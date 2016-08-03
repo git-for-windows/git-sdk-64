@@ -1,0 +1,34 @@
+# iconv(1) completion                                      -*- shell-script -*-
+
+_iconv()
+{
+    local cur prev words cword split
+    _init_completion -s || return
+
+    case $prev in
+        -'?'|--help|--usage|-V|--version|--unicode-subst|--byte-subst|\
+        --widechar-subst)
+            return 0
+            ;;
+        -f|--from-code|-t|--to-code)
+            COMPREPLY=( $( compgen -W '$( iconv -l | \
+                command sed -e "s@/*\$@@" -e "s/[,()]//g" )' -- "$cur" ) )
+            return 0
+            ;;
+        -o|--output)
+            _filedir
+            return 0
+            ;;
+    esac
+
+    $split && return 0
+
+    if [[ "$cur" == -* ]]; then
+        COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
+        [[ $COMPREPLY == *= ]] && compopt -o nospace
+        return 0
+    fi
+} &&
+complete -F _iconv -o default iconv
+
+# ex: ts=4 sw=4 et filetype=sh

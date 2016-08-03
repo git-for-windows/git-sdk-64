@@ -1,0 +1,32 @@
+# bash completion for rtcwake                              -*- shell-script -*-
+
+# Use of this file is deprecated.  Upstream completion is available in
+# util-linux >= 2.23, use that instead.
+
+_rtcwake()
+{
+    local cur prev words cword split
+    _init_completion -s || return
+
+    case "$prev" in
+        --help|-h|--version|-V|--seconds|-s|--time|-t)
+            return 0
+            ;;
+        --mode|-m)
+            COMPREPLY=( $( compgen -W 'standby mem disk on no off' -- "$cur" ) )
+            return 0
+            ;;
+        --device|-d)
+            COMPREPLY=( $( command ls -d /dev/rtc?* 2>/dev/null ) )
+            COMPREPLY=( $( compgen -W '${COMPREPLY[@]#/dev/}' -- "$cur" ) )
+            return 0
+            ;;
+    esac
+
+    $split && return 0
+
+    COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
+} &&
+complete -F _rtcwake rtcwake
+
+# ex: ts=4 sw=4 et filetype=sh

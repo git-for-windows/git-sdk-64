@@ -1,0 +1,13 @@
+# PINE address-book completion                             -*- shell-script -*-
+
+_pineaddr()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    COMPREPLY=( $( compgen -W '$( awk "{print \$1}" ~/.addressbook \
+        2>/dev/null)' -- "$cur" ) )
+} &&
+complete -F _pineaddr -o default pine alpine
+
+# ex: ts=4 sw=4 et filetype=sh

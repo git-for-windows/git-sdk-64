@@ -1,0 +1,40 @@
+# bash completion for minicom                              -*- shell-script -*-
+
+_minicom()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -a|-c)
+            COMPREPLY=( $( compgen -W 'on off' -- "$cur" ) )
+            return 0
+            ;;
+        -S|-C)
+            _filedir
+            return 0
+            ;;
+        -P)
+            COMPREPLY=( $( printf '%s\n' /dev/tty* ) )
+            COMPREPLY=( $( compgen -W '${COMPREPLY[@]} ${COMPREPLY[@]#/dev/}' \
+                -- "$cur" ) )
+            return 0
+            ;;
+    esac
+
+
+    if [[ "$cur" == -* ]]; then
+        COMPREPLY=( $( compgen -W '-s -o -m -M -z -l -L -w -a -t -c -S -d -p -C
+            -T -7 -8' -- "$cur" ) )
+        return 0
+    else
+        COMPREPLY=(
+            $( command ls /etc/minirc.* /etc/minicom/minirc.* ~/.minirc.* \
+                       2>/dev/null | command sed 's|^.*minirc\.||' | \
+                   command grep "^${cur}" ) )
+        [[ $COMPREPLY ]] && return
+    fi
+} &&
+complete -F _minicom -o default minicom
+
+# ex: ts=4 sw=4 et filetype=sh

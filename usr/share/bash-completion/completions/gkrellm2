@@ -1,0 +1,39 @@
+# gkrellm(1) completion                                    -*- shell-script -*-
+
+_gkrellm()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -t|--theme)
+            _filedir -d
+            return 0
+            ;;
+        -p|--plugin)
+            _filedir so
+            return 0
+            ;;
+        -s|--server)
+            _known_hosts_real "$cur"
+            return 0
+            ;;
+        -l|--logfile)
+            _filedir
+            return 0
+            ;;
+        -g|--geometry|-c|--config|-P|--port|-d|--debug-level)
+            # Argument required but no completions available
+            return 0
+            ;;
+        -h|--help|-v|--version)
+            # All other options are noop with these
+            return 0
+            ;;
+    esac
+
+    COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
+} &&
+complete -F _gkrellm gkrellm gkrellm2
+
+# ex: ts=4 sw=4 et filetype=sh

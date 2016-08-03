@@ -1,0 +1,30 @@
+# bash completion for dd                                   -*- shell-script -*-
+
+_dd()
+{
+    local cur prev words cword
+    _init_completion -n = || return
+
+    case $cur in
+        if=*|of=*)
+            cur=${cur#*=}
+            _filedir
+            return 0
+            ;;
+        conv=*)
+            cur=${cur#*=}
+            COMPREPLY=( $( compgen -W 'ascii ebcdic ibm block unblock lcase
+                notrunc ucase swab noerror sync' -- "$cur" ) )
+            return 0
+            ;;
+    esac
+
+    _expand || return 0
+
+    COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) \
+                $( compgen -W 'bs cbs conv count ibs if obs of seek skip' \
+                           -S '=' -- "$cur" ) )
+} &&
+complete -F _dd -o nospace dd
+
+# ex: ts=4 sw=4 et filetype=sh

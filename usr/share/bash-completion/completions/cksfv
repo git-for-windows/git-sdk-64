@@ -1,0 +1,29 @@
+# cksfv completion by Chris <xris@forevermore.net>         -*- shell-script -*-
+
+_cksfv()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    if [[ $cword -eq 1 ]]; then
+        COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
+        return 0
+    fi
+
+    case "$prev" in
+        -C|-g)
+            _filedir -d
+            return 0
+            ;;
+        -f)
+            _filedir 'sfv'
+            return 0
+            ;;
+    esac
+
+    _filedir
+    return 0
+} &&
+complete -F _cksfv cksfv
+
+# ex: ts=4 sw=4 et filetype=sh

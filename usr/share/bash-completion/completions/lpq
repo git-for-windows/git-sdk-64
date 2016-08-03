@@ -1,0 +1,28 @@
+# lpq(1) completion                                        -*- shell-script -*-
+
+_lpq()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -P)
+            COMPREPLY=( $( compgen -W "$( lpstat -a 2>/dev/null | cut -d' ' -f1 )" -- "$cur" ) )
+            return 0
+            ;;
+        -U)
+            COMPREPLY=( $( compgen -u -- "$cur" ) )
+            return 0
+            ;;
+    esac
+
+    if [[ "$cur" == - ]]; then
+        COMPREPLY=( $( compgen -W '-E -P -U -a -h -l' -- "$cur" ) )
+        return 0
+    fi
+
+    _filedir
+} &&
+complete -F _lpq lpq
+
+# ex: ts=4 sw=4 et filetype=sh

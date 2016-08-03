@@ -1,0 +1,34 @@
+# autoscan(1) completion                                   -*- shell-script -*-
+
+_autoscan()
+{
+    local cur prev words cword split
+    _init_completion -s || return
+
+    case "$prev" in
+        --help|-h|--version|-V)
+            return 0
+            ;;
+        --prepend-include|-B|--include|-I)
+            _filedir -d
+            return 0
+            ;;
+    esac
+
+    $split && return 0
+
+    if [[ "$cur" == -* ]]; then
+        COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
+        [[ $COMPREPLY == *= ]] && compopt -o nospace
+        return 0
+    fi
+
+    if [[ $1 == autoupdate ]] ; then
+        _filedir '@(ac|in)'
+    else
+        _filedir -d
+    fi
+} &&
+complete -F _autoscan autoscan autoupdate
+
+# ex: ts=4 sw=4 et filetype=sh

@@ -1,0 +1,22 @@
+# FreeBSD kldload completion                               -*- shell-script -*-
+
+[[ $OSTYPE == *freebsd* ]] || return 1
+
+_kldload()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    local moddir=/modules/
+    [[ -d $moddir ]] || moddir=/boot/kernel/
+
+    compopt -o filenames
+    COMPREPLY=( $( compgen -f "$moddir$cur" ) )
+    COMPREPLY=( ${COMPREPLY[@]#$moddir} )
+    COMPREPLY=( ${COMPREPLY[@]%.ko} )
+
+    return 0
+} &&
+complete -F _kldload kldload
+
+# ex: ts=4 sw=4 et filetype=sh

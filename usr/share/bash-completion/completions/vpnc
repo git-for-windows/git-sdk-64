@@ -1,0 +1,62 @@
+# bash completion for vpnc                                 -*- shell-script -*-
+
+_vpnc()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        --help|--long-help|--version|--id|--username|--domain|--ifname|\
+        --application-version|--local-addr|--local-port|--udp-port|--dpd-idle|\
+        --target-network)
+            return 0
+            ;;
+        --gateway)
+            _known_hosts_real "$cur"
+            return 0
+            ;;
+        --vendor)
+            COMPREPLY=( $( compgen -W 'cisco netscreen' -- "$cur" ) )
+            return 0
+            ;;
+        --natt-mode)
+            COMPREPLY=( $( compgen -W 'natt none force-natt cisco-udp' \
+                -- "$cur" ) )
+            return 0
+            ;;
+        --script|--pid-file|--ca-file)
+            _filedir
+            return 0
+            ;;
+        --dh)
+            COMPREPLY=( $( compgen -W 'dh1 dh2 dh5' -- "$cur" ) )
+            return 0
+            ;;
+        --pfs)
+            COMPREPLY=( $( compgen -W 'nopfs dh1 dh2 dh5 server' -- "$cur" ) )
+            return 0
+            ;;
+        --debug)
+            COMPREPLY=( $( compgen -W '0 1 2 3 99' -- "$cur" ) )
+            return 0
+            ;;
+        --auth-mode)
+            COMPREPLY=( $( compgen -W 'psk cert hybrid' -- "$cur" ) )
+            return 0
+            ;;
+        --ca-dir)
+            _filedir -d
+            return 0
+            ;;
+    esac
+
+    if [[ "$cur" == -* ]]; then
+        COMPREPLY=( $( compgen -W '$( _parse_help "$1" --long-help )' \
+            -- "$cur" ) )
+    else
+        COMPREPLY=( $( compgen -W '$( command ls /etc/vpnc )' -- "$cur" ) )
+    fi
+} &&
+complete -F _vpnc vpnc
+
+# ex: ts=4 sw=4 et filetype=sh

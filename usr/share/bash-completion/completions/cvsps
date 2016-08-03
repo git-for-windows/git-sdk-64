@@ -1,0 +1,58 @@
+# bash completion for cvsps                                -*- shell-script -*-
+
+_cvsps()
+{
+    local cur prev words cword
+    _init_completion -n : || return
+
+    case $prev in
+        -h|-z|-f|-d|-l|--diff-opts|--debuglvl)
+            return 0
+            ;;
+        -s)
+            COMPREPLY=( $( compgen -W "$( $1 2>/dev/null |
+                awk '/^PatchSet:?[ \t]/ { print $2 }' )" -- "$cur" ) )
+            return 0
+            ;;
+        -a)
+            COMPREPLY=( $( compgen -W "$( $1 2>/dev/null |
+                awk '/^Author:[ \t]/ { print $2 }' )" -- "$cur" ) )
+            return 0
+            ;;
+        -b)
+            COMPREPLY=( $( compgen -W "$( $1 2>/dev/null |
+                awk '/^Branch:[ \t]/ { print $2 }' )" -- "$cur" ) )
+            return 0
+            ;;
+        -r)
+            COMPREPLY=( $( compgen -W "$( $1 2>/dev/null |
+                awk '/^Tag:[ \t]+[^(]/ { print $2 }' )" -- "$cur" ) )
+            return 0
+            ;;
+        -p)
+            _filedir -d
+            return 0
+            ;;
+        --test-log)
+            _filedir
+            return 0
+            ;;
+        -Z)
+            COMPREPLY=( $( compgen -W '{1..9}' -- "$cur" ) )
+            return 0
+            ;;
+        --root)
+            _xfunc cvs _cvs_roots
+            return 0
+            ;;
+    esac
+
+    if [[ "$cur" == -* ]] ; then
+        COMPREPLY=( $( compgen -W '$( _parse_help "$1" -h )' -- "$cur" ) )
+    else
+        _xfunc cvs _cvs_roots
+    fi
+} &&
+complete -F _cvsps cvsps
+
+# ex: ts=4 sw=4 et filetype=sh

@@ -1,0 +1,34 @@
+# javaws(1) completion                                     -*- shell-script -*-
+
+_javaws()
+{
+    local cur prev words cword
+    _init_completion -n = || return
+
+    case $prev in
+        -help|-license|-about|-viewer|-arg|-param|-property|-update|-umask)
+            return 0
+            ;;
+        -basedir|-codebase)
+            _filedir -d
+            return 0
+            ;;
+        -uninstall|-import)
+            _filedir jnlp
+            return 0
+            ;;
+    esac
+
+    if [[ $cur == *= ]]; then
+        return 0
+    elif [[ $cur == -* ]]; then
+        COMPREPLY=( $( compgen -W "$( _parse_help "$1" -help ) " -- "$cur" ) )
+        [[ $COMPREPLY == *= ]] && compopt -o nospace
+        return 0
+    fi
+
+    _filedir jnlp
+} &&
+complete -F _javaws javaws
+
+# ex: ts=4 sw=4 et filetype=sh

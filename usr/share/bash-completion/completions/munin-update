@@ -1,0 +1,27 @@
+# munin-update completion                                  -*- shell-script -*-
+
+_munin_update()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        --config)
+            _filedir
+            return 0
+            ;;
+        --host)
+            _known_hosts_real "$cur"
+            return 0
+            ;;
+    esac
+
+    if [[ "$cur" == -* ]]; then
+        COMPREPLY=( $( compgen -W '--force-root --noforce-root --service --host
+            --config --help --debug --nodebug --fork --nofork --stdout
+            --nostdout --timeout' -- "$cur" ) )
+    fi
+} &&
+complete -F _munin_update munin-update
+
+# ex: ts=4 sw=4 et filetype=sh

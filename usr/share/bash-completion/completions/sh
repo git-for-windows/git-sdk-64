@@ -1,0 +1,36 @@
+# POSIX sh(1) completion                                   -*- shell-script -*-
+
+_sh()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -c)
+            return 0
+            ;;
+        -o|+o)
+            COMPREPLY=( $( compgen -W 'allexport errexit ignoreeof monitor
+                noclobber noglob noexec nolog notify nounset verbose vi
+                xtrace' -- "$cur" ) )
+            return 0
+            ;;
+    esac
+
+    local opts="-a -b -C -e -f -h -i -m -n -o -u -v -x"
+    if [[ "$cur" == -* ]]; then
+        COMPREPLY=( $( compgen -W "$opts -c -s" -- "$cur" ) )
+        return 0
+    elif [[ "$cur" == +* ]]; then
+        COMPREPLY=( $( compgen -W "${opts//-/+}" -- "$cur" ) )
+        return 0
+    fi
+
+    local args ext=
+    _count_args
+    [[ $args -eq 1 ]] && ext=sh
+    _filedir $ext
+} &&
+complete -F _sh sh
+
+# ex: ts=4 sw=4 et filetype=sh

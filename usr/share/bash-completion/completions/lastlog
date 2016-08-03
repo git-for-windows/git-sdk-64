@@ -1,0 +1,25 @@
+# lastlog(8) completion                                    -*- shell-script -*-
+
+_lastlog()
+{
+    local cur prev words cword split
+    _init_completion -s || return
+
+    case $prev in
+        -b|--before|-h|--help|-t|--time)
+            return 0
+            ;;
+        -u|--user)
+            COMPREPLY=( $( compgen -u -- "$cur" ) )
+            return 0
+            ;;
+    esac
+
+    $split && return 0
+
+    COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
+    [[ $COMPREPLY == *= ]] && compopt -o nospace
+} &&
+complete -F _lastlog lastlog
+
+# ex: ts=4 sw=4 et filetype=sh

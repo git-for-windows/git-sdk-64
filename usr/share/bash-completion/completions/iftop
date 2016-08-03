@@ -1,0 +1,26 @@
+# iftop(8) completion                                      -*- shell-script -*-
+
+_iftop()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -h|-f|-F|-m)
+            return 0
+            ;;
+        -i)
+            _available_interfaces -a
+            return 0
+            ;;
+        -c)
+            _filedir
+            return 0
+            ;;
+    esac
+
+    COMPREPLY=( $( compgen -W '$( _parse_help "$1" -h )' -- "$cur" ) )
+} &&
+complete -F _iftop iftop
+
+# ex: ts=4 sw=4 et filetype=sh

@@ -1,0 +1,17 @@
+# mailman newlist completion                               -*- shell-script -*-
+
+_newlist()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    if [[ "$cur" == -* ]]; then
+        COMPREPLY=( $( compgen -W '--language --quiet --help' -- "$cur" ) )
+    else
+        _xfunc list_lists _mailman_lists
+    fi
+
+} &&
+complete -F _newlist newlist
+
+# ex: ts=4 sw=4 et filetype=sh

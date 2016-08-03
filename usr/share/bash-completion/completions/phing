@@ -1,0 +1,76 @@
+# bash completion for ant and phing                        -*- shell-script -*-
+
+_ant()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -h|-help|--h|--help|-projecthelp|-p|-version|-diagnostics)
+            return 0
+            ;;
+        -buildfile|-file|-f)
+            _filedir 'xml'
+            return 0
+            ;;
+        -logfile|-l)
+            _filedir
+            return 0
+            ;;
+        -propertyfile)
+            _filedir properties
+            return 0
+            ;;
+        -nice)
+            COMPREPLY=( $( compgen -W '{1..10}' -- "$cur" ) )
+            return 0
+            ;;
+        -lib)
+            _filedir -d
+            return 0
+            ;;
+        -logger|-listener|-inputhandler|-main|-find|-s)
+            return 0
+            ;;
+    esac
+
+    if [[ $cur == -D* ]]; then
+        return 0
+    elif [[ "$cur" == -* ]]; then
+        COMPREPLY=( $( compgen -W '$( _parse_help "$1" -h )' -- "$cur" ) )
+    else
+        # available targets completion
+        # find which buildfile to use
+        local buildfile=build.xml i
+        for (( i=1; i < cword; i++ )); do
+            if [[ "${words[i]}" == -@(?(build)file|f) ]]; then
+                buildfile=${words[i+1]}
+                break
+            fi
+        done
+        if [[ $i -eq $cword ]]; then
+            for i in $ANT_ARGS; do
+                if [[ $prev == -@(?(build)file|f) ]]; then
+                    buildfile=$i
+                    break
+                fi
+                prev=$i
+            done
+        fi
+        [[ ! -f $buildfile ]] && return 0
+
+        # parse buildfile for targets
+        local line targets
+        while read -rd '>' line; do
+            [[ $line =~ \
+               \<(targe|extension-poin)t[[:space:]].*name=[\"\']([^\"\']+) ]] \
+                && targets+=" ${BASH_REMATCH[2]}"
+        done < $buildfile
+        COMPREPLY=( $( compgen -W '$targets' -- "$cur" ) )
+    fi
+} &&
+complete -F _ant ant phing
+type complete-ant-cmd.pl &>/dev/null && \
+    complete -C complete-ant-cmd.pl -F _ant ant || :
+
+# ex: ts=4 sw=4 et filetype=sh

@@ -1,0 +1,58 @@
+# povray completion                                        -*- shell-script -*-
+# by "David Necas (Yeti)" <yeti@physics.muni.cz>
+
+_povray()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    local povcur=$cur pfx oext defoext
+    defoext=png # default output extension, if cannot be determined FIXME
+
+    _expand || return 0
+
+    case $povcur in
+        [-+]I*)
+            cur="${povcur#[-+]I}" # to confuse _filedir
+            pfx="${povcur%"$cur"}"
+            _filedir pov
+            COMPREPLY=( ${COMPREPLY[@]/#/$pfx} )
+            return 0
+            ;;
+        [-+]O*)
+            # guess what output file type user may want
+            case $( ( IFS=$'\n'; command grep '^[-+]F' <<<"${words[*]}" ) ) in
+                [-+]FN) oext=png ;;
+                [-+]FP) oext=ppm ;;
+                [-+]F[CT]) oext=tga ;;
+                *) oext=$defoext ;;
+            esac
+            # complete filename corresponding to previously specified +I
+            COMPREPLY=( $( ( IFS=$'\n'; command grep '^[-+]I' <<<"${words[*]}" ) ) )
+            COMPREPLY=( ${COMPREPLY[@]#[-+]I} )
+            COMPREPLY=( ${COMPREPLY[@]/%.pov/.$oext} )
+            cur="${povcur#[-+]O}" # to confuse _filedir
+            pfx="${povcur%"$cur"}"
+            _filedir $oext
+            COMPREPLY=( ${COMPREPLY[@]/#/$pfx} )
+            return 0
+            ;;
+        *.ini\[|*.ini\[*[^]]) # sections in .ini files
+            cur="${povcur#*\[}"
+            pfx="${povcur%\["$cur"}" # prefix == filename
+            [[ -r $pfx ]] || return 0
+            COMPREPLY=( $(command sed -e 's/^[[:space:]]*\[\('"$cur"'[^]]*\]\).*$/\1/' \
+                -e 't' -e 'd' -- "$pfx") )
+            # to prevent [bar] expand to nothing.  can be done more easily?
+            COMPREPLY=( "${COMPREPLY[@]/#/$pfx[}" )
+            return 0
+            ;;
+        *)
+            _filedir '@(ini|pov)'
+            return 0
+            ;;
+    esac
+} &&
+complete -F _povray povray xpovray spovray
+
+# ex: ts=4 sw=4 et filetype=sh

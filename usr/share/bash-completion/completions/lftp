@@ -1,0 +1,29 @@
+# lftp(1) completion                                       -*- shell-script -*-
+
+_lftp()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        -f)
+            _filedir
+            return 0
+            ;;
+        -c|-h|--help|-v|--version|-e|-u|-p)
+            return 0
+            ;;
+    esac
+
+    if [[ "$cur" == -* ]] ; then
+        COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
+        return 0
+    fi
+
+    COMPREPLY=( $( compgen -W \
+        '$( cut -f 1 -s ~/.lftp/bookmarks 2>/dev/null )' -- "$cur" ) )
+    _known_hosts_real "$cur"
+} &&
+complete -F _lftp lftp
+
+# ex: ts=4 sw=4 et filetype=sh
