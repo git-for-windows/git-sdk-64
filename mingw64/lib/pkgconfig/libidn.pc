@@ -1,0 +1,23 @@
+# Process this file with autoconf to produce a pkg-config metadata file.
+# Copyright 2002-2015 Simon Josefsson
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This file is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+prefix=/mingw64
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Libidn
+Description: IETF stringprep, nameprep, punycode, IDNA text processing.
+URL: http://www.gnu.org/software/libidn/
+Version: 1.32
+Libs: -L${libdir} -lidn
+Libs.private: -L/mingw64/lib -liconv
+Cflags: -I${includedir}
