@@ -1,0 +1,167 @@
+V "GNAT Lib v6"
+A -gnatwa
+A -nostdinc
+A -O2
+A -Wextra
+A -Wall
+A -g
+A -gnatp
+A -gnatg
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV NO_FIXED_POINT
+RV NO_LONG_LONG_INTEGERS
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_IMPLEMENTATION_ATTRIBUTES
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_OBSOLESCENT_FEATURES
+RV SPARK_05
+
+U system.memory%b	memtrack.adb		e875c2c3 NE OO PK
+W ada%s			ada.ads			ada.ali
+W ada.exceptions%s	a-except.adb		a-except.ali
+W gnat%s		gnat.ads		gnat.ali
+W gnat.io%s		g-io.adb		g-io.ali
+W system%s		system.ads		system.ali
+W system.os_primitives%s  s-osprim.adb		s-osprim.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.traceback%s	s-traceb.adb		s-traceb.ali
+W system.traceback_entries%s  s-traent.adb	s-traent.ali
+
+U system.memory%s	s-memory.ads		6bdde70c EB NE OL PK
+W system%s		system.ads		system.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-except.ads		20151016123252 291912d5 ada.exceptions%s
+D a-unccon.ads		20070406091342 f9eb8f06 ada.unchecked_conversion%s
+D gnat.ads		20140801083228 fd2ad2f1 gnat%s
+D g-io.ads		20110801150502 9f0d3ab2 gnat.io%s
+D system.ads		20151123113124 32a08138 system%s
+D s-memory.ads		20140225151140 597d6634 system.memory%s
+D memtrack.adb		20140801081228 c750a84e system.memory%b
+D s-osprim.ads		20151016123252 8a8f1176 system.os_primitives%s
+D s-parame.ads		20140801093848 7e2a0d7f system.parameters%s
+D s-soflin.ads		20151020124036 14e1eb6c system.soft_links%s
+D s-stache.ads		20140225151140 a37c21ec system.stack_checking%s
+D s-stalib.ads		20151112104908 09bd3940 system.standard_library%s
+D s-stoele.ads		20140225151140 2dc34a04 system.storage_elements%s
+D s-traceb.ads		20151016104410 5e7928b4 system.traceback%s
+D s-traent.ads		20140730135026 005bf670 system.traceback_entries%s
+X 1 ada.ads
+16K9*Ada 19e8 8|71r6 80r8
+X 2 a-except.ads
+54K13*Exceptions 349e19 8|71w10 80r12
+90U14*Raise_Exception 8|169s10 224s10 333s10 395s10
+X 4 gnat.ads
+34K9*GNAT 37e9 8|75r6 84r8
+X 5 g-io.ads
+41K14*IO 91e12 8|75w11 84r13
+72U14*Put_Line 8|305s13
+X 6 system.ads
+37K9*System 200e11 7|45r9 53r42 68r26 77r14 78r29 107r5 8|72r6 73r6 74r6
+. 76r6 78r14 81r8 82r8 83r8 86r45 89r28 93r13 93r51 96r24 106r16 128r31 162r42
+. 163r29 197r23 211r22 223r19 245r26 246r36 266r23 276r22 300r10 301r23 304r24
+. 320r14 321r29 323r36 324r27 349r23 359r22 382r22 394r19 401r5
+67M9*Address 7|53r49 68r33 77r21 78r36 8|86r52 89r35 93r20 93r58 96r31 106r23
+. 128r38 162r49 163r36 211r29 245r33 246r43 276r29 320r21 321r36 323r43 324r34
+. 359r29 382r29
+69m4*Null_Address{67M9} 8|223r26 304r31 394r26
+81V14*"="{boolean} 8|223r17 304r22 394r17
+X 7 s-memory.ads
+45K16*Memory 6|37k9 7|103E31 107l12 107e18 8|78b21 401l12 401t18
+48M9*size_t 53r27 78r14 8|86r30 93r36 107r16 108r16 113r16 114r16 162r27
+. 164r29 168r17 202r39 321r14 332r17 373r32
+53V13*Alloc{6|67M9} 53>20 103i<c,__gnat_malloc>22 8|162b13 228l8 228t13
+53m20 Size{48M9} 8|162b20 164r39 168r10 177r10
+68U14*Free 68>20 104i<c,__gnat_free>22 8|245b14 288l8 288t12
+68m20 Ptr{6|67M9} 8|245b20 246r54 282r18
+76V13*Realloc{6|67M9} 77>7 78>7 105i<c,__gnat_realloc>22 8|319b13 399l8 399t15
+77m7 Ptr{6|67M9} 8|320b7 323r54 367r31
+78m7 Size{48M9} 8|321b7 332r10 367r36 373r18
+X 8 memtrack.adb
+86V13 c_malloc{6|67M9} 86>23 87b<c,malloc>22 183s17
+86m23 Size{7|48M9}
+89U14 c_free 89>22 90b<c,free>22 282s10
+89m22 Ptr{6|67M9}
+92V13 c_realloc{6|67M9} 93>7 93>29 94b<c,realloc>22 367s20
+93m7 Ptr{6|67M9}
+93m29 Size{7|48M9}
+96M12 File_Ptr{6|67M9} 98r57 109r16 115r16 118r43 121r31 142r15
+98V13 fopen{96M12} 98>20 98>35 99b<c,fopen>22 302s22
+98a20 Path{string}
+98a35 Mode{string}
+101U14 OS_Exit 101>23 102b<c,__gnat_os_exit>22 103r22 306s13
+101i23 Status{integer}
+105U14 fwrite 106>7 107>7 108>7 109>7 116b<c,fwrite>22 201s10 202s10 204s10
+. 206s10 213s16 268s10 269s10 271s10 278s16 310s10 351s10 352s10 354s10 361s16
+. 372s10 373s10 375s10 377s10 384s16
+106m7 Ptr{6|67M9}
+107m7 Size{7|48M9}
+108m7 Nmemb{7|48M9}
+109m7 Stream{96M12}
+111U14 fwrite 112>7 113>7 114>7 115>7 116b<c,fwrite>22 309s10
+112a7 Str{string}
+113m7 Size{7|48M9}
+114m7 Nmemb{7|48M9}
+115m7 Stream{96M12}
+118U14 fputc 118>21 118>34 119b<c,fputc>22 200s10 267s10 350s10 371s10
+118i21 C{integer}
+118m34 Stream{96M12}
+121U14 fclose 121>22 122b<c,fclose>22 237s10
+121m22 Stream{96M12}
+124U14 Finalize 125i<c,__gnat_finalize>22 234b14 239l8 239t16
+128N4 Address_Size 201r34 213r37 268r32 278r37 351r32 361r37 372r34 384r37
+131N4 Max_Call_Stack 134r39 199r22 265r22 348r22
+134a4 Tracebk{16|56A9} 199m13 199r13 209r19 209r36 211r48 265m13 265r13 274r19
+. 274r36 276r48 348m13 348r13 357r19 357r36 359r48 380r19 380r36 382r48
+135i4 Num_Calls{integer} 199m38 206m18 206r18 209r52 265m38 271m18 271r18
+. 274r52 348m38 354m18 354r18 357r52 377m18 377r18 380r52
+137a4 Gmemfname{string} 302r29
+142m4 Gmemfile{96M12} 200r38 201r51 203r18 205r18 207r18 213r54 237r18 267r38
+. 268r49 270r18 272r18 278r54 302m10 304r13 309r49 311r18 350r38 351r49 353r18
+. 355r18 361r54 371r38 372r51 374r18 376r18 378r18 384r54
+145b4 Needs_Init{boolean} 193r13 236r14 260r13 298r10 299m10 344r13
+148U14 Gmem_Initialize 194s13 261s13 294b14 313l8 313t23 345s13
+153b4 First_Call{boolean} 185r10 191m10 217m10 252r10 258m10 284m10 339r10
+. 340m10 388m10
+163m7 Result{6|67M9} 183m7 201m18 201r18 223r10 227r14
+164m7 Actual_Size{7|48M9} 178m10 183r27 202m18 202r18
+165o7 Timestamp{duration} 197m10 204m18 204r18
+209i14 J{integer} 211r57
+211m16 Ptr{6|67M9} 213m24 213r24
+246m7 Addr{6|67M9} 268r18
+247o7 Timestamp{duration} 266m10 269m18 269r18
+274i14 J{integer} 276r57
+276m16 Ptr{6|67M9} 278m24 278r24
+295o7 Timestamp{duration} 301m10 310m18 310r18
+323m7 Addr{6|67M9} 351r18
+324m7 Result{6|67M9} 367m10 372m18 372r18 394r10 398r14
+325o7 Timestamp{duration} 349m10 352m18 352r18 375m18 375r18
+357i14 J{integer} 359r57
+359m16 Ptr{6|67M9} 361m24 361r24
+380i14 J{integer} 382r57
+382m16 Ptr{6|67M9} 384m24 384r24
+X 9 s-osprim.ads
+40K16*OS_Primitives 8|76w13 197r30 266r30 300r17 301r30 349r30 9|85e25
+55U14*Initialize 8|300s31
+60V13*Clock{duration} 8|197s44 266s44 301s44 349s44
+X 11 s-soflin.ads
+45K16*Soft_Links 8|72w13 81r15 11|399e22
+60P9*No_Param_Proc
+163p4*Abort_Defer{60P9} 8|336r7
+167p4*Abort_Undefer{60P9} 8|392r7
+178p4*Lock_Task{60P9} 8|181r7 250r7 337r7
+188p4*Unlock_Task{60P9} 8|221r7 287r7 391r7
+X 15 s-traceb.ads
+44K16*Traceback 8|73w13 82r15 15|87e21
+50U14*Call_Chain 8|198s10 264s10 347s10
+56i7 Skip_Frames{natural} 8|199r49 265r49 348r49
+81V13*C_Call_Chain{natural} 84i<c,system__traceback__c_call_chain>22
+X 16 s-traent.ads
+47K16*Traceback_Entries 8|74w13 83r15 16|67e29
+56A9*Tracebacks_Array(50M12)<integer> 8|134r16
+58V13*PC_For{6|67M9} 8|211s40 276s40 359s40 382s40
+

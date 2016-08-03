@@ -1,0 +1,131 @@
+V "GNAT Lib v6"
+A -gnatwa
+A -nostdinc
+A -O2
+A -Wextra
+A -Wall
+A -g
+A -gnatp
+A -gnatg
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV NO_ACCESS_SUBPROGRAMS
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_UNCHECKED_CONVERSION
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_ASPECT_SPECIFICATIONS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV SPARK_05
+
+U ada.interrupts%b	a-interr.adb		1b0bfe6e NE OL PK
+W ada%s			ada.ads			ada.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W ada.unchecked_conversion%s
+W system%s		system.ads		system.ali
+
+U ada.interrupts%s	a-interr.ads		fc1daed4 BN NE OL PK
+W ada%s			ada.ads			ada.ali
+W ada.task_identification%s  a-taside.adb	a-taside.ali
+W system%s		system.ads		system.ali
+W system.interrupts%s	s-interr.adb		s-interr.ali
+W system.multiprocessors%s  s-multip.adb	s-multip.ali
+
+D ada.ads		20070406091342 3ffc8e18 ada%s
+D a-except.ads		20151016123252 291912d5 ada.exceptions%s
+D a-finali.ads		20151020095656 bf4f806b ada.finalization%s
+D a-interr.ads		20151118104048 bdf68b51 ada.interrupts%s
+D a-interr.adb		20151118102306 5f16fa39 ada.interrupts%b
+D a-stream.ads		20141120112812 119b8fb3 ada.streams%s
+D a-tags.ads		20151016130316 01f5e3ef ada.tags%s
+D a-taside.ads		20151026154432 60271635 ada.task_identification%s
+D a-unccon.ads		20070406091342 f9eb8f06 ada.unchecked_conversion%s
+D interfac.ads		20151118101228 4be8ce1b interfaces%s
+D i-c.ads		20110801143640 5421119b interfaces.c%s
+D i-cstrin.ads		20140611122922 341d0ddf interfaces.c.strings%s
+D system.ads		20151123113124 32a08138 system%s
+D s-atacco.ads		20120515093410 4c36d12f system.address_to_access_conversions%s
+D s-exctab.ads		20140225151140 54135002 system.exception_table%s
+D s-finroo.ads		20120426095924 4ff27390 system.finalization_root%s
+D s-interr.ads		20140813165906 269c22db system.interrupts%s
+D s-multip.ads		20101011073010 38ac9f73 system.multiprocessors%s
+D s-osinte.ads		20150107102252 2e5b26a9 system.os_interface%s
+D s-parame.ads		20140801093848 7e2a0d7f system.parameters%s
+D s-soflin.ads		20151020124036 14e1eb6c system.soft_links%s
+D s-stache.ads		20140225151140 a37c21ec system.stack_checking%s
+D s-stausa.ads		20110804134156 017a0a05 system.stack_usage%s
+D s-stalib.ads		20151112104908 09bd3940 system.standard_library%s
+D s-stoele.ads		20140225151140 2dc34a04 system.storage_elements%s
+D s-tasinf.ads		20140613095942 601f6b72 system.task_info%s
+D s-taspri.ads		20141120144720 6c1d93d4 system.task_primitives%s
+D s-taskin.ads		20151023124846 0766baa7 system.tasking%s
+D s-taprob.ads		20110927094500 502249e3 system.tasking.protected_objects%s
+D s-tpoben.ads		20121029113218 b641f948 system.tasking.protected_objects.entries%s
+D s-traent.ads		20140730135026 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20140731130224 9d58a4c0 system.unsigned_types%s
+D s-win32.ads		20140120152906 b7f96285 system.win32%s
+X 1 ada.ads
+16K9*Ada 19e8 4|38r6 40r9 49r16 54r16 79r27 90r16 100r5 5|33r6 35r14 39r30
+. 42r27 139r5
+X 4 a-interr.ads
+40K13*Interrupts 1|16k9 4|44E4 100l9 100e19 5|35b18 139l9 139t19
+42I9*Interrupt_ID<17|64I9> 46r38 51r38 57r19 64r21 72r21 77r42 81r36 86r19
+. 5|51r21 63r19 73r42 85r21 101r19 116r38 125r38 134r36
+44P9*Parameterless_Handler 57r40 63r21 70r25 71r21 5|40r7 43r33 50r21 63r40
+. 83r25 84r21
+46V13*Is_Reserved{boolean} 46>26 93r19 5|125b13 128l8 128t19
+46i26 Interrupt{42I9} 5|125b26 127r47
+51V13*Is_Attached{boolean} 51>26 94r19 5|116b13 119l8 119t19
+51i26 Interrupt{42I9} 5|116b26 118r55
+56V13*Current_Handler{44P9} 57>7 95r19 5|62b13 67l8 67t23
+57i7 Interrupt{42I9} 5|63b7 66r59
+62U14*Attach_Handler 63>7 64>7 96r19 5|49b14 56l8 56t22
+63p7 New_Handler{44P9} 5|50b7 55r21
+64i7 Interrupt{42I9} 5|51b7 55r52
+69U14*Exchange_Handler 70<7 71>7 72>7 98r19 5|82b14 94l8 94t24
+70p7 Old_Handler{44P9} 5|83b7 93m7
+71p7 New_Handler{44P9} 5|84b7 91r24
+72i7 Interrupt{42I9} 5|85b7 92r27
+77U14*Detach_Handler 77>30 97r19 5|73b14 76l8 76t22
+77i30 Interrupt{42I9} 5|73b30 75r43
+81V13*Reference{13|67M9} 81>24 5|134b13 137l8 137t17
+81i24 Interrupt{42I9} 5|134b24 136r45
+85V13*Get_CPU{18|19I9} 86>7 99r19 5|100b13 110l8 110t15
+86i7 Interrupt{42I9} 5|101b7 103r28
+X 5 a-interr.adb
+37K12 SI=37:30 40r30 43r7 54r7 55r35 66r22 66r42 75r7 75r26 87r11 90r7 92r10
+. 118r14 118r38 127r14 127r30 136r14 136r28
+39V13 To_System[9|20]{17|73P9} 55s10 91s13
+42V13 To_Ada[9|20]{4|44P9} 66s14 93s22
+87p7 H{17|73P9} 91m10 91r10 93r30
+X 8 a-taside.ads
+39K13*Task_Identification 4|38w10 49r20 54r20 79r31 90r20 8|96e28
+41@22*Tasking_State 4|49r40 54r40 79r51 90r40
+X 9 a-unccon.ads
+20v14*Unchecked_Conversion 5|33w10 39r34 42r31
+X 13 system.ads
+37K9*System 4|36r6 37r6 42r29 81r57 86r40 5|37r23 101r40 109r14 134r57 13|200e11
+67M9*Address 4|81r64 5|134r64
+X 17 s-interr.ads
+50K16*Interrupts 4|36w13 42r36 5|37r30 17|278e22
+64I9*Ada_Interrupt_ID<short_short_integer> 4|42r47
+67I9*Interrupt_ID<short_short_integer> 5|55r38 66r45 75r29 92r13 118r41 127r33
+. 136r31
+73P9*Parameterless_Handler 5|40r33 43r10 87r14
+82V13*Is_Reserved{boolean} 5|127s17
+86V13*Is_Handler_Attached{boolean} 5|118s17
+88V13*Current_Handler{73P9} 5|66s25
+96U14*Attach_Handler 5|54s10
+101U14*Exchange_Handler 5|90s10
+107U14*Detach_Handler 5|75s10
+111V13*Reference{13|67M9} 5|136s17
+X 18 s-multip.ads
+16K16*Multiprocessors 4|37w13 86r47 5|101r47 109r21 18|28e27
+19I9*CPU_Range<integer> 4|86r63 5|101r63
+23i4*Not_A_Specific_CPU{19I9} 5|109r37
+X 23 s-stausa.ads
+203U14*Initialize 204i<c,__gnat_stack_usage_initialize>22
+268U14*Output_Results 272i<c,__gnat_stack_usage_output_results>22
+
