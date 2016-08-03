@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libsvn_subr
+Description: Subversion General Utility Library
+Version: 1.9.3
+Requires:  apr-util-1 apr-1
+Requires.private:  sqlite3
+Libs: -L${libdir}  -lsvn_subr -lexpat -lz  -lmagic -lintl @crypt3@
+Cflags: -I${includedir}
