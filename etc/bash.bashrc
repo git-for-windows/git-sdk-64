@@ -50,3 +50,6 @@ unset _warning
 
 # Uncomment to use the terminal colours set in DIR_COLORS
 # eval "$(dircolors -b /etc/DIR_COLORS)"
+
+# Fixup git-bash in non login env
+shopt -q login_shell || . /etc/profile.d/git-prompt.sh

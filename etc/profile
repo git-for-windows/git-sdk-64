@@ -83,11 +83,18 @@ SYSCONFDIR="${SYSCONFDIR:=/etc}"
 #
 ORIGINAL_TMP="${ORIGINAL_TMP:-${TMP}}"
 ORIGINAL_TEMP="${ORIGINAL_TEMP:-${TEMP}}"
-unset TMP TEMP
-tmp=$(cygpath -w "$ORIGINAL_TMP" 2> /dev/null)
-temp=$(cygpath -w "$ORIGINAL_TEMP" 2> /dev/null)
-TMP="/tmp"
-TEMP="/tmp"
+#unset TMP TEMP
+#tmp=$(cygpath -w "$ORIGINAL_TMP" 2> /dev/null)
+#temp=$(cygpath -w "$ORIGINAL_TEMP" 2> /dev/null)
+#TMP="/tmp"
+#TEMP="/tmp"
+case "$TMP" in *\\*) TMP="$(cygpath -m "$TMP")";; esac
+case "$TEMP" in *\\*) TEMP="$(cygpath -m "$TEMP")";; esac
+test -d "$TMPDIR" || test ! -d "$TMP" || {
+  TMPDIR="$TMP"
+  export TMPDIR
+}
+
 
 # Define default printer
 p='/proc/registry/HKEY_CURRENT_USER/Software/Microsoft/Windows NT/CurrentVersion/Windows/Device'
