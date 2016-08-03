@@ -1,0 +1,13 @@
+prefix=/mingw64
+exec_prefix=${prefix}
+libdir=/mingw64/lib
+incdir=${prefix}/include
+
+Name: librtmp
+Description: RTMP implementation
+Version: v2.4
+Requires: gnutls,hogweed,nettle
+URL: http://rtmpdump.mplayerhq.hu
+Libs: -L${libdir} -lrtmp -lz -lgmp
+Libs.private: -lws2_32 -lwinmm -lgdi32
+Cflags: -I${incdir}
