@@ -1,0 +1,36 @@
+if [ -z "`type -t $ZIP_PATH`" ]
+then
+  echo >&2 "Missing zip utility at $ZIP_PATH, conversion to epub not possible."
+  echo >&2 "Exiting !"
+  exit 3
+fi
+
+case "$1" in
+  stylesheet)
+   if [ "$VERBOSE" -ge 1 ]
+    then
+      echo >&2 "Converting Docbook to epub"
+    fi
+    echo "http://docbook.sourceforge.net/release/xsl/current/epub/docbook.xsl"
+  ;;
+  post-process)
+  if [ "$VERBOSE" -ge 1 ]
+    then
+    echo >&2 "Creating epub file"
+  fi
+  INPUT_DIR=`dirname $INPUT_FILE`
+  CSS_DEST_DIR=$PWD/OEBPS
+  mkdir $PWD/OEBPS
+  USED_CSS_LIST=`${GREP_PATH} 'link rel="stylesheet"' $CSS_DEST_DIR/*.html | ${SED_PATH} -e's/.*<link rel="stylesheet" type="text\/css" href="\(.*\.css\)"\/>.*/\1/' | uniq`
+  for CSS_SOURCE in $USED_CSS_LIST
+  do
+    ${GCP_PATH:-cp} -R -P -p -- $INPUT_DIR/$CSS_SOURCE $CSS_DEST_DIR/
+  done
+  echo -n "application/epub+zip" > mimetype
+  EPUB_NAME=$(basename "${XSLT_PROCESSED%.*}").epub
+  [ -e "$XSLT_PROCESSED" ] && rm "$XSLT_PROCESSED"
+  ${ZIP_PATH} -0Xq $EPUB_NAME mimetype
+  ${ZIP_PATH} -Xr9D $EPUB_NAME *
+  ${GCP_PATH:-cp} -R -P -p -- $EPUB_NAME "$OUTPUT_DIR" 2>/dev/null
+  ;;
+esac

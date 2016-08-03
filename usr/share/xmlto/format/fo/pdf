@@ -1,0 +1,64 @@
+case "$USE_BACKEND" in
+DEFAULT|DBLATEX)
+	case "$1" in
+	stylesheet)
+	  ;;
+	post-process)
+	  if [ "$VERBOSE" -ge 1 ]
+	  then
+	    echo >&2 "Post-process XSL-FO to PDF"
+	  fi
+	  if [ -z "`type -t $PDFXMLTEX_PATH`" ]
+	  then
+	    echo >&2 "Can't process, pdfxmltex tool not found at $PDFXMLTEX_PATH."
+	    exit 3
+	  fi
+	  # Work around stupid tetex bug with '_' in filenames
+	  # Also work around stupid tetex limitation with long lines
+	  # (rhbz #101055) and workaround passivetex limitation for chapter
+          # titles starting with L (rhbz #526273)
+	  ${SED_PATH} -e "s,/>,/>\n,g" \
+              -e "s,block>,&\n,g" "$XSLT_PROCESSED" >tmp.fo
+	  OUT=output
+	  TEXINPUTS="$(dirname "$INPUT_FILE")::$SEARCHPATH"
+	  export TEXINPUTS
+	  "$PDFXMLTEX_PATH" ${POSTARGS} tmp.fo >$OUT </dev/null || \
+       { cat $OUT; exit 1; }
+	  [ "$VERBOSE" -ge 2 ] && echo >&2 "First pass complete"
+	  # If there were undefined references we need to re-run pdfxmltex.
+	  if egrep '^LaTeX Warning: There were undefined references.$' $OUT \
+							>/dev/null 2>&1 \
+	  || egrep '^LaTeX Warning: Label.s. may have changed\.' $OUT \
+							>/dev/null 2>&1
+	  then
+	    "$PDFXMLTEX_PATH" ${POSTARGS} tmp.fo >$OUT </dev/null
+	    [ "$VERBOSE" -ge 2 ] && echo >&2 "Second pass complete"
+	    "$PDFXMLTEX_PATH" ${POSTARGS} tmp.fo >$OUT </dev/null
+	    if [ "$VERBOSE" -ge 2 ]
+	    then
+	      echo >&2 "Third pass complete"
+	      [ "$VERBOSE" -ge 3 ] && cat $OUT
+	    fi
+	  fi
+	  ${GCP_PATH:-cp} -R -P -p -- *.pdf "$OUTPUT_DIR/$(basename "${XSLT_PROCESSED%.*}").pdf"
+	  ;;
+	esac
+	;;
+FOP)
+	EXT=$(basename "$0")
+	case "$1" in
+	stylesheet)
+	  ;;
+	post-process)
+	  if [ "$VERBOSE" -ge 1 ]
+	  then
+	    echo >&2 "Post-process XSL-FO to PDF"
+	  fi
+	  #we need to change dir to handle external data objects correctly
+	  cd "$OUTPUT_DIR"
+	  "$FOP_PATH" ${POSTARGS} -fo "${XSLT_PROCESSED}" -"${EXT}" "$OUTPUT_DIR/$(basename ${XSLT_PROCESSED%.*}).${EXT}"
+	  cd -
+	  ;;
+	esac
+	;;
+esac

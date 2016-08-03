@@ -1,0 +1,12 @@
+case "$1" in
+stylesheet)
+  if [ "$VERBOSE" -ge 1 ]
+  then
+    echo >&2 "Convert to HTML (no chunks)"
+  fi
+  echo "http://docbook.sourceforge.net/release/xsl/current/html/docbook.xsl"
+  ;;
+post-process)
+  ${GCP_PATH:-cp} -R -P -p -- "$XSLT_PROCESSED" "$OUTPUT_DIR/$(basename "${XSLT_PROCESSED%.*}").html"
+  ;;
+esac

@@ -1,0 +1,18 @@
+case "$1" in
+stylesheet)
+  if [ "$VERBOSE" -ge 1 ]
+  then
+    echo >&2 "Convert to XSL-FO"
+  fi
+  echo "http://www.antennahouse.com/XSLsample/sample-xsl-xhtml2fo/xhtml2fo.xsl"
+  ;;
+post-process)
+  EXT=$(basename "$0")
+  if [ "$VERBOSE" -ge 1 ]
+  then
+    echo >&2 "Convert to ${EXT}"
+  fi
+  # Get the FO format script to do the rest
+  sh "$(dirname "$0")/../fo/${EXT}" "$1"
+  ;;
+esac

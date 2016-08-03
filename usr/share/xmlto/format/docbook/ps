@@ -1,0 +1,37 @@
+case "$USE_BACKEND" in
+DEFAULT|FOP)
+  case "$1" in
+  stylesheet)
+    if [ "$VERBOSE" -ge 1 ]
+    then
+      echo >&2 "Convert to XSL-FO"
+    fi
+    echo "http://docbook.sourceforge.net/release/xsl/current/fo/docbook.xsl"
+    ;;
+  post-process)
+    EXT=$(basename "$0")
+    if [ "$VERBOSE" -ge 1 ]
+    then
+      echo >&2 "Convert to ${EXT}"
+    fi
+    # Get the FO format script to do the rest
+    sh "$(dirname "$0")/../fo/${EXT}" "$1"
+    ;;
+  esac
+  ;;
+DBLATEX)
+  EXT=$(basename "$0")
+  case "$1" in
+  stylesheet)
+    ;;
+  post-process)
+    if [ "$VERBOSE" -ge 1 ]
+    then
+      echo >&2 "Convert to ${EXT}"
+      POSTARGS="${POSTARGS} --verbose"
+    fi
+    "$DBLATEX_PATH" ${POSTARGS} -P doc.collab.show=0 -P latex.output.revhistory=0 "${XSLT_PROCESSED}" --"${EXT}" --output="$OUTPUT_DIR/$(basename ${XSLT_PROCESSED%.*}).${EXT}"
+    ;;
+  esac
+  ;;
+esac

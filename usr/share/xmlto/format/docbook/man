@@ -1,0 +1,13 @@
+case "$1" in
+stylesheet)
+  if [ "$VERBOSE" -ge 1 ]
+  then
+    echo >&2 "Convert to troff"
+  fi
+  echo "http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl"
+  ;;
+post-process)
+  [ -e "$XSLT_PROCESSED" ] && rm "$XSLT_PROCESSED"
+  ${GCP_PATH:-cp} -R -P -p -- * "$OUTPUT_DIR" 2>/dev/null
+  ;;
+esac

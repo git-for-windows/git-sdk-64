@@ -1,0 +1,654 @@
+#!/bin/sh
+#
+# xmlto - apply an XSL stylesheet to an XML document
+# Copyright (C) 2001, 2002, 2003  Tim Waugh <twaugh@redhat.com>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, see <http://www.gnu.org/licenses/>.
+
+# Utilities that we need that aren't everywhere
+FIND=find      # This must be GNU find (need -maxdepth)
+MKTEMP=mktemp # See http://www.mktemp.org if missing on your system
+BASH=/bin/sh     # GNU bash, for running the format scripts
+GETOPT=getopt # a getopt that supports --longoptions
+TAIL=/usr/bin/tail     # a tail that supports -n (posix)
+GREP=/usr/bin/grep     # GNU grep, for searching patterns
+SED=/usr/bin/sed       # GNU sed, for modification of patterns
+
+version () {
+  echo "xmlto version 0.0.28"
+}
+
+usage () {
+  cat << EOF
+usage: xmlto [OPTION]... FORMAT XML
+OPTIONs are:
+  -v              verbose output (-vv for very verbose)
+  -x stylesheet   use the specified stylesheet instead of choosing one
+  -m fragment     use the XSL fragment to customize the stylesheet
+  -o directory    put output in the specified directory instead of
+                  the current working directory
+  -p postprocopts pass option to postprocessor
+  --extensions    turn on stylesheet extensions for this tool chain
+  --noautosize    do not autodetect paper size via locales or paperconf
+  --noclean       temp files are not deleted automatically
+                  (good for diagnostics)
+  --noextensions  do not use passivetex/fop extensions
+  --profile       use profiling stylesheet
+  --searchpath    colon-separated list of fallback directories
+  --skip-validation
+                  do not attempt to validate the input before processing
+  --stringparam paramname=paramvalue
+                  pass a named parameter to the stylesheet from the
+                  command line
+  --with-fop      use fop for formatting (if fop available)
+  --with-dblatex  use dblatex for formatting (if dblatex available)
+
+Available FORMATs depend on the type of the XML file (which is
+determined automatically).
+EOF
+  if [ -d "$FORMAT_DIR" ]
+  then
+    for source in $(${FIND} "$FORMAT_DIR" -maxdepth 1 -type d)
+    do
+      if [ "$source" = "$FORMAT_DIR" ]; then continue; fi
+
+      cat << EOF
+
+For documents of type "$(basename "$source")":
+EOF
+    ls "$source"
+    done
+  fi
+}
+
+# make_temp [-d] filenametag varname [message upon failure]
+#
+# Wrapper for 'varname=$(mktemp /tmp/xmlto-$filenametag.XXXXXX)'.
+#  * Remembers the temporary file's name so it can be deleted on exit
+#  * If the failure message is empty or missing, exits on failure
+make_temp () {
+  local dirflag="" prefix="xmlto"
+  [ "$1" = "-d" ] && { dirflag="-d"; shift; }
+  [ -n "$1" ] && prefix="xmlto-$1"
+
+  if eval $2='$(${MKTEMP} $dirflag "${TMPDIR:-/tmp}/${prefix}.XXXXXX")'
+  then
+    CLEANFILES="$CLEANFILES ${!2}"
+    return 0
+  elif [ -z "$3" ]
+  then
+    echo >&2 "mktemp failed!"
+    exit 2
+  else
+    echo >&2 "mktemp failed. $3"
+    return 2
+  fi
+}
+
+compute_searchpath () {
+  local oldIFS="${IFS}"
+  IFS=":"
+  for asearchpath in "$1"; do
+    # wrangle relative paths into absolute ones so that the user
+    # isn't surprised if he does ``--searchpath .''
+    case "${asearchpath}" in
+     /*) ;;
+     *) asearchpath="${PWD}/${asearchpath}" ;;
+    esac
+    SEARCHPATH="${SEARCHPATH}${XML_SEARCHPATH_SEPARATOR}${asearchpath}"
+    # we only need a colon if more than one path is in the searchpath
+    # and only after the first iteration.
+    XML_SEARCHPATH_SEPARATOR=":"
+  done
+  IFS="${oldIFS}"
+}
+
+# Allow FORMAT_DIR to be over-ridden, so that we can be
+# run from the build directory.
+prefix=/usr
+: ${FORMAT_DIR=${prefix}/share/xmlto/format}
+# This can be over-ridden, but really we should detect the source
+# document type without needing any help.
+: ${SOURCE_FORMAT=docbook}
+
+# Get absolute pathnames for FORMAT_DIR and OUTPUT_DIR.
+WD="$(pwd)"
+if [ "x${FORMAT_DIR##/*}" != "x" ]
+then
+	FORMAT_DIR="${PWD}/${FORMAT_DIR}"
+fi
+OUTPUT_DIR="$WD"
+
+# This is an array of XSL fragments specified by the user.
+XSL_MODS=
+
+# List of files to remove after exit
+CLEANFILES=
+trap -- 'cd /; [ -z "$CLEANFILES" ] || rm -rf $CLEANFILES' EXIT
+
+XSLTOPTS=
+SEARCHPATH=
+PAPERCONF_PATH=paperconf
+LOCALE_PATH=/usr/bin/locale
+XMLLINT_PATH=/usr/bin/xmllint
+XSLTPROC_PATH=/usr/bin/xsltproc
+
+# Try to setup papersize using libpaper first ...
+if type "$PAPERCONF_PATH" >/dev/null 2>&1
+then
+  papername=`"$PAPERCONF_PATH" -n`
+  paperheight=`"$PAPERCONF_PATH" -mh | sed 's/ //g'`
+  paperwidth=`"$PAPERCONF_PATH" -mw | sed 's/ //g'`
+
+  if [ -n "$paperheight" -a -n "$paperwidth" ]
+  then
+    make_temp xsl papersizemod "Using default paper type." &&
+    cat << EOF > "$papersizemod"
+<?xml version='1.0'?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version='1.0'>
+<xsl:param name="page.height">$paperheight</xsl:param>
+<xsl:param name="page.width">$paperwidth</xsl:param>
+<xsl:template name="root.messages">
+  <xsl:message>
+  <xsl:text>Making </xsl:text>
+  <xsl:value-of select="\$page.orientation"/>
+  <xsl:text> pages on $papername paper (</xsl:text>
+  <xsl:value-of select="\$page.width"/>
+  <xsl:text>x</xsl:text>
+  <xsl:value-of select="\$page.height"/>
+  <xsl:text>)</xsl:text>
+  </xsl:message>
+</xsl:template>
+</xsl:stylesheet>
+EOF
+  fi
+
+# ... or use magic paper size, based on LC_PAPER
+elif type "$LOCALE_PATH" >/dev/null 2>&1
+then
+  # For paper sizes we know about, specify them.
+  h=$("$LOCALE_PATH" LC_PAPER 2>/dev/null | head -n 1)
+  if [ "$h" = "297" ]
+  then
+    papertype=A4
+  fi
+
+  if [ -n "$papertype" ]
+  then
+    make_temp xsl papersizemod "Using default paper type." &&
+    cat << EOF > "$papersizemod"
+<?xml version='1.0'?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+		version='1.0'>
+<xsl:param name="paper.type" select="'$papertype'"/>
+</xsl:stylesheet>
+EOF
+  fi
+fi
+
+# Magic encoding, based on locale
+if type "$LOCALE_PATH" >/dev/null 2>&1
+then
+  charmap=$("$LOCALE_PATH" charmap 2>/dev/null)
+
+  if [ -n "$charmap" ]
+  then
+    if make_temp xsl encodingmod "Using default output encoding."
+    then
+      cat << EOF > "$encodingmod"
+<?xml version='1.0'?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version='1.0'>
+<xsl:param name="chunker.output.encoding" select="'$charmap'"/>
+<xsl:param name="man.charmap.use.subset" select="'0'"/>
+</xsl:stylesheet>
+EOF
+      XSL_MODS="$XSL_MODS $encodingmod"
+    fi
+  fi
+fi
+
+# Make verbosity level uniformly available to called scripts
+VERBOSE=0
+export VERBOSE
+
+# Disable network entities
+XSLTOPTS="$XSLTOPTS --nonet"
+
+# The names parameter for the XSLT stylesheet
+XSLTPARAMS=""
+
+# Enable XInclude
+XSLTOPTS="$XSLTOPTS --xinclude"
+
+SKIP_VALIDATION=0
+BACKEND_EXTENSIONS=1
+NO_AUTOSIZE=0
+PROFILE=0
+
+#actual possibilities DEFAULT(XSL-FO/passivetex), FOP and DBLATEX
+USE_BACKEND=DEFAULT
+
+
+FOP_PATH=fop
+DBLATEX_PATH=dblatex
+
+XMLTEX_PATH=xmltex
+PDFXMLTEX_PATH=pdfxmltex
+
+#check if we could use fop/dblatex backend as default(if not, use passivetex)
+if [ x"$USE_BACKEND" = xFOP ] && ! type "$FOP_PATH" >/dev/null 2>&1
+then
+  echo >&2 "xmlto: Warning: fop not found or not executable."
+  echo >&2 "xmlto: Using default backend..."
+  USE_BACKEND=DEFAULT
+elif type "$FOP_PATH" >/dev/null 2>&1
+then
+  # we should enable fop.extensions for fop 0_17,0_18 and 0_20*,
+  # fop1.extensions for the rest
+  if [ x`$FOP_PATH -v 2>/dev/null | $GREP 0_[12]` = x ]; then
+    FOPVERSION="fop1"
+  else
+    FOPVERSION="fop"
+  fi
+fi
+if [ x"$USE_BACKEND" = xDBLATEX ] && \
+   ! type "$DBLATEX_PATH" >/dev/null 2>&1
+then
+  echo >&2 "xmlto: Warning: dblatex not found or not executable."
+  echo >&2 "xmlto: Using default backend..."
+  USE_BACKEND=DEFAULT
+fi
+
+LINKS_PATH=/usr/bin/elinks
+W3M_PATH=/usr/local/bin/w3m
+LYNX_PATH=lynx
+GCP_PATH=/usr/bin/cp
+SED_PATH=/usr/bin/sed
+GREP_PATH=/usr/bin/grep
+ZIP_PATH=/usr/bin/zip
+
+# Process any options
+ARGS=$(${GETOPT} \
+	--longoptions=help,version,extensions,searchpath:,skip-validation,stringparam:,noclean,noautosize,noextensions,profile,with-fop,with-dblatex \
+	-n xmlto -- x:m:o:p:v "$@")
+[ $? != 0 ] && { usage; exit 1; }
+eval set -- "$ARGS"
+while [ "$#" -gt "0" ]; do
+  case "$1" in
+  --help)
+	usage
+	exit 0
+	;;
+  --version)
+	version
+	exit 0
+	;;
+  -x)
+	case "$2" in
+	-)  make_temp stdin-xsl TMP_STYLESHEET
+	    cat /dev/stdin > ${TMP_STYLESHEET}
+	    STYLESHEET=${TMP_STYLESHEET} ;;
+	/*) STYLESHEET="$2" ;;
+	 *) STYLESHEET="$PWD/$2" ;;
+	esac
+	shift 2
+	;;
+  -m)
+	case "$2" in
+	/* | *:/*) XSL_MODS="$XSL_MODS $2" ;;
+	        *) XSL_MODS="$XSL_MODS $PWD/$2" ;;
+	esac
+	shift 2
+	;;
+  -o)
+	case "$2" in
+	/*) OUTPUT_DIR="$2" ;;
+	 *) OUTPUT_DIR="$WD/$2" ;;
+	esac
+	shift 2
+	;;
+  -p)
+	case $POSTARGS in
+	"") POSTARGS="$2" ;;
+	*) POSTPOSTARGS="$2" ;;
+	esac
+	shift 2
+	;;
+  --extensions)
+	XSLTOPTS="$XSLTOPTS --param use.extensions '1'"
+	shift
+	;;
+  --noextensions)
+        BACKEND_EXTENSIONS=0
+        shift
+        ;;
+  -v)
+	: ${VERBOSE:-0}
+	VERBOSE=$((${VERBOSE}+1))
+	shift
+	;;
+  --searchpath)
+	compute_searchpath "$2"
+	# This is the cleanest method I can think of, but requires calls to
+	# xmllint and xsltproc to be run through eval --ohnobinki
+	[ -n "${SEARCHPATH}" ] && SEARCHPATH_FORMATTED="--path \"${SEARCHPATH}\""
+	shift 2
+	;;
+  --skip-validation)
+	SKIP_VALIDATION=1
+	shift
+	;;
+  --stringparam)
+	MYPARAM="$2"
+	XSLTPARAMS="$XSLTPARAMS --stringparam ${MYPARAM%=*}"
+	XSLTPARAMS="$XSLTPARAMS ${MYPARAM#*=}"
+	shift 2
+	;;
+  --noclean)
+	trap -- 'cd /; [ -z "$CLEANFILES" ] || echo "$CLEANFILES"' EXIT
+	shift
+	;;
+  --noautosize)
+  NO_AUTOSIZE=1
+  shift
+  ;;
+  --with-fop)
+	##use fop instead of passivetex where possible
+	if ! type "$FOP_PATH" >/dev/null 2>&1
+	then
+		echo >&2 Warning: fop not found or not executable.
+		echo >&2 Using default backend...
+	else
+		USE_BACKEND="FOP"
+	fi
+	shift
+	;;
+  --with-dblatex)
+	##use dblatex instead of passivetex where possible
+	if ! type "$DBLATEX_PATH" >/dev/null 2>&1
+	then
+		echo >&2 Warning: dblatex not found or not executable.
+		echo >&2 Using default backend...
+	else
+		USE_BACKEND="DBLATEX"
+	fi
+	shift
+	;;
+  --profile)
+	PROFILE=1
+	shift
+	;;
+  --)
+	shift
+	break
+	;;
+  esac
+done
+
+if [ "$BACKEND_EXTENSIONS" -eq 1 ]
+then
+  case "$USE_BACKEND" in
+  FOP)
+      XSLTOPTS="$XSLTOPTS --param $FOPVERSION.extensions '1'" ;;
+  DBLATEX)
+      ;;
+  DEFAULT)
+      XSLTOPTS="$XSLTOPTS --param passivetex.extensions '1'" ;;
+  esac
+fi
+
+if [ "$#" != "2" ]
+then
+  usage
+  exit 1
+fi
+
+DEST_FORMAT="$1"
+case "$2" in
+/*) INPUT_FILE="$2" ;;
+ *) INPUT_FILE="$PWD/$2" ;;
+esac
+
+if [ -z "$DEST_FORMAT" -o -z "$INPUT_FILE" ]
+then
+  usage
+  exit 1
+fi
+
+[ ! -e "$INPUT_FILE" ] && echo >&2 Input file "$INPUT_FILE" not found && \
+  exit 1
+
+# Since we know DEST_FORMAT, we know whether or not to use $papersizemod.
+case "$DEST_FORMAT" in
+  fo | pdf | ps | dvi)
+    if [ "$NO_AUTOSIZE" -eq 0 ] && [ -n "$papersizemod" ]
+    then
+      XSL_MODS="$XSL_MODS $papersizemod"
+    fi
+    ;;
+esac
+
+
+# Decide what source format this is.  Default to DocBook.
+#This was failing on Ubuntu 14.04, so changing detection a bit
+#rootel=$(echo "xpath *" | "$XMLLINT_PATH" --shell "$INPUT_FILE" 2> /dev/null | head -n 3 |$TAIL -n 1 | cut -f 4 -d " " )
+
+rootel_xpath='concat("{", namespace-uri(/*), "}", local-name(/*))'
+rootel="$("$XMLLINT_PATH" --xpath "$rootel_xpath" "$INPUT_FILE" 2>/dev/null)"
+
+
+case $(echo $rootel) in
+  "{http://www.w3.org/1999/XSL/Format}root")
+	SOURCE_FORMAT="fo"
+	;;
+  "{http://www.w3.org/1999/xhtml}html")
+	SOURCE_FORMAT="xhtml1"
+	;;
+esac
+
+[ "$VERBOSE" -ge 1 ] && \
+  echo >&2 "Source format: ${SOURCE_FORMAT} / root element: ${rootel} "
+
+# If the destination format is an absolute pathname then it's a
+# user-defined format script.  Otherwise it's one of ours.
+case "$DEST_FORMAT" in
+/*) FORMAT="$DEST_FORMAT" ;;
+ *) FORMAT="${FORMAT_DIR}/${SOURCE_FORMAT}/${DEST_FORMAT}" ;;
+esac
+
+[ "$VERBOSE" -ge 1 ] && echo >&2 "Format script: ${FORMAT}"
+
+if [ ! -e "$FORMAT" ]
+then
+  echo >&2 "I don't know how to convert ${SOURCE_FORMAT} into ${DEST_FORMAT}."
+  exit 1
+fi
+
+# Ask the format script what stylesheet to use.
+XSLT_PROCESSOR="$XSLTPROC_PATH" # We only know about xsltproc right now.
+export XSLT_PROCESSOR
+export ZIP_PATH
+export W3M_PATH
+export GCP_PATH
+export LINKS_PATH
+export LYNX_PATH
+export FOP_PATH
+export SED_PATH
+export GREP_PATH
+export DBLATEX_PATH
+export XMLTEX_PATH
+export PDFXMLTEX_PATH
+export USE_BACKEND
+if [ -z "$STYLESHEET" ]
+then
+  STYLESHEET="$(${BASH} "$FORMAT" stylesheet)" || exit 1
+  [ "$VERBOSE" -ge 1 ] && echo >&2 "Stylesheet: ${STYLESHEET}"
+fi
+
+# We might need to create a temporary stylesheet if there are
+# XSL fragments that need adding.
+if [ -n "$XSL_MODS" -a -n "$STYLESHEET" ]
+then
+  REAL_STYLESHEET="$STYLESHEET"
+  [ "$VERBOSE" -ge 1 ] && echo >&2 "Real stylesheet: ${REAL_STYLESHEET}"
+  make_temp xsl STYLESHEET
+  cat << EOF > "$STYLESHEET"
+<?xml version='1.0'?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+		version='1.0'>
+<xsl:import href="${REAL_STYLESHEET}"/>
+EOF
+
+  i=0
+  for i in $XSL_MODS
+  do
+    cat << EOF >> "$STYLESHEET"
+<xsl:include href="$i"/>
+EOF
+  done
+
+  cat << EOF >> "$STYLESHEET"
+</xsl:stylesheet>
+EOF
+fi
+
+make_temp -d "" XSLT_PROCESSED_DIR
+cd "$XSLT_PROCESSED_DIR"
+
+# Validate the input
+if [ "$SKIP_VALIDATION" -eq 0 ] && [ "$SOURCE_FORMAT" != "fo" ]
+then
+  #do we have xmllint validation tool?
+  if ! type "$XMLLINT_PATH" >/dev/null 2>&1
+  then
+    echo >&2 "xmlto: xmllint validation tool not found or not executable."
+    echo >&2 "xmlto: Skipping validation... " \
+             "Please make sure xmllint is installed."
+  else
+    VALIDATION="${XSLT_PROCESSED_DIR}/validation-errors"
+
+    [ "$VERBOSE" -ge 1 ] && \
+    echo >&2 \
+	"\"${XMLLINT_PATH}\" --noout --nonet --xinclude --postvalid --noent ${SEARCHPATH_FORMATTED} \"${INPUT_FILE}\""
+    # eval is for SEARCHPATH_FORMATTED's proper expansion
+    # make sure expansions are protected from eval
+    eval "\"${XMLLINT_PATH}\" --noout --nonet --xinclude --postvalid --noent ${SEARCHPATH_FORMATTED} \"${INPUT_FILE}\"" 2>"${VALIDATION}"
+    xmllint_status=$?
+
+    if [ $xmllint_status -ne 0 ]
+    then
+      echo >&2 "xmlto: $INPUT_FILE does not validate (status ${xmllint_status})"
+      echo >&2 "xmlto: Fix document syntax or use --skip-validation option"
+      cat >&2 "${VALIDATION}"
+      exit $(($xmllint_status + 10))
+    fi
+    rm -f "${VALIDATION}"
+  fi
+fi
+
+if [ "$VERBOSE" -gt 2 ]
+then
+  XSLTOPTS="$XSLTOPTS -v"
+fi
+XSLTOPTS="${XSLTPARAMS} ${XSLTOPTS}"
+
+if [ "$PROFILE" -eq 1 ] || [ -n "${STYLESHEET}" ]
+then
+  #do we have xsltproc tool?
+  if ! type "$XSLTPROC_PATH" >/dev/null 2>&1
+  then
+    echo >&2 "xmlto: Can't continue, xsltproc tool not found or not executable."
+    exit 3
+  fi
+fi
+
+if [ "$PROFILE" -eq 1 ]
+then
+  PROF_PROCESSED="$XSLT_PROCESSED_DIR/$(basename "${INPUT_FILE%.*}").prof"
+  PROFILE_STYLESHEET="http://docbook.sourceforge.net/release/xsl/current/profiling/profile.xsl"
+  [ "$VERBOSE" -ge 1 ] && echo >&2 "Profiling stylesheet: ${PROFILE_STYLESHEET}"
+
+  [ "${VERBOSE}" -ge 1 ] && \
+    printf >&2 "${XSLTPROC_PATH} ${XSLTOPTS} ${SEARCHPATH_FORMATTED} \\\\\n -o \"${PROF_PROCESSED}\" \\\\\n \"${PROFILE_STYLESHEET}\" \"${INPUT_FILE}\"\n"
+  # eval is for SEARCHPATH_FORMATTED's proper expansion
+  eval "\"${XSLTPROC_PATH}\" ${XSLTOPTS} ${SEARCHPATH_FORMATTED} -o \"${PROF_PROCESSED}\" \"${PROFILE_STYLESHEET}\" \"${INPUT_FILE}\""
+
+  # remember the xsltproc exit code for later checks
+  xsltproc_status=$?
+
+  #xsltproc may return no file on empty input, touch it to have it for sure
+  touch "$PROF_PROCESSED"
+
+  # xsltproc returned an exit code - exit the script
+  [ ${xsltproc_status} -gt 0 ] && exit ${xsltproc_status}
+else
+  # No profile processing to do.
+  PROF_PROCESSED="$INPUT_FILE"
+fi
+
+if [ -z "${STYLESHEET}" ]
+then
+  # No stylesheet: no XSL-T processing to do.
+  XSLT_PROCESSED="$PROF_PROCESSED"
+else
+  [ "$VERBOSE" -ge 1 ] && echo >&2 "Stylesheet: ${STYLESHEET}"
+  XSLT_PROCESSED="$XSLT_PROCESSED_DIR/$(basename "${PROF_PROCESSED%.*}").proc"
+
+  [ "${VERBOSE}" -ge 1 ] && \
+   printf >&2 "${XSLTPROC_PATH} ${XSLTOPTS} ${SEARCHPATH_FORMATTED} \\\\\n -o \"${XSLT_PROCESSED}\" \\\\\n \"${STYLESHEET}\" \\\\\n \"${PROF_PROCESSED}\"\n"
+  # eval is for SEARCHPATH_FORMATTED's proper expansion
+  eval "\"${XSLTPROC_PATH}\" ${XSLTOPTS} ${SEARCHPATH_FORMATTED} -o \"${XSLT_PROCESSED}\" \"${STYLESHEET}\" \"${PROF_PROCESSED}\""
+
+  # remember the xsltproc exit code for later checks
+  xsltproc_status=$?
+
+  #xsltproc may return no file on empty input, touch it to have it for sure
+  touch "$XSLT_PROCESSED"
+
+  if [ $xsltproc_status = 4 ]
+  then
+    XSLTOPTS="${XSLTOPTS} --catalogs"
+    if [ "$VERBOSE" -ge 1 ]; then
+	echo >&2 "No XML Catalogs?  Trying again with --catalogs:"
+	printf >&2 "${XSLTPROC_PATH} ${XSLTOPTS} ${SEARCHPATH_FORMATTED}\\\\\n -o \"${XSLT_PROCESSED}\" \\\\\n \"${STYLESHEET}\" \\\\\n \"${PROF_PROCESSED}\"\n"
+    fi
+    eval "\"${XSLTPROC_PATH}\"" ${XSLTOPTS} ${SEARCHPATH_FORMATTED} -o "\"${XSLT_PROCESSED}\"" "\"${STYLESHEET}\"" "\"${PROF_PROCESSED}\""
+    xsltproc_status=$?
+  fi
+
+  # xsltproc returned an exit code - exit the script
+  [ ${xsltproc_status} -gt 0 ] && exit ${xsltproc_status}
+fi
+
+if [ ! -d "$OUTPUT_DIR" ]
+then
+  [ "$VERBOSE" -ge 1 ] && echo >&2 "Creating output directory ${OUTPUT_DIR}"
+  mkdir -p "$OUTPUT_DIR"
+fi
+
+# Run the format script in post-process mode to finish off.
+export OUTPUT_DIR
+export POSTARGS
+export POSTPOSTARGS
+export XSLT_PROCESSED
+export INPUT_FILE
+export SEARCHPATH
+if [ "$VERBOSE" -gt 2 ]
+then
+  # Extremely verbose
+  BASH="${BASH} -x"
+fi
+${BASH} "$FORMAT" post-process || exit 1

@@ -1,0 +1,63 @@
+case "$USE_BACKEND" in
+DEFAULT|DBLATEX)
+	case "$1" in
+	stylesheet)
+	  ;;
+	post-process)
+	  if [ "$VERBOSE" -ge 1 ]
+	  then
+	    echo >&2 "Post-process XSL-FO to DVI"
+	  fi
+	  # Work around stupid tetex bug with '_' in filenames
+	  # Also work around stupid tetex limitation with long lines 
+	  # (rhbz #101055) and workaround passivetex limitation for chapter
+	  # titles starting with L (rhbz #526273)
+	  ${SED_PATH} -e "s,/>,/>\n,g" \
+	      -e "s,block>,&\n,g" "$XSLT_PROCESSED" >tmp.fo
+
+	  OUT=output
+	  TEXINPUTS="$(dirname "$INPUT_FILE")::$SEARCHPATH"
+	  export TEXINPUTS
+	  "$XMLTEX_PATH" ${POSTARGS} tmp.fo >$OUT </dev/null || { cat $OUT; exit 1; }
+	  [ "$VERBOSE" -ge 2 ] && echo >&2 "First pass complete"
+	  # If there were undefined references we need to re-run xmltex.
+	  if egrep '^LaTeX Warning: There were undefined references.$' $OUT \
+							>/dev/null 2>&1 \
+	  || egrep '^LaTeX Warning: Label.s. may have changed\.' $OUT \
+							>/dev/null 2>&1
+	  then
+	    "$XMLTEX_PATH" ${POSTARGS} tmp.fo >$OUT </dev/null
+	    [ "$VERBOSE" -ge 2 ] && echo >&2 "Second pass complete"
+	    "$XMLTEX_PATH" ${POSTARGS} tmp.fo >$OUT </dev/null
+	    if [ "$VERBOSE" -ge 2 ]
+	    then
+	      echo >&2 "Third pass complete"
+	      [ "$VERBOSE" -ge 3 ] && cat $OUT
+	    fi
+	  fi
+	  if [ "$VERBOSE" -ge 1 ]
+	  then
+	    echo >&2 "Post-process DVI to PS"
+	  fi
+	  dvips -R -q ${POSTPOSTARGS} -o "$OUTPUT_DIR/$(basename "${XSLT_PROCESSED%.*}").ps" *.dvi
+	  ;;
+	esac
+	;;
+FOP)
+	EXT=$(basename "$0")
+	case "$1" in
+	stylesheet)
+	  ;;
+	post-process)
+	  if [ "$VERBOSE" -ge 1 ]
+	  then
+	    echo >&2 "Post-process XSL-FO to PS"
+	  fi
+	  #we need to change dir to handle external data objects correctly
+	  cd "${OUTPUT_DIR}"
+	  "$FOP_PATH" ${POSTARGS} -fo "${XSLT_PROCESSED}" -"${EXT}" "$OUTPUT_DIR/$(basename ${XSLT_PROCESSED%.*}).${EXT}"
+	  cd -
+	  ;;
+	esac
+	;;
+esac

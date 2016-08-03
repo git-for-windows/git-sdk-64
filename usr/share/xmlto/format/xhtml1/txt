@@ -1,0 +1,54 @@
+case "$USE_BACKEND" in
+DEFAULT|DBLATEX)
+  if [ -n "`type -t $W3M_PATH`" ]
+  then
+    CONVERT="$W3M_PATH"
+    ARGS="-T text/html -dump"
+  elif [ -n "`type -t $LYNX_PATH`" ]
+  then
+    CONVERT="$LYNX_PATH"
+    ARGS="-force_html -dump -nolist -width=72"
+  elif [ -n "`type -t $LINKS_PATH`" ]
+  then
+    CONVERT="$LINKS_PATH"
+    ARGS="-dump"
+  else
+    echo >&2 "No way to convert HTML to text found."
+    echo >&2 "Try either installing text webbrowser(lynx/w3m/links) or use option --with-fop"
+    exit 3
+  fi
+
+  case "$1" in
+  post-process)
+    if [ "$VERBOSE" -ge 1 ]
+    then
+      echo >&2 "Convert HTML to ASCII"
+      BASENAMEFILE="`basename ${XSLT_PROCESSED%.}`"
+      echo >&2 "Using : \"${CONVERT} ${ARGS} ${POSTARGS} ${XSLT_PROCESSED}  > $OUTPUT_DIR/${BASENAMEFILE}.txt\""
+    fi
+    ${CONVERT} ${ARGS} ${POSTARGS} ${XSLT_PROCESSED} > \
+     "$OUTPUT_DIR/$(basename ${XSLT_PROCESSED%.*}).txt"
+    ;;
+  esac
+;;
+FOP)
+	case "$1" in
+	stylesheet)
+	  if [ "$VERBOSE" -ge 1 ]
+	  then
+	    echo >&2 "Convert to XSL-FO"
+	  fi
+	  echo "http://www.antennahouse.com/XSLsample/sample-xsl-xhtml2fo/xhtml2fo.xsl"
+	  ;;
+	post-process)
+	  EXT=$(basename "$0")
+	  if [ "$VERBOSE" -ge 1 ]
+	  then
+	    echo >&2 "Convert to ${EXT}"
+	  fi
+	  # Get the FO format script to do the rest
+	  sh "$(dirname "$0")/../fo/${EXT}" "$1"
+	  ;;
+	esac
+;;
+esac
