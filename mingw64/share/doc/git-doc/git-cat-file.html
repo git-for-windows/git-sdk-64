@@ -430,7 +430,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git cat-file</em> (-t [--allow-unknown-type]| -s [--allow-unknown-type]| -e | -p | &lt;type&gt; | --textconv ) &lt;object&gt;
+<pre class="content"><em>git cat-file</em> (-t [--allow-unknown-type]| -s [--allow-unknown-type]| -e | -p | &lt;type&gt; | --textconv | --smudge ) &lt;object&gt;
 <em>git cat-file</em> (--batch | --batch-check) [--follow-symlinks]</pre>
 </div>
 </div>
@@ -440,9 +440,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="paragraph">
 <p>In its first form, the command provides the content or the type of an object in
-the repository. The type is required unless <em>-t</em> or <em>-p</em> is used to find the
-object type, or <em>-s</em> is used to find the object size, or <em>--textconv</em> is used
-(which implies type "blob").</p>
+the repository. The type is required unless <code>-t</code> or <code>-p</code> is used to find the
+object type, or <code>-s</code> is used to find the object size, or <code>--textconv</code> or
+<code>--smudge</code> is used (which imply type "blob").</p>
 </div>
 <div class="paragraph">
 <p>In the second form, a list of objects (separated by linefeeds) is provided on
@@ -492,8 +492,15 @@ points at it.</p>
 <dt class="hdlist1">--textconv</dt>
 <dd>
 <p>Show the content as transformed by a textconv filter. In this case,
-&lt;object&gt; has be of the form &lt;tree-ish&gt;:&lt;path&gt;, or :&lt;path&gt; in order
-to apply the filter to the content recorded in the index at &lt;path&gt;.</p>
+&lt;object&gt; has to be of the form &lt;tree-ish&gt;:&lt;path&gt;, or :&lt;path&gt; in
+order to apply the filter to the content recorded in the index at
+&lt;path&gt;.</p>
+</dd>
+<dt class="hdlist1">--smudge</dt>
+<dd>
+<p>Show the content as transformed by the smudge filter configured in
+the current working tree for the given &lt;path&gt;. In this case,
+&lt;object&gt; has to be of the form &lt;tree-ish&gt;:&lt;path&gt;, or :&lt;path&gt;.</p>
 </dd>
 <dt class="hdlist1">--batch</dt>
 <dt class="hdlist1">--batch=&lt;format&gt;</dt>
@@ -623,16 +630,16 @@ respectively print:</p>
 <h2 id="_output">OUTPUT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If <em>-t</em> is specified, one of the &lt;type&gt;.</p>
+<p>If <code>-t</code> is specified, one of the &lt;type&gt;.</p>
 </div>
 <div class="paragraph">
-<p>If <em>-s</em> is specified, the size of the &lt;object&gt; in bytes.</p>
+<p>If <code>-s</code> is specified, the size of the &lt;object&gt; in bytes.</p>
 </div>
 <div class="paragraph">
-<p>If <em>-e</em> is specified, no output.</p>
+<p>If <code>-e</code> is specified, no output.</p>
 </div>
 <div class="paragraph">
-<p>If <em>-p</em> is specified, the contents of &lt;object&gt; are pretty-printed.</p>
+<p>If <code>-p</code> is specified, the contents of &lt;object&gt; are pretty-printed.</p>
 </div>
 <div class="paragraph">
 <p>If &lt;type&gt; is specified, the raw (though uncompressed) contents of the &lt;object&gt;
@@ -815,7 +822,7 @@ will be reported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-16 10:12:33 W. Europe Daylight Time
+Last updated 2016-08-09 18:10:45 W. Europe Daylight Time
 </div>
 </div>
 </body>

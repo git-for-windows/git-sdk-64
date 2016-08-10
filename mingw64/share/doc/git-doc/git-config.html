@@ -457,7 +457,7 @@ actually the section and the key separated by a dot, and the value will be
 escaped.</p>
 </div>
 <div class="paragraph">
-<p>Multiple lines can be added to an option by using the <em>--add</em> option.
+<p>Multiple lines can be added to an option by using the <code>--add</code> option.
 If you want to update or unset an option which can occur on multiple
 lines, a POSIX regexp <code>value_regex</code> needs to be given.  Only the
 existing values that match the regexp are updated or unset.  If
@@ -465,24 +465,24 @@ you want to handle the lines that do <strong>not</strong> match the regex, just
 prepend a single exclamation mark in front (see also <a href="#EXAMPLES">EXAMPLES</a>).</p>
 </div>
 <div class="paragraph">
-<p>The type specifier can be either <em>--int</em> or <em>--bool</em>, to make
+<p>The type specifier can be either <code>--int</code> or <code>--bool</code>, to make
 <em>git config</em> ensure that the variable(s) are of the given type and
 convert the value to the canonical form (simple decimal number for int,
-a "true" or "false" string for bool), or <em>--path</em>, which does some
-path expansion (see <em>--path</em> below).  If no type specifier is passed, no
+a "true" or "false" string for bool), or <code>--path</code>, which does some
+path expansion (see <code>--path</code> below).  If no type specifier is passed, no
 checks or transformations are performed on the value.</p>
 </div>
 <div class="paragraph">
 <p>When reading, the values are read from the system, global and
 repository local configuration files by default, and options
-<em>--system</em>, <em>--global</em>, <em>--local</em> and <em>--file &lt;filename&gt;</em> can be
+<code>--system</code>, <code>--global</code>, <code>--local</code> and <code>--file &lt;filename&gt;</code> can be
 used to tell the command to read from only that location (see <a href="#FILES">FILES</a>).</p>
 </div>
 <div class="paragraph">
 <p>When writing, the new value is written to the repository local
-configuration file by default, and options <em>--system</em>, <em>--global</em>,
-<em>--file &lt;filename&gt;</em> can be used to tell the command to write to
-that location (you can say <em>--local</em> but that is the default).</p>
+configuration file by default, and options <code>--system</code>, <code>--global</code>,
+<code>--file &lt;filename&gt;</code> can be used to tell the command to write to
+that location (you can say <code>--local</code> but that is the default).</p>
 </div>
 <div class="paragraph">
 <p>This command will fail with non-zero status upon error.  Some exit
@@ -607,7 +607,7 @@ from all available files.</p>
 </dd>
 <dt class="hdlist1">--blob blob</dt>
 <dd>
-<p>Similar to <em>--file</em> but use the given blob instead of a file. E.g.
+<p>Similar to <code>--file</code> but use the given blob instead of a file. E.g.
 you can use <em>master:.gitmodules</em> to read values from the file
 <em>.gitmodules</em> in the master branch. See "SPECIFYING REVISIONS"
 section in <a href="gitrevisions.html">gitrevisions</a>(7) for a more complete list of
@@ -702,7 +702,7 @@ there is no color configured for <code>name</code>.</p>
 <dt class="hdlist1">--edit</dt>
 <dd>
 <p>Opens an editor to modify the specified config file; either
-<em>--system</em>, <em>--global</em>, or repository (default).</p>
+<code>--system</code>, <code>--global</code>, or repository (default).</p>
 </dd>
 <dt class="hdlist1">--[no-]includes</dt>
 <dd>
@@ -719,7 +719,7 @@ config files.</p>
 <h2 id="FILES">FILES</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If not set explicitly with <em>--file</em>, there are four files where
+<p>If not set explicitly with <code>--file</code>, there are four files where
 <em>git config</em> will search for configuration options:</p>
 </div>
 <div class="dlist">
@@ -771,12 +771,12 @@ values of a key from all files will be used.</p>
 </div>
 <div class="paragraph">
 <p>All writing options will per default write to the repository specific
-configuration file. Note that this also affects options like <em>--replace-all</em>
-and <em>--unset</em>. <strong><em>git config</em> will only ever change one file at a time</strong>.</p>
+configuration file. Note that this also affects options like <code>--replace-all</code>
+and <code>--unset</code>. <strong><em>git config</em> will only ever change one file at a time</strong>.</p>
 </div>
 <div class="paragraph">
 <p>You can override these rules either by command-line options or by environment
-variables. The <em>--global</em> and the <em>--system</em> options will limit the file used
+variables. The <code>--global</code> and the <code>--system</code> options will limit the file used
 to the global or system-wide file respectively. The <code>GIT_CONFIG</code> environment
 variable has a similar effect, but you can specify any filename you want.</p>
 </div>
@@ -1158,7 +1158,7 @@ is taken as true.</p>
 <p>Boolean false can be spelled as <code>no</code>, <code>off</code>,
 <code>false</code>, or <code>0</code>.</p>
 <div class="paragraph">
-<p>When converting value to the canonical form using <em>--bool</em> type
+<p>When converting value to the canonical form using <code>--bool</code> type
 specifier; <em>git config</em> will ensure that the output is "true" or
 "false" (spelled in lowercase).</p>
 </div>
@@ -1580,7 +1580,7 @@ false), while all other repositories are assumed to be bare (bare
 If <code>GIT_COMMON_DIR</code> environment variable is set, core.worktree
 is ignored and not used for determining the root of working tree.
 This can be overridden by the <code>GIT_WORK_TREE</code> environment
-variable and the <em>--work-tree</em> command-line option.
+variable and the <code>--work-tree</code> command-line option.
 The value can be an absolute path or relative to the path to
 the .git directory, which is either specified by --git-dir
 or GIT_DIR, or automatically discovered.
@@ -1960,7 +1960,7 @@ time.</p>
 <dt class="hdlist1">add.ignore-errors (deprecated)</dt>
 <dd>
 <p>Tells <em>git add</em> to continue adding files when some files cannot be
-added due to indexing errors. Equivalent to the <em>--ignore-errors</em>
+added due to indexing errors. Equivalent to the <code>--ignore-errors</code>
 option of <a href="git-add.html">git-add</a>(1).  <code>add.ignore-errors</code> is deprecated,
 as it does not follow the usual naming convention for configuration
 variables.</p>
@@ -1989,9 +1989,9 @@ from the original current directory. See <a href="git-rev-parse.html">git-rev-pa
 <dt class="hdlist1">am.keepcr</dt>
 <dd>
 <p>If true, git-am will call git-mailsplit for patches in mbox format
-with parameter <em>--keep-cr</em>. In this case git-mailsplit will
+with parameter <code>--keep-cr</code>. In this case git-mailsplit will
 not remove <code>\r</code> from lines ending with <code>\r\n</code>. Can be overridden
-by giving <em>--no-keep-cr</em> from the command line.
+by giving <code>--no-keep-cr</code> from the command line.
 See <a href="git-am.html">git-am</a>(1), <a href="git-mailsplit.html">git-mailsplit</a>(1).</p>
 </dd>
 <dt class="hdlist1">am.threeWay</dt>
@@ -2006,7 +2006,7 @@ See <a href="git-am.html">git-am</a>(1).</p>
 <dt class="hdlist1">apply.ignoreWhitespace</dt>
 <dd>
 <p>When set to <em>change</em>, tells <em>git apply</em> to ignore changes in
-whitespace, in the same way as the <em>--ignore-space-change</em>
+whitespace, in the same way as the <code>--ignore-space-change</code>
 option.
 When set to one of: no, none, never, false tells <em>git apply</em> to
 respect all whitespace differences.
@@ -2015,7 +2015,7 @@ See <a href="git-apply.html">git-apply</a>(1).</p>
 <dt class="hdlist1">apply.whitespace</dt>
 <dd>
 <p>Tells <em>git apply</em> how to handle whitespaces, in the same way
-as the <em>--whitespace</em> option. See <a href="git-apply.html">git-apply</a>(1).</p>
+as the <code>--whitespace</code> option. See <a href="git-apply.html">git-apply</a>(1).</p>
 </dd>
 <dt class="hdlist1">branch.autoSetupMerge</dt>
 <dd>
@@ -2129,7 +2129,7 @@ as arguments. (See <a href="git-web&#45;&#45;browse.html">git-web&#45;&#45;brows
 <dt class="hdlist1">browser.&lt;tool&gt;.path</dt>
 <dd>
 <p>Override the path for the given tool that may be used to
-browse HTML help (see <em>-w</em> option in <a href="git-help.html">git-help</a>(1)) or a
+browse HTML help (see <code>-w</code> option in <a href="git-help.html">git-help</a>(1)) or a
 working repository in gitweb (see <a href="git-instaweb.html">git-instaweb</a>(1)).</p>
 </dd>
 <dt class="hdlist1">clean.requireForce</dt>
@@ -2605,7 +2605,7 @@ Can be overridden by the <em>-O</em> option to <a href="git-diff.html">git-diff<
 <dt class="hdlist1">diff.renameLimit</dt>
 <dd>
 <p>The number of files to consider when performing the copy/rename
-detection; equivalent to the <em>git diff</em> option <em>-l</em>.</p>
+detection; equivalent to the <em>git diff</em> option <code>-l</code>.</p>
 </dd>
 <dt class="hdlist1">diff.renames</dt>
 <dd>
@@ -3080,9 +3080,9 @@ various stuff. See <a href="git-cvsserver.html">git-cvsserver</a>(1).</p>
 <dt class="hdlist1">gitcvs.usecrlfattr</dt>
 <dd>
 <p>If true, the server will look up the end-of-line conversion
-attributes for files to determine the <em>-k</em> modes to use. If
+attributes for files to determine the <code>-k</code> modes to use. If
 the attributes force Git to treat a file as text,
-the <em>-k</em> mode will be left blank so CVS clients will
+the <code>-k</code> mode will be left blank so CVS clients will
 treat it as text. If they suppress text conversion, the file
 will be set with <em>-kb</em> mode, which suppresses any newline munging
 the client might otherwise do. If the attributes do not allow
@@ -3165,18 +3165,18 @@ access method.</p>
 </dd>
 <dt class="hdlist1">grep.lineNumber</dt>
 <dd>
-<p>If set to true, enable <em>-n</em> option by default.</p>
+<p>If set to true, enable <code>-n</code> option by default.</p>
 </dd>
 <dt class="hdlist1">grep.patternType</dt>
 <dd>
 <p>Set the default matching behavior. Using a value of <em>basic</em>, <em>extended</em>,
-<em>fixed</em>, or <em>perl</em> will enable the <em>--basic-regexp</em>, <em>--extended-regexp</em>,
-<em>--fixed-strings</em>, or <em>--perl-regexp</em> option accordingly, while the
+<em>fixed</em>, or <em>perl</em> will enable the <code>--basic-regexp</code>, <code>--extended-regexp</code>,
+<code>--fixed-strings</code>, or <code>--perl-regexp</code> option accordingly, while the
 value <em>default</em> will return to the default matching behavior.</p>
 </dd>
 <dt class="hdlist1">grep.extendedRegexp</dt>
 <dd>
-<p>If set to true, enable <em>--extended-regexp</em> option by default. This
+<p>If set to true, enable <code>--extended-regexp</code> option by default. This
 option is ignored when the <code>grep.patternType</code> option is set to a value
 other than <em>default</em>.</p>
 </dd>
@@ -3744,7 +3744,7 @@ command. If <em>short</em> is specified, the ref name prefixes <em>refs/heads/</
 specified, the full ref name (including prefix) will be printed.
 If <em>auto</em> is specified, then if the output is going to a terminal,
 the ref names are shown as if <em>short</em> were given, otherwise no ref
-names are shown. This is the same as the <em>--decorate</em> option
+names are shown. This is the same as the <code>--decorate</code> option
 of the <code>git log</code>.</p>
 </dd>
 <dt class="hdlist1">log.follow</dt>
@@ -4365,17 +4365,17 @@ new default).</p>
 </dd>
 <dt class="hdlist1">push.followTags</dt>
 <dd>
-<p>If set to true enable <em>--follow-tags</em> option by default.  You
+<p>If set to true enable <code>--follow-tags</code> option by default.  You
 may override this configuration at time of push by specifying
-<em>--no-follow-tags</em>.</p>
+<code>--no-follow-tags</code>.</p>
 </dd>
 <dt class="hdlist1">push.gpgSign</dt>
 <dd>
 <p>May be set to a boolean value, or the string <em>if-asked</em>. A true
-value causes all pushes to be GPG signed, as if <em>--signed</em> is
+value causes all pushes to be GPG signed, as if <code>--signed</code> is
 passed to <a href="git-push.html">git-push</a>(1). The string <em>if-asked</em> causes
 pushes to be signed if the server supports it, as if
-<em>--signed=if-asked</em> is passed to <em>git push</em>. A false value may
+<code>--signed=if-asked</code> is passed to <em>git push</em>. A false value may
 override a value from a lower-priority config file. An explicit
 command-line flag always overrides this config option.</p>
 </dd>
@@ -4401,7 +4401,7 @@ rebase. False by default.</p>
 </dd>
 <dt class="hdlist1">rebase.autoSquash</dt>
 <dd>
-<p>If set to true enable <em>--autosquash</em> option by default.</p>
+<p>If set to true enable <code>--autosquash</code> option by default.</p>
 </dd>
 <dt class="hdlist1">rebase.autoStash</dt>
 <dd>
@@ -5104,7 +5104,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-16 10:12:33 W. Europe Daylight Time
+Last updated 2016-08-09 18:10:45 W. Europe Daylight Time
 </div>
 </div>
 </body>

@@ -558,13 +558,13 @@ your Perl&#8217;s Getopt::Long is &lt; v2.37).
 <dd>
 <p>When passed to <em>init</em> or <em>clone</em> this regular expression will
 be preserved as a config key.  See <em>fetch</em> for a description
-of <em>--ignore-paths</em>.</p>
+of <code>--ignore-paths</code>.</p>
 </dd>
 <dt class="hdlist1">--include-paths=&lt;regex&gt;</dt>
 <dd>
 <p>When passed to <em>init</em> or <em>clone</em> this regular expression will
 be preserved as a config key.  See <em>fetch</em> for a description
-of <em>--include-paths</em>.</p>
+of <code>--include-paths</code>.</p>
 </dd>
 <dt class="hdlist1">--no-minimize-url</dt>
 <dd>
@@ -574,7 +574,7 @@ to the root (or highest allowed level) of the Subversion
 repository.  This default allows better tracking of history if
 entire projects are moved within a repository, but may cause
 issues on repositories where read access restrictions are in
-place.  Passing <em>--no-minimize-url</em> will allow git svn to
+place.  Passing <code>--no-minimize-url</code> will allow git svn to
 accept URLs as-is without attempting to connect to a higher
 level directory.  This option is off by default when only
 one URL/branch is tracked (it would do little good).</p>
@@ -615,7 +615,7 @@ the same local time zone.</p>
 <dd>
 <p>This allows one to specify a Perl regular expression that will
 cause skipping of all matching paths from checkout from SVN.
-The <em>--ignore-paths</em> option should match for every <em>fetch</em>
+The <code>--ignore-paths</code> option should match for every <em>fetch</em>
 (including automatic fetches due to <em>clone</em>, <em>dcommit</em>,
 <em>rebase</em>, etc) on a given repository.</p>
 <div class="verseblock">
@@ -657,10 +657,10 @@ option is also given, both regular expressions will be used.</p>
 <dd>
 <p>This allows one to specify a Perl regular expression that will
 cause the inclusion of only matching paths from checkout from SVN.
-The <em>--include-paths</em> option should match for every <em>fetch</em>
+The <code>--include-paths</code> option should match for every <em>fetch</em>
 (including automatic fetches due to <em>clone</em>, <em>dcommit</em>,
-<em>rebase</em>, etc) on a given repository. <em>--ignore-paths</em> takes
-precedence over <em>--include-paths</em>.</p>
+<em>rebase</em>, etc) on a given repository. <code>--ignore-paths</code> takes
+precedence over <code>--include-paths</code>.</p>
 <div class="verseblock">
 <pre class="content">config key: svn-remote.&lt;name&gt;.include-paths</pre>
 </div>
@@ -683,7 +683,7 @@ directory based on the basename of the URL passed to it;
 or if a second argument is passed; it will create a directory
 and work within that.  It accepts all arguments that the
 <em>init</em> and <em>fetch</em> commands accept; with the exception of
-<em>--fetch-all</em> and <em>--parent</em>.  After a repository is cloned,
+<code>--fetch-all</code> and <code>--parent</code>.  After a repository is cloned,
 the <em>fetch</em> command will be able to update revisions without
 affecting the working tree; and the <em>rebase</em> command will be
 able to update the working tree with the latest changes.</p>
@@ -716,7 +716,7 @@ it preserves linear history with <em>git rebase</em> instead of
 </div>
 <div class="paragraph">
 <p>This accepts all options that <em>git svn fetch</em> and <em>git rebase</em>
-accept.  However, <em>--fetch-all</em> only fetches from the current
+accept.  However, <code>--fetch-all</code> only fetches from the current
 [svn-remote], and not all [svn-remote] definitions.</p>
 </div>
 <div class="paragraph">
@@ -1622,7 +1622,7 @@ parent of the branch. However, it is possible that there is no suitable
 Git commit to serve as parent.  This will happen, among other reasons,
 if the SVN branch is a copy of a revision that was not fetched by <em>git
 svn</em> (e.g. because it is an old revision that was skipped with
-<em>--revision</em>), or if in SVN a directory was copied that is not tracked
+<code>--revision</code>), or if in SVN a directory was copied that is not tracked
 by <em>git svn</em> (such as a branch that is not tracked at all, or a
 subdirectory of a tracked branch). In these cases, <em>git svn</em> will still
 create a Git branch, but instead of using an existing Git commit as the
@@ -1715,12 +1715,12 @@ directories in the working copy.  While this is the easiest way to get a
 copy of a complete repository, for projects with many branches it will
 lead to a working copy many times larger than just the trunk. Thus for
 projects using the standard directory structure (trunk/branches/tags),
-it is recommended to clone with option <em>--stdlayout</em>. If the project
+it is recommended to clone with option <code>--stdlayout</code>. If the project
 uses a non-standard structure, and/or if branches and tags are not
 required, it is easiest to only clone one directory (typically trunk),
 without giving any repository layout options.  If the full history with
-branches and tags is required, the options <em>--trunk</em> / <em>--branches</em> /
-<em>--tags</em> must be used.</p>
+branches and tags is required, the options <code>--trunk</code> / <code>--branches</code> /
+<code>--tags</code> must be used.</p>
 </div>
 <div class="paragraph">
 <p>When using multiple --branches or --tags, <em>git svn</em> does not automatically
@@ -1897,7 +1897,7 @@ rewinds it.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-16 10:12:34 W. Europe Daylight Time
+Last updated 2016-08-09 18:10:47 W. Europe Daylight Time
 </div>
 </div>
 </body>
