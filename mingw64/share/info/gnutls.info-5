@@ -1,9 +1,9 @@
-This is gnutls.info, produced by makeinfo version 6.0 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.1 from gnutls.texi.
 
-This manual is last updated 4 March 2015 for version 3.5.2 of GnuTLS.
+This manual is last updated 9 October 2016 for version 3.5.5 of GnuTLS.
 
-Copyright (C) 2001-2015 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2015 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2016 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2016 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -4383,8 +4383,8 @@ gnutls_pkcs11_privkey_set_pin_function
 gnutls_pkcs11_privkey_status
 ----------------------------
 
- -- Function: int gnutls_pkcs11_privkey_status (gnutls_pkcs11_privkey_t
-          KEY)
+ -- Function: unsigned gnutls_pkcs11_privkey_status
+          (gnutls_pkcs11_privkey_t KEY)
      KEY: Holds the key
 
      Checks the status of the private key token.
@@ -4751,7 +4751,7 @@ gnutls_tpm_privkey_generate
      *Since:* 3.1.0
 
 
-File: gnutls.info,  Node: Abstract key API,  Next: DANE API,  Prev: TPM API,  Up: API reference
+File: gnutls.info,  Node: Abstract key API,  Next: Socket specific API,  Prev: TPM API,  Up: API reference
 
 E.10 Abstract key API
 =====================
@@ -4782,21 +4782,21 @@ gnutls_certificate_set_key
      This function sets a certificate/private key pair in the
      gnutls_certificate_credentials_t type.  This function may be called
      more than once, in case multiple keys/certificates exist for the
-     server.  For clients that wants to send more than its own end
-     entity certificate (e.g., also an intermediate CA cert) then put
-     the certificate chain in 'pcert_list' .
+     server.  For clients that want to send more than their own end-
+     entity certificate (e.g., also an intermediate CA cert), the full
+     certificate chain must be provided in 'pcert_list' .
 
      Note that the 'key' and the elements of 'pcert_list' will become
      part of the credentials structure and must not be deallocated.
-     They will be automatically deallocated when the 'res' type is
+     They will be automatically deallocated when the 'res' structure is
      deinitialized.
 
      If that function fails to load the 'res' structure is at an
      undefined state, it must not be reused to load other keys or
      certificates.
 
-     *Returns:* 'GNUTLS_E_SUCCESS' (0) on success, or a negative error
-     code.
+     *Returns:* An index of the inserted certificate chain on success
+     (greater or equal to zero), or a negative error code.
 
      *Since:* 3.0
 
@@ -6972,9 +6972,57 @@ gnutls_x509_crt_set_pubkey
      *Since:* 2.12.0
 
 
-File: gnutls.info,  Node: DANE API,  Next: Cryptographic API,  Prev: Abstract key API,  Up: API reference
+File: gnutls.info,  Node: Socket specific API,  Next: DANE API,  Prev: Abstract key API,  Up: API reference
 
-E.11 DANE API
+E.11 Socket specific API
+========================
+
+The prototypes for the following functions lie in 'gnutls/socket.h'.
+
+gnutls_transport_set_fastopen
+-----------------------------
+
+ -- Function: void gnutls_transport_set_fastopen (gnutls_session_t
+          SESSION, int FD, struct sockaddr * CONNECT_ADDR, socklen_t
+          CONNECT_ADDRLEN, unsigned int FLAGS)
+     SESSION: is a 'gnutls_session_t' type.
+
+     FD: is the session's socket descriptor
+
+     CONNECT_ADDR: is the address we want to connect to
+
+     CONNECT_ADDRLEN: is the length of 'connect_addr'
+
+     FLAGS: must be zero
+
+     Enables TCP Fast Open (TFO) for the specified TLS client session.
+     That means that TCP connection establishment and the transmission
+     of the first TLS client hello packet are combined.  The peer's
+     address must be specified in 'connect_addr' and 'connect_addrlen' ,
+     and the socket specified by 'fd' should not be connected.
+
+     TFO only works for TCP sockets of type AF_INET and AF_INET6.  If
+     the OS doesn't support TCP fast open this function will result to
+     gnutls using 'connect()' transparently during the first write.
+
+     *Note:* This function overrides all the transport callback
+     functions.  If this is undesirable, TCP Fast Open must be
+     implemented on the user callback functions without calling this
+     function.  When using this function, transport callbacks must not
+     be set, and 'gnutls_transport_set_ptr()' or
+     'gnutls_transport_set_int()' must not be called.
+
+     On GNU/Linux TFO has to be enabled at the system layer, that is in
+     /proc/sys/net/ipv4/tcp_fastopen, bit 0 has to be set.
+
+     This function has no effect on server sessions.
+
+     *Since:* 3.5.3
+
+
+File: gnutls.info,  Node: DANE API,  Next: Cryptographic API,  Prev: Socket specific API,  Up: API reference
+
+E.12 DANE API
 =============
 
 The following functions are to be used for DANE certificate
@@ -7352,7 +7400,7 @@ dane_verify_session_crt
 
 File: gnutls.info,  Node: Cryptographic API,  Next: Compatibility API,  Prev: DANE API,  Up: API reference
 
-E.12 Cryptographic API
+E.13 Cryptographic API
 ======================
 
 The following functions are to be used for low-level cryptographic
@@ -8155,7 +8203,7 @@ gnutls_rnd_refresh
 
 File: gnutls.info,  Node: Compatibility API,  Prev: Cryptographic API,  Up: API reference
 
-E.13 Compatibility API
+E.14 Compatibility API
 ======================
 
 The following functions are carried over from old GnuTLS released.  They

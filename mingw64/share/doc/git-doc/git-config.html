@@ -770,6 +770,10 @@ precedence over values read earlier.  When multiple values are taken then all
 values of a key from all files will be used.</p>
 </div>
 <div class="paragraph">
+<p>You may override individual configuration parameters when running any git
+command by using the <code>-c</code> option. See <a href="git.html">git</a>(1) for details.</p>
+</div>
+<div class="paragraph">
 <p>All writing options will per default write to the repository specific
 configuration file. Note that this also affects options like <code>--replace-all</code>
 and <code>--unset</code>. <strong><em>git config</em> will only ever change one file at a time</strong>.</p>
@@ -1174,28 +1178,37 @@ be suffixed with <code>k</code>, <code>M</code>,&#8230;&#8203; to mean "scale th
 </dd>
 <dt class="hdlist1">color</dt>
 <dd>
-<p>The value for a variables that takes a color is a list of
-colors (at most two) and attributes (at most one), separated
-by spaces.  The colors accepted are <code>normal</code>, <code>black</code>,
-<code>red</code>, <code>green</code>, <code>yellow</code>, <code>blue</code>, <code>magenta</code>, <code>cyan</code> and
-<code>white</code>; the attributes are <code>bold</code>, <code>dim</code>, <code>ul</code>, <code>blink</code> and
-<code>reverse</code>.  The first color given is the foreground; the
-second is the background.  The position of the attribute, if
-any, doesn&#8217;t matter. Attributes may be turned off specifically
-by prefixing them with <code>no</code> (e.g., <code>noreverse</code>, <code>noul</code>, etc).</p>
+<p>The value for a variable that takes a color is a list of
+colors (at most two, one for foreground and one for background)
+and attributes (as many as you want), separated by spaces.</p>
 <div class="paragraph">
-<p>Colors (foreground and background) may also be given as numbers between
-0 and 255; these use ANSI 256-color mode (but note that not all
-terminals may support this).  If your terminal supports it, you may also
-specify 24-bit RGB values as hex, like <code>#ff0ab3</code>.</p>
+<p>The basic colors accepted are <code>normal</code>, <code>black</code>, <code>red</code>, <code>green</code>, <code>yellow</code>,
+<code>blue</code>, <code>magenta</code>, <code>cyan</code> and <code>white</code>.  The first color given is the
+foreground; the second is the background.</p>
 </div>
 <div class="paragraph">
-<p>The attributes are meant to be reset at the beginning of each item
-in the colored output, so setting color.decorate.branch to <code>black</code>
-will paint that branch name in a plain <code>black</code>, even if the previous
-thing on the same output line (e.g. opening parenthesis before the
-list of branch names in <code>log --decorate</code> output) is set to be
-painted with <code>bold</code> or some other attribute.</p>
+<p>Colors may also be given as numbers between 0 and 255; these use ANSI
+256-color mode (but note that not all terminals may support this).  If
+your terminal supports it, you may also specify 24-bit RGB values as
+hex, like <code>#ff0ab3</code>.</p>
+</div>
+<div class="paragraph">
+<p>The accepted attributes are <code>bold</code>, <code>dim</code>, <code>ul</code>, <code>blink</code>, <code>reverse</code>,
+<code>italic</code>, and <code>strike</code> (for crossed-out or "strikethrough" letters).
+The position of any attributes with respect to the colors
+(before, after, or in between), doesn&#8217;t matter. Specific attributes may
+be turned off by prefixing them with <code>no</code> or <code>no-</code> (e.g., <code>noreverse</code>,
+<code>no-ul</code>, etc).</p>
+</div>
+<div class="paragraph">
+<p>For git&#8217;s pre-defined color slots, the attributes are meant to be reset
+at the beginning of each item in the colored output. So setting
+<code>color.decorate.branch</code> to <code>black</code> will paint that branch name in a
+plain <code>black</code>, even if the previous thing on the same output line (e.g.
+opening parenthesis before the list of branch names in <code>log --decorate</code>
+output) is set to be painted with <code>bold</code> or some other attribute.
+However, custom log formats may do more complicated and layered
+coloring, and the negated forms may be useful there.</p>
 </div>
 </dd>
 <dt class="hdlist1">pathname</dt>
@@ -1491,13 +1504,11 @@ mechanism.</p>
 </dd>
 <dt class="hdlist1">core.autocrlf</dt>
 <dd>
-<p>Setting this variable to "true" is almost the same as setting
-the <code>text</code> attribute to "auto" on all files except that text
-files are not guaranteed to be normalized: files that contain
-<code>CRLF</code> in the repository will not be touched.  Use this
-setting if you want to have <code>CRLF</code> line endings in your
-working directory even though the repository does not have
-normalized line endings.  This variable can be set to <em>input</em>,
+<p>Setting this variable to "true" is the same as setting
+the <code>text</code> attribute to "auto" on all files and core.eol to "crlf".
+Set to true if you want to have <code>CRLF</code> line endings in your
+working directory and the repository has LF line endings.
+This variable can be set to <em>input</em>,
 in which case no output conversion is performed.</p>
 </dd>
 <dt class="hdlist1">core.symlinks</dt>
@@ -1533,6 +1544,14 @@ specify that no proxy be used for a given domain pattern.
 This is useful for excluding servers inside a firewall from
 proxy use, while defaulting to a common proxy for external domains.</p>
 </div>
+</dd>
+<dt class="hdlist1">core.sshCommand</dt>
+<dd>
+<p>If this variable is set, <code>git fetch</code> and <code>git push</code> will
+use the specified command instead of <code>ssh</code> when they need to
+connect to a remote system. The command is in the same form as
+the <code>GIT_SSH_COMMAND</code> environment variable and is overridden
+when the environment variable is set.</p>
 </dd>
 <dt class="hdlist1">core.ignoreStat</dt>
 <dd>
@@ -2142,7 +2161,8 @@ working repository in gitweb (see <a href="git-instaweb.html">git-instaweb</a>(1
 <p>A boolean to enable/disable color in the output of
 <a href="git-branch.html">git-branch</a>(1). May be set to <code>always</code>,
 <code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors are used
-only when the output is to a terminal. Defaults to false.</p>
+only when the output is to a terminal. If unset, then the
+value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
 </dd>
 <dt class="hdlist1">color.branch.&lt;slot&gt;</dt>
 <dd>
@@ -2159,7 +2179,8 @@ If this is set to <code>always</code>, <a href="git-diff.html">git-diff</a>(1),
 <a href="git-log.html">git-log</a>(1), and <a href="git-show.html">git-show</a>(1) will use color
 for all patches.  If it is set to <code>true</code> or <code>auto</code>, those
 commands will only use color when output is to the terminal.
-Defaults to false.</p>
+If unset, then the value of <code>color.ui</code> is used (<code>auto</code> by
+default).</p>
 <div class="paragraph">
 <p>This does not affect <a href="git-format-patch.html">git-format-patch</a>(1) or the
 <em>git-diff-*</em> plumbing commands.  Can be overridden on the
@@ -2186,7 +2207,8 @@ branches, remote-tracking branches, tags, stash and HEAD, respectively.</p>
 <dd>
 <p>When set to <code>always</code>, always highlight matches.  When <code>false</code> (or
 <code>never</code>), never.  When set to <code>true</code> or <code>auto</code>, use color only
-when the output is written to the terminal.  Defaults to <code>false</code>.</p>
+when the output is written to the terminal.  If unset, then the
+value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
 </dd>
 <dt class="hdlist1">color.grep.&lt;slot&gt;</dt>
 <dd>
@@ -2244,7 +2266,8 @@ and between hunks (<code>--</code>)</p>
 and displays (such as those used by "git-add --interactive" and
 "git-clean --interactive"). When false (or <code>never</code>), never.
 When set to <code>true</code> or <code>auto</code>, use colors only when the output is
-to the terminal. Defaults to false.</p>
+to the terminal. If unset, then the value of <code>color.ui</code> is
+used (<code>auto</code> by default).</p>
 </dd>
 <dt class="hdlist1">color.interactive.&lt;slot&gt;</dt>
 <dd>
@@ -2263,14 +2286,16 @@ use (default is true).</p>
 <p>A boolean to enable/disable color in the output of
 <a href="git-show-branch.html">git-show-branch</a>(1). May be set to <code>always</code>,
 <code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors are used
-only when the output is to a terminal. Defaults to false.</p>
+only when the output is to a terminal. If unset, then the
+value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
 </dd>
 <dt class="hdlist1">color.status</dt>
 <dd>
 <p>A boolean to enable/disable color in the output of
 <a href="git-status.html">git-status</a>(1). May be set to <code>always</code>,
 <code>false</code> (or <code>never</code>) or <code>auto</code> (or <code>true</code>), in which case colors are used
-only when the output is to a terminal. Defaults to false.</p>
+only when the output is to a terminal. If unset, then the
+value of <code>color.ui</code> is used (<code>auto</code> by default).</p>
 </dd>
 <dt class="hdlist1">color.status.&lt;slot&gt;</dt>
 <dd>
@@ -2809,6 +2834,16 @@ of the diff post-image.</p>
 <dd>
 <p>Prompt before each invocation of the diff tool.</p>
 </dd>
+<dt class="hdlist1">fastimport.unpackLimit</dt>
+<dd>
+<p>If the number of objects imported by <a href="git-fast-import.html">git-fast-import</a>(1)
+is below this limit, then the objects will be unpacked into
+loose object files.  However if the number of imported objects
+equals or exceeds this limit then the pack will be stored as a
+pack.  Storing the pack from a fast-import can make the import
+operation complete faster, especially on slow filesystems.  If
+not set, the value of <code>transfer.unpackLimit</code> is used instead.</p>
+</dd>
 <dt class="hdlist1">fetch.recurseSubmodules</dt>
 <dd>
 <p>This option can be either set to a boolean value or to <em>on-demand</em>.
@@ -2844,6 +2879,12 @@ especially on slow filesystems.  If not set, the value of
 <p>If true, fetch will automatically behave as if the <code>--prune</code>
 option was given on the command line.  See also <code>remote.&lt;name&gt;.prune</code>.</p>
 </dd>
+<dt class="hdlist1">fetch.output</dt>
+<dd>
+<p>Control how ref update status is printed. Valid values are
+<code>full</code> and <code>compact</code>. Default value is <code>full</code>. See section
+OUTPUT in <a href="git-fetch.html">git-fetch</a>(1) for detail.</p>
+</dd>
 <dt class="hdlist1">format.attach</dt>
 <dd>
 <p>Enable multipart/mixed attachments as the default for
@@ -2851,6 +2892,17 @@ option was given on the command line.  See also <code>remote.&lt;name&gt;.prune<
 which will enable attachments as the default and set the
 value as the boundary.  See the --attach option in
 <a href="git-format-patch.html">git-format-patch</a>(1).</p>
+</dd>
+<dt class="hdlist1">format.from</dt>
+<dd>
+<p>Provides the default value for the <code>--from</code> option to format-patch.
+Accepts a boolean value, or a name and email address.  If false,
+format-patch defaults to <code>--no-from</code>, using commit authors directly in
+the "From:" field of patch mails.  If true, format-patch defaults to
+<code>--from</code>, using your committer identity in the "From:" field of patch
+mails and including a "From:" field in the body of the patch mail if
+different.  If set to a non-boolean value, format-patch uses that
+value instead of your committer identity.  Defaults to false.</p>
 </dd>
 <dt class="hdlist1">format.numbered</dt>
 <dd>
@@ -2975,7 +3027,7 @@ Note: corrupt objects cannot be skipped with this setting.</p>
 <dd>
 <p>The depth parameter used in the delta compression
 algorithm used by <em>git gc --aggressive</em>.  This defaults
-to 250.</p>
+to 50.</p>
 </dd>
 <dt class="hdlist1">gc.aggressiveWindow</dt>
 <dd>
@@ -4437,8 +4489,14 @@ Defaults to "ignore".</p>
 <dt class="hdlist1">receive.advertiseAtomic</dt>
 <dd>
 <p>By default, git-receive-pack will advertise the atomic push
-capability to its clients. If you don&#8217;t want to this capability
-to be advertised, set this variable to false.</p>
+capability to its clients. If you don&#8217;t want to advertise this
+capability, set this variable to false.</p>
+</dd>
+<dt class="hdlist1">receive.advertisePushOptions</dt>
+<dd>
+<p>By default, git-receive-pack will advertise the push options
+capability to its clients. If you don&#8217;t want to advertise this
+capability, set this variable to false.</p>
 </dd>
 <dt class="hdlist1">receive.autogc</dt>
 <dd>
@@ -4499,6 +4557,16 @@ be ignored. This feature is useful when an established project
 should be accepted despite early commits containing errors that
 can be safely ignored such as invalid committer email addresses.
 Note: corrupt objects cannot be skipped with this setting.</p>
+</dd>
+<dt class="hdlist1">receive.keepAlive</dt>
+<dd>
+<p>After receiving the pack from the client, <code>receive-pack</code> may
+produce no output (if <code>--quiet</code> was specified) while processing
+the pack, causing some networks to drop the TCP connection.
+With this option set, if <code>receive-pack</code> does not transmit
+any data in this phase for <code>receive.keepAlive</code> seconds, it will
+send a short keepalive packet.  The default is 5 seconds; set
+to 0 to disable keepalives entirely.</p>
 </dd>
 <dt class="hdlist1">receive.unpackLimit</dt>
 <dd>
@@ -4851,13 +4919,14 @@ See description of <em>show</em> command in <a href="git-stash.html">git-stash</
 option will show diffstat of the stash.  Defaults to true.
 See description of <em>show</em> command in <a href="git-stash.html">git-stash</a>(1).</p>
 </dd>
-<dt class="hdlist1">submodule.&lt;name&gt;.path</dt>
 <dt class="hdlist1">submodule.&lt;name&gt;.url</dt>
 <dd>
-<p>The path within this project and URL for a submodule. These
-variables are initially populated by <em>git submodule init</em>. See
-<a href="git-submodule.html">git-submodule</a>(1) and <a href="gitmodules.html">gitmodules</a>(5) for
-details.</p>
+<p>The URL for a submodule. This variable is copied from the .gitmodules
+file to the git config via <em>git submodule init</em>. The user can change
+the configured URL before obtaining the submodule via <em>git submodule
+update</em>. After obtaining the submodule, the presence of this variable
+is used as a sign whether the submodule is of interest to git commands.
+See <a href="git-submodule.html">git-submodule</a>(1) and <a href="gitmodules.html">gitmodules</a>(5) for details.</p>
 </dd>
 <dt class="hdlist1">submodule.&lt;name&gt;.update</dt>
 <dd>
@@ -5004,6 +5073,23 @@ the server to be hung and give up. Setting this option instructs
 <code>uploadpack.keepAlive</code> seconds. Setting this option to 0
 disables keepalive packets entirely. The default is 5 seconds.</p>
 </dd>
+<dt class="hdlist1">uploadpack.packObjectsHook</dt>
+<dd>
+<p>If this option is set, when <code>upload-pack</code> would run
+<code>git pack-objects</code> to create a packfile for a client, it will
+run this shell command instead.  The <code>pack-objects</code> command and
+arguments it <em>would</em> have run (including the <code>git pack-objects</code>
+at the beginning) are appended to the shell command. The stdin
+and stdout of the hook are treated as if <code>pack-objects</code> itself
+was run. I.e., <code>upload-pack</code> will feed input intended for
+<code>pack-objects</code> to the hook, and expects a completed packfile on
+stdout.</p>
+<div class="paragraph">
+<p>Note that this configuration variable is ignored if it is seen in the
+repository-level config (this is a safety measure against fetching from
+untrusted repositories).</p>
+</div>
+</dd>
 <dt class="hdlist1">url.&lt;base&gt;.insteadOf</dt>
 <dd>
 <p>Any URL that starts with this value will be rewritten to
@@ -5104,7 +5190,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-09 18:10:45 W. Europe Daylight Time
+Last updated 2016-11-02 12:15:33 W. Europe Standard Time
 </div>
 </div>
 </body>

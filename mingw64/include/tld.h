@@ -1,6 +1,6 @@
 /* tld.h --- Declarations for TLD restriction checking.
-   Copyright (C) 2004-2015 Simon Josefsson.
-   Copyright (C) 2003-2014 Free Software Foundation, Inc.
+   Copyright (C) 2004-2016 Simon Josefsson.
+   Copyright (C) 2003-2014, 2016 Free Software Foundation, Inc.
 
    Author: Thomas Jacob, Internet24.de
 

@@ -149,7 +149,7 @@ typedef struct ItclObjectInfo {
     Tcl_HashTable namespaceClasses; /* maps from nsPtr to iclsPtr */
     Tcl_HashTable procMethods;      /* maps from procPtr to mFunc */
     Tcl_HashTable instances;        /* maps from instanceNumber to ioPtr */
-    Tcl_HashTable objectInstances;  /* maps from ioPtr to instanceNumber */
+    Tcl_HashTable unused8;          /* maps from ioPtr to instanceNumber */
     Tcl_HashTable unused;           /* Obsolete field */
     Tcl_HashTable classTypes;       /* maps from class type i.e. "widget"
                                      * to define value i.e. ITCL_WIDGET */
@@ -182,7 +182,7 @@ typedef struct ItclObjectInfo {
     Tcl_Obj **unparsedObjv;         /* options not parsed by
                                        ItclExtendedConfigure/-Cget function */
     int functionFlags;              /* used for creating of ItclMemberCode */
-    int numInstances;               /* used for having a unique key for objects
+    int unused7;               /* used for having a unique key for objects
                                      * for use in mytypemethod etc. */
     struct ItclDelegatedOption *currIdoPtr;
                                     /* the current delegated option info */
@@ -587,16 +587,6 @@ typedef struct ItclMethodVariable {
     Tcl_Obj *callbackPtr;
 } ItclMethodVariable;
 
-typedef struct IctlVarTraceInfo {
-    int flags;
-    ItclVariable* ivPtr;
-    ItclClass *iclsPtr;
-    ItclObject *ioPtr;
-} IctlVarTraceInfo;
-
-#define ITCL_TRACE_CLASS		0x01
-#define ITCL_TRACE_OBJECT		0x02
-
 #define VAR_TYPE_VARIABLE 	1
 #define VAR_TYPE_COMMON 	2
 
@@ -727,8 +717,6 @@ MODULE_SCOPE void ItclDeleteObjectVariablesNamespace(Tcl_Interp *interp,
 MODULE_SCOPE void ItclDeleteClassVariablesNamespace(Tcl_Interp *interp,
         ItclClass *iclsPtr);
 MODULE_SCOPE int ItclInfoInit(Tcl_Interp *interp);
-MODULE_SCOPE char * ItclTraceUnsetVar(ClientData clientData, Tcl_Interp *interp,
-	const char *name1, const char *name2, int flags);
 
 struct Tcl_ResolvedVarInfo;
 MODULE_SCOPE int Itcl_ClassCmdResolver(Tcl_Interp *interp, const char* name,

@@ -100,8 +100,10 @@ other objects in that pack they already have locally.
 	out of memory with a large window, but still be able to take
 	advantage of the large window for the smaller objects.  The
 	size can be suffixed with "k", "m", or "g".
-	`--window-memory=0` makes memory usage unlimited, which is the
-	default.
+	`--window-memory=0` makes memory usage unlimited.  The default
+	is taken from the `pack.windowMemory` configuration variable.
+	Note that the actual memory usage will be the limit multiplied
+	by the number of threads used by linkgit:git-pack-objects[1].
 
 --max-pack-size=<n>::
 	Maximum size of each output pack file. The size can be suffixed with
@@ -127,6 +129,19 @@ other objects in that pack they already have locally.
 	This option is generally only useful if you are writing bitmaps
 	with `-b` or `repack.writeBitmaps`, as it ensures that the
 	bitmapped packfile has the necessary objects.
+
+--unpack-unreachable=<when>::
+	When loosening unreachable objects, do not bother loosening any
+	objects older than `<when>`. This can be used to optimize out
+	the write of any objects that would be immediately pruned by
+	a follow-up `git prune`.
+
+-k::
+--keep-unreachable::
+	When used with `-ad`, any unreachable objects from existing
+	packs will be appended to the end of the packfile instead of
+	being removed. In addition, any unreachable loose objects will
+	be packed (and their loose counterparts removed).
 
 Configuration
 -------------

@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.5.2"
+#define GNUTLS_VERSION "3.5.5"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 5
-#define GNUTLS_VERSION_PATCH 2
+#define GNUTLS_VERSION_PATCH 5
 
-#define GNUTLS_VERSION_NUMBER 0x030502
+#define GNUTLS_VERSION_NUMBER 0x030505
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -350,11 +350,11 @@ typedef enum {
  *
  * @GNUTLS_SERVER: Connection end is a server.
  * @GNUTLS_CLIENT: Connection end is a client.
- * @GNUTLS_DATAGRAM: Connection is datagram oriented (DTLS).
- * @GNUTLS_NONBLOCK: Connection should not block.
+ * @GNUTLS_DATAGRAM: Connection is datagram oriented (DTLS). Since 3.0.0.
+ * @GNUTLS_NONBLOCK: Connection should not block. Since 3.0.0.
  * @GNUTLS_NO_SIGNAL: In systems where SIGPIPE is delivered on send, it will be disabled. That flag has effect in systems which support the MSG_NOSIGNAL sockets flag (since 3.4.2).
  * @GNUTLS_NO_EXTENSIONS: Do not enable any TLS extensions by default (since 3.1.2).
- * @GNUTLS_NO_REPLAY_PROTECTION: Disable any replay protection in DTLS. This must only be used if  replay protection is achieved using other means.
+ * @GNUTLS_NO_REPLAY_PROTECTION: Disable any replay protection in DTLS. This must only be used if  replay protection is achieved using other means. Since 3.2.2.
  * @GNUTLS_ALLOW_ID_CHANGE: Allow the peer to replace its certificate, or change its ID during a rehandshake. This change is often used in attacks and thus prohibited by default. Since 3.5.0.
  * @GNUTLS_ENABLE_FALSE_START: Enable the TLS false start on client side if the negotiated ciphersuites allow it. This will enable sending data prior to the handshake being complete, and may introduce a risk of crypto failure when combined with certain key exchanged; for that GnuTLS may not enable that option in ciphersuites that are known to be not safe for false start. Since 3.5.0.
  * @GNUTLS_FORCE_CLIENT_CERT: When in client side and only a single cert is specified, send that certificate irrespective of the issuers expectated by the server. Since 3.5.0.
@@ -375,6 +375,17 @@ typedef enum {
 	GNUTLS_ENABLE_FALSE_START = (1<<8),
 	GNUTLS_FORCE_CLIENT_CERT = (1<<9)
 } gnutls_init_flags_t;
+
+/* compatibility defines (previous versions of gnutls
+ * used defines instead of enumerated values). */
+#define GNUTLS_SERVER (1)
+#define GNUTLS_CLIENT (1<<1)
+#define GNUTLS_DATAGRAM (1<<2)
+#define GNUTLS_NONBLOCK (1<<3)
+#define GNUTLS_NO_EXTENSIONS (1<<4)
+#define GNUTLS_NO_REPLAY_PROTECTION (1<<5)
+#define GNUTLS_NO_SIGNAL (1<<6)
+#define GNUTLS_ALLOW_ID_CHANGE (1<<7)
 
 /**
  * gnutls_alert_level_t:
@@ -1009,6 +1020,8 @@ gnutls_pk_algorithm_t gnutls_ecc_curve_get_pk(gnutls_ecc_curve_t curve) __GNUTLS
 
 gnutls_digest_algorithm_t
 	gnutls_oid_to_digest(const char *oid)  __GNUTLS_CONST__;
+gnutls_mac_algorithm_t
+	gnutls_oid_to_mac(const char *oid)  __GNUTLS_CONST__;
 gnutls_pk_algorithm_t
 	gnutls_oid_to_pk(const char *oid) __GNUTLS_CONST__;
 gnutls_sign_algorithm_t
@@ -1115,7 +1128,7 @@ typedef struct mbuffer_st *gnutls_packet_t;
 
 ssize_t
 gnutls_record_recv_packet(gnutls_session_t session, 
-		   	  gnutls_packet_t *packet);
+			  gnutls_packet_t *packet);
 
 void gnutls_packet_get(gnutls_packet_t packet, gnutls_datum_t *data, unsigned char *sequence);
 void gnutls_packet_deinit(gnutls_packet_t packet);
@@ -1197,7 +1210,7 @@ void gnutls_heartbeat_enable(gnutls_session_t session, unsigned int type);
 int gnutls_heartbeat_allowed(gnutls_session_t session, unsigned int type);
 
   /* Safe renegotiation */
-int gnutls_safe_renegotiation_status(gnutls_session_t session);
+unsigned gnutls_safe_renegotiation_status(gnutls_session_t session);
 unsigned gnutls_session_ext_master_secret_status(gnutls_session_t session);
 unsigned gnutls_session_etm_status(gnutls_session_t session);
 
@@ -1750,9 +1763,14 @@ gnutls_certificate_set_ocsp_status_request_function
 gnutls_status_request_ocsp_func ocsp_func, void *ptr);
 
 int
+gnutls_certificate_set_ocsp_status_request_function2
+(gnutls_certificate_credentials_t res, unsigned idx,
+gnutls_status_request_ocsp_func ocsp_func, void *ptr);
+
+int
 gnutls_certificate_set_ocsp_status_request_file
 (gnutls_certificate_credentials_t res, const char *response_file,
- unsigned int flags);
+ unsigned idx);
 
 int gnutls_ocsp_status_request_enable_client(gnutls_session_t session,
 					     gnutls_datum_t * responder_id,
@@ -1856,8 +1874,8 @@ int gnutls_dh_params_cpy(gnutls_dh_params_t dst, gnutls_dh_params_t src);
 /* Session stuff
  */
 typedef struct {
-	void *iov_base;		/* Starting address */
-	size_t iov_len;		/* Number of bytes to transfer */
+    void *iov_base;
+    size_t iov_len;
 } giovec_t;
 
 typedef ssize_t(*gnutls_pull_func) (gnutls_transport_ptr_t, void *,
@@ -2134,6 +2152,7 @@ typedef enum gnutls_x509_subject_alt_name_t {
 	GNUTLS_SAN_IPADDRESS = 4,
 	GNUTLS_SAN_OTHERNAME = 5,
 	GNUTLS_SAN_DN = 6,
+	GNUTLS_SAN_MAX = GNUTLS_SAN_DN,
 	/* The following are "virtual" subject alternative name types, in
 	   that they are represented by an otherName value and an OID.
 	   Used by gnutls_x509_crt_get_subject_alt_othername_oid.  */
@@ -2521,6 +2540,11 @@ int gnutls_ext_register(const char *name, int type, gnutls_ext_parse_type_t pars
 				gnutls_ext_deinit_data_func deinit_func, gnutls_ext_pack_func pack_func,
 				gnutls_ext_unpack_func unpack_func);
 
+int gnutls_session_ext_register(gnutls_session_t, const char *name, int type, gnutls_ext_parse_type_t parse_type,
+				gnutls_ext_recv_func recv_func, gnutls_ext_send_func send_func, 
+				gnutls_ext_deinit_data_func deinit_func, gnutls_ext_pack_func pack_func,
+				gnutls_ext_unpack_func unpack_func, unsigned flags);
+
 const char *gnutls_ext_get_name(unsigned int ext);
 
 /* Public supplemental data related functions */
@@ -2535,12 +2559,18 @@ int gnutls_supplemental_register(const char *name,
 				gnutls_supp_recv_func supp_recv_func,
 				gnutls_supp_send_func supp_send_func);
 
+int gnutls_session_supplemental_register(gnutls_session_t session, const char *name,
+				gnutls_supplemental_data_format_type_t type, 
+				gnutls_supp_recv_func supp_recv_func,
+				gnutls_supp_send_func supp_send_func,
+				unsigned int flags);
+
 void gnutls_supplemental_recv(gnutls_session_t session, unsigned do_recv_supplemental);
 
 void gnutls_supplemental_send(gnutls_session_t session, unsigned do_send_supplemental);
 
 /* FIPS140-2 related functions */
-int gnutls_fips140_mode_enabled(void);
+unsigned gnutls_fips140_mode_enabled(void);
 
   /* Gnutls error codes. The mapping to a TLS alert is also shown in
    * comments.
@@ -2659,6 +2689,8 @@ int gnutls_fips140_mode_enabled(void);
 #define GNUTLS_E_UNKNOWN_SRP_USERNAME -109
 #define GNUTLS_E_PREMATURE_TERMINATION -110
 
+#define GNUTLS_E_MALFORMED_CIDR -111
+
 #define GNUTLS_E_BASE64_ENCODING_ERROR -201
 #define GNUTLS_E_INCOMPATIBLE_GCRYPT_LIBRARY -202	/* obsolete */
 #define GNUTLS_E_INCOMPATIBLE_CRYPTO_LIBRARY -202
@@ -2753,6 +2785,9 @@ int gnutls_fips140_mode_enabled(void);
 #define GNUTLS_E_NEED_FALLBACK -405
 #define GNUTLS_E_SESSION_USER_ID_CHANGED -406
 #define GNUTLS_E_HANDSHAKE_DURING_FALSE_START -407
+#define GNUTLS_E_UNAVAILABLE_DURING_HANDSHAKE -408
+#define GNUTLS_E_PK_INVALID_PUBKEY -409
+#define GNUTLS_E_PK_INVALID_PRIVKEY -410
 
 #define GNUTLS_E_UNIMPLEMENTED_FEATURE -1250
 

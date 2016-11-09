@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2011-2013 mingw-w64 project
+   Copyright (c) 2011-2016 mingw-w64 project
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -212,7 +212,7 @@ struct _pthread_cleanup
 
 /* Note that if async cancelling is used, then there is a race here */
 #define pthread_cleanup_pop(E)\
-    (*pthread_getclean() = _pthread_cup.next, (E?_pthread_cup.func((pthread_once_t *)_pthread_cup.arg):0));}
+    (*pthread_getclean() = _pthread_cup.next, ((E) ? (_pthread_cup.func((pthread_once_t *)_pthread_cup.arg)) : (void)0));}
 
 /* Windows doesn't have this, so declare it ourselves. */
 #ifndef _TIMESPEC_DEFINED

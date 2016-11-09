@@ -71,9 +71,9 @@ extern "C" {
 #endif
     );
 
-  STDAPI MFShutdown ();
-  STDAPI MFLockPlatform ();
-  STDAPI MFUnlockPlatform ();
+  STDAPI MFShutdown (void);
+  STDAPI MFLockPlatform (void);
+  STDAPI MFUnlockPlatform (void);
   STDAPI MFPutWorkItem2 (DWORD dwQueue, LONG Priority, IMFAsyncCallback *pCallback, IUnknown *pState);
   STDAPI MFPutWorkItemEx2 (DWORD dwQueue, LONG Priority, IMFAsyncResult *pResult);
   STDAPI MFPutWaitingWorkItem (HANDLE hEvent, LONG Priority, IMFAsyncResult *pResult, MFWORKITEM_KEY *pKey);
@@ -124,7 +124,7 @@ extern "C" {
   STDAPI MFGetWorkQueueMMCSSClass (DWORD dwWorkQueueId, LPWSTR pwszClass, DWORD *pcchClass);
   STDAPI MFGetWorkQueueMMCSSTaskId (DWORD dwWorkQueueId, LPDWORD pdwTaskId);
   STDAPI MFRegisterPlatformWithMMCSS (PCWSTR wszClass, DWORD *pdwTaskId, LONG lPriority);
-  STDAPI MFUnregisterPlatformFromMMCSS ();
+  STDAPI MFUnregisterPlatformFromMMCSS (void);
   STDAPI MFGetWorkQueueMMCSSPriority (DWORD dwWorkQueueId, LONG *lPriority);
   STDAPI MFCreateFile (MF_FILE_ACCESSMODE AccessMode, MF_FILE_OPENMODE OpenMode, MF_FILE_FLAGS fFlags, LPCWSTR pwszFileURL, IMFByteStream **ppIByteStream);
   STDAPI MFCreateTempFile (MF_FILE_ACCESSMODE AccessMode, MF_FILE_OPENMODE OpenMode, MF_FILE_FLAGS fFlags, IMFByteStream **ppIByteStream);
@@ -148,7 +148,7 @@ extern "C" {
 
 #if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_APP)
   STDAPI MFLockDXGIDeviceManager (UINT *pResetToken, IMFDXGIDeviceManager **ppManager);
-  STDAPI MFUnlockDXGIDeviceManager ();
+  STDAPI MFUnlockDXGIDeviceManager (void);
   STDAPI MFCreateDXGISurfaceBuffer (REFIID riid, IUnknown *punkSurface, UINT uSubresourceIndex, WINBOOL fBottomUpWhenLinear, IMFMediaBuffer **ppBuffer);
   STDAPI MFCreateVideoSampleAllocatorEx (REFIID riid, void **ppSampleAllocator);
   STDAPI MFCreateDXGIDeviceManager (UINT *resetToken, IMFDXGIDeviceManager **ppDeviceManager);
@@ -160,16 +160,16 @@ extern "C" {
 #define MF_E_DXGI_NEW_VIDEO_DEVICE ((HRESULT)__MSABI_LONG(0x80041001))
 #define MF_E_DXGI_VIDEO_DEVICE_LOCKED ((HRESULT)__MSABI_LONG(0x80041002))
 
-#define MF_1_BYTE_ALIGNMENT 0x00000000
-#define MF_2_BYTE_ALIGNMENT 0x00000001
-#define MF_4_BYTE_ALIGNMENT 0x00000003
-#define MF_8_BYTE_ALIGNMENT 0x00000007
-#define MF_16_BYTE_ALIGNMENT 0x0000000f
-#define MF_32_BYTE_ALIGNMENT 0x0000001f
-#define MF_64_BYTE_ALIGNMENT 0x0000003f
-#define MF_128_BYTE_ALIGNMENT 0x0000007f
-#define MF_256_BYTE_ALIGNMENT 0x000000ff
-#define MF_512_BYTE_ALIGNMENT 0x000001ff
+#define MF_1_BYTE_ALIGNMENT     0x00000000
+#define MF_2_BYTE_ALIGNMENT     0x00000001
+#define MF_4_BYTE_ALIGNMENT     0x00000003
+#define MF_8_BYTE_ALIGNMENT     0x00000007
+#define MF_16_BYTE_ALIGNMENT    0x0000000F
+#define MF_32_BYTE_ALIGNMENT    0x0000001F
+#define MF_64_BYTE_ALIGNMENT    0x0000003F
+#define MF_128_BYTE_ALIGNMENT   0x0000007F
+#define MF_256_BYTE_ALIGNMENT   0x000000FF
+#define MF_512_BYTE_ALIGNMENT   0x000001FF
 
 #endif
 
@@ -329,6 +329,12 @@ extern "C" {
   DEFINE_MEDIATYPE_GUID (MFVideoFormat_RGB555, D3DFMT_X1R5G5B5);
   DEFINE_MEDIATYPE_GUID (MFVideoFormat_RGB565, D3DFMT_R5G6B5);
   DEFINE_MEDIATYPE_GUID (MFVideoFormat_RGB8, D3DFMT_P8);
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmultichar"
+#endif
+
   DEFINE_MEDIATYPE_GUID (MFVideoFormat_AI44, FCC ('AI44'));
   DEFINE_MEDIATYPE_GUID (MFVideoFormat_AYUV, FCC ('AYUV'));
   DEFINE_MEDIATYPE_GUID (MFVideoFormat_YUY2, FCC ('YUY2'));
@@ -382,6 +388,10 @@ extern "C" {
   DEFINE_MEDIATYPE_GUID (MFVideoFormat_VP90, FCC ('VP90'));
 #if WINVER >= 0x0602
   DEFINE_MEDIATYPE_GUID (MFVideoFormat_H263, FCC ('H263'));
+#endif
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
 #endif
 
 #ifdef LOCAL_D3DFMT_DEFINES

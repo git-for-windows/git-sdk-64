@@ -101,6 +101,7 @@ void gnutls_pkcs11_obj_set_pin_function(gnutls_pkcs11_obj_t obj,
  * @GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_ANY: When retrieving an object, do not set any requirements (store).
  * @GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_TRUSTED: When retrieving an object, only retrieve the marked as trusted (alias to %GNUTLS_PKCS11_OBJ_FLAG_MARK_TRUSTED).
  *   In gnutls_pkcs11_crt_is_known() it implies %GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_COMPARE if %GNUTLS_PKCS11_OBJ_FLAG_COMPARE_KEY is not given.
+ * @GNUTLS_PKCS11_OBJ_FLAG_MARK_DISTRUSTED: When writing an object, mark it as distrusted (store).
  * @GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_DISTRUSTED: When retrieving an object, only retrieve the marked as distrusted (seek).
  * @GNUTLS_PKCS11_OBJ_FLAG_COMPARE: When checking an object's presence, fully compare it before returning any result (seek).
  * @GNUTLS_PKCS11_OBJ_FLAG_COMPARE_KEY: When checking an object's presence, compare the key before returning any result (seek).
@@ -129,7 +130,8 @@ typedef enum gnutls_pkcs11_obj_flags {
 	GNUTLS_PKCS11_OBJ_FLAG_MARK_NOT_PRIVATE = (1<<5),
 	GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_ANY = (1<<6),
 	GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_TRUSTED = GNUTLS_PKCS11_OBJ_FLAG_MARK_TRUSTED,
-	GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_DISTRUSTED = (1<<8),
+	GNUTLS_PKCS11_OBJ_FLAG_MARK_DISTRUSTED = (1<<8),
+	GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_DISTRUSTED = GNUTLS_PKCS11_OBJ_FLAG_MARK_DISTRUSTED,
 	GNUTLS_PKCS11_OBJ_FLAG_COMPARE = (1<<9),
 	GNUTLS_PKCS11_OBJ_FLAG_PRESENT_IN_TRUSTED_MODULE = (1<<10),
 	GNUTLS_PKCS11_OBJ_FLAG_MARK_CA = (1<<11),
@@ -432,7 +434,7 @@ int gnutls_pkcs11_privkey_import_url(gnutls_pkcs11_privkey_t pkey,
 int gnutls_pkcs11_privkey_export_url(gnutls_pkcs11_privkey_t key,
 				     gnutls_pkcs11_url_type_t
 				     detailed, char **url);
-int gnutls_pkcs11_privkey_status(gnutls_pkcs11_privkey_t key);
+unsigned gnutls_pkcs11_privkey_status(gnutls_pkcs11_privkey_t key);
 
 #define gnutls_pkcs11_privkey_generate(url, pk, bits, label, flags) \
 	gnutls_pkcs11_privkey_generate3(url, pk, bits, label, NULL, 0, NULL, 0, flags)

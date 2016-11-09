@@ -54,8 +54,8 @@ TDBC_STUB_LIB_PATH="/mingw64/lib/tdbc1.0.4/libtdbcstub104.a"
 # was compiled in a directory other than the source directory, this still
 # points to the location of the sources, not the location where TDBC was
 # compiled.
-tdbc_SRC_DIR="/c/repo/mingw-w64-tcl/src/tcl8.6.5/pkgs/tdbc1.0.4"
-TDBC_SRC_DIR="/c/repo/mingw-w64-tcl/src/tcl8.6.5/pkgs/tdbc1.0.4"
+tdbc_SRC_DIR="/c/repo/mingw-w64-tcl/src/tcl8.6.6/pkgs/tdbc1.0.4"
+TDBC_SRC_DIR="/c/repo/mingw-w64-tcl/src/tcl8.6.6/pkgs/tdbc1.0.4"
 
 # String to pass to the compiler so that an extension can find installed TDBC
 # headers
@@ -64,16 +64,16 @@ TDBC_INCLUDE_SPEC="-I/mingw64/include"
 
 # String to pass to the compiler so that an extension can find TDBC headers
 # in the source directory
-tdbc_BUILD_INCLUDE_SPEC="-I/c/repo/mingw-w64-tcl/src/tcl8.6.5/pkgs/tdbc1.0.4/generic"
-TDBC_BUILD_INCLUDE_SPEC="-I/c/repo/mingw-w64-tcl/src/tcl8.6.5/pkgs/tdbc1.0.4/generic"
+tdbc_BUILD_INCLUDE_SPEC="-I/c/repo/mingw-w64-tcl/src/tcl8.6.6/pkgs/tdbc1.0.4/generic"
+TDBC_BUILD_INCLUDE_SPEC="-I/c/repo/mingw-w64-tcl/src/tcl8.6.6/pkgs/tdbc1.0.4/generic"
 
 # Path name where .tcl files in the tdbc package appear at run time.
-tdbc_LIBRARY_PATH="/c/repo/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.4"
-TDBC_LIBRARY_PATH="/c/repo/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.4"
+tdbc_LIBRARY_PATH="/mingw64/lib/tdbc1.0.4"
+TDBC_LIBRARY_PATH="/mingw64/lib/tdbc1.0.4"
 
 # Path name where .tcl files in the tdbc package appear at build time.
-tdbc_BUILD_LIBRARY_PATH="/c/repo/mingw-w64-tcl/src/tcl8.6.5/pkgs/tdbc1.0.4/library"
-TDBC_BUILD_LIBRARY_PATH="/c/repo/mingw-w64-tcl/src/tcl8.6.5/pkgs/tdbc1.0.4/library"
+tdbc_BUILD_LIBRARY_PATH="/c/repo/mingw-w64-tcl/src/tcl8.6.6/pkgs/tdbc1.0.4/library"
+TDBC_BUILD_LIBRARY_PATH="/c/repo/mingw-w64-tcl/src/tcl8.6.6/pkgs/tdbc1.0.4/library"
 
 # Additional flags that must be passed to the C compiler to use tdbc
 tdbc_CFLAGS=

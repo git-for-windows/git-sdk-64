@@ -173,7 +173,7 @@ def change_root (new_root, pathname):
                    % (drive_r,drive))
         elif len(drive_r) == 2:
             drive_used = drive_r+os.sep
-        else:
+        elif len(drive) == 2:
             drive_used = drive+os.sep
         return os.path.join(drive_used+path_r, path)
 

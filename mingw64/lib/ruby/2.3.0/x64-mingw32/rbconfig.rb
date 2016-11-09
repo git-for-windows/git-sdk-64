@@ -6,7 +6,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("2.3.") or
-    raise "ruby lib version (2.3.0) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (2.3.1) doesn't match executable version (#{RUBY_VERSION})"
 
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.3.0/x64-mingw32")
   DESTDIR = TOPDIR && TOPDIR[/\A[a-z]:/i] || '' unless defined? DESTDIR
@@ -15,7 +15,7 @@ module RbConfig
   CONFIG["MAJOR"] = "2"
   CONFIG["MINOR"] = "3"
   CONFIG["TEENY"] = "0"
-  CONFIG["PATCHLEVEL"] = "0"
+  CONFIG["PATCHLEVEL"] = "112"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/mingw64")
@@ -87,7 +87,7 @@ module RbConfig
   CONFIG["EXTDLDFLAGS"] = ""
   CONFIG["EXTLDFLAGS"] = "-static-libgcc"
   CONFIG["strict_warnflags"] = ""
-  CONFIG["warnflags"] = "-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wno-maybe-uninitialized"
+  CONFIG["warnflags"] = "-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat"
   CONFIG["debugflags"] = "-ggdb3"
   CONFIG["optflags"] = "-O3 -fno-omit-frame-pointer -fno-fast-math"
   CONFIG["NULLCMD"] = ":"
@@ -187,7 +187,7 @@ module RbConfig
   CONFIG["build_vendor"] = "w64"
   CONFIG["build_cpu"] = "x86_64"
   CONFIG["build"] = "x86_64-w64-mingw32"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.3.0"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.3.1"
   CONFIG["cxxflags"] = " $(optflags) $(debugflags) $(warnflags)"
   CONFIG["cppflags"] = ""
   CONFIG["cflags"] = " $(optflags) $(debugflags) $(warnflags)"

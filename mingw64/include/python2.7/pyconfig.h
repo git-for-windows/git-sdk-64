@@ -581,6 +581,9 @@
 /* Define if you have readline 4.0 */
 #define HAVE_RL_PRE_INPUT_HOOK 1
 
+/* Define if you have readline 4.0 */
+/* #undef HAVE_RL_RESIZE_TERMINAL */
+
 /* Define to 1 if you have the `round' function. */
 #define HAVE_ROUND 1
 
@@ -731,10 +734,6 @@
 
 /* Define to 1 if `tm_zone' is a member of `struct tm'. */
 /* #undef HAVE_STRUCT_TM_TM_ZONE */
-
-/* Define to 1 if your `struct stat' has `st_blocks'. Deprecated, use
-   `HAVE_STRUCT_STAT_ST_BLOCKS' instead. */
-/* #undef HAVE_ST_BLOCKS */
 
 /* Define if you have the 'symlink' function. */
 /* #undef HAVE_SYMLINK */

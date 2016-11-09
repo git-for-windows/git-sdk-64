@@ -1,6 +1,6 @@
 @ECHO OFF
 IF NOT "%~f0" == "~f0" GOTO :WinNT
-@"D:\test-git\git-sdk-64-ci\mingw64\bin\ruby.exe" "D:/test-git/git-sdk-64-ci/mingw64/bin/asciidoctor-safe" %1 %2 %3 %4 %5 %6 %7 %8 %9
+@"C:\git-sdk-64-ci\mingw64\bin\ruby.exe" "C:/git-sdk-64-ci/mingw64/bin/asciidoctor-safe" %1 %2 %3 %4 %5 %6 %7 %8 %9
 GOTO :EOF
 :WinNT
-@"D:\test-git\git-sdk-64-ci\mingw64\bin\ruby.exe" "%~dpn0" %*
+@"C:\git-sdk-64-ci\mingw64\bin\ruby.exe" "%~dpn0" %*

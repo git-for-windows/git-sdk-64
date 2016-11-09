@@ -556,7 +556,8 @@ repository upon <em>git add</em> and <em>git commit</em>.</p>
 text file is normalized, its line endings are converted to LF in the
 repository.  To control what line ending style is used in the working
 directory, use the <code>eol</code> attribute for a single file and the
-<code>core.eol</code> configuration variable for all text files.</p>
+<code>core.eol</code> configuration variable for all text files.
+Note that <code>core.autocrlf</code> overrides <code>core.eol</code></p>
 </div>
 <div class="dlist">
 <dl>
@@ -574,8 +575,9 @@ attempt any end-of-line conversion upon checkin or checkout.</p>
 <dt class="hdlist1">Set to string value "auto"</dt>
 <dd>
 <p>When <code>text</code> is set to "auto", the path is marked for automatic
-end-of-line normalization.  If Git decides that the content is
-text, its line endings are normalized to LF on checkin.</p>
+end-of-line conversion.  If Git decides that the content is
+text, its line endings are converted to LF on checkin.
+When the file has been committed with CRLF, no conversion is done.</p>
 </dd>
 <dt class="hdlist1">Unspecified</dt>
 <dd>
@@ -594,7 +596,7 @@ unspecified.</p>
 <h4 id="__code_eol_code"><code>eol</code></h4>
 <div class="paragraph">
 <p>This attribute sets a specific line-ending style to be used in the
-working directory.  It enables end-of-line normalization without any
+working directory.  It enables end-of-line conversion without any
 content checks, effectively setting the <code>text</code> attribute.</p>
 </div>
 <div class="dlist">
@@ -636,28 +638,9 @@ normalize line endings to LF in the repository and, optionally, to
 convert them to CRLF when files are checked out.</p>
 </div>
 <div class="paragraph">
-<p>Here is an example that will make Git normalize .txt, .vcproj and .sh
-files, ensure that .vcproj files have CRLF and .sh files have LF in
-the working directory, and prevent .jpg files from being normalized
-regardless of their content.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>*.txt		text
-*.vcproj	eol=crlf
-*.sh		eol=lf
-*.jpg		-text</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Other source code management systems normalize all text files in their
-repositories, and there are two ways to enable similar automatic
-normalization in Git.</p>
-</div>
-<div class="paragraph">
 <p>If you simply want to have CRLF line endings in your working directory
 regardless of the repository you are working with, you can set the
-config variable "core.autocrlf" without changing any attributes.</p>
+config variable "core.autocrlf" without using any attributes.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -666,16 +649,15 @@ config variable "core.autocrlf" without changing any attributes.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This does not force normalization of all text files, but does ensure
+<p>This does not force normalization of text files, but does ensure
 that text files that you introduce to the repository have their line
 endings normalized to LF when they are added, and that files that are
 already normalized in the repository stay normalized.</p>
 </div>
 <div class="paragraph">
-<p>If you want to interoperate with a source code management system that
-enforces end-of-line normalization, or you simply want all text files
-in your repository to be normalized, you should instead set the <code>text</code>
-attribute to "auto" for <em>all</em> files.</p>
+<p>If you want to ensure that text files that any contributor introduces to
+the repository have their line endings normalized, you can set the
+<code>text</code> attribute to "auto" for <em>all</em> files.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -683,12 +665,21 @@ attribute to "auto" for <em>all</em> files.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This ensures that all files that Git considers to be text will have
-normalized (LF) line endings in the repository.  The <code>core.eol</code>
-configuration variable controls which line endings Git will use for
-normalized files in your working directory; the default is to use the
-native line ending for your platform, or CRLF if <code>core.autocrlf</code> is
-set.</p>
+<p>The attributes allow a fine-grained control, how the line endings
+are converted.
+Here is an example that will make Git normalize .txt, .vcproj and .sh
+files, ensure that .vcproj files have CRLF and .sh files have LF in
+the working directory, and prevent .jpg files from being normalized
+regardless of their content.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>*               text=auto
+*.txt		text
+*.vcproj	text eol=crlf
+*.sh		text eol=lf
+*.jpg		-text</pre>
+</div>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -697,18 +688,19 @@ set.</p>
 <div class="title">Note</div>
 </td>
 <td class="content">
-When <code>text=auto</code> normalization is enabled in an existing
-repository, any text files containing CRLFs should be normalized.  If
-they are not they will be normalized the next time someone tries to
-change them, causing unfortunate misattribution.  From a clean working
-directory:
+When <code>text=auto</code> conversion is enabled in a cross-platform
+project using push and pull to a central repository the text files
+containing CRLFs should be normalized.
 </td>
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>From a clean working directory:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre>$ echo "* text=auto" &gt;&gt;.gitattributes
+<pre>$ echo "* text=auto" &gt;.gitattributes
 $ rm .git/index     # Remove the index to force Git to
 $ git reset         # re-scan the working directory
 $ git status        # Show files that will be normalized
@@ -875,6 +867,13 @@ substitution.  For example:</p>
 	clean = git-p4-filter --clean %f
 	smudge = git-p4-filter --smudge %f</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Note that "%f" is the name of the path that is being worked on. Depending
+on the version that is being filtered, the corresponding file on disk may
+not exist, or may have different contents. So, smudge and clean commands
+should not try to access the file on disk, but only act as filters on the
+content provided to them on standard input.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1052,6 +1051,9 @@ patterns are available:</p>
 </li>
 <li>
 <p><code>csharp</code> suitable for source code in the C# language.</p>
+</li>
+<li>
+<p><code>css</code> suitable for cascading style sheets.</p>
 </li>
 <li>
 <p><code>fortran</code> suitable for source code in the Fortran language.</p>
@@ -1639,7 +1641,7 @@ frotz	unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-09 18:10:47 W. Europe Daylight Time
+Last updated 2016-11-02 12:15:33 W. Europe Standard Time
 </div>
 </div>
 </body>

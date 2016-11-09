@@ -432,7 +432,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="verseblock">
 <pre class="content"><em>git push</em> [--all | --mirror | --tags] [--follow-tags] [--atomic] [-n | --dry-run] [--receive-pack=&lt;git-receive-pack&gt;]
 	   [--repo=&lt;repository&gt;] [-f | --force] [-d | --delete] [--prune] [-v | --verbose]
-	   [-u | --set-upstream]
+	   [-u | --set-upstream] [--push-option=&lt;string&gt;]
 	   [--[no-]signed|--sign=(true|false|if-asked)]
 	   [--force-with-lease[=&lt;refname&gt;[:&lt;expect&gt;]]]
 	   [--no-verify] [&lt;repository&gt; [&lt;refspec&gt;&#8230;&#8203;]]</pre>
@@ -606,6 +606,13 @@ will also fail if the actual call to <code>gpg --sign</code> fails.  See
 Either all refs are updated, or on error, no refs are updated.
 If the server does not support atomic pushes the push will fail.</p>
 </dd>
+<dt class="hdlist1">-o</dt>
+<dt class="hdlist1">--push-option</dt>
+<dd>
+<p>Transmit the given string to the server, which passes them to
+the pre-receive as well as the post-receive hook. The given string
+must not contain a NUL or LF character.</p>
+</dd>
 <dt class="hdlist1">--receive-pack=&lt;git-receive-pack&gt;</dt>
 <dt class="hdlist1">--exec=&lt;git-receive-pack&gt;</dt>
 <dd>
@@ -655,10 +662,11 @@ branch we have for it.</p>
 <div class="paragraph">
 <p><code>--force-with-lease=&lt;refname&gt;:&lt;expect&gt;</code> will protect the named ref (alone),
 if it is going to be updated, by requiring its current value to be
-the same as the specified value &lt;expect&gt; (which is allowed to be
+the same as the specified value <code>&lt;expect&gt;</code> (which is allowed to be
 different from the remote-tracking branch we have for the refname,
 or we do not even have to have such a remote-tracking branch when
-this form is used).</p>
+this form is used).  If <code>&lt;expect&gt;</code> is the empty string, then the named ref
+must not already exist.</p>
 </div>
 <div class="paragraph">
 <p>Note that all forms other than <code>--force-with-lease=&lt;refname&gt;:&lt;expect&gt;</code>
@@ -1395,7 +1403,7 @@ a <code>git gc</code> command on the origin repository.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-09 18:10:46 W. Europe Daylight Time
+Last updated 2016-11-02 12:15:33 W. Europe Standard Time
 </div>
 </div>
 </body>

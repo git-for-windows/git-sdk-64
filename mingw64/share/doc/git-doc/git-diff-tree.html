@@ -1573,10 +1573,16 @@ or <a href="git-blame.html">git-blame</a>(1))</p>
 <p><em>%GK</em>: show the key used to sign a signed commit</p>
 </li>
 <li>
-<p><em>%gD</em>: reflog selector, e.g., <code>refs/stash@{1}</code></p>
+<p><em>%gD</em>: reflog selector, e.g., <code>refs/stash@{1}</code> or
+<code>refs/stash@{2 minutes ago</code>}; the format follows the rules described
+for the <code>-g</code> option. The portion before the <code>@</code> is the refname as
+given on the command line (so <code>git log -g refs/heads/master</code> would
+yield <code>refs/heads/master@{0}</code>).</p>
 </li>
 <li>
-<p><em>%gd</em>: shortened reflog selector, e.g., <code>stash@{1}</code></p>
+<p><em>%gd</em>: shortened reflog selector; same as <code>%gD</code>, but the refname
+portion is shortened for human readability (so <code>refs/heads/master</code>
+becomes just <code>master</code>).</p>
 </li>
 <li>
 <p><em>%gn</em>: reflog identity name</p>
@@ -1608,7 +1614,8 @@ or <a href="git-blame.html">git-blame</a>(1))</p>
 <p><em>%Creset</em>: reset color</p>
 </li>
 <li>
-<p><em>%C(&#8230;&#8203;)</em>: color specification, as described in color.branch.* config option;
+<p><em>%C(&#8230;&#8203;)</em>: color specification, as described under Values in the
+"CONFIGURATION FILE" section of <a href="git-config.html">git-config</a>(1);
 adding <code>auto,</code> at the beginning will emit color only when colors are
 enabled for log output (by <code>color.diff</code>, <code>color.ui</code>, or <code>--color</code>, and
 respecting the <code>auto</code> settings of the former if we are going to a
@@ -1616,7 +1623,7 @@ terminal). <code>auto</code> alone (i.e. <code>%C(auto)</code>) will turn on aut
 on the next placeholders until the color is switched again.</p>
 </li>
 <li>
-<p><em>%m</em>: left, right or boundary mark</p>
+<p><em>%m</em>: left (<code>&lt;</code>), right (<code>&gt;</code>) or boundary (<code>-</code>) mark</p>
 </li>
 <li>
 <p><em>%n</em>: newline</p>
@@ -2364,7 +2371,7 @@ the pathname, but if that is <code>NUL</code>, the record will show two paths.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-09 18:10:45 W. Europe Daylight Time
+Last updated 2016-11-02 12:15:33 W. Europe Standard Time
 </div>
 </div>
 </body>

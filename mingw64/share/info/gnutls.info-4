@@ -1,9 +1,9 @@
-This is gnutls.info, produced by makeinfo version 6.0 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.1 from gnutls.texi.
 
-This manual is last updated 4 March 2015 for version 3.5.2 of GnuTLS.
+This manual is last updated 9 October 2016 for version 3.5.5 of GnuTLS.
 
-Copyright (C) 2001-2015 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2015 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2016 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2016 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -639,6 +639,31 @@ gnutls_x509_aki_set_id
      otherwise a negative error value.
 
      *Since:* 3.3.0
+
+gnutls_x509_cidr_to_rfc5280
+---------------------------
+
+ -- Function: int gnutls_x509_cidr_to_rfc5280 (const char * CIDR,
+          gnutls_datum_t * CIDR_RFC5280)
+     CIDR: CIDR in RFC4632 format (IP/prefix), null-terminated
+
+     CIDR_RFC5280: CIDR range converted to RFC5280 format
+
+     This function will convert text CIDR range with prefix (such as
+     '10.0.0.0/8') to RFC5280 (IP address in network byte order followed
+     by its network mask).  Works for both IPv4 and IPv6.
+
+     The resulting object is directly usable for IP name constraints
+     usage, for example in functions
+     'gnutls_x509_name_constraints_add_permitted' or
+     'gnutls_x509_name_constraints_add_excluded' .
+
+     The data in datum needs to be deallocated using 'gnutls_free()' .
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.4
 
 gnutls_x509_crl_check_issuer
 ----------------------------
@@ -2446,7 +2471,8 @@ gnutls_x509_crq_set_dn
      ERR: indicates the error position (if any)
 
      This function will set the DN on the provided certificate.  The
-     input string should be plain ASCII or UTF-8 encoded.
+     input string should be plain ASCII or UTF-8 encoded.  On DN parsing
+     error 'GNUTLS_E_PARSING_ERROR' is returned.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -2476,6 +2502,30 @@ gnutls_x509_crq_set_dn_by_oid
      for known OIDs using 'gnutls_x509_dn_oid_known()' .  For OIDs that
      are not known (by gnutls) you should properly DER encode your data,
      and call this function with raw_flag set.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+gnutls_x509_crq_set_extension_by_oid
+------------------------------------
+
+ -- Function: int gnutls_x509_crq_set_extension_by_oid
+          (gnutls_x509_crq_t CRQ, const char * OID, const void * BUF,
+          size_t SIZEOF_BUF, unsigned int CRITICAL)
+     CRQ: a certificate of type 'gnutls_x509_crq_t'
+
+     OID: holds an Object Identifier in null terminated string
+
+     BUF: a pointer to a DER encoded data
+
+     SIZEOF_BUF: holds the size of 'buf'
+
+     CRITICAL: should be non-zero if the extension is to be marked as
+     critical
+
+     This function will set an the extension, by the specified OID, in
+     the certificate request.  The extension data should be binary data
+     DER encoded.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -2633,7 +2683,7 @@ gnutls_x509_crq_set_tlsfeatures
      the certificate request.
 
      This function will set the certificate request's X.509 TLS
-     extention from the given structure.
+     extension from the given structure.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -2721,7 +2771,7 @@ gnutls_x509_crt_check_email
 gnutls_x509_crt_check_hostname
 ------------------------------
 
- -- Function: int gnutls_x509_crt_check_hostname (gnutls_x509_crt_t
+ -- Function: unsigned gnutls_x509_crt_check_hostname (gnutls_x509_crt_t
           CERT, const char * HOSTNAME)
      CERT: should contain an gnutls_x509_crt_t type
 
@@ -2739,8 +2789,9 @@ gnutls_x509_crt_check_hostname
 gnutls_x509_crt_check_hostname2
 -------------------------------
 
- -- Function: int gnutls_x509_crt_check_hostname2 (gnutls_x509_crt_t
-          CERT, const char * HOSTNAME, unsigned int FLAGS)
+ -- Function: unsigned gnutls_x509_crt_check_hostname2
+          (gnutls_x509_crt_t CERT, const char * HOSTNAME, unsigned int
+          FLAGS)
      CERT: should contain an gnutls_x509_crt_t type
 
      HOSTNAME: A null terminated string that contains a DNS name
@@ -4766,7 +4817,8 @@ gnutls_x509_crt_set_dn
      ERR: indicates the error position (if any)
 
      This function will set the DN on the provided certificate.  The
-     input string should be plain ASCII or UTF-8 encoded.
+     input string should be plain ASCII or UTF-8 encoded.  On DN parsing
+     error 'GNUTLS_E_PARSING_ERROR' is returned.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -4825,7 +4877,7 @@ gnutls_x509_crt_set_extension_by_oid
           size_t SIZEOF_BUF, unsigned int CRITICAL)
      CRT: a certificate of type 'gnutls_x509_crt_t'
 
-     OID: holds an Object Identified in null terminated string
+     OID: holds an Object Identifier in null terminated string
 
      BUF: a pointer to a DER encoded data
 
@@ -4910,7 +4962,8 @@ gnutls_x509_crt_set_issuer_dn
      ERR: indicates the error position (if any)
 
      This function will set the DN on the provided certificate.  The
-     input string should be plain ASCII or UTF-8 encoded.
+     input string should be plain ASCII or UTF-8 encoded.  On DN parsing
+     error 'GNUTLS_E_PARSING_ERROR' is returned.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -5248,7 +5301,7 @@ gnutls_x509_crt_set_subject_alternative_name
      extension.  This function assumes that data can be expressed as a
      null terminated string.
 
-     The name of the function is unfortunate since it is incosistent
+     The name of the function is unfortunate since it is inconsistent
      with 'gnutls_x509_crt_get_subject_alt_name()' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
@@ -5300,7 +5353,7 @@ gnutls_x509_crt_set_tlsfeatures
      FEATURES: If the function succeeds, the features will be added to
      the certificate.
 
-     This function will set the certificates X.509 TLS extention from
+     This function will set the certificates X.509 TLS extension from
      the given structure.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
@@ -5602,6 +5655,26 @@ gnutls_x509_dn_oid_name
      *Returns:* A null terminated string or NULL otherwise.
 
      *Since:* 3.0
+
+gnutls_x509_dn_set_str
+----------------------
+
+ -- Function: int gnutls_x509_dn_set_str (gnutls_x509_dn_t DN, const
+          char * STR, const char ** ERR)
+     DN: a pointer to DN
+
+     STR: a comma separated DN string (RFC4514)
+
+     ERR: indicates the error position (if any)
+
+     This function will set the DN on the provided DN structure.  The
+     input string should be plain ASCII or UTF-8 encoded.  On DN parsing
+     error 'GNUTLS_E_PARSING_ERROR' is returned.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.3
 
 gnutls_x509_ext_deinit
 ----------------------
@@ -6325,8 +6398,9 @@ gnutls_x509_name_constraints_check
 
      This function will check the provided name against the constraints
      in 'nc' using the RFC5280 rules.  Currently this function is
-     limited to DNS names and emails (of type 'GNUTLS_SAN_DNSNAME' and
-     'GNUTLS_SAN_RFC822NAME' ).
+     limited to DNS names, emails and IP addresses (of type
+     'GNUTLS_SAN_DNSNAME' , 'GNUTLS_SAN_RFC822NAME' and
+     'GNUTLS_SAN_IPADDRESS' ).
 
      *Returns:* zero if the provided name is not acceptable, and
      non-zero otherwise.
@@ -7416,7 +7490,7 @@ gnutls_x509_tlsfeatures_add
      FEATURE: The feature to add
 
      This function will append a feature to the X.509 TLS features
-     extention structure.
+     extension structure.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -7449,7 +7523,7 @@ gnutls_x509_tlsfeatures_deinit
           (gnutls_x509_tlsfeatures_t F)
      F: The TLS features
 
-     This function will deinitialize a X.509 TLS features extention
+     This function will deinitialize a X.509 TLS features extension
      structure
 
      *Since:* 3.5.1
@@ -7467,7 +7541,7 @@ gnutls_x509_tlsfeatures_get
      this variable
 
      This function will get a feature from the X.509 TLS features
-     extention structure.
+     extension structure.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -7481,7 +7555,7 @@ gnutls_x509_tlsfeatures_init
           (gnutls_x509_tlsfeatures_t * F)
      F: The TLS features
 
-     This function will initialize a X.509 TLS features extention
+     This function will initialize a X.509 TLS features extension
      structure
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,

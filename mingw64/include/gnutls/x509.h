@@ -185,10 +185,10 @@ int gnutls_x509_crt_get_dn_by_oid(gnutls_x509_crt_t cert,
 				  const char *oid, unsigned indx,
 				  unsigned int raw_flag, void *buf,
 				  size_t * buf_size);
-int gnutls_x509_crt_check_hostname(gnutls_x509_crt_t cert,
+unsigned gnutls_x509_crt_check_hostname(gnutls_x509_crt_t cert,
 				   const char *hostname);
-int gnutls_x509_crt_check_hostname2(gnutls_x509_crt_t cert,
-	 			    const char *hostname, unsigned int flags);
+unsigned gnutls_x509_crt_check_hostname2(gnutls_x509_crt_t cert,
+					 const char *hostname, unsigned int flags);
 int
 gnutls_x509_crt_check_email(gnutls_x509_crt_t cert,
 			    const char *email, unsigned int flags);
@@ -321,6 +321,7 @@ int gnutls_x509_name_constraints_get_permitted(gnutls_x509_name_constraints_t nc
 int gnutls_x509_name_constraints_get_excluded(gnutls_x509_name_constraints_t nc,
 				     unsigned idx,
 				     unsigned *type, gnutls_datum_t * name);
+int gnutls_x509_cidr_to_rfc5280(const char *cidr, gnutls_datum_t *cidr_rfc5280);
 
 
 #define GNUTLS_CRL_REASON_SUPERSEEDED GNUTLS_CRL_REASON_SUPERSEDED,
@@ -684,6 +685,8 @@ int gnutls_x509_dn_get_rdn_ava(gnutls_x509_dn_t dn, int irdn,
 			       int iava, gnutls_x509_ava_st * ava);
 
 int gnutls_x509_dn_get_str(gnutls_x509_dn_t dn, gnutls_datum_t *str);
+int
+gnutls_x509_dn_set_str(gnutls_x509_dn_t dn, const char *str, const char **err);
 
 int gnutls_x509_dn_init(gnutls_x509_dn_t * dn);
 
@@ -1001,6 +1004,7 @@ int gnutls_x509_crt_set_key_purpose_oid(gnutls_x509_crt_t cert,
  * @GNUTLS_PKCS_PBES2_AES_192: PBES2 AES-192.
  * @GNUTLS_PKCS_PBES2_AES_256: PBES2 AES-256.
  * @GNUTLS_PKCS_PBES2_DES: PBES2 single DES.
+ * @GNUTLS_PKCS_PBES2_DES_MD5: PBES1 with single DES; for compatibility with openssl only.
  *
  * Enumeration of different PKCS encryption flags.
  */
@@ -1014,8 +1018,11 @@ typedef enum gnutls_pkcs_encrypt_flags_t {
 	GNUTLS_PKCS_PBES2_AES_192 = 1<<6,
 	GNUTLS_PKCS_PBES2_AES_256 = 1<<7,
 	GNUTLS_PKCS_NULL_PASSWORD = 1<<8,
-	GNUTLS_PKCS_PBES2_DES = 1<<9
+	GNUTLS_PKCS_PBES2_DES = 1<<9,
+	GNUTLS_PKCS_PBES1_DES_MD5 = 1<<10
 } gnutls_pkcs_encrypt_flags_t;
+
+#define GNUTLS_PKCS_CIPHER_MASK(x) ((x)&(~(GNUTLS_PKCS_NULL_PASSWORD)))
 
 #define GNUTLS_PKCS_USE_PKCS12_3DES GNUTLS_PKCS_PKCS12_3DES
 #define GNUTLS_PKCS_USE_PKCS12_ARCFOUR GNUTLS_PKCS_PKCS12_ARCFOUR
@@ -1237,6 +1244,12 @@ int gnutls_x509_crq_set_version(gnutls_x509_crq_t crq,
 int gnutls_x509_crq_get_version(gnutls_x509_crq_t crq);
 int gnutls_x509_crq_set_key(gnutls_x509_crq_t crq,
 			    gnutls_x509_privkey_t key);
+
+int
+gnutls_x509_crq_set_extension_by_oid(gnutls_x509_crq_t crq,
+				     const char *oid, const void *buf,
+				     size_t sizeof_buf,
+				     unsigned int critical);
 
 int gnutls_x509_crq_set_challenge_password(gnutls_x509_crq_t crq,
 					   const char *pass);

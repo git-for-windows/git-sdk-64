@@ -820,7 +820,7 @@ excluded from the output.</p>
 <dt class="hdlist1">--left-only</dt>
 <dt class="hdlist1">--right-only</dt>
 <dd>
-<p>List only commits on the respective side of a symmetric range,
+<p>List only commits on the respective side of a symmetric difference,
 i.e. only those which would be marked <code>&lt;</code> resp. <code>&gt;</code> by
 <code>--left-right</code>.</p>
 <div class="paragraph">
@@ -850,15 +850,46 @@ and <em>commit1...commit2</em> notations cannot be used).</p>
 <div class="paragraph">
 <p>With <code>--pretty</code> format other than <code>oneline</code> (for obvious reasons),
 this causes the output to have two extra lines of information
-taken from the reflog.  By default, <em>commit@{Nth}</em> notation is
-used in the output.  When the starting commit is specified as
-<em>commit@{now}</em>, output also uses <em>commit@{timestamp}</em> notation
-instead.  Under <code>--pretty=oneline</code>, the commit message is
+taken from the reflog.  The reflog designator in the output may be shown
+as <code>ref@{Nth}</code> (where <code>Nth</code> is the reverse-chronological index in the
+reflog) or as <code>ref@{timestamp}</code> (with the timestamp for that entry),
+depending on a few rules:</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If the starting point is specified as <code>ref@{Nth}</code>, show the index
+format.</p>
+</li>
+<li>
+<p>If the starting point was specified as <code>ref@{now}</code>, show the
+timestamp format.</p>
+</li>
+<li>
+<p>If neither was used, but <code>--date</code> was given on the command line, show
+the timestamp in the format requested by <code>--date</code>.</p>
+</li>
+<li>
+<p>Otherwise, show the index format.</p>
+</li>
+</ol>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>+
+Under <code>--pretty=oneline</code>, the commit message is
 prefixed with this information on the same line.
 This option cannot be combined with <code>--reverse</code>.
 See also <a href="git-reflog.html">git-reflog</a>(1).</p>
 </div>
-</dd>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">--merge</dt>
 <dd>
 <p>After a failed merge, show refs that touch files having a
@@ -1284,8 +1315,9 @@ together.</p>
 </dd>
 <dt class="hdlist1">--reverse</dt>
 <dd>
-<p>Output the commits in reverse order.
-Cannot be combined with <code>--walk-reflogs</code>.</p>
+<p>Output the commits chosen to be shown (see Commit Limiting
+section above) in reverse order. Cannot be combined with
+<code>--walk-reflogs</code>.</p>
 </dd>
 </dl>
 </div>
@@ -1443,8 +1475,8 @@ author&#8217;s). If <code>-local</code> is appended to the format (e.g.,
 <code>iso-local</code>), the user&#8217;s local time zone is used instead.</p>
 <div class="paragraph">
 <p><code>--date=relative</code> shows dates relative to the current time,
-e.g. &#8220;2 hours ago&#8221;. The <code>-local</code> option cannot be used with
-<code>--raw</code> or <code>--relative</code>.</p>
+e.g. &#8220;2 hours ago&#8221;. The <code>-local</code> option has no effect for
+<code>--date=relative</code>.</p>
 </div>
 <div class="paragraph">
 <p><code>--date=local</code> is an alias for <code>--date=default-local</code>.</p>
@@ -1481,7 +1513,20 @@ format, often found in email messages.</p>
 </div>
 <div class="paragraph">
 <p>+
-<code>--date=raw</code> shows the date in the internal raw Git format <code>%s %z</code> format.</p>
+<code>--date=raw</code> shows the date as seconds since the epoch (1970-01-01
+00:00:00 UTC), followed by a space, and then the timezone as an offset
+from UTC (a <code>+</code> or <code>-</code> with four digits; the first two are hours, and
+the second two are minutes). I.e., as if the timestamp were formatted
+with <code>strftime("%s %z")</code>).
+Note that the <code>-local</code> option does not affect the seconds-since-epoch
+value (which is always measured in UTC), but does switch the accompanying
+timezone value.</p>
+</div>
+<div class="paragraph">
+<p>+
+<code>--date=unix</code> shows the date as a Unix epoch timestamp (seconds since
+1970).  As with <code>--raw</code>, this is always in UTC and therefore <code>-local</code>
+has no effect.</p>
 </div>
 <div class="paragraph">
 <p>+
@@ -1519,7 +1564,7 @@ Also enables parent rewriting, see <em>History Simplification</em> below.</p>
 </dd>
 <dt class="hdlist1">--left-right</dt>
 <dd>
-<p>Mark which side of a symmetric diff a commit is reachable from.
+<p>Mark which side of a symmetric difference a commit is reachable from.
 Commits from the left side are prefixed with <code>&lt;</code> and those from
 the right with <code>&gt;</code>.  If combined with <code>--boundary</code>, those
 commits are prefixed with <code>-</code>.</p>
@@ -1907,10 +1952,16 @@ or <a href="git-blame.html">git-blame</a>(1))</p>
 <p><em>%GK</em>: show the key used to sign a signed commit</p>
 </li>
 <li>
-<p><em>%gD</em>: reflog selector, e.g., <code>refs/stash@{1}</code></p>
+<p><em>%gD</em>: reflog selector, e.g., <code>refs/stash@{1}</code> or
+<code>refs/stash@{2 minutes ago</code>}; the format follows the rules described
+for the <code>-g</code> option. The portion before the <code>@</code> is the refname as
+given on the command line (so <code>git log -g refs/heads/master</code> would
+yield <code>refs/heads/master@{0}</code>).</p>
 </li>
 <li>
-<p><em>%gd</em>: shortened reflog selector, e.g., <code>stash@{1}</code></p>
+<p><em>%gd</em>: shortened reflog selector; same as <code>%gD</code>, but the refname
+portion is shortened for human readability (so <code>refs/heads/master</code>
+becomes just <code>master</code>).</p>
 </li>
 <li>
 <p><em>%gn</em>: reflog identity name</p>
@@ -1942,7 +1993,8 @@ or <a href="git-blame.html">git-blame</a>(1))</p>
 <p><em>%Creset</em>: reset color</p>
 </li>
 <li>
-<p><em>%C(&#8230;&#8203;)</em>: color specification, as described in color.branch.* config option;
+<p><em>%C(&#8230;&#8203;)</em>: color specification, as described under Values in the
+"CONFIGURATION FILE" section of <a href="git-config.html">git-config</a>(1);
 adding <code>auto,</code> at the beginning will emit color only when colors are
 enabled for log output (by <code>color.diff</code>, <code>color.ui</code>, or <code>--color</code>, and
 respecting the <code>auto</code> settings of the former if we are going to a
@@ -1950,7 +2002,7 @@ terminal). <code>auto</code> alone (i.e. <code>%C(auto)</code>) will turn on aut
 on the next placeholders until the color is switched again.</p>
 </li>
 <li>
-<p><em>%m</em>: left, right or boundary mark</p>
+<p><em>%m</em>: left (<code>&lt;</code>), right (<code>&gt;</code>) or boundary (<code>-</code>) mark</p>
 </li>
 <li>
 <p><em>%n</em>: newline</p>
@@ -3137,6 +3189,11 @@ initial commit as a big creation event.  Any root commits in
 <code>git log -p</code> output would be shown without a diff attached.
 The default is <code>true</code>.</p>
 </dd>
+<dt class="hdlist1">log.showSignature</dt>
+<dd>
+<p>If <code>true</code>, <code>git log</code> and related commands will act as if the
+<code>--show-signature</code> option was passed to them.</p>
+</dd>
 <dt class="hdlist1">mailmap.*</dt>
 <dd>
 <p>See <a href="git-shortlog.html">git-shortlog</a>(1).</p>
@@ -3173,7 +3230,7 @@ and overridden by the <code>--notes=&lt;ref&gt;</code> option.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-08-09 18:10:45 W. Europe Daylight Time
+Last updated 2016-11-02 12:15:33 W. Europe Standard Time
 </div>
 </div>
 </body>

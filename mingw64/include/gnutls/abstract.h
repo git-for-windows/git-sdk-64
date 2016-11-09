@@ -476,8 +476,8 @@ int gnutls_pcert_import_x509(gnutls_pcert_st * pcert,
 			     gnutls_x509_crt_t crt, unsigned int flags);
 
 int gnutls_pcert_import_x509_list(gnutls_pcert_st * pcert,
-			     	  gnutls_x509_crt_t *crt, unsigned *ncrt,
-			     	  unsigned int flags);
+				  gnutls_x509_crt_t *crt, unsigned *ncrt,
+				  unsigned int flags);
 
 int gnutls_pcert_export_x509(gnutls_pcert_st * pcert,
                              gnutls_x509_crt_t * crt);

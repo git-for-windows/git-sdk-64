@@ -263,7 +263,7 @@ extern "C" {
 #define EDOM 33
 #define ERANGE 34
 
-#ifndef __STRICT_ANSI__
+#if !defined(__STRICT_ANSI__) || defined(_POSIX_C_SOURCE) || defined(_POSIX_SOURCE) || defined(_XOPEN_SOURCE) || defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 
 #ifndef _COMPLEX_DEFINED
 #define _COMPLEX_DEFINED
@@ -428,7 +428,7 @@ typedef long double double_t;
               FP_INFINITE : FP_NAN);
     return FP_NORMAL;
 #elif defined(__arm__) || defined(_ARM_)
-    __fpclassify(x);
+    return __fpclassify(x);
 #elif defined(__i386__) || defined(_X86_)
     unsigned short sw;
     __asm__ __volatile__ ("fxam; fstsw %%ax;" : "=a" (sw): "t" (x));

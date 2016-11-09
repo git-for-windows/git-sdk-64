@@ -11,14 +11,11 @@ proc do_windows_shortcut {} {
 		if {[file extension $fn] ne {.lnk}} {
 			set fn ${fn}.lnk
 		}
-		# Use /cmd/git-gui.exe if available
-		set normalized [file normalize $::argv0]
-		regsub "/mingw../libexec/git-core/git-gui$" \
-			$normalized "/cmd/git-gui.exe" cmdLine
-		if {$cmdLine != $normalized && [file exists $cmdLine]} {
-			set cmdLine [list [file nativename $cmdLine]]
-		} else {
-			set cmdLine [list [info nameofexecutable] $normalized]
+		# Use git-gui.exe if available (ie: git-for-windows)
+		set cmdLine [auto_execok git-gui.exe]
+		if {$cmdLine eq {}} {
+			set cmdLine [list [info nameofexecutable] \
+							 [file normalize $::argv0]]
 		}
 		if {[catch {
 				win32_create_lnk $fn $cmdLine \

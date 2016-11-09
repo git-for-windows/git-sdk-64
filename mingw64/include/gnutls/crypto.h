@@ -153,17 +153,17 @@ typedef int (*gnutls_cipher_auth_func) (void *ctx, const void *data, size_t data
 typedef void (*gnutls_cipher_tag_func) (void *ctx, void *tag, size_t tagsize);
 
 typedef int (*gnutls_cipher_aead_encrypt_func) (void *ctx,
- 			     const void *nonce, size_t noncesize,
-			     const void *auth, size_t authsize,
-			     size_t tag_size,
-			     const void *plain, size_t plainsize,
-			     void *encr, size_t encrsize);
+			const void *nonce, size_t noncesize,
+			const void *auth, size_t authsize,
+			size_t tag_size,
+			const void *plain, size_t plainsize,
+			void *encr, size_t encrsize);
 typedef int (*gnutls_cipher_aead_decrypt_func) (void *ctx,
- 			     const void *nonce, size_t noncesize,
-			     const void *auth, size_t authsize,
-			     size_t tag_size,
-			     const void *encr, size_t encrsize,
-			     void *plain, size_t plainsize);
+			const void *nonce, size_t noncesize,
+			const void *auth, size_t authsize,
+			size_t tag_size,
+			const void *encr, size_t encrsize,
+			void *plain, size_t plainsize);
 typedef void (*gnutls_cipher_deinit_func) (void *ctx);
 
 int

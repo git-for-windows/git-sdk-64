@@ -26,9 +26,9 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	2.7
-srcdir=		../Python-2.7.11
-VPATH=		../Python-2.7.11
-abs_srcdir=	/scripts/mingw-w64-python2/src/build-x86_64/../Python-2.7.11
+srcdir=		../Python-2.7.12
+VPATH=		../Python-2.7.12
+abs_srcdir=	/scripts/mingw-w64-python2/src/build-x86_64/../Python-2.7.12
 abs_builddir=	/scripts/mingw-w64-python2/src/build-x86_64
 build=		x86_64-w64-mingw32
 host=		x86_64-w64-mingw32
@@ -108,9 +108,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.11
-VPATH_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.11
-abs_srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.11
+srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.12
+VPATH_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.12
+abs_srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.12
 abs_builddir_b2h=	C:/repo/mingw-w64-python2/src/build-x86_64
 prefix_b2h=		C:/building/msys64/mingw64
 
@@ -203,12 +203,13 @@ DLINCLDIR=	.
 DYNLOADFILE=	dynload_win.o
 MACHDEP_OBJS=	 PC/dl_nt.o PC/import_nt.o
 LIBOBJDIR=	Python/
-LIBOBJS=	 ${LIBOBJDIR}fileblocks$U.o
+LIBOBJS=	
 UNICODE_OBJS=   Objects/unicodeobject.o Objects/unicodectype.o
 
 PYTHON=		python$(EXE)
 BUILDPYTHON=	python$(BUILDEXE)
 
+cross_compiling=no
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 _PYTHON_HOST_PLATFORM=
 HOST_GNU_TYPE=  x86_64-w64-mingw32
@@ -218,7 +219,14 @@ TCLTK_INCLUDES=
 TCLTK_LIBS=	
 
 # The task to run while instrument when building the profile-opt target
-PROFILE_TASK=-m test.regrtest --pgo
+# We exclude unittests with -x that take a rediculious amount of time to
+# run in the instrumented training build or do not provide much value.
+PROFILE_TASK=-m test.regrtest --pgo -x test_asyncore test_gdb test_multiprocessing test_subprocess
+
+# report files for gcov / lcov coverage report
+COVERAGE_INFO=	$(abs_builddir)/coverage.info
+COVERAGE_REPORT=$(abs_builddir)/lcov-report
+COVERAGE_REPORT_OPTIONS=--no-branch-coverage --title "CPython lcov report"
 
 # === Definitions added by makesetup ===
 
@@ -451,7 +459,7 @@ build_all:	$(BUILDPYTHON) oldsharedmods sharedmods gdbhooks
 
 # Compile a binary with profile guided optimization.
 profile-opt:
-	@if [ $(LLVM_PROF_ERR) == yes ]; then \
+	@if [ $(LLVM_PROF_ERR) = yes ]; then \
 		echo "Error: Cannot perform PGO build because llvm-profdata was not found in PATH" ;\
 		echo "Please add it to PATH and run ./configure again" ;\
 		exit 1;\
@@ -470,7 +478,7 @@ profile-opt:
 	$(MAKE) profile-removal
 
 build_all_generate_profile:
-	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_GEN_FLAG)" LDFLAGS="$(LDFLAGS) $(PGO_PROF_GEN_FLAG)" LIBS="$(LIBS)"
+	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_GEN_FLAG) " LDFLAGS="$(LDFLAGS) $(PGO_PROF_GEN_FLAG) " LIBS="$(LIBS)"
 
 run_profile_task:
 	: # FIXME: can't run for a cross build
@@ -480,12 +488,47 @@ build_all_merge_profile:
 	$(LLVM_PROF_MERGER)
 
 build_all_use_profile:
-	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_USE_FLAG)"
+	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_USE_FLAG) " LDFLAGS="$(LDFLAGS) "
 
+# Compile and run with gcov
+.PHONY=coverage coverage-lcov coverage-report
 coverage:
 	@echo "Building with support for coverage checking:"
-	$(MAKE) clean
+	$(MAKE) clean profile-removal
 	$(MAKE) all CFLAGS="$(CFLAGS) -O0 -pg -fprofile-arcs -ftest-coverage" LIBS="$(LIBS) -lgcov"
+
+coverage-lcov:
+	@echo "Creating Coverage HTML report with LCOV:"
+	@rm -f $(COVERAGE_INFO)
+	@rm -rf $(COVERAGE_REPORT)
+	@lcov --capture --directory $(abs_builddir) \
+	    --base-directory $(realpath $(abs_builddir)) \
+	    --path $(realpath $(abs_srcdir)) \
+	    --output-file $(COVERAGE_INFO)
+	: # remove 3rd party modules and system headers
+	@lcov --remove $(COVERAGE_INFO) \
+	    '*/Modules/_ctypes/libffi*/*' \
+	    '*/Modules/expat/*' \
+	    '*/Modules/zlib/*' \
+	    '*/Include/*' \
+	    '/usr/include/*' \
+	    '/usr/local/include/*' \
+	    --output-file $(COVERAGE_INFO)
+	@genhtml $(COVERAGE_INFO) --output-directory $(COVERAGE_REPORT) \
+	    $(COVERAGE_REPORT_OPTIONS)
+	@echo
+	@echo "lcov report at $(COVERAGE_REPORT)/index.html"
+	@echo
+
+coverage-report:
+	: # force rebuilding of parser
+	@touch $(GRAMMAR_INPUT)
+	: # build with coverage info
+	$(MAKE) coverage
+	: # run tests, ignore failures
+	$(TESTPYTHON) $(TESTPROG) $(TESTOPTS) || true
+	: # build lcov report
+	$(MAKE) coverage-lcov
 
 
 # Build the interpreter
@@ -513,11 +556,15 @@ pybuilddir.txt: $(BUILDPYTHON)
 		exit 1 ; \
 	fi
 
+# This is shared by the math and cmath modules
+Modules/_math.o: Modules/_math.c Modules/_math.h
+	$(CC) -c $(CCSHARED) $(PY_CFLAGS) -o $@ $<
+
 # Build the shared modules
 # Under GNU make, MAKEFLAGS are sorted and normalized; the 's' for
 # -s, --silent or --quiet is always the first char.
 # Under BSD make, MAKEFLAGS might be " -s -v x=y".
-sharedmods: $(BUILDPYTHON) pybuilddir.txt
+sharedmods: $(BUILDPYTHON) pybuilddir.txt Modules/_math.o
 	@case "$$MAKEFLAGS" in \
 	    *\ -s*|s*) quiet="-q";; \
 	    *) quiet="";; \
@@ -666,13 +713,22 @@ Modules/grpmodule.o: $(srcdir)/Modules/grpmodule.c $(srcdir)/Modules/posixmodule
 
 Modules/pwdmodule.o: $(srcdir)/Modules/pwdmodule.c $(srcdir)/Modules/posixmodule.h
 
-$(GRAMMAR_H): $(GRAMMAR_INPUT) $(PGENSRCS)
-		@$(MKDIR_P) Include
-		$(MAKE) $(PGEN)
-		$(PGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C)
-$(GRAMMAR_C): $(GRAMMAR_H) $(GRAMMAR_INPUT) $(PGENSRCS)
-		$(MAKE) $(GRAMMAR_H)
-		touch $(GRAMMAR_C)
+$(GRAMMAR_H): $(GRAMMAR_INPUT) $(PGEN)
+	@$(MKDIR_P) Include
+	# Avoid copying the file onto itself for an in-tree build
+	if test "$(cross_compiling)" != "yes"; then \
+		$(PGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C); \
+	else \
+		cp $(srcdir)/Include/graminit.h $(GRAMMAR_H).tmp; \
+		mv $(GRAMMAR_H).tmp $(GRAMMAR_H); \
+	fi
+$(GRAMMAR_C): $(GRAMMAR_H)
+	if test "$(cross_compiling)" != "yes"; then \
+		touch $(GRAMMAR_C); \
+	else \
+		cp $(srcdir)/Python/graminit.c $(GRAMMAR_C).tmp; \
+		mv $(GRAMMAR_C).tmp $(GRAMMAR_C); \
+	fi
 
 $(PGEN):	$(PGENOBJS)
 		$(CC) $(OPT) $(LDFLAGS) $(PGENOBJS) $(LIBS) -o $(PGEN)
@@ -947,6 +1003,10 @@ $(DESTSHARED):
 #  $(PYTHON) -> python2 -> python$(VERSION))
 # Also create equivalent chains for other installed files
 bininstall:	altbininstall
+	if test ! -d $(DESTDIR)$(LIBPC); then \
+		echo "Creating directory $(LIBPC)"; \
+		$(INSTALL) -d -m $(DIRMODE) $(DESTDIR)$(LIBPC); \
+	fi
 	-if test -f $(DESTDIR)$(BINDIR)/$(PYTHON) -o -h $(DESTDIR)$(BINDIR)/$(PYTHON); \
 	then rm -f $(DESTDIR)$(BINDIR)/$(PYTHON); \
 	else true; \
@@ -1264,7 +1324,7 @@ sharedinstall: sharedmods
 # the Makefile in Mac
 #
 #
-# This target is here for backward compatiblity, previous versions of Python
+# This target is here for backward compatibility, previous versions of Python
 # hadn't integrated framework installation in the normal install process.
 frameworkinstall: install
 
@@ -1396,6 +1456,7 @@ clean: pycremoval
 profile-removal:
 	find . -name '*.gc??' -exec rm -f {} ';'
 	find . -name '*.profclang?' -exec rm -f {} ';'
+	find . -name '*.dyn' -exec rm -f {} ';'
 
 clobber: clean profile-removal
 	-rm -f $(BUILDPYTHON) $(PGEN) $(LIBRARY) $(LDLIBRARY) $(DLLLIBRARY) \

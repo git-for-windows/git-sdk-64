@@ -152,27 +152,34 @@ integer::
        1024", "by 1024x1024", etc.
 
 color::
-       The value for a variables that takes a color is a list of
-       colors (at most two) and attributes (at most one), separated
-       by spaces.  The colors accepted are `normal`, `black`,
-       `red`, `green`, `yellow`, `blue`, `magenta`, `cyan` and
-       `white`; the attributes are `bold`, `dim`, `ul`, `blink` and
-       `reverse`.  The first color given is the foreground; the
-       second is the background.  The position of the attribute, if
-       any, doesn't matter. Attributes may be turned off specifically
-       by prefixing them with `no` (e.g., `noreverse`, `noul`, etc).
+       The value for a variable that takes a color is a list of
+       colors (at most two, one for foreground and one for background)
+       and attributes (as many as you want), separated by spaces.
 +
-Colors (foreground and background) may also be given as numbers between
-0 and 255; these use ANSI 256-color mode (but note that not all
-terminals may support this).  If your terminal supports it, you may also
-specify 24-bit RGB values as hex, like `#ff0ab3`.
+The basic colors accepted are `normal`, `black`, `red`, `green`, `yellow`,
+`blue`, `magenta`, `cyan` and `white`.  The first color given is the
+foreground; the second is the background.
 +
-The attributes are meant to be reset at the beginning of each item
-in the colored output, so setting color.decorate.branch to `black`
-will paint that branch name in a plain `black`, even if the previous
-thing on the same output line (e.g. opening parenthesis before the
-list of branch names in `log --decorate` output) is set to be
-painted with `bold` or some other attribute.
+Colors may also be given as numbers between 0 and 255; these use ANSI
+256-color mode (but note that not all terminals may support this).  If
+your terminal supports it, you may also specify 24-bit RGB values as
+hex, like `#ff0ab3`.
++
+The accepted attributes are `bold`, `dim`, `ul`, `blink`, `reverse`,
+`italic`, and `strike` (for crossed-out or "strikethrough" letters).
+The position of any attributes with respect to the colors
+(before, after, or in between), doesn't matter. Specific attributes may
+be turned off by prefixing them with `no` or `no-` (e.g., `noreverse`,
+`no-ul`, etc).
++
+For git's pre-defined color slots, the attributes are meant to be reset
+at the beginning of each item in the colored output. So setting
+`color.decorate.branch` to `black` will paint that branch name in a
+plain `black`, even if the previous thing on the same output line (e.g.
+opening parenthesis before the list of branch names in `log --decorate`
+output) is set to be painted with `bold` or some other attribute.
+However, custom log formats may do more complicated and layered
+coloring, and the negated forms may be useful there.
 
 pathname::
 	A variable that takes a pathname value can be given a
@@ -407,13 +414,11 @@ file with mixed line endings would be reported by the `core.safecrlf`
 mechanism.
 
 core.autocrlf::
-	Setting this variable to "true" is almost the same as setting
-	the `text` attribute to "auto" on all files except that text
-	files are not guaranteed to be normalized: files that contain
-	`CRLF` in the repository will not be touched.  Use this
-	setting if you want to have `CRLF` line endings in your
-	working directory even though the repository does not have
-	normalized line endings.  This variable can be set to 'input',
+	Setting this variable to "true" is the same as setting
+	the `text` attribute to "auto" on all files and core.eol to "crlf".
+	Set to true if you want to have `CRLF` line endings in your
+	working directory and the repository has LF line endings.
+	This variable can be set to 'input',
 	in which case no output conversion is performed.
 
 core.symlinks::
@@ -444,6 +449,13 @@ The special string `none` can be used as the proxy command to
 specify that no proxy be used for a given domain pattern.
 This is useful for excluding servers inside a firewall from
 proxy use, while defaulting to a common proxy for external domains.
+
+core.sshCommand::
+	If this variable is set, `git fetch` and `git push` will
+	use the specified command instead of `ssh` when they need to
+	connect to a remote system. The command is in the same form as
+	the `GIT_SSH_COMMAND` environment variable and is overridden
+	when the environment variable is set.
 
 core.ignoreStat::
 	If true, Git will avoid using lstat() calls to detect if files have
@@ -956,7 +968,8 @@ color.branch::
 	A boolean to enable/disable color in the output of
 	linkgit:git-branch[1]. May be set to `always`,
 	`false` (or `never`) or `auto` (or `true`), in which case colors are used
-	only when the output is to a terminal. Defaults to false.
+	only when the output is to a terminal. If unset, then the
+	value of `color.ui` is used (`auto` by default).
 
 color.branch.<slot>::
 	Use customized color for branch coloration. `<slot>` is one of
@@ -971,7 +984,8 @@ color.diff::
 	linkgit:git-log[1], and linkgit:git-show[1] will use color
 	for all patches.  If it is set to `true` or `auto`, those
 	commands will only use color when output is to the terminal.
-	Defaults to false.
+	If unset, then the value of `color.ui` is used (`auto` by
+	default).
 +
 This does not affect linkgit:git-format-patch[1] or the
 'git-diff-{asterisk}' plumbing commands.  Can be overridden on the
@@ -994,7 +1008,8 @@ color.decorate.<slot>::
 color.grep::
 	When set to `always`, always highlight matches.  When `false` (or
 	`never`), never.  When set to `true` or `auto`, use color only
-	when the output is written to the terminal.  Defaults to `false`.
+	when the output is written to the terminal.  If unset, then the
+	value of `color.ui` is used (`auto` by default).
 
 color.grep.<slot>::
 	Use customized color for grep colorization.  `<slot>` specifies which
@@ -1027,7 +1042,8 @@ color.interactive::
 	and displays (such as those used by "git-add --interactive" and
 	"git-clean --interactive"). When false (or `never`), never.
 	When set to `true` or `auto`, use colors only when the output is
-	to the terminal. Defaults to false.
+	to the terminal. If unset, then the value of `color.ui` is
+	used (`auto` by default).
 
 color.interactive.<slot>::
 	Use customized color for 'git add --interactive' and 'git clean
@@ -1043,13 +1059,15 @@ color.showBranch::
 	A boolean to enable/disable color in the output of
 	linkgit:git-show-branch[1]. May be set to `always`,
 	`false` (or `never`) or `auto` (or `true`), in which case colors are used
-	only when the output is to a terminal. Defaults to false.
+	only when the output is to a terminal. If unset, then the
+	value of `color.ui` is used (`auto` by default).
 
 color.status::
 	A boolean to enable/disable color in the output of
 	linkgit:git-status[1]. May be set to `always`,
 	`false` (or `never`) or `auto` (or `true`), in which case colors are used
-	only when the output is to a terminal. Defaults to false.
+	only when the output is to a terminal. If unset, then the
+	value of `color.ui` is used (`auto` by default).
 
 color.status.<slot>::
 	Use customized color for status colorization. `<slot>` is
@@ -1204,6 +1222,15 @@ difftool.<tool>.cmd::
 difftool.prompt::
 	Prompt before each invocation of the diff tool.
 
+fastimport.unpackLimit::
+	If the number of objects imported by linkgit:git-fast-import[1]
+	is below this limit, then the objects will be unpacked into
+	loose object files.  However if the number of imported objects
+	equals or exceeds this limit then the pack will be stored as a
+	pack.  Storing the pack from a fast-import can make the import
+	operation complete faster, especially on slow filesystems.  If
+	not set, the value of `transfer.unpackLimit` is used instead.
+
 fetch.recurseSubmodules::
 	This option can be either set to a boolean value or to 'on-demand'.
 	Setting it to a boolean changes the behavior of fetch and pull to
@@ -1235,12 +1262,27 @@ fetch.prune::
 	If true, fetch will automatically behave as if the `--prune`
 	option was given on the command line.  See also `remote.<name>.prune`.
 
+fetch.output::
+	Control how ref update status is printed. Valid values are
+	`full` and `compact`. Default value is `full`. See section
+	OUTPUT in linkgit:git-fetch[1] for detail.
+
 format.attach::
 	Enable multipart/mixed attachments as the default for
 	'format-patch'.  The value can also be a double quoted string
 	which will enable attachments as the default and set the
 	value as the boundary.  See the --attach option in
 	linkgit:git-format-patch[1].
+
+format.from::
+	Provides the default value for the `--from` option to format-patch.
+	Accepts a boolean value, or a name and email address.  If false,
+	format-patch defaults to `--no-from`, using commit authors directly in
+	the "From:" field of patch mails.  If true, format-patch defaults to
+	`--from`, using your committer identity in the "From:" field of patch
+	mails and including a "From:" field in the body of the patch mail if
+	different.  If set to a non-boolean value, format-patch uses that
+	value instead of your committer identity.  Defaults to false.
 
 format.numbered::
 	A boolean which can enable or disable sequence numbers in patch
@@ -1345,7 +1387,7 @@ fsck.skipList::
 gc.aggressiveDepth::
 	The depth parameter used in the delta compression
 	algorithm used by 'git gc --aggressive'.  This defaults
-	to 250.
+	to 50.
 
 gc.aggressiveWindow::
 	The window size parameter used in the delta compression
@@ -2416,8 +2458,13 @@ rebase.instructionFormat
 
 receive.advertiseAtomic::
 	By default, git-receive-pack will advertise the atomic push
-	capability to its clients. If you don't want to this capability
-	to be advertised, set this variable to false.
+	capability to its clients. If you don't want to advertise this
+	capability, set this variable to false.
+
+receive.advertisePushOptions::
+	By default, git-receive-pack will advertise the push options
+	capability to its clients. If you don't want to advertise this
+	capability, set this variable to false.
 
 receive.autogc::
 	By default, git-receive-pack will run "git-gc --auto" after
@@ -2471,6 +2518,15 @@ receive.fsck.skipList::
 	should be accepted despite early commits containing errors that
 	can be safely ignored such as invalid committer email addresses.
 	Note: corrupt objects cannot be skipped with this setting.
+
+receive.keepAlive::
+	After receiving the pack from the client, `receive-pack` may
+	produce no output (if `--quiet` was specified) while processing
+	the pack, causing some networks to drop the TCP connection.
+	With this option set, if `receive-pack` does not transmit
+	any data in this phase for `receive.keepAlive` seconds, it will
+	send a short keepalive packet.  The default is 5 seconds; set
+	to 0 to disable keepalives entirely.
 
 receive.unpackLimit::
 	If the number of objects received in a push is below this
@@ -2764,12 +2820,13 @@ stash.showStat::
 	option will show diffstat of the stash.  Defaults to true.
 	See description of 'show' command in linkgit:git-stash[1].
 
-submodule.<name>.path::
 submodule.<name>.url::
-	The path within this project and URL for a submodule. These
-	variables are initially populated by 'git submodule init'. See
-	linkgit:git-submodule[1] and linkgit:gitmodules[5] for
-	details.
+	The URL for a submodule. This variable is copied from the .gitmodules
+	file to the git config via 'git submodule init'. The user can change
+	the configured URL before obtaining the submodule via 'git submodule
+	update'. After obtaining the submodule, the presence of this variable
+	is used as a sign whether the submodule is of interest to git commands.
+	See linkgit:git-submodule[1] and linkgit:gitmodules[5] for details.
 
 submodule.<name>.update::
 	The default update procedure for a submodule. This variable
@@ -2897,6 +2954,21 @@ uploadpack.keepAlive::
 	`upload-pack` to send an empty keepalive packet every
 	`uploadpack.keepAlive` seconds. Setting this option to 0
 	disables keepalive packets entirely. The default is 5 seconds.
+
+uploadpack.packObjectsHook::
+	If this option is set, when `upload-pack` would run
+	`git pack-objects` to create a packfile for a client, it will
+	run this shell command instead.  The `pack-objects` command and
+	arguments it _would_ have run (including the `git pack-objects`
+	at the beginning) are appended to the shell command. The stdin
+	and stdout of the hook are treated as if `pack-objects` itself
+	was run. I.e., `upload-pack` will feed input intended for
+	`pack-objects` to the hook, and expects a completed packfile on
+	stdout.
++
+Note that this configuration variable is ignored if it is seen in the
+repository-level config (this is a safety measure against fetching from
+untrusted repositories).
 
 url.<base>.insteadOf::
 	Any URL that starts with this value will be rewritten to
