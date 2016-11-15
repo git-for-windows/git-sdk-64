@@ -1,0 +1,343 @@
+.\" -*- mode: nroff; coding: iso-latin-1; -*-
+.\"
+.\" refer.tmac
+.\"
+.\" This is an interface to `refer', originally part of `s.tmac'.
+.\"
+.\" Copyright (C) 2011-2014  Free Software Foundation, Inc.
+.\"   Written by Werner Lemberg (wl@gnu.org)
+.\"
+.\" This file is part of groff.
+.\"
+.\" groff is free software; you can redistribute it and/or modify it under
+.\" the terms of the GNU General Public License as published by the Free
+.\" Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" groff is distributed in the hope that it will be useful, but WITHOUT ANY
+.\" WARRANTY; without even the implied warranty of MERCHANTABILITY or
+.\" FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+.\" for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program. If not, see <http://www.gnu.org/licenses/>.
+.\"
+.\" Please send comments to groff@gnu.org.
+.
+.
+.\" The following macros must be defined:
+.\"
+.\"   ref*error                     -- print an error message (in arg1)
+.\"
+.\"   ref*text-label-start          -- start a reference in text (formatted
+.\"                                    reference number in arg1)
+.\"   ref*text-label-end            -- end a reference in text
+.\"
+.\"   ref*biblio-item-start         -- a reference item with label (in arg1)
+.\"                                    in the bibliography block
+.\"   ref*biblio-item-start-nolabel -- a reference item without label in the
+.\"                                    bibliography block
+.\"   ref*biblio-item-end           -- end a reference item in the
+.\"                                    bibliography block
+.\"
+.\" The following macros are optional:
+.\"
+.\"   ref*item-start-hook           -- stuff appended to the ]- macro
+.\"   ref*item-end-hook             -- stuff prepended to the ][ macro
+.\"   ref*biblio-start-hook         -- stuff appended to the ]< macro
+.\"   ref*biblio-end-hook           -- stuff appended to the ]> macro
+.\"
+.\" The following strings must be defined:
+.\"
+.\"   ref*refnum-start              -- start reference number formatting in
+.\"                                    footnote
+.\"   ref*refnum-end                -- end reference number formatting in
+.\"                                    footnote
+.\"
+.\"   [.                            -- start reference number in text
+.\"                                    (directly inserted by `refer')
+.\"   .]                            -- end reference number in text (directly
+.\"                                    inserted by `refer')
+.\"
+.\" Here is the specification of the five possible reference styles
+.\" provided by `refer'.  The example entries are taken from the ms
+.\" macro package
+.\"
+.\"   ref*spec!0  Q A T S V N P I C D O      -- other
+.\"   ref*spec!1  Q A T J S V N P I C D O    -- journal article
+.\"   ref*spec!2  Q A T S V P I C D O        -- book
+.\"   ref*spec!3  Q A T B E S V P I C D O    -- article within book
+.\"   ref*spec!4  Q A T R G P I C D O        -- technical report
+.\"
+.\" Now the setup for the formatting of reference entries.  The given example
+.\" entries for the various strings are taken from the ms macro package.
+.\"
+.\" Each string defines five arguments which are passed to a macro, with the
+.\" meaning as below.  Please refer to the man page of `refer' for more
+.\" details on the fields.  To allow fine-tuning, two levels are implemented:
+.\" For the refer field X and style Y the string `ref*spec!X:Y' is looked up.
+.\" If it doesn't exist, the string `ref*spec!X' is used instead.
+.\"
+.\"   arg 1  the punctuation character to use to separate this field from the
+.\"          previous field
+.\"   arg 2  a string to insert after the punctuation character of the
+.\"          previous field (normally a space)
+.\"   arg 3  a string with which to prefix this field
+.\"   arg 4  a string with which to postfix this field
+.\"   arg 5  a string to add after the punctuation character supplied by the
+.\"          next field
+.\"
+.\"                  1  2   3        4     5
+.\"   ----------------------------------------------------------------------
+.\"   ref*spec!A     ,  " "                       -- author name
+.\"   ref*spec!B     "" " " "in \fI" ""    "\fP"  -- book title of article
+.\"   ref*spec!D     "" " " "("      ")"          -- date of publication
+.\"   ref*spec!E     ,  " " "ed. "                -- editor
+.\"   ref*spec!G     "" " " "("      ")"          -- US Gov. ordering number
+.\"   ref*spec!J     ,  " " "\fI"    ""    "\fP"  -- journal name
+.\"   ref*spec!N     "" "(" ""       ")"          -- issue number
+.\"   ref*spec!O     .  " "                       -- other information
+.\"   ref*spec!P     ,  " " "p.\~"                -- page
+.\"   ref*spec!PP    ,  " " "pp.\~"               -- page range
+.\"   ref*spec!T     ,  " " "\\*Q"   ""    "\\*U" -- journal title
+.\"   ref*spec!T:0   ,  " " "\fI"    ""    "\fP"  -- book title (other)
+.\"   ref*spec!T:2   ,  " " "\fI"    ""    "\fP"  -- book title (book)
+.\"   ref*spec!V     "" " " "\fB"    "\fR"        -- volume number
+.\"
+.\"   ref*spec!dflt  ,  " "                       -- all other entries
+.
+.\" start of reference
+.de ]-
+.	rm [A [B [C [D [E [G [I [J [N [O [P [Q [R [S [T [V
+.	rm ref*string
+.	if d ref*item-start-hook \
+.		ref*item-start-hook
+..
+.
+.
+.\" end of reference
+.de ][
+.	if d ref*item-end-hook \
+.		ref*item-end-hook
+.	ie d ref*spec!\\$1 \
+.		ref*build \\$1 \\*[ref*spec!\\$1]
+.	el \{\
+.		ref*error "unknown reference type `\\$1'"
+.		ref*build 0 \\*[ref*spec!0]
+.	\}
+.	ref*print
+.	rm ref*string
+.	rm [F
+..
+.
+.
+.\" period before reference
+.ds <. .\"
+.
+.\" period after reference
+.ds >. \" empty
+.
+.\" comma before reference
+.ds <, ,\"
+.
+.\" comma after reference
+.ds >, \" empty
+.
+.
+.\" start collected references
+.de ]<
+.	als ref*print ref*end-print
+.	if d ref*biblio-start-hook \
+.		ref*biblio-start-hook
+..
+.
+.
+.\" end collected references
+.de ]>
+.	als ref*print ref*normal-print
+.	if d ref*biblio-end-hook \
+.		ref*biblio-end-hook
+..
+.
+.
+.de ref*normal-print
+.	ie d [F \
+.		ref*text-label-start \
+                  "\\*[ref*refnum-start]\\*([F\\*[ref*refnum-end]"
+.	el \
+.		ref*text-label-start \&
+.	nop \\*[ref*string]
+.	ref*text-label-end
+..
+.
+.
+.de ref*end-print
+.	ie d [F \
+.		ref*biblio-item-start "\\*([F."
+.	el \
+.		ref*biblio-item-start-nolabel
+.	nop \\*[ref*string]
+.	ref*biblio-item-end
+..
+.
+.
+.als ref*print ref*normal-print
+.
+.de ref*build
+.	rm ref*string ref*post-punct
+.	nr ref*suppress-period 1
+.	nr ref*style \\$1
+.	shift
+.	while \\n[.$] \{\
+.		if d [\\$1 \{\
+.			ie d ref*add-\\$1 \
+.				ref*add-\\$1 \\n[ref*style]
+.			el \
+.				ref*add-dflt \\$1 \\n[ref*style]
+.		\}
+.		shift
+.	\}
+.	\" now add a final period
+.	ie d ref*string \{\
+.		if !\\n[ref*suppress-period] \
+.			as ref*string .
+.		if d ref*post-punct \{\
+.			as ref*string "\\*[ref*post-punct]
+.			rm ref*post-punct
+.		\}
+.	\}
+.	el \
+.		ds ref*string
+..
+.
+.
+.de ref*add-T
+.	ie d ref*spec!T:\\$1 \
+.		ref*field T \\*[ref*spec!T:\\$1]
+.	el \
+.		ref*field T \\*[ref*spec!T]
+.	if r [T \
+.		nr ref*suppress-period \\n([T
+..
+.
+.de ref*add-P
+.	ie \\n([P>0 \{\
+.		ie d ref*spec!PP:\\$1 \
+.			ref*field P \\*[ref*spec!PP:\\$1]
+.		el \
+.			ref*field P \\*[ref*spec!PP]
+.	\}
+.	el \{\
+.		ie d ref*spec!P:\\$1 \
+.			ref*field P \\*[ref*spec!P:\\$1]
+.		el \
+.			ref*field P \\*[ref*spec!P]
+.	\}
+..
+.
+.de ref*add-J
+.	ie ref*spec!J:\\$1 \
+.		ref*field J \\*[ref*spec!J:\\$1]
+.	el \
+.		ref*field J \\*[ref*spec!J]
+..
+.
+.de ref*add-D
+.	ie ref*spec!D:\\$1 \
+.		ref*field D \\*[ref*spec!D:\\$1]
+.	el \
+.		ref*field D \\*[ref*spec!D]
+..
+.
+.de ref*add-E
+.	ie ref*spec!E:\\$1 \
+.		ref*field E \\*[ref*spec!E:\\$1]
+.	el \
+.		ref*field E \\*[ref*spec!E]
+..
+.
+.de ref*add-G
+.	ie ref*spec!G:\\$1 \
+.		ref*field G \\*[ref*spec!G:\\$1]
+.	el \
+.		ref*field G \\*[ref*spec!G]
+..
+.
+.de ref*add-B
+.	ie ref*spec!B:\\$1 \
+.		ref*field B \\*[ref*spec!B:\\$1]
+.	el \
+.		ref*field B \\*[ref*spec!B]
+..
+.
+.de ref*add-O
+.	ie ref*spec!O:\\$1 \
+.		ref*field O \\*[ref*spec!O:\\$1]
+.	el \
+.		ref*field O \\*[ref*spec!O]
+.	if r [O \
+.		nr ref*suppress-period \\n([O
+.\" XXX
+.\"	el \
+.\"		nr ref*suppress-period 1
+..
+.
+.de ref*add-A
+.	ie ref*spec!A:\\$1 \
+.		ref*field A \\*[ref*spec!A:\\$1]
+.	el \
+.		ref*field A \\*[ref*spec!A]
+.	if r [A \
+.		nr ref*suppress-period \\n([A
+..
+.
+.de ref*add-V
+.	ie ref*spec!V:\\$1 \
+.		ref*field V \\*[ref*spec!V:\\$1]
+.	el \
+.		ref*field V \\*[ref*spec!V]
+..
+.
+.de ref*add-N
+.	ie ref*spec!N:\\$1 \
+.		ref*field N \\*[ref*spec!N:\\$1]
+.	el \
+.		ref*field N \\*[ref*spec!N]
+..
+.
+.de ref*add-dflt
+.	ie ref*spec!dflt:\\$2 \
+.		ref*field \\$1 \\*[ref*spec!dflt:\\$2]
+.	el \
+.		ref*field \\$1 \\*[ref*spec!dflt]
+..
+.
+.
+.\" First argument is the field letter.
+.\" Second argument is the punctuation character to use to separate this
+.\" field from the previous field.
+.\" Third argument is a string to insert after the punctuation character of
+.\" the previous field (normally a space).
+.\" Fourth argument is a string with which to prefix this field.
+.\" Fifth argument is a string with which to postfix this field.
+.\" Sixth argument is a string to add after the punctuation character
+.\" supplied by the next field.
+.de ref*field
+.	if d ref*string \{\
+.		ie d ref*post-punct \{\
+.			if !\\n[ref*suppress-period] \
+.				as ref*string "\\$2\"
+.			as ref*string "\\*[ref*post-punct]\\$3\"
+.			rm ref*post-punct
+.		\}
+.		el \
+.			as ref*string "\\$2\\$3\"
+.	\}
+.	as ref*string "\\$4\\*([\\$1\\$5
+.	if \\n[.$]>5 \
+.		ds ref*post-punct "\\$6\"
+.	nr ref*suppress-period 0
+..
+.
+.
+.\" EOF

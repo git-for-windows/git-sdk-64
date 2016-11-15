@@ -1,0 +1,207 @@
+/* This is file `std_type.sprut'.  The file contains descriptions and
+   type specific macros for the following types
+
+                   int_t
+                   unsigned_int_t
+                   short_int_t
+                   unsigned_short_int_t
+                   long_int_t
+                   unsigned_long_int_t
+                   char_t
+                   float_t
+                   double_t
+                   bool_t
+                   void_ptr_t   
+
+   Copyright (C) 1997-2007 Vladimir Makarov.
+
+   Written by Vladimir Makarov <vmakarov@users.sourceforge.net>
+
+   This file is part of the tool SPRUT.
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This software is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with GNU CC; see the file COPYING.  If not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA.
+
+*/
+
+%type  int_t  unsigned_int_t  short_int_t  unsigned_short_int_t
+       long_int_t  unsigned_long_int_t
+       char_t  float_t  double_t  bool_t  void_ptr_t
+
+%import {
+
+#include <stdio.h>
+
+/* The following type is usual C int type. */
+typedef int int_t;
+
+/* The following type is usual C unsigned int type. */
+typedef unsigned int unsigned_int_t;
+
+/* The following type is usual C short int type. */
+typedef short int short_int_t;
+
+/* The following type is usual C unsigned short int type. */
+typedef unsigned short int unsigned_short_int_t;
+
+/* The following type is usual C long int type. */
+typedef long int long_int_t;
+
+/* The following type is usual C unsigned long int type. */
+typedef unsigned long int unsigned_long_int_t;
+
+/* The following type is usual C char type. */
+typedef char char_t;
+
+/* The following type is used to describe boolean values TRUE and FALSE. */
+typedef int bool_t;
+
+/* The following type is used to define a pointer type. */
+typedef void *void_ptr_t;
+
+}
+
+
+%local {
+
+/* Type specific macros (see SPRUT documentation) for `int_t': */
+#define IR_BEGIN_int_t(a)           /* 0 by default*/
+#define IR_END_int_t(a)
+#define IR_COPY_int_t(a, b)         ((a) = (b))
+#define IR_EQUAL_int_t(a, b)        ((a) == (b))
+#define IR_PRINT_int_t(a)           printf ("%d", (a))
+#define IR_INPUT_int_t(file, a)     (fread (&(a), sizeof (a), 1, (file))\
+                                     != sizeof (a))
+#define IR_OUTPUT_int_t(file, a)    (fwrite (&(a), sizeof (a), 1, (file))\
+                                     != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `unsigned_int_t': */
+#define IR_BEGIN_unsigned_int_t(a)        /* 0 by default*/
+#define IR_END_unsigned_int_t(a)         
+#define IR_COPY_unsigned_int_t(a, b)      ((a) = (b))
+#define IR_EQUAL_unsigned_int_t(a, b)     ((a) == (b))
+#define IR_PRINT_unsigned_int_t(a)        printf ("%u", (a))
+#define IR_INPUT_unsigned_int_t(file, a)  (fread (&(a), sizeof (a), 1, (file))\
+                                           != sizeof (a))
+#define IR_OUTPUT_unsigned_int_t(file, a) (fwrite (&(a), sizeof (a), 1,(file))\
+                                           != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `short_int_t': */
+#define IR_BEGIN_short_int_t(a)         /* 0 by default*/
+#define IR_END_short_int_t(a)         
+#define IR_COPY_short_int_t(a, b)       ((a) = (b))
+#define IR_EQUAL_short_int_t(a, b)      ((a) == (b))
+#define IR_PRINT_short_int_t(a)         printf ("%d", (a))
+#define IR_INPUT_short_int_t(file, a)   (fread (&(a), sizeof (a), 1, (file))\
+                                        != sizeof (a))
+#define IR_OUTPUT_short_int_t(file, a)  (fwrite (&(a), sizeof (a), 1, (file))\
+                                         != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `unsigned_short_int_t': */
+#define IR_BEGIN_unsigned_short_int_t(a)         /* 0 by default*/
+#define IR_END_unsigned_short_int_t(a)        
+#define IR_COPY_unsigned_short_int_t(a, b)       ((a) = (b))
+#define IR_EQUAL_unsigned_short_int_t(a, b)      ((a) == (b))
+#define IR_PRINT_unsigned_short_int_t(a)         printf ("%u", (a))
+#define IR_INPUT_unsigned_short_int_t(file, a)   (fread (&(a), sizeof (a), 1,\
+                                                  (file)) != sizeof (a))
+#define IR_OUTPUT_unsigned_short_int_t(file, a)  (fwrite (&(a), sizeof (a), 1,\
+                                                  (file)) != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `long_int_t': */
+#define IR_BEGIN_long_int_t(a)          /* 0 by default*/
+#define IR_END_long_int_t(a)            
+#define IR_COPY_long_int_t(a, b)        ((a) = (b))
+#define IR_EQUAL_long_int_t(a, b)       ((a) == (b))
+#define IR_PRINT_long_int_t(a)          printf ("%ld", (a))
+#define IR_INPUT_long_int_t(file, a)    (fread (&(a), sizeof (a), 1, (file))\
+                                         != sizeof (a))
+#define IR_OUTPUT_long_int_t(file, a)   (fwrite (&(a), sizeof (a), 1, (file))\
+                                         != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `unsigned_long_int_t': */
+#define IR_BEGIN_unsigned_long_int_t(a)          /* 0 by default*/
+#define IR_END_unsigned_long_int_t(a)           
+#define IR_COPY_unsigned_long_int_t(a, b)        ((a) = (b))
+#define IR_EQUAL_unsigned_long_int_t(a, b)       ((a) == (b))
+#define IR_PRINT_unsigned_long_int_t(a)          printf ("%lu", (a))
+#define IR_INPUT_unsigned_long_int_t(file, a)    (fread (&(a), sizeof (a), 1,\
+                                                  (file)) != sizeof (a))
+#define IR_OUTPUT_unsigned_long_int_t(file, a)   (fwrite (&(a), sizeof (a), 1,\
+                                                  (file)) != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `char_t': */
+#define IR_BEGIN_char_t(a)          /* 0 by default */
+#define IR_END_char_t(a)         
+#define IR_COPY_char_t(a, b)        ((a) = (b))
+#define IR_EQUAL_char_t(a, b)       ((a) == (b))
+#define IR_PRINT_char_t(a)          printf ("%c", (a))
+#define IR_INPUT_char_t(file, a)    (fread (&(a), sizeof (a), 1, (file))\
+                                     != sizeof (a))
+#define IR_OUTPUT_char_t(file, a)   (fwrite (&(a), sizeof (a), 1, (file))\
+                                     != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `float_t': */
+#define IR_BEGIN_float_t(a)         ((a) = 0.0)
+#define IR_END_float_t(a)        
+#define IR_COPY_float_t(a, b)       ((a) = (b))
+#define IR_EQUAL_float_t(a, b)      ((a) == (b))
+#define IR_PRINT_float_t(a)         printf ("%g", (a))
+#define IR_INPUT_float_t(file, a)   (fread (&(a), sizeof (a), 1, (file))\
+                                     != sizeof (a))
+#define IR_OUTPUT_float_t(file, a)  (fwrite (&(a), sizeof (a), 1, (file))\
+                                     != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `double_t': */
+#define IR_BEGIN_double_t(a)        ((a) = 0.0)
+#define IR_END_double_t(a)         
+#define IR_COPY_double_t(a, b)      ((a) = (b))
+#define IR_EQUAL_double_t(a, b)     ((a) == (b))
+#define IR_PRINT_double_t(a)        printf ("%g", (a))
+#define IR_INPUT_double_t(file, a)  (fread (&(a), sizeof (a), 1, (file))\
+                                     != sizeof (a))
+#define IR_OUTPUT_double_t(file, a) (fwrite (&(a), sizeof (a), 1, (file))\
+                                     != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `bool_t': */
+#define IR_BEGIN_bool_t(a)        /* FALSE or (0) by default*/
+#define IR_END_bool_t(a)         
+#define IR_COPY_bool_t(a, b)      ((a) = (b))
+#define IR_EQUAL_bool_t(a, b)     ((a) == (b))
+#define IR_PRINT_bool_t(a)        printf ((a) ? "TRUE " : "FALSE")
+#define IR_INPUT_bool_t(file, a)  (fread (&(a), sizeof (a), 1, (file))\
+                                      != sizeof (a))
+#define IR_OUTPUT_bool_t(file, a) (fwrite (&(a), sizeof (a), 1, (file))\
+                                      != sizeof (a))
+
+/* Type specific macros (see SPRUT documentation) for `void_ptr_t': */
+#define IR_BEGIN_void_ptr_t(a)        /* NULL (0) by default*/
+#define IR_END_void_ptr_t(a)        
+#define IR_COPY_void_ptr_t(a, b)      ((a) = (b))
+#define IR_EQUAL_void_ptr_t(a, b)     ((a) == (b))
+#define IR_PRINT_void_ptr_t(a)        printf ("%u", (a))
+#define IR_INPUT_void_ptr_t(file, a)  (fread (&(a), sizeof (a), 1, (file))\
+                                       != sizeof (a))
+#define IR_OUTPUT_void_ptr_t(file, a) (fwrite (&(a), sizeof (a), 1, (file))\
+                                       != sizeof (a))
+}
+
+%%
+
+/*
+Local Variables:
+mode:c
+End:
+*/

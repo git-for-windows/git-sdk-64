@@ -1,0 +1,99 @@
+.\" -*- mode: nroff; coding: iso-latin-1; -*-
+.\"
+.\" refer-me.tmac
+.\"
+.\" Refer support for me macros.
+.\"
+.\" Copyright (C) 2011-2014  Free Software Foundation, Inc.
+.\"   Written by Werner Lemberg (wl@gnu.org)
+.\"
+.\" This file is part of groff.
+.\"
+.\" groff is free software; you can redistribute it and/or modify it under
+.\" the terms of the GNU General Public License as published by the Free
+.\" Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" groff is distributed in the hope that it will be useful, but WITHOUT ANY
+.\" WARRANTY; without even the implied warranty of MERCHANTABILITY or
+.\" FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+.\" for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program. If not, see <http://www.gnu.org/licenses/>.
+.\"
+.\" Please send comments to groff@gnu.org.
+.
+.
+.als ref*error tm
+.
+.de ref*text-label-start
+.  (f
+.  ip "\\$1"
+..
+.de ref*text-label-end
+.  )f
+..
+.
+.de ref*biblio-item-start
+.  ip "\\$1"
+..
+.de ref*biblio-item-start-nolabel
+.  ip \&
+..
+.de ref*biblio-item-end
+..
+.
+.ds ref*refnum-start \" empty
+.ds ref*refnum-end   .\0\"
+.
+.ie \n(.V<1v \{\
+.	ds [. \s-2\v'-.4m'\f1
+.	ds .] \v'.4m'\s+2\fP
+.\}
+.el \{\
+.	ds [. " [
+.	ds .] ]
+.\}
+.
+.ds ref*spec!0  Q A T S V N P I C O D
+.ds ref*spec!1  Q A T J S V N P I C D O
+.ds ref*spec!2  Q A T S V P I C D G O
+.ds ref*spec!3  Q A T P B E S V I C D O
+.ds ref*spec!4  Q A T R G P I C D O
+.\" style #5 (Bell Laboratories internal memorandum) is not supported
+.\" by GNU refer
+.
+.ds ref*spec!A     ",  " "
+.ds ref*spec!B     ",  " " "in \f2"                ""    "\f1"
+.ds ref*spec!B:3   ",  " " "in \f2"                "\f1"
+.ds ref*spec!D     """ " " "("                     ")"
+.ds ref*spec!D:0   """ " "
+.ds ref*spec!E     ",  " " "ed. "
+.ds ref*spec!G     """ " " "("                     ")"
+.ds ref*spec!G:2   ".  " " "Gov't. ordering no.\~"
+.ds ref*spec!J     ",  " " "\f2"                   "\f1"
+.ds ref*spec!N     """ "(" ""                      ")"
+.ds ref*spec!O     ".  " "
+.ds ref*spec!O:0   ",  " "
+.ds ref*spec!O:2   """ " "
+.ds ref*spec!P     ",  " " "p.\~"
+.ds ref*spec!PP    ",  " " "pp.\~"
+.ds ref*spec!T     ",  " " "\\*(lq"                ""    "\\*(rq"
+.ds ref*spec!T:0   ",  " " "\f2"                   "\f1"
+.ds ref*spec!T:2   ",  " " "\f2"                   ""    "\f1"
+.ds ref*spec!V     """ " " "\f3"                   "\f1"
+.ds ref*spec!dflt  ",  " "
+.
+.de ref*biblio-start-hook
+.  $p References
+.  lp
+..
+.
+.de ref*biblio-end-hook
+.  sp
+..
+.
+.mso refer.tmac
+.
+.\" EOF

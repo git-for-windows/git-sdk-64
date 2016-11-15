@@ -1,0 +1,67 @@
+;;; display-commentary --- As advertized
+
+;; 	Copyright (C) 2001, 2006, 2011 Free Software Foundation, Inc.
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU Lesser General Public License
+;; as published by the Free Software Foundation; either version 3, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; Lesser General Public License for more details.
+;;
+;; You should have received a copy of the GNU Lesser General Public
+;; License along with this software; see the file COPYING.LESSER.  If
+;; not, write to the Free Software Foundation, Inc., 51 Franklin
+;; Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+;;; Author: Thien-Thi Nguyen
+
+;;; Commentary:
+
+;; Usage: display-commentary REF1 REF2 ...
+;;
+;; Display Commentary section from REF1, REF2 and so on.
+;; Each REF may be a filename or module name (list of symbols).
+;; In the latter case, a filename is computed by searching `%load-path'.
+
+;;; Code:
+
+(define-module (scripts display-commentary)
+  :use-module (ice-9 documentation)
+  :export (display-commentary))
+
+(define %summary "Display the Commentary section from a file or module.")
+
+(define (display-commentary-one file)
+  (format #t "~A commentary:\n~A" file (file-commentary file)))
+
+(define (module-name->filename-frag ls) ; todo: export or move
+  (let ((ls (map symbol->string ls)))
+    (let loop ((ls (cdr ls)) (acc (car ls)))
+      (if (null? ls)
+          acc
+          (loop (cdr ls) (string-append acc "/" (car ls)))))))
+
+(define (display-module-commentary module-name)
+  (cond ((%search-load-path (module-name->filename-frag module-name))
+         => (lambda (file)
+              (format #t "module ~A\n" module-name)
+              (display-commentary-one file)))))
+
+(define (display-commentary . refs)
+  (for-each (lambda (ref)
+              (cond ((string? ref)
+                     (if (equal? 0 (string-index ref #\())
+                         (display-module-commentary
+                          (with-input-from-string ref read))
+                         (display-commentary-one ref)))
+                    ((list? ref)
+                     (display-module-commentary ref))))
+            refs))
+
+(define main display-commentary)
+
+;;; display-commentary ends here

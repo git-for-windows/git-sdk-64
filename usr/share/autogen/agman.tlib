@@ -1,0 +1,98 @@
+[+:  AutoGen5 template -*- shell-script -*-
+
+null
+
+:+][+:
+
+## agman-lib.tpl -- Template for command line man pages
+##
+## Author:          Jim Van Zandt <jrv@vanzandt.mv.com>
+##
+##  This file is part of AutoOpts, a companion to AutoGen.
+##  AutoOpts is free software.
+##  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+##
+##  AutoOpts is available under any one of two licenses.  The license
+##  in use must be one of these two and the choice is under the control
+##  of the user of the license.
+##
+##   The GNU Lesser General Public License, version 3 or later
+##      See the files "COPYING.lgplv3" and "COPYING.gplv3"
+##
+##   The Modified Berkeley Software Distribution License
+##      See the file "COPYING.mbsd"
+##
+##  These files have the following sha256 sums:
+##
+##  8584710e9b04216a394078dc156b781d0b47e1729104d666658aecef8ee32e95  COPYING.gplv3
+##  4379e7444a0e2ce2b12dd6f5a52a27a4d02d39d247901d3285c88cf0d37f477b  COPYING.lgplv3
+##  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
+
+## This "library" converts texi-isms into man-isms.  It gets included
+## by the man page template at the point where texi-isms might start appearing
+## and then "emit-man-text" is invoked when all the text has been assembled.
+##
+## Display the command line prototype,
+## based only on the argument processing type.
+##
+## And run the entire output through "sed" to convert texi-isms
+
+:+][+:
+
+(define sed-script (string-append (base-name) ".post-proc-sed"))
+(out-push-new sed-script)
+
+\:+]
+s;@code{\([^}]*\)};\\fB\1\\fP;g
+s;@var{\([^}]*\)};\\fB\1\\fP;g
+s;@samp{\([^}]*\)};\\fB\1\\fP;g
+s;@i{\([^}]*\)};\\fI\1\\fP;g
+s;@file{\([^}]*\)};\\fI\1\\fP;g
+s;@emph{\([^}]*\)};\\fI\1\\fP;g
+s;@strong{\([^}]*\)};\\fB\1\\fP;g
+s/@\([{}]\)/\1/g
+s,^\$\*$,.br,
+/@ *example/,/@ *end *example/s/^/    /
+s/^ *@ *example/.nf/
+s/^ *@ *end *example/.fi/
+/^ *@ *noindent/d
+/^ *@ *enumerate/d
+s/^ *@ *end *enumerate/.br/
+/^ *@ *table/d
+s/^ *@ *end *table/.br/
+s/^@item \(.*\)/.sp\
+.IR "\1"/
+s/^@item/.sp 1/
+s/\*\([a-zA-Z0-9:~=_ -]*\)\*/\\fB\1\\fP/g
+s/``\([a-zA-Z0-9:~+=_ -]*\)''/\\(lq\1\\(rq/g
+s/^'/\\'/
+s/^@\*/.br/
+s/ -/ \\-/g
+s/^\.in \\-/.in -/
+[+:
+
+(out-suspend  "sed-script")
+(define raw-text (string-append (base-name) ".raw"))
+(out-push-new raw-text)
+
+:+][+:
+
+DEFINE emit-man-text        :+][+:
+  (out-pop)
+  (out-resume "sed-script") :+][+:
+
+  FOR doc-sub               :+][+:
+
+    (define field-name (get "sub-name"))
+    (define rep-string (string-append "<<" field-name ">>"))
+    (string-substitute (get "sub-expr") rep-string (get field-name))
+    :+][+:
+  ENDFOR doc-sub            :+][+:
+
+  (out-pop)
+  (shellf "sed -f %1$s %2$s ; rm -f %1$s %2$s"
+    sed-script raw-text)    :+][+:
+
+ENDDEF emit-man-text        :+][+: #
+
+agman-lib.tpl ends here     :+]

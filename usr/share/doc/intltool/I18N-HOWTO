@@ -1,0 +1,227 @@
+Autoconf/I18n-ify HelloWorld HOW-TO
+-----------------------------------
+
+Authors:
+	Kenneth Christiansen <kenneth at gnu dot org>
+	Thomas Vander Stichele <thomas at apestaart dot org>
+	
+Help from: Bruno Haible <bruno at clisp dot org>
+
+Disclaimer:
+	Kenneth last used autoconf 2.52 and automake 1.4p5 to test this guide.
+	Thomas last used autoconf 2.52 and automake 1.5 to test this guide.
+	We would like you to let us know if you have different versions of
+	these tools and things don't work out the same way.
+	No authors of any autotools were harmed during the making of this guide.
+
+In this article we are going to explain how to turn a simple
+Hello World application with a standard Makefile into an autotools-
+and I18N-enabled tree up to the point where it can be distributed.
+
+Our existing helloworld.c file looks like the following:
+
+#include <stdio.h>
+
+int main (void) {
+  printf ("Hello, world!\n");
+} 
+
+1. First we create a source tree :
+    
+   /                        - This is the top level directory
+   /src/                    - Here the source will end up.
+
+   and place the helloworld.c file in the src/ dir
+
+2. If your program has not been autoconf-enabled yet, you can
+   create configure.scan (which is a good starting point for configure.ac)
+   and rename it to configure.ac
+
+        autoscan   # creates configure.scan
+        mv configure.scan configure.ac
+
+   Now edit configure.ac and make some changes.
+   You can remove everything after AC_INIT, we'll be using AM_INIT_AUTOMAKE
+   to pass on variables.
+
+   Add the lines
+     PACKAGE=helloworld
+     VERSION=0.0.1
+     AM_INIT_AUTOMAKE($PACKAGE, $VERSION) 
+   to configure.in, just after AC_INIT
+
+   Change AC_CONFIG_HEADERS to AM_CONFIG_HEADER as well.
+
+   If you have an empty AC_CONFIG_FILES macro, then comment that, or automake
+   will fail in the next step.
+
+   Finally, add Makefile to the AC_OUTPUT macro by changing that
+   line to read
+     AC_OUTPUT(Makefile)
+
+   NOTE: configure.ac used to be called configure.in
+
+3. We add some files that automake does not make but are necessary
+   to adhere to GNU standards.
+
+   touch NEWS README AUTHORS ChangeLog
+
+   These two files need to be created to satisfy automake
+
+   touch config.h.in Makefile.am
+
+   We will create Makefile.am later on.
+
+4. To add some basic files (like COPYING, INSTALL, etc..) 
+   we run automake in the toplevel directory.
+
+   automake --add-missing --gnu
+
+5. After that we do the big i18n trick :-), also in the toplevel
+   directory.
+
+   intltoolize 		        # bring in the perl helper scripts
+   				# and our Makefile.in.in for the po directory
+
+6. Run autoheader which will create config.h.in
+
+	autoheader # create config.h.in
+
+7. Now, open up configure.in and make some modifications.
+
+    The gettext macros need to be added after the initial checks.  
+    Putting them after the checks for library functions is a good idea.
+
+    IT_PROG_INTLTOOL(0.50.0)
+
+    AC_OUTPUT(
+	Makefile
+	src/Makefile
+	intl/Makefile
+	po/Makefile.in
+    )
+
+    IT_PROG_INTLTOOL checks if a good enough intltool is available.
+    Please require the latest intltool that exists. Intltool releases
+    are pretty stable and often only contains bugfixes.
+
+    The text domain is identified by PACKAGE.  We will need to add a few
+    functions later on to helloworld.c that will use this #define'd variable.
+
+    Also, this will be the base filename for all your translation files, 
+    so make sure you choose a unique one.
+
+8.
+    Now add the add the supported languages to po/LINGUAS:
+
+    da nl
+
+9.  Run 
+       aclocal 
+     to make sure that the necessary autoconf and automake macros
+     are inserted in aclocal.m4
+
+     Run 
+       autoconf 
+     to create the configure script.
+
+10. install the gettext.h file (since gettext 0.11) and include it:
+
+    #include "gettext.h"
+    #define _(String) gettext (String)
+
+11. Now add the following to helloworld.c
+
+    #include <locale.h>
+    #include "gettext.h"
+    #define _(String) gettext (String)
+    /* includes used by original program here */    
+
+    int main (void) 
+    {
+
+	    setlocale (LC_ALL, "");
+            bindtextdomain (PACKAGE, LOCALEDIR);
+            textdomain (PACKAGE);
+
+            /* Original Helloworld code here */
+    }
+
+    If you use GNOME or GTK+ the setlocale sentence shouldn't be needed
+
+    We also substitute all strings we want to be translated with 
+    _("original string") to make sure that gettext is run on the strings.
+    So the printf now looks like
+
+      printf (_("Hello, world!\n"));
+
+12. We create src/Makefile.am (from which Makefile.in and Makefile will be
+    generated)
+
+    INCLUDES = -I$(top_srcdir) -I$(includedir) \
+               -DLOCALEDIR=\""$(datadir)/locale"\"
+
+    bin_PROGRAMS = helloworld
+
+    helloworld_SOURCES = helloworld.c
+    noinst_HEADERS = i18n-support.h
+
+13. Now we create the following toplevel Makefile.am
+
+     SUBDIRS = src po
+
+14. Go into the directory po/ and create POTFILES.in
+    This file should contain a list of all the files in your distribution
+    (starting from the top, one level above the po dir) that contain
+    strings to be internationalized.
+
+    For the helloworld sample, it would contain
+    src/helloworld.c
+
+    Run 
+      intltool-update --pot
+
+    Run
+      intltool-update --maintain 
+    to see if you are missing files that contain marked strings.  
+    You should consider adding these to POTFILES.in
+
+
+15. Now we start making a Danish and Dutch translation
+
+    msginit --locale=da
+    msginit --locale=nl
+
+    intltool-update da
+    intltool-update nl
+
+    edit and update da.po and nl.po
+    (The respective translations are "Hej verden" and "Hallo wereld")
+    
+16. Now we can compile.  We will test it later, so we will install it in
+    a temporary location.
+    Close your eyes and type 
+      ./configure --prefix=/tmp/helloworld && make 
+    in the toplevel directory. :-)
+
+17. To test if it works, you have to install the package.
+    Run
+      make install
+    in the toplevel directory.
+
+18. Now set the environment variable LC_ALL to your preferred language :
+      export LC_ALL=nl_NL
+      /tmp/helloworld/bin/helloworld
+      export LC_ALL=da_DK
+      /tmp/helloworld/bin/helloworld
+
+    And if all goes well, the string should be translated in the two languages.
+
+19. To finish it all up, run
+      make dist
+    to create a distributable tarball containing your internationalized
+    program.
+
+20. Exercises :
+    - add another language
+

@@ -1,0 +1,121 @@
+#!/usr/bin/perl
+#
+# splitdiff - split up a diff made of incremental patches
+# Copyright (C) 2001, 2002, 2003, 2011  Tim Waugh <twaugh@redhat.com>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use Getopt::Std;
+getopts('p:v-:D:adE', \%opts);
+if ($opts{'-'} && $opts{'-'} eq 'version') {
+    print "splitdiff - patchutils version 0.3.4\n";
+    exit 0;
+}
+if ($opts{'-'} && $opts{'-'} eq 'help') {
+    print "usage: splitdiff [OPTIONS] FILE\n";
+    print "OPTIONS are:\n";
+    print "  -a              split out every single file-level patch\n";
+    print "  -p N            pathname components to ignore\n";
+    print "  -d              use output filenames like a_b.c.patch for a/b.c\n";
+    print "  -D dir          create patches in subdirectory dir (implies -d)\n";
+    print "  -E              don't use .patch filename extension\n";
+    exit 0;
+}
+
+# Read in the input.
+open(IN, "<$ARGV[0]") || die "Can't open input file\n";
+@input=<IN>;
+close(IN);	
+
+$part = 1;
+my %written = ();
+sub process {
+    print "Lines $_[0] to $_[1]\n" if ($opts{v});
+    if ($opts{d} || $opts{D}) {
+	$out = $_[2];
+	$out =~ s,/,_,g;
+
+	if ($opts{D}) {
+	    $out = sprintf("%s/%s", $opts{D}, $out);
+	}
+    } else {
+	$out = sprintf ("%s.part%03d", $ARGV[0], $part);
+    }
+
+    if ($opts{D} && ! -e $opts{D}) {
+	mkdir $opts{D} || die "Can't create output directory\n";
+    }
+
+    unless ($opts{E}) {
+        $out = sprintf("%s.patch", $out);
+    }
+    if ($written{$_[2]}) { $mode = '>>' } else { $mode = '>' }
+    $written{$_[2]} = $_[2];
+    open(OUT, $mode, $out) or die "Can't open output file\n";
+    for $i ($_[0] .. $_[1]) {
+	unless (($i == $_[1]) && ($input[$i - 1] =~ /^diff\s+\S+/)) {
+	    print OUT $input[$i - 1];
+	}
+    }
+    close(OUT);
+    print "Wrote ".$mode.$out."\n";
+    $part++;
+}
+
+if($#ARGV != 0) {
+    die "usage: splitdiff DIFF\n";
+}
+$getlist = '${LSDIFF-lsdiff} -n ';
+$getlist .= '--strip='.$opts{p}.' ' if ($opts{p});
+$getlist .= $ARGV[0]; # Yuck.  How do you do this properly in perl?
+open(LIST, '-|', $getlist) or die "Can't run lsdiff";
+@list = <LIST>;
+close LIST;
+
+my %seen = ();
+my @this = ();
+my $ready = 0;
+my $linenum;
+my $file;
+for (@list) {
+    /\s*(\d+)\s*(.*)$/;
+    ($linenum, $file) = ($1, $2);
+    if ($ready == 1) {
+	process ($firstline, $linenum - 1, $prevfile);
+	$ready = 0;
+    }
+    $prevfile = $file;
+    push @this, [ $linenum, $file ];
+    if ($opts{'a'} || $seen{$file}) {
+	$firstline = $this[0]->[0];
+	$ready = 1;
+	if ($opts{v}) {
+	    for (@this) {
+		print $_->[0].": ".$_->[1]."\n";
+	    }
+	    print "\n";
+	}
+	@this = ();
+    }
+    $seen{$file} = $file;
+}
+if ($ready == 1) {
+    process ($firstline, $linenum - 1, $file) if $linenum > $firstline;
+    process ($linenum, $#input + 1, $file);
+}
+
+if ($part == 1) {
+    print "Input contained no duplicate files; nothing to do\n";
+}

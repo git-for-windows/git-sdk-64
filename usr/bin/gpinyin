@@ -1,0 +1,192 @@
+#! /usr/bin/env perl
+
+# gpinyin - European-like Chinese writing `pinyin' into `groff'
+
+# Source file position: <groff-source>/contrib/gpinyin/gpinyin.pl
+# Installed position: <prefix>/bin/gpinyin
+
+# Copyright (C) 2014  Free Software Foundation, Inc.
+
+# Written by Bernd Warken <groff-bernd.warken-72@web.de>.
+
+my $version = '1.0.4';
+
+# This file is part of `gpinyin', which is part of `groff'.
+
+# `groff' is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+
+# `groff' is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+
+# You can find a copy of the GNU General Public License in the internet
+# at <http://www.gnu.org/licenses/gpl-2.0.html>.
+
+########################################################################
+
+use strict;
+use warnings;
+#use diagnostics;
+
+# temporary dir and files
+use File::Temp qw/ tempfile tempdir /;
+
+# needed for temporary dir
+use File::Spec;
+
+# for `copy' and `move'
+use File::Copy;
+
+# for fileparse, dirname and basename
+use File::Basename;
+
+# current working directory
+use Cwd;
+
+# $Bin is the directory where this script is located
+use FindBin;
+
+
+########################################################################
+# system variables and exported variables
+########################################################################
+
+$\ = "\n";	# final part for print command
+
+########################################################################
+# read-only variables with double-@ construct
+########################################################################
+
+our $File_split_env_sh;
+our $File_version_sh;
+our $Groff_Version;
+
+my $before_make;		# script before run of `make'
+{
+  my $at = '@';
+  $before_make = 1 if '1.22.3' eq "${at}VERSION${at}";
+}
+
+my %at_at;
+my $file_gpinyin_test_pl;
+my $gpinyin_libdir;
+
+if ($before_make) {
+  my $gpinyin_source_dir = $FindBin::Bin;
+  $at_at{'BINDIR'} = $gpinyin_source_dir;
+  $at_at{'G'} = '';
+  $gpinyin_libdir = '/usr/lib/groff/gpinyin';
+} else {
+  $at_at{'BINDIR'} = '/usr/bin';
+  $at_at{'G'} = '';
+  $gpinyin_libdir = '/usr/lib/groff/gpinyin';
+  unshift(@INC, $gpinyin_libdir);
+}
+
+require 'subs.pl';
+
+
+########################################################################
+# options
+########################################################################
+
+foreach (@ARGV) {
+  if ( /^(-h|--h|--he|--hel|--help)$/ ) {
+    print q(Usage for the `gpinyin' program:);
+    print 'gpinyin [-] [--] [filespec...] normal file name arguments';
+    print 'gpinyin [-h|--help]            gives usage information';
+    print 'gpinyin [-v|--version]         displays the version number';
+    print q(This program is a `groff' preprocessor that handles ) .
+      q(pinyin parts in `roff' files.);
+    exit;
+  } elsif (/^(-v|--v|--ve|--ver|--vers|--versi|--versio|--version)$/) {
+    print q(`gpinyin' version ) . $version;
+    exit;
+  }
+}
+
+
+########################################################################
+# input
+########################################################################
+
+my $pinyin_mode = 0;	# not in Pinyin mode
+
+my @output_n =	# nroff
+  (
+   '.ie n \\{\\',
+  );
+
+my @output_t =	# troff
+  (
+   '.el \\{\\',
+  );
+
+foreach (<>) {	# get line from input
+  chomp;
+  s/\s+$//;		# remove final spaces
+# &err('gpinyin: ' . $_);
+
+  my $line = $_;	# with starting blanks
+
+  # .pinyin start or begin line
+  if ( $line =~ /^[.']\s*pinyin\s+(start|begin)$/ ) {
+    if ( $pinyin_mode ) {
+      # `.pinyin' was started twice, ignore
+      &err( q[`.pinyin' starter was run several times] );
+    } else {	# new pinyin start
+      $pinyin_mode = 1;
+    }
+    next;
+  }
+
+  # .pinyin stop or end line
+  if ( $line =~ /^[.']\s*pinyin\s+(stop|end)$/ ) {
+    if ( $pinyin_mode ) {		# normal stop
+      $pinyin_mode = 0;
+      &finish_pinyin_mode( \@output_n, \@output_t );
+    } else {	# ignore
+      &err( 'gpinyin: there was a .pinyin stop without ' .
+	'being in pinyin mode' );
+    }
+    next;
+  }
+
+  # now not a .pinyin line
+
+
+  if ( $pinyin_mode ) {	# within Pinyin
+    my $starting_blanks = '';
+    $starting_blanks = $1 if ( s/^(s+)// );	# handle starting spaces
+
+    my %outline = &handle_line($starting_blanks, $line);
+#&err('gpinyin outline n: ' . $outline{'n'} );
+#&err('gpinyin outline t: ' . $outline{'t'} );
+    push @output_n, $outline{'n'};
+    push @output_t, $outline{'t'};
+  } else {	# normal roff line, not within Pinyin
+    print $line;
+  }
+  next;
+}	# end of input line
+
+
+########################################################################
+# end of file without stopping `pinyin' mode
+if ( $pinyin_mode ) {
+  &finish_pinyin_mode( \@output_n, \@output_t );
+}
+
+########################################################################
+
+
+1;
+########################################################################
+### Emacs settings
+# Local Variables:
+# mode: CPerl
+# End:

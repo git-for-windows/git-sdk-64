@@ -1,0 +1,711 @@
+[= autogen5 template -*- Mode: C -*-
+
+##  This file is part of AutoOpts, a companion to AutoGen.
+##  AutoOpts is free software.
+##  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+##
+##  AutoOpts is available under any one of two licenses.  The license
+##  in use must be one of these two and the choice is under the control
+##  of the user of the license.
+##
+##   The GNU Lesser General Public License, version 3 or later
+##      See the files "COPYING.lgplv3" and "COPYING.gplv3"
+##
+##   The Modified Berkeley Software Distribution License
+##      See the file "COPYING.mbsd"
+##
+##  These files have the following sha256 sums:
+##
+##  8584710e9b04216a394078dc156b781d0b47e1729104d666658aecef8ee32e95  COPYING.gplv3
+##  4379e7444a0e2ce2b12dd6f5a52a27a4d02d39d247901d3285c88cf0d37f477b  COPYING.lgplv3
+##  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
+
+=]
+/**
+ *  This file contains the programmatic interface to the Automated
+ *  Options generated for the [=prog-name=] program.
+ *  These macros are documented in the AutoGen info file in the
+ *  "AutoOpts" chapter.  Please refer to that doc for usage help.
+ */
+[=
+  (emit (make-header-guard "autoopts"))
+  (if (exist? "config-header")
+      (ag-fprintf 0 "\n#include \"%s\"" (get "config-header")) )
+
+  (emit "\n#include <autoopts/options.h>\n")
+
+  (if have-noret-funcs (begin
+     (emit "#include <stdarg.h>\n")
+     (if (exist? "no-return")
+         (emit "#include <stdnoreturn.h>\n"))
+  )  )
+
+  (define option-ct      0)
+  (define index-sep-str "")
+
+  (set! max-name-len (+ max-name-len 2))
+  (define index-fmt (sprintf "%%s\n    %s%%-%ds=%%3d" INDEX-pfx max-name-len))
+
+  (define add-opt-index (lambda (opt-nm) (begin
+     (ag-fprintf 0 index-fmt index-sep-str opt-nm option-ct)
+     (set! option-ct (+ option-ct 1))
+     (set! index-sep-str ",")
+  ) ) )                                 =][=
+
+IF  (not (exist? "library"))            =]
+/**
+ *  Ensure that the library used for compiling this generated header is at
+ *  least as new as the version current when the header template was released
+ *  (not counting patch version increments).  Also ensure that the oldest
+ *  tolerable version is at least as old as what was current when the header
+ *  template was released.
+ */
+#define AO_TEMPLATE_VERSION [=(. ao-template-ver)=]
+#if (AO_TEMPLATE_VERSION < OPTIONS_MINIMUM_VERSION) \
+ || (AO_TEMPLATE_VERSION > OPTIONS_STRUCT_VERSION)
+# error option template version mismatches autoopts/options.h header
+  Choke Me.
+#endif
+[= ENDIF not a library =]
+/**
+ *  Enumeration of each option type for [= prog-name =]
+ */
+typedef enum {[=
+FOR flag                                =][=
+  (if (exist? "documentation")
+      (set! option-ct (+ option-ct 1))
+      (add-opt-index (get-up-name "name"))
+  )
+  =][=
+ENDFOR flag                             =][=
+
+IF (exist? "library")                   =],
+        LIBRARY_OPTION_COUNT[=
+
+ELSE not exists library                 =][=
+
+  (if (exist? "resettable")       (add-opt-index "RESET_OPTION"))
+  (if (exist? "version")          (add-opt-index "VERSION"))
+  (add-opt-index "HELP")
+  (if (not (exist? "no-libopts")) (add-opt-index "MORE_HELP"))
+  (if (exist? "usage-opt")        (add-opt-index "USAGE"))
+  (if (exist? "vendor-opt")       (add-opt-index "VENDOR_OPT"))
+
+  (if (exist? "homerc") (begin
+      (if (not (exist? "disable-save")) (add-opt-index "SAVE_OPTS"))
+      (add-opt-index "LOAD_OPTS")
+  )   )                                 =][=
+ENDIF  not exist library                =]
+} te[=(. Cap-prefix)=]OptIndex;
+/** count of all options for [= prog-name =] */
+#define [=(. UP-prefix)=]OPTION_CT    [= (. option-ct) =][=
+IF (exist? "version") =]
+/** [= prog-name =] version */
+#define [=(. pname-up)=]_VERSION       [=(c-string (get "version"))=]
+/** Full [= prog-name =] version text */
+#define [=(. pname-up)=]_FULL_VERSION  [=(c-string version-text) =][=
+ENDIF (exist? version) =]
+
+/**
+ *  Interface defines for all options.  Replace "n" with the UPPER_CASED
+ *  option name (as in the te[=(. Cap-prefix)=]OptIndex enumeration above).
+ *  e.g. HAVE_[=(. UP-prefix)=]OPT([= (get-up-name "flag[].name") =])
+ */[=
+
+IF (exist? "library")
+
+=]
+/** pointer to the library handling procedure. */
+extern tOptDesc * const [= (. lib-opt-ptr) =];[=
+
+ENDIF is a library                    =][=
+
+CASE guard-option-names               =][=
+!E                                    =][=
+      (set! tmp-val (string-append "[" INDEX-pfx "## n]"))
+      =][=
+
+=  full-enum                          =][=
+      (set! tmp-val "[n]")            =][=
+
+=* no-warn                            =][=
+      (set! tmp-val (string-append "[" INDEX-pfx "## n]"))
+      =][=
+
+*                                     =][=
+      (set! tmp-val (string-append "[" INDEX-pfx "## n]"))
+      =][=
+
+ESAC                                  =][=
+
+(if (exist? "library")
+    (set! tmp-val (string-append "(" lib-opt-ptr tmp-val ")"))
+    (set! tmp-val (string-append "(" pname "Options.pOptDesc" tmp-val ")")) )
+
+(ag-fprintf 0 "\n#define %8sDESC(n) " UP-prefix)
+(emit tmp-val)
+(out-push-new)
+
+=]
+/** 'true' if an option has been specified in any way */
+#define     HAVE_<P>OPT(n) (! UNUSED_OPT(& <P>DESC(n)))
+/** The string argument to an option. The argument type must be \"string\". */
+#define      <P>OPT_ARG(n) (<P>DESC(n).optArg.argString)
+/** Mask the option state revealing how an option was specified.
+ *  It will be one and only one of \a OPTST_SET, \a OPTST_PRESET,
+ * \a OPTST_DEFINED, \a OPTST_RESET or zero.
+ */
+#define    STATE_<P>OPT(n) (<P>DESC(n).fOptState & OPTST_SET_MASK)
+/** Count of option's occurrances *on the command line*. */
+#define    COUNT_<P>OPT(n) (<P>DESC(n).optOccCt)
+/** mask of \a OPTST_SET and \a OPTST_DEFINED. */
+#define    ISSEL_<P>OPT(n) (SELECTED_OPT(&<P>DESC(n)))
+/** 'true' if \a HAVE_OPT would yield 'false'. */
+#define ISUNUSED_<P>OPT(n) (UNUSED_OPT(& <P>DESC(n)))
+/** 'true' if OPTST_DISABLED bit not set. */
+#define  ENABLED_<P>OPT(n) (! DISABLED_OPT(& <P>DESC(n)))
+/** number of stacked option arguments.
+ *  Valid only for stacked option arguments. */
+#define  STACKCT_<P>OPT(n) (((tArgList*)(<P>DESC(n).optCookie))->useCt)
+/** stacked argument vector.
+ *  Valid only for stacked option arguments. */
+#define STACKLST_<P>OPT(n) (((tArgList*)(<P>DESC(n).optCookie))->apzArgs)
+/** Reset an option. */
+#define    CLEAR_<P>OPT(n) STMTS( \
+                <P>DESC(n).fOptState &= OPTST_PERSISTENT_MASK;   \
+                if ((<P>DESC(n).fOptState & OPTST_INITENABLED) == 0) \
+                    <P>DESC(n).fOptState |= OPTST_DISABLED; \
+                <P>DESC(n).optCookie = NULL )[=
+
+(set! tmp-val (if (> (string-length UP-prefix) 1) UP-prefix ""))
+(string-substitute (out-pop #t) "<P>" tmp-val)
+
+=][=
+
+INVOKE emit-exit-codes                =][=
+INVOKE emit-option-guards
+
+=]
+/**
+ *  Interface defines for specific options.
+ * @{
+ */[=
+
+FOR flag =][=
+  (define flag-index (for-index)) =][=
+
+  INVOKE save-name-morphs   =][=
+
+  IF (set! opt-name   (string-append OPT-pfx UP-name))
+     (set! descriptor (string-append UP-prefix "DESC(" UP-name ")" ))
+
+     (exist? "documentation")
+
+   =][=
+   IF (hash-ref have-cb-procs flg-name)
+=]
+/** call the handler procedure for setting the [= name =] option. */
+#define SET_[= (string-append OPT-pfx UP-name) =]   STMTS( \
+        (*([=(. descriptor)=].pOptProc))(&[=(. pname)=]Options, \
+                [=(. pname)=]Options.pOptDesc + [=(for-index)=])[=
+
+   ENDIF                    =][=
+ ELSE                       =][=
+   INVOKE option-defines    =][=
+ ENDIF                      =][=
+ENDFOR flag                 =][=
+INVOKE emit-opt-values      =][=
+
+IF (and (exist? "homerc") (not (exist? "disable-save")))
+
+=]
+#define SET_[=(. OPT-pfx)=]SAVE_OPTS(a)   STMTS( \
+        [=(. UP-prefix)=]DESC(SAVE_OPTS).fOptState &= OPTST_PERSISTENT_MASK; \
+        [=(. UP-prefix)=]DESC(SAVE_OPTS).fOptState |= OPTST_SET; \
+        [=(. UP-prefix)=]DESC(SAVE_OPTS).optArg.argString = (char const*)(a))[=
+ENDIF
+
+// # # # # # # # # # # # # # # # # # # # # # # =][=
+
+IF (not (exist? "library"))     =][=
+  INVOKE emit-program-externs   =][=
+ENDIF
+
+=]
+#endif /* [=(. header-guard)=] */
+[= #
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-program-externs
+
+=][=
+(tpl-file-line extract-fmt)
+(out-push-new)
+=]
+/*
+ *  Interface defines not associated with particular options
+ */
+#define ERRSKIP_<Pfx>OPTERR  STMTS(<Prg>Options.fOptSet &= ~OPTPROC_ERRSTOP)
+#define ERRSTOP_<Pfx>OPTERR  STMTS(<Prg>Options.fOptSet |= OPTPROC_ERRSTOP)
+#define RESTART_<Pfx>OPT(n)  STMTS( \
+                <Prg>Options.curOptIdx = (n); \
+                <Prg>Options.pzCurOpt  = NULL )
+#define START_<Pfx>OPT       RESTART_<Pfx>OPT(1)
+#define <Pfx>USAGE(c)        (*<Prg>Options.pUsageProc)(&<Prg>Options, c)
+[=
+
+(set! tmp-val (if (> (string-length UP-prefix) 1) UP-prefix ""))
+(string-substitute (out-pop #t)
+     (list "<Pfx>" "<Prg>")
+     (list tmp-val pname) )
+
+=]
+#ifdef  __cplusplus
+extern "C" {
+#endif
+[=
+INVOKE join-or-expand  join-type = "export" =][=
+INVOKE nls-header-code                  =][=
+
+  IF
+     (define no-return-str "extern void")
+     (if (and have-noret-funcs (exist? "no-return")) (begin
+         (set! no-return-str (get "no-return"))
+
+         (if (== no-return-str "") (begin
+             (emit "#ifndef  noreturn\n# define noreturn\n#endif\n")
+             (set! no-return-str "noreturn") ))
+
+         (set! no-return-str (string-append "extern " no-return-str " void"))
+     )   )
+     (set! no-return-str (string-append no-return-str " " lc-prefix))
+
+     (exist? "usage-message")
+
+=]
+[=(. no-return-str)=]vusage_message(char const * fmt, va_list ap);
+[=(. no-return-str)=]usage_message(char const * fmt, ...);[=
+  ENDIF have usage-message              =][=
+
+  IF (exist? "die-code")                =]
+[=(. no-return-str)=]vdie( int exit_code, char const * fmt, va_list);
+[=(. no-return-str)=]die(  int exit_code, char const * fmt, ...);
+[=(. no-return-str)=]fserr(int exit_code, char const * op, char const * fn);[=
+
+    IF (. no-mem-func)                  =]
+
+/**
+ * Print a [=(. nomem-exit-code)=] fatal error message and die.
+ *
+ * @param[in] sz     the object size that was not allocated
+ * @param[in] what   what that object was going to be
+ * @noreturn
+ */
+static inline void
+[=(. lc-prefix)=]nomem_err(size_t sz, char const * what)
+{
+    char const * fmt = _("could not allocate %zu bytes for %s\n");
+    die([=(. nomem-exit-code)=], fmt, sz, what);
+}[=
+
+    ENDIF  no-memory failure            =][=
+
+  ENDIF die-code exists                 =]
+#ifdef  __cplusplus
+}
+#endif[=
+
+ENDDEF emit-program-externs
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-exit-codes
+
+=]
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/**
+ *  Enumeration of [= prog-name =] exit codes
+ */
+typedef enum {[=
+
+  (define exit-name-len 15)             =][=
+
+  FOR exit-name                         =][=
+
+     (set! tmp-val (string-length (get "exit-name")))
+     (if (> tmp-val exit-name-len)
+         (set! exit-name-len tmp-val))  =][=
+
+  ENDFOR  exit-name                     =][=
+ #/*
+  ;; Assume no definitions for exit-name[0] and [1].  If not true,
+  ;; then change the strings associated with the ones defined to the
+  ;; specified name.  If the assumption is correct, we'll need to
+  ;; emit the a default value into the enumeration..
+  =][= ;;  */
+  (set! tmp-val "")
+  (define no-mem-func #f)
+  (define need-ex-noinput  (exist? "homerc"))
+  (define noinput-err-name "")
+  (define need-ex-software #t)
+  (define need-ex-usage    #t)
+  (define usage-err-name   "")
+  (define exit-code-fmt    (sprintf
+          "\n    %s_EXIT_%%-%us = %%d" pname-up exit-name-len ))
+
+  (define succ-exit-code (string-append pname-up "_EXIT_SUCCESS"))
+  (if (exist? "exit-name[0]")
+      (set! succ-exit-code (string-append
+            pname-up "_EXIT_" (get-up-name "exit-name[0]") ))
+
+      (set! tmp-val (sprintf exit-code-fmt "SUCCESS" 0))
+  )
+
+  (define fail-exit-code (string-append pname-up "_EXIT_FAILURE"))
+  (if (exist? "exit-name[1]")
+      (set! fail-exit-code (string-append
+            pname-up "_EXIT_" (get-up-name "exit-name[1]") ))
+
+      (set! tmp-val (string-append tmp-val
+            (if (> (string-length tmp-val) 1) "," "")
+            (sprintf exit-code-fmt "FAILURE" 1) ))
+  )
+
+  (define nomem-exit-code fail-exit-code)
+  (set! exit-code-fmt (string-append "," exit-code-fmt))
+
+  tmp-val                             =][=
+
+  FOR exit-name                       =][=
+    (define err-name (get-up-name "exit-name"))
+    (if (~~ err-name "(NO_MEM|NOMEM)") (begin
+            (set! no-mem-func #t)
+            (set! nomem-exit-code (string-append
+                  pname-up "_EXIT_" err-name)) ))
+    (sprintf exit-code-fmt err-name (for-index))
+    =][=
+
+    CASE (for-index)                            =][=
+    == 64 =][= (set! need-ex-usage    #f)
+               (set! usage-err-name   err-name) =][=
+    == 66 =][= (set! need-ex-noinput  #f)
+               (set! noinput-err-name err-name) =][=
+    == 70 =][= (set! need-ex-software #f)       =][=
+    ESAC (for-index)                            =][=
+  ENDFOR                                        =][=
+
+  (if need-ex-usage (begin
+   (set! usage-err-name (string-append pname-up "_EXIT_USAGE_ERROR"))
+   (ag-fprintf 0 exit-code-fmt "USAGE_ERROR" 64) ))
+
+  (if need-ex-noinput (begin
+   (set! tmp-val (string-append pname-up "_EXIT_NO_CONFIG_INPUT"))
+   (ag-fprintf 0 exit-code-fmt "NO_CONFIG_INPUT" 66)))
+
+  (define file-fail-exit-code
+     (if (exist? "file-fail-code")
+         (string-append pname-up "_EXIT_" (get-up-name "file-fail-code"))
+     (if need-ex-noinput
+         (string-append pname-up "_EXIT_NO_CONFIG_INPUT")
+         fail-exit-code )))
+
+  (if need-ex-software (begin
+   (set! need-ex-software (string-append pname-up "_EXIT_LIBOPTS_FAILURE"))
+   (ag-fprintf 0 exit-code-fmt "LIBOPTS_FAILURE"  70)))
+=]
+}   [= (. pname-down) =]_exit_code_t;[=
+
+ENDDEF emit-exit-codes
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-opt-values
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Autoopts maintained option values.
+
+If *any* option flag value is specified,
+then we provide flag characters for our options.
+Otherwise, we will use the INDEX_* values for the option value.
+
+There are no documentation strings because these defines
+are used identically to the user-generated VALUE defines.
+
+*/ =][=
+
+IF (exist? "flag.value")                =][=
+
+  INVOKE set-std-value
+       val-name    = "help-value"
+       val-UPNAME  = "HELP"
+       std-value   = "?"                =][=
+
+  IF (not (exist? "no-libopts"))        =][=
+    INVOKE set-std-value
+         val-name    = "more-help-value"
+         val-UPNAME  = "MORE_HELP"
+         std-value   = "!"              =][=
+  ENDIF don't have no-libopts '         =][=
+
+  IF (exist? "resettable")              =][=
+    INVOKE set-std-value
+       val-name    = "reset-value"
+       val-UPNAME  = "RESET_OPTION"
+       std-value   = "R"                =][=
+  ENDIF  have "reset"                   =][=
+
+  IF (exist? "version")                 =][=
+    INVOKE set-std-value
+       val-name    = "version-value"
+       val-UPNAME  = "VERSION"
+       std-value   = "v"                =][=
+  ENDIF  have "version"                 =][=
+
+  IF (exist? "usage-opt")               =][=
+    INVOKE set-std-value
+       val-name    = "usage-value"
+       val-UPNAME  = "USAGE"
+       std-value   = "u"                =][=
+  ENDIF  have "usage-opt"               =][=
+
+  IF (exist? "vendor-opt")              =][=
+    INVOKE set-std-value
+       val-name    = "vendor-value"
+       val-UPNAME  = "VENDOR_OPT"
+       std-value   = "W"                =][=
+  ENDIF  have "vendor-opt"              =][=
+
+  IF (exist? "homerc")                  =][=
+
+    IF (not (exist? "disable-save"))    =][=
+      INVOKE set-std-value
+         val-name    = "save-opts-value"
+         val-UPNAME  = "SAVE_OPTS"
+         std-value   = ">"              =][=
+    ELSE                                =]
+#define [= (sprintf "%-23s 0" (string-append VALUE-pfx "SAVE_OPTS"))
+         =][=
+    ENDIF                               =][=
+    IF (not (exist? "disable-load"))    =][=
+      INVOKE set-std-value
+         val-name    = "load-opts-value"
+         val-UPNAME  = "LOAD_OPTS"
+         std-value   = "<"              =][=
+    ELSE                                =]
+#define [= (sprintf "%-23s 0" (string-append VALUE-pfx "LOAD_OPTS"))
+         =][=
+    ENDIF                               =][=
+  ENDIF  have "homerc"                  =][=
+
+ELSE  NO "flag.value"                   =]
+[=
+(set! index-fmt (string-append
+      "\n/** option value for %s option */"
+      "\n#define " VALUE-pfx "%-16s %s"))
+ (define std-vals (lambda (std-nm)
+   (ag-fprintf 0 index-fmt (string-downcase std-nm) std-nm (get-value-idx))
+ ) )
+
+(if (exist? "resettable")       (std-vals "RESET_OPTION"))
+(if (exist? "version")          (std-vals "VERSION"))
+(std-vals "HELP")
+(if (not (exist? "no-libopts")) (std-vals "MORE_HELP"))
+(if (exist? "usage-opt")        (std-vals "USAGE"))
+(if (exist? "homerc")           (begin
+    (if (not (exist? "disable-save"))
+        (std-vals "SAVE_OPTS"))
+    (if (not (exist? "disable-load"))
+        (std-vals "LOAD_OPTS"))
+)   )  =][=
+
+ENDIF    have flag.value/not            =][=
+
+ENDDEF emit-opt-values
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-option-guards
+
+=][=
+
+CASE guard-option-names               =][=
+!E                                    =][=
+=  full-enum                          =][=
+
+
+=* no-warn                            =]
+/**
+ *  Make sure there are no #define name conflicts with the option names
+ * @{
+ */[=
+    FOR flag                          =]
+#undef [= (get-up-name "name")        =][=
+    ENDFOR flag
+
+// # # # # # # # # # # # # # # # # #  =][=
+
+*                                     =][=
+
+   (define undef-list "\n#else  /* NO_OPTION_NAME_WARNINGS */")
+   (define conf-warn-fmt (string-append
+   "\n# ifdef    %1$s"
+   "\n#  warning undefining %1$s due to option name conflict"
+   "\n#  undef   %1$s"
+   "\n# endif" ))
+
+=]
+/** @} */
+/**
+ *  Make sure there are no #define name conflicts with the option names
+ */
+#ifndef     NO_OPTION_NAME_WARNINGS[=
+
+    FOR flag                =][=
+
+    (set! opt-name   (get-up-name "name"))
+    (set! undef-list (string-append undef-list "\n# undef " opt-name))
+    (sprintf conf-warn-fmt opt-name)
+    =][=
+
+    ENDFOR flag             =][=
+
+  (. undef-list)=]
+#endif  /*  NO_OPTION_NAME_WARNINGS */
+[=
+
+ESAC   =][=
+
+ENDDEF emit-option-guards
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE set-std-value
+
+=]
+/** option flag (value) for [= (get "val-name") =] option */
+#define [= (sprintf "%-23s " (string-append VALUE-pfx (get "val-UPNAME"))) =][=
+  CASE (define tmp-val (get "val-name"))
+       (get tmp-val)                    =][=
+
+   == ""    =][=
+     (if (exist? tmp-val)
+         (if (not (exist? "long-opts"))
+             (error (sprintf "'%s' may not be empty" tmp-val))
+             (get-value-idx)
+         )
+
+         (sprintf "'%s'" (get "std-value"))
+     )      =][=
+
+   == "'"   =]'\''[=
+   ~~ .     =]'[=(get tmp-val)=]'[=
+   *        =][= (error (sprintf "option %s has multiple character flag value"
+                    (get "val-name")))  =][=
+   ESAC     =][=
+
+ENDDEF set-std-value
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE join-or-expand
+
+=][=
+  IF (define join-type (get "join-type"))
+     (exist? join-type)                \=]
+/*
+ *  global [=(string-append join-type (if (==* join-type "inc") "d" "ed"))
+           =] definitions
+ */
+[=
+    IF
+      (set! tmp-text (join "\n\n" (stack join-type)))
+      (~* (get join-type) "^[^a-z0-9_]{2,}[ \t]+autogen5[ \t]+template")
+      =][=
+      INCLUDE (begin
+               (set! tmp-val (string-append tmp-dir "/" join-type "-text"))
+               (out-push-new tmp-val)
+               (emit tmp-text)
+               (out-pop)
+               tmp-val
+          )                             =][=
+    ELSE   text is not template         =][=
+      (. tmp-text)                      =][=
+    ENDIF  text is template             =]
+[=ENDIF  join-type                      =][=
+ENDDEF join-or-expand
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE nls-header-code
+
+=]
+
+/* * * * * *
+ *
+ *  Declare the [=prog-name=] option descriptor.
+ */
+extern tOptions [=(. pname)=]Options;[=
+
+ (if (> (string-length added-hdr) 0)
+     (begin
+        (emit "\n")
+        (shellf "sort -u <<_EOF_\n%s_EOF_" added-hdr)
+ )   )                          =][=
+
+   IF (not omit-nls-code) =]
+
+#if defined(ENABLE_NLS)
+# ifndef _
+#   include <stdio.h>
+#   ifndef HAVE_GETTEXT
+      extern char * gettext(char const *);
+#   else
+#     include <libintl.h>
+#   endif
+
+# ifndef ATTRIBUTE_FORMAT_ARG
+#   define ATTRIBUTE_FORMAT_ARG(_a)
+# endif
+
+static inline char* aoGetsText(char const* pz) ATTRIBUTE_FORMAT_ARG(1);
+static inline char* aoGetsText(char const* pz) {
+    if (pz == NULL) return NULL;
+    return (char*)gettext(pz);
+}
+#   define _(s)  aoGetsText(s)
+# endif /* _() */
+
+# define OPT_NO_XLAT_CFG_NAMES  STMTS([=(. pname)=]Options.fOptSet |= \
+                                    OPTPROC_NXLAT_OPT_CFG;)
+# define OPT_NO_XLAT_OPT_NAMES  STMTS([=(. pname)=]Options.fOptSet |= \
+                                    OPTPROC_NXLAT_OPT|OPTPROC_NXLAT_OPT_CFG;)
+
+# define OPT_XLAT_CFG_NAMES     STMTS([=(. pname)=]Options.fOptSet &= \
+                                  ~(OPTPROC_NXLAT_OPT|OPTPROC_NXLAT_OPT_CFG);)
+# define OPT_XLAT_OPT_NAMES     STMTS([=(. pname)=]Options.fOptSet &= \
+                                  ~OPTPROC_NXLAT_OPT;)
+
+#else   /* ENABLE_NLS */[=
+   ENDIF no-nls-support         =]
+# define OPT_NO_XLAT_CFG_NAMES
+# define OPT_NO_XLAT_OPT_NAMES
+
+# define OPT_XLAT_CFG_NAMES
+# define OPT_XLAT_OPT_NAMES
+
+# ifndef _
+#   define _(_s)  _s
+# endif[=
+
+(if (not omit-nls-code) (emit "\n#endif  /* ENABLE_NLS */")) =]
+[=
+ENDDEF nls-header-code
+
+/*
+ * Local Variables:
+ * mode: C
+ * c-file-style: "stroustrup"
+ * indent-tabs-mode: nil
+ * End:
+ * opthead.tpl ends here */ \=]

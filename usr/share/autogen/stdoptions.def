@@ -1,0 +1,427 @@
+
+/* -*- Mode: Text -*-
+ *
+ *  This file is part of AutoOpts, a companion to AutoGen.
+ *  AutoOpts is free software.
+ *  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+ *
+ *  AutoOpts is available under any one of two licenses.  The license
+ *  in use must be one of these two and the choice is under the control
+ *  of the user of the license.
+ *
+ *   The GNU Lesser General Public License, version 3 or later
+ *      See the files "COPYING.lgplv3" and "COPYING.gplv3"
+ *
+ *   The Modified Berkeley Software Distribution License
+ *      See the file "COPYING.mbsd"
+ *
+ *  These files have the following sha256 sums:
+ *
+ *  8584710e9b04216a394078dc156b781d0b47e1729104d666658aecef8ee32e95  COPYING.gplv3
+ *  4379e7444a0e2ce2b12dd6f5a52a27a4d02d39d247901d3285c88cf0d37f477b  COPYING.lgplv3
+ *  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
+ */
+
+#ifndef NO_STD_OPT_DOC
+# ifndef HAVE_STD_OPT_DOC
+#   define HAVE_STD_OPT_DOC 1
+flag = {
+    name        = autoopts_std_options;
+    documentation;
+    descrip = <<- _EOF_
+	The following options are commonly used and are
+	provided and supported by AutoOpts
+	_EOF_;
+};
+# endif
+#endif
+
+#ifdef  ALL_STD_OPTS
+#define BRIEF
+#define DEBUG
+#define DIRECTORY
+#define DRY_RUN
+#define INPUT
+#define INTERACTIVE
+#define OUTPUT
+#define QUIET
+#define SILENT
+#define VERBOSE
+#define WARN
+#endif
+
+#ifdef ALL_FLAG_OPTS
+#define BRIEF_FLAG
+#define DEBUG_FLAG
+#define DIRECTORY_FLAG
+#define DRY_RUN_FLAG
+#define INPUT_FLAG
+#define INTERACTIVE_FLAG
+#define OUTPUT_FLAG
+#define QUIET_FLAG
+#define SILENT_FLAG
+#define VERBOSE_FLAG
+#define WARN_FLAG
+#endif
+
+#ifdef STD_EXITS
+exit-name[64]   = usage;
+exit-desc[64]   =<<-  _EOExit_
+	The command was used incorrectly, e.g., with the wrong number of
+	arguments, a bad flag, a bad syntax in a parameter.
+	_EOExit_;
+
+exit-name[65]   = dataerr;
+exit-desc[65]   =<<-  _EOExit_
+	The input data was incorrect in some way.
+	_EOExit_;
+
+exit-name[66]   = noinput;
+exit-desc[66]   =<<-  _EOExit_
+	An input file (not a system file) did not exist or was not readable.
+	_EOExit_;
+
+exit-name[67]   = nouser;
+exit-desc[67]   =<<-  _EOExit_
+	The user specified did not exist.
+	_EOExit_;
+
+exit-name[68]   = nohost;
+exit-desc[68]   =<<-  _EOExit_
+	The host specified did not exist.
+	_EOExit_;
+
+exit-name[69]   = unavailable;
+exit-desc[69]   =<<-  _EOExit_
+	A service is unavailable.  This can occur if a support program or
+	file does not exist.  This can also be a catchall message when
+	something doesn't work, and the cause cannot be determined.
+	_EOExit_;
+
+exit-name[70]   = software;
+exit-desc[70]   =<<-  _EOExit_
+	An internal software error has been detected.
+	_EOExit_;
+
+exit-name[71]   = oserr;
+exit-desc[71]   =<<-  _EOExit_
+	An operating system error has been detected.  This is used for such
+	things as "cannot fork", "cannot create pipe", or the similar.
+	_EOExit_;
+
+exit-name[72]   = osfile;
+exit-desc[72]   =<<-  _EOExit_
+	Some system file (e.g., /etc/passwd, /etc/utmp, etc.) does not
+	exist, cannot be opened, or has some sort of error.
+	_EOExit_;
+
+exit-name[73]   = cantcreat;
+exit-desc[73]   =<<-  _EOExit_
+	A (user specified) output file cannot be created.
+	_EOExit_;
+
+exit-name[74]   = ioerr;
+exit-desc[74]   =<<-  _EOExit_
+	An error occurred while doing I/O on somefile.
+	_EOExit_;
+
+exit-name[75]   = tempfail;
+exit-desc[75]   =<<-  _EOExit_
+	A temporary failure, indicating something that is not really an
+	error.  The request should be reattempted later.
+	_EOExit_;
+
+exit-name[76]   = protocol;
+exit-desc[76]   =<<-  _EOExit_
+	the remote system returned something that was "not possible" during
+	a protocol exchange.
+	_EOExit_;
+
+exit-name[77]   = noperm;
+exit-desc[77]   =<<-  _EOExit_
+	You did not have sufficient permission to perform the operation.
+	This is not intended for file system problems, which should use
+	NOINPUT or CANTCREAT, but rather for higher level permissions.
+	_EOExit_;
+
+exit-name[78]   = config;
+exit-desc[78]   = 'configuration error';
+#endif
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ *  Levels of user entertainment
+ *
+ *  DEBUG output
+ */
+#ifdef  DEBUG_FLAG
+#define DEBUG
+#endif
+
+#ifdef DEBUG
+flag = {
+    name    = DEBUG;
+#ifdef DEBUG_FLAG
+    value   = D;
+#endif
+#ifdef DEBUG_LEVEL
+    arg-type = number;
+#endif
+    descrip = 'run program with debugging info';
+    doc =
+    "Specifying this option will cause the program to display debugging\n"
+    "information.  The information should be helpful to a developer in\n"
+    "debugging this program.";
+};
+#endif
+
+/* * * * * * * *
+ *
+ *  VERBOSE output
+ */
+#ifdef  VERBOSE_FLAG
+#define VERBOSE 1
+#endif
+
+#ifdef VERBOSE
+flag = {
+    name    = verbose;
+#ifdef VERBOSE_FLAG
+    value   = V;
+#endif
+#ifdef VERBOSE_LEVEL
+    arg-type = number;
+#endif
+#ifdef VERBOSE_ENUM
+    arg-type = keyword;
+    keyword  = silent, quiet, brief, informative, verbose;
+    arg-default = brief;
+#endif
+    descrip = 'run program with progress info';
+    doc =
+    "Specifying this option will cause the program to display lots of\n"
+    "progress information.  You will be able to see that the program\n"
+    "is working and it may help you debug your use of the tool.";
+};
+#endif
+
+/* * * * * * * *
+ *
+ *  WARNING output
+ */
+#ifdef WARN_LEVEL
+#define WARN
+#endif
+#ifdef  WARN_FLAG
+#define WARN
+#endif
+
+#ifdef WARN
+flag = {
+    name    = warn;
+#ifdef WARN_FLAG
+    value   = w;
+#endif
+#ifdef WARN_LEVEL
+    arg-type = number;
+    descrip  = 'specify a warning-level threshhold';
+    disable  = no;
+    doc =
+    "Specifying this option will allow you to specify the warning level\n"
+    "for the messages you want to see.  `--no-warn' will disable\n"
+    "warnings entirely.";
+#else
+    descrip  = 'disable warning output';
+    doc =
+    "Specifying this option will cause the program to disable\n"
+    "warning messages.";
+#endif
+};
+#endif
+
+/* * * * * * * *
+ *
+ *  BRIEF output
+ */
+#ifdef  BRIEF_FLAG
+#define BRIEF
+#endif
+
+#ifdef BRIEF
+flag = {
+    name    = brief;
+#ifdef BRIEF_FLAG
+    value   = b;
+#endif
+    descrip = 'run with minimal info output';
+    doc =
+    "Specifying this option will cause the program to disable most progress\n"
+    "information.";
+};
+#endif
+
+/* * * * * * * *
+ *
+ *  QUIET/SILENT output
+ */
+#ifdef  QUIET_FLAG
+#define QUIET
+#endif
+#ifdef  SILENT_FLAG
+#define SILENT
+#endif
+
+#ifdef QUIET_SILENT
+#define QUIET
+#define SILENT
+#else
+
+#ifdef QUIET
+#ifdef SILENT
+#define QUIET_SILENT
+#endif
+#endif
+#endif
+
+#ifdef QUIET
+flag = {
+    name    = quiet;
+#ifdef QUIET_FLAG
+    value   = q;
+#endif
+#ifdef QUIET_SILENT
+    equivalence = quiet;
+#endif
+#ifdef QUIET_LEVEL
+    arg-type = number;
+#endif
+    descrip = 'run without unnecessary output';
+    doc =
+    "Specifying this option will cause the program to disable progress\n"
+    "information.";
+};
+#endif
+
+#ifdef SILENT
+flag = {
+    name    = silent;
+#ifdef SILENT_FLAG
+    value   = s;
+#endif
+#ifdef QUIET_SILENT
+    equivalence = quiet;
+#endif
+#ifdef SILENT_LEVEL
+    arg-type = number;
+#endif
+    descrip = 'run without unnecessary output';
+    doc =
+    "Specifying this option will cause the program to disable progress\n"
+    "information.";
+};
+#endif
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ *  Operational mode
+ *
+ *  DRY_RUN
+ */
+#ifdef  DRY_RUN_FLAG
+#define DRY_RUN
+#endif
+
+#ifdef DRY_RUN
+flag = {
+    name    = DRY_RUN;
+#ifdef DRY_RUN_FLAG
+    value   = R;
+#endif
+    descrip = 'program will make no changes';
+    doc =
+    "Specifying this option will cause the program to run without\n"
+    "altering any of the normal output files.  Instead, it will\n"
+    "display what it would otherwise have done.";
+};
+#endif
+
+/* * * * * * * *
+ *
+ *  INTERACTIVE OPERATION
+ */
+#ifdef INTERACTIVE_FLAG
+#define INTERACTIVE
+#endif
+
+#ifdef INTERACTIVE
+flag = {
+    name      = interactive;
+    arg-type  = string;
+#ifdef INTERACTIVE_FLAG
+    value     = I;        /* flag style option character */
+#endif
+    descrip   = "prompt for confirmation";
+    doc =
+    "Specifying this option will cause the program to query you for\n"
+    "confirmation before doing anything destructive.";
+};
+#endif
+
+/* * * * * * * *
+ *
+ *  INPUT/OUTPUT files
+ */
+#ifdef INPUT_FLAG
+#define INPUT
+#endif
+
+#ifdef INPUT
+flag = {
+    name      = input;
+    arg-type  = string;
+#ifdef INPUT_FLAG
+    value     = i;        /* flag style option character */
+#endif
+    descrip   = "redirect input from file";
+    doc =
+    "This option specifies the file to use for program input.";
+};
+#endif
+
+#ifdef OUTPUT_FLAG
+#define OUTPUT
+#endif
+
+#ifdef OUTPUT
+flag = {
+    name      = output;
+    arg-type  = string;
+#ifdef OUTPUT_FLAG
+    value     = o;        /* flag style option character */
+#endif
+    descrip   = "redirect output to file";
+    doc =
+    "This option specifies the file to use for program output.";
+};
+#endif
+
+/* * * * * * * *
+ *
+ *  INPUT/OUTPUT directory
+ */
+#ifdef DIRECTORY_FLAG
+#define DIRECTORY
+#endif
+
+#ifdef DIRECTORY
+flag = {
+    name      = directory;
+    arg-type  = string;
+#ifdef DIRECTORY_FLAG
+    value     = d;        /* flag style option character */
+#endif
+    descrip   = "use specified dir for I/O";
+    doc =
+    "This option specifies the directory to use for program input and output.";
+};
+#endif

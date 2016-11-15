@@ -1,0 +1,142 @@
+#!/usr/bin/perl
+# -*- perl -*-
+#
+# recountdiff - recompute patch counts and offsets
+# Copyright (C) 2002  Tim Waugh <twaugh@redhat.com>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use Getopt::Std;
+getopts('-:', \%opts);
+if ($opts{'-'} && $opts{'-'} eq 'version') {
+    print "recountdiff - patchutils version 0.3.4\n";
+    exit 0;
+}
+if ($opts{'-'} && $opts{'-'} eq 'help') {
+    print "usage: recountdiff [FILE...]\n";
+    exit 0;
+}
+
+@line=<>;
+
+# First pass: fix up the counts.
+$i=-1;
+$state=0;
+$chunk_start = 0;
+$orig=0;
+$new=0;
+$orig_offset=0;
+$new_offset=0;
+$misc="";
+@off_lines = ();
+while ($i < $#line) {
+    $i++;
+    $_=$line[$i];
+    if ($state == 0) {
+	# Looking for the start of a file change.
+	unless(/^--- /) {
+	    next;
+	}
+	$state++;
+    } elsif ($state == 1) {
+	# Should be '+++ ...'.
+	unless (/^\+\+\+ /) {
+		if (/^--- /) { $state = 1; }
+		else { $state = 0; }
+		next;
+	}
+	$state++;
+    } elsif ($state == 2) {
+	# Start of chunk.  Should be '@@ ...'
+	unless (/^@@ -(\d+),?(\d+)? \+(\d+),?(\d+)? @@(.*)$/) {
+		if (/^--- /) { $state = 1; }
+		else { $state = 0; }
+		next;
+	}
+	($orig_offset,$new_offset,$misc) = ($1,$3,$5);
+	$orig_offset++ if defined($2) and $2 == 0;
+	$new_offset++ if defined($4) and $4 == 0;
+	$state++;
+	$orig=0;
+	$new=0;
+	$chunk_start = $i + 1;
+    } elsif ($state == 3) {
+	# Counting lines.
+	my $spit = 0;
+	if (/^\s/ or /^$/) { $orig++; $new++; }
+	elsif (/^\+/) { $new++; }
+	elsif (/^-/) {
+	    # Look out for new file changes.
+	    if (/^--- /) {
+		if ($i+2 <= $#line) {
+		    if ($line[$i+2] =~ /^@/) {
+			$spit = 1;
+		    }
+		}
+	    } else {
+		$orig++;
+	    }
+	} elsif (/^\\/) { }
+	else {
+	    $spit = 1;
+	}
+
+	$spit = 1 if ($i == $#line);
+
+	if ($spit) {
+	    # Spit them out.
+	    $chunk_start--;
+	    $orig_offset-- if ($orig == 0);
+	    $new_offset-- if ($new == 0);
+	    $line[$chunk_start] = "@@ -$orig_offset";
+	    $line[$chunk_start] .= ",$orig" if ($orig != 1);
+	    $line[$chunk_start] .= " +$new_offset";
+	    $line[$chunk_start] .= ",$new" if ($new != 1);
+	    $line[$chunk_start] .= " @@" . "$misc\n";
+	    push (@off_lines, $chunk_start);
+
+	    if (/^@/) { $state = 2; $i--; }
+	    else {
+		$state = 0;
+		$i--;
+		push (@off_lines, -1)
+	    }
+	}
+    }
+}
+
+# Second pass: fix up the offsets.
+$offset = 0;
+foreach (@off_lines) {
+    if ($_ == -1) {
+	$offset = 0;
+	next;
+    }
+    $line[$_] =~ /^@@ -(\d+),?(\d+)? \+(\d+),?(\d+)? @@(.*)$/;
+    ($ooff,$oc,$nc,$misc) = ($1,$2,$4,$5);
+    $oc = 1 unless defined($oc);
+    $nc = 1 unless defined($nc);
+    $noff = $ooff + $offset;
+    $noff++ if ($oc == 0);
+    $noff-- if ($nc == 0);
+    $line[$_] = "@@ -$ooff";
+    $line[$_] .= ",$oc" if ($oc != 1);
+    $line[$_] .= " +$noff";
+    $line[$_] .= ",$nc" if ($nc != 1);
+    $line[$_] .= " @@" . "$misc\n";
+    $offset += $nc - $oc;
+}
+
+print @line;

@@ -1,0 +1,236 @@
+#!/usr/bin/perl
+# -*- perl -*-
+#
+# unwrapdiff - demangle word-wrapped patches
+# Copyright (C) 2002  Tim Waugh <twaugh@redhat.com>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# Set non-zero if unwrapdiff doesn't work.  It won't fix it, but at least
+# it'll say more.
+$debug = 0;
+
+$verbose = 0;
+use Getopt::Std;
+getopts('v-:', \%opts);
+if ($opts{'-'} && $opts{'-'} eq 'version') {
+    print "unwrapdiff - patchutils version 0.3.4\n";
+    exit 0;
+}
+if ($opts{'-'} && $opts{'-'} eq 'help') {
+    print "usage: unwrapdiff [OPTIONS] [FILE...]\n";
+    print "OPTIONS are:\n";
+    print "  -v              verbose output (to stderr)\n";
+    exit 0;
+}
+if ($opts{'v'}) {
+    $verbose = 1;
+}
+
+@line=<>;
+
+$hazard = 0;
+
+$joined = 0;
+$i=-1;
+$state=0;
+$chunk_start = 0;
+$orig=0;
+$new=0;
+$orig_offset=0;
+$new_offset=0;
+$misc="";
+@blankline = ();
+while ($i < $#line) {
+    $i++;
+    $_=$line[$i];
+    if ($state == 0) {
+	# Looking for the start of a file change.
+	unless(/^--- /) {
+	    next;
+	}
+	$state++;
+    } elsif ($state == 1) {
+	# Should be '+++ ...'.
+	unless (/^\+\+\+ /) {
+	    if (/^--- /) { $state = 1; }
+	    elsif ($i + 1 < $#line &&
+		   $line[$i + 1] =~ /^\+\+\+ /) {
+		chomp($line[$i - 1]);
+		$line[$i - 1] .= " " . $line[$i];
+		splice (@line, $i, 1);
+		$joined++;
+		$i--;
+		$state = 1;
+	    }
+	    else { $state = 0; }
+	    next;
+	}
+	$state++;
+    } elsif ($state == 2) {
+	# Start of chunk.  Should be '@@ ...'
+	unless (/^@@ -(\d+),?(\d+)? \+(\d+),?(\d+)? @@(.*)$/) {
+	    if (/^--- /) { $state = 1; }
+	    elsif ($i + 1 < $#line &&
+		   $line[$i + 1] =~ /^@@ /) {
+		chomp($line[$i - 1]);
+		$line[$i - 1] .= " " . $line[$i];
+		splice (@line, $i, 1);
+		$joined++;
+		$i--;
+		$state = 2;
+	    }
+	    else { $state = 0; }
+	    next;
+	}
+	($orig_offset,$orig,$new_offset,$new,$misc) = ($1,$2,$3,$4,$5);
+	$state++;
+	$orig = 1 unless defined($2);
+	$new = 1 unless defined($4);
+	$chunk_start = $i + 1;
+	print STDERR "# State 2, $orig, $new\n" if $debug;
+    } elsif ($state == 3) {
+	# Counting lines.
+	if (/^ /) {
+	    $orig--;
+	    $new--;
+	}
+	elsif (/^\+/) {
+	    $new--;
+	}
+	elsif (/^-/) {
+	    $orig--;
+	}
+	elsif (/^\\/) { }
+	elsif (/^$/) {
+	    # This blank line might be meant to represent ' ', or
+	    # it might be superfluous altogether.  Try ' ' first,
+	    # and if that doesn't work we can start deleting the lines
+	    # that were originally blank until the counts work.
+	    print STDERR "#Blank line $i\n" if $debug;
+	    push (@blankline, $i);
+	    $line[$i] = " \n";
+	    $i--;
+	    next;
+	}
+	elsif (/^@/) {
+	    print STDERR "unwrapdiff: patch may be damaged near line "
+		. ($i + $joined) . ".\n";
+	    $hazard = 1;
+
+	    $i--;
+	    $state = 2;
+	    @blankline = ();
+	}
+	elsif ($chunk_start < $i) {
+	    $i--;
+	    chomp($line[$i]);
+	    print STDERR "Constructed line $i from:\n" .
+		"$line[$i]\n$line[$i + 1]"
+		if $debug || $verbose;
+
+	    # Decide whether there was a space in the line
+	    # before it was wrapped.  We have to use
+	    # heuristics for this.
+	    $space = " ";
+	    $_ = $line[$i];
+	    if (/(.)\1\1$/ && $line[$i + 1] =~ /^\Q$1$1\E/) {
+		$space = "";
+	    }
+
+	    $line[$i] .= $space . $line[$i + 1];
+	    splice (@line, $i + 1, 1);
+	    $joined++;
+
+	    print STDERR "to make:\n$line[$i]" if $debug || $verbose;
+	}
+
+	if ($orig < 1 && $new < 1) {
+	    if ($orig != 0 || $new != 0) {
+		# The numbers don't add up.
+		if ($#blankline >= 0) {
+		    # Let's see if we can fix it by deleting lines that
+		    # were originally blank.
+
+		    # Remove the last line.
+		    print STDERR
+			"# Removed $blankline[$#blankline] to fix counts\n"
+			if $debug;
+		    splice (@line, $blankline[$#blankline], 1);
+		    splice (@blankline, $#blankline, 1);
+		    $joined++; # for line number reporting
+
+		    # Make all the others blank again.
+		    foreach $l (@blankline) { $line[$l] = ""; }
+
+		    $i = $chunk_start - 2;
+		    $state = 2;
+		    print STDERR "# Reset to $i\n" if $debug;
+		    # Re-read this hunk from the beginning again.
+		    next;
+		}
+
+		print STDERR "unwrapdiff: patch may be damaged near line "
+		    . ($i + $joined) . ".\n";
+		$hazard = 1;
+	    }
+	    # Check to see if the last line of this hunk seems to
+	    # be wrapped or not.  If this is the last line, or the
+	    # next line starts with '--- ' or 'diff ' or 'Index: '
+	    # then it's probably not wrapped.  Otherwise it might
+	    # well be.
+	    else {
+		unless ($i == $#line ||
+			$line[$i + 1] =~ /^@@/ ||
+			$line[$i + 1] =~ /^--- / ||
+			$line[$i + 1] =~ /^diff / ||
+			$line[$i + 1] =~ /^Index: /) {
+		    chomp($line[$i]);
+		    print STDERR "Constructed line $i from:\n" .
+			"$line[$i]\n$line[$i + 1]"
+			if $debug || $verbose;
+
+		    # Decide whether there was a space in the line
+		    # before it was wrapped.  We have to use
+		    # heuristics for this.
+		    $space = " ";
+		    $_ = $line[$i];
+		    if (/\*\*\*\*\*$/) {
+			$space = "";
+		    }
+
+		    $line[$i] .= $space . $line[$i + 1];
+		    splice (@line, $i + 1, 1);
+		    $joined++;
+
+		    print STDERR "to make:\n$line[$i]" if $debug || $verbose;
+
+		    # But only handle one line of wrapped text in this case.
+		}
+	    }
+
+	    $state = 2;
+	    @blankline = ();
+	}
+    }
+}
+
+if ($orig != 0 || $new != 0) {
+    print STDERR "unwrapdiff: patch may be damaged.\n";
+    $hazard = 1;
+}
+
+print @line;
+exit ($hazard);

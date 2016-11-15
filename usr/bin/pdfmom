@@ -1,0 +1,144 @@
+#!/usr/bin/perl -w
+#
+#	pdfmom		: Frontend to run groff -mom to produce PDFs
+#	Deri James	: Friday 16 Mar 2012
+#
+
+# Copyright (C) 2012-2014
+#      Free Software Foundation, Inc.
+#      Written by Deri James <deri@chuzzlewit.demon.co.uk>
+#
+# This file is part of groff.
+#
+# groff is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# groff is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+# for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+use strict;
+use File::Temp qw/tempfile/;
+my @cmd;
+my $dev='pdf';
+my $preconv='';
+my $readstdin=1;
+
+$ENV{PATH}=$ENV{GROFF_BIN_PATH}.':'.$ENV{PATH} if exists($ENV{GROFF_BIN_PATH});
+$ENV{TMPDIR}=$ENV{GROFF_TMPDIR} if exists($ENV{GROFF_TMPDIR});
+
+while (my $c=shift)
+{
+    $c=~s/(?<!\\)"/\\"/g;
+    
+    if (substr($c,0,2) eq '-T')
+    {
+	if (length($c) > 2)
+	{
+	    $dev=substr($c,2);
+	}
+	else
+	{
+	    $dev=shift;
+	}
+	next;
+    }
+    elsif (substr($c,0,2) eq '-K')
+    {
+	if (length($c) > 2)
+	{
+	    $preconv=$c;
+	}
+	else
+	{
+	    $preconv=$c;
+	    $preconv.=shift;
+	}
+	next;
+    }
+    elsif (substr($c,0,2) eq '-k')
+    {
+	$preconv=$c;
+	next;
+    }
+    elsif ($c eq '-z' or $c eq '-Z')
+    {
+	$dev=$c;
+	next;
+    }
+    elsif ($c eq '-v')
+    {
+	print "GNU pdfmom (groff) version 1.22.3\n";
+	exit;
+    }
+    elsif (substr($c,0,1) eq '-')
+    {
+	if (length($c) > 1)
+	{
+	    push(@cmd,"\"$c\"");
+	    push(@cmd,"'".(shift)."'") if length($c)==2 and index('dDfFIKLmMnoPrwW',substr($c,-1)) >= 0;
+	}
+	else
+	{
+	    # Just a '-'
+	    
+	    push(@cmd,$c);
+	    $readstdin=2;
+	}
+    }
+    else
+    {
+	# Got a filename?
+	
+	push(@cmd,"\"$c\"");
+	$readstdin=0 if $readstdin == 1;
+	
+    }
+
+}
+
+my $cmdstring=' '.join(' ',@cmd).' ';
+
+if ($readstdin)
+{
+    my ($fh,$tmpfn)=tempfile('pdfmom-XXXXX', UNLINK=>1);
+
+    while (<STDIN>)
+    {
+	print $fh ($_);
+    }
+    
+    close($fh);
+    
+    $cmdstring=~s/ - / $tmpfn / if $readstdin == 2;
+    $cmdstring.=" $tmpfn " if $readstdin == 1;
+}
+
+if ($dev eq 'pdf')
+{
+    system("groff -Tpdf -dPDF.EXPORT=1 -mom -z $cmdstring 2>&1 | grep '^\.ds' | groff -Tpdf -mom - $preconv $cmdstring");
+}
+elsif ($dev eq 'ps')
+{
+    system("pdfroff -mpdfmark -mom --no-toc $cmdstring");
+}
+elsif ($dev eq '-z') # pseudo dev - just compile for warnings
+{
+    system("groff -Tpdf -mom -z $cmdstring");
+}
+elsif ($dev eq '-Z') # pseudo dev - produce troff output
+{
+    system("groff -Tpdf -mom -Z $cmdstring");
+}
+else
+{
+    print STDERR "Not compatible with device '-T $dev'\n";
+    exit 1;
+}
+

@@ -1,0 +1,106 @@
+.\" -*- mode: nroff; coding: iso-latin-1; -*-
+.\"
+.\" refer-mm.tmac
+.\"
+.\" Refer support for mm macros.
+.\"
+.\" Copyright (C) 2011-2014  Free Software Foundation, Inc.
+.\"   Written by Werner Lemberg (wl@gnu.org)
+.\"
+.\" This file is part of groff.
+.\"
+.\" groff is free software; you can redistribute it and/or modify it under
+.\" the terms of the GNU General Public License as published by the Free
+.\" Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" groff is distributed in the hope that it will be useful, but WITHOUT ANY
+.\" WARRANTY; without even the implied warranty of MERCHANTABILITY or
+.\" FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+.\" for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program. If not, see <http://www.gnu.org/licenses/>.
+.\"
+.\" Please send comments to groff@gnu.org.
+.
+.
+.als ref*error @warning
+.
+.de ref*text-label-start
+.  FS "\\$1"
+..
+.de ref*text-label-end
+.  FE
+..
+.
+.de ref*biblio-item-start
+.  ref@start-print "\\$1"
+..
+.de ref*biblio-item-start-nolabel
+.  ref@start-print \&
+..
+.de ref*biblio-item-end
+.  ref@stop-print
+..
+.
+.ds ref*refnum-start \" empty
+.ds ref*refnum-end   .\"
+.
+.ds [. \v'-.4m'\s-3[\"
+.ds .] ]\s0\v'.4m'\"
+.
+.ds ref*spec!0  Q A T S V N P I C D O
+.ds ref*spec!1  Q A T J S V N P I C D O
+.ds ref*spec!2  Q A T S V P I C D O
+.ds ref*spec!3  Q A T B E S V P I C D O
+.ds ref*spec!4  Q A T R G P I C D O
+.
+.ds ref*spec!A     ",  " "
+.ds ref*spec!B     """ " " "in \fI" ""    "\fP"
+.ds ref*spec!D     """ " " "("      ")"
+.ds ref*spec!E     ",  " " "ed. "
+.ds ref*spec!G     """ " " "("      ")"
+.ds ref*spec!J     ",  " " "\fI"    ""    "\fP"
+.ds ref*spec!N     """ "(" ""       ")"
+.ds ref*spec!O     ".  " "
+.ds ref*spec!P     ",  " " "p.\~"
+.ds ref*spec!PP    ",  " " "pp.\~"
+.ds ref*spec!T     ",  " " "\(lq"   ""    "\(rq"
+.ds ref*spec!T:0   ",  " " "\fI"    ""    "\fP"
+.ds ref*spec!T:2   ",  " " "\fI"    ""    "\fP"
+.ds ref*spec!V     """ " " "\fB"    "\fR"
+.ds ref*spec!dflt  ",  " "
+.
+.\" For the bibliography section, we emulate the .RS/.RF mechanism of mm by
+.\" collecting references (enclosed with .]- and .][) in macro `ref*mac'.
+.\" This macro gets expanded while calling the .RP macro.
+.
+.de ref*][-first-pass
+.  ec
+.  am ref*mac
+.    ds [F "\\*([F\"
+.    ][ "\\$1" "\\$2"
+\\..
+..
+.
+.de ref*biblio-start-hook
+.  als ref*][-second-pass ][
+.  als ][ ref*][-first-pass
+.  de ref*item-start-hook
+.    eo
+.    am ref*mac ][
+\\..
+..
+.
+.de ref*biblio-end-hook
+.  als ][ ref*][-second-pass
+.  rm ref*item-start-hook
+.  als ref*print ref*end-print
+.  RP
+.  als ref*print ref*normal-print
+..
+.
+.mso refer.tmac
+.
+.\" EOF

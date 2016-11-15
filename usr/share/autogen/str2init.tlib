@@ -1,0 +1,133 @@
+[= AutoGen5 Template null   -*- Mode: Scheme -*-
+
+# This file contains the templates used to generate
+# keyword parsing and bit map management code
+
+#  This file is part of AutoGen.
+#  AutoGen is free software.
+#  AutoGen is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+#
+# AutoGen is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# AutoGen is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+#  This file has the following md5sum:
+#
+#  43b91e8ca915626ed3818ffb1b71248b COPYING.gplv3
+
+=][=
+(define move-output-file (exist? "base-name"))
+(define base-file-name  (if move-output-file (get "base-name") (base-name)))
+(define base-type-name  (string->c-name! (string-downcase base-file-name)))
+(define pfx-str         "")
+(define tmp-str         "")
+(define idx             0)
+
+(if move-output-file
+    (out-move (string-append base-file-name "." (suffix))) )
+
+(if (exist? "prefix")
+    (set! pfx-str (string->c-name! (get "prefix")))
+    (begin
+       (set! idx (string-index base-type-name (string->char-set "_-^")))
+       (if (number? idx)
+           (set! pfx-str (substring/copy base-type-name 0 idx))
+           (set! pfx-str base-type-name)
+)   )  )
+(define PFX-STR         (string-upcase pfx-str))
+(define mask-name       (string-append base-type-name "_mask_t"))
+(define enum-name       (string-append base-type-name "_enum_t"))
+(define BASE-TYPE       (string-upcase base-type-name))
+
+(if (exist? "type")     (set! enum-type (string->c-name! (get "type"))))
+(define ENUM-TYPE       (string-upcase  (string-append "_" enum-type)))
+(define find-func-name  "")
+
+(if (<= (string-length enum-type) 0) (begin
+       (set! ENUM-TYPE      "")
+       (set! find-func-name (string-append "find_" base-type-name))
+   )
+   (set! find-func-name  (string-append
+         "find_" base-type-name "_" enum-type ))
+)
+
+(define enum-prefix     (string-append PFX-STR ENUM-TYPE))
+(define cmd-count       (string-append PFX-STR "_COUNT" ENUM-TYPE))
+(define enum-val-offset (if (exist? "cmd[0]") 1 0))
+(define insert-undef    #t)
+(define invalid-name    (if (exist? "invalid-name")
+                            (string->c-name! (get "invalid-name"))
+                            "invalid"))
+(define INVALID-NAME    (string-upcase invalid-name))
+(define max-cmd-width   0)
+(define min-cmd-width   99999)
+(define bit-count       (+ 1 (high-lim "cmd")))
+(define undef-str (if (exist? "undef-str") (get "undef-str") "* UNDEFINED *"))
+
+(make-tmp-dir)
+(out-push-new (string-append tmp-dir "/commands"))
+(define finish-commands "chmod a+w ${tmp_dir}/commands")
+
+
+(shell
+  "gperf=`command -v gperf` 2>/dev/null\n"
+  "test -x \"$gperf\" || die 'gperf not installed'\n"
+  "CLexe=`echo ${AGexe} | sed 's@/autogen@/columns@'`
+  test -x \"${CLexe}\" || CLexe=`which columns`")
+
+
+=][=
+
+FOR cmd                 =][=
+  (set! tmp-str (sprintf "what[%d]" (for-index)))
+  (if (exist? tmp-str)
+      (set! finish-commands (string-append finish-commands
+            "\ndesc_" tmp-str "=" (raw-shell-str (get tmp-str)) )) )
+  (set! tmp-str (string-downcase! (string->c-name! (get "cmd"))))
+  (if (= tmp-str invalid-name)
+      (error (string-append "You cannot specify a cmd of " invalid-name)) )
+  (set! idx (string-length tmp-str))
+  (if (> idx max-cmd-width) (set! max-cmd-width idx))
+  (if (< idx min-cmd-width) (set! min-cmd-width idx))
+  (sprintf "%5u %s\n" (for-index) tmp-str) =][=
+
+ENDFOR cmd              =][=
+
+(out-pop)
+(shell finish-commands)
+(if (< max-cmd-width 8) (set! max-cmd-width 8))
+
+                        =][=
+CASE invalid-val        =][=
+!E                      =][=
+  (define invalid-cmd (string-append PFX-STR "_" INVALID-NAME ENUM-TYPE))
+  =][=
+
+== "~0"                 =][=
+  (set! enum-val-offset 0)
+  (set! insert-undef    #f)
+  (define invalid-cmd (string-append PFX-STR "_" INVALID-NAME ENUM-TYPE))
+  =][=
+
+== ""                   =][=
+  (set! enum-val-offset 0)
+  (set! insert-undef    #f)
+  (define invalid-cmd cmd-count)
+  =][=
+
+*                       =][=
+  (error "if invalid-val exists, it is constrained to:
+	'' (empty) or '~0'.")
+  =][=
+
+ESAC
+
+\=]

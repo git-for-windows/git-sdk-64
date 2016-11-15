@@ -1,0 +1,448 @@
+#!/usr/bin/perl -w
+#
+#   BuildFoundries   : Given a Foundry file generate groff and download files
+#   Deri James       : Monday 07 Feb 2011
+
+# Copyright (C) 2011 Free Software Foundation, Inc.
+#      Written by Deri James <deri@chuzzlewit.demon.co.uk>
+#
+# This file is part of groff.
+#
+# groff is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# groff is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+# for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+use strict;
+
+my $where=shift||'';
+my $devps=shift||'../devps';
+chdir $where if $where ne '';
+my (%foundry,%flg,@downloadpreamble,%download);
+my $GSpath=FindGSpath();
+my $warn=0;
+my $lct=0;
+my $foundry='';	# the default foundry
+
+LoadDownload("download");
+LoadFoundry("Foundry");
+WriteDownload("download");
+
+exit 0;
+
+
+
+sub LoadFoundry
+{
+    my $fn=shift;
+    my $foundrypath='';
+
+    open(F,"<$fn") or die "No $fn file found";
+
+    while (<F>)
+    {
+	chomp;
+	$lct++;
+	s/\r$//;	# in case edited in windows
+
+	s/\s*#.*?$//;	# remove comments
+
+	next if $_ eq '';
+
+	if (m/^[A-Za-z]=/)
+	{
+	    my (@f)=split('=');
+	    $flg{$f[0]}=$f[1];
+	    next;
+	}
+
+	my (@r)=split('\|');
+
+	if (lc($r[0]) eq 'foundry')
+	{
+	    $foundry=uc($r[1]);
+	    $foundrypath=$r[2].' : '.$devps;
+	    $foundrypath=~s/\(gs\)/$GSpath /;
+	}
+	else
+	{
+	    # 0=groff font name
+	    # 1=IsBase Y/N (one of PDFs 14 base fonts)
+	    # 2=afmtodit flag
+	    # 3=map file
+	    # 4=encoding file
+	    # 5=font file
+	    # 6=afm file
+
+	    if (!defined($r[6]) or $r[6] eq '')
+	    {
+		# if no afm file, have a guess!
+		$r[6]=substr($r[5],0,-3)."afm";
+	    }
+
+	    my $gfont=($foundry eq '')?$r[0]:"$foundry-$r[0]";
+
+	    if ($r[2] eq '')
+	    {
+		# Don't run afmtodit, just copy the grops font file
+
+		my $gotf=1;
+		my $gropsfnt=LocateFile($devps,$r[0],0);
+
+		if ($gropsfnt ne '' and -r "$gropsfnt")
+		{
+		    my $psfont=UseGropsVersion($gropsfnt);
+		    if (!PutDownload($psfont,LocatePF($foundrypath,$r[5]),uc($r[1])))
+		    {
+			if (uc($r[1]) ne 'Y')
+			{
+			    $gotf=0;
+			    my $fns=join(',',split('!',$r[5]));
+			    Msg(0,"Unable to locate font(s) $fns on the given path(s)");
+			    unlink $gfont;	# Unable to find the postscript file for the font just created by afmtodit
+			}
+		    }
+		    print STDERR "Copied grops font $gfont...\n" if $gotf;
+
+		}
+		else
+		{
+		    Msg(0,"Can't read grops font '$r[0]' for Foundry '$foundry'");
+		}
+	    }
+	    else
+	    {
+		# We need to run afmtodit to create this groff font
+		my $psfont=RunAfmtodit($gfont,LocateAF($foundrypath,$r[6]),$r[2],$r[3],$r[4]);
+
+		if ($psfont)
+		{
+		    if (!PutDownload($psfont,LocatePF($foundrypath,$r[5]),uc($r[1])))
+		    {
+			unlink $gfont;	# Unable to find the postscript file for the font just created by afmtodit
+		    }
+		    else
+		    {
+			print STDERR "Generated $gfont...\n";
+		    }
+		}
+		else
+		{
+		    Msg(0,"Failed to create groff font '$gfont' by running afmtodit");
+		}
+	    }
+	}
+    }
+
+    close();
+}
+
+sub RunAfmtodit
+{
+    my $gfont=shift;
+    my $afmfile=shift;
+    my $flags=shift;
+    my $map=shift||'';
+    my $enc=shift||'';
+    my $psfont='';
+
+    $enc="-e 'enc/$enc'" if $enc;
+    $map="'map/$map'" if $map;
+
+    my $cmd='afmtodit -c -dDESC';
+
+    foreach my $f (split('',$flags))
+    {
+	if (!exists($flg{$f}))
+	{
+	    Msg(0,"Can't use undefined flag '$f' in calling afmtodit for groff font '$gfont'");
+	    return('');
+	}
+
+	$cmd.=" $flg{$f}";
+    }
+
+    system("$cmd $enc '$afmfile' $map $gfont 2>/dev/null");
+
+    if ($?)
+    {
+	unlink $gfont;
+	return('');
+    }
+
+    if (open(GF,"<$gfont"))
+    {
+	my (@gf)=(<GF>);
+	my @ps=grep(/^internalname /,@gf);
+	if ($#ps == 0)	# Just 1 match
+	{
+	    (undef,$psfont)=split(' ',$ps[0],2);
+	    chomp($psfont);
+	}
+	else
+	{
+	    Msg(0,"Unexpected format for grops font '$gfont' for Foundry '$foundry' - ignoring");
+	}
+
+	close(GF);
+    }
+
+    return($psfont);
+}
+
+sub LocateAF
+{
+    my $path=shift;
+    my $file=shift;
+
+    return(LocateFile($path,$file,1));
+}
+
+sub LocatePF
+{
+    my $path=shift;
+    my $file=shift;
+
+    return(LocateFile($path,$file,0));
+}
+
+sub LocateFile
+{
+    my $path=shift;
+    my $files=shift;
+    my $tryafm=shift;
+    return(substr($files,1)) if substr($files,0,1) eq '*';
+
+    foreach my $file (split('!',$files))
+    {
+    if ($file=~m'/')
+    {
+	# path given with file name so no need to search the paths
+
+	if (-r $file)
+	{
+	    return($file);
+	}
+
+	if ($tryafm and $file=~s'type1/'afm/'i)
+	{
+	    if (-r "$file")
+	    {
+		return($file);
+	    }
+	}
+
+	return('');
+    }
+
+	if ($path eq '(tex)')
+    {
+	my $res=`kpsewhich $file`;
+	return '' if $?;
+	chomp($res);
+	return($res);
+    }
+
+	my (@paths)=split(/ (:|;)/,$path);
+
+    foreach my $p (@paths)
+    {
+	    next if !defined($p) or $p eq ';' or $p eq ':';
+	$p=~s/^\s+//;
+	$p=~s/\s+$//;
+
+	next if $p=~m/^\%rom\%/;	# exclude %rom% paths (from (gs))
+
+	if (-r "$p/$file")
+	{
+	    return("$p/$file");
+	}
+
+	if ($tryafm and $p=~s'type1/'afm/'i)
+	{
+	    if (-r "$p/$file")
+	    {
+		return("$p/$file");
+	    }
+	}
+    }
+    }
+
+    return('');
+}
+
+sub FindGSpath
+{
+    my (@res)=`missing -h 2>/dev/null`;
+    return '' if $?;
+    my $buildpath='';
+    my $stg=1;
+
+    foreach my $l (@res)
+    {
+	chomp($l);
+
+	if ($stg==1 and $l=~m/^Search path:/)
+	{
+	    $stg=2;
+	}
+	elsif ($stg == 2)
+	{
+	    if (substr($l,0,1) ne ' ')
+	    {
+		$stg=3;
+	    }
+	    else
+	    {
+		$l=~s/^\s+//;
+		$buildpath.=$l;
+	    }
+	}
+    }
+
+    return($buildpath);
+}
+
+sub UseGropsVersion
+{
+    my $gfont=shift;
+    my $psfont='';
+    my (@gfa)=split('/',$gfont);
+    my $gfontbase=pop(@gfa);
+
+    if (open(GF,"<$gfont"))
+    {
+	my (@gf)=(<GF>);
+	my @ps=grep(/^internalname /,@gf);
+	if ($#ps == 0)	# Just 1 match
+	{
+	    (undef,$psfont)=split(' ',$ps[0],2);
+	    chomp($psfont);
+	}
+	else
+	{
+	    Msg(0,"Unexpected format for grops font '$gfont' for Foundry '$foundry' - ignoring");
+	}
+
+	close(GF);
+
+	if ($psfont)
+	{
+	    if (open(GF,">$gfontbase"))
+	    {
+		local $"='';
+		print GF "@gf";
+		close(GF);
+	    }
+	    else
+	    {
+		$psfont='';
+		Msg(0,"Failed to create new font '$gfont' for Foundry '$foundry'");
+	    }
+	}
+	else
+	{
+	    Msg(0,"Failed to locate postscript internalname in grops font '$gfont' for Foundry '$foundry'");
+	}
+
+	close(GF);
+    }
+    else
+    {
+	Msg(0,"Failed to open grops font '$gfont' for Foundry '$foundry'");
+    }
+
+    return($psfont);
+}
+
+sub PutDownload
+{
+    my $psfont=shift;
+    my $pffile=shift;
+    my $IsBase14=shift;
+    my $key="$foundry $psfont";
+
+    delete($download{$key}), return 0 if ($pffile eq '');
+
+    $pffile='*'.$pffile if $IsBase14 eq 'Y'; # This signals to gropdf to only edmbed if -e given
+    $download{$key}=$pffile;
+
+    return 1;
+}
+
+sub LoadDownload
+{
+    my $fn=shift;
+    my $top=1;
+
+    return if !open(F,"<$fn");
+
+    while (<F>)
+    {
+	chomp;
+	s/\r$//;	# in case edited in windows
+
+	if ($top and substr($_,0,1) eq '#' or $_ eq '')
+	{
+	    # Preserve comments at top of download file
+
+	    push(@downloadpreamble,$_);
+	    next;
+	}
+
+	$top=0;
+	s/\s*#.*?$//;	# remove comments
+
+	next if $_ eq '';
+
+	my (@r)=split(/\t+/);
+	my $key=$r[1];
+	$key="$r[0] $r[1]";
+	$download{$key}=$r[2];
+    }
+
+    close(F);
+}
+
+sub WriteDownload
+{
+    my $fn=shift;
+    my $top=1;
+
+    open(F,">$fn") or die "Can't Create new file '$fn'";
+
+    print F join("\n",@downloadpreamble),"\n";
+
+    foreach my $k (sort keys %download)
+    {
+	my ($f,$ps)=split(/ /,$k);
+	print F "$f\t$ps\t$download{$k}\n";
+    }
+
+    close(F);
+}
+
+sub Msg
+{
+    my $sev=shift;
+    my $msg=shift;
+
+    if ($sev)
+    {
+	print STDERR "Error: line $lct: $msg\n";
+	exit 2;
+    }
+    else
+    {
+	print STDERR "Warning: line $lct: $msg\n";
+	$warn=1;
+    }
+}

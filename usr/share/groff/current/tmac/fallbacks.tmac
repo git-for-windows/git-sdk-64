@@ -1,0 +1,67 @@
+.\" -*- nroff -*-
+.\"
+.\" fallbacks.tmac
+.\"
+.\" This file contains generic fallback characters.
+.
+.nr _C \n(.C
+.cp 0
+.
+.\" fall back to GREEK CAPITAL LETTER DELTA for INCREMENT
+.fchar \[u2206] \[u0394]
+.
+.
+.\" NB: as per http://unicode.org/Public/UNIDATA/NamesList.txt
+.\"
+.\" #!/usr/bin/perl
+.\" ## Ivan Shmakov, 2012.
+.\" ## This code is in the public-domain.
+.\" my $u;
+.\" while (<>) {
+.\"   $u = oct ("0x" . $1)
+.\"       if (/^([[:xdigit:]]{4})/);
+.\"   next unless (defined ($u) && $u >= 0x2160 && $u <= 0x217F);
+.\"   if (/^\s+#\s+([[:xdigit:][:blank:]]+)(\s.*)?$/) {
+.\"     ## NB: may make sense to map to \[uXXXX]'s instead
+.\"     printf (".fchar \\[u%04x] %s\n", $u,
+.\"             pack ("U*", map { oct ("0x" . $_); } split (/ /, $1)));
+.\"     $u = undef;
+.\"   }
+.\" }
+.
+.fchar \[u2160] I
+.fchar \[u2161] II
+.fchar \[u2162] III
+.fchar \[u2163] IV
+.fchar \[u2164] V
+.fchar \[u2165] VI
+.fchar \[u2166] VII
+.fchar \[u2167] VIII
+.fchar \[u2168] IX
+.fchar \[u2169] X
+.fchar \[u216a] XI
+.fchar \[u216b] XII
+.fchar \[u216c] L
+.fchar \[u216d] C
+.fchar \[u216e] D
+.fchar \[u216f] M
+.fchar \[u2170] i
+.fchar \[u2171] ii
+.fchar \[u2172] iii
+.fchar \[u2173] iv
+.fchar \[u2174] v
+.fchar \[u2175] vi
+.fchar \[u2176] vii
+.fchar \[u2177] viii
+.fchar \[u2178] ix
+.fchar \[u2179] x
+.fchar \[u217a] xi
+.fchar \[u217b] xii
+.fchar \[u217c] l
+.fchar \[u217d] c
+.fchar \[u217e] d
+.fchar \[u217f] m
+.
+.cp \n[_C]
+.
+.\" EOF

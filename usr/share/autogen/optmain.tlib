@@ -1,0 +1,1407 @@
+[= AutoGen5 Template -*- Mode: C -*-
+
+##  This file is part of AutoOpts, a companion to AutoGen.
+##  AutoOpts is free software.
+##  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+##
+##  AutoOpts is available under any one of two licenses.  The license
+##  in use must be one of these two and the choice is under the control
+##  of the user of the license.
+##
+##   The GNU Lesser General Public License, version 3 or later
+##      See the files "COPYING.lgplv3" and "COPYING.gplv3"
+##
+##   The Modified Berkeley Software Distribution License
+##      See the file "COPYING.mbsd"
+##
+##  These files have the following sha256 sums:
+##
+##  8584710e9b04216a394078dc156b781d0b47e1729104d666658aecef8ee32e95  COPYING.gplv3
+##  4379e7444a0e2ce2b12dd6f5a52a27a4d02d39d247901d3285c88cf0d37f477b  COPYING.lgplv3
+##  13aa749a5b0a454917a944ed8fffc530b784f5ead522b1aacaf4ec8aa55a6239  COPYING.mbsd
+
+=][=
+
+(out-push-new) =]
+ck_flag_code() {
+    addon_txt=''
+    txt1=`[=(. grep-prog)=] -w pOptDesc ${tmp_dir}/flag-code`
+    test -z "$txt1" && addon_txt='    (void)pOptDesc;\n'
+    txt2=`[=(. grep-prog)=] -w pOptions ${tmp_dir}/flag-code`
+    test -z "$txt2" && addon_txt=${addon_txt}'    (void)pOptions;\n'
+    cat ${tmp_dir}/flag-code
+    test -z "$addon_txt" || printf "\n$addon_txt"
+    rm -f ${tmp_dir}/flag-code
+}[=
+(shell (out-pop #t)) =][=
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+   BUILD TEST MAIN
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE build-test-main          =][=
+
+  IF (emit (tpl-file-line extract-fmt))
+     (define end-test-main-guard "")
+     guarded-test-main
+=]
+#if defined([=(set! end-test-main-guard (string-append
+                    "\n#endif  /* " main-guard " END-TEST-MAIN-PROCEDURE */"))
+              main-guard=]) /* TEST-MAIN-PROCEDURE: */[=
+
+  ENDIF guarded-test-main       =][=
+
+  IF (= (get "test-main") "optionParseShell")
+
+=]
+
+extern tOptions  genshelloptOptions;
+extern void      optionParseShell(tOptions*);
+extern tOptions* optionParseShellOptions;[=
+
+  ELIF (not (exist? "main-text"))  =][=
+
+    (define option-emitter-proc (get "test-main"))
+    (if (<= (string-length option-emitter-proc) 3)
+        (set! option-emitter-proc "optionPutShell"))
+=]
+
+extern void [= (. option-emitter-proc) =](tOptions*);[=
+
+  ENDIF
+
+=]
+
+/**
+ * Generated main procedure.  This will emit text that a Bourne shell can
+ * process to handle its command line arguments.
+ *
+ * @param[in] argc argument count
+ * @param[in] argv argument vector
+ * @returns program exit code
+ */
+int
+main(int argc, char ** argv)
+{
+    int res = [=(. succ-exit-code)=];[=
+
+  IF (= (get "test-main") "optionParseShell") =]
+    /*
+     *  Stash a pointer to the options we are generating.
+     *  `genshellUsage()' will use it.
+     */
+    optionParseShellOptions = &[=(. pname)=]Options;
+    (void)optionProcess(&genshelloptOptions, argc, argv);
+    optionParseShell(&[=(. pname)=]Options);[=
+
+  ELSE                          =][=
+  INVOKE emit-option-code       =][=
+  INVOKE emit-main-text         =][=
+  ENDIF                         =]
+    return res;
+}[=(. end-test-main-guard)      =][=
+
+ENDDEF  build-test-main
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+   BUILD FOR-EACH MAIN
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE for-each-main            =][=
+
+  (if (not (==* (get "argument") "[" ))
+      (error "command line arguments must be optional for a 'for-each' main"))
+
+  (if (not (exist? "handler-proc"))
+      (error "'for-each' mains require a handler proc") )
+
+  (define handler-arg-type "")
+  (tpl-file-line extract-fmt)   =][=
+
+INVOKE emit-handler-proc        =][=
+
+IF (exist? "handler-type")      =][=
+    INVOKE emit-file-dispatcher    =][=
+ENDIF handler-type exists       =][=
+
+(tpl-file-line extract-fmt)
+
+=][=
+
+IF (not (exist? "stdin-input"))  =][=
+  INVOKE emit-trim-input         =][=
+ENDIF
+
+=]
+/**
+ * Generated main procedure.  This will call the [=(. handler-proc)=] procedure
+ * for every operand on the command line.  If there are no operands, then stdin
+ * is read for a list of file names to process.  stdin must not be a terminal.
+ * It must be a pipe or a file.
+ *
+ * @param[in] argc argument count
+ * @param[in] argv argument vector
+ * @returns program exit code
+ */
+int
+main(int argc, char ** argv)
+{
+    int res     = 0;
+    int proc_ct = 0;
+    int arg_ix  = optionProcess(&[=(. pname)=]Options, argc, argv);[=
+
+    (if (exist? "main-init") (string-append
+    "\n    " (def-file-line "main-init" extract-fmt) "\n" (get "main-init")))
+
+    =][= (tpl-file-line extract-fmt) =]
+    /*
+     *  IF the input list is from the command line...
+     */
+    if (arg_ix < argc) {
+        for (; arg_ix < argc; arg_ix++) {
+            char * arg = argv[arg_ix];[=
+    IF (exist? "interleaved")   =]
+            if (*arg == '-') {
+                RESTART_OPT(arg_ix);
+                arg_ix = optionProcess(&[=(. pname)=]Options, argc, argv) - 1;
+                continue;
+            }[=
+    ENDIF interleaved           =]
+            res |= [= (. handler-proc) =](arg);
+            proc_ct++;
+        }[=
+    IF (exist? "interleaved")   =]
+
+        if (proc_ct == 0)
+            fputs(_("[=(. prog-name)
+            =] Warning:  no command operands were processed\n"), stderr);[=
+    ENDIF interleaved           =]
+    }[=
+ 
+IF (exist? "stdin-input")       =][=
+    INVOKE stdin-as-input       =][=
+ELSE                            =][=
+    INVOKE files-from-stdin     =][=
+ENDIF                           =][=
+
+    (if (exist? "main-fini") (string-append
+    "\n    " (def-file-line "main-fini" extract-fmt) "\n" (get "main-fini")))
+
+    =]
+    return res;
+}[=
+
+ENDDEF  for-each-main
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-file-dispatcher     =][=
+
+(tpl-file-line extract-fmt)     =]
+/**
+ * validate file name and dispach callout procedure.
+ * This procedure is generated by AutoOpts.
+ * It will make sure that the input file name refers to a file[=
+
+  CASE handler-type             =][=
+=*  name                        =]
+ * that exists.[=
+=*  file                        =]
+ * that exists and has been opened for [=
+    CASE
+    (define open-mode (shellf "echo '%s' | sed 's/.*-//'"
+                (get "handler-type")))
+    open-mode                   =][=
+    *~~*  '[rwa]\+'             =]reading and writing[=
+    *~~*  [wa]                  =]writing[=
+    *~~*  r                     =]reading[=
+    ESAC                        =].[=
+
+*=*  text                       =]
+ * that has been read into memory as text.[=
+  ESAC                          =]
+ *
+ * @param pz_fname the name of the file to process
+ * @returns program exit code flag
+ */
+static [=
+
+(define emit-failing-printf (not (= (get "file-fail-code") "success")))
+
+ pname-down =]_exit_code_t
+validate_fname(char const * pz_fname)
+{
+    static char const * pz_fs_err = NULL;[=
+
+  IF (*=* (get "handler-type") "text")          =]
+    char*  file_text;
+    size_t text_size;
+    int    res;[=
+  ENDIF                                         =]
+
+    if (pz_fs_err == NULL)
+        pz_fs_err = _("fs error %d (%s) %s-ing %s\n");[=
+
+  IF (== (get "handler-type") "file-r")         =]
+    if ((pz_fname[0] == '-') && (pz_fname[1] == '\0'))
+        return [= handler-proc =](_("standard input"), stdin);[=
+  ENDIF  file-r handler type                    =]
+    {
+        struct stat sb;
+        if (stat(pz_fname, &sb) < 0) {[=
+  IF (. emit-failing-printf)                    =]
+            fprintf(stderr, pz_fs_err, errno, strerror(errno), "stat",
+                    pz_fname);[=
+  ENDIF                                         =]
+            return [= (. file-fail-exit-code)   =];
+        }[=
+
+  IF (*=* (get "handler-type") "text")          =]
+
+        if (! S_ISREG(sb.st_mode)) {[=
+    IF (. emit-failing-printf)                  =]
+            fprintf(stderr, pz_fs_err, EINVAL, strerror(EINVAL),
+                    _("not regular file:"), pz_fname);[=
+    ENDIF                                       =]
+            return [= (. file-fail-exit-code)   =];
+        }[=
+
+    IF (=* (get "handler-type") "some-text")    =]
+
+        if (sb.st_size == 0) {[=
+      IF (. emit-failing-printf)                =]
+            fprintf(stderr, pz_fs_err, EINVAL, strerror(EINVAL),
+                    _("empty file:"), pz_fname);[=
+      ENDIF                                     =]
+            return [= (. file-fail-exit-code)   =];
+        }[=
+
+    ENDIF                                       =]
+
+        text_size = sb.st_size;[=
+
+  ENDIF                                         =]
+    }[=
+
+CASE handler-type =][=
+=*  name          =][= (tpl-file-line extract-fmt) =]
+
+    return [= handler-proc =](pz_fname);[=
+
+=*  file          =][= (tpl-file-line extract-fmt) =]
+    {
+        int res;
+        FILE* fp = fopen(pz_fname, "[=
+        (shellf "echo '%s' | sed 's/.*-//'"
+                (get "handler-type")) =]");
+        if (fp == NULL) {
+            fprintf(stderr, pz_fs_err, errno, strerror(errno), "fopen",
+                    pz_fname);
+            return [= (. file-fail-exit-code) =];
+        }
+        res = [= handler-proc =](pz_fname, fp);
+        fclose(fp);
+        return res;
+    }[=
+
+*=*  text         =][= (tpl-file-line extract-fmt) =]
+    file_text = malloc(text_size + 1);
+    if (file_text == NULL) {
+        fprintf(stderr, _("cannot allocate %u bytes for %s file text\n"),
+                (unsigned int)text_size+1, pz_fname);
+        exit([=(. nomem-exit-code)=]);
+    }
+
+    {
+        char*   pz = file_text;
+        size_t  sz = text_size;
+        int     fd = open(pz_fname, O_RDONLY);
+        int     try_ct = 0;
+
+        if (fd < 0) {
+            fprintf(stderr, pz_fs_err, errno, strerror(errno), "open",
+                    pz_fname);
+            free(file_text);
+            return [= (. file-fail-exit-code) =];
+        }
+
+        while (sz > 0) {
+            ssize_t rd_ct = read(fd, pz, sz);
+            /*
+             *  a read count of zero is theoretically okay, but we've already
+             *  checked the file size, so we shoud be reading more.
+             *  For us, a count of zero is an error.
+             */
+            if (rd_ct <= 0) {
+                /*
+                 * Try retriable errors up to 10 times.  Then bomb out.
+                 */
+                if (  ((errno == EAGAIN) || (errno == EINTR))
+                   && (++try_ct < 10)  )
+                    continue;
+
+                fprintf(stderr, pz_fs_err, errno, strerror(errno), "read",
+                        pz_fname);
+                exit([=(. file-fail-exit-code)=]);
+            }
+            pz += rd_ct;
+            sz -= rd_ct;
+        }
+        close(fd);
+    }
+
+    /*
+     *  Just in case it is a text file, we have an extra byte to NUL
+     *  terminate the thing.
+     */
+    file_text[ text_size ] = '\0';
+    res = [= handler-proc =](pz_fname, file_text, text_size);
+    free(file_text);
+    return res;[=
+ESAC             =]
+}[=
+ENDDEF emit-file-dispatcher
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE stdin-as-input           =][=
+  IF (=* (get "handler-type") "file-")  =]
+    else
+        /*
+         * process standard input as input file
+         */
+        res = [= handler-proc =](_("standard input"), stdin);[=
+  ELSE  =][=
+    (error "'stdin-input' specified for non-file handler type") =][=
+  ENDIF =][=
+ENDDEF stdin-as-input
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-handler-proc        =][=
+
+CASE handler-type =][=
+=*  name         =][= (set! handler-arg-type "char const* pz_fname")
+                      (define handler-proc "validate_fname")       =][=
+=*  file         =][=
+   (set! handler-arg-type "char const* pz_fname, FILE* entry_fp")
+                      (define handler-proc "validate_fname")       =][=
+*=* text         =][=
+   (set! handler-arg-type
+         "char const* pz_fname, char* pz_file_text, size_t text_size")
+                      (define handler-proc "validate_fname")       =][=
+!E               =][= (set! handler-arg-type "char const* pz_entry")
+                      (define handler-proc (get "handler-proc"))       =][=
+*                =][= (error) =][=
+ESAC             =]
+
+[=
+
+IF (set! tmp-text (string-append (get "handler-proc") "-code"))
+   (exist? tmp-text)
+
+\=]
+static int
+[= handler-proc =]([=(. handler-arg-type)=])
+{
+    int res = 0;[=
+   (string-append
+      (def-file-line tmp-text extract-fmt)
+      (get tmp-text) ) =]
+    return res;
+}[=
+
+ELSE
+
+\=]
+extern int [= handler-proc =]([=(. handler-arg-type)=]);[=
+
+ENDIF
+
+=][=
+
+ENDDEF emit-handler-proc
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-trim-input          =]
+/**
+ * strip (destructively) the leading and trailing white space.
+ * Trailing white space is trimmed with a NUL byte.
+ * The returned address is that of the first character after the
+ * leading white space.  Characters are not moved.
+ *
+ * @param[in,out] pz_s source text pointer
+ * @returns pointer to the same text buffer, but after skipping over the
+ * leading white space characters.
+ */
+static char *
+trim_input_line(char * pz_s)
+{
+    char* pz_e = pz_s + strlen(pz_s);
+    while ((pz_e > pz_s) && isspace((unsigned int)pz_e[-1]))  pz_e--;
+    *pz_e = '\0';
+    while ((unsigned int)isspace(*pz_s))  pz_s++;
+
+    switch (*pz_s) {
+    case '\0':[=
+    (define comment-char (substring (get "comment-char" "#") 0 1))
+    (if (> (string-length comment-char) 0) (begin
+        (if (or (== comment-char "\\") (== comment-char "'"))
+            (set! comment-char (string-append "\\" comment-char)) )
+        (string-append "\n    case '" comment-char "':")
+    )   ) =]
+        return NULL;
+    default:
+        return pz_s;
+    }
+}
+[=
+ENDDEF emit-trim-input
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE files-from-stdin         =]
+    /*
+     *  Input list from tty input
+     */
+    else if (isatty(STDIN_FILENO)) {
+        fputs(_("[=(. prog-name)=] ERROR: input list is a tty\n"), stderr);
+        [= (. UP-prefix) =]USAGE([=(. file-fail-exit-code)=]);
+        /* NOTREACHED */
+    }
+
+    /*
+     *  Input list from a pipe or file or some such
+     */
+    else {
+        long pg_size = sysconf(_SC_PAGESIZE);
+        char * buf   = malloc((size_t)pg_size);
+        if (buf == NULL) {
+            fputs(_("[=(. prog-name)
+                   =] ERROR: no memory for input list\n"), stderr);
+            return [=(. nomem-exit-code)=];
+        }
+
+        for (;;) {
+            char * pz = fgets(buf, (ssize_t)pg_size, stdin);
+            if (pz == NULL)
+                break;
+
+            pz = trim_input_line(pz);
+            if (pz == NULL)
+                continue;[=
+    IF (= (get "handler-type") "file-r")          =]
+            if ((pz[0] == '-') && (pz[1] == '\0'))
+                continue; /* disallowed when reading operands from stdin */[=
+    ENDIF  file-r handler type                    =][=
+    IF (exist? "interleaved")   =]
+            if (*pz == '-') {
+                optionLoadLine(&[=(. pname)=]Options, pz);
+                continue;
+            }[=
+    ENDIF interleaved           =]
+            res |= [= (. handler-proc) =](pz);
+            proc_ct++;
+        }
+
+        if (proc_ct == 0)
+            fputs(_("[=(. prog-name)
+                   =] Warning:  no input lines were read\n"), stderr);
+        free(buf);
+    }
+[=
+
+ENDDEF files-from-stdin
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+   BUILD MAIN
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE build-main               =][= FOR main[] =][=
+
+ CASE main-type                 =][=
+  == shell-process              =][=
+     INVOKE build-test-main  test-main = "optionPutShell"   =][=
+
+  == shell-parser               =][=
+     INVOKE build-test-main  test-main = "optionParseShell" =][=
+
+  == main                       =][=
+     INVOKE build-test-main     =][=
+
+  == include                    =]
+[=   INCLUDE tpl                =][=
+
+  == invoke                     =][=
+     INVOKE (get "func")        =][=
+
+  == for-each                   =][=
+     INVOKE for-each-main       =][=
+
+  *                             =][=
+     (error (sprintf "unknown/invalid main-type: '%s'" (get "main-type"))) =][=
+
+  ESAC =][= ENDFOR first-main   =][=
+
+ENDDEF build-main
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+   DECLARE OPTION CALLBACK PROCEDURES
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE decl-callbacks
+
+   This is the test for whether or not to emit callback handling code:
+
+=]
+/**
+ *  Declare option callback procedures
+ */[=
+  (define undef-proc-names "")
+  (define decl-type "")
+  (define extern-proc-list (string-append
+    (if (exist? "version-proc")
+        (get "version-proc")
+        "optionPrintVersion") "\n"
+    "optionBooleanVal\n"
+    "optionNestedVal\n"
+    "optionNumericVal\n"
+    "optionResetOpt\n"
+    "optionStackArg\n"
+    "optionTimeDate\n"
+    "optionTimeVal\n"
+    "optionUnstackArg\n"
+    "optionVendorOption\n"
+
+  ) )
+
+  (define extern-test-list "")
+
+  (define emit-decl-list (lambda(txt-var is-extern)
+    (if (> (string-length txt-var) 1) (begin
+
+      (emit (if is-extern "\nextern tOptProc\n" "\nstatic tOptProc\n"))
+      (set! txt-var (shellf "
+        (%s -v '^%s$' | sed '/^$/d' | sort -u | \
+        sed 's@$@,@;$s@,$@;@' ) <<_EOProcs_\n%s_EOProcs_"
+            egrep-prog
+            (if is-extern "NULL" "(NULL|optionStackArg|optionUnstackArg)")
+            txt-var ))
+
+      (emit (shellf (if (< (string-length txt-var) 72)
+                  "f='%s' ; echo \"   \" $f"
+                  "${CLexe} --spread=1 -I4 <<_EOProcs_\n%s\n_EOProcs_" )
+            txt-var ))
+    ))
+  ))
+
+  (define static-proc-list "doUsageOpt\n")
+  (define static-test-list static-proc-list)
+  (define ifdef-fmt (string-append
+    "\n#if%1$sdef %2$s"
+    "\n  %3$s tOptProc %4$s;"
+    "\n#else /* not %2$s */"
+    "\n# define %4$s NULL"
+    "\n#endif /* def/not %2$s */"))
+
+  (define make-proc-decl #t)
+
+  (define set-ifdef (lambda(n-or-def ifdef-cb ifdef-name) (begin
+     (set! decl-type (if (hash-ref is-ext-cb-proc flg-name) "extern" "static"))
+     (set! make-proc-decl #f)
+     (ag-fprintf 0 ifdef-fmt n-or-def ifdef-name decl-type ifdef-cb )
+  )))
+
+  (define set-cb-decl (lambda() (begin
+
+     (set! make-proc-decl #t)
+     (set! tmp-val (hash-ref cb-proc-name flg-name))
+
+     (if (exist? "ifdef")
+         (set-ifdef ""  tmp-val (get "ifdef"))
+
+         (if (exist? "ifndef")
+             (set-ifdef "n" tmp-val (get "ifndef"))
+
+             (if (hash-ref is-ext-cb-proc flg-name)
+                 (set! extern-proc-list (string-append
+                       extern-proc-list tmp-val "\n" ))
+
+                 (set! static-proc-list (string-append
+                       static-proc-list tmp-val "\n" ))
+     )  )  )
+
+     (if guarded-test-main (begin
+         (set! tmp-val (hash-ref test-proc-name flg-name))
+         (if (hash-ref is-ext-cb-proc flg-name)
+             (set! extern-test-list (string-append extern-test-list
+                   tmp-val "\n" ))
+
+             (if make-proc-decl
+                 (set! static-test-list
+                       (string-append static-test-list tmp-val "\n") ) ) )
+     )   )
+
+  )))
+  =][=
+
+  FOR flag =][=
+
+    ;;  Fill in four strings with names of callout procedures:
+    ;;  extern-test-list - external callouts done IFF test main is built
+    ;;  static-test-list - static callouts done IFF test main is built
+    ;;  extern-proc-list - external callouts for normal compilation
+    ;;  static-proc-list - static callouts for normal compilation
+    ;;
+    ;;  Anything under the control of "if[n]def" has the declaration or
+    ;;  #define to NULL emitted immediately.
+    ;;
+    (set! flg-name (get "name"))
+
+    (if (and (hash-ref have-cb-procs flg-name)
+             (not (hash-ref is-lib-cb-proc flg-name)) )
+              (set-cb-decl)
+    )           =][=
+
+  ENDFOR flag   =][=
+
+  IF (. guarded-test-main)                      =][=
+    INVOKE emit-testing-defines                 =][=
+  ENDIF guarded-test-main                       =][=
+
+  (if (not (exist? "no-libopts"))
+      (set! extern-proc-list (string-append extern-proc-list
+            "optionPagedUsage\n")) )
+
+  (emit-decl-list extern-proc-list #t)
+  (emit-decl-list static-proc-list #f)
+  (set! static-proc-list "")                    =][=
+
+  FOR flag                                      =][=
+
+    (set! flg-name (get "name"))
+    (if (not (= (hash-ref cb-proc-name  flg-name)
+               (hash-ref test-proc-name flg-name)))
+        (set! static-proc-list (string-append static-proc-list
+              "#define " (get-up-name "name") "_OPT_PROC "
+                     (hash-ref cb-proc-name flg-name) "\n"))  )
+    =][=
+  ENDFOR  flag                                  =][=
+
+  IF (> (string-length static-proc-list) 0) =]
+
+/**
+ *  #define map the "normal" callout procs
+ */
+[= (. static-proc-list)                         =][=
+
+  ENDIF  have some #define mappings
+
+=][=
+
+  (if guarded-test-main
+      (emit "\n#endif /* " main-guard " */") )
+
+  undef-proc-names                              =][=
+
+ENDDEF decl-callbacks
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-testing-defines
+
+=][=
+  (set! extern-proc-list (string-append extern-proc-list
+        "optionVersionStderr\n"))
+  (tpl-file-line extract-fmt)                   =]
+#if defined([=(. main-guard)=])
+/*
+ *  Under test, omit argument processing, or call optionStackArg,
+ *  if multiple copies are allowed.
+ */[=
+
+    (emit-decl-list extern-test-list #t)
+    (emit-decl-list static-test-list #f)
+    (set! static-test-list "")                  =][=
+
+    FOR flag                                    =][=
+
+      (set! flg-name (get "name"))
+      (if (not (= (hash-ref cb-proc-name  flg-name)
+                 (hash-ref test-proc-name flg-name)))
+          (set! static-test-list (string-append static-test-list
+                "#define " (get-up-name "name") "_OPT_PROC "
+                       (hash-ref test-proc-name flg-name) "\n"))  )
+      =][=
+    ENDFOR  flag                                =][=
+
+    IF (> (string-length static-test-list) 0)   =]
+
+/*
+ *  #define map the "normal" callout procs to the test ones...
+ */
+[= (. static-test-list)                         =][=
+
+    ENDIF  have some #define mappings
+
+=]
+
+#else /* NOT defined [=(. main-guard)=] */
+/*
+ *  When not under test, there are different procs to use
+ */[=
+
+ENDDEF emit-testing-defines
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+   DEFINE OPTION CALLBACKS
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE callback-proc-header     =]
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/**
+ * Code to handle the [=name=] option[= # */ =][=
+
+  IF  (exist? "ifdef")
+
+=], when [= ifdef =] is #define-d[=
+    (define ifdef-text (string-append "\n#ifdef " (get "ifdef")))
+    (set! endif-test-main (string-append
+	   (sprintf "\n#endif /* defined %s */" (get "ifdef"))
+	   endif-test-main
+    )) =][=
+
+  ELIF (exist? "ifndef")
+
+=], when [= ifndef =] is *not* #define-d[=
+    (define ifdef-text (string-append "\n#ifndef " (get "ifndef")))
+    (set! endif-test-main (string-append
+	   (sprintf "\n#endif /* ! defined %s */" (get "ifndef"))
+	   endif-test-main
+    )) =][=
+
+  ELSE  unconditional code:
+
+=][= (define ifdef-text "") =][=
+
+  ENDIF ifdef / ifndef
+
+=].
+[= (prefix " * " (get "doc")) =]
+ * @param[in] pOptions the [=(. prog-name)=] options data structure
+ * @param[in,out] pOptDesc the option descriptor for this option.
+ */[= (. ifdef-text) =]
+static void
+doOpt[= (set! endif-test-main (string-append "\n}" endif-test-main))
+        cap-name =](tOptions* pOptions, tOptDesc* pOptDesc)
+{
+[=
+
+ENDDEF   callback-proc-header
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE reset-clause =][=
+
+  (if (exist? "flag-code[0]")
+      (emit (string-append "\n" (get "flag-code[0]"))))
+
+  (if (exist? "resettable") (emit (string-append
+      "\n    if ((pOptDesc->fOptState & OPTST_RESET) != 0)"
+      "\n        return;" )) )
+
+  =][=
+
+ENDDEF reset-clause
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE range-option-code
+
+=][=
+
+(define option-arg-type (get "arg-type"))
+(define range-count     (count "arg-range"))
+
+\=]
+    static struct {long rmin, rmax;} const rng[[=
+      (. range-count)   =]] = {
+[=(out-push-new)        =][=
+  FOR arg-range ",\n"   =]{ [=
+
+    CASE arg-range      =][=
+      *==    "->"       =][=
+             (string-substitute (get "arg-range") "->" "") =], LONG_MAX[=
+
+      ==*    "->"       =]LONG_MIN, [=
+             (string-substitute (get "arg-range") "->" "") =][=
+
+      *==*   "->"       =][=
+             (string-substitute (get "arg-range") "->" ", ") =][=
+
+      ~~ -{0,1}[0-9]+   =][=arg-range=], LONG_MIN[=
+
+      *  =][= (error (string-append "Invalid range spec:  ``"
+              (get "arg-range") "''" ))  =][=
+
+    ESAC arg-range      =] }[=
+  ENDFOR                =][=
+
+  (shellf "${CLexe} -I8 --spread=2 <<_EOF_\n%s\n_EOF_"
+          (out-pop #t)) =] };
+    int  ix;
+
+    if (pOptions <= OPTPROC_EMIT_LIMIT)
+        goto emit_ranges;[=
+
+  INVOKE reset-clause =][=
+
+  CASE (define leave-ok-code "") (define ok-return-code "")
+    (if (exist? "flag-code[1]")
+        (begin
+           (set! leave-ok-code "goto return_okay")
+           (set! ok-return-code (string-append
+                 "\n    return;\n\nreturn_okay:\n"
+                 (get "flag-code[1]") ))
+        )
+        (begin
+           (set! leave-ok-code  "return")
+           (set! ok-return-code "")
+    )   )
+
+    option-arg-type     =][=
+
+  =*  num               =]
+    optionNumericVal(pOptions, pOptDesc);[=
+
+  =   time-date         =][=
+    (error (string-append "time/date option " low-name
+           " may not be range limited.")) )
+    =][=
+
+  =*  time              =]
+    optionTimeVal(pOptions, pOptDesc);
+    if (pOptDesc->optArg.argInt == (long)BAD_TIME)
+        return;[=
+
+  *                     =][=
+    (error (string-append option-arg-type " option " low-name
+           " may not be range limited.")) )
+    =][=
+
+  ESAC                  =]
+
+    for (ix = 0; ix < [=(. range-count)=]; ix++) {
+        if (pOptDesc->optArg.argInt < rng[ix].rmin)
+            continue;  /* ranges need not be ordered. */
+        if (pOptDesc->optArg.argInt == rng[ix].rmin)
+            [= (. leave-ok-code) =];
+        if (rng[ix].rmax == LONG_MIN)
+            continue;
+        if (pOptDesc->optArg.argInt <= rng[ix].rmax)
+            [= (. leave-ok-code) =];
+    }
+
+    option_usage_fp = stderr;
+
+ emit_ranges:
+    optionShowRange(pOptions, pOptDesc, (void *)rng, [= (. range-count) =]);[=
+
+(. ok-return-code)  =][=
+
+ENDDEF   range-option-code
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE alias-option-code       \=]
+    int res = optionAlias(pOptions, pOptDesc, [=
+        (string-append INDEX-pfx (get-up-name "aliases")) =]);
+    if ((res != 0) && ((pOptions->fOptSet & OPTPROC_ERRSTOP) != 0))
+        [= (. UP-prefix) =]USAGE([=(. usage-err-name)=]);
+[=
+
+ENDDEF   alias-option-code
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE   keyword-code           =][=
+   (emit (tpl-file-line extract-fmt))
+
+   (set! tmp-ct (count "keyword"))
+   (if (not (exist? "arg-default"))
+       (begin
+         (set! tmp-ct (+ 1 tmp-ct))
+         (emit "    static char const zDef[2] = { 0x7F, 0 };\n")
+   )   )                        \=]
+    static char const * const names[[= (. tmp-ct) =]] = {[=
+        (emit (if (not (exist? "arg-default")) " zDef,\n" "\n"))
+        (out-push-new) =][=
+  FOR keyword =][=
+    (string-table-add-ref opt-strs (get "keyword")) =]
+[=  ENDFOR =][=
+  (shell (string-append
+  "${CLexe} -S, -I8 --spread=1 <<-\\_EOF_\n" (out-pop #t) "_EOF_\nset +x" ))
+=] };
+
+    if (pOptions <= OPTPROC_EMIT_LIMIT) {
+        (void) optionEnumerationVal(pOptions, pOptDesc, names, [=
+           (. tmp-ct)=]);
+        return; /* protect AutoOpts client code from internal callbacks */
+    }[=
+
+  INVOKE reset-clause =][=
+
+  IF (exist? "arg-optional")
+
+=]
+
+    if (pOptDesc->optArg.argString == NULL)
+        pOptDesc->optArg.argEnum = [=
+             (string-append UP-name "_"    (if (> (len "arg-optional") 0)
+                (get-up-name "arg-optional") (if (exist? "arg-default")
+                (get-up-name "arg-default")
+                "UNDEFINED"  ))) =];
+    else
+        pOptDesc->optArg.argEnum =
+            optionEnumerationVal(pOptions, pOptDesc, names, [=(. tmp-ct)=]);[=
+
+  ELSE
+
+=]
+
+    pOptDesc->optArg.argEnum =
+        optionEnumerationVal(pOptions, pOptDesc, names, [=(. tmp-ct)=]);[=
+
+  ENDIF                         =][=
+
+  (if (exist? "flag-code[1]")
+      (emit (string-append "\n" (get "flag-code[1]"))))
+
+  =][=
+
+ENDDEF   keyword-code
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE   set-membership-code
+
+=][=
+
+(if (not (exist? "keyword"))
+    (error "set membership requires keywords"))
+(set! tmp-ct (count "keyword"))
+(emit (tpl-file-line extract-fmt))
+(ag-fprintf 0 "    static char const * const names[%d] = {\n" tmp-ct)
+
+(shell (string-append
+
+  "${CLexe} -I8 --spread=2 --sep=',' -f'\"%s\"' <<_EOF_\n"
+  (join "\n" (stack "keyword"))
+  "\n_EOF_\n" )) =]
+    };[=
+
+  INVOKE reset-clause =]
+    /*
+     * This function handles special invalid values for "pOptions"
+     */
+    optionSetMembers(pOptions, pOptDesc, names, [= (. tmp-ct) =]);[=
+
+  (if (exist? "flag-code[1]")
+      (emit (string-append "\n" (get "flag-code[1]"))))
+
+  =][=
+
+ENDDEF   set-membership-code
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE   file-name-code
+
+\=]
+    static teOptFileType const  type =
+        [= (set! tmp-val (get "open-file")) =][=
+   CASE file-exists                 =][=
+   == ""                            =]FTYPE_MODE_MAY_EXIST[=
+   =* "no"                          =]FTYPE_MODE_MUST_NOT_EXIST[=
+   *                                =]FTYPE_MODE_MUST_EXIST[=
+   ESAC =] + [= CASE open-file      =][=
+
+   == ""                            =]FTYPE_MODE_NO_OPEN[=
+   =* "desc"                        =]FTYPE_MODE_OPEN_FD[=
+   *                                =]FTYPE_MODE_FOPEN_FP[=
+
+   ESAC =];
+    static tuFileMode           mode;
+[= IF (or (=* tmp-val "desc") (== tmp-val "")) \=]
+[= IF (not (exist? "file-mode"))   \=]
+#ifndef O_CLOEXEC
+#  define O_CLOEXEC 0
+#endif
+[= (define file-mode "O_CLOEXEC")   =][=
+   ELSE                             =][=
+   (define file-mode (get "file-mode")) \=]
+[= ENDIF \=]
+    mode.file_flags = [= (. file-mode) =];
+[= ELSE \=]
+#ifndef FOPEN_BINARY_FLAG
+#  define FOPEN_BINARY_FLAG
+#endif
+    mode.file_mode = [= (c-string (get "file-mode")) =] FOPEN_BINARY_FLAG;
+[= ENDIF =][=
+
+  INVOKE reset-clause =]
+    /*
+     * This function handles special invalid values for "pOptions"
+     */
+    optionFileCheck(pOptions, pOptDesc, type, mode);[=
+
+  (if (exist? "flag-code[1]")
+      (emit (string-append "\n" (get "flag-code[1]"))))
+
+  =][=
+
+ENDDEF   file-name-code
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE   requested-code             =][=
+
+IF (not (or (exist? "extract-code") (exist? "flag-code")))
+   =][=  RETURN                     =][=
+ENDIF                               =][=
+
+(if guarded-test-main
+    (begin
+      (set! endif-test-main
+            (sprintf "\n#endif /* defined(%s) */" main-guard))
+      (emit "\n\n#if ! defined(" main-guard ")")
+)   )                               =][=
+
+INVOKE callback-proc-header         =][=
+
+IF (out-push-new (string-append tmp-dir "/flag-code"))
+   (exist? "flag-code")             =][=
+
+   IF (exist? "flag-code[0]")      \=]
+    /*
+     * Be sure the flag-code[0] handles special values for the options pointer
+     * viz. (poptions <= OPTPROC_EMIT_LIMIT) *and also* the special flag bit
+     * ((poptdesc->fOptState & OPTST_RESET) != 0) telling the option to
+     * reset its state.
+     */[=
+      (def-file-line "flag-code[0]" "\n    /* extracted from %s, line %d */\n")
+      =][=  flag-code[0]            =][=
+    ENDIF                           =][=
+
+    CASE arg-type                   =][=
+    =*   bool                       =]
+    optionBooleanVal(pOptions, pOptDesc);[=
+    =*   num                        =]
+    optionNumericVal(pOptions, pOptDesc);[=
+    =    time-date                  =]
+    optionTimeDate(pOptions, pOptDesc);[=
+    =*   time                       =]
+    optionTimeVal(pOptions, pOptDesc);[=
+    ~*   hier|nest                  =]
+    optionNestedVal(pOptions, pOptDesc);[=
+    ESAC                            =][=
+
+    IF (exist? "flag-code[1]")      =]
+[=     flag-code[1]                 =][=
+    ENDIF                           =][=
+
+ELSE                                =][=
+
+   (extract (string-append (base-name) ".c.save") (string-append
+            "/*  %s =-= " cap-name " Opt Code =-= %s */"))
+                                    =][=
+ENDIF                               =][=
+(out-pop)
+(shell "ck_flag_code")              =][=
+
+ENDDEF   requested-code
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE define-option-callbacks      =][=
+
+  FOR flag                          =][=
+    (define flag-index (for-index))
+    (set-flag-names)
+    (define endif-test-main "")     =][=
+
+# # # # # # # # # # # # # # # # # # =][=
+
+    IF (exist? "arg-range")         =][=
+
+      INVOKE callback-proc-header   =][=
+      INVOKE range-option-code      =][=
+
+# # # # # # # # # # # # # # # # # # =][=
+
+    ELIF (exist? "aliases")         =][=
+
+      INVOKE callback-proc-header   =][=
+      INVOKE alias-option-code      =][=
+
+# # # # # # # # # # # # # # # # # # =][=
+
+    ELSE =][= CASE arg-type         =][=
+
+      =* key                        =][=
+      INVOKE callback-proc-header   =][=
+      INVOKE keyword-code           =][=
+
+# # # # # # # # # # # # # # # # # # =][=
+
+      =* set                        =][=
+
+      INVOKE callback-proc-header   =][=
+      INVOKE set-membership-code    =][=
+
+# # # # # # # # # # # # # # # # # # =][=
+
+      =* fil                        =][=
+      INVOKE callback-proc-header   =][=
+      INVOKE file-name-code         =][=
+
+# # # # # # # # # # # # # # # # # # =][=
+
+      *                             =][=
+      INVOKE requested-code         =][=
+
+      ESAC                          =][=
+    ENDIF                           =][=
+
+    (. endif-test-main)             =][=
+
+  ENDFOR flag                       =][=
+
+ENDDEF define-option-callbacks
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-option-callbacks        =]
+/*
+ *  Create the static procedure(s) declared above.
+ */
+/**
+ * The callout function that invokes the [= (. usage-proc)
+   =] function.
+ *
+ * @param[in] opts the AutoOpts option description structure
+ * @param[in] od   the descriptor for the "help" (usage) option.
+ * @noreturn
+ */
+static void
+doUsageOpt(tOptions * opts, tOptDesc * od)
+{
+    int ex_code;[=
+
+  IF (define od-used #f)
+     (exist? "resettable") =]
+    if ((od->fOptState & OPTST_RESET) != 0)
+        return;[= (set! od-used #t) =][=
+
+  ENDIF                         =][=
+
+  IF (exist? "usage-opt") =]
+    ex_code = (od->optIndex == [= (set! od-used #t) INDEX-pfx =]HELP)
+        ? [=(. succ-exit-code)=] : AO_EXIT_REQ_USAGE;[=
+
+  ELSE                          =]
+    ex_code = [=(. succ-exit-code)=];[=
+  ENDIF                         =][=
+  (string-append "\n    " usage-proc "(&" pname "Options, ex_code);") =]
+    /* NOTREACHED */
+    exit(1);
+    (void)opts;[=
+    (if od-used "" "\n    (void)od;") =]
+}[=
+
+INVOKE define-option-callbacks  =][=
+
+IF (exist? "main")              =][=
+  INVOKE build-main             =][=
+
+ELIF (. guarded-test-main)      =][=
+  INVOKE build-test-main        =][=
+
+ENDIF
+
+=][=
+(tpl-file-line extract-fmt)
+=][=
+
+IF (exist? "usage-message")     =]
+/**
+ * Print a usage message with a format and va_list argument.
+ * The [= (. usage-proc) =] function is then invoked to print
+ * the error usage text (somewhat abbreviated) and then exit.
+ *
+ * @param[in] fmt the message format string
+ * @param[in] ap  the var-arg list.
+ * @noreturn
+ */
+void
+[=(. lc-prefix)=]vusage_message(char const * fmt, va_list ap)
+{
+    char const * er_leader = _("[= prog-name =] usage error:\n");
+    fputs(er_leader, stderr);
+    vfprintf(stderr, fmt, ap);
+    [= (string-append usage-proc "(&" pname "Options, " usage-err-name ");") =]
+    /* NOTREACHED */
+    exit(1);
+}
+
+/**
+ * Print a usage message with a format and a variable argument list.
+ * [=(. lc-prefix)=]vusage_message() is called to do the work.
+ *
+ * @param[in] fmt the message format string
+ * @param[in] ... the argument list for the message
+ * @noreturn
+ */
+void
+[=(. lc-prefix)=]usage_message(char const * fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    [=(. lc-prefix)=]vusage_message(fmt, ap);
+    /* NOTREACHED */
+    va_end(ap);
+}
+[=
+
+ENDIF have usage-message    =][=
+
+IF (exist? "die-code")
+
+=]
+/**
+ * Print a fatal error message and die, \a va_list style.
+ *
+ * @param[in] exit_code  the value to call exit(3) with
+ * @param[in] fmt        the death rattle message
+ * @param[in] ap         the argument list for the message
+ * @noreturn
+ */
+void
+[=(. lc-prefix)=]vdie(int exit_code, char const * fmt, va_list ap)
+{
+    char const * die_leader = _("[= prog-name =] fatal error:\n");[=
+  (set! tmp-text (get "die-code"))
+  (if (> (string-length tmp-text) 1)
+      (string-append "\n\n" tmp-text "\n"))
+ =]
+    fputs(die_leader, stderr);
+    vfprintf(stderr, fmt, ap);
+    fflush(stderr);
+    exit(exit_code);
+    /* NOTREACHED */
+}
+
+/**
+ * Print a fatal error message and die, var-arg style.
+ *
+ * @param[in] exit_code  the value to call exit(3) with
+ * @param[in] fmt        the death rattle message
+ * @param[in] ...        the list of arguments for the message
+ * @noreturn
+ */
+void
+[=(. lc-prefix)=]die(int exit_code, char const * fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    vdie(exit_code, fmt, ap);
+    /* NOTREACHED */
+    va_end(ap);
+}
+
+/**
+ * Print a file system error fatal error message and die.
+ *
+ * @param[in] exit_code  the value to call exit(3) with.
+ * @param[in] op         the operation that failed.
+ * @param[in] fname      the file name the operation was on.
+ * @noreturn
+ */
+void
+[=(. lc-prefix)=]fserr(int exit_code, char const * op, char const * fname)
+{
+    char const * fserr_fmt = _("fserr %d (%s) performing '%s' on %s\n");
+    die(exit_code, fserr_fmt, errno, strerror(errno), op, fname);
+    /* NOTREACHED */
+}
+[=
+ENDIF die-code              =][=
+
+ENDDEF emit-option-callbacks
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-option-code        =][=
+
+  IF (exist? "option-code") =][=
+      (def-file-line "option-code" extract-fmt) =][=
+      option-code   =][=
+
+  ELSE            =][=
+
+    IF (and (exist? "no-libopts") (not (exist? "autoopts-usage-tlib"))) =]
+    (void)process_[=(. pname)=]_opts(argc, argv);[= 
+    ELIF (exist? "main-text") =]
+    {
+        int ct = optionProcess(&[=(. pname)=]Options, argc, argv);
+        argc -= ct;
+        argv += ct;
+    }[=
+    ELSE =]
+    (void)optionProcess(&[=(. pname)=]Options, argc, argv);[=
+    ENDIF =][=
+
+  ENDIF           =][=
+
+ENDDEF emit-option-code
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # =][=
+
+DEFINE emit-main-text        =][=
+
+  IF (exist? "main-text") =][=
+
+    (def-file-line "main-text" extract-fmt) =][=
+    main-text         =][=
+
+  ELSE            =][=
+
+    IF (and (exist? "no-libopts") (not (exist? "autoopts-usage-tlib"))) =]
+    /* When using AutoOpts with getopt(3C) or getopt_long(3GNU)
+       the main-text attribute of main _must_ be defined. */ 
+#error autoopts_with_getopt_must_define_main_text_attribute[=
+    ELSE test-main is not optionParseShell and main-text not exist
+         Above, we figure out which emitter procedure is to be used.
+         The default is optionPutShell.
+=]
+    [= (. option-emitter-proc) =](&[=(. pname)=]Options);
+    res = ferror(stdout);
+    if (res != 0)
+        fputs("output error writing to stdout\n", stderr);[=
+    ENDIF   =][=
+
+  ENDIF           =][=
+
+ENDDEF emit-main-text        =]

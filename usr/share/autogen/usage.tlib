@@ -1,0 +1,202 @@
+[=  AutoGen5 Template  -*- Mode: shell-script -*-
+
+ help-text
+
+# This file is part of AutoGen.
+# AutoGen Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+#
+# AutoGen is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# AutoGen is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=][= INCLUDE "tpl-config.tlib" =][=
+
+ ;; This template is designed to emit help text from the current set
+ ;; of option definitions.
+ ;;
+
+(shell "CLexe=`echo ${AGexe} | sed 's@/autogen@/columns@'`
+       test -x \"${CLexe}\" || CLexe=`which columns`")
+
+
+ (make-tmp-dir)
+ (out-push-new (shellf "echo ${tmp_dir}/%s.def" (get "prog-name")))
+ (define emit-def (lambda (vname)
+   (if (exist? vname)
+       (sprintf "\n%s = %s;" vname (kr-string (get vname))) ) ))
+=]
+AutoGen Definitions options.tpl;
+no-libopts;
+no-xlate = anything;
+autoopts-usage-tlib;
+[=
+
+FOR var IN  prog-name  prog-title  argument
+            environrc  export      homerc         include
+            long-opts  rcfile      version        detail
+            explain    package     preserve-case  prog-desc
+            opts-ptr   gnu-usage   reorder-args   usage-opt
+
+            version-value   help-value  more-help-value
+            save-opts-value usage-value load-opts-value
+  =][=
+  (emit-def (get "var"))    =][=
+ENDFOR var IN ....          =][=
+
+IF (exist? "config-header") =]
+config-header = '[= prog-name =]-config.h';[=
+ENDIF                       =][=
+
+FOR copyright               =]
+copyright = {[=
+
+  FOR var IN  date owner type text author eaddr
+    =][=
+    (emit-def (get "var"))  =][=
+  ENDFOR var IN ....        =]
+};[=
+ENDFOR copyright            =]
+
+main = { main-type = main; };
+[=
+
+FOR flag
+
+=]
+flag = {[=
+
+  FOR var IN name descrip value max min must-set enable disable enabled
+             ifdef ifndef no-preset settable equivalence documentation
+             immediate immed-disable also
+             arg-type arg-optional arg-default default arg-range
+             stack-arg unstack-arg
+    =][=
+    (emit-def (get "var"))  =][=
+  ENDFOR var IN ....        =][=
+
+  IF (exist? "keyword")     =]
+    keyword = '[=    (join "', '" (stack "keyword")) =]';[=
+  ENDIF  keyword exists     =][=
+
+  IF (exist? "flags-must")  =]
+    flags-must = '[= (join "', '" (stack "flags-must")) =]';[=
+  ENDIF  flags-must exists  =][=
+
+  IF (exist? "flags-cant")  =]
+    flags-cant = '[= (join "', '" (stack "flags-cant")) =]';[=
+  ENDIF  flags-cant exists  =]
+};[=
+
+ENDFOR flag                 =][=
+
+(out-pop)
+(out-push-new)
+(out-push-new)              =][=
+
+# We are creating a shell script that needs to obtain values from the current
+# execution envronment for an execution environment that happens later.
+#                          \=]
+export tmp_dir="${tmp_dir}" \
+       top_builddir="${top_builddir}" \
+       CFLAGS="${CFLAGS}" \
+       CLexe="${CLexe}"[=
+
+(shell (out-pop #t))        =]
+save_dir=`pwd`
+# redirect stdout.  We see this IFF there is a problem
+#
+redirect_log=${tmp_dir}/redirected.log
+exec 7>&1 9>&2 1> ${redirect_log} 2>&1 || \
+   die "Redirection failure:  7>&1 9>&2 1> ${redirect_log} 2>&1"
+redirect_die() {
+    exec 2>&9 1>&9 9>&- 7>&-
+    sed 's/^/## /' ${redirect_log}
+    die "$*"
+}
+
+inc_list="-I${PWD} -I[=(. inc-dir)=]"
+cfg_ldflags="[=(. libs)=]"
+cfg_cflags="${CFLAGS}"
+exe=${tmp_dir}/[= prog-name =]
+
+aocfg=`dirname ${AGexe}`/autoopts-config
+test -x "$aocfg" || redirect_die "missing $ag"
+ldflags="${cfg_ldflags} `${aocfg} ldflags`"
+cfg_cflags="${cfg_cflags} `${aocfg} cflags`"
+
+[= IF (exist? "config-header") \=]
+inc_list="-I${tmp_dir} ${inc_list}"
+while :
+do
+    h='[= config-header =]'
+    test -f "$h" && break
+    hdr=$h
+    h=`basename "${hdr}"`
+    test -f "$h" && break
+    g=$h
+    d=`pwd`
+
+    while :
+    do
+        d=`dirname $d`
+        test "X$d" = X/ && \
+            redirect_die "cannot locate $h"
+        h="$d/$g"
+        test -f "$h" && break
+        h="$d/$hdr"
+        test -f "$h" && break
+    done
+    break
+done
+cp "${h}" ${exe}-config.h
+[= ENDIF \=]
+flags="-DTEST_[= (string-upcase! (string->c-name! (get "prog-name")))
+    =]_OPTS=1 ${inc_list} ${cfg_cflags}"
+tpldir=`dirname [= (tpl-file)=]`
+tpldir=`cd $tpldir >/dev/null && pwd`
+cd ${tmp_dir}
+mkdir ag-tmp
+TMPDIR=${tmp_dir}/ag-tmp \
+  ${AGexe} -L $tpldir [= prog-name =].def || \
+    redirect_die "Cannot gen [= prog-name =]"
+cd -
+${CC:-cc} ${flags} -g -o TMPexe$$ ${exe}.c ${ldflags} || \
+    redirect_die cannot compile ${exe}.c
+mv -f TMPexe$$ ${exe}
+xtr_set=`set -o | awk '/^xtrace/{ print $2 }'`
+set +x
+exec 2>/dev/null 1>&7
+${exe} [=
+
+  (if (== (get "usage-type") "short")
+      (if (exist? "usage-opt")
+          (if (exist? "long-opts")
+              "--usage"
+              (string-append "-" (get "usage-value" "u"))
+          )
+          "--give-me-short-usage 2>&1 | sed -e '/: illegal option /d'"
+      )
+      (if (exist? "long-opts")
+          "--help"
+          (string-append "-" (get "help-value" "?"))
+   )  )   =] || \
+  redirect_die "cannot obtain ${exe} help in ${tmp_dir}"
+test "X${VERBOSE:-false}" = Xtrue && \
+    cp -frp ${tmp_dir}/. ${save_dir}/TEMP-DIR
+exec 1>&7 2>&9 7>&- 9>&-
+test X$xtr_set = Xon && set -x
+[=
+
+(shell (out-pop #t))
+
+=][=
+# end of usage.tlib =]

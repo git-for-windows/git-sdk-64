@@ -1,0 +1,272 @@
+#! /usr/bin/bash
+
+# find original data file by md5sum
+original_file()
+{
+	local file=$1 md5sum
+
+	set -- $(md5sum < $file)
+	md5sum=$1
+	while read md5sum_ file_
+	do
+		if [ "$md5sum" = "$md5sum_" ]
+		then
+			echo ${file_#\*}
+			return 0
+		fi
+	done < $tmpdir/md5sums
+
+	# Try harder
+	if ! [ -e $tmpdir/more-md5sums ]
+	then
+		( cd $RPM_BUILD_DIR
+		find . -type f \
+		| sed -e 's:^.\/::' \
+		| xargs md5sum \
+		) > $tmpdir/more-md5sums
+	fi
+
+	while read md5sum_ file_
+	do
+		if [ "$md5sum" = "$md5sum_" ]
+		then
+			echo $QUILT_SETUP_PREFIX${file_#\*}
+			return 0
+		fi
+	done < $tmpdir/more-md5sums
+
+	return 1
+}
+
+# Extract a command line option with or without argument
+cmdline_option()
+{
+	local letter=$1 no_arg=$2
+	shift
+
+	while [ $# -ne 0 ]
+	do
+		if [ "${1:0:2}" = -$letter ]
+		then
+			if [ -z "$no_arg" ]
+			then
+				[ "$1" = -$letter ] && set -- "$1$2"
+			fi
+			echo $1
+			break
+		fi
+		shift
+	done
+}
+
+# Extract the -p option from the command line
+strip_option()
+{
+	set -- $(cmdline_option p "$@")
+	[ "$1" != -p1 ] && echo $1
+}
+
+# Extract the -R option from the command line
+reverse_option()
+{
+	set -- $(cmdline_option R no_arg "$@")
+	echo $1
+}
+
+patch_opt_d()
+{
+	local subdir=$(cmdline_option d "$@")
+	[ -z "$subdir" ] || echo "${subdir:2}"
+
+}
+
+patch_input_file()
+{
+	while [ $# -gt 0 ]
+	do
+		case "$1" in
+		-i|--input)
+			if [ $# -ge 2 ]
+			then
+				echo "$2"
+				return
+			fi
+			;;
+		-i*)
+			echo "${1#-i}"
+			return
+			;;
+		--input=*)
+			echo "${1#--input=}"
+			return
+			;;
+		esac
+		shift
+	done
+	return 1
+}
+
+tar_input_file()
+{
+	case "$1" in
+	# Modern option format
+	-*)
+		while [ $# -gt 0 ]
+		do
+			case "$1" in
+			# Extract the file name (long option)
+			--file)
+				echo "$2"
+				return
+				;;
+			--file=*)
+				echo "${1#--file=}"
+				return
+				;;
+			# Skip other long options
+			--*)
+				shift
+				;;
+			# Extract the file name (short option)
+			-*f)
+				echo "$2"
+				return
+				;;
+			-f*)
+				echo "${1#-f}"
+				return
+				;;
+			# Skip other short options and parameters
+			*)
+				shift
+				;;
+			esac
+		done
+		;;
+	# Legacy option format (must always come first)
+	*C*f*)
+		echo "$3"
+		return
+		;;
+	*f*)
+		echo "$2"
+		return
+		;;
+	?*)
+		# Eat legacy options and try again
+		until [ $# -eq 0 -o "${1:0:1}" = "-" ]
+		do
+			shift
+		done
+		tar_input_file "$@"
+		return
+		;;
+	esac
+	return 1
+}
+
+unzip_input_file()
+{
+	while [ $# -gt 0 ]
+	do
+		case "$1" in
+		-*)
+			shift
+			;;
+		*)
+			echo "$1"
+			return
+			;;
+		esac
+	done
+	return 1
+}
+
+tar_opt_C()
+{
+	case "$1" in
+	*C*f*)
+		echo "$2"
+		return ;;
+	esac
+}
+
+pwd_to_dir()
+{
+	local subdir=$1 dir
+
+	if [ -n "$subdir" ]
+	then
+		dir=$(cd "$subdir" && echo $PWD)
+	else
+		dir=$PWD
+	fi
+	dir=${dir/$RPM_BUILD_DIR}
+	dir=${dir##/}
+	dir=${dir// /\\ }
+
+	echo "$dir"
+}
+
+PATH=${PATH#*:}
+# If we are called too early, pass through without processing
+[ -n "$RPM_BUILD_DIR" ] || exec ${0##*/} "$@"
+
+tmpdir=${RPM_BUILD_DIR%/*}
+case "${0##*/}" in
+patch)
+	echo -n p >&4
+	inputfile=$(patch_input_file "$@")
+	;;
+tar)
+	echo -n t >&4
+	[ -n "$QUILT_SETUP_FAST" ] && exec ${0##*/} "$@"
+	inputfile=$(tar_input_file "$@")
+	# For tar, file - means read from stdin
+	[ "$inputfile" = "-" ] && inputfile=
+	;;
+unzip)
+	echo -n Z >&4
+	[ -n "$QUILT_SETUP_FAST" ] && exec ${0##*/} "$@"
+	inputfile=$(unzip_input_file "$@")
+	;;
+esac
+if [ -n "$inputfile" ]
+then
+	unpackfile=$(original_file "$inputfile")
+else
+	# put data from stdin into tmpfile
+	cat > $tmpdir/data
+	unpackfile=$(original_file $tmpdir/data)
+fi
+
+if [ -n "$unpackfile" ]
+then
+	case "${0##*/}" in
+	patch)
+		subdir=$(patch_opt_d "$@")
+		dir=$(pwd_to_dir $subdir)
+		echo "${0##*/} ${dir:-.} $unpackfile" \
+		     $(strip_option "$@") $(reverse_option "$@") >&3
+		;;
+	tar)
+		subdir=$(tar_opt_C "$@")
+		dir=$(pwd_to_dir $subdir)
+		echo "${0##*/} ${dir:-.} $unpackfile" >&3
+		;;
+	unzip)
+		dir=$(pwd_to_dir)
+		echo "${0##*/} ${dir:-.} $unpackfile" >&3
+		;;
+	esac
+fi
+
+# In fast mode, we don't actually apply patches
+[ -n "$QUILT_SETUP_FAST" ] && exit 0
+
+if [ -n "$inputfile" ]
+then
+	exec ${0##*/} "$@"
+else
+	exec ${0##*/} "$@" < $tmpdir/data
+fi

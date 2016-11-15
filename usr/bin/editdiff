@@ -1,0 +1,75 @@
+#!/bin/bash
+#
+# editdiff - simple wrapper around rediff
+# Copyright (C) 2001-2002, 2011 Tim Waugh <twaugh@redhat.com>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+version() {
+  echo "editdiff - patchutils version 0.3.4"
+}
+
+usage() {
+  echo "usage: editdiff FILE"
+}
+
+while [ "$#" -gt 0 ]
+do
+  case "$1" in
+  --help)
+	usage
+	exit 0
+	;;
+  --version)
+	version
+	exit 0
+	;;
+  --)
+	shift || { usage; exit 1; }
+	if [ -z "$FILE" ]
+	then
+	  FILE="$1"
+	fi
+	shift
+	[ "$#" -gt 0 ] && { usage; exit 1; }
+	;;
+  *)
+	if [ -z "$FILE" ]
+	then
+	  FILE="$1"
+	fi
+	shift
+	;;
+  esac
+done
+[ "$#" -gt 0 ] && { usage; exit 1; }
+[ -n "$FILE" ] || { usage; exit 1; }
+
+TMPD="$(mktemp -d /tmp/editdiff.XXXXXX)" || \
+	{ echo >&2 "Failed to create temporary directory"; exit 1; }
+trap 'rm -rf "${TMPD}"' EXIT
+NAME="$(basename "${FILE}")"
+filterdiff -v --format=unified <"${FILE}" >"${TMPD}/${NAME}.orig" || exit 1
+cp "${TMPD}/${NAME}.orig" "${TMPD}/${NAME}" || exit 1
+${EDITOR:-${VISUAL:-vim}} "${TMPD}/${NAME}" || \
+	{ echo >&2 "Editor exited with non-zero exit status"; exit 1; }
+cmp -s "${TMPD}/${NAME}" "${TMPD}/${NAME}.orig" && \
+	{ echo >&2 "No changes" ; exit 0; }
+mv "${FILE}" "${FILE}.orig"
+rediff "${TMPD}/${NAME}.orig" "${TMPD}/${NAME}" > "${FILE}" || \
+	{ cat "${TMPD}/${NAME}" > "${FILE}"; \
+	  echo 1>&2 "rediff failed."
+	  echo 1>&2 "Unedited patch is in ${FILE}.orig, edited patch is in ${FILE}";
+	  exit 1; }

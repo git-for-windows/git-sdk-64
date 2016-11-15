@@ -1,0 +1,80 @@
+#!/usr/bin/perl -w
+#
+# Fixes cvs diffs so that the Index: and "---" and "+++" are in sync,
+# including diffs containing added or removed files, so that they patch
+# correctly with patch(1).
+#
+# usage: fixcvsdiff [-p] [-b] [files to fix]
+#
+# -p prints the cvs commands that will be needed when applying
+# the patch.
+#
+# -b keeps a .bak backup file
+#
+# Based on code by Amir Karger <karger@post.harvard.edu>
+#
+# Modified by John Levon <moz@compsoc.man.ac.uk> and
+# Ville Skyttä <ville.skytta@iki.fi>.
+#
+# Contributed under the terms of the GNU GPL v2 or later:
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at
+# your option) any later version.
+
+use Getopt::Std;
+our ($opt_b,$opt_p);
+$add = 0;
+
+getopts('pb');
+
+if (defined($opt_b)) {
+	$^I = '.bak';
+} else {
+	$^I = '';
+}
+
+while (<>) {
+	# get the diff fragment filename
+	if (/^Index: (.*)/) {
+		$Filename = $1;
+	}
+
+	if (!defined($Filename)) {
+		print;
+		next;
+	}
+
+	# tack the filename on the end of lines like this:
+	# diff [options] -r?.? -r?.?
+	s/^diff(.*) -r(\S*)$/diff$1 -r$2 $Filename/;
+
+	# Allow spaces in file names; the filename ends at the first TAB.
+	if (/^(---|\+\+\+) ([^\t]+)\t/) {
+		my ($pre, $currfile) = ($1, $2);
+
+		if ($currfile =~ m|^/dev/null|) {
+			my $action;
+			if ($pre eq '---') {
+				$action = 'add';
+				$add = 1;
+			} else {
+				$action = 'remove';
+	    		}
+			if (defined($opt_p)) {
+	    			print STDOUT "cvs $action $Filename\n";
+			}
+		}
+
+		if ($add == 1 && $pre eq '+++' && $currfile =~ m|[^/]*|) {
+			$add = 0;
+		}
+
+		# Replace all "(---|+++) foo" lines with the correct filename.
+		if ($currfile ne $Filename) {
+			# Don't use $pre here, just for safety with '+' ...
+			s/^(---|\+\+\+) [^\t]+/$1 $Filename/;
+		}
+	}
+	print;
+}

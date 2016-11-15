@@ -1,0 +1,342 @@
+/* This is file `std_bmem.sprut'.  This file contains macros and
+   functions for work with memory of program of a language with BLOCK
+   structure.  This work is oriented to processing memory block by
+   block.
+
+   Copyright (C) 1997-2007 Vladimir Makarov.
+
+   Written by Vladimir Makarov <vmakarov@users.sourceforge.net>
+
+   This file is part of the tool SPRUT.
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This software is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with GNU CC; see the file COPYING.  If not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA.
+
+ */
+
+%import {
+
+#include "allocate.h"
+#include "objstack.h"
+
+
+/* Start work with the storage manager -- see Sprut documentation. */
+
+#define IR_BEGIN_ALLOC()    IR_start_memory ()
+
+/* Finish work with the storage manager -- see Sprut documentation. */
+
+#define IR_CLOSE_ALLOC()    IR_finish_memory ()
+
+/* This page contains macros which are analogous to macros of the next
+   page but work with long live storage, i.e storage for objects which
+   are created after start of block processing and must be live during
+   processing all file. */
+
+/* The following macro creates new variable length object with initial
+   zero length on the top of the long live object stack.  The work
+   (analogous to one with variable length object) with object which
+   was on the top of the long live object stack is finished, i.e. the
+   object will never more change address.  See also comments for
+   package `object-stack'.  */
+
+#define IRLL_TOP_FINISH() OS_TOP_FINISH (long_live_objects_stack)
+
+
+/* The following macro makes that length of variable length object on
+   the top of the long live object stack will be equal to zero.  See
+   also comments for package `object-stack'.  */
+
+#define IRLL_TOP_NULLIFY()  OS_TOP_NULLIFY (long_live_objects_stack)
+
+
+/* The following macro removes given number bytes LENGTH from the end
+   of variable length object on the top of the long live object stack.
+   See also comments for package `object-stack'. */
+
+#define IRLL_TOP_SHORTEN(length)\
+    OS_TOP_SHORTEN (long_live_objects_stack, length)
+
+
+/* The following macro increases length of variable length object on
+   the top of the long live object stack on given number LENGTH of
+   bytes.  See also comments for package `object-stack'.  */
+
+#define IRLL_TOP_EXPAND(length) OS_TOP_EXPAND (long_live_objects_stack, length)
+
+
+/* The following macro returns pointer to the first byte of variable
+   length object on the top of the long live object stack.  See also
+   comments for package `object-stack'.  */
+
+#define IRLL_TOP_BEGIN()  OS_TOP_BEGIN (long_live_objects_stack)
+
+
+/* The following macro returns current length of variable length
+   object on the top of the long live object stack.  See also comments
+   for package `object-stack'.  */
+
+#define IRLL_TOP_LENGTH() OS_TOP_LENGTH (long_live_objects_stack)
+
+
+/* The following macro adds byte B to the end of variable length
+   object on the top of the long live object stack.  See also comments
+   for package `object-stack'. */
+
+#define IRLL_TOP_ADD_BYTE(b) OS_TOP_ADD_BYTE (long_live_objects_stack, b)
+
+
+/* The following macro adds string STR to the end of variable length
+   object on the top of the long live object stack.  See also comments
+   for package `object-stack'. */
+
+#define IRLL_TOP_ADD_STRING(str)\
+    OS_TOP_ADD_STRING (long_live_objects_stack, str)
+
+
+/* The following macro adds memory starting with MEM bytes with LENGTH
+ to the end of variable length object on the top of the long live
+ object stack.  See also comments for package `object-stack'. */
+
+#define IRLL_TOP_ADD_MEMORY(mem, length)\
+    OS_TOP_ADD_MEMORY (long_live_objects_stack, mem, length)
+
+
+
+/* The following macros are used to make or not long live objects
+   memory as current.  The following will be act where IR nodes will
+   be created. */
+
+#define IR_activate_LL_memory() (long_live_objects_stack_is_active = 1/*TRUE*/)
+#define IR_deactivate_LL_memory() (long_live_objects_stack_is_active = 0)
+
+/* The following macro allocates storage for internal representation
+   of given SIZE -- see also SPRUT documentation. */
+
+#define IR_ALLOC(ptr, size)\
+  do {\
+    os_t *_stack_ptr;\
+    if (long_live_objects_stack_is_active)\
+      _stack_ptr = &long_live_objects_stack;\
+    else\
+      _stack_ptr = &current_block_memory->object_stack;\
+    OS_TOP_EXPAND (*_stack_ptr, size);\
+    ptr = OS_TOP_BEGIN (*_stack_ptr);\
+    OS_TOP_FINISH (*_stack_ptr);\
+  } while (0)
+
+
+
+/* This page contains macros for work with memory of a language
+   blocks. */
+
+/* These macros are analogous to ones of package `object-stack' worked
+   with storage of internal representation in current block memory
+   region: */
+
+/* The following macro creates new variable length object with initial
+   zero length on the top of current block memory region.  The work
+   (analogous to one with variable length object) with object which
+   was on the top of the current block memory region is finished,
+   i.e. the object will never more change address.  See also comments
+   for package `object-stack'. */
+
+#define IR_TOP_FINISH() OS_TOP_FINISH (current_block_memory->object_stack)
+
+
+/* The following macro makes that length of variable length object on
+   the top of current block memory region will be equal to zero.  See
+   also comments for package `object-stack'. */
+
+#define IR_TOP_NULLIFY()\
+    OS_TOP_NULLIFY (current_block_memory->object_stack)
+
+
+/* The following macro removes given number bytes LENGTH from the end
+   of variable length object on the top of current block memory
+   region.  See also comments for package `object-stack'. */
+
+#define IR_TOP_SHORTEN(length)\
+    OS_TOP_SHORTEN (current_block_memory->object_stack, length)
+
+
+/* The following macro increases length of variable length object on
+   the top of the current block memory region on given number of bytes
+   LENGTH.  See also comments for package `object-stack'. */
+
+#define IR_TOP_EXPAND(length)\
+    OS_TOP_EXPAND (current_block_memory->object_stack, length)
+
+
+/* The following macro returns pointer to the first byte of variable
+   length object on the top of the current block memory region.  See
+   also comments for package `object-stack'. */
+
+#define IR_TOP_BEGIN()  OS_TOP_BEGIN (current_block_memory->object_stack)
+
+
+/* The following macro returns current length of variable length
+   object on the top of the current block memory region.  See also
+   comments for package `object-stack'. */
+
+#define IR_TOP_LENGTH() OS_TOP_LENGTH (current_block_memory->object_stack)
+
+
+/* The following macro adds byte B to the end of variable length
+   object on the top of the current block memory region.  See also
+   comments for package `object-stack'. */
+
+#define IR_TOP_ADD_BYTE(b)\
+    OS_TOP_ADD_BYTE (current_block_memory->object_stack, b)
+
+
+/* The following macro adds string STR to the end of variable length
+   object on the top of the current block memory region.  See also
+   comments for package `object-stack'. */
+
+#define IR_TOP_ADD_STRING(str)\
+    OS_TOP_ADD_STRING (current_block_memory->object_stack, str)
+
+
+/* The following macro adds memory MEM containg LENGTH bytes to the
+   end of variable length object on the top of the current block
+   memory region.  See also comments for package `object-stack'. */
+
+#define IR_TOP_ADD_MEMORY(mem, length)\
+    OS_TOP_ADD_MEMORY (current_block_memory->object_stack, mem, length)
+
+
+/* All work with program of the language with the block structure is
+   fulfilled block by block.  All internal representation
+   corresponding to a block is placed in separate memory region. */
+
+struct block_memory
+{
+  /* All memory of internal representation of block is implemented by
+     object stack. */
+  os_t object_stack;
+  /* Pointer to allocation region for closest containing block. */
+  struct block_memory *previous_block_memory;
+};
+
+extern struct block_memory *current_block_memory;
+
+extern os_t long_live_objects_stack;
+
+extern int long_live_objects_stack_is_active;
+
+extern void IR_start_memory (void);
+
+extern void IR_finish_memory (void);
+
+extern void IR_start_new_block_memory (void);
+
+extern void IR_finish_current_block_memory (void);
+
+}
+
+%%
+
+%%
+
+/* This page contains functions for initialization and finalization of
+   all internal representation of source file. */
+
+/* The following variable value is pointer to current allocation
+   region. */
+
+struct block_memory *current_block_memory;
+
+/* The following variable value is long live objects stack. */
+
+os_t long_live_objects_stack;
+
+/* The following variable value affect will be IR nodes created in
+   long live objects memory or in the current block memory. */
+
+int long_live_objects_stack_is_active;
+
+/* The following macro creates and initiates descriptor describing
+   memory allocated for a block of program. */
+
+#define IR_NEW_BLOCK_MEMORY()\
+  do {\
+    struct block_memory *temp;\
+    temp = current_block_memory;\
+    ALLOC (current_block_memory, sizeof (struct block_memory));\
+    current_block_memory->previous_block_memory = temp;\
+    OS_CREATE (current_block_memory->object_stack, 0);\
+  } while (0)
+
+
+/* The following macro deletes memory allocated for the last program
+   block makes previous descriptor describing memory allocated for the
+   previous block as current. */
+
+#define IR_PREVIOUS_BLOCK_MEMORY()\
+  do {\
+    struct block_memory *temp;\
+    OS_DELETE (current_block_memory->object_stack);\
+    temp = current_block_memory;\
+    current_block_memory\
+      = current_block_memory->previous_block_memory;\
+    FREE (temp);\
+  } while (0)
+
+/* The following function initiates block memory regions.  Long live
+   objects memory is not active initially. */
+
+void
+IR_start_memory (void)
+{
+  current_block_memory = NULL;
+  IR_NEW_BLOCK_MEMORY ();
+  OS_CREATE (long_live_objects_stack, 0);
+  long_live_objects_stack_is_active = 0; /* FALSE */
+}
+
+/* The following function finishes block all memory regions. */
+
+void
+IR_finish_memory (void)
+{
+  while (current_block_memory != NULL)
+    IR_PREVIOUS_BLOCK_MEMORY ();
+  OS_DELETE (long_live_objects_stack);
+}
+
+/* The function starts new program block memory region with the aid of
+   macro IR_NEW_BLOCK_MEMORY. */
+
+void
+IR_start_new_block_memory (void)
+{
+  IR_NEW_BLOCK_MEMORY ();
+}
+
+/* The function finishes current program block memory region with the
+   aid of macro IR_PREVIOUS_BLOCK_MEMORY. */
+
+void
+IR_finish_current_block_memory (void)
+{
+  IR_PREVIOUS_BLOCK_MEMORY ();
+}
+
+/*
+Local Variables:
+mode:c
+End:
+*/

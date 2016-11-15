@@ -1,0 +1,326 @@
+#! /usr/bin/env perl
+
+# groffer - display groff files
+
+# Source file position: <groff-source>/contrib/groffer/groffer.pl
+# Installed position: <prefix>/bin/groffer
+
+# Copyright (C) 2006-2014
+#   Free Software Foundation, Inc.
+
+# Written by Bernd Warken <groff-bernd.warken-72@web.de>.
+
+# This file is part of `groffer', which is part of `groff'.
+
+# `groff' is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+
+# `groff' is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see
+# <http://www.gnu.org/licenses/gpl-2.0.html>.
+
+########################################################################
+
+use strict;
+use warnings;
+#use diagnostics;
+
+# temporary dir and files
+use File::Temp qw/ tempfile tempdir /;
+
+# needed for temporary dir
+use File::Spec;
+
+# for `copy' and `move'
+use File::Copy;
+
+# for fileparse, dirname and basename
+use File::Basename;
+
+# current working directory
+use Cwd;
+
+# $Bin is the directory where this script is located
+use FindBin;
+
+
+########################################################################
+# system variables and exported variables
+########################################################################
+
+require 5.6.1;
+
+our $Dev_Null;
+our $Umask;
+our @Path;
+our $Start_Dir;
+
+our $tmpdir = '';
+our ($fh_cat, $tmp_cat);
+our ($fh_stdin, $tmp_stdin);
+
+our @Addopts_Groff;
+our %Debug;
+our %Opt;
+
+our $Has_Compression;
+our $Has_bzip;
+
+our $Output_File_Name;
+
+our $Apropos_Prog;
+our $Filespec_Arg;
+our $Filespec_Is_Man;
+our $Macro_Pkg;
+our $Manspec;
+our $No_Filespecs;
+our $Special_Filespec;
+our $Special_Setup;
+
+our %Man;
+
+BEGIN {
+  $Dev_Null = File::Spec->devnull();
+
+  $Umask = umask 077;
+
+  $Start_Dir = getcwd;
+
+  # flush after each print or write command
+  $| = 1;
+}
+
+
+########################################################################
+# read-only variables with double-@ construct
+########################################################################
+
+our $File_split_env_sh;
+our $File_version_sh;
+our $Groff_Version;
+
+my $before_make;		# script before run of `make'
+{
+  my $at = '@';
+  $before_make = 1 if '1.22.3' eq "${at}VERSION${at}";
+}
+
+my %at_at;
+my $groffer_libdir;
+
+if ($before_make) {
+  my $groffer_source_dir = $FindBin::Bin;
+  $at_at{'BINDIR'} = $groffer_source_dir;
+  $at_at{'G'} = '';
+  $at_at{'LIBDIR'} = '';
+  $groffer_libdir = $groffer_source_dir;
+  $File_version_sh = File::Spec->catfile($groffer_source_dir, 'version.sh');
+  $Groff_Version = '';
+} else {
+  $Groff_Version = '1.22.3';
+  $at_at{'BINDIR'} = '/usr/bin';
+  $at_at{'G'} = '';
+  $at_at{'LIBDIR'} = '/usr/lib';
+  $groffer_libdir = '/usr/lib/groff/groffer';
+  $File_version_sh = File::Spec->catfile($groffer_libdir, 'version.sh');
+}
+
+die "$groffer_libdir is not an existing directory;"
+  unless -d $groffer_libdir;
+
+unshift(@INC, $groffer_libdir);
+
+$File_split_env_sh = File::Spec->catfile($groffer_libdir, 'split_env.sh');
+die "$File_split_env_sh does not exist;" unless -f "$File_split_env_sh";
+
+require 'subs.pl';
+require 'main_subs.pl';
+require 'man.pl';
+
+@Path = &path_uniq( File::Spec->path() );
+
+if ( &where_is_prog('gzip') ) {
+  $Has_Compression = 1;
+  $Has_bzip = 1 if &where_is_prog('bzip2');
+}
+
+
+########################################################################
+# modes, viewers, man sections, and defaults
+########################################################################
+
+# configuration files
+our @Conf_Files = (File::Spec->catfile(File::Spec->rootdir(),
+				      'etc', 'groff', 'groffer.conf'),
+		  File::Spec->catfile("$ENV{'HOME'}", '.groff',
+				      'groffer.conf')
+		 );
+
+our @Default_Modes = ('pdf', 'pdf2', 'html', 'ps', 'x', 'dvi', 'tty');
+our $Default_Resolution = 100;
+our $Default_tty_Device = 'utf8';
+
+our @Macro_Packages = ('-man', '-mdoc', '-me', '-mm', '-mom', '-ms');
+
+our %Viewer_tty = ('DVI' => [],
+		  'HTML' => ['lynx', 'w3m'],
+		  'PDF' => [],
+		  'PS' => [],
+		  'TTY' => ['less -r -R', 'more', 'pager'],
+		  'X' => [],
+		 );
+
+our %Viewer_X = ('DVI' => ['kdvi', 'xdvi', 'dvilx'],
+		'HTML' => ['konqueror', 'epiphany'. 'mozilla-firefox',
+			   'firefox', 'mozilla', 'netscape', 'galeon',
+			   'opera', 'amaya','arena', 'mosaic'],
+		'PDF' => ['okular', 'kpdf', 'acroread', 'evince',
+			  'xpdf -z 150', 'gpdf', 'xpdf', 'zathura'.
+			  'epdfview', 'qpdfview', 'apvlv', 'qpdfview',
+			  'kghostview --scale 1.45', 'gv', 'ggv'],
+		'PS' => ['okular', 'evince', 'gv',
+			 'gs', 'gs_x11', 'ghostscript', 'ghostview',
+			 'kghostview --scale 1.45', 'ggv', 'kpdf'],
+		'TTY' => ['xless'],
+		'X' => ['gxditview', 'xditview'],
+	      );
+
+%Man = ('ALL' => 0,
+	'AUTO_SEC' => ['1', '2', '3', '4', '5', '6', '7', '8', '9',
+			  'n', 'o'],
+	'ENABLE' => 1,
+	   'EXT' => '',
+	   'FORCE' => 0,
+	   'IS_SETUP' => 0,
+	   'MANSPEC' => {},
+	   'LANG' => '',
+	   'LANG2' => '',
+	   'PATH' => [],
+	   'SEC' => [],
+	   'SEC_CHARS' => '',
+	   'SYS' => [],
+	  );
+$Man{'AUTO_SEC_CHARS'} = join('', @{$Man{'AUTO_SEC'}});
+
+
+########################################################################
+# given options
+########################################################################
+
+our %Opts_Cmdline_Short;
+our %Opts_Cmdline_Long;
+our $Opts_Cmdline_Long_Str;
+our %Opts_Cmdline_Double;
+our %Opts_Groff_Short;
+
+&main_set_options();
+
+
+########################################################################
+# $MANOPT
+########################################################################
+
+# handle environment variable $MANOPT
+our @Manopt;
+
+&main_parse_MANOPT();
+
+
+########################################################################
+# configuration files, $GROFFER_OPT, and command line, main_config_params()
+########################################################################
+
+our @Options;
+our @Filespecs;
+our @Starting_Conf;
+our @Starting_ARGV = @ARGV;
+
+&main_config_params();
+
+if (0) {
+  print STDERR "<$_>\n" foreach @ARGV;
+}
+
+
+########################################################################
+# main_parse_params()
+########################################################################
+
+$Opt{'XRM'} = [];
+
+our $i = 0;
+our $n = $#Options;
+
+&main_parse_params();
+
+
+########################################################################
+# main_set_mode()
+########################################################################
+
+our $Viewer_Background;
+our $PDF_Did_Not_Work;
+our $PDF_Has_gs;
+our $PDF_Has_ps2pdf;
+our %Display = ('MODE' => '',
+	       'PROG' => '',
+	       'ARGS' => ''
+	      );
+
+&main_set_mode();
+
+
+########################################################################
+# groffer temporary directory, main_temp()
+########################################################################
+
+&main_temp();
+
+
+########################################################################
+# tmp functions and compression
+########################################################################
+
+########################################################################
+# main_do_fileargs() and related subs
+########################################################################
+
+our @REG_TITLE = ();
+
+&main_do_fileargs();
+
+
+
+########################################################################
+# main_set_resources()
+########################################################################
+
+&main_set_resources();
+
+
+########################################################################
+# set resources
+########################################################################
+
+our $groggy;
+our $modefile;
+our $addopts;
+
+&main_display();
+
+&clean_up();
+
+
+1;
+########################################################################
+### Emacs settings
+# Local Variables:
+# mode: CPerl
+# End:

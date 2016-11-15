@@ -1,0 +1,117 @@
+#!/bin/sh
+# $Id: texindex.in 6991 2016-02-06 12:16:13Z gavin $
+#
+# Copyright 2015, 2016 Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Originally written by Karl Berry.
+# Please send bug reports, etc. to bug-texinfo@gnu.org.
+#
+# Shell wrapper for the texindex.awk program.  This is the most
+# convenient way to support --options; with a #! line, it is (g)awk
+# itself that interprets the options.  We want texindex --version
+# to report texindex's version number, not gawk's.
+# 
+# So our job here is to (a) find the awk interpreter,
+# and (b) find the texindex.awk script file.
+
+mydir=`cd \`dirname $0\` && pwd`
+
+# 
+# allow user override for awk program location.
+awk_binary=
+awk_envvar=$TEXINDEX_AWK
+if test -n "$awk_envvar"; then
+  if test -s "$awk_envvar"; then
+    awk_binary=$awk_envvar
+  else
+    echo "$0: TEXINDEX_AWK environment variable set, but value" >&2
+    echo "$0: is not a readable non-empty file; ignoring: $awk_envvar" >&2
+  fi
+fi
+#
+# else use configured value for awk.
+if test -z "$awk_binary"; then
+  awk_binary="gawk"
+fi
+#
+# that should never be empty, but just in case, else fall back to plain
+# "awk".  (Let's not go to the trouble of searching PATH unless we get
+# reports of problems.)
+test -z "$awk_binary" && awk_binary=awk
+
+
+# 
+# finding the texindex.awk script file ...
+ti_script=
+#
+# allow user override for script location:
+ti_envvar=$TEXINDEX_SCRIPT
+if test -n "$ti_envvar"; then
+  if test -s "$ti_envvar"; then
+    ti_script=$ti_envvar
+  else
+    echo "$0: TEXINDEX_SCRIPT environment variable set, but value" >&2
+    echo "$0: is not a readable non-empty file; ignoring: $ti_script" >&2
+  fi
+fi
+#
+# else if script is in the same directory as us (development tree), use it:
+test -z "$ti_script" && test -s "$mydir/texindex.awk" \
+&& ti_script=$mydir/texindex.awk
+#
+# else look for script in pkgdatadir.
+if test -z "$ti_script"; then
+  pkgdatadir_configured="/usr/share/texinfo"
+  test -s "$pkgdatadir_configured/texindex.awk" \
+  && ti_script=$pkgdatadir_configured/texindex.awk
+fi
+#
+# look relative to $mydir, to allow the installed tree to be moved.
+if test -z "$ti_script"; then
+  relative_dir=$mydir/../share/texinfo
+  test -d "$relative_dir" \
+  && test -s "$relative_dir/texindex.awk" \
+  && ti_script=$relative_dir/texindex.awk
+fi
+#
+# didn't find it, abort.
+if test -z "$ti_script"; then
+  echo "$0: could not locate texindex.awk script file, quitting." >&2
+  echo "$0: (checked envvar TEXINDEX_SCRIPT ($TEXINDEX_SCRIPT)," >&2
+  echo "$0:  executable dir ($mydir)," >&2
+  echo "$0:  share dir relative to binary ($relative_dir)," >&2
+  echo "$0:  and configured pkgdatadir ($pkgdatadir_configured).)"  >&2
+  exit 1
+fi
+
+# Suppose a symlink named a\tb (four chars) is made to this script, and
+# "a\tb" --help
+# is invoked.  We want the output to report the program name as the
+# four chars a, \, t, b, not a, tab, b.
+# 
+# But we pass the value using (g)awk -v, and (g)awk processes arguments
+# to -v for escape sequences, so that by the time the rest of the script
+# sees it, it has a tab in it.
+# 
+# Conclusion: we must double any backslashes before invoking gawk,
+# by running the command: sed 's,\\,\\\\,g'
+# 
+# Sadly, since we have to do this in a shell, we need twice
+# as many backslash characters in the input.  Hope it's portable across
+# shells and seds.
+# 
+escaped0=`echo "$0" | sed 's,\\\\,\\\\\\\\,g'`
+exec $awk_binary -v Invocation_name="$escaped0" -f "$ti_script" -- "$@"

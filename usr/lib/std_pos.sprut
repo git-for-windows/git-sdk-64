@@ -1,0 +1,66 @@
+/* This is file `std_pos.sprut'.  The file contains description of C
+   position type and its type specific macros (see SPRUT
+   documentation).  The macros is implemented with the aid of package
+   `positions' therefore the package must be initiated before usage
+   macros from this file.
+
+   Copyright (C) 1997-2007 Vladimir Makarov.
+
+   Written by Vladimir Makarov <vmakarov@users.sourceforge.net>
+
+   This file is part of the tool SPRUT.
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This software is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with GNU CC; see the file COPYING.  If not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA.
+
+ */
+
+%type position_t
+
+%import {
+
+#include <stdio.h>
+#include "position.h"
+
+/* The type `position_t' is already in file `positions.h'. */
+
+}
+
+%local {
+
+/* Type specific macros (see SPRUT documentation) for `position_t': */
+#define IR_BEGIN_position_t(a)        ((a) = no_position)
+#define IR_END_position_t(a)        
+#define IR_COPY_position_t(a, b)      ((a) = (b))
+#define IR_EQUAL_position_t(a, b)     (compare_positions ((a), (b)) == 0)
+#define IR_PRINT_position_t(a)\
+   printf ("(file = \"%s\", line = %d, pos = %d)",\
+           (a).file_name, (a).line_number, (a).column_number)
+
+#define IR_INPUT_position_t(file, a)  (fread (&(a), sizeof (a), 1, (file))\
+                                       != sizeof (a))
+#define IR_OUTPUT_position_t(file, a)  (fwrite (&(a), sizeof (a), 1, (file))\
+                                        != sizeof (a))
+
+}
+
+%%
+
+/*
+Local Variables:
+mode:c
+End:
+*/
+

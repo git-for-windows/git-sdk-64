@@ -1,0 +1,2046 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               [1mman-db - the database cached manual pager suite[0m
+
+
+                  [4mGraeme[24m [4mW.[24m [4mWilford[24m [4m<eep2gw@ee.surrey.ac.uk>[0m
+                      [4mColin[24m [4mWatson[24m [4m<cjwatson@debian.org>[0m
+
+
+
+
+
+
+    This  document  describes  the setup, maintenance and use of a generic
+    online manual page system with special reference to the man-db package
+    and its advanced features.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[1mUNIX [22mis a registered trademark of the X/Open Company, Ltd.
+NFS is a registered trademark of Sun Microsystems, Inc.
+PostScript is a registered trademark of Adobe in the United States.
+
+The general conventions used throughout this manual include
+
+ +o file names and paths in [4mitalic[24m, e.g.  [4m/usr/share/man[24m.
+ +o variable  strings  (usually  path  components)  enclosed  within  <> and in
+   [4mitalic[24m, eg.  [4m<sec>[24m,
+ +o program names in [1mbold[22m, eg.  [1mman[22m.                  _____       ____________
+ +o commands that can be typed at a shell prompt in a |_b_o_x_|_, eg.  |_m_a_n__f_o_o_b_a_r_|_.
+ +o environment variables denoted as follows: $[1mENV_VAR[0m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Copyright (C) 1995 Graeme W. Wilford
+Copyright (C) 2001, 2002, 2003, 2007 Colin Watson
+
+Permission is granted to make and distribute verbatim copies  of  this  manual
+provided  the copyright notice and this permission notice are preserved on all
+copies.
+
+Permission is granted to copy and distribute modified versions of this  manual
+under  the conditions for verbatim copying, provided that the entire resulting
+derived work is distributed under the terms of a notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual  into
+another  language,  under  the  above conditions for modified versions, except
+that this permission notice may be stated in a  translation  approved  by  the
+copyright holder.
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[1m1.  Introduction[0m
+
+[1m1.1.  man-db[0m
+
+man-db  is a package that is designed to provide users with online information
+in a fast and friendly manner while at the same time offering  flexibility  to
+the system administrator.
+
+It is made up of several user programs:
+         [1m+o man       [22m- an interface to the on-line reference manuals
+         [1m+o whatis    [22m- search the manual page names
+         [1m+o apropos   [22m- search the manual page names and descriptions
+         [1m+o manpath   [22m- determine search path for manual pages
+         [1m+o lexgrog   [22m- directly read header information in manual pages
+several maintenance programs:
+         [1m+o mandb     [22m- create or update the manual page index caches
+         [1m+o catman    [22m- create or update the pre-formatted manual pages
+and a special pre-formatter that knows about compressed manual pages:
+         [1m+o zsoelim   [22m- satisfy .so requests in roff input
+
+
+In addition to these compiled programs, there are two shell scripts, [1mmkcatdirs[0m
+and [1mcheckman [22min the [4mtools[24m subdirectory.  These scripts aid the creation of cat
+directories and check for duplicated manual pages, respectively.
+
+The  following  manual pages are provided with this package to explain correct
+format and usage.  [1mman[22m(1), [1mwhatis[22m(1), [1mapropos[22m(1), [1mmanpath[22m(1), [1mlexgrog[22m(1), [1mman-[0m
+[1mpath[22m(5), [1mmandb[22m(8), [1mcatman[22m(8) and [1mzsoelim[22m(1).
+
+[1m1.1.1.  The concept[0m
+
+man-db  originally started out life as program suite man-1.1B, written by John
+W.  Eaton <jwe@che.utexas.edu> and maintained by Rik Faith  <faith@cs.unc.edu>
+to  which  support proposed by the newly formed FSSTND committee regarding cat
+directories was added.
+
+Since  then,  man-db's most innovative feature: the database cache scheme1 has
+been significantly developed. The basic idea was to reduce manual page  search
+times  to  a  minimum.  The  following piece of text is included from the man-
+db-2.2 distribution:
+
+    The theory: If you go to a library to take a book out, what do you do?
+
+    a) Go and look where it might be on  a  micro-fiche/terminal,  take  a
+    look  where it is supposed to be on the shelf, and then go look at the
+    new arrivals if it's not where it's supposed to be?
+
+    OR
+____________________
+   1 originally conceived after observing the actions of the Perl-based manual
+pager suite, man-pl written by Tom Christiansen <tchrist@convex.com>
+
+
+
+
+                                       [1m1[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+    b) Start at one end of the ground floor, look  along  every  bookshelf
+    until  you've completed that floor, then go up a level and start again
+    until you've found what you're looking for?
+
+
+Since then the database [1mindex [22mscheme has evolved greatly.  Every  manual  page
+and  stray  cat  page  on  the system is registered in an [1mindex [22mdatabase cache
+which stores various details about the file including the timestamp, the loca-
+tion and the whatis2 information.  This information is kept up to date by reg-
+ular runs of [1mmandb[22m.  In some configurations  [1mman  [22malso  looks  for  filesystem
+changes  each time it is invoked and helps to keep the database cache current,
+but this imposes a penalty on manual page search times.
+
+[1m1.2.  The manual page system[0m
+
+The simplest manual page system will have  a  single  manual  page  hierarchy.
+This will typically be
+
+     [4m/usr/share/man[0m
+
+beneath  which will be several subdirectories of the form [4mman<sec>[24m where [4m<sec>[0m
+is [1m1[22m, [1m2[22m, [1m3[22m, [1m4[22m, [1m5[22m, [1m6[22m, [1m7 [22mor [1m8[22m.  These are referred to as [4msections[24m of the manual.
+Others may exist and they are not restricted to single character names. eg.
+
+     [4m/usr/share/man/manfoo[0m
+
+is a valid section subdirectory.  Other common sections include [1m9[22m, [1mn[22m, [1ml[22m, [1mp [22mand
+[1mo[22m.
+
+Within these section subdirectories reside the manual pages themselves.  Their
+filenames follow the pattern
+
+     [4m/usr/share/man/man<sec>/<name>.<sec><ext>[0m
+
+where in most cases [4m<ext>[24m is an empty string.  An example is manual page [1mcp[0m
+
+     [4m/usr/share/man/man1/cp.1[0m
+
+which resides in [4msection[24m [1m1 [22mand has no special [4mextension[24m.
+
+[1m1.3.  Sections of the manual[0m
+
+The  manual  is  split up into sections to ease access and to cater for manual
+pages that share the same name.  It is common for a program  and  function  to
+share  the  same  name.  [1mkill [22mis a good example.  This is both a program which
+can be used to send a process a signal and an operating system call with simi-
+lar  functionality.   Their  manual  pages  are  stored under sections [1m1 [22mand [1m2[0m
+respectively.  Thus, sections are used to  separate  out  the  program  manual
+pages  from  the  function  manual pages and so on.  The table below shows the
+____________________
+   2 one line description of the manual page
+
+
+
+
+                                       [1m2[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[4msection[24m numbers of the manual followed by the types of pages they contain.
+
+
+       +--------+------------------------------------------------------+
+       |Section |                   Section contents                   |
+       +--------+------------------------------------------------------+
+       |   1    | user executable programs or shell commands           |
+       |   2    | system calls (functions provided by the kernel)      |
+       |   3    | library calls (functions within system libraries)    |
+       |   4    | special files (usually found in [4m/dev[24m)                |
+       |   5    | file formats and conventions eg. [4m/etc/passwd[24m         |
+       |   6    | games                                                |
+       |   7    | macro packages and conventions eg. [1mman[22m(7), [1mgroff[22m(7). |
+       |   8    | system administration commands                       |
+       |   9    | kernel routines [Non-standard]                       |
+       |   n    | new [obsolete]                                       |
+       |   l    | local [obsolete]                                     |
+       |   p    | public [obsolete]                                    |
+       |   o    | old [obsolete]                                       |
+       +--------+------------------------------------------------------+
+
+
+[1m1.4.  The format of manual pages[0m
+
+The format in which manual pages are stored is [1mNROFF[22m/[1mTROFF [22mor  more  generally
+ROFF.   This  is a typesetter style language3 which requires formatting before
+being viewed.  In fact some manual pages require pre-format processing to cor-
+rectly format tables or equations.
+
+If  the page is to be viewed on screen in a text environment, [1mNROFF [22mis used as
+the primary formatter. If the page is to be printed or displayed in a  graphi-
+cal  environment,  [1mTROFF  [22mis  used. Traditionally, [1mTROFF [22mformatted files for a
+[1mC/A/T [22m(Computer aided Typesetter) which is now obsolete.
+
+The [1mGNU [22mROFF ([1mGROFF[22m4) suite of programs offer a choice of output types includ-
+ing [1mX[22m, [1mdvi [22mand [1mpostscript[22m.  When configuring man-db, the preference is to  use
+[1mGROFF [22mrather than [1mTROFF[22m.
+
+[1m1.5.  Arguments to configure[0m
+
+To  allow  the configuration program, [1mconfigure[22m, to be non-interactive, it can
+be passed various options to alter the default  settings.   Generic  [1mconfigure[0m
+options  are  discussed  in  [4mdocs/INSTALL[24m.   Options  that are specific to the
+man-db package are described below.
+
+--enable-setuid[=ARG]
+     By default, [1mman [22mwill be installed as a setuid program to user  man.   Use
+____________________
+   3 similar in some aspects to [1mTeX[0m
+   4 Written by James Clark <jjc@jclark.com> and now maintained by Ted Harding
+<ted.harding@nessie.mcc.ac.uk> and Werner Lemberg <wl@gnu.org>
+
+
+
+
+                                       [1m3[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+     this option with an argument to change the setuid owner.
+
+--disable-setuid
+     Use  this option to install [1mman [22mas a non-setuid program and to change the
+     default cat and database files' access flags to  allow  users  to  modify
+     them.
+
+--enable-mandirs=OS
+     By  default,  man-db  supports  manual page directories in any of several
+     layouts used by free and proprietary versions of [1mUNIX[22m.  However, in  cer-
+     tain  cases,  this  can  cause  man-db to find the wrong page by mistake,
+     especially when the names of some manual  pages  on  the  system  contain
+     periods.   Use  this option with an argument of GNU, HPUX, IRIX, Solaris,
+     or BSD (or more than one of these, separated by commas) to  support  only
+     the layouts typically used on each of those systems.  Note that man-db is
+     not currently capable of writing cat pages in the proper BSD layout.
+
+--with-device=DEVICE
+     Use this flag to alter the default output device used by [1mNROFF[22m. DEVICE is
+     passed  to [1mNROFF [22mwith the -T option.  [1mconfigure [22mwill test that [1mNROFF [22mwill
+     run with the supplied device argument.
+
+--with-db=LIBRARY
+     configure will look for database interface libraries in the  order  gdbm,
+     Berkeley DB and finally ndbm and will #define appropriate variables rela-
+     tive to the first one found.  To override the built-in order on platforms
+     having  a  choice  of interface library, use this option to specify which
+     library to use.
+
+--enable-automatic-create
+     If this flag is used, [1mman [22mwill automatically create index  databases  for
+     users' private manual page hierarchies.
+
+--disable-automatic-update
+     Normally,  [1mman  [22mwill  update entries in index databases if it finds newly
+     installed manual pages (if the [1m--update [22mflag is used) or  delete  entries
+     if manual pages are removed.  This flag suppresses this behaviour.
+
+--disable-cats
+     Normally, [1mman [22mwill automatically try to create cat files corresponding to
+     manual files when a manual page is read.  This flag suppresses  this  be-
+     haviour.
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                       [1m4[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[1m2.  The specifics of Sections[0m
+
+[1m2.1.  Package specific manual page sections[0m
+
+The  use  of  package specific manual page sections is discouraged as packages
+large enough to warrant their own section probably contain manual  pages  that
+span other sections.  An example might be package [1mfoo [22mthat has its own section
+
+     [4m/usr/share/man/manfoo[0m
+
+which  contains  manual pages describing its programs, the library routines it
+offers and the format of several of  its  configuration  files.   These  pages
+would  normally be allocated to sections [1m1[22m, [1m3 [22mand [1m5 [22mrespectively and thus com-
+bining them all under section [1mfoo [22mis misleading.  Subtle problems  will  arise
+if  there  are  any  base  name-space clashes with standard manual pages, e.g.
+[1mexit[22m(3), [1mexit[22m(foo) and the order in which they should be shown.
+
+There are two standard solutions to this problem.
+
+ (1)   Create a separate manual page hierarchy for the package's manual  pages
+       such as
+
+           [4m/usr/local/packages/foo/man[0m
+
+
+ (2)   Install  the  pages in their relevant sections, with a unique extension
+       appended to the filename such that
+
+           [4m/usr/share/man/manfoo/exit.foo[0m
+
+       would instead be installed as
+
+           [4m/usr/share/man/man1/exit.1foo[0m
+
+
+Only (2) offers a complete solution  to  manual  page  ordering  problems  and
+allows users to access the desired page directly.
+
+[1m2.2.  Selecting a section type[0m
+
+[1m2.2.1.  Specifying a section[0m
+
+This is done via use of the section argument to man
+     ____________
+     |_m_a_n__1__e_x_i_t_|_
+
+will  look  for [4mexit.1*[24m in section [1m1 [22mof the manual.  If [4mexit.1[24m exists, it will
+be displayed in preference to [4mexit.1foo[0m
+     _______________
+     |_m_a_n__1_f_o_o__e_x_i_t_|_
+
+will look for [4mexit.1foo*[24m in section [1m1 [22mof the manual.  The asterisk (*)  repre-
+sents a wild-card of any type or length, including length zero.
+
+
+                                       [1m5[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+For  an  argument to be interpreted as a section name rather than a page name,
+it must either begin with a digit, or be  included  in  the  standard  section
+list.   The default section list is defined in [4minclude/manconfig.h[24m to be [1m1[22m, [1mn[22m,
+[1ml[22m, [1m8[22m, [1m3[22m, [1m2[22m, [1m5[22m, [1m4[22m, [1m9[22m, [1m6 [22mand [1m7[22m.  This should be modified in order and content to
+meet  the  local conventions.  It may be altered at run-time using the [1mSECTION[0m
+directive in the man-db configuration file.
+
+Every subdirectory section name in the entire system  must  be  in  the  list,
+including  sections found in imported manual page hierarchies.  It is not nec-
+essary to list sections with extensions unless a special  ordering  for  those
+extensions  is  desired.   The order is important because in normal operation,
+[1mman [22mwill only display the first manual page it finds  that  meets  the  search
+criteria.  Using  the  [1m--all [22margument will cause [1mman [22mto attempt to display all
+manual pages that meet the criteria. See [1mman[22m(1) for further information.
+
+Having an excess of sections listed will not slow [1mman [22mdown.
+
+[1m2.2.2.  Specifying an extension[0m
+
+If the section is unknown, but the package extension is, it is possible to use
+the extension argument
+     _________________
+     |_m_a_n__-_e__f_o_o__e_x_i_t_|_
+
+to search in all sections for manual pages named [4mexit[24m from package [4mfoo[24m.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                       [1m6[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[1m3.  Filesystem structure[0m
+
+[1m3.1.  Manual page hierarchies[0m
+
+It  is  often common for manual page systems to have more than one manual page
+hierarchy.  Indeed one of the systems I use has the following globally  acces-
+sible hierarchies
+
+     [4m/usr/man[0m
+     [4m/usr/local/man[0m
+     [4m/usr/local/tex/man[0m
+     [4m/usr/local/pbm/man[0m
+     [4m/usr/X11R6/man[0m
+     [4m/usr/openwin/man[0m
+     [4m/usr/local/packages/pvm/man[0m
+
+A  full  system $[1mMANPATH [22mwould be a colon separated list of these directories.
+The order is important, and is observed by man-db's  search  algorithms.   The
+order  is  very  much  related  to  the user's $[1mPATH [22menvironment variable, and
+should be set on a per user basis, or not set  at  all.   If  a  user's  $[1mPATH[0m
+causes
+
+     [4m/usr/local/packages/bin/foobar[0m
+
+to be executed in preference to
+
+     [4m/usr/bin/foobar[24m,
+
+it is essential that
+     ____________
+     |_m_a_n__f_o_o_b_a_r_|_
+
+displays the manual page located within
+
+     [4m/usr/local/packages/man[0m
+
+rather than within
+
+     [4m/usr/share/man[0m
+
+To  ensure  correct order, the program [1mmanpath [22mmay be used to set the $[1mMANPATH[0m
+environment variable.  See [1mmanpath[22m(1) and [1mmanpath[22m(5) for details.
+
+[1m3.2.  Setting the MANPATH[0m
+
+If using a Bourne style login shell such as [1mbash[22m, [1mksh[22m, or [1mzsh[22m, the commands
+
+     export MANPATH
+     MANPATH=`manpath -q`
+
+can be added to [1m$HOME[4m[22m/.profile[0m
+
+
+
+
+                                       [1m7[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+If using a C style login shell such as [1mcsh [22mor [1mtcsh[22m, the commands
+
+     setenv MANPATH `manpath -q`
+
+can be added to [1m$HOME[4m[22m/.login[0m
+
+N.B.  $[1mPATH [22mmust be set prior to using [1mmanpath[22m.  The setting  of  $[1mMANPATH  [22mis
+actually  unnecessary  as  the man-db utilities will dynamically determine the
+manpath if $[1mMANPATH [22mis unset.
+
+[1m3.3.  Determination of the internal manpath[0m
+
+All man-db utilities, [1mmanpath [22mincluded, will use the user's $[1mMANPATH  [22menviron-
+ment variable if set and not equal to "".  Otherwise the user's $[1mPATH [22menviron-
+ment variable is queried.  If this is unset or is set to  "",  the  determined
+manpath will simply be any
+
+     [1mMANDATORY_MANPATH[0m
+
+elements defined in the man-db config file.
+
+Assuming  that a $[1mPATH [22mexists, each path element it contains is scanned for in
+the config file.  If found, the corresponding manpath element is  appended  to
+the  internal manpath.  However, if the element is not mentioned in the config
+file, a man directory relative to  it  will  be  sought.   The  subdirectories
+[4m../man[24m,  [4mman[24m,  [4m../share/man[24m,  or  [4mshare/man[24m relative to the path component are
+appended to the internal manpath if they exist.  Finally, the internal manpath
+is  stripped  of  duplicate paths before being processed by the [1mNLS [22mand `Other
+OS' routines.  These may add to or modify the separate  path  elements  giving
+priority to [1mNLS [22mmanual pages or add OS-relative manpaths.
+
+[1m3.4.  Other OS's manual pages[0m
+
+It  is  common  to  have  collections of heterogeneous computer systems linked
+together in a network.  In some circumstances5 it is advantageous to  be  able
+to  access  the manual pages of these other systems directly from your system.
+This feature is known as alternate system support.  The accepted way to  setup
+this  support  is to NFS mount the respective systems' manual page hierarchies
+under the native manual page hierarchies.  An example:
+
+
+
+
+
+
+
+
+
+____________________
+   5 writing portable software instantly comes to mind
+
+
+
+
+
+                                       [1m8[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+                      +--------+-----------------------+
+                      |System  | Manual page hierarchy |
+                      +--------+-----------------------+
+                      |<local> | /usr/share/man        |
+                      |newOS   | /usr/share/man/newOS  |
+                      |userix  | /usr/share/man/userix |
+                      |<local> | /usr/local/man        |
+                      |newOS   | /usr/local/man/newOS  |
+                      |userix  | /usr/local/man/userix |
+                      +--------+-----------------------+
+
+Rather than have multiple NFS mounts from a single machine, this may be accom-
+plished by NFS mounting
+
+     [4m<other-sys>:/usr[0m
+
+somewhere on the local system and using symbolic links within the manual hier-
+archies.  To access these [4malternate[24m [4msystems[24m using [1mman [22muse the [1m-m [22mor  [1m--systems[0m
+option, eg.
+     ___________________________________________
+     |_m_a_n__-_-_a_l_l__-_-_s_y_s_t_e_m_s__u_s_e_r_i_x_:_n_e_w_O_S__5__p_a_s_s_w_d_|_
+
+would  provide  manual  pages  showing the structure of [4m/etc/passwd[24m on systems
+[1muserix [22mand [1mnewOS [22min that order.  A manual page would [4mnot[24m  be  displayed  about
+the local systems conventions.  Please read the relevant man-db utility's man-
+ual page for further and more specific information.
+
+[1m3.5.  NLS manual pages[0m
+
+NLS manual pages should be installed in NLS subdirectories of a standard  man-
+ual  page  hierarchy.   The  subdirectory names should be made up of language,
+territory, and character set components as necessary to specify the locale  of
+the manual page.
+
+The  character set component describes the encoding of the manual page itself,
+and not the encoding in use by the user; a manual  page  installed  under  the
+[1mfr.UTF-8  [22msubdirectory  will be used in the [1mfr_FR.ISO-8859-1 [22mlocale as well as
+[1mfr_FR.UTF-8[22m, and converted between encodings as necessary.   If  no  character
+set  is  specified  in  the  subdirectory  name, man-db will attempt to detect
+whether each page is encoded using UTF-8 or a legacy character set appropriate
+for  the  language.  Accordingly, the recommended scheme for installing manual
+pages is to encode them in UTF-8 (or, if that is not practical, in the  legacy
+character  set) and install them in directories [4mwithout[24m a character set compo-
+nent in their names.
+
+The territory should normally be omitted unless it is  necessary  to  describe
+the  manual  page  text.   For example, Brazilian Portuguese is quite distinct
+from Portuguese and so should be installed under the [1mpt_BR [22msubdirectory, but a
+single German manual page will typically suffice in Austria as well as in Ger-
+many and so should be installed under the [1mde [22msubdirectory.
+
+
+
+
+
+                                       [1m9[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+The following table gives some examples.
+
+
+ +---------+-------------+-----------------+---------------------------------+
+ |Language | Territory   | Character Set   | Directory                       |
+ +---------+-------------+-----------------+---------------------------------+
+ |French   | any         | UTF-8 or        | /usr/share/man/fr               |
+ |         |             | ISO-8859-1      |                                 |
+ |French   | Canada      | ISO 8859-1      | /usr/share/man/fr_CA            |
+ |French   | any         | UTF-8           | /usr/share/man/fr.UTF-8         |
+ |German   | Germany     | UTF-8           | /usr/share/man/de_DE.UTF-8      |
+ |German   | Switzerland | ISO 8859-1      | /usr/share/man/de_CH.ISO-8859-1 |
+ |Japanese | Japan       | UTF-8 or EUC-JP | /usr/share/man/ja_JP            |
+ |Japanese | Japan       | EUC-JP          | /usr/share/man/ja_JP.EUC-JP     |
+ |Japanese | any         | UTF-8           | /usr/share/man/ja.UTF-8         |
+ +---------+-------------+-----------------+---------------------------------+
+
+On  systems  supporting  UTF-8,  it  is  recommended  that all manual pages be
+encoded using UTF-8 where possible, in order to simplify the task of editing a
+variety of pages without reconfiguring editors and terminals and the like.
+
+Each  of  these  directories  are  then interpreted as manual page hierarchies
+themselves and may contain the usual section subdirectories.   Access  to  NLS
+manual  pages  is  achieved via use of the [1msetlocale[22m(3) function which queries
+user environment variables to determine the current locale.  Internally to the
+man-db  utilities,  this locale string is appended to each manpath element and
+the resultant NLS manpath element is searched before the standard manpath ele-
+ment.   In  this way, an NLS manual page that matches the search criteria will
+be shown before or in place of the standard American English page.
+
+If a user's $[1mMANPATH [22mconsists of or is determined as
+
+     [4m/usr/local/man:/usr/share/man:/usr/X11R6/man[0m
+
+and their locale is set to [1mde_DE[22m, the command
+     _________________________________
+     |_m_a_n__-_-_s_y_s_t_e_m_s__u_s_e_r_i_x_:_m_a_n__f_o_o_b_a_r_|_
+
+would produce the following internal man-db manpath elements
+
+
+     [4m/usr/local/man/userix/de_DE[0m
+     [4m/usr/local/man/userix/de[0m
+     [4m/usr/local/man/userix[0m
+     [4m/usr/share/man/userix/de_DE[0m
+     [4m/usr/share/man/userix/de[0m
+     [4m/usr/share/man/userix[0m
+     [4m/usr/X11R6/man/userix/de_DE[0m
+     [4m/usr/X11R6/man/userix/de[0m
+     [4m/usr/X11R6/man/userix[0m
+     [4m/usr/local/man/de_DE[0m
+     [4m/usr/local/man/de[0m
+
+
+
+                                      [1m10[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+     [4m/usr/local/man[0m
+     [4m/usr/share/man/de_DE[0m
+     [4m/usr/share/man/de[0m
+     [4m/usr/share/man[0m
+     [4m/usr/X11R6/man/de_DE[0m
+     [4m/usr/X11R6/man/de[0m
+     [4m/usr/X11R6/man[0m
+
+[1mfoobar [22mwould be searched for in the order of manual page  hierarchies  listed.
+Additional  directories  corresponding  to  manual  pages encoded in different
+character sets would be used if present.
+
+[1m3.5.1.  ISO 8859-1 (latin1) manual pages[0m
+
+By default [1mNROFF [22mwill format manual pages into a form  suitable  for  a  type-
+writer  style device, e.g. a terminal screen. [1mGNU NROFF [22mis capable6 of format-
+ting ROFF into a form suitable for 8-bit latin1  capable  output  devices.  To
+enable output for such a device, give the option
+
+--with-device=DEVICE
+
+to [1mconfigure [22mwhere DEVICE is the suitable and supported output format, in this
+case [1mlatin1[22m.
+
+[1m3.5.2.  Displaying non-ASCII characters on a Linux virtual terminal[0m
+
+To view non-ASCII characters at the Linux console, you must have  one  of  the
+kbd7  and console-tools packages installed.  If your system does not come with
+suitable configuration already, then please see the documentation in  the  kbd
+or  console-tools package for details on how to configure the console for your
+locale.  On modern systems, the best choice is likely to be to use  the  UTF-8
+encoding  with  a font suitable for your language.  Make sure that your locale
+environment variables match the encoding displayed by the console.   For  dis-
+play  under the "X Window System", a suitable 8-bit-clean terminal emulator is
+required.
+
+[1m3.5.3.  Viewing ASCII pages formatted for latin1 output device[0m
+
+When formatting an ASCII manual page for a latin1  output  device,  [1mGNU  NROFF[0m
+will  take advantage of the extra characters available and will always produce
+a text page containing some latin1 (8-bit) symbols.  The table8  below,  taken
+from [1mman[22m(1), illustrates the differences.
+
+
+
+____________________
+   6 see [1mnroff[22m(5) for the output device formats available with your [1mNROFF[0m
+   7 written and maintained by Andries Brouwer <aeb@cwi.nl>.
+   8 The ISO 8859-1 and ASCII columns of this table will be identical if  this
+manual  was  formatted for an ASCII based typewriter display, i.e. using [1mNROFF[0m
+in its native mode.
+
+
+
+
+                                      [1m11[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+              +--------------------+-------+------------+-------+
+              |Description         | Octal | ISO 8859-1 | ASCII |
+              +--------------------+-------+------------+-------+
+              |continuation hyphen |  255  |            |   -   |
+              |bullet (middle dot) |  267  |     +o      |   o   |
+              |acute accent        |  264  |     '      |   '   |
+              |multiplication sign |  327  |     x      |   x   |
+              +--------------------+-------+------------+-------+
+
+To display such symbols on a 7 bit terminal or terminal emulator, they must be
+translated back into standard ASCII.  The [1m-7 [22moption with [1mman [22mwill enable  this
+simple reverse translation.
+
+This  option  may  be  useful if your site has both 7 and 8-bit capable output
+devices and nroff is using the latin1 output device to format manual pages.
+
+[1m3.6.  Cat pages[0m
+
+It has become standard practice to store the formatted manual pages on disk so
+that  subsequent  requests for the manual page do not have to involve the for-
+matting process.  These pre-formatted manual pages are  known  as  [4mcat[24m  pages.
+Although  cat pages require additional disk storage requirements, they provide
+a substantial speed increase and their use is recommended.
+
+The automatic support for storing and using cat pages is brought about by sim-
+ply creating suitable directories for them.
+
+[1m3.7.  Cat page hierarchies[0m
+
+Traditionally,  cat pages were stored under the same manual hierarchy as their
+source manual pages, in [4mcat<sec>[24m subdirectories rather  than  [4mman<sec>[24m.   This
+situation is rather limiting in several situations:
+
+
+
+ +o When it is advantageous to mount [4m/usr[24m as a read-only filesystem.  Cat pages
+   cannot be supported in this situation without use of symbolic links to var-
+   ious other areas of the filesystem.  This situation is a greater problem if
+   the media itself is read-only, such as CD-ROM.
+ +o When NFS mounting alternate OS's manual page  hierarchies.   The  alternate
+   system  may be under someone else's control and they may not want cat pages
+   stored on their system.  In fact, it is usually a good idea to  export  the
+   manual page filesystems read-only, or import them that way.  It is possible
+   to avoid the problems, this time with even more  symbolic  links  that  may
+   need periodic updating.
+ +o If  there is a mixture of normal cat files and stray cats9, it is very dif-
+   ficult to periodically [4mtrim[24m the cat space disk  usage  by  removing  seldom
+   accessed cat files.
+
+____________________
+   9 cat files that have no source manual page, i.e. they cannot be recreated.
+
+
+
+
+                                      [1m12[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+To avoid all of these problems simultaneously, it was decided to support local
+cat page directory caches.
+
+[1m3.8.  Local cat page directory caches[0m
+
+Any location for cat page hierarchy may be specified in the man-db  configura-
+tion  file.   The  location  of the database cache associated with each manual
+page hierarchy will always be at the root  of  the  cat  page  hierarchy.   By
+default,  the  cat  page hierarchy shadows the manual page hierarchy.  The [1mFHS[0m
+proposes [4m/var/cache/man[24m as the location for such directories, although  man-db
+allows  any  directory hierarchy to be used.  The [1mFHS [22mpath transformation rule
+is as follows:
+
+     [4m/usr/<hierarchy>/share/man/<locale>/man<sec>/page.<sec><ext>[0m
+
+should be formatted into the cat file
+
+     [4m/var/cache/man/<hierarchy>/<locale>/cat<sec>/page.<sec><ext>[0m
+
+where the [4m<locale>[24m directory component may be missing  and  [4m<ext>[24m  may  be  an
+empty string.
+
+The  suggestion  is  that  stray cats are located in the traditional hierarchy
+under [4m/usr[24m whereas re-creatable cat pages are stored under the local  writable
+hierarchy  [4m/var/cache/man.[24m  [1mman [22mfollows strict rules in determining which file
+is displayed.
+
+As an example, the following route is taken if all three files exist.
+
+ (1)   Check relative modification time stamps of the manual file and the tra-
+       ditional  cat  file.   If the cat file is up to date (has an equal time
+       stamp), display it.
+
+ (2)   The traditional cat file is out of date.  Check relative time stamps of
+       the  manual  file and the alternate cat file.  If the cat file is up to
+       date, display it.
+
+ (3)   The alternate cat file is out of date.  Format the manual file and dis-
+       play  the  result  in  the foreground, while updating the alternate cat
+       file in the background.
+
+When a cat file is created, its time stamp is set to that of the corresponding
+manual  file.   Manual files are often stored in [1mtar [22marchives, and time stamps
+may be preserved when these archives are unpacked.   Simply  checking  whether
+the  cat file is newer would sometimes cause [1mman [22mto display an out-of-date cat
+file in this case, when it should have reformatted the manual file instead.
+
+
+
+
+
+
+
+
+
+                                      [1m13[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[1m4.  Compression[0m
+
+[1m4.1.  Compressed manual pages[0m
+
+It is possible to maintain a system of compressed manual pages.  This  imposes
+a  small  overhead on the formatting process, but is nevertheless usually rea-
+sonable in order to avoid unnecessary consumption of disk space.
+
+Presently, the compression extension/decompressor pairs must be known at  com-
+pile  time  although any number may be defined and used.  The following struc-
+ture is predefined in man-db:
+
+
+                          +----------+--------------+
+                          |Extension | Decompressor |
+                          +----------+--------------+
+                          |gz        | gzip -dc     |
+                          |z         | gzip -dc     |
+                          |Z         | compress -dc |
+                          +----------+--------------+
+
+It is a relatively easy operation to include further pairs in this  structure.
+See [4minclude/comp_src.h[24m for details and an example.
+
+Support  for  compressed manual pages is compiled into the man-db utilities by
+default.  To completely disable this support, edit [4mconfig.h[24m  and  comment  out
+the following line
+
+#define COMP_SRC 1
+
+This  will enable a minor speed increase, but note that support for stray cats
+with any compression extension other than the default will also be disabled.
+
+[1m4.2.  Compressed cat pages[0m
+
+man-db compresses cat files by default.  During configuration, [1mconfigure  [22mwill
+try  to  find  [1mgzip  [22mand, if found, all cat files produced by [1mman [22mwill be com-
+pressed with
+
+     [1mgzip -7c[0m
+
+and have a [1m.gz [22mextension appended.  If [1mgzip [22mis not found,
+
+     [1mcompress -c[0m
+
+is used as the compressor and the extension [1m.Z [22mis appended.
+
+To store cat files in an uncompressed state and to disable  compressed  exten-
+sion processing completely, edit [4mconfig.h[24m and comment out the following line
+
+#define COMP_CAT 1
+
+
+
+
+                                      [1m14[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[1m4.2.1.  Stray cats[0m
+
+Normally, [1mman [22mwill only look for cat files with the default compression exten-
+sion.  The default compression extension is dependent on the default  compres-
+sor and may be an empty string if the support for compressed cats is disabled.
+
+It is possible for a system to be supplied with stray cat files located in the
+traditional cat page hierarchy.  To make matters worse, they may have compres-
+sion extensions other than the default and reside on read-only media.  In such
+circumstances, stray cat files will be accepted with any compression extension
+that is also supported for manual pages.
+
+This special treatment of stray cat pages is removed if support for compressed
+manual pages is turned off or not available.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      [1m15[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[1m5.  Formatting[0m
+
+As already pointed out in the introduction, there are two  primary  formatters
+common to [1mUNIX[22m: [1mNROFF [22mand [1mTROFF[22m.
+
+In  the following sections, I will use the term [1mTROFF [22mto describe the typeset-
+ter formatter and [1mNROFF [22mto describe the typewriter formatter.  The  term  ROFF
+will be used to describe a generic formatter.
+
+[1m5.1.  GROFF[0m
+
+If  using  the [1mGROFF [22mpackage, there is a further choice, [1mGROFF [22mitself.  Essen-
+tially, [1mGROFF [22mforms a pipeline of processors including  [1mTROFF  [22mand  an  output
+processor  which translates the ditroff produced by [1mTROFF [22minto the appropriate
+output format.  The default output format, or device, for [1mGROFF [22mis PostScript.
+Anything  else  must  be  specified  using the device argument.  To illustrate
+[1mGROFF[22m, the command
+     _______________________
+     |_g_r_o_f_f__-_T_d_v_i__/_d_e_v_/_n_u_l_l_|_
+
+will form the following pipeline
+
+     troff -Tdvi /dev/null | grodvi
+
+If [1mGROFF [22mis tied to [1mman[22m's [1m-T [22moption, it is still possible for [1mman  [22mto  produce
+ditroff via use of the [1m-Z [22moption.
+
+In  [1mGROFF  [22m1.09, [1mNROFF [22mis bundled as a shell script that calls [1mGROFF[22m, which in
+turn calls [1mTROFF [22mwith the default options [1m-Wall  -mtty-char  -Tascii[22m,  passing
+the result through [1mgrotty [22mbefore it finally reaches the screen.
+
+It  is  imperative  that  the  script  does not pass pre-processing options to
+[1mGROFF[22m's command line as [1mman [22mtakes care of this separately.
+
+[1m5.2.  Devices[0m
+
+Both [1mNROFF [22mand [1mGROFF [22mmay allow output device selection.  As  mentioned  previ-
+ously, classic [1mNROFF [22mproduces output suitable for a typewriter device, classic
+[1mTROFF [22mproduces output suitable for a [1mC/A/T [22mand [1mGROFF [22mproduces output  suitable
+for a PostScript interpreting device by default.
+
+[1m5.3.  Macros[0m
+
+There  are  several  ROFF macro sets in existence that are suitable for manual
+pages.  Unfortunately, they tend to be incompatible with each other.
+
+During configuration, [1mconfigure [22mwill attempt to determine a suitable macro set
+for  the local system's manual page collection.  It attempts to use [1mNROFF [22mwith
+the following three macro packages:
+
+
+
+
+
+
+                                      [1m16[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+          +--------------+--------------------------+---------------+
+          |macro package | macro filename           | nroff command |
+          +--------------+--------------------------+---------------+
+          |andoc         | tmac.andoc or andoc.tmac | nroff -mandoc |
+          |an            | tmac.an or an.tmac       | nroff -man    |
+          |doc           | tmac.doc or doc.tmac     | nroff -mdoc   |
+          +--------------+--------------------------+---------------+
+
+The first that succeeds is used.  The [1mandoc [22mmacro set is suitable  for  manual
+pages  written using either [1man [22mor [1mdoc [22mmacro commands, but not a combination of
+both.
+
+[1m5.4.  Pre-format processors (pre-processors)[0m
+
+Manual pages may require pre-processing by any of the following
+
+
+                      +--------+----+------------------+
+                      |Program | ID | Pre-processes    |
+                      +--------+----+------------------+
+                      |eqn     | e  | equations        |
+                      |tbl     | t  | tables           |
+                      |grap    | g  | graphs           |
+                      |pic     | p  | pictures         |
+                      |refer   | r  | A bibliography   |
+                      |vgrind  | v  | program listings |
+                      +--------+----+------------------+
+
+It is possible to assign a default pre-processor list that  all  manual  pages
+will  be  passed  through prior to the primary formatter.  By default, this is
+empty.  To define a default list, edit [4minclude/manconfig.h[24m and un-comment  the
+following line
+
+/* #define DEFAULT_MANROFFSEQ   "t" */
+
+which  will enable [1mtbl [22mprocessing by default.  To change the list, replace the
+[1mt [22mwith a suitable string of processor ID's.
+
+Pre-process options may be provided at run time in various forms, but in  gen-
+eral the pre-processors required by each manual page is indicated in the first
+line of the manual page itself.  See [1mman[22m(1) for details.
+
+If a manual page does not contain a pre-processor string in its first line, it
+will  be  scanned  for  well-known ROFF requests used to pass input to certain
+pre-processors.  Thus, the pre-processor string is often unnecessary for  cor-
+rect output, but should nevertheless be included for efficiency.
+
+[1m5.5.  Format scripts[0m
+
+It is very likely that alternate systems manual pages may require non-standard
+macro packages or possibly even special pre-processors.  To tackle such  prob-
+lems, special format scripts may be created on a per manual hierarchy basis.
+
+
+
+                                      [1m17[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+If the file
+
+     [4m<manual_hierarchy>/mandb_nfmt[0m
+
+exists and is executable, it is expected to be able to correctly format a man-
+ual page originating from [4m<manual_hierarchy>[24m to its standard output.  It  will
+be supplied with either two or three arguments:
+
+    +o manual page filename
+    +o pre-processor string
+    +o output device (optional)
+
+Similarly, if the option [1m-T[4m[22m<device>[24m or [1m-t [22mwas supplied to [1mman [22mand the file
+
+     [4m<manual_hierarchy>/mandb_tfmt[0m
+
+exists and is executable, it will be used in the same way.
+
+An   example   of   such   a  script,  supplied  by  Markus  Armbruster  <arm-
+bru@pond.sub.org>, who provided support for external formatter scripts, can be
+found as [4mtools/mandb_fmt-script[0m
+
+The  script can be used as both an [1mNROFF [22mand [1mTROFF[22m/[1mGROFF [22mformat script and can
+be installed as [4mmandb_nfmt[24m and hard linked to  [4mmandb_tfmt[24m  after  modification
+appropriate for your particular site.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      [1m18[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[1m6.  The index database caches[0m
+
+As  mentioned  in the introduction, man-db uses database lookups to search for
+manual page locations and information.  When performing a manual  page  lookup
+or a basic [1mwhatis [22msearch, the databases are searched in
+
+     [4mkey[24m [4m->[24m [4mcontent[0m
+
+mode  and  are  as  fast  as the underlying databases can be.  When performing
+[1mapropos [22mor special [1mwhatis [22msearches, the databases are  searched  in  a  linear
+way,  which,  although  far more expensive than [4mkeyed[24m lookup, is no worse than
+traditional text based file searching.
+
+[1m6.1.  index database location[0m
+
+The databases are always located at  the  root  of  the  cat  page  hierarchy,
+whether this is the same as the manual page hierarchy or not.  As file locking
+mechanisms are employed to ensure that concurrent processes do  not  update  a
+database  simultaneously, it is almost imperative that the databases reside on
+a local filesystem since file locking across NFS filesystems may  be  unavail-
+able  or  flaky.  To avoid such problems, [1mman [22mcan be compiled without database
+maintenance support.  See the section titled "Modes of operation" for details.
+
+[1m6.1.1.  Manual hierarchies with no index database[0m
+
+It is possible for the man-db utilities to operate without aid from  an  index
+database.   Under  such circumstances, search methods will use only file glob-
+bing and whatis type searches are performed on  any  traditional  whatis  text
+databases  that may exist.  Only the traditional cat hierarchy is searched for
+cat files.
+
+[1m6.1.2.  User manual page hierarchies[0m
+
+A user may have any number of personal manual page hierarchies listed in their
+$[1mMANPATH[22m.   By  default, [1mman [22mwill maintain [1mmandb [22mcreated databases at the root
+of user manual page hierarchies.  The definition of a user manual hierarchy is
+that  it  does  not  have an entry in the man-db configuration file.  See [1mman-[0m
+[1mpath[22m(5) for details.
+
+[1m6.2.  Contents of an index database[0m
+
+There are four kinds of entry in an index database.
+
+ (1)   A direct entry regarding a particular manual page.  Manual  pages  that
+       are unique in terms of name use just a single entry in the database and
+       can be looked up by simply using the name as the key.
+
+ (2)   A common name index entry that lists the extensions of all of the  man-
+       ual pages sharing the common index entry name.  Manual pages that share
+       common names but have differing extensions each have a single  database
+       entry,  but  this time they are looked up with a key comprised of their
+       name and their extension.  The entire set of common  named  pages  also
+       has  an  common  name  index  entry  that  informs  of  the  extensions
+
+
+                                      [1m19[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+       available.
+
+ (3)   An indirect entry that has a pointer to the real entry.   Manual  pages
+       that are whatis references to a particular page do not physically exist
+       so they have a pointer to the entry containing the location of the real
+       manual page.
+
+ (4)   Special  identification entries.  There is one special key name, "$ver-
+       sion$" that identifies the database storage scheme version.
+
+In order to support looking up manual pages  in  a  case-insensitive  fashion,
+keys  are  stored  in  lower case.  If the name of the page was not already in
+lower case, its true case is also stored in the common name index entry.
+
+In the following entries, the character "|"  will  be  used  to  separate  the
+fields. In reality a tab is used.  Direct and indirect entries takes the form:
+
+     [4m<name>[24m   [4m->[24m   [4m<realname>|<ext>|<sec>|<mtime.sec>|<mtime.nsec>|<ID>|<ref>|[0m
+     [4m<filter>|<comp>|<whatis>[0m
+
+Common name index entries take the form:
+
+     [4m<name>[24m [4m->[24m [4m|<realname1>|<ext1>|<realname2>|<ext2>|<realname3>|<ext3>|[24m  [4m...[0m
+     [4m<realnamen>|<extn>[0m
+
+and common name direct or indirect entries take the form:
+
+     [4m<name>|<ext>[24m   [4m->[24m   [4m<realname>|<ext>|<sec>|<mtime.sec>|<mtime.nsec>|<ID>|[0m
+     [4m<ref>|<filter>|<comp>|<whatis>[0m
+
+where in each case the filename being represented is formed as
+
+     [4m<manual_hierarchy>/man<sec>/<name>.<ext>.<comp>[0m
+
+in the case of a manual page, or
+
+     [4m<cat_hierarchy>/cat<sec>/<name>.<ext>.<comp>[0m
+
+in the case of a stray cat.
+
+If any of the fields would be empty, a single "-"  is  stored  in  its  place.
+[4m<comp>[24m  represents the compression extension, [4m<mtime.sec>[24m is an integer repre-
+senting the seconds part of the last modification time  of  the  manual  page,
+[4m<mtime.nsec>[24m is an integer representing the nanoseconds part of the last modi-
+fication time of the manual page, [4m<ref>[24m points to  the  entry  containing  the
+location  of  the  real page, [4m<ID>[24m is one of the following identification let-
+ters, and [4m<filter>[24m represents any preprocessors that are needed to display the
+page.
+
+
+
+
+
+
+
+                                      [1m20[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+  +---+------------+--------------------------------------------------------+
+  |ID | #define    | Description                                            |
+  +---+------------+--------------------------------------------------------+
+  |A  | ULT_MAN    | ultimate manual page, the full source nroff file       |
+  |B  | SO_MAN     | manual page containing a .so request to an ULT_MAN     |
+  |C  | WHATIS_MAN | virtual whatis referenced page pointing to an ULT_MAN  |
+  |D  | STRAY_CAT  | cat page with no source manual page                    |
+  |E  | WHATIS_CAT | virtual whatis referenced page pointing to a STRAY_CAT |
+  +---+------------+--------------------------------------------------------+
+
+The  [4mID[24m  illustrates  the precedence.  Some types of manual page can be refer-
+enced by several means, e.g. .so requested and whatis  referred.   In  such  a
+case,  only one reference must be stored in the database, the precedence level
+decides which.
+
+[1m6.2.1.  Favouring stray cats[0m
+
+With the above rules of precedence, it is possible for a valid stray cat  page
+to be replaced by a whatis referred page sharing identical name-space.
+
+If  you  would  like  to  see  the  stray  cat  page  [1mkill[22m(1)  instead  of the
+[1mbash_builtins[22m(1) page referenced by [1mkill[22m(1), edit [4minclude/manconfig.h[24m and  un-
+comment the following line
+
+/* #define FAVOUR_STRAYCATS */
+
+[1m6.2.2.  Accessdb[0m
+
+A  simple  program, [1maccessdb [22mis included with man-db.  It will output the data
+contained within a man-db database in a human readable form.  By  default,  it
+will  [4mdump[24m  the  data  from [4m/var/cache/man/index.<db-type>[24m, where [4m<db-type>[24m is
+dependent on the database library in use.
+
+Supplying an argument to  [1maccessdb  [22mwill  override  this  default.   Tabs  are
+replaced  in  the output by a tilde "~" in the [4mkey[24m field and a single space in
+the [4mcontent[24m field.
+
+[1m6.2.3.  Example database[0m
+
+As an example of both [1maccessdb [22mand the database storage method, the output of
+     ___________________________
+     |_s_r_c_/_a_c_c_e_s_s_d_b__m_a_n_/_i_n_d_e_x_._b_t_|_
+
+after first running
+     _______________
+     |_s_r_c_/_m_a_n_d_b__m_a_n_|_
+
+from the top level build directory is included below.
+
+$version$ -> "2.5.0"
+accessdb -> "- 8 8 1410381979 324541691 A - - - dumps the content of a man-db database in a human readable format"
+apropos -> "- 1 1 1410381979 268541692 A - - - search the manual page names and descriptions"
+
+
+
+                                      [1m21[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+catman -> "- 8 8 1410381979 328541691 A - - - create or update the pre-formatted manual pages"
+lexgrog -> "- 1 1 1410381979 268541692 A - - - parse header information in man pages"
+man -> "- 1 1 1410381979 280541692 A - t - an interface to the on-line reference manuals"
+manconv -> "- 1 1 1410381979 272541692 A - - - convert manual page from one encoding to another"
+mandb -> "- 8 8 1410381979 324541691 A - t - create or update the manual page index caches"
+manpath -> " manpath 5 manpath 1"
+manpath~1 -> "- 1 1 1410381979 300541691 A - - - determine search path for manual pages"
+manpath~5 -> "- 5 5 1410381979 304541691 A - - - format of the /etc/manpath.config file"
+whatis -> "- 1 1 1410381979 300541691 A - - - display one-line manual page descriptions"
+zsoelim -> "- 1 1 1410381979 304541691 A - - - satisfy .so requests in roff input"
+
+[1m6.3.  Database types[0m
+
+man-db has support for various low level database libraries  commonly  in  use
+today.  The interfaces to the libraries are known as
+
+ +o ndbm ([1mUNIX[22m)
+ +o gdbm ([1mGNU[22m)
+ +o btree (Berkeley DB)
+
+man-db currently does not hold more than one database open at any time, so
+
+ +o dbm ([1mUNIX[22m)
+
+support could be added in the future.
+
+[1m6.4.  Limitations[0m
+
+The general differences and limitations are best compared in a table.
+
+
++------+-------------+----------+-----------------+--------------+-----------+
+|      |             |   File   | Content memory  |  Concurrent  |           |
+|Name  |    Type     |          +---------+-------+              | Shareable |
+|      |             |   name   |  type   | limit |    access    |           |
++------+-------------+----------+---------+-------+--------------+-----------+
+|ndbm  | hash        | index10  | static  | 1Kb   | none         | no        |
+|gdbm  | hash        | index.db | dynamic | -     | file locking | no        |
+|btree | binary tree | index.bt | static  | -     | none         | yes       |
++------+-------------+----------+---------+-------+--------------+-----------+
+
+Those types that have no built in concurrent access strategy are provided with
+[1mflock[22m(2) based file locking by man-db.
+
+Berkeley  DB  initializes  its  databases very quickly, so [1mbtree [22mmay have some
+performance advantages when doing [1mman [22msearches.  However, it is  quite  heavy-
+weight  and  its  library  SONAME and on-disk formats have changed a number of
+times to provide features  considerably  beyond  what  man-db  needs,  so  the
+____________________
+   10  ndbm  databases  are physically represented by two files, [4mindex.dir[24m and
+[4mindex.pag[24m, but are referred to simply as [4mindex[24m by the interface routines.
+
+
+
+
+                                      [1m22[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+preferred  library interface is now [1mgdbm[22m.  [1mconfigure [22mwill look for [1mgdbm[22m, [1mbtree[0m
+and then finally [1mndbm [22mroutines when configuring man-db.
+
+[1m6.5.  Sharing databases in a heterogeneous environment[0m
+It may be necessary or  advantageous  to  share  databases  across  platforms,
+regardless of the potential file locking problems.
+
+An  example  would be a user having a personal manual page hierarchy in an NFS
+based home directory environment, whereby the home directory is  held  on  and
+mounted from a single machine in a heterogeneous network.
+
+In  this context, the database cache will have the same name and reside in the
+same place on all machines.  There are at least two ways  to  deal  with  this
+problem.
+
+ +o Hack  the  [4minclude/manconfig.h[24m  file  on  each platform to provide a unique
+   database name for each system.  No databases will be shared.
+ +o Install and use the Berkeley DB database interface library  on  each  plat-
+   form.   These databases can be shared across big-endian/little-endian plat-
+   forms although a database created on a big-endian platform  will  suffer  a
+   small access penalty when used by a litle-endian machine and vice-versa.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      [1m23[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+[1m7.  Miscellaneous[0m
+
+[1m7.1.  Modes of operation[0m
+
+The  man-db  utilities  can  operate in many different modes, allowing varying
+degrees of freedom, functionality and security.  No  mode  requires  that  the
+manual page hierarchies be writable.
+
+(1) Default mode
+     [1mman  [22mis  setuid  to  the  user MAN_OWNER which is `man' by default and is
+     changeable via options to [1mconfigure[22m.  [1mmandb[22m, if run by the  superuser  or
+     MAN_OWNER,   creates   globally   accessible  index  databases  owned  by
+     MAN_OWNER.  Once the databases are created, [1mman [22mwill  update  entries  in
+     them  if  it  finds newly installed manual pages (if the [1m--update [22mflag is
+     used) or delete entries if manual pages are removed.  In this mode it  is
+     possible  for  a  malicious [1mman [22muser to deliberately lock a database as a
+     writer, thus denying read access to other users.
+     If cat directories exist and have the correct permissions, [1mman [22mwill  take
+     care  of  producing  cat  files.   These will be owned by MAN_OWNER.  The
+     default permissions of both cat files and databases are 0644.
+
+(2) No man database updates
+     This mode also requires [1mman [22mto be setuid, but is favoured where databases
+     must be shared in an environment unfriendly to kernel locking procedures,
+     eg. NFS.  It also prevents possible "denial of service" attacks by  mali-
+     cious  [1mman  [22musers  as  [1mman  [22mnever opens the databases as a writer in this
+     mode.  To replace the functionality lost by disallowing [1mman [22mwrite  access
+     to  the  databases,  [1mmandb  [22mshould be rerun whenever new manual pages are
+     installed.  Otherwise, [1mman [22mwill not be able to use the database  to  find
+     and  display  the  newly  added  manual  pages,  and will have to use the
+     filesystem instead.  Each index database may be  owned  by  an  arbitrary
+     user  who  will  have subsequent write access to the database.  Cat files
+     are created in the same way as for mode (1) above.
+     To use the man-db  utilities  in  this  mode,  give  the  option  `--dis-
+     able-automatic-update' to [1mconfigure[22m.
+
+(3) No man database updates or cat production
+     [1mman  [22mis installed not setuid.  This mode of operation probably offers the
+     highest level of security but it requires higher  levels  of  maintenance
+     than other modes due to the restrictions imposed upon [1mman[22m.  Each database
+     is owned by an arbitrary user as in mode (2).  Each cat hierarchy is also
+     owned  by  an  arbitrary  user  who is responsible for creating cat files
+     using [1mcatman [22mwhenever new manual files are installed.  [1mman [22mwill  be  com-
+     pletely passive in its action, i.e. no index databases will be written to
+     and no cat files are ever produced.
+     To use the man-db utilities in this  mode,  supply  the  options  `--dis-
+     able-setuid  --disable-automatic-update  --disable-cats' to [1mconfigure[22m, or
+     build man-db as in mode (1) and install the binaries without  the  setuid
+     bit set.
+
+(4) Wide open
+     [1mman  [22mis  installed  not setuid.  This mode is similar in operation to the
+     majority of vendor supplied, non setuid, cat file supporting manual pager
+
+
+                                      [1m24[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+     suites.   It is not recommended.  The databases are owned by an arbitrary
+     user who maintains them using [1mmandb[22m.  [1mman [22mdoes not update the  databases.
+     Cat  files  are produced and stored in world writable cat directories and
+     have world write access themselves.
+     To use the man-db utilities in this  mode,  supply  the  options  `--dis-
+     able-setuid  --disable-automatic-update'  to [1mconfigure[22m, edit [4minclude/man-[0m
+     [4mconfig.h[24m and change the definition of CATMODE from 0644 to 0666.
+
+Other variations can also be used.  In fact it is possible for [1mman [22mto actually
+create  index  databases,  usually the job of [1mmandb[22m, for users' private manual
+page hierarchies.  This  is  enabled  by  giving  the  option  `--enable-auto-
+matic-create' to [1mconfigure[22m.
+
+In summary, [4minclude/manconfig.h[24m contains definitions for
+
+ +o CATMODE
+ +o DBMODE
+
+the  setuid  installation and operation of [1mman [22mis modified by supplying either
+of the following options to [1mconfigure[22m:
+
+ +o --enable-setuid=USER
+ +o --disable-setuid
+
+and other aspects of [1mman[22m's behaviour are controlled by the  following  options
+to [1mconfigure[22m:
+
+ +o --enable-automatic-create
+ +o --disable-automatic-update
+ +o --disable-cats
+
+[1m7.2.  NFS root squash[0m
+
+If [1mman [22mis installed setuid to an arbitrary user and is run by root, instead of
+gaining the effective user id of the setuid user, [1mman [22mis run with both uid and
+euid  as  root.  This is neccesary due to infelicities with the [1mPOSIX [22msetuid()
+function call:  All users except root may change to  and  from  the  effective
+(setuid) user, however once root has setuid(user), there is no way back.
+
+A side effect of this is that [1mNFS [22mmounted cat hierarchies or databases will be
+unwritable if the following conditions exist:
+
+ +o man/catman/mandb is run by root
+ +o The NFS mount has the root squash flag set
+
+To get around this problem, the root user must first attain the ID of the  cat
+hierarchy or database owner before running [1mman/catman/mandb [22mwhenever the data-
+bases need updating or cat files are to be produced.
+
+[1m7.3.  NLS message catalogues[0m
+
+man-db has built in support for native language message catalogues.  That  is,
+it  can  issue  messages  in  the locale of the user's choice.  This will only
+
+
+                                      [1m25[0m
+
+
+
+
+
+
+
+[1mman-db                              v2.7.4                    October 19, 2015[0m
+
+
+occur if the locale's translation has  been  written.   Before  undertaking  a
+translation,  please  contact  the Translation Project (http://translationpro-
+ject.org/) who are coordinating such activities.
+
+[1m7.4.  Credits[0m
+
+The authors would like to thank the following people for their  time,  effort,
+support, ideas and code which went into man-db:
+
+    Markus Armbruster <armbru@pond.sub.org>
+    Lionel Cons & colleages <cons@dxcern.cern.ch>
+    Carl Edman <cedman@princeton.edu>
+    Caleb Epstein <epstein_caleb@jpmorgan.com>
+    Lars Fenneberg <lf@gimli.comlink.de>
+    Zoltan Hidvegi <hzoli@cs.elte.hu>
+    Nils Magnus <magnus@unix-ag.uni-kl.de>
+    Daniel Quinlan <quinlan@yggdrasil.com>
+    Fabrizio Polacco <fpolacco@debian.org>
+    Gordon Sadler <gbsadler1@lcisp.com>
+    Colin Phipps <cph@cph.demon.co.uk>
+    Paul Slootman <paul@wurtel.net>
+    Jose Rodriguez <boriel@airtel.net>
+    Eirik Fuller <eirik@hackrat.com>
+    Matej Vela <vela@debian.org>
+    Clint Adams <schizo@debian.org>
+    Jeremy C. Reed <reed@reedmedia.net>
+    Erik Andersen <andersen@codepoet.org>
+    Giuseppe Sacco <eppesuig@debian.org>
+    David Weinehall <tao@debian.org>
+    Ralph Corderoy <ralph@inputplus.co.uk>
+    Yuri Kozlov <kozlov.y@gmail.com>
+    Henning Makholm <henning@makholm.net>
+    Lars Wirzenius <liw@iki.fi>
+    Nicolas Fran,cois <nicolas.francois@centraliens.net>
+    Ivan Shmakov <oneingray@gmail.com>
+    Peter Breitenlohner <peb@mppmu.mpg.de>
+    Robert Luberda <robert@debian.org>
+    Chusslove Illich <caslav.ilic@gmx.net>
+
+and all those translators listed in the [1mman/THANKS [22mfile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      [1m26[0m
+
+
+
+
+
+
+
+
+
+
+                                   Glossary
+
+
+manual page
+     A  file  containing descriptions related to the use of a function or pro-
+     gram or the structure of a file.  The name of the file is formed from the
+     title of the manual page followed by a period followed by the name of the
+     section that it resides in, optionally followed  by  an  extension.   The
+     format of the file is [1mNROFF [22mand may be compressed, having a suitable com-
+     pression extension appended.
+
+cat page
+     A formatted manual page suitable for viewing on a vt100-type terminal.
+
+stray cat page
+     A cat page that does not have a relative manual page on the system,  i.e.
+     only  the  cat page was supplied or the manual page was removed after the
+     cat page had been created.
+
+section
+     Each manual page or cat page hierarchy is  divided  into  sections,  each
+     section  having  its  own directory.  Manual page hierarchy section names
+     begin with `man' and cat page sections with `cat'.
+
+extension
+     A package may provide manual pages with filenames ending  in  a  package-
+     specific extension name.  This allows manual pages with the same title to
+     coexist in the same manual page hierarchy and section without sharing the
+     same  filename.   It  also provides a further mechanism for man to select
+     the correct manual page.
+
+manual page hierarchy
+     A directory tree divided into manual page  sections,  each  containing  a
+     collection of manual pages.
+
+cat page hierarchy
+     A  directory  tree divided into cat page sections, each containing a col-
+     lection of cat pages.
+
+traditional cat page hierarchy
+     The same location as the manual page hierarchy.
+
+alternate cat page hierarchy
+     A separate location to that of the traditional cat page hierarchy.
+
+traditional cat page
+     A cat page located in a traditional cat page hierarchy.
+
+alternate cat page
+     A cat page located in an alternate cat page hierarchy.
+
+
+
+
+
+                                       [1mi[0m
+
+
+
+
+
+
+
+
+
+
+                                     Contents
+
+
+1.  Introduction ........................................................    1
+    1.1  man-db .........................................................    1
+         1.1.1  The concept .............................................    1
+    1.2  The manual page system .........................................    2
+    1.3  Sections of the manual .........................................    2
+    1.4  The format of manual pages .....................................    3
+    1.5  Arguments to configure .........................................    3
+
+2.  The specifics of Sections ...........................................    5
+    2.1  Package specific manual page sections ..........................    5
+    2.2  Selecting a section type .......................................    5
+         2.2.1  Specifying a section ....................................    5
+         2.2.2  Specifying an extension .................................    6
+
+3.  Filesystem structure ................................................    7
+    3.1  Manual page hierarchies ........................................    7
+    3.2  Setting the MANPATH ............................................    7
+    3.3  Determination of the internal manpath ..........................    8
+    3.4  Other OS's manual pages ........................................    8
+    3.5  NLS manual pages ...............................................    9
+         3.5.1  ISO 8859-1 (latin1) manual pages ........................   11
+         3.5.2  Displaying non-ASCII characters  on  a  Linux  virtual
+         terminal .......................................................   11
+         3.5.3  Viewing ASCII pages formatted for latin1 output device
+         ................................................................   11
+    3.6  Cat pages ......................................................   12
+    3.7  Cat page hierarchies ...........................................   12
+    3.8  Local cat page directory caches ................................   13
+
+4.  Compression .........................................................   14
+    4.1  Compressed manual pages ........................................   14
+    4.2  Compressed cat pages ...........................................   14
+         4.2.1  Stray cats ..............................................   15
+
+5.  Formatting ..........................................................   16
+    5.1  [1mGROFF [22m..........................................................   16
+    5.2  Devices ........................................................   16
+    5.3  Macros .........................................................   16
+    5.4  Pre-format processors (pre-processors) .........................   17
+    5.5  Format scripts .................................................   17
+
+6.  The index database caches ...........................................   19
+    6.1  index database location ........................................   19
+         6.1.1  Manual hierarchies with no index database ...............   19
+         6.1.2  User manual page hierarchies ............................   19
+    6.2  Contents of an index database ..................................   19
+         6.2.1  Favouring stray cats ....................................   21
+         6.2.2  Accessdb ................................................   21
+         6.2.3  Example database ........................................   21
+    6.3  Database types .................................................   22
+
+
+                                       [1mi[0m
+
+
+
+
+
+
+
+
+
+
+    6.4  Limitations ....................................................   22
+    6.5  Sharing databases in a heterogeneous environment ...............   23
+
+7.  Miscellaneous .......................................................   24
+    7.1  Modes of operation .............................................   24
+    7.2  NFS root squash ................................................   25
+    7.3  NLS message catalogues .........................................   25
+    7.4  Credits ........................................................   26
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      [1mii[0m
+
+
+

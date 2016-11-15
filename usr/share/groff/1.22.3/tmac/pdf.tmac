@@ -1,0 +1,805 @@
+.\" -*- nroff -*-
+.
+.ig
+
+pdf.tmac
+
+ Copyright (C) 2011-2014 Free Software Foundation, Inc.
+      Written by Deri James <deri@chuzzlewit.myzen.co.uk>
+
+This file is part of groff.
+
+groff is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+groff is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+Author's Note
+=============
+
+Much of the code in this macro has come from the excellent original work by
+Keith Marshall (see attribution in the pdfmark.tmac file). I, however,
+am solely responsible for any bugs I may have introduced into this file.
+..
+.mso ps.tmac
+.
+.de pdf:SS
+.	char \\$1 \\S'16'\\$1\\S'0'
+..
+.pdf:SS \[+h]
+.pdf:SS \[ts]
+.pdf:SS \[*a]
+.pdf:SS \[*b]
+.pdf:SS \[*x]
+.pdf:SS \[*d]
+.pdf:SS \[*e]
+.pdf:SS \[*f]
+.pdf:SS \[*g]
+.pdf:SS \[*y]
+.pdf:SS \[*i]
+.pdf:SS \[+f]
+.pdf:SS \[*k]
+.pdf:SS \[*l]
+.pdf:SS \[*m]
+.pdf:SS \[*n]
+.pdf:SS \[*o]
+.pdf:SS \[*p]
+.pdf:SS \[*h]
+.pdf:SS \[*r]
+.pdf:SS \[*s]
+.pdf:SS \[*t]
+.pdf:SS \[*u]
+.pdf:SS \[+p]
+.pdf:SS \[*w]
+.pdf:SS \[*c]
+.pdf:SS \[*q]
+.pdf:SS \[*z]
+.char \[lh] \X'pdf: xrev'\[rh]\X'pdf: xrev'
+.nr pdf:bm.nl 1
+.de pdfmark
+. nop \!x X ps:exec [\\$* pdfmark
+..
+.de pdf:warn
+. tm \\n(.F:\\n(.c: macro warning: \\$*
+..
+.de pdf:error
+. tm \\n(.F:\\n(.c: macro error: \\$*
+..
+.de pdfinfo
+.\" -------------------------------------------------------------------
+.\" Usage:
+.\"   .pdfinfo /FieldName field content ...
+.\" Examples:
+.\"   .pdfinfo /Title   A PDF Document
+.\"   .pdfinfo /Author  Keith Marshall
+.\" -------------------------------------------------------------------
+.\"
+.ds pdf:meta.field \\$1
+.shift
+.ie '\\n(.z'' .pdfmark \\*[pdf:meta.field] (\\$*) /DOCINFO
+.el \!.pdfmark \\*[pdf:meta.field] (\\$*) /DOCINFO
+.rm pdf:meta.field
+..
+.de pdfview
+.\" -------------------------------------------------------------------
+.\" Usage:
+.\"   .pdfview view parameters ...
+.\" Examples:
+.\"   .pdfview /PageMode /UseOutlines
+.\"   .pdfview /Page 2 /View [/FitH \n(.p u]
+.\" -------------------------------------------------------------------
+.\"
+.ie '\\n(.z'' .pdfmark \\$* /DOCVIEW
+.el \!.pdfmark \\$* /DOCVIEW
+..
+.\" =====================================================================
+.\" Module PDFNOTE: Insert "Sticky Note" Style Comments in a PDF Document
+.\" =====================================================================
+.\"
+.\" "PDFNOTE.WIDTH" and "PDFNOTE.HEIGHT" set the preferred size for
+.\" display of the "sticky note" pane, when opened.  Acrobat Reader
+.\" seems not to honour these -- perhaps GhostScript doesn't encode
+.\" them correctly!  Anyway, let's set some suitable default values,
+.\" in case the user has a set up which does work as advertised.
+.\"
+.nr PDFNOTE.WIDTH  3.5i
+.nr PDFNOTE.HEIGHT 2.0i
+.\"
+.\" "pdf:bbox" defines the expression used to set the size and location
+.\" of the bounding rectangle for display of notes and link "hot-spots".
+.\" This is defined, such that a note is placed at troff's current text
+.\" position on the current page, with its displayed image size defined
+.\" by the "PDFNOTE.WIDTH" and "PDFNOTE.HEIGHT" registers, while the
+.\" bounds for a link "hot-spot" are matched to the text region which
+.\" defines the "hot-spot".
+.\"
+.ds pdf:bbox \\n[pdf:llx] u \\n[pdf:lly] u \\n[pdf:urx] u \\n[pdf:ury] u
+.\"
+.\" Getting line breaks into the text of a PDFNOTE is tricky -- we need
+.\" to get a "\n" into the Postscript stream, but three levels of "\" are
+.\" swallowed, when we invoke "pdfnote".  The following definition of "PDFLB",
+.\" (for LineBreak), is rather ugly, but does allow us to use
+.\"
+.\"    .pdfnote  Some text.\*[PDFLB]Some more text, on a new line.
+.\"
+.ds PDFLB \\\\\\\\\\\\\\\\n
+.\"
+.de pdfnote
+.\" ----------------------------------------------------------------------
+.\" Usage:
+.\"   .pdfnote [-T "Text for Title"] Text of note ...
+.\" ----------------------------------------------------------------------
+.\"
+.\" First, compute the bounding rectangle,
+.\" for this PDFNOTE instance
+.\"
+.   mk pdf:ury
+.   nr pdf:llx \\n(.k+\\n(.o+\\n[.in]
+.   nr pdf:lly \\n[pdf:ury]-\\n[PDFNOTE.HEIGHT]
+.   nr pdf:urx \\n[pdf:llx]+\\n[PDFNOTE.WIDTH]
+.   ds pdf:note.instance /Rect [\\*[pdf:bbox]]
+.\"
+.\" Parse any specified (recognisable) PDFNOTE options
+.\"
+.   while dpdf:note\\$1 \{\
+.      pdf:note\\$1 \\$@
+.      shift \\n[pdf:note.argc]
+.      \}
+.\"
+.\" Emit the note, and clean up
+.\"
+.   pdfmark \\*[pdf:note.instance] /Subtype /Text /Contents (\\$*) /ANN
+.   rm pdf:note.instance
+.   rr pdf:note.argc
+..
+.de pdf:note-T
+.nr pdf:note.argc 2
+.as pdf:note.instance " /Title (\\$2)
+..
+.\" =====================================================================
+.\" Module PDFBOOKMARK: Add an Outline Reference in the PDF Bookmark Pane
+.\" =====================================================================
+.\"
+.\" "PDFBOOKMARK.VIEW" controls how the document will be displayed,
+.\" when the user selects a bookmark.  This default setting will fit
+.\" the page width to the viewing window, with the bookmarked entry
+.\" located at the top of the viewable area.
+.\"
+.ds PDFBOOKMARK.VIEW /FitH \\n[PDFPAGE.Y] u
+.\"
+.\" "PDFOUTLINE.FOLDLEVEL" controls how the document outline will be
+.\" displayed.  It is a number, defining the maximum heading level
+.\" which will be visible, without outline expansion by the user, in
+.\" the initial view of the document outline.  Assuming that no sane
+.\" document will ever extend to 10,000 levels of nested headings,
+.\" this initial default value causes outlines to be fully expanded.
+.\"
+.nr PDFOUTLINE.FOLDLEVEL 10000
+.\"
+.\" The actual job of creating an outline reference
+.\" is performed by the "pdfbookmark" macro.
+.\"
+.de pdfbookmark
+.\" ------------------------------------------------------------------
+.\" Usage:
+.\"   .pdfbookmark [-T tag] level "Text of Outline Entry"
+.\"
+.\"   $1 = nesting level for bookmark (1 is top level)
+.\"   $2 = text for bookmark, (in PDF viewer bookmarks list)
+.\" ------------------------------------------------------------------
+.\"
+.ie '\\n(.z'' \{\
+.\"
+.\" When we are at the top diversion level, i.e. actually emitting text
+.\" to the output device stream, then we compute the location of, and
+.\" plant this bookmark immediately.
+.\"
+.   \" Make the bookmark name "untagged" by default,
+.   \" then parse any specified options, to set a "tag", if required
+.   \"
+.      ds pdf:href-T
+.      while dpdf:href.opt\\$1 \{\
+.         pdf:href.opt\\$1 \\$@
+.         shift \\n[pdf:href.argc]
+.         \}
+.      rr pdf:href.argc
+.   \"
+.   \" If we found "--" to mark the end of the options, discard it
+.   \"
+.      if '\\$1'--' .shift
+.   \"
+.      nr pdf:bm.lev 0+\\$1
+.      if \\n[pdf:bm.lev]==0 .nr pdf:bm.lev 1
+.      if \\n[pdf:bm.lev]-1==\\n[PDFOUTLINE.FOLDLEVEL] .nr pdf:bm.lev \\n[pdf:bm.lev]*-1
+.      nr pdf:bm.abslev 0+\\n[pdf:bm.lev]
+.      if \\n[pdf:bm.lev]<0 .nr pdf:bm.abslev 0+\\n[pdf:bm.abslev]*-1
+.      if \\n[pdf:bm.abslev]>\\n[pdf:bm.nl] .nr pdf:bm.nl \\n[pdf:bm.nl]+1
+.      ie \\n[pdf:bm.abslev]>\\n[pdf:bm.nl] \{\
+.        pdf:warn adjusted level \\n[pdf:bm.abslev] bookmark; should be <= \\n[pdf:bm.nl]
+.        nr pdf:bm.abslev 0+\\n[pdf:bm.nl]
+.        if \\n[pdf:bm.abslev]-1==\\n[PDFOUTLINE.FOLDLEVEL] .nr pdf:bm.lev \\n[pdf:bm.abslev]*-1
+.      \}
+.      el .nr pdf:bm.nl \\n[pdf:bm.abslev]
+.      if \\n[pdf:bm.lev]<0 .nr pdf:bm.abslev \\n[pdf:bm.abslev]*-1
+.      nr pdf:bm.lev 0+\\n[pdf:bm.abslev]
+.      rr pdf:bm.abslev
+.      shift
+.   \"
+.   \" Increment the bookmark serialisation index
+.   \" in order to generate a uniquely serialised bookmark name,
+.   \" ( which we return in the string "PDFBOOKMARK.NAME" ),
+.   \"
+.      nr pdf:bm.nr +1
+.      ie '\\*[pdf:href-T]'' .ds PDFBOOKMARK.NAME pdf:bm\\n[pdf:bm.nr]
+.      el .ds PDFBOOKMARK.NAME \\*[pdf:href-T]
+.      pdf:href.sety
+.         ds pdf:cleaned \\$*
+.         ev pdfcln
+.         tr \[em]-
+.         nf
+.         box pdf:clean
+.         nop \\$*
+.         fl
+.         box
+.         chop pdf:clean
+.         asciify pdf:clean
+.         length pdf:clean:len \\*[pdf:clean]
+.         ds pdf:cleaned \\*[pdf:clean]
+.         rm pdf:clean
+.         ev
+.         tr \[em]\[em]
+.      ds pdf:look(\\*[PDFBOOKMARK.NAME]) \\*[pdf:cleaned]
+.      if dPDF.EXPORT .tm .ds pdf:look(\\*[PDFBOOKMARK.NAME]) \\*[pdf:cleaned]
+.      pdfmark /Dest /\\*[PDFBOOKMARK.NAME] /View [\\*[PDFBOOKMARK.VIEW]] /DEST
+.      nop \!x X ps:exec [/Dest /\\*[PDFBOOKMARK.NAME] /Title (\\*[pdf:cleaned]) /Level \\n[pdf:bm.lev] /OUT pdfmark
+.\".      pdfmark /Dest /\\*[PDFBOOKMARK.NAME] /Title "(\\*[pdf:cleaned])" /Level \\n[pdf:bm.lev] /OUT
+.      pdf:href.options.clear
+.      rr PDFPAGE.Y
+.      rm pdf:cleaned
+.      rm pdf:clean
+.      \}
+.   \}
+.el \{\
+.\"
+.\" But when we are collecting a diversion which will be written out later,
+.\" then we must defer bookmark placement, until we emit the diversion.
+.\" (don't rely on $0 == pdfbookmark here; it may be a volatile alias).
+.\"
+.   nop \!.pdfbookmark \\$@
+.   \}
+..
+.
+.de pdfclean
+.  ie '\\n(.z'' \{\
+.         ds pdfcleaned \\$*
+.         ev pdfcln
+.         tr \[em]-
+.         nf
+.         box pdf:clean
+.         nop \\*[\\*[pdfcleaned]]
+.         fl
+.         box
+.         chop pdf:clean
+.         asciify pdf:clean
+.         ev
+.         ds \\*[pdfcleaned] "\\*[pdf:clean]
+.         rm pdf:clean
+.         tr \[em]\[em]
+.  el .nop \!.pdfclean \\$@
+..
+.\"
+.\" =============================================================
+.\" Module PDFHREF: Create Hypertext References in a PDF Document
+.\" =============================================================
+.\"
+.\" "PDFHREF.VIEW" controls how the document will be displayed,
+.\" when the user follows a link to a named reference.
+.\"
+.ds PDFHREF.VIEW     /FitH \\n[PDFPAGE.Y] u
+.\"
+.\" This default setting will fit the page width to the viewing
+.\" window, with the bookmarked entry located close to the top
+.\" of the viewable area.  "PDFHREF.VIEW.LEADING" controls the
+.\" actual distance below the top of the viewing window, where
+.\" the reference will be positioned; 5 points is a reasonable
+.\" default offset.
+.\"
+.nr PDFHREF.VIEW.LEADING  5.0p
+.\"
+.\" Yuk!!!
+.\" PDF view co-ordinates are mapped from the bottom left corner,
+.\" of the page, whereas page printing co-ordinates are mapped
+.\" conventionally, from top left.
+.\"
+.\" Macro "pdf:href.sety" transforms the vertical position of the
+.\" last printed baseline, from the printing co-ordinate domain to
+.\" the PDF view domain.
+.\"
+.de pdf:href.sety
+.\" ----------------------------------------------------------------
+.\" Usage:
+.\"   .pdf:href.sety
+.\" ----------------------------------------------------------------
+.\"
+.\" This computation yields the vertical view co-ordinate
+.\" in groff's basic units; don't forget to append grops' "u"
+.\" conversion operator, when writing the pdfmark!
+.\"
+.nr PDFPAGE.Y (\\n[PDFHREF.VIEW.LEADING]-\\n(nl)
+..
+.\" When we create a link "hot-spot" ...
+.\" "PDFHREF.LEADING" sets the distance above the top of the glyph
+.\" bounding boxes, in each line of link text, over which the link
+.\" hot-spot will extend, while "PDFHREF.HEIGHT" sets the hot-spot
+.\" height, PER LINE of text occupied by the reference.
+.\"
+.\" Since most fonts specify some leading space within the bounding
+.\" boxes of their glyphs, a better appearance may be achieved when
+.\" NEGATIVE leading is specified for link hot-spots;  indeed, when
+.\" the default 10pt Times font is used, -1.0 point seems to be a
+.\" reasonable default value for "PDFHREF.LEADING" -- it may be
+.\" changed, if desired.
+.\"
+.\" "PDFHREF.HEIGHT" is initially set as one vertical spacing unit;
+.\" note that it is defined as a string, so it will adapt to changes
+.\" in the vertical spacing.  Changing it is NOT RECOMMENDED.
+.\"
+.nr PDFHREF.LEADING  2.0p
+.ds PDFHREF.HEIGHT   1.0v
+.\"
+.\" PDF readers generally place a rectangular border around link
+.\" "hot-spots".  Within text, this looks rather ugly, so we set
+.\" "PDFHREF.BORDER" to suppress it -- the three zeroes represent
+.\" the border parameters in the "/Border [0 0 0]" PDFMARK string,
+.\" and may be changed to any valid form, as defined in Adobe's
+.\" PDFMARK Reference Manual.
+.\"
+.ds PDFHREF.BORDER   0 0 0
+.\"
+.\" "PDFHREF.COLOUR" (note British spelling) defines the colour to
+.\" be used for display of link "hot-spots".  This will apply both
+.\" to borders, if used, and, by default to text; however, actual
+.\" text colour is set by "PDFHREF.TEXT.COLOUR", which may be reset
+.\" independently of "PDFHREF.COLOUR", to achieve contrasting text
+.\" and border colours.
+.\"
+.\" "PDFHREF.COLOUR" must be set to a sequence of three values,
+.\" each in the range 0.0 .. 1.0, representing the red, green, and
+.\" blue components of the colour specification in the RGB colour
+.\" domain, which is shared by "groff" and the PDF readers.
+.\"
+.ds PDFHREF.COLOUR   0.35 0.00 0.60
+.defcolor pdf:href.colour rgb \*[PDFHREF.COLOUR]
+.\"
+.\" "PDFHREF.TEXT.COLOUR", on the other hand, is simply defined
+.\" using any "groff" colour name -- this default maps it to the
+.\" same colour value as "PDFHREF.COLOUR".
+.\"
+.ds PDFHREF.TEXT.COLOUR  pdf:href.colour
+.\"
+.\" Accommodate users who prefer the American spelling, COLOR, to
+.\" the British spelling, COLOUR.
+.\"
+.als PDFHREF.COLOR       PDFHREF.COLOUR
+.als PDFHREF.TEXT.COLOR  PDFHREF.TEXT.COLOUR
+.\"
+.\" All PDF "Hypertext" reference capabilities are accessed
+.\" through the "pdfhref" macro
+.\"
+.de pdfhref
+.\" -----------------------------------------------------------------
+.\" Usage:
+.\"   .pdfhref <subcommand [options ...] [parameters ...]> ...
+.\" -----------------------------------------------------------------
+.\"
+.\"
+.\" Loop over all subcommands specified in the argument list
+.\"
+.   while \\n(.$ \{\
+.   \"
+.   \" Initially, assume each subcommand will complete successfully
+.   \"
+.      nr pdf:href.ok 1
+.   \"
+.   \" Initialise -E and -X flags in the OFF state
+.   \"
+.      nr pdf:href-E 0
+.      nr pdf:href-X 0
+.   \"
+.   \" Handle the case where subcommand is specified as "-class",
+.   \" setting up appropriate macro aliases for subcommand handlers.
+.   \"
+.      if dpdf*href\\$1       .als pdf*href      pdf*href\\$1
+.      if dpdf*href\\$1.link  .als pdf*href.link pdf*href\\$1.link
+.      if dpdf*href\\$1.file  .als pdf*href.file pdf*href\\$1.file
+.   \"
+.   \" Repeat macro alias setup
+.   \" for the case where the subcommand is specified as "class",
+.   \" (without a leading hyphen)
+.   \"
+.      if dpdf*href-\\$1      .als pdf*href      pdf*href-\\$1
+.      if dpdf*href-\\$1.link .als pdf*href.link pdf*href-\\$1.link
+.      if dpdf*href-\\$1.file .als pdf*href.file pdf*href-\\$1.file
+.   \"
+.   \" Process one subcommand ...
+.   \"
+.      ds pdf*href.class \\$1
+.      ie dpdf*href \{\
+.      \"
+.      \" Subcommand "class" is recognised ...
+.      \" discard the "class" code from the argument list,
+.      \" set the initial argument count to swallow all arguments,
+.      \" and invoke the selected subcommand handler.
+.      \"
+.         shift
+.         nr pdf:argc \\n(.$
+.         pdf*href \\$@
+.      \"
+.      \" When done,
+.      \" discard all arguments actually consumed by the handler,
+.      \" before proceeding to the next subcommand (if any).
+.      \"
+.         shift \\n[pdf:argc]
+.      \}
+.      el \{\
+.      \"
+.      \" Subcommand "class" is not recognised ...
+.      \" issue a warning, and discard the entire argument list,
+.      \" so aborting this "pdfhref" invocation
+.      \"
+.         pdf:warn \\$0: undefined reference class '\\$1' ignored
+.         shift \\n(.$
+.         \}
+.   \"
+.   \" Clean up temporary reference data,
+.   \" to ensure it doesn't propagate to any future reference
+.   \"
+.      rm pdf*href pdf:href.link pdf:href.files
+.      rr pdf:href-E
+.      pdf:href.options.clear
+.      \}
+.   rr pdf:href.ok
+..
+.\"
+.\" Macros "pdf:href.flag" and "pdf:href.option"
+.\" provide a generic mechanism for switching on flag type options,
+.\" and for decoding options with arguments, respectively
+.\"
+.de pdf:href.flag
+.\" ----------------------------------------------------------------------
+.\" ----------------------------------------------------------------------
+.nr pdf:href\\$1 1
+.nr pdf:href.argc 1
+..
+.de pdf:href.option
+.\" ----------------------------------------------------------------------
+.\" ----------------------------------------------------------------------
+.ds pdf:href\\$1 \\$2
+.nr pdf:href.argc 2
+..
+.\"
+.\" Valid PDFHREF options are simply declared
+.\" by aliasing option handlers to "pdf:href.option",
+.\" or to "pdf:href.flag", as appropriate
+.\"
+.als pdf:href.opt-A pdf:href.option   \" affixed text
+.als pdf:href.opt-D pdf:href.option   \" destination name
+.als pdf:href.opt-E pdf:href.flag     \" echo link descriptor
+.als pdf:href.opt-F pdf:href.option   \" remote file specifier
+.als pdf:href.opt-N pdf:href.option   \" reference name
+.als pdf:href.opt-P pdf:href.option   \" prefixed text
+.als pdf:href.opt-T pdf:href.option   \" bookmark "tag"
+.als pdf:href.opt-X pdf:href.flag     \" cross reference
+.\"
+.\" For references to another document file
+.\" we also need to support OS dependent file name specifiers
+.\"
+.als pdf:href.opt-DF pdf:href.option  \" /DOSFile specifier
+.als pdf:href.opt-MF pdf:href.option  \" /MacFile specifier
+.als pdf:href.opt-UF pdf:href.option  \" /UnixFile specifier
+.als pdf:href.opt-WF pdf:href.option  \" /WinFile specifier
+.\"
+.\" Macro "pdf:href.options.clear" ensures that ALL option
+.\" argument strings are deleted, after "pdfhref" has completed
+.\" all processing which depends on them
+.\"
+.de pdf:href.options.clear
+.\" -----------------------------------------------------------------
+.\" Usage:
+.\"   .pdf:href.options.clear [option ...]
+.\" -----------------------------------------------------------------
+.\"
+.\" When an option list is specified ...
+.\"
+.ie \\n(.$ \{\
+.   \"
+.   \" then loop through the list,
+.   \" deleting each specified option argument string in turn
+.   \"
+.   while \\n(.$ \{\
+.      if dpdf:href-\\$1 .rm pdf:href-\\$1
+.      shift
+.      \}
+.   \}
+.\"
+.\" ... but when no list is specified,
+.\" then recurse, to clear all known option argument strings
+.\"
+.el .pdf:href.options.clear A D F N P T DF MF UF WF
+..
+.\"
+.\" Macro "pdf*href-M" is the handler invoked by "pdfhref", when
+.\" called with the "M" reference class specifier, to create a
+.\" named cross reference mark, and to emit a cross reference
+.\" data record, as specified by "PDFHREF.INFO".
+.\"
+.de pdf*href-M
+.\" -----------------------------------------------------------------
+.\" Usage:
+.\"   .pdfhref M [-N name | -D name] [-E] descriptive text ...
+.\" -----------------------------------------------------------------
+.\"
+.\" Initially, declare the -D and -N string options as empty,
+.\" so we avoid warning messages when we try to use them, and find
+.\" that they are undefined.
+.\"
+.ds pdf:href-D
+.ds pdf:href-N
+.\"
+.\" Parse, interpret, and strip any specified options from the
+.\" argument list.  (Note that only options with a declared handler
+.\" will be processed; there is no provision for detecting invalid
+.\" options -- anything which is not recognised is assumed to start
+.\" the "descriptive text" component of the argument list).
+.\"
+.while dpdf:href.opt\\$1 \{\
+.   pdf:href.opt\\$1 \\$@
+.   shift \\n[pdf:href.argc]
+.   \}
+.\"
+.\" If we found "--", to mark the end of the options,
+.\" then we should discard it.
+.\"
+.if '\\$1'--' .shift
+.\"
+.\" All PDF reference markers MUST be named. The name may have been
+.\" supplied using the "-N Name" option, (or the "-D Name" option);
+.\" if not, deduce it from the first "word" in the "descriptive text",
+.\" if any, and set the marker -- if we still can't identify the name
+.\" for the destination, then this marker will not be created.
+.\"
+.ds PDFBOOKMARK.NAME "\\*[pdf:href-N]\\*[pdf:href-D]
+.pdf*href.set \\*[PDFBOOKMARK.NAME] \\$1
+.ds pdf:look(\\*[PDFBOOKMARK.NAME]) \\$*
+.if dPDF.EXPORT .tm .ds pdf:look(\\*[PDFBOOKMARK.NAME]) \\$*
+.\"
+.\"
+.\" Irrespective of whether this marker is created, or not,
+.\" the descriptive text will be copied to the groff output stream,
+.\" provided the "-E" option was specified
+.\"
+.if \\n[pdf:href-E] \&\\$*
+..
+.de pdf*href-F
+.\"do nothing
+..
+.\"
+.de pdf*href.set
+.\" ----------------------------------------------------------------------
+.\" ----------------------------------------------------------------------
+.ie \\n(.$ \{\
+.   \"
+.   \" a marker name has been supplied ...
+.   \" if we are formatting for immediate output,
+.   \" emit PDFMARK code to establish the associated view
+.   \"
+.   ie '\\n(.z'' \{\
+.      pdf:href.sety
+.      pdfmark /Dest /\\$1 /View [\\*[PDFHREF.VIEW]] /DEST
+.      ds PDFHREF.NAME \\$1
+.      rr PDFPAGE.Y
+.      \}
+.   \"
+.   \" but, when formatting a diversion ...
+.   \" delay output of the PDFMARK code, until the diversion
+.   \" is eventually written out
+.   \"
+.   el \!.\\$0 \\$@
+.   \"
+.   \}
+.el \{\
+.   \" marker is unnamed ...
+.   \" issue error message; do not emit reference data
+.   \"
+.   pdf:warn pdfhref destination marker must be named
+.   \}
+..
+.\"
+.de pdf*href
+.\" ------------------------------------------------------------------
+.\" Usage:
+.\"   .pdf*href class [options ...] [link text ...]
+.\" ------------------------------------------------------------------
+.\"
+.\" First, we initialise an empty string, which will be affixed to
+.\" the end of the "link text".  (This is needed to cancel the effect
+.\" of a "\c" escape, which is placed at the end of the "link text"
+.\" to support the "-A" option -- any text supplied by the user, when
+.\" the "-A" option is specified, will replace this empty string).
+.\"
+.ds pdf:href-A
+.\"
+.\" Now we interpret, and remove any specified options from the
+.\" argument list.  (Note that only options with a declared handler
+.\" will be processed;  there is no provision for detecting invalid
+.\" options -- anything which is not recognised is assumed to start
+.\" the "link text" component of the argument list).
+.\"
+.while dpdf:href.opt\\$1 \{\
+.   pdf:href.opt\\$1 \\$@
+.   shift \\n[pdf:href.argc]
+.   \}
+.\"
+.\" If we found "--", to mark the end of the options, then we should
+.\" discard it.
+.\"
+.if '\\$1'--' .shift
+.\"
+.\" All PDF link classes REQUIRE a named destination.  This may have
+.\" been supplied using the "-D Name" option, but, if not, deduce it
+.\" from the first "word" in the "link text", if any -- if we still
+.\" can't identify the destination, then set "pdf:href.ok" to zero,
+.\" so this link will not be created.
+.\"
+.if !dpdf:href-D .pdf:href.option -D \\$1
+.if '\\*[pdf:href-D]'' \{\
+.   pdf:error pdfhref has no destination
+.   nr pdf:href.ok 0
+.   \}
+.\"
+.\" Now, initialise a string, defining the PDFMARK code sequence
+.\" to create the reference, using the appropriate type indicators.
+.\"
+.ds pdf:href.link /Subtype /Link \\*[pdf*href.link]
+.\"
+.\" And now, we have no further use for "pdf*href.link".
+.\"
+.rm pdf*href.link
+.\"
+.\" If the user specified any "link prefix" text, (using the "-P text"
+.\" option), then emit it BEFORE processing the "link text" itself.
+.\"
+.if dpdf:href-P \&\\*[pdf:href-P]\c
+.ie \\n[pdf:href.ok] \{\
+.   \"
+.   \" This link is VALID (so far as we can determine) ...
+.   \" Modify the "link text" argument specification, as required,
+.   \" to include any pre-formatted cross reference information
+.   \"
+.   ie \\n(.$ \{\
+.      \"
+.      \" One or more "link text" argument(s) are present,
+.      \" so, set the link description from the argument(s) ...
+.      \"
+.      ds PDFHREF.DESC \\\\$*
+.      \}
+.   el \{\
+.      ie dpdf:look(\\*[pdf:href-D]) .ds PDFHREF.DESC \\*[pdf:look(\\*[pdf:href-D])]
+.      el .ds PDFHREF.DESC Unknown
+.      \}
+.   \" Apply border and colour specifications to the PDFMARK string
+.   \" definition, as required.
+.   \"
+.   if dPDFHREF.BORDER .as pdf:href.link " /Border [\\*[PDFHREF.BORDER]]
+.   if dPDFHREF.COLOUR .as pdf:href.link " /Color  [\\*[PDFHREF.COLOUR]]
+.   \"
+.   \" Emit the "link text", in its appropriate colour, marking the
+.   \" limits of its bounding box(es), as the before and after output
+.   \" text positions.
+.   \"
+\#.   if dPDFHREF.COLOUR .defcolor pdf:href.colour rgb \\*[PDFHREF.COLOUR]
+.   nr pdf:bm.width \\w'\\*[PDFHREF.DESC]'
+.   nop \&\m[\\*[PDFHREF.TEXT.COLOUR]]\c
+.   device pdf: markstart \\n[rst] \\n[rsb] \\n[PDFHREF.LEADING] \\*[pdf:href.link]
+.   nop \&\\*[PDFHREF.DESC]\X'pdf: markend'\m[]\c
+.   \"
+.   \" Clean up the temporary registers and strings, used to
+.   \" compute the "hot-spot" bounds, and format the reference,
+.   \"
+.   rm PDFHREF.DESC PDFHREF.TEXT
+.   \}
+.\"
+.\" But when we identify an INVALID link ...
+.\" We simply emit the "link text", with no colour change, no border,
+.\" and no associated "hot-spot".
+.\"
+.el \&\\$*\c
+.\"
+.\" And then, if the user specified any affixed text, (using the
+.\" "-A text" option), we tack it on at the end.
+.\"
+.nop \&\\*[pdf:href-A]
+..
+.\" Macro "pdf*href-I" is used for one time initialisation of special
+.\" "pdfhref" features; (currently, only the above page trap hook is
+.\" supported, but it is implemented with one level of indirection, to
+.\" accommodate possible future expansion).
+.
+.de pdf*href-I
+.\" ----------------------------------------------------------------------
+.\" Usage:
+.\"   .pdfhref I -<option> <optarg> [-<option> <optarg>] ...
+.\" ----------------------------------------------------------------------
+.\"
+.\" Loop over all arguments, in pairs ...
+.
+.while \\n(.$ \{\
+.   \"
+.   \" handing them off to their respective initialisers,
+.   \" when suitable initialisers exist, or complaining otherwise.
+.   \"
+.   ie dpdf*href\\$1.init .pdf*href\\$1.init \\$2
+.   el .pdf*error pdfhref:init: unknown feature '\\$1'
+.   shift 2
+.   \}
+..
+.\" Before we can use the page break "hook", we need to initialise it
+.\" as an addendum to a regular page break trap. To ensure that we don't
+.\" compromise the user's page trap setup, we leave the onus for this
+.\" initialisation with the user, but we provide the "pdf*href-PT.init"
+.\" macro, (invoked by ".pdfhref I -PT <macro-name>"), to implement a
+.\" suitable initialisation action.
+.\"
+.\"
+.\" "pdf*href-L" is the generic handler for creating references to
+.\" named destinations in PDF documents.  It supports both local
+.\" references, to locations within the same document, through its
+.\" "pdf*href-L.link" attribute, and also references to locations
+.\" in any other PDF document, through "pdf*href-L.file".
+.\"
+.als pdf*href-L      pdf*href
+.ds  pdf*href-L.link /Dest /\\\\*[pdf:href-D]
+.ds  pdf*href-L.file /Action /GoToR \\\\*[pdf:href.files] \\*[pdf*href-L.link]
+.\"
+.\" "pdf*href-O" is the "official" handler for creating PDF
+.\" document outlines.  It is simply an alias to "pdfbookmark",
+.\" which may also be invoked directly, if preferred.  Neither
+.\" a "pdf*href-O.link" nor a "pdf*href-O.file" attribute is
+.\" required.
+.\"
+.als pdf*href-O      pdfbookmark
+.\"
+.\" "pdf*href-W" is the generic handler for creating references to
+.\" web resources, (or any resource specified by a uniform resource
+.\" identifier).  Such resource links are fully specified by the
+.\" "pdf*href-W.link" attribute.
+.\"
+.als pdf*href-W      pdf*href
+.ds  pdf*href-W.link /Action << /Subtype /URI /URI (\\\\*[pdf:href-D]) >>
+.nr pdf:bm.nl 0
+.\"
+.\" "pdfmarksuspend" and "pdfmarkrestart" should be used in any page trap
+.\" macros to prevent output from the page trap macro being considered part
+.\" of a 'hot spot' when it crosses a page boundary.
+.de pdfmarksuspend
+.nop \!x X pdf: marksuspend
+..
+.de pdfmarkrestart
+.nop \!x X pdf: markrestart
+..
+.de pdfpagename
+.nop \!x X pdf: pagename \\$1
+..
+.de pdfswitchtopage
+.nop \!x X pdf: switchtopage \\$*
+..
+.\"
+.\" pdf.tmac: end of file / vim: ft=groff

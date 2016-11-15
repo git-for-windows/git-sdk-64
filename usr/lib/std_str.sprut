@@ -1,0 +1,105 @@
+/* This is file `std_str.sprut'.  The file contains description of C
+   string type and its type specific macros (see SPRUT documentation).
+   The macros is implemented with the aid of macros for work with
+   memory from the file `std_mem.sprut' or `std_bmem.sprut' therefore
+   one of these files must be placed before `std_str.sprut' in
+   '%extend' construction and the initiation function from the file
+   `std_mem.sprut' must be called before usage macros from this
+   file.
+
+   Copyright (C) 1997-2007 Vladimir Makarov.
+
+   Written by Vladimir Makarov <vmakarov@users.sourceforge.net>
+
+   This file is part of the tool SPRUT.
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This software is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with GNU CC; see the file COPYING.  If not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA.
+
+ */
+
+%type string_t
+
+%import {
+
+#include <stdio.h>
+#include <string.h>
+
+/* The following type is usual C repesentation of strings. */
+
+typedef char *string_t;
+
+}
+
+%local {
+
+/* Type specific macros (see SPRUT documentation) for `string_t': */
+#define IR_BEGIN_string_t(a)        ((a) = "")
+#define IR_END_string_t(a)          
+#define IR_COPY_string_t(a, b)      ((a) = (b))
+#define IR_EQUAL_string_t(a, b)     (strcmp ((a), (b)) == 0)
+#define IR_PRINT_string_t(a)        printf ("%s", (a))
+#define IR_INPUT_string_t(file, a)  input_string_t ((file), &(a))
+#define IR_OUTPUT_string_t(file, a) output_string_t ((file), (a))
+
+extern int input_string_t (FILE *f, char **str);
+
+extern int output_string_t (FILE *f, const char *str);
+
+}
+
+%%
+
+%%
+
+/* The following function allocates memory on the top of current block
+   memory region (setting up its address in *STR) and inputs string to
+   the memory from given file F.  The function returns TRUE if input
+   is ok, FALSE otherwise. */
+
+int
+input_string_t (FILE *f, char **str)
+{
+  int length;
+
+  if (fread (&length, sizeof (length), 1, f) != sizeof (length) || length < 0)
+    return 1 /* TRUE */;
+  IR_TOP_EXPAND (length + 1);
+  *str = IR_TOP_BEGIN ();
+  IR_TOP_FINISH ();
+  return fread (*str, length + 1, 1, f) != length + 1;
+}
+
+
+/* The following function outputs given string STR (its length and its
+   bytes including finish zero byte) to given file F.  The function
+   returns TRUE if output is ok, FALSE otherwise.  */
+
+int
+output_string_t (FILE *f, const char *str)
+{
+  int length;
+
+  length = strlen (str);
+  if (fwrite (&length, sizeof (length), 1, f) != sizeof (length))
+    return 1 /* TRUE */;
+  return fwrite (str, length + 1, 1, f) != length + 1;
+}
+
+/*
+Local Variables:
+mode:c
+End:
+*/
