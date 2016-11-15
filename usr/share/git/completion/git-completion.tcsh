@@ -32,14 +32,14 @@ if ( ${__git_tcsh_completion_version[1]} < 6 || \
 endif
 unset __git_tcsh_completion_version
 
-set __git_tcsh_completion_original_script = ${HOME}/.git-completion.bash
-set __git_tcsh_completion_script = ${HOME}/.git-completion.tcsh.bash
+set __git_tcsh_completion_original_script = /etc/bash_completion.d/git.sh
+set __git_tcsh_completion_script = $RPM_BUILD_ROOT/usr/share/tcsh/git.complete
 
-# Check that the user put the script in the right place
-if ( ! -e ${__git_tcsh_completion_original_script} ) then
-	echo "git-completion.tcsh: Cannot find: ${__git_tcsh_completion_original_script}.  Git completion will not work."
-	exit
-endif
+# # Check that the user put the script in the right place
+# if ( ! -e ${__git_tcsh_completion_original_script} ) then
+# 	echo "git-completion.tcsh: Cannot find: ${__git_tcsh_completion_original_script}.  Git completion will not work."
+# 	exit
+# endif
 
 cat << EOF >! ${__git_tcsh_completion_script}
 #!bash
@@ -121,6 +121,3 @@ EOF
 
 # Don't need this variable anymore, so don't pollute the users environment
 unset __git_tcsh_completion_original_script
-
-complete git  'p,*,`bash ${__git_tcsh_completion_script} git "${COMMAND_LINE}"`,'
-complete gitk 'p,*,`bash ${__git_tcsh_completion_script} gitk "${COMMAND_LINE}"`,'

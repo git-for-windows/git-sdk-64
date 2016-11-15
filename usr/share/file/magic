@@ -203,6 +203,25 @@
 !:mime	application/x-adrift
 
 #------------------------------------------------------------------------------
+# $File: algol68,v 1.2 2016/10/17 14:17:48 christos Exp $
+# algol68:  file(1) magic for Algol 68 source
+#
+0	search/8192	(input,			Algol 68 source text
+!:mime	text/x-Algol68
+0	regex		\^PROC			Algol 68 source text
+!:mime	text/x-Algol68
+0	regex           MODE[\t\ ]		Algol 68 source text
+!:mime	text/x-Algol68
+0	regex          	REF[\t\ ]		Algol 68 source text
+!:mime	text/x-Algol68
+0	regex          	FLEX[\t\ ]\*\\[		Algol 68 source text
+!:mime	text/x-Algol68
+#0	regex          	[\t\ ]OD		Algol 68 source text
+#!:mime	text/x-Algol68
+#0	regex          	[\t\ ]FI		Algol 68 source text
+#!:mime	text/x-Algol68
+
+#------------------------------------------------------------------------------
 # $File: allegro,v 1.4 2009/09/19 16:28:07 christos Exp $
 # allegro:  file(1) magic for Allegro datafiles
 # Toby Deshane <hac@shoelace.digivill.net>
@@ -455,7 +474,7 @@
 0	lelong	0x00080003	Android binary XML
 
 #------------------------------------------------------------------------------
-# $File: animation,v 1.57 2015/11/29 22:11:07 christos Exp $
+# $File: animation,v 1.58 2016/07/03 14:13:11 christos Exp $
 # animation:  file(1) magic for animation/movie formats
 #
 # animation formats
@@ -1464,6 +1483,14 @@
 >8	lelong	x	%d,
 >12	lelong	x	%d frames
 
+# Material Exchange Format
+# More information:
+# https://en.wikipedia.org/wiki/Material_Exchange_Format
+# http://www.freemxf.org/
+0	string	\x06\x0e\x2b\x34\x02\x05\x01\x01\x0d\x01\x02\x01\x01\x02	Material exchange container format
+!:ext	mxf
+!:mime	application/mxf
+
 #------------------------------------------------------------------------------
 # $File: aout,v 1.1 2013/01/09 22:37:23 christos Exp $
 # aout:  file(1) magic for a.out executable/object/etc entries that
@@ -1518,7 +1545,7 @@
 0	long		0100554		APL workspace (Ken's original?)
 
 #------------------------------------------------------------------------------
-# $File: apple,v 1.32 2015/12/04 20:40:10 christos Exp $
+# $File: apple,v 1.35 2016/08/17 09:45:13 christos Exp $
 # apple:  file(1) magic for Apple file formats
 #
 0	search/1/t	FiLeStArTfIlEsTaRt	binscii (apple ][) text
@@ -1803,49 +1830,118 @@
 # .vdi
 4	string innotek\ VirtualBox\ Disk\ Image %s
 
-# Apple disk partition stuff, strengthen the magic using byte 4
+# Apple disk partition stuff
+# URL: https://en.wikipedia.org/wiki/Apple_Partition_Map
+# Reference: https://ftp.netbsd.org/pub/NetBSD/NetBSD-current/src/sys/sys/bootblock.h
+# Update: Joerg Jenderek 
+# "ER" is APPLE_DRVR_MAP_MAGIC signature
 0	beshort	0x4552
->4	byte	0			Apple Driver Map
+# display Apple Driver Map (strength=50) after Syslinux bootloader (71)
+#!:strength +0
+# strengthen the magic by looking for used blocksizes 512 2048
+>2	ubeshort&0xf1FF		0	Apple Driver Map
+# last 6 bytes for padding found are 0 or end with 55AAh marker for MBR hybrid
+#>>504	ubequad&0x0000FFffFFff0000	0
+!:mime	application/x-apple-diskimage
+!:apple	????devr
+# https://en.wikipedia.org/wiki/Apple_Disk_Image
+!:ext	dmg/iso
+# sbBlkSize for driver descriptor map 512 2048
 >>2	beshort	x			\b, blocksize %d
->>4	belong	x			\b, blockcount %d
->>10	beshort	x			\b, devtype %d
->>12	beshort	x			\b, devid %d
->>20	beshort x			\b, descriptors %d
-# Assume 	8 partitions each at a multiple of the sector size.
-# We could glean this from the partition descriptors, but they are empty!?!?
->>(2.S*1)	indirect	x	\b, contains[@0x%x]: 
->>(2.S*2)	indirect	x	\b, contains[@0x%x]: 
->>(2.S*3)	indirect	x	\b, contains[@0x%x]: 
->>(2.S*4)	indirect	x	\b, contains[@0x%x]: 
->>(2.S*5)	indirect	x	\b, contains[@0x%x]: 
->>(2.S*6)	indirect	x	\b, contains[@0x%x]: 
->>(2.S*7)	indirect	x	\b, contains[@0x%x]: 
->>(2.S*8)	indirect	x	\b, contains[@0x%x]: 
+# sbBlkCount sometimes garbish like
+# 0xb0200000 for unzlibed install_flash_player_19.0.0.245_osx.dmg
+# 0xf2720100 for bunziped Firefox 48.0-2.dmg
+# 0xeb02ffff for super_grub2_disk_hybrid_2.02s3.iso
+# 0x00009090 by syslinux-6.03/utils/isohybrid.c
+>>4	ubelong	x			\b, blockcount %u
+# following device/driver information not very useful
+# device type 0 1 (37008 garbage for super_grub2_disk_hybrid_2.02s3.iso)
+>>8	ubeshort	x		\b, devtype %u
+# device id 0 1 (37008 garbage for super_grub2_disk_hybrid_2.02s3.iso)
+>>10	ubeshort	x		\b, devid %u
+# driver data 0 (2425393296 garbage for super_grub2_disk_hybrid_2.02s3.iso)
+>>12	ubelong		>0		
+>>>12	ubelong		x		\b, driver data %u
+# number of driver descriptors sbDrvrCount <= 61
+# (37008 garbage for super_grub2_disk_hybrid_2.02s3.iso)
+>>16	ubeshort	x		\b, driver count %u
+# 61 * apple_drvr_descriptor[8]. information not very useful or same as in partition map
+# >>18	use		apple-driver-map
+# >>26	use		apple-driver-map
+# # ...
+# >>500	use		apple-driver-map
+# number of partitions is always same in every partition (map block count)
+#>>0x0204	ubelong		x	\b, %u partitions
+>>0x0204	ubelong		>0	\b, contains[@0x200]: 
+>>>0x0200	use		apple-apm
+>>0x0204	ubelong		>1	\b, contains[@0x400]: 
+>>>0x0400	use		apple-apm
+>>0x0204	ubelong		>2	\b, contains[@0x600]: 
+>>>0x0600	use		apple-apm
+>>0x0204	ubelong		>3	\b, contains[@0x800]: 
+>>>0x0800	use		apple-apm
+>>0x0204	ubelong		>4	\b, contains[@0xA00]: 
+>>>0x0A00	use		apple-apm
+>>0x0204	ubelong		>5	\b, contains[@0xC00]: 
+>>>0x0C00	use		apple-apm
+>>0x0204	ubelong		>6	\b, contains[@0xE00]: 
+>>>0x0E00	use		apple-apm
+>>0x0204	ubelong		>7	\b, contains[@0x1000]: 
+>>>0x1000	use		apple-apm
+#	display apple driver descriptor map (start-block, # blocks in sbBlkSize sizes, type)
+0	name				apple-driver-map
+>0	ubequad		!0		
+# descBlock first block of driver 
+>>0	ubelong	x			\b, driver start block %u
+# descSize driver size in blocks
+>>4	ubeshort	x		\b, size %u
+# descType driver system type 1 701h F8FFh FFFFh
+>>6	ubeshort	x		\b, type 0x%x
 
-# Yes, the 3rd and 4th bytes are reserved, but we use them to make the
+# URL: https://en.wikipedia.org/wiki/Apple_Partition_Map
+# Reference: http://opensource.apple.com/source/IOStorageFamily/IOStorageFamily-116/IOApplePartitionScheme.h
+# Update: Joerg Jenderek 
+# Yes, the 3rd and 4th bytes pmSigPad are reserved, but we use them to make the
 # magic stronger.
-0	belong	0x504d0000		Apple Partition Map
->4	belong	x			\b, map block count %d
->8	belong	x			\b, start block %d
->12	belong	x			\b, block count %d
->16	string >0			\b, name %s
->48	string >0			\b, type %s
->124	string >0			\b, processor %s
->140	string >0			\b, boot arguments %s
->92	belong	& 1			\b, valid
->92	belong	& 2			\b, allocated
->92	belong	& 4			\b, in use
->92	belong	& 8			\b, has boot info
->92	belong	& 16			\b, readable
->92	belong	& 32			\b, writable
->92	belong	& 64			\b, pic boot code
->92	belong	& 128			\b, chain compatible driver
->92	belong	& 256			\b, real driver
->92	belong	& 512			\b, chain driver
->92	belong	& 1024			\b, mount at startup
->92	belong	& 2048			\b, is the startup partition
+# for apple partition map stored as a single file
+0	belong	0x504d0000		
+# to display Apple Partition Map (strength=70) after Syslinux bootloader (71)
+#!:strength +0
+>0	use		apple-apm
+# magic/Magdir/apple14.test, 365: Warning: Current entry does not yet have a description for adding a EXTENSION type
+# file: could not find any valid magic files!
+#!:ext	bin
+#	display apple partition map. Normally called after Apple driver map
+0	name				apple-apm
+>0	belong	0x504d0000		Apple Partition Map
+# number of partitions
+>>4	ubelong	x			\b, map block count %u
+# logical block (512 bytes) start of partition
+>>8	ubelong	x			\b, start block %u
+>>12	ubelong	x			\b, block count %u
+>>16	string >0			\b, name %s
+>>48	string >0			\b, type %s
+# processor type dpme_process_id[16] e.g. "68000" "68020"
+>>120	string >0			\b, processor %s
+# A/UX boot arguments BootArgs[128]
+>>136	string >0			\b, boot arguments %s
+# status of partition dpme_flags
+>>88	belong	& 1			\b, valid
+>>88	belong	& 2			\b, allocated
+>>88	belong	& 4			\b, in use
+>>88	belong	& 8			\b, has boot info
+>>88	belong	& 16			\b, readable
+>>88	belong	& 32			\b, writable
+>>88	belong	& 64			\b, pic boot code
+>>88	belong	& 128			\b, chain compatible driver
+>>88	belong	& 256			\b, real driver
+>>88	belong	& 512			\b, chain driver
+# mount automatically at startup APPLE_PS_AUTO_MOUNT
+>>88	ubelong	&0x40000000		\b, mount at startup
+# is the startup partition APPLE_PS_STARTUP
+>>88	ubelong	&0x80000000		\b, is the startup partition
 
-#http://wiki.mozilla.org/DS_Store_File_Format`
+#http://wiki.mozilla.org/DS_Store_File_Format
 #http://en.wikipedia.org/wiki/.DS_Store
 0	string	\0\0\0\1Bud1\0		Apple Desktop Services Store
 
@@ -1855,8 +1951,38 @@
 # extensions rsr/rsrc
 0	string  \000\000\001\000
 >4	leshort 0
->>16    lelong  0			Apple HFS/HFS+ resource fork
+>>16	lelong  0			Apple HFS/HFS+ resource fork
 
+#https://en.wikipedia.org/wiki/AppleScript
+0	string	FasdUAS			AppleScript compiled
+
+# AppleWorks/ClarisWorks
+# https://github.com/joshenders/appleworks_format
+# http://fileformats.archiveteam.org/wiki/AppleWorks
+0	name			appleworks
+>0	belong&0x00ffffff	0x07e100	AppleWorks CWK Document
+>0	belong&0x00ffffff	0x008803	ClarisWorks CWK Document
+>0	default			x	
+>>0	belong			x		AppleWorks/ClarisWorks CWK Document
+>0	byte			x		\b, version %d
+>30	beshort			x		\b, %d
+>32	beshort			x		\bx%d
+!:ext cwk
+
+4	string	BOBO
+>0	byte	>4
+>>12	belong	0
+>>>26	belong	0
+>>>>0	use	appleworks
+>0	belong	0x0481ad00
+>>0	use 	appleworks
+
+#------------------------------------------------------------------------------
+# $File: application,v 1.1 2016/10/17 12:13:01 christos Exp $
+# application:  file(1) magic for applications on small devices
+#
+# Pebble Application
+0	string	PBLAPP\000\000	Pebble application
 
 #------------------------------------------------------------------------------
 # $File: applix,v 1.5 2009/09/19 16:28:08 christos Exp $
@@ -1870,6 +1996,58 @@
 >7	string		SPREADSHEETS		Spreadsheet
 >7	string		MACRO			Macro
 >7	string		BUILDER			Builder Object
+
+#------------------------------------------------------------------------------
+# $File: apt,v 1.1 2016/10/17 19:51:57 christos Exp $
+# apt: file(1) magic for APT Cache files
+# <http://www.fifi.org/doc/libapt-pkg-doc/cache.html/ch2.html>
+# <https://anonscm.debian.org/cgit/apt/apt.git/tree/apt-pkg/pkgcache.h#n292>
+
+# before version 10 ("old format"), data was in arch-specific long/short
+
+# old format 64 bit
+0   	name		apt-cache-64bit-be
+>12	beshort		1		\b, dirty
+>40 	bequad		x		\b, %llu packages
+>48 	bequad		x		\b, %llu versions
+
+# old format 32 bit
+0   	name    	apt-cache-32bit-be
+>8  	beshort 	1		\b, dirty
+>40 	belong  	x		\b, %u packages
+>44 	belong  	x		\b, %u versions
+
+# new format
+0	name		apt-cache-be
+>6	byte    	1		\b, dirty
+>24	belong  	x		\b, %u packages
+>28	belong		x		\b, %u versions
+
+0	bequad		0x98FE76DC
+>8	ubeshort	<10		APT cache data, version %u
+>>10	beshort	    	x	  	\b.%u, 64 bit big-endian
+>>0	use		apt-cache-64bit-be
+
+0	lequad	    	0x98FE76DC
+>8	uleshort    	<10		APT cache data, version %u
+>>10	leshort		x		\b.%u, 64 bit little-endian
+>>0	use		\^apt-cache-64bit-be
+
+0	belong	    	0x98FE76DC
+>4	ubeshort    	<10	 	APT cache data, version %u
+>>6	ubeshort    	x		\b.%u, 32 bit big-endian
+>>0	use  		apt-cache-32bit-be
+>4	ubyte	    	>9		APT cache data, version %u
+>>5	ubyte	    	x		\b.%u, big-endian
+>>0	use 		apt-cache-be
+
+0	lelong	    	0x98FE76DC
+>4	uleshort    	<10		APT cache data, version %u
+>>6	uleshort   	x		\b.%u, 32 bit little-endian
+>>0	use 		\^apt-cache-32bit-be
+>4	ubyte	    	>9		APT cache data, version %u
+>>5	ubyte	    	x		\b.%u, little-endian
+>>0	use		\^apt-cache-be
 #------------------------------------------------------------------------------
 # $File: archive,v 1.103 2016/05/05 17:07:40 christos Exp $
 # archive:  file(1) magic for archive formats (see also "msdos" for self-
@@ -3975,7 +4153,7 @@
 >>36	belong&0x8	0x8		gzdata
 
 #------------------------------------------------------------------------------
-# $File: bioinformatics,v 1.3 2016/06/20 16:13:14 christos Exp $
+# $File: bioinformatics,v 1.4 2016/06/20 16:13:46 christos Exp $
 # bioinfomatics:  file(1) magic for Bioinfomatics file formats
 
 ###############################################################################
@@ -3991,32 +4169,32 @@
 
 
 ###############################################################################
-# Tabix index file 
+# Tabix index file
 # used by SAMtools bgzip/tabix (http://samtools.sourceforge.net/tabix.shtml)
 ###############################################################################
 0	string	TBI\1		SAMtools TBI (Tabix index format)
 >0x04	lelong	=1		\b, with %d reference sequence
 >0x04	lelong	>1		\b, with %d reference sequences
 >0x08	lelong	&0x10000	\b, using half-closed-half-open coordinates (BED style)
->0x08	lelong	^0x10000	
+>0x08	lelong	^0x10000
 >>0x08	lelong	=0		\b, using closed and one based coordinates (GFF style)
 >>0x08	lelong	=1		\b, using SAM format
 >>0x08	lelong	=2		\b, using VCF format
 >0x0c	lelong	x		\b, sequence name column: %d
 >0x10	lelong	x		\b, region start column: %d
->0x08	lelong	=0		
+>0x08	lelong	=0
 >>0x14	lelong	x		\b, region end column: %d
 >0x18	byte	x		\b, comment character: %c
 >0x1c	lelong	x		\b, skip line count: %d
 
 
 ###############################################################################
-# BAM (Binary Sequence Alignment/Map format) 
-# used by SAMtools (http://samtools.sourceforge.net/SAM1.pdf) 
+# BAM (Binary Sequence Alignment/Map format)
+# used by SAMtools (http://samtools.sourceforge.net/SAM1.pdf)
 # data is normally present only within compressed BGZF blocks (CDATA), so use file -z to examine it
 ###############################################################################
 0	string	BAM\1	SAMtools BAM (Binary Sequence Alignment/Map)
->0x04	lelong	>0	
+>0x04	lelong	>0
 >>&0x00 regex	=^[@]HD\t.*VN:		\b, with SAM header
 >>>&0	regex	=[0-9.]+		\b version %s
 >>&(0x04)	lelong	>0	\b, with %d reference sequences
@@ -4024,14 +4202,14 @@
 
 ###############################################################################
 # BAI (BAM indexing format)
-# used by SAMtools (http://samtools.sourceforge.net/SAM1.pdf) 
+# used by SAMtools (http://samtools.sourceforge.net/SAM1.pdf)
 ###############################################################################
 0		string	BAI\1	SAMtools BAI (BAM indexing format)
 >0x04		lelong	>0	\b, with %d reference sequences
 
 
 ###############################################################################
-# CRAM (Binary Sequence Alignment/Map format) 
+# CRAM (Binary Sequence Alignment/Map format)
 ###############################################################################
 0	string	CRAM	CRAM
 >0x04	byte	>-1	version %d.
@@ -4044,13 +4222,13 @@
 # used by SAMtools & VCFtools (http://vcftools.sourceforge.net/bcf.pdf)
 # data is normally present only within compressed BGZF blocks (CDATA), so use file -z to examine it
 ###############################################################################
-0		string	   BCF\4    
+0		string	   BCF\4
 # length of seqnm data in bytes is positive
->&0x00		lelong	  >0	
+>&0x00		lelong	  >0
 # length of smpl data in bytes is positive
 >>&(&-0x04)	lelong	  >0			SAMtools BCF (Binary Call Format)
 # length of meta in bytes
->>>&(&-0x04)	lelong	  >0	
+>>>&(&-0x04)	lelong	  >0
 # have meta text string
 >>>>&0x00	search	  ##samtoolsVersion=
 >>>>>&0x00	string	  x			\b, generated by SAMtools version %s
@@ -4063,7 +4241,7 @@
 ###############################################################################
 0		string	   BCF\2\1    Binary Call Format (BCF) version 2.1
 # length of header text
->&0x00		lelong	  >0	
+>&0x00		lelong	  >0
 # have header string
 >>&0x00 search	  ##samtoolsVersion=
 >>>&0x00	string	  x			\b, generated by SAMtools version %s
@@ -4076,7 +4254,7 @@
 ###############################################################################
 0		string	   BCF\2\2    Binary Call Format (BCF) version 2.2
 # length of header text
->&0x00		lelong	  >0	
+>&0x00		lelong	  >0
 # have header string
 >>&0x00 search	  ##samtoolsVersion=
 >>>&0x00	string	  x			\b, generated by SAMtools version %s
@@ -4094,11 +4272,11 @@
 ###############################################################################
 # XXX Broken?
 # @<seqname>
-#0	regex	=^@[A-Za-z0-9_.:-]+\?\n	
+#0	regex	=^@[A-Za-z0-9_.:-]+\?\n
 # <seq>
 #>&1	regex	=^[A-Za-z\n.~]++
 # +[<seqname>]
-#>>&1	regex	=^[A-Za-z0-9_.:-]*\?\n	
+#>>&1	regex	=^[A-Za-z0-9_.:-]*\?\n
 # <qual>
 #>>>&1	regex	=^[!-~\n]+\n		FASTQ
 
@@ -4107,7 +4285,7 @@
 # used by FASTA (http://fasta.bioch.virginia.edu/fasta_www2/fasta_guide.pdf)
 ###############################################################################
 #0	byte	0x3e
-# q>0	regex	=^[>][!-~\t\ ]+$	
+# q>0	regex	=^[>][!-~\t\ ]+$
 # Amino Acid codes: [A-IK-Z*-]+
 #>>1	regex	!=[!-'Jj;:=?@^`|~\\]		FASTA
 # IUPAC codes/gaps: [ACGTURYKMSWBDHVNX-]+
@@ -4116,37 +4294,37 @@
 #>>>1	regex	=^[EFIJLOPQZefijlopqz]+$	\b, with Amino Acid codes
 
 ###############################################################################
-# SAM (Sequence Alignment/Map format) 
-# used by SAMtools (http://samtools.sourceforge.net/SAM1.pdf) 
+# SAM (Sequence Alignment/Map format)
+# used by SAMtools (http://samtools.sourceforge.net/SAM1.pdf)
 ###############################################################################
 # Short-cut version to recognise SAM files with (optional) header at beginning
 ###############################################################################
-0      string	   @HD\t	
+0      string	   @HD\t
 >4     search	   VN:		Sequence Alignment/Map (SAM), with header
 >>&0   regex	   [0-9.]+	\b version %s
 ###############################################################################
 # Longer version to recognise SAM alignment lines using (many) regexes
 ###############################################################################
 # SAM Alignment QNAME
-0		regex	=^[!-?A-~]{1,255}(\t[^\t]+){11}		
+0		regex	=^[!-?A-~]{1,255}(\t[^\t]+){11}
 # SAM Alignment FLAG
->0		regex	=^([^\t]+\t){1}[0-9]{1,5}\t		
+>0		regex	=^([^\t]+\t){1}[0-9]{1,5}\t
 # SAM Alignment RNAME
->>0		regex	=^([^\t]+\t){2}\\*|[^*=]*\t		
+>>0		regex	=^([^\t]+\t){2}\\*|[^*=]*\t
 # SAM Alignment POS
->>>0		regex	=^([^\t]+\t){3}[0-9]{1,9}\t		
+>>>0		regex	=^([^\t]+\t){3}[0-9]{1,9}\t
 # SAM Alignment MAPQ
->>>>0		regex	=^([^\t]+\t){4}[0-9]{1,3}\t		
+>>>>0		regex	=^([^\t]+\t){4}[0-9]{1,3}\t
 # SAM Alignment CIGAR
 >>>>>0		regex	=\t(\\*|([0-9]+[MIDNSHPX=])+)\t
 # SAM Alignment RNEXT
->>>>>>0		regex	=\t(\\*|=|[!-()+->?-~][!-~]*)\t		
+>>>>>>0		regex	=\t(\\*|=|[!-()+->?-~][!-~]*)\t
 # SAM Alignment PNEXT
->>>>>>>0	regex	=^([^\t]+\t){7}[0-9]{1,9}\t		
+>>>>>>>0	regex	=^([^\t]+\t){7}[0-9]{1,9}\t
 # SAM Alignment TLEN
->>>>>>>>0	regex	=\t[+-]{0,1}[0-9]{1,9}\t.*\t		
+>>>>>>>>0	regex	=\t[+-]{0,1}[0-9]{1,9}\t.*\t
 # SAM Alignment SEQ
->>>>>>>>>0	regex	=^([^\t]+\t){9}(\\*|[A-Za-z=.]+)\t	
+>>>>>>>>>0	regex	=^([^\t]+\t){9}(\\*|[A-Za-z=.]+)\t
 # SAM Alignment QUAL
 >>>>>>>>>>0	regex	=^([^\t]+\t){10}[!-~]+	Sequence Alignment/Map (SAM)
 >>>>>>>>>>>0	regex	=^[@]HD\t.*VN:		\b, with header
@@ -4310,7 +4488,7 @@
 >12	belong		1004			HCI Serial (H5)
 >>12	belong		x			type %d
 #------------------------------------------------------------------------------
-# $File: c-lang,v 1.23 2016/05/21 14:28:27 christos Exp $
+# $File: c-lang,v 1.24 2016/07/01 23:31:13 christos Exp $
 # c-lang:  file(1) magic for C and related languages programs
 #
 # The strength is to beat standard HTML
@@ -4358,6 +4536,11 @@
 0	regex	\^private:		C++ source text
 !:strength + 30
 !:mime	text/x-c++
+
+# Objective-C
+0	regex	\^#import	Objective-C source text
+!:strength +25
+!:mime	text/x-objective-c
 
 # From: Mikhail Teterin <mi@aldan.algebra.com> 
 0	string		cscope		cscope reference data
@@ -4743,7 +4926,7 @@
 0	leshort	0x49e0	Clarion Developer (v2 and above) help data
 
 #------------------------------------------------------------------------------
-# $File: claris,v 1.7 2014/06/03 19:17:27 christos Exp $
+# $File: claris,v 1.8 2016/07/18 19:23:38 christos Exp $
 # claris:  file(1) magic for claris
 # "H. Nanosecond" <aldomel@ix.netcom.com>
 # Claris Works a word processor, etc.
@@ -4761,7 +4944,8 @@
 
 # Claris works files
 # .cwk
-0	string	\002\000\210\003\102\117\102\117\000\001\206 Claris works document
+# Moved to Apple AppleWorks document
+#0	string	\002\000\210\003\102\117\102\117\000\001\206 Claris works document
 # .plt
 0	string	\020\341\000\000\010\010	Claris Works palette files .plt
 
@@ -4932,7 +5116,7 @@
 
 
 #------------------------------------------------------------------------------
-# $File: commands,v 1.54 2016/04/19 13:40:02 christos Exp $
+# $File: commands,v 1.56 2016/07/14 19:01:12 christos Exp $
 # commands:  file(1) magic for various shells and interpreters
 #
 #0	string/w	:			shell archive or script for antique kernel text
@@ -5045,6 +5229,10 @@
 # From: Edward Betts <edward@debian.org>
 0	string		#!/usr/bin/pdmenu	Pdmenu configuration file text
 
+# From Danny Weldon
+0	string	\x0b\x13\x08\x00
+>0x04   uleshort	<4      ksh byte-code version %d
+
 #----------------------------------------------------------------------------
 # $File: communications,v 1.5 2009/09/19 16:28:08 christos Exp $
 # communication
@@ -5067,7 +5255,7 @@
 0	string		msc		Message Sequence Chart (chart)
 0	string		submsc		Message Sequence Chart (subchart)
 #------------------------------------------------------------------------------
-# $File: compress,v 1.65 2015/12/04 20:48:03 christos Exp $
+# $File: compress,v 1.66 2016/09/16 12:12:05 christos Exp $
 # compress:  file(1) magic for pure-compression formats (no archives)
 #
 # compress, gzip, pack, compact, huf, squeeze, crunch, freeze, yabba, etc.
@@ -5287,6 +5475,56 @@
 !:mime	application/x-lz4
 0	lelong		0x184c2102	LZ4 compressed data (v0.1-v0.9)
 !:mime	application/x-lz4
+
+# Zstandard/LZ4 skippable frames
+# https://github.com/facebook/zstd/blob/dev/zstd_compression_format.md
+0         lelong&0xFFFFFFF0  0x184D2A50
+>(4.l+8)  indirect
+
+# Zstandard Dictionary ID subroutine
+0     name        zstd-dictionary-id
+# Single Segment = True
+>0    byte        &0x20   \b, Dictionary ID:
+>>0   byte&0x03   0       None
+>>0   byte&0x03   1
+>>>1  byte        x       %u
+>>0   byte&0x03   2
+>>>1  leshort     x       %u
+>>0   byte&0x03   3
+>>>1  lelong      x       %u
+# Single Segment = False
+>0    byte        ^0x20   \b, Dictionary ID:
+>>0   byte&0x03   0       None
+>>0   byte&0x03   1
+>>>2  byte        x       %u
+>>0   byte&0x03   2
+>>>2  leshort     x       %u
+>>0   byte&0x03   3
+>>>2  lelong      x       %u
+
+# Zstandard compressed data
+# https://github.com/facebook/zstd/blob/dev/zstd_compression_format.md
+0     lelong       0xFD2FB522  Zstandard compressed data (v0.2)
+!:mime  application/x-zstd
+0     lelong       0xFD2FB523  Zstandard compressed data (v0.3)
+!:mime  application/x-zstd
+0     lelong       0xFD2FB524  Zstandard compressed data (v0.4)
+!:mime  application/x-zstd
+0     lelong       0xFD2FB525  Zstandard compressed data (v0.5)
+!:mime  application/x-zstd
+0     lelong       0xFD2FB526  Zstandard compressed data (v0.6)
+!:mime  application/x-zstd
+0     lelong       0xFD2FB527  Zstandard compressed data (v0.7)
+!:mime  application/x-zstd
+>4    use          zstd-dictionary-id
+0     lelong       0xFD2FB528  Zstandard compressed data (v0.8+)
+!:mime  application/x-zstd
+>4    use          zstd-dictionary-id
+
+# https://github.com/facebook/zstd/blob/dev/zstd_compression_format.md
+0  lelong    0xEC30A437  Zstandard dictionary
+!:mime  application/x-zstd-dictionary
+>4 lelong    x           (ID %u)
 
 # AFX compressed files (Wolfram Kleff)
 2	string		-afx-		AFX compressed file data
@@ -6297,7 +6535,7 @@
 0	string	MAPZ)	Map file for the Blood Frontier/Red Eclipse FPS games
 
 #------------------------------------------------------------------------------
-# $File: cups,v 1.3 2014/05/28 19:50:41 christos Exp $
+# $File: cups,v 1.4 2016/10/17 18:51:02 christos Exp $
 # Cups: file(1) magic for the cups raster file format
 # From: Laurent Martelli <martellilaurent@gmail.com>
 # http://www.cups.org/documentation.php/spec-raster.html
@@ -6341,7 +6579,7 @@
 >3	string		2		Cups Raster version 2, Big Endian
 >3	string		3		Cups Raster version 3, Big Endian
 !:mime	application/vnd.cups-raster
->0	use		^cups-le
+>0	use		\^cups-le
 
 
 # Cups Raster image format, Little Endian
@@ -7446,7 +7684,7 @@
 >>&1	string	x		\b, creator %.8s
 
 #------------------------------------------------------------------------------
-# $File: editors,v 1.8 2009/09/19 16:28:09 christos Exp $
+# $File: editors,v 1.10 2016/07/18 17:44:49 christos Exp $
 # T602 editor documents 
 # by David Necas <yeti@physics.muni.cz>
 0	string	@CT\ 	T602 document data,
@@ -7458,10 +7696,31 @@
 # Vi IMproved Encrypted file 
 # by David Necas <yeti@physics.muni.cz>
 0	string	VimCrypt~	Vim encrypted file data
+
+0	name	vimnanoswap
+>67	byte	0
+>>107	byte	0
+#>>>2	string	x	%s swap file
+>>>24	ulelong	x	\b, pid %d
+>>>28	string	>\0	\b, user %s
+>>>68	string	>\0	\b, host %s
+>>>108	string	>\0	\b, file %s
+>>>1007	byte	0x55	\b, modified
+
 # Vi IMproved Swap file
 # by Sven Wegener <swegener@gentoo.org>
-0	string	b0VIM\ 		Vim swap file
->&0	string	>\0		\b, version %s
+0	string  b0VIM\ 		Vim swap file
+>&0	string  >\0		\b, version %s
+>0	use	vimnanoswap
+
+
+# Lock/swap file for several editors, at least
+# Vi IMproved and nano
+0	string	b0nano		Nano swap file
+>0	use	vimnanoswap
+
+# kate (K Advanced Text Editor)
+0	string	\x00\x00\x00\x12Kate\ Swap\ File\ 2.0\x00	Kate swap file
 
 #------------------------------------------------------------------------------
 # $File: efi,v 1.5 2014/04/30 21:41:02 christos Exp $
@@ -7943,7 +8202,7 @@
 0       string          FCS3.0          Flow Cytometry Standard (FCS) data, version 3.0
 
 #------------------------------------------------------------------------------
-# $File: filesystems,v 1.113 2016/02/14 14:38:24 christos Exp $
+# $File: filesystems,v 1.114 2016/09/05 08:34:25 christos Exp $
 # filesystems:  file(1) magic for different filesystems
 #
 0	name	partid  
@@ -8483,8 +8742,6 @@
 >>>514		string		!HdrS			
 # not BeOS
 >>>>422		string		!Be\ Boot\ Loader	
->>>>>32769	string    CD001
->>>>>>0	use cdrom
 # jump over BPB instruction implies DOS bootsector or AdvanceMAME mbr 
 >>>>>0		ubelong&0xFD000000	=0xE9000000	
 # AdvanceMAME mbr
@@ -9873,6 +10130,7 @@
 >>38917	string    3         (version 2.0)
 >>38917	byte     >0x33      (unknown version, ID 0x%X)
 >>38917	byte     <0x31      (unknown version, ID 0x%X)
+# The next line is not necessary because the MBR staff is done looking for boot signature
 >0x1FE	leshort  0xAA55     (DOS/MBR boot sector)
 # "application id" which appears to be used as a volume label
 >32808	string/T  >\0       '%s'
@@ -10391,7 +10649,7 @@
 >>4	string	=d	\b, RGBA, interlaced
 
 #------------------------------------------------------------------------------
-# $File: fonts,v 1.30 2016/03/22 22:27:47 christos Exp $
+# $File: fonts,v 1.33 2016/09/14 01:26:26 christos Exp $
 # fonts:  file(1) magic for font data
 #
 0	search/1	FONT		ASCII vfont text
@@ -10405,6 +10663,56 @@
 0	string		%!FontType1	PostScript Type 1 font program data
 6	string		%!FontType1	PostScript Type 1 font program data
 0	string		%!PS-Adobe-3.0\ Resource-Font	PostScript Type 1 font text
+
+# Summary:	PostScript Type 1 Printer Font Metrics
+# URL:		https://en.wikipedia.org/wiki/PostScript_fonts
+# Reference:	http://partners.adobe.com/public/developer/en/font/5178.PFM.pdf
+# Modified by:	Joerg Jenderek
+# Note:		moved from ./msdos magic 
+# dfVersion 256=0100h 
+0		uleshort	0x0100		
+# GRR: line above is too general as it catches also TrueType font,
+# raw G3 data FAX, WhatsApp encrypted and Panorama database
+# dfType 129=0081h
+>66		uleshort	0x0081		
+# dfVertRes 300=012Ch not needed as additional test
+#>>70		uleshort	0x012c		
+# dfHorizRes 300=012Ch
+#>>>72		uleshort	0x012c		
+# dfDriverInfo points to postscript information section
+>>(101.l)	string/c	Postscript	Printer Font Metrics
+# above labeled "PFM data" by ./msdos (version 5.28) or "Adobe Printer Font Metrics" by TrID
+!:mime	application/x-font-pfm
+# AppleShare Print Server
+#!:apple	ASPS????
+!:ext	pfm
+# dfCopyright 60 byte null padded Copyright string. uncomment it to get old looking
+#>>>6		string		>\060		- %-.60s
+# dfDriverInfo
+>>>139		ulelong		>0		
+# often abbreviated and same as filename
+>>>>(139.l)	string		x		%s
+# dfSize
+>>>2		ulelong		x		\b, %d bytes
+# dfFace 210=D2h 9Eh
+>>>105		ulelong		>0		
+# Windows font name
+>>>>(105.l)	string		x		\b, %s
+# dfItalic
+>>>80		ubyte		1		italic
+# dfUnderline
+>>>81		ubyte		1		underline
+# dfStrikeOut
+>>>82		ubyte		1		strikeout
+# dfWeight 400=0x0190 300=0x012c 500=0x01f4 600=0x0258 700=0x02bc
+>>>83		uleshort	>699		bold
+# dfPitchAndFamily 16 17 48 49 64 65
+>>>90		ubyte		16		serif
+>>>90		ubyte		17		serif proportional
+#>>>90		ubyte		48		other
+>>>90		ubyte		49		proportional
+>>>90		ubyte		64		script
+>>>90		ubyte		65		script proportional
 
 # X11 font files in SNF (Server Natural Format) format
 # updated by Joerg Jenderek at Feb 2013
@@ -10501,7 +10809,12 @@
 >14	string		x		version %s
 
 # EOT
-34	string		LP		Embedded OpenType (EOT)
+0x40	string		\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0
+>0x22	string		LP		Embedded OpenType (EOT)
+# workaround until there's lepstring16
+# >>0x52	lepstring16/h	>\0		\b, %s family
+>>0x52	short	!0
+>>>0x54	lestring16	x		\b, %s family
 !:mime application/vnd.ms-fontobject
 
 # Web Open Font Format (.woff)
@@ -11075,7 +11388,7 @@
 >20	lelong		!0		\b, exports: %i
 
 #------------------------------------------------------------------------------
-# $File: gcc,v 1.4 2009/09/19 16:28:09 christos Exp $
+# $File: gcc,v 1.5 2016/07/01 23:31:13 christos Exp $
 # gcc:  file(1) magic for GCC special files
 #
 0	string		gpch		GCC precompiled header
@@ -11087,9 +11400,9 @@
 
 # 67 = 'C', 111 = 'o', 43 = '+', 79 = 'O'
 >4	byte		67			for C
->4	byte		111			for Objective C
+>4	byte		111			for Objective-C
 >4	byte		43			for C++
->4	byte		79			for Objective C++
+>4	byte		79			for Objective-C++
 
 #------------------------------------------------------------------------------
 # $File: geo,v 1.3 2013/01/04 00:47:02 christos Exp $
@@ -11335,7 +11648,7 @@
 >22	leshort		x			\b/%d local
 
 #------------------------------------------------------------------------------
-# $File: gnu,v 1.16 2015/04/19 22:59:25 christos Exp $
+# $File: gnu,v 1.17 2016/07/16 22:17:04 christos Exp $
 # gnu:  file(1) magic for various GNU tools
 #
 # GNU nlsutils message catalog file format
@@ -11369,8 +11682,11 @@
 
 # This magic is not particularly good, as the keyrings don't have true
 # magic. Nevertheless, it covers many keyrings.
-0       beshort         0x9901                  GPG key public ring
-!:mime	application/x-gnupg-keyring
+0	ubeshort-0x9901	<2
+>3	byte		4
+>>4	bedate		x		GPG key public ring, created %s
+!:mime application/x-gnupg-keyring
+
 
 # Symmetric encryption
 0	leshort		0x0d8c
@@ -12458,7 +12774,7 @@
 !:mime	application/x-blorb
 
 #------------------------------------------------------------------------------
-# $File: images,v 1.116 2016/03/23 15:29:20 christos Exp $
+# $File: images,v 1.117 2016/07/05 19:12:21 christos Exp $
 # images:  file(1) magic for image formats (see also "iff", and "c-lang" for
 # XPM bitmaps)
 #
@@ -12629,38 +12945,44 @@
 >>>&0	regex		=[0-9]{1,50}			\b %s
 
 0	search/1	P1		
->0	use		netpbm
->>0	string		x	\b, bitmap
+>0	regex/4		P1\\s
+>>0	use		netpbm
+>>>0	string		x	\b, bitmap
 !:strength + 45
 !:mime	image/x-portable-bitmap
 
 0	search/1	P2		
->0	use		netpbm
->>0	string		x	\b, greymap
+>0	regex/4		P2\\s
+>>0	use		netpbm
+>>>0	string		x	\b, greymap
 !:strength + 45
 !:mime	image/x-portable-greymap
 
 0	search/1	P3
->0	use		netpbm
->>0	string		x	\b, pixmap
+>0	regex/4		P3\\s
+>>0	use		netpbm
+>>>0	string		x	\b, pixmap
 !:strength + 45
 !:mime	image/x-portable-pixmap
 
 0	string		P4		
->0	use		netpbm
->>0	string		x	\b, rawbits, bitmap
+>0	regex/4		P4\\s
+>>0	use		netpbm
+>>>0	string		x	\b, rawbits, bitmap
 !:strength + 45
 !:mime	image/x-portable-bitmap
 
 0	string		P5		
->0	use		netpbm
->>0	string		x	\b, rawbits, greymap
+>0	regex/4		P5\\s
+>>0	use		netpbm
+>>>0	string		x	\b, rawbits, greymap
 !:strength + 45
 !:mime	image/x-portable-greymap
 
 0	string		P6		
->0	use		netpbm
->>0	string		x	\b, rawbits, pixmap
+>0	regex/4		P6\\s
+>>0	use		netpbm
+>>>0	string		x	\b, rawbits, pixmap
 !:strength + 45
 !:mime	image/x-portable-pixmap
 
@@ -14120,7 +14442,7 @@
 !:mime application/javascript
 
 #------------------------------------------------------------------------------
-# $File: jpeg,v 1.29 2015/04/10 15:36:02 christos Exp $
+# $File: jpeg,v 1.30 2016/07/04 15:18:23 christos Exp $
 # JPEG images
 # SunOS 5.5.1 had
 #
@@ -14237,6 +14559,13 @@
 # From: Mathieu Malaterre <mathieu.malaterre@gmail.com>
 0	belong		0xff4fff51						JPEG 2000 codestream
 45	beshort		0xff52
+
+# JPEG extended range
+0	string		\x49\x49\xbc
+>3	byte		1
+>>4	lelong%2	0	JPEG-XR
+!:mime	image/jxr
+!:ext	jxr
 
 #------------------------------------------------------------------------------
 # $File: karma,v 1.8 2015/08/29 07:10:35 christos Exp $
@@ -16491,7 +16820,7 @@
 0	string	mozLz4a				Mozilla lz4 compressed bookmark data
 
 #------------------------------------------------------------------------------
-# $File: msdos,v 1.106 2016/06/11 00:52:14 christos Exp $
+# $File: msdos,v 1.111 2016/09/14 01:26:26 christos Exp $
 # msdos:  file(1) magic for MS-DOS files
 #
 
@@ -16819,15 +17148,6 @@
 0	string	\xffKEYB\ \ \ \0\0\0\0	
 >12	string	\0\0\0\0`\004\360	MS-DOS KEYBoard Layout file
 
-# .COM formats (Daniel Quinlan, quinlan@yggdrasil.com)
-# Uncommenting only the first two lines will cover about 2/3 of COM files,
-# but it isn't feasible to match all COM files since there must be at least
-# two dozen different one-byte "magics".
-# test too generic ?
-0	byte		0xe9		DOS executable (COM)
->0x1FE leshort		0xAA55		\b, boot code
->6	string		SFX\ of\ LHarc	(%s)
-
 # DOS device driver updated by Joerg Jenderek at May 2011
 # http://maben.homeip.net/static/S100/IBM/software/DOS/DOS%20techref/CHAPTER.009
 0	ulequad&0x07a0ffffffff		0xffffffff		DOS executable (
@@ -16930,12 +17250,37 @@
 # byte 0xeb conflicts with "sequent" magic leshort 0xn2eb
 0	ubeshort&0xeb8d	>0xeb00		
 # DR-DOS STACKER.COM SCREATE.SYS missed
->0	byte		0xeb
->>0x1FE leshort		0xAA55		DOS executable (COM), boot code
->>85	string		UPX		DOS executable (COM), UPX compressed
->>4	string		\ $ARX		DOS executable (COM), ARX self-extracting archive
->>4	string		\ $LHarc	DOS executable (COM), LHarc self-extracting archive
->>0x20e string		SFX\ by\ LARC	DOS executable (COM), LARC self-extracting archive
+
+0       name    msdos-com
+>0  byte        x               DOS executable (COM)
+>6	string		SFX\ of\ LHarc	\b, %s
+>0x1FE leshort	0xAA55		    \b, boot code
+>85	string		UPX		        \b, UPX compressed
+>4	string		\ $ARX		    \b, ARX self-extracting archive
+>4	string		\ $LHarc	    \b, LHarc self-extracting archive
+>0x20e string	SFX\ by\ LARC	\b, LARC self-extracting archive
+
+# JMP 8bit
+0	        byte	0xeb
+# allow forward jumps only
+>1          byte    >-1
+# that offset must be accessible
+>>(1.b+2)   byte    x
+>>>0        use msdos-com
+
+# JMP 16bit
+0           byte    0xe9
+# forward jumps
+>1          short   >-1
+# that offset must be accessible
+>>(1.s+3)   byte    x
+>>>0        use msdos-com
+# negative offset, must not lead into PSP
+>1          short   <-259
+# that offset must be accessible
+>>(1,s+65539)   byte    x
+>>>0        use msdos-com
+
 # updated by Joerg Jenderek at Oct 2008,2015
 # following line is too general
 0	ubyte		0xb8		
@@ -17069,17 +17414,158 @@
 0	string/b	\x09\x04\x06\x00\x00\x00\x10\x00	Microsoft Excel Worksheet
 !:mime	application/vnd.ms-excel
 #
-0	belong	0x00001a00	Lotus 1-2-3
-!:mime	application/x-123
->4	belong	0x00100400	wk3 document data
->4	belong	0x02100400	wk4 document data
->4	belong	0x07800100	fm3 or fmb document data
->4	belong	0x07800000	fm3 or fmb document data
+# Update: Joerg Jenderek
+# URL: https://en.wikipedia.org/wiki/Lotus_1-2-3
+# Reference: http://www.aboutvb.de/bas/formate/pdf/wk3.pdf
+# Note: newer Lotus versions >2 use longer BOF record
+# record type (BeginningOfFile=0000h) + length (001Ah)
+0	belong	0x00001a00	
+# reserved should be 0h but 8c0dh for TUTMAC.WK3, 5h for SAMPADNS.WK3, 1h for a_readme.wk3, 1eh for K&G86.WK3
+#>18	uleshort&0x73E0	0	
+# Lotus Multi Byte Character Set (LMBCS=1-31)
+>20	ubyte		>0	
+>>20	ubyte		<32	Lotus 1-2-3
+#!:mime	application/x-123
+!:mime	application/vnd.lotus-1-2-3
+!:apple	????L123
+# (version 5.26) labeled the entry as "Lotus 1-2-3 wk3 document data"
+>>>4	uleshort	0x1000	WorKsheet, version 3
+!:ext	wk3
+# (version 5.26) labeled the entry as "Lotus 1-2-3 wk4 document data"
+>>>4	uleshort	0x1002	WorKsheet, version 4
+# also worksheet template 4 (.wt4)
+!:ext	wk4/wt4
+# no example or documentation for wk5
+#>>4	uleshort	0x????	WorKsheet, version 4
+#!:ext	wk5
+# only MacrotoScript.123 example
+>>>4	uleshort	0x1003	WorKsheet, version 97
+# also worksheet template Smartmaster (.12M)?
+!:ext	123
+# only Set_Y2K.123 example
+>>>4	uleshort	0x1005	WorKsheet, version 9.8 Millennium
+!:ext	123
+# no example for this version
+>>>4	uleshort	0x8001	FoRMatting data
+!:ext	frm
+# (version 5.26) labeled the entry as "Lotus 1-2-3 fm3 or fmb document data"
+# TrID labeles the entry as "Formatting Data for Lotus 1-2-3 worksheet"
+>>>4	uleshort	0x8007	ForMatting data, version 3
+!:ext	fm3
+>>>4	default		x	unknown
+# file revision sub code 0004h for worksheets
+>>>>6	uleshort	=0x0004	worksheet
+!:ext	wXX
+>>>>6	uleshort	!0x0004	formatting data
+!:ext	fXX
+# main revision number
+>>>>4	uleshort	x	\b, revision 0x%x
+>>>6	uleshort	=0x0004	\b, cell range 
+# active cellcoord range (start row, page,column ; end row, page, column)
+# start values normally 0~1st sheet A1
+>>>>8	ulelong		!0	
+>>>>>10	ubyte		>0	\b%d*
+>>>>>8	uleshort	x	\b%d,
+>>>>>11	ubyte		x	\b%d-
+# end page mostly 0
+>>>>14	ubyte		>0	\b%d*
+# end raw, column normally not 0
+>>>>12	uleshort	x	\b%d,
+>>>>15	ubyte		x	\b%d
+# Lotus Multi Byte Character Set (1~cp850,2~cp851,...,16~japan,...,31~??)
+>>>>20	ubyte		>1	\b, character set 0x%x
+# flags
+>>>>21	ubyte		x	\b, flags 0x%x
+>>>6	uleshort	!0x0004	
+# record type (FONTNAME=00AEh)
+>>>>30	search/29	\0\xAE	
+# variable length m (2) + entries (1) + ?? (1) + LCMBS string (n)
+>>>>>&4	string		>\0	\b, 1st font "%s"
 #
-0	belong	0x00000200	Lotus 1-2-3
-!:mime	application/x-123
->4	belong	0x06040600	wk1 document data
->4	belong	0x06800200	fmt document data
+# Update: Joerg Jenderek
+# URL: http://fileformats.archiveteam.org/wiki/Lotus_1-2-3
+# Reference: http://www.schnarff.com/file-formats/lotus-1-2-3/WSFF2.TXT
+# Note: Used by both old Lotus 1-2-3 and Lotus Symphony (DOS) til version 2.x
+# record type (BeginningOfFile=0000h) + length (0002h)
+0	belong	0x00000200	
+# GRR: line above is too general as it catches also MS Windows CURsor
+# to display MS Windows cursor (strength=70) before Lotus 1-2-3 (strength=70-1)
+!:strength -1
+# skip Windows cursors with image height <256 and keep Lotus with low opcode 0001-0083h
+>7	ubyte		0	
+# skip Windows cursors with image width 256 and keep Lotus with positiv opcode
+>>6	ubyte		>0	Lotus
+# !:mime	application/x-123
+!:mime	application/vnd.lotus-1-2-3
+!:apple	????L123
+# revision number (0404h = 123 1A, 0405h = Lotus Symphony , 0406h = 123 2.x wk1 , 8006h = fmt , ...)
+# undocumented; (version 5.26) labeled the configurations as "Lotus 1-2-3"
+>>>4	uleshort	0x0007	1-2-3 CoNFiguration, version 2.x (PGRAPH.CNF)
+!:ext	cnf
+>>>4	uleshort	0x0C05	1-2-3 CoNFiguration, version 2.4J
+!:ext	cnf
+>>>4	uleshort	0x0801	1-2-3 CoNFiguration, version 1-2.1
+!:ext	cnf
+>>>4	uleshort	0x0802	Symphony CoNFiguration
+!:ext	cnf
+>>>4	uleshort	0x0804	1-2-3 CoNFiguration, version 2.2
+!:ext	cnf
+>>>4	uleshort	0x080A	1-2-3 CoNFiguration, version 2.3-2.4
+!:ext	cnf
+>>>4	uleshort	0x1402	1-2-3 CoNFiguration, version 3.x
+!:ext	cnf
+>>>4	uleshort	0x1450	1-2-3 CoNFiguration, version 4.x
+!:ext	cnf
+# (version 5.26) labeled the entry as "Lotus 123"
+# TrID labeles the entry as "Lotus 123 Worksheet (generic)"
+>>>4	uleshort	0x0404	1-2-3 WorKSheet, version 1
+# extension "wks" also for Microsoft Works document
+!:ext	wks
+# (version 5.26) labeled the entry as "Lotus 123"
+# TrID labeles the entry as "Lotus 123 Worksheet (generic)"
+>>>4	uleshort	0x0405	Symphony WoRksheet, version 1.0
+!:ext	wrk/wr1
+# (version 5.26) labeled the entry as "Lotus 1-2-3 wk1 document data"
+# TrID labeles the entry as "Lotus 123 Worksheet (V2)"
+>>>4	uleshort	0x0406	1-2-3/Symphony worksheet, version 2
+# Symphony (.wr1)
+!:ext	wk1/wr1
+# no example for this japan version
+>>>4	uleshort	0x0600	1-2-3 WorKsheet, version 1.xJ
+!:ext	wj1
+# no example or documentation for wk2
+#>>>4	uleshort	0x????	1-2-3 WorKsheet, version 2
+#!:ext	wk2
+# undocumented japan version
+>>>4	uleshort	0x0602	1-2-3 worksheet, version 2.4J
+!:ext	wj3
+# (version 5.26) labeled the entry as "Lotus 1-2-3 fmt document data"
+>>>4	uleshort	0x8006	1-2-3 ForMaTting data, version 2.x
+# japan version 2.4J (fj3)
+!:ext	fmt/fj3
+# no example for this version
+>>>4	uleshort	0x8007	1-2-3 FoRMatting data, version 2.0
+!:ext	frm
+# (version 5.26) labeled the entry as "Lotus 1-2-3"
+>>>4	default		x	unknown worksheet or configuration
+!:ext	cnf
+>>>>4	uleshort	x	\b, revision 0x%x
+# 2nd record for most worksheets describes cells range
+>>>6		use	lotus-cells
+# 3nd record for most japan worksheets describes cells range
+>>>(8.s+10)	use	lotus-cells
+#	check and then display Lotus worksheet cells range
+0	name		lotus-cells
+# look for type (RANGE=0006h) + length (0008h) at record begin
+>0	ubelong	0x06000800	\b, cell range 
+# cell range (start column, row, end column, row) start values normally 0,0~A1 cell
+>>4	ulong		!0	
+>>>4	uleshort	x	\b%d,
+>>>6	uleshort	x	\b%d-
+# end of cell range
+>>8	uleshort	x	\b%d,
+>>10	uleshort	x	\b%d
+# EndOfLotus123
 0	string/b		WordPro\0	Lotus WordPro
 !:mime	application/vnd.lotus-wordpro
 0	string/b		WordPro\r\373	Lotus WordPro
@@ -17228,24 +17714,6 @@
 
 0	lelong		0x00000005
 >12	lelong		0x00000320	Windows Recycle Bin INFO2 file (Win2k - WinXP)
-
-
-##### put in Either Magic/font or Magic/news
-# Acroread or something	 files wrongly identified as G3	 .pfm
-# these have the form \000 \001 any? \002 \000 \000
-# or \000 \001 any? \022 \000 \000
-0	belong&0xffff00ff	0x00010012	PFM data
->4	string			\000\000
->6	string			>\060		- %s
-
-0	belong&0xffff00ff	0x00010002	PFM data
->4	string			\000\000
->6	string			>\060		- %s
-#0	string	\000\001 pfm?
-#>3	string	\022\000\000Copyright\	yes
-#>3	string	\002\000\000Copyright\	yes
-#>3	string	>\0	oops, not a font file. Cancel that.
-#it clashes with ttf files so put it lower down.
 
 # From Doug Lee via a FreeBSD pr
 9	string		GERBILDOC	First Choice document
@@ -17431,7 +17899,8 @@
 # Type: Microsoft Document Imaging Format (.mdi)
 # URL:	http://en.wikipedia.org/wiki/Microsoft_Document_Imaging_Format
 # From: Daniele Sempione <scrows@oziosi.org>
-0	short	0x5045			Microsoft Document Imaging Format
+# Too weak (EP)
+#0	short	0x5045			Microsoft Document Imaging Format
 
 # MS eBook format (.lit)
 0	string/b	ITOLITLS		Microsoft Reader eBook Data
@@ -19226,7 +19695,7 @@
 #>>(4.l+12)	lelong x level 2 size: %d
 
 #------------------------------------------------------------------------------
-# $File: pgp,v 1.11 2014/11/11 21:32:38 christos Exp $
+# $File: pgp,v 1.12 2016/10/07 20:22:12 christos Exp $
 # pgp:  file(1) magic for Pretty Good Privacy
 # see http://lists.gnupg.org/pipermail/gnupg-devel/1999-September/016052.html
 #
@@ -19419,6 +19888,23 @@
 >0	byte	0x09			SHA384
 >0	byte	0x0a			SHA512
 >0	byte	0x0b			SHA224
+
+# display public key algorithms as human readable text
+0	name	key_algo
+>0	byte	0x01			RSA (Encrypt or Sign)
+# keep old look of version 5.28 without parentheses
+>0	byte	0x02			RSA Encrypt-Only
+>0	byte	0x03			RSA (Sign-Only)
+>0	byte	16			ElGamal (Encrypt-Only)
+>0	byte	17			DSA
+>0	byte	18			Elliptic Curve
+>0	byte	19			ECDSA
+>0	byte	20			ElGamal (Encrypt or Sign)
+>0	byte	21			Diffie-Hellman
+>0	default	x			
+>>0	ubyte	<22			unknown (pub %d)
+# this should never happen
+>>0	ubyte	>21			invalid (%d)
 
 # pgp symmetric encrypted data
 
@@ -19691,8 +20177,44 @@
 >1	use	pgpkey
 0	byte	0x97			PGP	Secret Sub-key -
 >1	use	pgpkey
-0	byte	0x9d			PGP	Secret Sub-key -
->1	use	pgpkey
+0	byte	0x9d			
+# Update: Joerg Jenderek
+# secret subkey packet (tag 7) with same structure as secret key packet (tag 5)
+# skip Fetus.Sys16 CALIBUS.MAIN OrbFix.Sys16.Ex by looking for positive len
+>1	ubeshort	>0		
+#>1	ubeshort	x		\b, body length 0x%x
+# next packet type often 88h,89h~(tag 2)~Signature Packet
+#>>(1.S+3)	ubyte	x		\b, next packet type 0x%x
+# skip Dragon.SHR DEMO.INIT by looking for positive version
+>>3	ubyte		>0	
+# skip BUISSON.13 GUITAR1 by looking for low version number
+>>>3	ubyte		<5		PGP Secret Sub-key
+# sub-key are normally part of secret key. So it does not occur as standalone file
+#!:ext	bin
+# version 2,3~old 4~new . Comment following line for version 5.28 look
+>>>>3	ubyte		x		(v%d)
+>>>>3	ubyte		x		-
+# old versions 2 or 3 but no real example found
+>>>>3	ubyte		<4		
+# 2 byte for key bits in version 5.28 look
+>>>>>11		ubeshort	x	%db
+>>>>>4		beldate		x	created on %s -
+# old versions use 2 additional bytes after time stamp
+#>>>>>8		ubeshort	x	0x%x
+# display key algorithm 1~RSA Encrypt|Sign - 21~Diffie-Hellman
+>>>>>10	  	use		key_algo
+>>>>>(11.S/8)	ubequad		x	
+# look after first key
+>>>>>>&5	use		keyend
+# new version
+>>>>3	ubyte		>3		
+>>>>>9		ubeshort	x	%db
+>>>>>4		beldate		x	created on %s -
+# display key algorithm
+>>>>>8		use		key_algo
+>>>>>(9.S/8)	ubequad		x	
+# look after first key for something like s2k
+>>>>>>&3	use		keyend
 
 #------------------------------------------------------------------------------
 # $File: pkgadd,v 1.6 2009/09/19 16:28:11 christos Exp $
@@ -19935,6 +20457,20 @@
 >>4	string	>\0	from kernel %s
 
 #------------------------------------------------------------------------------
+# $File: psl,v 1.2 2016/07/14 17:34:27 christos Exp $
+# psl:  file(1) magic for Public Suffix List representations
+# From: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+# URL: https://publicsuffix.org
+# see also: http://thread.gmane.org/gmane.network.dns.libpsl.bugs/162/focus=166
+
+0	search/512	\n\n//\ ===BEGIN\ ICANN\ DOMAINS===\n\n Public Suffix List data
+
+0	string	.DAFSA@PSL_
+>15	string	\n	Public Suffix List data (optimized)
+>>11	byte	>0x2f
+>>>11	byte	<0x3a   (Version %c)
+
+#------------------------------------------------------------------------------
 # $File: pulsar,v 1.5 2009/09/19 16:28:12 christos Exp $
 # pulsar:  file(1) magic for Pulsar POP3 daemon binary files
 #
@@ -19974,7 +20510,7 @@
 >16	long		>0		not stripped
 
 #------------------------------------------------------------------------------
-# $File: python,v 1.28 2015/09/16 22:19:54 christos Exp $
+# $File: python,v 1.29 2016/07/27 09:42:16 rrt Exp $
 # python:  file(1) magic for python
 #
 # Outlook puts """ too for urgent messages
@@ -19983,7 +20519,7 @@
 0	string/t	"""	Python script text executable
 # MAGIC as specified in Python/import.c (1.5 to 2.7a0 and 3.1a0, assuming
 # that Py_UnicodeFlag is off for Python 2)
-# 20121  ( YEAR - 1995 ) + MONTH  + DAY (little endian followed by "\r\n"
+# two bytes of magic followed by "\r\n" in little endian order
 0	belong		0x994e0d0a	python 1.5/1.6 byte-compiled
 0	belong		0x87c60d0a	python 2.0 byte-compiled
 0	belong		0x2aeb0d0a	python 2.1 byte-compiled
@@ -19998,6 +20534,7 @@
 0	belong		0x6c0c0d0a	python 3.2 byte-compiled
 0	belong		0x9e0c0d0a	python 3.3 byte-compiled
 0	belong		0xee0c0d0a	python 3.4 byte-compiled
+0	belong		0x160d0d0a	python 3.5 byte-compiled
 
 0	search/1/w	#!\ /usr/bin/python	Python script text executable
 !:strength + 15
@@ -20487,19 +21024,23 @@
 >5	default		x		unknown version
 
 #------------------------------------------------------------------------------
-# $File: ruby,v 1.5 2010/07/21 16:47:17 christos Exp $
+# $File: ruby,v 1.6 2016/07/27 09:46:29 rrt Exp $
 # ruby:  file(1) magic for Ruby scripting language
 # URL:  http://www.ruby-lang.org/
 # From: Reuben Thomas <rrt@sc3d.org>
 
 # Ruby scripts
 0	search/1/w	#!\ /usr/bin/ruby	Ruby script text executable
+!:strength + 15
 !:mime text/x-ruby
 0	search/1/w	#!\ /usr/local/bin/ruby	Ruby script text executable
+!:strength + 15
 !:mime text/x-ruby
 0	search/1	#!/usr/bin/env\ ruby	Ruby script text executable
+!:strength + 15
 !:mime text/x-ruby
 0	search/1	#!\ /usr/bin/env\ ruby	Ruby script text executable
+!:strength + 15
 !:mime text/x-ruby
 
 # What looks like ruby, but does not have a shebang
@@ -20935,7 +21476,7 @@
 >32	string	>\0	version %s scene
 8	string	CIMG		Alias Maya Image File
 8	string	DEEP		Alias Maya Image File
-#------------------------------------------------------------------------------ # $File: sgml,v 1.33 2015/11/29 22:14:49 christos Exp $
+#------------------------------------------------------------------------------ # $File: sgml,v 1.34 2016/09/11 13:56:42 christos Exp $
 # Type:	SVG Vectorial Graphics
 # From:	Noel Torres <tecnico@ejerciciosresueltos.com>
 0	string		\<?xml\ version="
@@ -20944,6 +21485,8 @@
 !:mime	image/svg+xml
 >>19	search/4096	\<gnc-v2		GnuCash file
 !:mime	application/x-gnucash
+0	string		\<svg			SVG Scalable Vector Graphics image
+!:mime	image/svg
 
 # Sitemap file
 0	string/t		\<?xml\ version="
@@ -21588,7 +22131,7 @@
 >7     byte            x               \b, version 0x%02x
 
 #------------------------------------------------------------------------------
-# $File: sql,v 1.18 2015/12/04 20:38:43 christos Exp $
+# $File: sql,v 1.20 2016/07/05 19:49:59 christos Exp $
 # sql:  file(1) magic for SQL files
 #
 # From: "Marty Leisner" <mleisner@eng.mc.xerox.com>
@@ -21598,24 +22141,66 @@
 #
 0	beshort			0xfe01		MySQL table definition file
 >2	byte			x		Version %d
-0	belong&0xffffff00	0xfefe0700	MySQL MyISAM index file
->3	byte			x		Version %d
-0	belong&0xffffff00	0xfefe0800	MySQL MyISAM compressed data file
->3	byte			x		Version %d
-0	belong&0xffffff00	0xfefe0900	MySQL Maria index file
->3	byte			x		Version %d
-0	belong&0xffffff00	0xfefe0A00	MySQL Maria compressed data file
->3	byte			x		Version %d
+>3	byte			0		\b, type UNKNOWN
+>3	byte			1		\b, type DIAM_ISAM
+>3	byte			2		\b, type HASH
+>3	byte			3		\b, type MISAM
+>3	byte			4		\b, type PISAM
+>3	byte			5		\b, type RMS_ISAM
+>3	byte			6		\b, type HEAP
+>3	byte			7		\b, type ISAM
+>3	byte			8		\b, type MRG_ISAM
+>3	byte			9		\b, type MYISAM
+>3	byte			10		\b, type MRG_MYISAM
+>3	byte			11		\b, type BERKELEY_DB
+>3	byte			12		\b, type INNODB
+>3	byte			13		\b, type GEMINI
+>3	byte			14		\b, type NDBCLUSTER
+>3	byte			15		\b, type EXAMPLE_DB
+>3	byte			16		\b, type CSV_DB
+>3	byte			17		\b, type FEDERATED_DB
+>3	byte			18		\b, type BLACKHOLE_DB
+>3	byte			19		\b, type PARTITION_DB
+>3	byte			20		\b, type BINLOG
+>3	byte			21		\b, type SOLID
+>3	byte			22		\b, type PBXT
+>3	byte			23		\b, type TABLE_FUNCTION
+>3	byte			24		\b, type MEMCACHE
+>3	byte			25		\b, type FALCON
+>3	byte			26		\b, type MARIA
+>3	byte			27		\b, type PERFORMANCE_SCHEMA
+>3	byte			127		\b, type DEFAULT
+>0x0033	ulong			x		\b, MySQL version %d
 0	belong&0xffffff00	0xfefe0500	MySQL ISAM index file
 >3	byte			x		Version %d
 0	belong&0xffffff00	0xfefe0600	MySQL ISAM compressed data file
 >3	byte			x		Version %d
-0	string			\376bin		MySQL replication log
-0	belong&0xffffff00	0xfefe0b00
->4	string			MARIALOG	MySQL Maria transaction log file
->>3	byte			x		Version %d
+0	belong&0xffffff00	0xfefe0700	MySQL MyISAM index file
+>3	byte			x		Version %d
+>14	beshort			x		\b, %d key parts
+>16	beshort			x		\b, %d unique key parts
+>18	byte			x		\b, %d keys
+>28	bequad			x		\b, %lld records
+>36	bequad			x		\b, %lld deleted records
+0	belong&0xffffff00	0xfefe0800	MySQL MyISAM compressed data file
+>3	byte			x		Version %d
+0	belong&0xffffff00	0xfefe0900	MySQL Maria index file
+>3	byte			x		Version %d
+0	belong&0xffffff00	0xfefe0a00	MySQL Maria compressed data file
+>3	byte			x		Version %d
 0	belong&0xffffff00	0xfefe0c00
 >4	string			MACF		MySQL Maria control file
+>>3	byte			x		Version %d
+0	string			\376bin	MySQL replication log,
+>9	long			x		server id %d
+>8	byte			1
+>>13	long			69		\b, MySQL V3.2.3
+>>>19	string			x		\b, server version %s
+>>13	long			75		\b, MySQL V4.0.2-V4.1
+>>>25	string			x		\b, server version %s
+>8	byte			15		MySQL V5+,
+>>25	string			x		server version %s
+>4	string			MARIALOG	MySQL Maria transaction log file
 >>3	byte			x		Version %d
 
 #------------------------------------------------------------------------------
@@ -21682,6 +22267,9 @@
 >126	string		SQLite\ format\ 3	
 #!:mime	application/x-panasonic-sqlite3
 >>&-15	indirect	x			\b; contains 
+
+# H2 Database from http://www.h2database.com/
+0	string		--\ H2\ 0.5/B\ --\ \n	H2 Database file
 # Type:	OpenSSH key files
 # From:	Nicolas Collignon <tsointsoin@gmail.com>
 

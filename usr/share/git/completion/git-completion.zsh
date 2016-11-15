@@ -31,6 +31,7 @@ if [ -z "$script" ]; then
 	local e
 	locations=(
 		$(dirname ${funcsourcetrace[1]%:*})/git-completion.bash
+		'/etc/bash_completion.d/git.sh' # suse
 		'/etc/bash_completion.d/git' # fedora, old debian
 		'/usr/share/bash-completion/completions/git' # arch, ubuntu, new debian
 		'/usr/share/bash-completion/git' # gentoo

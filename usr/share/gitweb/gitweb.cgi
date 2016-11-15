@@ -31,7 +31,7 @@ BEGIN {
 	CGI->compile() if $ENV{'MOD_PERL'};
 }
 
-our $version = "2.10.1";
+our $version = "2.10.2";
 
 our ($my_url, $my_uri, $base_url, $path_info, $home_link);
 sub evaluate_uri {
@@ -190,7 +190,7 @@ our @diff_opts = ('-M'); # taken from git_commit
 
 # Disables features that would allow repository owners to inject script into
 # the gitweb domain.
-our $prevent_xss = 0;
+our $prevent_xss = 1;
 
 # Path to the highlight executable to use (must be the one from
 # http://www.andre-simon.de due to assumptions about parameters and output).
