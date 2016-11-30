@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.1 from gnutls.texi.
 
-This manual is last updated 9 October 2016 for version 3.5.5 of GnuTLS.
+This manual is last updated 9 October 2016 for version 3.5.6 of GnuTLS.
 
 Copyright (C) 2001-2016 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2016 Nikos Mavrogiannopoulos
@@ -490,10 +490,21 @@ File: gnutls.info,  Node: Error handling,  Next: Common types,  Prev: General id
 6.1.2 Error handling
 --------------------
 
-There two types of GnuTLS functions.  One type returns a boolean true
-(non-zero) or false (zero) value, which are set to return an unsigned
-integer type.  The other type returns a signed integer type with zero
-indicating success and a negative value indicating failure.
+There two types of GnuTLS functions.  The first type returns a boolean
+value, true (non-zero) or false (zero) value; these functions are
+defined to return an unsigned integer type.  The other type returns a
+signed integer type with zero (or a positive number) indicating success
+and a negative value indicating failure.  For the latter type it is
+recommended to check for errors as following.
+         ret = gnutls_function();
+         if (ret < 0) {
+             return -1;
+         }
+The above example checks for a failure condition rather than for
+explicit success (e.g., equality to zero).  That has the advantage that
+future extensions of the API can be extended to provide additional
+information via positive returned values (see for example *note
+gnutls_certificate_set_x509_key_file::).
 
 For certain operations such as TLS handshake and TLS packet receive
 there is the notion of fatal and non-fatal error codes.  Fatal errors
@@ -1111,8 +1122,15 @@ gnutls_privkey_import_x509_raw::.
      undefined state, it must not be reused to load other keys or
      certificates.
 
-     *Returns:* An index of the inserted certificate chain on success
-     (greater or equal to zero), or a negative error code.
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used to other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success this functions returns zero, and otherwise a
+     negative value on error (see above for modifying that behavior).
 
      *Since:* 3.0
 
@@ -2408,13 +2426,17 @@ allowed.
 
 The order with which every algorithm or protocol is specified is
 significant.  Algorithms specified before others will take precedence.
-The supported algorithms and protocols are shown in *note Table 6.4:
-tab:prio-algorithms.  To avoid collisions in order to specify a
-compression algorithm in the priority string you have to prefix it with
-"COMP-", protocol versions with "VERS-", signature algorithms with
-"SIGN-" and certificate types with "CTYPE-".  All other algorithms don't
-need a prefix.  Each specified keyword (except for _special keywords_)
-can be prefixed with any of the following characters.
+The supported in the GnuTLS version corresponding to this document
+algorithms and protocols are shown in *note Table 6.4:
+tab:prio-algorithms.; to list the supported algorithms in your currently
+using version use 'gnutls-cli -l'.
+
+To avoid collisions in order to specify a compression algorithm in the
+priority string you have to prefix it with "COMP-", protocol versions
+with "VERS-", signature algorithms with "SIGN-" and certificate types
+with "CTYPE-".  All other algorithms don't need a prefix.  Each
+specified keyword (except for _special keywords_) can be prefixed with
+any of the following characters.
 
 '!' or '-'
      appended with an algorithm will remove this algorithm.
@@ -2423,11 +2445,11 @@ can be prefixed with any of the following characters.
 
 Type           Keywords
 ------------------------------------------------------------------
-Ciphers        AES-128-CBC, AES-256-CBC, AES-128-GCM,
-               CAMELLIA-128-CBC, CAMELLIA-256-CBC, ARCFOUR-128,
-               3DES-CBC. Catch all name is CIPHER-ALL which
-               will add all the algorithms from NORMAL
-               priority.
+Ciphers        Examples are AES-128-GCM, AES-256-GCM,
+               AES-256-CBC; see also
+               *note Table 3.1: tab:ciphers. for more options.
+               Catch all name is CIPHER-ALL which will add all
+               the algorithms from NORMAL priority.
                
 Key exchange   RSA, DHE-RSA, DHE-DSS, SRP, SRP-RSA, SRP-DSS,
                PSK, DHE-PSK, ECDHE-RSA, ECDHE-ECDSA, ECDHE-PSK,
@@ -3100,7 +3122,7 @@ below.
 
      PORT: The port of the service connecting (e.g.  443)
 
-     SFLAGS: Flags for the the initialization of 's' (if NULL)
+     SFLAGS: Flags for the initialization of 's' (if NULL)
 
      VFLAGS: Verification flags; an OR'ed list of 'dane_verify_flags_t'
      .
@@ -3252,47 +3274,36 @@ File: gnutls.info,  Node: Parameter generation,  Next: Deriving keys for other a
 Several TLS ciphersuites require additional parameters that need to be
 generated or provided by the application.  The Diffie-Hellman based
 ciphersuites (ANON-DH or DHE), require the group parameters to be
-provided.  Those can either be be generated on the fly using *note
-gnutls_dh_params_generate2:: or imported from pregenerated data using
-*note gnutls_dh_params_import_pkcs3::.  The parameters can be used in a
-TLS session by calling *note gnutls_certificate_set_dh_params:: or *note
-gnutls_anon_set_server_dh_params:: for anonymous sessions.
+provided.  These parameters can be specified in a TLS credentials
+structure by calling *note gnutls_certificate_set_known_dh_params::,
+*note gnutls_anon_set_server_known_dh_params::, or *note
+gnutls_psk_set_server_known_dh_params::, depending on the type of the
+credentials.
+
+'INT *note gnutls_certificate_set_known_dh_params:: (gnutls_certificate_credentials_t RES, gnutls_sec_param_t SEC_PARAM)'
+'INT *note gnutls_anon_set_server_known_dh_params:: (gnutls_anon_server_credentials_t RES, gnutls_sec_param_t SEC_PARAM)'
+'INT *note gnutls_psk_set_server_known_dh_params:: (gnutls_psk_server_credentials_t RES, gnutls_sec_param_t SEC_PARAM)'
+
+The functions above will set DH parameters pre-configured in the library
+based on the security level provided.  The GnuTLS' included parameters
+are the FFDHE parameters from [_RFC7919_].
+
+6.12.4.1 Legacy parameter generation
+....................................
+
+Note that older than 3.5.6 versions of GnuTLS provided functions to
+generate or import arbitrary DH parameters from a file.  This practice
+is still supported but discouraged in current versions.
 
 'INT *note gnutls_dh_params_generate2:: (gnutls_dh_params_t DPARAMS, unsigned int BITS)'
 'INT *note gnutls_dh_params_import_pkcs3:: (gnutls_dh_params_t PARAMS, const gnutls_datum_t * PKCS3_PARAMS, gnutls_x509_crt_fmt_t FORMAT)'
 'VOID *note gnutls_certificate_set_dh_params:: (gnutls_certificate_credentials_t RES, gnutls_dh_params_t DH_PARAMS)'
-'VOID *note gnutls_anon_set_server_dh_params:: (gnutls_anon_server_credentials_t RES, gnutls_dh_params_t DH_PARAMS)'
 
-Due to the time-consuming calculations required for the generation of
-Diffie-Hellman parameters we suggest against performing generation of
-them within an application.  The 'certtool' tool can be used to generate
-or export known safe values that can be stored in code or in a
-configuration file to provide the ability to replace.  We also recommend
-the usage of *note gnutls_sec_param_to_pk_bits:: (see *note Selecting
-cryptographic key sizes::) to determine the bit size of the generated
-parameters.
-
-Note that the information stored in the generated PKCS #3 structure
-changed with GnuTLS 3.0.9.  Since that version the 'privateValueLength'
-member of the structure is set, allowing the server utilizing the
-parameters to use keys of the size of the security parameter.  This
-provides better performance in key exchange.
-
-To allow renewal of the parameters within an application without
-accessing the credentials, which are a shared structure, an alternative
-interface is available using a callback function.
-
- -- Function: void gnutls_certificate_set_params_function
-          (gnutls_certificate_credentials_t RES, gnutls_params_function
-          * FUNC)
-     RES: is a gnutls_certificate_credentials_t type
-
-     FUNC: is the function to be called
-
-     This function will set a callback in order for the server to get
-     the Diffie-Hellman or RSA parameters for certificate
-     authentication.  The callback should return 'GNUTLS_E_SUCCESS' (0)
-     on success.
+For old applications which require explicit DH parameters, we recommend
+using 'certtool' (of GnuTLS 3.5.6) with the '--get-dh-params' option to
+obtain the FFDHE parameters descussed above.  The output parameters of
+the tool are in PKCS#3 format and can be imported by most existing
+applications.
 
 
 File: gnutls.info,  Node: Deriving keys for other applications/protocols,  Next: Channel Bindings,  Prev: Parameter generation,  Up: Advanced topics
@@ -5542,24 +5553,6 @@ authentication.
 #define MAX_BUF 1024
 #define PORT 5556               /* listen to 5556 port */
 
-/* These are global */
-static gnutls_dh_params_t dh_params;
-
-static int generate_dh_params(void)
-{
-        unsigned int bits = gnutls_sec_param_to_pk_bits(GNUTLS_PK_DH,
-                                                        GNUTLS_SEC_PARAM_MEDIUM);
-
-        /* Generate Diffie-Hellman parameters - for use with DHE
-         * kx algorithms. When short bit length is used, it might
-         * be wise to regenerate parameters often.
-         */
-        CHECK(gnutls_dh_params_init(&dh_params));
-        CHECK(gnutls_dh_params_generate2(dh_params, bits));
-
-        return 0;
-}
-
 int main(void)
 {
         int listen_sd;
@@ -5585,21 +5578,28 @@ int main(void)
         CHECK(gnutls_certificate_set_x509_crl_file(x509_cred, CRLFILE,
                                                    GNUTLS_X509_FMT_PEM));
 
+        /* The following code sets the certificate key pair as well as,
+         * an OCSP response which corresponds to it. It is possible
+         * to set multiple key-pairs and multiple OCSP status responses
+         * (the latter since 3.5.6). See the manual pages of the individual
+         * functions for more information.
+         */
         CHECK(gnutls_certificate_set_x509_key_file(x509_cred, CERTFILE,
                                                    KEYFILE,
                                                    GNUTLS_X509_FMT_PEM));
 
-        /* loads an OCSP status request if available */
         CHECK(gnutls_certificate_set_ocsp_status_request_file(x509_cred,
                                                               OCSP_STATUS_FILE,
                                                               0));
 
-        generate_dh_params();
-
         CHECK(gnutls_priority_init(&priority_cache,
                                    "PERFORMANCE:%SERVER_PRECEDENCE", NULL));
 
-        gnutls_certificate_set_dh_params(x509_cred, dh_params);
+#if GNUTLS_VERSION_NUMBER >= 0x030506
+        /* only available since GnuTLS 3.5.6, on previous versions see
+         * gnutls_certificate_set_dh_params(). */
+        gnutls_certificate_set_known_dh_params(x509_cred, GNUTLS_SEC_PARAM_MEDIUM);
+#endif
 
         /* Socket operations
          */
@@ -5633,6 +5633,8 @@ int main(void)
                  */
                 gnutls_certificate_server_set_request(session,
                                                       GNUTLS_CERT_IGNORE);
+                gnutls_handshake_set_timeout(session,
+                                             GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
 
                 sd = accept(listen_sd, (struct sockaddr *) &sa_cli,
                             &client_len);
@@ -5926,24 +5928,6 @@ to serve the example client for anonymous authentication.
 #define MAX_BUF 1024
 #define PORT 5556               /* listen to 5556 port */
 
-/* These are global */
-static gnutls_dh_params_t dh_params;
-
-static int generate_dh_params(void)
-{
-        unsigned int bits = gnutls_sec_param_to_pk_bits(GNUTLS_PK_DH,
-                                                        GNUTLS_SEC_PARAM_LEGACY);
-        /* Generate Diffie-Hellman parameters - for use with DHE
-         * kx algorithms. These should be discarded and regenerated
-         * once a day, once a week or once a month. Depending on the
-         * security requirements.
-         */
-        gnutls_dh_params_init(&dh_params);
-        gnutls_dh_params_generate2(dh_params, bits);
-
-        return 0;
-}
-
 int main(void)
 {
         int err, listen_sd;
@@ -5967,9 +5951,7 @@ int main(void)
 
         gnutls_anon_allocate_server_credentials(&anoncred);
 
-        generate_dh_params();
-
-        gnutls_anon_set_server_dh_params(anoncred, dh_params);
+        gnutls_anon_set_server_known_dh_params(anoncred, GNUTLS_SEC_PARAM_MEDIUM);
 
         /* Socket operations
          */
@@ -6124,13 +6106,11 @@ static ssize_t pull_func(gnutls_transport_ptr_t p, void *data,
 static const char *human_addr(const struct sockaddr *sa, socklen_t salen,
                               char *buf, size_t buflen);
 static int wait_for_connection(int fd);
-static int generate_dh_params(void);
 
 /* Use global credentials and parameters to simplify
  * the example. */
 static gnutls_certificate_credentials_t x509_cred;
 static gnutls_priority_t priority_cache;
-static gnutls_dh_params_t dh_params;
 
 int main(void)
 {
@@ -6167,9 +6147,7 @@ int main(void)
                 exit(1);
         }
 
-        generate_dh_params();
-
-        gnutls_certificate_set_dh_params(x509_cred, dh_params);
+        gnutls_certificate_set_known_dh_params(x509_cred, GNUTLS_SEC_PARAM_MEDIUM);
 
         gnutls_priority_init(&priority_cache,
                              "PERFORMANCE:-VERS-TLS-ALL:+VERS-DTLS1.0:%SERVER_PRECEDENCE",
@@ -6501,20 +6479,6 @@ static const char *human_addr(const struct sockaddr *sa, socklen_t salen,
         return save_buf;
 }
 
-static int generate_dh_params(void)
-{
-        int bits = gnutls_sec_param_to_pk_bits(GNUTLS_PK_DH,
-                                               GNUTLS_SEC_PARAM_LEGACY);
-
-        /* Generate Diffie-Hellman parameters - for use with DHE
-         * kx algorithms. When short bit length is used, it might
-         * be wise to regenerate parameters often.
-         */
-        gnutls_dh_params_init(&dh_params);
-        gnutls_dh_params_generate2(dh_params, bits);
-
-        return 0;
-}
 
 
 File: gnutls.info,  Node: OCSP example,  Next: Miscellaneous examples,  Prev: Server examples,  Up: GnuTLS application examples

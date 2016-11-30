@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.5.5"
+#define GNUTLS_VERSION "3.5.6"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 5
-#define GNUTLS_VERSION_PATCH 5
+#define GNUTLS_VERSION_PATCH 6
 
-#define GNUTLS_VERSION_NUMBER 0x030505
+#define GNUTLS_VERSION_NUMBER 0x030506
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -358,6 +358,7 @@ typedef enum {
  * @GNUTLS_ALLOW_ID_CHANGE: Allow the peer to replace its certificate, or change its ID during a rehandshake. This change is often used in attacks and thus prohibited by default. Since 3.5.0.
  * @GNUTLS_ENABLE_FALSE_START: Enable the TLS false start on client side if the negotiated ciphersuites allow it. This will enable sending data prior to the handshake being complete, and may introduce a risk of crypto failure when combined with certain key exchanged; for that GnuTLS may not enable that option in ciphersuites that are known to be not safe for false start. Since 3.5.0.
  * @GNUTLS_FORCE_CLIENT_CERT: When in client side and only a single cert is specified, send that certificate irrespective of the issuers expectated by the server. Since 3.5.0.
+ * @GNUTLS_NO_TICKETS: Flag to indicate that the session should not use resumption with session tickets.
  *
  * Enumeration of different flags for gnutls_init() function. All the flags
  * can be combined except @GNUTLS_SERVER and @GNUTLS_CLIENT which are mutually
@@ -373,7 +374,8 @@ typedef enum {
 	GNUTLS_NO_SIGNAL = (1<<6),
 	GNUTLS_ALLOW_ID_CHANGE = (1<<7),
 	GNUTLS_ENABLE_FALSE_START = (1<<8),
-	GNUTLS_FORCE_CLIENT_CERT = (1<<9)
+	GNUTLS_FORCE_CLIENT_CERT = (1<<9),
+	GNUTLS_NO_TICKETS = (1<<10)
 } gnutls_init_flags_t;
 
 /* compatibility defines (previous versions of gnutls
@@ -386,6 +388,9 @@ typedef enum {
 #define GNUTLS_NO_REPLAY_PROTECTION (1<<5)
 #define GNUTLS_NO_SIGNAL (1<<6)
 #define GNUTLS_ALLOW_ID_CHANGE (1<<7)
+#define GNUTLS_ENABLE_FALSE_START (1<<8)
+#define GNUTLS_FORCE_CLIENT_CERT (1<<9)
+#define GNUTLS_NO_TICKETS (1<<10)
 
 /**
  * gnutls_alert_level_t:
@@ -1596,6 +1601,10 @@ gnutls_anon_allocate_server_credentials(gnutls_anon_server_credentials_t
 void gnutls_anon_set_server_dh_params(gnutls_anon_server_credentials_t res,
 				      gnutls_dh_params_t dh_params);
 
+int
+gnutls_anon_set_server_known_dh_params(gnutls_anon_server_credentials_t res,
+					gnutls_sec_param_t sec_param);
+
 void
 gnutls_anon_set_server_params_function(gnutls_anon_server_credentials_t
 				       res, gnutls_params_function * func);
@@ -1643,6 +1652,9 @@ void gnutls_certificate_free_crls(gnutls_certificate_credentials_t sc);
 
 void gnutls_certificate_set_dh_params(gnutls_certificate_credentials_t res,
 				      gnutls_dh_params_t dh_params);
+
+int gnutls_certificate_set_known_dh_params(gnutls_certificate_credentials_t res,
+					   gnutls_sec_param_t sec_param);
 void gnutls_certificate_set_verify_flags(gnutls_certificate_credentials_t
 					 res, unsigned int flags);
 unsigned int
@@ -1651,11 +1663,13 @@ gnutls_certificate_get_verify_flags(gnutls_certificate_credentials_t res);
 /**
  * gnutls_certificate_flags:
  * @GNUTLS_CERTIFICATE_SKIP_KEY_CERT_MATCH: Skip the key and certificate matching check.
+ * @GNUTLS_CERTIFICATE_API_V2: If set the gnutls_certificate_set_*key* functions will return an index of the added key pair instead of zero.
  *
  * Enumeration of different certificate credentials flags.
  */
 typedef enum gnutls_certificate_flags {
-	GNUTLS_CERTIFICATE_SKIP_KEY_CERT_MATCH = 1
+	GNUTLS_CERTIFICATE_SKIP_KEY_CERT_MATCH = 1,
+	GNUTLS_CERTIFICATE_API_V2 = (1<<1)
 } gnutls_certificate_flags;
 
 void gnutls_certificate_set_flags(gnutls_certificate_credentials_t,
@@ -2014,6 +2028,25 @@ extern _SYM_EXPORT const gnutls_datum_t gnutls_srp_1536_group_generator;
 extern _SYM_EXPORT const gnutls_datum_t gnutls_srp_1024_group_prime;
 extern _SYM_EXPORT const gnutls_datum_t gnutls_srp_1024_group_generator;
 
+/* The static parameters defined in rfc7919
+ */
+
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_8192_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_8192_group_generator;
+extern _SYM_EXPORT const unsigned int gnutls_ffdhe_8192_key_bits;
+
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_4096_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_4096_group_generator;
+extern _SYM_EXPORT const unsigned int gnutls_ffdhe_4096_key_bits;
+
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_3072_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_3072_group_generator;
+extern _SYM_EXPORT const unsigned int gnutls_ffdhe_3072_key_bits;
+
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_2048_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_2048_group_generator;
+extern _SYM_EXPORT const unsigned int gnutls_ffdhe_2048_key_bits;
+
 typedef int gnutls_srp_server_credentials_function(gnutls_session_t,
 						   const char *username,
 						   gnutls_datum_t * salt,
@@ -2127,6 +2160,10 @@ int gnutls_hex_decode2(const gnutls_datum_t * data, gnutls_datum_t *result);
 void
 gnutls_psk_set_server_dh_params(gnutls_psk_server_credentials_t res,
 				gnutls_dh_params_t dh_params);
+
+int
+gnutls_psk_set_server_known_dh_params(gnutls_psk_server_credentials_t res,
+				      gnutls_sec_param_t sec_param);
 
 void
 gnutls_psk_set_server_params_function(gnutls_psk_server_credentials_t
@@ -2514,7 +2551,7 @@ typedef int (*gnutls_ext_unpack_func) (gnutls_buffer_t packed_data,
 /**
  * gnutls_ext_parse_type_t:
  * @GNUTLS_EXT_NONE: Never parsed
- * @GNUTLS_EXT_ANY: Any extension type.
+ * @GNUTLS_EXT_ANY: Any extension type (internal use only).
  * @GNUTLS_EXT_APPLICATION: Application extension.
  * @GNUTLS_EXT_TLS: TLS-internal extension.
  * @GNUTLS_EXT_MANDATORY: Extension parsed even if resuming (or extensions are disabled).
@@ -2788,6 +2825,7 @@ unsigned gnutls_fips140_mode_enabled(void);
 #define GNUTLS_E_UNAVAILABLE_DURING_HANDSHAKE -408
 #define GNUTLS_E_PK_INVALID_PUBKEY -409
 #define GNUTLS_E_PK_INVALID_PRIVKEY -410
+#define GNUTLS_E_NOT_YET_ACTIVATED -411
 
 #define GNUTLS_E_UNIMPLEMENTED_FEATURE -1250
 

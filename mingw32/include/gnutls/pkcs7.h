@@ -55,7 +55,12 @@ int gnutls_pkcs7_export2(gnutls_pkcs7_t pkcs7,
 			 gnutls_datum_t * out);
 
 int gnutls_pkcs7_get_signature_count(gnutls_pkcs7_t pkcs7);
-int gnutls_pkcs7_get_embedded_data(gnutls_pkcs7_t pkcs7, unsigned idx, gnutls_datum_t *data);
+
+#define GNUTLS_PKCS7_EDATA_GET_RAW (1<<24)
+int gnutls_pkcs7_get_embedded_data(gnutls_pkcs7_t pkcs7, unsigned flags, gnutls_datum_t *data);
+
+const char *
+gnutls_pkcs7_get_embedded_data_oid(gnutls_pkcs7_t pkcs7);
 
 int gnutls_pkcs7_get_crt_count(gnutls_pkcs7_t pkcs7);
 int gnutls_pkcs7_get_crt_raw(gnutls_pkcs7_t pkcs7, unsigned indx,

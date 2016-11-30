@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.1 from gnutls.texi.
 
-This manual is last updated 9 October 2016 for version 3.5.5 of GnuTLS.
+This manual is last updated 9 October 2016 for version 3.5.6 of GnuTLS.
 
 Copyright (C) 2001-2016 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2016 Nikos Mavrogiannopoulos
@@ -2837,6 +2837,27 @@ gnutls_x509_crt_check_issuer
      *Returns:* It will return true (1) if the given certificate is
      issued by the given issuer, and false (0) if not.
 
+gnutls_x509_crt_check_key_purpose
+---------------------------------
+
+ -- Function: unsigned gnutls_x509_crt_check_key_purpose
+          (gnutls_x509_crt_t CERT, const char * PURPOSE, unsigned FLAGS)
+     CERT: should contain a 'gnutls_x509_crt_t' type
+
+     PURPOSE: a key purpose OID (e.g., 'GNUTLS_KP_CODE_SIGNING' )
+
+     FLAGS: zero or 'GNUTLS_KP_FLAG_DISALLOW_ANY'
+
+     This function will check whether the given certificate matches the
+     provided key purpose.  If 'flags' contains
+     'GNUTLS_KP_FLAG_ALLOW_ANY' then it a certificate marked for any
+     purpose will not match.
+
+     *Returns:* zero if the key purpose doesn't match, and non-zero
+     otherwise.
+
+     *Since:* 3.5.6
+
 gnutls_x509_crt_check_revocation
 --------------------------------
 
@@ -2849,8 +2870,8 @@ gnutls_x509_crt_check_revocation
 
      CRL_LIST_LENGTH: the length of the crl_list
 
-     This function will return check if the given certificate is
-     revoked.  It is assumed that the CRLs have been verified before.
+     This function will check if the given certificate is revoked.  It
+     is assumed that the CRLs have been verified before.
 
      *Returns:* 0 if the certificate is NOT revoked, and 1 if it is.  A
      negative error code is returned on error.
@@ -5472,8 +5493,13 @@ gnutls_x509_crt_verify_data2
      parameters from the certificate.
 
      *Returns:* In case of a verification failure
-     'GNUTLS_E_PK_SIG_VERIFY_FAILED' is returned, and zero or positive
-     code on success.
+     'GNUTLS_E_PK_SIG_VERIFY_FAILED' is returned, 'GNUTLS_E_EXPIRED' or
+     'GNUTLS_E_NOT_YET_ACTIVATED' on expired or not yet activated
+     certificate and zero or positive code on success.
+
+     Note that since GnuTLS 3.5.6 this function introduces checks in the
+     end certificate ( 'crt' ), including time checks and key usage
+     checks.
 
      *Since:* 3.4.0
 

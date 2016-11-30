@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.1 from gnutls.texi.
 
-This manual is last updated 9 October 2016 for version 3.5.5 of GnuTLS.
+This manual is last updated 9 October 2016 for version 3.5.6 of GnuTLS.
 
 Copyright (C) 2001-2016 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2016 Nikos Mavrogiannopoulos
@@ -1406,8 +1406,8 @@ expressions.
                                           record packet has failed.
 -28         GNUTLS_E_AGAIN                Resource temporarily
                                           unavailable, try again.
--29         GNUTLS_E_EXPIRED              The requested session has
-                                          expired.
+-29         GNUTLS_E_EXPIRED              The session or
+                                          certificate has expired.
 -30         GNUTLS_E_DB_ERROR             Error in Database
                                           backend.
 -31         GNUTLS_E_SRP_PWD_ERROR        Error in password file.
@@ -1706,6 +1706,8 @@ expressions.
                                           is invalid.
 -410        GNUTLS_E_PK_INVALID_PRIVKEY   The private key is
                                           invalid.
+-411        GNUTLS_E_NOT_YET_ACTIVATED    The certificate is not
+                                          yet activated.
 
 
 File: gnutls.info,  Node: Supported ciphersuites,  Next: API reference,  Prev: Error codes,  Up: Top
@@ -2260,6 +2262,26 @@ gnutls_anon_set_server_dh_params
      anonymous server to use.  These parameters will be used in
      Anonymous Diffie-Hellman cipher suites.
 
+gnutls_anon_set_server_known_dh_params
+--------------------------------------
+
+ -- Function: int gnutls_anon_set_server_known_dh_params
+          (gnutls_anon_server_credentials_t RES, gnutls_sec_param_t
+          SEC_PARAM)
+     RES: is a gnutls_anon_server_credentials_t type
+
+     SEC_PARAM: - undescribed -
+
+     This function will set the Diffie-Hellman parameters for an
+     anonymous server to use.  These parameters will be used in
+     Anonymous Diffie-Hellman cipher suites and will be selected from
+     the FFDHE set of RFC7919 according to the security level provided.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.6
+
 gnutls_anon_set_server_params_function
 --------------------------------------
 
@@ -2643,9 +2665,12 @@ gnutls_certificate_get_x509_crt
      'gnutls_x509_crt_deinit()' , and the list itself must be freed with
      'gnutls_free()' .
 
-     The 'index' matches the value 'gnutls_certificate_set_x509_key()'
-     and friends functions.  If there is no certificate with the given
-     index, 'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' is returned.  If the
+     The 'index' matches the return value of
+     'gnutls_certificate_set_x509_key()' and friends functions, when the
+     'GNUTLS_CERTIFICATE_API_V2' flag is set.
+
+     If there is no certificate with the given index,
+     'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' is returned.  If the
      certificate with the given index is not a X.509 certificate,
      'GNUTLS_E_INVALID_REQUEST' is returned.  The returned certificates
      must be deinitialized after use, and the 'crt_list' pointer must be
@@ -2678,11 +2703,14 @@ gnutls_certificate_get_x509_key
      be deallocated with 'gnutls_x509_privkey_deinit()' when no longer
      needed.
 
+     The 'index' matches the return value of
+     'gnutls_certificate_set_x509_key()' and friends functions, when the
+     'GNUTLS_CERTIFICATE_API_V2' flag is set.
+
      If there is no key with the given index,
      'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' is returned.  If the key
      with the given index is not a X.509 key, 'GNUTLS_E_INVALID_REQUEST'
-     is returned.  The 'index' matches the value
-     'gnutls_certificate_set_x509_key()' and friends functions.
+     is returned.
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) on success, or a negative error
      code.
@@ -2754,6 +2782,26 @@ gnutls_certificate_set_flags
 
      *Since:* 3.4.7
 
+gnutls_certificate_set_known_dh_params
+--------------------------------------
+
+ -- Function: int gnutls_certificate_set_known_dh_params
+          (gnutls_certificate_credentials_t RES, gnutls_sec_param_t
+          SEC_PARAM)
+     RES: is a gnutls_certificate_credentials_t type
+
+     SEC_PARAM: is an option of the 'gnutls_sec_param_t' enumeration
+
+     This function will set the Diffie-Hellman parameters for a
+     certificate server to use.  These parameters will be used in
+     Ephemeral Diffie-Hellman cipher suites and will be selected from
+     the FFDHE set of RFC7919 according to the security level provided.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.6
+
 gnutls_certificate_set_ocsp_status_request_file
 -----------------------------------------------
 
@@ -2777,7 +2825,8 @@ gnutls_certificate_set_ocsp_status_request_file
      fine-tune file accesses.
 
      *Note:* the ability to set multiple OCSP responses per credential
-     structure via 'idx' was added in version 3.5.5.
+     structure via 'idx' was added in version 3.5.6 with the
+     'GNUTLS_CERTIFICATE_API_V2' flag.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.
@@ -3101,8 +3150,15 @@ gnutls_certificate_set_x509_key
      If that function fails to load the 'res' type is at an undefined
      state, it must not be reused to load other keys or certificates.
 
-     *Returns:* An index of the inserted certificate chain on success
-     (greater or equal to zero), or a negative error code.
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used to other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success this functions returns zero, and otherwise a
+     negative value on error (see above for modifying that behavior).
 
      *Since:* 2.4.0
 
@@ -3146,8 +3202,15 @@ gnutls_certificate_set_x509_key_file
      undefined state, it must not be reused to load other keys or
      certificates.
 
-     *Returns:* An index of the inserted certificate chain on success
-     (greater or equal to zero), or a negative error code.
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used to other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success this functions returns zero, and otherwise a
+     negative value on error (see above for modifying that behavior).
 
      *Since:* 3.1.11
 
@@ -3198,8 +3261,15 @@ gnutls_certificate_set_x509_key_file2
      undefined state, it must not be reused to load other keys or
      certificates.
 
-     *Returns:* An index of the inserted certificate chain on success
-     (greater or equal to zero), or a negative error code.
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used to other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success this functions returns zero, and otherwise a
+     negative value on error (see above for modifying that behavior).
 
 gnutls_certificate_set_x509_key_mem
 -----------------------------------
@@ -3232,8 +3302,15 @@ gnutls_certificate_set_x509_key_mem
      The 'key' may be 'NULL' if you are using a sign callback, see
      'gnutls_sign_callback_set()' .
 
-     *Returns:* An index of the inserted certificate chain on success
-     (greater or equal to zero), or a negative error code.
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used to other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success this functions returns zero, and otherwise a
+     negative value on error (see above for modifying that behavior).
 
 gnutls_certificate_set_x509_key_mem2
 ------------------------------------
@@ -3271,8 +3348,15 @@ gnutls_certificate_set_x509_key_mem2
      The 'key' may be 'NULL' if you are using a sign callback, see
      'gnutls_sign_callback_set()' .
 
-     *Returns:* An index of the inserted certificate chain on success
-     (greater or equal to zero), or a negative error code.
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used to other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success this functions returns zero, and otherwise a
+     negative value on error (see above for modifying that behavior).
 
 gnutls_certificate_set_x509_simple_pkcs12_file
 ----------------------------------------------
@@ -3312,8 +3396,15 @@ gnutls_certificate_set_x509_simple_pkcs12_file
      complexity that would make it harder to use this functionality at
      all.
 
-     *Returns:* An index of the inserted certificate chain on success
-     (greater or equal to zero), or a negative error code.
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used to other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success this functions returns zero, and otherwise a
+     negative value on error (see above for modifying that behavior).
 
 gnutls_certificate_set_x509_simple_pkcs12_mem
 ---------------------------------------------
@@ -3353,8 +3444,15 @@ gnutls_certificate_set_x509_simple_pkcs12_mem
      complexity that would make it harder to use this functionality at
      all.
 
-     *Returns:* An index of the inserted certificate chain on success
-     (greater or equal to zero), or a negative error code.
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used to other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success this functions returns zero, and otherwise a
+     negative value on error (see above for modifying that behavior).
 
      *Since:* 2.8.0
 
@@ -6620,6 +6718,26 @@ gnutls_psk_set_server_dh_params
      This function will set the Diffie-Hellman parameters for an
      anonymous server to use.  These parameters will be used in
      Diffie-Hellman exchange with PSK cipher suites.
+
+gnutls_psk_set_server_known_dh_params
+-------------------------------------
+
+ -- Function: int gnutls_psk_set_server_known_dh_params
+          (gnutls_psk_server_credentials_t RES, gnutls_sec_param_t
+          SEC_PARAM)
+     RES: is a gnutls_psk_server_credentials_t type
+
+     SEC_PARAM: is an option of the 'gnutls_sec_param_t' enumeration
+
+     This function will set the Diffie-Hellman parameters for a PSK
+     server to use.  These parameters will be used in Ephemeral
+     Diffie-Hellman cipher suites and will be selected from the FFDHE
+     set of RFC7919 according to the security level provided.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.6
 
 gnutls_psk_set_server_params_function
 -------------------------------------

@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.1 from gnutls.texi.
 
-This manual is last updated 9 October 2016 for version 3.5.5 of GnuTLS.
+This manual is last updated 9 October 2016 for version 3.5.6 of GnuTLS.
 
 Copyright (C) 2001-2016 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2016 Nikos Mavrogiannopoulos
@@ -32,7 +32,7 @@ File: gnutls.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS
 ******
 
-This manual is last updated 9 October 2016 for version 3.5.5 of GnuTLS.
+This manual is last updated 9 October 2016 for version 3.5.6 of GnuTLS.
 
 Copyright (C) 2001-2016 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2016 Nikos Mavrogiannopoulos
@@ -387,73 +387,78 @@ size.
 The supported in GnuTLS ciphers and MAC algorithms are shown in *note
 Table 3.1: tab:ciphers. and *note Table 3.2: tab:macs.
 
-Algorithm      Description
-------------------------------------------------------------------
-AES_CBC        AES or RIJNDAEL is the block cipher algorithm
-               that replaces the old DES algorithm.  Has 128
-               bits block size and is used in CBC mode.
-               
-AES_GCM        This is the AES algorithm in the authenticated
-               encryption GCM mode.  This mode combines message
-               authentication and encryption and can be
-               extremely fast on CPUs that support hardware
-               acceleration.
-               
-AES_CCM        This is the AES algorithm in the authenticated
-               encryption CCM mode.  This mode combines message
-               authentication and encryption and is often used
-               by systems without AES or GCM acceleration
-               support.
-               
-AES_CCM_8      This is the AES algorithm in the authenticated
-               encryption CCM mode with a truncated to 64-bit
-               authentication tag.  This mode is for
-               communication with restricted systems.
-               
-CAMELLIA_CBC   This is an 128-bit block cipher developed by
-               Mitsubishi and NTT. It is one of the approved
-               ciphers of the European NESSIE and Japanese
-               CRYPTREC projects.
-               
-CHACHA20_POLY1305CHACHA20-POLY1305 is an authenticated encryption
-               algorithm based on CHACHA20 cipher and POLY1305
-               MAC. CHACHA20 is a refinement of SALSA20
-               algorithm, an approved cipher by the European
-               ESTREAM project.  POLY1305 is Wegman-Carter,
-               one-time authenticator.  The combination
-               provides a fast stream cipher suitable for
-               systems where a hardware AES accelerator is not
-               available.
-               
-3DES_CBC       This is the DES block cipher algorithm used with
-               triple encryption (EDE). Has 64 bits block size
-               and is used in CBC mode.
-               
-ARCFOUR_128    ARCFOUR-128 is a compatible algorithm with RSA's
-               RC4 algorithm, which is considered to be a trade
-               secret.  It is a fast cipher but considered weak
-               today, and thus it is not enabled by default.
-               
+Algorithm              Description
+-------------------------------------------------------------------
+AES-128-CBC,           AES or RIJNDAEL is the block cipher
+AES-256-CBC            algorithm that replaces the old DES
+                       algorithm.  It has 128 bits block size
+                       and is used in CBC mode.
+                       
+AES-128-GCM,           This is the AES algorithm in the
+AES-256-GCM            authenticated encryption GCM mode.  This
+                       mode combines message authentication and
+                       encryption and can be extremely fast on
+                       CPUs that support hardware acceleration.
+                       
+AES-128-CCM,           This is the AES algorithm in the
+AES-256-CCM            authenticated encryption CCM mode.  This
+                       mode combines message authentication and
+                       encryption and is often used by systems
+                       without AES or GCM acceleration support.
+                       
+AES-128-CCM-8,         This is the AES algorithm in the
+AES-256-CCM-8          authenticated encryption CCM mode with a
+                       truncated to 64-bit authentication tag.
+                       This mode is for communication with
+                       restricted systems.
+                       
+CAMELLIA-128-CBC,      This is an 128-bit block cipher developed
+CAMELLIA-256-CBC       by Mitsubishi and NTT. It is one of the
+                       approved ciphers of the European NESSIE
+                       and Japanese CRYPTREC projects.
+                       
+CHACHA20-POLY1305      CHACHA20-POLY1305 is an authenticated
+                       encryption algorithm based on CHACHA20
+                       cipher and POLY1305 MAC. CHACHA20 is a
+                       refinement of SALSA20 algorithm, an
+                       approved cipher by the European ESTREAM
+                       project.  POLY1305 is Wegman-Carter,
+                       one-time authenticator.  The combination
+                       provides a fast stream cipher suitable
+                       for systems where a hardware AES
+                       accelerator is not available.
+                       
+3DES-CBC               This is the DES block cipher algorithm
+                       used with triple encryption (EDE). Has 64
+                       bits block size and is used in CBC mode.
+                       
+ARCFOUR-128            ARCFOUR-128 is a compatible algorithm
+                       with RSA's RC4 algorithm, which is
+                       considered to be a trade secret.  It is a
+                       considered to be broken, and is only used
+                       for compatibility purposed.  For this
+                       reason it is not enabled by default.
+                       
 
 Table 3.1: Supported ciphers in TLS.
 
 Algorithm      Description
 ------------------------------------------------------------------
-MAC_MD5        This is an HMAC based on MD5 a cryptographic
+MAC-MD5        This is an HMAC based on MD5 a cryptographic
                hash algorithm designed by Ron Rivest.  Outputs
                128 bits of data.
                
-MAC_SHA1       An HMAC based on the SHA1 cryptographic hash
+MAC-SHA1       An HMAC based on the SHA1 cryptographic hash
                algorithm designed by NSA. Outputs 160 bits of
                data.
                
-MAC_SHA256     An HMAC based on SHA2-256.  Outputs 256 bits of
+MAC-SHA256     An HMAC based on SHA2-256.  Outputs 256 bits of
                data.
                
-MAC_SHA384     An HMAC based on SHA2-384.  Outputs 384 bits of
+MAC-SHA384     An HMAC based on SHA2-384.  Outputs 384 bits of
                data.
                
-MAC_AEAD       This indicates that an authenticated encryption
+MAC-AEAD       This indicates that an authenticated encryption
                algorithm, such as GCM, is in use.
                
 
@@ -3749,13 +3754,21 @@ verify-allow-broken option
 This is the "allow broken algorithms, such as md5 for verification"
 option.  This can be combined with -p7-verify, -verify or -verify-chain.
 
+generate-dh-params option
+.........................
+
+This is the "generate pkcs #3 encoded diffie-hellman parameters" option.
+The will generate random parameters to be used with Diffie-Hellman key
+exchange.  The output parameters will be in PKCS #3 format.  Note that
+it is recommended to use the -get-dh-params option instead.
+
 get-dh-params option
 ....................
 
 This is the "get the included pkcs #3 encoded diffie-hellman parameters"
-option.  Returns stored DH parameters in GnuTLS. Those parameters are
-used in the SRP protocol.  The parameters returned by fresh generation
-are more efficient since GnuTLS 3.0.9.
+option.  Returns stored DH parameters in GnuTLS. Those parameters
+returned are defined in RFC7919, and can be considered standard
+parameters for a TLS key exchange.
 
 load-privkey option
 ...................
@@ -3907,8 +3920,8 @@ option.
 This option has some usage constraints.  It:
    * can be disabled with -no-p7-show-data.
 
-This option can be combined with -p7-verify and will display the
-embedded signed data in the PKCS #7 structure.
+This option can be combined with -p7-verify or -p7-info and will display
+the embedded signed data in the PKCS #7 structure.
 
 p7-verify option
 ................

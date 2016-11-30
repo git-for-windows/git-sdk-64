@@ -81,6 +81,8 @@ extern "C" {
 #define GNUTLS_KP_IPSEC_IKE			"1.3.6.1.5.5.7.3.17"
 #define GNUTLS_KP_ANY				"2.5.29.37.0"
 
+#define GNUTLS_KP_FLAG_DISALLOW_ANY		1
+
 #define GNUTLS_OID_AIA				"1.3.6.1.5.5.7.1.1"
 #define GNUTLS_OID_AD_OCSP			"1.3.6.1.5.5.7.48.1"
 #define GNUTLS_OID_AD_CAISSUERS			"1.3.6.1.5.5.7.48.2"
@@ -980,6 +982,9 @@ int gnutls_x509_crt_get_key_purpose_oid(gnutls_x509_crt_t cert,
 int gnutls_x509_crt_set_key_purpose_oid(gnutls_x509_crt_t cert,
 					const void *oid,
 					unsigned int critical);
+
+unsigned gnutls_x509_crt_check_key_purpose(gnutls_x509_crt_t cert,
+		const char *purpose, unsigned flags);
 
 /* Private key handling.
  */
