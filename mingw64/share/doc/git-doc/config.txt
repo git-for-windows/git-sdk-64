@@ -775,6 +775,12 @@ core.longpaths::
 	(msys, bash, tcl, perl...). Only enable this if you know what you're
 	doing and are prepared to live with a few quirks.
 
+core.unsetenvvars::
+	EXPERIMENTAL, Windows-only: comma-separated list of environment
+	variables' names that need to be unset before spawning any other
+	process. Defaults to `PERL5LIB` to account for the fact that Git
+	for Windows insists on using its own Perl interpreter.
+
 core.createObject::
 	You can set this to 'link', in which case a hardlink followed by
 	a delete of the source are used to make sure that object creation
@@ -1751,6 +1757,20 @@ http.emptyAuth::
 	a username in the URL, as libcurl normally requires a username for
 	authentication.
 
+http.delegation::
+	Control GSSAPI credential delegation. The delegation is disabled
+	by default in libcurl since version 7.21.7. Set parameter to tell
+	the server what it is allowed to delegate when it comes to user
+	credentials. Used with GSS/kerberos. Possible values are:
++
+--
+* `none` - Don't allow any delegation.
+* `policy` - Delegates if and only if the OK-AS-DELEGATE flag is set in the
+  Kerberos service ticket, which is a matter of realm policy.
+* `always` - Unconditionally allow the server to delegate.
+--
+
+
 http.extraHeader::
 	Pass an additional HTTP header when communicating with a server.  If
 	more than one such entry exists, all of them are added as extra
@@ -2451,7 +2471,7 @@ rebase.missingCommitsCheck::
 	command in the todo-list.
 	Defaults to "ignore".
 
-rebase.instructionFormat
+rebase.instructionFormat::
 	A format string, as specified in linkgit:git-log[1], to be used for
 	the instruction list during an interactive rebase.  The format will automatically
 	have the long commit hash prepended to the format.
@@ -2537,6 +2557,12 @@ receive.unpackLimit::
 	pack from a push can make the push operation complete faster,
 	especially on slow filesystems.  If not set, the value of
 	`transfer.unpackLimit` is used instead.
+
+receive.maxInputSize::
+	If the size of the incoming pack stream is larger than this
+	limit, then git-receive-pack will error out, instead of
+	accepting the pack file. If not set or set to 0, then the size
+	is unlimited.
 
 receive.denyDeletes::
 	If set to true, git-receive-pack will deny a ref update that deletes
@@ -2868,6 +2894,18 @@ submodule.fetchJobs::
 	A positive integer allows up to that number of submodules fetched
 	in parallel. A value of 0 will give some reasonable default.
 	If unset, it defaults to 1.
+
+submodule.alternateLocation::
+	Specifies how the submodules obtain alternates when submodules are
+	cloned. Possible values are `no`, `superproject`.
+	By default `no` is assumed, which doesn't add references. When the
+	value is set to `superproject` the submodule to be cloned computes
+	its alternates location relative to the superprojects alternate.
+
+submodule.alternateErrorStrategy
+	Specifies how to treat errors with the alternates for a submodule
+	as computed via `submodule.alternateLocation`. Possible values are
+	`ignore`, `info`, `die`. Default is `die`.
 
 tag.forceSignAnnotated::
 	A boolean to specify whether annotated tags created should be GPG signed.

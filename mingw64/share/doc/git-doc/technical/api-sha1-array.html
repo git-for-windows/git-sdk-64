@@ -476,7 +476,10 @@ initial, empty state.</p>
 <dd>
 <p>Efficiently iterate over each unique element of the list,
 executing the callback function for each one. If the array is
-not sorted, this function has the side effect of sorting it.</p>
+not sorted, this function has the side effect of sorting it. If
+the callback returns a non-zero value, the iteration ends
+immediately and the callback&#8217;s return is propagated; otherwise,
+0 is returned.</p>
 </dd>
 </dl>
 </div>
@@ -487,10 +490,11 @@ not sorted, this function has the side effect of sorting it.</p>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre>void print_callback(const unsigned char sha1[20],
+<pre>int print_callback(const unsigned char sha1[20],
 		    void *data)
 {
 	printf("%s\n", sha1_to_hex(sha1));
+	return 0; /* always continue */
 }
 
 void some_func(void)
@@ -523,7 +527,7 @@ void some_func(void)
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:33 W. Europe Standard Time
+Last updated 2016-12-01 11:55:40 W. Europe Standard Time
 </div>
 </div>
 </body>

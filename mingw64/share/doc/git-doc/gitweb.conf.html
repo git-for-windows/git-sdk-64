@@ -731,13 +731,20 @@ executable if it is not installed on your web server&#8217;s PATH.
 Note that <em>highlight</em> feature must be set for gitweb to actually
 use syntax highlighting.</p>
 <div class="paragraph">
-<p><strong>NOTE</strong>: if you want to add support for new file type (supported by
-"highlight" but not used by gitweb), you need to modify <code>%highlight_ext</code>
-or <code>%highlight_basename</code>, depending on whether you detect type of file
-based on extension (for example "sh") or on its basename (for example
-"Makefile").  The keys of these hashes are extension and basename,
-respectively, and value for given key is name of syntax to be passed via
-<code>--syntax &lt;syntax&gt;</code> to highlighter.</p>
+<p><strong>NOTE</strong>: for a file to be highlighted, its syntax type must be detected
+and that syntax must be supported by "highlight".  The default syntax
+detection is minimal, and there are many supported syntax types with no
+detection by default.  There are three options for adding syntax
+detection.  The first and second priority are <code>%highlight_basename</code> and
+<code>%highlight_ext</code>, which detect based on basename (the full filename, for
+example "Makefile") and extension (for example "sh").  The keys of these
+hashes are the basename and extension, respectively, and the value for a
+given key is the name of the syntax to be passed via <code>--syntax &lt;syntax&gt;</code>
+to "highlight".  The last priority is the "highlight" configuration of
+<code>Shebang</code> regular expressions to detect the language based on the first
+line in the file, (for example, matching the line "#!/bin/bash").  See
+the highlight documentation and the default config at
+/etc/highlight/filetypes.conf for more details.</p>
 </div>
 <div class="paragraph">
 <p>For example if repositories you are hosting use "phtml" extension for
@@ -1665,7 +1672,7 @@ file.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:33 W. Europe Standard Time
+Last updated 2016-12-01 11:55:40 W. Europe Standard Time
 </div>
 </div>
 </body>

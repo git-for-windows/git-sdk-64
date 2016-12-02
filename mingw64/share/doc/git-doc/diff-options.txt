@@ -63,12 +63,7 @@ ifndef::git-format-patch[]
 	Synonym for `-p --raw`.
 endif::git-format-patch[]
 
---compaction-heuristic::
---no-compaction-heuristic::
-	These are to help debugging and tuning an experimental
-	heuristic (which is off by default) that shifts the hunk
-	boundary in an attempt to make the resulting patch easier
-	to read.
+include::diff-heuristic-options.txt[]
 
 --minimal::
 	Spend extra time to make sure the smallest possible
@@ -210,13 +205,16 @@ any of those replacements occurred.
 	of the `--diff-filter` option on what the status letters mean.
 
 --submodule[=<format>]::
-	Specify how differences in submodules are shown.  When `--submodule`
-	or `--submodule=log` is given, the 'log' format is used.  This format lists
-	the commits in the range like linkgit:git-submodule[1] `summary` does.
-	Omitting the `--submodule` option or specifying `--submodule=short`,
-	uses the 'short' format. This format just shows the names of the commits
-	at the beginning and end of the range.  Can be tweaked via the
-	`diff.submodule` configuration variable.
+	Specify how differences in submodules are shown.  When specifying
+	`--submodule=short` the 'short' format is used.  This format just
+	shows the names of the commits at the beginning and end of the range.
+	When `--submodule` or `--submodule=log` is specified, the 'log'
+	format is used.  This format lists the commits in the range like
+	linkgit:git-submodule[1] `summary` does.  When `--submodule=diff`
+	is specified, the 'diff' format is used.  This format shows an
+	inline diff of the changes in the submodule contents between the
+	commit range.  Defaults to `diff.submodule` or the 'short' format
+	if the config option is unset.
 
 --color[=<when>]::
 	Show colored diff.
@@ -310,6 +308,8 @@ ifndef::git-format-patch[]
 	lines are highlighted.  E.g. `--ws-error-highlight=new,old`
 	highlights whitespace errors on both deleted and added lines.
 	`all` can be used as a short-hand for `old,new,context`.
+	The `diff.wsErrorHighlight` configuration variable can be
+	used to specify the default behaviour.
 
 endif::git-format-patch[]
 
@@ -568,6 +568,17 @@ endif::git-format-patch[]
 
 --no-prefix::
 	Do not show any source or destination prefix.
+
+--line-prefix=<prefix>::
+	Prepend an additional prefix to every line of output.
+
+--ita-invisible-in-index::
+	By default entries added by "git add -N" appear as an existing
+	empty file in "git diff" and a new file in "git diff --cached".
+	This option makes the entry appear as a new file in "git diff"
+	and non-existent in "git diff --cached". This option could be
+	reverted with `--ita-visible-in-index`. Both options are
+	experimental and could be removed in future.
 
 For more detailed explanation on these common options, see also
 linkgit:gitdiffcore[7].

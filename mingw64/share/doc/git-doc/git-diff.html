@@ -562,13 +562,14 @@ Implies <code>-p</code>.</p>
 <dd>
 <p>Synonym for <code>-p --raw</code>.</p>
 </dd>
+<dt class="hdlist1">--indent-heuristic</dt>
+<dt class="hdlist1">--no-indent-heuristic</dt>
 <dt class="hdlist1">--compaction-heuristic</dt>
 <dt class="hdlist1">--no-compaction-heuristic</dt>
 <dd>
-<p>These are to help debugging and tuning an experimental
-heuristic (which is off by default) that shifts the hunk
-boundary in an attempt to make the resulting patch easier
-to read.</p>
+<p>These are to help debugging and tuning experimental heuristics
+(which are off by default) that shift diff hunk boundaries to
+make patches easier to read.</p>
 </dd>
 <dt class="hdlist1">--minimal</dt>
 <dd>
@@ -744,13 +745,16 @@ of the <code>--diff-filter</code> option on what the status letters mean.</p>
 </dd>
 <dt class="hdlist1">--submodule[=&lt;format&gt;]</dt>
 <dd>
-<p>Specify how differences in submodules are shown.  When <code>--submodule</code>
-or <code>--submodule=log</code> is given, the <em>log</em> format is used.  This format lists
-the commits in the range like <a href="git-submodule.html">git-submodule</a>(1) <code>summary</code> does.
-Omitting the <code>--submodule</code> option or specifying <code>--submodule=short</code>,
-uses the <em>short</em> format. This format just shows the names of the commits
-at the beginning and end of the range.  Can be tweaked via the
-<code>diff.submodule</code> configuration variable.</p>
+<p>Specify how differences in submodules are shown.  When specifying
+<code>--submodule=short</code> the <em>short</em> format is used.  This format just
+shows the names of the commits at the beginning and end of the range.
+When <code>--submodule</code> or <code>--submodule=log</code> is specified, the <em>log</em>
+format is used.  This format lists the commits in the range like
+<a href="git-submodule.html">git-submodule</a>(1) <code>summary</code> does.  When <code>--submodule=diff</code>
+is specified, the <em>diff</em> format is used.  This format shows an
+inline diff of the changes in the submodule contents between the
+commit range.  Defaults to <code>diff.submodule</code> or the <em>short</em> format
+if the config option is unset.</p>
 </dd>
 <dt class="hdlist1">--color[=&lt;when&gt;]</dt>
 <dd>
@@ -862,7 +866,9 @@ is a comma separated list of <code>old</code>, <code>new</code>, <code>context</
 this option is not given, only whitespace errors in <code>new</code>
 lines are highlighted.  E.g. <code>--ws-error-highlight=new,old</code>
 highlights whitespace errors on both deleted and added lines.
-<code>all</code> can be used as a short-hand for <code>old,new,context</code>.</p>
+<code>all</code> can be used as a short-hand for <code>old,new,context</code>.
+The <code>diff.wsErrorHighlight</code> configuration variable can be
+used to specify the default behaviour.</p>
 </dd>
 <dt class="hdlist1">--full-index</dt>
 <dd>
@@ -1146,6 +1152,19 @@ the behavior until 1.7.0). Using "all" hides all changes to submodules.</p>
 <dt class="hdlist1">--no-prefix</dt>
 <dd>
 <p>Do not show any source or destination prefix.</p>
+</dd>
+<dt class="hdlist1">--line-prefix=&lt;prefix&gt;</dt>
+<dd>
+<p>Prepend an additional prefix to every line of output.</p>
+</dd>
+<dt class="hdlist1">--ita-invisible-in-index</dt>
+<dd>
+<p>By default entries added by "git add -N" appear as an existing
+empty file in "git diff" and a new file in "git diff --cached".
+This option makes the entry appear as a new file in "git diff"
+and non-existent in "git diff --cached". This option could be
+reverted with <code>--ita-visible-in-index</code>. Both options are
+experimental and could be removed in future.</p>
 </dd>
 </dl>
 </div>
@@ -1873,7 +1892,7 @@ rewrites (very expensive).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:33 W. Europe Standard Time
+Last updated 2016-12-01 11:55:39 W. Europe Standard Time
 </div>
 </div>
 </body>

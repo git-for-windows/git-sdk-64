@@ -898,16 +898,7 @@ master or exposed as a part of a stable branch.</p>
 </li>
 <li>
 <p>make sure master was not accidentally rewound beyond that
-already pushed out.  <code>ko</code> shorthand points at the Git maintainer&#8217;s
-repository at kernel.org, and looks like this:<br>
-<code>(in .git/config)<br>
-[remote "ko"]<br>
-&#160;&#160;&#160;&#160;url = kernel.org:/pub/scm/git/git.git<br>
-&#160;&#160;&#160;&#160;fetch = refs/heads/*:refs/remotes/ko/*<br>
-&#160;&#160;&#160;&#160;push = refs/heads/master<br>
-&#160;&#160;&#160;&#160;push = refs/heads/next<br>
-&#160;&#160;&#160;&#160;push = +refs/heads/pu<br>
-&#160;&#160;&#160;&#160;push = refs/heads/maint</code></p>
+already pushed out.</p>
 </li>
 <li>
 <p>In the output from <code>git show-branch</code>, <code>master</code> should have
@@ -922,6 +913,22 @@ into the pushed history.</p>
 </div>
 </dd>
 </dl>
+</div>
+<div class="paragraph">
+<p>In this example, the <code>ko</code> shorthand points at the Git maintainer&#8217;s
+repository at kernel.org, and looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>(in .git/config)
+[remote "ko"]
+	url = kernel.org:/pub/scm/git/git.git
+	fetch = refs/heads/*:refs/remotes/ko/*
+	push = refs/heads/master
+	push = refs/heads/next
+	push = +refs/heads/pu
+	push = refs/heads/maint</pre>
+</div>
 </div>
 </div>
 </div>
@@ -1111,7 +1118,7 @@ create and push version tags.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:33 W. Europe Standard Time
+Last updated 2016-12-01 11:55:40 W. Europe Standard Time
 </div>
 </div>
 </body>

@@ -780,7 +780,15 @@ checkout, when the <code>smudge</code> command is specified, the command is
 fed the blob object from its standard input, and its standard
 output is used to update the worktree file.  Similarly, the
 <code>clean</code> command is used to convert the contents of worktree file
-upon checkin.</p>
+upon checkin. By default these commands process only a single
+blob and terminate. If a long running <code>process</code> filter is used
+in place of <code>clean</code> and/or <code>smudge</code> filters, then Git can process
+all blobs with a single filter command invocation for the entire
+life of a single Git command, for example <code>git add --all</code>. If a
+long running <code>process</code> filter is configured then it always takes
+precedence over a configured single blob filter. See section
+below for the description of the protocol used to communicate with
+a <code>process</code> filter.</p>
 </div>
 <div class="paragraph">
 <p>One use of the content filtering is to massage the content into a shape
@@ -874,6 +882,181 @@ on the version that is being filtered, the corresponding file on disk may
 not exist, or may have different contents. So, smudge and clean commands
 should not try to access the file on disk, but only act as filters on the
 content provided to them on standard input.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_long_running_filter_process">Long Running Filter Process</h4>
+<div class="paragraph">
+<p>If the filter command (a string value) is defined via
+<code>filter.&lt;driver&gt;.process</code> then Git can process all blobs with a
+single filter invocation for the entire life of a single Git
+command. This is achieved by using a packet format (pkt-line,
+see technical/protocol-common.txt) based protocol over standard
+input and standard output as follows. All packets, except for the
+"*CONTENT" packets and the "0000" flush packet, are considered
+text and therefore are terminated by a LF.</p>
+</div>
+<div class="paragraph">
+<p>Git starts the filter when it encounters the first file
+that needs to be cleaned or smudged. After the filter started
+Git sends a welcome message ("git-filter-client"), a list of supported
+protocol version numbers, and a flush packet. Git expects to read a welcome
+response message ("git-filter-server"), exactly one protocol version number
+from the previously sent list, and a flush packet. All further
+communication will be based on the selected version. The remaining
+protocol description below documents "version=2". Please note that
+"version=42" in the example below does not exist and is only there
+to illustrate how the protocol would look like with more than one
+version.</p>
+</div>
+<div class="paragraph">
+<p>After the version negotiation Git sends a list of all capabilities that
+it supports and a flush packet. Git expects to read a list of desired
+capabilities, which must be a subset of the supported capabilities list,
+and a flush packet as response:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&gt; git-filter-client
+packet:          git&gt; version=2
+packet:          git&gt; version=42
+packet:          git&gt; 0000
+packet:          git&lt; git-filter-server
+packet:          git&lt; version=2
+packet:          git&lt; 0000
+packet:          git&gt; capability=clean
+packet:          git&gt; capability=smudge
+packet:          git&gt; capability=not-yet-invented
+packet:          git&gt; 0000
+packet:          git&lt; capability=clean
+packet:          git&lt; capability=smudge
+packet:          git&lt; 0000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Supported filter capabilities in version 2 are "clean" and
+"smudge".</p>
+</div>
+<div class="paragraph">
+<p>Afterwards Git sends a list of "key=value" pairs terminated with
+a flush packet. The list will contain at least the filter command
+(based on the supported capabilities) and the pathname of the file
+to filter relative to the repository root. Right after the flush packet
+Git sends the content split in zero or more pkt-line packets and a
+flush packet to terminate content. Please note, that the filter
+must not send any response before it received the content and the
+final flush packet.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&gt; command=smudge
+packet:          git&gt; pathname=path/testfile.dat
+packet:          git&gt; 0000
+packet:          git&gt; CONTENT
+packet:          git&gt; 0000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The filter is expected to respond with a list of "key=value" pairs
+terminated with a flush packet. If the filter does not experience
+problems then the list must contain a "success" status. Right after
+these packets the filter is expected to send the content in zero
+or more pkt-line packets and a flush packet at the end. Finally, a
+second list of "key=value" pairs terminated with a flush packet
+is expected. The filter can change the status in the second list
+or keep the status as is with an empty list. Please note that the
+empty list must be terminated with a flush packet regardless.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&lt; status=success
+packet:          git&lt; 0000
+packet:          git&lt; SMUDGED_CONTENT
+packet:          git&lt; 0000
+packet:          git&lt; 0000  # empty list, keep "status=success" unchanged!</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the result content is empty then the filter is expected to respond
+with a "success" status and a flush packet to signal the empty content.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&lt; status=success
+packet:          git&lt; 0000
+packet:          git&lt; 0000  # empty content!
+packet:          git&lt; 0000  # empty list, keep "status=success" unchanged!</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In case the filter cannot or does not want to process the content,
+it is expected to respond with an "error" status.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&lt; status=error
+packet:          git&lt; 0000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the filter experiences an error during processing, then it can
+send the status "error" after the content was (partially or
+completely) sent.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&lt; status=success
+packet:          git&lt; 0000
+packet:          git&lt; HALF_WRITTEN_ERRONEOUS_CONTENT
+packet:          git&lt; 0000
+packet:          git&lt; status=error
+packet:          git&lt; 0000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In case the filter cannot or does not want to process the content
+as well as any future content for the lifetime of the Git process,
+then it is expected to respond with an "abort" status at any point
+in the protocol.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&lt; status=abort
+packet:          git&lt; 0000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Git neither stops nor restarts the filter process in case the
+"error"/"abort" status is set. However, Git sets its exit code
+according to the <code>filter.&lt;driver&gt;.required</code> flag, mimicking the
+behavior of the <code>filter.&lt;driver&gt;.clean</code> / <code>filter.&lt;driver&gt;.smudge</code>
+mechanism.</p>
+</div>
+<div class="paragraph">
+<p>If the filter dies during the communication or does not adhere to
+the protocol then Git will stop the filter process and restart it
+with the next file that needs to be processed. Depending on the
+<code>filter.&lt;driver&gt;.required</code> flag Git will interpret that as error.</p>
+</div>
+<div class="paragraph">
+<p>After the filter has processed a blob it is expected to wait for
+the next "key=value" list containing a command. Git will close
+the command pipe on exit. The filter is expected to detect EOF
+and exit gracefully on its own. Git will wait until the filter
+process has stopped.</p>
+</div>
+<div class="paragraph">
+<p>A long running filter demo implementation can be found in
+<code>contrib/long-running-filter/example.pl</code> located in the Git
+core repository. If you develop your own long running filter
+process then the <code>GIT_TRACE_PACKET</code> environment variables can be
+very helpful for debugging (see <a href="git.html">git</a>(1)).</p>
+</div>
+<div class="paragraph">
+<p>Please note that you cannot use an existing <code>filter.&lt;driver&gt;.clean</code>
+or <code>filter.&lt;driver&gt;.smudge</code> command with <code>filter.&lt;driver&gt;.process</code>
+because the former two use a different inter process communication
+protocol than the latter one.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1641,7 +1824,7 @@ frotz	unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:33 W. Europe Standard Time
+Last updated 2016-12-01 11:55:40 W. Europe Standard Time
 </div>
 </div>
 </body>

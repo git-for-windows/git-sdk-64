@@ -481,21 +481,24 @@ will be added before the new trailer.</p>
 </div>
 <div class="paragraph">
 <p>Existing trailers are extracted from the input message by looking for
-a group of one or more lines that contain a colon (by default), where
-the group is preceded by one or more empty (or whitespace-only) lines.
+a group of one or more lines that (i) are all trailers, or (ii) contains at
+least one Git-generated or user-configured trailer and consists of at
+least 25% trailers.
+The group must be preceded by one or more empty (or whitespace-only) lines.
 The group must either be at the end of the message or be the last
 non-whitespace lines before a line that starts with <em>---</em>. Such three
 minus signs start the patch part of the message.</p>
 </div>
 <div class="paragraph">
-<p>When reading trailers, there can be whitespaces before and after the
+<p>When reading trailers, there can be whitespaces after the
 token, the separator and the value. There can also be whitespaces
-inside the token and the value.</p>
+inside the token and the value. The value may be split over multiple lines with
+each subsequent line starting with whitespace, like the "folding" in RFC 822.</p>
 </div>
 <div class="paragraph">
 <p>Note that <em>trailers</em> do not follow and are not intended to follow many
-rules for RFC 822 headers. For example they do not follow the line
-folding rules, the encoding rules and probably many other rules.</p>
+rules for RFC 822 headers. For example they do not follow
+the encoding rules and probably many other rules.</p>
 </div>
 </div>
 </div>
@@ -848,7 +851,7 @@ $ chmod +x .git/hooks/commit-msg</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:33 W. Europe Standard Time
+Last updated 2016-12-01 11:55:39 W. Europe Standard Time
 </div>
 </div>
 </body>

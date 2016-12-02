@@ -530,13 +530,14 @@ file.</p>
 <dd>
 <p>Use revisions from revs-file instead of calling <a href="git-rev-list.html">git-rev-list</a>(1).</p>
 </dd>
-<dt class="hdlist1">--reverse</dt>
+<dt class="hdlist1">--reverse &lt;rev&gt;..&lt;rev&gt;</dt>
 <dd>
 <p>Walk history forward instead of backward. Instead of showing
 the revision in which a line appeared, this shows the last
 revision in which a line has existed. This requires a range of
 revision like START..END where the path to blame exists in
-START.</p>
+START.  <code>git blame --reverse START</code> is taken as <code>git blame
+--reverse START..HEAD</code> for convenience.</p>
 </dd>
 <dt class="hdlist1">-p</dt>
 <dt class="hdlist1">--porcelain</dt>
@@ -627,6 +628,15 @@ take effect.</p>
 <dd>
 <p>Show help message.</p>
 </dd>
+<dt class="hdlist1">--indent-heuristic</dt>
+<dt class="hdlist1">--no-indent-heuristic</dt>
+<dt class="hdlist1">--compaction-heuristic</dt>
+<dt class="hdlist1">--no-compaction-heuristic</dt>
+<dd>
+<p>These are to help debugging and tuning experimental heuristics
+(which are off by default) that shift diff hunk boundaries to
+make patches easier to read.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -650,7 +660,7 @@ take effect.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:32 W. Europe Standard Time
+Last updated 2016-12-01 11:55:39 W. Europe Standard Time
 </div>
 </div>
 </body>

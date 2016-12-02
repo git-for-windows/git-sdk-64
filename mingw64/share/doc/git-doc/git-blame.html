@@ -432,7 +432,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="verseblock">
 <pre class="content"><em>git blame</em> [-c] [-b] [-l] [--root] [-t] [-f] [-n] [-s] [-e] [-p] [-w] [--incremental]
 	    [-L &lt;range&gt;] [-S &lt;revs-file&gt;] [-M] [-C] [-C] [-C] [--since=&lt;date&gt;]
-	    [--progress] [--abbrev=&lt;n&gt;] [&lt;rev&gt; | --contents &lt;file&gt; | --reverse &lt;rev&gt;]
+	    [--progress] [--abbrev=&lt;n&gt;] [&lt;rev&gt; | --contents &lt;file&gt; | --reverse &lt;rev&gt;..&lt;rev&gt;]
 	    [--] &lt;file&gt;</pre>
 </div>
 </div>
@@ -558,13 +558,14 @@ file.</p>
 <dd>
 <p>Use revisions from revs-file instead of calling <a href="git-rev-list.html">git-rev-list</a>(1).</p>
 </dd>
-<dt class="hdlist1">--reverse</dt>
+<dt class="hdlist1">--reverse &lt;rev&gt;..&lt;rev&gt;</dt>
 <dd>
 <p>Walk history forward instead of backward. Instead of showing
 the revision in which a line appeared, this shows the last
 revision in which a line has existed. This requires a range of
 revision like START..END where the path to blame exists in
-START.</p>
+START.  <code>git blame --reverse START</code> is taken as <code>git blame
+--reverse START..HEAD</code> for convenience.</p>
 </dd>
 <dt class="hdlist1">-p</dt>
 <dt class="hdlist1">--porcelain</dt>
@@ -702,6 +703,15 @@ the child&#8217;s to find where the lines came from.</p>
 <p>Instead of using the default 7+1 hexadecimal digits as the
 abbreviated object name, use &lt;n&gt;+1 digits. Note that 1 column
 is used for a caret to mark the boundary commit.</p>
+</dd>
+<dt class="hdlist1">--indent-heuristic</dt>
+<dt class="hdlist1">--no-indent-heuristic</dt>
+<dt class="hdlist1">--compaction-heuristic</dt>
+<dt class="hdlist1">--no-compaction-heuristic</dt>
+<dd>
+<p>These are to help debugging and tuning experimental heuristics
+(which are off by default) that shift diff hunk boundaries to
+make patches easier to read.</p>
 </dd>
 </dl>
 </div>
@@ -1060,7 +1070,7 @@ the email address.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:32 W. Europe Standard Time
+Last updated 2016-12-01 11:55:39 W. Europe Standard Time
 </div>
 </div>
 </body>

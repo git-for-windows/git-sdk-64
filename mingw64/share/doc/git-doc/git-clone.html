@@ -527,14 +527,17 @@ its source repository, you can simply run <code>git repack -a</code> to copy all
 objects from the source repository into a pack in the cloned repository.</p>
 </div>
 </dd>
-<dt class="hdlist1">--reference &lt;repository&gt;</dt>
+<dt class="hdlist1">--reference[-if-able] &lt;repository&gt;</dt>
 <dd>
 <p>If the reference repository is on the local machine,
 automatically setup <code>.git/objects/info/alternates</code> to
 obtain objects from the reference repository.  Using
 an already existing repository as an alternate will
 require fewer objects to be copied from the repository
-being cloned, reducing network and local storage costs.</p>
+being cloned, reducing network and local storage costs.
+When using the <code>--reference-if-able</code>, a non existing
+directory is skipped with a warning instead of aborting
+the clone.</p>
 <div class="paragraph">
 <p><strong>NOTE</strong>: see the NOTE for the <code>--shared</code> option, and also the
 <code>--dissociate</code> option.</p>
@@ -645,6 +648,16 @@ specified number of commits. Implies <code>--single-branch</code> unless
 <code>--no-single-branch</code> is given to fetch the histories near the
 tips of all branches. If you want to clone submodules shallowly,
 also pass <code>--shallow-submodules</code>.</p>
+</dd>
+<dt class="hdlist1">--shallow-since=&lt;date&gt;</dt>
+<dd>
+<p>Create a shallow clone with a history after the specified time.</p>
+</dd>
+<dt class="hdlist1">--shallow-exclude=&lt;revision&gt;</dt>
+<dd>
+<p>Create a shallow clone with a history, excluding commits
+reachable from a specified remote branch or tag.  This option
+can be specified multiple times.</p>
 </dd>
 <dt class="hdlist1">--[no-]single-branch</dt>
 <dd>
@@ -920,7 +933,7 @@ $ cd my-linux</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:32 W. Europe Standard Time
+Last updated 2016-12-01 11:55:39 W. Europe Standard Time
 </div>
 </div>
 </body>

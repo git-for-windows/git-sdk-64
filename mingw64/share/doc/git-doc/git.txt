@@ -13,6 +13,7 @@ SYNOPSIS
     [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
     [-p|--paginate|--no-pager] [--no-replace-objects] [--bare]
     [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
+    [--super-prefix=<path>]
     <command> [<args>]
 
 DESCRIPTION
@@ -42,6 +43,11 @@ You are reading the documentation for the latest (possibly
 unreleased) version of Git, that is available from the 'master'
 branch of the `git.git` repository.
 Documentation for older releases are available here:
+
+* link:v2.11.0/git.html[documentation for release 2.11]
+
+* release notes for
+  link:RelNotes/2.11.0.txt[2.11].
 
 * link:v2.10.2/git.html[documentation for release 2.10.2]
 
@@ -602,6 +608,11 @@ foo.bar= ...`) sets `foo.bar` to the empty string.
 	Set the Git namespace.  See linkgit:gitnamespaces[7] for more
 	details.  Equivalent to setting the `GIT_NAMESPACE` environment
 	variable.
+
+--super-prefix=<path>::
+	Currently for internal use only.  Set a prefix which gives a path from
+	above a repository down to its root.  One use is to give submodules
+	context about the superproject that invoked it.
 
 --bare::
 	Treat the repository as a bare repository.  If GIT_DIR

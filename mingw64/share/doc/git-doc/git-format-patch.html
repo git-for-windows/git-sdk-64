@@ -440,7 +440,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 		   [--start-number &lt;n&gt;] [--numbered-files]
 		   [--in-reply-to=Message-Id] [--suffix=.&lt;sfx&gt;]
 		   [--ignore-if-in-upstream]
-		   [--subject-prefix=Subject-Prefix] [(--reroll-count|-v) &lt;n&gt;]
+		   [--rfc] [--subject-prefix=Subject-Prefix]
+		   [(--reroll-count|-v) &lt;n&gt;]
 		   [--to=&lt;email&gt;] [--cc=&lt;email&gt;]
 		   [--[no-]cover-letter] [--quiet] [--notes[=&lt;ref&gt;]]
 		   [&lt;common diff options&gt;]
@@ -531,13 +532,14 @@ reference.</p>
 <p>Generate diffs with &lt;n&gt; lines of context instead of
 the usual three.</p>
 </dd>
+<dt class="hdlist1">--indent-heuristic</dt>
+<dt class="hdlist1">--no-indent-heuristic</dt>
 <dt class="hdlist1">--compaction-heuristic</dt>
 <dt class="hdlist1">--no-compaction-heuristic</dt>
 <dd>
-<p>These are to help debugging and tuning an experimental
-heuristic (which is off by default) that shifts the hunk
-boundary in an attempt to make the resulting patch easier
-to read.</p>
+<p>These are to help debugging and tuning experimental heuristics
+(which are off by default) that shift diff hunk boundaries to
+make patches easier to read.</p>
 </dd>
 <dt class="hdlist1">--minimal</dt>
 <dd>
@@ -884,6 +886,19 @@ the behavior until 1.7.0). Using "all" hides all changes to submodules.</p>
 <dd>
 <p>Do not show any source or destination prefix.</p>
 </dd>
+<dt class="hdlist1">--line-prefix=&lt;prefix&gt;</dt>
+<dd>
+<p>Prepend an additional prefix to every line of output.</p>
+</dd>
+<dt class="hdlist1">--ita-invisible-in-index</dt>
+<dd>
+<p>By default entries added by "git add -N" appear as an existing
+empty file in "git diff" and a new file in "git diff --cached".
+This option makes the entry appear as a new file in "git diff"
+and non-existent in "git diff --cached". This option could be
+reverted with <code>--ita-visible-in-index</code>. Both options are
+experimental and could be removed in future.</p>
+</dd>
 </dl>
 </div>
 <div class="paragraph">
@@ -1001,6 +1016,12 @@ ignored.</p>
 line, instead use <em>[&lt;Subject-Prefix&gt;]</em>. This
 allows for useful naming of a patch series, and can be
 combined with the <code>--numbered</code> option.</p>
+</dd>
+<dt class="hdlist1">--rfc</dt>
+<dd>
+<p>Alias for <code>--subject-prefix="RFC PATCH"</code>. RFC means "Request For
+Comments"; use this when sending an experimental patch for
+discussion rather than application.</p>
 </dd>
 <dt class="hdlist1">-v &lt;n&gt;</dt>
 <dt class="hdlist1">--reroll-count=&lt;n&gt;</dt>
@@ -1615,7 +1636,7 @@ as e-mailable patches:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:33 W. Europe Standard Time
+Last updated 2016-12-01 11:55:39 W. Europe Standard Time
 </div>
 </div>
 </body>

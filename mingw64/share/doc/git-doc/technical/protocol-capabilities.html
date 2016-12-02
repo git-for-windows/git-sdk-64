@@ -658,6 +658,40 @@ clones.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_deepen_since">deepen-since</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This capability adds "deepen-since" command to fetch-pack/upload-pack
+protocol so the client can request shallow clones that are cut at a
+specific time, instead of depth. Internally it&#8217;s equivalent of doing
+"rev-list --max-age=&lt;timestamp&gt;" on the server side. "deepen-since"
+cannot be used with "deepen".</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deepen_not">deepen-not</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This capability adds "deepen-not" command to fetch-pack/upload-pack
+protocol so the client can request shallow clones that are cut at a
+specific revision, instead of depth. Internally it&#8217;s equivalent of
+doing "rev-list --not &lt;rev&gt;" on the server side. "deepen-not"
+cannot be used with "deepen", but can be used with "deepen-since".</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deepen_relative">deepen-relative</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If this capability is requested by the client, the semantics of
+"deepen" command is changed. The "depth" argument is the depth from
+the current shallow boundary, instead of the depth from remote refs.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_no_progress">no-progress</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -800,7 +834,7 @@ this capability.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:33 W. Europe Standard Time
+Last updated 2016-12-01 11:55:40 W. Europe Standard Time
 </div>
 </div>
 </body>

@@ -1941,6 +1941,13 @@ by Windows Explorer, cmd.exe and the Git for Windows tool chain
 (msys, bash, tcl, perl&#8230;&#8203;). Only enable this if you know what you&#8217;re
 doing and are prepared to live with a few quirks.</p>
 </dd>
+<dt class="hdlist1">core.unsetenvvars</dt>
+<dd>
+<p>EXPERIMENTAL, Windows-only: comma-separated list of environment
+variables' names that need to be unset before spawning any other
+process. Defaults to <code>PERL5LIB</code> to account for the fact that Git
+for Windows insists on using its own Perl interpreter.</p>
+</dd>
 <dt class="hdlist1">core.createObject</dt>
 <dd>
 <p>You can set this to <em>link</em>, in which case a hardlink followed by
@@ -2650,10 +2657,11 @@ before each empty output line. Defaults to false.</p>
 <dt class="hdlist1">diff.submodule</dt>
 <dd>
 <p>Specify the format in which differences in submodules are
-shown.  The "log" format lists the commits in the range like
-<a href="git-submodule.html">git-submodule</a>(1) <code>summary</code> does.  The "short" format
-format just shows the names of the commits at the beginning
-and end of the range.  Defaults to short.</p>
+shown.  The "short" format just shows the names of the commits
+at the beginning and end of the range. The "log" format lists
+the commits in the range like <a href="git-submodule.html">git-submodule</a>(1) <code>summary</code>
+does. The "diff" format shows an inline diff of the changed
+contents of the submodule. Defaults to "short".</p>
 </dd>
 <dt class="hdlist1">diff.wordRegex</dt>
 <dd>
@@ -2780,11 +2788,12 @@ that a corresponding difftool.&lt;tool&gt;.cmd variable is defined.</p>
 </ul>
 </div>
 </dd>
+<dt class="hdlist1">diff.indentHeuristic</dt>
 <dt class="hdlist1">diff.compactionHeuristic</dt>
 <dd>
-<p>Set this option to <code>true</code> to enable an experimental heuristic that
-shifts the hunk boundary in an attempt to make the resulting
-patch easier to read.</p>
+<p>Set one of these options to <code>true</code> to enable one of two
+experimental heuristics that shift diff hunk boundaries to
+make patches easier to read.</p>
 </dd>
 <dt class="hdlist1">diff.algorithm</dt>
 <dd>
@@ -2815,6 +2824,13 @@ low-occurrence common elements".</p>
 </div>
 </div>
 </div>
+</dd>
+<dt class="hdlist1">diff.wsErrorHighlight</dt>
+<dd>
+<p>A comma separated list of <code>old</code>, <code>new</code>, <code>context</code>, that
+specifies how whitespace errors on lines are highlighted
+with <code>color.diff.whitespace</code>.  Can be overridden by the
+command line option <code>--ws-error-highlight=&lt;kind&gt;</code></p>
 </dd>
 <dt class="hdlist1">difftool.&lt;tool&gt;.path</dt>
 <dd>
@@ -3467,6 +3483,31 @@ of <code>curl(1)</code>)</p>
 can be used to attempt GSS-Negotiate authentication without specifying
 a username in the URL, as libcurl normally requires a username for
 authentication.</p>
+</dd>
+<dt class="hdlist1">http.delegation</dt>
+<dd>
+<p>Control GSSAPI credential delegation. The delegation is disabled
+by default in libcurl since version 7.21.7. Set parameter to tell
+the server what it is allowed to delegate when it comes to user
+credentials. Used with GSS/kerberos. Possible values are:</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>none</code> - Don&#8217;t allow any delegation.</p>
+</li>
+<li>
+<p><code>policy</code> - Delegates if and only if the OK-AS-DELEGATE flag is set in the
+Kerberos service ticket, which is a matter of realm policy.</p>
+</li>
+<li>
+<p><code>always</code> - Unconditionally allow the server to delegate.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">http.extraHeader</dt>
 <dd>
@@ -4476,16 +4517,12 @@ To drop a commit without warning or error, use the <code>drop</code>
 command in the todo-list.
 Defaults to "ignore".</p>
 </dd>
-</dl>
-</div>
-<div class="paragraph">
-<p>rebase.instructionFormat
-	A format string, as specified in <a href="git-log.html">git-log</a>(1), to be used for
-	the instruction list during an interactive rebase.  The format will automatically
-	have the long commit hash prepended to the format.</p>
-</div>
-<div class="dlist">
-<dl>
+<dt class="hdlist1">rebase.instructionFormat</dt>
+<dd>
+<p>A format string, as specified in <a href="git-log.html">git-log</a>(1), to be used for
+the instruction list during an interactive rebase.  The format will automatically
+have the long commit hash prepended to the format.</p>
+</dd>
 <dt class="hdlist1">receive.advertiseAtomic</dt>
 <dd>
 <p>By default, git-receive-pack will advertise the atomic push
@@ -4578,6 +4615,13 @@ a pack, after adding any missing delta bases.  Storing the
 pack from a push can make the push operation complete faster,
 especially on slow filesystems.  If not set, the value of
 <code>transfer.unpackLimit</code> is used instead.</p>
+</dd>
+<dt class="hdlist1">receive.maxInputSize</dt>
+<dd>
+<p>If the size of the incoming pack stream is larger than this
+limit, then git-receive-pack will error out, instead of
+accepting the pack file. If not set or set to 0, then the size
+is unlimited.</p>
 </dd>
 <dt class="hdlist1">receive.denyDeletes</dt>
 <dd>
@@ -4974,6 +5018,24 @@ A positive integer allows up to that number of submodules fetched
 in parallel. A value of 0 will give some reasonable default.
 If unset, it defaults to 1.</p>
 </dd>
+<dt class="hdlist1">submodule.alternateLocation</dt>
+<dd>
+<p>Specifies how the submodules obtain alternates when submodules are
+cloned. Possible values are <code>no</code>, <code>superproject</code>.
+By default <code>no</code> is assumed, which doesn&#8217;t add references. When the
+value is set to <code>superproject</code> the submodule to be cloned computes
+its alternates location relative to the superprojects alternate.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>submodule.alternateErrorStrategy
+	Specifies how to treat errors with the alternates for a submodule
+	as computed via <code>submodule.alternateLocation</code>. Possible values are
+	<code>ignore</code>, <code>info</code>, <code>die</code>. Default is <code>die</code>.</p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">tag.forceSignAnnotated</dt>
 <dd>
 <p>A boolean to specify whether annotated tags created should be GPG signed.
@@ -5190,7 +5252,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-11-02 12:15:33 W. Europe Standard Time
+Last updated 2016-12-01 11:55:39 W. Europe Standard Time
 </div>
 </div>
 </body>
