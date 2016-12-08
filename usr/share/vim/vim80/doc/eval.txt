@@ -1,4 +1,4 @@
-*eval.txt*	For Vim version 8.0.  Last change: 2016 Oct 02
+*eval.txt*	For Vim version 8.0.  Last change: 2016 Nov 29
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -2009,6 +2009,7 @@ byteidxcomp({expr}, {nr})	Number	byte index of {nr}'th char in {expr}
 call({func}, {arglist} [, {dict}])
 				any	call {func} with arguments {arglist}
 ceil({expr})			Float	round {expr} up
+ch_canread({handle})		Number	check if there is something to read
 ch_close({handle})		none	close {handle}
 ch_close_in({handle})		none	close in part of {handle}
 ch_evalexpr({handle}, {expr} [, {options}])
@@ -2523,7 +2524,7 @@ assert_exception({error} [, {msg}])			*assert_exception()*
 assert_fails({cmd} [, {error}])					*assert_fails()*
 		Run {cmd} and add an error message to |v:errors| if it does
 		NOT produce an error.
-		When {error} is given it must match |v:errmsg|.
+		When {error} is given it must match in |v:errmsg|.
 
 assert_false({actual} [, {msg}])				*assert_false()*
 		When {actual} is not false an error message is added to
@@ -2980,16 +2981,28 @@ confirm({msg} [, {choices} [, {default} [, {type}]]])
 		don't fit, a vertical layout is used anyway.  For some systems
 		the horizontal layout is always used.
 
+ch_canread({handle})						*ch_canread()*
+		Return non-zero when there is something to read from {handle}.
+		{handle} can be a Channel or a Job that has a Channel.
+
+		This is useful to read from a channel at a convenient time,
+		e.g. from a timer.
+
+		Note that messages are dropped when the channel does not have
+		a callback.  Add a close callback to avoid that.
+
+		{only available when compiled with the |+channel| feature}
+
 ch_close({handle})						*ch_close()*
 		Close {handle}.  See |channel-close|.
-		{handle} can be Channel or a Job that has a Channel.
+		{handle} can be a Channel or a Job that has a Channel.
 		A close callback is not invoked.
 
 		{only available when compiled with the |+channel| feature}
 
 ch_close_in({handle})						*ch_close_in()*
 		Close the "in" part of {handle}.  See |channel-close-in|.
-		{handle} can be Channel or a Job that has a Channel.
+		{handle} can be a Channel or a Job that has a Channel.
 		A close callback is not invoked.
 
 		{only available when compiled with the |+channel| feature}
@@ -2998,7 +3011,7 @@ ch_evalexpr({handle}, {expr} [, {options}])			*ch_evalexpr()*
 		Send {expr} over {handle}.  The {expr} is encoded
 		according to the type of channel.  The function cannot be used
 		with a raw channel.  See |channel-use|.
-		{handle} can be Channel or a Job that has a Channel.
+		{handle} can be a Channel or a Job that has a Channel.
 								*E917*
 		{options} must be a Dictionary.  It must not have a "callback"
 		entry.  It can have a "timeout" entry to specify the timeout
@@ -3012,7 +3025,7 @@ ch_evalexpr({handle}, {expr} [, {options}])			*ch_evalexpr()*
 
 ch_evalraw({handle}, {string} [, {options}])		*ch_evalraw()*
 		Send {string} over {handle}.
-		{handle} can be Channel or a Job that has a Channel.
+		{handle} can be a Channel or a Job that has a Channel.
 
 		Works like |ch_evalexpr()|, but does not encode the request or
 		decode the response.  The caller is responsible for the
@@ -3025,7 +3038,7 @@ ch_evalraw({handle}, {string} [, {options}])		*ch_evalraw()*
 
 ch_getbufnr({handle}, {what})				 *ch_getbufnr()*
 		Get the buffer number that {handle} is using for {what}.
-		{handle} can be Channel or a Job that has a Channel.
+		{handle} can be a Channel or a Job that has a Channel.
 		{what} can be "err" for stderr, "out" for stdout or empty for
 		socket output.
 		Returns -1 when there is no buffer.
@@ -3071,7 +3084,7 @@ ch_log({msg} [, {handle}])					*ch_log()*
 		|ch_logfile()|.
 		When {handle} is passed the channel number is used for the
 		message.
-		{handle} can be Channel or a Job that has a Channel.  The
+		{handle} can be a Channel or a Job that has a Channel.  The
 		Channel must be open for the channel number to be used.
 
 ch_logfile({fname} [, {mode}])					*ch_logfile()*
@@ -3099,7 +3112,7 @@ ch_open({address} [, {options}])				*ch_open()*
 
 ch_read({handle} [, {options}])					*ch_read()*
 		Read from {handle} and return the received message.
-		{handle} can be Channel or a Job that has a Channel.
+		{handle} can be a Channel or a Job that has a Channel.
 		See |channel-more|.
 		{only available when compiled with the |+channel| feature}
 
@@ -3113,7 +3126,7 @@ ch_sendexpr({handle}, {expr} [, {options}])			*ch_sendexpr()*
 		according to the type of channel.  The function cannot be used
 		with a raw channel.
 		See |channel-use|.				*E912*
-		{handle} can be Channel or a Job that has a Channel.
+		{handle} can be a Channel or a Job that has a Channel.
 
 		{only available when compiled with the |+channel| feature}
 
@@ -3134,7 +3147,7 @@ ch_setoptions({handle}, {options})			*ch_setoptions()*
 			"timeout"	default read timeout in msec
 			"mode"		mode for the whole channel
 		See |ch_open()| for more explanation.
-		{handle} can be Channel or a Job that has a Channel.
+		{handle} can be a Channel or a Job that has a Channel.
 
 		Note that changing the mode may cause queued messages to be
 		lost.
@@ -3148,7 +3161,7 @@ ch_status({handle} [, {options}])				*ch_status()*
 			"open"		channel can be used
 			"buffered"	channel can be read, not written to
 			"closed"	channel can not be used
-		{handle} can be Channel or a Job that has a Channel.
+		{handle} can be a Channel or a Job that has a Channel.
 		"buffered" is used when the channel was closed but there is
 		still data that can be obtained with |ch_read()|.
 
@@ -4287,7 +4300,9 @@ getcompletion({pat}, {type} [, {filtered}])		*getcompletion()*
 		locale		locale names (as output of locale -a)
 		mapping		mapping name
 		menu		menus
+		messages	|:messages| suboptions
 		option		options
+		packadd		optional package |pack-add| names
 		shellcmd	Shell command
 		sign		|:sign| suboptions
 		syntax		syntax file names |'syntax'|
@@ -8212,7 +8227,7 @@ writefile({list}, {fname} [, {flags}])
 		end does cause the last line in the file to end in a NL.
 
 		When {flags} contains "a" then append mode is used, lines are
-		append to the file: >
+		appended to the file: >
 			:call writefile(["foo"], "event.log", "a")
 			:call writefile(["bar"], "event.log", "a")
 >
@@ -8414,6 +8429,8 @@ tgetent			Compiled with tgetent support, able to use a termcap
 timers			Compiled with |timer_start()| support.
 title			Compiled with window title support |'title'|.
 toolbar			Compiled with support for |gui-toolbar|.
+ttyin			input is a terminal (tty)
+ttyout			output is a terminal (tty)
 unix			Unix version of Vim.
 user_commands		User-defined commands.
 vertsplit		Compiled with vertically split windows |:vsplit|.

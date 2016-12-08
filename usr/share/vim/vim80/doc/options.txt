@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 8.0.  Last change: 2016 Oct 01
+*options.txt*	For Vim version 8.0.  Last change: 2016 Nov 26
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -242,7 +242,7 @@ opt+=val" the expansion is done before the adding or removing.
 Handling of local options			*local-options*
 
 Some of the options only apply to a window or buffer.  Each window or buffer
-has its own copy of this option, thus can each have their own value.  This
+has its own copy of this option, thus each can have its own value.  This
 allows you to set 'list' in one window but not in another.  And set
 'shiftwidth' to 3 in one buffer and 4 in another.
 
@@ -3871,6 +3871,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 
 	The format of this option is like that of 'statusline'.
 	'guitabtooltip' is used for the tooltip, see below.
+	The expression will be evaluated in the |sandbox| when set from a
+	modeline, see |sandbox-option|.
 
 	Only used when the GUI tab pages line is displayed.  'e' must be
 	present in 'guioptions'.  For the non-GUI tab pages line 'tabline' is
@@ -4327,8 +4329,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	original position when no match is found and when pressing <Esc>.  You
 	still need to finish the search command with <Enter> to move the
 	cursor to the match.
-	You can use the CTRL-N and CTRL-P keys to move to the next and
-	previous match. |c_CTRL-N| |c_CTRL-P|
+	You can use the CTRL-G and CTRL-T keys to move to the next and
+	previous match. |c_CTRL-G| |c_CTRL-T|
 	When compiled with the |+reltime| feature Vim only searches for about
 	half a second.  With a complicated pattern and/or a lot of text the
 	match may not be found.  This is to avoid that Vim hangs while you
@@ -5699,6 +5701,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 			and |+postscript| features}
 	Expression used to print the PostScript produced with |:hardcopy|.
 	See |pexpr-option|.
+	This option cannot be set from a |modeline| or in the |sandbox|, for
+	security reasons.
 
 						*'printfont'* *'pfn'*
 'printfont' 'pfn'	string	(default "courier")
@@ -7818,7 +7822,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Amiga console, Win32 console, all GUI versions and terminals with a
 	non-empty 't_ts' option).
 	When Vim was compiled with HAVE_X11 defined, the original title will
-	be restored if possible |X11|.
+	be restored if possible, see |X11|.
 	When this option contains printf-style '%' items, they will be
 	expanded according to the rules used for 'statusline'.
 	Example: >
@@ -7966,8 +7970,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	"xterm", "xterm2", "urxvt" or "sgr" (because dec mouse codes conflict
 	with them).
 	This option is automatically set to "xterm", when the 'term' option is
-	set to a name that starts with "xterm", "mlterm", "screen", "st" (full
-	match only), "st-" or "stterm", and 'ttymouse' is not set already.
+	set to a name that starts with "xterm", "mlterm", "screen", "tmux",
+	"st" (full match only), "st-" or "stterm", and 'ttymouse' is not set
+	already.
 	Additionally, if vim is compiled with the |+termresponse| feature and
 	|t_RV| is set to the escape sequence to request the xterm version
 	number, more intelligent detection process runs.
