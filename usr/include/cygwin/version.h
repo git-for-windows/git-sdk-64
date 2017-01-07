@@ -11,7 +11,7 @@ details. */
    changes to the DLL and is mainly informative in nature. */
 
 #define CYGWIN_VERSION_DLL_MAJOR 2006
-#define CYGWIN_VERSION_DLL_MINOR 0
+#define CYGWIN_VERSION_DLL_MINOR 1
 
 /* Major numbers before CYGWIN_VERSION_DLL_EPOCH are incompatible. */
 
@@ -469,13 +469,14 @@ details. */
   302: Export nl_langinfo_l.
   303: Export pthread_getname_np, pthread_setname_np.
   304: Export strerror_l, strptime_l, wcsftime_l.
-  305: Export kill_process_tree.
+  305: [f]pathconf flag _PC_CASE_INSENSITIVE added.
+  306: Export kill_process_tree.
 
   Note that we forgot to bump the api for ualarm, strtoll, strtoull,
   sigaltstack, sethostname. */
 
 #define CYGWIN_VERSION_API_MAJOR 0
-#define CYGWIN_VERSION_API_MINOR 304
+#define CYGWIN_VERSION_API_MINOR 306
 
 /* There is also a compatibity version number associated with the shared memory
    regions.  It is incremented when incompatible changes are made to the shared

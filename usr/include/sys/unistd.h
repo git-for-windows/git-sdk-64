@@ -459,6 +459,7 @@ int	_EXFUN(unlinkat, (int, const char *, int));
 #define _SC_LEVEL4_CACHE_SIZE           137
 #define _SC_LEVEL4_CACHE_ASSOC          138
 #define _SC_LEVEL4_CACHE_LINESIZE       139
+#define _SC_POSIX_26_VERSION            140
 
 /*
  *  pathconf values per IEEE Std 1003.1, 2008 Edition
@@ -490,6 +491,7 @@ int	_EXFUN(unlinkat, (int, const char *, int));
 #define _PC_POSIX_PERMISSIONS            90
 /* Ask for full POSIX permission support including uid/gid settings. */
 #define _PC_POSIX_SECURITY               91
+#define _PC_CASE_INSENSITIVE             92
 #endif
 
 /*
