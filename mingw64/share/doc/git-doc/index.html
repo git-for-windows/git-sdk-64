@@ -1870,6 +1870,25 @@ you should specify both as <code>http:https</code>.</p>
 </ul>
 </div>
 </dd>
+<dt class="hdlist1"><code>GIT_REDIRECT_STDIN</code></dt>
+<dt class="hdlist1"><code>GIT_REDIRECT_STDOUT</code></dt>
+<dt class="hdlist1"><code>GIT_REDIRECT_STDERR</code></dt>
+<dd>
+<p>(EXPERIMENTAL) Windows-only: allow redirecting the standard
+input/output/error handles. This is particularly useful in
+multi-threaded applications where the canonical way to pass
+standard handles via <code>CreateProcess()</code> is not an option because
+it would require the handles to be marked inheritable (and
+consequently <strong>every</strong> spawned process would inherit them, possibly
+blocking regular Git operations). The primary intended use case
+is to use named pipes for communication.</p>
+<div class="paragraph">
+<p>Two special values are supported: <code>off</code> will simply close the
+corresponding standard handle, and if <code>GIT_REDIRECT_STDERR</code> is
+<code>2&gt;&amp;1</code>, standard error will be redirected to the same handle as
+standard output.</p>
+</div>
+</dd>
 </dl>
 </div>
 </div>
@@ -2018,7 +2037,7 @@ subscribed to the list to send a message there.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-12-01 11:55:40 W. Europe Standard Time
+Last updated 2017-01-13 14:43:58 W. Europe Standard Time
 </div>
 </div>
 </body>
