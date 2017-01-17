@@ -292,6 +292,10 @@ typedef struct _cairo_user_data_key {
  * @CAIRO_STATUS_DEVICE_FINISHED: target device has been finished (Since 1.12)
  * @CAIRO_STATUS_JBIG2_GLOBAL_MISSING: %CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID has been used on at least one image
  *   but no image provided %CAIRO_MIME_TYPE_JBIG2_GLOBAL (Since 1.14)
+ * @CAIRO_STATUS_PNG_ERROR: error occurred in libpng while reading from or writing to a PNG file (Since 1.16)
+ * @CAIRO_STATUS_FREETYPE_ERROR: error occurred in libfreetype (Since 1.16)
+ * @CAIRO_STATUS_WIN32_GDI_ERROR: error occurred in the Windows Graphics Device Interface (Since 1.16)
+ * @CAIRO_STATUS_TAG_ERROR: invalid tag name, attributes, or nesting (Since 1.16)
  * @CAIRO_STATUS_LAST_STATUS: this is a special value indicating the number of
  *   status values defined in this enumeration.  When using this value, note
  *   that the version of cairo at run-time may have additional status values
@@ -348,6 +352,10 @@ typedef enum _cairo_status {
     CAIRO_STATUS_INVALID_MESH_CONSTRUCTION,
     CAIRO_STATUS_DEVICE_FINISHED,
     CAIRO_STATUS_JBIG2_GLOBAL_MISSING,
+    CAIRO_STATUS_PNG_ERROR,
+    CAIRO_STATUS_FREETYPE_ERROR,
+    CAIRO_STATUS_WIN32_GDI_ERROR,
+    CAIRO_STATUS_TAG_ERROR,
 
     CAIRO_STATUS_LAST_STATUS
 } cairo_status_t;
@@ -1017,6 +1025,17 @@ cairo_copy_clip_rectangle_list (cairo_t *cr);
 
 cairo_public void
 cairo_rectangle_list_destroy (cairo_rectangle_list_t *rectangle_list);
+
+/* Logical structure tagging functions */
+
+#define CAIRO_TAG_DEST "cairo.dest"
+#define CAIRO_TAG_LINK "Link"
+
+cairo_public void
+cairo_tag_begin (cairo_t *cr, const char *tag_name, const char *attributes);
+
+cairo_public void
+cairo_tag_end (cairo_t *cr, const char *tag_name);
 
 /* Font/Text functions */
 

@@ -599,8 +599,8 @@ cairo_surface_reference (<em class="parameter"><code><a class="link" href="cairo
 <em class="parameter"><code>surface</code></em>
  from being destroyed until a matching call to
 <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-destroy" title="cairo_surface_destroy ()"><code class="function">cairo_surface_destroy()</code></a> is made.</p>
-<p>The number of references to a <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> can be get using
-<a class="link" href="cairo-cairo-surface-t.html#cairo-surface-get-reference-count" title="cairo_surface_get_reference_count ()"><code class="function">cairo_surface_get_reference_count()</code></a>.</p>
+<p>Use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-get-reference-count" title="cairo_surface_get_reference_count ()"><code class="function">cairo_surface_get_reference_count()</code></a> to get the number of
+references to a <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a>.</p>
 <div class="refsect3">
 <a name="id-1.5.3.7.5.6"></a><h4>Parameters</h4>
 <div class="informaltable"><table width="100%" border="0">
@@ -771,7 +771,7 @@ See <a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo
 <div class="refsect3">
 <a name="id-1.5.3.7.10.6"></a><h4>Returns</h4>
 <p> The device for <em class="parameter"><code>surface</code></em>
-or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the surface does
+or <code class="literal">NULL</code> if the surface does
 not have an associated device.</p>
 <p></p>
 </div>
@@ -1258,7 +1258,7 @@ cairo_surface_set_user_data (<em class="parameter"><code><a class="link" href="c
                              <em class="parameter"><code><a class="link" href="cairo-Types.html#cairo-destroy-func-t" title="cairo_destroy_func_t ()"><span class="type">cairo_destroy_func_t</span></a> destroy</code></em>);</pre>
 <p>Attach user data to <em class="parameter"><code>surface</code></em>
 .  To remove user data from a surface,
-call this function with the key that was used to set it and <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+call this function with the key that was used to set it and <code class="literal">NULL</code>
 for <em class="parameter"><code>data</code></em>
 .</p>
 <div class="refsect3">
@@ -1312,7 +1312,7 @@ cairo_surface_get_user_data (<em class="parameter"><code><a class="link" href="c
 <p>Return user data previously attached to <em class="parameter"><code>surface</code></em>
  using the specified
 key.  If no user data has been attached with the given key this
-function returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+function returns <code class="literal">NULL</code>.</p>
 <div class="refsect3">
 <a name="id-1.5.3.7.24.5"></a><h4>Parameters</h4>
 <div class="informaltable"><table width="100%" border="0">
@@ -1338,7 +1338,7 @@ attached to</p></td>
 </div>
 <div class="refsect3">
 <a name="id-1.5.3.7.24.6"></a><h4>Returns</h4>
-<p> the user data previously attached or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+<p> the user data previously attached or <code class="literal">NULL</code>.</p>
 <p></p>
 </div>
 <p class="since">Since 1.0</p>
@@ -1406,7 +1406,7 @@ cairo_surface_has_show_text_glyphs (<em class="parameter"><code><a class="link" 
 sophisticated <a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a> operations.  That is,
 whether it actually uses the provided text and cluster data
 to a <a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a> call.</p>
-<p>Note: Even if this function returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>, a
+<p>Note: Even if this function returns <code class="literal">FALSE</code>, a
 <a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a> operation targeted at <em class="parameter"><code>surface</code></em>
  will
 still succeed.  It just will
@@ -1430,9 +1430,9 @@ target surface does not use it.</p>
 </div>
 <div class="refsect3">
 <a name="id-1.5.3.7.27.7"></a><h4>Returns</h4>
-<p> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>surface</code></em>
+<p> <code class="literal">TRUE</code> if <em class="parameter"><code>surface</code></em>
 supports
-<a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a>, <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a>, <code class="literal">FALSE</code> otherwise</p>
 <p></p>
 </div>
 <p class="since">Since 1.8</p>
@@ -1451,7 +1451,7 @@ cairo_surface_set_mime_data (<em class="parameter"><code><a class="link" href="c
  to <em class="parameter"><code>surface</code></em>
 . To remove
 the data from a surface, call this function with same mime type
-and <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for <em class="parameter"><code>data</code></em>
+and <code class="literal">NULL</code> for <em class="parameter"><code>data</code></em>
 .</p>
 <p>The attached image (or filename) data can later be used by backends
 which support it (currently: PDF, PS, SVG and Win32 Printing
@@ -1541,7 +1541,7 @@ cairo_surface_get_mime_data (<em class="parameter"><code><a class="link" href="c
  using the
 specified mime type.  If no data has been attached with the given
 mime type, <em class="parameter"><code>data</code></em>
- is set <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+ is set <code class="literal">NULL</code>.</p>
 <div class="refsect3">
 <a name="id-1.5.3.7.29.5"></a><h4>Parameters</h4>
 <div class="informaltable"><table width="100%" border="0">
@@ -1609,10 +1609,10 @@ cairo_surface_supports_mime_type (<em class="parameter"><code><a class="link" hr
 </div>
 <div class="refsect3">
 <a name="id-1.5.3.7.30.6"></a><h4>Returns</h4>
-<p> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>surface</code></em>
+<p> <code class="literal">TRUE</code> if <em class="parameter"><code>surface</code></em>
 supports
 <em class="parameter"><code>mime_type</code></em>
-, <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+, <code class="literal">FALSE</code> otherwise</p>
 <p></p>
 </div>
 <p class="since">Since 1.12</p>
@@ -1626,7 +1626,7 @@ cairo_surface_map_to_image (<em class="parameter"><code><a class="link" href="ca
 <p>Returns an image surface that is the most efficient mechanism for
 modifying the backing store of the target surface. The region retrieved
 may be limited to the <em class="parameter"><code>extents</code></em>
- or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for the whole surface</p>
+ or <code class="literal">NULL</code> for the whole surface</p>
 <p>Note, the use of the original surface as a target or source whilst
 it is mapped is undefined. The result of mapping the surface
 multiple times is undefined. Calling <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-destroy" title="cairo_surface_destroy ()"><code class="function">cairo_surface_destroy()</code></a> or

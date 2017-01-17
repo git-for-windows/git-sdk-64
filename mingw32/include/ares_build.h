@@ -51,19 +51,9 @@
 /*  DEFINITION OF THESE SYMBOLS SHALL NOT TAKE PLACE ANYWHERE ELSE  */
 /* ================================================================ */
 
-#ifdef CARES_SIZEOF_LONG
-#  error "CARES_SIZEOF_LONG shall not be defined except in ares_build.h"
-   Error Compilation_aborted_CARES_SIZEOF_LONG_already_defined
-#endif
-
 #ifdef CARES_TYPEOF_ARES_SOCKLEN_T
 #  error "CARES_TYPEOF_ARES_SOCKLEN_T shall not be defined except in ares_build.h"
    Error Compilation_aborted_CARES_TYPEOF_ARES_SOCKLEN_T_already_defined
-#endif
-
-#ifdef CARES_SIZEOF_ARES_SOCKLEN_T
-#  error "CARES_SIZEOF_ARES_SOCKLEN_T shall not be defined except in ares_build.h"
-   Error Compilation_aborted_CARES_SIZEOF_ARES_SOCKLEN_T_already_defined
 #endif
 
 /* ================================================================ */
@@ -96,14 +86,8 @@
 #  include <sys/socket.h>
 #endif
 
-/* The size of `long', as computed by sizeof. */
-/* #undef CARES_SIZEOF_LONG */
-
 /* Integral data type used for ares_socklen_t. */
 #define CARES_TYPEOF_ARES_SOCKLEN_T socklen_t
-
-/* The size of `ares_socklen_t', as computed by sizeof. */
-#define CARES_SIZEOF_ARES_SOCKLEN_T 4
 
 /* Data type definition of ares_socklen_t. */
 typedef CARES_TYPEOF_ARES_SOCKLEN_T ares_socklen_t;

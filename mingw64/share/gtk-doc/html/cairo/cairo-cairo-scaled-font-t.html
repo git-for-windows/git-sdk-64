@@ -279,8 +279,8 @@ cairo_scaled_font_reference (<em class="parameter"><code><a class="link" href="c
 <em class="parameter"><code>scaled_font</code></em>
  from being destroyed until a matching call to
 <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-destroy" title="cairo_scaled_font_destroy ()"><code class="function">cairo_scaled_font_destroy()</code></a> is made.</p>
-<p>The number of references to a <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-t" title="cairo_scaled_font_t"><span class="type">cairo_scaled_font_t</span></a> can be get using
-<a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-get-reference-count" title="cairo_scaled_font_get_reference_count ()"><code class="function">cairo_scaled_font_get_reference_count()</code></a>.</p>
+<p>Use <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-get-reference-count" title="cairo_scaled_font_get_reference_count ()"><code class="function">cairo_scaled_font_get_reference_count()</code></a> to get the number of
+references to a <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-t" title="cairo_scaled_font_t"><span class="type">cairo_scaled_font_t</span></a>.</p>
 <div class="refsect3">
 <a name="id-1.4.3.7.3.6"></a><h4>Parameters</h4>
 <div class="informaltable"><table width="100%" border="0">
@@ -291,7 +291,7 @@ cairo_scaled_font_reference (<em class="parameter"><code><a class="link" href="c
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>scaled_font</p></td>
-<td class="parameter_description"><p>a <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-t" title="cairo_scaled_font_t"><span class="type">cairo_scaled_font_t</span></a>, (may be <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> in which case
+<td class="parameter_description"><p>a <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-t" title="cairo_scaled_font_t"><span class="type">cairo_scaled_font_t</span></a>, (may be <code class="literal">NULL</code> in which case
 this function does nothing)</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
@@ -513,7 +513,7 @@ cairo_scaled_font_text_to_glyphs (<em class="parameter"><code><a class="link" hr
 mapping, that can be used to render later using <em class="parameter"><code>scaled_font</code></em>
 .</p>
 <p>If <em class="parameter"><code>glyphs</code></em>
- initially points to a non-<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> value, that array is used
+ initially points to a non-<code class="literal">NULL</code> value, that array is used
 as a glyph buffer, and <em class="parameter"><code>num_glyphs</code></em>
  should point to the number of glyph
 entries available there.  If the provided glyph array is too short for
@@ -527,14 +527,14 @@ after the call, the user is responsible for freeing the allocated glyph
 array using <a class="link" href="cairo-text.html#cairo-glyph-free" title="cairo_glyph_free ()"><code class="function">cairo_glyph_free()</code></a>.  This may happen even if the provided
 array was large enough.</p>
 <p>If <em class="parameter"><code>clusters</code></em>
- is not <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, <em class="parameter"><code>num_clusters</code></em>
+ is not <code class="literal">NULL</code>, <em class="parameter"><code>num_clusters</code></em>
  and <em class="parameter"><code>cluster_flags</code></em>
- should not be <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>,
+ should not be <code class="literal">NULL</code>,
 and cluster mapping will be computed.
 The semantics of how cluster array allocation works is similar to the glyph
 array.  That is,
 if <em class="parameter"><code>clusters</code></em>
- initially points to a non-<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> value, that array is used
+ initially points to a non-<code class="literal">NULL</code> value, that array is used
 as a cluster buffer, and <em class="parameter"><code>num_clusters</code></em>
  should point to the number of cluster
 entries available there.  If the provided cluster array is too short for
@@ -549,7 +549,7 @@ array using <a class="link" href="cairo-text.html#cairo-text-cluster-free" title
 array was large enough.</p>
 <p>In the simplest case, <em class="parameter"><code>glyphs</code></em>
  and <em class="parameter"><code>clusters</code></em>
- can point to <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> initially
+ can point to <code class="literal">NULL</code> initially
 and a suitable array will be allocated.  In code:</p>
 <div class="informalexample"><pre class="programlisting">
 cairo_status_t status;
@@ -682,19 +682,19 @@ in bytes, or -1 if it is NUL-terminated</p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>clusters</p></td>
-<td class="parameter_description"><p>pointer to array of cluster mapping information to fill, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
+<td class="parameter_description"><p>pointer to array of cluster mapping information to fill, or <code class="literal">NULL</code></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
 <td class="parameter_name"><p>num_clusters</p></td>
-<td class="parameter_description"><p>pointer to number of clusters, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
+<td class="parameter_description"><p>pointer to number of clusters, or <code class="literal">NULL</code></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cluster_flags</p></td>
 <td class="parameter_description"><p>pointer to location to store cluster flags corresponding to the
 output <em class="parameter"><code>clusters</code></em>
-, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
+, or <code class="literal">NULL</code></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 </tbody>
@@ -956,7 +956,7 @@ cairo_scaled_font_set_user_data (<em class="parameter"><code><a class="link" hre
                                  <em class="parameter"><code><a class="link" href="cairo-Types.html#cairo-destroy-func-t" title="cairo_destroy_func_t ()"><span class="type">cairo_destroy_func_t</span></a> destroy</code></em>);</pre>
 <p>Attach user data to <em class="parameter"><code>scaled_font</code></em>
 .  To remove user data from a surface,
-call this function with the key that was used to set it and <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+call this function with the key that was used to set it and <code class="literal">NULL</code>
 for <em class="parameter"><code>data</code></em>
 .</p>
 <div class="refsect3">
@@ -1010,7 +1010,7 @@ cairo_scaled_font_get_user_data (<em class="parameter"><code><a class="link" hre
 <p>Return user data previously attached to <em class="parameter"><code>scaled_font</code></em>
  using the
 specified key.  If no user data has been attached with the given
-key this function returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+key this function returns <code class="literal">NULL</code>.</p>
 <div class="refsect3">
 <a name="id-1.4.3.7.18.5"></a><h4>Parameters</h4>
 <div class="informaltable"><table width="100%" border="0">
@@ -1036,7 +1036,7 @@ attached to</p></td>
 </div>
 <div class="refsect3">
 <a name="id-1.4.3.7.18.6"></a><h4>Returns</h4>
-<p> the user data previously attached or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+<p> the user data previously attached or <code class="literal">NULL</code>.</p>
 <p></p>
 </div>
 <p class="since">Since 1.4</p>

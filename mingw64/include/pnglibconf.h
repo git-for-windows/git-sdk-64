@@ -1,6 +1,6 @@
 /* pnglibconf.h - library build configuration */
 
-/* libpng version 1.6.26, October 20, 2016 */
+/* libpng version 1.6.28, January 5, 2017 */
 
 /* Copyright (c) 1998-2016 Glenn Randers-Pehrson */
 

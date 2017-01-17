@@ -87,6 +87,38 @@
 <a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-surface-set-size" title="cairo_pdf_surface_set_size ()">cairo_pdf_surface_set_size</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-surface-add-outline" title="cairo_pdf_surface_add_outline ()">cairo_pdf_surface_add_outline</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-surface-set-metadata" title="cairo_pdf_surface_set_metadata ()">cairo_pdf_surface_set_metadata</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-surface-set-page-label" title="cairo_pdf_surface_set_page_label ()">cairo_pdf_surface_set_page_label</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-surface-set-thumbnail-size" title="cairo_pdf_surface_set_thumbnail_size ()">cairo_pdf_surface_set_thumbnail_size</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
 </tbody>
 </table></div>
 </div>
@@ -101,6 +133,18 @@
 <tr>
 <td class="define_keyword">#define</td>
 <td class="function_name"><a class="link" href="cairo-PDF-Surfaces.html#CAIRO-HAS-PDF-SURFACE:CAPS" title="CAIRO_HAS_PDF_SURFACE">CAIRO_HAS_PDF_SURFACE</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="cairo-PDF-Surfaces.html#CAIRO-PDF-OUTLINE-ROOT:CAPS" title="CAIRO_PDF_OUTLINE_ROOT">CAIRO_PDF_OUTLINE_ROOT</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-outline-flags-t" title="enum cairo_pdf_outline_flags_t">cairo_pdf_outline_flags_t</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-metadata-t" title="enum cairo_pdf_metadata_t">cairo_pdf_metadata_t</a></td>
 </tr>
 <tr>
 <td class="datatype_keyword">enum</td>
@@ -156,7 +200,7 @@ to <em class="parameter"><code>filename</code></em>
 <tbody>
 <tr>
 <td class="parameter_name"><p>filename</p></td>
-<td class="parameter_description"><p>a filename for the PDF output (must be writable), <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> may be
+<td class="parameter_description"><p>a filename for the PDF output (must be writable), <code class="literal">NULL</code> may be
 used to specify no output. This will generate a PDF surface that
 may be queried and used as a source, without generating a
 temporary file.</p></td>
@@ -210,7 +254,7 @@ incrementally to the stream represented by <em class="parameter"><code>write_fun
 <tbody>
 <tr>
 <td class="parameter_name"><p>write_func</p></td>
-<td class="parameter_description"><p>a <a class="link" href="cairo-PNG-Support.html#cairo-write-func-t" title="cairo_write_func_t ()"><span class="type">cairo_write_func_t</span></a> to accept the output data, may be <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+<td class="parameter_description"><p>a <a class="link" href="cairo-PNG-Support.html#cairo-write-func-t" title="cairo_write_func_t ()"><span class="type">cairo_write_func_t</span></a> to accept the output data, may be <code class="literal">NULL</code>
 to indicate a no-op <em class="parameter"><code>write_func</code></em>
 . With a no-op <em class="parameter"><code>write_func</code></em>
 ,
@@ -325,7 +369,7 @@ cairo_pdf_get_versions (<em class="parameter"><code><a class="link" href="cairo-
 cairo_pdf_version_to_string (<em class="parameter"><code><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-version-t" title="enum cairo_pdf_version_t"><span class="type">cairo_pdf_version_t</span></a> version</code></em>);</pre>
 <p>Get the string representation of the given <em class="parameter"><code>version</code></em>
  id. This function
-will return <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>version</code></em>
+will return <code class="literal">NULL</code> if <em class="parameter"><code>version</code></em>
  isn't valid. See <a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-get-versions" title="cairo_pdf_get_versions ()"><code class="function">cairo_pdf_get_versions()</code></a>
 for a way to get the list of valid version ids.</p>
 <div class="refsect3">
@@ -393,6 +437,183 @@ surface or immediately after completing a page with either
 </div>
 <p class="since">Since 1.2</p>
 </div>
+<hr>
+<div class="refsect2">
+<a name="cairo-pdf-surface-add-outline"></a><h3>cairo_pdf_surface_add_outline ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+cairo_pdf_surface_add_outline (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>,
+                               <em class="parameter"><code><span class="type">int</span> parent_id</code></em>,
+                               <em class="parameter"><code>const <span class="type">char</span> *utf8</code></em>,
+                               <em class="parameter"><code>const <span class="type">char</span> *dest</code></em>,
+                               <em class="parameter"><code><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-outline-flags-t" title="enum cairo_pdf_outline_flags_t"><span class="type">cairo_pdf_outline_flags_t</span></a> flags</code></em>);</pre>
+<p>Add an item to the document outline hierarchy with the name <em class="parameter"><code>utf8</code></em>
+ that links to the
+destinaton <em class="parameter"><code>dest</code></em>
+. Destinations are created using
+<a class="link" href="cairo-Tags-and-Links.html#cairo-tag-begin" title="cairo_tag_begin ()"><code class="function">cairo_tag_begin()</code></a>/<a class="link" href="cairo-Tags-and-Links.html#cairo-tag-end" title="cairo_tag_end ()"><code class="function">cairo_tag_end()</code></a> with the
+<a class="link" href="cairo-Tags-and-Links.html#CAIRO-TAG-DEST:CAPS" title="CAIRO_TAG_DEST"><code class="literal">CAIRO_TAG_DEST</code></a>. The item will be a child of the item with id <em class="parameter"><code>parent_id</code></em>
+. Use <a class="link" href="cairo-PDF-Surfaces.html#CAIRO-PDF-OUTLINE-ROOT:CAPS" title="CAIRO_PDF_OUTLINE_ROOT"><code class="literal">CAIRO_PDF_OUTLINE_ROOT</code></a>
+as the parent id of top level items.</p>
+<div class="refsect3">
+<a name="id-1.5.5.7.8.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>surface</p></td>
+<td class="parameter_description"><p>a PDF <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>parent_id</p></td>
+<td class="parameter_description"><p>the id of the parent item or <a class="link" href="cairo-PDF-Surfaces.html#CAIRO-PDF-OUTLINE-ROOT:CAPS" title="CAIRO_PDF_OUTLINE_ROOT"><code class="literal">CAIRO_PDF_OUTLINE_ROOT</code></a> if this is a top level item.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>utf8</p></td>
+<td class="parameter_description"><p>the name of the outline</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>dest</p></td>
+<td class="parameter_description"><p>the name of the destination</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>flags</p></td>
+<td class="parameter_description"><p>outline item flags</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.5.5.7.8.6"></a><h4>Returns</h4>
+<p> the id for the added item.</p>
+<p></p>
+</div>
+<p class="since">Since 1.16</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="cairo-pdf-surface-set-metadata"></a><h3>cairo_pdf_surface_set_metadata ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+cairo_pdf_surface_set_metadata (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>,
+                                <em class="parameter"><code><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-metadata-t" title="enum cairo_pdf_metadata_t"><span class="type">cairo_pdf_metadata_t</span></a> metadata</code></em>,
+                                <em class="parameter"><code>const <span class="type">char</span> *utf8</code></em>);</pre>
+<p>Set document metadata. The <a class="link" href="cairo-PDF-Surfaces.html#CAIRO-PDF-METADATA-CREATE-DATE:CAPS"><code class="literal">CAIRO_PDF_METADATA_CREATE_DATE</code></a> and
+<a class="link" href="cairo-PDF-Surfaces.html#CAIRO-PDF-METADATA-MOD-DATE:CAPS"><code class="literal">CAIRO_PDF_METADATA_MOD_DATE</code></a> values must be in ISO-8601 format:
+YYYY-MM-DDThh:mm:ss. An optional timezone of the form "[+/-]hh:mm"
+or "Z" for UTC time can be appended. All other metadata values can be any UTF-8
+string.</p>
+<p>For example:</p>
+<div class="informalexample"><pre class="programlisting">
+cairo_pdf_surface_set_metadata (surface, CAIRO_PDF_METADATA_TITLE, "My Document");
+cairo_pdf_surface_set_metadata (surface, CAIRO_PDF_METADATA_CREATE_DATE, "2015-12-31T23:59+02:00");
+</pre></div>
+<div class="refsect3">
+<a name="id-1.5.5.7.9.7"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>surface</p></td>
+<td class="parameter_description"><p>a PDF <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>metadata</p></td>
+<td class="parameter_description"><p>The metadata item to set.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>utf8</p></td>
+<td class="parameter_description"><p>metadata value</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 1.16</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="cairo-pdf-surface-set-page-label"></a><h3>cairo_pdf_surface_set_page_label ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+cairo_pdf_surface_set_page_label (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>,
+                                  <em class="parameter"><code>const <span class="type">char</span> *utf8</code></em>);</pre>
+<p>Set page label for the current page.</p>
+<div class="refsect3">
+<a name="id-1.5.5.7.10.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>surface</p></td>
+<td class="parameter_description"><p>a PDF <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>utf8</p></td>
+<td class="parameter_description"><p>The page label.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 1.16</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="cairo-pdf-surface-set-thumbnail-size"></a><h3>cairo_pdf_surface_set_thumbnail_size ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+cairo_pdf_surface_set_thumbnail_size (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>,
+                                      <em class="parameter"><code><span class="type">int</span> width</code></em>,
+                                      <em class="parameter"><code><span class="type">int</span> height</code></em>);</pre>
+<p>Set the thumbnail image size for the current and all subsequent
+pages. Setting a width or height of 0 disables thumbnails for the
+current and subsequent pages.</p>
+<div class="refsect3">
+<a name="id-1.5.5.7.11.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>surface</p></td>
+<td class="parameter_description"><p>a PDF <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>width</p></td>
+<td class="parameter_description"><p>Thumbnail width.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>height</p></td>
+<td class="parameter_description"><p>Thumbnail height</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 1.16</p>
+</div>
 </div>
 <div class="refsect1">
 <a name="cairo-PDF-Surfaces.other_details"></a><h2>Types and Values</h2>
@@ -406,11 +627,129 @@ This macro can be used to conditionally compile backend-specific code.</p>
 </div>
 <hr>
 <div class="refsect2">
+<a name="CAIRO-PDF-OUTLINE-ROOT:CAPS"></a><h3>CAIRO_PDF_OUTLINE_ROOT</h3>
+<pre class="programlisting">#define CAIRO_PDF_OUTLINE_ROOT 0
+</pre>
+<p>The root outline item in <a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-surface-add-outline" title="cairo_pdf_surface_add_outline ()"><code class="function">cairo_pdf_surface_add_outline()</code></a>.</p>
+<p class="since">Since 1.16</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="cairo-pdf-outline-flags-t"></a><h3>enum cairo_pdf_outline_flags_t</h3>
+<p><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-outline-flags-t" title="enum cairo_pdf_outline_flags_t"><span class="type">cairo_pdf_outline_flags_t</span></a> is used by the
+<a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-surface-add-outline" title="cairo_pdf_surface_add_outline ()"><code class="function">cairo_pdf_surface_add_outline()</code></a> function specify the attributes of
+an outline item. These flags may be bitwise-or'd to produce any
+combination of flags.</p>
+<div class="refsect3">
+<a name="id-1.5.5.8.4.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-BOOKMARK-FLAG-OPEN:CAPS"></a>CAIRO_BOOKMARK_FLAG_OPEN</p></td>
+<td class="enum_member_description">
+<p>The outline item defaults to open in the PDF viewer (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-BOOKMARK-FLAG-BOLD:CAPS"></a>CAIRO_BOOKMARK_FLAG_BOLD</p></td>
+<td class="enum_member_description">
+<p>The outline item is displayed by the viewer in bold text (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-BOOKMARK-FLAG-ITALIC:CAPS"></a>CAIRO_BOOKMARK_FLAG_ITALIC</p></td>
+<td class="enum_member_description">
+<p>The outline item is displayed by the viewer in italic text (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 1.16</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="cairo-pdf-metadata-t"></a><h3>enum cairo_pdf_metadata_t</h3>
+<p><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-metadata-t" title="enum cairo_pdf_metadata_t"><span class="type">cairo_pdf_metadata_t</span></a> is used by the
+<a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-surface-set-metadata" title="cairo_pdf_surface_set_metadata ()"><code class="function">cairo_pdf_surface_set_metadata()</code></a> function specify the metadata to set.</p>
+<div class="refsect3">
+<a name="id-1.5.5.8.5.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-PDF-METADATA-TITLE:CAPS"></a>CAIRO_PDF_METADATA_TITLE</p></td>
+<td class="enum_member_description">
+<p>The document title (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-PDF-METADATA-AUTHOR:CAPS"></a>CAIRO_PDF_METADATA_AUTHOR</p></td>
+<td class="enum_member_description">
+<p>The document author (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-PDF-METADATA-SUBJECT:CAPS"></a>CAIRO_PDF_METADATA_SUBJECT</p></td>
+<td class="enum_member_description">
+<p>The document subject (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-PDF-METADATA-KEYWORDS:CAPS"></a>CAIRO_PDF_METADATA_KEYWORDS</p></td>
+<td class="enum_member_description">
+<p>The document keywords (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-PDF-METADATA-CREATOR:CAPS"></a>CAIRO_PDF_METADATA_CREATOR</p></td>
+<td class="enum_member_description">
+<p>The document creator (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-PDF-METADATA-CREATE-DATE:CAPS"></a>CAIRO_PDF_METADATA_CREATE_DATE</p></td>
+<td class="enum_member_description">
+<p>The document creation date (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-PDF-METADATA-MOD-DATE:CAPS"></a>CAIRO_PDF_METADATA_MOD_DATE</p></td>
+<td class="enum_member_description">
+<p>The document modification date (Since 1.16)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 1.16</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="cairo-pdf-version-t"></a><h3>enum cairo_pdf_version_t</h3>
 <p><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-version-t" title="enum cairo_pdf_version_t"><span class="type">cairo_pdf_version_t</span></a> is used to describe the version number of the PDF
 specification that a generated PDF file will conform to.</p>
 <div class="refsect3">
-<a name="id-1.5.5.8.3.4"></a><h4>Members</h4>
+<a name="id-1.5.5.8.6.4"></a><h4>Members</h4>
 <div class="informaltable"><table width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
