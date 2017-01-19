@@ -26,9 +26,9 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	2.7
-srcdir=		../Python-2.7.12
-VPATH=		../Python-2.7.12
-abs_srcdir=	/scripts/mingw-w64-python2/src/build-i686/../Python-2.7.12
+srcdir=		../Python-2.7.13
+VPATH=		../Python-2.7.13
+abs_srcdir=	/scripts/mingw-w64-python2/src/build-i686/../Python-2.7.13
 abs_builddir=	/scripts/mingw-w64-python2/src/build-i686
 build=		i686-w64-mingw32
 host=		i686-w64-mingw32
@@ -108,9 +108,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.12
-VPATH_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.12
-abs_srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.12
+srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.13
+VPATH_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.13
+abs_srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.13
 abs_builddir_b2h=	C:/repo/mingw-w64-python2/src/build-i686
 prefix_b2h=		C:/building/msys64/mingw32
 
@@ -209,7 +209,6 @@ UNICODE_OBJS=   Objects/unicodeobject.o Objects/unicodectype.o
 PYTHON=		python$(EXE)
 BUILDPYTHON=	python$(BUILDEXE)
 
-cross_compiling=no
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 _PYTHON_HOST_PLATFORM=
 HOST_GNU_TYPE=  i686-w64-mingw32
@@ -713,22 +712,11 @@ Modules/grpmodule.o: $(srcdir)/Modules/grpmodule.c $(srcdir)/Modules/posixmodule
 
 Modules/pwdmodule.o: $(srcdir)/Modules/pwdmodule.c $(srcdir)/Modules/posixmodule.h
 
-$(GRAMMAR_H): $(GRAMMAR_INPUT) $(PGEN)
+$(GRAMMAR_H):  $(GRAMMAR_INPUT) $(PGEN)
 	@$(MKDIR_P) Include
-	# Avoid copying the file onto itself for an in-tree build
-	if test "$(cross_compiling)" != "yes"; then \
-		$(PGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C); \
-	else \
-		cp $(srcdir)/Include/graminit.h $(GRAMMAR_H).tmp; \
-		mv $(GRAMMAR_H).tmp $(GRAMMAR_H); \
-	fi
-$(GRAMMAR_C): $(GRAMMAR_H)
-	if test "$(cross_compiling)" != "yes"; then \
-		touch $(GRAMMAR_C); \
-	else \
-		cp $(srcdir)/Python/graminit.c $(GRAMMAR_C).tmp; \
-		mv $(GRAMMAR_C).tmp $(GRAMMAR_C); \
-	fi
+	$(PGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C)
+$(GRAMMAR_C):  $(GRAMMAR_H)
+	touch $(GRAMMAR_C)
 
 $(PGEN):	$(PGENOBJS)
 		$(CC) $(OPT) $(LDFLAGS) $(PGENOBJS) $(LIBS) -o $(PGEN)
@@ -928,7 +916,7 @@ testuniversal:	all platform
 
 # Like testall, but with a single pass only
 # run an optional script to include some information about the build environment
-buildbottest:	all platform
+buildbottest:	build_all platform
 		-@if which pybuildbot.identify >/dev/null 2>&1; then \
 			pybuildbot.identify "CC='$(CC)'" "CXX='$(CXX)'"; \
 		fi
@@ -1284,7 +1272,7 @@ libainstall:	all python-config
 		$(INSTALL_SCRIPT) $(srcdir)/Modules/makexp_aix	\
 				$(DESTDIR)$(LIBPL)/makexp_aix;		\
 		echo "$(LIBPL)/makexp_aix";			\
-		$(INSTALL_SCRIPT) $(srcdir)/Modules/ld_so_aix	\
+		$(INSTALL_SCRIPT) Modules/ld_so_aix	\
 				$(DESTDIR)$(LIBPL)/ld_so_aix;		\
 		echo "$(LIBPL)/ld_so_aix";			\
 		echo; echo "See Misc/AIX-NOTES for details.";	\
@@ -1451,7 +1439,7 @@ clean: pycremoval
 	find build -name 'fficonfig.h' -exec rm -f {} ';' || true
 	find build -name 'fficonfig.py' -exec rm -f {} ';' || true
 	-rm -f Lib/lib2to3/*Grammar*.pickle
-	-rm -rf build
+	-find build -type f -a ! -name '*.gc??' -exec rm -f {} ';'
 
 profile-removal:
 	find . -name '*.gc??' -exec rm -f {} ';'
@@ -1477,7 +1465,11 @@ distclean: clobber
 		Modules/ld_so_aix Modules/python.exp Misc/python.pc
 	-rm -f python*-gdb.py
 	-rm -f pybuilddir.txt
-	find $(srcdir)/[a-zA-Z]* '(' -name '*.fdc' -o -name '*~' \
+	# Issue #28258: set LC_ALL to avoid issues with Estonian locale.
+	# Expansion is performed here by shell (spawned by make) itself before
+	# arguments are passed to find. So LC_ALL=C must be set as a separate
+	# command.
+	LC_ALL=C; find $(srcdir)/[a-zA-Z]* '(' -name '*.fdc' -o -name '*~' \
 				     -o -name '[@,#]*' -o -name '*.old' \
 				     -o -name '*.orig' -o -name '*.rej' \
 				     -o -name '*.bak' ')' \

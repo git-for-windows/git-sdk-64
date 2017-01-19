@@ -32,7 +32,7 @@
  *     and: Thomas E. Dickey                        1996-on                 *
  ****************************************************************************/
 
-/* $Id: curses.h.in,v 1.243 2016/01/23 22:20:31 tom Exp $ */
+/* $Id: curses.h.in,v 1.244 2016/12/10 23:56:23 tom Exp $ */
 
 #ifndef __NCURSES_H
 #define __NCURSES_H
@@ -43,7 +43,7 @@
 /* These are defined only in curses.h, and are used for conditional compiles */
 #define NCURSES_VERSION_MAJOR 6
 #define NCURSES_VERSION_MINOR 0
-#define NCURSES_VERSION_PATCH 20161105
+#define NCURSES_VERSION_PATCH 20170114
 
 /* This is defined in more than one ncurses header, for identification */
 #undef  NCURSES_VERSION
@@ -108,6 +108,15 @@
  */
 #ifndef NCURSES_OPAQUE
 #define NCURSES_OPAQUE 0
+#endif
+
+/*
+ * Definition used to optionally suppress wattr* macros to help with the
+ * transition from ncurses5 to ncurses6 by allowing the header files to
+ * be shared across development packages for ncursesw in both ABIs.
+ */
+#ifndef NCURSES_WATTR_MACROS
+#define NCURSES_WATTR_MACROS 1
 #endif
 
 /*
@@ -407,7 +416,7 @@ typedef struct
     wchar_t	chars[CCHARW_MAX];
 #if 1
 #undef NCURSES_EXT_COLORS
-#define NCURSES_EXT_COLORS 20161105
+#define NCURSES_EXT_COLORS 20170114
     int		ext_color;	/* color pair, must be more than 16-bits */
 #endif
 }
@@ -895,7 +904,7 @@ extern NCURSES_EXPORT(int) getpary (const WINDOW *);			/* generated */
  */
 #if 1
 #undef  NCURSES_EXT_FUNCS
-#define NCURSES_EXT_FUNCS 20161105
+#define NCURSES_EXT_FUNCS 20170114
 typedef int (*NCURSES_WINDOW_CB)(WINDOW *, void *);
 typedef int (*NCURSES_SCREEN_CB)(SCREEN *, void *);
 extern NCURSES_EXPORT(bool) is_term_resized (int, int);
@@ -948,7 +957,7 @@ extern NCURSES_EXPORT(int) wgetscrreg (const WINDOW *, int *, int *); /* generat
  */
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20161105
+#define NCURSES_SP_FUNCS 20170114
 #define NCURSES_SP_NAME(name) name##_sp
 
 /* Define the sp-funcs helper function */
@@ -1153,6 +1162,7 @@ extern NCURSES_EXPORT(int) NCURSES_SP_NAME(use_legacy_coding) (SCREEN*, int);	/*
 #define wattroff(win,at)	wattr_off(win, NCURSES_CAST(attr_t, at), NULL)
 
 #if !NCURSES_OPAQUE
+#if NCURSES_WATTR_MACROS
 #if NCURSES_WIDECHAR && 1
 #define wattrset(win,at)	((win) \
 				  ? ((win)->_color = NCURSES_CAST(int, PAIR_NUMBER(at)), \
@@ -1165,6 +1175,7 @@ extern NCURSES_EXPORT(int) NCURSES_SP_NAME(use_legacy_coding) (SCREEN*, int);	/*
 				     OK) \
 				  : ERR)
 #endif
+#endif /* NCURSES_WATTR_MACROS */
 #endif /* NCURSES_OPAQUE */
 
 #define scroll(win)		wscrl(win,1)
@@ -1301,6 +1312,7 @@ extern NCURSES_EXPORT(int) NCURSES_SP_NAME(use_legacy_coding) (SCREEN*, int);	/*
 #define slk_attr_on(a,v)		((v) ? ERR : slk_attron(a))
 
 #if !NCURSES_OPAQUE
+#if NCURSES_WATTR_MACROS
 #if NCURSES_WIDECHAR && 1
 #define wattr_set(win,a,p,opts)		(((win) \
 					  ? ((win)->_attrs = ((a) & ~A_COLOR), \
@@ -1319,6 +1331,7 @@ extern NCURSES_EXPORT(int) NCURSES_SP_NAME(use_legacy_coding) (SCREEN*, int);	/*
 					 (void)(((p) != (void *)0) ? (*(p) = (NCURSES_PAIRS_T) ((win) ? PAIR_NUMBER((win)->_attrs) : 0)) : OK), \
 					 OK)
 #endif
+#endif /* NCURSES_WATTR_MACROS */
 #endif /* NCURSES_OPAQUE */
 
 /*

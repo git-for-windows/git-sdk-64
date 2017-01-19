@@ -548,9 +548,6 @@
 /* Define to 1 if you have the `putenv' function. */
 #define HAVE_PUTENV 1
 
-/* Define if the libcrypto has RAND_egd */
-#define HAVE_RAND_EGD 1
-
 /* Define to 1 if you have the `readlink' function. */
 /* #undef HAVE_READLINK */
 
