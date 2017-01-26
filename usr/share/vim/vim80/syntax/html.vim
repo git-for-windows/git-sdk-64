@@ -1,9 +1,10 @@
 " Vim syntax file
-" Language:	HTML
-" Maintainer:	Claudio Fleiner <claudio@fleiner.com>
-" URL:		http://www.fleiner.com/vim/syntax/html.vim
-" Last Change:	2015 Jan 07
-"		included patch from David Felix
+" Language:             HTML
+" Maintainer:           Jorge Maldonado Ventura <jorgesumle@freakspot.net>
+" Previous Maintainer:  Claudio Fleiner <claudio@fleiner.com>
+" Repository:           https://notabug.org/jorgesumle/vim-html-syntax
+" Last Change:          2017 Jan 04
+"                       included patch from Jorge Maldonado Ventura
 
 " Please check :help html.vim for some comments and a description of the options
 
@@ -53,6 +54,14 @@ syn keyword htmlTagName contained abbr acronym bdo button col label
 syn keyword htmlTagName contained colgroup del fieldset iframe ins legend
 syn keyword htmlTagName contained object optgroup q s tbody tfoot thead
 
+" new html 5 tags
+syn keyword htmlTagName contained article aside audio bdi canvas datalist
+syn keyword htmlTagName contained details embed figcaption figure
+syn keyword htmlTagName contained footer header hgroup main mark
+syn keyword htmlTagName contained menuitem meter nav output picture
+syn keyword htmlTagName contained progress rb rp rt rtc ruby section
+syn keyword htmlTagName contained slot source template time track video wbr
+
 " legal arg names
 syn keyword htmlArg contained action
 syn keyword htmlArg contained align alink alt archive background bgcolor
@@ -86,6 +95,10 @@ syn keyword htmlArg contained headers hreflang lang language longdesc
 syn keyword htmlArg contained multiple nohref nowrap object profile readonly
 syn keyword htmlArg contained rules scheme scope span standby style
 syn keyword htmlArg contained summary tabindex valuetype version
+
+" html 5 arg names
+syn keyword htmlArg contained contenteditable contextmenu draggable dropzone
+syn keyword htmlArg contained hidden spellcheck title translate
 
 " special characters
 syn match htmlSpecialChar "&#\=[0-9A-Za-z]\{1,8};"
