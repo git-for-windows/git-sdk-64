@@ -1,15 +1,15 @@
 <HTML>
 <HEAD>
 <!-- This HTML file has been created by texi2html 1.52b
-     from gperf.texi on 1 February 2009 -->
+     from gperf.texi on 2 January 2017 -->
 
 <META HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
 <TITLE>Perfect Hash Function Generator</TITLE>
 </HEAD>
 <BODY>
-<H1>User's Guide to <CODE>gperf</CODE> 3.0.4</H1>
+<H1>User's Guide to <CODE>gperf</CODE> 3.1</H1>
 <H2>The GNU Perfect Hash Function Generator</H2>
-<H2>Edition 3.0.4, 1 February 2009</H2>
+<H2>Edition 3.1, 26 November 2016</H2>
 <ADDRESS>Douglas C. Schmidt</ADDRESS>
 <ADDRESS>Bruno Haible</ADDRESS>
 <P>
@@ -36,26 +36,27 @@
 </UL>
 <LI><A NAME="TOC14" HREF="gperf.html#SEC14">4.2  Output Format for Generated C Code with <CODE>gperf</CODE></A>
 <LI><A NAME="TOC15" HREF="gperf.html#SEC15">4.3  Use of NUL bytes</A>
-<LI><A NAME="TOC16" HREF="gperf.html#SEC16">4.4  The Copyright of the Output</A>
+<LI><A NAME="TOC16" HREF="gperf.html#SEC16">4.4  Controlling Identifiers</A>
+<LI><A NAME="TOC17" HREF="gperf.html#SEC17">4.5  The Copyright of the Output</A>
 </UL>
-<LI><A NAME="TOC17" HREF="gperf.html#SEC17">5  Invoking <CODE>gperf</CODE></A>
+<LI><A NAME="TOC18" HREF="gperf.html#SEC18">5  Invoking <CODE>gperf</CODE></A>
 <UL>
-<LI><A NAME="TOC18" HREF="gperf.html#SEC18">5.1  Specifying the Location of the Output File</A>
-<LI><A NAME="TOC19" HREF="gperf.html#SEC19">5.2  Options that affect Interpretation of the Input File</A>
-<LI><A NAME="TOC20" HREF="gperf.html#SEC20">5.3  Options to specify the Language for the Output Code</A>
-<LI><A NAME="TOC21" HREF="gperf.html#SEC21">5.4  Options for fine tuning Details in the Output Code</A>
-<LI><A NAME="TOC22" HREF="gperf.html#SEC22">5.5  Options for changing the Algorithms employed by <CODE>gperf</CODE></A>
-<LI><A NAME="TOC23" HREF="gperf.html#SEC23">5.6  Informative Output</A>
+<LI><A NAME="TOC19" HREF="gperf.html#SEC19">5.1  Specifying the Location of the Output File</A>
+<LI><A NAME="TOC20" HREF="gperf.html#SEC20">5.2  Options that affect Interpretation of the Input File</A>
+<LI><A NAME="TOC21" HREF="gperf.html#SEC21">5.3  Options to specify the Language for the Output Code</A>
+<LI><A NAME="TOC22" HREF="gperf.html#SEC22">5.4  Options for fine tuning Details in the Output Code</A>
+<LI><A NAME="TOC23" HREF="gperf.html#SEC23">5.5  Options for changing the Algorithms employed by <CODE>gperf</CODE></A>
+<LI><A NAME="TOC24" HREF="gperf.html#SEC24">5.6  Informative Output</A>
 </UL>
-<LI><A NAME="TOC24" HREF="gperf.html#SEC24">6  Known Bugs and Limitations with <CODE>gperf</CODE></A>
-<LI><A NAME="TOC25" HREF="gperf.html#SEC25">7  Things Still Left to Do</A>
-<LI><A NAME="TOC26" HREF="gperf.html#SEC26">8  Bibliography</A>
-<LI><A NAME="TOC27" HREF="gperf.html#SEC27">Concept Index</A>
+<LI><A NAME="TOC25" HREF="gperf.html#SEC25">6  Known Bugs and Limitations with <CODE>gperf</CODE></A>
+<LI><A NAME="TOC26" HREF="gperf.html#SEC26">7  Things Still Left to Do</A>
+<LI><A NAME="TOC27" HREF="gperf.html#SEC27">8  Bibliography</A>
+<LI><A NAME="TOC28" HREF="gperf.html#SEC28">Concept Index</A>
 </UL>
 <P><HR><P>
 
 <P>
-Copyright (C) 1989-2009 Free Software Foundation, Inc.
+Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
 </P>
 
@@ -879,7 +880,7 @@ Bostic's algorithm written in C, and distributed to net.sources around
 1984.  The current program is a heavily modified, enhanced, and extended
 implementation of Keith's basic idea, created at the University of
 California, Irvine.  Bugs, patches, and suggestions should be reported
-to <CODE>&#60;bug-gnu-gperf@gnu.org&#62;</CODE>.
+to <CODE>&#60;bug-gperf@gnu.org&#62;</CODE>.
 
 <LI>
 
@@ -1251,7 +1252,7 @@ ISO C99 compilers, and C++ compilers.
 C++.  This language is understood by C++ compilers.
 </DL>
 
-The default is C.
+The default is ANSI-C.
 
 <DT><SAMP>&lsquo;%define slot-name <VAR>name</VAR>&rsquo;</SAMP>
 <DD>
@@ -1382,9 +1383,19 @@ This reduces the startup time of programs using a shared library containing
 the generated code (but not as much as the declaration <SAMP>&lsquo;%pic&rsquo;</SAMP>), at the
 expense of one more test-and-branch instruction at run time.
 
-<DT><SAMP>&lsquo;%define word-array-name <VAR>name</VAR>&rsquo;</SAMP>
+<DT><SAMP>&lsquo;%define constants-prefix <VAR>prefix</VAR>&rsquo;</SAMP>
 <DD>
 <A NAME="IDX28"></A>
+Allows you to specify a prefix for the constants <CODE>TOTAL_KEYWORDS</CODE>,
+<CODE>MIN_WORD_LENGTH</CODE>, <CODE>MAX_WORD_LENGTH</CODE>, and so on.  This option
+permits the use of two hash tables in the same file, even when the option
+<SAMP>&lsquo;-E&rsquo;</SAMP> (or, equivalently, the <SAMP>&lsquo;%enum&rsquo;</SAMP> declaration) is not given or
+the option <SAMP>&lsquo;-G&rsquo;</SAMP> (or, equivalently, the <SAMP>&lsquo;%global-table&rsquo;</SAMP> declaration)
+is given.
+
+<DT><SAMP>&lsquo;%define word-array-name <VAR>name</VAR>&rsquo;</SAMP>
+<DD>
+<A NAME="IDX29"></A>
 Allows you to specify the name for the generated array containing the
 hash table.  Default name is <SAMP>&lsquo;wordlist&rsquo;</SAMP>.  This option permits the
 use of two hash tables in the same file, even when the option <SAMP>&lsquo;-G&rsquo;</SAMP>
@@ -1392,7 +1403,7 @@ use of two hash tables in the same file, even when the option <SAMP>&lsquo;-G&rs
 
 <DT><SAMP>&lsquo;%define length-table-name <VAR>name</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX29"></A>
+<A NAME="IDX30"></A>
 Allows you to specify the name for the generated array containing the
 length table.  Default name is <SAMP>&lsquo;lengthtable&rsquo;</SAMP>.  This option permits the
 use of two length tables in the same file, even when the option <SAMP>&lsquo;-G&rsquo;</SAMP>
@@ -1400,7 +1411,7 @@ use of two length tables in the same file, even when the option <SAMP>&lsquo;-G&
 
 <DT><SAMP>&lsquo;%switch=<VAR>count</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX30"></A>
+<A NAME="IDX31"></A>
 Causes the generated C code to use a <CODE>switch</CODE> statement scheme,
 rather than an array lookup table.  This can lead to a reduction in both
 time and space requirements for some input files.  The argument to this
@@ -1413,7 +1424,7 @@ was inspired in part by Keith Bostic's original C program.
 
 <DT><SAMP>&lsquo;%omit-struct-type&rsquo;</SAMP>
 <DD>
-<A NAME="IDX31"></A>
+<A NAME="IDX32"></A>
 Prevents the transfer of the type declaration to the output file.  Use
 this option if the type is already defined elsewhere.
 </DL>
@@ -1423,8 +1434,8 @@ this option if the type is already defined elsewhere.
 <H4><A NAME="SEC10" HREF="gperf.html#TOC10">4.1.1.3  C Code Inclusion</A></H4>
 
 <P>
-<A NAME="IDX32"></A>
 <A NAME="IDX33"></A>
+<A NAME="IDX34"></A>
 Using a syntax similar to GNU utilities <CODE>flex</CODE> and <CODE>bison</CODE>, it
 is possible to directly include C source text and comments verbatim into
 the generated output file.  This is accomplished by enclosing the region
@@ -1569,7 +1580,7 @@ functions
 
 <H2><A NAME="SEC14" HREF="gperf.html#TOC14">4.2  Output Format for Generated C Code with <CODE>gperf</CODE></A></H2>
 <P>
-<A NAME="IDX34"></A>
+<A NAME="IDX35"></A>
 
 </P>
 <P>
@@ -1583,8 +1594,8 @@ function prototypes are as follows:
 </P>
 <P>
 <DL>
-<DT><U>Function:</U> unsigned int <B>hash</B> <I>(const char * <VAR>str</VAR>, unsigned int <VAR>len</VAR>)</I>
-<DD><A NAME="IDX35"></A>
+<DT><U>Function:</U> unsigned int <B>hash</B> <I>(const char * <VAR>str</VAR>, size_t <VAR>len</VAR>)</I>
+<DD><A NAME="IDX36"></A>
 By default, the generated <CODE>hash</CODE> function returns an integer value
 created by adding <VAR>len</VAR> to several user-specified <VAR>str</VAR> byte
 positions indexed into an <EM>associated values</EM> table stored in a
@@ -1592,14 +1603,14 @@ local static array.  The associated values table is constructed
 internally by <CODE>gperf</CODE> and later output as a static local C array
 called <SAMP>&lsquo;hash_table&rsquo;</SAMP>.  The relevant selected positions (i.e. indices
 into <VAR>str</VAR>) are specified via the <SAMP>&lsquo;-k&rsquo;</SAMP> option when running
-<CODE>gperf</CODE>, as detailed in the <EM>Options</EM> section below (see section <A HREF="gperf.html#SEC17">5  Invoking <CODE>gperf</CODE></A>).
+<CODE>gperf</CODE>, as detailed in the <EM>Options</EM> section below (see section <A HREF="gperf.html#SEC18">5  Invoking <CODE>gperf</CODE></A>).
 </DL>
 
 </P>
 <P>
 <DL>
-<DT><U>Function:</U>  <B>in_word_set</B> <I>(const char * <VAR>str</VAR>, unsigned int <VAR>len</VAR>)</I>
-<DD><A NAME="IDX36"></A>
+<DT><U>Function:</U>  <B>in_word_set</B> <I>(const char * <VAR>str</VAR>, size_t <VAR>len</VAR>)</I>
+<DD><A NAME="IDX37"></A>
 If <VAR>str</VAR> is in the keyword set, returns a pointer to that
 keyword.  More exactly, if the option <SAMP>&lsquo;-t&rsquo;</SAMP> (or, equivalently, the
 <SAMP>&lsquo;%struct-type&rsquo;</SAMP> declaration) was given, it returns
@@ -1634,7 +1645,7 @@ Make use of the user-defined <CODE>struct</CODE>.
 <DD>
 <DT><SAMP>&lsquo;--switch=<VAR>total-switch-statements</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX37"></A>
+<A NAME="IDX38"></A>
 Generate 1 or more C <CODE>switch</CODE> statement rather than use a large,
 (and potentially sparse) static array.  Although the exact time and
 space savings of this approach vary according to your C compiler's
@@ -1657,7 +1668,7 @@ set characteristics.
 
 <H2><A NAME="SEC15" HREF="gperf.html#TOC15">4.3  Use of NUL bytes</A></H2>
 <P>
-<A NAME="IDX38"></A>
+<A NAME="IDX39"></A>
 
 </P>
 <P>
@@ -1689,9 +1700,74 @@ Also, in this case the <SAMP>&lsquo;-c&rsquo;</SAMP> option (or, equivalently, t
 </P>
 
 
-<H2><A NAME="SEC16" HREF="gperf.html#TOC16">4.4  The Copyright of the Output</A></H2>
+<H2><A NAME="SEC16" HREF="gperf.html#TOC16">4.4  Controlling Identifiers</A></H2>
+
 <P>
-<A NAME="IDX39"></A>
+The identifiers of the functions, tables, and constants defined by the code
+generated by <CODE>gperf</CODE> can be controlled through <CODE>gperf</CODE> declarations
+or the equivalent command-line options.  This is useful for three purposes:
+
+</P>
+
+<UL>
+<LI>
+
+Esthetics of the generated code.
+
+For this purpose, just use the available declarations or options at will.
+
+<LI>
+
+Controlling the exported identifiers of a library.
+
+Assume you include code generated by <CODE>gperf</CODE> in a library, and to
+avoid collisions with other libraries, you want to ensure that all exported
+identifiers of this library start with a certain prefix.
+
+By default, the only exported identifier is the lookup function.  You can
+therefore use the option <SAMP>&lsquo;-N&rsquo;</SAMP> (or, equivalently, the
+<SAMP>&lsquo;%define lookup-function-name&rsquo;</SAMP> declaration).
+
+When you use the option <SAMP>&lsquo;-L C++&rsquo;</SAMP> (or, equivalently, the
+<SAMP>&lsquo;%language=C++&rsquo;</SAMP> declaration), the only exported entity is a class.
+You control its name through the option <SAMP>&lsquo;-Z&rsquo;</SAMP> (or, equivalently, the
+<SAMP>&lsquo;%define class-name&rsquo;</SAMP> declaration).
+
+<LI>
+
+Allowing multiple <CODE>gperf</CODE> generated codes in a single compilation unit.
+
+Assume you invoke <CODE>gperf</CODE> multiple times, with different input files,
+and want the generated code to included from the same source file.  In this
+case, you have to customize not only the exported identifiers, but also the
+names of functions with <SAMP>&lsquo;static&rsquo;</SAMP> scope, types, and constants.
+
+By default, you will have to deal with the lookup function, the hash
+function, and the constants.  You should therefore use the option <SAMP>&lsquo;-N&rsquo;</SAMP>
+(or, equivalently, the <SAMP>&lsquo;%define lookup-function-name&rsquo;</SAMP> declaration),
+the option <SAMP>&lsquo;-H&rsquo;</SAMP> (or, equivalently, the
+<SAMP>&lsquo;%define hash-function-name&rsquo;</SAMP> declaration), and the option
+<SAMP>&lsquo;--constants-prefix&rsquo;</SAMP> (or, equivalently, the
+<SAMP>&lsquo;%define constants-prefix&rsquo;</SAMP> declaration).
+
+If you use the option <SAMP>&lsquo;-G&rsquo;</SAMP> (or, equivalently, the <SAMP>&lsquo;%global-table&rsquo;</SAMP>
+declaration), you will also have to deal with the word array, the length
+table if present, and the string pool if present.  This means: You should
+use the option <SAMP>&lsquo;-W&rsquo;</SAMP> (or, equivalently, the
+<SAMP>&lsquo;%define word-array-name&rsquo;</SAMP> declaration).  If you use the option
+<SAMP>&lsquo;-l&rsquo;</SAMP> (or, equivalently, the <SAMP>&lsquo;%compare-lengths&rsquo;</SAMP> declaration), you
+should use the option <SAMP>&lsquo;--length-table-name&rsquo;</SAMP> (or, equivalently, the
+<SAMP>&lsquo;%define length-table-name&rsquo;</SAMP> declaration). If you use the option
+<SAMP>&lsquo;-P&rsquo;</SAMP> (or, equivalently, the <SAMP>&lsquo;%pic&rsquo;</SAMP> declaration), you should use
+the option <SAMP>&lsquo;-Q&rsquo;</SAMP> (or, equivalently, the <SAMP>&lsquo;%define string-pool-name&rsquo;</SAMP>
+declaration).
+</UL>
+
+
+
+<H2><A NAME="SEC17" HREF="gperf.html#TOC17">4.5  The Copyright of the Output</A></H2>
+<P>
+<A NAME="IDX40"></A>
 
 </P>
 <P>
@@ -1715,7 +1791,7 @@ license, with the same copyright holder, as the input that was passed to
 </P>
 
 
-<H1><A NAME="SEC17" HREF="gperf.html#TOC17">5  Invoking <CODE>gperf</CODE></A></H1>
+<H1><A NAME="SEC18" HREF="gperf.html#TOC18">5  Invoking <CODE>gperf</CODE></A></H1>
 
 <P>
 There are <EM>many</EM> options to <CODE>gperf</CODE>.  They were added to make
@@ -1727,7 +1803,7 @@ complete list of options.
 
 
 
-<H2><A NAME="SEC18" HREF="gperf.html#TOC18">5.1  Specifying the Location of the Output File</A></H2>
+<H2><A NAME="SEC19" HREF="gperf.html#TOC19">5.1  Specifying the Location of the Output File</A></H2>
 
 <DL COMPACT>
 
@@ -1743,7 +1819,7 @@ or if it is <SAMP>&lsquo;-&rsquo;</SAMP>.
 </P>
 
 
-<H2><A NAME="SEC19" HREF="gperf.html#TOC19">5.2  Options that affect Interpretation of the Input File</A></H2>
+<H2><A NAME="SEC20" HREF="gperf.html#TOC20">5.2  Options that affect Interpretation of the Input File</A></H2>
 
 <P>
 These options are also available as declarations in the input file
@@ -1756,7 +1832,7 @@ These options are also available as declarations in the input file
 <DD>
 <DT><SAMP>&lsquo;--delimiters=<VAR>keyword-delimiter-list</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX40"></A>
+<A NAME="IDX41"></A>
 Allows you to provide a string containing delimiters used to
 separate keywords from their attributes.  The default is ",".  This
 option is essential if you want to use keywords that have embedded
@@ -1789,7 +1865,7 @@ the <CODE>gperf</CODE> generated function.
 
 
 
-<H2><A NAME="SEC20" HREF="gperf.html#TOC20">5.3  Options to specify the Language for the Output Code</A></H2>
+<H2><A NAME="SEC21" HREF="gperf.html#TOC21">5.3  Options to specify the Language for the Output Code</A></H2>
 
 <P>
 These options are also available as declarations in the input file
@@ -1828,7 +1904,7 @@ ANSI C.  This language is understood by ANSI C compilers and C++ compilers.
 C++.  This language is understood by C++ compilers.
 </DL>
 
-The default is C.
+The default is ANSI-C.
 
 <DT><SAMP>&lsquo;-a&rsquo;</SAMP>
 <DD>
@@ -1843,7 +1919,7 @@ This option is supported for compatibility with previous releases of
 
 
 
-<H2><A NAME="SEC21" HREF="gperf.html#TOC21">5.4  Options for fine tuning Details in the Output Code</A></H2>
+<H2><A NAME="SEC22" HREF="gperf.html#TOC22">5.4  Options for fine tuning Details in the Output Code</A></H2>
 
 <P>
 Most of these options are also available as declarations in the input file
@@ -1856,7 +1932,7 @@ Most of these options are also available as declarations in the input file
 <DD>
 <DT><SAMP>&lsquo;--slot-name=<VAR>slot-name</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX41"></A>
+<A NAME="IDX42"></A>
 This option is only useful when option <SAMP>&lsquo;-t&rsquo;</SAMP> (or, equivalently, the
 <SAMP>&lsquo;%struct-type&rsquo;</SAMP> declaration) has been given.
 By default, the program assumes the structure component identifier for
@@ -1868,7 +1944,7 @@ field in your supplied <CODE>struct</CODE>.
 <DD>
 <DT><SAMP>&lsquo;--initializer-suffix=<VAR>initializers</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX42"></A>
+<A NAME="IDX43"></A>
 This option is only useful when option <SAMP>&lsquo;-t&rsquo;</SAMP> (or, equivalently, the
 <SAMP>&lsquo;%struct-type&rsquo;</SAMP> declaration) has been given.
 It permits to specify initializers for the structure members following
@@ -1896,7 +1972,7 @@ generated hash functions to be used in the same application.
 <DD>
 <DT><SAMP>&lsquo;--class-name=<VAR>class-name</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX43"></A>
+<A NAME="IDX44"></A>
 This option is only useful when option <SAMP>&lsquo;-L C++&rsquo;</SAMP> (or, equivalently,
 the <SAMP>&lsquo;%language=C++&rsquo;</SAMP> declaration) has been given.  It
 allows you to specify the name of generated C++ class.  Default name is
@@ -1947,6 +2023,7 @@ by putting the tables in readonly memory.
 <DD>
 <DT><SAMP>&lsquo;--enum&rsquo;</SAMP>
 <DD>
+<A NAME="IDX45"></A>
 Define constant values using an enum local to the lookup function rather
 than with #defines.  This also means that different lookup functions can
 reside in the same file.  Thanks to James Clark <CODE>&#60;jjc@ai.mit.edu&#62;</CODE>.
@@ -1998,11 +2075,21 @@ This reduces the startup time of programs using a shared library containing
 the generated code (but not as much as option <SAMP>&lsquo;-P&rsquo;</SAMP>), at the expense
 of one more test-and-branch instruction at run time.
 
+<DT><SAMP>&lsquo;--constants-prefix=<VAR>prefix</VAR>&rsquo;</SAMP>
+<DD>
+<A NAME="IDX46"></A>
+Allows you to specify a prefix for the constants <CODE>TOTAL_KEYWORDS</CODE>,
+<CODE>MIN_WORD_LENGTH</CODE>, <CODE>MAX_WORD_LENGTH</CODE>, and so on.  This option
+permits the use of two hash tables in the same file, even when the option
+<SAMP>&lsquo;-E&rsquo;</SAMP> (or, equivalently, the <SAMP>&lsquo;%enum&rsquo;</SAMP> declaration) is not given or
+the option <SAMP>&lsquo;-G&rsquo;</SAMP> (or, equivalently, the <SAMP>&lsquo;%global-table&rsquo;</SAMP> declaration)
+is given.
+
 <DT><SAMP>&lsquo;-W <VAR>hash-table-array-name</VAR>&rsquo;</SAMP>
 <DD>
 <DT><SAMP>&lsquo;--word-array-name=<VAR>hash-table-array-name</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX44"></A>
+<A NAME="IDX47"></A>
 Allows you to specify the name for the generated array containing the
 hash table.  Default name is <SAMP>&lsquo;wordlist&rsquo;</SAMP>.  This option permits the
 use of two hash tables in the same file, even when the option <SAMP>&lsquo;-G&rsquo;</SAMP>
@@ -2010,7 +2097,7 @@ use of two hash tables in the same file, even when the option <SAMP>&lsquo;-G&rs
 
 <DT><SAMP>&lsquo;--length-table-name=<VAR>length-table-array-name</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX45"></A>
+<A NAME="IDX48"></A>
 Allows you to specify the name for the generated array containing the
 length table.  Default name is <SAMP>&lsquo;lengthtable&rsquo;</SAMP>.  This option permits the
 use of two length tables in the same file, even when the option <SAMP>&lsquo;-G&rsquo;</SAMP>
@@ -2020,7 +2107,7 @@ use of two length tables in the same file, even when the option <SAMP>&lsquo;-G&
 <DD>
 <DT><SAMP>&lsquo;--switch=<VAR>total-switch-statements</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX46"></A>
+<A NAME="IDX49"></A>
 Causes the generated C code to use a <CODE>switch</CODE> statement scheme,
 rather than an array lookup table.  This can lead to a reduction in both
 time and space requirements for some input files.  The argument to this
@@ -2046,7 +2133,7 @@ This option is supported for compatibility with previous releases of
 
 
 
-<H2><A NAME="SEC22" HREF="gperf.html#TOC22">5.5  Options for changing the Algorithms employed by <CODE>gperf</CODE></A></H2>
+<H2><A NAME="SEC23" HREF="gperf.html#TOC23">5.5  Options for changing the Algorithms employed by <CODE>gperf</CODE></A></H2>
 
 <DL COMPACT>
 
@@ -2080,7 +2167,7 @@ through a search that minimizes the number of byte positions.
 <DD>
 <DT><SAMP>&lsquo;--duplicates&rsquo;</SAMP>
 <DD>
-<A NAME="IDX47"></A>
+<A NAME="IDX50"></A>
 Handle keywords whose selected byte sets hash to duplicate values.
 Duplicate hash values can occur if a set of keywords has the same names, but
 possesses different attributes, or if the selected byte positions are not well
@@ -2117,7 +2204,7 @@ option is not particularly useful when <SAMP>&lsquo;-S&rsquo;</SAMP> (or, equiva
 <DD>
 <DT><SAMP>&lsquo;--jump=<VAR>jump-value</VAR>&rsquo;</SAMP>
 <DD>
-<A NAME="IDX48"></A>
+<A NAME="IDX51"></A>
 Affects the “jump value”, i.e., how far to advance the associated
 byte value upon collisions.  <VAR>Jump-value</VAR> is rounded up to an
 odd number, the default is 5.  If the <VAR>jump-value</VAR> is 0 <CODE>gperf</CODE>
@@ -2171,7 +2258,7 @@ heuristic.
 
 
 
-<H2><A NAME="SEC23" HREF="gperf.html#TOC23">5.6  Informative Output</A></H2>
+<H2><A NAME="SEC24" HREF="gperf.html#TOC24">5.6  Informative Output</A></H2>
 
 <DL COMPACT>
 
@@ -2202,7 +2289,7 @@ option is enabled.
 
 
 
-<H1><A NAME="SEC24" HREF="gperf.html#TOC24">6  Known Bugs and Limitations with <CODE>gperf</CODE></A></H1>
+<H1><A NAME="SEC25" HREF="gperf.html#TOC25">6  Known Bugs and Limitations with <CODE>gperf</CODE></A></H1>
 
 <P>
 The following are some limitations with the current release of
@@ -2244,7 +2331,7 @@ the constraint.
 
 
 
-<H1><A NAME="SEC25" HREF="gperf.html#TOC25">7  Things Still Left to Do</A></H1>
+<H1><A NAME="SEC26" HREF="gperf.html#TOC26">7  Things Still Left to Do</A></H1>
 
 <P>
 It should be “relatively” easy to replace the current perfect hash
@@ -2275,7 +2362,7 @@ C and C++ routines.
 
 
 
-<H1><A NAME="SEC26" HREF="gperf.html#TOC26">8  Bibliography</A></H1>
+<H1><A NAME="SEC27" HREF="gperf.html#TOC27">8  Bibliography</A></H1>
 
 <P>
 [1] Chang, C.C.: <I>A Scheme for Constructing Ordered Minimal Perfect
@@ -2356,7 +2443,7 @@ Foundation, 1989.
 </P>
 
 
-<H1><A NAME="SEC27" HREF="gperf.html#TOC27">Concept Index</A></H1>
+<H1><A NAME="SEC28" HREF="gperf.html#TOC28">Concept Index</A></H1>
 
 <P>
 Jump to:
@@ -2393,13 +2480,14 @@ Jump to:
 <LI><A HREF="gperf.html#IDX19"><SAMP>&lsquo;%compare-lengths&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX20"><SAMP>&lsquo;%compare-strncmp&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX17"><SAMP>&lsquo;%define class-name&rsquo;</SAMP></A>
+<LI><A HREF="gperf.html#IDX28"><SAMP>&lsquo;%define constants-prefix&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX15"><SAMP>&lsquo;%define hash-function-name&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX14"><SAMP>&lsquo;%define initializer-suffix&rsquo;</SAMP></A>
-<LI><A HREF="gperf.html#IDX29"><SAMP>&lsquo;%define length-table-name&rsquo;</SAMP></A>
+<LI><A HREF="gperf.html#IDX30"><SAMP>&lsquo;%define length-table-name&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX16"><SAMP>&lsquo;%define lookup-function-name&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX13"><SAMP>&lsquo;%define slot-name&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX26"><SAMP>&lsquo;%define string-pool-name&rsquo;</SAMP></A>
-<LI><A HREF="gperf.html#IDX28"><SAMP>&lsquo;%define word-array-name&rsquo;</SAMP></A>
+<LI><A HREF="gperf.html#IDX29"><SAMP>&lsquo;%define word-array-name&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX9"><SAMP>&lsquo;%delimiters&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX22"><SAMP>&lsquo;%enum&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX24"><SAMP>&lsquo;%global-table&rsquo;</SAMP></A>
@@ -2407,17 +2495,17 @@ Jump to:
 <LI><A HREF="gperf.html#IDX23"><SAMP>&lsquo;%includes&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX12"><SAMP>&lsquo;%language&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX27"><SAMP>&lsquo;%null-strings&rsquo;</SAMP></A>
-<LI><A HREF="gperf.html#IDX31"><SAMP>&lsquo;%omit-struct-type&rsquo;</SAMP></A>
+<LI><A HREF="gperf.html#IDX32"><SAMP>&lsquo;%omit-struct-type&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX25"><SAMP>&lsquo;%pic&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX21"><SAMP>&lsquo;%readonly-tables&rsquo;</SAMP></A>
 <LI><A HREF="gperf.html#IDX10"><SAMP>&lsquo;%struct-type&rsquo;</SAMP></A>
-<LI><A HREF="gperf.html#IDX30"><SAMP>&lsquo;%switch&rsquo;</SAMP></A>
-<LI><A HREF="gperf.html#IDX32"><SAMP>&lsquo;%{&rsquo;</SAMP></A>
-<LI><A HREF="gperf.html#IDX33"><SAMP>&lsquo;%}&rsquo;</SAMP></A>
+<LI><A HREF="gperf.html#IDX31"><SAMP>&lsquo;%switch&rsquo;</SAMP></A>
+<LI><A HREF="gperf.html#IDX33"><SAMP>&lsquo;%{&rsquo;</SAMP></A>
+<LI><A HREF="gperf.html#IDX34"><SAMP>&lsquo;%}&rsquo;</SAMP></A>
 </DIR>
 <H2><A NAME="cindex_a">a</A></H2>
 <DIR>
-<LI><A HREF="gperf.html#IDX44">Array name</A>, <A HREF="gperf.html#IDX45">Array name</A>
+<LI><A HREF="gperf.html#IDX47">Array name</A>, <A HREF="gperf.html#IDX48">Array name</A>
 </DIR>
 <H2><A NAME="cindex_b">b</A></H2>
 <DIR>
@@ -2425,14 +2513,16 @@ Jump to:
 </DIR>
 <H2><A NAME="cindex_c">c</A></H2>
 <DIR>
-<LI><A HREF="gperf.html#IDX43">Class name</A>
-<LI><A HREF="gperf.html#IDX39">Copyright</A>
+<LI><A HREF="gperf.html#IDX44">Class name</A>
+<LI><A HREF="gperf.html#IDX45">Constants definition</A>
+<LI><A HREF="gperf.html#IDX46">Constants prefix</A>
+<LI><A HREF="gperf.html#IDX40">Copyright</A>
 </DIR>
 <H2><A NAME="cindex_d">d</A></H2>
 <DIR>
 <LI><A HREF="gperf.html#IDX5">Declaration section</A>
-<LI><A HREF="gperf.html#IDX40">Delimiters</A>
-<LI><A HREF="gperf.html#IDX47">Duplicates</A>
+<LI><A HREF="gperf.html#IDX41">Delimiters</A>
+<LI><A HREF="gperf.html#IDX50">Duplicates</A>
 </DIR>
 <H2><A NAME="cindex_f">f</A></H2>
 <DIR>
@@ -2441,17 +2531,17 @@ Jump to:
 </DIR>
 <H2><A NAME="cindex_h">h</A></H2>
 <DIR>
-<LI><A HREF="gperf.html#IDX35">hash</A>
-<LI><A HREF="gperf.html#IDX34">hash table</A>
+<LI><A HREF="gperf.html#IDX36">hash</A>
+<LI><A HREF="gperf.html#IDX35">hash table</A>
 </DIR>
 <H2><A NAME="cindex_i">i</A></H2>
 <DIR>
-<LI><A HREF="gperf.html#IDX36">in_word_set</A>
-<LI><A HREF="gperf.html#IDX42">Initializers</A>
+<LI><A HREF="gperf.html#IDX37">in_word_set</A>
+<LI><A HREF="gperf.html#IDX43">Initializers</A>
 </DIR>
 <H2><A NAME="cindex_j">j</A></H2>
 <DIR>
-<LI><A HREF="gperf.html#IDX48">Jump value</A>
+<LI><A HREF="gperf.html#IDX51">Jump value</A>
 </DIR>
 <H2><A NAME="cindex_k">k</A></H2>
 <DIR>
@@ -2463,19 +2553,19 @@ Jump to:
 </DIR>
 <H2><A NAME="cindex_n">n</A></H2>
 <DIR>
-<LI><A HREF="gperf.html#IDX38">NUL</A>
+<LI><A HREF="gperf.html#IDX39">NUL</A>
 </DIR>
 <H2><A NAME="cindex_s">s</A></H2>
 <DIR>
-<LI><A HREF="gperf.html#IDX41">Slot name</A>
+<LI><A HREF="gperf.html#IDX42">Slot name</A>
 <LI><A HREF="gperf.html#IDX2">Static search structure</A>
-<LI><A HREF="gperf.html#IDX37"><CODE>switch</CODE></A>, <A HREF="gperf.html#IDX46"><CODE>switch</CODE></A>
+<LI><A HREF="gperf.html#IDX38"><CODE>switch</CODE></A>, <A HREF="gperf.html#IDX49"><CODE>switch</CODE></A>
 </DIR>
 
 </P>
 
 <P><HR><P>
-This document was generated on 1 February 2009 using the
+This document was generated on 2 January 2017 using the
 <A HREF="http://wwwinfo.cern.ch/dis/texi2html/">texi2html</A>
 translator version 1.52b.</P>
 </BODY>
