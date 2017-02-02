@@ -1,9 +1,9 @@
 This is gnutls.info, produced by makeinfo version 6.1 from gnutls.texi.
 
-This manual is last updated 9 October 2016 for version 3.5.6 of GnuTLS.
+This manual is last updated 8 January 2017 for version 3.5.8 of GnuTLS.
 
-Copyright (C) 2001-2016 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2016 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2017 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -330,9 +330,9 @@ gnutls_pkcs8_info
      set on supported structures.
 
      *Returns:* 'GNUTLS_E_INVALID_REQUEST' if the provided structure
-     isn't encrypted, 'GNUTLS_E_UNKNOWN_CIPHER_TYPE' if the structure's
-     encryption isn't supported, or another negative error code in case
-     of a failure.  Zero on success.
+     isn't an encrypted key, 'GNUTLS_E_UNKNOWN_CIPHER_TYPE' if the
+     structure's encryption isn't supported, or another negative error
+     code in case of a failure.  Zero on success.
 
 gnutls_pkcs_schema_get_name
 ---------------------------
@@ -436,6 +436,10 @@ gnutls_subject_alt_names_set
      This function will store the specified alternative name in the
      'sans' .
 
+     Since version 3.5.7 the 'GNUTLS_SAN_RFC822NAME' ,
+     'GNUTLS_SAN_DNSNAME' , and 'GNUTLS_SAN_OTHERNAME_XMPP' are
+     converted to ACE format when necessary.
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0), otherwise a negative
      error value.
 
@@ -516,6 +520,9 @@ gnutls_x509_aia_set
 
      Typically the value for 'oid' should be 'GNUTLS_OID_AD_OCSP' , or
      'GNUTLS_OID_AD_CAISSUERS' .
+
+     Since version 3.5.7 the 'GNUTLS_SAN_RFC822NAME' , and
+     'GNUTLS_SAN_DNSNAME' , are converted to ACE format when necessary.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0), otherwise a negative
      error value.
@@ -617,6 +624,10 @@ gnutls_x509_aki_set_cert_issuer
      authorityCertSerialNumber to be stored in the 'aki' type.  When
      storing multiple names, the serial should be set on the first call,
      and subsequent calls should use a 'NULL' serial.
+
+     Since version 3.5.7 the 'GNUTLS_SAN_RFC822NAME' ,
+     'GNUTLS_SAN_DNSNAME' , and 'GNUTLS_SAN_OTHERNAME_XMPP' are
+     converted to ACE format when necessary.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -1068,6 +1079,9 @@ gnutls_x509_crl_get_issuer_dn
 
      If buf is 'NULL' then only the size will be filled.
 
+     This function does not output a fully RFC4514 compliant string, if
+     that is required see 'gnutls_x509_crl_get_issuer_dn3()' .
+
      *Returns:* 'GNUTLS_E_SHORT_MEMORY_BUFFER' if the provided buffer is
      not long enough, and in that case the sizeof_buf will be updated
      with the required size, and 0 on success.
@@ -1086,10 +1100,38 @@ gnutls_x509_crl_get_issuer_dn2
      described in RFC4514.  The output string will be ASCII or UTF-8
      encoded, depending on the certificate data.
 
+     This function does not output a fully RFC4514 compliant string, if
+     that is required see 'gnutls_x509_crl_get_issuer_dn3()' .
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
      *Since:* 3.1.10
+
+gnutls_x509_crl_get_issuer_dn3
+------------------------------
+
+ -- Function: int gnutls_x509_crl_get_issuer_dn3 (gnutls_x509_crl_t CRL,
+          gnutls_datum_t * DN, unsigned FLAGS)
+     CRL: should contain a 'gnutls_x509_crl_t' type
+
+     DN: a pointer to a structure to hold the name
+
+     FLAGS: zero or 'GNUTLS_X509_DN_FLAG_COMPAT'
+
+     This function will allocate buffer and copy the name of the CRL
+     issuer.  The name will be in the form "C=xxxx,O=yyyy,CN=zzzz" as
+     described in RFC4514.  The output string will be ASCII or UTF-8
+     encoded, depending on the certificate data.
+
+     When the flag 'GNUTLS_X509_DN_FLAG_COMPAT' is specified, the output
+     format will match the format output by previous to 3.5.6 versions
+     of GnuTLS which was not not fully RFC4514-compliant.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.7
 
 gnutls_x509_crl_get_issuer_dn_by_oid
 ------------------------------------
@@ -1475,7 +1517,12 @@ gnutls_x509_crl_set_next_update
 
      EXP_TIME: The actual time
 
-     This function will set the time this CRL will be updated.
+     This function will set the time this CRL will be updated.  This is
+     an optional value to be set on a CRL and this call can be omitted
+     when generating a CRL.
+
+     Prior to GnuTLS 3.5.7, setting a nextUpdate field was required in
+     order to generate a CRL.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -1542,8 +1589,8 @@ gnutls_x509_crl_sign2
 
      ISSUER_KEY: holds the issuer's private key
 
-     DIG: The message digest to use.  GNUTLS_DIG_SHA1 is the safe choice
-     unless you know what you're doing.
+     DIG: The message digest to use.  GNUTLS_DIG_SHA256 is the safe
+     choice unless you know what you're doing.
 
      FLAGS: must be 0
 
@@ -1552,6 +1599,10 @@ gnutls_x509_crl_sign2
 
      This must be the last step in a certificate CRL since all the
      previously set parameters are now signed.
+
+     A known limitation of this function is, that a newly-signed CRL
+     will not be fully functional (e.g., for signature verification),
+     until it is exported an re-imported.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -1583,8 +1634,11 @@ gnutls_x509_crl_verify
      this function is success (i.e, failure to trust a CRL a certificate
      does not imply a negative return value).
 
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
+     Before GnuTLS 3.5.7 this function would return zero or a positive
+     number on success.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0), otherwise a negative
+     error value.
 
 gnutls_x509_crq_deinit
 ----------------------
@@ -1801,6 +1855,9 @@ gnutls_x509_crq_get_dn
      string 'buf' will be ASCII or UTF-8 encoded, depending on the
      certificate data.
 
+     This function does not output a fully RFC4514 compliant string, if
+     that is required see 'gnutls_x509_crq_get_dn3()' .
+
      *Returns:* 'GNUTLS_E_SHORT_MEMORY_BUFFER' if the provided buffer is
      not long enough, and in that case the * 'buf_size' will be updated
      with the required size.  On success 0 is returned.
@@ -1819,11 +1876,40 @@ gnutls_x509_crq_get_dn2
      "C=xxxx,O=yyyy,CN=zzzz" as described in RFC4514.  The output string
      will be ASCII or UTF-8 encoded, depending on the certificate data.
 
+     This function does not output a fully RFC4514 compliant string, if
+     that is required see 'gnutls_x509_crq_get_dn3()' .
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.  and a negative error code on
      error.
 
      *Since:* 3.1.10
+
+gnutls_x509_crq_get_dn3
+-----------------------
+
+ -- Function: int gnutls_x509_crq_get_dn3 (gnutls_x509_crq_t CRQ,
+          gnutls_datum_t * DN, unsigned FLAGS)
+     CRQ: should contain a 'gnutls_x509_crq_t' type
+
+     DN: a pointer to a structure to hold the name
+
+     FLAGS: zero or 'GNUTLS_X509_DN_FLAG_COMPAT'
+
+     This function will allocate buffer and copy the name of the
+     Certificate request.  The name will be in the form
+     "C=xxxx,O=yyyy,CN=zzzz" as described in RFC4514.  The output string
+     will be ASCII or UTF-8 encoded, depending on the certificate data.
+
+     When the flag 'GNUTLS_X509_DN_FLAG_COMPAT' is specified, the output
+     format will match the format output by previous to 3.5.6 versions
+     of GnuTLS which was not not fully RFC4514-compliant.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.  and a negative error code on
+     error.
+
+     *Since:* 3.5.7
 
 gnutls_x509_crq_get_dn_by_oid
 -----------------------------
@@ -2754,8 +2840,8 @@ gnutls_x509_crq_verify
 gnutls_x509_crt_check_email
 ---------------------------
 
- -- Function: int gnutls_x509_crt_check_email (gnutls_x509_crt_t CERT,
-          const char * EMAIL, unsigned int FLAGS)
+ -- Function: unsigned gnutls_x509_crt_check_email (gnutls_x509_crt_t
+          CERT, const char * EMAIL, unsigned int FLAGS)
      CERT: should contain an gnutls_x509_crt_t type
 
      EMAIL: A null terminated string that contains an email address
@@ -3238,6 +3324,9 @@ gnutls_x509_crt_get_dn
 
      If 'buf' is null then only the size will be filled.
 
+     This function does not output a fully RFC4514 compliant string, if
+     that is required see 'gnutls_x509_crt_get_dn3()' .
+
      *Returns:* 'GNUTLS_E_SHORT_MEMORY_BUFFER' if the provided buffer is
      not long enough, and in that case the 'buf_size' will be updated
      with the required size.  'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' if
@@ -3258,10 +3347,38 @@ gnutls_x509_crt_get_dn2
      as described in RFC4514.  The output string will be ASCII or UTF-8
      encoded, depending on the certificate data.
 
+     This function does not output a fully RFC4514 compliant string, if
+     that is required see 'gnutls_x509_crt_get_dn3()' .
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
      *Since:* 3.1.10
+
+gnutls_x509_crt_get_dn3
+-----------------------
+
+ -- Function: int gnutls_x509_crt_get_dn3 (gnutls_x509_crt_t CERT,
+          gnutls_datum_t * DN, unsigned FLAGS)
+     CERT: should contain a 'gnutls_x509_crt_t' type
+
+     DN: a pointer to a structure to hold the name
+
+     FLAGS: zero or 'GNUTLS_X509_DN_FLAG_COMPAT'
+
+     This function will allocate buffer and copy the name of the
+     Certificate.  The name will be in the form "C=xxxx,O=yyyy,CN=zzzz"
+     as described in RFC4514.  The output string will be ASCII or UTF-8
+     encoded, depending on the certificate data.
+
+     When the flag 'GNUTLS_X509_DN_FLAG_COMPAT' is specified, the output
+     format will match the format output by previous to 3.5.6 versions
+     of GnuTLS which was not not fully RFC4514-compliant.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.7
 
 gnutls_x509_crt_get_dn_by_oid
 -----------------------------
@@ -3690,6 +3807,9 @@ gnutls_x509_crt_get_issuer_dn
 
      If 'buf' is null then only the size will be filled.
 
+     This function does not output a fully RFC4514 compliant string, if
+     that is required see 'gnutls_x509_crt_get_issuer_dn3()' .
+
      *Returns:* 'GNUTLS_E_SHORT_MEMORY_BUFFER' if the provided buffer is
      not long enough, and in that case the 'buf_size' will be updated
      with the required size.  'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' if
@@ -3710,10 +3830,38 @@ gnutls_x509_crt_get_issuer_dn2
      "C=xxxx,O=yyyy,CN=zzzz" as described in RFC4514.  The output string
      will be ASCII or UTF-8 encoded, depending on the certificate data.
 
+     This function does not output a fully RFC4514 compliant string, if
+     that is required see 'gnutls_x509_crt_get_issuer_dn3()' .
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
      *Since:* 3.1.10
+
+gnutls_x509_crt_get_issuer_dn3
+------------------------------
+
+ -- Function: int gnutls_x509_crt_get_issuer_dn3 (gnutls_x509_crt_t
+          CERT, gnutls_datum_t * DN, unsigned FLAGS)
+     CERT: should contain a 'gnutls_x509_crt_t' type
+
+     DN: a pointer to a structure to hold the name
+
+     FLAGS: zero or 'GNUTLS_X509_DN_FLAG_COMPAT'
+
+     This function will allocate buffer and copy the name of issuer of
+     the Certificate.  The name will be in the form
+     "C=xxxx,O=yyyy,CN=zzzz" as described in RFC4514.  The output string
+     will be ASCII or UTF-8 encoded, depending on the certificate data.
+
+     When the flag 'GNUTLS_X509_DN_FLAG_COMPAT' is specified, the output
+     format will match the format output by previous to 3.5.6 versions
+     of GnuTLS which was not not fully RFC4514-compliant.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.7
 
 gnutls_x509_crt_get_issuer_dn_by_oid
 ------------------------------------
@@ -4841,6 +4989,11 @@ gnutls_x509_crt_set_dn
      input string should be plain ASCII or UTF-8 encoded.  On DN parsing
      error 'GNUTLS_E_PARSING_ERROR' is returned.
 
+     Note that DNs are not expected to hold DNS information, and thus no
+     automatic IDNA convertions are attempted when using this function.
+     If that is required (e.g., store a domain in CN), process the
+     corresponding input with 'gnutls_idna_map()' .
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
@@ -4934,6 +5087,10 @@ gnutls_x509_crt_set_issuer_alt_name
      This function will set the issuer alternative name certificate
      extension.  It can set the same types as
      'gnutls_x509_crt_set_subject_alt_name()' .
+
+     Since version 3.5.7 the 'GNUTLS_SAN_RFC822NAME' ,
+     'GNUTLS_SAN_DNSNAME' , and 'GNUTLS_SAN_OTHERNAME_XMPP' are
+     converted to ACE format when necessary.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -5270,6 +5427,10 @@ gnutls_x509_crt_set_subject_alt_name
      binary IP address (4 or 16 bytes), 'GNUTLS_SAN_OTHERNAME_XMPP' as a
      UTF8 string (since 3.5.0).
 
+     Since version 3.5.7 the 'GNUTLS_SAN_RFC822NAME' ,
+     'GNUTLS_SAN_DNSNAME' , and 'GNUTLS_SAN_OTHERNAME_XMPP' are
+     converted to ACE format when necessary.
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
@@ -5324,6 +5485,8 @@ gnutls_x509_crt_set_subject_alternative_name
 
      The name of the function is unfortunate since it is inconsistent
      with 'gnutls_x509_crt_get_subject_alt_name()' .
+
+     See 'gnutls_x509_crt_set_subject_alt_name()' for more information.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -5433,7 +5596,8 @@ gnutls_x509_crt_sign2
 
      ISSUER_KEY: holds the issuer's private key
 
-     DIG: The message digest to use, 'GNUTLS_DIG_SHA1' is a safe choice
+     DIG: The message digest to use, 'GNUTLS_DIG_SHA256' is a safe
+     choice
 
      FLAGS: must be 0
 
@@ -5442,6 +5606,10 @@ gnutls_x509_crt_sign2
 
      This must be the last step in a certificate generation since all
      the previously set parameters are now signed.
+
+     A known limitation of this function is, that a newly-signed
+     certificate will not be fully functional (e.g., for signature
+     verification), until it is exported an re-imported.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -5613,6 +5781,31 @@ gnutls_x509_dn_get_str
      otherwise a negative error value.
 
      *Since:* 3.4.2
+
+gnutls_x509_dn_get_str2
+-----------------------
+
+ -- Function: int gnutls_x509_dn_get_str2 (gnutls_x509_dn_t DN,
+          gnutls_datum_t * STR, unsigned FLAGS)
+     DN: a pointer to DN
+
+     STR: a datum that will hold the name
+
+     FLAGS: zero or 'GNUTLS_X509_DN_FLAG_COMPAT'
+
+     This function will allocate buffer and copy the name in the
+     provided DN. The name will be in the form "C=xxxx,O=yyyy,CN=zzzz"
+     as described in RFC4514.  The output string will be ASCII or UTF-8
+     encoded, depending on the certificate data.
+
+     When the flag 'GNUTLS_X509_DN_FLAG_COMPAT' is specified, the output
+     format will match the format output by previous to 3.5.6 versions
+     of GnuTLS which was not not fully RFC4514-compliant.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.7
 
 gnutls_x509_dn_import
 ---------------------
@@ -6190,7 +6383,7 @@ gnutls_x509_ext_import_proxy
 
      POLICY: output variable with policy data
 
-     SIZEOF_POLICY: output variable size of policy data
+     SIZEOF_POLICY: output variable with size of policy data
 
      This function will return the information from a proxy certificate
      extension.  It reads the ProxyCertInfo X.509 extension
@@ -7450,6 +7643,33 @@ gnutls_x509_rdn_get
      name will be in the form "C=xxxx,O=yyyy,CN=zzzz" as described in
      RFC4514.
 
+     This function does not output a fully RFC4514 compliant string, if
+     that is required see 'gnutls_x509_rdn_get2()' .
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned, or
+     'GNUTLS_E_SHORT_MEMORY_BUFFER' is returned and * 'buf_size' is
+     updated if the provided buffer is not long enough, otherwise a
+     negative error value.
+
+gnutls_x509_rdn_get2
+--------------------
+
+ -- Function: int gnutls_x509_rdn_get2 (const gnutls_datum_t * IDN,
+          gnutls_datum_t * STR, unsigned FLAGS)
+     IDN: should contain a DER encoded RDN sequence
+
+     STR: - undescribed -
+
+     FLAGS: - undescribed -
+
+     This function will return the name of the given RDN sequence.  The
+     name will be in the form "C=xxxx,O=yyyy,CN=zzzz" as described in
+     RFC4514.
+
+     When the flag 'GNUTLS_X509_DN_FLAG_COMPAT' is specified, the output
+     format will match the format output by previous to 3.5.6 versions
+     of GnuTLS which was not not fully RFC4514-compliant.
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned, or
      'GNUTLS_E_SHORT_MEMORY_BUFFER' is returned and * 'buf_size' is
      updated if the provided buffer is not long enough, otherwise a
@@ -7601,7 +7821,7 @@ gnutls_x509_trust_list_add_cas
 
      CLIST_SIZE: The length of the CA list
 
-     FLAGS: should be 0 or an or'ed sequence of 'GNUTLS_TL' options.
+     FLAGS: flags from 'gnutls_trust_list_flags_t'
 
      This function will add the given certificate authorities to the
      trusted list.  The list of CAs must not be deinitialized during
@@ -7628,8 +7848,7 @@ gnutls_x509_trust_list_add_crls
 
      CRL_SIZE: The length of the CRL list
 
-     FLAGS: if GNUTLS_TL_VERIFY_CRL is given the CRLs will be verified
-     before being added.
+     FLAGS: flags from 'gnutls_trust_list_flags_t'
 
      VERIFICATION_FLAGS: gnutls_certificate_verify_flags if flags
      specifies GNUTLS_TL_VERIFY_CRL
@@ -7644,6 +7863,9 @@ gnutls_x509_trust_list_add_crls
      provided CRLs that are a duplicate, will be deinitialized and not
      added to the list (that assumes that
      'gnutls_x509_trust_list_deinit()' will be called with all=1).
+
+     If GNUTLS_TL_VERIFY_CRL is given the CRLs will be verified before
+     being added.
 
      *Returns:* The number of added elements is returned.
 
@@ -7723,7 +7945,7 @@ gnutls_x509_trust_list_add_trust_dir
 
      TYPE: The format of the certificates
 
-     TL_FLAGS: GNUTLS_TL_*
+     TL_FLAGS: flags from 'gnutls_trust_list_flags_t'
 
      TL_VFLAGS: gnutls_certificate_verify_flags if flags specifies
      GNUTLS_TL_VERIFY_CRL
@@ -7750,7 +7972,7 @@ gnutls_x509_trust_list_add_trust_file
 
      TYPE: The format of the certificates
 
-     TL_FLAGS: GNUTLS_TL_*
+     TL_FLAGS: flags from 'gnutls_trust_list_flags_t'
 
      TL_VFLAGS: gnutls_certificate_verify_flags if flags specifies
      GNUTLS_TL_VERIFY_CRL
@@ -7781,7 +8003,7 @@ gnutls_x509_trust_list_add_trust_mem
 
      TYPE: The format of the certificates
 
-     TL_FLAGS: GNUTLS_TL_*
+     TL_FLAGS: flags from 'gnutls_trust_list_flags_t'
 
      TL_VFLAGS: gnutls_certificate_verify_flags if flags specifies
      GNUTLS_TL_VERIFY_CRL
@@ -7823,7 +8045,8 @@ gnutls_x509_trust_list_get_issuer
      ISSUER: Will hold the issuer if any.  Should be treated as
      constant.
 
-     FLAGS: Use zero or 'GNUTLS_TL_GET_COPY'
+     FLAGS: flags from 'gnutls_trust_list_flags_t' ('GNUTLS_TL_GET_COPY'
+     is applicable)
 
      This function will find the issuer of the given certificate.  If
      the flag 'GNUTLS_TL_GET_COPY' is specified a copy of the issuer
@@ -8074,24 +8297,28 @@ gnutls_x509_trust_list_verify_crt2
      FUNC: If non-null will be called on each chain element verification
      with the output.
 
-     This function will attempt to verify the given certificate and
-     return its status.  The 'voutput' parameter will hold an OR'ed
-     sequence of 'gnutls_certificate_status_t' flags.  When a chain of
-     'cert_list_size' with more than one certificates is provided, the
-     verification status will apply to the first certificate in the
-     chain that failed verification.  The verification process starts
-     from the end of the chain (from CA to end certificate).
+     This function will attempt to verify the given certificate chain
+     and return its status.  The 'voutput' parameter will hold an OR'ed
+     sequence of 'gnutls_certificate_status_t' flags.
+
+     When a certificate chain of 'cert_list_size' with more than one
+     certificates is provided, the verification status will apply to the
+     first certificate in the chain that failed verification.  The
+     verification process starts from the end of the chain (from CA to
+     end certificate).  The first certificate in the chain must be the
+     end-certificate while the rest of the members may be sorted or not.
 
      Additionally a certificate verification profile can be specified
      from the ones in 'gnutls_certificate_verification_profiles_t' by
      ORing the result of 'GNUTLS_PROFILE_TO_VFLAGS()' to the
      verification flags.
 
-     The acceptable 'data' types are 'GNUTLS_DT_DNS_HOSTNAME' and
+     Additional verification parameters are possible via the 'data'
+     types; the acceptable types are 'GNUTLS_DT_DNS_HOSTNAME' and
      'GNUTLS_DT_KEY_PURPOSE_OID' .  The former accepts as data a
      null-terminated hostname, and the latter a null-terminated object
      identifier (e.g., 'GNUTLS_KP_TLS_WWW_SERVER' ).  If a DNS hostname
-     is provided then this function will compare the hostname in the
+     is provided then this function will compare the hostname in the end
      certificate against the given.  If names do not match the
      'GNUTLS_CERT_UNEXPECTED_OWNER' status flag will be set.  In
      addition it will consider certificates provided with

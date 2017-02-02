@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.5.6"
+#define GNUTLS_VERSION "3.5.8"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 5
-#define GNUTLS_VERSION_PATCH 6
+#define GNUTLS_VERSION_PATCH 8
 
-#define GNUTLS_VERSION_NUMBER 0x030506
+#define GNUTLS_VERSION_NUMBER 0x030508
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -2523,6 +2523,10 @@ typedef struct gnutls_buffer_st *gnutls_buffer_t;
 
 int gnutls_buffer_append_data(gnutls_buffer_t, const void *data, size_t data_size);
 
+#define GNUTLS_UTF8_IGNORE_ERRS 1
+int gnutls_utf8_password_normalize(const unsigned char *password, unsigned password_len,
+				   gnutls_datum_t *out, unsigned flags);
+
 /* Public extensions related functions */
 
 typedef void *gnutls_ext_priv_data_t;
@@ -2826,6 +2830,10 @@ unsigned gnutls_fips140_mode_enabled(void);
 #define GNUTLS_E_PK_INVALID_PUBKEY -409
 #define GNUTLS_E_PK_INVALID_PRIVKEY -410
 #define GNUTLS_E_NOT_YET_ACTIVATED -411
+#define GNUTLS_E_INVALID_UTF8_STRING -412
+#define GNUTLS_E_NO_EMBEDDED_DATA -413
+#define GNUTLS_E_INVALID_UTF8_EMAIL -414
+#define GNUTLS_E_INVALID_PASSWORD_STRING -415
 
 #define GNUTLS_E_UNIMPLEMENTED_FEATURE -1250
 

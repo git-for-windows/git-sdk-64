@@ -211,6 +211,9 @@ int gnutls_ocsp_resp_get_response(gnutls_ocsp_resp_t resp,
 int gnutls_ocsp_resp_get_version(gnutls_ocsp_resp_t resp);
 int gnutls_ocsp_resp_get_responder(gnutls_ocsp_resp_t resp,
 				   gnutls_datum_t * dn);
+int gnutls_ocsp_resp_get_responder2(gnutls_ocsp_resp_t resp,
+				    gnutls_datum_t * dn,
+				    unsigned flags);
 
 /* the raw key ID of the responder */
 #define GNUTLS_OCSP_RESP_ID_KEY 1
