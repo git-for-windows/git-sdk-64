@@ -804,10 +804,11 @@ core.sparseCheckout::
 	linkgit:git-read-tree[1] for more information.
 
 core.abbrev::
-	Set the length object names are abbreviated to.  If unspecified,
-	many commands abbreviate to 7 hexdigits, which may not be enough
-	for abbreviated object names to stay unique for sufficiently long
-	time.
+	Set the length object names are abbreviated to.  If
+	unspecified or set to "auto", an appropriate value is
+	computed based on the approximate number of packed objects
+	in your repository, which hopefully is enough for
+	abbreviated object names to stay unique for some time.
 
 add.ignoreErrors::
 add.ignore-errors (deprecated)::
@@ -1430,7 +1431,9 @@ gc.pruneExpire::
 	Override the grace period with this config variable.  The value
 	"now" may be used to disable this grace period and always prune
 	unreachable objects immediately, or "never" may be used to
-	suppress pruning.
+	suppress pruning.  This feature helps prevent corruption when
+	'git gc' runs concurrently with another process writing to the
+	repository; see the "NOTES" section of linkgit:git-gc[1].
 
 gc.worktreePruneExpire::
 	When 'git gc' is run, it calls
@@ -1912,6 +1915,16 @@ http.userAgent::
 	of common USER_AGENT strings (but not including those like git/1.7.1).
 	Can be overridden by the `GIT_HTTP_USER_AGENT` environment variable.
 
+http.followRedirects::
+	Whether git should follow HTTP redirects. If set to `true`, git
+	will transparently follow any redirect issued by a server it
+	encounters. If set to `false`, git will treat all redirects as
+	errors. If set to `initial`, git will follow redirects only for
+	the initial request to a remote, but not for subsequent
+	follow-up HTTP requests. Since git uses the redirected URL as
+	the base for the follow-up requests, this is generally
+	sufficient. The default is `initial`.
+
 http.<url>.*::
 	Any of the http.* options above can be applied selectively to some URLs.
 	For a config key to match a URL, each element of the config key is
@@ -1956,6 +1969,17 @@ equivalent URLs that are simply spelled differently will match properly.
 Environment variable settings always override any matches.  The URLs that are
 matched against are those given directly to Git commands.  This means any URLs
 visited as a result of a redirection do not participate in matching.
+
+ssh.variant::
+	Depending on the value of the environment variables `GIT_SSH` or
+	`GIT_SSH_COMMAND`, or the config setting `core.sshCommand`, Git
+	auto-detects whether to adjust its command-line parameters for use
+	with plink or tortoiseplink, as opposed to the default (OpenSSH).
++
+The config variable `ssh.variant` can be set to override this auto-detection;
+valid values are `ssh`, `plink`, `putty` or `tortoiseplink`. Any other value
+will be treated as normal ssh. This setting can be overridden via the
+environment variable `GIT_SSH_VARIANT`.
 
 i18n.commitEncoding::
 	Character encoding the commit messages are stored in; Git itself
@@ -2951,6 +2975,11 @@ is omitted from the advertisements but `refs/heads/master` and
 `refs/namespaces/bar/refs/heads/master` are still advertised as so-called
 "have" lines. In order to match refs before stripping, add a `^` in front of
 the ref name. If you combine `!` and `^`, `!` must be specified first.
++
+Even if you hide refs, a client may still be able to steal the target
+objects via the techniques described in the "SECURITY" section of the
+linkgit:gitnamespaces[7] man page; it's best to keep private data in a
+separate repository.
 
 transfer.unpackLimit::
 	When `fetch.unpackLimit` or `receive.unpackLimit` are
@@ -2960,7 +2989,7 @@ transfer.unpackLimit::
 uploadarchive.allowUnreachable::
 	If true, allow clients to use `git archive --remote` to request
 	any tree, whether reachable from the ref tips or not. See the
-	discussion in the `SECURITY` section of
+	discussion in the "SECURITY" section of
 	linkgit:git-upload-archive[1] for more details. Defaults to
 	`false`.
 
@@ -2974,12 +3003,23 @@ uploadpack.allowTipSHA1InWant::
 	When `uploadpack.hideRefs` is in effect, allow `upload-pack`
 	to accept a fetch request that asks for an object at the tip
 	of a hidden ref (by default, such a request is rejected).
-	see also `uploadpack.hideRefs`.
+	See also `uploadpack.hideRefs`.  Even if this is false, a client
+	may be able to steal objects via the techniques described in the
+	"SECURITY" section of the linkgit:gitnamespaces[7] man page; it's
+	best to keep private data in a separate repository.
 
 uploadpack.allowReachableSHA1InWant::
 	Allow `upload-pack` to accept a fetch request that asks for an
 	object that is reachable from any ref tip. However, note that
 	calculating object reachability is computationally expensive.
+	Defaults to `false`.  Even if this is false, a client may be able
+	to steal objects via the techniques described in the "SECURITY"
+	section of the linkgit:gitnamespaces[7] man page; it's best to
+	keep private data in a separate repository.
+
+uploadpack.allowAnySHA1InWant::
+	Allow `upload-pack` to accept a fetch request that asks for any
+	object at all.
 	Defaults to `false`.
 
 uploadpack.keepAlive::

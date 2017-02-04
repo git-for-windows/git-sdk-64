@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.4">
+<meta name="generator" content="Asciidoctor 1.5.5">
 <title>git-config(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -17,7 +17,6 @@ audio:not([controls]){display:none;height:0}
 [hidden],template{display:none}
 script{display:none!important}
 html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
-body{margin:0}
 a{background:transparent}
 a:focus{outline:thin dotted}
 a:active,a:hover{outline:0}
@@ -52,7 +51,7 @@ textarea{overflow:auto;vertical-align:top}
 table{border-collapse:collapse;border-spacing:0}
 *,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
 html,body{font-size:100%}
-body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
 a:hover{cursor:pointer}
 img,object,embed{max-width:100%;height:auto}
 object,embed{height:100%}
@@ -64,7 +63,6 @@ img{-ms-interpolation-mode:bicubic}
 .text-center{text-align:center!important}
 .text-justify{text-align:justify!important}
 .hide{display:none}
-body{-webkit-font-smoothing:antialiased}
 img,object,svg{display:inline-block;vertical-align:middle}
 textarea{height:auto;min-height:50px}
 select{width:100%}
@@ -119,13 +117,16 @@ table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:
 table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
 table tr.even,table tr.alt,table tr:nth-of-type(even){background:#f8f8f7}
 table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
-body{tab-size:4}
 h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
 h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
 .clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
 .clearfix:after,.float-group:after{clear:both}
-*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
+*:not(pre)>code.nobreak{word-wrap:normal}
+*:not(pre)>code.nowrap{white-space:nowrap}
 pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
+em em{font-style:normal}
+strong strong{font-weight:400}
 .keyseq{color:rgba(51,51,51,.8)}
 kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
 .keyseq kbd:first-child{margin-left:0}
@@ -1977,10 +1978,11 @@ the <code>GIT_NOTES_REF</code> environment variable.  See <a href="git-notes.htm
 </dd>
 <dt class="hdlist1">core.abbrev</dt>
 <dd>
-<p>Set the length object names are abbreviated to.  If unspecified,
-many commands abbreviate to 7 hexdigits, which may not be enough
-for abbreviated object names to stay unique for sufficiently long
-time.</p>
+<p>Set the length object names are abbreviated to.  If
+unspecified or set to "auto", an appropriate value is
+computed based on the approximate number of packed objects
+in your repository, which hopefully is enough for
+abbreviated object names to stay unique for some time.</p>
 </dd>
 <dt class="hdlist1">add.ignoreErrors</dt>
 <dt class="hdlist1">add.ignore-errors (deprecated)</dt>
@@ -3086,7 +3088,9 @@ boolean value.  The default is <code>true</code>.</p>
 Override the grace period with this config variable.  The value
 "now" may be used to disable this grace period and always prune
 unreachable objects immediately, or "never" may be used to
-suppress pruning.</p>
+suppress pruning.  This feature helps prevent corruption when
+<em>git gc</em> runs concurrently with another process writing to the
+repository; see the "NOTES" section of <a href="git-gc.html">git-gc</a>(1).</p>
 </dd>
 <dt class="hdlist1">gc.worktreePruneExpire</dt>
 <dd>
@@ -3685,6 +3689,17 @@ connecting through a firewall that restricts HTTP connections to a set
 of common USER_AGENT strings (but not including those like git/1.7.1).
 Can be overridden by the <code>GIT_HTTP_USER_AGENT</code> environment variable.</p>
 </dd>
+<dt class="hdlist1">http.followRedirects</dt>
+<dd>
+<p>Whether git should follow HTTP redirects. If set to <code>true</code>, git
+will transparently follow any redirect issued by a server it
+encounters. If set to <code>false</code>, git will treat all redirects as
+errors. If set to <code>initial</code>, git will follow redirects only for
+the initial request to a remote, but not for subsequent
+follow-up HTTP requests. Since git uses the redirected URL as
+the base for the follow-up requests, this is generally
+sufficient. The default is <code>initial</code>.</p>
+</dd>
 <dt class="hdlist1">http.&lt;url&gt;.*</dt>
 <dd>
 <p>Any of the http.* options above can be applied selectively to some URLs.
@@ -3742,6 +3757,19 @@ equivalent URLs that are simply spelled differently will match properly.
 Environment variable settings always override any matches.  The URLs that are
 matched against are those given directly to Git commands.  This means any URLs
 visited as a result of a redirection do not participate in matching.</p>
+</div>
+</dd>
+<dt class="hdlist1">ssh.variant</dt>
+<dd>
+<p>Depending on the value of the environment variables <code>GIT_SSH</code> or
+<code>GIT_SSH_COMMAND</code>, or the config setting <code>core.sshCommand</code>, Git
+auto-detects whether to adjust its command-line parameters for use
+with plink or tortoiseplink, as opposed to the default (OpenSSH).</p>
+<div class="paragraph">
+<p>The config variable <code>ssh.variant</code> can be set to override this auto-detection;
+valid values are <code>ssh</code>, <code>plink</code>, <code>putty</code> or <code>tortoiseplink</code>. Any other value
+will be treated as normal ssh. This setting can be overridden via the
+environment variable <code>GIT_SSH_VARIANT</code>.</p>
 </div>
 </dd>
 <dt class="hdlist1">i18n.commitEncoding</dt>
@@ -5087,6 +5115,12 @@ is omitted from the advertisements but <code>refs/heads/master</code> and
 "have" lines. In order to match refs before stripping, add a <code>^</code> in front of
 the ref name. If you combine <code>!</code> and <code>^</code>, <code>!</code> must be specified first.</p>
 </div>
+<div class="paragraph">
+<p>Even if you hide refs, a client may still be able to steal the target
+objects via the techniques described in the "SECURITY" section of the
+<a href="gitnamespaces.html">gitnamespaces</a>(7) man page; it&#8217;s best to keep private data in a
+separate repository.</p>
+</div>
 </dd>
 <dt class="hdlist1">transfer.unpackLimit</dt>
 <dd>
@@ -5098,7 +5132,7 @@ The default value is 100.</p>
 <dd>
 <p>If true, allow clients to use <code>git archive --remote</code> to request
 any tree, whether reachable from the ref tips or not. See the
-discussion in the <code>SECURITY</code> section of
+discussion in the "SECURITY" section of
 <a href="git-upload-archive.html">git-upload-archive</a>(1) for more details. Defaults to
 <code>false</code>.</p>
 </dd>
@@ -5114,13 +5148,25 @@ also <code>uploadpack.allowTipSHA1InWant</code>.</p>
 <p>When <code>uploadpack.hideRefs</code> is in effect, allow <code>upload-pack</code>
 to accept a fetch request that asks for an object at the tip
 of a hidden ref (by default, such a request is rejected).
-see also <code>uploadpack.hideRefs</code>.</p>
+See also <code>uploadpack.hideRefs</code>.  Even if this is false, a client
+may be able to steal objects via the techniques described in the
+"SECURITY" section of the <a href="gitnamespaces.html">gitnamespaces</a>(7) man page; it&#8217;s
+best to keep private data in a separate repository.</p>
 </dd>
 <dt class="hdlist1">uploadpack.allowReachableSHA1InWant</dt>
 <dd>
 <p>Allow <code>upload-pack</code> to accept a fetch request that asks for an
 object that is reachable from any ref tip. However, note that
 calculating object reachability is computationally expensive.
+Defaults to <code>false</code>.  Even if this is false, a client may be able
+to steal objects via the techniques described in the "SECURITY"
+section of the <a href="gitnamespaces.html">gitnamespaces</a>(7) man page; it&#8217;s best to
+keep private data in a separate repository.</p>
+</dd>
+<dt class="hdlist1">uploadpack.allowAnySHA1InWant</dt>
+<dd>
+<p>Allow <code>upload-pack</code> to accept a fetch request that asks for any
+object at all.
 Defaults to <code>false</code>.</p>
 </dd>
 <dt class="hdlist1">uploadpack.keepAlive</dt>
@@ -5252,7 +5298,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-01-14 11:41:56 W. Europe Standard Time
+Last updated 2017-02-03 08:41:53 W. Europe Standard Time
 </div>
 </div>
 </body>

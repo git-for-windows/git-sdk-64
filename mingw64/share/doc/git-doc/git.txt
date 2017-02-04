@@ -44,9 +44,10 @@ unreleased) version of Git, that is available from the 'master'
 branch of the `git.git` repository.
 Documentation for older releases are available here:
 
-* link:v2.11.0/git.html[documentation for release 2.11]
+* link:v2.11.1/git.html[documentation for release 2.11.1]
 
 * release notes for
+  link:RelNotes/2.11.1.txt[2.11.1],
   link:RelNotes/2.11.0.txt[2.11].
 
 * link:v2.10.2/git.html[documentation for release 2.10.2]
@@ -871,6 +872,12 @@ Git so take care if using a foreign front-end.
 	specifies a ":" separated (on Windows ";" separated) list
 	of Git object directories which can be used to search for Git
 	objects. New objects will not be written to these directories.
++
+	Entries that begin with `"` (double-quote) will be interpreted
+	as C-style quoted paths, removing leading and trailing
+	double-quotes and respecting backslash escapes. E.g., the value
+	`"path-with-\"-and-:-in-it":vanilla-path` has two paths:
+	`path-with-"-and-:-in-it` and `vanilla-path`.
 
 `GIT_DIR`::
 	If the `GIT_DIR` environment variable is set then it
@@ -1012,6 +1019,12 @@ needed).
 Usually it is easier to configure any desired options through your
 personal `.ssh/config` file.  Please consult your ssh documentation
 for further details.
+
+`GIT_SSH_VARIANT`::
+	If this environment variable is set, it overrides Git's autodetection
+	whether `GIT_SSH`/`GIT_SSH_COMMAND`/`core.sshCommand` refer to OpenSSH,
+	plink or tortoiseplink. This variable overrides the config setting
+	`ssh.variant` that serves the same purpose.
 
 `GIT_ASKPASS`::
 	If this environment variable is set, then Git commands which need to
