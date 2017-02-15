@@ -5,8 +5,8 @@ use strict;
 use vars qw(@ISA $VERSION);
 require File::Spec::Unix;
 
-$VERSION = '3.56';
-$VERSION =~ tr/_//;
+$VERSION = '3.63_01';
+$VERSION =~ tr/_//d;
 
 @ISA = qw(File::Spec::Unix);
 
@@ -90,7 +90,11 @@ Default: 1
 =cut
 
 sub case_tolerant {
-  eval { require Win32API::File; } or return 1;
+  eval {
+    local @INC = @INC;
+    pop @INC if $INC[-1] eq '.';
+    require Win32API::File;
+  } or return 1;
   my $drive = shift || "C:";
   my $osFsType = "\0"x256;
   my $osVolName = "\0"x256;

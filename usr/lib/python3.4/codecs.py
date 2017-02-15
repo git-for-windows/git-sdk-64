@@ -141,8 +141,8 @@ class Codec:
             'strict' handling.
 
             The method may not store state in the Codec instance. Use
-            StreamCodec for codecs which have to keep state in order to
-            make encoding/decoding efficient.
+            StreamWriter for codecs which have to keep state in order to
+            make encoding efficient.
 
             The encoder must be able to handle zero length input and
             return an empty object of the output object type in this
@@ -164,8 +164,8 @@ class Codec:
             'strict' handling.
 
             The method may not store state in the Codec instance. Use
-            StreamCodec for codecs which have to keep state in order to
-            make encoding/decoding efficient.
+            StreamReader for codecs which have to keep state in order to
+            make decoding efficient.
 
             The decoder must be able to handle zero length input and
             return an empty object of the output object type in this
@@ -256,7 +256,7 @@ class IncrementalDecoder(object):
     """
     def __init__(self, errors='strict'):
         """
-        Create a IncrementalDecoder instance.
+        Create an IncrementalDecoder instance.
 
         The IncrementalDecoder may use different error handling schemes by
         providing the errors keyword argument. See the module docstring
@@ -1007,7 +1007,7 @@ def iterencode(iterator, encoding, errors='strict', **kwargs):
     """
     Encoding iterator.
 
-    Encodes the input strings from the iterator using a IncrementalEncoder.
+    Encodes the input strings from the iterator using an IncrementalEncoder.
 
     errors and kwargs are passed through to the IncrementalEncoder
     constructor.
@@ -1025,7 +1025,7 @@ def iterdecode(iterator, encoding, errors='strict', **kwargs):
     """
     Decoding iterator.
 
-    Decodes the input strings from the iterator using a IncrementalDecoder.
+    Decodes the input strings from the iterator using an IncrementalDecoder.
 
     errors and kwargs are passed through to the IncrementalDecoder
     constructor.
@@ -1061,7 +1061,7 @@ def make_encoding_map(decoding_map):
         during translation.
 
         One example where this happens is cp875.py which decodes
-        multiple character to \u001a.
+        multiple character to \\u001a.
 
     """
     m = {}

@@ -258,11 +258,11 @@ C<AUTOLOAD>
 
 =item documented in L<perlmod>
 
-C<CLONE>, C<CLONE_SKIP>, 
+C<CLONE>, C<CLONE_SKIP>
 
 =item documented in L<perlobj>
 
-C<DESTROY>
+C<DESTROY>, C<DOES>
 
 =item documented in L<perltie>
 
@@ -514,9 +514,10 @@ evolving.  The current semantics and interface are subject to change.
 See L<attributes> and L<Attribute::Handlers>.
 
 The C<my> operator declares the listed variables to be lexically
-confined to the enclosing block, conditional (C<if/unless/elsif/else>),
-loop (C<for/foreach/while/until/continue>), subroutine, C<eval>,
-or C<do/require/use>'d file.  If more than one value is listed, the
+confined to the enclosing block, conditional
+(C<if>/C<unless>/C<elsif>/C<else>), loop
+(C<for>/C<foreach>/C<while>/C<until>/C<continue>), subroutine, C<eval>,
+or C<do>/C<require>/C<use>'d file.  If more than one value is listed, the
 list must be placed in parentheses.  All listed elements must be
 legal lvalues.  Only alphanumeric identifiers may be lexically
 scoped--magical built-ins like C<$/> must currently be C<local>ized
@@ -1290,7 +1291,7 @@ of all their former last elements:
 
     sub popmany {
 	my $aref;
-	my @retlist = ();
+	my @retlist;
 	foreach $aref ( @_ ) {
 	    push @retlist, pop @$aref;
 	}
@@ -1395,8 +1396,8 @@ using function prototyping.  This can be declared in either the PROTO
 section or with a L<prototype attribute|attributes/Built-in Attributes>.
 If you declare either of
 
-    sub mypush (+@)
-    sub mypush :prototype(+@)
+    sub mypush (\@@)
+    sub mypush :prototype(\@@)
 
 then C<mypush()> takes arguments exactly like C<push()> does.
 
@@ -1433,9 +1434,9 @@ corresponding built-in.
    sub mysyswrite ($$$;$)  mysyswrite $buf, 0, length($buf) - $off, $off
    sub myreverse (@)	   myreverse $a, $b, $c
    sub myjoin ($@)	   myjoin ":", $a, $b, $c
-   sub mypop (+)	   mypop @array
-   sub mysplice (+$$@)	   mysplice @array, 0, 2, @pushme
-   sub mykeys (+)	   mykeys %{$hashref}
+   sub mypop (\@)	   mypop @array
+   sub mysplice (\@$$@)	   mysplice @array, 0, 2, @pushme
+   sub mykeys (\[%@])	   mykeys %{$hashref}
    sub myopen (*;$)	   myopen HANDLE, $name
    sub mypipe (**)	   mypipe READHANDLE, WRITEHANDLE
    sub mygrep (&@)	   mygrep { /foo/ } $a, $b, $c

@@ -15,7 +15,7 @@ use ExtUtils::MakeMaker qw($Verbose neatvalue);
 
 # If we make $VERSION an our variable parse_version() breaks
 use vars qw($VERSION);
-$VERSION = '7.04_01';
+$VERSION = '7.10_02';
 $VERSION = eval $VERSION;  ## no critic [BuiltinFunctions::ProhibitStringyEval]
 
 require ExtUtils::MM_Any;
@@ -317,8 +317,8 @@ sub const_cccmd {
 
 =item const_config (o)
 
-Defines a couple of constants in the Makefile that are imported from
-%Config.
+Sets SHELL if needed, then defines a couple of constants in the Makefile
+that are imported from %Config.
 
 =cut
 
@@ -326,7 +326,8 @@ sub const_config {
 # --- Constants Sections ---
 
     my($self) = shift;
-    my @m = <<"END";
+    my @m = $self->specify_shell(); # Usually returns empty string
+    push @m, <<"END";
 
 # These definitions are from config.sh (via $INC{'Config.pm'}).
 # They may have been overridden via Makefile.PL or on the command line.
@@ -676,13 +677,13 @@ Defines a check in target for RCS.
 
 sub dist_ci {
     my($self) = shift;
-    return q{
-ci :
-	$(PERLRUN) "-MExtUtils::Manifest=maniread" \\
-	  -e "@all = keys %{ maniread() };" \\
-	  -e "print(qq{Executing $(CI) @all\n}); system(qq{$(CI) @all});" \\
-	  -e "print(qq{Executing $(RCS_LABEL) ...\n}); system(qq{$(RCS_LABEL) @all});"
-};
+    return sprintf "ci :\n\t%s\n", $self->oneliner(<<'EOF', [qw(-MExtUtils::Manifest=maniread)]);
+@all = sort keys %{ maniread() };
+print(qq{Executing $(CI) @all\n});
+system(qq{$(CI) @all}) == 0 or die $!;
+print(qq{Executing $(RCS_LABEL) ...\n});
+system(qq{$(RCS_LABEL) @all}) == 0 or die $!;
+EOF
 }
 
 =item dist_core (o)
@@ -3174,6 +3175,16 @@ MAKE_FRAG
     }
 
     return $m;
+}
+
+=item specify_shell
+
+Specify SHELL if needed - not done on Unix.
+
+=cut
+
+sub specify_shell {
+  return '';
 }
 
 =item quote_paren

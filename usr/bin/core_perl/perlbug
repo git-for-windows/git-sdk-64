@@ -2,12 +2,13 @@
     eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
 	if $running_under_some_shell;
 
-my $config_tag1 = '5.22.1 - Fri Mar 11 09:30:57 MSK 2016';
+my $config_tag1 = '5.24.1 - Tue Feb 14 13:37:39 MSK 2017';
 
-my $patchlevel_date = 1449610757;
+my $patchlevel_date = 1483384486;
 my @patches = Config::local_patches();
 my $patch_tags = join "", map /(\S+)/ ? "+$1 " : (), @patches;
 
+BEGIN { pop @INC if $INC[-1] eq '.' }
 use warnings;
 use strict;
 use Config;

@@ -10,8 +10,6 @@ import sys
 import threading
 import time
 import tokenize
-import traceback
-import types
 import io
 
 import linecache
@@ -32,7 +30,6 @@ from idlelib.ColorDelegator import ColorDelegator
 from idlelib.UndoDelegator import UndoDelegator
 from idlelib.OutputWindow import OutputWindow
 from idlelib.configHandler import idleConf
-from idlelib import idlever
 from idlelib import rpc
 from idlelib import Debugger
 from idlelib import RemoteDebugger
@@ -155,7 +152,7 @@ class PyShellEditorWindow(EditorWindow):
             # possible due to update in restore_file_breaks
             return
         if color:
-            theme = idleConf.GetOption('main','Theme','name')
+            theme = idleConf.CurrentTheme()
             cfg = idleConf.GetHighlight(theme, "break")
         else:
             cfg = {'foreground': '', 'background': ''}
@@ -166,7 +163,7 @@ class PyShellEditorWindow(EditorWindow):
         filename = self.io.filename
         text.tag_add("BREAK", "%d.0" % lineno, "%d.0" % (lineno+1))
         try:
-            i = self.breakpoints.index(lineno)
+            self.breakpoints.index(lineno)
         except ValueError:  # only add if missing, i.e. do once
             self.breakpoints.append(lineno)
         try:    # update the subprocess debugger
@@ -341,7 +338,7 @@ class ModifiedColorDelegator(ColorDelegator):
 
     def LoadTagDefs(self):
         ColorDelegator.LoadTagDefs(self)
-        theme = idleConf.GetOption('main','Theme','name')
+        theme = idleConf.CurrentTheme()
         self.tagdefs.update({
             "stdin": {'background':None,'foreground':None},
             "stdout": idleConf.GetHighlight(theme, "stdout"),
@@ -427,7 +424,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
             try:
                 self.rpcclt = MyRPCClient(addr)
                 break
-            except OSError as err:
+            except OSError:
                 pass
         else:
             self.display_port_binding_error()
@@ -448,7 +445,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
         self.rpcclt.listening_sock.settimeout(10)
         try:
             self.rpcclt.accept()
-        except socket.timeout as err:
+        except socket.timeout:
             self.display_no_subprocess_error()
             return None
         self.rpcclt.register("console", self.tkconsole)
@@ -462,7 +459,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
         self.poll_subprocess()
         return self.rpcclt
 
-    def restart_subprocess(self, with_cwd=False):
+    def restart_subprocess(self, with_cwd=False, filename=''):
         if self.restarting:
             return self.rpcclt
         self.restarting = True
@@ -483,25 +480,24 @@ class ModifiedInterpreter(InteractiveInterpreter):
         self.spawn_subprocess()
         try:
             self.rpcclt.accept()
-        except socket.timeout as err:
+        except socket.timeout:
             self.display_no_subprocess_error()
             return None
         self.transfer_path(with_cwd=with_cwd)
         console.stop_readline()
         # annotate restart in shell window and mark it
         console.text.delete("iomark", "end-1c")
-        if was_executing:
-            console.write('\n')
-            console.showprompt()
-        halfbar = ((int(console.width) - 16) // 2) * '='
-        console.write(halfbar + ' RESTART ' + halfbar)
+        tag = 'RESTART: ' + (filename if filename else 'Shell')
+        halfbar = ((int(console.width) -len(tag) - 4) // 2) * '='
+        console.write("\n{0} {1} {0}".format(halfbar, tag))
         console.text.mark_set("restart", "end-1c")
         console.text.mark_gravity("restart", "left")
-        console.showprompt()
+        if not filename:
+            console.showprompt()
         # restart subprocess debugger
         if debug:
             # Restarted debugger connects to current instance of debug GUI
-            gui = RemoteDebugger.restart_subprocess_debugger(self.rpcclt)
+            RemoteDebugger.restart_subprocess_debugger(self.rpcclt)
             # reload remote debugger breakpoints for all PyShellEditWindows
             debug.load_breakpoints()
         self.compile.compiler.flags = self.original_compiler_flags
@@ -625,7 +621,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
         item = RemoteObjectBrowser.StubObjectTreeItem(self.rpcclt, oid)
         from idlelib.TreeWidget import ScrolledCanvas, TreeNode
         top = Toplevel(self.tkconsole.root)
-        theme = idleConf.GetOption('main','Theme','name')
+        theme = idleConf.CurrentTheme()
         background = idleConf.GetHighlight(theme, 'normal')['background']
         sc = ScrolledCanvas(top, bg=background, highlightthickness=0)
         sc.frame.pack(expand=1, fill="both")
@@ -778,7 +774,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
                     "Exit?",
                     "Do you want to exit altogether?",
                     default="yes",
-                    master=self.tkconsole.text):
+                    parent=self.tkconsole.text):
                     raise
                 else:
                     self.showtraceback()
@@ -816,7 +812,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
             "Run IDLE with the -n command line switch to start without a "
             "subprocess and refer to Help/IDLE Help 'Running without a "
             "subprocess' for further details.",
-            master=self.tkconsole.text)
+            parent=self.tkconsole.text)
 
     def display_no_subprocess_error(self):
         tkMessageBox.showerror(
@@ -824,14 +820,14 @@ class ModifiedInterpreter(InteractiveInterpreter):
             "IDLE's subprocess didn't make connection.  Either IDLE can't "
             "start a subprocess or personal firewall software is blocking "
             "the connection.",
-            master=self.tkconsole.text)
+            parent=self.tkconsole.text)
 
     def display_executing_dialog(self):
         tkMessageBox.showerror(
             "Already executing",
             "The Python Shell window is already executing a command; "
             "please wait until it is finished.",
-            master=self.tkconsole.text)
+            parent=self.tkconsole.text)
 
 
 class PyShell(OutputWindow):
@@ -935,7 +931,7 @@ class PyShell(OutputWindow):
         if self.executing:
             tkMessageBox.showerror("Don't debug now",
                 "You can only toggle the debugger when idle",
-                master=self.text)
+                parent=self.text)
             self.set_debugger_indicator()
             return "break"
         else:
@@ -993,7 +989,7 @@ class PyShell(OutputWindow):
         if self.executing:
             response = tkMessageBox.askokcancel(
                 "Kill?",
-                "The program is still running!\n Do you want to kill it?",
+                "Your program is still running!\n Do you want to kill it?",
                 default="ok",
                 parent=self.text)
             if response is False:
@@ -1047,6 +1043,7 @@ class PyShell(OutputWindow):
 
         self.write("Python %s on %s\n%s\n%s" %
                    (sys.version, sys.platform, self.COPYRIGHT, nosub))
+        self.text.focus_force()
         self.showprompt()
         import tkinter
         tkinter._default_root = None # 03Jan04 KBK What's this?
@@ -1231,7 +1228,7 @@ class PyShell(OutputWindow):
         while i > 0 and line[i-1] in " \t":
             i = i-1
         line = line[:i]
-        more = self.interp.runsource(line)
+        self.interp.runsource(line)
 
     def open_stack_viewer(self, event=None):
         if self.interp.rpcclt:
@@ -1242,10 +1239,10 @@ class PyShell(OutputWindow):
             tkMessageBox.showerror("No stack trace",
                 "There is no stack trace yet.\n"
                 "(sys.last_traceback is not defined)",
-                master=self.text)
+                parent=self.text)
             return
         from idlelib.StackViewer import StackBrowser
-        sv = StackBrowser(self.root, self.flist)
+        StackBrowser(self.root, self.flist)
 
     def view_restart_mark(self, event=None):
         self.text.see("iomark")
@@ -1550,6 +1547,14 @@ def main():
     root.withdraw()
     flist = PyShellFileList(root)
     macosxSupport.setupApp(root, flist)
+
+    if macosxSupport.isAquaTk():
+        # There are some screwed up <2> class bindings for text
+        # widgets defined in Tk which we need to do away with.
+        # See issue #24801.
+        root.unbind_class('Text', '<B2>')
+        root.unbind_class('Text', '<B2-Motion>')
+        root.unbind_class('Text', '<<PasteSelection>>')
 
     if enable_edit:
         if not (cmd or script):

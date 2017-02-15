@@ -1,11 +1,11 @@
 import collections
-import sys
 import warnings
 try:
     import ssl
 except ImportError:  # pragma: no cover
     ssl = None
 
+from . import compat
 from . import protocols
 from . import transports
 from .log import logger
@@ -295,6 +295,7 @@ class _SSLProtocolTransport(transports._FlowControlMixin,
 
     def __init__(self, loop, ssl_protocol, app_protocol):
         self._loop = loop
+        # SSLProtocol instance
         self._ssl_protocol = ssl_protocol
         self._app_protocol = app_protocol
         self._closed = False
@@ -302,6 +303,9 @@ class _SSLProtocolTransport(transports._FlowControlMixin,
     def get_extra_info(self, name, default=None):
         """Get optional transport information."""
         return self._ssl_protocol._get_extra_info(name, default)
+
+    def is_closing(self):
+        return self._closed
 
     def close(self):
         """Close the transport.
@@ -317,7 +321,7 @@ class _SSLProtocolTransport(transports._FlowControlMixin,
     # On Python 3.3 and older, objects with a destructor part of a reference
     # cycle are never destroyed. It's not more the case on Python 3.4 thanks
     # to the PEP 442.
-    if sys.version_info >= (3, 4):
+    if compat.PY34:
         def __del__(self):
             if not self._closed:
                 warnings.warn("unclosed transport %r" % self, ResourceWarning)
@@ -348,7 +352,7 @@ class _SSLProtocolTransport(transports._FlowControlMixin,
         high-water limit.  Neither value can be negative.
 
         The defaults are implementation-specific.  If only the
-        high-water limit is given, the low-water limit defaults to a
+        high-water limit is given, the low-water limit defaults to an
         implementation-specific value less than or equal to the
         high-water limit.  Setting high to zero forces low to zero as
         well, and causes pause_writing() to be called whenever the
@@ -425,10 +429,12 @@ class SSLProtocol(protocols.Protocol):
         self._app_protocol = app_protocol
         self._app_transport = _SSLProtocolTransport(self._loop,
                                                     self, self._app_protocol)
+        # _SSLPipe instance (None until the connection is made)
         self._sslpipe = None
         self._session_established = False
         self._in_handshake = False
         self._in_shutdown = False
+        # transport, ex: SelectorSocketTransport
         self._transport = None
 
     def _wakeup_waiter(self, exc=None):
@@ -591,6 +597,7 @@ class SSLProtocol(protocols.Protocol):
         self._extra.update(peercert=peercert,
                            cipher=sslobj.cipher(),
                            compression=sslobj.compression(),
+                           ssl_object=sslobj,
                            )
         self._app_protocol.connection_made(self._app_transport)
         self._wakeup_waiter()
@@ -613,7 +620,8 @@ class SSLProtocol(protocols.Protocol):
                 if data:
                     ssldata, offset = self._sslpipe.feed_appdata(data, offset)
                 elif offset:
-                    ssldata = self._sslpipe.do_handshake(self._on_handshake_complete)
+                    ssldata = self._sslpipe.do_handshake(
+                        self._on_handshake_complete)
                     offset = 1
                 else:
                     ssldata = self._sslpipe.shutdown(self._finalize)
@@ -637,9 +645,13 @@ class SSLProtocol(protocols.Protocol):
                 self._write_buffer_size -= len(data)
         except BaseException as exc:
             if self._in_handshake:
+                # BaseExceptions will be re-raised in _on_handshake_complete.
                 self._on_handshake_complete(exc)
             else:
                 self._fatal_error(exc, 'Fatal error on SSL transport')
+            if not isinstance(exc, Exception):
+                # BaseException
+                raise
 
     def _fatal_error(self, exc, message='Fatal error on transport'):
         # Should be called from exception handler only.

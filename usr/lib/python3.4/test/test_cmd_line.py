@@ -271,7 +271,11 @@ class CmdLineTest(unittest.TestCase):
 
     def test_displayhook_unencodable(self):
         for encoding in ('ascii', 'latin-1', 'utf-8'):
-            env = os.environ.copy()
+            # We are testing a PYTHON environment variable here, so we can't
+            # use -E, -I, or script_helper (which uses them).  So instead we do
+            # poor-man's isolation by deleting the PYTHON vars from env.
+            env = {key:value for (key,value) in os.environ.copy().items()
+                   if not key.startswith('PYTHON')}
             env['PYTHONIOENCODING'] = encoding
             p = subprocess.Popen(
                 [sys.executable, '-i'],
@@ -398,12 +402,24 @@ class CmdLineTest(unittest.TestCase):
         # Verify that -R enables hash randomization:
         self.verify_valid_flag('-R')
         hashes = []
-        for i in range(2):
+        if os.environ.get('PYTHONHASHSEED', 'random') != 'random':
+            env = dict(os.environ)  # copy
+            # We need to test that it is enabled by default without
+            # the environment variable enabling it for us.
+            del env['PYTHONHASHSEED']
+            env['__cleanenv'] = '1'  # consumed by assert_python_ok()
+        else:
+            env = {}
+        for i in range(3):
             code = 'print(hash("spam"))'
-            rc, out, err = assert_python_ok('-c', code)
+            rc, out, err = assert_python_ok('-c', code, **env)
             self.assertEqual(rc, 0)
             hashes.append(out)
-        self.assertNotEqual(hashes[0], hashes[1])
+        hashes = sorted(set(hashes))  # uniq
+        # Rare chance of failure due to 3 random seeds honestly being equal.
+        self.assertGreater(len(hashes), 1,
+                           msg='3 runs produced an identical random hash '
+                               ' for "spam": {}'.format(hashes))
 
         # Verify that sys.flags contains hash_randomization
         code = 'import sys; print("random is", sys.flags.hash_randomization)'

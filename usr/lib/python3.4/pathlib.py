@@ -73,6 +73,10 @@ class _Flavour(object):
                     # parts. This makes the result of parsing e.g.
                     # ("C:", "/", "a") reasonably intuitive.
                     for part in it:
+                        if not part:
+                            continue
+                        if altsep:
+                            part = part.replace(altsep, sep)
                         drv = self.splitroot(part)[0]
                         if drv:
                             break
@@ -450,12 +454,15 @@ class _PreciseSelector(_Selector):
         _Selector.__init__(self, child_parts)
 
     def _select_from(self, parent_path, is_dir, exists, listdir):
-        if not is_dir(parent_path):
+        try:
+            if not is_dir(parent_path):
+                return
+            path = parent_path._make_child_relpath(self.name)
+            if exists(path):
+                for p in self.successor._select_from(path, is_dir, exists, listdir):
+                    yield p
+        except PermissionError:
             return
-        path = parent_path._make_child_relpath(self.name)
-        if exists(path):
-            for p in self.successor._select_from(path, is_dir, exists, listdir):
-                yield p
 
 
 class _WildcardSelector(_Selector):
@@ -465,15 +472,19 @@ class _WildcardSelector(_Selector):
         _Selector.__init__(self, child_parts)
 
     def _select_from(self, parent_path, is_dir, exists, listdir):
-        if not is_dir(parent_path):
+        try:
+            if not is_dir(parent_path):
+                return
+            cf = parent_path._flavour.casefold
+            for name in listdir(parent_path):
+                casefolded = cf(name)
+                if self.pat.match(casefolded):
+                    path = parent_path._make_child_relpath(name)
+                    for p in self.successor._select_from(path, is_dir, exists, listdir):
+                        yield p
+        except PermissionError:
             return
-        cf = parent_path._flavour.casefold
-        for name in listdir(parent_path):
-            casefolded = cf(name)
-            if self.pat.match(casefolded):
-                path = parent_path._make_child_relpath(name)
-                for p in self.successor._select_from(path, is_dir, exists, listdir):
-                    yield p
+
 
 
 class _RecursiveWildcardSelector(_Selector):
@@ -483,26 +494,32 @@ class _RecursiveWildcardSelector(_Selector):
 
     def _iterate_directories(self, parent_path, is_dir, listdir):
         yield parent_path
-        for name in listdir(parent_path):
-            path = parent_path._make_child_relpath(name)
-            if is_dir(path):
-                for p in self._iterate_directories(path, is_dir, listdir):
-                    yield p
+        try:
+            for name in listdir(parent_path):
+                path = parent_path._make_child_relpath(name)
+                if is_dir(path) and not path.is_symlink():
+                    for p in self._iterate_directories(path, is_dir, listdir):
+                        yield p
+        except PermissionError:
+            return
 
     def _select_from(self, parent_path, is_dir, exists, listdir):
-        if not is_dir(parent_path):
+        try:
+            if not is_dir(parent_path):
+                return
+            with _cached(listdir) as listdir:
+                yielded = set()
+                try:
+                    successor_select = self.successor._select_from
+                    for starting_point in self._iterate_directories(parent_path, is_dir, listdir):
+                        for p in successor_select(starting_point, is_dir, exists, listdir):
+                            if p not in yielded:
+                                yield p
+                                yielded.add(p)
+                finally:
+                    yielded.clear()
+        except PermissionError:
             return
-        with _cached(listdir) as listdir:
-            yielded = set()
-            try:
-                successor_select = self.successor._select_from
-                for starting_point in self._iterate_directories(parent_path, is_dir, listdir):
-                    for p in successor_select(starting_point, is_dir, exists, listdir):
-                        if p not in yielded:
-                            yield p
-                            yielded.add(p)
-            finally:
-                yielded.clear()
 
 
 #

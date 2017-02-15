@@ -1,5 +1,6 @@
 package ExtUtils::CBuilder::Platform::darwin;
-$ExtUtils::CBuilder::Platform::darwin::VERSION = '0.280221';
+$ExtUtils::CBuilder::Platform::darwin::VERSION = '0.280225';
+use warnings;
 use strict;
 use ExtUtils::CBuilder::Platform::Unix;
 

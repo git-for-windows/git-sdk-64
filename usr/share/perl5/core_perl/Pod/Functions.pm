@@ -54,7 +54,7 @@ L<perlfunc/"Perl Functions by Category"> section.
 
 =cut
 
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 require Exporter;
 
@@ -207,7 +207,7 @@ glob	File	expand filenames using wildcards
 gmtime	Time	convert UNIX time into record or string using Greenwich time
 goto	Flow	create spaghetti code
 grep	LIST	locate elements in a list test true against a given criterion
-hex	Math	String	convert a string to a hexadecimal number
+hex	Math	String	convert a hexadecimal string to a number
 import	Modules	Namespace	patch a module's namespace into your own
 index	String	find a substring within a string
 int	Math	get the integer portion of a number
@@ -280,7 +280,7 @@ say	I/O	output a list to a filehandle, appending a newline
 scalar	Misc	force a scalar context
 seek	I/O	reposition file pointer for random-access I/O
 seekdir	I/O	reposition directory pointer
-select	I/O	reset default output or do I/O multiplexing
+select	File	I/O	reset default output or do I/O multiplexing
 semctl	SysV	SysV semaphore control operations
 semget	SysV	get set of SysV semaphores
 semop	SysV	SysV semaphore operations

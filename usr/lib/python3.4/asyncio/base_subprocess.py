@@ -1,8 +1,8 @@
 import collections
 import subprocess
-import sys
 import warnings
 
+from . import compat
 from . import futures
 from . import protocols
 from . import transports
@@ -35,8 +35,13 @@ class BaseSubprocessTransport(transports.SubprocessTransport):
             self._pipes[2] = None
 
         # Create the child process: set the _proc attribute
-        self._start(args=args, shell=shell, stdin=stdin, stdout=stdout,
-                    stderr=stderr, bufsize=bufsize, **kwargs)
+        try:
+            self._start(args=args, shell=shell, stdin=stdin, stdout=stdout,
+                        stderr=stderr, bufsize=bufsize, **kwargs)
+        except:
+            self.close()
+            raise
+
         self._pid = self._proc.pid
         self._extra['subprocess'] = self._proc
 
@@ -54,9 +59,14 @@ class BaseSubprocessTransport(transports.SubprocessTransport):
         info = [self.__class__.__name__]
         if self._closed:
             info.append('closed')
-        info.append('pid=%s' % self._pid)
+        if self._pid is not None:
+            info.append('pid=%s' % self._pid)
         if self._returncode is not None:
             info.append('returncode=%s' % self._returncode)
+        elif self._pid is not None:
+            info.append('running')
+        else:
+            info.append('not started')
 
         stdin = self._pipes.get(0)
         if stdin is not None:
@@ -77,11 +87,8 @@ class BaseSubprocessTransport(transports.SubprocessTransport):
     def _start(self, args, shell, stdin, stdout, stderr, bufsize, **kwargs):
         raise NotImplementedError
 
-    def _make_write_subprocess_pipe_proto(self, fd):
-        raise NotImplementedError
-
-    def _make_read_subprocess_pipe_proto(self, fd):
-        raise NotImplementedError
+    def is_closing(self):
+        return self._closed
 
     def close(self):
         if self._closed:
@@ -93,7 +100,12 @@ class BaseSubprocessTransport(transports.SubprocessTransport):
                 continue
             proto.pipe.close()
 
-        if self._proc is not None and self._returncode is None:
+        if (self._proc is not None
+        # the child process finished?
+        and self._returncode is None
+        # the child process finished but the transport was not notified yet?
+        and self._proc.poll() is None
+        ):
             if self._loop.get_debug():
                 logger.warning('Close running child process: kill %r', self)
 
@@ -107,7 +119,7 @@ class BaseSubprocessTransport(transports.SubprocessTransport):
     # On Python 3.3 and older, objects with a destructor part of a reference
     # cycle are never destroyed. It's not more the case on Python 3.4 thanks
     # to the PEP 442.
-    if sys.version_info >= (3, 4):
+    if compat.PY34:
         def __del__(self):
             if not self._closed:
                 warnings.warn("unclosed transport %r" % self, ResourceWarning)
@@ -207,6 +219,7 @@ class BaseSubprocessTransport(transports.SubprocessTransport):
                 waiter.set_result(returncode)
         self._exit_waiters = None
 
+    @coroutine
     def _wait(self):
         """Wait until the process exit and return the process return code.
 

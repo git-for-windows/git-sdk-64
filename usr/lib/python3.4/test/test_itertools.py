@@ -698,7 +698,7 @@ class TestBasicOps(unittest.TestCase):
         # iter.__next__ failure on inner object
         self.assertRaises(ExpectedError, gulp, delayed_raise(1))
 
-        # __cmp__ failure
+        # __eq__ failure
         class DummyCmp:
             def __eq__(self, dst):
                 raise ExpectedError
@@ -984,6 +984,16 @@ class TestBasicOps(unittest.TestCase):
             self.assertEqual(list(copy.deepcopy(product(*args))), result)
             for proto in range(pickle.HIGHEST_PROTOCOL + 1):
                 self.pickletest(proto, product(*args))
+
+    def test_product_issue_25021(self):
+        # test that indices are properly clamped to the length of the tuples
+        p = product((1, 2),(3,))
+        p.__setstate__((0, 0x1000))  # will access tuple element 1 if not clamped
+        self.assertEqual(next(p), (2, 3))
+        # test that empty tuple in the list will result in an immediate StopIteration
+        p = product((1, 2), (), (3,))
+        p.__setstate__((0, 0, 0x1000))  # will access tuple element 1 if not clamped
+        self.assertRaises(StopIteration, next, p)
 
     def test_repeat(self):
         self.assertEqual(list(repeat(object='a', times=3)), ['a', 'a', 'a'])
@@ -1338,8 +1348,12 @@ class TestBasicOps(unittest.TestCase):
     # Issue 13454: Crash when deleting backward iterator from tee()
     def test_tee_del_backward(self):
         forward, backward = tee(repeat(None, 20000000))
-        any(forward)  # exhaust the iterator
-        del backward
+        try:
+            any(forward)  # exhaust the iterator
+            del backward
+        except:
+            del forward, backward
+            raise
 
     def test_StopIteration(self):
         self.assertRaises(StopIteration, next, zip())

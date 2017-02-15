@@ -90,8 +90,6 @@
 /* This is the stuff that used to live in regexp.h that was truly
    private to the engine itself. It now lives here. */
 
-
-
  typedef struct regexp_internal {
         int name_list_idx;	/* Optional data index of an array of paren names */
         union {
@@ -134,13 +132,14 @@
 #define PREGf_USE_RE_EVAL	0x00000020 /* compiled with "use re 'eval'" */
 /* these used to be extflags, but are now intflags */
 #define PREGf_NOSCAN            0x00000040
-#define PREGf_CANY_SEEN         0x00000080
+                                /* spare */
 #define PREGf_GPOS_SEEN         0x00000100
 #define PREGf_GPOS_FLOAT        0x00000200
 
 #define PREGf_ANCH_MBOL         0x00000400
 #define PREGf_ANCH_SBOL         0x00000800
 #define PREGf_ANCH_GPOS         0x00001000
+#define PREGf_RECURSE_SEEN      0x00002000
 
 #define PREGf_ANCH              \
     ( PREGf_ANCH_SBOL | PREGf_ANCH_GPOS | PREGf_ANCH_MBOL )
@@ -261,7 +260,7 @@ struct regnode_ssc {
 #define set_ANYOF_SYNTHETIC(n) STMT_START{ OP(n) = ANYOF;              \
                                            NEXT_OFF(n) = 1;            \
                                } STMT_END
-#define is_ANYOF_SYNTHETIC(n) (OP(n) == ANYOF && NEXT_OFF(n) == 1)
+#define is_ANYOF_SYNTHETIC(n) (PL_regkind[OP(n)] == ANYOF && NEXT_OFF(n) == 1)
 
 /* XXX fix this description.
    Impose a limit of REG_INFTY on various pattern matching operations
@@ -369,85 +368,198 @@ struct regnode_ssc {
 
 #define REG_MAGIC 0234
 
-#define SIZE_ONLY (RExC_emit == (regnode *) & RExC_emit_dummy)
+#define SIZE_ONLY cBOOL(RExC_emit == (regnode *) & RExC_emit_dummy)
 #define PASS1 SIZE_ONLY
 #define PASS2 (! SIZE_ONLY)
 
-/* If the bitmap fully represents what this ANYOF node can match, the
- * ARG is set to this special value (since 0, 1, ... are legal, but will never
- * reach this high). */
+/* An ANYOF node is basically a bitmap with the index being a code point.  If
+ * the bit for that code point is 1, the code point matches;  if 0, it doesn't
+ * match (complemented if inverted).  There is an additional mechanism to deal
+ * with cases where the bitmap is insufficient in and of itself.  This #define
+ * indicates if the bitmap does fully represent what this ANYOF node can match.
+ * The ARG is set to this special value (since 0, 1, ... are legal, but will
+ * never reach this high). */
 #define ANYOF_ONLY_HAS_BITMAP	((U32) -1)
 
-/* Flags for node->flags of ANYOF.  These are in short supply, with none
- * currently available.  The ABOVE_BITMAP_ALL bit could be freed up
- * by resorting to creating a swash containing everything above 255.  This
- * introduces a performance penalty.  An option that wouldn't slow things down
- * would be to split one of the two LOC flags out into a separate
- * node, like what was done with ANYOF_NON_UTF8_NON_ASCII_ALL in commit
- * 34fdef848b1687b91892ba55e9e0c3430e0770f6 (but which was reverted because it
- * wasn't the best option available at the time), and using a LOC flag is
- * probably better than that commit anyway.  But it could be reinstated if we
- * need a bit.  The LOC flags are only for /l nodes; the reverted commit was
- * only for /d, so there are no combinatorial issues.  The LOC flag to use is
- * probably the POSIXL one.  Now that there is an ANYOFL (locale) node, another
- * option would be to make all of those include the POSIXL data structure,
- * which would get rid of needing a separate POSIXL flag.  But it would
- * increase the size of all such nodes, so it's probably not as atractive as
- * having an ANYOF_POSIXL node type.  But if we did do it, note that not all 32
- * bits of that extra space are used, one bit of that could be set aside for
- * the LOC_FOLD flag, yielding yet another bit.  This would require extra code
- * for masking, so again not the most attractive solution.
+/* When the bimap isn't completely sufficient for handling the ANYOF node,
+ * flags (in node->flags of the ANYOF node) get set to indicate this.  These
+ * are perennially in short supply.  Beyond several cases where warnings need
+ * to be raised under certain circumstances, currently, there are six cases
+ * where the bitmap alone isn't sufficient.  We could use six flags to
+ * represent the 6 cases, but to save flags bits, we play some games.  The
+ * cases are:
  *
- * Several flags are not used in synthetic start class (SSC) nodes, so could be
+ *  1)  The bitmap has a compiled-in very finite size.  So something else needs
+ *      to be used to specify if a code point that is too large for the bitmap
+ *      actually matches.  The mechanism currently is a swash or inversion
+ *      list.  ANYOF_ONLY_HAS_BITMAP, described above, being TRUE indicates
+ *      there are no matches of too-large code points.  But if it is FALSE,
+ *      then almost certainly there are matches too large for the bitmap.  (The
+ *      other cases, described below, either imply this one or are extremely
+ *      rare in practice.)  So we can just assume that a too-large code point
+ *      will need something beyond the bitmap if ANYOF_ONLY_HAS_BITMAP is
+ *      FALSE, instead of having a separate flag for this.
+ *  2)  A subset of item 1) is if all possible code points outside the bitmap
+ *      match.  This is a common occurrence when the class is complemented,
+ *      like /[^ij]/.  Therefore a bit is reserved to indicate this,
+ *      rather than having an expensive swash created,
+ *      ANYOF_MATCHES_ALL_ABOVE_BITMAP.
+ *  3)  Under /d rules, it can happen that code points that are in the upper
+ *      latin1 range (\x80-\xFF or their equivalents on EBCDIC platforms) match
+ *      only if the runtime target string being matched against is UTF-8.  For
+ *      example /[\w[:punct:]]/d.  This happens only for posix classes (with a
+ *      couple of exceptions, like \d where it doesn't happen), and all such
+ *      ones also have above-bitmap matches.  Thus, 3) implies 1) as well.
+ *      Note that /d rules are no longer encouraged; 'use 5.14' or higher
+ *      deselects them.  But a flag is required so that they can be properly
+ *      handled.  But it can be a shared flag: see 5) below.
+ *  4)  Also under /d rules, something like /[\Wfoo]/ will match everything in
+ *      the \x80-\xFF range, unless the string being matched against is UTF-8.
+ *      A swash could be created for this case, but this is relatively common,
+ *      and it turns out that it's all or nothing:  if any one of these code
+ *      points matches, they all do.  Hence a single bit suffices.  We use a
+ *      shared flag that doesn't take up space by itself:
+ *      ANYOF_SHARED_d_MATCHES_ALL_NON_UTF8_NON_ASCII_non_d_WARN_SUPER.
+ *      This also implies 1), with one exception: [:^cntrl:].
+ *  5)  A user-defined \p{} property may not have been defined by the time the
+ *      regex is compiled.  In this case, we don't know until runtime what it
+ *      will match, so we have to assume it could match anything, including
+ *      code points that ordinarily would be in the bitmap.  A flag bit is
+ *      necessary to indicate this , though it can be shared with the item 3)
+ *      flag, as that only occurs under /d, and this only occurs under non-d.
+ *      This case is quite uncommon in the field, and the /(?[ ...])/ construct
+ *      is a better way to accomplish what this feature does.  This case also
+ *      implies 1).
+ *      ANYOF_SHARED_d_UPPER_LATIN1_UTF8_STRING_MATCHES_non_d_RUNTIME_USER_PROP
+ *      is the shared flag.
+ *  6)  /[foo]/il may have folds that are only valid if the runtime locale is a
+ *      UTF-8 one.  These are quite rare, so it would be good to avoid the
+ *      expense of looking for them.  But /l matching is slow anyway, and we've
+ *      traditionally not worried too much about its performance.  And this
+ *      condition requires the ANYOFL_FOLD flag to be set, so testing for
+ *      that flag would be sufficient to rule out most cases of this.  So it is
+ *      unclear if this should have a flag or not.  But, this flag can be
+ *      shared with another, so it doesn't occupy extra space.
+ *
+ * At the moment, there is one spare bit, but this could be increased by
+ * various tricks.
+ *
+ * If just one more bit is needed, at this writing it seems to khw that the
+ * best choice would be to make ANYOF_MATCHES_ALL_ABOVE_BITMAP not a flag, but
+ * something like
+ *
+ *      #define ANYOF_MATCHES_ALL_ABOVE_BITMAP      ((U32) -2)
+ *
+ * and access it through the ARG like ANYOF_ONLY_HAS_BITMAP is.  This flag is
+ * used by all ANYOF node types, and it could be used to avoid calling the
+ * handler function, as the macro REGINCLASS in regexec.c does now for other
+ * cases.
+ *
+ * Another possibility is to instead (or additionally) rename the ANYOF_POSIXL
+ * flag to be ANYOFL_LARGE, to mean that the ANYOF node has an extra 32 bits
+ * beyond what a regular one does.  That's what it effectively means now, with
+ * the extra space all for the POSIX class flags.  But those classes actually
+ * only occupy 30 bits, so the ANYOFL_FOLD and
+ * ANYOFL_SHARED_UTF8_LOCALE_fold_HAS_MATCHES_nonfold_REQD flags could be moved
+ * to that extra space.  The 30 bits in the extra word would indicate if a
+ * posix class should be looked up or not.  The downside of this is that ANYOFL
+ * nodes with folding would always have to have the extra space allocated, even
+ * if they didn't use the 30 posix bits.  There isn't an SSC problem as all
+ * SSCs are this large anyway.
+ *
+ * One could completely remove ANYOFL_LARGE and make all ANYOFL nodes large.
+ * REGINCLASS would have to be modified so that if the node type were this, it
+ * would call reginclass(), as the flag bit that indicates to do this now would
+ * be gone.
+ *
+ * All told, 5 bits could be available for other uses if all of the above were
+ * done.
+ *
+ * Some flags are not used in synthetic start class (SSC) nodes, so could be
  * shared should new flags be needed for SSCs, like SSC_MATCHES_EMPTY_STRING
  * now. */
 
-/* regexec.c is expecting this to be in the low bit */
+/* If this is set, the result of the match should be complemented.  regexec.c
+ * is expecting this to be in the low bit.  Never in an SSC */
 #define ANYOF_INVERT		                0x01
 
 /* For the SSC node only, which cannot be inverted, so is shared with that bit.
  * This is used only during regex compilation. */
 #define SSC_MATCHES_EMPTY_STRING                ANYOF_INVERT
 
-/* Are there things outside the bitmap that will match only if the target
- * string is encoded in UTF-8?  (This is not set if ANYOF_ABOVE_BITMAP_ALL is
- * set) */
-#define ANYOF_HAS_UTF8_NONBITMAP_MATCHES        0x02
+/* Set if this is a regnode_charclass_posixl vs a regnode_charclass.  This
+ * is used for runtime \d, \w, [:posix:], ..., which are used only in locale
+ * and the optimizer's synthetic start class.  Non-locale \d, etc are resolved
+ * at compile-time.  Only set under /l; can be in SSC */
+#define ANYOF_MATCHES_POSIXL                    0x02
 
 /* The fold is calculated and stored in the bitmap where possible at compile
  * time.  However under locale, the actual folding varies depending on
  * what the locale is at the time of execution, so it has to be deferred until
- * then */
-#define ANYOF_LOC_FOLD                          0x04
+ * then.  Only set under /l; never in an SSC  */
+#define ANYOFL_FOLD                             0x04
 
-/* Set if this is a regnode_charclass_posixl vs a regnode_charclass.  This
- * is used for runtime \d, \w, [:posix:], ..., which are used only in locale
- * and the optimizer's synthetic start class.  Non-locale \d, etc are resolved
- * at compile-time */
-#define ANYOF_MATCHES_POSIXL                    0x08
+/* Shared bit set only with ANYOFL and SSC nodes:
+ *    If ANYOFL_FOLD is set, this means there are potential matches valid
+ *       only if the locale is a UTF-8 one.
+ *    If ANYOFL_FOLD is NOT set, this means to warn if the runtime locale
+ *       isn't a UTF-8 one (and the generated node assumes a UTF-8 locale).
+ *       None of INVERT, POSIXL,
+ *       ANYOF_SHARED_d_UPPER_LATIN1_UTF8_STRING_MATCHES_non_d_RUNTIME_USER_PROP
+ *       can be set.  */
+#define ANYOFL_SHARED_UTF8_LOCALE_fold_HAS_MATCHES_nonfold_REQD        0x08
 
-/* Should we raise a warning if matching against an above-Unicode code point?
+/* Convenience macros for teasing apart the meanings when reading the above bit
  * */
-#define ANYOF_WARN_SUPER                        0x10
+#define ANYOFL_SOME_FOLDS_ONLY_IN_UTF8_LOCALE(flags)                        \
+    ((flags & ( ANYOFL_FOLD /* Both bits are set */                         \
+               |ANYOFL_SHARED_UTF8_LOCALE_fold_HAS_MATCHES_nonfold_REQD))   \
+             == ( ANYOFL_FOLD                                               \
+                 |ANYOFL_SHARED_UTF8_LOCALE_fold_HAS_MATCHES_nonfold_REQD))
 
-/* Can match something outside the bitmap that isn't in utf8 */
-#define ANYOF_HAS_NONBITMAP_NON_UTF8_MATCHES    0x20
+#define  ANYOFL_UTF8_LOCALE_REQD(flags)                                     \
+    ((flags & ( ANYOFL_FOLD /* Only REQD bit is set */                      \
+               |ANYOFL_SHARED_UTF8_LOCALE_fold_HAS_MATCHES_nonfold_REQD))   \
+             == ANYOFL_SHARED_UTF8_LOCALE_fold_HAS_MATCHES_nonfold_REQD)
 
-/* Matches every code point NUM_ANYOF_CODE_POINTS and above*/
-#define ANYOF_MATCHES_ALL_ABOVE_BITMAP          0x40
+/* Spare:                                       0x10 */
 
-/* Match all Latin1 characters that aren't ASCII when the target string is not
- * in utf8. */
-#define ANYOF_MATCHES_ALL_NON_UTF8_NON_ASCII    0x80
+/* If set, the node matches every code point NUM_ANYOF_CODE_POINTS and above.
+ * Can be in an SSC */
+#define ANYOF_MATCHES_ALL_ABOVE_BITMAP          0x20
 
-#define ANYOF_FLAGS_ALL		(0xff)
+/* Shared bit:
+ *      Under /d it means the ANYOFD node matches more things if the target
+ *          string is encoded in UTF-8; any such things will be non-ASCII,
+ *          characters that are < 256, and can be accessed via the swash.
+ *      When not under /d, it means the ANYOF node contains a user-defined
+ *      property that wasn't yet defined at the time the regex was compiled,
+ *      and so must be looked up at runtime, by creating a swash
+ * (These uses are mutually exclusive because a user-defined property is
+ * specified by \p{}, and \p{} implies /u which deselects /d).  The long macro
+ * name is to make sure that you are cautioned about its shared nature.  Only
+ * the non-/d meaning can be in an SSC */
+#define ANYOF_SHARED_d_UPPER_LATIN1_UTF8_STRING_MATCHES_non_d_RUNTIME_USER_PROP  0x40
 
-#define ANYOF_LOCALE_FLAGS (ANYOF_LOC_FOLD | ANYOF_MATCHES_POSIXL)
+/* Shared bit:
+ *      Under /d it means the ANYOFD node matches all non-ASCII Latin1
+ *          characters when the target string is not in utf8.
+ *      When not under /d, it means the ANYOF node should raise a warning if
+ *          matching against an above-Unicode code point.
+ * (These uses are mutually exclusive because the warning requires a \p{}, and
+ * \p{} implies /u which deselects /d).  An SSC node only has this bit set if
+ * what is meant is the warning.  The long macro name is to make sure that you
+ * are cautioned about its shared nature */
+#define ANYOF_SHARED_d_MATCHES_ALL_NON_UTF8_NON_ASCII_non_d_WARN_SUPER 0x80
+
+#define ANYOF_FLAGS_ALL		(0xff & ~0x10)
+
+#define ANYOF_LOCALE_FLAGS (ANYOFL_FOLD | ANYOF_MATCHES_POSIXL)
 
 /* These are the flags that apply to both regular ANYOF nodes and synthetic
  * start class nodes during construction of the SSC.  During finalization of
- * the SSC, other of the flags could be added to it */
-#define ANYOF_COMMON_FLAGS    (ANYOF_WARN_SUPER|ANYOF_HAS_UTF8_NONBITMAP_MATCHES)
+ * the SSC, other of the flags may get added to it */
+#define ANYOF_COMMON_FLAGS      0
 
 /* Character classes for node->classflags of ANYOF */
 /* Should be synchronized with a table in regprop() */
@@ -567,9 +679,9 @@ struct regnode_ssc {
 
 #define ANYOF_POSIXL_AND(source, dest) STMT_START { (dest)->classflags &= (source)->classflags ; } STMT_END
 
-#define ANYOF_BITMAP_ZERO(ret)	Zero(((struct regnode_charclass*)(ret))->bitmap, ANYOF_BITMAP_SIZE, char)
-#define ANYOF_BITMAP(p)		(((struct regnode_charclass*)(p))->bitmap)
-#define ANYOF_BITMAP_BYTE(p, c)	(ANYOF_BITMAP(p)[(((U8)(c)) >> 3) & 31])
+#define ANYOF_BITMAP_ZERO(ret)	Zero(((regnode_charclass*)(ret))->bitmap, ANYOF_BITMAP_SIZE, char)
+#define ANYOF_BITMAP(p)		((regnode_charclass*)(p))->bitmap
+#define ANYOF_BITMAP_BYTE(p, c)	BITMAP_BYTE(ANYOF_BITMAP(p), c)
 #define ANYOF_BITMAP_SET(p, c)	(ANYOF_BITMAP_BYTE(p, c) |=  ANYOF_BIT(c))
 #define ANYOF_BITMAP_CLEAR(p,c)	(ANYOF_BITMAP_BYTE(p, c) &= ~ANYOF_BIT(c))
 #define ANYOF_BITMAP_TEST(p, c)	cBOOL(ANYOF_BITMAP_BYTE(p, c) &   ANYOF_BIT(c))
@@ -579,7 +691,7 @@ struct regnode_ssc {
 #define ANYOF_BITMAP_CLEARALL(p)	\
 	Zero (ANYOF_BITMAP(p), ANYOF_BITMAP_SIZE)
 
-#define ANYOF_SKIP		EXTRA_SIZE(struct regnode_charclass)
+#define ANYOF_SKIP		EXTRA_SIZE(regnode_charclass)
 #define ANYOF_POSIXL_SKIP	EXTRA_SIZE(regnode_charclass_posixl)
 
 /*
@@ -597,14 +709,13 @@ struct regnode_ssc {
 #define REG_LOOKBEHIND_SEEN                 0x00000002
 #define REG_GPOS_SEEN                       0x00000004
 /* spare */
-#define REG_CANY_SEEN                       0x00000010
 #define REG_RECURSE_SEEN                    0x00000020
 #define REG_TOP_LEVEL_BRANCHES_SEEN         0x00000040
 #define REG_VERBARG_SEEN                    0x00000080
 #define REG_CUTGROUP_SEEN                   0x00000100
 #define REG_RUN_ON_COMMENT_SEEN             0x00000200
 #define REG_UNFOLDED_MULTI_SEEN             0x00000400
-#define REG_GOSTART_SEEN                    0x00000800
+/* spare */
 #define REG_UNBOUNDED_QUANTIFIER_SEEN       0x00001000
 
 
@@ -796,7 +907,7 @@ typedef struct _reg_ac_data reg_ac_data;
    three different sets... */
 
 #define TRIE_BITMAP(p)		(((reg_trie_data *)(p))->bitmap)
-#define TRIE_BITMAP_BYTE(p, c)	(TRIE_BITMAP(p)[(((U8)(c)) >> 3) & 31])
+#define TRIE_BITMAP_BYTE(p, c)	BITMAP_BYTE(TRIE_BITMAP(p), c)
 #define TRIE_BITMAP_SET(p, c)	(TRIE_BITMAP_BYTE(p, c) |=  ANYOF_BIT((U8)c))
 #define TRIE_BITMAP_CLEAR(p,c)	(TRIE_BITMAP_BYTE(p, c) &= ~ANYOF_BIT((U8)c))
 #define TRIE_BITMAP_TEST(p, c)	(TRIE_BITMAP_BYTE(p, c) &   ANYOF_BIT((U8)c))
@@ -805,7 +916,7 @@ typedef struct _reg_ac_data reg_ac_data;
 #define IS_TRIE_AC(op) ((op)>=AHOCORASICK)
 
 
-#define BITMAP_BYTE(p, c)	(((U8*)p)[(((U8)(c)) >> 3) & 31])
+#define BITMAP_BYTE(p, c)	(( (U8*) p) [ ( ( (UV) (c)) >> 3) ] )
 #define BITMAP_TEST(p, c)	(BITMAP_BYTE(p, c) &   ANYOF_BIT((U8)c))
 
 /* these defines assume uniquecharcount is the correct variable, and state may be evaluated twice */
@@ -943,7 +1054,7 @@ re.pm, especially to the documentation.
 /* get_sv() can return NULL during global destruction. */
 #define GET_RE_DEBUG_FLAGS DEBUG_r({ \
         SV * re_debug_flags_sv = NULL; \
-        re_debug_flags_sv = get_sv(RE_DEBUG_FLAGS, 1); \
+        re_debug_flags_sv = PL_curcop ? get_sv(RE_DEBUG_FLAGS, 1) : NULL; \
         if (re_debug_flags_sv) { \
             if (!SvIOK(re_debug_flags_sv)) \
                 sv_setuv(re_debug_flags_sv, RE_DEBUG_COMPILE_DUMP | RE_DEBUG_EXECUTE_MASK ); \
@@ -957,22 +1068,25 @@ re.pm, especially to the documentation.
         PERL_UNUSED_VAR(re_debug_flags); GET_RE_DEBUG_FLAGS;
 
 #define RE_PV_COLOR_DECL(rpv,rlen,isuni,dsv,pv,l,m,c1,c2) \
-    const char * const rpv =                          \
-        pv_pretty((dsv), (pv), (l), (m), \
-            PL_colors[(c1)],PL_colors[(c2)], \
+    const char * const rpv =                                 \
+        pv_pretty((dsv), (pv), (l),                          \
+            (PL_dump_re_max_len) ? PL_dump_re_max_len : (m), \
+            PL_colors[(c1)],PL_colors[(c2)],                 \
             PERL_PV_ESCAPE_RE|PERL_PV_ESCAPE_NONASCII |((isuni) ? PERL_PV_ESCAPE_UNI : 0) );         \
     const int rlen = SvCUR(dsv)
 
-#define RE_SV_ESCAPE(rpv,isuni,dsv,sv,m) \
-    const char * const rpv =                          \
-        pv_pretty((dsv), (SvPV_nolen_const(sv)), (SvCUR(sv)), (m), \
-            PL_colors[(c1)],PL_colors[(c2)], \
+#define RE_SV_ESCAPE(rpv,isuni,dsv,sv,m)                        \
+    const char * const rpv =                                    \
+        pv_pretty((dsv), (SvPV_nolen_const(sv)), (SvCUR(sv)),   \
+            (PL_dump_re_max_len) ? PL_dump_re_max_len : (m),    \
+            PL_colors[(c1)],PL_colors[(c2)],                    \
             PERL_PV_ESCAPE_RE|PERL_PV_ESCAPE_NONASCII |((isuni) ? PERL_PV_ESCAPE_UNI : 0) )
 
 #define RE_PV_QUOTED_DECL(rpv,isuni,dsv,pv,l,m)                    \
     const char * const rpv =                                       \
-        pv_pretty((dsv), (pv), (l), (m), \
-            PL_colors[0], PL_colors[1], \
+        pv_pretty((dsv), (pv), (l),                                \
+            (PL_dump_re_max_len) ? PL_dump_re_max_len : (m),       \
+            PL_colors[0], PL_colors[1],                            \
             ( PERL_PV_PRETTY_QUOTE | PERL_PV_ESCAPE_RE | PERL_PV_ESCAPE_NONASCII | PERL_PV_PRETTY_ELLIPSES | \
               ((isuni) ? PERL_PV_ESCAPE_UNI : 0))                  \
         )
@@ -994,6 +1108,7 @@ re.pm, especially to the documentation.
 typedef enum {
 	TRADITIONAL_BOUND = _CC_WORDCHAR,
 	GCB_BOUND,
+	LB_BOUND,
 	SB_BOUND,
 	WB_BOUND
 } bound_type;

@@ -12,8 +12,13 @@ our @EXPORT = qw( );
 our @EXPORT_OK = qw (usleep sleep ualarm alarm gettimeofday time tv_interval
 		 getitimer setitimer nanosleep clock_gettime clock_getres
 		 clock clock_nanosleep
-		 CLOCK_HIGHRES CLOCK_MONOTONIC CLOCK_PROCESS_CPUTIME_ID
-		 CLOCK_REALTIME CLOCK_SOFTTIME CLOCK_THREAD_CPUTIME_ID
+		 CLOCK_BOOTTIME CLOCK_HIGHRES
+		 CLOCK_MONOTONIC CLOCK_MONOTONIC_COARSE
+		 CLOCK_MONOTONIC_PRECISE CLOCK_MONOTONIC_RAW
+		 CLOCK_PROCESS_CPUTIME_ID
+		 CLOCK_REALTIME CLOCK_REALTIME_COARSE
+		 CLOCK_REALTIME_FAST CLOCK_REALTIME_PRECISE
+		 CLOCK_SECOND CLOCK_SOFTTIME CLOCK_THREAD_CPUTIME_ID
 		 CLOCK_TIMEOFDAY CLOCKS_PER_SEC
 		 ITIMER_REAL ITIMER_VIRTUAL ITIMER_PROF ITIMER_REALPROF
 		 TIMER_ABSTIME
@@ -23,7 +28,7 @@ our @EXPORT_OK = qw (usleep sleep ualarm alarm gettimeofday time tv_interval
 		 stat lstat
 		);
 
-our $VERSION = '1.9726';
+our $VERSION = '1.9733';
 our $XS_VERSION = $VERSION;
 $VERSION = eval $VERSION;
 
@@ -115,7 +120,8 @@ Time::HiRes - High resolution alarm, sleep, gettimeofday, interval timers
   getitimer ($which);
 
   use Time::HiRes qw( clock_gettime clock_getres clock_nanosleep
-		      ITIMER_REAL ITIMER_VIRTUAL ITIMER_PROF ITIMER_REALPROF );
+		      ITIMER_REAL ITIMER_VIRTUAL ITIMER_PROF
+                      ITIMER_REALPROF );
 
   $realtime   = clock_gettime(CLOCK_REALTIME);
   $resolution = clock_getres(CLOCK_REALTIME);
@@ -356,6 +362,13 @@ specified by C<$which>.  All implementations that support POSIX high
 resolution timers are supposed to support at least the C<$which> value
 of C<CLOCK_REALTIME>, see L</clock_gettime>.
 
+B<NOTE>: the resolution returned may be highly optimistic.  Even if
+the resolution is high (a small number), all it means is that you'll
+be able to specify the arguments to clock_gettime() and clock_nanosleep()
+with that resolution.  The system might not actually be able to measure
+events at that resolution, and the various overheads and the overall system
+load are certain to affect any timings.
+
 =item clock_nanosleep ( $which, $nanoseconds, $flags = 0)
 
 Sleeps for the number of nanoseconds (1e9ths of a second) specified.
@@ -510,7 +523,7 @@ modglobal hash:
 
   name             C prototype
   ---------------  ----------------------
-  Time::NVtime     double (*)()
+  Time::NVtime     NV (*)()
   Time::U2time     void (*)(pTHX_ UV ret[2])
 
 Both functions return equivalent information (like C<gettimeofday>)
@@ -521,12 +534,12 @@ VMS have emulations for it.)
 
 Here is an example of using C<NVtime> from C:
 
-  double (*myNVtime)(); /* Returns -1 on failure. */
+  NV (*myNVtime)(); /* Returns -1 on failure. */
   SV **svp = hv_fetch(PL_modglobal, "Time::NVtime", 12, 0);
   if (!svp)         croak("Time::HiRes is required");
   if (!SvIOK(*svp)) croak("Time::NVtime isn't a function pointer");
-  myNVtime = INT2PTR(double(*)(), SvIV(*svp));
-  printf("The current time is: %f\n", (*myNVtime)());
+  myNVtime = INT2PTR(NV(*)(), SvIV(*svp));
+  printf("The current time is: %" NVff "\n", (*myNVtime)());
 
 =head1 DIAGNOSTICS
 
@@ -572,6 +585,10 @@ might help in this (in case your system supports CLOCK_MONOTONIC).
 
 Some systems have APIs but not implementations: for example QNX and Haiku
 have the interval timer APIs but not the functionality.
+
+In OS X clock_getres(), clock_gettime() and clock_nanosleep() are
+emulated using the Mach timers; as a side effect of being emulated
+the CLOCK_REALTIME and CLOCK_MONOTONIC are the same timer.
 
 =head1 SEE ALSO
 

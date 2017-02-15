@@ -79,7 +79,7 @@ If you want to have arrays of constant strings, note carefully the
 right combination of C<const>s:
 
     static const char * const yippee[] =
-	{"hi", "ho", "silver"};
+        {"hi", "ho", "silver"};
 
 There is a way to completely hide any modifiable globals (they are all
 moved to heap), the compilation setting
@@ -201,7 +201,7 @@ guaranteed to be B<int> or B<long>.  If you really explicitly need
 Assuming one can dereference any type of pointer for any type of data
 
   char *p = ...;
-  long pony = *p;    /* BAD */
+  long pony = *(long *)p;    /* BAD */
 
 Many platforms, quite rightly so, will give you a core dump instead of
 a pony if the p happens not to be correctly aligned.
@@ -299,7 +299,7 @@ Also, the range 'A' - 'Z' in ASCII is an unbroken sequence of 26 upper
 case alphabetic characters.  That is not true in EBCDIC.  Nor for 'a' to
 'z'.  But '0' - '9' is an unbroken range in both systems.  Don't assume
 anything about other ranges.  (Note that special handling of ranges in
-regular expression patterns makes it appear to Perl
+regular expression patterns and transliterations makes it appear to Perl
 code that the aforementioned ranges are all unbroken.)
 
 Many of the comments in the existing code ignore the possibility of
@@ -600,6 +600,10 @@ temporarily try the following:
 
 But in any case, try to keep the features and operating systems
 separate.
+
+A good resource on the predefined macros for various operating
+systems, compilers, and so forth is
+L<http://sourceforge.net/p/predef/wiki/Home/>
 
 =item *
 
@@ -969,11 +973,11 @@ similar output to L<B::Debug|B::Debug>.
 
 =head2 Using gdb to look at specific parts of a program
 
-With the example above, you knew to look for C<Perl_pp_add>, but what if 
-there were multiple calls to it all over the place, or you didn't know what 
+With the example above, you knew to look for C<Perl_pp_add>, but what if
+there were multiple calls to it all over the place, or you didn't know what
 the op was you were looking for?
 
-One way to do this is to inject a rare call somewhere near what you're looking 
+One way to do this is to inject a rare call somewhere near what you're looking
 for.  For example, you could add C<study> before your method:
 
     study;
@@ -983,7 +987,7 @@ And in gdb do:
     (gdb) break Perl_pp_study
 
 And then step until you hit what you're
-looking for.  This works well in a loop 
+looking for.  This works well in a loop
 if you want to only break at certain iterations:
 
     for my $c (1..100) {
@@ -992,7 +996,7 @@ if you want to only break at certain iterations:
 
 =head2 Using gdb to look at what the parser/lexer are doing
 
-If you want to see what perl is doing when parsing/lexing your code, you can 
+If you want to see what perl is doing when parsing/lexing your code, you can
 use C<BEGIN {}>:
 
     print "Before\n";
@@ -1006,7 +1010,7 @@ And in gdb:
 If you want to see what the parser/lexer is doing inside of C<if> blocks and
 the like you need to be a little trickier:
 
-    if ($a && $b && do { BEGIN { study } 1 } && $c) { ... } 
+    if ($a && $b && do { BEGIN { study } 1 } && $c) { ... }
 
 =head1 SOURCE CODE STATIC ANALYSIS
 
@@ -1039,6 +1043,17 @@ Coverity (http://www.coverity.com/) is a product similar to lint and as
 a testbed for their product they periodically check several open source
 projects, and they give out accounts to open source developers to the
 defect databases.
+
+There is Coverity setup for the perl5 project:
+L<https://scan.coverity.com/projects/perl5>
+
+=head2 HP-UX cadvise (Code Advisor)
+
+HP has a C/C++ static analyzer product for HP-UX caller Code Advisor.
+(Link not given here because the URL is horribly long and seems horribly
+unstable; use the search engine of your choice to find it.)  The use of
+the C<cadvise_cc> recipe with C<Configure ... -Dcc=./cadvise_cc>
+(see cadvise "User Guide") is recommended; as is the use of C<+wall>.
 
 =head2 cpd (cut-and-paste detector)
 
@@ -1167,7 +1182,7 @@ C<-Accflags=-DDL_UNLOAD_ALL_AT_EXIT>.
 
 The valgrind tool can be used to find out both memory leaks and illegal
 heap memory accesses.  As of version 3.3.0, Valgrind only supports Linux
-on x86, x86-64 and PowerPC and Darwin (OS X) on x86 and x86-64).  The
+on x86, x86-64 and PowerPC and Darwin (OS X) on x86 and x86-64.  The
 special "test.valgrind" target can be used to run the tests under
 valgrind.  Found errors and memory leaks are logged in files named
 F<testfile.valgrind> and by default output is displayed inline.
@@ -1184,7 +1199,7 @@ run.  The valgrind tests support being run in parallel to help with this:
 Note that the above two invocations will be very verbose as reachable
 memory and leak-checking is enabled by default.  If you want to just see
 pure errors, try:
-    
+
     VG_OPTS='-q --leak-check=no --show-reachable=no' TEST_JOBS=9 \
         make test.valgrind
 
@@ -1396,7 +1411,7 @@ variable PERL_DESTRUCT_LEVEL to a non-zero value.  The t/TEST wrapper
 does set this to 2, and this is what you need to do too, if you don't
 want to see the "global leaks": For example, for running under valgrind
 
-	env PERL_DESTRUCT_LEVEL=2 valgrind ./perl -Ilib t/foo/bar.t
+    env PERL_DESTRUCT_LEVEL=2 valgrind ./perl -Ilib t/foo/bar.t
 
 (Note: the mod_perl apache module uses also this environment variable
 for its own purposes and extended its semantics.  Refer to the mod_perl
@@ -1436,17 +1451,18 @@ C<-DPERL_MEM_LOG> instead.
 
 =head2 PERL_MEM_LOG
 
-If compiled with C<-DPERL_MEM_LOG>, both memory and SV allocations go
-through logging functions, which is handy for breakpoint setting.
+If compiled with C<-DPERL_MEM_LOG> (C<-Accflags=-DPERL_MEM_LOG>), both
+memory and SV allocations go through logging functions, which is
+handy for breakpoint setting.
 
-Unless C<-DPERL_MEM_LOG_NOIMPL> is also compiled, the logging functions
-read $ENV{PERL_MEM_LOG} to determine whether to log the event, and if
-so how:
+Unless C<-DPERL_MEM_LOG_NOIMPL> (C<-Accflags=-DPERL_MEM_LOG_NOIMPL>) is
+also compiled, the logging functions read $ENV{PERL_MEM_LOG} to
+determine whether to log the event, and if so how:
 
-    $ENV{PERL_MEM_LOG} =~ /m/		Log all memory ops
-    $ENV{PERL_MEM_LOG} =~ /s/		Log all SV ops
-    $ENV{PERL_MEM_LOG} =~ /t/		include timestamp in Log
-    $ENV{PERL_MEM_LOG} =~ /^(\d+)/	write to FD given (default is 2)
+    $ENV{PERL_MEM_LOG} =~ /m/           Log all memory ops
+    $ENV{PERL_MEM_LOG} =~ /s/           Log all SV ops
+    $ENV{PERL_MEM_LOG} =~ /t/           include timestamp in Log
+    $ENV{PERL_MEM_LOG} =~ /^(\d+)/      write to FD given (default is 2)
 
 Memory logging is somewhat similar to C<-Dm> but is independent of
 C<-DDEBUGGING>, and at a higher level; all uses of Newx(), Renew(), and

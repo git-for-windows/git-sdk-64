@@ -2170,7 +2170,7 @@ def test_DocTestSuite():
          ...
          AttributeError: 'module' object has no attribute 'sillySetup'
 
-       The setUp and tearDown funtions are passed test objects. Here
+       The setUp and tearDown functions are passed test objects. Here
        we'll use the setUp function to supply the missing variable y:
 
          >>> def setUp(test):
@@ -2316,7 +2316,7 @@ def test_DocFileSuite():
          ...
          AttributeError: 'module' object has no attribute 'sillySetup'
 
-       The setUp and tearDown funtions are passed test objects.
+       The setUp and tearDown functions are passed test objects.
        Here, we'll use a setUp function to set the favorite color in
        test_doctest.txt:
 
@@ -2624,8 +2624,8 @@ Windows line endings first:
 
     >>> import tempfile, os
     >>> fn = tempfile.mktemp()
-    >>> with open(fn, 'w') as f:
-    ...    f.write('Test:\r\n\r\n  >>> x = 1 + 1\r\n\r\nDone.\r\n')
+    >>> with open(fn, 'wb') as f:
+    ...    f.write(b'Test:\r\n\r\n  >>> x = 1 + 1\r\n\r\nDone.\r\n')
     35
     >>> doctest.testfile(fn, False)
     TestResults(failed=0, attempted=1)
@@ -2634,8 +2634,8 @@ Windows line endings first:
 And now *nix line endings:
 
     >>> fn = tempfile.mktemp()
-    >>> with open(fn, 'w') as f:
-    ...     f.write('Test:\n\n  >>> x = 1 + 1\n\nDone.\n')
+    >>> with open(fn, 'wb') as f:
+    ...     f.write(b'Test:\n\n  >>> x = 1 + 1\n\nDone.\n')
     30
     >>> doctest.testfile(fn, False)
     TestResults(failed=0, attempted=1)

@@ -229,6 +229,7 @@ def urlretrieve(url, filename=None, reporthook=None, data=None):
     return result
 
 def urlcleanup():
+    """Clean up temporary files from urlretrieve calls."""
     for temp_file in _url_tempfiles:
         try:
             os.unlink(temp_file)
@@ -2240,7 +2241,11 @@ class ftpwrapper:
         self.timeout = timeout
         self.refcount = 0
         self.keepalive = persistent
-        self.init()
+        try:
+            self.init()
+        except:
+            self.close()
+            raise
 
     def init(self):
         import ftplib

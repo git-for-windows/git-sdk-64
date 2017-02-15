@@ -744,6 +744,14 @@ class BytesTest(BaseBytesTest, unittest.TestCase):
             def __index__(self):
                 return 42
         self.assertEqual(bytes(A()), b'a')
+        # Issue #24731
+        class A:
+            def __bytes__(self):
+                return OtherBytesSubclass(b'abc')
+        self.assertEqual(bytes(A()), b'abc')
+        self.assertIs(type(bytes(A())), OtherBytesSubclass)
+        self.assertEqual(BytesSubclass(A()), b'abc')
+        self.assertIs(type(BytesSubclass(A())), BytesSubclass)
 
     # Test PyBytes_FromFormat()
     def test_from_format(self):
@@ -947,6 +955,22 @@ class ByteArrayTest(BaseBytesTest, unittest.TestCase):
         b.extend(range(100, 110))
         self.assertEqual(list(b), list(range(10, 110)))
 
+    def test_fifo_overrun(self):
+        # Test for issue #23985, a buffer overrun when implementing a FIFO
+        # Build Python in pydebug mode for best results.
+        b = bytearray(10)
+        b.pop()        # Defeat expanding buffer off-by-one quirk
+        del b[:1]      # Advance start pointer without reallocating
+        b += bytes(2)  # Append exactly the number of deleted bytes
+        del b          # Free memory buffer, allowing pydebug verification
+
+    def test_del_expand(self):
+        # Reducing the size should not expand the buffer (issue #23985)
+        b = bytearray(10)
+        size = sys.getsizeof(b)
+        del b[:1]
+        self.assertLessEqual(sys.getsizeof(b), size)
+
     def test_extended_set_del_slice(self):
         indices = (0, None, 1, 3, 19, 300, 1<<333, -1, -2, -31, -300)
         for start in indices:
@@ -1014,9 +1038,26 @@ class ByteArrayTest(BaseBytesTest, unittest.TestCase):
         for i in range(100):
             b += b"x"
             alloc = b.__alloc__()
-            self.assertTrue(alloc >= len(b))
+            self.assertGreater(alloc, len(b))  # including trailing null byte
             if alloc not in seq:
                 seq.append(alloc)
+
+    def test_init_alloc(self):
+        b = bytearray()
+        def g():
+            for i in range(1, 100):
+                yield i
+                a = list(b)
+                self.assertEqual(a, list(range(1, len(a)+1)))
+                self.assertEqual(len(b), len(a))
+                self.assertLessEqual(len(b), i)
+                alloc = b.__alloc__()
+                self.assertGreater(alloc, len(b))  # including trailing null byte
+        b.__init__(g())
+        self.assertEqual(list(b), list(range(1, 100)))
+        self.assertEqual(len(b), 99)
+        alloc = b.__alloc__()
+        self.assertGreater(alloc, len(b))
 
     def test_extend(self):
         orig = b'hello'
@@ -1430,6 +1471,9 @@ class ByteArraySubclass(bytearray):
     pass
 
 class BytesSubclass(bytes):
+    pass
+
+class OtherBytesSubclass(bytes):
     pass
 
 class ByteArraySubclassTest(SubclassTest, unittest.TestCase):

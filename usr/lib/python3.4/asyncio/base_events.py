@@ -16,8 +16,11 @@ to modify the meaning of the API call itself.
 
 import collections
 import concurrent.futures
+import functools
 import heapq
 import inspect
+import ipaddress
+import itertools
 import logging
 import os
 import socket
@@ -28,6 +31,7 @@ import traceback
 import sys
 import warnings
 
+from . import compat
 from . import coroutines
 from . import events
 from . import futures
@@ -68,56 +72,83 @@ def _format_pipe(fd):
         return repr(fd)
 
 
-class _StopError(BaseException):
-    """Raised to stop the event loop."""
+# Linux's sock.type is a bitmask that can include extra info about socket.
+_SOCKET_TYPE_MASK = 0
+if hasattr(socket, 'SOCK_NONBLOCK'):
+    _SOCKET_TYPE_MASK |= socket.SOCK_NONBLOCK
+if hasattr(socket, 'SOCK_CLOEXEC'):
+    _SOCKET_TYPE_MASK |= socket.SOCK_CLOEXEC
+
+
+@functools.lru_cache(maxsize=1024)
+def _ipaddr_info(host, port, family, type, proto):
+    # Try to skip getaddrinfo if "host" is already an IP. Since getaddrinfo
+    # blocks on an exclusive lock on some platforms, users might handle name
+    # resolution in their own code and pass in resolved IPs.
+    if proto not in {0, socket.IPPROTO_TCP, socket.IPPROTO_UDP} or host is None:
+        return None
+
+    type &= ~_SOCKET_TYPE_MASK
+    if type == socket.SOCK_STREAM:
+        proto = socket.IPPROTO_TCP
+    elif type == socket.SOCK_DGRAM:
+        proto = socket.IPPROTO_UDP
+    else:
+        return None
+
+    if hasattr(socket, 'inet_pton'):
+        if family == socket.AF_UNSPEC:
+            afs = [socket.AF_INET, socket.AF_INET6]
+        else:
+            afs = [family]
+
+        for af in afs:
+            # Linux's inet_pton doesn't accept an IPv6 zone index after host,
+            # like '::1%lo0', so strip it. If we happen to make an invalid
+            # address look valid, we fail later in sock.connect or sock.bind.
+            try:
+                if af == socket.AF_INET6:
+                    socket.inet_pton(af, host.partition('%')[0])
+                else:
+                    socket.inet_pton(af, host)
+                return af, type, proto, '', (host, port)
+            except OSError:
+                pass
+
+        # "host" is not an IP address.
+        return None
+
+    # No inet_pton. (On Windows it's only available since Python 3.4.)
+    # Even though getaddrinfo with AI_NUMERICHOST would be non-blocking, it
+    # still requires a lock on some platforms, and waiting for that lock could
+    # block the event loop. Use ipaddress instead, it's just text parsing.
+    try:
+        addr = ipaddress.IPv4Address(host)
+    except ValueError:
+        try:
+            addr = ipaddress.IPv6Address(host.partition('%')[0])
+        except ValueError:
+            return None
+
+    af = socket.AF_INET if addr.version == 4 else socket.AF_INET6
+    if family not in (socket.AF_UNSPEC, af):
+        # "host" is wrong IP version for "family".
+        return None
+
+    return af, type, proto, '', (host, port)
 
 
 def _check_resolved_address(sock, address):
     # Ensure that the address is already resolved to avoid the trap of hanging
     # the entire event loop when the address requires doing a DNS lookup.
-    #
-    # getaddrinfo() is slow (around 10 us per call): this function should only
-    # be called in debug mode
-    family = sock.family
 
-    if family == socket.AF_INET:
-        host, port = address
-    elif family == socket.AF_INET6:
-        host, port = address[:2]
-    else:
+    if hasattr(socket, 'AF_UNIX') and sock.family == socket.AF_UNIX:
         return
 
-    # On Windows, socket.inet_pton() is only available since Python 3.4
-    if hasattr(socket, 'inet_pton'):
-        # getaddrinfo() is slow and has known issue: prefer inet_pton()
-        # if available
-        try:
-            socket.inet_pton(family, host)
-        except OSError as exc:
-            raise ValueError("address must be resolved (IP address), "
-                             "got host %r: %s"
-                             % (host, exc))
-    else:
-        # Use getaddrinfo(flags=AI_NUMERICHOST) to ensure that the address is
-        # already resolved.
-        type_mask = 0
-        if hasattr(socket, 'SOCK_NONBLOCK'):
-            type_mask |= socket.SOCK_NONBLOCK
-        if hasattr(socket, 'SOCK_CLOEXEC'):
-            type_mask |= socket.SOCK_CLOEXEC
-        try:
-            socket.getaddrinfo(host, port,
-                               family=family,
-                               type=(sock.type & ~type_mask),
-                               proto=sock.proto,
-                               flags=socket.AI_NUMERICHOST)
-        except socket.gaierror as err:
-            raise ValueError("address must be resolved (IP address), "
-                             "got host %r: %s"
-                             % (host, err))
-
-def _raise_stop_error(*args):
-    raise _StopError
+    host, port = address[:2]
+    if _ipaddr_info(host, port, sock.family, sock.type, sock.proto) is None:
+        raise ValueError("address must be resolved (IP address),"
+                         " got host %r" % host)
 
 
 def _run_until_complete_cb(fut):
@@ -127,7 +158,7 @@ def _run_until_complete_cb(fut):
         # Issue #22429: run_forever() already finished, no need to
         # stop it.
         return
-    _raise_stop_error()
+    fut._loop.stop()
 
 
 class Server(events.AbstractServer):
@@ -182,6 +213,7 @@ class BaseEventLoop(events.AbstractEventLoop):
     def __init__(self):
         self._timer_cancelled_count = 0
         self._closed = False
+        self._stopping = False
         self._ready = collections.deque()
         self._scheduled = []
         self._default_executor = None
@@ -191,12 +223,14 @@ class BaseEventLoop(events.AbstractEventLoop):
         self._thread_id = None
         self._clock_resolution = time.get_clock_info('monotonic').resolution
         self._exception_handler = None
-        self._debug = (not sys.flags.ignore_environment
-                       and bool(os.environ.get('PYTHONASYNCIODEBUG')))
+        self.set_debug((not sys.flags.ignore_environment
+                        and bool(os.environ.get('PYTHONASYNCIODEBUG'))))
         # In debug mode, if the execution of a callback or a step of a task
         # exceed this duration in seconds, the slow callback/task is logged.
         self.slow_callback_duration = 0.1
         self._current_handle = None
+        self._task_factory = None
+        self._coroutine_wrapper_set = False
 
     def __repr__(self):
         return ('<%s running=%s closed=%s debug=%s>'
@@ -209,10 +243,31 @@ class BaseEventLoop(events.AbstractEventLoop):
         Return a task object.
         """
         self._check_closed()
-        task = tasks.Task(coro, loop=self)
-        if task._source_traceback:
-            del task._source_traceback[-1]
+        if self._task_factory is None:
+            task = tasks.Task(coro, loop=self)
+            if task._source_traceback:
+                del task._source_traceback[-1]
+        else:
+            task = self._task_factory(self, coro)
         return task
+
+    def set_task_factory(self, factory):
+        """Set a task factory that will be used by loop.create_task().
+
+        If factory is None the default task factory will be set.
+
+        If factory is a callable, it should have a signature matching
+        '(loop, coro)', where 'loop' will be a reference to the active
+        event loop, 'coro' will be a coroutine object.  The callable
+        must return a Future.
+        """
+        if factory is not None and not callable(factory):
+            raise TypeError('task factory must be a callable or None')
+        self._task_factory = factory
+
+    def get_task_factory(self):
+        """Return a task factory, or None if the default one is in use."""
+        return self._task_factory
 
     def _make_socket_transport(self, sock, protocol, waiter=None, *,
                                extra=None, server=None):
@@ -269,15 +324,17 @@ class BaseEventLoop(events.AbstractEventLoop):
         self._check_closed()
         if self.is_running():
             raise RuntimeError('Event loop is running.')
+        self._set_coroutine_wrapper(self._debug)
         self._thread_id = threading.get_ident()
         try:
             while True:
-                try:
-                    self._run_once()
-                except _StopError:
+                self._run_once()
+                if self._stopping:
                     break
         finally:
+            self._stopping = False
             self._thread_id = None
+            self._set_coroutine_wrapper(False)
 
     def run_until_complete(self, future):
         """Run until the Future is done.
@@ -293,7 +350,7 @@ class BaseEventLoop(events.AbstractEventLoop):
         self._check_closed()
 
         new_task = not isinstance(future, futures.Future)
-        future = tasks.async(future, loop=self)
+        future = tasks.ensure_future(future, loop=self)
         if new_task:
             # An exception is raised if the future didn't complete, so there
             # is no need to log the "destroy pending task" message
@@ -318,11 +375,10 @@ class BaseEventLoop(events.AbstractEventLoop):
     def stop(self):
         """Stop running the event loop.
 
-        Every callback scheduled before stop() is called will run. Callbacks
-        scheduled after stop() is called will not run. However, those callbacks
-        will run if run_forever is called again later.
+        Every callback already scheduled will still run.  This simply informs
+        run_forever to stop looping after a complete iteration.
         """
-        self.call_soon(_raise_stop_error)
+        self._stopping = True
 
     def close(self):
         """Close the event loop.
@@ -353,7 +409,7 @@ class BaseEventLoop(events.AbstractEventLoop):
     # On Python 3.3 and older, objects with a destructor part of a reference
     # cycle are never destroyed. It's not more the case on Python 3.4 thanks
     # to the PEP 442.
-    if sys.version_info >= (3, 4):
+    if compat.PY34:
         def __del__(self):
             if not self.is_closed():
                 warnings.warn("unclosed event loop %r" % self, ResourceWarning)
@@ -465,25 +521,25 @@ class BaseEventLoop(events.AbstractEventLoop):
         self._write_to_self()
         return handle
 
-    def run_in_executor(self, executor, callback, *args):
-        if (coroutines.iscoroutine(callback)
-        or coroutines.iscoroutinefunction(callback)):
+    def run_in_executor(self, executor, func, *args):
+        if (coroutines.iscoroutine(func)
+        or coroutines.iscoroutinefunction(func)):
             raise TypeError("coroutines cannot be used with run_in_executor()")
         self._check_closed()
-        if isinstance(callback, events.Handle):
+        if isinstance(func, events.Handle):
             assert not args
-            assert not isinstance(callback, events.TimerHandle)
-            if callback._cancelled:
+            assert not isinstance(func, events.TimerHandle)
+            if func._cancelled:
                 f = futures.Future(loop=self)
                 f.set_result(None)
                 return f
-            callback, args = callback._callback, callback._args
+            func, args = func._callback, func._args
         if executor is None:
             executor = self._default_executor
             if executor is None:
                 executor = concurrent.futures.ThreadPoolExecutor(_MAX_WORKERS)
                 self._default_executor = executor
-        return futures.wrap_future(executor.submit(callback, *args), loop=self)
+        return futures.wrap_future(executor.submit(func, *args), loop=self)
 
     def set_default_executor(self, executor):
         self._default_executor = executor
@@ -515,7 +571,12 @@ class BaseEventLoop(events.AbstractEventLoop):
 
     def getaddrinfo(self, host, port, *,
                     family=0, type=0, proto=0, flags=0):
-        if self._debug:
+        info = _ipaddr_info(host, port, family, type, proto)
+        if info is not None:
+            fut = futures.Future(loop=self)
+            fut.set_result([info])
+            return fut
+        elif self._debug:
             return self.run_in_executor(None, self._getaddrinfo_debug,
                                         host, port, family, type, proto, flags)
         else:
@@ -673,75 +734,109 @@ class BaseEventLoop(events.AbstractEventLoop):
     @coroutine
     def create_datagram_endpoint(self, protocol_factory,
                                  local_addr=None, remote_addr=None, *,
-                                 family=0, proto=0, flags=0):
+                                 family=0, proto=0, flags=0,
+                                 reuse_address=None, reuse_port=None,
+                                 allow_broadcast=None, sock=None):
         """Create datagram connection."""
-        if not (local_addr or remote_addr):
-            if family == 0:
-                raise ValueError('unexpected address family')
-            addr_pairs_info = (((family, proto), (None, None)),)
-        else:
-            # join address by (family, protocol)
-            addr_infos = collections.OrderedDict()
-            for idx, addr in ((0, local_addr), (1, remote_addr)):
-                if addr is not None:
-                    assert isinstance(addr, tuple) and len(addr) == 2, (
-                        '2-tuple is expected')
-
-                    infos = yield from self.getaddrinfo(
-                        *addr, family=family, type=socket.SOCK_DGRAM,
-                        proto=proto, flags=flags)
-                    if not infos:
-                        raise OSError('getaddrinfo() returned empty list')
-
-                    for fam, _, pro, _, address in infos:
-                        key = (fam, pro)
-                        if key not in addr_infos:
-                            addr_infos[key] = [None, None]
-                        addr_infos[key][idx] = address
-
-            # each addr has to have info for each (family, proto) pair
-            addr_pairs_info = [
-                (key, addr_pair) for key, addr_pair in addr_infos.items()
-                if not ((local_addr and addr_pair[0] is None) or
-                        (remote_addr and addr_pair[1] is None))]
-
-            if not addr_pairs_info:
-                raise ValueError('can not get address information')
-
-        exceptions = []
-
-        for ((family, proto),
-             (local_address, remote_address)) in addr_pairs_info:
-            sock = None
+        if sock is not None:
+            if (local_addr or remote_addr or
+                    family or proto or flags or
+                    reuse_address or reuse_port or allow_broadcast):
+                # show the problematic kwargs in exception msg
+                opts = dict(local_addr=local_addr, remote_addr=remote_addr,
+                            family=family, proto=proto, flags=flags,
+                            reuse_address=reuse_address, reuse_port=reuse_port,
+                            allow_broadcast=allow_broadcast)
+                problems = ', '.join(
+                    '{}={}'.format(k, v) for k, v in opts.items() if v)
+                raise ValueError(
+                    'socket modifier keyword arguments can not be used '
+                    'when sock is specified. ({})'.format(problems))
+            sock.setblocking(False)
             r_addr = None
-            try:
-                sock = socket.socket(
-                    family=family, type=socket.SOCK_DGRAM, proto=proto)
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                sock.setblocking(False)
-
-                if local_addr:
-                    sock.bind(local_address)
-                if remote_addr:
-                    yield from self.sock_connect(sock, remote_address)
-                    r_addr = remote_address
-            except OSError as exc:
-                if sock is not None:
-                    sock.close()
-                exceptions.append(exc)
-            except:
-                if sock is not None:
-                    sock.close()
-                raise
-            else:
-                break
         else:
-            raise exceptions[0]
+            if not (local_addr or remote_addr):
+                if family == 0:
+                    raise ValueError('unexpected address family')
+                addr_pairs_info = (((family, proto), (None, None)),)
+            else:
+                # join address by (family, protocol)
+                addr_infos = collections.OrderedDict()
+                for idx, addr in ((0, local_addr), (1, remote_addr)):
+                    if addr is not None:
+                        assert isinstance(addr, tuple) and len(addr) == 2, (
+                            '2-tuple is expected')
+
+                        infos = yield from self.getaddrinfo(
+                            *addr, family=family, type=socket.SOCK_DGRAM,
+                            proto=proto, flags=flags)
+                        if not infos:
+                            raise OSError('getaddrinfo() returned empty list')
+
+                        for fam, _, pro, _, address in infos:
+                            key = (fam, pro)
+                            if key not in addr_infos:
+                                addr_infos[key] = [None, None]
+                            addr_infos[key][idx] = address
+
+                # each addr has to have info for each (family, proto) pair
+                addr_pairs_info = [
+                    (key, addr_pair) for key, addr_pair in addr_infos.items()
+                    if not ((local_addr and addr_pair[0] is None) or
+                            (remote_addr and addr_pair[1] is None))]
+
+                if not addr_pairs_info:
+                    raise ValueError('can not get address information')
+
+            exceptions = []
+
+            if reuse_address is None:
+                reuse_address = os.name == 'posix' and sys.platform != 'cygwin'
+
+            for ((family, proto),
+                 (local_address, remote_address)) in addr_pairs_info:
+                sock = None
+                r_addr = None
+                try:
+                    sock = socket.socket(
+                        family=family, type=socket.SOCK_DGRAM, proto=proto)
+                    if reuse_address:
+                        sock.setsockopt(
+                            socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    if reuse_port:
+                        if not hasattr(socket, 'SO_REUSEPORT'):
+                            raise ValueError(
+                                'reuse_port not supported by socket module')
+                        else:
+                            sock.setsockopt(
+                                socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+                    if allow_broadcast:
+                        sock.setsockopt(
+                            socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+                    sock.setblocking(False)
+
+                    if local_addr:
+                        sock.bind(local_address)
+                    if remote_addr:
+                        yield from self.sock_connect(sock, remote_address)
+                        r_addr = remote_address
+                except OSError as exc:
+                    if sock is not None:
+                        sock.close()
+                    exceptions.append(exc)
+                except:
+                    if sock is not None:
+                        sock.close()
+                    raise
+                else:
+                    break
+            else:
+                raise exceptions[0]
 
         protocol = protocol_factory()
         waiter = futures.Future(loop=self)
-        transport = self._make_datagram_transport(sock, protocol, r_addr,
-                                                  waiter)
+        transport = self._make_datagram_transport(
+            sock, protocol, r_addr, waiter)
         if self._debug:
             if local_addr:
                 logger.info("Datagram endpoint local_addr=%r remote_addr=%r "
@@ -761,6 +856,15 @@ class BaseEventLoop(events.AbstractEventLoop):
         return transport, protocol
 
     @coroutine
+    def _create_server_getaddrinfo(self, host, port, family, flags):
+        infos = yield from self.getaddrinfo(host, port, family=family,
+                                            type=socket.SOCK_STREAM,
+                                            flags=flags)
+        if not infos:
+            raise OSError('getaddrinfo({!r}) returned empty list'.format(host))
+        return infos
+
+    @coroutine
     def create_server(self, protocol_factory, host=None, port=None,
                       *,
                       family=socket.AF_UNSPEC,
@@ -768,8 +872,15 @@ class BaseEventLoop(events.AbstractEventLoop):
                       sock=None,
                       backlog=100,
                       ssl=None,
-                      reuse_address=None):
-        """Create a TCP server bound to host and port.
+                      reuse_address=None,
+                      reuse_port=None):
+        """Create a TCP server.
+
+        The host parameter can be a string, in that case the TCP server is bound
+        to host and port.
+
+        The host parameter can also be a sequence of strings and in that case
+        the TCP server is bound to all hosts of the sequence.
 
         Return a Server object which can be used to stop the service.
 
@@ -787,13 +898,18 @@ class BaseEventLoop(events.AbstractEventLoop):
                 reuse_address = os.name == 'posix' and sys.platform != 'cygwin' and sys.platform != 'msys'
             sockets = []
             if host == '':
-                host = None
+                hosts = [None]
+            elif (isinstance(host, str) or
+                  not isinstance(host, collections.Iterable)):
+                hosts = [host]
+            else:
+                hosts = host
 
-            infos = yield from self.getaddrinfo(
-                host, port, family=family,
-                type=socket.SOCK_STREAM, proto=0, flags=flags)
-            if not infos:
-                raise OSError('getaddrinfo() returned empty list')
+            fs = [self._create_server_getaddrinfo(host, port, family=family,
+                                                  flags=flags)
+                  for host in hosts]
+            infos = yield from tasks.gather(*fs, loop=self)
+            infos = itertools.chain.from_iterable(infos)
 
             completed = False
             try:
@@ -810,8 +926,15 @@ class BaseEventLoop(events.AbstractEventLoop):
                         continue
                     sockets.append(sock)
                     if reuse_address:
-                        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
-                                        True)
+                        sock.setsockopt(
+                            socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+                    if reuse_port:
+                        if not hasattr(socket, 'SO_REUSEPORT'):
+                            raise ValueError(
+                                'reuse_port not supported by socket module')
+                        else:
+                            sock.setsockopt(
+                                socket.SOL_SOCKET, socket.SO_REUSEPORT, True)
                     # Disable IPv4/IPv6 dual stack support (enabled by
                     # default on Linux) which makes a single socket
                     # listen on both address families.
@@ -1105,7 +1228,7 @@ class BaseEventLoop(events.AbstractEventLoop):
                 handle._scheduled = False
 
         timeout = None
-        if self._ready:
+        if self._ready or self._stopping:
             timeout = 0
         elif self._scheduled:
             # Compute the desired timeout.
@@ -1172,8 +1295,44 @@ class BaseEventLoop(events.AbstractEventLoop):
                 handle._run()
         handle = None  # Needed to break cycles when an exception occurs.
 
+    def _set_coroutine_wrapper(self, enabled):
+        try:
+            set_wrapper = sys.set_coroutine_wrapper
+            get_wrapper = sys.get_coroutine_wrapper
+        except AttributeError:
+            return
+
+        enabled = bool(enabled)
+        if self._coroutine_wrapper_set == enabled:
+            return
+
+        wrapper = coroutines.debug_wrapper
+        current_wrapper = get_wrapper()
+
+        if enabled:
+            if current_wrapper not in (None, wrapper):
+                warnings.warn(
+                    "loop.set_debug(True): cannot set debug coroutine "
+                    "wrapper; another wrapper is already set %r" %
+                    current_wrapper, RuntimeWarning)
+            else:
+                set_wrapper(wrapper)
+                self._coroutine_wrapper_set = True
+        else:
+            if current_wrapper not in (None, wrapper):
+                warnings.warn(
+                    "loop.set_debug(False): cannot unset debug coroutine "
+                    "wrapper; another wrapper was set %r" %
+                    current_wrapper, RuntimeWarning)
+            else:
+                set_wrapper(None)
+                self._coroutine_wrapper_set = False
+
     def get_debug(self):
         return self._debug
 
     def set_debug(self, enabled):
         self._debug = enabled
+
+        if self.is_running():
+            self._set_coroutine_wrapper(enabled)

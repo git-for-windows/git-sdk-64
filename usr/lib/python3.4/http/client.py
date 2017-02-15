@@ -70,16 +70,19 @@ import email.parser
 import email.message
 import io
 import os
+import re
 import socket
 import collections
 from urllib.parse import urlsplit
 
+# HTTPMessage, parse_headers(), and the HTTP status code constants are
+# intentionally omitted for simplicity
 __all__ = ["HTTPResponse", "HTTPConnection",
            "HTTPException", "NotConnected", "UnknownProtocol",
            "UnknownTransferEncoding", "UnimplementedFileMode",
            "IncompleteRead", "InvalidURL", "ImproperConnectionState",
            "CannotSendRequest", "CannotSendHeader", "ResponseNotReady",
-           "BadStatusLine", "error", "responses"]
+           "BadStatusLine", "LineTooLong", "error", "responses"]
 
 HTTP_PORT = 80
 HTTPS_PORT = 443
@@ -214,6 +217,38 @@ MAXAMOUNT = 1048576
 # maximal line length when calling readline().
 _MAXLINE = 65536
 _MAXHEADERS = 100
+
+# Header name/value ABNF (http://tools.ietf.org/html/rfc7230#section-3.2)
+#
+# VCHAR          = %x21-7E
+# obs-text       = %x80-FF
+# header-field   = field-name ":" OWS field-value OWS
+# field-name     = token
+# field-value    = *( field-content / obs-fold )
+# field-content  = field-vchar [ 1*( SP / HTAB ) field-vchar ]
+# field-vchar    = VCHAR / obs-text
+#
+# obs-fold       = CRLF 1*( SP / HTAB )
+#                ; obsolete line folding
+#                ; see Section 3.2.4
+
+# token          = 1*tchar
+#
+# tchar          = "!" / "#" / "$" / "%" / "&" / "'" / "*"
+#                / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
+#                / DIGIT / ALPHA
+#                ; any VCHAR, except delimiters
+#
+# VCHAR defined in http://tools.ietf.org/html/rfc5234#appendix-B.1
+
+# the patterns for both name and value are more leniant than RFC
+# definitions to allow for backwards compatibility
+_is_legal_header_name = re.compile(rb'[^:\s][^:\r\n]*').fullmatch
+_is_illegal_header_value = re.compile(rb'\n(?![ \t])|\r(?![ \t\n])').search
+
+# We always set the Content-Length header for these methods because some
+# servers will otherwise respond with a 411
+_METHODS_EXPECTING_BODY = {'PATCH', 'POST', 'PUT'}
 
 
 class HTTPMessage(email.message.Message):
@@ -457,9 +492,11 @@ class HTTPResponse(io.RawIOBase):
         fp.close()
 
     def close(self):
-        super().close() # set "closed" flag
-        if self.fp:
-            self._close_conn()
+        try:
+            super().close() # set "closed" flag
+        finally:
+            if self.fp:
+                self._close_conn()
 
     # These implementations are for the benefit of io.BufferedReader.
 
@@ -838,13 +875,17 @@ class HTTPConnection:
 
     def close(self):
         """Close the connection to the HTTP server."""
-        if self.sock:
-            self.sock.close()   # close it manually... there may be other refs
-            self.sock = None
-        if self.__response:
-            self.__response.close()
-            self.__response = None
         self.__state = _CS_IDLE
+        try:
+            sock = self.sock
+            if sock:
+                self.sock = None
+                sock.close()   # close it manually... there may be other refs
+        finally:
+            response = self.__response
+            if response:
+                self.__response = None
+                response.close()
 
     def send(self, data):
         """Send `data' to the server.
@@ -1058,12 +1099,20 @@ class HTTPConnection:
 
         if hasattr(header, 'encode'):
             header = header.encode('ascii')
+
+        if not _is_legal_header_name(header):
+            raise ValueError('Invalid header name %r' % (header,))
+
         values = list(values)
         for i, one_value in enumerate(values):
             if hasattr(one_value, 'encode'):
                 values[i] = one_value.encode('latin-1')
             elif isinstance(one_value, int):
                 values[i] = str(one_value).encode('ascii')
+
+            if _is_illegal_header_value(values[i]):
+                raise ValueError('Invalid header value %r' % (values[i],))
+
         value = b'\r\n\t'.join(values)
         header = header + b': ' + value
         self._output(header)
@@ -1087,19 +1136,26 @@ class HTTPConnection:
         """Send a complete request to the server."""
         self._send_request(method, url, body, headers)
 
-    def _set_content_length(self, body):
-        # Set the content-length based on the body.
+    def _set_content_length(self, body, method):
+        # Set the content-length based on the body. If the body is "empty", we
+        # set Content-Length: 0 for methods that expect a body (RFC 7230,
+        # Section 3.3.2). If the body is set for other methods, we set the
+        # header provided we can figure out what the length is.
         thelen = None
-        try:
-            thelen = str(len(body))
-        except TypeError as te:
-            # If this is a file-like object, try to
-            # fstat its file descriptor
+        method_expects_body = method.upper() in _METHODS_EXPECTING_BODY
+        if body is None and method_expects_body:
+            thelen = '0'
+        elif body is not None:
             try:
-                thelen = str(os.fstat(body.fileno()).st_size)
-            except (AttributeError, OSError):
-                # Don't send a length if this failed
-                if self.debuglevel > 0: print("Cannot stat!!")
+                thelen = str(len(body))
+            except TypeError:
+                # If this is a file-like object, try to
+                # fstat its file descriptor
+                try:
+                    thelen = str(os.fstat(body.fileno()).st_size)
+                except (AttributeError, OSError):
+                    # Don't send a length if this failed
+                    if self.debuglevel > 0: print("Cannot stat!!")
 
         if thelen is not None:
             self.putheader('Content-Length', thelen)
@@ -1115,8 +1171,8 @@ class HTTPConnection:
 
         self.putrequest(method, url, **skips)
 
-        if body is not None and ('content-length' not in header_names):
-            self._set_content_length(body)
+        if 'content-length' not in header_names:
+            self._set_content_length(body, method)
         for hdr, value in headers.items():
             self.putheader(hdr, value)
         if isinstance(body, str):

@@ -2,10 +2,11 @@
 #
 # Versions up to 2.31_1 Copyright (c) 1995-2004 Graham Barr <gbarr@pobox.com>.
 # All rights reserved.
-# Changes in Version 2.31_2 onwards Copyright (C) 2013-2014 Steve Hay.  All
+# Changes in Version 2.31_2 onwards Copyright (C) 2013-2015 Steve Hay.  All
 # rights reserved.
-# This program is free software; you can redistribute it and/or
-# modify it under the same terms as Perl itself.
+# This module is free software; you can redistribute it and/or modify it under
+# the same terms as Perl itself, i.e. under the terms of either the GNU General
+# Public License or the Artistic License, as specified in the F<LICENCE> file.
 
 package Net::SMTP;
 
@@ -20,7 +21,7 @@ use Net::Cmd;
 use Net::Config;
 use Socket;
 
-our $VERSION = "3.05";
+our $VERSION = "3.08_01";
 
 # Code for detecting if we can use SSL
 my $ssl_class = eval {
@@ -34,10 +35,12 @@ my $nossl_warn = !$ssl_class &&
   'To use SSL please install IO::Socket::SSL with version>=2.007';
 
 # Code for detecting if we can use IPv6
+my $family_key = 'Domain';
 my $inet6_class = eval {
   require IO::Socket::IP;
   no warnings 'numeric';
-  IO::Socket::IP->VERSION(0.20);
+  IO::Socket::IP->VERSION(0.20) || die;
+  $family_key = 'Family';
 } && 'IO::Socket::IP' || eval {
   require IO::Socket::INET6;
   no warnings 'numeric';
@@ -79,6 +82,7 @@ sub new {
       PeerPort => $arg{Port} || 'smtp(25)',
       LocalAddr => $arg{LocalAddr},
       LocalPort => $arg{LocalPort},
+      $family_key => $arg{Domain} || $arg{Family},
       Proto     => 'tcp',
       Timeout   => $arg{Timeout}
       )
@@ -112,11 +116,13 @@ sub new {
   (${*$obj}{'net_smtp_banner'}) = $obj->message;
   (${*$obj}{'net_smtp_domain'}) = $obj->message =~ /\A\s*(\S+)/;
 
-  unless ($obj->hello($arg{Hello} || "")) {
-    my $err = ref($obj) . ": " . $obj->code . " " . $obj->message;
-    $obj->close();
-    $@ = $err;
-    return;
+  if (!exists $arg{SendHello} || $arg{SendHello}) {
+    unless ($obj->hello($arg{Hello} || "")) {
+      my $err = ref($obj) . ": " . $obj->code . " " . $obj->message;
+      $obj->close();
+      $@ = $err;
+      return;
+    }
   }
 
   $obj;
@@ -615,9 +621,9 @@ sub _STARTTLS { shift->command("STARTTLS")->response() == CMD_OK }
     my ($class,$smtp,%arg) = @_;
     delete @arg{ grep { !m{^SSL_} } keys %arg };
     ( $arg{SSL_verifycn_name} ||= $smtp->host )
-	=~s{(?<!:):[\w()]+$}{}; # strip port
+        =~s{(?<!:):[\w()]+$}{}; # strip port
     $arg{SSL_hostname} = $arg{SSL_verifycn_name}
-	if ! defined $arg{SSL_hostname} && $class->can_client_sni;
+        if ! defined $arg{SSL_hostname} && $class->can_client_sni;
     $arg{SSL_verifycn_scheme} ||= 'smtp';
     my $ok = $class->SUPER::start_SSL($smtp,%arg);
     $@ = $ssl_class->errstr if !$ok;
@@ -648,12 +654,12 @@ Net::SMTP - Simple Mail Transfer Protocol Client
 This module implements a client interface to the SMTP and ESMTP
 protocol, enabling a perl5 application to talk to SMTP servers. This
 documentation assumes that you are familiar with the concepts of the
-SMTP protocol described in RFC821.
+SMTP protocol described in RFC2821.
+With L<IO::Socket::SSL> installed it also provides support for implicit and
+explicit TLS encryption, i.e. SMTPS or SMTP+STARTTLS.
 
-A new Net::SMTP object must be created with the I<new> method. Once
-this has been done, all SMTP commands are accessed through this object.
-
-The Net::SMTP class is a subclass of Net::Cmd and IO::Socket::INET.
+The Net::SMTP class is a subclass of Net::Cmd and (depending on avaibility) of
+IO::Socket::IP, IO::Socket::INET6 or IO::Socket::INET.
 
 =head1 EXAMPLES
 
@@ -712,6 +718,10 @@ B<Hello> - SMTP requires that you identify yourself. This option
 specifies a string to pass as your mail domain. If not given localhost.localdomain
 will be used.
 
+B<SendHello> - If false then the EHLO (or HELO) command that is normally sent
+when constructing the object will not be sent. In that case the command will
+have to be sent manually by calling C<hello()> instead.
+
 B<Host> - SMTP host to connect to. It may be a single scalar (hostname[:port]),
 as defined for the C<PeerAddr> option in L<IO::Socket::INET>, or a reference to
 an array with hosts to try in turn. The L</host> method will return the value
@@ -727,7 +737,11 @@ You can use SSL arguments as documented in L<IO::Socket::SSL>, but it will
 usually use the right arguments already.
 
 B<LocalAddr> and B<LocalPort> - These parameters are passed directly
-to IO::Socket to allow binding the socket to a local port.
+to IO::Socket to allow binding the socket to a specific local address and port.
+
+B<Domain> - This parameter is passed directly to IO::Socket and makes it
+possible to enforce IPv4 connections even if L<IO::Socket::IP> is used as super
+class. Alternatively B<Family> can be used.
 
 B<Timeout> - Maximum time, in seconds, to wait for a response from the
 SMTP server (default: 120)
@@ -758,11 +772,11 @@ Example:
 
     # the same with direct SSL
     $smtp = Net::SMTP->new('mailhost',
-			   Hello => 'my.mail.domain',
-			   Timeout => 30,
-			   Debug   => 1,
-			   SSL     => 1,
-			  );
+                           Hello => 'my.mail.domain',
+                           Timeout => 30,
+                           Debug   => 1,
+                           SSL     => 1,
+                          );
 
     # Connect to the default server from Net::config
     $smtp = Net::SMTP->new(
@@ -819,7 +833,11 @@ usually use the right arguments already.
 
 =item auth ( USERNAME, PASSWORD )
 
-Attempt SASL authentication. Requires Authen::SASL module.
+=item auth ( SASL )
+
+Attempt SASL authentication. Requires Authen::SASL module. The first form
+constructs a new Authen::SASL object using the given username and password;
+the second form uses the given Authen::SASL object.
 
 =item mail ( ADDRESS [, OPTIONS] )
 
@@ -935,9 +953,12 @@ Synonyms for C<recipient>.
 
 Initiate the sending of the data from the current message. 
 
-C<DATA> may be a reference to a list or a list. If specified the contents
-of C<DATA> and a termination string C<".\r\n"> is sent to the server. And the
-result will be true if the data was accepted.
+C<DATA> may be a reference to a list or a list and must be encoded by the
+caller to octets of whatever encoding is required, e.g. by using the Encode
+module's C<encode()> function.
+
+If specified the contents of C<DATA> and a termination string C<".\r\n"> is
+sent to the server. The result will be true if the data was accepted.
 
 If C<DATA> is not specified then the result will indicate that the server
 wishes the data to be sent. The data must then be sent using the C<datasend>
@@ -1011,10 +1032,11 @@ Steve Hay E<lt>F<shay@cpan.org>E<gt> is now maintaining libnet as of version
 =head1 COPYRIGHT
 
 Versions up to 2.31_1 Copyright (c) 1995-2004 Graham Barr. All rights reserved.
-Changes in Version 2.31_2 onwards Copyright (C) 2013-2014 Steve Hay.  All rights
+Changes in Version 2.31_2 onwards Copyright (C) 2013-2015 Steve Hay.  All rights
 reserved.
 
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+This module is free software; you can redistribute it and/or modify it under the
+same terms as Perl itself, i.e. under the terms of either the GNU General Public
+License or the Artistic License, as specified in the F<LICENCE> file.
 
 =cut

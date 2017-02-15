@@ -999,6 +999,9 @@ use it will raise a warning, unless disabled via
 Comments on this feature are welcome; send email to
 C<perl5-porters@perl.org>.
 
+The rules used by L<C<use re 'strict>|re/'strict' mode> apply to this
+construct.
+
 We can extend the example above:
 
  /(?[ ( \p{Thai} + \p{Lao} ) & \p{Digit} ])/
@@ -1051,8 +1054,9 @@ C<\N{...}>, etc.)
 
 This last example shows the use of this construct to specify an ordinary
 bracketed character class without additional set operations.  Note the
-white space within it; C<E<sol>x> is turned on even within bracketed
-character classes, except you can't have comments inside them.  Hence,
+white space within it; a limited version of C<E<sol>x> is turned on even
+within bracketed character classes, with only the SPACE and TAB (C<\t>)
+characters allowed, and no comments.  Hence,
 
  (?[ [#] ])
 
@@ -1106,8 +1110,12 @@ just three limitations:
 
 =item 1
 
-This construct cannot be used within the scope of
-C<use locale> (or the C<E<sol>l> regex modifier).
+When compiled within the scope of C<use locale> (or the C<E<sol>l> regex
+modifier), this construct assumes that the execution-time locale will be
+a UTF-8 one, and the generated pattern always uses Unicode rules.  What
+gets matched or not thus isn't dependent on the actual runtime locale, so
+tainting is not enabled.  But a C<locale> category warning is raised
+if the runtime locale turns out to not be UTF-8.
 
 =item 2
 

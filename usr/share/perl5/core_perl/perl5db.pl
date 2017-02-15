@@ -189,7 +189,7 @@ Values are magical in numeric context: 1 if the line is breakable, 0 if not.
 The scalar C<${"_<$filename"}> simply contains the string C<$filename>.
 This is also the case for evaluated strings that contain subroutines, or
 which are currently being executed.  The $filename for C<eval>ed strings looks
-like C<(eval 34).
+like C<(eval 34)>.
 
 =head1 DEBUGGER STARTUP
 
@@ -528,7 +528,7 @@ BEGIN {
 # Debugger for Perl 5.00x; perl5db.pl patch level:
 use vars qw($VERSION $header);
 
-$VERSION = '1.49';
+$VERSION = '1.49_05';
 
 $header = "perl5db.pl version $VERSION";
 
@@ -1548,14 +1548,27 @@ We then determine what the console should be on various systems:
         $console = "con";
     }
 
+=item * AmigaOS - use C<CONSOLE:>.
+
+=cut
+
+    elsif ( $^O eq 'amigaos' ) {
+        $console = "CONSOLE:";
+    }
+
 =item * VMS - use C<sys$command>.
 
 =cut
 
-    else {
+    elsif ($^O eq 'VMS') {
+        $console = 'sys$command';
+    }
 
-        # everything else is ...
-        $console = "sys\$command";
+# Keep this last.
+
+    else {
+        _db_warn("Can't figure out your console, using stdin");
+        undef $console;
     }
 
 =pod
@@ -1938,7 +1951,10 @@ sub _DB__handle_y_command {
         = $obj->cmd_args =~ /\A(?:(\d*)\s*(.*))?\z/) {
 
         # See if we've got the necessary support.
-        if (!eval { require PadWalker; PadWalker->VERSION(0.08) }) {
+        if (!eval {
+            local @INC = @INC;
+            pop @INC if $INC[-1] eq '.';
+            require PadWalker; PadWalker->VERSION(0.08) }) {
             my $Err = $@;
             _db_warn(
                 $Err =~ /locate/
@@ -2490,7 +2506,11 @@ EOP
 # 'm' is method.
 # 'v' is the value (i.e: method name or subroutine ref).
 # 's' is subroutine.
-my %cmd_lookup =
+my %cmd_lookup;
+
+BEGIN
+{
+    %cmd_lookup =
 (
     '-' => { t => 'm', v => '_handle_dash_command', },
     '.' => { t => 's', v => \&_DB__handle_dot_command, },
@@ -2523,6 +2543,7 @@ my %cmd_lookup =
     (map { $_ => {t => 'm', v => '_handle_cmd_wrapper_commands' }, }
         qw(a A b B e E h i l L M o O v w W)),
 );
+};
 
 sub DB {
 
@@ -3319,6 +3340,9 @@ B<h q>, B<h R> or B<h o> to get additional info.
 EOP
 
         # Set the DB::eval context appropriately.
+        # At program termination disable any user actions.
+        $DB::action = undef;
+
         $DB::package     = 'main';
         $DB::usercontext = DB::_calc_usercontext($DB::package);
     } ## end elsif ($package eq 'DB::fake')
@@ -9420,7 +9444,10 @@ if PadWalker could be loaded.
 
 =cut
 
-        if (not $text =~ /::/ and eval { require PadWalker } ) {
+        if (not $text =~ /::/ and eval {
+            local @INC = @INC;
+            pop @INC if $INC[-1] eq '.';
+            require PadWalker } ) {
             my $level = 1;
             while (1) {
                 my @info = caller($level);

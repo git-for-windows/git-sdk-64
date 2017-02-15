@@ -7,8 +7,6 @@ ctype_types = [c_byte, c_ubyte, c_short, c_ushort, c_int, c_uint,
                  c_long, c_ulong, c_longlong, c_ulonglong, c_double, c_float]
 python_types = [int, int, int, int, int, int,
                 int, int, int, int, float, float]
-LargeNamedType = type('T' * 2 ** 25, (Structure,), {})
-large_string = 'T' * 2 ** 25
 
 class PointersTestCase(unittest.TestCase):
 
@@ -191,10 +189,22 @@ class PointersTestCase(unittest.TestCase):
             self.assertEqual(bool(mth), True)
 
     def test_pointer_type_name(self):
+        LargeNamedType = type('T' * 2 ** 25, (Structure,), {})
         self.assertTrue(POINTER(LargeNamedType))
 
+        # to not leak references, we must clean _pointer_type_cache
+        from ctypes import _pointer_type_cache
+        del _pointer_type_cache[LargeNamedType]
+
     def test_pointer_type_str_name(self):
-        self.assertTrue(POINTER(large_string))
+        large_string = 'T' * 2 ** 25
+        P = POINTER(large_string)
+        self.assertTrue(P)
+
+        # to not leak references, we must clean _pointer_type_cache
+        from ctypes import _pointer_type_cache
+        del _pointer_type_cache[id(P)]
+
 
 if __name__ == '__main__':
     unittest.main()

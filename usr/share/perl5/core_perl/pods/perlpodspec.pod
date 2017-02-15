@@ -906,7 +906,7 @@ character 34 (doublequote, "), "EE<lt>amp>" for character 38
 
 Note that in all cases of "EE<lt>whateverE<gt>", I<whatever> (whether
 an htmlname, or a number in any base) must consist only of
-alphanumeric characters -- that is, I<whatever> must watch
+alphanumeric characters -- that is, I<whatever> must match
 C<m/\A\w+\z/>.  So S<"EE<lt> 0 1 2 3 E<gt>"> is invalid, because
 it contains spaces, which aren't alphanumeric characters.  This
 presumably does not I<need> special treatment by a Pod processor;
@@ -1349,7 +1349,7 @@ either the name of a Pod page like C<LE<lt>Foo::BarE<gt>> (which
 might be a real Perl module or program in an @INC / PATH
 directory, or a .pod file in those places); or the name of a Unix
 man page, like C<LE<lt>crontab(5)E<gt>>.  In theory, C<LE<lt>chmodE<gt>>
-in ambiguous between a Pod page called "chmod", or the Unix man page
+is ambiguous between a Pod page called "chmod", or the Unix man page
 "chmod" (in whatever man-section).  However, the presence of a string
 in parens, as in "crontab(5)", is sufficient to signal that what
 is being discussed is not a Pod page, and so is presumably a

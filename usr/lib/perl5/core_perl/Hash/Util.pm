@@ -31,10 +31,11 @@ our @EXPORT_OK  = qw(
                      hash_seed hash_value hv_store
                      bucket_stats bucket_stats_formatted bucket_info bucket_array
                      lock_hash_recurse unlock_hash_recurse
+                     lock_hashref_recurse unlock_hashref_recurse
 
                      hash_traversal_mask
                     );
-our $VERSION = '0.18';
+our $VERSION = '0.19';
 require XSLoader;
 XSLoader::load();
 
@@ -78,6 +79,7 @@ Hash::Util - A selection of general-utility hash subroutines
                      hash_seed hash_value hv_store
                      bucket_stats bucket_info bucket_array
                      lock_hash_recurse unlock_hash_recurse
+                     lock_hashref_recurse unlock_hashref_recurse
 
                      hash_traversal_mask
                    );
@@ -364,7 +366,7 @@ sub unlock_hashref_recurse {
         if (defined($type) and $type eq 'HASH') {
             unlock_hashref_recurse($value);
         }
-        Internals::SvREADONLY($value,1);
+        Internals::SvREADONLY($value,0);
     }
     unlock_ref_keys($hash);
     return $hash;

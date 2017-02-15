@@ -32,18 +32,18 @@ L<perlunitut> for an introduction to that) in part to address these
 design deficiencies, and nowadays, there is a series of "UTF-8
 locales", based on Unicode.  These are locales whose character set is
 Unicode, encoded in UTF-8.  Starting in v5.20, Perl fully supports
-UTF-8 locales, except for sorting and string comparisons.  (Use
-L<Unicode::Collate> for these.)  Perl continues to support the old
-non UTF-8 locales as well.  There are currently no UTF-8 locales for
-EBCDIC platforms.
+UTF-8 locales, except for sorting and string comparisons like C<lt> and
+C<ge>.  (Use L<Unicode::Collate> for these.)  Perl continues to support
+the old non UTF-8 locales as well.  There are currently no UTF-8 locales
+for EBCDIC platforms.
 
 (Unicode is also creating C<CLDR>, the "Common Locale Data Repository",
 L<http://cldr.unicode.org/> which includes more types of information than
 are available in the POSIX locale system.  At the time of this writing,
 there was no CPAN module that provides access to this XML-encoded data.
-However, many of its locales have the POSIX-only data extracted, and are
-available as UTF-8 locales at
-L<http://unicode.org/Public/cldr/latest/>.)
+However, it is possible to compute the POSIX locale data from them, and
+earlier CLDR versions had these already extracted for you as UTF-8 locales
+L<http://unicode.org/Public/cldr/2.0.1/>.)
 
 =head1 WHAT IS A LOCALE
 
@@ -164,6 +164,15 @@ L<The setlocale function>.
 
 =head2 The C<"use locale"> pragma
 
+WARNING!  Do NOT use this pragma in scripts that have multiple
+L<threads|threads> active.  The locale is not local to a single thread.
+Another thread may change the locale at any time, which could cause at a
+minimum that a given thread is operating in a locale it isn't expecting
+to be in.  On some platforms, segfaults can also occur.  The locale
+change need not be explicit; some operations cause perl to change the
+locale itself.  You are vulnerable simply by having done a C<"use
+locale">.
+
 By default, Perl itself (outside the L<POSIX> module)
 ignores the current locale.  The S<C<use locale>>
 pragma tells Perl to use the current locale for some operations.
@@ -205,8 +214,7 @@ Also Perl gives access to various C library functions through the
 L<POSIX> module.  Some of those functions are always affected by the
 current locale.  For example, C<POSIX::strftime()> uses C<LC_TIME>;
 C<POSIX::strtod()> uses C<LC_NUMERIC>; C<POSIX::strcoll()> and
-C<POSIX::strxfrm()> use C<LC_COLLATE>; and character classification
-functions like C<POSIX::isalnum()> use C<LC_CTYPE>.  All such functions
+C<POSIX::strxfrm()> use C<LC_COLLATE>.  All such functions
 will behave according to the current underlying locale, even if that
 locale isn't exposed to Perl space.
 
@@ -390,6 +398,13 @@ this, as described in L</Unicode and UTF-8>.
 
 =head2 The setlocale function
 
+WARNING!  Do NOT use this function in a L<thread|threads>.  The locale
+will change in all other threads at the same time, and should your
+thread get paused by the operating system, and another started, that
+thread will not have the locale it is expecting.  On some platforms,
+there can be a race leading to segfaults if two threads call this
+function nearly simultaneously.
+
 You can switch locales as often as you wish at run time with the
 C<POSIX::setlocale()> function:
 
@@ -417,10 +432,6 @@ C<POSIX::setlocale()> function:
 
         # restore the old locale
         setlocale(LC_CTYPE, $old_locale);
-
-This simultaneously affects all threads of the program, so it may be
-problematic to use locales in threaded applications except where there
-is a single locale applicable to all threads.
 
 The first argument of C<setlocale()> gives the B<category>, the second the
 B<locale>.  The category tells in what aspect of data processing you
@@ -869,16 +880,6 @@ interpolation with C<\F>, C<\l>, C<\L>, C<\u>, or C<\U> in double-quoted
 strings and C<s///> substitutions; and case-independent regular expression
 pattern matching using the C<i> modifier.
 
-Finally, C<LC_CTYPE> affects the (deprecated) POSIX character-class test
-functions--C<POSIX::isalpha()>, C<POSIX::islower()>, and so on.  For
-example, if you move from the "C" locale to a 7-bit ISO 646 one,
-you may find--possibly to your surprise--that C<"|"> moves from the
-C<POSIX::ispunct()> class to C<POSIX::isalpha()>.
-Unfortunately, this creates big problems for regular expressions. "|" still
-means alternation even though it matches C<\w>.  Starting in v5.22, a
-warning will be raised when such a locale is switched into.  More
-details are given several paragraphs further down.
-
 Starting in v5.20, Perl supports UTF-8 locales for C<LC_CTYPE>, but
 otherwise Perl only supports single-byte locales, such as the ISO 8859
 series.  This means that wide character locales, for example for Asian
@@ -1137,15 +1138,6 @@ C<strftime()>, C<strxfrm()>):
 
 Results are never tainted.
 
-=item *
-
-B<POSIX character class tests> (C<POSIX::isalnum()>,
-C<POSIX::isalpha()>, C<POSIX::isdigit()>, C<POSIX::isgraph()>,
-C<POSIX::islower()>, C<POSIX::isprint()>, C<POSIX::ispunct()>,
-C<POSIX::isspace()>, C<POSIX::isupper()>, C<POSIX::isxdigit()>):
-
-True/false results are never tainted.
-
 =back
 
 Three examples illustrate locale-dependent tainting.
@@ -1385,7 +1377,10 @@ system's implementation of the locale system than by Perl.
 The Unicode CLDR project extracts the POSIX portion of many of its
 locales, available at
 
-  http://unicode.org/Public/cldr/latest/
+  http://unicode.org/Public/cldr/2.0.1/
+
+(Newer versions of CLDR require you to compute the POSIX data yourself.
+See L<http://unicode.org/Public/cldr/latest/>.)
 
 There is a large collection of locale definitions at:
 
@@ -1466,7 +1461,10 @@ multi-byte:
 The only multi-byte (or wide character) locale that Perl is ever likely
 to support is UTF-8.  This is due to the difficulty of implementation,
 the fact that high quality UTF-8 locales are now published for every
-area of the world (L<http://unicode.org/Public/cldr/latest/>), and that
+area of the world (L<http://unicode.org/Public/cldr/2.0.1/> for
+ones that are already set-up, but from an earlier version;
+L<http://unicode.org/Public/cldr/latest/> for the most up-to-date, but
+you have to extract the POSIX information yourself), and that
 failing all that you can use the L<Encode> module to translate to/from
 your locale.  So, you'll have to do one of those things if you're using
 one of these locales, such as Big5 or Shift JIS.  For UTF-8 locales, in

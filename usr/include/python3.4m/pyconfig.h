@@ -331,7 +331,7 @@
 #define HAVE_GETC_UNLOCKED 1
 
 /* Define to 1 if you have the `getentropy' function. */
-/* #undef HAVE_GETENTROPY */
+#define HAVE_GETENTROPY 1
 
 /* Define to 1 if you have the `getgrouplist' function. */
 #define HAVE_GETGROUPLIST 1

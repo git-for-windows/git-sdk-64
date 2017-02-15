@@ -446,8 +446,13 @@ class ExpatParser:
         self._parser.Parse(data, 0)
 
     def close(self):
-        self._parser.Parse("", 1) # end of data
-        del self._target, self._parser # get rid of circular references
+        try:
+            parser = self._parser
+        except AttributeError:
+            pass
+        else:
+            del self._target, self._parser # get rid of circular references
+            parser.Parse(b"", True) # end of data
 
 # --------------------------------------------------------------------
 # XML-RPC marshalling and unmarshalling code
@@ -826,7 +831,7 @@ class MultiCallIterator:
             raise ValueError("unexpected type in multicall result")
 
 class MultiCall:
-    """server -> a object used to boxcar method calls
+    """server -> an object used to boxcar method calls
 
     server should be a ServerProxy object.
 
@@ -1079,8 +1084,10 @@ class GzipDecodedResponse(gzip.GzipFile if gzip else object):
         gzip.GzipFile.__init__(self, mode="rb", fileobj=self.io)
 
     def close(self):
-        gzip.GzipFile.close(self)
-        self.io.close()
+        try:
+            gzip.GzipFile.close(self)
+        finally:
+            self.io.close()
 
 
 # --------------------------------------------------------------------
@@ -1177,7 +1184,7 @@ class Transport:
     ##
     # Create parser.
     #
-    # @return A 2-tuple containing a parser and a unmarshaller.
+    # @return A 2-tuple containing a parser and an unmarshaller.
 
     def getparser(self):
         # get parser and unmarshaller
@@ -1235,9 +1242,10 @@ class Transport:
     # Used in the event of socket errors.
     #
     def close(self):
-        if self._connection[1]:
-            self._connection[1].close()
+        host, connection = self._connection
+        if connection:
             self._connection = (None, None)
+            connection.close()
 
     ##
     # Send HTTP request.

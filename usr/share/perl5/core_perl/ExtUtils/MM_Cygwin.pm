@@ -9,7 +9,7 @@ require ExtUtils::MM_Unix;
 require ExtUtils::MM_Win32;
 our @ISA = qw( ExtUtils::MM_Unix );
 
-our $VERSION = '7.04_01';
+our $VERSION = '7.10_02';
 
 
 =head1 NAME
@@ -122,78 +122,22 @@ sub maybe_command {
 =item dynamic_lib
 
 Use the default to produce the *.dll's.
-Add the dll size to F<$vendorarch/auto/.rebase>, which stores the
-next available imagebase.
-
-If an old dll exists and .rebase is empty, use the same rebase address
-for new archdir dll's.
+But for new archdir dll's use the same rebase address if the old exists.
 
 =cut
 
 sub dynamic_lib {
     my($self, %attribs) = @_;
     my $s = ExtUtils::MM_Unix::dynamic_lib($self, %attribs);
-    return '' unless $s;
-    return $s unless %{$self->{XS}};
-
     my $ori = "$self->{INSTALLARCHLIB}/auto/$self->{FULLEXT}/$self->{BASEEXT}.$self->{DLEXT}";
-    my $rebase = "$self->{INSTALLVENDORARCH}/auto/.rebase";
-    my $imagebase = '';
-    my $rebaseverstr = -f '/usr/bin/rebase' ? `/usr/bin/rebase -V 2>&1` : '0';
-    my ($rebasever) = $rebaseverstr =~ /rebase version ([0-9.]+)/;
-    $rebasever =~ s/(\d\.\d+)\./$1/;
-    if (-f $rebase and $rebasever < 3.02) {
-      $imagebase = `/bin/cat $rebase`;
-      chomp $imagebase;
-    }
     if (-e $ori) {
-      $imagebase = `/usr/bin/objdump -p $ori | /usr/bin/grep ImageBase | /usr/bin/cut -c12-`;
-      chomp $imagebase;
-      if ($imagebase gt "40000000" and $imagebase lt "80000000") {
-        my $LDDLFLAGS = $self->{LDDLFLAGS};
-        $LDDLFLAGS =~ s/-Wl,--enable-auto-image-base/-Wl,--image-base=0x$imagebase/;
-        $s =~ s/ \$\(LDDLFLAGS\) / $LDDLFLAGS /m;
-      }
-    } elsif ($imagebase gt "40000000" and $imagebase lt "80000000") {
-      my $LDDLFLAGS = $self->{LDDLFLAGS};
-      $LDDLFLAGS =~ s/-Wl,--enable-auto-image-base/-Wl,--image-base=0x$imagebase/ or
-        $LDDLFLAGS .= " -Wl,--image-base=0x$imagebase";
-      $s =~ s/ \$\(INST_DYNAMIC_DEP\)/ \$(INST_DYNAMIC_DEP) _rebase/;
-      $s =~ s/ \$\(LDDLFLAGS\) / $LDDLFLAGS /m;
-      # Here we create all DLL's per project with the same imagebase. With rebase 3.0.2 we do better
-      $s .= "\t/usr/bin/rebase -v -b 0x$imagebase \$@ | ";
-      $s .= "\$(FULLPERL) -n _rebase > \$(INSTALLVENDORARCH)/auto/.rebase\n";
-      # Need a tempfile, because gmake expands $_ in the perl cmdline
-      $s .= "\n_rebase : \$(OBJECT)\n";
-      $s .= "\t\$(NOECHO) \$(ECHO) '/new base = (.+), new size = (.+)/ && printf \"%x\\n\",hex(\$1)+hex(\$2);' > _rebase\n";
-    } else {
-      if ($rebasever < 3.02) {  # new rebase 3.0.2 with database
-        warn "Hint: run perlrebase to initialize $rebase or upgrade to rebase 3.0.2\n";
-      }
-    }
-    $s;
-}
-
-=item install
-
-Rebase dll's with the global rebase database after installation.
-
-=cut
-
-sub install {
-    my($self, %attribs) = @_;
-    my $s = ExtUtils::MM_Unix::install($self, %attribs);
-    return '' unless $s;
-    return $s unless %{$self->{XS}};
-
-    my $rebaseverstr = -f '/usr/bin/rebase' ? `/usr/bin/rebase -V 2>&1` : '0';
-    my ($rebasever) = $rebaseverstr =~ /rebase version ([0-9.]+)/;
-    $rebasever =~ s/(\d\.\d+)\./$1/;
-    if ($rebasever > 3.01) {  # new rebase 3.0.2 with database
-      my $INSTALLDIRS = $self->{INSTALLDIRS};
-      my $INSTALLLIB = $self->{"INSTALL". ($INSTALLDIRS eq 'perl' ? 'ARCHLIB' : uc($INSTALLDIRS)."ARCH")};
-      my $dll = "$INSTALLLIB/auto/$self->{FULLEXT}/$self->{BASEEXT}.$self->{DLEXT}";
-      $s =~ s|^(pure_install :: pure_\$\(INSTALLDIRS\)_install\n\t)\$\(NOECHO\) \$\(NOOP\)\n|$1\$(CHMOD) \$(PERM_RWX) \$(DESTDIR)$dll\n\ttest -n "\$(DESTDIR)\" \|\| /bin/rebase -s $dll\n|m;
+        my $imagebase = `/bin/objdump -p $ori | /bin/grep ImageBase | /bin/cut -c12-`;
+        chomp $imagebase;
+        if ($imagebase gt "40000000") {
+            my $LDDLFLAGS = $self->{LDDLFLAGS};
+            $LDDLFLAGS =~ s/-Wl,--enable-auto-image-base/-Wl,--image-base=0x$imagebase/;
+            $s =~ s/ \$\(LDDLFLAGS\) / $LDDLFLAGS /m;
+        }
     }
     $s;
 }

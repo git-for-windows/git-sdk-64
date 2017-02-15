@@ -1,6 +1,7 @@
 # -*- mode: cperl; tab-width: 8; indent-tabs-mode: nil; basic-offset: 2 -*-
 # vim:ts=8:sw=2:et:sta:sts=2
-package Module::Metadata; # git description: v1.000025-7-g47ca1b2
+package Module::Metadata; # git description: v1.000030-2-g52f466c
+# ABSTRACT: Gather package and POD information from perl module files
 
 # Adapted from Perl-licensed code originally distributed with
 # Module-Build by Ken Williams
@@ -13,7 +14,7 @@ sub __clean_eval { eval $_[0] }
 use strict;
 use warnings;
 
-our $VERSION = '1.000026';
+our $VERSION = '1.000031'; # TRIAL
 
 use Carp qw/croak/;
 use File::Spec;
@@ -26,8 +27,12 @@ BEGIN {
 use version 0.87;
 BEGIN {
   if ($INC{'Log/Contextual.pm'}) {
-    Log::Contextual->import('log_info');
-  } else {
+    require "Log/Contextual/WarnLogger.pm"; # Hide from AutoPrereqs
+    Log::Contextual->import('log_info',
+      '-default_logger' => Log::Contextual::WarnLogger->new({ env_prefix => 'MODULE_METADATA', }),
+    );
+  }
+  else {
     *log_info = sub (&) { warn $_[0]->() };
   }
 }
@@ -170,10 +175,12 @@ sub new_from_module {
           if ( defined( $version ) ) {
             if ( $compare_versions->( $version, '!=', $p->{version} ) ) {
               $err .= "  $p->{file} ($p->{version})\n";
-            } else {
+            }
+            else {
               # same version declared multiple times, ignore
             }
-          } else {
+          }
+          else {
             $file    = $p->{file};
             $version = $p->{version};
           }
@@ -239,7 +246,8 @@ sub new_from_module {
 
     if ( $files ) {
       @files = @$files;
-    } else {
+    }
+    else {
       find( {
         wanted => sub {
           push @files, $_ if -f $_ && /\.pm$/;
@@ -269,12 +277,14 @@ sub new_from_module {
         if ( $package eq $prime_package ) {
           if ( exists( $prime{$package} ) ) {
             croak "Unexpected conflict in '$package'; multiple versions found.\n";
-          } else {
+          }
+          else {
             $mapped_filename = "$package.pm" if lc("$package.pm") eq lc($mapped_filename);
             $prime{$package}{file} = $mapped_filename;
             $prime{$package}{version} = $version if defined( $version );
           }
-        } else {
+        }
+        else {
           push( @{$alt{$package}}, {
                                     file    => $mapped_filename,
                                     version => $version,
@@ -301,7 +311,8 @@ sub new_from_module {
             $result->{err}
           };
 
-        } elsif ( defined( $result->{version} ) ) {
+        }
+        elsif ( defined( $result->{version} ) ) {
         # There is a primary package selected, and exactly one
         # alternative package
 
@@ -321,19 +332,22 @@ sub new_from_module {
             };
           }
 
-        } else {
+        }
+        else {
           # The prime package selected has no version so, we choose to
           # use any alternative package that does have a version
           $prime{$package}{file}    = $result->{file};
           $prime{$package}{version} = $result->{version};
         }
 
-        } else {
+        }
+        else {
         # no alt package found with a version, but we have a prime
         # package so we use it whether it has a version or not
         }
 
-      } else { # No primary package was selected, use the best alternative
+      }
+      else { # No primary package was selected, use the best alternative
 
         if ( $result->{err} ) {
           log_info {
@@ -405,17 +419,12 @@ sub _init {
       $self->{module} = shift(@candidates); # punt
     }
     else {
-      if(grep /main/, @{$self->{packages}}) {
-        $self->{module} = 'main';
-      }
-      else {
-        $self->{module} = $self->{packages}[0] || '';
-      }
+      $self->{module} = 'main';
     }
   }
 
   $self->{version} = $self->{versions}{$self->{module}}
-      if defined( $self->{module} );
+    if defined( $self->{module} );
 
   return $self;
 }
@@ -484,9 +493,11 @@ sub _handle_bom {
   my $encoding;
   if ( $buf eq "\x{FE}\x{FF}" ) {
     $encoding = 'UTF-16BE';
-  } elsif ( $buf eq "\x{FF}\x{FE}" ) {
+  }
+  elsif ( $buf eq "\x{FF}\x{FE}" ) {
     $encoding = 'UTF-16LE';
-  } elsif ( $buf eq "\x{EF}\x{BB}" ) {
+  }
+  elsif ( $buf eq "\x{EF}\x{BB}" ) {
     $buf = ' ';
     $count = read $fh, $buf, length $buf;
     if ( defined $count and $count >= 1 and $buf eq "\x{BF}" ) {
@@ -498,7 +509,8 @@ sub _handle_bom {
     if ( "$]" >= 5.008 ) {
       binmode( $fh, ":encoding($encoding)" );
     }
-  } else {
+  }
+  else {
     seek $fh, $pos, SEEK_SET
       or croak( sprintf "Can't reset position to the top of '$filename'" );
   }
@@ -541,88 +553,91 @@ sub _parse_fh {
           $pod_data = '';
         }
         $pod_sect = $1;
-
-      } elsif ( $self->{collect_pod} ) {
-        $pod_data .= "$line\n";
-
       }
-
-    } elsif ( $is_cut ) {
-
+      elsif ( $self->{collect_pod} ) {
+        $pod_data .= "$line\n";
+      }
+      next;
+    }
+    elsif ( $is_cut ) {
       if ( $self->{collect_pod} && length( $pod_data ) ) {
         $pod{$pod_sect} = $pod_data;
         $pod_data = '';
       }
       $pod_sect = '';
+      next;
+    }
 
-    } else {
+    # Skip after __END__
+    next if $in_end;
 
-      # Skip after __END__
-      next if $in_end;
+    # Skip comments in code
+    next if $line =~ /^\s*#/;
 
-      # Skip comments in code
-      next if $line =~ /^\s*#/;
+    # Would be nice if we could also check $in_string or something too
+    if ($line eq '__END__') {
+      $in_end++;
+      next;
+    }
 
-      # Would be nice if we could also check $in_string or something too
-      if ($line eq '__END__') {
-        $in_end++;
-        next;
-      }
-      last if $line eq '__DATA__';
+    last if $line eq '__DATA__';
 
-      # parse $line to see if it's a $VERSION declaration
-      my( $version_sigil, $version_fullname, $version_package ) =
-          index($line, 'VERSION') >= 1
-              ? $self->_parse_version_expression( $line )
-              : ();
+    # parse $line to see if it's a $VERSION declaration
+    my( $version_sigil, $version_fullname, $version_package ) =
+      index($line, 'VERSION') >= 1
+        ? $self->_parse_version_expression( $line )
+        : ();
 
-      if ( $line =~ /$PKG_REGEXP/o ) {
-        $package = $1;
-        my $version = $2;
-        push( @packages, $package ) unless grep( $package eq $_, @packages );
-        $need_vers = defined $version ? 0 : 1;
+    if ( $line =~ /$PKG_REGEXP/o ) {
+      $package = $1;
+      my $version = $2;
+      push( @packages, $package ) unless grep( $package eq $_, @packages );
+      $need_vers = defined $version ? 0 : 1;
 
-        if ( not exists $vers{$package} and defined $version ){
-          # Upgrade to a version object.
-          my $dwim_version = eval { _dwim_version($version) };
-          croak "Version '$version' from $self->{filename} does not appear to be valid:\n$line\n\nThe fatal error was: $@\n"
-              unless defined $dwim_version;  # "0" is OK!
-          $vers{$package} = $dwim_version;
-        }
-
-      # VERSION defined with full package spec, i.e. $Module::VERSION
-      } elsif ( $version_fullname && $version_package ) {
-        push( @packages, $version_package ) unless grep( $version_package eq $_, @packages );
-        $need_vers = 0 if $version_package eq $package;
-
-        unless ( defined $vers{$version_package} && length $vers{$version_package} ) {
-        $vers{$version_package} = $self->_evaluate_version_line( $version_sigil, $version_fullname, $line );
-      }
-
-      # first non-comment line in undeclared package main is VERSION
-      } elsif ( $package eq 'main' && $version_fullname && !exists($vers{main}) ) {
-        $need_vers = 0;
-        my $v = $self->_evaluate_version_line( $version_sigil, $version_fullname, $line );
-        $vers{$package} = $v;
-        push( @packages, 'main' );
-
-      # first non-comment line in undeclared package defines package main
-      } elsif ( $package eq 'main' && !exists($vers{main}) && $line =~ /\w/ ) {
-        $need_vers = 1;
-        $vers{main} = '';
-        push( @packages, 'main' );
-
-      # only keep if this is the first $VERSION seen
-      } elsif ( $version_fullname && $need_vers ) {
-        $need_vers = 0;
-        my $v = $self->_evaluate_version_line( $version_sigil, $version_fullname, $line );
-
-        unless ( defined $vers{$package} && length $vers{$package} ) {
-          $vers{$package} = $v;
-        }
+      if ( not exists $vers{$package} and defined $version ){
+        # Upgrade to a version object.
+        my $dwim_version = eval { _dwim_version($version) };
+        croak "Version '$version' from $self->{filename} does not appear to be valid:\n$line\n\nThe fatal error was: $@\n"
+          unless defined $dwim_version;  # "0" is OK!
+        $vers{$package} = $dwim_version;
       }
     }
-  }
+
+    # VERSION defined with full package spec, i.e. $Module::VERSION
+    elsif ( $version_fullname && $version_package ) {
+      # we do NOT save this package in found @packages
+      $need_vers = 0 if $version_package eq $package;
+
+      unless ( defined $vers{$version_package} && length $vers{$version_package} ) {
+        $vers{$version_package} = $self->_evaluate_version_line( $version_sigil, $version_fullname, $line );
+      }
+    }
+
+    # first non-comment line in undeclared package main is VERSION
+    elsif ( $package eq 'main' && $version_fullname && !exists($vers{main}) ) {
+      $need_vers = 0;
+      my $v = $self->_evaluate_version_line( $version_sigil, $version_fullname, $line );
+      $vers{$package} = $v;
+      push( @packages, 'main' );
+    }
+
+    # first non-comment line in undeclared package defines package main
+    elsif ( $package eq 'main' && !exists($vers{main}) && $line =~ /\w/ ) {
+      $need_vers = 1;
+      $vers{main} = '';
+      push( @packages, 'main' );
+    }
+
+    # only keep if this is the first $VERSION seen
+    elsif ( $version_fullname && $need_vers ) {
+      $need_vers = 0;
+      my $v = $self->_evaluate_version_line( $version_sigil, $version_fullname, $line );
+
+      unless ( defined $vers{$package} && length $vers{$package} ) {
+        $vers{$package} = $v;
+      }
+    }
+  } # end loop over each line
 
   if ( $self->{collect_pod} && length($pod_data) ) {
     $pod{$pod_sect} = $pod_data;
@@ -649,7 +664,8 @@ sub _evaluate_version_line {
     sub {
       local $sigil$variable_name;
       $line;
-      \$$variable_name
+      return \$$variable_name if defined \$$variable_name;
+      return \$Module::Metadata::_version::p${pn}::$variable_name;
     };
   };
 
@@ -760,7 +776,8 @@ sub version {
     if ( defined( $mod ) && length( $mod ) &&
          exists( $self->{versions}{$mod} ) ) {
         return $self->{versions}{$mod};
-    } else {
+    }
+    else {
         return undef;
     }
 }
@@ -771,7 +788,8 @@ sub pod {
     if ( defined( $sect ) && length( $sect ) &&
          exists( $self->{pod}{$sect} ) ) {
         return $self->{pod}{$sect};
-    } else {
+    }
+    else {
         return undef;
     }
 }
@@ -790,9 +808,19 @@ sub is_indexable {
 
 1;
 
+__END__
+
+=pod
+
+=encoding UTF-8
+
 =head1 NAME
 
 Module::Metadata - Gather package and POD information from perl module files
+
+=head1 VERSION
+
+version 1.000031
 
 =head1 SYNOPSIS
 
@@ -814,13 +842,9 @@ This module provides a standard way to gather metadata about a .pm file through
 version of a module, the C<$VERSION> assignment is C<eval>ed, as is traditional
 in the CPAN toolchain.
 
-=head1 USAGE
+=head1 CLASS METHODS
 
-=head2 Class methods
-
-=over 4
-
-=item C<< new_from_file($filename, collect_pod => 1) >>
+=head2 C<< new_from_file($filename, collect_pod => 1) >>
 
 Constructs a C<Module::Metadata> object given the path to a file.  Returns
 undef if the filename does not exist.
@@ -833,7 +857,7 @@ If the file begins by an UTF-8, UTF-16BE or UTF-16LE byte-order mark, then
 it is skipped before processing, and the content of the file is also decoded
 appropriately starting from perl 5.8.
 
-=item C<< new_from_handle($handle, $filename, collect_pod => 1) >>
+=head2 C<< new_from_handle($handle, $filename, collect_pod => 1) >>
 
 This works just like C<new_from_file>, except that a handle can be provided
 as the first argument.
@@ -846,7 +870,7 @@ mandatory or undef will be returned.
 You are responsible for setting the decoding layers on C<$handle> if
 required.
 
-=item C<< new_from_module($module, collect_pod => 1, inc => \@dirs) >>
+=head2 C<< new_from_module($module, collect_pod => 1, inc => \@dirs) >>
 
 Constructs a C<Module::Metadata> object given a module or package name.
 Returns undef if the module cannot be found.
@@ -860,7 +884,7 @@ If the file that contains the module begins by an UTF-8, UTF-16BE or
 UTF-16LE byte-order mark, then it is skipped before processing, and the
 content of the file is also decoded appropriately starting from perl 5.8.
 
-=item C<< find_module_by_name($module, \@dirs) >>
+=head2 C<< find_module_by_name($module, \@dirs) >>
 
 Returns the path to a module given the module or package name. A list
 of directories can be passed in as an optional parameter, otherwise
@@ -868,7 +892,7 @@ of directories can be passed in as an optional parameter, otherwise
 
 Can be called as either an object or a class method.
 
-=item C<< find_module_dir_by_name($module, \@dirs) >>
+=head2 C<< find_module_dir_by_name($module, \@dirs) >>
 
 Returns the entry in C<@dirs> (or C<@INC> by default) that contains
 the module C<$module>. A list of directories can be passed in as an
@@ -876,7 +900,7 @@ optional parameter, otherwise @INC is searched.
 
 Can be called as either an object or a class method.
 
-=item C<< provides( %options ) >>
+=head2 C<< provides( %options ) >>
 
 This is a convenience wrapper around C<package_versions_from_directory>
 to generate a CPAN META C<provides> data structure.  It takes key/value
@@ -925,7 +949,7 @@ is a hashref of the form:
     'OtherPackage::Name' => ...
   }
 
-=item C<< package_versions_from_directory($dir, \@files?) >>
+=head2 C<< package_versions_from_directory($dir, \@files?) >>
 
 Scans C<$dir> for .pm files (unless C<@files> is given, in which case looks
 for those files in C<$dir> - and reads each file for packages and versions,
@@ -947,36 +971,33 @@ Note that the file path is relative to C<$dir> if that is specified.
 This B<must not> be used directly for CPAN META C<provides>.  See
 the C<provides> method instead.
 
-=item C<< log_info (internal) >>
+=head2 C<< log_info (internal) >>
 
 Used internally to perform logging; imported from Log::Contextual if
 Log::Contextual has already been loaded, otherwise simply calls warn.
 
-=back
+=head1 OBJECT METHODS
 
-=head2 Object methods
-
-=over 4
-
-=item C<< name() >>
+=head2 C<< name() >>
 
 Returns the name of the package represented by this module. If there
 is more than one package, it makes a best guess based on the
 filename. If it's a script (i.e. not a *.pm) the package name is
 'main'.
 
-=item C<< version($package) >>
+=head2 C<< version($package) >>
 
 Returns the version as defined by the $VERSION variable for the
 package as returned by the C<name> method if no arguments are
 given. If given the name of a package it will attempt to return the
 version of that package if it is specified in the file.
 
-=item C<< filename() >>
+=head2 C<< filename() >>
 
 Returns the absolute path to the file.
+Note that this file may not actually exist on disk yet, e.g. if the module was read from an in-memory filehandle.
 
-=item C<< packages_inside() >>
+=head2 C<< packages_inside() >>
 
 Returns a list of packages. Note: this is a raw list of packages
 discovered (or assumed, in the case of C<main>).  It is not
@@ -986,26 +1007,37 @@ for example "Foo:Bar".  Strange but valid package names are
 returned, for example "Foo::Bar::", and are left up to the caller
 on how to handle.
 
-=item C<< pod_inside() >>
+=head2 C<< pod_inside() >>
 
 Returns a list of POD sections.
 
-=item C<< contains_pod() >>
+=head2 C<< contains_pod() >>
 
 Returns true if there is any POD in the file.
 
-=item C<< pod($section) >>
+=head2 C<< pod($section) >>
 
 Returns the POD data in the given section.
 
-=item C<< is_indexable($package) >> or C<< is_indexable() >>
+=head2 C<< is_indexable($package) >> or C<< is_indexable() >>
+
+Available since version 1.000020.
 
 Returns a boolean indicating whether the package (if provided) or any package
 (otherwise) is eligible for indexing by PAUSE, the Perl Authors Upload Server.
 Note This only checks for valid C<package> declarations, and does not take any
 ownership information into account.
 
-=back
+=head1 SUPPORT
+
+Bugs may be submitted through L<the RT bug tracker|https://rt.cpan.org/Public/Dist/Display.html?Name=Module-Metadata>
+(or L<bug-Module-Metadata@rt.cpan.org|mailto:bug-Module-Metadata@rt.cpan.org>).
+
+There is also a mailing list available for users of this distribution, at
+L<http://lists.perl.org/list/cpan-workers.html>.
+
+There is also an irc channel available for users of this distribution, at
+L<irc://irc.perl.org/#toolchain>.
 
 =head1 AUTHOR
 
@@ -1014,6 +1046,102 @@ Original code from Module::Build::ModuleInfo by Ken Williams
 
 Released as Module::Metadata by Matt S Trout (mst) <mst@shadowcat.co.uk> with
 assistance from David Golden (xdg) <dagolden@cpan.org>.
+
+=head1 CONTRIBUTORS
+
+=for stopwords Karen Etheridge David Golden Vincent Pit Matt S Trout Chris Nehren Graham Knop Olivier Mengué Tomas Doran Tatsuhiko Miyagawa tokuhirom Peter Rabbitson Steve Hay Josh Jore Craig A. Berry Mitchell Steinbrunner Edward Zborowski Gareth Harper James Raspass Jerry D. Hedden 'BinGOs' Williams Kent Fredric
+
+=over 4
+
+=item *
+
+Karen Etheridge <ether@cpan.org>
+
+=item *
+
+David Golden <dagolden@cpan.org>
+
+=item *
+
+Vincent Pit <perl@profvince.com>
+
+=item *
+
+Matt S Trout <mst@shadowcat.co.uk>
+
+=item *
+
+Chris Nehren <apeiron@cpan.org>
+
+=item *
+
+Graham Knop <haarg@haarg.org>
+
+=item *
+
+Olivier Mengué <dolmen@cpan.org>
+
+=item *
+
+Tomas Doran <bobtfish@bobtfish.net>
+
+=item *
+
+Tatsuhiko Miyagawa <miyagawa@bulknews.net>
+
+=item *
+
+tokuhirom <tokuhirom@gmail.com>
+
+=item *
+
+Peter Rabbitson <ribasushi@cpan.org>
+
+=item *
+
+Steve Hay <steve.m.hay@googlemail.com>
+
+=item *
+
+Josh Jore <jjore@cpan.org>
+
+=item *
+
+Craig A. Berry <cberry@cpan.org>
+
+=item *
+
+David Mitchell <davem@iabyn.com>
+
+=item *
+
+David Steinbrunner <dsteinbrunner@pobox.com>
+
+=item *
+
+Edward Zborowski <ed@rubensteintech.com>
+
+=item *
+
+Gareth Harper <gareth@broadbean.com>
+
+=item *
+
+James Raspass <jraspass@gmail.com>
+
+=item *
+
+Jerry D. Hedden <jdhedden@cpan.org>
+
+=item *
+
+Chris 'BinGOs' Williams <chris@bingosnet.co.uk>
+
+=item *
+
+Kent Fredric <kentnl@cpan.org>
+
+=back
 
 =head1 COPYRIGHT & LICENSE
 
@@ -1025,4 +1153,3 @@ This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 =cut
-

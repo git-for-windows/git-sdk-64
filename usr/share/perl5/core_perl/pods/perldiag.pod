@@ -72,6 +72,11 @@ removed in a future Perl version:
 (F) The modifiers '!', '<' and '>' are allowed in pack() or unpack() only
 after certain types.  See L<perlfunc/pack>.
 
+=item alpha->numify() is lossy
+
+(W numeric) An alpha version can not be numified without losing
+information.
+
 =item Ambiguous call resolved as CORE::%s(), qualify as such or use &
 
 (W ambiguous) A subroutine you have declared has the same name as a Perl
@@ -211,6 +216,11 @@ operator which expects either a number or a string matching
 C</^[a-zA-Z]*[0-9]*\z/>.  See L<perlop/Auto-increment and
 Auto-decrement> for details.
 
+=item Array passed to stat will be coerced to a scalar%s
+
+(W syntax) You called stat() on an array, but the array will be
+coerced to a scalar - the number of elements in the array.
+
 =item assertion botched: %s
 
 (X) The malloc package that comes with Perl had an internal failure.
@@ -246,6 +256,33 @@ the special variable C<$[>, which is deprecated, is now a fixed zero value.
 (F) If you assign to a conditional operator, the 2nd and 3rd arguments
 must either both be scalars or both be lists.  Otherwise Perl won't
 know which context to supply to the right side.
+
+=item Assuming NOT a POSIX class since %s in regex; marked by S<<-- HERE> in m/%s/
+
+(W regexp) You had something like these:
+
+ [[:alnum]]
+ [[:digit:xyz]
+
+They look like they might have been meant to be the POSIX classes
+C<[:alnum:]> or C<[:digit:]>.  If so, they should be written:
+
+ [[:alnum:]]
+ [[:digit:]xyz]
+
+Since these aren't legal POSIX class specifications, but are legal
+bracketed character classes, Perl treats them as the latter.  In the
+first example, it matches the characters C<":">, C<"[">, C<"a">, C<"l">,
+C<"m">, C<"n">, and C<"u">.
+
+If these weren't meant to be POSIX classes, this warning message is
+spurious, and can be suppressed by reordering things, such as
+
+ [[al:num]]
+
+or
+
+ [[:munla]]
 
 =item <> at require-statement should be quotes
 
@@ -662,6 +699,14 @@ keep a reference count on its arguments and cannot be made to
 do so.  Such arrays are not even supposed to be accessible to
 Perl code, but are only used internally.
 
+=item Cannot yet reorder sv_catpvfn() arguments from va_list
+
+(F) Some XS code tried to use C<sv_catpvfn()> or a related function with a
+format string that specifies explicit indexes for some of the elements, and
+using a C-style variable-argument list (a C<va_list>). This is not currently
+supported. XS authors wanting to do this must instead construct a C array of
+C<SV*> scalars containing the arguments.
+
 =item Can only compress unsigned integers in pack
 
 (F) An argument to pack("w",...) was not an integer.  The BER compressed
@@ -860,13 +905,6 @@ found in the PATH did not have correct permissions.
 (F) A string of a form C<CORE::word> was given to prototype(), but there
 is no builtin with the name C<word>.
 
-=item Can't find %s character property "%s"
-
-(F) You used C<\p{}> or C<\P{}> but the character property by that name
-could not be found.  Maybe you misspelled the name of the property?
-See L<perluniprops/Properties accessible through \p{} and \P{}>
-for a complete list of available official properties.
-
 =item Can't find label %s
 
 (F) You said to goto a label that isn't mentioned anywhere that it's
@@ -899,13 +937,19 @@ L<perlop> for the full details on here-documents.
 
 =item Can't find Unicode property definition "%s"
 
-(F) You may have tried to use C<\p> which means a Unicode
-property (for example C<\p{Lu}> matches all uppercase
-letters).  If you did mean to use a Unicode property, see
+=item Can't find Unicode property definition "%s" in regex; marked by <-- HERE in m/%s/
+
+(F) The named property which you specified via C<\p> or C<\P> is not one
+known to Perl.  Perhaps you misspelled the name?  See
 L<perluniprops/Properties accessible through \p{} and \P{}>
-for a complete list of available properties.  If you didn't
-mean to use a Unicode property, escape the C<\p>, either by
-C<\\p> (just the C<\p>) or by C<\Q\p> (the rest of the string, or
+for a complete list of available official
+properties.  If it is a
+L<user-defined property|perlunicode/User-Defined Character Properties>
+it must have been defined by the time the regular expression is
+matched.
+
+If you didn't mean to use a Unicode property, escape the C<\p>, either
+by C<\\p> (just the C<\p>) or by C<\Q\p> (the rest of the string, or
 until C<\E>).
 
 =item Can't fork: %s
@@ -1100,7 +1144,7 @@ to change it, such as with an auto-increment.
 (P) The internal routine that does assignment to a substr() was handed
 a NULL.
 
-=item Can't modify non-lvalue subroutine call
+=item Can't modify non-lvalue subroutine call of &%s
 
 (F) Subroutines meant to be used in lvalue context should be declared as
 such.  See L<perlsub/"Lvalue subroutines">.
@@ -1208,6 +1252,11 @@ from the CRTL's internal environment array and discovered the array was
 missing.  You need to figure out where your CRTL misplaced its environ
 or define F<PERL_ENV_TABLES> (see L<perlvms>) so that environ is not
 searched.
+
+=item Can't redeclare "%s" in "%s"
+
+(F) A "my", "our" or "state" declaration was found within another declaration,
+such as C<my ($x, my($y), $z)> or C<our (my $x)>.
 
 =item Can't "redo" outside a loop block
 
@@ -1465,6 +1514,13 @@ Note that ASCII characters that don't map to control characters are
 discouraged, and will generate the warning (when enabled)
 L</""\c%c" is more clearly written simply as "%s"">.
 
+=item Character following \%c must be '{' or a single-character Unicode property name in regex; marked by <-- HERE in m/%s/
+
+(F) (In the above the C<%c> is replaced by either C<p> or C<P>.)  You
+specified something that isn't a legal Unicode property name.  Most
+Unicode properties are specified by C<\p{...}>.  But if the name is a
+single character one, the braces may be omitted.
+
 =item Character in 'C' format wrapped in pack
 
 (W pack) You said
@@ -1559,15 +1615,9 @@ defined in the C<:alias> import argument to C<use charnames>, but they
 could be defined by a translator installed into C<$^H{charnames}>.
 See L<charnames/CUSTOM ALIASES>.
 
-=item \C is deprecated in regex; marked by S<<-- HERE> in m/%s/
+=item chdir() on unopened filehandle %s
 
-(D deprecated, regexp) The \C character class is deprecated, and will
-become a compile-time error in a future release of perl (tentatively
-v5.24).  This construct allows you to match a single byte of what makes
-up a multi-byte single UTF8 character, and breaks encapsulation.  It is
-currently also very buggy.  If you really need to process the individual
-bytes, you probably want to convert your string to one where each
-underlying byte is stored as a character, with utf8::encode().
+(W unopened) You tried chdir() on a filehandle that was never opened.
 
 =item "\c%c" is more clearly written simply as "%s"
 
@@ -1596,22 +1646,55 @@ a dirhandle.  Check your control flow.
 handler is the prototype that is cloned when a new closure is created.
 This subroutine cannot be called.
 
+=item \C no longer supported in regex; marked by S<<-- HERE> in m/%s/
+
+(F) The \C character class used to allow a match of single byte
+within a multi-byte utf-8 character, but was removed in v5.24 as
+it broke encapsulation and its implementation was extremely buggy.
+If you really need to process the individual bytes, you probably
+want to convert your string to one where each underlying byte is
+stored as a character, with utf8::encode().
+
 =item Code missing after '/'
 
 (F) You had a (sub-)template that ends with a '/'.  There must be
 another template code following the slash.  See L<perlfunc/pack>.
+
+=item Code point 0x%X is not Unicode, and not portable
+
+(S non_unicode) You had a code point that has never been in any
+standard, so it is likely that languages other than Perl will NOT
+understand it.  At one time, it was legal in some standards to have code
+points up to 0x7FFF_FFFF, but not higher, and this code point is higher.
+
+Acceptance of these code points is a Perl extension, and you should
+expect that nothing other than Perl can handle them; Perl itself on
+EBCDIC platforms before v5.24 does not handle them.
+
+Code points above 0xFFFF_FFFF require larger than a 32 bit word.
+
+Perl also makes no guarantees that the representation of these code
+points won't change at some point in the future, say when machines
+become available that have larger than a 64-bit word.  At that time,
+files written by an older Perl would require conversion before being
+readable by a newer Perl.
 
 =item Code point 0x%X is not Unicode, may not be portable
 
 (S non_unicode) You had a code point above the Unicode maximum
 of U+10FFFF.
 
-Perl allows strings to contain a superset of Unicode code points, up
-to the limit of what is storable in an unsigned integer on your system,
-but these may not be accepted by other languages/systems.  At one time,
-it was legal in some standards to have code points up to 0x7FFF_FFFF,
-but not higher.  Code points above 0xFFFF_FFFF require larger than a
-32 bit word.
+Perl allows strings to contain a superset of Unicode code points, but
+these may not be accepted by other languages/systems.  Further, even if
+these languages/systems accept these large code points, they may have
+chosen a different representation for them than the UTF-8-like one that
+Perl has, which would mean files are not exchangeable between them and
+Perl.
+
+On EBCDIC platforms, code points above 0x3FFF_FFFF have a different
+representation in Perl v5.24 than before, so any file containing these
+that was written before that version will require conversion before
+being readable by a later Perl.
 
 =item %s: Command not found
 
@@ -1956,20 +2039,14 @@ already been freed.
 (W unpack) You have applied the same modifier more than once after a
 type in a pack template.  See L<perlfunc/pack>.
 
-=item each on reference is experimental
-
-(S experimental::autoderef) C<each> with a scalar argument is experimental
-and may change or be removed in a future Perl version.  If you want to
-take the risk of using this feature, simply disable this warning:
-
-    no warnings "experimental::autoderef";
-
 =item elseif should be elsif
 
 (S syntax) There is no keyword "elseif" in Perl because Larry thinks
 it's ugly.  Your code will be interpreted as an attempt to call a method
 named "elseif" for the class returned by the following block.  This is
 unlikely to be what you want.
+
+=item Empty \%c in regex; marked by S<<-- HERE> in m/%s/
 
 =item Empty \%c{} in regex; marked by S<<-- HERE> in m/%s/
 
@@ -2112,6 +2189,13 @@ L<perlrecharclass/Extended Bracketed Character Classes>.
     use feature "refaliasing";
     \$x = \$y;
 
+=item Experimental %s on scalar is now forbidden
+
+(F) An experimental feature added in Perl 5.14 allowed C<each>, C<keys>,
+C<push>, C<pop>, C<shift>, C<splice>, C<unshift>, and C<values> to be called with a
+scalar argument.  This experiment is considered unsuccessful, and
+has been removed.  The C<postderef> feature may meet your needs better.
+
 =item Experimental subroutine signatures not enabled
 
 (F) To use subroutine signatures, you must first enable them:
@@ -2145,6 +2229,11 @@ Check the #! line, or manually feed your script into Perl yourself.
 (F) An untrapped exception was raised while executing a UNITCHECK,
 CHECK, INIT, or END subroutine.  Processing of the remainder of the
 queue of such routines has been prematurely ended.
+
+=item Failed to close in-place edit file %s: %s
+
+(F) Closing an output file from in-place editing, as with the C<-i>
+command-line switch, failed.
 
 =item False [] range "%s" in regex; marked by S<<-- HERE> in m/%s/
 
@@ -2528,6 +2617,15 @@ L<C<(?I<PARNO>)>|perlre/(?PARNO) (?-PARNO) (?+PARNO) (?R) (?0)>.
 (X) The PERL5OPT environment variable may only be used to set the
 following switches: B<-[CDIMUdmtw]>.
 
+=item Illegal user-defined property name
+
+(F) You specified a Unicode-like property name in a regular expression
+pattern (using C<\p{}> or C<\P{}>) that Perl knows isn't an official
+Unicode property, and was likely meant to be a user-defined property
+name, but it can't be one of those, as they must begin with either C<In>
+or C<Is>.  Check the spelling.  See also
+L</Can't find Unicode property definition "%s">.
+
 =item Ill-formed CRTL environ value "%s"
 
 (W internal) A warning peculiar to VMS.  Perl tried to read the CRTL's
@@ -2566,12 +2664,6 @@ parent '%s'
 (F) The method resolution order (MRO) of the given class is not
 C3-consistent, and you have enabled the C3 MRO for this class.  See the C3
 documentation in L<mro> for more information.
-
-=item In EBCDIC the v-string components cannot exceed 2147483647
-
-(F) An error peculiar to EBCDIC.  Internally, v-strings are stored as
-Unicode code points, and encoded in EBCDIC as UTF-EBCDIC.  The UTF-EBCDIC
-encoding is limited to code points no larger than 2147483647 (0x7FFFFFFF).
 
 =item Infinite recursion in regex
 
@@ -2796,6 +2888,11 @@ a module that is a MRO plugin.  See L<mro> and L<perlmroapi>.
 not valid character numbers, so it returns the Unicode replacement
 character (U+FFFD).
 
+=item Invalid number '%s' for -C option.
+
+(F) You supplied a number to the -C option that either has extra leading
+zeroes or overflows perl's unsigned integer representation.
+
 =item invalid option -D%c, use -D'' to see choices
 
 (S debugging) Perl was called with invalid debugger flags.  Call perl
@@ -2907,6 +3004,26 @@ neither as a system call nor an ioctl call (SIOCATMARK).
 Perl.  The current valid ones are given in
 L<perlrebackslash/\b{}, \b, \B{}, \B>.
 
+=item %s() is deprecated on :utf8 handles
+
+(W deprecated) The sysread(), recv(), syswrite() and send() operators are
+deprecated on handles that have the C<:utf8> layer, either explicitly, or
+implicitly, eg., with the C<:encoding(UTF-16LE)> layer.
+
+Both sysread() and recv() currently use only the C<:utf8> flag for the stream,
+ignoring the actual layers.  Since sysread() and recv() do no UTF-8
+validation they can end up creating invalidly encoded scalars.
+
+Similarly, syswrite() and send() use only the C<:utf8> flag, otherwise ignoring
+any layers.  If the flag is set, both write the value UTF-8 encoded, even if
+the layer is some different encoding, such as the example above.
+
+Ideally, all of these operators would completely ignore the C<:utf8> state,
+working only with bytes, but this would result in silently breaking existing
+code.  To avoid this a future version of perl will throw an exception when
+any of sysread(), recv(), syswrite() or send() are called on handle with the
+C<:utf8> layer.
+
 =item "%s" is more clearly written simply as "%s" in regex; marked by S<<-- HERE> in m/%s/
 
 (W regexp) (only under C<S<use re 'strict'>> or within C<(?[...])>)
@@ -2957,14 +3074,6 @@ line.  See L<perlrun> for more details.
 =item Junk on end of regexp in regex m/%s/
 
 (P) The regular expression parser is confused.
-
-=item keys on reference is experimental
-
-(S experimental::autoderef) C<keys> with a scalar argument is experimental
-and may change or be removed in a future Perl version.  If you want to
-take the risk of using this feature, simply disable this warning:
-
-    no warnings "experimental::autoderef";
 
 =item Label not found for "last %s"
 
@@ -3503,6 +3612,13 @@ They're written like C<$foo[1][2][3]>, as in C.
 (F) You had an unpack template that contained a '/', but this did not
 follow some unpack specification producing a numeric value.
 See L<perlfunc/pack>.
+
+=item %s must not be a named sequence in transliteration operator
+
+(F) Transliteration (C<tr///> and C<y///>) transliterates individual
+characters.  But a named sequence by definition is more than an
+individual charater, and hence doing this operation on it doesn't make
+sense.
 
 =item "my sub" not yet implemented
 
@@ -4245,11 +4361,6 @@ there are in the savestack.
 (P) Failed an internal consistency check while trying to reset a weak
 reference.
 
-=item panic: die %s
-
-(P) We popped the context stack to an eval context, and then discovered
-it wasn't an eval context.
-
 =item panic: do_subst
 
 (P) The internal pp_subst() routine was called with invalid operational
@@ -4591,14 +4702,6 @@ fine from VMS' perspective, it's probably not what you intended.
 
 (F) The unpack format P must have an explicit size, not "*".
 
-=item pop on reference is experimental
-
-(S experimental::autoderef) C<pop> with a scalar argument is experimental
-and may change or be removed in a future Perl version.  If you want to
-take the risk of using this feature, simply disable this warning:
-
-    no warnings "experimental::autoderef";
-
 =item POSIX class [:%s:] unknown in regex; marked by S<<-- HERE> in m/%s/
 
 (F) The class in the character class [: :] syntax is unknown.  The S<<-- HERE>
@@ -4612,15 +4715,26 @@ not C<isprint>.  See L<perlre>.
 (F) Your system has POSIX getpgrp(), which takes no argument, unlike
 the BSD version, which takes a pid.
 
-=item POSIX syntax [%c %c] belongs inside character classes in regex; marked by 
+=item POSIX syntax [%c %c] belongs inside character classes%s in regex; marked by
 S<<-- HERE> in m/%s/
 
-(W regexp) The character class constructs [: :], [= =], and [. .]  go
-I<inside> character classes, the [] are part of the construct, for example:
-/[012[:alpha:]345]/.  Note that [= =] and [. .] are not currently
+(W regexp) Perl thinks that you intended to write a POSIX character
+class, but didn't use enough brackets.  These POSIX class constructs [:
+:], [= =], and [. .]  go I<inside> character classes, the [] are part of
+the construct, for example: C<qr/[012[:alpha:]345]/>.  What the regular
+expression pattern compiled to is probably not what you were intending.
+For example, C<qr/[:alpha:]/> compiles to a regular bracketed character
+class consisting of the four characters C<":">,  C<"a">,  C<"l">,
+C<"h">, and C<"p">.  To specify the POSIX class, it should have been
+written C<qr/[[:alpha:]]/>.
+
+Note that [= =] and [. .] are not currently
 implemented; they are simply placeholders for future extensions and
 will cause fatal errors.  The S<<-- HERE> shows whereabouts in the regular
 expression the problem was discovered.  See L<perlre>.
+
+If the specification of the class was not completely valid, the message
+indicates that.
 
 =item POSIX syntax [. .] is reserved for future extensions in regex; marked by 
 S<<-- HERE> in m/%s/
@@ -4749,21 +4863,6 @@ but there was no array C<@foo> in scope at the time.  If you wanted a
 literal @foo, then write it as \@foo; otherwise find out what happened
 to the array you apparently lost track of.
 
-=item Postfix dereference is experimental
-
-(S experimental::postderef) This warning is emitted if you use
-the experimental postfix dereference syntax.  Simply suppress the
-warning if you want to use the feature, but know that in doing
-so you are taking the risk of using an experimental feature which
-may change or be removed in a future Perl version:
-
-    no warnings "experimental::postderef";
-    use feature "postderef", "postderef_qq";
-    $ref->$*;
-    $aref->@*;
-    $aref->@[@indices];
-    ... etc ...
-
 =item Precedence problem: open %s should be open(%s)
 
 (S precedence) The old irregular construct
@@ -4801,16 +4900,6 @@ port.  One can easily disable this by appropriate sighandlers, see
 L<perlipc/"Signals">.  See also "Process terminated by SIGTERM/SIGINT"
 in L<perlos2>.
 
-=item Property '%s' is unknown in regex; marked by S<<-- HERE> in m/%s/
-
-(F) The named property which you specified via C<\p> or C<\P> is not one
-known to Perl.  Perhaps you misspelled the name?  See
-L<perluniprops/Properties accessible through \p{} and \P{}>
-for a complete list of available official
-properties.  If it is a L<user-defined property|perlunicode/User-Defined Character Properties>
-it must have been defined by the time the regular expression is
-compiled.
-
 =item Prototype after '%c' for %s : %s
 
 (W illegalproto) A character follows % or @ in a prototype.  This is
@@ -4832,14 +4921,6 @@ definition.
 the sub name and via the prototype attribute.  The prototype in
 parentheses is useless, since it will be replaced by the prototype
 from the attribute before it's ever used.
-
-=item push on reference is experimental
-
-(S experimental::autoderef) C<push> with a scalar argument is experimental
-and may change or be removed in a future Perl version.  If you want to
-take the risk of using this feature, simply disable this warning:
-
-    no warnings "experimental::autoderef";
 
 =item Quantifier follows nothing in regex; marked by S<<-- HERE> in m/%s/
 
@@ -5271,6 +5352,18 @@ sequence and this has been omitted or incorrectly written.
 (F) The end of the perl code contained within the {...} must be
 followed immediately by a ')'.
 
+=item Sequence (?PE<gt>... not terminated in regex; marked by S<<-- HERE> in m/%s/
+
+(F) A named reference of the form C<(?PE<gt>...)> was missing the final
+closing parenthesis after the name.  The S<<-- HERE> shows whereabouts
+in the regular expression the problem was discovered.
+
+=item Sequence (?PE<lt>... not terminated in regex; marked by S<<-- HERE> in m/%s/
+
+(F) A named group of the form C<(?PE<lt>...E<gt>')> was missing the final
+closing angle bracket.  The S<<-- HERE> shows whereabouts in the
+regular expression the problem was discovered.
+
 =item Sequence ?P=... not terminated in regex; marked by S<<-- HERE> in
 m/%s/
 
@@ -5372,14 +5465,6 @@ a positive integer, where the integer was the address of the reference.
 As of Perl 5.20.0 this is a fatal error, to allow future versions of Perl
 to use non-integer refs for more interesting purposes.
 
-=item shift on reference is experimental
-
-(S experimental::autoderef) C<shift> with a scalar argument is experimental
-and may change or be removed in a future Perl version.  If you want to
-take the risk of using this feature, simply disable this warning:
-
-    no warnings "experimental::autoderef";
-
 =item shm%s not implemented
 
 (F) You don't have System V shared memory IPC on your system.
@@ -5445,11 +5530,6 @@ overhauled.
 (F) An ancient error message that almost nobody ever runs into anymore.
 But before sort was a keyword, people sometimes used it as a filehandle.
 
-=item Sort subroutine didn't return single value
-
-(F) A sort comparison subroutine written in XS must return exactly one
-item.  See L<perlfunc/sort>.
-
 =item Source filters apply only to byte streams
 
 (F) You tried to activate a source filter (usually by loading a
@@ -5464,15 +5544,6 @@ the array passed to splice().  Splicing will instead commence at the
 end of the array, rather than past it.  If this isn't what you want,
 try explicitly pre-extending the array by assigning $#array = $offset.
 See L<perlfunc/splice>.
-
-=item splice on reference is experimental
-
-(S experimental::autoderef) C<splice> with a scalar argument
-is experimental and may change or be removed in a future
-Perl version.  If you want to take the risk of using this
-feature, simply disable this warning:
-
-    no warnings "experimental::autoderef";
 
 =item Split loop
 
@@ -5991,11 +6062,6 @@ certain type.  Arrays must be @NAME or C<@{EXPR}>.  Hashes must be
 %NAME or C<%{EXPR}>.  No implicit dereferencing is allowed--use the
 {EXPR} forms as an explicit dereference.  See L<perlref>.
 
-=item Type of argument to %s must be unblessed hashref or arrayref
-
-(F) You called C<keys>, C<values> or C<each> with a scalar argument that
-was not a reference to an unblessed hash or array.
-
 =item umask not implemented
 
 (F) Your machine doesn't implement the umask function and you tried to
@@ -6145,7 +6211,7 @@ There should be an operator before the C<"(">, as there's
 no indication as to how the digits are to be combined
 with the characters in the Lao and Thai scripts.
 
-=item Unicode non-character U+%X is illegal for open interchange
+=item Unicode non-character U+%X is not recommended for open interchange
 
 (S nonchar) Certain codepoints, such as U+FFFE and U+FFFF, are
 defined by the Unicode standard to be non-characters.  Those
@@ -6169,6 +6235,12 @@ available on your platform), including surrogates.  But these can cause
 problems when being input or output, which is likely where this message
 came from.  If you really really know what you are doing you can turn
 off this warning by C<no warnings 'surrogate';>.
+
+=item Unknown charname '' is deprecated
+
+(D deprecated) You had a C<\N{}> with nothing between the braces.  This
+usage is deprecated, and will be made a syntax error in a future Perl
+version.
 
 =item Unknown charname '%s'
 
@@ -6270,27 +6342,6 @@ Note that if you want to enable a warnings category registered by a
 module (e.g. C<use warnings 'File::Find'>), you must have loaded this
 module first.
 
-=item Unmatched '[' in POSIX class in regex; marked by S<<-- HERE> in m/%s/
-
-(F) You had something like this:
-
- (?[ [:digit: ])
-
-That should be written:
-
- (?[ [:digit:] ])
-
-=item Unmatched '%c' in POSIX class in regex; marked by S<<-- HERE> in
-m/%s/
-
-(F) You had something like this:
-
- (?[ [:alnum] ])
-
-There should be a second C<":">, like this:
-
- (?[ [:alnum:] ])
-
 =item Unmatched [ in regex; marked by S<<-- HERE> in m/%s/
 
 (F) The brackets around a character class must match.  If you wish to
@@ -6370,15 +6421,6 @@ on your system.
 (F) You specified an illegal option to Perl.  Don't do that.  (If you
 think you didn't do that, check the #! line to see if it's supplying the
 bad switch on your behalf.)
-
-=item unshift on reference is experimental
-
-(S experimental::autoderef) C<unshift> with a scalar argument
-is experimental and may change or be removed in a future
-Perl version.  If you want to take the risk of using this
-feature, simply disable this warning:
-
-    no warnings "experimental::autoderef";
 
 =item Unsuccessful %s on filename containing newline
 
@@ -6547,7 +6589,7 @@ discovered.  See L<perlre>.
 
 =item Useless use of attribute "const"
 
-(W misc) The "const" attribute has no effect except
+(W misc) The C<const> attribute has no effect except
 on anonymous closure prototypes.  You applied it to
 a subroutine via L<attributes.pm|attributes>.  This is only useful
 inside an attribute handler for an anonymous subroutine.
@@ -6656,25 +6698,6 @@ is deprecated.  See L<perlvar/"$[">.
 form if you wish to use an empty line as the terminator of the
 here-document.
 
-=item Use of \b{} for non-UTF-8 locale is wrong.  Assuming a UTF-8 locale
-
-(W locale)  You are matching a regular expression using locale rules,
-and a Unicode boundary is being matched, but the locale is not a Unicode
-one.  This doesn't make sense.  Perl will continue, assuming a Unicode
-(UTF-8) locale, but the results could well be wrong except if the locale
-happens to be ISO-8859-1 (Latin1) where this message is spurious and can
-be ignored.
-
-=item Use of chdir('') or chdir(undef) as chdir() deprecated
-
-(D deprecated) chdir() with no arguments is documented to change to
-$ENV{HOME} or $ENV{LOGDIR}.  chdir(undef) and chdir('') share this
-behavior, but that has been deprecated.  In future versions they
-will simply fail.
-
-Be careful to check that what you pass to chdir() is defined and not
-blank, else you might find yourself in your home directory.
-
 =item Use of /c modifier is meaningless in s///
 
 (W regexp) You used the /c modifier in a substitution.  The /c
@@ -6685,6 +6708,20 @@ modifier is not presently meaningful in substitutions.
 (W regexp) You used the /c modifier with a regex operand, but didn't
 use the /g modifier.  Currently, /c is meaningful only when /g is
 used.  (This may change in the future.)
+
+=item Use of code point 0x%s is deprecated; the permissible max is 0x%s
+
+(D deprecated) You used a code point that will not be allowed in a
+future perl version, because it is too large.  Unicode only allows code
+points up to 0x10FFFF, but Perl allows much larger ones.  However, the
+largest possible ones break the perl interpreter in some constructs,
+including causing it to hang in a few cases.  The known problem areas
+are in C<tr///>, regular expression pattern matching using quantifiers,
+and as the upper limits in loops.
+
+If your code is to run on various platforms, keep in mind that the upper
+limit depends on the platform.  It is much larger on 64-bit word sizes
+than 32-bit ones.
 
 =item Use of comma-less variable list is deprecated
 
@@ -6706,6 +6743,14 @@ error, so C<:=> can be reclaimed as a new operator in the future.
 
 If you need an empty attribute list, for example in a code generator, add
 a space before the C<=>.
+
+=item Use of %s for non-UTF-8 locale is wrong.  Assuming a UTF-8 locale
+
+(W locale)  You are matching a regular expression using locale rules,
+and the specified construct was encountered.  This construct is only
+valid for UTF-8 locales, which the current locale isn't.  This doesn't
+make sense.  Perl will continue, assuming a Unicode (UTF-8) locale, but
+the results are likely to be wrong.
 
 =item Use of freed value in iteration
 
@@ -6792,12 +6837,6 @@ for historical reasons.
 it already went past any symlink you are presumably trying to look for.
 The operation returned C<undef>.  Use a filename instead.
 
-=item Use of my $_ is experimental
-
-(S experimental::lexical_topic) Lexical $_ is an experimental feature and
-its behavior may change or even be removed in any future release of perl.
-See the explanation under L<perlvar/$_>.
-
 =item Use of %s on a handle without * is deprecated
 
 (D deprecated) You used C<tie>, C<tied> or C<untie> on a scalar but that scalar
@@ -6825,6 +6864,14 @@ operators and then you presumably know what you are doing.
 (S experimental::lexical_topic) Lexical $_ is an experimental feature and
 its behavior may change or even be removed in any future release of perl.
 See the explanation under L<perlvar/$_>.
+
+=item Use of strings with code points over 0xFF as arguments to %s
+operator is deprecated
+
+(D deprecated) You tried to use one of the string bitwise operators
+(C<&> or C<|> or C<^> or C<~>) on a string containing a code point over
+0xFF.  The string bitwise operators treat their operands as strings of
+bytes, and values beyond 0xFF are nonsensical in this context.
 
 =item Use of tainted arguments in %s is deprecated
 
@@ -6928,15 +6975,6 @@ C<defined> operator.
 %ENV element from a CLI symbol table, and found a resultant string
 longer than 1024 characters.  The return value has been truncated to
 1024 characters.
-
-=item values on reference is experimental
-
-(S experimental::autoderef) C<values> with a scalar argument
-is experimental and may change or be removed in a future
-Perl version.  If you want to take the risk of using this
-feature, simply disable this warning:
-
-    no warnings "experimental::autoderef";
 
 =item Variable "%s" is not available
 
@@ -7068,8 +7106,21 @@ space.
 
 =item Warning: unable to close filehandle %s properly: %s
 
-(S io) An error occurred when Perl implicitly closed a filehandle.  This
-usually indicates your file system ran out of disk space.
+(S io) There were errors during the implicit close() done on a filehandle
+when its reference count reached zero while it was still open, e.g.:
+
+    {
+        open my $fh, '>', $file  or die "open: '$file': $!\n";
+        print $fh $data or die "print: $!";
+    } # implicit close here
+
+Because various errors may only be detected by close() (e.g. buffering could
+allow the C<print> in this example to return true even when the disk is full),
+it is dangerous to ignore its result. So when it happens implicitly, perl will
+signal errors by warning.
+
+B<Prior to version 5.22.0, perl ignored such errors>, so the common idiom shown
+above was liable to cause B<silent data loss>.
 
 =item Warning: Use of "%s" without parentheses is ambiguous
 
@@ -7130,6 +7181,11 @@ can be determined from the template alone.  This is not possible if
 it contains any of the codes @, /, U, u, w or a *-length.  Redesign
 the template.
 
+=item %s() with negative argument
+
+(S misc) Certain operations make no sense with negative arguments.
+Warning is given and the operation is not done.
+
 =item write() on closed filehandle %s
 
 (W closed) The filehandle you're writing to got itself closed sometime
@@ -7180,9 +7236,10 @@ Something Very Wrong.
 
 (F) Named Unicode character escapes (C<\N{...}>) may return a zero-length
 sequence.  Such an escape was used in an extended character class, i.e.
-C<(?[...])>, which is not permitted.  Check that the correct escape has
-been used, and the correct charnames handler is in scope.  The S<<-- HERE>
-shows whereabouts in the regular expression the problem was discovered.
+C<(?[...])>, or under C<use re 'strict'>, which is not permitted.  Check
+that the correct escape has been used, and the correct charnames handler
+is in scope.  The S<<-- HERE> shows whereabouts in the regular
+expression the problem was discovered.
 
 =back
 

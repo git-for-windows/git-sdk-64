@@ -1,5 +1,8 @@
 package ExtUtils::CBuilder::Platform::Windows::BCC;
-$ExtUtils::CBuilder::Platform::Windows::BCC::VERSION = '0.280220';
+$ExtUtils::CBuilder::Platform::Windows::BCC::VERSION = '0.280225';
+use strict;
+use warnings;
+
 sub format_compiler_cmd {
   my ($self, %spec) = @_;
 

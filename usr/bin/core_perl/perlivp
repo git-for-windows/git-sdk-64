@@ -2,7 +2,9 @@
     eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
         if $running_under_some_shell;
 
-# perlivp v5.22.1
+# perlivp v5.24.1
+
+BEGIN { pop @INC if $INC[-1] eq '.' }
 
 sub usage {
     warn "@_\n" if @_;
@@ -65,7 +67,7 @@ $tests_total++;
 
 print "## Checking Perl version via variable '\$]'.\n" if $opt{'p'};
 
-my $ivp_VERSION = "5.022001";
+my $ivp_VERSION = "5.024001";
 
 
 $label = 'Perl version correct';

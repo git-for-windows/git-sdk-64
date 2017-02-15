@@ -592,7 +592,7 @@ C<L</General_Category>> property, this
 property can have more values added in a future Unicode release.  Those
 listed above comprised the complete set for many Unicode releases, but
 others were added in Unicode 6.3; you can always find what the
-current ones are in in L<perluniprops>.  And
+current ones are in L<perluniprops>.  And
 L<http://www.unicode.org/reports/tr9/> describes how to use them.
 
 =head3 B<Scripts>
@@ -697,30 +697,34 @@ with the nuts and bolts of Unicode.
 
 Block names are matched in the compound form, like C<\p{Block: Arrows}> or
 C<\p{Blk=Hebrew}>.  Unlike most other properties, only a few block names have a
-Unicode-defined short name.  But Perl does provide a (slight, no longer
-recommended) shortcut:  You can say, for example C<\p{In_Arrows}> or
-C<\p{In_Hebrew}>.
+Unicode-defined short name.
 
-For backwards compatibility, the C<In> prefix may be
-omitted if there is no naming conflict with a script or any other
-property, and you can even use an C<Is> prefix instead in those cases.
-But don't do this for new code because your code could break in new
-releases, and this has already happened: There was a time in very
-early Unicode releases when C<\p{Hebrew}> would have matched the
-I<block> Hebrew; now it doesn't.
+Perl also defines single form synonyms for the block property in cases
+where these do not conflict with something else.  But don't use any of
+these, because they are unstable.  Since these are Perl extensions, they
+are subordinate to official Unicode property names; Unicode doesn't know
+nor care about Perl's extensions.  It may happen that a name that
+currently means the Perl extension will later be changed without warning
+to mean a different Unicode property in a future version of the perl
+interpreter that uses a later Unicode release, and your code would no
+longer work.  The extensions are mentioned here for completeness:  Take
+the block name and prefix it with one of: C<In> (for example
+C<\p{Blk=Arrows}> can currently be written as C<\p{In_Arrows}>); or
+sometimes C<Is> (like C<\p{Is_Arrows}>); or sometimes no prefix at all
+(C<\p{Arrows}>).  As of this writing (Unicode 8.0) there are no
+conflicts with using the C<In_> prefix, but there are plenty with the
+other two forms.  For example, C<\p{Is_Hebrew}> and C<\p{Hebrew}> mean
+C<\p{Script=Hebrew}> which is NOT the same thing as C<\p{Blk=Hebrew}>.  Our
+advice used to be to use the C<In_> prefix as a single form way of
+specifying a block.  But Unicode 8.0 added properties whose names begin
+with C<In>, and it's now clear that it's only luck that's so far
+prevented a conflict.  Using C<In> is only marginally less typing than
+C<Blk:>, and the latter's meaning is clearer anyway, and guaranteed to
+never conflict.  So don't take chances.  Use C<\p{Blk=foo}> for new
+code.  And be sure that block is what you really really want to do.  In
+most cases scripts are what you want instead.
 
-Using the C<In> prefix avoids this ambiguity, so far.  But new versions
-of Unicode continue to add new properties whose names begin with C<In>.
-There is a possibility that one of them someday will conflict with your
-usage.  Since this is just a Perl extension, Unicode's name will take
-precedence and your code will become broken.  Also, Unicode is free to
-add a script whose name begins with C<In>; that would cause problems.
-
-So it's clearer and best to use the compound form when specifying
-blocks.  And be sure that is what you really really want to do.  In most
-cases scripts are what you want instead.
-
-A complete list of blocks and their shortcuts is in L<perluniprops>.
+A complete list of blocks is in L<perluniprops>.
 
 =head3 B<Other Properties>
 
@@ -1106,7 +1110,7 @@ feature, you can use one of the following:
 
 =item *
 
-Regular expression look-ahead
+Regular expression lookahead
 
 You can mimic class subtraction using lookahead.
 For example, what UTS#18 might write as
@@ -1172,10 +1176,14 @@ Also, lines should not be split within C<CRLF> (i.e. there is no
 empty line between C<\r> and C<\n>).  For C<CRLF>, try the C<:crlf>
 layer (see L<PerlIO>).
 
-=item [9] But C<L<Unicode::LineBreak>> is available.
+=item [9] But C<qr/\b{lb}/> and C<L<Unicode::LineBreak>> are available.
 
-This module supplies line breaking conformant with
+L<C<qrE<sol>\b{lb}E<sol>>|perlrebackslash/\b{lb}> supplies default line
+breaking conformant with
 L<UAX#14 "Unicode Line Breaking Algorithm"|http://www.unicode.org/reports/tr14>.
+
+And, the module C<L<Unicode::LineBreak>> also conformant with UAX#14,
+provides customizable line breaking.
 
 =item [10]
 UTF-8/UTF-EBDDIC used in Perl allows not only C<U+10000> to
@@ -1219,7 +1227,7 @@ Level 3 - Tailored Support
 
  [17] see UAX#10 "Unicode Collation Algorithms"
  [18] have Unicode::Collate but not integrated to regexes
- [19] have (?<=x) and (?=x), but look-aheads or look-behinds
+ [19] have (?<=x) and (?=x), but lookaheads or lookbehinds
       should see outside of the target substring
  [20] need insensitive matching for linguistic features other
       than case; for example, hiragana to katakana, wide and
@@ -1285,7 +1293,10 @@ encoding of numbers up to C<0x7FFF_FFFF>.  Perl continues to allow those,
 and has extended that up to 13 bytes to encode code points up to what
 can fit in a 64-bit word.  However, Perl will warn if you output any of
 these as being non-portable; and under strict UTF-8 input protocols,
-they are forbidden.
+they are forbidden.  In addition, it is deprecated to use a code point
+larger than what a signed integer variable on your system can hold.  On
+32-bit ASCII systems, this means C<0x7FFF_FFFF> is the legal maximum
+going forward (much higher on 64-bit systems).
 
 =item *
 
@@ -1296,10 +1307,11 @@ This means that all the basic characters (which includes all
 those that have ASCII equivalents (like C<"A">, C<"0">, C<"%">, I<etc.>)
 are the same in both EBCDIC and UTF-EBCDIC.)
 
-UTF-EBCDIC is used on EBCDIC platforms.  The largest Unicode code points
-take 5 bytes to represent (instead of 4 in UTF-8), and Perl extends it
-to a maximum of 7 bytes to encode pode points up to what can fit in a
-32-bit word (instead of 13 bytes and a 64-bit word in UTF-8).
+UTF-EBCDIC is used on EBCDIC platforms.  It generally requires more
+bytes to represent a given code point than UTF-8 does; the largest
+Unicode code points take 5 bytes to represent (instead of 4 in UTF-8),
+and, extended for 64-bit words, it uses 14 bytes instead of 13 bytes in
+UTF-8.
 
 =item *
 

@@ -41,7 +41,8 @@ extern void exit();
 #  include <readline/readline.h>
 #endif
 
-int main(void)
+int
+main()
 {
 	printf ("%s\n", rl_library_version ? rl_library_version : "unknown");
 	exit (0);

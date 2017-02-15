@@ -518,8 +518,8 @@ class SMTP:
         Raises SMTPDataError if there is an unexpected reply to the
         DATA command; the return value from this method is the final
         response code received when the all data is sent.  If msg
-        is a string, lone '\r' and '\n' characters are converted to
-        '\r\n' characters.  If msg is bytes, it is transmitted as is.
+        is a string, lone '\\r' and '\\n' characters are converted to
+        '\\r\\n' characters.  If msg is bytes, it is transmitted as is.
         """
         self.putcmd("data")
         (code, repl) = self.getreply()
@@ -695,6 +695,11 @@ class SMTP:
             self.ehlo_resp = None
             self.esmtp_features = {}
             self.does_esmtp = 0
+        else:
+            # RFC 3207:
+            # 501 Syntax error (no parameters allowed)
+            # 454 TLS not available due to temporary reason
+            raise SMTPResponseException(resp, reply)
         return (resp, reply)
 
     def sendmail(self, from_addr, to_addrs, msg, mail_options=[],
@@ -855,12 +860,16 @@ class SMTP:
 
     def close(self):
         """Close the connection to the SMTP server."""
-        if self.file:
-            self.file.close()
-        self.file = None
-        if self.sock:
-            self.sock.close()
-        self.sock = None
+        try:
+            file = self.file
+            self.file = None
+            if file:
+                file.close()
+        finally:
+            sock = self.sock
+            self.sock = None
+            if sock:
+                sock.close()
 
     def quit(self):
         """Terminate the SMTP session."""

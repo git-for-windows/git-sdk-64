@@ -79,6 +79,12 @@ if test_support.have_unicode:
         (unichr(0x200), ValueError),
 ]
 
+class LongSubclass(long):
+    pass
+
+class OtherLongSubclass(long):
+    pass
+
 class LongTest(test_int.IntLongCommonTests, unittest.TestCase):
 
     ntype = long
@@ -195,6 +201,21 @@ class LongTest(test_int.IntLongCommonTests, unittest.TestCase):
                      1)
                 self.assertEqual(x, y,
                     Frm("bad result for a*b: a=%r, b=%r, x=%r, y=%r", a, b, x, y))
+
+    def test_lshift_of_zero(self):
+        self.assertEqual(0L << 0, 0)
+        self.assertEqual(0L << 10, 0)
+        with self.assertRaises(ValueError):
+            0L << -1
+
+    @test_support.cpython_only
+    def test_huge_lshift_of_zero(self):
+        # Shouldn't try to allocate memory for a huge shift. See issue #27870.
+        # Other implementations may have a different boundary for overflow,
+        # or not raise at all.
+        self.assertEqual(0L << sys.maxsize, 0)
+        with self.assertRaises(OverflowError):
+            0L << (sys.maxsize + 1)
 
     def check_bitop_identities_1(self, x):
         eq = self.assertEqual
@@ -538,6 +559,17 @@ class LongTest(test_int.IntLongCommonTests, unittest.TestCase):
                 else:
                     self.fail("Failed to raise TypeError with %s" %
                               ((base, trunc_result_base),))
+
+                class TruncReturnsLongSubclass(base):
+                    def __long__(self):
+                        return OtherLongSubclass(42L)
+                good_int = TruncReturnsLongSubclass()
+                n = long(good_int)
+                self.assertEqual(n, 42L)
+                self.assertIs(type(n), OtherLongSubclass)
+                n = LongSubclass(good_int)
+                self.assertEqual(n, 42L)
+                self.assertIs(type(n), LongSubclass)
 
     def test_misc(self):
 

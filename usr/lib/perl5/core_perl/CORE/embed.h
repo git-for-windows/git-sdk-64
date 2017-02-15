@@ -32,7 +32,6 @@
 #define _is_uni_perl_idcont(a)	Perl__is_uni_perl_idcont(aTHX_ a)
 #define _is_uni_perl_idstart(a)	Perl__is_uni_perl_idstart(aTHX_ a)
 #define _is_utf8_FOO(a,b)	Perl__is_utf8_FOO(aTHX_ a,b)
-#define _is_utf8_char_slow	S__is_utf8_char_slow
 #define _is_utf8_idcont(a)	Perl__is_utf8_idcont(aTHX_ a)
 #define _is_utf8_idstart(a)	Perl__is_utf8_idstart(aTHX_ a)
 #define _is_utf8_mark(a)	Perl__is_utf8_mark(aTHX_ a)
@@ -47,7 +46,6 @@
 #define _to_utf8_upper_flags(a,b,c,d)	Perl__to_utf8_upper_flags(aTHX_ a,b,c,d)
 #define amagic_call(a,b,c,d)	Perl_amagic_call(aTHX_ a,b,c,d)
 #define amagic_deref_call(a,b)	Perl_amagic_deref_call(aTHX_ a,b)
-#define append_utf8_from_native_byte	S_append_utf8_from_native_byte
 #define apply_attrs_string(a,b,c,d)	Perl_apply_attrs_string(aTHX_ a,b,c,d)
 #define atfork_lock		Perl_atfork_lock
 #define atfork_unlock		Perl_atfork_unlock
@@ -63,7 +61,6 @@
 #define av_push(a,b)		Perl_av_push(aTHX_ a,b)
 #define av_shift(a)		Perl_av_shift(aTHX_ a)
 #define av_store(a,b,c)		Perl_av_store(aTHX_ a,b,c)
-#define av_top_index(a)		S_av_top_index(aTHX_ a)
 #define av_undef(a)		Perl_av_undef(aTHX_ a)
 #define av_unshift(a,b)		Perl_av_unshift(aTHX_ a,b)
 #define block_end(a,b)		Perl_block_end(aTHX_ a,b)
@@ -90,6 +87,7 @@
 #define ck_warner		Perl_ck_warner
 #define ck_warner_d		Perl_ck_warner_d
 #endif
+#define clear_defarray(a,b)	Perl_clear_defarray(aTHX_ a,b)
 #ifndef PERL_IMPLICIT_CONTEXT
 #define croak			Perl_croak
 #endif
@@ -246,7 +244,6 @@
 #define isIDFIRST_lazy(a)	Perl_isIDFIRST_lazy(aTHX_ a)
 #define is_invariant_string	Perl_is_invariant_string
 #define is_lvalue_sub()		Perl_is_lvalue_sub(aTHX)
-#define is_safe_syscall(a,b,c,d)	S_is_safe_syscall(aTHX_ a,b,c,d)
 #define is_uni_alnum(a)		Perl_is_uni_alnum(aTHX_ a)
 #define is_uni_alnum_lc(a)	Perl_is_uni_alnum_lc(aTHX_ a)
 #define is_uni_alnumc(a)	Perl_is_uni_alnumc(aTHX_ a)
@@ -303,6 +300,7 @@
 #define is_utf8_xidcont(a)	Perl_is_utf8_xidcont(aTHX_ a)
 #define is_utf8_xidfirst(a)	Perl_is_utf8_xidfirst(aTHX_ a)
 #define isinfnan		Perl_isinfnan
+#define leave_adjust_stacks(a,b,c,d)	Perl_leave_adjust_stacks(aTHX_ a,b,c,d)
 #define leave_scope(a)		Perl_leave_scope(aTHX_ a)
 #define lex_bufutf8()		Perl_lex_bufutf8(aTHX)
 #define lex_discard_to(a)	Perl_lex_discard_to(aTHX_ a)
@@ -648,6 +646,7 @@
 #define sv_pvutf8n(a,b)		Perl_sv_pvutf8n(aTHX_ a,b)
 #define sv_pvutf8n_force(a,b)	Perl_sv_pvutf8n_force(aTHX_ a,b)
 #define sv_recode_to_utf8(a,b)	Perl_sv_recode_to_utf8(aTHX_ a,b)
+#define sv_ref(a,b,c)		Perl_sv_ref(aTHX_ a,b,c)
 #define sv_reftype(a,b)		Perl_sv_reftype(aTHX_ a,b)
 #define sv_replace(a,b)		Perl_sv_replace(aTHX_ a,b)
 #define sv_report_used()	Perl_sv_report_used(aTHX)
@@ -765,6 +764,9 @@
 #if !defined(HAS_MEMCMP) || !defined(HAS_SANE_MEMCMP)
 #define my_memcmp		Perl_my_memcmp
 #endif
+#if !defined(HAS_MEMCPY) || (!defined(HAS_MEMMOVE) && !defined(HAS_SAFE_MEMCPY))
+#define my_bcopy		Perl_my_bcopy
+#endif
 #if !defined(HAS_MEMSET)
 #define my_memset		Perl_my_memset
 #endif
@@ -775,12 +777,36 @@
 #define my_pclose(a)		Perl_my_pclose(aTHX_ a)
 #define my_popen(a,b)		Perl_my_popen(aTHX_ a,b)
 #endif
-#if (!defined(HAS_MEMCPY) && !defined(HAS_BCOPY)) || (!defined(HAS_MEMMOVE) && !defined(HAS_SAFE_MEMCPY) && !defined(HAS_SAFE_BCOPY))
-#define my_bcopy		Perl_my_bcopy
+#if !defined(PERL_NO_INLINE_FUNCTIONS)
+#define _is_utf8_char_slow	S__is_utf8_char_slow
+#define append_utf8_from_native_byte	S_append_utf8_from_native_byte
+#define av_top_index(a)		S_av_top_index(aTHX_ a)
+#define cx_popblock(a)		S_cx_popblock(aTHX_ a)
+#define cx_popeval(a)		S_cx_popeval(aTHX_ a)
+#define cx_popformat(a)		S_cx_popformat(aTHX_ a)
+#define cx_popgiven(a)		S_cx_popgiven(aTHX_ a)
+#define cx_poploop(a)		S_cx_poploop(aTHX_ a)
+#define cx_popsub(a)		S_cx_popsub(aTHX_ a)
+#define cx_popsub_args(a)	S_cx_popsub_args(aTHX_ a)
+#define cx_popsub_common(a)	S_cx_popsub_common(aTHX_ a)
+#define cx_popwhen(a)		S_cx_popwhen(aTHX_ a)
+#define cx_pushblock(a,b,c,d)	S_cx_pushblock(aTHX_ a,b,c,d)
+#define cx_pusheval(a,b,c)	S_cx_pusheval(aTHX_ a,b,c)
+#define cx_pushformat(a,b,c,d)	S_cx_pushformat(aTHX_ a,b,c,d)
+#define cx_pushgiven(a,b)	S_cx_pushgiven(aTHX_ a,b)
+#define cx_pushloop_for(a,b,c)	S_cx_pushloop_for(aTHX_ a,b,c)
+#define cx_pushloop_plain(a)	S_cx_pushloop_plain(aTHX_ a)
+#define cx_pushsub(a,b,c,d)	S_cx_pushsub(aTHX_ a,b,c,d)
+#define cx_pushwhen(a)		S_cx_pushwhen(aTHX_ a)
+#define cx_topblock(a)		S_cx_topblock(aTHX_ a)
+#define is_safe_syscall(a,b,c,d)	S_is_safe_syscall(aTHX_ a,b,c,d)
 #endif
 #if defined(DEBUGGING)
 #define pad_setsv(a,b)		Perl_pad_setsv(aTHX_ a,b)
 #define pad_sv(a)		Perl_pad_sv(aTHX_ a)
+#  if defined(USE_LOCALE)     && (defined(PERL_IN_LOCALE_C) || defined (PERL_EXT_POSIX))
+#define _setlocale_debug_string	Perl__setlocale_debug_string
+#  endif
 #endif
 #if defined(HAS_SIGACTION) && defined(SA_SIGINFO)
 #define csighandler		Perl_csighandler
@@ -916,18 +942,21 @@
 #define reg_temp_copy(a,b)	Perl_reg_temp_copy(aTHX_ a,b)
 #define report_uninit(a)	Perl_report_uninit(aTHX_ a)
 #define sv_magicext_mglob(a)	Perl_sv_magicext_mglob(aTHX_ a)
-#define sv_only_taint_gmagic	S_sv_only_taint_gmagic
 #define validate_proto(a,b,c)	Perl_validate_proto(aTHX_ a,b,c)
 #define vivify_defelem(a)	Perl_vivify_defelem(aTHX_ a)
 #define yylex()			Perl_yylex(aTHX)
 #  if !defined(PERL_EXT_RE_BUILD)
 #    if defined(PERL_IN_REGCOMP_C)
 #define get_invlist_previous_index_addr	S_get_invlist_previous_index_addr
-#define invlist_is_iterating	S_invlist_is_iterating
+#define invlist_clear(a)	S_invlist_clear(aTHX_ a)
 #define invlist_previous_index	S_invlist_previous_index
+#define invlist_replace_list_destroys_src(a,b)	S_invlist_replace_list_destroys_src(aTHX_ a,b)
 #define invlist_set_previous_index	S_invlist_set_previous_index
 #define invlist_trim		S_invlist_trim
 #    endif
+#  endif
+#  if !defined(PERL_NO_INLINE_FUNCTIONS)
+#define sv_only_taint_gmagic	S_sv_only_taint_gmagic
 #  endif
 #  if defined(DEBUGGING)
 #    if defined(PERL_IN_REGCOMP_C)
@@ -935,16 +964,24 @@
 #define dump_trie_interim_list(a,b,c,d,e)	S_dump_trie_interim_list(aTHX_ a,b,c,d,e)
 #define dump_trie_interim_table(a,b,c,d,e)	S_dump_trie_interim_table(aTHX_ a,b,c,d,e)
 #define dumpuntil(a,b,c,d,e,f,g,h)	S_dumpuntil(aTHX_ a,b,c,d,e,f,g,h)
-#define put_charclass_bitmap_innards(a,b,c)	S_put_charclass_bitmap_innards(aTHX_ a,b,c)
+#define put_charclass_bitmap_innards(a,b,c,d,e)	S_put_charclass_bitmap_innards(aTHX_ a,b,c,d,e)
+#define put_charclass_bitmap_innards_common(a,b,c,d,e,f)	S_put_charclass_bitmap_innards_common(aTHX_ a,b,c,d,e,f)
+#define put_charclass_bitmap_innards_invlist(a,b)	S_put_charclass_bitmap_innards_invlist(aTHX_ a,b)
 #define put_code_point(a,b)	S_put_code_point(aTHX_ a,b)
 #define put_range(a,b,c,d)	S_put_range(aTHX_ a,b,c,d)
+#ifndef PERL_IMPLICIT_CONTEXT
+#define re_indentf		Perl_re_indentf
+#endif
 #define regdump_extflags(a,b)	S_regdump_extflags(aTHX_ a,b)
 #define regdump_intflags(a,b)	S_regdump_intflags(aTHX_ a,b)
 #define regtail_study(a,b,c,d)	S_regtail_study(aTHX_ a,b,c,d)
 #    endif
 #    if defined(PERL_IN_REGEXEC_C)
 #define debug_start_match(a,b,c,d,e)	S_debug_start_match(aTHX_ a,b,c,d,e)
-#define dump_exec_pos(a,b,c,d,e,f)	S_dump_exec_pos(aTHX_ a,b,c,d,e,f)
+#define dump_exec_pos(a,b,c,d,e,f,g)	S_dump_exec_pos(aTHX_ a,b,c,d,e,f,g)
+#ifndef PERL_IMPLICIT_CONTEXT
+#define re_exec_indentf		Perl_re_exec_indentf
+#endif
 #    endif
 #  endif
 #  if defined(PERL_ANY_COW)
@@ -965,14 +1002,18 @@
 #define cntrl_to_mnemonic	S_cntrl_to_mnemonic
 #define compute_EXACTish	S_compute_EXACTish
 #define construct_ahocorasick_from_trie(a,b,c)	S_construct_ahocorasick_from_trie(aTHX_ a,b,c)
-#define could_it_be_a_POSIX_class	S_could_it_be_a_POSIX_class
+#define edit_distance		S_edit_distance
 #define get_ANYOF_cp_list_for_ssc(a,b)	S_get_ANYOF_cp_list_for_ssc(aTHX_ a,b)
 #define get_invlist_iter_addr	S_get_invlist_iter_addr
-#define grok_bslash_N(a,b,c,d,e,f)	S_grok_bslash_N(aTHX_ a,b,c,d,e,f)
+#define grok_bslash_N(a,b,c,d,e,f,g)	S_grok_bslash_N(aTHX_ a,b,c,d,e,f,g)
+#define handle_named_backref(a,b,c,d)	S_handle_named_backref(aTHX_ a,b,c,d)
+#define handle_possible_posix(a,b,c,d,e)	S_handle_possible_posix(aTHX_ a,b,c,d,e)
 #define handle_regex_sets(a,b,c,d,e)	S_handle_regex_sets(aTHX_ a,b,c,d,e)
 #define invlist_clone(a)	S_invlist_clone(aTHX_ a)
+#define invlist_contents(a,b)	S_invlist_contents(aTHX_ a,b)
 #define invlist_extend(a,b)	S_invlist_extend(aTHX_ a,b)
 #define invlist_highest		S_invlist_highest
+#define invlist_is_iterating	S_invlist_is_iterating
 #define invlist_iterfinish	S_invlist_iterfinish
 #define invlist_iterinit	S_invlist_iterinit
 #define invlist_iternext	S_invlist_iternext
@@ -982,6 +1023,7 @@
 #define join_exact(a,b,c,d,e,f,g)	S_join_exact(aTHX_ a,b,c,d,e,f,g)
 #define make_trie(a,b,c,d,e,f,g,h)	S_make_trie(aTHX_ a,b,c,d,e,f,g,h)
 #define nextchar(a)		S_nextchar(aTHX_ a)
+#define output_or_return_posix_warnings(a,b,c)	S_output_or_return_posix_warnings(aTHX_ a,b,c)
 #define parse_lparen_question_flags(a)	S_parse_lparen_question_flags(aTHX_ a)
 #define populate_ANYOF_from_invlist(a,b)	S_populate_ANYOF_from_invlist(aTHX_ a,b)
 #define reg(a,b,c,d)		S_reg(aTHX_ a,b,c,d)
@@ -993,16 +1035,15 @@
 #define reganode(a,b,c)		S_reganode(aTHX_ a,b,c)
 #define regatom(a,b,c)		S_regatom(aTHX_ a,b,c)
 #define regbranch(a,b,c,d)	S_regbranch(aTHX_ a,b,c,d)
-#define regclass(a,b,c,d,e,f,g,h)	S_regclass(aTHX_ a,b,c,d,e,f,g,h)
+#define regclass(a,b,c,d,e,f,g,h,i,j)	S_regclass(aTHX_ a,b,c,d,e,f,g,h,i,j)
 #define regex_set_precedence	S_regex_set_precedence
 #define reginsert(a,b,c,d)	S_reginsert(aTHX_ a,b,c,d)
 #define regnode_guts(a,b,c,d)	S_regnode_guts(aTHX_ a,b,c,d)
-#define regpatws		S_regpatws
 #define regpiece(a,b,c)		S_regpiece(aTHX_ a,b,c)
-#define regpposixcc(a,b,c)	S_regpposixcc(aTHX_ a,b,c)
 #define regtail(a,b,c,d)	S_regtail(aTHX_ a,b,c,d)
 #define scan_commit(a,b,c,d)	S_scan_commit(aTHX_ a,b,c,d)
 #define set_ANYOF_arg(a,b,c,d,e,f,g)	S_set_ANYOF_arg(aTHX_ a,b,c,d,e,f,g)
+#define skip_to_be_ignored_text(a,b,c)	S_skip_to_be_ignored_text(aTHX_ a,b,c)
 #define ssc_add_range(a,b,c)	S_ssc_add_range(aTHX_ a,b,c)
 #define ssc_and(a,b,c)		S_ssc_and(aTHX_ a,b,c)
 #define ssc_anything(a)		S_ssc_anything(aTHX_ a)
@@ -1020,14 +1061,19 @@
 #  if defined(PERL_IN_REGCOMP_C) || defined (PERL_IN_DUMP_C)
 #define _invlist_dump(a,b,c,d)	Perl__invlist_dump(aTHX_ a,b,c,d)
 #  endif
+#  if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_PERL_C) || defined(PERL_IN_UTF8_C)
+#define _invlistEQ(a,b,c)	Perl__invlistEQ(aTHX_ a,b,c)
+#  endif
 #  if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_REGEXEC_C)
 #define _load_PL_utf8_foldclosures()	Perl__load_PL_utf8_foldclosures(aTHX)
+#ifndef PERL_IMPLICIT_CONTEXT
+#define re_printf		Perl_re_printf
+#endif
 #define regprop(a,b,c,d,e)	Perl_regprop(aTHX_ a,b,c,d,e)
 #  endif
 #  if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_REGEXEC_C) || defined(PERL_IN_UTF8_C)
 #define _get_swash_invlist(a)	Perl__get_swash_invlist(aTHX_ a)
 #define _invlist_contains_cp	S__invlist_contains_cp
-#define _invlist_contents(a)	Perl__invlist_contents(aTHX_ a)
 #define _invlist_len		S__invlist_len
 #define _invlist_search		Perl__invlist_search
 #define _swash_inversion_hash(a)	Perl__swash_inversion_hash(aTHX_ a)
@@ -1037,11 +1083,11 @@
 #  if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_REGEXEC_C) || defined(PERL_IN_UTF8_C) || defined(PERL_IN_TOKE_C)
 #define _core_swash_init(a,b,c,d,e,f,g)	Perl__core_swash_init(aTHX_ a,b,c,d,e,f,g)
 #  endif
-#  if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_TOKE_C)
+#  if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_TOKE_C) || defined(PERL_IN_DQUOTE_C)
 #define form_short_octal_warning(a,b)	S_form_short_octal_warning(aTHX_ a,b)
-#define grok_bslash_c(a,b)	S_grok_bslash_c(aTHX_ a,b)
-#define grok_bslash_o(a,b,c,d,e,f,g)	S_grok_bslash_o(aTHX_ a,b,c,d,e,f,g)
-#define grok_bslash_x(a,b,c,d,e,f,g)	S_grok_bslash_x(aTHX_ a,b,c,d,e,f,g)
+#define grok_bslash_c(a,b)	Perl_grok_bslash_c(aTHX_ a,b)
+#define grok_bslash_o(a,b,c,d,e,f,g)	Perl_grok_bslash_o(aTHX_ a,b,c,d,e,f,g)
+#define grok_bslash_x(a,b,c,d,e,f,g)	Perl_grok_bslash_x(aTHX_ a,b,c,d,e,f,g)
 #define regcurly		S_regcurly
 #  endif
 #  if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_UTF8_C)
@@ -1055,14 +1101,17 @@
 #define _swash_to_invlist(a)	Perl__swash_to_invlist(aTHX_ a)
 #  endif
 #  if defined(PERL_IN_REGEXEC_C)
+#define advance_one_LB(a,b,c)	S_advance_one_LB(aTHX_ a,b,c)
 #define advance_one_SB(a,b,c)	S_advance_one_SB(aTHX_ a,b,c)
-#define advance_one_WB(a,b,c)	S_advance_one_WB(aTHX_ a,b,c)
+#define advance_one_WB(a,b,c,d)	S_advance_one_WB(aTHX_ a,b,c,d)
+#define backup_one_LB(a,b,c)	S_backup_one_LB(aTHX_ a,b,c)
 #define backup_one_SB(a,b,c)	S_backup_one_SB(aTHX_ a,b,c)
 #define backup_one_WB(a,b,c,d)	S_backup_one_WB(aTHX_ a,b,c,d)
 #define find_byclass(a,b,c,d,e)	S_find_byclass(aTHX_ a,b,c,d,e)
 #define isFOO_lc(a,b)		S_isFOO_lc(aTHX_ a,b)
 #define isFOO_utf8_lc(a,b)	S_isFOO_utf8_lc(aTHX_ a,b)
 #define isGCB			S_isGCB
+#define isLB(a,b,c,d,e,f)	S_isLB(aTHX_ a,b,c,d,e,f)
 #define isSB(a,b,c,d,e,f)	S_isSB(aTHX_ a,b,c,d,e,f)
 #define isWB(a,b,c,d,e,f,g)	S_isWB(aTHX_ a,b,c,d,e,f,g)
 #define reg_check_named_buff_matched	S_reg_check_named_buff_matched
@@ -1144,7 +1193,7 @@
 #define closest_cop(a,b,c,d)	Perl_closest_cop(aTHX_ a,b,c,d)
 #define core_prototype(a,b,c,d)	Perl_core_prototype(aTHX_ a,b,c,d)
 #define coresub_op(a,b,c)	Perl_coresub_op(aTHX_ a,b,c)
-#define create_eval_scope(a)	Perl_create_eval_scope(aTHX_ a)
+#define create_eval_scope(a,b)	Perl_create_eval_scope(aTHX_ a,b)
 #define croak_no_mem		Perl_croak_no_mem
 #define croak_popstack		Perl_croak_popstack
 #define custom_op_get_field(a,b)	Perl_custom_op_get_field(aTHX_ a,b)
@@ -1181,7 +1230,6 @@
 #define finalize_optree(a)	Perl_finalize_optree(aTHX_ a)
 #define find_lexical_cv(a)	Perl_find_lexical_cv(aTHX_ a)
 #define find_runcv_where(a,b,c)	Perl_find_runcv_where(aTHX_ a,b,c)
-#define find_rundefsv2(a,b)	Perl_find_rundefsv2(aTHX_ a,b)
 #define find_script(a,b,c,d)	Perl_find_script(aTHX_ a,b,c,d)
 #define free_tied_hv_pool()	Perl_free_tied_hv_pool(aTHX)
 #define get_hash_seed(a)	Perl_get_hash_seed(aTHX_ a)
@@ -1304,7 +1352,6 @@
 #define rsignal_restore(a,b)	Perl_rsignal_restore(aTHX_ a,b)
 #define rsignal_save(a,b,c)	Perl_rsignal_save(aTHX_ a,b,c)
 #define rxres_save(a,b)		Perl_rxres_save(aTHX_ a,b)
-#define save_aliased_sv(a)	Perl_save_aliased_sv(aTHX_ a)
 #define save_strlen(a)		Perl_save_strlen(aTHX_ a)
 #define sawparens(a)		Perl_sawparens(aTHX_ a)
 #define scalar(a)		Perl_scalar(aTHX_ a)
@@ -1318,7 +1365,6 @@
 #define sv_free_arenas()	Perl_sv_free_arenas(aTHX)
 #define sv_len_utf8_nomg(a)	Perl_sv_len_utf8_nomg(aTHX_ a)
 #define sv_mortalcopy_flags(a,b)	Perl_sv_mortalcopy_flags(aTHX_ a,b)
-#define sv_ref(a,b,c)		Perl_sv_ref(aTHX_ a,b,c)
 #define sv_resetpvn(a,b,c)	Perl_sv_resetpvn(aTHX_ a,b,c)
 #define sv_sethek(a,b)		Perl_sv_sethek(aTHX_ a,b)
 #ifndef PERL_IMPLICIT_CONTEXT
@@ -1526,7 +1572,6 @@
 #define mro_get_linear_isa_dfs(a,b)	S_mro_get_linear_isa_dfs(aTHX_ a,b)
 #  endif
 #  if defined(PERL_IN_OP_C)
-#define aassign_common_vars(a)	S_aassign_common_vars(aTHX_ a)
 #define apply_attrs(a,b,c)	S_apply_attrs(aTHX_ a,b,c)
 #define apply_attrs_my(a,b,c,d)	S_apply_attrs_my(aTHX_ a,b,c,d)
 #define assignment_type(a)	S_assignment_type(aTHX_ a)
@@ -1610,16 +1655,15 @@
 #define destroy_matcher(a)	S_destroy_matcher(aTHX_ a)
 #define do_smartmatch(a,b,c)	S_do_smartmatch(aTHX_ a,b,c)
 #define docatch(a)		S_docatch(aTHX_ a)
-#define doeval(a,b,c,d)		S_doeval(aTHX_ a,b,c,d)
+#define doeval_compile(a,b,c,d)	S_doeval_compile(aTHX_ a,b,c,d)
 #define dofindlabel(a,b,c,d,e,f)	S_dofindlabel(aTHX_ a,b,c,d,e,f)
 #define doparseform(a)		S_doparseform(aTHX_ a)
 #define dopoptoeval(a)		S_dopoptoeval(aTHX_ a)
-#define dopoptogiven(a)		S_dopoptogiven(aTHX_ a)
+#define dopoptogivenfor(a)	S_dopoptogivenfor(aTHX_ a)
 #define dopoptolabel(a,b,c)	S_dopoptolabel(aTHX_ a,b,c)
 #define dopoptoloop(a)		S_dopoptoloop(aTHX_ a)
 #define dopoptosub_at(a,b)	S_dopoptosub_at(aTHX_ a,b)
 #define dopoptowhen(a)		S_dopoptowhen(aTHX_ a)
-#define leave_common(a,b,c,d,e,f)	S_leave_common(aTHX_ a,b,c,d,e,f)
 #define make_matcher(a)		S_make_matcher(aTHX_ a)
 #define matcher_matches_sv(a,b)	S_matcher_matches_sv(aTHX_ a,b)
 #define num_overflow		S_num_overflow
@@ -1697,9 +1741,6 @@
 #define utf8_mg_len_cache_update(a,b,c)	S_utf8_mg_len_cache_update(aTHX_ a,b,c)
 #define utf8_mg_pos_cache_update(a,b,c,d,e)	S_utf8_mg_pos_cache_update(aTHX_ a,b,c,d,e)
 #define visit(a,b,c)		S_visit(aTHX_ a,b,c)
-#    if defined(PERL_OLD_COPY_ON_WRITE)
-#define sv_release_COW(a,b,c)	S_sv_release_COW(aTHX_ a,b,c)
-#    endif
 #    if defined(USE_ITHREADS)
 #define sv_dup_common(a,b)	S_sv_dup_common(aTHX_ a,b)
 #define sv_dup_inc_multiple(a,b,c,d)	S_sv_dup_inc_multiple(aTHX_ a,b,c,d)
@@ -1755,6 +1796,7 @@
 #define isa_lookup(a,b,c,d)	S_isa_lookup(aTHX_ a,b,c,d)
 #  endif
 #  if defined(PERL_IN_UTF8_C)
+#define _to_utf8_case(a,b,c,d,e,f,g)	S__to_utf8_case(aTHX_ a,b,c,d,e,f,g)
 #define check_locale_boundary_crossing(a,b,c,d)	S_check_locale_boundary_crossing(aTHX_ a,b,c,d)
 #define is_utf8_common(a,b,c,d)	S_is_utf8_common(aTHX_ a,b,c,d)
 #define swash_scan_list_line(a,b,c,d,e,f,g)	S_swash_scan_list_line(aTHX_ a,b,c,d,e,f,g)
@@ -1772,6 +1814,11 @@
 #    if defined(PERL_MEM_LOG) && !defined(PERL_MEM_LOG_NOIMPL)
 #define mem_log_common		S_mem_log_common
 #    endif
+#  endif
+#  if defined(PERL_MEM_LOG)
+#define mem_log_alloc		Perl_mem_log_alloc
+#define mem_log_free		Perl_mem_log_free
+#define mem_log_realloc		Perl_mem_log_realloc
 #  endif
 #  if defined(PERL_USES_PL_PIDSTATUS) && defined(PERL_IN_UTIL_C)
 #define pidgone(a,b)		S_pidgone(aTHX_ a,b)

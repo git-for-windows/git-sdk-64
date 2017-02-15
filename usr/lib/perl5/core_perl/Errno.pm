@@ -5,14 +5,14 @@
 
 package Errno;
 require Exporter;
-use Config;
 use strict;
 
+use Config;
 "$Config{'archname'}-$Config{'osvers'}" eq
-"x86_64-msys-thread-multi-2.5.0(0.29453)" or
-	die "Errno architecture (x86_64-msys-thread-multi-2.5.0(0.29453)) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
+"x86_64-msys-thread-multi-2.7.0(0.30653)" or
+	die "Errno architecture (x86_64-msys-thread-multi-2.7.0(0.30653)) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
 
-our $VERSION = "1.23";
+our $VERSION = "1.25";
 $VERSION = eval $VERSION;
 our @ISA = 'Exporter';
 
@@ -183,7 +183,7 @@ our %EXPORT_TAGS = (
 	EPFNOSUPPORT EPIPE EPROCLIM EPROTONOSUPPORT EPROTOTYPE ERANGE EREMOTE
 	EROFS ESHUTDOWN ESOCKTNOSUPPORT ESPIPE ESRCH ESTALE ETIMEDOUT
 	ETOOMANYREFS ETXTBSY EUSERS EWOULDBLOCK EXDEV
-    )]
+    )],
 );
 
 sub TIEHASH { bless \%err }
@@ -231,8 +231,12 @@ Errno - System errno constants
 =head1 DESCRIPTION
 
 C<Errno> defines and conditionally exports all the error constants
-defined in your system C<errno.h> include file. It has a single export
+defined in your system F<errno.h> include file. It has a single export
 tag, C<:POSIX>, which will export all POSIX defined error numbers.
+
+On Windows, C<Errno> also defines and conditionally exports all the
+Winsock error constants defined in your system F<WinError.h> include
+file. These are included in a second export tag, C<:WINSOCK>.
 
 C<Errno> also makes C<%!> magic such that each element of C<%!> has a
 non-zero value only if C<$!> is set to that value. For example:

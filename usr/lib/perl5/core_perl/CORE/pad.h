@@ -33,7 +33,15 @@ typedef U64TYPE PADOFFSET;
 
 struct padlist {
     SSize_t	xpadl_max;	/* max index for which array has space */
-    PAD **	xpadl_alloc;	/* pointer to beginning of array of AVs */
+    union {
+	PAD **	xpadlarr_alloc; /* Pointer to beginning of array of AVs.
+				   index 0 is a padnamelist *          */
+	struct {
+	    PADNAMELIST * padnl;
+	    PAD * pad_1;        /* this slice of PAD * array always alloced */
+	    PAD * pad_2;        /* maybe unalloced */
+	} * xpadlarr_dbg;       /* for use with a C debugger only */
+    } xpadl_arr;
     U32		xpadl_id;	/* Semi-unique ID, shared between clones */
     U32		xpadl_outid;	/* ID of outer pad */
 };
@@ -171,10 +179,10 @@ Save a pad slot (used to restore after an iteration)
 XXX DAPM it would make more sense to make the arg a PADOFFSET
 =for apidoc m|void|SAVECLEARSV	|SV **svp
 Clear the pointed to pad value on scope exit.  (i.e. the runtime action of
-'my')
+C<my>)
 
 =for apidoc m|void|SAVECOMPPAD
-save PL_comppad and PL_curpad
+save C<PL_comppad> and C<PL_curpad>
 
 
 =for apidoc Amx|PAD **|PadlistARRAY|PADLIST padlist
@@ -183,7 +191,7 @@ numbers >= 1, as the 0th entry is not guaranteed to remain usable.
 
 =for apidoc Amx|SSize_t|PadlistMAX|PADLIST padlist
 The index of the last allocated space in the padlist.  Note that the last
-pad may be in an earlier slot.  Any entries following it will be NULL in
+pad may be in an earlier slot.  Any entries following it will be C<NULL> in
 that case.
 
 =for apidoc Amx|PADNAMELIST *|PadlistNAMES|PADLIST padlist
@@ -217,14 +225,14 @@ The C array of pad entries.
 The index of the last pad entry.
 
 =for apidoc Amx|char *|PadnamePV|PADNAME pn	
-The name stored in the pad name struct.  This returns NULL for a target
+The name stored in the pad name struct.  This returns C<NULL> for a target
 slot.
 
 =for apidoc Amx|STRLEN|PadnameLEN|PADNAME pn	
 The length of the name.
 
 =for apidoc Amx|bool|PadnameUTF8|PADNAME pn
-Whether PadnamePV is in UTF8.  Currently, this is always true.
+Whether PadnamePV is in UTF-8.  Currently, this is always true.
 
 =for apidoc Amx|SV *|PadnameSV|PADNAME pn
 Returns the pad name as a mortal SV.
@@ -243,7 +251,7 @@ are often referred to as 'fake'.
 Whether this is a "state" variable.
 
 =for apidoc m|HV *|PadnameTYPE|PADNAME pn
-The stash associated with a typed lexical.  This returns the %Foo:: hash
+The stash associated with a typed lexical.  This returns the C<%Foo::> hash
 for C<my Foo $bar>.
 
 =for apidoc Amx|SSize_t|PadnameREFCNT|PADNAME pn
@@ -284,18 +292,18 @@ like PAD_SET_CUR, but without the save
 Save the current pad then set it to null.
 
 =for apidoc m|void|PAD_SAVE_LOCAL|PAD *opad|PAD *npad
-Save the current pad to the local variable opad, then make the
-current pad equal to npad
+Save the current pad to the local variable C<opad>, then make the
+current pad equal to C<npad>
 
 =for apidoc m|void|PAD_RESTORE_LOCAL|PAD *opad
-Restore the old pad saved into the local variable opad by PAD_SAVE_LOCAL()
+Restore the old pad saved into the local variable C<opad> by C<PAD_SAVE_LOCAL()>
 
 =cut
 */
 
-#define PadlistARRAY(pl)	(pl)->xpadl_alloc
+#define PadlistARRAY(pl)	(pl)->xpadl_arr.xpadlarr_alloc
 #define PadlistMAX(pl)		(pl)->xpadl_max
-#define PadlistNAMES(pl)	((PADNAMELIST *)*PadlistARRAY(pl))
+#define PadlistNAMES(pl)	*((PADNAMELIST **)PadlistARRAY(pl))
 #define PadlistNAMESARRAY(pl)	PadnamelistARRAY(PadlistNAMES(pl))
 #define PadlistNAMESMAX(pl)	PadnamelistMAX(PadlistNAMES(pl))
 #define PadlistREFCNT(pl)	1	/* reserved for future use */
@@ -404,7 +412,7 @@ Restore the old pad saved into the local variable opad by PAD_SAVE_LOCAL()
 Save the current pad in the given context block structure.
 
 =for apidoc m|SV *|CX_CURPAD_SV|struct context|PADOFFSET po
-Access the SV at offset po in the saved current pad in the given
+Access the SV at offset C<po> in the saved current pad in the given
 context block structure (can be used as an lvalue).
 
 =cut
@@ -433,12 +441,11 @@ Assumes the slot entry is a valid C<our> lexical.
 
 =for apidoc m|STRLEN|PAD_COMPNAME_GEN|PADOFFSET po
 The generation number of the name at offset C<po> in the current
-compiling pad (lvalue).  Note that C<SvUVX> is hijacked for this purpose.
+compiling pad (lvalue).
 
 =for apidoc m|STRLEN|PAD_COMPNAME_GEN_set|PADOFFSET po|int gen
 Sets the generation number of the name at offset C<po> in the current
-ling pad (lvalue) to C<gen>.  Note that C<SvUV_set> is hijacked for this purpose.
-
+ling pad (lvalue) to C<gen>.
 =cut
 
 */
@@ -493,8 +500,8 @@ Clone the state variables associated with running and compiling pads.
 /*
 =for apidoc Am|PADOFFSET|pad_add_name_pvs|const char *name|U32 flags|HV *typestash|HV *ourstash
 
-Exactly like L</pad_add_name_pvn>, but takes a literal string instead
-of a string/length pair.
+Exactly like L</pad_add_name_pvn>, but takes a C<NUL>-terminated literal string
+instead of a string/length pair.
 
 =cut
 */
@@ -505,8 +512,8 @@ of a string/length pair.
 /*
 =for apidoc Am|PADOFFSET|pad_findmy_pvs|const char *name|U32 flags
 
-Exactly like L</pad_findmy_pvn>, but takes a literal string instead
-of a string/length pair.
+Exactly like L</pad_findmy_pvn>, but takes a C<NUL>-terminated literal string
+instead of a string/length pair.
 
 =cut
 */

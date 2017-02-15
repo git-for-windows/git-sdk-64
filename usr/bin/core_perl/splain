@@ -2,6 +2,9 @@
     eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
 	if $running_under_some_shell;
 
+BEGIN { pop @INC if $INC[-1] eq '.' }
+
+
 =head1 NAME
 
 diagnostics, splain - produce verbose warning diagnostics

@@ -648,7 +648,21 @@ class PyZipFileTests(unittest.TestCase):
         if name + 'o' not in namelist:
             self.assertIn(name + 'c', namelist)
 
+    def requiresWriteAccess(self, path):
+        # effective_ids unavailable on windows
+        if not os.access(path, os.W_OK,
+                         effective_ids=os.access in os.supports_effective_ids):
+            self.skipTest('requires write access to the installed location')
+        filename = os.path.join(path, 'test_zipfile.try')
+        try:
+            fd = os.open(filename, os.O_WRONLY | os.O_CREAT)
+            os.close(fd)
+        except Exception:
+            self.skipTest('requires write access to the installed location')
+        unlink(filename)
+
     def test_write_pyfile(self):
+        self.requiresWriteAccess(os.path.dirname(__file__))
         with TemporaryFile() as t, zipfile.PyZipFile(t, "w") as zipfp:
             fn = __file__
             if fn.endswith('.pyc') or fn.endswith('.pyo'):
@@ -680,6 +694,7 @@ class PyZipFileTests(unittest.TestCase):
     def test_write_python_package(self):
         import email
         packagedir = os.path.dirname(email.__file__)
+        self.requiresWriteAccess(packagedir)
 
         with TemporaryFile() as t, zipfile.PyZipFile(t, "w") as zipfp:
             zipfp.writepy(packagedir)
@@ -693,6 +708,7 @@ class PyZipFileTests(unittest.TestCase):
     def test_write_filtered_python_package(self):
         import test
         packagedir = os.path.dirname(test.__file__)
+        self.requiresWriteAccess(packagedir)
 
         with TemporaryFile() as t, zipfile.PyZipFile(t, "w") as zipfp:
 
@@ -710,9 +726,10 @@ class PyZipFileTests(unittest.TestCase):
             self.assertTrue('SyntaxError' not in reportStr)
 
             # then check that the filter works on individual files
+            def filter(path):
+                return not os.path.basename(path).startswith("bad")
             with captured_stdout() as reportSIO, self.assertWarns(UserWarning):
-                zipfp.writepy(packagedir, filterfunc=lambda fn:
-                                                     'bad' not in fn)
+                zipfp.writepy(packagedir, filterfunc=filter)
             reportStr = reportSIO.getvalue()
             if reportStr:
                 print(reportStr)
@@ -721,6 +738,7 @@ class PyZipFileTests(unittest.TestCase):
     def test_write_with_optimization(self):
         import email
         packagedir = os.path.dirname(email.__file__)
+        self.requiresWriteAccess(packagedir)
         # use .pyc if running test in optimization mode,
         # use .pyo if running test in debug mode
         optlevel = 1 if __debug__ else 0

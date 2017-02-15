@@ -6,12 +6,14 @@ if __name__ != 'test.support':
 import collections.abc
 import contextlib
 import errno
+import faulthandler
 import fnmatch
 import functools
 import gc
 import importlib
 import importlib.util
 import logging.handlers
+import nntplib
 import os
 import platform
 import re
@@ -96,7 +98,7 @@ __all__ = [
     # logging
     "TestHandler",
     # threads
-    "threading_setup", "threading_cleanup",
+    "threading_setup", "threading_cleanup", "reap_threads", "start_threads",
     # miscellaneous
     "check_warnings", "EnvironmentVarGuard", "run_with_locale", "swap_item",
     "swap_attr", "Matcher", "set_memlimit", "SuppressCrashReport", "sortdict",
@@ -307,7 +309,7 @@ if sys.platform.startswith("win"):
         # The exponential backoff of the timeout amounts to a total
         # of ~1 second after which the deletion is probably an error
         # anyway.
-        # Testing on a i7@4.3GHz shows that usually only 1 iteration is
+        # Testing on an i7@4.3GHz shows that usually only 1 iteration is
         # required when contention occurs.
         timeout = 0.001
         while timeout < 1.0:
@@ -1324,8 +1326,11 @@ def transient_internet(resource_name, *, timeout=30.0, errnos=()):
         n = getattr(err, 'errno', None)
         if (isinstance(err, socket.timeout) or
             (isinstance(err, socket.gaierror) and n in gai_errnos) or
+            (isinstance(err, urllib.error.HTTPError) and
+             500 <= err.code <= 599) or
             (isinstance(err, urllib.error.URLError) and
-             "ConnectionRefusedError" in err.reason) or
+                 (("ConnectionRefusedError" in err.reason) or
+                  ("TimeoutError" in err.reason))) or
             n in captured_errnos):
             if not verbose:
                 sys.stderr.write(denied.args[0] + "\n")
@@ -1336,6 +1341,10 @@ def transient_internet(resource_name, *, timeout=30.0, errnos=()):
         if timeout is not None:
             socket.setdefaulttimeout(timeout)
         yield
+    except nntplib.NNTPTemporaryError as err:
+        if verbose:
+            sys.stderr.write(denied.args[0] + "\n")
+        raise denied from err
     except OSError as err:
         # urllib can wrap original socket errors multiple times (!), we must
         # unwrap to get at the original error.
@@ -1375,7 +1384,7 @@ def captured_stdout():
 
        with captured_stdout() as stdout:
            print("hello")
-       self.assertEqual(stdout.getvalue(), "hello\n")
+       self.assertEqual(stdout.getvalue(), "hello\\n")
     """
     return captured_output("stdout")
 
@@ -1384,7 +1393,7 @@ def captured_stderr():
 
        with captured_stderr() as stderr:
            print("hello", file=sys.stderr)
-       self.assertEqual(stderr.getvalue(), "hello\n")
+       self.assertEqual(stderr.getvalue(), "hello\\n")
     """
     return captured_output("stderr")
 
@@ -1392,7 +1401,7 @@ def captured_stdin():
     """Capture the input to sys.stdin:
 
        with captured_stdin() as stdin:
-           stdin.write('hello\n')
+           stdin.write('hello\\n')
            stdin.seek(0)
            # call test code that consumes from sys.stdin
            captured = input()
@@ -1435,7 +1444,7 @@ def python_is_optimized():
     for opt in cflags.split():
         if opt.startswith('-O'):
             final_opt = opt
-    return final_opt != '' and final_opt != '-O0'
+    return final_opt not in ('', '-O0', '-Og')
 
 
 _header = 'nP'
@@ -1938,6 +1947,42 @@ def reap_children():
                 break
 
 @contextlib.contextmanager
+def start_threads(threads, unlock=None):
+    threads = list(threads)
+    started = []
+    try:
+        try:
+            for t in threads:
+                t.start()
+                started.append(t)
+        except:
+            if verbose:
+                print("Can't start %d threads, only %d threads started" %
+                      (len(threads), len(started)))
+            raise
+        yield
+    finally:
+        try:
+            if unlock:
+                unlock()
+            endtime = starttime = time.time()
+            for timeout in range(1, 16):
+                endtime += 60
+                for t in started:
+                    t.join(max(endtime - time.time(), 0.01))
+                started = [t for t in started if t.isAlive()]
+                if not started:
+                    break
+                if verbose:
+                    print('Unable to join %d threads during a period of '
+                          '%d minutes' % (len(started), timeout))
+        finally:
+            started = [t for t in started if t.isAlive()]
+            if started:
+                faulthandler.dump_traceback(sys.stdout)
+                raise AssertionError('Unable to join %d threads' % len(started))
+
+@contextlib.contextmanager
 def swap_attr(obj, attr, new_val):
     """Temporary swap out an attribute with a new object.
 
@@ -2131,16 +2176,15 @@ def skip_unless_xattr(test):
 
 def fs_is_case_insensitive(directory):
     """Detects if the file system for the specified directory is case-insensitive."""
-    base_fp, base_path = tempfile.mkstemp(dir=directory)
-    case_path = base_path.upper()
-    if case_path == base_path:
-        case_path = base_path.lower()
-    try:
-        return os.path.samefile(base_path, case_path)
-    except FileNotFoundError:
-        return False
-    finally:
-        os.unlink(base_path)
+    with tempfile.NamedTemporaryFile(dir=directory) as base:
+        base_path = base.name
+        case_path = base_path.upper()
+        if case_path == base_path:
+            case_path = base_path.lower()
+        try:
+            return os.path.samefile(base_path, case_path)
+        except FileNotFoundError:
+            return False
 
 
 class SuppressCrashReport:

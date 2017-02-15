@@ -1,6 +1,6 @@
 package locale;
 
-our $VERSION = '1.06';
+our $VERSION = '1.09';
 use Config;
 
 $Carp::Internal{ (__PACKAGE__) } = 1;
@@ -8,6 +8,17 @@ $Carp::Internal{ (__PACKAGE__) } = 1;
 =head1 NAME
 
 locale - Perl pragma to use or avoid POSIX locales for built-in operations
+
+=head1 WARNING
+
+DO NOT USE this pragma in scripts that have multiple
+L<threads|threads> active.  The locale is not local to a single thread.
+Another thread may change the locale at any time, which could cause at a
+minimum that a given thread is operating in a locale it isn't expecting
+to be in.  On some platforms, segfaults can also occur.  The locale
+change need not be explicit; some operations cause perl to change the
+locale itself.  You are vulnerable simply by having done a C<"use
+locale">.
 
 =head1 SYNOPSIS
 
@@ -97,15 +108,24 @@ sub import {
             $arg =~ s/^://;
 
             eval { require POSIX; import POSIX 'locale_h'; };
-            unless (defined &POSIX::LC_CTYPE) {
-              return;
-            }
 
             # Map our names to the ones defined by POSIX
-            $arg = "LC_" . uc($arg);
+            my $LC = "LC_" . uc($arg);
 
-            my $bit = eval "&POSIX::$arg";
-            if (defined $bit) {
+            my $bit = eval "&POSIX::$LC";
+            if (defined $bit) { # XXX Should we warn that this category isn't
+                                # supported on this platform, or make it
+                                # always be the C locale?
+
+                # Verify our assumption.
+                if (! ($bit >= 0 && $bit < 31)) {
+                    require Carp;
+                    Carp::croak("Cannot have ':$arg' parameter to 'use locale'"
+                              . " on this platform.  Use the 'perlbug' utility"
+                              . " to report this problem, or send email to"
+                              . " 'perlbug\@perl.org'.  $LC=$bit");
+                }
+
                 # 1 is added so that the pseudo-category :characters, which is
                 # -1, comes out 0.
                 $^H{locale} |= 1 << ($bit + 1);

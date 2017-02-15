@@ -67,7 +67,7 @@ typedef PERL_BITFIELD16 Optype;
     U8		op_private;
 #endif
 
-/* If op_type:9 is changed to :10, also change PUSHEVAL in cop.h.
+/* If op_type:9 is changed to :10, also change cx_pusheval()
    Also, if the type of op_type is ever changed (e.g. to PERL_BITFIELD32)
    then all the other bit-fields before/after it should change their
    types too to let VC pack them into the same 4 byte integer.*/
@@ -113,7 +113,8 @@ Deprecated.  Use C<GIMME_V> instead.
 				/*  On local LVAL, don't init local value. */
 				/*  On OP_SORT, subroutine is inlined. */
 				/*  On OP_NOT, inversion was implicit. */
-				/*  On OP_LEAVE, don't restore curpm. */
+				/*  On OP_LEAVE, don't restore curpm, e.g.
+                                 *      /(...)/ while ...>;  */
 				/*  On truncate, we truncate filehandle */
 				/*  On control verbs, we saw no label */
 				/*  On flipflop, we saw ... instead of .. */
@@ -613,7 +614,7 @@ struct loop {
 Given the root of an optree, link the tree in execution order using the
 C<op_next> pointers and return the first op executed.  If this has
 already been done, it will not be redone, and C<< o->op_next >> will be
-returned.  If C<< o->op_next >> is not already set, I<o> should be at
+returned.  If C<< o->op_next >> is not already set, C<o> should be at
 least an C<UNOP>.
 
 =cut
@@ -712,30 +713,30 @@ struct block_hooks {
 Return the BHK's flags.
 
 =for apidoc mx|void *|BhkENTRY|BHK *hk|which
-Return an entry from the BHK structure.  I<which> is a preprocessor token
+Return an entry from the BHK structure.  C<which> is a preprocessor token
 indicating which entry to return.  If the appropriate flag is not set
-this will return NULL.  The type of the return value depends on which
+this will return C<NULL>.  The type of the return value depends on which
 entry you ask for.
 
 =for apidoc Amx|void|BhkENTRY_set|BHK *hk|which|void *ptr
 Set an entry in the BHK structure, and set the flags to indicate it is
-valid.  I<which> is a preprocessing token indicating which entry to set.
-The type of I<ptr> depends on the entry.
+valid.  C<which> is a preprocessing token indicating which entry to set.
+The type of C<ptr> depends on the entry.
 
 =for apidoc Amx|void|BhkDISABLE|BHK *hk|which
 Temporarily disable an entry in this BHK structure, by clearing the
-appropriate flag.  I<which> is a preprocessor token indicating which
+appropriate flag.  C<which> is a preprocessor token indicating which
 entry to disable.
 
 =for apidoc Amx|void|BhkENABLE|BHK *hk|which
 Re-enable an entry in this BHK structure, by setting the appropriate
-flag.  I<which> is a preprocessor token indicating which entry to enable.
+flag.  C<which> is a preprocessor token indicating which entry to enable.
 This will assert (under -DDEBUGGING) if the entry doesn't contain a valid
 pointer.
 
 =for apidoc mx|void|CALL_BLOCK_HOOKS|which|arg
-Call all the registered block hooks for type I<which>.  I<which> is a
-preprocessing token; the type of I<arg> depends on I<which>.
+Call all the registered block hooks for type C<which>.  C<which> is a
+preprocessing token; the type of C<arg> depends on C<which>.
 
 =cut
 */
@@ -810,19 +811,19 @@ preprocessing token; the type of I<arg> depends on I<which>.
 Return the XOP's flags.
 
 =for apidoc Am||XopENTRY|XOP *xop|which
-Return a member of the XOP structure.  I<which> is a cpp token
+Return a member of the XOP structure.  C<which> is a cpp token
 indicating which entry to return.  If the member is not set
 this will return a default value.  The return type depends
-on I<which>.  This macro evaluates its arguments more than
+on C<which>.  This macro evaluates its arguments more than
 once.  If you are using C<Perl_custom_op_xop> to retreive a
 C<XOP *> from a C<OP *>, use the more efficient L</XopENTRYCUSTOM> instead.
 
 =for apidoc Am||XopENTRYCUSTOM|const OP *o|which
 Exactly like C<XopENTRY(XopENTRY(Perl_custom_op_xop(aTHX_ o), which)> but more
-efficient.  The I<which> parameter is identical to L</XopENTRY>.
+efficient.  The C<which> parameter is identical to L</XopENTRY>.
 
 =for apidoc Am|void|XopENTRY_set|XOP *xop|which|value
-Set a member of the XOP structure.  I<which> is a cpp token
+Set a member of the XOP structure.  C<which> is a cpp token
 indicating which entry to set.  See L<perlguts/"Custom Operators">
 for details about the available members and how
 they are used.  This macro evaluates its argument
@@ -912,13 +913,13 @@ Return a short description of the provided OP.
 =for apidoc Am|U32|OP_CLASS|OP *o
 Return the class of the provided OP: that is, which of the *OP
 structures it uses.  For core ops this currently gets the information out
-of PL_opargs, which does not always accurately reflect the type used.
+of C<PL_opargs>, which does not always accurately reflect the type used.
 For custom ops the type is returned from the registration, and it is up
 to the registree to ensure it is accurate.  The value returned will be
-one of the OA_* constants from op.h.
+one of the C<OA_>* constants from F<op.h>.
 
 =for apidoc Am|bool|OP_TYPE_IS|OP *o|Optype type
-Returns true if the given OP is not a NULL pointer
+Returns true if the given OP is not a C<NULL> pointer
 and if it is of the given type.
 
 The negation of this macro, C<OP_TYPE_ISNT> is also available
@@ -933,28 +934,28 @@ replaced by an OP of type OP_NULL.
 The negation of this macro, C<OP_TYPE_ISNT_AND_WASNT>
 is also available as well as C<OP_TYPE_IS_OR_WAS_NN>
 and C<OP_TYPE_ISNT_AND_WASNT_NN> which elide
-the NULL pointer check.
+the C<NULL> pointer check.
 
 =for apidoc Am|bool|OpHAS_SIBLING|OP *o
-Returns true if o has a sibling
+Returns true if C<o> has a sibling
 
 =for apidoc Am|OP*|OpSIBLING|OP *o
-Returns the sibling of o, or NULL if there is no sibling
+Returns the sibling of C<o>, or C<NULL> if there is no sibling
 
 =for apidoc Am|void|OpMORESIB_set|OP *o|OP *sib
-Sets the sibling of o to the non-zero value sib. See also C<OpLASTSIB_set>
-and C<OpMAYBESIB_set>. For a higher-level interface, see
-C<op_sibling_splice>.
+Sets the sibling of C<o> to the non-zero value C<sib>. See also C<L</OpLASTSIB_set>>
+and C<L</OpMAYBESIB_set>>. For a higher-level interface, see
+C<L</op_sibling_splice>>.
 
 =for apidoc Am|void|OpLASTSIB_set|OP *o|OP *parent
-Marks o as having no further siblings. On C<PERL_OP_PARENT> builds, marks
-o as having the specified parent. See also C<OpMORESIB_set> and
+Marks C<o> as having no further siblings. On C<PERL_OP_PARENT> builds, marks
+o as having the specified parent. See also C<L</OpMORESIB_set>> and
 C<OpMAYBESIB_set>. For a higher-level interface, see
-C<op_sibling_splice>.
+C<L</op_sibling_splice>>.
 
 =for apidoc Am|void|OpMAYBESIB_set|OP *o|OP *sib|OP *parent
 Conditionally does C<OpMORESIB_set> or C<OpLASTSIB_set> depending on whether
-sib is non-null. For a higher-level interface, see C<op_sibling_splice>.
+C<sib> is non-null. For a higher-level interface, see C<L</op_sibling_splice>>.
 
 =cut
 */
@@ -1074,6 +1075,12 @@ sib is non-null. For a higher-level interface, see C<op_sibling_splice>.
 
 #define MDEREF_MASK         0x7F
 #define MDEREF_SHIFT           7
+
+#if defined(PERL_IN_DOOP_C) || defined(PERL_IN_PP_C)
+static const char * const deprecated_above_ff_msg
+    = "Use of strings with code points over 0xFF as arguments to "
+      "%s operator is deprecated";
+#endif
 
 
 /*

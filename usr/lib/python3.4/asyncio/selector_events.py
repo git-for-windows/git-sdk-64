@@ -10,7 +10,6 @@ import collections
 import errno
 import functools
 import socket
-import sys
 import warnings
 try:
     import ssl
@@ -18,6 +17,7 @@ except ImportError:  # pragma: no cover
     ssl = None
 
 from . import base_events
+from . import compat
 from . import constants
 from . import events
 from . import futures
@@ -397,8 +397,7 @@ class BaseSelectorEventLoop(base_events.BaseEventLoop):
             raise ValueError("the socket must be non-blocking")
         fut = futures.Future(loop=self)
         try:
-            if self._debug:
-                base_events._check_resolved_address(sock, address)
+            base_events._check_resolved_address(sock, address)
         except ValueError as err:
             fut.set_exception(err)
         else:
@@ -408,14 +407,12 @@ class BaseSelectorEventLoop(base_events.BaseEventLoop):
     def _sock_connect(self, fut, sock, address):
         fd = sock.fileno()
         try:
-            while True:
-                try:
-                    sock.connect(address)
-                except InterruptedError:
-                    continue
-                else:
-                    break
-        except BlockingIOError:
+            sock.connect(address)
+        except (BlockingIOError, InterruptedError):
+            # Issue #23618: When the C function connect() fails with EINTR, the
+            # connection runs in background. We have to wait until the socket
+            # becomes writable to be notified when the connection succeed or
+            # fails.
             fut.add_done_callback(functools.partial(self._sock_connect_done,
                                                     fd))
             self.add_writer(fd, self._sock_connect_cb, fut, sock, address)
@@ -535,7 +532,7 @@ class _SelectorTransport(transports._FlowControlMixin,
             info.append('closing')
         info.append('fd=%s' % self._sock_fd)
         # test if the transport was closed
-        if self._loop is not None:
+        if self._loop is not None and not self._loop.is_closed():
             polling = _test_selector_event(self._loop._selector,
                                            self._sock_fd, selectors.EVENT_READ)
             if polling:
@@ -558,6 +555,9 @@ class _SelectorTransport(transports._FlowControlMixin,
     def abort(self):
         self._force_close(None)
 
+    def is_closing(self):
+        return self._closing
+
     def close(self):
         if self._closing:
             return
@@ -570,7 +570,7 @@ class _SelectorTransport(transports._FlowControlMixin,
     # On Python 3.3 and older, objects with a destructor part of a reference
     # cycle are never destroyed. It's not more the case on Python 3.4 thanks
     # to the PEP 442.
-    if sys.version_info >= (3, 4):
+    if compat.PY34:
         def __del__(self):
             if self._sock is not None:
                 warnings.warn("unclosed transport %r" % self, ResourceWarning)
@@ -635,7 +635,8 @@ class _SelectorSocketTransport(_SelectorTransport):
                              self._sock_fd, self._read_ready)
         if waiter is not None:
             # only wake up the waiter when connection_made() has been called
-            self._loop.call_soon(waiter._set_result_unless_cancelled, None)
+            self._loop.call_soon(futures._set_result_unless_cancelled,
+                                 waiter, None)
 
     def pause_reading(self):
         if self._closing:
@@ -845,6 +846,7 @@ class _SelectorSslTransport(_SelectorTransport):
         self._extra.update(peercert=peercert,
                            cipher=self._sock.cipher(),
                            compression=self._sock.compression(),
+                           ssl_object=self._sock,
                            )
 
         self._read_wants_write = False
@@ -988,7 +990,8 @@ class _SelectorDatagramTransport(_SelectorTransport):
                              self._sock_fd, self._read_ready)
         if waiter is not None:
             # only wake up the waiter when connection_made() has been called
-            self._loop.call_soon(waiter._set_result_unless_cancelled, None)
+            self._loop.call_soon(futures._set_result_unless_cancelled,
+                                 waiter, None)
 
     def get_write_buffer_size(self):
         return sum(len(data) for data, _ in self._buffer)

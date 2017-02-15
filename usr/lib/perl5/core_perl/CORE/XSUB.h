@@ -18,7 +18,8 @@
 
 =for apidoc Amn|char*|CLASS
 Variable which is setup by C<xsubpp> to indicate the 
-class name for a C++ XS constructor.  This is always a C<char*>.  See C<THIS>.
+class name for a C++ XS constructor.  This is always a C<char*>.  See
+C<L</THIS>>.
 
 =for apidoc Amn|(whatever)|RETVAL
 Variable which is setup by C<xsubpp> to hold the return value for an 
@@ -27,7 +28,7 @@ L<perlxs/"The RETVAL Variable">.
 
 =for apidoc Amn|(whatever)|THIS
 Variable which is setup by C<xsubpp> to designate the object in a C++ 
-XSUB.  This is always the proper type for the C++ object.  See C<CLASS> and 
+XSUB.  This is always the proper type for the C++ object.  See C<L</CLASS>> and
 L<perlxs/"Using XS With C++">.
 
 =for apidoc Amn|I32|ax
@@ -48,7 +49,7 @@ Used to access elements on the XSUB's stack.
 
 =for apidoc AmU||XS
 Macro to declare an XSUB and its C parameter list.  This is handled by
-C<xsubpp>.  It is the same as using the more explicit XS_EXTERNAL macro.
+C<xsubpp>.  It is the same as using the more explicit C<XS_EXTERNAL> macro.
 
 =for apidoc AmU||XS_INTERNAL
 Macro to declare an XSUB and its C parameter list without exporting the symbols.
@@ -71,7 +72,7 @@ Sets up the C<items> variable.
 This is usually handled automatically by C<xsubpp> by calling C<dXSARGS>.
 
 =for apidoc Ams||dXSARGS
-Sets up stack and mark pointers for an XSUB, calling dSP and dMARK.
+Sets up stack and mark pointers for an XSUB, calling C<dSP> and C<dMARK>.
 Sets up the C<ax> and C<items> variables by calling C<dAX> and C<dITEMS>.
 This is usually handled automatically by C<xsubpp>.
 
@@ -85,8 +86,8 @@ C<padoff_du>, but it is currently a noop.  However, it is strongly advised
 to still use it for ensuring past and future compatibility.
 
 =for apidoc AmU||UNDERBAR
-The SV* corresponding to the $_ variable.  Works even if there
-is a lexical $_ in scope.
+The SV* corresponding to the C<$_> variable.  Works even if there
+is a lexical C<$_> in scope.
 
 =cut
 */
@@ -281,10 +282,11 @@ the subs.
 
 =for apidoc AmU||XS_VERSION
 The version identifier for an XS module.  This is usually
-handled automatically by C<ExtUtils::MakeMaker>.  See C<XS_VERSION_BOOTCHECK>.
+handled automatically by C<ExtUtils::MakeMaker>.  See
+C<L</XS_VERSION_BOOTCHECK>>.
 
 =for apidoc Ams||XS_VERSION_BOOTCHECK
-Macro to verify that a PM module's $VERSION variable matches the XS
+Macro to verify that a PM module's C<$VERSION> variable matches the XS
 module's C<XS_VERSION> variable.  This is usually handled automatically by
 C<xsubpp>.  See L<perlxs/"The VERSIONCHECK: Keyword">.
 
@@ -325,6 +327,7 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #define XSRETURN(off)					\
     STMT_START {					\
 	const IV tmpXSoff = (off);			\
+	assert(tmpXSoff >= 0);\
 	PL_stack_sp = PL_stack_base + ax + (tmpXSoff - 1);	\
 	return;						\
     } STMT_END

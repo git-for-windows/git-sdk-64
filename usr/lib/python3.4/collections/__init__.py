@@ -272,22 +272,13 @@ class {typename}(tuple):
         'Return a nicely formatted representation string'
         return self.__class__.__name__ + '({repr_fmt})' % self
 
-    @property
-    def __dict__(self):
-        'A new OrderedDict mapping field names to their values'
-        return OrderedDict(zip(self._fields, self))
-
     def _asdict(self):
         'Return a new OrderedDict which maps field names to their values.'
-        return self.__dict__
+        return OrderedDict(zip(self._fields, self))
 
     def __getnewargs__(self):
         'Return self as a plain tuple.  Used by copy and pickle.'
         return tuple(self)
-
-    def __getstate__(self):
-        'Exclude the OrderedDict from pickling'
-        return None
 
 {field_defs}
 """
@@ -845,9 +836,8 @@ class ChainMap(MutableMapping):
     __copy__ = copy
 
     def new_child(self, m=None):                # like Django's Context.push()
-        '''
-        New ChainMap with a new map followed by all previous maps. If no
-        map is provided, an empty dict is used.
+        '''New ChainMap with a new map followed by all previous maps.
+        If no map is provided, an empty dict is used.
         '''
         if m is None:
             m = {}
@@ -893,7 +883,22 @@ class ChainMap(MutableMapping):
 class UserDict(MutableMapping):
 
     # Start by filling-out the abstract methods
-    def __init__(self, dict=None, **kwargs):
+    def __init__(*args, **kwargs):
+        if not args:
+            raise TypeError("descriptor '__init__' of 'UserDict' object "
+                            "needs an argument")
+        self, *args = args
+        if len(args) > 1:
+            raise TypeError('expected at most 1 arguments, got %d' % len(args))
+        if args:
+            dict = args[0]
+        elif 'dict' in kwargs:
+            dict = kwargs.pop('dict')
+            import warnings
+            warnings.warn("Passing 'dict' as keyword argument is deprecated",
+                          PendingDeprecationWarning, stacklevel=2)
+        else:
+            dict = None
         self.data = {}
         if dict is not None:
             self.update(dict)

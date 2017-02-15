@@ -46,7 +46,7 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
         MDEREF_SHIFT
     );
 
-$VERSION = '1.35';
+$VERSION = '1.37';
 use strict;
 use vars qw/$AUTOLOAD/;
 use warnings ();
@@ -58,12 +58,12 @@ BEGIN {
     # be to fake up a dummy constant that will never actually be true.
     foreach (qw(OPpSORT_INPLACE OPpSORT_DESCEND OPpITER_REVERSED OPpCONST_NOVER
 		OPpPAD_STATE PMf_SKIPWHITE RXf_SKIPWHITE
-		RXf_PMf_CHARSET RXf_PMf_KEEPCOPY CVf_ANONCONST
+		PMf_CHARSET PMf_KEEPCOPY PMf_NOCAPTURE CVf_ANONCONST
 		CVf_LOCKED OPpREVERSE_INPLACE OPpSUBSTR_REPL_FIRST
 		PMf_NONDESTRUCT OPpCONST_ARYBASE OPpEVAL_BYTES
 		OPpLVREF_TYPE OPpLVREF_SV OPpLVREF_AV OPpLVREF_HV
 		OPpLVREF_CV OPpLVREF_ELEM SVpad_STATE)) {
-	eval { import B $_ };
+	eval { B->import($_) };
 	no strict 'refs';
 	*{$_} = sub () {0} unless *{$_}{CODE};
     }
@@ -2642,10 +2642,11 @@ sub pp_readline {
     my $self = shift;
     my($op, $cx) = @_;
     my $kid = $op->first;
-    if (is_scalar($kid)) {
-        my $kid_deparsed = $self->deparse($kid, 1);
-        return '<<>>' if $op->flags & OPf_SPECIAL and $kid_deparsed eq 'ARGV';
-        return "<$kid_deparsed>";
+    if (is_scalar($kid)
+        and $op->flags & OPf_SPECIAL
+        and $self->deparse($kid, 1) eq 'ARGV')
+    {
+        return '<<>>';
     }
     return $self->unop($op, $cx, "readline");
 }
@@ -3221,19 +3222,10 @@ sub pp_glob {
     my $kid = $op->first->sibling;  # skip pushmark
     my $keyword =
 	$op->flags & OPf_SPECIAL ? 'glob' : $self->keyword('glob');
-    my $text;
-    if ($keyword =~ /^CORE::/
-	or $kid->name ne 'const'
-	or ($text = $self->dq($kid))
-	     =~ /^\$?(\w|::|\`)+$/ # could look like a readline
-        or $text =~ /[<>]/) {
-	$text = $self->deparse($kid);
-	return $cx >= 5 || $self->{'parens'}
-	    ? "$keyword($text)"
-	    : "$keyword $text";
-    } else {
-	return '<' . $text . '>';
-    }
+    my $text = $self->deparse($kid);
+    return $cx >= 5 || $self->{'parens'}
+	? "$keyword($text)"
+	: "$keyword $text";
 }
 
 # Truncate is special because OPf_SPECIAL makes a bareword first arg
@@ -5437,8 +5429,9 @@ sub re_flags {
     $flags .= "s" if $pmflags & PMf_SINGLELINE;
     $flags .= "x" if $pmflags & PMf_EXTENDED;
     $flags .= "x" if $pmflags & PMf_EXTENDED_MORE;
-    $flags .= "p" if $pmflags & RXf_PMf_KEEPCOPY;
-    if (my $charset = $pmflags & RXf_PMf_CHARSET) {
+    $flags .= "p" if $pmflags & PMf_KEEPCOPY;
+    $flags .= "n" if $pmflags & PMf_NOCAPTURE;
+    if (my $charset = $pmflags & PMf_CHARSET) {
 	# Hardcoding this is fragile, but B does not yet export the
 	# constants we need.
 	$flags .= qw(d l u a aa)[$charset >> 7]
@@ -5450,10 +5443,8 @@ sub re_flags {
 	or $self->{hints} & $feature::hint_mask
 	  && ($self->{hints} & $feature::hint_mask)
 	       != $feature::hint_mask
-	  && do {
-		$self->{hints} & $feature::hint_uni8bit;
-	     }
-  ) {
+	  && $self->{hints} & $feature::hint_uni8bit
+    ) {
 	$flags .= 'd';
     }
     $flags;

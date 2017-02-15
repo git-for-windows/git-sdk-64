@@ -21,7 +21,8 @@ class OperatorsTest(unittest.TestCase):
             'add': '+',
             'sub': '-',
             'mul': '*',
-            'div': '/',
+            'truediv': '/',
+            'floordiv': '//',
             'divmod': 'divmod',
             'pow': '**',
             'lshift': '<<',
@@ -52,8 +53,6 @@ class OperatorsTest(unittest.TestCase):
             'invert': '~',
             'int': 'int',
             'float': 'float',
-            'oct': 'oct',
-            'hex': 'hex',
         }
 
         for name, expr in list(self.unops.items()):
@@ -81,12 +80,6 @@ class OperatorsTest(unittest.TestCase):
 
     def binop_test(self, a, b, res, expr="a+b", meth="__add__"):
         d = {'a': a, 'b': b}
-
-        # XXX Hack so this passes before 2.3 when -Qnew is specified.
-        if meth == "__div__" and 1/2 == 0.5:
-            meth = "__truediv__"
-
-        if meth == '__divmod__': pass
 
         self.assertEqual(eval(expr, d), res)
         t = type(a)
@@ -221,7 +214,7 @@ class OperatorsTest(unittest.TestCase):
     def number_operators(self, a, b, skip=[]):
         dict = {'a': a, 'b': b}
 
-        for name, expr in list(self.binops.items()):
+        for name, expr in self.binops.items():
             if name not in skip:
                 name = "__%s__" % name
                 if hasattr(a, name):
@@ -261,7 +254,7 @@ class OperatorsTest(unittest.TestCase):
         # Testing complex operations...
         self.number_operators(100.0j, 3.0j, skip=['lt', 'le', 'gt', 'ge',
                                                   'int', 'float',
-                                                  'divmod', 'mod'])
+                                                  'floordiv', 'divmod', 'mod'])
 
         class Number(complex):
             __slots__ = ['prec']
@@ -3742,6 +3735,37 @@ order (MRO) for bases """
         else:
             assert 0, "best_base calculation found wanting"
 
+    def test_unsubclassable_types(self):
+        with self.assertRaises(TypeError):
+            class X(type(None)):
+                pass
+        with self.assertRaises(TypeError):
+            class X(object, type(None)):
+                pass
+        with self.assertRaises(TypeError):
+            class X(type(None), object):
+                pass
+        class O(object):
+            pass
+        with self.assertRaises(TypeError):
+            class X(O, type(None)):
+                pass
+        with self.assertRaises(TypeError):
+            class X(type(None), O):
+                pass
+
+        class X(object):
+            pass
+        with self.assertRaises(TypeError):
+            X.__bases__ = type(None),
+        with self.assertRaises(TypeError):
+            X.__bases__ = object, type(None)
+        with self.assertRaises(TypeError):
+            X.__bases__ = type(None), object
+        with self.assertRaises(TypeError):
+            X.__bases__ = O, type(None)
+        with self.assertRaises(TypeError):
+            X.__bases__ = type(None), O
 
     def test_mutable_bases_with_failing_mro(self):
         # Testing mutable bases with failing mro...
@@ -4160,9 +4184,8 @@ order (MRO) for bases """
                 ('__add__',      'x + y',                   'x += y'),
                 ('__sub__',      'x - y',                   'x -= y'),
                 ('__mul__',      'x * y',                   'x *= y'),
-                ('__truediv__',  'operator.truediv(x, y)',  None),
-                ('__floordiv__', 'operator.floordiv(x, y)', None),
-                ('__div__',      'x / y',                   'x /= y'),
+                ('__truediv__',  'x / y',                   'x /= y'),
+                ('__floordiv__', 'x // y',                  'x //= y'),
                 ('__mod__',      'x % y',                   'x %= y'),
                 ('__divmod__',   'divmod(x, y)',            None),
                 ('__pow__',      'x ** y',                  'x **= y'),
@@ -4224,8 +4247,8 @@ order (MRO) for bases """
         # Also check type_getattro for correctness.
         class Meta(type):
             pass
-        class X(object):
-            __metaclass__ = Meta
+        class X(metaclass=Meta):
+            pass
         X.a = 42
         Meta.a = Descr("a")
         self.assertEqual(X.a, 42)
@@ -4632,14 +4655,6 @@ class PicklingTests(unittest.TestCase):
                     with self.assertRaises((TypeError, ValueError)):
                         obj.__reduce_ex__(proto)
 
-        class C8:
-            def __getnewargs_ex__(self):
-                return (args, kwargs)
-        obj = C8()
-        for proto in protocols:
-            if 2 <= proto < 4:
-                with self.assertRaises(ValueError):
-                    obj.__reduce_ex__(proto)
         class C9:
             def __getnewargs_ex__(self):
                 return (args, {})
@@ -4972,6 +4987,23 @@ class PicklingTests(unittest.TestCase):
                     objcopy.__dict__.clear()
                     objcopy2 = deepcopy(objcopy)
                     self._assert_is_copy(obj, objcopy2)
+
+    def test_issue24097(self):
+        # Slot name is freed inside __getattr__ and is later used.
+        class S(str):  # Not interned
+            pass
+        class A:
+            __slotnames__ = [S('spam')]
+            def __getattr__(self, attr):
+                if attr == 'spam':
+                    A.__slotnames__[:] = [S('spam')]
+                    return 42
+                else:
+                    raise AttributeError
+
+        import copyreg
+        expected = (copyreg.__newobj__, (A,), (None, {'spam': 42}), None, None)
+        self.assertEqual(A().__reduce__(2), expected)  # Shouldn't crash
 
 
 class SharedKeyTests(unittest.TestCase):

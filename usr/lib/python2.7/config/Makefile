@@ -28,8 +28,8 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	2.7
 srcdir=		.
 
-abs_srcdir=	/msys_scripts/python2/src/Python-2.7.11
-abs_builddir=	/msys_scripts/python2/src/Python-2.7.11
+abs_srcdir=	/msys_scripts/python2/src/Python-2.7.13
+abs_builddir=	/msys_scripts/python2/src/Python-2.7.13
 build=		x86_64-pc-msys
 host=		x86_64-pc-msys
 
@@ -210,7 +210,14 @@ TCLTK_INCLUDES=
 TCLTK_LIBS=	
 
 # The task to run while instrument when building the profile-opt target
-PROFILE_TASK=-m test.regrtest --pgo
+# We exclude unittests with -x that take a rediculious amount of time to
+# run in the instrumented training build or do not provide much value.
+PROFILE_TASK=-m test.regrtest --pgo -x test_asyncore test_gdb test_multiprocessing test_subprocess
+
+# report files for gcov / lcov coverage report
+COVERAGE_INFO=	$(abs_builddir)/coverage.info
+COVERAGE_REPORT=$(abs_builddir)/lcov-report
+COVERAGE_REPORT_OPTIONS=--no-branch-coverage --title "CPython lcov report"
 
 # === Definitions added by makesetup ===
 
@@ -443,7 +450,7 @@ build_all:	$(BUILDPYTHON) oldsharedmods sharedmods gdbhooks
 
 # Compile a binary with profile guided optimization.
 profile-opt:
-	@if [ $(LLVM_PROF_ERR) == yes ]; then \
+	@if [ $(LLVM_PROF_ERR) = yes ]; then \
 		echo "Error: Cannot perform PGO build because llvm-profdata was not found in PATH" ;\
 		echo "Please add it to PATH and run ./configure again" ;\
 		exit 1;\
@@ -462,7 +469,7 @@ profile-opt:
 	$(MAKE) profile-removal
 
 build_all_generate_profile:
-	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_GEN_FLAG)" LDFLAGS="$(LDFLAGS) $(PGO_PROF_GEN_FLAG)" LIBS="$(LIBS)"
+	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_GEN_FLAG) " LDFLAGS="$(LDFLAGS) $(PGO_PROF_GEN_FLAG) " LIBS="$(LIBS)"
 
 run_profile_task:
 	: # FIXME: can't run for a cross build
@@ -472,12 +479,47 @@ build_all_merge_profile:
 	$(LLVM_PROF_MERGER)
 
 build_all_use_profile:
-	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_USE_FLAG)"
+	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_USE_FLAG) " LDFLAGS="$(LDFLAGS) "
 
+# Compile and run with gcov
+.PHONY=coverage coverage-lcov coverage-report
 coverage:
 	@echo "Building with support for coverage checking:"
-	$(MAKE) clean
+	$(MAKE) clean profile-removal
 	$(MAKE) all CFLAGS="$(CFLAGS) -O0 -pg -fprofile-arcs -ftest-coverage" LIBS="$(LIBS) -lgcov"
+
+coverage-lcov:
+	@echo "Creating Coverage HTML report with LCOV:"
+	@rm -f $(COVERAGE_INFO)
+	@rm -rf $(COVERAGE_REPORT)
+	@lcov --capture --directory $(abs_builddir) \
+	    --base-directory $(realpath $(abs_builddir)) \
+	    --path $(realpath $(abs_srcdir)) \
+	    --output-file $(COVERAGE_INFO)
+	: # remove 3rd party modules and system headers
+	@lcov --remove $(COVERAGE_INFO) \
+	    '*/Modules/_ctypes/libffi*/*' \
+	    '*/Modules/expat/*' \
+	    '*/Modules/zlib/*' \
+	    '*/Include/*' \
+	    '/usr/include/*' \
+	    '/usr/local/include/*' \
+	    --output-file $(COVERAGE_INFO)
+	@genhtml $(COVERAGE_INFO) --output-directory $(COVERAGE_REPORT) \
+	    $(COVERAGE_REPORT_OPTIONS)
+	@echo
+	@echo "lcov report at $(COVERAGE_REPORT)/index.html"
+	@echo
+
+coverage-report:
+	: # force rebuilding of parser
+	@touch $(GRAMMAR_INPUT)
+	: # build with coverage info
+	$(MAKE) coverage
+	: # run tests, ignore failures
+	$(TESTPYTHON) $(TESTPROG) $(TESTOPTS) || true
+	: # build lcov report
+	$(MAKE) coverage-lcov
 
 
 # Build the interpreter
@@ -505,11 +547,15 @@ pybuilddir.txt: $(BUILDPYTHON)
 		exit 1 ; \
 	fi
 
+# This is shared by the math and cmath modules
+Modules/_math.o: Modules/_math.c Modules/_math.h
+	$(CC) -c $(CCSHARED) $(PY_CFLAGS) -o $@ $<
+
 # Build the shared modules
 # Under GNU make, MAKEFLAGS are sorted and normalized; the 's' for
 # -s, --silent or --quiet is always the first char.
 # Under BSD make, MAKEFLAGS might be " -s -v x=y".
-sharedmods: $(BUILDPYTHON) pybuilddir.txt
+sharedmods: $(BUILDPYTHON) pybuilddir.txt Modules/_math.o
 	@case "$$MAKEFLAGS" in \
 	    *\ -s*|s*) quiet="-q";; \
 	    *) quiet="";; \
@@ -650,13 +696,11 @@ Modules/grpmodule.o: $(srcdir)/Modules/grpmodule.c $(srcdir)/Modules/posixmodule
 
 Modules/pwdmodule.o: $(srcdir)/Modules/pwdmodule.c $(srcdir)/Modules/posixmodule.h
 
-$(GRAMMAR_H): $(GRAMMAR_INPUT) $(PGENSRCS)
-		@$(MKDIR_P) Include
-		$(MAKE) $(PGEN)
-		$(PGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C)
-$(GRAMMAR_C): $(GRAMMAR_H) $(GRAMMAR_INPUT) $(PGENSRCS)
-		$(MAKE) $(GRAMMAR_H)
-		touch $(GRAMMAR_C)
+$(GRAMMAR_H):  $(GRAMMAR_INPUT) $(PGEN)
+	@$(MKDIR_P) Include
+	$(PGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C)
+$(GRAMMAR_C):  $(GRAMMAR_H)
+	touch $(GRAMMAR_C)
 
 $(PGEN):	$(PGENOBJS)
 		$(CC) $(OPT) $(LDFLAGS) $(PGENOBJS) $(LIBS) -o $(PGEN)
@@ -856,7 +900,7 @@ testuniversal:	all platform
 
 # Like testall, but with a single pass only
 # run an optional script to include some information about the build environment
-buildbottest:	all platform
+buildbottest:	build_all platform
 		-@if which pybuildbot.identify >/dev/null 2>&1; then \
 			pybuildbot.identify "CC='$(CC)'" "CXX='$(CXX)'"; \
 		fi
@@ -931,6 +975,10 @@ $(DESTSHARED):
 #  $(PYTHON) -> python2 -> python$(VERSION))
 # Also create equivalent chains for other installed files
 bininstall:	altbininstall
+	if test ! -d $(DESTDIR)$(LIBPC); then \
+		echo "Creating directory $(LIBPC)"; \
+		$(INSTALL) -d -m $(DIRMODE) $(DESTDIR)$(LIBPC); \
+	fi
 	-if test -f $(DESTDIR)$(BINDIR)/$(PYTHON) -o -h $(DESTDIR)$(BINDIR)/$(PYTHON); \
 	then rm -f $(DESTDIR)$(BINDIR)/$(PYTHON); \
 	else true; \
@@ -1201,7 +1249,7 @@ libainstall:	all python-config
 		$(INSTALL_SCRIPT) $(srcdir)/Modules/makexp_aix	\
 				$(DESTDIR)$(LIBPL)/makexp_aix;		\
 		echo "$(LIBPL)/makexp_aix";			\
-		$(INSTALL_SCRIPT) $(srcdir)/Modules/ld_so_aix	\
+		$(INSTALL_SCRIPT) Modules/ld_so_aix	\
 				$(DESTDIR)$(LIBPL)/ld_so_aix;		\
 		echo "$(LIBPL)/ld_so_aix";			\
 		echo; echo "See Misc/AIX-NOTES for details.";	\
@@ -1235,7 +1283,7 @@ sharedinstall: sharedmods
 # the Makefile in Mac
 #
 #
-# This target is here for backward compatiblity, previous versions of Python
+# This target is here for backward compatibility, previous versions of Python
 # hadn't integrated framework installation in the normal install process.
 frameworkinstall: install
 
@@ -1362,11 +1410,12 @@ clean: pycremoval
 	find build -name 'fficonfig.h' -exec rm -f {} ';' || true
 	find build -name 'fficonfig.py' -exec rm -f {} ';' || true
 	-rm -f Lib/lib2to3/*Grammar*.pickle
-	-rm -rf build
+	-find build -type f -a ! -name '*.gc??' -exec rm -f {} ';'
 
 profile-removal:
 	find . -name '*.gc??' -exec rm -f {} ';'
 	find . -name '*.profclang?' -exec rm -f {} ';'
+	find . -name '*.dyn' -exec rm -f {} ';'
 
 clobber: clean profile-removal
 	-rm -f $(BUILDPYTHON) $(PGEN) $(LIBRARY) $(LDLIBRARY) $(DLLLIBRARY) \
@@ -1387,7 +1436,11 @@ distclean: clobber
 		Modules/ld_so_aix Modules/python.exp Misc/python.pc
 	-rm -f python*-gdb.py
 	-rm -f pybuilddir.txt
-	find $(srcdir)/[a-zA-Z]* '(' -name '*.fdc' -o -name '*~' \
+	# Issue #28258: set LC_ALL to avoid issues with Estonian locale.
+	# Expansion is performed here by shell (spawned by make) itself before
+	# arguments are passed to find. So LC_ALL=C must be set as a separate
+	# command.
+	LC_ALL=C; find $(srcdir)/[a-zA-Z]* '(' -name '*.fdc' -o -name '*~' \
 				     -o -name '[@,#]*' -o -name '*.old' \
 				     -o -name '*.orig' -o -name '*.rej' \
 				     -o -name '*.bak' ')' \

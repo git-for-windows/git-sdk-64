@@ -287,7 +287,7 @@ class FTP:
         return self.voidcmd(cmd)
 
     def sendeprt(self, host, port):
-        '''Send a EPRT command with the current host and the given port number.'''
+        '''Send an EPRT command with the current host and the given port number.'''
         af = 0
         if self.af == socket.AF_INET:
             af = 1
@@ -667,11 +667,16 @@ class FTP:
 
     def close(self):
         '''Close the connection without assuming anything about it.'''
-        if self.file is not None:
-            self.file.close()
-        if self.sock is not None:
-            self.sock.close()
-        self.file = self.sock = None
+        try:
+            file = self.file
+            self.file = None
+            if file is not None:
+                file.close()
+        finally:
+            sock = self.sock
+            self.sock = None
+            if sock is not None:
+                sock.close()
 
 try:
     import ssl
@@ -847,7 +852,7 @@ def parse227(resp):
 
 
 def parse229(resp, peer):
-    '''Parse the '229' response for a EPSV request.
+    '''Parse the '229' response for an EPSV request.
     Raises error_proto if it does not contain '(|||port|)'
     Return ('host.addr.as.numbers', port#) tuple.'''
 

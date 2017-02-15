@@ -2,10 +2,11 @@
 #
 # Versions up to 2.29 Copyright (c) 1995-2004 Graham Barr <gbarr@pobox.com>.
 # All rights reserved.
-# Changes in Version 2.29_01 onwards Copyright (C) 2013-2014 Steve Hay.  All
+# Changes in Version 2.29_01 onwards Copyright (C) 2013-2015 Steve Hay.  All
 # rights reserved.
-# This program is free software; you can redistribute it and/or
-# modify it under the same terms as Perl itself.
+# This module is free software; you can redistribute it and/or modify it under
+# the same terms as Perl itself, i.e. under the terms of either the GNU General
+# Public License or the Artistic License, as specified in the F<LICENCE> file.
 
 package Net::POP3;
 
@@ -19,7 +20,7 @@ use IO::Socket;
 use Net::Cmd;
 use Net::Config;
 
-our $VERSION = "3.05";
+our $VERSION = "3.08_01";
 
 # Code for detecting if we can use SSL
 my $ssl_class = eval {
@@ -33,15 +34,18 @@ my $nossl_warn = !$ssl_class &&
   'To use SSL please install IO::Socket::SSL with version>=2.007';
 
 # Code for detecting if we can use IPv6
+my $family_key = 'Domain';
 my $inet6_class = eval {
   require IO::Socket::IP;
   no warnings 'numeric';
-  IO::Socket::IP->VERSION(0.20);
+  IO::Socket::IP->VERSION(0.20) || die;
+  $family_key = 'Family';
 } && 'IO::Socket::IP' || eval {
   require IO::Socket::INET6;
   no warnings 'numeric';
   IO::Socket::INET6->VERSION(2.62);
 } && 'IO::Socket::INET6';
+
 
 sub can_ssl   { $ssl_class };
 sub can_inet6 { $inet6_class };
@@ -62,7 +66,6 @@ sub new {
   }
   my $hosts = defined $host ? [$host] : $NetConfig{pop3_hosts};
   my $obj;
-  my @localport = exists $arg{ResvPort} ? (LocalPort => $arg{ResvPort}) : ();
 
   if ($arg{SSL}) {
     # SSL from start
@@ -77,7 +80,9 @@ sub new {
       PeerAddr => ($host = $h),
       PeerPort => $arg{Port} || 'pop3(110)',
       Proto => 'tcp',
-      @localport,
+      $family_key => $arg{Domain} || $arg{Family},
+      LocalAddr => $arg{LocalAddr},
+      LocalPort => exists($arg{ResvPort}) ? $arg{ResvPort} : $arg{LocalPort},
       Timeout => $arg{Timeout},
       )
       and last;
@@ -577,9 +582,9 @@ sub banner {
     my ($class,$pop3,%arg) = @_;
     delete @arg{ grep { !m{^SSL_} } keys %arg };
     ( $arg{SSL_verifycn_name} ||= $pop3->host )
-	=~s{(?<!:):[\w()]+$}{}; # strip port
+        =~s{(?<!:):[\w()]+$}{}; # strip port
     $arg{SSL_hostname} = $arg{SSL_verifycn_name}
-	if ! defined $arg{SSL_hostname} && $class->can_client_sni;
+        if ! defined $arg{SSL_hostname} && $class->can_client_sni;
     $arg{SSL_verifycn_scheme} ||= 'pop3';
     my $ok = $class->SUPER::start_SSL($pop3,%arg);
     $@ = $ssl_class->errstr if !$ok;
@@ -622,12 +627,16 @@ Net::POP3 - Post Office Protocol 3 Client class (RFC1939)
 This module implements a client interface to the POP3 protocol, enabling
 a perl5 application to talk to POP3 servers. This documentation assumes
 that you are familiar with the POP3 protocol described in RFC1939.
+With L<IO::Socket::SSL> installed it also provides support for implicit and
+explicit TLS encryption, i.e. POP3S or POP3+STARTTLS.
 
 A new Net::POP3 object must be created with the I<new> method. Once
 this has been done, all POP3 commands are accessed via method calls
 on the object.
 
-The Net::POP3 class is a subclass of Net::Cmd and IO::Socket::INET.
+The Net::POP3 class is a subclass of Net::Cmd and (depending on avaibility) of
+IO::Socket::IP, IO::Socket::INET6 or IO::Socket::INET.
+
 
 =head1 CONSTRUCTOR
 
@@ -658,9 +667,14 @@ upgrade with C<starttls>.
 You can use SSL arguments as documented in L<IO::Socket::SSL>, but it will
 usually use the right arguments already.
 
-B<ResvPort> - If given then the socket for the C<Net::POP3> object
-will be bound to the local port given using C<bind> when the socket is
-created.
+B<LocalAddr> and B<LocalPort> - These parameters are passed directly
+to IO::Socket to allow binding the socket to a specific local address and port.
+For compatibility with older versions B<ResvPort> can be used instead of
+B<LocalPort>.
+
+B<Domain> - This parameter is passed directly to IO::Socket and makes it
+possible to enforce IPv4 connections even if L<IO::Socket::IP> is used as super
+class. Alternatively B<Family> can be used.
 
 B<Timeout> - Maximum time, in seconds, to wait for a response from the
 POP3 server (default: 120)
@@ -839,10 +853,11 @@ Steve Hay E<lt>F<shay@cpan.org>E<gt> is now maintaining libnet as of version
 =head1 COPYRIGHT
 
 Versions up to 2.29 Copyright (c) 1995-2004 Graham Barr. All rights reserved.
-Changes in Version 2.29_01 onwards Copyright (C) 2013-2014 Steve Hay.  All
+Changes in Version 2.29_01 onwards Copyright (C) 2013-2015 Steve Hay.  All
 rights reserved.
 
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+This module is free software; you can redistribute it and/or modify it under the
+same terms as Perl itself, i.e. under the terms of either the GNU General Public
+License or the Artistic License, as specified in the F<LICENCE> file.
 
 =cut

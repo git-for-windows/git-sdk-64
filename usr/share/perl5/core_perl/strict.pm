@@ -1,17 +1,17 @@
 package strict;
 
-$strict::VERSION = "1.09";
-
-# Verify that we're called correctly so that strictures will work.
-unless ( __FILE__ =~ /(^|[\/\\])\Q${\__PACKAGE__}\E\.pmc?$/ ) {
-    # Can't use Carp, since Carp uses us!
-    my (undef, $f, $l) = caller;
-    die("Incorrect use of pragma '${\__PACKAGE__}' at $f line $l.\n");
-}
+$strict::VERSION = "1.11";
 
 my ( %bitmask, %explicit_bitmask );
 
 BEGIN {
+    # Verify that we're called correctly so that strictures will work.
+    # Can't use Carp, since Carp uses us!
+    # see also warnings.pm.
+    die sprintf "Incorrect use of pragma '%s' at %s line %d.\n", __PACKAGE__, +(caller)[1,2]
+        if __FILE__ !~ ( '(?x) \b     '.__PACKAGE__.'  \.pmc? \z' )
+        && __FILE__ =~ ( '(?x) \b (?i:'.__PACKAGE__.') \.pmc? \z' );
+
     %bitmask = (
         refs => 0x00000002,
         subs => 0x00000200,
@@ -93,6 +93,10 @@ strict - Perl pragma to restrict unsafe constructs
     no strict "vars";
 
 =head1 DESCRIPTION
+
+The C<strict> pragma disables certain Perl expressions that could behave
+unexpectedly or are difficult to debug, turning them into errors. The
+effect of this pragma is limited to the current file or scope block.
 
 If no import list is supplied, all possible restrictions are assumed.
 (This is the safest mode to operate in, but is sometimes too strict for

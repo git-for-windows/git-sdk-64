@@ -5,7 +5,7 @@ use warnings;
 no warnings 'surrogate';    # surrogates can be inputs to this
 use charnames ();
 
-our $VERSION = '0.61';
+our $VERSION = '0.64';
 
 require Exporter;
 
@@ -384,6 +384,9 @@ my %SIMPLE_UPPER;
 my %UNICODE_1_NAMES;
 my %ISO_COMMENT;
 
+# Eval'd so can run on versions earlier than the property is available in
+my $Hangul_Syllables_re = eval 'qr/\p{Block=Hangul_Syllables}/';
+
 sub charinfo {
 
     # This function has traditionally mimicked what is in UnicodeData.txt,
@@ -438,7 +441,7 @@ sub charinfo {
     # "Canonical" imply a compatible decomposition, and the type is prefixed
     # to that, as it is in UnicodeData.txt
     UnicodeVersion() unless defined $v_unicode_version;
-    if ($v_unicode_version ge v2.0.0 && $char =~ /\p{Block=Hangul_Syllables}/) {
+    if ($v_unicode_version ge v2.0.0 && $char =~ $Hangul_Syllables_re) {
         # The code points of the decomposition are output in standard Unicode
         # hex format, separated by blanks.
         $prop{'decomposition'} = join " ", map { sprintf("%04X", $_)}
@@ -775,7 +778,6 @@ sub charprop ($$) {
     }
     else {
         croak __PACKAGE__, "::charprop: Internal error: unknown format '$format'.  Please perlbug this";
-        return undef;
     }
 }
 
@@ -877,6 +879,10 @@ sub _charblocks {
 	    local $_;
 	    local $/ = "\n";
 	    while (<$BLOCKSFH>) {
+
+                # Old versions used a different syntax to mark the range.
+                $_ =~ s/;\s+/../ if $v_unicode_version lt v3.1.0;
+
 		if (/^([0-9A-F]+)\.\.([0-9A-F]+);\s+(.+)/) {
 		    my ($lo, $hi) = (hex($1), hex($2));
 		    my $subrange = [ $lo, $hi, $3 ];
@@ -934,6 +940,9 @@ sub charblock {
     elsif (exists $BLOCKS{$arg}) {
         return _dclone $BLOCKS{$arg};
     }
+
+    carp __PACKAGE__, "::charblock: unknown code '$arg'";
+    return;
 }
 
 =head2 B<charscript()>
@@ -1001,6 +1010,7 @@ sub charscript {
         return _dclone $SCRIPTS{$arg};
     }
 
+    carp __PACKAGE__, "::charscript: unknown code '$arg'";
     return;
 }
 
@@ -1226,6 +1236,9 @@ The routine returns B<false> otherwise.
 
 =cut
 
+# Eval'd so can run on versions earlier than the property is available in
+my $Composition_Exclusion_re = eval 'qr/\p{Composition_Exclusion}/';
+
 sub compexcl {
     my $arg  = shift;
     my $code = _getcode($arg);
@@ -1236,7 +1249,7 @@ sub compexcl {
     return if $v_unicode_version lt v3.0.0;
 
     no warnings "non_unicode";     # So works on non-Unicode code points
-    return chr($code) =~ /\p{Composition_Exclusion}/;
+    return chr($code) =~ $Composition_Exclusion_re
 }
 
 =head2 B<casefold()>
@@ -2652,9 +2665,11 @@ or even better, C<"Gc=LC">).
 
 Many Unicode properties have more than one name (or alias).  C<prop_invmap>
 understands all of these, including Perl extensions to them.  Ambiguities are
-resolved as described above for L</prop_aliases()>.  The Perl internal
-property "Perl_Decimal_Digit, described below, is also accepted.  An empty
-list is returned if the property name is unknown.
+resolved as described above for L</prop_aliases()> (except if a property has
+both a complete mapping, and a binary C<Y>/C<N> mapping, then specifying the
+property name prefixed by C<"is"> causes the binary one to be returned).  The
+Perl internal property "Perl_Decimal_Digit, described below, is also accepted.
+An empty list is returned if the property name is unknown.
 See L<perluniprops/Properties accessible through Unicode::UCD> for the
 properties acceptable as inputs to this function.
 
@@ -3253,8 +3268,8 @@ RETRY:
             # we need to also read in that table.  Create a hash with the keys
             # being the code points, and the values being a list of the
             # aliases for the code point key.
-            my ($aliases_code_points, $aliases_maps, undef, undef) =
-                                                &prop_invmap('Name_Alias');
+            my ($aliases_code_points, $aliases_maps, undef, undef)
+                  = &prop_invmap("_Perl_Name_Alias", '_perl_core_internal_ok');
             my %aliases;
             for (my $i = 0; $i < @$aliases_code_points; $i++) {
                 my $code_point = $aliases_code_points->[$i];
@@ -3545,7 +3560,19 @@ RETRY:
 
     if ($swash->{'LIST'} =~ /^V/) {
         @invlist = split "\n", $swash->{'LIST'} =~ s/ \s* (?: \# .* )? $ //xmgr;
-        shift @invlist;
+
+        shift @invlist;     # Get rid of 'V';
+
+        # Could need to be inverted: add or subtract a 0 at the beginning of
+        # the list.
+        if ($swash->{'INVERT_IT'}) {
+            if (@invlist && $invlist[0] == 0) {
+                shift @invlist;
+            }
+            else {
+                unshift @invlist, 0;
+            }
+        }
         foreach my $i (0 .. @invlist - 1) {
             $invmap[$i] = ($i % 2 == 0) ? 'Y' : 'N'
         }
@@ -3558,6 +3585,10 @@ RETRY:
         }
     }
     else {
+        if ($swash->{'INVERT_IT'}) {
+            croak __PACKAGE__, ":prop_invmap: Don't know how to deal with inverted";
+        }
+
         # The LIST input lines look like:
         # ...
         # 0374\t\tCommon
@@ -3873,7 +3904,7 @@ RETRY:
         map { $_ = [ split " ", $_  ] if $_ =~ / / } @invmap;
         $format = 'sl';
     }
-    elsif ($returned_prop eq 'ToNameAlias') {
+    elsif ($returned_prop =~ / To ( _Perl )? NameAlias/x) {
 
         # This property currently doesn't have any lists, but theoretically
         # could
@@ -3888,7 +3919,14 @@ RETRY:
         # to indicate that need to add code point to it.
         $format = 'ar';
     }
-    elsif ($format ne 'n' && $format ne 'a') {
+    elsif ($format eq 'ax') {
+
+        # Normally 'ax' properties have overrides, and will have been handled
+        # above, but if not, they still need adjustment, and the hex values
+        # have already been converted to decimal
+        $format = 'a';
+    }
+    elsif ($format ne 'n' && $format !~ / ^ a /x) {
 
         # All others are simple scalars
         $format = 's';
@@ -4078,6 +4116,15 @@ for its block using C<charblock>).
 
 Note that starting in Unicode 6.1, many of the block names have shorter
 synonyms.  These are always given in the new style.
+
+=head2 Use with older Unicode versions
+
+The functions in this module work as well as can be expected when
+used on earlier Unicode versions.  But, obviously, they use the available data
+from that Unicode version.  For example, if the Unicode version predates the
+definition of the script property (Unicode 3.1), then any function that deals
+with scripts is going to return C<undef> for the script portion of the return
+value.
 
 =head1 AUTHOR
 

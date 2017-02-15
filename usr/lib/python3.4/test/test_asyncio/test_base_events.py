@@ -3,6 +3,7 @@
 import errno
 import logging
 import math
+import os
 import socket
 import sys
 import threading
@@ -16,14 +17,137 @@ from asyncio import constants
 from asyncio import test_utils
 try:
     from test import support
-    from test.script_helper import assert_python_ok
 except ImportError:
     from asyncio import test_support as support
-    from asyncio.test_support import assert_python_ok
+try:
+    from test.support.script_helper import assert_python_ok
+except ImportError:
+    try:
+        from test.script_helper import assert_python_ok
+    except ImportError:
+        from asyncio.test_support import assert_python_ok
 
 
 MOCK_ANY = mock.ANY
 PY34 = sys.version_info >= (3, 4)
+
+
+def mock_socket_module():
+    m_socket = mock.MagicMock(spec=socket)
+    for name in (
+        'AF_INET', 'AF_INET6', 'AF_UNSPEC', 'IPPROTO_TCP', 'IPPROTO_UDP',
+        'SOCK_STREAM', 'SOCK_DGRAM', 'SOL_SOCKET', 'SO_REUSEADDR', 'inet_pton'
+    ):
+        if hasattr(socket, name):
+            setattr(m_socket, name, getattr(socket, name))
+        else:
+            delattr(m_socket, name)
+
+    m_socket.socket = mock.MagicMock()
+    m_socket.socket.return_value = test_utils.mock_nonblocking_socket()
+
+    return m_socket
+
+
+def patch_socket(f):
+    return mock.patch('asyncio.base_events.socket',
+                      new_callable=mock_socket_module)(f)
+
+
+class BaseEventTests(test_utils.TestCase):
+
+    def setUp(self):
+        super().setUp()
+        base_events._ipaddr_info.cache_clear()
+
+    def tearDown(self):
+        base_events._ipaddr_info.cache_clear()
+        super().tearDown()
+
+    def test_ipaddr_info(self):
+        UNSPEC = socket.AF_UNSPEC
+        INET = socket.AF_INET
+        INET6 = socket.AF_INET6
+        STREAM = socket.SOCK_STREAM
+        DGRAM = socket.SOCK_DGRAM
+        TCP = socket.IPPROTO_TCP
+        UDP = socket.IPPROTO_UDP
+
+        self.assertEqual(
+            (INET, STREAM, TCP, '', ('1.2.3.4', 1)),
+            base_events._ipaddr_info('1.2.3.4', 1, INET, STREAM, TCP))
+
+        self.assertEqual(
+            (INET, STREAM, TCP, '', ('1.2.3.4', 1)),
+            base_events._ipaddr_info('1.2.3.4', 1, UNSPEC, STREAM, TCP))
+
+        self.assertEqual(
+            (INET, DGRAM, UDP, '', ('1.2.3.4', 1)),
+            base_events._ipaddr_info('1.2.3.4', 1, UNSPEC, DGRAM, UDP))
+
+        # Socket type STREAM implies TCP protocol.
+        self.assertEqual(
+            (INET, STREAM, TCP, '', ('1.2.3.4', 1)),
+            base_events._ipaddr_info('1.2.3.4', 1, UNSPEC, STREAM, 0))
+
+        # Socket type DGRAM implies UDP protocol.
+        self.assertEqual(
+            (INET, DGRAM, UDP, '', ('1.2.3.4', 1)),
+            base_events._ipaddr_info('1.2.3.4', 1, UNSPEC, DGRAM, 0))
+
+        # No socket type.
+        self.assertIsNone(
+            base_events._ipaddr_info('1.2.3.4', 1, UNSPEC, 0, 0))
+
+        # IPv4 address with family IPv6.
+        self.assertIsNone(
+            base_events._ipaddr_info('1.2.3.4', 1, INET6, STREAM, TCP))
+
+        self.assertEqual(
+            (INET6, STREAM, TCP, '', ('::3', 1)),
+            base_events._ipaddr_info('::3', 1, INET6, STREAM, TCP))
+
+        self.assertEqual(
+            (INET6, STREAM, TCP, '', ('::3', 1)),
+            base_events._ipaddr_info('::3', 1, UNSPEC, STREAM, TCP))
+
+        # IPv6 address with family IPv4.
+        self.assertIsNone(
+            base_events._ipaddr_info('::3', 1, INET, STREAM, TCP))
+
+        # IPv6 address with zone index.
+        self.assertEqual(
+            (INET6, STREAM, TCP, '', ('::3%lo0', 1)),
+            base_events._ipaddr_info('::3%lo0', 1, INET6, STREAM, TCP))
+
+    @patch_socket
+    def test_ipaddr_info_no_inet_pton(self, m_socket):
+        del m_socket.inet_pton
+        self.test_ipaddr_info()
+
+    def test_check_resolved_address(self):
+        sock = socket.socket(socket.AF_INET)
+        with sock:
+            base_events._check_resolved_address(sock, ('1.2.3.4', 1))
+
+        sock = socket.socket(socket.AF_INET6)
+        with sock:
+            base_events._check_resolved_address(sock, ('::3', 1))
+            base_events._check_resolved_address(sock, ('::3%lo0', 1))
+            with self.assertRaises(ValueError):
+                base_events._check_resolved_address(sock, ('foo', 1))
+
+    def test_check_resolved_sock_type(self):
+        # Ensure we ignore extra flags in sock.type.
+        if hasattr(socket, 'SOCK_NONBLOCK'):
+            sock = socket.socket(type=socket.SOCK_STREAM | socket.SOCK_NONBLOCK)
+            with sock:
+                base_events._check_resolved_address(sock, ('1.2.3.4', 1))
+
+        if hasattr(socket, 'SOCK_CLOEXEC'):
+            sock = socket.socket(type=socket.SOCK_STREAM | socket.SOCK_CLOEXEC)
+            with sock:
+                base_events._check_resolved_address(sock, ('1.2.3.4', 1))
 
 
 class BaseEventLoopTests(test_utils.TestCase):
@@ -56,7 +180,8 @@ class BaseEventLoopTests(test_utils.TestCase):
             NotImplementedError,
             self.loop._make_write_pipe_transport, m, m)
         gen = self.loop._make_subprocess_transport(m, m, m, m, m, m, m)
-        self.assertRaises(NotImplementedError, next, iter(gen))
+        with self.assertRaises(NotImplementedError):
+            gen.send(None)
 
     def test_close(self):
         self.assertFalse(self.loop.is_closed())
@@ -499,7 +624,7 @@ class BaseEventLoopTests(test_utils.TestCase):
 
         # Test Future.__del__
         with mock.patch('asyncio.base_events.logger') as log:
-            fut = asyncio.async(zero_error_coro(), loop=self.loop)
+            fut = asyncio.ensure_future(zero_error_coro(), loop=self.loop)
             fut.add_done_callback(lambda *args: self.loop.stop())
             self.loop.run_forever()
             fut = None # Trigger Future.__del__ or futures._TracebackLogger
@@ -623,6 +748,42 @@ class BaseEventLoopTests(test_utils.TestCase):
             self.assertIs(type(_context['context']['exception']),
                           ZeroDivisionError)
 
+    def test_set_task_factory_invalid(self):
+        with self.assertRaisesRegex(
+            TypeError, 'task factory must be a callable or None'):
+
+            self.loop.set_task_factory(1)
+
+        self.assertIsNone(self.loop.get_task_factory())
+
+    def test_set_task_factory(self):
+        self.loop._process_events = mock.Mock()
+
+        class MyTask(asyncio.Task):
+            pass
+
+        @asyncio.coroutine
+        def coro():
+            pass
+
+        factory = lambda loop, coro: MyTask(coro, loop=loop)
+
+        self.assertIsNone(self.loop.get_task_factory())
+        self.loop.set_task_factory(factory)
+        self.assertIs(self.loop.get_task_factory(), factory)
+
+        task = self.loop.create_task(coro())
+        self.assertTrue(isinstance(task, MyTask))
+        self.loop.run_until_complete(task)
+
+        self.loop.set_task_factory(None)
+        self.assertIsNone(self.loop.get_task_factory())
+
+        task = self.loop.create_task(coro())
+        self.assertTrue(isinstance(task, asyncio.Task))
+        self.assertFalse(isinstance(task, MyTask))
+        self.loop.run_until_complete(task)
+
     def test_env_var_debug(self):
         code = '\n'.join((
             'import asyncio',
@@ -662,7 +823,7 @@ class BaseEventLoopTests(test_utils.TestCase):
         self.set_event_loop(loop)
 
         coro = test()
-        task = asyncio.async(coro, loop=loop)
+        task = asyncio.ensure_future(coro, loop=loop)
         self.assertIsInstance(task, MyTask)
 
         # make warnings quiet
@@ -714,6 +875,59 @@ class BaseEventLoopTests(test_utils.TestCase):
             pass
         self.assertTrue(func.called)
 
+    def test_single_selecter_event_callback_after_stopping(self):
+        # Python issue #25593: A stopped event loop may cause event callbacks
+        # to run more than once.
+        event_sentinel = object()
+        callcount = 0
+        doer = None
+
+        def proc_events(event_list):
+            nonlocal doer
+            if event_sentinel in event_list:
+                doer = self.loop.call_soon(do_event)
+
+        def do_event():
+            nonlocal callcount
+            callcount += 1
+            self.loop.call_soon(clear_selector)
+
+        def clear_selector():
+            doer.cancel()
+            self.loop._selector.select.return_value = ()
+
+        self.loop._process_events = proc_events
+        self.loop._selector.select.return_value = (event_sentinel,)
+
+        for i in range(1, 3):
+            with self.subTest('Loop %d/2' % i):
+                self.loop.call_soon(self.loop.stop)
+                self.loop.run_forever()
+                self.assertEqual(callcount, 1)
+
+    def test_run_once(self):
+        # Simple test for test_utils.run_once().  It may seem strange
+        # to have a test for this (the function isn't even used!) but
+        # it's a de-factor standard API for library tests.  This tests
+        # the idiom: loop.call_soon(loop.stop); loop.run_forever().
+        count = 0
+
+        def callback():
+            nonlocal count
+            count += 1
+
+        self.loop._process_events = mock.Mock()
+        self.loop.call_soon(callback)
+        test_utils.run_once(self.loop)
+        self.assertEqual(count, 1)
+
+    def test_run_forever_pre_stopped(self):
+        # Test that the old idiom for pre-stopping the loop works.
+        self.loop._process_events = mock.Mock()
+        self.loop.stop()
+        self.loop.run_forever()
+        self.loop._selector.select.assert_called_once_with(0)
+
 
 class MyProto(asyncio.Protocol):
     done = None
@@ -748,11 +962,11 @@ class MyProto(asyncio.Protocol):
 class MyDatagramProto(asyncio.DatagramProtocol):
     done = None
 
-    def __init__(self, create_future=False):
+    def __init__(self, create_future=False, loop=None):
         self.state = 'INITIAL'
         self.nbytes = 0
         if create_future:
-            self.done = asyncio.Future()
+            self.done = asyncio.Future(loop=loop)
 
     def connection_made(self, transport):
         self.transport = transport
@@ -779,7 +993,12 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
         self.loop = asyncio.new_event_loop()
         self.set_event_loop(self.loop)
 
-    @mock.patch('asyncio.base_events.socket')
+    def tearDown(self):
+        # Clear mocked constants like AF_INET from the cache.
+        base_events._ipaddr_info.cache_clear()
+        super().tearDown()
+
+    @patch_socket
     def test_create_connection_multiple_errors(self, m_socket):
 
         class MyProto(asyncio.Protocol):
@@ -812,7 +1031,7 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
 
         self.assertEqual(str(cm.exception), 'Multiple exceptions: err1, err2')
 
-    @mock.patch('asyncio.base_events.socket')
+    @patch_socket
     def test_create_connection_timeout(self, m_socket):
         # Ensure that the socket is closed on timeout
         sock = mock.Mock()
@@ -890,7 +1109,7 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
         with self.assertRaises(OSError):
             self.loop.run_until_complete(coro)
 
-    @mock.patch('asyncio.base_events.socket')
+    @patch_socket
     def test_create_connection_multiple_errors_local_addr(self, m_socket):
 
         def bind(addr):
@@ -921,6 +1140,53 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
 
         self.assertTrue(str(cm.exception).startswith('Multiple exceptions: '))
         self.assertTrue(m_socket.socket.return_value.close.called)
+
+    def _test_create_connection_ip_addr(self, m_socket, allow_inet_pton):
+        # Test the fallback code, even if this system has inet_pton.
+        if not allow_inet_pton:
+            del m_socket.inet_pton
+
+        def getaddrinfo(*args, **kw):
+            self.fail('should not have called getaddrinfo')
+
+        m_socket.getaddrinfo = getaddrinfo
+        sock = m_socket.socket.return_value
+
+        self.loop.add_reader = mock.Mock()
+        self.loop.add_reader._is_coroutine = False
+        self.loop.add_writer = mock.Mock()
+        self.loop.add_writer._is_coroutine = False
+
+        coro = self.loop.create_connection(asyncio.Protocol, '1.2.3.4', 80)
+        t, p = self.loop.run_until_complete(coro)
+        try:
+            sock.connect.assert_called_with(('1.2.3.4', 80))
+            m_socket.socket.assert_called_with(family=m_socket.AF_INET,
+                                               proto=m_socket.IPPROTO_TCP,
+                                               type=m_socket.SOCK_STREAM)
+        finally:
+            t.close()
+            test_utils.run_briefly(self.loop)  # allow transport to close
+
+        sock.family = socket.AF_INET6
+        coro = self.loop.create_connection(asyncio.Protocol, '::2', 80)
+        t, p = self.loop.run_until_complete(coro)
+        try:
+            sock.connect.assert_called_with(('::2', 80))
+            m_socket.socket.assert_called_with(family=m_socket.AF_INET6,
+                                               proto=m_socket.IPPROTO_TCP,
+                                               type=m_socket.SOCK_STREAM)
+        finally:
+            t.close()
+            test_utils.run_briefly(self.loop)  # allow transport to close
+
+    @patch_socket
+    def test_create_connection_ip_addr(self, m_socket):
+        self._test_create_connection_ip_addr(m_socket, True)
+
+    @patch_socket
+    def test_create_connection_no_inet_pton(self, m_socket):
+        self._test_create_connection_ip_addr(m_socket, False)
 
     def test_create_connection_no_local_addr(self):
         @asyncio.coroutine
@@ -1057,7 +1323,18 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
         f = self.loop.create_server(MyProto, '0.0.0.0', 0)
         self.assertRaises(OSError, self.loop.run_until_complete, f)
 
-    @mock.patch('asyncio.base_events.socket')
+    @patch_socket
+    def test_create_server_nosoreuseport(self, m_socket):
+        m_socket.getaddrinfo = socket.getaddrinfo
+        del m_socket.SO_REUSEPORT
+        m_socket.socket.return_value = mock.Mock()
+
+        f = self.loop.create_server(
+            MyProto, '0.0.0.0', 0, reuse_port=True)
+
+        self.assertRaises(ValueError, self.loop.run_until_complete, f)
+
+    @patch_socket
     def test_create_server_cant_bind(self, m_socket):
 
         class Err(OSError):
@@ -1073,7 +1350,7 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
         self.assertRaises(OSError, self.loop.run_until_complete, fut)
         self.assertTrue(m_sock.close.called)
 
-    @mock.patch('asyncio.base_events.socket')
+    @patch_socket
     def test_create_datagram_endpoint_no_addrinfo(self, m_socket):
         m_socket.getaddrinfo.return_value = []
         m_socket.getaddrinfo._is_coroutine = False
@@ -1102,7 +1379,7 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
         self.assertRaises(
             OSError, self.loop.run_until_complete, coro)
 
-    @mock.patch('asyncio.base_events.socket')
+    @patch_socket
     def test_create_datagram_endpoint_socket_err(self, m_socket):
         m_socket.getaddrinfo = socket.getaddrinfo
         m_socket.socket.side_effect = OSError
@@ -1125,7 +1402,7 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
         self.assertRaises(
             ValueError, self.loop.run_until_complete, coro)
 
-    @mock.patch('asyncio.base_events.socket')
+    @patch_socket
     def test_create_datagram_endpoint_setblk_err(self, m_socket):
         m_socket.socket.return_value.setblocking.side_effect = OSError
 
@@ -1141,12 +1418,11 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
             asyncio.DatagramProtocol)
         self.assertRaises(ValueError, self.loop.run_until_complete, coro)
 
-    @mock.patch('asyncio.base_events.socket')
+    @patch_socket
     def test_create_datagram_endpoint_cant_bind(self, m_socket):
         class Err(OSError):
             pass
 
-        m_socket.AF_INET6 = socket.AF_INET6
         m_socket.getaddrinfo = socket.getaddrinfo
         m_sock = m_socket.socket.return_value = mock.Mock()
         m_sock.bind.side_effect = Err
@@ -1156,6 +1432,149 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
             local_addr=('127.0.0.1', 0), family=socket.AF_INET)
         self.assertRaises(Err, self.loop.run_until_complete, fut)
         self.assertTrue(m_sock.close.called)
+
+    def test_create_datagram_endpoint_sock(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.bind(('127.0.0.1', 0))
+        fut = self.loop.create_datagram_endpoint(
+            lambda: MyDatagramProto(create_future=True, loop=self.loop),
+            sock=sock)
+        transport, protocol = self.loop.run_until_complete(fut)
+        transport.close()
+        self.loop.run_until_complete(protocol.done)
+        self.assertEqual('CLOSED', protocol.state)
+
+    def test_create_datagram_endpoint_sock_sockopts(self):
+        fut = self.loop.create_datagram_endpoint(
+            MyDatagramProto, local_addr=('127.0.0.1', 0), sock=object())
+        self.assertRaises(ValueError, self.loop.run_until_complete, fut)
+
+        fut = self.loop.create_datagram_endpoint(
+            MyDatagramProto, remote_addr=('127.0.0.1', 0), sock=object())
+        self.assertRaises(ValueError, self.loop.run_until_complete, fut)
+
+        fut = self.loop.create_datagram_endpoint(
+            MyDatagramProto, family=1, sock=object())
+        self.assertRaises(ValueError, self.loop.run_until_complete, fut)
+
+        fut = self.loop.create_datagram_endpoint(
+            MyDatagramProto, proto=1, sock=object())
+        self.assertRaises(ValueError, self.loop.run_until_complete, fut)
+
+        fut = self.loop.create_datagram_endpoint(
+            MyDatagramProto, flags=1, sock=object())
+        self.assertRaises(ValueError, self.loop.run_until_complete, fut)
+
+        fut = self.loop.create_datagram_endpoint(
+            MyDatagramProto, reuse_address=True, sock=object())
+        self.assertRaises(ValueError, self.loop.run_until_complete, fut)
+
+        fut = self.loop.create_datagram_endpoint(
+            MyDatagramProto, reuse_port=True, sock=object())
+        self.assertRaises(ValueError, self.loop.run_until_complete, fut)
+
+        fut = self.loop.create_datagram_endpoint(
+            MyDatagramProto, allow_broadcast=True, sock=object())
+        self.assertRaises(ValueError, self.loop.run_until_complete, fut)
+
+    def test_create_datagram_endpoint_sockopts(self):
+        # Socket options should not be applied unless asked for.
+        # SO_REUSEADDR defaults to on for UNIX.
+        # SO_REUSEPORT is not available on all platforms.
+
+        coro = self.loop.create_datagram_endpoint(
+            lambda: MyDatagramProto(create_future=True, loop=self.loop),
+            local_addr=('127.0.0.1', 0))
+        transport, protocol = self.loop.run_until_complete(coro)
+        sock = transport.get_extra_info('socket')
+
+        reuse_address_default_on = (
+            os.name == 'posix' and sys.platform != 'cygwin')
+        reuseport_supported = hasattr(socket, 'SO_REUSEPORT')
+
+        if reuse_address_default_on:
+            self.assertTrue(
+                sock.getsockopt(
+                    socket.SOL_SOCKET, socket.SO_REUSEADDR))
+        else:
+            self.assertFalse(
+                sock.getsockopt(
+                    socket.SOL_SOCKET, socket.SO_REUSEADDR))
+        if reuseport_supported:
+            self.assertFalse(
+                sock.getsockopt(
+                    socket.SOL_SOCKET, socket.SO_REUSEPORT))
+        self.assertFalse(
+            sock.getsockopt(
+                socket.SOL_SOCKET, socket.SO_BROADCAST))
+
+        transport.close()
+        self.loop.run_until_complete(protocol.done)
+        self.assertEqual('CLOSED', protocol.state)
+
+        coro = self.loop.create_datagram_endpoint(
+            lambda: MyDatagramProto(create_future=True, loop=self.loop),
+            local_addr=('127.0.0.1', 0),
+            reuse_address=True,
+            reuse_port=reuseport_supported,
+            allow_broadcast=True)
+        transport, protocol = self.loop.run_until_complete(coro)
+        sock = transport.get_extra_info('socket')
+
+        self.assertTrue(
+            sock.getsockopt(
+                socket.SOL_SOCKET, socket.SO_REUSEADDR))
+        if reuseport_supported:
+            self.assertTrue(
+                sock.getsockopt(
+                    socket.SOL_SOCKET, socket.SO_REUSEPORT))
+        self.assertTrue(
+            sock.getsockopt(
+                socket.SOL_SOCKET, socket.SO_BROADCAST))
+
+        transport.close()
+        self.loop.run_until_complete(protocol.done)
+        self.assertEqual('CLOSED', protocol.state)
+
+    @patch_socket
+    def test_create_datagram_endpoint_nosoreuseport(self, m_socket):
+        del m_socket.SO_REUSEPORT
+        m_socket.socket.return_value = mock.Mock()
+
+        coro = self.loop.create_datagram_endpoint(
+            lambda: MyDatagramProto(loop=self.loop),
+            local_addr=('127.0.0.1', 0),
+            reuse_address=False,
+            reuse_port=True)
+
+        self.assertRaises(ValueError, self.loop.run_until_complete, coro)
+
+    @patch_socket
+    def test_create_datagram_endpoint_ip_addr(self, m_socket):
+        def getaddrinfo(*args, **kw):
+            self.fail('should not have called getaddrinfo')
+
+        m_socket.getaddrinfo = getaddrinfo
+        m_socket.socket.return_value.bind = bind = mock.Mock()
+        self.loop.add_reader = mock.Mock()
+        self.loop.add_reader._is_coroutine = False
+
+        reuseport_supported = hasattr(socket, 'SO_REUSEPORT')
+        coro = self.loop.create_datagram_endpoint(
+            lambda: MyDatagramProto(loop=self.loop),
+            local_addr=('1.2.3.4', 0),
+            reuse_address=False,
+            reuse_port=reuseport_supported)
+
+        t, p = self.loop.run_until_complete(coro)
+        try:
+            bind.assert_called_with(('1.2.3.4', 0))
+            m_socket.socket.assert_called_with(family=m_socket.AF_INET,
+                                               proto=m_socket.IPPROTO_UDP,
+                                               type=m_socket.SOCK_DGRAM)
+        finally:
+            t.close()
+            test_utils.run_briefly(self.loop)  # allow transport to close
 
     def test_accept_connection_retry(self):
         sock = mock.Mock()
@@ -1224,7 +1643,7 @@ class BaseEventLoopWithSelectorTests(test_utils.TestCase):
                          "took .* seconds$")
 
         # slow task
-        asyncio.async(stop_loop_coro(self.loop), loop=self.loop)
+        asyncio.ensure_future(stop_loop_coro(self.loop), loop=self.loop)
         self.loop.run_forever()
         fmt, *args = m_logger.warning.call_args[0]
         self.assertRegex(fmt % tuple(args),

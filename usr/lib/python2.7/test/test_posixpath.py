@@ -7,6 +7,11 @@ import os
 import sys
 from posixpath import realpath, abspath, dirname, basename
 
+try:
+    import posix
+except ImportError:
+    posix = None
+
 # An absolute path to a temporary filename for testing. We can't rely on TESTFN
 # being an absolute path, so we need this.
 
@@ -100,7 +105,7 @@ class PosixPathTest(unittest.TestCase):
             f.write("foo")
             f.close()
             self.assertIs(posixpath.islink(test_support.TESTFN + "1"), False)
-            if hasattr(os, "symlink"):
+            if hasattr(os, 'symlink'):
                 os.symlink(test_support.TESTFN + "1", test_support.TESTFN + "2")
                 self.assertIs(posixpath.islink(test_support.TESTFN + "2"), True)
                 os.remove(test_support.TESTFN + "1")
@@ -196,8 +201,73 @@ class PosixPathTest(unittest.TestCase):
     def test_ismount(self):
         self.assertIs(posixpath.ismount("/"), True)
 
+    def test_ismount_non_existent(self):
+        # Non-existent mountpoint.
+        self.assertIs(posixpath.ismount(ABSTFN), False)
+        try:
+            os.mkdir(ABSTFN)
+            self.assertIs(posixpath.ismount(ABSTFN), False)
+        finally:
+            safe_rmdir(ABSTFN)
+
+    @unittest.skipUnless(hasattr(os, 'symlink'),
+                         'Requires functional symlink implementation')
+    def test_ismount_symlinks(self):
+        # Symlinks are never mountpoints.
+        try:
+            os.symlink("/", ABSTFN)
+            self.assertIs(posixpath.ismount(ABSTFN), False)
+        finally:
+            os.unlink(ABSTFN)
+
+    @unittest.skipIf(posix is None, "Test requires posix module")
+    def test_ismount_different_device(self):
+        # Simulate the path being on a different device from its parent by
+        # mocking out st_dev.
+        save_lstat = os.lstat
+        def fake_lstat(path):
+            st_ino = 0
+            st_dev = 0
+            if path == ABSTFN:
+                st_dev = 1
+                st_ino = 1
+            return posix.stat_result((0, st_ino, st_dev, 0, 0, 0, 0, 0, 0, 0))
+        try:
+            os.lstat = fake_lstat
+            self.assertIs(posixpath.ismount(ABSTFN), True)
+        finally:
+            os.lstat = save_lstat
+
+    @unittest.skipIf(posix is None, "Test requires posix module")
+    def test_ismount_directory_not_readable(self):
+        # issue #2466: Simulate ismount run on a directory that is not
+        # readable, which used to return False.
+        save_lstat = os.lstat
+        def fake_lstat(path):
+            st_ino = 0
+            st_dev = 0
+            if path.startswith(ABSTFN) and path != ABSTFN:
+                # ismount tries to read something inside the ABSTFN directory;
+                # simulate this being forbidden (no read permission).
+                raise OSError("Fake [Errno 13] Permission denied")
+            if path == ABSTFN:
+                st_dev = 1
+                st_ino = 1
+            return posix.stat_result((0, st_ino, st_dev, 0, 0, 0, 0, 0, 0, 0))
+        try:
+            os.lstat = fake_lstat
+            self.assertIs(posixpath.ismount(ABSTFN), True)
+        finally:
+            os.lstat = save_lstat
+
     def test_expanduser(self):
         self.assertEqual(posixpath.expanduser("foo"), "foo")
+        with test_support.EnvironmentVarGuard() as env:
+            for home in '/', '', '//', '///':
+                env['HOME'] = home
+                self.assertEqual(posixpath.expanduser("~"), "/")
+                self.assertEqual(posixpath.expanduser("~/"), "/")
+                self.assertEqual(posixpath.expanduser("~/foo"), "/foo")
         try:
             import pwd
         except ImportError:
@@ -214,9 +284,12 @@ class PosixPathTest(unittest.TestCase):
             self.assertIsInstance(posixpath.expanduser("~foo/"), basestring)
 
             with test_support.EnvironmentVarGuard() as env:
-                env['HOME'] = '/'
-                self.assertEqual(posixpath.expanduser("~"), "/")
-                self.assertEqual(posixpath.expanduser("~/foo"), "/foo")
+                # expanduser should fall back to using the password database
+                del env['HOME']
+                home = pwd.getpwuid(os.getuid()).pw_dir
+                # $HOME can end with a trailing /, so strip it (see #17809)
+                home = home.rstrip("/") or '/'
+                self.assertEqual(posixpath.expanduser("~"), home)
 
     def test_normpath(self):
         self.assertEqual(posixpath.normpath(""), ".")

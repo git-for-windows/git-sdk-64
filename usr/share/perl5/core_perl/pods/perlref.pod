@@ -51,13 +51,6 @@ When a scalar is holding a reference, it always behaves as a simple scalar.
 It doesn't magically start being an array or hash or subroutine; you have to
 tell it explicitly to do so, by dereferencing it.
 
-That said, be aware that Perl version 5.14 introduces an exception
-to the rule, for syntactic convenience.  Experimental array and hash container
-function behavior allows array and hash references to be handled by Perl as
-if they had been explicitly syntactically dereferenced.  See
-L<perl5140delta/"Syntactical Enhancements">
-and L<perlfunc> for details.
-
 =head2 Making References
 X<reference, creation> X<referencing>
 
@@ -272,8 +265,9 @@ the IO handle, used for file handles (L<perlfunc/open>), sockets
 (L<perlfunc/socket> and L<perlfunc/socketpair>), and directory
 handles (L<perlfunc/opendir>).  For compatibility with previous
 versions of Perl, C<*foo{FILEHANDLE}> is a synonym for C<*foo{IO}>, though it
-is deprecated as of 5.8.0.  If deprecation warnings are in effect, it will warn
-of its use.
+is discouraged, to encourage a consistent use of one name: IO.  On perls
+between v5.8 and v5.22, it will issue a deprecation warning, but this
+deprecation has since been rescinded.
 
 C<*foo{THING}> returns undef if that particular THING hasn't been used yet,
 except in the case of scalars.  C<*foo{SCALAR}> returns a reference to an
@@ -758,9 +752,9 @@ For example:
     $r = [ 1, [ 2, 3 ], 4 ];
     $r->[1]->@*;  # equivalent to @{ $r->[1] }
 
-This syntax must be enabled with C<use feature 'postderef'>.  It is
-experimental, and will warn by default unless C<no warnings
-'experimental::postderef'> is in effect.
+In Perl 5.20 and 5.22, this syntax must be enabled with C<use feature
+'postderef'>. As of Perl 5.24, no feature declarations are required to make
+it available.
 
 Postfix dereference should work in all circumstances where block
 (circumfix) dereference worked, and should be entirely equivalent.  This
@@ -783,7 +777,7 @@ Glob elements can be extracted through the postfix dereferencing feature:
 
 Postfix array and scalar dereferencing I<can> be used in interpolating
 strings (double quotes or the C<qq> operator), but only if the
-additional C<postderef_qq> feature is enabled.
+C<postderef_qq> feature is enabled.
 
 =head2 Postfix Reference Slicing
 
@@ -802,7 +796,7 @@ Slices">, also behaves as expected:
 
 As with postfix array, postfix value slice dereferencing I<can> be used
 in interpolating strings (double quotes or the C<qq> operator), but only
-if the additional C<postderef_qq> L<feature> is enabled.
+if the C<postderef_qq> L<feature> is enabled.
 
 =head1 Assigning to References
 
@@ -887,7 +881,7 @@ for obfuscated code:
     # @harry is (1,2,3)
 
     my $type = ref $thingy;
-    ($type ? $type == 'ARRAY' ? \@foo : \$bar : $baz) = $thingy;
+    ($type ? $type eq 'ARRAY' ? \@foo : \$bar : $baz) = $thingy;
 
 The C<foreach> loop can also take a reference constructor for its loop
 variable, though the syntax is limited to one of the following, with an
@@ -906,7 +900,7 @@ arrays-of-arrays, or arrays-of-hashes:
     }
 
     foreach \my %h (@array_of_hashes) {
-        $h{gelastic}++ if $h{type} == 'funny';
+        $h{gelastic}++ if $h{type} eq 'funny';
     }
 
 B<CAVEAT:> Aliasing does not work correctly with closures.  If you try to

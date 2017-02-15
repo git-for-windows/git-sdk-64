@@ -28,8 +28,8 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.4
 srcdir=		.
 
-abs_srcdir=	/msys_scripts/python3/src/Python-3.4.3
-abs_builddir=	/msys_scripts/python3/src/Python-3.4.3
+abs_srcdir=	/msys_scripts/python3/src/Python-3.4.5
+abs_builddir=	/msys_scripts/python3/src/Python-3.4.5
 
 
 CC=		x86_64-pc-msys-gcc
@@ -243,7 +243,7 @@ BASEMODLIBS=
 PYTHONPATH=$(COREPYTHONPATH)
 COREPYTHONPATH=$(DESTPATH)$(SITEPATH)$(TESTPATH)$(MACHDEPPATH)$(EXTRAMACHDEPPATH)
 EXTRAMACHDEPPATH=
-MACHDEPPATH=:plat-$(MACHDEP)
+MACHDEPPATH=:$(PLATDIR)
 TESTPATH=
 SITEPATH=
 DESTPATH=
@@ -1137,9 +1137,8 @@ maninstall:	altmaninstall
 	(cd $(DESTDIR)$(MANDIR)/man1; $(LN) -s python$(VERSION).1 python3.1)
 
 # Install the library
-PLATDIR=	plat-$(MACHDEP)
-EXTRAPLATDIR= @EXTRAPLATDIR@
-MACHDEPS=	$(PLATDIR) $(EXTRAPLATDIR)
+PLATDIR=	plat-msys
+MACHDEPS=	$(PLATDIR)
 XMLLIBSUBDIRS=  xml xml/dom xml/etree xml/parsers xml/sax
 LIBSUBDIRS=	tkinter tkinter/test tkinter/test/test_tkinter \
 		tkinter/test/test_ttk site-packages test \
@@ -1325,7 +1324,7 @@ inclinstall:
 
 # Install the library and miscellaneous stuff needed for extending/embedding
 # This goes into $(exec_prefix)
-LIBPL=		$(LIBDEST)/config-$(LDVERSION)
+LIBPL=		$(prefix)/lib/python3.4/config-$(VERSION)$(ABIFLAGS)
 
 # pkgconfig directory
 LIBPC=		$(LIBDIR)/pkgconfig

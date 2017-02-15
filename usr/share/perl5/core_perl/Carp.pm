@@ -87,7 +87,8 @@ BEGIN {
     }
 }
 
-our $VERSION = '1.36';
+our $VERSION = '1.40';
+$VERSION =~ tr/_//d;
 
 our $MaxEvalLen = 0;
 our $Verbose    = 0;
@@ -229,7 +230,7 @@ sub caller_info {
             my $overflow;
             if ( $MaxArgNums and @args > $MaxArgNums )
             {    # More than we want to show?
-                $#args = $MaxArgNums;
+                $#args = $MaxArgNums - 1;
                 $overflow = 1;
             }
 
@@ -444,7 +445,9 @@ sub long_error_loc {
 }
 
 sub longmess_heavy {
-    return @_ if ref( $_[0] );    # don't break references as exceptions
+    if ( ref( $_[0] ) ) {   # don't break references as exceptions
+        return wantarray ? @_ : $_[0];
+    }
     my $i = long_error_loc();
     return ret_backtrace( $i, @_ );
 }
@@ -783,7 +786,8 @@ Defaults to C<64>.
 =head2 $Carp::MaxArgNums
 
 This variable determines how many arguments to each function to show.
-Use a value of C<0> to show all arguments to a function call.
+Use a false value to show all arguments to a function call.  To suppress all
+arguments, use C<-1> or C<'0 but true'>.
 
 Defaults to C<8>.
 
@@ -903,6 +907,12 @@ call die() or warn(), as appropriate.
 
 L<Carp::Always>,
 L<Carp::Clan>
+
+=head1 CONTRIBUTING
+
+L<Carp> is maintained by the perl 5 porters as part of the core perl 5
+version control repository. Please see the L<perlhack> perldoc for how to
+submit patches and contribute to it.
 
 =head1 AUTHOR
 

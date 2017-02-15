@@ -30,9 +30,9 @@ NOTE: this function is experimental and may change or be
 removed without notice.
 
 
-Return an entry from the BHK structure.  I<which> is a preprocessor token
+Return an entry from the BHK structure.  C<which> is a preprocessor token
 indicating which entry to return.  If the appropriate flag is not set
-this will return NULL.  The type of the return value depends on which
+this will return C<NULL>.  The type of the return value depends on which
 entry you ask for.
 
 	void *	BhkENTRY(BHK *hk, which)
@@ -63,8 +63,8 @@ NOTE: this function is experimental and may change or be
 removed without notice.
 
 
-Call all the registered block hooks for type I<which>.  I<which> is a
-preprocessing token; the type of I<arg> depends on I<which>.
+Call all the registered block hooks for type C<which>.  C<which> is a
+preprocessing token; the type of C<arg> depends on C<which>.
 
 	void	CALL_BLOCK_HOOKS(which, arg)
 
@@ -82,8 +82,8 @@ Found in file op.h
 X<core_prototype>
 
 This function assigns the prototype of the named core function to C<sv>, or
-to a new mortal SV if C<sv> is NULL.  It returns the modified C<sv>, or
-NULL if the core function has no prototype.  C<code> is a code as returned
+to a new mortal SV if C<sv> is C<NULL>.  It returns the modified C<sv>, or
+C<NULL> if the core function has no prototype.  C<code> is a code as returned
 by C<keyword()>.  It must not be equal to 0.
 
 	SV *	core_prototype(SV *sv, const char *name,
@@ -109,7 +109,7 @@ Check for the cases 0 or 3 of cur_env.je_ret, only used inside an eval context.
 
 3 is used for a die caught by an inner eval - continue inner loop
 
-See cop.h: je_mustcatch, when set at any runlevel to TRUE, means eval ops must
+See F<cop.h>: je_mustcatch, when set at any runlevel to TRUE, means eval ops must
 establish a local jmpenv to handle exception traps.
 
 	OP*	docatch(OP *o)
@@ -142,7 +142,7 @@ There is a further complication with non-closure anonymous subs (i.e. those
 that do not refer to any lexicals outside that sub).  In this case, the
 anonymous prototype is shared rather than being cloned.  This has the
 consequence that the parent may be freed while there are still active
-children, eg
+children, I<e.g.>,
 
     BEGIN { $a = sub { eval '$x' } }
 
@@ -199,10 +199,10 @@ Found in file pad.c
 =item cv_forget_slab
 X<cv_forget_slab>
 
-When a CV has a reference count on its slab (CvSLABBED), it is responsible
+When a CV has a reference count on its slab (C<CvSLABBED>), it is responsible
 for making sure it is freed.  (Hence, no two CVs should ever have a
 reference count on the same slab.)  The CV only needs to reference the slab
-during compilation.  Once it is compiled and CvROOT attached, it has
+during compilation.  Once it is compiled and C<CvROOT> attached, it has
 finished its job, so it can forget the slab.
 
 	void	cv_forget_slab(CV *cv)
@@ -221,47 +221,15 @@ Dump the contents of a padlist
 =for hackers
 Found in file pad.c
 
-=item padlist_dup
-X<padlist_dup>
-
-Duplicates a pad.
-
-	PADLIST * padlist_dup(PADLIST *srcpad,
-	                      CLONE_PARAMS *param)
-
-=for hackers
-Found in file pad.c
-
-=item padnamelist_dup
-X<padnamelist_dup>
-
-Duplicates a pad name list.
-
-	PADNAMELIST * padnamelist_dup(PADNAMELIST *srcpad,
-	                              CLONE_PARAMS *param)
-
-=for hackers
-Found in file pad.c
-
-=item padname_dup
-X<padname_dup>
-
-Duplicates a pad name.
-
-	PADNAME * padname_dup(PADNAME *src, CLONE_PARAMS *param)
-
-=for hackers
-Found in file pad.c
-
 =item pad_alloc_name
 X<pad_alloc_name>
 
 Allocates a place in the currently-compiling
 pad (via L<perlapi/pad_alloc>) and
-then stores a name for that entry.  I<name> is adopted and
+then stores a name for that entry.  C<name> is adopted and
 becomes the name entry; it must already contain the name
-string.  I<typestash> and I<ourstash> and the C<padadd_STATE>
-flag get added to I<name>.  None of the other
+string.  C<typestash> and C<ourstash> and the C<padadd_STATE>
+flag get added to C<name>.  None of the other
 processing of L<perlapi/pad_add_name_pvn>
 is done.  Returns the offset of the allocated pad slot.
 
@@ -286,11 +254,11 @@ X<pad_check_dup>
 
 Check for duplicate declarations: report any of:
 
-     * a my in the current scope with the same name;
-     * an our (anywhere in the pad) with the same name and the
-       same stash as C<ourstash>
+     * a 'my' in the current scope with the same name;
+     * an 'our' (anywhere in the pad) with the same name and the
+       same stash as 'ourstash'
 
-C<is_our> indicates that the name to check is an 'our' declaration.
+C<is_our> indicates that the name to check is an C<"our"> declaration.
 
 	void	pad_check_dup(PADNAME *name, U32 flags,
 		              const HV *ourstash)
@@ -305,18 +273,18 @@ Find a named lexical anywhere in a chain of nested pads.  Add fake entries
 in the inner pads if it's found in an outer one.
 
 Returns the offset in the bottom pad of the lex or the fake lex.
-cv is the CV in which to start the search, and seq is the current cop_seq
-to match against.  If warn is true, print appropriate warnings.  The out_*
+C<cv> is the CV in which to start the search, and seq is the current C<cop_seq>
+to match against.  If C<warn> is true, print appropriate warnings.  The C<out_>*
 vars return values, and so are pointers to where the returned values
-should be stored.  out_capture, if non-null, requests that the innermost
-instance of the lexical is captured; out_name is set to the innermost
-matched pad name or fake pad name; out_flags returns the flags normally
-associated with the PARENT_FAKELEX_FLAGS field of a fake pad name.
+should be stored.  C<out_capture>, if non-null, requests that the innermost
+instance of the lexical is captured; C<out_name> is set to the innermost
+matched pad name or fake pad name; C<out_flags> returns the flags normally
+associated with the C<PARENT_FAKELEX_FLAGS> field of a fake pad name.
 
-Note that pad_findlex() is recursive; it recurses up the chain of CVs,
+Note that C<pad_findlex()> is recursive; it recurses up the chain of CVs,
 then comes back down, adding fake entries
 as it goes.  It has to be this way
-because fake names in anon protoypes have to store in xlow the index into
+because fake names in anon protoypes have to store in C<xlow> the index into
 the parent pad.
 
 	PADOFFSET pad_findlex(const char *namepv,
@@ -332,8 +300,8 @@ Found in file pad.c
 =item pad_fixup_inner_anons
 X<pad_fixup_inner_anons>
 
-For any anon CVs in the pad, change CvOUTSIDE of that CV from
-old_cv to new_cv if necessary.  Needed when a newly-compiled CV has to be
+For any anon CVs in the pad, change C<CvOUTSIDE> of that CV from
+C<old_cv> to C<new_cv> if necessary.  Needed when a newly-compiled CV has to be
 moved to a pre-existing CV struct.
 
 	void	pad_fixup_inner_anons(PADLIST *padlist,
@@ -363,12 +331,44 @@ lexicals in this scope and warn of any lexicals that never got introduced.
 =for hackers
 Found in file pad.c
 
+=item padlist_dup
+X<padlist_dup>
+
+Duplicates a pad.
+
+	PADLIST * padlist_dup(PADLIST *srcpad,
+	                      CLONE_PARAMS *param)
+
+=for hackers
+Found in file pad.c
+
+=item padname_dup
+X<padname_dup>
+
+Duplicates a pad name.
+
+	PADNAME * padname_dup(PADNAME *src, CLONE_PARAMS *param)
+
+=for hackers
+Found in file pad.c
+
+=item padnamelist_dup
+X<padnamelist_dup>
+
+Duplicates a pad name list.
+
+	PADNAMELIST * padnamelist_dup(PADNAMELIST *srcpad,
+	                              CLONE_PARAMS *param)
+
+=for hackers
+Found in file pad.c
+
 =item pad_push
 X<pad_push>
 
 Push a new pad frame onto the padlist, unless there's already a pad at
 this depth, in which case don't bother creating a new one.  Then give
-the new pad an @_ in slot zero.
+the new pad an C<@_> in slot zero.
 
 	void	pad_push(PADLIST *padlist, int depth)
 
@@ -388,7 +388,7 @@ Found in file pad.c
 =item pad_swipe
 X<pad_swipe>
 
-Abandon the tmp in the current pad at offset po and replace with a
+Abandon the tmp in the current pad at offset C<po> and replace with a
 new one.
 
 	void	pad_swipe(PADOFFSET po, bool refadjust)
@@ -441,7 +441,7 @@ Found in file gv.c
 X<hv_ename_add>
 
 Adds a name to a stash's internal list of effective names.  See
-C<hv_ename_delete>.
+C<L</hv_ename_delete>>.
 
 This is called when a stash is assigned to a new location in the symbol
 table.
@@ -472,7 +472,7 @@ X<refcounted_he_chain_2hv>
 
 Generates and returns a C<HV *> representing the content of a
 C<refcounted_he> chain.
-I<flags> is currently unused and must be zero.
+C<flags> is currently unused and must be zero.
 
 	HV *	refcounted_he_chain_2hv(
 		    const struct refcounted_he *c, U32 flags
@@ -499,9 +499,9 @@ Found in file hv.c
 X<refcounted_he_fetch_pvn>
 
 Search along a C<refcounted_he> chain for an entry with the key specified
-by I<keypv> and I<keylen>.  If I<flags> has the C<REFCOUNTED_HE_KEY_UTF8>
+by C<keypv> and C<keylen>.  If C<flags> has the C<REFCOUNTED_HE_KEY_UTF8>
 bit set, the key octets are interpreted as UTF-8, otherwise they
-are interpreted as Latin-1.  I<hash> is a precomputed hash of the key
+are interpreted as Latin-1.  C<hash> is a precomputed hash of the key
 string, or zero if it has not been precomputed.  Returns a mortal scalar
 representing the value associated with the key, or C<&PL_sv_placeholder>
 if there is no value associated with the key.
@@ -518,8 +518,8 @@ Found in file hv.c
 =item refcounted_he_fetch_pvs
 X<refcounted_he_fetch_pvs>
 
-Like L</refcounted_he_fetch_pvn>, but takes a literal string instead of
-a string/length pair, and no precomputed hash.
+Like L</refcounted_he_fetch_pvn>, but takes a C<NUL>-terminated literal string
+instead of a string/length pair, and no precomputed hash.
 
 	SV *	refcounted_he_fetch_pvs(
 		    const struct refcounted_he *chain,
@@ -595,25 +595,25 @@ be empty), and thus forms a longer chain.  When using the longer chain,
 the new key/value pair takes precedence over any entry for the same key
 further along the chain.
 
-The new key is specified by I<keypv> and I<keylen>.  If I<flags> has
+The new key is specified by C<keypv> and C<keylen>.  If C<flags> has
 the C<REFCOUNTED_HE_KEY_UTF8> bit set, the key octets are interpreted
-as UTF-8, otherwise they are interpreted as Latin-1.  I<hash> is
+as UTF-8, otherwise they are interpreted as Latin-1.  C<hash> is
 a precomputed hash of the key string, or zero if it has not been
 precomputed.
 
-I<value> is the scalar value to store for this key.  I<value> is copied
+C<value> is the scalar value to store for this key.  C<value> is copied
 by this function, which thus does not take ownership of any reference
 to it, and later changes to the scalar will not be reflected in the
 value visible in the C<refcounted_he>.  Complex types of scalar will not
 be stored with referential integrity, but will be coerced to strings.
-I<value> may be either null or C<&PL_sv_placeholder> to indicate that no
+C<value> may be either null or C<&PL_sv_placeholder> to indicate that no
 value is to be associated with the key; this, as with any non-null value,
 takes precedence over the existence of a value for the key further along
 the chain.
 
-I<parent> points to the rest of the C<refcounted_he> chain to be
+C<parent> points to the rest of the C<refcounted_he> chain to be
 attached to the new C<refcounted_he>.  This function takes ownership
-of one reference to I<parent>, and returns one reference to the new
+of one reference to C<parent>, and returns one reference to the new
 C<refcounted_he>.
 
 	struct refcounted_he * refcounted_he_new_pvn(
@@ -629,8 +629,8 @@ Found in file hv.c
 =item refcounted_he_new_pvs
 X<refcounted_he_new_pvs>
 
-Like L</refcounted_he_new_pvn>, but takes a literal string instead of
-a string/length pair, and no precomputed hash.
+Like L</refcounted_he_new_pvn>, but takes a C<NUL>-terminated literal string
+instead of a string/length pair, and no precomputed hash.
 
 	struct refcounted_he * refcounted_he_new_pvs(
 	                           struct refcounted_he *parent,
@@ -673,8 +673,9 @@ removed without notice.
 
 Function called by C<do_readline> to spawn a glob (or do the glob inside
 perl on VMS).  This code used to be inline, but now perl uses C<File::Glob>
-this glob starter is only used by miniperl during the build process.
-Moving it away shrinks pp_hot.c; shrinking pp_hot.c helps speed perl up.
+this glob starter is only used by miniperl during the build process,
+or when PERL_EXTERNAL_GLOB is defined.
+Moving it away shrinks F<pp_hot.c>; shrinking F<pp_hot.c> helps speed perl up.
 
 	PerlIO*	start_glob(SV *tmpglob, IO *io)
 
@@ -724,7 +725,7 @@ Found in file toke.c
 =item magic_clearhint
 X<magic_clearhint>
 
-Triggered by a delete from %^H, records the key to
+Triggered by a delete from C<%^H>, records the key to
 C<PL_compiling.cop_hints_hash>.
 
 	int	magic_clearhint(SV* sv, MAGIC* mg)
@@ -735,7 +736,7 @@ Found in file mg.c
 =item magic_clearhints
 X<magic_clearhints>
 
-Triggered by clearing %^H, resets C<PL_compiling.cop_hints_hash>.
+Triggered by clearing C<%^H>, resets C<PL_compiling.cop_hints_hash>.
 
 	int	magic_clearhints(SV* sv, MAGIC* mg)
 
@@ -762,7 +763,7 @@ The C<flags> can be:
 
 The arguments themselves are any values following the C<flags> argument.
 
-Returns the SV (if any) returned by the method, or NULL on failure.
+Returns the SV (if any) returned by the method, or C<NULL> on failure.
 
 
 	SV*	magic_methcall(SV *sv, const MAGIC *mg,
@@ -775,7 +776,7 @@ Found in file mg.c
 =item magic_sethint
 X<magic_sethint>
 
-Triggered by a store to %^H, records the key/value pair to
+Triggered by a store to C<%^H>, records the key/value pair to
 C<PL_compiling.cop_hints_hash>.  It is assumed that hints aren't storing
 anything that would need a deep copy.  Maybe we should warn if we find a
 reference.
@@ -789,12 +790,12 @@ Found in file mg.c
 X<mg_localize>
 
 Copy some of the magic from an existing SV to new localized version of that
-SV.  Container magic (eg %ENV, $1, tie)
-gets copied, value magic doesn't (eg
-taint, pos).
+SV.  Container magic (I<e.g.>, C<%ENV>, C<$1>, C<tie>)
+gets copied, value magic doesn't (I<e.g.>,
+C<taint>, C<pos>).
 
-If setmagic is false then no set magic will be called on the new (empty) SV.
-This typically means that assignment will soon follow (e.g. 'local $x = $y'),
+If C<setmagic> is false then no set magic will be called on the new (empty) SV.
+This typically means that assignment will soon follow (e.g. S<C<'local $x = $y'>>),
 and that will handle the magic.
 
 	void	mg_localize(SV* sv, SV* nsv, bool setmagic)
@@ -823,10 +824,10 @@ Found in file util.c
 X<get_c_backtrace>
 
 Collects the backtrace (aka "stacktrace") into a single linear
-malloced buffer, which the caller B<must> Perl_free_c_backtrace().
+malloced buffer, which the caller B<must> C<Perl_free_c_backtrace()>.
 
-Scans the frames back by depth + skip, then drops the skip innermost,
-returning at most depth frames.
+Scans the frames back by S<C<depth + skip>>, then drops the C<skip> innermost,
+returning at most C<depth> frames.
 
 	Perl_c_backtrace* get_c_backtrace(int max_depth,
 	                                  int skip)
@@ -844,7 +845,7 @@ Found in file util.c
 =item mro_get_linear_isa_dfs
 X<mro_get_linear_isa_dfs>
 
-Returns the Depth-First Search linearization of @ISA
+Returns the Depth-First Search linearization of C<@ISA>
 the given stash.  The return value is a read-only AV*.
 C<level> should be 0 (it is used internally in this
 function's recursion).
@@ -864,7 +865,7 @@ Found in file mro_core.c
 X<mro_isa_changed_in>
 
 Takes the necessary steps (cache invalidations, mostly)
-when the @ISA of the given package has changed.  Invoked
+when the C<@ISA> of the given package has changed.  Invoked
 by the C<setisa> magic, should not need to invoke directly.
 
 	void	mro_isa_changed_in(HV* stash)
@@ -913,7 +914,7 @@ X<finalize_optree>
 
 This function finalizes the optree.  Should be called directly after
 the complete optree is built.  It does some additional
-checking which can't be done in the normal ck_xxx functions and makes
+checking which can't be done in the normal C<ck_>xxx functions and makes
 the tree thread-safe.
 
 	void	finalize_optree(OP* o)
@@ -941,10 +942,96 @@ Found in file pad.h
 =item CX_CURPAD_SV
 X<CX_CURPAD_SV>
 
-Access the SV at offset po in the saved current pad in the given
+Access the SV at offset C<po> in the saved current pad in the given
 context block structure (can be used as an lvalue).
 
 	SV *	CX_CURPAD_SV(struct context, PADOFFSET po)
+
+=for hackers
+Found in file pad.h
+
+=item PAD_BASE_SV
+X<PAD_BASE_SV>
+
+Get the value from slot C<po> in the base (DEPTH=1) pad of a padlist
+
+	SV *	PAD_BASE_SV(PADLIST padlist, PADOFFSET po)
+
+=for hackers
+Found in file pad.h
+
+=item PAD_CLONE_VARS
+X<PAD_CLONE_VARS>
+
+Clone the state variables associated with running and compiling pads.
+
+	void	PAD_CLONE_VARS(PerlInterpreter *proto_perl,
+		               CLONE_PARAMS* param)
+
+=for hackers
+Found in file pad.h
+
+=item PAD_COMPNAME_FLAGS
+X<PAD_COMPNAME_FLAGS>
+
+Return the flags for the current compiling pad name
+at offset C<po>.  Assumes a valid slot entry.
+
+	U32	PAD_COMPNAME_FLAGS(PADOFFSET po)
+
+=for hackers
+Found in file pad.h
+
+=item PAD_COMPNAME_GEN
+X<PAD_COMPNAME_GEN>
+
+The generation number of the name at offset C<po> in the current
+compiling pad (lvalue).
+
+	STRLEN	PAD_COMPNAME_GEN(PADOFFSET po)
+
+=for hackers
+Found in file pad.h
+
+=item PAD_COMPNAME_GEN_set
+X<PAD_COMPNAME_GEN_set>
+
+Sets the generation number of the name at offset C<po> in the current
+ling pad (lvalue) to C<gen>.
+	STRLEN	PAD_COMPNAME_GEN_set(PADOFFSET po, int gen)
+
+=for hackers
+Found in file pad.h
+
+=item PAD_COMPNAME_OURSTASH
+X<PAD_COMPNAME_OURSTASH>
+
+Return the stash associated with an C<our> variable.
+Assumes the slot entry is a valid C<our> lexical.
+
+	HV *	PAD_COMPNAME_OURSTASH(PADOFFSET po)
+
+=for hackers
+Found in file pad.h
+
+=item PAD_COMPNAME_PV
+X<PAD_COMPNAME_PV>
+
+Return the name of the current compiling pad name
+at offset C<po>.  Assumes a valid slot entry.
+
+	char *	PAD_COMPNAME_PV(PADOFFSET po)
+
+=for hackers
+Found in file pad.h
+
+=item PAD_COMPNAME_TYPE
+X<PAD_COMPNAME_TYPE>
+
+Return the type (stash) of the current compiling pad name at offset
+C<po>.  Must be a valid name.  Returns null if not typed.
+
+	HV *	PAD_COMPNAME_TYPE(PADOFFSET po)
 
 =for hackers
 Found in file pad.h
@@ -993,7 +1080,7 @@ Found in file pad.h
 =item PadnameTYPE
 X<PadnameTYPE>
 
-The stash associated with a typed lexical.  This returns the %Foo:: hash
+The stash associated with a typed lexical.  This returns the C<%Foo::> hash
 for C<my Foo $bar>.
 
 	HV *	PadnameTYPE(PADNAME pn)
@@ -1001,97 +1088,10 @@ for C<my Foo $bar>.
 =for hackers
 Found in file pad.h
 
-=item PAD_BASE_SV
-X<PAD_BASE_SV>
-
-Get the value from slot C<po> in the base (DEPTH=1) pad of a padlist
-
-	SV *	PAD_BASE_SV(PADLIST padlist, PADOFFSET po)
-
-=for hackers
-Found in file pad.h
-
-=item PAD_CLONE_VARS
-X<PAD_CLONE_VARS>
-
-Clone the state variables associated with running and compiling pads.
-
-	void	PAD_CLONE_VARS(PerlInterpreter *proto_perl,
-		               CLONE_PARAMS* param)
-
-=for hackers
-Found in file pad.h
-
-=item PAD_COMPNAME_FLAGS
-X<PAD_COMPNAME_FLAGS>
-
-Return the flags for the current compiling pad name
-at offset C<po>.  Assumes a valid slot entry.
-
-	U32	PAD_COMPNAME_FLAGS(PADOFFSET po)
-
-=for hackers
-Found in file pad.h
-
-=item PAD_COMPNAME_GEN
-X<PAD_COMPNAME_GEN>
-
-The generation number of the name at offset C<po> in the current
-compiling pad (lvalue).  Note that C<SvUVX> is hijacked for this purpose.
-
-	STRLEN	PAD_COMPNAME_GEN(PADOFFSET po)
-
-=for hackers
-Found in file pad.h
-
-=item PAD_COMPNAME_GEN_set
-X<PAD_COMPNAME_GEN_set>
-
-Sets the generation number of the name at offset C<po> in the current
-ling pad (lvalue) to C<gen>.  Note that C<SvUV_set> is hijacked for this purpose.
-
-	STRLEN	PAD_COMPNAME_GEN_set(PADOFFSET po, int gen)
-
-=for hackers
-Found in file pad.h
-
-=item PAD_COMPNAME_OURSTASH
-X<PAD_COMPNAME_OURSTASH>
-
-Return the stash associated with an C<our> variable.
-Assumes the slot entry is a valid C<our> lexical.
-
-	HV *	PAD_COMPNAME_OURSTASH(PADOFFSET po)
-
-=for hackers
-Found in file pad.h
-
-=item PAD_COMPNAME_PV
-X<PAD_COMPNAME_PV>
-
-Return the name of the current compiling pad name
-at offset C<po>.  Assumes a valid slot entry.
-
-	char *	PAD_COMPNAME_PV(PADOFFSET po)
-
-=for hackers
-Found in file pad.h
-
-=item PAD_COMPNAME_TYPE
-X<PAD_COMPNAME_TYPE>
-
-Return the type (stash) of the current compiling pad name at offset
-C<po>.  Must be a valid name.  Returns null if not typed.
-
-	HV *	PAD_COMPNAME_TYPE(PADOFFSET po)
-
-=for hackers
-Found in file pad.h
-
 =item PAD_RESTORE_LOCAL
 X<PAD_RESTORE_LOCAL>
 
-Restore the old pad saved into the local variable opad by PAD_SAVE_LOCAL()
+Restore the old pad saved into the local variable C<opad> by C<PAD_SAVE_LOCAL()>
 
 	void	PAD_RESTORE_LOCAL(PAD *opad)
 
@@ -1101,8 +1101,8 @@ Found in file pad.h
 =item PAD_SAVE_LOCAL
 X<PAD_SAVE_LOCAL>
 
-Save the current pad to the local variable opad, then make the
-current pad equal to npad
+Save the current pad to the local variable C<opad>, then make the
+current pad equal to C<npad>
 
 	void	PAD_SAVE_LOCAL(PAD *opad, PAD *npad)
 
@@ -1182,7 +1182,7 @@ Found in file pad.h
 X<SAVECLEARSV>
 
 Clear the pointed to pad value on scope exit.  (i.e. the runtime action of
-'my')
+C<my>)
 
 	void	SAVECLEARSV(SV **svp)
 
@@ -1192,7 +1192,7 @@ Found in file pad.h
 =item SAVECOMPPAD
 X<SAVECOMPPAD>
 
-save PL_comppad and PL_curpad
+save C<PL_comppad> and C<PL_curpad>
 
 
 	void	SAVECOMPPAD()
@@ -1225,7 +1225,7 @@ When Perl is run in debugging mode, with the B<-d> switch, this SV is a
 boolean which indicates whether subs are being single-stepped.
 Single-stepping is automatically turned on after every step.  This is the C
 variable which corresponds to Perl's $DB::single variable.  See
-C<PL_DBsub>.
+C<L</PL_DBsub>>.
 
 	SV *	PL_DBsingle
 
@@ -1238,7 +1238,7 @@ X<PL_DBsub>
 When Perl is run in debugging mode, with the B<-d> switch, this GV contains
 the SV which holds the name of the sub being debugged.  This is the C
 variable which corresponds to Perl's $DB::sub variable.  See
-C<PL_DBsingle>.
+C<L</PL_DBsingle>>.
 
 	GV *	PL_DBsub
 
@@ -1250,7 +1250,7 @@ X<PL_DBtrace>
 
 Trace variable used when Perl is run in debugging mode, with the B<-d>
 switch.  This is the C variable which corresponds to Perl's $DB::trace
-variable.  See C<PL_DBsingle>.
+variable.  See C<L</PL_DBsingle>>.
 
 	SV *	PL_DBtrace
 
@@ -1260,7 +1260,7 @@ Found in file intrpvar.h
 =item PL_dowarn
 X<PL_dowarn>
 
-The C variable which corresponds to Perl's $^W warning variable.
+The C variable which corresponds to Perl's C<$^W> warning variable.
 
 	bool	PL_dowarn
 
@@ -1309,8 +1309,8 @@ X<djSP>
 
 Declare Just C<SP>.  This is actually identical to C<dSP>, and declares
 a local copy of perl's stack pointer, available via the C<SP> macro.
-See C<SP>.  (Available for backward source code compatibility with the
-old (Perl 5.005) thread model.)
+See C<L<perlapi/SP>>.  (Available for backward source code compatibility with
+the old (Perl 5.005) thread model.)
 
 		djSP;
 
@@ -1324,6 +1324,46 @@ True if this op will be the return value of an lvalue subroutine
 
 =for hackers
 Found in file pp.h
+
+
+=back
+
+=head1 SV-Body Allocation
+
+=over 8
+
+=item sv_2num
+X<sv_2num>
+
+
+NOTE: this function is experimental and may change or be
+removed without notice.
+
+
+Return an SV with the numeric value of the source SV, doing any necessary
+reference or overload conversion.  The caller is expected to have handled
+get-magic already.
+
+	SV*	sv_2num(SV *const sv)
+
+=for hackers
+Found in file sv.c
+
+=item sv_copypv
+X<sv_copypv>
+
+Copies a stringified representation of the source SV into the
+destination SV.  Automatically performs any necessary C<mg_get> and
+coercion of numeric values into strings.  Guaranteed to preserve
+C<UTF8> flag even from overloaded objects.  Similar in nature to
+C<sv_2pv[_flags]> but operates directly on an SV instead of just the
+string.  Mostly uses C<sv_2pv_flags> to do its work, except when that
+would lose the UTF-8'ness of the PV.
+
+	void	sv_copypv(SV *const dsv, SV *const ssv)
+
+=for hackers
+Found in file sv.c
 
 
 =back
@@ -1411,32 +1451,6 @@ called by visit() for each SV]):
 
 =over 8
 
-=item SvTHINKFIRST
-X<SvTHINKFIRST>
-
-A quick flag check to see whether an sv should be passed to sv_force_normal
-to be "downgraded" before SvIVX or SvPVX can be modified directly.
-
-For example, if your scalar is a reference and you want to modify the SvIVX
-slot, you can't just do SvROK_off, as that will leak the referent.
-
-This is used internally by various sv-modifying functions, such as
-sv_setsv, sv_setiv and sv_pvn_force.
-
-One case that this does not handle is a gv without SvFAKE set.  After
-
-    if (SvTHINKFIRST(gv)) sv_force_normal(gv);
-
-it will still be a gv.
-
-SvTHINKFIRST sometimes produces false positives.  In those cases
-sv_force_normal does nothing.
-
-	U32	SvTHINKFIRST(SV *sv)
-
-=for hackers
-Found in file sv.h
-
 =item sv_add_arena
 X<sv_add_arena>
 
@@ -1482,56 +1496,31 @@ heads and bodies within the arenas must already have been freed.
 =for hackers
 Found in file sv.c
 
+=item SvTHINKFIRST
+X<SvTHINKFIRST>
 
-=back
+A quick flag check to see whether an C<sv> should be passed to C<sv_force_normal>
+to be "downgraded" before C<SvIVX> or C<SvPVX> can be modified directly.
 
-=head1 SV-Body Allocation
+For example, if your scalar is a reference and you want to modify the C<SvIVX>
+slot, you can't just do C<SvROK_off>, as that will leak the referent.
 
-=over 8
+This is used internally by various sv-modifying functions, such as
+C<sv_setsv>, C<sv_setiv> and C<sv_pvn_force>.
 
-=item sv_2num
-X<sv_2num>
+One case that this does not handle is a gv without SvFAKE set.  After
 
+    if (SvTHINKFIRST(gv)) sv_force_normal(gv);
 
-NOTE: this function is experimental and may change or be
-removed without notice.
+it will still be a gv.
 
+C<SvTHINKFIRST> sometimes produces false positives.  In those cases
+C<sv_force_normal> does nothing.
 
-Return an SV with the numeric value of the source SV, doing any necessary
-reference or overload conversion.  The caller is expected to have handled
-get-magic already.
-
-	SV*	sv_2num(SV *const sv)
-
-=for hackers
-Found in file sv.c
-
-=item sv_copypv
-X<sv_copypv>
-
-Copies a stringified representation of the source SV into the
-destination SV.  Automatically performs any necessary mg_get and
-coercion of numeric values into strings.  Guaranteed to preserve
-UTF8 flag even from overloaded objects.  Similar in nature to
-sv_2pv[_flags] but operates directly on an SV instead of just the
-string.  Mostly uses sv_2pv_flags to do its work, except when that
-would lose the UTF-8'ness of the PV.
-
-	void	sv_copypv(SV *const dsv, SV *const ssv)
+	U32	SvTHINKFIRST(SV *sv)
 
 =for hackers
-Found in file sv.c
-
-=item sv_ref
-X<sv_ref>
-
-Returns a SV describing what the SV passed in is a reference to.
-
-	SV*	sv_ref(SV *dst, const SV *const sv,
-		       const int ob)
-
-=for hackers
-Found in file sv.c
+Found in file sv.h
 
 
 =back
@@ -1550,19 +1539,19 @@ removed without notice.
 
 Find the name of the undefined variable (if any) that caused the operator
 to issue a "Use of uninitialized value" warning.
-If match is true, only return a name if its value matches uninit_sv.
-So roughly speaking, if a unary operator (such as OP_COS) generates a
+If match is true, only return a name if its value matches C<uninit_sv>.
+So roughly speaking, if a unary operator (such as C<OP_COS>) generates a
 warning, then following the direct child of the op may yield an
-OP_PADSV or OP_GV that gives the name of the undefined variable.  On the
-other hand, with OP_ADD there are two branches to follow, so we only print
+C<OP_PADSV> or C<OP_GV> that gives the name of the undefined variable.  On the
+other hand, with C<OP_ADD> there are two branches to follow, so we only print
 the variable name if we get an exact match.
-desc_p points to a string pointer holding the description of the op.
+C<desc_p> points to a string pointer holding the description of the op.
 This may be updated if needed.
 
 The name is returned as a mortal SV.
 
-Assumes that PL_op is the op that originally triggered the error, and that
-PL_comppad/PL_curpad points to the currently executing pad.
+Assumes that C<PL_op> is the OP that originally triggered the error, and that
+C<PL_comppad>/C<PL_curpad> points to the currently executing pad.
 
 	SV*	find_uninit_var(const OP *const obase,
 		                const SV *const uninit_sv,
@@ -1622,14 +1611,14 @@ X<_get_encoding>
 =item _get_swash_invlist
 X<_get_swash_invlist>
 
+=item _invlistEQ
+X<_invlistEQ>
+
 =item _invlist_array_init
 X<_invlist_array_init>
 
 =item _invlist_contains_cp
 X<_invlist_contains_cp>
-
-=item _invlist_contents
-X<_invlist_contents>
 
 =item _invlist_dump
 X<_invlist_dump>
@@ -1684,9 +1673,6 @@ X<_to_upper_title_latin1>
 
 =item _warn_problematic_locale
 X<_warn_problematic_locale>
-
-=item aassign_common_vars
-X<aassign_common_vars>
 
 =item add_cp_to_invlist
 X<add_cp_to_invlist>
@@ -2006,6 +1992,18 @@ X<drand48_init_r>
 =item drand48_r
 X<drand48_r>
 
+=item dtrace_probe_call
+X<dtrace_probe_call>
+
+=item dtrace_probe_load
+X<dtrace_probe_load>
+
+=item dtrace_probe_op
+X<dtrace_probe_op>
+
+=item dtrace_probe_phase
+X<dtrace_probe_phase>
+
 =item dump_all_perl
 X<dump_all_perl>
 
@@ -2030,11 +2028,11 @@ X<find_lexical_cv>
 =item find_runcv_where
 X<find_runcv_where>
 
-=item find_rundefsv2
-X<find_rundefsv2>
-
 =item find_script
 X<find_script>
+
+=item form_short_octal_warning
+X<form_short_octal_warning>
 
 =item free_tied_hv_pool
 X<free_tied_hv_pool>
@@ -2075,6 +2073,12 @@ X<getenv_len>
 =item grok_atoUV
 X<grok_atoUV>
 
+=item grok_bslash_c
+X<grok_bslash_c>
+
+=item grok_bslash_o
+X<grok_bslash_o>
+
 =item grok_bslash_x
 X<grok_bslash_x>
 
@@ -2092,6 +2096,9 @@ X<gv_stashpvn_internal>
 
 =item gv_stashsvpvn_cached
 X<gv_stashsvpvn_cached>
+
+=item handle_named_backref
+X<handle_named_backref>
 
 =item hfree_next_entry
 X<hfree_next_entry>
@@ -2126,6 +2133,9 @@ X<invert>
 =item invlist_array
 X<invlist_array>
 
+=item invlist_clear
+X<invlist_clear>
+
 =item invlist_clone
 X<invlist_clone>
 
@@ -2158,6 +2168,9 @@ X<invlist_trim>
 
 =item io_close
 X<io_close>
+
+=item isGCB
+X<isGCB>
 
 =item is_utf8_common
 X<is_utf8_common>
@@ -2342,6 +2355,15 @@ X<malloced_size>
 =item mem_collxfrm
 X<mem_collxfrm>
 
+=item mem_log_alloc
+X<mem_log_alloc>
+
+=item mem_log_free
+X<mem_log_free>
+
+=item mem_log_realloc
+X<mem_log_realloc>
+
 =item mg_find_mglob
 X<mg_find_mglob>
 
@@ -2495,8 +2517,17 @@ X<ptr_hash>
 =item qerror
 X<qerror>
 
+=item re_exec_indentf
+X<re_exec_indentf>
+
+=item re_indentf
+X<re_indentf>
+
 =item re_op_compile
 X<re_op_compile>
+
+=item re_printf
+X<re_printf>
 
 =item reg_named_buff
 X<reg_named_buff>
@@ -2525,9 +2556,6 @@ X<reg_temp_copy>
 =item regcurly
 X<regcurly>
 
-=item regpposixcc
-X<regpposixcc>
-
 =item regprop
 X<regprop>
 
@@ -2554,9 +2582,6 @@ X<rxres_save>
 
 =item same_dirent
 X<same_dirent>
-
-=item save_aliased_sv
-X<save_aliased_sv>
 
 =item save_strlen
 X<save_strlen>

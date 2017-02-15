@@ -482,7 +482,7 @@ our(@ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS, $VERSION);
 	      clearcache clearallcache disablecache enablecache);
 %EXPORT_TAGS=( all => [ @EXPORT, @EXPORT_OK ] ) ;
 
-$VERSION = 1.20;
+$VERSION = 1.22;
 
 # --- ':hireswallclock' special handling
 
@@ -585,6 +585,17 @@ sub cpu_a { my($r,$pu,$ps,$cu,$cs) = @{$_[0]}; $pu+$ps+$cu+$cs ; }
 sub real  { my($r,$pu,$ps,$cu,$cs) = @{$_[0]}; $r              ; }
 sub iters { $_[0]->[5] ; }
 
+# return the sum of various times: which ones depending on $style
+
+sub elapsed {
+    my ($self, $style) = @_;
+    $style = "" unless defined $style;
+
+    return $self->cpu_c if $style eq 'nop';
+    return $self->cpu_p if $style eq 'noc';
+    return $self->cpu_a;
+}
+
 
 $_Usage{timediff} = <<'USAGE';
 usage: $result_diff = timediff($result1, $result2);
@@ -647,11 +658,7 @@ sub timestr {
 			    $r,$pu,$ps,$pt) if $style eq 'noc';
     $s = sprintf("$w wallclock secs (%$f cusr + %$f csys = %$f CPU)",
 			    $r,$cu,$cs,$ct) if $style eq 'nop';
-    my $elapsed = do {
-	if ($style eq 'nop') {$cu+$cs}
-	elsif ($style eq 'noc') {$pu+$ps}
-	else {$cu+$cs+$pu+$ps}
-    };
+    my $elapsed = $tr->elapsed($style);
     $s .= sprintf(" @ %$f/s (n=$n)",$n/($elapsed)) if $n && $elapsed;
     $s;
 }
@@ -897,6 +904,16 @@ sub timethis{
 
     $n = $forn if defined $forn;
 
+    if ($t->elapsed($style) < 0) {
+        # due to clock granularity and variable CPU speed and load,
+        # on quick code with a small number of loops, it's possible for
+        # the empty loop to appear to take longer than the real loop
+        # (e.g. 1 tick versus 0 ticks). This leads to a negative elapsed
+        # time. In this case, floor it at zero, to stop bizarre results.
+        print "            (warning: too few iterations for a reliable count)\n";
+        $t->[$_] = 0 for 1..4;
+    }
+
     # A conservative warning to spot very silly tests.
     # Don't assume that your benchmark is ok simply because
     # you don't get this warning!
@@ -973,13 +990,11 @@ sub cmpthese{
     my @vals = map{ [ $_, @{$results->{$_}} ] } keys %$results;
 
     for (@vals) {
+        # recreate the pre-flattened Benchmark object
+        my $tmp_bm = bless [ @{$_}[1..$#$_] ];
+	my $elapsed = $tmp_bm->elapsed($style);
 	# The epsilon fudge here is to prevent div by 0.  Since clock
 	# resolutions are much larger, it's below the noise floor.
-	my $elapsed = do {
-	    if ($style eq 'nop') {$_->[4]+$_->[5]}
-	    elsif ($style eq 'noc') {$_->[2]+$_->[3]}
-	    else {$_->[2]+$_->[3]+$_->[4]+$_->[5]}
-	};
 	my $rate = $_->[6]/(($elapsed)+0.000000000000001);
 	$_->[7] = $rate;
     }

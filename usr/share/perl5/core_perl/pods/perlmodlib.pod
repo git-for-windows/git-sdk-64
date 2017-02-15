@@ -104,7 +104,7 @@ Use MakeMaker's uninstalled version of a package
 
 =item bytes
 
-Force byte semantics rather than character semantics
+Expose the individual bytes of characters
 
 =item charnames
 
@@ -256,6 +256,14 @@ system. For example, the GDBM_File module will not be installed if you
 don't have the gdbm library.
 
 =over 12
+
+=item Amiga::ARexx
+
+Perl extension for ARexx support
+
+=item Amiga::Exec
+
+Perl extension for low level amiga support
 
 =item AnyDBM_File
 
@@ -945,6 +953,10 @@ Create or remove directory trees
 
 Portably perform operations on file names
 
+=item File::Spec::AmigaOS
+
+File::Spec for AmigaOS
+
 =item File::Spec::Cygwin
 
 Methods for Cygwin file specs
@@ -1213,10 +1225,6 @@ A description of the callable function in each module
 
 Details changes to Locale::Codes
 
-=item Locale::Codes::Constants
-
-Constants for Locale codes
-
 =item Locale::Codes::Country
 
 Standard codes for country identification
@@ -1232,10 +1240,6 @@ Standard codes for language extension identification
 =item Locale::Codes::LangFam
 
 Standard codes for language extension identification
-
-=item Locale::Codes::LangFam_Retired
-
-Retired langfam codes for the Locale::Codes::LangFam module
 
 =item Locale::Codes::LangVar
 
@@ -1695,7 +1699,7 @@ Turn Pod into XML
 
 =item Pod::Text
 
-Convert POD data to formatted ASCII text
+Convert POD data to formatted text
 
 =item Pod::Text::Color
 
@@ -2205,9 +2209,9 @@ Wrapper class for calling subs at end of scope
 
  Hook stack for managing scopes via %^H
 
-=item autodie::ScopeUtil
+=item autodie::Util
 
-Utilities for managing %^H scopes
+Internal Utility subroutines for autodie and Fatal
 
 =item version::Internals
 
@@ -3262,7 +3266,6 @@ Module names should begin with a capital letter.
 Having 57 modules all called Sort will not make life easy for anyone
 (though having 23 called Sort::Quick is only marginally better :-).
 Imagine someone trying to install your module alongside many others.
-If in any doubt ask for suggestions in comp.lang.perl.misc.
 
 If you are developing a suite of related modules/classes it's good
 practice to use nested classes with a common prefix as this will
@@ -3283,6 +3286,12 @@ To be portable each component of a module name should be limited to
 11 characters. If it might be used on MS-DOS then try to ensure each is
 unique in the first 8 characters. Nested modules make this easier.
 
+For additional guidance on the naming of modules, please consult:
+
+    http://pause.perl.org/pause/query?ACTION=pause_namingmodules
+
+or send mail to the <module-authors@perl.org> mailing list.
+
 =item  *
 
 Have you got it right?
@@ -3292,8 +3301,9 @@ picked an interface design that will cause problems later? Have
 you picked the most appropriate name? Do you have any questions?
 
 The best way to know for sure, and pick up many helpful suggestions,
-is to ask someone who knows. Comp.lang.perl.misc is read by just about
-all the people who develop modules and it's the best place to ask.
+is to ask someone who knows. The <module-authors@perl.org> mailing list
+is useful for this purpose; it's also accessible via news interface as
+perl.module-authors at nntp.perl.org.
 
 All you need to do is post a short summary of the module, its
 purpose and interfaces. A few lines on each of the main methods is

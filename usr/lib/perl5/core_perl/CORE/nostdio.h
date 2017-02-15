@@ -17,8 +17,8 @@
    It is completely pointless as we have already included it ourselves.
 */
 
-#if !defined(_STDIO_H_) && !defined(FILE) && !defined(_STDIO_INCLUDED) && !defined(__STDIO_LOADED)
-#define _STDIO_H_
+#if !defined(_STDIO_H) && !defined(FILE) && !defined(_STDIO_INCLUDED) && !defined(__STDIO_LOADED)
+#define _STDIO_H
 #define _STDIO_INCLUDED
 #define __STDIO_LOADED
 struct _FILE;

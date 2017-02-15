@@ -136,7 +136,7 @@ class POP3:
         # so only possibilities are ...LF, ...CRLF, CR...LF
         if line[-2:] == CRLF:
             return line[:-2], octets
-        if line[0] == CR:
+        if line[:1] == CR:
             return line[1:-1], octets
         return line[:-1], octets
 
@@ -276,18 +276,23 @@ class POP3:
 
     def close(self):
         """Close the connection without assuming anything about it."""
-        if self.file is not None:
-            self.file.close()
-        if self.sock is not None:
-            try:
-                self.sock.shutdown(socket.SHUT_RDWR)
-            except OSError as e:
-                # The server might already have closed the connection
-                if e.errno != errno.ENOTCONN:
-                    raise
-            finally:
-                self.sock.close()
-        self.file = self.sock = None
+        try:
+            file = self.file
+            self.file = None
+            if file is not None:
+                file.close()
+        finally:
+            sock = self.sock
+            self.sock = None
+            if sock is not None:
+                try:
+                    sock.shutdown(socket.SHUT_RDWR)
+                except OSError as e:
+                    # The server might already have closed the connection
+                    if e.errno != errno.ENOTCONN:
+                        raise
+                finally:
+                    sock.close()
 
     #__del__ = quit
 

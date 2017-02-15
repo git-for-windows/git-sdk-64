@@ -48,6 +48,13 @@ sigint (s)
   exit (0);
 }
 
+void
+sigwinch (s)
+     int s;
+{
+  rl_resize_terminal ();
+}
+
 static int 
 user_input()
 {
@@ -316,6 +323,7 @@ main()
   if (val == -1)
     return -1;
 
+  signal (SIGWINCH, sigwinch);
   signal (SIGINT, sigint);
 
   val = init_readline (slavefd, slavefd);

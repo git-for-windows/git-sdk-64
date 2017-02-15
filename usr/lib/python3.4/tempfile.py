@@ -166,6 +166,13 @@ def _get_default_tempdir():
                 return dir
             except FileExistsError:
                 pass
+            except PermissionError:
+                # This exception is thrown when a directory with the chosen name
+                # already exists on windows.
+                if (_os.name == 'nt' and _os.path.isdir(dir) and
+                    _os.access(dir, _os.W_OK)):
+                    continue
+                break   # no point trying more names in this directory
             except OSError:
                 break   # no point trying more names in this directory
     raise FileNotFoundError(_errno.ENOENT,
@@ -204,7 +211,8 @@ def _mkstemp_inner(dir, pre, suf, flags):
         except PermissionError:
             # This exception is thrown when a directory with the chosen name
             # already exists on windows.
-            if _os.name == 'nt':
+            if (_os.name == 'nt' and _os.path.isdir(dir) and
+                _os.access(dir, _os.W_OK)):
                 continue
             else:
                 raise
@@ -296,6 +304,14 @@ def mkdtemp(suffix="", prefix=template, dir=None):
             return file
         except FileExistsError:
             continue    # try again
+        except PermissionError:
+            # This exception is thrown when a directory with the chosen name
+            # already exists on windows.
+            if (_os.name == 'nt' and _os.path.isdir(dir) and
+                _os.access(dir, _os.W_OK)):
+                continue
+            else:
+                raise
 
     raise FileExistsError(_errno.EEXIST,
                           "No usable temporary directory name found")
@@ -357,9 +373,11 @@ class _TemporaryFileCloser:
         def close(self, unlink=_os.unlink):
             if not self.close_called and self.file is not None:
                 self.close_called = True
-                self.file.close()
-                if self.delete:
-                    unlink(self.name)
+                try:
+                    self.file.close()
+                finally:
+                    if self.delete:
+                        unlink(self.name)
 
         # Need to ensure the file is deleted on __del__
         def __del__(self):
@@ -426,7 +444,13 @@ class _TemporaryFileWrapper:
 
     # iter() doesn't use __getattr__ to find the __iter__ method
     def __iter__(self):
-        return iter(self.file)
+        # Don't return iter(self.file), but yield from it to avoid closing
+        # file as long as it's being used as iterator (see issue #23700).  We
+        # can't use 'yield from' here because iter(file) returns the file
+        # object itself, which has a close method, and thus the file would get
+        # closed when the generator is finalized, due to PEP380 semantics.
+        for line in self.file:
+            yield line
 
 
 def NamedTemporaryFile(mode='w+b', buffering=-1, encoding=None,

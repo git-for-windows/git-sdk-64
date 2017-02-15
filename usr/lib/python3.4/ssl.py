@@ -103,8 +103,6 @@ from _ssl import (
     SSLSyscallError, SSLEOFError,
     )
 from _ssl import CERT_NONE, CERT_OPTIONAL, CERT_REQUIRED
-from _ssl import (VERIFY_DEFAULT, VERIFY_CRL_CHECK_LEAF, VERIFY_CRL_CHECK_CHAIN,
-    VERIFY_X509_STRICT)
 from _ssl import txt2obj as _txt2obj, nid2obj as _nid2obj
 from _ssl import RAND_status, RAND_add, RAND_bytes, RAND_pseudo_bytes
 try:
@@ -122,6 +120,7 @@ _import_symbols('OP_')
 _import_symbols('ALERT_DESCRIPTION_')
 _import_symbols('SSL_ERROR_')
 _import_symbols('PROTOCOL_')
+_import_symbols('VERIFY_')
 
 from _ssl import HAS_SNI, HAS_ECDH, HAS_NPN
 
@@ -170,14 +169,12 @@ else:
 #   * Prefer any AES-GCM over any AES-CBC for better performance and security
 #   * Then Use HIGH cipher suites as a fallback
 #   * Then Use 3DES as fallback which is secure but slow
-#   * Finally use RC4 as a fallback which is problematic but needed for
-#     compatibility some times.
 #   * Disable NULL authentication, NULL encryption, and MD5 MACs for security
 #     reasons
 _DEFAULT_CIPHERS = (
     'ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+HIGH:'
-    'DH+HIGH:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+HIGH:RSA+3DES:ECDH+RC4:'
-    'DH+RC4:RSA+RC4:!aNULL:!eNULL:!MD5'
+    'DH+HIGH:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+HIGH:RSA+3DES:!aNULL:'
+    '!eNULL:!MD5'
 )
 
 # Restricted and more secure ciphers for the server side

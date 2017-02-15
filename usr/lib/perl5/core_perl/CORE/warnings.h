@@ -91,34 +91,32 @@
 
 #define WARN_EXPERIMENTAL		 51
 #define WARN_EXPERIMENTAL__LEXICAL_SUBS	 52
-#define WARN_EXPERIMENTAL__LEXICAL_TOPIC 53
-#define WARN_EXPERIMENTAL__REGEX_SETS	 54
-#define WARN_EXPERIMENTAL__SMARTMATCH	 55
+#define WARN_EXPERIMENTAL__REGEX_SETS	 53
+#define WARN_EXPERIMENTAL__SMARTMATCH	 54
 
 /* Warnings Categories added in Perl 5.019 */
 
-#define WARN_EXPERIMENTAL__AUTODEREF	 56
-#define WARN_EXPERIMENTAL__POSTDEREF	 57
-#define WARN_EXPERIMENTAL__SIGNATURES	 58
-#define WARN_SYSCALLS			 59
+#define WARN_EXPERIMENTAL__POSTDEREF	 55
+#define WARN_EXPERIMENTAL__SIGNATURES	 56
+#define WARN_SYSCALLS			 57
 
 /* Warnings Categories added in Perl 5.021 */
 
-#define WARN_EXPERIMENTAL__BITWISE	 60
-#define WARN_EXPERIMENTAL__CONST_ATTR	 61
-#define WARN_EXPERIMENTAL__RE_STRICT	 62
-#define WARN_EXPERIMENTAL__REFALIASING	 63
-#define WARN_EXPERIMENTAL__WIN32_PERLIO	 64
-#define WARN_LOCALE			 65
-#define WARN_MISSING			 66
-#define WARN_REDUNDANT			 67
+#define WARN_EXPERIMENTAL__BITWISE	 58
+#define WARN_EXPERIMENTAL__CONST_ATTR	 59
+#define WARN_EXPERIMENTAL__RE_STRICT	 60
+#define WARN_EXPERIMENTAL__REFALIASING	 61
+#define WARN_EXPERIMENTAL__WIN32_PERLIO	 62
+#define WARN_LOCALE			 63
+#define WARN_MISSING			 64
+#define WARN_REDUNDANT			 65
 
 #define WARNsize			 17
 #define WARN_ALLstring			 "\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125"
 #define WARN_NONEstring			 "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
 
-#define isLEXWARN_on 	(PL_curcop->cop_warnings != pWARN_STD)
-#define isLEXWARN_off	(PL_curcop->cop_warnings == pWARN_STD)
+#define isLEXWARN_on 	cBOOL(PL_curcop->cop_warnings != pWARN_STD)
+#define isLEXWARN_off	cBOOL(PL_curcop->cop_warnings == pWARN_STD)
 #define isWARN_ONCE	(PL_dowarn & (G_WARN_ON|G_WARN_ONCE))
 #define isWARN_on(c,x)	(IsSet((U8 *)(c + 1), 2*(x)))
 #define isWARNf_on(c,x)	(IsSet((U8 *)(c + 1), 2*(x)+1))

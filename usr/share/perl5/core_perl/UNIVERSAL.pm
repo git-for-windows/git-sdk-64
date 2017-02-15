@@ -1,6 +1,6 @@
 package UNIVERSAL;
 
-our $VERSION = '1.12';
+our $VERSION = '1.13';
 
 # UNIVERSAL should not contain any extra subs/methods beyond those
 # that it exists to define. The existence of import() below is a historical
@@ -186,10 +186,8 @@ None.
 Previous versions of this documentation suggested using C<isa> as
 a function to determine the type of a reference:
 
-  use UNIVERSAL 'isa';
-
-  $yes = isa $h, "HASH";
-  $yes = isa "Foo", "Bar";
+  $yes = UNIVERSAL::isa($h, "HASH");
+  $yes = UNIVERSAL::isa("Foo", "Bar");
 
 The problem is that this code would I<never> call an overridden C<isa> method in
 any class.  Instead, use C<reftype> from L<Scalar::Util> for the first case:

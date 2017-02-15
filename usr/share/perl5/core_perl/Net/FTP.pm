@@ -2,10 +2,11 @@
 #
 # Versions up to 2.77_2 Copyright (c) 1995-2004 Graham Barr <gbarr@pobox.com>.
 # All rights reserved.
-# Changes in Version 2.77_3 onwards Copyright (C) 2013-2014 Steve Hay.  All
+# Changes in Version 2.77_3 onwards Copyright (C) 2013-2015 Steve Hay.  All
 # rights reserved.
-# This program is free software; you can redistribute it and/or
-# modify it under the same terms as Perl itself.
+# This module is free software; you can redistribute it and/or modify it under
+# the same terms as Perl itself, i.e. under the terms of either the GNU General
+# Public License or the Artistic License, as specified in the F<LICENCE> file.
 #
 # Documentation (at end) improved 1996 by Nathan Torkington <gnat@frii.com>.
 
@@ -24,9 +25,10 @@ use Net::Config;
 use Socket;
 use Time::Local;
 
-our $VERSION = '3.05';
+our $VERSION = '3.08_01';
 
 our $IOCLASS;
+my $family_key;
 BEGIN {
   # Code for detecting if we can use SSL
   my $ssl_class = eval {
@@ -54,6 +56,10 @@ BEGIN {
   sub can_inet6 { $inet6_class };
 
   $IOCLASS = $ssl_class || $inet6_class || 'IO::Socket::INET';
+  $family_key =
+    ( $ssl_class ? $ssl_class->can_ipv6 : $inet6_class || '' )
+      eq 'IO::Socket::IP'
+      ? 'Family' : 'Domain';
 }
 
 our @ISA = ('Exporter','Net::Cmd',$IOCLASS);
@@ -119,6 +125,7 @@ sub new {
     PeerAddr  => $peer,
     PeerPort  => $arg{Port} || ($arg{SSL} ? 'ftps(990)' : 'ftp(21)'),
     LocalAddr => $arg{'LocalAddr'},
+    $family_key => $arg{Domain} || $arg{Family},
     Proto     => 'tcp',
     Timeout   => defined $arg{Timeout} ? $arg{Timeout} : 120,
     %tlsargs,
@@ -130,6 +137,7 @@ sub new {
   ${*$ftp}{'net_ftp_blksize'} = abs($arg{'BlockSize'} || 10240);
 
   ${*$ftp}{'net_ftp_localaddr'} = $arg{'LocalAddr'};
+  ${*$ftp}{'net_ftp_domain'} = $arg{Domain} || $arg{Family};
 
   ${*$ftp}{'net_ftp_firewall'} = $fire
     if (defined $fire);
@@ -452,7 +460,7 @@ sub authorize {
 
   my $ok = $ftp->_AUTH($auth || "");
 
-  $ok = $ftp->_RESP($resp || "")
+  return $ftp->_RESP($resp || "")
     if ($ok == CMD_MORE);
 
   $ok == CMD_OK;
@@ -661,8 +669,12 @@ sub rmdir {
     or !$recurse;
 
   # Try to delete the contents
-  # Get a list of all the files in the directory
-  my @filelist = grep { !/^\.{1,2}$/ } $ftp->ls($dir);
+  # Get a list of all the files in the directory, excluding the current and parent directories
+  my @filelist = map { /^(?:\S+;)+ (.+)$/ ? ($1) : () } grep { !/^(?:\S+;)*type=[cp]dir;/ } $ftp->_list_cmd("MLSD", $dir);
+
+  # Fallback to using the less well-defined NLST command if MLSD fails
+  @filelist = grep { !/^\.{1,2}$/ } $ftp->ls($dir)
+    unless @filelist;
 
   return
     unless @filelist;    # failed, it is probably not a directory
@@ -888,9 +900,10 @@ sub _eprt {
       Listen    => 1,
       Timeout   => $ftp->timeout,
       LocalAddr => $ftp->sockhost,
+      $family_key  => $ftp->sockdomain,
       can_ssl() ? (
-	%{ ${*$ftp}{net_ftp_tlsargs} },
-	SSL_startHandshake => 0,
+        %{ ${*$ftp}{net_ftp_tlsargs} },
+        SSL_startHandshake => 0,
       ):(),
     );
     ${*$ftp}{net_ftp_intern_port} = 1;
@@ -1034,17 +1047,18 @@ sub _dataconn {
       PeerAddr  => $pasv->[0],
       PeerPort  => $pasv->[1],
       LocalAddr => ${*$ftp}{net_ftp_localaddr},
+      $family_key => ${*$ftp}{net_ftp_domain},
       Timeout   => $ftp->timeout,
       can_ssl() ? (
-	SSL_startHandshake => 0,
-	$ftp->is_SSL ? (
-	  SSL_reuse_ctx => $ftp,
-	  SSL_verifycn_name => ${*$ftp}{net_ftp_tlsargs}{SSL_verifycn_name},
-	  # This will cause the use of SNI if supported by IO::Socket::SSL.
-	  $ftp->can_client_sni ? (
-	    SSL_hostname  => ${*$ftp}{net_ftp_tlsargs}{SSL_hostname}
-	  ):(),
-	) :( %{${*$ftp}{net_ftp_tlsargs}} ),
+        SSL_startHandshake => 0,
+        $ftp->is_SSL ? (
+          SSL_reuse_ctx => $ftp,
+          SSL_verifycn_name => ${*$ftp}{net_ftp_tlsargs}{SSL_verifycn_name},
+          # This will cause the use of SNI if supported by IO::Socket::SSL.
+          $ftp->can_client_sni ? (
+            SSL_hostname  => ${*$ftp}{net_ftp_tlsargs}{SSL_hostname}
+          ):(),
+        ) :( %{${*$ftp}{net_ftp_tlsargs}} ),
       ):(),
     ) or return;
   } elsif (my $listen =  delete ${*$ftp}{net_ftp_listen}) {
@@ -1141,7 +1155,7 @@ sub _data_cmd {
     my $data = $ftp->_dataconn();
     if (CMD_INFO == $ftp->response()) {
       $data->reading
-	if $data && $cmd =~ /RETR|LIST|NLST/;
+        if $data && $cmd =~ /RETR|LIST|NLST|MLSD/;
       return $data;
     }
     $data->_close if $data;
@@ -1180,7 +1194,7 @@ sub _data_cmd {
     my $data = $ftp->_dataconn();
 
     $data->reading
-      if $data && $cmd =~ /RETR|LIST|NLST/;
+      if $data && $cmd =~ /RETR|LIST|NLST|MLSD/;
 
     return $data;
   }
@@ -1434,10 +1448,15 @@ Net::FTP - FTP Client class
 =head1 DESCRIPTION
 
 C<Net::FTP> is a class implementing a simple FTP client in Perl as
-described in RFC959.  It provides wrappers for a subset of the RFC959
-commands.
+described in RFC959.  It provides wrappers for the commonly used subset of the
+RFC959 commands.
+If L<IO::Socket::IP> or L<IO::Socket::INET6> is installed it also provides
+support for IPv6 as defined in RFC2428.
+And with L<IO::Socket::SSL> installed it provides support for implicit FTPS
+and explicit FTPS as defined in RFC4217.
 
-The Net::FTP class is a subclass of Net::Cmd and IO::Socket::INET.
+The Net::FTP class is a subclass of Net::Cmd and (depending on avaibility) of
+IO::Socket::IP, IO::Socket::INET6 or IO::Socket::INET.
 
 =head1 OVERVIEW
 
@@ -1538,8 +1557,15 @@ simply invokes the C<hash()> method for you, so that hash marks
 are displayed for all transfers.  You can, of course, call C<hash()>
 explicitly whenever you'd like.
 
-B<LocalAddr> - Local address to use for all socket connections, this
-argument will be passed to L<IO::Socket::INET>
+B<LocalAddr> - Local address to use for all socket connections. This
+argument will be passed to the super class, i.e. L<IO::Socket::INET>
+or L<IO::Socket::IP>.
+
+B<Domain> - Domain to use, i.e. AF_INET or AF_INET6. This
+argument will be passed to the IO::Socket super class.
+This can be used to enforce IPv4 even with L<IO::Socket::IP>
+which would default to IPv6.
+B<Family> is accepted as alternative name for B<Domain>.
 
 If the constructor fails undef will be returned and an error message will
 be in $@
@@ -1591,8 +1617,8 @@ Only C<LEVEL>s "C" (clear) and "P" (private) are supported.
 
 =item host ()
 
-Returns the value used by the constructor, and passed to IO::Socket::INET,
-to connect to the host.
+Returns the value used by the constructor, and passed to the IO::Socket super
+class to connect to the host.
 
 =item account( ACCT )
 
@@ -1839,6 +1865,7 @@ C<put_unique> and those that do not require data connections.
 =over 4
 
 =item port ( [ PORT ] )
+
 =item eprt ( [ PORT ] )
 
 Send a C<PORT> (IPv4) or C<EPRT> (IPv6) command to the server. If C<PORT> is
@@ -1846,6 +1873,7 @@ specified then it is sent to the server. If not, then a listen socket is created
 and the correct information sent to the server.
 
 =item pasv ()
+
 =item epsv ()
 
 Tell the server to go into passive mode (C<pasv> for IPv4, C<epsv> for IPv6).
@@ -1963,7 +1991,7 @@ It may be difficult for me to reproduce the problem as almost every setup
 is different.
 
 A small script which yields the problem will probably be of help. It would
-also be useful if this script was run with the extra options C<Debug => 1>
+also be useful if this script was run with the extra options C<< Debug => 1 >>
 passed to the constructor, and the output sent with the bug report. If you
 cannot include a small script then please include a Debug trace from a
 run of your program which does yield the problem.
@@ -2011,10 +2039,11 @@ Roderick Schertler <roderick@gate.net> - for various inputs
 =head1 COPYRIGHT
 
 Versions up to 2.77_2 Copyright (c) 1995-2004 Graham Barr. All rights reserved.
-Changes in Version 2.77_3 onwards Copyright (C) 2013-2014 Steve Hay.  All rights
+Changes in Version 2.77_3 onwards Copyright (C) 2013-2015 Steve Hay.  All rights
 reserved.
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+This module is free software; you can redistribute it and/or modify it under the
+same terms as Perl itself, i.e. under the terms of either the GNU General Public
+License or the Artistic License, as specified in the F<LICENCE> file.
 
 =cut

@@ -1,6 +1,7 @@
 import signal
 import sys
 import unittest
+import warnings
 from unittest import mock
 
 import asyncio
@@ -60,7 +61,7 @@ class SubprocessTransportTests(test_utils.TestCase):
         self.assertTrue(protocol.connection_lost.called)
         self.assertEqual(protocol.connection_lost.call_args[0], (None,))
 
-        self.assertFalse(transport._closed)
+        self.assertFalse(transport.is_closing())
         self.assertIsNone(transport._loop)
         self.assertIsNone(transport._proc)
         self.assertIsNone(transport._protocol)
@@ -266,7 +267,7 @@ class SubprocessMixin:
         self.assertTrue(transport.resume_reading.called)
 
     def test_stdin_not_inheritable(self):
-        # Tulip issue #209: stdin must not be inheritable, otherwise
+        # asyncio issue #209: stdin must not be inheritable, otherwise
         # the Process.communicate() hangs
         @asyncio.coroutine
         def len_message(message):
@@ -348,6 +349,88 @@ class SubprocessMixin:
         with test_utils.disable_logger():
             self.loop.run_until_complete(cancel_make_transport())
             test_utils.run_briefly(self.loop)
+
+    def test_close_kill_running(self):
+        @asyncio.coroutine
+        def kill_running():
+            create = self.loop.subprocess_exec(asyncio.SubprocessProtocol,
+                                               *PROGRAM_BLOCKED)
+            transport, protocol = yield from create
+
+            kill_called = False
+            def kill():
+                nonlocal kill_called
+                kill_called = True
+                orig_kill()
+
+            proc = transport.get_extra_info('subprocess')
+            orig_kill = proc.kill
+            proc.kill = kill
+            returncode = transport.get_returncode()
+            transport.close()
+            yield from transport._wait()
+            return (returncode, kill_called)
+
+        # Ignore "Close running child process: kill ..." log
+        with test_utils.disable_logger():
+            returncode, killed = self.loop.run_until_complete(kill_running())
+        self.assertIsNone(returncode)
+
+        # transport.close() must kill the process if it is still running
+        self.assertTrue(killed)
+        test_utils.run_briefly(self.loop)
+
+    def test_close_dont_kill_finished(self):
+        @asyncio.coroutine
+        def kill_running():
+            create = self.loop.subprocess_exec(asyncio.SubprocessProtocol,
+                                               *PROGRAM_BLOCKED)
+            transport, protocol = yield from create
+            proc = transport.get_extra_info('subprocess')
+
+            # kill the process (but asyncio is not notified immediatly)
+            proc.kill()
+            proc.wait()
+
+            proc.kill = mock.Mock()
+            proc_returncode = proc.poll()
+            transport_returncode = transport.get_returncode()
+            transport.close()
+            return (proc_returncode, transport_returncode, proc.kill.called)
+
+        # Ignore "Unknown child process pid ..." log of SafeChildWatcher,
+        # emitted because the test already consumes the exit status:
+        # proc.wait()
+        with test_utils.disable_logger():
+            result = self.loop.run_until_complete(kill_running())
+            test_utils.run_briefly(self.loop)
+
+        proc_returncode, transport_return_code, killed = result
+
+        self.assertIsNotNone(proc_returncode)
+        self.assertIsNone(transport_return_code)
+
+        # transport.close() must not kill the process if it finished, even if
+        # the transport was not notified yet
+        self.assertFalse(killed)
+
+    def test_popen_error(self):
+        # Issue #24763: check that the subprocess transport is closed
+        # when BaseSubprocessTransport fails
+        if sys.platform == 'win32':
+            target = 'asyncio.windows_utils.Popen'
+        else:
+            target = 'subprocess.Popen'
+        with mock.patch(target) as popen:
+            exc = ZeroDivisionError
+            popen.side_effect = exc
+
+            create = asyncio.create_subprocess_exec(sys.executable, '-c',
+                                                    'pass', loop=self.loop)
+            with warnings.catch_warnings(record=True) as warns:
+                with self.assertRaises(exc):
+                    self.loop.run_until_complete(create)
+                self.assertEqual(warns, [])
 
 
 if sys.platform != 'win32':

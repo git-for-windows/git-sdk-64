@@ -7,10 +7,10 @@ proactor is only implemented on Windows with IOCP.
 __all__ = ['BaseProactorEventLoop']
 
 import socket
-import sys
 import warnings
 
 from . import base_events
+from . import compat
 from . import constants
 from . import futures
 from . import sslproto
@@ -41,7 +41,8 @@ class _ProactorBasePipeTransport(transports._FlowControlMixin,
         self._loop.call_soon(self._protocol.connection_made, self)
         if waiter is not None:
             # only wake up the waiter when connection_made() has been called
-            self._loop.call_soon(waiter._set_result_unless_cancelled, None)
+            self._loop.call_soon(futures._set_result_unless_cancelled,
+                                 waiter, None)
 
     def __repr__(self):
         info = [self.__class__.__name__]
@@ -65,6 +66,9 @@ class _ProactorBasePipeTransport(transports._FlowControlMixin,
     def _set_extra(self, sock):
         self._extra['pipe'] = sock
 
+    def is_closing(self):
+        return self._closing
+
     def close(self):
         if self._closing:
             return
@@ -79,7 +83,7 @@ class _ProactorBasePipeTransport(transports._FlowControlMixin,
     # On Python 3.3 and older, objects with a destructor part of a reference
     # cycle are never destroyed. It's not more the case on Python 3.4 thanks
     # to the PEP 442.
-    if sys.version_info >= (3, 4):
+    if compat.PY34:
         def __del__(self):
             if self._sock is not None:
                 warnings.warn("unclosed transport %r" % self, ResourceWarning)
@@ -437,8 +441,7 @@ class BaseProactorEventLoop(base_events.BaseEventLoop):
 
     def sock_connect(self, sock, address):
         try:
-            if self._debug:
-                base_events._check_resolved_address(sock, address)
+            base_events._check_resolved_address(sock, address)
         except ValueError as err:
             fut = futures.Future(loop=self)
             fut.set_exception(err)

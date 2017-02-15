@@ -1,6 +1,7 @@
 import errno
 from http import client
 import io
+import itertools
 import os
 import array
 import socket
@@ -125,21 +126,59 @@ class HeaderTests(TestCase):
                     self.content_length = kv[1].strip()
                 list.append(self, item)
 
-        # POST with empty body
-        conn = client.HTTPConnection('example.com')
-        conn.sock = FakeSocket(None)
-        conn._buffer = ContentLengthChecker()
-        conn.request('POST', '/', '')
-        self.assertEqual(conn._buffer.content_length, b'0',
-                        'Header Content-Length not set')
+        # Here, we're testing that methods expecting a body get a
+        # content-length set to zero if the body is empty (either None or '')
+        bodies = (None, '')
+        methods_with_body = ('PUT', 'POST', 'PATCH')
+        for method, body in itertools.product(methods_with_body, bodies):
+            conn = client.HTTPConnection('example.com')
+            conn.sock = FakeSocket(None)
+            conn._buffer = ContentLengthChecker()
+            conn.request(method, '/', body)
+            self.assertEqual(
+                conn._buffer.content_length, b'0',
+                'Header Content-Length incorrect on {}'.format(method)
+            )
 
-        # PUT request with empty body
-        conn = client.HTTPConnection('example.com')
-        conn.sock = FakeSocket(None)
-        conn._buffer = ContentLengthChecker()
-        conn.request('PUT', '/', '')
-        self.assertEqual(conn._buffer.content_length, b'0',
-                        'Header Content-Length not set')
+        # For these methods, we make sure that content-length is not set when
+        # the body is None because it might cause unexpected behaviour on the
+        # server.
+        methods_without_body = (
+             'GET', 'CONNECT', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE',
+        )
+        for method in methods_without_body:
+            conn = client.HTTPConnection('example.com')
+            conn.sock = FakeSocket(None)
+            conn._buffer = ContentLengthChecker()
+            conn.request(method, '/', None)
+            self.assertEqual(
+                conn._buffer.content_length, None,
+                'Header Content-Length set for empty body on {}'.format(method)
+            )
+
+        # If the body is set to '', that's considered to be "present but
+        # empty" rather than "missing", so content length would be set, even
+        # for methods that don't expect a body.
+        for method in methods_without_body:
+            conn = client.HTTPConnection('example.com')
+            conn.sock = FakeSocket(None)
+            conn._buffer = ContentLengthChecker()
+            conn.request(method, '/', '')
+            self.assertEqual(
+                conn._buffer.content_length, b'0',
+                'Header Content-Length incorrect on {}'.format(method)
+            )
+
+        # If the body is set, make sure Content-Length is set.
+        for method in itertools.chain(methods_without_body, methods_with_body):
+            conn = client.HTTPConnection('example.com')
+            conn.sock = FakeSocket(None)
+            conn._buffer = ContentLengthChecker()
+            conn.request(method, '/', ' ')
+            self.assertEqual(
+                conn._buffer.content_length, b'1',
+                'Header Content-Length incorrect on {}'.format(method)
+            )
 
     def test_putheader(self):
         conn = client.HTTPConnection('example.com')
@@ -147,6 +186,33 @@ class HeaderTests(TestCase):
         conn.putrequest('GET','/')
         conn.putheader('Content-length', 42)
         self.assertIn(b'Content-length: 42', conn._buffer)
+
+        conn.putheader('Foo', ' bar ')
+        self.assertIn(b'Foo:  bar ', conn._buffer)
+        conn.putheader('Bar', '\tbaz\t')
+        self.assertIn(b'Bar: \tbaz\t', conn._buffer)
+        conn.putheader('Authorization', 'Bearer mytoken')
+        self.assertIn(b'Authorization: Bearer mytoken', conn._buffer)
+        conn.putheader('IterHeader', 'IterA', 'IterB')
+        self.assertIn(b'IterHeader: IterA\r\n\tIterB', conn._buffer)
+        conn.putheader('LatinHeader', b'\xFF')
+        self.assertIn(b'LatinHeader: \xFF', conn._buffer)
+        conn.putheader('Utf8Header', b'\xc3\x80')
+        self.assertIn(b'Utf8Header: \xc3\x80', conn._buffer)
+        conn.putheader('C1-Control', b'next\x85line')
+        self.assertIn(b'C1-Control: next\x85line', conn._buffer)
+        conn.putheader('Embedded-Fold-Space', 'is\r\n allowed')
+        self.assertIn(b'Embedded-Fold-Space: is\r\n allowed', conn._buffer)
+        conn.putheader('Embedded-Fold-Tab', 'is\r\n\tallowed')
+        self.assertIn(b'Embedded-Fold-Tab: is\r\n\tallowed', conn._buffer)
+        conn.putheader('Key Space', 'value')
+        self.assertIn(b'Key Space: value', conn._buffer)
+        conn.putheader('KeySpace ', 'value')
+        self.assertIn(b'KeySpace : value', conn._buffer)
+        conn.putheader(b'Nonbreak\xa0Space', 'value')
+        self.assertIn(b'Nonbreak\xa0Space: value', conn._buffer)
+        conn.putheader(b'\xa0NonbreakSpace', 'value')
+        self.assertIn(b'\xa0NonbreakSpace: value', conn._buffer)
 
     def test_ipv6host_header(self):
         # Default host header on IPv6 transaction should wrapped by [] if
@@ -176,6 +242,36 @@ class HeaderTests(TestCase):
 
         self.assertEqual(resp.getheader('First'), 'val')
         self.assertEqual(resp.getheader('Second'), 'val')
+
+    def test_invalid_headers(self):
+        conn = client.HTTPConnection('example.com')
+        conn.sock = FakeSocket('')
+        conn.putrequest('GET', '/')
+
+        # http://tools.ietf.org/html/rfc7230#section-3.2.4, whitespace is no
+        # longer allowed in header names
+        cases = (
+            (b'Invalid\r\nName', b'ValidValue'),
+            (b'Invalid\rName', b'ValidValue'),
+            (b'Invalid\nName', b'ValidValue'),
+            (b'\r\nInvalidName', b'ValidValue'),
+            (b'\rInvalidName', b'ValidValue'),
+            (b'\nInvalidName', b'ValidValue'),
+            (b' InvalidName', b'ValidValue'),
+            (b'\tInvalidName', b'ValidValue'),
+            (b'Invalid:Name', b'ValidValue'),
+            (b':InvalidName', b'ValidValue'),
+            (b'ValidName', b'Invalid\r\nValue'),
+            (b'ValidName', b'Invalid\rValue'),
+            (b'ValidName', b'Invalid\nValue'),
+            (b'ValidName', b'InvalidValue\r\n'),
+            (b'ValidName', b'InvalidValue\r'),
+            (b'ValidName', b'InvalidValue\n'),
+        )
+        for name, value in cases:
+            with self.subTest((name, value)):
+                with self.assertRaisesRegex(ValueError, 'Invalid header'):
+                    conn.putheader(name, value)
 
 
 class BasicTest(TestCase):
@@ -708,7 +804,22 @@ class BasicTest(TestCase):
         self.assertTrue(response.closed)
         self.assertTrue(conn.sock.file_closed)
 
+
 class OfflineTest(TestCase):
+    def test_all(self):
+        # Documented objects defined in the module should be in __all__
+        expected = {"responses"}  # White-list documented dict() object
+        # HTTPMessage, parse_headers(), and the HTTP status code constants are
+        # intentionally omitted for simplicity
+        blacklist = {"HTTPMessage", "parse_headers"}
+        for name in dir(client):
+            if name in blacklist:
+                continue
+            module_object = getattr(client, name)
+            if getattr(module_object, "__module__", None) == "http.client":
+                expected.add(name)
+        self.assertCountEqual(client.__all__, expected)
+
     def test_responses(self):
         self.assertEqual(client.responses[client.NOT_FOUND], "Not Found")
 
@@ -825,6 +936,7 @@ class HTTPSTest(TestCase):
                                        context=context)
             h.request('GET', '/')
             resp = h.getresponse()
+            h.close()
             self.assertIn('nginx', resp.getheader('server'))
 
     @support.system_must_validate_cert
@@ -836,6 +948,7 @@ class HTTPSTest(TestCase):
             h.request('GET', '/')
             resp = h.getresponse()
             content_type = resp.getheader('content-type')
+            h.close()
             self.assertIn('text/html', content_type)
 
     def test_networked_good_cert(self):
@@ -850,6 +963,7 @@ class HTTPSTest(TestCase):
             h.request('GET', '/')
             resp = h.getresponse()
             server_string = resp.getheader('server')
+            h.close()
             self.assertIn('nginx', server_string)
 
     def test_networked_bad_cert(self):

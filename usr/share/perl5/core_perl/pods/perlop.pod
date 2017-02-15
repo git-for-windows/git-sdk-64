@@ -154,7 +154,7 @@ and the left side must be either an object (a blessed reference)
 or a class name (that is, a package name).  See L<perlobj>.
 
 The dereferencing cases (as opposed to method-calling cases) are
-somewhat extended by the experimental C<postderef> feature.  For the
+somewhat extended by the C<postderef> feature.  For the
 details of that feature, consult L<perlref/Postfix Dereference Syntax>.
 
 =head2 Auto-increment and Auto-decrement
@@ -258,7 +258,7 @@ produces a warning unless you use S<C<no warnings 'experimental::bitwise'>>.
 Unary C<"+"> has no effect whatsoever, even on strings.  It is useful
 syntactically for separating a function name from a parenthesized expression
 that would otherwise be interpreted as the complete list of function
-arguments.  (See examples above under L<Terms and List Operators (Leftward)>.)
+arguments.  (See examples above under L</Terms and List Operators (Leftward)>.)
 X<+>
 
 Unary C<"\"> creates a reference to whatever follows it.  See L<perlreftut>
@@ -376,17 +376,28 @@ Binary C<<< ">>" >>> returns the value of its left argument shifted right by
 the number of bits specified by the right argument.  Arguments should
 be integers.  (See also L<Integer Arithmetic>.)
 
-Note that both C<<< << >>> and C<<< >> >>> in Perl are implemented directly using
-C<<< << >>> and C<<< >> >>>  in C.  If S<C<use integer>> (see L<Integer Arithmetic>) is
-in force then signed C integers are used, else unsigned C integers are
-used, even for negative shiftees.  Either way, the implementation isn't going to generate results
-larger than the size of the integer type Perl was built with (32 bits
-or 64 bits).
+If S<C<use integer>> (see L<Integer Arithmetic>) is in force then
+signed C integers are used (I<arithmetic shift>), otherwise unsigned C
+integers are used (I<logical shift>), even for negative shiftees.
+In arithmetic right shift the sign bit is replicated on the left,
+in logical shift zero bits come in from the left.
 
-The result of overflowing the range of the integers is undefined
-because it is undefined also in C.  In other words, using 32-bit
-integers, S<C<< 1 << 32 >>> is undefined.  Shifting by a negative number
-of bits is also undefined.
+Either way, the implementation isn't going to generate results larger
+than the size of the integer type Perl was built with (32 bits or 64 bits).
+
+Shifting by negative number of bits means the reverse shift: left
+shift becomes right shift, right shift becomes left shift.  This is
+unlike in C, where negative shift is undefined.
+
+Shifting by more bits than the size of the integers means most of the
+time zero (all bits fall off), except that under S<C<use integer>>
+right overshifting a negative shiftee results in -1.  This is unlike
+in C, where shifting by too many bits is undefined.  A common C
+behavior is "shift by modulo wordbits", so that for example
+
+    1 >> 64 == 1 >> (64 % 64) == 1 >> 0 == 1  # Common C behavior.
+
+but that is completely accidental.
 
 If you get tired of being subject to your platform's native integers,
 the S<C<use bigint>> pragma neatly sidesteps the issue altogether:
@@ -764,19 +775,11 @@ might have.  For example:
         ...
     }
 
-or, if other non-required fields are allowed, use ARRAY ~~ HASH:
-
-    use v5.10.1;
-    sub make_dogtag {
-        state $REQUIRED_FIELDS = { name=>1, rank=>1, serial_num=>1 };
-
-        my ($class, $init_fields) = @_;
-
-        die "Must supply (at least) name, rank, and serial number"
-            unless [keys %{$init_fields}] ~~ $REQUIRED_FIELDS;
-
-        ...
-    }
+However, this only does what you mean if C<$init_fields> is indeed a hash
+reference. The condition C<$init_fields ~~ $REQUIRED_FIELDS> also allows the
+strings C<"name">, C<"rank">, C<"serial_num"> as well as any array reference
+that contains C<"name"> or C<"rank"> or C<"serial_num"> anywhere to pass
+through.
 
 The smartmatch operator is most often used as the implicit operator of a
 C<when> clause.  See the section on "Switch Statements" in L<perlsyn>.
@@ -913,9 +916,9 @@ portable way to find out the home directory might be:
 In particular, this means that you shouldn't use this
 for selecting between two aggregates for assignment:
 
-    @a = @b || @c;		# this is wrong
-    @a = scalar(@b) || @c;	# really meant this
-    @a = @b ? @b : @c;		# this works fine, though
+    @a = @b || @c;            # This doesn't do the right thing
+    @a = scalar(@b) || @c;    # because it really means this.
+    @a = @b ? @b : @c;        # This works fine, though.
 
 As alternatives to C<&&> and C<||> when used for
 control flow, Perl provides the C<and> and C<or> operators (see below).
@@ -1269,7 +1272,7 @@ in which case you might as well just use the more customary C<"||"> operator:
 
     open(HANDLE, "< :utf8", "filename") || die "Can't open: $!\n";
 
-See also discussion of list operators in L<Terms and List Operators (Leftward)>.
+See also discussion of list operators in L</Terms and List Operators (Leftward)>.
 
 =head2 Logical Not
 X<operator, logical, not> X<not>
@@ -2298,6 +2301,21 @@ when they're the right way to get something done.  Perl was made to be
 a glue language, and one of the things it glues together is commands.
 Just understand what you're getting yourself into.
 
+Like C<system>, backticks put the child process exit code in C<$?>.
+If you'd like to manually inspect failure, you can check all possible
+failure modes by inspecting C<$?> like this:
+
+    if ($? == -1) {
+        print "failed to execute: $!\n";
+    }
+    elsif ($? & 127) {
+        printf "child died with signal %d, %s coredump\n",
+            ($? & 127),  ($? & 128) ? 'with' : 'without';
+    }
+    else {
+        printf "child exited with value %d\n", $? >> 8;
+    }
+
 See L</"I/O Operators"> for more discussion.
 
 =item C<qw/I<STRING>/>
@@ -2361,11 +2379,7 @@ double-quoted strings.  But there is no interpolation, so C<"$"> and
 C<"@"> are treated as literals.  A hyphen at the beginning or end, or
 preceded by a backslash is considered a literal.  Escape sequence
 details are in L<the table near the beginning of this section|/Quote and
-Quote-like Operators>.  It is a bug in Perl v5.22 that something like
-
- tr/\N{U+20}-\N{U+7E}foobar//
-
-does not treat that range as fully Unicode.
+Quote-like Operators>.
 
 Note that C<tr> does B<not> do regular expression character classes such as
 C<\d> or C<\pL>.  The C<tr> operator is not equivalent to the C<L<tr(1)>>
@@ -2376,11 +2390,41 @@ C<\l> string-interpolation escapes on the right side of a substitution
 operator will perform correct case-mappings, but C<tr[a-z][A-Z]> will not
 (except sometimes on legacy 7-bit data).
 
-Note also that the whole range idea is rather unportable between
-character sets--and even within character sets they may cause results
-you probably didn't expect.  A sound principle is to use only ranges
-that begin from and end at either alphabets of equal case (a-e, A-E),
-or digits (0-4).  Anything else is unsafe.  If in doubt, spell out the
+Most ranges are unportable between character sets, but certain ones
+signal Perl to do special handling to make them portable.  There are two
+classes of portable ranges.  The first are any subsets of the ranges
+C<A-Z>, C<a-z>, and C<0-9>, when expressed as literal characters.
+
+  tr/h-k/H-K/
+
+capitalizes the letters C<"h">, C<"i">, C<"j">, and C<"k"> and nothing
+else, no matter what the platform's character set is.  In contrast, all
+of
+
+  tr/\x68-\x6B/\x48-\x4B/
+  tr/h-\x6B/H-\x4B/
+  tr/\x68-k/\x48-K/
+
+do the same capitalizations as the previous example when run on ASCII
+platforms, but something completely different on EBCDIC ones.
+
+The second class of portable ranges is invoked when one or both of the
+range's end points are expressed as C<\N{...}>
+
+ $string =~ tr/\N{U+20}-\N{U+7E}//d;
+
+removes from C<$string> all the platform's characters which are
+equivalent to any of Unicode U+0020, U+0021, ... U+007D, U+007E.  This
+is a portable range, and has the same effect on every platform it is
+run on.  It turns out that in this example, these are the ASCII
+printable characters.  So after this is run, C<$string> has only
+controls and characters which have no ASCII equivalents.
+
+But, even for portable ranges, it is not generally obvious what is
+included without having to look things up.  A sound principle is to use
+only ranges that begin from and end at either ASCII alphabetics of equal
+case (C<b-e>, C<b-E>), or digits (C<1-4>).  Anything else is unclear
+(and unportable unless C<\N{...}> is used).  If in doubt, spell out the
 character sets in full.
 
 Options:

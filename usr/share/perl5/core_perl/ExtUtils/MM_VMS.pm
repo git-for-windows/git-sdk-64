@@ -15,7 +15,7 @@ BEGIN {
 
 use File::Basename;
 
-our $VERSION = '7.04_01';
+our $VERSION = '7.10_02';
 
 require ExtUtils::MM_Any;
 require ExtUtils::MM_Unix;
@@ -1764,7 +1764,8 @@ sub oneliner {
     $cmd =~ s{^\n+}{};
     $cmd =~ s{\n+$}{};
 
-    $cmd = $self->quote_literal($cmd);
+    my @cmds = split /\n/, $cmd;
+    $cmd = join " \n\t  -e ", map $self->quote_literal($_), @cmds;
     $cmd = $self->escape_newlines($cmd);
 
     # Switches must be quoted else they will be lowercased.

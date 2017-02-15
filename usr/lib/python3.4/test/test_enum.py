@@ -257,6 +257,19 @@ class TestEnum(unittest.TestCase):
         with self.assertRaises(AttributeError):
             del Season.SPRING.name
 
+    def test_bool_of_class(self):
+        class Empty(Enum):
+            pass
+        self.assertTrue(bool(Empty))
+
+    def test_bool_of_member(self):
+        class Count(Enum):
+            zero = 0
+            one = 1
+            two = 2
+        for member in Count:
+            self.assertTrue(bool(member))
+
     def test_invalid_names(self):
         with self.assertRaises(ValueError):
             class Wrong(Enum):
@@ -580,6 +593,14 @@ class TestEnum(unittest.TestCase):
                 protocol=(0, 3))
         test_pickle_dump_load(self.assertIs, self.NestedEnum.twigs,
                 protocol=(4, HIGHEST_PROTOCOL))
+
+    def test_pickle_by_name(self):
+        class ReplaceGlobalInt(IntEnum):
+            ONE = 1
+            TWO = 2
+        ReplaceGlobalInt.__reduce_ex__ = enum._reduce_ex_by_name
+        for proto in range(HIGHEST_PROTOCOL):
+            self.assertEqual(ReplaceGlobalInt.TWO.__reduce_ex__(proto), 'TWO')
 
     def test_exploding_pickle(self):
         BadPickle = Enum(

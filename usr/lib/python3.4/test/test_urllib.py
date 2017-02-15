@@ -523,7 +523,7 @@ class urlretrieve_FileTests(unittest.TestCase):
         result = urllib.request.urlretrieve("file:%s" % support.TESTFN)
         self.assertEqual(result[0], support.TESTFN)
         self.assertIsInstance(result[1], email.message.Message,
-                              "did not get a email.message.Message instance "
+                              "did not get an email.message.Message instance "
                               "as second returned value")
 
     def test_copy(self):
@@ -1293,21 +1293,6 @@ class Pathname_Tests(unittest.TestCase):
 
 class Utility_Tests(unittest.TestCase):
     """Testcase to test the various utility functions in the urllib."""
-
-    def test_splitpasswd(self):
-        """Some of password examples are not sensible, but it is added to
-        confirming to RFC2617 and addressing issue4675.
-        """
-        self.assertEqual(('user', 'ab'),urllib.parse.splitpasswd('user:ab'))
-        self.assertEqual(('user', 'a\nb'),urllib.parse.splitpasswd('user:a\nb'))
-        self.assertEqual(('user', 'a\tb'),urllib.parse.splitpasswd('user:a\tb'))
-        self.assertEqual(('user', 'a\rb'),urllib.parse.splitpasswd('user:a\rb'))
-        self.assertEqual(('user', 'a\fb'),urllib.parse.splitpasswd('user:a\fb'))
-        self.assertEqual(('user', 'a\vb'),urllib.parse.splitpasswd('user:a\vb'))
-        self.assertEqual(('user', 'a:b'),urllib.parse.splitpasswd('user:a:b'))
-        self.assertEqual(('user', 'a b'),urllib.parse.splitpasswd('user:a b'))
-        self.assertEqual(('user 2', 'ab'),urllib.parse.splitpasswd('user 2:ab'))
-        self.assertEqual(('user+1', 'a+b'),urllib.parse.splitpasswd('user+1:a+b'))
 
     def test_thishost(self):
         """Test the urllib.request.thishost utility function returns a tuple"""

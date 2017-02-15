@@ -4,8 +4,8 @@
 # Author          : Johan Vromans
 # Created On      : Tue Sep 11 15:00:12 1990
 # Last Modified By: Johan Vromans
-# Last Modified On: Mon Feb 23 20:29:11 2015
-# Update Count    : 1683
+# Last Modified On: Thu Oct  8 14:57:49 2015
+# Update Count    : 1697
 # Status          : Released
 
 ################ Module Preamble ################
@@ -17,10 +17,10 @@ use 5.004;
 use strict;
 
 use vars qw($VERSION);
-$VERSION        =  2.45;
+$VERSION        =  2.48;
 # For testing versions only.
 use vars qw($VERSION_STRING);
-$VERSION_STRING = "2.45";
+$VERSION_STRING = "2.48";
 
 use Exporter;
 use vars qw(@ISA @EXPORT @EXPORT_OK);
@@ -255,7 +255,12 @@ use constant PAT_XINT  =>
   "|".
 	  "0[0-7_]*".
   ")";
-use constant PAT_FLOAT => "[-+]?[0-9_]+(\.[0-9_]+)?([eE][-+]?[0-9_]+)?";
+use constant PAT_FLOAT =>
+  "[-+]?".			# optional sign
+  "(?=[0-9.])".			# must start with digit or dec.point
+  "[0-9_]*".			# digits before the dec.point
+  "(\.[0-9_]+)?".		# optional fraction
+  "([eE][-+]?[0-9_]+)?";	# optional exponent
 
 sub GetOptions(@) {
     # Shift in default array.
@@ -1104,9 +1109,13 @@ sub FindOption ($$$$$) {
     my $mand = $ctl->[CTL_AMIN];
 
     # Check if there is an option argument available.
-    if ( $gnu_compat && defined $optarg && $optarg eq '' ) {
-	return (1, $opt, $ctl, $type eq 's' ? '' : 0) ;#unless $mand;
-	$optarg = 0 unless $type eq 's';
+    if ( $gnu_compat ) {
+	my $optargtype = 0; # 0 = none, 1 = empty, 2 = nonempty
+	$optargtype = ( !defined($optarg) ? 0 : ( (length($optarg) == 0) ? 1 : 2 ) );
+	return (1, $opt, $ctl, undef)
+	  if (($optargtype == 0) && !$mand);
+	return (1, $opt, $ctl, $type eq 's' ? '' : 0)
+	  if $optargtype == 1;  # --foo=  -> return nothing
     }
 
     # Check if there is an option argument available.
@@ -1227,8 +1236,6 @@ sub FindOption ($$$$$) {
     }
 
     elsif ( $type eq 'f' ) { # real number, int is also ok
-	# We require at least one digit before a point or 'e',
-	# and at least one digit following the point and 'e'.
 	my $o_valid = PAT_FLOAT;
 	if ( $bundling && defined $rest &&
 	     $rest =~ /^($key_valid)($o_valid)(.*)$/s ) {
@@ -1298,9 +1305,6 @@ sub ValidValue ($$$$$) {
     }
 
     elsif ( $type eq 'f' ) { # real number, int is also ok
-	# We require at least one digit before a point or 'e',
-	# and at least one digit following the point and 'e'.
-	# [-]NN[.NN][eNN]
 	my $o_valid = PAT_FLOAT;
 	return $arg =~ /^$o_valid$/;
     }
@@ -1312,13 +1316,13 @@ sub Configure (@) {
     my (@options) = @_;
 
     my $prevconfig =
-      [ $error, $debug, $major_version, $minor_version,
+      [ $error, $debug, $major_version, $minor_version, $caller,
 	$autoabbrev, $getopt_compat, $ignorecase, $bundling, $order,
 	$gnu_compat, $passthrough, $genprefix, $auto_version, $auto_help,
 	$longprefix, $bundling_values ];
 
     if ( ref($options[0]) eq 'ARRAY' ) {
-	( $error, $debug, $major_version, $minor_version,
+	( $error, $debug, $major_version, $minor_version, $caller,
 	  $autoabbrev, $getopt_compat, $ignorecase, $bundling, $order,
 	  $gnu_compat, $passthrough, $genprefix, $auto_version, $auto_help,
 	  $longprefix, $bundling_values ) = @{shift(@options)};
@@ -1359,6 +1363,8 @@ sub Configure (@) {
 	}
 	elsif ( $try eq 'gnu_compat' ) {
 	    $gnu_compat = $action;
+	    $bundling = 0;
+	    $bundling_values = 1;
 	}
 	elsif ( $try =~ /^(auto_?)?version$/ ) {
 	    $auto_version = $action;

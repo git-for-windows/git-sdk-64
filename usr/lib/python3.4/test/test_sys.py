@@ -197,9 +197,10 @@ class SysModuleTest(unittest.TestCase):
         self.assertEqual(sys.getrecursionlimit(), 10000)
         sys.setrecursionlimit(oldlimit)
 
-    @unittest.skipIf(hasattr(sys, 'gettrace') and sys.gettrace(),
-                     'fatal error if run with a trace function')
     def test_recursionlimit_recovery(self):
+        if hasattr(sys, 'gettrace') and sys.gettrace():
+            self.skipTest('fatal error if run with a trace function')
+
         # NOTE: this test is slightly fragile in that it depends on the current
         # recursion count when executing the test being low enough so as to
         # trigger the recursion recovery detection in the _Py_MakeEndRecCheck
@@ -778,6 +779,9 @@ class SizeofTest(unittest.TestCase):
             check(x, vsize('n2Pi') + x.__alloc__())
         # bytearray_iterator
         check(iter(bytearray()), size('nP'))
+        # bytes
+        check(b'', vsize('n') + 1)
+        check(b'x' * 10, vsize('n') + 11)
         # cell
         def get_cell():
             x = 42
@@ -897,8 +901,6 @@ class SizeofTest(unittest.TestCase):
         check(int(PyLong_BASE), vsize('') + 2*self.longdigit)
         check(int(PyLong_BASE**2-1), vsize('') + 2*self.longdigit)
         check(int(PyLong_BASE**2), vsize('') + 3*self.longdigit)
-        # memoryview
-        check(memoryview(b''), size('Pnin 2P2n2i5P 3cPn'))
         # module
         check(unittest, size('PnPPP'))
         # None

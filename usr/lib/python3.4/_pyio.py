@@ -24,8 +24,8 @@ if hasattr(os, 'SEEK_HOLE') :
 DEFAULT_BUFFER_SIZE = 8 * 1024  # bytes
 
 # NOTE: Base classes defined here are registered with the "official" ABCs
-# defined in io.py. We don't use real inheritance though, because we don't
-# want to inherit the C implementations.
+# defined in io.py. We don't use real inheritance though, because we don't want
+# to inherit the C implementations.
 
 # Rebind for compatibility
 BlockingIOError = BlockingIOError
@@ -1230,8 +1230,10 @@ class BufferedRWPair(BufferedIOBase):
         return self.writer.flush()
 
     def close(self):
-        self.writer.close()
-        self.reader.close()
+        try:
+            self.writer.close()
+        finally:
+            self.reader.close()
 
     def isatty(self):
         return self.reader.isatty() or self.writer.isatty()
@@ -1863,6 +1865,19 @@ class TextIOWrapper(TextIOBase):
         return buffer
 
     def seek(self, cookie, whence=0):
+        def _reset_encoder(position):
+            """Reset the encoder (merely useful for proper BOM handling)"""
+            try:
+                encoder = self._encoder or self._get_encoder()
+            except LookupError:
+                # Sometimes the encoder doesn't exist
+                pass
+            else:
+                if position != 0:
+                    encoder.setstate(0)
+                else:
+                    encoder.reset()
+
         if self.closed:
             raise ValueError("tell on closed file")
         if not self._seekable:
@@ -1883,6 +1898,7 @@ class TextIOWrapper(TextIOBase):
             self._snapshot = None
             if self._decoder:
                 self._decoder.reset()
+            _reset_encoder(position)
             return position
         if whence != 0:
             raise ValueError("unsupported whence (%r)" % (whence,))
@@ -1920,17 +1936,7 @@ class TextIOWrapper(TextIOBase):
                 raise OSError("can't restore logical file position")
             self._decoded_chars_used = chars_to_skip
 
-        # Finally, reset the encoder (merely useful for proper BOM handling)
-        try:
-            encoder = self._encoder or self._get_encoder()
-        except LookupError:
-            # Sometimes the encoder doesn't exist
-            pass
-        else:
-            if cookie != 0:
-                encoder.setstate(0)
-            else:
-                encoder.reset()
+        _reset_encoder(cookie)
         return cookie
 
     def read(self, size=None):
@@ -2095,7 +2101,7 @@ class StringIO(TextIOWrapper):
 
     def __repr__(self):
         # TextIOWrapper tells the encoding in its repr. In StringIO,
-        # that's a implementation detail.
+        # that's an implementation detail.
         return object.__repr__(self)
 
     @property

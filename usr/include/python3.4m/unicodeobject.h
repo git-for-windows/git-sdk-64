@@ -965,7 +965,7 @@ _PyUnicodeWriter_WriteSubstring(_PyUnicodeWriter *writer,
     Py_ssize_t end
     );
 
-/* Append a ASCII-encoded byte string.
+/* Append an ASCII-encoded byte string.
    Return 0 on success, raise an exception and return -1 on error. */
 PyAPI_FUNC(int)
 _PyUnicodeWriter_WriteASCIIString(_PyUnicodeWriter *writer,
@@ -1052,7 +1052,7 @@ PyAPI_FUNC(Py_ssize_t) PyUnicode_AsWideChar(
    always ends with a nul character. If size is not NULL, write the number of
    wide characters (excluding the null character) into *size.
 
-   Returns a buffer allocated by PyMem_Alloc() (use PyMem_Free() to free it)
+   Returns a buffer allocated by PyMem_Malloc() (use PyMem_Free() to free it)
    on success. On error, returns NULL, *size is undefined and raises a
    MemoryError. */
 
@@ -2041,7 +2041,7 @@ PyAPI_FUNC(PyObject *) PyUnicode_RichCompare(
     int op                      /* Operation: Py_EQ, Py_NE, Py_GT, etc. */
     );
 
-/* Apply a argument tuple or dictionary to a format string and return
+/* Apply an argument tuple or dictionary to a format string and return
    the resulting Unicode string. */
 
 PyAPI_FUNC(PyObject *) PyUnicode_Format(

@@ -41,8 +41,6 @@
 #define STREQN(a, b, n) ((n == 0) ? (1) \
                                   : ((a)[0] == (b)[0] && strncmp(a, b, n) == 0))
 
-extern int history_offset;
-
 #define PURGE_REGEXP	0x01
 
 static void

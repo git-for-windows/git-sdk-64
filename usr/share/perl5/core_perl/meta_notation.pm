@@ -4,7 +4,7 @@ use warnings;
 # A tiny private library routine which is a helper to several Perl core
 # modules, to allow a paradigm to be implemented in a single place.  The name,
 # contents, or even the existence of this file may be changed at any time and
-# are NOT to be used by anthing outside the Perl core.
+# are NOT to be used by anything outside the Perl core.
 
 sub _meta_notation ($) {
 
@@ -22,10 +22,8 @@ sub _meta_notation ($) {
     # On ASCII platforms, the upper-Latin1-range characters are converted to
     # Meta notation, so that \xC1 becomes 'M-A', \xE2 becomes 'M-b', etc.
     # This is how it always has worked, so is continued that way for backwards
-    # compatibility.  XXX Wrong, but the way it has always worked is that \x80
-    # .. \x9F are converted to M- followed by a literal control char.  This
-    # probably has escaped attention due to the limited domains this code has
-    # been applied to.  ext/SDBM_File/dbu.c does this right.
+    # compatibility.  The range \x80 .. \x9F becomes M-^@ .. M-^A, M-^B, ...
+    # M-^Z, M-^[, M-^\, M-^], M-^, M-^_
     #
     # On EBCDIC platforms, the upper-Latin1-range characters are converted
     # into '\x{...}'  Meta notation doesn't make sense on EBCDIC platforms
@@ -40,7 +38,8 @@ sub _meta_notation ($) {
                sprintf("^%c",utf8::unicode_to_native(ord($1)^64))/xeg;
     $string =~ s/\c?/^?/g;
     if (ord("A") == 65) {
-        $string =~ s/([\200-\377])/sprintf("M-%c",ord($1)&0177)/eg;
+        $string =~ s/([\200-\237])/sprintf("M-^%c",(ord($1)&0177)^64)/eg;
+        $string =~ s/([\240-\377])/sprintf("M-%c"  ,ord($1)&0177)/eg;
     }
     else {
         no warnings 'experimental::regex_sets';

@@ -2,10 +2,11 @@
 #
 # Versions up to 2.29_1 Copyright (c) 1995-2006 Graham Barr <gbarr@pobox.com>.
 # All rights reserved.
-# Changes in Version 2.29_2 onwards Copyright (C) 2013-2014 Steve Hay.  All
+# Changes in Version 2.29_2 onwards Copyright (C) 2013-2015 Steve Hay.  All
 # rights reserved.
-# This program is free software; you can redistribute it and/or
-# modify it under the same terms as Perl itself.
+# This module is free software; you can redistribute it and/or modify it under
+# the same terms as Perl itself, i.e. under the terms of either the GNU General
+# Public License or the Artistic License, as specified in the F<LICENCE> file.
 
 package Net::Cmd;
 
@@ -17,6 +18,7 @@ use warnings;
 use Carp;
 use Exporter;
 use Symbol 'gensym';
+use Errno 'EINTR';
 
 BEGIN {
   if ($^O eq 'os390') {
@@ -26,22 +28,7 @@ BEGIN {
   }
 }
 
-BEGIN {
-  if (!eval { require utf8 }) {
-    *is_utf8 = sub { 0 };
-  }
-  elsif (eval { utf8::is_utf8(undef); 1 }) {
-    *is_utf8 = \&utf8::is_utf8;
-  }
-  elsif (eval { require Encode; Encode::is_utf8(undef); 1 }) {
-    *is_utf8 = \&Encode::is_utf8;
-  }
-  else {
-    *is_utf8 = sub { $_[0] =~ /[^\x00-\xff]/ };
-  }
-}
-
-our $VERSION = "3.05";
+our $VERSION = "3.08_01";
 our @ISA     = qw(Exporter);
 our @EXPORT  = qw(CMD_INFO CMD_OK CMD_MORE CMD_REJECT CMD_ERROR CMD_PENDING);
 
@@ -203,7 +190,57 @@ sub set_status {
   1;
 }
 
+sub _syswrite_with_timeout {
+  my $cmd = shift;
+  my $line = shift;
 
+  my $len    = length($line);
+  my $offset = 0;
+  my $win    = "";
+  vec($win, fileno($cmd), 1) = 1;
+  my $timeout = $cmd->timeout || undef;
+  my $initial = time;
+  my $pending = $timeout;
+
+  local $SIG{PIPE} = 'IGNORE' unless $^O eq 'MacOS';
+
+  while ($len) {
+    my $wout;
+    my $nfound = select(undef, $wout = $win, undef, $pending);
+    if ((defined $nfound and $nfound > 0) or -f $cmd)    # -f for testing on win32
+    {
+      my $w = syswrite($cmd, $line, $len, $offset);
+      if (! defined($w) ) {
+        my $err = $!;
+        $cmd->close;
+        $cmd->_set_status_closed($err);
+        return;
+      }
+      $len -= $w;
+      $offset += $w;
+    }
+    elsif ($nfound == -1) {
+      if ( $! == EINTR ) {
+        if ( defined($timeout) ) {
+          redo if ($pending = $timeout - ( time - $initial ) ) > 0;
+          $cmd->_set_status_timeout;
+          return;
+        }
+        redo;
+      }
+      my $err = $!;
+      $cmd->close;
+      $cmd->_set_status_closed($err);
+      return;
+    }
+    else {
+      $cmd->_set_status_timeout;
+      return;
+    }
+  }
+
+  return 1;
+}
 
 sub _set_status_timeout {
   my $cmd = shift;
@@ -215,17 +252,18 @@ sub _set_status_timeout {
 
 sub _set_status_closed {
   my $cmd = shift;
+  my $err = shift;
   my $pkg = ref($cmd) || $cmd;
 
   $cmd->set_status($cmd->DEF_REPLY_CODE, "[$pkg] Connection closed");
   carp(ref($cmd) . ": " . (caller(1))[3]
-    . "(): unexpected EOF on command channel: $!") if $cmd->debug;
+    . "(): unexpected EOF on command channel: $err") if $cmd->debug;
 }
 
 sub _is_closed {
   my $cmd = shift;
   if (!defined fileno($cmd)) {
-     $cmd->_set_status_closed;
+     $cmd->_set_status_closed($!);
      return 1;
   }
   return 0;
@@ -241,8 +279,6 @@ sub command {
     if (exists ${*$cmd}{'net_cmd_last_ch'});
 
   if (scalar(@_)) {
-    local $SIG{PIPE} = 'IGNORE' unless $^O eq 'MacOS';
-
     my $str = join(
       " ",
       map {
@@ -254,17 +290,13 @@ sub command {
     $str = $cmd->toascii($str) if $tr;
     $str .= "\015\012";
 
-    my $len = length $str;
-    my $swlen;
-
     $cmd->debug_print(1, $str)
       if ($cmd->debug);
 
-    unless (defined($swlen = syswrite($cmd,$str,$len)) && $swlen == $len) {
-      $cmd->close;
-      $cmd->_set_status_closed;
-      return $cmd;
-    }
+    # though documented to return undef on failure, the legacy behavior
+    # was to return $cmd even on failure, so this odd construct does that
+    $cmd->_syswrite_with_timeout($str)
+      or return $cmd;
   }
 
   $cmd;
@@ -314,8 +346,9 @@ sub getline {
     my $select_ret = select($rout = $rin, undef, undef, $timeout);
     if ($select_ret > 0) {
       unless (sysread($cmd, $buf = "", 1024)) {
+        my $err = $!;
         $cmd->close;
-        $cmd->_set_status_closed;
+        $cmd->_set_status_closed($err);
         return;
       }
 
@@ -428,9 +461,17 @@ sub datasend {
   my $arr  = @_ == 1 && ref($_[0]) ? $_[0] : \@_;
   my $line = join("", @$arr);
 
-  # encode to individual utf8 bytes if
-  # $line is a string (in internal UTF-8)
-  utf8::encode($line) if is_utf8($line);
+  # Perls < 5.10.1 (with the exception of 5.8.9) have a performance problem with
+  # the substitutions below when dealing with strings stored internally in
+  # UTF-8, so downgrade them (if possible).
+  # Data passed to datasend() should be encoded to octets upstream already so
+  # shouldn't even have the UTF-8 flag on to start with, but if it so happens
+  # that the octets are stored in an upgraded string (as can sometimes occur)
+  # then they would still downgrade without fail anyway.
+  # Only Unicode codepoints > 0xFF stored in an upgraded string will fail to
+  # downgrade. We fail silently in that case, and a "Wide character in print"
+  # warning will be emitted later by syswrite().
+  utf8::downgrade($line, 1) if $] < 5.010001 && $] != 5.008009;
 
   return 0
     if $cmd->_is_closed;
@@ -469,33 +510,8 @@ sub datasend {
 
   ${*$cmd}{'net_cmd_last_ch'} = substr($line, -1, 1);
 
-  my $len    = length($line);
-  my $offset = 0;
-  my $win    = "";
-  vec($win, fileno($cmd), 1) = 1;
-  my $timeout = $cmd->timeout || undef;
-
-  local $SIG{PIPE} = 'IGNORE' unless $^O eq 'MacOS';
-
-  while ($len) {
-    my $wout;
-    my $s = select(undef, $wout = $win, undef, $timeout);
-    if ((defined $s and $s > 0) or -f $cmd)    # -f for testing on win32
-    {
-      my $w = syswrite($cmd, $line, $len, $offset);
-      unless (defined($w) && $w == $len) {
-        $cmd->close;
-        $cmd->_set_status_closed;
-        return;
-      }
-      $len -= $w;
-      $offset += $w;
-    }
-    else {
-      $cmd->_set_status_timeout;
-      return;
-    }
-  }
+  $cmd->_syswrite_with_timeout($line)
+    or return;
 
   1;
 }
@@ -517,30 +533,8 @@ sub rawdatasend {
     print STDERR $b, join("\n$b", split(/\n/, $line)), "\n";
   }
 
-  my $len    = length($line);
-  my $offset = 0;
-  my $win    = "";
-  vec($win, fileno($cmd), 1) = 1;
-  my $timeout = $cmd->timeout || undef;
-
-  local $SIG{PIPE} = 'IGNORE' unless $^O eq 'MacOS';
-  while ($len) {
-    my $wout;
-    if (select(undef, $wout = $win, undef, $timeout) > 0) {
-      my $w = syswrite($cmd, $line, $len, $offset);
-      unless (defined($w) && $w == $len) {
-        $cmd->close;
-        $cmd->_set_status_closed;
-        return;
-      }
-      $len -= $w;
-      $offset += $w;
-    }
-    else {
-      $cmd->_set_status_timeout;
-      return;
-    }
-  }
+  $cmd->_syswrite_with_timeout($line)
+    or return;
 
   1;
 }
@@ -564,19 +558,11 @@ sub dataend {
 
   $tosend .= ".\015\012";
 
-  local $SIG{PIPE} = 'IGNORE' unless $^O eq 'MacOS';
-
   $cmd->debug_print(1, ".\n")
     if ($cmd->debug);
 
-  my $len = length $tosend;
-  my $w = syswrite($cmd, $tosend, $len);
-  unless (defined($w) && $w == $len)
-  {
-    $cmd->close;
-    $cmd->_set_status_closed;
-    return 0;
-  }
+  $cmd->_syswrite_with_timeout($tosend)
+    or return 0;
 
   delete ${*$cmd}{'net_cmd_last_ch'};
 
@@ -721,6 +707,8 @@ is pending then C<CMD_PENDING> is returned.
 Send data to the remote server, converting LF to CRLF. Any line starting
 with a '.' will be prefixed with another '.'.
 C<DATA> may be an array or a reference to an array.
+The C<DATA> passed in must be encoded by the caller to octets of whatever
+encoding is required, e.g. by using the Encode module's C<encode()> function.
 
 =item dataend ()
 
@@ -793,6 +781,9 @@ Unget a line of text from the server.
 
 Send data to the remote server without performing any conversions. C<DATA>
 is a scalar.
+As with C<datasend()>, the C<DATA> passed in must be encoded by the caller
+to octets of whatever encoding is required, e.g. by using the Encode module's
+C<encode()> function.
 
 =item read_until_dot ()
 
@@ -870,7 +861,8 @@ Versions up to 2.29_1 Copyright (c) 1995-2006 Graham Barr. All rights reserved.
 Changes in Version 2.29_2 onwards Copyright (C) 2013-2014 Steve Hay.  All rights
 reserved.
 
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+This module is free software; you can redistribute it and/or modify it under the
+same terms as Perl itself, i.e. under the terms of either the GNU General Public
+License or the Artistic License, as specified in the F<LICENCE> file.
 
 =cut
