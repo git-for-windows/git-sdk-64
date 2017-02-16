@@ -29,9 +29,9 @@
 MACHINE="x86_64"
 OS="msys"
 CC="gcc"
-CFLAGS=" -DPROGRAM='bash.exe' -DCONF_HOSTTYPE='x86_64' -DCONF_OSTYPE='msys' -DCONF_MACHTYPE='x86_64-pc-msys' -DCONF_VENDOR='pc' -DLOCALEDIR='/usr/share/locale' -DPACKAGE='bash' -DSHELL -DHAVE_CONFIG_H -DRECYCLES_PIDS   -I.  -I. -I./include -I./lib  -DWORDEXP_OPTION -march=x86-64 -mtune=generic -O2 -pipe -D_STATIC_BUILD"
-RELEASE="4.3"
-PATCHLEVEL="46"
+CFLAGS=" -DPROGRAM='bash.exe' -DCONF_HOSTTYPE='x86_64' -DCONF_OSTYPE='msys' -DCONF_MACHTYPE='x86_64-pc-msys' -DCONF_VENDOR='pc' -DLOCALEDIR='/usr/share/locale' -DPACKAGE='bash' -DSHELL -DHAVE_CONFIG_H -DRECYCLES_PIDS   -I.  -I. -I./include -I./lib  -DWORDEXP_OPTION -march=x86-64 -mtune=generic -O2 -pipe -Wno-parentheses -Wno-format-security -D_STATIC_BUILD"
+RELEASE="4.4"
+PATCHLEVEL="12"
 RELSTATUS="release"
 MACHTYPE="x86_64-pc-msys"
 
@@ -62,7 +62,7 @@ while [ $# -gt 0 ]; do
 	--version)	shift ; do_version=y ;;
 	--)		shift ; break ;;
 	-*)		echo "bashbug: ${1}: invalid option" >&2
-			echo "$USAGE" >& 2
+			echo "$USAGE" >&2
 			exit 2 ;;
 	*)		break ;;
 	esac
@@ -265,7 +265,8 @@ esac
 
 ${RMAIL} $SMARGS < "$TEMPFILE1" || {
 	cat "$TEMPFILE1" >> $HOME/dead.bashbug
-	echo "$0: mail failed: report saved in $HOME/dead.bashbug" >&2
+	echo "$0: mail to ${BUGADDR} failed: report saved in $HOME/dead.bashbug" >&2
+	echo "$0: please send it manually to ${BUGADDR}" >&2
 }
 
 exit 0

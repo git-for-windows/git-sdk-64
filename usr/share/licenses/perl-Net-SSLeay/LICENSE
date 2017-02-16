@@ -1,17 +1,23 @@
 README - Net::SSLeay Perl module for using OpenSSL
-$Id: README 435 2015-02-14 21:57:30Z mikem-guest $
+$Id: README 472 2016-07-28 09:14:26Z mikem-guest $
 
 By popular demand...
 --------------------
 
    perl -MNet::SSLeay -e '($p)=Net::SSLeay::get_https("www.openssl.org", 443, "/"); print $p'
 
+for the latest and possibly unstable version from SVN:
+
+   svn co svn://svn.debian.org/svn/net-ssleay
+
+
 Prerequisites
 -------------
 
-perl-5.6.1     though anything starting from perl5.003 probably works.
+perl-5.6.1     though anything starting from perl5.003 probably works. Later
+	       versions are OK.
 
-OpenSSL-0.9.6j through to at least OpenSSL-1.0.2 and probably later
+OpenSSL-0.9.6j through to at least OpenSSL-1.1 and probably later
 	       http://www.openssl.org/ - On Linux, you can either build and
 	       install OpenSSL from scratch (its very portable) or you can
 	       install the appropriate OpenSSL 'devel' package for your Linux
@@ -24,6 +30,8 @@ Note: SSLeay is no longer supported. If you want to use Net::SSLeay with
       work goes on with OpenSSL) and due to incompatible API changes
       in OpenSSL-0.9.2b. OpenSSL-0.9.1c support has also been dropped,
       version 1.03 was the last one to support that.
+
+LibreSSL is also supported.
 
 You should use the same C compiler and options to compile OpenSSL,
 perl, and Net::SSLeay. This is the only supported configuration.
@@ -45,6 +53,12 @@ Unix:
 	perl Makefile.PL     # builds and tests it
 	make test            # Run the test suite
 	make install         # You probably have to su to root to do this
+
+	If your OpenSSL is installed in an unusual place, you can tell
+	Net-SSLeay where to find it with the OPENSSL_PREFIX environment
+	variable:
+	OPENSSL_PREFIX=/home/mikem/playpen/openssl-1.0.2c perl Makefile.PL
+	....
 
 HPUX:
 	In principle the Unix build should work (Makefile.PL contains
@@ -71,6 +85,9 @@ Windows:
 	Supported on 32 and 64 bit platforms
 	See README.Win32 for details
 
+OS X:
+	See README.OSX
+---------------------------------	
 You should also be able to use CPAN.pm to install this module if you like.
 
 Linking with RSAref is no longer supported (the patent issue is moot

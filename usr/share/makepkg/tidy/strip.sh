@@ -114,15 +114,13 @@ tidy_strip() {
 			# Magic number is at end of file:
 			# http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=256900#74
 			# http://cygwin.com/ml/cygwin-apps/2010-10/msg00057.html
-			case $(tail -c 12 "${binary}") in
-				Caml1999X0[0-9][0-9])  continue ;;
-			esac
-
+			#
 			# Perl Archive (PAR) binaries must not be stripped
 			# https://rt.cpan.org/Public/Bug/Display.html?id=18536
 			# http://cygwin.com/ml/cygwin-apps/2012-07/msg00088.html
-			case $(tail -c 8 "${binary}" | tr '\012' '%') in
+			case $(tail -c 12 "${binary}" | tr '\012\0' '%') in
 				%PAR\.pm%)  continue ;;
+				Caml1999X0[0-9][0-9])  continue ;;
 			esac
 			
 			# Mono assemblies must not be stripped, but remove .mdb debug symbols,

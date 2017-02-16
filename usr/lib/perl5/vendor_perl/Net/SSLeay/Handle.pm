@@ -187,7 +187,7 @@ sub shutdown {
   my $debug = Net::SSLeay::Handle->debug()
   Net::SSLeay::Handle->debug(1)
 
-Get/set debuging mode. Always returns the debug value before the function call.
+Get/set debugging mode. Always returns the debug value before the function call.
 if an additional argument is given the debug option will be set to this value.
 
 =cut

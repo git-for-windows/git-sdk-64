@@ -46,7 +46,7 @@ BEGIN {
 	import Encode if ($encode_available);
 }
 
-$VERSION = "1.05" ;
+$VERSION = "1.07" ;
 
 %EXPORT_TAGS = (
 
@@ -268,7 +268,7 @@ not provide it.
 
 =head1 VERSION
 
-1.05.
+1.07.
 
 =head1 SEE ALSO
 
@@ -276,7 +276,7 @@ gettext(3i), gettext(1), msgfmt(1)
 
 =head1 AUTHOR
 
-Phillip Vandry <vandry@TZoNE.ORG>
+Kim Vandry <vandry@TZoNE.ORG>
 
 =cut
 
