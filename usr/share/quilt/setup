@@ -142,7 +142,7 @@ create_md5sums()
 			# In fast mode, we are only interested in patches, so filter out
 			# archives
 			*.tar|*.tar.Z|*.tar.gz|*.tgz|*.tar.bz2|*.tar.xz|*.zip)
-				[ -n "$targetdir" ] && continue
+				[ -n "$QUILT_SETUP_FAST" ] && continue
 				;;
 		esac
 		[ -f "$file" ] || continue
@@ -220,15 +220,6 @@ inspect()
 	ln -s $QUILT_DIR/scripts/inspect-wrapper $tmpdir/bin/patch
 	ln -s $QUILT_DIR/scripts/inspect-wrapper $tmpdir/bin/tar
 	ln -s $QUILT_DIR/scripts/inspect-wrapper $tmpdir/bin/unzip
-	if [ -n "$targetdir" ]
-	then
-		# Fast mode
-		[ -d "$targetdir" ] || mkdir -p "$targetdir" || exit 1
-		ln -s "$targetdir" $tmpdir/build
-	else
-		# Standard mode
-		mkdir -p $tmpdir/build
-	fi
 
 	# Redirect file descriptors
 	# 5 is used in verbose mode, 4 in non-verbose mode, and 2 for both (real errors)
@@ -239,12 +230,23 @@ inspect()
 		exec 3>&1 4>&2 5>/dev/null
 	fi
 
-	create_md5sums "$sourcedir" $tmpdir/md5sums
+	if [ -n "$QUILT_SETUP_FAST" ]
+	then
+		# Fast mode
+		[ -d "$targetdir" ] || mkdir -p "$targetdir" || exit 1
+		ln -s "$targetdir" $tmpdir/build
+		export -f create_md5sums
+	else
+		# Standard mode
+		mkdir -p $tmpdir/build
+		create_md5sums "$sourcedir" $tmpdir/md5sums
+	fi
+	export -f normalize_path dir_to_dir
 
 	# let rpm do all the dirty specfile stuff ...
 	echo -n "### rpmbuild: " >&4
 
-	PATH="$tmpdir/bin:$PATH" QUILT_SETUP_FAST=${targetdir:+1} \
+	PATH="$tmpdir/bin:$PATH" \
 	rpmbuild --eval "%define _sourcedir $abs_sourcedir" \
 		 --eval "%define _specdir   $specdir" \
 		 --eval "%define _builddir  $tmpdir/build" \
@@ -325,10 +327,10 @@ do
 		DEFINE_FUZZ="%define _default_patch_fuzz $2"
 		shift 2 ;;
 	--slow)
-		opt_fast=
+		QUILT_SETUP_FAST=
 		shift ;;
 	--fast)
-		opt_fast=1
+		export QUILT_SETUP_FAST=1
 		shift ;;
 	--)
 		shift
@@ -356,7 +358,7 @@ case "$1" in
 	# check if rpmbuild is installed before running inspect
 	check_external_tool rpmbuild rpm-build
 
-	if [ -n "$opt_fast" ]
+	if [ -n "$QUILT_SETUP_FAST" ]
 	then
 		if [ "${prefix:0:1}" = / ]
 		then
@@ -413,13 +415,15 @@ case "$1" in
 	;;
 esac
 
-if [ -z "$opt_fast" ]
+if [ -z "$QUILT_SETUP_FAST" ]
 then
 	# Make sure that unpacking will not overwrite anything
 	check_for_existing_directories || exit 1
 
 	while read tag dir arg1 arg2
 	do
+		[ "${arg1:0:1}" != '#' ] || continue
+
 		case "$tag" in
 		tar)
 			tarball=$sourcedir$arg1
@@ -498,7 +502,3 @@ do
 		;;
 	esac
 done < $tmpfile
-### Local Variables:
-### mode: shell-script
-### End:
-# vim:filetype=sh

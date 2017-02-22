@@ -1,6 +1,6 @@
 #! /bin/sh
 # texi2dvi --- produce DVI (or PDF) files from Texinfo (or (La)TeX) sources.
-# $Id: texi2dvi 6991 2016-02-06 12:16:13Z gavin $
+# $Id: texi2dvi 7353 2016-09-10 13:03:54Z gavin $
 #
 # Copyright 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001, 2002,
 # 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013,
@@ -37,7 +37,7 @@ set -e
 : ${SED=sed}
 
 # This string is expanded automatically when this file is checked out.
-rcs_revision='$Revision: 6991 $'
+rcs_revision='$Revision: 7353 $'
 rcs_version=`set - $rcs_revision; echo $2`
 program=`echo $0 | $SED -e 's!.*/!!'`
 
@@ -51,7 +51,6 @@ orig_pwd=`pwd`
 # Instead, assign them an empty value.
 action=compile
 batch=false     # interact normally
-catcode_special=maybe
 debug=false
 escape="\\"
 expand=false    # true for expansion via makeinfo
@@ -134,13 +133,8 @@ containing each FILE is searched for included files.  The suffix of FILE
 is used to determine its language ((La)TeX or Texinfo).  To process
 (e)plain TeX files, set the environment variable LATEX=tex.
 
-In order to make texi2dvi a drop-in replacement of TeX/LaTeX in AUC-TeX,
-the FILE may also be composed of the following simple TeX commands.
-  \`\\input{FILE}'     the actual file to compile
-  \`\\nonstopmode'     same as --batch
-
-When invoked as \`texi2pdf' or \`pdftexi2dvi', or given the option --pdf
-or --dvipdf, generate PDF output.  Otherwise, generate DVI.
+When invoked as \`texi2pdf' or given the option --pdf generate PDF output.
+Otherwise, generate DVI.
 
 General options:
   -b, --batch         no interaction
@@ -148,12 +142,11 @@ General options:
   -h, --help          display this help and exit successfully
   -o, --output=OFILE  leave output in OFILE; only one input FILE is allowed
   -q, --quiet         no output unless errors (implies --batch)
-  -s, --silent        same as --quiet
   -v, --version       display version information and exit successfully
   -V, --verbose       report on what is done
-  --max-iterations=N   don't process files more than N times [$max_iters]
-  --mostly-clean      remove the auxiliary files and directories,
-                         but not the output
+  --max-iterations=N  don't process files more than N times [$max_iters]
+  --mostly-clean      remove auxiliary files or directories from
+                          previous runs (but not the output)
 
 Output format:
       --dvi     output a DVI file [default]
@@ -165,16 +158,17 @@ Output format:
       --text    output a plain text file from LaTeX, using HeVeA
 
 TeX tuning:
-  -@                         use @input instead of \input for preloaded Texinfo
-  -e, -E, --expand           force macro expansion using makeinfo
+  -E, --expand               macro expansion using makeinfo
   -I DIR                     search DIR for Texinfo files
   -l, --language=LANG        specify LANG for FILE, either latex or texinfo
       --no-line-error        do not pass --file-line-error to TeX
       --shell-escape         pass --shell-escape to TeX
       --src-specials         pass --src-specials to TeX
-  -t, --command=CMD          insert CMD in copy of input file
-   or --texinfo=CMD          multiple values accumulate
       --translate-file=FILE  use given charset translation file for TeX
+  -t, --command=CMD          insert CMD in copy of input file
+
+Any CMD strings are added after @setfilename for Texinfo input, or in
+the first line for LaTeX input.  Multiple values accumulate.
 
 Build modes:
   --build=MODE         specify the treatment of auxiliary files [$build_mode]
@@ -206,9 +200,6 @@ Regarding --dvipdf, if DVIPDF is not set in the environment, the
 following programs are looked for (in this order): dvipdfmx dvipdfm
 dvipdf dvi2pdf dvitopdf.
 
-Any CMD strings are added after @setfilename for Texinfo input, or in
-the first line for LaTeX input.
-
 If Texinfo is installed on your site, then the command
 
   info texi2dvi
@@ -228,7 +219,7 @@ EOF
 version ()
 {
   cat <<EOF
-texi2dvi (GNU Texinfo 6.1) $rcs_version
+texi2dvi (GNU Texinfo 6.3) $rcs_version
 
 Copyright (C) 2016 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -241,6 +232,48 @@ EOF
 
 #  Generic auxiliary functions.
 
+# List of variables containing paths to directories or files that
+# we need to update.
+path_vars='work_build workdir t2ddir work_bak in_input'
+
+# Change directory, updating some relative paths.
+cd_dir ()
+{
+  cd "$1"
+
+  # Check if argument is absolute, and if so, make all the path variables
+  # absolute.
+  case "$1" in
+  [\\/]* | ?:[\\/]*)  # absolute path
+    for cdd_dir in $path_vars; do
+      eval "$cdd_dir=\`absolute \$$cdd_dir\`"
+    done
+    return ;;
+  esac
+
+  # Replace each path component with ".." and remove any trailing slash.
+  cdd_prefix=`echo "$1" | \$SED -e 's/[^/\\][^/\\]*/../g' -e 's/[/\\]$//'`
+
+  # Add this prefix for some variables.
+  for cdd_dir in $path_vars; do
+    eval "case \"\$$cdd_dir\" in
+          [\\/]* | ?:[\\/]*) ;;  # absolute path - do nothing
+          ?*)
+             eval \"\$cdd_dir=\$cdd_prefix/\\\$\$cdd_dir\" ;;
+          esac"
+    # Without first level of quotes, where CDD_DIR is $cdd_dir:
+    #      case "$CDD_DIR" in
+    #      [\\/]* | ?:[\\/]*) ;;
+    #      *)
+    #         eval "$cdd_dir=$cdd_prefix/\$$cdd_dir" ;;
+    #      esac
+    #
+    # Inner 'eval' becomes
+    #     CDD_DIR=CDD_PREFIX/$CDD_DIR
+    # where CDD_DIR is $cdd_dir and CDD_PREFIX is $cdd_prefix
+  done
+}
+
 # cd_orig - Return to the original directory.
 cd_orig ()
 {
@@ -251,6 +284,24 @@ cd_orig ()
   # - the next file is processed in correct conditions
   # - the temporary file can be removed
   cd "$orig_pwd" || exit 1
+
+  test -z "$cdd_prefix" && return
+  
+  # strip off ../../ from some variables
+  # quote string by placing \ before each character (each either . or /)
+  cdd_prefix_q=`echo "$cdd_prefix" | \$SED -e 's/\\(.\\)/\\\\\\1/g'`
+  # after backslashes quote within backquoted string:
+  #             echo "$cdd_prefix" | $SED -e 's/\(.\)/\\\1/g'
+
+  for cdo_dir in $path_vars ; do
+    eval "$cdo_dir=\`echo \"\$$cdo_dir\" | \$SED -e 's/^$cdd_prefix_q\///'\`"
+
+    # Becomes
+    # CDO_DIR=`echo "$CDO_DIR" | $SED -e 's/^CDD_PREFIX//'`
+
+    # eval $cdo_dir=\${$cdo_dir#\$cdd_prefix/}
+    # would be simpler, but doesn't work in older shells.
+  done
 }
 
 
@@ -810,14 +861,6 @@ make_tex_cmd ()
     *) error 1 "$out_lang not supported for $in_lang";;
   esac
 
-  # do the special catcode trick for ~ in filenames only for Texinfo,
-  # not LaTeX.
-  if test x"$in_lang" = xtexinfo && test $catcode_special = maybe; then
-    catcode_special=true
-  else
-    catcode_special=false
-  fi
-
   # Beware of aux files in subdirectories that require the
   # subdirectory to exist.
   case $in_lang:$tidy in
@@ -873,61 +916,47 @@ make_tex_cmd ()
     # from the user.  Close its stdin to make it impossible.
     tex_cmd="$tex_cmd </dev/null '${escape}nonstopmode'"
   fi
-
-  # we'd like to handle arbitrary input file names, especially
-  # foo~bar/a~b.tex, since Debian likes ~ characters.
-  if $catcode_special; then
-    # The idea is to define \normaltilde as a catcode other ~ character,
-    # then make the active ~ be equivalent to that, instead of the plain
-    # TeX tie.  Then when the active ~ appears in the filename, it will
-    # be expanded to itself, as far as \input will see.  (This is the
-    # same thing that texinfo.tex does in general, BTW.)
-    normaltilde="${escape}catcode126=12 ${escape}def${escape}normaltilde{~}"
-    tex_cmd="$tex_cmd '$normaltilde${escape}catcode126=13 ${escape}let~\normaltilde '"
-  fi
-  # Other special (non-active) characters could be supported by
-  # resetting their catcodes to other on the command line and changing
-  # texinfo.tex to initialize everything to plain catcodes.  Maybe someday.
-
-  # append the \input command.
-  tex_cmd="$tex_cmd '${escape}input'"
 }
+
 
 # run_tex - Run TeX as "$tex $in_input", taking care of errors and logs.
 run_tex ()
 {
   make_tex_cmd
-    
-  # TeX's \input does not (easily or reliably) support whitespace
-  # characters or other special characters in file names.  Our intensive
-  # use of absolute file names makes this worse: the enclosing directory
-  # names may include white spaces.  Improve the situation using a
-  # symbolic link to the filename in the current directory, in tidy mode
-  # only.  Do not alter in_input.
-  #
-  # The filename is almost always tokenized using plain TeX conventions
-  # (the exception would be if the user made a texinfo.fmt file).  Not
-  # all the plain TeX special characters cause trouble, but there's no
-  # harm in making the link.
-  #
-  case $tidy:`func_dirname "$in_input"` in
-    true:*["$space$tab$newline\"#\$%\\^_{}~"]*)
-      _run_tex_file_name=`basename "$in_input"`
-      if test ! -f "$_run_tex_file_name"; then
-        # It might not be a file, clear it.
-        run rm -f "$_run_tex_file_name"
-        run ln -s "$in_input"
-      fi
-      tex_cmd="$tex_cmd '$_run_tex_file_name'"
-      ;;
 
-    *)
-      tex_cmd="$tex_cmd '$in_input'"
-      ;;
-  esac
+  # Check for any unusual characters in the filename.
+  # However, >, \ and any whitespace characters are not supported
+  # filenames.
+  in_input_funnies=`echo "$in_input" \
+    | $SED -e 's![^}#$%&^_{~]!!g' -e 's!\(.\)!\1\''
+!g' | uniq`
+
+  if test -n "$in_input_funnies" ; then
+    # Make > an end group character, as it's unlikely to appear in
+    # a filename.
+    tex_cmd="$tex_cmd '${escape}bgroup${escape}catcode62=2${escape}relax'"
+
+    # If the filename has funny characters, change the TeX category codes of 
+    # some characters within a group, and use \expandafter to input the file
+    # outside of the group.
+    for w in $in_input_funnies ; do
+      tex_cmd="$tex_cmd '${escape}catcode\`${escape}$w=12${escape}relax'"
+    done
+
+    # Set \toks0 to "\input FILENAME\relax"
+    tex_cmd="$tex_cmd '${escape}toks0${escape}bgroup${escape}input' '$in_input' '${escape}relax>"
+
+    # Expand \toks0 after the end of the group
+    tex_cmd="$tex_cmd${escape}expandafter${escape}egroup"
+    tex_cmd="$tex_cmd${escape}the${escape}toks0${escape}relax'"
+  else
+    # In the case of a simple filename, just pass the filename
+    # with no funny tricks.
+    tex_cmd="$tex_cmd '${escape}input' '$in_input'"
+  fi
 
   verbose "$0: Running $tex_cmd ..."
-  if eval "$tex_cmd" >&5; then
+  if (eval "$tex_cmd" >&5); then
     case $out_lang in
       dvi | pdf ) move_to_dest "$in_noext.$out_lang";;
     esac
@@ -988,7 +1017,8 @@ run_bibtex ()
 #                         that match PREDICATE.
 filter_files ()
 {
-  test -n "$xref_files_new" && echo "$xref_files_new" |
+  test -n "$xref_files_new" || return 0
+  echo "$xref_files_new" |
   # Filter existing files matching the criterion.
   #
   while read file; do
@@ -1110,7 +1140,7 @@ run_tex_suite ()
   # Move to the working directory.
   if $tidy; then
     verbose "cd $work_build"
-    cd "$work_build" || exit 1
+    cd_dir "$work_build" || exit 1
   fi
 
   # Count the number of cycles.
@@ -1455,7 +1485,7 @@ compile ()
   # --command, --texinfo
   insert_commands
 
-  # Run until a fix point is reached.
+  # Run until a fixed point is reached.
   run_tex_suite
 }
 
@@ -1464,8 +1494,8 @@ compile ()
 #
 make_openout_test ()
 {
-    ensure_dir $workdir/check_recorder
-    cd $workdir/check_recorder
+    ensure_dir "$workdir"/check_recorder
+    cd_dir "$workdir"/check_recorder
     cat > openout.tex <<EOF
 \newwrite\ourwrite
 \immediate\openout\ourwrite dum.dum
@@ -1474,15 +1504,15 @@ EOF
     # \bye doesn't work for LaTeX, but it will cause latex
     # to exit with an input error.
     recorder_option_maybe="$1"
-    save_catcode_special=$catcode_special
-    catcode_special=false
+    save_batch=$batch
+    batch=true
     make_tex_cmd
-    catcode_special=$save_catcode_special
-    tex_cmd="$tex_cmd ./openout.tex"
+    batch=$save_batch
+    tex_cmd="$tex_cmd '${escape}input' ./openout.tex"
     # ./ in case . isn't in path
     verbose "$0: running $tex_cmd ..."
     rm -fr "openout.$2"
-    eval "$tex_cmd" </dev/null >/dev/null 2>&1
+    (eval "$tex_cmd" >/dev/null 2>&1)
 }
 
 # Check tex supports -recorder option
@@ -1646,10 +1676,9 @@ mostly_clean ()
 # the script.  Changes the current directory.
 cleanup ()
 {
-  case $build_mode in
-    local) cd_orig; remove "$t2ddir";;
-    clean) mostly_clean;;
-    tidy)  ;;
+  case $clean:$tidy in
+    true:true) mostly_clean ;;                # build mode is "clean"
+    false:false) cd_orig; remove "$t2ddir";;  # build mode is "local"
   esac
 }
 
@@ -1660,9 +1689,7 @@ cleanup ()
 # - COMMAND_LINE_FILENAME
 #   The filename given on the commmand line, but cleaned of TeX commands.
 # - IN_DIR
-#   The directory containing the input file, possibly absolute if needed.
-# - IN_DIR_ABS
-#   The absolute directory of the input file.
+#   The directory containing the input file.
 # - IN_BASE
 #   The input file base name (no directory part).
 # - IN_NOEXT
@@ -1702,11 +1729,6 @@ input_file_name_decode ()
 
   # Get the name of the current directory.
   in_dir=`func_dirname "$command_line_filename"`
-  in_dir_abs=`absolute "$in_dir"`
-  # In a clean build, we `cd', so get an absolute file name.
-  if $tidy; then
-    in_dir=$in_dir_abs
-  fi
 
   # Strip directory part but leave extension.
   in_base=`basename "$command_line_filename"`
@@ -1768,7 +1790,7 @@ while test x"$1" != x"$arg_sep"; do
 
   case "$1" in
     -@ ) escape=@;;
-    -~ ) catcode_special=false;;
+    -~ ) verbose "Option -~ is obsolete: texi2dvi ignores it.";;
     # Silently and without documentation accept -b and --b[atch] as synonyms.
     -b | --batch) batch=true;;
          --build)      shift; build_mode=$1;;
@@ -1942,8 +1964,6 @@ do
 
   ensure_dir "$build_dir" "$t2ddir"
 
-  # We will change directory, better work with an absolute path...
-  t2ddir=`absolute "$t2ddir"`
   # Sometimes there are incompatibilities between auxiliary files for
   # DVI and PDF.  The contents can also change whether we work on PDF
   # and/or DVI.  So keep separate spaces for each.

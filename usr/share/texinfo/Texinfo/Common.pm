@@ -1,4 +1,4 @@
-# $Id: Common.pm 6991 2016-02-06 12:16:13Z gavin $
+# $Id: Common.pm 7353 2016-09-10 13:03:54Z gavin $
 # Common.pm: definition of commands. Common code of other Texinfo modules.
 #
 # Copyright 2010, 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
@@ -71,7 +71,7 @@ valid_tree_transformation
 @EXPORT = qw(
 );
 
-$VERSION = '6.1';
+$VERSION = '6.2';
 
 # i18n
 sub N__($)
@@ -126,21 +126,15 @@ our %default_parser_state_configuration = (
                               # value is the reference on a macro element 
                               # as obtained by parsing the @macro
   'merged_indices' => {},     # the key is merged in the value
-  'novalidate' => 0,          # same as setting @novalidate.
   'validatemenus' => 0,       # same as setting @validatemenus.
   'sections_level' => 0,      # modified by raise/lowersections
   'values' => {'txicommandconditionals' => 1},
                               # the key is the name, the value the @set name 
                               # argument.  A Texinfo tree may also be used.
+  'info' => {
+    'novalidate' => 0,        # same as setting @novalidate.
+  }
 );
-
-# command-line options
-#my @command_line_settable_at_commands = ('footnotestyle', 'novalidate',
-#  'documentlanguage', 'paragraphindent');
-
-
-# FIXME maybe this should better be set as texinfo passed to texi2any as
-# texi2dvi --command 
 
 # customization options
 our %document_settable_at_commands = (
@@ -182,9 +176,7 @@ our %document_settable_unique_at_commands = (
   # FIXME not clear here.
   'pagesizes' => undef,
   'setchapternewpage' => 'on',
-  'setcontentsaftertitlepage' => 0,
   'setfilename' => undef,
-  'setshortcontentsaftertitlepage' => 0,
   'everyheading'      => undef,
   'everyfooting'      => undef,
   'evenheading'       => undef,
@@ -265,7 +257,8 @@ my @variable_string_settables = (
   'MACRO_BODY_IGNORES_LEADING_SPACE', 'CHECK_HTMLXREF',
   'TEXINFO_DTD_VERSION', 'TEXINFO_COLUMN_FOR_DESCRIPTION',
   'TEXINFO_OUTPUT_FORMAT', 'INFO_SPECIAL_CHARS_WARNING',
-  'INDEX_SPECIAL_CHARS_WARNING', 'INFO_SPECIAL_CHARS_QUOTE'
+  'INDEX_SPECIAL_CHARS_WARNING', 'INFO_SPECIAL_CHARS_QUOTE',
+  'HTMLXREF'
 );
 # Not strings. 
 # FIXME To be documented somewhere, but where?
@@ -426,8 +419,6 @@ our %misc_commands = (
   'insertcopying'     => 'noarg', # no arg
   'clickstyle'        => 'special', # arg should be an @-command
   # more relevant in preamble
-  'setcontentsaftertitlepage'      => 'skipline', # no arg
-  'setshortcontentsaftertitlepage' => 'skipline', # no arg
   'documentencoding'  => 'text', # or 1?
   'novalidate'        => 'skipline', # no arg
   'validatemenus'     => 1, # on off
@@ -514,43 +505,32 @@ our %misc_commands = (
   'vskip'             => 'lineraw', # arg line in TeX
   # obsolete @-commands.
   'refill'            => 'noarg',   # no arg (obsolete, to be ignored)
+  'setcontentsaftertitlepage'      => 'skipline', # no arg
+  'setshortcontentsaftertitlepage' => 'skipline', # no arg
   # Remove spaces and end of lines after the 
   # commands? If no, they can lead to empty lines
   'quote-arg'         => 'skipline',
   'allow-recursion'   => 'skipline',
 );
 
-# key is index name, keys of the reference value are the prefixes.
-# value associated with the prefix is 0 if the prefix is not a code-like
-# prefix, 1 if it is a code-like prefix (set by defcodeindex/syncodeindex).
-#our %index_names = (
-# 'cp' => {'cp' => 0, 'c' => 0},
-# 'fn' => {'fn' => 1, 'f' => 1},
-# 'vr' => {'vr' => 1, 'v' => 1},
-# 'ky' => {'ky' => 1, 'k' => 1},
-# 'pg' => {'pg' => 1, 'p' => 1},
-# 'tp' => {'tp' => 1, 't' => 1}
-#);
-
 our %index_names = (
- 'cp' => {'prefix' => ['c'], 'in_code' => 0},
- 'fn' => {'prefix' => ['f'], 'in_code' => 1},
- 'vr' => {'prefix' => ['v'], 'in_code' => 1},
- 'ky' => {'prefix' => ['k'], 'in_code' => 1},
- 'pg' => {'prefix' => ['p'], 'in_code' => 1},
- 'tp' => {'prefix' => ['t'], 'in_code' => 1},
+ 'cp' => {'in_code' => 0},
+ 'fn' => {'in_code' => 1},
+ 'vr' => {'in_code' => 1},
+ 'ky' => {'in_code' => 1},
+ 'pg' => {'in_code' => 1},
+ 'tp' => {'in_code' => 1},
 );
 
 foreach my $index(keys(%index_names)) {
   $index_names{$index}->{'name'} = $index;
-  push @{$index_names{$index}->{'prefix'}}, $index;
 }
 
 our %default_index_commands;
 # all the commands are readded dynamically in the Parser.
 foreach my $index_name (keys (%index_names)) {
-  foreach my $index_prefix (@{$index_names{$index_name}->{'prefix'}}) {
-    next if ($index_prefix eq $index_name);
+  if ($index_name =~ /^(.).$/) {
+    my $index_prefix = $1;
     # only put the one letter versions in the hash.
     $misc_commands{$index_prefix.'index'} = 'line';
     $default_index_commands{$index_prefix.'index'} = 1;
@@ -727,21 +707,22 @@ our %def_map = (
     'deftypemethod', {'deftypeop' => gdt('Method')},
 );
 
-# the type of index, f: function, v: variable, t: type
+# the type of index, fn: function, vr: variable, tp: type
 my %index_type_def = (
- 'f' => ['deffn', 'deftypefn', 'deftypeop', 'defop'],
- 'v' => ['defvr', 'deftypevr', 'defcv', 'deftypecv' ],
- 't' => ['deftp']
+ 'fn' => ['deffn', 'deftypefn', 'deftypeop', 'defop'],
+ 'vr' => ['defvr', 'deftypevr', 'defcv', 'deftypecv' ],
+ 'tp' => ['deftp']
 );
 
-our %command_index_prefix;
+# Keys are commmands, values are names of indices.
+our %command_index;
 
-$command_index_prefix{'vtable'} = 'v';
-$command_index_prefix{'ftable'} = 'f';
+$command_index{'vtable'} = 'vr';
+$command_index{'ftable'} = 'fn';
 
 foreach my $index_type (keys %index_type_def) {
   foreach my $def (@{$index_type_def{$index_type}}) {
-    $command_index_prefix{$def} = $index_type;
+    $command_index{$def} = $index_type;
   }
 }
 
@@ -750,14 +731,14 @@ our %def_aliases;
 foreach my $def_command(keys %def_map) {
   if (ref($def_map{$def_command}) eq 'HASH') {
     my ($real_command) = keys (%{$def_map{$def_command}});
-    $command_index_prefix{$def_command} = $command_index_prefix{$real_command};
+    $command_index{$def_command} = $command_index{$real_command};
     $def_aliases{$def_command} = $real_command;
   }
   $block_commands{$def_command} = 'def';
   $misc_commands{$def_command.'x'} = 'line';
   $def_commands{$def_command} = 1;
   $def_commands{$def_command.'x'} = 1;
-  $command_index_prefix{$def_command.'x'} = $command_index_prefix{$def_command};
+  $command_index{$def_command.'x'} = $command_index{$def_command};
 }
 
 #print STDERR "".Data::Dumper->Dump([\%def_aliases]);
@@ -880,6 +861,13 @@ our %deprecated_commands = (
   'ctrl' => '',
   'allow-recursion' => N__('recursion is always allowed'),
   'quote-arg' => N__('arguments are quoted by default'),
+
+  'setcontentsaftertitlepage' =>
+N__('move your @contents command if you want the contents after the title page'),
+
+  'setshortcontentsaftertitlepage' =>
+N__('move your @shortcontents and @contents commands if you want the contents after the title page'),
+
 );
 
 my %unformatted_block_commands;
@@ -1192,16 +1180,15 @@ sub definition_category($$)
   return $arg_category
     if (!defined($arg_class));
   
-  my $style = 
-    $command_index_prefix{$current->{'extra'}->{'def_command'}};
-  if ($style eq 'f') {
+  my $style = $command_index{$current->{'extra'}->{'def_command'}};
+  if ($style eq 'fn') {
     if ($self) {
       return $self->gdt('{category} on {class}', { 'category' => $arg_category,
                                           'class' => $arg_class });
     } else {
       return {'contents' => [$arg_category, {'text' => ' on '}, $arg_class]};
     }
-  } elsif ($style eq 'v') {
+  } elsif ($style eq 'vr') {
     if ($self) {
       return $self->gdt('{category} of {class}', { 'category' => $arg_category,
                                           'class' => $arg_class });
@@ -1365,6 +1352,125 @@ sub trim_spaces_comment_from_content($)
   }
 }
 
+sub _find_end_brace($$)
+{
+  my $text = shift;
+  my $braces_count = shift;
+
+  my $before = '';
+  while ($braces_count > 0 and length($text)) {
+    if ($text =~ s/([^()]*)([()])//) {
+      $before .= $1.$2;
+      my $brace = $2;
+      if ($brace eq '(') {
+        $braces_count++;
+      } else {
+        $braces_count--;
+        if ($braces_count == 0) {
+          return ($before, $text, 0);
+        }
+      }
+    } else {
+      $before .= $text;
+      $text = '';
+    }
+  }
+  return ($before, undef, $braces_count);
+}
+
+# This only counts opening braces, and returns 0 once all the parentheses
+# are closed
+sub _count_opened_tree_braces($$);
+sub _count_opened_tree_braces($$)
+{
+  my $current = shift;
+  my $braces_count = shift;
+  if (defined($current->{'text'})) {
+    my ($before, $after);
+    ($before, $after, $braces_count) = _find_end_brace($current->{'text'},
+                                                          $braces_count);
+  }
+  if ($current->{'args'}) {
+    foreach my $arg (@{$current->{'args'}}) {
+      $braces_count = _count_opened_tree_braces($arg, $braces_count);
+      return $braces_count if ($braces_count == 0);
+    }
+  }
+  if ($current->{'contents'}) {
+    foreach my $content (@{$current->{'contents'}}) {
+      $braces_count = _count_opened_tree_braces($content, $braces_count);
+      return $braces_count if ($braces_count == 0);
+    }
+  }
+  return $braces_count;
+}
+
+# $NODE->{'contents'} is the Texinfo fo the specification of a node.
+# Returned object is a hash with three fields:
+#
+#     manual_content - Texinfo tree for a manual name extracted from the
+#                      node specification.
+#     node_content - Texinfo tree for the node name on its own
+#     normalized - a string with the node name after HTML node name
+#                  normalization is applied
+#
+# retrieve a leading manual name in parentheses, if there is one.
+sub parse_node_manual($)
+{
+  my $node = shift;
+  my @contents = @{$node->{'contents'}};
+  trim_spaces_comment_from_content(\@contents);
+
+  my $manual;
+  my $result;
+#print STDERR "RRR $contents[0] and $contents[0]->{'text'} \n";
+  if ($contents[0] and $contents[0]->{'text'} and $contents[0]->{'text'} =~ /^\(/) {
+    my $braces_count = 1;
+    if ($contents[0]->{'text'} !~ /^\($/) {
+      my $brace = shift @contents;
+      my $brace_text = $brace->{'text'};
+      $brace_text =~ s/^\(//;
+      unshift @contents, { 'text' => $brace_text, 'type' => $brace->{'type'},
+                           'parent' => $brace->{'parent'} } if $brace_text ne '';
+    } else {
+      shift @contents;
+    }
+    while(@contents) {
+      my $content = shift @contents;
+      if (!defined($content->{'text'}) or $content->{'text'} !~ /\)/) {
+        push @$manual, $content;
+        $braces_count = _count_opened_tree_braces($content, $braces_count);
+        # This is an error, braces were closed in a command
+        if ($braces_count == 0) {
+          last;
+        }
+      } else {
+        my ($before, $after);
+        ($before, $after, $braces_count) = _find_end_brace($content->{'text'},
+                                                              $braces_count);
+        if ($braces_count == 0) {
+          $before =~ s/\)$//;
+          push @$manual, { 'text' => $before, 'parent' => $content->{'parent'} }
+            if ($before ne '');
+          $after =~ s/^\s*//;
+          unshift @contents,  { 'text' => $after, 'parent' => $content->{'parent'} }
+            if ($after ne '');
+          last;
+        } else {
+          push @$manual, $content;
+        }
+      }
+    }
+    $result->{'manual_content'} = $manual if (defined($manual));
+  }
+  if (@contents) {
+    $result->{'node_content'} = \@contents;
+    $result->{'normalized'} =
+      Texinfo::Convert::NodeNameNormalization::normalize_node({'contents' => \@contents});
+  }
+  return $result;
+}
+
 sub float_name_caption($$)
 {
   my $self = shift;
@@ -1498,78 +1604,6 @@ sub is_content_empty($;$)
     }
   }
   return 1;
-}
-
-our %htmlxref_entries = (
- 'node' => [ 'node', 'section', 'chapter', 'mono' ],
- 'section' => [ 'section', 'chapter','node', 'mono' ],
- 'chapter' => [ 'chapter', 'section', 'node', 'mono' ],
- 'mono' => [ 'mono', 'chapter', 'section', 'node' ],
-);
-
-sub parse_htmlxref_files($$)
-{
-  my $self = shift;
-  my $files = shift;
-  my $htmlxref;
-
-  foreach my $file (@$files) {
-    print STDERR "html refs config file: $file\n" if ($self->get_conf('DEBUG'));
-    unless (open (HTMLXREF, $file)) {
-      $self->document_warn(
-        sprintf($self->__("could not open html refs config file %s: %s"),
-          $file, $!));
-      next;
-    }
-    my $line_nr = 0;
-    my %variables;
-    while (my $hline = <HTMLXREF>) {
-      my $line = $hline;
-      $line_nr++;
-      next if $hline =~ /^\s*#/;
-      #$hline =~ s/[#]\s.*//;
-      $hline =~ s/^\s*//;
-      next if $hline =~ /^\s*$/;
-      chomp ($hline);
-      if ($hline =~ s/^\s*(\w+)\s*=\s*//) {
-        # handle variables
-        my $var = $1;
-        my $re = join '|', map { quotemeta $_ } keys %variables;
-        $hline =~ s/\$\{($re)\}/defined $variables{$1} ? $variables{$1} 
-                                                       : "\${$1}"/ge;
-        $variables{$var} = $hline;
-        next;
-      }
-      my @htmlxref = split /\s+/, $hline;
-      my $manual = shift @htmlxref;
-      my $split_or_mono = shift @htmlxref;
-      #print STDERR "$split_or_mono $Texi2HTML::Config::htmlxref_entries{$split_or_mono} $line_nr\n";
-      if (!defined($split_or_mono)) {
-        $self->file_line_warn($self->__("missing type"), $file, $line_nr);
-        next;
-      } elsif (!defined($htmlxref_entries{$split_or_mono})) {
-        $self->file_line_warn(sprintf($self->__("unrecognized type: %s"), 
-                               $split_or_mono), $file, $line_nr);
-        next;
-      }
-      my $href = shift @htmlxref;
-      next if (exists($htmlxref->{$manual}->{$split_or_mono}));
-
-      if (defined($href)) { # substitute 'variables'
-        my $re = join '|', map { quotemeta $_ } keys %variables;
-        $href =~ s/\$\{($re)\}/defined $variables{$1} ? $variables{$1} 
-                                                      : "\${$1}"/ge;
-        $href =~ s/\/*$// if ($split_or_mono ne 'mono');
-      }
-      $htmlxref->{$manual}->{$split_or_mono} = $href;
-    }
-    if (!close (HTMLXREF)) {
-      $self->document_warn(sprintf($self->__(
-                       "error on closing html refs config file %s: %s"),
-                             $file, $!));
-    }
-  }
-  return $htmlxref;
 }
 
 sub parse_renamed_nodes_file($$;$$)
@@ -2392,6 +2426,24 @@ sub debug_hash
   $str .= "}";
 
   warn "$str\n";
+}
+
+use Data::Dumper;
+
+my @kept_keys = ('contents', 'cmdname', 'type', 'text', 'args');
+my %kept_keys;
+foreach my $key (@kept_keys) {
+  $kept_keys{$key} = 1;
+}
+sub _filter_print_keys { [grep {$kept_keys{$_}} ( sort keys %{$_[0]} )] };
+sub print_tree($)
+{
+  my $tree = shift;
+  local $Data::Dumper::Sortkeys = \&_filter_print_keys;
+  local $Data::Dumper::Purity = 1;
+  local $Data::Dumper::Indent = 1;
+
+  return Data::Dumper->Dump([$tree]);
 }
 1;
 

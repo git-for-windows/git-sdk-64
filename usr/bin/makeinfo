@@ -253,7 +253,7 @@ if (($command_suffix eq '.pl' and !(defined($ENV{'TEXINFO_DEV_SOURCE'})
 # in practice as a regexp extracts the version from configure.ac.
 my $hardcoded_version = "0.00-hardcoded";
 # Version set in configure.ac
-my $configured_version = '6.1';
+my $configured_version = '6.3';
 if ($configured_version eq '@' . 'PACKAGE_VERSION@') {
   # if not configured, and $hardcoded_version is set search for the version 
   # in configure.ac
@@ -923,7 +923,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"), "2016";
   },
  'no-validate|no-pointer-validate' => sub {
       set_from_cmdline('novalidate',$_[1]);
-      $parser_default_options->{'novalidate'} = $_[1];
+      $parser_default_options->{'info'}->{'novalidate'} = $_[1];
     },
  'no-warn' => sub { set_from_cmdline('NO_WARN', $_[1]); },
  'verbose|v!' => sub {set_from_cmdline('VERBOSE', $_[1]); 
@@ -1191,8 +1191,15 @@ while(@input_files) {
     unshift @htmlxref_dirs, $input_directory;
   }
   unshift @htmlxref_dirs, '.';
-  my @texinfo_htmlxref_files 
+
+  my @texinfo_htmlxref_files;
+  my $init_file_from_conf = get_conf('HTMLXREF');
+  if ($init_file_from_conf) {
+    @texinfo_htmlxref_files = ( $init_file_from_conf );
+  } else {
+    @texinfo_htmlxref_files 
       = locate_init_file ($texinfo_htmlxref, \@htmlxref_dirs, 1);
+  }
 
   my $parser_options = { %$parser_default_options };
 

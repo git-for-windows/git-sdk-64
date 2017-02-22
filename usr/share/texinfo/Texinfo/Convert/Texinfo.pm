@@ -1,6 +1,6 @@
 # Texinfo.pm: output a Texinfo tree as Texinfo.
 #
-# Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2016 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 # will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   convert
+  node_extra_to_texi
 ) ] );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
@@ -46,7 +47,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.1';
+$VERSION = '6.2';
 
 my %misc_commands            = %Texinfo::Common::misc_commands;
 my %brace_commands           = %Texinfo::Common::brace_commands;    
@@ -68,9 +69,7 @@ sub convert ($;$)
   die "convert: bad root type (".ref($root).") $root\n" 
      if (ref($root) ne 'HASH');
   my $result = '';
-  #print STDERR "$root ";
-  #print STDERR "$root->{'type'}" if (defined($root->{'type'}));
-  #print STDERR "\n";
+
   if (defined($root->{'text'})) {
     $result .= $root->{'text'};
   } else {
@@ -81,11 +80,9 @@ sub convert ($;$)
        or ($root->{'type'} and ($root->{'type'} eq 'def_line'
                                 or $root->{'type'} eq 'menu_entry'
                                 or $root->{'type'} eq 'menu_comment'))) {
-      #print STDERR "cmd: $root->{'cmdname'}\n";
       $result .= _expand_cmd_args_to_texi($root, $fix);
     }
     $result .= '{' if ($root->{'type'} and $root->{'type'} eq 'bracketed');
-    #print STDERR "$root->{'contents'} @{$root->{'contents'}}\n" if (defined($root->{'contents'}));
     if (defined($root->{'contents'})) {
       die "bad contents type(" . ref($root->{'contents'})
           . ") $root->{'contents'}\n" if (ref($root->{'contents'}) ne 'ARRAY');
@@ -101,7 +98,22 @@ sub convert ($;$)
       $result .= "\n" if ($block_commands{$root->{'cmdname'}} ne 'raw');
     } 
   }
-  #print STDERR "convert result: $result\n";
+  return $result;
+}
+
+# used to put a node name in error messages.
+sub node_extra_to_texi($)
+{
+  my $node = shift;
+  my $result = '';
+  if ($node->{'manual_content'}) {
+    $result = '('.Texinfo::Convert::Texinfo::convert({'contents'
+                                     => $node->{'manual_content'}}) .')';
+  }
+  if ($node->{'node_content'}) {
+    $result .= Texinfo::Convert::Texinfo::convert ({'contents'
+                                          => $node->{'node_content'}});
+  }
   return $result;
 }
 
@@ -114,7 +126,6 @@ sub _expand_cmd_args_to_texi ($;$) {
   $cmdname = '' if (!$cmd->{'cmdname'}); 
   my $result = '';
   $result = '@'.$cmdname if ($cmdname);
-  #print STDERR "Expand $result\n";
 
   # this is done here otherwise for some constructs, there are
   # no 'args', and so the space is never readded.
@@ -153,7 +164,6 @@ sub _expand_cmd_args_to_texi ($;$) {
     if ($cmdname eq 'verb') {
       $result .= $cmd->{'type'};
     }
-    #print STDERR "".Data::Dumper->Dump([$cmd]);
     my $arg_nr = 0;
     foreach my $arg (@{$cmd->{'args'}}) {
       if (exists($brace_commands{$cmdname}) or ($cmd->{'type'} 
@@ -170,7 +180,6 @@ sub _expand_cmd_args_to_texi ($;$) {
     $result .= '}' if ($braces);
   }
   $result .= '{'.$cmd->{'type'}.'}' if ($cmdname eq 'value');
-  #print STDERR "Result: $result\n";
   return $result;
 }
 

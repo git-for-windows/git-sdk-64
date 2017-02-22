@@ -22,7 +22,7 @@ export QUILT_DIR
 
 if [ -z "$QUILTRC" ]
 then
-	for QUILTRC in $HOME/.quiltrc /etc/quilt.quiltrc; do
+	for QUILTRC in $HOME/.quiltrc /usr/etc/quilt.quiltrc; do
 		[ -e $QUILTRC ] && break
 	done
 	export QUILTRC
@@ -45,7 +45,7 @@ usage()
 	| sort \
 	| column | column -t \
 	| sed -e $'s/^/\t/'
-	echo $"
+	printf $"
 Global options:
 
 --trace
@@ -53,13 +53,13 @@ Global options:
 
 --quiltrc file
 	Use the specified configuration file instead of ~/.quiltrc (or
-	/etc/quilt.quiltrc if ~/.quiltrc does not exist).  See the pdf
+	%s/quilt.quiltrc if ~/.quiltrc does not exist).  See the pdf
 	documentation for details about its possible contents.  The
 	special value \"-\" causes quilt not to read any configuration
 	file.
 
 --version
-	Print the version number and exit immediately."
+	Print the version number and exit immediately.\n" "/usr/etc"
 	exit 1
 }
 
@@ -77,7 +77,7 @@ quilt_commands()
 
 if [ $# -eq 1 -a "$1" == "--version" ]
 then
-	echo '0.64'
+	echo '0.65'
 	exit
 fi
 

@@ -49,7 +49,7 @@ our @EXPORT = qw(
 BEGIN {
 
 my $module = "Texinfo::Convert::XSParagraph::XSParagraph";
-our $VERSION = '6.1';
+our $VERSION = '6.2';
 # Module interface number, to be changed when the XS interface changes.  
 # The value used for the .xs file compilation is set in configure.ac.  
 # Both should correspond, but it should be manually changed here to make

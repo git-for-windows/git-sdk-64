@@ -159,9 +159,7 @@ else
 
 	cat_file "$patch_file_or_null" | patch_body >> $tmp2 || exit 1
 
-	if ( [ -z "$QUILT_BACKUP" -o ! -e $patch_file ] || \
-	       mv $patch_file $patch_file~ ) && \
-	       cat_to_new_file $patch_file < $tmp2
+	if cat_to_new_file $patch_file $QUILT_BACKUP < $tmp2
 	then
 		if [ -z "$opt_append" ]
 		then
@@ -175,7 +173,3 @@ $"Appended text to header of patch %s\n" "$(print_patch $patch)"
 		exit 1
 	fi
 fi
-### Local Variables:
-### mode: shell-script
-### End:
-# vim:filetype=sh

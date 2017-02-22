@@ -1,7 +1,8 @@
 # Structuring.pm: extract informations about a document structure based on the 
 #                 document tree.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014 Free Software Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016 Free Software Foundation, 
+# Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@ use strict;
 use Texinfo::Convert::Text;
 # for error messages 
 use Texinfo::Convert::Texinfo;
+
+*node_extra_to_texi = \&Texinfo::Convert::Texinfo::node_extra_to_texi;
 
 use Carp qw(cluck);
 
@@ -70,7 +73,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.1';
+$VERSION = '6.2';
 
 
 my %types_to_enter;
@@ -541,11 +544,9 @@ sub _check_menu_entry($$$$)
   if (!$self->{'labels'}->{$menu_content->{'extra'}->{'menu_entry_node'}->{'normalized'}}) {
     if ($check_menu_entries) {
       $self->line_error(sprintf($self->
-       __("\@%s reference to nonexistent node `%s'"), 
-         $command,
-         Texinfo::Parser::_node_extra_to_texi(
-                 $menu_content->{'extra'}->{'menu_entry_node'})), 
-        $menu_content->{'line_nr'});
+       __("\@%s reference to nonexistent node `%s'"), $command,
+          node_extra_to_texi($menu_content->{'extra'}->{'menu_entry_node'})), 
+       $menu_content->{'line_nr'});
     }
   } else {
     my $normalized_menu_node
@@ -556,11 +557,10 @@ sub _check_menu_entry($$$$)
       $self->line_warn(sprintf($self->
        __("\@%s entry node name `%s' different from %s name `%s'"), 
          $command,
-         Texinfo::Parser::_node_extra_to_texi(
-                 $menu_content->{'extra'}->{'menu_entry_node'}),
+         node_extra_to_texi($menu_content->{'extra'}->{'menu_entry_node'}),
          $menu_node->{'cmdname'},
-         Texinfo::Parser::_node_extra_to_texi($menu_node->{'extra'})),
-        $menu_content->{'line_nr'});
+         node_extra_to_texi($menu_node->{'extra'})),
+                            $menu_content->{'line_nr'});
     }
   }
   return $menu_node;
@@ -576,7 +576,8 @@ sub nodes_tree($)
   my $top_node;
   my $top_node_up;
 
-  my $check_menu_entries = (!$self->{'novalidate'} and $self->{'SHOW_MENU'});
+  my $check_menu_entries = (!$self->{'info'}->{'novalidate'}
+                              and $self->{'SHOW_MENU'});
 
   foreach my $node (@{$self->{'nodes'}}) {
     if ($node->{'extra'}->{'normalized'} eq 'Top') {
@@ -585,7 +586,7 @@ sub nodes_tree($)
                                                     $self->{'TOP_NODE_UP'});
       $top_node_up
         = {'type' => 'top_node_up',
-           'extra' => Texinfo::Parser::_parse_node_manual(
+           'extra' => Texinfo::Common::parse_node_manual(
                 {'contents' => $top_node_up_content_tree->{'contents'}})};
     }
     if ($node->{'menus'}) {
@@ -660,11 +661,8 @@ sub nodes_tree($)
     # warn if node is not top node and doesn't appear in menu
     if ($self->{'SHOW_MENU'} and $node ne $top_node and !$node->{'menu_up'}) {
       $self->line_warn(sprintf($self->__("unreferenced node `%s'"), 
-                    Texinfo::Parser::_node_extra_to_texi($node->{'extra'})), 
-                       $node->{'line_nr'});
+                    node_extra_to_texi($node->{'extra'})), $node->{'line_nr'});
     }
-    #print STDERR "Processing "
-    #  .Texinfo::Parser::_node_extra_to_texi($node->{'extra'})."\n";
    
     my $automatic_directions = 
       (scalar(@{$node->{'extra'}->{'nodes_manuals'}}) == 1);
@@ -706,17 +704,17 @@ sub nodes_tree($)
                 if (!$node->{'menu_'.$direction}) {
                   $self->line_warn(sprintf($self->
                     __("node `%s' is %s for `%s' in sectioning but not in menu"), 
-                  Texinfo::Parser::_node_extra_to_texi($node->{'node_'.$direction}->{'extra'}), 
+                  node_extra_to_texi($node->{'node_'.$direction}->{'extra'}), 
                   $direction,
-                  Texinfo::Parser::_node_extra_to_texi($node->{'extra'})),
+                  node_extra_to_texi($node->{'extra'})),
                   $node->{'line_nr'});
                 } elsif ($node->{'menu_'.$direction} ne $node->{'node_'.$direction}) {
                   $self->line_warn(sprintf($self->
                     __("node %s `%s' in menu `%s' and in sectioning `%s' differ"), 
                     $direction,
-                    Texinfo::Parser::_node_extra_to_texi($node->{'extra'}),
-                    Texinfo::Parser::_node_extra_to_texi($node->{'menu_'.$direction}->{'extra'}), 
-                    Texinfo::Parser::_node_extra_to_texi($node->{'node_'.$direction}->{'extra'})),
+                    node_extra_to_texi($node->{'extra'}),
+                    node_extra_to_texi($node->{'menu_'.$direction}->{'extra'}), 
+                    node_extra_to_texi($node->{'node_'.$direction}->{'extra'})),
                     $node->{'line_nr'});
                 }
               }
@@ -731,9 +729,9 @@ sub nodes_tree($)
             if ($self->{'SHOW_MENU'} and $node->{'extra'}->{'associated_section'}) {
               $self->line_warn(sprintf($self->
                   __("node `%s' is %s for `%s' in menu but not in sectioning"), 
-                Texinfo::Parser::_node_extra_to_texi($node->{'menu_'.$direction}->{'extra'}),
-                $direction,
-                Texinfo::Parser::_node_extra_to_texi($node->{'extra'}), 
+                node_extra_to_texi($node->{'menu_'.$direction}->{'extra'}),
+                                   $direction,
+                node_extra_to_texi($node->{'extra'}), 
                   ), 
                 $node->{'line_nr'});
             }
@@ -781,22 +779,20 @@ sub nodes_tree($)
                = $self->{'labels'}->{$node_direction->{'normalized'}};
             $node->{'node_'.$direction} = $node_target;
 
-            if (! $self->{'novalidate'} and ! _check_node_same_texinfo_code(
-                $node_target, $node_direction)) {
+            if (!$self->{'info'}->{'novalidate'}
+                and !_check_node_same_texinfo_code($node_target,
+                                                   $node_direction)) {
               $self->line_warn(sprintf($self->
                 __("%s pointer `%s' (for node `%s') different from %s name `%s'"),
                   $direction_texts{$direction},
-                  Texinfo::Parser::_node_extra_to_texi(
-                        $node_direction),
-                  Texinfo::Parser::_node_extra_to_texi(
-                        $node->{'extra'}),
-                  $node_target->{'cmdname'},
-                  Texinfo::Parser::_node_extra_to_texi(
-                        $node_target->{'extra'})),
-                $node->{'line_nr'});
+                  node_extra_to_texi($node_direction),
+                  node_extra_to_texi($node->{'extra'}),
+                                     $node_target->{'cmdname'},
+                  node_extra_to_texi($node_target->{'extra'})),
+                                     $node->{'line_nr'});
             }
           } else {
-            if ($self->{'novalidate'}) {
+            if ($self->{'info'}->{'novalidate'}) {
               $node->{'node_'.$direction} = { 'extra' => $node_direction };
             # special case of up for top an internal node and the same
             # as TOP_NODE_UP.  This is not the default case, since in the
@@ -813,8 +809,7 @@ sub nodes_tree($)
               $self->line_error(sprintf($self->
                                   __("%s reference to nonexistent `%s'"),
                     $direction_texts{$direction},
-                    Texinfo::Parser::_node_extra_to_texi($node_direction)), 
-                    $node->{'line_nr'});
+                    node_extra_to_texi($node_direction)), $node->{'line_nr'});
             }
           }
         }
@@ -832,17 +827,17 @@ sub nodes_tree($)
       # up node is a real node but has no menu entry
         $self->line_error(sprintf($self->
            __("node `%s' lacks menu item for `%s' despite being its Up target"), 
-           Texinfo::Parser::_node_extra_to_texi($node->{'node_up'}->{'extra'}), 
-           Texinfo::Parser::_node_extra_to_texi($node->{'extra'})),
+           node_extra_to_texi($node->{'node_up'}->{'extra'}), 
+           node_extra_to_texi($node->{'extra'})),
            $node->{'node_up'}->{'line_nr'});
       # This leads to an error when there is an external nodes as up, and 
       # not in Top node.
       } elsif ($node->{'menu_up'}) {
         $self->line_warn(sprintf($self->
            __("for `%s', up in menu `%s' and up `%s' don't match"), 
-          Texinfo::Parser::_node_extra_to_texi($node->{'extra'}),
-          Texinfo::Parser::_node_extra_to_texi($node->{'menu_up'}->{'extra'}), 
-          Texinfo::Parser::_node_extra_to_texi($node->{'node_up'}->{'extra'})),
+          node_extra_to_texi($node->{'extra'}),
+          node_extra_to_texi($node->{'menu_up'}->{'extra'}), 
+          node_extra_to_texi($node->{'node_up'}->{'extra'})),
                         $node->{'line_nr'});
       }
     }
@@ -851,6 +846,8 @@ sub nodes_tree($)
   return $top_node;
 }
 
+# Return a list of elements to be converted into pages.  Each element starts
+# with a @node as its first child (except possibly the first one).
 sub split_by_node($)
 {
   my $root = shift;
@@ -959,7 +956,9 @@ sub split_by_section($)
   return $elements;
 }
 
-# associate elements to pages according to the splitting specification.
+# Associate top-level elements with pages according to the splitting 
+# specification.  Set 'first_in_page' on each top-level element to the element 
+# that is the first in the output page.
 sub split_pages ($$)
 {
   my $elements = shift;
@@ -1321,28 +1320,26 @@ sub associate_internal_references($;$$)
   $refs = $self->internal_references_information() if (!defined($refs));
   return if (!defined($refs));
   foreach my $ref (@$refs) {
-    if (!defined($labels->{$ref->{'extra'}->{'node_argument'}->{'normalized'}})
-         and !$self->{'novalidate'}) {
-      $self->line_error(sprintf($self->__("\@%s reference to nonexistent node `%s'"),
-                           $ref->{'cmdname'}, 
-                           Texinfo::Parser::_node_extra_to_texi(
-                                $ref->{'extra'}->{'node_argument'})), 
-                        $ref->{'line_nr'})
+    if (!defined($labels->{$ref->{'extra'}{'node_argument'}{'normalized'}})) {
+      if (!$self->{'info'}->{'novalidate'}) {
+        $self->line_error(sprintf($self->__("\@%s reference to nonexistent node `%s'"),
+                $ref->{'cmdname'}, 
+                node_extra_to_texi($ref->{'extra'}->{'node_argument'})), 
+                          $ref->{'line_nr'})
+      }
     } else {
       my $node_target 
         = $labels->{$ref->{'extra'}->{'node_argument'}->{'normalized'}};
       $ref->{'extra'}->{'label'} = $node_target;
-      if (! $self->{'novalidate'} and ! _check_node_same_texinfo_code(
-          $node_target, $ref->{'extra'}->{'node_argument'})) {
+      if (!$self->{'info'}->{'novalidate'}
+          and !_check_node_same_texinfo_code($node_target,
+                                         $ref->{'extra'}->{'node_argument'})) {
         $self->line_warn(sprintf($self->
            __("\@%s to `%s', different from %s name `%s'"), 
            $ref->{'cmdname'},
-           Texinfo::Parser::_node_extra_to_texi(
-              $ref->{'extra'}->{'node_argument'}),
+           node_extra_to_texi($ref->{'extra'}->{'node_argument'}),
            $node_target->{'cmdname'},
-           Texinfo::Parser::_node_extra_to_texi(
-                        $node_target->{'extra'})),
-          $ref->{'line_nr'});
+           node_extra_to_texi($node_target->{'extra'})), $ref->{'line_nr'});
       }
     }
   }
@@ -1360,8 +1357,8 @@ sub number_floats($)
                or !defined($float->{'extra'}->{'normalized'}));
       $float_index++;
       my $number;
-      if ($float->{'float_section'}) {
-        my $up = $float->{'float_section'};
+      if ($float->{'extra'}->{'float_section'}) {
+        my $up = $float->{'extra'}->{'float_section'};
         while ($up->{'section_up'} 
                #and $command_structuring_level{$up->{'cmdname'}} 
                and defined($up->{'section_up'}->{'cmdname'})

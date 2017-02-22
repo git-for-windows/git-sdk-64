@@ -41,7 +41,18 @@ sub files_in($$) {
     my $dh = new FileHandle;
     my (@files, $file);
 
+    # @<file> syntax
+    if ($path =~ s/^@//) {
+	my $fh;
+	open($fh, '<', $path) or die "$path: $!\n";
+	@files = <$fh>;
+	close($fh);
+	chomp(@files);
+	s:^$dir:: for @files;
+	return @files;
+    }
 
+    $path = slashme($path);
     opendir $dh, length("$dir$path") ? "$dir$path" : '.'
 	or die "$dir$path: $!\n";
     while ($file = readdir($dh)) {
@@ -100,8 +111,8 @@ sub help() {
     print "SYNOPSIS: $0 [--prefix=dir] [--path=dir1:dir2:...]\n" .
 	"	[--default=0|1] [--check|--list] [--invert-match]\n" .
 	"	[--with-guards] [--config=file] symbol ...\n\n" .
-	"	(Default values: --path='" . join(':', @path) . "', " .
-		"--default=$default)\n";
+	"	Defaults: --default=$default\n" .
+	"	Use --path=\@<file> to read the list of entries from <file>\n";
     exit 0;
 }
 
@@ -146,7 +157,7 @@ if ($check) {
     my @files;
 
     foreach (@path) {
-	@files = (@files, files_in($dir, slashme($_)));
+	@files = (@files, files_in($dir, $_));
     }
     my %files = map { $_ => 0 } @files;
 
@@ -155,7 +166,11 @@ if ($check) {
 	if (exists $files{$patch}) {
 	    $files{$patch}++;
 	} else {
-	    print "Not found: $dir$patch\n";
+	    if ($config eq '-') {
+		print "Not found: $dir$patch\n";
+	    } else {
+		print "In $config but not found: $dir$patch\n";
+	    }
 	    $problems++;
 	}});
 
@@ -166,11 +181,17 @@ if ($check) {
 	next if $ref == 1;
 
 	if ($ref == 0) {
-	    print "Unused: $file\n" if $ref == 0;
+	    if ($config eq '-') {
+		print "Unused: $file\n";
+	    } else {
+		print "Not in $config: $file\n";
+	    }
 	    $problems++;
 	}
 	if ($ref > 1) {
-	    print "Warning: multiple uses: $file\n" if $ref > 1;
+	    print "Warning: multiple uses";
+	    print " in $config" if $config ne '-';
+	    print ": $file\n";
 	    # This is not an error if the entries are mutually exclusive...
 	}
     }
@@ -231,8 +252,8 @@ guards - select from a list of files guarded by conditions
 =head1 SYNOPSIS
 
 F<guards> [--prefix=F<dir>] [--path=F<dir1:dir2:...>] [--default=<0|1>]
-	  [--check|--list] [--invert-match] [--with-guards] [--config=<file>]
-	  I<symbol> ...
+[--check|--list] [--invert-match] [--with-guards] [--config=<file>]
+I<symbol> ...
 
 =head1 DESCRIPTION
 
@@ -267,7 +288,9 @@ file system. If files are referenced in the specification that do not exist, or
 if files are not enlisted in the specification file warnings are printed. The
 I<--path> option can be used to specify which directory or directories to scan.
 Multiple directories are separated by a colon (C<:>) character. The
-I<--prefix> option specifies the location of the files.
+I<--prefix> option specifies the location of the files. Alternatively, the
+I<--path=@E<lt>fileE<gt>> syntax can be used to specify a file from which the
+file names will be read.
 
 Use I<--list> to list all files independent of any rules. Use I<--invert-match>
 to list only the excluded patches. Use I<--with-guards> to also include all

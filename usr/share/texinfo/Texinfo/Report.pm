@@ -244,7 +244,8 @@ sub _encode_i18n_string($$)
   return Encode::decode($encoding, $string);
 }
 
-# handle translations of in-document strings.
+# Get document translation - handle translations of in-document strings.
+# Return a parsed Texinfo tree
 sub gdt($$;$$)
 {
   my $self = shift;
@@ -376,7 +377,11 @@ sub gdt($$;$$)
     $translation_result =~ s/\{($re)\}/\@value\{_$1\}/g;
     foreach my $substitution(keys %$context) {
       #print STDERR "$translation_result $substitution $context->{$substitution}\n";
-      $parser_conf->{'values'}->{'_'.$substitution} = $context->{$substitution};
+      # Only pass simple string @values to parser.
+      if (!ref($context->{$substitution})) {
+        $parser_conf->{'values'}->{'_'.$substitution}
+        = $context->{$substitution};
+      }
     }
   }
 
@@ -411,6 +416,53 @@ sub gdt($$;$$)
   } else {
     $tree = $parser->parse_texi_line($translation_result);
   }
+  $tree = _substitute ($tree, $context);
+  return $tree;
+}
+
+sub _substitute_element_array ($$);
+sub _substitute_element_array ($$) {
+  my $array = shift; my $context = shift;
+
+  @{$array} = map {
+    if ($_->{'cmdname'} and $_->{'cmdname'} eq 'value') {
+      my $name = $_->{'type'};
+      $name =~ s/^_//;
+      if (ref($context->{$name}) eq 'HASH') {
+        ( $context->{$name} );
+      } elsif (ref($context->{$name}) eq 'ARRAY') {
+        @{$context->{$name}};
+      }
+    } else {
+      _substitute($_, $context);
+      ( $_ );
+    }
+  } @{$array};
+}
+
+# Recursively substitute @value elements in $TREE with their values given
+# in $CONTEXT.
+sub _substitute ($$);
+sub _substitute ($$) {
+  my $tree = shift; my $context = shift;
+
+  if ($tree->{'contents'}) {
+    _substitute_element_array ($tree->{'contents'}, $context);
+  }
+
+  if ($tree->{'args'}) {
+    _substitute_element_array ($tree->{'args'}, $context);
+  }
+
+  # Used for @email and @url
+  if ($tree->{'extra'} and $tree->{'extra'}{'brace_command_contents'}) {
+    for my $arg (@{$tree->{'extra'}{'brace_command_contents'}}) {
+      if ($arg) {
+        _substitute_element_array ($arg, $context);
+      }
+    }
+  }
+
   return $tree;
 }
 

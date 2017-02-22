@@ -175,7 +175,7 @@
 	(if (quilt-bottom-p)
 	    (quilt-cmd "applied")	; to print error message
 	  (setq dirs (if quilt-edit-top-only
-			 (list (quilt-top-patch))
+			 (list (substring (quilt-cmd-to-string "top")  0 -1))
 			 (cdr (cdr (directory-files (concat qd ".pc/"))))))
 	  (while (and (not result) dirs)
 	    (if (file-exists-p (concat qd ".pc/" (car dirs) "/" fn))

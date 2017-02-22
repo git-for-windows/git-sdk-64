@@ -67,17 +67,15 @@ then
 fi
 LANG=$ORIGINAL_LANG $EDITOR "${@/#/$SUBDIR}"
 status=$?
+
+patch=$(top_patch)
 for file in "$@"
 do
-	if ! [ -e "$SUBDIR$file" ]
+	if [ ! -e "$SUBDIR$file" -a ! -s "$QUILT_PC/$patch/$file" ]
 	then
-		quilt_command revert "$file"
+		quilt_command remove "$file"
 		status=1
 	fi
 done
 
 exit $status
-### Local Variables:
-### mode: shell-script
-### End:
-# vim:filetype=sh

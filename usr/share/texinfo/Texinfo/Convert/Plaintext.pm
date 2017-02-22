@@ -1,7 +1,8 @@
-# $Id: Plaintext.pm 6991 2016-02-06 12:16:13Z gavin $
+# $Id: Plaintext.pm 7353 2016-09-10 13:03:54Z gavin $
 # Plaintext.pm: output tree as text with filling.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2013, 2014, 2015,
+# 2016 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ use Texinfo::Convert::Paragraph;
 use Texinfo::Convert::Text;
 use Texinfo::Convert::Line;
 use Texinfo::Convert::UnFilled;
+use Texinfo::Convert::NodeNameNormalization;
 
 
 use Carp qw(cluck);
@@ -55,7 +57,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.1';
+$VERSION = '6.2';
 
 # misc commands that are of use for formatting.
 my %formatting_misc_commands = %Texinfo::Convert::Text::formatting_misc_commands;
@@ -64,8 +66,7 @@ my $NO_NUMBER_FOOTNOTE_SYMBOL = '*';
 
 my @informative_global_commands = ('paragraphindent', 'firstparagraphindent',
 'frenchspacing', 'documentencoding', 'footnotestyle', 'documentlanguage',
-'contents', 'shortcontents', 'summarycontents', 'setcontentsaftertitlepage',
-'setshortcontentsaftertitlepage', 'deftypefnnewline');
+'contents', 'shortcontents', 'summarycontents', 'deftypefnnewline');
 
 my %informative_commands;
 foreach my $informative_command (@informative_global_commands) {
@@ -2539,37 +2540,6 @@ sub _convert($$)
       $result .= $self->_node($root);
       $self->{'format_context'}->[-1]->{'paragraph_count'} = 0;
     } elsif ($sectioning_commands{$root->{'cmdname'}}) {
-      if ($self->get_conf('setcontentsaftertitlepage') 
-           and $root_commands{$root->{'cmdname'}}
-           and !$self->{'setcontentsaftertitlepage_done'}) {
-        my ($contents, $lines_count) 
-                = $self->_contents($self->{'structuring'}->{'sectioning_root'}, 
-                                  'contents');
-        if ($contents ne '') {
-          $contents .= "\n";
-          $self->{'empty_lines_count'} = 1;
-          _add_text_count($self, $contents);
-          _add_lines_count($self, $lines_count+1);
-        }
-        $self->{'setcontentsaftertitlepage_done'} = 1;
-        $result .= $contents;
-      } 
-      if ($self->get_conf('setshortcontentsaftertitlepage')
-            and $root_commands{$root->{'cmdname'}}
-            and !$self->{'setshortcontentsaftertitlepage_done'}) {
-        my ($contents, $lines_count) 
-                = $self->_contents($self->{'structuring'}->{'sectioning_root'}, 
-                              'shortcontents');
-        if ($contents ne '') {
-          $contents .= "\n";
-          $self->{'empty_lines_count'} = 1;
-          _add_text_count($self, $contents);
-          _add_lines_count($self, $lines_count+1);
-        }
-
-        $self->{'setshortcontentsaftertitlepage_done'} = 1;
-        $result .= $contents;
-      }
       # use settitle for empty @top
       # ignore @part
       my $contents;
@@ -2822,9 +2792,8 @@ sub _convert($$)
       }
       return $result;
     } elsif ($root->{'cmdname'} eq 'contents') {
-      if (!defined($self->get_conf('setcontentsaftertitlepage'))
-           and $self->{'structuring'}
-           and $self->{'structuring'}->{'sectioning_root'}) {
+      if ($self->{'structuring'}
+            and $self->{'structuring'}->{'sectioning_root'}) {
         my $lines_count;
         ($result, $lines_count) 
             = $self->_contents($self->{'structuring'}->{'sectioning_root'}, 
@@ -2835,8 +2804,7 @@ sub _convert($$)
       return $result;
     } elsif ($root->{'cmdname'} eq 'shortcontents' 
                or $root->{'cmdname'} eq 'summarycontents') {
-      if (!defined($self->get_conf('setshortcontentsaftertitlepage'))
-            and $self->{'structuring'}
+      if ($self->{'structuring'}
             and $self->{'structuring'}->{'sectioning_root'}) {
         my $lines_count;
         ($result, $lines_count) 
@@ -3543,7 +3511,7 @@ sub indent_menu_descriptions($;$)
 1;
 
 __END__
-# $Id: Plaintext.pm 6991 2016-02-06 12:16:13Z gavin $
+# $Id: Plaintext.pm 7353 2016-09-10 13:03:54Z gavin $
 # Automatically generated from maintain/template.pod
 
 =head1 NAME

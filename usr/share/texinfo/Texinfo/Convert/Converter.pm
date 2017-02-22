@@ -1,4 +1,4 @@
-# $Id: Converter.pm 6991 2016-02-06 12:16:13Z gavin $
+# $Id: Converter.pm 7353 2016-09-10 13:03:54Z gavin $
 # Converter.pm: Common code for Converters.
 #
 # Copyright 2011, 2012, 2013, 2014, 2015, 2016 Free Software Foundation, Inc.
@@ -60,7 +60,7 @@ xml_accents
 @EXPORT = qw(
 );
 
-$VERSION = '6.1';
+$VERSION = '6.2';
 
 my %defaults = (
   'ENABLE_ENCODING'      => 1,
@@ -245,16 +245,6 @@ sub converter(;$)
           }
         }
       }
-      $converter->set_conf('setcontentsaftertitlepage', 1)
-         if ($converter->get_conf('contents')
-               and $converter->{'extra'}->{'setcontentsaftertitlepage'}
-               and $converter->{'structuring'}
-               and $converter->{'structuring'}->{'sectioning_root'});
-      $converter->set_conf('setshortcontentsaftertitlepage', 1)
-         if ($converter->get_conf('shortcontents') 
-               and $converter->{'extra'}->{'setshortcontentsaftertitlepage'}
-               and $converter->{'structuring'}
-               and $converter->{'structuring'}->{'sectioning_root'});
       $converter->{'gettext'} = $converter->{'parser'}->{'gettext'};
       $converter->{'pgettext'} = $converter->{'parser'}->{'pgettext'};
       delete $conf->{'parser'};
@@ -372,12 +362,14 @@ sub _unset_global_multiple_commands($)
   }
 }
 
+use Carp;
 sub get_conf($$)
 {
   my $self = shift;
   my $conf = shift;
   if (!Texinfo::Common::valid_option($conf)) {
-    warn "BUG: unknown option $conf\n";
+    cluck "CBUG: unknown option $conf\n";
+    die;
     return undef;
   }
   return $self->{'conf'}->{$conf};
@@ -389,7 +381,7 @@ sub set_conf($$$)
   my $conf = shift;
   my $value = shift;
   if (!Texinfo::Common::valid_option($conf)) {
-    warn "BUG: unknown option $conf\n";
+    die "BBUG: unknown option $conf\n";
     return undef;
   } elsif (Texinfo::Common::obsolete_option($conf)) {
     warn(sprintf(main::__("Obsolete variable %s\n"), $conf));
@@ -408,7 +400,7 @@ sub force_conf($$$)
   my $conf = shift; 
   my $value = shift;
   if (!Texinfo::Common::valid_option($conf)) {
-    warn "BUG: unknown option $conf\n";
+    die "ABUG: unknown option $conf\n";
     return undef;
   } elsif (Texinfo::Common::obsolete_option($conf)) {
     warn(sprintf(main::__("Obsolete variable %s\n"), $conf));
@@ -937,7 +929,7 @@ sub _bug_message($$;$)
     }
     if ($current) {
       $current_element_message = "current: ". 
-        Texinfo::Parser::_print_current($current);
+        Texinfo::Common::_print_current($current);
     }
   }
   my $additional_information = '';

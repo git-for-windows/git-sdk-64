@@ -1,4 +1,4 @@
-# $Id: DocBook.pm 6991 2016-02-06 12:16:13Z gavin $
+# $Id: DocBook.pm 7353 2016-09-10 13:03:54Z gavin $
 # DocBook.pm: output tree as DocBook.
 #
 # Copyright 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
@@ -55,7 +55,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.1';
+$VERSION = '6.2';
 
 my $nbsp = '&#'.hex('00A0').';';
 my $mdash = '&#'.hex('2014').';';
@@ -587,7 +587,7 @@ sub _convert($$;$)
                     and $root->{'parent'}->{'type'}
                     and $root->{'parent'}->{'type'} eq 'row') {
           warn "BUG: multitable cell command not in a row "
-            .Texinfo::Parser::_print_current($root);
+            .Texinfo::Common::_print_current($root);
         }
         
         $result .= "<entry>";
@@ -1408,7 +1408,7 @@ sub _convert($$;$)
 1;
 
 __END__
-# $Id: DocBook.pm 6991 2016-02-06 12:16:13Z gavin $
+# $Id: DocBook.pm 7353 2016-09-10 13:03:54Z gavin $
 # Automatically generated from maintain/template.pod
 
 =head1 NAME

@@ -232,7 +232,6 @@ do
 	fi
 	if ! diff_file "$file" "$old_file" "$new_file"
 	then
-		printf $"Diff failed on file '%s', aborting\n" "$new_file" >&2
 		die 1
 	fi
 
@@ -323,9 +322,7 @@ if [ -e "$patch_file" ] && \
    diff -q "$patch_file" $tmp_result > /dev/null
 then
 	printf $"Patch %s is unchanged\n" "$(print_patch "$patch")"
-elif ( [ -z "$QUILT_BACKUP" -o ! -e "$patch_file" ] || \
-       mv "$patch_file" "$patch_file~" ) && \
-     cat_to_new_file "$patch_file" < $tmp_result
+elif cat_to_new_file "$patch_file" $QUILT_BACKUP < $tmp_result
 then
 	if [ -n "$opt_fork" ]
 	then
@@ -366,7 +363,3 @@ then
 	die 1
 fi
 die 0
-### Local Variables:
-### mode: shell-script
-### End:
-# vim:filetype=sh

@@ -240,7 +240,7 @@ quilt import [-p num] [-R] [-P patch] [-f] [-d {o|a|n}] patchfile ...
   	must be specified. This option is only effective when -f is used.
 
 
-quilt mail {--mbox file|--send} [-m text] [-M file] [--prefix prefix] [--sender ...] [--from ...] [--to ...] [--cc ...] [--bcc ...] [--subject ...] [--reply-to message] [first_patch [last_patch]]
+quilt mail {--mbox file|--send} [-m text] [-M file] [--prefix prefix] [--sender ...] [--from ...] [--to ...] [--cc ...] [--bcc ...] [--subject ...] [--reply-to message] [--charset ...] [--signature file] [first_patch [last_patch]]
 
   Create mail messages from a specified range of patches, or all patches in
   the series file, and either store them in a mailbox file, or send them
@@ -278,6 +278,11 @@ quilt mail {--mbox file|--send} [-m text] [-M file] [--prefix prefix] [--sender 
 
   --to, --cc, --bcc
   	Append a recipient to the To, Cc, or Bcc header.
+
+  --charset
+  	Specify a particular message encoding on systems which don't use
+  	UTF-8 or ISO-8859-15. This character encoding must match the one
+  	used in the patches.
 
   --signature file
   	Append the specified signature to messages (defaults to ~/.signature
@@ -355,7 +360,7 @@ quilt previous [patch]
   patch in the series file.
 
 
-quilt push [-afqv] [--merge[=merge|diff3]] [--leave-rejects] [--color[=always|auto|never]] [--refresh] [num|patch]
+quilt push [-afqvm] [--fuzz=N] [--merge[=merge|diff3]] [--leave-rejects] [--color[=always|auto|never]] [--refresh] [num|patch]
 
   Apply patch(es) from the series file.  Without options, the next patch
   in the series file is applied.  When a number is specified, apply the

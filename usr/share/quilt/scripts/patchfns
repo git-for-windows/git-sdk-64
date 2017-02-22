@@ -741,18 +741,27 @@ diff_file()
 	     "$old_file" "$new_file" \
 	| if read line
 	then
-		if [ -z "$QUILT_NO_DIFF_INDEX" ]
+		local status=0
+
+		if [[ "$line" =~ ^Binary\ files\ .*\ differ$ ]]
+		then
+			status=1
+		elif [ -z "$QUILT_NO_DIFF_INDEX" ]
 		then
 			echo "Index: $index"
 			echo "==================================================================="
 		fi
+
 		echo "$line"
 		cat
+
+		return $status
 	fi
 
 	# Test the return value of diff, and propagate the error retcode if any
-	if [ ${PIPESTATUS[0]} == 2 ]
+	if [ ${PIPESTATUS[0]} == 2 -o ${PIPESTATUS[1]} == 1 ]
 	then
+		printf $"Diff failed on file '%s', aborting\n" "$new_file" >&2
 		return 1
 	fi
 }
@@ -783,9 +792,27 @@ cat_file()
 
 cat_to_new_file()
 {
-	local filename="$1"
+	local filename=$1 backup=$2
 
-	[ -e "$filename" ] && rm -f "$filename"
+	# If the file exists, back it up if requested. Return immediately upon
+	# failure.
+	if [ -e "$filename" -a -n "$backup" ]
+	then
+		if [ -L "$filename" ]
+		then
+			cp -p "$filename" "$filename~"
+		else
+			mv "$filename" "$filename~"
+		fi || return
+	fi
+
+	# If the destination file is a symbolic link, preserve it unless its
+	# target is read-only. In other cases, delete the patch file first in
+	# case it has hard links.
+	if [ -e "$filename" -a ! \( -L "$filename" -a -w "$filename" \) ]
+	then
+		rm -f "$filename"
+	fi
 
 	case "$filename" in
 	*.gz)
@@ -1094,7 +1121,7 @@ then
 	    SUBDIR_DOWN=$down
 	    if ! cd $basedir/
 	    then
-		echo "Cannot change into parent directory $basedir/" >&2
+		printf $"Cannot change into parent directory %s/\n" "$basedir" >&2
 		exit 1
 	    fi
 	    break
@@ -1105,13 +1132,13 @@ fi
 
 if [ -r $QUILT_PC/.quilt_patches ]
 then
-	: ${QUILT_PATCHES:=$(< $QUILT_PC/.quilt_patches)}
+	QUILT_PATCHES=$(< $QUILT_PC/.quilt_patches)
 else
 	: ${QUILT_PATCHES:=patches}
 fi
 if [ -r $QUILT_PC/.quilt_series ]
 then
-	: ${QUILT_SERIES:=$(< $QUILT_PC/.quilt_series)}
+	QUILT_SERIES=$(< $QUILT_PC/.quilt_series)
 else
 	: ${QUILT_SERIES:=series}
 fi
@@ -1147,7 +1174,3 @@ then
 		exit 1
 	fi
 fi
-### Local Variables:
-### mode: shell-script
-### End:
-# vim:filetype=sh

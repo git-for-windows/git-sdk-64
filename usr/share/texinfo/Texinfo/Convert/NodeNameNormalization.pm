@@ -1,6 +1,6 @@
 # NodeNameNormalization.pm: output tree as normalized node name.
 #
-# Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2016 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,8 +69,8 @@ $normalize_node_no_brace_commands{'*'} = ' ';
 my %accent_commands = %Texinfo::Common::accent_commands;
 
 my %ignored_brace_commands;
-foreach my $ignored_brace_command (#'xref','ref', 'pxref', 'inforef', 
-   'anchor', 'footnote', 'shortcaption', 'caption', 'hyphenation') {
+foreach my $ignored_brace_command ('anchor', 'footnote', 'shortcaption',
+                                   'caption', 'hyphenation') {
   $ignored_brace_commands{$ignored_brace_command} = 1;
 }
 
@@ -202,15 +202,6 @@ sub _convert($;$)
   my $root = shift;
   my $in_sc = shift;
 
-  if (0) {
-    print STDERR "root\n";
-    print STDERR "  Command: $root->{'cmdname'}\n" if ($root->{'cmdname'});
-    print STDERR "  Type: $root->{'type'}\n" if ($root->{'type'});
-    print STDERR "  Text: $root->{'text'}\n" if (defined($root->{'text'}));
-    #print STDERR "  Special def_command: $root->{'extra'}->{'def_command'}\n"
-    #  if (defined($root->{'extra'}) and $root->{'extra'}->{'def_command'});
-  }
-
   return '' if (($root->{'type'} and $ignored_types{$root->{'type'}})
           or ($root->{'cmdname'} 
              and ($ignored_brace_commands{$root->{'cmdname'}} 
@@ -273,15 +264,6 @@ sub _convert($;$)
         }
       }
       return '';
-    #} elsif ($root->{'cmdname'} eq 'email') {
-    #  my $mail = _convert($root->{'args'}->[0]);
-    #  return $mail if (defined($mail) and $mail ne '');
-    #  my $text;
-    #  $text = _convert($root->{'args'}->[1])
-    #     if (defined($root->{'args'}->[1]));
-    #  return $text if (defined($text) and ($text ne ''));
-    #  #return $mail;
-    #  return '';
     # Here all the commands with args are processed, if they have
     # more than one arg the first one is used.
     } elsif ($root->{'args'} and $root->{'args'}->[0] 

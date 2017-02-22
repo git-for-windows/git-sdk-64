@@ -21,7 +21,7 @@ fi
 
 usage()
 {
-	printf $"Usage: quilt mail {--mbox file|--send} [-m text] [-M file] [--prefix prefix] [--sender ...] [--from ...] [--to ...] [--cc ...] [--bcc ...] [--subject ...] [--reply-to message] [first_patch [last_patch]]\n"
+	printf $"Usage: quilt mail {--mbox file|--send} [-m text] [-M file] [--prefix prefix] [--sender ...] [--from ...] [--to ...] [--cc ...] [--bcc ...] [--subject ...] [--reply-to message] [--charset ...] [--signature file] [first_patch [last_patch]]\n"
 	if [ x$1 = x-h ]
 	then
 		printf $"
@@ -61,6 +61,11 @@ first, and a last patch name of \`-' denotes the last patch in the series.
 
 --to, --cc, --bcc
 	Append a recipient to the To, Cc, or Bcc header.
+
+--charset
+	Specify a particular message encoding on systems which don't use
+	UTF-8 or ISO-8859-15. This character encoding must match the one
+	used in the patches.
 
 --signature file
 	Append the specified signature to messages (defaults to ~/.signature
@@ -500,7 +505,7 @@ introduction="$(gen_tempfile)"
 (
 	cat <<-EOF
 	Message-Id: <$(msgid)>
-	User-Agent: quilt/0.64
+	User-Agent: quilt/0.65
 	Date: $(date --rfc-822)
 	From: ${opt_from:-$opt_sender}
 	To: $(IFS=,; echo "${opt_to[*]}")
@@ -682,7 +687,3 @@ for patch in "${patches[@]}"; do
 	((num++))
 done
 rm -f $introduction
-### Local Variables:
-### mode: shell-script
-### End:
-# vim:filetype=sh

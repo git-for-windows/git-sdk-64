@@ -3,10 +3,15 @@
 # find original data file by md5sum
 original_file()
 {
-	local file=$1 md5sum
+	local md5sum=$1
 
-	set -- $(md5sum < $file)
-	md5sum=$1
+	if ! [ -e $tmpdir/md5sums ]
+	then
+		echo >&4
+		create_md5sums "$RPM_SOURCE_DIR" $tmpdir/md5sums
+		echo -n "### rpmbuild: " >&4
+	fi
+
 	while read md5sum_ file_
 	do
 		if [ "$md5sum" = "$md5sum_" ]
@@ -35,6 +40,8 @@ original_file()
 		fi
 	done < $tmpdir/more-md5sums
 
+	# Return md5sum and error if we can't match the file
+	echo $md5sum
 	return 1
 }
 
@@ -208,65 +215,95 @@ pwd_to_dir()
 	echo "$dir"
 }
 
+# Who were we called as?
+command=${0##*/}
+
 PATH=${PATH#*:}
 # If we are called too early, pass through without processing
-[ -n "$RPM_BUILD_DIR" ] || exec ${0##*/} "$@"
+[ -n "$RPM_BUILD_DIR" ] || exec $command "$@"
 
 tmpdir=${RPM_BUILD_DIR%/*}
-case "${0##*/}" in
+case $command in
 patch)
 	echo -n p >&4
 	inputfile=$(patch_input_file "$@")
 	;;
 tar)
 	echo -n t >&4
-	[ -n "$QUILT_SETUP_FAST" ] && exec ${0##*/} "$@"
+	[ -n "$QUILT_SETUP_FAST" ] && exec tar "$@"
 	inputfile=$(tar_input_file "$@")
 	# For tar, file - means read from stdin
 	[ "$inputfile" = "-" ] && inputfile=
 	;;
 unzip)
 	echo -n Z >&4
-	[ -n "$QUILT_SETUP_FAST" ] && exec ${0##*/} "$@"
+	[ -n "$QUILT_SETUP_FAST" ] && exec unzip "$@"
 	inputfile=$(unzip_input_file "$@")
 	;;
 esac
-if [ -n "$inputfile" ]
+
+# If the file was not passed as a parameter, try to identify stdin
+if [ -n "$QUILT_SETUP_FAST" -a -z "$inputfile" ]
 then
-	unpackfile=$(original_file "$inputfile")
-else
-	# put data from stdin into tmpfile
-	cat > $tmpdir/data
-	unpackfile=$(original_file $tmpdir/data)
+	inputfile=$(readlink /proc/self/fd/0)
+	[ "${inputfile:0:1}" = / -a -f "$inputfile" ] || inputfile=
 fi
 
-if [ -n "$unpackfile" ]
+if [ -n "$inputfile" ]
 then
-	case "${0##*/}" in
-	patch)
-		subdir=$(patch_opt_d "$@")
-		dir=$(pwd_to_dir $subdir)
-		echo "${0##*/} ${dir:-.} $unpackfile" \
-		     $(strip_option "$@") $(reverse_option "$@") >&3
-		;;
-	tar)
-		subdir=$(tar_opt_C "$@")
-		dir=$(pwd_to_dir $subdir)
-		echo "${0##*/} ${dir:-.} $unpackfile" >&3
-		;;
-	unzip)
-		dir=$(pwd_to_dir)
-		echo "${0##*/} ${dir:-.} $unpackfile" >&3
-		;;
-	esac
+	if [ "${inputfile:0:1}" = / ]
+	then
+		unpackfile=${inputfile/$RPM_SOURCE_DIR}
+	else
+		unpackfile=$QUILT_SETUP_PREFIX$(dir_to_dir "$RPM_BUILD_DIR" "$inputfile")
+	fi
+else
+	if [ -n "$QUILT_SETUP_FAST" ]
+	then
+		# In fast mode we can read from stdin directly, we won't let
+		# patch apply the patch anyway
+		md5sum=$(md5sum)
+	else
+		# put data from stdin into tmpfile
+		cat > $tmpdir/data
+		md5sum=$(md5sum < $tmpdir/data)
+	fi
+
+	unpackfile=$(original_file $md5sum)
+	if [ $? -ne 0 ]
+	then
+		# Report problem to the caller
+		echo -n "?" >&4
+		printf "Warning: no match for file with md5sum %s\n" \
+		       $unpackfile >&2
+		unpackfile="#$unpackfile"
+	fi
 fi
+
+case $command in
+patch)
+	subdir=$(patch_opt_d "$@")
+	dir=$(pwd_to_dir $subdir)
+	echo "patch ${dir:-.} $unpackfile" \
+	     $(strip_option "$@") $(reverse_option "$@") >&3
+	;;
+tar)
+	subdir=$(tar_opt_C "$@")
+	dir=$(pwd_to_dir $subdir)
+	echo "tar ${dir:-.} $unpackfile" >&3
+	;;
+unzip)
+	dir=$(pwd_to_dir)
+	echo "unzip ${dir:-.} $unpackfile" >&3
+	;;
+esac
 
 # In fast mode, we don't actually apply patches
 [ -n "$QUILT_SETUP_FAST" ] && exit 0
 
 if [ -n "$inputfile" ]
 then
-	exec ${0##*/} "$@"
+	exec $command "$@"
 else
-	exec ${0##*/} "$@" < $tmpdir/data
+	exec $command "$@" < $tmpdir/data
 fi
