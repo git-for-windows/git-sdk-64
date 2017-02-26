@@ -743,7 +743,7 @@ is specified. This flag forces progress status even if the
 standard error stream is not directed to a terminal.</p>
 </dd>
 <dt class="hdlist1">--no-recurse-submodules</dt>
-<dt class="hdlist1">--recurse-submodules=check|on-demand|no</dt>
+<dt class="hdlist1">--recurse-submodules=check|on-demand|only|no</dt>
 <dd>
 <p>May be used to make sure all submodule commits used by the
 revisions to be pushed are available on a remote-tracking branch.
@@ -752,11 +752,12 @@ changed in the revisions to be pushed are available on at least one
 remote of the submodule. If any commits are missing the push will
 be aborted and exit with non-zero status. If <em>on-demand</em> is used
 all submodules that changed in the revisions to be pushed will be
-pushed. If on-demand was not able to push all necessary revisions
-it will also be aborted and exit with non-zero status. A value of
-<em>no</em> or using <code>--no-recurse-submodules</code> can be used to override the
-push.recurseSubmodules configuration variable when no submodule
-recursion is required.</p>
+pushed. If on-demand was not able to push all necessary revisions it will
+also be aborted and exit with non-zero status. If <em>only</em> is used all
+submodules will be recursively pushed while the superproject is left
+unpushed. A value of <em>no</em> or using <code>--no-recurse-submodules</code> can be used
+to override the push.recurseSubmodules configuration variable when no
+submodule recursion is required.</p>
 </dd>
 <dt class="hdlist1">--[no-]verify</dt>
 <dd>
@@ -1446,7 +1447,7 @@ The delta reveals regions of X that are similar to Y to the attacker.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-02-03 08:41:53 W. Europe Standard Time
+Last updated 2017-02-25 16:39:40 W. Europe Standard Time
 </div>
 </div>
 </body>

@@ -82,7 +82,7 @@ set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPOT-Crea
 ::msgcat::mcset ca "Copy path" "Copia el cam\u00ed"
 ::msgcat::mcset ca "Show origin of this line" "Mostra l'origen d'aquesta l\u00ednia"
 ::msgcat::mcset ca "Run git gui blame on this line" "Executa git gui blame en aquesta l\u00ednia"
-::msgcat::mcset ca "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2014 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - visualitzador de comissions per al git\n\nCopyright \u00a9 2005-2014 Paul Mackerras\n\nUseu-lo i redistribu\u00efu-lo sota els termes de la Llic\u00e8ncia P\u00fablica General GNU"
+::msgcat::mcset ca "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2016 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - visualitzador de comissions per al git\n\nCopyright \u00a9 2005-2016 Paul Mackerras\n\nUseu-lo i redistribu\u00efu-lo sota els termes de la Llic\u00e8ncia P\u00fablica General GNU"
 ::msgcat::mcset ca "Close" "Tanca"
 ::msgcat::mcset ca "Gitk key bindings" "Associacions de tecles del Gitk"
 ::msgcat::mcset ca "Gitk key bindings:" "Associacions de tecles del Gitk:"

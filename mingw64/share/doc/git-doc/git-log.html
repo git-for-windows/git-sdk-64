@@ -727,8 +727,8 @@ for all following revision specifiers, up to the next <code>--not</code>.</p>
 </dd>
 <dt class="hdlist1">--all</dt>
 <dd>
-<p>Pretend as if all the refs in <code>refs/</code> are listed on the
-command line as <em>&lt;commit&gt;</em>.</p>
+<p>Pretend as if all the refs in <code>refs/</code>, along with <code>HEAD</code>, are
+listed on the command line as <em>&lt;commit&gt;</em>.</p>
 </dd>
 <dt class="hdlist1">--branches[=&lt;pattern&gt;]</dt>
 <dd>
@@ -2046,7 +2046,9 @@ than given and there are spaces on its left, use those spaces</p>
 </li>
 <li>
 <p><em>%&gt;&lt;(&lt;N&gt;)</em>, <em>%&gt;&lt;|(&lt;N&gt;)</em>: similar to <em>% &lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
-respectively, but padding both sides (i.e. the text is centered)</p>
+  respectively, but padding both sides (i.e. the text is centered)
+-%(trailers): display the trailers of the body as interpreted by
+  <a href="git-interpret-trailers.html">git-interpret-trailers</a>(1)</p>
 </li>
 </ul>
 </div>
@@ -2165,8 +2167,6 @@ itself in raw format, which you can achieve with
 </dd>
 <dt class="hdlist1">--indent-heuristic</dt>
 <dt class="hdlist1">--no-indent-heuristic</dt>
-<dt class="hdlist1">--compaction-heuristic</dt>
-<dt class="hdlist1">--no-compaction-heuristic</dt>
 <dd>
 <p>These are to help debugging and tuning experimental heuristics
 (which are off by default) that shift diff hunk boundaries to
@@ -2641,11 +2641,53 @@ expression to match.</p>
 </dd>
 <dt class="hdlist1">-O&lt;orderfile&gt;</dt>
 <dd>
-<p>Output the patch in the order specified in the
-&lt;orderfile&gt;, which has one shell glob pattern per line.
+<p>Control the order in which files appear in the output.
 This overrides the <code>diff.orderFile</code> configuration variable
 (see <a href="git-config.html">git-config</a>(1)).  To cancel <code>diff.orderFile</code>,
 use <code>-O/dev/null</code>.</p>
+<div class="paragraph">
+<p>The output order is determined by the order of glob patterns in
+&lt;orderfile&gt;.
+All files with pathnames that match the first pattern are output
+first, all files with pathnames that match the second pattern (but not
+the first) are output next, and so on.
+All files with pathnames that do not match any pattern are output
+last, as if there was an implicit match-all pattern at the end of the
+file.
+If multiple pathnames have the same rank (they match the same pattern
+but no earlier patterns), their output order relative to each other is
+the normal order.</p>
+</div>
+<div class="paragraph">
+<p>&lt;orderfile&gt; is parsed as follows:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Blank lines are ignored, so they can be used as separators for
+readability.</p>
+</li>
+<li>
+<p>Lines starting with a hash ("<code>#</code>") are ignored, so they can be used
+for comments.  Add a backslash ("<code>\</code>") to the beginning of the
+pattern if it starts with a hash.</p>
+</li>
+<li>
+<p>Each other line contains a single pattern.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Patterns have the same syntax and semantics as patterns used for
+fnmantch(3) without the FNM_PATHNAME flag, except a pathname also
+matches a pattern if removing any number of the final pathname
+components matches the pattern.  For example, the pattern "<code>foo*bar</code>"
+matches "<code>fooasdfbar</code>" and "<code>foo/bar/baz/asdf</code>" but not "<code>foobarx</code>".</p>
+</div>
 </dd>
 <dt class="hdlist1">-R</dt>
 <dd>
@@ -2691,7 +2733,9 @@ line has none.</p>
 <dt class="hdlist1">--inter-hunk-context=&lt;lines&gt;</dt>
 <dd>
 <p>Show the context between diff hunks, up to the specified number
-of lines, thereby fusing hunks that are close to each other.</p>
+of lines, thereby fusing hunks that are close to each other.
+Defaults to <code>diff.interHunkContext</code> or 0 if the config option
+is unset.</p>
 </dd>
 <dt class="hdlist1">-W</dt>
 <dt class="hdlist1">--function-context</dt>
@@ -3256,7 +3300,7 @@ and overridden by the <code>--notes=&lt;ref&gt;</code> option.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-02-03 08:41:53 W. Europe Standard Time
+Last updated 2017-02-25 16:39:40 W. Europe Standard Time
 </div>
 </div>
 </body>

@@ -82,7 +82,7 @@ set ::msgcat::header "Project-Id-Version: gitk @@GIT_VERSION@@\nReport-Msgid-Bug
 ::msgcat::mcset vi "Copy path" "Ch\u00e9p \u0111\u01b0\u1eddng d\u1eabn"
 ::msgcat::mcset vi "Show origin of this line" "Hi\u1ec3n th\u1ecb nguy\u00ean g\u1ed1c c\u1ee7a d\u00f2ng n\u00e0y"
 ::msgcat::mcset vi "Run git gui blame on this line" "Ch\u1ea1y l\u1ec7nh git gui blame cho d\u00f2ng n\u00e0y"
-::msgcat::mcset vi "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2014 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - \u1ee9ng d\u1ee5ng \u0111\u1ec3 xem c\u00e1c l\u1ea7n chuy\u1ec3n giao d\u00e0nh cho git\n\nB\u1ea3n quy\u1ec1n \u00a9 2005-2014 Paul Mackerras\n\nD\u00f9ng v\u00e0 ph\u00e2n ph\u1ed1i l\u1ea1i ph\u1ea7n m\u1ec1m n\u00e0y theo c\u00e1c \u0111i\u1ec1u kho\u1ea3n c\u1ee7a Gi\u1ea5y Ph\u00e9p C\u00f4ng GNU"
+::msgcat::mcset vi "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2016 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - \u1ee9ng d\u1ee5ng \u0111\u1ec3 xem c\u00e1c l\u1ea7n chuy\u1ec3n giao d\u00e0nh cho git\n\nB\u1ea3n quy\u1ec1n \u00a9 2005-2016 Paul Mackerras\n\nD\u00f9ng v\u00e0 ph\u00e2n ph\u1ed1i l\u1ea1i ph\u1ea7n m\u1ec1m n\u00e0y theo c\u00e1c \u0111i\u1ec1u kho\u1ea3n c\u1ee7a Gi\u1ea5y Ph\u00e9p C\u00f4ng GNU"
 ::msgcat::mcset vi "Close" "\u0110\u00f3ng"
 ::msgcat::mcset vi "Gitk key bindings" "T\u1ed5 h\u1ee3p ph\u00edm gitk"
 ::msgcat::mcset vi "Gitk key bindings:" "T\u1ed5 h\u1ee3p ph\u00edm gitk:"

@@ -448,6 +448,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	   [--threads &lt;num&gt;]
 	   [-f &lt;file&gt;] [-e] &lt;pattern&gt;
 	   [--and|--or|--not|(|)|-e &lt;pattern&gt;&#8230;&#8203;]
+	   [--recurse-submodules] [--parent-basename &lt;basename&gt;]
 	   [ [--[no-]exclude-standard] [--cached | --no-index | --untracked] | &lt;tree&gt;&#8230;&#8203;]
 	   [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
 </div>
@@ -533,6 +534,21 @@ mechanism. Only useful with <code>--untracked</code>.</p>
 <p>Do not pay attention to ignored files specified via the	<code>.gitignore</code>
 mechanism.  Only useful when searching files in the current directory
 with <code>--no-index</code>.</p>
+</dd>
+<dt class="hdlist1">--recurse-submodules</dt>
+<dd>
+<p>Recursively search in each submodule that has been initialized and
+checked out in the repository.  When used in combination with the
+&lt;tree&gt; option the prefix of all submodule output will be the name of
+the parent project&#8217;s &lt;tree&gt; object.</p>
+</dd>
+<dt class="hdlist1">--parent-basename &lt;basename&gt;</dt>
+<dd>
+<p>For internal use only.  In order to produce uniform output with the
+--recurse-submodules option, this option can be used to provide the
+basename of a parent&#8217;s &lt;tree&gt; object to a submodule so the submodule
+can prefix its output with the parent&#8217;s name rather than the SHA1 of
+the submodule.</p>
 </dd>
 <dt class="hdlist1">-a</dt>
 <dt class="hdlist1">--text</dt>
@@ -801,7 +817,7 @@ files that have lines that match both.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-02-03 08:41:53 W. Europe Standard Time
+Last updated 2017-02-25 16:39:40 W. Europe Standard Time
 </div>
 </div>
 </body>

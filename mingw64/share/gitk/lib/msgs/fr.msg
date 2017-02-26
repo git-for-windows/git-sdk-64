@@ -84,7 +84,7 @@ set ::msgcat::header "Project-Id-Version: gitk\nReport-Msgid-Bugs-To: \nPOT-Crea
 ::msgcat::mcset fr "Show origin of this line" "Montrer l'origine de cette ligne"
 ::msgcat::mcset fr "Run git gui blame on this line" "Ex\u00e9cuter git gui blame sur cette ligne"
 ::msgcat::mcset fr "About gitk" "\u00c0 propos de gitk"
-::msgcat::mcset fr "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2014 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - visualisateur de commit pour git\n\nCopyright \\u00a9 2005-2014 Paul Mackerras\n\nUtilisation et redistribution soumises aux termes de la GNU General Public License"
+::msgcat::mcset fr "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2016 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - visualisateur de commit pour git\n\nCopyright \\u00a9 2005-2016 Paul Mackerras\n\nUtilisation et redistribution soumises aux termes de la GNU General Public License"
 ::msgcat::mcset fr "Close" "Fermer"
 ::msgcat::mcset fr "Gitk key bindings" "Raccourcis clavier de Gitk"
 ::msgcat::mcset fr "Gitk key bindings:" "Raccourcis clavier de Gitk :"

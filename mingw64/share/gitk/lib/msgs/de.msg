@@ -82,7 +82,7 @@ set ::msgcat::header "Project-Id-Version: git-gui\nReport-Msgid-Bugs-To: \nPOT-C
 ::msgcat::mcset de "Copy path" "Pfad kopieren"
 ::msgcat::mcset de "Show origin of this line" "Herkunft dieser Zeile anzeigen"
 ::msgcat::mcset de "Run git gui blame on this line" "Diese Zeile annotieren (\u00bbgit gui blame\u00ab)"
-::msgcat::mcset de "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2014 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - eine Visualisierung der Git-Historie\n\nCopyright \\u00a9 2005-2014 Paul Mackerras\n\nBenutzung und Weiterverbreitung gem\u00e4\u00df den Bedingungen der GNU General Public License"
+::msgcat::mcset de "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2016 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - eine Visualisierung der Git-Historie\n\nCopyright \\u00a9 2005-2016 Paul Mackerras\n\nBenutzung und Weiterverbreitung gem\u00e4\u00df den Bedingungen der GNU General Public License"
 ::msgcat::mcset de "Close" "Schlie\u00dfen"
 ::msgcat::mcset de "Gitk key bindings" "Gitk-Tastaturbelegung"
 ::msgcat::mcset de "Gitk key bindings:" "Gitk-Tastaturbelegung:"

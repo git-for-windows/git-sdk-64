@@ -487,19 +487,23 @@ functions.</p>
 <p>Can be passed to the config parsing infrastructure to parse
 local (worktree) submodule configurations.</p>
 </dd>
-<dt class="hdlist1"><code>const struct submodule *submodule_from_path(const unsigned char *commit_sha1, const char *path)</code></dt>
+<dt class="hdlist1"><code>const struct submodule *submodule_from_path(const unsigned char *treeish_name, const char *path)</code></dt>
 <dd>
-<p>Lookup values for one submodule by its commit_sha1 and path.</p>
+<p>Given a tree-ish in the superproject and a path, return the
+submodule that is bound at the path in the named tree.</p>
 </dd>
-<dt class="hdlist1"><code>const struct submodule *submodule_from_name(const unsigned char *commit_sha1, const char *name)</code></dt>
+<dt class="hdlist1"><code>const struct submodule *submodule_from_name(const unsigned char *treeish_name, const char *name)</code></dt>
 <dd>
 <p>The same as above but lookup by name.</p>
 </dd>
 </dl>
 </div>
 <div class="paragraph">
-<p>If given the null_sha1 as commit_sha1 the local configuration of a
-submodule will be returned (e.g. consolidated values from local git
+<p>Whenever a submodule configuration is parsed in <code>parse_submodule_config_option</code>
+via e.g. <code>gitmodules_config()</code>, it will overwrite the null_sha1 entry.
+So in the normal case, when HEAD:.gitmodules is parsed first and then overlayed
+with the repository configuration, the null_sha1 entry contains the local
+configuration of a submodule (e.g. consolidated values from local git
 configuration and the .gitmodules file in the worktree).</p>
 </div>
 <div class="paragraph">
@@ -510,7 +514,7 @@ configuration and the .gitmodules file in the worktree).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-02-03 08:41:54 W. Europe Standard Time
+Last updated 2017-02-25 16:39:40 W. Europe Standard Time
 </div>
 </div>
 </body>

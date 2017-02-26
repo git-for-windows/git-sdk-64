@@ -1202,6 +1202,10 @@ be turned off by prefixing them with <code>no</code> or <code>no-</code> (e.g., 
 <code>no-ul</code>, etc).</p>
 </div>
 <div class="paragraph">
+<p>An empty color string produces no color effect at all. This can be used
+to avoid coloring specific elements without disabling color entirely.</p>
+</div>
+<div class="paragraph">
 <p>For git&#8217;s pre-defined color slots, the attributes are meant to be reset
 at the beginning of each item in the colored output. So setting
 <code>color.decorate.branch</code> to <code>black</code> will paint that branch name in a
@@ -1626,10 +1630,12 @@ repository&#8217;s usual working tree).</p>
 "<code>$GIT_DIR/logs/&lt;ref&gt;</code>", by appending the new and old
 SHA-1, the date/time and the reason of the update, but
 only when the file exists.  If this configuration
-variable is set to true, missing "<code>$GIT_DIR/logs/&lt;ref&gt;</code>"
+variable is set to <code>true</code>, missing "<code>$GIT_DIR/logs/&lt;ref&gt;</code>"
 file is automatically created for branch heads (i.e. under
-refs/heads/), remote refs (i.e. under refs/remotes/),
-note refs (i.e. under refs/notes/), and the symbolic ref HEAD.</p>
+<code>refs/heads/</code>), remote refs (i.e. under <code>refs/remotes/</code>),
+note refs (i.e. under <code>refs/notes/</code>), and the symbolic ref <code>HEAD</code>.
+If it is set to <code>always</code>, then a missing reflog is automatically
+created for any ref under <code>refs/</code>.</p>
 <div class="paragraph">
 <p>This information can be used to determine what commit
 was the tip of a branch "2 days ago".</p>
@@ -2574,6 +2580,13 @@ to all commands generating --stat output except format-patch.</p>
 <p>Generate diffs with &lt;n&gt; lines of context instead of the default
 of 3. This value is overridden by the -U option.</p>
 </dd>
+<dt class="hdlist1">diff.interHunkContext</dt>
+<dd>
+<p>Show the context between diff hunks, up to the specified number
+of lines, thereby fusing the hunks that are close to each other.
+This value serves as the default for the <code>--inter-hunk-context</code>
+command line option.</p>
+</dd>
 <dt class="hdlist1">diff.external</dt>
 <dd>
 <p>If this config variable is set, diff generation is not
@@ -2632,9 +2645,10 @@ the order of the prefixes:</p>
 </dd>
 <dt class="hdlist1">diff.orderFile</dt>
 <dd>
-<p>File indicating how to order files within a diff, using
-one shell glob pattern per line.
-Can be overridden by the <em>-O</em> option to <a href="git-diff.html">git-diff</a>(1).</p>
+<p>File indicating how to order files within a diff.
+See the <em>-O</em> option to <a href="git-diff.html">git-diff</a>(1) for details.
+If <code>diff.orderFile</code> is a relative pathname, it is treated as
+relative to the top of the working tree.</p>
 </dd>
 <dt class="hdlist1">diff.renameLimit</dt>
 <dd>
@@ -2791,11 +2805,9 @@ that a corresponding difftool.&lt;tool&gt;.cmd variable is defined.</p>
 </div>
 </dd>
 <dt class="hdlist1">diff.indentHeuristic</dt>
-<dt class="hdlist1">diff.compactionHeuristic</dt>
 <dd>
-<p>Set one of these options to <code>true</code> to enable one of two
-experimental heuristics that shift diff hunk boundaries to
-make patches easier to read.</p>
+<p>Set this option to <code>true</code> to enable experimental heuristics
+that shift diff hunk boundaries to make patches easier to read.</p>
 </dd>
 <dt class="hdlist1">diff.algorithm</dt>
 <dd>
@@ -3875,6 +3887,11 @@ a single &lt;path&gt; is given.  This has the same limitations as <code>--follow
 i.e. it cannot be used to follow multiple files and does not work well
 on non-linear history.</p>
 </dd>
+<dt class="hdlist1">log.graphColors</dt>
+<dd>
+<p>A list of colors, separated by commas, that can be used to draw
+history lines in <code>git log --graph</code>.</p>
+</dd>
 <dt class="hdlist1">log.showRoot</dt>
 <dd>
 <p>If true, the initial commit will be shown as a big creation event.
@@ -4374,6 +4391,73 @@ would cause the invocation <code>git log --pretty=changelog</code>
 to be equivalent to running <code>git log "--pretty=format:* %H %s"</code>.
 Note that an alias with the same name as a built-in format
 will be silently ignored.</p>
+</dd>
+<dt class="hdlist1">protocol.allow</dt>
+<dd>
+<p>If set, provide a user defined default policy for all protocols which
+don&#8217;t explicitly have a policy (<code>protocol.&lt;name&gt;.allow</code>).  By default,
+if unset, known-safe protocols (http, https, git, ssh, file) have a
+default policy of <code>always</code>, known-dangerous protocols (ext) have a
+default policy of <code>never</code>, and all other protocols have a default
+policy of <code>user</code>.  Supported policies:</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>always</code> - protocol is always able to be used.</p>
+</li>
+<li>
+<p><code>never</code> - protocol is never able to be used.</p>
+</li>
+<li>
+<p><code>user</code> - protocol is only able to be used when <code>GIT_PROTOCOL_FROM_USER</code> is
+either unset or has a value of 1.  This policy should be used when you want a
+protocol to be directly usable by the user but don&#8217;t want it used by commands which
+execute clone/fetch/push commands without user input, e.g. recursive
+submodule initialization.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">protocol.&lt;name&gt;.allow</dt>
+<dd>
+<p>Set a policy to be used by protocol <code>&lt;name&gt;</code> with clone/fetch/push
+commands. See <code>protocol.allow</code> above for the available policies.</p>
+<div class="paragraph">
+<p>The protocol names currently used by git are:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>file</code>: any local file-based path (including <code>file://</code> URLs,
+or local paths)</p>
+</li>
+<li>
+<p><code>git</code>: the anonymous git protocol over a direct TCP
+connection (or proxy, if configured)</p>
+</li>
+<li>
+<p><code>ssh</code>: git over ssh (including <code>host:path</code> syntax,
+<code>ssh://</code>, etc).</p>
+</li>
+<li>
+<p><code>http</code>: git over http, both "smart http" and "dumb http".
+Note that this does <em>not</em> include <code>https</code>; if you want to configure
+both, you must do so individually.</p>
+</li>
+<li>
+<p>any external helpers are named by their protocol (e.g., use
+<code>hg</code> to allow the <code>git-remote-hg</code> helper)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">pull.ff</dt>
 <dd>
@@ -5054,16 +5138,12 @@ By default <code>no</code> is assumed, which doesn&#8217;t add references. When 
 value is set to <code>superproject</code> the submodule to be cloned computes
 its alternates location relative to the superprojects alternate.</p>
 </dd>
-</dl>
-</div>
-<div class="paragraph">
-<p>submodule.alternateErrorStrategy
-	Specifies how to treat errors with the alternates for a submodule
-	as computed via <code>submodule.alternateLocation</code>. Possible values are
-	<code>ignore</code>, <code>info</code>, <code>die</code>. Default is <code>die</code>.</p>
-</div>
-<div class="dlist">
-<dl>
+<dt class="hdlist1">submodule.alternateErrorStrategy</dt>
+<dd>
+<p>Specifies how to treat errors with the alternates for a submodule
+as computed via <code>submodule.alternateLocation</code>. Possible values are
+<code>ignore</code>, <code>info</code>, <code>die</code>. Default is <code>die</code>.</p>
+</dd>
 <dt class="hdlist1">tag.forceSignAnnotated</dt>
 <dd>
 <p>A boolean to specify whether annotated tags created should be GPG signed.
@@ -5255,18 +5335,42 @@ commit, you can override the default selection with this variable.
 This option is passed unchanged to gpg&#8217;s --local-user parameter,
 so you may specify a key using any method that gpg supports.</p>
 </dd>
-<dt class="hdlist1">versionsort.prereleaseSuffix</dt>
+<dt class="hdlist1">versionsort.prereleaseSuffix (deprecated)</dt>
 <dd>
-<p>When version sort is used in <a href="git-tag.html">git-tag</a>(1), prerelease
-tags (e.g. "1.0-rc1") may appear after the main release
-"1.0". By specifying the suffix "-rc" in this variable,
-"1.0-rc1" will appear before "1.0".</p>
+<p>Deprecated alias for <code>versionsort.suffix</code>.  Ignored if
+<code>versionsort.suffix</code> is set.</p>
+</dd>
+<dt class="hdlist1">versionsort.suffix</dt>
+<dd>
+<p>Even when version sort is used in <a href="git-tag.html">git-tag</a>(1), tagnames
+with the same base version but different suffixes are still sorted
+lexicographically, resulting e.g. in prerelease tags appearing
+after the main release (e.g. "1.0-rc1" after "1.0").  This
+variable can be specified to determine the sorting order of tags
+with different suffixes.</p>
 <div class="paragraph">
-<p>This variable can be specified multiple times, once per suffix. The
-order of suffixes in the config file determines the sorting order
-(e.g. if "-pre" appears before "-rc" in the config file then 1.0-preXX
-is sorted before 1.0-rcXX). The sorting order between different
-suffixes is undefined if they are in multiple config files.</p>
+<p>By specifying a single suffix in this variable, any tagname containing
+that suffix will appear before the corresponding main release.  E.g. if
+the variable is set to "-rc", then all "1.0-rcX" tags will appear before
+"1.0".  If specified multiple times, once per suffix, then the order of
+suffixes in the configuration will determine the sorting order of tagnames
+with those suffixes.  E.g. if "-pre" appears before "-rc" in the
+configuration, then all "1.0-preX" tags will be listed before any
+"1.0-rcX" tags.  The placement of the main release tag relative to tags
+with various suffixes can be determined by specifying the empty suffix
+among those other suffixes.  E.g. if the suffixes "-rc", "", "-ck" and
+"-bfs" appear in the configuration in this order, then all "v4.8-rcX" tags
+are listed first, followed by "v4.8", then "v4.8-ckX" and finally
+"v4.8-bfsX".</p>
+</div>
+<div class="paragraph">
+<p>If more than one suffixes match the same tagname, then that tagname will
+be sorted according to the suffix which starts at the earliest position in
+the tagname.  If more than one different matching suffixes start at
+that earliest position, then that tagname will be sorted according to the
+longest of those suffixes.
+The sorting order between different suffixes is undefined if they are
+in multiple config files.</p>
 </div>
 </dd>
 <dt class="hdlist1">web.browser</dt>
@@ -5298,7 +5402,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-02-03 08:41:53 W. Europe Standard Time
+Last updated 2017-02-25 16:39:39 W. Europe Standard Time
 </div>
 </div>
 </body>

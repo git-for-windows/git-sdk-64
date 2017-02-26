@@ -84,7 +84,7 @@ set ::msgcat::header "Project-Id-Version: sv\nReport-Msgid-Bugs-To: \nPOT-Creati
 ::msgcat::mcset sv "Show origin of this line" "Visa ursprunget f\u00f6r den h\u00e4r raden"
 ::msgcat::mcset sv "Run git gui blame on this line" "K\u00f6r git gui blame p\u00e5 den h\u00e4r raden"
 ::msgcat::mcset sv "About gitk" "Om gitk"
-::msgcat::mcset sv "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2014 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - en incheckningsvisare f\u00f6r git\n\nCopyright \u00a9 2005-2014 Paul Mackerras\n\nAnv\u00e4nd och vidaref\u00f6rmedla enligt villkoren i GNU General Public License"
+::msgcat::mcset sv "\nGitk - a commit viewer for git\n\nCopyright \u00a9 2005-2016 Paul Mackerras\n\nUse and redistribute under the terms of the GNU General Public License" "\nGitk - en incheckningsvisare f\u00f6r git\n\nCopyright \u00a9 2005-2016 Paul Mackerras\n\nAnv\u00e4nd och vidaref\u00f6rmedla enligt villkoren i GNU General Public License"
 ::msgcat::mcset sv "Close" "St\u00e4ng"
 ::msgcat::mcset sv "Gitk key bindings" "Tangentbordsbindningar f\u00f6r Gitk"
 ::msgcat::mcset sv "Gitk key bindings:" "Tangentbordsbindningar f\u00f6r Gitk:"

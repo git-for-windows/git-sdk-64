@@ -543,7 +543,8 @@ repository.  For example:</p>
 <div class="content">
 <pre>prefix=$(git rev-parse --show-prefix)
 cd "$(git rev-parse --show-toplevel)"
-eval "set -- $(git rev-parse --sq --prefix "$prefix" "$@")"</pre>
+# rev-parse provides the -- needed for 'set'
+eval "set $(git rev-parse --sq --prefix "$prefix" -- "$@")"</pre>
 </div>
 </div>
 </dd>
@@ -1445,7 +1446,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-02-03 08:41:53 W. Europe Standard Time
+Last updated 2017-02-25 16:39:40 W. Europe Standard Time
 </div>
 </div>
 </body>
