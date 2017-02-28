@@ -474,7 +474,7 @@
 0	lelong	0x00080003	Android binary XML
 
 #------------------------------------------------------------------------------
-# $File: animation,v 1.58 2016/07/03 14:13:11 christos Exp $
+# $File: animation,v 1.59 2017/01/21 16:07:14 christos Exp $
 # animation:  file(1) magic for animation/movie formats
 #
 # animation formats
@@ -1329,10 +1329,12 @@
 
 # X3D (Extensible 3D) [http://www.web3d.org/specifications/x3d-3.0.dtd]
 # From Michel Briand <michelbriand@free.fr>
-0	string/t		\<?xml\ version="
-!:strength +1
->20	search/1000/cw  \<!DOCTYPE\ X3D		X3D (Extensible 3D) model xml text
-!:mime model/x3d
+# mimetype from https://www.iana.org/assignments/media-types/model/x3d+xml
+# Example http://www.web3d.org/x3d/content/examples/Basic/course/CreateX3DFromStringRandomSpheres.x3d
+0	string/w	\<?xml\ version=
+!:strength + 5
+>20	search/1000/w	\<!DOCTYPE\ X3D		X3D (Extensible 3D) model xml text
+!:mime model/x3d+xml
 
 #---------------------------------------------------------------------------
 # HVQM4: compressed movie format designed by Hudson for Nintendo GameCube
@@ -2049,7 +2051,7 @@
 >>5	ubyte	    	x		\b.%u, little-endian
 >>0	use		\^apt-cache-be
 #------------------------------------------------------------------------------
-# $File: archive,v 1.103 2016/05/05 17:07:40 christos Exp $
+# $File: archive,v 1.104 2017/02/10 14:03:22 christos Exp $
 # archive:  file(1) magic for archive formats (see also "msdos" for self-
 #           extracting compressed archives)
 #
@@ -2958,7 +2960,17 @@
 >>>4	byte		0x0a		\b, at least v1.0 to extract
 >>>4	byte		0x0b		\b, at least v1.1 to extract
 >>>4	byte		0x14		\b, at least v2.0 to extract
+>>>4	byte		0x15		\b, at least v2.1 to extract
+>>>4	byte		0x19		\b, at least v2.5 to extract
+>>>4	byte		0x1b		\b, at least v2.7 to extract
 >>>4	byte		0x2d		\b, at least v4.5 to extract
+>>>4	byte		0x2e		\b, at least v4.6 to extract
+>>>4	byte		0x32		\b, at least v5.0 to extract
+>>>4	byte		0x33		\b, at least v5.1 to extract
+>>>4	byte		0x34		\b, at least v5.2 to extract
+>>>4	byte		0x3d		\b, at least v6.1 to extract
+>>>4	byte		0x3e		\b, at least v6.2 to extract
+>>>4	byte		0x3f		\b, at least v6.3 to extract
 >>>0x161	string		WINZIP		\b, WinZIP self-extracting
 
 # StarView Metafile
@@ -3298,7 +3310,7 @@
 >364	string		>\0		of '%s'
 
 #------------------------------------------------------------------------------
-# $File: audio,v 1.75 2016/02/08 17:30:11 christos Exp $
+# $File: audio,v 1.76 2016/11/02 23:06:32 christos Exp $
 # audio:  file(1) magic for sound formats (see also "iff")
 #
 # Jan Nicolai Langfeldt (janl@ifi.uio.no), Dan Quinlan (quinlan@yggdrasil.com),
@@ -3767,6 +3779,8 @@
 >>20	byte&0xe		0xc		\b, 7 channels
 >>20	byte&0xe		0xe		\b, 8 channels
 # some common sample rates
+>>17	belong&0xfffff0		0x2ee000	\b, 192 kHz
+>>17	belong&0xfffff0		0x158880	\b, 88.2 kHz
 >>17	belong&0xfffff0		0x0ac440	\b, 44.1 kHz
 >>17	belong&0xfffff0		0x0bb800	\b, 48 kHz
 >>17	belong&0xfffff0		0x07d000	\b, 32 kHz
@@ -5572,7 +5586,7 @@
 !:mime	application/zlib
 
 #------------------------------------------------------------------------------
-# $File: console,v 1.26 2016/06/12 15:20:37 christos Exp $
+# $File: console,v 1.29 2017/02/08 21:53:06 christos Exp $
 # Console game magic
 # Toby Deshane <hac@shoelace.digivill.net>
 
@@ -5581,17 +5595,19 @@
 # References:
 # - http://wiki.nesdev.com/w/index.php/INES
 # - http://wiki.nesdev.com/w/index.php/NES_2.0
-0	string		NES\x1A		iNES ROM image
+
+# Common header for iNES, NES 2.0, and Wii U iNES.
+0	name		nes-rom-image-ines
 >7	byte&0x0C	=0x8		(NES 2.0)
 >4	byte		x		\b: %ux16k PRG
->5	byte		x		\b, %ux16k CHR
+>5	byte		x		\b, %ux8k CHR
 >6	byte&0x08	=0x8		[4-Scr]
 >6	byte&0x09	=0x0		[H-mirror]
 >6	byte&0x09	=0x1		[V-mirror]
 >6	byte&0x02	=0x2		[SRAM]
 >6	byte&0x04	=0x4		[Trainer]
 >7	byte&0x03	=0x2		[PC10]
->7	byte&0x03	=0x1		[VS
+>7	byte&0x03	=0x1		[VS]
 >>7	byte&0x0C	=0x8
 # NES 2.0: VS PPU
 >>>13	byte&0x0F	=0x0		\b, RP2C03B
@@ -5615,17 +5631,24 @@
 >>12	byte&0x03	=0x1		[PAL]
 >>12	byte&0x02	=0x2		[NTSC+PAL]
 
+# Standard iNES ROM header.
+0	string		NES\x1A		NES ROM image (iNES)
+>0	use		nes-rom-image-ines
+
+# Wii U Virtual Console iNES ROM header.
+0	belong		0x4E455300	NES ROM image (Wii U Virtual Console)
+>0	use		nes-rom-image-ines
+
 #------------------------------------------------------------------------------
 # unif: file(1) magic for UNIF-format Nintendo Entertainment System ROM images
 # Reference: http://wiki.nesdev.com/w/index.php/UNIF
 # From: David Korth <gerbilsoft@gerbilsoft.com>
-# TODO commit on 2016/03/21
 #
 # NOTE: The UNIF format uses chunks instead of a fixed header,
 # so most of the data isn't easily parseable.
 #
 0	string	UNIF
->4	lelong	<16	UNIF v%d format NES ROM image
+>4	lelong	<16	NES ROM image (UNIF v%d format)
 
 #------------------------------------------------------------------------------
 # fds: file(1) magic for Famciom Disk System disk images
@@ -5635,23 +5658,38 @@
 
 # Disk info block. (block 1)
 0	name	nintendo-fds-disk-info-block
->1	string	*NINTENDO-HVC*	Famicom Disk System disk image:
 >23	byte	!1		FMC-
 >23	byte	1		FSC-
 >16	string	x		\b%.3s
->15	byte	x		\b, mfr 0x%02X
+>15	byte	x		\b, mfr %02X
 >20	byte	x		(Rev.%02u)
 
 # Headered version.
 0	string	FDS\x1A
->0x11	string	*NINTENDO-HVC*
+>0x11	string	*NINTENDO-HVC*	Famicom Disk System disk image:
 >>0x10	use	nintendo-fds-disk-info-block
 >4	byte	1	(%u side)
 >4	byte	!1	(%u sides)
 
 # Unheadered version.
-1	string	*NINTENDO-HVC*
+1	string	*NINTENDO-HVC*	Famicom Disk System disk image:
 >0	use	nintendo-fds-disk-info-block
+
+#------------------------------------------------------------------------------
+# tnes: file(1) magic for TNES-format Nintendo Entertainment System ROM images
+# Used by Nintendo 3DS NES Virtual Console games.
+# From: David Korth <gerbilsoft@gerbilsoft.com>
+#
+0		string	TNES	NES ROM image (Nintendo 3DS Virtual Console)
+>4		byte	100	\b: FDS,
+>>0x2010	use	nintendo-fds-disk-info-block
+>4		byte	!100	\b: TNES mapper %u
+>>5	byte		x		\b, %ux8k PRG
+>>6	byte		x		\b, %ux8k CHR
+>>7	byte&0x08	=1		[WRAM]
+>>8	byte&0x09	=1		[H-mirror]
+>>8	byte&0x09	=2		[V-mirror]
+>>8	byte&0x02	=3		[VRAM]
 
 #------------------------------------------------------------------------------
 # gameboy: file(1) magic for the Nintendo (Color) Gameboy raw ROM format
@@ -6063,6 +6101,10 @@
 >3	byte		x	version %d,
 >4	byte		x	%d tracks
 
+# IPS Patch Files from: From: Thomas Klausner <tk@giga.or.at>
+# see http://zerosoft.zophar.net/ips.php
+0	string	PATCH			IPS patch file
+
 # Playstations Patch Files from: From: Thomas Klausner <tk@giga.or.at>
 0	string	PPF30			Playstation Patch File version 3.0
 >5	byte	0			\b, PPF 1.0 patch
@@ -6188,6 +6230,52 @@
 0	string	WBFS
 >0x218	belong	0x5D1C9EA3	Nintendo Wii disc image (WBFS format):
 >>0x200	use	nintendo-gcn-disc-common
+
+# Type: Nintendo GameCube/Wii disc image (CISO format)
+# NOTE: This is NOT the same as Compact ISO or PSP CISO,
+# though it has the same magic number.
+0		string	CISO
+# Other fields are used to determine what type of CISO this is:
+# - 0x04 == 0x00200000: GameCube/Wii CISO (block_size)
+# - 0x10 == 0x00000800: PSP CISO (ISO-9660 sector size)
+# - None of the above: Compact ISO.
+>4		lelong	0x200000
+>>8		byte	1
+>>>0x801C	belong	0xC2339F3D	Nintendo GameCube disc image (CISO format):
+>>>>0x8000	use	nintendo-gcn-disc-common
+>>>0x8018	belong	0x5D1C9EA3	Nintendo Wii disc image (CISO format):
+>>>>0x8000	use	nintendo-gcn-disc-common
+
+# Type: Nintendo GameCube/Wii disc image (GCZ format)
+# Due to zlib compression, we can't get the actual disc information.
+0	lelong	0xB10BC001
+>4	lelong	0		Nintendo GameCube disc image (GCZ format)
+>4	lelong	1		Nintendo Wii disc image (GCZ format)
+>4	lelong	>1		Nintendo GameCube/Wii disc image (GCZ format)
+
+# Type: Nintendo GameCube/Wii disc image (WDF format)
+0		string	WII\001DISC
+>8		belong	1
+# WDFv1
+>>0x54		belong	0xC2339F3D	Nintendo GameCube disc image (WDFv1 format):
+>>>0x38		use	nintendo-gcn-disc-common
+>>0x58		belong	0x5D1C9EA3	Nintendo Wii disc image (WDFv1 format):
+>>>0x38		use	nintendo-gcn-disc-common
+>8		belong	2
+# WDFv2
+>>(12.L+0x1C)	belong	0xC2339F3D	Nintendo GameCube disc image (WDFv2 format):
+>>>(12.L)	use	nintendo-gcn-disc-common
+>>(12.L+0x18)	belong	0x5D1C9EA3	Nintendo Wii disc image (WDFv2 format):
+>>>(12.L)	use	nintendo-gcn-disc-common
+
+# Type: Nintendo GameCube/Wii disc image (WIA format)
+0	string	WIA\001	Nintendo
+>0x48	belong	0	GameCube/Wii
+>0x48	belong	1	GameCube
+>0x48	belong	2	Wii
+>0x48	belong	>2	GameCube/Wii
+>0x48	belong	x	disc image (WIA format):
+>>0x58	use	nintendo-gcn-disc-common
 
 #------------------------------------------------------------------------------
 # Nintendo 3DS file formats.
@@ -6322,6 +6410,20 @@
 #
 0	string	g\ GCE	Vectrex ROM image
 >0x11	string	>\0	\b: "%.16s"
+
+#------------------------------------------------------------------------------
+# amiibo: file(1) magic for Nintendo amiibo NFC dumps.
+# From: David Korth <gerbilsoft@gerbilsoft.com>
+# Reference: https://www.3dbrew.org/wiki/Amiibo
+0x00		byte	0x04
+>0x0A		beshort	0x0FE0
+>>0x0C		belong	0xF110FFEE
+>>>0x208	beshort	0x0100
+>>>>0x020A	byte	0x0F
+>>>>>0x020C	bequad	0x000000045F000000
+>>>>>>0x5B	byte	0x02
+>>>>>>>0x54	belong	x	Nintendo amiibo NFC dump - amiibo ID: %08X-
+>>>>>>>0x58	belong	x	\b%08X
 
 #------------------------------------------------------------------------------
 # $File: convex,v 1.8 2012/10/03 23:44:43 christos Exp $
@@ -8202,7 +8304,7 @@
 0       string          FCS3.0          Flow Cytometry Standard (FCS) data, version 3.0
 
 #------------------------------------------------------------------------------
-# $File: filesystems,v 1.114 2016/09/05 08:34:25 christos Exp $
+# $File: filesystems,v 1.116 2017/01/03 11:25:37 christos Exp $
 # filesystems:  file(1) magic for different filesystems
 #
 0	name	partid  
@@ -10152,7 +10254,19 @@
 >0	use cdrom
 
 # .cso files
-0    string    CISO	Compressed ISO CD image
+# Reference: http://pismotec.com/ciso/ciso.h
+# NOTE: There are two other formats with the same magic but
+# completely incompatible specifications:
+# - GameCube/Wii CISO: https://github.com/dolphin-emu/dolphin/blob/master/Source/Core/DiscIO/CISOBlob.h
+# - PSP CISO: https://github.com/jamie/ciso/blob/master/ciso.h
+0    string    CISO
+# Other fields are used to determine what type of CISO this is:
+# - 0x04 == 0x00200000: GameCube/Wii CISO (block_size)
+# - 0x10 == 0x00000800: PSP CISO (ISO-9660 sector size)
+# - None of the above: Compact ISO.
+>4	lelong	!0
+>>4	lelong	!0x200000
+>>>0x10	lelong	!0x800		Compressed ISO CD image
 
 # cramfs filesystem - russell@coker.com.au
 0       lelong    0x28cd3d45      Linux Compressed ROM File System data, little endian
@@ -10244,6 +10358,13 @@
 >29	byte	16		\bBlackfin,
 >29	byte	17		\bAVR32,
 >29	byte	18		\bSTMicroelectronics ST200,
+>29	byte	19		\bSandbox architecture,
+>29	byte	20		\bANDES Technology NDS32,
+>29	byte	21		\bOpenRISC 1000,
+>29	byte	22		\bARM 64-bit,
+>29	byte	23		\bDesignWare ARC,
+>29	byte	24		\bx86_64,
+>29	byte	25		\bXtensa,
 >30	byte	0		Invalid Image
 >30	byte	1		Standalone Program
 >30	byte	2		OS Kernel Image
@@ -10573,7 +10694,7 @@
 >5	belong	x		\b, devtype %x
 
 #------------------------------------------------------------------------------
-# $File: flash,v 1.11 2014/05/02 00:26:49 christos Exp $
+# $File: flash,v 1.12 2017/02/07 23:25:26 christos Exp $
 # flash:	file(1) magic for Macromedia Flash file format
 #
 # See
@@ -10584,22 +10705,44 @@
 #
 
 0   name        swf-details
->0	string		F		Macromedia Flash data
-!:mime	application/x-shockwave-flash
->0	string		C		Macromedia Flash data (compressed)
-!:mime	application/x-shockwave-flash
->0	string		Z		Macromedia Flash data (lzma compressed)
-!:mime	application/x-shockwave-flash
->3   byte        x      \b, version %d
+
+>0      string      F
+>>8     byte&0xfd   0x08    Macromedia Flash data
+!:mime  application/x-shockwave-flash
+>>>3    byte        x       \b, version %d
+>>8     byte&0xfe   0x10    Macromedia Flash data
+!:mime  application/x-shockwave-flash
+>>>3    byte        x       \b, version %d
+>>8     byte        0x18    Macromedia Flash data
+!:mime  application/x-shockwave-flash
+>>>3    byte        x       \b, version %d
+>>8     beshort&ff87 0x2000 Macromedia Flash data
+!:mime  application/x-shockwave-flash
+>>>3    byte        x       \b, version %d
+>>8     beshort&ffe0 0x3000 Macromedia Flash data
+!:mime  application/x-shockwave-flash
+>>>3    byte        x       \b, version %d
+>>8     byte&0x7    0
+>>>8    ubyte       >0x2f
+>>>>9   ubyte       <0x20   Macromedia Flash data
+!:mime  application/x-shockwave-flash
+>>>>>3  byte        x       \b, version %d
+
+>0      string      C
+>>8     byte        0x78    Macromedia Flash data (compressed)
+!:mime  application/x-shockwave-flash
+>>>3    byte        x       \b, version %d
+
+>0      string      Z
+>>8     byte        0x5d    Macromedia Flash data (lzma compressed)
+!:mime  application/x-shockwave-flash
+>>>3    byte        x      \b, version %d
+
 
 1   string      WS
->4  lelong      !0
->>3 byte        255 Suspicious
->>>0    use     swf-details
-
->>3 ubyte       <32
->>>3 ubyte      !0
->>>>0   use     swf-details
+>4  ulelong     >14
+>>3 ubyte       !0
+>>>0   use      swf-details
 
 # From: Cal Peake <cp@absolutedigital.net>
 0	string		FLV\x01		Macromedia Flash Video
@@ -10649,7 +10792,7 @@
 >>4	string	=d	\b, RGBA, interlaced
 
 #------------------------------------------------------------------------------
-# $File: fonts,v 1.33 2016/09/14 01:26:26 christos Exp $
+# $File: fonts,v 1.34 2016/12/01 15:30:33 christos Exp $
 # fonts:  file(1) magic for font data
 #
 0	search/1	FONT		ASCII vfont text
@@ -10749,9 +10892,11 @@
 
 # X11 fonts, from Daniel Quinlan (quinlan@yggdrasil.com)
 # PCF must come before SGI additions ("MIPSEL MIPS-II COFF" collides)
-0	string		\001fcp			X11 Portable Compiled Font data
->12	byte		0x02			\b, LSB first
->12	byte		0x0a			\b, MSB first
+0	string		\001fcp			X11 Portable Compiled Font data,
+>12	lelong		^0x08			bit: LSB,
+>12	lelong		&0x08			bit: MSB,
+>12	lelong		^0x04			byte: LSB first
+>12	lelong		&0x04			byte: MSB first
 0	string		D1.0\015		X11 Speedo font data
 
 #------------------------------------------------------------------------------
@@ -11984,6 +12129,22 @@
 
 
 #------------------------------------------------------------------------------
+# $File: gpu,v 1.1 2016/11/09 18:20:53 christos Exp $
+# gpu: file(1) magic for GPU input files
+
+# Standard Portable Intermediate Representation (SPIR)
+# Documentation: https://www.khronos.org/spir
+# Typical file extension: .spv
+
+0	belong	0x07230203	Khronos SPIR-V binary, big-endian
+>4	belong	x		\b, version 0x%08x
+>8	belong	x		\b, generator 0x%08x
+
+0	lelong	0x07230203      Khronos SPIR-V binary, little-endian
+>4	lelong	x		\b, version 0x%08x
+>8	lelong	x		\b, generator 0x%08x
+
+#------------------------------------------------------------------------------
 # $File: grace,v 1.4 2009/09/19 16:28:09 christos Exp $
 # ACE/gr and Grace type files - PLEASE DO NOT REMOVE THIS LINE
 #
@@ -12650,7 +12811,7 @@
 >>>0x524	string	>\0		\b, %s
 
 #------------------------------------------------------------------------------
-# $File: icc,v 1.1 2013/01/08 01:43:18 christos Exp $
+# $File: icc,v 1.2 2016/12/02 19:32:15 christos Exp $
 # icc:  file(1) magic for International Color Consortium file formats
 
 #
@@ -12661,42 +12822,205 @@
 #	http://www.color.org/specification/ICC1v43_2010-12.pdf
 #
 # for Specification ICC.1:2010 (Profile version 4.3.0.0).
+# URL: http://fileformats.archiveteam.org/wiki/ICC_profile
+# Reference: http://www.color.org/iccmax/ICC.2-2016-7.pdf
+# Update: Joerg Jenderek
 #
 # Bytes 36 to 39 contain a generic profile file signature of "acsp";
 # bytes 40 to 43 "may be used to identify the primary platform/operating
 # system framework for which the profile was created".
 #
-# There are other fields that might be worth dumping as well.
-#
+#	check and display ICC/ICM color profile
+0	name	color-profile
+>36	string		acsp		
+# skip ASCII like Cognacspirit.txt by month <= 12
+>>26	ubeshort	<13		
+# platform/operating system. Only 5 mentioned
 
+#
 # This appears to be what's used for Apple ColorSync profiles.
 # Instead of adding that, Apple just changed the generic "acsp" entry
 # to be for "ColorSync ICC Color Profile" rather than "Kodak Color
 # Management System, ICC Profile".
 # Yes, it's "APPL", not "AAPL"; see the spec.
-36	string		acspAPPL	ColorSync ICC Profile
-!:mime	application/vnd.iccprofile
+>>>40	string		APPL		ColorSync
 
 # Microsoft ICM color profile
-36	string		acspMSFT	Microsoft ICM Color Profile
-!:mime	application/vnd.iccprofile
+>>>40	string		MSFT		Microsoft
 
 # Yes, that's a blank after "SGI".
-36	string		acspSGI\ 	SGI ICC Profile
-!:mime	application/vnd.iccprofile
+>>>40	string		SGI\ 		SGI
 
 # XXX - is this what's used for the Sun KCMS or not?  The standard file
 # uses just "acsp" for that, but Apple's file uses it for "ColorSync",
 # and there *is* an identified "primary platform" value of SUNW.
-36	string		acspSUNW	Sun KCMS ICC Profile
+>>>40	string		SUNW		Sun KCMS
+
+# 5th platform
+>>>40	string		TGNT		Taligent
+
+# remaing "l" "e" of "color profile" printed later to avoid error
+>>>40	string		x 		color profi
+#>>>40	string		x		(%.4s)
 !:mime	application/vnd.iccprofile
+# for "ICM" extension only versions 2.x and for Kodak "CC" 2.0 is found
+>>>8	ubyte		=2		
+# do not use empty message text to a avoid error like
+# icc, 82: Warning: Current entry does not yet have a description for adding a EXTENSION type
+# file.exe: could not find any valid magic files!
+>>>>9	ubyte		!0		\ble
+!:ext	icc/icm
+# minor version
+>>>>9	ubyte		=0		\bl
+# Kodak colour management system
+>>>>>4	string		=KCMS		\be
+!:ext	icc/icm/cc
+>>>>>4	string		!KCMS		\be
+!:ext	icc/icm
+>>>8	ubyte		!2		\ble
+!:ext	icc
+# Profile version major.4bit-minor.sub1.sub2 like 4.3.0.0 (04300000h)
+>>>8	ubyte		x		%u
+>>>9	ubyte/16	x		\b.%u
+# reserved and shall be null but 205.205 in umx1220u.icm
+>>>10	ubyte		>0		\b.%u
+>>>>11	ubyte		>0		\b.%u
+# preferred colour management module like appl CCMS KCMS Lino UCCM "Win " "FF  "
+# skip space like in brmsl08f.icm and null like in brmsl09f.icm, brmsl07f.icm
+>>>4	string		>\ 		\b, type %.2s
+>>>>6	string		>\  		\b%.1s
+>>>>>7	string		>\  		\b%.1s
+# colour space "XYZ " "Lab " "RGB " CMYK GRAY ...
+>>>16	string		x		\b, %.3s
+>>>19	string		>\  		\b%.1s
+# Profile Connection Space (PCS) field usually "XYZ " or "Lab " but sometimes
+# null or CMYK like in ISOcoated_v2_to_PSOcoated_v3_DeviceLink.icc
+>>>20	string		>\0		\b/%.3s
+>>>>23	string		>\ 		\b%.1s
+# eleven device classes
+>>>12	string		x		\b-%.4s device
+# skip 00001964h in hpf69000.icc or 0h in XRDC50Q.ICM or " ROT" in brmsl05f.icm
+>>>52	string		>\ 		
+# skip "none" model like in "Trinitron Compatible 9300K G2.2.icm"
+>>>>52	ubelong		!0x6e6f6e65	
+# device manufacturer field like "HP  " "IBM " EPSO
+>>>>>48	string		x		\b, %.2s
+>>>>>50	string		>\  		\b%.1s
+>>>>>51	string		>\  		\b%.1s
+# model like "ADI " "A265" and skip 20000404h in IS330.icm for RICOH RUSSIAN-SC
+>>>>>52	string		>\ \  		\b/%.3s
+>>>>>>55 string		>\  		\b%.1s
+>>>>>52	string		x		model
+# creator (often same as manufacture) like HP SONY XROX or null like in A925A.icm
+>>>80	string		>\0		by %.2s
+>>>>82	string		>\  		\b%.1s
+>>>>>83	string		>\  		\b%.1s
+# profile size
+>>>0	ubelong		x		\b, %u bytes
+# skip invalid date 0 like in linearSRGB.icc
+>>>24	ubequad		!0		
+# datetime dd-mm-yyyy hh:mm:ss
+>>>>28	ubeshort	x		\b, %u
+# month <= 12
+>>>>26	ubeshort	x		\b-%u
+# year
+>>>>24	ubeshort	x		\b-%u
+# do not display midnight time like in CNHP8308.ICC
+>>>>30	ubequad&0xFFffFFffFFff0000	!0
+# hour <= 24
+>>>>>30	ubeshort	x		%u
+# minutes <= 59
+>>>>>32	ubeshort	x		\b:%.2u
+# seconds <= 59
+>>>>>34	ubeshort	x		\b:%.2u
+# vendor specific flags like 2 in HPCLJ5.ICM
+>>>44	ubeshort	>0		\b, 0x%x vendor flags
+# profile flags bits 0-2 of least 16 used by ICC
+#>>>44	ubelong		>0		\b, 0x%x flags
+# icEmbeddedProfileTrue
+>>>44	ubelong		&1		\b, embedded
+# icEmbeddedProfileFalse
+#>>>44	ubelong		^1		\b, not embedded
+# icUseWithEmbeddedDataOnly
+>>>44	ubelong		&2		\b, dependently
+# icUseAnywhere
+#>>>44	ubelong		^2		\b, independently
+>>>44	ubelong		&4		\b, MCS
+#>>>44	ubelong		^4		\b, no MCS
+# vendor specific device attributes 1~srgb.icc
+# E000D00h~CNB7QEDA.ICM C000A00h~CNB5FCAA.ICM 01040401h~CNB25PE3.ICM
+>>>56	ubelong		>0		\b, 0x%x vendor attribute
+# ICC device attributes bits 0-7 used
+#>>>60	ubelong		x		\b, 0x%x attribute
+# http://www.color.org/icc34.h
+>>>60	ubelong		&0x01		\b, transparent
+#>>>60	ubelong		^0x01		\b, reflective
+>>>60	ubelong		&0x02		\b, matte
+#>>>60	ubelong		^0x02		\b, glossy
+>>>60	ubelong		&0x04		\b, negative
+#>>>60	ubelong		^0x04		\b, positive
+>>>60	ubelong		&0x08		\b, black&white
+#>>>60	ubelong		^0x08		\b, colour
+>>>60	ubelong		&0x10		\b, non-paper
+#>>>60	ubelong		^0x10		\b, paper
+>>>60	ubelong		&0x20		\b, non-textured
+#>>>60	ubelong		^0x20		\b, textured
+>>>60	ubelong		&0x40		\b, non-isotropic
+#>>>60	ubelong		^0x40		\b, isotropic
+>>>60	ubelong		&0x80		\b, self-luminous
+#>>>60	ubelong		^0x80		\b, non-self-luminous
+# rendering intent 0-3 but 7AEA5027h in EE051__1.ICM 6CB1BCh in EE061__1.ICM
+>>>64	ubelong		>3		\b, 0x%x rendering intent
+#>>>64	ubelong		=0		\b, perceptual
+>>>64	ubelong		=1		\b, relative colorimetric
+>>>64	ubelong		=2		\b, saturation
+>>>64	ubelong		=3		\b, absolute colorimetric
+# PCS illuminant (3*s15Fixed16Numbers) often 0000f6d6 00010000 0000d32d
+>>>71	ubequad		!0xd6000100000000d3	\b, PCS
+# usually X~0.9642*65536=63189.8112~63190=F6D5h ; but also found
+# often F6D6 in gt5000r.icm, F6B8 in kodakce.icm, F6CA in RSWOP.icm
+>>>>68	ubelong			!0x0000f6d5	X=0x%x
+# usually Y=1.0~00010000h but Y=0 in brmsl07f.icm
+>>>>72	ubelong			!0x00010000	Y=0x%x
+# usually Z~0.8249*65536=54060.6464~54061=D32Dh ; but also found
+# D2F7 in hp1200c.icm, often D32C in A925A.icm, D309 in RSWOP.icm , D2F8 in kodak_dc.icm
+>>>>76	ubelong			!0x0000d32d	Z=0x%x
+# Profile ID. MD5 fingerprinting method as defined in Internet RFC 1321.
+>>>84	ubequad		>0		\b, 0x%llx MD5
+# reserved in older versions should be zero but also found CDCDCDCDCDCDCDCD
+#>>100	ubequad		x		\b 0x%llx reserved
+# tag table
+# 6 <= tags count <= 43
+#>>>128	ubelong		>43		\b, %u tags
+>>>128	ubelong		x		
+# shall contain the profileDescriptionTag "desc" , copyrightTag "cprt"
+# search range = tags count * 12 -8=< maximal tag count * 12 -8= 43 * 12 -8= 508
+>>>>132	search/508	cprt		
+# but no copyright tag in linearSRGB.icc
+# beneath /System/Library/Frameworks/WebKit.framework/
+# Versions/A/Frameworks/WebCore.framework/Versions/A/Resources
+>>>>132	default		x		\b, no copyright tag
+# 1st tag
+#>>>132	string		x		\b, 1st tag %.4s
+#>>>136	ubelong		x		0x%x offset
+#>>>140	ubelong		x		0x%x len
+# 2nd tag,...
+# look also for profileDescriptionTag "desc"
+>>>132	search/508	desc		
+# look further for TextDescriptionType "desc" signature
+>>>>(&0.L)	string		=desc	
+>>>>>&4		pstring/l	x	"%s"
+# look alternative for multiLocalizedUnicodeType "mluc" signature like in VideoPAL.icc
+>>>>(&0.L)	string		=mluc	
+>>>>>&(&8.L)	ubequad		x		
+>>>>>>&4	bestring16	x	'%s'
 
 # Any other profile.
 # XXX - should we use "acsp\0\0\0\0" for "no primary platform" profiles,
 # and use "acsp" for everything else and dump the "primary platform"
 # string in those cases?
-36	string		acsp		ICC Profile
-!:mime	application/vnd.iccprofile
+36	string		acsp		
+>0	use		color-profile
 
 
 
@@ -12774,7 +13098,7 @@
 !:mime	application/x-blorb
 
 #------------------------------------------------------------------------------
-# $File: images,v 1.117 2016/07/05 19:12:21 christos Exp $
+# $File: images,v 1.121 2016/12/01 16:20:13 christos Exp $
 # images:  file(1) magic for image formats (see also "iff", and "c-lang" for
 # XPM bitmaps)
 #
@@ -12815,7 +13139,11 @@
 >>>>>>3	uleshort		0	
 >>>>>>>0	use		tga-image
 # Color Map
->>>>>1	ubyte			>0	
+>>>>>1	belong&0xfff7ffff	0x01010000
+>>>>>>0		use		tga-image
+>>>>>1	belong&0xfff7ffff	0x00020000
+>>>>>>0		use		tga-image
+>>>>>1	belong&0xfff7ffff	0x00030000
 >>>>>>0		use		tga-image
 #	display tga bitmap image information
 0	name				tga-image
@@ -13192,6 +13520,7 @@
 #
 0	string		\x89PNG\x0d\x0a\x1a\x0a		PNG image data
 !:mime	image/png
+!:strength +10
 >16	belong		x		\b, %d x
 >20	belong		x		%d,
 >24	byte		x		%d-bit
@@ -14225,6 +14554,15 @@
 >0x10	string	GVRT	Sega GVR image:
 >>0x10	use	sega-gvr-image-header
 >>0x08	belong	x	\b, global index = %u
+
+# Light Field Picture
+# Documentation: http://optics.miloush.net/lytro/TheFileFormat.aspx
+# Typical file extensions: .lfp .lfr .lfx
+
+0	belong	0x894C4650
+>4	belong	0x0D0A1A0A
+>12	belong	0x00000000	Lytro Light Field Picture
+>8	belong	x		\b, version %d
 
 #------------------------------------------------------------------------------
 # $File: inform,v 1.5 2009/09/19 16:28:09 christos Exp $
@@ -16043,9 +16381,10 @@
 >12     lelong =1       version 1, little-endian
 >12     belong x        version %d, network-endian
 #------------------------------------------------------------------------------
-# $File: make,v 1.2 2015/08/25 07:34:06 christos Exp $
+# $File: make,v 1.3 2016/12/10 14:21:29 christos Exp $
 # make:  file(1) magic for makefiles
 #
+# URL: https://en.wikipedia.org/wiki/Make_(software)
 0	regex/100l	\^CFLAGS	makefile script text
 !:mime	text/x-makefile
 0	regex/100l	\^VPATH		makefile script text
@@ -16054,13 +16393,20 @@
 !:mime	text/x-makefile
 0	regex/100l	\^all:		makefile script text
 !:mime	text/x-makefile
-0	regex/100l	\^\.PRECIOUS	makefile script text
+0	regex/100l	\^\\.PRECIOUS	makefile script text
 !:mime	text/x-makefile
-0	regex/100l	\^\.BEGIN	BSD makefile script text
+# Update: Joerg Jenderek
+# Reference: https://www.freebsd.org/cgi/man.cgi?make(1)
+# exclude grub-core\lib\libgcrypt\mpi\Makefile.am with "#BEGIN_ASM_LIST"
+# by additional escaping point character
+0	regex/100l	\^\\.BEGIN	BSD makefile script text with "%s"
 !:mime	text/x-makefile
-0	regex/100l	\^\.include	BSD makefile script text
+!:ext	/mk
+# exclude MS Windows help file CoNtenT with ":include FOOBAR.CNT"
+# and NSIS script with "!include" by additional escaping point character
+0	regex/100l	\^\\.include	BSD makefile script text with "%s"
 !:mime	text/x-makefile
-
+!:ext	/mk
 0	regex/100l	\^SUBDIRS	automake makefile script text
 !:mime	text/x-makefile
 
@@ -16820,7 +17166,7 @@
 0	string	mozLz4a				Mozilla lz4 compressed bookmark data
 
 #------------------------------------------------------------------------------
-# $File: msdos,v 1.111 2016/09/14 01:26:26 christos Exp $
+# $File: msdos,v 1.115 2017/01/18 16:24:56 christos Exp $
 # msdos:  file(1) magic for MS-DOS files
 #
 
@@ -17385,10 +17731,23 @@
 0	string/b	PO^Q`				Microsoft Word 6.0 Document
 !:mime	application/msword
 #
-0	string/b	\376\067\0\043			Microsoft Office Document
+4   long        0
+>0  belong      0xfe320000      Microsoft Word for Macintosh 1.0
 !:mime	application/msword
-0	string/b	\333\245-\0\0\0			Microsoft Office Document
+!:ext   mcw
+>0  belong      0xfe340000      Microsoft Word for Macintosh 3.0
 !:mime	application/msword
+!:ext   mcw
+>0  belong      0xfe37001c      Microsoft Word for Macintosh 4.0
+!:mime	application/msword
+!:ext   mcw
+>0  belong      0xfe370023      Microsoft Word for Macintosh 5.0
+!:mime	application/msword
+!:ext   mcw
+
+0	string/b	\333\245-\0\0\0			Microsoft Word 2.0 Document
+!:mime	application/msword
+!:ext   doc
 512	string/b	\354\245\301			Microsoft Word Document
 !:mime	application/msword
 
@@ -17780,6 +18139,7 @@
 # DOS EPS Binary File Header
 # From: Ed Sznyter <ews@Black.Market.NET>
 0	belong		0xC5D0D3C6	DOS EPS Binary File
+!:mime	image/x-eps
 >4	long		>0		Postscript starts at byte %d
 >>8	long		>0		length %d
 >>>12	long		>0		Metafile starts at byte %d
@@ -17926,6 +18286,43 @@
 0	string	MIOPEN		Mallard BASIC Jetsam data
 0	string	Jetsam0		Mallard BASIC Jetsam index data
 
+# DOS backup 2.0 to 3.2
+
+# backupid.@@@
+
+# plausibility check for date
+0x3	ushort	>1979
+>0x5	ubyte-1 <31
+>>0x6	ubyte-1 <12
+# actually 121 nul bytes
+>>>0x7	string	\0\0\0\0\0\0\0\0
+>>>>0x1 ubyte	x	DOS 2.0 backup id file, sequence %d
+!:ext @@@
+>>>>0x0 ubyte	0xff	\b, last disk
+
+# backed up file
+
+# plausibility check for file name length
+0x53	ubyte-1	<80
+# actually 54 nul bytes
+>0x54	string	\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0
+>>0x5	string	x	DOS 2.0 backed up file %s,
+>>0	ubyte	0xff	complete file
+>>0	ubyte	!0xff
+>>>1	ushort	x	split file, sequence %d
+
+
+# DOS backup 3.3 to 5.x
+
+# CONTROL.nnn files
+0	string	\x8bBACKUP\x20
+# actually 128 nul bytes
+>0xa	string	\0\0\0\0\0\0\0\0
+>>0x9	ubyte	x	DOS 3.3 backup control file, sequence %d
+>>0x8a	ubyte	0xff	\b, last disk
+
+# NB: The BACKUP.nnn files consist of the files backed up,
+# concatenated.
 
 #------------------------------------------------------------------------------
 # $File: msooxml,v 1.5 2014/08/05 07:38:45 christos Exp $
@@ -18275,18 +18672,18 @@
 0x4000	string/b		AB
 >0x4002	uleshort	>0x400F
 >>0x400A	string		\0\0\0\0\0\0	MSX ROM with nonstandard page order
->>0x4002	uleshort	x			\b, init=0x%04x
->>0x4004	uleshort	>0			\b, stahdl=0x%04x
->>0x4006	uleshort	>0			\b, devhdl=0x%04x
->>0x4008	uleshort	>0			\b, bas=0x%04x
+>>>0x4002	uleshort	x			\b, init=0x%04x
+>>>0x4004	uleshort	>0			\b, stahdl=0x%04x
+>>>0x4006	uleshort	>0			\b, devhdl=0x%04x
+>>>0x4008	uleshort	>0			\b, bas=0x%04x
 
 0x8000	string/b		AB
 >0x8002	uleshort	>0x400F
 >>0x800A	string		\0\0\0\0\0\0	MSX ROM with nonstandard page order
->>0x8002	uleshort	x			\b, init=0x%04x
->>0x8004	uleshort	>0			\b, stahdl=0x%04x
->>0x8006	uleshort	>0			\b, devhdl=0x%04x
->>0x8008	uleshort	>0			\b, bas=0x%04x
+>>>0x8002	uleshort	x			\b, init=0x%04x
+>>>0x8004	uleshort	>0			\b, stahdl=0x%04x
+>>>0x8006	uleshort	>0			\b, devhdl=0x%04x
+>>>0x8008	uleshort	>0			\b, bas=0x%04x
 
 
 0x3C000	string/b		AB
@@ -19359,15 +19756,15 @@
 #!:mime	text/x-pascal
 
 #------------------------------------------------------------------------------
-# $File: pbf,v 1.1 2013/12/21 14:27:24 christos Exp $
+# $File: pbf,v 1.2 2017/01/18 16:16:21 christos Exp $
 # file(1) magic(5) data for OpenStreetMap
 
 # OpenStreetMap Protocolbuffer Binary Format (.osm.pbf)
 # http://wiki.openstreetmap.org/wiki/PBF_Format
 # From: Markus Heidelberg <markus.heidelberg@web.de>
-0	belong		0x0000000D
->4	beshort		0x0A09
->>6	string		OSMHeader	OpenStreetMap Protocolbuffer Binary Format
+0	belong&0xfffffff0	0
+>4	beshort			0x0A09
+>>6	string			OSMHeader	OpenStreetMap Protocolbuffer Binary Format
 
 #------------------------------------------------------------------------------
 # $File: pbm,v 1.6 2009/09/19 16:28:11 christos Exp $
@@ -19695,7 +20092,7 @@
 #>>(4.l+12)	lelong x level 2 size: %d
 
 #------------------------------------------------------------------------------
-# $File: pgp,v 1.12 2016/10/07 20:22:12 christos Exp $
+# $File: pgp,v 1.13 2017/01/22 21:13:13 christos Exp $
 # pgp:  file(1) magic for Pretty Good Privacy
 # see http://lists.gnupg.org/pipermail/gnupg-devel/1999-September/016052.html
 #
@@ -19714,15 +20111,15 @@
 #>15	string	SIGNED\040MESSAGE-	signed message
 #>15	string	PGP\040SIGNATURE-	signature
 
-2	string	---BEGIN\ PGP\ PUBLIC\ KEY\ BLOCK-	PGP public key block
+2	string	---BEGIN\040PGP\040PUBLIC\040KEY\040BLOCK-	PGP public key block
 !:mime	application/pgp-keys
 >10	search/100	\n\n
 >>&0	use		pgp
-0	string	-----BEGIN\040PGP\40MESSAGE-		PGP message
+0	string	-----BEGIN\040PGP\040MESSAGE-		PGP message
 !:mime	application/pgp
 >10	search/100	\n\n
 >>&0	use		pgp
-0	string	-----BEGIN\040PGP\40SIGNATURE-		PGP signature
+0	string	-----BEGIN\040PGP\040SIGNATURE-		PGP signature
 !:mime	application/pgp-signature
 >10	search/100	\n\n
 >>&0	use		pgp
@@ -21476,7 +21873,9 @@
 >32	string	>\0	version %s scene
 8	string	CIMG		Alias Maya Image File
 8	string	DEEP		Alias Maya Image File
-#------------------------------------------------------------------------------ # $File: sgml,v 1.34 2016/09/11 13:56:42 christos Exp $
+
+#------------------------------------------------------------------------------
+# $File: sgml,v 1.36 2016/12/01 15:40:52 christos Exp $
 # Type:	SVG Vectorial Graphics
 # From:	Noel Torres <tecnico@ejerciciosresueltos.com>
 0	string		\<?xml\ version="
@@ -21522,6 +21921,12 @@
 # adapted to string extenstions by Anthon van der Neut <anthon@mnt.org)
 0	search/4096/cWt	\<!doctype\ html	HTML document text
 !:mime	text/html
+!:strength + 5
+
+# SVG document
+# https://www.w3.org/TR/SVG/single-page.html
+0	search/4096/cWbt	\<!doctype\ svg	SVG XML document
+!:mime  image/svg+xml
 !:strength + 5
 
 0	search/4096/cwt	\<head\>		HTML document text
@@ -22283,14 +22688,26 @@
 0	string	ecdsa-sha2-nistp384	OpenSSH ECDSA public key
 0	string	ecdsa-sha2-nistp521	OpenSSH ECDSA public key
 0	string	ssh-ed25519		OpenSSH ED25519 public key
+
+#------------------------------------------------------------------------------
+# $File: ssl,v 1.4 2017/01/22 21:14:25 christos Exp $
+# ssl:  file(1) magic for SSL file formats
+
 # Type: OpenSSL certificates/key files
 # From: Nicolas Collignon <tsointsoin@gmail.com>
 
-0	string	-----BEGIN\ CERTIFICATE-----	PEM certificate
-0	string	-----BEGIN\ CERTIFICATE\ REQ	PEM certificate request
-0	string	-----BEGIN\ RSA\ PRIVATE	PEM RSA private key
-0	string	-----BEGIN\ DSA\ PRIVATE	PEM DSA private key
-0	string	-----BEGIN\ EC\ PRIVATE	PEM EC private key
+0	string	-----BEGIN\040CERTIFICATE-----	PEM certificate
+0	string	-----BEGIN\040CERTIFICATE\040REQ	PEM certificate request
+0	string	-----BEGIN\040RSA\040PRIVATE	PEM RSA private key
+0	string	-----BEGIN\040DSA\040PRIVATE	PEM DSA private key
+0	string	-----BEGIN\040EC\040PRIVATE	PEM EC private key
+0	string	-----BEGIN\040ECDSA\040PRIVATE	PEM ECDSA private key
+
+# From Luc Gommans
+# OpenSSL enc file (recognized by a magic string preceding the password's salt)
+0	string	Salted__	openssl enc'd data with salted password
+# Using the -a or -base64 option, OpenSSL will base64-encode the data.
+0	string U2FsdGVkX19	openssl enc'd data with salted password, base64 encoded
 
 #------------------------------------------------------------------------------
 # $File: sun,v 1.27 2014/04/30 21:41:02 christos Exp $
@@ -25113,6 +25530,23 @@
 !:mime	image/x-xcursor
 >10	leshort		x		version %d
 >>8	leshort		x		\b.%d
+
+
+#------------------------------------------------------------------------------
+# $File: yara,v 1.1 2016/10/30 00:38:01 christos Exp $
+# yara:  file(1) magic for http://virustotal.github.io/yara/
+#
+
+0	string	YARA
+>4	lelong	>2047
+>8	byte	<20	YARA 3.x compiled rule set
+# version
+>>8	clear
+>>8	byte	6	created with version 3.3.0
+>>8	byte	8	created with version 3.4.0
+>>8	byte	11	created with version 3.5.0
+>>8	default	x
+>>>8	byte	x	development version 0x%02x
 #------------------------------------------------------------------------------
 # zfs:	file(1) magic for ZFS dumps
 #
