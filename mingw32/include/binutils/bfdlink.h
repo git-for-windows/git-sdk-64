@@ -1,5 +1,5 @@
 /* bfdlink.h -- header file for BFD link routines
-   Copyright (C) 1993-2016 Free Software Foundation, Inc.
+   Copyright (C) 1993-2017 Free Software Foundation, Inc.
    Written by Steve Chamberlain and Ian Lance Taylor, Cygnus Support.
 
    This file is part of BFD, the Binary File Descriptor library.
@@ -107,6 +107,9 @@ struct bfd_link_hash_entry
   /* Symbol is a built-in define.  These will be overridden by PROVIDE
      in a linker script.  */
   unsigned int linker_def : 1;
+
+  /* Symbol defined in a linker script.  */
+  unsigned int ldscript_def : 1;
 
   /* A union of information depending upon the type.  */
   union
@@ -325,6 +328,9 @@ struct bfd_link_info
   /* TRUE if unreferenced sections should be removed.  */
   unsigned int gc_sections: 1;
 
+  /* TRUE if exported symbols should be kept during section gc.  */
+  unsigned int gc_keep_exported: 1;
+
   /* TRUE if every symbol should be reported back via the notice
      callback.  */
   unsigned int notice_all: 1;
@@ -531,6 +537,9 @@ struct bfd_link_info
 
   /* The output BFD.  */
   bfd *output_bfd;
+
+  /* The import library generated.  */
+  bfd *out_implib_bfd;
 
   /* The list of input BFD's involved in the link.  These are chained
      together via the link.next field.  */

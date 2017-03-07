@@ -1,5 +1,5 @@
 /* Default linker script, for normal executables */
-/* Copyright (C) 2014-2016 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2017 Free Software Foundation, Inc.
    Copying and distribution of this script, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
@@ -24,12 +24,12 @@ SECTIONS
 			LONG (-1);*(.ctors); *(.ctor); *(SORT(.ctors.*));  LONG (0);
      ___DTOR_LIST__ = .; __DTOR_LIST__ = . ;
 			LONG (-1); *(.dtors); *(.dtor); *(SORT(.dtors.*));  LONG (0);
-     *(.fini)
+     KEEP (*(.fini))
     /* ??? Why is .gcc_exc here?  */
      *(.gcc_exc)
     PROVIDE (etext = .);
     PROVIDE (_etext = .);
-     *(.gcc_except_table)
+     KEEP (*(.gcc_except_table))
   }
   /* The Cygwin32 library uses a section to avoid copying certain data
      on fork.  This used to be named ".data".  The linker used
@@ -65,7 +65,7 @@ SECTIONS
   }
   .pdata BLOCK(__section_alignment__) :
   {
-    KEEP(*(.pdata))
+    KEEP(*(.pdata*))
   }
   .bss BLOCK(__section_alignment__) :
   {
