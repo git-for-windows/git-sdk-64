@@ -1,7 +1,8 @@
 This is gnutls-guile.info, produced by makeinfo version 6.3 from
 gnutls-guile.texi.
 
-This manual is last updated 16 March 2016 for version 3.5.8 of GnuTLS.
+This manual is last updated 12 February 2017 for version 3.5.10 of
+GnuTLS.
 
 Copyright (C) 2001-2012, 2014, 2016 Free Software Foundation, Inc.
 
@@ -22,7 +23,8 @@ File: gnutls-guile.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS-Guile
 ************
 
-This manual is last updated 16 March 2016 for version 3.5.8 of GnuTLS.
+This manual is last updated 12 February 2017 for version 3.5.10 of
+GnuTLS.
 
 Copyright (C) 2001-2012, 2014, 2016 Free Software Foundation, Inc.
 
@@ -130,7 +132,7 @@ the version number of the loaded library as follows:
      $ guile
      scheme@(guile-user)> (use-modules (gnutls))
      scheme@(guile-user)> (gnutls-version)
-     "3.5.8"
+     "3.5.10"
      scheme@(guile-user)>
 
 
@@ -258,9 +260,6 @@ in the PEM format can be done as follows:
          (lambda (port)
            (uniform-vector-write pem port))))
 
-For an example of OpenPGP key import from a file, see *note Importing
-OpenPGP Keys Guile Example::.
-
    ---------- Footnotes ----------
 
    (1) Historically, SRFI-4 'u8vector's are the closest thing to
@@ -384,11 +383,9 @@ This chapter provides examples that illustrate common use cases.
 * Menu:
 
 * Anonymous Authentication Guile Example::    Simplest client and server.
-* OpenPGP Authentication Guile Example::      Using OpenPGP-based authentication.
-* Importing OpenPGP Keys Guile Example::      Importing keys from files.
 
 
-File: gnutls-guile.info,  Node: Anonymous Authentication Guile Example,  Next: OpenPGP Authentication Guile Example,  Up: Guile Examples
+File: gnutls-guile.info,  Node: Anonymous Authentication Guile Example,  Up: Guile Examples
 
 4.1 Anonymous Authentication Guile Example
 ==========================================
@@ -459,111 +456,6 @@ SOME-SOCKET is bound to a socket port):
          (bye server close-request/rdwr)))
 
 This is it!
-
-
-File: gnutls-guile.info,  Node: OpenPGP Authentication Guile Example,  Next: Importing OpenPGP Keys Guile Example,  Prev: Anonymous Authentication Guile Example,  Up: Guile Examples
-
-4.2 OpenPGP Authentication Guile Example
-========================================
-
-GnuTLS allows users to authenticate using OpenPGP certificates.  Using
-OpenPGP-based authentication is not more complicated than using
-anonymous authentication.  It requires a bit of extra work, though, to
-import the OpenPGP public and private key of the client/server.  Key
-import is omitted here and is left as an exercise to the reader (*note
-Importing OpenPGP Keys Guile Example::).
-
-Assuming SOME-SOCKET is bound to an open socket port and PUB and SEC are
-bound to the client's OpenPGP public and secret key, respectively,
-client-side code would look like this:
-
-     ;; Client-side.
-
-     (define %certs (list certificate-type/openpgp))
-
-     (let ((client (make-session connection-end/client))
-           (cred   (make-certificate-credentials)))
-       (set-session-default-priority! client)
-
-       ;; Choose OpenPGP certificates.
-       (set-session-certificate-type-priority! client %certs)
-
-       ;; Prepare appropriate client credentials.
-       (set-certificate-credentials-openpgp-keys! cred pub sec)
-       (set-session-credentials! client cred)
-
-       ;; Specify the underlying transport socket.
-       (set-session-transport-fd! client (fileno some-socket))
-
-       (handshake client)
-       (write "hello, world!" (session-record-port client))
-       (bye client close-request/rdwr))
-
-Similarly, server-side code would be along these lines:
-
-     ;; Server-side.
-
-     (define %certs (list certificate-type/openpgp))
-
-     (let ((server (make-session connection-end/server))
-           (dh     (make-dh-parameters 1024)))
-       (set-session-default-priority! server)
-
-       ;; Choose OpenPGP certificates.
-       (set-session-certificate-type-priority! server %certs)
-
-       (let ((cred (make-certificate-credentials)))
-         ;; Prepare credentials with Diffie-Hellman parameters.
-         (set-certificate-credentials-dh-parameters! cred dh)
-         (set-certificate-credentials-openpgp-keys! cred pub sec)
-         (set-session-credentials! server cred))
-
-       (set-session-transport-fd! server (fileno some-socket))
-
-       (handshake server)
-       (let ((msg (read (session-record-port server))))
-         (format #t "received: ~a~%" msg)
-
-         (bye server close-request/rdwr)))
-
-
-File: gnutls-guile.info,  Node: Importing OpenPGP Keys Guile Example,  Prev: OpenPGP Authentication Guile Example,  Up: Guile Examples
-
-4.3 Importing OpenPGP Keys Guile Example
-========================================
-
-The following example provides a simple way of importing "ASCII-armored"
-OpenPGP keys from files, using the 'import-openpgp-certificate' and
-'import-openpgp-private-key' procedures.
-
-     (use-modules (srfi srfi-4)
-                  (gnutls))
-
-     (define (import-key-from-file import-proc file)
-       ;; Import OpenPGP key from FILE using IMPORT-PROC.
-
-       ;; Prepare a u8vector large enough to hold the raw
-       ;; key contents.
-       (let* ((size (stat:size (stat path)))
-              (raw  (make-u8vector size)))
-
-         ;; Fill in the u8vector with the contents of FILE.
-         (uniform-vector-read! raw (open-input-file file))
-
-         ;; Pass the u8vector to the import procedure.
-         (import-proc raw openpgp-certificate-format/base64)))
-
-
-     (define (import-public-key-from-file file)
-       (import-key-from-file import-openpgp-certificate file))
-
-     (define (import-private-key-from-file file)
-       (import-key-from-file import-openpgp-private-key file))
-
-The procedures 'import-public-key-from-file' and
-'import-private-key-from-file' can be passed a file name.  They return
-an OpenPGP public key and private key object, respectively (*note
-OpenPGP key objects: Guile Reference.).
 
 
 File: gnutls-guile.info,  Node: Guile Reference,  Next: Copying Information,  Prev: Guile Examples,  Up: Top
@@ -1712,23 +1604,21 @@ Concept Index
 
 
 Tag Table:
-Node: Top788
-Node: Preface1846
-Node: Guile Preparations2412
-Node: Guile API Conventions5185
-Node: Enumerates and Constants5759
-Node: Procedure Names8084
-Node: Representation of Binary Data9067
-Ref: Representation of Binary Data-Footnote-110093
-Node: Input and Output10209
-Node: Exception Handling12554
-Node: Guile Examples14382
-Node: Anonymous Authentication Guile Example14836
-Node: OpenPGP Authentication Guile Example17398
-Node: Importing OpenPGP Keys Guile Example19884
-Node: Guile Reference21324
-Node: Copying Information40344
-Node: Procedure Index65530
-Node: Concept Index76198
+Node: Top792
+Node: Preface1854
+Node: Guile Preparations2420
+Node: Guile API Conventions5194
+Node: Enumerates and Constants5768
+Node: Procedure Names8093
+Node: Representation of Binary Data9076
+Ref: Representation of Binary Data-Footnote-110001
+Node: Input and Output10117
+Node: Exception Handling12462
+Node: Guile Examples14290
+Node: Anonymous Authentication Guile Example14589
+Node: Guile Reference17106
+Node: Copying Information36126
+Node: Procedure Index61312
+Node: Concept Index71980
 
 End Tag Table

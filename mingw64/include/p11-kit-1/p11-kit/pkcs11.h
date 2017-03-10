@@ -59,13 +59,10 @@ extern "C" {
 
 
 /* The version of cryptoki we implement.  The revision is changed with
-   each modification of this file.  If you do not use the "official"
-   version of this file, please consider deleting the revision macro
-   (you may use a macro with a different name to keep track of your
-   versions).  */
+   each modification of this file.  */
 #define CRYPTOKI_VERSION_MAJOR		2
-#define CRYPTOKI_VERSION_MINOR		20
-#define CRYPTOKI_VERSION_REVISION	6
+#define CRYPTOKI_VERSION_MINOR		40
+#define P11_KIT_CRYPTOKI_VERSION_REVISION	0
 
 
 /* Compatibility interface is default, unless CRYPTOKI_GNU is
@@ -178,6 +175,12 @@ extern "C" {
 #define lock_mutex LockMutex
 #define unlock_mutex UnlockMutex
 #define reserved pReserved
+
+#define ck_rsa_pkcs_mgf_type_t CK_RSA_PKCS_MGF_TYPE
+#define ck_rsa_pkcs_oaep_source_type_t CK_RSA_PKCS_OAEP_SOURCE_TYPE
+#define hash_alg hashAlg
+#define source_data pSourceData
+#define source_data_len ulSourceDataLen
 
 #endif	/* CRYPTOKI_COMPAT */
 
@@ -426,6 +429,7 @@ typedef unsigned long ck_attribute_type_t;
 #define CKA_ALWAYS_SENSITIVE		(0x165UL)
 #define CKA_KEY_GEN_MECHANISM		(0x166UL)
 #define CKA_MODIFIABLE			(0x170UL)
+#define CKA_COPYABLE			(0x171UL)
 #define CKA_ECDSA_PARAMS		(0x180UL)
 #define CKA_EC_PARAMS			(0x180UL)
 #define CKA_EC_POINT			(0x181UL)
@@ -716,6 +720,9 @@ typedef unsigned long ck_mechanism_type_t;
 #define CKM_CAMELLIA_ECB_ENCRYPT_DATA (0x556UL)
 #define CKM_CAMELLIA_CBC_ENCRYPT_DATA (0x557UL)
 
+#define CKM_AES_KEY_WRAP (0x2109UL)
+#define CKM_AES_KEY_WRAP_PAD (0x210aUL)
+
 struct ck_mechanism
 {
   ck_mechanism_type_t mechanism;
@@ -729,6 +736,17 @@ struct ck_mechanism_info
   unsigned long min_key_size;
   unsigned long max_key_size;
   ck_flags_t flags;
+};
+
+typedef unsigned long ck_rsa_pkcs_mgf_type_t;
+typedef unsigned long ck_rsa_pkcs_oaep_source_type_t;
+
+struct ck_rsa_pkcs_oaep_params {
+  ck_mechanism_type_t hash_alg;
+  ck_rsa_pkcs_mgf_type_t mgf;
+  ck_rsa_pkcs_oaep_source_type_t source;
+  void *source_data;
+  unsigned long source_data_len;
 };
 
 #define CKF_HW			(1UL << 0)
@@ -1300,6 +1318,9 @@ typedef struct ck_function_list **CK_FUNCTION_LIST_PTR_PTR;
 
 typedef struct ck_c_initialize_args CK_C_INITIALIZE_ARGS;
 typedef struct ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
+
+typedef struct ck_rsa_pkcs_oaep_params CK_RSA_PKCS_OAEP_PARAM;
+typedef struct ck_rsa_pkcs_oaep_params *CK_RSA_PKCS_OAEP_PARAMS_PTR;
 
 #define NULL_PTR NULL
 

@@ -59,6 +59,7 @@ typedef enum {
 typedef enum {
 	P11_KIT_URI_FOR_OBJECT =  (1 << 1),
 	P11_KIT_URI_FOR_TOKEN =   (1 << 2),
+	P11_KIT_URI_FOR_SLOT =    (1 << 5),
 	P11_KIT_URI_FOR_MODULE =  (1 << 3),
 
 	P11_KIT_URI_FOR_MODULE_WITH_VERSION =
@@ -83,6 +84,8 @@ typedef struct ck_token_info *CK_TOKEN_INFO_PTR;
 typedef ck_attribute_type_t CK_ATTRIBUTE_TYPE;
 typedef struct ck_attribute *CK_ATTRIBUTE_PTR;
 typedef unsigned long int CK_ULONG;
+typedef struct ck_slot_info *CK_SLOT_INFO_PTR;
+typedef ck_slot_id_t CK_SLOT_ID;
 typedef P11KitUriType p11_kit_uri_type_t;
 typedef P11KitUriResult p11_kit_uri_result_t;
 #endif
@@ -94,6 +97,15 @@ CK_INFO_PTR         p11_kit_uri_get_module_info             (P11KitUri *uri);
 
 int                 p11_kit_uri_match_module_info           (P11KitUri *uri,
                                                              CK_INFO_PTR info);
+
+CK_SLOT_INFO_PTR    p11_kit_uri_get_slot_info               (P11KitUri *uri);
+
+int                 p11_kit_uri_match_slot_info             (P11KitUri *uri,
+                                                             CK_SLOT_INFO_PTR slot_info);
+
+CK_SLOT_ID          p11_kit_uri_get_slot_id                 (P11KitUri *uri);
+void                p11_kit_uri_set_slot_id                 (P11KitUri *uri,
+                                                             CK_SLOT_ID slot_id);
 
 CK_TOKEN_INFO_PTR   p11_kit_uri_get_token_info              (P11KitUri *uri);
 
@@ -140,6 +152,22 @@ void                p11_kit_uri_set_pinfile                 (P11KitUri *uri,
                                                              const char *pinfile);
 
 #endif /* P11_KIT_DISABLE_DEPRECATED */
+
+const char*         p11_kit_uri_get_module_name             (P11KitUri *uri);
+
+void                p11_kit_uri_set_module_name             (P11KitUri *uri,
+                                                             const char *name);
+
+const char*         p11_kit_uri_get_module_path             (P11KitUri *uri);
+
+void                p11_kit_uri_set_module_path             (P11KitUri *uri,
+                                                             const char *path);
+
+const char*         p11_kit_uri_get_vendor_query            (P11KitUri *uri,
+							     const char *name);
+int                 p11_kit_uri_set_vendor_query            (P11KitUri *uri,
+							     const char *name,
+							     const char *value);
 
 void                p11_kit_uri_set_unrecognized            (P11KitUri *uri,
                                                              int unrecognized);

@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.5.8"
+#define GNUTLS_VERSION "3.5.10"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 5
-#define GNUTLS_VERSION_PATCH 8
+#define GNUTLS_VERSION_PATCH 10
 
-#define GNUTLS_VERSION_NUMBER 0x030508
+#define GNUTLS_VERSION_NUMBER 0x03050a
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -1972,6 +1972,11 @@ int gnutls_random_art(gnutls_random_art_t type,
 		      const char *key_type, unsigned int key_size,
 		      void *fpr, size_t fpr_size, gnutls_datum_t * art);
 
+/* IDNA */
+#define GNUTLS_IDNA_FORCE_2008 (1<<1)
+int gnutls_idna_map(const char * input, unsigned ilen, gnutls_datum_t *out, unsigned flags);
+int gnutls_idna_reverse_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsigned flags);
+
 /* SRP 
  */
 
@@ -2425,6 +2430,7 @@ int gnutls_verify_stored_pubkey(const char *db_name,
 				const gnutls_datum_t * cert,
 				unsigned int flags);
 
+#define GNUTLS_SCOMMIT_FLAG_ALLOW_BROKEN 1
 int gnutls_store_commitment(const char *db_name,
 			    gnutls_tdb_t tdb,
 			    const char *host,

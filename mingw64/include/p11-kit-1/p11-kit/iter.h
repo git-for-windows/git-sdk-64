@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Red Hat, Inc
+ * Copyright (c) 2013,2016 Red Hat, Inc
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,8 +49,20 @@ typedef struct p11_kit_iter P11KitIter;
 typedef P11KitIter p11_kit_iter;
 
 typedef enum {
+	P11_KIT_ITER_KIND_MODULE,
+	P11_KIT_ITER_KIND_SLOT,
+	P11_KIT_ITER_KIND_TOKEN,
+	P11_KIT_ITER_KIND_OBJECT,
+	P11_KIT_ITER_KIND_UNKNOWN = -1,
+} P11KitIterKind;
+
+typedef enum {
 	P11_KIT_ITER_BUSY_SESSIONS = 1 << 1,
 	P11_KIT_ITER_WANT_WRITABLE = 1 << 2,
+	P11_KIT_ITER_WITH_MODULES = 1 << 3,
+	P11_KIT_ITER_WITH_SLOTS = 1 << 4,
+	P11_KIT_ITER_WITH_TOKENS = 1 << 5,
+	P11_KIT_ITER_WITHOUT_OBJECTS = 1 << 6,
 } P11KitIterBehavior;
 
 typedef CK_RV      (* p11_kit_iter_callback)                (P11KitIter *iter,
@@ -84,9 +96,13 @@ void                  p11_kit_iter_begin_with               (P11KitIter *iter,
 
 CK_RV                 p11_kit_iter_next                     (P11KitIter *iter);
 
+P11KitIterKind        p11_kit_iter_get_kind                 (P11KitIter *iter);
+
 CK_FUNCTION_LIST_PTR  p11_kit_iter_get_module               (P11KitIter *iter);
 
 CK_SLOT_ID            p11_kit_iter_get_slot                 (P11KitIter *iter);
+
+CK_SLOT_INFO *        p11_kit_iter_get_slot_info            (P11KitIter *iter);
 
 CK_TOKEN_INFO *       p11_kit_iter_get_token                (P11KitIter *iter);
 

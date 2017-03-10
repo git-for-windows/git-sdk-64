@@ -90,6 +90,17 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
               c:type="HB_OT_LAYOUT_NO_SCRIPT_INDEX">
       <type name="gint" c:type="gint"/>
     </constant>
+    <constant name="OT_LAYOUT_NO_VARIATIONS_INDEX"
+              value="4294967295"
+              c:type="HB_OT_LAYOUT_NO_VARIATIONS_INDEX">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="OT_VAR_NO_AXIS_INDEX"
+              value="4294967295"
+              c:type="HB_OT_VAR_NO_AXIS_INDEX"
+              version="1.4.2">
+      <type name="gint" c:type="gint"/>
+    </constant>
     <constant name="SET_VALUE_INVALID"
               value="4294967295"
               c:type="HB_SET_VALUE_INVALID">
@@ -106,10 +117,10 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MICRO" value="4" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="3" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="4" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.3.4" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.4.4" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_create"
@@ -3707,6 +3718,23 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_get_var_coords_normalized"
+              c:identifier="hb_font_get_var_coords_normalized"
+              version="1.4.2">
+      <doc xml:space="preserve">Return value is valid as long as variation coordinates of the font
+are not modified.</doc>
+      <return-value transfer-ownership="none">
+        <type name="gint" c:type="const int*"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="length" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_get_variation_glyph"
               c:identifier="hb_font_get_variation_glyph"
               version="1.2.3">
@@ -3856,6 +3884,24 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_set_face"
+              c:identifier="hb_font_set_face"
+              version="1.4.3">
+      <doc xml:space="preserve">Sets font-face of @font.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font.</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">new face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_set_funcs"
               c:identifier="hb_font_set_funcs"
               version="0.9.2">
@@ -3991,6 +4037,60 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
         <parameter name="replace" transfer-ownership="none">
           <type name="bool_t" c:type="hb_bool_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_set_var_coords_design"
+              c:identifier="hb_font_set_var_coords_design"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="coords" transfer-ownership="none">
+          <type name="gfloat" c:type="const float*"/>
+        </parameter>
+        <parameter name="coords_length" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_set_var_coords_normalized"
+              c:identifier="hb_font_set_var_coords_normalized"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="coords" transfer-ownership="none">
+          <type name="gint" c:type="const int*"/>
+        </parameter>
+        <parameter name="coords_length" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_set_variations"
+              c:identifier="hb_font_set_variations"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="variations" transfer-ownership="none">
+          <type name="variation_t" c:type="const hb_variation_t*"/>
+        </parameter>
+        <parameter name="variations_length" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
     </function>
@@ -4462,6 +4562,35 @@ the caller.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_layout_feature_with_variations_get_lookups"
+              c:identifier="hb_ot_layout_feature_with_variations_get_lookups">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="table_tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="feature_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="variations_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="lookup_count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="lookup_indexes" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_layout_get_attach_points"
               c:identifier="hb_ot_layout_get_attach_points">
       <return-value transfer-ownership="none">
@@ -4911,6 +5040,29 @@ the caller.</doc>
         </parameter>
         <parameter name="chosen_script" transfer-ownership="none">
           <type name="tag_t" c:type="hb_tag_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_table_find_feature_variations"
+              c:identifier="hb_ot_layout_table_find_feature_variations">
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="table_tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="coords" transfer-ownership="none">
+          <type name="gint" c:type="const int*"/>
+        </parameter>
+        <parameter name="num_coords" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="variations_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
     </function>
@@ -5521,10 +5673,9 @@ assembly in the specified direction. Note that only the value of
               c:identifier="hb_ot_math_has_data"
               version="1.3.3">
       <doc xml:space="preserve">This function allows to verify the presence of an OpenType MATH table on the
-face. If so, such a table will be loaded into memory and sanitized. You can
-then safely call other functions for math layout and shaping.</doc>
+face.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">#TRUE if face has a MATH table and #FALSE otherwise</doc>
+        <doc xml:space="preserve">true if face has a MATH table, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -5538,11 +5689,12 @@ then safely call other functions for math layout and shaping.</doc>
               c:identifier="hb_ot_math_is_glyph_extended_shape"
               version="1.3.3">
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">#TRUE if the glyph is an extended shape and #FALSE otherwise</doc>
+        <doc xml:space="preserve">true if the glyph is an extended shape, false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a #hb_face_t to test</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="glyph" transfer-ownership="none">
@@ -5665,6 +5817,138 @@ then safely call other functions for math layout and shaping.</doc>
         </parameter>
         <parameter name="script_tag_2" transfer-ownership="none">
           <type name="tag_t" c:type="hb_tag_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <record name="ot_var_axis_t" c:type="hb_ot_var_axis_t" version="1.4.2">
+      <field name="tag" writable="1">
+        <type name="tag_t" c:type="hb_tag_t"/>
+      </field>
+      <field name="name_id" writable="1">
+        <type name="guint" c:type="unsigned"/>
+      </field>
+      <field name="min_value" writable="1">
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="default_value" writable="1">
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="max_value" writable="1">
+        <type name="gfloat" c:type="float"/>
+      </field>
+    </record>
+    <function name="ot_var_find_axis"
+              c:identifier="hb_ot_var_find_axis"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="axis_tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="axis_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="axis_info" transfer-ownership="none">
+          <type name="ot_var_axis_t" c:type="hb_ot_var_axis_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_var_get_axes"
+              c:identifier="hb_ot_var_get_axes"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="axes_count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="axes_array" transfer-ownership="none">
+          <type name="ot_var_axis_t" c:type="hb_ot_var_axis_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_var_get_axis_count"
+              c:identifier="hb_ot_var_get_axis_count"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_var_has_data"
+              c:identifier="hb_ot_var_has_data"
+              version="1.4.2">
+      <doc xml:space="preserve">This function allows to verify the presence of OpenType variation data on the face.
+Alternatively, use hb_ot_var_get_axis_count().</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true if face has a `fvar' table and false otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to test</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_var_normalize_coords"
+              c:identifier="hb_ot_var_normalize_coords"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="coords_length" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="design_coords" transfer-ownership="none">
+          <type name="gfloat" c:type="const float*"/>
+        </parameter>
+        <parameter name="normalized_coords" transfer-ownership="none">
+          <type name="gint" c:type="int*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_var_normalize_variations"
+              c:identifier="hb_ot_var_normalize_variations"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="variations" transfer-ownership="none">
+          <type name="variation_t" c:type="const hb_variation_t*"/>
+        </parameter>
+        <parameter name="variations_length" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="coords" transfer-ownership="none">
+          <type name="gint" c:type="int*"/>
+        </parameter>
+        <parameter name="coords_length" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
     </function>
@@ -6857,7 +7141,6 @@ are greater than current value of @last.</doc>
                    transfer-ownership="none"
                    nullable="1"
                    allow-none="1">
-          <doc xml:space="preserve">@destroy (closure data):</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="destroy" transfer-ownership="none">
@@ -6957,7 +7240,7 @@ features applied during shaping.</doc>
 shapers will be used in the given order, otherwise the default shapers list
 will be used.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%FALSE if all shapers failed, %TRUE otherwise</doc>
+        <doc xml:space="preserve">false if all shapers failed, true otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -7036,6 +7319,35 @@ will be used.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="shape_plan_create2" c:identifier="hb_shape_plan_create2">
+      <return-value transfer-ownership="full">
+        <type name="shape_plan_t" c:type="hb_shape_plan_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="props" transfer-ownership="none">
+          <type name="segment_properties_t"
+                c:type="const hb_segment_properties_t*"/>
+        </parameter>
+        <parameter name="user_features" transfer-ownership="none">
+          <type name="feature_t" c:type="const hb_feature_t*"/>
+        </parameter>
+        <parameter name="num_user_features" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="coords" transfer-ownership="none">
+          <type name="gint" c:type="const int*"/>
+        </parameter>
+        <parameter name="num_coords" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="shaper_list" transfer-ownership="none">
+          <type name="utf8" c:type="const char* const*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="shape_plan_create_cached"
               c:identifier="hb_shape_plan_create_cached"
               version="0.9.7">
@@ -7062,6 +7374,36 @@ will be used.</doc>
           <array c:type="char**">
             <type name="utf8" c:type="char*"/>
           </array>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="shape_plan_create_cached2"
+              c:identifier="hb_shape_plan_create_cached2">
+      <return-value transfer-ownership="full">
+        <type name="shape_plan_t" c:type="hb_shape_plan_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="props" transfer-ownership="none">
+          <type name="segment_properties_t"
+                c:type="const hb_segment_properties_t*"/>
+        </parameter>
+        <parameter name="user_features" transfer-ownership="none">
+          <type name="feature_t" c:type="const hb_feature_t*"/>
+        </parameter>
+        <parameter name="num_user_features" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="coords" transfer-ownership="none">
+          <type name="gint" c:type="const int*"/>
+        </parameter>
+        <parameter name="num_coords" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="shaper_list" transfer-ownership="none">
+          <type name="utf8" c:type="const char* const*"/>
         </parameter>
       </parameters>
     </function>
@@ -8448,6 +8790,69 @@ of this function type must ensure that they do not write past the provided array
         </array>
       </field>
     </union>
+    <function name="variation_from_string"
+              c:identifier="hb_variation_from_string"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="str" transfer-ownership="none">
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+        <parameter name="len" transfer-ownership="none">
+          <type name="gint" c:type="int"/>
+        </parameter>
+        <parameter name="variation" transfer-ownership="none">
+          <type name="variation_t" c:type="hb_variation_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <record name="variation_t" c:type="hb_variation_t" version="1.4.2">
+      <field name="tag" writable="1">
+        <type name="tag_t" c:type="hb_tag_t"/>
+      </field>
+      <field name="value" writable="1">
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <method name="_string"
+              c:identifier="hb_variation_to_string"
+              moved-to="variation_to_string"
+              version="1.4.2">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="variation" transfer-ownership="none">
+            <type name="variation_t" c:type="hb_variation_t*"/>
+          </instance-parameter>
+          <parameter name="buf" transfer-ownership="none">
+            <type name="utf8" c:type="char*"/>
+          </parameter>
+          <parameter name="size" transfer-ownership="none">
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
+    </record>
+    <function name="variation_to_string"
+              c:identifier="hb_variation_to_string"
+              version="1.4.2">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="variation" transfer-ownership="none">
+          <type name="variation_t" c:type="hb_variation_t*"/>
+        </parameter>
+        <parameter name="buf" transfer-ownership="none">
+          <type name="utf8" c:type="char*"/>
+        </parameter>
+        <parameter name="size" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="version" c:identifier="hb_version" version="0.9.2">
       <doc xml:space="preserve">Returns library version as three integer components.</doc>
       <return-value transfer-ownership="none">
