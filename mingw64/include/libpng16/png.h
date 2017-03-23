@@ -1,7 +1,7 @@
 
 /* png.h - header file for PNG reference library
  *
- * libpng version 1.6.28, January 5, 2017
+ * libpng version 1.6.29, March 16, 2017
  *
  * Copyright (c) 1998-2002,2004,2006-2017 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
@@ -12,7 +12,7 @@
  * Authors and maintainers:
  *   libpng versions 0.71, May 1995, through 0.88, January 1996: Guy Schalnat
  *   libpng versions 0.89, June 1996, through 0.96, May 1997: Andreas Dilger
- *   libpng versions 0.97, January 1998, through 1.6.28, January 5, 2017:
+ *   libpng versions 0.97, January 1998, through 1.6.29, March 16, 2017:
  *     Glenn Randers-Pehrson.
  *   See also "Contributing Authors", below.
  */
@@ -23,9 +23,15 @@
  * If you modify libpng you may insert additional notices immediately following
  * this sentence.
  *
+ * This modified version of libpng code adds animated PNG support and is
+ * released under the libpng license described below. The modifications are
+ * Copyright (c) 2006-2007 Andrew Smith, Copyright (c) 2008-2017 Max Stepin,
+ * and are delimited by "#ifdef PNG_APNG_SUPPORTED / #endif" directives
+ * surrounding them in the modified libpng source files.
+ *
  * This code is released under the libpng license.
  *
- * libpng versions 1.0.7, July 1, 2000 through 1.6.28, January 5, 2017 are
+ * libpng versions 1.0.7, July 1, 2000 through 1.6.29, March 16, 2017 are
  * Copyright (c) 2000-2002, 2004, 2006-2017 Glenn Randers-Pehrson, are
  * derived from libpng-1.0.6, and are distributed according to the same
  * disclaimer and license as libpng-1.0.6 with the following individuals
@@ -38,6 +44,8 @@
  *    Gilles Vollant
  *    James Yu
  *    Mandar Sahastrabuddhe
+ *    Google Inc.
+ *    Vadim Barkov
  *
  * and with the following additions to the disclaimer:
  *
@@ -211,7 +219,7 @@
  *    ...
  *    1.5.28                  15    10527  15.so.15.28[.0]
  *    ...
- *    1.6.28                  16    10628  16.so.16.28[.0]
+ *    1.6.29                  16    10629  16.so.16.29[.0]
  *
  *    Henceforth the source version will match the shared-library major
  *    and minor numbers; the shared-library major version number will be
@@ -239,13 +247,13 @@
  * Y2K compliance in libpng:
  * =========================
  *
- *    January 5, 2017
+ *    March 16, 2017
  *
  *    Since the PNG Development group is an ad-hoc body, we can't make
  *    an official declaration.
  *
  *    This is your unofficial assurance that libpng from version 0.71 and
- *    upward through 1.6.28 are Y2K compliant.  It is my belief that
+ *    upward through 1.6.29 are Y2K compliant.  It is my belief that
  *    earlier versions were also Y2K compliant.
  *
  *    Libpng only has two year fields.  One is a 2-byte unsigned integer
@@ -307,8 +315,9 @@
  */
 
 /* Version information for png.h - this should match the version in png.c */
-#define PNG_LIBPNG_VER_STRING "1.6.28"
-#define PNG_HEADER_VERSION_STRING " libpng version 1.6.28 - January 5, 2017\n"
+#define PNG_LIBPNG_VER_STRING "1.6.29+apng"
+#define PNG_HEADER_VERSION_STRING \
+     " libpng version 1.6.29+apng - March 16, 2017\n"
 
 #define PNG_LIBPNG_VER_SONUM   16
 #define PNG_LIBPNG_VER_DLLNUM  16
@@ -316,7 +325,7 @@
 /* These should match the first 3 components of PNG_LIBPNG_VER_STRING: */
 #define PNG_LIBPNG_VER_MAJOR   1
 #define PNG_LIBPNG_VER_MINOR   6
-#define PNG_LIBPNG_VER_RELEASE 28
+#define PNG_LIBPNG_VER_RELEASE 29
 
 /* This should match the numeric part of the final component of
  * PNG_LIBPNG_VER_STRING, omitting any leading zero:
@@ -347,7 +356,7 @@
  * version 1.0.0 was mis-numbered 100 instead of 10000).  From
  * version 1.0.1 it's    xxyyzz, where x=major, y=minor, z=release
  */
-#define PNG_LIBPNG_VER 10628 /* 1.6.28 */
+#define PNG_LIBPNG_VER 10629 /* 1.6.29 */
 
 /* Library configuration: these options cannot be changed after
  * the library has been built.
@@ -460,19 +469,19 @@ extern "C" {
 
 #ifdef PNG_APNG_SUPPORTED
 /* dispose_op flags from inside fcTL */
-#define PNG_DISPOSE_OP_NONE        0x00U
-#define PNG_DISPOSE_OP_BACKGROUND  0x01U
-#define PNG_DISPOSE_OP_PREVIOUS    0x02U
+#define PNG_DISPOSE_OP_NONE        0x00
+#define PNG_DISPOSE_OP_BACKGROUND  0x01
+#define PNG_DISPOSE_OP_PREVIOUS    0x02
 
 /* blend_op flags from inside fcTL */
-#define PNG_BLEND_OP_SOURCE        0x00U
-#define PNG_BLEND_OP_OVER          0x01U
-#endif /* PNG_APNG_SUPPORTED */
+#define PNG_BLEND_OP_SOURCE        0x00
+#define PNG_BLEND_OP_OVER          0x01
+#endif /* APNG */
 
 /* This triggers a compiler error in png.c, if png.c and png.h
  * do not agree upon the version number.
  */
-typedef char* png_libpng_version_1_6_28;
+typedef char* png_libpng_version_1_6_29;
 
 /* Basic control structions.  Read libpng-manual.txt or libpng.3 for more info.
  *
@@ -3247,7 +3256,10 @@ PNG_EXPORT(245, int, png_image_write_to_memory, (png_imagep image, void *memory,
 #  define PNG_MIPS_MSA   6 /* HARDWARE: MIPS Msa SIMD instructions supported */
 #endif
 #define PNG_IGNORE_ADLER32 8
-#define PNG_OPTION_NEXT  10 /* Next option - numbers must be even */
+#ifdef PNG_POWERPC_VSX_API_SUPPORTED
+#  define PNG_POWERPC_VSX   10 /* HARDWARE: PowerPC VSX SIMD instructions supported */
+#endif
+#define PNG_OPTION_NEXT  12 /* Next option - numbers must be even */
 
 /* Return values: NOTE: there are four values and 'off' is *not* zero */
 #define PNG_OPTION_UNSET   0 /* Unset - defaults to off */
@@ -3262,6 +3274,7 @@ PNG_EXPORT(244, int, png_set_option, (png_structrp png_ptr, int option,
 /*******************************************************************************
  *  END OF HARDWARE AND SOFTWARE OPTIONS
  ******************************************************************************/
+
 #ifdef PNG_APNG_SUPPORTED
 PNG_EXPORT(246, png_uint_32, png_get_acTL, (png_structp png_ptr,
    png_infop info_ptr, png_uint_32 *num_frames, png_uint_32 *num_plays));
@@ -3315,8 +3328,8 @@ PNG_EXPORT(262, void, png_read_frame_head, (png_structp png_ptr,
 PNG_EXPORT(263, void, png_set_progressive_frame_fn, (png_structp png_ptr,
    png_progressive_frame_ptr frame_info_fn,
    png_progressive_frame_ptr frame_end_fn));
-#endif /* PNG_PROGRESSIVE_READ_SUPPORTED */
-#endif /* PNG_READ_APNG_SUPPORTED */
+#endif /* PROGRESSIVE_READ */
+#endif /* READ_APNG */
 
 #ifdef PNG_WRITE_APNG_SUPPORTED
 PNG_EXPORT(264, void, png_write_frame_head, (png_structp png_ptr,
@@ -3328,8 +3341,8 @@ PNG_EXPORT(264, void, png_write_frame_head, (png_structp png_ptr,
 
 PNG_EXPORT(265, void, png_write_frame_tail, (png_structp png_ptr,
    png_infop info_ptr));
-#endif /* PNG_WRITE_APNG_SUPPORTED */
-#endif /* PNG_APNG_SUPPORTED */
+#endif /* WRITE_APNG */
+#endif /* APNG */
 
 /* Maintainer: Put new public prototypes here ^, in libpng.3, in project
  * defs, and in scripts/symbols.def.
@@ -3343,7 +3356,7 @@ PNG_EXPORT(265, void, png_write_frame_tail, (png_structp png_ptr,
   PNG_EXPORT_LAST_ORDINAL(265);
 #else
   PNG_EXPORT_LAST_ORDINAL(245);
-#endif /* PNG_APNG_SUPPORTED */
+#endif /* APNG */
 #endif
 
 #ifdef __cplusplus

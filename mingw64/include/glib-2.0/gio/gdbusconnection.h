@@ -648,11 +648,11 @@ void             g_dbus_connection_signal_unsubscribe         (GDBusConnection  
  * If the returned #GDBusMessage is different from @message and cannot
  * be sent on @connection (it could use features, such as file
  * descriptors, not compatible with @connection), then a warning is
- * logged to <emphasis>standard error</emphasis>. Applications can
+ * logged to standard error. Applications can
  * check this ahead of time using g_dbus_message_to_blob() passing a
  * #GDBusCapabilityFlags value obtained from @connection.
  *
- * Returns: (transfer full) (allow-none): A #GDBusMessage that will be freed with
+ * Returns: (transfer full) (nullable): A #GDBusMessage that will be freed with
  * g_object_unref() or %NULL to drop the message. Passive filter
  * functions can simply return the passed @message object.
  *
