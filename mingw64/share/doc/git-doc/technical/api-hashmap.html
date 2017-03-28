@@ -453,6 +453,10 @@ that the hashmap is initialized. It may also be useful for statistical purposes
 advanced scenarios, it may be useful to change this, e.g. to switch between
 case-sensitive and case-insensitive lookup.</p>
 </div>
+<div class="paragraph">
+<p>When <code>disallow_rehash</code> is set, automatic rehashes are prevented during inserts
+and deletes.</p>
+</div>
 </dd>
 <dt class="hdlist1"><code>struct hashmap_entry</code></dt>
 <dd>
@@ -503,6 +507,7 @@ as second and third argument, respectively. Otherwise, <code>keydata</code> is N
 <dt class="hdlist1"><code>unsigned int strihash(const char *buf)</code></dt>
 <dt class="hdlist1"><code>unsigned int memhash(const void *buf, size_t len)</code></dt>
 <dt class="hdlist1"><code>unsigned int memihash(const void *buf, size_t len)</code></dt>
+<dt class="hdlist1"><code>unsigned int memihash_cont(unsigned int hash_seed, const void *buf, size_t len)</code></dt>
 <dd>
 <p>Ready-to-use hash functions for strings, using the FNV-1 algorithm (see
 <a href="http://www.isthe.com/chongo/tech/comp/fnv" class="bare">http://www.isthe.com/chongo/tech/comp/fnv</a>).</p>
@@ -512,6 +517,10 @@ as second and third argument, respectively. Otherwise, <code>keydata</code> is N
 </div>
 <div class="paragraph">
 <p><code>strihash</code> and <code>memihash</code> are case insensitive versions.</p>
+</div>
+<div class="paragraph">
+<p><code>memihash_cont</code> is a variant of <code>memihash</code> that allows a computation to be
+continued with another chunk of data.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>unsigned int sha1hash(const unsigned char *sha1)</code></dt>
@@ -657,6 +666,24 @@ passed to <code>hashmap_cmp_fn</code> to decide whether the entry matches the ke
 <p>Returns the removed entry, or NULL if not found.</p>
 </div>
 </dd>
+<dt class="hdlist1"><code>void hashmap_disallow_rehash(struct hashmap *map, unsigned value)</code></dt>
+<dd>
+<p>Disallow/allow automatic rehashing of the hashmap during inserts
+and deletes.</p>
+<div class="paragraph">
+<p>This is useful if the caller knows that the hashmap will be accessed
+by multiple threads.</p>
+</div>
+<div class="paragraph">
+<p>The caller is still responsible for any necessary locking; this simply
+prevents unexpected rehashing.  The caller is also responsible for properly
+sizing the initial hashmap to ensure good performance.</p>
+</div>
+<div class="paragraph">
+<p>A call to allow rehashing does not force a rehash; that might happen
+with the next insert or delete.</p>
+</div>
+</dd>
 <dt class="hdlist1"><code>void hashmap_iter_init(struct hashmap *map, struct hashmap_iter *iter)</code></dt>
 <dt class="hdlist1"><code>void *hashmap_iter_next(struct hashmap_iter *iter)</code></dt>
 <dt class="hdlist1"><code>void *hashmap_iter_first(struct hashmap *map, struct hashmap_iter *iter)</code></dt>
@@ -782,7 +809,7 @@ stack.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-03-21 15:22:02 W. Europe Standard Time
+Last updated 2017-03-27 18:05:12 W. Europe Daylight Time
 </div>
 </div>
 </body>

@@ -3085,6 +3085,13 @@ default	value is 50.  Setting this to 0 disables it.</p>
 <p>Make <code>git gc --auto</code> return immediately and run in background
 if the system supports it. Default is true.</p>
 </dd>
+<dt class="hdlist1">gc.logExpiry</dt>
+<dd>
+<p>If the file gc.log exists, then <code>git gc --auto</code> won&#8217;t run
+unless that file is more than <em>gc.logExpiry</em> old.  Default is
+"1.day".  See <code>gc.pruneExpire</code> for more ways to specify its
+value.</p>
+</dd>
 <dt class="hdlist1">gc.packRefs</dt>
 <dd>
 <p>Running <code>git pack-refs</code> in a repository renders it
@@ -4528,6 +4535,9 @@ pushing to the same repository you would normally pull from
 (i.e. central workflow).</p>
 </li>
 <li>
+<p><code>tracking</code> - This is a deprecated synonym for <code>upstream</code>.</p>
+</li>
+<li>
 <p><code>simple</code> - in centralized workflow, work like <code>upstream</code> with an
 added safety to refuse to push if the upstream branch&#8217;s name is
 different from the local one.</p>
@@ -5402,7 +5412,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-03-21 15:22:01 W. Europe Standard Time
+Last updated 2017-03-27 18:05:11 W. Europe Daylight Time
 </div>
 </div>
 </body>
