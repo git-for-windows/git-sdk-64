@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2015,2016 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2016,2017 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -32,7 +32,7 @@
  *     and: Thomas E. Dickey                        1996-on                 *
  ****************************************************************************/
 
-/* $Id: curses.h.in,v 1.244 2016/12/10 23:56:23 tom Exp $ */
+/* $Id: curses.h.in,v 1.248 2017/03/09 09:43:50 tom Exp $ */
 
 #ifndef __NCURSES_H
 #define __NCURSES_H
@@ -43,7 +43,7 @@
 /* These are defined only in curses.h, and are used for conditional compiles */
 #define NCURSES_VERSION_MAJOR 6
 #define NCURSES_VERSION_MINOR 0
-#define NCURSES_VERSION_PATCH 20170114
+#define NCURSES_VERSION_PATCH 20170325
 
 /* This is defined in more than one ncurses header, for identification */
 #undef  NCURSES_VERSION
@@ -95,7 +95,7 @@
  * total foreground and background colors.
  *
  * X/Open uses "short" for both of these types, ultimately because they are
- * numbers from the terminal database, which uses 16-bit signed values.
+ * numbers from the SVr4 terminal database, which uses 16-bit signed values.
  */
 #undef	NCURSES_COLOR_T
 #define	NCURSES_COLOR_T short
@@ -104,10 +104,13 @@
 #define	NCURSES_PAIRS_T short
 
 /*
- * Definition used to make WINDOW and similar structs opaque.
+ * Definitions used to make WINDOW and similar structs opaque.
  */
-#ifndef NCURSES_OPAQUE
-#define NCURSES_OPAQUE 0
+#ifndef NCURSES_INTERNALS
+#define NCURSES_OPAQUE       0
+#define NCURSES_OPAQUE_FORM  0
+#define NCURSES_OPAQUE_MENU  0
+#define NCURSES_OPAQUE_PANEL 0
 #endif
 
 /*
@@ -416,7 +419,7 @@ typedef struct
     wchar_t	chars[CCHARW_MAX];
 #if 1
 #undef NCURSES_EXT_COLORS
-#define NCURSES_EXT_COLORS 20170114
+#define NCURSES_EXT_COLORS 20170325
     int		ext_color;	/* color pair, must be more than 16-bits */
 #endif
 }
@@ -904,14 +907,17 @@ extern NCURSES_EXPORT(int) getpary (const WINDOW *);			/* generated */
  */
 #if 1
 #undef  NCURSES_EXT_FUNCS
-#define NCURSES_EXT_FUNCS 20170114
+#define NCURSES_EXT_FUNCS 20170325
 typedef int (*NCURSES_WINDOW_CB)(WINDOW *, void *);
 typedef int (*NCURSES_SCREEN_CB)(SCREEN *, void *);
 extern NCURSES_EXPORT(bool) is_term_resized (int, int);
 extern NCURSES_EXPORT(char *) keybound (int, int);
 extern NCURSES_EXPORT(const char *) curses_version (void);
+extern NCURSES_EXPORT(int) alloc_pair (int, int);
 extern NCURSES_EXPORT(int) assume_default_colors (int, int);
 extern NCURSES_EXPORT(int) define_key (const char *, int);
+extern NCURSES_EXPORT(int) find_pair (int, int);
+extern NCURSES_EXPORT(int) free_pair (int);
 extern NCURSES_EXPORT(int) get_escdelay (void);
 extern NCURSES_EXPORT(int) key_defined (const char *);
 extern NCURSES_EXPORT(int) keyok (int, bool);
@@ -957,7 +963,7 @@ extern NCURSES_EXPORT(int) wgetscrreg (const WINDOW *, int *, int *); /* generat
  */
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20170114
+#define NCURSES_SP_FUNCS 20170325
 #define NCURSES_SP_NAME(name) name##_sp
 
 /* Define the sp-funcs helper function */
@@ -1041,9 +1047,12 @@ extern NCURSES_EXPORT(int) NCURSES_SP_NAME(vidattr) (SCREEN*, chtype);	/* implem
 extern NCURSES_EXPORT(int) NCURSES_SP_NAME(vidputs) (SCREEN*, chtype, NCURSES_SP_OUTC); /* implemented:SP_FUNC */
 #if 1
 extern NCURSES_EXPORT(char *) NCURSES_SP_NAME(keybound) (SCREEN*, int, int);	/* implemented:EXT_SP_FUNC */
+extern NCURSES_EXPORT(int) NCURSES_SP_NAME(alloc_pair) (SCREEN*, int, int); /* implemented:EXT_SP_FUNC */
 extern NCURSES_EXPORT(int) NCURSES_SP_NAME(assume_default_colors) (SCREEN*, int, int);	/* implemented:EXT_SP_FUNC */
 extern NCURSES_EXPORT(int) NCURSES_SP_NAME(define_key) (SCREEN*, const char *, int);	/* implemented:EXT_SP_FUNC */
 extern NCURSES_EXPORT(int) NCURSES_SP_NAME(get_escdelay) (SCREEN*);	/* implemented:EXT_SP_FUNC */
+extern NCURSES_EXPORT(int) NCURSES_SP_NAME(find_pair) (SCREEN*, int, int); /* implemented:EXT_SP_FUNC */
+extern NCURSES_EXPORT(int) NCURSES_SP_NAME(free_pair) (SCREEN*, int); /* implemented:EXT_SP_FUNC */
 extern NCURSES_EXPORT(bool) NCURSES_SP_NAME(is_term_resized) (SCREEN*, int, int);	/* implemented:EXT_SP_FUNC */
 extern NCURSES_EXPORT(int) NCURSES_SP_NAME(key_defined) (SCREEN*, const char *);	/* implemented:EXT_SP_FUNC */
 extern NCURSES_EXPORT(int) NCURSES_SP_NAME(keyok) (SCREEN*, int, bool);	/* implemented:EXT_SP_FUNC */
@@ -1203,7 +1212,7 @@ extern NCURSES_EXPORT(int) NCURSES_SP_NAME(use_legacy_coding) (SCREEN*, int);	/*
 /*
  * These apply to the first 256 color pairs.
  */
-#define COLOR_PAIR(n)	NCURSES_BITS((n), 0)
+#define COLOR_PAIR(n)	(NCURSES_BITS((n), 0) & A_COLOR)
 #define PAIR_NUMBER(a)	(NCURSES_CAST(int,((NCURSES_CAST(unsigned long,(a)) & A_COLOR) >> NCURSES_ATTR_SHIFT)))
 
 /*
@@ -1535,7 +1544,7 @@ extern NCURSES_EXPORT_VAR(int) TABSIZE;
 #define KEY_EVENT	0633		/* We were interrupted by an event */
 
 #define KEY_MAX		0777		/* Maximum key value is 0633 */
-/* $Id: curses.wide,v 1.46 2014/02/01 22:00:32 tom Exp $ */
+/* $Id: curses.wide,v 1.49 2017/03/26 00:04:04 tom Exp $ */
 /*
  * vile:cmode:
  * This file is part of ncurses, designed to be appended after curses.h.in
@@ -1798,7 +1807,7 @@ extern NCURSES_EXPORT(int) NCURSES_SP_NAME(vid_puts) (SCREEN*, attr_t, NCURSES_P
 #define wins_wstr(w,t)			wins_nwstr((w),(t),-1)
 
 #if !NCURSES_OPAQUE
-#define wgetbkgrnd(win,wch)		((win) ? (*(wch) = (win)->_bkgrnd) : *(wch), OK)
+#define wgetbkgrnd(win,wch)		((0 != (const void*)(wch)) ? ((win) ? (*(wch) = (win)->_bkgrnd) : *(wch), OK) : ERR)
 #endif
 
 #define mvadd_wch(y,x,c)		mvwadd_wch(stdscr,(y),(x),(c))

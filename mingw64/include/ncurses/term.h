@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2011,2013 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2013,2017 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -32,7 +32,7 @@
 /*    and: Thomas E. Dickey                        1995-on                  */
 /****************************************************************************/
 
-/* $Id: MKterm.h.awk.in,v 1.62 2013/08/17 19:21:56 tom Exp $ */
+/* $Id: MKterm.h.awk.in,v 1.65 2017/03/18 20:05:53 tom Exp $ */
 
 /*
 **	term.h -- Definition of struct term
@@ -122,7 +122,8 @@ extern "C" {
 
 #define NAMESIZE 256
 
-#define CUR cur_term->type.
+/* The cast works because TERMTYPE is the first data in TERMINAL */
+#define CUR ((TERMTYPE *)(cur_term))->
 
 #define auto_left_margin               CUR Booleans[0]
 #define auto_right_margin              CUR Booleans[1]
@@ -667,14 +668,24 @@ typedef struct termtype {	/* in-core form of terminfo data */
 
 } TERMTYPE;
 
+/*
+ * The only reason these structures are visible is for read-only use.
+ * Programs which modify the data are not, never were, portable across
+ * curses implementations.
+ */
+#ifdef NCURSES_INTERNALS
 typedef struct term {		/* describe an actual terminal */
     TERMTYPE	type;		/* terminal type description */
     short	Filedes;	/* file description being written to */
-    TTY		Ottyb,		/* original state of the terminal */
-		Nttyb;		/* current state of the terminal */
+    TTY		Ottyb;		/* original state of the terminal */
+    TTY		Nttyb;		/* current state of the terminal */
     int		_baudrate;	/* used to compute padding */
-    char *      _termname;      /* used for termname() */
+    char *	_termname;	/* used for termname() */
 } TERMINAL;
+#else
+typedef struct term TERMINAL;
+#endif /* NCURSES_INTERNALS */
+
 
 #if 0 && !0
 extern NCURSES_EXPORT_VAR(TERMINAL *) cur_term;
@@ -720,18 +731,28 @@ extern NCURSES_EXPORT_VAR(NCURSES_CONST char * const ) strfnames[];
 
 #endif
 
-/* internals */
+/*
+ * These entrypoints are used only by the ncurses utilities such as tic.
+ */
+#ifdef NCURSES_INTERNALS
+
 extern NCURSES_EXPORT(int) _nc_set_tty_mode (TTY *buf);
-extern NCURSES_EXPORT(int) _nc_get_tty_mode (TTY *buf);
-extern NCURSES_EXPORT(int) _nc_read_entry (const char * const, char * const, TERMTYPE *const);
 extern NCURSES_EXPORT(int) _nc_read_file_entry (const char *const, TERMTYPE *);
 extern NCURSES_EXPORT(void) _nc_init_termtype (TERMTYPE *const);
 extern NCURSES_EXPORT(int) _nc_read_termtype (TERMTYPE *, char *, int);
 extern NCURSES_EXPORT(char *) _nc_first_name (const char *const);
 extern NCURSES_EXPORT(int) _nc_name_match (const char *const, const char *const, const char *const);
-extern NCURSES_EXPORT(const TERMTYPE *) _nc_fallback (const char *);
 
-/* entry points */
+#endif /* NCURSES_INTERNALS */
+
+
+/*
+ * These entrypoints are used by tack.
+ */
+extern NCURSES_EXPORT(const TERMTYPE *) _nc_fallback (const char *);
+extern NCURSES_EXPORT(int) _nc_read_entry (const char * const, char * const, TERMTYPE *const);
+
+/* Normal entry points */
 extern NCURSES_EXPORT(TERMINAL *) set_curterm (TERMINAL *);
 extern NCURSES_EXPORT(int) del_curterm (TERMINAL *);
 
