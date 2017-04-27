@@ -96,14 +96,6 @@ test -d "$TMPDIR" || test ! -d "$TMP" || {
 }
 
 
-# Define default printer
-p='/proc/registry/HKEY_CURRENT_USER/Software/Microsoft/Windows NT/CurrentVersion/Windows/Device'
-if [ -e "${p}" ] ; then
-  read -r PRINTER < "${p}" 
-  PRINTER=${PRINTER%%,*}
-fi
-unset p
-
 print_flags ()
 {
   (( $1 & 0x0002 )) && echo -n "binary" || echo -n "text"
@@ -158,7 +150,7 @@ then
   export ACLOCAL_PATH
 fi
 
-export PATH MANPATH INFOPATH PKG_CONFIG_PATH USER TMP TEMP PRINTER HOSTNAME PS1 SHELL tmp temp ORIGINAL_TMP ORIGINAL_TEMP ORIGINAL_PATH
+export PATH MANPATH INFOPATH PKG_CONFIG_PATH USER TMP TEMP HOSTNAME PS1 SHELL tmp temp ORIGINAL_TMP ORIGINAL_TEMP ORIGINAL_PATH
 unset PATH_SEPARATOR
 
 if [ "$MAYBE_FIRST_START" = "true" ]; then
