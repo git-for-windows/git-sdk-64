@@ -618,14 +618,12 @@ project root. Implies <a href="#Remap_to_ancestor">Remap to ancestor</a>.</p>
 </dd>
 <dt class="hdlist1">--prune-empty</dt>
 <dd>
-<p>Some kind of filters will generate empty commits, that left the tree
-untouched.  This switch allow git-filter-branch to ignore such
-commits.  Though, this switch only applies for commits that have one
-and only one parent, it will hence keep merges points. Also, this
-option is not compatible with the use of <code>--commit-filter</code>. Though you
-just need to use the function <em>git_commit_non_empty_tree "$@"</em> instead
-of the <code>git commit-tree "$@"</code> idiom in your commit filter to make that
-happen.</p>
+<p>Some filters will generate empty commits that leave the tree untouched.
+This option instructs git-filter-branch to remove such commits if they
+have exactly one or zero non-pruned parents; merge commits will
+therefore remain intact.  This option cannot be used together with
+<code>--commit-filter</code>, though the same effect can be achieved by using the
+provided <code>git_commit_non_empty_tree</code> function in a commit filter.</p>
 </dd>
 <dt class="hdlist1">--original &lt;namespace&gt;</dt>
 <dd>
@@ -997,7 +995,7 @@ to the tasks of removing unwanted data- e.g:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

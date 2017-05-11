@@ -457,7 +457,19 @@ format parsable by <em>git rev-parse</em>.</p>
 <dt class="hdlist1">--refs=&lt;pattern&gt;</dt>
 <dd>
 <p>Only use refs whose names match a given shell pattern.  The pattern
-can be one of branch name, tag name or fully qualified ref name.</p>
+can be one of branch name, tag name or fully qualified ref name. If
+given multiple times, use refs whose names match any of the given shell
+patterns. Use <code>--no-refs</code> to clear any previous ref patterns given.</p>
+</dd>
+<dt class="hdlist1">--exclude=&lt;pattern&gt;</dt>
+<dd>
+<p>Do not use any ref whose name matches a given shell pattern. The
+pattern can be one of branch name, tag name or fully qualified ref
+name. If given multiple times, a ref will be excluded when it matches
+any of the given patterns. When used together with --refs, a ref will
+be used as a match only when it matches at least one --refs pattern and
+does not match any --exclude patterns. Use <code>--no-exclude</code> to clear the
+list of exclude patterns.</p>
 </dd>
 <dt class="hdlist1">--all</dt>
 <dd>
@@ -532,7 +544,7 @@ not the context.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

@@ -727,10 +727,9 @@ such as creations, renames and mode changes.</p>
 <p>When <code>--raw</code>, <code>--numstat</code>, <code>--name-only</code> or <code>--name-status</code> has been
 given, do not munge pathnames and use NULs as output field terminators.</p>
 <div class="paragraph">
-<p>Without this option, each pathname output will have TAB, LF, double quotes,
-and backslash characters replaced with <code>\t</code>, <code>\n</code>, <code>\"</code>, and <code>\\</code>,
-respectively, and the pathname will be enclosed in double quotes if
-any of those replacements occurred.</p>
+<p>Without this option, pathnames with "unusual" characters are quoted as
+explained for the configuration variable <code>core.quotePath</code> (see
+<a href="git-config.html">git-config</a>(1)).</p>
 </div>
 </dd>
 <dt class="hdlist1">--name-only</dt>
@@ -1217,6 +1216,22 @@ experimental and could be removed in future.</p>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1">-1 --base</dt>
+<dt class="hdlist1">-2 --ours</dt>
+<dt class="hdlist1">-3 --theirs</dt>
+<dd>
+<p>Compare the working tree with the "base" version (stage #1),
+"our branch" (stage #2) or "their branch" (stage #3).  The
+index contains these stages only for unmerged entries i.e.
+while resolving conflicts.  See <a href="git-read-tree.html">git-read-tree</a>(1)
+section "3-Way Merge" for detailed information.</p>
+</dd>
+<dt class="hdlist1">-0</dt>
+<dd>
+<p>Omit diff output for unmerged entries and just show
+"Unmerged".  Can be used only when comparing the working tree
+with the index.</p>
+</dd>
 <dt class="hdlist1">&lt;path&gt;&#8230;&#8203;</dt>
 <dd>
 <p>The &lt;paths&gt; parameters, when given, are used to limit
@@ -1379,9 +1394,10 @@ and it is out of sync with the index.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>When <code>-z</code> option is not used, TAB, LF, and backslash characters
-in pathnames are represented as <code>\t</code>, <code>\n</code>, and <code>\\</code>,
-respectively.</p>
+<p>Without the <code>-z</code> option, pathnames with "unusual" characters are
+quoted as explained for the configuration variable <code>core.quotePath</code>
+(see <a href="git-config.html">git-config</a>(1)).  Using <code>-z</code> the filename is output
+verbatim and the line is terminated by a NUL byte.</p>
 </div>
 </div>
 </div>
@@ -1501,10 +1517,9 @@ separate lines indicate the old and the new mode.</p>
 </div>
 </li>
 <li>
-<p>TAB, LF, double quote and backslash characters in pathnames
-are represented as <code>\t</code>, <code>\n</code>, <code>\"</code> and <code>\\</code>, respectively.
-If there is need for such substitution then the whole
-pathname is put in double quotes.</p>
+<p>Pathnames with "unusual" characters are quoted as explained for
+the configuration variable <code>core.quotePath</code> (see
+<a href="git-config.html">git-config</a>(1)).</p>
 </li>
 <li>
 <p>All the <code>file1</code> files in the output refer to files before the
@@ -1935,7 +1950,7 @@ rewrites (very expensive).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

@@ -545,7 +545,7 @@ commit message options (<code>-m</code>/<code>-c</code>/<code>-C</code>/<code>-F
 <dt class="hdlist1">--reset-author</dt>
 <dd>
 <p>When used with -C/-c/--amend options, or when committing after a
-a conflicting cherry-pick, declare that the authorship of the
+conflicting cherry-pick, declare that the authorship of the
 resulting commit now belongs to the committer. This also renews
 the author timestamp.</p>
 </dd>
@@ -566,15 +566,18 @@ format. See <a href="git-status.html">git-status</a>(1) for details. Implies
 </dd>
 <dt class="hdlist1">--long</dt>
 <dd>
-<p>When doing a dry-run, give the output in a the long-format.
+<p>When doing a dry-run, give the output in the long-format.
 Implies <code>--dry-run</code>.</p>
 </dd>
 <dt class="hdlist1">-z</dt>
 <dt class="hdlist1">--null</dt>
 <dd>
-<p>When showing <code>short</code> or <code>porcelain</code> status output, terminate
-entries in the status output with NUL, instead of LF. If no
-format is given, implies the <code>--porcelain</code> output format.</p>
+<p>When showing <code>short</code> or <code>porcelain</code> status output, print the
+filename verbatim and terminate the entries with NUL, instead of LF.
+If no format is given, implies the <code>--porcelain</code> output format.
+Without the <code>-z</code> option, filenames with "unusual" characters are
+quoted as explained for the configuration variable <code>core.quotePath</code>
+(see <a href="git-config.html">git-config</a>(1)).</p>
 </dd>
 <dt class="hdlist1">-F &lt;file&gt;</dt>
 <dt class="hdlist1">--file=&lt;file&gt;</dt>
@@ -1183,7 +1186,7 @@ overwritten by the next invocation of <code>git commit</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

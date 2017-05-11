@@ -1080,18 +1080,94 @@ escape sequences) are invalid.</p>
 <div class="sect2">
 <h3 id="_includes">Includes</h3>
 <div class="paragraph">
-<p>You can include one config file from another by setting the special
+<p>You can include a config file from another by setting the special
 <code>include.path</code> variable to the name of the file to be included. The
 variable takes a pathname as its value, and is subject to tilde
-expansion.</p>
+expansion. <code>include.path</code> can be given multiple times.</p>
 </div>
 <div class="paragraph">
-<p>The
-included file is expanded immediately, as if its contents had been
+<p>The included file is expanded immediately, as if its contents had been
 found at the location of the include directive. If the value of the
-<code>include.path</code> variable is a relative path, the path is considered to be
-relative to the configuration file in which the include directive was
-found.  See below for examples.</p>
+<code>include.path</code> variable is a relative path, the path is considered to
+be relative to the configuration file in which the include directive
+was found.  See below for examples.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conditional_includes">Conditional includes</h3>
+<div class="paragraph">
+<p>You can include a config file from another conditionally by setting a
+<code>includeIf.&lt;condition&gt;.path</code> variable to the name of the file to be
+included. The variable&#8217;s value is treated the same way as
+<code>include.path</code>. <code>includeIf.&lt;condition&gt;.path</code> can be given multiple times.</p>
+</div>
+<div class="paragraph">
+<p>The condition starts with a keyword followed by a colon and some data
+whose format and meaning depends on the keyword. Supported keywords
+are:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>gitdir</code></dt>
+<dd>
+<p>The data that follows the keyword <code>gitdir:</code> is used as a glob
+pattern. If the location of the .git directory matches the
+pattern, the include condition is met.</p>
+<div class="paragraph">
+<p>The .git location may be auto-discovered, or come from <code>$GIT_DIR</code>
+environment variable. If the repository is auto discovered via a .git
+file (e.g. from submodules, or a linked worktree), the .git location
+would be the final location where the .git directory is, not where the
+.git file is.</p>
+</div>
+<div class="paragraph">
+<p>The pattern can contain standard globbing wildcards and two additional
+ones, <code>**/</code> and <code>/**</code>, that can match multiple path components. Please
+refer to <a href="gitignore.html">gitignore</a>(5) for details. For convenience:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the pattern starts with <code>~/</code>, <code>~</code> will be substituted with the
+content of the environment variable <code>HOME</code>.</p>
+</li>
+<li>
+<p>If the pattern starts with <code>./</code>, it is replaced with the directory
+containing the current config file.</p>
+</li>
+<li>
+<p>If the pattern does not start with either <code>~/</code>, <code>./</code> or <code>/</code>, <code>**/</code>
+will be automatically prepended. For example, the pattern <code>foo/bar</code>
+becomes <code>**/foo/bar</code> and would match <code>/any/path/to/foo/bar</code>.</p>
+</li>
+<li>
+<p>If the pattern ends with <code>/</code>, <code>**</code> will be automatically added. For
+example, the pattern <code>foo/</code> becomes <code>foo/**</code>. In other words, it
+matches "foo" and everything inside, recursively.</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><code>gitdir/i</code></dt>
+<dd>
+<p>This is the same as <code>gitdir</code> except that matching is done
+case-insensitively (e.g. on case-insensitive file sytems)</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>A few more notes on matching via <code>gitdir</code> and <code>gitdir/i</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Symlinks in <code>$GIT_DIR</code> are not resolved before matching.</p>
+</li>
+<li>
+<p>Note that "../" is not special and will match literally, which is
+unlikely what you want.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
@@ -1133,6 +1209,27 @@ found.  See below for examples.</p>
 	path = /path/to/foo.inc ; include by absolute path
 	path = foo ; expand "foo" relative to the current file
 	path = ~/foo ; expand "foo" in your `$HOME` directory</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>; include if $GIT_DIR is /path/to/foo/.git
+[includeIf "gitdir:/path/to/foo/.git"]
+	path = /path/to/foo.inc</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>; include for all repositories inside /path/to/group
+[includeIf "gitdir:/path/to/group/"]
+	path = /path/to/foo.inc</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>; include for all repositories inside $HOME/to/group
+[includeIf "gitdir:~/to/group/"]
+	path = /path/to/foo.inc</pre>
 </div>
 </div>
 </div>
@@ -1418,6 +1515,11 @@ is regularly modified by something outside Git (file system
 crawlers and some backup systems).
 See <a href="git-update-index.html">git-update-index</a>(1). True by default.</p>
 </dd>
+<dt class="hdlist1">core.splitIndex</dt>
+<dd>
+<p>If true, the split-index feature of the index will be used.
+See <a href="git-update-index.html">git-update-index</a>(1). False by default.</p>
+</dd>
 <dt class="hdlist1">core.untrackedCache</dt>
 <dd>
 <p>Determines what to do about the untracked cache feature of the
@@ -1437,16 +1539,19 @@ all fields, including the sub-second part of mtime and ctime.</p>
 </dd>
 <dt class="hdlist1">core.quotePath</dt>
 <dd>
-<p>The commands that output paths (e.g. <em>ls-files</em>,
-<em>diff</em>), when not given the <code>-z</code> option, will quote
-"unusual" characters in the pathname by enclosing the
-pathname in a double-quote pair and with backslashes the
-same way strings in C source code are quoted.  If this
-variable is set to false, the bytes higher than 0x80 are
-not quoted but output as verbatim.  Note that double
-quote, backslash and control characters are always
-quoted without <code>-z</code> regardless of the setting of this
-variable.</p>
+<p>Commands that output paths (e.g. <em>ls-files</em>, <em>diff</em>), will
+quote "unusual" characters in the pathname by enclosing the
+pathname in double-quotes and escaping those characters with
+backslashes in the same way C escapes control characters (e.g.
+<code>\t</code> for TAB, <code>\n</code> for LF, <code>\\</code> for backslash) or bytes with
+values larger than 0x80 (e.g. octal <code>\302\265</code> for "micro" in
+UTF-8).  If this variable is set to false, bytes higher than
+0x80 are not considered "unusual" any more. Double-quotes,
+backslash and control characters are always escaped regardless
+of the setting of this variable.  A simple space character is
+not considered "unusual".  Many commands can output pathnames
+completely verbatim using the <code>-z</code> option. The default value
+is true.</p>
 </dd>
 <dt class="hdlist1">core.eol</dt>
 <dd>
@@ -1804,14 +1909,14 @@ default hooks.</p>
 </dd>
 <dt class="hdlist1">core.editor</dt>
 <dd>
-<p>Commands such as <code>commit</code> and <code>tag</code> that lets you edit
-messages by launching an editor uses the value of this
+<p>Commands such as <code>commit</code> and <code>tag</code> that let you edit
+messages by launching an editor use the value of this
 variable when it is set, and the environment variable
 <code>GIT_EDITOR</code> is not set.  See <a href="git-var.html">git-var</a>(1).</p>
 </dd>
 <dt class="hdlist1">core.commentChar</dt>
 <dd>
-<p>Commands such as <code>commit</code> and <code>tag</code> that lets you edit
+<p>Commands such as <code>commit</code> and <code>tag</code> that let you edit
 messages consider a line that begins with this character
 commented, and removes them after the editor returns
 (default <em>#</em>).</p>
@@ -3734,7 +3839,10 @@ must match exactly between the config key and the URL.</p>
 </li>
 <li>
 <p>Host/domain name (e.g., <code>example.com</code> in <code>https://example.com/</code>).
-This field must match exactly between the config key and the URL.</p>
+This field must match between the config key and the URL. It is
+possible to specify a <code>*</code> as part of the host name to match all subdomains
+at this level. <code>https://*.example.com/</code> for example would match
+<code>https://foo.example.com/</code>, but not <code>https://foo.bar.example.com/</code>.</p>
 </li>
 <li>
 <p>Port number (e.g., <code>8080</code> in <code>http://example.com:8080/</code>).
@@ -4999,6 +5107,33 @@ identity is selected, through command-line or
 <p>The default set of branches for <a href="git-show-branch.html">git-show-branch</a>(1).
 See <a href="git-show-branch.html">git-show-branch</a>(1).</p>
 </dd>
+<dt class="hdlist1">splitIndex.maxPercentChange</dt>
+<dd>
+<p>When the split index feature is used, this specifies the
+percent of entries the split index can contain compared to the
+total number of entries in both the split index and the shared
+index before a new shared index is written.
+The value should be between 0 and 100. If the value is 0 then
+a new shared index is always written, if it is 100 a new
+shared index is never written.
+By default the value is 20, so a new shared index is written
+if the number of entries in the split index would be greater
+than 20 percent of the total number of entries.
+See <a href="git-update-index.html">git-update-index</a>(1).</p>
+</dd>
+<dt class="hdlist1">splitIndex.sharedIndexExpire</dt>
+<dd>
+<p>When the split index feature is used, shared index files that
+were not modified since the time this variable specifies will
+be removed when a new shared index file is created. The value
+"now" expires all entries immediately, and "never" suppresses
+expiration altogether.
+The default value is "2.weeks.ago".
+Note that a shared index file is considered modified (for the
+purpose of expiration) each time a new split-index file is
+either created based on it or read from it.
+See <a href="git-update-index.html">git-update-index</a>(1).</p>
+</dd>
 <dt class="hdlist1">status.relativePaths</dt>
 <dd>
 <p>By default, <a href="git-status.html">git-status</a>(1) shows paths relative to the
@@ -5090,8 +5225,9 @@ See description of <em>show</em> command in <a href="git-stash.html">git-stash</
 <p>The URL for a submodule. This variable is copied from the .gitmodules
 file to the git config via <em>git submodule init</em>. The user can change
 the configured URL before obtaining the submodule via <em>git submodule
-update</em>. After obtaining the submodule, the presence of this variable
-is used as a sign whether the submodule is of interest to git commands.
+update</em>. If neither submodule.&lt;name&gt;.active or submodule.active are
+set, the presence of this variable is used as a fallback to indicate
+whether the submodule is of interest to git commands.
 See <a href="git-submodule.html">git-submodule</a>(1) and <a href="gitmodules.html">gitmodules</a>(5) for details.</p>
 </dd>
 <dt class="hdlist1">submodule.&lt;name&gt;.update</dt>
@@ -5132,6 +5268,18 @@ This setting overrides any setting made in .gitmodules for this submodule,
 both settings can be overridden on the command line by using the
 "--ignore-submodules" option. The <em>git submodule</em> commands are not
 affected by this setting.</p>
+</dd>
+<dt class="hdlist1">submodule.&lt;name&gt;.active</dt>
+<dd>
+<p>Boolean value indicating if the submodule is of interest to git
+commands.  This config option takes precedence over the
+submodule.active config option.</p>
+</dd>
+<dt class="hdlist1">submodule.active</dt>
+<dd>
+<p>A repeated field which contains a pathspec used to match against a
+submodule&#8217;s path to determine if the submodule is of interest to git
+commands.</p>
 </dd>
 <dt class="hdlist1">submodule.fetchJobs</dt>
 <dd>
@@ -5412,7 +5560,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

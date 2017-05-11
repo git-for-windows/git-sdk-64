@@ -431,7 +431,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git worktree add</em> [-f] [--detach] [--checkout] [-b &lt;new-branch&gt;] &lt;path&gt; [&lt;branch&gt;]
+<pre class="content"><em>git worktree add</em> [-f] [--detach] [--checkout] [--lock] [-b &lt;new-branch&gt;] &lt;path&gt; [&lt;branch&gt;]
 <em>git worktree list</em> [--porcelain]
 <em>git worktree lock</em> [--reason &lt;string&gt;] &lt;worktree&gt;
 <em>git worktree prune</em> [-n] [-v] [--expire &lt;expire&gt;]
@@ -551,6 +551,12 @@ in <a href="git-checkout.html">git-checkout</a>(1).</p>
 be used to suppress checkout in order to make customizations,
 such as configuring sparse-checkout. See "Sparse checkout"
 in <a href="git-read-tree.html">git-read-tree</a>(1).</p>
+</dd>
+<dt class="hdlist1">--lock</dt>
+<dd>
+<p>Keep the working tree locked after creation. This is the
+equivalent of <code>git worktree lock</code> after <code>git worktree add</code>,
+but without race condition.</p>
 </dd>
 <dt class="hdlist1">-n</dt>
 <dt class="hdlist1">--dry-run</dt>
@@ -754,7 +760,7 @@ warn if the working tree is dirty)</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
 </div>
 </div>
 </body>

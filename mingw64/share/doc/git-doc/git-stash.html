@@ -436,8 +436,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <em>git stash</em> drop [-q|--quiet] [&lt;stash&gt;]
 <em>git stash</em> ( pop | apply ) [--index] [-q|--quiet] [&lt;stash&gt;]
 <em>git stash</em> branch &lt;branchname&gt; [&lt;stash&gt;]
-<em>git stash</em> [save [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
-	     [-u|--include-untracked] [-a|--all] [&lt;message&gt;]]
+<em>git stash</em> save [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
+	     [-u|--include-untracked] [-a|--all] [&lt;message&gt;]
+<em>git stash</em> [push [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
+	     [-u|--include-untracked] [-a|--all] [-m|--message &lt;message&gt;]]
+	     [--] [&lt;pathspec&gt;&#8230;&#8203;]]
 <em>git stash</em> clear
 <em>git stash</em> create [&lt;message&gt;]
 <em>git stash</em> store [-m|--message &lt;message&gt;] [-q|--quiet] &lt;commit&gt;</pre>
@@ -478,14 +481,26 @@ stash index (e.g. the integer <code>n</code> is equivalent to <code>stash@{n}</c
 <div class="dlist">
 <dl>
 <dt class="hdlist1">save [-p|--patch] [-k|--[no-]keep-index] [-u|--include-untracked] [-a|--all] [-q|--quiet] [&lt;message&gt;]</dt>
+<dt class="hdlist1">push [-p|--patch] [-k|--[no-]keep-index] [-u|--include-untracked] [-a|--all] [-q|--quiet] [-m|--message &lt;message&gt;] [--] [&lt;pathspec&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>Save your local modifications to a new <em>stash</em> and roll them
 back to HEAD (in the working tree and in the index).
 The &lt;message&gt; part is optional and gives
-the description along with the stashed state.  For quickly making
-a snapshot, you can omit <em>both</em> "save" and &lt;message&gt;, but giving
-only &lt;message&gt; does not trigger this action to prevent a misspelled
-subcommand from making an unwanted stash.</p>
+the description along with the stashed state.</p>
+<div class="paragraph">
+<p>For quickly making a snapshot, you can omit "push".  In this mode,
+non-option arguments are not allowed to prevent a misspelled
+subcommand from making an unwanted stash.  The two exceptions to this
+are <code>stash -p</code> which acts as alias for <code>stash push -p</code> and pathspecs,
+which are allowed after a double hyphen <code>--</code> for disambiguation.</p>
+</div>
+<div class="paragraph">
+<p>When pathspec is given to <em>git stash push</em>, the new stash records the
+modified states only for the files that match the pathspec.  The index
+entries and working tree files are then rolled back to the state in
+HEAD only for these files, too, leaving files that do not match the
+pathspec intact.</p>
+</div>
 <div class="paragraph">
 <p>If the <code>--keep-index</code> option is used, all changes already added to the
 index are left intact.</p>
@@ -757,7 +772,7 @@ xargs git log --merges --no-walk --grep=WIP</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
 </div>
 </div>
 </body>

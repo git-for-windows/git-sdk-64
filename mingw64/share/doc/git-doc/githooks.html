@@ -450,8 +450,10 @@ changed via the <code>core.hooksPath</code> configuration variable (see
 </div>
 <div class="paragraph">
 <p>Before Git invokes a hook, it changes its working directory to either
-the root of the working tree in a non-bare repository, or to the
-$GIT_DIR in a bare repository.</p>
+$GIT_DIR in a bare repository or the root of the working tree in a non-bare
+repository. An exception are hooks triggered during a push (<em>pre-receive</em>,
+<em>update</em>, <em>post-receive</em>, <em>post-update</em>, <em>push-to-checkout</em>) which are always
+executed in $GIT_DIR.</p>
 </div>
 <div class="paragraph">
 <p>Hooks can get their arguments via the environment, command-line
@@ -735,6 +737,10 @@ environment variables will not be set. If the client selects
 to use push options, but doesn&#8217;t transmit any, the count variable
 will be set to zero, <code>GIT_PUSH_OPTION_COUNT=0</code>.</p>
 </div>
+<div class="paragraph">
+<p>See the section on "Quarantine Environment" in
+<a href="git-receive-pack.html">git-receive-pack</a>(1) for some caveats.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="update">update</h3>
@@ -979,7 +985,7 @@ processed by rebase.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
 </div>
 </div>
 </body>

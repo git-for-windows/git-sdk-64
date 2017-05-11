@@ -904,11 +904,43 @@ matches "<code>a/b</code>", "<code>a/x/b</code>", "<code>a/x/y/b</code>" and so 
 </ul>
 </div>
 </dd>
+<dt class="hdlist1">attr</dt>
+<dd>
+<p>After <code>attr:</code> comes a space separated list of "attribute
+requirements", all of which must be met in order for the
+path to be considered a match; this is in addition to the
+usual non-magic pathspec pattern matching.
+See <a href="gitattributes.html">gitattributes</a>(5).</p>
+<div class="paragraph">
+<p>Each of the attribute requirements for the path takes one of
+these forms:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"<code>ATTR</code>" requires that the attribute <code>ATTR</code> be set.</p>
+</li>
+<li>
+<p>"<code>-ATTR</code>" requires that the attribute <code>ATTR</code> be unset.</p>
+</li>
+<li>
+<p>"<code>ATTR=VALUE</code>" requires that the attribute <code>ATTR</code> be
+set to the string <code>VALUE</code>.</p>
+</li>
+<li>
+<p>"<code>!ATTR</code>" requires that the attribute <code>ATTR</code> be
+unspecified.</p>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">exclude</dt>
 <dd>
 <p>After a path matches any non-exclude pathspec, it will be run
-through all exclude pathspec (magic signature: <code>!</code>). If it
-matches, the path is ignored.</p>
+through all exclude pathspec (magic signature: <code>!</code> or its
+synonym <code>^</code>). If it matches, the path is ignored.  When there
+is no non-exclude pathspec, the exclusion is applied to the
+result set as if invoked without any pathspec.</p>
 </dd>
 </dl>
 </div>
@@ -1222,7 +1254,7 @@ plus any local changes that you have made but not yet committed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
 </div>
 </div>
 </body>

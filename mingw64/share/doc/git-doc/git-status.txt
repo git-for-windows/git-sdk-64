@@ -186,6 +186,17 @@ in which case `XY` are `!!`.
     !           !    ignored
     -------------------------------------------------
 
+Submodules have more state and instead report
+		M    the submodule has a different HEAD than
+		     recorded in the index
+		m    the submodule has modified content
+		?    the submodule has untracked files
+since modified content or untracked files in a submodule cannot be added
+via `git add` in the superproject to prepare a commit.
+
+'m' and '?' are applied recursively. For example if a nested submodule
+in a submodule contains an untracked file, this is reported as '?' as well.
+
 If -b is used the short-format status is preceded by a line
 
     ## branchname tracking info
@@ -214,6 +225,8 @@ and the terminating newline (but a space still separates the status
 field from the first filename).  Third, filenames containing special
 characters are not specially formatted; no quoting or
 backslash-escaping is performed.
+
+Any submodule changes are reported as modified `M` instead of `m` or single `?`.
 
 Porcelain Format Version 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -327,10 +340,9 @@ When the `-z` option is given, pathnames are printed as is and
 without any quoting and lines are terminated with a NUL (ASCII 0x00)
 byte.
 
-Otherwise, all pathnames will be "C-quoted" if they contain any tab,
-linefeed, double quote, or backslash characters. In C-quoting, these
-characters will be replaced with the corresponding C-style escape
-sequences and the resulting pathname will be double quoted.
+Without the `-z` option, pathnames with "unusual" characters are
+quoted as explained for the configuration variable `core.quotePath`
+(see linkgit:git-config[1]).
 
 
 CONFIGURATION

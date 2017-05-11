@@ -893,6 +893,12 @@ Incompatible with the --interactive option.</p>
 of the rebased commits (see <a href="git-am.html">git-am</a>(1)).
 Incompatible with the --interactive option.</p>
 </dd>
+<dt class="hdlist1">--signoff</dt>
+<dd>
+<p>This flag is passed to <em>git am</em> to sign off all the rebased
+commits (see <a href="git-am.html">git-am</a>(1)). Incompatible with the
+--interactive option.</p>
+</dd>
 <dt class="hdlist1">-i</dt>
 <dt class="hdlist1">--interactive</dt>
 <dd>
@@ -965,13 +971,15 @@ instead.</p>
 <dt class="hdlist1">--no-autosquash</dt>
 <dd>
 <p>When the commit log message begins with "squash! &#8230;&#8203;" (or
-"fixup! &#8230;&#8203;"), and there is a commit whose title begins with
-the same &#8230;&#8203;, automatically modify the todo list of rebase -i
-so that the commit marked for squashing comes right after the
-commit to be modified, and change the action of the moved
-commit from <code>pick</code> to <code>squash</code> (or <code>fixup</code>).  Ignores subsequent
-"fixup! " or "squash! " after the first, in case you referred to an
-earlier fixup/squash with <code>git commit --fixup/--squash</code>.</p>
+"fixup! &#8230;&#8203;"), and there is already a commit in the todo list that
+matches the same <code>...</code>, automatically modify the todo list of rebase
+-i so that the commit marked for squashing comes right after the
+commit to be modified, and change the action of the moved commit
+from <code>pick</code> to <code>squash</code> (or <code>fixup</code>).  A commit matches the <code>...</code> if
+the commit subject matches, or if the <code>...</code> refers to the commit&#8217;s
+hash. As a fall-back, partial matches of the commit subject work,
+too.  The recommended way to create fixup/squash commits is by using
+the <code>--fixup</code>/<code>--squash</code> options of <a href="git-commit.html">git-commit</a>(1).</p>
 <div class="paragraph">
 <p>This option is only valid when the <code>--interactive</code> option is used.</p>
 </div>
@@ -1665,7 +1673,7 @@ reorder commits tend to produce counterintuitive results.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

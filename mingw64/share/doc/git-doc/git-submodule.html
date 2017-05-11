@@ -509,13 +509,18 @@ configuration entries unless <code>--name</code> is used to specify a logical na
 <div class="paragraph">
 <p>&lt;repository&gt; is the URL of the new submodule&#8217;s origin repository.
 This may be either an absolute URL, or (if it begins with ./
-or ../), the location relative to the superproject&#8217;s origin
+or ../), the location relative to the superproject&#8217;s default remote
 repository (Please note that to specify a repository <em>foo.git</em>
 which is located right next to a superproject <em>bar.git</em>, you&#8217;ll
 have to use <em>../foo.git</em> instead of <em>./foo.git</em> - as one might expect
 when following the rules for relative URLs - because the evaluation
-of relative URLs in Git is identical to that of relative directories).
-If the superproject doesn&#8217;t have an origin configured
+of relative URLs in Git is identical to that of relative directories).</p>
+</div>
+<div class="paragraph">
+<p>The default remote is the remote of the remote tracking branch
+of the current branch. If no such remote tracking branch exists or
+the HEAD is detached, "origin" is assumed to be the default remote.
+If the superproject doesn&#8217;t have a default remote configured
 the superproject is its own authoritative upstream and the current
 working directory is used instead.</p>
 </div>
@@ -561,18 +566,29 @@ too (and can also report changes to a submodule&#8217;s work tree).</p>
 <dt class="hdlist1">init [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>Initialize the submodules recorded in the index (which were
-added and committed elsewhere) by copying submodule
-names and urls from .gitmodules to .git/config.
-Optional &lt;path&gt; arguments limit which submodules will be initialized.
-It will also copy the value of <code>submodule.$name.update</code> into
-.git/config.
-The key used in .git/config is <code>submodule.$name.url</code>.
+added and committed elsewhere) by setting <code>submodule.$name.url</code>
+in .git/config. It uses the same setting from .gitmodules as
+a template. If the URL is relative, it will be resolved using
+the default remote. If there is no default remote, the current
+repository will be assumed to be upstream.</p>
+<div class="paragraph">
+<p>Optional &lt;path&gt; arguments limit which submodules will be initialized.
+If no path is specified and submodule.active has been configured, submodules
+configured to be active will be initialized, otherwise all submodules are
+initialized.</p>
+</div>
+<div class="paragraph">
+<p>When present, it will also copy the value of <code>submodule.$name.update</code>.
 This command does not alter existing information in .git/config.
 You can then customize the submodule clone URLs in .git/config
 for your local setup and proceed to <code>git submodule update</code>;
 you can also just use <code>git submodule update --init</code> without
 the explicit <em>init</em> step if you do not intend to customize
 any submodule locations.</p>
+</div>
+<div class="paragraph">
+<p>See the add subcommand for the defintion of default remote.</p>
+</div>
 </dd>
 <dt class="hdlist1">deinit [-f|--force] (--all|[--] &lt;path&gt;&#8230;&#8203;)</dt>
 <dd>
@@ -957,7 +973,7 @@ for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
 </div>
 </div>
 </body>

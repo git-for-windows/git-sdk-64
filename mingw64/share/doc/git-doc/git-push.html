@@ -679,6 +679,62 @@ with this feature.</p>
 <p>"--no-force-with-lease" will cancel all the previous --force-with-lease on the
 command line.</p>
 </div>
+<div class="paragraph">
+<p>A general note on safety: supplying this option without an expected
+value, i.e. as <code>--force-with-lease</code> or <code>--force-with-lease=&lt;refname&gt;</code>
+interacts very badly with anything that implicitly runs <code>git fetch</code> on
+the remote to be pushed to in the background, e.g. <code>git fetch origin</code>
+on your repository in a cronjob.</p>
+</div>
+<div class="paragraph">
+<p>The protection it offers over <code>--force</code> is ensuring that subsequent
+changes your work wasn&#8217;t based on aren&#8217;t clobbered, but this is
+trivially defeated if some background process is updating refs in the
+background. We don&#8217;t have anything except the remote tracking info to
+go by as a heuristic for refs you&#8217;re expected to have seen &amp; are
+willing to clobber.</p>
+</div>
+<div class="paragraph">
+<p>If your editor or some other system is running <code>git fetch</code> in the
+background for you a way to mitigate this is to simply set up another
+remote:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>git remote add origin-push $(git config remote.origin.url)
+git fetch origin-push</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now when the background process runs <code>git fetch origin</code> the references
+on <code>origin-push</code> won&#8217;t be updated, and thus commands like:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>git push --force-with-lease origin-push</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Will fail unless you manually run <code>git fetch origin-push</code>. This method
+is of course entirely defeated by something that runs <code>git fetch
+--all</code>, in that case you&#8217;d need to either disable it or do something
+more tedious like:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>git fetch              # update 'master' from remote
+git tag base master    # mark our base point
+git rebase -i master   # rewrite some commits
+git push --force-with-lease=master:base master:master</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I.e. create a <code>base</code> tag for versions of the upstream code that you&#8217;ve
+seen and are willing to overwrite, then rewrite history, and finally
+force push changes to <code>master</code> if the remote version is still at
+<code>base</code>, regardless of what your local <code>remotes/origin/master</code> has been
+updated to in the background.</p>
+</div>
 </dd>
 <dt class="hdlist1">-f</dt>
 <dt class="hdlist1">--force</dt>
@@ -1447,7 +1503,7 @@ The delta reveals regions of X that are similar to Y to the attacker.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

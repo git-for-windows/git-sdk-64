@@ -885,15 +885,21 @@ multi_ack_detailed is enabled. The server always sends NAK after <em>done</em>
 if there is no common base found.</p>
 </div>
 <div class="paragraph">
+<p>Instead of <em>ACK</em> or <em>NAK</em>, the server may send an error message (for
+example, if it does not recognize an object in a <em>want</em> line received
+from the client).</p>
+</div>
+<div class="paragraph">
 <p>Then the server will start sending its packfile data.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>  server-response = *ack_multi ack / nak
+<pre>  server-response = *ack_multi ack / nak / error-line
   ack_multi       = PKT-LINE("ACK" SP obj-id ack_status)
   ack_status      = "continue" / "common" / "ready"
   ack             = PKT-LINE("ACK" SP obj-id)
-  nak             = PKT-LINE("NAK")</pre>
+  nak             = PKT-LINE("NAK")
+  error-line     =  PKT-LINE("ERR" SP explanation-text)</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1195,7 +1201,7 @@ can be rejected.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
 </div>
 </div>
 </body>

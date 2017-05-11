@@ -495,7 +495,7 @@ pattern.</p>
 <dt class="hdlist1">-s</dt>
 <dt class="hdlist1">--stage</dt>
 <dd>
-<p>Show staged contents' object name, mode bits and stage number in the output.</p>
+<p>Show staged contents' mode bits, object name and stage number in the output.</p>
 </dd>
 <dt class="hdlist1">--directory</dt>
 <dd>
@@ -520,7 +520,8 @@ succeed.</p>
 </dd>
 <dt class="hdlist1">-z</dt>
 <dd>
-<p>\0 line termination on output.</p>
+<p>\0 line termination on output and do not quote filenames.
+See OUTPUT below for more information.</p>
 </dd>
 <dt class="hdlist1">-x &lt;pattern&gt;</dt>
 <dt class="hdlist1">--exclude=&lt;pattern&gt;</dt>
@@ -691,9 +692,10 @@ the user (or the porcelain) to see what should eventually be recorded at the
 path. (see <a href="git-read-tree.html">git-read-tree</a>(1) for more information on state)</p>
 </div>
 <div class="paragraph">
-<p>When <code>-z</code> option is not used, TAB, LF, and backslash characters
-in pathnames are represented as <code>\t</code>, <code>\n</code>, and <code>\\</code>,
-respectively.</p>
+<p>Without the <code>-z</code> option, pathnames with "unusual" characters are
+quoted as explained for the configuration variable <code>core.quotePath</code>
+(see <a href="git-config.html">git-config</a>(1)).  Using <code>-z</code> the filename is output
+verbatim and the line is terminated by a NUL byte.</p>
 </div>
 </div>
 </div>
@@ -758,7 +760,7 @@ pattern file appears in.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

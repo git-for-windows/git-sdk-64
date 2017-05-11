@@ -496,7 +496,8 @@ if <code>-r</code> was not passed. <code>-d</code> implies <code>-t</code>.</p>
 </dd>
 <dt class="hdlist1">-z</dt>
 <dd>
-<p>\0 line termination on output.</p>
+<p>\0 line termination on output and do not quote filenames.
+See OUTPUT FORMAT below for more information.</p>
 </dd>
 <dt class="hdlist1">--name-only</dt>
 <dt class="hdlist1">--name-status</dt>
@@ -538,9 +539,7 @@ implicitly uses the root level of the tree as the sole path argument.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Unless the <code>-z</code> option is used, TAB, LF, and backslash characters
-in pathnames are represented as <code>\t</code>, <code>\n</code>, and <code>\\</code>, respectively.
-This output format is compatible with what <code>--index-info --stdin</code> of
+<p>This output format is compatible with what <code>--index-info --stdin</code> of
 <em>git update-index</em> expects.</p>
 </div>
 <div class="paragraph">
@@ -556,6 +555,12 @@ This output format is compatible with what <code>--index-info --stdin</code> of
 with minimum width of 7 characters.  Object size is given only for blobs
 (file) entries; for other entries <code>-</code> character is used in place of size.</p>
 </div>
+<div class="paragraph">
+<p>Without the <code>-z</code> option, pathnames with "unusual" characters are
+quoted as explained for the configuration variable <code>core.quotePath</code>
+(see <a href="git-config.html">git-config</a>(1)).  Using <code>-z</code> the filename is output
+verbatim and the line is terminated by a NUL byte.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -569,7 +574,7 @@ with minimum width of 7 characters.  Object size is given only for blobs
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

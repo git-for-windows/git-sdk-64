@@ -621,14 +621,17 @@ separated with NUL character instead of LF.</p>
 <dt class="hdlist1">--split-index</dt>
 <dt class="hdlist1">--no-split-index</dt>
 <dd>
-<p>Enable or disable split index mode. If enabled, the index is
-split into two files, $GIT_DIR/index and $GIT_DIR/sharedindex.&lt;SHA-1&gt;.
-Changes are accumulated in $GIT_DIR/index while the shared
-index file contains all index entries stays unchanged. If
-split-index mode is already enabled and <code>--split-index</code> is
-given again, all changes in $GIT_DIR/index are pushed back to
-the shared index file. This mode is designed for very large
-indexes that take a significant amount of time to read or write.</p>
+<p>Enable or disable split index mode. If split-index mode is
+already enabled and <code>--split-index</code> is given again, all
+changes in $GIT_DIR/index are pushed back to the shared index
+file.</p>
+<div class="paragraph">
+<p>These options take effect whatever the value of the <code>core.splitIndex</code>
+configuration variable (see <a href="git-config.html">git-config</a>(1)). But a warning is
+emitted when the change goes against the configured value, as the
+configured value will take effect next time the index is read and this
+will remove the intended effect of the option.</p>
+</div>
 </dd>
 <dt class="hdlist1">--untracked-cache</dt>
 <dt class="hdlist1">--no-untracked-cache</dt>
@@ -928,6 +931,38 @@ precedence over assume-unchanged bit when both are set.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_split_index">Split index</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This mode is designed for repositories with very large indexes, and
+aims at reducing the time it takes to repeatedly write these indexes.</p>
+</div>
+<div class="paragraph">
+<p>In this mode, the index is split into two files, $GIT_DIR/index and
+$GIT_DIR/sharedindex.&lt;SHA-1&gt;. Changes are accumulated in
+$GIT_DIR/index, the split index, while the shared index file contains
+all index entries and stays unchanged.</p>
+</div>
+<div class="paragraph">
+<p>All changes in the split index are pushed back to the shared index
+file when the number of entries in the split index reaches a level
+specified by the splitIndex.maxPercentChange config variable (see
+<a href="git-config.html">git-config</a>(1)).</p>
+</div>
+<div class="paragraph">
+<p>Each time a new shared index file is created, the old shared index
+files are deleted if their modification time is older than what is
+specified by the splitIndex.sharedIndexExpire config variable (see
+<a href="git-config.html">git-config</a>(1)).</p>
+</div>
+<div class="paragraph">
+<p>To avoid deleting a shared index file that is still used, its
+modification time is updated to the current time everytime a new split
+index based on the shared index file is either created or read from.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_untracked_cache">Untracked cache</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1022,7 +1057,7 @@ ctime for marking files processed) (see <a href="git-config.html">git-config</a>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
 </div>
 </div>
 </body>

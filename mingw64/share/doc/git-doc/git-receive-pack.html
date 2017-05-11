@@ -588,6 +588,9 @@ will be performed, and the update, post-receive and post-update
 hooks will not be invoked either.  This can be useful to quickly
 bail out if the update is not to be supported.</p>
 </div>
+<div class="paragraph">
+<p>See the notes on the quarantine environment below.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -724,6 +727,43 @@ exec git update-server-info</pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_quarantine_environment">Quarantine Environment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When <code>receive-pack</code> takes in objects, they are placed into a temporary
+"quarantine" directory within the <code>$GIT_DIR/objects</code> directory and
+migrated into the main object store only after the <code>pre-receive</code> hook
+has completed. If the push fails before then, the temporary directory is
+removed entirely.</p>
+</div>
+<div class="paragraph">
+<p>This has a few user-visible effects and caveats:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Pushes which fail due to problems with the incoming pack, missing
+objects, or due to the <code>pre-receive</code> hook will not leave any
+on-disk data. This is usually helpful to prevent repeated failed
+pushes from filling up your disk, but can make debugging more
+challenging.</p>
+</li>
+<li>
+<p>Any objects created by the <code>pre-receive</code> hook will be created in
+the quarantine directory (and migrated only if it succeeds).</p>
+</li>
+<li>
+<p>The <code>pre-receive</code> hook MUST NOT update any refs to point to
+quarantined objects. Other programs accessing the repository will
+not be able to see the objects (and if the pre-receive hook fails,
+those refs would become corrupted). For safety, any ref updates
+from within <code>pre-receive</code> are automatically rejected.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -742,7 +782,7 @@ exec git update-server-info</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

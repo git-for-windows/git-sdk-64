@@ -433,9 +433,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="verseblock">
 <pre class="content"><em>git branch</em> [--color[=&lt;when&gt;] | --no-color] [-r | -a]
 	[--list] [-v [--abbrev=&lt;length&gt; | --no-abbrev]]
-	[--column[=&lt;options&gt;] | --no-column]
-	[(--merged | --no-merged | --contains) [&lt;commit&gt;]] [--sort=&lt;key&gt;]
-	[--points-at &lt;object&gt;] [&lt;pattern&gt;&#8230;&#8203;]
+	[--column[=&lt;options&gt;] | --no-column] [--sort=&lt;key&gt;]
+	[(--merged | --no-merged) [&lt;commit&gt;]]
+	[--contains [&lt;commit]] [--no-contains [&lt;commit&gt;]]
+	[--points-at &lt;object&gt;] [--format=&lt;format&gt;] [&lt;pattern&gt;&#8230;&#8203;]
 <em>git branch</em> [--set-upstream | --track | --no-track] [-l] [-f] &lt;branchname&gt; [&lt;start-point&gt;]
 <em>git branch</em> (--set-upstream-to=&lt;upstream&gt; | -u &lt;upstream&gt;) [&lt;branchname&gt;]
 <em>git branch</em> --unset-upstream [&lt;branchname&gt;]
@@ -462,11 +463,12 @@ as branch creation.</p>
 <div class="paragraph">
 <p>With <code>--contains</code>, shows only the branches that contain the named commit
 (in other words, the branches whose tip commits are descendants of the
-named commit).  With <code>--merged</code>, only branches merged into the named
-commit (i.e. the branches whose tip commits are reachable from the named
-commit) will be listed.  With <code>--no-merged</code> only branches not merged into
-the named commit will be listed.  If the &lt;commit&gt; argument is missing it
-defaults to <code>HEAD</code> (i.e. the tip of the current branch).</p>
+named commit), <code>--no-contains</code> inverts it. With <code>--merged</code>, only branches
+merged into the named commit (i.e. the branches whose tip commits are
+reachable from the named commit) will be listed.  With <code>--no-merged</code> only
+branches not merged into the named commit will be listed.  If the &lt;commit&gt;
+argument is missing it defaults to <code>HEAD</code> (i.e. the tip of the current
+branch).</p>
 </div>
 <div class="paragraph">
 <p>The command&#8217;s second form creates a new branch head named &lt;branchname&gt;
@@ -593,8 +595,14 @@ without options are equivalent to <em>always</em> and <em>never</em> respectivel
 </dd>
 <dt class="hdlist1">--list</dt>
 <dd>
-<p>Activate the list mode. <code>git branch &lt;pattern&gt;</code> would try to create a branch,
-use <code>git branch --list &lt;pattern&gt;</code> to list matching branches.</p>
+<p>List branches.  With optional <code>&lt;pattern&gt;...</code>, e.g. <code>git
+branch --list 'maint-*'</code>, list only the branches that match
+the pattern(s).</p>
+<div class="paragraph">
+<p>This should not be confused with <code>git branch -l &lt;branchname&gt;</code>,
+which creates a branch named <code>&lt;branchname&gt;</code> with a reflog.
+See <code>--create-reflog</code> above for details.</p>
+</div>
 </dd>
 <dt class="hdlist1">-v</dt>
 <dt class="hdlist1">-vv</dt>
@@ -676,15 +684,22 @@ may be used.</p>
 <p>Only list branches which contain the specified commit (HEAD
 if not specified). Implies <code>--list</code>.</p>
 </dd>
+<dt class="hdlist1">--no-contains [&lt;commit&gt;]</dt>
+<dd>
+<p>Only list branches which don&#8217;t contain the specified commit
+(HEAD if not specified). Implies <code>--list</code>.</p>
+</dd>
 <dt class="hdlist1">--merged [&lt;commit&gt;]</dt>
 <dd>
 <p>Only list branches whose tips are reachable from the
-specified commit (HEAD if not specified). Implies <code>--list</code>.</p>
+specified commit (HEAD if not specified). Implies <code>--list</code>,
+incompatible with <code>--no-merged</code>.</p>
 </dd>
 <dt class="hdlist1">--no-merged [&lt;commit&gt;]</dt>
 <dd>
 <p>Only list branches whose tips are not reachable from the
-specified commit (HEAD if not specified). Implies <code>--list</code>.</p>
+specified commit (HEAD if not specified). Implies <code>--list</code>,
+incompatible with <code>--merged</code>.</p>
 </dd>
 <dt class="hdlist1">&lt;branchname&gt;</dt>
 <dd>
@@ -722,6 +737,12 @@ finally remote-tracking branches.</p>
 <dt class="hdlist1">--points-at &lt;object&gt;</dt>
 <dd>
 <p>Only list branches of the given object.</p>
+</dd>
+<dt class="hdlist1">--format &lt;format&gt;</dt>
+<dd>
+<p>A string that interpolates <code>%(fieldname)</code> from the object
+pointed at by a ref being shown.  The format is the same as
+that of <a href="git-for-each-ref.html">git-for-each-ref</a>(1).</p>
 </dd>
 </dl>
 </div>
@@ -788,8 +809,8 @@ easier to use the git checkout command with its <code>-b</code> option to create
 a branch and check it out with a single command.</p>
 </div>
 <div class="paragraph">
-<p>The options <code>--contains</code>, <code>--merged</code> and <code>--no-merged</code> serve three related
-but different purposes:</p>
+<p>The options <code>--contains</code>, <code>--no-contains</code>, <code>--merged</code> and <code>--no-merged</code>
+serve four related but different purposes:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -797,6 +818,10 @@ but different purposes:</p>
 <p><code>--contains &lt;commit&gt;</code> is used to find all branches which will need
 special attention if &lt;commit&gt; were to be rebased or amended, since those
 branches contain the specified &lt;commit&gt;.</p>
+</li>
+<li>
+<p><code>--no-contains &lt;commit&gt;</code> is the inverse of that, i.e. branches that don&#8217;t
+contain the specified &lt;commit&gt;.</p>
 </li>
 <li>
 <p><code>--merged</code> is used to find all branches which can be safely deleted,
@@ -833,7 +858,7 @@ a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

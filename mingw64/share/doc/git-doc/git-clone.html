@@ -436,7 +436,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	  [-o &lt;name&gt;] [-b &lt;name&gt;] [-u &lt;upload-pack&gt;] [--reference &lt;repository&gt;]
 	  [--dissociate] [--separate-git-dir &lt;git dir&gt;]
 	  [--depth &lt;depth&gt;] [--[no-]single-branch]
-	  [--recursive | --recurse-submodules] [--[no-]shallow-submodules]
+	  [--recurse-submodules] [--[no-]shallow-submodules]
 	  [--jobs &lt;n&gt;] [--] &lt;repository&gt; [&lt;directory&gt;]</pre>
 </div>
 </div>
@@ -671,11 +671,15 @@ initial cloning.  If the HEAD at the remote did not point at any
 branch when <code>--single-branch</code> clone was made, no remote-tracking
 branch is created.</p>
 </dd>
-<dt class="hdlist1">--recursive</dt>
-<dt class="hdlist1">--recurse-submodules</dt>
+<dt class="hdlist1">--recurse-submodules[=&lt;pathspec]</dt>
 <dd>
-<p>After the clone is created, initialize all submodules within,
-using their default settings. This is equivalent to running
+<p>After the clone is created, initialize and clone submodules
+within based on the provided pathspec.  If no pathspec is
+provided, all submodules are initialized and cloned.
+Submodules are initialized and cloned using their default
+settings.  The resulting clone has <code>submodule.active</code> set to
+the provided pathspec, or "." (meaning all submodules) if no
+pathspec is provided.  This is equivalent to running
 <code>git submodule update --init --recursive</code> immediately after
 the clone is finished. This option is ignored if the cloned
 repository does not have a worktree/checkout (i.e. if any of
@@ -934,7 +938,7 @@ $ cd my-linux</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

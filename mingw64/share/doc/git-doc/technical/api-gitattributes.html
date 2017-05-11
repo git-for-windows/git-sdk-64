@@ -444,10 +444,15 @@ this type.  The internal representation of this structure is
 of no interest to the calling programs.  The name of the
 attribute can be retrieved by calling <code>git_attr_name()</code>.</p>
 </dd>
-<dt class="hdlist1"><code>struct git_attr_check</code></dt>
+<dt class="hdlist1"><code>struct attr_check_item</code></dt>
 <dd>
-<p>This structure represents a set of attributes to check in a call
-to <code>git_check_attr()</code> function, and receives the results.</p>
+<p>This structure represents one attribute and its value.</p>
+</dd>
+<dt class="hdlist1"><code>struct attr_check</code></dt>
+<dd>
+<p>This structure represents a collection of <code>attr_check_item</code>.
+It is passed to <code>git_check_attr()</code> function, specifying the
+attributes to check, and receives their values.</p>
 </dd>
 </dl>
 </div>
@@ -459,7 +464,7 @@ to <code>git_check_attr()</code> function, and receives the results.</p>
 <div class="paragraph">
 <p>An attribute for a path can be in one of four states: Set, Unset,
 Unspecified or set to a string, and <code>.value</code> member of <code>struct
-git_attr_check</code> records it.  There are three macros to check these:</p>
+attr_check_item</code> records it.  There are three macros to check these:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -489,16 +494,20 @@ value of the attribute for the path.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Prepare an array of <code>struct git_attr_check</code> to define the list of
-attributes you would want to check.  To populate this array, you would
-need to define necessary attributes by calling <code>git_attr()</code> function.</p>
+<p>Prepare <code>struct attr_check</code> using attr_check_initl()
+function, enumerating the names of attributes whose values you are
+interested in, terminated with a NULL pointer.  Alternatively, an
+empty <code>struct attr_check</code> can be prepared by calling
+<code>attr_check_alloc()</code> function and then attributes you want to
+ask about can be added to it with <code>attr_check_append()</code>
+function.</p>
 </li>
 <li>
 <p>Call <code>git_check_attr()</code> to check the attributes for the path.</p>
 </li>
 <li>
-<p>Inspect <code>git_attr_check</code> structure to see how each of the attribute in
-the array is defined for the path.</p>
+<p>Inspect <code>attr_check</code> structure to see how each of the
+attribute in the array is defined for the path.</p>
 </li>
 </ul>
 </div>
@@ -508,33 +517,31 @@ the array is defined for the path.</p>
 <h2 id="_example">Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To see how attributes "crlf" and "indent" are set for different paths.</p>
+<p>To see how attributes "crlf" and "ident" are set for different paths.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Prepare an array of <code>struct git_attr_check</code> with two elements (because
-we are checking two attributes).  Initialize their <code>attr</code> member with
-pointers to <code>struct git_attr</code> obtained by calling <code>git_attr()</code>:</p>
+<p>Prepare a <code>struct attr_check</code> with two elements (because
+we are checking two attributes):</p>
 </li>
 </ol>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>static struct git_attr_check check[2];
+<pre>static struct attr_check *check;
 static void setup_check(void)
 {
-	if (check[0].attr)
+	if (check)
 		return; /* already done */
-	check[0].attr = git_attr("crlf");
-	check[1].attr = git_attr("ident");
+	check = attr_check_initl("crlf", "ident", NULL);
 }</pre>
 </div>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Call <code>git_check_attr()</code> with the prepared array of <code>struct git_attr_check</code>:</p>
+<p>Call <code>git_check_attr()</code> with the prepared <code>struct attr_check</code>:</p>
 </li>
 </ol>
 </div>
@@ -543,19 +550,19 @@ static void setup_check(void)
 <pre>	const char *path;
 
 	setup_check();
-	git_check_attr(path, ARRAY_SIZE(check), check);</pre>
+	git_check_attr(path, check);</pre>
 </div>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Act on <code>.value</code> member of the result, left in <code>check[]</code>:</p>
+<p>Act on <code>.value</code> member of the result, left in <code>check-&gt;items[]</code>:</p>
 </li>
 </ol>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	const char *value = check[0].value;
+<pre>	const char *value = check-&gt;items[0].value;
 
 	if (ATTR_TRUE(value)) {
 		The attribute is Set, by listing only the name of the
@@ -574,6 +581,24 @@ static void setup_check(void)
 	}</pre>
 </div>
 </div>
+<div class="paragraph">
+<p>To see how attributes in argv[] are set for different paths, only
+the first step in the above would be different.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>static struct attr_check *check;
+static void setup_check(const char **argv)
+{
+	check = attr_check_alloc();
+	while (*argv) {
+		struct git_attr *attr = git_attr(*argv);
+		attr_check_append(check, attr);
+		argv++;
+	}
+}</pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -585,19 +610,23 @@ static void setup_check(void)
 <div class="ulist">
 <ul>
 <li>
-<p>Call <code>git_all_attrs()</code>, which returns an array of <code>git_attr_check</code>
-structures.</p>
+<p>Prepare an empty <code>attr_check</code> structure by calling
+<code>attr_check_alloc()</code>.</p>
 </li>
 <li>
-<p>Iterate over the <code>git_attr_check</code> array to examine the attribute
-names and values.  The name of the attribute described by a
-<code>git_attr_check</code> object can be retrieved via
-<code>git_attr_name(check[i].attr)</code>.  (Please note that no items will be
-returned for unset attributes, so <code>ATTR_UNSET()</code> will return false
-for all returned <code>git_array_check</code> objects.)</p>
+<p>Call <code>git_all_attrs()</code>, which populates the <code>attr_check</code>
+with the attributes attached to the path.</p>
 </li>
 <li>
-<p>Free the <code>git_array_check</code> array.</p>
+<p>Iterate over the <code>attr_check.items[]</code> array to examine
+the attribute names and values.  The name of the attribute
+described by a  <code>attr_check.items[]</code> object can be retrieved via
+<code>git_attr_name(check-&gt;items[i].attr)</code>.  (Please note that no items
+will be returned for unset attributes, so <code>ATTR_UNSET()</code> will return
+false for all returned <code>attr_check.items[]</code> objects.)</p>
+</li>
+<li>
+<p>Free the <code>attr_check</code> struct by calling <code>attr_check_free()</code>.</p>
 </li>
 </ul>
 </div>
@@ -606,7 +635,7 @@ for all returned <code>git_array_check</code> objects.)</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
 </div>
 </div>
 </body>

@@ -434,7 +434,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="content"><em>git for-each-ref</em> [--count=&lt;count&gt;] [--shell|--perl|--python|--tcl]
 		   [(--sort=&lt;key&gt;)&#8230;&#8203;] [--format=&lt;format&gt;] [&lt;pattern&gt;&#8230;&#8203;]
 		   [--points-at &lt;object&gt;] [(--merged | --no-merged) [&lt;object&gt;]]
-		   [--contains [&lt;object&gt;]]</pre>
+		   [--contains [&lt;object&gt;]] [--no-contains [&lt;object&gt;]]</pre>
 </div>
 </div>
 </div>
@@ -507,17 +507,24 @@ a scriptlet that can directly be `eval`ed.</p>
 <dt class="hdlist1">--merged [&lt;object&gt;]</dt>
 <dd>
 <p>Only list refs whose tips are reachable from the
-specified commit (HEAD if not specified).</p>
+specified commit (HEAD if not specified),
+incompatible with <code>--no-merged</code>.</p>
 </dd>
 <dt class="hdlist1">--no-merged [&lt;object&gt;]</dt>
 <dd>
 <p>Only list refs whose tips are not reachable from the
-specified commit (HEAD if not specified).</p>
+specified commit (HEAD if not specified),
+incompatible with <code>--merged</code>.</p>
 </dd>
 <dt class="hdlist1">--contains [&lt;object&gt;]</dt>
 <dd>
 <p>Only list refs which contain the specified commit (HEAD if not
 specified).</p>
+</dd>
+<dt class="hdlist1">--no-contains [&lt;object&gt;]</dt>
+<dd>
+<p>Only list refs which don&#8217;t contain the specified commit (HEAD
+if not specified).</p>
 </dd>
 <dt class="hdlist1">--ignore-case</dt>
 <dd>
@@ -545,11 +552,21 @@ keys.</p>
 <p>The name of the ref (the part after $GIT_DIR/).
 For a non-ambiguous short name of the ref append <code>:short</code>.
 The option core.warnAmbiguousRefs is used to select the strict
-abbreviation mode. If <code>strip=&lt;N&gt;</code> is appended, strips <code>&lt;N&gt;</code>
-slash-separated path components from the front of the refname
-(e.g., <code>%(refname:strip=2)</code> turns <code>refs/tags/foo</code> into <code>foo</code>.
-<code>&lt;N&gt;</code> must be a positive integer.  If a displayed ref has fewer
-components than <code>&lt;N&gt;</code>, the command aborts with an error.</p>
+abbreviation mode. If <code>lstrip=&lt;N&gt;</code> (<code>rstrip=&lt;N&gt;</code>) is appended, strips <code>&lt;N&gt;</code>
+slash-separated path components from the front (back) of the refname
+(e.g. <code>%(refname:lstrip=2)</code> turns <code>refs/tags/foo</code> into <code>foo</code> and
+<code>%(refname:rstrip=2)</code> turns <code>refs/tags/foo</code> into <code>refs</code>).
+If <code>&lt;N&gt;</code> is a negative number, strip as many path components as
+necessary from the specified end to leave <code>-&lt;N&gt;</code> path components
+(e.g. <code>%(refname:lstrip=-2)</code> turns
+<code>refs/tags/foo</code> into <code>tags/foo</code> and <code>%(refname:rstrip=-1)</code>
+turns <code>refs/tags/foo</code> into <code>refs</code>). When the ref does not have
+enough components, the result becomes an empty string if
+stripping with positive &lt;N&gt;, or it becomes the full refname if
+stripping with negative &lt;N&gt;.  Neither is an error.</p>
+<div class="paragraph">
+<p><code>strip</code> can be used as a synomym to <code>lstrip</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">objecttype</dt>
 <dd>
@@ -562,24 +579,34 @@ components than <code>&lt;N&gt;</code>, the command aborts with an error.</p>
 <dt class="hdlist1">objectname</dt>
 <dd>
 <p>The object name (aka SHA-1).
-For a non-ambiguous abbreviation of the object name append <code>:short</code>.</p>
+For a non-ambiguous abbreviation of the object name append <code>:short</code>.
+For an abbreviation of the object name with desired length append
+<code>:short=&lt;length&gt;</code>, where the minimum length is MINIMUM_ABBREV. The
+length may be exceeded to ensure unique object names.</p>
 </dd>
 <dt class="hdlist1">upstream</dt>
 <dd>
 <p>The name of a local ref which can be considered &#8220;upstream&#8221;
-from the displayed ref. Respects <code>:short</code> in the same way as
-<code>refname</code> above.  Additionally respects <code>:track</code> to show
-"[ahead N, behind M]" and <code>:trackshort</code> to show the terse
-version: "&gt;" (ahead), "&lt;" (behind), "&lt;&gt;" (ahead and behind),
-or "=" (in sync).  Has no effect if the ref does not have
-tracking information associated with it.</p>
+from the displayed ref. Respects <code>:short</code>, <code>:lstrip</code> and
+<code>:rstrip</code> in the same way as <code>refname</code> above.  Additionally
+respects <code>:track</code> to show "[ahead N, behind M]" and
+<code>:trackshort</code> to show the terse version: "&gt;" (ahead), "&lt;"
+(behind), "&lt;&gt;" (ahead and behind), or "=" (in sync). <code>:track</code>
+also prints "[gone]" whenever unknown upstream ref is
+encountered. Append <code>:track,nobracket</code> to show tracking
+information without brackets (i.e "ahead N, behind M").  Has
+no effect if the ref does not have tracking information
+associated with it.  All the options apart from <code>nobracket</code>
+are mutually exclusive, but if used together the last option
+is selected.</p>
 </dd>
 <dt class="hdlist1">push</dt>
 <dd>
-<p>The name of a local ref which represents the <code>@{push}</code> location
-for the displayed ref. Respects <code>:short</code>, <code>:track</code>, and
-<code>:trackshort</code> options as <code>upstream</code> does. Produces an empty
-string if no <code>@{push}</code> ref is configured.</p>
+<p>The name of a local ref which represents the <code>@{push}</code>
+location for the displayed ref. Respects <code>:short</code>, <code>:lstrip</code>,
+<code>:rstrip</code>, <code>:track</code>, and <code>:trackshort</code> options as <code>upstream</code>
+does. Produces an empty string if no <code>@{push}</code> ref is
+configured.</p>
 </dd>
 <dt class="hdlist1">HEAD</dt>
 <dd>
@@ -606,6 +633,27 @@ than the width then no alignment is performed. If used with
 <code>--quote</code> everything in between %(align:&#8230;&#8203;) and %(end) is
 quoted, but if nested then only the topmost level performs
 quoting.</p>
+</dd>
+<dt class="hdlist1">if</dt>
+<dd>
+<p>Used as %(if)&#8230;&#8203;%(then)&#8230;&#8203;%(end) or
+%(if)&#8230;&#8203;%(then)&#8230;&#8203;%(else)&#8230;&#8203;%(end).  If there is an atom with
+value or string literal after the %(if) then everything after
+the %(then) is printed, else if the %(else) atom is used, then
+everything after %(else) is printed. We ignore space when
+evaluating the string before %(then), this is useful when we
+use the %(HEAD) atom which prints either "*" or " " and we
+want to apply the <em>if</em> condition only on the <em>HEAD</em> ref.
+Append ":equals=&lt;string&gt;" or ":notequals=&lt;string&gt;" to compare
+the value between the %(if:&#8230;&#8203;) and %(then) atoms with the
+given string.</p>
+</dd>
+<dt class="hdlist1">symref</dt>
+<dd>
+<p>The ref which the given symbolic ref refers to. If not a
+symbolic ref, nothing is printed. Respects the <code>:short</code>,
+<code>:lstrip</code> and <code>:rstrip</code> options in the same way as <code>refname</code>
+above.</p>
 </dd>
 </dl>
 </div>
@@ -653,6 +701,16 @@ returns an empty string instead.</p>
 <p>As a special case for the date-type fields, you may specify a format for
 the date by adding <code>:</code> followed by date format name (see the
 values the <code>--date</code> option to <a href="git-rev-list.html">git-rev-list</a>(1) takes).</p>
+</div>
+<div class="paragraph">
+<p>Some atoms like %(align) and %(if) always require a matching %(end).
+We call them "opening atoms" and sometimes denote them as %($open).</p>
+</div>
+<div class="paragraph">
+<p>When a scripting language specific quoting is in effect, everything
+between a top-level opening atom and its matching %(end) is evaluated
+according to the semantics of the opening atom and only its result
+from the top-level is quoted.</p>
 </div>
 </div>
 </div>
@@ -748,6 +806,24 @@ eval=`git for-each-ref --shell --format="$fmt" \
 eval "$eval"</pre>
 </div>
 </div>
+<div class="paragraph">
+<p>An example to show the usage of %(if)&#8230;&#8203;%(then)&#8230;&#8203;%(else)&#8230;&#8203;%(end).
+This prefixes the current branch with a star.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>git for-each-ref --format="%(if)%(HEAD)%(then)* %(else)  %(end)%(refname:short)" refs/heads/</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>An example to show the usage of %(if)&#8230;&#8203;%(then)&#8230;&#8203;%(end).
+This prints the authorname, if present.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>git for-each-ref --format="%(refname)%(if)%(authorname)%(then) Authored by: %(authorname)%(end)"</pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -769,7 +845,7 @@ eval "$eval"</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:14 W. Europe Daylight Time
 </div>
 </div>
 </body>

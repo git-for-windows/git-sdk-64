@@ -434,9 +434,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="content"><em>git tag</em> [-a | -s | -u &lt;keyid&gt;] [-f] [-m &lt;msg&gt; | -F &lt;file&gt;]
 	&lt;tagname&gt; [&lt;commit&gt; | &lt;object&gt;]
 <em>git tag</em> -d &lt;tagname&gt;&#8230;&#8203;
-<em>git tag</em> [-n[&lt;num&gt;]] -l [--contains &lt;commit&gt;] [--points-at &lt;object&gt;]
-	[--column[=&lt;options&gt;] | --no-column] [--create-reflog] [--sort=&lt;key&gt;]
-	[--format=&lt;format&gt;] [--[no-]merged [&lt;commit&gt;]] [&lt;pattern&gt;&#8230;&#8203;]
+<em>git tag</em> [-n[&lt;num&gt;]] -l [--contains &lt;commit&gt;] [--contains &lt;commit&gt;]
+	[--points-at &lt;object&gt;] [--column[=&lt;options&gt;] | --no-column]
+	[--create-reflog] [--sort=&lt;key&gt;] [--format=&lt;format&gt;]
+	[--[no-]merged [&lt;commit&gt;]] [&lt;pattern&gt;&#8230;&#8203;]
 <em>git tag</em> -v [--format=&lt;format&gt;] &lt;tagname&gt;&#8230;&#8203;</pre>
 </div>
 </div>
@@ -525,19 +526,28 @@ lightweight tags by default.</p>
 <dt class="hdlist1">-n&lt;num&gt;</dt>
 <dd>
 <p>&lt;num&gt; specifies how many lines from the annotation, if any,
-are printed when using -l.
-The default is not to print any annotation lines.
+are printed when using -l. Implies <code>--list</code>.</p>
+<div class="paragraph">
+<p>The default is not to print any annotation lines.
 If no number is given to <code>-n</code>, only the first line is printed.
 If the tag is not annotated, the commit message is displayed instead.</p>
+</div>
 </dd>
-<dt class="hdlist1">-l &lt;pattern&gt;</dt>
-<dt class="hdlist1">--list &lt;pattern&gt;</dt>
+<dt class="hdlist1">-l</dt>
+<dt class="hdlist1">--list</dt>
 <dd>
-<p>List tags with names that match the given pattern (or all if no
-pattern is given).  Running "git tag" without arguments also
-lists all tags. The pattern is a shell wildcard (i.e., matched
-using fnmatch(3)).  Multiple patterns may be given; if any of
-them matches, the tag is shown.</p>
+<p>List tags. With optional <code>&lt;pattern&gt;...</code>, e.g. <code>git tag --list
+'v-*'</code>, list only the tags that match the pattern(s).</p>
+<div class="paragraph">
+<p>Running "git tag" without arguments also lists all tags. The pattern
+is a shell wildcard (i.e., matched using fnmatch(3)). Multiple
+patterns may be given; if any of them matches, the tag is shown.</p>
+</div>
+<div class="paragraph">
+<p>This option is implicitly supplied if any other list-like option such
+as <code>--contains</code> is provided. See the documentation for each of those
+options for details.</p>
+</div>
 </dd>
 <dt class="hdlist1">--sort=&lt;key&gt;</dt>
 <dd>
@@ -571,11 +581,27 @@ without options are equivalent to <em>always</em> and <em>never</em> respectivel
 <dt class="hdlist1">--contains [&lt;commit&gt;]</dt>
 <dd>
 <p>Only list tags which contain the specified commit (HEAD if not
-specified).</p>
+specified). Implies <code>--list</code>.</p>
+</dd>
+<dt class="hdlist1">--no-contains [&lt;commit&gt;]</dt>
+<dd>
+<p>Only list tags which don&#8217;t contain the specified commit (HEAD if
+not specified). Implies <code>--list</code>.</p>
+</dd>
+<dt class="hdlist1">--merged [&lt;commit&gt;]</dt>
+<dd>
+<p>Only list tags whose commits are reachable from the specified
+commit (<code>HEAD</code> if not specified), incompatible with <code>--no-merged</code>.</p>
+</dd>
+<dt class="hdlist1">--no-merged [&lt;commit&gt;]</dt>
+<dd>
+<p>Only list tags whose commits are not reachable from the specified
+commit (<code>HEAD</code> if not specified), incompatible with <code>--merged</code>.</p>
 </dd>
 <dt class="hdlist1">--points-at &lt;object&gt;</dt>
 <dd>
-<p>Only list tags of the given object.</p>
+<p>Only list tags of the given object (HEAD if not
+specified). Implies <code>--list</code>.</p>
 </dd>
 <dt class="hdlist1">-m &lt;msg&gt;</dt>
 <dt class="hdlist1">--message=&lt;msg&gt;</dt>
@@ -629,12 +655,6 @@ Defaults to HEAD.</p>
 pointed at by a ref being shown.  The format is the same as
 that of <a href="git-for-each-ref.html">git-for-each-ref</a>(1).  When unspecified,
 defaults to <code>%(refname:strip=2)</code>.</p>
-</dd>
-<dt class="hdlist1">--[no-]merged [&lt;commit&gt;]</dt>
-<dd>
-<p>Only list tags whose tips are reachable, or not reachable
-if <code>--no-merged</code> is used, from the specified commit (<code>HEAD</code>
-if not specified).</p>
 </dd>
 </dl>
 </div>
@@ -896,7 +916,7 @@ In addition, the date part is accepted in the following formats:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-04-05 17:00:27 W. Europe Daylight Time
+Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
 </div>
 </div>
 </body>
