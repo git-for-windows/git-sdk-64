@@ -1299,6 +1299,7 @@ inline ENUMTYPE &operator ^= (ENUMTYPE &a, ENUMTYPE b) { return (ENUMTYPE &)(((i
 #define DBG_RIPEXCEPTION ((DWORD)0x40010007)
 #define DBG_CONTROL_BREAK ((DWORD)0x40010008)
 #define DBG_COMMAND_EXCEPTION ((DWORD)0x40010009)
+#define DBG_PRINTEXCEPTION_WIDE_C ((DWORD)(0x4001000A)
 #define STATUS_GUARD_PAGE_VIOLATION ((DWORD)0x80000001)
 #define STATUS_DATATYPE_MISALIGNMENT ((DWORD)0x80000002)
 #define STATUS_BREAKPOINT ((DWORD)0x80000003)
@@ -2910,7 +2911,20 @@ __buildmemorybarrier()
       WinAccountCloneableControllersSid = 100,
       WinBuiltinAccessControlAssistanceOperatorsSid = 101,
       WinBuiltinRemoteManagementUsersSid = 102, WinAuthenticationAuthorityAssertedSid = 103,
-      WinAuthenticationServiceAssertedSid = 104
+      WinAuthenticationServiceAssertedSid = 104,
+      WinLocalAccountSid = 105,
+      WinLocalAccountAndAdministratorSid = 106,
+      WinAccountProtectedUsersSid = 107,
+      WinCapabilityAppointmentsSid = 108,
+      WinCapabilityContactsSid = 109,
+      WinAccountDefaultSystemManagedSid = 110,
+      WinBuiltinDefaultSystemManagedGroupSid = 111,
+      WinBuiltinStorageReplicaAdminsSid = 112,
+      WinAccountKeyAdminsSid = 113,
+      WinAccountEnterpriseKeyAdminsSid = 114,
+      WinAuthenticationKeyTrustSid = 115,
+      WinAuthenticationKeyPropertyMFASid = 116,
+      WinAuthenticationKeyPropertyAttestationSid = 117
 } WELL_KNOWN_SID_TYPE;
 
 #define SYSTEM_LUID { 0x3e7, 0x0 }
