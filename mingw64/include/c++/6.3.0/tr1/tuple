@@ -102,26 +102,26 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       : _Inherited(__tail...), _M_head(__head) { }
 
       template<typename... _UElements>
-      _Tuple_impl(const _Tuple_impl<_Idx, _UElements...>& __in)
-      : _Inherited(__in._M_tail()), _M_head(__in._M_head) { }
+      _Tuple_impl(const _Tuple_impl<_Idx, _UElements...>& ___in)
+      : _Inherited(___in._M_tail()), _M_head(___in._M_head) { }
 
-      _Tuple_impl(const _Tuple_impl& __in)
-      : _Inherited(__in._M_tail()), _M_head(__in._M_head) { }
+      _Tuple_impl(const _Tuple_impl& ___in)
+      : _Inherited(___in._M_tail()), _M_head(___in._M_head) { }
      
       template<typename... _UElements>
         _Tuple_impl&
-        operator=(const _Tuple_impl<_Idx, _UElements...>& __in)
+        operator=(const _Tuple_impl<_Idx, _UElements...>& ___in)
         {
-	  _M_head = __in._M_head;
-	  _M_tail() = __in._M_tail();
+	  _M_head = ___in._M_head;
+	  _M_tail() = ___in._M_tail();
 	  return *this;
 	}
 
       _Tuple_impl&
-      operator=(const _Tuple_impl& __in)
+      operator=(const _Tuple_impl& ___in)
       {
-	_M_head = __in._M_head;
-	_M_tail() = __in._M_tail();
+	_M_head = ___in._M_head;
+	_M_tail() = ___in._M_tail();
 	return *this;
       }
     };
@@ -139,24 +139,24 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       : _Inherited(__elements...) { }
 
       template<typename... _UElements>
-        tuple(const tuple<_UElements...>& __in)
-	: _Inherited(__in) { }
+        tuple(const tuple<_UElements...>& ___in)
+	: _Inherited(___in) { }
 
-      tuple(const tuple& __in)
-      : _Inherited(__in) { }
+      tuple(const tuple& ___in)
+      : _Inherited(___in) { }
 
       template<typename... _UElements>
         tuple&
-        operator=(const tuple<_UElements...>& __in)
+        operator=(const tuple<_UElements...>& ___in)
         {
-	  static_cast<_Inherited&>(*this) = __in;
+	  static_cast<_Inherited&>(*this) = ___in;
 	  return *this;
 	}
 
       tuple&
-      operator=(const tuple& __in)
+      operator=(const tuple& ___in)
       {
-	static_cast<_Inherited&>(*this) = __in;
+	static_cast<_Inherited&>(*this) = ___in;
 	return *this;
       }
     };
@@ -178,41 +178,41 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       : _Inherited(__a1, __a2) { }
 
       template<typename _U1, typename _U2>
-        tuple(const tuple<_U1, _U2>& __in)
-	: _Inherited(__in) { }
+        tuple(const tuple<_U1, _U2>& ___in)
+	: _Inherited(___in) { }
 
-      tuple(const tuple& __in)
-      : _Inherited(__in) { }
+      tuple(const tuple& ___in)
+      : _Inherited(___in) { }
 
       template<typename _U1, typename _U2>
-        tuple(const pair<_U1, _U2>& __in)
+        tuple(const pair<_U1, _U2>& ___in)
 	: _Inherited(_Tuple_impl<0, 
 		     typename __add_c_ref<_U1>::type,
-		     typename __add_c_ref<_U2>::type>(__in.first, 
-						      __in.second))
+		     typename __add_c_ref<_U2>::type>(___in.first, 
+						      ___in.second))
         { }
   
       template<typename _U1, typename _U2>
         tuple&
-        operator=(const tuple<_U1, _U2>& __in)
+        operator=(const tuple<_U1, _U2>& ___in)
         {
-	  static_cast<_Inherited&>(*this) = __in;
+	  static_cast<_Inherited&>(*this) = ___in;
 	  return *this;
 	}
 
       tuple&
-      operator=(const tuple& __in)
+      operator=(const tuple& ___in)
       {
-	static_cast<_Inherited&>(*this) = __in;
+	static_cast<_Inherited&>(*this) = ___in;
 	return *this;
       }
 
       template<typename _U1, typename _U2>
         tuple&
-        operator=(const pair<_U1, _U2>& __in)
+        operator=(const pair<_U1, _U2>& ___in)
         {
-	  this->_M_head = __in.first;
-	  this->_M_tail()._M_head = __in.second;
+	  this->_M_head = ___in.first;
+	  this->_M_tail()._M_head = ___in.second;
 	  return *this;
 	}
     };

@@ -738,7 +738,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   //@{
   /**
    *  @brief  Character extractors
-   *  @param  __in  An input stream.
+   *  @param  ___in  An input stream.
    *  @param  __c  A character reference.
    *  @return  in
    *
@@ -749,25 +749,25 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   */
   template<typename _CharT, typename _Traits>
     basic_istream<_CharT, _Traits>&
-    operator>>(basic_istream<_CharT, _Traits>& __in, _CharT& __c);
+    operator>>(basic_istream<_CharT, _Traits>& ___in, _CharT& __c);
 
   template<class _Traits>
     inline basic_istream<char, _Traits>&
-    operator>>(basic_istream<char, _Traits>& __in, unsigned char& __c)
-    { return (__in >> reinterpret_cast<char&>(__c)); }
+    operator>>(basic_istream<char, _Traits>& ___in, unsigned char& __c)
+    { return (___in >> reinterpret_cast<char&>(__c)); }
 
   template<class _Traits>
     inline basic_istream<char, _Traits>&
-    operator>>(basic_istream<char, _Traits>& __in, signed char& __c)
-    { return (__in >> reinterpret_cast<char&>(__c)); }
+    operator>>(basic_istream<char, _Traits>& ___in, signed char& __c)
+    { return (___in >> reinterpret_cast<char&>(__c)); }
   //@}
 
   //@{
   /**
    *  @brief  Character string extractors
-   *  @param  __in  An input stream.
+   *  @param  ___in  An input stream.
    *  @param  __s  A pointer to a character array.
-   *  @return  __in
+   *  @return  ___in
    *
    *  Behaves like one of the formatted arithmetic extractors described in
    *  std::basic_istream.  After constructing a sentry object with good
@@ -791,22 +791,22 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   */
   template<typename _CharT, typename _Traits>
     basic_istream<_CharT, _Traits>&
-    operator>>(basic_istream<_CharT, _Traits>& __in, _CharT* __s);
+    operator>>(basic_istream<_CharT, _Traits>& ___in, _CharT* __s);
 
   // Explicit specialization declaration, defined in src/istream.cc.
   template<>
     basic_istream<char>&
-    operator>>(basic_istream<char>& __in, char* __s);
+    operator>>(basic_istream<char>& ___in, char* __s);
 
   template<class _Traits>
     inline basic_istream<char, _Traits>&
-    operator>>(basic_istream<char, _Traits>& __in, unsigned char* __s)
-    { return (__in >> reinterpret_cast<char*>(__s)); }
+    operator>>(basic_istream<char, _Traits>& ___in, unsigned char* __s)
+    { return (___in >> reinterpret_cast<char*>(__s)); }
 
   template<class _Traits>
     inline basic_istream<char, _Traits>&
-    operator>>(basic_istream<char, _Traits>& __in, signed char* __s)
-    { return (__in >> reinterpret_cast<char*>(__s)); }
+    operator>>(basic_istream<char, _Traits>& ___in, signed char* __s)
+    { return (___in >> reinterpret_cast<char*>(__s)); }
   //@}
 
   /**

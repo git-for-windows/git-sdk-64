@@ -1777,7 +1777,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CXX11
        */
       template<typename _Out_iter>
 	_Out_iter
-	format(_Out_iter __out, const char_type* __fmt_first,
+	format(_Out_iter ___out, const char_type* __fmt_first,
 	       const char_type* __fmt_last,
 	       match_flag_type __flags = regex_constants::format_default) const;
 
@@ -1786,10 +1786,10 @@ _GLIBCXX_BEGIN_NAMESPACE_CXX11
        */
       template<typename _Out_iter, typename _St, typename _Sa>
 	_Out_iter
-	format(_Out_iter __out, const basic_string<char_type, _St, _Sa>& __fmt,
+	format(_Out_iter ___out, const basic_string<char_type, _St, _Sa>& __fmt,
 	       match_flag_type __flags = regex_constants::format_default) const
 	{
-	  return format(__out, __fmt.data(), __fmt.data() + __fmt.size(),
+	  return format(___out, __fmt.data(), __fmt.data() + __fmt.size(),
 			__flags);
 	}
 
@@ -2277,46 +2277,46 @@ _GLIBCXX_END_NAMESPACE_CXX11
   /**
    * @brief Search for a regular expression within a range for multiple times,
    and replace the matched parts through filling a format string.
-   * @param __out   [OUT] The output iterator.
+   * @param ___out   [OUT] The output iterator.
    * @param __first [IN]  The start of the string to search.
    * @param __last  [IN]  One-past-the-end of the string to search.
    * @param __e     [IN]  The regular expression to search for.
    * @param __fmt   [IN]  The format string.
    * @param __flags [IN]  Search and replace policy flags.
    *
-   * @returns __out
+   * @returns ___out
    * @throws an exception of type regex_error.
    */
   template<typename _Out_iter, typename _Bi_iter,
 	   typename _Rx_traits, typename _Ch_type,
 	   typename _St, typename _Sa>
     inline _Out_iter
-    regex_replace(_Out_iter __out, _Bi_iter __first, _Bi_iter __last,
+    regex_replace(_Out_iter ___out, _Bi_iter __first, _Bi_iter __last,
 		  const basic_regex<_Ch_type, _Rx_traits>& __e,
 		  const basic_string<_Ch_type, _St, _Sa>& __fmt,
 		  regex_constants::match_flag_type __flags
 		  = regex_constants::match_default)
     {
-      return regex_replace(__out, __first, __last, __e, __fmt.c_str(), __flags);
+      return regex_replace(___out, __first, __last, __e, __fmt.c_str(), __flags);
     }
 
   /**
    * @brief Search for a regular expression within a range for multiple times,
    and replace the matched parts through filling a format C-string.
-   * @param __out   [OUT] The output iterator.
+   * @param ___out   [OUT] The output iterator.
    * @param __first [IN]  The start of the string to search.
    * @param __last  [IN]  One-past-the-end of the string to search.
    * @param __e     [IN]  The regular expression to search for.
    * @param __fmt   [IN]  The format C-string.
    * @param __flags [IN]  Search and replace policy flags.
    *
-   * @returns __out
+   * @returns ___out
    * @throws an exception of type regex_error.
    */
   template<typename _Out_iter, typename _Bi_iter,
 	   typename _Rx_traits, typename _Ch_type>
     _Out_iter
-    regex_replace(_Out_iter __out, _Bi_iter __first, _Bi_iter __last,
+    regex_replace(_Out_iter ___out, _Bi_iter __first, _Bi_iter __last,
 		  const basic_regex<_Ch_type, _Rx_traits>& __e,
 		  const _Ch_type* __fmt,
 		  regex_constants::match_flag_type __flags

@@ -265,7 +265,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	   typename _Distance>
     _OutputIterator
     random_sample_n(_ForwardIterator __first, _ForwardIterator __last,
-                    _OutputIterator __out, const _Distance __n)
+                    _OutputIterator ___out, const _Distance __n)
     {
       // concept requirements
       __glibcxx_function_requires(_ForwardIteratorConcept<_ForwardIterator>)
@@ -280,14 +280,14 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	{
 	  if ((std::rand() % __remaining) < __m)
 	    {
-	      *__out = *__first;
-	      ++__out;
+	      *___out = *__first;
+	      ++___out;
 	      --__m;
 	    }
 	  --__remaining;
 	  ++__first;
 	}
-      return __out;
+      return ___out;
     }
 
   /**
@@ -299,7 +299,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	   typename _Distance, typename _RandomNumberGenerator>
     _OutputIterator
     random_sample_n(_ForwardIterator __first, _ForwardIterator __last,
-                   _OutputIterator __out, const _Distance __n,
+                   _OutputIterator ___out, const _Distance __n,
 		   _RandomNumberGenerator& __rand)
     {
       // concept requirements
@@ -317,44 +317,44 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	{
 	  if (__rand(__remaining) < __m)
 	    {
-	      *__out = *__first;
-	      ++__out;
+	      *___out = *__first;
+	      ++___out;
 	      --__m;
 	    }
 	  --__remaining;
 	  ++__first;
 	}
-      return __out;
+      return ___out;
     }
 
   template<typename _InputIterator, typename _RandomAccessIterator,
 	   typename _Distance>
     _RandomAccessIterator
     __random_sample(_InputIterator __first, _InputIterator __last,
-		    _RandomAccessIterator __out,
+		    _RandomAccessIterator ___out,
 		    const _Distance __n)
     {
       _Distance __m = 0;
       _Distance __t = __n;
       for ( ; __first != __last && __m < __n; ++__m, ++__first)
-	__out[__m] = *__first;
+	___out[__m] = *__first;
 
       while (__first != __last)
 	{
 	  ++__t;
 	  _Distance __M = std::rand() % (__t);
 	  if (__M < __n)
-	    __out[__M] = *__first;
+	    ___out[__M] = *__first;
 	  ++__first;
 	}
-      return __out + __m;
+      return ___out + __m;
     }
 
   template<typename _InputIterator, typename _RandomAccessIterator,
 	   typename _RandomNumberGenerator, typename _Distance>
     _RandomAccessIterator
     __random_sample(_InputIterator __first, _InputIterator __last,
-		    _RandomAccessIterator __out,
+		    _RandomAccessIterator ___out,
 		    _RandomNumberGenerator& __rand,
 		    const _Distance __n)
     {
@@ -365,17 +365,17 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       _Distance __m = 0;
       _Distance __t = __n;
       for ( ; __first != __last && __m < __n; ++__m, ++__first)
-	__out[__m] = *__first;
+	___out[__m] = *__first;
 
       while (__first != __last)
 	{
 	  ++__t;
 	  _Distance __M = __rand(__t);
 	  if (__M < __n)
-	    __out[__M] = *__first;
+	    ___out[__M] = *__first;
 	  ++__first;
 	}
-      return __out + __m;
+      return ___out + __m;
     }
 
   /**

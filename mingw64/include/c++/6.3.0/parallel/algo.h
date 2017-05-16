@@ -300,48 +300,48 @@ namespace __parallel
   // Sequential fallback
   template<typename _IIter, typename _OutputIterator>
     inline _OutputIterator
-    unique_copy(_IIter __begin1, _IIter __end1, _OutputIterator __out,
+    unique_copy(_IIter __begin1, _IIter __end1, _OutputIterator ___out,
                 __gnu_parallel::sequential_tag)
-    { return _GLIBCXX_STD_A::unique_copy(__begin1, __end1, __out); }
+    { return _GLIBCXX_STD_A::unique_copy(__begin1, __end1, ___out); }
 
   // Sequential fallback
   template<typename _IIter, typename _OutputIterator,
            typename _Predicate>
     inline _OutputIterator
-    unique_copy(_IIter __begin1, _IIter __end1, _OutputIterator __out,
+    unique_copy(_IIter __begin1, _IIter __end1, _OutputIterator ___out,
                 _Predicate __pred, __gnu_parallel::sequential_tag)
-    { return _GLIBCXX_STD_A::unique_copy(__begin1, __end1, __out, __pred); }
+    { return _GLIBCXX_STD_A::unique_copy(__begin1, __end1, ___out, __pred); }
 
   // Sequential fallback for input iterator case
   template<typename _IIter, typename _OutputIterator,
            typename _Predicate, typename _IteratorTag1, typename _IteratorTag2>
     inline _OutputIterator
     __unique_copy_switch(_IIter __begin, _IIter __last, 
-                       _OutputIterator __out, _Predicate __pred, 
+                       _OutputIterator ___out, _Predicate __pred, 
                        _IteratorTag1, _IteratorTag2)
-    { return _GLIBCXX_STD_A::unique_copy(__begin, __last, __out, __pred); }
+    { return _GLIBCXX_STD_A::unique_copy(__begin, __last, ___out, __pred); }
 
   // Parallel unique_copy for random access iterators
   template<typename _RAIter, typename RandomAccessOutputIterator,
            typename _Predicate>
     RandomAccessOutputIterator
     __unique_copy_switch(_RAIter __begin, _RAIter __last, 
-                       RandomAccessOutputIterator __out, _Predicate __pred, 
+                       RandomAccessOutputIterator ___out, _Predicate __pred, 
                        random_access_iterator_tag, random_access_iterator_tag)
     {
       if (_GLIBCXX_PARALLEL_CONDITION(
             static_cast<__gnu_parallel::_SequenceIndex>(__last - __begin)
             > __gnu_parallel::_Settings::get().unique_copy_minimal_n))
         return __gnu_parallel::__parallel_unique_copy(
-                 __begin, __last, __out, __pred);
+                 __begin, __last, ___out, __pred);
       else
-        return _GLIBCXX_STD_A::unique_copy(__begin, __last, __out, __pred);
+        return _GLIBCXX_STD_A::unique_copy(__begin, __last, ___out, __pred);
     }
 
   // Public interface
   template<typename _IIter, typename _OutputIterator>
     inline _OutputIterator
-    unique_copy(_IIter __begin1, _IIter __end1, _OutputIterator __out)
+    unique_copy(_IIter __begin1, _IIter __end1, _OutputIterator ___out)
     {
       typedef std::iterator_traits<_IIter> _IIterTraits;
       typedef std::iterator_traits<_OutputIterator> _OIterTraits;
@@ -350,14 +350,14 @@ namespace __parallel
       typedef typename _OIterTraits::iterator_category _OIterCategory;
 
       return __unique_copy_switch(
-               __begin1, __end1, __out, equal_to<_ValueType>(),
+               __begin1, __end1, ___out, equal_to<_ValueType>(),
                _IIteratorCategory(), _OIterCategory());
     }
 
   // Public interface
   template<typename _IIter, typename _OutputIterator, typename _Predicate>
     inline _OutputIterator
-    unique_copy(_IIter __begin1, _IIter __end1, _OutputIterator __out,
+    unique_copy(_IIter __begin1, _IIter __end1, _OutputIterator ___out,
                 _Predicate __pred)
     {
       typedef std::iterator_traits<_IIter> _IIterTraits;
@@ -366,7 +366,7 @@ namespace __parallel
       typedef typename _OIterTraits::iterator_category _OIterCategory;
 
       return __unique_copy_switch(
-               __begin1, __end1, __out, __pred,
+               __begin1, __end1, ___out, __pred,
                _IIteratorCategory(), _OIterCategory());
     }
 
@@ -376,9 +376,9 @@ namespace __parallel
     inline _OutputIterator
     set_union(_IIter1 __begin1, _IIter1 __end1,
               _IIter2 __begin2, _IIter2 __end2,
-              _OutputIterator __out, __gnu_parallel::sequential_tag)
+              _OutputIterator ___out, __gnu_parallel::sequential_tag)
     { return _GLIBCXX_STD_A::set_union(
-               __begin1, __end1, __begin2, __end2, __out); }
+               __begin1, __end1, __begin2, __end2, ___out); }
 
   // Sequential fallback
   template<typename _IIter1, typename _IIter2,
@@ -386,10 +386,10 @@ namespace __parallel
     inline _OutputIterator
     set_union(_IIter1 __begin1, _IIter1 __end1,
               _IIter2 __begin2, _IIter2 __end2,
-              _OutputIterator __out, _Predicate __pred,
+              _OutputIterator ___out, _Predicate __pred,
               __gnu_parallel::sequential_tag)
     { return _GLIBCXX_STD_A::set_union(__begin1, __end1,
-                                       __begin2, __end2, __out, __pred); }
+                                       __begin2, __end2, ___out, __pred); }
 
   // Sequential fallback for input iterator case
   template<typename _IIter1, typename _IIter2, typename _Predicate,
@@ -430,7 +430,7 @@ namespace __parallel
            typename _OutputIterator>
     inline _OutputIterator 
     set_union(_IIter1 __begin1, _IIter1 __end1,
-              _IIter2 __begin2, _IIter2 __end2, _OutputIterator __out)
+              _IIter2 __begin2, _IIter2 __end2, _OutputIterator ___out)
     {
       typedef std::iterator_traits<_IIter1> _IIterTraits1;
       typedef std::iterator_traits<_IIter2> _IIterTraits2;
@@ -444,7 +444,7 @@ namespace __parallel
       typedef typename _IIterTraits2::value_type _ValueType2;
 
       return __set_union_switch(
-               __begin1, __end1, __begin2, __end2, __out,
+               __begin1, __end1, __begin2, __end2, ___out,
                __gnu_parallel::_Less<_ValueType1, _ValueType2>(),
                _IIterCategory1(), _IIterCategory2(), _OIterCategory());
     }
@@ -455,7 +455,7 @@ namespace __parallel
     inline _OutputIterator 
     set_union(_IIter1 __begin1, _IIter1 __end1,
               _IIter2 __begin2, _IIter2 __end2,
-              _OutputIterator __out, _Predicate __pred)
+              _OutputIterator ___out, _Predicate __pred)
     {
       typedef std::iterator_traits<_IIter1> _IIterTraits1;
       typedef std::iterator_traits<_IIter2> _IIterTraits2;
@@ -467,7 +467,7 @@ namespace __parallel
       typedef typename _OIterTraits::iterator_category _OIterCategory;
 
       return __set_union_switch(
-               __begin1, __end1, __begin2, __end2, __out, __pred,
+               __begin1, __end1, __begin2, __end2, ___out, __pred,
                _IIterCategory1(), _IIterCategory2(), _OIterCategory());
     }
 
@@ -477,9 +477,9 @@ namespace __parallel
     inline _OutputIterator
     set_intersection(_IIter1 __begin1, _IIter1 __end1,
                      _IIter2 __begin2, _IIter2 __end2,
-                     _OutputIterator __out, __gnu_parallel::sequential_tag)
+                     _OutputIterator ___out, __gnu_parallel::sequential_tag)
     { return _GLIBCXX_STD_A::set_intersection(__begin1, __end1,
-                                              __begin2, __end2, __out); }
+                                              __begin2, __end2, ___out); }
 
   // Sequential fallback.
   template<typename _IIter1, typename _IIter2,
@@ -487,10 +487,10 @@ namespace __parallel
     inline _OutputIterator
     set_intersection(_IIter1 __begin1, _IIter1 __end1,
                      _IIter2 __begin2, _IIter2 __end2,
-                     _OutputIterator __out, _Predicate __pred, 
+                     _OutputIterator ___out, _Predicate __pred, 
                      __gnu_parallel::sequential_tag)
     { return _GLIBCXX_STD_A::set_intersection(
-               __begin1, __end1, __begin2, __end2, __out, __pred); }
+               __begin1, __end1, __begin2, __end2, ___out, __pred); }
 
   // Sequential fallback for input iterator case
   template<typename _IIter1, typename _IIter2,
@@ -537,7 +537,7 @@ namespace __parallel
     inline _OutputIterator 
     set_intersection(_IIter1 __begin1, _IIter1 __end1, 
                      _IIter2 __begin2, _IIter2 __end2, 
-                     _OutputIterator __out)
+                     _OutputIterator ___out)
     {
       typedef std::iterator_traits<_IIter1> _IIterTraits1;
       typedef std::iterator_traits<_IIter2> _IIterTraits2;
@@ -551,7 +551,7 @@ namespace __parallel
       typedef typename _IIterTraits2::value_type _ValueType2;
 
       return __set_intersection_switch(
-               __begin1, __end1, __begin2, __end2, __out,
+               __begin1, __end1, __begin2, __end2, ___out,
                __gnu_parallel::_Less<_ValueType1, _ValueType2>(),
                _IIterCategory1(), _IIterCategory2(), _OIterCategory());
     }
@@ -561,7 +561,7 @@ namespace __parallel
     inline _OutputIterator 
     set_intersection(_IIter1 __begin1, _IIter1 __end1,
                      _IIter2 __begin2, _IIter2 __end2,
-                     _OutputIterator __out, _Predicate __pred)
+                     _OutputIterator ___out, _Predicate __pred)
     {
       typedef std::iterator_traits<_IIter1> _IIterTraits1;
       typedef std::iterator_traits<_IIter2> _IIterTraits2;
@@ -573,7 +573,7 @@ namespace __parallel
       typedef typename _OIterTraits::iterator_category _OIterCategory;
 
       return __set_intersection_switch(
-               __begin1, __end1, __begin2, __end2, __out, __pred,
+               __begin1, __end1, __begin2, __end2, ___out, __pred,
                _IIterCategory1(), _IIterCategory2(), _OIterCategory());
     }
 
@@ -583,10 +583,10 @@ namespace __parallel
     inline _OutputIterator
     set_symmetric_difference(_IIter1 __begin1, _IIter1 __end1,
                              _IIter2 __begin2, _IIter2 __end2,
-                             _OutputIterator __out,
+                             _OutputIterator ___out,
                              __gnu_parallel::sequential_tag)
     { return _GLIBCXX_STD_A::set_symmetric_difference(
-               __begin1, __end1, __begin2, __end2, __out); }
+               __begin1, __end1, __begin2, __end2, ___out); }
 
   // Sequential fallback
   template<typename _IIter1, typename _IIter2,
@@ -594,10 +594,10 @@ namespace __parallel
     inline _OutputIterator
     set_symmetric_difference(_IIter1 __begin1, _IIter1 __end1,
                              _IIter2 __begin2, _IIter2 __end2,
-                             _OutputIterator __out, _Predicate __pred,
+                             _OutputIterator ___out, _Predicate __pred,
                              __gnu_parallel::sequential_tag)
     { return _GLIBCXX_STD_A::set_symmetric_difference(
-               __begin1, __end1, __begin2, __end2, __out, __pred); }
+               __begin1, __end1, __begin2, __end2, ___out, __pred); }
 
   // Sequential fallback for input iterator case
   template<typename _IIter1, typename _IIter2,
@@ -644,7 +644,7 @@ namespace __parallel
     inline _OutputIterator 
     set_symmetric_difference(_IIter1 __begin1, _IIter1 __end1,
                              _IIter2 __begin2, _IIter2 __end2,
-                             _OutputIterator __out)
+                             _OutputIterator ___out)
     {
       typedef std::iterator_traits<_IIter1> _IIterTraits1;
       typedef std::iterator_traits<_IIter2> _IIterTraits2;
@@ -658,7 +658,7 @@ namespace __parallel
       typedef typename _IIterTraits2::value_type _ValueType2;
 
       return __set_symmetric_difference_switch(
-               __begin1, __end1, __begin2, __end2, __out,
+               __begin1, __end1, __begin2, __end2, ___out,
                __gnu_parallel::_Less<_ValueType1, _ValueType2>(),
                _IIterCategory1(), _IIterCategory2(), _OIterCategory());
     }
@@ -669,7 +669,7 @@ namespace __parallel
     inline _OutputIterator 
     set_symmetric_difference(_IIter1 __begin1, _IIter1 __end1,
                              _IIter2 __begin2, _IIter2 __end2,
-                             _OutputIterator __out, _Predicate __pred)
+                             _OutputIterator ___out, _Predicate __pred)
     {
       typedef std::iterator_traits<_IIter1> _IIterTraits1;
       typedef std::iterator_traits<_IIter2> _IIterTraits2;
@@ -681,7 +681,7 @@ namespace __parallel
       typedef typename _OIterTraits::iterator_category _OIterCategory;
 
       return __set_symmetric_difference_switch(
-               __begin1, __end1, __begin2, __end2, __out, __pred,
+               __begin1, __end1, __begin2, __end2, ___out, __pred,
                _IIterCategory1(), _IIterCategory2(), _OIterCategory());
     }
 
@@ -691,9 +691,9 @@ namespace __parallel
     inline _OutputIterator
     set_difference(_IIter1 __begin1, _IIter1 __end1, 
                    _IIter2 __begin2, _IIter2 __end2, 
-                   _OutputIterator __out, __gnu_parallel::sequential_tag)
+                   _OutputIterator ___out, __gnu_parallel::sequential_tag)
     { return _GLIBCXX_STD_A::set_difference(
-               __begin1,__end1, __begin2, __end2, __out); }
+               __begin1,__end1, __begin2, __end2, ___out); }
 
   // Sequential fallback.
   template<typename _IIter1, typename _IIter2,
@@ -701,10 +701,10 @@ namespace __parallel
     inline _OutputIterator
     set_difference(_IIter1 __begin1, _IIter1 __end1, 
                    _IIter2 __begin2, _IIter2 __end2, 
-                   _OutputIterator __out, _Predicate __pred, 
+                   _OutputIterator ___out, _Predicate __pred, 
                    __gnu_parallel::sequential_tag)
     { return _GLIBCXX_STD_A::set_difference(__begin1, __end1,
-                                            __begin2, __end2, __out, __pred); }
+                                            __begin2, __end2, ___out, __pred); }
 
   // Sequential fallback for input iterator case.
   template<typename _IIter1, typename _IIter2, typename _Predicate,
@@ -749,7 +749,7 @@ namespace __parallel
     inline _OutputIterator
     set_difference(_IIter1 __begin1, _IIter1 __end1, 
                    _IIter2 __begin2, _IIter2 __end2, 
-                   _OutputIterator __out)
+                   _OutputIterator ___out)
     {
       typedef std::iterator_traits<_IIter1> _IIterTraits1;
       typedef std::iterator_traits<_IIter2> _IIterTraits2;
@@ -763,7 +763,7 @@ namespace __parallel
       typedef typename _IIterTraits2::value_type _ValueType2;
 
       return __set_difference_switch(
-               __begin1, __end1, __begin2, __end2, __out,
+               __begin1, __end1, __begin2, __end2, ___out,
                __gnu_parallel::_Less<_ValueType1, _ValueType2>(),
                _IIterCategory1(), _IIterCategory2(), _OIterCategory());
     }
@@ -774,7 +774,7 @@ namespace __parallel
     inline _OutputIterator
     set_difference(_IIter1 __begin1, _IIter1 __end1, 
                    _IIter2 __begin2, _IIter2 __end2, 
-                   _OutputIterator __out, _Predicate __pred)
+                   _OutputIterator ___out, _Predicate __pred)
     {
       typedef std::iterator_traits<_IIter1> _IIterTraits1;
       typedef std::iterator_traits<_IIter2> _IIterTraits2;
@@ -786,7 +786,7 @@ namespace __parallel
       typedef typename _OIterTraits::iterator_category _OIterCategory;
 
       return __set_difference_switch(
-               __begin1, __end1, __begin2, __end2, __out, __pred,
+               __begin1, __end1, __begin2, __end2, ___out, __pred,
                _IIterCategory1(), _IIterCategory2(), _OIterCategory());
     }
 

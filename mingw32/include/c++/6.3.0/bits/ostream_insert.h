@@ -41,31 +41,31 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
   template<typename _CharT, typename _Traits>
     inline void
-    __ostream_write(basic_ostream<_CharT, _Traits>& __out,
+    __ostream_write(basic_ostream<_CharT, _Traits>& ___out,
 		    const _CharT* __s, streamsize __n)
     {
       typedef basic_ostream<_CharT, _Traits>       __ostream_type;      
       typedef typename __ostream_type::ios_base    __ios_base;
 
-      const streamsize __put = __out.rdbuf()->sputn(__s, __n);
+      const streamsize __put = ___out.rdbuf()->sputn(__s, __n);
       if (__put != __n)
-	__out.setstate(__ios_base::badbit);
+	___out.setstate(__ios_base::badbit);
     }
 
   template<typename _CharT, typename _Traits>
     inline void
-    __ostream_fill(basic_ostream<_CharT, _Traits>& __out, streamsize __n)
+    __ostream_fill(basic_ostream<_CharT, _Traits>& ___out, streamsize __n)
     {
       typedef basic_ostream<_CharT, _Traits>       __ostream_type;      
       typedef typename __ostream_type::ios_base    __ios_base;
 
-      const _CharT __c = __out.fill();
+      const _CharT __c = ___out.fill();
       for (; __n > 0; --__n)
 	{
-	  const typename _Traits::int_type __put = __out.rdbuf()->sputc(__c);
+	  const typename _Traits::int_type __put = ___out.rdbuf()->sputc(__c);
 	  if (_Traits::eq_int_type(__put, _Traits::eof()))
 	    {
-	      __out.setstate(__ios_base::badbit);
+	      ___out.setstate(__ios_base::badbit);
 	      break;
 	    }
 	}
@@ -73,43 +73,43 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
   template<typename _CharT, typename _Traits>
     basic_ostream<_CharT, _Traits>&
-    __ostream_insert(basic_ostream<_CharT, _Traits>& __out,
+    __ostream_insert(basic_ostream<_CharT, _Traits>& ___out,
 		     const _CharT* __s, streamsize __n)
     {
       typedef basic_ostream<_CharT, _Traits>       __ostream_type;
       typedef typename __ostream_type::ios_base    __ios_base;
 
-      typename __ostream_type::sentry __cerb(__out);
+      typename __ostream_type::sentry __cerb(___out);
       if (__cerb)
 	{
 	  __try
 	    {
-	      const streamsize __w = __out.width();
+	      const streamsize __w = ___out.width();
 	      if (__w > __n)
 		{
-		  const bool __left = ((__out.flags()
+		  const bool __left = ((___out.flags()
 					& __ios_base::adjustfield)
 				       == __ios_base::left);
 		  if (!__left)
-		    __ostream_fill(__out, __w - __n);
-		  if (__out.good())
-		    __ostream_write(__out, __s, __n);
-		  if (__left && __out.good())
-		    __ostream_fill(__out, __w - __n);
+		    __ostream_fill(___out, __w - __n);
+		  if (___out.good())
+		    __ostream_write(___out, __s, __n);
+		  if (__left && ___out.good())
+		    __ostream_fill(___out, __w - __n);
 		}
 	      else
-		__ostream_write(__out, __s, __n);
-	      __out.width(0);
+		__ostream_write(___out, __s, __n);
+	      ___out.width(0);
 	    }
 	  __catch(__cxxabiv1::__forced_unwind&)
 	    {
-	      __out._M_setstate(__ios_base::badbit);
+	      ___out._M_setstate(__ios_base::badbit);
 	      __throw_exception_again;
 	    }
 	  __catch(...)
-	    { __out._M_setstate(__ios_base::badbit); }
+	    { ___out._M_setstate(__ios_base::badbit); }
 	}
-      return __out;
+      return ___out;
     }
 
   // Inhibit implicit instantiations for required instantiations,

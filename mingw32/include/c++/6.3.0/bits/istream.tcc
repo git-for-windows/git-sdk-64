@@ -44,20 +44,20 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
   template<typename _CharT, typename _Traits>
     basic_istream<_CharT, _Traits>::sentry::
-    sentry(basic_istream<_CharT, _Traits>& __in, bool __noskip) : _M_ok(false)
+    sentry(basic_istream<_CharT, _Traits>& ___in, bool __noskip) : _M_ok(false)
     {
       ios_base::iostate __err = ios_base::goodbit;
-      if (__in.good())
+      if (___in.good())
 	{
-	  if (__in.tie())
-	    __in.tie()->flush();
-	  if (!__noskip && bool(__in.flags() & ios_base::skipws))
+	  if (___in.tie())
+	    ___in.tie()->flush();
+	  if (!__noskip && bool(___in.flags() & ios_base::skipws))
 	    {
 	      const __int_type __eof = traits_type::eof();
-	      __streambuf_type* __sb = __in.rdbuf();
+	      __streambuf_type* __sb = ___in.rdbuf();
 	      __int_type __c = __sb->sgetc();
 
-	      const __ctype_type& __ct = __check_facet(__in._M_ctype);
+	      const __ctype_type& __ct = __check_facet(___in._M_ctype);
 	      while (!traits_type::eq_int_type(__c, __eof)
 		     && __ct.is(ctype_base::space, 
 				traits_type::to_char_type(__c)))
@@ -71,12 +71,12 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	    }
 	}
 
-      if (__in.good() && __err == ios_base::goodbit)
+      if (___in.good() && __err == ios_base::goodbit)
 	_M_ok = true;
       else
 	{
 	  __err |= ios_base::failbit;
-	  __in.setstate(__err);
+	  ___in.setstate(__err);
 	}
     }
 
@@ -920,18 +920,18 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   // 27.6.1.2.3 Character extraction templates
   template<typename _CharT, typename _Traits>
     basic_istream<_CharT, _Traits>&
-    operator>>(basic_istream<_CharT, _Traits>& __in, _CharT& __c)
+    operator>>(basic_istream<_CharT, _Traits>& ___in, _CharT& __c)
     {
       typedef basic_istream<_CharT, _Traits>		__istream_type;
       typedef typename __istream_type::int_type         __int_type;
 
-      typename __istream_type::sentry __cerb(__in, false);
+      typename __istream_type::sentry __cerb(___in, false);
       if (__cerb)
 	{
 	  ios_base::iostate __err = ios_base::goodbit;
 	  __try
 	    {
-	      const __int_type __cb = __in.rdbuf()->sbumpc();
+	      const __int_type __cb = ___in.rdbuf()->sbumpc();
 	      if (!_Traits::eq_int_type(__cb, _Traits::eof()))
 		__c = _Traits::to_char_type(__cb);
 	      else
@@ -939,20 +939,20 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	    }
 	  __catch(__cxxabiv1::__forced_unwind&)
 	    {
-	      __in._M_setstate(ios_base::badbit);
+	      ___in._M_setstate(ios_base::badbit);
 	      __throw_exception_again;
 	    }
 	  __catch(...)
-	    { __in._M_setstate(ios_base::badbit); }
+	    { ___in._M_setstate(ios_base::badbit); }
 	  if (__err)
-	    __in.setstate(__err);
+	    ___in.setstate(__err);
 	}
-      return __in;
+      return ___in;
     }
 
   template<typename _CharT, typename _Traits>
     basic_istream<_CharT, _Traits>&
-    operator>>(basic_istream<_CharT, _Traits>& __in, _CharT* __s)
+    operator>>(basic_istream<_CharT, _Traits>& ___in, _CharT* __s)
     {
       typedef basic_istream<_CharT, _Traits>		__istream_type;
       typedef basic_streambuf<_CharT, _Traits>          __streambuf_type;
@@ -962,20 +962,20 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
       streamsize __extracted = 0;
       ios_base::iostate __err = ios_base::goodbit;
-      typename __istream_type::sentry __cerb(__in, false);
+      typename __istream_type::sentry __cerb(___in, false);
       if (__cerb)
 	{
 	  __try
 	    {
 	      // Figure out how many characters to extract.
-	      streamsize __num = __in.width();
+	      streamsize __num = ___in.width();
 	      if (__num <= 0)
 		__num = __gnu_cxx::__numeric_traits<streamsize>::__max;
 
-	      const __ctype_type& __ct = use_facet<__ctype_type>(__in.getloc());
+	      const __ctype_type& __ct = use_facet<__ctype_type>(___in.getloc());
 
 	      const int_type __eof = _Traits::eof();
-	      __streambuf_type* __sb = __in.rdbuf();
+	      __streambuf_type* __sb = ___in.rdbuf();
 	      int_type __c = __sb->sgetc();
 
 	      while (__extracted < __num - 1
@@ -993,36 +993,36 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	      // _GLIBCXX_RESOLVE_LIB_DEFECTS
 	      // 68.  Extractors for char* should store null at end
 	      *__s = char_type();
-	      __in.width(0);
+	      ___in.width(0);
 	    }
 	  __catch(__cxxabiv1::__forced_unwind&)
 	    {
-	      __in._M_setstate(ios_base::badbit);
+	      ___in._M_setstate(ios_base::badbit);
 	      __throw_exception_again;
 	    }
 	  __catch(...)
-	    { __in._M_setstate(ios_base::badbit); }
+	    { ___in._M_setstate(ios_base::badbit); }
 	}
       if (!__extracted)
 	__err |= ios_base::failbit;
       if (__err)
-	__in.setstate(__err);
-      return __in;
+	___in.setstate(__err);
+      return ___in;
     }
 
   // 27.6.1.4 Standard basic_istream manipulators
   template<typename _CharT, typename _Traits>
     basic_istream<_CharT, _Traits>&
-    ws(basic_istream<_CharT, _Traits>& __in)
+    ws(basic_istream<_CharT, _Traits>& ___in)
     {
       typedef basic_istream<_CharT, _Traits>		__istream_type;
       typedef basic_streambuf<_CharT, _Traits>          __streambuf_type;
       typedef typename __istream_type::int_type		__int_type;
       typedef ctype<_CharT>				__ctype_type;
 
-      const __ctype_type& __ct = use_facet<__ctype_type>(__in.getloc());
+      const __ctype_type& __ct = use_facet<__ctype_type>(___in.getloc());
       const __int_type __eof = _Traits::eof();
-      __streambuf_type* __sb = __in.rdbuf();
+      __streambuf_type* __sb = ___in.rdbuf();
       __int_type __c = __sb->sgetc();
 
       while (!_Traits::eq_int_type(__c, __eof)
@@ -1030,8 +1030,8 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	__c = __sb->snextc();
 
        if (_Traits::eq_int_type(__c, __eof))
-	 __in.setstate(ios_base::eofbit);
-      return __in;
+	 ___in.setstate(ios_base::eofbit);
+      return ___in;
     }
 
   // Inhibit implicit instantiations for required instantiations,

@@ -246,10 +246,10 @@ _GLIBCXX_BEGIN_NAMESPACE_CXX11
       {
 	if (!_M_with_cvtstate)
 	  _M_state = state_type();
-	wide_string __out{ _M_wide_err_string.get_allocator() };
-	if (__str_codecvt_in(__first, __last, __out, *_M_cvt, _M_state,
+	wide_string ___out{ _M_wide_err_string.get_allocator() };
+	if (__str_codecvt_in(__first, __last, ___out, *_M_cvt, _M_state,
 			     _M_count))
-	  return __out;
+	  return ___out;
 	if (_M_with_strings)
 	  return _M_wide_err_string;
 	__throw_range_error("wstring_convert::from_bytes");
@@ -282,10 +282,10 @@ _GLIBCXX_BEGIN_NAMESPACE_CXX11
       {
 	if (!_M_with_cvtstate)
 	  _M_state = state_type();
-	byte_string __out{ _M_byte_err_string.get_allocator() };
-	if (__str_codecvt_out(__first, __last, __out, *_M_cvt, _M_state,
+	byte_string ___out{ _M_byte_err_string.get_allocator() };
+	if (__str_codecvt_out(__first, __last, ___out, *_M_cvt, _M_state,
 			      _M_count))
-	  return __out;
+	  return ___out;
 	if (_M_with_strings)
 	  return _M_byte_err_string;
 	__throw_range_error("wstring_convert::to_bytes");
@@ -375,13 +375,13 @@ _GLIBCXX_END_NAMESPACE_CXX11
       { return _M_buf && _M_conv_put() && _M_buf->pubsync() ? 0 : -1; }
 
       typename _Wide_streambuf::int_type
-      overflow(typename _Wide_streambuf::int_type __out)
+      overflow(typename _Wide_streambuf::int_type ___out)
       {
 	if (!_M_buf || !_M_conv_put())
 	  return _Tr::eof();
-	else if (!_Tr::eq_int_type(__out, _Tr::eof()))
-	  return this->sputc(__out);
-	return _Tr::not_eof(__out);
+	else if (!_Tr::eq_int_type(___out, _Tr::eof()))
+	  return this->sputc(___out);
+	return _Tr::not_eof(___out);
       }
 
       typename _Wide_streambuf::int_type

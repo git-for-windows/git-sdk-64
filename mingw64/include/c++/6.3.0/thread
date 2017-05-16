@@ -107,7 +107,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
       template<class _CharT, class _Traits>
 	friend basic_ostream<_CharT, _Traits>&
-	operator<<(basic_ostream<_CharT, _Traits>& __out, thread::id __id);
+	operator<<(basic_ostream<_CharT, _Traits>& ___out, thread::id __id);
     };
 
   private:
@@ -259,12 +259,12 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
   template<class _CharT, class _Traits>
     inline basic_ostream<_CharT, _Traits>&
-    operator<<(basic_ostream<_CharT, _Traits>& __out, thread::id __id)
+    operator<<(basic_ostream<_CharT, _Traits>& ___out, thread::id __id)
     {
       if (__id == thread::id())
-	return __out << "thread::id of a non-executing thread";
+	return ___out << "thread::id of a non-executing thread";
       else
-	return __out << __id._M_thread;
+	return ___out << __id._M_thread;
     }
 
 _GLIBCXX_END_NAMESPACE_VERSION

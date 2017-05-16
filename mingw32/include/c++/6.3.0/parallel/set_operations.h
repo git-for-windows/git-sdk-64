@@ -130,12 +130,12 @@ namespace __gnu_parallel
       }
 
       _OutputIterator
-      __first_empty(_IIter __c, _IIter __d, _OutputIterator __out) const
-      { return std::copy(__c, __d, __out); }
+      __first_empty(_IIter __c, _IIter __d, _OutputIterator ___out) const
+      { return std::copy(__c, __d, ___out); }
 
       _OutputIterator
-      __second_empty(_IIter __a, _IIter __b, _OutputIterator __out) const
-      { return std::copy(__a, __b, __out); }
+      __second_empty(_IIter __a, _IIter __b, _OutputIterator ___out) const
+      { return std::copy(__a, __b, ___out); }
     };
 
 
@@ -198,12 +198,12 @@ namespace __gnu_parallel
       }
 
       _OutputIterator
-      __first_empty(_IIter, _IIter, _OutputIterator __out) const
-      { return __out; }
+      __first_empty(_IIter, _IIter, _OutputIterator ___out) const
+      { return ___out; }
 
       _OutputIterator
-      __second_empty(_IIter __a, _IIter __b, _OutputIterator __out) const
-      { return std::copy(__a, __b, __out); }
+      __second_empty(_IIter __a, _IIter __b, _OutputIterator ___out) const
+      { return std::copy(__a, __b, ___out); }
     };
 
 
@@ -265,12 +265,12 @@ namespace __gnu_parallel
       }
 
       _OutputIterator
-      __first_empty(_IIter, _IIter, _OutputIterator __out) const
-      { return __out; }
+      __first_empty(_IIter, _IIter, _OutputIterator ___out) const
+      { return ___out; }
 
       _OutputIterator
-      __second_empty(_IIter, _IIter, _OutputIterator __out) const
-      { return __out; }
+      __second_empty(_IIter, _IIter, _OutputIterator ___out) const
+      { return ___out; }
     };
 
   template<class _IIter, class _OutputIterator, class _Compare>
@@ -335,12 +335,12 @@ namespace __gnu_parallel
       }
 
       _OutputIterator
-      __first_empty(_IIter __c, _IIter __d, _OutputIterator __out) const
-      { return std::copy(__c, __d, __out); }
+      __first_empty(_IIter __c, _IIter __d, _OutputIterator ___out) const
+      { return std::copy(__c, __d, ___out); }
 
       _OutputIterator
-      __second_empty(_IIter __a, _IIter __b, _OutputIterator __out) const
-      { return std::copy(__a, __b, __out); }
+      __second_empty(_IIter __a, _IIter __b, _OutputIterator ___out) const
+      { return std::copy(__a, __b, ___out); }
     };
 
   template<typename _IIter,

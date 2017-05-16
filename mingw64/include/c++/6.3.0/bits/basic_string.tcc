@@ -1434,7 +1434,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   // 21.3.7.9 basic_string::getline and operators
   template<typename _CharT, typename _Traits, typename _Alloc>
     basic_istream<_CharT, _Traits>&
-    operator>>(basic_istream<_CharT, _Traits>& __in,
+    operator>>(basic_istream<_CharT, _Traits>& ___in,
 	       basic_string<_CharT, _Traits, _Alloc>& __str)
     {
       typedef basic_istream<_CharT, _Traits>		__istream_type;
@@ -1447,7 +1447,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
       __size_type __extracted = 0;
       typename __ios_base::iostate __err = __ios_base::goodbit;
-      typename __istream_type::sentry __cerb(__in, false);
+      typename __istream_type::sentry __cerb(___in, false);
       if (__cerb)
 	{
 	  __try
@@ -1456,12 +1456,12 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	      __str.erase();
 	      _CharT __buf[128];
 	      __size_type __len = 0;	      
-	      const streamsize __w = __in.width();
+	      const streamsize __w = ___in.width();
 	      const __size_type __n = __w > 0 ? static_cast<__size_type>(__w)
 		                              : __str.max_size();
-	      const __ctype_type& __ct = use_facet<__ctype_type>(__in.getloc());
+	      const __ctype_type& __ct = use_facet<__ctype_type>(___in.getloc());
 	      const __int_type __eof = _Traits::eof();
-	      __int_type __c = __in.rdbuf()->sgetc();
+	      __int_type __c = ___in.rdbuf()->sgetc();
 
 	      while (__extracted < __n
 		     && !_Traits::eq_int_type(__c, __eof)
@@ -1475,17 +1475,17 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 		    }
 		  __buf[__len++] = _Traits::to_char_type(__c);
 		  ++__extracted;
-		  __c = __in.rdbuf()->snextc();
+		  __c = ___in.rdbuf()->snextc();
 		}
 	      __str.append(__buf, __len);
 
 	      if (_Traits::eq_int_type(__c, __eof))
 		__err |= __ios_base::eofbit;
-	      __in.width(0);
+	      ___in.width(0);
 	    }
 	  __catch(__cxxabiv1::__forced_unwind&)
 	    {
-	      __in._M_setstate(__ios_base::badbit);
+	      ___in._M_setstate(__ios_base::badbit);
 	      __throw_exception_again;
 	    }
 	  __catch(...)
@@ -1493,20 +1493,20 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	      // _GLIBCXX_RESOLVE_LIB_DEFECTS
 	      // 91. Description of operator>> and getline() for string<>
 	      // might cause endless loop
-	      __in._M_setstate(__ios_base::badbit);
+	      ___in._M_setstate(__ios_base::badbit);
 	    }
 	}
       // 211.  operator>>(istream&, string&) doesn't set failbit
       if (!__extracted)
 	__err |= __ios_base::failbit;
       if (__err)
-	__in.setstate(__err);
-      return __in;
+	___in.setstate(__err);
+      return ___in;
     }
 
   template<typename _CharT, typename _Traits, typename _Alloc>
     basic_istream<_CharT, _Traits>&
-    getline(basic_istream<_CharT, _Traits>& __in,
+    getline(basic_istream<_CharT, _Traits>& ___in,
 	    basic_string<_CharT, _Traits, _Alloc>& __str, _CharT __delim)
     {
       typedef basic_istream<_CharT, _Traits>		__istream_type;
@@ -1518,7 +1518,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       __size_type __extracted = 0;
       const __size_type __n = __str.max_size();
       typename __ios_base::iostate __err = __ios_base::goodbit;
-      typename __istream_type::sentry __cerb(__in, true);
+      typename __istream_type::sentry __cerb(___in, true);
       if (__cerb)
 	{
 	  __try
@@ -1526,7 +1526,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	      __str.erase();
 	      const __int_type __idelim = _Traits::to_int_type(__delim);
 	      const __int_type __eof = _Traits::eof();
-	      __int_type __c = __in.rdbuf()->sgetc();
+	      __int_type __c = ___in.rdbuf()->sgetc();
 
 	      while (__extracted < __n
 		     && !_Traits::eq_int_type(__c, __eof)
@@ -1534,7 +1534,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 		{
 		  __str += _Traits::to_char_type(__c);
 		  ++__extracted;
-		  __c = __in.rdbuf()->snextc();
+		  __c = ___in.rdbuf()->snextc();
 		}
 
 	      if (_Traits::eq_int_type(__c, __eof))
@@ -1542,14 +1542,14 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	      else if (_Traits::eq_int_type(__c, __idelim))
 		{
 		  ++__extracted;		  
-		  __in.rdbuf()->sbumpc();
+		  ___in.rdbuf()->sbumpc();
 		}
 	      else
 		__err |= __ios_base::failbit;
 	    }
 	  __catch(__cxxabiv1::__forced_unwind&)
 	    {
-	      __in._M_setstate(__ios_base::badbit);
+	      ___in._M_setstate(__ios_base::badbit);
 	      __throw_exception_again;
 	    }
 	  __catch(...)
@@ -1557,14 +1557,14 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	      // _GLIBCXX_RESOLVE_LIB_DEFECTS
 	      // 91. Description of operator>> and getline() for string<>
 	      // might cause endless loop
-	      __in._M_setstate(__ios_base::badbit);
+	      ___in._M_setstate(__ios_base::badbit);
 	    }
 	}
       if (!__extracted)
 	__err |= __ios_base::failbit;
       if (__err)
-	__in.setstate(__err);
-      return __in;
+	___in.setstate(__err);
+      return ___in;
     }
 
   // Inhibit implicit instantiations for required instantiations,

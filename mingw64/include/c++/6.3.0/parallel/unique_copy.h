@@ -85,7 +85,7 @@ namespace __gnu_parallel
 	// Check for length without duplicates
 	// Needed for position in output
 	_DifferenceType __i = 0;
-	_OutputIterator __out = __result;
+	_OutputIterator ___out = __result;
 
 	if (__iam == 0)
           {
@@ -93,7 +93,7 @@ namespace __gnu_parallel
             __end = __borders[__iam + 1];
 
             ++__i;
-            *__out++ = *__first;
+            *___out++ = *__first;
 
             for (_IIter __iter = __first + __begin; __iter < __first + __end;
 		 ++__iter)
@@ -101,7 +101,7 @@ namespace __gnu_parallel
         	if (!__binary_pred(*__iter, *(__iter - 1)))
                   {
                     ++__i;
-                    *__out++ = *__iter;
+                    *___out++ = *__iter;
                   }
               }
           }

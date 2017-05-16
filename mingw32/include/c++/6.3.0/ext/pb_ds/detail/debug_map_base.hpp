@@ -57,9 +57,9 @@ namespace __gnu_pbds
     // Need std::pair ostream extractor.
     template<typename _CharT, typename _Traits, typename _Tp1, typename _Tp2>
     inline std::basic_ostream<_CharT, _Traits>&
-    operator<<(std::basic_ostream<_CharT, _Traits>& __out,
+    operator<<(std::basic_ostream<_CharT, _Traits>& ___out,
 	       const std::pair<_Tp1, _Tp2>& p)
-    { return (__out << '(' << p.first << ',' << p.second << ')'); }
+    { return (___out << '(' << p.first << ',' << p.second << ')'); }
 
 #define PB_DS_CLASS_T_DEC \
     template<typename Key, typename Eq_Fn, typename Const_Key_Reference>

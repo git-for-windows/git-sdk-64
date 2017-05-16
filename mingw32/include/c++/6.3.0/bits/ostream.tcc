@@ -318,10 +318,10 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
   template<typename _CharT, typename _Traits>
     basic_ostream<_CharT, _Traits>&
-    operator<<(basic_ostream<_CharT, _Traits>& __out, const char* __s)
+    operator<<(basic_ostream<_CharT, _Traits>& ___out, const char* __s)
     {
       if (!__s)
-	__out.setstate(ios_base::badbit);
+	___out.setstate(ios_base::badbit);
       else
 	{
 	  // _GLIBCXX_RESOLVE_LIB_DEFECTS
@@ -339,18 +339,18 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
 	      _CharT *__ws = __pg.__get();
 	      for (size_t  __i = 0; __i < __clen; ++__i)
-		__ws[__i] = __out.widen(__s[__i]);
-	      __ostream_insert(__out, __ws, __clen);
+		__ws[__i] = ___out.widen(__s[__i]);
+	      __ostream_insert(___out, __ws, __clen);
 	    }
 	  __catch(__cxxabiv1::__forced_unwind&)
 	    {
-	      __out._M_setstate(ios_base::badbit);
+	      ___out._M_setstate(ios_base::badbit);
 	      __throw_exception_again;
 	    }
 	  __catch(...)
-	    { __out._M_setstate(ios_base::badbit); }
+	    { ___out._M_setstate(ios_base::badbit); }
 	}
-      return __out;
+      return ___out;
     }
 
   // Inhibit implicit instantiations for required instantiations,

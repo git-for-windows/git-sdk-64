@@ -1372,7 +1372,7 @@ namespace __gnu_parallel
    *     for (int __j = 0; __i < 10; ++__j)
    *       sequences[__i][__j] = __j;
    *
-   *   int __out[33];
+   *   int ___out[33];
    *   std::vector<std::pair<int*> > seqs;
    *   for (int __i = 0; __i < 10; ++__i)
    *     { seqs.push(std::make_pair<int*>(sequences[__i],
@@ -1733,7 +1733,7 @@ namespace __gnu_parallel
    *     for (int __j = 0; __i < 11; ++__j)
    *       sequences[__i][__j] = __j; // __last one is sentinel!
    *
-   *   int __out[33];
+   *   int ___out[33];
    *   std::vector<std::pair<int*> > seqs;
    *   for (int __i = 0; __i < 10; ++__i)
    *     { seqs.push(std::make_pair<int*>(sequences[__i],

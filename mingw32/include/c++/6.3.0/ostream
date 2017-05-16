@@ -479,14 +479,14 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   //@{
   /**
    *  @brief  Character inserters
-   *  @param  __out  An output stream.
+   *  @param  ___out  An output stream.
    *  @param  __c  A character.
    *  @return  out
    *
    *  Behaves like one of the formatted arithmetic inserters described in
    *  std::basic_ostream.  After constructing a sentry object with good
    *  status, this function inserts a single character and any required
-   *  padding (as determined by [22.2.2.2.2]).  @c __out.width(0) is then
+   *  padding (as determined by [22.2.2.2.2]).  @c ___out.width(0) is then
    *  called.
    *
    *  If @p __c is of type @c char and the character type of the stream is not
@@ -494,36 +494,36 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   */
   template<typename _CharT, typename _Traits>
     inline basic_ostream<_CharT, _Traits>&
-    operator<<(basic_ostream<_CharT, _Traits>& __out, _CharT __c)
-    { return __ostream_insert(__out, &__c, 1); }
+    operator<<(basic_ostream<_CharT, _Traits>& ___out, _CharT __c)
+    { return __ostream_insert(___out, &__c, 1); }
 
   template<typename _CharT, typename _Traits>
     inline basic_ostream<_CharT, _Traits>&
-    operator<<(basic_ostream<_CharT, _Traits>& __out, char __c)
-    { return (__out << __out.widen(__c)); }
+    operator<<(basic_ostream<_CharT, _Traits>& ___out, char __c)
+    { return (___out << ___out.widen(__c)); }
 
   // Specialization
   template <class _Traits>
     inline basic_ostream<char, _Traits>&
-    operator<<(basic_ostream<char, _Traits>& __out, char __c)
-    { return __ostream_insert(__out, &__c, 1); }
+    operator<<(basic_ostream<char, _Traits>& ___out, char __c)
+    { return __ostream_insert(___out, &__c, 1); }
 
   // Signed and unsigned
   template<class _Traits>
     inline basic_ostream<char, _Traits>&
-    operator<<(basic_ostream<char, _Traits>& __out, signed char __c)
-    { return (__out << static_cast<char>(__c)); }
+    operator<<(basic_ostream<char, _Traits>& ___out, signed char __c)
+    { return (___out << static_cast<char>(__c)); }
 
   template<class _Traits>
     inline basic_ostream<char, _Traits>&
-    operator<<(basic_ostream<char, _Traits>& __out, unsigned char __c)
-    { return (__out << static_cast<char>(__c)); }
+    operator<<(basic_ostream<char, _Traits>& ___out, unsigned char __c)
+    { return (___out << static_cast<char>(__c)); }
   //@}
 
   //@{
   /**
    *  @brief  String inserters
-   *  @param  __out  An output stream.
+   *  @param  ___out  An output stream.
    *  @param  __s  A character string.
    *  @return  out
    *  @pre  @p __s must be a non-NULL pointer
@@ -532,47 +532,47 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
    *  std::basic_ostream.  After constructing a sentry object with good
    *  status, this function inserts @c traits::length(__s) characters starting
    *  at @p __s, widened if necessary, followed by any required padding (as
-   *  determined by [22.2.2.2.2]).  @c __out.width(0) is then called.
+   *  determined by [22.2.2.2.2]).  @c ___out.width(0) is then called.
   */
   template<typename _CharT, typename _Traits>
     inline basic_ostream<_CharT, _Traits>&
-    operator<<(basic_ostream<_CharT, _Traits>& __out, const _CharT* __s)
+    operator<<(basic_ostream<_CharT, _Traits>& ___out, const _CharT* __s)
     {
       if (!__s)
-	__out.setstate(ios_base::badbit);
+	___out.setstate(ios_base::badbit);
       else
-	__ostream_insert(__out, __s,
+	__ostream_insert(___out, __s,
 			 static_cast<streamsize>(_Traits::length(__s)));
-      return __out;
+      return ___out;
     }
 
   template<typename _CharT, typename _Traits>
     basic_ostream<_CharT, _Traits> &
-    operator<<(basic_ostream<_CharT, _Traits>& __out, const char* __s);
+    operator<<(basic_ostream<_CharT, _Traits>& ___out, const char* __s);
 
   // Partial specializations
   template<class _Traits>
     inline basic_ostream<char, _Traits>&
-    operator<<(basic_ostream<char, _Traits>& __out, const char* __s)
+    operator<<(basic_ostream<char, _Traits>& ___out, const char* __s)
     {
       if (!__s)
-	__out.setstate(ios_base::badbit);
+	___out.setstate(ios_base::badbit);
       else
-	__ostream_insert(__out, __s,
+	__ostream_insert(___out, __s,
 			 static_cast<streamsize>(_Traits::length(__s)));
-      return __out;
+      return ___out;
     }
 
   // Signed and unsigned
   template<class _Traits>
     inline basic_ostream<char, _Traits>&
-    operator<<(basic_ostream<char, _Traits>& __out, const signed char* __s)
-    { return (__out << reinterpret_cast<const char*>(__s)); }
+    operator<<(basic_ostream<char, _Traits>& ___out, const signed char* __s)
+    { return (___out << reinterpret_cast<const char*>(__s)); }
 
   template<class _Traits>
     inline basic_ostream<char, _Traits> &
-    operator<<(basic_ostream<char, _Traits>& __out, const unsigned char* __s)
-    { return (__out << reinterpret_cast<const char*>(__s)); }
+    operator<<(basic_ostream<char, _Traits>& ___out, const unsigned char* __s)
+    { return (___out << reinterpret_cast<const char*>(__s)); }
   //@}
 
   // Standard basic_ostream manipulators

@@ -207,38 +207,38 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   namespace {
 
     template<size_t __shift>
-      inline void __rshift(uint32_t *__out, const uint32_t *__in)
+      inline void __rshift(uint32_t *___out, const uint32_t *___in)
       {
-	uint64_t __th = ((static_cast<uint64_t>(__in[3]) << 32)
-			 | static_cast<uint64_t>(__in[2]));
-	uint64_t __tl = ((static_cast<uint64_t>(__in[1]) << 32)
-			 | static_cast<uint64_t>(__in[0]));
+	uint64_t __th = ((static_cast<uint64_t>(___in[3]) << 32)
+			 | static_cast<uint64_t>(___in[2]));
+	uint64_t __tl = ((static_cast<uint64_t>(___in[1]) << 32)
+			 | static_cast<uint64_t>(___in[0]));
 
 	uint64_t __oh = __th >> (__shift * 8);
 	uint64_t __ol = __tl >> (__shift * 8);
 	__ol |= __th << (64 - __shift * 8);
-	__out[1] = static_cast<uint32_t>(__ol >> 32);
-	__out[0] = static_cast<uint32_t>(__ol);
-	__out[3] = static_cast<uint32_t>(__oh >> 32);
-	__out[2] = static_cast<uint32_t>(__oh);
+	___out[1] = static_cast<uint32_t>(__ol >> 32);
+	___out[0] = static_cast<uint32_t>(__ol);
+	___out[3] = static_cast<uint32_t>(__oh >> 32);
+	___out[2] = static_cast<uint32_t>(__oh);
       }
 
 
     template<size_t __shift>
-      inline void __lshift(uint32_t *__out, const uint32_t *__in)
+      inline void __lshift(uint32_t *___out, const uint32_t *___in)
       {
-	uint64_t __th = ((static_cast<uint64_t>(__in[3]) << 32)
-			 | static_cast<uint64_t>(__in[2]));
-	uint64_t __tl = ((static_cast<uint64_t>(__in[1]) << 32)
-			 | static_cast<uint64_t>(__in[0]));
+	uint64_t __th = ((static_cast<uint64_t>(___in[3]) << 32)
+			 | static_cast<uint64_t>(___in[2]));
+	uint64_t __tl = ((static_cast<uint64_t>(___in[1]) << 32)
+			 | static_cast<uint64_t>(___in[0]));
 
 	uint64_t __oh = __th << (__shift * 8);
 	uint64_t __ol = __tl << (__shift * 8);
 	__oh |= __tl >> (64 - __shift * 8);
-	__out[1] = static_cast<uint32_t>(__ol >> 32);
-	__out[0] = static_cast<uint32_t>(__ol);
-	__out[3] = static_cast<uint32_t>(__oh >> 32);
-	__out[2] = static_cast<uint32_t>(__oh);
+	___out[1] = static_cast<uint32_t>(__ol >> 32);
+	___out[0] = static_cast<uint32_t>(__ol);
+	___out[3] = static_cast<uint32_t>(__oh >> 32);
+	___out[2] = static_cast<uint32_t>(__oh);
       }
 
 

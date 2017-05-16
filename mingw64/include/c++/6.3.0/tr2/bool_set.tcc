@@ -100,9 +100,9 @@ _GLIBCXX_END_NAMESPACE_VERSION
        *  @param  v  Value to format and insert.
        *  @return  Iterator after reading.
       iter_type
-      get(iter_type __in, iter_type __end, ios_base& __io,
+      get(iter_type ___in, iter_type __end, ios_base& __io,
 	  ios_base::iostate& __err, bool& __v) const
-      { return this->do_get(__in, __end, __io, __err, __v); }
+      { return this->do_get(___in, __end, __io, __err, __v); }
        */
 /*
   template<typename _CharT, typename _InIter>

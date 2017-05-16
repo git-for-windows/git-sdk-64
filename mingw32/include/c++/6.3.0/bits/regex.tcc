@@ -357,7 +357,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
   template<typename _Bi_iter, typename _Alloc>
   template<typename _Out_iter>
     _Out_iter match_results<_Bi_iter, _Alloc>::
-    format(_Out_iter __out,
+    format(_Out_iter ___out,
 	   const match_results<_Bi_iter, _Alloc>::char_type* __fmt_first,
 	   const match_results<_Bi_iter, _Alloc>::char_type* __fmt_last,
 	   match_flag_type __flags) const
@@ -372,7 +372,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	{
 	  auto& __sub = (*this)[__idx];
 	  if (__sub.matched)
-	    __out = std::copy(__sub.first, __sub.second, __out);
+	    ___out = std::copy(__sub.first, __sub.second, ___out);
 	};
 
       if (__flags & regex_constants::format_sed)
@@ -389,10 +389,10 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 		    && __fctyp.is(__ctype_type::digit, *__fmt_first))
 		  __output(__traits.value(*__fmt_first++, 10));
 		else
-		  *__out++ = '\\';
+		  *___out++ = '\\';
 	      }
 	    else
-	      *__out++ = *__fmt_first++;
+	      *___out++ = *__fmt_first++;
 	}
       else
 	{
@@ -402,7 +402,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	      if (__next == __fmt_last)
 		break;
 
-	      __out = std::copy(__fmt_first, __next, __out);
+	      ___out = std::copy(__fmt_first, __next, ___out);
 
 	      auto __eat = [&](char __ch) -> bool
 		{
@@ -415,22 +415,22 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 		};
 
 	      if (++__next == __fmt_last)
-		*__out++ = '$';
+		*___out++ = '$';
 	      else if (__eat('$'))
-		*__out++ = '$';
+		*___out++ = '$';
 	      else if (__eat('&'))
 		__output(0);
 	      else if (__eat('`'))
 		{
 		  auto& __sub = _M_prefix();
 		  if (__sub.matched)
-		    __out = std::copy(__sub.first, __sub.second, __out);
+		    ___out = std::copy(__sub.first, __sub.second, ___out);
 		}
 	      else if (__eat('\''))
 		{
 		  auto& __sub = _M_suffix();
 		  if (__sub.matched)
-		    __out = std::copy(__sub.first, __sub.second, __out);
+		    ___out = std::copy(__sub.first, __sub.second, ___out);
 		}
 	      else if (__fctyp.is(__ctype_type::digit, *__next))
 		{
@@ -445,18 +445,18 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 		    __output(__num);
 		}
 	      else
-		*__out++ = '$';
+		*___out++ = '$';
 	      __fmt_first = __next;
 	    }
-	  __out = std::copy(__fmt_first, __fmt_last, __out);
+	  ___out = std::copy(__fmt_first, __fmt_last, ___out);
 	}
-      return __out;
+      return ___out;
     }
 
   template<typename _Out_iter, typename _Bi_iter,
 	   typename _Rx_traits, typename _Ch_type>
     _Out_iter
-    regex_replace(_Out_iter __out, _Bi_iter __first, _Bi_iter __last,
+    regex_replace(_Out_iter ___out, _Bi_iter __first, _Bi_iter __last,
 		  const basic_regex<_Ch_type, _Rx_traits>& __e,
 		  const _Ch_type* __fmt,
 		  regex_constants::match_flag_type __flags)
@@ -467,7 +467,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       if (__i == __end)
 	{
 	  if (!(__flags & regex_constants::format_no_copy))
-	    __out = std::copy(__first, __last, __out);
+	    ___out = std::copy(__first, __last, ___out);
 	}
       else
 	{
@@ -476,17 +476,17 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 	  for (; __i != __end; ++__i)
 	    {
 	      if (!(__flags & regex_constants::format_no_copy))
-		__out = std::copy(__i->prefix().first, __i->prefix().second,
-				  __out);
-	      __out = __i->format(__out, __fmt, __fmt + __len, __flags);
+		___out = std::copy(__i->prefix().first, __i->prefix().second,
+				  ___out);
+	      ___out = __i->format(___out, __fmt, __fmt + __len, __flags);
 	      __last = __i->suffix();
 	      if (__flags & regex_constants::format_first_only)
 		break;
 	    }
 	  if (!(__flags & regex_constants::format_no_copy))
-	    __out = std::copy(__last.first, __last.second, __out);
+	    ___out = std::copy(__last.first, __last.second, ___out);
 	}
-      return __out;
+      return ___out;
     }
 
   template<typename _Bi_iter,

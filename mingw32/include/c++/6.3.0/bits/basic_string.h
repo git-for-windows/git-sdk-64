@@ -5384,13 +5384,13 @@ _GLIBCXX_END_NAMESPACE_CXX11
 
   template<>
     basic_istream<char>&
-    getline(basic_istream<char>& __in, basic_string<char>& __str,
+    getline(basic_istream<char>& ___in, basic_string<char>& __str,
 	    char __delim);
 
 #ifdef _GLIBCXX_USE_WCHAR_T
   template<>
     basic_istream<wchar_t>&
-    getline(basic_istream<wchar_t>& __in, basic_string<wchar_t>& __str,
+    getline(basic_istream<wchar_t>& ___in, basic_string<wchar_t>& __str,
 	    wchar_t __delim);
 #endif  
 

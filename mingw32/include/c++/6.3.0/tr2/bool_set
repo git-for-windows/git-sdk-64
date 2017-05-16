@@ -131,18 +131,18 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
     template<typename CharT, typename Traits>
       friend std::basic_ostream<CharT, Traits>&
-      operator<<(std::basic_ostream<CharT, Traits>& __out, bool_set __b)
+      operator<<(std::basic_ostream<CharT, Traits>& ___out, bool_set __b)
       {
 	int __a = __b._M_b;
-	__out << __a;
+	___out << __a;
       }
 
     template<typename CharT, typename Traits>
       friend std::basic_istream<CharT, Traits>&
-      operator>>(std::basic_istream<CharT, Traits>& __in, bool_set& __b)
+      operator>>(std::basic_istream<CharT, Traits>& ___in, bool_set& __b)
       {
 	long __c;
-	__in >> __c;
+	___in >> __c;
 	if (__c >= _S_false && __c < _S_empty)
 	  __b._M_b = static_cast<_Bool_set_val>(__c);
       }
