@@ -81,10 +81,18 @@ To enable the SPDY protocol in the application program ``nghttpx`` and
 
 * spdylay >= 1.3.2
 
+We no longer recommend to build nghttp2 with SPDY protocol support
+enabled.  SPDY support will be removed soon.
+
 To enable ``-a`` option (getting linked assets from the downloaded
 resource) in ``nghttp``, the following package is required:
 
 * libxml2 >= 2.7.7
+
+To enable systemd support in nghttpx, the following package is
+required:
+
+* libsystemd-dev >= 209
 
 The HPACK tools require the following package:
 
@@ -115,15 +123,17 @@ The Python bindings require the following packages:
 * python >= 2.7
 * python-setuptools
 
-If you are using Ubuntu 14.04 LTS (trusty) or Debian 7.0 (wheezy) and above run the following to install the needed packages:
+If you are using Ubuntu 16.04 LTS (Xenial Xerus) or Debian 8 (jessie)
+and above, run the following to install the required packages:
 
 .. code-block:: text
 
     sudo apt-get install g++ make binutils autoconf automake autotools-dev libtool pkg-config \
       zlib1g-dev libcunit1-dev libssl-dev libxml2-dev libev-dev libevent-dev libjansson-dev \
-      libc-ares-dev libjemalloc-dev cython python3-dev python-setuptools
+      libc-ares-dev libjemalloc-dev libsystemd-dev libspdylay-dev \
+      cython python3-dev python-setuptools
 
-From Ubuntu 15.10, spdylay has been available as a package named
+Since Ubuntu 15.10, spdylay has been available as a package named
 `libspdylay-dev`.  For the earlier Ubuntu release, you need to build
 it yourself: http://tatsuhiro-t.github.io/spdylay/
 
@@ -147,22 +157,8 @@ minimizes the risk of private key leakage when serious bug like
 Heartbleed is exploited.  The neverbleed is disabled by default.  To
 enable it, use ``--with-neverbleed`` configure option.
 
-Building from git
------------------
-
-Building from git is easy, but please be sure that at least autoconf 2.68 is
-used:
-
-.. code-block:: text
-
-    $ git submodule update --init
-    $ autoreconf -i
-    $ automake
-    $ autoconf
-    $ ./configure
-    $ make
-
-To compile the source code, gcc >= 4.8.3 or clang >= 3.4 is required.
+In ordre to compile the source code, gcc >= 4.8.3 or clang >= 3.4 is
+required.
 
 .. note::
 
@@ -186,6 +182,62 @@ To compile the source code, gcc >= 4.8.3 or clang >= 3.4 is required.
    don't have to use it explicitly.  But if you found that
    applications were not built, then using ``--enable-app`` may find
    that cause, such as the missing dependency.
+
+.. note::
+
+   In order to detect third party libraries, pkg-config is used
+   (however we don't use pkg-config for some libraries (e.g., libev)).
+   By default, pkg-config searches ``*.pc`` file in the standard
+   locations (e.g., /usr/lib/pkgconfig).  If it is necessary to use
+   ``*.pc`` file in the custom location, specify paths to
+   ``PKG_CONFIG_PATH`` environment variable, and pass it to configure
+   script, like so:
+
+   .. code-block:: text
+
+       $ ./configure PKG_CONFIG_PATH=/path/to/pkgconfig
+
+   For pkg-config managed libraries, ``*_CFLAG`` and ``*_LIBS``
+   environment variables are defined (e.g., ``OPENSSL_CFLAGS``,
+   ``OPENSSL_LIBS``).  Specifying non-empty string to these variables
+   completely overrides pkg-config.  In other words, if they are
+   specified, pkg-config is not used for detection, and user is
+   responsible to specify the correct values to these variables.  For
+   complete list of these variables, run ``./configure -h``.
+
+Building nghttp2 from release tar archive
+-----------------------------------------
+
+The nghttp2 project regularly releases tar archives which includes
+nghttp2 source code, and generated build files.  They can be
+downloaded from `Releases
+<https://github.com/nghttp2/nghttp2/releases>`_ page.
+
+Building nghttp2 from git requires autotools development packages.
+Building from tar archives does not require them, and thus it is much
+easier.  The usual build step is as follows:
+
+.. code-block:: text
+
+    $ tar xf nghttp2-X.Y.Z.tar.bz2
+    $ cd nghttp2-X.Y.Z
+    $ ./configure
+    $ make
+
+Building from git
+-----------------
+
+Building from git is easy, but please be sure that at least autoconf 2.68 is
+used:
+
+.. code-block:: text
+
+    $ git submodule update --init
+    $ autoreconf -i
+    $ automake
+    $ autoconf
+    $ ./configure
+    $ make
 
 Notes for building on Windows (MSVC)
 ------------------------------------

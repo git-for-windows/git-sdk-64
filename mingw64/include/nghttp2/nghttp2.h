@@ -863,6 +863,11 @@ typedef enum {
  * the outgoing queue temporarily.  To move back deferred DATA frame
  * to outgoing queue, call `nghttp2_session_resume_data()`.
  *
+ * By default, |length| is limited to 16KiB at maximum.  If peer
+ * allows larger frames, application can enlarge transmission buffer
+ * size.  See :type:`nghttp2_data_source_read_length_callback` for
+ * more details.
+ *
  * If the application just wants to return from
  * `nghttp2_session_send()` or `nghttp2_session_mem_send()` without
  * sending anything, return :enum:`NGHTTP2_ERR_PAUSE`.
@@ -2549,6 +2554,16 @@ nghttp2_option_set_max_deflate_dynamic_table_size(nghttp2_option *option,
 /**
  * @function
  *
+ * This option prevents the library from retaining closed streams to
+ * maintain the priority tree.  If this option is set to nonzero,
+ * applications can discard closed stream completely to save memory.
+ */
+NGHTTP2_EXTERN void nghttp2_option_set_no_closed_streams(nghttp2_option *option,
+                                                         int val);
+
+/**
+ * @function
+ *
  * Initializes |*session_ptr| for client use.  The all members of
  * |callbacks| are copied to |*session_ptr|.  Therefore |*session_ptr|
  * does not store |callbacks|.  The |user_data| is an arbitrary user
@@ -3566,7 +3581,7 @@ NGHTTP2_EXTERN int nghttp2_session_upgrade2(nghttp2_session *session,
  * Serializes the SETTINGS values |iv| in the |buf|.  The size of the
  * |buf| is specified by |buflen|.  The number of entries in the |iv|
  * array is given by |niv|.  The required space in |buf| for the |niv|
- * entries is ``8*niv`` bytes and if the given buffer is too small, an
+ * entries is ``6*niv`` bytes and if the given buffer is too small, an
  * error is returned.  This function is used mainly for creating a
  * SETTINGS payload to be sent with the ``HTTP2-Settings`` header
  * field in an HTTP Upgrade request.  The data written in |buf| is NOT

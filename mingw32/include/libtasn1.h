@@ -44,7 +44,7 @@ extern "C"
 {
 #endif
 
-#define ASN1_VERSION "4.9"
+#define ASN1_VERSION "4.10"
 
 #if defined(__GNUC__) && !defined(ASN1_INTERNAL_BUILD)
 # define _ASN1_GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
@@ -377,7 +377,7 @@ extern "C"
   extern ASN1_API int
     asn1_get_object_id_der (const unsigned char *der,
                             int der_len, int *ret_len,
-		 	    char *str, int str_size);
+                            char *str, int str_size);
 
 /* Compatibility types */
 

@@ -65,12 +65,6 @@ HB_EXTERN GType hb_gobject_direction_get_type (void) G_GNUC_CONST;
 HB_EXTERN GType hb_gobject_script_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_SCRIPT (hb_gobject_script_get_type ())
 
-HB_EXTERN GType hb_gobject_unicode_general_category_get_type (void) G_GNUC_CONST;
-#define HB_GOBJECT_TYPE_UNICODE_GENERAL_CATEGORY (hb_gobject_unicode_general_category_get_type ())
-
-HB_EXTERN GType hb_gobject_unicode_combining_class_get_type (void) G_GNUC_CONST;
-#define HB_GOBJECT_TYPE_UNICODE_COMBINING_CLASS (hb_gobject_unicode_combining_class_get_type ())
-
 HB_EXTERN GType hb_gobject_ot_layout_glyph_class_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_LAYOUT_GLYPH_CLASS (hb_gobject_ot_layout_glyph_class_get_type ())
 
@@ -82,6 +76,12 @@ HB_EXTERN GType hb_gobject_ot_math_kern_get_type (void) G_GNUC_CONST;
 
 HB_EXTERN GType hb_gobject_ot_math_glyph_part_flags_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_MATH_GLYPH_PART_FLAGS (hb_gobject_ot_math_glyph_part_flags_get_type ())
+
+HB_EXTERN GType hb_gobject_unicode_general_category_get_type (void) G_GNUC_CONST;
+#define HB_GOBJECT_TYPE_UNICODE_GENERAL_CATEGORY (hb_gobject_unicode_general_category_get_type ())
+
+HB_EXTERN GType hb_gobject_unicode_combining_class_get_type (void) G_GNUC_CONST;
+#define HB_GOBJECT_TYPE_UNICODE_COMBINING_CLASS (hb_gobject_unicode_combining_class_get_type ())
 
 
 HB_END_DECLS
