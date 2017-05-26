@@ -320,7 +320,7 @@ typedef int (*gnutls_openpgp_recv_key_func) (gnutls_session_t
 					     *keyfpr,
 					     unsigned int
 					     keyfpr_length,
-					     gnutls_datum_t * key) _GNUTLS_GCC_ATTR_DEPRECATED;
+					     gnutls_datum_t * key);
 
 void
 gnutls_openpgp_set_recv_key_function(gnutls_session_t session,

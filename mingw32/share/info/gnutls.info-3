@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 8 January 2017 for version 3.5.10 of GnuTLS.
+This manual is last updated 28 March 2017 for version 3.5.12 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -370,7 +370,7 @@ to 'more'.  Both will exit with a status code of 0.
                                        0 to 65536
             --app-proto=str        an alias for the 'starttls-proto' option
             --starttls-proto=str   The application protocol to be used to obtain the server's certificate
-     (https, ftp, smtp, imap, ldap, xmpp)
+     (https, ftp, smtp, imap, ldap, xmpp, lmtp, pop3, nntp, sieve, postgres)
         -v, --version[=arg]        output version information and exit
         -h, --help                 display extended usage information and exit
         -!, --more-help            extended usage information passed thru pager
@@ -2279,7 +2279,7 @@ gnutls_anon_set_server_known_dh_params
           SEC_PARAM)
      RES: is a gnutls_anon_server_credentials_t type
 
-     SEC_PARAM: - undescribed -
+     SEC_PARAM: is an option of the 'gnutls_sec_param_t' enumeration
 
      This function will set the Diffie-Hellman parameters for an
      anonymous server to use.  These parameters will be used in
@@ -2438,7 +2438,8 @@ gnutls_certificate_client_get_request_status
           (gnutls_session_t SESSION)
      SESSION: is a gnutls session
 
-     Get whether client certificate is requested or not.
+     Get whether client certificate was requested on the last handshake
+     or not.
 
      *Returns:* 0 if the peer (server) did not request client
      authentication or 1 otherwise.
@@ -4269,7 +4270,7 @@ gnutls_dh_params_cpy
      SRC: Is the source parameters
 
      This function will copy the DH parameters structure from source to
-     destination.
+     destination.  The destination should be already initialized.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.
@@ -4949,6 +4950,10 @@ gnutls_global_set_mutex
      program and libraries.  Do not call this function from a library,
      or preferably from any application unless really needed to.  GnuTLS
      will use the appropriate locks for the running system.
+
+     Note that since the move to implicit initialization of GnuTLS on
+     library load, calling this function will deinitialize the library,
+     and re-initialize it after the new locking functions are set.
 
      This function must be called prior to any other gnutls function.
 
@@ -5935,7 +5940,7 @@ gnutls_pem_base64_encode
 
  -- Function: int gnutls_pem_base64_encode (const char * MSG, const
           gnutls_datum_t * DATA, char * RESULT, size_t * RESULT_SIZE)
-     MSG: is a message to be put in the header
+     MSG: is a message to be put in the header (may be 'NULL' )
 
      DATA: contain the raw data
 
@@ -5946,8 +5951,8 @@ gnutls_pem_base64_encode
      This function will convert the given data to printable data, using
      the base64 encoding.  This is the encoding used in PEM messages.
 
-     The output string will be null terminated, although the size will
-     not include the terminating null.
+     The output string will be null terminated, although the output size
+     will not include the terminating null.
 
      *Returns:* On success 'GNUTLS_E_SUCCESS' (0) is returned,
      'GNUTLS_E_SHORT_MEMORY_BUFFER' is returned if the buffer given is
@@ -5958,7 +5963,7 @@ gnutls_pem_base64_encode2
 
  -- Function: int gnutls_pem_base64_encode2 (const char * MSG, const
           gnutls_datum_t * DATA, gnutls_datum_t * RESULT)
-     MSG: is a message to be put in the encoded header
+     MSG: is a message to be put in the encoded header (may be 'NULL' )
 
      DATA: contains the raw data
 
@@ -6850,7 +6855,9 @@ gnutls_random_art
      ART: The returned random art
 
      This function will convert a given fingerprint to an "artistic"
-     image.  The returned image is allocated using 'gnutls_malloc()' .
+     image.  The returned image is allocated using 'gnutls_malloc()' ,
+     is null-terminated but art->size will not account the terminating
+     null.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise an error code is returned.
@@ -7544,12 +7551,17 @@ gnutls_session_ext_register
      UNPACK_FUNC: a function which will deserialize the extension's
      private data
 
-     FLAGS: must be zero
+     FLAGS: must be zero or flags from 'gnutls_ext_flags_t'
 
      This function will register a new extension type.  The extension
      will be only usable within the registered session.  If the
      extension type is already registered then
-     'GNUTLS_E_ALREADY_REGISTERED' will be returned.
+     'GNUTLS_E_ALREADY_REGISTERED' will be returned, unless the flag
+     'GNUTLS_EXT_FLAG_OVERRIDE_INTERNAL' is specified.  The latter flag
+     when specified can be used to override certain extensions
+     introduced after 3.5.12.  It is expected to be used by applications
+     which handle custom extensions that are not currently supported in
+     GnuTLS, but direct support for them may be added in the future.
 
      Each registered extension can store temporary data into the
      gnutls_session_t structure using 'gnutls_ext_set_data()' , and they
@@ -8883,7 +8895,7 @@ gnutls_supplemental_send
           unsigned DO_SEND_SUPPLEMENTAL)
      SESSION: is a 'gnutls_session_t' type.
 
-     DO_SEND_SUPPLEMENTAL: - undescribed -
+     DO_SEND_SUPPLEMENTAL: non-zero in order to send supplemental data
 
      This function is to be called by an extension handler to instruct
      gnutls to send supplemental data during the handshake process.
@@ -9205,11 +9217,16 @@ gnutls_transport_set_pull_timeout_function
      ms);
 
      This callback is necessary when 'gnutls_handshake_set_timeout()' or
-     'gnutls_record_set_timeout()' are set.  It will not be used when
-     non-blocking sockets are in use.  That is, this function will not
-     operate when 'GNUTLS_NONBLOCK' is specified in 'gnutls_init()' , or
-     a custom pull function is registered without updating the pull
-     timeout function.
+     'gnutls_record_set_timeout()' are set, and for calculating the DTLS
+     mode timeouts.
+
+     In short, this callback should be set when a custom pull function
+     is registered.  The callback will not be used when the session is
+     in TLS mode with non-blocking sockets.  That is, when
+     'GNUTLS_NONBLOCK' is specified for a TLS session in 'gnutls_init()'
+     .  For compatibility with future GnuTLS versions it is recommended
+     to always set this function when a custom pull function is
+     registered.
 
      The helper function 'gnutls_system_recv_timeout()' is provided to
      simplify writing callbacks.

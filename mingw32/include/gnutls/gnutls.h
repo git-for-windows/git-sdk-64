@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.5.10"
+#define GNUTLS_VERSION "3.5.12"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 5
-#define GNUTLS_VERSION_PATCH 10
+#define GNUTLS_VERSION_PATCH 12
 
-#define GNUTLS_VERSION_NUMBER 0x03050a
+#define GNUTLS_VERSION_NUMBER 0x03050c
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -2566,9 +2566,9 @@ typedef int (*gnutls_ext_unpack_func) (gnutls_buffer_t packed_data,
  * @GNUTLS_EXT_TLS: TLS-internal extension.
  * @GNUTLS_EXT_MANDATORY: Extension parsed even if resuming (or extensions are disabled).
  *
- * Enumeration of different TLS extension types.  This flag
- * indicates for an extension whether it is useful to application
- * level or TLS level only.  This is (only) used to parse the
+ * Enumeration of different TLS extension types.  This type is
+ * to indicate whether an extension is useful to application
+ * level or TLS level only.  This is used to parse the
  * application level extensions before the "client_hello" callback
  * is called.
  */
@@ -2580,8 +2580,18 @@ typedef enum {
   GNUTLS_EXT_NONE = 4
 } gnutls_ext_parse_type_t;
 
-	/* Register a custom tls extension
-	 */
+/**
+ * gnutls_ext_flags_t:
+ * @GNUTLS_EXT_FLAG_OVERRIDE_INTERNAL: If specified the extension registered will override the internal; this does not work with extensions existing prior to 3.5.12.
+ *
+ * Enumeration of different TLS extension registration flags.
+ */
+typedef enum {
+  GNUTLS_EXT_FLAG_OVERRIDE_INTERNAL = 1
+} gnutls_ext_flags_t;
+
+/* Register a custom tls extension
+ */
 int gnutls_ext_register(const char *name, int type, gnutls_ext_parse_type_t parse_type,
 				gnutls_ext_recv_func recv_func, gnutls_ext_send_func send_func, 
 				gnutls_ext_deinit_data_func deinit_func, gnutls_ext_pack_func pack_func,
