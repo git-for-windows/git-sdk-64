@@ -278,16 +278,16 @@ of an expression."
           ;; Primitives that allocate memory.
           (($ <application> _ ($ <primitive-ref> _ 'cons) (x y))
            (logior (compute-effects x) (compute-effects y)
-                   &allocation))
+                   (cause &allocation)))
 
           (($ <application> _ ($ <primitive-ref> _ (or 'list 'vector)) args)
-           (logior (accumulate-effects args) &allocation))
+           (logior (accumulate-effects args) (cause &allocation)))
 
           (($ <application> _ ($ <primitive-ref> _ 'make-prompt-tag) ())
-           &allocation)
+           (cause &allocation))
 
           (($ <application> _ ($ <primitive-ref> _ 'make-prompt-tag) (arg))
-           (logior (compute-effects arg) &allocation))
+           (logior (compute-effects arg) (cause &allocation)))
 
           ;; Primitives that are normally effect-free, but which might
           ;; cause type checks, allocate memory, or access mutable

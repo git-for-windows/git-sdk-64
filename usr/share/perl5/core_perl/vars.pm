@@ -31,7 +31,7 @@ sub import {
 		 : $ch eq "\@" ? \@$sym
 		 : $ch eq "\%" ? \%$sym
 		 : $ch eq "\*" ? \*$sym
-		 : $ch eq "\&" ? \&$sym 
+		 : $ch eq "\&" ? \&$sym
 		 : do {
 		     require Carp;
 		     Carp::croak("'$_' is not a valid variable name");
@@ -61,7 +61,7 @@ functionality provided by this pragma has been superseded by C<our>
 declarations, available in Perl v5.6.0 or later, and use of this pragma is
 discouraged.  See L<perlfunc/our>.
 
-This will predeclare all the variables whose names are 
+This will predeclare all the variables whose names are
 in the list, allowing you to use them under "use strict", and
 disabling any typo warnings.
 

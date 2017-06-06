@@ -132,7 +132,7 @@ byte algorithm.
 
 Fails if the original UTF-8 sequence cannot be represented in the
 native 8 bit encoding. On failure dies or, if the value of I<$fail_ok> is
-true, returns false. 
+true, returns false.
 
 Returns true on success.
 

@@ -304,7 +304,7 @@ serialization."
 (define hex-chars
   (string->char-set "0123456789abcdefABCDEF"))
 
-(define* (uri-decode str #:key (encoding "utf-8"))
+(define* (uri-decode str #:key (encoding "utf-8") (decode-plus-to-space? #t))
   "Percent-decode the given STR, according to ENCODING,
 which should be the name of a character encoding.
 
@@ -320,6 +320,10 @@ bytes are not valid for the given encoding. Pass ‘#f’ for ENCODING if
 you want decoded bytes as a bytevector directly.  ‘set-port-encoding!’,
 for more information on character encodings.
 
+If DECODE-PLUS-TO-SPACE? is true, which is the default, also replace
+instances of the plus character (+) with a space character.  This is
+needed when parsing application/x-www-form-urlencoded data.
+
 Returns a string of the decoded characters, or a bytevector if
 ENCODING was ‘#f’."
   (let* ((len (string-length str))
@@ -330,7 +334,7 @@ ENCODING was ‘#f’."
                (if (< i len)
                    (let ((ch (string-ref str i)))
                      (cond
-                      ((eqv? ch #\+)
+                      ((and (eqv? ch #\+) decode-plus-to-space?)
                        (put-u8 port (char->integer #\space))
                        (lp (1+ i)))
                       ((and (< (+ i 2) len) (eqv? ch #\%)
@@ -413,7 +417,8 @@ removing empty components.
 For example, ‘\"/foo/bar%20baz/\"’ decodes to the two-element list,
 ‘(\"foo\" \"bar baz\")’."
   (filter (lambda (x) (not (string-null? x)))
-          (map uri-decode (string-split path #\/))))
+          (map (lambda (s) (uri-decode s #:decode-plus-to-space? #f))
+               (string-split path #\/))))
 
 (define (encode-and-join-uri-path parts)
   "URI-encode each element of PARTS, which should be a list of

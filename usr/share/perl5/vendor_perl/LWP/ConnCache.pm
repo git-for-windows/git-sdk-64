@@ -3,7 +3,7 @@ package LWP::ConnCache;
 use strict;
 use vars qw($VERSION $DEBUG);
 
-$VERSION = "6.13";
+$VERSION = "6.15";
 
 
 sub new {

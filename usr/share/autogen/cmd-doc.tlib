@@ -6,7 +6,7 @@
 #
 #  This file is part of AutoOpts, a companion to AutoGen.
 #  AutoOpts is free software.
-#  Copyright (C) 1992-2013 Bruce Korb - all rights reserved
+#  Copyright (C) 1992-2013, 2015 Bruce Korb - all rights reserved
 #
 #  AutoOpts is available under any one of two licenses.  The license
 #  in use must be one of these two and the choice is under the control
@@ -86,7 +86,7 @@
     (string-append "mk-" macro-name) )))
 
 (make-tmp-dir)
-
+(shell "mkdir $tmp_dir/SEC")
 (define home-rc-files (exist? "homerc"))
 (define home-rc-text
   "\nSee \\fBOPTION PRESETS\\fP for configuration files.")
@@ -148,7 +148,7 @@ DEFINE assemble-sections    :+][+:
         tmp-str :+]'
     cvt_prog=`cd \`dirname "$cvt_prog"\` >/dev/null && pwd
          `/`basename "$cvt_prog"`
-    cd $tmp_dir
+    cd $tmp_dir/SEC
     test -x "$cvt_prog" || die "'$cvt_prog' is not executable"
 
     list='synopsis description options option-presets'
@@ -156,7 +156,7 @@ DEFINE assemble-sections    :+][+:
     do  test -f $f && {
             cat $f ; echo
         }
-    done > .doc
+    done > ../raw-doc
     rm -f $list name
 
     list='implementation-notes environment files examples exit-status errors
@@ -166,20 +166,15 @@ DEFINE assemble-sections    :+][+:
     do  test -f $f && {
             cat $f ; echo
         }
-    done > .end-doc
+    done > ../end-doc
     rm -f $list
 
-    list=`ls -1 *`' .end-doc'
-    for f in $list
-    do  test -f $f && {
-            cat $f ; echo
-        }
-    done >> .doc
-    rm -f $list
+    cat * ../end-doc >> ../raw-doc
 } 2>/dev/null
+cd ..
 [+:
 IF (exist? "doc-sub")       :+][+:
-  (out-push-new (string-append tmp-dir "/.cmds")) :+][+:
+  (out-push-new (string-append tmp-dir "/doc-secs")) :+][+:
   FOR doc-sub               :+][+:
 
     IF (define field-name (get "sub-type" target-form))
@@ -198,14 +193,13 @@ IF (exist? "doc-sub")       :+][+:
   (define post-proc-cmd (string-append
           (get "doc-sub-cmd" "sed -f %s %s") " | "
           egrep-prog " -v '^[ 	]*$'"))
-  (sprintf post-proc-cmd ".cmds" ".doc")
+  (sprintf post-proc-cmd "doc-secs" "raw-doc")
   :+][+:
 ELSE                       \:+]
-[+:(. egrep-prog):+] -v '^[ 	]*$' .doc[+:
-ENDIF doc-sub exists        :+] | $cvt_prog > .final-doc[+:
+[+:(. egrep-prog):+] -v '^[ 	]*$' raw-doc[+:
+ENDIF doc-sub exists        :+] | $cvt_prog[+:
 
 (shell (out-pop #t))
-(insert-file (string-append tmp-dir "/.final-doc"))
 
 :+][+:
 
@@ -231,7 +225,7 @@ FOR doc-section                       :+][+:
         (error (sprintf "Cannot locate converter for %s"
                (get "ds-format" "man"))))
 
-    (define sec-file (string-append tmp-dir "/" sec-name))
+    (define sec-file (string-append tmp-dir "/SEC/" sec-name))
     (access? sec-file R_OK)           :+][+:
         (out-push-add sec-file)
         (emit ".Pp\n")                :+][+:
@@ -246,26 +240,27 @@ FOR doc-section                       :+][+:
     ESAC     :+][+:
   ENDIF :+]
 [+:
-    (shell (string-append
-      "fn='" cvt-fn "'\n"
-      "test -f ${fn} || die ${fn} not found from $PWD\n"
-      "${fn} <<\\_EndOfDocSection_ || die ${fn} failed in $PWD\n"
-      (get "ds-text")
-      "\n_EndOfDocSection_"
-    ))                                :+][+:
 
-    CASE (emit "\n") sec-type         :+][+:
-    == FILES                          :+][+:
-        (if home-rc-files (emit home-rc-text))
-        (set! home-rc-files #f)       :+][+:
+  (shell (string-append
+    "fn='" cvt-fn "'\n"
+    "test -f ${fn} || die ${fn} not found from $PWD\n"
+    "${fn} <<\\_EndOfDocSection_ || die ${fn} failed in $PWD\n"
+    (get "ds-text")
+    "\n_EndOfDocSection_"
+  ))                                :+][+:
 
-    == ENVIRONMENT                    :+][+:
-        (if environ-init (emit environ-text))
-        (set! environ-init #f)        :+][+:
-    ESAC                              :+][+:
+  CASE (emit "\n") sec-type         :+][+:
+  == FILES                          :+][+:
+      (if home-rc-files (emit home-rc-text))
+      (set! home-rc-files #f)       :+][+:
 
-    (out-pop)
-    :+][+:
+  == ENVIRONMENT                    :+][+:
+      (if environ-init (emit environ-text))
+      (set! environ-init #f)        :+][+:
+  ESAC                              :+][+:
+
+  (out-pop)
+  :+][+:
 
 ENDFOR doc-section                    :+][+:
 
@@ -334,7 +329,7 @@ DEFINE cond-section                     :+][+:
                        (get "sec") "-" " " )))
      (set! macro-name  (string-downcase! (string-substitute
                        sect-name " " "-" )))
-     (set! file-name   (string-append tmp-dir "/" macro-name))
+     (set! file-name   (string-append tmp-dir "/SEC/" macro-name))
 
      (not (access? file-name R_OK))     :+][+:
 
@@ -399,14 +394,14 @@ DEFINE append-description               :+][+:
 IF (= (get "main.main-type") "for-each"):+][+:
 
   CASE main.handler-type                :+][+:
-  ~* ^(name|file)|.*text               \:+]
+  ~* ^(name|file)|.*text                :+]
 .Pp
 This program will perform its function for every file named on the command
 line or every file named in a list read from stdin.  The arguments or input
 names must be pre\-existing files.  The input list may contain comments,
 which[+:
 
-  !E                                   \:+]
+  !E                                    :+]
 .Pp
 This program will perform its function for every command line argument
 or every non\-comment line in a list read from stdin.
@@ -935,9 +930,9 @@ DEFINE emit-flag-text                 :+][+:
             arg-optional Oc :+][+:
       ENDIF                             :+][+:
 
-      IF (exist? "disable")
-        :+], " Fl \-[+:(. dis-name):+]"[+:
-      ENDIF                             :+][+:
+      (if (exist? "disable")
+          (string-append ", Fl \\-" dis-name)
+          "")                           :+][+:
     ENDIF                               :+][+:
   ENDIF                                 :+]
 [+: (get "descrip" "") :+].[+:
@@ -1031,8 +1026,8 @@ is constrained to being:
 .in +4
 .nf
 .na[+:FOR arg_range ", or"            :+]
-[+: (shellf "
-range='%s'
+[+: (shell "
+range='" (get "arg-range") "'
 
 case \"X${range}\" in
 X'->'?*  )
@@ -1051,11 +1046,8 @@ X?* )
   echo exactly $range ;;
 
 X* ) echo $range is indeterminate
-esac"
-
-(get "arg-range") )
-:+][+:
-      ENDFOR arg-range :+]
+esac" )                               :+][+:
+      ENDFOR arg-range "              :+]
 .fi
 .in -4[+:
 

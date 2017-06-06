@@ -1106,7 +1106,7 @@ sub _hash_merge {
 
     my @metadata_pairs = $mm->metafile_data(\%meta_add, \%meta_merge);
 
-Returns the data which MakeMaker turns into the META.yml file 
+Returns the data which MakeMaker turns into the META.yml file
 and the META.json file.
 
 Values of %meta_add will overwrite any existing metadata in those

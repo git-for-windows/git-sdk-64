@@ -1,6 +1,6 @@
 # bash completion for GNU make                             -*- shell-script -*-
 
-function _make_target_extract_script()
+_make_target_extract_script()
 {
     local mode="$1"
     shift
@@ -69,7 +69,7 @@ EOF
     # don't complete with hidden targets unless we are doing a partial completion
     if [[ -z "${prefix_pat}" || "${prefix_pat}" = */ ]]; then
       cat <<EOF
-      /^${prefix_pat}[^a-zA-Z0-9]/d             # convention for hidden tgt
+      /^${prefix_pat}[^a-zA-Z0-9]/d;            # convention for hidden tgt
 EOF
     fi
 
@@ -92,26 +92,26 @@ _make()
         -f|--file|--makefile|-o|--old-file|--assume-old|-W|--what-if|\
         --new-file|--assume-new)
             _filedir
-            return 0
+            return
             ;;
         -I|--include-dir|-C|--directory|-m)
             _filedir -d
-            return 0
+            return
             ;;
         -E)
             COMPREPLY=( $( compgen -v -- "$cur" ) )
-            return 0
+            return
             ;;
         --eval|-D|-V|-x)
-            return 0
+            return
             ;;
         --jobs|-j)
             COMPREPLY=( $( compgen -W "{1..$(( $(_ncpus)*2 ))}" -- "$cur" ) )
-            return 0
+            return
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ "$cur" == -* ]]; then
         local opts="$( _parse_help "$1" )"
@@ -152,9 +152,9 @@ _make()
             mode=-d # display-only mode
         fi
 
-        local reset=$( set +o | command grep -F posix ); set +o posix # <(...)
+        local reset=$( shopt -po posix ); set +o posix # <(...)
         COMPREPLY=( $( LC_ALL=C \
-            make -npq __BASH_MAKE_COMPLETION__=1 \
+            $1 -npq __BASH_MAKE_COMPLETION__=1 \
                 "${makef[@]}" "${makef_dir[@]}" .DEFAULT 2>/dev/null | \
             command sed -nf <(_make_target_extract_script $mode "$cur") ) )
         $reset
@@ -169,4 +169,4 @@ _make()
 } &&
 complete -F _make make gmake gnumake pmake colormake
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

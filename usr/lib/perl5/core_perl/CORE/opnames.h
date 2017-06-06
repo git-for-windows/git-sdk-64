@@ -407,7 +407,7 @@ typedef enum opcode {
 	OP_LVREFSLICE	 = 390,
 	OP_LVAVREF	 = 391,
 	OP_ANONCONST	 = 392,
-	OP_max		
+	OP_max
 } opcode;
 
 #define MAXO 393

@@ -207,5 +207,24 @@
 #define _Analysis_assume_(expr)
 #define _Analysis_assume_nullterminated_(expr)
 
+/* FIXME: __in macro conflicts with argument names in libstdc++. For this reason,
+ * we disable it for C++. This should be fixed in libstdc++ so we can uncomment
+ * it in fixed version here. */
+#if !defined(__cplusplus) || !defined(__GNUC__)
+#define __in
+#define __out
+#endif
+
+#define __in_bcount(size)
+#define __in_ecount(size)
+
+#define __out_bcount(size)
+#define __out_bcount_part(size, length)
+#define __out_ecount(size)
+
+#define __inout
+
+#define __deref_out_ecount(size)
+
 #endif
 

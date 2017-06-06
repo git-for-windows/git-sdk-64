@@ -366,7 +366,7 @@ sub predefine_encodings {
         $Encode::Encoding{utf8} =
           bless { Name => "utf8" } => "Encode::utf8";
         $Encode::Encoding{"utf-8-strict"} =
-          bless { Name => "utf-8-strict", strict_utf8 => 1 } 
+          bless { Name => "utf-8-strict", strict_utf8 => 1 }
             => "Encode::utf8";
     }
 }

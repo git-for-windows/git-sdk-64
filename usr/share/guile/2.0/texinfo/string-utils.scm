@@ -26,7 +26,6 @@
 (define-module (texinfo string-utils)
   #:use-module (srfi srfi-13)
   #:use-module (srfi srfi-14)
-  #:use-module (oop goops)
   #:export (escape-special-chars
             transform-string
             expand-tabs

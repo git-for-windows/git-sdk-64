@@ -1,8 +1,8 @@
-#############################################################################  
+#############################################################################
 # Pod/Find.pm -- finds files containing POD documentation
 #
 # Author: Marek Rouchal <marekr@cpan.org>
-# 
+#
 # Copyright (C) 1999-2000 by Marek Rouchal (and borrowing code
 # from Nick Ing-Simmon's PodToHtml). All rights reserved.
 # This file is part of "PodParser". Pod::Find is free software;
@@ -112,7 +112,7 @@ F<site_perl> as a module hierarchy name etc.
 
 =item C<-script =E<gt> 1>
 
-Search for PODs in the current Perl interpreter's installation 
+Search for PODs in the current Perl interpreter's installation
 B<scriptdir>. This is taken from the local L<Config|Config> module.
 
 =item C<-inc =E<gt> 1>
@@ -377,7 +377,7 @@ It is assumed that if a module name is supplied, that that name
 matches the file name. Pods are not opened to check for the 'NAME'
 entry.
 
-A check is made to make sure that the file that is found does 
+A check is made to make sure that the file that is found does
 contain some pod documentation.
 
 =cut
@@ -518,7 +518,7 @@ sub contains_pod {
     warn "Error: $file is unreadable: $!\n";
     return;
   }
-  
+
   local $/ = undef;
   my $pod = <$podfh>;
   close($podfh) || die "Error closing $file: $!\n";

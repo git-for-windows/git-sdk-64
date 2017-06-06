@@ -1,6 +1,6 @@
 ;;; Web client
 
-;; Copyright (C) 2011, 2012, 2013 Free Software Foundation, Inc.
+;; Copyright (C) 2011, 2012, 2013, 2014 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -92,8 +92,6 @@
 
           ;; Buffer input and output on this port.
           (setvbuf s _IOFBF)
-          ;; Enlarge the receive buffer.
-          (setsockopt s SOL_SOCKET SO_RCVBUF (* 12 1024))
           ;; If we're using a proxy, make a note of that.
           (when http-proxy (set-http-proxy-port?! s #t))
           s)

@@ -322,12 +322,7 @@
  * or variables/arguments that are used only in certain configurations.
  */
 #ifndef PERL_UNUSED_ARG
-#  if defined(lint) && defined(S_SPLINT_S) /* www.splint.org */
-#    include <note.h>
-#    define PERL_UNUSED_ARG(x) NOTE(ARGUNUSED(x))
-#  else
-#    define PERL_UNUSED_ARG(x) ((void)sizeof(x))
-#  endif
+#  define PERL_UNUSED_ARG(x) ((void)sizeof(x))
 #endif
 #ifndef PERL_UNUSED_VAR
 #  define PERL_UNUSED_VAR(x) ((void)sizeof(x))
@@ -455,7 +450,7 @@
 #  define aTHXa(a)      NOOP
 #  define dTHXa(a)	dNOOP
 #  define dTHX		dNOOP
-#  define pTHX_1	1	
+#  define pTHX_1	1
 #  define pTHX_2	2
 #  define pTHX_3	3
 #  define pTHX_4	4
@@ -1743,7 +1738,7 @@ typedef UVTYPE UV;
 #endif
 
 #ifndef PTR2ul
-#  define PTR2ul(p)	INT2PTR(unsigned long,p)	
+#  define PTR2ul(p)	INT2PTR(unsigned long,p)
 #endif
 
 #define NUM2PTR(any,d)	(any)(PTRV)(d)
@@ -4000,7 +3995,7 @@ struct ptr_tbl {
 
 PERL_STATIC_INLINE U32
 my_swap32(const U32 x) {
-    return ((x & 0xFF) << 24) | ((x >> 24) & 0xFF)	
+    return ((x & 0xFF) << 24) | ((x >> 24) & 0xFF)
         | ((x & 0x0000FF00) << 8) | ((x & 0x00FF0000) >> 8);
 }
 
@@ -4842,7 +4837,7 @@ EXTCONST  unsigned char PL_fold[] = {
 	192,	193,	194,	195,	196,	197,	198,	199,
 	200,	201,	202,	203,	204,	205,	206,	207,
 	208,	209,	210,	211,	212,	213,	214,	215,
-	216,	217,	218,	219,	220,	221,	222,	223,	
+	216,	217,	218,	219,	220,	221,	222,	223,
 	224,	225,	226,	227,	228,	229,	230,	231,
 	232,	233,	234,	235,	236,	237,	238,	239,
 	240,	241,	242,	243,	244,	245,	246,	247,
@@ -4922,7 +4917,7 @@ EXTCONST  unsigned char PL_latin1_lc[] = {  /* lowercasing */
 	192+32,	193+32,	194+32,	195+32,	196+32,	197+32,	198+32,	199+32,
 	200+32,	201+32,	202+32,	203+32,	204+32,	205+32,	206+32,	207+32,
 	208+32,	209+32,	210+32,	211+32,	212+32,	213+32,	214+32,	215,
-	216+32,	217+32,	218+32,	219+32,	220+32,	221+32,	222+32,	223,	
+	216+32,	217+32,	218+32,	219+32,	220+32,	221+32,	222+32,	223,
 	224,	225,	226,	227,	228,	229,	230,	231,
 	232,	233,	234,	235,	236,	237,	238,	239,
 	240,	241,	242,	243,	244,	245,	246,	247,
@@ -5012,7 +5007,7 @@ EXT unsigned char PL_fold_locale[] = { /* Unfortunately not EXTCONST. */
 	192,	193,	194,	195,	196,	197,	198,	199,
 	200,	201,	202,	203,	204,	205,	206,	207,
 	208,	209,	210,	211,	212,	213,	214,	215,
-	216,	217,	218,	219,	220,	221,	222,	223,	
+	216,	217,	218,	219,	220,	221,	222,	223,
 	224,	225,	226,	227,	228,	229,	230,	231,
 	232,	233,	234,	235,	236,	237,	238,	239,
 	240,	241,	242,	243,	244,	245,	246,	247,

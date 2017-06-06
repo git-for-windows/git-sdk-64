@@ -8,11 +8,11 @@ _dsniff()
     case $prev in
         -r|-w|-f|-p)
             _filedir
-            return 0
+            return
             ;;
         -i)
             _available_interfaces -a
-            return 0
+            return
             ;;
     esac
 
@@ -23,4 +23,4 @@ _dsniff()
 } &&
 complete -F _dsniff dsniff
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

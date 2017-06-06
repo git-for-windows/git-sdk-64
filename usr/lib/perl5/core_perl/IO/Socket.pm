@@ -180,25 +180,25 @@ sub blocking {
     #
     # which is used to set blocking behaviour.
 
-    # NOTE: 
+    # NOTE:
     # This is a little confusing, the perl keyword for this is
     # 'blocking' but the OS level behaviour is 'non-blocking', probably
     # because sockets are blocking by default.
     # Therefore internally we have to reverse the semantics.
 
     my $orig= !${*$sock}{io_sock_nonblocking};
-        
+
     return $orig unless @_;
 
     my $block = shift;
-    
+
     if ( !$block != !$orig ) {
         ${*$sock}{io_sock_nonblocking} = $block ? 0 : 1;
         ioctl($sock, 0x8004667e, pack("L!",${*$sock}{io_sock_nonblocking}))
             or return undef;
     }
-    
-    return $orig;        
+
+    return $orig;
 }
 
 
@@ -396,7 +396,7 @@ is built upon the L<IO::Handle> interface and inherits all the methods defined
 by L<IO::Handle>.
 
 C<IO::Socket> only defines methods for those operations which are common to all
-types of socket. Operations which are specified to a socket in a particular 
+types of socket. Operations which are specified to a socket in a particular
 domain have methods defined in sub classes of C<IO::Socket>
 
 C<IO::Socket> will export all functions (and constants) defined by L<Socket>.

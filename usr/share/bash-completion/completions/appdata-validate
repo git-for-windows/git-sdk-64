@@ -4,7 +4,7 @@ _appdata_validate()
 {
     local cur prev words cword split
     _init_completion -s || return
-    
+
     case $prev in
         -h|--help|--version)
             return
@@ -17,7 +17,7 @@ _appdata_validate()
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ $cur == -* ]]; then
         COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
@@ -29,4 +29,4 @@ _appdata_validate()
 } &&
 complete -F _appdata_validate appdata-validate
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

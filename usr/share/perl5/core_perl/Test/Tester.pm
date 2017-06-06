@@ -6,7 +6,7 @@ BEGIN
 {
 	if (*Test::Builder::new{CODE})
 	{
-		warn "You should load Test::Tester before Test::Builder (or anything that loads Test::Builder)" 
+		warn "You should load Test::Tester before Test::Builder (or anything that loads Test::Builder)"
 	}
 }
 

@@ -23,7 +23,7 @@
 #
 #   https://github.com/scop/bash-completion
 #
-#   RELEASE: 2.3
+#   RELEASE: 2.5
 
 if [[ $- == *v* ]]; then
     BASH_COMPLETION_ORIGINAL_V_VALUE="-v"
@@ -51,9 +51,6 @@ shopt -s extglob progcomp
 
 # A lot of the following one-liners were taken directly from the
 # completion examples provided with the bash 2.04 source distribution
-
-# Make directory commands see only directories
-complete -d pushd
 
 # start of section containing compspecs that can be handled within bash
 
@@ -571,7 +568,7 @@ _filedir()
 {
     local IFS=$'\n'
 
-    _tilde "$cur" || return 0
+    _tilde "$cur" || return
 
     local -a toks
     local x tmp
@@ -633,10 +630,40 @@ _split_longopt()
 #          False (> 0) if not.
 _variables()
 {
-    if [[ $cur =~ ^(\$\{?)([A-Za-z0-9_]*)$ ]]; then
-        [[ $cur == *{* ]] && local suffix=} || local suffix=
-        COMPREPLY+=( $( compgen -P ${BASH_REMATCH[1]} -S "$suffix" -v -- \
-            "${BASH_REMATCH[2]}" ) )
+    if [[ $cur =~ ^(\$(\{[!#]?)?)([A-Za-z0-9_]*)$ ]]; then
+        # Completing $var / ${var / ${!var / ${#var
+        if [[ $cur == \${* ]]; then
+            local arrs vars
+            vars=( $( compgen -A variable -P ${BASH_REMATCH[1]} -S '}' -- ${BASH_REMATCH[3]} ) ) && \
+            arrs=( $( compgen -A arrayvar -P ${BASH_REMATCH[1]} -S '[' -- ${BASH_REMATCH[3]} ) )
+            if [[ ${#vars[@]} -eq 1 && $arrs ]]; then
+                # Complete ${arr with ${array[ if there is only one match, and that match is an array variable
+                compopt -o nospace
+                COMPREPLY+=( ${arrs[*]} )
+            else
+                # Complete ${var with ${variable}
+                COMPREPLY+=( ${vars[*]} )
+            fi
+        else
+            # Complete $var with $variable
+            COMPREPLY+=( $( compgen -A variable -P '$' -- "${BASH_REMATCH[3]}" ) )
+        fi
+        return 0
+    elif [[ $cur =~ ^(\$\{[#!]?)([A-Za-z0-9_]*)\[([^]]*)$ ]]; then
+        # Complete ${array[i with ${array[idx]}
+        local IFS=$'\n'
+        COMPREPLY+=( $( compgen -W '$(printf %s\\n "${!'${BASH_REMATCH[2]}'[@]}")' \
+            -P "${BASH_REMATCH[1]}${BASH_REMATCH[2]}[" -S ']}' -- "${BASH_REMATCH[3]}" ) )
+        # Complete ${arr[@ and ${arr[*
+        if [[ ${BASH_REMATCH[3]} == [@*] ]]; then
+            COMPREPLY+=( "${BASH_REMATCH[1]}${BASH_REMATCH[2]}[${BASH_REMATCH[3]}]}" )
+        fi
+        __ltrim_colon_completions "$cur"    # array indexes may have colons
+        return 0
+    elif [[ $cur =~ ^\$\{[#!]?[A-Za-z0-9_]*\[.*\]$ ]]; then
+        # Complete ${array[idx] with ${array[idx]}
+        COMPREPLY+=( "$cur}" )
+        __ltrim_colon_completions "$cur"
         return 0
     else
         case $prev in
@@ -761,7 +788,7 @@ __parse_options()
             *)    break ;;
         esac
     done
-    [[ $option ]] || return 0
+    [[ $option ]] || return
 
     IFS=$' \t\n' # affects parsing of the regexps below...
 
@@ -1166,7 +1193,7 @@ _service()
     _init_completion || return
 
     # don't complete past 2nd token
-    [[ $cword -gt 2 ]] && return 0
+    [[ $cword -gt 2 ]] && return
 
     if [[ $cword -eq 1 && $prev == ?(*/)service ]]; then
         _services
@@ -1302,14 +1329,14 @@ _fstypes()
     if [[ -e /proc/filesystems ]]; then
         # Linux
         fss="$( cut -d$'\t' -f2 /proc/filesystems )
-             $( awk '! /\*/ { print $NF }' /etc/filesystems 2>/dev/null )"
+            $( awk '! /\*/ { print $NF }' /etc/filesystems 2>/dev/null )"
     else
         # Generic
         fss="$( awk '/^[ \t]*[^#]/ { print $3 }' /etc/fstab 2>/dev/null )
-             $( awk '/^[ \t]*[^#]/ { print $3 }' /etc/mnttab 2>/dev/null )
-             $( awk '/^[ \t]*[^#]/ { print $4 }' /etc/vfstab 2>/dev/null )
-             $( awk '{ print $1 }' /etc/dfs/fstypes 2>/dev/null )
-             $( [[ -d /etc/fs ]] && command ls /etc/fs )"
+            $( awk '/^[ \t]*[^#]/ { print $3 }' /etc/mnttab 2>/dev/null )
+            $( awk '/^[ \t]*[^#]/ { print $4 }' /etc/vfstab 2>/dev/null )
+            $( awk '{ print $1 }' /etc/dfs/fstypes 2>/dev/null )
+            $( [[ -d /etc/fs ]] && command ls /etc/fs )"
     fi
 
     [[ -n $fss ]] && COMPREPLY+=( $( compgen -W "$fss" -- "$cur" ) )
@@ -1421,8 +1448,6 @@ _user_at_host()
     else
         COMPREPLY=( $( compgen -u -- "$cur" ) )
     fi
-
-    return 0
 }
 shopt -u hostcomplete && complete -F _user_at_host -o nospace talk ytalk finger
 
@@ -1440,6 +1465,39 @@ _known_hosts()
     [[ "$1" == -c || "$2" == -c ]] && options+=" -c"
     _known_hosts_real $options -- "$cur"
 } # _known_hosts()
+
+# Helper function to locate ssh included files in configs
+# This function look for the "Include" keyword in ssh config files and include
+# them recursively adding each result to the config variable
+_included_ssh_config_files()
+{
+    [[ $# -lt 1 ]] && echo "error: $FUNCNAME: missing mandatory argument CONFIG"
+    local configfile i f
+    configfile=$1
+    local included=$( command sed -ne 's/^[[:blank:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:blank:]]\{1,\}\([^#%]*\)\(#.*\)\{0,1\}$/\1/p' "${configfile}" )
+    for i in ${included[@]}; do
+        # Check the origin of $configfile to complete relative included paths on included
+        # files according to ssh_config(5):
+        #  "[...] Files without absolute paths are assumed to be in ~/.ssh if included in a user
+        #   configuration file or /etc/ssh if included from the system configuration file.[...]"
+        if ! [[ "$i" =~ ^\~.*|^\/.* ]]; then
+            if [[ "$configfile" =~ ^\/etc\/ssh.* ]]; then
+                i="/etc/ssh/$i"
+            else
+                i="$HOME/.ssh/$i"
+            fi
+        fi
+        __expand_tilde_by_ref i
+        # In case the expanded variable contains multiple paths
+        for f in ${i}; do
+            if [ -r $f ]; then
+                config+=( "$f" )
+                # The Included file is processed to look for Included files in itself
+                _included_ssh_config_files $f
+            fi
+        done
+    done
+} # _included_ssh_config_files()
 
 # Helper function for completing _known_hosts.
 # This function performs host completion based on ssh's config and known_hosts
@@ -1484,6 +1542,11 @@ _known_hosts_real()
             [[ -r $i ]] && config+=( "$i" )
         done
     fi
+
+    # "Include" keyword in ssh config files
+    for i in "${config[@]}"; do
+        _included_ssh_config_files "$i"
+    done
 
     # Known hosts files from configs
     if [[ ${#config[@]} -gt 0 ]]; then
@@ -1592,7 +1655,7 @@ _known_hosts_real()
         # time ago, so...
         COMPREPLY+=( $( compgen -P "$prefix$user" -S "$suffix" -W \
             "$( avahi-browse -cpr _workstation._tcp 2>/dev/null | \
-                 awk -F';' '/^=/ { print $7 }' | sort -u )" -- "$cur" ) )
+                awk -F';' '/^=/ { print $7 }' | sort -u )" -- "$cur" ) )
     fi
 
     # Add hosts reported by ruptime.
@@ -1609,7 +1672,6 @@ _known_hosts_real()
 
     __ltrim_colon_completions "$prefix$user$cur"
 
-    return 0
 } # _known_hosts_real()
 complete -F _known_hosts traceroute traceroute6 tracepath tracepath6 \
     fping fping6 telnet rsh rlogin ftp dig mtr ssh-installkeys showmount
@@ -1630,7 +1692,7 @@ _cd()
     # ./ or ../
     if [[ -z "${CDPATH:-}" || "$cur" == ?(.)?(.)/* ]]; then
         _filedir -d
-        return 0
+        return
     fi
 
     local -r mark_dirs=$(_rl_enabled mark-directories && echo y)
@@ -1657,12 +1719,12 @@ _cd()
         fi
     fi
 
-    return 0
+    return
 }
 if shopt -q cdable_vars; then
-    complete -v -F _cd -o nospace cd
+    complete -v -F _cd -o nospace cd pushd
 else
-    complete -F _cd -o nospace cd
+    complete -F _cd -o nospace cd pushd
 fi
 
 # a wrapper method for the next one, when the offset is unknown
@@ -1795,15 +1857,15 @@ _longopt()
 
     case "${prev,,}" in
         --help|--usage|--version)
-            return 0
+            return
             ;;
         --*dir*)
             _filedir -d
-            return 0
+            return
             ;;
         --*file*|--*path*)
             _filedir
-            return 0
+            return
             ;;
         --+([-a-z0-9_]))
             local argtype=$( LC_ALL=C $1 --help 2>&1 | command sed -ne \
@@ -1811,32 +1873,32 @@ _longopt()
             case ${argtype,,} in
                 *dir*)
                     _filedir -d
-                    return 0
+                    return
                     ;;
                 *file*|*path*)
                     _filedir
-                    return 0
+                    return
                     ;;
             esac
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W "$( LC_ALL=C $1 --help 2>&1 | \
             command sed -ne 's/.*\(--[-A-Za-z0-9]\{1,\}=\{0,1\}\).*/\1/p' | sort -u )" \
             -- "$cur" ) )
         [[ $COMPREPLY == *= ]] && compopt -o nospace
-    elif [[ "$1" == @(mk|rm)dir ]]; then
+    elif [[ "$1" == @(@(mk|rm)dir|chroot) ]]; then
         _filedir -d
     else
         _filedir
     fi
 }
 # makeinfo and texi2dvi are defined elsewhere.
-complete -F _longopt a2ps awk base64 bash bc bison cat colordiff cp csplit \
-    cut date df diff dir du enscript env expand fmt fold gperf \
+complete -F _longopt a2ps awk base64 bash bc bison cat chroot colordiff cp \
+    csplit cut date df diff dir du enscript env expand fmt fold gperf \
     grep grub head irb ld ldd less ln ls m4 md5sum mkdir mkfifo mknod \
     mv netstat nl nm objcopy objdump od paste pr ptx readelf rm rmdir \
     sed seq sha{,1,224,256,384,512}sum shar sort split strip sum tac tail tee \
@@ -1848,7 +1910,7 @@ _filedir_xspec()
     local cur prev words cword
     _init_completion || return
 
-    _tilde "$cur" || return 0
+    _tilde "$cur" || return
 
     local IFS=$'\n' xspec=${_xspecs[${1##*/}]} tmp
     local -a toks
@@ -1896,7 +1958,7 @@ _install_xspec()
 }
 # bzcmp, bzdiff, bz*grep, bzless, bzmore intentionally not here, see Debian: #455510
 _install_xspec '!*.?(t)bz?(2)' bunzip2 bzcat pbunzip2 pbzcat lbunzip2 lbzcat
-_install_xspec '!*.@(zip|[ejsw]ar|exe|pk3|wsz|zargo|xpi|s[tx][cdiw]|sx[gm]|o[dt][tspgfc]|od[bm]|oxt|epub|apk|do[ct][xm]|p[op]t[mx]|xl[st][xm]|pyz)' unzip zipinfo
+_install_xspec '!*.@(zip|[ejsw]ar|exe|pk3|wsz|zargo|xpi|s[tx][cdiw]|sx[gm]|o[dt][tspgfc]|od[bm]|oxt|epub|apk|ipa|do[ct][xm]|p[op]t[mx]|xl[st][xm]|pyz)' unzip zipinfo
 _install_xspec '*.Z' compress znew
 # zcmp, zdiff, z*grep, zless, zmore intentionally not here, see Debian: #455510
 _install_xspec '!*.@(Z|[gGd]z|t[ag]z)' gunzip zcat
@@ -1919,7 +1981,7 @@ _install_xspec '!*.pdf' epdfview
 _install_xspec '!*.@(cb[rz7t]|djv?(u)|?(e)ps|pdf)' zathura
 _install_xspec '!*.@(?(e)ps|pdf)' ps2pdf ps2pdf12 ps2pdf13 ps2pdf14 ps2pdfwr
 _install_xspec '!*.texi*' makeinfo texi2html
-_install_xspec '!*.@(?(la)tex|texi|dtx|ins|ltx|dbj)' tex latex slitex jadetex pdfjadetex pdftex pdflatex texi2dvi
+_install_xspec '!*.@(?(la)tex|texi|dtx|ins|ltx|dbj)' tex latex slitex jadetex pdfjadetex pdftex pdflatex texi2dvi xetex xelatex luatex lualatex
 _install_xspec '!*.mp3' mpg123 mpg321 madplay
 _install_xspec '!*@(.@(mp?(e)g|MP?(E)G|wma|avi|AVI|asf|vob|VOB|bin|dat|divx|DIVX|vcd|ps|pes|fli|flv|FLV|fxm|FXM|viv|rm|ram|yuv|mov|MOV|qt|QT|wmv|mp[234]|MP[234]|m4[pv]|M4[PV]|mkv|MKV|og[gmv]|OG[GMV]|t[ps]|T[PS]|m2t?(s)|M2T?(S)|mts|MTS|wav|WAV|flac|FLAC|asx|ASX|mng|MNG|srt|m[eo]d|M[EO]D|s[3t]m|S[3T]M|it|IT|xm|XM)|+([0-9]).@(vdr|VDR))?(.part)' xine aaxine fbxine
 _install_xspec '!*@(.@(mp?(e)g|MP?(E)G|wma|avi|AVI|asf|vob|VOB|bin|dat|divx|DIVX|vcd|ps|pes|fli|flv|FLV|fxm|FXM|viv|rm|ram|yuv|mov|MOV|qt|QT|wmv|mp[234]|MP[234]|m4[pv]|M4[PV]|mkv|MKV|og[gmv]|OG[GMV]|t[ps]|T[PS]|m2t?(s)|M2T?(S)|mts|MTS|wav|WAV|flac|FLAC|asx|ASX|mng|MNG|srt|m[eo]d|M[EO]D|s[3t]m|S[3T]M|it|IT|xm|XM|iso|ISO)|+([0-9]).@(vdr|VDR))?(.part)' kaffeine dragon
@@ -2025,8 +2087,7 @@ _xfunc()
 # source compat completion directory definitions
 if [[ -d $BASH_COMPLETION_COMPAT_DIR && -r $BASH_COMPLETION_COMPAT_DIR && \
     -x $BASH_COMPLETION_COMPAT_DIR ]]; then
-    for i in $(LC_ALL=C command ls "$BASH_COMPLETION_COMPAT_DIR"); do
-        i=$BASH_COMPLETION_COMPAT_DIR/$i
+    for i in "$BASH_COMPLETION_COMPAT_DIR"/*; do
         [[ ${i##*/} != @($_backup_glob|Makefile*|$_blacklist_glob) \
             && -f $i && -r $i ]] && . "$i"
     done
@@ -2042,4 +2103,4 @@ unset have
 set $BASH_COMPLETION_ORIGINAL_V_VALUE
 unset BASH_COMPLETION_ORIGINAL_V_VALUE
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

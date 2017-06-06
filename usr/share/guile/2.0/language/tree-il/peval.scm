@@ -1,6 +1,6 @@
 ;;; Tree-IL partial evaluator
 
-;; Copyright (C) 2011, 2012, 2013 Free Software Foundation, Inc.
+;; Copyright (C) 2011-2014 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -281,7 +281,7 @@
 ;; 
 (define-record-type <operand>
   (%make-operand var sym visit source visit-count use-count
-                 copyable? residual-value constant-value alias-value)
+                 copyable? residual-value constant-value alias)
   operand?
   (var operand-var)
   (sym operand-sym)
@@ -292,7 +292,7 @@
   (copyable? operand-copyable? set-operand-copyable?!)
   (residual-value operand-residual-value %set-operand-residual-value!)
   (constant-value operand-constant-value set-operand-constant-value!)
-  (alias-value operand-alias-value set-operand-alias-value!))
+  (alias operand-alias set-operand-alias!))
 
 (define* (make-operand var sym #:optional source visit alias)
   ;; Bind SYM to VAR, with value SOURCE.  Unassigned bound operands are
@@ -479,7 +479,15 @@ top-level bindings from ENV and return the resulting expression."
         (lambda ()
           (call-with-values
               (lambda ()
-                (apply (module-ref the-scm-module name) args))
+                (case name
+                  ((eq? eqv?)
+                   ;; Constants will be deduplicated later, but eq?
+                   ;; folding can happen now.  Anticipate the
+                   ;; deduplication by using equal? instead of eq?.
+                   ;; Same for eqv?.
+                   (apply equal? args))
+                  (else
+                   (apply (module-ref the-scm-module name) args))))
             (lambda results
               (values #t results))))
         (lambda _
@@ -772,16 +780,16 @@ top-level bindings from ENV and return the resulting expression."
          (else exp)))
       (($ <lexical-ref> _ _ gensym)
        (log 'begin-copy gensym)
-       (let ((op (lookup gensym)))
+       (let lp ((op (lookup gensym)))
          (cond
           ((eq? ctx 'effect)
            (log 'lexical-for-effect gensym)
            (make-void #f))
-          ((operand-alias-value op)
+          ((operand-alias op)
            ;; This is an unassigned operand that simply aliases some
            ;; other operand.  Recurse to avoid residualizing the leaf
            ;; binding.
-           => for-tail)
+           => lp)
           ((eq? ctx 'call)
            ;; Don't propagate copies if we are residualizing a call.
            (log 'residualize-lexical-call gensym op)
@@ -899,7 +907,7 @@ top-level bindings from ENV and return the resulting expression."
                              (map (cut make-lexical-ref #f <> <>)
                                   tmps tmp-syms)))))))
       (($ <let> src names gensyms vals body)
-       (define (compute-alias exp)
+       (define (lookup-alias exp)
          ;; It's very common for macros to introduce something like:
          ;;
          ;;   ((lambda (x y) ...) x-exp y-exp)
@@ -919,9 +927,7 @@ top-level bindings from ENV and return the resulting expression."
          (match exp
            (($ <lexical-ref> _ _ sym)
             (let ((op (lookup sym)))
-              (and (not (var-set? (operand-var op)))
-                   (or (operand-alias-value op)
-                       exp))))
+              (and (not (var-set? (operand-var op))) op)))
            (_ #f)))
 
        (let* ((vars (map lookup-var gensyms))
@@ -929,7 +935,7 @@ top-level bindings from ENV and return the resulting expression."
               (ops (make-bound-operands vars new vals
                                         (lambda (exp counter ctx)
                                           (loop exp env counter ctx))
-                                        (map compute-alias vals)))
+                                        (map lookup-alias vals)))
               (env (fold extend-env env gensyms ops))
               (body (loop body env counter ctx)))
          (cond
@@ -1313,24 +1319,80 @@ top-level bindings from ENV and return the resulting expression."
                    (nopt (if opt (length opt) 0))
                    (key (source-expression proc)))
               (define (inlined-application)
-                (make-let src
-                          (append req
-                                  (or opt '())
-                                  (if rest (list rest) '()))
-                          gensyms
-                          (if (> nargs (+ nreq nopt))
-                              (append (list-head orig-args (+ nreq nopt))
-                                      (list
-                                       (make-application
-                                        #f
-                                        (make-primitive-ref #f 'list)
-                                        (drop orig-args (+ nreq nopt)))))
-                              (append orig-args
-                                      (drop inits (- nargs nreq))
-                                      (if rest
-                                          (list (make-const #f '()))
-                                          '())))
-                          body))
+                (cond
+                 ((= nargs (+ nreq nopt))
+                  (make-let src
+                            (append req
+                                    (or opt '())
+                                    (if rest (list rest) '()))
+                            gensyms
+                            (append orig-args
+                                    (if rest
+                                        (list (make-const #f '()))
+                                        '()))
+                            body))
+                 ((> nargs (+ nreq nopt))
+                  (make-let src
+                            (append req
+                                    (or opt '())
+                                    (list rest))
+                            gensyms
+                            (append (take orig-args (+ nreq nopt))
+                                    (list (make-application
+                                           #f
+                                           (make-primitive-ref #f 'list)
+                                           (drop orig-args (+ nreq nopt)))))
+                            body))
+                 (else
+                  ;; Here we handle the case where nargs < nreq + nopt,
+                  ;; so the rest argument (if any) will be empty, and
+                  ;; there will be optional arguments that rely on their
+                  ;; default initializers.
+                  ;;
+                  ;; The default initializers of optional arguments
+                  ;; may refer to earlier arguments, so in the general
+                  ;; case we must expand into a series of nested let
+                  ;; expressions.
+                  ;;
+                  ;; In the generated code, the outermost let
+                  ;; expression will bind all arguments provided by
+                  ;; the application's argument list, as well as the
+                  ;; empty rest argument, if any.  Each remaining
+                  ;; optional argument that relies on its default
+                  ;; initializer will be bound within an inner let.
+                  ;;
+                  ;; rest-gensyms, rest-vars and rest-inits will have
+                  ;; either 0 or 1 elements.  They are oddly named, but
+                  ;; allow simpler code below.
+                  (let*-values
+                      (((non-rest-gensyms rest-gensyms)
+                        (split-at gensyms (+ nreq nopt)))
+                       ((provided-gensyms default-gensyms)
+                        (split-at non-rest-gensyms nargs))
+                       ((provided-vars default-vars)
+                        (split-at (append req opt) nargs))
+                       ((rest-vars)
+                        (if rest (list rest) '()))
+                       ((rest-inits)
+                        (if rest
+                            (list (make-const #f '()))
+                            '()))
+                       ((default-inits)
+                        (drop inits (- nargs nreq))))
+                    (make-let src
+                              (append provided-vars rest-vars)
+                              (append provided-gensyms rest-gensyms)
+                              (append orig-args rest-inits)
+                              (fold-right (lambda (var gensym init body)
+                                            (make-let src
+                                                      (list var)
+                                                      (list gensym)
+                                                      (list init)
+                                                      body))
+                                          body
+                                          default-vars
+                                          default-gensyms
+                                          default-inits))))))
 
               (cond
                ((or (< nargs nreq) (and (not rest) (> nargs (+ nreq nopt))))
@@ -1494,7 +1556,7 @@ top-level bindings from ENV and return the resulting expression."
            (_ #f)))
 
        (let ((tag (for-value tag))
-             (body (for-tail body)))
+             (body (for-values body)))
          (cond
           ((find-definition tag 1)
            (lambda (val op)
@@ -1526,9 +1588,9 @@ top-level bindings from ENV and return the resulting expression."
                                       ,(make-primitive-ref #f 'values)
                                       ,@(abort-args body)
                                       ,(abort-tail body)))
-                  (for-value handler)))))
+                  (for-tail handler)))))
           (else
-           (make-prompt src tag body (for-value handler))))))
+           (make-prompt src tag body (for-tail handler))))))
       (($ <abort> src tag args tail)
        (make-abort src (for-value tag) (map for-value args)
                    (for-value tail))))))

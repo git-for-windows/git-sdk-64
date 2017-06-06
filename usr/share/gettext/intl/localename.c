@@ -1,5 +1,5 @@
 /* Determine name of the currently selected locale.
-   Copyright (C) 1995-2015 Free Software Foundation, Inc.
+   Copyright (C) 1995-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -66,7 +66,7 @@ extern char * getlocalename_l(int, locale_t);
 # endif
 #endif
 
-#if defined WINDOWS_NATIVE_ /* Native Windows */
+#if defined WINDOWS_NATIVE /* Native Windows */
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 # include <winnls.h>

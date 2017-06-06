@@ -10,43 +10,40 @@ _abook()
     {
         compopt -o nospace
         COMPREPLY=( "-" )
-        return 0
+        return
     }
 
     case $cur in
         -*)
-            _longopt abook
-            return 0
+            _longopt "$1"
+            return
             ;;
     esac
 
     case $prev in
         --informat)
             COMPREPLY=( $( compgen -W "$($1 --formats | \
-                command sed -n -e 's/^'$'\t''\([a-z]*\).*/\1/p' -e '/^$/q')" -- "$cur" ) )
-            return 0
+                command sed -n -e 's/^'$'\t''\([a-z]*\).*/\1/p' -e '/^$/q')" \
+                -- "$cur" ) )
             ;;
         --outformat)
             COMPREPLY=( $( compgen -W "$($1 --formats | \
-                command sed -n -e '/^$/,$s/^'$'\t''\([a-z]*\).*/\1/p')" -- "$cur" ) )
-            return 0
+                command sed -n -e '/^$/,$s/^'$'\t''\([a-z]*\).*/\1/p')" \
+                -- "$cur" ) )
             ;;
         --infile)
             COMPREPLY=( $( compgen -W stdin -- "$cur" ) )
             _filedir
-            return 0
             ;;
         --outfile)
             COMPREPLY=( $( compgen -W stdout -- "$cur" ) )
             _filedir
-            return 0
             ;;
         --config|--datafile)
             _filedir
-            return 0
             ;;
     esac
 } &&
 complete -F _abook abook
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

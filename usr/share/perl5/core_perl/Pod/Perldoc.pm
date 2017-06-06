@@ -345,7 +345,7 @@ sub program_name {
     \A
     perl
       (?: doc | func | faq | help | op | toc | var # Camel 3
-      ) 
+      )
     (?: -? v? \d+ \. \d+ (?:\. \d+)? )? # possible version
     (?: \. (?: bat | exe | com ) )?    # possible extension
     \z
@@ -1108,7 +1108,7 @@ sub search_perlvar {
     my $found = 0;
     my $inheader = 1;
     my $inlist = 0;
-    while (<$fh>) {  
+    while (<$fh>) {
         last if /^=head2 Error Indicators/;
         # \b at the end of $` and friends borks things!
         if ( m/^=item\s+$search_re\s/ )  {
@@ -1177,8 +1177,8 @@ sub search_perlop {
     next if $skip;
 
     # strategy is to capture the previous line until we get a match on X<$thingy>
-    # if the current line contains X<$thingy>, then we push "=over", the previous line, 
-    # the current line and keep pushing current line until we see a ^X<some-other-thing>, 
+    # if the current line contains X<$thingy>, then we push "=over", the previous line,
+    # the current line and keep pushing current line until we see a ^X<some-other-thing>,
     # then we chop off final line from @$pod and add =back
     #
     # At that point, Bob's your uncle.

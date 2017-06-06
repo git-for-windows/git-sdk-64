@@ -57,9 +57,7 @@ _update_rc_d()
     else
         COMPREPLY=()
     fi
-
-    return 0
 } &&
 complete -F _update_rc_d update-rc.d
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

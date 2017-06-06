@@ -8,20 +8,20 @@ _ether_wake()
     case $prev in
         -i)
             _available_interfaces -a
-            return 0
+            return
             ;;
         -p)
-            return 0
+            return
             ;;
     esac
 
     if [[ $cur == -* ]]; then
         COMPREPLY=( $( compgen -W '$( _parse_help "$1" -u ) -V' -- "$cur" ) )
-        return 0
+        return
     fi
 
     _mac_addresses
 } &&
 complete -F _ether_wake ether-wake
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

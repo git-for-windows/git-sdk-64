@@ -525,7 +525,7 @@ Looks like this:
 	    OUTSIDE = 0x22c9fb0 (MAIN)
 
 
-This shows that 
+This shows that
 
 =over 4
 
@@ -540,7 +540,7 @@ that it was compiled in the package C<main>;
 
 =item *
 
-under the name C<MY::top_targets>; 
+under the name C<MY::top_targets>;
 
 =item *
 

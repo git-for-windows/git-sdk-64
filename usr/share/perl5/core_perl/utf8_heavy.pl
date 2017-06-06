@@ -76,7 +76,7 @@ sub _loose_name ($) {
         ##
         ## $list (or that filled according to $type):
         ##     Refer to perlunicode.pod, "User-Defined Character Properties."
-        ##     
+        ##
         ##     For binary properties, only characters with the property value
         ##     of True should be listed. The 3rd column, if any, will be ignored
         ##
@@ -201,7 +201,7 @@ sub _loose_name ($) {
 
                 my $prefix;
                 if (! defined $table) {
-                        
+
                     # Here, is the single form.  The property becomes empty, and
                     # the whole value is the table.
                     $table = $property;
@@ -229,7 +229,7 @@ sub _loose_name ($) {
                     if ($table =~ m{ ^ [ \s 0-9 _  + / . -]+ $ }x) {
                         print STDERR __LINE__, ": table=$table\n" if DEBUG;
 
-                        # Don't allow leading nor trailing slashes 
+                        # Don't allow leading nor trailing slashes
                         if ($table =~ / ^ \/ | \/ $ /x) {
                             pop @recursed if @recursed;
                             return $type;
@@ -272,7 +272,7 @@ sub _loose_name ($) {
 
                             print STDERR __LINE__, ": part=$part\n" if DEBUG;
                             #return $type if $part eq "";
-                            
+
                             # Result better look like a number.  (This test is
                             # needed because, for example could have a plus in
                             # the middle.)
@@ -361,7 +361,7 @@ sub _loose_name ($) {
                                     # just to be safe.
                                     $min_floating_slop *= 100;
                                 }
-                                    
+
                                 if ($epsilon < $min_floating_slop) {
                                     $epsilon = $min_floating_slop;
                                 }

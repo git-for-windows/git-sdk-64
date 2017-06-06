@@ -256,7 +256,7 @@ the corresponding POD command, such as C<head1> or C<item> (it should
 I<not> contain the C<=> prefix); this is needed only if the POD
 paragraph corresponds to a command paragraph. The C<-file> and C<-line>
 keywords indicate the filename and line number corresponding to the
-beginning of the paragraph 
+beginning of the paragraph
 
 =cut
 
@@ -291,7 +291,7 @@ sub new {
 
         my $para_cmd = $pod_para->cmd_name();
 
-If this paragraph is a command paragraph, then this method will return 
+If this paragraph is a command paragraph, then this method will return
 the name of the command (I<without> any leading C<=> prefix).
 
 =cut
@@ -342,7 +342,7 @@ sub raw_text {
 
         my $prefix = $pod_para->cmd_prefix();
 
-If this paragraph is a command paragraph, then this method will return 
+If this paragraph is a command paragraph, then this method will return
 the prefix used to denote the command (which should be the string "="
 or "==").
 

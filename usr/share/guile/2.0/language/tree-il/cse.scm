@@ -569,7 +569,7 @@
                 (lp rest (cons head out) (concat db** db*)))))))))
       (($ <prompt> src tag body handler)
        (let*-values (((tag db*) (visit tag db env 'value))
-                     ((body _) (visit body (concat db* db) env ctx))
+                     ((body _) (visit body (concat db* db) env 'values))
                      ((handler _) (visit handler (concat db* db) env ctx)))
          (return (make-prompt src tag body handler)
                  db*)))

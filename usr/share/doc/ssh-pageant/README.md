@@ -15,8 +15,10 @@ variables, which allows OpenSSH connections to use it.
 
 ## Installation
 
-The `INSTALL` file describes how to build and install `ssh-pageant` from source,
-but the easiest way is to use the readily-available [binary releases]:
+You can install the latest release of `ssh-pageant` for Cygwin using the
+standard `setup.exe` program.  For MSYS2, just run `pacman -S ssh-pageant`.
+
+Otherwise, you can use the readily-available [binary releases]:
 
 1. Download the pre-built [32-bit] or [64-bit] release for Cygwin, or
 the [32-bit][32-bit-msys] release for MSYS.
@@ -29,6 +31,8 @@ the [32-bit][32-bit-msys] release for MSYS.
 3. Optionally, copy the manpage as well:
 
         $ cp ssh-pageant.1 /usr/share/man/man1/
+
+The `INSTALL` file describes how to build and install `ssh-pageant` from source.
 
 
 ## Usage
@@ -60,8 +64,9 @@ the [32-bit][32-bit-msys] release for MSYS.
       open shells might still be using the socket.
 
     * Using `eval` will set the environment variables in the current shell.
-      By default, ssh-pageant outputs sh-style commands.  Use the `-c` option
-      for csh-style commands.
+      By default, ssh-pageant tries to detect the current shell and output
+      appropriate commands. If detection fails, then use the `-S SHELL` option
+      to define a shell type manually.
 
 You could also rename `ssh-pageant` to `ssh-agent` and then use something like
 `keychain` to manage a single instance (the approach of [Charade]), but that is
@@ -74,7 +79,7 @@ system-wide use.
 
 ## Options
 
-`ssh-pageant` aims to be compatible with `ssh-agent` options:
+`ssh-pageant` aims to be compatible with `ssh-agent` options, with a few extras:
 
     $ ssh-pageant -h
     Usage: ssh-pageant [options] [command [arg ...]]
@@ -82,7 +87,8 @@ system-wide use.
       -h, --help     Show this help.
       -v, --version  Display version information.
       -c             Generate C-shell commands on stdout.
-      -s             Generate Bourne shell commands on stdout. (default)
+      -s             Generate Bourne shell commands on stdout.
+      -S SHELL       Generate shell command for "bourne", "csh", or "fish".
       -k             Kill the current ssh-pageant.
       -d             Enable debug mode.
       -q             Enable quiet mode.
@@ -141,7 +147,8 @@ finally published the code in April 2009.
 * [PuTTY]: An SSH client for Windows (including the Pageant authentication agent).
 * [Cygwin]: A Linux-like environment for Windows.
 * [MSYS]: Another Linux-like environment, made to supplement MinGW.
-* [OpenSSH]: The SSH client shipped by Cygwin.
+* [MSYS2]: The modern successor to MSYS, staying closer to Cygwin development.
+* [OpenSSH]: The SSH client shipped by Cygwin/MSYS.
 * [Charade]: The friendly competition to ssh-pageant.
 
 ------------------------------------------------------------------------------
@@ -164,5 +171,6 @@ in the file `COPYING.PuTTY`.
 [PuTTY]: http://www.chiark.greenend.org.uk/~sgtatham/putty/
 [Cygwin]: http://www.cygwin.com/
 [MSYS]: http://www.mingw.org/wiki/MSYS
+[MSYS2]: https://msys2.github.io/
 [OpenSSH]: http://www.openssh.com/
 [Charade]: http://github.com/wesleyd/charade

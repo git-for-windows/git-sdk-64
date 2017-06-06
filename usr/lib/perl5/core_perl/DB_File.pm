@@ -1,4 +1,4 @@
-# DB_File.pm -- Perl 5 interface to Berkeley DB 
+# DB_File.pm -- Perl 5 interface to Berkeley DB
 #
 # Written by Paul Marquess (pmqs@cpan.org)
 #
@@ -30,21 +30,21 @@ sub TIEHASH
 {
     my $pkg = shift ;
 
-    bless { VALID => { 
+    bless { VALID => {
 		       	bsize	  => 1,
 			ffactor	  => 1,
 			nelem	  => 1,
 			cachesize => 1,
 			hash	  => 2,
 			lorder	  => 1,
-		     }, 
+		     },
 	    GOT   => {}
           }, $pkg ;
 }
 
 
-sub FETCH 
-{  
+sub FETCH
+{
     my $self  = shift ;
     my $key   = shift ;
 
@@ -55,7 +55,7 @@ sub FETCH
 }
 
 
-sub STORE 
+sub STORE
 {
     my $self  = shift ;
     my $key   = shift ;
@@ -65,17 +65,17 @@ sub STORE
 
     if ( $type )
     {
-    	croak "Key '$key' not associated with a code reference" 
+    	croak "Key '$key' not associated with a code reference"
 	    if $type == 2 && !ref $value && ref $value ne 'CODE';
         $self->{GOT}{$key} = $value ;
         return ;
     }
-    
+
     my $pkg = ref $self ;
     croak "${pkg}::STORE - Unknown element '$key'" ;
 }
 
-sub DELETE 
+sub DELETE
 {
     my $self = shift ;
     my $key  = shift ;
@@ -85,7 +85,7 @@ sub DELETE
         delete $self->{GOT}{$key} ;
         return ;
     }
-    
+
     my $pkg = ref $self ;
     croak "DB_File::HASHINFO::DELETE - Unknown element '$key'" ;
 }
@@ -121,7 +121,7 @@ sub TIEHASH
 {
     my $pkg = shift ;
 
-    bless { VALID => { map {$_, 1} 
+    bless { VALID => { map {$_, 1}
 		       qw( bval cachesize psize flags lorder reclen bfname )
 		     },
 	    GOT   => {},
@@ -139,7 +139,7 @@ sub TIEHASH
 {
     my $pkg = shift ;
 
-    bless { VALID => { 
+    bless { VALID => {
 		      	flags	   => 1,
 			cachesize  => 1,
 			maxkeypage => 1,
@@ -169,15 +169,15 @@ $VERSION = eval $VERSION; # needed for dev releases
 {
     local $SIG{__WARN__} = sub {$splice_end_array_no_length = join(" ",@_);};
     my @a =(1); splice(@a, 3);
-    $splice_end_array_no_length = 
+    $splice_end_array_no_length =
         ($splice_end_array_no_length =~ /^splice\(\) offset past end of array at /);
-}      
+}
 {
     local $SIG{__WARN__} = sub {$splice_end_array = join(" ", @_);};
     my @a =(1); splice(@a, 3, 1);
-    $splice_end_array = 
+    $splice_end_array =
         ($splice_end_array =~ /^splice\(\) offset past end of array at /);
-}      
+}
 
 #typedef enum { DB_BTREE, DB_HASH, DB_RECNO } DBTYPE;
 $DB_BTREE = new DB_File::BTREEINFO ;
@@ -199,7 +199,7 @@ BEGIN {
 
 push @ISA, qw(Tie::Hash Exporter);
 @EXPORT = qw(
-        $DB_BTREE $DB_HASH $DB_RECNO 
+        $DB_BTREE $DB_HASH $DB_RECNO
 
 	BTREEMAGIC
 	BTREEVERSION
@@ -240,7 +240,7 @@ sub AUTOLOAD {
     no strict 'refs';
     *{$AUTOLOAD} = sub { $val };
     goto &{$AUTOLOAD};
-}           
+}
 
 
 eval {
@@ -262,22 +262,22 @@ sub tie_hash_or_array
     my $tieHASH = ( (caller(1))[3] =~ /TIEHASH/ ) ;
 
     use File::Spec;
-    $arg[1] = File::Spec->rel2abs($arg[1]) 
+    $arg[1] = File::Spec->rel2abs($arg[1])
         if defined $arg[1] ;
 
-    $arg[4] = tied %{ $arg[4] } 
+    $arg[4] = tied %{ $arg[4] }
 	if @arg >= 5 && ref $arg[4] && $arg[4] =~ /=HASH/ && tied %{ $arg[4] } ;
 
     $arg[2] = O_CREAT()|O_RDWR() if @arg >=3 && ! defined $arg[2];
     $arg[3] = 0666               if @arg >=4 && ! defined $arg[3];
 
-    # make recno in Berkeley DB version 2 (or better) work like 
+    # make recno in Berkeley DB version 2 (or better) work like
     # recno in version 1.
     if ($db_version >= 4 and ! $tieHASH) {
         $arg[2] |= O_CREAT();
     }
 
-    if ($db_version > 1 and defined $arg[4] and $arg[4] =~ /RECNO/ and 
+    if ($db_version > 1 and defined $arg[4] and $arg[4] =~ /RECNO/ and
 	$arg[1] and ! -e $arg[1]) {
 	open(FH, ">$arg[1]") or return undef ;
 	close FH ;
@@ -297,20 +297,20 @@ sub TIEARRAY
     tie_hash_or_array(@_) ;
 }
 
-sub CLEAR 
+sub CLEAR
 {
     my $self = shift;
     my $key = 0 ;
     my $value = "" ;
     my $status = $self->seq($key, $value, R_FIRST());
     my @keys;
- 
+
     while ($status == 0) {
         push @keys, $key;
         $status = $self->seq($key, $value, R_NEXT());
     }
     foreach $key (reverse @keys) {
-        my $s = $self->del($key); 
+        my $s = $self->del($key);
     }
 }
 
@@ -331,7 +331,7 @@ sub STORESIZE
         $self->put($length-1, "") ;
     }
 }
- 
+
 
 sub SPLICE
 {
@@ -346,15 +346,15 @@ sub SPLICE
     my $length = @_ ? shift : 0;
     # Carping about definedness comes _after_ the OFFSET sanity check.
     # This is so we get the same error messages as Perl's splice().
-    # 
+    #
 
     my @list = @_;
 
     my $size = $self->FETCHSIZE();
-    
+
     # 'If OFFSET is negative then it start that far from the end of
     # the array.'
-    # 
+    #
     if ($offset < 0) {
 	my $new_offset = $size + $offset;
 	if ($new_offset < 0) {
@@ -382,7 +382,7 @@ sub SPLICE
 
     # 'If LENGTH is negative, leave that many elements off the end of
     # the array.'
-    # 
+    #
     if ($length < 0) {
 	$length = $size - $offset + $length;
 
@@ -390,7 +390,7 @@ sub SPLICE
 	    # The user must have specified a length bigger than the
 	    # length of the array passed in.  But perl's splice()
 	    # doesn't catch this, it just behaves as for length=0.
-	    # 
+	    #
 	    $length = 0;
 	}
     }
@@ -404,7 +404,7 @@ sub SPLICE
 
     # 'Removes the elements designated by OFFSET and LENGTH from an
     # array,'...
-    # 
+    #
     my @removed = ();
     foreach (0 .. $length - 1) {
 	my $old;
@@ -478,13 +478,13 @@ sub SPLICE
     if (wantarray) {
 	# 'In list context, returns the elements removed from the
 	# array.'
-	# 
+	#
 	return @removed;
     }
     elsif (defined wantarray and not wantarray) {
 	# 'In scalar context, returns the last element removed, or
 	# undef if no elements are removed.'
-	# 
+	#
 	if (@removed) {
 	    my $last = pop @removed;
 	    return "$last";
@@ -504,7 +504,7 @@ sub find_dup
 {
     croak "Usage: \$db->find_dup(key,value)\n"
         unless @_ == 3 ;
- 
+
     my $db        = shift ;
     my ($origkey, $value_wanted) = @_ ;
     my ($key, $value) = ($origkey, 0);
@@ -524,7 +524,7 @@ sub del_dup
 {
     croak "Usage: \$db->del_dup(key,value)\n"
         unless @_ == 3 ;
- 
+
     my $db        = shift ;
     my ($key, $value) = @_ ;
     my ($status) = $db->find_dup($key, $value) ;
@@ -538,7 +538,7 @@ sub get_dup
 {
     croak "Usage: \$db->get_dup(key [,flag])\n"
         unless @_ == 2 or @_ == 3 ;
- 
+
     my $db        = shift ;
     my $key       = shift ;
     my $flag	  = shift ;
@@ -549,13 +549,13 @@ sub get_dup
     my @values    = () ;
     my $counter   = 0 ;
     my $status    = 0 ;
- 
+
     # iterate through the database until either EOF ($status == 0)
     # or a different key is encountered ($key ne $origkey).
     for ($status = $db->seq($key, $value, R_CURSOR()) ;
 	 $status == 0 and $key eq $origkey ;
          $status = $db->seq($key, $value, R_NEXT()) ) {
- 
+
         # save the value or count number of matches
         if ($wantarray) {
 	    if ($flag)
@@ -565,9 +565,9 @@ sub get_dup
 	}
         else
             { ++ $counter }
-     
+
     }
- 
+
     return ($wantarray ? ($flag ? %values : @values) : $counter) ;
 }
 
@@ -721,7 +721,7 @@ Berkeley DB uses the function dbopen() to open or create a database.
 Here is the C prototype for dbopen():
 
       DB*
-      dbopen (const char * file, int flags, int mode, 
+      dbopen (const char * file, int flags, int mode,
               DBTYPE type, const void * openinfo)
 
 The parameter C<type> is an enumeration which specifies which of the 3
@@ -747,7 +747,7 @@ Apart from $DB_HASH, there is also $DB_BTREE and $DB_RECNO.
 The keys allowed in each of these pre-defined references is limited to
 the names used in the equivalent C structure. So, for example, the
 $DB_HASH reference will only allow keys called C<bsize>, C<cachesize>,
-C<ffactor>, C<hash>, C<lorder> and C<nelem>. 
+C<ffactor>, C<hash>, C<lorder> and C<nelem>.
 
 To change one of these elements, just assign to it like this:
 
@@ -824,7 +824,7 @@ to Perl subs. Below are templates for each of the subs:
     {
 	my ($key, $key2) = @_ ;
         ...
-        # return number of bytes of $key2 which are 
+        # return number of bytes of $key2 which are
         # necessary to determine that it is greater than $key1
         return $bytes ;
     }
@@ -883,7 +883,7 @@ contents of the database.
     our (%h, $k, $v) ;
 
     unlink "fruit" ;
-    tie %h, "DB_File", "fruit", O_RDWR|O_CREAT, 0666, $DB_HASH 
+    tie %h, "DB_File", "fruit", O_RDWR|O_CREAT, 0666, $DB_HASH
         or die "Cannot open file 'fruit': $!\n";
 
     # Add a few key/value pairs to the file
@@ -944,7 +944,7 @@ insensitive compare function will be used.
     $DB_BTREE->{'compare'} = \&Compare ;
 
     unlink "tree" ;
-    tie %h, "DB_File", "tree", O_RDWR|O_CREAT, 0666, $DB_BTREE 
+    tie %h, "DB_File", "tree", O_RDWR|O_CREAT, 0666, $DB_BTREE
         or die "Cannot open file 'tree': $!\n" ;
 
     # Add a key/value pair to the file
@@ -1014,9 +1014,9 @@ possible to recover the original keys in sets of keys that
 compared as equal).
 
 
-=back 
+=back
 
-=head2 Handling Duplicate Keys 
+=head2 Handling Duplicate Keys
 
 The BTREE file type optionally allows a single key to be associated
 with an arbitrary number of values. This option is enabled by setting
@@ -1038,7 +1038,7 @@ code:
     # Enable duplicate records
     $DB_BTREE->{'flags'} = R_DUP ;
 
-    tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE 
+    tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE
 	or die "Cannot open $filename: $!\n";
 
     # Add some key/value pairs to the file
@@ -1093,7 +1093,7 @@ Here is the script above rewritten using the C<seq> API method.
     # Enable duplicate records
     $DB_BTREE->{'flags'} = R_DUP ;
 
-    $x = tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE 
+    $x = tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE
 	or die "Cannot open $filename: $!\n";
 
     # Add some key/value pairs to the file
@@ -1125,7 +1125,7 @@ that prints:
 This time we have got all the key/value pairs, including the multiple
 values associated with the key C<Wall>.
 
-To make life easier when dealing with duplicate keys, B<DB_File> comes with 
+To make life easier when dealing with duplicate keys, B<DB_File> comes with
 a few utility methods.
 
 =head2 The get_dup() Method
@@ -1164,7 +1164,7 @@ this:
     # Enable duplicate records
     $DB_BTREE->{'flags'} = R_DUP ;
 
-    $x = tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE 
+    $x = tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE
 	or die "Cannot open $filename: $!\n";
 
     my $cnt  = $x->get_dup("Wall") ;
@@ -1198,7 +1198,7 @@ and it will print:
     $status = $X->find_dup($key, $value) ;
 
 This method checks for the existence of a specific key/value pair. If the
-pair exists, the cursor is left pointing to the pair and the method 
+pair exists, the cursor is left pointing to the pair and the method
 returns 0. Otherwise the method returns a non-zero value.
 
 Assuming the database from the previous example:
@@ -1214,13 +1214,13 @@ Assuming the database from the previous example:
     # Enable duplicate records
     $DB_BTREE->{'flags'} = R_DUP ;
 
-    $x = tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE 
+    $x = tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE
 	or die "Cannot open $filename: $!\n";
 
-    $found = ( $x->find_dup("Wall", "Larry") == 0 ? "" : "not") ; 
+    $found = ( $x->find_dup("Wall", "Larry") == 0 ? "" : "not") ;
     print "Larry Wall is $found there\n" ;
 
-    $found = ( $x->find_dup("Wall", "Harry") == 0 ? "" : "not") ; 
+    $found = ( $x->find_dup("Wall", "Harry") == 0 ? "" : "not") ;
     print "Harry Wall is $found there\n" ;
 
     undef $x ;
@@ -1253,12 +1253,12 @@ Again assuming the existence of the C<tree> database
     # Enable duplicate records
     $DB_BTREE->{'flags'} = R_DUP ;
 
-    $x = tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE 
+    $x = tie %h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_BTREE
 	or die "Cannot open $filename: $!\n";
 
     $x->del_dup("Wall", "Larry") ;
 
-    $found = ( $x->find_dup("Wall", "Larry") == 0 ? "" : "not") ; 
+    $found = ( $x->find_dup("Wall", "Larry") == 0 ? "" : "not") ;
     print "Larry Wall is $found there\n" ;
 
     undef $x ;
@@ -1268,7 +1268,7 @@ prints this
 
     Larry Wall is not there
 
-=head2 Matching Partial Keys 
+=head2 Matching Partial Keys
 
 The BTREE interface has a feature which allows partial keys to be
 matched. This functionality is I<only> available when the C<seq> method
@@ -1312,7 +1312,7 @@ and print the first matching key/value pair given a partial key.
     # Add some key/value pairs to the file
     $h{'mouse'} = 'mickey' ;
     $h{'Wall'} = 'Larry' ;
-    $h{'Walls'} = 'Brick' ; 
+    $h{'Walls'} = 'Brick' ;
     $h{'Smith'} = 'John' ;
 
 
@@ -1391,8 +1391,8 @@ as a delimiter.
 
 =head2 A Simple Example
 
-Here is a simple example that uses RECNO (if you are using a version 
-of Perl earlier than 5.004_57 this example won't work -- see 
+Here is a simple example that uses RECNO (if you are using a version
+of Perl earlier than 5.004_57 this example won't work -- see
 L<Extra RECNO Methods> for a workaround).
 
     use warnings ;
@@ -1403,7 +1403,7 @@ L<Extra RECNO Methods> for a workaround).
     unlink $filename ;
 
     my @h ;
-    tie @h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_RECNO 
+    tie @h, "DB_File", $filename, O_RDWR|O_CREAT, 0666, $DB_RECNO
         or die "Cannot open file 'text': $!\n" ;
 
     # Add a few key/value pairs to the file
@@ -1486,7 +1486,7 @@ Returns a splice of the array.
 =head2 Another Example
 
 Here is a more complete example that makes use of some of the methods
-described above. It also makes use of the API interface directly (see 
+described above. It also makes use of the API interface directly (see
 L<THE API INTERFACE>).
 
     use warnings ;
@@ -1499,7 +1499,7 @@ L<THE API INTERFACE>).
 
     unlink $file ;
 
-    $H = tie @h, "DB_File", $file, O_RDWR|O_CREAT, 0666, $DB_RECNO 
+    $H = tie @h, "DB_File", $file, O_RDWR|O_CREAT, 0666, $DB_RECNO
         or die "Cannot open file $file: $!\n" ;
 
     # first create a text file to play with
@@ -1514,7 +1514,7 @@ L<THE API INTERFACE>).
     #
     # The length method is needed here because evaluating a tied
     # array in a scalar context does not return the number of
-    # elements in the array.  
+    # elements in the array.
 
     print "\nORIGINAL\n" ;
     foreach $i (0 .. $H->length - 1) {
@@ -1550,8 +1550,8 @@ L<THE API INTERFACE>).
     # same again, but use the API functions instead
     print "\nREVERSE again\n" ;
     my ($s, $k, $v)  = (0, 0, 0) ;
-    for ($s = $H->seq($k, $v, R_LAST) ; 
-             $s == 0 ; 
+    for ($s = $H->seq($k, $v, R_LAST) ;
+             $s == 0 ;
              $s = $H->seq($k, $v, R_PREV))
       { print "$k: $v\n" }
 
@@ -1598,7 +1598,7 @@ Rather than iterating through the array, C<@h> like this:
 
 it is necessary to use either this:
 
-    foreach $i (0 .. $H->length - 1) 
+    foreach $i (0 .. $H->length - 1)
 
 or this:
 
@@ -1633,10 +1633,10 @@ as B<DB_File> methods directly like this:
 B<Important:> If you have saved a copy of the object returned from
 C<tie>, the underlying database file will I<not> be closed until both
 the tied variable is untied and all copies of the saved object are
-destroyed. 
+destroyed.
 
     use DB_File ;
-    $db = tie %hash, "DB_File", "filename" 
+    $db = tie %hash, "DB_File", "filename"
         or die "Cannot tie filename: $!" ;
     ...
     undef $db ;
@@ -1683,7 +1683,7 @@ code will probably not do what you expect:
     $X->seq($key, $value, R_FIRST) ;
 
     # this line will modify the cursor
-    $count = scalar keys %x ; 
+    $count = scalar keys %x ;
 
     # Get the second key/value pair.
     # oops, it didn't, it got the last key/value pair!
@@ -1695,7 +1695,7 @@ The code above can be rearranged to get around the problem, like this:
         or die "Cannot tie $filename: $!" ;
 
     # this line will modify the cursor
-    $count = scalar keys %x ; 
+    $count = scalar keys %x ;
 
     # Get the first key/value pair and set  the cursor
     $X->seq($key, $value, R_FIRST) ;
@@ -1849,7 +1849,7 @@ fix very easily.
     my $filename = "filt" ;
     unlink $filename ;
 
-    my $db = tie %hash, 'DB_File', $filename, O_CREAT|O_RDWR, 0666, $DB_HASH 
+    my $db = tie %hash, 'DB_File', $filename, O_CREAT|O_RDWR, 0666, $DB_HASH
       or die "Cannot open $filename: $!\n" ;
 
     # Install DBM Filters
@@ -1892,7 +1892,7 @@ Here is a DBM Filter that does it:
     unlink $filename ;
 
 
-    my $db = tie %hash, 'DB_File', $filename, O_CREAT|O_RDWR, 0666, $DB_HASH 
+    my $db = tie %hash, 'DB_File', $filename, O_CREAT|O_RDWR, 0666, $DB_HASH
       or die "Cannot open $filename: $!\n" ;
 
     $db->filter_fetch_key  ( sub { $_ = unpack("i", $_) } ) ;
@@ -1906,7 +1906,7 @@ This time only two filters have been used -- we only need to manipulate
 the contents of the key, so it wasn't necessary to install any value
 filters.
 
-=head1 HINTS AND TIPS 
+=head1 HINTS AND TIPS
 
 
 =head2 Locking: The Trouble with fd
@@ -1917,7 +1917,7 @@ function. Unfortunately this technique has been shown to be fundamentally
 flawed (Kudos to David Harris for tracking this down). Use it at your own
 peril!
 
-The locking technique went like this. 
+The locking technique went like this.
 
     $db = tie(%db, 'DB_File', 'foo.db', O_CREAT|O_RDWR, 0644)
         || die "dbcreat foo.db $!";
@@ -2008,7 +2008,7 @@ read access, so that you have a kind of a multiversioning concurrent read
 system. However, updates are still serial. Use for databases where reads
 may be lengthy and consistency problems may occur.
 
-=item B<Tie::DB_LockFile> 
+=item B<Tie::DB_LockFile>
 
 A B<DB_File> wrapper that has the ability to lock and unlock the database
 while it is being used. Avoids the tie-before-flock problem by simply
@@ -2018,7 +2018,7 @@ session, this can be massaged into a system that will work with long
 updates and/or reads if the application follows the hints in the POD
 documentation.
 
-=item B<DB_File::Lock> 
+=item B<DB_File::Lock>
 
 An extremely lightweight B<DB_File> wrapper that simply flocks a lockfile
 before tie-ing the database and drops the lock after the untie. Allows
@@ -2090,7 +2090,7 @@ F<authors/id/TOMC/scripts/nshist.gz>).
 =head2 The untie() Gotcha
 
 If you make use of the Berkeley DB API, it is I<very> strongly
-recommended that you read L<perltie/The untie Gotcha>. 
+recommended that you read L<perltie/The untie Gotcha>.
 
 Even if you don't currently make use of the API interface, it is still
 worth reading it.
@@ -2194,7 +2194,7 @@ Here are a couple of possibilities:
 
 =item 1.
 
-Attempting to reopen a database without closing it. 
+Attempting to reopen a database without closing it.
 
 =item 2.
 
@@ -2202,7 +2202,7 @@ Using the O_WRONLY flag.
 
 =back
 
-=head2 What does "Bareword 'DB_File' not allowed" mean? 
+=head2 What does "Bareword 'DB_File' not allowed" mean?
 
 You will encounter this particular error message when you have the
 C<strict 'subs'> pragma (or the full strict pragma) in your script.
@@ -2216,7 +2216,7 @@ Consider this script:
 
 Running it produces the error in question:
 
-    Bareword "DB_File" not allowed while "strict subs" in use 
+    Bareword "DB_File" not allowed while "strict subs" in use
 
 To get around the error, place the word C<DB_File> in either single or
 double quotes, like this:
@@ -2284,7 +2284,7 @@ copyright and its own license. Please take the time to read it.
 Here are a few words taken from the Berkeley DB FAQ (at
 F<http://www.oracle.com/technology/products/berkeley-db/db/index.html>) regarding the license:
 
-    Do I have to license DB to use it in Perl scripts? 
+    Do I have to license DB to use it in Perl scripts?
 
     No. The Berkeley DB license requires that software that uses
     Berkeley DB be freely redistributable. In the case of Perl, that

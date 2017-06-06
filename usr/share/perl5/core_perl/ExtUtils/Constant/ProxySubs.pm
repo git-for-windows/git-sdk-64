@@ -38,7 +38,7 @@ $VERSION = '0.08';
      '' => sub {},
     );
 
-%type_to_sv = 
+%type_to_sv =
     (
      IV => sub { "newSViv($_[0])" },
      NV => sub { "newSVnv($_[0])" },
@@ -52,7 +52,7 @@ $VERSION = '0.08';
      SV => sub {"SvREFCNT_inc($_[0])"},
      );
 
-%type_to_C_value = 
+%type_to_C_value =
     (
      YES => sub {},
      NO => sub {},
@@ -81,7 +81,7 @@ sub type_to_C_value {
      PVN => ['const char *', 'STRLEN'],
      );
 $type_temporary{$_} = [$_] foreach qw(IV UV NV);
-     
+
 while (my ($type, $value) = each %XS_TypeSet) {
     $type_num_args{$type}
 	= defined $value ? ref $value ? scalar @$value : 1 : 0;
@@ -448,7 +448,7 @@ EOBOOT
 
     my $add_symbol_subname = $c_subname . '_add_symbol';
     foreach my $type (sort keys %$found) {
-	print $xs_fh $self->boottime_iterator($type, $iterator{$type}, 
+	print $xs_fh $self->boottime_iterator($type, $iterator{$type},
 					      'symbol_table',
 					      $add_symbol_subname, $push);
     }
@@ -464,7 +464,7 @@ EOBOOT
 
     print $xs_fh $explosives ? <<"EXPLODE" : << "DONT";
 		SV *tripwire = newSV(0);
-		
+
 		sv_magicext(tripwire, 0, PERL_MAGIC_ext, &not_defined_vtbl, 0, 0);
 		SvPV_set(tripwire, (char *)value_for_notfound->name);
 		if(value_for_notfound->namelen >= 0) {

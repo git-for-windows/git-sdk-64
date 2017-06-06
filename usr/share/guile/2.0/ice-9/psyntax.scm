@@ -1,7 +1,7 @@
 ;;;; -*-scheme-*-
 ;;;;
 ;;;; Copyright (C) 2001, 2003, 2006, 2009, 2010, 2011,
-;;;;   2012, 2013 Free Software Foundation, Inc.
+;;;;   2012, 2013, 2016 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -460,9 +460,10 @@
               (make-letrec src in-order? ids vars val-exps body-exp)))))
 
 
-    ;; FIXME: use a faster gensym
     (define-syntax-rule (build-lexical-var src id)
-      (gensym (string-append (symbol->string id) "-")))
+      ;; Use a per-module counter instead of the global counter of
+      ;; 'gensym' so that the generated identifier is reproducible.
+      (module-gensym (symbol->string id)))
 
     (define-structure (syntax-object expression wrap module))
 
@@ -642,7 +643,7 @@
     ;; labels must be comparable with "eq?", have read-write invariance,
     ;; and distinct from symbols.
     (define (gen-label)
-      (string-append "l-" (session-id) (symbol->string (gensym "-"))))
+      (symbol->string (module-gensym "l")))
 
     (define gen-labels
       (lambda (ls)
@@ -671,7 +672,7 @@
                    (cons 'shift (wrap-subst w)))))
 
     (define-syntax-rule (new-mark)
-      (gensym (string-append "m-" (session-id) "-")))
+      (module-gensym "m"))
 
     ;; make-empty-ribcage and extend-ribcage maintain list-based ribcages for
     ;; internal definitions, in which the ribcages are built incrementally
@@ -2591,7 +2592,9 @@
           (lambda (ls)
             (arg-check list? ls 'generate-temporaries)
             (let ((mod (cons 'hygiene (module-name (current-module)))))
-              (map (lambda (x) (wrap (gensym "t-") top-wrap mod)) ls))))
+              (map (lambda (x)
+                     (wrap (module-gensym "t") top-wrap mod))
+                   ls))))
 
     (set! free-identifier=?
           (lambda (x y)
@@ -2725,7 +2728,8 @@
                            (match (car e) (car y-pat) w r mod)))
                       (values #f #f #f)))))
              ((syntax-object? e)
-              (f (syntax-object-expression e) (join-wraps w e)))
+              (f (syntax-object-expression e)
+                 (join-wraps w (syntax-object-wrap e))))
              (else
               (values '() y-pat (match e z-pat w r mod)))))))
 

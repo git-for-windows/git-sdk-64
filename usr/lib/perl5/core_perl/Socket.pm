@@ -744,7 +744,7 @@ our @EXPORT = qw(
 	sockaddr_family
 	pack_sockaddr_in  unpack_sockaddr_in  sockaddr_in
 	pack_sockaddr_in6 unpack_sockaddr_in6 sockaddr_in6
-	pack_sockaddr_un  unpack_sockaddr_un  sockaddr_un 
+	pack_sockaddr_un  unpack_sockaddr_un  sockaddr_un
 
 	inet_aton inet_ntoa
 );
@@ -823,7 +823,7 @@ BEGIN {
 sub sockaddr_in {
     if (@_ == 6 && !wantarray) { # perl5.001m compat; use this && die
 	my($af, $port, @quad) = @_;
-	warnings::warn "6-ARG sockaddr_in call is deprecated" 
+	warnings::warn "6-ARG sockaddr_in call is deprecated"
 	    if warnings::enabled();
 	pack_sockaddr_in($port, inet_aton(join('.', @quad)));
     } elsif (wantarray) {

@@ -32,8 +32,7 @@ _invoke_rc_d()
         COMPREPLY=()
     fi
 
-    return 0
 } &&
 complete -F _invoke_rc_d invoke-rc.d
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

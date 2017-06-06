@@ -79,7 +79,7 @@ sub header_files {
 #
 ## Package name      : perl5
 ## Source directory  : .
-## Configuration time: Thu Feb 16 14:27:44 MSK 2017
+## Configuration time: Wed May 31 08:17:19 MSK 2017
 ## Configured by     : Alexx
 ## Target system     : msys_nt-6.1 warlock 2.7.0(0.30653) 2017-02-14 08:57 x86_64 msys 
 #
@@ -124,7 +124,7 @@ my $summary_expanded;
 sub myconfig {
     return $summary_expanded if $summary_expanded;
     ($summary_expanded = $summary) =~ s{\$(\w+)}
-		 { 
+		 {
 			my $c;
 			if ($1 eq 'git_ancestor_line') {
 				if ($Config::Config{git_ancestor}) {
@@ -133,9 +133,9 @@ sub myconfig {
 					$c= "";
 				}
 			} else {
-                     		$c = $Config::Config{$1}; 
+                     		$c = $Config::Config{$1};
 			}
-			defined($c) ? $c : 'undef' 
+			defined($c) ? $c : 'undef'
 		}ge;
     $summary_expanded;
 }
@@ -205,7 +205,7 @@ ccsymbols=''
 ccversion=''
 cf_by='Alexx'
 cf_email=''
-cf_time='Thu Feb 16 14:27:44 MSK 2017'
+cf_time='Wed May 31 08:17:19 MSK 2017'
 charbits='8'
 charsize='1'
 chgrp=''
@@ -1432,7 +1432,7 @@ sub config_vars {
     # implements -V:cfgvar option (see perlrun -V:)
     foreach (@_) {
 	# find optional leading, trailing colons; and query-spec
-	my ($notag,$qry,$lncont) = m/^(:)?(.*?)(:)?$/;	# flags fore and aft, 
+	my ($notag,$qry,$lncont) = m/^(:)?(.*?)(:)?$/;	# flags fore and aft,
 	# map colon-flags to print decorations
 	my $prfx = $notag ? '': "$qry=";		# tag-prefix for print
 	my $lnend = $lncont ? ' ' : ";\n";		# line ending for print

@@ -11,11 +11,11 @@ _cpan2dist()
             COMPREPLY=( $( compgen -W '$(perl -MCPANPLUS::Dist -e \
                 "print map { \"\$_\n\" } CPANPLUS::Dist->dist_types")' \
                 -- "$cur" ) )
-            return 0
+            return
             ;;
         --banlist|--ignorelist|--modulelist|--logfile)
             _filedir
-            return 0
+            return
             ;;
     esac
 
@@ -34,4 +34,4 @@ _cpan2dist()
 } &&
 complete -F _cpan2dist -o default cpan2dist
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

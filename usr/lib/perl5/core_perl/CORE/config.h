@@ -9,7 +9,7 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Thu Feb 16 14:27:44 MSK 2017
+ * Configuration time: Wed May 31 08:17:19 MSK 2017
  * Configured by     : Alexx
  * Target system     : msys_nt-6.1 warlock 2.7.0(0.30653) 2017-02-14 08:57 x86_64 msys 
  */
@@ -182,7 +182,7 @@
 #define HAS_GETLOGIN		/**/
 
 /* HAS_GETPGID:
- *	This symbol, if defined, indicates to the C program that 
+ *	This symbol, if defined, indicates to the C program that
  *	the getpgid(pid) function is available to get the
  *	process group id.
  */
@@ -641,8 +641,8 @@
  *	This symbol holds the type used for the second argument to
  *	getgroups() and setgroups().  Usually, this is the same as
  *	gidtype (gid_t) , but sometimes it isn't.
- *	It can be int, ushort, gid_t, etc... 
- *	It may be necessary to include <sys/types.h> to get any 
+ *	It can be int, ushort, gid_t, etc...
+ *	It may be necessary to include <sys/types.h> to get any
  *	typedef'ed information.  This is only required if you have
  *	getgroups() or setgroups()..
  */

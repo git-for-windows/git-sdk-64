@@ -7,18 +7,18 @@ _xmodmap()
 
     case $prev in
         -display|-e)
-            return 0
+            return
             ;;
     esac
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W '-display -help -grammar -verbose -quiet -n
             -e -pm -pk -pke -pp' -- "$cur" ) )
-        return 0
+        return
     fi
 
     _filedir
 } &&
 complete -F _xmodmap xmodmap
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

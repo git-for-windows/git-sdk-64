@@ -21,7 +21,7 @@ _mount()
     case $prev in
         -t|--types)
             _fstypes
-            return 0
+            return
             ;;
     esac
 
@@ -32,7 +32,7 @@ _mount()
             [[ -x $sm ]] || continue
             COMPREPLY=( $( compgen -W "$( "$sm" -e ${cur%%:*} | \
                 awk 'NR>1 {print $1}' )" -- "${cur#*:}" ) )
-            return 0
+            return
         done
     fi
 
@@ -59,4 +59,4 @@ _mount()
 } &&
 complete -F _mount -o default -o dirnames mount
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

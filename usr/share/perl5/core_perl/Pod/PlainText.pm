@@ -202,7 +202,7 @@ sub textblock {
           >
           (
               ,?\s+(and\s+)?    # Allow lots of them, conjuncted.
-              L<  
+              L<
                   /
                   (
                       [:\w]+

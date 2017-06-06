@@ -1593,7 +1593,7 @@ Version 2.x was ported to the Perl core by Paul Marquess.
 
 Version 3.x was ported back to CPAN by Marcus Holland-Moritz.
 
-=item * 
+=item *
 
 Versions >= 3.22 are maintained with support from Matthew Horsfall (alh).
 

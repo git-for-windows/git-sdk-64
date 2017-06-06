@@ -4,7 +4,7 @@ use strict;
 use 5.006_001;
 our $VERSION = '1.00';
 our(@EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-BEGIN { 
+BEGIN {
     use Exporter   ();
     @EXPORT      = qw(getnetbyname getnetbyaddr getnet);
     @EXPORT_OK   = qw(
@@ -34,17 +34,17 @@ sub populate (@) {
     $n_addrtype  =    $nob->[2] 	     = $_[2];
     $n_net	 =    $nob->[3] 	     = $_[3];
     return $nob;
-} 
+}
 
-sub getnetbyname ($)  { populate(CORE::getnetbyname(shift)) } 
+sub getnetbyname ($)  { populate(CORE::getnetbyname(shift)) }
 
-sub getnetbyaddr ($;$) { 
+sub getnetbyaddr ($;$) {
     my ($net, $addrtype);
     $net = shift;
     require Socket if @_;
     $addrtype = @_ ? shift : Socket::AF_INET();
-    populate(CORE::getnetbyaddr($net, $addrtype)) 
-} 
+    populate(CORE::getnetbyaddr($net, $addrtype))
+}
 
 sub getnet($) {
     if ($_[0] =~ /^\d+(?:\.\d+(?:\.\d+(?:\.\d+)?)?)?$/) {
@@ -52,8 +52,8 @@ sub getnet($) {
 	&getnetbyaddr(Socket::inet_aton(shift));
     } else {
 	&getnetbyname;
-    } 
-} 
+    }
+}
 
 1;
 __END__
@@ -83,8 +83,8 @@ This module's default exports override the core getnetbyname() and
 getnetbyaddr() functions, replacing them with versions that return
 "Net::netent" objects.  This object has methods that return the similarly
 named structure field name from the C's netent structure from F<netdb.h>;
-namely name, aliases, addrtype, and net.  The aliases 
-method returns an array reference, the rest scalars.  
+namely name, aliases, addrtype, and net.  The aliases
+method returns an array reference, the rest scalars.
 
 You may also import all the structure fields directly into your namespace
 as regular variables using the :FIELDS import tag.  (Note that this still
@@ -133,13 +133,13 @@ This seems a bug, but here's how to deal with it:
  	next;
      }
 
-     printf "\n%s is %s%s\n", 
- 	    $net, 
+     printf "\n%s is %s%s\n",
+ 	    $net,
  	    lc($n->name) eq lc($net) ? "" : "*really* ",
  	    $n->name;
 
      print "\taliases are ", join(", ", @{$n->aliases}), "\n"
- 		if @{$n->aliases};     
+ 		if @{$n->aliases};
 
      # this is stupid; first, why is this not in binary?
      # second, why am i going through these convolutions
@@ -155,7 +155,7 @@ This seems a bug, but here's how to deal with it:
  	    printf "\tThat addr reverses to net %s!\n", $n->name;
  	    $net = $n->name;
  	    redo;
- 	} 
+ 	}
      }
  }
 

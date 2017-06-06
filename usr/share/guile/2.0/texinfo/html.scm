@@ -37,10 +37,11 @@
 ;; margin-top on dd > p)
 
 (define-module (texinfo html)
-  :use-module (texinfo)
-  :use-module (sxml transform)
-  :use-module (srfi srfi-13)
-  :export (stexi->shtml add-ref-resolver! urlify))
+  #:use-module (texinfo)
+  #:use-module (sxml transform)
+  #:use-module (ice-9 match)
+  #:use-module (srfi srfi-13)
+  #:export (stexi->shtml add-ref-resolver! urlify))
 
 ;; The caller is responsible for carring the returned list.
 (define (arg-ref key %-args)
@@ -138,6 +139,18 @@ name, @code{#}, and the node name."
                    (cdr elts))
              elts)))
 
+(define (itemize tag . elts)
+  `(ul ,@(match elts
+           ;; Strip `bullet' attribute.
+           ((('% . attrs) . elts) elts)
+           (elts elts))))
+
+(define (acronym tag . elts)
+  (match elts
+    ;; FIXME: Need attribute matcher that doesn't depend on attribute
+    ;; order.
+    ((('% ('acronym text) . _)) `(acronym ,text))))
+
 (define (table tag args . body)
   (let ((formatter (caar (arg-req 'formatter args))))
     (cons 'dl
@@ -184,7 +197,6 @@ name, @code{#}, and the node name."
     (subheading   h4)
     (subsubheading       h5)
     (quotation    blockquote)
-    (itemize      ul)
     (item         li) ;; itemx ?
     (para         p)
     (*fragment*   div) ;; should be ok
@@ -234,6 +246,8 @@ name, @code{#}, and the node name."
     (node . ,node) (anchor . ,node)
     (table . ,table)
     (enumerate . ,enumerate)
+    (itemize . ,itemize)
+    (acronym . ,acronym)
     (entry *preorder* . ,entry)
 
     (deftp . ,def) (defcv . ,def) (defivar . ,def) (deftypeivar . ,def)

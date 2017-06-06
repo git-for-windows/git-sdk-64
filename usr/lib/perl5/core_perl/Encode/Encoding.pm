@@ -102,7 +102,7 @@ either encode() or decode().
 
 =item -E<gt>encode($string [,$check])
 
-MUST return the octet sequence representing I<$string>. 
+MUST return the octet sequence representing I<$string>.
 
 =over 2
 
@@ -225,7 +225,7 @@ unless the value is numeric so return 0 for false.
 
 Predefined As:
 
-  sub perlio_ok { 
+  sub perlio_ok {
       eval{ require PerlIO::encoding };
       return $@ ? 0 : 1;
   }

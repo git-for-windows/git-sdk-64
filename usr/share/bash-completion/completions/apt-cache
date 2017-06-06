@@ -34,33 +34,31 @@ _apt_cache()
         case $special in
         add)
             _filedir
-            return 0
             ;;
 
         showsrc)
             COMPREPLY=( $( _apt_cache_sources "$cur" ) )
-            return 0
             ;;
 
         *)
             COMPREPLY=( $( _apt_cache_packages ) )
-            return 0
             ;;
 
         esac
+        return
     fi
 
 
     case $prev in
-         -c|-p|-s|--config-file|--pkg-cache|--src-cache)
-             _filedir
-             return 0
-             ;;
-         search)
-             if [[ "$cur" != -* ]]; then
-                return 0
-             fi
-             ;;
+        -c|-p|-s|--config-file|--pkg-cache|--src-cache)
+            _filedir
+            return
+            ;;
+        search)
+            if [[ "$cur" != -* ]]; then
+                return
+            fi
+            ;;
     esac
 
     if [[ "$cur" == -* ]]; then
@@ -78,9 +76,7 @@ _apt_cache()
 
     fi
 
-
-    return 0
 } &&
 complete -F _apt_cache apt-cache
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

@@ -30,26 +30,22 @@ _dict()
                 [[ -n $db ]] && host="-d $db"
                 i=$((++i))
                 ;;
-            *)
-                ;;
         esac
     done
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
-        return 0
+        return
     fi
 
     case $prev in
         -d|--database|-i|-info)
             COMPREPLY=( $( compgen -W '$( _dictdata -D )' -- "$cur" ) )
-            return 0
+            return
             ;;
         -s|--strategy)
             COMPREPLY=( $( compgen -W '$( _dictdata -S )' -- "$cur" ) )
-            return 0
-            ;;
-        *)
+            return
             ;;
     esac
 
@@ -68,4 +64,4 @@ _dict()
 } &&
 complete -F _dict -o default dict rdict
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

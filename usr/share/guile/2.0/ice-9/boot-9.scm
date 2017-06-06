@@ -1,8 +1,6 @@
 ;;; -*- mode: scheme; coding: utf-8; -*-
 
-;;;; Copyright (C) 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-;;;;   2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014
-;;;;   Free Software Foundation, Inc.
+;;;; Copyright (C) 1995-2014, 2016  Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -40,6 +38,11 @@
 
 (eval-when (compile)
   (set-current-module (resolve-module '(guile))))
+
+;; Prevent this file being loaded more than once in a session.  Just
+;; doesn't make sense!
+(if (current-module)
+    (error "re-loading ice-9/boot-9.scm not allowed"))
 
 
 
@@ -183,77 +186,10 @@ If there is no handler at all, Guile prints an error and then exits."
                "Wrong type argument in position ~a: ~a" (list 1 key) (list key))
               (apply (fluid-ref %exception-handler) key args)))))
 
-
-
-
-;;; {R4RS compliance}
-;;;
-
-(primitive-load-path "ice-9/r4rs")
-
-
-
-;;; {Simple Debugging Tools}
-;;;
-
-;; peek takes any number of arguments, writes them to the
-;; current ouput port, and returns the last argument.
-;; It is handy to wrap around an expression to look at
-;; a value each time is evaluated, e.g.:
-;;
-;;      (+ 10 (troublesome-fn))
-;;      => (+ 10 (pk 'troublesome-fn-returned (troublesome-fn)))
-;;
-
-(define (peek . stuff)
-  (newline)
-  (display ";;; ")
-  (write stuff)
-  (newline)
-  (car (last-pair stuff)))
-
-(define pk peek)
-
-;; Temporary definition; replaced later.
-(define current-warning-port current-error-port)
-
-(define (warn . stuff)
-  (with-output-to-port (current-warning-port)
-    (lambda ()
-      (newline)
-      (display ";;; WARNING ")
-      (display stuff)
-      (newline)
-      (car (last-pair stuff)))))
-
-
-
-;;; {Features}
-;;;
-
-(define (provide sym)
-  (if (not (memq sym *features*))
-      (set! *features* (cons sym *features*))))
-
-;; Return #t iff FEATURE is available to this Guile interpreter.  In SLIB,
-;; provided? also checks to see if the module is available.  We should do that
-;; too, but don't.
-
-(define (provided? feature)
-  (and (memq feature *features*) #t))
-
-
-
-;;; {Structs}
-;;;
-
-(define (make-struct/no-tail vtable . args)
-  (apply make-struct vtable 0 args))
-
 
 
 ;;; Boot versions of `map' and `for-each', enough to get the expander
-;;; running.
+;;; running, and get the "map" used in eval.scm for with-fluids to work.
 ;;;
 (define map
   (case-lambda
@@ -295,6 +231,71 @@ If there is no handler at all, Guile prints an error and then exits."
            (begin
              (apply f (car l1) (map car rest))
              (lp (cdr l1) (map cdr rest))))))))
+
+
+
+;;; {R4RS compliance}
+;;;
+
+(primitive-load-path "ice-9/r4rs")
+
+
+
+;;; {Simple Debugging Tools}
+;;;
+
+;; peek takes any number of arguments, writes them to the
+;; current ouput port, and returns the last argument.
+;; It is handy to wrap around an expression to look at
+;; a value each time is evaluated, e.g.:
+;;
+;;      (+ 10 (troublesome-fn))
+;;      => (+ 10 (pk 'troublesome-fn-returned (troublesome-fn)))
+;;
+
+(define (peek . stuff)
+  (newline)
+  (display ";;; ")
+  (write stuff)
+  (newline)
+  (car (last-pair stuff)))
+
+(define pk peek)
+
+(define (warn . stuff)
+  (with-output-to-port (current-warning-port)
+    (lambda ()
+      (newline)
+      (display ";;; WARNING ")
+      (display stuff)
+      (newline)
+      (car (last-pair stuff)))))
+
+
+
+;;; {Features}
+;;;
+
+(define (provide sym)
+  (if (not (memq sym *features*))
+      (set! *features* (cons sym *features*))))
+
+;; Return #t iff FEATURE is available to this Guile interpreter.  In SLIB,
+;; provided? also checks to see if the module is available.  We should do that
+;; too, but don't.
+
+(define (provided? feature)
+  (and (memq feature *features*) #t))
+
+
+
+;;; {Structs}
+;;;
+
+(define (make-struct/no-tail vtable . args)
+  (apply make-struct vtable 0 args))
+
+
 
 ;; Temporary definition used in the include-from-path expansion;
 ;; replaced later.
@@ -383,6 +384,13 @@ If there is no handler at all, Guile prints an error and then exits."
 (define (module-ref module sym)
   (let ((v (module-variable module sym)))
     (if v (variable-ref v) (error "badness!" (pk module) (pk sym)))))
+(define module-generate-unique-id!
+  (let ((next-id 0))
+    (lambda (m)
+      (let ((i next-id))
+        (set! next-id (+ i 1))
+        i))))
+(define module-gensym gensym)
 (define (resolve-module . args)
   #f)
 
@@ -409,13 +417,15 @@ If there is no handler at all, Guile prints an error and then exits."
   (syntax-rules ()
     ((_) #t)
     ((_ x) x)
-    ((_ x y ...) (if x (and y ...) #f))))
+    ;; Avoid ellipsis, which would lead to quadratic expansion time.
+    ((_ x . y) (if x (and . y) #f))))
 
 (define-syntax or
   (syntax-rules ()
     ((_) #f)
     ((_ x) x)
-    ((_ x y ...) (let ((t x)) (if t t (or y ...))))))
+    ;; Avoid ellipsis, which would lead to quadratic expansion time.
+    ((_ x . y) (let ((t x)) (if t t (or . y))))))
 
 (include-from-path "ice-9/quasisyntax")
 
@@ -1657,7 +1667,7 @@ VALUE."
        (or (char=? c #\/)
            (char=? c #\\)))
 
-     (define file-name-separator-string "\\")
+     (define file-name-separator-string "/")
 
      (define (absolute-file-name? file-name)
        (define (file-name-separator-at-index? idx)
@@ -1748,7 +1758,7 @@ VALUE."
 (define-syntax-rule (add-to-load-path elt)
   "Add ELT to Guile's load path, at compile-time and at run-time."
   (eval-when (expand load eval)
-    (set! %load-path (cons elt %load-path))))
+    (set! %load-path (cons elt (delete elt %load-path)))))
 
 (define %load-verbosely #f)
 (define (assert-load-verbosity v) (set! %load-verbosely v))
@@ -2018,7 +2028,8 @@ VALUE."
      submodules
      submodule-binder
      public-interface
-     filename)))
+     filename
+     next-unique-id)))
 
 
 ;; make-module &opt size uses binder
@@ -2046,7 +2057,7 @@ VALUE."
                       (make-hash-table %default-import-size)
                       '()
                       (make-weak-key-hash-table 31) #f
-                      (make-hash-table 7) #f #f #f))
+                      (make-hash-table 7) #f #f #f 0))
 
 
 
@@ -2653,6 +2664,11 @@ VALUE."
   (let ((m (make-module 0)))
     (set-module-obarray! m (%get-pre-modules-obarray))
     (set-module-name! m '(guile))
+
+    ;; Inherit next-unique-id from preliminary stub of
+    ;; %module-get-next-unique-id! defined above.
+    (set-module-next-unique-id! m (module-generate-unique-id! #f))
+
     m))
 
 ;; The root interface is a module that uses the same obarray as the
@@ -2680,6 +2696,11 @@ VALUE."
   (if (equal? name '(guile))
       the-root-module
       (error "unexpected module to resolve during module boot" name)))
+
+(define (module-generate-unique-id! m)
+  (let ((i (module-next-unique-id m)))
+    (set-module-next-unique-id! m (+ i 1))
+    i))
 
 ;; Cheat.  These bindings are needed by modules.c, but we don't want
 ;; to move their real definition here because that would be unnatural.
@@ -2710,6 +2731,21 @@ VALUE."
             (set-module-name! mod name)
             (nested-define-module! (resolve-module '() #f) name mod)
             (accessor mod))))))
+
+(define* (module-gensym #:optional (id " mg") (m (current-module)))
+  "Return a fresh symbol in the context of module M, based on ID (a
+string or symbol).  As long as M is a valid module, this procedure is
+deterministic."
+  (define (->string number)
+    (number->string number 16))
+
+  (if m
+      (string->symbol
+       (string-append id "-"
+                      (->string (hash (module-name m) most-positive-fixnum))
+                      "-"
+                      (->string (module-generate-unique-id! m))))
+      (gensym id)))
 
 (define (make-modules-in module name)
   (or (nested-ref-module module name)
@@ -3010,7 +3046,7 @@ VALUE."
               #:warning "Failed to autoload ~a in ~a:\n" sym name))))
     (module-constructor (make-hash-table 0) '() b #f #f name 'autoload #f
                         (make-hash-table 0) '() (make-weak-value-hash-table 31) #f
-                        (make-hash-table 0) #f #f #f)))
+                        (make-hash-table 0) #f #f #f 0)))
 
 (define (module-autoload! module . args)
   "Have @var{module} automatically load the module named @var{name} when one
@@ -3306,20 +3342,9 @@ CONV is not applied to the initial value."
   (port-parameterize! current-output-port %current-output-port-fluid
                       output-port? "expected an output port")
   (port-parameterize! current-error-port %current-error-port-fluid
+                      output-port? "expected an output port")
+  (port-parameterize! current-warning-port %current-warning-port-fluid
                       output-port? "expected an output port"))
-
-
-
-;;;
-;;; Warnings.
-;;;
-
-(define current-warning-port
-  (make-parameter (current-error-port)
-                  (lambda (x)
-                    (if (output-port? x)
-                        x
-                        (error "expected an output port" x)))))
 
 
 
@@ -3965,19 +3990,25 @@ when none is available, reading FILE-NAME with READER."
      #:opts %auto-compilation-options
      #:env (current-module)))
 
-  ;; Returns the .go file corresponding to `name'.  Does not search load
-  ;; paths, only the fallback path.  If the .go file is missing or out
-  ;; of date, and auto-compilation is enabled, will try
-  ;; auto-compilation, just as primitive-load-path does internally.
-  ;; primitive-load is unaffected.  Returns #f if auto-compilation
-  ;; failed or was disabled.
+  (define (load-thunk-from-file file)
+    (let ((objcode (resolve-interface '(system vm objcode)))
+          (program (resolve-interface '(system vm program))))
+      ((module-ref program 'make-program)
+       ((module-ref objcode 'load-objcode) file))))
+
+  ;; Returns a thunk loaded from the .go file corresponding to `name'.
+  ;; Does not search load paths, only the fallback path.  If the .go
+  ;; file is missing or out of date, and auto-compilation is enabled,
+  ;; will try auto-compilation, just as primitive-load-path does
+  ;; internally.  primitive-load is unaffected.  Returns #f if
+  ;; auto-compilation failed or was disabled.
   ;;
   ;; NB: Unless we need to compile the file, this function should not
   ;; cause (system base compile) to be loaded up.  For that reason
   ;; compiled-file-name partially duplicates functionality from (system
   ;; base compile).
 
-  (define (fresh-compiled-file-name name scmstat go-file-name)
+  (define (fresh-compiled-thunk name scmstat go-file-name)
     ;; Return GO-FILE-NAME after making sure that it contains a freshly
     ;; compiled version of source file NAME with stat SCMSTAT; return #f
     ;; on failure.
@@ -3985,19 +4016,19 @@ when none is available, reading FILE-NAME with READER."
      (let ((gostat (and (not %fresh-auto-compile)
                         (stat go-file-name #f))))
        (if (and gostat (more-recent? gostat scmstat))
-           go-file-name
+           (load-thunk-from-file go-file-name)
            (begin
-             (if gostat
-                 (format (current-warning-port)
-                         ";;; note: source file ~a\n;;;       newer than compiled ~a\n"
-                         name go-file-name))
+             (when gostat
+               (format (current-warning-port)
+                       ";;; note: source file ~a\n;;;       newer than compiled ~a\n"
+                       name go-file-name))
              (cond
               (%load-should-auto-compile
                (%warn-auto-compilation-enabled)
                (format (current-warning-port) ";;; compiling ~a\n" name)
                (let ((cfn (compile name)))
                  (format (current-warning-port) ";;; compiled ~a\n" cfn)
-                 cfn))
+                 (load-thunk-from-file cfn)))
               (else #f)))))
      #:warning "WARNING: compilation of ~a failed:\n" name))
 
@@ -4016,28 +4047,36 @@ when none is available, reading FILE-NAME with READER."
        #:warning "Stat of ~a failed:\n" abs-file-name))
 
     (define (pre-compiled)
-      (and=> (search-path %load-compiled-path (sans-extension file-name)
-                          %load-compiled-extensions #t)
-             (lambda (go-file-name)
-               (let ((gostat (stat go-file-name #f)))
-                 (and gostat (more-recent? gostat scmstat)
-                      go-file-name)))))
+      (or-map
+       (lambda (dir)
+         (or-map
+          (lambda (ext)
+            (let ((candidate (string-append (in-vicinity dir file-name) ext)))
+              (let ((gostat (stat candidate #f)))
+                (and gostat
+                     (more-recent? gostat scmstat)
+                     (false-if-exception
+                      (load-thunk-from-file candidate)
+                      #:warning "WARNING: failed to load compiled file ~a:\n"
+                      candidate)))))
+          %load-compiled-extensions))
+       %load-compiled-path))
 
     (define (fallback)
       (and=> (false-if-exception (canonicalize-path abs-file-name))
              (lambda (canon)
                (and=> (fallback-file-name canon)
                       (lambda (go-file-name)
-                        (fresh-compiled-file-name abs-file-name
-                                                  scmstat
-                                                  go-file-name))))))
+                        (fresh-compiled-thunk abs-file-name
+                                              scmstat
+                                              go-file-name))))))
 
     (let ((compiled (and scmstat (or (pre-compiled) (fallback)))))
       (if compiled
           (begin
             (if %load-hook
                 (%load-hook abs-file-name))
-            (load-compiled compiled))
+            (compiled))
           (start-stack 'load-stack
                        (primitive-load abs-file-name)))))
 

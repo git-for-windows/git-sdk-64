@@ -111,11 +111,11 @@ answers for a yes/no question in the current locale.
 In other words, in the "C" (or English) locale the above will probably
 print something like:
 
-    Sun? [yes/no] 
+    Sun? [yes/no]
 
 but under a French locale
 
-    dim? [oui/non] 
+    dim? [oui/non]
 
 The usually available constants are
 
@@ -187,6 +187,6 @@ Jarkko Hietaniemi, E<lt>jhi@hut.fiE<gt>
 Copyright 2001 by Jarkko Hietaniemi
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself. 
+it under the same terms as Perl itself.
 
 =cut

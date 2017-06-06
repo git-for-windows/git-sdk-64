@@ -1,6 +1,6 @@
 ;;; installed-scm-file
 
-;;;; Copyright (C) 1998,1999,2000,2001,2002, 2003, 2006, 2009, 2010, 2011 Free Software Foundation, Inc.
+;;;; Copyright (C) 1998,1999,2000,2001,2002, 2003, 2006, 2009, 2010, 2011, 2014, 2015 Free Software Foundation, Inc.
 ;;;; Copyright (C) 1993-1998 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
@@ -25,12 +25,14 @@
 ;;;;
 
 (define-module (oop goops)
-  :use-module (srfi srfi-1)
-  :export-syntax (define-class class standard-define-class
-		  define-generic define-accessor define-method
-		  define-extended-generic define-extended-generics
-		  method)
-  :export (is-a? class-of
+  #:use-module (srfi srfi-1)
+  #:use-module (ice-9 match)
+  #:use-module (oop goops util)
+  #:export-syntax (define-class class standard-define-class
+                   define-generic define-accessor define-method
+                   define-extended-generic define-extended-generics
+                   method)
+  #:export (is-a? class-of
            ensure-metaclass ensure-metaclass-with-supers
 	   make-class
 	   make-generic ensure-generic
@@ -71,8 +73,7 @@
 	   method-specializers method-formals
 	   primitive-generic-generic enable-primitive-generic!
 	   method-procedure accessor-method-slot-definition
-	   slot-exists? make find-method get-keyword)
-  :no-backtrace)
+	   slot-exists? make find-method get-keyword))
 
 (define *goops-module* (current-module))
 
@@ -82,18 +83,38 @@
 
 (eval-when (expand load eval)
   (use-modules ((language tree-il primitives) :select (add-interesting-primitive!)))
-  (add-interesting-primitive! 'class-of)
-  (define (@slot-ref o n)
-    (struct-ref o n))
-  (define (@slot-set! o n v)
-    (struct-set! o n v))
-  (add-interesting-primitive! '@slot-ref)
-  (add-interesting-primitive! '@slot-set!))
+  (add-interesting-primitive! 'class-of))
 
 ;; Then load the rest of GOOPS
-(use-modules (oop goops util)
-	     (oop goops dispatch)
-	     (oop goops compile))
+(use-modules (oop goops dispatch))
+
+;;;
+;;; Compiling next methods into method bodies
+;;;
+
+;;; So, for the reader: there basic idea is that, given that the
+;;; semantics of `next-method' depend on the concrete types being
+;;; dispatched, why not compile a specific procedure to handle each type
+;;; combination that we see at runtime.
+;;;
+;;; In theory we can do much better than a bytecode compilation, because
+;;; we know the *exact* types of the arguments. It's ideal for native
+;;; compilation. A task for the future.
+;;;
+;;; I think this whole generic application mess would benefit from a
+;;; strict MOP.
+
+(define (compute-cmethod methods types)
+  (match methods
+    ((method . methods)
+     (let ((make-procedure (slot-ref method 'make-procedure)))
+       (if make-procedure
+           (make-procedure
+            (if (null? methods)
+                (lambda args
+                  (no-next-method (method-generic-function method) args))
+                (compute-cmethod methods types)))
+           (method-procedure method))))))
 
 
 (eval-when (expand load eval)
@@ -1095,33 +1116,34 @@
 			     (compute-setter-method class g-n-s))))))
       slots (slot-ref class 'getters-n-setters)))
 
-(define-method (compute-getter-method (class <class>) slotdef)
-  (let ((init-thunk (cadr slotdef))
-	(g-n-s (cddr slotdef)))
+(define-method (compute-getter-method (class <class>) g-n-s)
+  (let ((init-thunk (cadr g-n-s))
+        (g-n-s (cddr g-n-s)))
     (make <accessor-method>
           #:specializers (list class)
-	  #:procedure (cond ((pair? g-n-s)
-			     (make-generic-bound-check-getter (car g-n-s)))
-			    (init-thunk
-			     (standard-get g-n-s))
-			    (else
-			     (bound-check-get g-n-s)))
-	  #:slot-definition slotdef)))
+          #:procedure (cond ((pair? g-n-s)
+                             (make-generic-bound-check-getter (car g-n-s)))
+                            (init-thunk
+                             (standard-get g-n-s))
+                            (else
+                             (bound-check-get g-n-s)))
+          #:slot-definition g-n-s)))
 
-(define-method (compute-setter-method (class <class>) slotdef)
-  (let ((g-n-s (cddr slotdef)))
+(define-method (compute-setter-method (class <class>) g-n-s)
+  (let ((init-thunk (cadr g-n-s))
+        (g-n-s (cddr g-n-s)))
     (make <accessor-method>
-          #:specializers (list class <top>)
-	  #:procedure (if (pair? g-n-s)
-			  (cadr g-n-s)
-			  (standard-set g-n-s))
-	  #:slot-definition slotdef)))
+      #:specializers (list class <top>)
+      #:procedure (if (pair? g-n-s)
+                      (cadr g-n-s)
+                      (standard-set g-n-s))
+      #:slot-definition g-n-s)))
 
 (define (make-generic-bound-check-getter proc)
   (lambda (o) (assert-bound (proc o) o)))
 
 ;; the idea is to compile the index into the procedure, for fastest
-;; lookup. Also, @slot-ref and @slot-set! have their own bytecodes.
+;; lookup.
 
 (eval-when (expand load eval)
   (define num-standard-pre-cache 20))
@@ -1133,9 +1155,9 @@
     (define (make-one x)
       (define (body-trans form)
         (cond ((not (pair? form)) form)
-              ((eq? (car form) '@slot-ref)
+              ((eq? (car form) 'struct-ref)
                `(,(car form) ,(cadr form) ,x))
-              ((eq? (car form) '@slot-set!)
+              ((eq? (car form) 'struct-set!)
                `(,(car form) ,(cadr form) ,x ,(cadddr form)))
               (else
                (map body-trans form))))
@@ -1148,16 +1170,16 @@
                ((lambda (,n-var) (lambda ,args ,@body)) n)))))))
 
 (define-standard-accessor-method ((bound-check-get n) o)
-  (let ((x (@slot-ref o n)))
+  (let ((x (struct-ref o n)))
     (if (unbound? x)
         (slot-unbound o)
         x)))
 
 (define-standard-accessor-method ((standard-get n) o)
-  (@slot-ref o n))
+  (struct-ref o n))
 
 (define-standard-accessor-method ((standard-set n) o v)
-  (@slot-set! o n v))
+  (struct-set! o n v))
 
 ;;; compute-getters-n-setters
 ;;;
@@ -1206,12 +1228,20 @@
 	   ;;   '(index size) for instance allocated slots
 	   ;;   '() for other slots
 	   (verify-accessors name g-n-s)
-	   (cons name
-		 (cons (compute-slot-init-function name s)
-		       (if (or (integer? g-n-s)
-			       (zero? size))
-			   g-n-s
-			   (append g-n-s (list index size)))))))
+           (case (slot-definition-allocation s)
+             ((#:each-subclass #:class)
+              (unless (and (zero? size) (pair? g-n-s))
+                (error "Class-allocated slots should not reserve fields"))
+              ;; Don't initialize the slot; that's handled when the slot
+              ;; is allocated, in compute-get-n-set.
+              (cons name (cons #f g-n-s)))
+             (else
+              (cons name
+                    (cons (compute-slot-init-function name s)
+                          (if (or (integer? g-n-s)
+                                  (zero? size))
+                              g-n-s
+                              (append g-n-s (list index size)))))))))
        slots))
 
 ;;; compute-cpl
@@ -1363,6 +1393,12 @@
 ;;; compute-get-n-set
 ;;;
 (define-method (compute-get-n-set (class <class>) s)
+  (define (class-slot-init-value)
+    (let ((thunk (slot-definition-init-thunk s)))
+      (if thunk
+          (thunk)
+          (slot-definition-init-value s))))
+
   (case (slot-definition-allocation s)
     ((#:instance) ;; Instance slot
      ;; get-n-set is just its offset
@@ -1377,7 +1413,7 @@
      (let ((name (slot-definition-name s)))
        (if (memq name (map slot-definition-name (class-direct-slots class)))
 	   ;; This slot is direct; create a new shared variable
-	   (make-closure-variable class)
+	   (make-closure-variable class (class-slot-init-value))
 	   ;; Slot is inherited. Find its definition in superclass
 	   (let loop ((l (cdr (class-precedence-list class))))
 	     (let ((r (assoc name (slot-ref (car l) 'getters-n-setters))))
@@ -1387,7 +1423,7 @@
 
     ((#:each-subclass) ;; slot shared by instances of direct subclass.
      ;; (Thomas Buerger, April 1998)
-     (make-closure-variable class))
+     (make-closure-variable class (class-slot-init-value)))
 
     ((#:virtual) ;; No allocation
      ;; slot-ref and slot-set! function must be given by the user
@@ -1399,10 +1435,9 @@
        (list get set)))
     (else    (next-method))))
 
-(define (make-closure-variable class)
-  (let ((shared-variable (make-unbound)))
-    (list (lambda (o) shared-variable)
-	  (lambda (o v) (set! shared-variable v)))))
+(define (make-closure-variable class value)
+  (list (lambda (o) value)
+        (lambda (o v) (set! value v))))
 
 (define-method (compute-get-n-set (o <object>) s)
   (goops-error "Allocation \"~S\" is unknown" (slot-definition-allocation s)))

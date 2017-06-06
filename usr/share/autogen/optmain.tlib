@@ -2,7 +2,7 @@
 
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -225,7 +225,7 @@ DEFINE emit-file-dispatcher     =][=
  * that has been read into memory as text.[=
   ESAC                          =]
  *
- * @param pz_fname the name of the file to process
+ * @param fname the name of the file to process
  * @returns program exit code flag
  */
 static [=
@@ -233,9 +233,9 @@ static [=
 (define emit-failing-printf (not (= (get "file-fail-code") "success")))
 
  pname-down =]_exit_code_t
-validate_fname(char const * pz_fname)
+validate_fname(char const * fname)
 {
-    static char const * pz_fs_err = NULL;[=
+    static char const * err_str = NULL;[=
 
   IF (*=* (get "handler-type") "text")          =]
     char*  file_text;
@@ -243,19 +243,19 @@ validate_fname(char const * pz_fname)
     int    res;[=
   ENDIF                                         =]
 
-    if (pz_fs_err == NULL)
-        pz_fs_err = _("fs error %d (%s) %s-ing %s\n");[=
+    if (err_str == NULL)
+        err_str = _("fs error %d (%s) %s-ing %s\n");[=
 
   IF (== (get "handler-type") "file-r")         =]
-    if ((pz_fname[0] == '-') && (pz_fname[1] == '\0'))
+    if ((fname[0] == '-') && (fname[1] == '\0'))
         return [= handler-proc =](_("standard input"), stdin);[=
   ENDIF  file-r handler type                    =]
     {
         struct stat sb;
-        if (stat(pz_fname, &sb) < 0) {[=
+        if (stat(fname, &sb) < 0) {[=
   IF (. emit-failing-printf)                    =]
-            fprintf(stderr, pz_fs_err, errno, strerror(errno), "stat",
-                    pz_fname);[=
+            fprintf(stderr, err_str, errno, strerror(errno), "stat",
+                    fname);[=
   ENDIF                                         =]
             return [= (. file-fail-exit-code)   =];
         }[=
@@ -264,8 +264,8 @@ validate_fname(char const * pz_fname)
 
         if (! S_ISREG(sb.st_mode)) {[=
     IF (. emit-failing-printf)                  =]
-            fprintf(stderr, pz_fs_err, EINVAL, strerror(EINVAL),
-                    _("not regular file:"), pz_fname);[=
+            fprintf(stderr, err_str, EINVAL, strerror(EINVAL),
+                    _("not regular file:"), fname);[=
     ENDIF                                       =]
             return [= (. file-fail-exit-code)   =];
         }[=
@@ -274,8 +274,8 @@ validate_fname(char const * pz_fname)
 
         if (sb.st_size == 0) {[=
       IF (. emit-failing-printf)                =]
-            fprintf(stderr, pz_fs_err, EINVAL, strerror(EINVAL),
-                    _("empty file:"), pz_fname);[=
+            fprintf(stderr, err_str, EINVAL, strerror(EINVAL),
+                    _("empty file:"), fname);[=
       ENDIF                                     =]
             return [= (. file-fail-exit-code)   =];
         }[=
@@ -290,20 +290,20 @@ validate_fname(char const * pz_fname)
 CASE handler-type =][=
 =*  name          =][= (tpl-file-line extract-fmt) =]
 
-    return [= handler-proc =](pz_fname);[=
+    return [= handler-proc =](fname);[=
 
 =*  file          =][= (tpl-file-line extract-fmt) =]
     {
         int res;
-        FILE* fp = fopen(pz_fname, "[=
+        FILE* fp = fopen(fname, "[=
         (shellf "echo '%s' | sed 's/.*-//'"
                 (get "handler-type")) =]");
         if (fp == NULL) {
-            fprintf(stderr, pz_fs_err, errno, strerror(errno), "fopen",
-                    pz_fname);
+            fprintf(stderr, err_str, errno, strerror(errno), "fopen",
+                    fname);
             return [= (. file-fail-exit-code) =];
         }
-        res = [= handler-proc =](pz_fname, fp);
+        res = [= handler-proc =](fname, fp);
         fclose(fp);
         return res;
     }[=
@@ -312,19 +312,18 @@ CASE handler-type =][=
     file_text = malloc(text_size + 1);
     if (file_text == NULL) {
         fprintf(stderr, _("cannot allocate %u bytes for %s file text\n"),
-                (unsigned int)text_size+1, pz_fname);
+                (unsigned int)text_size+1, fname);
         exit([=(. nomem-exit-code)=]);
     }
 
     {
         char*   pz = file_text;
         size_t  sz = text_size;
-        int     fd = open(pz_fname, O_RDONLY);
+        int     fd = open(fname, O_RDONLY);
         int     try_ct = 0;
 
         if (fd < 0) {
-            fprintf(stderr, pz_fs_err, errno, strerror(errno), "open",
-                    pz_fname);
+            fprintf(stderr, err_str, errno, strerror(errno), "open", fname);
             free(file_text);
             return [= (. file-fail-exit-code) =];
         }
@@ -344,8 +343,7 @@ CASE handler-type =][=
                    && (++try_ct < 10)  )
                     continue;
 
-                fprintf(stderr, pz_fs_err, errno, strerror(errno), "read",
-                        pz_fname);
+                fprintf(stderr, err_str, errno, strerror(errno), "read", fname);
                 exit([=(. file-fail-exit-code)=]);
             }
             pz += rd_ct;
@@ -359,8 +357,10 @@ CASE handler-type =][=
      *  terminate the thing.
      */
     file_text[ text_size ] = '\0';
-    res = [= handler-proc =](pz_fname, file_text, text_size);
-    free(file_text);
+    res = [= handler-proc =](fname, file_text, text_size);[=
+    IF (not (exist? "handler-frees")) =]
+    free(file_text);[=
+    ENDIF =]
     return res;[=
 ESAC             =]
 }[=
@@ -385,14 +385,14 @@ ENDDEF stdin-as-input
 DEFINE emit-handler-proc        =][=
 
 CASE handler-type =][=
-=*  name         =][= (set! handler-arg-type "char const* pz_fname")
+=*  name         =][= (set! handler-arg-type "char const * fname")
                       (define handler-proc "validate_fname")       =][=
 =*  file         =][=
-   (set! handler-arg-type "char const* pz_fname, FILE* entry_fp")
+   (set! handler-arg-type "char const * fname, FILE * entry_fp")
                       (define handler-proc "validate_fname")       =][=
 *=* text         =][=
    (set! handler-arg-type
-         "char const* pz_fname, char* pz_file_text, size_t text_size")
+         "char const * fname, char * file_text, size_t text_size")
                       (define handler-proc "validate_fname")       =][=
 !E               =][= (set! handler-arg-type "char const* pz_entry")
                       (define handler-proc (get "handler-proc"))       =][=
@@ -440,14 +440,19 @@ DEFINE emit-trim-input          =]
  * leading white space characters.
  */
 static char *
-trim_input_line(char * pz_s)
+trim_input_line(char * src_str)
 {
-    char* pz_e = pz_s + strlen(pz_s);
-    while ((pz_e > pz_s) && isspace((unsigned int)pz_e[-1]))  pz_e--;
-    *pz_e = '\0';
-    while ((unsigned int)isspace(*pz_s))  pz_s++;
+    while ((unsigned int)isspace(*src_str))
+        src_str++;
 
-    switch (*pz_s) {
+    {
+        char * end = src_str + strlen(src_str);
+        while ((end > src_str) && isspace((unsigned int)end[-1]))
+            end--;
+        *end = '\0';
+    }
+
+    switch (*src_str) {
     case '\0':[=
     (define comment-char (substring (get "comment-char" "#") 0 1))
     (if (> (string-length comment-char) 0) (begin
@@ -457,7 +462,7 @@ trim_input_line(char * pz_s)
     )   ) =]
         return NULL;
     default:
-        return pz_s;
+        return src_str;
     }
 }
 [=
@@ -917,7 +922,7 @@ DEFINE range-option-code
     option_usage_fp = stderr;
 
  emit_ranges:
-    optionShowRange(pOptions, pOptDesc, (void *)rng, [= (. range-count) =]);[=
+optionShowRange(pOptions, pOptDesc, VOIDP(rng), [= (. range-count) =]);[=
 
 (. ok-return-code)  =][=
 
@@ -1226,7 +1231,7 @@ doUsageOpt(tOptions * opts, tOptDesc * od)
   ENDIF                         =][=
   (string-append "\n    " usage-proc "(&" pname "Options, ex_code);") =]
     /* NOTREACHED */
-    exit(1);
+    exit([=(. fail-exit-code)=]);
     (void)opts;[=
     (if od-used "" "\n    (void)od;") =]
 }[=
@@ -1348,6 +1353,46 @@ void
 }
 [=
 ENDIF die-code              =][=
+
+IF (exist? "warn-code")
+
+=]
+/**
+ * Print a warning message, \a va_list style.
+ *
+ * @param[in] fmt        the "something awry" message
+ * @param[in] ap         the argument list for the message
+ */
+void
+[=(. lc-prefix)=]vwarning_msg(char const * fmt, va_list ap)
+{
+    char const * warn_leader = _("[= prog-name =] WARNING:\n");[=
+  (set! tmp-text (get "warn-code"))
+  (if (> (string-length tmp-text) 1)
+      (string-append "\n\n" tmp-text "\n"))
+ =]
+    fputs(warn_leader, stderr);
+    vfprintf(stderr, fmt, ap);
+    fflush(stderr);
+}
+
+/**
+ * Print a warning message, var-arg style.
+ *
+ * @param[in] fmt        the "something awry" message
+ * @param[in] ...        the list of arguments for the message
+ */
+void
+[=(. lc-prefix)=]warning_msg(char const * fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    vwarning_msg(fmt, ap);
+    va_end(ap);
+}
+[=
+
+ENDIF have warn-code    =][=
 
 ENDDEF emit-option-callbacks
 

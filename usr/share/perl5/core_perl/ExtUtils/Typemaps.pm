@@ -22,7 +22,7 @@ ExtUtils::Typemaps - Read/Write/Modify Perl/XS typemap files
   # $typemap = ExtUtils::Typemaps->new();
   # alternatively create an in-memory typemap by parsing a string
   # $typemap = ExtUtils::Typemaps->new(string => $sometypemap);
-  
+
   # add a mapping
   $typemap->add_typemap(ctype => 'NV', xstype => 'T_NV');
   $typemap->add_inputmap(
@@ -33,13 +33,13 @@ ExtUtils::Typemaps - Read/Write/Modify Perl/XS typemap files
   );
   $typemap->add_string(string => $typemapstring);
                                            # will be parsed and merged
-  
+
   # remove a mapping (same for remove_typemap and remove_outputmap...)
   $typemap->remove_inputmap(xstype => 'SomeType');
-  
+
   # save a typemap to a file
   $typemap->write(file => 'anotherfile.map');
-  
+
   # merge the other typemap into this one
   $typemap->merge(typemap => $another_typemap);
 
@@ -374,7 +374,7 @@ sub remove_inputmap {
   else {
     $xstype = $_[0]->xstype;
   }
-  
+
   return $self->_remove($xstype, $self->{input_section}, $self->{input_lookup});
 }
 
@@ -399,7 +399,7 @@ sub remove_outputmap {
   else {
     $xstype = $_[0]->xstype;
   }
-  
+
   return $self->_remove($xstype, $self->{output_section}, $self->{output_lookup});
 }
 
@@ -1002,7 +1002,7 @@ sub _parse {
       $current = \$junk;
       next;
     }
-    
+
     if ($section eq 'typemap') {
       my $line = $_;
       s/^\s+//; s/\s+$//;

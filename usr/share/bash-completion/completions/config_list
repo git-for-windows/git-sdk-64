@@ -8,11 +8,11 @@ _config_list()
     case $prev in
         -i|-o|--inputfile|--outputfile)
             _filedir
-            return 0
+            return
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W '--inputfile --outputfile --checkonly
@@ -24,4 +24,4 @@ _config_list()
 } &&
 complete -F _config_list config_list
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

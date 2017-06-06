@@ -93,7 +93,7 @@ sub _slurp {
   $content = Encode::decode('UTF-8', $content, Encode::PERLQQ());
   return $content;
 }
-  
+
 sub _can_load {
   my ($module, $version) = @_;
   (my $file = $module) =~ s{::}{/}g;
@@ -143,21 +143,21 @@ version 1.4417
 
     #############################################
     # In your file
-    
+
     ---
     name: My-Distribution
     version: 1.23
     resources:
       homepage: "http://example.com/dist/My-Distribution"
-    
-    
+
+
     #############################################
     # In your program
-    
+
     use Parse::CPAN::Meta;
-    
+
     my $distmeta = Parse::CPAN::Meta->load_file('META.yml');
-    
+
     # Reading properties
     my $name     = $distmeta->{name};
     my $version  = $distmeta->{version};
@@ -213,7 +213,7 @@ C<load_yaml_string>.
 
   my $metadata_structure = Parse::CPAN::Meta->load_json_string($json_string);
 
-This method deserializes the given string of JSON and the result.  
+This method deserializes the given string of JSON and the result.
 If the source was UTF-8 encoded, the string must be decoded before calling
 C<load_json_string>.
 

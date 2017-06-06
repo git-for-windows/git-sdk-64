@@ -480,7 +480,7 @@ sub kill_gently {
   while ($do_wait) {
     $previous_monotonic_value = $now;
     $now = get_monotonic_time();
-    
+
     adjust_monotonic_start_time([\$wait_start_time], $now, $previous_monotonic_value);
 
     if ($now > $wait_start_time + $opts->{'wait_time'}) {
@@ -495,7 +495,7 @@ sub kill_gently {
         $do_wait = 0;
         next;
     }
-    
+
     Time::HiRes::usleep(250000); # quarter of a second
   }
 
@@ -1056,7 +1056,7 @@ sub run_forked {
               $opts->{'stderr_handler'}->($data);
             }
           }
- 
+
           # process may finish (waitpid returns -1) before
           # we've read all of its output because of buffering;
           # so try to read all the way it is possible to read

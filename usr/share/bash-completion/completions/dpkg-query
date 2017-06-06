@@ -39,7 +39,7 @@ _dpkg()
     local cur prev words cword split
     _init_completion -s || return
 
-    _expand || return 0
+    _expand || return
 
     local i=$cword
 
@@ -56,27 +56,27 @@ _dpkg()
         --contents|--info|--fsys-tarfile|--field|--control|--extract| \
         --show)
             _filedir '?(u|d)deb'
-            return 0
+            return
             ;;
         -b|--build)
             _filedir -d
-            return 0
+            return
             ;;
         -s|-p|-l|--status|--print-avail|--list)
             COMPREPLY=( $( apt-cache pkgnames "$cur" 2>/dev/null ) )
-            return 0
+            return
             ;;
         -S|--search)
             _filedir
-            return 0
+            return
             ;;
         -r|--remove)
             COMPREPLY=( $( _comp_dpkg_installed_packages "$cur" ) )
-            return 0
+            return
             ;;
         -L|-P|--listfiles|--purge)
             COMPREPLY=( $( _comp_dpkg_purgeable_packages "$cur" ) )
-            return 0
+            return
             ;;
     esac
 
@@ -98,25 +98,25 @@ _dpkg_reconfigure()
 
     case $prev in
         -f|--frontend)
-        opt=( $( printf '%s\n' /usr/share/perl5/Debconf/FrontEnd/* ) )
-        opt=( ${opt[@]##*/} )
-        opt=( ${opt[@]%.pm} )
-        COMPREPLY=( $( compgen -W '${opt[@]}' -- "$cur" ) )
-        return 0
-        ;;
+            opt=( $( printf '%s\n' /usr/share/perl5/Debconf/FrontEnd/* ) )
+            opt=( ${opt[@]##*/} )
+            opt=( ${opt[@]%.pm} )
+            COMPREPLY=( $( compgen -W '${opt[@]}' -- "$cur" ) )
+            return
+            ;;
         -p|--priority)
-        COMPREPLY=( $( compgen -W 'low medium high critical' -- "$cur" ) )
-        return 0
-        ;;
+            COMPREPLY=( $( compgen -W 'low medium high critical' -- "$cur" ) )
+            return
+            ;;
     esac
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $(compgen -W '--frontend --priority --all --unseen-only
-                      --help --showold --force --terse' -- "$cur" ) )
+            --help --showold --force --terse' -- "$cur" ) )
     else
         COMPREPLY=( $( _comp_dpkg_installed_packages "$cur" ) )
     fi
 } &&
 complete -F _dpkg_reconfigure -o default dpkg-reconfigure
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

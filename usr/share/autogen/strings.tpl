@@ -2,7 +2,7 @@
 
 ## Author:          Bruce Korb <bkorb@gnu.org>
 ##
-## Copyright (C) 2011-2014 Bruce Korb, all rights reserved.
+## Copyright (C) 2011-2015 Bruce Korb, all rights reserved.
 ## This is free software. It is licensed for use, modification and
 ## redistribution under the terms of the
 ## Modified (3 clause) Berkeley Software Distribution License

@@ -17,7 +17,7 @@ _evince()
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ $cur == -* ]]; then
         COMPREPLY=( $( compgen -W '$( _parse_help "$1" --help-all )' \
@@ -30,4 +30,4 @@ _evince()
 } &&
 complete -F _evince evince
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

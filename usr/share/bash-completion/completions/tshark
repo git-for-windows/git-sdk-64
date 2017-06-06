@@ -88,11 +88,11 @@ _tshark()
         -G)
             COMPREPLY=( $( compgen -W "$( "$1" -G ? | \
                 awk '/^[ \t]*-G / \
-                     { sub("^[[]","",$2); sub("[]]$","",$2); print $2 }' )" \
+                    { sub("^[[]","",$2); sub("[]]$","",$2); print $2 }' )" \
                 -- "$cur" ) )
             return
             ;;
-            
+
     esac
 
     if [[ "$cur" == -* ]]; then
@@ -102,4 +102,4 @@ _tshark()
 } &&
 complete -F _tshark tshark
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

@@ -1,7 +1,6 @@
 #! /bin/sh
 #
-# Copyright (C) 2003, 2005-2007, 2011, 2015 Free Software Foundation,
-# Inc.
+# Copyright (C) 2003, 2005-2007, 2011, 2015-2016 Free Software Foundation, Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -49,7 +48,7 @@ if test -z "${ZSH_VERSION+set}"; then
     gettext.sh | */gettext.sh | *\\gettext.sh)
       progname=$0
       package=gettext-runtime
-      version=0.19.7
+      version=0.19.8.1
       # func_usage
       # outputs to stdout the --help usage message.
       func_usage ()

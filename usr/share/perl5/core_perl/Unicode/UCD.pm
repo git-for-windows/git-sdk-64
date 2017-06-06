@@ -204,7 +204,7 @@ the standard),
 C<undef> is returned.
 
 Fields that aren't applicable to the particular code point argument exist in the
-returned hash, and are empty. 
+returned hash, and are empty.
 
 For results that are less "raw" than this function returns, or to get the values for
 any property, not just the few covered by this function, use the
@@ -414,7 +414,7 @@ sub charinfo {
     @CATEGORIES =_read_table("To/Gc.pl") unless @CATEGORIES;
     $prop{'category'} = _search(\@CATEGORIES, 0, $#CATEGORIES, $code)
                         // $utf8::SwashInfo{'ToGc'}{'missing'};
-    # Return undef if category value is 'Unassigned' or one of its synonyms 
+    # Return undef if category value is 'Unassigned' or one of its synonyms
     return if grep { lc $_ eq 'unassigned' }
                                     prop_value_aliases('Gc', $prop{'category'});
 
@@ -1167,7 +1167,7 @@ my %BIDI_TYPES =
    'S'   => 'Segment Separator',
    'WS'  => 'Whitespace',
    'ON'  => 'Other Neutrals',
- ); 
+ );
 
 =head2 B<bidi_types()>
 
@@ -1354,7 +1354,7 @@ additional processing.
 For Unicode versions between 3.1 and 3.1.1 inclusive, this field is empty unless
 there is a
 special folding for Turkic languages, in which case I<status> is C<I>, and
-I<mapping>, I<full>, I<simple>, and I<turkic> are all equal.  
+I<mapping>, I<full>, I<simple>, and I<turkic> are all equal.
 
 =back
 

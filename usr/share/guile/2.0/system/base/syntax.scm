@@ -1,6 +1,6 @@
 ;;; Guile VM specific syntaxes and utilities
 
-;; Copyright (C) 2001, 2009 Free Software Foundation, Inc
+;; Copyright (C) 2001, 2009, 2016 Free Software Foundation, Inc
 
 ;;; This library is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU Lesser General Public
@@ -72,7 +72,7 @@
                            '()
                            (cons (car slots) (lp (cdr slots))))))
                (opts (list-tail slots (length reqs)))
-               (tail (gensym)))
+               (tail (module-gensym "defrec")))
           `(define (,(symbol-append 'make- stem) ,@reqs . ,tail)
              (let ,(map (lambda (o)
                           `(,(car o) (cond ((null? ,tail) ,(cadr o))
@@ -243,8 +243,8 @@
 ;; code looks good.
 
 (define-macro (transform-record type-and-common record . clauses)
-  (let ((r (gensym))
-        (rtd (gensym))
+  (let ((r (module-gensym "rec"))
+        (rtd (module-gensym "rtd"))
         (type-stem (trim-brackets (car type-and-common))))
     (define (make-stem s)
       (symbol-append type-stem '- s))

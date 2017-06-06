@@ -9,23 +9,24 @@ _jarsigner()
         -keystore)
             COMPREPLY=( $( compgen -W 'NONE' -- "$cur" ) )
             _filedir '@(jks|ks|p12|pfx)'
-            return 0
+            return
             ;;
-        -storepass|-keypass|-sigfile|-digestalg|-sigalg|-tsacert|-altsigner|\
-        -altsignerpath|-providerName|-providerClass|-providerArg)
-            return 0
+        -storepass|-keypass|-sigfile|-digestalg|-sigalg|-tsacert|-tsapolicyid|\
+        -tsadigestalg|-altsigner|-altsignerpath|-providerName|-providerClass|\
+        -providerArg)
+            return
+            ;;
+        -certchain|-sigfile|-tsa)
+            _filedir
+            return
             ;;
         -storetype)
             COMPREPLY=( $( compgen -W 'JKS PKCS11 PKCS12' -- "$cur" ) )
-            return 0
+            return
             ;;
         -signedjar)
             _filedir jar
-            return 0
-            ;;
-        -tsa)
-            _filedir
-            return 0
+            return
             ;;
     esac
 
@@ -53,4 +54,4 @@ _jarsigner()
 } &&
 complete -F _jarsigner jarsigner
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

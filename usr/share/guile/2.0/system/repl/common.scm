@@ -1,7 +1,6 @@
 ;;; Repl common routines
 
-;; Copyright (C) 2001, 2008, 2009, 2010, 2011, 2012,
-;;    2013, 2014 Free Software Foundation, Inc.
+;; Copyright (C) 2001, 2008-2016  Free Software Foundation, Inc.
 
 ;;; This library is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU Lesser General Public
@@ -40,7 +39,7 @@
 
 (define *version*
   (format #f "GNU Guile ~A
-Copyright (C) 1995-2014 Free Software Foundation, Inc.
+Copyright (C) 1995-2016 Free Software Foundation, Inc.
 
 Guile comes with ABSOLUTELY NO WARRANTY; for details type `,show w'.
 This program is free software, and you are welcome to redistribute it

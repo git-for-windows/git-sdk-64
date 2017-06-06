@@ -8,11 +8,11 @@ _change_pw()
     case $prev in
         -l|--listname)
             _xfunc list_lists _mailman_lists
-            return 0
+            return
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W '--all --domain --listname --password --quiet
@@ -22,4 +22,4 @@ _change_pw()
 } &&
 complete -F _change_pw change_pw
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

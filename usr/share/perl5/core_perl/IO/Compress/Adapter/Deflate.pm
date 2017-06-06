@@ -6,8 +6,8 @@ use bytes;
 
 use IO::Compress::Base::Common 2.069 qw(:Status);
 use Compress::Raw::Zlib  2.069 qw( !crc32 !adler32 ) ;
-                                  
-require Exporter;                                     
+
+require Exporter;
 our ($VERSION, @ISA, @EXPORT_OK, %EXPORT_TAGS, @EXPORT, %DEFLATE_CONSTANTS);
 
 $VERSION = '2.069_001';
@@ -32,12 +32,12 @@ sub mkCompObject
                                 -Strategy       => $strategy,
                                 -WindowBits     => - MAX_WBITS;
 
-    return (undef, "Cannot create Deflate object: $status", $status) 
-        if $status != Z_OK;    
+    return (undef, "Cannot create Deflate object: $status", $status)
+        if $status != Z_OK;
 
     return bless {'Def'        => $def,
                   'Error'      => '',
-                 } ;     
+                 } ;
 }
 
 sub compr
@@ -51,11 +51,11 @@ sub compr
 
     if ($status != Z_OK)
     {
-        $self->{Error} = "Deflate Error: $status"; 
+        $self->{Error} = "Deflate Error: $status";
         return STATUS_ERROR;
     }
 
-    return STATUS_OK;    
+    return STATUS_OK;
 }
 
 sub flush
@@ -70,11 +70,11 @@ sub flush
 
     if ($status != Z_OK)
     {
-        $self->{Error} = "Deflate Error: $status"; 
+        $self->{Error} = "Deflate Error: $status";
         return STATUS_ERROR;
     }
 
-    return STATUS_OK;        
+    return STATUS_OK;
 }
 
 sub close
@@ -97,14 +97,14 @@ sub reset
     $self->{ErrorNo} = $status;
     if ($status != Z_OK)
     {
-        $self->{Error} = "Deflate Error: $status"; 
+        $self->{Error} = "Deflate Error: $status";
         return STATUS_ERROR;
     }
 
-    return STATUS_OK;    
+    return STATUS_OK;
 }
 
-sub deflateParams 
+sub deflateParams
 {
     my $self = shift ;
 
@@ -114,11 +114,11 @@ sub deflateParams
     $self->{ErrorNo} = $status;
     if ($status != Z_OK)
     {
-        $self->{Error} = "deflateParams Error: $status"; 
+        $self->{Error} = "deflateParams Error: $status";
         return STATUS_ERROR;
     }
 
-    return STATUS_OK;   
+    return STATUS_OK;
 }
 
 

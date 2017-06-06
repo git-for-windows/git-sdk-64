@@ -721,7 +721,7 @@ sub _can_do_level {
   # only exist in this block.
 
   #  This means we only have to set up a single END block to remove
-  #  all files. 
+  #  all files.
 
   # in order to prevent child processes inadvertently deleting the parent
   # temp files we use a hash to store the temp files and directories
@@ -834,7 +834,7 @@ sub _can_do_level {
         # Directory exists so store it
         # first on VMS turn []foo into [.foo] for rmtree
         $fname = VMS::Filespec::vmspath($fname) if $^O eq 'VMS';
-        $dirs_to_unlink{$$} = [] 
+        $dirs_to_unlink{$$} = []
           unless exists $dirs_to_unlink{$$};
         push (@{ $dirs_to_unlink{$$} }, $fname);
 
@@ -1606,7 +1606,7 @@ sub unlink_on_destroy {
 sub DESTROY {
   my $self = shift;
   local($., $@, $!, $^E, $?);
-  if ($self->unlink_on_destroy && 
+  if ($self->unlink_on_destroy &&
       $$ == $self->{LAUNCHPID} && !$File::Temp::KEEP_ALL) {
     if (-d $self->{REALNAME}) {
       # Some versions of rmtree will abort if you attempt to remove
@@ -1963,12 +1963,12 @@ if warnings are turned on. Consider using the tmpnam()
 and mktemp() functions described elsewhere in this document
 if opening the file is not required.
 
-If the operating system supports it (for example BSD derived systems), the 
-filehandle will be opened with O_EXLOCK (open with exclusive file lock). 
-This can sometimes cause problems if the intention is to pass the filename 
-to another system that expects to take an exclusive lock itself (such as 
-DBD::SQLite) whilst ensuring that the tempfile is not reused. In this 
-situation the "EXLOCK" option can be passed to tempfile. By default EXLOCK 
+If the operating system supports it (for example BSD derived systems), the
+filehandle will be opened with O_EXLOCK (open with exclusive file lock).
+This can sometimes cause problems if the intention is to pass the filename
+to another system that expects to take an exclusive lock itself (such as
+DBD::SQLite) whilst ensuring that the tempfile is not reused. In this
+situation the "EXLOCK" option can be passed to tempfile. By default EXLOCK
 will be true (this retains compatibility with earlier releases).
 
   ($fh, $filename) = tempfile($template, EXLOCK => 0);

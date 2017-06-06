@@ -1,4 +1,4 @@
-;;;; 	Copyright (C) 1999, 2000, 2001, 2003, 2006, 2009, 2012 Free Software Foundation, Inc.
+;;;; 	Copyright (C) 1999, 2000, 2001, 2003, 2006, 2009, 2012, 2015 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@
 (define-module (oop goops dispatch)
   #:use-module (oop goops)
   #:use-module (oop goops util)
-  #:use-module (oop goops compile)
   #:use-module (system base target)
   #:export (memoize-method!)
   #:no-backtrace)
@@ -251,7 +250,7 @@
           (else
            (parse (1+ n) (cdr ls)))))
   (define (memoize len rest? types)
-    (let* ((cmethod (compute-cmethod applicable types))
+    (let* ((cmethod ((@@ (oop goops) compute-cmethod) applicable types))
            (cache (cons (vector len types rest? cmethod)
                         (slot-ref gf 'effective-methods))))
       (slot-set! gf 'effective-methods cache)

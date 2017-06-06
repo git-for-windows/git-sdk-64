@@ -10,20 +10,20 @@ _groupmod()
 
     case $prev in
         -g|--gid|-h|--help|-n|--new-name|-p|--password)
-            return 0
+            return
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
         [[ $COMPREPLY == *= ]] && compopt -o nospace
-        return 0
+        return
     fi
 
     COMPREPLY=( $( compgen -g -- "$cur" ) )
 } &&
 complete -F _groupmod groupmod
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

@@ -1,4 +1,4 @@
-Produced by GNU Guile 2.0.11 from `./libguile/guile-procedures.texi'.
+Produced by GNU Guile 2.0.14 from `./libguile/guile-procedures.texi'.
 
 acons
 
@@ -1885,8 +1885,11 @@ endianness
      This procedure has a variety of uses: waiting for the ability to
      provide input, accept output, or the existence of exceptional
      conditions on a collection of ports or file descriptors, or waiting
-     for a timeout to occur.  It also returns if interrupted by a
-     signal.
+     for a timeout to occur.
+
+     When an error occurs, of if it is interrupted by a signal, this
+     procedure throws a `system-error' exception (see `system-error').
+     In case of an interruption, the associated error number is EINTR.
 
      READS, WRITES and EXCEPTS can be lists or vectors, with each member
      a port or a file descriptor.  The value returned is a list of three
@@ -1954,8 +1957,8 @@ endianness
 symlink
 
 - Scheme Procedure: symlink oldpath newpath
-     Create a symbolic link named OLDPATH with the value (i.e., pointing
-     to) NEWPATH.  The return value is unspecified.
+     Create a symbolic link named NEWPATH with the value (i.e., pointing
+     to) OLDPATH.  The return value is unspecified.
 
 readlink
 
@@ -1986,9 +1989,9 @@ endianness
 
 - Scheme Procedure: mkdir path [mode]
      Create a new directory named by PATH.  If MODE is omitted then the
-     permissions of the directory file are set using the current umask.
-     Otherwise they are set to the decimal value specified with MODE.
-     The return value is unspecified.
+     permissions of the directory are set to `#o777' masked with the
+     current umask (see `umask').  Otherwise they are set to the value
+     specified with MODE.  The return value is unspecified.
 
 rmdir
 
@@ -2069,7 +2072,7 @@ endianness
 
 mkstemp!
 
-- Scheme Procedure: mkstemp! tmpl
+- Scheme Procedure: mkstemp! tmpl [mode]
      Create a new unique file in the file system and return a new
      buffered port open for reading and writing to the file.
 
@@ -2086,6 +2089,9 @@ endianness
           (let ((port (mkstemp! (string-copy "/tmp/myfile-XXXXXX"))))
             (chmod port (logand #o666 (lognot (umask))))
             ...)
+
+     The optional MODE argument specifies a mode, as a string in the
+     same format that `open-file' takes.  It defaults to `"w+"'.
 
 system-file-name-convention
 
@@ -2334,7 +2340,8 @@ endianness
 
 pointer->procedure
 
-- Scheme Procedure: pointer->procedure return_type func_ptr arg_types
+- Scheme Procedure: pointer->procedure return_type func_ptr arg_types .
+keyword_args
      Make a foreign function.
 
      Given the foreign void pointer FUNC_PTR, its argument and return
@@ -2342,7 +2349,9 @@ endianness
      arguments to the foreign function and return appropriate values.
 
      ARG_TYPES should be a list of foreign types.  `return_type' should
-     be a foreign type.
+     be a foreign type.  If the `#:return-errno?' keyword argument is
+     provided and its value is true, then the returned procedure will
+     return two values, with `errno' as the second value.
 
 procedure->pointer
 
@@ -4886,6 +4895,11 @@ endianness
      Return the port to which errors and warnings should be sent (the
      "standard error" in Unix and C terminology).
 
+current-warning-port
+
+- Scheme Procedure: current-warning-port
+     Return the port to which warnings should be sent.
+
 current-load-port
 
 - Scheme Procedure: current-load-port
@@ -5823,26 +5837,6 @@ interval_microseconds value_seconds value_microseconds
 
      If `system' is called without arguments, return a boolean
      indicating whether the command processor is available.
-
-system*
-
-- Scheme Procedure: system* .  args
-     Execute the command indicated by ARGS.  The first element must be a
-     string indicating the command to be executed, and the remaining
-     items must be strings representing each of the arguments to that
-     command.
-
-     This function returns the exit status of the command as provided by
-     `waitpid'.  This value can be handled with `status:exit-val' and
-     the related functions.
-
-     `system*' is similar to `system', but accepts only one string
-     per-argument, and performs no shell interpretation.  The command is
-     executed using fork and execlp.  Accordingly this function may be
-     safer than `system' in situations where shell interpretation is not
-     required.
-
-     Example: (system* "echo" "foo" "bar")
 
 getenv
 
@@ -7663,6 +7657,11 @@ interval_microseconds value_seconds value_microseconds
      Return a newly allocated string whose characters form the
      concatenation of the given strings, ARGS.
 
+string-utf8-length
+
+- Scheme Procedure: string-utf8-length string
+     Returns the number of bytes in the UTF-8 representation of STRING.
+
 string-normalize-nfc
 
 - Scheme Procedure: string-normalize-nfc string
@@ -8189,6 +8188,18 @@ interval_microseconds value_seconds value_microseconds
      both pairs and vectors (since both cons cells and vector cells may
      point to arbitrary objects), and stops recursing when it hits any
      other object.
+
+char->formal-name
+
+- Scheme Procedure: char->formal-name ch
+     Return the formal all-upper-case unicode name of CH, as a string.
+     If the character has no name, return `#f'.
+
+formal-name->char
+
+- Scheme Procedure: formal-name->char name
+     Return the character whose formal all-upper-case unicode name is
+     NAME, or `#f' if no such character is known.
 
 uniform-vector?
 
@@ -8941,6 +8952,26 @@ interval_microseconds value_seconds value_microseconds
      This procedure has been renamed from `fork' to avoid a naming
      conflict with the scsh fork.
 
+system*
+
+- Scheme Procedure: system* .  args
+     Execute the command indicated by ARGS.  The first element must be a
+     string indicating the command to be executed, and the remaining
+     items must be strings representing each of the arguments to that
+     command.
+
+     This function returns the exit status of the command as provided by
+     `waitpid'.  This value can be handled with `status:exit-val' and
+     the related functions.
+
+     `system*' is similar to `system', but accepts only one string
+     per-argument, and performs no shell interpretation.  The command is
+     executed using fork and execlp.  Accordingly this function may be
+     safer than `system' in situations where shell interpretation is not
+     required.
+
+     Example: (system* "echo" "foo" "bar")
+
 uname
 
 - Scheme Procedure: uname
@@ -9140,6 +9171,12 @@ interval_microseconds value_seconds value_microseconds
      descriptor or an open file descriptor port.
 
      Note that `flock' does not lock files across NFS.
+
+sethostname
+
+- Scheme Procedure: sethostname name
+     Set the host name of the current processor to NAME.  May only be
+     used by the superuser.  The return value is not specified.
 
 gethostname
 

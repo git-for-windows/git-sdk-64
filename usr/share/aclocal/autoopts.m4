@@ -5,7 +5,7 @@ dnl
 dnl Author:            Gary V. Vaughan <gvaughan@localhost>
 dnl  This file is part of AutoOpts, a companion to AutoGen.
 dnl  AutoOpts is free software.
-dnl  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+dnl  AutoOpts is Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
 dnl
 dnl  AutoOpts is available under any one of two licenses.  The license
 dnl  in use must be one of these two and the choice is under the control

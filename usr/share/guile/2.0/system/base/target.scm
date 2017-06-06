@@ -1,6 +1,6 @@
 ;;; Compilation targets
 
-;; Copyright (C) 2011, 2012, 2013 Free Software Foundation, Inc.
+;; Copyright (C) 2011, 2012, 2013, 2014 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -65,12 +65,20 @@
       (cond ((string-match "^i[0-9]86$" cpu)
              (endianness little))
             ((member cpu '("x86_64" "ia64"
-                           "powerpcle" "powerpc64le" "mipsel" "mips64el"))
+                           "powerpcle" "powerpc64le" "mipsel" "mips64el" "nios2" "sh3" "sh4" "alpha"))
              (endianness little))
             ((member cpu '("sparc" "sparc64" "powerpc" "powerpc64" "spu"
-                           "mips" "mips64"))
+                           "mips" "mips64" "m68k" "s390x"))
              (endianness big))
             ((string-match "^arm.*el" cpu)
+             (endianness little))
+            ((string-match "^arm.*eb" cpu)
+             (endianness big))
+            ((string-prefix? "arm" cpu)          ;ARMs are LE by default
+             (endianness little))
+            ((string-match "^aarch64.*be" cpu)
+             (endianness big))
+            ((string=? "aarch64" cpu)
              (endianness little))
             (else
              (error "unknown CPU endianness" cpu)))))
@@ -95,8 +103,9 @@
           ((string-match "^x86_64-.*-gnux32" triplet) 4)  ; x32
 
           ((string-match "64$" cpu) 8)
-          ((string-match "64[lbe][lbe]$" cpu) 8)
-          ((member cpu '("sparc" "powerpc" "mips" "mipsel")) 4)
+          ((string-match "64_?[lbe][lbe]$" cpu) 8)
+          ((member cpu '("sparc" "powerpc" "mips" "mipsel" "nios2" "m68k" "sh3" "sh4")) 4)
+          ((member cpu '("s390x" "alpha")) 8)
           ((string-match "^arm.*" cpu) 4)
           (else (error "unknown CPU word size" cpu)))))
 

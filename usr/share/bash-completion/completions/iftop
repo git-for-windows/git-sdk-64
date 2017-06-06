@@ -7,15 +7,15 @@ _iftop()
 
     case $prev in
         -h|-f|-F|-m)
-            return 0
+            return
             ;;
         -i)
             _available_interfaces -a
-            return 0
+            return
             ;;
         -c)
             _filedir
-            return 0
+            return
             ;;
     esac
 
@@ -23,4 +23,4 @@ _iftop()
 } &&
 complete -F _iftop iftop
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

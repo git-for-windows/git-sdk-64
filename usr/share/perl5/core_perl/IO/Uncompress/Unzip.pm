@@ -64,17 +64,17 @@ sub unzip
 
 sub getExtraParams
 {
-   
+
     return (
 #            # Zip header fields
             'name'    => [IO::Compress::Base::Common::Parse_any,       undef],
 
             'stream'  => [IO::Compress::Base::Common::Parse_boolean,   0],
-            
+
             # TODO - This means reading the central directory to get
             # 1. the local header offsets
             # 2. The compressed data length
-        );    
+        );
 }
 
 sub ckParams
@@ -114,9 +114,9 @@ sub ckMagic
 
     *$self->{HeaderPending} = $magic ;
 
-    return $self->HeaderError("Minimum header size is " . 
-                              4 . " bytes") 
-        if length $magic != 4 ;                                    
+    return $self->HeaderError("Minimum header size is " .
+                              4 . " bytes")
+        if length $magic != 4 ;
 
     return $self->HeaderError("Bad Magic")
         if ! _isZipMagic($magic) ;
@@ -183,9 +183,9 @@ sub readHeader
                 my $out;
                 $status = *$self->{Uncomp}->uncompr(\$b, \$temp_buf, 0, $out);
 
-                return $self->saveErrorString(undef, *$self->{Uncomp}{Error}, 
+                return $self->saveErrorString(undef, *$self->{Uncomp}{Error},
                                                      *$self->{Uncomp}{ErrorNo})
-                    if $self->saveStatus($status) == STATUS_ERROR;                
+                    if $self->saveStatus($status) == STATUS_ERROR;
 
                 if ($status == STATUS_ENDSTREAM) {
                     *$self->{Uncomp}->reset();
@@ -241,7 +241,7 @@ sub chkTrailer
             if $sig != ZIP_DATA_HDR_SIG;
     }
     else {
-        ($CRC32, $cSize, $uSize) = 
+        ($CRC32, $cSize, $uSize) =
             (*$self->{ZipData}{Crc32},
              *$self->{ZipData}{CompressedLen},
              *$self->{ZipData}{UnCompressedLen});
@@ -327,7 +327,7 @@ sub skipCentralDirectory
 
     my $buffer;
     $self->smartReadExact(\$buffer, 46 - 4)
-        or return $self->TrailerError("Minimum header size is " . 
+        or return $self->TrailerError("Minimum header size is " .
                                      46 . " bytes") ;
 
     my $keep = $magic . $buffer ;
@@ -341,7 +341,7 @@ sub skipCentralDirectory
    #my $crc32              = unpack ("V", substr($buffer, 16-4, 4));
     my $compressedLength   = unpack ("V", substr($buffer, 20-4, 4));
     my $uncompressedLength = unpack ("V", substr($buffer, 24-4, 4));
-    my $filename_length    = unpack ("v", substr($buffer, 28-4, 2)); 
+    my $filename_length    = unpack ("v", substr($buffer, 28-4, 2));
     my $extra_length       = unpack ("v", substr($buffer, 30-4, 2));
     my $comment_length     = unpack ("v", substr($buffer, 32-4, 2));
    #my $disk_start         = unpack ("v", substr($buffer, 34-4, 2));
@@ -349,7 +349,7 @@ sub skipCentralDirectory
    #my $ext_file_attrib    = unpack ("V", substr($buffer, 38-4, 2));
    #my $lcl_hdr_offset     = unpack ("V", substr($buffer, 42-4, 2));
 
-    
+
     my $filename;
     my $extraField;
     my $comment ;
@@ -384,7 +384,7 @@ sub skipArchiveExtra
 
     my $buffer;
     $self->smartReadExact(\$buffer, 4)
-        or return $self->TrailerError("Minimum header size is " . 
+        or return $self->TrailerError("Minimum header size is " .
                                      4 . " bytes") ;
 
     my $keep = $magic . $buffer ;
@@ -392,7 +392,7 @@ sub skipArchiveExtra
     my $size = unpack ("V", $buffer);
 
     $self->smartReadExact(\$buffer, $size)
-        or return $self->TrailerError("Minimum header size is " . 
+        or return $self->TrailerError("Minimum header size is " .
                                      $size . " bytes") ;
 
     $keep .= $buffer ;
@@ -409,7 +409,7 @@ sub skipCentralDirectory64Rec
 
     my $buffer;
     $self->smartReadExact(\$buffer, 8)
-        or return $self->TrailerError("Minimum header size is " . 
+        or return $self->TrailerError("Minimum header size is " .
                                      8 . " bytes") ;
 
     my $keep = $magic . $buffer ;
@@ -418,7 +418,7 @@ sub skipCentralDirectory64Rec
     my $size = $sizeHi * U64::MAX32 + $sizeLo;
 
     $self->fastForward($size)
-        or return $self->TrailerError("Minimum header size is " . 
+        or return $self->TrailerError("Minimum header size is " .
                                      $size . " bytes") ;
 
    #$keep .= $buffer ;
@@ -443,7 +443,7 @@ sub skipCentralDirectory64Loc
 
     my $buffer;
     $self->smartReadExact(\$buffer, 20 - 4)
-        or return $self->TrailerError("Minimum header size is " . 
+        or return $self->TrailerError("Minimum header size is " .
                                      20 . " bytes") ;
 
     my $keep = $magic . $buffer ;
@@ -463,7 +463,7 @@ sub skipEndCentralDirectory
 
     my $buffer;
     $self->smartReadExact(\$buffer, 22 - 4)
-        or return $self->TrailerError("Minimum header size is " . 
+        or return $self->TrailerError("Minimum header size is " .
                                      22 . " bytes") ;
 
     my $keep = $magic . $buffer ;
@@ -477,7 +477,7 @@ sub skipEndCentralDirectory
    #my $offsetToCD         = unpack ("V", substr($buffer, 16-4, 4));
     my $comment_length     = unpack ("v", substr($buffer, 20-4, 2));
 
-    
+
     my $comment ;
     if ($comment_length)
     {
@@ -508,9 +508,9 @@ sub _readFullZipHeader($)
 
     *$self->{HeaderPending} = $magic ;
 
-    return $self->HeaderError("Minimum header size is " . 
-                              30 . " bytes") 
-        if length $magic != 4 ;                                    
+    return $self->HeaderError("Minimum header size is " .
+                              30 . " bytes")
+        if length $magic != 4 ;
 
 
     return $self->HeaderError("Bad Magic")
@@ -528,7 +528,7 @@ sub _readZipHeader($)
     my ($buffer) = '' ;
 
     $self->smartReadExact(\$buffer, 30 - 4)
-        or return $self->HeaderError("Minimum header size is " . 
+        or return $self->HeaderError("Minimum header size is " .
                                      30 . " bytes") ;
 
     my $keep = $magic . $buffer ;
@@ -541,7 +541,7 @@ sub _readZipHeader($)
     my $crc32              = unpack ("V", substr($buffer, 14-4, 4));
     my $compressedLength   = U64::newUnpack_V32 substr($buffer, 18-4, 4);
     my $uncompressedLength = U64::newUnpack_V32 substr($buffer, 22-4, 4);
-    my $filename_length    = unpack ("v", substr($buffer, 26-4, 2)); 
+    my $filename_length    = unpack ("v", substr($buffer, 26-4, 2));
     my $extra_length       = unpack ("v", substr($buffer, 28-4, 2));
 
     my $filename;
@@ -584,7 +584,7 @@ sub _readZipHeader($)
         {
             $Extra{$_->[0]} = \$_->[1];
         }
-        
+
         if (defined $Extra{ZIP_EXTRA_ID_ZIP64()})
         {
             $zip64 = 1 ;
@@ -599,7 +599,7 @@ sub _readZipHeader($)
                 my $offset = 0 ;
 
                 if (U64::full32 $uncompressedLength->get32bit() ) {
-                    $uncompressedLength 
+                    $uncompressedLength
                             = U64::newUnpack_V64 substr($buff, 0, 8);
 
                     $offset += 8 ;
@@ -607,7 +607,7 @@ sub _readZipHeader($)
 
                 if (U64::full32 $compressedLength->get32bit() ) {
 
-                    $compressedLength 
+                    $compressedLength
                         = U64::newUnpack_V64 substr($buff, $offset, 8);
 
                     $offset += 8 ;
@@ -640,9 +640,9 @@ sub _readZipHeader($)
     {
         return $self->HeaderError("Unsupported Compression format $compressedMethod")
             if ! defined $IO::Uncompress::Adapter::Bunzip2::VERSION ;
-        
+
         *$self->{Type} = 'zip-bzip2';
-        
+
         my $obj = IO::Uncompress::Adapter::Bunzip2::mkUncompObject();
 
         *$self->{Uncomp} = $obj;
@@ -651,7 +651,7 @@ sub _readZipHeader($)
     {
         return $self->HeaderError("Unsupported Compression format $compressedMethod")
             if ! defined $IO::Uncompress::Adapter::UnLzma::VERSION ;
-        
+
         *$self->{Type} = 'zip-lzma';
         my $LzmaHeader;
         $self->smartReadExact(\$LzmaHeader, 4)
@@ -678,7 +678,7 @@ sub _readZipHeader($)
     elsif ($compressedMethod == ZIP_CM_STORE)
     {
         *$self->{Type} = 'zip-stored';
-        
+
         my $obj =
         IO::Uncompress::Adapter::Identity::mkUncompObject($streamingMode,
                                                           $zip64);
@@ -706,8 +706,8 @@ sub _readZipHeader($)
         'Stream'             => $streamingMode,
 
         'MethodID'           => $compressedMethod,
-        'MethodName'         => $compressedMethod == ZIP_CM_DEFLATE 
-                                 ? "Deflated" 
+        'MethodName'         => $compressedMethod == ZIP_CM_DEFLATE
+                                 ? "Deflated"
                                  : $compressedMethod == ZIP_CM_BZIP2
                                      ? "Bzip2"
                                      : $compressedMethod == ZIP_CM_LZMA
@@ -723,7 +723,7 @@ sub _readZipHeader($)
 #        'ExtraFlag'     => $flag & GZIP_FLG_FEXTRA ? 1 : 0,
 #        'Comment'       => $comment,
 #        'OsID'          => $os,
-#        'OsName'        => defined $GZIP_OS_Names{$os} 
+#        'OsName'        => defined $GZIP_OS_Names{$os}
 #                                 ? $GZIP_OS_Names{$os} : "Unknown",
 #        'HeaderCRC'     => $HeaderCRC,
 #        'Flags'         => $flag,
@@ -745,7 +745,7 @@ sub filterUncompressed
     else {
         *$self->{ZipData}{CRC32} = Compress::Raw::Zlib::crc32(${$_[0]}, *$self->{ZipData}{CRC32}, $_[1]);
     }
-}    
+}
 
 
 # from Archive::Zip & info-zip
@@ -787,7 +787,7 @@ sub _dosToUnixTime
 #
 #    # Now walk the Central Directory Records
 #    my $buffer ;
-#    while ($self->smartReadExact(\$buffer, 46) && 
+#    while ($self->smartReadExact(\$buffer, 46) &&
 #           unpack("V", $buffer) == ZIP_CENTRAL_HDR_SIG) {
 #
 #        my $compressedLength   = unpack ("V", substr($buffer, 20, 4));
@@ -795,7 +795,7 @@ sub _dosToUnixTime
 #        my $extra_length       = unpack ("v", substr($buffer, 30, 2));
 #        my $comment_length     = unpack ("v", substr($buffer, 32, 2));
 #
-#        $self->smarkSeek($filename_length + $extra_length + $comment_length, 0, SEEK_CUR) 
+#        $self->smarkSeek($filename_length + $extra_length + $comment_length, 0, SEEK_CUR)
 #            if $extra_length || $comment_length || $filename_length;
 #        push @CD, $compressedLength ;
 #    }
@@ -815,7 +815,7 @@ sub _dosToUnixTime
 #    my $buffer;
 #    $self->smartReadExact(\$buffer, 22) ;
 #
-#    my $zip64 = 0;                             
+#    my $zip64 = 0;
 #    my $centralDirOffset ;
 #    if ( unpack("V", $buffer) == ZIP_END_CENTRAL_HDR_SIG ) {
 #        $centralDirOffset = unpack ("V", substr($buffer, 16, 2));
@@ -846,7 +846,7 @@ sub skip
     else {
         $self->smartSeek($size, SEEK_CUR);
     }
-    
+
 }
 
 
@@ -870,7 +870,7 @@ sub scanCentralDirectory
 
     # Now walk the Central Directory Records
     my $buffer ;
-    while ($self->smartReadExact(\$buffer, 46) && 
+    while ($self->smartReadExact(\$buffer, 46) &&
            unpack("V", $buffer) == ZIP_CENTRAL_HDR_SIG) {
 
         my $compressedLength   = unpack("V", substr($buffer, 20, 4));
@@ -885,7 +885,7 @@ sub scanCentralDirectory
 
         if (U64::full32 $compressedLength ) {
             $self->smartReadExact(\$buffer, $extra_length) ;
-            die "xxx $offset $comment_length $filename_length $extra_length" . length($buffer) 
+            die "xxx $offset $comment_length $filename_length $extra_length" . length($buffer)
                 if length($buffer) != $extra_length;
             my $got = $self->get64Extra($buffer, U64::full32 $uncompressedLength);
 
@@ -897,7 +897,7 @@ sub scanCentralDirectory
         }
 
         $self->skip($comment_length ) ;
-            
+
         push @CD, $v64 ;
     }
 
@@ -914,7 +914,7 @@ sub get64Extra
     my $is_uncomp = shift ;
 
     my $extra = IO::Compress::Zlib::Extra::findID(0x0001, $buffer);
-                                            
+
     if (! defined $extra)
     {
         return undef;
@@ -923,7 +923,7 @@ sub get64Extra
     {
         my $u64 = U64::newUnpack_V64(substr($extra,  $is_uncomp ? 8 : 0)) ;
         return $u64;
-    }    
+    }
 }
 
 sub offsetFromZip64
@@ -931,20 +931,20 @@ sub offsetFromZip64
     my $self = shift ;
     my $here = shift;
 
-    $self->smartSeek($here - 20, 0, SEEK_SET) 
+    $self->smartSeek($here - 20, 0, SEEK_SET)
         or die "xx $!" ;
 
     my $buffer;
     my $got = 0;
-    $self->smartReadExact(\$buffer, 20)  
+    $self->smartReadExact(\$buffer, 20)
         or die "xxx $here $got $!" ;
 
     if ( unpack("V", $buffer) == ZIP64_END_CENTRAL_LOC_HDR_SIG ) {
         my $cd64 = U64::Value_VV64 substr($buffer,  8, 8);
-       
+
         $self->smartSeek($cd64, 0, SEEK_SET) ;
 
-        $self->smartReadExact(\$buffer, 4) 
+        $self->smartReadExact(\$buffer, 4)
             or die "xxx" ;
 
         if ( unpack("V", $buffer) == ZIP64_END_CENTRAL_REC_HDR_SIG ) {
@@ -959,7 +959,7 @@ sub offsetFromZip64
 
             return $cd64 ;
         }
-        
+
         die "zzz";
     }
 
@@ -980,10 +980,10 @@ sub findCentralDirectoryOffset
     my $here = $self->tell();
 
     my $buffer;
-    $self->smartReadExact(\$buffer, 22) 
+    $self->smartReadExact(\$buffer, 22)
         or die "xxx" ;
 
-    my $zip64 = 0;                             
+    my $zip64 = 0;
     my $centralDirOffset ;
     if ( unpack("V", $buffer) == ZIP_END_CENTRAL_HDR_SIG ) {
         $centralDirOffset = unpack("V", substr($buffer, 16,  4));
@@ -1001,7 +1001,7 @@ sub findCentralDirectoryOffset
                 $seekTo = 0;
                 $want = $fileLen ;
             }
-            $self->smartSeek( $seekTo, 0, SEEK_SET) 
+            $self->smartSeek( $seekTo, 0, SEEK_SET)
                 or die "xxx $!" ;
             my $got;
             $self->smartReadExact($buffer, $want)
@@ -1042,7 +1042,7 @@ IO::Uncompress::Unzip - Read zip files/buffers
     my $status = unzip $input => $output [,OPTS]
         or die "unzip failed: $UnzipError\n";
 
-    my $z = new IO::Uncompress::Unzip $input [OPTS] 
+    my $z = new IO::Uncompress::Unzip $input [OPTS]
         or die "unzip failed: $UnzipError\n";
 
     $status = $z->read($buffer)
@@ -1096,7 +1096,7 @@ section.
 
     use IO::Uncompress::Unzip qw(unzip $UnzipError) ;
 
-    unzip $input_filename_or_reference => $output_filename_or_reference [,OPTS] 
+    unzip $input_filename_or_reference => $output_filename_or_reference [,OPTS]
         or die "unzip failed: $UnzipError\n";
 
 The functional interface needs Perl5.005 or better.
@@ -1109,7 +1109,7 @@ C<$input_filename_or_reference> and C<$output_filename_or_reference>.
 =head3 The C<$input_filename_or_reference> parameter
 
 The parameter, C<$input_filename_or_reference>, is used to define the
-source of the compressed data. 
+source of the compressed data.
 
 It can take one of the following forms:
 
@@ -1127,17 +1127,17 @@ If the C<$input_filename_or_reference> parameter is a filehandle, the input
 data will be read from it.  The string '-' can be used as an alias for
 standard input.
 
-=item A scalar reference 
+=item A scalar reference
 
 If C<$input_filename_or_reference> is a scalar reference, the input data
 will be read from C<$$input_filename_or_reference>.
 
-=item An array reference 
+=item An array reference
 
 If C<$input_filename_or_reference> is an array reference, each element in
 the array must be a filename.
 
-The input data will be read from each file in turn. 
+The input data will be read from each file in turn.
 
 The complete array will be walked to ensure that it only
 contains valid filenames before any data is uncompressed.
@@ -1145,8 +1145,8 @@ contains valid filenames before any data is uncompressed.
 =item An Input FileGlob string
 
 If C<$input_filename_or_reference> is a string that is delimited by the
-characters "<" and ">" C<unzip> will assume that it is an 
-I<input fileglob string>. The input is the list of files that match the 
+characters "<" and ">" C<unzip> will assume that it is an
+I<input fileglob string>. The input is the list of files that match the
 fileglob.
 
 See L<File::GlobMapper|File::GlobMapper> for more details.
@@ -1167,7 +1167,7 @@ these forms.
 =item A filename
 
 If the C<$output_filename_or_reference> parameter is a simple scalar, it is
-assumed to be a filename.  This file will be opened for writing and the 
+assumed to be a filename.  This file will be opened for writing and the
 uncompressed data will be written to it.
 
 =item A filehandle
@@ -1176,14 +1176,14 @@ If the C<$output_filename_or_reference> parameter is a filehandle, the
 uncompressed data will be written to it.  The string '-' can be used as
 an alias for standard output.
 
-=item A scalar reference 
+=item A scalar reference
 
 If C<$output_filename_or_reference> is a scalar reference, the
 uncompressed data will be stored in C<$$output_filename_or_reference>.
 
 =item An Array Reference
 
-If C<$output_filename_or_reference> is an array reference, 
+If C<$output_filename_or_reference> is an array reference,
 the uncompressed data will be pushed onto the array.
 
 =item An Output FileGlob
@@ -1222,7 +1222,7 @@ L</"Constructor Options"> section below.
 
 =item C<< AutoClose => 0|1 >>
 
-This option applies to any input or output data streams to 
+This option applies to any input or output data streams to
 C<unzip> that are filehandles.
 
 If C<AutoClose> is specified, and the value is true, it will result in all
@@ -1265,7 +1265,7 @@ written to it.  Otherwise the file pointer will not be moved.
 
 =back
 
-When C<Append> is specified, and set to true, it will I<append> all uncompressed 
+When C<Append> is specified, and set to true, it will I<append> all uncompressed
 data to the output data stream.
 
 So when the output is a filehandle it will carry out a seek to the eof
@@ -1293,7 +1293,7 @@ Defaults to 0.
 =item C<< TrailingData => $scalar >>
 
 Returns the data, if any, that is present immediately after the compressed
-data stream once uncompression is complete. 
+data stream once uncompression is complete.
 
 This option can be used when there is useful information immediately
 following the compressed data stream, and you don't know the length of the
@@ -1305,7 +1305,7 @@ end of the compressed data stream to the end of the buffer.
 If the input is a filehandle, C<trailingData> will return the data that is
 left in the filehandle input buffer once the end of the compressed data
 stream has been reached. You can then use the filehandle to read the rest
-of the input file. 
+of the input file.
 
 Don't bother using C<trailingData> if the input is a filename.
 
@@ -1331,7 +1331,7 @@ file C<file1.txt> like this.
         or die "unzip failed: $UnzipError\n";
 
 If you have a zip file that contains multiple members and want to read a
-specific member from the file, say C<"data1">, use the C<Name> option 
+specific member from the file, say C<"data1">, use the C<Name> option
 
     use strict ;
     use warnings ;
@@ -1366,7 +1366,7 @@ uncompressed data to a buffer, C<$buffer>.
     my $input = new IO::File "<file1.zip"
         or die "Cannot open 'file1.zip': $!\n" ;
     my $buffer ;
-    unzip $input => \$buffer 
+    unzip $input => \$buffer
         or die "unzip failed: $UnzipError\n";
 
 =head1 OO Interface
@@ -1406,7 +1406,7 @@ If the C<$input> parameter is a filehandle, the compressed data will be
 read from it.
 The string '-' can be used as an alias for standard input.
 
-=item A scalar reference 
+=item A scalar reference
 
 If C<$input> is a scalar reference, the compressed data will be read from
 C<$$input>.
@@ -1429,7 +1429,7 @@ OPTS is a combination of the following options:
 
 =item C<< Name => "membername" >>
 
-Open "membername" from the zip file for reading. 
+Open "membername" from the zip file for reading.
 
 =item C<< AutoClose => 0|1 >>
 
@@ -1484,7 +1484,7 @@ When present this option will limit the number of compressed bytes read
 from the input file/buffer to C<$size>. This option can be used in the
 situation where there is useful data directly after the compressed data
 stream and you know beforehand the exact length of the compressed data
-stream. 
+stream.
 
 This option is mostly used when reading from a filehandle, in which case
 the file pointer will be left pointing to the first byte directly after the
@@ -1518,7 +1518,7 @@ The default for this option is off.
 
 TODO
 
-=head1 Methods 
+=head1 Methods
 
 =head2 read
 
@@ -1562,16 +1562,16 @@ Usage is
     $line = $z->getline()
     $line = <$z>
 
-Reads a single line. 
+Reads a single line.
 
 This method fully supports the use of the variable C<$/> (or
 C<$INPUT_RECORD_SEPARATOR> or C<$RS> when C<English> is in use) to
 determine what constitutes an end of line. Paragraph mode, record mode and
-file slurp mode are all supported. 
+file slurp mode are all supported.
 
 =head2 getc
 
-Usage is 
+Usage is
 
     $char = $z->getc()
 
@@ -1654,7 +1654,7 @@ This is a noop provided for completeness.
 
     $z->opened()
 
-Returns true if the object currently refers to a opened file/buffer. 
+Returns true if the object currently refers to a opened file/buffer.
 
 =head2 autoflush
 
@@ -1701,7 +1701,7 @@ C<undef>.
     $z->close() ;
     close $z ;
 
-Closes the output file/buffer. 
+Closes the output file/buffer.
 
 For most versions of Perl this method will be automatically invoked if
 the IO::Uncompress::Unzip object is destroyed (either explicitly or by the
@@ -1755,7 +1755,7 @@ end of the compressed data stream to the end of the buffer.
 If the input is a filehandle, C<trailingData> will return the data that is
 left in the filehandle input buffer once the end of the compressed data
 stream has been reached. You can then use the filehandle to read the rest
-of the input file. 
+of the input file.
 
 Don't bother using C<trailingData> if the input is a filename.
 
@@ -1763,9 +1763,9 @@ If you know the length of the compressed data stream before you start
 uncompressing, you can avoid having to use C<trailingData> by setting the
 C<InputLength> option in the constructor.
 
-=head1 Importing 
+=head1 Importing
 
-No symbolic constants are required by this IO::Uncompress::Unzip at present. 
+No symbolic constants are required by this IO::Uncompress::Unzip at present.
 
 =over 5
 
@@ -1798,7 +1798,7 @@ stream at a time.
     my $status;
     for ($status = 1; $status > 0; $status = $u->nextStream())
     {
- 
+
         my $name = $u->getHeaderInfo()->{Name};
         warn "Processing member $name\n" ;
 
@@ -1838,7 +1838,7 @@ L<File::GlobMapper|File::GlobMapper>, L<Archive::Zip|Archive::Zip>,
 L<Archive::Tar|Archive::Tar>,
 L<IO::Zlib|IO::Zlib>
 
-For RFC 1950, 1951 and 1952 see 
+For RFC 1950, 1951 and 1952 see
 F<http://www.faqs.org/rfcs/rfc1950.html>,
 F<http://www.faqs.org/rfcs/rfc1951.html> and
 F<http://www.faqs.org/rfcs/rfc1952.html>
@@ -1853,7 +1853,7 @@ The primary site for gzip is F<http://www.gzip.org>.
 
 =head1 AUTHOR
 
-This module was written by Paul Marquess, F<pmqs@cpan.org>. 
+This module was written by Paul Marquess, F<pmqs@cpan.org>.
 
 =head1 MODIFICATION HISTORY
 

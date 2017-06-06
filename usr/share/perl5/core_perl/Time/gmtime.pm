@@ -5,13 +5,13 @@ use 5.006_001;
 use Time::tm;
 
 our(@ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS, $VERSION);
-BEGIN { 
+BEGIN {
     use Exporter   ();
     @ISA         = qw(Exporter Time::tm);
     @EXPORT      = qw(gmtime gmctime);
-    @EXPORT_OK   = qw(  
-			$tm_sec $tm_min $tm_hour $tm_mday 
-			$tm_mon $tm_year $tm_wday $tm_yday 
+    @EXPORT_OK   = qw(
+			$tm_sec $tm_min $tm_hour $tm_mday
+			$tm_mon $tm_year $tm_wday $tm_yday
 			$tm_isdst
 		    );
     %EXPORT_TAGS = ( FIELDS => [ @EXPORT_OK, @EXPORT ] );
@@ -23,15 +23,15 @@ sub populate (@) {
     return unless @_;
     my $tmob = Time::tm->new();
     @$tmob = (
-		$tm_sec, $tm_min, $tm_hour, $tm_mday, 
-		$tm_mon, $tm_year, $tm_wday, $tm_yday, 
+		$tm_sec, $tm_min, $tm_hour, $tm_mday,
+		$tm_mon, $tm_year, $tm_wday, $tm_yday,
 		$tm_isdst )
 	    = @_;
     return $tmob;
-} 
+}
 
 sub gmtime (;$)    { populate CORE::gmtime(@_ ? shift : time)}
-sub gmctime (;$)   { scalar   CORE::gmtime(@_ ? shift : time)} 
+sub gmctime (;$)   { scalar   CORE::gmtime(@_ ? shift : time)}
 
 1;
 __END__
@@ -44,12 +44,12 @@ Time::gmtime - by-name interface to Perl's built-in gmtime() function
 
  use Time::gmtime;
  $gm = gmtime();
- printf "The day in Greenwich is %s\n", 
+ printf "The day in Greenwich is %s\n",
     (qw(Sun Mon Tue Wed Thu Fri Sat Sun))[ $gm->wday() ];
 
  use Time::gmtime qw(:FIELDS);
  gmtime();
- printf "The day in Greenwich is %s\n", 
+ printf "The day in Greenwich is %s\n",
     (qw(Sun Mon Tue Wed Thu Fri Sat Sun))[ $tm_wday ];
 
  $now = gmctime();
@@ -72,7 +72,7 @@ still overrides your core functions.)  Access these fields as variables
 named with a preceding C<tm_> in front their method names.  Thus,
 C<$tm_obj-E<gt>mday()> corresponds to $tm_mday if you import the fields.
 
-The gmctime() function provides a way of getting at the 
+The gmctime() function provides a way of getting at the
 scalar sense of the original CORE::gmtime() function.
 
 To access this functionality without the core overrides,

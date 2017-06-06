@@ -35,7 +35,7 @@ PerlIO - On demand loader for PerlIO layers and root of PerlIO::* name space
 
 =head1 SYNOPSIS
 
-  open($fh, "<:crlf", "my.txt"); # support platform-native and 
+  open($fh, "<:crlf", "my.txt"); # support platform-native and
                                  # CRLF text files
 
   open($fh, "<", "his.jpg"); # portably open a binary file for reading

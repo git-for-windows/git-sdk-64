@@ -4,7 +4,7 @@ AutoGen5 Template
 
 ##  This file is part of AutoGen.
 ##
-##  AutoGen Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+##  AutoGen Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
 ##
 ##  AutoGen is free software: you can redistribute it and/or modify it
 ##  under the terms of the GNU General Public License as published by the
@@ -95,7 +95,7 @@ AC_DEFUN([[=
   (define end-requested-disablement "")
 
   (if (= (get "code-mode") "body")
-    (set! c-text (string-append "int main(int argc,char** argv) {\n"
+    (set! c-text (string-append "int main(int argc, char ** argv) {\n"
           c-text "\nreturn 0; }" )) )
 
   mac-name                      =]],[[=
@@ -555,7 +555,7 @@ DEFINE  try-withlib             =][=
   Xyes|Xno|X )
     case "X${[=(. cv-name)=]_root}" in
     Xyes|Xno|X ) [=(. cv-name)=]_cflags=no ;;
-    * )        [=(. cv-name)=]_cflags=-I${[=(. cv-name)=]_root}/include ;;
+    * ) [=(. cv-name)=]_cflags=-I${[=(. cv-name)=]_root}/include ;;
     esac
   esac
   case "X${[=(. cv-name)=]_libs}" in
@@ -563,7 +563,7 @@ DEFINE  try-withlib             =][=
     case "X${[=(. cv-name)=]_root}" in
     Xyes|Xno|X ) [=(. cv-name)=]_libs=no ;;
     * )        [=(. cv-name)=]_libs="-L${[=(. cv-name)
-               =]_root}/lib -l[=(. down-name)=]";;
+               =]_root}/lib -l[=(. down-name)=]" ;;
     esac
   esac
   [=(. group-pfx)=]save_CPPFLAGS="${CPPFLAGS}"

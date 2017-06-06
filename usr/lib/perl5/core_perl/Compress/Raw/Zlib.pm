@@ -11,11 +11,11 @@ use bytes ;
 our ($VERSION, $XS_VERSION, @ISA, @EXPORT, %EXPORT_TAGS, @EXPORT_OK, $AUTOLOAD, %DEFLATE_CONSTANTS, @DEFLATE_CONSTANTS);
 
 $VERSION = '2.069';
-$XS_VERSION = $VERSION; 
+$XS_VERSION = $VERSION;
 $VERSION = eval $VERSION;
 
 @ISA = qw(Exporter);
-%EXPORT_TAGS = ( flush     => [qw{  
+%EXPORT_TAGS = ( flush     => [qw{
                                     Z_NO_FLUSH
                                     Z_PARTIAL_FLUSH
                                     Z_SYNC_FLUSH
@@ -23,30 +23,30 @@ $VERSION = eval $VERSION;
                                     Z_FINISH
                                     Z_BLOCK
                               }],
-                 level     => [qw{  
+                 level     => [qw{
                                     Z_NO_COMPRESSION
                                     Z_BEST_SPEED
                                     Z_BEST_COMPRESSION
                                     Z_DEFAULT_COMPRESSION
                               }],
-                 strategy  => [qw{  
+                 strategy  => [qw{
                                     Z_FILTERED
                                     Z_HUFFMAN_ONLY
                                     Z_RLE
                                     Z_FIXED
                                     Z_DEFAULT_STRATEGY
                               }],
-                 status   => [qw{  
+                 status   => [qw{
                                     Z_OK
                                     Z_STREAM_END
                                     Z_NEED_DICT
                                     Z_ERRNO
                                     Z_STREAM_ERROR
-                                    Z_DATA_ERROR  
-                                    Z_MEM_ERROR   
-                                    Z_BUF_ERROR 
-                                    Z_VERSION_ERROR 
-                              }],                              
+                                    Z_DATA_ERROR
+                                    Z_MEM_ERROR
+                                    Z_BUF_ERROR
+                                    Z_VERSION_ERROR
+                              }],
               );
 
 %DEFLATE_CONSTANTS = %EXPORT_TAGS;
@@ -54,12 +54,12 @@ $VERSION = eval $VERSION;
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
-@DEFLATE_CONSTANTS = 
+@DEFLATE_CONSTANTS =
 @EXPORT = qw(
         ZLIB_VERSION
         ZLIB_VERNUM
 
-        
+
         OS_CODE
 
         MAX_MEM_LEVEL
@@ -125,13 +125,13 @@ eval {
     require XSLoader;
     XSLoader::load('Compress::Raw::Zlib', $XS_VERSION);
     1;
-} 
+}
 or do {
     require DynaLoader;
     local @ISA = qw(DynaLoader);
-    bootstrap Compress::Raw::Zlib $XS_VERSION ; 
+    bootstrap Compress::Raw::Zlib $XS_VERSION ;
 };
- 
+
 
 use constant Parse_any      => 0x01;
 use constant Parse_unsigned => 0x02;
@@ -153,7 +153,7 @@ use constant OFF_STICKY     => 5 ;
 
 sub ParseParameters
 {
-    my $level = shift || 0 ; 
+    my $level = shift || 0 ;
 
     my $sub = (caller($level + 1))[3] ;
     #local $Carp::CarpLevel = 1 ;
@@ -186,13 +186,13 @@ sub Compress::Raw::Zlib::Parameters::setError
     $self->{Error} = $error ;
     return $retval;
 }
-          
+
 #sub getError
 #{
 #    my $self = shift ;
 #    return $self->{Error} ;
 #}
-          
+
 sub Compress::Raw::Zlib::Parameters::parse
 {
     my $self = shift ;
@@ -211,10 +211,10 @@ sub Compress::Raw::Zlib::Parameters::parse
         @entered = () ;
     }
     elsif (@_ == 1) {
-        my $href = $_[0] ;    
+        my $href = $_[0] ;
         return $self->setError("Expected even number of parameters, got 1")
             if ! defined $href or ! ref $href or ref $href ne "HASH" ;
- 
+
         foreach my $key (keys %$href) {
             push @entered, $key ;
             push @entered, \$href->{$key} ;
@@ -224,7 +224,7 @@ sub Compress::Raw::Zlib::Parameters::parse
         my $count = @_;
         return $self->setError("Expected even number of parameters, got $count")
             if $count % 2 != 0 ;
-        
+
         for my $i (0.. $count / 2 - 1) {
             push @entered, $_[2* $i] ;
             push @entered, \$_[2* $i+1] ;
@@ -239,7 +239,7 @@ sub Compress::Raw::Zlib::Parameters::parse
 
         my ($first_only, $sticky, $type, $value) = @$v ;
         my $x ;
-        $self->_checkType($key, \$value, $type, 0, \$x) 
+        $self->_checkType($key, \$value, $type, 0, \$x)
             or return undef ;
 
         $key = lc $key;
@@ -260,7 +260,7 @@ sub Compress::Raw::Zlib::Parameters::parse
 
         $key =~ s/^-// ;
         my $canonkey = lc $key;
- 
+
         if ($got->{$canonkey} && ($firstTime ||
                                   ! $got->{$canonkey}[OFF_FIRST_ONLY]  ))
         {
@@ -275,7 +275,7 @@ sub Compress::Raw::Zlib::Parameters::parse
         else
           { push (@Bad, $key) }
     }
- 
+
     if (@Bad) {
         my ($bad) = join(", ", @Bad) ;
         return $self->setError("unknown key value(s) @Bad") ;
@@ -319,7 +319,7 @@ sub Compress::Raw::Zlib::Parameters::_checkType
         return $self->setError("Parameter '$key' must be an unsigned int, got '$value'")
             if $validate && $value !~ /^\d+$/;
 
-        $$output = defined $value ? $value : 0 ;    
+        $$output = defined $value ? $value : 0 ;
         return 1;
     }
     elsif ($type & Parse_signed)
@@ -329,19 +329,19 @@ sub Compress::Raw::Zlib::Parameters::_checkType
         return $self->setError("Parameter '$key' must be a signed int, got '$value'")
             if $validate && $value !~ /^-?\d+$/;
 
-        $$output = defined $value ? $value : 0 ;    
+        $$output = defined $value ? $value : 0 ;
         return 1 ;
     }
     elsif ($type & Parse_boolean)
     {
         return $self->setError("Parameter '$key' must be an int, got '$value'")
             if $validate && defined $value && $value !~ /^\d*$/;
-        $$output =  defined $value ? $value != 0 : 0 ;    
+        $$output =  defined $value ? $value != 0 : 0 ;
         return 1;
     }
 #    elsif ($type & Parse_string)
 #    {
-#        $$output = defined $value ? $value : "" ;    
+#        $$output = defined $value ? $value : "" ;
 #        return 1;
 #    }
 
@@ -374,7 +374,7 @@ sub Compress::Raw::Zlib::Parameters::value
     return $self->{Got}{lc $name}[OFF_FIXED] ;
 }
 
-our $OPTIONS_deflate =   
+our $OPTIONS_deflate =
     {
         'AppendOutput'  => [1, 1, Parse_boolean,  0],
         'CRC32'         => [1, 1, Parse_boolean,  0],
@@ -394,7 +394,7 @@ sub Compress::Raw::Zlib::Deflate::new
     my $pkg = shift ;
     my ($got) = ParseParameters(0, $OPTIONS_deflate, @_);
 
-    croak "Compress::Raw::Zlib::Deflate::new: Bufsize must be >= 1, you specified " . 
+    croak "Compress::Raw::Zlib::Deflate::new: Bufsize must be >= 1, you specified " .
             $got->value('Bufsize')
         unless $got->value('Bufsize') >= 1;
 
@@ -408,11 +408,11 @@ sub Compress::Raw::Zlib::Deflate::new
         if ($windowBits & MAX_WBITS()) == 0 ;
 
     _deflateInit($flags,
-                $got->value('Level'), 
-                $got->value('Method'), 
-                $windowBits, 
-                $got->value('MemLevel'), 
-                $got->value('Strategy'), 
+                $got->value('Level'),
+                $got->value('Method'),
+                $windowBits,
+                $got->value('MemLevel'),
+                $got->value('Strategy'),
                 $got->value('Bufsize'),
                 $got->value('Dictionary')) ;
 
@@ -431,7 +431,7 @@ sub Compress::Raw::Zlib::deflateStream::STORABLE_thaw
 }
 
 
-our $OPTIONS_inflate = 
+our $OPTIONS_inflate =
     {
         'AppendOutput'  => [1, 1, Parse_boolean,  0],
         'LimitOutput'   => [1, 1, Parse_boolean,  0],
@@ -439,7 +439,7 @@ our $OPTIONS_inflate =
         'ADLER32'       => [1, 1, Parse_boolean,  0],
         'ConsumeInput'  => [1, 1, Parse_boolean,  1],
         'Bufsize'       => [1, 1, Parse_unsigned, 4096],
- 
+
         'WindowBits'    => [1, 1, Parse_signed,   MAX_WBITS()],
         'Dictionary'    => [1, 1, Parse_any,      ""],
     } ;
@@ -449,7 +449,7 @@ sub Compress::Raw::Zlib::Inflate::new
     my $pkg = shift ;
     my ($got) = ParseParameters(0, $OPTIONS_inflate, @_);
 
-    croak "Compress::Raw::Zlib::Inflate::new: Bufsize must be >= 1, you specified " . 
+    croak "Compress::Raw::Zlib::Inflate::new: Bufsize must be >= 1, you specified " .
             $got->value('Bufsize')
         unless $got->value('Bufsize') >= 1;
 
@@ -465,7 +465,7 @@ sub Compress::Raw::Zlib::Inflate::new
     $windowBits += MAX_WBITS()
         if ($windowBits & MAX_WBITS()) == 0 ;
 
-    _inflateInit($flags, $windowBits, $got->value('Bufsize'), 
+    _inflateInit($flags, $windowBits, $got->value('Bufsize'),
                  $got->value('Dictionary')) ;
 }
 
@@ -489,13 +489,13 @@ sub Compress::Raw::Zlib::InflateScan::new
                         'CRC32'         => [1, 1, Parse_boolean,  0],
                         'ADLER32'       => [1, 1, Parse_boolean,  0],
                         'Bufsize'       => [1, 1, Parse_unsigned, 4096],
-                 
+
                         'WindowBits'    => [1, 1, Parse_signed,   -MAX_WBITS()],
                         'Dictionary'    => [1, 1, Parse_any,      ""],
             }, @_) ;
 
 
-    croak "Compress::Raw::Zlib::InflateScan::new: Bufsize must be >= 1, you specified " . 
+    croak "Compress::Raw::Zlib::InflateScan::new: Bufsize must be >= 1, you specified " .
             $got->value('Bufsize')
         unless $got->value('Bufsize') >= 1;
 
@@ -505,7 +505,7 @@ sub Compress::Raw::Zlib::InflateScan::new
     $flags |= FLAG_ADLER  if $got->value('ADLER32') ;
     #$flags |= FLAG_CONSUME_INPUT if $got->value('ConsumeInput') ;
 
-    _inflateScanInit($flags, $got->value('WindowBits'), $got->value('Bufsize'), 
+    _inflateScanInit($flags, $got->value('WindowBits'), $got->value('Bufsize'),
                  '') ;
 }
 
@@ -518,7 +518,7 @@ sub Compress::Raw::Zlib::inflateScanStream::createDeflateStream
                 'CRC32'         => [1, 1, Parse_boolean,  0],
                 'ADLER32'       => [1, 1, Parse_boolean,  0],
                 'Bufsize'       => [1, 1, Parse_unsigned, 4096],
- 
+
                 'Level'         => [1, 1, Parse_signed,   Z_DEFAULT_COMPRESSION()],
                 'Method'        => [1, 1, Parse_unsigned, Z_DEFLATED()],
                 'WindowBits'    => [1, 1, Parse_signed,   - MAX_WBITS()],
@@ -526,7 +526,7 @@ sub Compress::Raw::Zlib::inflateScanStream::createDeflateStream
                 'Strategy'      => [1, 1, Parse_unsigned, Z_DEFAULT_STRATEGY()],
             }, @_) ;
 
-    croak "Compress::Raw::Zlib::InflateScan::createDeflateStream: Bufsize must be >= 1, you specified " . 
+    croak "Compress::Raw::Zlib::InflateScan::createDeflateStream: Bufsize must be >= 1, you specified " .
             $got->value('Bufsize')
         unless $got->value('Bufsize') >= 1;
 
@@ -536,11 +536,11 @@ sub Compress::Raw::Zlib::inflateScanStream::createDeflateStream
     $flags |= FLAG_ADLER  if $got->value('ADLER32') ;
 
     $pkg->_createDeflateStream($flags,
-                $got->value('Level'), 
-                $got->value('Method'), 
-                $got->value('WindowBits'), 
-                $got->value('MemLevel'), 
-                $got->value('Strategy'), 
+                $got->value('Level'),
+                $got->value('Method'),
+                $got->value('WindowBits'),
+                $got->value('MemLevel'),
+                $got->value('Strategy'),
                 $got->value('Bufsize'),
                 ) ;
 
@@ -556,10 +556,10 @@ sub Compress::Raw::Zlib::inflateScanStream::inflate
 
     if ($status == Z_OK() && $_[2]) {
         my $byte = ' ';
-        
+
         $status = $self->scan(\$byte, $_[1]) ;
     }
-    
+
     return $status ;
 }
 
@@ -570,14 +570,14 @@ sub Compress::Raw::Zlib::deflateStream::deflateParams
                 'Level'      => [1, 1, Parse_signed,   undef],
                 'Strategy'   => [1, 1, Parse_unsigned, undef],
                 'Bufsize'    => [1, 1, Parse_unsigned, undef],
-                }, 
+                },
                 @_) ;
 
     croak "Compress::Raw::Zlib::deflateParams needs Level and/or Strategy"
         unless $got->parsed('Level') + $got->parsed('Strategy') +
             $got->parsed('Bufsize');
 
-    croak "Compress::Raw::Zlib::Inflate::deflateParams: Bufsize must be >= 1, you specified " . 
+    croak "Compress::Raw::Zlib::Inflate::deflateParams: Bufsize must be >= 1, you specified " .
             $got->value('Bufsize')
         if $got->parsed('Bufsize') && $got->value('Bufsize') <= 1;
 
@@ -586,7 +586,7 @@ sub Compress::Raw::Zlib::deflateStream::deflateParams
     $flags |= 2 if $got->parsed('Strategy') ;
     $flags |= 4 if $got->parsed('Bufsize') ;
 
-    $self->_deflateParams($flags, $got->value('Level'), 
+    $self->_deflateParams($flags, $got->value('Level'),
                           $got->value('Strategy'), $got->value('Bufsize'));
 
 }
@@ -645,7 +645,7 @@ Compress::Raw::Zlib - Low-Level Interface to zlib compression library
 
 The I<Compress::Raw::Zlib> module provides a Perl interface to the I<zlib>
 compression library (see L</AUTHOR> for details about where to get
-I<zlib>). 
+I<zlib>).
 
 =head1 Compress::Raw::Zlib::Deflate
 
@@ -656,7 +656,7 @@ Here is a definition of the interface available:
 
 =head2 B<($d, $status) = new Compress::Raw::Zlib::Deflate( [OPT] ) >
 
-Initialises a deflation object. 
+Initialises a deflation object.
 
 If you are familiar with the I<zlib> library, it combines the
 features of the I<zlib> functions C<deflateInit>, C<deflateInit2>
@@ -727,7 +727,7 @@ The default is C<Z_DEFAULT_STRATEGY>.
 
 When a dictionary is specified I<Compress::Raw::Zlib> will automatically
 call C<deflateSetDictionary> directly after calling C<deflateInit>. The
-Adler32 value for the dictionary can be obtained by calling the method 
+Adler32 value for the dictionary can be obtained by calling the method
 C<$d-E<gt>dict_adler()>.
 
 The default is no dictionary.
@@ -775,7 +775,7 @@ Here is an example of using the C<Compress::Raw::Zlib::Deflate> optional
 parameter list to override the default buffer size and compression
 level. All other options will take their default values.
 
-    my $d = new Compress::Raw::Zlib::Deflate ( -Bufsize => 300, 
+    my $d = new Compress::Raw::Zlib::Deflate ( -Bufsize => 300,
                                                -Level   => Z_BEST_SPEED ) ;
 
 =head2 B<$status = $d-E<gt>deflate($input, $output)>
@@ -853,7 +853,7 @@ C<Z_DEFAULT_COMPRESSION>.
 =item B<-Strategy>
 
 Defines the strategy used to tune the compression. The valid values are
-C<Z_DEFAULT_STRATEGY>, C<Z_FILTERED> and C<Z_HUFFMAN_ONLY>. 
+C<Z_DEFAULT_STRATEGY>, C<Z_FILTERED> and C<Z_HUFFMAN_ONLY>.
 
 =item B<-BufSize>
 
@@ -878,14 +878,14 @@ Returns the adler32 value for the dictionary.
 
 =head2 B<$d-E<gt>crc32()>
 
-Returns the crc32 value for the uncompressed data to date. 
+Returns the crc32 value for the uncompressed data to date.
 
 If the C<CRC32> option is not enabled in the constructor for this object,
 this method will always return 0;
 
 =head2 B<$d-E<gt>adler32()>
 
-Returns the adler32 value for the uncompressed data to date. 
+Returns the adler32 value for the uncompressed data to date.
 
 =head2 B<$d-E<gt>msg()>
 
@@ -902,11 +902,11 @@ Returns the total number of compressed bytes output from deflate.
 =head2 B<$d-E<gt>get_Strategy()>
 
 Returns the deflation strategy currently used. Valid values are
-C<Z_DEFAULT_STRATEGY>, C<Z_FILTERED> and C<Z_HUFFMAN_ONLY>. 
+C<Z_DEFAULT_STRATEGY>, C<Z_FILTERED> and C<Z_HUFFMAN_ONLY>.
 
 =head2 B<$d-E<gt>get_Level()>
 
-Returns the compression level being used. 
+Returns the compression level being used.
 
 =head2 B<$d-E<gt>get_BufSize()>
 
@@ -931,18 +931,18 @@ input, deflates it and writes it to standard output.
     while (<>)
     {
         $status = $x->deflate($_, $output) ;
-    
+
         $status == Z_OK
             or die "deflation failed\n" ;
-    
+
         print $output ;
     }
-    
+
     $status = $x->flush($output) ;
-    
+
     $status == Z_OK
         or die "deflation failed\n" ;
-    
+
     print $output ;
 
 =head1 Compress::Raw::Zlib::Inflate
@@ -954,7 +954,7 @@ Here is a definition of the interface:
 
 =head2 B< ($i, $status) = new Compress::Raw::Zlib::Inflate( [OPT] ) >
 
-Initialises an inflation object. 
+Initialises an inflation object.
 
 In a list context it returns the inflation object, C<$i>, and the
 I<zlib> status code (C<$status>). In a scalar context it returns the
@@ -1049,7 +1049,7 @@ This option defaults to true.
 
 The C<LimitOutput> option changes the behavior of the C<< $i->inflate >>
 method so that the amount of memory used by the output buffer can be
-limited. 
+limited.
 
 When C<LimitOutput> is used the size of the output buffer used will either
 be the value of the C<Bufsize> option or the amount of memory already
@@ -1082,7 +1082,7 @@ data to C<$output>. The C<$input> and C<$output> parameters can either be
 scalars or scalar references.
 
 Returns C<Z_OK> if successful and C<Z_STREAM_END> if the end of the
-compressed data has been successfully reached. 
+compressed data has been successfully reached.
 
 If not successful C<$status> will hold the I<zlib> error code.
 
@@ -1104,7 +1104,7 @@ this object, the uncompressed data will be appended to C<$output>. If
 it is false, C<$output> will be truncated before any uncompressed data
 is written to it.
 
-The C<$eof> parameter needs a bit of explanation. 
+The C<$eof> parameter needs a bit of explanation.
 
 Prior to version 1.2.0, zlib assumed that there was at least one trailing
 byte immediately after the compressed data stream when it was carrying out
@@ -1118,7 +1118,7 @@ conditions apply
 
 =over 5
 
-=item 1 
+=item 1
 
 You are either using a copy of zlib that is older than version 1.2.0 or you
 want your application code to be able to run with as many different
@@ -1137,7 +1137,7 @@ There is no data immediately after the compressed data stream.
 =back
 
 If B<all> of these are the case, then you need to set the C<$eof> parameter
-to true on the final call (and only the final call) to C<$i-E<gt>inflate>. 
+to true on the final call (and only the final call) to C<$i-E<gt>inflate>.
 
 If you have built this module with zlib >= 1.2.0, the C<$eof> parameter is
 ignored. You can still set it if you want, but it won't be used behind the
@@ -1166,7 +1166,7 @@ was created by calling C<Compress::Deflate::flush>  with C<Z_FULL_FLUSH>.
 
 This method will reset the inflation object C<$i>. It can be used when you
 are uncompressing multiple data streams and want to use the same object to
-uncompress each of them. 
+uncompress each of them.
 
 Returns C<Z_OK> if successful.
 
@@ -1210,26 +1210,26 @@ Here is an example of using C<inflate>.
 
     use strict ;
     use warnings ;
-    
+
     use Compress::Raw::Zlib;
-    
+
     my $x = new Compress::Raw::Zlib::Inflate()
        or die "Cannot create a inflation stream\n" ;
-    
+
     my $input = '' ;
     binmode STDIN;
     binmode STDOUT;
-    
+
     my ($output, $status) ;
     while (read(STDIN, $input, 4096))
     {
         $status = $x->inflate($input, $output) ;
-    
+
         print $output ;
-    
+
         last if $status != Z_OK ;
     }
-    
+
     die "inflation failed\n"
         unless $status == Z_STREAM_END ;
 
@@ -1243,16 +1243,16 @@ simpler.
 
     use strict ;
     use warnings ;
-    
+
     use Compress::Raw::Zlib;
-    
+
     my $x = new Compress::Raw::Zlib::Inflate(LimitOutput => 1)
        or die "Cannot create a inflation stream\n" ;
-    
+
     my $input = '' ;
     binmode STDIN;
     binmode STDOUT;
-    
+
     my ($output, $status) ;
 
   OUTER:
@@ -1269,7 +1269,7 @@ simpler.
         }
         while ($status == Z_OK && length $input);
     }
-    
+
     die "inflation failed\n"
         unless $status == Z_STREAM_END ;
 
@@ -1304,14 +1304,14 @@ Returns the version of the zlib library.
 
 =head2  my $flags = Compress::Raw::Zlib::zlibCompileFlags();
 
-Returns the flags indicating compile-time options that were used to build 
+Returns the flags indicating compile-time options that were used to build
 the zlib library. See the zlib documentation for a description of the flags
 returned by C<zlibCompileFlags>.
 
 Note that when the zlib sources are built along with this module the
 C<sprintf> flags (bits 24, 25 and 26) should be ignored.
 
-If you are using zlib 1.2.0 or older, C<zlibCompileFlags> will return 0. 
+If you are using zlib 1.2.0 or older, C<zlibCompileFlags> will return 0.
 
 =head1 The LimitOutput option.
 
@@ -1324,28 +1324,28 @@ source and uncompressing as you go the code will look something like this
 
     use strict ;
     use warnings ;
-    
+
     use Compress::Raw::Zlib;
-    
+
     my $x = new Compress::Raw::Zlib::Inflate()
        or die "Cannot create a inflation stream\n" ;
-    
+
     my $input = '' ;
-    
+
     my ($output, $status) ;
     while (read(STDIN, $input, 4096))
     {
         $status = $x->inflate($input, $output) ;
-    
+
         print $output ;
-    
+
         last if $status != Z_OK ;
     }
-    
+
     die "inflation failed\n"
         unless $status == Z_STREAM_END ;
 
-The points to note are 
+The points to note are
 
 =over 5
 
@@ -1377,7 +1377,7 @@ compressed data stream contains the same pattern repeated thousands of
 times, a relatively small compressed data stream can uncompress into
 hundreds of megabytes.  Remember C<inflate> will keep allocating memory
 until I<all> the uncompressed data has been written to the output buffer -
-the size of C<$output> is unbounded. 
+the size of C<$output> is unbounded.
 
 The C<LimitOutput> option is designed to help with this use-case.
 
@@ -1391,16 +1391,16 @@ Below is typical code that shows how to use C<LimitOutput>.
 
     use strict ;
     use warnings ;
-    
+
     use Compress::Raw::Zlib;
-    
+
     my $x = new Compress::Raw::Zlib::Inflate(LimitOutput => 1)
        or die "Cannot create a inflation stream\n" ;
-    
+
     my $input = '' ;
     binmode STDIN;
     binmode STDOUT;
-    
+
     my ($output, $status) ;
 
   OUTER:
@@ -1417,7 +1417,7 @@ Below is typical code that shows how to use C<LimitOutput>.
         }
         while ($status == Z_OK && length $input);
     }
-    
+
     die "inflation failed\n"
         unless $status == Z_STREAM_END ;
 
@@ -1567,7 +1567,7 @@ L<File::GlobMapper|File::GlobMapper>, L<Archive::Zip|Archive::Zip>,
 L<Archive::Tar|Archive::Tar>,
 L<IO::Zlib|IO::Zlib>
 
-For RFC 1950, 1951 and 1952 see 
+For RFC 1950, 1951 and 1952 see
 F<http://www.faqs.org/rfcs/rfc1950.html>,
 F<http://www.faqs.org/rfcs/rfc1951.html> and
 F<http://www.faqs.org/rfcs/rfc1952.html>
@@ -1582,7 +1582,7 @@ The primary site for gzip is F<http://www.gzip.org>.
 
 =head1 AUTHOR
 
-This module was written by Paul Marquess, F<pmqs@cpan.org>. 
+This module was written by Paul Marquess, F<pmqs@cpan.org>.
 
 =head1 MODIFICATION HISTORY
 

@@ -8,7 +8,7 @@ use Carp;
 use Time::Local;
 
 our @ISA = qw(DynaLoader);
- 
+
 use Exporter ();
 
 our @EXPORT = qw(
@@ -86,7 +86,7 @@ sub parse {
     my $class = ref($proto) || $proto;
     my @components;
 
-    warnings::warnif("deprecated", 
+    warnings::warnif("deprecated",
         "parse() is deprecated, use strptime() instead.");
 
     if (@_ > 1) {
@@ -644,7 +644,7 @@ Time::Piece - Object Oriented time objects
 =head1 SYNOPSIS
 
     use Time::Piece;
-    
+
     my $t = localtime;
     print "Time is $t\n";
     print "Year is ", $t->year, "\n";
@@ -665,7 +665,7 @@ http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/2000-01/msg00241.html
 After importing this module, when you use localtime or gmtime in a scalar
 context, rather than getting an ordinary scalar string representing the
 date and time, you get a Time::Piece object, whose stringification happens
-to produce the same effect as the localtime and gmtime functions. There is 
+to produce the same effect as the localtime and gmtime functions. There is
 also a new() constructor provided, which is the same as localtime(), except
 when passed a Time::Piece object, in which case it's a copy constructor. The
 following methods are available on the object:
@@ -724,7 +724,7 @@ following methods are available on the object:
     $t->strftime(FORMAT)    # same as POSIX::strftime (without the overhead
                             # of the full POSIX extension)
     $t->strftime()          # "Tue, 29 Feb 2000 12:34:56 GMT"
-    
+
     Time::Piece->strptime(STRING, FORMAT)
                             # see strptime man page. Creates a new
                             # Time::Piece object
@@ -762,7 +762,7 @@ And locally for months:
 It's possible to use simple addition and subtraction of objects:
 
     use Time::Seconds;
-    
+
     my $seconds = $t1 - $t2;
     $t1 += ONE_DAY; # add 1 day (constant from Time::Seconds)
 
@@ -806,7 +806,7 @@ you incredibly flexible date parsing routines. For example:
 
   my $t = Time::Piece->strptime("Sunday 3rd Nov, 1943",
                                 "%A %drd %b, %Y");
-  
+
   print $t->strftime("%a, %d %b %Y");
 
 Outputs:

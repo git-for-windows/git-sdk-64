@@ -1,6 +1,6 @@
 ;;; Cooperative REPL server
 
-;; Copyright (C) 2014 Free Software Foundation, Inc.
+;; Copyright (C) 2014, 2016 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,8 @@
                 #:select (start-repl* prompting-meta-read))
   #:use-module ((system repl server)
                 #:select (run-server* make-tcp-server-socket
-                                      add-open-socket! close-socket!))
+                                      add-open-socket! close-socket!
+                                      guard-against-http-request))
   #:export (spawn-coop-repl-server
             poll-coop-repl-server))
 
@@ -172,6 +173,8 @@ and output is sent over the socket CLIENT."
   ;; this way because we cannot close the port itself safely from
   ;; another thread.
   (add-open-socket! client (lambda () (close-fdes (fileno client))))
+
+  (guard-against-http-request client)
 
   (with-continuation-barrier
    (lambda ()

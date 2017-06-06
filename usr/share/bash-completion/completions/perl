@@ -1,18 +1,11 @@
 # bash completion for perl                                 -*- shell-script -*-
 
-_perlmodules()
+_perl_helper()
 {
     COMPREPLY=( $( compgen -P "$prefix" -W \
-        "$( ${1:-perl} ${BASH_SOURCE[0]%/*}/../helpers/perl modules $cur )" \
+        "$( ${2:-perl} ${BASH_SOURCE[0]%/*}/../helpers/perl $1 $cur )" \
         -- "$cur" ) )
-    __ltrim_colon_completions "$prefix$cur"
-}
-
-_perlfunctions()
-{
-    COMPREPLY=( $( compgen -P "$prefix" -W \
-        "$( ${1:-perl} ${BASH_SOURCE[0]%/*}/../helpers/perl functions $cur )" \
-        -- "$cur" ) )
+    [[ $1 == functions ]] || __ltrim_colon_completions "$prefix$cur"
 }
 
 _perl()
@@ -38,20 +31,20 @@ _perl()
 
     case $prev in
         -D|-e|-E|-i|-F|-l)
-            return 0
+            return
             ;;
         -I|-x)
             local IFS=$'\n'
             compopt -o filenames
             COMPREPLY=( $( compgen -d $optPrefix $optSuffix -- "$cur" ) )
-            return 0
+            return
             ;;
         -m|-M)
             temp="${cur#-}"
             prefix+="${cur%$temp}"
             cur="$temp"
-            _perlmodules $1
-            return 0
+            _perl_helper modules $1
+            return
             ;;
         -V)
             if [[ $cur == :* ]]; then
@@ -63,14 +56,14 @@ _perl()
                         keys %Config::Config" 2>/dev/null )' -- "$temp" ) )
                 __ltrim_colon_completions "$prefix$temp"
             fi
-            return 0
+            return
             ;;
         -d|-dt)
             if [[ $cur == :* ]]; then
                 temp="${cur#:}"
                 prefix="$prefix${cur%$temp}"
                 cur="Devel::$temp"
-                _perlmodules $1
+                _perl_helper modules $1
             fi
             ;;
     esac
@@ -104,15 +97,15 @@ _perldoc()
 
     case $prev in
         -h|-V|-n|-o|-M|-w|-L)
-            return 0
+            return
             ;;
         -d)
             _filedir
-            return 0
+            return
             ;;
         -f)
-            _perlfunctions $perl
-            return 0
+            _perl_helper functions $perl
+            return
             ;;
     esac
 
@@ -121,12 +114,12 @@ _perldoc()
     else
         # return available modules (unless it is clearly a file)
         if [[ "$cur" != @(*/|[.~])* ]]; then
-            _perlmodules $perl
+            _perl_helper perldocs $perl
             if [[ $cur == p* ]]; then
                 COMPREPLY+=( $( compgen -W \
-                    '$( PERLDOC_PAGER=/bin/cat "$1" -u perl |  \
-                     command sed -ne "/perl.*Perl overview/,/perlwin32/p" | \
-                     awk "\$NF=2 && \$1 ~ /^perl/ { print \$1 }" )' \
+                    '$( PERLDOC_PAGER=cat "$1" -u perl |  \
+                    command sed -ne "/perl.*Perl overview/,/perlwin32/p" | \
+                    awk "\$NF=2 && \$1 ~ /^perl/ { print \$1 }" )' \
                     -- "$cur" ) )
             fi
         fi
@@ -135,4 +128,4 @@ _perldoc()
 } &&
 complete -F _perldoc -o bashdefault perldoc
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

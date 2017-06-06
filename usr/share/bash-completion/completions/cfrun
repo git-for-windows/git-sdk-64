@@ -17,7 +17,7 @@ _cfrun()
             case $prev in
                 -f)
                     _filedir
-                    return 0
+                    return
                     ;;
             esac
 
@@ -31,7 +31,7 @@ _cfrun()
                         break
                     fi
                 done
-                [[ ! -f $hostfile ]] && return 0
+                [[ ! -f $hostfile ]] && return
 
                 COMPREPLY=( $(compgen -W  "$( command grep -v \
                     -E '(=|^$|^#)' $hostfile )" -- "$cur" ) )
@@ -44,4 +44,4 @@ _cfrun()
 } &&
 complete -F _cfrun cfrun
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

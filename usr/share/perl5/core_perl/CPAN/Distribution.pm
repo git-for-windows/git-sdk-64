@@ -2923,7 +2923,7 @@ sub unsat_prereq {
             } elsif (
                 $self->{reqtype} =~ /^(r|c)$/
                 && (exists $prereq_pm->{requires}{$need_module} || exists $prereq_pm->{opt_requires} )
-                && $nmo 
+                && $nmo
                 && !$inst_file
             ) {
                 # continue installing as a prereq; this may be a

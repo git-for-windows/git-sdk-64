@@ -1,7 +1,8 @@
 ;;; installed-scm-file
 
-;;;; Copyright (C) 1997, 1999, 2000, 2001, 2006, 2010, 2013 Free Software Foundation, Inc.
-;;;; 
+;;;; Copyright (C) 1997, 1999, 2000, 2001, 2006, 2010, 2013,
+;;;;   2014 Free Software Foundation, Inc.
+;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
 ;;;; License as published by the Free Software Foundation; either
@@ -148,26 +149,29 @@ left in the port."
                 (lp (1+ n)))))
         (- n start))))
 
-(define* (read-string #:optional (port (current-input-port)) (count #f))
-  "Read all of the characters out of PORT and return them as a string.
+(define* read-string
+  (case-lambda*
+   "Read all of the characters out of PORT and return them as a string.
 If the COUNT argument is present, treat it as a limit to the number of
 characters to read.  By default, there is no limit."
-  (check-arg (or (not count) (index? count)) "bad count" count)
-  (let loop ((substrings '())
-             (total-chars 0)
-             (buf-size 100))		; doubled each time through.
-    (let* ((buf (make-string (if count
-                                 (min buf-size (- count total-chars))
-                                 buf-size)))
-           (nchars (read-string! buf port))
-           (new-total (+ total-chars nchars)))
-      (cond
-       ((= nchars buf-size)
-        ;; buffer filled.
-        (loop (cons buf substrings) new-total (* buf-size 2)))
-       (else
-        (string-concatenate-reverse
-         (cons (substring buf 0 nchars) substrings)))))))
+   ((#:optional (port (current-input-port)))
+    ;; Fast path.
+    ;; This creates more garbage than using 'string-set!' as in
+    ;; 'read-string!', but currently that is faster nonetheless.
+    (let loop ((chars '()))
+      (let ((char (read-char port)))
+        (if (eof-object? char)
+            (list->string (reverse! chars))
+            (loop (cons char chars))))))
+   ((port count)
+    ;; Slower path.
+    (let loop ((chars '())
+               (total 0))
+      (let ((char (read-char port)))
+        (if (or (eof-object? char) (>= total count))
+            (list->string (reverse chars))
+            (loop (cons char chars) (+ 1 total))))))))
+
 
 ;;; read-line [PORT [HANDLE-DELIM]] reads a newline-terminated string
 ;;; from PORT.  The return value depends on the value of HANDLE-DELIM,

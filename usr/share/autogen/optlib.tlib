@@ -2,7 +2,7 @@
 
 # This file is part of AutoOpts, a companion to AutoGen.
 # AutoOpts is free software.
-# AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+# AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
 #
 # AutoOpts is available under any one of two licenses.  The license
 # in use must be one of these two and the choice is under the control
@@ -153,10 +153,6 @@ DEFINE init-and-validate                =][=
       (~~ (get "main[].main-type" "") "shell-process|shell-parser|main")
       guarded-test-main ) )
 (if (not make-main-proc) (set! guarded-test-main #f))
-(define put-shell-main
-  (or (== (get "main.main-type") "shell-process")
-      (and (not (exist? "main")) guarded-test-main)
-) )
 
 (define descriptor "")
 (define opt-name   "")
@@ -932,7 +928,7 @@ DEFINE   emit-nondoc-option     =][=
           (get-up-name "arg-default") =][=
 
      =* set                   =]NULL)
-#define [=(sprintf "%-28s " (string-append cap-name "CookieBits"))=](void*)([=
+#define [=(sprintf "%-28s " (string-append cap-name "CookieBits"))=]VOIDP([=
         IF (not (exist? "arg-default")) =]0[=
         ELSE =][=
           FOR    arg-default | =][=

@@ -236,7 +236,7 @@
 				   (list timeout) 
 				   '()))))
 	 (secs (inexact->exact (truncate t)))
-	 (usecs (inexact->exact (truncate (* (- t secs) 1000)))))
+	 (usecs (inexact->exact (truncate (* (- t secs) 1000000)))))
     (and (> secs 0) (sleep secs))
     (and (> usecs 0) (usleep usecs))
     *unspecified*))

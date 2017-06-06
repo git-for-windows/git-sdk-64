@@ -9,15 +9,15 @@ _chown()
     case "$prev" in
         --from)
             _usergroup
-            return 0
+            return
             ;;
         --reference)
             _filedir
-            return 0
+            return
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ "$cur" == -* ]]; then
         # Complete -options
@@ -43,4 +43,4 @@ _chown()
 } &&
 complete -F _chown chown
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

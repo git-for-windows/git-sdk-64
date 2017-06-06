@@ -253,7 +253,7 @@ sub _match_bracketed($$$$$$)	# $textref, $pre, $ldel, $qdel, $quotelike, $rdel
 	}
 
 	$endpos = pos $$textref;
-	
+
 	return (
 		$startpos,  $ldelpos-$startpos,		# PREFIX
 		$ldelpos,   1,				# OPENING BRACKET
@@ -402,7 +402,7 @@ short:
 		$parapos,     0,				# NO CLOSING TAG
 		$parapos,     length($$textref)-$parapos,	# REMAINDER
 	       );
-	
+
 matched:
 	$endpos = pos($$textref);
 	return (
@@ -480,7 +480,7 @@ sub _match_variable($$)
 		next if $$textref =~ m/\G\s*->\s*\w+(?![{([])/gc;
 		last;
 	}
-	
+
 	my $endpos = pos($$textref);
 	return ($startpos, $varpos-$startpos,
 		$varpos,   $endpos-$varpos,
@@ -528,7 +528,7 @@ sub _match_codeblock($$$$$$$)
 			    substr($$textref,pos($$textref),20) .
 			    q{..."},
 		         pos $$textref;
-		return; 
+		return;
 	}
 	my $codepos = pos($$textref);
 	unless ($$textref =~ m/\G($ldel_outer)/gc)	# OUTERMOST DELIMITER
@@ -674,7 +674,7 @@ sub _match_quotelike($$$$)	# ($textref, $prepat, $allow_raw_match)
 			     substr($$textref, pos($$textref), 20) .
 			     q{..."},
 		         pos $$textref;
-		return; 
+		return;
 	}
 	$oppos = pos($$textref);
 
@@ -696,7 +696,7 @@ sub _match_quotelike($$$$)	# ($textref, $prepat, $allow_raw_match)
 		$modpos= pos($$textref);
 		$rd1pos = $modpos-1;
 
-		if ($initial eq '/' || $initial eq '?') 
+		if ($initial eq '/' || $initial eq '?')
 		{
 			$$textref =~ m/\G$mods{none}/gc
 		}
@@ -824,7 +824,7 @@ sub _match_quotelike($$$$)	# ($textref, $prepat, $allow_raw_match)
 
 		if ($ldel2 =~ /[[(<{]/)
 		{
-			pos($$textref)--;	# OVERCOME BROKEN LOOKAHEAD 
+			pos($$textref)--;	# OVERCOME BROKEN LOOKAHEAD
 			defined(_match_bracketed($textref,"",$ldel2,"","",$rdel2))
 			|| do { pos $$textref = $startpos; return };
 		}
@@ -954,7 +954,7 @@ sub extract_multiple (;$$$$)	# ($text, $functions_ref, $max_fields, $ignoreunkno
 					unless $igunk || defined $unkpos;
 			}
 		}
-		
+
 		if (defined $unkpos)
 		{
 			push @fields, substr($$textref, $unkpos);
@@ -1150,10 +1150,10 @@ extracted string). On failure, the entire string is returned.
 The skipped prefix (i.e. the characters before the extracted string).
 On failure, C<undef> is returned.
 
-=back 
+=back
 
 Note that in a list context, the contents of the original input text (the first
-argument) are not modified in any way. 
+argument) are not modified in any way.
 
 However, if the input text was passed in a variable, that variable's
 C<pos> value is updated to point at the first character after the
@@ -1264,7 +1264,7 @@ Note that this last example is I<not> the same as deleting the first
 quote-like pattern. For instance, if C<$text> contained the string:
 
 	"if ('./cmd' =~ m/$UNIXCMD/s) { $cmd = $1; }"
-	
+
 then after the deletion it would contain:
 
 	"if ('.$UNIXCMD/s) { $cmd = $1; }"
@@ -1272,7 +1272,7 @@ then after the deletion it would contain:
 not:
 
 	"if ('./cmd' =~ ms) { $cmd = $1; }"
-	
+
 See L<"extract_quotelike"> for a (partial) solution to this problem.
 
 =head2 C<extract_bracketed>
@@ -1433,7 +1433,7 @@ any specified prefix) removed.
 =head2 C<extract_tagged>
 
 C<extract_tagged> extracts and segments text between (balanced)
-specified tags. 
+specified tags.
 
 The subroutine takes up to five optional arguments:
 
@@ -1451,12 +1451,12 @@ that matches any standard XML tag is used.
 
 =item 3.
 
-A string specifying a pattern to be matched at the closing tag. 
+A string specifying a pattern to be matched at the closing tag.
 If the pattern string is omitted (or C<undef>) then the closing
 tag is constructed by inserting a C</> after any leading bracket
 characters in the actual opening tag that was matched (I<not> the pattern
 that matched the tag). For example, if the opening tag pattern
-is specified as C<'{{\w+}}'> and actually matched the opening tag 
+is specified as C<'{{\w+}}'> and actually matched the opening tag
 C<"{{DATA}}">, then the constructed closing tag would be C<"{{/DATA}}">.
 
 =item 4.
@@ -1589,7 +1589,7 @@ C<gen_extract_tagged>, is that those generated subroutines:
 
 =over 4
 
-=item * 
+=item *
 
 do not have to reparse tag specification or parsing options every time
 they are called (whereas C<extract_tagged> has to effectively rebuild
@@ -1598,7 +1598,7 @@ its tag parser on every call);
 =item *
 
 make use of the new qr// construct to pre-compile the regexes they use
-(whereas C<extract_tagged> uses standard string variable interpolation 
+(whereas C<extract_tagged> uses standard string variable interpolation
 to create tag-matching patterns).
 
 =back
@@ -1621,7 +1621,7 @@ equivalent to:
 (although C<extract_tagged> is not currently implemented that way, in order
 to preserve pre-5.005 compatibility).
 
-Using C<gen_extract_tagged> to create extraction functions for specific tags 
+Using C<gen_extract_tagged> to create extraction functions for specific tags
 is a good idea if those functions are going to be called more than once, since
 their performance is typically twice as good as the more general-purpose
 C<extract_tagged>.
@@ -1636,7 +1636,7 @@ delimiters (for the quotelike operators), and trailing modifiers are
 all caught. For example, in:
 
         extract_quotelike 'q # an octothorpe: \# (not the end of the q!) #'
-        
+
         extract_quotelike '  "You said, \"Use sed\"."  '
 
         extract_quotelike ' s{([A-Z]{1,8}\.[A-Z]{3})} /\L$1\E/; '
@@ -1664,7 +1664,7 @@ will be extracted as if it were:
 This behaviour is identical to that of the actual compiler.
 
 C<extract_quotelike> takes two arguments: the text to be processed and
-a prefix to be matched at the very beginning of the text. If no prefix 
+a prefix to be matched at the very beginning of the text. If no prefix
 is specified, optional whitespace is the default. If no text is given,
 C<$_> is used.
 
@@ -1710,7 +1710,7 @@ the left delimiter of the second block of the operation
 
 =item [8]
 
-the text of the second block of the operation 
+the text of the second block of the operation
 (that is, the replacement of a substitution or the translation list
 of a translation),
 
@@ -1935,7 +1935,7 @@ level of the code block, so the directive is parsed correctly.
 
 =head2 C<extract_multiple>
 
-The C<extract_multiple> subroutine takes a string to be processed and a 
+The C<extract_multiple> subroutine takes a string to be processed and a
 list of extractors (subroutines or regular expressions) to apply to that string.
 
 In an array context C<extract_multiple> returns an array of substrings
@@ -1982,11 +1982,11 @@ An number specifying the maximum number of fields to return. If this
 argument is omitted (or C<undef>), split continues as long as possible.
 
 If the third argument is I<N>, then extraction continues until I<N> fields
-have been successfully extracted, or until the string has been completely 
+have been successfully extracted, or until the string has been completely
 processed.
 
-Note that in scalar and void contexts the value of this argument is 
-automatically reset to 1 (under C<-w>, a warning is issued if the argument 
+Note that in scalar and void contexts the value of this argument is
+automatically reset to 1 (under C<-w>, a warning is issued if the argument
 has to be reset).
 
 =item 4.
@@ -2026,7 +2026,7 @@ return value of the extractor will be blessed.
 If an extractor returns a defined value, that value is immediately
 treated as the next extracted field and pushed onto the list of fields.
 If the extractor was specified in a hash reference, the field is also
-blessed into the appropriate class, 
+blessed into the appropriate class,
 
 If the extractor fails to match (in the case of a regex extractor), or returns an empty list or an undefined value (in the case of a subroutine extractor), it is
 assumed to have failed to extract.
@@ -2123,7 +2123,7 @@ If no escape char is specified for a given specified delimiter, '\' is used.
 
 Note that C<gen_delimited_pat> was previously called C<delimited_pat>.
 That name may still be used, but is now deprecated.
-        
+
 
 =head1 DIAGNOSTICS
 
@@ -2170,7 +2170,7 @@ a closing bracket where none was expected.
 
 =item  C<Unmatched opening bracket(s): "%s">
 
-C<extract_bracketed>, C<extract_quotelike> or C<extract_codeblock> ran 
+C<extract_bracketed>, C<extract_quotelike> or C<extract_codeblock> ran
 out of characters in the text before closing one or more levels of nested
 brackets.
 
@@ -2265,7 +2265,7 @@ Damian Conway (damian@conway.org)
 
 There are undoubtedly serious bugs lurking somewhere in this code, if
 only because parts of it give the impression of understanding a great deal
-more about Perl than they really do. 
+more about Perl than they really do.
 
 Bug reports and other feedback are most welcome.
 

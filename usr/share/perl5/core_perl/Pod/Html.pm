@@ -95,7 +95,7 @@ Displays the usage message.
 
 Sets the directory to which all cross references in the resulting
 html file will be relative. Not passing this causes all links to be
-absolute since this is the value that tells Pod::Html the root of the 
+absolute since this is the value that tells Pod::Html the root of the
 documentation tree.
 
 Do not use this and --htmlroot in the same call to pod2html; they are
@@ -140,7 +140,7 @@ is specified.
     --poderrors
     --nopoderrors
 
-Include a "POD ERRORS" section in the outfile if there were any POD 
+Include a "POD ERRORS" section in the outfile if there were any POD
 errors in the infile. This section is included by default.
 
 =item podpath
@@ -209,7 +209,7 @@ Uses C<$Config{pod2html}> to setup default options.
 
 =head1 AUTHOR
 
-Marc Green, E<lt>marcgreen@cpan.orgE<gt>. 
+Marc Green, E<lt>marcgreen@cpan.orgE<gt>.
 
 Original version by Tom Christiansen, E<lt>tchrist@perl.comE<gt>.
 
@@ -223,7 +223,7 @@ This program is distributed under the Artistic License.
 
 =cut
 
-my $Cachedir; 
+my $Cachedir;
 my $Dircache;
 my($Htmlroot, $Htmldir, $Htmlfile, $Htmlfileurl);
 my($Podfile, @Podpath, $Podroot);
@@ -307,7 +307,7 @@ sub pod2html {
     unless (get_cache($Dircache, \@Podpath, $Podroot, $Recurse)) {
         # generate %Pages
         my $pwd = getcwd();
-        chdir($Podroot) || 
+        chdir($Podroot) ||
             die "$0: error changing to directory $Podroot: $!\n";
 
         # find all pod modules/pages in podpath, store in %Pages
@@ -466,7 +466,7 @@ Usage:  $0 --help --htmldir=<name> --htmlroot=<URL>
                       by default).
   --outfile       - filename for the resulting html file (output sent to
                       stdout by default).
-  --[no]poderrors - include a POD ERRORS section in the output if there were 
+  --[no]poderrors - include a POD ERRORS section in the output if there were
                       any POD errors in the input (default behavior).
   --podpath       - colon-separated list of directories containing library
                       pods (empty by default).
@@ -742,13 +742,13 @@ sub resolve_pod_page_link {
         }
 
         if ($#matches == -1) {
-            warn "Cannot find \"$to\" in podpath: " . 
+            warn "Cannot find \"$to\" in podpath: " .
                  "cannot find suitable replacement path, cannot resolve link\n"
                  unless $self->quiet;
             return '';
         } elsif ($#matches == 0) {
             warn "Cannot find \"$to\" in podpath: " .
-                 "using $matches[0] as replacement path to $to\n" 
+                 "using $matches[0] as replacement path to $to\n"
                  unless $self->quiet;
             $path = $self->pages->{$matches[0]};
         } else {

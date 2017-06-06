@@ -8,39 +8,39 @@ _lrzip()
     local xspec="*.lrz"
 
     case $prev in
-        -w|-S|-V|-h|-'?')
-            return 0
+        -w|-S|-V|-h|-'?'|-m)
+            return
             ;;
         -d)
             xspec="!"$xspec
             ;;
         -o)
             _filedir
-            return 0
+            return
             ;;
         -O)
             _filedir -d
-            return 0
+            return
             ;;
         -L)
             COMPREPLY=( $( compgen -W '{1..9}' -- "$cur" ) )
-            return 0
+            return
             ;;
         -N)
             COMPREPLY=( $( compgen -W '{-20..19}' -- "$cur" ) )
-            return 0
+            return
             ;;
         -p)
             COMPREPLY=( $( compgen -W "{1..$(_ncpus)}" -- "$cur" ) )
-            return 0
+            return
             ;;
     esac
 
-    _expand || return 0
+    _expand || return
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
-        return 0
+        return
     fi
 
     local IFS=$'\n'
@@ -50,4 +50,4 @@ _lrzip()
 } &&
 complete -F _lrzip lrzip
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

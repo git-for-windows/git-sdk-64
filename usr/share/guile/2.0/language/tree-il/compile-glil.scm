@@ -1,6 +1,6 @@
 ;;; TREE-IL -> GLIL compiler
 
-;; Copyright (C) 2001,2008,2009,2010,2011,2012,2013 Free Software Foundation, Inc.
+;; Copyright (C) 2001,2008,2009,2010,2011,2012,2013,2014 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -113,8 +113,6 @@
    (list . list)
    (vector . vector)
    ((class-of . 1) . class-of)
-   ((@slot-ref . 2) . slot-ref)
-   ((@slot-set! . 3) . slot-set)
    ((vector-ref . 2) . vector-ref)
    ((vector-set! . 3) . vector-set)
    ((variable-ref . 1) . variable-ref)

@@ -1,7 +1,7 @@
 # config file for bash-completion
 # https://github.com/scop/bash-completion
 
-set (BASH_COMPLETION_VERSION "2.3")
+set (BASH_COMPLETION_VERSION "2.5")
 
 set (BASH_COMPLETION_PREFIX "/usr")
 set (BASH_COMPLETION_COMPATDIR "/etc/bash_completion.d")

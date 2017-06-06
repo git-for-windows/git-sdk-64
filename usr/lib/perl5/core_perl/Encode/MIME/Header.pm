@@ -41,7 +41,7 @@ sub decode($$;$) {
     my ( $obj, $str, $chk ) = @_;
     # zap spaces between encoded words
     $str =~ s/\?=\s+=\?/\?==\?/gos;
-    
+
     # multi-line header to single line
     $str =~ s/(?:\r\n|[\r\n])[ \t]//gos;
 

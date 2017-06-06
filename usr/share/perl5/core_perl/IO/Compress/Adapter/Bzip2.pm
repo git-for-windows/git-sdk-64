@@ -30,7 +30,7 @@ sub mkCompObject
     return bless {'Def'        => $def,
                   'Error'      => '',
                   'ErrorNo'    => 0,
-                 }  ;     
+                 }  ;
 }
 
 sub compr
@@ -44,11 +44,11 @@ sub compr
 
     if ($status != BZ_RUN_OK)
     {
-        $self->{Error} = "Deflate Error: $status"; 
+        $self->{Error} = "Deflate Error: $status";
         return STATUS_ERROR;
     }
 
-    return STATUS_OK;    
+    return STATUS_OK;
 }
 
 sub flush
@@ -62,12 +62,12 @@ sub flush
 
     if ($status != BZ_RUN_OK)
     {
-        $self->{Error} = "Deflate Error: $status"; 
+        $self->{Error} = "Deflate Error: $status";
         return STATUS_ERROR;
     }
 
-    return STATUS_OK;    
-    
+    return STATUS_OK;
+
 }
 
 sub close
@@ -81,12 +81,12 @@ sub close
 
     if ($status != BZ_STREAM_END)
     {
-        $self->{Error} = "Deflate Error: $status"; 
+        $self->{Error} = "Deflate Error: $status";
         return STATUS_ERROR;
     }
 
-    return STATUS_OK;    
-    
+    return STATUS_OK;
+
 }
 
 
@@ -101,13 +101,13 @@ sub reset
 
     if ($status != BZ_OK)
     {
-        $self->{Error} = "Cannot create Deflate object: $status"; 
+        $self->{Error} = "Cannot create Deflate object: $status";
         return STATUS_ERROR;
     }
 
     $self->{Def} = $def;
 
-    return STATUS_OK;    
+    return STATUS_OK;
 }
 
 sub compressedBytes

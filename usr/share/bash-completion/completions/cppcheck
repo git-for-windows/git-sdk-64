@@ -56,7 +56,8 @@ _cppcheck()
             return
             ;;
         --platform)
-            COMPREPLY=( $( compgen -W 'unix32 unix64 win32A win32W win64
+            _filedir
+            COMPREPLY+=( $( compgen -W 'unix32 unix64 win32A win32W win64
                 native' -- "$cur" ) )
             return
             ;;
@@ -87,4 +88,4 @@ _cppcheck()
 } &&
 complete -F _cppcheck cppcheck
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

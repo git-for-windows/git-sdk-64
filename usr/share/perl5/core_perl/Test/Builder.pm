@@ -225,7 +225,7 @@ sub child {
 
     $builder->subtest($name, \&subtests, @args);
 
-See documentation of C<subtest> in Test::More.  
+See documentation of C<subtest> in Test::More.
 
 C<subtest> also, and optionally, accepts arguments which will be passed to the
 subtests reference.
@@ -2140,7 +2140,7 @@ sub summary {
 
 Like C<summary()>, but with a lot more detail.
 
-    $tests[$test_num - 1] = 
+    $tests[$test_num - 1] =
             { 'ok'       => is the test considered a pass?
               actual_ok  => did it literally say 'ok'?
               name       => name of the test (if any)

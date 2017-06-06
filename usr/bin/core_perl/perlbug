@@ -2,9 +2,9 @@
     eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
 	if $running_under_some_shell;
 
-my $config_tag1 = '5.24.1 - Thu Feb 16 14:27:44 MSK 2017';
+my $config_tag1 = '5.24.1 - Wed May 31 08:17:19 MSK 2017';
 
-my $patchlevel_date = 1483384486;
+my $patchlevel_date = 1496207751;
 my @patches = Config::local_patches();
 my $patch_tags = join "", map /(\S+)/ ? "+$1 " : (), @patches;
 
@@ -165,7 +165,7 @@ sub Init {
     if ($opt{T}) {
 	$thanks = 'thanks';
     }
-    
+
     $progname = $thanks ? 'perlthanks' : 'perlbug';
     # Target address
     $address = $opt{a} || ($opt{t} ? $testaddress
@@ -206,7 +206,7 @@ sub Init {
 
     # Body of report
     $body = $opt{b} || "";
-	
+
     # Editor
     $ed = $opt{e} || $ENV{VISUAL} || $ENV{EDITOR} || $ENV{EDIT}
 	|| ($Is_VMS && "edit/tpu")
@@ -277,7 +277,7 @@ EOF
     }
 
     # Message-Id - rjsf
-    $messageid = "<$::Config{'version'}_${$}_".time."\@$domain>"; 
+    $messageid = "<$::Config{'version'}_${$}_".time."\@$domain>";
 
     # My username
     $me = $Is_MSWin32 ? $ENV{'USERNAME'}
@@ -317,13 +317,13 @@ EOF
     }
 
     # Prompt for subject of message, if needed
-    
+
     if ($subject && TrivialSubject($subject)) {
 	$subject = '';
     }
 
     unless ($subject) {
-	    print 
+	    print
 "First of all, please provide a subject for the message.\n";
 	if ( not $thanks)  {
 	    paraprint <<EOF;
@@ -359,7 +359,7 @@ EOF
 	    || $from || '';
 
 	unless ($guess) {
-		# move $domain to where we can use it elsewhere	
+		# move $domain to where we can use it elsewhere
         if ($domain) {
 		if ($Is_VMS && !$::Config{'d_socket'}) {
 		    $guess = "$domain\:\:$me";
@@ -417,8 +417,8 @@ EOF
     }
 
     $cc = '' if $cc =~ /^(none|yourself|me|myself|ourselves)$/i;
-    if ($cc) { 
-        $andcc = " and $cc" 
+    if ($cc) {
+        $andcc = " and $cc"
     } else {
         $andcc = ''
     }
@@ -627,7 +627,7 @@ EFF
 EFF
     }
 
-    if ($report_about_module ) { 
+    if ($report_about_module ) {
         print OUT <<EFF;
     module=$report_about_module
 EFF
@@ -767,10 +767,10 @@ sub NowWhat {
 	    my $menu = <<EOF;
 
 
-You have finished composing your message. At this point, you have 
+You have finished composing your message. At this point, you have
 a few options. You can:
 
-    * [Se]nd the message to $address$andcc, 
+    * [Se]nd the message to $address$andcc,
     * [D]isplay the message on the screen,
     * [R]e-edit the message
     * Display or change the message's [su]bject
@@ -1278,7 +1278,7 @@ L<perldebug>.
 =item Do you have a proper test case?
 
 The easier it is to reproduce your bug, the more likely it will be
-fixed -- if nobody can duplicate your problem, it probably won't be 
+fixed -- if nobody can duplicate your problem, it probably won't be
 addressed.
 
 A good test case has most of these attributes: short, simple code;
@@ -1297,7 +1297,7 @@ Be sure to include the B<exact> error messages, if any.
 
 If you get a core dump (or equivalent), you may use a debugger
 (B<dbx>, B<gdb>, etc) to produce a stack trace to include in the bug
-report.  
+report.
 
 NOTE: unless your Perl has been compiled with debug info
 (often B<-g>), the stack trace is likely to be somewhat hard to use
@@ -1352,7 +1352,7 @@ description of what's wrong is fine.
 
 Yes, you can do this by either using the C<-T> option, or by invoking
 the program as C<perlthanks>. Thank-you notes are good. It makes people
-smile. 
+smile.
 
 =back
 
@@ -1481,7 +1481,7 @@ Test mode.  The target address defaults to B<perlbug-test@perl.org>.
 
 =item B<-T>
 
-Send a thank-you note instead of a bug report. 
+Send a thank-you note instead of a bug report.
 
 =item B<-v>
 

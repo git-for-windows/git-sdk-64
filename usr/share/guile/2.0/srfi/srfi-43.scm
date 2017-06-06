@@ -104,10 +104,10 @@
 
 The fundamental vector constructor.  Create a vector whose length is
 LENGTH and iterates across each index k from 0 up to LENGTH - 1,
-applying F at each iteration to the current index and current seeds,
-in that order, to receive n + 1 values: first, the element to put in
-the kth slot of the new vector and n new seeds for the next iteration.
-It is an error for the number of seeds to vary between iterations."
+applying F at each iteration to the current index and current seeds, in
+that order, to receive n + 1 values: the element to put in the kth slot
+of the new vector, and n new seeds for the next iteration.  It is an
+error for the number of seeds to vary between iterations."
     ((f len)
      (assert-procedure f 'vector-unfold)
      (assert-nonneg-exact-integer len 'vector-unfold)
@@ -154,10 +154,10 @@ It is an error for the number of seeds to vary between iterations."
 
 The fundamental vector constructor.  Create a vector whose length is
 LENGTH and iterates across each index k from LENGTH - 1 down to 0,
-applying F at each iteration to the current index and current seeds,
-in that order, to receive n + 1 values: first, the element to put in
-the kth slot of the new vector and n new seeds for the next iteration.
-It is an error for the number of seeds to vary between iterations."
+applying F at each iteration to the current index and current seeds, in
+that order, to receive n + 1 values: the element to put in the kth slot
+of the new vector, and n new seeds for the next iteration.  It is an
+error for the number of seeds to vary between iterations."
     ((f len)
      (assert-procedure f 'vector-unfold-right)
      (assert-nonneg-exact-integer len 'vector-unfold-right)
@@ -304,7 +304,7 @@ from the subsequent locations in VEC ..."
 
 Append each vector in LIST-OF-VECTORS.  Equivalent to:
   (apply vector-append LIST-OF-VECTORS)"
-  (assert-vectors vs 'vector-append)
+  (assert-vectors vs 'vector-concatenate)
   (%vector-concatenate vs))
 
 (define (vector-empty? vec)

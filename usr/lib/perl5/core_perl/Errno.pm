@@ -248,8 +248,8 @@ non-zero value only if C<$!> is set to that value. For example:
             warn "Get a wife!\n";
         } else {
             warn "This path is barred: $!";
-        } 
-    } 
+        }
+    }
 
 If a specified constant C<EFOO> does not exist on the system, C<$!{EFOO}>
 returns C<"">.  You may use C<exists $!{EFOO}> to check whether the

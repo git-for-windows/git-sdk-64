@@ -28,7 +28,7 @@ Pod::Parser - base class for creating POD filters and translators
     package MyParser;
     @ISA = qw(Pod::Parser);
 
-    sub command { 
+    sub command {
         my ($parser, $command, $paragraph, $line_num) = @_;
         ## Interpret the command and its text; sample actions might be:
         if ($command eq 'head1') { ... }
@@ -39,14 +39,14 @@ Pod::Parser - base class for creating POD filters and translators
         print $out_fh $expansion;
     }
 
-    sub verbatim { 
+    sub verbatim {
         my ($parser, $paragraph, $line_num) = @_;
         ## Format verbatim paragraph; sample actions might be:
         my $out_fh = $parser->output_handle();
         print $out_fh $paragraph;
     }
 
-    sub textblock { 
+    sub textblock {
         my ($parser, $paragraph, $line_num) = @_;
         ## Translate/Format this block of text; sample actions might be:
         my $out_fh = $parser->output_handle();
@@ -54,7 +54,7 @@ Pod::Parser - base class for creating POD filters and translators
         print $out_fh $expansion;
     }
 
-    sub interior_sequence { 
+    sub interior_sequence {
         my ($parser, $seq_command, $seq_argument) = @_;
         ## Expand an interior sequence; sample actions might be:
         return "*$seq_argument*"     if ($seq_command eq 'B');
@@ -378,7 +378,7 @@ object which contains further information about the interior sequence.
 Please see L<Pod::InputObjects> for details if you need to access this
 additional information.
 
-Subclass implementations of this method may wish to invoke the 
+Subclass implementations of this method may wish to invoke the
 B<nested()> method of C<$pod_seq> to see if it is nested inside
 some other interior-sequence (and if so, which kind).
 
@@ -645,7 +645,7 @@ their functionality.
             $ptree2 = $parser->parse_text({%opts}, $text, $line_num);
             $ptree3 = $parser->parse_text(\%opts, $text, $line_num);
 
-This method is useful if you need to perform your own interpolation 
+This method is useful if you need to perform your own interpolation
 of interior sequences and can't rely upon B<interpolate> to expand
 them in simple bottom-up order.
 
@@ -1150,7 +1150,7 @@ If the special input filename "", "-" or "<&STDIN" is given then the STDIN
 filehandle is used for input (and no open or close is performed). If no
 input filename is specified then "-" is implied. Filehandle references,
 or objects that support the regular IO operations (like C<E<lt>$fhE<gt>>
-or C<$fh-<Egt>getline>) are also accepted; the handles must already be 
+or C<$fh-<Egt>getline>) are also accepted; the handles must already be
 opened.
 
 If a second argument is given then it should be the name of the desired
@@ -1362,7 +1362,7 @@ When passed a single hash-ref, B<parseopts> uses that hash to completely
 reset the existing parse-options, all previous parse-option values
 are lost.
 
-            ## Reset all options to default 
+            ## Reset all options to default
             $parser->parseopts( { } );
 
 See L<"PARSING OPTIONS"> for more information on the name and meaning of each
@@ -1689,19 +1689,19 @@ following:
         $self->{'-paragraphs'} = [];  ## initialize paragraph list
     }
 
-    sub command { 
+    sub command {
         my ($parser, $command, $paragraph, $line_num, $pod_para) = @_;
         my $ptree = $parser->parse_text({%options}, $paragraph, ...);
         $pod_para->parse_tree( $ptree );
         push @{ $self->{'-paragraphs'} }, $pod_para;
     }
 
-    sub verbatim { 
+    sub verbatim {
         my ($parser, $paragraph, $line_num, $pod_para) = @_;
         push @{ $self->{'-paragraphs'} }, $pod_para;
     }
 
-    sub textblock { 
+    sub textblock {
         my ($parser, $paragraph, $line_num, $pod_para) = @_;
         my $ptree = $parser->parse_text({%options}, $paragraph, ...);
         $pod_para->parse_tree( $ptree );
@@ -1736,19 +1736,19 @@ interface for all parse-tree nodes. The result would look something like:
         return $_[0]->{'-ptree'};
     }
 
-    sub command { 
+    sub command {
         my ($parser, $command, $paragraph, $line_num, $pod_para) = @_;
         my $ptree = $parser->parse_text({<<options>>}, $paragraph, ...);
         $pod_para->parse_tree( $ptree );
         $parser->parse_tree()->append( $pod_para );
     }
 
-    sub verbatim { 
+    sub verbatim {
         my ($parser, $paragraph, $line_num, $pod_para) = @_;
         $parser->parse_tree()->append( $pod_para );
     }
 
-    sub textblock { 
+    sub textblock {
         my ($parser, $paragraph, $line_num, $pod_para) = @_;
         my $ptree = $parser->parse_text({<<options>>}, $paragraph, ...);
         $pod_para->parse_tree( $ptree );

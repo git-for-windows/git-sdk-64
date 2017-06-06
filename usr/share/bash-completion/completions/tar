@@ -33,9 +33,9 @@
 # FIXME: at least 'tar -<tab>' should show some helping text (apart from just
 #        pure option advices)
 # FIXME: short option completion should be more intuitive
-#        - verbose mode option should be adviced multiple times
-#        - mode option should be adviced only once
-#        - format option should be adviced only once
+#        - verbose mode option should be advised multiple times
+#        - mode option should be advised only once
+#        - format option should be advised only once
 #        ...
 
 __gtar_parse_help_opt()
@@ -90,7 +90,7 @@ __gtar_parse_help_line()
 
             # end once there is single non-option word
             *)
-                break;
+                break
         esac
     done
 }
@@ -378,7 +378,7 @@ __tar_adjust_PREV_from_old_option()
     # $ tar cfTC # expects this sequence of arguments:
     # $ tar cfTC ARCHIVE_FILE PATTERNS_FILE CHANGE_DIR
     if [[ "$old_opt_used" -eq 1 && "$cword" -gt 1 \
-         && "$cword" -lt $(( ${#old_opt_parsed[@]} + 2 )) ]];
+        && "$cword" -lt $(( ${#old_opt_parsed[@]} + 2 )) ]];
     then
         # make e.g. 'C' option from 'cffCT'
         prev="-${old_opt_parsed[ $cword - 2 ]}"
@@ -568,7 +568,7 @@ _gtar()
                 [[ " $long_arg_req " =~ \ $prev=\  ]] && break
 
                 # parameter with optional argument passed with =, something like
-                # --ocurrence=*<TAB> which is not handled above
+                # --occurrence=*<TAB> which is not handled above
                 [[ " $long_arg_opt " =~ \ $prev\  ]] && break
 
                 # if there is some unknown option with '=', for example
@@ -628,8 +628,6 @@ _gtar()
         set +x
         unset PS4
     fi
-
-    return 0
 }
 
 
@@ -683,7 +681,7 @@ _posix_tar()
 
     __tar_adjust_PREV_from_old_option
 
-    __tar_posix_prev_handle && return 0
+    __tar_posix_prev_handle && return
 
     __tar_try_mode && return
 
@@ -697,7 +695,7 @@ _posix_tar()
 _tar()
 {
     local cmd=${COMP_WORDS[0]} func line
-    read line <<<"$($cmd --version)"
+    read line <<<"$($cmd --version 2>/dev/null)"
     case "$line" in
     *GNU*)
         func=_gtar
@@ -730,4 +728,4 @@ else
     complete -F _posix_tar  star
 fi
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

@@ -31,7 +31,7 @@
 #endif
 
 #ifdef USE_REENTRANT_API
- 
+
 /* Deprecations: some platforms have the said reentrant interfaces
  * but they are declared obsolete and are not to be used.  Often this
  * means that the platform has threadsafed the interfaces (hopefully).
@@ -65,7 +65,7 @@
 #    define REENTR_MEMZERO(a,b) memzero(a,b)
 #else
 #    define REENTR_MEMZERO(a,b) 0
-#endif 
+#endif
 
 #ifdef NETDB_R_OBSOLETE
 #   undef HAS_ENDHOSTENT_R
@@ -653,7 +653,7 @@ typedef struct {
 #   endif
 #   ifdef USE_HOSTENT_ERRNO
 	int	_hostent_errno;
-#   endif 
+#   endif
 #endif /* HAS_GETHOSTBYNAME_R */
 #ifdef HAS_GETLOGIN_R
 	char*	_getlogin_buffer;
@@ -672,7 +672,7 @@ typedef struct {
 #   endif
 #   ifdef USE_NETENT_ERRNO
 	int	_netent_errno;
-#   endif 
+#   endif
 #endif /* HAS_GETNETBYNAME_R */
 #ifdef HAS_GETPROTOBYNAME_R
 	struct protoent	_protoent_struct;
@@ -687,7 +687,7 @@ typedef struct {
 #   endif
 #   ifdef USE_PROTOENT_ERRNO
 	int	_protoent_errno;
-#   endif 
+#   endif
 #endif /* HAS_GETPROTOBYNAME_R */
 #ifdef HAS_GETPWNAM_R
 	struct passwd	_pwent_struct;
@@ -713,7 +713,7 @@ typedef struct {
 #   endif
 #   ifdef USE_SERVENT_ERRNO
 	int	_servent_errno;
-#   endif 
+#   endif
 #endif /* HAS_GETSERVBYNAME_R */
 #ifdef HAS_GETSPNAM_R
 	struct spwd	_spent_struct;
@@ -1433,7 +1433,7 @@ typedef struct {
 
 
 #endif /* USE_REENTRANT_API */
- 
+
 #endif
 
 /* ex: set ro: */

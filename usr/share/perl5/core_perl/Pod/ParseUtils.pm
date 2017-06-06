@@ -142,7 +142,7 @@ sub type {
 
 =item $list-E<gt>rx()
 
-Without argument, retrieves a regular expression for simplifying the 
+Without argument, retrieves a regular expression for simplifying the
 individual item strings once the list type has been determined. Usage:
 E.g. when converting to HTML, one might strip the leading number in
 an ordered list as C<E<lt>OLE<gt>> already prints numbers itself.

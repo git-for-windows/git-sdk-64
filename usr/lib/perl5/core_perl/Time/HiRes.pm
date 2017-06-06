@@ -224,7 +224,7 @@ ualarm(0) will cancel an outstanding ualarm().
 
 Note that the interaction between alarms and sleeps is unspecified.
 
-=item tv_interval 
+=item tv_interval
 
 tv_interval ( $ref_to_gettimeofday [, $ref_to_later_gettimeofday] )
 
@@ -463,7 +463,7 @@ time stamp from t1: it may be equal or I<less>.
   # get seconds and microseconds since the epoch
   ($s, $usec) = gettimeofday();
 
-  # measure elapsed time 
+  # measure elapsed time
   # (could also do by subtracting 2 gettimeofday return values)
   $t0 = [gettimeofday];
   # do bunch of stuff here

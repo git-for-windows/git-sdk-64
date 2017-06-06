@@ -1,6 +1,6 @@
 ;;;; readline.scm --- support functions for command-line editing
 ;;;;
-;;;; 	Copyright (C) 1997, 1999, 2000, 2001, 2002, 2006, 2009, 2010, 2011 Free Software Foundation, Inc.
+;;;; 	Copyright (C) 1997, 1999, 2000, 2001, 2002, 2006, 2009, 2010, 2011, 2014 Free Software Foundation, Inc.
 ;;;; 
 ;;;; This program is free software; you can redistribute it and/or modify
 ;;;; it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@
                                            (set! history-buffer
                                                  (if history-buffer
                                                      (string-append history-buffer
-                                                                    " "
+                                                                    "\n"
                                                                     str)
                                                      str)))
                                        str)))))
@@ -118,7 +118,8 @@
 (define-once the-readline-port #f)
 
 (define-once history-variable "GUILE_HISTORY")
-(define-once history-file (string-append (getenv "HOME") "/.guile_history"))
+(define-once history-file
+  (string-append (or (getenv "HOME") ".") "/.guile_history"))
 
 (define-public readline-port
   (let ((do (lambda (r/w)

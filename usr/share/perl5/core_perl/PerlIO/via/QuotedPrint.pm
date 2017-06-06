@@ -65,7 +65,7 @@ PerlIO::via::QuotedPrint - PerlIO layer for quoted-printable strings
 
  open( my $in, '<:via(QuotedPrint)', 'file.qp' )
    or die "Can't open file.qp for reading: $!\n";
- 
+
  open( my $out, '>:via(QuotedPrint)', 'file.qp' )
    or die "Can't open file.qp for writing: $!\n";
 

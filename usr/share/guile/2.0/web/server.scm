@@ -1,6 +1,6 @@
 ;;; Web server
 
-;; Copyright (C)  2010, 2011, 2012, 2013 Free Software Foundation, Inc.
+;; Copyright (C)  2010, 2011, 2012, 2013, 2015 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -84,6 +84,15 @@
   #:use-module (ice-9 iconv)
   #:export (define-server-impl
             lookup-server-impl
+
+            make-server-impl
+            server-impl?
+            server-impl-name
+            server-impl-open
+            server-impl-read
+            server-impl-write
+            server-impl-close
+
             open-server
             read-client
             handle-request

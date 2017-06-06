@@ -8,11 +8,11 @@ _btdownload()
     case $prev in
         --responsefile|--saveas)
             _filedir
-            return 0
+            return
             ;;
     esac
 
-     if [[ "$cur" == -* ]]; then
+    if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W '--max_uploads --keepalive_interval
             --download_slice_size --request_backlog --max_message_length
             --ip --minport --maxport --responsefile --url --saveas --timeout
@@ -29,4 +29,4 @@ _btdownload()
 complete -F _btdownload btdownloadheadless.py btdownloadcurses.py \
     btdownloadgui.py
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

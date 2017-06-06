@@ -1,7 +1,7 @@
 [= AutoGen5 Template  -*- Mode: Text -*-
 
 ## This file is part of AutoGen.
-## AutoGen Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+## AutoGen Copyright (C) 1992-2016 by Bruce Korb - all rights reserved
 ##
 ## AutoGen is free software: you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -142,8 +142,8 @@ struct transition {[=
     (set! fmt (sprintf "\n    %%-%ds %%s;"
                 (+ (string-length pfx) 14) ))
     (sprintf (string-append fmt fmt)
-             (string-append "te_" pfx "_state") "next_state"
-             (string-append pfx "_callback_t*") "trans_proc") =]
+             (string-append "te_" pfx "_state")  "next_state"
+             (string-append pfx "_callback_t *") "trans_proc") =]
 };
 
 /**
@@ -187,15 +187,15 @@ DEFINE machine-step  =][=
     } else
 #endif /* __COVERITY__ */
     {
-        const [= (. t-trans) =]* pTT =
+        const [= (. t-trans) =] * ttbl =
             [=(. pfx)=]_trans_table[ [=(. pfx)=]_state ] + trans_evt;
 [= IF (exist? "debug-flag") \=]
 #ifdef [= (get "debug-flag") =]
         firstNext = /* next line */
 #endif /* [= debug-flag =] */
 [= ENDIF \=]
-        nxtSt = pTT->next_state;
-        [=(. trans-name)=] = pTT->[=(. trans-field)=];
+        nxtSt = ttbl->next_state;
+        [=(. trans-name)=] = ttbl->[=(. trans-field)=];
     }
 [= IF (exist? "debug-flag") \=]
 #ifdef [= (get "debug-flag") =]
@@ -243,7 +243,7 @@ DEFINE fsm-proc-variables
 [= ENDIF \=]
     te_[=(. pfx)=]_state nxtSt;[=
     IF (=* (get "method") "call")  =]
-    [=(. pfx)=]_callback_t* pT;[=
+    [=(. pfx)=]_callback_t * pT;[=
     ELSE  =]
     te_[=(. pfx)=]_trans trans;[=
     ENDIF =][=

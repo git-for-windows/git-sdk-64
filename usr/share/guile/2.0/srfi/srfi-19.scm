@@ -1,7 +1,7 @@
 ;;; srfi-19.scm --- Time/Date Library
 
-;; Copyright (C) 2001, 2002, 2003, 2005, 2006, 2007, 2008, 2009, 2010,
-;;   2011, 2014 Free Software Foundation, Inc.
+;; Copyright (C) 2001-2003, 2005-2011, 2014, 2016
+;;   Free Software Foundation, Inc.
 ;;
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -203,7 +203,8 @@
 ;; each entry is (tai seconds since epoch . # seconds to subtract for utc)
 ;; note they go higher to lower, and end in 1972.
 (define leap-second-table
-  '((1341100800 . 35)
+  '((1435708800 . 36)
+    (1341100800 . 35)
     (1230768000 . 34)
     (1136073600 . 33)
     (915148800 . 32)

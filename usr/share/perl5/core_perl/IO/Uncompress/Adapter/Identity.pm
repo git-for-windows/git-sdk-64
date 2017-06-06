@@ -70,7 +70,7 @@ sub uncompr
                     $ind = $len - 1 ;
                 }
             }
-           
+
             if ($ind >= 0) {
                 $remainder = substr($$in, $ind) ;
                 substr($$in, $ind) = '' ;
@@ -94,7 +94,7 @@ sub uncompr
                     $l1 = U64::newUnpack_V32(substr($remainder, 8));
                     $l2 = U64::newUnpack_V32(substr($remainder, 12));
                 }
-                    
+
                 my $newLen = $self->{CompSize}->clone();
                 $newLen->add(length $$in);
                 if ($l1->equal($l2) && $l1->equal($newLen) ) {
@@ -142,7 +142,7 @@ sub reset
     $self->{CompSize}   = 0;
     $self->{UnCompSize} = 0;
     $self->{CRC32}      = Compress::Raw::Zlib::crc32('');
-    $self->{ADLER32}    = Compress::Raw::Zlib::adler32('');      
+    $self->{ADLER32}    = Compress::Raw::Zlib::adler32('');
 
     return STATUS_OK ;
 }

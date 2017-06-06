@@ -46,7 +46,7 @@ This documentation uses "Latin1" and "Latin-1" to refer to all 256 characters.
 
 Note that Perl can be compiled and run under either ASCII or EBCDIC (See
 L<perlebcdic>).  Most of the documentation (and even comments in the code)
-ignore the EBCDIC possibility.  
+ignore the EBCDIC possibility.
 For almost all purposes the differences are transparent.
 As an example, under EBCDIC,
 instead of UTF-8, UTF-EBCDIC is used to encode Unicode strings, and so
@@ -166,7 +166,7 @@ it wasn't real before), which you can then modify.  Check that the return
 value is non-null before dereferencing it to a C<SV*>.
 
 See L<perlguts/"Understanding the Magic of Tied Hashes and Arrays"> for
-more information on how to use this function on tied arrays. 
+more information on how to use this function on tied arrays.
 
 The rough perl equivalent is C<$myarray[$idx]>.
 
@@ -353,7 +353,7 @@ Found in file av.c
 X<get_av>
 
 Returns the AV of the specified Perl global or package array with the given
-name (so it won't work on lexical variables).  C<flags> are passed 
+name (so it won't work on lexical variables).  C<flags> are passed
 to C<gv_fetchpv>.  If C<GV_ADD> is set and the
 Perl variable does not exist then it will be created.  If C<flags> is zero
 and the variable does not exist then NULL is returned.
@@ -416,7 +416,7 @@ Found in file pp_sort.c
 =item call_argv
 X<call_argv>
 
-Performs a callback to the specified named and package-scoped Perl subroutine 
+Performs a callback to the specified named and package-scoped Perl subroutine
 with C<argv> (a C<NULL>-terminated array of strings) as arguments.  See
 L<perlcall>.
 
@@ -1877,7 +1877,7 @@ Found in file XSUB.h
 =item CLASS
 X<CLASS>
 
-Variable which is setup by C<xsubpp> to indicate the 
+Variable which is setup by C<xsubpp> to indicate the
 class name for a C++ XS constructor.  This is always a C<char*>.  See
 C<L</THIS>>.
 
@@ -1957,7 +1957,7 @@ Found in file XSUB.h
 =item items
 X<items>
 
-Variable which is setup by C<xsubpp> to indicate the number of 
+Variable which is setup by C<xsubpp> to indicate the number of
 items on the stack.  See L<perlxs/"Variable-length Parameter Lists">.
 
 	I32	items
@@ -1968,7 +1968,7 @@ Found in file XSUB.h
 =item ix
 X<ix>
 
-Variable which is setup by C<xsubpp> to indicate which of an 
+Variable which is setup by C<xsubpp> to indicate which of an
 XSUB's aliases was used to invoke it.  See L<perlxs/"The ALIAS: Keyword">.
 
 	I32	ix
@@ -1979,8 +1979,8 @@ Found in file XSUB.h
 =item RETVAL
 X<RETVAL>
 
-Variable which is setup by C<xsubpp> to hold the return value for an 
-XSUB.  This is always the proper type for the XSUB.  See 
+Variable which is setup by C<xsubpp> to hold the return value for an
+XSUB.  This is always the proper type for the XSUB.  See
 L<perlxs/"The RETVAL Variable">.
 
 	(whatever)	RETVAL
@@ -2001,7 +2001,7 @@ Found in file XSUB.h
 =item THIS
 X<THIS>
 
-Variable which is setup by C<xsubpp> to designate the object in a C++ 
+Variable which is setup by C<xsubpp> to designate the object in a C++
 XSUB.  This is always the proper type for the C++ object.  See C<L</CLASS>> and
 L<perlxs/"Using XS With C++">.
 
@@ -2056,7 +2056,7 @@ Found in file XSUB.h
 =item dump_all
 X<dump_all>
 
-Dumps the entire optree of the current program starting at C<PL_main_root> to 
+Dumps the entire optree of the current program starting at C<PL_main_root> to
 C<STDERR>.  Also dumps the optrees for all visible subroutines in
 C<PL_defstash>.
 
@@ -2180,7 +2180,7 @@ C<pv_escape()> and supporting quoting and ellipses.
 If the C<PERL_PV_PRETTY_QUOTE> flag is set then the result will be
 double quoted with any double quotes in the string escaped.  Otherwise
 if the C<PERL_PV_PRETTY_LTGT> flag is set then the result be wrapped in
-angle brackets. 
+angle brackets.
 
 If the C<PERL_PV_PRETTY_ELLIPSES> flag is set and not all characters in
 string were output then an ellipsis C<...> will be appended to the
@@ -2840,7 +2840,7 @@ Found in file vutil.c
 =item vcmp
 X<vcmp>
 
-Version object aware cmp.  Both operands must already have been 
+Version object aware cmp.  Both operands must already have been
 converted into version objects.
 
 	int	vcmp(SV *lhv, SV *rhv)
@@ -3215,7 +3215,7 @@ Found in file gv.c
 =item gv_fetchmeth_pv
 X<gv_fetchmeth_pv>
 
-Exactly like L</gv_fetchmeth_pvn>, but takes a nul-terminated string 
+Exactly like L</gv_fetchmeth_pvn>, but takes a nul-terminated string
 instead of a string/length pair.
 
 	GV*	gv_fetchmeth_pv(HV* stash, const char* name,
@@ -6636,7 +6636,7 @@ removed without notice.
 
 
 Return a non-zero integer if the sign bit on an NV is set, and 0 if
-it is not.  
+it is not.
 
 If F<Configure> detects this system has a C<signbit()> that will work with
 our NVs, then we just use it via the C<#define> in F<perl.h>.  Otherwise,
@@ -8320,7 +8320,7 @@ AV which is C<@_>.  Other entries are storage for variables and op targets.
 
 Iterating over the PADNAMELIST iterates over all possible pad
 items.  Pad slots for targets (C<SVs_PADTMP>)
-and GVs end up having &PL_padname_undef "names", while slots for constants 
+and GVs end up having &PL_padname_undef "names", while slots for constants
 have C<&PL_padname_const> "names" (see C<L</pad_alloc>>).  That
 C<&PL_padname_undef>
 and C<&PL_padname_const> are used is an implementation detail subject to
@@ -8375,7 +8375,7 @@ write is called (if necessary).
 The flag C<SVs_PADSTALE> is cleared on lexicals each time the C<my()> is executed,
 and set on scope exit.  This allows the
 C<"Variable $x is not available"> warning
-to be generated in evals, such as 
+to be generated in evals, such as
 
     { my $x = 1; sub f { eval '$x'} } f();
 
@@ -9191,7 +9191,7 @@ X<PUSHi>
 
 Push an integer onto the stack.  The stack must have room for this element.
 Handles 'set' magic.  Uses C<TARG>, so C<dTARGET> or C<dXSTARG> should be
-called to declare it.  Do not call multiple C<TARG>-oriented macros to 
+called to declare it.  Do not call multiple C<TARG>-oriented macros to
 return lists from XSUB's - see C<L</mPUSHi>> instead.  See also C<L</XPUSHi>>
 and C<L</mXPUSHi>>.
 
@@ -9514,7 +9514,7 @@ Found in file XSUB.h
 =item XST_mPV
 X<XST_mPV>
 
-Place a copy of a string into the specified position C<pos> on the stack. 
+Place a copy of a string into the specified position C<pos> on the stack.
 The value is stored in a new mortal SV.
 
 	void	XST_mPV(int pos, char* str)
@@ -11843,7 +11843,7 @@ Found in file universal.c
 =item sv_derived_from_pv
 X<sv_derived_from_pv>
 
-Exactly like L</sv_derived_from_pvn>, but takes a nul-terminated string 
+Exactly like L</sv_derived_from_pvn>, but takes a nul-terminated string
 instead of a string/length pair.
 
 	bool	sv_derived_from_pv(SV* sv,
@@ -12103,7 +12103,7 @@ X<SvIV_set>
 
 Set the value of the IV pointer in sv to val.  It is possible to perform
 the same function of this macro with an lvalue assignment to C<SvIVX>.
-With future Perls, however, it will be more efficient to use 
+With future Perls, however, it will be more efficient to use
 C<SvIV_set> instead of the lvalue assignment to C<SvIVX>.
 
 	void	SvIV_set(SV* sv, IV val)

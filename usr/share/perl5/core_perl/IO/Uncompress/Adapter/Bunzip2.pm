@@ -26,8 +26,8 @@ sub mkUncompObject
                   'UnCompSize'    => 0,
                   'Error'         => '',
                   'ConsumesInput' => 1,
-                 }  ;     
-    
+                 }  ;
+
 }
 
 sub uncompr
@@ -48,7 +48,7 @@ sub uncompr
         return STATUS_ERROR;
     }
 
-    
+
     return STATUS_OK        if $status == BZ_OK ;
     return STATUS_ENDSTREAM if $status == BZ_STREAM_END ;
     return STATUS_ERROR ;
@@ -64,7 +64,7 @@ sub reset
 
     if ($status != BZ_OK)
     {
-        $self->{Error} = "Cannot create Inflate object: $status"; 
+        $self->{Error} = "Cannot create Inflate object: $status";
         return STATUS_ERROR;
     }
 
@@ -100,8 +100,8 @@ sub adler32
 sub sync
 {
     my $self = shift ;
-    #( $self->{Inf}->inflateSync(@_) == BZ_OK) 
-    #        ? STATUS_OK 
+    #( $self->{Inf}->inflateSync(@_) == BZ_OK)
+    #        ? STATUS_OK
     #        : STATUS_ERROR ;
 }
 

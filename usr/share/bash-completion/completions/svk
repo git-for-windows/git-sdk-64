@@ -24,12 +24,12 @@ _svk()
         case $prev in
             -F|--file|--targets)
                 _filedir
-                return 0
+                return
                 ;;
             --encoding)
                 COMPREPLY=( $( compgen -W \
                     '$( iconv --list | command sed -e "s@//@@;" )' -- "$cur" ) )
-                return 0
+                return
                 ;;
         esac
 
@@ -209,9 +209,7 @@ _svk()
             esac
         fi
     fi
-
-    return 0
 } &&
 complete -F _svk svk
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

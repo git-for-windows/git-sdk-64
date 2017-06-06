@@ -6,7 +6,7 @@
 ##
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -27,9 +27,16 @@
 # Produce an mdoc page for section 5 - configuration file formats.
 #
 :+][+:
+(out-push-new)  :+]
+if test -z "${MAN_PAGE_DATE}"
+then LC_ALL=C date '+%B %e %Y' | sed 's/  */ /g'
+else echo "${MAN_PAGE_DATE}"
+fi
+[+:
+(define mpage-date (shell (out-pop #t)))
 
 (define head-line (lambda() (string-append
-   ".Dd "   (shell "date '+%B %e %Y' | sed 's/  */ /g'")
+   ".Dd "   mpage-date
    "\n.Dt " UP-PROG-NAME " " man-sect " " section-name
    "\n.Os " (shell "uname -sr") "\n") ))
 

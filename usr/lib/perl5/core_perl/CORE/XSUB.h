@@ -17,17 +17,17 @@
 =head1 C<xsubpp> variables and internal functions
 
 =for apidoc Amn|char*|CLASS
-Variable which is setup by C<xsubpp> to indicate the 
+Variable which is setup by C<xsubpp> to indicate the
 class name for a C++ XS constructor.  This is always a C<char*>.  See
 C<L</THIS>>.
 
 =for apidoc Amn|(whatever)|RETVAL
-Variable which is setup by C<xsubpp> to hold the return value for an 
-XSUB.  This is always the proper type for the XSUB.  See 
+Variable which is setup by C<xsubpp> to hold the return value for an
+XSUB.  This is always the proper type for the XSUB.  See
 L<perlxs/"The RETVAL Variable">.
 
 =for apidoc Amn|(whatever)|THIS
-Variable which is setup by C<xsubpp> to designate the object in a C++ 
+Variable which is setup by C<xsubpp> to designate the object in a C++
 XSUB.  This is always the proper type for the C++ object.  See C<L</CLASS>> and
 L<perlxs/"Using XS With C++">.
 
@@ -37,11 +37,11 @@ used by the C<ST>, C<XSprePUSH> and C<XSRETURN> macros.  The C<dMARK> macro
 must be called prior to setup the C<MARK> variable.
 
 =for apidoc Amn|I32|items
-Variable which is setup by C<xsubpp> to indicate the number of 
+Variable which is setup by C<xsubpp> to indicate the number of
 items on the stack.  See L<perlxs/"Variable-length Parameter Lists">.
 
 =for apidoc Amn|I32|ix
-Variable which is setup by C<xsubpp> to indicate which of an 
+Variable which is setup by C<xsubpp> to indicate which of an
 XSUB's aliases was used to invoke it.  See L<perlxs/"The ALIAS: Keyword">.
 
 =for apidoc Am|SV*|ST|int ix
@@ -93,12 +93,7 @@ is a lexical C<$_> in scope.
 */
 
 #ifndef PERL_UNUSED_ARG
-#  if defined(lint) && defined(S_SPLINT_S) /* www.splint.org */
-#    include <note.h>
-#    define PERL_UNUSED_ARG(x) NOTE(ARGUNUSED(x))
-#  else
-#    define PERL_UNUSED_ARG(x) ((void)x)
-#  endif
+#  define PERL_UNUSED_ARG(x) ((void)x)
 #endif
 #ifndef PERL_UNUSED_VAR
 #  define PERL_UNUSED_VAR(x) ((void)x)
@@ -164,12 +159,7 @@ is a lexical C<$_> in scope.
 
 #define dITEMS I32 items = (I32)(SP - MARK)
 
-#if defined(lint) && defined(S_SPLINT_S) /* www.splint.org */
-#  define dXSARGS \
-	NOTE(ARGUNUSED(cv)) \
-	dSP; dAXMARK; dITEMS
-#else
-#  define dXSARGS \
+#define dXSARGS \
 	dSP; dAXMARK; dITEMS
 /* These 3 macros are replacements for dXSARGS macro only in bootstrap.
    They factor out common code in every BOOT XSUB. Computation of vars mark
@@ -177,19 +167,18 @@ is a lexical C<$_> in scope.
    optimized away since BOOT must return &PL_sv_yes by default from xsubpp.
    Note these macros are not drop in replacements for dXSARGS since they set
    PL_xsubfilename. */
-#  define dXSBOOTARGSXSAPIVERCHK  \
+#define dXSBOOTARGSXSAPIVERCHK  \
 	I32 ax = XS_BOTHVERSION_SETXSUBFN_POPMARK_BOOTCHECK;	\
 	SV **mark = PL_stack_base + ax; dSP; dITEMS
-#  define dXSBOOTARGSAPIVERCHK  \
+#define dXSBOOTARGSAPIVERCHK  \
 	I32 ax = XS_APIVERSION_SETXSUBFN_POPMARK_BOOTCHECK;	\
 	SV **mark = PL_stack_base + ax; dSP; dITEMS
 /* dXSBOOTARGSNOVERCHK has no API in xsubpp to choose it so do
 #undef dXSBOOTARGSXSAPIVERCHK
 #define dXSBOOTARGSXSAPIVERCHK dXSBOOTARGSNOVERCHK */
-#  define dXSBOOTARGSNOVERCHK  \
+#define dXSBOOTARGSNOVERCHK  \
 	I32 ax = XS_SETXSUBFN_POPMARK;  \
 	SV **mark = PL_stack_base + ax; dSP; dITEMS
-#endif
 
 #define dXSTARG SV * const targ = ((PL_op->op_private & OPpENTERSUB_HASTARG) \
 			     ? PAD_SV(PL_op->op_targ) : sv_newmortal())
@@ -231,7 +220,7 @@ Place a double into the specified position C<pos> on the stack.  The value
 is stored in a new mortal SV.
 
 =for apidoc Am|void|XST_mPV|int pos|char* str
-Place a copy of a string into the specified position C<pos> on the stack. 
+Place a copy of a string into the specified position C<pos> on the stack.
 The value is stored in a new mortal SV.
 
 =for apidoc Am|void|XST_mNO|int pos
@@ -453,7 +442,7 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
             if (name[7] == 's'){                                \
                 arg = sv_2mortal(arg);                          \
             }                                                   \
-	} } STMT_END                                                     
+	} } STMT_END
 
 #if 1		/* for compatibility */
 #  define VTBL_sv		&PL_vtbl_sv

@@ -8,11 +8,11 @@ _dselect()
     case $prev in
         --admindir)
             _filedir -d
-            return 0
+            return
             ;;
         -D|-debug)
             _filedir
-            return 0
+            return
             ;;
     esac
 
@@ -24,8 +24,7 @@ _dselect()
             quit' -- "$cur" ) )
     fi
 
-    return 0
 } &&
 complete -F _dselect dselect
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

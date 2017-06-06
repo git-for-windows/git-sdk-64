@@ -8,11 +8,11 @@ _find_member()
     case $prev in
         -l|-x|--listname|--exclude)
             _xfunc list_lists _mailman_lists
-            return 0
+            return
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W '--listname --exclude --owners --help' \
@@ -22,4 +22,4 @@ _find_member()
 } &&
 complete -F _find_member find_member
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

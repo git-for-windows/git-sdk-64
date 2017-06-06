@@ -331,7 +331,7 @@ re - Perl pragma to alter regular expression behaviour
 
     use re qw(is_regexp regexp_pattern); # import utility functions
     my ($pat,$mods)=regexp_pattern(qr/foo/i);
-    if (is_regexp($obj)) { 
+    if (is_regexp($obj)) {
         print "Got regexp: ",
             scalar regexp_pattern($obj); # just as perl would stringify
     }                                    # it but no hassle with blessed
@@ -358,7 +358,7 @@ appearing literally within the regexp.  That is normally disallowed, since
 it is a
 potential security risk.  Note that this pragma is ignored when the regular
 expression is obtained from tainted data, i.e.  evaluation is always
-disallowed with tainted regular expressions.  See L<perlre/(?{ code })> 
+disallowed with tainted regular expressions.  See L<perlre/(?{ code })>
 and L<perlre/(??{ code })>.
 
 For the purpose of this pragma, interpolation of precompiled regular
@@ -467,7 +467,7 @@ strings on/off, pre-point part on/off.
 See L<perldebug/"Debugging Regular Expressions"> for additional info.
 
 As of 5.9.5 the directive C<use re 'debug'> and its equivalents are
-lexically scoped, as the other directives are.  However they have both 
+lexically scoped, as the other directives are.  However they have both
 compile-time and run-time effects.
 
 See L<perlmodlib/Pragmatic Modules>.

@@ -130,7 +130,7 @@ sub pod2usage {
 
     ## Check for perldoc
     my $progpath = $opts{'-perldoc'} ? $opts{'-perldoc'} :
-        File::Spec->catfile($Config{scriptdirexp} 
+        File::Spec->catfile($Config{scriptdirexp}
 	|| $Config{scriptdir}, 'perldoc');
 
     my $version = sprintf("%vd",$^V);
@@ -391,13 +391,13 @@ Pod::Usage - print a usage message from embedded pod documentation
   pod2usage($exit_status);
 
   pod2usage( { -message => $message_text ,
-               -exitval => $exit_status  ,  
-               -verbose => $verbose_level,  
+               -exitval => $exit_status  ,
+               -verbose => $verbose_level,
                -output  => $filehandle } );
 
   pod2usage(   -msg     => $message_text ,
-               -exitval => $exit_status  ,  
-               -verbose => $verbose_level,  
+               -exitval => $exit_status  ,
+               -verbose => $verbose_level,
                -output  => $filehandle );
 
   pod2usage(   -verbose => 2,
@@ -443,7 +443,7 @@ keys:
 =item C<-msg> I<string>
 
 The text of a message to print immediately prior to printing the
-program's usage message. 
+program's usage message.
 
 =item C<-exitval> I<value>
 
@@ -468,14 +468,14 @@ parameter; then these sections are extracted and printed.
 
 =item C<-sections> I<spec>
 
-There are two ways to specify the selection. Either a string (scalar) 
+There are two ways to specify the selection. Either a string (scalar)
 representing a selection regexp for sections to be printed when -verbose
 is set to 99, e.g.
 
   "NAME|SYNOPSIS|DESCRIPTION|VERSION"
 
 With the above regexp all content following (and including) any of the
-given C<=head1> headings will be shown. It is possible to restrict the 
+given C<=head1> headings will be shown. It is possible to restrict the
 output to particular subsections only, e.g.:
 
   "DESCRIPTION/Algorithm"
@@ -494,7 +494,7 @@ Alternatively, an array reference of section specifications can be used:
   pod2usage(-verbose => 99, -sections => [
     qw(DESCRIPTION DESCRIPTION/Introduction) ] );
 
-This will print only the content of C<=head1 DESCRIPTION> and the 
+This will print only the content of C<=head1 DESCRIPTION> and the
 C<=head2 Introduction> sections, but no other C<=head2>, and no other
 C<=head1> either.
 
@@ -531,7 +531,7 @@ MSWin32 and DOS).
 By default, Pod::Usage will call L<perldoc> when -verbose >= 2 is
 specified. This does not work well e.g. if the script was packed
 with L<PAR>. The -noperldoc option suppresses the external call to
-L<perldoc> and uses the simple text formatter (L<Pod::Text>) to 
+L<perldoc> and uses the simple text formatter (L<Pod::Text>) to
 output the POD.
 
 =item C<-perlcmd>

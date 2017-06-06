@@ -42,7 +42,7 @@ _lz4()
         esac
     done
 
-    _expand || return 0
+    _expand || return
     local IFS=$'\n'
     compopt -o filenames
     COMPREPLY=( $( compgen -f -X "$xspec" -- "$cur" ) \
@@ -50,4 +50,4 @@ _lz4()
 } &&
 complete -F _lz4 lz4 lz4c
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

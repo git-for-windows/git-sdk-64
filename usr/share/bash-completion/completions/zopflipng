@@ -16,7 +16,7 @@ _zopflipng()
     esac
 
     $split && return
-    
+
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( _parse_help "$1" -h ) )
         COMPREPLY=( $( compgen -W '${COMPREPLY[@]%:}' -- "$cur" ) )
@@ -36,4 +36,4 @@ _zopflipng()
 } &&
 complete -F _zopflipng zopflipng
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

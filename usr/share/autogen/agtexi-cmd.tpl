@@ -6,7 +6,7 @@ texi=invoke_PROGRAMNAME.texi
 #
 #  This file is part of AutoOpts, a companion to AutoGen.
 #  AutoOpts is free software.
-#  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+#  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
 #
 #  AutoOpts is available under any one of two licenses.  The license
 #  in use must be one of these two and the choice is under the control
@@ -620,7 +620,7 @@ detail to provide.  The default is to print [=
 (if (exist? "gnu-usage")
     "the license name with the version"
     "just the version")
-=].  The licensing infomation may be selected with an option argument.
+=].  The licensing information may be selected with an option argument.
 Only the first letter of the argument is examined:
 
 @table @samp
@@ -857,8 +857,8 @@ DEFINE initialization                   =][=
       (begin
          (set! tmp-str (get "more-help-value"))
          (if (> (string-length tmp-str) 0)
-             (set! help-opt (string-append "-" tmp-str))
-             (set! help-opt "--more-help")
+             (set! more-help-opt (string-append "-" tmp-str))
+             (set! more-help-opt "--more-help")
       )  )
   )))
 

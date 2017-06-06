@@ -2,15 +2,15 @@
 
 _aspell_dictionary()
 {
-    local datadir
-    datadir=$( aspell config data-dir 2>/dev/null || echo /usr/lib/aspell )
+    local datadir aspell=${1:-aspell}
+    datadir=$( $aspell config data-dir 2>/dev/null || echo /usr/lib/aspell )
     # First, get aliases (dicts dump does not list them)
-    COMPREPLY=( $( command ls $datadir/*.alias 2>/dev/null ) )
-    COMPREPLY=( ${COMPREPLY[@]%.alias} )
-    COMPREPLY=( ${COMPREPLY[@]#$datadir/} )
+    COMPREPLY=( $( printf '%s\n' $datadir/*.alias ) )
+    COMPREPLY=( "${COMPREPLY[@]%.alias}" )
+    COMPREPLY=( "${COMPREPLY[@]#$datadir/}" )
     # Then, add the canonical dicts
-    COMPREPLY+=( $( aspell dicts 2>/dev/null ) )
-    COMPREPLY=( $( compgen -W '${COMPREPLY[@]}' -- "$cur" ) )
+    COMPREPLY+=( $( $aspell dicts 2>/dev/null ) )
+    COMPREPLY=( $( compgen -X '\*' -W '${COMPREPLY[@]}' -- "$cur" ) )
 }
 
 _aspell()
@@ -21,42 +21,42 @@ _aspell()
     case $prev in
         -c|-p|check|--conf|--personal|--repl|--per-conf)
             _filedir
-            return 0
+            return
             ;;
         --conf-dir|--data-dir|--dict-dir|--home-dir|--local-data-dir|--prefix)
             _filedir -d
-            return 0
+            return
             ;;
         dump|create|merge)
             COMPREPLY=( $( compgen -W 'master personal repl' -- "$cur" ) )
-            return 0
+            return
             ;;
         --mode)
             COMPREPLY=( $( compgen -W "$( $1 modes 2>/dev/null | \
                 awk '{ print $1 }' )" -- "$cur" ) )
-            return 0
+            return
             ;;
         --sug-mode)
             COMPREPLY=( $( compgen -W 'ultra fast normal bad-speller' \
                 -- "$cur" ) )
-            return 0
+            return
             ;;
         --keymapping)
             COMPREPLY=( $( compgen -W 'aspell ispell' -- "$cur" ) )
-            return 0
+            return
             ;;
         -d|--master)
-            _aspell_dictionary
-            return 0
+            _aspell_dictionary "$1"
+            return
             ;;
         --add-filter|--rem-filter)
             COMPREPLY=( $( compgen -W "$( $1 filters 2>/dev/null | \
                 awk '{ print $1 }' )" -- "$cur" ) )
-            return 0
+            return
             ;;
     esac
 
-    $split && return 0
+    $split && return
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=( $( compgen -W '--conf= --conf-dir= --data-dir= --dict-dir=
@@ -85,4 +85,4 @@ _aspell()
 } &&
 complete -F _aspell aspell
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

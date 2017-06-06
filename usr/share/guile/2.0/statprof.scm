@@ -1,7 +1,7 @@
 ;;;; (statprof) -- a statistical profiler for Guile
 ;;;; -*-scheme-*-
 ;;;;
-;;;; 	Copyright (C) 2009, 2010, 2011  Free Software Foundation, Inc.
+;;;; 	Copyright (C) 2009, 2010, 2011, 2015  Free Software Foundation, Inc.
 ;;;;    Copyright (C) 2004, 2009 Andy Wingo <wingo at pobox dot com>
 ;;;;    Copyright (C) 2001 Rob Browning <rlb at defaultvalue dot org>
 ;;;; 
@@ -632,10 +632,10 @@ The return value is a list of nodes, each of which is of the type:
 
 (define* (statprof thunk #:key (loop 1) (hz 100) (count-calls? #f)
                    (full-stacks? #f))
-  "Profiles the execution of @var{thunk}.
+  "Profile the execution of @var{thunk}, and return its return values.
 
-The stack will be sampled @var{hz} times per second, and the thunk itself will
-be called @var{loop} times.
+The stack will be sampled @var{hz} times per second, and the thunk
+itself will be called @var{loop} times.
 
 If @var{count-calls?} is true, all procedure calls will be recorded. This
 operation is somewhat expensive.
@@ -643,7 +643,6 @@ operation is somewhat expensive.
 If @var{full-stacks?} is true, at each sample, statprof will store away the
 whole call tree, for later analysis. Use @code{statprof-fetch-stacks} or
 @code{statprof-fetch-call-tree} to retrieve the last-stored stacks."
-  
   (dynamic-wind
     (lambda ()
       (statprof-reset (inexact->exact (floor (/ 1 hz)))
@@ -653,18 +652,20 @@ whole call tree, for later analysis. Use @code{statprof-fetch-stacks} or
                       full-stacks?)
       (statprof-start))
     (lambda ()
-      (let lp ((i loop))
-        (if (not (zero? i))
-            (begin
-              (thunk)
-              (lp (1- i))))))
+      (let lp ((i      loop)
+               (result '()))
+        (if (zero? i)
+            (apply values result)
+            (call-with-values thunk
+              (lambda result
+                (lp (1- i) result))))))
     (lambda ()
       (statprof-stop)
       (statprof-display)
       (set! procedure-data #f))))
 
 (define-macro (with-statprof . args)
-  "Profiles the expressions in its body.
+  "Profile the expressions in the body, and return the body's return values.
 
 Keyword arguments:
 

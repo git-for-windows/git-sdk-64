@@ -1,6 +1,6 @@
 ;;; transformation of letrec into simpler forms
 
-;; Copyright (C) 2009, 2010, 2011, 2012 Free Software Foundation, Inc.
+;; Copyright (C) 2009, 2010, 2011, 2012, 2016 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -267,7 +267,9 @@
                     ;; bindings, in a `let' to indicate that order doesn't
                     ;; matter, and bind to their variables.
                     (list
-                     (let ((tmps (map (lambda (x) (gensym)) c)))
+                     (let ((tmps (map (lambda (x)
+                                        (module-gensym "fixlr"))
+                                      c)))
                        (make-let
                         #f (map cadr c) tmps (map caddr c)
                         (make-sequence

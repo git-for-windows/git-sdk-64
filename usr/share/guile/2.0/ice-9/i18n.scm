@@ -1,6 +1,7 @@
 ;;;; i18n.scm --- internationalization support    -*- coding: utf-8 -*-
 
-;;;;	Copyright (C) 2006, 2007, 2009, 2010, 2012 Free Software Foundation, Inc.
+;;;;	Copyright (C) 2006, 2007, 2009, 2010, 2012,
+;;;;      2017 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -245,6 +246,52 @@
   'unspecified        'unspecified)
 
 
+(define (integer->string number)
+  "Return a string representing NUMBER, an integer, written in base 10."
+  (define (digit->char digit)
+    (integer->char (+ digit (char->integer #\0))))
+
+  (if (zero? number)
+      "0"
+      (let loop ((number number)
+                 (digits '()))
+        (if (zero? number)
+            (list->string digits)
+            (loop (quotient number 10)
+                  (cons (digit->char (modulo number 10))
+                        digits))))))
+
+(define (number-decimal-string number digit-count)
+  "Return a string representing the decimal part of NUMBER.  When
+DIGIT-COUNT is an integer, return exactly DIGIT-COUNT digits; when
+DIGIT-COUNT is #t, return as many decimals as necessary, up to an
+arbitrary limit."
+  (define max-decimals
+    5)
+
+  ;; XXX: This is brute-force and could be improved by following one of
+  ;; the "Printing Floating-Point Numbers Quickly and Accurately"
+  ;; papers.
+  (if (integer? digit-count)
+      (let ((number (* (expt 10 digit-count)
+                       (- number (floor number)))))
+        (string-pad (integer->string (round (inexact->exact number)))
+                    digit-count
+                    #\0))
+      (let loop ((decimals 0))
+        (let ((number' (* number (expt 10 decimals))))
+          (if (or (= number' (floor number'))
+                  (>= decimals max-decimals))
+              (let* ((fraction (- number'
+                                  (* (floor number)
+                                     (expt 10 decimals))))
+                     (str      (integer->string
+                                (round (inexact->exact fraction)))))
+                (if (zero? fraction)
+                    ""
+                    str))
+              (loop (+ decimals 1)))))))
+
 (define (%number-integer-part int grouping separator)
   ;; Process INT (a string denoting a number's integer part) and return a new
   ;; string with digit grouping and separators according to GROUPING (a list,
@@ -335,12 +382,11 @@ locale is used."
                                    (substring dec 0 fraction-digits)
                                    dec)))))
 
-         (external-repr (number->string (if (> amount 0) amount (- amount))))
-         (int+dec   (string-split external-repr #\.))
-         (int       (car int+dec))
-         (dec       (decimal-part (if (null? (cdr int+dec))
-                                      ""
-                                      (cadr int+dec))))
+         (int       (integer->string (inexact->exact
+                                      (floor (abs amount)))))
+         (dec       (decimal-part
+                     (number-decimal-string (abs amount)
+                                            fraction-digits)))
          (grouping  (locale-monetary-digit-grouping locale))
          (separator (locale-monetary-thousands-separator locale)))
 
@@ -369,6 +415,7 @@ locale is used."
                                            (locale %global-locale))
   "Convert @var{number} (an inexact) into a string according to the cultural
 conventions of either @var{locale} (a locale object) or the current locale.
+By default, print as many fractional digits as necessary, up to an upper bound.
 Optionally, @var{fraction-digits} may be bound to an integer specifying the
 number of fractional digits to be displayed."
 
@@ -387,14 +434,11 @@ number of fractional digits to be displayed."
                                    (substring dec 0 fraction-digits)
                                    dec))))))
 
-    (let* ((external-repr (number->string (if (> number 0)
-                                              number
-                                              (- number))))
-           (int+dec   (string-split external-repr #\.))
-           (int       (car int+dec))
-           (dec       (decimal-part (if (null? (cdr int+dec))
-                                        ""
-                                        (cadr int+dec))))
+    (let* ((int       (integer->string (inexact->exact
+                                        (floor (abs number)))))
+           (dec       (decimal-part
+                       (number-decimal-string (abs number)
+                                              fraction-digits)))
            (grouping  (locale-digit-grouping locale))
            (separator (locale-thousands-separator locale)))
 

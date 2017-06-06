@@ -25,15 +25,15 @@ _rpcdebug()
     case $prev in
         -s)
             _rpcdebug_flags
-            return 0
+            return
             ;;
         -c)
             _rpcdebug_flags
-            return 0
+            return
             ;;
         -m)
             COMPREPLY=( $( compgen -W 'rpc nfs nfsd nlm' -- "$cur" ) )
-            return 0
+            return
             ;;
     esac
 
@@ -44,4 +44,4 @@ _rpcdebug()
 } &&
 complete -F _rpcdebug rpcdebug
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

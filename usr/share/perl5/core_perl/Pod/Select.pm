@@ -151,7 +151,7 @@ Match all top level sections but none of their subsections:
 
 C</!.+>
 
-=back 
+=back
 
 =begin _NOT_IMPLEMENTED_
 
@@ -233,7 +233,7 @@ desired if the item contains an itemized list nested within it):
 
 C</=item mine/../=(item|back)/>
 
-=back 
+=back
 
 =end _NOT_IMPLEMENTED_
 
@@ -263,13 +263,13 @@ reference to the object itself as an implicit first parameter.
 ##---------------------------------------------------------------------------
 
 ## =begin _PRIVATE_
-## 
+##
 ## =head1 B<_init_headings()>
-## 
+##
 ## Initialize the current set of active section headings.
-## 
+##
 ## =cut
-## 
+##
 ## =end _PRIVATE_
 
 sub _init_headings {
@@ -456,7 +456,7 @@ sub match_section {
     for my $section_spec ( @{$selections} ) {
         ##------------------------------------------------------
         ## Each portion of this spec must match in order for
-        ## the spec to be matched. So we will start with a 
+        ## the spec to be matched. So we will start with a
         ## match-value of 'true' and logically 'and' it with
         ## the results of matching a given element of the spec.
         ##------------------------------------------------------
@@ -575,7 +575,7 @@ read from or the names of input files containing POD sections. A file name
 of "", "-" or "<&STDIN" will be interpreted to mean standard input (which
 is the default if no arguments are given).
 
-=cut 
+=cut
 
 sub podselect {
     my(@argv) = @_;

@@ -23,18 +23,18 @@
     /* miniperl should not export anything */
 #    if defined(PERL_IS_MINIPERL) && !defined(UNDER_CE) && defined(_MSC_VER)
 #      define EXT extern
-#      define dEXT 
+#      define dEXT
 #      define EXTCONST extern const
 #      define dEXTCONST const
 #    else
 #      if defined(PERLDLL) || defined(__SYMBIAN32__)
 #        define EXT EXTERN_C __declspec(dllexport)
-#        define dEXT 
+#        define dEXT
 #        define EXTCONST EXTERN_C __declspec(dllexport) const
 #        define dEXTCONST const
 #      else
 #        define EXT EXTERN_C __declspec(dllimport)
-#        define dEXT 
+#        define dEXT
 #        define EXTCONST EXTERN_C __declspec(dllimport) const
 #        define dEXTCONST const
 #      endif
@@ -42,7 +42,7 @@
 #  else
 #    if defined(__CYGWIN__) && defined(USEIMPORTLIB)
 #      define EXT extern __declspec(dllimport)
-#      define dEXT 
+#      define dEXT
 #      define EXTCONST extern __declspec(dllimport) const
 #      define dEXTCONST const
 #    else

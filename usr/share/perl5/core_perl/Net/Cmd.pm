@@ -667,11 +667,11 @@ These methods provide a user interface to the C<Net::Cmd> object.
 =item debug ( VALUE )
 
 Set the level of debug information for this object. If C<VALUE> is not given
-then the current state is returned. Otherwise the state is changed to 
-C<VALUE> and the previous state returned. 
+then the current state is returned. Otherwise the state is changed to
+C<VALUE> and the previous state returned.
 
 Different packages
-may implement different levels of debug but a non-zero value results in 
+may implement different levels of debug but a non-zero value results in
 copies of all commands and responses also being sent to STDERR.
 
 If C<VALUE> is C<undef> then the debug level will be set to the default
@@ -721,7 +721,7 @@ returns true if C<response> returns CMD_OK.
 
 =head1 CLASS METHODS
 
-These methods are not intended to be called by the user, but used or 
+These methods are not intended to be called by the user, but used or
 over-ridden by a sub-class of C<Net::Cmd>
 
 =over 4

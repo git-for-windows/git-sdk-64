@@ -13,7 +13,7 @@ subs - Perl pragma to predeclare sub names
 
 =head1 DESCRIPTION
 
-This will predeclare all the subroutine whose names are 
+This will predeclare all the subroutine whose names are
 in the list, allowing you to use them without parentheses
 even before they're declared.
 

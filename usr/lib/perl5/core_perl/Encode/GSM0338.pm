@@ -225,7 +225,7 @@ sub encode($$;$) {
           ? $UNI2GSM{$u}
           : $chk ? ref $chk eq 'CODE'
               ? $chk->( ord($u) )
-              : croak sprintf( "\\x{%04x} does not map to %s", 
+              : croak sprintf( "\\x{%04x} does not map to %s",
 			       ord($u), $obj->name )
           : $FBCHAR;
     }
@@ -242,7 +242,7 @@ Encode::GSM0338 -- ESTI GSM 03.38 Encoding
 
 =head1 SYNOPSIS
 
-  use Encode qw/encode decode/; 
+  use Encode qw/encode decode/;
   $gsm0338 = encode("gsm0338", $utf8);    # loads Encode::GSM0338 implicitly
   $utf8    = decode("gsm0338", $gsm0338); # ditto
 
@@ -281,7 +281,7 @@ ESTI GSM 03.38 Encoding itself.
 
 Mapping \x00 to '@' causes too much pain everywhere.
 
-Its use of \x1b (escape) is also very questionable.  
+Its use of \x1b (escape) is also very questionable.
 
 Because of those two, the code paging approach used use in ucm-based
 Encoding SOMETIMES fails so this module was written.

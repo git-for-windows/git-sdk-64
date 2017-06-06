@@ -4,13 +4,13 @@
    c=%s-temp.c  +][+
 
 `stamp=\`sed 's,.*stamp: *",,;s,".*,,' <<\_EOF_
-  Time-stamp:        "2013-10-06 15:55:21 bkorb"
+  Time-stamp:        "2015-01-01 11:08:35 bkorb"
 _EOF_
 \` `            +][+
 
 ;;  This file is part of AutoOpts, a companion to AutoGen.
 ;;  AutoOpts is free software.
-;;  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+;;  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
 ;;
 ;;  AutoOpts is available under any one of two licenses.  The license
 ;;  in use must be one of these two and the choice is under the control
@@ -351,7 +351,7 @@ process_[+(. prog-name)+]_opts (int argc, char** argv)
      * This violates the const-ness of the pzProgName field.
      * The const-ness is to prevent accidents.  This is not accidental.
      */
-    char ** pp = (char **)(void *)&([+ (. prog-name) +]Options.pzProgName);
+    char ** pp = VOIDP(&([+ (. prog-name) +]Options.pzProgName));
 
     if (pz_prog != NULL)
       pz_prog++;

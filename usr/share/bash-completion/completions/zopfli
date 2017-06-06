@@ -20,7 +20,7 @@ _zopfli()
 
     local IFS=$'\n' xspec="*.@(gz|t[ag]z)"
 
-    _expand || return 0
+    _expand || return
 
     compopt -o filenames
     COMPREPLY=( $( compgen -f -X "$xspec" -- "$cur" ) \
@@ -28,4 +28,4 @@ _zopfli()
 } &&
 complete -F _zopfli zopfli
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

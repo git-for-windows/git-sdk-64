@@ -35,7 +35,7 @@ The GDBM error number and error message interface needs to be added.
 
 =head1 SEE ALSO
 
-L<perl(1)>, L<DB_File(3)>, L<perldbmfilter>. 
+L<perl(1)>, L<DB_File(3)>, L<perldbmfilter>.
 
 =cut
 

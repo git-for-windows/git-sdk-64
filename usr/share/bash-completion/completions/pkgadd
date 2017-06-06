@@ -10,18 +10,18 @@ _pkgadd ()
     # if a device directory was given
     # we must complete with the package
     # available in this directory
-    local device=/var/spool/pkg;
+    local device=/var/spool/pkg
     local i=$cword
     while [[ $((i--)) -gt 0 ]]; do
         case "${words[$i]}" in
             -d)
-                device="${words[$((i+1))]}";
+                device="${words[$((i+1))]}"
                 break
                 ;;
-        esac;
-    done;
+        esac
+    done
 
-    case $prev in 
+    case $prev in
         -d)
             _filedir pkg
             _filedir -d
@@ -57,4 +57,4 @@ _pkgadd ()
 } &&
 complete -F _pkgadd pkgadd
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

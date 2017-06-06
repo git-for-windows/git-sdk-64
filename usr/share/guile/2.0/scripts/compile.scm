@@ -1,6 +1,6 @@
 ;;; Compile --- Command-line Guile Scheme compiler  -*- coding: iso-8859-1 -*-
 
-;; Copyright 2005,2008,2009,2010,2011 Free Software Foundation, Inc.
+;; Copyright 2005, 2008, 2009, 2010, 2011, 2014 Free Software Foundation, Inc.
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public License
@@ -175,6 +175,14 @@ Report bugs to <~A>.~%"
                  (not (null? (cdr input-files)))))
         (fail "`-o' option can only be specified "
               "when compiling a single file"))
+
+    ;; Install a SIGINT handler.  As a side effect, this gives unwind
+    ;; handlers an opportunity to run upon SIGINT; this includes that of
+    ;; 'call-with-output-file/atomic', called by 'compile-file', which
+    ;; removes the temporary output file.
+    (sigaction SIGINT
+      (lambda args
+        (fail "interrupted by the user")))
 
     (for-each (lambda (file)
                 (format #t "wrote `~A'\n"

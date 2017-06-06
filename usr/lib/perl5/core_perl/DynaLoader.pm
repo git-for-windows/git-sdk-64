@@ -47,7 +47,7 @@ $do_expand = 0;
 @dl_library_path    = ();       # path to look for files
 
 #XSLoader.pm may have added elements before we were required
-#@dl_shared_objects  = ();       # shared objects for symbols we have 
+#@dl_shared_objects  = ();       # shared objects for symbols we have
 #@dl_librefs         = ();       # things we have loaded
 #@dl_modules         = ();       # Modules we have loaded
 
@@ -143,13 +143,13 @@ sub bootstrap {
     foreach (@INC) {
 	
 	    $dir = "$_/auto/$modpname";
-	
+
 	next unless -d $dir; # skip over uninteresting directories
-	
+
 	# check for common cases to avoid autoload of dl_findfile
         my $try = "$dir/$modfname.$dl_dlext";
 	last if $file = ($do_expand) ? dl_expandspec($try) : ((-f $try) && $try);
-	
+
 	# no luck here, save dir for possible later dl_findfile search
 	push @dirs, $dir;
     }
@@ -335,7 +335,7 @@ DynaLoader - Dynamically load C libraries into Perl code
     bootstrap YourPackage;
 
     # optional method for 'global' loading
-    sub dl_load_flags { 0x01 }     
+    sub dl_load_flags { 0x01 }
 
 
 =head1 DESCRIPTION
@@ -522,7 +522,7 @@ names are treated as filenames to be searched for.
 
 Using arguments of the form C<-Ldir> and C<-lname> is recommended.
 
-Example: 
+Example:
 
     @dl_resolve_using = dl_findfile(qw(-L/usr/5lib -lposix));
 
@@ -550,7 +550,7 @@ Dynamically load $filename, which must be the path to a shared object
 or library.  An opaque 'library reference' is returned as a handle for
 the loaded object.  Returns undef on error.
 
-The $flags argument to alters dl_load_file behaviour.  
+The $flags argument to alters dl_load_file behaviour.
 Assigned bits:
 
  0x01  make symbols available for linking later dl_load_file's.

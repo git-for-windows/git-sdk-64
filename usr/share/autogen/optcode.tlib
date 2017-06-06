@@ -2,7 +2,7 @@
 
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2014 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -433,9 +433,10 @@ static char const [=(. pname)=]_packager_info[] =
 #endif
 #ifndef __doxygen__
 [=
- (out-suspend  "home-list") =][=
- (emit-string-table opt-strs) =][=
- (out-resume   "home-list") =][=
+ (out-suspend  "home-list")
+ (emit-string-table opt-strs)
+ (out-resume   "home-list")
+ (define put-shell-main (== (get "main.main-type") "shell-process"))
  (out-pop      #t)
 =]
 #endif /* __doxygen__ */
@@ -563,11 +564,11 @@ AO_gettext(char const * pz)
     if (option_xlateable_txt.field_ct != 0) {
         res = dgettext("libopts", pz);
         if (res == pz)
-            res = (char *)(void *)_(pz);
+            res = (char *)VOIDP(_(pz));
     } else
-        res = (char *)(void *)_(pz);
+        res = (char *)VOIDP(_(pz));
 #else
-    res = (char *)(void *)_(pz);
+    res = (char *)VOIDP(_(pz));
 #endif
     if (res == pz)
         return res;
@@ -604,7 +605,7 @@ translate_option_strings(void)
          *  Do the translations.  The first pointer follows the field count
          *  field.  The field count field is the size of a pointer.
          */
-        char ** ppz = (char**)(void*)&(option_xlateable_txt);
+        char ** ppz = (char**)VOIDP(&(option_xlateable_txt));
         int     ix  = option_xlateable_txt.field_ct;
 
         do {
@@ -615,17 +616,17 @@ translate_option_strings(void)
         option_xlateable_txt.field_ct = 0;
 [=
   FOR field IN pzCopyright pzCopyNotice pzFullVersion =]
-        coerce_it((void*)&(opts->[= field =]));[=
+        coerce_it(VOIDP(&(opts->[= field =])));[=
   ENDFOR                        =][=
 
   IF (not (exist? "full-usage"))=][=
     FOR field IN pzUsageTitle pzExplain pzDetail =]
-        coerce_it((void*)&(opts->[= field =]));[=
+        coerce_it(VOIDP(&(opts->[= field =])));[=
     ENDFOR                      =]
         {
             tOptDesc * od = opts->pOptDesc;
             for (ix = opts->optCt; ix > 0; ix--, od++)
-                coerce_it((void*)&(od->pzText));
+                coerce_it(VOIDP(&(od->pzText)));
         }[=
   ENDIF                         =]
     }

@@ -9,7 +9,7 @@ _cowsay()
         -f)
             COMPREPLY=( $( compgen -W \
                 '$( cowsay -l 2>/dev/null | tail -n +2 )' -- "$cur" ) )
-            return 0
+            return
             ;;
     esac
 
@@ -20,4 +20,4 @@ _cowsay()
 } &&
 complete -F _cowsay -o default cowsay cowthink
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

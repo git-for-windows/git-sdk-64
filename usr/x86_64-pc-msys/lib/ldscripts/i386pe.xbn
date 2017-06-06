@@ -1,5 +1,5 @@
 /* Script for -N: mix text and data on same page; don't align data */
-/* Copyright (C) 2014 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2017 Free Software Foundation, Inc.
    Copying and distribution of this script, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
@@ -13,7 +13,7 @@ SECTIONS
   . = ALIGN(__section_alignment__);
   .text  __image_base__ + ( __section_alignment__ < 0x1000 ? . : __section_alignment__ ) :
   {
-     *(.init)
+     KEEP(*(.init))
     *(.text)
     *(SORT(.text$*))
      *(.text.*)
@@ -24,12 +24,12 @@ SECTIONS
 			LONG (-1);*(.ctors); *(.ctor); *(SORT(.ctors.*));  LONG (0);
      ___DTOR_LIST__ = .; __DTOR_LIST__ = . ;
 			LONG (-1); *(.dtors); *(.dtor); *(SORT(.dtors.*));  LONG (0);
-     *(.fini)
+     KEEP (*(.fini))
     /* ??? Why is .gcc_exc here?  */
      *(.gcc_exc)
     PROVIDE (etext = .);
     PROVIDE (_etext = .);
-     *(.gcc_except_table)
+     KEEP (*(.gcc_except_table))
   }
   /* The Cygwin32 library uses a section to avoid copying certain data
      on fork.  This used to be named ".data".  The linker used
@@ -42,7 +42,7 @@ SECTIONS
     *(.data)
     *(.data2)
     *(SORT(.data$*))
-    *(.jcr)
+    KEEP(*(.jcr))
     __data_end__ = . ;
     *(.data_cygwin_nocopy)
   }
@@ -51,7 +51,7 @@ SECTIONS
     *(.rdata)
              *(SORT(.rdata$*))
     __rt_psrelocs_start = .;
-    *(.rdata_runtime_pseudo_reloc)
+    KEEP(*(.rdata_runtime_pseudo_reloc))
     __rt_psrelocs_end = .;
   }
   __rt_psrelocs_size = __rt_psrelocs_end - __rt_psrelocs_start;
@@ -61,11 +61,11 @@ SECTIONS
   __RUNTIME_PSEUDO_RELOC_LIST__ = . - __rt_psrelocs_size;
   .eh_frame BLOCK(__section_alignment__) :
   {
-    *(.eh_frame*)
+    KEEP(*(.eh_frame*))
   }
   .pdata BLOCK(__section_alignment__) :
   {
-    *(.pdata)
+    KEEP(*(.pdata*))
   }
   .bss BLOCK(__section_alignment__) :
   {
@@ -91,33 +91,33 @@ SECTIONS
   {
     /* This cannot currently be handled with grouped sections.
 	See pe.em:sort_sections.  */
-    SORT(*)(.idata$2)
-    SORT(*)(.idata$3)
+    KEEP (SORT(*)(.idata$2))
+    KEEP (SORT(*)(.idata$3))
     /* These zeroes mark the end of the import list.  */
     LONG (0); LONG (0); LONG (0); LONG (0); LONG (0);
-    SORT(*)(.idata$4)
+    KEEP (SORT(*)(.idata$4))
     __IAT_start__ = .;
-    SORT(*)(.idata$5)
+    KEEP (SORT(*)(.idata$5))
     __IAT_end__ = .;
-    SORT(*)(.idata$6)
-    SORT(*)(.idata$7)
+    KEEP (SORT(*)(.idata$6))
+    KEEP (SORT(*)(.idata$7))
   }
   .CRT BLOCK(__section_alignment__) :
   {
     ___crt_xc_start__ = . ;
-    *(SORT(.CRT$XC*))  /* C initialization */
+    KEEP (*(SORT(.CRT$XC*)))  /* C initialization */
     ___crt_xc_end__ = . ;
     ___crt_xi_start__ = . ;
-    *(SORT(.CRT$XI*))  /* C++ initialization */
+    KEEP (*(SORT(.CRT$XI*)))  /* C++ initialization */
     ___crt_xi_end__ = . ;
     ___crt_xl_start__ = . ;
-    *(SORT(.CRT$XL*))  /* TLS callbacks */
+    KEEP (*(SORT(.CRT$XL*)))  /* TLS callbacks */
     /* ___crt_xl_end__ is defined in the TLS Directory support code */
     ___crt_xp_start__ = . ;
-    *(SORT(.CRT$XP*))  /* Pre-termination */
+    KEEP (*(SORT(.CRT$XP*)))  /* Pre-termination */
     ___crt_xp_end__ = . ;
     ___crt_xt_start__ = . ;
-    *(SORT(.CRT$XT*))  /* Termination */
+    KEEP (*(SORT(.CRT$XT*)))  /* Termination */
     ___crt_xt_end__ = . ;
   }
   /* Windows TLS expects .tls$AAA to be at the start and .tls$ZZZ to be
@@ -127,11 +127,11 @@ SECTIONS
   .tls BLOCK(__section_alignment__) :
   {
     ___tls_start__ = . ;
-    *(.tls$AAA)
-    *(.tls)
-    *(.tls$)
-    *(SORT(.tls$*))
-    *(.tls$ZZZ)
+    KEEP (*(.tls$AAA))
+    KEEP (*(.tls))
+    KEEP (*(.tls$))
+    KEEP (*(SORT(.tls$*)))
+    KEEP (*(.tls$ZZZ))
     ___tls_end__ = . ;
   }
   .endjunk BLOCK(__section_alignment__) :
@@ -143,8 +143,8 @@ SECTIONS
   }
   .rsrc BLOCK(__section_alignment__) : SUBALIGN(4)
   {
-    *(.rsrc)
-    *(.rsrc$*)
+    KEEP (*(.rsrc))
+    KEEP (*(.rsrc$*))
   }
   .reloc BLOCK(__section_alignment__) :
   {

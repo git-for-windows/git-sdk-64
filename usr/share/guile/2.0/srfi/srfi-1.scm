@@ -374,10 +374,10 @@ end-of-list checking in contexts where dotted lists are allowed."
 	lag)))
 
 (define (drop-right lis k)
-  (let recur ((lag lis) (lead (drop lis k)))
+  (let lp ((lag lis) (lead (drop lis k)) (result '()))
     (if (pair? lead)
-	(cons (car lag) (recur (cdr lag) (cdr lead)))
-	'())))
+	(lp (cdr lag) (cdr lead) (cons (car lag) result))
+	(reverse result))))
 
 (define (take! lst i)
   "Linear-update variant of `take'."
@@ -557,10 +557,7 @@ then that's the return value."
 F is on two elements from LST, rather than one element and a given
 initial value.  If LST is empty, RIDENTITY is returned.  If LST
 has just one element then that's the return value."
-  (check-arg procedure? f reduce)
-  (if (null? lst)
-      ridentity
-      (fold-right f (last lst) (drop-right lst 1))))
+  (reduce f ridentity (reverse lst)))
 
 (define map
   (case-lambda

@@ -42,11 +42,11 @@ _mussh()
             COMPREPLY+=( $( compgen -c -- "$cur" ) )
             return
             ;;
-   esac
+    esac
 
-   [[ $cur != -* ]] || \
-       COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
+    [[ $cur != -* ]] || \
+        COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
 } &&
 complete -F _mussh mussh
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh

@@ -1,5 +1,5 @@
 /* Script for ld -r: link without relocation */
-/* Copyright (C) 2014 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2017 Free Software Foundation, Inc.
    Copying and distribution of this script, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
@@ -23,20 +23,20 @@ SECTIONS
   {
     *(.data)
     *(.data2)
-    *(.jcr)
+    KEEP(*(.jcr))
   }
   .rdata  :
   {
     *(.rdata)
-    *(.rdata_runtime_pseudo_reloc)
+    KEEP(*(.rdata_runtime_pseudo_reloc))
   }
   .eh_frame  :
   {
-    *(.eh_frame*)
+    KEEP(*(.eh_frame*))
   }
   .pdata  :
   {
-    *(.pdata)
+    KEEP(*(.pdata*))
   }
   .bss  :
   {

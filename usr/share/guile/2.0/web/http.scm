@@ -1,6 +1,6 @@
 ;;; HTTP messages
 
-;; Copyright (C)  2010, 2011, 2012, 2013, 2014 Free Software Foundation, Inc.
+;; Copyright (C)  2010-2016 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@
   #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-19)
   #:use-module (ice-9 rdelim)
+  #:use-module (ice-9 match)
   #:use-module (ice-9 q)
   #:use-module (ice-9 binary-ports)
   #:use-module (rnrs bytevectors)
@@ -143,28 +144,27 @@ The default writer is ‘display’."
         (header-decl-writer decl)
         display)))
 
-(define (read-line* port)
-  (let* ((pair (%read-line port))
-         (line (car pair))
-         (delim (cdr pair)))
-    (if (and (string? line) (char? delim))
-        (let ((orig-len (string-length line)))
-          (let lp ((len orig-len))
-            (if (and (> len 0)
-                     (char-whitespace? (string-ref line (1- len))))
-                (lp (1- len))
-                (if (= len orig-len)
-                    line
-                    (substring line 0 len)))))
-        (bad-header '%read line))))
+(define (read-header-line port)
+  "Read an HTTP header line and return it without its final CRLF or LF.
+Raise a 'bad-header' exception if the line does not end in CRLF or LF,
+or if EOF is reached."
+  (match (%read-line port)
+    (((? string? line) . #\newline)
+     ;; '%read-line' does not consider #\return a delimiter; so if it's
+     ;; there, remove it.  We are more tolerant than the RFC in that we
+     ;; tolerate LF-only endings.
+     (if (string-suffix? "\r" line)
+         (string-drop-right line 1)
+         line))
+    ((line . _)                                ;EOF or missing delimiter
+     (bad-header 'read-header-line line))))
 
 (define (read-continuation-line port val)
   (if (or (eqv? (peek-char port) #\space)
           (eqv? (peek-char port) #\tab))
       (read-continuation-line port
                               (string-append val
-                                             (begin
-                                               (read-line* port))))
+                                             (read-header-line port)))
       val))
 
 (define *eof* (call-with-input-string "" read))
@@ -176,7 +176,7 @@ was known but the value was invalid.
 
 Returns the end-of-file object for both values if the end of the message
 body was reached (i.e., a blank line)."
-  (let ((line (read-line* port)))
+  (let ((line (read-header-line port)))
     (if (or (string-null? line)
             (string=? line "\r"))
         (values *eof* *eof*)
@@ -751,6 +751,26 @@ as an ordered alist."
                (minute (parse-non-negative-integer str 19 21))
                (second (parse-non-negative-integer str 22 24)))
            (make-date 0 second minute hour date month year zone-offset)))
+
+        ;; The next two clauses match dates that have a space instead of
+        ;; a leading zero for hours, like " 8:49:37".
+        ((string-match? (substring str 0 space) "aaa, dd aaa dddd  d:dd:dd")
+         (let ((date (parse-non-negative-integer str 5 7))
+               (month (parse-month str 8 11))
+               (year (parse-non-negative-integer str 12 16))
+               (hour (parse-non-negative-integer str 18 19))
+               (minute (parse-non-negative-integer str 20 22))
+               (second (parse-non-negative-integer str 23 25)))
+           (make-date 0 second minute hour date month year zone-offset)))
+        ((string-match? (substring str 0 space) "aaa, d aaa dddd  d:dd:dd")
+         (let ((date (parse-non-negative-integer str 5 6))
+               (month (parse-month str 7 10))
+               (year (parse-non-negative-integer str 11 15))
+               (hour (parse-non-negative-integer str 17 18))
+               (minute (parse-non-negative-integer str 19 21))
+               (second (parse-non-negative-integer str 22 24)))
+           (make-date 0 second minute hour date month year zone-offset)))
+
         (else
          (bad-header 'date str)         ; prevent tail call
          #f)))
@@ -848,10 +868,15 @@ as an ordered alist."
     (display-digits (date-second date) 2 port)
     (display " GMT" port)))
 
+;; Following https://tools.ietf.org/html/rfc7232#section-2.3, an entity
+;; tag should really be a qstring.  However there are a number of
+;; servers that emit etags as unquoted strings.  Assume that if the
+;; value doesn't start with a quote, it's an unquoted strong etag.
 (define (parse-entity-tag val)
-  (if (string-prefix? "W/" val)
-      (cons (parse-qstring val 2) #f)
-      (cons (parse-qstring val) #t)))
+  (cond
+   ((string-prefix? "W/" val) (cons (parse-qstring val 2) #f))
+   ((string-prefix? "\"" val) (cons (parse-qstring val) #t))
+   (else (cons val #t))))
 
 (define (entity-tag? val)
   (and (pair? val)
@@ -1065,7 +1090,7 @@ not have to have a scheme or host name.  The result is a URI object."
     (bad-request "Missing Request-URI"))
    ((string= str "*" start end)
     #f)
-   ((eq? (string-ref str start) #\/)
+   ((eqv? (string-ref str start) #\/)
     (let* ((q (string-index str #\? start end))
            (f (string-index str #\# start end))
            (q (and q (or (not f) (< q f)) q)))
@@ -1080,7 +1105,7 @@ not have to have a scheme or host name.  The result is a URI object."
 (define (read-request-line port)
   "Read the first line of an HTTP request from PORT, returning
 three values: the method, the URI, and the version."
-  (let* ((line (read-line* port))
+  (let* ((line (read-header-line port))
          (d0 (string-index line char-set:whitespace)) ; "delimiter zero"
          (d1 (string-rindex line char-set:whitespace)))
     (if (and d0 d1 (< d0 d1))
@@ -1151,10 +1176,10 @@ three values: the method, the URI, and the version."
   (display "\r\n" port))
 
 (define (read-response-line port)
-  "Read the first line of an HTTP response from PORT, returning
-three values: the HTTP version, the response code, and the \"reason
-phrase\"."
-  (let* ((line (read-line* port))
+  "Read the first line of an HTTP response from PORT, returning three
+values: the HTTP version, the response code, and the (possibly empty)
+\"reason phrase\"."
+  (let* ((line (read-header-line port))
          (d0 (string-index line char-set:whitespace)) ; "delimiter zero"
          (d1 (and d0 (string-index line char-set:whitespace
                                    (skip-whitespace line d0)))))
@@ -1859,9 +1884,9 @@ treated specially, and is just returned as a plain string."
   entity-tag?
   write-entity-tag)
 
-;; Location = absoluteURI
+;; Location = URI-reference
 ;; 
-(declare-uri-header! "Location")
+(declare-relative-uri-header! "Location")
 
 ;; Proxy-Authenticate = 1#challenge
 ;;
@@ -1907,24 +1932,21 @@ treated specially, and is just returned as a plain string."
 
 ;; Chunked Responses
 (define (read-chunk-header port)
-  (let* ((str (read-line port))
-         (extension-start (string-index str (lambda (c) (or (char=? c #\;)
-                                                       (char=? c #\return)))))
-         (size (string->number (if extension-start ; unnecessary?
-                                   (substring str 0 extension-start)
-                                   str)
-                               16)))
-    size))
-
-(define (read-chunk port)
-  (let ((size (read-chunk-header port)))
-    (read-chunk-body port size)))
-
-(define (read-chunk-body port size)
-  (let ((bv (get-bytevector-n port size)))
-    (get-u8 port)                       ; CR
-    (get-u8 port)                       ; LF
-    bv))
+  "Read a chunk header from PORT and return the size in bytes of the
+upcoming chunk."
+  (match (read-line port)
+    ((? eof-object?)
+     ;; Connection closed prematurely: there's nothing left to read.
+     0)
+    (str
+     (let ((extension-start (string-index str
+                                          (lambda (c)
+                                            (or (char=? c #\;)
+                                                (char=? c #\return))))))
+       (string->number (if extension-start       ; unnecessary?
+                           (substring str 0 extension-start)
+                           str)
+                       16)))))
 
 (define* (make-chunked-input-port port #:key (keep-alive? #f))
   "Returns a new port which translates HTTP chunked transfer encoded
@@ -1932,37 +1954,44 @@ data from PORT into a non-encoded format. Returns eof when it has
 read the final chunk from PORT. This does not necessarily mean
 that there is no more data on PORT. When the returned port is
 closed it will also close PORT, unless the KEEP-ALIVE? is true."
-  (define (next-chunk)
-    (read-chunk port))
-  (define finished? #f)
   (define (close)
     (unless keep-alive?
       (close-port port)))
-  (define buffer #vu8())
-  (define buffer-size 0)
-  (define buffer-pointer 0)
+
+  (define chunk-size 0)     ;size of the current chunk
+  (define remaining 0)      ;number of bytes left from the current chunk
+  (define finished? #f)     ;did we get all the chunks?
+
   (define (read! bv idx to-read)
     (define (loop to-read num-read)
       (cond ((or finished? (zero? to-read))
              num-read)
-            ((<= to-read (- buffer-size buffer-pointer))
-             (bytevector-copy! buffer buffer-pointer
-                               bv (+ idx num-read)
-                               to-read)
-             (set! buffer-pointer (+ buffer-pointer to-read))
-             (loop 0 (+ num-read to-read)))
-            (else
-             (let ((n (- buffer-size buffer-pointer)))
-               (bytevector-copy! buffer buffer-pointer
-                                 bv (+ idx num-read)
-                                 n)
-               (set! buffer (next-chunk))
-               (set! buffer-pointer 0)
-               (set! buffer-size (bytevector-length buffer))
-               (set! finished? (= buffer-size 0))
-               (loop (- to-read n)
-                     (+ num-read n))))))
+            ((zero? remaining)                    ;get a new chunk
+             (let ((size (read-chunk-header port)))
+               (set! chunk-size size)
+               (set! remaining size)
+               (if (zero? size)
+                   (begin
+                     (set! finished? #t)
+                     num-read)
+                   (loop to-read num-read))))
+            (else                           ;read from the current chunk
+             (let* ((ask-for (min to-read remaining))
+                    (read    (get-bytevector-n! port bv (+ idx num-read)
+                                                ask-for)))
+               (if (eof-object? read)
+                   (begin                         ;premature termination
+                     (set! finished? #t)
+                     num-read)
+                   (let ((left (- remaining read)))
+                     (set! remaining left)
+                     (when (zero? left)
+                       ;; We're done with this chunk; read CR and LF.
+                       (get-u8 port) (get-u8 port))
+                     (loop (- to-read read)
+                           (+ num-read read))))))))
     (loop to-read 0))
+
   (make-custom-binary-input-port "chunked input port" read! #f #f close))
 
 (define* (make-chunked-output-port port #:key (keep-alive? #f))

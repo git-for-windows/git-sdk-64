@@ -8,5 +8,6 @@ command_not_found_handler() {
     return 0
   fi
 
+  printf 'zsh: command not found: %s\n' "$cmd" 1>&2
   return 127
 }

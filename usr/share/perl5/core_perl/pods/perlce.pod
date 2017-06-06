@@ -75,46 +75,46 @@ Windows then change "C:\Program Files" to "C:\Program Files (x86)" throughout.)
 
  http://download.microsoft.com/download/c/3/f/c3f8b58b-9753-4c2e-8b96-2dfe3476a2f7/eVC4.exe
 
-Use the key mentioned at 
+Use the key mentioned at
 
  http://download.cnet.com/Microsoft-eMbedded-Visual-C/3000-2212_4-10108490.html?tag=bc
 
-The installer is ancient and has a few bugs on the paths it uses. You 
-will have to fix them later. Basically, some things go into "C:/Program 
-Files/Windows CE Tools", others go into "C:/Windows CE Tools" regardless 
-of the path you gave to the installer (the default will be "C:/Windows 
-CE Tools"). Reboots will be required for the installer to proceed. Also 
-.c and .h associations with Visual Studio might get overridden when 
+The installer is ancient and has a few bugs on the paths it uses. You
+will have to fix them later. Basically, some things go into "C:/Program
+Files/Windows CE Tools", others go into "C:/Windows CE Tools" regardless
+of the path you gave to the installer (the default will be "C:/Windows
+CE Tools"). Reboots will be required for the installer to proceed. Also
+.c and .h associations with Visual Studio might get overridden when
 installing EVC4. You have been warned.
 
 2. Download celib from GitHub (using "Download ZIP") at
 
-    https://github.com/bulk88/celib 
+    https://github.com/bulk88/celib
 
 Extract it to a spaceless path but not into the perl build source.
-I call this directory "celib-palm-3.0" but in the GitHub 
-snapshot it will be called "celib-master". Make a copy of the 
-"wince-arm-pocket-wce300-release" folder and rename the copy to 
-"wince-arm-pocket-wce400". This is a hack so we can build a CE 4.0 
-binary by linking in CE 3.0 ARM asm; the linker doesn't care. Windows 
+I call this directory "celib-palm-3.0" but in the GitHub
+snapshot it will be called "celib-master". Make a copy of the
+"wince-arm-pocket-wce300-release" folder and rename the copy to
+"wince-arm-pocket-wce400". This is a hack so we can build a CE 4.0
+binary by linking in CE 3.0 ARM asm; the linker doesn't care. Windows
 Mobile/WinCE are backwards compatible with machine code like Desktop Windows.
 
-3. Download console-1.3-src.tar.gz from 
+3. Download console-1.3-src.tar.gz from
 
  http://sourceforge.net/projects/perlce/files/PerlCE%20support%20files/console/
 
-Extract it to a spaceless path but not into the perl build source. 
-Don't extract it into the same directory as celib. Make a copy of the 
-"wince-arm-pocket-wce300" folder and rename the copy to 
-"wince-arm-pocket-wce400". This is a hack so we can build a CE 4.0 
-binary by linking in CE 3.0 ARM asm; the linker doesn't care. Windows 
+Extract it to a spaceless path but not into the perl build source.
+Don't extract it into the same directory as celib. Make a copy of the
+"wince-arm-pocket-wce300" folder and rename the copy to
+"wince-arm-pocket-wce400". This is a hack so we can build a CE 4.0
+binary by linking in CE 3.0 ARM asm; the linker doesn't care. Windows
 Mobile/WinCE are backwards compatible with machine code like Desktop Windows.
 
 4. Open a command prompt, run your regular batch file to set the environment
 for desktop Visual C building, goto the perl source directory, cd into win32/,
 fill out Makefile, and do a "nmake all" to build a Desktop Perl.
 
-5. Open win32/Makefile.ce in a text editor and do something similar to the 
+5. Open win32/Makefile.ce in a text editor and do something similar to the
 following patch.
 
     -CELIBDLLDIR  = h:\src\wince\celib-palm-3.0
@@ -164,13 +164,13 @@ to
 
 so wince-arm-pocket-wce400 is the MACHINE type.
 
-6. Use a text editor to open "C:\Program Files\Microsoft eMbedded C++ 
+6. Use a text editor to open "C:\Program Files\Microsoft eMbedded C++
 4.0\EVC\WCE400\BIN\WCEARMV4.BAT". Look for
 
     if "%SDKROOT%"=="" set SDKROOT=...
 
-On a new install it is "C:\Windows CE Tools". Goto 
-"C:\Windows CE Tools" in a file manager and see if "C:\Windows CE 
+On a new install it is "C:\Windows CE Tools". Goto
+"C:\Windows CE Tools" in a file manager and see if "C:\Windows CE
 Tools\wce400\STANDARDSDK\Include\Armv4" exists on your disk. If not
 the SDKROOT need to be changed to "C:\Program Files\Windows CE Tools".
 
@@ -185,7 +185,7 @@ already unless you know what you're doing (so that the correct default
 value is set by the next command), and run "C:\Program Files\Microsoft
 eMbedded C++ 4.0\EVC\WCE400\BIN\WCEARMV4.BAT"
 
-8. In the WinCE command prompt you made with WCEARMV4.BAT, goto the perl 
+8. In the WinCE command prompt you made with WCEARMV4.BAT, goto the perl
 source directory, cd into win32/ and run "nmake -f Makefile.ce".
 
 9. The ARM perl interpreter (perl519.dll and perl.exe) will be in something
@@ -240,10 +240,10 @@ To prepare distribution you need to do following:
 
 =item * edit file F<./win32/ce-helpers/compile.bat>
 
-=item * run 
+=item * run
   compile.bat
 
-=item * run 
+=item * run
   compile.bat dist
 
 =back
@@ -364,7 +364,7 @@ To start perl by clicking on a perl source file, you have
 to make the according entries in HKCR (see F<ce-helpers/wince-reg.bat>).
 cereg.exe (which must be executed on a desktop pc with
 ActiveSync) is reported not to work on some devices.
-You have to create the registry entries by hand using a 
+You have to create the registry entries by hand using a
 registry editor.
 
 =head2 XS
@@ -392,9 +392,9 @@ they use stdio (normal perl file handles).
 
 If you find bugs or if it does not work at all on your
 device, send mail to the address below. Please report
-the details of your device (processor, ceversion, 
+the details of your device (processor, ceversion,
 devicetype (hpc/palm/pocket)) and the date of the downloaded
-files. 
+files.
 
 =head2 INSTALLATION
 

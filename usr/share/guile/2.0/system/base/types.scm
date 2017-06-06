@@ -1,5 +1,5 @@
 ;;; 'SCM' type tag decoding.
-;;; Copyright (C) 2014 Free Software Foundation, Inc.
+;;; Copyright (C) 2014, 2015 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU Lesser General Public License as published by
@@ -117,8 +117,12 @@ SIZE is omitted, return an unbounded port to the memory at ADDRESS."
      (let ((open (memory-backend-open backend)))
        (open address #f)))
     ((_ backend address size)
-     (let ((open (memory-backend-open backend)))
-       (open address size)))))
+     (if (zero? size)
+         ;; GDB's 'open-memory' raises an error when size
+         ;; is zero, so we must handle that case specially.
+         (open-bytevector-input-port '#vu8())
+         (let ((open (memory-backend-open backend)))
+           (open address size))))))
 
 (define (get-word port)
   "Read a word from PORT and return it as an integer."
@@ -241,7 +245,9 @@ the matching bits, possibly with bitwise operations to extract it from BITS."
 ;; Cell types.
 (define %tc3-struct 1)
 (define %tc7-symbol 5)
+(define %tc7-variable 7)
 (define %tc7-vector 13)
+(define %tc7-wvect 15)
 (define %tc7-string 21)
 (define %tc7-number 23)
 (define %tc7-hashtable 29)
@@ -255,6 +261,8 @@ the matching bits, possibly with bitwise operations to extract it from BITS."
 (define %tc7-vm-continuation 71)
 (define %tc7-bytevector 77)
 (define %tc7-program 79)
+(define %tc7-array 85)
+(define %tc7-bitvector 87)
 (define %tc7-port 125)
 (define %tc7-smob 127)
 
@@ -420,6 +428,8 @@ using BACKEND."
            (match (cell->object buf backend)
              (($ <stringbuf> string)
               (string->symbol string))))
+          (((_ & #x7f = %tc7-variable) obj)
+           (inferior-object 'variable address))
           (((_ & #x7f = %tc7-string) buf start len)
            (match (cell->object buf backend)
              (($ <stringbuf> string)
@@ -433,7 +443,7 @@ using BACKEND."
                                                 ('big "UTF-32BE")))))
           (((_ & #x7f = %tc7-bytevector) len address)
            (let ((bv-port (memory-port backend address len)))
-             (get-bytevector-all bv-port)))
+             (get-bytevector-n bv-port len)))
           ((((len << 7) || %tc7-vector) weakv-data)
            (let* ((len    (arithmetic-shift len -1))
                   (words  (get-bytevector-n port (* len %word-size)))
@@ -447,6 +457,8 @@ using BACKEND."
                           (bytevector->uint-list words (native-endianness)
                                                  %word-size)))
                vector)))
+          (((_ & #x7f = %tc7-wvect))
+           (inferior-object 'weak-vector address))   ; TODO: show elements
           ((((n << 8) || %tc7-fluid) init-value)
            (inferior-fluid n #f))                    ; TODO: show current value
           (((_ & #x7f = %tc7-dynamic-state))
@@ -474,6 +486,10 @@ using BACKEND."
            (inferior-object 'vm address))
           (((_ & #x7f = %tc7-vm-continuation))
            (inferior-object 'vm-continuation address))
+          (((_ & #x7f = %tc7-array))
+           (inferior-object 'array address))
+          (((_ & #x7f = %tc7-bitvector))
+           (inferior-object 'bitvector address))
           ((((smob-type << 8) || %tc7-smob) word1)
            (inferior-smob backend smob-type address))))))
 

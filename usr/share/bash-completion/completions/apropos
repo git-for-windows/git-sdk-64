@@ -48,25 +48,18 @@ _man()
         return
     fi
 
-    _expand || return 0
+    _expand || return
 
     # file based completion if parameter looks like a path
     if [[ "$cur" == @(*/|[.~])* ]]; then
         _filedir "$manext"
-        return 0
+        return
     fi
 
-    local manpath
-    if [[ $OSTYPE == *@(darwin|linux|freebsd|cygwin)* ]] || _userland GNU; then
-        manpath=$( manpath 2>/dev/null || command man -w )
-    else
-        manpath=$MANPATH
-    fi
-
-    if [[ -z $manpath ]]; then
-        COMPREPLY=( $( compgen -c -- "$cur" ) )
-        return 0
-    fi
+    local manpath="$MANPATH"
+    [[ -z $manpath ]] && \
+        manpath=$( manpath 2>/dev/null || command man -w 2>/dev/null )
+    [[ -z $manpath ]] && manpath="/usr/share/man:/usr/local/share/man"
 
     # determine manual section to search
     local sect
@@ -98,8 +91,7 @@ _man()
     fi
 
     __ltrim_colon_completions "$cur"
-    return 0
 } &&
 complete -F _man man apropos whatis
 
-# ex: ts=4 sw=4 et filetype=sh
+# ex: filetype=sh
