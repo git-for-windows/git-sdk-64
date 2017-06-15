@@ -1033,14 +1033,11 @@ the server, the obj-id the client would like to update it to and the name
 of the reference.</p>
 </div>
 <div class="paragraph">
-<p>This list is followed by a flush-pkt. Then the push options are transmitted
-one per packet followed by another flush-pkt. After that the packfile that
-should contain all the objects that the server will need to complete the new
-references will be sent.</p>
+<p>This list is followed by a flush-pkt.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>  update-request    =  *shallow ( command-list | push-cert ) [packfile]
+<pre>  update-requests   =  *shallow ( command-list | push-cert )
 
   shallow           =  PKT-LINE("shallow" SP obj-id)
 
@@ -1061,12 +1058,40 @@ references will be sent.</p>
 		      PKT-LINE("pusher" SP ident LF)
 		      PKT-LINE("pushee" SP url LF)
 		      PKT-LINE("nonce" SP nonce LF)
+		      *PKT-LINE("push-option" SP push-option LF)
 		      PKT-LINE(LF)
 		      *PKT-LINE(command LF)
 		      *PKT-LINE(gpg-signature-lines LF)
 		      PKT-LINE("push-cert-end" LF)
 
-  packfile          = "PACK" 28*(OCTET)</pre>
+  push-option       =  1*( VCHAR | SP )</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the server has advertised the <em>push-options</em> capability and the client has
+specified <em>push-options</em> as part of the capability list above, the client then
+sends its push options followed by a flush-pkt.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  push-options      =  *PKT-LINE(push-option) flush-pkt</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For backwards compatibility with older Git servers, if the client sends a push
+cert and push options, it MUST send its push options both embedded within the
+push cert and after the push cert. (Note that the push options within the cert
+are prefixed, but the push options after the cert are not.) Both these lists
+MUST be the same, modulo the prefix.</p>
+</div>
+<div class="paragraph">
+<p>After that the packfile that
+should contain all the objects that the server will need to complete the new
+references will be sent.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  packfile          =  "PACK" 28*(OCTET)</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1201,7 +1226,7 @@ can be rejected.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
+Last updated 2017-06-13 12:47:47 W. Europe Daylight Time
 </div>
 </div>
 </body>

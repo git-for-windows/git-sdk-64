@@ -583,6 +583,13 @@ newlines (e.g. when using pickaxe <code>-S</code> with
 <em>git diff-*</em>). In contrast to the <code>--sq-quote</code> option,
 the command input is still interpreted as usual.</p>
 </dd>
+<dt class="hdlist1">--short[=length]</dt>
+<dd>
+<p>Same as <code>--verify</code> but shortens the object name to a unique
+prefix with at least <code>length</code> characters. The minimum length
+is 4, the default is the effective value of the <code>core.abbrev</code>
+configuration variable (see <a href="git-config.html">git-config</a>(1)).</p>
+</dd>
 <dt class="hdlist1">--not</dt>
 <dd>
 <p>When showing object names, prefix them with <em>^</em> and
@@ -594,13 +601,6 @@ one.</p>
 <p>A non-ambiguous short name of the objects name.
 The option core.warnAmbiguousRefs is used to select the strict
 abbreviation mode.</p>
-</dd>
-<dt class="hdlist1">--short</dt>
-<dt class="hdlist1">--short=number</dt>
-<dd>
-<p>Instead of outputting the full SHA-1 values of object names try to
-abbreviate them to a shorter unique name. When no length is specified
-7 is used. The minimum length is 4.</p>
 </dd>
 <dt class="hdlist1">--symbolic</dt>
 <dd>
@@ -1467,7 +1467,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-05-10 08:07:15 W. Europe Daylight Time
+Last updated 2017-06-13 12:47:47 W. Europe Daylight Time
 </div>
 </div>
 </body>
