@@ -29,10 +29,12 @@
  
  /* The functions are not part of the main API, and are conditionally
   * enabled. */
+#define GNUTLS_SELF_TEST_FLAG_ALL 1
+#define GNUTLS_SELF_TEST_FLAG_NO_COMPAT (1<<1)
 
-int gnutls_cipher_self_test(unsigned all, gnutls_cipher_algorithm_t cipher);
-int gnutls_mac_self_test(unsigned all, gnutls_mac_algorithm_t mac);
-int gnutls_digest_self_test(unsigned all, gnutls_digest_algorithm_t digest);
-int gnutls_pk_self_test(unsigned all, gnutls_pk_algorithm_t pk);
+int gnutls_cipher_self_test(unsigned flags, gnutls_cipher_algorithm_t cipher);
+int gnutls_mac_self_test(unsigned flags, gnutls_mac_algorithm_t mac);
+int gnutls_digest_self_test(unsigned flags, gnutls_digest_algorithm_t digest);
+int gnutls_pk_self_test(unsigned flags, gnutls_pk_algorithm_t pk);
 
 #endif

@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 28 March 2017 for version 3.5.12 of GnuTLS.
+This manual is last updated 28 March 2017 for version 3.5.13 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -32,7 +32,7 @@ File: gnutls.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS
 ******
 
-This manual is last updated 28 March 2017 for version 3.5.12 of GnuTLS.
+This manual is last updated 28 March 2017 for version 3.5.13 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -3750,7 +3750,9 @@ This is the "signs using a pkcs #7 structure" option.  This option
 generates a PKCS #7 structure containing a signature for the provided
 data from infile.  The data are stored within the structure.  The signer
 certificate has to be specified using -load-certificate and
--load-privkey.
+-load-privkey.  The input to -load-certificate can be a list of
+certificates.  In case of a list, the first certificate is used for
+signing and the other certificates are included in the structure.
 
 p7-detached-sign option
 .......................
@@ -3758,7 +3760,10 @@ p7-detached-sign option
 This is the "signs using a detached pkcs #7 structure" option.  This
 option generates a PKCS #7 structure containing a signature for the
 provided data from infile.  The signer certificate has to be specified
-using -load-certificate and -load-privkey.
+using -load-certificate and -load-privkey.  The input to
+-load-certificate can be a list of certificates.  In case of a list, the
+first certificate is used for signing and the other certificates are
+included in the structure.
 
 p7-include-cert option
 ......................
