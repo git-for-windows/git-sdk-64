@@ -95,7 +95,7 @@ while test $# -gt 0; do
         ;;
 
     --version)
-        echo libcurl 7.54.0
+        echo libcurl 7.54.1
         exit 0
         ;;
 
@@ -107,20 +107,20 @@ while test $# -gt 0; do
         # dash as that's used for things like version 1.2.3-CVS
         cpatch=`echo $checkfor | cut -d. -f3 | cut -d- -f1`
         checknum=`echo "$cmajor*256*256 + $cminor*256 + ${cpatch:-0}" | bc`
-        numuppercase=`echo 073600 | tr 'a-f' 'A-F'`
+        numuppercase=`echo 073601 | tr 'a-f' 'A-F'`
         nownum=`echo "obase=10; ibase=16; $numuppercase" | bc`
 
         if test "$nownum" -ge "$checknum"; then
           # silent success
           exit 0
         else
-          echo "requested version $checkfor is newer than existing 7.54.0"
+          echo "requested version $checkfor is newer than existing 7.54.1"
           exit 1
         fi
         ;;
 
     --vernum)
-        echo 073600
+        echo 073601
         exit 0
         ;;
 
@@ -156,7 +156,7 @@ while test $# -gt 0; do
 
     --static-libs)
         if test "Xyes" != "Xno" ; then
-          echo ${exec_prefix}/lib/libcurl.a -L/mingw32/lib -pipe -L/mingw32/lib -L/mingw32/lib -lnghttp2 -lrtmp -lssh2 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lwldap32 -lz -lws2_32
+          echo ${exec_prefix}/lib/libcurl.a -pipe -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -lnghttp2 -lrtmp -lssh2 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lwldap32 -lz -lws2_32
         else
           echo "curl was built with static libraries disabled" >&2
           exit 1
