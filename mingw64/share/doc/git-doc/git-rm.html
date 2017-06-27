@@ -605,10 +605,11 @@ use the following command:</p>
 with a Git version 1.7.8 or newer) will be removed from the work
 tree, as their repository lives inside the .git directory of the
 superproject. If a submodule (or one of those nested inside it)
-still uses a .git directory, <code>git rm</code> will fail - no matter if forced
-or not - to protect the submodule&#8217;s history. If it exists the
-submodule.&lt;name&gt; section in the <a href="gitmodules.html">gitmodules</a>(5) file will also
-be removed and that file will be staged (unless --cached or -n are used).</p>
+still uses a .git directory, <code>git rm</code> will move the submodules
+git directory into the superprojects git directory to protect
+the submodule&#8217;s history. If it exists the submodule.&lt;name&gt; section
+in the <a href="gitmodules.html">gitmodules</a>(5) file will also be removed and that file
+will be staged (unless --cached or -n are used).</p>
 </div>
 <div class="paragraph">
 <p>A submodule is considered up-to-date when the HEAD is the same as
@@ -681,7 +682,7 @@ obsolete when recursive submodule update has been implemented.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-15 16:34:09 W. Europe Daylight Time
+Last updated 2017-06-26 14:52:01 W. Europe Daylight Time
 </div>
 </div>
 </body>
