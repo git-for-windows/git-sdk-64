@@ -82,7 +82,7 @@ typedef struct timespec __gthread_time_t;
 # define __GTHREAD_COND_INIT_FUNCTION __gthread_cond_init_function
 #endif
 
-#if __GXX_WEAK__ && _GLIBCXX_GTHREAD_USE_WEAK
+#if __GXX_WEAK__ && _GLIBCXX_GTHREAD_USE_WEAK && !defined(__MINGW32__)
 # ifndef __gthrw_pragma
 #  define __gthrw_pragma(pragma)
 # endif

@@ -64,6 +64,10 @@ _mm_prefetch (const void *__P, enum _mm_hint __I)
 #define __DISABLE_SSE__
 #endif /* __SSE__ */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* The Intel API is flexible enough that we must allow aliasing with other
    vector types, and their scalar components.  */
 typedef float __m128 __attribute__ ((__vector_size__ (16), __may_alias__));
@@ -1247,6 +1251,10 @@ do {									\
   (row2) = __builtin_ia32_movlhps (__t2, __t3);				\
   (row3) = __builtin_ia32_movhlps (__t3, __t2);				\
 } while (0)
+
+#ifdef __cplusplus
+}
+#endif
 
 /* For backward source compatibility.  */
 # include <emmintrin.h>
