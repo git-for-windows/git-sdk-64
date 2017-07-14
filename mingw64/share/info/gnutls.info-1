@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 28 March 2017 for version 3.5.13 of GnuTLS.
+This manual is last updated 28 March 2017 for version 3.5.14 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -32,7 +32,7 @@ File: gnutls.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS
 ******
 
-This manual is last updated 28 March 2017 for version 3.5.13 of GnuTLS.
+This manual is last updated 28 March 2017 for version 3.5.14 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -375,70 +375,75 @@ File: gnutls.info,  Node: Encryption algorithms used in the record layer,  Next:
 3.3.1 Encryption algorithms used in the record layer
 ----------------------------------------------------
 
-Confidentiality in the record layer is achieved by using symmetric block
-encryption algorithms like '3DES', 'AES' or stream algorithms like
-'ARCFOUR_128'.  Ciphers are encryption algorithms that use a single,
-secret, key to encrypt and decrypt data.  Block algorithms in CBC mode
-also provide protection against statistical analysis of the data.  Thus,
-if you're using the TLS protocol, a random number of blocks will be
-appended to data, to prevent eavesdroppers from guessing the actual data
-size.
+Confidentiality in the record layer is achieved by using symmetric
+ciphers like 'AES' or 'CHACHA20'.  Ciphers are encryption algorithms
+that use a single, secret, key to encrypt and decrypt data.  Early
+versions of TLS separated between block and stream ciphers and had
+message authentication plugged in to them by the protocol, though later
+versions switched to using authenticated-encryption (AEAD) ciphers.  The
+AEAD ciphers are defined to combine encryption and authentication, and
+as such they are not only more efficient, as the primitives used are
+designed to interoperate nicely, but they are also known to interoperate
+in a secure way.
 
 The supported in GnuTLS ciphers and MAC algorithms are shown in *note
 Table 3.1: tab:ciphers. and *note Table 3.2: tab:macs.
 
-Algorithm              Description
--------------------------------------------------------------------
-AES-128-CBC,           AES or RIJNDAEL is the block cipher
-AES-256-CBC            algorithm that replaces the old DES
-                       algorithm.  It has 128 bits block size
-                       and is used in CBC mode.
-                       
-AES-128-GCM,           This is the AES algorithm in the
-AES-256-GCM            authenticated encryption GCM mode.  This
-                       mode combines message authentication and
-                       encryption and can be extremely fast on
-                       CPUs that support hardware acceleration.
-                       
-AES-128-CCM,           This is the AES algorithm in the
-AES-256-CCM            authenticated encryption CCM mode.  This
-                       mode combines message authentication and
-                       encryption and is often used by systems
-                       without AES or GCM acceleration support.
-                       
-AES-128-CCM-8,         This is the AES algorithm in the
-AES-256-CCM-8          authenticated encryption CCM mode with a
-                       truncated to 64-bit authentication tag.
-                       This mode is for communication with
-                       restricted systems.
-                       
-CAMELLIA-128-CBC,      This is an 128-bit block cipher developed
-CAMELLIA-256-CBC       by Mitsubishi and NTT. It is one of the
-                       approved ciphers of the European NESSIE
-                       and Japanese CRYPTREC projects.
-                       
-CHACHA20-POLY1305      CHACHA20-POLY1305 is an authenticated
-                       encryption algorithm based on CHACHA20
-                       cipher and POLY1305 MAC. CHACHA20 is a
-                       refinement of SALSA20 algorithm, an
-                       approved cipher by the European ESTREAM
-                       project.  POLY1305 is Wegman-Carter,
-                       one-time authenticator.  The combination
-                       provides a fast stream cipher suitable
-                       for systems where a hardware AES
-                       accelerator is not available.
-                       
-3DES-CBC               This is the DES block cipher algorithm
-                       used with triple encryption (EDE). Has 64
-                       bits block size and is used in CBC mode.
-                       
-ARCFOUR-128            ARCFOUR-128 is a compatible algorithm
-                       with RSA's RC4 algorithm, which is
-                       considered to be a trade secret.  It is a
-                       considered to be broken, and is only used
-                       for compatibility purposed.  For this
-                       reason it is not enabled by default.
-                       
+Algorithm      Type           Description
+--------------------------------------------------------------------------
+AES-128-GCM,   AEAD           This is the AES algorithm in the
+AES-256-GCM                   authenticated encryption GCM mode.  This
+                              mode combines message authentication and
+                              encryption and can be extremely fast on
+                              CPUs that support hardware acceleration.
+                              
+AES-128-CCM,   AEAD           This is the AES algorithm in the
+AES-256-CCM                   authenticated encryption CCM mode.  This
+                              mode combines message authentication and
+                              encryption and is often used by systems
+                              without AES or GCM acceleration support.
+                              
+AES-128-CCM-8, AEAD           This is the AES algorithm in the
+AES-256-CCM-8                 authenticated encryption CCM mode with a
+                              truncated to 64-bit authentication tag.
+                              This mode is for communication with
+                              restricted systems.
+                              
+CAMELLIA-128-GCM,AEAD         This is the CAMELLIA algorithm in the
+CAMELLIA-256-GCM              authenticated encryption GCM mode.
+                              
+CHACHA20-POLY1305AEAD         CHACHA20-POLY1305 is an authenticated
+                              encryption algorithm based on CHACHA20
+                              cipher and POLY1305 MAC. CHACHA20 is a
+                              refinement of SALSA20 algorithm, an
+                              approved cipher by the European ESTREAM
+                              project.  POLY1305 is Wegman-Carter,
+                              one-time authenticator.  The combination
+                              provides a fast stream cipher suitable
+                              for systems where a hardware AES
+                              accelerator is not available.
+                              
+AES-128-CBC,   Legacy         AES or RIJNDAEL is the block cipher
+AES-256-CBC    (block)        algorithm that replaces the old DES
+                              algorithm.  It has 128 bits block size
+                              and is used in CBC mode.
+                              
+CAMELLIA-128-CBC,Legacy       This is an 128-bit block cipher developed
+CAMELLIA-256-CBC(block)       by Mitsubishi and NTT. It is one of the
+                              approved ciphers of the European NESSIE
+                              and Japanese CRYPTREC projects.
+                              
+3DES-CBC       Legacy         This is the DES block cipher algorithm
+               (block)        used with triple encryption (EDE). Has 64
+                              bits block size and is used in CBC mode.
+                              
+ARCFOUR-128    Legacy         ARCFOUR-128 is a compatible algorithm
+               (stream)       with RSA's RC4 algorithm, which is
+                              considered to be a trade secret.  It is a
+                              considered to be broken, and is only used
+                              for compatibility purposed.  For this
+                              reason it is not enabled by default.
+                              
 
 Table 3.1: Supported ciphers in TLS.
 
@@ -7153,101 +7158,6 @@ using *note gnutls_tpm_privkey_generate::.
      otherwise a negative error value.
 
      *Since:* 3.1.0
-
-'INT *note gnutls_tpm_get_registered:: (gnutls_tpm_key_list_t * LIST)'
-'VOID *note gnutls_tpm_key_list_deinit:: (gnutls_tpm_key_list_t LIST)'
-'INT *note gnutls_tpm_key_list_get_url:: (gnutls_tpm_key_list_t LIST, unsigned int IDX, char ** URL, unsigned int FLAGS)'
-
- -- Function: int gnutls_tpm_privkey_delete (const char * URL, const
-          char * SRK_PASSWORD)
-     URL: the URL describing the key
-
-     SRK_PASSWORD: a password for the SRK key
-
-     This function will unregister the private key from the TPM chip.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
-     *Since:* 3.1.0
-
-
-File: gnutls.info,  Node: Using keys,  Next: tpmtool Invocation,  Prev: Key generation,  Up: Trusted Platform Module
-
-5.4.3 Using keys
-----------------
-
-Importing keys
-..............
-
-The TPM keys can be used directly by the abstract key types and do not
-require any special structures.  Moreover functions like *note
-gnutls_certificate_set_x509_key_file2:: can access TPM URLs.
-
-'INT *note gnutls_privkey_import_tpm_raw:: (gnutls_privkey_t PKEY, const gnutls_datum_t * FDATA, gnutls_tpmkey_fmt_t FORMAT, const char * SRK_PASSWORD, const char * KEY_PASSWORD, unsigned int FLAGS)'
-'INT *note gnutls_pubkey_import_tpm_raw:: (gnutls_pubkey_t PKEY, const gnutls_datum_t * FDATA, gnutls_tpmkey_fmt_t FORMAT, const char * SRK_PASSWORD, unsigned int FLAGS)'
-
- -- Function: int gnutls_privkey_import_tpm_url (gnutls_privkey_t PKEY,
-          const char * URL, const char * SRK_PASSWORD, const char *
-          KEY_PASSWORD, unsigned int FLAGS)
-     PKEY: The private key
-
-     URL: The URL of the TPM key to be imported
-
-     SRK_PASSWORD: The password for the SRK key (optional)
-
-     KEY_PASSWORD: A password for the key (optional)
-
-     FLAGS: One of the GNUTLS_PRIVKEY_* flags
-
-     This function will import the given private key to the abstract
-     'gnutls_privkey_t' type.
-
-     Note that unless 'GNUTLS_PRIVKEY_DISABLE_CALLBACKS' is specified,
-     if incorrect (or NULL) passwords are given the PKCS11 callback
-     functions will be used to obtain the correct passwords.  Otherwise
-     if the SRK password is wrong 'GNUTLS_E_TPM_SRK_PASSWORD_ERROR' is
-     returned and if the key password is wrong or not provided then
-     'GNUTLS_E_TPM_KEY_PASSWORD_ERROR' is returned.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
-     *Since:* 3.1.0
-
- -- Function: int gnutls_pubkey_import_tpm_url (gnutls_pubkey_t PKEY,
-          const char * URL, const char * SRK_PASSWORD, unsigned int
-          FLAGS)
-     PKEY: The public key
-
-     URL: The URL of the TPM key to be imported
-
-     SRK_PASSWORD: The password for the SRK key (optional)
-
-     FLAGS: should be zero
-
-     This function will import the given private key to the abstract
-     'gnutls_privkey_t' type.
-
-     Note that unless 'GNUTLS_PUBKEY_DISABLE_CALLBACKS' is specified, if
-     incorrect (or NULL) passwords are given the PKCS11 callback
-     functions will be used to obtain the correct passwords.  Otherwise
-     if the SRK password is wrong 'GNUTLS_E_TPM_SRK_PASSWORD_ERROR' is
-     returned.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
-     *Since:* 3.1.0
-
-Listing and deleting keys
-.........................
-
-The registered keys (that are stored in the TPM) can be listed using one
-of the following functions.  Those keys are unfortunately only
-identified by their UUID and have no label or other human friendly
-identifier.  Keys can be deleted from permament storage using *note
-gnutls_tpm_privkey_delete::.
 
 'INT *note gnutls_tpm_get_registered:: (gnutls_tpm_key_list_t * LIST)'
 'VOID *note gnutls_tpm_key_list_deinit:: (gnutls_tpm_key_list_t LIST)'

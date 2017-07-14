@@ -87,9 +87,9 @@ cairo_pdf_surface_set_size (cairo_surface_t	*surface,
 
 /**
  * cairo_pdf_outline_flags_t:
- * @CAIRO_BOOKMARK_FLAG_OPEN: The outline item defaults to open in the PDF viewer (Since 1.16)
- * @CAIRO_BOOKMARK_FLAG_BOLD: The outline item is displayed by the viewer in bold text (Since 1.16)
- * @CAIRO_BOOKMARK_FLAG_ITALIC: The outline item is displayed by the viewer in italic text (Since 1.16)
+ * @CAIRO_PDF_OUTLINE_FLAG_OPEN: The outline item defaults to open in the PDF viewer (Since 1.16)
+ * @CAIRO_PDF_OUTLINE_FLAG_BOLD: The outline item is displayed by the viewer in bold text (Since 1.16)
+ * @CAIRO_PDF_OUTLINE_FLAG_ITALIC: The outline item is displayed by the viewer in italic text (Since 1.16)
  *
  * #cairo_pdf_outline_flags_t is used by the
  * cairo_pdf_surface_add_outline() function specify the attributes of
@@ -99,9 +99,9 @@ cairo_pdf_surface_set_size (cairo_surface_t	*surface,
  * Since: 1.16
  **/
 typedef enum _cairo_pdf_outline_flags {
-    CAIRO_BOOKMARK_FLAG_OPEN   = 0x1,
-    CAIRO_BOOKMARK_FLAG_BOLD   = 0x2,
-    CAIRO_BOOKMARK_FLAG_ITALIC = 0x4,
+    CAIRO_PDF_OUTLINE_FLAG_OPEN   = 0x1,
+    CAIRO_PDF_OUTLINE_FLAG_BOLD   = 0x2,
+    CAIRO_PDF_OUTLINE_FLAG_ITALIC = 0x4,
 } cairo_pdf_outline_flags_t;
 
 #define CAIRO_PDF_OUTLINE_ROOT 0
@@ -120,7 +120,6 @@ cairo_pdf_surface_add_outline (cairo_surface_t	          *surface,
  * @CAIRO_PDF_METADATA_SUBJECT: The document subject (Since 1.16)
  * @CAIRO_PDF_METADATA_KEYWORDS: The document keywords (Since 1.16)
  * @CAIRO_PDF_METADATA_CREATOR: The document creator (Since 1.16)
- * @CAIRO_PDF_METADATA_TITLE: The document title (Since 1.16)
  * @CAIRO_PDF_METADATA_CREATE_DATE: The document creation date (Since 1.16)
  * @CAIRO_PDF_METADATA_MOD_DATE: The document modification date (Since 1.16)
  *

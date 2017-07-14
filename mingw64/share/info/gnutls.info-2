@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 28 March 2017 for version 3.5.13 of GnuTLS.
+This manual is last updated 28 March 2017 for version 3.5.14 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -25,6 +25,101 @@ START-INFO-DIR-ENTRY
 * psktool: (gnutls)Invoking psktool.	Simple TLS-Pre-Shared-Keys manager.
 * srptool: (gnutls)Invoking srptool.	Simple SRP password tool.
 END-INFO-DIR-ENTRY
+
+
+File: gnutls.info,  Node: Using keys,  Next: tpmtool Invocation,  Prev: Key generation,  Up: Trusted Platform Module
+
+5.4.3 Using keys
+----------------
+
+Importing keys
+..............
+
+The TPM keys can be used directly by the abstract key types and do not
+require any special structures.  Moreover functions like *note
+gnutls_certificate_set_x509_key_file2:: can access TPM URLs.
+
+'INT *note gnutls_privkey_import_tpm_raw:: (gnutls_privkey_t PKEY, const gnutls_datum_t * FDATA, gnutls_tpmkey_fmt_t FORMAT, const char * SRK_PASSWORD, const char * KEY_PASSWORD, unsigned int FLAGS)'
+'INT *note gnutls_pubkey_import_tpm_raw:: (gnutls_pubkey_t PKEY, const gnutls_datum_t * FDATA, gnutls_tpmkey_fmt_t FORMAT, const char * SRK_PASSWORD, unsigned int FLAGS)'
+
+ -- Function: int gnutls_privkey_import_tpm_url (gnutls_privkey_t PKEY,
+          const char * URL, const char * SRK_PASSWORD, const char *
+          KEY_PASSWORD, unsigned int FLAGS)
+     PKEY: The private key
+
+     URL: The URL of the TPM key to be imported
+
+     SRK_PASSWORD: The password for the SRK key (optional)
+
+     KEY_PASSWORD: A password for the key (optional)
+
+     FLAGS: One of the GNUTLS_PRIVKEY_* flags
+
+     This function will import the given private key to the abstract
+     'gnutls_privkey_t' type.
+
+     Note that unless 'GNUTLS_PRIVKEY_DISABLE_CALLBACKS' is specified,
+     if incorrect (or NULL) passwords are given the PKCS11 callback
+     functions will be used to obtain the correct passwords.  Otherwise
+     if the SRK password is wrong 'GNUTLS_E_TPM_SRK_PASSWORD_ERROR' is
+     returned and if the key password is wrong or not provided then
+     'GNUTLS_E_TPM_KEY_PASSWORD_ERROR' is returned.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.1.0
+
+ -- Function: int gnutls_pubkey_import_tpm_url (gnutls_pubkey_t PKEY,
+          const char * URL, const char * SRK_PASSWORD, unsigned int
+          FLAGS)
+     PKEY: The public key
+
+     URL: The URL of the TPM key to be imported
+
+     SRK_PASSWORD: The password for the SRK key (optional)
+
+     FLAGS: should be zero
+
+     This function will import the given private key to the abstract
+     'gnutls_privkey_t' type.
+
+     Note that unless 'GNUTLS_PUBKEY_DISABLE_CALLBACKS' is specified, if
+     incorrect (or NULL) passwords are given the PKCS11 callback
+     functions will be used to obtain the correct passwords.  Otherwise
+     if the SRK password is wrong 'GNUTLS_E_TPM_SRK_PASSWORD_ERROR' is
+     returned.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.1.0
+
+Listing and deleting keys
+.........................
+
+The registered keys (that are stored in the TPM) can be listed using one
+of the following functions.  Those keys are unfortunately only
+identified by their UUID and have no label or other human friendly
+identifier.  Keys can be deleted from permament storage using *note
+gnutls_tpm_privkey_delete::.
+
+'INT *note gnutls_tpm_get_registered:: (gnutls_tpm_key_list_t * LIST)'
+'VOID *note gnutls_tpm_key_list_deinit:: (gnutls_tpm_key_list_t LIST)'
+'INT *note gnutls_tpm_key_list_get_url:: (gnutls_tpm_key_list_t LIST, unsigned int IDX, char ** URL, unsigned int FLAGS)'
+
+ -- Function: int gnutls_tpm_privkey_delete (const char * URL, const
+          char * SRK_PASSWORD)
+     URL: the URL describing the key
+
+     SRK_PASSWORD: a password for the SRK key
+
+     This function will unregister the private key from the TPM chip.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.1.0
 
 
 File: gnutls.info,  Node: tpmtool Invocation,  Prev: Using keys,  Up: Trusted Platform Module

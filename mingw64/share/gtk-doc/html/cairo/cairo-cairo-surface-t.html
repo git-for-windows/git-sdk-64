@@ -2,21 +2,20 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Cairo: A Vector Graphics Library: cairo_surface_t</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<title>cairo_surface_t: Cairo: A Vector Graphics Library</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
 <link rel="home" href="index.html" title="Cairo: A Vector Graphics Library">
 <link rel="up" href="cairo-surfaces.html" title="Surfaces">
 <link rel="prev" href="cairo-cairo-device-t.html" title="cairo_device_t">
 <link rel="next" href="cairo-Image-Surfaces.html" title="Image Surfaces">
-<meta name="generator" content="GTK-Doc V1.20 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="10"><tr valign="middle">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
 <td width="100%" align="left" class="shortcuts">
-<a href="#" class="shortcut">Top</a><span id="nav_description"> <span class="dim">|</span> 
-                  <a href="#cairo-cairo-surface-t.description" class="shortcut">Description</a></span><span id="nav_hierarchy"> <span class="dim">|</span> 
-                  <a href="#cairo-cairo-surface-t.object-hierarchy" class="shortcut">Object Hierarchy</a></span>
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#cairo-cairo-surface-t.description" class="shortcut">Description</a></span>
 </td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
 <td><a accesskey="u" href="cairo-surfaces.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
@@ -34,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="cairo-cairo-surface-t.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -292,7 +291,7 @@
 </div>
 <div class="refsect1">
 <a name="cairo-cairo-surface-t.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -350,11 +349,6 @@
 </table></div>
 </div>
 <div class="refsect1">
-<a name="cairo-cairo-surface-t.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">
-</pre>
-</div>
-<div class="refsect1">
 <a name="cairo-cairo-surface-t.description"></a><h2>Description</h2>
 <p><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> is the abstract type representing all different drawing
 targets that cairo can render to.  The actual drawings are
@@ -367,7 +361,7 @@ functions. If you do this, keep in mind that it is mandatory that you call
 <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-flush" title="cairo_surface_flush ()"><code class="function">cairo_surface_flush()</code></a> before reading from or writing to the surface and that
 you must use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-mark-dirty" title="cairo_surface_mark_dirty ()"><code class="function">cairo_surface_mark_dirty()</code></a> after modifying it.</p>
 <div class="example">
-<a name="id-1.5.3.6.5"></a><p class="title"><b>Example 1. Directly modifying an image surface</b></p>
+<a name="id-1.5.3.5.5"></a><p class="title"><b>Example 1. Directly modifying an image surface</b></p>
 <div class="example-contents"><pre class="programlisting">
 void
 modify_image_surface (cairo_surface_t *surface)
@@ -405,19 +399,20 @@ cairo_surface_create_similar (<em class="parameter"><code><a class="link" href="
                               <em class="parameter"><code><span class="type">int</span> height</code></em>);</pre>
 <p>Create a new surface that is as compatible as possible with an
 existing surface. For example the new surface will have the same
-fallback resolution and font options as <em class="parameter"><code>other</code></em>
-. Generally, the new
-surface will also use the same backend as <em class="parameter"><code>other</code></em>
-, unless that is
-not possible for some reason. The type of the returned surface may
-be examined with <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-get-type" title="cairo_surface_get_type ()"><code class="function">cairo_surface_get_type()</code></a>.</p>
+device scale, fallback resolution and font options as
+<em class="parameter"><code>other</code></em>
+. Generally, the new surface will also use the same backend
+as <em class="parameter"><code>other</code></em>
+, unless that is not possible for some reason. The type of
+the returned surface may be examined with
+<a class="link" href="cairo-cairo-surface-t.html#cairo-surface-get-type" title="cairo_surface_get_type ()"><code class="function">cairo_surface_get_type()</code></a>.</p>
 <p>Initially the surface contents are all 0 (transparent if contents
 have transparency, black otherwise.)</p>
 <p>Use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-create-similar-image" title="cairo_surface_create_similar_image ()"><code class="function">cairo_surface_create_similar_image()</code></a> if you need an image surface
 which can be painted quickly to the target surface.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.2.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-create-similar.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -448,7 +443,7 @@ which can be painted quickly to the target surface.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.2.8"></a><h4>Returns</h4>
+<a name="cairo-surface-create-similar.returns"></a><h4>Returns</h4>
 <p> a pointer to the newly allocated surface. The caller
 owns the surface and should call <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-destroy" title="cairo_surface_destroy ()"><code class="function">cairo_surface_destroy()</code></a> when done
 with it.</p>
@@ -456,9 +451,8 @@ with it.</p>
 pointer to a "nil" surface if <em class="parameter"><code>other</code></em>
 is already in an error state
 or any other error occurs.</p>
-<p></p>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -470,13 +464,16 @@ cairo_surface_create_similar_image (<em class="parameter"><code><a class="link" 
                                     <em class="parameter"><code><span class="type">int</span> height</code></em>);</pre>
 <p>Create a new image surface that is as compatible as possible for uploading
 to and the use in conjunction with an existing surface. However, this surface
-can still be used like any normal image surface.</p>
+can still be used like any normal image surface. Unlike
+<a class="link" href="cairo-cairo-surface-t.html#cairo-surface-create-similar" title="cairo_surface_create_similar ()"><code class="function">cairo_surface_create_similar()</code></a> the new image surface won't inherit
+the device scale from <em class="parameter"><code>other</code></em>
+.</p>
 <p>Initially the surface contents are all 0 (transparent if contents
 have transparency, black otherwise.)</p>
 <p>Use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-create-similar" title="cairo_surface_create_similar ()"><code class="function">cairo_surface_create_similar()</code></a> if you don't need an image surface.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.3.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-create-similar-image.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -495,19 +492,19 @@ have transparency, black otherwise.)</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>width</p></td>
-<td class="parameter_description"><p>width of the new surface, (in device-space units)</p></td>
+<td class="parameter_description"><p>width of the new surface, (in pixels)</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
 <td class="parameter_name"><p>height</p></td>
-<td class="parameter_description"><p>height of the new surface (in device-space units)</p></td>
+<td class="parameter_description"><p>height of the new surface (in pixels)</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.3.8"></a><h4>Returns</h4>
+<a name="cairo-surface-create-similar-image.returns"></a><h4>Returns</h4>
 <p> a pointer to the newly allocated image surface. The caller
 owns the surface and should call <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-destroy" title="cairo_surface_destroy ()"><code class="function">cairo_surface_destroy()</code></a> when done
 with it.</p>
@@ -515,9 +512,8 @@ with it.</p>
 pointer to a "nil" surface if <em class="parameter"><code>other</code></em>
 is already in an error state
 or any other error occurs.</p>
-<p></p>
 </div>
-<p class="since">Since 1.12</p>
+<p class="since">Since: 1.12</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -540,8 +536,8 @@ unless the rectangle is in full device units, is contained within
 the extents of the target surface, and the target or subsurface's
 device transforms are not changed.</p></div>
 <div class="refsect3">
-<a name="id-1.5.3.7.4.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-create-for-rectangle.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -577,7 +573,7 @@ device transforms are not changed.</p></div>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.4.7"></a><h4>Returns</h4>
+<a name="cairo-surface-create-for-rectangle.returns"></a><h4>Returns</h4>
 <p> a pointer to the newly allocated surface. The caller
 owns the surface and should call <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-destroy" title="cairo_surface_destroy ()"><code class="function">cairo_surface_destroy()</code></a> when done
 with it.</p>
@@ -585,9 +581,8 @@ with it.</p>
 pointer to a "nil" surface if <em class="parameter"><code>other</code></em>
 is already in an error state
 or any other error occurs.</p>
-<p></p>
 </div>
-<p class="since">Since 1.10</p>
+<p class="since">Since: 1.10</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -602,8 +597,8 @@ cairo_surface_reference (<em class="parameter"><code><a class="link" href="cairo
 <p>Use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-get-reference-count" title="cairo_surface_get_reference_count ()"><code class="function">cairo_surface_get_reference_count()</code></a> to get the number of
 references to a <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-reference.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -617,11 +612,10 @@ references to a <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.5.7"></a><h4>Returns</h4>
+<a name="cairo-surface-reference.returns"></a><h4>Returns</h4>
 <p> the referenced <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a>.</p>
-<p></p>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -634,8 +628,8 @@ zero, then <em class="parameter"><code>surface</code></em>
  and all associated resources are freed.  See
 <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-reference" title="cairo_surface_reference ()"><code class="function">cairo_surface_reference()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-destroy.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -648,7 +642,7 @@ zero, then <em class="parameter"><code>surface</code></em>
 </tr></tbody>
 </table></div>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -658,8 +652,8 @@ cairo_surface_status (<em class="parameter"><code><a class="link" href="cairo-ca
 <p>Checks whether an error has previously occurred for this
 surface.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-status.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -673,14 +667,13 @@ surface.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.7.6"></a><h4>Returns</h4>
+<a name="cairo-surface-status.returns"></a><h4>Returns</h4>
 <p> <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-SUCCESS:CAPS"><code class="literal">CAIRO_STATUS_SUCCESS</code></a>, <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-NULL-POINTER:CAPS"><code class="literal">CAIRO_STATUS_NULL_POINTER</code></a>,
 <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-NO-MEMORY:CAPS"><code class="literal">CAIRO_STATUS_NO_MEMORY</code></a>, <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-READ-ERROR:CAPS"><code class="literal">CAIRO_STATUS_READ_ERROR</code></a>,
 <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-INVALID-CONTENT:CAPS"><code class="literal">CAIRO_STATUS_INVALID_CONTENT</code></a>, <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-INVALID-FORMAT:CAPS"><code class="literal">CAIRO_STATUS_INVALID_FORMAT</code></a>, or
 <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-INVALID-VISUAL:CAPS"><code class="literal">CAIRO_STATUS_INVALID_VISUAL</code></a>.</p>
-<p></p>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -701,8 +694,8 @@ reference count to zero, cairo will call <a class="link" href="cairo-cairo-surfa
 it hasn't been called already, before freeing the resources
 associated with the surface.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.8.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -715,7 +708,7 @@ associated with the surface.</p>
 </tr></tbody>
 </table></div>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -729,8 +722,8 @@ cairo to drawing on it directly with native APIs, or accessing its
 memory outside of Cairo. If the surface doesn't support direct
 access, then this function does nothing.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.9.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-flush.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -743,7 +736,7 @@ access, then this function does nothing.</p>
 </tr></tbody>
 </table></div>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -754,8 +747,8 @@ cairo_surface_get_device (<em class="parameter"><code><a class="link" href="cair
 .
 See <a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo_device_t"><span class="type">cairo_device_t</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-device.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -769,13 +762,12 @@ See <a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.10.6"></a><h4>Returns</h4>
+<a name="cairo-surface-get-device.returns"></a><h4>Returns</h4>
 <p> The device for <em class="parameter"><code>surface</code></em>
 or <code class="literal">NULL</code> if the surface does
 not have an associated device.</p>
-<p></p>
 </div>
-<p class="since">Since 1.10</p>
+<p class="since">Since: 1.10</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -789,8 +781,8 @@ for rendering on them, print surfaces to disable hinting of
 metrics and so forth. The result can then be used with
 <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-create" title="cairo_scaled_font_create ()"><code class="function">cairo_scaled_font_create()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-font-options.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -811,7 +803,7 @@ the retrieved options. All existing values are overwritten</p></td>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -823,8 +815,8 @@ cairo_surface_get_content (<em class="parameter"><code><a class="link" href="cai
 whether the surface contains color and/or alpha information. See
 <a class="link" href="cairo-cairo-surface-t.html#cairo-content-t" title="enum cairo_content_t"><span class="type">cairo_content_t</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.12.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-content.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -838,12 +830,11 @@ whether the surface contains color and/or alpha information. See
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.12.6"></a><h4>Returns</h4>
+<a name="cairo-surface-get-content.returns"></a><h4>Returns</h4>
 <p> The content type of <em class="parameter"><code>surface</code></em>
 .</p>
-<p></p>
 </div>
-<p class="since">Since 1.2</p>
+<p class="since">Since: 1.2</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -854,8 +845,8 @@ cairo_surface_mark_dirty (<em class="parameter"><code><a class="link" href="cair
 than cairo, and that cairo should reread any cached areas. Note
 that you must call <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-flush" title="cairo_surface_flush ()"><code class="function">cairo_surface_flush()</code></a> before doing such drawing.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.13.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-mark-dirty.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -868,7 +859,7 @@ that you must call <a class="link" href="cairo-cairo-surface-t.html#cairo-surfac
 </tr></tbody>
 </table></div>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -886,8 +877,8 @@ for other parts of the surface.</p>
 to make sure that future cairo calls have the clip set that they
 expect.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.14.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-mark-dirty-rectangle.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -922,7 +913,7 @@ expect.</p>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -943,8 +934,8 @@ sufficient to do this, since functions like
 <p>Note that the offset affects drawing to the surface as well as
 using the surface in a source pattern.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.15.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-set-device-offset.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -969,7 +960,7 @@ using the surface in a source pattern.</p>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -981,8 +972,8 @@ cairo_surface_get_device_offset (<em class="parameter"><code><a class="link" hre
 <p>This function returns the previous device offset set by
 <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-set-device-offset" title="cairo_surface_set_device_offset ()"><code class="function">cairo_surface_set_device_offset()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.16.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-device-offset.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1007,7 +998,7 @@ cairo_surface_get_device_offset (<em class="parameter"><code><a class="link" hre
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.2</p>
+<p class="since">Since: 1.2</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1019,8 +1010,8 @@ cairo_surface_get_device_scale (<em class="parameter"><code><a class="link" href
 <p>This function returns the previous device offset set by
 <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-set-device-scale" title="cairo_surface_set_device_scale ()"><code class="function">cairo_surface_set_device_scale()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.17.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-device-scale.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1045,7 +1036,7 @@ cairo_surface_get_device_scale (<em class="parameter"><code><a class="link" href
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.14</p>
+<p class="since">Since: 1.14</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1065,8 +1056,8 @@ sufficient to do this, since functions like
 <p>Note that the scale affects drawing to the surface as well as
 using the surface in a source pattern.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.18.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-set-device-scale.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1091,7 +1082,7 @@ using the surface in a source pattern.</p>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.14</p>
+<p class="since">Since: 1.14</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1120,8 +1111,8 @@ in effect on a single page.</p>
 <p>The default fallback resoultion is 300 pixels per inch in both
 dimensions.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.19.10"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-set-fallback-resolution.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1146,7 +1137,7 @@ dimensions.</p>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.2</p>
+<p class="since">Since: 1.2</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1159,8 +1150,8 @@ cairo_surface_get_fallback_resolution (<em class="parameter"><code><a class="lin
 <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-set-fallback-resolution" title="cairo_surface_set_fallback_resolution ()"><code class="function">cairo_surface_set_fallback_resolution()</code></a>, or default fallback
 resolution if never set.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.20.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-fallback-resolution.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1185,7 +1176,7 @@ resolution if never set.</p>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.8</p>
+<p class="since">Since: 1.8</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1195,8 +1186,8 @@ cairo_surface_get_type (<em class="parameter"><code><a class="link" href="cairo-
 <p>This function returns the type of the backend used to create
 a surface. See <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-type-t" title="enum cairo_surface_type_t"><span class="type">cairo_surface_type_t</span></a> for available types.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.21.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1210,12 +1201,11 @@ a surface. See <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-ty
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.21.6"></a><h4>Returns</h4>
+<a name="cairo-surface-get-type.returns"></a><h4>Returns</h4>
 <p> The type of <em class="parameter"><code>surface</code></em>
 .</p>
-<p></p>
 </div>
-<p class="since">Since 1.2</p>
+<p class="since">Since: 1.2</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1225,8 +1215,8 @@ cairo_surface_get_reference_count (<em class="parameter"><code><a class="link" h
 <p>Returns the current reference count of <em class="parameter"><code>surface</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.22.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-reference-count.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1240,13 +1230,12 @@ cairo_surface_get_reference_count (<em class="parameter"><code><a class="link" h
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.22.6"></a><h4>Returns</h4>
+<a name="cairo-surface-get-reference-count.returns"></a><h4>Returns</h4>
 <p> the current reference count of <em class="parameter"><code>surface</code></em>
 .  If the
 object is a nil object, 0 will be returned.</p>
-<p></p>
 </div>
-<p class="since">Since 1.4</p>
+<p class="since">Since: 1.4</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1262,8 +1251,8 @@ call this function with the key that was used to set it and <code class="literal
 for <em class="parameter"><code>data</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.23.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-set-user-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1296,12 +1285,11 @@ same key.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.23.6"></a><h4>Returns</h4>
+<a name="cairo-surface-set-user-data.returns"></a><h4>Returns</h4>
 <p> <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-SUCCESS:CAPS"><code class="literal">CAIRO_STATUS_SUCCESS</code></a> or <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-NO-MEMORY:CAPS"><code class="literal">CAIRO_STATUS_NO_MEMORY</code></a> if a
 slot could not be allocated for the user data.</p>
-<p></p>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1314,8 +1302,8 @@ cairo_surface_get_user_data (<em class="parameter"><code><a class="link" href="c
 key.  If no user data has been attached with the given key this
 function returns <code class="literal">NULL</code>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.24.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-user-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1337,11 +1325,10 @@ attached to</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.24.6"></a><h4>Returns</h4>
+<a name="cairo-surface-get-user-data.returns"></a><h4>Returns</h4>
 <p> the user data previously attached or <code class="literal">NULL</code>.</p>
-<p></p>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1355,8 +1342,8 @@ want to get an empty page after the emission.</p>
 <p>There is a convenience function for this that takes a <a class="link" href="cairo-cairo-t.html#cairo-t" title="cairo_t"><span class="type">cairo_t</span></a>,
 namely <a class="link" href="cairo-cairo-t.html#cairo-copy-page" title="cairo_copy_page ()"><code class="function">cairo_copy_page()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.25.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-copy-page.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1369,7 +1356,7 @@ namely <a class="link" href="cairo-cairo-t.html#cairo-copy-page" title="cairo_co
 </tr></tbody>
 </table></div>
 </div>
-<p class="since">Since 1.6</p>
+<p class="since">Since: 1.6</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1381,8 +1368,8 @@ pages.  Use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-copy-
 <p>There is a convenience function for this that takes a <a class="link" href="cairo-cairo-t.html#cairo-t" title="cairo_t"><span class="type">cairo_t</span></a>,
 namely <a class="link" href="cairo-cairo-t.html#cairo-show-page" title="cairo_show_page ()"><code class="function">cairo_show_page()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.26.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-show-page.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1395,7 +1382,7 @@ namely <a class="link" href="cairo-cairo-t.html#cairo-show-page" title="cairo_sh
 </tr></tbody>
 </table></div>
 </div>
-<p class="since">Since 1.6</p>
+<p class="since">Since: 1.6</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1414,8 +1401,8 @@ act like a <a class="link" href="cairo-text.html#cairo-show-glyphs" title="cairo
 function to avoid computing UTF-8 text and cluster mapping if the
 target surface does not use it.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.27.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-has-show-text-glyphs.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1429,13 +1416,12 @@ target surface does not use it.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.27.7"></a><h4>Returns</h4>
+<a name="cairo-surface-has-show-text-glyphs.returns"></a><h4>Returns</h4>
 <p> <code class="literal">TRUE</code> if <em class="parameter"><code>surface</code></em>
 supports
 <a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a>, <code class="literal">FALSE</code> otherwise</p>
-<p></p>
 </div>
-<p class="since">Since 1.8</p>
+<p class="since">Since: 1.8</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1477,8 +1463,8 @@ then attach the MIME data to that. This ensures the image will always
 be used while still allowing the MIME data to be used whenever
 possible.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.28.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-set-mime-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1522,12 +1508,11 @@ notifier</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.28.10"></a><h4>Returns</h4>
+<a name="cairo-surface-set-mime-data.returns"></a><h4>Returns</h4>
 <p> <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-SUCCESS:CAPS"><code class="literal">CAIRO_STATUS_SUCCESS</code></a> or <a class="link" href="cairo-Error-handling.html#CAIRO-STATUS-NO-MEMORY:CAPS"><code class="literal">CAIRO_STATUS_NO_MEMORY</code></a> if a
 slot could not be allocated for the user data.</p>
-<p></p>
 </div>
-<p class="since">Since 1.10</p>
+<p class="since">Since: 1.10</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1543,8 +1528,8 @@ specified mime type.  If no data has been attached with the given
 mime type, <em class="parameter"><code>data</code></em>
  is set <code class="literal">NULL</code>.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.29.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-get-mime-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1574,7 +1559,7 @@ mime type, <em class="parameter"><code>data</code></em>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.10</p>
+<p class="since">Since: 1.10</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1586,8 +1571,8 @@ cairo_surface_supports_mime_type (<em class="parameter"><code><a class="link" hr
  supports <em class="parameter"><code>mime_type</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.30.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-supports-mime-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1608,14 +1593,13 @@ cairo_surface_supports_mime_type (<em class="parameter"><code><a class="link" hr
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.30.6"></a><h4>Returns</h4>
+<a name="cairo-surface-supports-mime-type.returns"></a><h4>Returns</h4>
 <p> <code class="literal">TRUE</code> if <em class="parameter"><code>surface</code></em>
 supports
 <em class="parameter"><code>mime_type</code></em>
 , <code class="literal">FALSE</code> otherwise</p>
-<p></p>
 </div>
-<p class="since">Since 1.12</p>
+<p class="since">Since: 1.12</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1636,8 +1620,8 @@ surface or of <em class="parameter"><code>surface</code></em>
  before the image surface is unmapped results
 in undefined behavior.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.31.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-map-to-image.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1658,7 +1642,7 @@ in undefined behavior.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.3.7.31.7"></a><h4>Returns</h4>
+<a name="cairo-surface-map-to-image.returns"></a><h4>Returns</h4>
 <p> a pointer to the newly allocated image surface. The caller
 must use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-unmap-image" title="cairo_surface_unmap_image ()"><code class="function">cairo_surface_unmap_image()</code></a> to destroy this image surface.</p>
 <p>This function always returns a valid pointer, but it will return a
@@ -1667,9 +1651,8 @@ is already in an error state
 or any other error occurs. If the returned pointer does not have an
 error status, it is guaranteed to be an image surface whose format
 is not <a class="link" href="cairo-Image-Surfaces.html#CAIRO-FORMAT-INVALID:CAPS"><code class="literal">CAIRO_FORMAT_INVALID</code></a>.</p>
-<p></p>
 </div>
-<p class="since">Since 1.12</p>
+<p class="since">Since: 1.12</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1683,8 +1666,8 @@ Afterwards, the image is destroyed.</p>
 <p>Using an image surface which wasn't returned by <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-map-to-image" title="cairo_surface_map_to_image ()"><code class="function">cairo_surface_map_to_image()</code></a>
 results in undefined behavior.</p>
 <div class="refsect3">
-<a name="id-1.5.3.7.32.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-unmap-image.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1704,7 +1687,7 @@ results in undefined behavior.</p>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.12</p>
+<p class="since">Since: 1.12</p>
 </div>
 </div>
 <div class="refsect1">
@@ -1722,7 +1705,7 @@ results in undefined behavior.</p>
 <pre class="programlisting">#define CAIRO_MIME_TYPE_JBIG2 "application/x-cairo.jbig2"
 </pre>
 <p>Joint Bi-level Image Experts Group image coding standard (ISO/IEC 11544).</p>
-<p class="since">Since 1.14</p>
+<p class="since">Since: 1.14</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1730,7 +1713,7 @@ results in undefined behavior.</p>
 <pre class="programlisting">#define CAIRO_MIME_TYPE_JBIG2_GLOBAL "application/x-cairo.jbig2-global"
 </pre>
 <p>Joint Bi-level Image Experts Group image coding standard (ISO/IEC 11544) global segment.</p>
-<p class="since">Since 1.14</p>
+<p class="since">Since: 1.14</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1739,7 +1722,7 @@ results in undefined behavior.</p>
 </pre>
 <p>An unique identifier shared by a JBIG2 global segment and all JBIG2 images
 that depend on the global segment.</p>
-<p class="since">Since 1.14</p>
+<p class="since">Since: 1.14</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1747,7 +1730,7 @@ that depend on the global segment.</p>
 <pre class="programlisting">#define CAIRO_MIME_TYPE_JP2 "image/jp2"
 </pre>
 <p>The Joint Photographic Experts Group (JPEG) 2000 image coding standard (ISO/IEC 15444-1).</p>
-<p class="since">Since 1.10</p>
+<p class="since">Since: 1.10</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1755,7 +1738,7 @@ that depend on the global segment.</p>
 <pre class="programlisting">#define CAIRO_MIME_TYPE_JPEG "image/jpeg"
 </pre>
 <p>The Joint Photographic Experts Group (JPEG) image coding standard (ISO/IEC 10918-1).</p>
-<p class="since">Since 1.10</p>
+<p class="since">Since: 1.10</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1763,7 +1746,7 @@ that depend on the global segment.</p>
 <pre class="programlisting">#define CAIRO_MIME_TYPE_PNG "image/png"
 </pre>
 <p>The Portable Network Graphics image file format (ISO/IEC 15948).</p>
-<p class="since">Since 1.10</p>
+<p class="since">Since: 1.10</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1771,7 +1754,7 @@ that depend on the global segment.</p>
 <pre class="programlisting">#define CAIRO_MIME_TYPE_URI "text/x-uri"
 </pre>
 <p>URI for an image file (unofficial MIME type).</p>
-<p class="since">Since 1.10</p>
+<p class="since">Since: 1.10</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1780,7 +1763,7 @@ that depend on the global segment.</p>
 </pre>
 <p>Unique identifier for a surface (cairo specific MIME type). All surfaces with
 the same unique identifier will only be embedded once.</p>
-<p class="since">Since 1.12</p>
+<p class="since">Since: 1.12</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1805,7 +1788,7 @@ not modified; for example, <a class="link" href="cairo-Image-Surfaces.html#cairo
 <a class="link" href="cairo-XLib-Surfaces.html#cairo-xlib-surface-create" title="cairo_xlib_surface_create ()"><code class="function">cairo_xlib_surface_create()</code></a>.</p>
 <p>Memory management of <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> is done with
 <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-reference" title="cairo_surface_reference ()"><code class="function">cairo_surface_reference()</code></a> and <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-destroy" title="cairo_surface_destroy ()"><code class="function">cairo_surface_destroy()</code></a>.</p>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1817,8 +1800,8 @@ vs. opacity), or both.</p>
 values distinct from <a class="link" href="cairo-Image-Surfaces.html#cairo-format-t" title="enum cairo_format_t"><span class="type">cairo_format_t</span></a> values so that the
 implementation can detect the error if users confuse the two types.</p>
 <div class="refsect3">
-<a name="id-1.5.3.8.12.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-content-t.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -1849,7 +1832,7 @@ implementation can detect the error if users confuse the two types.</p>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1871,8 +1854,8 @@ type. These functions have names that begin with
 the wrong type is undefined.</p>
 <p>New entries may be added in future versions.</p>
 <div class="refsect3">
-<a name="id-1.5.3.8.13.9"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-surface-type-t.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -2058,7 +2041,7 @@ the wrong type is undefined.</p>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.2</p>
+<p class="since">Since: 1.2</p>
 </div>
 </div>
 <div class="refsect1">
@@ -2067,7 +2050,6 @@ the wrong type is undefined.</p>
 </div>
 </div>
 <div class="footer">
-<hr>
-          Generated by GTK-Doc V1.20</div>
+<hr>Generated by GTK-Doc V1.25</div>
 </body>
 </html>

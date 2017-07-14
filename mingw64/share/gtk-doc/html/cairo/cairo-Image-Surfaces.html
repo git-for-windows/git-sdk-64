@@ -2,21 +2,20 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Cairo: A Vector Graphics Library: Image Surfaces</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<title>Image Surfaces: Cairo: A Vector Graphics Library</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
 <link rel="home" href="index.html" title="Cairo: A Vector Graphics Library">
 <link rel="up" href="cairo-surfaces.html" title="Surfaces">
 <link rel="prev" href="cairo-cairo-surface-t.html" title="cairo_surface_t">
 <link rel="next" href="cairo-PDF-Surfaces.html" title="PDF Surfaces">
-<meta name="generator" content="GTK-Doc V1.20 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="10"><tr valign="middle">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
 <td width="100%" align="left" class="shortcuts">
-<a href="#" class="shortcut">Top</a><span id="nav_description"> <span class="dim">|</span> 
-                  <a href="#cairo-Image-Surfaces.description" class="shortcut">Description</a></span><span id="nav_hierarchy"> <span class="dim">|</span> 
-                  <a href="#cairo-Image-Surfaces.object-hierarchy" class="shortcut">Object Hierarchy</a></span>
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#cairo-Image-Surfaces.description" class="shortcut">Description</a></span>
 </td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
 <td><a accesskey="u" href="cairo-surfaces.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
@@ -34,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="cairo-Image-Surfaces.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -108,7 +107,7 @@
 </div>
 <div class="refsect1">
 <a name="cairo-Image-Surfaces.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -124,11 +123,6 @@
 </tr>
 </tbody>
 </table></div>
-</div>
-<div class="refsect1">
-<a name="cairo-Image-Surfaces.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">
-</pre>
 </div>
 <div class="refsect1">
 <a name="cairo-Image-Surfaces.description"></a><h2>Description</h2>
@@ -158,8 +152,8 @@ surface = cairo_image_surface_create_for_data (data, format,
 					  stride);
 </pre></div>
 <div class="refsect3">
-<a name="id-1.5.4.7.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-format-stride-for-width.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -180,13 +174,12 @@ surface = cairo_image_surface_create_for_data (data, format,
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.4.7.2.7"></a><h4>Returns</h4>
+<a name="cairo-format-stride-for-width.returns"></a><h4>Returns</h4>
 <p> the appropriate stride to use given the desired
 format and width, or -1 if either the format is invalid or the width
 too large.</p>
-<p></p>
 </div>
-<p class="since">Since 1.6</p>
+<p class="since">Since: 1.6</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -201,8 +194,8 @@ dimensions. Initially the surface contents are all</p>
 belonging to format will be 0. The contents of bits within a pixel,
 but not belonging to the given format are undefined).</p></li></ol></div>
 <div class="refsect3">
-<a name="id-1.5.4.7.3.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-image-surface-create.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -228,16 +221,15 @@ but not belonging to the given format are undefined).</p></li></ol></div>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.4.7.3.7"></a><h4>Returns</h4>
+<a name="cairo-image-surface-create.returns"></a><h4>Returns</h4>
 <p> a pointer to the newly created surface. The caller
 owns the surface and should call <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-destroy" title="cairo_surface_destroy ()"><code class="function">cairo_surface_destroy()</code></a> when done
 with it.</p>
 <p>This function always returns a valid pointer, but it will return a
 pointer to a "nil" surface if an error such as out of memory
 occurs. You can use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-status" title="cairo_surface_status ()"><code class="function">cairo_surface_status()</code></a> to check for this.</p>
-<p></p>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -264,8 +256,8 @@ maximum image width value, and then use the resulting stride value
 to allocate the data and to create the image surface. See
 <a class="link" href="cairo-Image-Surfaces.html#cairo-format-stride-for-width" title="cairo_format_stride_for_width ()"><code class="function">cairo_format_stride_for_width()</code></a> for example code.</p>
 <div class="refsect3">
-<a name="id-1.5.4.7.4.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-image-surface-create-for-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -306,7 +298,7 @@ buffer.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.4.7.4.7"></a><h4>Returns</h4>
+<a name="cairo-image-surface-create-for-data.returns"></a><h4>Returns</h4>
 <p> a pointer to the newly created surface. The caller
 owns the surface and should call <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-destroy" title="cairo_surface_destroy ()"><code class="function">cairo_surface_destroy()</code></a> when done
 with it.</p>
@@ -318,9 +310,8 @@ the error status of the returned surface will be
 <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-status" title="cairo_surface_status ()"><code class="function">cairo_surface_status()</code></a> to check for this.</p>
 <p>See <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-set-user-data" title="cairo_surface_set_user_data ()"><code class="function">cairo_surface_set_user_data()</code></a> for a means of attaching a
 destroy-notification fallback to the surface if necessary.</p>
-<p></p>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -334,8 +325,8 @@ pixel data to ensure that all pending drawing operations are
 finished. A call to <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-mark-dirty" title="cairo_surface_mark_dirty ()"><code class="function">cairo_surface_mark_dirty()</code></a> is required after
 the data is modified.</p>
 <div class="refsect3">
-<a name="id-1.5.4.7.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-image-surface-get-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -349,14 +340,13 @@ the data is modified.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.4.7.5.7"></a><h4>Returns</h4>
+<a name="cairo-image-surface-get-data.returns"></a><h4>Returns</h4>
 <p> a pointer to the image data of this surface or <code class="literal">NULL</code>
 if <em class="parameter"><code>surface</code></em>
 is not an image surface, or if <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-finish" title="cairo_surface_finish ()"><code class="function">cairo_surface_finish()</code></a>
 has been called.</p>
-<p></p>
 </div>
-<p class="since">Since 1.2</p>
+<p class="since">Since: 1.2</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -365,8 +355,8 @@ has been called.</p>
 cairo_image_surface_get_format (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>);</pre>
 <p>Get the format of the surface.</p>
 <div class="refsect3">
-<a name="id-1.5.4.7.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-image-surface-get-format.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -380,11 +370,10 @@ cairo_image_surface_get_format (<em class="parameter"><code><a class="link" href
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.4.7.6.6"></a><h4>Returns</h4>
+<a name="cairo-image-surface-get-format.returns"></a><h4>Returns</h4>
 <p> the format of the surface</p>
-<p></p>
 </div>
-<p class="since">Since 1.2</p>
+<p class="since">Since: 1.2</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -393,8 +382,8 @@ cairo_image_surface_get_format (<em class="parameter"><code><a class="link" href
 cairo_image_surface_get_width (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>);</pre>
 <p>Get the width of the image surface in pixels.</p>
 <div class="refsect3">
-<a name="id-1.5.4.7.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-image-surface-get-width.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -408,11 +397,10 @@ cairo_image_surface_get_width (<em class="parameter"><code><a class="link" href=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.4.7.7.6"></a><h4>Returns</h4>
+<a name="cairo-image-surface-get-width.returns"></a><h4>Returns</h4>
 <p> the width of the surface in pixels.</p>
-<p></p>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -421,8 +409,8 @@ cairo_image_surface_get_width (<em class="parameter"><code><a class="link" href=
 cairo_image_surface_get_height (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>);</pre>
 <p>Get the height of the image surface in pixels.</p>
 <div class="refsect3">
-<a name="id-1.5.4.7.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-image-surface-get-height.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -436,11 +424,10 @@ cairo_image_surface_get_height (<em class="parameter"><code><a class="link" href
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.4.7.8.6"></a><h4>Returns</h4>
+<a name="cairo-image-surface-get-height.returns"></a><h4>Returns</h4>
 <p> the height of the surface in pixels.</p>
-<p></p>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -449,8 +436,8 @@ cairo_image_surface_get_height (<em class="parameter"><code><a class="link" href
 cairo_image_surface_get_stride (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>);</pre>
 <p>Get the stride of the image surface in bytes</p>
 <div class="refsect3">
-<a name="id-1.5.4.7.9.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-image-surface-get-stride.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -464,15 +451,14 @@ cairo_image_surface_get_stride (<em class="parameter"><code><a class="link" href
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.5.4.7.9.6"></a><h4>Returns</h4>
+<a name="cairo-image-surface-get-stride.returns"></a><h4>Returns</h4>
 <p> the stride of the image surface in bytes (or 0 if
 <em class="parameter"><code>surface</code></em>
 is not an image surface). The stride is the distance in
 bytes from the beginning of one row of the image data to the
 beginning of the next row.</p>
-<p></p>
 </div>
-<p class="since">Since 1.2</p>
+<p class="since">Since: 1.2</p>
 </div>
 </div>
 <div class="refsect1">
@@ -484,7 +470,7 @@ beginning of the next row.</p>
 <p>Defined if the image surface backend is available.
 The image surface backend is always built in.
 This macro was added for completeness in cairo 1.8.</p>
-<p class="since">Since 1.8</p>
+<p class="since">Since: 1.8</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -493,8 +479,8 @@ This macro was added for completeness in cairo 1.8.</p>
 image data.</p>
 <p>New entries may be added in future versions.</p>
 <div class="refsect3">
-<a name="id-1.5.4.8.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="cairo-format-t.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -567,7 +553,7 @@ image data.</p>
 </tbody>
 </table></div>
 </div>
-<p class="since">Since 1.0</p>
+<p class="since">Since: 1.0</p>
 </div>
 </div>
 <div class="refsect1">
@@ -576,7 +562,6 @@ image data.</p>
 </div>
 </div>
 <div class="footer">
-<hr>
-          Generated by GTK-Doc V1.20</div>
+<hr>Generated by GTK-Doc V1.25</div>
 </body>
 </html>
