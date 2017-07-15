@@ -1250,7 +1250,7 @@ create_package() {
 	# bsdtar's gzip compression always saves the time stamp, making one
 	# archive created using the same command line distinct from another.
 	# Disable bsdtar compression and use gzip -n for now.
-	LANG=C bsdtar -cf - "${comp_files[@]}" * |
+	LANG=C bsdtar --no-xattrs -cf - "${comp_files[@]}" * |
 	case "$PKGEXT" in
 		*tar.gz)  ${COMPRESSGZ[@]:-gzip -c -f -n} ;;
 		*tar.bz2) ${COMPRESSBZ2[@]:-bzip2 -c -f} ;;
