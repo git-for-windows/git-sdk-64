@@ -4,5 +4,6 @@ Extensions.register do
   if document.basebackend? 'html'
     block_macro ChartBlockMacro
     block ChartBlockProcessor
+    docinfo_processor ChartAssetsDocinfoProcessor
   end
 end

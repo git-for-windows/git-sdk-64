@@ -555,6 +555,12 @@ your Perl&#8217;s Getopt::Long is &lt; v2.37).
 </table>
 </div>
 </dd>
+<dt class="hdlist1">--ignore-refs=&lt;regex&gt;</dt>
+<dd>
+<p>When passed to <em>init</em> or <em>clone</em> this regular expression will
+be preserved as a config key.  See <em>fetch</em> for a description
+of <code>--ignore-refs</code>.</p>
+</dd>
 <dt class="hdlist1">--ignore-paths=&lt;regex&gt;</dt>
 <dd>
 <p>When passed to <em>init</em> or <em>clone</em> this regular expression will
@@ -611,6 +617,20 @@ the same local time zone.</p>
 <dt class="hdlist1">--parent</dt>
 <dd>
 <p>Fetch only from the SVN parent of the current HEAD.</p>
+</dd>
+<dt class="hdlist1">--ignore-refs=&lt;regex&gt;</dt>
+<dd>
+<p>Ignore refs for branches or tags matching the Perl regular
+expression. A "negative look-ahead assertion" like
+<code>^refs/remotes/origin/(?!tags/wanted-tag|wanted-branch).*$</code>
+can be used to allow only certain refs.</p>
+<div class="verseblock">
+<pre class="content">config key: svn-remote.&lt;name&gt;.ignore-refs</pre>
+</div>
+<div class="paragraph">
+<p>If the ignore-refs configuration key is set, and the command-line
+option is also given, both regular expressions will be used.</p>
+</div>
 </dd>
 <dt class="hdlist1">--ignore-paths=&lt;regex&gt;</dt>
 <dd>
@@ -1039,6 +1059,28 @@ URL of the target Subversion repository.  The final argument
 (URL) may be omitted if you are working from a <em>git svn</em>-aware
 repository (that has been <code>init</code>-ed with <em>git svn</em>).
 The -r&lt;revision&gt; option is required for this.</p>
+<div class="paragraph">
+<p>The commit message is supplied either directly with the <code>-m</code> or <code>-F</code>
+option, or indirectly from the tag or commit when the second tree-ish
+denotes such an object, or it is requested by invoking an editor (see
+<code>--edit</code> option below).</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">-m &lt;msg&gt;</dt>
+<dt class="hdlist1">--message=&lt;msg&gt;</dt>
+<dd>
+<p>Use the given <code>msg</code> as the commit message. This option
+disables the <code>--edit</code> option.</p>
+</dd>
+<dt class="hdlist1">-F &lt;filename&gt;</dt>
+<dt class="hdlist1">--file=&lt;filename&gt;</dt>
+<dd>
+<p>Take the commit message from the given file. This option
+disables the <code>--edit</code> option.</p>
+</dd>
+</dl>
+</div>
 </dd>
 <dt class="hdlist1"><em>info</em></dt>
 <dd>
@@ -1907,7 +1949,7 @@ rewinds it.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-13 09:57:31 W. Europe Daylight Time
+Last updated 2017-08-07 11:58:00 W. Europe Daylight Time
 </div>
 </div>
 </body>

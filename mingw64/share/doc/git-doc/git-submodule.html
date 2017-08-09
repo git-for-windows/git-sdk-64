@@ -450,40 +450,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Inspects, updates and manages submodules.</p>
 </div>
 <div class="paragraph">
-<p>A submodule allows you to keep another Git repository in a subdirectory
-of your repository. The other repository has its own history, which does not
-interfere with the history of the current repository. This can be used to
-have external dependencies such as third party libraries for example.</p>
-</div>
-<div class="paragraph">
-<p>When cloning or pulling a repository containing submodules however,
-these will not be checked out by default; the <em>init</em> and <em>update</em>
-subcommands will maintain submodules checked out and at
-appropriate revision in your working tree.</p>
-</div>
-<div class="paragraph">
-<p>Submodules are composed from a so-called <code>gitlink</code> tree entry
-in the main repository that refers to a particular commit object
-within the inner repository that is completely separate.
-A record in the <code>.gitmodules</code> (see <a href="gitmodules.html">gitmodules</a>(5)) file at the
-root of the source tree assigns a logical name to the submodule and
-describes the default URL the submodule shall be cloned from.
-The logical name can be used for overriding this URL within your
-local repository configuration (see <em>submodule init</em>).</p>
-</div>
-<div class="paragraph">
-<p>Submodules are not to be confused with remotes, which are other
-repositories of the same project; submodules are meant for
-different projects you would like to make part of your source tree,
-while the history of the two projects still stays completely
-independent and you cannot modify the contents of the submodule
-from within the main project.
-If you want to merge the project histories and want to treat the
-aggregated whole as a single project from then on, you may want to
-add a remote for the other project and use the <em>subtree</em> merge strategy,
-instead of treating the other project as a submodule. Directories
-that come from both projects can be cloned and checked out as a whole
-if you choose to go that route.</p>
+<p>For more information about submodules, see <a href="gitsubmodules.html">gitsubmodules</a>(7).</p>
 </div>
 </div>
 </div>
@@ -497,15 +464,6 @@ if you choose to go that route.</p>
 <p>Add the given repository as a submodule at the given path
 to the changeset to be committed next to the current
 project: the current project is termed the "superproject".</p>
-<div class="paragraph">
-<p>This requires at least one argument: &lt;repository&gt;. The optional
-argument &lt;path&gt; is the relative location for the cloned submodule
-to exist in the superproject. If &lt;path&gt; is not given, the
-"humanish" part of the source repository is used ("repo" for
-"/path/to/repo.git" and "foo" for "host.xz:foo/.git").
-The &lt;path&gt; is also used as the submodule&#8217;s logical name in its
-configuration entries unless <code>--name</code> is used to specify a logical name.</p>
-</div>
 <div class="paragraph">
 <p>&lt;repository&gt; is the URL of the new submodule&#8217;s origin repository.
 This may be either an absolute URL, or (if it begins with ./
@@ -525,22 +483,23 @@ the superproject is its own authoritative upstream and the current
 working directory is used instead.</p>
 </div>
 <div class="paragraph">
-<p>&lt;path&gt; is the relative location for the cloned submodule to
-exist in the superproject. If &lt;path&gt; does not exist, then the
-submodule is created by cloning from the named URL. If &lt;path&gt; does
-exist and is already a valid Git repository, then this is added
-to the changeset without cloning. This second form is provided
-to ease creating a new submodule from scratch, and presumes
-the user will later push the submodule to the given URL.</p>
+<p>The optional argument &lt;path&gt; is the relative location for the cloned
+submodule to exist in the superproject. If &lt;path&gt; is not given, the
+canonical part of the source repository is used ("repo" for
+"/path/to/repo.git" and "foo" for "host.xz:foo/.git"). If &lt;path&gt;
+exists and is already a valid Git repository, then it is staged
+for commit without cloning. The &lt;path&gt; is also used as the submodule&#8217;s
+logical name in its configuration entries unless <code>--name</code> is used
+to specify a logical name.</p>
 </div>
 <div class="paragraph">
-<p>In either case, the given URL is recorded into .gitmodules for
-use by subsequent users cloning the superproject. If the URL is
-given relative to the superproject&#8217;s repository, the presumption
-is the superproject and submodule repositories will be kept
-together in the same relative location, and only the
-superproject&#8217;s URL needs to be provided: git-submodule will correctly
-locate the submodule using the relative URL in .gitmodules.</p>
+<p>The given URL is recorded into <code>.gitmodules</code> for use by subsequent users
+cloning the superproject. If the URL is given relative to the
+superproject&#8217;s repository, the presumption is the superproject and
+submodule repositories will be kept together in the same relative
+location, and only the superproject&#8217;s URL needs to be provided.
+git-submodule will correctly locate the submodule using the relative
+URL in <code>.gitmodules</code>.</p>
 </div>
 </dd>
 <dt class="hdlist1">status [--cached] [--recursive] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
@@ -567,7 +526,7 @@ too (and can also report changes to a submodule&#8217;s work tree).</p>
 <dd>
 <p>Initialize the submodules recorded in the index (which were
 added and committed elsewhere) by setting <code>submodule.$name.url</code>
-in .git/config. It uses the same setting from .gitmodules as
+in .git/config. It uses the same setting from <code>.gitmodules</code> as
 a template. If the URL is relative, it will be resolved using
 the default remote. If there is no default remote, the current
 repository will be assumed to be upstream.</p>
@@ -587,7 +546,7 @@ the explicit <em>init</em> step if you do not intend to customize
 any submodule locations.</p>
 </div>
 <div class="paragraph">
-<p>See the add subcommand for the defintion of default remote.</p>
+<p>See the add subcommand for the definition of default remote.</p>
 </div>
 </dd>
 <dt class="hdlist1">deinit [-f|--force] (--all|[--] &lt;path&gt;&#8230;&#8203;)</dt>
@@ -597,9 +556,7 @@ any submodule locations.</p>
 tree. Further calls to <code>git submodule update</code>, <code>git submodule foreach</code>
 and <code>git submodule sync</code> will skip any unregistered submodules until
 they are initialized again, so use this command if you don&#8217;t want to
-have a local checkout of the submodule in your working tree anymore. If
-you really want to remove a submodule from the repository and commit
-that use <a href="git-rm.html">git-rm</a>(1) instead.</p>
+have a local checkout of the submodule in your working tree anymore.</p>
 <div class="paragraph">
 <p>When the command is run without pathspec, it errors out,
 instead of deinit-ing everything, to prevent mistakes.</p>
@@ -607,6 +564,11 @@ instead of deinit-ing everything, to prevent mistakes.</p>
 <div class="paragraph">
 <p>If <code>--force</code> is specified, the submodule&#8217;s working tree will
 be removed even if it contains local modifications.</p>
+</div>
+<div class="paragraph">
+<p>If you really want to remove a submodule from the repository and commit
+that use <a href="git-rm.html">git-rm</a>(1) instead. See <a href="gitsubmodules.html">gitsubmodules</a>(7) for removal
+options.</p>
 </div>
 </dd>
 <dt class="hdlist1">update [--init] [--remote] [-N|--no-fetch] [--[no-]recommend-shallow] [-f|--force] [--checkout|--rebase|--merge] [--reference &lt;repository&gt;] [--depth &lt;depth&gt;] [--recursive] [--jobs &lt;n&gt;] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
@@ -670,7 +632,7 @@ is the custom command.</p>
 </div>
 <div class="paragraph">
 <p>If the submodule is not yet initialized, and you just want to use the
-setting as stored in .gitmodules, you can automatically initialize the
+setting as stored in <code>.gitmodules</code>, you can automatically initialize the
 submodule with the <code>--init</code> option.</p>
 </div>
 <div class="paragraph">
@@ -700,7 +662,7 @@ information too.</p>
 <p>Evaluates an arbitrary shell command in each checked out submodule.
 The command has access to the variables $name, $path, $sha1 and
 $toplevel:
-$name is the name of the relevant submodule section in .gitmodules,
+$name is the name of the relevant submodule section in <code>.gitmodules</code>,
 $path is the name of the submodule directory relative to the
 superproject, $sha1 is the commit as recorded in the superproject,
 and $toplevel is the absolute path to the top-level of the superproject.
@@ -725,7 +687,7 @@ checked out commit for each submodule:</p>
 <dt class="hdlist1">sync [--recursive] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>Synchronizes submodules' remote URL configuration setting
-to the value specified in .gitmodules. It will only affect those
+to the value specified in <code>.gitmodules</code>. It will only affect those
 submodules which already have a URL entry in .git/config (that is the
 case when they are initialized or freshly added). This is useful when
 submodule URLs change upstream and you need to update your local
@@ -930,7 +892,7 @@ See <a href="git-clone.html">git-clone</a>(1)</p>
 <dd>
 <p>This option is only valid for the update command.
 The initial clone of a submodule will use the recommended
-<code>submodule.&lt;name&gt;.shallow</code> as provided by the .gitmodules file
+<code>submodule.&lt;name&gt;.shallow</code> as provided by the <code>.gitmodules</code> file
 by default. To ignore the suggestions use <code>--no-recommend-shallow</code>.</p>
 </dd>
 <dt class="hdlist1">-j &lt;n&gt;</dt>
@@ -954,11 +916,19 @@ to only operate on the submodules found at the specified paths.
 <h2 id="_files">FILES</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When initializing submodules, a .gitmodules file in the top-level directory
+<p>When initializing submodules, a <code>.gitmodules</code> file in the top-level directory
 of the containing repository is used to find the url of each submodule.
 This file should be formatted in the same way as <code>$GIT_DIR/config</code>. The key
 to each submodule url is "submodule.$name.url".  See <a href="gitmodules.html">gitmodules</a>(5)
 for details.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_see_also">SEE ALSO</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="gitsubmodules.html">gitsubmodules</a>(7), <a href="gitmodules.html">gitmodules</a>(5).</p>
 </div>
 </div>
 </div>
@@ -973,7 +943,7 @@ for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-13 09:57:31 W. Europe Daylight Time
+Last updated 2017-08-07 11:58:00 W. Europe Daylight Time
 </div>
 </div>
 </body>

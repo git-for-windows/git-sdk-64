@@ -729,6 +729,23 @@ then authentication is not attempted.</p>
 commands and replies will be printed. Useful to debug TLS
 connection and authentication problems.</p>
 </dd>
+<dt class="hdlist1">--batch-size=&lt;num&gt;</dt>
+<dd>
+<p>Some email servers (e.g. smtp.163.com) limit the number emails to be
+sent per session (connection) and this will lead to a faliure when
+sending many messages.  With this option, send-email will disconnect after
+sending $&lt;num&gt; messages and wait for a few seconds (see --relogin-delay)
+and reconnect, to work around such a limit.  You may want to
+use some form of credential helper to avoid having to retype
+your password every time this happens.  Defaults to the
+<code>sendemail.smtpBatchSize</code> configuration variable.</p>
+</dd>
+<dt class="hdlist1">--relogin-delay=&lt;int&gt;</dt>
+<dd>
+<p>Waiting $&lt;int&gt; seconds before reconnecting to SMTP server. Used together
+with --batch-size option.  Defaults to the <code>sendemail.smtpReloginDelay</code>
+configuration variable.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -923,6 +940,9 @@ Currently, validation means the following:</p>
 <div class="ulist">
 <ul>
 <li>
+<p>Invoke the sendemail-validate hook if present (see <a href="githooks.html">githooks</a>(5)).</p>
+</li>
+<li>
 <p>Warn of patches that contain lines longer than 998 characters; this
 is due to SMTP limits as described by <a href="http://www.ietf.org/rfc/rfc2821.txt" class="bare">http://www.ietf.org/rfc/rfc2821.txt</a>.</p>
 </li>
@@ -1098,7 +1118,7 @@ $ git send-email outgoing/*</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-13 09:57:31 W. Europe Daylight Time
+Last updated 2017-08-07 11:58:00 W. Europe Daylight Time
 </div>
 </div>
 </body>

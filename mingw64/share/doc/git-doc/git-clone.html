@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	  [-l] [-s] [--no-hardlinks] [-q] [-n] [--bare] [--mirror]
 	  [-o &lt;name&gt;] [-b &lt;name&gt;] [-u &lt;upload-pack&gt;] [--reference &lt;repository&gt;]
 	  [--dissociate] [--separate-git-dir &lt;git dir&gt;]
-	  [--depth &lt;depth&gt;] [--[no-]single-branch]
+	  [--depth &lt;depth&gt;] [--[no-]single-branch] [--no-tags]
 	  [--recurse-submodules] [--[no-]shallow-submodules]
 	  [--jobs &lt;n&gt;] [--] &lt;repository&gt; [&lt;directory&gt;]</pre>
 </div>
@@ -670,6 +670,20 @@ remote-tracking branch for the branch this option was used for the
 initial cloning.  If the HEAD at the remote did not point at any
 branch when <code>--single-branch</code> clone was made, no remote-tracking
 branch is created.</p>
+</dd>
+<dt class="hdlist1">--no-tags</dt>
+<dd>
+<p>Don&#8217;t clone any tags, and set
+<code>remote.&lt;remote&gt;.tagOpt=--no-tags</code> in the config, ensuring
+that future <code>git pull</code> and <code>git fetch</code> operations won&#8217;t follow
+any tags. Subsequent explicit tag fetches will still work,
+(see <a href="git-fetch.html">git-fetch</a>(1)).</p>
+<div class="paragraph">
+<p>Can be used in conjunction with <code>--single-branch</code> to clone and
+maintain a branch with no references other than a single cloned
+branch. This is useful e.g. to maintain minimal clones of the default
+branch of some repository for search indexing.</p>
+</div>
 </dd>
 <dt class="hdlist1">--recurse-submodules[=&lt;pathspec]</dt>
 <dd>
@@ -938,7 +952,7 @@ $ cd my-linux</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-13 09:57:30 W. Europe Daylight Time
+Last updated 2017-08-07 11:58:00 W. Europe Daylight Time
 </div>
 </div>
 </body>

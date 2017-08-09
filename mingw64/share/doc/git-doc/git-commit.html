@@ -670,11 +670,14 @@ commentary and collapse consecutive empty lines.</p>
 </dd>
 <dt class="hdlist1">scissors</dt>
 <dd>
-<p>Same as <code>whitespace</code>, except that everything from (and
-including) the line
-"<code># ------------------------ &gt;8 ------------------------</code>"
-is truncated if the message is to be edited. "<code>#</code>" can be
-customized with core.commentChar.</p>
+<p>Same as <code>whitespace</code> except that everything from (and including)
+the line found below is truncated, if the message is to be edited.
+"<code>#</code>" can be customized with core.commentChar.</p>
+<div class="literalblock">
+<div class="content">
+<pre># ------------------------ &gt;8 ------------------------</pre>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">default</dt>
 <dd>
@@ -1088,12 +1091,12 @@ have i18n.commitencoding in <code>.git/config</code> file, like this:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[i18n]
-	commitencoding = ISO-8859-1</pre>
+	commitEncoding = ISO-8859-1</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Commit objects created with the above setting record the value
-of <code>i18n.commitencoding</code> in its <code>encoding</code> header.  This is to
+of <code>i18n.commitEncoding</code> in its <code>encoding</code> header.  This is to
 help other people who look at them later.  Lack of this header
 implies that the commit log message is encoded in UTF-8.</p>
 </div>
@@ -1103,16 +1106,16 @@ implies that the commit log message is encoded in UTF-8.</p>
 <code>encoding</code> header of a commit object, and try to re-code the
 log message into UTF-8 unless otherwise specified.  You can
 specify the desired output encoding with
-<code>i18n.logoutputencoding</code> in <code>.git/config</code> file, like this:</p>
+<code>i18n.logOutputEncoding</code> in <code>.git/config</code> file, like this:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[i18n]
-	logoutputencoding = ISO-8859-1</pre>
+	logOutputEncoding = ISO-8859-1</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>If you do not have this configuration variable, the value of
-<code>i18n.commitencoding</code> is used instead.</p>
+<code>i18n.commitEncoding</code> is used instead.</p>
 </div>
 </li>
 </ol>
@@ -1186,7 +1189,7 @@ overwritten by the next invocation of <code>git commit</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-13 09:57:30 W. Europe Daylight Time
+Last updated 2017-08-07 11:58:00 W. Europe Daylight Time
 </div>
 </div>
 </body>

@@ -2,7 +2,7 @@ RUBY_ENGINE == 'opal' ? (require 'emoji-inline-macro/extension') : (require_rela
 
 Asciidoctor::Extensions.register do
   if @document.basebackend? 'html'
-    inline_macro EmojiBlockMacro
+    inline_macro EmojiInlineMacro
     docinfo_processor EmojiAssetsDocinfoProcessor
   end
 end

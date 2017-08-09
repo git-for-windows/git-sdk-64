@@ -527,12 +527,14 @@ merging.</p>
 <dt class="hdlist1">--[no-]recurse-submodules[=yes|on-demand|no]</dt>
 <dd>
 <p>This option controls if new commits of all populated submodules should
-be fetched too (see <a href="git-config.html">git-config</a>(1) and <a href="gitmodules.html">gitmodules</a>(5)).
-That might be necessary to get the data needed for merging submodule
-commits, a feature Git learned in 1.7.3. Notice that the result of a
-merge will not be checked out in the submodule, "git submodule update"
-has to be called afterwards to bring the work tree up to date with the
-merge result.</p>
+be fetched and updated, too (see <a href="git-config.html">git-config</a>(1) and
+<a href="gitmodules.html">gitmodules</a>(5)).</p>
+<div class="paragraph">
+<p>If the checkout is done via rebase, local submodule commits are rebased as well.</p>
+</div>
+<div class="paragraph">
+<p>If the update is done via merge, the submodule conflicts are resolved and checked out.</p>
+</div>
 </dd>
 </dl>
 </div>
@@ -709,7 +711,7 @@ unless you have read <a href="git-rebase.html">git-rebase</a>(1) carefully.
 <dt class="hdlist1">--no-autostash</dt>
 <dd>
 <p>Before starting rebase, stash local modifications away (see
-<a href="git-stash.html">git-stash</a>(1)) if needed, and apply the stash when
+<a href="git-stash.html">git-stash</a>(1)) if needed, and apply the stash entry when
 done. <code>--no-autostash</code> is useful to override the <code>rebase.autoStash</code>
 configuration variable (see <a href="git-config.html">git-config</a>(1)).</p>
 <div class="paragraph">
@@ -1554,7 +1556,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-13 09:57:31 W. Europe Daylight Time
+Last updated 2017-08-07 11:58:00 W. Europe Daylight Time
 </div>
 </div>
 </body>

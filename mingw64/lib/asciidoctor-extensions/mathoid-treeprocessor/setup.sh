@@ -7,30 +7,36 @@ if [ $? != 0 ]; then
   exit 1
 fi
 
-if [ $(npm list phantomjs | grep -c phantomjs) == 0 ]; then
-  npm install phantomjs
+if [ $(npm list --parseable mathoid | grep -c mathoid) == 0 ]; then
+  npm install mathoid
 fi
 
-if [ ! -d mathoid ]; then
-  #git clone --recursive https://github.com/gwicke/mathoid
-  #git clone -b integration --recursive https://github.com/mojavelinux/mathoid
-  git clone --branch debian/0.2.4 --recursive https://git.wikimedia.org/git/mediawiki/services/mathoid.git
-fi
+#if [ ! -d mathoid ]; then
+#  git clone https://github.com/wikimedia/mathoid
+#  cd mathoid
+#  git tag 0.6.3 fe51562923a26cfefc34bbde1045976aef1ff632
+#  git co 0.6.3
+#  cd ..
+#fi
 
 # Make sure you can run the following command:
 #
-# cd mathoid
-# phantomjs main.js
+#  $ npm run mathoid
 #
-# Then visit the following URL in your browser:
+# or
 #
-# http://localhost:16000/?q=x^2&type=asciimath
+# ./node_modules/mathoid/server.js -c mathoid-config.yaml
 #
-# You should see x to the power of 2 rendered.
-# Press Ctrl+C when you are done.
+# Then curl the following URL
+#
+#  $ curl -d 'q=x^2&type=asciimath' localhost:10044/svg > test.svg
+#
+# You should see x to the power of 2 rendered when you visit test.svg in the browser.
+#
+# Press Ctrl+C when you are done testing.
 #
 # If you want to use the STIX-Web fonts to render the math,
-# add the following property to the MathJax configuration in mathoid/index.html:
+# add the following property to the MathJax configuration in node_modules/mathoid/app.js:
 #
 #   SVG: {
 #     font: 'STIX-Web'

@@ -20,10 +20,14 @@ class MathoidTreeprocessor < Extensions::Treeprocessor
           math_id = %(stem-#{::Digest::MD5.hexdigest math.content})
           alt_text = 'STEM equation'
         end
+        # FIXME mimic behavior of Ascidoctor Diagram when saving images
         image_target = %(#{math_id}.svg)
         image_file = math.normalize_system_path image_target, (math.document.attr 'imagesdir')
         mathoid.convert_to_file image_file, equation_data, equation_type
         attrs = { 'target' => image_target, 'alt' => alt_text }
+        ['align', 'width', 'pdfwidth'].each do |attr_name|
+          attrs[attr_name] = math.attr attr_name if math.attr? attr_name
+        end
         parent = math.parent
         image = Block.new parent, :image, attributes: attrs
         parent.blocks[parent.blocks.index(math)] = image
