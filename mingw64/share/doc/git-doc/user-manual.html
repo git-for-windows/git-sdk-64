@@ -1,16 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Git User Manual</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="en" class="book"><div class="titlepage"><div><div><h1 class="title"><a name="idp6464589600"></a>Git User Manual</h1></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="preface"><a href="#idp6463498016"></a></span></dt><dt><span class="part"><a href="#repositories-and-branches">I. Repositories and Branches</a></span></dt><dd><dl><dt><span class="chapter"><a href="#how-to-get-a-git-repository">1. How to get a Git repository</a></span></dt><dt><span class="chapter"><a href="#how-to-check-out">2. How to check out a different version of a project</a></span></dt><dt><span class="chapter"><a href="#understanding-commits">3. Understanding History: Commits</a></span></dt><dd><dl><dt><span class="section"><a href="#understanding-reachability">Understanding history: commits, parents, and reachability</a></span></dt><dt><span class="section"><a href="#history-diagrams">Understanding history: History diagrams</a></span></dt><dt><span class="section"><a href="#what-is-a-branch">Understanding history: What is a branch?</a></span></dt></dl></dd><dt><span class="chapter"><a href="#manipulating-branches">4. Manipulating branches</a></span></dt><dt><span class="chapter"><a href="#detached-head">5. Examining an old version without creating a new branch</a></span></dt><dt><span class="chapter"><a href="#examining-remote-branches">6. Examining branches from a remote repository</a></span></dt><dt><span class="chapter"><a href="#how-git-stores-references">7. Naming branches, tags, and other references</a></span></dt><dt><span class="chapter"><a href="#Updating-a-repository-With-git-fetch">8. Updating a repository with git fetch</a></span></dt><dt><span class="chapter"><a href="#fetching-branches">9. Fetching branches from other repositories</a></span></dt></dl></dd><dt><span class="part"><a href="#exploring-git-history">II. Exploring Git history</a></span></dt><dd><dl><dt><span class="chapter"><a href="#using-bisect">10. How to use bisect to find a regression</a></span></dt><dt><span class="chapter"><a href="#naming-commits">11. Naming commits</a></span></dt><dt><span class="chapter"><a href="#creating-tags">12. Creating tags</a></span></dt><dt><span class="chapter"><a href="#browsing-revisions">13. Browsing revisions</a></span></dt><dt><span class="chapter"><a href="#generating-diffs">14. Generating diffs</a></span></dt><dt><span class="chapter"><a href="#viewing-old-file-versions">15. Viewing old file versions</a></span></dt><dt><span class="chapter"><a href="#history-examples">16. Examples</a></span></dt><dd><dl><dt><span class="section"><a href="#counting-commits-on-a-branch">Counting the number of commits on a branch</a></span></dt><dt><span class="section"><a href="#checking-for-equal-branches">Check whether two branches point at the same history</a></span></dt><dt><span class="section"><a href="#finding-tagged-descendants">Find first tagged version including a given fix</a></span></dt><dt><span class="section"><a href="#showing-commits-unique-to-a-branch">Showing commits unique to a given branch</a></span></dt><dt><span class="section"><a href="#making-a-release">Creating a changelog and tarball for a software release</a></span></dt><dt><span class="section"><a href="#Finding-commits-With-given-Content">Finding commits referencing a file with given content</a></span></dt></dl></dd></dl></dd><dt><span class="part"><a href="#Developing-With-git">III. Developing with Git</a></span></dt><dd><dl><dt><span class="chapter"><a href="#telling-git-your-name">17. Telling Git your name</a></span></dt><dt><span class="chapter"><a href="#creating-a-new-repository">18. Creating a new repository</a></span></dt><dt><span class="chapter"><a href="#how-to-make-a-commit">19. How to make a commit</a></span></dt><dt><span class="chapter"><a href="#creating-good-commit-messages">20. Creating good commit messages</a></span></dt><dt><span class="chapter"><a href="#ignoring-files">21. Ignoring files</a></span></dt><dt><span class="chapter"><a href="#how-to-merge">22. How to merge</a></span></dt><dt><span class="chapter"><a href="#resolving-a-merge">23. Resolving a merge</a></span></dt><dd><dl><dt><span class="section"><a href="#conflict-resolution">Getting conflict-resolution help during a merge</a></span></dt></dl></dd><dt><span class="chapter"><a href="#undoing-a-merge">24. Undoing a merge</a></span></dt><dt><span class="chapter"><a href="#fast-forwards">25. Fast-forward merges</a></span></dt><dt><span class="chapter"><a href="#fixing-mistakes">26. Fixing mistakes</a></span></dt><dd><dl><dt><span class="section"><a href="#reverting-a-commit">Fixing a mistake with a new commit</a></span></dt><dt><span class="section"><a href="#fixing-a-mistake-by-rewriting-history">Fixing a mistake by rewriting history</a></span></dt><dt><span class="section"><a href="#checkout-of-path">Checking out an old version of a file</a></span></dt><dt><span class="section"><a href="#interrupted-work">Temporarily setting aside work in progress</a></span></dt></dl></dd><dt><span class="chapter"><a href="#ensuring-good-performance">27. Ensuring good performance</a></span></dt><dt><span class="chapter"><a href="#ensuring-reliability">28. Ensuring reliability</a></span></dt><dd><dl><dt><span class="section"><a href="#checking-for-corruption">Checking the repository for corruption</a></span></dt><dt><span class="section"><a href="#recovering-lost-changes">Recovering lost changes</a></span></dt><dd><dl><dt><span class="section"><a href="#reflogs">Reflogs</a></span></dt><dt><span class="section"><a href="#dangling-object-recovery">Examining dangling objects</a></span></dt></dl></dd></dl></dd></dl></dd><dt><span class="part"><a href="#sharing-development">IV. Sharing development with others</a></span></dt><dd><dl><dt><span class="chapter"><a href="#getting-updates-With-git-pull">29. Getting updates with git pull</a></span></dt><dt><span class="chapter"><a href="#submitting-patches">30. Submitting patches to a project</a></span></dt><dt><span class="chapter"><a href="#importing-patches">31. Importing patches to a project</a></span></dt><dt><span class="chapter"><a href="#public-repositories">32. Public Git repositories</a></span></dt><dd><dl><dt><span class="section"><a href="#setting-up-a-public-repository">Setting up a public repository</a></span></dt><dt><span class="section"><a href="#exporting-via-git">Exporting a Git repository via the Git protocol</a></span></dt><dt><span class="section"><a href="#exporting-via-http">Exporting a git repository via HTTP</a></span></dt><dt><span class="section"><a href="#pushing-changes-to-a-public-repository">Pushing changes to a public repository</a></span></dt><dt><span class="section"><a href="#forcing-push">What to do when a push fails</a></span></dt><dt><span class="section"><a href="#setting-up-a-shared-repository">Setting up a shared repository</a></span></dt><dt><span class="section"><a href="#setting-up-gitweb">Allowing web browsing of a repository</a></span></dt></dl></dd><dt><span class="chapter"><a href="#how-to-get-a-git-repository-with-minimal-history">33. How to get a Git repository with minimal history</a></span></dt><dt><span class="chapter"><a href="#sharing-development-examples">34. Examples</a></span></dt><dd><dl><dt><span class="section"><a href="#maintaining-topic-branches">Maintaining topic branches for a Linux subsystem maintainer</a></span></dt></dl></dd></dl></dd><dt><span class="part"><a href="#cleaning-up-history">V. Rewriting history and maintaining patch series</a></span></dt><dd><dl><dt><span class="chapter"><a href="#patch-series">35. Creating the perfect patch series</a></span></dt><dt><span class="chapter"><a href="#using-git-rebase">36. Keeping a patch series up to date using git rebase</a></span></dt><dt><span class="chapter"><a href="#rewriting-one-commit">37. Rewriting a single commit</a></span></dt><dt><span class="chapter"><a href="#reordering-patch-series">38. Reordering or selecting from a patch series</a></span></dt><dt><span class="chapter"><a href="#interactive-rebase">39. Using interactive rebases</a></span></dt><dt><span class="chapter"><a href="#patch-series-tools">40. Other tools</a></span></dt><dt><span class="chapter"><a href="#problems-With-rewriting-history">41. Problems with rewriting history</a></span></dt><dt><span class="chapter"><a href="#bisect-merges">42. Why bisecting merge commits can be harder than bisecting linear history</a></span></dt></dl></dd><dt><span class="part"><a href="#advanced-branch-management">VI. Advanced branch management</a></span></dt><dd><dl><dt><span class="chapter"><a href="#fetching-individual-branches">43. Fetching individual branches</a></span></dt><dt><span class="chapter"><a href="#fetch-fast-forwards">44. git fetch and fast-forwards</a></span></dt><dt><span class="chapter"><a href="#forcing-fetch">45. Forcing git fetch to do non-fast-forward updates</a></span></dt><dt><span class="chapter"><a href="#remote-branch-configuration">46. Configuring remote-tracking branches</a></span></dt></dl></dd><dt><span class="part"><a href="#git-concepts">VII. Git concepts</a></span></dt><dd><dl><dt><span class="chapter"><a href="#the-object-database">47. The Object Database</a></span></dt><dd><dl><dt><span class="section"><a href="#commit-object">Commit Object</a></span></dt><dt><span class="section"><a href="#tree-object">Tree Object</a></span></dt><dt><span class="section"><a href="#blob-object">Blob Object</a></span></dt><dt><span class="section"><a href="#trust">Trust</a></span></dt><dt><span class="section"><a href="#tag-object">Tag Object</a></span></dt><dt><span class="section"><a href="#pack-files">How Git stores objects efficiently: pack files</a></span></dt><dt><span class="section"><a href="#dangling-objects">Dangling objects</a></span></dt><dt><span class="section"><a href="#recovering-from-repository-corruption">Recovering from repository corruption</a></span></dt></dl></dd><dt><span class="chapter"><a href="#the-index">48. The index</a></span></dt></dl></dd><dt><span class="part"><a href="#submodules">VIII. Submodules</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_pitfalls_with_submodules">49. Pitfalls with submodules</a></span></dt></dl></dd><dt><span class="part"><a href="#low-level-operations">IX. Low-level Git operations</a></span></dt><dd><dl><dt><span class="chapter"><a href="#object-manipulation">50. Object access and manipulation</a></span></dt><dt><span class="chapter"><a href="#the-workflow">51. The Workflow</a></span></dt><dd><dl><dt><span class="section"><a href="#working-directory-to-index">working directory → index</a></span></dt><dt><span class="section"><a href="#index-to-object-database">index → object database</a></span></dt><dt><span class="section"><a href="#object-database-to-index">object database → index</a></span></dt><dt><span class="section"><a href="#index-to-working-directory">index → working directory</a></span></dt><dt><span class="section"><a href="#tying-it-all-together">Tying it all together</a></span></dt></dl></dd><dt><span class="chapter"><a href="#examining-the-data">52. Examining the data</a></span></dt><dt><span class="chapter"><a href="#merging-multiple-trees">53. Merging multiple trees</a></span></dt><dt><span class="chapter"><a href="#merging-multiple-trees-2">54. Merging multiple trees, continued</a></span></dt></dl></dd><dt><span class="part"><a href="#hacking-git">X. Hacking Git</a></span></dt><dd><dl><dt><span class="chapter"><a href="#object-details">55. Object storage format</a></span></dt><dt><span class="chapter"><a href="#birdview-on-the-source-code">56. A birds-eye view of Git’s source code</a></span></dt></dl></dd><dt><span class="part"><a href="#glossary">XI. Git Glossary</a></span></dt><dd><dl><dt><span class="chapter"><a href="#git-explained">57. Git explained</a></span></dt></dl></dd><dt><span class="part"><a href="#git-quick-start">XII. Appendix A: Git Quick Reference</a></span></dt><dd><dl><dt><span class="chapter"><a href="#quick-creating-a-new-repository">58. Creating a new repository</a></span></dt><dt><span class="chapter"><a href="#managing-branches">59. Managing branches</a></span></dt><dt><span class="chapter"><a href="#exploring-history">60. Exploring history</a></span></dt><dt><span class="chapter"><a href="#making-changes">61. Making changes</a></span></dt><dt><span class="chapter"><a href="#merging">62. Merging</a></span></dt><dt><span class="chapter"><a href="#sharing-your-changes">63. Sharing your changes</a></span></dt><dt><span class="chapter"><a href="#repository-maintenance">64. Repository maintenance</a></span></dt></dl></dd><dt><span class="part"><a href="#todo">XIII. Appendix B: Notes and todo list for this manual</a></span></dt><dd><dl><dt><span class="chapter"><a href="#todo-list">65. Todo list</a></span></dt></dl></dd></dl></div><div class="preface"><div class="titlepage"><div><div><h1 class="title"><a name="idp6463498016"></a></h1></div></div></div><p>Git is a fast distributed revision control system.</p><p>This manual is designed to be readable by someone with basic UNIX
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Git User Manual</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="en" class="book"><div class="titlepage"><div><div><h1 class="title"><a name="idp6463844688"></a>Git User Manual</h1></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="preface"><a href="#idp6464654464"></a></span></dt><dt><span class="part"><a href="#repositories-and-branches">I. Repositories and Branches</a></span></dt><dd><dl><dt><span class="chapter"><a href="#how-to-get-a-git-repository">1. How to get a Git repository</a></span></dt><dt><span class="chapter"><a href="#how-to-check-out">2. How to check out a different version of a project</a></span></dt><dt><span class="chapter"><a href="#understanding-commits">3. Understanding History: Commits</a></span></dt><dd><dl><dt><span class="section"><a href="#understanding-reachability">Understanding history: commits, parents, and reachability</a></span></dt><dt><span class="section"><a href="#history-diagrams">Understanding history: History diagrams</a></span></dt><dt><span class="section"><a href="#what-is-a-branch">Understanding history: What is a branch?</a></span></dt></dl></dd><dt><span class="chapter"><a href="#manipulating-branches">4. Manipulating branches</a></span></dt><dt><span class="chapter"><a href="#detached-head">5. Examining an old version without creating a new branch</a></span></dt><dt><span class="chapter"><a href="#examining-remote-branches">6. Examining branches from a remote repository</a></span></dt><dt><span class="chapter"><a href="#how-git-stores-references">7. Naming branches, tags, and other references</a></span></dt><dt><span class="chapter"><a href="#Updating-a-repository-With-git-fetch">8. Updating a repository with git fetch</a></span></dt><dt><span class="chapter"><a href="#fetching-branches">9. Fetching branches from other repositories</a></span></dt></dl></dd><dt><span class="part"><a href="#exploring-git-history">II. Exploring Git history</a></span></dt><dd><dl><dt><span class="chapter"><a href="#using-bisect">10. How to use bisect to find a regression</a></span></dt><dt><span class="chapter"><a href="#naming-commits">11. Naming commits</a></span></dt><dt><span class="chapter"><a href="#creating-tags">12. Creating tags</a></span></dt><dt><span class="chapter"><a href="#browsing-revisions">13. Browsing revisions</a></span></dt><dt><span class="chapter"><a href="#generating-diffs">14. Generating diffs</a></span></dt><dt><span class="chapter"><a href="#viewing-old-file-versions">15. Viewing old file versions</a></span></dt><dt><span class="chapter"><a href="#history-examples">16. Examples</a></span></dt><dd><dl><dt><span class="section"><a href="#counting-commits-on-a-branch">Counting the number of commits on a branch</a></span></dt><dt><span class="section"><a href="#checking-for-equal-branches">Check whether two branches point at the same history</a></span></dt><dt><span class="section"><a href="#finding-tagged-descendants">Find first tagged version including a given fix</a></span></dt><dt><span class="section"><a href="#showing-commits-unique-to-a-branch">Showing commits unique to a given branch</a></span></dt><dt><span class="section"><a href="#making-a-release">Creating a changelog and tarball for a software release</a></span></dt><dt><span class="section"><a href="#Finding-commits-With-given-Content">Finding commits referencing a file with given content</a></span></dt></dl></dd></dl></dd><dt><span class="part"><a href="#Developing-With-git">III. Developing with Git</a></span></dt><dd><dl><dt><span class="chapter"><a href="#telling-git-your-name">17. Telling Git your name</a></span></dt><dt><span class="chapter"><a href="#creating-a-new-repository">18. Creating a new repository</a></span></dt><dt><span class="chapter"><a href="#how-to-make-a-commit">19. How to make a commit</a></span></dt><dt><span class="chapter"><a href="#creating-good-commit-messages">20. Creating good commit messages</a></span></dt><dt><span class="chapter"><a href="#ignoring-files">21. Ignoring files</a></span></dt><dt><span class="chapter"><a href="#how-to-merge">22. How to merge</a></span></dt><dt><span class="chapter"><a href="#resolving-a-merge">23. Resolving a merge</a></span></dt><dd><dl><dt><span class="section"><a href="#conflict-resolution">Getting conflict-resolution help during a merge</a></span></dt></dl></dd><dt><span class="chapter"><a href="#undoing-a-merge">24. Undoing a merge</a></span></dt><dt><span class="chapter"><a href="#fast-forwards">25. Fast-forward merges</a></span></dt><dt><span class="chapter"><a href="#fixing-mistakes">26. Fixing mistakes</a></span></dt><dd><dl><dt><span class="section"><a href="#reverting-a-commit">Fixing a mistake with a new commit</a></span></dt><dt><span class="section"><a href="#fixing-a-mistake-by-rewriting-history">Fixing a mistake by rewriting history</a></span></dt><dt><span class="section"><a href="#checkout-of-path">Checking out an old version of a file</a></span></dt><dt><span class="section"><a href="#interrupted-work">Temporarily setting aside work in progress</a></span></dt></dl></dd><dt><span class="chapter"><a href="#ensuring-good-performance">27. Ensuring good performance</a></span></dt><dt><span class="chapter"><a href="#ensuring-reliability">28. Ensuring reliability</a></span></dt><dd><dl><dt><span class="section"><a href="#checking-for-corruption">Checking the repository for corruption</a></span></dt><dt><span class="section"><a href="#recovering-lost-changes">Recovering lost changes</a></span></dt><dd><dl><dt><span class="section"><a href="#reflogs">Reflogs</a></span></dt><dt><span class="section"><a href="#dangling-object-recovery">Examining dangling objects</a></span></dt></dl></dd></dl></dd></dl></dd><dt><span class="part"><a href="#sharing-development">IV. Sharing development with others</a></span></dt><dd><dl><dt><span class="chapter"><a href="#getting-updates-With-git-pull">29. Getting updates with git pull</a></span></dt><dt><span class="chapter"><a href="#submitting-patches">30. Submitting patches to a project</a></span></dt><dt><span class="chapter"><a href="#importing-patches">31. Importing patches to a project</a></span></dt><dt><span class="chapter"><a href="#public-repositories">32. Public Git repositories</a></span></dt><dd><dl><dt><span class="section"><a href="#setting-up-a-public-repository">Setting up a public repository</a></span></dt><dt><span class="section"><a href="#exporting-via-git">Exporting a Git repository via the Git protocol</a></span></dt><dt><span class="section"><a href="#exporting-via-http">Exporting a git repository via HTTP</a></span></dt><dt><span class="section"><a href="#pushing-changes-to-a-public-repository">Pushing changes to a public repository</a></span></dt><dt><span class="section"><a href="#forcing-push">What to do when a push fails</a></span></dt><dt><span class="section"><a href="#setting-up-a-shared-repository">Setting up a shared repository</a></span></dt><dt><span class="section"><a href="#setting-up-gitweb">Allowing web browsing of a repository</a></span></dt></dl></dd><dt><span class="chapter"><a href="#how-to-get-a-git-repository-with-minimal-history">33. How to get a Git repository with minimal history</a></span></dt><dt><span class="chapter"><a href="#sharing-development-examples">34. Examples</a></span></dt><dd><dl><dt><span class="section"><a href="#maintaining-topic-branches">Maintaining topic branches for a Linux subsystem maintainer</a></span></dt></dl></dd></dl></dd><dt><span class="part"><a href="#cleaning-up-history">V. Rewriting history and maintaining patch series</a></span></dt><dd><dl><dt><span class="chapter"><a href="#patch-series">35. Creating the perfect patch series</a></span></dt><dt><span class="chapter"><a href="#using-git-rebase">36. Keeping a patch series up to date using git rebase</a></span></dt><dt><span class="chapter"><a href="#rewriting-one-commit">37. Rewriting a single commit</a></span></dt><dt><span class="chapter"><a href="#reordering-patch-series">38. Reordering or selecting from a patch series</a></span></dt><dt><span class="chapter"><a href="#interactive-rebase">39. Using interactive rebases</a></span></dt><dt><span class="chapter"><a href="#patch-series-tools">40. Other tools</a></span></dt><dt><span class="chapter"><a href="#problems-With-rewriting-history">41. Problems with rewriting history</a></span></dt><dt><span class="chapter"><a href="#bisect-merges">42. Why bisecting merge commits can be harder than bisecting linear history</a></span></dt></dl></dd><dt><span class="part"><a href="#advanced-branch-management">VI. Advanced branch management</a></span></dt><dd><dl><dt><span class="chapter"><a href="#fetching-individual-branches">43. Fetching individual branches</a></span></dt><dt><span class="chapter"><a href="#fetch-fast-forwards">44. git fetch and fast-forwards</a></span></dt><dt><span class="chapter"><a href="#forcing-fetch">45. Forcing git fetch to do non-fast-forward updates</a></span></dt><dt><span class="chapter"><a href="#remote-branch-configuration">46. Configuring remote-tracking branches</a></span></dt></dl></dd><dt><span class="part"><a href="#git-concepts">VII. Git concepts</a></span></dt><dd><dl><dt><span class="chapter"><a href="#the-object-database">47. The Object Database</a></span></dt><dd><dl><dt><span class="section"><a href="#commit-object">Commit Object</a></span></dt><dt><span class="section"><a href="#tree-object">Tree Object</a></span></dt><dt><span class="section"><a href="#blob-object">Blob Object</a></span></dt><dt><span class="section"><a href="#trust">Trust</a></span></dt><dt><span class="section"><a href="#tag-object">Tag Object</a></span></dt><dt><span class="section"><a href="#pack-files">How Git stores objects efficiently: pack files</a></span></dt><dt><span class="section"><a href="#dangling-objects">Dangling objects</a></span></dt><dt><span class="section"><a href="#recovering-from-repository-corruption">Recovering from repository corruption</a></span></dt></dl></dd><dt><span class="chapter"><a href="#the-index">48. The index</a></span></dt></dl></dd><dt><span class="part"><a href="#submodules">VIII. Submodules</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_pitfalls_with_submodules">49. Pitfalls with submodules</a></span></dt></dl></dd><dt><span class="part"><a href="#low-level-operations">IX. Low-level Git operations</a></span></dt><dd><dl><dt><span class="chapter"><a href="#object-manipulation">50. Object access and manipulation</a></span></dt><dt><span class="chapter"><a href="#the-workflow">51. The Workflow</a></span></dt><dd><dl><dt><span class="section"><a href="#working-directory-to-index">working directory → index</a></span></dt><dt><span class="section"><a href="#index-to-object-database">index → object database</a></span></dt><dt><span class="section"><a href="#object-database-to-index">object database → index</a></span></dt><dt><span class="section"><a href="#index-to-working-directory">index → working directory</a></span></dt><dt><span class="section"><a href="#tying-it-all-together">Tying it all together</a></span></dt></dl></dd><dt><span class="chapter"><a href="#examining-the-data">52. Examining the data</a></span></dt><dt><span class="chapter"><a href="#merging-multiple-trees">53. Merging multiple trees</a></span></dt><dt><span class="chapter"><a href="#merging-multiple-trees-2">54. Merging multiple trees, continued</a></span></dt></dl></dd><dt><span class="part"><a href="#hacking-git">X. Hacking Git</a></span></dt><dd><dl><dt><span class="chapter"><a href="#object-details">55. Object storage format</a></span></dt><dt><span class="chapter"><a href="#birdview-on-the-source-code">56. A birds-eye view of Git’s source code</a></span></dt></dl></dd><dt><span class="part"><a href="#glossary">XI. Git Glossary</a></span></dt><dd><dl><dt><span class="chapter"><a href="#git-explained">57. Git explained</a></span></dt></dl></dd><dt><span class="part"><a href="#git-quick-start">XII. Appendix A: Git Quick Reference</a></span></dt><dd><dl><dt><span class="chapter"><a href="#quick-creating-a-new-repository">58. Creating a new repository</a></span></dt><dt><span class="chapter"><a href="#managing-branches">59. Managing branches</a></span></dt><dt><span class="chapter"><a href="#exploring-history">60. Exploring history</a></span></dt><dt><span class="chapter"><a href="#making-changes">61. Making changes</a></span></dt><dt><span class="chapter"><a href="#merging">62. Merging</a></span></dt><dt><span class="chapter"><a href="#sharing-your-changes">63. Sharing your changes</a></span></dt><dt><span class="chapter"><a href="#repository-maintenance">64. Repository maintenance</a></span></dt></dl></dd><dt><span class="part"><a href="#todo">XIII. Appendix B: Notes and todo list for this manual</a></span></dt><dd><dl><dt><span class="chapter"><a href="#todo-list">65. Todo list</a></span></dt></dl></dd></dl></div><div class="preface"><div class="titlepage"><div><div><h1 class="title"><a name="idp6464654464"></a></h1></div></div></div><p>Git is a fast distributed revision control system.</p><p>This manual is designed to be readable by someone with basic UNIX
 command-line skills, but no previous knowledge of Git.</p><p><a class="xref" href="#repositories-and-branches" title="Part I. Repositories and Branches">Part I, “Repositories and Branches”</a> and <a class="xref" href="#exploring-git-history" title="Part II. Exploring Git history">Part II, “Exploring Git history”</a> explain how
 to fetch and study a project using git—​read these chapters to learn how
 to build and test a particular version of a software project, search for
 regressions, and so on.</p><p>People needing to do actual development will also want to read
 <a class="xref" href="#Developing-With-git" title="Part III. Developing with Git">Part III, “Developing with Git”</a> and <a class="xref" href="#sharing-development" title="Part IV. Sharing development with others">Part IV, “Sharing development with others”</a>.</p><p>Further chapters cover more specialized topics.</p><p>Comprehensive reference documentation is available through the man
-pages, or <a class="ulink" href="git-help.html" target="_top">git-help</a>(1) command.  For example, for the command
+pages, or git-help(1) command.  For example, for the command
 <code class="literal">git clone &lt;repo&gt;</code>, you can either use:</p><pre class="screen">$ man git-clone</pre><p>or:</p><pre class="screen">$ git help clone</pre><p>With the latter, you can use the manual viewer of your choice; see
-<a class="ulink" href="git-help.html" target="_top">git-help</a>(1) for more information.</p><p>See also <a class="xref" href="#git-quick-start" title="Part XII. Appendix A: Git Quick Reference">Part XII, “Appendix A: Git Quick Reference”</a> for a brief overview of Git commands,
+git-help(1) for more information.</p><p>See also <a class="xref" href="#git-quick-start" title="Part XII. Appendix A: Git Quick Reference">Part XII, “Appendix A: Git Quick Reference”</a> for a brief overview of Git commands,
 without any explanation.</p><p>Finally, see <a class="xref" href="#todo" title="Part XIII. Appendix B: Notes and todo list for this manual">Part XIII, “Appendix B: Notes and todo list for this manual”</a> for ways that you can help make this manual more
 complete.</p></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="repositories-and-branches"></a>Part I. Repositories and Branches</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="chapter"><a href="#how-to-get-a-git-repository">1. How to get a Git repository</a></span></dt><dt><span class="chapter"><a href="#how-to-check-out">2. How to check out a different version of a project</a></span></dt><dt><span class="chapter"><a href="#understanding-commits">3. Understanding History: Commits</a></span></dt><dd><dl><dt><span class="section"><a href="#understanding-reachability">Understanding history: commits, parents, and reachability</a></span></dt><dt><span class="section"><a href="#history-diagrams">Understanding history: History diagrams</a></span></dt><dt><span class="section"><a href="#what-is-a-branch">Understanding history: What is a branch?</a></span></dt></dl></dd><dt><span class="chapter"><a href="#manipulating-branches">4. Manipulating branches</a></span></dt><dt><span class="chapter"><a href="#detached-head">5. Examining an old version without creating a new branch</a></span></dt><dt><span class="chapter"><a href="#examining-remote-branches">6. Examining branches from a remote repository</a></span></dt><dt><span class="chapter"><a href="#how-git-stores-references">7. Naming branches, tags, and other references</a></span></dt><dt><span class="chapter"><a href="#Updating-a-repository-With-git-fetch">8. Updating a repository with git fetch</a></span></dt><dt><span class="chapter"><a href="#fetching-branches">9. Fetching branches from other repositories</a></span></dt></dl></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="how-to-get-a-git-repository"></a>Chapter 1. How to get a Git repository</h2></div></div></div><p>It will be useful to have a Git repository to experiment with as you
-read this manual.</p><p>The best way to get one is by using the <a class="ulink" href="git-clone.html" target="_top">git-clone</a>(1) command to
+read this manual.</p><p>The best way to get one is by using the git-clone(1) command to
 download a copy of an existing repository.  If you don’t already have a
 project in mind, here are some interesting examples:</p><pre class="screen">	# Git itself (approx. 40MB download):
 $ git clone git://git.kernel.org/pub/scm/git/git.git
@@ -29,13 +29,13 @@ oldest to newest; instead, work may simultaneously proceed along
 parallel lines of development, called <a class="link" href="#def_branch">branches</a>, which may
 merge and diverge.</p><p>A single Git repository can track development on multiple branches.  It
 does this by keeping a list of <a class="link" href="#def_head">heads</a> which reference the
-latest commit on each branch; the <a class="ulink" href="git-branch.html" target="_top">git-branch</a>(1) command shows
+latest commit on each branch; the git-branch(1) command shows
 you the list of branch heads:</p><pre class="screen">$ git branch
 * master</pre><p>A freshly cloned repository contains a single branch head, by default
 named "master", with the working directory initialized to the state of
 the project referred to by that branch head.</p><p>Most projects also use <a class="link" href="#def_tag">tags</a>.  Tags, like heads, are
 references into the project’s history, and can be listed using the
-<a class="ulink" href="git-tag.html" target="_top">git-tag</a>(1) command:</p><pre class="screen">$ git tag -l
+git-tag(1) command:</p><pre class="screen">$ git tag -l
 v2.6.11
 v2.6.11-tree
 v2.6.12
@@ -47,8 +47,8 @@ v2.6.12-rc6
 v2.6.13
 ...</pre><p>Tags are expected to always point at the same version of a project,
 while heads are expected to advance as development progresses.</p><p>Create a new branch head pointing to one of these versions and check it
-out using <a class="ulink" href="git-checkout.html" target="_top">git-checkout</a>(1):</p><pre class="screen">$ git checkout -b new v2.6.13</pre><p>The working directory then reflects the contents that the project had
-when it was tagged v2.6.13, and <a class="ulink" href="git-branch.html" target="_top">git-branch</a>(1) shows two
+out using git-checkout(1):</p><pre class="screen">$ git checkout -b new v2.6.13</pre><p>The working directory then reflects the contents that the project had
+when it was tagged v2.6.13, and git-branch(1) shows two
 branches, with an asterisk marking the currently checked-out branch:</p><pre class="screen">$ git branch
   master
 * new</pre><p>If you decide that you’d rather see version 2.6.17, you can modify
@@ -56,7 +56,7 @@ the current branch to point at v2.6.17 instead, with</p><pre class="screen">$ gi
 particular point in history, then resetting that branch may leave you
 with no way to find the history it used to point to; so use this command
 carefully.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="understanding-commits"></a>Chapter 3. Understanding History: Commits</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="#understanding-reachability">Understanding history: commits, parents, and reachability</a></span></dt><dt><span class="section"><a href="#history-diagrams">Understanding history: History diagrams</a></span></dt><dt><span class="section"><a href="#what-is-a-branch">Understanding history: What is a branch?</a></span></dt></dl></div><p>Every change in the history of a project is represented by a commit.
-The <a class="ulink" href="git-show.html" target="_top">git-show</a>(1) command shows the most recent commit on the
+The git-show(1) command shows the most recent commit on the
 current branch:</p><pre class="screen">$ git show
 commit 17cf781661e6d38f737f15f53ab552f1e95960d7
 Author: Linus Torvalds &lt;torvalds@ppc970.osdl.org.(none)&gt;
@@ -98,7 +98,7 @@ development to diverge and then reconverge, and the point where two
 lines of development reconverge is called a "merge".  The commit
 representing a merge can therefore have more than one parent, with
 each parent representing the most recent commit on one of the lines
-of development leading to that point.</p><p>The best way to see how this works is using the <a class="ulink" href="gitk.html" target="_top">gitk</a>(1)
+of development leading to that point.</p><p>The best way to see how this works is using the gitk(1)
 command; running gitk now on a Git repository and looking for merge
 commits will help understand how Git organizes history.</p><p>In the following, we say that commit X is "reachable" from commit Y
 if commit X is an ancestor of commit Y.  Equivalently, you could say
@@ -153,7 +153,7 @@ of the HEAD in the repository that you cloned from.  That repository
 may also have had other branches, though, and your local repository
 keeps branches which track each of those remote branches, called
 remote-tracking branches, which you
-can view using the <code class="literal">-r</code> option to <a class="ulink" href="git-branch.html" target="_top">git-branch</a>(1):</p><pre class="screen">$ git branch -r
+can view using the <code class="literal">-r</code> option to git-branch(1):</p><pre class="screen">$ git branch -r
   origin/HEAD
   origin/html
   origin/maint
@@ -176,17 +176,17 @@ shorthand:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-sty
 exists a tag and a branch with the same name.</p><p>(Newly created refs are actually stored in the <code class="literal">.git/refs</code> directory,
 under the path given by their name.  However, for efficiency reasons
 they may also be packed together in a single file; see
-<a class="ulink" href="git-pack-refs.html" target="_top">git-pack-refs</a>(1)).</p><p>As another useful shortcut, the "HEAD" of a repository can be referred
+git-pack-refs(1)).</p><p>As another useful shortcut, the "HEAD" of a repository can be referred
 to just using the name of that repository.  So, for example, "origin"
 is usually a shortcut for the HEAD branch in the repository "origin".</p><p>For the complete list of paths which Git checks for references, and
 the order it uses to decide which to choose when there are multiple
 references with the same shorthand name, see the "SPECIFYING
-REVISIONS" section of <a class="ulink" href="gitrevisions.html" target="_top">gitrevisions</a>(7).</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="Updating-a-repository-With-git-fetch"></a>Chapter 8. Updating a repository with git fetch</h2></div></div></div><p>After you clone a repository and commit a few changes of your own, you
+REVISIONS" section of gitrevisions(7).</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="Updating-a-repository-With-git-fetch"></a>Chapter 8. Updating a repository with git fetch</h2></div></div></div><p>After you clone a repository and commit a few changes of your own, you
 may wish to check the original repository for updates.</p><p>The <code class="literal">git-fetch</code> command, with no arguments, will update all of the
 remote-tracking branches to the latest version found in the original
 repository.  It will not touch any of your own branches—​not even the
 "master" branch that was created for you on clone.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="fetching-branches"></a>Chapter 9. Fetching branches from other repositories</h2></div></div></div><p>You can also track branches from repositories other than the one you
-cloned from, using <a class="ulink" href="git-remote.html" target="_top">git-remote</a>(1):</p><pre class="screen">$ git remote add staging git://git.kernel.org/.../gregkh/staging.git
+cloned from, using git-remote(1):</p><pre class="screen">$ git remote add staging git://git.kernel.org/.../gregkh/staging.git
 $ git fetch staging
 ...
 From git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging
@@ -208,7 +208,7 @@ a new stanza:</p><pre class="screen">$ cat .git/config
 ...</pre><p>This is what causes Git to track the remote’s branches; you may modify
 or delete these configuration options by editing <code class="literal">.git/config</code> with a
 text editor.  (See the "CONFIGURATION FILE" section of
-<a class="ulink" href="git-config.html" target="_top">git-config</a>(1) for details.)</p></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="exploring-git-history"></a>Part II. Exploring Git history</h1></div></div></div><div class="partintro"><div></div><p>Git is best thought of as a tool for storing the history of a
+git-config(1) for details.)</p></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="exploring-git-history"></a>Part II. Exploring Git history</h1></div></div></div><div class="partintro"><div></div><p>Git is best thought of as a tool for storing the history of a
 collection of files.  It does this by storing compressed snapshots of
 the contents of a file hierarchy, together with "commits" which show
 the relationships between these snapshots.</p><p>Git provides extremely flexible and fast tools for exploring the
@@ -217,7 +217,7 @@ commit that introduced a bug into a project.</p><div class="toc"><p><b>Table of 
 "master" crashes.  Sometimes the best way to find the cause of such a
 regression is to perform a brute-force search through the project’s
 history to find the particular commit that caused the problem.  The
-<a class="ulink" href="git-bisect.html" target="_top">git-bisect</a>(1) command can help you do this:</p><pre class="screen">$ git bisect start
+git-bisect(1) command can help you do this:</p><pre class="screen">$ git bisect start
 $ git bisect good v2.6.18
 $ git bisect bad master
 Bisecting: 3537 revisions left to test after this
@@ -232,7 +232,7 @@ stage whether the version it gives you is good or bad, and notice
 that the number of revisions left to test is cut approximately in
 half each time.</p><p>After about 13 tests (in this case), it will output the commit id of
 the guilty commit.  You can then examine the commit with
-<a class="ulink" href="git-show.html" target="_top">git-show</a>(1), find out who wrote it, and mail them your bug
+git-show(1), find out who wrote it, and mail them your bug
 report with the commit id.  Finally, run</p><pre class="screen">$ git bisect reset</pre><p>to return you to the branch you were on before.</p><p>Note that the version which <code class="literal">git bisect</code> checks out for you at each
 point is just a suggestion, and you’re free to try a different
 version if you think it would be a good idea.  For example,
@@ -245,12 +245,12 @@ fb47ddb2db...</code>, you might just want to tell Git that you want to skip
 the current commit:</p><pre class="screen">$ git bisect skip</pre><p>In this case, though, Git may not eventually be able to tell the first
 bad one between some first skipped commits and a later bad commit.</p><p>There are also ways to automate the bisecting process if you have a
 test script that can tell a good from a bad commit. See
-<a class="ulink" href="git-bisect.html" target="_top">git-bisect</a>(1) for more information about this and other <code class="literal">git
+git-bisect(1) for more information about this and other <code class="literal">git
 bisect</code> features.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="naming-commits"></a>Chapter 11. Naming commits</h2></div></div></div><p>We have seen several ways of naming commits already:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">40-hexdigit object name</li><li class="listitem">branch name: refers to the commit at the head of the given
 branch</li><li class="listitem">tag name: refers to the commit pointed to by the given tag
 (we’ve seen branches and tags are special cases of
 <a class="link" href="#how-git-stores-references" title="Chapter 7. Naming branches, tags, and other references">references</a>).</li><li class="listitem">HEAD: refers to the head of the current branch</li></ul></div><p>There are many more; see the "SPECIFYING REVISIONS" section of the
-<a class="ulink" href="gitrevisions.html" target="_top">gitrevisions</a>(7) man page for the complete list of ways to
+gitrevisions(7) man page for the complete list of ways to
 name revisions.  Some examples:</p><pre class="screen">$ git show fb47ddb2 # the first few characters of the object name
 		    # are usually enough to specify it uniquely
 $ git show HEAD^    # the parent of the HEAD commit
@@ -265,14 +265,14 @@ set ORIG_HEAD to the value HEAD had before the current operation.</p><p>The <cod
 branch in FETCH_HEAD.  For example, if you run <code class="literal">git fetch</code> without
 specifying a local branch as the target of the operation</p><pre class="screen">$ git fetch git://example.com/proj.git theirbranch</pre><p>the fetched commits will still be available from FETCH_HEAD.</p><p>When we discuss merges we’ll also see the special name MERGE_HEAD,
 which refers to the other branch that we’re merging in to the current
-branch.</p><p>The <a class="ulink" href="git-rev-parse.html" target="_top">git-rev-parse</a>(1) command is a low-level command that is
+branch.</p><p>The git-rev-parse(1) command is a low-level command that is
 occasionally useful for translating some name for a commit to the object
 name for that commit:</p><pre class="screen">$ git rev-parse origin
 e05db0fd4f31dde7005f075a84f96b360d05984b</pre></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="creating-tags"></a>Chapter 12. Creating tags</h2></div></div></div><p>We can also create a tag to refer to a particular commit; after
 running</p><pre class="screen">$ git tag stable-1 1b2e1d63ff</pre><p>You can use <code class="literal">stable-1</code> to refer to the commit 1b2e1d63ff.</p><p>This creates a "lightweight" tag.  If you would also like to include a
 comment with the tag, and possibly sign it cryptographically, then you
-should create a tag object instead; see the <a class="ulink" href="git-tag.html" target="_top">git-tag</a>(1) man page
-for details.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="browsing-revisions"></a>Chapter 13. Browsing revisions</h2></div></div></div><p>The <a class="ulink" href="git-log.html" target="_top">git-log</a>(1) command can show lists of commits.  On its
+should create a tag object instead; see the git-tag(1) man page
+for details.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="browsing-revisions"></a>Chapter 13. Browsing revisions</h2></div></div></div><p>The git-log(1) command can show lists of commits.  On its
 own, it shows all commits reachable from the parent commit; but you
 can also make more specific requests:</p><pre class="screen">$ git log v2.5..	# commits since (not reachable from) v2.5
 $ git log test..master	# commits reachable from master but not test
@@ -284,22 +284,22 @@ $ git log Makefile      # commits which modify Makefile
 $ git log fs/		# ... which modify any file under fs/
 $ git log -S'foo()'	# commits which add or remove any file data
 			# matching the string 'foo()'</pre><p>And of course you can combine all of these; the following finds
-commits since v2.5 which touch the <code class="literal">Makefile</code> or any file under <code class="literal">fs</code>:</p><pre class="screen">$ git log v2.5.. Makefile fs/</pre><p>You can also ask git log to show patches:</p><pre class="screen">$ git log -p</pre><p>See the <code class="literal">--pretty</code> option in the <a class="ulink" href="git-log.html" target="_top">git-log</a>(1) man page for more
+commits since v2.5 which touch the <code class="literal">Makefile</code> or any file under <code class="literal">fs</code>:</p><pre class="screen">$ git log v2.5.. Makefile fs/</pre><p>You can also ask git log to show patches:</p><pre class="screen">$ git log -p</pre><p>See the <code class="literal">--pretty</code> option in the git-log(1) man page for more
 display options.</p><p>Note that git log starts with the most recent commit and works
 backwards through the parents; however, since Git history can contain
 multiple independent lines of development, the particular order that
 commits are listed in may be somewhat arbitrary.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="generating-diffs"></a>Chapter 14. Generating diffs</h2></div></div></div><p>You can generate diffs between any two versions using
-<a class="ulink" href="git-diff.html" target="_top">git-diff</a>(1):</p><pre class="screen">$ git diff master..test</pre><p>That will produce the diff between the tips of the two branches.  If
+git-diff(1):</p><pre class="screen">$ git diff master..test</pre><p>That will produce the diff between the tips of the two branches.  If
 you’d prefer to find the diff from their common ancestor to test, you
 can use three dots instead of two:</p><pre class="screen">$ git diff master...test</pre><p>Sometimes what you want instead is a set of patches; for this you can
-use <a class="ulink" href="git-format-patch.html" target="_top">git-format-patch</a>(1):</p><pre class="screen">$ git format-patch master..test</pre><p>will generate a file with a patch for each commit reachable from test
+use git-format-patch(1):</p><pre class="screen">$ git format-patch master..test</pre><p>will generate a file with a patch for each commit reachable from test
 but not from master.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="viewing-old-file-versions"></a>Chapter 15. Viewing old file versions</h2></div></div></div><p>You can always view an old version of a file by just checking out the
 correct revision first.  But sometimes it is more convenient to be
 able to view an old version of a single file without checking
 anything out; this command does that:</p><pre class="screen">$ git show v2.5:fs/locks.c</pre><p>Before the colon may be anything that names a commit, and after it
 may be any path to a file tracked by Git.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="history-examples"></a>Chapter 16. Examples</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="#counting-commits-on-a-branch">Counting the number of commits on a branch</a></span></dt><dt><span class="section"><a href="#checking-for-equal-branches">Check whether two branches point at the same history</a></span></dt><dt><span class="section"><a href="#finding-tagged-descendants">Find first tagged version including a given fix</a></span></dt><dt><span class="section"><a href="#showing-commits-unique-to-a-branch">Showing commits unique to a given branch</a></span></dt><dt><span class="section"><a href="#making-a-release">Creating a changelog and tarball for a software release</a></span></dt><dt><span class="section"><a href="#Finding-commits-With-given-Content">Finding commits referencing a file with given content</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="counting-commits-on-a-branch"></a>Counting the number of commits on a branch</h2></div></div></div><p>Suppose you want to know how many commits you’ve made on <code class="literal">mybranch</code>
 since it diverged from <code class="literal">origin</code>:</p><pre class="screen">$ git log --pretty=oneline origin..mybranch | wc -l</pre><p>Alternatively, you may often see this sort of thing done with the
-lower-level command <a class="ulink" href="git-rev-list.html" target="_top">git-rev-list</a>(1), which just lists the SHA-1’s
+lower-level command git-rev-list(1), which just lists the SHA-1’s
 of all the given commits:</p><pre class="screen">$ git rev-list origin..mybranch | wc -l</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="checking-for-equal-branches"></a>Check whether two branches point at the same history</h2></div></div></div><p>Suppose you want to check whether two branches point at the same point
 in history.</p><pre class="screen">$ git diff origin..master</pre><p>will tell you whether the contents of the project are the same at the
 two branches; in theory, however, it’s possible that the same project
@@ -313,19 +313,19 @@ both; so</p><pre class="screen">$ git log origin...master</pre><p>will return no
 You’d like to find the earliest tagged release that contains that
 fix.</p><p>Of course, there may be more than one answer—​if the history branched
 after commit e05db0fd, then there could be multiple "earliest" tagged
-releases.</p><p>You could just visually inspect the commits since e05db0fd:</p><pre class="screen">$ gitk e05db0fd..</pre><p>or you can use <a class="ulink" href="git-name-rev.html" target="_top">git-name-rev</a>(1), which will give the commit a
+releases.</p><p>You could just visually inspect the commits since e05db0fd:</p><pre class="screen">$ gitk e05db0fd..</pre><p>or you can use git-name-rev(1), which will give the commit a
 name based on any tag it finds pointing to one of the commit’s
 descendants:</p><pre class="screen">$ git name-rev --tags e05db0fd
-e05db0fd tags/v1.5.0-rc1^0~23</pre><p>The <a class="ulink" href="git-describe.html" target="_top">git-describe</a>(1) command does the opposite, naming the
+e05db0fd tags/v1.5.0-rc1^0~23</pre><p>The git-describe(1) command does the opposite, naming the
 revision using a tag on which the given commit is based:</p><pre class="screen">$ git describe e05db0fd
 v1.5.0-rc0-260-ge05db0f</pre><p>but that may sometimes help you guess which tags might come after the
 given commit.</p><p>If you just want to verify whether a given tagged version contains a
-given commit, you could use <a class="ulink" href="git-merge-base.html" target="_top">git-merge-base</a>(1):</p><pre class="screen">$ git merge-base e05db0fd v1.5.0-rc1
+given commit, you could use git-merge-base(1):</p><pre class="screen">$ git merge-base e05db0fd v1.5.0-rc1
 e05db0fd4f31dde7005f075a84f96b360d05984b</pre><p>The merge-base command finds a common ancestor of the given commits,
 and always returns one or the other in the case where one is a
 descendant of the other; so the above output shows that e05db0fd
 actually is an ancestor of v1.5.0-rc1.</p><p>Alternatively, note that</p><pre class="screen">$ git log v1.5.0-rc1..e05db0fd</pre><p>will produce empty output if and only if v1.5.0-rc1 includes e05db0fd,
-because it outputs only commits that are not reachable from v1.5.0-rc1.</p><p>As yet another alternative, the <a class="ulink" href="git-show-branch.html" target="_top">git-show-branch</a>(1) command lists
+because it outputs only commits that are not reachable from v1.5.0-rc1.</p><p>As yet another alternative, the git-show-branch(1) command lists
 the commits reachable from its arguments with a display on the left-hand
 side that indicates which arguments that commit is reachable from.
 So, if you run something like</p><pre class="screen">$ git show-branch e05db0fd v1.5.0-rc0 v1.5.0-rc1 v1.5.0-rc2
@@ -338,7 +338,7 @@ available
 available</pre><p>shows that e05db0fd is reachable from itself, from v1.5.0-rc1,
 and from v1.5.0-rc2, and not from v1.5.0-rc0.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="showing-commits-unique-to-a-branch"></a>Showing commits unique to a given branch</h2></div></div></div><p>Suppose you would like to see all the commits reachable from the branch
 head named <code class="literal">master</code> but not from any other head in your repository.</p><p>We can list all the heads in this repository with
-<a class="ulink" href="git-show-ref.html" target="_top">git-show-ref</a>(1):</p><pre class="screen">$ git show-ref --heads
+git-show-ref(1):</p><pre class="screen">$ git show-ref --heads
 bf62196b5e363d73353a9dcf094c59595f3153b7 refs/heads/core-tutorial
 db768d5504c1bb46f63ee9d6e1772bd047e05bf9 refs/heads/maint
 a07157ac624b2524a059a3414e99f6f44bebc1e7 refs/heads/master
@@ -351,11 +351,11 @@ refs/heads/tutorial-2
 refs/heads/tutorial-fixes</pre><p>And then we can ask to see all the commits reachable from master
 but not from these other heads:</p><pre class="screen">$ gitk master --not $( git show-ref --heads | cut -d' ' -f2 |
 				grep -v '^refs/heads/master' )</pre><p>Obviously, endless variations are possible; for example, to see all
-commits reachable from some head but not from any tag in the repository:</p><pre class="screen">$ gitk $( git show-ref --heads ) --not  $( git show-ref --tags )</pre><p>(See <a class="ulink" href="gitrevisions.html" target="_top">gitrevisions</a>(7) for explanations of commit-selecting
-syntax such as <code class="literal">--not</code>.)</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="making-a-release"></a>Creating a changelog and tarball for a software release</h2></div></div></div><p>The <a class="ulink" href="git-archive.html" target="_top">git-archive</a>(1) command can create a tar or zip archive from
+commits reachable from some head but not from any tag in the repository:</p><pre class="screen">$ gitk $( git show-ref --heads ) --not  $( git show-ref --tags )</pre><p>(See gitrevisions(7) for explanations of commit-selecting
+syntax such as <code class="literal">--not</code>.)</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="making-a-release"></a>Creating a changelog and tarball for a software release</h2></div></div></div><p>The git-archive(1) command can create a tar or zip archive from
 any version of a project; for example:</p><pre class="screen">$ git archive -o latest.tar.gz --prefix=project/ HEAD</pre><p>will use HEAD to produce a gzipped tar archive in which each filename
 is preceded by <code class="literal">project/</code>.  The output file format is inferred from
-the output file extension if possible, see <a class="ulink" href="git-archive.html" target="_top">git-archive</a>(1) for
+the output file extension if possible, see git-archive(1) for
 details.</p><p>Versions of Git older than 1.7.7 don’t know about the <code class="literal">tar.gz</code> format,
 you’ll need to use gzip explicitly:</p><pre class="screen">$ git archive --format=tar --prefix=project/ HEAD | gzip &gt;latest.tar.gz</pre><p>If you’re releasing a new version of a software project, you may want
 to simultaneously make a changelog to include in the release
@@ -374,13 +374,13 @@ they look OK.</p></div><div class="section"><div class="titlepage"><div><div><h2
 file such that it contained the given content either before or after the
 commit.  You can find out with this:</p><pre class="screen">$  git log --raw --abbrev=40 --pretty=oneline |
 	grep -B 1 `git hash-object filename`</pre><p>Figuring out why this works is left as an exercise to the (advanced)
-student.  The <a class="ulink" href="git-log.html" target="_top">git-log</a>(1), <a class="ulink" href="git-diff-tree.html" target="_top">git-diff-tree</a>(1), and
-<a class="ulink" href="git-hash-object.html" target="_top">git-hash-object</a>(1) man pages may prove helpful.</p></div></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="Developing-With-git"></a>Part III. Developing with Git</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="chapter"><a href="#telling-git-your-name">17. Telling Git your name</a></span></dt><dt><span class="chapter"><a href="#creating-a-new-repository">18. Creating a new repository</a></span></dt><dt><span class="chapter"><a href="#how-to-make-a-commit">19. How to make a commit</a></span></dt><dt><span class="chapter"><a href="#creating-good-commit-messages">20. Creating good commit messages</a></span></dt><dt><span class="chapter"><a href="#ignoring-files">21. Ignoring files</a></span></dt><dt><span class="chapter"><a href="#how-to-merge">22. How to merge</a></span></dt><dt><span class="chapter"><a href="#resolving-a-merge">23. Resolving a merge</a></span></dt><dd><dl><dt><span class="section"><a href="#conflict-resolution">Getting conflict-resolution help during a merge</a></span></dt></dl></dd><dt><span class="chapter"><a href="#undoing-a-merge">24. Undoing a merge</a></span></dt><dt><span class="chapter"><a href="#fast-forwards">25. Fast-forward merges</a></span></dt><dt><span class="chapter"><a href="#fixing-mistakes">26. Fixing mistakes</a></span></dt><dd><dl><dt><span class="section"><a href="#reverting-a-commit">Fixing a mistake with a new commit</a></span></dt><dt><span class="section"><a href="#fixing-a-mistake-by-rewriting-history">Fixing a mistake by rewriting history</a></span></dt><dt><span class="section"><a href="#checkout-of-path">Checking out an old version of a file</a></span></dt><dt><span class="section"><a href="#interrupted-work">Temporarily setting aside work in progress</a></span></dt></dl></dd><dt><span class="chapter"><a href="#ensuring-good-performance">27. Ensuring good performance</a></span></dt><dt><span class="chapter"><a href="#ensuring-reliability">28. Ensuring reliability</a></span></dt><dd><dl><dt><span class="section"><a href="#checking-for-corruption">Checking the repository for corruption</a></span></dt><dt><span class="section"><a href="#recovering-lost-changes">Recovering lost changes</a></span></dt><dd><dl><dt><span class="section"><a href="#reflogs">Reflogs</a></span></dt><dt><span class="section"><a href="#dangling-object-recovery">Examining dangling objects</a></span></dt></dl></dd></dl></dd></dl></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="telling-git-your-name"></a>Chapter 17. Telling Git your name</h2></div></div></div><p>Before creating any commits, you should introduce yourself to Git.
-The easiest way to do so is to use <a class="ulink" href="git-config.html" target="_top">git-config</a>(1):</p><pre class="screen">$ git config --global user.name 'Your Name Comes Here'
+student.  The git-log(1), git-diff-tree(1), and
+git-hash-object(1) man pages may prove helpful.</p></div></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="Developing-With-git"></a>Part III. Developing with Git</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="chapter"><a href="#telling-git-your-name">17. Telling Git your name</a></span></dt><dt><span class="chapter"><a href="#creating-a-new-repository">18. Creating a new repository</a></span></dt><dt><span class="chapter"><a href="#how-to-make-a-commit">19. How to make a commit</a></span></dt><dt><span class="chapter"><a href="#creating-good-commit-messages">20. Creating good commit messages</a></span></dt><dt><span class="chapter"><a href="#ignoring-files">21. Ignoring files</a></span></dt><dt><span class="chapter"><a href="#how-to-merge">22. How to merge</a></span></dt><dt><span class="chapter"><a href="#resolving-a-merge">23. Resolving a merge</a></span></dt><dd><dl><dt><span class="section"><a href="#conflict-resolution">Getting conflict-resolution help during a merge</a></span></dt></dl></dd><dt><span class="chapter"><a href="#undoing-a-merge">24. Undoing a merge</a></span></dt><dt><span class="chapter"><a href="#fast-forwards">25. Fast-forward merges</a></span></dt><dt><span class="chapter"><a href="#fixing-mistakes">26. Fixing mistakes</a></span></dt><dd><dl><dt><span class="section"><a href="#reverting-a-commit">Fixing a mistake with a new commit</a></span></dt><dt><span class="section"><a href="#fixing-a-mistake-by-rewriting-history">Fixing a mistake by rewriting history</a></span></dt><dt><span class="section"><a href="#checkout-of-path">Checking out an old version of a file</a></span></dt><dt><span class="section"><a href="#interrupted-work">Temporarily setting aside work in progress</a></span></dt></dl></dd><dt><span class="chapter"><a href="#ensuring-good-performance">27. Ensuring good performance</a></span></dt><dt><span class="chapter"><a href="#ensuring-reliability">28. Ensuring reliability</a></span></dt><dd><dl><dt><span class="section"><a href="#checking-for-corruption">Checking the repository for corruption</a></span></dt><dt><span class="section"><a href="#recovering-lost-changes">Recovering lost changes</a></span></dt><dd><dl><dt><span class="section"><a href="#reflogs">Reflogs</a></span></dt><dt><span class="section"><a href="#dangling-object-recovery">Examining dangling objects</a></span></dt></dl></dd></dl></dd></dl></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="telling-git-your-name"></a>Chapter 17. Telling Git your name</h2></div></div></div><p>Before creating any commits, you should introduce yourself to Git.
+The easiest way to do so is to use git-config(1):</p><pre class="screen">$ git config --global user.name 'Your Name Comes Here'
 $ git config --global user.email 'you@yourdomain.example.com'</pre><p>Which will add the following to a file named <code class="literal">.gitconfig</code> in your
 home directory:</p><pre class="screen">[user]
 	name = Your Name Comes Here
-	email = you@yourdomain.example.com</pre><p>See the "CONFIGURATION FILE" section of <a class="ulink" href="git-config.html" target="_top">git-config</a>(1) for
+	email = you@yourdomain.example.com</pre><p>See the "CONFIGURATION FILE" section of git-config(1) for
 details on the configuration file.  The file is plain text, so you can
 also edit it with your favorite editor.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="creating-a-new-repository"></a>Chapter 18. Creating a new repository</h2></div></div></div><p>Creating a new repository from scratch is very easy:</p><pre class="screen">$ mkdir project
 $ cd project
@@ -409,7 +409,7 @@ $ git diff	    # difference between the index file and your
 		    # be included if you ran "commit" now.
 $ git diff HEAD	    # difference between HEAD and working tree; what
 		    # would be committed if you ran "commit -a" now.
-$ git status	    # a brief per-file summary of the above.</pre><p>You can also use <a class="ulink" href="git-gui.html" target="_top">git-gui</a>(1) to create commits, view changes in
+$ git status	    # a brief per-file summary of the above.</pre><p>You can also use git-gui(1) to create commits, view changes in
 the index and the working tree files, and individually select diff hunks
 for inclusion in the index (by right-clicking on the diff hunk and
 choosing "Stage Hunk For Commit").</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="creating-good-commit-messages"></a>Chapter 20. Creating good commit messages</h2></div></div></div><p>Though not required, it’s a good idea to begin the commit message
@@ -417,7 +417,7 @@ with a single short (less than 50 character) line summarizing the
 change, followed by a blank line and then a more thorough
 description.  The text up to the first blank line in a commit
 message is treated as the commit title, and that title is used
-throughout Git.  For example, <a class="ulink" href="git-format-patch.html" target="_top">git-format-patch</a>(1) turns a
+throughout Git.  For example, git-format-patch(1) turns a
 commit into email, and it uses the title on the Subject line and the
 rest of the commit in the body.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="ignoring-files"></a>Chapter 21. Ignoring files</h2></div></div></div><p>A project will often generate files that you do <span class="emphasis"><em>not</em></span> want to track with Git.
 This typically includes files generated by a build process or temporary
@@ -435,7 +435,7 @@ foo.txt
 # except foo.html which is maintained by hand.
 !foo.html
 # Ignore objects and archives.
-*.[oa]</pre><p>See <a class="ulink" href="gitignore.html" target="_top">gitignore</a>(5) for a detailed explanation of the syntax.  You can
+*.[oa]</pre><p>See gitignore(5) for a detailed explanation of the syntax.  You can
 also place .gitignore files in other directories in your working tree, and they
 will apply to those directories and their subdirectories.  The <code class="literal">.gitignore</code>
 files can be added to your repository like any other files (just run <code class="literal">git add
@@ -446,8 +446,8 @@ for other users who clone your repository.</p><p>If you wish the exclude pattern
 them in a file in your repository named <code class="literal">.git/info/exclude</code>, or in any
 file specified by the <code class="literal">core.excludesFile</code> configuration variable.
 Some Git commands can also take exclude patterns directly on the
-command line.  See <a class="ulink" href="gitignore.html" target="_top">gitignore</a>(5) for the details.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="how-to-merge"></a>Chapter 22. How to merge</h2></div></div></div><p>You can rejoin two diverging branches of development using
-<a class="ulink" href="git-merge.html" target="_top">git-merge</a>(1):</p><pre class="screen">$ git merge branchname</pre><p>merges the development in the branch <code class="literal">branchname</code> into the current
+command line.  See gitignore(5) for the details.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="how-to-merge"></a>Chapter 22. How to merge</h2></div></div></div><p>You can rejoin two diverging branches of development using
+git-merge(1):</p><pre class="screen">$ git merge branchname</pre><p>merges the development in the branch <code class="literal">branchname</code> into the current
 branch.</p><p>A merge is made by combining the changes made in <code class="literal">branchname</code> and the
 changes made up to the latest commit in your current branch since
 their histories forked. The work tree is overwritten by the result of
@@ -456,7 +456,7 @@ half-merged results when this combining results in conflicts.
 Therefore, if you have uncommitted changes touching the same files as
 the ones impacted by the merge, Git will refuse to proceed. Most of
 the time, you will want to commit your changes before you can merge,
-and if you don’t, then <a class="ulink" href="git-stash.html" target="_top">git-stash</a>(1) can take these changes
+and if you don’t, then git-stash(1) can take these changes
 away while you’re doing the merge, and reapply them afterwards.</p><p>If the changes are independent enough, Git will automatically complete
 the merge and commit the result (or reuse an existing commit in case
 of <a class="link" href="#fast-forwards" title="Chapter 25. Fast-forward merges">fast-forward</a>, see below). On the other hand,
@@ -474,9 +474,9 @@ has two parents, one pointing to the top of the current branch, and
 one to the top of the other branch.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="resolving-a-merge"></a>Chapter 23. Resolving a merge</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="#conflict-resolution">Getting conflict-resolution help during a merge</a></span></dt></dl></div><p>When a merge isn’t resolved automatically, Git leaves the index and
 the working tree in a special state that gives you all the
 information you need to help resolve the merge.</p><p>Files with conflicts are marked specially in the index, so until you
-resolve the problem and update the index, <a class="ulink" href="git-commit.html" target="_top">git-commit</a>(1) will
+resolve the problem and update the index, git-commit(1) will
 fail:</p><pre class="screen">$ git commit
-file.txt: needs merge</pre><p>Also, <a class="ulink" href="git-status.html" target="_top">git-status</a>(1) will list those files as "unmerged", and the
+file.txt: needs merge</pre><p>Also, git-status(1) will list those files as "unmerged", and the
 files with conflicts will have conflict markers added, like this:</p><pre class="screen">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:file.txt
 Hello world
 =======
@@ -487,7 +487,7 @@ some information about the merge.  Normally you can just use this
 default message unchanged, but you may add additional commentary of
 your own if desired.</p><p>The above is all you need to know to resolve a simple merge.  But Git
 also provides more information to help resolve conflicts:</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="conflict-resolution"></a>Getting conflict-resolution help during a merge</h2></div></div></div><p>All of the changes that Git was able to merge automatically are
-already added to the index file, so <a class="ulink" href="git-diff.html" target="_top">git-diff</a>(1) shows only
+already added to the index file, so git-diff(1) shows only
 the conflicts.  It uses an unusual syntax:</p><pre class="screen">$ git diff
 diff --cc file.txt
 index 802992c,2b60207..0000000
@@ -504,7 +504,7 @@ will be HEAD, the tip of the current branch; the other will be the
 tip of the other branch, which is stored temporarily in MERGE_HEAD.</p><p>During the merge, the index holds three versions of each file.  Each of
 these three "file stages" represents a different version of the file:</p><pre class="screen">$ git show :1:file.txt	# the file in a common ancestor of both branches
 $ git show :2:file.txt	# the version from HEAD.
-$ git show :3:file.txt	# the version from MERGE_HEAD.</pre><p>When you ask <a class="ulink" href="git-diff.html" target="_top">git-diff</a>(1) to show the conflicts, it runs a
+$ git show :3:file.txt	# the version from MERGE_HEAD.</pre><p>When you ask git-diff(1) to show the conflicts, it runs a
 three-way diff between the conflicted merge results in the work tree with
 stages 2 and 3 to show only hunks whose contents come from both sides,
 mixed (in other words, when a hunk’s merge results come only from stage 2,
@@ -514,7 +514,7 @@ each line by a single <code class="literal">+</code> or <code class="literal">-<
 column is used for differences between the first parent and the working
 directory copy, and the second for differences between the second parent
 and the working directory copy.  (See the "COMBINED DIFF FORMAT" section
-of <a class="ulink" href="git-diff-files.html" target="_top">git-diff-files</a>(1) for a details of the format.)</p><p>After resolving the conflict in the obvious way (but before updating the
+of git-diff-files(1) for a details of the format.)</p><p>After resolving the conflict in the obvious way (but before updating the
 index), the diff will look like:</p><pre class="screen">$ git diff
 diff --cc file.txt
 index 802992c,2b60207..0000000
@@ -531,10 +531,10 @@ $ git diff --base file.txt	# same as the above
 $ git diff -2 file.txt		# diff against stage 2
 $ git diff --ours file.txt	# same as the above
 $ git diff -3 file.txt		# diff against stage 3
-$ git diff --theirs file.txt	# same as the above.</pre><p>The <a class="ulink" href="git-log.html" target="_top">git-log</a>(1) and <a class="ulink" href="gitk.html" target="_top">gitk</a>(1) commands also provide special help
+$ git diff --theirs file.txt	# same as the above.</pre><p>The git-log(1) and gitk(1) commands also provide special help
 for merges:</p><pre class="screen">$ git log --merge
 $ gitk --merge</pre><p>These will display all commits which exist only on HEAD or on
-MERGE_HEAD, and which touch an unmerged file.</p><p>You may also use <a class="ulink" href="git-mergetool.html" target="_top">git-mergetool</a>(1), which lets you merge the
+MERGE_HEAD, and which touch an unmerged file.</p><p>You may also use git-mergetool(1), which lets you merge the
 unmerged files using external tools such as Emacs or kdiff3.</p><p>Each time you resolve the conflicts in a file and update the index:</p><pre class="screen">$ git add file.txt</pre><p>the different stages of that file will be "collapsed", after which
 <code class="literal">git diff</code> will (by default) no longer show diffs for that file.</p></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="undoing-a-merge"></a>Chapter 24. Undoing a merge</h2></div></div></div><p>If you get stuck and decide to just give up and throw the whole mess
 away, you can always return to the pre-merge state with</p><pre class="screen">$ git reset --hard HEAD</pre><p>Or, if you’ve already committed the merge that you want to throw away,</p><pre class="screen">$ git reset --hard ORIG_HEAD</pre><p>However, this last command can be dangerous in some cases—​never
@@ -557,7 +557,7 @@ never do this if you have already made the history public;
 Git does not normally expect the "history" of a project to
 change, and cannot correctly perform repeated merges from
 a branch that has had its history changed.</li></ol></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="reverting-a-commit"></a>Fixing a mistake with a new commit</h2></div></div></div><p>Creating a new commit that reverts an earlier change is very easy;
-just pass the <a class="ulink" href="git-revert.html" target="_top">git-revert</a>(1) command a reference to the bad
+just pass the git-revert(1) command a reference to the bad
 commit; for example, to revert the most recent commit:</p><pre class="screen">$ git revert HEAD</pre><p>This will create a new commit which undoes the change in HEAD.  You
 will be given a chance to edit the commit message for the new commit.</p><p>You can also revert an earlier change, for example, the next-to-last:</p><pre class="screen">$ git revert HEAD^</pre><p>In this case Git will attempt to undo the old change while leaving
 intact any changes made since then.  If more recent changes overlap
@@ -569,19 +569,19 @@ can edit the working directory and update the index to fix your
 mistake, just as if you were going to <a class="link" href="#how-to-make-a-commit" title="Chapter 19. How to make a commit">create a
 new commit</a>, then run</p><pre class="screen">$ git commit --amend</pre><p>which will replace the old commit by a new commit incorporating your
 changes, giving you a chance to edit the old commit message first.</p><p>Again, you should never do this to a commit that may already have
-been merged into another branch; use <a class="ulink" href="git-revert.html" target="_top">git-revert</a>(1) instead in
+been merged into another branch; use git-revert(1) instead in
 that case.</p><p>It is also possible to replace commits further back in the history, but
 this is an advanced topic to be left for
 <a class="link" href="#cleaning-up-history" title="Part V. Rewriting history and maintaining patch series">another chapter</a>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="checkout-of-path"></a>Checking out an old version of a file</h2></div></div></div><p>In the process of undoing a previous bad change, you may find it
 useful to check out an older version of a particular file using
-<a class="ulink" href="git-checkout.html" target="_top">git-checkout</a>(1).  We’ve used <code class="literal">git checkout</code> before to switch
+git-checkout(1).  We’ve used <code class="literal">git checkout</code> before to switch
 branches, but it has quite different behavior if it is given a path
 name: the command</p><pre class="screen">$ git checkout HEAD^ path/to/file</pre><p>replaces path/to/file by the contents it had in the commit HEAD^, and
 also updates the index to match.  It does not change branches.</p><p>If you just want to look at an old version of the file, without
 modifying the working directory, you can do that with
-<a class="ulink" href="git-show.html" target="_top">git-show</a>(1):</p><pre class="screen">$ git show HEAD^:path/to/file</pre><p>which will display the given version of the file.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="interrupted-work"></a>Temporarily setting aside work in progress</h2></div></div></div><p>While you are in the middle of working on something complicated, you
+git-show(1):</p><pre class="screen">$ git show HEAD^:path/to/file</pre><p>which will display the given version of the file.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="interrupted-work"></a>Temporarily setting aside work in progress</h2></div></div></div><p>While you are in the middle of working on something complicated, you
 find an unrelated but obvious and trivial bug.  You would like to fix it
-before continuing.  You can use <a class="ulink" href="git-stash.html" target="_top">git-stash</a>(1) to save the current
+before continuing.  You can use git-stash(1) to save the current
 state of your work, and after fixing the bug (or, optionally after doing
 so on a different branch and then coming back), unstash the
 work-in-progress changes.</p><pre class="screen">$ git stash save "work in progress for foo feature"</pre><p>This command will save your changes away to the <code class="literal">stash</code>, and
@@ -590,10 +590,10 @@ current branch.  Then you can make your fix as usual.</p><pre class="screen">...
 $ git commit -a -m "blorpl: typofix"</pre><p>After that, you can go back to what you were working on with
 <code class="literal">git stash pop</code>:</p><pre class="screen">$ git stash pop</pre></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="ensuring-good-performance"></a>Chapter 27. Ensuring good performance</h2></div></div></div><p>On large repositories, Git depends on compression to keep the history
 information from taking up too much space on disk or in memory.  Some
-Git commands may automatically run <a class="ulink" href="git-gc.html" target="_top">git-gc</a>(1), so you don’t
+Git commands may automatically run git-gc(1), so you don’t
 have to worry about running it manually.  However, compressing a large
 repository may take a while, so you may want to call <code class="literal">gc</code> explicitly
-to avoid automatic compression kicking in when it is not convenient.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="ensuring-reliability"></a>Chapter 28. Ensuring reliability</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="#checking-for-corruption">Checking the repository for corruption</a></span></dt><dt><span class="section"><a href="#recovering-lost-changes">Recovering lost changes</a></span></dt><dd><dl><dt><span class="section"><a href="#reflogs">Reflogs</a></span></dt><dt><span class="section"><a href="#dangling-object-recovery">Examining dangling objects</a></span></dt></dl></dd></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="checking-for-corruption"></a>Checking the repository for corruption</h2></div></div></div><p>The <a class="ulink" href="git-fsck.html" target="_top">git-fsck</a>(1) command runs a number of self-consistency checks
+to avoid automatic compression kicking in when it is not convenient.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="ensuring-reliability"></a>Chapter 28. Ensuring reliability</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="#checking-for-corruption">Checking the repository for corruption</a></span></dt><dt><span class="section"><a href="#recovering-lost-changes">Recovering lost changes</a></span></dt><dd><dl><dt><span class="section"><a href="#reflogs">Reflogs</a></span></dt><dt><span class="section"><a href="#dangling-object-recovery">Examining dangling objects</a></span></dt></dl></dd></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="checking-for-corruption"></a>Checking the repository for corruption</h2></div></div></div><p>The git-fsck(1) command runs a number of self-consistency checks
 on the repository, and reports on any problems.  This may take some
 time.</p><pre class="screen">$ git fsck
 dangling commit 7281251ddd2a61e38657c827739c57015671a6b3
@@ -621,9 +621,9 @@ $ gitk master@{"1 week ago"}	# ... or last week
 $ git log --walk-reflogs master	# show reflog entries for master</pre><p>A separate reflog is kept for the HEAD, so</p><pre class="screen">$ git show HEAD@{"1 week ago"}</pre><p>will show what HEAD pointed to one week ago, not what the current branch
 pointed to one week ago.  This allows you to see the history of what
 you’ve checked out.</p><p>The reflogs are kept by default for 30 days, after which they may be
-pruned.  See <a class="ulink" href="git-reflog.html" target="_top">git-reflog</a>(1) and <a class="ulink" href="git-gc.html" target="_top">git-gc</a>(1) to learn
+pruned.  See git-reflog(1) and git-gc(1) to learn
 how to control this pruning, and see the "SPECIFYING REVISIONS"
-section of <a class="ulink" href="gitrevisions.html" target="_top">gitrevisions</a>(7) for details.</p><p>Note that the reflog history is very different from normal Git history.
+section of gitrevisions(7) for details.</p><p>Note that the reflog history is very different from normal Git history.
 While normal history is shared by every repository that works on the
 same project, the reflog history is not shared: it tells you only about
 how the branches in your local repository have changed over time.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dangling-object-recovery"></a>Examining dangling objects</h3></div></div></div><p>In some situations the reflog may not be able to save you.  For example,
@@ -647,10 +647,10 @@ reference pointing to it, for example, a new branch:</p><pre class="screen">$ gi
 dangling objects can arise in other situations.</p></div></div></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="sharing-development"></a>Part IV. Sharing development with others</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="chapter"><a href="#getting-updates-With-git-pull">29. Getting updates with git pull</a></span></dt><dt><span class="chapter"><a href="#submitting-patches">30. Submitting patches to a project</a></span></dt><dt><span class="chapter"><a href="#importing-patches">31. Importing patches to a project</a></span></dt><dt><span class="chapter"><a href="#public-repositories">32. Public Git repositories</a></span></dt><dd><dl><dt><span class="section"><a href="#setting-up-a-public-repository">Setting up a public repository</a></span></dt><dt><span class="section"><a href="#exporting-via-git">Exporting a Git repository via the Git protocol</a></span></dt><dt><span class="section"><a href="#exporting-via-http">Exporting a git repository via HTTP</a></span></dt><dt><span class="section"><a href="#pushing-changes-to-a-public-repository">Pushing changes to a public repository</a></span></dt><dt><span class="section"><a href="#forcing-push">What to do when a push fails</a></span></dt><dt><span class="section"><a href="#setting-up-a-shared-repository">Setting up a shared repository</a></span></dt><dt><span class="section"><a href="#setting-up-gitweb">Allowing web browsing of a repository</a></span></dt></dl></dd><dt><span class="chapter"><a href="#how-to-get-a-git-repository-with-minimal-history">33. How to get a Git repository with minimal history</a></span></dt><dt><span class="chapter"><a href="#sharing-development-examples">34. Examples</a></span></dt><dd><dl><dt><span class="section"><a href="#maintaining-topic-branches">Maintaining topic branches for a Linux subsystem maintainer</a></span></dt></dl></dd></dl></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="getting-updates-With-git-pull"></a>Chapter 29. Getting updates with git pull</h2></div></div></div><p>After you clone a repository and commit a few changes of your own, you
 may wish to check the original repository for updates and merge them
 into your own work.</p><p>We have already seen <a class="link" href="#Updating-a-repository-With-git-fetch" title="Chapter 8. Updating a repository with git fetch">how to
-keep remote-tracking branches up to date</a> with <a class="ulink" href="git-fetch.html" target="_top">git-fetch</a>(1),
+keep remote-tracking branches up to date</a> with git-fetch(1),
 and how to merge two branches.  So you can merge in changes from the
 original repository’s master branch with:</p><pre class="screen">$ git fetch
-$ git merge origin/master</pre><p>However, the <a class="ulink" href="git-pull.html" target="_top">git-pull</a>(1) command provides a way to do this in
+$ git merge origin/master</pre><p>However, the git-pull(1) command provides a way to do this in
 one step:</p><pre class="screen">$ git pull origin master</pre><p>In fact, if you have <code class="literal">master</code> checked out, then this branch has been
 configured by <code class="literal">git clone</code> to get changes from the HEAD branch of the
 origin repository.  So often you can
@@ -660,8 +660,8 @@ the current branch.</p><p>More generally, a branch that is created from a remote
 will pull
 by default from that branch.  See the descriptions of the
 <code class="literal">branch.&lt;name&gt;.remote</code> and <code class="literal">branch.&lt;name&gt;.merge</code> options in
-<a class="ulink" href="git-config.html" target="_top">git-config</a>(1), and the discussion of the <code class="literal">--track</code> option in
-<a class="ulink" href="git-checkout.html" target="_top">git-checkout</a>(1), to learn how to control these defaults.</p><p>In addition to saving you keystrokes, <code class="literal">git pull</code> also helps you by
+git-config(1), and the discussion of the <code class="literal">--track</code> option in
+git-checkout(1), to learn how to control these defaults.</p><p>In addition to saving you keystrokes, <code class="literal">git pull</code> also helps you by
 producing a default commit message documenting the branch and
 repository that you pulled from.</p><p>(But note that no such commit will be created in the case of a
 <a class="link" href="#fast-forwards" title="Chapter 25. Fast-forward merges">fast-forward</a>; instead, your branch will just be
@@ -669,7 +669,7 @@ updated to point to the latest commit from the upstream branch.)</p><p>The <code
 in which case it just merges in a branch from the current repository; so
 the commands</p><pre class="screen">$ git pull . branch
 $ git merge branch</pre><p>are roughly equivalent.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="submitting-patches"></a>Chapter 30. Submitting patches to a project</h2></div></div></div><p>If you just have a few changes, the simplest way to submit them may
-just be to send them as patches in email:</p><p>First, use <a class="ulink" href="git-format-patch.html" target="_top">git-format-patch</a>(1); for example:</p><pre class="screen">$ git format-patch origin</pre><p>will produce a numbered series of files in the current directory, one
+just be to send them as patches in email:</p><p>First, use git-format-patch(1); for example:</p><pre class="screen">$ git format-patch origin</pre><p>will produce a numbered series of files in the current directory, one
 for each patch in the current branch but not in <code class="literal">origin/HEAD</code>.</p><p><code class="literal">git format-patch</code> can include an initial "cover letter". You can insert
 commentary on individual patches after the three dash line which
 <code class="literal">format-patch</code> places after the commit message but before the patch
@@ -677,9 +677,9 @@ itself.  If you use <code class="literal">git notes</code> to track your cover l
 <code class="literal">git format-patch --notes</code> will include the commit’s notes in a similar
 manner.</p><p>You can then import these into your mail client and send them by
 hand.  However, if you have a lot to send at once, you may prefer to
-use the <a class="ulink" href="git-send-email.html" target="_top">git-send-email</a>(1) script to automate the process.
+use the git-send-email(1) script to automate the process.
 Consult the mailing list for your project first to determine
-their requirements for submitting patches.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="importing-patches"></a>Chapter 31. Importing patches to a project</h2></div></div></div><p>Git also provides a tool called <a class="ulink" href="git-am.html" target="_top">git-am</a>(1) (am stands for
+their requirements for submitting patches.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="importing-patches"></a>Chapter 31. Importing patches to a project</h2></div></div></div><p>Git also provides a tool called git-am(1) (am stands for
 "apply mailbox"), for importing such an emailed series of patches.
 Just save all of the patch-containing messages, in order, into a
 single mailbox file, say <code class="literal">patches.mbox</code>, then run</p><pre class="screen">$ git am -3 patches.mbox</pre><p>Git will apply each patch in order; if any conflicts are found, it
@@ -692,7 +692,7 @@ remaining patches from the mailbox.</p><p>The final result will be a series of c
 the original mailbox, with authorship and commit log message each
 taken from the message containing each patch.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="public-repositories"></a>Chapter 32. Public Git repositories</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="#setting-up-a-public-repository">Setting up a public repository</a></span></dt><dt><span class="section"><a href="#exporting-via-git">Exporting a Git repository via the Git protocol</a></span></dt><dt><span class="section"><a href="#exporting-via-http">Exporting a git repository via HTTP</a></span></dt><dt><span class="section"><a href="#pushing-changes-to-a-public-repository">Pushing changes to a public repository</a></span></dt><dt><span class="section"><a href="#forcing-push">What to do when a push fails</a></span></dt><dt><span class="section"><a href="#setting-up-a-shared-repository">Setting up a shared repository</a></span></dt><dt><span class="section"><a href="#setting-up-gitweb">Allowing web browsing of a repository</a></span></dt></dl></div><p>Another way to submit changes to a project is to tell the maintainer
 of that project to pull the changes from your repository using
-<a class="ulink" href="git-pull.html" target="_top">git-pull</a>(1).  In the section "<a class="link" href="#getting-updates-With-git-pull" title="Chapter 29. Getting updates with git pull">Getting updates with <code class="literal">git pull</code></a>" we described this as a way to get
+git-pull(1).  In the section "<a class="link" href="#getting-updates-With-git-pull" title="Chapter 29. Getting updates with git pull">Getting updates with <code class="literal">git pull</code></a>" we described this as a way to get
 updates from the "main" repository, but it works just as well in the
 other direction.</p><p>If you and the maintainer both have accounts on the same machine, then
 you can just pull changes from each other’s repositories directly;
@@ -726,12 +726,12 @@ convenient.</p></div><div class="section"><div class="titlepage"><div><div><h2 c
 directory to put the repository in, and what <code class="literal">git://</code> URL it will
 appear at.  You can then skip to the section
 "<a class="link" href="#pushing-changes-to-a-public-repository" title="Pushing changes to a public repository">Pushing changes to a public
-repository</a>", below.</p><p>Otherwise, all you need to do is start <a class="ulink" href="git-daemon.html" target="_top">git-daemon</a>(1); it will
+repository</a>", below.</p><p>Otherwise, all you need to do is start git-daemon(1); it will
 listen on port 9418.  By default, it will allow access to any directory
 that looks like a Git directory and contains the magic file
 git-daemon-export-ok.  Passing some directory paths as <code class="literal">git daemon</code>
 arguments will further restrict the exports to those paths.</p><p>You can also run <code class="literal">git daemon</code> as an inetd service; see the
-<a class="ulink" href="git-daemon.html" target="_top">git-daemon</a>(1) man page for details.  (See especially the
+git-daemon(1) man page for details.  (See especially the
 examples section.)</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="exporting-via-http"></a>Exporting a git repository via HTTP</h2></div></div></div><p>The Git protocol gives better performance and reliability, but on a
 host with a web server set up, HTTP exports may be simpler to set up.</p><p>All you need to do is place the newly created bare Git repository in
 a directory that is exported by the web server, and make some
@@ -739,7 +739,7 @@ adjustments to give web clients some extra information they need:</p><pre class=
 $ cd proj.git
 $ git --bare update-server-info
 $ mv hooks/post-update.sample hooks/post-update</pre><p>(For an explanation of the last two lines, see
-<a class="ulink" href="git-update-server-info.html" target="_top">git-update-server-info</a>(1) and <a class="ulink" href="githooks.html" target="_top">githooks</a>(5).)</p><p>Advertise the URL of <code class="literal">proj.git</code>.  Anybody else should then be able to
+git-update-server-info(1) and githooks(5).)</p><p>Advertise the URL of <code class="literal">proj.git</code>.  Anybody else should then be able to
 clone or pull from that URL, for example with a command line like:</p><pre class="screen">$ git clone http://yourserver.com/~you/proj.git</pre><p>(See also
 <a class="ulink" href="howto/setup-git-server-over-http.html" target="_top">setup-git-server-over-http</a>
 for a slightly more sophisticated setup using WebDAV which also
@@ -747,7 +747,7 @@ allows pushing over HTTP.)</p></div><div class="section"><div class="titlepage">
 <a class="link" href="#exporting-via-http" title="Exporting a git repository via HTTP">http</a> or <a class="link" href="#exporting-via-git" title="Exporting a Git repository via the Git protocol">git</a>) allow other
 maintainers to fetch your latest changes, but they do not allow write
 access, which you will need to update the public repository with the
-latest changes created in your private repository.</p><p>The simplest way to do this is using <a class="ulink" href="git-push.html" target="_top">git-push</a>(1) and ssh; to
+latest changes created in your private repository.</p><p>The simplest way to do this is using git-push(1) and ssh; to
 update the remote branch named <code class="literal">master</code> with the latest state of your
 branch named <code class="literal">master</code>, run</p><pre class="screen">$ git push ssh://yourserver.com/~you/proj.git master:master</pre><p>or just</p><pre class="screen">$ git push ssh://yourserver.com/~you/proj.git master</pre><p>As with <code class="literal">git fetch</code>, <code class="literal">git push</code> will complain if this does not result in a
 <a class="link" href="#fast-forwards" title="Chapter 25. Fast-forward merges">fast-forward</a>; see the following section for details on
@@ -756,12 +756,12 @@ handling this case.</p><p>Note that the target of a <code class="literal">push</
 repository that has a checked-out working tree, but a push to update the
 currently checked-out branch is denied by default to prevent confusion.
 See the description of the receive.denyCurrentBranch option
-in <a class="ulink" href="git-config.html" target="_top">git-config</a>(1) for details.</p><p>As with <code class="literal">git fetch</code>, you may also set up configuration options to
+in git-config(1) for details.</p><p>As with <code class="literal">git fetch</code>, you may also set up configuration options to
 save typing; so, for example:</p><pre class="screen">$ git remote add public-repo ssh://yourserver.com/~you/proj.git</pre><p>adds the following to <code class="literal">.git/config</code>:</p><pre class="screen">[remote "public-repo"]
 	url = yourserver.com:proj.git
 	fetch = +refs/heads/*:refs/remotes/example/*</pre><p>which lets you do the same push with just</p><pre class="screen">$ git push public-repo master</pre><p>See the explanations of the <code class="literal">remote.&lt;name&gt;.url</code>,
 <code class="literal">branch.&lt;name&gt;.remote</code>, and <code class="literal">remote.&lt;name&gt;.push</code> options in
-<a class="ulink" href="git-config.html" target="_top">git-config</a>(1) for details.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="forcing-push"></a>What to do when a push fails</h2></div></div></div><p>If a push would not result in a <a class="link" href="#fast-forwards" title="Chapter 25. Fast-forward merges">fast-forward</a> of the
+git-config(1) for details.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="forcing-push"></a>What to do when a push fails</h2></div></div></div><p>If a push would not result in a <a class="link" href="#fast-forwards" title="Chapter 25. Fast-forward merges">fast-forward</a> of the
 remote branch, then it will fail with an error like:</p><pre class="screen">error: remote 'refs/heads/master' is not an ancestor of
  local  'refs/heads/master'.
  Maybe you are not up-to-date and need to pull first?
@@ -780,10 +780,10 @@ the right to push to the same repository.  In that case, the correct
 solution is to retry the push after first updating your work: either by a
 pull, or by a fetch followed by a rebase; see the
 <a class="link" href="#setting-up-a-shared-repository" title="Setting up a shared repository">next section</a> and
-<a class="ulink" href="gitcvs-migration.html" target="_top">gitcvs-migration</a>(7) for more.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setting-up-a-shared-repository"></a>Setting up a shared repository</h2></div></div></div><p>Another way to collaborate is by using a model similar to that
+gitcvs-migration(7) for more.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setting-up-a-shared-repository"></a>Setting up a shared repository</h2></div></div></div><p>Another way to collaborate is by using a model similar to that
 commonly used in CVS, where several developers with special rights
 all push to and pull from a single shared repository.  See
-<a class="ulink" href="gitcvs-migration.html" target="_top">gitcvs-migration</a>(7) for instructions on how to
+gitcvs-migration(7) for instructions on how to
 set this up.</p><p>However, while there is nothing wrong with Git’s support for shared
 repositories, this mode of operation is not generally recommended,
 simply because the mode of collaboration that Git supports—​by
@@ -802,16 +802,16 @@ less need for formal decisions about who is "in" and who is
 "out".</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="setting-up-gitweb"></a>Allowing web browsing of a repository</h2></div></div></div><p>The gitweb cgi script provides users an easy way to browse your
 project’s revisions, file contents and logs without having to install
 Git. Features like RSS/Atom feeds and blame/annotation details may
-optionally be enabled.</p><p>The <a class="ulink" href="git-instaweb.html" target="_top">git-instaweb</a>(1) command provides a simple way to start
+optionally be enabled.</p><p>The git-instaweb(1) command provides a simple way to start
 browsing the repository using gitweb. The default server when using
 instaweb is lighttpd.</p><p>See the file gitweb/INSTALL in the Git source tree and
-<a class="ulink" href="gitweb.html" target="_top">gitweb</a>(1) for instructions on details setting up a permanent
+gitweb(1) for instructions on details setting up a permanent
 installation with a CGI or Perl capable server.</p></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="how-to-get-a-git-repository-with-minimal-history"></a>Chapter 33. How to get a Git repository with minimal history</h2></div></div></div><p>A <a class="link" href="#def_shallow_clone">shallow clone</a>, with its truncated
 history, is useful when one is interested only in recent history
 of a project and getting full history from the upstream is
 expensive.</p><p>A <a class="link" href="#def_shallow_clone">shallow clone</a> is created by specifying
-the <a class="ulink" href="git-clone.html" target="_top">git-clone</a>(1) <code class="literal">--depth</code> switch. The depth can later be
-changed with the <a class="ulink" href="git-fetch.html" target="_top">git-fetch</a>(1) <code class="literal">--depth</code> switch, or full
+the git-clone(1) <code class="literal">--depth</code> switch. The depth can later be
+changed with the git-fetch(1) <code class="literal">--depth</code> switch, or full
 history restored with <code class="literal">--unshallow</code>.</p><p>Merging inside a <a class="link" href="#def_shallow_clone">shallow clone</a> will work as long
 as a merge base is in the recent history.
 Otherwise, it will be like merging unrelated histories and may
@@ -826,21 +826,21 @@ him a "please pull" request.)</li></ul></div><p>He also uses a set of temporary 
 containing a logical grouping of patches.</p><p>To set this up, first create your work tree by cloning Linus’s public
 tree:</p><pre class="screen">$ git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git work
 $ cd work</pre><p>Linus’s tree will be stored in the remote-tracking branch named origin/master,
-and can be updated using <a class="ulink" href="git-fetch.html" target="_top">git-fetch</a>(1); you can track other
-public trees using <a class="ulink" href="git-remote.html" target="_top">git-remote</a>(1) to set up a "remote" and
-<a class="ulink" href="git-fetch.html" target="_top">git-fetch</a>(1) to keep them up-to-date; see
+and can be updated using git-fetch(1); you can track other
+public trees using git-remote(1) to set up a "remote" and
+git-fetch(1) to keep them up-to-date; see
 <a class="xref" href="#repositories-and-branches" title="Part I. Repositories and Branches">Part I, “Repositories and Branches”</a>.</p><p>Now create the branches in which you are going to work; these start out
 at the current tip of origin/master branch, and should be set up (using
-the <code class="literal">--track</code> option to <a class="ulink" href="git-branch.html" target="_top">git-branch</a>(1)) to merge changes in from
+the <code class="literal">--track</code> option to git-branch(1)) to merge changes in from
 Linus by default.</p><pre class="screen">$ git branch --track test origin/master
-$ git branch --track release origin/master</pre><p>These can be easily kept up to date using <a class="ulink" href="git-pull.html" target="_top">git-pull</a>(1).</p><pre class="screen">$ git checkout test &amp;&amp; git pull
+$ git branch --track release origin/master</pre><p>These can be easily kept up to date using git-pull(1).</p><pre class="screen">$ git checkout test &amp;&amp; git pull
 $ git checkout release &amp;&amp; git pull</pre><p>Important note!  If you have any local changes in these branches, then
 this merge will create a commit object in the history (with no local
 changes Git will simply do a "fast-forward" merge).  Many people dislike
 the "noise" that this creates in the Linux history, so you should avoid
 doing this capriciously in the <code class="literal">release</code> branch, as these noisy commits
 will become part of the permanent history when you ask Linus to pull
-from the release branch.</p><p>A few configuration variables (see <a class="ulink" href="git-config.html" target="_top">git-config</a>(1)) can
+from the release branch.</p><p>A few configuration variables (see git-config(1)) can
 make it easy to push both branches to your public tree.  (See
 <a class="xref" href="#setting-up-a-public-repository" title="Setting up a public repository">the section called “Setting up a public repository”</a>.)</p><pre class="screen">$ cat &gt;&gt; .git/config &lt;&lt;EOF
 [remote "mytree"]
@@ -848,7 +848,7 @@ make it easy to push both branches to your public tree.  (See
 	push = release
 	push = test
 EOF</pre><p>Then you can push both the test and release trees using
-<a class="ulink" href="git-push.html" target="_top">git-push</a>(1):</p><pre class="screen">$ git push mytree</pre><p>or push just one of the test and release branches using:</p><pre class="screen">$ git push mytree test</pre><p>or</p><pre class="screen">$ git push mytree release</pre><p>Now to apply some patches from the community.  Think of a short
+git-push(1):</p><pre class="screen">$ git push mytree</pre><p>or push just one of the test and release branches using:</p><pre class="screen">$ git push mytree test</pre><p>or</p><pre class="screen">$ git push mytree release</pre><p>Now to apply some patches from the community.  Think of a short
 snappy name for a branch to hold this patch (or related group of
 patches), and create a new branch from a recent stable tag of
 Linus’s branch. Picking a stable base for your branch will:
@@ -873,7 +873,7 @@ You detect this when the output from:</p><pre class="screen">$ git log origin..b
 branch and then merge into each of the test and release branches.  For
 these changes, just apply directly to the <code class="literal">release</code> branch, and then
 merge that into the <code class="literal">test</code> branch.</p><p>After pushing your work to <code class="literal">mytree</code>, you can use
-<a class="ulink" href="git-request-pull.html" target="_top">git-request-pull</a>(1) to prepare a "please pull" request message
+git-request-pull(1) to prepare a "please pull" request message
 to send to Linus:</p><pre class="screen">$ git push mytree
 $ git request-pull origin mytree release</pre><p>Here are some of the scripts that simplify all this even further.</p><pre class="screen">==== update script ====
 # Update a branch in my Git tree.  If the branch to be updated
@@ -1003,7 +1003,7 @@ the result would create a new merge commit, like this:</p><pre class="literallay
         \        \
          a--b--c--m &lt;-- mywork</pre><p>However, if you prefer to keep the history in mywork a simple series of
 commits without any merges, you may instead choose to use
-<a class="ulink" href="git-rebase.html" target="_top">git-rebase</a>(1):</p><pre class="screen">$ git checkout mywork
+git-rebase(1):</p><pre class="screen">$ git checkout mywork
 $ git rebase origin</pre><p>This will remove each of your commits from mywork, temporarily saving
 them as patches (in a directory named <code class="literal">.git/rebase-apply</code>), update mywork to
 point at the latest version of origin, then apply each of the saved
@@ -1026,7 +1026,7 @@ use <a class="link" href="#interactive-rebase" title="Chapter 39. Using intera
 approach is to use <code class="literal">git format-patch</code> to create a series of patches
 and then reset the state to before the patches:</p><pre class="screen">$ git format-patch origin
 $ git reset --hard origin</pre><p>Then modify, reorder, or eliminate patches as needed before applying
-them again with <a class="ulink" href="git-am.html" target="_top">git-am</a>(1):</p><pre class="screen">$ git am *.patch</pre></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="interactive-rebase"></a>Chapter 39. Using interactive rebases</h2></div></div></div><p>You can also edit a patch series with an interactive rebase.  This is
+them again with git-am(1):</p><pre class="screen">$ git am *.patch</pre></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="interactive-rebase"></a>Chapter 39. Using interactive rebases</h2></div></div></div><p>You can also edit a patch series with an interactive rebase.  This is
 the same as <a class="link" href="#reordering-patch-series" title="Chapter 38. Reordering or selecting from a patch series">reordering a patch series using
 <code class="literal">format-patch</code></a>, so use whichever interface you like best.</p><p>Rebase your current HEAD on the last commit you want to retain as-is.
 For example, if you want to reorder the last 5 commits, use:</p><pre class="screen">$ git rebase -i HEAD~5</pre><p>This will open your editor with a list of steps to be taken to perform
@@ -1060,7 +1060,7 @@ you can continue with <code class="literal">git rebase --continue</code>.  If yo
 things are getting too hairy, you can always bail out with <code class="literal">git rebase
 --abort</code>.  Even after the rebase is complete, you can still recover
 the original branch by using the <a class="link" href="#reflogs" title="Reflogs">reflog</a>.</p><p>For a more detailed discussion of the procedure and additional tips,
-see the "INTERACTIVE MODE" section of <a class="ulink" href="git-rebase.html" target="_top">git-rebase</a>(1).</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="patch-series-tools"></a>Chapter 40. Other tools</h2></div></div></div><p>There are numerous other tools, such as StGit, which exist for the
+see the "INTERACTIVE MODE" section of git-rebase(1).</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="patch-series-tools"></a>Chapter 40. Other tools</h2></div></div></div><p>There are numerous other tools, such as StGit, which exist for the
 purpose of maintaining a patch series.  These are outside of the scope of
 this manual.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="problems-With-rewriting-history"></a>Chapter 41. Problems with rewriting history</h2></div></div></div><p>The primary problem with rewriting the history of a branch has to do
 with merging.  Suppose somebody fetches your branch and merges it into
@@ -1083,7 +1083,7 @@ new.  The results are likely to be unexpected.</p><p>You may still choose to pub
 and it may be useful for others to be able to fetch those branches in
 order to examine or test them, but they should not attempt to pull such
 branches into their own work.</p><p>For true distributed development that supports proper merging,
-published branches should never be rewritten.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="bisect-merges"></a>Chapter 42. Why bisecting merge commits can be harder than bisecting linear history</h2></div></div></div><p>The <a class="ulink" href="git-bisect.html" target="_top">git-bisect</a>(1) command correctly handles history that
+published branches should never be rewritten.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="bisect-merges"></a>Chapter 42. Why bisecting merge commits can be harder than bisecting linear history</h2></div></div></div><p>The git-bisect(1) command correctly handles history that
 includes merge commits.  However, when the commit that it finds is a
 merge commit, the user may need to work harder than usual to figure out
 why that commit introduced a problem.</p><p>Imagine this history:</p><pre class="literallayout">      ---Z---o---X---...---o---A---C---D
@@ -1102,7 +1102,7 @@ so no conflict resolution is required.</p><p>Nevertheless, the code at C is brok
 on the lower line of development have not been converted to the new
 semantics introduced on the upper line of development.  So if all
 you know is that D is bad, that Z is good, and that
-<a class="ulink" href="git-bisect.html" target="_top">git-bisect</a>(1) identifies C as the culprit, how will you
+git-bisect(1) identifies C as the culprit, how will you
 figure out that the problem is due to this change in semantics?</p><p>When the result of a <code class="literal">git bisect</code> is a non-merge commit, you should
 normally be able to discover the problem by examining just that commit.
 Developers can make this easy by breaking their changes into small
@@ -1117,7 +1117,7 @@ linear history:</p><pre class="literallayout">    ---Z---o---X--...---o---A---o-
 and understanding why Y* was broken would probably be easier.</p><p>Partly for this reason, many experienced Git users, even when
 working on an otherwise merge-heavy project, keep the history
 linear by rebasing against the latest upstream version before
-publishing.</p></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="advanced-branch-management"></a>Part VI. Advanced branch management</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="chapter"><a href="#fetching-individual-branches">43. Fetching individual branches</a></span></dt><dt><span class="chapter"><a href="#fetch-fast-forwards">44. git fetch and fast-forwards</a></span></dt><dt><span class="chapter"><a href="#forcing-fetch">45. Forcing git fetch to do non-fast-forward updates</a></span></dt><dt><span class="chapter"><a href="#remote-branch-configuration">46. Configuring remote-tracking branches</a></span></dt></dl></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="fetching-individual-branches"></a>Chapter 43. Fetching individual branches</h2></div></div></div><p>Instead of using <a class="ulink" href="git-remote.html" target="_top">git-remote</a>(1), you can also choose just
+publishing.</p></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="advanced-branch-management"></a>Part VI. Advanced branch management</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="chapter"><a href="#fetching-individual-branches">43. Fetching individual branches</a></span></dt><dt><span class="chapter"><a href="#fetch-fast-forwards">44. git fetch and fast-forwards</a></span></dt><dt><span class="chapter"><a href="#forcing-fetch">45. Forcing git fetch to do non-fast-forward updates</a></span></dt><dt><span class="chapter"><a href="#remote-branch-configuration">46. Configuring remote-tracking branches</a></span></dt></dl></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="fetching-individual-branches"></a>Chapter 43. Fetching individual branches</h2></div></div></div><p>Instead of using git-remote(1), you can also choose just
 to update one branch at a time, and to store it locally under an
 arbitrary name:</p><pre class="screen">$ git fetch origin todo:my-todo-work</pre><p>The first argument, <code class="literal">origin</code>, just tells Git to fetch from the
 repository you originally cloned from.  The second argument tells Git
@@ -1147,7 +1147,7 @@ flag to force updates of all the fetched branches, as in:</p><pre class="screen"
 may be lost, as we saw in the previous section.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="remote-branch-configuration"></a>Chapter 46. Configuring remote-tracking branches</h2></div></div></div><p>We saw above that <code class="literal">origin</code> is just a shortcut to refer to the
 repository that you originally cloned from.  This information is
 stored in Git configuration variables, which you can see using
-<a class="ulink" href="git-config.html" target="_top">git-config</a>(1):</p><pre class="screen">$ git config -l
+git-config(1):</p><pre class="screen">$ git config -l
 core.repositoryformatversion=0
 core.filemode=true
 core.logallrefupdates=true
@@ -1158,11 +1158,11 @@ branch.master.merge=refs/heads/master</pre><p>If there are other repositories th
 create similar configuration options to save typing; for example,</p><pre class="screen">$ git remote add example git://example.com/proj.git</pre><p>adds the following to <code class="literal">.git/config</code>:</p><pre class="screen">[remote "example"]
 	url = git://example.com/proj.git
 	fetch = +refs/heads/*:refs/remotes/example/*</pre><p>Also note that the above configuration can be performed by directly
-editing the file <code class="literal">.git/config</code> instead of using <a class="ulink" href="git-remote.html" target="_top">git-remote</a>(1).</p><p>After configuring the remote, the following three commands will do the
+editing the file <code class="literal">.git/config</code> instead of using git-remote(1).</p><p>After configuring the remote, the following three commands will do the
 same thing:</p><pre class="screen">$ git fetch git://example.com/proj.git +refs/heads/*:refs/remotes/example/*
 $ git fetch example +refs/heads/*:refs/remotes/example/*
-$ git fetch example</pre><p>See <a class="ulink" href="git-config.html" target="_top">git-config</a>(1) for more details on the configuration
-options mentioned above and <a class="ulink" href="git-fetch.html" target="_top">git-fetch</a>(1) for more details on
+$ git fetch example</pre><p>See git-config(1) for more details on the configuration
+options mentioned above and git-fetch(1) for more details on
 the refspec syntax.</p></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="git-concepts"></a>Part VII. Git concepts</h1></div></div></div><div class="partintro"><div></div><p>Git is built on a small number of simple but powerful ideas.  While it
 is possible to get things done without understanding them, you will find
 Git much more intuitive if you do.</p><p>We start with the most important, the  <a class="link" href="#def_object_database">object
@@ -1191,7 +1191,7 @@ used to sign other objects. It contains the object name and type of
 another object, a symbolic name (of course!) and, optionally, a
 signature.</li></ul></div><p>The object types in some more detail:</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="commit-object"></a>Commit Object</h2></div></div></div><p>The "commit" object links a physical state of a tree with a description
 of how we got there and why.  Use the <code class="literal">--pretty=raw</code> option to
-<a class="ulink" href="git-show.html" target="_top">git-show</a>(1) or <a class="ulink" href="git-log.html" target="_top">git-log</a>(1) to examine your favorite
+git-show(1) or git-log(1) to examine your favorite
 commit:</p><pre class="screen">$ git show -s --pretty=raw 2be7fcb476
 commit 2be7fcb4764f2dbcee52635b91fedb1b3dcf7ab4
 tree fb3a8bdd0ceddd019615af4d57a53f43d8cee2bf
@@ -1218,10 +1218,10 @@ of the tree referred to by this commit with the trees associated with
 its parents.  In particular, Git does not attempt to record file renames
 explicitly, though it can identify cases where the existence of the same
 file data at changing paths suggests a rename.  (See, for example, the
-<code class="literal">-M</code> option to <a class="ulink" href="git-diff.html" target="_top">git-diff</a>(1)).</p><p>A commit is usually created by <a class="ulink" href="git-commit.html" target="_top">git-commit</a>(1), which creates a
+<code class="literal">-M</code> option to git-diff(1)).</p><p>A commit is usually created by git-commit(1), which creates a
 commit whose parent is normally the current HEAD, and whose tree is
-taken from the content currently stored in the index.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tree-object"></a>Tree Object</h2></div></div></div><p>The ever-versatile <a class="ulink" href="git-show.html" target="_top">git-show</a>(1) command can also be used to
-examine tree objects, but <a class="ulink" href="git-ls-tree.html" target="_top">git-ls-tree</a>(1) will give you more
+taken from the content currently stored in the index.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tree-object"></a>Tree Object</h2></div></div></div><p>The ever-versatile git-show(1) command can also be used to
+examine tree objects, but git-ls-tree(1) will give you more
 details:</p><pre class="screen">$ git ls-tree fb3a8bdd0ce
 100644 blob 63c918c667fa005ff12ad89437f2fdc80926e21c    .gitignore
 100644 blob 5529b198e8d14decbe4ad99db3f7fb632de0439d    .mailmap
@@ -1242,7 +1242,7 @@ are identical.  This allows Git to quickly determine the differences
 between two related tree objects, since it can ignore any entries with
 identical object names.</p><p>(Note: in the presence of submodules, trees may also have commits as
 entries.  See <a class="xref" href="#submodules" title="Part VIII. Submodules">Part VIII, “Submodules”</a> for documentation.)</p><p>Note that the files all have mode 644 or 755: Git actually only pays
-attention to the executable bit.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="blob-object"></a>Blob Object</h2></div></div></div><p>You can use <a class="ulink" href="git-show.html" target="_top">git-show</a>(1) to examine the contents of a blob; take,
+attention to the executable bit.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="blob-object"></a>Blob Object</h2></div></div></div><p>You can use git-show(1) to examine the contents of a blob; take,
 for example, the blob in the entry for <code class="literal">COPYING</code> from the tree above:</p><pre class="screen">$ git show 6ff87c4664
 
  Note that the only valid version of the GPL as far as this project
@@ -1254,7 +1254,7 @@ directory tree (or in multiple different versions of the repository)
 have the same contents, they will share the same blob object. The object
 is totally independent of its location in the directory tree, and
 renaming a file does not change the object that file is associated with.</p><p>Note that any tree or blob object can be examined using
-<a class="ulink" href="git-show.html" target="_top">git-show</a>(1) with the &lt;revision&gt;:&lt;path&gt; syntax.  This can
+git-show(1) with the &lt;revision&gt;:&lt;path&gt; syntax.  This can
 sometimes be useful for browsing the contents of a tree that is not
 currently checked out.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="trust"></a>Trust</h2></div></div></div><p>If you receive the SHA-1 name of a blob from one source, and its contents
 from another (possibly untrusted) source, you can still trust that those
@@ -1274,7 +1274,7 @@ sending out a single email that tells the people the name (SHA-1 hash)
 of the top commit, and digitally sign that email using something
 like GPG/PGP.</p><p>To assist in this, Git also provides the tag object…​</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tag-object"></a>Tag Object</h2></div></div></div><p>A tag object contains an object, object type, tag name, the name of the
 person ("tagger") who created the tag, and a message, which may contain
-a signature, as can be seen using <a class="ulink" href="git-cat-file.html" target="_top">git-cat-file</a>(1):</p><pre class="screen">$ git cat-file tag v1.5.0
+a signature, as can be seen using git-cat-file(1):</p><pre class="screen">$ git cat-file tag v1.5.0
 object 437b1b20df4b356c9342dac8d38849f24ef44f27
 type commit
 tag v1.5.0
@@ -1287,8 +1287,8 @@ Version: GnuPG v1.4.6 (GNU/Linux)
 iD8DBQBF0lGqwMbZpPMRm5oRAuRiAJ9ohBLd7s2kqjkKlq1qqC57SbnmzQCdG4ui
 nLE/L9aUXdWeTFPron96DLA=
 =2E+0
------END PGP SIGNATURE-----</pre><p>See the <a class="ulink" href="git-tag.html" target="_top">git-tag</a>(1) command to learn how to create and verify tag
-objects.  (Note that <a class="ulink" href="git-tag.html" target="_top">git-tag</a>(1) can also be used to create
+-----END PGP SIGNATURE-----</pre><p>See the git-tag(1) command to learn how to create and verify tag
+objects.  (Note that git-tag(1) can also be used to create
 "lightweight tags", which are not tag objects at all, but just simple
 references whose names begin with <code class="literal">refs/tags/</code>).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="pack-files"></a>How Git stores objects efficiently: pack files</h2></div></div></div><p>Newly created objects are initially created in a file named after the
 object’s SHA-1 hash (stored in <code class="literal">.git/objects</code>).</p><p>Unfortunately this system becomes inefficient once a project has a
@@ -1310,8 +1310,8 @@ created when, for example, you use <code class="literal">git reset</code> to rem
 You can verify that the loose objects are gone by looking at the
 <code class="literal">.git/objects</code> directory or by running</p><pre class="screen">$ git count-objects
 0 objects, 0 kilobytes</pre><p>Although the object files are gone, any commands that refer to those
-objects will work exactly as they did before.</p><p>The <a class="ulink" href="git-gc.html" target="_top">git-gc</a>(1) command performs packing, pruning, and more for
-you, so is normally the only high-level command you need.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dangling-objects"></a>Dangling objects</h2></div></div></div><p>The <a class="ulink" href="git-fsck.html" target="_top">git-fsck</a>(1) command will sometimes complain about dangling
+objects will work exactly as they did before.</p><p>The git-gc(1) command performs packing, pruning, and more for
+you, so is normally the only high-level command you need.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dangling-objects"></a>Dangling objects</h2></div></div></div><p>The git-fsck(1) command will sometimes complain about dangling
 objects.  They are not a problem.</p><p>The most common cause of dangling objects is that you’ve rebased a
 branch, or you have pulled from somebody else who rebased a branch—​see
 <a class="xref" href="#cleaning-up-history" title="Part V. Rewriting history and maintaining patch series">Part V, “Rewriting history and maintaining patch series”</a>.  In that case, the old head of the original
@@ -1357,14 +1357,14 @@ to replace them by hand.  Back up your repository before attempting this
 in case you corrupt things even more in the process.</p><p>We’ll assume that the problem is a single missing or corrupted blob,
 which is sometimes a solvable problem.  (Recovering missing trees and
 especially commits is <span class="strong"><strong>much</strong></span> harder).</p><p>Before starting, verify that there is corruption, and figure out where
-it is with <a class="ulink" href="git-fsck.html" target="_top">git-fsck</a>(1); this may be time-consuming.</p><p>Assume the output looks like this:</p><pre class="screen">$ git fsck --full --no-dangling
+it is with git-fsck(1); this may be time-consuming.</p><p>Assume the output looks like this:</p><pre class="screen">$ git fsck --full --no-dangling
 broken link from    tree 2d9263c6d23595e7cb2a21e5ebbb53655278dff8
               to    blob 4b9458b3786228369c63936db65827de3cc06200
 missing blob 4b9458b3786228369c63936db65827de3cc06200</pre><p>Now you know that blob 4b9458b3 is missing, and that the tree 2d9263c6
 points to it.  If you could find just one copy of that missing blob
 object, possibly in some other repository, you could move it into
 <code class="literal">.git/objects/4b/9458b3...</code> and be done.  Suppose you can’t.  You can
-still examine the tree that pointed to it with <a class="ulink" href="git-ls-tree.html" target="_top">git-ls-tree</a>(1),
+still examine the tree that pointed to it with git-ls-tree(1),
 which might output something like:</p><pre class="screen">$ git ls-tree 2d9263c6d23595e7cb2a21e5ebbb53655278dff8
 100644 blob 8d14531846b95bfa3564b58ccfb7913a034323b8	.gitignore
 100644 blob ebf9bf84da0aab5ed944264a5db2a65fe3a3e883	.mailmap
@@ -1376,7 +1376,7 @@ which might output something like:</p><pre class="screen">$ git ls-tree 2d9263c6
 say it’s in <code class="literal">somedirectory</code>.  If you’re lucky the missing copy might be
 the same as the copy you have checked out in your working tree at
 <code class="literal">somedirectory/myfile</code>; you can test whether that’s right with
-<a class="ulink" href="git-hash-object.html" target="_top">git-hash-object</a>(1):</p><pre class="screen">$ git hash-object -w somedirectory/myfile</pre><p>which will create and store a blob object with the contents of
+git-hash-object(1):</p><pre class="screen">$ git hash-object -w somedirectory/myfile</pre><p>which will create and store a blob object with the contents of
 somedirectory/myfile, and output the SHA-1 of that object.  if you’re
 extremely lucky it might be 4b9458b3786228369c63936db65827de3cc06200, in
 which case you’ve guessed right, and the corruption is fixed!</p><p>Otherwise, you need more information.  How do you tell which version of
@@ -1400,7 +1400,7 @@ shot at reconstructing the contents of the in-between state 4b9458b.</p><p>If yo
 whole thing. It’s up to you—​Git does <span class="strong"><strong>have</strong></span> a lot of information, it is
 just missing one particular blob version.</p></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="the-index"></a>Chapter 48. The index</h2></div></div></div><p>The index is a binary file (generally kept in <code class="literal">.git/index</code>) containing a
 sorted list of path names, each with permissions and the SHA-1 of a blob
-object; <a class="ulink" href="git-ls-files.html" target="_top">git-ls-files</a>(1) can show you the contents of the index:</p><pre class="screen">$ git ls-files --stage
+object; git-ls-files(1) can show you the contents of the index:</p><pre class="screen">$ git ls-files --stage
 100644 63c918c667fa005ff12ad89437f2fdc80926e21c 0	.gitignore
 100644 5529b198e8d14decbe4ad99db3f7fb632de0439d 0	.mailmap
 100644 6ff87c4664981e4397625791c8ea3bbb5f2279a3 0	COPYING
@@ -1412,7 +1412,7 @@ object; <a class="ulink" href="git-ls-files.html" target="_top">git-ls-files</a>
 100644 d5de8292e05e7c36c4b68857c1cf9855e3d2f70a 0	xdiff/xutils.h</pre><p>Note that in older documentation you may see the index called the
 "current directory cache" or just the "cache".  It has three important
 properties:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p class="simpara">The index contains all the information necessary to generate a single
-(uniquely determined) tree object.</p><p class="simpara">For example, running <a class="ulink" href="git-commit.html" target="_top">git-commit</a>(1) generates this tree object
+(uniquely determined) tree object.</p><p class="simpara">For example, running git-commit(1) generates this tree object
 from the index, stores it in the object database, and uses it as the
 tree object associated with the new commit.</p></li><li class="listitem"><p class="simpara">The index enables fast comparisons between the tree object it defines
 and the working tree.</p><p class="simpara">It does this by storing some additional data for each entry (such as
@@ -1425,7 +1425,7 @@ between different tree objects, allowing each pathname to be
 associated with sufficient information about the trees involved that
 you can create a three-way merge between them.</p><p class="simpara">We saw in <a class="xref" href="#conflict-resolution" title="Getting conflict-resolution help during a merge">the section called “Getting conflict-resolution help during a merge”</a> that during a merge the index can
 store multiple versions of a single file (called "stages").  The third
-column in the <a class="ulink" href="git-ls-files.html" target="_top">git-ls-files</a>(1) output above is the stage
+column in the git-ls-files(1) output above is the stage
 number, and will take on values other than 0 for files with merge
 conflicts.</p></li></ol></div><p>The index is thus a sort of temporary staging area, which is filled with
 a tree which you are in the process of working on.</p><p>If you blow the index away entirely, you generally haven’t lost any
@@ -1454,7 +1454,7 @@ the submodule support just stores the submodule repository location and
 commit ID, so other developers who clone the containing project
 ("superproject") can easily clone all the submodules at the same revision.
 Partial checkouts of the superproject are possible: you can tell Git to
-clone none, some or all of the submodules.</p><p>The <a class="ulink" href="git-submodule.html" target="_top">git-submodule</a>(1) command is available since Git 1.5.3.  Users
+clone none, some or all of the submodules.</p><p>The git-submodule(1) command is available since Git 1.5.3.  Users
 with Git 1.5.2 can look up the submodule commits in the repository and
 manually check them out; earlier versions won’t recognize the submodules at
 all.</p><p>To see how submodule support works, create four example
@@ -1477,7 +1477,7 @@ do
 	git submodule add ~/git/$i $i
 done</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Do not use local URLs here if you plan to publish your superproject!</p></div><p>See what files <code class="literal">git submodule</code> created:</p><pre class="screen">$ ls -a
 .  ..  .git  .gitmodules  a  b  c  d</pre><p>The <code class="literal">git submodule add &lt;repo&gt; &lt;path&gt;</code> command does a couple of things:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">It clones the submodule from <code class="literal">&lt;repo&gt;</code> to the given <code class="literal">&lt;path&gt;</code> under the
-current directory and by default checks out the master branch.</li><li class="listitem">It adds the submodule’s clone path to the <a class="ulink" href="gitmodules.html" target="_top">gitmodules</a>(5) file and
+current directory and by default checks out the master branch.</li><li class="listitem">It adds the submodule’s clone path to the gitmodules(5) file and
 adds this file to the index, ready to be committed.</li><li class="listitem">It adds the submodule’s current commit ID to the index, ready to be
 committed.</li></ul></div><p>Commit the superproject:</p><pre class="screen">$ git commit -m "Add submodules a, b, c and d."</pre><p>Now clone the superproject:</p><pre class="screen">$ cd ..
 $ git clone super cloned
@@ -1562,21 +1562,21 @@ submodule update</code> will not overwrite them.  Instead, you get the usual
 warning about not being able switch from a dirty branch.</p></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="low-level-operations"></a>Part IX. Low-level Git operations</h1></div></div></div><div class="partintro"><div></div><p>Many of the higher-level commands were originally implemented as shell
 scripts using a smaller core of low-level Git commands.  These can still
 be useful when doing unusual things with Git, or just as a way to
-understand its inner workings.</p><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="chapter"><a href="#object-manipulation">50. Object access and manipulation</a></span></dt><dt><span class="chapter"><a href="#the-workflow">51. The Workflow</a></span></dt><dd><dl><dt><span class="section"><a href="#working-directory-to-index">working directory → index</a></span></dt><dt><span class="section"><a href="#index-to-object-database">index → object database</a></span></dt><dt><span class="section"><a href="#object-database-to-index">object database → index</a></span></dt><dt><span class="section"><a href="#index-to-working-directory">index → working directory</a></span></dt><dt><span class="section"><a href="#tying-it-all-together">Tying it all together</a></span></dt></dl></dd><dt><span class="chapter"><a href="#examining-the-data">52. Examining the data</a></span></dt><dt><span class="chapter"><a href="#merging-multiple-trees">53. Merging multiple trees</a></span></dt><dt><span class="chapter"><a href="#merging-multiple-trees-2">54. Merging multiple trees, continued</a></span></dt></dl></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="object-manipulation"></a>Chapter 50. Object access and manipulation</h2></div></div></div><p>The <a class="ulink" href="git-cat-file.html" target="_top">git-cat-file</a>(1) command can show the contents of any object,
-though the higher-level <a class="ulink" href="git-show.html" target="_top">git-show</a>(1) is usually more useful.</p><p>The <a class="ulink" href="git-commit-tree.html" target="_top">git-commit-tree</a>(1) command allows constructing commits with
-arbitrary parents and trees.</p><p>A tree can be created with <a class="ulink" href="git-write-tree.html" target="_top">git-write-tree</a>(1) and its data can be
-accessed by <a class="ulink" href="git-ls-tree.html" target="_top">git-ls-tree</a>(1).  Two trees can be compared with
-<a class="ulink" href="git-diff-tree.html" target="_top">git-diff-tree</a>(1).</p><p>A tag is created with <a class="ulink" href="git-mktag.html" target="_top">git-mktag</a>(1), and the signature can be
-verified by <a class="ulink" href="git-verify-tag.html" target="_top">git-verify-tag</a>(1), though it is normally simpler to
-use <a class="ulink" href="git-tag.html" target="_top">git-tag</a>(1) for both.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="the-workflow"></a>Chapter 51. The Workflow</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="#working-directory-to-index">working directory → index</a></span></dt><dt><span class="section"><a href="#index-to-object-database">index → object database</a></span></dt><dt><span class="section"><a href="#object-database-to-index">object database → index</a></span></dt><dt><span class="section"><a href="#index-to-working-directory">index → working directory</a></span></dt><dt><span class="section"><a href="#tying-it-all-together">Tying it all together</a></span></dt></dl></div><p>High-level operations such as <a class="ulink" href="git-commit.html" target="_top">git-commit</a>(1),
-<a class="ulink" href="git-checkout.html" target="_top">git-checkout</a>(1) and <a class="ulink" href="git-reset.html" target="_top">git-reset</a>(1) work by moving data
+understand its inner workings.</p><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="chapter"><a href="#object-manipulation">50. Object access and manipulation</a></span></dt><dt><span class="chapter"><a href="#the-workflow">51. The Workflow</a></span></dt><dd><dl><dt><span class="section"><a href="#working-directory-to-index">working directory → index</a></span></dt><dt><span class="section"><a href="#index-to-object-database">index → object database</a></span></dt><dt><span class="section"><a href="#object-database-to-index">object database → index</a></span></dt><dt><span class="section"><a href="#index-to-working-directory">index → working directory</a></span></dt><dt><span class="section"><a href="#tying-it-all-together">Tying it all together</a></span></dt></dl></dd><dt><span class="chapter"><a href="#examining-the-data">52. Examining the data</a></span></dt><dt><span class="chapter"><a href="#merging-multiple-trees">53. Merging multiple trees</a></span></dt><dt><span class="chapter"><a href="#merging-multiple-trees-2">54. Merging multiple trees, continued</a></span></dt></dl></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="object-manipulation"></a>Chapter 50. Object access and manipulation</h2></div></div></div><p>The git-cat-file(1) command can show the contents of any object,
+though the higher-level git-show(1) is usually more useful.</p><p>The git-commit-tree(1) command allows constructing commits with
+arbitrary parents and trees.</p><p>A tree can be created with git-write-tree(1) and its data can be
+accessed by git-ls-tree(1).  Two trees can be compared with
+git-diff-tree(1).</p><p>A tag is created with git-mktag(1), and the signature can be
+verified by git-verify-tag(1), though it is normally simpler to
+use git-tag(1) for both.</p></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="the-workflow"></a>Chapter 51. The Workflow</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="#working-directory-to-index">working directory → index</a></span></dt><dt><span class="section"><a href="#index-to-object-database">index → object database</a></span></dt><dt><span class="section"><a href="#object-database-to-index">object database → index</a></span></dt><dt><span class="section"><a href="#index-to-working-directory">index → working directory</a></span></dt><dt><span class="section"><a href="#tying-it-all-together">Tying it all together</a></span></dt></dl></div><p>High-level operations such as git-commit(1),
+git-checkout(1) and git-reset(1) work by moving data
 between the working tree, the index, and the object database.  Git
 provides low-level operations which perform each of these steps
 individually.</p><p>Generally, all Git operations work on the index file. Some operations
 work <span class="strong"><strong>purely</strong></span> on the index file (showing the current state of the
 index), but most operations move data between the index file and either
 the database or the working directory. Thus there are four main
-combinations:</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="working-directory-to-index"></a>working directory → index</h2></div></div></div><p>The <a class="ulink" href="git-update-index.html" target="_top">git-update-index</a>(1) command updates the index with
+combinations:</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="working-directory-to-index"></a>working directory → index</h2></div></div></div><p>The git-update-index(1) command updates the index with
 information from the working directory.  You generally update the
 index information by just specifying the filename you want to update,
 like so:</p><pre class="screen">$ git update-index filename</pre><p>but to avoid common mistakes with filename globbing etc., the command
@@ -1592,8 +1592,8 @@ does not exist any more, it will update the index accordingly.</p><p>As a specia
 will refresh the "stat" information of each index to match the current
 stat information. It will <span class="emphasis"><em>not</em></span> update the object status itself, and
 it will only update the fields that are used to quickly test whether
-an object still matches its old backing store object.</p><p>The previously introduced <a class="ulink" href="git-add.html" target="_top">git-add</a>(1) is just a wrapper for
-<a class="ulink" href="git-update-index.html" target="_top">git-update-index</a>(1).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="index-to-object-database"></a>index → object database</h2></div></div></div><p>You write your current index file to a "tree" object with the program</p><pre class="screen">$ git write-tree</pre><p>that doesn’t come with any options—​it will just write out the
+an object still matches its old backing store object.</p><p>The previously introduced git-add(1) is just a wrapper for
+git-update-index(1).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="index-to-object-database"></a>index → object database</h2></div></div></div><p>You write your current index file to a "tree" object with the program</p><pre class="screen">$ git write-tree</pre><p>that doesn’t come with any options—​it will just write out the
 current index into the set of tree objects that describe that state,
 and it will return the name of the resulting top-level tree. You can
 use that tree to re-generate the index at any time by going in the
@@ -1661,7 +1661,7 @@ what the last committed state was.</p><p>Here is a picture that illustrates how 
                     | Directory |
                     +-----------+</pre></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="examining-the-data"></a>Chapter 52. Examining the data</h2></div></div></div><p>You can examine the data represented in the object database and the
 index with various helper tools. For every object, you can use
-<a class="ulink" href="git-cat-file.html" target="_top">git-cat-file</a>(1) to examine details about the
+git-cat-file(1) to examine details about the
 object:</p><pre class="screen">$ git cat-file -t &lt;objectname&gt;</pre><p>shows the type of the object, and once you have the type (which is
 usually implicit in where you find the object), you can use</p><pre class="screen">$ git cat-file blob|tree|commit|tag &lt;objectname&gt;</pre><p>to show its contents. NOTE! Trees have binary content, and as a result
 there is a special helper for showing that content, called
@@ -1916,7 +1916,7 @@ revision. This will happen frequently on a
 branch’s <a class="link" href="#def_head_ref">head ref</a> from a remote
 <a class="link" href="#def_repository">repository</a>, to find out which objects are
 missing from the local <a class="link" href="#def_object_database">object database</a>,
-and to get them, too.  See also <a class="ulink" href="git-fetch.html" target="_top">git-fetch</a>(1).</dd><dt><span class="term"><a name="def_file_system"></a>file system</span></dt><dd>Linus Torvalds originally designed Git to be a user space file system,
+and to get them, too.  See also git-fetch(1).</dd><dt><span class="term"><a name="def_file_system"></a>file system</span></dt><dd>Linus Torvalds originally designed Git to be a user space file system,
 i.e. the infrastructure to hold files and directories. That ensured the
 efficiency and speed of Git.</dd><dt><span class="term"><a name="def_git_archive"></a>Git archive</span></dt><dd>Synonym for <a class="link" href="#def_repository">repository</a> (for arch people).</dd><dt><span class="term"><a name="def_gitfile"></a>gitfile</span></dt><dd>A plain file <code class="literal">.git</code> at the root of a working tree that
 points at the directory that is the real repository.</dd><dt><span class="term"><a name="def_grafts"></a>grafts</span></dt><dd><p class="simpara">Grafts enables two otherwise different lines of development to be joined
@@ -1924,11 +1924,11 @@ together by recording fake ancestry information for commits. This way
 you can make Git pretend the set of <a class="link" href="#def_parent">parents</a> a <a class="link" href="#def_commit">commit</a> has
 is different from what was recorded when the commit was
 created. Configured via the <code class="literal">.git/info/grafts</code> file.</p><p class="simpara">Note that the grafts mechanism is outdated and can lead to problems
-transferring objects between repositories; see <a class="ulink" href="git-replace.html" target="_top">git-replace</a>(1)
+transferring objects between repositories; see git-replace(1)
 for a more flexible and robust system to do the same thing.</p></dd><dt><span class="term"><a name="def_hash"></a>hash</span></dt><dd>In Git’s context, synonym for <a class="link" href="#def_object_name">object name</a>.</dd><dt><span class="term"><a name="def_head"></a>head</span></dt><dd>A <a class="link" href="#def_ref">named reference</a> to the <a class="link" href="#def_commit">commit</a> at the tip of a
 <a class="link" href="#def_branch">branch</a>.  Heads are stored in a file in
 <code class="literal">$GIT_DIR/refs/heads/</code> directory, except when using packed refs. (See
-<a class="ulink" href="git-pack-refs.html" target="_top">git-pack-refs</a>(1).)</dd><dt><span class="term"><a name="def_HEAD"></a>HEAD</span></dt><dd>The current <a class="link" href="#def_branch">branch</a>.  In more detail: Your <a class="link" href="#def_working_tree">working tree</a> is normally derived from the state of the tree
+git-pack-refs(1).)</dd><dt><span class="term"><a name="def_HEAD"></a>HEAD</span></dt><dd>The current <a class="link" href="#def_branch">branch</a>.  In more detail: Your <a class="link" href="#def_working_tree">working tree</a> is normally derived from the state of the tree
 referred to by HEAD.  HEAD is a reference to one of the
 <a class="link" href="#def_head">heads</a> in your repository, except when using a
 <a class="link" href="#def_detached_HEAD">detached HEAD</a>, in which case it directly
@@ -2029,7 +2029,7 @@ matches "<code class="literal">a/b</code>", "<code class="literal">a/x/b</code>"
 requirements", all of which must be met in order for the
 path to be considered a match; this is in addition to the
 usual non-magic pathspec pattern matching.
-See <a class="ulink" href="gitattributes.html" target="_top">gitattributes</a>(5).</p><p class="simpara">Each of the attribute requirements for the path takes one of
+See gitattributes(5).</p><p class="simpara">Each of the attribute requirements for the path takes one of
 these forms:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">"<code class="literal">ATTR</code>" requires that the attribute <code class="literal">ATTR</code> be set.</li><li class="listitem">"<code class="literal">-ATTR</code>" requires that the attribute <code class="literal">ATTR</code> be unset.</li><li class="listitem">"<code class="literal">ATTR=VALUE</code>" requires that the attribute <code class="literal">ATTR</code> be
 set to the string <code class="literal">VALUE</code>.</li><li class="listitem">"<code class="literal">!ATTR</code>" requires that the attribute <code class="literal">ATTR</code> be
 unspecified.</li></ul></div></dd><dt><span class="term">exclude</span></dt><dd>After a path matches any non-exclude pathspec, it will be run
@@ -2042,7 +2042,7 @@ parents.</dd><dt><span class="term"><a name="def_pickaxe"></a>pickaxe</span></dt
 routines that help select changes that add or delete a given text
 string. With the <code class="literal">--pickaxe-all</code> option, it can be used to view the full
 <a class="link" href="#def_changeset">changeset</a> that introduced or removed, say, a
-particular line of text. See <a class="ulink" href="git-diff.html" target="_top">git-diff</a>(1).</dd><dt><span class="term"><a name="def_plumbing"></a>plumbing</span></dt><dd>Cute name for <a class="link" href="#def_core_git">core Git</a>.</dd><dt><span class="term"><a name="def_porcelain"></a>porcelain</span></dt><dd>Cute name for programs and program suites depending on
+particular line of text. See git-diff(1).</dd><dt><span class="term"><a name="def_plumbing"></a>plumbing</span></dt><dd>Cute name for <a class="link" href="#def_core_git">core Git</a>.</dd><dt><span class="term"><a name="def_porcelain"></a>porcelain</span></dt><dd>Cute name for programs and program suites depending on
 <a class="link" href="#def_core_git">core Git</a>, presenting a high level access to
 core Git. Porcelains expose more of a <a class="link" href="#def_SCM">SCM</a>
 interface than the <a class="link" href="#def_plumbing">plumbing</a>.</dd><dt><span class="term"><a name="def_per_worktree_ref"></a>per-worktree ref</span></dt><dd>Refs that are per-<a class="link" href="#def_working_tree">worktree</a>, rather than
@@ -2062,7 +2062,7 @@ updated through the normal ref update machinery.  Instead,
 they are updated by directly writing to the files.  However,
 they can be read as if they were refs, so <code class="literal">git rev-parse
 MERGE_HEAD</code> will work.</dd><dt><span class="term"><a name="def_pull"></a>pull</span></dt><dd>Pulling a <a class="link" href="#def_branch">branch</a> means to <a class="link" href="#def_fetch">fetch</a> it and
-<a class="link" href="#def_merge">merge</a> it.  See also <a class="ulink" href="git-pull.html" target="_top">git-pull</a>(1).</dd><dt><span class="term"><a name="def_push"></a>push</span></dt><dd>Pushing a <a class="link" href="#def_branch">branch</a> means to get the branch’s
+<a class="link" href="#def_merge">merge</a> it.  See also git-pull(1).</dd><dt><span class="term"><a name="def_push"></a>push</span></dt><dd>Pushing a <a class="link" href="#def_branch">branch</a> means to get the branch’s
 <a class="link" href="#def_head_ref">head ref</a> from a remote <a class="link" href="#def_repository">repository</a>,
 find out if it is a direct ancestor to the branch’s local
 head ref, and in that case, putting all
@@ -2084,7 +2084,7 @@ to the result.</dd><dt><span class="term"><a name="def_ref"></a>ref</span></dt><
 that points to an <a class="link" href="#def_object_name">object name</a> or another
 ref (the latter is called a <a class="link" href="#def_symref">symbolic ref</a>).
 For convenience, a ref can sometimes be abbreviated when used
-as an argument to a Git command; see <a class="ulink" href="gitrevisions.html" target="_top">gitrevisions</a>(7)
+as an argument to a Git command; see gitrevisions(7)
 for details.
 Refs are stored in the <a class="link" href="#def_repository">repository</a>.</p><p class="simpara">The ref namespace is hierarchical.
 Different subhierarchies are used for different purposes (e.g. the
@@ -2092,7 +2092,7 @@ Different subhierarchies are used for different purposes (e.g. the
 The most notable example is <code class="literal">HEAD</code>.</p></dd><dt><span class="term"><a name="def_reflog"></a>reflog</span></dt><dd>A reflog shows the local "history" of a ref.  In other words,
 it can tell you what the 3rd last revision in <span class="emphasis"><em>this</em></span> repository
 was, and what was the current state in <span class="emphasis"><em>this</em></span> repository,
-yesterday 9:14pm.  See <a class="ulink" href="git-reflog.html" target="_top">git-reflog</a>(1) for details.</dd><dt><span class="term"><a name="def_refspec"></a>refspec</span></dt><dd>A "refspec" is used by <a class="link" href="#def_fetch">fetch</a> and
+yesterday 9:14pm.  See git-reflog(1) for details.</dd><dt><span class="term"><a name="def_refspec"></a>refspec</span></dt><dd>A "refspec" is used by <a class="link" href="#def_fetch">fetch</a> and
 <a class="link" href="#def_push">push</a> to describe the mapping between remote
 <a class="link" href="#def_ref">ref</a> and local ref.</dd><dt><span class="term"><a name="def_remote"></a>remote repository</span></dt><dd>A <a class="link" href="#def_repository">repository</a> which is used to track the same
 project but resides somewhere else. To communicate with remotes,
@@ -2119,8 +2119,8 @@ parents, even though they are recorded in the <a class="link" href="#def_commit_
 object</a>). This is sometimes useful when you are interested only in the
 recent history of a project even though the real history recorded in the
 upstream is much larger. A shallow repository
-is created by giving the <code class="literal">--depth</code> option to <a class="ulink" href="git-clone.html" target="_top">git-clone</a>(1), and
-its history can be later deepened with <a class="ulink" href="git-fetch.html" target="_top">git-fetch</a>(1).</dd><dt><span class="term"><a name="def_stash"></a>stash entry</span></dt><dd>An <a class="link" href="#def_object">object</a> used to temporarily store the contents of a
+is created by giving the <code class="literal">--depth</code> option to git-clone(1), and
+its history can be later deepened with git-fetch(1).</dd><dt><span class="term"><a name="def_stash"></a>stash entry</span></dt><dd>An <a class="link" href="#def_object">object</a> used to temporarily store the contents of a
 <a class="link" href="#def_dirty">dirty</a> working directory and the index for future reuse.</dd><dt><span class="term"><a name="def_submodule"></a>submodule</span></dt><dd>A <a class="link" href="#def_repository">repository</a> that holds the history of a
 separate project inside another repository (the latter of
 which is called <a class="link" href="#def_superproject">superproject</a>).</dd><dt><span class="term"><a name="def_superproject"></a>superproject</span></dt><dd>A <a class="link" href="#def_repository">repository</a> that references repositories
@@ -2130,7 +2130,7 @@ copies of) commit objects of the contained submodules.</dd><dt><span class="term
 id itself, it is of the format <span class="emphasis"><em>ref: refs/some/thing</em></span> and when
 referenced, it recursively dereferences to this reference.
 <span class="emphasis"><em><a class="link" href="#def_HEAD">HEAD</a></em></span> is a prime example of a symref. Symbolic
-references are manipulated with the <a class="ulink" href="git-symbolic-ref.html" target="_top">git-symbolic-ref</a>(1)
+references are manipulated with the git-symbolic-ref(1)
 command.</dd><dt><span class="term"><a name="def_tag"></a>tag</span></dt><dd>A <a class="link" href="#def_ref">ref</a> under <code class="literal">refs/tags/</code> namespace that points to an
 object of an arbitrary type (typically a tag points to either a
 <a class="link" href="#def_tag_object">tag</a> or a <a class="link" href="#def_commit_object">commit object</a>).
@@ -2248,7 +2248,7 @@ they explain how to do, in language that requires no more knowledge
 than necessary: for example, "importing patches into a project" rather
 than "the <code class="literal">git am</code> command"</li></ul></div><p>Think about how to create a clear chapter dependency graph that will
 allow people to get to important topics without necessarily reading
-everything in between.</p><p>Scan <code class="literal">Documentation/</code> for other stuff left out; in particular:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">howto’s</li><li class="listitem">some of <code class="literal">technical/</code>?</li><li class="listitem">hooks</li><li class="listitem">list of commands in <a class="ulink" href="git.html" target="_top">git</a>(1)</li></ul></div><p>Scan email archives for other stuff left out</p><p>Scan man pages to see if any assume more background than this manual
+everything in between.</p><p>Scan <code class="literal">Documentation/</code> for other stuff left out; in particular:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">howto’s</li><li class="listitem">some of <code class="literal">technical/</code>?</li><li class="listitem">hooks</li><li class="listitem">list of commands in git(1)</li></ul></div><p>Scan email archives for other stuff left out</p><p>Scan man pages to see if any assume more background than this manual
 provides.</p><p>Add more good examples.  Entire sections of just cookbook examples
 might be a good idea; maybe make an "advanced examples" section a
 standard end-of-chapter section?</p><p>Include cross-references to the glossary, where appropriate.</p><p>Add a section on working with other version control systems, including
