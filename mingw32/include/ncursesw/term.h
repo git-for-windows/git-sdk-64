@@ -32,7 +32,7 @@
 /*    and: Thomas E. Dickey                        1995-on                  */
 /****************************************************************************/
 
-/* $Id: MKterm.h.awk.in,v 1.65 2017/03/18 20:05:53 tom Exp $ */
+/* $Id: MKterm.h.awk.in,v 1.67 2017/04/06 00:19:26 tom Exp $ */
 
 /*
 **	term.h -- Definition of struct term
@@ -674,6 +674,29 @@ typedef struct termtype {	/* in-core form of terminfo data */
  * curses implementations.
  */
 #ifdef NCURSES_INTERNALS
+
+typedef struct termtype2 {	/* in-core form of terminfo data */
+    char  *term_names;		/* str_table offset of term names */
+    char  *str_table;		/* pointer to string table */
+    NCURSES_SBOOL  *Booleans;	/* array of boolean values */
+    int   *Numbers;		/* array of integer values */
+    char  **Strings;		/* array of string offsets */
+
+#if NCURSES_XNAMES
+    char  *ext_str_table;	/* pointer to extended string table */
+    char  **ext_Names;		/* corresponding names */
+
+    unsigned short num_Booleans;/* count total Booleans */
+    unsigned short num_Numbers;	/* count total Numbers */
+    unsigned short num_Strings;	/* count total Strings */
+
+    unsigned short ext_Booleans;/* count extensions to Booleans */
+    unsigned short ext_Numbers;	/* count extensions to Numbers */
+    unsigned short ext_Strings;	/* count extensions to Strings */
+#endif /* NCURSES_XNAMES */
+
+} TERMTYPE2;
+
 typedef struct term {		/* describe an actual terminal */
     TERMTYPE	type;		/* terminal type description */
     short	Filedes;	/* file description being written to */
@@ -681,6 +704,7 @@ typedef struct term {		/* describe an actual terminal */
     TTY		Nttyb;		/* current state of the terminal */
     int		_baudrate;	/* used to compute padding */
     char *	_termname;	/* used for termname() */
+    TERMTYPE2	type2;		/* extended terminal type description */
 } TERMINAL;
 #else
 typedef struct term TERMINAL;
@@ -737,9 +761,9 @@ extern NCURSES_EXPORT_VAR(NCURSES_CONST char * const ) strfnames[];
 #ifdef NCURSES_INTERNALS
 
 extern NCURSES_EXPORT(int) _nc_set_tty_mode (TTY *buf);
-extern NCURSES_EXPORT(int) _nc_read_file_entry (const char *const, TERMTYPE *);
-extern NCURSES_EXPORT(void) _nc_init_termtype (TERMTYPE *const);
-extern NCURSES_EXPORT(int) _nc_read_termtype (TERMTYPE *, char *, int);
+extern NCURSES_EXPORT(int) _nc_read_entry2 (const char * const, char * const, TERMTYPE2 *const);
+extern NCURSES_EXPORT(int) _nc_read_file_entry (const char *const, TERMTYPE2 *);
+extern NCURSES_EXPORT(int) _nc_read_termtype (TERMTYPE2 *, char *, int);
 extern NCURSES_EXPORT(char *) _nc_first_name (const char *const);
 extern NCURSES_EXPORT(int) _nc_name_match (const char *const, const char *const, const char *const);
 

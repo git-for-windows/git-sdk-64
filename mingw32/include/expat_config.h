@@ -4,6 +4,9 @@
 /* 1234 = LIL_ENDIAN, 4321 = BIGENDIAN */
 #define BYTEORDER 1234
 
+/* Define to 1 if you have the `arc4random' function. */
+/* #undef HAVE_ARC4RANDOM */
+
 /* Define to 1 if you have the `arc4random_buf' function. */
 /* #undef HAVE_ARC4RANDOM_BUF */
 
@@ -77,7 +80,7 @@
 #define PACKAGE_NAME "expat"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "expat 2.2.1"
+#define PACKAGE_STRING "expat 2.2.3"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "expat"
@@ -86,7 +89,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.2.1"
+#define PACKAGE_VERSION "2.2.3"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -98,14 +101,14 @@
    point. */
 #define XML_CONTEXT_BYTES 1024
 
+/* Define to include code reading entropy from `/dev/urandom'. */
+#define XML_DEV_URANDOM 1
+
 /* Define to make parameter entity parsing functionality available. */
 #define XML_DTD 1
 
 /* Define to make XML Namespaces functionality available. */
 #define XML_NS 1
-
-/* Define to __FUNCTION__ or "" if `__func__' does not conform to ANSI C. */
-/* #undef __func__ */
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
