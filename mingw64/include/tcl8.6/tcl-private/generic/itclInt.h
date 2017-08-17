@@ -150,7 +150,7 @@ typedef struct ItclObjectInfo {
     Tcl_HashTable procMethods;      /* maps from procPtr to mFunc */
     Tcl_HashTable instances;        /* maps from instanceNumber to ioPtr */
     Tcl_HashTable unused8;          /* maps from ioPtr to instanceNumber */
-    Tcl_HashTable unused;           /* Obsolete field */
+    Tcl_HashTable frameContext;     /* maps frame to context stack */
     Tcl_HashTable classTypes;       /* maps from class type i.e. "widget"
                                      * to define value i.e. ITCL_WIDGET */
     int protection;                 /* protection level currently in effect */
@@ -158,7 +158,7 @@ typedef struct ItclObjectInfo {
                                      * resolvers or the CallFrame resolvers */
     Itcl_Stack clsStack;            /* stack of class definitions currently
                                      * being parsed */
-    Itcl_Stack contextStack;        /* stack of call contexts */
+    Itcl_Stack unused;              /* Removed */
     Itcl_Stack unused6;		    /* obsolete field */
     struct ItclObject *currIoPtr;   /* object currently being constructed
                                      * set only during calling of constructors
@@ -205,6 +205,7 @@ typedef struct ItclObjectInfo {
     Tcl_Obj *infoVars4Ptr;
     Tcl_Obj *typeDestructorArgumentPtr;
     struct ItclObject *lastIoPtr;   /* last object constructed */
+    Tcl_Command infoCmd;
 } ItclObjectInfo;
 
 typedef struct EnsembleInfo {
@@ -237,7 +238,6 @@ typedef struct EnsembleInfo {
 #define ITCL_CLASS_NS_TEARDOWN            0x40000
 #define ITCL_CLASS_NO_VARNS_DELETE        0x80000
 #define ITCL_CLASS_SHOULD_VARNS_DELETE   0x100000
-#define ITCL_CLASS_CONSTRUCT_ERROR       0x200000
 #define ITCL_CLASS_DESTRUCTOR_CALLED     0x400000
 
 
@@ -328,6 +328,7 @@ typedef struct ItclHierIter {
 #define ITCL_TCLOO_OBJECT_IS_DELETED     0x20
 #define ITCL_OBJECT_DESTRUCT_ERROR       0x40
 #define ITCL_OBJECT_SHOULD_VARNS_DELETE  0x80
+#define ITCL_OBJECT_ROOT_METHOD          0x8000
 
 /*
  *  Representation for each [incr Tcl] object.
@@ -700,8 +701,6 @@ MODULE_SCOPE int ItclAfterCallMethod(ClientData clientData, Tcl_Interp *interp,
 MODULE_SCOPE void ItclReportObjectUsage(Tcl_Interp *interp,
         ItclObject *contextIoPtr, Tcl_Namespace *callerNsPtr,
 	Tcl_Namespace *contextNsPtr);
-MODULE_SCOPE void ItclGetInfoUsage(Tcl_Interp *interp, Tcl_Obj *objPtr,
-        ItclObjectInfo *infoPtr);
 MODULE_SCOPE int ItclMapMethodNameProc(Tcl_Interp *interp, Tcl_Object oPtr,
         Tcl_Class *startClsPtr, Tcl_Obj *methodObj);
 MODULE_SCOPE int ItclCreateArgList(Tcl_Interp *interp, const char *str,
@@ -716,7 +715,7 @@ MODULE_SCOPE void ItclDeleteObjectVariablesNamespace(Tcl_Interp *interp,
         ItclObject *ioPtr);
 MODULE_SCOPE void ItclDeleteClassVariablesNamespace(Tcl_Interp *interp,
         ItclClass *iclsPtr);
-MODULE_SCOPE int ItclInfoInit(Tcl_Interp *interp);
+MODULE_SCOPE int ItclInfoInit(Tcl_Interp *interp, ItclObjectInfo *infoPtr);
 
 struct Tcl_ResolvedVarInfo;
 MODULE_SCOPE int Itcl_ClassCmdResolver(Tcl_Interp *interp, const char* name,
@@ -742,9 +741,6 @@ MODULE_SCOPE int Itcl_CreateMethodVariable (Tcl_Interp *interp,
 	Tcl_Obj *callbackPtr, ItclMethodVariable **imvPtr);
 MODULE_SCOPE int DelegationInstall(Tcl_Interp *interp, ItclObject *ioPtr,
         ItclClass *iclsPtr);
-MODULE_SCOPE const char* ItclGetInstanceVar(Tcl_Interp *interp,
-        const char *name, const char *name2, ItclObject *contextIoPtr,
-	ItclClass *contextIclsPtr);
 MODULE_SCOPE const char* ItclGetCommonInstanceVar(Tcl_Interp *interp,
         const char *name, const char *name2, ItclObject *contextIoPtr,
 	ItclClass *contextIclsPtr);
@@ -839,6 +835,7 @@ typedef int (ItclRootMethodProc)(ItclObject *ioPtr, Tcl_Interp *interp,
 MODULE_SCOPE const Tcl_MethodType itclRootMethodType;
 MODULE_SCOPE ItclRootMethodProc ItclUnknownGuts;
 MODULE_SCOPE ItclRootMethodProc ItclConstructGuts;
+MODULE_SCOPE ItclRootMethodProc ItclInfoGuts;
 
 #include "itcl2TclOO.h"
 #ifdef NEW_PROTO_RESOLVER

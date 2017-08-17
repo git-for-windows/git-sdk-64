@@ -15,7 +15,7 @@ TCL_DLL_FILE="tcl86.dll"
 TCL_VERSION='8.6'
 TCL_MAJOR_VERSION='8'
 TCL_MINOR_VERSION='6'
-TCL_PATCH_LEVEL='.6'
+TCL_PATCH_LEVEL='.7'
 
 # C compiler to use for compilation.
 TCL_CC='x86_64-w64-mingw32-gcc'
@@ -92,10 +92,11 @@ TCL_DL_LIBS=''
 # an executable tclsh or tcltest binary.
 TCL_LD_FLAGS='-pipe'
 
-# Flags to pass to ld, such as "-R /usr/local/tcl/lib", that tell the
+# Flags to pass to cc/ld, such as "-R /usr/local/tcl/lib", that tell the
 # run-time dynamic linker where to look for shared libraries such as
 # libtcl.so.  Used when linking applications.  Only works if there
 # is a variable "LIB_RUNTIME_DIR" defined in the Makefile.
+TCL_CC_SEARCH_FLAGS=''
 TCL_LD_SEARCH_FLAGS=''
 
 # Additional object files linked with Tcl to provide compatibility

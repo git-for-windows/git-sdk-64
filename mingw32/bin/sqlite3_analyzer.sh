@@ -27,6 +27,33 @@ proc is_without_rowid {tname} {
   return 0
 }
 
+# Read and run TCL commands from standard input.  Used to implement
+# the --tclsh option.
+#
+proc tclsh {} {
+  set line {}
+  while {![eof stdin]} {
+    if {$line!=""} {
+      puts -nonewline "> "
+    } else {
+      puts -nonewline "% "
+    }
+    flush stdout
+    append line [gets stdin]
+    if {[info complete $line]} {
+      if {[catch {uplevel #0 $line} result]} {
+        puts stderr "Error: $result"
+      } elseif {$result!=""} {
+        puts $result
+      }
+      set line {}
+    } else {
+      append line \n
+    }
+  }
+}
+
+
 # Get the name of the database to analyze
 #
 proc usage {} {
@@ -39,22 +66,37 @@ information for the database and its constituent tables and indexes.
 
 Options:
 
-   --stats        Output SQL text that creates a new database containing
-                  statistics about the database that was analyzed
+   --pageinfo   Show how each page of the database-file is used
 
-   --pageinfo     Show how each page of the database-file is used
+   --stats      Output SQL text that creates a new database containing
+                statistics about the database that was analyzed
+
+   --tclsh      Run the built-in TCL interpreter interactively (for debugging)
+
+   --version    Show the version number of SQLite
 }
   exit 1
 }
 set file_to_analyze {}
 set flags(-pageinfo) 0
 set flags(-stats) 0
+set flags(-debug) 0
 append argv {}
 foreach arg $argv {
   if {[regexp {^-+pageinfo$} $arg]} {
     set flags(-pageinfo) 1
   } elseif {[regexp {^-+stats$} $arg]} {
     set flags(-stats) 1
+  } elseif {[regexp {^-+debug$} $arg]} {
+    set flags(-debug) 1
+  } elseif {[regexp {^-+tclsh$} $arg]} {
+    tclsh
+    exit 0
+  } elseif {[regexp {^-+version$} $arg]} {
+    sqlite3 mem :memory:
+    puts [mem one {SELECT sqlite_version()||' '||sqlite_source_id()}]
+    mem close
+    exit 0
   } elseif {[regexp {^-} $arg]} {
     puts stderr "Unknown option: $arg"
     usage
@@ -105,6 +147,10 @@ if {[catch {sqlite3 db $file_to_analyze -uri 1} msg]} {
   puts stderr "error trying to open $file_to_analyze: $msg"
   exit 1
 }
+if {$flags(-debug)} {
+  proc dbtrace {txt} {puts $txt; flush stdout;}
+  db trace ::dbtrace
+}
 
 db eval {SELECT count(*) FROM sqlite_master}
 set pageSize [expr {wide([db one {PRAGMA page_size}])}]
@@ -147,12 +193,17 @@ if {$flags(-stats)} {
   exit 0
 }
 
+
 # In-memory database for collecting statistics. This script loops through
 # the tables and indices in the database being analyzed, adding a row for each
 # to an in-memory database (for which the schema is shown below). It then
 # queries the in-memory db to produce the space-analysis report.
 #
 sqlite3 mem :memory:
+if {$flags(-debug)} {
+  proc dbtrace {txt} {puts $txt; flush stdout;}
+  mem trace ::dbtrace
+}
 set tabledef {CREATE TABLE space_used(
    name clob,        -- Name of a table or index in the database file
    tblname clob,     -- Name of associated table
@@ -378,6 +429,7 @@ proc subreport {title where showFrag} {
   # avg_payload: Average payload per btree entry.
   # avg_fanout: Average fanout for internal pages.
   # avg_unused: Average unused bytes per btree entry.
+  # avg_meta: Average metadata overhead per entry.
   # ovfl_cnt_percent: Percentage of btree entries that use overflow pages.
   #
   set total_pages [expr {$leaf_pages+$int_pages+$ovfl_pages}]
@@ -387,6 +439,10 @@ proc subreport {title where showFrag} {
   set total_unused [expr {$ovfl_unused+$int_unused+$leaf_unused}]
   set avg_payload [divide $payload $nentry]
   set avg_unused [divide $total_unused $nentry]
+  set total_meta [expr {$storage - $payload - $total_unused}]
+  set total_meta [expr {$total_meta + 4*($ovfl_pages - $ovfl_cnt)}]
+  set meta_percent [percent $total_meta $storage {of metadata}]
+  set avg_meta [divide $total_meta $nentry]
   if {$int_pages>0} {
     # TODO: Is this formula correct?
     set nTab [mem eval "
@@ -414,9 +470,11 @@ proc subreport {title where showFrag} {
     statline {Bytes used after compression} $compressed_size $pct
   }
   statline {Bytes of payload} $payload $payload_percent
+  statline {Bytes of metadata} $total_meta $meta_percent
   if {$cnt==1} {statline {B-tree depth} $depth}
   statline {Average payload per entry} $avg_payload
   statline {Average unused bytes per entry} $avg_unused
+  statline {Average metadata per entry} $avg_meta
   if {[info exists avg_fanout]} {
     statline {Average fanout} $avg_fanout
   }
@@ -710,6 +768,16 @@ Bytes of payload
     part of table entries and the key part of index entries.  The percentage
     at the right is the bytes of payload divided by the bytes of storage 
     consumed.
+
+Bytes of metadata
+
+    The amount of formatting and structural information stored in the
+    table or index.  Metadata includes the btree page header, the cell pointer
+    array, the size field for each cell, the left child pointer or non-leaf
+    cells, the overflow pointers for overflow cells, and the rowid value for
+    rowid table cells.  In other words, metadata is everything that is neither
+    unused space nor content.  The record header in the payload is counted as
+    content, not metadata.
 
 Average payload per entry
 

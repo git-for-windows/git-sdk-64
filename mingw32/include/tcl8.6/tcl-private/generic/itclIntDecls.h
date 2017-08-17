@@ -8,7 +8,7 @@
 /* !BEGIN!: Do not edit below this line. */
 
 #define ITCLINT_STUBS_EPOCH 0
-#define ITCLINT_STUBS_REVISION 147
+#define ITCLINT_STUBS_REVISION 150
 
 #ifdef __cplusplus
 extern "C" {
@@ -216,8 +216,7 @@ ITCLAPI int		Itcl_ExecProc(ClientData clientData,
 /* 71 */
 ITCLAPI int		Itcl_ConstructBase(Tcl_Interp *interp,
 				ItclObject *contextObj,
-				ItclClass *contextClass, int objc,
-				Tcl_Obj *const *objv);
+				ItclClass *contextClass);
 /* 72 */
 ITCLAPI int		Itcl_InvokeMethodIfExists(Tcl_Interp *interp,
 				const char *name, ItclClass *contextClass,
@@ -513,6 +512,15 @@ ITCLAPI int		ItclClassBaseCmd(ClientData clientData,
 ITCLAPI int		ItclCreateComponent(Tcl_Interp *interp,
 				ItclClass *iclsPtr, Tcl_Obj *componentPtr,
 				int type, ItclComponent **icPtrPtr);
+/* 182 */
+ITCLAPI void		Itcl_SetContext(Tcl_Interp *interp,
+				ItclObject *ioPtr);
+/* 183 */
+ITCLAPI void		Itcl_UnsetContext(Tcl_Interp *interp);
+/* 184 */
+ITCLAPI const char *	ItclGetInstanceVar(Tcl_Interp *interp,
+				const char *name, const char *name2,
+				ItclObject *ioPtr, ItclClass *iclsPtr);
 
 typedef struct ItclIntStubs {
     int magic;
@@ -591,7 +599,7 @@ typedef struct ItclIntStubs {
     int (*itcl_ExecMethod) (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]); /* 68 */
     int (*itcl_ExecProc) (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]); /* 69 */
     void (*reserved70)(void);
-    int (*itcl_ConstructBase) (Tcl_Interp *interp, ItclObject *contextObj, ItclClass *contextClass, int objc, Tcl_Obj *const *objv); /* 71 */
+    int (*itcl_ConstructBase) (Tcl_Interp *interp, ItclObject *contextObj, ItclClass *contextClass); /* 71 */
     int (*itcl_InvokeMethodIfExists) (Tcl_Interp *interp, const char *name, ItclClass *contextClass, ItclObject *contextObj, int objc, Tcl_Obj *const objv[]); /* 72 */
     void (*reserved73)(void);
     int (*itcl_ReportFuncErrors) (Tcl_Interp *interp, ItclMemberFunc *mfunc, ItclObject *contextObj, int result); /* 74 */
@@ -702,6 +710,9 @@ typedef struct ItclIntStubs {
     Tcl_Obj * (*itclCapitalize) (const char *str); /* 179 */
     int (*itclClassBaseCmd) (ClientData clientData, Tcl_Interp *interp, int flags, int objc, Tcl_Obj *const objv[], ItclClass **iclsPtrPtr); /* 180 */
     int (*itclCreateComponent) (Tcl_Interp *interp, ItclClass *iclsPtr, Tcl_Obj *componentPtr, int type, ItclComponent **icPtrPtr); /* 181 */
+    void (*itcl_SetContext) (Tcl_Interp *interp, ItclObject *ioPtr); /* 182 */
+    void (*itcl_UnsetContext) (Tcl_Interp *interp); /* 183 */
+    const char * (*itclGetInstanceVar) (Tcl_Interp *interp, const char *name, const char *name2, ItclObject *ioPtr, ItclClass *iclsPtr); /* 184 */
 } ItclIntStubs;
 
 extern const ItclIntStubs *itclIntStubsPtr;
@@ -1021,6 +1032,12 @@ extern const ItclIntStubs *itclIntStubsPtr;
 	(itclIntStubsPtr->itclClassBaseCmd) /* 180 */
 #define ItclCreateComponent \
 	(itclIntStubsPtr->itclCreateComponent) /* 181 */
+#define Itcl_SetContext \
+	(itclIntStubsPtr->itcl_SetContext) /* 182 */
+#define Itcl_UnsetContext \
+	(itclIntStubsPtr->itcl_UnsetContext) /* 183 */
+#define ItclGetInstanceVar \
+	(itclIntStubsPtr->itclGetInstanceVar) /* 184 */
 
 #endif /* defined(USE_ITCL_STUBS) */
 
