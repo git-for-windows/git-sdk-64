@@ -92,4 +92,10 @@
 /* Data type definition of ares_socklen_t. */
 typedef CARES_TYPEOF_ARES_SOCKLEN_T ares_socklen_t;
 
+/* Integral data type used for ares_ssize_t. */
+#define CARES_TYPEOF_ARES_SSIZE_T ssize_t
+
+/* Data type definition of ares_ssize_t. */
+typedef CARES_TYPEOF_ARES_SSIZE_T ares_ssize_t;
+
 #endif /* __CARES_BUILD_H */
