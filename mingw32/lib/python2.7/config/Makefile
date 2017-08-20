@@ -78,7 +78,7 @@ CFLAGS=		$(BASECFLAGS) -march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MING
 # Both CPPFLAGS and LDFLAGS need to contain the shell's value for setup.py to
 # be able to build extension modules using the directories specified in the
 # environment variables
-CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncursesw 
+CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -ID:/develop/msys64/mingw32/include/ncursesw 
 LDFLAGS=	-pipe -s 
 LDLAST=		
 SGI_ABI=	
@@ -88,7 +88,7 @@ ARFLAGS=	rc
 # Extra C flags added for building the interpreter object files.
 CFLAGSFORSHARED=$(CCSHARED)
 # C flags used for building the interpreter object files
-PY_CFLAGS=	$(CFLAGS) $(CPPFLAGS) $(CFLAGSFORSHARED) -DPy_BUILD_CORE
+PY_CFLAGS=	$(CFLAGS) $(CPPFLAGS) $(CFLAGSFORSHARED) -DPy_BUILD_CORE -D_WIN32_WINNT=0x0600
 
 # ; on Windows otherwise :
 DELIM=		;
@@ -108,11 +108,11 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.13
-VPATH_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.13
-abs_srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.13
-abs_builddir_b2h=	C:/repo/mingw-w64-python2/src/build-i686
-prefix_b2h=		C:/building/msys64/mingw32
+srcdir_b2h=		D:/develop/scripts/mingw-w64-python2/src/Python-2.7.13
+VPATH_b2h=		D:/develop/scripts/mingw-w64-python2/src/Python-2.7.13
+abs_srcdir_b2h=		D:/develop/scripts/mingw-w64-python2/src/Python-2.7.13
+abs_builddir_b2h=	D:/develop/scripts/mingw-w64-python2/src/build-i686
+prefix_b2h=		D:/develop/msys64/mingw32
 
 # Expanded directories
 BINDIR=		${exec_prefix}/bin
@@ -168,7 +168,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncursesw ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -ID:/develop/msys64/mingw32/include/ncursesw ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig'
 
 
 # Subdirectories with code
@@ -265,7 +265,7 @@ GRAMMAR_C=	Python/graminit.c
 GRAMMAR_INPUT=	$(srcdir)/Grammar/Grammar
 
 
-LIBFFI_INCLUDEDIR=	C:/building/msys64/mingw32/lib/libffi-3.2.1/include
+LIBFFI_INCLUDEDIR=	D:/develop/msys64/mingw32/lib/libffi-3.2.1/include
 
 ##########################################################################
 # Parser
@@ -367,6 +367,7 @@ PYTHON_OBJS=	\
 		Python/graminit.o \
 		Python/import.o \
 		Python/importdl.o \
+		Python/iscygpty.o \
 		Python/marshal.o \
 		Python/modsupport.o \
 		Python/mystrtoul.o \
@@ -821,6 +822,7 @@ PYTHON_HEADERS= \
 		Include/import.h \
 		Include/intobject.h \
 		Include/intrcheck.h \
+		Include/iscygpty.h \
 		Include/iterobject.h \
 		Include/listobject.h \
 		Include/longintrepr.h \
