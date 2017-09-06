@@ -103,9 +103,12 @@ extern "C" {
 #define GNUTLS_X509EXT_OID_CRT_POLICY "2.5.29.32"
 #define GNUTLS_X509EXT_OID_AUTHORITY_KEY_ID "2.5.29.35"
 #define GNUTLS_X509EXT_OID_EXTENDED_KEY_USAGE "2.5.29.37"
+#define GNUTLS_X509EXT_OID_INHIBIT_ANYPOLICY "2.5.29.52"
 #define GNUTLS_X509EXT_OID_AUTHORITY_INFO_ACCESS "1.3.6.1.5.5.7.1.1"
 #define GNUTLS_X509EXT_OID_PROXY_CRT_INFO "1.3.6.1.5.5.7.1.14"
 #define GNUTLS_X509EXT_OID_TLSFEATURES "1.3.6.1.5.5.7.1.24"
+
+#define GNUTLS_X509_OID_POLICY_ANY "2.5.29.54"
 
 /* Certificate handling functions.
  */
@@ -130,6 +133,19 @@ typedef enum gnutls_certificate_import_flags {
 
 int gnutls_x509_crt_init(gnutls_x509_crt_t * cert);
 void gnutls_x509_crt_deinit(gnutls_x509_crt_t cert);
+
+/**
+ * gnutls_certificate_import_flags:
+ * @GNUTLS_X509_CRT_FLAG_IGNORE_SANITY: Ignore any sanity checks at the
+ *   import of the certificate; i.e., ignore checks such as version/field
+ *   matching and strict time field checks. Intended to be used for debugging.
+ *
+ * Enumeration of different certificate flags.
+ */
+typedef enum gnutls_x509_crt_flags {
+	GNUTLS_X509_CRT_FLAG_IGNORE_SANITY = 1
+} gnutls_x509_crt_flags;
+void gnutls_x509_crt_set_flags(gnutls_x509_crt_t cert, unsigned flags);
 
 unsigned gnutls_x509_crt_equals(gnutls_x509_crt_t cert1, gnutls_x509_crt_t cert2);
 unsigned gnutls_x509_crt_equals2(gnutls_x509_crt_t cert1, gnutls_datum_t * der);
@@ -199,6 +215,11 @@ unsigned gnutls_x509_crt_check_hostname2(gnutls_x509_crt_t cert,
 unsigned
 gnutls_x509_crt_check_email(gnutls_x509_crt_t cert,
 			    const char *email, unsigned int flags);
+
+unsigned
+gnutls_x509_crt_check_ip(gnutls_x509_crt_t cert,
+			 const unsigned char *ip, unsigned int ip_size,
+			 unsigned int flags);
 
 int gnutls_x509_crt_get_signature_algorithm(gnutls_x509_crt_t cert);
 int gnutls_x509_crt_get_signature(gnutls_x509_crt_t cert,
@@ -392,8 +413,24 @@ time_t gnutls_x509_crt_get_expiration_time(gnutls_x509_crt_t cert);
 int gnutls_x509_crt_get_serial(gnutls_x509_crt_t cert,
 			       void *result, size_t * result_size);
 
+typedef struct gnutls_x509_spki_st *gnutls_x509_spki_t;
+
+int gnutls_x509_spki_init(gnutls_x509_spki_t *spki);
+void gnutls_x509_spki_deinit(gnutls_x509_spki_t spki);
+
+int gnutls_x509_spki_get_rsa_pss_params(gnutls_x509_spki_t spki,
+			gnutls_digest_algorithm_t *dig, unsigned int *salt_size);
+
+void gnutls_x509_spki_set_rsa_pss_params(gnutls_x509_spki_t spki,
+			gnutls_digest_algorithm_t dig, unsigned int salt_size);
+
 int gnutls_x509_crt_get_pk_algorithm(gnutls_x509_crt_t cert,
 				     unsigned int *bits);
+int gnutls_x509_crt_set_spki(gnutls_x509_crt_t crt, const gnutls_x509_spki_t spki,
+			     unsigned int flags);
+int gnutls_x509_crt_get_spki(gnutls_x509_crt_t cert, gnutls_x509_spki_t spki,
+			     unsigned int flags);
+
 int gnutls_x509_crt_get_pk_rsa_raw(gnutls_x509_crt_t crt,
 				   gnutls_datum_t * m, gnutls_datum_t * e);
 int gnutls_x509_crt_get_pk_dsa_raw(gnutls_x509_crt_t crt,
@@ -458,6 +495,12 @@ int gnutls_x509_crt_set_key_usage(gnutls_x509_crt_t crt,
 int gnutls_x509_crt_set_authority_info_access(gnutls_x509_crt_t
 					      crt, int what,
 					      gnutls_datum_t * data);
+
+int gnutls_x509_crt_get_inhibit_anypolicy(gnutls_x509_crt_t cert,
+				  unsigned int *skipcerts,
+				  unsigned int *critical);
+int
+gnutls_x509_crt_set_inhibit_anypolicy(gnutls_x509_crt_t crt, unsigned int skipcerts);
 
 int gnutls_x509_crt_get_proxy(gnutls_x509_crt_t cert,
 			      unsigned int *critical,
@@ -878,6 +921,8 @@ int gnutls_x509_crl_set_number(gnutls_x509_crl_t crl,
  *   using the broken MD2 algorithm.
  * @GNUTLS_VERIFY_ALLOW_SIGN_RSA_MD5: Allow certificates to be signed
  *   using the broken MD5 algorithm.
+ * @GNUTLS_VERIFY_ALLOW_SIGN_WITH_SHA1: Allow certificates to be signed
+ *   using the broken SHA1 hash algorithm.
  * @GNUTLS_VERIFY_ALLOW_BROKEN: Allow certificates to be signed
  *   using any broken algorithm.
  * @GNUTLS_VERIFY_DISABLE_TIME_CHECKS: Disable checking of activation
@@ -887,8 +932,13 @@ int gnutls_x509_crl_set_number(gnutls_x509_crl_t crl,
  *   using certificate revocation lists or the available OCSP data.
  * @GNUTLS_VERIFY_DO_NOT_ALLOW_WILDCARDS: When including a hostname
  *   check in the verification, do not consider any wildcards.
+ * @GNUTLS_VERIFY_DO_NOT_ALLOW_IP_MATCHES: When verifying a hostname
+ *   prevent textual IP addresses from matching IP addresses in the
+ *   certificate. Treat the input only as a DNS name.
  * @GNUTLS_VERIFY_USE_TLS1_RSA: This indicates that a (raw) RSA signature is provided
  *   as in the TLS 1.0 protocol. Not all functions accept this flag.
+ * @GNUTLS_VERIFY_IGNORE_UNKNOWN_CRIT_EXTENSIONS: This signals the verification
+ *   process, not to fail on unknown critical extensions.
  *
  * Enumeration of different certificate verify flags. Additional
  * verification profiles can be set using GNUTLS_PROFILE_TO_VFLAGS()
@@ -896,6 +946,7 @@ int gnutls_x509_crl_set_number(gnutls_x509_crl_t crl,
  */
 typedef enum gnutls_certificate_verify_flags {
 	GNUTLS_VERIFY_DISABLE_CA_SIGN = 1 << 0,
+	GNUTLS_VERIFY_DO_NOT_ALLOW_IP_MATCHES = 1<<1,
 	GNUTLS_VERIFY_DO_NOT_ALLOW_SAME = 1 << 2,
 	GNUTLS_VERIFY_ALLOW_ANY_X509_V1_CA_CRT = 1 << 3,
 	GNUTLS_VERIFY_ALLOW_SIGN_RSA_MD2 = 1 << 4,
@@ -907,7 +958,9 @@ typedef enum gnutls_certificate_verify_flags {
 	GNUTLS_VERIFY_ALLOW_UNSORTED_CHAIN = 1 << 10,
 	GNUTLS_VERIFY_DO_NOT_ALLOW_UNSORTED_CHAIN = 1 << 11,
 	GNUTLS_VERIFY_DO_NOT_ALLOW_WILDCARDS = 1 << 12,
-	GNUTLS_VERIFY_USE_TLS1_RSA = 1 << 13
+	GNUTLS_VERIFY_USE_TLS1_RSA = 1 << 13,
+	GNUTLS_VERIFY_IGNORE_UNKNOWN_CRIT_EXTENSIONS = 1 << 14,
+	GNUTLS_VERIFY_ALLOW_SIGN_WITH_SHA1 = 1 << 15
 	/* cannot exceed 2^24 due to GNUTLS_PROFILE_TO_VFLAGS() */
 } gnutls_certificate_verify_flags;
 
@@ -1130,6 +1183,14 @@ int gnutls_x509_privkey_import_dsa_raw(gnutls_x509_privkey_t key,
 int gnutls_x509_privkey_get_pk_algorithm(gnutls_x509_privkey_t key);
 int gnutls_x509_privkey_get_pk_algorithm2(gnutls_x509_privkey_t
 					  key, unsigned int *bits);
+int gnutls_x509_privkey_get_spki(gnutls_x509_privkey_t key,
+				 gnutls_x509_spki_t spki,
+				 unsigned int flags);
+int
+gnutls_x509_privkey_set_spki(gnutls_x509_privkey_t key,
+			     const gnutls_x509_spki_t spki,
+			     unsigned int flags);
+
 int gnutls_x509_privkey_get_key_id(gnutls_x509_privkey_t key,
 				   unsigned int flags,
 				   unsigned char *output_data,
@@ -1145,12 +1206,14 @@ void gnutls_x509_privkey_set_flags(gnutls_x509_privkey_t key, unsigned int flags
  * gnutls_keygen_types_t:
  * @GNUTLS_KEYGEN_SEED: Specifies the seed to be used in key generation.
  * @GNUTLS_KEYGEN_DIGEST: The size field specifies the hash algorithm to be used in key generation.
+ * @GNUTLS_KEYGEN_SPKI: data points to a %gnutls_x509_spki_t structure; it is not used after the key generation call.
  *
  * Enumeration of different key exchange algorithms.
  */
 typedef enum {
 	GNUTLS_KEYGEN_SEED = 1,
 	GNUTLS_KEYGEN_DIGEST = 2,
+	GNUTLS_KEYGEN_SPKI = 3
 } gnutls_keygen_types_t;
 
 typedef struct {
@@ -1354,6 +1417,11 @@ int gnutls_x509_crq_get_attribute_info(gnutls_x509_crq_t crq,
 				       size_t * sizeof_oid);
 int gnutls_x509_crq_get_pk_algorithm(gnutls_x509_crq_t crq,
 				     unsigned int *bits);
+int gnutls_x509_crq_get_spki(gnutls_x509_crq_t crq, gnutls_x509_spki_t spki,
+			     unsigned int flags);
+
+int gnutls_x509_crq_set_spki(gnutls_x509_crq_t crq, const gnutls_x509_spki_t spki,
+			     unsigned int flags);
 
 int gnutls_x509_crq_get_signature_oid(gnutls_x509_crq_t crq, char *oid, size_t *oid_size);
 int gnutls_x509_crq_get_pk_oid(gnutls_x509_crq_t crq, char *oid, size_t *oid_size);

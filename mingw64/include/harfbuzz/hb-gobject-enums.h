@@ -44,6 +44,9 @@ HB_BEGIN_DECLS
 HB_EXTERN GType hb_gobject_memory_mode_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_MEMORY_MODE (hb_gobject_memory_mode_get_type ())
 
+HB_EXTERN GType hb_gobject_glyph_flags_get_type (void) G_GNUC_CONST;
+#define HB_GOBJECT_TYPE_GLYPH_FLAGS (hb_gobject_glyph_flags_get_type ())
+
 HB_EXTERN GType hb_gobject_buffer_content_type_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_BUFFER_CONTENT_TYPE (hb_gobject_buffer_content_type_get_type ())
 
@@ -58,6 +61,9 @@ HB_EXTERN GType hb_gobject_buffer_serialize_flags_get_type (void) G_GNUC_CONST;
 
 HB_EXTERN GType hb_gobject_buffer_serialize_format_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_BUFFER_SERIALIZE_FORMAT (hb_gobject_buffer_serialize_format_get_type ())
+
+HB_EXTERN GType hb_gobject_buffer_diff_flags_get_type (void) G_GNUC_CONST;
+#define HB_GOBJECT_TYPE_BUFFER_DIFF_FLAGS (hb_gobject_buffer_diff_flags_get_type ())
 
 HB_EXTERN GType hb_gobject_direction_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_DIRECTION (hb_gobject_direction_get_type ())

@@ -264,16 +264,16 @@ int gnutls_pkcs11_copy_secret_key(const char *token_url,
 
 /**
  * gnutls_pkcs11_obj_info_t:
- * @GNUTLS_PKCS11_OBJ_ID_HEX: The object ID in hex.
- * @GNUTLS_PKCS11_OBJ_LABEL: The object label.
- * @GNUTLS_PKCS11_OBJ_TOKEN_LABEL: The token's label.
- * @GNUTLS_PKCS11_OBJ_TOKEN_SERIAL: The token's serial number.
- * @GNUTLS_PKCS11_OBJ_TOKEN_MANUFACTURER: The token's manufacturer.
- * @GNUTLS_PKCS11_OBJ_TOKEN_MODEL: The token's model.
- * @GNUTLS_PKCS11_OBJ_ID: The object ID.
- * @GNUTLS_PKCS11_OBJ_LIBRARY_VERSION: The library's version.
- * @GNUTLS_PKCS11_OBJ_LIBRARY_DESCRIPTION: The library's description.
- * @GNUTLS_PKCS11_OBJ_LIBRARY_MANUFACTURER: The library's manufacturer name.
+ * @GNUTLS_PKCS11_OBJ_ID_HEX: The object ID in hex. Null-terminated text.
+ * @GNUTLS_PKCS11_OBJ_LABEL: The object label. Null-terminated text.
+ * @GNUTLS_PKCS11_OBJ_TOKEN_LABEL: The token's label. Null-terminated text.
+ * @GNUTLS_PKCS11_OBJ_TOKEN_SERIAL: The token's serial number. Null-terminated text.
+ * @GNUTLS_PKCS11_OBJ_TOKEN_MANUFACTURER: The token's manufacturer. Null-terminated text.
+ * @GNUTLS_PKCS11_OBJ_TOKEN_MODEL: The token's model. Null-terminated text.
+ * @GNUTLS_PKCS11_OBJ_ID: The object ID. Raw bytes.
+ * @GNUTLS_PKCS11_OBJ_LIBRARY_VERSION: The library's version. Null-terminated text.
+ * @GNUTLS_PKCS11_OBJ_LIBRARY_DESCRIPTION: The library's description. Null-terminated text.
+ * @GNUTLS_PKCS11_OBJ_LIBRARY_MANUFACTURER: The library's manufacturer name. Null-terminated text.
  *
  * Enumeration of several object information types.
  */
@@ -291,10 +291,10 @@ typedef enum {
 	GNUTLS_PKCS11_OBJ_LIBRARY_MANUFACTURER
 } gnutls_pkcs11_obj_info_t;
 
-int gnutls_pkcs11_obj_get_info(gnutls_pkcs11_obj_t crt,
+int gnutls_pkcs11_obj_get_info(gnutls_pkcs11_obj_t obj,
 			       gnutls_pkcs11_obj_info_t itype,
 			       void *output, size_t * output_size);
-int gnutls_pkcs11_obj_set_info(gnutls_pkcs11_obj_t crt,
+int gnutls_pkcs11_obj_set_info(gnutls_pkcs11_obj_t obj,
 			       gnutls_pkcs11_obj_info_t itype,
 			       const void *data, size_t data_size,
 			       unsigned flags);
@@ -356,6 +356,11 @@ int
 gnutls_pkcs11_token_get_mechanism(const char *url,
 				  unsigned int idx,
 				  unsigned long *mechanism);
+
+unsigned
+gnutls_pkcs11_token_check_mechanism(const char *url,
+				    unsigned long mechanism,
+				    void *ptr, unsigned psize, unsigned flags);
 
 int gnutls_pkcs11_token_set_pin(const char *token_url, const char *oldpin, const char *newpin, unsigned int flags	/*gnutls_pin_flag_t */);
 

@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 28 March 2017 for version 3.5.14 of GnuTLS.
+This manual is last updated 6 March 2017 for version 3.6.0 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -1321,7 +1321,7 @@ gnutls_ocsp_resp_verify
      VERIFY: output variable with verification status, an
      'gnutls_ocsp_verify_reason_t'
 
-     FLAGS: verification flags, 0 for now.
+     FLAGS: verification flags from 'gnutls_certificate_verify_flags'
 
      Verify signature of the Basic OCSP Response against the public key
      in the certificate of a trusted signer.  The 'trustlist' should be
@@ -1359,7 +1359,7 @@ gnutls_ocsp_resp_verify_direct
      VERIFY: output variable with verification status, an
      'gnutls_ocsp_verify_reason_t'
 
-     FLAGS: verification flags, 0 for now.
+     FLAGS: verification flags from 'gnutls_certificate_verify_flags'
 
      Verify signature of the Basic OCSP Response against the public key
      in the 'issuer' certificate.
@@ -1892,7 +1892,8 @@ gnutls_pkcs12_simple_parse
 
      This function parses a PKCS12 structure in 'pkcs12' and extracts
      the private key, the corresponding certificate chain, any
-     additional certificates and a CRL.
+     additional certificates and a CRL. The structures in 'key' ,
+     'chain' 'crl' , and 'extra_certs' must not be initialized.
 
      The 'extra_certs' and 'extra_certs_len' parameters are optional and
      both may be set to 'NULL' .  If either is non-'NULL' , then both
@@ -2528,6 +2529,10 @@ gnutls_pkcs11_obj_get_info
      stored.  When output is text it returns null terminated string
      although 'output_size' contains the size of the actual data only.
 
+     In versions previously to 3.6.0 this function included the null
+     terminator to 'output_size' .  After 3.6.0 the output size doesn't
+     include the terminator character.
+
      *Returns:* 'GNUTLS_E_SUCCESS' (0) on success or a negative error
      code on error.
 
@@ -2954,7 +2959,13 @@ gnutls_pkcs11_privkey_init
           KEY)
      KEY: A pointer to the type to be initialized
 
-     This function will initialize an private key structure.
+     This function will initialize an private key structure.  This
+     structure can be used for accessing an underlying PKCS'11' object.
+
+     In versions of GnuTLS later than 3.5.11 the object is protected
+     using locks and a single 'gnutls_pkcs11_privkey_t' can be re-used
+     by many threads.  However, for performance it is recommended to
+     utilize one object per key per thread.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -3036,6 +3047,31 @@ gnutls_pkcs11_set_token_function
      needs to be inserted to continue PKCS 11 operations.
 
      *Since:* 2.12.0
+
+gnutls_pkcs11_token_check_mechanism
+-----------------------------------
+
+ -- Function: unsigned gnutls_pkcs11_token_check_mechanism (const char *
+          URL, unsigned long MECHANISM, void * PTR, unsigned PSIZE,
+          unsigned FLAGS)
+     URL: should contain a PKCS 11 URL
+
+     MECHANISM: The PKCS '11' mechanism ID
+
+     PTR: if set it should point to a CK_MECHANISM_INFO struct
+
+     PSIZE: the size of CK_MECHANISM_INFO struct (for safety)
+
+     FLAGS: must be zero
+
+     This function will return whether a mechanism is supported by the
+     given token.  If the mechanism is supported and 'ptr' is set, it
+     will be updated with the token information.
+
+     *Returns:* Non-zero if the mechanism is supported or zero
+     otherwise.
+
+     *Since:* 3.6.0
 
 gnutls_pkcs11_token_get_flags
 -----------------------------
@@ -3477,14 +3513,9 @@ gnutls_pcert_export_openpgp
 
      CRT: An initialized 'gnutls_openpgp_crt_t' .
 
-     Converts the given 'gnutls_pcert_t' type into a
-     'gnutls_openpgp_crt_t' .  This function only works if the type of
-     'pcert' is 'GNUTLS_CRT_OPENPGP' .  When successful, the value
-     written to 'crt' must be freed with 'gnutls_openpgp_crt_deinit()'
-     when no longer needed.
+     This function is no-op.
 
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
+     *Returns:* 'GNUTLS_E_UNIMPLEMENTED_FEATURE' .
 
      *Since:* 3.4.0
 
@@ -3519,12 +3550,9 @@ gnutls_pcert_import_openpgp
 
      FLAGS: zero for now
 
-     This convenience function will import the given certificate to a
-     'gnutls_pcert_st' structure.  The structure must be deinitialized
-     afterwards using 'gnutls_pcert_deinit()' ;
+     This function is no-op.
 
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
+     *Returns:* 'GNUTLS_E_UNIMPLEMENTED_FEATURE' .
 
      *Since:* 3.0
 
@@ -3544,12 +3572,9 @@ gnutls_pcert_import_openpgp_raw
 
      FLAGS: zero for now
 
-     This convenience function will import the given certificate to a
-     'gnutls_pcert_st' structure.  The structure must be deinitialized
-     afterwards using 'gnutls_pcert_deinit()' ;
+     This function is no-op.
 
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
+     *Returns:* 'GNUTLS_E_UNIMPLEMENTED_FEATURE' .
 
      *Since:* 3.0
 
@@ -3715,6 +3740,35 @@ gnutls_privkey_export_dsa_raw
 
      *Since:* 3.3.0
 
+gnutls_privkey_export_dsa_raw2
+------------------------------
+
+ -- Function: int gnutls_privkey_export_dsa_raw2 (gnutls_privkey_t KEY,
+          gnutls_datum_t * P, gnutls_datum_t * Q, gnutls_datum_t * G,
+          gnutls_datum_t * Y, gnutls_datum_t * X, unsigned int FLAGS)
+     KEY: Holds the public key
+
+     P: will hold the p
+
+     Q: will hold the q
+
+     G: will hold the g
+
+     Y: will hold the y
+
+     X: will hold the x
+
+     FLAGS: flags from 'gnutls_abstract_export_flags_t'
+
+     This function will export the DSA private key's parameters found in
+     the given structure.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.0
+
 gnutls_privkey_export_ecc_raw
 -----------------------------
 
@@ -3740,6 +3794,33 @@ gnutls_privkey_export_ecc_raw
 
      *Since:* 3.3.0
 
+gnutls_privkey_export_ecc_raw2
+------------------------------
+
+ -- Function: int gnutls_privkey_export_ecc_raw2 (gnutls_privkey_t KEY,
+          gnutls_ecc_curve_t * CURVE, gnutls_datum_t * X, gnutls_datum_t
+          * Y, gnutls_datum_t * K, unsigned int FLAGS)
+     KEY: Holds the public key
+
+     CURVE: will hold the curve
+
+     X: will hold the x coordinate
+
+     Y: will hold the y coordinate
+
+     K: will hold the private key
+
+     FLAGS: flags from 'gnutls_abstract_export_flags_t'
+
+     This function will export the ECC private key's parameters found in
+     the given structure.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.0
+
 gnutls_privkey_export_openpgp
 -----------------------------
 
@@ -3749,13 +3830,9 @@ gnutls_privkey_export_openpgp
 
      KEY: Location for the key to be exported.
 
-     Converts the given abstract private key to a
-     'gnutls_openpgp_privkey_t' type.  The key must be of type
-     'GNUTLS_PRIVKEY_OPENPGP' .  The key returned in 'key' must be
-     deinitialized with 'gnutls_openpgp_privkey_deinit()' .
+     This function is no-op.
 
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
+     *Returns:* 'GNUTLS_E_UNIMPLEMENTED_FEATURE' .
 
      *Since:* 3.4.0
 
@@ -3805,12 +3882,49 @@ gnutls_privkey_export_rsa_raw
 
      This function will export the RSA private key's parameters found in
      the given structure.  The new parameters will be allocated using
-     'gnutls_malloc()' and will be stored in the appropriate datum.
+     'gnutls_malloc()' and will be stored in the appropriate datum.  For
+     EdDSA keys, the 'y' value should be 'NULL' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.
 
      *Since:* 3.3.0
+
+gnutls_privkey_export_rsa_raw2
+------------------------------
+
+ -- Function: int gnutls_privkey_export_rsa_raw2 (gnutls_privkey_t KEY,
+          gnutls_datum_t * M, gnutls_datum_t * E, gnutls_datum_t * D,
+          gnutls_datum_t * P, gnutls_datum_t * Q, gnutls_datum_t * U,
+          gnutls_datum_t * E1, gnutls_datum_t * E2, unsigned int FLAGS)
+     KEY: Holds the certificate
+
+     M: will hold the modulus
+
+     E: will hold the public exponent
+
+     D: will hold the private exponent
+
+     P: will hold the first prime (p)
+
+     Q: will hold the second prime (q)
+
+     U: will hold the coefficient
+
+     E1: will hold e1 = d mod (p-1)
+
+     E2: will hold e2 = d mod (q-1)
+
+     FLAGS: flags from 'gnutls_abstract_export_flags_t'
+
+     This function will export the RSA private key's parameters found in
+     the given structure.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.0
 
 gnutls_privkey_export_x509
 --------------------------
@@ -3822,9 +3936,10 @@ gnutls_privkey_export_x509
      KEY: Location for the key to be exported.
 
      Converts the given abstract private key to a
-     'gnutls_x509_privkey_t' type.  The key must be of type
-     'GNUTLS_PRIVKEY_X509' .  The key returned in 'key' must be
-     deinitialized with 'gnutls_x509_privkey_deinit()' .
+     'gnutls_x509_privkey_t' type.  The abstract key must be of type
+     'GNUTLS_PRIVKEY_X509' .  The input 'key' must not be initialized.
+     The key returned in 'key' should be deinitialized using
+     'gnutls_x509_privkey_deinit()' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -3946,6 +4061,26 @@ gnutls_privkey_get_seed
      otherwise a negative error value.
 
      *Since:* 3.5.0
+
+gnutls_privkey_get_spki
+-----------------------
+
+ -- Function: int gnutls_privkey_get_spki (gnutls_privkey_t PRIVKEY,
+          gnutls_x509_spki_t SPKI, unsigned int FLAGS)
+     PRIVKEY: a public key of type 'gnutls_privkey_t'
+
+     SPKI: a SubjectPublicKeyInfo structure of type
+     'gnutls_privkey_spki_t'
+
+     FLAGS: must be zero
+
+     This function will return the public key information if available.
+     The provided 'spki' must be initialized.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.0
 
 gnutls_privkey_get_type
 -----------------------
@@ -4130,6 +4265,70 @@ gnutls_privkey_import_ext3
 
      *Since:* 3.4.0
 
+gnutls_privkey_import_ext4
+--------------------------
+
+ -- Function: int gnutls_privkey_import_ext4 (gnutls_privkey_t PKEY,
+          void * USERDATA, gnutls_privkey_sign_data_func SIGN_DATA_FN,
+          gnutls_privkey_sign_hash_func SIGN_HASH_FN,
+          gnutls_privkey_decrypt_func DECRYPT_FN,
+          gnutls_privkey_deinit_func DEINIT_FN, gnutls_privkey_info_func
+          INFO_FN, unsigned int FLAGS)
+     PKEY: The private key
+
+     USERDATA: private data to be provided to the callbacks
+
+     SIGN_DATA_FN: callback for signature operations (may be 'NULL' )
+
+     SIGN_HASH_FN: callback for signature operations (may be 'NULL' )
+
+     DECRYPT_FN: callback for decryption operations (may be 'NULL' )
+
+     DEINIT_FN: a deinitialization function
+
+     INFO_FN: returns info about the public key algorithm (should not be
+     'NULL' )
+
+     FLAGS: Flags for the import
+
+     This function will associate the given callbacks with the
+     'gnutls_privkey_t' type.  At least one of the callbacks must be
+     non-null.  If a deinitialization function is provided then flags is
+     assumed to contain 'GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE' .
+
+     Note that in contrast with the signing function of
+     'gnutls_privkey_import_ext3()' , the signing functions provided to
+     this function take explicitly the signature algorithm as parameter
+     and different functions are provided to sign the data and hashes.
+
+     The 'sign_hash_fn' is to be called to sign pre-hashed data.  The
+     input to the callback is the output of the hash (such as SHA256)
+     corresponding to the signature algorithm.  For RSA PKCS'1'
+     signatures, the signature algorithm can be set to
+     'GNUTLS_SIGN_RSA_RAW' , and in that case the data should be handled
+     as if they were an RSA PKCS'1' DigestInfo structure.
+
+     The 'sign_data_fn' is to be called to sign data.  The input data
+     will be he data to be signed (and hashed), with the provided
+     signature algorithm.  This function is to be used for signature
+     algorithms like Ed25519 which cannot take pre-hashed data as input.
+
+     When both 'sign_data_fn' and 'sign_hash_fn' functions are provided
+     they must be able to operate on all the supported signature
+     algorithms, unless prohibited by the type of the algorithm (e.g.,
+     as with Ed25519).
+
+     The 'info_fn' must provide information on the signature algorithms
+     supported by this private key, and should support the flags
+     'GNUTLS_PRIVKEY_INFO_PK_ALGO' and
+     'GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO' .  It must return -1 on
+     unknown flags.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.0
+
 gnutls_privkey_import_openpgp
 -----------------------------
 
@@ -4141,19 +4340,9 @@ gnutls_privkey_import_openpgp
 
      FLAGS: Flags for the import
 
-     This function will import the given private key to the abstract
-     'gnutls_privkey_t' type.
+     This function is no-op.
 
-     The 'gnutls_openpgp_privkey_t' object must not be deallocated
-     during the lifetime of this structure.  The subkey set as preferred
-     will be used, or the master key otherwise.
-
-     'flags' might be zero or one of
-     'GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE' and
-     'GNUTLS_PRIVKEY_IMPORT_COPY' .
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
+     *Returns:* 'GNUTLS_E_UNIMPLEMENTED_FEATURE' .
 
      *Since:* 2.12.0
 
@@ -4174,11 +4363,9 @@ gnutls_privkey_import_openpgp_raw
 
      PASSWORD: A password (optional)
 
-     This function will import the given private key to the abstract
-     'gnutls_privkey_t' type.
+     This function is no-op.
 
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
+     *Returns:* 'GNUTLS_E_UNIMPLEMENTED_FEATURE' .
 
      *Since:* 3.1.0
 
@@ -4398,7 +4585,17 @@ gnutls_privkey_init
  -- Function: int gnutls_privkey_init (gnutls_privkey_t * KEY)
      KEY: A pointer to the type to be initialized
 
-     This function will initialize a private key.
+     This function will initialize a private key object.  The object can
+     be used to generate, import, and perform cryptographic operations
+     on the associated private key.
+
+     Note that when the underlying private key is a PKCS'11' key (i.e.,
+     when imported with a PKCS'11' URI), the limitations of
+     'gnutls_pkcs11_privkey_init()' apply to this object as well.  In
+     versions of GnuTLS later than 3.5.11 the object is protected using
+     locks and a single 'gnutls_privkey_t' can be re-used by many
+     threads.  However, for performance it is recommended to utilize one
+     object per key per thread.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -4441,6 +4638,26 @@ gnutls_privkey_set_pin_function
 
      *Since:* 3.1.0
 
+gnutls_privkey_set_spki
+-----------------------
+
+ -- Function: int gnutls_privkey_set_spki (gnutls_privkey_t PRIVKEY,
+          const gnutls_x509_spki_t SPKI, unsigned int FLAGS)
+     PRIVKEY: a public key of type 'gnutls_privkey_t'
+
+     SPKI: a SubjectPublicKeyInfo structure of type
+     'gnutls_privkey_spki_t'
+
+     FLAGS: must be zero
+
+     This function will set the public key information.  The provided
+     'spki' must be initialized.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.0
+
 gnutls_privkey_sign_data
 ------------------------
 
@@ -4472,6 +4689,34 @@ gnutls_privkey_sign_data
 
      *Since:* 2.12.0
 
+gnutls_privkey_sign_data2
+-------------------------
+
+ -- Function: int gnutls_privkey_sign_data2 (gnutls_privkey_t SIGNER,
+          gnutls_sign_algorithm_t ALGO, unsigned int FLAGS, const
+          gnutls_datum_t * DATA, gnutls_datum_t * SIGNATURE)
+     SIGNER: Holds the key
+
+     ALGO: The signature algorithm used
+
+     FLAGS: Zero or one of 'gnutls_privkey_flags_t'
+
+     DATA: holds the data to be signed
+
+     SIGNATURE: will contain the signature allocated with
+     'gnutls_malloc()'
+
+     This function will sign the given data using the specified
+     signature algorithm.  This function is an enhancement of
+     'gnutls_privkey_sign_data()' , as it allows utilizing a alternative
+     signature algorithm where possible (e.g, use an RSA key with
+     RSA-PSS).
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.0
+
 gnutls_privkey_sign_hash
 ------------------------
 
@@ -4497,14 +4742,58 @@ gnutls_privkey_sign_hash
      You may use 'gnutls_pubkey_get_preferred_hash_algorithm()' to
      determine the hash algorithm.
 
-     Note that if 'GNUTLS_PRIVKEY_SIGN_FLAG_TLS1_RSA' flag is specified
-     this function will ignore 'hash_algo' and perform a raw PKCS1
-     signature.
+     The flags may be 'GNUTLS_PRIVKEY_SIGN_FLAG_TLS1_RSA' or
+     'GNUTLS_PRIVKEY_SIGN_FLAG_RSA_PSS' .  In the former case this
+     function will ignore 'hash_algo' and perform a raw PKCS1 signature,
+     and in the latter an RSA-PSS signature will be generated.
+
+     Note that, not all algorithm support signing already hashed data.
+     When signing with Ed25519, 'gnutls_privkey_sign_data()' should be
+     used.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
      *Since:* 2.12.0
+
+gnutls_privkey_sign_hash2
+-------------------------
+
+ -- Function: int gnutls_privkey_sign_hash2 (gnutls_privkey_t SIGNER,
+          gnutls_sign_algorithm_t ALGO, unsigned int FLAGS, const
+          gnutls_datum_t * HASH_DATA, gnutls_datum_t * SIGNATURE)
+     SIGNER: Holds the signer's key
+
+     ALGO: The signature algorithm used
+
+     FLAGS: Zero or one of 'gnutls_privkey_flags_t'
+
+     HASH_DATA: holds the data to be signed
+
+     SIGNATURE: will contain newly allocated signature
+
+     This function will sign the given hashed data using a signature
+     algorithm supported by the private key.  Signature algorithms are
+     always used together with a hash functions.  Different hash
+     functions may be used for the RSA algorithm, but only SHA-XXX for
+     the DSA keys.
+
+     You may use 'gnutls_pubkey_get_preferred_hash_algorithm()' to
+     determine the hash algorithm.
+
+     The flags may be 'GNUTLS_PRIVKEY_SIGN_FLAG_TLS1_RSA' or
+     'GNUTLS_PRIVKEY_SIGN_FLAG_RSA_PSS' .  In the former case this
+     function will ignore 'hash_algo' and perform a raw PKCS1 signature,
+     and in the latter an RSA-PSS signature will be generated.
+
+     Note that, not all algorithm support signing already hashed data.
+     When signing with Ed25519, 'gnutls_privkey_sign_data()' should be
+     used.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.0
 
 gnutls_privkey_status
 ---------------------
@@ -4675,6 +4964,35 @@ gnutls_pubkey_export_dsa_raw
 
      *Since:* 3.3.0
 
+gnutls_pubkey_export_dsa_raw2
+-----------------------------
+
+ -- Function: int gnutls_pubkey_export_dsa_raw2 (gnutls_pubkey_t KEY,
+          gnutls_datum_t * P, gnutls_datum_t * Q, gnutls_datum_t * G,
+          gnutls_datum_t * Y, unsigned FLAGS)
+     KEY: Holds the public key
+
+     P: will hold the p (may be 'NULL' )
+
+     Q: will hold the q (may be 'NULL' )
+
+     G: will hold the g (may be 'NULL' )
+
+     Y: will hold the y (may be 'NULL' )
+
+     FLAGS: flags from 'gnutls_abstract_export_flags_t'
+
+     This function will export the DSA public key's parameters found in
+     the given certificate.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     This function allows for 'NULL' parameters since 3.4.1.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.0
+
 gnutls_pubkey_export_ecc_raw
 ----------------------------
 
@@ -4691,7 +5009,8 @@ gnutls_pubkey_export_ecc_raw
 
      This function will export the ECC public key's parameters found in
      the given key.  The new parameters will be allocated using
-     'gnutls_malloc()' and will be stored in the appropriate datum.
+     'gnutls_malloc()' and will be stored in the appropriate datum.  For
+     EdDSA public keys, 'y' will be set to 'NULL' .
 
      This function allows for 'NULL' parameters since 3.4.1.
 
@@ -4699,6 +5018,33 @@ gnutls_pubkey_export_ecc_raw
      error code.
 
      *Since:* 3.0
+
+gnutls_pubkey_export_ecc_raw2
+-----------------------------
+
+ -- Function: int gnutls_pubkey_export_ecc_raw2 (gnutls_pubkey_t KEY,
+          gnutls_ecc_curve_t * CURVE, gnutls_datum_t * X, gnutls_datum_t
+          * Y, unsigned int FLAGS)
+     KEY: Holds the public key
+
+     CURVE: will hold the curve (may be 'NULL' )
+
+     X: will hold x (may be 'NULL' )
+
+     Y: will hold y (may be 'NULL' )
+
+     FLAGS: flags from 'gnutls_abstract_export_flags_t'
+
+     This function will export the ECC public key's parameters found in
+     the given key.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     This function allows for 'NULL' parameters since 3.4.1.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.0
 
 gnutls_pubkey_export_ecc_x962
 -----------------------------
@@ -4741,6 +5087,30 @@ gnutls_pubkey_export_rsa_raw
      error code.
 
      *Since:* 3.3.0
+
+gnutls_pubkey_export_rsa_raw2
+-----------------------------
+
+ -- Function: int gnutls_pubkey_export_rsa_raw2 (gnutls_pubkey_t KEY,
+          gnutls_datum_t * M, gnutls_datum_t * E, unsigned FLAGS)
+     KEY: Holds the certificate
+
+     M: will hold the modulus (may be 'NULL' )
+
+     E: will hold the public exponent (may be 'NULL' )
+
+     FLAGS: flags from 'gnutls_abstract_export_flags_t'
+
+     This function will export the RSA public key's parameters found in
+     the given structure.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     This function allows for 'NULL' parameters since 3.4.1.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.0
 
 gnutls_pubkey_get_key_id
 ------------------------
@@ -4796,30 +5166,20 @@ gnutls_pubkey_get_openpgp_key_id
           OUTPUT_DATA_SIZE, unsigned int * SUBKEY)
      KEY: Holds the public key
 
-     FLAGS: should be 0 or 'GNUTLS_PUBKEY_GET_OPENPGP_FINGERPRINT'
+     FLAGS: should be one of the flags from 'gnutls_keyid_flags_t'
 
      OUTPUT_DATA: will contain the key ID
 
      OUTPUT_DATA_SIZE: holds the size of output_data (and will be
      replaced by the actual size of parameters)
 
-     SUBKEY: Will be non zero if the key ID corresponds to a subkey
+     SUBKEY: - undescribed -
 
-     This function returns the OpenPGP key ID of the corresponding key.
-     The key is a unique ID that depends on the public key parameters.
+     This function is no-op.
 
-     If the flag 'GNUTLS_PUBKEY_GET_OPENPGP_FINGERPRINT' is specified
-     this function returns the fingerprint of the master key.
+     *Returns:* 'GNUTLS_E_UNIMPLEMENTED_FEATURE' .
 
-     If the buffer provided is not long enough to hold the output, then
-     *output_data_size is updated and 'GNUTLS_E_SHORT_MEMORY_BUFFER'
-     will be returned.  The output is 'GNUTLS_OPENPGP_KEYID_SIZE' bytes
-     long.
-
-     *Returns:* In case of failure a negative error code will be
-     returned, and 0 on success.
-
-     *Since:* 3.0
+     *Since:* 2.12.0
 
 gnutls_pubkey_get_pk_algorithm
 ------------------------------
@@ -4867,6 +5227,26 @@ gnutls_pubkey_get_preferred_hash_algorithm
      code is returned on error.
 
      *Since:* 2.12.0
+
+gnutls_pubkey_get_spki
+----------------------
+
+ -- Function: int gnutls_pubkey_get_spki (gnutls_pubkey_t PUBKEY,
+          gnutls_x509_spki_t SPKI, unsigned int FLAGS)
+     PUBKEY: a public key of type 'gnutls_pubkey_t'
+
+     SPKI: a SubjectPublicKeyInfo structure of type
+     'gnutls_pubkey_spki_t'
+
+     FLAGS: must be zero
+
+     This function will return the public key information if available.
+     The provided 'spki' must be initialized.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.0
 
 gnutls_pubkey_import
 --------------------
@@ -4929,7 +5309,8 @@ gnutls_pubkey_import_ecc_raw
      Y: holds the y
 
      This function will convert the given elliptic curve parameters to a
-     'gnutls_pubkey_t' .  The output will be stored in 'key' .
+     'gnutls_pubkey_t' .  The output will be stored in 'key' .  For
+     EdDSA keys the 'y' parameter should be 'NULL' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -4967,13 +5348,9 @@ gnutls_pubkey_import_openpgp
 
      FLAGS: should be zero
 
-     Imports a public key from an openpgp key.  This function will
-     import the given public key to the abstract 'gnutls_pubkey_t' type.
-     The subkey set as preferred will be imported or the master key
-     otherwise.
+     This function is no-op.
 
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
+     *Returns:* 'GNUTLS_E_UNIMPLEMENTED_FEATURE' .
 
      *Since:* 2.12.0
 
@@ -4994,11 +5371,9 @@ gnutls_pubkey_import_openpgp_raw
 
      FLAGS: Should be zero
 
-     This function will import the given public key to the abstract
-     'gnutls_pubkey_t' type.
+     This function is no-op.
 
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
+     *Returns:* 'GNUTLS_E_UNIMPLEMENTED_FEATURE' .
 
      *Since:* 3.1.3
 
@@ -5274,6 +5649,26 @@ gnutls_pubkey_set_pin_function
 
      *Since:* 3.1.0
 
+gnutls_pubkey_set_spki
+----------------------
+
+ -- Function: int gnutls_pubkey_set_spki (gnutls_pubkey_t PUBKEY, const
+          gnutls_x509_spki_t SPKI, unsigned int FLAGS)
+     PUBKEY: a public key of type 'gnutls_pubkey_t'
+
+     SPKI: a SubjectPublicKeyInfo structure of type
+     'gnutls_pubkey_spki_t'
+
+     FLAGS: must be zero
+
+     This function will set the public key information.  The provided
+     'spki' must be initialized.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.0
+
 gnutls_pubkey_verify_data2
 --------------------------
 
@@ -5325,7 +5720,9 @@ gnutls_pubkey_verify_hash2
 
      *Returns:* In case of a verification failure
      'GNUTLS_E_PK_SIG_VERIFY_FAILED' is returned, and zero or positive
-     code on success.
+     code on success.  For known to be insecure signatures this function
+     will return 'GNUTLS_E_INSUFFICIENT_SECURITY' unless the flag
+     'GNUTLS_VERIFY_ALLOW_BROKEN' is specified.
 
      *Since:* 3.0
 
@@ -5658,7 +6055,7 @@ dane_cert_usage_name
 
  -- Function: const char * dane_cert_usage_name (dane_cert_usage_t
           USAGE)
-     USAGE: - undescribed -
+     USAGE: is a DANE certificate usage
 
      Convert a 'dane_cert_usage_t' value to a string.
 
@@ -6019,6 +6416,10 @@ E.12 Cryptographic API
 The following functions are to be used for low-level cryptographic
 operations.  Their prototypes lie in 'gnutls/crypto.h'.
 
+Note that due to historic reasons several functions, (e.g.  *note
+gnutls_mac_list::, *note gnutls_mac_get_name::) of this API are part of
+the *note Core TLS API::.
+
 gnutls_aead_cipher_decrypt
 --------------------------
 
@@ -6280,6 +6681,9 @@ gnutls_cipher_get_tag_size
           (gnutls_cipher_algorithm_t ALGORITHM)
      ALGORITHM: is an encryption algorithm
 
+     This function returns the tag size of an authenticated encryption
+     algorithm.  For non-AEAD algorithms, it returns zero.
+
      *Returns:* the tag size of the authenticated encryption algorithm.
 
      *Since:* 3.2.2
@@ -6523,6 +6927,30 @@ gnutls_decode_ber_digest_info
 
      *Since:* 3.5.0
 
+gnutls_decode_rs_value
+----------------------
+
+ -- Function: int gnutls_decode_rs_value (const gnutls_datum_t *
+          SIG_VALUE, gnutls_datum_t * R, gnutls_datum_t * S)
+     SIG_VALUE: holds a Dss-Sig-Value DER or BER encoded structure
+
+     R: will contain the r value
+
+     S: will contain the s value
+
+     This function will decode the provided 'sig_value' , into 'r' and
+     's' elements.  The Dss-Sig-Value is used for DSA and ECDSA
+     signatures.
+
+     The output values may be padded with a zero byte to prevent them
+     from being interpreted as negative values.  The value should be
+     deallocated using 'gnutls_free()' .
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise an error code is returned.
+
+     *Since:* 3.6.0
+
 gnutls_encode_ber_digest_info
 -----------------------------
 
@@ -6542,6 +6970,27 @@ gnutls_encode_ber_digest_info
      otherwise an error code is returned.
 
      *Since:* 3.5.0
+
+gnutls_encode_rs_value
+----------------------
+
+ -- Function: int gnutls_encode_rs_value (gnutls_datum_t * SIG_VALUE,
+          const gnutls_datum_t * R, const gnutls_datum_t * S)
+     SIG_VALUE: will hold a Dss-Sig-Value DER encoded structure
+
+     R: must contain the r value
+
+     S: must contain the s value
+
+     This function will encode the provided r and s values, into a
+     Dss-Sig-Value structure, used for DSA and ECDSA signatures.
+
+     The output value should be deallocated using 'gnutls_free()' .
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise an error code is returned.
+
+     *Since:* 3.6.0
 
 gnutls_hash
 -----------
@@ -6792,7 +7241,9 @@ gnutls_rnd
      LEN: The requested size
 
      This function will generate random data and store it to output
-     buffer.
+     buffer.  The value of 'level' should be one of 'GNUTLS_RND_NONCE' ,
+     'GNUTLS_RND_RANDOM' and 'GNUTLS_RND_KEY' .  See the manual and
+     'gnutls_rnd_level_t' for detailed information.
 
      This function is thread-safe and also fork-safe.
 
@@ -6812,639 +7263,4 @@ gnutls_rnd_refresh
      On a slower rate input from /dev/urandom is mixed too.
 
      *Since:* 3.1.7
-
-
-File: gnutls.info,  Node: Compatibility API,  Prev: Cryptographic API,  Up: API reference
-
-E.13 Compatibility API
-======================
-
-The following functions are carried over from old GnuTLS released.  They
-might be removed at a later version.  Their prototypes lie in
-'gnutls/compat.h'.
-
-gnutls_global_set_mem_functions
--------------------------------
-
- -- Function: void gnutls_global_set_mem_functions
-          (gnutls_alloc_function ALLOC_FUNC, gnutls_alloc_function
-          SECURE_ALLOC_FUNC, gnutls_is_secure_function IS_SECURE_FUNC,
-          gnutls_realloc_function REALLOC_FUNC, gnutls_free_function
-          FREE_FUNC)
-     ALLOC_FUNC: it's the default memory allocation function.  Like
-     'malloc()' .
-
-     SECURE_ALLOC_FUNC: This is the memory allocation function that will
-     be used for sensitive data.
-
-     IS_SECURE_FUNC: a function that returns 0 if the memory given is
-     not secure.  May be NULL.
-
-     REALLOC_FUNC: A realloc function
-
-     FREE_FUNC: The function that frees allocated data.  Must accept a
-     NULL pointer.
-
-     *Deprecated:* since 3.3.0 it is no longer possible to replace the
-     internally used memory allocation functions
-
-     This is the function where you set the memory allocation functions
-     gnutls is going to use.  By default the libc's allocation functions
-     ('malloc()' , 'free()' ), are used by gnutls, to allocate both
-     sensitive and not sensitive data.  This function is provided to set
-     the memory allocation functions to something other than the
-     defaults
-
-     This function must be called before 'gnutls_global_init()' is
-     called.  This function is not thread safe.
-
-gnutls_openpgp_privkey_sign_hash
---------------------------------
-
- -- Function: int gnutls_openpgp_privkey_sign_hash
-          (gnutls_openpgp_privkey_t KEY, const gnutls_datum_t * HASH,
-          gnutls_datum_t * SIGNATURE)
-     KEY: Holds the key
-
-     HASH: holds the data to be signed
-
-     SIGNATURE: will contain newly allocated signature
-
-     This function will sign the given hash using the private key.  You
-     should use 'gnutls_openpgp_privkey_set_preferred_key_id()' before
-     calling this function to set the subkey to use.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
-     *Deprecated:* Use 'gnutls_privkey_sign_hash()' instead.
-
-gnutls_x509_crl_sign
---------------------
-
- -- Function: int gnutls_x509_crl_sign (gnutls_x509_crl_t CRL,
-          gnutls_x509_crt_t ISSUER, gnutls_x509_privkey_t ISSUER_KEY)
-     CRL: should contain a gnutls_x509_crl_t type
-
-     ISSUER: is the certificate of the certificate issuer
-
-     ISSUER_KEY: holds the issuer's private key
-
-     This function is the same a 'gnutls_x509_crl_sign2()' with no
-     flags, and SHA1 as the hash algorithm.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
-     *Deprecated:* Use 'gnutls_x509_crl_privkey_sign()' .
-
-gnutls_x509_crq_sign
---------------------
-
- -- Function: int gnutls_x509_crq_sign (gnutls_x509_crq_t CRQ,
-          gnutls_x509_privkey_t KEY)
-     CRQ: should contain a 'gnutls_x509_crq_t' type
-
-     KEY: holds a private key
-
-     This function is the same a 'gnutls_x509_crq_sign2()' with no
-     flags, and SHA1 as the hash algorithm.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
-     *Deprecated:* Use 'gnutls_x509_crq_privkey_sign()' instead.
-
-gnutls_x509_crt_get_preferred_hash_algorithm
---------------------------------------------
-
- -- Function: int gnutls_x509_crt_get_preferred_hash_algorithm
-          (gnutls_x509_crt_t CRT, gnutls_digest_algorithm_t * HASH,
-          unsigned int * MAND)
-     CRT: Holds the certificate
-
-     HASH: The result of the call with the hash algorithm used for
-     signature
-
-     MAND: If non-zero it means that the algorithm MUST use this hash.
-     May be NULL.
-
-     This function will read the certificate and return the appropriate
-     digest algorithm to use for signing with this certificate.  Some
-     certificates (i.e.  DSA might not be able to sign without the
-     preferred algorithm).
-
-     *Deprecated:* Please use
-     'gnutls_pubkey_get_preferred_hash_algorithm()' .
-
-     *Returns:* the 0 if the hash algorithm is found.  A negative error
-     code is returned on error.
-
-     *Since:* 2.12.0
-
-gnutls_x509_privkey_sign_hash
------------------------------
-
- -- Function: int gnutls_x509_privkey_sign_hash (gnutls_x509_privkey_t
-          KEY, const gnutls_datum_t * HASH, gnutls_datum_t * SIGNATURE)
-     KEY: a key
-
-     HASH: holds the data to be signed
-
-     SIGNATURE: will contain newly allocated signature
-
-     This function will sign the given hash using the private key.  Do
-     not use this function directly unless you know what it is.  Typical
-     signing requires the data to be hashed and stored in special
-     formats (e.g.  BER Digest-Info for RSA).
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
-     Deprecated in: 2.12.0
-
-
-File: gnutls.info,  Node: Copying Information,  Next: Bibliography,  Prev: API reference,  Up: Top
-
-Appendix F Copying Information
-******************************
-
-GNU Free Documentation License
-==============================
-
-                     Version 1.3, 3 November 2008
-
-     Copyright (C) 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc.
-     <http://fsf.org/>
-
-     Everyone is permitted to copy and distribute verbatim copies
-     of this license document, but changing it is not allowed.
-
-  0. PREAMBLE
-
-     The purpose of this License is to make a manual, textbook, or other
-     functional and useful document "free" in the sense of freedom: to
-     assure everyone the effective freedom to copy and redistribute it,
-     with or without modifying it, either commercially or
-     noncommercially.  Secondarily, this License preserves for the
-     author and publisher a way to get credit for their work, while not
-     being considered responsible for modifications made by others.
-
-     This License is a kind of "copyleft", which means that derivative
-     works of the document must themselves be free in the same sense.
-     It complements the GNU General Public License, which is a copyleft
-     license designed for free software.
-
-     We have designed this License in order to use it for manuals for
-     free software, because free software needs free documentation: a
-     free program should come with manuals providing the same freedoms
-     that the software does.  But this License is not limited to
-     software manuals; it can be used for any textual work, regardless
-     of subject matter or whether it is published as a printed book.  We
-     recommend this License principally for works whose purpose is
-     instruction or reference.
-
-  1. APPLICABILITY AND DEFINITIONS
-
-     This License applies to any manual or other work, in any medium,
-     that contains a notice placed by the copyright holder saying it can
-     be distributed under the terms of this License.  Such a notice
-     grants a world-wide, royalty-free license, unlimited in duration,
-     to use that work under the conditions stated herein.  The
-     "Document", below, refers to any such manual or work.  Any member
-     of the public is a licensee, and is addressed as "you".  You accept
-     the license if you copy, modify or distribute the work in a way
-     requiring permission under copyright law.
-
-     A "Modified Version" of the Document means any work containing the
-     Document or a portion of it, either copied verbatim, or with
-     modifications and/or translated into another language.
-
-     A "Secondary Section" is a named appendix or a front-matter section
-     of the Document that deals exclusively with the relationship of the
-     publishers or authors of the Document to the Document's overall
-     subject (or to related matters) and contains nothing that could
-     fall directly within that overall subject.  (Thus, if the Document
-     is in part a textbook of mathematics, a Secondary Section may not
-     explain any mathematics.)  The relationship could be a matter of
-     historical connection with the subject or with related matters, or
-     of legal, commercial, philosophical, ethical or political position
-     regarding them.
-
-     The "Invariant Sections" are certain Secondary Sections whose
-     titles are designated, as being those of Invariant Sections, in the
-     notice that says that the Document is released under this License.
-     If a section does not fit the above definition of Secondary then it
-     is not allowed to be designated as Invariant.  The Document may
-     contain zero Invariant Sections.  If the Document does not identify
-     any Invariant Sections then there are none.
-
-     The "Cover Texts" are certain short passages of text that are
-     listed, as Front-Cover Texts or Back-Cover Texts, in the notice
-     that says that the Document is released under this License.  A
-     Front-Cover Text may be at most 5 words, and a Back-Cover Text may
-     be at most 25 words.
-
-     A "Transparent" copy of the Document means a machine-readable copy,
-     represented in a format whose specification is available to the
-     general public, that is suitable for revising the document
-     straightforwardly with generic text editors or (for images composed
-     of pixels) generic paint programs or (for drawings) some widely
-     available drawing editor, and that is suitable for input to text
-     formatters or for automatic translation to a variety of formats
-     suitable for input to text formatters.  A copy made in an otherwise
-     Transparent file format whose markup, or absence of markup, has
-     been arranged to thwart or discourage subsequent modification by
-     readers is not Transparent.  An image format is not Transparent if
-     used for any substantial amount of text.  A copy that is not
-     "Transparent" is called "Opaque".
-
-     Examples of suitable formats for Transparent copies include plain
-     ASCII without markup, Texinfo input format, LaTeX input format,
-     SGML or XML using a publicly available DTD, and standard-conforming
-     simple HTML, PostScript or PDF designed for human modification.
-     Examples of transparent image formats include PNG, XCF and JPG.
-     Opaque formats include proprietary formats that can be read and
-     edited only by proprietary word processors, SGML or XML for which
-     the DTD and/or processing tools are not generally available, and
-     the machine-generated HTML, PostScript or PDF produced by some word
-     processors for output purposes only.
-
-     The "Title Page" means, for a printed book, the title page itself,
-     plus such following pages as are needed to hold, legibly, the
-     material this License requires to appear in the title page.  For
-     works in formats which do not have any title page as such, "Title
-     Page" means the text near the most prominent appearance of the
-     work's title, preceding the beginning of the body of the text.
-
-     The "publisher" means any person or entity that distributes copies
-     of the Document to the public.
-
-     A section "Entitled XYZ" means a named subunit of the Document
-     whose title either is precisely XYZ or contains XYZ in parentheses
-     following text that translates XYZ in another language.  (Here XYZ
-     stands for a specific section name mentioned below, such as
-     "Acknowledgements", "Dedications", "Endorsements", or "History".)
-     To "Preserve the Title" of such a section when you modify the
-     Document means that it remains a section "Entitled XYZ" according
-     to this definition.
-
-     The Document may include Warranty Disclaimers next to the notice
-     which states that this License applies to the Document.  These
-     Warranty Disclaimers are considered to be included by reference in
-     this License, but only as regards disclaiming warranties: any other
-     implication that these Warranty Disclaimers may have is void and
-     has no effect on the meaning of this License.
-
-  2. VERBATIM COPYING
-
-     You may copy and distribute the Document in any medium, either
-     commercially or noncommercially, provided that this License, the
-     copyright notices, and the license notice saying this License
-     applies to the Document are reproduced in all copies, and that you
-     add no other conditions whatsoever to those of this License.  You
-     may not use technical measures to obstruct or control the reading
-     or further copying of the copies you make or distribute.  However,
-     you may accept compensation in exchange for copies.  If you
-     distribute a large enough number of copies you must also follow the
-     conditions in section 3.
-
-     You may also lend copies, under the same conditions stated above,
-     and you may publicly display copies.
-
-  3. COPYING IN QUANTITY
-
-     If you publish printed copies (or copies in media that commonly
-     have printed covers) of the Document, numbering more than 100, and
-     the Document's license notice requires Cover Texts, you must
-     enclose the copies in covers that carry, clearly and legibly, all
-     these Cover Texts: Front-Cover Texts on the front cover, and
-     Back-Cover Texts on the back cover.  Both covers must also clearly
-     and legibly identify you as the publisher of these copies.  The
-     front cover must present the full title with all words of the title
-     equally prominent and visible.  You may add other material on the
-     covers in addition.  Copying with changes limited to the covers, as
-     long as they preserve the title of the Document and satisfy these
-     conditions, can be treated as verbatim copying in other respects.
-
-     If the required texts for either cover are too voluminous to fit
-     legibly, you should put the first ones listed (as many as fit
-     reasonably) on the actual cover, and continue the rest onto
-     adjacent pages.
-
-     If you publish or distribute Opaque copies of the Document
-     numbering more than 100, you must either include a machine-readable
-     Transparent copy along with each Opaque copy, or state in or with
-     each Opaque copy a computer-network location from which the general
-     network-using public has access to download using public-standard
-     network protocols a complete Transparent copy of the Document, free
-     of added material.  If you use the latter option, you must take
-     reasonably prudent steps, when you begin distribution of Opaque
-     copies in quantity, to ensure that this Transparent copy will
-     remain thus accessible at the stated location until at least one
-     year after the last time you distribute an Opaque copy (directly or
-     through your agents or retailers) of that edition to the public.
-
-     It is requested, but not required, that you contact the authors of
-     the Document well before redistributing any large number of copies,
-     to give them a chance to provide you with an updated version of the
-     Document.
-
-  4. MODIFICATIONS
-
-     You may copy and distribute a Modified Version of the Document
-     under the conditions of sections 2 and 3 above, provided that you
-     release the Modified Version under precisely this License, with the
-     Modified Version filling the role of the Document, thus licensing
-     distribution and modification of the Modified Version to whoever
-     possesses a copy of it.  In addition, you must do these things in
-     the Modified Version:
-
-       A. Use in the Title Page (and on the covers, if any) a title
-          distinct from that of the Document, and from those of previous
-          versions (which should, if there were any, be listed in the
-          History section of the Document).  You may use the same title
-          as a previous version if the original publisher of that
-          version gives permission.
-
-       B. List on the Title Page, as authors, one or more persons or
-          entities responsible for authorship of the modifications in
-          the Modified Version, together with at least five of the
-          principal authors of the Document (all of its principal
-          authors, if it has fewer than five), unless they release you
-          from this requirement.
-
-       C. State on the Title page the name of the publisher of the
-          Modified Version, as the publisher.
-
-       D. Preserve all the copyright notices of the Document.
-
-       E. Add an appropriate copyright notice for your modifications
-          adjacent to the other copyright notices.
-
-       F. Include, immediately after the copyright notices, a license
-          notice giving the public permission to use the Modified
-          Version under the terms of this License, in the form shown in
-          the Addendum below.
-
-       G. Preserve in that license notice the full lists of Invariant
-          Sections and required Cover Texts given in the Document's
-          license notice.
-
-       H. Include an unaltered copy of this License.
-
-       I. Preserve the section Entitled "History", Preserve its Title,
-          and add to it an item stating at least the title, year, new
-          authors, and publisher of the Modified Version as given on the
-          Title Page.  If there is no section Entitled "History" in the
-          Document, create one stating the title, year, authors, and
-          publisher of the Document as given on its Title Page, then add
-          an item describing the Modified Version as stated in the
-          previous sentence.
-
-       J. Preserve the network location, if any, given in the Document
-          for public access to a Transparent copy of the Document, and
-          likewise the network locations given in the Document for
-          previous versions it was based on.  These may be placed in the
-          "History" section.  You may omit a network location for a work
-          that was published at least four years before the Document
-          itself, or if the original publisher of the version it refers
-          to gives permission.
-
-       K. For any section Entitled "Acknowledgements" or "Dedications",
-          Preserve the Title of the section, and preserve in the section
-          all the substance and tone of each of the contributor
-          acknowledgements and/or dedications given therein.
-
-       L. Preserve all the Invariant Sections of the Document, unaltered
-          in their text and in their titles.  Section numbers or the
-          equivalent are not considered part of the section titles.
-
-       M. Delete any section Entitled "Endorsements".  Such a section
-          may not be included in the Modified Version.
-
-       N. Do not retitle any existing section to be Entitled
-          "Endorsements" or to conflict in title with any Invariant
-          Section.
-
-       O. Preserve any Warranty Disclaimers.
-
-     If the Modified Version includes new front-matter sections or
-     appendices that qualify as Secondary Sections and contain no
-     material copied from the Document, you may at your option designate
-     some or all of these sections as invariant.  To do this, add their
-     titles to the list of Invariant Sections in the Modified Version's
-     license notice.  These titles must be distinct from any other
-     section titles.
-
-     You may add a section Entitled "Endorsements", provided it contains
-     nothing but endorsements of your Modified Version by various
-     parties--for example, statements of peer review or that the text
-     has been approved by an organization as the authoritative
-     definition of a standard.
-
-     You may add a passage of up to five words as a Front-Cover Text,
-     and a passage of up to 25 words as a Back-Cover Text, to the end of
-     the list of Cover Texts in the Modified Version.  Only one passage
-     of Front-Cover Text and one of Back-Cover Text may be added by (or
-     through arrangements made by) any one entity.  If the Document
-     already includes a cover text for the same cover, previously added
-     by you or by arrangement made by the same entity you are acting on
-     behalf of, you may not add another; but you may replace the old
-     one, on explicit permission from the previous publisher that added
-     the old one.
-
-     The author(s) and publisher(s) of the Document do not by this
-     License give permission to use their names for publicity for or to
-     assert or imply endorsement of any Modified Version.
-
-  5. COMBINING DOCUMENTS
-
-     You may combine the Document with other documents released under
-     this License, under the terms defined in section 4 above for
-     modified versions, provided that you include in the combination all
-     of the Invariant Sections of all of the original documents,
-     unmodified, and list them all as Invariant Sections of your
-     combined work in its license notice, and that you preserve all
-     their Warranty Disclaimers.
-
-     The combined work need only contain one copy of this License, and
-     multiple identical Invariant Sections may be replaced with a single
-     copy.  If there are multiple Invariant Sections with the same name
-     but different contents, make the title of each such section unique
-     by adding at the end of it, in parentheses, the name of the
-     original author or publisher of that section if known, or else a
-     unique number.  Make the same adjustment to the section titles in
-     the list of Invariant Sections in the license notice of the
-     combined work.
-
-     In the combination, you must combine any sections Entitled
-     "History" in the various original documents, forming one section
-     Entitled "History"; likewise combine any sections Entitled
-     "Acknowledgements", and any sections Entitled "Dedications".  You
-     must delete all sections Entitled "Endorsements."
-
-  6. COLLECTIONS OF DOCUMENTS
-
-     You may make a collection consisting of the Document and other
-     documents released under this License, and replace the individual
-     copies of this License in the various documents with a single copy
-     that is included in the collection, provided that you follow the
-     rules of this License for verbatim copying of each of the documents
-     in all other respects.
-
-     You may extract a single document from such a collection, and
-     distribute it individually under this License, provided you insert
-     a copy of this License into the extracted document, and follow this
-     License in all other respects regarding verbatim copying of that
-     document.
-
-  7. AGGREGATION WITH INDEPENDENT WORKS
-
-     A compilation of the Document or its derivatives with other
-     separate and independent documents or works, in or on a volume of a
-     storage or distribution medium, is called an "aggregate" if the
-     copyright resulting from the compilation is not used to limit the
-     legal rights of the compilation's users beyond what the individual
-     works permit.  When the Document is included in an aggregate, this
-     License does not apply to the other works in the aggregate which
-     are not themselves derivative works of the Document.
-
-     If the Cover Text requirement of section 3 is applicable to these
-     copies of the Document, then if the Document is less than one half
-     of the entire aggregate, the Document's Cover Texts may be placed
-     on covers that bracket the Document within the aggregate, or the
-     electronic equivalent of covers if the Document is in electronic
-     form.  Otherwise they must appear on printed covers that bracket
-     the whole aggregate.
-
-  8. TRANSLATION
-
-     Translation is considered a kind of modification, so you may
-     distribute translations of the Document under the terms of section
-     4.  Replacing Invariant Sections with translations requires special
-     permission from their copyright holders, but you may include
-     translations of some or all Invariant Sections in addition to the
-     original versions of these Invariant Sections.  You may include a
-     translation of this License, and all the license notices in the
-     Document, and any Warranty Disclaimers, provided that you also
-     include the original English version of this License and the
-     original versions of those notices and disclaimers.  In case of a
-     disagreement between the translation and the original version of
-     this License or a notice or disclaimer, the original version will
-     prevail.
-
-     If a section in the Document is Entitled "Acknowledgements",
-     "Dedications", or "History", the requirement (section 4) to
-     Preserve its Title (section 1) will typically require changing the
-     actual title.
-
-  9. TERMINATION
-
-     You may not copy, modify, sublicense, or distribute the Document
-     except as expressly provided under this License.  Any attempt
-     otherwise to copy, modify, sublicense, or distribute it is void,
-     and will automatically terminate your rights under this License.
-
-     However, if you cease all violation of this License, then your
-     license from a particular copyright holder is reinstated (a)
-     provisionally, unless and until the copyright holder explicitly and
-     finally terminates your license, and (b) permanently, if the
-     copyright holder fails to notify you of the violation by some
-     reasonable means prior to 60 days after the cessation.
-
-     Moreover, your license from a particular copyright holder is
-     reinstated permanently if the copyright holder notifies you of the
-     violation by some reasonable means, this is the first time you have
-     received notice of violation of this License (for any work) from
-     that copyright holder, and you cure the violation prior to 30 days
-     after your receipt of the notice.
-
-     Termination of your rights under this section does not terminate
-     the licenses of parties who have received copies or rights from you
-     under this License.  If your rights have been terminated and not
-     permanently reinstated, receipt of a copy of some or all of the
-     same material does not give you any rights to use it.
-
-  10. FUTURE REVISIONS OF THIS LICENSE
-
-     The Free Software Foundation may publish new, revised versions of
-     the GNU Free Documentation License from time to time.  Such new
-     versions will be similar in spirit to the present version, but may
-     differ in detail to address new problems or concerns.  See
-     <http://www.gnu.org/copyleft/>.
-
-     Each version of the License is given a distinguishing version
-     number.  If the Document specifies that a particular numbered
-     version of this License "or any later version" applies to it, you
-     have the option of following the terms and conditions either of
-     that specified version or of any later version that has been
-     published (not as a draft) by the Free Software Foundation.  If the
-     Document does not specify a version number of this License, you may
-     choose any version ever published (not as a draft) by the Free
-     Software Foundation.  If the Document specifies that a proxy can
-     decide which future versions of this License can be used, that
-     proxy's public statement of acceptance of a version permanently
-     authorizes you to choose that version for the Document.
-
-  11. RELICENSING
-
-     "Massive Multiauthor Collaboration Site" (or "MMC Site") means any
-     World Wide Web server that publishes copyrightable works and also
-     provides prominent facilities for anybody to edit those works.  A
-     public wiki that anybody can edit is an example of such a server.
-     A "Massive Multiauthor Collaboration" (or "MMC") contained in the
-     site means any set of copyrightable works thus published on the MMC
-     site.
-
-     "CC-BY-SA" means the Creative Commons Attribution-Share Alike 3.0
-     license published by Creative Commons Corporation, a not-for-profit
-     corporation with a principal place of business in San Francisco,
-     California, as well as future copyleft versions of that license
-     published by that same organization.
-
-     "Incorporate" means to publish or republish a Document, in whole or
-     in part, as part of another Document.
-
-     An MMC is "eligible for relicensing" if it is licensed under this
-     License, and if all works that were first published under this
-     License somewhere other than this MMC, and subsequently
-     incorporated in whole or in part into the MMC, (1) had no cover
-     texts or invariant sections, and (2) were thus incorporated prior
-     to November 1, 2008.
-
-     The operator of an MMC Site may republish an MMC contained in the
-     site under CC-BY-SA on the same site at any time before August 1,
-     2009, provided the MMC is eligible for relicensing.
-
-ADDENDUM: How to use this License for your documents
-====================================================
-
-To use this License in a document you have written, include a copy of
-the License in the document and put the following copyright and license
-notices just after the title page:
-
-       Copyright (C)  YEAR  YOUR NAME.
-       Permission is granted to copy, distribute and/or modify this document
-       under the terms of the GNU Free Documentation License, Version 1.3
-       or any later version published by the Free Software Foundation;
-       with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
-       Texts.  A copy of the license is included in the section entitled ``GNU
-       Free Documentation License''.
-
-If you have Invariant Sections, Front-Cover Texts and Back-Cover Texts,
-replace the "with...Texts." line with this:
-
-         with the Invariant Sections being LIST THEIR TITLES, with
-         the Front-Cover Texts being LIST, and with the Back-Cover Texts
-         being LIST.
-
-If you have Invariant Sections without Cover Texts, or some other
-combination of the three, merge those two alternatives to suit the
-situation.
-
-If your document contains nontrivial examples of program code, we
-recommend releasing these examples in parallel under your choice of free
-software license, such as the GNU General Public License, to permit
-their use in free software.
 

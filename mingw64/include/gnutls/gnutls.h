@@ -1,6 +1,6 @@
 /* -*- c -*-
  * Copyright (C) 2000-2016 Free Software Foundation, Inc.
- * Copyright (C) 2015-2016 Red Hat, Inc.
+ * Copyright (C) 2015-2017 Red Hat, Inc.
  *
  * Author: Nikos Mavrogiannopoulos
  *
@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.5.14"
+#define GNUTLS_VERSION "3.6.0"
 
 #define GNUTLS_VERSION_MAJOR 3
-#define GNUTLS_VERSION_MINOR 5
-#define GNUTLS_VERSION_PATCH 14
+#define GNUTLS_VERSION_MINOR 6
+#define GNUTLS_VERSION_PATCH 0
 
-#define GNUTLS_VERSION_NUMBER 0x03050e
+#define GNUTLS_VERSION_NUMBER 0x030600
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -254,6 +254,7 @@ typedef enum {
  * @GNUTLS_MAC_SHA384: HMAC-SHA-384 algorithm.
  * @GNUTLS_MAC_SHA512: HMAC-SHA-512 algorithm.
  * @GNUTLS_MAC_SHA224: HMAC-SHA-224 algorithm.
+ * @GNUTLS_MAC_MD5_SHA1: Combined MD5+SHA1 MAC placeholder.
  * @GNUTLS_MAC_AEAD: MAC implicit through AEAD cipher.
  * @GNUTLS_MAC_UMAC_96: The UMAC-96 MAC algorithm.
  * @GNUTLS_MAC_UMAC_128: The UMAC-128 MAC algorithm.
@@ -276,6 +277,7 @@ typedef enum {
 	GNUTLS_MAC_SHA3_256 = 11, /* reserved: no implementation */
 	GNUTLS_MAC_SHA3_384 = 12, /* reserved: no implementation */
 	GNUTLS_MAC_SHA3_512 = 13, /* reserved: no implementation */
+	GNUTLS_MAC_MD5_SHA1 = 14, /* reserved: no implementation */
 	/* If you add anything here, make sure you align with
 	   gnutls_digest_algorithm_t. */
 	GNUTLS_MAC_AEAD = 200,	/* indicates that MAC is on the cipher */
@@ -299,6 +301,7 @@ typedef enum {
  * @GNUTLS_DIG_SHA3_256: SHA3-256 algorithm.
  * @GNUTLS_DIG_SHA3_384: SHA3-384 algorithm.
  * @GNUTLS_DIG_SHA3_512: SHA3-512 algorithm.
+ * @GNUTLS_DIG_MD5_SHA1: Combined MD5+SHA1 algorithm.
  *
  * Enumeration of different digest (hash) algorithms.
  */
@@ -316,7 +319,8 @@ typedef enum {
 	GNUTLS_DIG_SHA3_224 = GNUTLS_MAC_SHA3_224,
 	GNUTLS_DIG_SHA3_256 = GNUTLS_MAC_SHA3_256,
 	GNUTLS_DIG_SHA3_384 = GNUTLS_MAC_SHA3_384,
-	GNUTLS_DIG_SHA3_512 = GNUTLS_MAC_SHA3_512
+	GNUTLS_DIG_SHA3_512 = GNUTLS_MAC_SHA3_512,
+	GNUTLS_DIG_MD5_SHA1 = GNUTLS_MAC_MD5_SHA1
 	    /* If you add anything here, make sure you align with
 	       gnutls_mac_algorithm_t. */
 } gnutls_digest_algorithm_t;
@@ -357,7 +361,7 @@ typedef enum {
  * @GNUTLS_NO_REPLAY_PROTECTION: Disable any replay protection in DTLS. This must only be used if  replay protection is achieved using other means. Since 3.2.2.
  * @GNUTLS_ALLOW_ID_CHANGE: Allow the peer to replace its certificate, or change its ID during a rehandshake. This change is often used in attacks and thus prohibited by default. Since 3.5.0.
  * @GNUTLS_ENABLE_FALSE_START: Enable the TLS false start on client side if the negotiated ciphersuites allow it. This will enable sending data prior to the handshake being complete, and may introduce a risk of crypto failure when combined with certain key exchanged; for that GnuTLS may not enable that option in ciphersuites that are known to be not safe for false start. Since 3.5.0.
- * @GNUTLS_FORCE_CLIENT_CERT: When in client side and only a single cert is specified, send that certificate irrespective of the issuers expectated by the server. Since 3.5.0.
+ * @GNUTLS_FORCE_CLIENT_CERT: When in client side and only a single cert is specified, send that certificate irrespective of the issuers expected by the server. Since 3.5.0.
  * @GNUTLS_NO_TICKETS: Flag to indicate that the session should not use resumption with session tickets.
  *
  * Enumeration of different flags for gnutls_init() function. All the flags
@@ -474,7 +478,8 @@ typedef enum {
 	GNUTLS_A_CERTIFICATE_UNOBTAINABLE = 111,
 	GNUTLS_A_UNRECOGNIZED_NAME = 112,
 	GNUTLS_A_UNKNOWN_PSK_IDENTITY = 115,
-	GNUTLS_A_NO_APPLICATION_PROTOCOL = 120
+	GNUTLS_A_NO_APPLICATION_PROTOCOL = 120,
+	GNUTLS_A_MAX = GNUTLS_A_NO_APPLICATION_PROTOCOL
 } gnutls_alert_description_t;
 
 /**
@@ -550,6 +555,7 @@ const char
  * @GNUTLS_CERT_PURPOSE_MISMATCH: The certificate or an intermediate does not match the intended purpose (extended key usage).
  * @GNUTLS_CERT_MISSING_OCSP_STATUS: The certificate requires the server to send the certifiate status, but no status was received.
  * @GNUTLS_CERT_INVALID_OCSP_STATUS: The received OCSP status response is invalid.
+ * @GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS: The certificate has extensions marked as critical which are not supported.
  *
  * Enumeration of certificate status codes.  Note that the status
  * bits may have different meanings in OpenPGP keys and X.509
@@ -571,7 +577,8 @@ typedef enum {
 	GNUTLS_CERT_MISMATCH = 1 << 17,
 	GNUTLS_CERT_PURPOSE_MISMATCH = 1 << 18,
 	GNUTLS_CERT_MISSING_OCSP_STATUS = 1 << 19,
-	GNUTLS_CERT_INVALID_OCSP_STATUS = 1 << 20
+	GNUTLS_CERT_INVALID_OCSP_STATUS = 1 << 20,
+	GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS = 1 << 21
 } gnutls_certificate_status_t;
 
 /**
@@ -692,14 +699,17 @@ typedef enum gnutls_certificate_print_formats {
 #define GNUTLS_PK_ECC GNUTLS_PK_ECDSA
 #define GNUTLS_PK_EC GNUTLS_PK_ECDSA
 
+#define GNUTLS_PK_ECDHX GNUTLS_PK_ECDH_X25519
 /**
  * gnutls_pk_algorithm_t:
  * @GNUTLS_PK_UNKNOWN: Unknown public-key algorithm.
  * @GNUTLS_PK_RSA: RSA public-key algorithm.
+ * @GNUTLS_PK_RSA_PSS: RSA public-key algorithm, with PSS padding.
  * @GNUTLS_PK_DSA: DSA public-key algorithm.
  * @GNUTLS_PK_DH: Diffie-Hellman algorithm. Used to generate parameters.
  * @GNUTLS_PK_ECDSA: Elliptic curve algorithm. These parameters are compatible with the ECDSA and ECDH algorithm.
- * @GNUTLS_PK_ECDHX: Elliptic curve algorithm, restricted to ECDH as per rfc7748.
+ * @GNUTLS_PK_ECDH_X25519: Elliptic curve algorithm, restricted to ECDH as per rfc7748.
+ * @GNUTLS_PK_EDDSA_ED25519: Edwards curve Digital signature algorithm. Used with SHA512 on signatures.
  *
  * Enumeration of different public-key algorithms.
  */
@@ -709,7 +719,10 @@ typedef enum {
 	GNUTLS_PK_DSA = 2,
 	GNUTLS_PK_DH = 3,
 	GNUTLS_PK_ECDSA = 4,
-	GNUTLS_PK_ECDHX = 5
+	GNUTLS_PK_ECDH_X25519 = 5,
+	GNUTLS_PK_RSA_PSS = 6,
+	GNUTLS_PK_EDDSA_ED25519 = 7,
+	GNUTLS_PK_MAX = GNUTLS_PK_EDDSA_ED25519
 } gnutls_pk_algorithm_t;
 
 
@@ -718,6 +731,7 @@ const char *gnutls_pk_algorithm_get_name(gnutls_pk_algorithm_t algorithm);
 /**
  * gnutls_sign_algorithm_t:
  * @GNUTLS_SIGN_UNKNOWN: Unknown signature algorithm.
+ * @GNUTLS_SIGN_RSA_RAW: Digital signature algorithm RSA with DigestInfo formatted data
  * @GNUTLS_SIGN_RSA_SHA1: Digital signature algorithm RSA with SHA-1
  * @GNUTLS_SIGN_RSA_SHA: Same as %GNUTLS_SIGN_RSA_SHA1.
  * @GNUTLS_SIGN_DSA_SHA1: Digital signature algorithm DSA with SHA-1
@@ -750,6 +764,10 @@ const char *gnutls_pk_algorithm_get_name(gnutls_pk_algorithm_t algorithm);
  * @GNUTLS_SIGN_RSA_SHA3_256: Digital signature algorithm RSA with SHA3-256.
  * @GNUTLS_SIGN_RSA_SHA3_384: Digital signature algorithm RSA with SHA3-384.
  * @GNUTLS_SIGN_RSA_SHA3_512: Digital signature algorithm RSA with SHA3-512.
+ * @GNUTLS_SIGN_RSA_PSS_SHA256: Digital signature algorithm RSA with SHA-256, with PSS padding.
+ * @GNUTLS_SIGN_RSA_PSS_SHA384: Digital signature algorithm RSA with SHA-384, with PSS padding.
+ * @GNUTLS_SIGN_RSA_PSS_SHA512: Digital signature algorithm RSA with SHA-512, with PSS padding.
+ * @GNUTLS_SIGN_EDDSA_ED25519: Digital signature algorithm EdDSA with Ed25519 curve.
  *
  * Enumeration of different digital signature algorithms.
  */
@@ -787,7 +805,14 @@ typedef enum {
 	GNUTLS_SIGN_RSA_SHA3_224 = 28,
 	GNUTLS_SIGN_RSA_SHA3_256 = 29,
 	GNUTLS_SIGN_RSA_SHA3_384 = 30,
-	GNUTLS_SIGN_RSA_SHA3_512 = 31
+	GNUTLS_SIGN_RSA_SHA3_512 = 31,
+
+	GNUTLS_SIGN_RSA_PSS_SHA256 = 32,
+	GNUTLS_SIGN_RSA_PSS_SHA384 = 33,
+	GNUTLS_SIGN_RSA_PSS_SHA512 = 34,
+	GNUTLS_SIGN_EDDSA_ED25519 = 35,
+	GNUTLS_SIGN_RSA_RAW = 36,
+	GNUTLS_SIGN_MAX = GNUTLS_SIGN_RSA_RAW
 } gnutls_sign_algorithm_t;
 
 /**
@@ -799,6 +824,7 @@ typedef enum {
  * @GNUTLS_ECC_CURVE_SECP384R1: the SECP384R1 curve
  * @GNUTLS_ECC_CURVE_SECP521R1: the SECP521R1 curve
  * @GNUTLS_ECC_CURVE_X25519: the X25519 curve (ECDH only)
+ * @GNUTLS_ECC_CURVE_ED25519: the Ed25519 curve
  *
  * Enumeration of ECC curves.
  */
@@ -809,8 +835,44 @@ typedef enum {
 	GNUTLS_ECC_CURVE_SECP384R1,
 	GNUTLS_ECC_CURVE_SECP521R1,
 	GNUTLS_ECC_CURVE_SECP192R1,
-	GNUTLS_ECC_CURVE_X25519
+	GNUTLS_ECC_CURVE_X25519,
+	GNUTLS_ECC_CURVE_ED25519,
+	GNUTLS_ECC_CURVE_MAX = GNUTLS_ECC_CURVE_ED25519
 } gnutls_ecc_curve_t;
+
+/**
+ * gnutls_group_t:
+ * @GNUTLS_GROUP_INVALID: Indicates unknown/invalid group
+ * @GNUTLS_GROUP_SECP192R1: the SECP192R1 curve group (legacy, only for TLS 1.2 compatibility)
+ * @GNUTLS_GROUP_SECP224R1: the SECP224R1 curve group (legacy, only for TLS 1.2 compatibility)
+ * @GNUTLS_GROUP_SECP256R1: the SECP256R1 curve group
+ * @GNUTLS_GROUP_SECP384R1: the SECP384R1 curve group
+ * @GNUTLS_GROUP_SECP521R1: the SECP521R1 curve group
+ * @GNUTLS_GROUP_X25519: the X25519 curve group
+ * @GNUTLS_GROUP_FFDHE2048: the FFDHE2048 group
+ * @GNUTLS_GROUP_FFDHE3072: the FFDHE3072 group
+ * @GNUTLS_GROUP_FFDHE4096: the FFDHE4096 group
+ * @GNUTLS_GROUP_FFDHE8192: the FFDHE8192 group
+ *
+ * Enumeration of supported groups. It is intended to be backwards
+ * compatible with the enumerations in %gnutls_ecc_curve_t for the groups
+ * which are valid elliptic curves.
+ */
+typedef enum {
+	GNUTLS_GROUP_INVALID = 0,
+	GNUTLS_GROUP_SECP192R1 = GNUTLS_ECC_CURVE_SECP192R1,
+	GNUTLS_GROUP_SECP224R1 = GNUTLS_ECC_CURVE_SECP224R1,
+	GNUTLS_GROUP_SECP256R1 = GNUTLS_ECC_CURVE_SECP256R1,
+	GNUTLS_GROUP_SECP384R1 = GNUTLS_ECC_CURVE_SECP384R1,
+	GNUTLS_GROUP_SECP521R1 = GNUTLS_ECC_CURVE_SECP521R1,
+	GNUTLS_GROUP_X25519 = GNUTLS_ECC_CURVE_X25519,
+
+	GNUTLS_GROUP_FFDHE2048 = 256,
+	GNUTLS_GROUP_FFDHE3072,
+	GNUTLS_GROUP_FFDHE4096,
+	GNUTLS_GROUP_FFDHE8192,
+	GNUTLS_GROUP_MAX = GNUTLS_GROUP_FFDHE8192,
+} gnutls_group_t;
 
 /* macros to allow specifying a specific curve in gnutls_privkey_generate()
  * and gnutls_x509_privkey_generate() */
@@ -845,7 +907,8 @@ typedef enum {
 	GNUTLS_SEC_PARAM_MEDIUM = 35,
 	GNUTLS_SEC_PARAM_HIGH = 40,
 	GNUTLS_SEC_PARAM_ULTRA = 45,
-	GNUTLS_SEC_PARAM_FUTURE = 50
+	GNUTLS_SEC_PARAM_FUTURE = 50,
+	GNUTLS_SEC_PARAM_MAX = GNUTLS_SEC_PARAM_FUTURE
 } gnutls_sec_param_t;
 
 /* old name */
@@ -936,16 +999,19 @@ const char *
 const char *
 	gnutls_ecc_curve_get_oid(gnutls_ecc_curve_t curve) __GNUTLS_CONST__;
 
+const char *
+	gnutls_group_get_name(gnutls_group_t group) __GNUTLS_CONST__;
+
 int
 	gnutls_ecc_curve_get_size(gnutls_ecc_curve_t curve) __GNUTLS_CONST__;
 gnutls_ecc_curve_t gnutls_ecc_curve_get(gnutls_session_t session);
+
+gnutls_group_t gnutls_group_get(gnutls_session_t session);
 
 /* get information on the current session */
 gnutls_cipher_algorithm_t gnutls_cipher_get(gnutls_session_t session);
 gnutls_kx_algorithm_t gnutls_kx_get(gnutls_session_t session);
 gnutls_mac_algorithm_t gnutls_mac_get(gnutls_session_t session);
-gnutls_compression_method_t
-gnutls_compression_get(gnutls_session_t session);
 gnutls_certificate_type_t
 gnutls_certificate_type_get(gnutls_session_t session);
 
@@ -968,9 +1034,6 @@ const char *
 	gnutls_digest_get_oid(gnutls_digest_algorithm_t algorithm) __GNUTLS_CONST__;
 
 const char *
-gnutls_compression_get_name(gnutls_compression_method_t
-			    algorithm) __GNUTLS_CONST__;
-const char *
 	gnutls_kx_get_name(gnutls_kx_algorithm_t algorithm) __GNUTLS_CONST__;
 const char *
 	gnutls_certificate_type_get_name(gnutls_certificate_type_t
@@ -982,15 +1045,22 @@ const char *
 
 const char *
 	gnutls_sign_get_name(gnutls_sign_algorithm_t algorithm) __GNUTLS_CONST__;
-const char *
-	gnutls_sign_get_oid(gnutls_sign_algorithm_t algorithm) __GNUTLS_CONST__;
+
+const char *gnutls_sign_get_oid(gnutls_sign_algorithm_t sign) __GNUTLS_CONST__;
 
 size_t
 	gnutls_cipher_get_key_size(gnutls_cipher_algorithm_t algorithm) __GNUTLS_CONST__;
 size_t
 	gnutls_mac_get_key_size(gnutls_mac_algorithm_t algorithm) __GNUTLS_CONST__;
 
-int gnutls_sign_is_secure(gnutls_sign_algorithm_t algorithm) __GNUTLS_CONST__;
+unsigned gnutls_sign_is_secure(gnutls_sign_algorithm_t algorithm) __GNUTLS_CONST__;
+
+/* It is possible that a signature algorithm is ok to use for short-lived
+ * data (e.g., to sign a TLS session), but not for data that are long-lived
+ * like certificates. This flag is about checking the security of the algorithm
+ * for long-lived data. */
+#define GNUTLS_SIGN_FLAG_SECURE_FOR_CERTS 1
+unsigned gnutls_sign_is_secure2(gnutls_sign_algorithm_t algorithm, unsigned int flags) __GNUTLS_CONST__;
 
 gnutls_digest_algorithm_t
 	gnutls_sign_get_hash_algorithm(gnutls_sign_algorithm_t sign) __GNUTLS_CONST__;
@@ -1000,13 +1070,14 @@ gnutls_sign_algorithm_t
 	gnutls_pk_to_sign(gnutls_pk_algorithm_t pk,
 		  gnutls_digest_algorithm_t hash) __GNUTLS_CONST__;
 
+unsigned
+gnutls_sign_supports_pk_algorithm(gnutls_sign_algorithm_t sign, gnutls_pk_algorithm_t pk) __GNUTLS_CONST__;
+
 #define gnutls_sign_algorithm_get_name gnutls_sign_get_name
 
 gnutls_mac_algorithm_t gnutls_mac_get_id(const char *name) __GNUTLS_CONST__;
 gnutls_digest_algorithm_t gnutls_digest_get_id(const char *name) __GNUTLS_CONST__;
 
-gnutls_compression_method_t
-	gnutls_compression_get_id(const char *name) __GNUTLS_CONST__;
 gnutls_cipher_algorithm_t
 	gnutls_cipher_get_id(const char *name) __GNUTLS_CONST__;
 
@@ -1022,6 +1093,7 @@ gnutls_sign_algorithm_t
 	gnutls_sign_get_id(const char *name) __GNUTLS_CONST__;
 gnutls_ecc_curve_t gnutls_ecc_curve_get_id(const char *name)  __GNUTLS_CONST__;
 gnutls_pk_algorithm_t gnutls_ecc_curve_get_pk(gnutls_ecc_curve_t curve) __GNUTLS_CONST__;
+gnutls_group_t gnutls_group_get_id(const char *name);
 
 gnutls_digest_algorithm_t
 	gnutls_oid_to_digest(const char *oid)  __GNUTLS_CONST__;
@@ -1037,14 +1109,14 @@ gnutls_ecc_curve_t
   /* list supported algorithms */
 const gnutls_ecc_curve_t *
 	gnutls_ecc_curve_list(void)  __GNUTLS_PURE__;
+const gnutls_group_t *
+	gnutls_group_list(void)  __GNUTLS_PURE__;
 const gnutls_cipher_algorithm_t *
 	gnutls_cipher_list(void) __GNUTLS_PURE__;
 const gnutls_mac_algorithm_t *
 	gnutls_mac_list(void) __GNUTLS_PURE__;
 const gnutls_digest_algorithm_t *
 	gnutls_digest_list(void) __GNUTLS_PURE__;
-const gnutls_compression_method_t *
-	gnutls_compression_list(void) __GNUTLS_PURE__;
 const gnutls_protocol_t *
 	gnutls_protocol_list(void) __GNUTLS_PURE__;
 const gnutls_certificate_type_t *
@@ -1212,7 +1284,7 @@ void gnutls_heartbeat_set_timeouts(gnutls_session_t session,
 void gnutls_heartbeat_enable(gnutls_session_t session, unsigned int type);
 
 #define GNUTLS_HB_LOCAL_ALLOWED_TO_SEND (1<<2)
-int gnutls_heartbeat_allowed(gnutls_session_t session, unsigned int type);
+unsigned gnutls_heartbeat_allowed(gnutls_session_t session, unsigned int type);
 
   /* Safe renegotiation */
 unsigned gnutls_safe_renegotiation_status(gnutls_session_t session);
@@ -1224,6 +1296,7 @@ unsigned gnutls_session_etm_status(gnutls_session_t session);
  * @GNUTLS_SFLAGS_SAFE_RENEGOTIATION: Safe renegotiation (RFC5746) was used
  * @GNUTLS_SFLAGS_EXT_MASTER_SECRET: The extended master secret (RFC7627) extension was used
  * @GNUTLS_SFLAGS_ETM: The encrypt then MAC (RFC7366) extension was used
+ * @GNUTLS_SFLAGS_RFC7919: The RFC7919 Diffie-Hellman parameters were negotiated
  * @GNUTLS_SFLAGS_HB_LOCAL_SEND: The heartbeat negotiation allows the local side to send heartbeat messages
  * @GNUTLS_SFLAGS_HB_PEER_SEND: The heartbeat negotiation allows the peer to send heartbeat messages
  * @GNUTLS_SFLAGS_FALSE_START: The appdata set with gnutls_handshake_set_appdata() were sent during handshake (false start)
@@ -1236,7 +1309,8 @@ typedef enum {
 	GNUTLS_SFLAGS_ETM = 1<<2,
 	GNUTLS_SFLAGS_HB_LOCAL_SEND = 1<<3,
 	GNUTLS_SFLAGS_HB_PEER_SEND = 1<<4,
-	GNUTLS_SFLAGS_FALSE_START = 1<<5
+	GNUTLS_SFLAGS_FALSE_START = 1<<5,
+	GNUTLS_SFLAGS_RFC7919 = 1<<6
 } gnutls_session_flags_t;
 
 unsigned gnutls_session_get_flags(gnutls_session_t session);
@@ -1343,6 +1417,7 @@ gnutls_priority_string_list(unsigned iter, unsigned int flags);
 
 int gnutls_priority_set(gnutls_session_t session,
 			gnutls_priority_t priority);
+
 int gnutls_priority_set_direct(gnutls_session_t session,
 			       const char *priorities,
 			       const char **err_pos);
@@ -1353,10 +1428,11 @@ int gnutls_priority_sign_list(gnutls_priority_t pcache,
 			      const unsigned int **list);
 int gnutls_priority_protocol_list(gnutls_priority_t pcache,
 				  const unsigned int **list);
-int gnutls_priority_compression_list(gnutls_priority_t pcache,
-				     const unsigned int **list);
 int gnutls_priority_ecc_curve_list(gnutls_priority_t pcache,
 				   const unsigned int **list);
+int
+gnutls_priority_group_list(gnutls_priority_t pcache,
+			   const unsigned int **list);
 
 int gnutls_priority_kx_list(gnutls_priority_t pcache,
 			    const unsigned int **list);
@@ -1407,9 +1483,13 @@ void gnutls_session_set_verify_function(gnutls_session_t session, gnutls_certifi
  * gnutls_vdata_types_t:
  * @GNUTLS_DT_UNKNOWN: Unknown data type.
  * @GNUTLS_DT_DNS_HOSTNAME: The data contain a null-terminated DNS hostname; the hostname will be 
- *   matched using the RFC6125 rules.
+ *   matched using the RFC6125 rules. If the data contain a textual IP (v4 or v6) address it will
+ *   be marched against the IPAddress Alternative name, unless the verification flag %GNUTLS_VERIFY_DO_NOT_ALLOW_IP_MATCHES
+ *   is specified.
+ * @GNUTLS_DT_IP_ADDRESS: The data contain a raw IP address (4 or 16 bytes). If will be matched
+ *   against the IPAddress Alternative name; option available since 3.6.0.
  * @GNUTLS_DT_RFC822NAME: The data contain a null-terminated email address; the email will be
- *   matched against the RFC822Name field of the certificate, or the EMAIL DN component if the
+ *   matched against the RFC822Name Alternative name of the certificate, or the EMAIL DN component if the
  *   former isn't available. Prior to matching the email address will be converted to ACE
  *   (ASCII-compatible-encoding).
  * @GNUTLS_DT_KEY_PURPOSE_OID: The data contain a null-terminated key purpose OID. It will be matched
@@ -1417,13 +1497,16 @@ void gnutls_session_set_verify_function(gnutls_session_t session, gnutls_certifi
  *
  * Enumeration of different typed-data options. They are used as input to certificate
  * verification functions to provide information about the name and purpose of the
- * certificate. Only a single option of a type can be provided to the relevant functions.
+ * certificate. Only a single option of a type can be provided to the relevant functions
+ * (i.e., options %GNUTLS_DT_DNS_HOSTNAME, %GNUTLS_DT_IP_ADDRESS and
+ * %GNUTLS_DT_RFC822NAME cannot be combined).
  */
 typedef enum {
 	GNUTLS_DT_UNKNOWN = 0,
 	GNUTLS_DT_DNS_HOSTNAME = 1,
 	GNUTLS_DT_KEY_PURPOSE_OID = 2,
-	GNUTLS_DT_RFC822NAME = 3
+	GNUTLS_DT_RFC822NAME = 3,
+	GNUTLS_DT_IP_ADDRESS = 4
 } gnutls_vdata_types_t;
 
 typedef struct {
@@ -2353,6 +2436,11 @@ int gnutls_pem_base64_decode2(const char *header,
 				   const gnutls_datum_t * b64_data,
 				   gnutls_datum_t * result);
 
+int gnutls_base64_encode2(const gnutls_datum_t * data,
+			  gnutls_datum_t * result);
+int gnutls_base64_decode2(const gnutls_datum_t * b64_data,
+			  gnutls_datum_t * result);
+
 #define gnutls_pem_base64_encode_alloc gnutls_pem_base64_encode2
 #define gnutls_pem_base64_decode_alloc gnutls_pem_base64_decode2
 
@@ -2582,7 +2670,7 @@ typedef enum {
 
 /**
  * gnutls_ext_flags_t:
- * @GNUTLS_EXT_FLAG_OVERRIDE_INTERNAL: If specified the extension registered will override the internal; this does not work with extensions existing prior to 3.5.12.
+ * @GNUTLS_EXT_FLAG_OVERRIDE_INTERNAL: If specified the extension registered will override the internal; this does not work with extensions existing prior to 3.6.0.
  *
  * Enumeration of different TLS extension registration flags.
  */
@@ -2638,7 +2726,8 @@ unsigned gnutls_fips140_mode_enabled(void);
 #define	GNUTLS_E_UNKNOWN_CIPHER_TYPE -6
 #define	GNUTLS_E_LARGE_PACKET -7
 #define GNUTLS_E_UNSUPPORTED_VERSION_PACKET -8	/* GNUTLS_A_PROTOCOL_VERSION */
-#define GNUTLS_E_UNEXPECTED_PACKET_LENGTH -9	/* GNUTLS_A_RECORD_OVERFLOW */
+#define GNUTLS_E_TLS_PACKET_DECODING_ERROR GNUTLS_E_UNEXPECTED_PACKET_LENGTH
+#define GNUTLS_E_UNEXPECTED_PACKET_LENGTH -9	/* GNUTLS_A_DECODE_ERROR */
 #define GNUTLS_E_INVALID_SESSION -10
 #define GNUTLS_E_FATAL_ALERT_RECEIVED -12
 #define GNUTLS_E_UNEXPECTED_PACKET -15	/* GNUTLS_A_UNEXPECTED_MESSAGE */
@@ -2850,10 +2939,19 @@ unsigned gnutls_fips140_mode_enabled(void);
 #define GNUTLS_E_NO_EMBEDDED_DATA -413
 #define GNUTLS_E_INVALID_UTF8_EMAIL -414
 #define GNUTLS_E_INVALID_PASSWORD_STRING -415
+#define GNUTLS_E_CERTIFICATE_TIME_ERROR -416
+#define GNUTLS_E_RECORD_OVERFLOW -417	/* GNUTLS_A_RECORD_OVERFLOW */
+#define GNUTLS_E_ASN1_TIME_ERROR -418
+#define GNUTLS_E_INCOMPATIBLE_SIG_WITH_KEY -419
+#define GNUTLS_E_PK_INVALID_PUBKEY_PARAMS -420
+#define GNUTLS_E_PK_NO_VALIDATION_PARAMS -421
 
 #define GNUTLS_E_UNIMPLEMENTED_FEATURE -1250
 
-
+/* Internal errors of the library; will never be returned
+ * to a calling application */
+#define GNUTLS_E_INT_RET_0 -1251
+#define GNUTLS_E_INT_CHECK_AGAIN -1252
 
 #define GNUTLS_E_APPLICATION_ERROR_MAX -65000
 #define GNUTLS_E_APPLICATION_ERROR_MIN -65500

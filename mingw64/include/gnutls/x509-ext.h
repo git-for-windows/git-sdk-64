@@ -162,6 +162,11 @@ int gnutls_x509_ext_import_key_usage(const gnutls_datum_t * ext,
 int gnutls_x509_ext_export_key_usage(unsigned int key_usage,
 				  gnutls_datum_t * ext);
 
+int gnutls_x509_ext_import_inhibit_anypolicy(const gnutls_datum_t * ext,
+				  unsigned int *skipcerts);
+int gnutls_x509_ext_export_inhibit_anypolicy(unsigned int skipcerts,
+				  gnutls_datum_t * ext);
+
 int gnutls_x509_ext_import_proxy(const gnutls_datum_t * ext, int *pathlen,
 			      char **policyLanguage, char **policy,
 			      size_t * sizeof_policy);

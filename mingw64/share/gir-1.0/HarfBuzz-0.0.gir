@@ -114,13 +114,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="8" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="4" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="5" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.4.8" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.5.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_create"
@@ -619,6 +619,32 @@ see hb_buffer_set_replacement_codepoint().</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="buffer_append"
+              c:identifier="hb_buffer_append"
+              version="1.5.0">
+      <doc xml:space="preserve">Append (part of) contents of another buffer to this buffer.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_buffer_t.</doc>
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="source" transfer-ownership="none">
+          <doc xml:space="preserve">source #hb_buffer_t.</doc>
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="start" transfer-ownership="none">
+          <doc xml:space="preserve">start index into source buffer to copy.  Use 0 to copy from start of buffer.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="end" transfer-ownership="none">
+          <doc xml:space="preserve">end index into source buffer to copy.  Use (unsigned int) -1 to copy to end of buffer.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="buffer_clear_contents"
               c:identifier="hb_buffer_clear_contents"
               version="0.9.11">
@@ -747,6 +773,75 @@ Decreases the reference count on @buffer by one. If the result is zero, then
         </parameter>
       </parameters>
     </function>
+    <function name="buffer_diff" c:identifier="hb_buffer_diff" version="1.5.0">
+      <return-value transfer-ownership="none">
+        <type name="buffer_diff_flags_t" c:type="hb_buffer_diff_flags_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="buffer" transfer-ownership="none">
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="reference" transfer-ownership="none">
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="dottedcircle_glyph" transfer-ownership="none">
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="position_fuzz" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <bitfield name="buffer_diff_flags_t"
+              glib:type-name="hb_buffer_diff_flags_t"
+              glib:get-type="hb_gobject_buffer_diff_flags_get_type"
+              c:type="hb_buffer_diff_flags_t">
+      <member name="equal"
+              value="0"
+              c:identifier="HB_BUFFER_DIFF_FLAG_EQUAL"
+              glib:nick="equal">
+      </member>
+      <member name="content_type_mismatch"
+              value="0"
+              c:identifier="HB_BUFFER_DIFF_FLAG_CONTENT_TYPE_MISMATCH"
+              glib:nick="content-type-mismatch">
+      </member>
+      <member name="length_mismatch"
+              value="0"
+              c:identifier="HB_BUFFER_DIFF_FLAG_LENGTH_MISMATCH"
+              glib:nick="length-mismatch">
+      </member>
+      <member name="notdef_present"
+              value="4"
+              c:identifier="HB_BUFFER_DIFF_FLAG_NOTDEF_PRESENT"
+              glib:nick="notdef-present">
+      </member>
+      <member name="dotted_circle_present"
+              value="8"
+              c:identifier="HB_BUFFER_DIFF_FLAG_DOTTED_CIRCLE_PRESENT"
+              glib:nick="dotted-circle-present">
+      </member>
+      <member name="codepoint_mismatch"
+              value="16"
+              c:identifier="HB_BUFFER_DIFF_FLAG_CODEPOINT_MISMATCH"
+              glib:nick="codepoint-mismatch">
+      </member>
+      <member name="cluster_mismatch"
+              value="32"
+              c:identifier="HB_BUFFER_DIFF_FLAG_CLUSTER_MISMATCH"
+              glib:nick="cluster-mismatch">
+      </member>
+      <member name="glyph_flags_mismatch"
+              value="64"
+              c:identifier="HB_BUFFER_DIFF_FLAG_GLYPH_FLAGS_MISMATCH"
+              glib:nick="glyph-flags-mismatch">
+      </member>
+      <member name="position_mismatch"
+              value="128"
+              c:identifier="HB_BUFFER_DIFF_FLAG_POSITION_MISMATCH"
+              glib:nick="position-mismatch">
+      </member>
+    </bitfield>
     <bitfield name="buffer_flags_t"
               version="0.9.20"
               glib:type-name="hb_buffer_flags_t"
@@ -1228,6 +1323,11 @@ same cluster number) are reversed again.</doc>
               c:identifier="HB_BUFFER_SERIALIZE_FLAG_GLYPH_EXTENTS"
               glib:nick="glyph-extents">
         <doc xml:space="preserve">serialize glyph extents.</doc>
+      </member>
+      <member name="glyph_flags"
+              value="16"
+              c:identifier="HB_BUFFER_SERIALIZE_FLAG_GLYPH_FLAGS"
+              glib:nick="glyph-flags">
       </member>
     </bitfield>
     <function name="buffer_serialize_format_from_string"
@@ -4311,6 +4411,36 @@ are not modified.</doc>
         <type name="position_t" c:type="hb_position_t"/>
       </field>
     </record>
+    <bitfield name="glyph_flags_t"
+              glib:type-name="hb_glyph_flags_t"
+              glib:get-type="hb_gobject_glyph_flags_get_type"
+              c:type="hb_glyph_flags_t">
+      <member name="unsafe_to_break"
+              value="1"
+              c:identifier="HB_GLYPH_FLAG_UNSAFE_TO_BREAK"
+              glib:nick="unsafe-to-break">
+      </member>
+      <member name="defined"
+              value="1"
+              c:identifier="HB_GLYPH_FLAG_DEFINED"
+              glib:nick="defined">
+      </member>
+    </bitfield>
+    <function name="glyph_info_get_glyph_flags"
+              c:identifier="hb_glyph_info_get_glyph_flags"
+              version="1.5.0">
+      <doc xml:space="preserve">Returns glyph flags encoded within a #hb_glyph_info_t.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">The #hb_glyph_flags_t encoded within @info.</doc>
+        <type name="glyph_flags_t" c:type="hb_glyph_flags_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="info" transfer-ownership="none">
+          <doc xml:space="preserve">a #hb_glyph_info_t.</doc>
+          <type name="glyph_info_t" c:type="const hb_glyph_info_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <record name="glyph_info_t"
             c:type="hb_glyph_info_t"
             glib:type-name="hb_glyph_info_t"
