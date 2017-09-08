@@ -163,6 +163,7 @@ int pthread_mutex_getprioceiling (const pthread_mutex_t *, int *);
 int pthread_mutex_init (pthread_mutex_t *, const pthread_mutexattr_t *);
 int pthread_mutex_lock (pthread_mutex_t *);
 int pthread_mutex_setprioceiling (pthread_mutex_t *, int, int *);
+int pthread_mutex_timedlock (pthread_mutex_t *, const struct timespec *);
 int pthread_mutex_trylock (pthread_mutex_t *);
 int pthread_mutex_unlock (pthread_mutex_t *);
 int pthread_mutexattr_destroy (pthread_mutexattr_t *);
@@ -222,8 +223,8 @@ void pthread_testcancel (void);
 
 #if __GNU_VISIBLE
 int pthread_getattr_np (pthread_t, pthread_attr_t *);
-int pthread_getname_np (pthread_t, char *, size_t) __attribute__((nonnull(2)));
-int pthread_setname_np (pthread_t, const char *) __attribute__((nonnull(2)));
+int pthread_getname_np (pthread_t, char *, size_t) __attribute__((__nonnull__(2)));
+int pthread_setname_np (pthread_t, const char *) __attribute__((__nonnull__(2)));
 int pthread_sigqueue (pthread_t *, int, const union sigval);
 int pthread_yield (void);
 #endif

@@ -10,8 +10,8 @@ details. */
    the Cygwin shared library".  This version is used to track important
    changes to the DLL and is mainly informative in nature. */
 
-#define CYGWIN_VERSION_DLL_MAJOR 2008
-#define CYGWIN_VERSION_DLL_MINOR 2
+#define CYGWIN_VERSION_DLL_MAJOR 2009
+#define CYGWIN_VERSION_DLL_MINOR 0
 
 /* Major numbers before CYGWIN_VERSION_DLL_EPOCH are incompatible. */
 
@@ -478,12 +478,17 @@ details. */
   311: Export __xpg_sigpause.
   312: Export strverscmp, versionsort.
   313: Export fls, flsl, flsll.
+  314: Export explicit_bzero.
+  315: Export pthread_mutex_timedlock.
+  316: Export pthread_rwlock_timedrdlock, pthread_rwlock_timedwrlock.
+  317: Export renameat2.
+  318: Export strnstr.
 
   Note that we forgot to bump the api for ualarm, strtoll, strtoull,
   sigaltstack, sethostname. */
 
 #define CYGWIN_VERSION_API_MAJOR 0
-#define CYGWIN_VERSION_API_MINOR 313
+#define CYGWIN_VERSION_API_MINOR 318
 
 /* There is also a compatibity version number associated with the shared memory
    regions.  It is incremented when incompatible changes are made to the shared

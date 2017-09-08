@@ -83,7 +83,7 @@ while test $# -gt 0; do
         ;;
 
     --feature|--features)
-        for feature in SSL IPv6 libz AsynchDNS SSPI SPNEGO Kerberos NTLM TLS-SRP HTTP2 HTTPS-proxy ""; do
+        for feature in SSL IPv6 libz AsynchDNS IDN SSPI SPNEGO Kerberos NTLM TLS-SRP HTTP2 HTTPS-proxy ""; do
             test -n "$feature" && echo "$feature"
         done
         ;;
@@ -148,7 +148,7 @@ while test $# -gt 0; do
            CURLLIBDIR=""
         fi
         if test "Xyes" = "Xyes"; then
-          echo ${CURLLIBDIR}-lcurl -lnghttp2 -lssh2 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
+          echo ${CURLLIBDIR}-lcurl -lnghttp2 -lidn2 -lssh2 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
         else
           echo ${CURLLIBDIR}-lcurl
         fi
@@ -156,7 +156,7 @@ while test $# -gt 0; do
 
     --static-libs)
         if test "Xyes" != "Xno" ; then
-          echo ${exec_prefix}/lib/libcurl.a -pipe -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -lnghttp2 -lssh2 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
+          echo ${exec_prefix}/lib/libcurl.a -pipe -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -lnghttp2 -lidn2 -lssh2 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
         else
           echo "curl was built with static libraries disabled" >&2
           exit 1

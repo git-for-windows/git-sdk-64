@@ -46,7 +46,7 @@ struct _fpstate
   __uint32_t padding[24];
 };
 
-struct __attribute__ ((aligned (16))) __mcontext
+struct __attribute__ ((__aligned__ (16))) __mcontext
 {
   __uint64_t p1home;
   __uint64_t p2home;
@@ -265,8 +265,7 @@ enum
   SI_MESGQ,				/* sent by real time mesq state change
 					   (currently unimplemented) */
   SI_TIMER,				/* sent by timer expiration */
-  SI_QUEUE,				/* sent by sigqueue (currently
-					   unimplemented) */
+  SI_QUEUE,				/* sent by sigqueue */
   SI_KERNEL,				/* sent by system */
 
   ILL_ILLOPC,				/* illegal opcode */
