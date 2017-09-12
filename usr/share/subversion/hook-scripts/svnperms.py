@@ -21,7 +21,7 @@
 #
 #
 
-# $HeadURL: http://svn.apache.org/repos/asf/subversion/branches/1.9.x/tools/hook-scripts/svnperms.py $
+# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.9.x/tools/hook-scripts/svnperms.py $
 # $LastChangedDate: 2011-07-12 18:37:44 +0000 (Tue, 12 Jul 2011) $
 # $LastChangedBy: blair $
 # $LastChangedRevision: 1145712 $

@@ -29,8 +29,8 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.6
 srcdir=		.
 
-abs_srcdir=	/msys_scripts/python3/src/Python-3.6.1
-abs_builddir=	/msys_scripts/python3/src/Python-3.6.1
+abs_srcdir=	/msys_scripts/python3/src/Python-3.6.2
+abs_builddir=	/msys_scripts/python3/src/Python-3.6.2
 
 
 CC=		x86_64-pc-msys-gcc
@@ -108,6 +108,8 @@ ARFLAGS=	rc
 CFLAGSFORSHARED=
 # C flags used for building the interpreter object files
 PY_CORE_CFLAGS=	$(PY_CFLAGS) $(PY_CFLAGS_NODIST) $(PY_CPPFLAGS) $(CFLAGSFORSHARED) -DPy_BUILD_CORE
+# Strict or non-strict aliasing flags used to compile dtoa.c, see above
+CFLAGS_ALIASING=
 
 
 # Machine-dependent subdirectories
@@ -228,7 +230,7 @@ LIBOBJS=
 PYTHON=		python$(EXE)
 BUILDPYTHON=	python$(BUILDEXE)
 
-PYTHON_FOR_GEN=python3
+PYTHON_FOR_REGEN=python3.6
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 _PYTHON_HOST_PLATFORM=
 BUILD_GNU_TYPE=	x86_64-pc-msys
@@ -285,11 +287,6 @@ IO_OBJS=	\
 		Modules/_io/stringio.o
 
 ##########################################################################
-# Grammar
-GRAMMAR_H=	Include/graminit.h
-GRAMMAR_C=	Python/graminit.c
-GRAMMAR_INPUT=	$(srcdir)/Grammar/Grammar
-
 
 LIBFFI_INCLUDEDIR=	/usr/lib/libffi-3.2.1/include
 
@@ -329,36 +326,7 @@ PARSER_HEADERS= \
 PGENOBJS=	$(POBJS) $(PGOBJS)
 
 ##########################################################################
-# opcode.h generation
-OPCODE_H_DIR= 	$(srcdir)/Include
-OPCODE_H_SCRIPT= $(srcdir)/Tools/scripts/generate_opcode_h.py
-OPCODE_H=	$(OPCODE_H_DIR)/opcode.h
-OPCODE_H_GEN=	$(PYTHON_FOR_GEN) $(OPCODE_H_SCRIPT) $(srcdir)/Lib/opcode.py $(OPCODE_H)
-
-##########################################################################
-# AST
-AST_H_DIR=	Include
-AST_H=		$(AST_H_DIR)/Python-ast.h
-AST_C_DIR=	Python
-AST_C=		$(AST_C_DIR)/Python-ast.c
-AST_ASDL=	$(srcdir)/Parser/Python.asdl
-
-ASDLGEN_FILES=	$(srcdir)/Parser/asdl.py $(srcdir)/Parser/asdl_c.py
-# Note that a build now requires Python to exist before the build starts.
-# Use "hg touch" to fix up screwed up file mtimes in a checkout.
-ASDLGEN=	$(PYTHON_FOR_GEN) $(srcdir)/Parser/asdl_c.py
-
-##########################################################################
 # Python
-
-OPCODETARGETS_H= \
-		Python/opcode_targets.h
-
-OPCODETARGETGEN= \
-		$(srcdir)/Python/makeopcodetargets.py
-
-OPCODETARGETGEN_FILES= \
-		$(OPCODETARGETGEN) $(srcdir)/Lib/opcode.py
 
 PYTHON_OBJS=	\
 		Python/_warnings.o \
@@ -559,7 +527,8 @@ coverage-lcov:
 	@echo "lcov report at $(COVERAGE_REPORT)/index.html"
 	@echo
 
-coverage-report:
+# Force regeneration of parser and importlib
+coverage-report: regen-grammar regen-importlib
 	: # force rebuilding of parser and importlib
 	@touch $(GRAMMAR_INPUT)
 	@touch $(srcdir)/Lib/importlib/_bootstrap.py
@@ -735,14 +704,24 @@ Programs/_freeze_importlib.o: Programs/_freeze_importlib.c Makefile
 Programs/_freeze_importlib: Programs/_freeze_importlib.o $(LIBRARY_OBJS_OMIT_FROZEN)
 	$(LINKCC) $(PY_LDFLAGS) -o $@ Programs/_freeze_importlib.o $(LIBRARY_OBJS_OMIT_FROZEN) $(LIBS) $(MODLIBS) $(SYSLIBS) $(LDLAST)
 
-Python/importlib_external.h:  $(srcdir)/Lib/importlib/_bootstrap_external.py Programs/_freeze_importlib Python/marshal.c
+.PHONY: regen-importlib
+regen-importlib: Programs/_freeze_importlib
+	# Regenerate Python/importlib_external.h
+	# from Lib/importlib/_bootstrap_external.py using _freeze_importlib
 	./Programs/_freeze_importlib \
-	    $(srcdir)/Lib/importlib/_bootstrap_external.py Python/importlib_external.h
-
-Python/importlib.h:  $(srcdir)/Lib/importlib/_bootstrap.py Programs/_freeze_importlib Python/marshal.c
+	    $(srcdir)/Lib/importlib/_bootstrap_external.py \
+	    $(srcdir)/Python/importlib_external.h
+	# Regenerate Python/importlib.h from Lib/importlib/_bootstrap.py
+	# using _freeze_importlib
 	./Programs/_freeze_importlib \
-	    $(srcdir)/Lib/importlib/_bootstrap.py Python/importlib.h
+	    $(srcdir)/Lib/importlib/_bootstrap.py \
+	    $(srcdir)/Python/importlib.h
 
+
+############################################################################
+# Regenerate all generated files
+
+regen-all: regen-opcode regen-opcode-targets regen-typeslots regen-grammar regen-ast regen-importlib
 
 ############################################################################
 # Special rules for object files
@@ -801,14 +780,17 @@ Python/sysmodule.o: $(srcdir)/Python/sysmodule.c Makefile
 
 $(IO_OBJS): $(IO_H)
 
-$(GRAMMAR_H):  $(GRAMMAR_INPUT) $(PGEN)
-	@$(MKDIR_P) Include
-	$(PGEN) $(GRAMMAR_INPUT) $(GRAMMAR_H) $(GRAMMAR_C)
-$(GRAMMAR_C):  $(GRAMMAR_H)
-	touch $(GRAMMAR_C)
-
 $(PGEN): $(PGENOBJS)
 		$(CC) $(OPT) $(PY_LDFLAGS) $(PGENOBJS) $(LIBS) -o $(PGEN)
+
+.PHONY: regen-grammar
+regen-grammar: $(PGEN)
+	# Regenerate Include/graminit.h and Python/graminit.c
+	# from Grammar/Grammar using pgen
+	@$(MKDIR_P) Include
+	$(PGEN) $(srcdir)/Grammar/Grammar \
+		$(srcdir)/Include/graminit.h \
+		$(srcdir)/Python/graminit.c
 
 Parser/grammar.o:	$(srcdir)/Parser/grammar.c \
 				$(srcdir)/Include/token.h \
@@ -821,18 +803,28 @@ Parser/printgrammar.o: $(srcdir)/Parser/printgrammar.c
 
 Parser/pgenmain.o:	$(srcdir)/Include/parsetok.h
 
-$(AST_H): $(AST_ASDL) $(ASDLGEN_FILES)
-	$(MKDIR_P) $(AST_H_DIR)
-	$(ASDLGEN) -h $(AST_H_DIR) $(AST_ASDL)
+.PHONY=regen-ast
+regen-ast:
+	# Regenerate Include/Python-ast.h using Parser/asdl_c.py -h
+	$(MKDIR_P) $(srcdir)/Include
+	$(PYTHON_FOR_REGEN) $(srcdir)/Parser/asdl_c.py \
+		-h $(srcdir)/Include \
+		$(srcdir)/Parser/Python.asdl
+	# Regenerate Python/Python-ast.c using Parser/asdl_c.py -c
+	$(MKDIR_P) $(srcdir)/Python
+	$(PYTHON_FOR_REGEN) $(srcdir)/Parser/asdl_c.py \
+		-c $(srcdir)/Python \
+		$(srcdir)/Parser/Python.asdl
 
-$(AST_C): $(AST_H) $(AST_ASDL) $(ASDLGEN_FILES)
-	$(MKDIR_P) $(AST_C_DIR)
-	$(ASDLGEN) -c $(AST_C_DIR) $(AST_ASDL)
+.PHONY: regen-opcode
+regen-opcode:
+	# Regenerate Include/opcode.h from Lib/opcode.py
+	# using Tools/scripts/generate_opcode_h.py
+	$(PYTHON_FOR_REGEN) $(srcdir)/Tools/scripts/generate_opcode_h.py \
+		$(srcdir)/Lib/opcode.py \
+		$(srcdir)/Include/opcode.h
 
-$(OPCODE_H): $(srcdir)/Lib/opcode.py $(OPCODE_H_SCRIPT)
-	$(OPCODE_H_GEN)
-
-Python/compile.o Python/symtable.o Python/ast.o: $(GRAMMAR_H) $(AST_H)
+Python/compile.o Python/symtable.o Python/ast.o: $(srcdir)/Include/graminit.h $(srcdir)/Include/Python-ast.h
 
 Python/getplatform.o: $(srcdir)/Python/getplatform.c
 		$(CC) -c $(PY_CORE_CFLAGS) -DPLATFORM='"$(MACHDEP)"' -o $@ $(srcdir)/Python/getplatform.c
@@ -882,18 +874,22 @@ Objects/odictobject.o: $(srcdir)/Objects/dict-common.h
 Objects/dictobject.o: $(srcdir)/Objects/stringlib/eq.h $(srcdir)/Objects/dict-common.h
 Objects/setobject.o: $(srcdir)/Objects/stringlib/eq.h
 
-$(OPCODETARGETS_H): $(OPCODETARGETGEN_FILES)
-	$(PYTHON_FOR_GEN) $(OPCODETARGETGEN) $(OPCODETARGETS_H)
+.PHONY: regen-opcode-targets
+regen-opcode-targets:
+	# Regenerate Python/opcode_targets.h from Lib/opcode.py
+	# using Python/makeopcodetargets.py
+	$(PYTHON_FOR_REGEN) $(srcdir)/Python/makeopcodetargets.py \
+		$(srcdir)/Python/opcode_targets.h
 
-Python/ceval.o: $(OPCODETARGETS_H) $(srcdir)/Python/ceval_gil.h
+Python/ceval.o: $(srcdir)/Python/opcode_targets.h $(srcdir)/Python/ceval_gil.h
 
-Python/frozen.o: Python/importlib.h Python/importlib_external.h
+Python/frozen.o: $(srcdir)/Python/importlib.h $(srcdir)/Python/importlib_external.h
 
 # Generate DTrace probe macros, then rename them (PYTHON_ -> PyDTrace_) to
 # follow our naming conventions. dtrace(1) uses the output filename to generate
 # an include guard, so we can't use a pipeline to transform its output.
 Include/pydtrace_probes.h: $(srcdir)/Include/pydtrace.d
-	@$(MKDIR_P) Include
+	$(MKDIR_P) Include
 	$(DTRACE) $(DFLAGS) -o $@ -h -s $<
 	: sed in-place edit with POSIX-only tools
 	sed 's/PYTHON_/PyDTrace_/' $@ > $@.tmp
@@ -903,8 +899,14 @@ Python/pydtrace.o: $(srcdir)/Include/pydtrace.d $(DTRACE_DEPS)
 	$(DTRACE) $(DFLAGS) -o $@ -G -s $< $(DTRACE_DEPS)
 
 Objects/typeobject.o: Objects/typeslots.inc
-Objects/typeslots.inc: $(srcdir)/Include/typeslots.h $(srcdir)/Objects/typeslots.py
-	$(PYTHON_FOR_GEN) $(srcdir)/Objects/typeslots.py < $(srcdir)/Include/typeslots.h Objects/typeslots.inc
+
+.PHONY: regen-typeslots
+regen-typeslots:
+	# Regenerate Objects/typeslots.inc from Include/typeslotsh
+	# using Objects/typeslots.py
+	$(PYTHON_FOR_REGEN) $(srcdir)/Objects/typeslots.py \
+		< $(srcdir)/Include/typeslots.h \
+		$(srcdir)/Objects/typeslots.inc
 
 ############################################################################
 # Header files
@@ -957,7 +959,7 @@ PYTHON_HEADERS= \
 		$(srcdir)/Include/node.h \
 		$(srcdir)/Include/object.h \
 		$(srcdir)/Include/objimpl.h \
-		$(OPCODE_H) \
+		$(srcdir)/Include/opcode.h \
 		$(srcdir)/Include/osdefs.h \
 		$(srcdir)/Include/osmodule.h \
 		$(srcdir)/Include/patchlevel.h \
@@ -1000,7 +1002,7 @@ PYTHON_HEADERS= \
 		$(srcdir)/Include/weakrefobject.h \
 		pyconfig.h \
 		$(PARSER_HEADERS) \
-		$(AST_H) \
+		$(srcdir)/Include/Python-ast.h \
 		$(DTRACE_HEADERS)
 
 $(LIBRARY_OBJS) $(MODOBJS) Programs/python.o: $(PYTHON_HEADERS)
@@ -1550,6 +1552,13 @@ config.status:	$(srcdir)/configure
 .c.o:
 	$(CC) -c $(PY_CORE_CFLAGS) -o $@ $<
 
+# bpo-30104: dtoa.c uses union to cast double to unsigned long[2]. clang 4.0
+# with -O2 or higher and strict aliasing miscompiles the ratio() function
+# causing rounding issues. Compile dtoa.c using -fno-strict-aliasing on clang.
+# https://bugs.llvm.org//show_bug.cgi?id=31928
+Python/dtoa.o: Python/dtoa.c
+	$(CC) -c $(PY_CORE_CFLAGS) $(CFLAGS_ALIASING) -o $@ $<
+
 # Run reindent on the library
 reindent:
 	./$(BUILDPYTHON) $(srcdir)/Tools/scripts/reindent.py -r $(srcdir)/Lib
@@ -1560,9 +1569,12 @@ recheck:
 	$(SHELL) config.status --recheck
 	$(SHELL) config.status
 
-# Rebuild the configure script from configure.ac; also rebuild pyconfig.h.in
+# Regenerate configure and pyconfig.h.in
+.PHONY: autoconf
 autoconf:
+	# Regenerate the configure script from configure.ac using autoconf
 	(cd $(srcdir); autoconf -Wall)
+	# Regenerate pyconfig.h.in from configure.ac using autoheader
 	(cd $(srcdir); autoheader -Wall)
 
 # Create a tags file for vi
@@ -1578,14 +1590,6 @@ TAGS::
 	cd $(srcdir); \
 	etags Include/*.h; \
 	for i in $(SRCDIRS); do etags -a $$i/*.[ch]; done
-
-# This fixes up the mtimes of checked-in generated files, assuming that they
-# only *appear* to be outdated because of checkout order.
-# This is run while preparing a source release tarball, and can be run manually
-# to avoid bootstrap issues.
-touch:
-	cd $(srcdir); \
-	hg --config extensions.touch=Tools/hg/hgtouch.py touch -v
 
 # Sanitation targets -- clean leaves libraries, executables and tags
 # files, which clobber removes as well
@@ -1641,7 +1645,8 @@ distclean: clobber
 	done
 	-rm -f core Makefile Makefile.pre config.status \
 		Modules/Setup Modules/Setup.local Modules/Setup.config \
-		Modules/ld_so_aix Modules/python.exp Misc/python.pc
+		Modules/ld_so_aix Modules/python.exp Misc/python.pc \
+		Misc/python-config.sh
 	-rm -f python*-gdb.py
 	# Issue #28258: set LC_ALL to avoid issues with Estonian locale.
 	# Expansion is performed here by shell (spawned by make) itself before
@@ -1704,7 +1709,7 @@ Python/thread.o:  $(srcdir)/Python/thread_foobar.h $(srcdir)/Python/thread_nt.h 
 .PHONY: maninstall libinstall inclinstall libainstall sharedinstall
 .PHONY: frameworkinstall frameworkinstallframework frameworkinstallstructure
 .PHONY: frameworkinstallmaclib frameworkinstallapps frameworkinstallunixtools
-.PHONY: frameworkaltinstallunixtools recheck autoconf clean clobber distclean
+.PHONY: frameworkaltinstallunixtools recheck clean clobber distclean
 .PHONY: smelly funny patchcheck touch altmaninstall commoninstall
 .PHONY: gdbhooks
 

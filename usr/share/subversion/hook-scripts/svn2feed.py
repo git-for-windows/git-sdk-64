@@ -70,7 +70,7 @@ Options:
 #   is actually set only on initial feed creation, and thereafter simply
 #   re-used from the pickle each time.
 
-# $HeadURL: http://svn.apache.org/repos/asf/subversion/branches/1.9.x/tools/hook-scripts/svn2feed.py $
+# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.9.x/tools/hook-scripts/svn2feed.py $
 # $LastChangedDate: 2009-11-16 19:07:17 +0000 (Mon, 16 Nov 2009) $
 # $LastChangedBy: hwright $
 # $LastChangedRevision: 880911 $

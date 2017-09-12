@@ -187,19 +187,18 @@ class _WindowsFlavour(_Flavour):
             if strict:
                 return self._ext_to_normal(_getfinalpathname(s))
             else:
+                tail_parts = []  # End of the path after the first one not found
                 while True:
                     try:
                         s = self._ext_to_normal(_getfinalpathname(s))
                     except FileNotFoundError:
                         previous_s = s
-                        s = os.path.dirname(s)
+                        s, tail = os.path.split(s)
+                        tail_parts.append(tail)
                         if previous_s == s:
                             return path
                     else:
-                        if previous_s is None:
-                            return s
-                        else:
-                            return s + os.path.sep + os.path.basename(previous_s)
+                        return os.path.join(s, *reversed(tail_parts))
         # Means fallback on absolute
         return None
 
@@ -330,12 +329,10 @@ class _PosixFlavour(_Flavour):
                 try:
                     target = accessor.readlink(newpath)
                 except OSError as e:
-                    if e.errno != EINVAL:
-                        if strict:
-                            raise
-                        else:
-                            return newpath
-                    # Not a symlink
+                    if e.errno != EINVAL and strict:
+                        raise
+                    # Not a symlink, or non-strict mode. We just leave the path
+                    # untouched.
                     path = newpath
                 else:
                     seen[newpath] = None # not resolved symlink
@@ -1220,25 +1217,23 @@ class Path(PurePath):
         os.close(fd)
 
     def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
         if self._closed:
             self._raise_closed()
-        if not parents:
-            try:
-                self._accessor.mkdir(self, mode)
-            except FileExistsError:
-                if not exist_ok or not self.is_dir():
-                    raise
-        else:
-            try:
-                self._accessor.mkdir(self, mode)
-            except FileExistsError:
-                if not exist_ok or not self.is_dir():
-                    raise
-            except OSError as e:
-                if e.errno != ENOENT or self.parent == self:
-                    raise
-                self.parent.mkdir(parents=True)
-                self._accessor.mkdir(self, mode)
+        try:
+            self._accessor.mkdir(self, mode)
+        except FileNotFoundError:
+            if not parents or self.parent == self:
+                raise
+            self.parent.mkdir(parents=True, exist_ok=True)
+            self.mkdir(mode, parents=False, exist_ok=exist_ok)
+        except OSError:
+            # Cannot rely on checking for EEXIST, since the operating system
+            # could give priority to other errors like EACCES or EROFS
+            if not exist_ok or not self.is_dir():
+                raise
 
     def chmod(self, mode):
         """
