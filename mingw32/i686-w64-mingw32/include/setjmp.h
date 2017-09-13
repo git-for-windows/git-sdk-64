@@ -162,6 +162,37 @@ extern "C" {
     unsigned long long D[8];
   } _JUMP_BUFFER;
 
+#elif defined(_ARM64_)
+
+#define _JBLEN 24
+#define _JBTYPE unsigned __int64
+
+  typedef struct __JUMP_BUFFER {
+    unsigned __int64 Frame;
+    unsigned __int64 Reserved;
+    unsigned __int64 X19;
+    unsigned __int64 X20;
+    unsigned __int64 X21;
+    unsigned __int64 X22;
+    unsigned __int64 X23;
+    unsigned __int64 X24;
+    unsigned __int64 X25;
+    unsigned __int64 X26;
+    unsigned __int64 X27;
+    unsigned __int64 X28;
+    unsigned __int64 Fp;
+    unsigned __int64 Lr;
+    unsigned __int64 Sp;
+    unsigned long Fpcr;
+    unsigned long Fpsr;
+    double D[8];
+  } _JUMP_BUFFER;
+
+#else
+
+#define _JBLEN 1
+#define _JBTYPE int
+
 #endif
 
 #ifndef _JMP_BUF_DEFINED
@@ -173,14 +204,14 @@ void * __cdecl __attribute__ ((__nothrow__)) mingw_getsp (void);
 
 #ifndef USE_NO_MINGW_SETJMP_TWO_ARGS
 #  ifndef _INC_SETJMPEX
-#    ifdef _WIN64
+#    if defined(_X86_) || defined(__i386__)
+#      define setjmp(BUF) _setjmp3((BUF), NULL)
+#    else
 #     if (__MINGW_GCC_VERSION < 40702)
 #      define setjmp(BUF) _setjmp((BUF), mingw_getsp())
 #     else
 #      define setjmp(BUF) _setjmp((BUF), __builtin_frame_address (0))
 #     endif
-#    else
-#      define setjmp(BUF) _setjmp3((BUF), NULL)
 #    endif
   int __cdecl __attribute__ ((__nothrow__,__returns_twice__)) _setjmp(jmp_buf _Buf, void *_Ctx);
   int __cdecl __attribute__ ((__nothrow__,__returns_twice__)) _setjmp3(jmp_buf _Buf, void *_Ctx);

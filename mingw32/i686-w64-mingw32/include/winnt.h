@@ -28,21 +28,28 @@ extern "C" {
 #endif
 
 #if defined(__x86_64) && \
-  !(defined(_X86_) || defined(__i386__) || defined(_IA64_) || defined (__arm__))
+  !(defined(_X86_) || defined(__i386__) || defined(_IA64_) || defined (__arm__) || defined(__aarch64__))
 #if !defined(_AMD64_)
 #define _AMD64_
 #endif
 #endif /* _AMD64_ */
 
 #if defined(__arm__) && \
-  !(defined(_X86_) || defined(__x86_64) || defined(_AMD64_) || defined (__ia64__))
+  !(defined(_X86_) || defined(__x86_64) || defined(_AMD64_) || defined (__ia64__) || defined(__aarch64__))
 #if !defined(_ARM_)
 #define _ARM_
 #endif
 #endif /* _ARM_ */
 
+#if defined(__aarch64__) && \
+  !(defined(_X86_) || defined(__x86_64) || defined(_AMD64_) || defined (__ia64__) || defined(__arm__))
+#if !defined(_ARM64_)
+#define _ARM64_
+#endif
+#endif /* _ARM64_ */
+
 #if defined(__ia64__) && \
-  !(defined(_X86_) || defined(__x86_64) || defined(_AMD64_) || defined (__arm__))
+  !(defined(_X86_) || defined(__x86_64) || defined(_AMD64_) || defined (__arm__) || defined(__aarch64__))
 #if !defined(_IA64_)
 #define _IA64_
 #endif
@@ -94,7 +101,7 @@ extern "C" {
 
 #undef  UNALIGNED	/* avoid redefinition warnings vs _mingw.h */
 #undef  UNALIGNED64
-#if defined (__ia64__) || defined (__x86_64__) || defined (__arm__)
+#if defined (__ia64__) || defined (__x86_64__) || defined (__arm__) || defined(__aarch64__)
 #define ALIGNMENT_MACHINE
 #define UNALIGNED __unaligned
 #if defined (_WIN64)
@@ -124,7 +131,7 @@ extern "C" {
 
 #if defined (__x86_64__) || defined (__i386__)
 #define PROBE_ALIGNMENT(_s) TYPE_ALIGNMENT (DWORD)
-#elif defined (__ia64__) || defined (__arm__)
+#elif defined (__ia64__) || defined (__arm__) || defined(__aarch64__)
 #define PROBE_ALIGNMENT(_s) (TYPE_ALIGNMENT (_s) > TYPE_ALIGNMENT (DWORD) ? TYPE_ALIGNMENT (_s) : TYPE_ALIGNMENT (DWORD))
 #elif !defined (RC_INVOKED) && !defined (__WIDL__)
 #error No supported target architecture.
@@ -143,7 +150,7 @@ extern "C" {
 #include <basetsd.h>
 
 #ifndef DECLSPEC_IMPORT
-#if (defined (__i386__) || defined (__ia64__) || defined (__x86_64__) || defined (__arm__)) && !defined (__WIDL__)
+#if (defined (__i386__) || defined (__ia64__) || defined (__x86_64__) || defined (__arm__) || defined(__aarch64__)) && !defined (__WIDL__)
 #define DECLSPEC_IMPORT __declspec (dllimport)
 #else
 #define DECLSPEC_IMPORT
@@ -258,7 +265,7 @@ extern "C" {
 #endif
 #endif /* FASTCALL */
 
-#if defined(_ARM_)
+#if defined(_ARM_) || defined(_ARM64_)
 #define NTAPI
 #else
 #define NTAPI __stdcall
@@ -1939,6 +1946,103 @@ extern "C" {
 #define OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME "OutOfProcessFunctionTableCallback"
 
 #endif /* _ARM_ */
+
+
+#ifdef _ARM64_
+
+#if defined(__aarch64__) && !defined(RC_INVOKED)
+
+#ifdef __cplusplus
+  extern "C" {
+#endif
+
+#define BitTest _bittest
+#define BitTestAndComplement _bittestandcomplement
+#define BitTestAndSet _bittestandset
+#define BitTestAndReset _bittestandreset
+
+#define BitScanForward _BitScanForward
+#define BitScanReverse _BitScanReverse
+
+#define InterlockedIncrement16 _InterlockedIncrement16
+#define InterlockedDecrement16 _InterlockedDecrement16
+#define InterlockedCompareExchange16 _InterlockedCompareExchange16
+
+#define InterlockedAnd _InterlockedAnd
+#define InterlockedOr _InterlockedOr
+#define InterlockedXor _InterlockedXor
+#define InterlockedIncrement _InterlockedIncrement
+#define InterlockedIncrementAcquire InterlockedIncrement
+#define InterlockedIncrementRelease InterlockedIncrement
+#define InterlockedDecrement _InterlockedDecrement
+#define InterlockedDecrementAcquire InterlockedDecrement
+#define InterlockedDecrementRelease InterlockedDecrement
+#define InterlockedAdd _InterlockedAdd
+#define InterlockedExchange _InterlockedExchange
+#define InterlockedExchangeAdd _InterlockedExchangeAdd
+#define InterlockedCompareExchange _InterlockedCompareExchange
+#define InterlockedCompareExchangeAcquire InterlockedCompareExchange
+#define InterlockedCompareExchangeRelease InterlockedCompareExchange
+
+#define InterlockedAnd64 _InterlockedAnd64
+#define InterlockedAndAffinity InterlockedAnd64
+#define InterlockedOr64 _InterlockedOr64
+#define InterlockedOrAffinity InterlockedOr64
+#define InterlockedXor64 _InterlockedXor64
+#define InterlockedIncrement64 _InterlockedIncrement64
+#define InterlockedDecrement64 _InterlockedDecrement64
+#define InterlockedAdd64 _InterlockedAdd64
+#define InterlockedExchange64 _InterlockedExchange64
+#define InterlockedExchangeAcquire64 InterlockedExchange64
+#define InterlockedExchangeAdd64 _InterlockedExchangeAdd64
+#define InterlockedCompareExchange64 _InterlockedCompareExchange64
+#define InterlockedCompareExchangeAcquire64 InterlockedCompareExchange64
+#define InterlockedCompareExchangeRelease64 InterlockedCompareExchange64
+
+#define InterlockedExchangePointer _InterlockedExchangePointer
+#define InterlockedCompareExchangePointer _InterlockedCompareExchangePointer
+#define InterlockedCompareExchangePointerAcquire _InterlockedCompareExchangePointer
+#define InterlockedCompareExchangePointerRelease _InterlockedCompareExchangePointer
+
+#ifdef __cplusplus
+  }
+#endif
+#endif /* defined(__aarch64__) && !defined(RC_INVOKED) */
+
+#define EXCEPTION_READ_FAULT    0
+#define EXCEPTION_WRITE_FAULT   1
+#define EXCEPTION_EXECUTE_FAULT 8
+
+#if !defined(RC_INVOKED)
+
+// TODO: #define CONTEXT_*
+
+#endif /* !defined(RC_INVOKED) */
+
+  typedef struct _CONTEXT {
+    // TODO
+  } CONTEXT, *PCONTEXT;
+
+//  typedef struct _IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY RUNTIME_FUNCTION, *PRUNTIME_FUNCTION;
+//  typedef PRUNTIME_FUNCTION (*PGET_RUNTIME_FUNCTION_CALLBACK)(DWORD64 ControlPc,PVOID Context);
+
+// TODO: #define UNW_*
+
+  typedef struct _UNWIND_HISTORY_TABLE_ENTRY {
+    // TODO
+  } UNWIND_HISTORY_TABLE_ENTRY, *PUNWIND_HISTORY_TABLE_ENTRY;
+
+  typedef struct _UNWIND_HISTORY_TABLE {
+    // TODO
+  } UNWIND_HISTORY_TABLE, *PUNWIND_HISTORY_TABLE;
+
+  typedef struct _KNONVOLATILE_CONTEXT_POINTERS {
+    // TODO
+  } KNONVOLATILE_CONTEXT_POINTERS, *PKNONVOLATILE_CONTEXT_POINTERS;
+
+#define OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME "OutOfProcessFunctionTableCallback"
+
+#endif /* _ARM64_ */
 
 
 #ifdef _X86_
@@ -8387,6 +8491,17 @@ typedef DWORD (WINAPI *PRTL_RUN_ONCE_INIT_FN)(PRTL_RUN_ONCE, PVOID, PVOID *);
     FORCEINLINE PVOID GetCurrentFiber(VOID) { return (PVOID)(((PNT_TIB)NtCurrentTeb())->FiberData); }
     FORCEINLINE PVOID GetFiberData (VOID) { return *(PVOID *)GetCurrentFiber (); }
 #endif /* arm */
+
+#if defined (__aarch64__) && !defined (__WIDL__)
+    struct _TEB *NtCurrentTeb (VOID);
+    PVOID GetCurrentFiber (VOID);
+    PVOID GetFiberData (VOID);
+    FORCEINLINE struct _TEB *NtCurrentTeb(VOID) { struct _TEB *teb;
+    __asm ("mov %0, x18" : "=r" (teb));
+    return teb; }
+    FORCEINLINE PVOID GetCurrentFiber(VOID) { return (PVOID)(((PNT_TIB)NtCurrentTeb())->FiberData); }
+    FORCEINLINE PVOID GetFiberData (VOID) { return *(PVOID *)GetCurrentFiber (); }
+#endif /* aarch64 */
 
 #ifndef _NTTMAPI_
 #define _NTTMAPI_
