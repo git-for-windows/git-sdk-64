@@ -1,0 +1,19 @@
+prefix=/mingw64
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+gdk_pixbuf_binary_version=2.10.0
+gdk_pixbuf_binarydir=${exec_prefix}/lib/gdk-pixbuf-2.0/2.10.0
+gdk_pixbuf_moduledir=${gdk_pixbuf_binarydir}/loaders
+gdk_pixbuf_cache_file=${gdk_pixbuf_binarydir}/loaders.cache
+
+Name: GdkPixbuf
+Description: Image loading and scaling
+Version: 2.36.9
+Requires: gobject-2.0
+Requires.private: gmodule-no-export-2.0 libpng16
+Libs: -L${libdir} -lgdk_pixbuf-2.0
+Libs.private:  -lm 
+Cflags: -I${includedir}/gdk-pixbuf-2.0 
+
