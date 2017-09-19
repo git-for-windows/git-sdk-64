@@ -43,7 +43,7 @@
 /* These are defined only in curses.h, and are used for conditional compiles */
 #define NCURSES_VERSION_MAJOR 6
 #define NCURSES_VERSION_MINOR 0
-#define NCURSES_VERSION_PATCH 20170812
+#define NCURSES_VERSION_PATCH 20170916
 
 /* This is defined in more than one ncurses header, for identification */
 #undef  NCURSES_VERSION
@@ -421,7 +421,7 @@ typedef struct
     wchar_t	chars[CCHARW_MAX];
 #if 1
 #undef NCURSES_EXT_COLORS
-#define NCURSES_EXT_COLORS 20170812
+#define NCURSES_EXT_COLORS 20170916
     int		ext_color;	/* color pair, must be more than 16-bits */
 #endif
 }
@@ -909,7 +909,7 @@ extern NCURSES_EXPORT(int) getpary (const WINDOW *);			/* generated */
  */
 #if 1
 #undef  NCURSES_EXT_FUNCS
-#define NCURSES_EXT_FUNCS 20170812
+#define NCURSES_EXT_FUNCS 20170916
 typedef int (*NCURSES_WINDOW_CB)(WINDOW *, void *);
 typedef int (*NCURSES_SCREEN_CB)(SCREEN *, void *);
 extern NCURSES_EXPORT(bool) is_term_resized (int, int);
@@ -971,7 +971,7 @@ extern NCURSES_EXPORT(int) wgetscrreg (const WINDOW *, int *, int *); /* generat
  */
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20170812
+#define NCURSES_SP_FUNCS 20170916
 #define NCURSES_SP_NAME(name) name##_sp
 
 /* Define the sp-funcs helper function */

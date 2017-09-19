@@ -114,13 +114,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VERSION_MINOR" value="5" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.5.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.5.1" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_create"
@@ -774,6 +774,9 @@ Decreases the reference count on @buffer by one. If the result is zero, then
       </parameters>
     </function>
     <function name="buffer_diff" c:identifier="hb_buffer_diff" version="1.5.0">
+      <doc xml:space="preserve">If dottedcircle_glyph is (hb_codepoint_t) -1 then %HB_BUFFER_DIFF_FLAG_DOTTED_CIRCLE_PRESENT
+and %HB_BUFFER_DIFF_FLAG_NOTDEF_PRESENT are never returned.  This should be used by most
+callers if just comparing two buffers is needed.</doc>
       <return-value transfer-ownership="none">
         <type name="buffer_diff_flags_t" c:type="hb_buffer_diff_flags_t"/>
       </return-value>
@@ -802,12 +805,12 @@ Decreases the reference count on @buffer by one. If the result is zero, then
               glib:nick="equal">
       </member>
       <member name="content_type_mismatch"
-              value="0"
+              value="1"
               c:identifier="HB_BUFFER_DIFF_FLAG_CONTENT_TYPE_MISMATCH"
               glib:nick="content-type-mismatch">
       </member>
       <member name="length_mismatch"
-              value="0"
+              value="2"
               c:identifier="HB_BUFFER_DIFF_FLAG_LENGTH_MISMATCH"
               glib:nick="length-mismatch">
       </member>

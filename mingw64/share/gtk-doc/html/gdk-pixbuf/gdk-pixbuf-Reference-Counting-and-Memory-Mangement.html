@@ -76,14 +76,14 @@
 <p><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf"><span class="type">GdkPixbuf</span></a> structures are reference counted.  This means that an
 application can share a single pixbuf among many parts of the
 code.  When a piece of the program needs to keep a pointer to a
-pixbuf, it should add a reference to it by calling <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a>.
+pixbuf, it should add a reference to it by calling <a href="../gobject/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a>.
 When it no longer needs the pixbuf, it should subtract a reference
-by calling <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.  The pixbuf will be destroyed when
+by calling <a href="../gobject/gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.  The pixbuf will be destroyed when
 its reference count drops to zero.  Newly-created <a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf"><span class="type">GdkPixbuf</span></a>
 structures start with a reference count of one.</p>
-<div class="blockquote"><blockquote class="blockquote"><p>As <a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf"><span class="type">GdkPixbuf</span></a> is derived from <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a> now, <a class="link" href="gdk-pixbuf-Reference-Counting-and-Memory-Mangement.html#gdk-pixbuf-ref" title="gdk_pixbuf_ref ()"><code class="function">gdk_pixbuf_ref()</code></a> and
-<a class="link" href="gdk-pixbuf-Reference-Counting-and-Memory-Mangement.html#gdk-pixbuf-unref" title="gdk_pixbuf_unref ()"><code class="function">gdk_pixbuf_unref()</code></a> are deprecated in favour of <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a>
-and <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> resp.</p></blockquote></div>
+<div class="blockquote"><blockquote class="blockquote"><p>As <a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf"><span class="type">GdkPixbuf</span></a> is derived from <a href="../gobject/gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a> now, <a class="link" href="gdk-pixbuf-Reference-Counting-and-Memory-Mangement.html#gdk-pixbuf-ref" title="gdk_pixbuf_ref ()"><code class="function">gdk_pixbuf_ref()</code></a> and
+<a class="link" href="gdk-pixbuf-Reference-Counting-and-Memory-Mangement.html#gdk-pixbuf-unref" title="gdk_pixbuf_unref ()"><code class="function">gdk_pixbuf_unref()</code></a> are deprecated in favour of <a href="../gobject/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a>
+and <a href="../gobject/gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> resp.</p></blockquote></div>
 <p>Finalizing a pixbuf means to free its pixel data and to free the
 <a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf"><span class="type">GdkPixbuf</span></a> structure itself.  Most of the library functions that
 create <a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf"><span class="type">GdkPixbuf</span></a> structures create the pixel data by themselves
@@ -91,7 +91,7 @@ and define the way it should be freed; you do not need to worry
 about those.</p>
 <p>To provide preallocated pixel data, use
 <a class="link" href="gdk-pixbuf-Image-Data-in-Memory.html#gdk-pixbuf-new-from-bytes" title="gdk_pixbuf_new_from_bytes ()"><code class="function">gdk_pixbuf_new_from_bytes()</code></a>.  The <a class="link" href="gdk-pixbuf-Image-Data-in-Memory.html#gdk-pixbuf-new-from-data" title="gdk_pixbuf_new_from_data ()"><code class="function">gdk_pixbuf_new_from_data()</code></a> API is
-an older variant that predates the existence of <a href="/home/mclasen/gnome/share/gtk-doc/html/glib/glib-Byte-Arrays.html#GBytes"><span class="type">GBytes</span></a>.</p>
+an older variant that predates the existence of <a href="../glib/glib-Byte-Arrays.html#GBytes"><span class="type">GBytes</span></a>.</p>
 </div>
 <div class="refsect1">
 <a name="gdk-pixbuf-Reference-Counting-and-Memory-Mangement.functions_details"></a><h2>Functions</h2>
@@ -101,7 +101,7 @@ an older variant that predates the existence of <a href="/home/mclasen/gnome/sha
 gdk_pixbuf_ref (<em class="parameter"><code><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf"><span class="type">GdkPixbuf</span></a> *pixbuf</code></em>);</pre>
 <div class="warning">
 <p><code class="literal">gdk_pixbuf_ref</code> has been deprecated since version 2.0 and should not be used in newly-written code.</p>
-<p>Use <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a>.</p>
+<p>Use <a href="../gobject/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a>.</p>
 </div>
 <p>Adds a reference to a pixbuf.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
@@ -133,7 +133,7 @@ argument.</p>
 gdk_pixbuf_unref (<em class="parameter"><code><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf"><span class="type">GdkPixbuf</span></a> *pixbuf</code></em>);</pre>
 <div class="warning">
 <p><code class="literal">gdk_pixbuf_unref</code> has been deprecated since version 2.0 and should not be used in newly-written code.</p>
-<p>Use <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
+<p>Use <a href="../gobject/gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
 </div>
 <p>Removes a reference from a pixbuf.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
@@ -157,8 +157,8 @@ gdk_pixbuf_unref (<em class="parameter"><code><a class="link" href="gdk-pixbuf-T
 <div class="refsect2">
 <a name="GdkPixbufDestroyNotify"></a><h3>GdkPixbufDestroyNotify ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
-<span class="c_punctuation">(</span>*GdkPixbufDestroyNotify<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="/home/mclasen/gnome/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *pixels</code></em>,
-                           <em class="parameter"><code><a href="/home/mclasen/gnome/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);</pre>
+<span class="c_punctuation">(</span>*GdkPixbufDestroyNotify<span class="c_punctuation">)</span> (<em class="parameter"><code><a href="../glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *pixels</code></em>,
+                           <em class="parameter"><code><a href="../glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);</pre>
 <p>A function of this type is responsible for freeing the pixel array
 of a pixbuf.  The <a class="link" href="gdk-pixbuf-Image-Data-in-Memory.html#gdk-pixbuf-new-from-data" title="gdk_pixbuf_new_from_data ()"><code class="function">gdk_pixbuf_new_from_data()</code></a> function lets you
 pass in a pre-allocated pixel array so that a pixbuf can be
