@@ -39,7 +39,7 @@ count_other_bashes () {
 	mypid="$(ps | sed -n ":1;N;
 		s/.*$nl$mypid$s$p$s\\($p\\) .*$nl\\1$s\\($p\\) .*/\\2/p;
 		s/.*$nl\\($p\\)$s\\($p\\) .*$nl$mypid$s$p$s\\1 .*/\\2/p;
-		b1")" &&
+		b1")"
 	ps |
 	if test -z "$mypid"; then cat; else grep -v "^ *$mypid "; fi |
 	grep ' /usr/bin/bash$' |
@@ -57,11 +57,13 @@ git_update () {
 	fi
 
 	yn=
+	use_gui=
 	while test $# -gt 0
 	do
 		case "$1" in
 		-\?|--?\?|-h|--help) ;;
 		-y|--yes) yn=y; shift; continue;;
+		-g|--gui) use_gui=t; shift; continue;;
 		*) echo "Unknown option: $1" >&2;;
 		esac
 		printf >&2 '%s\n%s\n\t%s\n' \
@@ -103,14 +105,25 @@ git_update () {
 		if test $other_bashes -le 0
 		then
 			warn=
+		elif test $other_bash -eq 1
+		then
+			warn=" (killing one Git Bash)"
 		else
-			warn=" (killing $other_bashes other Bash)"
+			warn=" (killing $other_bashes Git Bash instances)"
 		fi
-		read -p "Download $filename and install$warn [N/y]? " yn >&2
-		case "$yn" in
-		[Yy]*) ;;
-		*) return 1;;
-		esac
+		if test -n "$use_gui"
+		then
+			git gui--askyesno \
+				"Download and install $filename$warn?" ||
+			return 1
+		else
+			read -p "Download $filename and install$warn [N/y]? " \
+				yn >&2
+			case "$yn" in
+			[Yy]*) ;;
+			*) return 1;;
+			esac
+		fi
 	else
 		echo "Downloading $filename" >&2
 	fi
