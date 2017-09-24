@@ -1164,7 +1164,10 @@ g_log_structured (<em class="parameter"><code>const <a class="link" href="glib-B
 <p>Log a message with structured data. The message will be passed through to
 the log writer set by the application using <a class="link" href="glib-Message-Logging.html#g-log-set-writer-func" title="g_log_set_writer_func ()"><code class="function">g_log_set_writer_func()</code></a>. If the
 message is fatal (i.e. its log level is <a class="link" href="glib-Message-Logging.html#G-LOG-LEVEL-ERROR:CAPS"><code class="literal">G_LOG_LEVEL_ERROR</code></a>), the program will
-be aborted at the end of this function.</p>
+be aborted at the end of this function. If the log writer returns
+<a class="link" href="glib-Message-Logging.html#G-LOG-WRITER-UNHANDLED:CAPS"><code class="literal">G_LOG_WRITER_UNHANDLED</code></a> (failure), no other fallback writers will be tried.
+See the documentation for <a class="link" href="glib-Message-Logging.html#GLogWriterFunc" title="GLogWriterFunc ()"><span class="type">GLogWriterFunc</span></a> for information on chaining
+writers.</p>
 <p>The structured data is provided as key–value pairs, where keys are UTF-8
 strings, and values are arbitrary pointers — typically pointing to UTF-8
 strings, but that is not a requirement. To pass binary (non-nul-terminated)
@@ -1251,8 +1254,8 @@ interpreted as a string.</p>
 
 <p></p>
 <p>Note also that, even if no other structured fields are specified, there
-must always be a "MESSAGE" key before the format string. The "MESSAGE"-format
-pair has to be the last of the key-value pairs, and "MESSAGE" is the only
+must always be a <code class="literal">MESSAGE</code> key before the format string. The <code class="literal">MESSAGE</code>-format
+pair has to be the last of the key-value pairs, and <code class="literal">MESSAGE</code> is the only
 field for which <code class="function">printf()</code>-style formatting is supported.</p>
 <p>The default writer function for <code class="literal">stdout</code> and <code class="literal">stderr</code> will automatically
 append a new-line character after the message, so you should not add one
@@ -1416,6 +1419,12 @@ can write arbitrary binary output, as field values may be arbitrary binary.</p>
  as the <code class="literal">PRIORITY</code> field,
 but is provided separately for convenience of deciding whether or where to
 output the log entry.</p>
+<p>Writer functions should return <a class="link" href="glib-Message-Logging.html#G-LOG-WRITER-HANDLED:CAPS"><code class="literal">G_LOG_WRITER_HANDLED</code></a> if they handled the log
+message successfully or if they deliberately ignored it. If there was an
+error handling the message (for example, if the writer function is meant to
+send messages to a remote logging server and there is a network error), it
+should return <a class="link" href="glib-Message-Logging.html#G-LOG-WRITER-UNHANDLED:CAPS"><code class="literal">G_LOG_WRITER_UNHANDLED</code></a>. This allows writer functions to be
+chained and fall back to simpler handlers in case of failure.</p>
 <div class="refsect3">
 <a name="GLogWriterFunc.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1541,6 +1550,20 @@ g_log_writer_is_journald (<em class="parameter"><code><a class="link" href="glib
  file descriptor is a connection to the
 systemd journal, or something else (like a log file or <code class="literal">stdout</code> or
 <code class="literal">stderr</code>).</p>
+<p>Invalid file descriptors are accepted and return <a class="link" href="glib-Standard-Macros.html#FALSE:CAPS" title="FALSE"><code class="literal">FALSE</code></a>, which allows for
+the following construct without needing any additional error handling:</p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting">is_journald <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Message-Logging.html#g-log-writer-is-journald">g_log_writer_is_journald</a></span> <span class="gtkdoc opt">(</span><span class="function">fileno</span> <span class="gtkdoc opt">(</span>stderr<span class="gtkdoc opt">));</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
 <div class="refsect3">
 <a name="g-log-writer-is-journald.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1806,8 +1829,7 @@ array</p></td>
 <pre class="programlisting">#define G_LOG_DOMAIN    ((gchar*) 0)
 </pre>
 <p>Defines the log domain.</p>
-<p>For applications, this is typically left as the default <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>
-(or "") domain. Libraries should define this so that any messages
+<p>Libraries should define this so that any messages
 which they log can be differentiated from messages from other
 libraries and application code. But be careful not to define
 it in any public header files.</p>
@@ -1824,6 +1846,9 @@ it in any public header files.</p>
 </div>
 
 <p></p>
+<p>Applications can choose to leave it as the default <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> (or "")
+domain. However, defining the domain offers the same advantages as
+above.</p>
 </div>
 <hr>
 <div class="refsect2">

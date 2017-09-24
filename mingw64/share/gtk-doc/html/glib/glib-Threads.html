@@ -607,18 +607,18 @@ you must coordinate accesses to the same <a class="link" href="glib-Hash-Tables.
 threads. The two notable exceptions from this rule are <a class="link" href="glib-The-Main-Event-Loop.html#GMainLoop" title="GMainLoop"><span class="type">GMainLoop</span></a>
 and <a class="link" href="glib-Asynchronous-Queues.html#GAsyncQueue" title="GAsyncQueue"><span class="type">GAsyncQueue</span></a>, which are thread-safe and need no further
 application-level locking to be accessed from multiple threads.
-Most refcounting functions such as <a href="../gobject/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a> are also thread-safe.</p>
+Most refcounting functions such as <a href="../gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a> are also thread-safe.</p>
 <p>A common use for <a href="glib-Threads.html#GThread"><span class="type">GThreads</span></a> is to move a long-running blocking operation out
 of the main thread and into a worker thread. For GLib functions, such as
 single GIO operations, this is not necessary, and complicates the code.
 Instead, the <code class="literal">…<code class="function">_async()</code></code> version of the function should be used from the main
 thread, eliminating the need for locking and synchronisation between multiple
 threads. If an operation does need to be moved to a worker thread, consider
-using <a href="../gio/GTask.html#g-task-run-in-thread"><code class="function">g_task_run_in_thread()</code></a>, or a <a class="link" href="glib-Thread-Pools.html#GThreadPool" title="struct GThreadPool"><span class="type">GThreadPool</span></a>. <a class="link" href="glib-Thread-Pools.html#GThreadPool" title="struct GThreadPool"><span class="type">GThreadPool</span></a> is often a
+using <a href="../GTask.html#g-task-run-in-thread"><code class="function">g_task_run_in_thread()</code></a>, or a <a class="link" href="glib-Thread-Pools.html#GThreadPool" title="struct GThreadPool"><span class="type">GThreadPool</span></a>. <a class="link" href="glib-Thread-Pools.html#GThreadPool" title="struct GThreadPool"><span class="type">GThreadPool</span></a> is often a
 better choice than <a class="link" href="glib-Threads.html#GThread" title="GThread"><span class="type">GThread</span></a>, as it handles thread reuse and task queueing;
-<a href="../gio/GTask.html#GTask-struct"><span class="type">GTask</span></a> uses this internally.</p>
+<a href="../GTask.html#GTask-struct"><span class="type">GTask</span></a> uses this internally.</p>
 <p>However, if multiple blocking operations need to be performed in sequence,
-and it is not possible to use <a href="../gio/GTask.html#GTask-struct"><span class="type">GTask</span></a> for them, moving them to a worker thread
+and it is not possible to use <a href="../GTask.html#GTask-struct"><span class="type">GTask</span></a> for them, moving them to a worker thread
 can clarify the code.</p>
 </div>
 <div class="refsect1">

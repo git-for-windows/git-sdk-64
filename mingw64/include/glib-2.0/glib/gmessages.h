@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -178,6 +178,13 @@ struct _GLogField
  * @log_level is guaranteed to be included in @fields as the `PRIORITY` field,
  * but is provided separately for convenience of deciding whether or where to
  * output the log entry.
+ *
+ * Writer functions should return %G_LOG_WRITER_HANDLED if they handled the log
+ * message successfully or if they deliberately ignored it. If there was an
+ * error handling the message (for example, if the writer function is meant to
+ * send messages to a remote logging server and there is a network error), it
+ * should return %G_LOG_WRITER_UNHANDLED. This allows writer functions to be
+ * chained and fall back to simpler handlers in case of failure.
  *
  * Returns: %G_LOG_WRITER_HANDLED if the log entry was handled successfully;
  *    %G_LOG_WRITER_UNHANDLED otherwise

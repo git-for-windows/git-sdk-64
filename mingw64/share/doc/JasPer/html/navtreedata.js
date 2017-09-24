@@ -1,6 +1,6 @@
 var NAVTREE =
 [
-  [ "Reference Manual (Version 2.0.12)", "index.html", [
+  [ "Reference Manual (Version 2.0.14)", "index.html", [
     [ "Introduction", "index.html#intro", null ],
     [ "License", "index.html#license", null ],
     [ "Reporting Bugs", "index.html#bugs", null ],

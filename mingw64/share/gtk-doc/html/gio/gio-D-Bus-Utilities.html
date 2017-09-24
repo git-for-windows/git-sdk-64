@@ -351,7 +351,11 @@ g_dbus_gvariant_to_gvalue (<em class="parameter"><code><a href="../glib-GVariant
 <p>Converts a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> to a <a href="../gobject-Generic-values.html#GValue"><span class="type">GValue</span></a>. If <em class="parameter"><code>value</code></em>
  is floating, it is consumed.</p>
 <p>The rules specified in the <a class="link" href="gio-D-Bus-Utilities.html#g-dbus-gvalue-to-gvariant" title="g_dbus_gvalue_to_gvariant ()"><code class="function">g_dbus_gvalue_to_gvariant()</code></a> function are
-used - this function is essentially its reverse form.</p>
+used - this function is essentially its reverse form. So, a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a>
+containing any basic or string array type will be converted to a <a href="../gobject-Generic-values.html#GValue"><span class="type">GValue</span></a>
+containing a basic value or string array. Any other <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> (handle,
+variant, tuple, dict entry) will be converted to a <a href="../gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> containing that
+<a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a>.</p>
 <p>The conversion never fails - a valid <a href="../gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> is always returned in
 <em class="parameter"><code>out_gvalue</code></em>
 .</p>

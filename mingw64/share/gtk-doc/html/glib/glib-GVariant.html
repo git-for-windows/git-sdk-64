@@ -1056,14 +1056,14 @@ can use:</p>
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">GVariant <span class="gtkdoc opt">*</span>v <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-GVariant.html#g-variant-new">g_variant_new</a></span> <span class="gtkdoc opt">(</span><span class="string">&apos;u&apos;</span><span class="gtkdoc opt">,</span> <span class="number">40</span><span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting">GVariant <span class="gtkdoc opt">*</span>v <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-GVariant.html#g-variant-new">g_variant_new</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;u&quot;</span><span class="gtkdoc opt">,</span> <span class="number">40</span><span class="gtkdoc opt">);</span></pre></td>
       </tr>
     </tbody>
   </table>
 </div>
 
 <p></p>
-<p>The string 'u' in the first argument tells <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> that the data passed to
+<p>The string "u" in the first argument tells <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> that the data passed to
 the constructor (40) is going to be an unsigned integer.</p>
 <p>More advanced examples of <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> in use can be found in documentation for
 GVariant format strings.</p>
@@ -1087,7 +1087,7 @@ Serialised <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><
 <p><a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> is largely compatible with D-Bus.  Almost all types of
 <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> instances can be sent over D-Bus.  See <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a> for
 exceptions.  (However, <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a>'s serialisation format is not the same
-as the serialisation format of a D-Bus message body: use <a href="../gio/GDBusMessage.html#GDBusMessage-struct"><span class="type">GDBusMessage</span></a>,
+as the serialisation format of a D-Bus message body: use <a href="../GDBusMessage.html#GDBusMessage-struct"><span class="type">GDBusMessage</span></a>,
 in the gio library, for those.)</p>
 <p>For space-efficiency, the <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> serialisation format does not
 automatically include the variant's length, type or endianness,
@@ -1242,7 +1242,7 @@ child.</p>
 <a name="id-1.6.19.6.27"></a><h4>Summary</h4>
 <p>To put the entire example together, for our dictionary mapping
 strings to variants (with two entries, as given above), we are
-using 91 bytes of memory for type information, 29 byes of memory
+using 91 bytes of memory for type information, 29 bytes of memory
 for the serialised data, 16 bytes for buffer management and 24
 bytes for the <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> instance, or a total of 160 bytes, plus
 malloc overhead.  If we were to use <a class="link" href="glib-GVariant.html#g-variant-get-child-value" title="g_variant_get_child_value ()"><code class="function">g_variant_get_child_value()</code></a> to
@@ -1680,7 +1680,7 @@ the data inside of the soon-to-be-freed <a class="link" href="glib-GVariant.html
 check fails then a <a class="link" href="glib-Message-Logging.html#g-critical" title="g_critical()"><code class="function">g_critical()</code></a> is printed and <a class="link" href="glib-Standard-Macros.html#FALSE:CAPS" title="FALSE"><code class="literal">FALSE</code></a> is returned.</p>
 <p>This function is meant to be used by functions that wish to provide
 varargs accessors to <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> values of uncertain values (eg:
-<a class="link" href="glib-GVariant.html#g-variant-lookup" title="g_variant_lookup ()"><code class="function">g_variant_lookup()</code></a> or <a href="../gio/GMenuModel.html#g-menu-model-get-item-attribute"><code class="function">g_menu_model_get_item_attribute()</code></a>).</p>
+<a class="link" href="glib-GVariant.html#g-variant-lookup" title="g_variant_lookup ()"><code class="function">g_variant_lookup()</code></a> or <a href="../GMenuModel.html#g-menu-model-get-item-attribute"><code class="function">g_menu_model_get_item_attribute()</code></a>).</p>
 <div class="refsect3">
 <a name="g-variant-check-format-string.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1944,7 +1944,7 @@ pointing to the argument following the last.</p>
  must be of the correct width for their
 types specified in <em class="parameter"><code>format_string</code></em>
  when collected into the <span class="type">va_list</span>.
-See the [GVariant varargs documentation][gvariant-varargs.</p>
+See the GVariant varargs documentation.</p>
 <p>These two generalisations allow mixing of multiple calls to
 <a class="link" href="glib-GVariant.html#g-variant-new-va" title="g_variant_new_va ()"><code class="function">g_variant_new_va()</code></a> and <a class="link" href="glib-GVariant.html#g-variant-get-va" title="g_variant_get_va ()"><code class="function">g_variant_get_va()</code></a> within a single actual
 varargs call by the user.</p>
@@ -3718,9 +3718,10 @@ g_variant_new_fixed_array (<em class="parameter"><code>const <a class="link" hre
                            <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> elements</code></em>,
                            <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gsize" title="gsize"><span class="type">gsize</span></a> n_elements</code></em>,
                            <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gsize" title="gsize"><span class="type">gsize</span></a> element_size</code></em>);</pre>
-<p>Provides access to the serialised data for an array of fixed-sized
-items.</p>
-<p><em class="parameter"><code>value</code></em>
+<p>Constructs a new array <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> instance, where the elements are
+of <em class="parameter"><code>element_type</code></em>
+ type.</p>
+<p><em class="parameter"><code>elements</code></em>
  must be an array with fixed-sized elements.  Numeric types are
 fixed-size as are tuples containing only other fixed-sized types.</p>
 <p><em class="parameter"><code>element_size</code></em>
@@ -3730,8 +3731,8 @@ you might say sizeof(gint32). This value isn't used except for the purpose
 of a double-check that the form of the serialised data matches the caller's
 expectation.</p>
 <p><em class="parameter"><code>n_elements</code></em>
-, which must be non-<a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> is set equal to the number of
-items in the array.</p>
+ must be the length of the <em class="parameter"><code>elements</code></em>
+ array.</p>
 <div class="refsect3">
 <a name="g-variant-new-fixed-array.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -5409,7 +5410,7 @@ freeing the <a class="link" href="glib-GVariant.html#GVariantBuilder" title="str
 <a class="link" href="glib-GVariant.html#GVariantBuilder" title="struct GVariantBuilder"><span class="type">GVariantBuilder</span></a> if you want to abort building the value part-way
 through.  This function need not be called if you call
 <a class="link" href="glib-GVariant.html#g-variant-builder-end" title="g_variant_builder_end ()"><code class="function">g_variant_builder_end()</code></a> and it also doesn't need to be called on
-builders allocated with g_variant_builder_new (see
+builders allocated with <a class="link" href="glib-GVariant.html#g-variant-builder-new" title="g_variant_builder_new ()"><code class="function">g_variant_builder_new()</code></a> (see
 <a class="link" href="glib-GVariant.html#g-variant-builder-unref" title="g_variant_builder_unref ()"><code class="function">g_variant_builder_unref()</code></a> for that).</p>
 <p>This function leaves the <a class="link" href="glib-GVariant.html#GVariantBuilder" title="struct GVariantBuilder"><span class="type">GVariantBuilder</span></a> structure set to all-zeros.
 It is valid to call this function on either an initialised

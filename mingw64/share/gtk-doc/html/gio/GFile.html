@@ -4573,6 +4573,9 @@ existing <em class="parameter"><code>destination</code></em>
 will be copied as symlinks, otherwise the target of the
 <em class="parameter"><code>source</code></em>
  symlink will be copied.</p>
+<p>If the flag <a class="link" href="GFile.html#G-FILE-COPY-ALL-METADATA:CAPS"><span class="type">G_FILE_COPY_ALL_METADATA</span></a> is specified then all the metadata
+that is possible to copy is copied, not just the default subset (which,
+for instance, does not include the owner, see <a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a>).</p>
 <p>If <em class="parameter"><code>cancellable</code></em>
  is not <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, then the operation can be cancelled by
 triggering the cancellable object from another thread. If the operation
@@ -4679,7 +4682,6 @@ run in.</p>
 <p>When the operation is finished, <em class="parameter"><code>callback</code></em>
  will be called. You can then call
 <a class="link" href="GFile.html#g-file-copy-finish" title="g_file_copy_finish ()"><code class="function">g_file_copy_finish()</code></a> to get the result of the operation.</p>
-<p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
 <a name="g-file-copy-async.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -4719,23 +4721,23 @@ run in.</p>
 <td class="parameter_name"><p>progress_callback</p></td>
 <td class="parameter_description"><p> function to callback with progress
 information, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if progress information is not needed. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="The callback is valid until the GDestroyNotify argument is called."><span class="acronym">scope notified</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>progress_callback_data</p></td>
 <td class="parameter_description"><p> user data to pass to <em class="parameter"><code>progress_callback</code></em>
 . </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym> progress_callback][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
-<td class="parameter_description"><p>a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> to call when the request is satisfied</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> to call when the request is satisfied. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="The callback is valid until first called."><span class="acronym">scope async</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
-<td class="parameter_description"><p>the data to pass to callback function</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the data to pass to callback function. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym> callback]</span></td>
 </tr>
 </tbody>
 </table></div>

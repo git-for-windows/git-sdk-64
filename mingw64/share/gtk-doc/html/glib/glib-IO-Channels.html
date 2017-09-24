@@ -465,7 +465,9 @@ this works for plain files, pipes, and sockets.</p>
 <p>The default encoding for <a class="link" href="glib-IO-Channels.html#GIOChannel" title="struct GIOChannel"><span class="type">GIOChannel</span></a> is UTF-8. If your application
 is reading output from a command using via pipe, you may need to set
 the encoding to the encoding of the current locale (see
-<a class="link" href="glib-Character-Set-Conversion.html#g-get-charset" title="g_get_charset ()"><code class="function">g_get_charset()</code></a>) with the <a class="link" href="glib-IO-Channels.html#g-io-channel-set-encoding" title="g_io_channel_set_encoding ()"><code class="function">g_io_channel_set_encoding()</code></a> function.</p>
+<a class="link" href="glib-Character-Set-Conversion.html#g-get-charset" title="g_get_charset ()"><code class="function">g_get_charset()</code></a>) with the <a class="link" href="glib-IO-Channels.html#g-io-channel-set-encoding" title="g_io_channel_set_encoding ()"><code class="function">g_io_channel_set_encoding()</code></a> function.
+By default, the fd passed will not be closed when the final reference
+to the <a class="link" href="glib-IO-Channels.html#GIOChannel" title="struct GIOChannel"><span class="type">GIOChannel</span></a> data structure is dropped.</p>
 <p>If you want to read raw binary data without interpretation, then
 call the <a class="link" href="glib-IO-Channels.html#g-io-channel-set-encoding" title="g_io_channel_set_encoding ()"><code class="function">g_io_channel_set_encoding()</code></a> function with <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> for the
 encoding argument.</p>
@@ -1907,8 +1909,7 @@ by <a class="link" href="glib-IO-Channels.html#g-io-channel-new-file" title="g_i
 </div>
 <div class="refsect3">
 <a name="g-io-channel-get-close-on-unref.returns"></a><h4>Returns</h4>
-<p> Whether the channel will be closed on the final unref of
-the GIOChannel data structure.</p>
+<p> <a class="link" href="glib-Standard-Macros.html#TRUE:CAPS" title="TRUE"><code class="literal">TRUE</code></a> if the channel will be closed, <a class="link" href="glib-Standard-Macros.html#FALSE:CAPS" title="FALSE"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 </div>
 <hr>
@@ -1917,8 +1918,11 @@ the GIOChannel data structure.</p>
 <pre class="programlisting"><span class="returnvalue">void</span>
 g_io_channel_set_close_on_unref (<em class="parameter"><code><a class="link" href="glib-IO-Channels.html#GIOChannel" title="struct GIOChannel"><span class="type">GIOChannel</span></a> *channel</code></em>,
                                  <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="type">gboolean</span></a> do_close</code></em>);</pre>
+<p>Whether to close the channel on the final unref of the <a class="link" href="glib-IO-Channels.html#GIOChannel" title="struct GIOChannel"><span class="type">GIOChannel</span></a>
+data structure. The default value of this is <a class="link" href="glib-Standard-Macros.html#TRUE:CAPS" title="TRUE"><code class="literal">TRUE</code></a> for channels
+created by <a class="link" href="glib-IO-Channels.html#g-io-channel-new-file" title="g_io_channel_new_file ()"><code class="function">g_io_channel_new_file()</code></a>, and <a class="link" href="glib-Standard-Macros.html#FALSE:CAPS" title="FALSE"><code class="literal">FALSE</code></a> for all other channels.</p>
 <p>Setting this flag to <a class="link" href="glib-Standard-Macros.html#TRUE:CAPS" title="TRUE"><code class="literal">TRUE</code></a> for a channel you have already closed
-can cause problems.</p>
+can cause problems when the final reference to the <a class="link" href="glib-IO-Channels.html#GIOChannel" title="struct GIOChannel"><span class="type">GIOChannel</span></a> is dropped.</p>
 <div class="refsect3">
 <a name="g-io-channel-set-close-on-unref.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1936,9 +1940,7 @@ can cause problems.</p>
 <tr>
 <td class="parameter_name"><p>do_close</p></td>
 <td class="parameter_description"><p>Whether to close the channel on the final unref of
-the GIOChannel data structure. The default value of
-this is <a class="link" href="glib-Standard-Macros.html#TRUE:CAPS" title="TRUE"><code class="literal">TRUE</code></a> for channels created by <a class="link" href="glib-IO-Channels.html#g-io-channel-new-file" title="g_io_channel_new_file ()"><code class="function">g_io_channel_new_file()</code></a>,
-and <a class="link" href="glib-Standard-Macros.html#FALSE:CAPS" title="FALSE"><code class="literal">FALSE</code></a> for all other channels.</p></td>
+the GIOChannel data structure.</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 </tbody>

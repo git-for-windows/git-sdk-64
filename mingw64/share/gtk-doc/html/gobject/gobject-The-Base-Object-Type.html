@@ -199,6 +199,14 @@
 </tr>
 <tr>
 <td class="function_type">
+<a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="returnvalue">GObject</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="gobject-The-Base-Object-Type.html#g-object-new-with-properties" title="g_object_new_with_properties ()">g_object_new_with_properties</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
 <a href="../glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>
 </td>
 <td class="function_name">
@@ -352,7 +360,23 @@
 <span class="returnvalue">void</span>
 </td>
 <td class="function_name">
+<a class="link" href="gobject-The-Base-Object-Type.html#g-object-setv" title="g_object_setv ()">g_object_setv</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
 <a class="link" href="gobject-The-Base-Object-Type.html#g-object-get" title="g_object_get ()">g_object_get</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="gobject-The-Base-Object-Type.html#g-object-getv" title="g_object_getv ()">g_object_getv</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -1619,10 +1643,67 @@ name/value pairs, followed by <a href="../glib-Standard-Macros.html#NULL:CAPS"><
 </div>
 <div class="refsect3">
 <a name="g-object-new.returns"></a><h4>Returns</h4>
-<p> (transfer full) (type GObject.Object) : a new instance of
+<p> a new instance of
 <em class="parameter"><code>object_type</code></em>
-</p>
+. </p>
+<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.Object]</span></p>
 </div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="g-object-new-with-properties"></a><h3>g_object_new_with_properties ()</h3>
+<pre class="programlisting"><a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="returnvalue">GObject</span></a> *
+g_object_new_with_properties (<em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> object_type</code></em>,
+                              <em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> n_properties</code></em>,
+                              <em class="parameter"><code>const <span class="type">char</span> *names[]</code></em>,
+                              <em class="parameter"><code>const <a class="link" href="gobject-Generic-values.html#GValue" title="GValue"><span class="type">GValue</span></a> values[]</code></em>);</pre>
+<p>Creates a new instance of a <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> subtype and sets its properties using
+the provided arrays. Both arrays must have exactly <em class="parameter"><code>n_properties</code></em>
+ elements,
+and the names and values correspond by index.</p>
+<p>Construction parameters (see <a class="link" href="gobject-GParamSpec.html#G-PARAM-CONSTRUCT:CAPS"><code class="literal">G_PARAM_CONSTRUCT</code></a>, <a class="link" href="gobject-GParamSpec.html#G-PARAM-CONSTRUCT-ONLY:CAPS"><code class="literal">G_PARAM_CONSTRUCT_ONLY</code></a>)
+which are not explicitly specified are set to their default values.</p>
+<p><span class="annotation">[<acronym title="Rename the original symbol's name to SYMBOL."><span class="acronym">rename-to</span></acronym> g_object_new]</span></p>
+<div class="refsect3">
+<a name="g-object-new-with-properties.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>object_type</p></td>
+<td class="parameter_description"><p>the object type to instantiate</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>n_properties</p></td>
+<td class="parameter_description"><p>the number of properties</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>names</p></td>
+<td class="parameter_description"><p> the names of each property to be set. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=n_properties]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>values</p></td>
+<td class="parameter_description"><p> the values of each property to be set. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=n_properties]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="g-object-new-with-properties.returns"></a><h4>Returns</h4>
+<p> a new instance of
+<em class="parameter"><code>object_type</code></em>
+. </p>
+<p><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.Object][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
+<p class="since">Since: 2.54</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1631,10 +1712,14 @@ name/value pairs, followed by <a href="../glib-Standard-Macros.html#NULL:CAPS"><
 g_object_newv (<em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> object_type</code></em>,
                <em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> n_parameters</code></em>,
                <em class="parameter"><code><a class="link" href="gobject-The-Base-Object-Type.html#GParameter" title="struct GParameter"><span class="type">GParameter</span></a> *parameters</code></em>);</pre>
+<div class="warning">
+<p><code class="literal">g_object_newv</code> has been deprecated since version 2.54 and should not be used in newly-written code.</p>
+<p>Use <a class="link" href="gobject-The-Base-Object-Type.html#g-object-new-with-properties" title="g_object_new_with_properties ()"><code class="function">g_object_new_with_properties()</code></a> instead.
+deprecated. See <a class="link" href="gobject-The-Base-Object-Type.html#GParameter" title="struct GParameter"><span class="type">GParameter</span></a> for more information.</p>
+</div>
 <p>Creates a new instance of a <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> subtype and sets its properties.</p>
 <p>Construction parameters (see <a class="link" href="gobject-GParamSpec.html#G-PARAM-CONSTRUCT:CAPS"><span class="type">G_PARAM_CONSTRUCT</span></a>, <a class="link" href="gobject-GParamSpec.html#G-PARAM-CONSTRUCT-ONLY:CAPS"><span class="type">G_PARAM_CONSTRUCT_ONLY</span></a>)
 which are not explicitly specified are set to their default values.</p>
-<p><span class="annotation">[<acronym title="Rename the original symbol's name to SYMBOL."><span class="acronym">rename-to</span></acronym> g_object_new]</span></p>
 <div class="refsect3">
 <a name="g-object-newv.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -2448,6 +2533,56 @@ name/value pairs, followed by <a href="../glib-Standard-Macros.html#NULL:CAPS"><
 </div>
 <hr>
 <div class="refsect2">
+<a name="g-object-setv"></a><h3>g_object_setv ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+g_object_setv (<em class="parameter"><code><a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *object</code></em>,
+               <em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> n_properties</code></em>,
+               <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *names[]</code></em>,
+               <em class="parameter"><code>const <a class="link" href="gobject-Generic-values.html#GValue" title="GValue"><span class="type">GValue</span></a> values[]</code></em>);</pre>
+<p>Sets <em class="parameter"><code>n_properties</code></em>
+ properties for an <em class="parameter"><code>object</code></em>
+.
+Properties to be set will be taken from <em class="parameter"><code>values</code></em>
+. All properties must be
+valid. Warnings will be emitted and undefined behaviour may result if invalid
+properties are passed in.</p>
+<p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
+<div class="refsect3">
+<a name="g-object-setv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>object</p></td>
+<td class="parameter_description"><p>a <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>n_properties</p></td>
+<td class="parameter_description"><p>the number of properties</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>names</p></td>
+<td class="parameter_description"><p> the names of each property to be set. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=n_properties]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>values</p></td>
+<td class="parameter_description"><p> the values of each property to be set. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=n_properties]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: 2.54</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="g-object-get"></a><h3>g_object_get ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 g_object_get (<em class="parameter"><code><a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> object</code></em>,
@@ -2526,6 +2661,55 @@ name/return location pairs, followed by <a href="../glib-Standard-Macros.html#NU
 </tbody>
 </table></div>
 </div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="g-object-getv"></a><h3>g_object_getv ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+g_object_getv (<em class="parameter"><code><a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *object</code></em>,
+               <em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> n_properties</code></em>,
+               <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *names[]</code></em>,
+               <em class="parameter"><code><a class="link" href="gobject-Generic-values.html#GValue" title="GValue"><span class="type">GValue</span></a> values[]</code></em>);</pre>
+<p>Gets <em class="parameter"><code>n_properties</code></em>
+ properties for an <em class="parameter"><code>object</code></em>
+.
+Obtained properties will be set to <em class="parameter"><code>values</code></em>
+. All properties must be valid.
+Warnings will be emitted and undefined behaviour may result if invalid
+properties are passed in.</p>
+<div class="refsect3">
+<a name="g-object-getv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>object</p></td>
+<td class="parameter_description"><p>a <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>n_properties</p></td>
+<td class="parameter_description"><p>the number of properties</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>names</p></td>
+<td class="parameter_description"><p> the names of each property to get. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=n_properties]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>values</p></td>
+<td class="parameter_description"><p> the values of each property to get. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=n_properties]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: 2.54</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -4076,6 +4260,10 @@ a <a class="link" href="gobject-The-Base-Object-Type.html#GObjectClass" title="s
   GValue       value;
 };
 </pre>
+<div class="warning">
+<p><code class="literal">GParameter</code> has been deprecated since version 2.54 and should not be used in newly-written code.</p>
+<p>This type is not introspectable.</p>
+</div>
 <p>The GParameter struct is an auxiliary structure used
 to hand parameter name/value pairs to <a class="link" href="gobject-The-Base-Object-Type.html#g-object-newv" title="g_object_newv ()"><code class="function">g_object_newv()</code></a>.</p>
 <div class="refsect3">

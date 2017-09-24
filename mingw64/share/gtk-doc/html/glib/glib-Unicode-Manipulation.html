@@ -1563,7 +1563,7 @@ g_unichar_break_type (<em class="parameter"><code><a class="link" href="glib-Uni
 <a class="link" href="glib-Unicode-Manipulation.html#g-utf8-get-char" title="g_utf8_get_char ()"><code class="function">g_utf8_get_char()</code></a>). The break type is used to find word and line
 breaks ("text boundaries"), Pango implements the Unicode boundary
 resolution algorithms and normally you would use a function such
-as <a href="C:/building/msys64/mingw64/share/gtk-doc/html/pango/pango-Text-Processing.html#pango-break"><code class="function">pango_break()</code></a> instead of caring about break types yourself.</p>
+as <a href="../pango/pango-Text-Processing.html#pango-break"><code class="function">pango_break()</code></a> instead of caring about break types yourself.</p>
 <div class="refsect3">
 <a name="g-unichar-break-type.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1744,7 +1744,7 @@ by Unicode Standard Annex #24). No check is made for <em class="parameter"><code
  being a
 valid Unicode character; if you pass in invalid character, the
 result is undefined.</p>
-<p>This function is equivalent to <a href="C:/building/msys64/mingw64/share/gtk-doc/html/pango/pango-Scripts-and-Languages.html#pango-script-for-unichar"><code class="function">pango_script_for_unichar()</code></a> and the
+<p>This function is equivalent to <a href="../pango/pango-Scripts-and-Languages.html#pango-script-for-unichar"><code class="function">pango_script_for_unichar()</code></a> and the
 two are interchangeable.</p>
 <div class="refsect3">
 <a name="g-unichar-get-script.parameters"></a><h4>Parameters</h4>
@@ -1916,6 +1916,10 @@ g_utf8_get_char_validated (<em class="parameter"><code>const <a class="link" hre
 This function checks for incomplete characters, for invalid characters
 such as characters that are out of the range of Unicode, and for
 overlong encodings of valid characters.</p>
+<p>Note that <a class="link" href="glib-Unicode-Manipulation.html#g-utf8-get-char-validated" title="g_utf8_get_char_validated ()"><code class="function">g_utf8_get_char_validated()</code></a> returns (gunichar)-2 if
+<em class="parameter"><code>max_len</code></em>
+ is positive and any of the bytes in the first UTF-8 character
+sequence are nul.</p>
 <div class="refsect3">
 <a name="g-utf8-get-char-validated.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -2085,6 +2089,12 @@ g_utf8_find_next_char (<em class="parameter"><code>const <a class="link" href="g
  does not have to be at the beginning of a UTF-8 character. No check
 is made to see if the character found is actually valid other than
 it starts with an appropriate byte.</p>
+<p>If <em class="parameter"><code>end</code></em>
+ is <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, the return value will never be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>: if the end of the
+string is reached, a pointer to the terminating nul byte is returned. If
+<em class="parameter"><code>end</code></em>
+ is non-<a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, the return value will be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the end of the string
+is reached.</p>
 <div class="refsect3">
 <a name="g-utf8-find-next-char.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -2110,7 +2120,10 @@ or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code
 </div>
 <div class="refsect3">
 <a name="g-utf8-find-next-char.returns"></a><h4>Returns</h4>
-<p> a pointer to the found character or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a></p>
+<p> a pointer to the found character or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if <em class="parameter"><code>end</code></em>
+is
+set and is reached. </p>
+<p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 </div>
 <hr>
@@ -4003,7 +4016,7 @@ to handle unknown values. They may be regarded as <a class="link" href="glib-Uni
 <p>The <a class="link" href="glib-Unicode-Manipulation.html#GUnicodeScript" title="enum GUnicodeScript"><span class="type">GUnicodeScript</span></a> enumeration identifies different writing
 systems. The values correspond to the names as defined in the
 Unicode standard. The enumeration has been added in GLib 2.14,
-and is interchangeable with <a href="C:/building/msys64/mingw64/share/gtk-doc/html/pango/pango-Scripts-and-Languages.html#PangoScript"><span class="type">PangoScript</span></a>.</p>
+and is interchangeable with <a href="../pango/pango-Scripts-and-Languages.html#PangoScript"><span class="type">PangoScript</span></a>.</p>
 <p>Note that new types may be added in the future. Applications
 should be ready to handle unknown values.
 See <a class="ulink" href="http://www.unicode.org/reports/tr24/" target="_top">Unicode Standard Annex <span class="type">24</span>: Script names</a>.</p>
@@ -4989,6 +5002,26 @@ See <a class="ulink" href="http://www.unicode.org/reports/tr24/" target="_top">U
 <p>Tangut. Since: 2.50</p>
 </td>
 <td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-MASARAM-GONDI:CAPS"></a>G_UNICODE_SCRIPT_MASARAM_GONDI</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-NUSHU:CAPS"></a>G_UNICODE_SCRIPT_NUSHU</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-SOYOMBO:CAPS"></a>G_UNICODE_SCRIPT_SOYOMBO</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-ZANABAZAR-SQUARE:CAPS"></a>G_UNICODE_SCRIPT_ZANABAZAR_SQUARE</p></td>
+<td> </td>
+<td> </td>
 </tr>
 </tbody>
 </table></div>

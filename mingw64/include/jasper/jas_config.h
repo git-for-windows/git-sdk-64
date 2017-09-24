@@ -16,7 +16,7 @@
 #if defined(JAS_CONFIGURE)
 
 /* This preprocessor symbol identifies the version of JasPer. */
-#define	JAS_VERSION "2.0.12"
+#define	JAS_VERSION "2.0.14"
 
 #define JAS_HAVE_FCNTL_H 1
 #define JAS_HAVE_IO_H 1
