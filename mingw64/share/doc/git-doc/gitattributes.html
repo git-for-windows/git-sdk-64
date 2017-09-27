@@ -935,8 +935,8 @@ packet:          git&lt; 0000</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Supported filter capabilities in version 2 are "clean" and
-"smudge".</p>
+<p>Supported filter capabilities in version 2 are "clean", "smudge",
+and "delay".</p>
 </div>
 <div class="paragraph">
 <p>Afterwards Git sends a list of "key=value" pairs terminated with
@@ -1042,12 +1042,81 @@ with the next file that needs to be processed. Depending on the
 <code>filter.&lt;driver&gt;.required</code> flag Git will interpret that as error.</p>
 </div>
 <div class="paragraph">
-<p>After the filter has processed a blob it is expected to wait for
-the next "key=value" list containing a command. Git will close
+<p>After the filter has processed a command it is expected to wait for
+a "key=value" list containing the next command. Git will close
 the command pipe on exit. The filter is expected to detect EOF
 and exit gracefully on its own. Git will wait until the filter
 process has stopped.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_delay">Delay</h4>
+<div class="paragraph">
+<p>If the filter supports the "delay" capability, then Git can send the
+flag "can-delay" after the filter command and pathname. This flag
+denotes that the filter can delay filtering the current blob (e.g. to
+compensate network latencies) by responding with no content but with
+the status "delayed" and a flush packet.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&gt; command=smudge
+packet:          git&gt; pathname=path/testfile.dat
+packet:          git&gt; can-delay=1
+packet:          git&gt; 0000
+packet:          git&gt; CONTENT
+packet:          git&gt; 0000
+packet:          git&lt; status=delayed
+packet:          git&lt; 0000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the filter supports the "delay" capability then it must support the
+"list_available_blobs" command. If Git sends this command, then the
+filter is expected to return a list of pathnames representing blobs
+that have been delayed earlier and are now available.
+The list must be terminated with a flush packet followed
+by a "success" status that is also terminated with a flush packet. If
+no blobs for the delayed paths are available, yet, then the filter is
+expected to block the response until at least one blob becomes
+available. The filter can tell Git that it has no more delayed blobs
+by sending an empty list. As soon as the filter responds with an empty
+list, Git stops asking. All blobs that Git has not received at this
+point are considered missing and will result in an error.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&gt; command=list_available_blobs
+packet:          git&gt; 0000
+packet:          git&lt; pathname=path/testfile.dat
+packet:          git&lt; pathname=path/otherfile.dat
+packet:          git&lt; 0000
+packet:          git&lt; status=success
+packet:          git&lt; 0000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After Git received the pathnames, it will request the corresponding
+blobs again. These requests contain a pathname and an empty content
+section. The filter is expected to respond with the smudged content
+in the usual way as explained above.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>packet:          git&gt; command=smudge
+packet:          git&gt; pathname=path/testfile.dat
+packet:          git&gt; 0000
+packet:          git&gt; 0000  # empty content!
+packet:          git&lt; status=success
+packet:          git&lt; 0000
+packet:          git&lt; SMUDGED_CONTENT
+packet:          git&lt; 0000
+packet:          git&lt; 0000  # empty list, keep "status=success" unchanged!</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_example">Example</h4>
 <div class="paragraph">
 <p>A long running filter demo implementation can be found in
 <code>contrib/long-running-filter/example.pl</code> located in the Git
@@ -1747,7 +1816,7 @@ to:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example">EXAMPLE</h2>
+<h2 id="_example_2">EXAMPLE</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If you have these three <code>gitattributes</code> file:</p>
@@ -1827,7 +1896,7 @@ frotz	unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-10 20:53:48 W. Europe Daylight Time
+Last updated 2017-09-26 14:05:51 W. Europe Daylight Time
 </div>
 </div>
 </body>

@@ -2067,7 +2067,7 @@ def UTF8Strpos(utf, pos):
 
 def UTF8Strsize(utf, len):
     """storage size of an UTF8 string the behaviour is not
-       garanteed if the input string is not UTF-8 """
+       guaranteed if the input string is not UTF-8 """
     ret = libxml2mod.xmlUTF8Strsize(utf, len)
     return ret
 
@@ -7341,7 +7341,7 @@ class xpathContext:
         return xpathObjectRet(ret)
 
     def xpathEvalExpression(self, str):
-        """Evaluate the XPath expression in the given context. """
+        """Alias for xmlXPathEval(). """
         ret = libxml2mod.xmlXPathEvalExpression(str, self._o)
         if ret is None:raise xpathError('xmlXPathEvalExpression() failed')
         return xpathObjectRet(ret)
@@ -7832,7 +7832,8 @@ class xpathParserContext:
         """Implement the round() XPath function number round(number)
           The round function returns the number that is closest to
           the argument and that is an integer. If there are two such
-           numbers, then the one that is even is returned. """
+          numbers, then the one that is closest to positive infinity
+           is returned. """
         libxml2mod.xmlXPathRoundFunction(self._o, nargs)
 
     def xpathStartsWithFunction(self, nargs):
@@ -7986,7 +7987,9 @@ class xpathParserContext:
         libxml2mod.xmlXPtrEvalRangePredicate(self._o)
 
     def xpointerRangeToFunction(self, nargs):
-        """Implement the range-to() XPointer function """
+        """Implement the range-to() XPointer function  Obsolete.
+          range-to is not a real function but a special type of
+           location step which is handled in xpath.c. """
         libxml2mod.xmlXPtrRangeToFunction(self._o, nargs)
 
 # xlinkShow

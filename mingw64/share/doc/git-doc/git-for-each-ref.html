@@ -472,11 +472,12 @@ key.</p>
 </dd>
 <dt class="hdlist1">&lt;format&gt;</dt>
 <dd>
-<p>A string that interpolates <code>%(fieldname)</code> from the
-object pointed at by a ref being shown.  If <code>fieldname</code>
+<p>A string that interpolates <code>%(fieldname)</code> from a ref being shown
+and the object it points at.  If <code>fieldname</code>
 is prefixed with an asterisk (<code>*</code>) and the ref points
-at a tag object, the value for the field in the object
-tag refers is used.  When unspecified, defaults to
+at a tag object, use the value for the field in the object
+which the tag object refers to (instead of the field in the tag object).
+When unspecified, <code>&lt;format&gt;</code> defaults to
 <code>%(objectname) SPC %(objecttype) TAB %(refname)</code>.
 It also interpolates <code>%%</code> to <code>%</code>, and <code>%xx</code> where <code>xx</code>
 are hex digits interpolates to character with hex code
@@ -615,8 +616,10 @@ otherwise.</p>
 </dd>
 <dt class="hdlist1">color</dt>
 <dd>
-<p>Change output color.  Followed by <code>:&lt;colorname&gt;</code>, where names
-are described in <code>color.branch.*</code>.</p>
+<p>Change output color. Followed by <code>:&lt;colorname&gt;</code>, where color
+names are described under Values in the "CONFIGURATION FILE"
+section of <a href="git-config.html">git-config</a>(1).  For example,
+<code>%(color:bold red)</code>.</p>
 </dd>
 <dt class="hdlist1">align</dt>
 <dd>
@@ -845,7 +848,7 @@ This prints the authorname, if present.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-10 20:53:48 W. Europe Daylight Time
+Last updated 2017-09-26 14:05:51 W. Europe Daylight Time
 </div>
 </div>
 </body>

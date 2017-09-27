@@ -2032,13 +2032,17 @@ becomes just <code>master</code>).</p>
 </li>
 <li>
 <p><em>%C(&#8230;&#8203;)</em>: color specification, as described under Values in the
-"CONFIGURATION FILE" section of <a href="git-config.html">git-config</a>(1);
-adding <code>auto,</code> at the beginning (e.g. <code>%C(auto,red)</code>) will emit
-color only when colors are enabled for log output (by <code>color.diff</code>,
-<code>color.ui</code>, or <code>--color</code>, and respecting the <code>auto</code> settings of the
-former if we are going to a terminal). <code>auto</code> alone (i.e.
-<code>%C(auto)</code>) will turn on auto coloring on the next placeholders
-until the color is switched again.</p>
+"CONFIGURATION FILE" section of <a href="git-config.html">git-config</a>(1).
+By default, colors are shown only when enabled for log output (by
+<code>color.diff</code>, <code>color.ui</code>, or <code>--color</code>, and respecting the <code>auto</code>
+settings of the former if we are going to a terminal). <code>%C(auto,...)</code>
+is accepted as a historical synonym for the default (e.g.,
+<code>%C(auto,red)</code>). Specifying <code>%C(always,...) will show the colors
+even when color is not otherwise enabled (though consider
+just using `--color=always</code> to enable color for the whole output,
+including this format and anything else git might color).  <code>auto</code>
+alone (i.e. <code>%C(auto)</code>) will turn on auto coloring on the next
+placeholders until the color is switched again.</p>
 </li>
 <li>
 <p><em>%m</em>: left (<code>&lt;</code>), right (<code>&gt;</code>) or boundary (<code>-</code>) mark</p>
@@ -2174,7 +2178,7 @@ $ git log -2 --pretty=%h 4da45bef</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-10 20:53:48 W. Europe Daylight Time
+Last updated 2017-09-26 14:05:51 W. Europe Daylight Time
 </div>
 </div>
 </body>

@@ -10,8 +10,6 @@ SECTIONS
   .text  :
   {
     *(.text)
-    *(.glue_7t)
-    *(.glue_7)
     /* ??? Why is .gcc_exc here?  */
   }
   /* The Cygwin32 library uses a section to avoid copying certain data
@@ -22,21 +20,19 @@ SECTIONS
   .data  :
   {
     *(.data)
-    *(.data2)
     KEEP(*(.jcr))
   }
   .rdata  :
   {
     *(.rdata)
-    KEEP(*(.rdata_runtime_pseudo_reloc))
   }
   .eh_frame  :
   {
-    KEEP(*(.eh_frame*))
+    KEEP(*(.eh_frame))
   }
   .pdata  :
   {
-    KEEP(*(.pdata*))
+    KEEP(*(.pdata))
   }
   .bss  :
   {
@@ -69,6 +65,7 @@ SECTIONS
      data.  */
   .tls  :
   {
+    *(.tls)
   }
   .endjunk  :
   {
@@ -234,5 +231,14 @@ SECTIONS
   .zdebug_types   :
   {
     *(.zdebug_types)
+  }
+  /* For Go and Rust.  */
+  .debug_gdb_scripts   :
+  {
+    *(.debug_gdb_scripts)
+  }
+  .zdebug_gdb_scripts   :
+  {
+    *(.zdebug_gdb_scripts)
   }
 }

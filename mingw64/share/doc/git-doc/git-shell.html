@@ -525,6 +525,24 @@ EOF
 $ chmod +x $HOME/git-shell-commands/no-interactive-login</pre>
 </div>
 </div>
+<div class="paragraph">
+<p>To enable git-cvsserver access (which should generally have the
+<code>no-interactive-login</code> example above as a prerequisite, as creating
+the git-shell-commands directory allows interactive logins):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ cat &gt;$HOME/git-shell-commands/cvs &lt;&lt;\EOF
+if ! test $# = 1 &amp;&amp; test "$1" = "server"
+then
+	echo &gt;&amp;2 "git-cvsserver only handles \"server\""
+	exit 1
+fi
+exec git cvsserver server
+EOF
+$ chmod +x $HOME/git-shell-commands/cvs</pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -548,7 +566,7 @@ contrib/git-shell-commands/README</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-10 20:53:48 W. Europe Daylight Time
+Last updated 2017-09-26 14:05:51 W. Europe Daylight Time
 </div>
 </div>
 </body>

@@ -315,4 +315,13 @@ SECTIONS
   {
     *(.zdebug_types .zdebug.gnu.linkonce.wt.*)
   }
+  /* For Go and Rust.  */
+  .debug_gdb_scripts BLOCK(__section_alignment__) (NOLOAD) :
+  {
+    *(.debug_gdb_scripts)
+  }
+  .zdebug_gdb_scripts BLOCK(__section_alignment__) (NOLOAD) :
+  {
+    *(.zdebug_gdb_scripts)
+  }
 }

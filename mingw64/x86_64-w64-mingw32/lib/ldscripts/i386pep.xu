@@ -10,8 +10,6 @@ SECTIONS
   .text  :
   {
     *(.text)
-    *(.glue_7t)
-    *(.glue_7)
     . = ALIGN(8);
      ___CTOR_LIST__ = .; __CTOR_LIST__ = . ;
 			LONG (-1); LONG (-1);
@@ -35,25 +33,23 @@ SECTIONS
   .data  :
   {
     *(.data)
-    *(.data2)
     KEEP(*(.jcr))
   }
   .rdata  :
   {
     *(.rdata)
-    KEEP(*(.rdata_runtime_pseudo_reloc))
   }
   .eh_frame  :
   {
-    KEEP (*(.eh_frame*))
+    KEEP (*(.eh_frame))
   }
   .pdata  :
   {
-    KEEP(*(.pdata*))
+    KEEP(*(.pdata))
   }
   .xdata  :
   {
-    KEEP(*(.xdata*))
+    KEEP(*(.xdata))
   }
   .bss  :
   {
@@ -86,6 +82,7 @@ SECTIONS
      data.  */
   .tls  :
   {
+    *(.tls)
   }
   .endjunk  :
   {
@@ -251,5 +248,14 @@ SECTIONS
   .zdebug_types   :
   {
     *(.zdebug_types)
+  }
+  /* For Go and Rust.  */
+  .debug_gdb_scripts   :
+  {
+    *(.debug_gdb_scripts)
+  }
+  .zdebug_gdb_scripts   :
+  {
+    *(.zdebug_gdb_scripts)
   }
 }

@@ -1278,17 +1278,17 @@ case-insensitive.</p>
 <dl>
 <dt class="hdlist1">true</dt>
 <dd>
-<p>Boolean true can be spelled as <code>yes</code>, <code>on</code>, <code>true</code>,
-or <code>1</code>.  Also, a variable defined without <code>= &lt;value&gt;</code>
+<p>Boolean true literals are <code>yes</code>, <code>on</code>, <code>true</code>,
+and <code>1</code>.  Also, a variable defined without <code>= &lt;value&gt;</code>
 is taken as true.</p>
 </dd>
 <dt class="hdlist1">false</dt>
 <dd>
-<p>Boolean false can be spelled as <code>no</code>, <code>off</code>,
-<code>false</code>, or <code>0</code>.</p>
+<p>Boolean false literals are <code>no</code>, <code>off</code>, <code>false</code>,
+<code>0</code> and the empty string.</p>
 <div class="paragraph">
 <p>When converting value to the canonical form using <code>--bool</code> type
-specifier; <em>git config</em> will ensure that the output is "true" or
+specifier, <em>git config</em> will ensure that the output is "true" or
 "false" (spelled in lowercase).</p>
 </div>
 </dd>
@@ -2983,10 +2983,13 @@ low-occurrence common elements".</p>
 </dd>
 <dt class="hdlist1">diff.wsErrorHighlight</dt>
 <dd>
-<p>A comma separated list of <code>old</code>, <code>new</code>, <code>context</code>, that
-specifies how whitespace errors on lines are highlighted
-with <code>color.diff.whitespace</code>.  Can be overridden by the
-command line option <code>--ws-error-highlight=&lt;kind&gt;</code></p>
+<p>Highlight whitespace errors in the <code>context</code>, <code>old</code> or <code>new</code>
+lines of the diff.  Multiple values are separated by comma,
+<code>none</code> resets previous values, <code>default</code> reset the list to
+<code>new</code> and <code>all</code> is a shorthand for <code>old,new,context</code>.  The
+whitespace errors are colored with <code>color.diff.whitespace</code>.
+The command line option <code>--ws-error-highlight=&lt;kind&gt;</code>
+overrides this setting.</p>
 </dd>
 <dt class="hdlist1">difftool.&lt;tool&gt;.path</dt>
 <dd>
@@ -5113,8 +5116,8 @@ Set it to an empty string to disable certificate verification.</p>
 <dt class="hdlist1">sendemail.&lt;identity&gt;.*</dt>
 <dd>
 <p>Identity-specific versions of the <em>sendemail.*</em> parameters
-found below, taking precedence over those when the this
-identity is selected, through command-line or
+found below, taking precedence over those when this
+identity is selected, through either the command-line or
 <code>sendemail.identity</code>.</p>
 </dd>
 <dt class="hdlist1">sendemail.aliasesFile</dt>
@@ -5639,7 +5642,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-10 20:53:48 W. Europe Daylight Time
+Last updated 2017-09-26 14:05:50 W. Europe Daylight Time
 </div>
 </div>
 </body>
