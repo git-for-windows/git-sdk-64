@@ -2,7 +2,7 @@ require 'asciidoctor/extensions' unless RUBY_ENGINE == 'opal'
 
 include ::Asciidoctor
 
-class EmojiBlockMacro < Extensions::InlineMacroProcessor
+class EmojiInlineMacro < Extensions::InlineMacroProcessor
   use_dsl
 
   named :emoji
@@ -30,7 +30,7 @@ end
 
 class EmojiAssetsDocinfoProcessor < Extensions::DocinfoProcessor
   use_dsl
-  at_location :header
+  #at_location :head
 
   def process doc
     unless doc.attributes['emoji'] == 'tortue'

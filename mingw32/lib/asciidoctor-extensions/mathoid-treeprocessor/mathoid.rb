@@ -1,19 +1,43 @@
-require 'asciidoctor/extensions' unless RUBY_ENGINE == 'opal'
-require 'open3'
 require 'net/http'
+require 'open3'
+require 'shellwords'
 
 # A simple processor manager and invoker for Mathoid.
 #
-# Mathoid is a PhantomJS script that uses MathJax to convert AsciiMath,
-# LaTeX and MathML to SVG output.
+# Mathoid is a Node.js-based REST service that uses MathJax to convert
+# AsciiMath, LaTeX and MathML to SVG (and other formats).
 #
-# In order to use, first install phantomjs:
+# In order to use this library, you need Node.js. The code has been tested with
+# Node.js 4.4.7.
 #
-#  npm install phantomjs
+#  $ nvm install 4
 #
-# Next, clone the mathoid repository (provides the main.js and engine.js scripts)
+# You also need the librsvg development package:
 #
-#  git clone -b integration --recursive https://github.com/mojavelinux/mathoid
+#  # Debian
+#  $ [sudo] apt-get install librsvg2-dev
+#
+#  # Fedora
+#  $ [sudo] dnf install librsvg2-devel
+#
+#  # OS X
+#  $ brew install librsvg
+#    export PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
+#
+# Next, you must install the mathoid module from the 
+# mathoid-treeprocessor directory:
+#
+#  npm install mathoid
+#
+# Now test that you can run the server using:
+#
+#  npm run mathoid
+#
+# You can verify that the server is running using:
+#
+#  curl localhost:10044/_info
+#
+# Stop the server by pressing Ctrl+C.
 #
 # Usage:
 #
@@ -23,14 +47,13 @@ require 'net/http'
 #  mathoid.stop
 #
 class Mathoid
-  MathoidHome = ENV['MATHOID_HOME'] || ::File.expand_path('mathoid', ::File.dirname(__FILE__))
-  # NOTE could also get the phantomjs path by passing "console.log(require('phantomjs').path)" to node
-  PhantomJsCmd = ENV['PHANTOMJS'] || 'phantomjs'
+  MathoidHome = ENV['MATHOID_HOME'] || (::File.expand_path 'node_modules/mathoid', (::File.dirname __FILE__))
+  MathoidServerCmd = ::Shellwords.escape %(#{MathoidHome}/server.js)
+  MathoidConfig = ::File.expand_path 'mathoid-config.yaml', (::File.dirname __FILE__)
 
-  ViewBoxAttrRx = / viewBox="([^"]+)"/
-  VacuumStyleAttrRx = /\A<svg (?:(.+) )?style="[^"]+"/
-  VacuumHrefAttrRx = / href="[^"]+"/
-  TagBoundaryRx = /(?<!\A)(<(\w+)[^>]*><\/\2>|<\w+[^>]*>|<\/\w+>)/
+  SvgStartTagRx = /\A<svg\b.*?>/m
+  ViewBoxAttrRx = /\sviewBox=(["'])(.*?)\1/
+  VacuumSvgAttrsRx = /\s(?:width|height|style)=(["']).*?\1/
   TransformMatrixRx = /<g (.+ )?transform="matrix\(((?:\S+ ){4})\S+ \S+\)"/
   ColorRx = /<g stroke="[^"]+" fill="[^"]+"/
 
@@ -40,9 +63,12 @@ class Mathoid
   attr_reader :pid
 
   def initialize opts = {}
+    # FIXME could read these from the Mathoid config file
     @host = opts[:host] || 'localhost'
-    @port = opts[:port] || 16000
-    @base_uri = URI %(http://#{@host}:#{@port})
+    @port = opts[:port] || 10044
+    @base_uri = %(http://#{@host}:#{@port})
+    @svg_uri = URI %(#{@base_uri}/svg)
+    @info_uri = URI %(#{@base_uri}/_info)
     @pid = nil
   end
 
@@ -51,13 +77,12 @@ class Mathoid
       warn 'Mathoid server is not running.'
       return
     end
-    syntax = :tex if syntax.to_s.start_with? 'latex'
-    uri = @base_uri.dup
-    params = { q: equation, type: %(#{syntax}) }
-    uri.query = ::URI.encode_www_form params
+    syntax = :tex if (str_syntax = syntax.to_s).start_with? 'latex'
+    params = { q: equation, type: str_syntax }
 
     # FIXME this hangs if an exception is thrown on the server
-    if ::Net::HTTPSuccess === (res = ::Net::HTTP.get_response uri)
+    # QUESTION still true?
+    if ::Net::HTTPSuccess === (res = ::Net::HTTP.post_form @svg_uri, params)
       postprocess_svg_data res.body, opts
     else
       raise %(Could not process math. Reason: #{res.message})
@@ -71,12 +96,9 @@ class Mathoid
   end
 
   def postprocess_svg_data data, opts = {}
-    data = data.
-        sub(VacuumStyleAttrRx, '<svg \1').
-        gsub(VacuumHrefAttrRx, '').
-        gsub(TagBoundaryRx, %(\n\\1))
+    start_tag = (SvgStartTagRx.match data)[0]
 
-    viewBox = (data.match(ViewBoxAttrRx)[1].split ' ').map &:to_f
+    viewBox = ((start_tag.match ViewBoxAttrRx)[2].split ' ').map &:to_f
     horizontal_shift = 0
     vertical_shift = 0
 
@@ -95,34 +117,49 @@ class Mathoid
     padding = opts.fetch :padding, ([viewBox[2], viewBox[3]].min * 0.1)
 
     # NOTE correct vertical misalignment
-    vertical_shift -= viewBox[3] * 0.015
+    # QUESTION still necessary?
+    #vertical_shift -= viewBox[3] * 0.015
 
     viewBox[2] += padding * 2
     horizontal_shift += padding
     viewBox[3] += padding * 2
     vertical_shift += padding
 
+    new_start_tag = start_tag.
+        gsub(VacuumSvgAttrsRx, '').
+        sub(ViewBoxAttrRx, %( viewBox="#{viewBox * ' '}"))
+
     color = opts.fetch :color, 'rgb(25,25,24)'
 
-    data.
-        sub(ViewBoxAttrRx, %( viewBox="#{viewBox * ' '}")).
+    %(#{new_start_tag}#{data[start_tag.length..-1]}).
         sub(TransformMatrixRx, %[<g \\1transform="matrix(\\2#{horizontal_shift} #{vertical_shift})"]).
         sub(ColorRx, %(<g stroke="#{color}" fill="#{color}"))
   end
 
   def start
     if @pid
+      # TODO also check if server is available
       warn 'Ignoring request to start already running server.'
       return false
     end
-    input, output, wait_thr = ::Open3.popen2 %(#{PhantomJsCmd} main.js), chdir: MathoidHome
-    # FIXME implement more robust startup status handling
-    while (status = output.gets)
-      if status.include? 'started'
-        break
-      elsif status.include? 'failed'
-        warn 'Failed to start PhantomJS. Check that a process is not already running.'
-        return false
+    input, output, wait_thr = ::Open3.popen2 %(#{MathoidServerCmd} -c #{MathoidConfig})
+    sleep(waited = 1) # it will take at least a second to start up the server
+    started = false
+    while !started
+      begin
+        if ::Net::HTTPSuccess === (res = ::Net::HTTP.get_response @info_uri)
+          started = true
+        end
+      rescue ::Errno::ECONNREFUSED; end
+      unless started
+        if waited >= 5
+          warn 'Failed to start Mathoid server. Check that a process is not already running.'
+          @pid = wait_thr.pid
+          stop
+          return false
+        end
+        sleep 0.25
+        waited += 0.25
       end
     end
     @pid = wait_thr.pid
@@ -131,16 +168,25 @@ class Mathoid
 
   def stop
     if @pid
-      # refer to node_modules/.bin/phantomjs to see how this signal is handled
+      # refer to node_modules/service-runner/lib/master.js to see how the SIGTERM signal is handled
       ::Process.kill 'SIGTERM', @pid
       ::Process.wait @pid rescue nil
       true
     else
       false
     end
+  ensure
+    @pid = nil
   end
 
   def running?
     !!@pid
   end
+end
+
+if ARGV[0] == 'test'
+  mathoid = Mathoid.new
+  mathoid.start
+  puts mathoid.convert '\\frac{\\frac{1}{x}+\\frac{1}{y}}{y-z}', :tex, color: 'rgb(25,25,24)'
+  mathoid.stop
 end

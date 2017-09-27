@@ -23,7 +23,13 @@ class ManInlineMacro < Extensions::InlineMacroProcessor
     else
       nil
     end
-    parent.document.register :links, target
-    %(#{(create_anchor parent, text, type: :link, target: target).render}#{suffix})
+    if parent.document.basebackend? 'html'
+      parent.document.register :links, target
+      %(#{(create_anchor parent, text, type: :link, target: target).render}#{suffix})
+    elsif parent.document.backend == 'manpage'
+      %(\\fB#{manname}\\fP#{suffix})
+    else
+      %(#{manname}#{suffix})
+    end
   end
 end
