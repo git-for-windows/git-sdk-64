@@ -6,7 +6,7 @@ eval 'case $# in 0) exec /usr/bin/perl -S "$0";; *) exec /usr/bin/perl -S "$0" "
     if 0;
 
 # automake - create Makefile.in from Makefile.am
-# Copyright (C) 1994-2014 Free Software Foundation, Inc.
+# Copyright (C) 1994-2017 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2352,6 +2352,7 @@ sub handle_ALLOCA
   $lt ||= '';
   my $dir = handle_LIBOBJS_or_ALLOCA "${lt}ALLOCA";
 
+  $dir eq '' and $dir = './';
   $var->requires_variables ("\@${lt}ALLOCA\@ used", $lt . 'ALLOCA');
   $dep_files{$dir . '$(DEPDIR)/alloca.P' . $myobjext} = 1;
   require_libsource_with_macro ($cond, $var, FOREIGN, 'alloca.c');
@@ -3933,7 +3934,7 @@ sub substitute_ac_subst_variables_worker
 sub substitute_ac_subst_variables
 {
   my ($text) = @_;
-  $text =~ s/\$\{([^ \t=:+{}]+)}/substitute_ac_subst_variables_worker ($1)/ge;
+  $text =~ s/\$[\{]([^ \t=:+{}]+)}/substitute_ac_subst_variables_worker ($1)/ge;
   return $text;
 }
 
@@ -6262,10 +6263,13 @@ sub check_trailing_slash ($\$)
 
 # read_am_file ($AMFILE, $WHERE, $RELDIR)
 # ---------------------------------------
-# Read Makefile.am and set up %contents.  Simultaneously copy lines
-# from Makefile.am into $output_trailer, or define variables as
-# appropriate.  NOTE we put rules in the trailer section.  We want
-# user rules to come after our generated stuff.
+# Read $AMFILE file name which is located in $RELDIR, and set up
+# global variables resetted by '&generate_makefile'.  Simultaneously
+# copy lines from $AMFILE into '$output_trailer', or define variables
+# as appropriate.
+#
+# NOTE: We put rules in the trailer section.  We want user rules to
+# come after our generated stuff.
 sub read_am_file
 {
     my ($amfile, $where, $reldir) = @_;

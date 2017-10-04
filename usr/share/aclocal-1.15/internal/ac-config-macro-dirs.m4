@@ -4,7 +4,7 @@
 # FIXME: keep in sync with the contents of the variable
 #        '$ac_config_macro_dirs_fallback' in aclocal.in.
 
-# Copyright (C) 2012-2014 Free Software Foundation, Inc.
+# Copyright (C) 2012-2017 Free Software Foundation, Inc.
 #
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,

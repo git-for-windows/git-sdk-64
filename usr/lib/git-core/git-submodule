@@ -611,7 +611,6 @@ cmd_update()
 		die_if_unmatched "$mode" "$sha1"
 
 		name=$(git submodule--helper name "$sm_path") || exit
-		url=$(git config submodule."$name".url)
 		if ! test -z "$update"
 		then
 			update_module=$update
@@ -864,7 +863,7 @@ cmd_summary() {
 				test $status != A && test $ignore_config = all && continue
 			fi
 			# Also show added or modified modules which are checked out
-			GIT_DIR="$sm_path/.git" git-rev-parse --git-dir >/dev/null 2>&1 &&
+			GIT_DIR="$sm_path/.git" git rev-parse --git-dir >/dev/null 2>&1 &&
 			printf '%s\n' "$sm_path"
 		done
 	)
@@ -898,11 +897,11 @@ cmd_summary() {
 		missing_dst=
 
 		test $mod_src = 160000 &&
-		! GIT_DIR="$name/.git" git-rev-parse -q --verify $sha1_src^0 >/dev/null &&
+		! GIT_DIR="$name/.git" git rev-parse -q --verify $sha1_src^0 >/dev/null &&
 		missing_src=t
 
 		test $mod_dst = 160000 &&
-		! GIT_DIR="$name/.git" git-rev-parse -q --verify $sha1_dst^0 >/dev/null &&
+		! GIT_DIR="$name/.git" git rev-parse -q --verify $sha1_dst^0 >/dev/null &&
 		missing_dst=t
 
 		display_name=$(git submodule--helper relative-path "$name" "$wt_prefix")
