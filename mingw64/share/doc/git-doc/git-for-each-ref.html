@@ -595,19 +595,25 @@ respects <code>:track</code> to show "[ahead N, behind M]" and
 (behind), "&lt;&gt;" (ahead and behind), or "=" (in sync). <code>:track</code>
 also prints "[gone]" whenever unknown upstream ref is
 encountered. Append <code>:track,nobracket</code> to show tracking
-information without brackets (i.e "ahead N, behind M").  Has
-no effect if the ref does not have tracking information
-associated with it.  All the options apart from <code>nobracket</code>
-are mutually exclusive, but if used together the last option
-is selected.</p>
+information without brackets (i.e "ahead N, behind M").</p>
+<div class="paragraph">
+<p>(EXPERIMENTAL) Also respects <code>:remotename</code> to state the name of the
+<strong>remote</strong> instead of the ref, and <code>:remoteref</code> to state the name of
+the <strong>reference</strong> as locally known by the remote.</p>
+</div>
+<div class="paragraph">
+<p>Has no effect if the ref does not have tracking information associated
+with it.  All the options apart from <code>nobracket</code> are mutually exclusive,
+but if used together the last option is selected.</p>
+</div>
 </dd>
 <dt class="hdlist1">push</dt>
 <dd>
 <p>The name of a local ref which represents the <code>@{push}</code>
 location for the displayed ref. Respects <code>:short</code>, <code>:lstrip</code>,
-<code>:rstrip</code>, <code>:track</code>, and <code>:trackshort</code> options as <code>upstream</code>
-does. Produces an empty string if no <code>@{push}</code> ref is
-configured.</p>
+<code>:rstrip</code>, <code>:track</code>, <code>:trackshort</code>, (EXPERIMENTAL) <code>:remotename</code>,
+and (EXPERIMENTAL) <code>:remoteref</code> options as <code>upstream</code> does.
+Produces an empty string if no <code>@{push}</code> ref is configured.</p>
 </dd>
 <dt class="hdlist1">HEAD</dt>
 <dd>
@@ -848,7 +854,7 @@ This prints the authorname, if present.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-26 14:05:51 W. Europe Daylight Time
+Last updated 2017-10-05 15:30:44 Coordinated Universal Time
 </div>
 </div>
 </body>
