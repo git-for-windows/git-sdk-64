@@ -114,13 +114,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="5" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="6" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.5.1" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.6.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_create"
@@ -1945,6 +1945,30 @@ and output glyphs and their information after shaping.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="face_get_table_tags"
+              c:identifier="hb_face_get_table_tags"
+              version="1.6.0">
+      <doc xml:space="preserve">Retrieves table tags for a face, if possible.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">total number of tables, or 0 if not possible to list.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="table_count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="table_tags" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="face_get_upem"
               c:identifier="hb_face_get_upem"
               version="0.9.2">
@@ -3760,6 +3784,21 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_get_ptem"
+              c:identifier="hb_font_get_ptem"
+              version="0.9.2">
+      <doc xml:space="preserve">Gets the "point size" of the font.  A value of 0 means unset.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Point size.</doc>
+        <type name="gfloat" c:type="float"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font.</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_get_scale"
               c:identifier="hb_font_get_scale"
               version="0.9.2">
@@ -4095,6 +4134,23 @@ are not modified.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_set_ptem"
+              c:identifier="hb_font_set_ptem"
+              version="1.6.0">
+      <doc xml:space="preserve">Sets "point size" of the font.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font.</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="ptem" transfer-ownership="none">
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_set_scale"
               c:identifier="hb_font_set_scale"
               version="0.9.2">
@@ -4276,6 +4332,16 @@ are not modified.</doc>
       <parameters>
         <parameter name="ft_face" transfer-ownership="none">
           <type c:type="FT_Face"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ft_font_changed" c:identifier="hb_ft_font_changed">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -6849,6 +6915,26 @@ hb_script_from_iso15924_tag().</doc>
               value="1315272545"
               c:identifier="HB_SCRIPT_NEWA"
               glib:nick="newa">
+      </member>
+      <member name="masaram_gondi"
+              value="1198485101"
+              c:identifier="HB_SCRIPT_MASARAM_GONDI"
+              glib:nick="masaram-gondi">
+      </member>
+      <member name="nushu"
+              value="1316186229"
+              c:identifier="HB_SCRIPT_NUSHU"
+              glib:nick="nushu">
+      </member>
+      <member name="soyombo"
+              value="1399814511"
+              c:identifier="HB_SCRIPT_SOYOMBO"
+              glib:nick="soyombo">
+      </member>
+      <member name="zanabazar_square"
+              value="1516334690"
+              c:identifier="HB_SCRIPT_ZANABAZAR_SQUARE"
+              glib:nick="zanabazar-square">
       </member>
       <member name="invalid"
               value="0"
