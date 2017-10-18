@@ -470,6 +470,15 @@ NGHTTP2_EXTERN void nghttp2_rcbuf_decref(nghttp2_rcbuf *rcbuf);
 NGHTTP2_EXTERN nghttp2_vec nghttp2_rcbuf_get_buf(nghttp2_rcbuf *rcbuf);
 
 /**
+ * @function
+ *
+ * Returns nonzero if the underlying buffer is statically allocated,
+ * and 0 otherwise. This can be useful for language bindings that wish
+ * to avoid creating duplicate strings for these buffers.
+ */
+NGHTTP2_EXTERN int nghttp2_rcbuf_is_static(const nghttp2_rcbuf *rcbuf);
+
+/**
  * @enum
  *
  * The flags for header field name/value pair.
@@ -3809,9 +3818,8 @@ nghttp2_submit_response(nghttp2_session *session, int32_t stream_id,
  * Submits trailer fields HEADERS against the stream |stream_id|.
  *
  * The |nva| is an array of name/value pair :type:`nghttp2_nv` with
- * |nvlen| elements.  The application is responsible not to include
- * pseudo-header fields (header field whose name starts with ":") in
- * |nva|.
+ * |nvlen| elements.  The application must not include pseudo-header
+ * fields (headers whose names starts with ":") in |nva|.
  *
  * This function creates copies of all name/value pairs in |nva|.  It
  * also lower-cases all names in |nva|.  The order of elements in

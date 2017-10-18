@@ -1,6 +1,7 @@
 /* pkcs11.h
    Copyright 2006, 2007 g10 Code GmbH
    Copyright 2006 Andreas Jellinghaus
+   Copyright 2017 Red Hat, Inc.
 
    This file is free software; as a special exception the author gives
    unlimited permission to copy and/or distribute it, with or without
@@ -11,12 +12,12 @@
    the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
    PURPOSE.  */
 
-/* Please submit changes back to the Scute project at
-   http://www.scute.org/ (or send them to marcus@g10code.com), so that
+/* Please submit any changes back to the p11-kit project at
+   https://github.com/p11-glue/p11-kit/, so that
    they can be picked up by other projects from there as well.  */
 
 /* This file is a modified implementation of the PKCS #11 standard by
-   RSA Security Inc.  It is mostly a drop-in replacement, with the
+   OASIS group.  It is mostly a drop-in replacement, with the
    following change:
 
    This header file does not require any macro definitions by the user
@@ -147,6 +148,8 @@ extern "C" {
 #define value pValue
 #define value_len ulValueLen
 
+#define count ulCount
+
 #define ck_date _CK_DATE
 
 #define ck_mechanism_type_t CK_MECHANISM_TYPE
@@ -155,9 +158,16 @@ extern "C" {
 #define parameter pParameter
 #define parameter_len ulParameterLen
 
+#define params pParams
+
 #define ck_mechanism_info _CK_MECHANISM_INFO
 #define min_key_size ulMinKeySize
 #define max_key_size ulMaxKeySize
+
+#define ck_param_type CK_PARAM_TYPE
+#define ck_otp_param CK_OTP_PARAM
+#define ck_otp_params CK_OTP_PARAMS
+#define ck_otp_signature_info CK_OTP_SIGNATURE_INFO
 
 #define ck_rv_t CK_RV
 #define ck_notify_t CK_NOTIFY
@@ -322,6 +332,7 @@ typedef unsigned long ck_object_class_t;
 #define CKO_HW_FEATURE		(5UL)
 #define CKO_DOMAIN_PARAMETERS	(6UL)
 #define CKO_MECHANISM		(7UL)
+#define CKO_OTP_KEY		(8UL)
 #define CKO_VENDOR_DEFINED	((unsigned long) (1UL << 31))
 
 
@@ -438,6 +449,23 @@ typedef unsigned long ck_attribute_type_t;
 #define CKA_AUTH_PIN_FLAGS		(0x201UL)
 #define CKA_ALWAYS_AUTHENTICATE		(0x202UL)
 #define CKA_WRAP_WITH_TRUSTED		(0x210UL)
+#define CKA_OTP_FORMAT			(0x220UL)
+#define CKA_OTP_LENGTH			(0x221UL)
+#define CKA_OTP_TIME_INTERVAL		(0x222UL)
+#define CKA_OTP_USER_FRIENDLY_MODE	(0x223UL)
+#define CKA_OTP_CHALLENGE_REQUIREMENT	(0x224UL)
+#define CKA_OTP_TIME_REQUIREMENT	(0x225UL)
+#define CKA_OTP_COUNTER_REQUIREMENT	(0x226UL)
+#define CKA_OTP_PIN_REQUIREMENT		(0x227UL)
+#define CKA_OTP_USER_IDENTIFIER		(0x22AUL)
+#define CKA_OTP_SERVICE_IDENTIFIER	(0x22BUL)
+#define CKA_OTP_SERVICE_LOGO		(0x22CUL)
+#define CKA_OTP_SERVICE_LOGO_TYPE	(0x22DUL)
+#define CKA_OTP_COUNTER			(0x22EUL)
+#define CKA_OTP_TIME                    (0x22FUL)
+#define CKA_GOSTR3410_PARAMS		(0x250UL)
+#define CKA_GOSTR3411_PARAMS		(0x251UL)
+#define CKA_GOST28147_PARAMS		(0x252UL)
 #define CKA_HW_FEATURE_TYPE		(0x300UL)
 #define CKA_RESET_ON_INIT		(0x301UL)
 #define CKA_HAS_RESET			(0x302UL)
@@ -564,6 +592,12 @@ typedef unsigned long ck_mechanism_type_t;
 #define CKM_SHA512			(0x270UL)
 #define CKM_SHA512_HMAC			(0x271UL)
 #define CKM_SHA512_HMAC_GENERAL		(0x272UL)
+#define CKM_SECURID_KEY_GEN             (0x280UL)
+#define CKM_SECURID                     (0x282UL)
+#define CKM_HOTP_KEY_GEN                (0x290UL)
+#define CKM_HOTP                        (0x291UL)
+#define CKM_ACTI                        (0x2a0UL)
+#define CKM_ACTI_KEY_GEN                (0x2a1UL)
 #define CKM_CAST_KEY_GEN		(0x300UL)
 #define CKM_CAST_ECB			(0x301UL)
 #define CKM_CAST_CBC			(0x302UL)
@@ -699,6 +733,18 @@ typedef unsigned long ck_mechanism_type_t;
 #define CKM_DES3_CBC_ENCRYPT_DATA	(0x1103UL)
 #define CKM_AES_ECB_ENCRYPT_DATA	(0x1104UL)
 #define CKM_AES_CBC_ENCRYPT_DATA	(0x1105UL)
+#define CKM_GOSTR3410_KEY_PAIR_GEN	(0x1200UL)
+#define CKM_GOSTR3410			(0x1201UL)
+#define CKM_GOSTR3410_WITH_GOSTR3411	(0x1202UL)
+#define CKM_GOSTR3410_KEY_WRAP		(0x1203UL)
+#define CKM_GOSTR3410_DERIVE		(0x1204UL)
+#define CKM_GOSTR3411			(0x1210UL)
+#define CKM_GOSTR3411_HMAC		(0x1211UL)
+#define CKM_GOST28147_KEY_GEN		(0x1220UL)
+#define CKM_GOST28147_ECB		(0x1221UL)
+#define CKM_GOST28147			(0x1222UL)
+#define CKM_GOST28147_MAC		(0x1223UL)
+#define CKM_GOST28147_KEY_WRAP		(0x1224UL)
 #define CKM_DSA_PARAMETER_GEN		(0x2000UL)
 #define CKM_DH_PKCS_PARAMETER_GEN	(0x2001UL)
 #define CKM_X9_42_DH_PARAMETER_GEN	(0x2002UL)
@@ -724,6 +770,34 @@ typedef unsigned long ck_mechanism_type_t;
 #define CKM_AES_KEY_WRAP (0x2109UL)
 #define CKM_AES_KEY_WRAP_PAD (0x210aUL)
 
+/* Attribute and other constants related to OTP */
+#define CK_OTP_FORMAT_DECIMAL		(0UL)
+#define CK_OTP_FORMAT_HEXADECIMAL	(1UL)
+#define CK_OTP_FORMAT_ALPHANUMERIC	(2UL)
+#define CK_OTP_FORMAT_BINARY		(3UL)
+#define CK_OTP_PARAM_IGNORED		(0UL)
+#define CK_OTP_PARAM_OPTIONAL		(1UL)
+#define CK_OTP_PARAM_MANDATORY		(2UL)
+
+#define CK_OTP_VALUE			(0UL)
+#define CK_OTP_PIN			(1UL)
+#define CK_OTP_CHALLENGE		(2UL)
+#define CK_OTP_TIME			(3UL)
+#define CK_OTP_COUNTER			(4UL)
+#define CK_OTP_FLAGS			(5UL)
+#define CK_OTP_OUTPUT_LENGTH		(6UL)
+#define CK_OTP_FORMAT			(7UL)
+
+/* OTP mechanism flags */
+#define CKF_NEXT_OTP			(0x01UL)
+#define CKF_EXCLUDE_TIME		(0x02UL)
+#define CKF_EXCLUDE_COUNTER		(0x04UL)
+#define CKF_EXCLUDE_CHALLENGE		(0x08UL)
+#define CKF_EXCLUDE_PIN			(0x10UL)
+#define CKF_USER_FRIENDLY_OTP		(0x20UL)
+
+#define CKN_OTP_CHANGED			(0x01UL)
+
 struct ck_mechanism
 {
   ck_mechanism_type_t mechanism;
@@ -738,6 +812,25 @@ struct ck_mechanism_info
   unsigned long max_key_size;
   ck_flags_t flags;
 };
+
+typedef unsigned long ck_param_type;
+
+typedef struct ck_otp_param {
+   ck_param_type type;
+   void *value;
+   unsigned long value_len;
+} ck_otp_param;
+
+typedef struct ck_otp_params {
+   struct ck_otp_param *params;
+   unsigned long count;
+} ck_otp_params;
+
+typedef struct ck_otp_signature_info
+{
+  struct ck_otp_param *params;
+  unsigned long count;
+} ck_otp_signature_info;
 
 #define CKG_MGF1_SHA1 0x00000001UL
 #define CKG_MGF1_SHA224 0x00000005UL
@@ -1251,6 +1344,13 @@ struct ck_c_initialize_args
 #define CKR_CRYPTOKI_ALREADY_INITIALIZED	(0x191UL)
 #define CKR_MUTEX_BAD				(0x1a0UL)
 #define CKR_MUTEX_NOT_LOCKED			(0x1a1UL)
+#define CKR_NEW_PIN_MODE			(0x1b0UL)
+#define CKR_NEXT_OTP				(0x1b1UL)
+#define CKR_EXCEEDED_MAX_ITERATIONS		(0x1c0UL)
+#define CKR_FIPS_SELF_TEST_FAILED		(0x1c1UL)
+#define CKR_LIBRARY_LOAD_FAILED			(0x1c2UL)
+#define CKR_PIN_TOO_WEAK			(0x1c3UL)
+#define CKR_PUBLIC_KEY_INVALID			(0x1c4UL)
 #define CKR_FUNCTION_REJECTED			(0x200UL)
 #define CKR_VENDOR_DEFINED			((unsigned long) (1UL << 31))
 
@@ -1326,6 +1426,9 @@ typedef struct ck_mechanism *CK_MECHANISM_PTR;
 typedef struct ck_mechanism_info CK_MECHANISM_INFO;
 typedef struct ck_mechanism_info *CK_MECHANISM_INFO_PTR;
 
+typedef struct ck_otp_mechanism_info CK_OTP_MECHANISM_INFO;
+typedef struct ck_otp_mechanism_info *CK_OTP_MECHANISM_INFO_PTR;
+
 typedef struct ck_function_list CK_FUNCTION_LIST;
 typedef struct ck_function_list *CK_FUNCTION_LIST_PTR;
 typedef struct ck_function_list **CK_FUNCTION_LIST_PTR_PTR;
@@ -1392,6 +1495,9 @@ typedef struct ck_rsa_pkcs_oaep_params *CK_RSA_PKCS_OAEP_PARAMS_PTR;
 #undef value
 #undef value_len
 
+#undef params
+#undef count
+
 #undef ck_date
 
 #undef ck_mechanism_type_t
@@ -1401,6 +1507,12 @@ typedef struct ck_rsa_pkcs_oaep_params *CK_RSA_PKCS_OAEP_PARAMS_PTR;
 #undef parameter_len
 
 #undef ck_mechanism_info
+
+#undef ck_param_type
+#undef ck_otp_param
+#undef ck_otp_params
+#undef ck_otp_signature_info
+
 #undef min_key_size
 #undef max_key_size
 
