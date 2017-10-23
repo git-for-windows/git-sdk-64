@@ -95,7 +95,7 @@ while test $# -gt 0; do
         ;;
 
     --version)
-        echo libcurl 7.56.0
+        echo libcurl 7.56.1
         exit 0
         ;;
 
@@ -107,20 +107,20 @@ while test $# -gt 0; do
         # dash as that's used for things like version 1.2.3-CVS
         cpatch=`echo $checkfor | cut -d. -f3 | cut -d- -f1`
         checknum=`echo "$cmajor*256*256 + $cminor*256 + ${cpatch:-0}" | bc`
-        numuppercase=`echo 073800 | tr 'a-f' 'A-F'`
+        numuppercase=`echo 073801 | tr 'a-f' 'A-F'`
         nownum=`echo "obase=10; ibase=16; $numuppercase" | bc`
 
         if test "$nownum" -ge "$checknum"; then
           # silent success
           exit 0
         else
-          echo "requested version $checkfor is newer than existing 7.56.0"
+          echo "requested version $checkfor is newer than existing 7.56.1"
           exit 1
         fi
         ;;
 
     --vernum)
-        echo 073800
+        echo 073801
         exit 0
         ;;
 
@@ -164,7 +164,7 @@ while test $# -gt 0; do
         ;;
 
     --configure)
-        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--without-random' '--without-librtmp' '--enable-static' '--enable-shared' '--enable-sspi' '--with-libmetalink=/mingw32' '--disable-debug' '--with-ssl' '--with-ca-bundle=/mingw32/ssl/certs/ca-bundle.crt' '--with-nghttp2=${MINGW_PREFIX}/' '--with-winssl' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1' 'CXXFLAGS=-march=i686 -mtune=generic -O2 -pipe'"
+        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--without-random' '--without-librtmp' '--enable-static' '--enable-shared' '--enable-sspi' '--with-libmetalink=/mingw32' '--disable-debug' '--with-ssl' '--with-ca-bundle=/mingw32/ssl/certs/ca-bundle.crt' '--with-nghttp2=${MINGW_PREFIX}/' '--with-winssl' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1'"
         ;;
 
     *)
