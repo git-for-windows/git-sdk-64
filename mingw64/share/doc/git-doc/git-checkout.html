@@ -436,7 +436,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <em>git checkout</em> [-q] [-f] [-m] [--detach] &lt;commit&gt;
 <em>git checkout</em> [-q] [-f] [-m] [[-b|-B|--orphan] &lt;new_branch&gt;] [&lt;start_point&gt;]
 <em>git checkout</em> [-f|--ours|--theirs|-m|--conflict=&lt;style&gt;] [&lt;tree-ish&gt;] [--] &lt;paths&gt;&#8230;&#8203;
-<em>git checkout</em> [-p|--patch] [&lt;tree-ish&gt;] [--] [&lt;paths&gt;&#8230;&#8203;]</pre>
+<em>git checkout</em> [&lt;tree-ish&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;
+<em>git checkout</em> (-p|--patch) [&lt;tree-ish&gt;] [--] [&lt;paths&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -470,7 +471,7 @@ equivalent to</p>
 </div>
 <div class="paragraph">
 <p>You could omit &lt;branch&gt;, in which case the command degenerates to
-"check out the current branch", which is a glorified no-op with a
+"check out the current branch", which is a glorified no-op with
 rather expensive side-effects to show only the tracking information,
 if exists, for the current branch.</p>
 </div>
@@ -516,21 +517,13 @@ be used to detach HEAD at the tip of the branch (<code>git checkout
 <p>Omitting &lt;branch&gt; detaches HEAD at the tip of the current branch.</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>git checkout</em> [-p|--patch] [&lt;tree-ish&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>git checkout</em> [&lt;tree-ish&gt;] [--] &lt;pathspec&gt;&#8230;&#8203;</dt>
 <dd>
-<p>When &lt;paths&gt; or <code>--patch</code> are given, <em>git checkout</em> does <strong>not</strong>
-switch branches.  It updates the named paths in the working tree
-from the index file or from a named &lt;tree-ish&gt; (most often a
-commit).  In this case, the <code>-b</code> and <code>--track</code> options are
-meaningless and giving either of them results in an error.  The
-&lt;tree-ish&gt; argument can be used to specify a specific tree-ish
-(i.e.  commit, tag or tree) to update the index for the given
-paths before updating the working tree.</p>
-<div class="paragraph">
-<p><em>git checkout</em> with &lt;paths&gt; or <code>--patch</code> is used to restore modified or
-deleted paths to their original contents from the index or replace paths
-with the contents from a named &lt;tree-ish&gt; (most often a commit-ish).</p>
-</div>
+<p>Overwrite paths in the working tree by replacing with the
+contents in the index or in the &lt;tree-ish&gt; (most often a
+commit).  When a &lt;tree-ish&gt; is given, the paths that
+match the &lt;pathspec&gt; are updated both in the index and in
+the working tree.</p>
 <div class="paragraph">
 <p>The index may contain unmerged entries because of a previous failed merge.
 By default, if you try to check out such an entry from the index, the
@@ -540,6 +533,14 @@ specific side of the merge can be checked out of the index by
 using <code>--ours</code> or <code>--theirs</code>.  With <code>-m</code>, changes made to the working tree
 file can be discarded to re-create the original conflicted merge result.</p>
 </div>
+</dd>
+<dt class="hdlist1"><em>git checkout</em> (-p|--patch) [&lt;tree-ish&gt;] [--] [&lt;pathspec&gt;&#8230;&#8203;]</dt>
+<dd>
+<p>This is similar to the "check out paths to the working tree
+from either the index or from a tree-ish" mode described
+above, but lets you use the interactive interface to show
+the "diff" output and choose which hunks to use in the
+result.  See below for the description of <code>--patch</code> option.</p>
 </dd>
 </dl>
 </div>
@@ -1079,7 +1080,7 @@ $ git add frotz</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-12 21:18:05 Coordinated Universal Time
+Last updated 2017-10-23 21:47:23 Coordinated Universal Time
 </div>
 </div>
 </body>

@@ -849,9 +849,11 @@ are read from <code>remote.&lt;repository&gt;.fetch</code> variables instead
 (see <a href="git-fetch.html">git-fetch</a>(1)).</p>
 <div class="paragraph">
 <p>The format of a &lt;refspec&gt; parameter is an optional plus
-<code>+</code>, followed by the source ref &lt;src&gt;, followed
+<code>+</code>, followed by the source &lt;src&gt;, followed
 by a colon <code>:</code>, followed by the destination ref &lt;dst&gt;.
-The colon can be omitted when &lt;dst&gt; is empty.</p>
+The colon can be omitted when &lt;dst&gt; is empty.  &lt;src&gt; is
+typically a ref, but it can also be a fully spelled hex object
+name.</p>
 </div>
 <div class="paragraph">
 <p><code>tag &lt;tag&gt;</code> means the same as <code>refs/tags/&lt;tag&gt;:refs/tags/&lt;tag&gt;</code>;
@@ -1244,7 +1246,8 @@ the other tree did, declaring <em>our</em> history contains all that happened in
 </dd>
 <dt class="hdlist1">theirs</dt>
 <dd>
-<p>This is the opposite of <em>ours</em>.</p>
+<p>This is the opposite of <em>ours</em>; note that, unlike <em>ours</em>, there is
+no <em>theirs</em> merge stragegy to confuse this merge option with.</p>
 </dd>
 <dt class="hdlist1">patience</dt>
 <dd>
@@ -1556,7 +1559,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-12 21:18:05 Coordinated Universal Time
+Last updated 2017-10-23 21:47:23 Coordinated Universal Time
 </div>
 </div>
 </body>

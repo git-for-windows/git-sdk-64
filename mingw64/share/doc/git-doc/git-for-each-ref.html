@@ -433,8 +433,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="verseblock">
 <pre class="content"><em>git for-each-ref</em> [--count=&lt;count&gt;] [--shell|--perl|--python|--tcl]
 		   [(--sort=&lt;key&gt;)&#8230;&#8203;] [--format=&lt;format&gt;] [&lt;pattern&gt;&#8230;&#8203;]
-		   [--points-at &lt;object&gt;] [(--merged | --no-merged) [&lt;object&gt;]]
-		   [--contains [&lt;object&gt;]] [--no-contains [&lt;object&gt;]]</pre>
+		   [--points-at=&lt;object&gt;]
+		   (--merged[=&lt;object&gt;] | --no-merged[=&lt;object&gt;])
+		   [--contains[=&lt;object&gt;]] [--no-contains[=&lt;object&gt;]]</pre>
 </div>
 </div>
 </div>
@@ -456,13 +457,20 @@ host language allowing their direct evaluation in that language.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">&lt;count&gt;</dt>
+<dt class="hdlist1">&lt;pattern&gt;&#8230;&#8203;</dt>
+<dd>
+<p>If one or more patterns are given, only refs are shown that
+match against at least one pattern, either using fnmatch(3) or
+literally, in the latter case matching completely or from the
+beginning up to a slash.</p>
+</dd>
+<dt class="hdlist1">--count=&lt;count&gt;</dt>
 <dd>
 <p>By default the command shows all refs that match
 <code>&lt;pattern&gt;</code>.  This option makes it stop after showing
 that many refs.</p>
 </dd>
-<dt class="hdlist1">&lt;key&gt;</dt>
+<dt class="hdlist1">--sort=&lt;key&gt;</dt>
 <dd>
 <p>A field name to sort on.  Prefix <code>-</code> to sort in
 descending order of the value.  When unspecified,
@@ -470,7 +478,7 @@ descending order of the value.  When unspecified,
 multiple times, in which case the last key becomes the primary
 key.</p>
 </dd>
-<dt class="hdlist1">&lt;format&gt;</dt>
+<dt class="hdlist1">--format=&lt;format&gt;</dt>
 <dd>
 <p>A string that interpolates <code>%(fieldname)</code> from a ref being shown
 and the object it points at.  If <code>fieldname</code>
@@ -484,13 +492,16 @@ are hex digits interpolates to character with hex code
 <code>xx</code>; for example <code>%00</code> interpolates to <code>\0</code> (NUL),
 <code>%09</code> to <code>\t</code> (TAB) and <code>%0a</code> to <code>\n</code> (LF).</p>
 </dd>
-<dt class="hdlist1">&lt;pattern&gt;&#8230;&#8203;</dt>
-<dd>
-<p>If one or more patterns are given, only refs are shown that
-match against at least one pattern, either using fnmatch(3) or
-literally, in the latter case matching completely or from the
-beginning up to a slash.</p>
-</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>--color[=&lt;when&gt;]:
+	Respect any colors specified in the <code>--format</code> option. The
+	<code>&lt;when&gt;</code> field must be one of <code>always</code>, <code>never</code>, or <code>auto</code> (if
+	<code>&lt;when&gt;</code> is absent, behave as if <code>always</code> was given).</p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">--shell</dt>
 <dt class="hdlist1">--perl</dt>
 <dt class="hdlist1">--python</dt>
@@ -501,28 +512,28 @@ placeholders are quoted as string literals suitable for
 the specified host language.  This is meant to produce
 a scriptlet that can directly be `eval`ed.</p>
 </dd>
-<dt class="hdlist1">--points-at &lt;object&gt;</dt>
+<dt class="hdlist1">--points-at=&lt;object&gt;</dt>
 <dd>
 <p>Only list refs which points at the given object.</p>
 </dd>
-<dt class="hdlist1">--merged [&lt;object&gt;]</dt>
+<dt class="hdlist1">--merged[=&lt;object&gt;]</dt>
 <dd>
 <p>Only list refs whose tips are reachable from the
 specified commit (HEAD if not specified),
 incompatible with <code>--no-merged</code>.</p>
 </dd>
-<dt class="hdlist1">--no-merged [&lt;object&gt;]</dt>
+<dt class="hdlist1">--no-merged[=&lt;object&gt;]</dt>
 <dd>
 <p>Only list refs whose tips are not reachable from the
 specified commit (HEAD if not specified),
 incompatible with <code>--merged</code>.</p>
 </dd>
-<dt class="hdlist1">--contains [&lt;object&gt;]</dt>
+<dt class="hdlist1">--contains[=&lt;object&gt;]</dt>
 <dd>
 <p>Only list refs which contain the specified commit (HEAD if not
 specified).</p>
 </dd>
-<dt class="hdlist1">--no-contains [&lt;object&gt;]</dt>
+<dt class="hdlist1">--no-contains[=&lt;object&gt;]</dt>
 <dd>
 <p>Only list refs which don&#8217;t contain the specified commit (HEAD
 if not specified).</p>
@@ -854,7 +865,7 @@ This prints the authorname, if present.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-12 21:18:05 Coordinated Universal Time
+Last updated 2017-10-23 21:47:23 Coordinated Universal Time
 </div>
 </div>
 </body>

@@ -652,59 +652,44 @@ refer to the presence of a path in the specified commit:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>I                   H        M        Result
-      -------------------------------------------------------
-    0  nothing             nothing  nothing  (does not happen)
-    1  nothing             nothing  exists   use M
-    2  nothing             exists   nothing  remove path from index
-    3  nothing             exists   exists,  use M if "initial checkout",
-			     H == M   keep index otherwise
-			     exists,  fail
-			     H != M</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>   clean I==H  I==M
-  ------------------
-4  yes   N/A   N/A     nothing  nothing  keep index
-5  no    N/A   N/A     nothing  nothing  keep index</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>6  yes   N/A   yes     nothing  exists   keep index
-7  no    N/A   yes     nothing  exists   keep index
-8  yes   N/A   no      nothing  exists   fail
-9  no    N/A   no      nothing  exists   fail</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>10 yes   yes   N/A     exists   nothing  remove path from index
-11 no    yes   N/A     exists   nothing  fail
-12 yes   no    N/A     exists   nothing  fail
-13 no    no    N/A     exists   nothing  fail</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>clean (H==M)
-      ------
-    14 yes                 exists   exists   keep index
-    15 no                  exists   exists   keep index</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>   clean I==H  I==M (H!=M)
-  ------------------
-16 yes   no    no      exists   exists   fail
-17 no    no    no      exists   exists   fail
-18 yes   no    yes     exists   exists   keep index
-19 no    no    yes     exists   exists   keep index
-20 yes   yes   no      exists   exists   use M
-21 no    yes   no      exists   exists   fail</pre>
+<pre>	I                   H        M        Result
+       -------------------------------------------------------
+     0  nothing             nothing  nothing  (does not happen)
+     1  nothing             nothing  exists   use M
+     2  nothing             exists   nothing  remove path from index
+     3  nothing             exists   exists,  use M if "initial checkout",
+				     H == M   keep index otherwise
+				     exists,  fail
+				     H != M
+
+        clean I==H  I==M
+       ------------------
+     4  yes   N/A   N/A     nothing  nothing  keep index
+     5  no    N/A   N/A     nothing  nothing  keep index
+
+     6  yes   N/A   yes     nothing  exists   keep index
+     7  no    N/A   yes     nothing  exists   keep index
+     8  yes   N/A   no      nothing  exists   fail
+     9  no    N/A   no      nothing  exists   fail
+
+     10 yes   yes   N/A     exists   nothing  remove path from index
+     11 no    yes   N/A     exists   nothing  fail
+     12 yes   no    N/A     exists   nothing  fail
+     13 no    no    N/A     exists   nothing  fail
+
+	clean (H==M)
+       ------
+     14 yes                 exists   exists   keep index
+     15 no                  exists   exists   keep index
+
+        clean I==H  I==M (H!=M)
+       ------------------
+     16 yes   no    no      exists   exists   fail
+     17 no    no    no      exists   exists   fail
+     18 yes   no    yes     exists   exists   keep index
+     19 no    no    yes     exists   exists   keep index
+     20 yes   yes   no      exists   exists   use M
+     21 no    yes   no      exists   exists   fail</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -992,7 +977,7 @@ support.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-12 21:18:05 Coordinated Universal Time
+Last updated 2017-10-23 21:47:23 Coordinated Universal Time
 </div>
 </div>
 </body>
