@@ -453,29 +453,43 @@ files (typically <code>.gitignore</code>).</p>
 </dd>
 <dt class="hdlist1"><code>flags</code></dt>
 <dd>
-<p>A bit-field of options (the <code>*IGNORED*</code> flags are mutually exclusive):</p>
+<p>A bit-field of options:</p>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code>DIR_SHOW_IGNORED</code></dt>
 <dd>
-<p>Return just ignored files in <code>entries[]</code>, not untracked files.</p>
+<p>Return just ignored files in <code>entries[]</code>, not untracked
+files. This flag is mutually exclusive with
+<code>DIR_SHOW_IGNORED_TOO</code>.</p>
 </dd>
 <dt class="hdlist1"><code>DIR_SHOW_IGNORED_TOO</code></dt>
 <dd>
-<p>Similar to <code>DIR_SHOW_IGNORED</code>, but return ignored files in <code>ignored[]</code>
-in addition to untracked files in <code>entries[]</code>.</p>
-</dd>
-<dt class="hdlist1"><code>DIR_SHOW_IGNORED_DIRECTORY</code></dt>
-<dd>
-<p>(EXPERIMENTAL) If this is set, non-empty directories that match an
-ignore pattern are returned. The individual files contained in ignored
-directories are not included.</p>
+<p>Similar to <code>DIR_SHOW_IGNORED</code>, but return ignored files in
+<code>ignored[]</code> in addition to untracked files in
+<code>entries[]</code>. This flag is mutually exclusive with
+<code>DIR_SHOW_IGNORED</code>.</p>
 </dd>
 <dt class="hdlist1"><code>DIR_KEEP_UNTRACKED_CONTENTS</code></dt>
 <dd>
 <p>Only has meaning if <code>DIR_SHOW_IGNORED_TOO</code> is also set; if this is set, the
 untracked contents of untracked directories are also returned in
 <code>entries[]</code>.</p>
+</dd>
+<dt class="hdlist1"><code>DIR_SHOW_IGNORED_TOO_MODE_MATCHING</code></dt>
+<dd>
+<p>Only has meaning if <code>DIR_SHOW_IGNORED_TOO</code> is also set; if
+this is set, returns ignored files and directories that match
+an exclude pattern. If a directory matches an exclude pattern,
+then the directory is returned and the contained paths are
+not. A directory that does not match an exclude pattern will
+not be returned even if all of its contents are ignored. In
+this case, the contents are returned as individual entries.</p>
+<div class="paragraph">
+<p>If this is set, files and directories that explicity match an ignore
+pattern are reported. Implicity ignored directories (directories that
+do not match an ignore pattern, but whose contents are all ignored)
+are not reported, instead all of the contents are reported.</p>
+</div>
 </dd>
 <dt class="hdlist1"><code>DIR_COLLECT_IGNORED</code></dt>
 <dd>
@@ -578,7 +592,7 @@ up the standard set of exclude settings.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:24 Coordinated Universal Time
+Last updated 2017-10-30 10:11:09 Coordinated Universal Time
 </div>
 </div>
 </body>

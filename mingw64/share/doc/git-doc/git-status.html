@@ -549,15 +549,40 @@ the behavior before 1.7.0). Using "all" hides all changes to submodules
 (and suppresses the output of submodule summaries when the config option
 <code>status.submoduleSummary</code> is set).</p>
 </dd>
-<dt class="hdlist1">--ignored</dt>
+<dt class="hdlist1">--ignored[=&lt;mode&gt;]</dt>
 <dd>
 <p>Show ignored files as well.</p>
-</dd>
-<dt class="hdlist1">--show-ignored-directory</dt>
-<dd>
-<p>(EXPERIMENTAL) Show directories that are ignored, instead of individual files.
-Does not recurse into excluded directories when listing all
-untracked files.</p>
+<div class="paragraph">
+<p>The mode parameter is used to specify the handling of ignored files.
+It is optional: it defaults to <em>traditional</em>.</p>
+</div>
+<div class="paragraph">
+<p>The possible options are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>traditional</em> - Shows ignored files and directories, unless
+--untracked-files=all is specifed, in which case
+individual files in ignored directories are
+displayed.</p>
+</li>
+<li>
+<p><em>no</em>	        - Show no ignored files.</p>
+</li>
+<li>
+<p><em>matching</em>    - Shows ignored files and directories matching an
+ignore pattern.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When <em>matching</em> mode is specified, paths that explicity match an
+ignored pattern are shown. If a directory matches an ignore pattern,
+then it is shown, but not paths contained in the ignored directory. If
+a directory does not match an ignore pattern, but all contents are
+ignored, then the directory is not shown, but all contents are shown.</p>
+</div>
 </dd>
 <dt class="hdlist1">-z</dt>
 <dd>
@@ -953,7 +978,7 @@ output but does not honor these settings.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

@@ -653,11 +653,11 @@ either --bool or --int, as described above.</p>
 </dd>
 <dt class="hdlist1">--path</dt>
 <dd>
-<p><em>git-config</em> will expand leading <em>~</em> to the value of
-<em>$HOME</em>, and <em>~user</em> to the home directory for the
+<p><code>git config</code> will expand a leading <code>~</code> to the value of
+<code>$HOME</code>, and <code>~user</code> to the home directory for the
 specified user.  This option has no effect when setting the
-value (but you can use <em>git config bla ~/</em> from the
-command line to let your shell do the expansion).</p>
+value (but you can use <code>git config section.variable ~/</code>
+from the command line to let your shell do the expansion).</p>
 </dd>
 <dt class="hdlist1">-z</dt>
 <dt class="hdlist1">--null</dt>
@@ -1958,6 +1958,13 @@ commented, and removes them after the editor returns
 the beginning character of any line in existing commit messages.</p>
 </div>
 </dd>
+<dt class="hdlist1">core.filesRefLockTimeout</dt>
+<dd>
+<p>The length of time, in milliseconds, to retry when trying to
+lock an individual reference. Value 0 means not to retry at
+all; -1 means to try indefinitely. Default is 100 (i.e.,
+retry for 100ms).</p>
+</dd>
 <dt class="hdlist1">core.packedRefsTimeout</dt>
 <dd>
 <p>The length of time, in milliseconds, to retry when trying to
@@ -2341,6 +2348,14 @@ default).</p>
 command line with the <code>--color[=&lt;when&gt;]</code> option.</p>
 </div>
 </dd>
+<dt class="hdlist1">diff.colorMoved</dt>
+<dd>
+<p>If set to either a valid <code>&lt;mode&gt;</code> or a true value, moved lines
+in a diff are colored differently, for details of valid modes
+see <em>--color-moved</em> in <a href="git-diff.html">git-diff</a>(1). If simply set to
+true the default color mode will be used. When set to false,
+moved lines are not colored.</p>
+</dd>
 <dt class="hdlist1">color.diff.&lt;slot&gt;</dt>
 <dd>
 <p>Use customized color for diff colorization.  <code>&lt;slot&gt;</code> specifies
@@ -2348,8 +2363,12 @@ which part of the patch to use the specified color, and is one
 of <code>context</code> (context text - <code>plain</code> is a historical synonym),
 <code>meta</code> (metainformation), <code>frag</code>
 (hunk header), <em>func</em> (function in hunk header), <code>old</code> (removed lines),
-<code>new</code> (added lines), <code>commit</code> (commit headers), or <code>whitespace</code>
-(highlighting whitespace errors).</p>
+<code>new</code> (added lines), <code>commit</code> (commit headers), <code>whitespace</code>
+(highlighting whitespace errors), <code>oldMoved</code> (deleted lines),
+<code>newMoved</code> (added lines), <code>oldMovedDimmed</code>, <code>oldMovedAlternative</code>,
+<code>oldMovedAlternativeDimmed</code>, <code>newMovedDimmed</code>, <code>newMovedAlternative</code>
+and <code>newMovedAlternativeDimmed</code> (See the <em>&lt;mode&gt;</em>
+setting of <em>--color-moved</em> in <a href="git-diff.html">git-diff</a>(1) for details).</p>
 </dd>
 <dt class="hdlist1">color.decorate.&lt;slot&gt;</dt>
 <dd>
@@ -3290,12 +3309,14 @@ match the &lt;pattern&gt;.</p>
 <dd>
 <p>Records of conflicted merge you resolved earlier are
 kept for this many days when <em>git rerere gc</em> is run.
+You can also use more human-readable "1.month.ago", etc.
 The default is 60 days.  See <a href="git-rerere.html">git-rerere</a>(1).</p>
 </dd>
 <dt class="hdlist1">gc.rerereUnresolved</dt>
 <dd>
 <p>Records of conflicted merge you have not resolved are
 kept for this many days when <em>git rerere gc</em> is run.
+You can also use more human-readable "1.month.ago", etc.
 The default is 15 days.  See <a href="git-rerere.html">git-rerere</a>(1).</p>
 </dd>
 <dt class="hdlist1">gitcvs.commitMsgAnnotation</dt>
@@ -5300,10 +5321,14 @@ See <a href="git-submodule.html">git-submodule</a>(1) and <a href="gitmodules.ht
 </dd>
 <dt class="hdlist1">submodule.&lt;name&gt;.update</dt>
 <dd>
-<p>The default update procedure for a submodule. This variable
-is populated by <code>git submodule init</code> from the
-<a href="gitmodules.html">gitmodules</a>(5) file. See description of <em>update</em>
-command in <a href="git-submodule.html">git-submodule</a>(1).</p>
+<p>The method by which a submodule is updated by <em>git submodule update</em>,
+which is the only affected command, others such as
+<em>git checkout --recurse-submodules</em> are unaffected. It exists for
+historical reasons, when <em>git submodule</em> was the only command to
+interact with submodules; settings like <code>submodule.active</code>
+and <code>pull.rebase</code> are more specific. It is populated by
+<code>git submodule init</code> from the <a href="gitmodules.html">gitmodules</a>(5) file.
+See description of <em>update</em> command in <a href="git-submodule.html">git-submodule</a>(1).</p>
 </dd>
 <dt class="hdlist1">submodule.&lt;name&gt;.branch</dt>
 <dd>
@@ -5642,7 +5667,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

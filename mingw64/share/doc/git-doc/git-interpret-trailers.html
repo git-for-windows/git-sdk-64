@@ -423,7 +423,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>git-interpret-trailers(1) Manual Page</h1>
 <h2>NAME</h2>
 <div class="sectionbody">
-<p>git-interpret-trailers - help add structured information into commit messages</p>
+<p>git-interpret-trailers - add or parse structured information in commit messages</p>
 </div>
 </div>
 <div id="content">
@@ -431,7 +431,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git interpret-trailers</em> [--in-place] [--trim-empty] [(--trailer &lt;token&gt;[(=|:)&lt;value&gt;])&#8230;&#8203;] [&lt;file&gt;&#8230;&#8203;]</pre>
+<pre class="content"><em>git interpret-trailers</em> [options] [(--trailer &lt;token&gt;[(=|:)&lt;value&gt;])&#8230;&#8203;] [&lt;file&gt;&#8230;&#8203;]
+<em>git interpret-trailers</em> [options] [--parse] [&lt;file&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -439,16 +440,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Help adding <em>trailers</em> lines, that look similar to RFC 822 e-mail
+<p>Help parsing or adding <em>trailers</em> lines, that look similar to RFC 822 e-mail
 headers, at the end of the otherwise free-form part of a commit
 message.</p>
 </div>
 <div class="paragraph">
 <p>This command reads some patches or commit messages from either the
-&lt;file&gt; arguments or the standard input if no &lt;file&gt; is specified. Then
-this command applies the arguments passed using the <code>--trailer</code>
-option, if any, to the commit message part of each input file. The
-result is emitted on the standard output.</p>
+&lt;file&gt; arguments or the standard input if no &lt;file&gt; is specified. If
+<code>--parse</code> is specified, the output consists of the parsed trailers.</p>
+</div>
+<div class="paragraph">
+<p>Otherwise, this command applies the arguments passed using the
+<code>--trailer</code> option, if any, to the commit message part of each input
+file. The result is emitted on the standard output.</p>
 </div>
 <div class="paragraph">
 <p>Some configuration variables control the way the <code>--trailer</code> arguments
@@ -523,6 +527,52 @@ This applies to existing trailers as well as new trailers.</p>
 <p>Specify a (&lt;token&gt;, &lt;value&gt;) pair that should be applied as a
 trailer to the input messages. See the description of this
 command.</p>
+</dd>
+<dt class="hdlist1">--where &lt;placement&gt;</dt>
+<dt class="hdlist1">--no-where</dt>
+<dd>
+<p>Specify where all new trailers will be added.  A setting
+provided with <em>--where</em> overrides all configuration variables
+and applies to all <em>--trailer</em> options until the next occurrence of
+<em>--where</em> or <em>--no-where</em>.</p>
+</dd>
+<dt class="hdlist1">--if-exists &lt;action&gt;</dt>
+<dt class="hdlist1">--no-if-exists</dt>
+<dd>
+<p>Specify what action will be performed when there is already at
+least one trailer with the same &lt;token&gt; in the message.  A setting
+provided with <em>--if-exists</em> overrides all configuration variables
+and applies to all <em>--trailer</em> options until the next occurrence of
+<em>--if-exists</em> or <em>--no-if-exists</em>.</p>
+</dd>
+<dt class="hdlist1">--if-missing &lt;action&gt;</dt>
+<dt class="hdlist1">--no-if-missing</dt>
+<dd>
+<p>Specify what action will be performed when there is no other
+trailer with the same &lt;token&gt; in the message.  A setting
+provided with <em>--if-missing</em> overrides all configuration variables
+and applies to all <em>--trailer</em> options until the next occurrence of
+<em>--if-missing</em> or <em>--no-if-missing</em>.</p>
+</dd>
+<dt class="hdlist1">--only-trailers</dt>
+<dd>
+<p>Output only the trailers, not any other parts of the input.</p>
+</dd>
+<dt class="hdlist1">--only-input</dt>
+<dd>
+<p>Output only trailers that exist in the input; do not add any
+from the command-line or by following configured <code>trailer.*</code>
+rules.</p>
+</dd>
+<dt class="hdlist1">--unfold</dt>
+<dd>
+<p>Remove any whitespace-continuation in trailers, so that each
+trailer appears on a line by itself with its full content.</p>
+</dd>
+<dt class="hdlist1">--parse</dt>
+<dd>
+<p>A convenience alias for <code>--only-trailers --only-input
+--unfold</code>.</p>
 </dd>
 </dl>
 </div>
@@ -643,9 +693,9 @@ variable.</p>
 configuration variable and it overrides what is specified by
 that option for trailers with the specified &lt;token&gt;.</p>
 </dd>
-<dt class="hdlist1">trailer.&lt;token&gt;.ifexist</dt>
+<dt class="hdlist1">trailer.&lt;token&gt;.ifexists</dt>
 <dd>
-<p>This option takes the same values as the <em>trailer.ifexist</em>
+<p>This option takes the same values as the <em>trailer.ifexists</em>
 configuration variable and it overrides what is specified by
 that option for trailers with the specified &lt;token&gt;.</p>
 </dd>
@@ -852,7 +902,7 @@ $ chmod +x .git/hooks/commit-msg</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

@@ -8,13 +8,13 @@ git-filter-branch - Rewrite branches
 SYNOPSIS
 --------
 [verse]
-'git filter-branch' [--setup <command>] [--env-filter <command>]
-	[--tree-filter <command>] [--index-filter <command>]
-	[--parent-filter <command>] [--msg-filter <command>]
-	[--commit-filter <command>] [--tag-name-filter <command>]
-	[--subdirectory-filter <directory>] [--prune-empty]
+'git filter-branch' [--setup <command>] [--subdirectory-filter <directory>]
+	[--env-filter <command>] [--tree-filter <command>]
+	[--index-filter <command>] [--parent-filter <command>]
+	[--msg-filter <command>] [--commit-filter <command>]
+	[--tag-name-filter <command>] [--prune-empty]
 	[--original <namespace>] [-d <directory>] [-f | --force]
-	[--] [<rev-list options>...]
+	[--state-branch <branch>] [--] [<rev-list options>...]
 
 DESCRIPTION
 -----------
@@ -88,6 +88,11 @@ OPTIONS
 	variables are defined yet.  Functions or variables defined here
 	can be used or modified in the following filter steps except
 	the commit filter, for technical reasons.
+
+--subdirectory-filter <directory>::
+	Only look at the history which touches the given subdirectory.
+	The result will contain that directory (and only that) as its
+	project root. Implies <<Remap_to_ancestor>>.
 
 --env-filter <command>::
 	This filter may be used if you only need to modify the environment
@@ -167,11 +172,6 @@ be removed, buyer beware. There is also no support for changing the
 author or timestamp (or the tag message for that matter). Tags which point
 to other tags will be rewritten to point to the underlying commit.
 
---subdirectory-filter <directory>::
-	Only look at the history which touches the given subdirectory.
-	The result will contain that directory (and only that) as its
-	project root. Implies <<Remap_to_ancestor>>.
-
 --prune-empty::
 	Some filters will generate empty commits that leave the tree untouched.
 	This option instructs git-filter-branch to remove such commits if they
@@ -197,6 +197,12 @@ to other tags will be rewritten to point to the underlying commit.
 	'git filter-branch' refuses to start with an existing temporary
 	directory or when there are already refs starting with
 	'refs/original/', unless forced.
+
+--state-branch <branch>::
+	This option will cause the mapping from old to new objects to
+	be loaded from named branch upon startup and saved as a new
+	commit to that branch upon exit, enabling incremental of large
+	trees. If '<branch>' does not exist it will be created.
 
 <rev-list options>...::
 	Arguments for 'git rev-list'.  All positive refs included by

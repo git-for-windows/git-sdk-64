@@ -618,6 +618,11 @@ magic ":(glob)"</p>
 <p>Add "icase" magic to all pathspec. This is equivalent to setting
 the <code>GIT_ICASE_PATHSPECS</code> environment variable to <code>1</code>.</p>
 </dd>
+<dt class="hdlist1">--no-optional-locks</dt>
+<dd>
+<p>Do not perform optional operations that require locks. This is
+equivalent to setting the <code>GIT_OPTIONAL_LOCKS</code> to <code>0</code>.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -1267,7 +1272,7 @@ users typically do not use them directly.</p>
 </dd>
 <dt class="hdlist1"><a href="git-interpret-trailers.html">git-interpret-trailers</a>(1)</dt>
 <dd>
-<p>help add structured information into commit messages.</p>
+<p>add or parse structured information in commit messages.</p>
 </dd>
 <dt class="hdlist1"><a href="git-mailinfo.html">git-mailinfo</a>(1)</dt>
 <dd>
@@ -1867,6 +1872,15 @@ submodule initialization from an untrusted repository or for programs
 which feed potentially-untrusted URLS to git commands.  See
 <a href="git-config.html">git-config</a>(1) for more details.</p>
 </dd>
+<dt class="hdlist1"><code>GIT_OPTIONAL_LOCKS</code></dt>
+<dd>
+<p>If set to <code>0</code>, Git will complete any requested operation without
+performing any optional sub-operations that require taking a lock.
+For example, this will prevent <code>git status</code> from refreshing the
+index as a side effect. This is useful for processes running in
+the background which do not want to cause lock contention with
+other operations on the repository.  Defaults to <code>1</code>.</p>
+</dd>
 <dt class="hdlist1"><code>GIT_REDIRECT_STDIN</code></dt>
 <dt class="hdlist1"><code>GIT_REDIRECT_STDOUT</code></dt>
 <dt class="hdlist1"><code>GIT_REDIRECT_STDERR</code></dt>
@@ -2034,7 +2048,7 @@ subscribed to the list to send a message there.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

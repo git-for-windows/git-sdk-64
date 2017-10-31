@@ -530,20 +530,24 @@ that points at object deadbee&#8230;&#8203;.).</p>
 <dt class="hdlist1">--match &lt;pattern&gt;</dt>
 <dd>
 <p>Only consider tags matching the given <code>glob(7)</code> pattern,
-excluding the "refs/tags/" prefix.  This can be used to avoid
-leaking private tags from the repository. If given multiple times, a
-list of patterns will be accumulated, and tags matching any of the
-patterns will be considered. Use <code>--no-match</code> to clear and reset the
-list of patterns.</p>
+excluding the "refs/tags/" prefix. If used with <code>--all</code>, it also
+considers local branches and remote-tracking references matching the
+pattern, excluding respectively "refs/heads/" and "refs/remotes/"
+prefix; references of other types are never considered. If given
+multiple times, a list of patterns will be accumulated, and tags
+matching any of the patterns will be considered.  Use <code>--no-match</code> to
+clear and reset the list of patterns.</p>
 </dd>
 <dt class="hdlist1">--exclude &lt;pattern&gt;</dt>
 <dd>
 <p>Do not consider tags matching the given <code>glob(7)</code> pattern, excluding
-the "refs/tags/" prefix. This can be used to narrow the tag space and
-find only tags matching some meaningful criteria. If given multiple
-times, a list of patterns will be accumulated and tags matching any
-of the patterns will be excluded. When combined with --match a tag will
-be considered when it matches at least one --match pattern and does not
+the "refs/tags/" prefix. If used with <code>--all</code>, it also does not consider
+local branches and remote-tracking references matching the pattern,
+excluding respectively "refs/heads/" and "refs/remotes/" prefix;
+references of other types are never considered. If given multiple times,
+a list of patterns will be accumulated and tags matching any of the
+patterns will be excluded. When combined with --match a tag will be
+considered when it matches at least one --match pattern and does not
 match any of the --exclude patterns. Use <code>--no-exclude</code> to clear and
 reset the list of patterns.</p>
 </dd>
@@ -671,7 +675,7 @@ will be the smallest number of commits possible.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

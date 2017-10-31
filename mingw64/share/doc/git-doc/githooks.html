@@ -570,18 +570,17 @@ means a failure of the hook and aborts the commit.  It should not
 be used as replacement for pre-commit hook.</p>
 </div>
 <div class="paragraph">
-<p>The sample <code>prepare-commit-msg</code> hook that comes with Git comments
-out the <code>Conflicts:</code> part of a merge&#8217;s commit message.</p>
+<p>The sample <code>prepare-commit-msg</code> hook that comes with Git removes the
+help message found in the commented portion of the commit template.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_commit_msg">commit-msg</h3>
 <div class="paragraph">
-<p>This hook is invoked by <em>git commit</em>, and can be bypassed
-with the <code>--no-verify</code> option.  It takes a single parameter, the
-name of the file that holds the proposed commit log message.
-Exiting with a non-zero status causes the <em>git commit</em> to
-abort.</p>
+<p>This hook is invoked by <em>git commit</em> and <em>git merge</em>, and can be
+bypassed with the <code>--no-verify</code> option.  It takes a single parameter,
+the name of the file that holds the proposed commit log message.
+Exiting with a non-zero status causes the command to abort.</p>
 </div>
 <div class="paragraph">
 <p>The hook is allowed to edit the message file in place, and can be used
@@ -875,7 +874,7 @@ them.</p>
 <div class="paragraph">
 <p>When enabled, the default <em>post-update</em> hook runs
 <em>git update-server-info</em> to keep the information used by dumb
-transports (e.g., HTTP) up-to-date.  If you are publishing
+transports (e.g., HTTP) up to date.  If you are publishing
 a Git repository that is accessible via HTTP, you should
 probably enable this hook.</p>
 </div>
@@ -994,7 +993,7 @@ e-mails.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:24 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

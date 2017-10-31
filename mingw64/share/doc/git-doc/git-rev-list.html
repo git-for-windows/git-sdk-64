@@ -760,6 +760,15 @@ explicitly.</p>
 <p>Pretend as if all objects mentioned by reflogs are listed on the
 command line as <code>&lt;commit&gt;</code>.</p>
 </dd>
+<dt class="hdlist1">--single-worktree</dt>
+<dd>
+<p>By default, all working trees will be examined by the
+following options when there are more than one (see
+<a href="git-worktree.html">git-worktree</a>(1)): <code>--all</code>, <code>--reflog</code> and
+<code>--indexed-objects</code>.
+This option forces them to examine the current working tree
+only.</p>
+</dd>
 <dt class="hdlist1">--ignore-missing</dt>
 <dd>
 <p>Upon seeing an invalid object name in the input, pretend as if
@@ -1620,12 +1629,12 @@ separated with a NUL character.</p>
 <dt class="hdlist1">--parents</dt>
 <dd>
 <p>Print also the parents of the commit (in the form "commit parent&#8230;&#8203;").
-Also enables parent rewriting, see <em>History Simplification</em> below.</p>
+Also enables parent rewriting, see <em>History Simplification</em> above.</p>
 </dd>
 <dt class="hdlist1">--children</dt>
 <dd>
 <p>Print also the children of the commit (in the form "commit child&#8230;&#8203;").
-Also enables parent rewriting, see <em>History Simplification</em> below.</p>
+Also enables parent rewriting, see <em>History Simplification</em> above.</p>
 </dd>
 <dt class="hdlist1">--timestamp</dt>
 <dd>
@@ -1673,7 +1682,7 @@ to be printed in between commits, in order for the graph history
 to be drawn properly.
 Cannot be combined with <code>--no-walk</code>.</p>
 <div class="paragraph">
-<p>This enables parent rewriting, see <em>History Simplification</em> below.</p>
+<p>This enables parent rewriting, see <em>History Simplification</em> above.</p>
 </div>
 <div class="paragraph">
 <p>This implies the <code>--topo-order</code> option by default, but the
@@ -2086,7 +2095,10 @@ respectively, but padding both sides (i.e. the text is centered)</p>
 </li>
 <li>
 <p>%(trailers): display the trailers of the body as interpreted by
-<a href="git-interpret-trailers.html">git-interpret-trailers</a>(1)</p>
+<a href="git-interpret-trailers.html">git-interpret-trailers</a>(1). If the <code>:only</code> option is given,
+omit non-trailer lines from the trailer block.  If the <code>:unfold</code>
+option is given, behave as if interpret-trailer&#8217;s <code>--unfold</code> option
+was given. E.g., <code>%(trailers:only:unfold)</code> to do both.</p>
 </li>
 </ul>
 </div>
@@ -2178,7 +2190,7 @@ $ git log -2 --pretty=%h 4da45bef</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

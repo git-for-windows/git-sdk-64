@@ -546,8 +546,15 @@ annotated (and possibly signed) tag.</p>
 <dt class="hdlist1">--ff-only</dt>
 <dd>
 <p>Refuse to merge and exit with a non-zero status unless the
-current <code>HEAD</code> is already up-to-date or the merge can be
+current <code>HEAD</code> is already up to date or the merge can be
 resolved as a fast-forward.</p>
+</dd>
+<dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
+<dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
+<dd>
+<p>GPG-sign the resulting merge commit. The <code>keyid</code> argument is
+optional and defaults to the committer identity; if specified,
+it must be stuck to the option without a space.</p>
 </dd>
 <dt class="hdlist1">--log[=&lt;n&gt;]</dt>
 <dt class="hdlist1">--no-log</dt>
@@ -643,12 +650,14 @@ projects that started their lives independently. As that is
 a very rare occasion, no configuration variable to enable
 this by default exists and will not be added.</p>
 </dd>
-<dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
-<dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
+<dt class="hdlist1">--signoff</dt>
 <dd>
-<p>GPG-sign the resulting merge commit. The <code>keyid</code> argument is
-optional and defaults to the committer identity; if specified,
-it must be stuck to the option without a space.</p>
+<p>Add Signed-off-by line by the committer at the end of the commit
+log message.  The meaning of a signoff depends on the project,
+but it typically certifies that committer has
+the rights to submit this work under the same license and
+agrees to a Developer Certificate of Origin
+(see <a href="http://developercertificate.org/" class="bare">http://developercertificate.org/</a> for more information).</p>
 </dd>
 <dt class="hdlist1">-m &lt;msg&gt;</dt>
 <dd>
@@ -730,7 +739,7 @@ would result from the merge already.)</p>
 </div>
 <div class="paragraph">
 <p>If all named commits are already ancestors of <code>HEAD</code>, <em>git merge</em>
-will exit early with the message "Already up-to-date."</p>
+will exit early with the message "Already up to date."</p>
 </div>
 </div>
 </div>
@@ -1387,7 +1396,7 @@ values containing whitespace characters are currently not supported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

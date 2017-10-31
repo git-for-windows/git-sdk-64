@@ -977,7 +977,10 @@ respectively, but padding both sides (i.e. the text is centered)</p>
 </li>
 <li>
 <p>%(trailers): display the trailers of the body as interpreted by
-<a href="git-interpret-trailers.html">git-interpret-trailers</a>(1)</p>
+<a href="git-interpret-trailers.html">git-interpret-trailers</a>(1). If the <code>:only</code> option is given,
+omit non-trailer lines from the trailer block.  If the <code>:unfold</code>
+option is given, behave as if interpret-trailer&#8217;s <code>--unfold</code> option
+was given. E.g., <code>%(trailers:only:unfold)</code> to do both.</p>
 </li>
 </ul>
 </div>
@@ -1298,6 +1301,53 @@ if the config option is unset.</p>
 <dd>
 <p>Turn off colored diff.
 It is the same as <code>--color=never</code>.</p>
+</dd>
+<dt class="hdlist1">--color-moved[=&lt;mode&gt;]</dt>
+<dd>
+<p>Moved lines of code are colored differently.
+The &lt;mode&gt; defaults to <em>no</em> if the option is not given
+and to <em>zebra</em> if the option with no mode is given.
+The mode must be one of:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">no</dt>
+<dd>
+<p>Moved lines are not highlighted.</p>
+</dd>
+<dt class="hdlist1">default</dt>
+<dd>
+<p>Is a synonym for <code>zebra</code>. This may change to a more sensible mode
+in the future.</p>
+</dd>
+<dt class="hdlist1">plain</dt>
+<dd>
+<p>Any line that is added in one location and was removed
+in another location will be colored with <em>color.diff.newMoved</em>.
+Similarly <em>color.diff.oldMoved</em> will be used for removed lines
+that are added somewhere else in the diff. This mode picks up any
+moved line, but it is not very useful in a review to determine
+if a block of code was moved without permutation.</p>
+</dd>
+<dt class="hdlist1">zebra</dt>
+<dd>
+<p>Blocks of moved text of at least 20 alphanumeric characters
+are detected greedily. The detected blocks are
+painted using either the <em>color.diff.{old,new}Moved</em> color or
+<em>color.diff.{old,new}MovedAlternative</em>. The change between
+the two colors indicates that a new block was detected.</p>
+</dd>
+<dt class="hdlist1">dimmed_zebra</dt>
+<dd>
+<p>Similar to <em>zebra</em>, but additional dimming of uninteresting parts
+of moved code is performed. The bordering lines of two adjacent
+blocks are considered interesting, the rest is uninteresting.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">--word-diff[=&lt;mode&gt;]</dt>
 <dd>
@@ -2126,7 +2176,7 @@ reversible operation.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

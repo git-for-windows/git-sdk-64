@@ -64,11 +64,13 @@ OPTIONS
 -------
 include::merge-options.txt[]
 
--S[<keyid>]::
---gpg-sign[=<keyid>]::
-	GPG-sign the resulting merge commit. The `keyid` argument is
-	optional and defaults to the committer identity; if specified,
-	it must be stuck to the option without a space.
+--signoff::
+	Add Signed-off-by line by the committer at the end of the commit
+	log message.  The meaning of a signoff depends on the project,
+	but it typically certifies that committer has
+	the rights to submit this work under the same license and
+	agrees to a Developer Certificate of Origin
+	(see http://developercertificate.org/ for more information).
 
 -m <msg>::
 	Set the commit message to be used for the merge commit (in
@@ -133,7 +135,7 @@ exception is when the changed index entries are in the state that
 would result from the merge already.)
 
 If all named commits are already ancestors of `HEAD`, 'git merge'
-will exit early with the message "Already up-to-date."
+will exit early with the message "Already up to date."
 
 FAST-FORWARD MERGE
 ------------------

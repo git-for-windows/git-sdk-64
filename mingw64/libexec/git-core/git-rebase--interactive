@@ -715,11 +715,11 @@ do_rest () {
 }
 
 expand_todo_ids() {
-	git rebase--helper --expand-sha1s
+	git rebase--helper --expand-ids
 }
 
 collapse_todo_ids() {
-	git rebase--helper --shorten-sha1s
+	git rebase--helper --shorten-ids
 }
 
 # Add commands after a pick or after a squash/fixup serie

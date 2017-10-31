@@ -431,13 +431,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git filter-branch</em> [--setup &lt;command&gt;] [--env-filter &lt;command&gt;]
-	[--tree-filter &lt;command&gt;] [--index-filter &lt;command&gt;]
-	[--parent-filter &lt;command&gt;] [--msg-filter &lt;command&gt;]
-	[--commit-filter &lt;command&gt;] [--tag-name-filter &lt;command&gt;]
-	[--subdirectory-filter &lt;directory&gt;] [--prune-empty]
+<pre class="content"><em>git filter-branch</em> [--setup &lt;command&gt;] [--subdirectory-filter &lt;directory&gt;]
+	[--env-filter &lt;command&gt;] [--tree-filter &lt;command&gt;]
+	[--index-filter &lt;command&gt;] [--parent-filter &lt;command&gt;]
+	[--msg-filter &lt;command&gt;] [--commit-filter &lt;command&gt;]
+	[--tag-name-filter &lt;command&gt;] [--prune-empty]
 	[--original &lt;namespace&gt;] [-d &lt;directory&gt;] [-f | --force]
-	[--] [&lt;rev-list options&gt;&#8230;&#8203;]</pre>
+	[--state-branch &lt;branch&gt;] [--] [&lt;rev-list options&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -526,6 +526,12 @@ time setup just before the loop. Therefore no commit-specific
 variables are defined yet.  Functions or variables defined here
 can be used or modified in the following filter steps except
 the commit filter, for technical reasons.</p>
+</dd>
+<dt class="hdlist1">--subdirectory-filter &lt;directory&gt;</dt>
+<dd>
+<p>Only look at the history which touches the given subdirectory.
+The result will contain that directory (and only that) as its
+project root. Implies <a href="#Remap_to_ancestor">Remap to ancestor</a>.</p>
 </dd>
 <dt class="hdlist1">--env-filter &lt;command&gt;</dt>
 <dd>
@@ -617,12 +623,6 @@ author or timestamp (or the tag message for that matter). Tags which point
 to other tags will be rewritten to point to the underlying commit.</p>
 </div>
 </dd>
-<dt class="hdlist1">--subdirectory-filter &lt;directory&gt;</dt>
-<dd>
-<p>Only look at the history which touches the given subdirectory.
-The result will contain that directory (and only that) as its
-project root. Implies <a href="#Remap_to_ancestor">Remap to ancestor</a>.</p>
-</dd>
 <dt class="hdlist1">--prune-empty</dt>
 <dd>
 <p>Some filters will generate empty commits that leave the tree untouched.
@@ -652,6 +652,13 @@ that choice by this parameter.</p>
 <p><em>git filter-branch</em> refuses to start with an existing temporary
 directory or when there are already refs starting with
 <em>refs/original/</em>, unless forced.</p>
+</dd>
+<dt class="hdlist1">--state-branch &lt;branch&gt;</dt>
+<dd>
+<p>This option will cause the mapping from old to new objects to
+be loaded from named branch upon startup and saved as a new
+commit to that branch upon exit, enabling incremental of large
+trees. If <em>&lt;branch&gt;</em> does not exist it will be created.</p>
 </dd>
 <dt class="hdlist1">&lt;rev-list options&gt;&#8230;&#8203;</dt>
 <dd>
@@ -1000,7 +1007,7 @@ to the tasks of removing unwanted data- e.g:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

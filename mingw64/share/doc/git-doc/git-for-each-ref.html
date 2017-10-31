@@ -697,11 +697,15 @@ and <code>date</code> to extract the named component.</p>
 <p>The complete message in a commit and tag object is <code>contents</code>.
 Its first line is <code>contents:subject</code>, where subject is the concatenation
 of all lines of the commit message up to the first blank line.  The next
-line is <em>contents:body</em>, where body is all of the lines after the first
+line is <code>contents:body</code>, where body is all of the lines after the first
 blank line.  The optional GPG signature is <code>contents:signature</code>.  The
 first <code>N</code> lines of the message is obtained using <code>contents:lines=N</code>.
 Additionally, the trailers as interpreted by <a href="git-interpret-trailers.html">git-interpret-trailers</a>(1)
-are obtained as <em>contents:trailers</em>.</p>
+are obtained as <code>trailers</code> (or by using the historical alias
+<code>contents:trailers</code>).  Non-trailer lines from the trailer block can be omitted
+with <code>trailers:only</code>. Whitespace-continuations can be removed from trailers so
+that each trailer appears on a line by itself with its full content with
+<code>trailers:unfold</code>. Both can be used together as <code>trailers:unfold,only</code>.</p>
 </div>
 <div class="paragraph">
 <p>For sorting purposes, fields with numeric values sort in numeric order
@@ -865,7 +869,7 @@ This prints the authorname, if present.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

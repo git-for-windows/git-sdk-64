@@ -441,6 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <em>git branch</em> (--set-upstream-to=&lt;upstream&gt; | -u &lt;upstream&gt;) [&lt;branchname&gt;]
 <em>git branch</em> --unset-upstream [&lt;branchname&gt;]
 <em>git branch</em> (-m | -M) [&lt;oldbranch&gt;] &lt;newbranch&gt;
+<em>git branch</em> (-c | -C) [&lt;oldbranch&gt;] &lt;newbranch&gt;
 <em>git branch</em> (-d | -D) [-r] &lt;branchname&gt;&#8230;&#8203;
 <em>git branch</em> --edit-description [&lt;branchname&gt;]</pre>
 </div>
@@ -496,6 +497,11 @@ renaming. If &lt;newbranch&gt; exists, -M must be used to force the rename
 to happen.</p>
 </div>
 <div class="paragraph">
+<p>The <code>-c</code> and <code>-C</code> options have the exact same semantics as <code>-m</code> and
+<code>-M</code>, except instead of the branch being renamed it along with its
+config and reflog will be copied to a new name.</p>
+</div>
+<div class="paragraph">
 <p>With a <code>-d</code> or <code>-D</code> option, <code>&lt;branchname&gt;</code> will be deleted.  You may
 specify more than one branch for deletion.  If the branch currently
 has a reflog then the reflog will also be deleted.</p>
@@ -540,12 +546,12 @@ The negated form <code>--no-create-reflog</code> only overrides an earlier
 <dt class="hdlist1">-f</dt>
 <dt class="hdlist1">--force</dt>
 <dd>
-<p>Reset &lt;branchname&gt; to &lt;startpoint&gt; if &lt;branchname&gt; exists
-already. Without <code>-f</code> <em>git branch</em> refuses to change an existing branch.
+<p>Reset &lt;branchname&gt; to &lt;startpoint&gt;, even if &lt;branchname&gt; exists
+already. Without <code>-f</code>, <em>git branch</em> refuses to change an existing branch.
 In combination with <code>-d</code> (or <code>--delete</code>), allow deleting the
 branch irrespective of its merged status. In combination with
 <code>-m</code> (or <code>--move</code>), allow renaming the branch even if the new
-branch name already exists.</p>
+branch name already exists, the same applies for <code>-c</code> (or <code>--copy</code>).</p>
 </dd>
 <dt class="hdlist1">-m</dt>
 <dt class="hdlist1">--move</dt>
@@ -555,6 +561,15 @@ branch name already exists.</p>
 <dt class="hdlist1">-M</dt>
 <dd>
 <p>Shortcut for <code>--move --force</code>.</p>
+</dd>
+<dt class="hdlist1">-c</dt>
+<dt class="hdlist1">--copy</dt>
+<dd>
+<p>Copy a branch and the corresponding reflog.</p>
+</dd>
+<dt class="hdlist1">-C</dt>
+<dd>
+<p>Shortcut for <code>--copy --force</code>.</p>
 </dd>
 <dt class="hdlist1">--color[=&lt;when&gt;]</dt>
 <dd>
@@ -655,10 +670,8 @@ branch.autoSetupMerge configuration variable is true.</p>
 </dd>
 <dt class="hdlist1">--set-upstream</dt>
 <dd>
-<p>If specified branch does not exist yet or if <code>--force</code> has been
-given, acts exactly like <code>--track</code>. Otherwise sets up configuration
-like <code>--track</code> would when creating the branch, except that where
-branch points to is not changed.</p>
+<p>As this option had confusing syntax, it is no longer supported.
+Please use <code>--track</code> or <code>--set-upstream-to</code> instead.</p>
 </dd>
 <dt class="hdlist1">-u &lt;upstream&gt;</dt>
 <dt class="hdlist1">--set-upstream-to=&lt;upstream&gt;</dt>
@@ -858,7 +871,7 @@ a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:22 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>

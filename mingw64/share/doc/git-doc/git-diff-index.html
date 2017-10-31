@@ -682,6 +682,53 @@ if the config option is unset.</p>
 <p>Turn off colored diff.
 It is the same as <code>--color=never</code>.</p>
 </dd>
+<dt class="hdlist1">--color-moved[=&lt;mode&gt;]</dt>
+<dd>
+<p>Moved lines of code are colored differently.
+The &lt;mode&gt; defaults to <em>no</em> if the option is not given
+and to <em>zebra</em> if the option with no mode is given.
+The mode must be one of:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">no</dt>
+<dd>
+<p>Moved lines are not highlighted.</p>
+</dd>
+<dt class="hdlist1">default</dt>
+<dd>
+<p>Is a synonym for <code>zebra</code>. This may change to a more sensible mode
+in the future.</p>
+</dd>
+<dt class="hdlist1">plain</dt>
+<dd>
+<p>Any line that is added in one location and was removed
+in another location will be colored with <em>color.diff.newMoved</em>.
+Similarly <em>color.diff.oldMoved</em> will be used for removed lines
+that are added somewhere else in the diff. This mode picks up any
+moved line, but it is not very useful in a review to determine
+if a block of code was moved without permutation.</p>
+</dd>
+<dt class="hdlist1">zebra</dt>
+<dd>
+<p>Blocks of moved text of at least 20 alphanumeric characters
+are detected greedily. The detected blocks are
+painted using either the <em>color.diff.{old,new}Moved</em> color or
+<em>color.diff.{old,new}MovedAlternative</em>. The change between
+the two colors indicates that a new block was detected.</p>
+</dd>
+<dt class="hdlist1">dimmed_zebra</dt>
+<dd>
+<p>Similar to <em>zebra</em>, but additional dimming of uninteresting parts
+of moved code is performed. The bordering lines of two adjacent
+blocks are considered interesting, the rest is uninteresting.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
 <dt class="hdlist1">--word-diff[=&lt;mode&gt;]</dt>
 <dd>
 <p>Show a word diff, using the &lt;mode&gt; to delimit changed words.
@@ -1777,7 +1824,7 @@ The non-cached version asks the question:</p>
 <div class="literalblock">
 <div class="content">
 <pre>show me the differences between HEAD and the currently checked out
-tree - index contents _and_ files that aren't up-to-date</pre>
+tree - index contents _and_ files that aren't up to date</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1799,8 +1846,8 @@ have not actually done a <em>git update-index</em> on it yet - there is no
 </div>
 </div>
 <div class="paragraph">
-<p>i.e., it shows that the tree has changed, and that <code>kernel/sched.c</code> has is
-not up-to-date and may contain new stuff. The all-zero sha1 means that to
+<p>i.e., it shows that the tree has changed, and that <code>kernel/sched.c</code> is
+not up to date and may contain new stuff. The all-zero sha1 means that to
 get the real diff, you need to look at the object in the working directory
 directly rather than do an object-to-object diff.</p>
 </div>
@@ -1849,7 +1896,7 @@ always have the special all-zero sha1.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 21:47:23 Coordinated Universal Time
+Last updated 2017-10-30 10:11:08 Coordinated Universal Time
 </div>
 </div>
 </body>
