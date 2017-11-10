@@ -25,7 +25,11 @@ extern "C" {
 #ifdef _MSVCRT_
 #define __pctype_func()	(_pctype)
 #else
+#if __MSVCRT_VERSION__ >= 0x1400
+  _CRTIMP unsigned short* __pctype_func(void);
+#else
 #define __pctype_func()	(* __MINGW_IMP_SYMBOL(_pctype))
+#endif
 #endif
 #endif
 
@@ -33,8 +37,12 @@ extern "C" {
 #ifdef _MSVCRT_
   extern unsigned short *_pctype;
 #else
+#if __MSVCRT_VERSION__ >= 0x1400
+#define _pctype (__pctype_func())
+#else
   extern unsigned short ** __MINGW_IMP_SYMBOL(_pctype);
 #define _pctype (* __MINGW_IMP_SYMBOL(_pctype))
+#endif
 #endif
 #endif
 
@@ -195,7 +203,7 @@ int __cdecl iswblank(wint_t _C);
 #define __mb_cur_max	(* __MINGW_IMP_SYMBOL(__mb_cur_max))
 #endif
 #endif
-#define ___mb_cur_max_func() (__mb_cur_max)
+_CRTIMP int __cdecl ___mb_cur_max_func(void);
 #endif
 
 #define __chvalidchk(a,b) (__PCTYPE_FUNC[(a)] & (b))

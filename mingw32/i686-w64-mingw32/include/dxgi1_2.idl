@@ -1,6 +1,5 @@
 /*
  * Copyright 2014 Jacek Caban for CodeWeavers
- * Copyright 2015 Martell Malone
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,20 +18,25 @@
 
 import "dxgi.idl";
 
-[
-    object,
-    uuid(ea9dbf1a-c88e-4486-854a-98aa0138f30c),
-    local,
-    pointer_default(unique)
-]
-interface IDXGIDisplayControl : IUnknown
-{
-    BOOL IsStereoEnabled();
+const UINT DXGI_ENUM_MODES_STEREO = 0x4;
+const UINT DXGI_ENUM_MODES_DISABLED_STEREO = 0x8;
 
-    void SetStereoEnabled(
-        BOOL enabled
-    );
-}
+const DWORD DXGI_SHARED_RESOURCE_READ = 0x80000000;
+const DWORD DXGI_SHARED_RESOURCE_WRITE = 0x00000001;
+
+typedef enum _DXGI_OFFER_RESOURCE_PRIORITY {
+    DXGI_OFFER_RESOURCE_PRIORITY_LOW = 1,
+    DXGI_OFFER_RESOURCE_PRIORITY_NORMAL,
+    DXGI_OFFER_RESOURCE_PRIORITY_HIGH
+} DXGI_OFFER_RESOURCE_PRIORITY;
+
+typedef enum DXGI_ALPHA_MODE {
+    DXGI_ALPHA_MODE_UNSPECIFIED = 0,
+    DXGI_ALPHA_MODE_PREMULTIPLIED = 1,
+    DXGI_ALPHA_MODE_STRAIGHT = 2,
+    DXGI_ALPHA_MODE_IGNORE = 3,
+    DXGI_ALPHA_MODE_FORCE_DWORD = 0xffffffff
+} DXGI_ALPHA_MODE;
 
 typedef struct DXGI_OUTDUPL_MOVE_RECT
 {
@@ -55,9 +59,9 @@ typedef struct DXGI_OUTDUPL_POINTER_POSITION
 
 typedef enum DXGI_OUTDUPL_POINTER_SHAPE_TYPE
 {
-    DXGI_OUTDUPL_POINTER_SHAPE_TYPE_MONOCHROME = 0x1,
-    DXGI_OUTDUPL_POINTER_SHAPE_TYPE_COLOR = 0x2,
-    DXGI_OUTDUPL_POINTER_SHAPE_TYPE_MASKED_COLOR = 0x4
+    DXGI_OUTDUPL_POINTER_SHAPE_TYPE_MONOCHROME = 0x00000001,
+    DXGI_OUTDUPL_POINTER_SHAPE_TYPE_COLOR = 0x00000002,
+    DXGI_OUTDUPL_POINTER_SHAPE_TYPE_MASKED_COLOR = 0x00000004
 } DXGI_OUTDUPL_POINTER_SHAPE_TYPE;
 
 typedef struct DXGI_OUTDUPL_POINTER_SHAPE_INFO
@@ -81,6 +85,17 @@ typedef struct DXGI_OUTDUPL_FRAME_INFO
     UINT PointerShapeBufferSize;
 } DXGI_OUTDUPL_FRAME_INFO;
 
+typedef struct DXGI_MODE_DESC1
+{
+    UINT Width;
+    UINT Height;
+    DXGI_RATIONAL RefreshRate;
+    DXGI_FORMAT Format;
+    DXGI_MODE_SCANLINE_ORDER ScanlineOrdering;
+    DXGI_MODE_SCALING Scaling;
+    BOOL Stereo;
+} DXGI_MODE_DESC1;
+
 [
     object,
     uuid(191cfac3-a341-470d-b26e-a864f428319c),
@@ -94,32 +109,32 @@ interface IDXGIOutputDuplication : IDXGIObject
     );
 
     HRESULT AcquireNextFrame(
-        [in] UINT timeout,
+        [in] UINT timeout_in_milliseconds,
         [out] DXGI_OUTDUPL_FRAME_INFO *frame_info,
-        [out] IDXGIResource **resource
+        [out] IDXGIResource **desktop_resource
     );
 
     HRESULT GetFrameDirtyRects(
-        [in] UINT dirty_size,
-        [out] RECT *buffer,
-        [out] UINT *buffer_size
+        [in] UINT dirty_rects_buffer_size,
+        [out] RECT *dirty_rects_buffer,
+        [out] UINT *dirty_rects_buffer_size_required
     );
 
     HRESULT GetFrameMoveRects(
-        [in] UINT move_size,
-        [out] DXGI_OUTDUPL_MOVE_RECT *rect,
-        [out] UINT *rect_size
+        [in] UINT move_rects_buffer_size,
+        [out] DXGI_OUTDUPL_MOVE_RECT *move_rect_buffer,
+        [out] UINT *move_rects_buffer_size_required
     );
 
     HRESULT GetFramePointerShape(
-        [in] UINT shape_size,
-        [out] void *buffer,
-        [out] UINT *buffer_size,
-        [out] DXGI_OUTDUPL_POINTER_SHAPE_INFO *shape_info
+        [in] UINT pointer_shape_buffer_size,
+        [out] void *pointer_shape_buffer,
+        [out] UINT *pointer_shape_buffer_size_required,
+        [out] DXGI_OUTDUPL_POINTER_SHAPE_INFO *pointer_shape_info
     );
 
     HRESULT MapDesktopSurface(
-        [out] DXGI_MAPPED_RECT *rect
+        [out] DXGI_MAPPED_RECT *locked_rect
     );
 
     HRESULT UnMapDesktopSurface();
@@ -127,19 +142,52 @@ interface IDXGIOutputDuplication : IDXGIObject
     HRESULT ReleaseFrame();
 }
 
-typedef enum _DXGI_OFFER_RESOURCE_PRIORITY {
-    DXGI_OFFER_RESOURCE_PRIORITY_LOW = 1,
-    DXGI_OFFER_RESOURCE_PRIORITY_NORMAL,
-    DXGI_OFFER_RESOURCE_PRIORITY_HIGH
-} DXGI_OFFER_RESOURCE_PRIORITY;
+[
+    object,
+    uuid(aba496dd-b617-4cb8-a866-bc44d7eb1fa2),
+    local,
+    pointer_default(unique)
+]
+interface IDXGISurface2 : IDXGISurface1
+{
+    HRESULT GetResource(
+        [in] REFIID iid,
+        [out] void **parent_resource,
+        [out] UINT *subresource_idx
+    );
+}
 
-typedef enum DXGI_ALPHA_MODE {
-    DXGI_ALPHA_MODE_UNSPECIFIED = 0,
-    DXGI_ALPHA_MODE_PREMULTIPLIED = 1,
-    DXGI_ALPHA_MODE_STRAIGHT = 2,
-    DXGI_ALPHA_MODE_IGNORE = 3,
-    DXGI_ALPHA_MODE_FORCE_DWORD = 0xffffffff
-} DXGI_ALPHA_MODE;
+[
+    object,
+    uuid(30961379-4609-4a41-998e-54fe567ee0c1),
+    local,
+    pointer_default(unique)
+]
+interface IDXGIResource1 : IDXGIResource
+{
+    HRESULT CreateSubresourceSurface(
+        UINT index,
+        [out] IDXGISurface2 **surface
+    );
+    HRESULT CreateSharedHandle(
+        [in] const SECURITY_ATTRIBUTES *attributes,
+        [in] DWORD access,
+        [in] const WCHAR *name,
+        [out] HANDLE *handle
+    );
+}
+
+[
+    object,
+    uuid(ea9dbf1a-c88e-4486-854a-98aa0138f30c),
+    local,
+    pointer_default(unique)
+]
+interface IDXGIDisplayControl : IUnknown
+{
+    BOOL IsStereoEnabled();
+    void SetStereoEnabled(BOOL enabled);
+}
 
 [
     object,
@@ -342,17 +390,6 @@ interface IDXGIAdapter2 : IDXGIAdapter1
     HRESULT GetDesc2([out] DXGI_ADAPTER_DESC2 *pDesc);
 }
 
-typedef struct DXGI_MODE_DESC1
-{
-    UINT Width;
-    UINT Height;
-    DXGI_RATIONAL RefreshRate;
-    DXGI_FORMAT Format;
-    DXGI_MODE_SCANLINE_ORDER ScanlineOrdering;
-    DXGI_MODE_SCALING Scaling;
-    BOOL Stereo;
-} DXGI_MODE_DESC1;
-
 [
     object,
     uuid(00cddea8-939b-4b83-a340-a685226666cc),
@@ -362,24 +399,24 @@ typedef struct DXGI_MODE_DESC1
 interface IDXGIOutput1 : IDXGIOutput
 {
     HRESULT GetDisplayModeList1(
-        [in] DXGI_FORMAT format,
+        [in] DXGI_FORMAT enum_format,
         [in] UINT flags,
-        [in, out] UINT *mode_count,
+        [in, out] UINT *num_modes,
         [out] DXGI_MODE_DESC1 *desc
     );
 
     HRESULT FindClosestMatchingMode1(
-        [in] const DXGI_MODE_DESC1 *mode,
+        [in] const DXGI_MODE_DESC1 *mode_to_match,
         [out] DXGI_MODE_DESC1 *closest_match,
-        [in] IUnknown *device
+        [in] IUnknown *concerned_device
     );
 
     HRESULT GetDisplaySurfaceData1(
-        [in] IDXGIResource *resource
+        [in] IDXGIResource *destination
     );
 
     HRESULT DuplicateOutput(
         [in] IUnknown *device,
-        [out] IDXGIOutputDuplication **output
+        [out] IDXGIOutputDuplication **output_duplication
     );
 }

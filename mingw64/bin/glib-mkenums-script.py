@@ -19,7 +19,7 @@ import errno
 import codecs
 import locale
 
-VERSION_STR = '''glib-mkenums version 2.54.1
+VERSION_STR = '''glib-mkenums version 2.54.2
 glib-genmarshal comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-genmarshal under the terms of
 the GNU General Public License which can be found in the

@@ -28,8 +28,8 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	2.7
 srcdir=		../Python-2.7.14
 VPATH=		../Python-2.7.14
-abs_srcdir=	/c/repo/mingw-w64-python2/src/build-x86_64/../Python-2.7.14
-abs_builddir=	/c/repo/mingw-w64-python2/src/build-x86_64
+abs_srcdir=	/scripts/mingw-w64-python2/src/build-x86_64/../Python-2.7.14
+abs_builddir=	/scripts/mingw-w64-python2/src/build-x86_64
 build=		x86_64-w64-mingw32
 host=		x86_64-w64-mingw32
 

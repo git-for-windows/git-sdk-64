@@ -75,6 +75,9 @@ and/or use gtk-doc annotations.  -->
 Set to U+FFFD REPLACEMENT CHARACTER.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
+    <constant name="LANGUAGE_INVALID" value="0" c:type="HB_LANGUAGE_INVALID">
+      <type name="language_t" c:type="hb_language_t"/>
+    </constant>
     <constant name="OT_LAYOUT_DEFAULT_LANGUAGE_INDEX"
               value="65535"
               c:type="HB_OT_LAYOUT_DEFAULT_LANGUAGE_INDEX">
@@ -114,13 +117,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="3" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VERSION_MINOR" value="6" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.6.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.6.3" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_create"
@@ -7225,7 +7228,11 @@ hb_buffer_get_segment_properties(), respectively.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="set_invert" c:identifier="hb_set_invert" version="0.9.10">
+    <function name="set_invert"
+              c:identifier="hb_set_invert"
+              version="0.9.10"
+              deprecated="1"
+              deprecated-version="1.6.1">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>

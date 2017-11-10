@@ -115,7 +115,7 @@ extern "C" {
 #define __mb_cur_max	(* __MINGW_IMP_SYMBOL(__mb_cur_max))
 #endif
 #endif
-#define ___mb_cur_max_func() (__mb_cur_max)
+_CRTIMP int __cdecl ___mb_cur_max_func(void);
 #endif
 
 #define __max(a,b) (((a) > (b)) ? (a) : (b))
@@ -198,9 +198,7 @@ extern "C" {
 #endif
 #endif
 
-#ifdef _POSIX_
-  extern char **environ;
-#else
+#ifndef _POSIX_
 #ifndef _environ
 #ifdef _MSVCRT_
   extern char **_environ;
@@ -218,7 +216,7 @@ extern "C" {
 #define _wenviron (* __MINGW_IMP_SYMBOL(_wenviron))
 #endif
 #endif
-#endif
+#endif /* !_POSIX_ */
 #ifndef _pgmptr
 #ifdef _MSVCRT_
   extern char *_pgmptr;
@@ -425,7 +423,8 @@ float __cdecl __MINGW_NOTHROW strtof(const char * __restrict__ _Str,char ** __re
   /* libmingwex.a provides a c99-compliant strtod() exported as __strtod() */
   extern double __cdecl __MINGW_NOTHROW
   __strtod (const char * __restrict__ , char ** __restrict__);
-#if !defined(__USE_MINGW_STRTOX)
+// The ucrtbase version of strtod is C99 compliant, so we don't need to redirect it to the mingw version.
+#if !defined(__USE_MINGW_STRTOX) && __MSVCRT_VERSION__ < 0x1400
 #define strtod __strtod
 #endif /* !defined(__USE_MINGW_STRTOX) */
 #endif /* __NO_ISOCEXT */

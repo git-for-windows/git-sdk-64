@@ -78,6 +78,10 @@
 #  endif
 #endif
 
+#if defined(__aarch64__) && !defined(_M_ARM64)
+#  define _M_ARM64 1
+#endif
+
 #ifndef _X86_
    /* MS does not prefix symbols by underscores for 64-bit.  */
 #  ifndef __MINGW_USE_UNDERSCORE_PREFIX
@@ -267,14 +271,18 @@
   __attribute__((__format__(gnu_scanf, __format,__args)))
 
 #undef __mingw_ovr
+#undef __mingw_static_ovr
 
 #ifdef __cplusplus
 #  define __mingw_ovr  inline __cdecl
+#  define __mingw_static_ovr static __mingw_ovr
 #elif defined (__GNUC__)
 #  define __mingw_ovr static \
       __attribute__ ((__unused__)) __inline__ __cdecl
+#  define __mingw_static_ovr __mingw_ovr
 #else
 #  define __mingw_ovr static __cdecl
+#  define __mingw_static_ovr __mingw_ovr
 #endif /* __cplusplus */
 
 #endif	/* _INC_CRTDEFS_MACRO */
