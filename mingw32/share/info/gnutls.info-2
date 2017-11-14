@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 6 March 2017 for version 3.6.0 of GnuTLS.
+This manual is last updated 6 March 2017 for version 3.6.1 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -7368,6 +7368,7 @@ nettle (1) library is recommended.
 
 * Symmetric algorithms::
 * Public key algorithms::
+* Cryptographic Message Syntax / PKCS#7::
 * Hash and MAC functions::
 * Random number generation::
 * Overriding algorithms::
@@ -7476,27 +7477,118 @@ verification and addition in transparent way.
 'VOID *note gnutls_aead_cipher_deinit:: (gnutls_aead_cipher_hd_t HANDLE)'
 
 
-File: gnutls.info,  Node: Public key algorithms,  Next: Hash and MAC functions,  Prev: Symmetric algorithms,  Up: Using GnuTLS as a cryptographic library
+File: gnutls.info,  Node: Public key algorithms,  Next: Cryptographic Message Syntax / PKCS#7,  Prev: Symmetric algorithms,  Up: Using GnuTLS as a cryptographic library
 
 8.2 Public key algorithms
 =========================
 
-Public key cryptography algorithms such as RSA, DSA and ECDSA, can be
+Public key cryptography algorithms such as RSA, DSA and ECDSA, are
 accessed using the abstract key API in *note Abstract key types::.  This
-is a high level API with the advantage of transparently handling keys in
-memory and keys present in smart cards.
+is a high level API with the advantage of transparently handling keys
+stored in memory and keys present in smart cards.
 
-8.2.1 PKCS #7 signing
----------------------
+'INT *note gnutls_privkey_init:: (gnutls_privkey_t * KEY)'
+'INT *note gnutls_privkey_import_url:: (gnutls_privkey_t KEY, const char * URL, unsigned int FLAGS)'
+'INT *note gnutls_privkey_import_x509_raw:: (gnutls_privkey_t PKEY, const gnutls_datum_t * DATA, gnutls_x509_crt_fmt_t FORMAT, const char * PASSWORD, unsigned int FLAGS)'
+'INT *note gnutls_privkey_sign_data:: (gnutls_privkey_t SIGNER, gnutls_digest_algorithm_t HASH, unsigned int FLAGS, const gnutls_datum_t * DATA, gnutls_datum_t * SIGNATURE)'
+'INT *note gnutls_privkey_sign_hash:: (gnutls_privkey_t SIGNER, gnutls_digest_algorithm_t HASH_ALGO, unsigned int FLAGS, const gnutls_datum_t * HASH_DATA, gnutls_datum_t * SIGNATURE)'
+'VOID *note gnutls_privkey_deinit:: (gnutls_privkey_t KEY)'
 
-The PKCS #7 format is common format used for digital signatures.  It
-allows to sign by embedding the data into the signature, or creating
-detached signatures of the data, including a timestamp, additional
-certificates etc.  In certain cases this format is also used to
-transport lists of certificates and CRLs.
+'INT *note gnutls_pubkey_init:: (gnutls_pubkey_t * KEY)'
+'INT *note gnutls_pubkey_import_url:: (gnutls_pubkey_t KEY, const char * URL, unsigned int FLAGS)'
+'INT *note gnutls_pubkey_import_x509:: (gnutls_pubkey_t KEY, gnutls_x509_crt_t CRT, unsigned int FLAGS)'
+'INT *note gnutls_pubkey_verify_data2:: (gnutls_pubkey_t PUBKEY, gnutls_sign_algorithm_t ALGO, unsigned int FLAGS, const gnutls_datum_t * DATA, const gnutls_datum_t * SIGNATURE)'
+'INT *note gnutls_pubkey_verify_hash2:: (gnutls_pubkey_t KEY, gnutls_sign_algorithm_t ALGO, unsigned int FLAGS, const gnutls_datum_t * HASH, const gnutls_datum_t * SIGNATURE)'
+'VOID *note gnutls_pubkey_deinit:: (gnutls_pubkey_t KEY)'
 
-The basic functions to initialize, deinitialize, import, export or print
-information about a PKCS #7 structure are shown below.
+Keys stored in memory can be imported using functions like *note
+gnutls_privkey_import_x509_raw::, while keys on smart cards or HSMs
+should be imported using their PKCS#11 URL with *note
+gnutls_privkey_import_url::.
+
+If any of the smart card operations require PIN, that should be provided
+either by setting the global PIN function (*note
+gnutls_pkcs11_set_pin_function::), or better with the targetted to
+structures functions such as *note gnutls_privkey_set_pin_function::.
+
+8.2.1 Key generation
+--------------------
+
+All supported key types (including RSA, DSA, ECDSA, Ed25519) can be
+generated with GnuTLS. They can be generated with the simpler *note
+gnutls_privkey_generate:: or with the more advanced *note
+gnutls_privkey_generate2::.
+
+ -- Function: int gnutls_privkey_generate2 (gnutls_privkey_t PKEY,
+          gnutls_pk_algorithm_t ALGO, unsigned int BITS, unsigned int
+          FLAGS, const gnutls_keygen_data_st * DATA, unsigned DATA_SIZE)
+     PKEY: The private key
+
+     ALGO: is one of the algorithms in 'gnutls_pk_algorithm_t' .
+
+     BITS: the size of the modulus
+
+     FLAGS: Must be zero or flags from 'gnutls_privkey_flags_t' .
+
+     DATA: Allow specifying 'gnutls_keygen_data_st' types such as the
+     seed to be used.
+
+     DATA_SIZE: The number of 'data' available.
+
+     This function will generate a random private key.  Note that this
+     function must be called on an initialized private key.
+
+     The flag 'GNUTLS_PRIVKEY_FLAG_PROVABLE' instructs the key
+     generation process to use algorithms like Shawe-Taylor (from FIPS
+     PUB186-4) which generate provable parameters out of a seed for RSA
+     and DSA keys.  On DSA keys the PQG parameters are generated using
+     the seed, while on RSA the two primes.  To specify an explicit seed
+     (by default a random seed is used), use the 'data' with a
+     'GNUTLS_KEYGEN_SEED' type.
+
+     Note that when generating an elliptic curve key, the curve can be
+     substituted in the place of the bits parameter using the
+     'GNUTLS_CURVE_TO_BITS()' macro.
+
+     To export the generated keys in memory or in files it is
+     recommended to use the PKCS'8' form as it can handle all key types,
+     and can store additional parameters such as the seed, in case of
+     provable RSA or DSA keys.  Generated keys can be exported in memory
+     using 'gnutls_privkey_export_x509()' , and then with
+     'gnutls_x509_privkey_export2_pkcs8()' .
+
+     If key generation is part of your application, avoid setting the
+     number of bits directly, and instead use
+     'gnutls_sec_param_to_pk_bits()' .  That way the generated keys will
+     adapt to the security levels of the underlying GnuTLS library.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.0
+
+
+File: gnutls.info,  Node: Cryptographic Message Syntax / PKCS#7,  Next: Hash and MAC functions,  Prev: Public key algorithms,  Up: Using GnuTLS as a cryptographic library
+
+8.3 Cryptographic Message Syntax / PKCS#7
+=========================================
+
+The CMS or PKCS #7 format is a commonly used format for digital
+signatures.  PKCS #7 is the name of the original standard when published
+by RSA, though today the standard is adopted by IETF under the name CMS.
+
+The standards include multiple ways of signing a digital document, e.g.,
+by embedding the data into the signature, or creating detached
+signatures of the data, including a timestamp, additional certificates
+etc.  In certain cases the same format is also used to transport lists
+of certificates and CRLs.
+
+It is a relatively popular standard to sign structures, and is being
+used to sign in PDF files, as well as for signing kernel modules and
+other structures.
+
+In GnuTLS, the basic functions to initialize, deinitialize, import,
+export or print information about a PKCS #7 structure are listed below.
 'INT *note gnutls_pkcs7_init:: (gnutls_pkcs7_t * PKCS7)'
 'VOID *note gnutls_pkcs7_deinit:: (gnutls_pkcs7_t PKCS7)'
 'INT *note gnutls_pkcs7_export2:: (gnutls_pkcs7_t PKCS7, gnutls_x509_crt_fmt_t FORMAT, gnutls_datum_t * OUT)'
@@ -7577,9 +7669,9 @@ are provided.
 'INT *note gnutls_pkcs7_set_crl:: (gnutls_pkcs7_t PKCS7, gnutls_x509_crl_t CRL)'
 
 
-File: gnutls.info,  Node: Hash and MAC functions,  Next: Random number generation,  Prev: Public key algorithms,  Up: Using GnuTLS as a cryptographic library
+File: gnutls.info,  Node: Hash and MAC functions,  Next: Random number generation,  Prev: Cryptographic Message Syntax / PKCS#7,  Up: Using GnuTLS as a cryptographic library
 
-8.3 Hash and MAC functions
+8.4 Hash and MAC functions
 ==========================
 
 The available operations to access hash functions and hash-MAC (HMAC)
@@ -7679,207 +7771,4 @@ gnutls_digest_algorithm_t.
      Combined MD5+SHA1 algorithm.
 
 Figure 8.4: The supported hash algorithms.
-
-
-File: gnutls.info,  Node: Random number generation,  Next: Overriding algorithms,  Prev: Hash and MAC functions,  Up: Using GnuTLS as a cryptographic library
-
-8.4 Random number generation
-============================
-
-Access to the random number generator is provided using the *note
-gnutls_rnd:: function.  It allows obtaining random data of various
-levels.
-
-'GNUTLS_RND_NONCE'
-     Non-predictable random number.  Fatal in parts of session if
-     broken, i.e., vulnerable to statistical analysis.
-'GNUTLS_RND_RANDOM'
-     Pseudo-random cryptographic random number.  Fatal in session if
-     broken.  Example use: temporal keys.
-'GNUTLS_RND_KEY'
-     Fatal in many sessions if broken.  Example use: Long-term keys.
-
-Figure 8.5: The random number levels.
-
- -- Function: int gnutls_rnd (gnutls_rnd_level_t LEVEL, void * DATA,
-          size_t LEN)
-     LEVEL: a security level
-
-     DATA: place to store random bytes
-
-     LEN: The requested size
-
-     This function will generate random data and store it to output
-     buffer.  The value of 'level' should be one of 'GNUTLS_RND_NONCE' ,
-     'GNUTLS_RND_RANDOM' and 'GNUTLS_RND_KEY' .  See the manual and
-     'gnutls_rnd_level_t' for detailed information.
-
-     This function is thread-safe and also fork-safe.
-
-     *Returns:* Zero on success, or a negative error code on error.
-
-     *Since:* 2.12.0
-
-See *note Random Number Generators-internals:: for more information on
-the random number generator operation.
-
-
-File: gnutls.info,  Node: Overriding algorithms,  Prev: Random number generation,  Up: Using GnuTLS as a cryptographic library
-
-8.5 Overriding algorithms
-=========================
-
-In systems which provide a hardware accelerated cipher implementation
-that is not directly supported by GnuTLS, it is possible to utilize it.
-There are functions which allow overriding the default cipher, digest
-and MAC implementations.  Those are described below.
-
-To override public key operations see *note Abstract private keys::.
-
- -- Function: int gnutls_crypto_register_cipher
-          (gnutls_cipher_algorithm_t ALGORITHM, int PRIORITY,
-          gnutls_cipher_init_func INIT, gnutls_cipher_setkey_func
-          SETKEY, gnutls_cipher_setiv_func SETIV,
-          gnutls_cipher_encrypt_func ENCRYPT, gnutls_cipher_decrypt_func
-          DECRYPT, gnutls_cipher_deinit_func DEINIT)
-     ALGORITHM: is the gnutls algorithm identifier
-
-     PRIORITY: is the priority of the algorithm
-
-     INIT: A function which initializes the cipher
-
-     SETKEY: A function which sets the key of the cipher
-
-     SETIV: A function which sets the nonce/IV of the cipher (non-AEAD)
-
-     ENCRYPT: A function which performs encryption (non-AEAD)
-
-     DECRYPT: A function which performs decryption (non-AEAD)
-
-     DEINIT: A function which deinitializes the cipher
-
-     This function will register a cipher algorithm to be used by
-     gnutls.  Any algorithm registered will override the included
-     algorithms and by convention kernel implemented algorithms have
-     priority of 90 and CPU-assisted of 80.  The algorithm with the
-     lowest priority will be used by gnutls.
-
-     In the case the registered init or setkey functions return
-     'GNUTLS_E_NEED_FALLBACK' , GnuTLS will attempt to use the next in
-     priority registered cipher.
-
-     The functions which are marked as non-AEAD they are not required
-     when registering a cipher to be used with the new AEAD API
-     introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
-     API.
-
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
-     error code.
-
-     *Since:* 3.4.0
-
- -- Function: int gnutls_crypto_register_aead_cipher
-          (gnutls_cipher_algorithm_t ALGORITHM, int PRIORITY,
-          gnutls_cipher_init_func INIT, gnutls_cipher_setkey_func
-          SETKEY, gnutls_cipher_aead_encrypt_func AEAD_ENCRYPT,
-          gnutls_cipher_aead_decrypt_func AEAD_DECRYPT,
-          gnutls_cipher_deinit_func DEINIT)
-     ALGORITHM: is the gnutls AEAD cipher identifier
-
-     PRIORITY: is the priority of the algorithm
-
-     INIT: A function which initializes the cipher
-
-     SETKEY: A function which sets the key of the cipher
-
-     AEAD_ENCRYPT: Perform the AEAD encryption
-
-     AEAD_DECRYPT: Perform the AEAD decryption
-
-     DEINIT: A function which deinitializes the cipher
-
-     This function will register a cipher algorithm to be used by
-     gnutls.  Any algorithm registered will override the included
-     algorithms and by convention kernel implemented algorithms have
-     priority of 90 and CPU-assisted of 80.  The algorithm with the
-     lowest priority will be used by gnutls.
-
-     In the case the registered init or setkey functions return
-     'GNUTLS_E_NEED_FALLBACK' , GnuTLS will attempt to use the next in
-     priority registered cipher.
-
-     The functions registered will be used with the new AEAD API
-     introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
-     API.
-
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
-     error code.
-
-     *Since:* 3.4.0
-
- -- Function: int gnutls_crypto_register_mac (gnutls_mac_algorithm_t
-          ALGORITHM, int PRIORITY, gnutls_mac_init_func INIT,
-          gnutls_mac_setkey_func SETKEY, gnutls_mac_setnonce_func
-          SETNONCE, gnutls_mac_hash_func HASH, gnutls_mac_output_func
-          OUTPUT, gnutls_mac_deinit_func DEINIT, gnutls_mac_fast_func
-          HASH_FAST)
-     ALGORITHM: is the gnutls MAC identifier
-
-     PRIORITY: is the priority of the algorithm
-
-     INIT: A function which initializes the MAC
-
-     SETKEY: A function which sets the key of the MAC
-
-     SETNONCE: A function which sets the nonce for the mac (may be
-     'NULL' for common MAC algorithms)
-
-     HASH: Perform the hash operation
-
-     OUTPUT: Provide the output of the MAC
-
-     DEINIT: A function which deinitializes the MAC
-
-     HASH_FAST: Perform the MAC operation in one go
-
-     This function will register a MAC algorithm to be used by gnutls.
-     Any algorithm registered will override the included algorithms and
-     by convention kernel implemented algorithms have priority of 90 and
-     CPU-assisted of 80.  The algorithm with the lowest priority will be
-     used by gnutls.
-
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
-     error code.
-
-     *Since:* 3.4.0
-
- -- Function: int gnutls_crypto_register_digest
-          (gnutls_digest_algorithm_t ALGORITHM, int PRIORITY,
-          gnutls_digest_init_func INIT, gnutls_digest_hash_func HASH,
-          gnutls_digest_output_func OUTPUT, gnutls_digest_deinit_func
-          DEINIT, gnutls_digest_fast_func HASH_FAST)
-     ALGORITHM: is the gnutls digest identifier
-
-     PRIORITY: is the priority of the algorithm
-
-     INIT: A function which initializes the digest
-
-     HASH: Perform the hash operation
-
-     OUTPUT: Provide the output of the digest
-
-     DEINIT: A function which deinitializes the digest
-
-     HASH_FAST: Perform the digest operation in one go
-
-     This function will register a digest algorithm to be used by
-     gnutls.  Any algorithm registered will override the included
-     algorithms and by convention kernel implemented algorithms have
-     priority of 90 and CPU-assisted of 80.  The algorithm with the
-     lowest priority will be used by gnutls.
-
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
-     error code.
-
-     *Since:* 3.4.0
 

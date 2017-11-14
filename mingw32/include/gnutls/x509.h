@@ -233,6 +233,7 @@ int gnutls_x509_crt_get_signature_oid(gnutls_x509_crt_t cert, char *oid, size_t 
  * gnutls_keyid_flags_t:
  * @GNUTLS_KEYID_USE_SHA1: Use SHA1 as the key ID algorithm (default).
  * @GNUTLS_KEYID_USE_SHA256: Use SHA256 as the key ID algorithm.
+ * @GNUTLS_KEYID_USE_SHA512: Use SHA512 as the key ID algorithm.
  * @GNUTLS_KEYID_USE_BEST_KNOWN: Use the best known algorithm to calculate key ID. Using that option will make your program behavior depend on the version of gnutls linked with. That option has a cap of 64-bytes key IDs.
  *
  * Enumeration of different flags for the key ID functions.
@@ -241,6 +242,7 @@ int gnutls_x509_crt_get_signature_oid(gnutls_x509_crt_t cert, char *oid, size_t 
 typedef enum {
 	GNUTLS_KEYID_USE_SHA1 = 0,
 	GNUTLS_KEYID_USE_SHA256 = (1<<0),
+	GNUTLS_KEYID_USE_SHA512 = (1<<1),
 	GNUTLS_KEYID_USE_BEST_KNOWN = (1<<30)
 } gnutls_keyid_flags_t;
 int gnutls_x509_crt_get_key_id(gnutls_x509_crt_t crt,
@@ -398,6 +400,10 @@ int gnutls_x509_crt_set_crl_dist_points(gnutls_x509_crt_t crt,
 					unsigned int reason_flags);
 int gnutls_x509_crt_cpy_crl_dist_points(gnutls_x509_crt_t dst,
 					gnutls_x509_crt_t src);
+
+int gnutls_x509_crl_sign(gnutls_x509_crl_t crl,
+			 gnutls_x509_crt_t issuer,
+			 gnutls_x509_privkey_t issuer_key);
 
 int gnutls_x509_crl_sign2(gnutls_x509_crl_t crl,
 			  gnutls_x509_crt_t issuer,
@@ -1208,7 +1214,7 @@ void gnutls_x509_privkey_set_flags(gnutls_x509_privkey_t key, unsigned int flags
  * @GNUTLS_KEYGEN_DIGEST: The size field specifies the hash algorithm to be used in key generation.
  * @GNUTLS_KEYGEN_SPKI: data points to a %gnutls_x509_spki_t structure; it is not used after the key generation call.
  *
- * Enumeration of different key exchange algorithms.
+ * Enumeration of different key generation data options.
  */
 typedef enum {
 	GNUTLS_KEYGEN_SEED = 1,
@@ -1281,6 +1287,8 @@ int gnutls_x509_privkey_sign_data(gnutls_x509_privkey_t key,
 
 /* Certificate request stuff.
  */
+int gnutls_x509_crq_sign(gnutls_x509_crq_t crq,
+			 gnutls_x509_privkey_t key);
 
 int gnutls_x509_crq_sign2(gnutls_x509_crq_t crq,
 			  gnutls_x509_privkey_t key,

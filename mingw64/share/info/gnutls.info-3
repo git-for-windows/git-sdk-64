@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 6 March 2017 for version 3.6.0 of GnuTLS.
+This manual is last updated 6 March 2017 for version 3.6.1 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -25,6 +25,209 @@ START-INFO-DIR-ENTRY
 * psktool: (gnutls)Invoking psktool.	Simple TLS-Pre-Shared-Keys manager.
 * srptool: (gnutls)Invoking srptool.	Simple SRP password tool.
 END-INFO-DIR-ENTRY
+
+
+File: gnutls.info,  Node: Random number generation,  Next: Overriding algorithms,  Prev: Hash and MAC functions,  Up: Using GnuTLS as a cryptographic library
+
+8.5 Random number generation
+============================
+
+Access to the random number generator is provided using the *note
+gnutls_rnd:: function.  It allows obtaining random data of various
+levels.
+
+'GNUTLS_RND_NONCE'
+     Non-predictable random number.  Fatal in parts of session if
+     broken, i.e., vulnerable to statistical analysis.
+'GNUTLS_RND_RANDOM'
+     Pseudo-random cryptographic random number.  Fatal in session if
+     broken.  Example use: temporal keys.
+'GNUTLS_RND_KEY'
+     Fatal in many sessions if broken.  Example use: Long-term keys.
+
+Figure 8.5: The random number levels.
+
+ -- Function: int gnutls_rnd (gnutls_rnd_level_t LEVEL, void * DATA,
+          size_t LEN)
+     LEVEL: a security level
+
+     DATA: place to store random bytes
+
+     LEN: The requested size
+
+     This function will generate random data and store it to output
+     buffer.  The value of 'level' should be one of 'GNUTLS_RND_NONCE' ,
+     'GNUTLS_RND_RANDOM' and 'GNUTLS_RND_KEY' .  See the manual and
+     'gnutls_rnd_level_t' for detailed information.
+
+     This function is thread-safe and also fork-safe.
+
+     *Returns:* Zero on success, or a negative error code on error.
+
+     *Since:* 2.12.0
+
+See *note Random Number Generators-internals:: for more information on
+the random number generator operation.
+
+
+File: gnutls.info,  Node: Overriding algorithms,  Prev: Random number generation,  Up: Using GnuTLS as a cryptographic library
+
+8.6 Overriding algorithms
+=========================
+
+In systems which provide a hardware accelerated cipher implementation
+that is not directly supported by GnuTLS, it is possible to utilize it.
+There are functions which allow overriding the default cipher, digest
+and MAC implementations.  Those are described below.
+
+To override public key operations see *note Abstract private keys::.
+
+ -- Function: int gnutls_crypto_register_cipher
+          (gnutls_cipher_algorithm_t ALGORITHM, int PRIORITY,
+          gnutls_cipher_init_func INIT, gnutls_cipher_setkey_func
+          SETKEY, gnutls_cipher_setiv_func SETIV,
+          gnutls_cipher_encrypt_func ENCRYPT, gnutls_cipher_decrypt_func
+          DECRYPT, gnutls_cipher_deinit_func DEINIT)
+     ALGORITHM: is the gnutls algorithm identifier
+
+     PRIORITY: is the priority of the algorithm
+
+     INIT: A function which initializes the cipher
+
+     SETKEY: A function which sets the key of the cipher
+
+     SETIV: A function which sets the nonce/IV of the cipher (non-AEAD)
+
+     ENCRYPT: A function which performs encryption (non-AEAD)
+
+     DECRYPT: A function which performs decryption (non-AEAD)
+
+     DEINIT: A function which deinitializes the cipher
+
+     This function will register a cipher algorithm to be used by
+     gnutls.  Any algorithm registered will override the included
+     algorithms and by convention kernel implemented algorithms have
+     priority of 90 and CPU-assisted of 80.  The algorithm with the
+     lowest priority will be used by gnutls.
+
+     In the case the registered init or setkey functions return
+     'GNUTLS_E_NEED_FALLBACK' , GnuTLS will attempt to use the next in
+     priority registered cipher.
+
+     The functions which are marked as non-AEAD they are not required
+     when registering a cipher to be used with the new AEAD API
+     introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
+     API.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.4.0
+
+ -- Function: int gnutls_crypto_register_aead_cipher
+          (gnutls_cipher_algorithm_t ALGORITHM, int PRIORITY,
+          gnutls_cipher_init_func INIT, gnutls_cipher_setkey_func
+          SETKEY, gnutls_cipher_aead_encrypt_func AEAD_ENCRYPT,
+          gnutls_cipher_aead_decrypt_func AEAD_DECRYPT,
+          gnutls_cipher_deinit_func DEINIT)
+     ALGORITHM: is the gnutls AEAD cipher identifier
+
+     PRIORITY: is the priority of the algorithm
+
+     INIT: A function which initializes the cipher
+
+     SETKEY: A function which sets the key of the cipher
+
+     AEAD_ENCRYPT: Perform the AEAD encryption
+
+     AEAD_DECRYPT: Perform the AEAD decryption
+
+     DEINIT: A function which deinitializes the cipher
+
+     This function will register a cipher algorithm to be used by
+     gnutls.  Any algorithm registered will override the included
+     algorithms and by convention kernel implemented algorithms have
+     priority of 90 and CPU-assisted of 80.  The algorithm with the
+     lowest priority will be used by gnutls.
+
+     In the case the registered init or setkey functions return
+     'GNUTLS_E_NEED_FALLBACK' , GnuTLS will attempt to use the next in
+     priority registered cipher.
+
+     The functions registered will be used with the new AEAD API
+     introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
+     API.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.4.0
+
+ -- Function: int gnutls_crypto_register_mac (gnutls_mac_algorithm_t
+          ALGORITHM, int PRIORITY, gnutls_mac_init_func INIT,
+          gnutls_mac_setkey_func SETKEY, gnutls_mac_setnonce_func
+          SETNONCE, gnutls_mac_hash_func HASH, gnutls_mac_output_func
+          OUTPUT, gnutls_mac_deinit_func DEINIT, gnutls_mac_fast_func
+          HASH_FAST)
+     ALGORITHM: is the gnutls MAC identifier
+
+     PRIORITY: is the priority of the algorithm
+
+     INIT: A function which initializes the MAC
+
+     SETKEY: A function which sets the key of the MAC
+
+     SETNONCE: A function which sets the nonce for the mac (may be
+     'NULL' for common MAC algorithms)
+
+     HASH: Perform the hash operation
+
+     OUTPUT: Provide the output of the MAC
+
+     DEINIT: A function which deinitializes the MAC
+
+     HASH_FAST: Perform the MAC operation in one go
+
+     This function will register a MAC algorithm to be used by gnutls.
+     Any algorithm registered will override the included algorithms and
+     by convention kernel implemented algorithms have priority of 90 and
+     CPU-assisted of 80.  The algorithm with the lowest priority will be
+     used by gnutls.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.4.0
+
+ -- Function: int gnutls_crypto_register_digest
+          (gnutls_digest_algorithm_t ALGORITHM, int PRIORITY,
+          gnutls_digest_init_func INIT, gnutls_digest_hash_func HASH,
+          gnutls_digest_output_func OUTPUT, gnutls_digest_deinit_func
+          DEINIT, gnutls_digest_fast_func HASH_FAST)
+     ALGORITHM: is the gnutls digest identifier
+
+     PRIORITY: is the priority of the algorithm
+
+     INIT: A function which initializes the digest
+
+     HASH: Perform the hash operation
+
+     OUTPUT: Provide the output of the digest
+
+     DEINIT: A function which deinitializes the digest
+
+     HASH_FAST: Perform the digest operation in one go
+
+     This function will register a digest algorithm to be used by
+     gnutls.  Any algorithm registered will override the included
+     algorithms and by convention kernel implemented algorithms have
+     priority of 90 and CPU-assisted of 80.  The algorithm with the
+     lowest priority will be used by gnutls.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.4.0
 
 
 File: gnutls.info,  Node: Other included programs,  Next: Internal architecture of GnuTLS,  Prev: Using GnuTLS as a cryptographic library,  Up: Top
@@ -642,7 +845,7 @@ This option has some usage constraints.  It:
 
 Specify the private key file or URI to use; it must correspond to the
 certificate specified in -x509certfile.  Multiple keys and certificates
-can be specified with this option and in that case each occurence of
+can be specified with this option and in that case each occurrence of
 keyfile must be followed by the corresponding x509certfile or
 vice-versa.
 
@@ -657,7 +860,7 @@ This option has some usage constraints.  It:
 
 Specify the certificate file or URI to use; it must correspond to the
 key specified in -x509keyfile.  Multiple keys and certificates can be
-specified with this option and in that case each occurence of keyfile
+specified with this option and in that case each occurrence of keyfile
 must be followed by the corresponding x509certfile or vice-versa.
 
 x509dsakeyfile option
@@ -842,7 +1045,7 @@ TLS debug client.  It sets up multiple TLS connections to a server and
 queries its capabilities.  It was created to assist in debugging GnuTLS,
 but it might be useful to extract a TLS server's capabilities.  It
 connects to a TLS server, performs tests and print the server's
-capabilities.  If called with the '-v' parameter more checks will be
+capabilities.  If called with the '-V' parameter more checks will be
 performed.  Can be used to check for servers with special needs or bugs.
 
 This section was generated by *AutoGen*, using the 'agtexi-cmd' template
@@ -888,7 +1091,7 @@ to 'more'.  Both will exit with a status code of 0.
      queries its capabilities.  It was created to assist in debugging GnuTLS,
      but it might be useful to extract a TLS server's capabilities.  It connects
      to a TLS server, performs tests and print the server's capabilities.  If
-     called with the `-v' parameter more checks will be performed.  Can be used
+     called with the `-V' parameter more checks will be performed.  Can be used
      to check for servers with special needs or bugs.
 
 
@@ -1856,15 +2059,23 @@ Upgrading to 3.6.x from 3.5.x
 GnuTLS 3.6.x is source and binary compatible with GnuTLS 3.5.x releases;
 however, there are minor differences, listed below.
 
-Old function           Replacement
+Old functionality      Replacement
                        
 -------------------------------------------------------------------
-The priority string    Compression will no longer be available.
+The priority strings   TLS compression is no longer available.
 "+COMP" are a no-op    
+The hash function      TLS 1.3 no longer uses SHA2-224, and it
+SHA2-224 is a no-op    was never a widespread hash algorithm.
+for TLS1.2             As such it was removed for simplicity.
+                       
 The                    No longer use 'gnutls_compression_get',
 compression-related    'gnutls_compression_get_name',
 functions are          'gnutls_compression_list', and
 deprecated             'gnutls_compression_get_id'.
+                       
+*note gnutls_x509_crt_sign::,These signing functions will no longer
+*note gnutls_x509_crl_sign::,sign using SHA1, but with a secure hash
+*note gnutls_x509_crq_sign::algorithm.
                        
 
 
@@ -2682,27 +2893,19 @@ Public key algorithms
 Public key signature algorithms
 ===============================
 
-'RSA-SHA1'
-'RSA-SHA1'
-'RSA-SHA224'
 'RSA-SHA256'
 'RSA-SHA384'
 'RSA-SHA512'
-'RSA-RMD160'
-'DSA-SHA1'
-'DSA-SHA1'
-'DSA-SHA224'
-'DSA-SHA256'
-'RSA-MD5'
-'RSA-MD5'
-'RSA-MD2'
-'ECDSA-SHA1'
-'ECDSA-SHA224'
+'RSA-PSS-SHA256'
+'RSA-PSS-SHA256'
+'RSA-PSS-SHA384'
+'RSA-PSS-SHA384'
+'RSA-PSS-SHA512'
+'RSA-PSS-SHA512'
+'EdDSA-Ed25519'
 'ECDSA-SHA256'
 'ECDSA-SHA384'
 'ECDSA-SHA512'
-'DSA-SHA384'
-'DSA-SHA512'
 'ECDSA-SHA3-224'
 'ECDSA-SHA3-256'
 'ECDSA-SHA3-384'
@@ -2715,13 +2918,22 @@ Public key signature algorithms
 'DSA-SHA3-256'
 'DSA-SHA3-384'
 'DSA-SHA3-512'
-'RSA-PSS-SHA256'
-'RSA-PSS-SHA256'
-'RSA-PSS-SHA384'
-'RSA-PSS-SHA384'
-'RSA-PSS-SHA512'
-'RSA-PSS-SHA512'
-'EdDSA-Ed25519'
+'RSA-RAW'
+'RSA-SHA1'
+'RSA-SHA1'
+'RSA-SHA224'
+'RSA-RMD160'
+'DSA-SHA1'
+'DSA-SHA1'
+'DSA-SHA224'
+'DSA-SHA256'
+'RSA-MD5'
+'RSA-MD5'
+'RSA-MD2'
+'ECDSA-SHA1'
+'ECDSA-SHA224'
+'DSA-SHA384'
+'DSA-SHA512'
 
 Groups
 ======
@@ -2958,6 +3170,10 @@ gnutls_anon_set_params_function
      the Diffie-Hellman or RSA parameters for anonymous authentication.
      The callback should return 'GNUTLS_E_SUCCESS' (0) on success.
 
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
+
 gnutls_anon_set_server_dh_params
 --------------------------------
 
@@ -2971,6 +3187,10 @@ gnutls_anon_set_server_dh_params
      This function will set the Diffie-Hellman parameters for an
      anonymous server to use.  These parameters will be used in
      Anonymous Diffie-Hellman cipher suites.
+
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
 
 gnutls_anon_set_server_known_dh_params
 --------------------------------------
@@ -2986,6 +3206,10 @@ gnutls_anon_set_server_known_dh_params
      anonymous server to use.  These parameters will be used in
      Anonymous Diffie-Hellman cipher suites and will be selected from
      the FFDHE set of RFC7919 according to the security level provided.
+
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -3005,6 +3229,10 @@ gnutls_anon_set_server_params_function
      This function will set a callback in order for the server to get
      the Diffie-Hellman parameters for anonymous authentication.  The
      callback should return 'GNUTLS_E_SUCCESS' (0) on success.
+
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
 
 gnutls_auth_client_get_type
 ---------------------------
@@ -3514,6 +3742,10 @@ gnutls_certificate_set_dh_params
      not deallocate the parameters before the certificate is
      deallocated.
 
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
+
 gnutls_certificate_set_flags
 ----------------------------
 
@@ -3544,6 +3776,10 @@ gnutls_certificate_set_known_dh_params
      Ephemeral Diffie-Hellman cipher suites and will be selected from
      the FFDHE set of RFC7919 according to the security level provided.
 
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
@@ -3572,8 +3808,11 @@ gnutls_certificate_set_ocsp_status_request_file
      fine-tune file accesses.
 
      *Note:* the ability to set multiple OCSP responses per credential
-     structure via 'idx' was added in version 3.5.6 with the
-     'GNUTLS_CERTIFICATE_API_V2' flag.
+     structure via the index 'idx' was added in version 3.5.6.  To keep
+     backwards compatibility, it requires using
+     'gnutls_certificate_set_flags()' with the
+     'GNUTLS_CERTIFICATE_API_V2' flag to make the set certificate
+     functions return an index usable by this function.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.
@@ -3631,9 +3870,9 @@ gnutls_certificate_set_ocsp_status_request_function2
      PTR: opaque pointer passed to callback function
 
      This function is to be used by server to register a callback to
-     handle OCSP status requests that correspond to the indexed
-     certificate from the client.  The callback will be invoked if the
-     client supplied a status-request OCSP extension.
+     provide OCSP status requests that correspond to the indexed
+     certificate chain from the client.  The callback will be invoked if
+     the client supplied a status-request OCSP extension.
 
      The callback function prototype is:
 
@@ -3648,6 +3887,13 @@ gnutls_certificate_set_ocsp_status_request_function2
      (DER-encoded) OCSP response.  The response must be a value
      allocated using 'gnutls_malloc()' , and will be deinitialized by
      the caller.
+
+     *Note:* the ability to set multiple OCSP responses per credential
+     structure via the index 'idx' was added in version 3.5.6.  To keep
+     backwards compatibility, it requires using
+     'gnutls_certificate_set_flags()' with the
+     'GNUTLS_CERTIFICATE_API_V2' flag to make the set certificate
+     functions return an index usable by this function.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.
@@ -3668,6 +3914,10 @@ gnutls_certificate_set_params_function
      the Diffie-Hellman or RSA parameters for certificate
      authentication.  The callback should return 'GNUTLS_E_SUCCESS' (0)
      on success.
+
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
 
 gnutls_certificate_set_pin_function
 -----------------------------------
@@ -3719,7 +3969,7 @@ gnutls_certificate_set_retrieve_function
      encoded.  To get a more meaningful value use the function
      'gnutls_x509_rdn_get()' .
 
-     'pk_algos' contains a list with server's acceptable signature
+     'pk_algos' contains a list with server's acceptable public key
      algorithms.  The certificate returned should support the server's
      given algorithms.
 
@@ -4439,7 +4689,7 @@ gnutls_certificate_verify_peers
      'GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE' flag set.
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) when the validation is performed,
-     or a negative error code otherwise.  A sucessful error code means
+     or a negative error code otherwise.  A successful error code means
      that the 'status' parameter must be checked to obtain the
      validation status.
 
@@ -4478,7 +4728,7 @@ gnutls_certificate_verify_peers2
      'gnutls_certificate_verify_peers3()' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) when the validation is performed,
-     or a negative error code otherwise.  A sucessful error code means
+     or a negative error code otherwise.  A successful error code means
      that the 'status' parameter must be checked to obtain the
      validation status.
 
@@ -4513,7 +4763,7 @@ gnutls_certificate_verify_peers3
      the extended key usage), use 'gnutls_certificate_verify_peers()' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) when the validation is performed,
-     or a negative error code otherwise.  A sucessful error code means
+     or a negative error code otherwise.  A successful error code means
      that the 'status' parameter must be checked to obtain the
      validation status.
 
@@ -7472,6 +7722,10 @@ gnutls_psk_set_params_function
      the Diffie-Hellman or RSA parameters for PSK authentication.  The
      callback should return 'GNUTLS_E_SUCCESS' (0) on success.
 
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
+
 gnutls_psk_set_server_credentials_file
 --------------------------------------
 
@@ -7547,6 +7801,10 @@ gnutls_psk_set_server_dh_params
      anonymous server to use.  These parameters will be used in
      Diffie-Hellman exchange with PSK cipher suites.
 
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
+
 gnutls_psk_set_server_known_dh_params
 -------------------------------------
 
@@ -7561,6 +7819,10 @@ gnutls_psk_set_server_known_dh_params
      server to use.  These parameters will be used in Ephemeral
      Diffie-Hellman cipher suites and will be selected from the FFDHE
      set of RFC7919 according to the security level provided.
+
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -7580,6 +7842,10 @@ gnutls_psk_set_server_params_function
      This function will set a callback in order for the server to get
      the Diffie-Hellman parameters for PSK authentication.  The callback
      should return 'GNUTLS_E_SUCCESS' (0) on success.
+
+     *Deprecated:* This function is unnecessary and discouraged on
+     GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
+     following RFC7919.
 
 gnutls_random_art
 -----------------
@@ -8183,7 +8449,8 @@ gnutls_server_name_set
 
      NAME: is a string that contains the server name.
 
-     NAME_LENGTH: holds the length of name
+     NAME_LENGTH: holds the length of name excluding the terminating
+     null byte
 
      This function is to be used by clients that want to inform (via a
      TLS extension mechanism) the server of the name they connected to.

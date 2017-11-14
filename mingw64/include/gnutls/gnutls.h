@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.0"
+#define GNUTLS_VERSION "3.6.1"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 0
+#define GNUTLS_VERSION_PATCH 1
 
-#define GNUTLS_VERSION_NUMBER 0x030600
+#define GNUTLS_VERSION_NUMBER 0x030601
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -1717,17 +1717,6 @@ int gnutls_certificate_get_crt_raw(gnutls_certificate_credentials_t sc,
 				   unsigned idx1, unsigned idx2,
 				   gnutls_datum_t * cert);
 
-int
-gnutls_certificate_get_x509_crt(gnutls_certificate_credentials_t res,
-                                unsigned index,
-                                gnutls_x509_crt_t **crt_list,
-                                unsigned *crt_list_size);
-
-int
-gnutls_certificate_get_x509_key(gnutls_certificate_credentials_t res,
-                                unsigned index,
-                                gnutls_x509_privkey_t *key);
-
 void gnutls_certificate_free_keys(gnutls_certificate_credentials_t sc);
 void gnutls_certificate_free_cas(gnutls_certificate_credentials_t sc);
 void gnutls_certificate_free_ca_names(gnutls_certificate_credentials_t sc);
@@ -1761,9 +1750,6 @@ void gnutls_certificate_set_flags(gnutls_certificate_credentials_t,
 void gnutls_certificate_set_verify_limits(gnutls_certificate_credentials_t
 					  res, unsigned int max_bits,
 					  unsigned int max_depth);
-
-unsigned int
-gnutls_certificate_get_verify_flags(gnutls_certificate_credentials_t);
 
 int
 gnutls_certificate_set_x509_system_trust(gnutls_certificate_credentials_t

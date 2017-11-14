@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 6 March 2017 for version 3.6.0 of GnuTLS.
+This manual is last updated 6 March 2017 for version 3.6.1 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -32,7 +32,7 @@ File: gnutls.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS
 ******
 
-This manual is last updated 6 March 2017 for version 3.6.0 of GnuTLS.
+This manual is last updated 6 March 2017 for version 3.6.1 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -2551,7 +2551,7 @@ types::.
 
      KEY: holds a private key
 
-     DIG: The message digest to use, i.e., 'GNUTLS_DIG_SHA1'
+     DIG: The message digest to use, i.e., 'GNUTLS_DIG_SHA256'
 
      FLAGS: must be 0
 
@@ -2562,6 +2562,14 @@ types::.
 
      This must be the last step in a certificate request generation
      since all the previously set parameters are now signed.
+
+     A known limitation of this function is, that a newly-signed request
+     will not be fully functional (e.g., for signature verification),
+     until it is exported an re-imported.
+
+     After GnuTLS 3.6.1 the value of 'dig' may be 'GNUTLS_DIG_UNKNOWN' ,
+     and in that case, a suitable but reasonable for the key algorithm
+     will be selected.
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.  'GNUTLS_E_ASN1_VALUE_NOT_FOUND' is returned if you
@@ -2743,7 +2751,7 @@ provided.
      otherwise a negative error value.
 
 'INT *note gnutls_x509_crl_get_version:: (gnutls_x509_crl_t CRL)'
-'INT *note gnutls_x509_crl_get_issuer_dn:: (const gnutls_x509_crl_t CRL, char * BUF, size_t * SIZEOF_BUF)'
+'INT *note gnutls_x509_crl_get_issuer_dn:: (gnutls_x509_crl_t CRL, char * BUF, size_t * SIZEOF_BUF)'
 'INT *note gnutls_x509_crl_get_issuer_dn2:: (gnutls_x509_crl_t CRL, gnutls_datum_t * DN)'
 'TIME_T *note gnutls_x509_crl_get_this_update:: (gnutls_x509_crl_t CRL)'
 'TIME_T *note gnutls_x509_crl_get_next_update:: (gnutls_x509_crl_t CRL)'
@@ -2789,6 +2797,10 @@ residing in a PKCS #11 token.
      will not be fully functional (e.g., for signature verification),
      until it is exported an re-imported.
 
+     After GnuTLS 3.6.1 the value of 'dig' may be 'GNUTLS_DIG_UNKNOWN' ,
+     and in that case, a suitable but reasonable for the key algorithm
+     will be selected.
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
@@ -2815,6 +2827,10 @@ residing in a PKCS #11 token.
      A known limitation of this function is, that a newly-signed CRL
      will not be fully functional (e.g., for signature verification),
      until it is exported an re-imported.
+
+     After GnuTLS 3.6.1 the value of 'dig' may be 'GNUTLS_DIG_UNKNOWN' ,
+     and in that case, a suitable but reasonable for the key algorithm
+     will be selected.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -3434,6 +3450,7 @@ to 'more'.  Both will exit with a status code of 0.
 
         -k, --key-info             Print information on a private key
             --p8-info              Print information on a PKCS #8 structure
+            --to-rsa               Convert an RSA-PSS key to raw RSA format
         -p, --generate-privkey     Generate a private key
             --bits=num             Specify the number of bits for key generation
             --curve=str            Specify the curve used for EC key generation
@@ -3669,11 +3686,11 @@ provable option.
 ................
 
 This is the "generate a private key or parameters from a seed using a
-provable method" option.  This will use the FIPS-186-4 algorithms (i.e.,
-Shawe-Taylor) for provable key generation.  When specified the private
-keys or parameters will be generated from a seed, and can be later
-validated with -verify-provable-privkey to be correctly generated from
-the seed.  You may specify -seed or allow GnuTLS to generate one
+provable method" option.  This will use the FIPS PUB186-4 algorithms
+(i.e., Shawe-Taylor) for provable key generation.  When specified the
+private keys or parameters will be generated from a seed, and can be
+later validated with -verify-provable-privkey to be correctly generated
+from the seed.  You may specify -seed or allow GnuTLS to generate one
 (recommended).  This option can be combined with -generate-privkey or
 -generate-dh-params.
 
@@ -4622,10 +4639,11 @@ ask option
 This is the "ask an ocsp/http server on a certificate validity" option.
 This option takes an optional string argument 'server name|url'.
 Connects to the specified HTTP OCSP server and queries on the validity
-of the loaded certificate.  It can be combined with -load-chain, where
-it checks all certificates in the provided chain, or with -load-cert and
--load-issuer options.  The latter checks the provided certificate
-against its specified issuer certificate.
+of the loaded certificate.  Its argument can be a URL or a plain server
+name.  It can be combined with -load-chain, where it checks all
+certificates in the provided chain, or with -load-cert and -load-issuer
+options.  The latter checks the provided certificate against its
+specified issuer certificate.
 
 verify-response option (-e)
 ...........................
@@ -4793,6 +4811,8 @@ The request is sent via HTTP to the OCSP server address found in the
 certificates.  It is possible to override the address of the OCSP server
 as well as ask information on a particular certificate using -load-cert
 and -load-issuer.
+
+     $ ocsptool --ask http://ocsp.CAcert.org/ --load-chain chain.pem
 
 
 File: gnutls.info,  Node: danetool Invocation,  Prev: ocsptool Invocation,  Up: More on certificate authentication
@@ -6706,7 +6726,7 @@ to 'more'.  Both will exit with a status code of 0.
             --initialize           Initializes a PKCS #11 token
             --initialize-pin       Initializes/Resets a PKCS #11 token user PIN
             --initialize-so-pin    Initializes/Resets a PKCS #11 token security officer PIN
-            --set-pin=str          Specify the PIN to use on token initialization
+            --set-pin=str          Specify the PIN to use on token operations
             --set-so-pin=str       Specify the Security Officer's PIN to use on token initialization
 
      Object listing:
@@ -6799,6 +6819,8 @@ to 'more'.  Both will exit with a status code of 0.
                                      - disabled as '--no-so-login'
             --admin-login          an alias for the 'so-login' option
             --test-sign            Tests the signature operation of the provided object
+            --sign-params=str      Sign with a specific signature algorithm
+            --hash=str             Hash algorithm to use for signing
             --generate-random=num  Generate random data
         -8, --pkcs8                Use PKCS #8 format for private keys
             --inder                Use DER/RAW format for input
@@ -6850,8 +6872,8 @@ compact version of -list-tokens.
 set-pin option.
 ...............
 
-This is the "specify the pin to use on token initialization" option.
-This option takes a string argument.  Alternatively the GNUTLS_PIN
+This is the "specify the pin to use on token operations" option.  This
+option takes a string argument.  Alternatively the GNUTLS_PIN
 environment variable may be used.
 
 set-so-pin option.
@@ -7177,6 +7199,23 @@ This is the "tests the signature operation of the provided object"
 option.  It can be used to test the correct operation of the signature
 operation.  If both a private and a public key are available this
 operation will sign and verify the signed data.
+
+sign-params option.
+...................
+
+This is the "sign with a specific signature algorithm" option.  This
+option takes a string argument.  This option can be combined with
+-test-sign, to sign with a specific signature algorithm variant.  The
+only option supported is 'RSA-PSS', and should be specified in order to
+use RSA-PSS signature on RSA keys.
+
+hash option.
+............
+
+This is the "hash algorithm to use for signing" option.  This option
+takes a string argument.  This option can be combined with test-sign.
+Available hash functions are SHA1, RMD160, SHA256, SHA384, SHA512,
+SHA3-224, SHA3-256, SHA3-384, SHA3-512.
 
 generate-random option.
 .......................

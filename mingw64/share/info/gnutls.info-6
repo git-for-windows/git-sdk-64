@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 6 March 2017 for version 3.6.0 of GnuTLS.
+This manual is last updated 6 March 2017 for version 3.6.1 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -25,6 +25,863 @@ START-INFO-DIR-ENTRY
 * psktool: (gnutls)Invoking psktool.	Simple TLS-Pre-Shared-Keys manager.
 * srptool: (gnutls)Invoking srptool.	Simple SRP password tool.
 END-INFO-DIR-ENTRY
+
+
+File: gnutls.info,  Node: Cryptographic API,  Next: Compatibility API,  Prev: DANE API,  Up: API reference
+
+E.12 Cryptographic API
+======================
+
+The following functions are to be used for low-level cryptographic
+operations.  Their prototypes lie in 'gnutls/crypto.h'.
+
+Note that due to historic reasons several functions, (e.g.  *note
+gnutls_mac_list::, *note gnutls_mac_get_name::) of this API are part of
+the *note Core TLS API::.
+
+gnutls_aead_cipher_decrypt
+--------------------------
+
+ -- Function: int gnutls_aead_cipher_decrypt (gnutls_aead_cipher_hd_t
+          HANDLE, const void * NONCE, size_t NONCE_LEN, const void *
+          AUTH, size_t AUTH_LEN, size_t TAG_SIZE, const void * CTEXT,
+          size_t CTEXT_LEN, void * PTEXT, size_t * PTEXT_LEN)
+     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
+
+     NONCE: the nonce to set
+
+     NONCE_LEN: The length of the nonce
+
+     AUTH: the data to be authenticated
+
+     AUTH_LEN: The length of the data
+
+     TAG_SIZE: The size of the tag to use (use zero for the default)
+
+     CTEXT: the data to decrypt
+
+     CTEXT_LEN: the length of data to decrypt (includes tag size)
+
+     PTEXT: the decrypted data
+
+     PTEXT_LEN: the length of decrypted data (initially must hold the
+     maximum available size)
+
+     This function will decrypt the given data using the algorithm
+     specified by the context.  This function must be provided the whole
+     data to be decrypted, including the tag, and will fail if the tag
+     verification fails.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 3.4.0
+
+gnutls_aead_cipher_deinit
+-------------------------
+
+ -- Function: void gnutls_aead_cipher_deinit (gnutls_aead_cipher_hd_t
+          HANDLE)
+     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
+
+     This function will deinitialize all resources occupied by the given
+     authenticated-encryption context.
+
+     *Since:* 3.4.0
+
+gnutls_aead_cipher_encrypt
+--------------------------
+
+ -- Function: int gnutls_aead_cipher_encrypt (gnutls_aead_cipher_hd_t
+          HANDLE, const void * NONCE, size_t NONCE_LEN, const void *
+          AUTH, size_t AUTH_LEN, size_t TAG_SIZE, const void * PTEXT,
+          size_t PTEXT_LEN, void * CTEXT, size_t * CTEXT_LEN)
+     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
+
+     NONCE: the nonce to set
+
+     NONCE_LEN: The length of the nonce
+
+     AUTH: the data to be authenticated
+
+     AUTH_LEN: The length of the data
+
+     TAG_SIZE: The size of the tag to use (use zero for the default)
+
+     PTEXT: the data to encrypt
+
+     PTEXT_LEN: The length of data to encrypt
+
+     CTEXT: the encrypted data
+
+     CTEXT_LEN: the length of encrypted data (initially must hold the
+     maximum available size, including space for tag)
+
+     This function will encrypt the given data using the algorithm
+     specified by the context.  The output data will contain the
+     authentication tag.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 3.4.0
+
+gnutls_aead_cipher_init
+-----------------------
+
+ -- Function: int gnutls_aead_cipher_init (gnutls_aead_cipher_hd_t *
+          HANDLE, gnutls_cipher_algorithm_t CIPHER, const gnutls_datum_t
+          * KEY)
+     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
+
+     CIPHER: the authenticated-encryption algorithm to use
+
+     KEY: The key to be used for encryption
+
+     This function will initialize an context that can be used for
+     encryption/decryption of data.  This will effectively use the
+     current crypto backend in use by gnutls or the cryptographic
+     accelerator in use.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 3.4.0
+
+gnutls_cipher_add_auth
+----------------------
+
+ -- Function: int gnutls_cipher_add_auth (gnutls_cipher_hd_t HANDLE,
+          const void * PTEXT, size_t PTEXT_SIZE)
+     HANDLE: is a 'gnutls_cipher_hd_t' type
+
+     PTEXT: the data to be authenticated
+
+     PTEXT_SIZE: the length of the data
+
+     This function operates on authenticated encryption with associated
+     data (AEAD) ciphers and authenticate the input data.  This function
+     can only be called once and before any encryption operations.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 3.0
+
+gnutls_cipher_decrypt
+---------------------
+
+ -- Function: int gnutls_cipher_decrypt (gnutls_cipher_hd_t HANDLE, void
+          * CTEXT, size_t CTEXT_LEN)
+     HANDLE: is a 'gnutls_cipher_hd_t' type
+
+     CTEXT: the data to decrypt
+
+     CTEXT_LEN: the length of data to decrypt
+
+     This function will decrypt the given data using the algorithm
+     specified by the context.
+
+     Note that in AEAD ciphers, this will not check the tag.  You will
+     need to compare the tag sent with the value returned from
+     'gnutls_cipher_tag()' .
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.10.0
+
+gnutls_cipher_decrypt2
+----------------------
+
+ -- Function: int gnutls_cipher_decrypt2 (gnutls_cipher_hd_t HANDLE,
+          const void * CTEXT, size_t CTEXT_LEN, void * PTEXT, size_t
+          PTEXT_LEN)
+     HANDLE: is a 'gnutls_cipher_hd_t' type
+
+     CTEXT: the data to decrypt
+
+     CTEXT_LEN: the length of data to decrypt
+
+     PTEXT: the decrypted data
+
+     PTEXT_LEN: the available length for decrypted data
+
+     This function will decrypt the given data using the algorithm
+     specified by the context.  For block ciphers the 'ctext_len' must
+     be a multiple of the block size.  For the supported ciphers the
+     plaintext data length will equal the ciphertext size.
+
+     Note that in AEAD ciphers, this will not check the tag.  You will
+     need to compare the tag sent with the value returned from
+     'gnutls_cipher_tag()' .
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.12.0
+
+gnutls_cipher_deinit
+--------------------
+
+ -- Function: void gnutls_cipher_deinit (gnutls_cipher_hd_t HANDLE)
+     HANDLE: is a 'gnutls_cipher_hd_t' type
+
+     This function will deinitialize all resources occupied by the given
+     encryption context.
+
+     *Since:* 2.10.0
+
+gnutls_cipher_encrypt
+---------------------
+
+ -- Function: int gnutls_cipher_encrypt (gnutls_cipher_hd_t HANDLE, void
+          * PTEXT, size_t PTEXT_LEN)
+     HANDLE: is a 'gnutls_cipher_hd_t' type
+
+     PTEXT: the data to encrypt
+
+     PTEXT_LEN: the length of data to encrypt
+
+     This function will encrypt the given data using the algorithm
+     specified by the context.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.10.0
+
+gnutls_cipher_encrypt2
+----------------------
+
+ -- Function: int gnutls_cipher_encrypt2 (gnutls_cipher_hd_t HANDLE,
+          const void * PTEXT, size_t PTEXT_LEN, void * CTEXT, size_t
+          CTEXT_LEN)
+     HANDLE: is a 'gnutls_cipher_hd_t' type
+
+     PTEXT: the data to encrypt
+
+     PTEXT_LEN: the length of data to encrypt
+
+     CTEXT: the encrypted data
+
+     CTEXT_LEN: the available length for encrypted data
+
+     This function will encrypt the given data using the algorithm
+     specified by the context.  For block ciphers the 'ptext_len' must
+     be a multiple of the block size.  For the supported ciphers the
+     encrypted data length will equal the plaintext size.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.12.0
+
+gnutls_cipher_get_block_size
+----------------------------
+
+ -- Function: unsigned gnutls_cipher_get_block_size
+          (gnutls_cipher_algorithm_t ALGORITHM)
+     ALGORITHM: is an encryption algorithm
+
+     *Returns:* the block size of the encryption algorithm.
+
+     *Since:* 2.10.0
+
+gnutls_cipher_get_iv_size
+-------------------------
+
+ -- Function: unsigned gnutls_cipher_get_iv_size
+          (gnutls_cipher_algorithm_t ALGORITHM)
+     ALGORITHM: is an encryption algorithm
+
+     Get block size for encryption algorithm.
+
+     *Returns:* block size for encryption algorithm.
+
+     *Since:* 3.2.0
+
+gnutls_cipher_get_tag_size
+--------------------------
+
+ -- Function: unsigned gnutls_cipher_get_tag_size
+          (gnutls_cipher_algorithm_t ALGORITHM)
+     ALGORITHM: is an encryption algorithm
+
+     This function returns the tag size of an authenticated encryption
+     algorithm.  For non-AEAD algorithms, it returns zero.
+
+     *Returns:* the tag size of the authenticated encryption algorithm.
+
+     *Since:* 3.2.2
+
+gnutls_cipher_init
+------------------
+
+ -- Function: int gnutls_cipher_init (gnutls_cipher_hd_t * HANDLE,
+          gnutls_cipher_algorithm_t CIPHER, const gnutls_datum_t * KEY,
+          const gnutls_datum_t * IV)
+     HANDLE: is a 'gnutls_cipher_hd_t' type
+
+     CIPHER: the encryption algorithm to use
+
+     KEY: the key to be used for encryption/decryption
+
+     IV: the IV to use (if not applicable set NULL)
+
+     This function will initialize the 'handle' context to be usable for
+     encryption/decryption of data.  This will effectively use the
+     current crypto backend in use by gnutls or the cryptographic
+     accelerator in use.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.10.0
+
+gnutls_cipher_set_iv
+--------------------
+
+ -- Function: void gnutls_cipher_set_iv (gnutls_cipher_hd_t HANDLE, void
+          * IV, size_t IVLEN)
+     HANDLE: is a 'gnutls_cipher_hd_t' type
+
+     IV: the IV to set
+
+     IVLEN: the length of the IV
+
+     This function will set the IV to be used for the next encryption
+     block.
+
+     *Since:* 3.0
+
+gnutls_cipher_tag
+-----------------
+
+ -- Function: int gnutls_cipher_tag (gnutls_cipher_hd_t HANDLE, void *
+          TAG, size_t TAG_SIZE)
+     HANDLE: is a 'gnutls_cipher_hd_t' type
+
+     TAG: will hold the tag
+
+     TAG_SIZE: the length of the tag to return
+
+     This function operates on authenticated encryption with associated
+     data (AEAD) ciphers and will return the output tag.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 3.0
+
+gnutls_crypto_register_aead_cipher
+----------------------------------
+
+ -- Function: int gnutls_crypto_register_aead_cipher
+          (gnutls_cipher_algorithm_t ALGORITHM, int PRIORITY,
+          gnutls_cipher_init_func INIT, gnutls_cipher_setkey_func
+          SETKEY, gnutls_cipher_aead_encrypt_func AEAD_ENCRYPT,
+          gnutls_cipher_aead_decrypt_func AEAD_DECRYPT,
+          gnutls_cipher_deinit_func DEINIT)
+     ALGORITHM: is the gnutls AEAD cipher identifier
+
+     PRIORITY: is the priority of the algorithm
+
+     INIT: A function which initializes the cipher
+
+     SETKEY: A function which sets the key of the cipher
+
+     AEAD_ENCRYPT: Perform the AEAD encryption
+
+     AEAD_DECRYPT: Perform the AEAD decryption
+
+     DEINIT: A function which deinitializes the cipher
+
+     This function will register a cipher algorithm to be used by
+     gnutls.  Any algorithm registered will override the included
+     algorithms and by convention kernel implemented algorithms have
+     priority of 90 and CPU-assisted of 80.  The algorithm with the
+     lowest priority will be used by gnutls.
+
+     In the case the registered init or setkey functions return
+     'GNUTLS_E_NEED_FALLBACK' , GnuTLS will attempt to use the next in
+     priority registered cipher.
+
+     The functions registered will be used with the new AEAD API
+     introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
+     API.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.4.0
+
+gnutls_crypto_register_cipher
+-----------------------------
+
+ -- Function: int gnutls_crypto_register_cipher
+          (gnutls_cipher_algorithm_t ALGORITHM, int PRIORITY,
+          gnutls_cipher_init_func INIT, gnutls_cipher_setkey_func
+          SETKEY, gnutls_cipher_setiv_func SETIV,
+          gnutls_cipher_encrypt_func ENCRYPT, gnutls_cipher_decrypt_func
+          DECRYPT, gnutls_cipher_deinit_func DEINIT)
+     ALGORITHM: is the gnutls algorithm identifier
+
+     PRIORITY: is the priority of the algorithm
+
+     INIT: A function which initializes the cipher
+
+     SETKEY: A function which sets the key of the cipher
+
+     SETIV: A function which sets the nonce/IV of the cipher (non-AEAD)
+
+     ENCRYPT: A function which performs encryption (non-AEAD)
+
+     DECRYPT: A function which performs decryption (non-AEAD)
+
+     DEINIT: A function which deinitializes the cipher
+
+     This function will register a cipher algorithm to be used by
+     gnutls.  Any algorithm registered will override the included
+     algorithms and by convention kernel implemented algorithms have
+     priority of 90 and CPU-assisted of 80.  The algorithm with the
+     lowest priority will be used by gnutls.
+
+     In the case the registered init or setkey functions return
+     'GNUTLS_E_NEED_FALLBACK' , GnuTLS will attempt to use the next in
+     priority registered cipher.
+
+     The functions which are marked as non-AEAD they are not required
+     when registering a cipher to be used with the new AEAD API
+     introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
+     API.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.4.0
+
+gnutls_crypto_register_digest
+-----------------------------
+
+ -- Function: int gnutls_crypto_register_digest
+          (gnutls_digest_algorithm_t ALGORITHM, int PRIORITY,
+          gnutls_digest_init_func INIT, gnutls_digest_hash_func HASH,
+          gnutls_digest_output_func OUTPUT, gnutls_digest_deinit_func
+          DEINIT, gnutls_digest_fast_func HASH_FAST)
+     ALGORITHM: is the gnutls digest identifier
+
+     PRIORITY: is the priority of the algorithm
+
+     INIT: A function which initializes the digest
+
+     HASH: Perform the hash operation
+
+     OUTPUT: Provide the output of the digest
+
+     DEINIT: A function which deinitializes the digest
+
+     HASH_FAST: Perform the digest operation in one go
+
+     This function will register a digest algorithm to be used by
+     gnutls.  Any algorithm registered will override the included
+     algorithms and by convention kernel implemented algorithms have
+     priority of 90 and CPU-assisted of 80.  The algorithm with the
+     lowest priority will be used by gnutls.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.4.0
+
+gnutls_crypto_register_mac
+--------------------------
+
+ -- Function: int gnutls_crypto_register_mac (gnutls_mac_algorithm_t
+          ALGORITHM, int PRIORITY, gnutls_mac_init_func INIT,
+          gnutls_mac_setkey_func SETKEY, gnutls_mac_setnonce_func
+          SETNONCE, gnutls_mac_hash_func HASH, gnutls_mac_output_func
+          OUTPUT, gnutls_mac_deinit_func DEINIT, gnutls_mac_fast_func
+          HASH_FAST)
+     ALGORITHM: is the gnutls MAC identifier
+
+     PRIORITY: is the priority of the algorithm
+
+     INIT: A function which initializes the MAC
+
+     SETKEY: A function which sets the key of the MAC
+
+     SETNONCE: A function which sets the nonce for the mac (may be
+     'NULL' for common MAC algorithms)
+
+     HASH: Perform the hash operation
+
+     OUTPUT: Provide the output of the MAC
+
+     DEINIT: A function which deinitializes the MAC
+
+     HASH_FAST: Perform the MAC operation in one go
+
+     This function will register a MAC algorithm to be used by gnutls.
+     Any algorithm registered will override the included algorithms and
+     by convention kernel implemented algorithms have priority of 90 and
+     CPU-assisted of 80.  The algorithm with the lowest priority will be
+     used by gnutls.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.4.0
+
+gnutls_decode_ber_digest_info
+-----------------------------
+
+ -- Function: int gnutls_decode_ber_digest_info (const gnutls_datum_t *
+          INFO, gnutls_digest_algorithm_t * HASH, unsigned char *
+          DIGEST, unsigned int * DIGEST_SIZE)
+     INFO: an RSA BER encoded DigestInfo structure
+
+     HASH: will contain the hash algorithm of the structure
+
+     DIGEST: will contain the hash output of the structure
+
+     DIGEST_SIZE: will contain the hash size of the structure; initially
+     must hold the maximum size of 'digest'
+
+     This function will parse an RSA PKCS'1' 1.5 DigestInfo structure
+     and report the hash algorithm used as well as the digest data.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise an error code is returned.
+
+     *Since:* 3.5.0
+
+gnutls_decode_rs_value
+----------------------
+
+ -- Function: int gnutls_decode_rs_value (const gnutls_datum_t *
+          SIG_VALUE, gnutls_datum_t * R, gnutls_datum_t * S)
+     SIG_VALUE: holds a Dss-Sig-Value DER or BER encoded structure
+
+     R: will contain the r value
+
+     S: will contain the s value
+
+     This function will decode the provided 'sig_value' , into 'r' and
+     's' elements.  The Dss-Sig-Value is used for DSA and ECDSA
+     signatures.
+
+     The output values may be padded with a zero byte to prevent them
+     from being interpreted as negative values.  The value should be
+     deallocated using 'gnutls_free()' .
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise an error code is returned.
+
+     *Since:* 3.6.0
+
+gnutls_encode_ber_digest_info
+-----------------------------
+
+ -- Function: int gnutls_encode_ber_digest_info
+          (gnutls_digest_algorithm_t HASH, const gnutls_datum_t *
+          DIGEST, gnutls_datum_t * OUTPUT)
+     HASH: the hash algorithm that was used to get the digest
+
+     DIGEST: must contain the digest data
+
+     OUTPUT: will contain the allocated DigestInfo BER encoded data
+
+     This function will encode the provided digest data, and its
+     algorithm into an RSA PKCS'1' 1.5 DigestInfo structure.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise an error code is returned.
+
+     *Since:* 3.5.0
+
+gnutls_encode_rs_value
+----------------------
+
+ -- Function: int gnutls_encode_rs_value (gnutls_datum_t * SIG_VALUE,
+          const gnutls_datum_t * R, const gnutls_datum_t * S)
+     SIG_VALUE: will hold a Dss-Sig-Value DER encoded structure
+
+     R: must contain the r value
+
+     S: must contain the s value
+
+     This function will encode the provided r and s values, into a
+     Dss-Sig-Value structure, used for DSA and ECDSA signatures.
+
+     The output value should be deallocated using 'gnutls_free()' .
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise an error code is returned.
+
+     *Since:* 3.6.0
+
+gnutls_hash
+-----------
+
+ -- Function: int gnutls_hash (gnutls_hash_hd_t HANDLE, const void *
+          PTEXT, size_t PTEXT_LEN)
+     HANDLE: is a 'gnutls_hash_hd_t' type
+
+     PTEXT: the data to hash
+
+     PTEXT_LEN: the length of data to hash
+
+     This function will hash the given data using the algorithm
+     specified by the context.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.10.0
+
+gnutls_hash_deinit
+------------------
+
+ -- Function: void gnutls_hash_deinit (gnutls_hash_hd_t HANDLE, void *
+          DIGEST)
+     HANDLE: is a 'gnutls_hash_hd_t' type
+
+     DIGEST: is the output value of the hash
+
+     This function will deinitialize all resources occupied by the given
+     hash context.
+
+     *Since:* 2.10.0
+
+gnutls_hash_fast
+----------------
+
+ -- Function: int gnutls_hash_fast (gnutls_digest_algorithm_t ALGORITHM,
+          const void * PTEXT, size_t PTEXT_LEN, void * DIGEST)
+     ALGORITHM: the hash algorithm to use
+
+     PTEXT: the data to hash
+
+     PTEXT_LEN: the length of data to hash
+
+     DIGEST: is the output value of the hash
+
+     This convenience function will hash the given data and return
+     output on a single call.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.10.0
+
+gnutls_hash_get_len
+-------------------
+
+ -- Function: unsigned gnutls_hash_get_len (gnutls_digest_algorithm_t
+          ALGORITHM)
+     ALGORITHM: the hash algorithm to use
+
+     This function will return the length of the output data of the
+     given hash algorithm.
+
+     *Returns:* The length or zero on error.
+
+     *Since:* 2.10.0
+
+gnutls_hash_init
+----------------
+
+ -- Function: int gnutls_hash_init (gnutls_hash_hd_t * DIG,
+          gnutls_digest_algorithm_t ALGORITHM)
+     DIG: is a 'gnutls_hash_hd_t' type
+
+     ALGORITHM: the hash algorithm to use
+
+     This function will initialize an context that can be used to
+     produce a Message Digest of data.  This will effectively use the
+     current crypto backend in use by gnutls or the cryptographic
+     accelerator in use.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.10.0
+
+gnutls_hash_output
+------------------
+
+ -- Function: void gnutls_hash_output (gnutls_hash_hd_t HANDLE, void *
+          DIGEST)
+     HANDLE: is a 'gnutls_hash_hd_t' type
+
+     DIGEST: is the output value of the hash
+
+     This function will output the current hash value and reset the
+     state of the hash.
+
+     *Since:* 2.10.0
+
+gnutls_hmac
+-----------
+
+ -- Function: int gnutls_hmac (gnutls_hmac_hd_t HANDLE, const void *
+          PTEXT, size_t PTEXT_LEN)
+     HANDLE: is a 'gnutls_hmac_hd_t' type
+
+     PTEXT: the data to hash
+
+     PTEXT_LEN: the length of data to hash
+
+     This function will hash the given data using the algorithm
+     specified by the context.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.10.0
+
+gnutls_hmac_deinit
+------------------
+
+ -- Function: void gnutls_hmac_deinit (gnutls_hmac_hd_t HANDLE, void *
+          DIGEST)
+     HANDLE: is a 'gnutls_hmac_hd_t' type
+
+     DIGEST: is the output value of the MAC
+
+     This function will deinitialize all resources occupied by the given
+     hmac context.
+
+     *Since:* 2.10.0
+
+gnutls_hmac_fast
+----------------
+
+ -- Function: int gnutls_hmac_fast (gnutls_mac_algorithm_t ALGORITHM,
+          const void * KEY, size_t KEYLEN, const void * PTEXT, size_t
+          PTEXT_LEN, void * DIGEST)
+     ALGORITHM: the hash algorithm to use
+
+     KEY: the key to use
+
+     KEYLEN: the length of the key
+
+     PTEXT: the data to hash
+
+     PTEXT_LEN: the length of data to hash
+
+     DIGEST: is the output value of the hash
+
+     This convenience function will hash the given data and return
+     output on a single call.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.10.0
+
+gnutls_hmac_get_len
+-------------------
+
+ -- Function: unsigned gnutls_hmac_get_len (gnutls_mac_algorithm_t
+          ALGORITHM)
+     ALGORITHM: the hmac algorithm to use
+
+     This function will return the length of the output data of the
+     given hmac algorithm.
+
+     *Returns:* The length or zero on error.
+
+     *Since:* 2.10.0
+
+gnutls_hmac_init
+----------------
+
+ -- Function: int gnutls_hmac_init (gnutls_hmac_hd_t * DIG,
+          gnutls_mac_algorithm_t ALGORITHM, const void * KEY, size_t
+          KEYLEN)
+     DIG: is a 'gnutls_hmac_hd_t' type
+
+     ALGORITHM: the HMAC algorithm to use
+
+     KEY: the key to be used for encryption
+
+     KEYLEN: the length of the key
+
+     This function will initialize an context that can be used to
+     produce a Message Authentication Code (MAC) of data.  This will
+     effectively use the current crypto backend in use by gnutls or the
+     cryptographic accelerator in use.
+
+     Note that despite the name of this function, it can be used for
+     other MAC algorithms than HMAC.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 2.10.0
+
+gnutls_hmac_output
+------------------
+
+ -- Function: void gnutls_hmac_output (gnutls_hmac_hd_t HANDLE, void *
+          DIGEST)
+     HANDLE: is a 'gnutls_hmac_hd_t' type
+
+     DIGEST: is the output value of the MAC
+
+     This function will output the current MAC value and reset the state
+     of the MAC.
+
+     *Since:* 2.10.0
+
+gnutls_hmac_set_nonce
+---------------------
+
+ -- Function: void gnutls_hmac_set_nonce (gnutls_hmac_hd_t HANDLE, const
+          void * NONCE, size_t NONCE_LEN)
+     HANDLE: is a 'gnutls_hmac_hd_t' type
+
+     NONCE: the data to set as nonce
+
+     NONCE_LEN: the length of data
+
+     This function will set the nonce in the MAC algorithm.
+
+     *Since:* 3.2.0
+
+gnutls_mac_get_nonce_size
+-------------------------
+
+ -- Function: size_t gnutls_mac_get_nonce_size (gnutls_mac_algorithm_t
+          ALGORITHM)
+     ALGORITHM: is an encryption algorithm
+
+     Returns the size of the nonce used by the MAC in TLS.
+
+     *Returns:* length (in bytes) of the given MAC nonce size, or 0.
+
+     *Since:* 3.2.0
+
+gnutls_rnd
+----------
+
+ -- Function: int gnutls_rnd (gnutls_rnd_level_t LEVEL, void * DATA,
+          size_t LEN)
+     LEVEL: a security level
+
+     DATA: place to store random bytes
+
+     LEN: The requested size
+
+     This function will generate random data and store it to output
+     buffer.  The value of 'level' should be one of 'GNUTLS_RND_NONCE' ,
+     'GNUTLS_RND_RANDOM' and 'GNUTLS_RND_KEY' .  See the manual and
+     'gnutls_rnd_level_t' for detailed information.
+
+     This function is thread-safe and also fork-safe.
+
+     *Returns:* Zero on success, or a negative error code on error.
+
+     *Since:* 2.12.0
+
+gnutls_rnd_refresh
+------------------
+
+ -- Function: void gnutls_rnd_refresh ( VOID)
+
+     This function refreshes the random generator state.  That is the
+     current precise time, CPU usage, and other values are input into
+     its state.
+
+     On a slower rate input from /dev/urandom is mixed too.
+
+     *Since:* 3.1.7
 
 
 File: gnutls.info,  Node: Compatibility API,  Prev: Cryptographic API,  Up: API reference
@@ -150,42 +1007,6 @@ gnutls_priority_compression_list
 
      *Since:* 3.0
 
-gnutls_x509_crl_sign
---------------------
-
- -- Function: int gnutls_x509_crl_sign (gnutls_x509_crl_t CRL,
-          gnutls_x509_crt_t ISSUER, gnutls_x509_privkey_t ISSUER_KEY)
-     CRL: should contain a gnutls_x509_crl_t type
-
-     ISSUER: is the certificate of the certificate issuer
-
-     ISSUER_KEY: holds the issuer's private key
-
-     This function is the same a 'gnutls_x509_crl_sign2()' with no
-     flags, and SHA1 as the hash algorithm.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
-     *Deprecated:* Use 'gnutls_x509_crl_privkey_sign()' .
-
-gnutls_x509_crq_sign
---------------------
-
- -- Function: int gnutls_x509_crq_sign (gnutls_x509_crq_t CRQ,
-          gnutls_x509_privkey_t KEY)
-     CRQ: should contain a 'gnutls_x509_crq_t' type
-
-     KEY: holds a private key
-
-     This function is the same a 'gnutls_x509_crq_sign2()' with no
-     flags, and SHA1 as the hash algorithm.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
-     *Deprecated:* Use 'gnutls_x509_crq_privkey_sign()' instead.
-
 gnutls_x509_crt_get_preferred_hash_algorithm
 --------------------------------------------
 
@@ -198,7 +1019,7 @@ gnutls_x509_crt_get_preferred_hash_algorithm
      signature
 
      MAND: If non-zero it means that the algorithm MUST use this hash.
-     May be NULL.
+     May be 'NULL' .
 
      This function will read the certificate and return the appropriate
      digest algorithm to use for signing with this certificate.  Some
@@ -1052,131 +1873,131 @@ Function and Data Index
 * gnutls_anon_free_client_credentials:   Core TLS API.       (line  170)
 * gnutls_anon_free_server_credentials:   Core TLS API.       (line  179)
 * gnutls_anon_set_params_function:       Core TLS API.       (line  188)
-* gnutls_anon_set_server_dh_params:      Core TLS API.       (line  202)
-* gnutls_anon_set_server_known_dh_params: Core TLS API.      (line  216)
-* gnutls_anon_set_server_params_function: Core TLS API.      (line  236)
-* gnutls_auth_client_get_type:           Core TLS API.       (line  250)
-* gnutls_auth_get_type:                  Core TLS API.       (line  264)
-* gnutls_auth_server_get_type:           Core TLS API.       (line  282)
-* gnutls_base64_decode2:                 Core TLS API.       (line  296)
-* gnutls_base64_encode2:                 Core TLS API.       (line  315)
-* gnutls_buffer_append_data:             Core TLS API.       (line  335)
+* gnutls_anon_set_server_dh_params:      Core TLS API.       (line  206)
+* gnutls_anon_set_server_known_dh_params: Core TLS API.      (line  224)
+* gnutls_anon_set_server_params_function: Core TLS API.      (line  248)
+* gnutls_auth_client_get_type:           Core TLS API.       (line  266)
+* gnutls_auth_get_type:                  Core TLS API.       (line  280)
+* gnutls_auth_server_get_type:           Core TLS API.       (line  298)
+* gnutls_base64_decode2:                 Core TLS API.       (line  312)
+* gnutls_base64_encode2:                 Core TLS API.       (line  331)
+* gnutls_buffer_append_data:             Core TLS API.       (line  351)
 * gnutls_bye:                            Data transfer and termination.
                                                              (line  151)
-* gnutls_bye <1>:                        Core TLS API.       (line  353)
-* gnutls_certificate_activation_time_peers: Core TLS API.    (line  389)
-* gnutls_certificate_allocate_credentials: Core TLS API.     (line  403)
+* gnutls_bye <1>:                        Core TLS API.       (line  369)
+* gnutls_certificate_activation_time_peers: Core TLS API.    (line  405)
+* gnutls_certificate_allocate_credentials: Core TLS API.     (line  419)
 * gnutls_certificate_client_get_request_status: Core TLS API.
-                                                             (line  414)
-* gnutls_certificate_expiration_time_peers: Core TLS API.    (line  427)
-* gnutls_certificate_free_cas:           Core TLS API.       (line  458)
-* gnutls_certificate_free_ca_names:      Core TLS API.       (line  441)
-* gnutls_certificate_free_credentials:   Core TLS API.       (line  470)
-* gnutls_certificate_free_crls:          Core TLS API.       (line  483)
-* gnutls_certificate_free_keys:          Core TLS API.       (line  493)
-* gnutls_certificate_get_crt_raw:        Core TLS API.       (line  505)
-* gnutls_certificate_get_issuer:         Core TLS API.       (line  532)
-* gnutls_certificate_get_ours:           Core TLS API.       (line  562)
-* gnutls_certificate_get_peers:          Core TLS API.       (line  577)
-* gnutls_certificate_get_peers_subkey_id: Core TLS API.      (line  602)
+                                                             (line  430)
+* gnutls_certificate_expiration_time_peers: Core TLS API.    (line  443)
+* gnutls_certificate_free_cas:           Core TLS API.       (line  474)
+* gnutls_certificate_free_ca_names:      Core TLS API.       (line  457)
+* gnutls_certificate_free_credentials:   Core TLS API.       (line  486)
+* gnutls_certificate_free_crls:          Core TLS API.       (line  499)
+* gnutls_certificate_free_keys:          Core TLS API.       (line  509)
+* gnutls_certificate_get_crt_raw:        Core TLS API.       (line  521)
+* gnutls_certificate_get_issuer:         Core TLS API.       (line  548)
+* gnutls_certificate_get_ours:           Core TLS API.       (line  578)
+* gnutls_certificate_get_peers:          Core TLS API.       (line  593)
+* gnutls_certificate_get_peers_subkey_id: Core TLS API.      (line  618)
 * gnutls_certificate_get_trust_list:     X509 certificate API.
                                                              (line   12)
-* gnutls_certificate_get_verify_flags:   Core TLS API.       (line  617)
-* gnutls_certificate_get_x509_crt:       Core TLS API.       (line  631)
-* gnutls_certificate_get_x509_key:       Core TLS API.       (line  672)
+* gnutls_certificate_get_verify_flags:   Core TLS API.       (line  633)
+* gnutls_certificate_get_x509_crt:       Core TLS API.       (line  647)
+* gnutls_certificate_get_x509_key:       Core TLS API.       (line  688)
 * gnutls_certificate_send_x509_rdn_sequence: Certificate credentials.
                                                              (line  180)
 * gnutls_certificate_send_x509_rdn_sequence <1>: Core TLS API.
-                                                             (line  708)
+                                                             (line  724)
 * gnutls_certificate_server_set_request: Certificate credentials.
                                                              (line  168)
-* gnutls_certificate_server_set_request <1>: Core TLS API.   (line  726)
-* gnutls_certificate_set_dh_params:      Core TLS API.       (line  741)
-* gnutls_certificate_set_flags:          Core TLS API.       (line  758)
+* gnutls_certificate_server_set_request <1>: Core TLS API.   (line  742)
+* gnutls_certificate_set_dh_params:      Core TLS API.       (line  757)
+* gnutls_certificate_set_flags:          Core TLS API.       (line  778)
 * gnutls_certificate_set_key:            Certificate credentials.
                                                              (line   64)
 * gnutls_certificate_set_key <1>:        Abstract key API.   (line   12)
-* gnutls_certificate_set_known_dh_params: Core TLS API.      (line  773)
+* gnutls_certificate_set_known_dh_params: Core TLS API.      (line  793)
 * gnutls_certificate_set_ocsp_status_request_file: Core TLS API.
-                                                             (line  793)
+                                                             (line  817)
 * gnutls_certificate_set_ocsp_status_request_function: Core TLS API.
-                                                             (line  824)
+                                                             (line  851)
 * gnutls_certificate_set_ocsp_status_request_function2: Core TLS API.
-                                                             (line  859)
-* gnutls_certificate_set_params_function: Core TLS API.      (line  898)
+                                                             (line  886)
+* gnutls_certificate_set_params_function: Core TLS API.      (line  932)
 * gnutls_certificate_set_pin_function:   Certificate credentials.
                                                              (line   40)
-* gnutls_certificate_set_pin_function <1>: Core TLS API.     (line  913)
-* gnutls_certificate_set_retrieve_function: Core TLS API.    (line  934)
+* gnutls_certificate_set_pin_function <1>: Core TLS API.     (line  951)
+* gnutls_certificate_set_retrieve_function: Core TLS API.    (line  972)
 * gnutls_certificate_set_retrieve_function2: Abstract key API.
                                                              (line   60)
 * gnutls_certificate_set_trust_list:     X509 certificate API.
                                                              (line   30)
-* gnutls_certificate_set_verify_flags:   Core TLS API.       (line  984)
-* gnutls_certificate_set_verify_function: Core TLS API.      (line  997)
-* gnutls_certificate_set_verify_limits:  Core TLS API.       (line 1026)
-* gnutls_certificate_set_x509_crl:       Core TLS API.       (line 1045)
-* gnutls_certificate_set_x509_crl_file:  Core TLS API.       (line 1069)
-* gnutls_certificate_set_x509_crl_mem:   Core TLS API.       (line 1091)
-* gnutls_certificate_set_x509_key:       Core TLS API.       (line 1113)
-* gnutls_certificate_set_x509_key_file:  Core TLS API.       (line 1153)
-* gnutls_certificate_set_x509_key_file2: Core TLS API.       (line 1205)
-* gnutls_certificate_set_x509_key_mem:   Core TLS API.       (line 1262)
-* gnutls_certificate_set_x509_key_mem2:  Core TLS API.       (line 1303)
+* gnutls_certificate_set_verify_flags:   Core TLS API.       (line 1022)
+* gnutls_certificate_set_verify_function: Core TLS API.      (line 1035)
+* gnutls_certificate_set_verify_limits:  Core TLS API.       (line 1064)
+* gnutls_certificate_set_x509_crl:       Core TLS API.       (line 1083)
+* gnutls_certificate_set_x509_crl_file:  Core TLS API.       (line 1107)
+* gnutls_certificate_set_x509_crl_mem:   Core TLS API.       (line 1129)
+* gnutls_certificate_set_x509_key:       Core TLS API.       (line 1151)
+* gnutls_certificate_set_x509_key_file:  Core TLS API.       (line 1191)
+* gnutls_certificate_set_x509_key_file2: Core TLS API.       (line 1243)
+* gnutls_certificate_set_x509_key_mem:   Core TLS API.       (line 1300)
+* gnutls_certificate_set_x509_key_mem2:  Core TLS API.       (line 1341)
 * gnutls_certificate_set_x509_simple_pkcs12_file: Core TLS API.
-                                                             (line 1349)
+                                                             (line 1387)
 * gnutls_certificate_set_x509_simple_pkcs12_mem: Core TLS API.
-                                                             (line 1397)
+                                                             (line 1435)
 * gnutls_certificate_set_x509_system_trust: Certificate credentials.
                                                              (line  220)
 * gnutls_certificate_set_x509_system_trust <1>: Core TLS API.
-                                                             (line 1447)
-* gnutls_certificate_set_x509_trust:     Core TLS API.       (line 1465)
-* gnutls_certificate_set_x509_trust_dir: Core TLS API.       (line 1492)
-* gnutls_certificate_set_x509_trust_file: Core TLS API.      (line 1514)
-* gnutls_certificate_set_x509_trust_mem: Core TLS API.       (line 1544)
-* gnutls_certificate_type_get:           Core TLS API.       (line 1569)
-* gnutls_certificate_type_get_id:        Core TLS API.       (line 1582)
-* gnutls_certificate_type_get_name:      Core TLS API.       (line 1594)
-* gnutls_certificate_type_list:          Core TLS API.       (line 1606)
+                                                             (line 1485)
+* gnutls_certificate_set_x509_trust:     Core TLS API.       (line 1503)
+* gnutls_certificate_set_x509_trust_dir: Core TLS API.       (line 1530)
+* gnutls_certificate_set_x509_trust_file: Core TLS API.      (line 1552)
+* gnutls_certificate_set_x509_trust_mem: Core TLS API.       (line 1582)
+* gnutls_certificate_type_get:           Core TLS API.       (line 1607)
+* gnutls_certificate_type_get_id:        Core TLS API.       (line 1620)
+* gnutls_certificate_type_get_name:      Core TLS API.       (line 1632)
+* gnutls_certificate_type_list:          Core TLS API.       (line 1644)
 * gnutls_certificate_verification_status_print: Core TLS API.
-                                                             (line 1617)
+                                                             (line 1655)
 * gnutls_certificate_verify_flags:       Verifying a certificate in the context of TLS session.
                                                              (line    6)
 * gnutls_certificate_verify_flags <1>:   Certificate verification.
                                                              (line    6)
-* gnutls_certificate_verify_peers:       Core TLS API.       (line 1642)
-* gnutls_certificate_verify_peers2:      Core TLS API.       (line 1689)
-* gnutls_certificate_verify_peers3:      Core TLS API.       (line 1726)
-* gnutls_check_version:                  Core TLS API.       (line 1763)
+* gnutls_certificate_verify_peers:       Core TLS API.       (line 1680)
+* gnutls_certificate_verify_peers2:      Core TLS API.       (line 1727)
+* gnutls_certificate_verify_peers3:      Core TLS API.       (line 1764)
+* gnutls_check_version:                  Core TLS API.       (line 1801)
 * gnutls_cipher_add_auth:                Cryptographic API.  (line  122)
 * gnutls_cipher_decrypt:                 Cryptographic API.  (line  141)
 * gnutls_cipher_decrypt2:                Cryptographic API.  (line  163)
 * gnutls_cipher_deinit:                  Cryptographic API.  (line  192)
 * gnutls_cipher_encrypt:                 Cryptographic API.  (line  203)
 * gnutls_cipher_encrypt2:                Cryptographic API.  (line  221)
-* gnutls_cipher_get:                     Core TLS API.       (line 1782)
+* gnutls_cipher_get:                     Core TLS API.       (line 1820)
 * gnutls_cipher_get_block_size:          Cryptographic API.  (line  246)
-* gnutls_cipher_get_id:                  Core TLS API.       (line 1794)
+* gnutls_cipher_get_id:                  Core TLS API.       (line 1832)
 * gnutls_cipher_get_iv_size:             Cryptographic API.  (line  257)
-* gnutls_cipher_get_key_size:            Core TLS API.       (line 1806)
-* gnutls_cipher_get_name:                Core TLS API.       (line 1818)
+* gnutls_cipher_get_key_size:            Core TLS API.       (line 1844)
+* gnutls_cipher_get_name:                Core TLS API.       (line 1856)
 * gnutls_cipher_get_tag_size:            Cryptographic API.  (line  270)
 * gnutls_cipher_init:                    Cryptographic API.  (line  284)
-* gnutls_cipher_list:                    Core TLS API.       (line 1830)
+* gnutls_cipher_list:                    Core TLS API.       (line 1868)
 * gnutls_cipher_set_iv:                  Cryptographic API.  (line  307)
-* gnutls_cipher_suite_get_name:          Core TLS API.       (line 1846)
-* gnutls_cipher_suite_info:              Core TLS API.       (line 1864)
+* gnutls_cipher_suite_get_name:          Core TLS API.       (line 1884)
+* gnutls_cipher_suite_info:              Core TLS API.       (line 1902)
 * gnutls_cipher_tag:                     Cryptographic API.  (line  323)
 * gnutls_compression_get:                Compatibility API.  (line   13)
 * gnutls_compression_get_id:             Compatibility API.  (line   25)
 * gnutls_compression_get_name:           Compatibility API.  (line   37)
 * gnutls_compression_list:               Compatibility API.  (line   49)
-* gnutls_credentials_clear:              Core TLS API.       (line 1894)
-* gnutls_credentials_get:                Core TLS API.       (line 1902)
+* gnutls_credentials_clear:              Core TLS API.       (line 1932)
+* gnutls_credentials_get:                Core TLS API.       (line 1940)
 * gnutls_credentials_set:                Session initialization.
                                                              (line   80)
-* gnutls_credentials_set <1>:            Core TLS API.       (line 1931)
+* gnutls_credentials_set <1>:            Core TLS API.       (line 1969)
 * gnutls_crypto_register_aead_cipher:    Overriding algorithms.
                                                              (line   55)
 * gnutls_crypto_register_aead_cipher <1>: Cryptographic API. (line  341)
@@ -1189,42 +2010,42 @@ Function and Data Index
 * gnutls_crypto_register_mac:            Overriding algorithms.
                                                              (line   94)
 * gnutls_crypto_register_mac <1>:        Cryptographic API.  (line  461)
-* gnutls_db_check_entry:                 Core TLS API.       (line 1966)
-* gnutls_db_check_entry_time:            Core TLS API.       (line 1980)
-* gnutls_db_get_default_cache_expiration: Core TLS API.      (line 1991)
-* gnutls_db_get_ptr:                     Core TLS API.       (line 1999)
-* gnutls_db_remove_session:              Core TLS API.       (line 2010)
-* gnutls_db_set_cache_expiration:        Core TLS API.       (line 2024)
-* gnutls_db_set_ptr:                     Core TLS API.       (line 2036)
-* gnutls_db_set_remove_function:         Core TLS API.       (line 2048)
-* gnutls_db_set_retrieve_function:       Core TLS API.       (line 2063)
-* gnutls_db_set_store_function:          Core TLS API.       (line 2083)
+* gnutls_db_check_entry:                 Core TLS API.       (line 2004)
+* gnutls_db_check_entry_time:            Core TLS API.       (line 2018)
+* gnutls_db_get_default_cache_expiration: Core TLS API.      (line 2029)
+* gnutls_db_get_ptr:                     Core TLS API.       (line 2037)
+* gnutls_db_remove_session:              Core TLS API.       (line 2048)
+* gnutls_db_set_cache_expiration:        Core TLS API.       (line 2062)
+* gnutls_db_set_ptr:                     Core TLS API.       (line 2074)
+* gnutls_db_set_remove_function:         Core TLS API.       (line 2086)
+* gnutls_db_set_retrieve_function:       Core TLS API.       (line 2101)
+* gnutls_db_set_store_function:          Core TLS API.       (line 2121)
 * gnutls_decode_ber_digest_info:         Cryptographic API.  (line  500)
 * gnutls_decode_rs_value:                Cryptographic API.  (line  523)
 * gnutls_deinit:                         Data transfer and termination.
                                                              (line  184)
-* gnutls_deinit <1>:                     Core TLS API.       (line 2098)
-* gnutls_dh_get_group:                   Core TLS API.       (line 2108)
-* gnutls_dh_get_peers_public_bits:       Core TLS API.       (line 2131)
-* gnutls_dh_get_prime_bits:              Core TLS API.       (line 2145)
-* gnutls_dh_get_pubkey:                  Core TLS API.       (line 2161)
-* gnutls_dh_get_secret_bits:             Core TLS API.       (line 2181)
-* gnutls_dh_params_cpy:                  Core TLS API.       (line 2194)
-* gnutls_dh_params_deinit:               Core TLS API.       (line 2209)
-* gnutls_dh_params_export2_pkcs3:        Core TLS API.       (line 2218)
-* gnutls_dh_params_export_pkcs3:         Core TLS API.       (line 2242)
-* gnutls_dh_params_export_raw:           Core TLS API.       (line 2269)
-* gnutls_dh_params_generate2:            Core TLS API.       (line 2291)
-* gnutls_dh_params_import_dsa:           Core TLS API.       (line 2321)
-* gnutls_dh_params_import_pkcs3:         Core TLS API.       (line 2336)
-* gnutls_dh_params_import_raw:           Core TLS API.       (line 2358)
-* gnutls_dh_params_import_raw2:          Core TLS API.       (line 2377)
-* gnutls_dh_params_init:                 Core TLS API.       (line 2398)
-* gnutls_dh_set_prime_bits:              Core TLS API.       (line 2409)
-* gnutls_digest_get_id:                  Core TLS API.       (line 2437)
-* gnutls_digest_get_name:                Core TLS API.       (line 2450)
-* gnutls_digest_get_oid:                 Core TLS API.       (line 2462)
-* gnutls_digest_list:                    Core TLS API.       (line 2477)
+* gnutls_deinit <1>:                     Core TLS API.       (line 2136)
+* gnutls_dh_get_group:                   Core TLS API.       (line 2146)
+* gnutls_dh_get_peers_public_bits:       Core TLS API.       (line 2169)
+* gnutls_dh_get_prime_bits:              Core TLS API.       (line 2183)
+* gnutls_dh_get_pubkey:                  Core TLS API.       (line 2199)
+* gnutls_dh_get_secret_bits:             Core TLS API.       (line 2219)
+* gnutls_dh_params_cpy:                  Core TLS API.       (line 2232)
+* gnutls_dh_params_deinit:               Core TLS API.       (line 2247)
+* gnutls_dh_params_export2_pkcs3:        Core TLS API.       (line 2256)
+* gnutls_dh_params_export_pkcs3:         Core TLS API.       (line 2280)
+* gnutls_dh_params_export_raw:           Core TLS API.       (line 2307)
+* gnutls_dh_params_generate2:            Core TLS API.       (line 2329)
+* gnutls_dh_params_import_dsa:           Core TLS API.       (line 2359)
+* gnutls_dh_params_import_pkcs3:         Core TLS API.       (line 2374)
+* gnutls_dh_params_import_raw:           Core TLS API.       (line 2396)
+* gnutls_dh_params_import_raw2:          Core TLS API.       (line 2415)
+* gnutls_dh_params_init:                 Core TLS API.       (line 2436)
+* gnutls_dh_set_prime_bits:              Core TLS API.       (line 2447)
+* gnutls_digest_get_id:                  Core TLS API.       (line 2475)
+* gnutls_digest_get_name:                Core TLS API.       (line 2488)
+* gnutls_digest_get_oid:                 Core TLS API.       (line 2500)
+* gnutls_digest_list:                    Core TLS API.       (line 2515)
 * gnutls_dtls_cookie_send:               Datagram TLS API.   (line   11)
 * gnutls_dtls_cookie_verify:             Datagram TLS API.   (line   45)
 * gnutls_dtls_get_data_mtu:              Datagram TLS API.   (line   74)
@@ -1236,71 +2057,71 @@ Function and Data Index
 * gnutls_dtls_set_data_mtu:              Datagram TLS API.   (line  139)
 * gnutls_dtls_set_mtu:                   Datagram TLS API.   (line  165)
 * gnutls_dtls_set_timeouts:              Datagram TLS API.   (line  182)
-* gnutls_ecc_curve_get:                  Core TLS API.       (line 2491)
-* gnutls_ecc_curve_get_id:               Core TLS API.       (line 2505)
-* gnutls_ecc_curve_get_name:             Core TLS API.       (line 2519)
-* gnutls_ecc_curve_get_oid:              Core TLS API.       (line 2533)
-* gnutls_ecc_curve_get_pk:               Core TLS API.       (line 2547)
-* gnutls_ecc_curve_get_size:             Core TLS API.       (line 2559)
-* gnutls_ecc_curve_list:                 Core TLS API.       (line 2569)
+* gnutls_ecc_curve_get:                  Core TLS API.       (line 2529)
+* gnutls_ecc_curve_get_id:               Core TLS API.       (line 2543)
+* gnutls_ecc_curve_get_name:             Core TLS API.       (line 2557)
+* gnutls_ecc_curve_get_oid:              Core TLS API.       (line 2571)
+* gnutls_ecc_curve_get_pk:               Core TLS API.       (line 2585)
+* gnutls_ecc_curve_get_size:             Core TLS API.       (line 2597)
+* gnutls_ecc_curve_list:                 Core TLS API.       (line 2607)
 * gnutls_encode_ber_digest_info:         Cryptographic API.  (line  547)
 * gnutls_encode_rs_value:                Cryptographic API.  (line  567)
 * gnutls_error_is_fatal:                 Data transfer and termination.
                                                              (line   78)
-* gnutls_error_is_fatal <1>:             Core TLS API.       (line 2581)
+* gnutls_error_is_fatal <1>:             Core TLS API.       (line 2619)
 * gnutls_error_to_alert:                 Handling alerts.    (line   66)
-* gnutls_error_to_alert <1>:             Core TLS API.       (line 2601)
-* gnutls_est_record_overhead_size:       Core TLS API.       (line 2620)
-* gnutls_ext_get_data:                   Core TLS API.       (line 2647)
-* gnutls_ext_get_name:                   Core TLS API.       (line 2666)
-* gnutls_ext_register:                   Core TLS API.       (line 2677)
-* gnutls_ext_set_data:                   Core TLS API.       (line 2720)
-* gnutls_fingerprint:                    Core TLS API.       (line 2737)
-* gnutls_fips140_mode_enabled:           Core TLS API.       (line 2764)
-* gnutls_global_deinit:                  Core TLS API.       (line 2775)
-* gnutls_global_init:                    Core TLS API.       (line 2788)
+* gnutls_error_to_alert <1>:             Core TLS API.       (line 2639)
+* gnutls_est_record_overhead_size:       Core TLS API.       (line 2658)
+* gnutls_ext_get_data:                   Core TLS API.       (line 2685)
+* gnutls_ext_get_name:                   Core TLS API.       (line 2704)
+* gnutls_ext_register:                   Core TLS API.       (line 2715)
+* gnutls_ext_set_data:                   Core TLS API.       (line 2758)
+* gnutls_fingerprint:                    Core TLS API.       (line 2775)
+* gnutls_fips140_mode_enabled:           Core TLS API.       (line 2802)
+* gnutls_global_deinit:                  Core TLS API.       (line 2813)
+* gnutls_global_init:                    Core TLS API.       (line 2826)
 * gnutls_global_set_audit_log_function:  Debugging and auditing.
                                                              (line   63)
-* gnutls_global_set_audit_log_function <1>: Core TLS API.    (line 2817)
-* gnutls_global_set_log_function:        Core TLS API.       (line 2836)
-* gnutls_global_set_log_level:           Core TLS API.       (line 2851)
+* gnutls_global_set_audit_log_function <1>: Core TLS API.    (line 2855)
+* gnutls_global_set_log_function:        Core TLS API.       (line 2874)
+* gnutls_global_set_log_level:           Core TLS API.       (line 2889)
 * gnutls_global_set_mem_functions:       Compatibility API.  (line   60)
-* gnutls_global_set_mutex:               Core TLS API.       (line 2864)
-* gnutls_global_set_time_function:       Core TLS API.       (line 2893)
-* gnutls_group_get:                      Core TLS API.       (line 2907)
-* gnutls_group_get_id:                   Core TLS API.       (line 2920)
-* gnutls_group_get_name:                 Core TLS API.       (line 2933)
-* gnutls_group_list:                     Core TLS API.       (line 2946)
+* gnutls_global_set_mutex:               Core TLS API.       (line 2902)
+* gnutls_global_set_time_function:       Core TLS API.       (line 2931)
+* gnutls_group_get:                      Core TLS API.       (line 2945)
+* gnutls_group_get_id:                   Core TLS API.       (line 2958)
+* gnutls_group_get_name:                 Core TLS API.       (line 2971)
+* gnutls_group_list:                     Core TLS API.       (line 2984)
 * gnutls_handshake:                      TLS handshake.      (line   10)
-* gnutls_handshake <1>:                  Core TLS API.       (line 2960)
-* gnutls_handshake_description_get_name: Core TLS API.       (line 3001)
-* gnutls_handshake_get_last_in:          Core TLS API.       (line 3013)
-* gnutls_handshake_get_last_out:         Core TLS API.       (line 3030)
-* gnutls_handshake_set_hook_function:    Core TLS API.       (line 3047)
-* gnutls_handshake_set_max_packet_length: Core TLS API.      (line 3083)
+* gnutls_handshake <1>:                  Core TLS API.       (line 2998)
+* gnutls_handshake_description_get_name: Core TLS API.       (line 3039)
+* gnutls_handshake_get_last_in:          Core TLS API.       (line 3051)
+* gnutls_handshake_get_last_out:         Core TLS API.       (line 3068)
+* gnutls_handshake_set_hook_function:    Core TLS API.       (line 3085)
+* gnutls_handshake_set_max_packet_length: Core TLS API.      (line 3121)
 * gnutls_handshake_set_post_client_hello_function: Core TLS API.
-                                                             (line 3104)
-* gnutls_handshake_set_private_extensions: Core TLS API.     (line 3135)
-* gnutls_handshake_set_random:           Core TLS API.       (line 3154)
+                                                             (line 3142)
+* gnutls_handshake_set_private_extensions: Core TLS API.     (line 3173)
+* gnutls_handshake_set_random:           Core TLS API.       (line 3192)
 * gnutls_handshake_set_timeout:          TLS handshake.      (line   48)
-* gnutls_handshake_set_timeout <1>:      Core TLS API.       (line 3176)
+* gnutls_handshake_set_timeout <1>:      Core TLS API.       (line 3214)
 * gnutls_hash:                           Cryptographic API.  (line  588)
 * gnutls_hash_deinit:                    Cryptographic API.  (line  606)
 * gnutls_hash_fast:                      Cryptographic API.  (line  620)
 * gnutls_hash_get_len:                   Cryptographic API.  (line  640)
 * gnutls_hash_init:                      Cryptographic API.  (line  654)
 * gnutls_hash_output:                    Cryptographic API.  (line  672)
-* gnutls_heartbeat_allowed:              Core TLS API.       (line 3196)
-* gnutls_heartbeat_enable:               Core TLS API.       (line 3213)
-* gnutls_heartbeat_get_timeout:          Core TLS API.       (line 3237)
-* gnutls_heartbeat_ping:                 Core TLS API.       (line 3253)
-* gnutls_heartbeat_pong:                 Core TLS API.       (line 3285)
-* gnutls_heartbeat_set_timeouts:         Core TLS API.       (line 3301)
-* gnutls_hex2bin:                        Core TLS API.       (line 3323)
-* gnutls_hex_decode:                     Core TLS API.       (line 3346)
-* gnutls_hex_decode2:                    Core TLS API.       (line 3368)
-* gnutls_hex_encode:                     Core TLS API.       (line 3383)
-* gnutls_hex_encode2:                    Core TLS API.       (line 3402)
+* gnutls_heartbeat_allowed:              Core TLS API.       (line 3234)
+* gnutls_heartbeat_enable:               Core TLS API.       (line 3251)
+* gnutls_heartbeat_get_timeout:          Core TLS API.       (line 3275)
+* gnutls_heartbeat_ping:                 Core TLS API.       (line 3291)
+* gnutls_heartbeat_pong:                 Core TLS API.       (line 3323)
+* gnutls_heartbeat_set_timeouts:         Core TLS API.       (line 3339)
+* gnutls_hex2bin:                        Core TLS API.       (line 3361)
+* gnutls_hex_decode:                     Core TLS API.       (line 3384)
+* gnutls_hex_decode2:                    Core TLS API.       (line 3406)
+* gnutls_hex_encode:                     Core TLS API.       (line 3421)
+* gnutls_hex_encode2:                    Core TLS API.       (line 3440)
 * gnutls_hmac:                           Cryptographic API.  (line  686)
 * gnutls_hmac_deinit:                    Cryptographic API.  (line  704)
 * gnutls_hmac_fast:                      Cryptographic API.  (line  718)
@@ -1308,25 +2129,25 @@ Function and Data Index
 * gnutls_hmac_init:                      Cryptographic API.  (line  757)
 * gnutls_hmac_output:                    Cryptographic API.  (line  783)
 * gnutls_hmac_set_nonce:                 Cryptographic API.  (line  797)
-* gnutls_idna_map:                       Core TLS API.       (line 3420)
-* gnutls_idna_reverse_map:               Core TLS API.       (line 3451)
+* gnutls_idna_map:                       Core TLS API.       (line 3458)
+* gnutls_idna_reverse_map:               Core TLS API.       (line 3489)
 * gnutls_init:                           Session initialization.
                                                              (line   14)
-* gnutls_init <1>:                       Core TLS API.       (line 3477)
-* gnutls_key_generate:                   Core TLS API.       (line 3500)
-* gnutls_kx_get:                         Core TLS API.       (line 3517)
-* gnutls_kx_get_id:                      Core TLS API.       (line 3529)
-* gnutls_kx_get_name:                    Core TLS API.       (line 3541)
-* gnutls_kx_list:                        Core TLS API.       (line 3553)
-* gnutls_load_file:                      Core TLS API.       (line 3565)
-* gnutls_mac_get:                        Core TLS API.       (line 3583)
-* gnutls_mac_get_id:                     Core TLS API.       (line 3595)
-* gnutls_mac_get_key_size:               Core TLS API.       (line 3608)
-* gnutls_mac_get_name:                   Core TLS API.       (line 3620)
+* gnutls_init <1>:                       Core TLS API.       (line 3515)
+* gnutls_key_generate:                   Core TLS API.       (line 3538)
+* gnutls_kx_get:                         Core TLS API.       (line 3555)
+* gnutls_kx_get_id:                      Core TLS API.       (line 3567)
+* gnutls_kx_get_name:                    Core TLS API.       (line 3579)
+* gnutls_kx_list:                        Core TLS API.       (line 3591)
+* gnutls_load_file:                      Core TLS API.       (line 3603)
+* gnutls_mac_get:                        Core TLS API.       (line 3621)
+* gnutls_mac_get_id:                     Core TLS API.       (line 3633)
+* gnutls_mac_get_key_size:               Core TLS API.       (line 3646)
+* gnutls_mac_get_name:                   Core TLS API.       (line 3658)
 * gnutls_mac_get_nonce_size:             Cryptographic API.  (line  812)
-* gnutls_mac_list:                       Core TLS API.       (line 3632)
-* gnutls_memcmp:                         Core TLS API.       (line 3644)
-* gnutls_memset:                         Core TLS API.       (line 3665)
+* gnutls_mac_list:                       Core TLS API.       (line 3670)
+* gnutls_memcmp:                         Core TLS API.       (line 3682)
+* gnutls_memset:                         Core TLS API.       (line 3703)
 * gnutls_ocsp_req_add_cert:              OCSP API.           (line   12)
 * gnutls_ocsp_req_add_cert_id:           OCSP API.           (line   36)
 * gnutls_ocsp_req_deinit:                OCSP API.           (line   69)
@@ -1364,18 +2185,18 @@ Function and Data Index
 * gnutls_ocsp_resp_print:                OCSP API.           (line  670)
 * gnutls_ocsp_resp_verify:               OCSP API.           (line  693)
 * gnutls_ocsp_resp_verify_direct:        OCSP API.           (line  731)
-* gnutls_ocsp_status_request_enable_client: Core TLS API.    (line 3682)
-* gnutls_ocsp_status_request_get:        Core TLS API.       (line 3710)
-* gnutls_ocsp_status_request_is_checked: Core TLS API.       (line 3729)
-* gnutls_oid_to_digest:                  Core TLS API.       (line 3759)
-* gnutls_oid_to_ecc_curve:               Core TLS API.       (line 3774)
-* gnutls_oid_to_mac:                     Core TLS API.       (line 3786)
-* gnutls_oid_to_pk:                      Core TLS API.       (line 3801)
-* gnutls_oid_to_sign:                    Core TLS API.       (line 3815)
+* gnutls_ocsp_status_request_enable_client: Core TLS API.    (line 3720)
+* gnutls_ocsp_status_request_get:        Core TLS API.       (line 3748)
+* gnutls_ocsp_status_request_is_checked: Core TLS API.       (line 3767)
+* gnutls_oid_to_digest:                  Core TLS API.       (line 3797)
+* gnutls_oid_to_ecc_curve:               Core TLS API.       (line 3812)
+* gnutls_oid_to_mac:                     Core TLS API.       (line 3824)
+* gnutls_oid_to_pk:                      Core TLS API.       (line 3839)
+* gnutls_oid_to_sign:                    Core TLS API.       (line 3853)
 * gnutls_openpgp_privkey_sign_hash:      Compatibility API.  (line   95)
-* gnutls_openpgp_send_cert:              Core TLS API.       (line 3830)
-* gnutls_packet_deinit:                  Core TLS API.       (line 3843)
-* gnutls_packet_get:                     Core TLS API.       (line 3854)
+* gnutls_openpgp_send_cert:              Core TLS API.       (line 3868)
+* gnutls_packet_deinit:                  Core TLS API.       (line 3881)
+* gnutls_packet_get:                     Core TLS API.       (line 3892)
 * gnutls_pcert_deinit:                   Abstract key API.   (line  114)
 * gnutls_pcert_export_openpgp:           Abstract key API.   (line  124)
 * gnutls_pcert_export_x509:              Abstract key API.   (line  139)
@@ -1385,11 +2206,11 @@ Function and Data Index
 * gnutls_pcert_import_x509_list:         Abstract key API.   (line  218)
 * gnutls_pcert_import_x509_raw:          Abstract key API.   (line  246)
 * gnutls_pcert_list_import_x509_raw:     Abstract key API.   (line  269)
-* gnutls_pem_base64_decode:              Core TLS API.       (line 3872)
-* gnutls_pem_base64_decode2:             Core TLS API.       (line 3896)
-* gnutls_pem_base64_encode:              Core TLS API.       (line 3924)
-* gnutls_pem_base64_encode2:             Core TLS API.       (line 3947)
-* gnutls_perror:                         Core TLS API.       (line 3975)
+* gnutls_pem_base64_decode:              Core TLS API.       (line 3910)
+* gnutls_pem_base64_decode2:             Core TLS API.       (line 3934)
+* gnutls_pem_base64_encode:              Core TLS API.       (line 3962)
+* gnutls_pem_base64_encode2:             Core TLS API.       (line 3985)
+* gnutls_perror:                         Core TLS API.       (line 4013)
 * gnutls_pkcs11_add_provider:            PKCS11 Manual Initialization.
                                                              (line   13)
 * gnutls_pkcs11_add_provider <1>:        PKCS 11 API.        (line   12)
@@ -1438,24 +2259,24 @@ Function and Data Index
 * gnutls_pkcs11_privkey_generate:        PKCS 11 API.        (line  854)
 * gnutls_pkcs11_privkey_generate2:       PKCS 11 API.        (line  879)
 * gnutls_pkcs11_privkey_generate3:       PKCS 11 API.        (line  915)
-* gnutls_pkcs11_privkey_get_info:        PKCS 11 API.        (line  956)
-* gnutls_pkcs11_privkey_get_pk_algorithm: PKCS 11 API.       (line  979)
-* gnutls_pkcs11_privkey_import_url:      PKCS 11 API.        (line  995)
-* gnutls_pkcs11_privkey_init:            PKCS 11 API.        (line 1015)
-* gnutls_pkcs11_privkey_set_pin_function: PKCS 11 API.       (line 1033)
-* gnutls_pkcs11_privkey_status:          PKCS 11 API.        (line 1051)
-* gnutls_pkcs11_reinit:                  PKCS 11 API.        (line 1065)
-* gnutls_pkcs11_set_pin_function:        PKCS 11 API.        (line 1082)
-* gnutls_pkcs11_set_token_function:      PKCS 11 API.        (line 1097)
-* gnutls_pkcs11_token_check_mechanism:   PKCS 11 API.        (line 1111)
-* gnutls_pkcs11_token_get_flags:         PKCS 11 API.        (line 1136)
-* gnutls_pkcs11_token_get_info:          PKCS 11 API.        (line 1156)
-* gnutls_pkcs11_token_get_mechanism:     PKCS 11 API.        (line 1179)
-* gnutls_pkcs11_token_get_random:        PKCS 11 API.        (line 1199)
-* gnutls_pkcs11_token_get_url:           PKCS 11 API.        (line 1217)
-* gnutls_pkcs11_token_init:              PKCS 11 API.        (line 1237)
-* gnutls_pkcs11_token_set_pin:           PKCS 11 API.        (line 1256)
-* gnutls_pkcs11_type_get_name:           PKCS 11 API.        (line 1276)
+* gnutls_pkcs11_privkey_get_info:        PKCS 11 API.        (line  960)
+* gnutls_pkcs11_privkey_get_pk_algorithm: PKCS 11 API.       (line  983)
+* gnutls_pkcs11_privkey_import_url:      PKCS 11 API.        (line  999)
+* gnutls_pkcs11_privkey_init:            PKCS 11 API.        (line 1019)
+* gnutls_pkcs11_privkey_set_pin_function: PKCS 11 API.       (line 1037)
+* gnutls_pkcs11_privkey_status:          PKCS 11 API.        (line 1055)
+* gnutls_pkcs11_reinit:                  PKCS 11 API.        (line 1069)
+* gnutls_pkcs11_set_pin_function:        PKCS 11 API.        (line 1086)
+* gnutls_pkcs11_set_token_function:      PKCS 11 API.        (line 1101)
+* gnutls_pkcs11_token_check_mechanism:   PKCS 11 API.        (line 1115)
+* gnutls_pkcs11_token_get_flags:         PKCS 11 API.        (line 1140)
+* gnutls_pkcs11_token_get_info:          PKCS 11 API.        (line 1160)
+* gnutls_pkcs11_token_get_mechanism:     PKCS 11 API.        (line 1183)
+* gnutls_pkcs11_token_get_random:        PKCS 11 API.        (line 1203)
+* gnutls_pkcs11_token_get_url:           PKCS 11 API.        (line 1221)
+* gnutls_pkcs11_token_init:              PKCS 11 API.        (line 1241)
+* gnutls_pkcs11_token_set_pin:           PKCS 11 API.        (line 1260)
+* gnutls_pkcs11_type_get_name:           PKCS 11 API.        (line 1280)
 * gnutls_pkcs12_bag_decrypt:             PKCS 12 API.        (line   12)
 * gnutls_pkcs12_bag_deinit:              PKCS 12 API.        (line   27)
 * gnutls_pkcs12_bag_encrypt:             PKCS 12 API.        (line   71)
@@ -1511,7 +2332,7 @@ Function and Data Index
 * gnutls_pkcs7_set_crl_raw:              PKCS 7 API.         (line  426)
 * gnutls_pkcs7_set_crt:                  PKCS 7 API.         (line  440)
 * gnutls_pkcs7_set_crt_raw:              PKCS 7 API.         (line  456)
-* gnutls_pkcs7_sign:                     Public key algorithms.
+* gnutls_pkcs7_sign:                     Cryptographic Message Syntax / PKCS#7.
                                                              (line   35)
 * gnutls_pkcs7_sign <1>:                 PKCS 7 API.         (line  471)
 * gnutls_pkcs7_signature_info_deinit:    PKCS 7 API.         (line  512)
@@ -1523,33 +2344,33 @@ Function and Data Index
                                                              (line   94)
 * gnutls_pkcs_schema_get_oid:            X509 certificate API.
                                                              (line  109)
-* gnutls_pk_algorithm_get_name:          Core TLS API.       (line 3984)
+* gnutls_pk_algorithm_get_name:          Core TLS API.       (line 4022)
 * gnutls_pk_bits_to_sec_param:           Selecting cryptographic key sizes.
                                                              (line   90)
-* gnutls_pk_bits_to_sec_param <1>:       Core TLS API.       (line 3996)
-* gnutls_pk_get_id:                      Core TLS API.       (line 4013)
-* gnutls_pk_get_name:                    Core TLS API.       (line 4028)
-* gnutls_pk_get_oid:                     Core TLS API.       (line 4042)
-* gnutls_pk_list:                        Core TLS API.       (line 4057)
-* gnutls_pk_to_sign:                     Core TLS API.       (line 4071)
-* gnutls_prf:                            Core TLS API.       (line 4086)
-* gnutls_prf_raw:                        Core TLS API.       (line 4134)
-* gnutls_prf_rfc5705:                    Core TLS API.       (line 4173)
-* gnutls_priority_certificate_type_list: Core TLS API.       (line 4217)
-* gnutls_priority_cipher_list:           Core TLS API.       (line 4233)
+* gnutls_pk_bits_to_sec_param <1>:       Core TLS API.       (line 4034)
+* gnutls_pk_get_id:                      Core TLS API.       (line 4051)
+* gnutls_pk_get_name:                    Core TLS API.       (line 4066)
+* gnutls_pk_get_oid:                     Core TLS API.       (line 4080)
+* gnutls_pk_list:                        Core TLS API.       (line 4095)
+* gnutls_pk_to_sign:                     Core TLS API.       (line 4109)
+* gnutls_prf:                            Core TLS API.       (line 4124)
+* gnutls_prf_raw:                        Core TLS API.       (line 4172)
+* gnutls_prf_rfc5705:                    Core TLS API.       (line 4211)
+* gnutls_priority_certificate_type_list: Core TLS API.       (line 4255)
+* gnutls_priority_cipher_list:           Core TLS API.       (line 4271)
 * gnutls_priority_compression_list:      Compatibility API.  (line  111)
-* gnutls_priority_deinit:                Core TLS API.       (line 4248)
-* gnutls_priority_ecc_curve_list:        Core TLS API.       (line 4257)
-* gnutls_priority_get_cipher_suite_index: Core TLS API.      (line 4275)
-* gnutls_priority_group_list:            Core TLS API.       (line 4300)
-* gnutls_priority_init:                  Core TLS API.       (line 4315)
-* gnutls_priority_kx_list:               Core TLS API.       (line 4416)
-* gnutls_priority_mac_list:              Core TLS API.       (line 4432)
-* gnutls_priority_protocol_list:         Core TLS API.       (line 4447)
-* gnutls_priority_set:                   Core TLS API.       (line 4463)
-* gnutls_priority_set_direct:            Core TLS API.       (line 4477)
-* gnutls_priority_sign_list:             Core TLS API.       (line 4500)
-* gnutls_priority_string_list:           Core TLS API.       (line 4516)
+* gnutls_priority_deinit:                Core TLS API.       (line 4286)
+* gnutls_priority_ecc_curve_list:        Core TLS API.       (line 4295)
+* gnutls_priority_get_cipher_suite_index: Core TLS API.      (line 4313)
+* gnutls_priority_group_list:            Core TLS API.       (line 4338)
+* gnutls_priority_init:                  Core TLS API.       (line 4353)
+* gnutls_priority_kx_list:               Core TLS API.       (line 4454)
+* gnutls_priority_mac_list:              Core TLS API.       (line 4470)
+* gnutls_priority_protocol_list:         Core TLS API.       (line 4485)
+* gnutls_priority_set:                   Core TLS API.       (line 4501)
+* gnutls_priority_set_direct:            Core TLS API.       (line 4515)
+* gnutls_priority_sign_list:             Core TLS API.       (line 4538)
+* gnutls_priority_string_list:           Core TLS API.       (line 4554)
 * gnutls_privkey_decrypt_data:           Operations.         (line  144)
 * gnutls_privkey_decrypt_data <1>:       Abstract key API.   (line  300)
 * gnutls_privkey_deinit:                 Abstract key API.   (line  323)
@@ -1563,261 +2384,263 @@ Function and Data Index
 * gnutls_privkey_export_rsa_raw2:        Abstract key API.   (line  510)
 * gnutls_privkey_export_x509:            Abstract key API.   (line  546)
 * gnutls_privkey_generate:               Abstract key API.   (line  566)
-* gnutls_privkey_generate2:              Abstract key API.   (line  601)
-* gnutls_privkey_get_pk_algorithm:       Abstract key API.   (line  638)
-* gnutls_privkey_get_seed:               Abstract key API.   (line  657)
-* gnutls_privkey_get_spki:               Abstract key API.   (line  682)
-* gnutls_privkey_get_type:               Abstract key API.   (line  702)
-* gnutls_privkey_import_dsa_raw:         Abstract key API.   (line  717)
-* gnutls_privkey_import_ecc_raw:         Abstract key API.   (line  743)
-* gnutls_privkey_import_ext:             Abstract key API.   (line  768)
-* gnutls_privkey_import_ext2:            Abstract key API.   (line  803)
+* gnutls_privkey_generate2:              Public key algorithms.
+                                                             (line   43)
+* gnutls_privkey_generate2 <1>:          Abstract key API.   (line  607)
+* gnutls_privkey_get_pk_algorithm:       Abstract key API.   (line  658)
+* gnutls_privkey_get_seed:               Abstract key API.   (line  677)
+* gnutls_privkey_get_spki:               Abstract key API.   (line  702)
+* gnutls_privkey_get_type:               Abstract key API.   (line  722)
+* gnutls_privkey_import_dsa_raw:         Abstract key API.   (line  737)
+* gnutls_privkey_import_ecc_raw:         Abstract key API.   (line  763)
+* gnutls_privkey_import_ext:             Abstract key API.   (line  788)
+* gnutls_privkey_import_ext2:            Abstract key API.   (line  823)
 * gnutls_privkey_import_ext3:            Abstract private keys.
                                                              (line   45)
-* gnutls_privkey_import_ext3 <1>:        Abstract key API.   (line  842)
-* gnutls_privkey_import_ext4:            Abstract key API.   (line  885)
-* gnutls_privkey_import_openpgp:         Abstract key API.   (line  949)
-* gnutls_privkey_import_openpgp_raw:     Abstract key API.   (line  966)
-* gnutls_privkey_import_pkcs11:          Abstract key API.   (line  989)
-* gnutls_privkey_import_pkcs11_url:      Abstract key API.   (line 1015)
-* gnutls_privkey_import_rsa_raw:         Abstract key API.   (line 1032)
-* gnutls_privkey_import_tpm_raw:         Abstract key API.   (line 1065)
+* gnutls_privkey_import_ext3 <1>:        Abstract key API.   (line  862)
+* gnutls_privkey_import_ext4:            Abstract key API.   (line  905)
+* gnutls_privkey_import_openpgp:         Abstract key API.   (line  969)
+* gnutls_privkey_import_openpgp_raw:     Abstract key API.   (line  986)
+* gnutls_privkey_import_pkcs11:          Abstract key API.   (line 1009)
+* gnutls_privkey_import_pkcs11_url:      Abstract key API.   (line 1035)
+* gnutls_privkey_import_rsa_raw:         Abstract key API.   (line 1052)
+* gnutls_privkey_import_tpm_raw:         Abstract key API.   (line 1085)
 * gnutls_privkey_import_tpm_url:         Using keys.         (line   16)
-* gnutls_privkey_import_tpm_url <1>:     Abstract key API.   (line 1095)
+* gnutls_privkey_import_tpm_url <1>:     Abstract key API.   (line 1115)
 * gnutls_privkey_import_url:             Abstract private keys.
                                                              (line   19)
-* gnutls_privkey_import_url <1>:         Abstract key API.   (line 1126)
-* gnutls_privkey_import_x509:            Abstract key API.   (line 1146)
+* gnutls_privkey_import_url <1>:         Abstract key API.   (line 1146)
+* gnutls_privkey_import_x509:            Abstract key API.   (line 1166)
 * gnutls_privkey_import_x509_raw:        Managing encrypted keys.
                                                              (line   27)
-* gnutls_privkey_import_x509_raw <1>:    Abstract key API.   (line 1172)
-* gnutls_privkey_init:                   Abstract key API.   (line 1199)
-* gnutls_privkey_set_flags:              Abstract key API.   (line 1222)
-* gnutls_privkey_set_pin_function:       Abstract key API.   (line 1238)
-* gnutls_privkey_set_spki:               Abstract key API.   (line 1258)
+* gnutls_privkey_import_x509_raw <1>:    Abstract key API.   (line 1192)
+* gnutls_privkey_init:                   Abstract key API.   (line 1219)
+* gnutls_privkey_set_flags:              Abstract key API.   (line 1242)
+* gnutls_privkey_set_pin_function:       Abstract key API.   (line 1258)
+* gnutls_privkey_set_spki:               Abstract key API.   (line 1278)
 * gnutls_privkey_sign_data:              Operations.         (line   80)
-* gnutls_privkey_sign_data <1>:          Abstract key API.   (line 1278)
-* gnutls_privkey_sign_data2:             Abstract key API.   (line 1309)
+* gnutls_privkey_sign_data <1>:          Abstract key API.   (line 1298)
+* gnutls_privkey_sign_data2:             Abstract key API.   (line 1329)
 * gnutls_privkey_sign_hash:              Operations.         (line  108)
-* gnutls_privkey_sign_hash <1>:          Abstract key API.   (line 1337)
-* gnutls_privkey_sign_hash2:             Abstract key API.   (line 1376)
-* gnutls_privkey_status:                 Abstract key API.   (line 1415)
-* gnutls_privkey_verify_params:          Abstract key API.   (line 1431)
-* gnutls_privkey_verify_seed:            Abstract key API.   (line 1444)
-* gnutls_protocol_get_id:                Core TLS API.       (line 4536)
-* gnutls_protocol_get_name:              Core TLS API.       (line 4548)
-* gnutls_protocol_get_version:           Core TLS API.       (line 4560)
-* gnutls_protocol_list:                  Core TLS API.       (line 4571)
-* gnutls_psk_allocate_client_credentials: Core TLS API.      (line 4583)
-* gnutls_psk_allocate_server_credentials: Core TLS API.      (line 4595)
-* gnutls_psk_client_get_hint:            Core TLS API.       (line 4607)
-* gnutls_psk_free_client_credentials:    Core TLS API.       (line 4623)
-* gnutls_psk_free_server_credentials:    Core TLS API.       (line 4632)
-* gnutls_psk_server_get_username:        Core TLS API.       (line 4641)
-* gnutls_psk_set_client_credentials:     Core TLS API.       (line 4653)
+* gnutls_privkey_sign_hash <1>:          Abstract key API.   (line 1357)
+* gnutls_privkey_sign_hash2:             Abstract key API.   (line 1396)
+* gnutls_privkey_status:                 Abstract key API.   (line 1435)
+* gnutls_privkey_verify_params:          Abstract key API.   (line 1451)
+* gnutls_privkey_verify_seed:            Abstract key API.   (line 1464)
+* gnutls_protocol_get_id:                Core TLS API.       (line 4574)
+* gnutls_protocol_get_name:              Core TLS API.       (line 4586)
+* gnutls_protocol_get_version:           Core TLS API.       (line 4598)
+* gnutls_protocol_list:                  Core TLS API.       (line 4609)
+* gnutls_psk_allocate_client_credentials: Core TLS API.      (line 4621)
+* gnutls_psk_allocate_server_credentials: Core TLS API.      (line 4633)
+* gnutls_psk_client_get_hint:            Core TLS API.       (line 4645)
+* gnutls_psk_free_client_credentials:    Core TLS API.       (line 4661)
+* gnutls_psk_free_server_credentials:    Core TLS API.       (line 4670)
+* gnutls_psk_server_get_username:        Core TLS API.       (line 4679)
+* gnutls_psk_set_client_credentials:     Core TLS API.       (line 4691)
 * gnutls_psk_set_client_credentials_function: PSK credentials.
                                                              (line   22)
 * gnutls_psk_set_client_credentials_function <1>: Core TLS API.
-                                                             (line 4678)
-* gnutls_psk_set_params_function:        Core TLS API.       (line 4702)
+                                                             (line 4716)
+* gnutls_psk_set_params_function:        Core TLS API.       (line 4740)
 * gnutls_psk_set_server_credentials_file: PSK credentials.   (line   58)
-* gnutls_psk_set_server_credentials_file <1>: Core TLS API.  (line 4716)
-* gnutls_psk_set_server_credentials_function: Core TLS API.  (line 4733)
-* gnutls_psk_set_server_credentials_hint: Core TLS API.      (line 4758)
-* gnutls_psk_set_server_dh_params:       Core TLS API.       (line 4777)
-* gnutls_psk_set_server_known_dh_params: Core TLS API.       (line 4791)
-* gnutls_psk_set_server_params_function: Core TLS API.       (line 4811)
-* gnutls_pubkey_deinit:                  Abstract key API.   (line 1468)
+* gnutls_psk_set_server_credentials_file <1>: Core TLS API.  (line 4758)
+* gnutls_psk_set_server_credentials_function: Core TLS API.  (line 4775)
+* gnutls_psk_set_server_credentials_hint: Core TLS API.      (line 4800)
+* gnutls_psk_set_server_dh_params:       Core TLS API.       (line 4819)
+* gnutls_psk_set_server_known_dh_params: Core TLS API.       (line 4837)
+* gnutls_psk_set_server_params_function: Core TLS API.       (line 4861)
+* gnutls_pubkey_deinit:                  Abstract key API.   (line 1488)
 * gnutls_pubkey_encrypt_data:            Operations.         (line   60)
-* gnutls_pubkey_encrypt_data <1>:        Abstract key API.   (line 1478)
-* gnutls_pubkey_export:                  Abstract key API.   (line 1501)
+* gnutls_pubkey_encrypt_data <1>:        Abstract key API.   (line 1498)
+* gnutls_pubkey_export:                  Abstract key API.   (line 1521)
 * gnutls_pubkey_export2:                 Abstract public keys.
                                                              (line   19)
-* gnutls_pubkey_export2 <1>:             Abstract key API.   (line 1532)
-* gnutls_pubkey_export_dsa_raw:          Abstract key API.   (line 1557)
-* gnutls_pubkey_export_dsa_raw2:         Abstract key API.   (line 1584)
-* gnutls_pubkey_export_ecc_raw:          Abstract key API.   (line 1613)
-* gnutls_pubkey_export_ecc_raw2:         Abstract key API.   (line 1639)
-* gnutls_pubkey_export_ecc_x962:         Abstract key API.   (line 1666)
-* gnutls_pubkey_export_rsa_raw:          Abstract key API.   (line 1686)
-* gnutls_pubkey_export_rsa_raw2:         Abstract key API.   (line 1708)
-* gnutls_pubkey_get_key_id:              Abstract key API.   (line 1732)
-* gnutls_pubkey_get_key_usage:           Abstract key API.   (line 1761)
-* gnutls_pubkey_get_openpgp_key_id:      Abstract key API.   (line 1778)
-* gnutls_pubkey_get_pk_algorithm:        Abstract key API.   (line 1801)
+* gnutls_pubkey_export2 <1>:             Abstract key API.   (line 1552)
+* gnutls_pubkey_export_dsa_raw:          Abstract key API.   (line 1577)
+* gnutls_pubkey_export_dsa_raw2:         Abstract key API.   (line 1604)
+* gnutls_pubkey_export_ecc_raw:          Abstract key API.   (line 1633)
+* gnutls_pubkey_export_ecc_raw2:         Abstract key API.   (line 1659)
+* gnutls_pubkey_export_ecc_x962:         Abstract key API.   (line 1686)
+* gnutls_pubkey_export_rsa_raw:          Abstract key API.   (line 1706)
+* gnutls_pubkey_export_rsa_raw2:         Abstract key API.   (line 1728)
+* gnutls_pubkey_get_key_id:              Abstract key API.   (line 1752)
+* gnutls_pubkey_get_key_usage:           Abstract key API.   (line 1781)
+* gnutls_pubkey_get_openpgp_key_id:      Abstract key API.   (line 1798)
+* gnutls_pubkey_get_pk_algorithm:        Abstract key API.   (line 1821)
 * gnutls_pubkey_get_preferred_hash_algorithm: Abstract key API.
-                                                             (line 1820)
-* gnutls_pubkey_get_spki:                Abstract key API.   (line 1848)
-* gnutls_pubkey_import:                  Abstract key API.   (line 1868)
-* gnutls_pubkey_import_dsa_raw:          Abstract key API.   (line 1889)
-* gnutls_pubkey_import_ecc_raw:          Abstract key API.   (line 1914)
-* gnutls_pubkey_import_ecc_x962:         Abstract key API.   (line 1937)
-* gnutls_pubkey_import_openpgp:          Abstract key API.   (line 1957)
-* gnutls_pubkey_import_openpgp_raw:      Abstract key API.   (line 1974)
-* gnutls_pubkey_import_pkcs11:           Abstract key API.   (line 1997)
-* gnutls_pubkey_import_privkey:          Abstract key API.   (line 2016)
-* gnutls_pubkey_import_rsa_raw:          Abstract key API.   (line 2040)
-* gnutls_pubkey_import_tpm_raw:          Abstract key API.   (line 2060)
+                                                             (line 1840)
+* gnutls_pubkey_get_spki:                Abstract key API.   (line 1868)
+* gnutls_pubkey_import:                  Abstract key API.   (line 1888)
+* gnutls_pubkey_import_dsa_raw:          Abstract key API.   (line 1909)
+* gnutls_pubkey_import_ecc_raw:          Abstract key API.   (line 1934)
+* gnutls_pubkey_import_ecc_x962:         Abstract key API.   (line 1957)
+* gnutls_pubkey_import_openpgp:          Abstract key API.   (line 1977)
+* gnutls_pubkey_import_openpgp_raw:      Abstract key API.   (line 1994)
+* gnutls_pubkey_import_pkcs11:           Abstract key API.   (line 2017)
+* gnutls_pubkey_import_privkey:          Abstract key API.   (line 2036)
+* gnutls_pubkey_import_rsa_raw:          Abstract key API.   (line 2060)
+* gnutls_pubkey_import_tpm_raw:          Abstract key API.   (line 2080)
 * gnutls_pubkey_import_tpm_url:          Using keys.         (line   44)
-* gnutls_pubkey_import_tpm_url <1>:      Abstract key API.   (line 2087)
-* gnutls_pubkey_import_url:              Abstract key API.   (line 2115)
-* gnutls_pubkey_import_x509:             Abstract key API.   (line 2133)
-* gnutls_pubkey_import_x509_crq:         Abstract key API.   (line 2152)
-* gnutls_pubkey_import_x509_raw:         Abstract key API.   (line 2171)
-* gnutls_pubkey_init:                    Abstract key API.   (line 2193)
-* gnutls_pubkey_print:                   Abstract key API.   (line 2206)
-* gnutls_pubkey_set_key_usage:           Abstract key API.   (line 2231)
-* gnutls_pubkey_set_pin_function:        Abstract key API.   (line 2249)
-* gnutls_pubkey_set_spki:                Abstract key API.   (line 2269)
+* gnutls_pubkey_import_tpm_url <1>:      Abstract key API.   (line 2107)
+* gnutls_pubkey_import_url:              Abstract key API.   (line 2135)
+* gnutls_pubkey_import_x509:             Abstract key API.   (line 2153)
+* gnutls_pubkey_import_x509_crq:         Abstract key API.   (line 2172)
+* gnutls_pubkey_import_x509_raw:         Abstract key API.   (line 2191)
+* gnutls_pubkey_init:                    Abstract key API.   (line 2213)
+* gnutls_pubkey_print:                   Abstract key API.   (line 2226)
+* gnutls_pubkey_set_key_usage:           Abstract key API.   (line 2251)
+* gnutls_pubkey_set_pin_function:        Abstract key API.   (line 2269)
+* gnutls_pubkey_set_spki:                Abstract key API.   (line 2289)
 * gnutls_pubkey_verify_data2:            Operations.         (line    9)
-* gnutls_pubkey_verify_data2 <1>:        Abstract key API.   (line 2289)
+* gnutls_pubkey_verify_data2 <1>:        Abstract key API.   (line 2309)
 * gnutls_pubkey_verify_hash2:            Operations.         (line   33)
-* gnutls_pubkey_verify_hash2 <1>:        Abstract key API.   (line 2316)
-* gnutls_pubkey_verify_params:           Abstract key API.   (line 2346)
-* gnutls_random_art:                     Core TLS API.       (line 4825)
-* gnutls_range_split:                    Core TLS API.       (line 4852)
-* gnutls_record_can_use_length_hiding:   Core TLS API.       (line 4878)
-* gnutls_record_check_corked:            Core TLS API.       (line 4896)
+* gnutls_pubkey_verify_hash2 <1>:        Abstract key API.   (line 2336)
+* gnutls_pubkey_verify_params:           Abstract key API.   (line 2366)
+* gnutls_random_art:                     Core TLS API.       (line 4879)
+* gnutls_range_split:                    Core TLS API.       (line 4906)
+* gnutls_record_can_use_length_hiding:   Core TLS API.       (line 4932)
+* gnutls_record_check_corked:            Core TLS API.       (line 4950)
 * gnutls_record_check_pending:           Data transfer and termination.
                                                              (line  134)
-* gnutls_record_check_pending <1>:       Core TLS API.       (line 4910)
+* gnutls_record_check_pending <1>:       Core TLS API.       (line 4964)
 * gnutls_record_cork:                    Buffered data transfer.
                                                              (line   12)
-* gnutls_record_cork <1>:                Core TLS API.       (line 4923)
-* gnutls_record_disable_padding:         Core TLS API.       (line 4937)
-* gnutls_record_discard_queued:          Core TLS API.       (line 4952)
+* gnutls_record_cork <1>:                Core TLS API.       (line 4977)
+* gnutls_record_disable_padding:         Core TLS API.       (line 4991)
+* gnutls_record_discard_queued:          Core TLS API.       (line 5006)
 * gnutls_record_get_direction:           Asynchronous operation.
                                                              (line   65)
-* gnutls_record_get_direction <1>:       Core TLS API.       (line 4967)
+* gnutls_record_get_direction <1>:       Core TLS API.       (line 5021)
 * gnutls_record_get_discarded:           Datagram TLS API.   (line  209)
-* gnutls_record_get_max_size:            Core TLS API.       (line 4987)
-* gnutls_record_get_state:               Core TLS API.       (line 4999)
-* gnutls_record_overhead_size:           Core TLS API.       (line 5029)
+* gnutls_record_get_max_size:            Core TLS API.       (line 5041)
+* gnutls_record_get_state:               Core TLS API.       (line 5053)
+* gnutls_record_overhead_size:           Core TLS API.       (line 5083)
 * gnutls_record_recv:                    Data transfer and termination.
                                                              (line   49)
-* gnutls_record_recv <1>:                Core TLS API.       (line 5042)
-* gnutls_record_recv_packet:             Core TLS API.       (line 5074)
+* gnutls_record_recv <1>:                Core TLS API.       (line 5096)
+* gnutls_record_recv_packet:             Core TLS API.       (line 5128)
 * gnutls_record_recv_seq:                Data transfer and termination.
                                                              (line  104)
-* gnutls_record_recv_seq <1>:            Core TLS API.       (line 5098)
+* gnutls_record_recv_seq <1>:            Core TLS API.       (line 5152)
 * gnutls_record_send:                    Data transfer and termination.
                                                              (line   12)
-* gnutls_record_send <1>:                Core TLS API.       (line 5125)
-* gnutls_record_send_range:              Core TLS API.       (line 5165)
-* gnutls_record_set_max_size:            Core TLS API.       (line 5194)
-* gnutls_record_set_state:               Core TLS API.       (line 5218)
-* gnutls_record_set_timeout:             Core TLS API.       (line 5239)
+* gnutls_record_send <1>:                Core TLS API.       (line 5179)
+* gnutls_record_send_range:              Core TLS API.       (line 5219)
+* gnutls_record_set_max_size:            Core TLS API.       (line 5248)
+* gnutls_record_set_state:               Core TLS API.       (line 5272)
+* gnutls_record_set_timeout:             Core TLS API.       (line 5293)
 * gnutls_record_uncork:                  Buffered data transfer.
                                                              (line   23)
-* gnutls_record_uncork <1>:              Core TLS API.       (line 5258)
+* gnutls_record_uncork <1>:              Core TLS API.       (line 5312)
 * gnutls_register_custom_url:            Application-specific keys.
                                                              (line   69)
-* gnutls_register_custom_url <1>:        Abstract key API.   (line 2359)
+* gnutls_register_custom_url <1>:        Abstract key API.   (line 2379)
 * gnutls_rehandshake:                    Re-authentication.  (line   60)
-* gnutls_rehandshake <1>:                Core TLS API.       (line 5283)
+* gnutls_rehandshake <1>:                Core TLS API.       (line 5337)
 * gnutls_rnd:                            Random number generation.
                                                              (line   21)
 * gnutls_rnd <1>:                        Cryptographic API.  (line  825)
 * gnutls_rnd_refresh:                    Cryptographic API.  (line  847)
 * gnutls_safe_renegotiation_status:      Re-authentication.  (line   38)
-* gnutls_safe_renegotiation_status <1>:  Core TLS API.       (line 5314)
-* gnutls_sec_param_get_name:             Core TLS API.       (line 5329)
+* gnutls_safe_renegotiation_status <1>:  Core TLS API.       (line 5368)
+* gnutls_sec_param_get_name:             Core TLS API.       (line 5383)
 * gnutls_sec_param_to_pk_bits:           Selecting cryptographic key sizes.
                                                              (line   74)
-* gnutls_sec_param_to_pk_bits <1>:       Core TLS API.       (line 5343)
-* gnutls_sec_param_to_symmetric_bits:    Core TLS API.       (line 5362)
-* gnutls_server_name_get:                Core TLS API.       (line 5376)
-* gnutls_server_name_set:                Core TLS API.       (line 5415)
-* gnutls_session_channel_binding:        Core TLS API.       (line 5445)
-* gnutls_session_enable_compatibility_mode: Core TLS API.    (line 5466)
-* gnutls_session_etm_status:             Core TLS API.       (line 5486)
-* gnutls_session_ext_master_secret_status: Core TLS API.     (line 5499)
-* gnutls_session_ext_register:           Core TLS API.       (line 5512)
-* gnutls_session_force_valid:            Core TLS API.       (line 5563)
-* gnutls_session_get_data:               Core TLS API.       (line 5574)
-* gnutls_session_get_data2:              Core TLS API.       (line 5598)
-* gnutls_session_get_desc:               Core TLS API.       (line 5622)
-* gnutls_session_get_flags:              Core TLS API.       (line 5639)
-* gnutls_session_get_id:                 Core TLS API.       (line 5658)
-* gnutls_session_get_id2:                Core TLS API.       (line 5682)
-* gnutls_session_get_master_secret:      Core TLS API.       (line 5699)
-* gnutls_session_get_ptr:                Core TLS API.       (line 5713)
-* gnutls_session_get_random:             Core TLS API.       (line 5725)
-* gnutls_session_get_verify_cert_status: Core TLS API.       (line 5745)
+* gnutls_sec_param_to_pk_bits <1>:       Core TLS API.       (line 5397)
+* gnutls_sec_param_to_symmetric_bits:    Core TLS API.       (line 5416)
+* gnutls_server_name_get:                Core TLS API.       (line 5430)
+* gnutls_server_name_set:                Core TLS API.       (line 5469)
+* gnutls_session_channel_binding:        Core TLS API.       (line 5500)
+* gnutls_session_enable_compatibility_mode: Core TLS API.    (line 5521)
+* gnutls_session_etm_status:             Core TLS API.       (line 5541)
+* gnutls_session_ext_master_secret_status: Core TLS API.     (line 5554)
+* gnutls_session_ext_register:           Core TLS API.       (line 5567)
+* gnutls_session_force_valid:            Core TLS API.       (line 5618)
+* gnutls_session_get_data:               Core TLS API.       (line 5629)
+* gnutls_session_get_data2:              Core TLS API.       (line 5653)
+* gnutls_session_get_desc:               Core TLS API.       (line 5677)
+* gnutls_session_get_flags:              Core TLS API.       (line 5694)
+* gnutls_session_get_id:                 Core TLS API.       (line 5713)
+* gnutls_session_get_id2:                Core TLS API.       (line 5737)
+* gnutls_session_get_master_secret:      Core TLS API.       (line 5754)
+* gnutls_session_get_ptr:                Core TLS API.       (line 5768)
+* gnutls_session_get_random:             Core TLS API.       (line 5780)
+* gnutls_session_get_verify_cert_status: Core TLS API.       (line 5800)
 * gnutls_session_is_resumed:             Session resumption. (line   27)
-* gnutls_session_is_resumed <1>:         Core TLS API.       (line 5765)
+* gnutls_session_is_resumed <1>:         Core TLS API.       (line 5820)
 * gnutls_session_resumption_requested:   Session resumption. (line   91)
-* gnutls_session_resumption_requested <1>: Core TLS API.     (line 5776)
-* gnutls_session_set_data:               Core TLS API.       (line 5789)
-* gnutls_session_set_id:                 Core TLS API.       (line 5812)
-* gnutls_session_set_premaster:          Core TLS API.       (line 5833)
-* gnutls_session_set_ptr:                Core TLS API.       (line 5868)
+* gnutls_session_resumption_requested <1>: Core TLS API.     (line 5831)
+* gnutls_session_set_data:               Core TLS API.       (line 5844)
+* gnutls_session_set_id:                 Core TLS API.       (line 5867)
+* gnutls_session_set_premaster:          Core TLS API.       (line 5888)
+* gnutls_session_set_ptr:                Core TLS API.       (line 5923)
 * gnutls_session_set_verify_cert:        Certificate credentials.
                                                              (line  255)
-* gnutls_session_set_verify_cert <1>:    Core TLS API.       (line 5881)
-* gnutls_session_set_verify_cert2:       Core TLS API.       (line 5914)
-* gnutls_session_set_verify_function:    Core TLS API.       (line 5946)
-* gnutls_session_supplemental_register:  Core TLS API.       (line 5975)
-* gnutls_session_ticket_enable_client:   Core TLS API.       (line 6008)
+* gnutls_session_set_verify_cert <1>:    Core TLS API.       (line 5936)
+* gnutls_session_set_verify_cert2:       Core TLS API.       (line 5969)
+* gnutls_session_set_verify_function:    Core TLS API.       (line 6001)
+* gnutls_session_supplemental_register:  Core TLS API.       (line 6030)
+* gnutls_session_ticket_enable_client:   Core TLS API.       (line 6063)
 * gnutls_session_ticket_enable_server:   Session resumption. (line   62)
-* gnutls_session_ticket_enable_server <1>: Core TLS API.     (line 6023)
+* gnutls_session_ticket_enable_server <1>: Core TLS API.     (line 6078)
 * gnutls_session_ticket_key_generate:    Session resumption. (line   78)
-* gnutls_session_ticket_key_generate <1>: Core TLS API.      (line 6042)
-* gnutls_set_default_priority:           Core TLS API.       (line 6058)
-* gnutls_sign_algorithm_get:             Core TLS API.       (line 6081)
-* gnutls_sign_algorithm_get_client:      Core TLS API.       (line 6095)
-* gnutls_sign_algorithm_get_requested:   Core TLS API.       (line 6110)
-* gnutls_sign_get_hash_algorithm:        Core TLS API.       (line 6137)
-* gnutls_sign_get_id:                    Core TLS API.       (line 6152)
-* gnutls_sign_get_name:                  Core TLS API.       (line 6164)
-* gnutls_sign_get_oid:                   Core TLS API.       (line 6176)
-* gnutls_sign_get_pk_algorithm:          Core TLS API.       (line 6190)
-* gnutls_sign_is_secure:                 Core TLS API.       (line 6208)
-* gnutls_sign_is_secure2:                Core TLS API.       (line 6218)
-* gnutls_sign_list:                      Core TLS API.       (line 6230)
-* gnutls_sign_supports_pk_algorithm:     Core TLS API.       (line 6240)
-* gnutls_srp_allocate_client_credentials: Core TLS API.      (line 6257)
-* gnutls_srp_allocate_server_credentials: Core TLS API.      (line 6269)
-* gnutls_srp_base64_decode:              Core TLS API.       (line 6281)
-* gnutls_srp_base64_decode2:             Core TLS API.       (line 6303)
-* gnutls_srp_base64_encode:              Core TLS API.       (line 6323)
-* gnutls_srp_base64_encode2:             Core TLS API.       (line 6345)
-* gnutls_srp_free_client_credentials:    Core TLS API.       (line 6366)
-* gnutls_srp_free_server_credentials:    Core TLS API.       (line 6375)
-* gnutls_srp_server_get_username:        Core TLS API.       (line 6384)
-* gnutls_srp_set_client_credentials:     Core TLS API.       (line 6397)
+* gnutls_session_ticket_key_generate <1>: Core TLS API.      (line 6097)
+* gnutls_set_default_priority:           Core TLS API.       (line 6113)
+* gnutls_sign_algorithm_get:             Core TLS API.       (line 6136)
+* gnutls_sign_algorithm_get_client:      Core TLS API.       (line 6150)
+* gnutls_sign_algorithm_get_requested:   Core TLS API.       (line 6165)
+* gnutls_sign_get_hash_algorithm:        Core TLS API.       (line 6192)
+* gnutls_sign_get_id:                    Core TLS API.       (line 6207)
+* gnutls_sign_get_name:                  Core TLS API.       (line 6219)
+* gnutls_sign_get_oid:                   Core TLS API.       (line 6231)
+* gnutls_sign_get_pk_algorithm:          Core TLS API.       (line 6245)
+* gnutls_sign_is_secure:                 Core TLS API.       (line 6263)
+* gnutls_sign_is_secure2:                Core TLS API.       (line 6273)
+* gnutls_sign_list:                      Core TLS API.       (line 6285)
+* gnutls_sign_supports_pk_algorithm:     Core TLS API.       (line 6295)
+* gnutls_srp_allocate_client_credentials: Core TLS API.      (line 6312)
+* gnutls_srp_allocate_server_credentials: Core TLS API.      (line 6324)
+* gnutls_srp_base64_decode:              Core TLS API.       (line 6336)
+* gnutls_srp_base64_decode2:             Core TLS API.       (line 6358)
+* gnutls_srp_base64_encode:              Core TLS API.       (line 6378)
+* gnutls_srp_base64_encode2:             Core TLS API.       (line 6400)
+* gnutls_srp_free_client_credentials:    Core TLS API.       (line 6421)
+* gnutls_srp_free_server_credentials:    Core TLS API.       (line 6430)
+* gnutls_srp_server_get_username:        Core TLS API.       (line 6439)
+* gnutls_srp_set_client_credentials:     Core TLS API.       (line 6452)
 * gnutls_srp_set_client_credentials_function: SRP credentials.
                                                              (line   19)
 * gnutls_srp_set_client_credentials_function <1>: Core TLS API.
-                                                             (line 6418)
-* gnutls_srp_set_prime_bits:             Core TLS API.       (line 6448)
+                                                             (line 6473)
+* gnutls_srp_set_prime_bits:             Core TLS API.       (line 6503)
 * gnutls_srp_set_server_credentials_file: SRP credentials.   (line   53)
-* gnutls_srp_set_server_credentials_file <1>: Core TLS API.  (line 6469)
+* gnutls_srp_set_server_credentials_file <1>: Core TLS API.  (line 6524)
 * gnutls_srp_set_server_credentials_function: SRP credentials.
                                                              (line   69)
 * gnutls_srp_set_server_credentials_function <1>: Core TLS API.
-                                                             (line 6488)
-* gnutls_srp_set_server_fake_salt_seed:  Core TLS API.       (line 6526)
+                                                             (line 6543)
+* gnutls_srp_set_server_fake_salt_seed:  Core TLS API.       (line 6581)
 * gnutls_srp_verifier:                   Authentication using SRP.
                                                              (line   43)
-* gnutls_srp_verifier <1>:               Core TLS API.       (line 6563)
+* gnutls_srp_verifier <1>:               Core TLS API.       (line 6618)
 * gnutls_srtp_get_keys:                  SRTP.               (line   31)
-* gnutls_srtp_get_keys <1>:              Core TLS API.       (line 6592)
-* gnutls_srtp_get_mki:                   Core TLS API.       (line 6630)
-* gnutls_srtp_get_profile_id:            Core TLS API.       (line 6648)
-* gnutls_srtp_get_profile_name:          Core TLS API.       (line 6664)
-* gnutls_srtp_get_selected_profile:      Core TLS API.       (line 6679)
-* gnutls_srtp_set_mki:                   Core TLS API.       (line 6695)
-* gnutls_srtp_set_profile:               Core TLS API.       (line 6712)
-* gnutls_srtp_set_profile_direct:        Core TLS API.       (line 6729)
+* gnutls_srtp_get_keys <1>:              Core TLS API.       (line 6647)
+* gnutls_srtp_get_mki:                   Core TLS API.       (line 6685)
+* gnutls_srtp_get_profile_id:            Core TLS API.       (line 6703)
+* gnutls_srtp_get_profile_name:          Core TLS API.       (line 6719)
+* gnutls_srtp_get_selected_profile:      Core TLS API.       (line 6734)
+* gnutls_srtp_set_mki:                   Core TLS API.       (line 6750)
+* gnutls_srtp_set_profile:               Core TLS API.       (line 6767)
+* gnutls_srtp_set_profile_direct:        Core TLS API.       (line 6784)
 * gnutls_store_commitment:               Certificate verification.
                                                              (line  108)
-* gnutls_store_commitment <1>:           Core TLS API.       (line 6750)
+* gnutls_store_commitment <1>:           Core TLS API.       (line 6805)
 * gnutls_store_pubkey:                   Certificate verification.
                                                              (line   61)
-* gnutls_store_pubkey <1>:               Core TLS API.       (line 6790)
-* gnutls_strerror:                       Core TLS API.       (line 6836)
-* gnutls_strerror_name:                  Core TLS API.       (line 6850)
+* gnutls_store_pubkey <1>:               Core TLS API.       (line 6845)
+* gnutls_strerror:                       Core TLS API.       (line 6891)
+* gnutls_strerror_name:                  Core TLS API.       (line 6905)
 * gnutls_subject_alt_names_deinit:       X509 certificate API.
                                                              (line  124)
 * gnutls_subject_alt_names_get:          X509 certificate API.
@@ -1826,22 +2649,22 @@ Function and Data Index
                                                              (line  164)
 * gnutls_subject_alt_names_set:          X509 certificate API.
                                                              (line  178)
-* gnutls_supplemental_get_name:          Core TLS API.       (line 6865)
-* gnutls_supplemental_recv:              Core TLS API.       (line 6878)
-* gnutls_supplemental_register:          Core TLS API.       (line 6893)
-* gnutls_supplemental_send:              Core TLS API.       (line 6922)
-* gnutls_system_key_add_x509:            Abstract key API.   (line 2385)
-* gnutls_system_key_delete:              Abstract key API.   (line 2411)
-* gnutls_system_key_iter_deinit:         Abstract key API.   (line 2427)
+* gnutls_supplemental_get_name:          Core TLS API.       (line 6920)
+* gnutls_supplemental_recv:              Core TLS API.       (line 6933)
+* gnutls_supplemental_register:          Core TLS API.       (line 6948)
+* gnutls_supplemental_send:              Core TLS API.       (line 6977)
+* gnutls_system_key_add_x509:            Abstract key API.   (line 2405)
+* gnutls_system_key_delete:              Abstract key API.   (line 2431)
+* gnutls_system_key_iter_deinit:         Abstract key API.   (line 2447)
 * gnutls_system_key_iter_get_info:       Application-specific keys.
                                                              (line   20)
-* gnutls_system_key_iter_get_info <1>:   Abstract key API.   (line 2438)
-* gnutls_system_recv_timeout:            Core TLS API.       (line 6936)
-* gnutls_tdb_deinit:                     Core TLS API.       (line 6959)
-* gnutls_tdb_init:                       Core TLS API.       (line 6968)
-* gnutls_tdb_set_store_commitment_func:  Core TLS API.       (line 6979)
-* gnutls_tdb_set_store_func:             Core TLS API.       (line 6999)
-* gnutls_tdb_set_verify_func:            Core TLS API.       (line 7018)
+* gnutls_system_key_iter_get_info <1>:   Abstract key API.   (line 2458)
+* gnutls_system_recv_timeout:            Core TLS API.       (line 6991)
+* gnutls_tdb_deinit:                     Core TLS API.       (line 7014)
+* gnutls_tdb_init:                       Core TLS API.       (line 7023)
+* gnutls_tdb_set_store_commitment_func:  Core TLS API.       (line 7034)
+* gnutls_tdb_set_store_func:             Core TLS API.       (line 7054)
+* gnutls_tdb_set_verify_func:            Core TLS API.       (line 7073)
 * gnutls_tpm_get_registered:             TPM API.            (line   12)
 * gnutls_tpm_key_list_deinit:            TPM API.            (line   27)
 * gnutls_tpm_key_list_get_url:           TPM API.            (line   38)
@@ -1850,44 +2673,44 @@ Function and Data Index
 * gnutls_tpm_privkey_delete <2>:         TPM API.            (line   60)
 * gnutls_tpm_privkey_generate:           Key generation.     (line    9)
 * gnutls_tpm_privkey_generate <1>:       TPM API.            (line   76)
-* gnutls_transport_get_int:              Core TLS API.       (line 7040)
-* gnutls_transport_get_int2:             Core TLS API.       (line 7054)
-* gnutls_transport_get_ptr:              Core TLS API.       (line 7071)
-* gnutls_transport_get_ptr2:             Core TLS API.       (line 7084)
+* gnutls_transport_get_int:              Core TLS API.       (line 7095)
+* gnutls_transport_get_int2:             Core TLS API.       (line 7109)
+* gnutls_transport_get_ptr:              Core TLS API.       (line 7126)
+* gnutls_transport_get_ptr2:             Core TLS API.       (line 7139)
 * gnutls_transport_set_errno:            Setting up the transport layer.
                                                              (line  118)
-* gnutls_transport_set_errno <1>:        Core TLS API.       (line 7100)
-* gnutls_transport_set_errno_function:   Core TLS API.       (line 7120)
+* gnutls_transport_set_errno <1>:        Core TLS API.       (line 7155)
+* gnutls_transport_set_errno_function:   Core TLS API.       (line 7175)
 * gnutls_transport_set_fastopen:         Reducing round-trips.
                                                              (line   21)
 * gnutls_transport_set_fastopen <1>:     Socket specific API.
                                                              (line   11)
-* gnutls_transport_set_int:              Core TLS API.       (line 7138)
-* gnutls_transport_set_int2:             Core TLS API.       (line 7156)
-* gnutls_transport_set_ptr:              Core TLS API.       (line 7178)
-* gnutls_transport_set_ptr2:             Core TLS API.       (line 7191)
+* gnutls_transport_set_int:              Core TLS API.       (line 7193)
+* gnutls_transport_set_int2:             Core TLS API.       (line 7211)
+* gnutls_transport_set_ptr:              Core TLS API.       (line 7233)
+* gnutls_transport_set_ptr2:             Core TLS API.       (line 7246)
 * gnutls_transport_set_pull_function:    Setting up the transport layer.
                                                              (line   56)
-* gnutls_transport_set_pull_function <1>: Core TLS API.      (line 7208)
+* gnutls_transport_set_pull_function <1>: Core TLS API.      (line 7263)
 * gnutls_transport_set_pull_timeout_function: Setting up the transport layer.
                                                              (line   71)
 * gnutls_transport_set_pull_timeout_function <1>: Setting up the transport layer.
                                                              (line  155)
 * gnutls_transport_set_pull_timeout_function <2>: Core TLS API.
-                                                             (line 7226)
+                                                             (line 7281)
 * gnutls_transport_set_push_function:    Setting up the transport layer.
                                                              (line   23)
-* gnutls_transport_set_push_function <1>: Core TLS API.      (line 7268)
+* gnutls_transport_set_push_function <1>: Core TLS API.      (line 7323)
 * gnutls_transport_set_vec_push_function: Setting up the transport layer.
                                                              (line   40)
-* gnutls_transport_set_vec_push_function <1>: Core TLS API.  (line 7288)
+* gnutls_transport_set_vec_push_function <1>: Core TLS API.  (line 7343)
 * gnutls_url_is_supported:               Abstract public keys.
                                                              (line   52)
-* gnutls_url_is_supported <1>:           Core TLS API.       (line 7307)
-* gnutls_utf8_password_normalize:        Core TLS API.       (line 7321)
+* gnutls_url_is_supported <1>:           Core TLS API.       (line 7362)
+* gnutls_utf8_password_normalize:        Core TLS API.       (line 7376)
 * gnutls_verify_stored_pubkey:           Certificate verification.
                                                              (line   18)
-* gnutls_verify_stored_pubkey <1>:       Core TLS API.       (line 7346)
+* gnutls_verify_stored_pubkey <1>:       Core TLS API.       (line 7401)
 * gnutls_x509_aia_deinit:                X509 certificate API.
                                                              (line  205)
 * gnutls_x509_aia_get:                   X509 certificate API.
@@ -1985,8 +2808,8 @@ Function and Data Index
 * gnutls_x509_crl_print:                 X509 certificate API.
                                                              (line 1192)
 * gnutls_x509_crl_privkey_sign:          PKIX certificate revocation lists.
-                                                             (line  128)
-* gnutls_x509_crl_privkey_sign <1>:      Abstract key API.   (line 2476)
+                                                             (line  132)
+* gnutls_x509_crl_privkey_sign <1>:      Abstract key API.   (line 2496)
 * gnutls_x509_crl_set_authority_key_id:  X509 certificate API.
                                                              (line 1212)
 * gnutls_x509_crl_set_crt:               X509 certificate API.
@@ -2001,657 +2824,659 @@ Function and Data Index
                                                              (line 1310)
 * gnutls_x509_crl_set_version:           X509 certificate API.
                                                              (line 1324)
-* gnutls_x509_crl_sign:                  Compatibility API.  (line  127)
+* gnutls_x509_crl_sign:                  X509 certificate API.
+                                                             (line 1340)
 * gnutls_x509_crl_sign2:                 PKIX certificate revocation lists.
                                                              (line  101)
 * gnutls_x509_crl_sign2 <1>:             X509 certificate API.
-                                                             (line 1340)
+                                                             (line 1359)
 * gnutls_x509_crl_verify:                X509 certificate API.
-                                                             (line 1370)
+                                                             (line 1393)
 * gnutls_x509_crq_deinit:                X509 certificate API.
-                                                             (line 1403)
+                                                             (line 1426)
 * gnutls_x509_crq_export:                X509 certificate API.
-                                                             (line 1412)
+                                                             (line 1435)
 * gnutls_x509_crq_export2:               X509 certificate API.
-                                                             (line 1440)
+                                                             (line 1463)
 * gnutls_x509_crq_get_attribute_by_oid:  X509 certificate API.
-                                                             (line 1464)
+                                                             (line 1487)
 * gnutls_x509_crq_get_attribute_data:    X509 certificate API.
-                                                             (line 1493)
+                                                             (line 1516)
 * gnutls_x509_crq_get_attribute_info:    X509 certificate API.
-                                                             (line 1522)
+                                                             (line 1545)
 * gnutls_x509_crq_get_basic_constraints: X509 certificate API.
-                                                             (line 1553)
+                                                             (line 1576)
 * gnutls_x509_crq_get_challenge_password: X509 certificate API.
-                                                             (line 1583)
+                                                             (line 1606)
 * gnutls_x509_crq_get_dn:                X509 certificate API.
-                                                             (line 1601)
+                                                             (line 1624)
 * gnutls_x509_crq_get_dn2:               X509 certificate API.
-                                                             (line 1625)
-* gnutls_x509_crq_get_dn3:               X509 certificate API.
                                                              (line 1648)
+* gnutls_x509_crq_get_dn3:               X509 certificate API.
+                                                             (line 1671)
 * gnutls_x509_crq_get_dn_by_oid:         X509 certificate API.
-                                                             (line 1674)
+                                                             (line 1697)
 * gnutls_x509_crq_get_dn_oid:            X509 certificate API.
-                                                             (line 1708)
+                                                             (line 1731)
 * gnutls_x509_crq_get_extension_by_oid:  X509 certificate API.
-                                                             (line 1728)
+                                                             (line 1751)
 * gnutls_x509_crq_get_extension_by_oid2: X509 certificate API.
-                                                             (line 1758)
+                                                             (line 1781)
 * gnutls_x509_crq_get_extension_data:    X509 certificate API.
-                                                             (line 1786)
+                                                             (line 1809)
 * gnutls_x509_crq_get_extension_data2:   X509 certificate API.
-                                                             (line 1816)
+                                                             (line 1839)
 * gnutls_x509_crq_get_extension_info:    X509 certificate API.
-                                                             (line 1841)
+                                                             (line 1864)
 * gnutls_x509_crq_get_key_id:            X509 certificate API.
-                                                             (line 1875)
+                                                             (line 1898)
 * gnutls_x509_crq_get_key_purpose_oid:   X509 certificate API.
-                                                             (line 1904)
+                                                             (line 1927)
 * gnutls_x509_crq_get_key_rsa_raw:       X509 certificate API.
-                                                             (line 1932)
+                                                             (line 1955)
 * gnutls_x509_crq_get_key_usage:         X509 certificate API.
-                                                             (line 1952)
+                                                             (line 1975)
 * gnutls_x509_crq_get_pk_algorithm:      X509 certificate API.
-                                                             (line 1978)
+                                                             (line 2001)
 * gnutls_x509_crq_get_pk_oid:            X509 certificate API.
-                                                             (line 1998)
+                                                             (line 2021)
 * gnutls_x509_crq_get_private_key_usage_period: X509 certificate API.
-                                                             (line 2017)
+                                                             (line 2040)
 * gnutls_x509_crq_get_signature_algorithm: X509 certificate API.
-                                                             (line 2038)
+                                                             (line 2061)
 * gnutls_x509_crq_get_signature_oid:     X509 certificate API.
-                                                             (line 2057)
+                                                             (line 2080)
 * gnutls_x509_crq_get_spki:              X509 certificate API.
-                                                             (line 2077)
+                                                             (line 2100)
 * gnutls_x509_crq_get_subject_alt_name:  X509 certificate API.
-                                                             (line 2093)
+                                                             (line 2116)
 * gnutls_x509_crq_get_subject_alt_othername_oid: X509 certificate API.
-                                                             (line 2130)
+                                                             (line 2153)
 * gnutls_x509_crq_get_tlsfeatures:       X509 certificate API.
-                                                             (line 2166)
+                                                             (line 2189)
 * gnutls_x509_crq_get_version:           X509 certificate API.
-                                                             (line 2198)
+                                                             (line 2221)
 * gnutls_x509_crq_import:                X509 certificate API.
-                                                             (line 2210)
+                                                             (line 2233)
 * gnutls_x509_crq_init:                  X509 certificate API.
-                                                             (line 2231)
+                                                             (line 2254)
 * gnutls_x509_crq_print:                 X509 certificate API.
-                                                             (line 2243)
-* gnutls_x509_crq_privkey_sign:          Abstract key API.   (line 2508)
+                                                             (line 2266)
+* gnutls_x509_crq_privkey_sign:          Abstract key API.   (line 2532)
 * gnutls_x509_crq_set_attribute_by_oid:  X509 certificate API.
-                                                             (line 2265)
+                                                             (line 2288)
 * gnutls_x509_crq_set_basic_constraints: X509 certificate API.
-                                                             (line 2290)
+                                                             (line 2313)
 * gnutls_x509_crq_set_challenge_password: X509 certificate API.
-                                                             (line 2312)
+                                                             (line 2335)
 * gnutls_x509_crq_set_dn:                X509 certificate API.
-                                                             (line 2327)
+                                                             (line 2350)
 * gnutls_x509_crq_set_dn_by_oid:         X509 certificate API.
-                                                             (line 2345)
+                                                             (line 2368)
 * gnutls_x509_crq_set_extension_by_oid:  X509 certificate API.
-                                                             (line 2374)
+                                                             (line 2397)
 * gnutls_x509_crq_set_key:               PKCS 10 certificate requests.
                                                              (line   30)
 * gnutls_x509_crq_set_key <1>:           X509 certificate API.
-                                                             (line 2398)
+                                                             (line 2421)
 * gnutls_x509_crq_set_key_purpose_oid:   X509 certificate API.
-                                                             (line 2413)
+                                                             (line 2436)
 * gnutls_x509_crq_set_key_rsa_raw:       X509 certificate API.
-                                                             (line 2435)
+                                                             (line 2458)
 * gnutls_x509_crq_set_key_usage:         X509 certificate API.
-                                                             (line 2454)
+                                                             (line 2477)
 * gnutls_x509_crq_set_private_key_usage_period: X509 certificate API.
-                                                             (line 2470)
+                                                             (line 2493)
 * gnutls_x509_crq_set_pubkey:            Operations.         (line  168)
-* gnutls_x509_crq_set_pubkey <1>:        Abstract key API.   (line 2537)
+* gnutls_x509_crq_set_pubkey <1>:        Abstract key API.   (line 2569)
 * gnutls_x509_crq_set_spki:              X509 certificate API.
-                                                             (line 2487)
+                                                             (line 2510)
 * gnutls_x509_crq_set_subject_alt_name:  X509 certificate API.
-                                                             (line 2511)
+                                                             (line 2534)
 * gnutls_x509_crq_set_subject_alt_othername: X509 certificate API.
-                                                             (line 2536)
+                                                             (line 2559)
 * gnutls_x509_crq_set_tlsfeatures:       X509 certificate API.
-                                                             (line 2564)
+                                                             (line 2587)
 * gnutls_x509_crq_set_version:           X509 certificate API.
-                                                             (line 2582)
-* gnutls_x509_crq_sign:                  Compatibility API.  (line  146)
+                                                             (line 2605)
+* gnutls_x509_crq_sign:                  X509 certificate API.
+                                                             (line 2620)
 * gnutls_x509_crq_sign2:                 PKCS 10 certificate requests.
                                                              (line   42)
 * gnutls_x509_crq_sign2 <1>:             X509 certificate API.
-                                                             (line 2597)
+                                                             (line 2641)
 * gnutls_x509_crq_verify:                X509 certificate API.
-                                                             (line 2624)
+                                                             (line 2676)
 * gnutls_x509_crt_check_email:           X509 certificate API.
-                                                             (line 2643)
+                                                             (line 2695)
 * gnutls_x509_crt_check_hostname:        X509 certificate API.
-                                                             (line 2660)
+                                                             (line 2712)
 * gnutls_x509_crt_check_hostname2:       X509 certificate API.
-                                                             (line 2678)
+                                                             (line 2730)
 * gnutls_x509_crt_check_ip:              X509 certificate API.
-                                                             (line 2719)
+                                                             (line 2771)
 * gnutls_x509_crt_check_issuer:          X509 certificate API.
-                                                             (line 2739)
+                                                             (line 2791)
 * gnutls_x509_crt_check_key_purpose:     X509 certificate API.
-                                                             (line 2758)
+                                                             (line 2810)
 * gnutls_x509_crt_check_revocation:      X509 certificate API.
-                                                             (line 2779)
+                                                             (line 2831)
 * gnutls_x509_crt_cpy_crl_dist_points:   X509 certificate API.
-                                                             (line 2797)
+                                                             (line 2849)
 * gnutls_x509_crt_deinit:                X509 certificate API.
-                                                             (line 2813)
+                                                             (line 2865)
 * gnutls_x509_crt_equals:                X509 certificate API.
-                                                             (line 2821)
+                                                             (line 2873)
 * gnutls_x509_crt_equals2:               X509 certificate API.
-                                                             (line 2836)
+                                                             (line 2888)
 * gnutls_x509_crt_export:                X509 certificate API.
-                                                             (line 2852)
+                                                             (line 2904)
 * gnutls_x509_crt_export2:               X509 certificate API.
-                                                             (line 2879)
+                                                             (line 2931)
 * gnutls_x509_crt_get_activation_time:   X509 certificate API.
-                                                             (line 2901)
+                                                             (line 2953)
 * gnutls_x509_crt_get_authority_info_access: X509 certificate API.
-                                                             (line 2913)
+                                                             (line 2965)
 * gnutls_x509_crt_get_authority_key_gn_serial: X509 certificate API.
-                                                             (line 2991)
+                                                             (line 3043)
 * gnutls_x509_crt_get_authority_key_id:  X509 certificate API.
-                                                             (line 3030)
+                                                             (line 3082)
 * gnutls_x509_crt_get_basic_constraints: X509 certificate API.
-                                                             (line 3057)
+                                                             (line 3109)
 * gnutls_x509_crt_get_ca_status:         X509 certificate API.
-                                                             (line 3085)
+                                                             (line 3137)
 * gnutls_x509_crt_get_crl_dist_points:   X509 certificate API.
-                                                             (line 3108)
+                                                             (line 3160)
 * gnutls_x509_crt_get_dn:                X509 certificate API.
-                                                             (line 3141)
+                                                             (line 3193)
 * gnutls_x509_crt_get_dn2:               X.509 distinguished names.
                                                              (line   14)
 * gnutls_x509_crt_get_dn2 <1>:           X509 certificate API.
-                                                             (line 3168)
+                                                             (line 3220)
 * gnutls_x509_crt_get_dn3:               X509 certificate API.
-                                                             (line 3190)
+                                                             (line 3242)
 * gnutls_x509_crt_get_dn_by_oid:         X509 certificate API.
-                                                             (line 3215)
+                                                             (line 3267)
 * gnutls_x509_crt_get_dn_oid:            X509 certificate API.
-                                                             (line 3254)
+                                                             (line 3306)
 * gnutls_x509_crt_get_expiration_time:   X509 certificate API.
-                                                             (line 3280)
+                                                             (line 3332)
 * gnutls_x509_crt_get_extension_by_oid:  X509 certificate API.
-                                                             (line 3295)
+                                                             (line 3347)
 * gnutls_x509_crt_get_extension_by_oid2: X509 certificate API.
-                                                             (line 3323)
+                                                             (line 3375)
 * gnutls_x509_crt_get_extension_data:    X509 certificate API.
-                                                             (line 3351)
+                                                             (line 3403)
 * gnutls_x509_crt_get_extension_data2:   X509 certificate API.
-                                                             (line 3379)
+                                                             (line 3431)
 * gnutls_x509_crt_get_extension_info:    X509 certificate API.
-                                                             (line 3402)
+                                                             (line 3454)
 * gnutls_x509_crt_get_extension_oid:     X509 certificate API.
-                                                             (line 3436)
+                                                             (line 3488)
 * gnutls_x509_crt_get_fingerprint:       X509 certificate API.
-                                                             (line 3462)
+                                                             (line 3514)
 * gnutls_x509_crt_get_inhibit_anypolicy: X509 certificate API.
-                                                             (line 3486)
+                                                             (line 3538)
 * gnutls_x509_crt_get_issuer:            X509 certificate API.
-                                                             (line 3513)
+                                                             (line 3565)
 * gnutls_x509_crt_get_issuer_alt_name:   X509 certificate API.
-                                                             (line 3531)
+                                                             (line 3583)
 * gnutls_x509_crt_get_issuer_alt_name2:  X509 certificate API.
-                                                             (line 3574)
+                                                             (line 3626)
 * gnutls_x509_crt_get_issuer_alt_othername_oid: X509 certificate API.
-                                                             (line 3612)
+                                                             (line 3664)
 * gnutls_x509_crt_get_issuer_dn:         X509 certificate API.
-                                                             (line 3652)
+                                                             (line 3704)
 * gnutls_x509_crt_get_issuer_dn2:        X509 certificate API.
-                                                             (line 3679)
+                                                             (line 3731)
 * gnutls_x509_crt_get_issuer_dn3:        X509 certificate API.
-                                                             (line 3701)
+                                                             (line 3753)
 * gnutls_x509_crt_get_issuer_dn_by_oid:  X509 certificate API.
-                                                             (line 3726)
+                                                             (line 3778)
 * gnutls_x509_crt_get_issuer_dn_oid:     X509 certificate API.
-                                                             (line 3765)
+                                                             (line 3817)
 * gnutls_x509_crt_get_issuer_unique_id:  X509 certificate API.
-                                                             (line 3791)
+                                                             (line 3843)
 * gnutls_x509_crt_get_key_id:            X.509 public and private keys.
                                                              (line   13)
 * gnutls_x509_crt_get_key_id <1>:        X509 certificate API.
-                                                             (line 3820)
+                                                             (line 3872)
 * gnutls_x509_crt_get_key_purpose_oid:   X509 certificate API.
-                                                             (line 3847)
+                                                             (line 3899)
 * gnutls_x509_crt_get_key_usage:         X509 certificate API.
-                                                             (line 3877)
+                                                             (line 3929)
 * gnutls_x509_crt_get_name_constraints:  X509 certificate API.
-                                                             (line 3900)
+                                                             (line 3952)
 * gnutls_x509_crt_get_pk_algorithm:      X509 certificate API.
-                                                             (line 3935)
+                                                             (line 3987)
 * gnutls_x509_crt_get_pk_dsa_raw:        X509 certificate API.
-                                                             (line 3957)
+                                                             (line 4009)
 * gnutls_x509_crt_get_pk_ecc_raw:        X509 certificate API.
-                                                             (line 3980)
+                                                             (line 4032)
 * gnutls_x509_crt_get_pk_oid:            X509 certificate API.
-                                                             (line 4003)
+                                                             (line 4055)
 * gnutls_x509_crt_get_pk_rsa_raw:        X509 certificate API.
-                                                             (line 4022)
+                                                             (line 4074)
 * gnutls_x509_crt_get_policy:            X509 certificate API.
-                                                             (line 4040)
+                                                             (line 4092)
 * gnutls_x509_crt_get_preferred_hash_algorithm: Compatibility API.
-                                                             (line  163)
+                                                             (line  127)
 * gnutls_x509_crt_get_private_key_usage_period: X509 certificate API.
-                                                             (line 4067)
+                                                             (line 4119)
 * gnutls_x509_crt_get_proxy:             X509 certificate API.
-                                                             (line 4089)
+                                                             (line 4141)
 * gnutls_x509_crt_get_raw_dn:            X509 certificate API.
-                                                             (line 4116)
+                                                             (line 4168)
 * gnutls_x509_crt_get_raw_issuer_dn:     X509 certificate API.
-                                                             (line 4133)
+                                                             (line 4185)
 * gnutls_x509_crt_get_serial:            X509 certificate API.
-                                                             (line 4149)
+                                                             (line 4201)
 * gnutls_x509_crt_get_signature:         X509 certificate API.
-                                                             (line 4169)
+                                                             (line 4221)
 * gnutls_x509_crt_get_signature_algorithm: X509 certificate API.
-                                                             (line 4186)
+                                                             (line 4238)
 * gnutls_x509_crt_get_signature_oid:     X509 certificate API.
-                                                             (line 4203)
+                                                             (line 4255)
 * gnutls_x509_crt_get_spki:              X509 certificate API.
-                                                             (line 4223)
+                                                             (line 4275)
 * gnutls_x509_crt_get_subject:           X509 certificate API.
-                                                             (line 4239)
+                                                             (line 4291)
 * gnutls_x509_crt_get_subject_alt_name:  X509 certificate API.
-                                                             (line 4257)
+                                                             (line 4309)
 * gnutls_x509_crt_get_subject_alt_name2: X509 certificate API.
-                                                             (line 4297)
+                                                             (line 4349)
 * gnutls_x509_crt_get_subject_alt_othername_oid: X509 certificate API.
-                                                             (line 4333)
+                                                             (line 4385)
 * gnutls_x509_crt_get_subject_key_id:    X509 certificate API.
-                                                             (line 4371)
+                                                             (line 4423)
 * gnutls_x509_crt_get_subject_unique_id: X509 certificate API.
-                                                             (line 4393)
+                                                             (line 4445)
 * gnutls_x509_crt_get_tlsfeatures:       X509 certificate API.
-                                                             (line 4420)
+                                                             (line 4472)
 * gnutls_x509_crt_get_version:           X509 certificate API.
-                                                             (line 4452)
+                                                             (line 4504)
 * gnutls_x509_crt_import:                X509 certificate API.
-                                                             (line 4463)
-* gnutls_x509_crt_import_pkcs11:         PKCS 11 API.        (line 1292)
+                                                             (line 4515)
+* gnutls_x509_crt_import_pkcs11:         PKCS 11 API.        (line 1296)
 * gnutls_x509_crt_import_url:            X509 certificate API.
-                                                             (line 4484)
+                                                             (line 4536)
 * gnutls_x509_crt_init:                  X509 certificate API.
-                                                             (line 4508)
+                                                             (line 4560)
 * gnutls_x509_crt_list_import:           X509 certificate API.
-                                                             (line 4519)
+                                                             (line 4571)
 * gnutls_x509_crt_list_import2:          X509 certificate API.
-                                                             (line 4555)
-* gnutls_x509_crt_list_import_pkcs11:    PKCS 11 API.        (line 1309)
+                                                             (line 4607)
+* gnutls_x509_crt_list_import_pkcs11:    PKCS 11 API.        (line 1313)
 * gnutls_x509_crt_list_verify:           X509 certificate API.
-                                                             (line 4587)
+                                                             (line 4639)
 * gnutls_x509_crt_print:                 X509 certificate API.
-                                                             (line 4627)
-* gnutls_x509_crt_privkey_sign:          Abstract key API.   (line 2554)
+                                                             (line 4679)
+* gnutls_x509_crt_privkey_sign:          Abstract key API.   (line 2586)
 * gnutls_x509_crt_set_activation_time:   X509 certificate API.
-                                                             (line 4652)
+                                                             (line 4704)
 * gnutls_x509_crt_set_authority_info_access: X509 certificate API.
-                                                             (line 4667)
+                                                             (line 4719)
 * gnutls_x509_crt_set_authority_key_id:  X509 certificate API.
-                                                             (line 4693)
+                                                             (line 4745)
 * gnutls_x509_crt_set_basic_constraints: X509 certificate API.
-                                                             (line 4711)
+                                                             (line 4763)
 * gnutls_x509_crt_set_ca_status:         X509 certificate API.
-                                                             (line 4731)
+                                                             (line 4783)
 * gnutls_x509_crt_set_crl_dist_points:   X509 certificate API.
-                                                             (line 4748)
+                                                             (line 4800)
 * gnutls_x509_crt_set_crl_dist_points2:  X509 certificate API.
-                                                             (line 4768)
+                                                             (line 4820)
 * gnutls_x509_crt_set_crq:               X509 certificate API.
-                                                             (line 4793)
+                                                             (line 4845)
 * gnutls_x509_crt_set_crq_extensions:    X509 certificate API.
-                                                             (line 4835)
+                                                             (line 4887)
 * gnutls_x509_crt_set_crq_extension_by_oid: X509 certificate API.
-                                                             (line 4813)
+                                                             (line 4865)
 * gnutls_x509_crt_set_dn:                X509 certificate API.
-                                                             (line 4852)
-* gnutls_x509_crt_set_dn_by_oid:         X509 certificate API.
-                                                             (line 4875)
-* gnutls_x509_crt_set_expiration_time:   X509 certificate API.
                                                              (line 4904)
+* gnutls_x509_crt_set_dn_by_oid:         X509 certificate API.
+                                                             (line 4927)
+* gnutls_x509_crt_set_expiration_time:   X509 certificate API.
+                                                             (line 4956)
 * gnutls_x509_crt_set_extension_by_oid:  X509 certificate API.
-                                                             (line 4921)
+                                                             (line 4973)
 * gnutls_x509_crt_set_flags:             X509 certificate API.
-                                                             (line 4945)
+                                                             (line 4997)
 * gnutls_x509_crt_set_inhibit_anypolicy: X509 certificate API.
-                                                             (line 4961)
+                                                             (line 5013)
 * gnutls_x509_crt_set_issuer_alt_name:   X509 certificate API.
-                                                             (line 4976)
+                                                             (line 5028)
 * gnutls_x509_crt_set_issuer_alt_othername: X509 certificate API.
-                                                             (line 5006)
+                                                             (line 5058)
 * gnutls_x509_crt_set_issuer_dn:         X509 certificate API.
-                                                             (line 5037)
+                                                             (line 5089)
 * gnutls_x509_crt_set_issuer_dn_by_oid:  X509 certificate API.
-                                                             (line 5055)
-* gnutls_x509_crt_set_issuer_unique_id:  X509 certificate API.
-                                                             (line 5088)
-* gnutls_x509_crt_set_key:               X509 certificate API.
                                                              (line 5107)
-* gnutls_x509_crt_set_key_purpose_oid:   X509 certificate API.
-                                                             (line 5125)
-* gnutls_x509_crt_set_key_usage:         X509 certificate API.
-                                                             (line 5145)
-* gnutls_x509_crt_set_name_constraints:  X509 certificate API.
+* gnutls_x509_crt_set_issuer_unique_id:  X509 certificate API.
+                                                             (line 5140)
+* gnutls_x509_crt_set_key:               X509 certificate API.
                                                              (line 5159)
+* gnutls_x509_crt_set_key_purpose_oid:   X509 certificate API.
+                                                             (line 5177)
+* gnutls_x509_crt_set_key_usage:         X509 certificate API.
+                                                             (line 5197)
+* gnutls_x509_crt_set_name_constraints:  X509 certificate API.
+                                                             (line 5211)
 * gnutls_x509_crt_set_pin_function:      X509 certificate API.
-                                                             (line 5180)
+                                                             (line 5232)
 * gnutls_x509_crt_set_policy:            X509 certificate API.
-                                                             (line 5200)
+                                                             (line 5252)
 * gnutls_x509_crt_set_private_key_usage_period: X509 certificate API.
-                                                             (line 5224)
+                                                             (line 5276)
 * gnutls_x509_crt_set_proxy:             X509 certificate API.
-                                                             (line 5241)
+                                                             (line 5293)
 * gnutls_x509_crt_set_proxy_dn:          X509 certificate API.
-                                                             (line 5264)
+                                                             (line 5316)
 * gnutls_x509_crt_set_pubkey:            Operations.         (line  182)
-* gnutls_x509_crt_set_pubkey <1>:        Abstract key API.   (line 2584)
+* gnutls_x509_crt_set_pubkey <1>:        Abstract key API.   (line 2620)
 * gnutls_x509_crt_set_serial:            X509 certificate API.
-                                                             (line 5290)
+                                                             (line 5342)
 * gnutls_x509_crt_set_spki:              X509 certificate API.
-                                                             (line 5317)
+                                                             (line 5369)
 * gnutls_x509_crt_set_subject_alternative_name: X509 certificate API.
-                                                             (line 5405)
+                                                             (line 5457)
 * gnutls_x509_crt_set_subject_alt_name:  X509 certificate API.
-                                                             (line 5341)
+                                                             (line 5393)
 * gnutls_x509_crt_set_subject_alt_othername: X509 certificate API.
-                                                             (line 5374)
+                                                             (line 5426)
 * gnutls_x509_crt_set_subject_key_id:    X509 certificate API.
-                                                             (line 5429)
+                                                             (line 5481)
 * gnutls_x509_crt_set_subject_unique_id: X509 certificate API.
-                                                             (line 5446)
+                                                             (line 5498)
 * gnutls_x509_crt_set_tlsfeatures:       X509 certificate API.
-                                                             (line 5465)
+                                                             (line 5517)
 * gnutls_x509_crt_set_version:           X509 certificate API.
-                                                             (line 5483)
+                                                             (line 5535)
 * gnutls_x509_crt_sign:                  X509 certificate API.
-                                                             (line 5505)
+                                                             (line 5557)
 * gnutls_x509_crt_sign2:                 X509 certificate API.
-                                                             (line 5522)
+                                                             (line 5576)
 * gnutls_x509_crt_verify:                X509 certificate API.
-                                                             (line 5552)
+                                                             (line 5610)
 * gnutls_x509_crt_verify_data2:          X509 certificate API.
-                                                             (line 5579)
+                                                             (line 5637)
 * gnutls_x509_dn_deinit:                 X509 certificate API.
-                                                             (line 5609)
+                                                             (line 5667)
 * gnutls_x509_dn_export:                 X509 certificate API.
-                                                             (line 5620)
+                                                             (line 5678)
 * gnutls_x509_dn_export2:                X509 certificate API.
-                                                             (line 5647)
+                                                             (line 5705)
 * gnutls_x509_dn_get_rdn_ava:            X.509 distinguished names.
                                                              (line   52)
 * gnutls_x509_dn_get_rdn_ava <1>:        X509 certificate API.
-                                                             (line 5670)
+                                                             (line 5728)
 * gnutls_x509_dn_get_str:                X509 certificate API.
-                                                             (line 5701)
+                                                             (line 5759)
 * gnutls_x509_dn_get_str2:               X509 certificate API.
-                                                             (line 5720)
+                                                             (line 5778)
 * gnutls_x509_dn_import:                 X509 certificate API.
-                                                             (line 5745)
+                                                             (line 5803)
 * gnutls_x509_dn_init:                   X509 certificate API.
-                                                             (line 5764)
+                                                             (line 5822)
 * gnutls_x509_dn_oid_known:              X509 certificate API.
-                                                             (line 5780)
+                                                             (line 5838)
 * gnutls_x509_dn_oid_name:               X509 certificate API.
-                                                             (line 5796)
+                                                             (line 5854)
 * gnutls_x509_dn_set_str:                X509 certificate API.
-                                                             (line 5813)
+                                                             (line 5871)
 * gnutls_x509_ext_deinit:                X509 certificate API.
-                                                             (line 5833)
+                                                             (line 5891)
 * gnutls_x509_ext_export_aia:            X509 certificate API.
-                                                             (line 5843)
+                                                             (line 5901)
 * gnutls_x509_ext_export_authority_key_id: X509 certificate API.
-                                                             (line 5862)
+                                                             (line 5920)
 * gnutls_x509_ext_export_basic_constraints: X509 certificate API.
-                                                             (line 5881)
+                                                             (line 5939)
 * gnutls_x509_ext_export_crl_dist_points: X509 certificate API.
-                                                             (line 5902)
+                                                             (line 5960)
 * gnutls_x509_ext_export_inhibit_anypolicy: X509 certificate API.
-                                                             (line 5922)
-* gnutls_x509_ext_export_key_purposes:   X509 certificate API.
-                                                             (line 5942)
-* gnutls_x509_ext_export_key_usage:      X509 certificate API.
-                                                             (line 5961)
-* gnutls_x509_ext_export_name_constraints: X509 certificate API.
                                                              (line 5980)
-* gnutls_x509_ext_export_policies:       X509 certificate API.
-                                                             (line 5999)
-* gnutls_x509_ext_export_private_key_usage_period: X509 certificate API.
+* gnutls_x509_ext_export_key_purposes:   X509 certificate API.
+                                                             (line 6000)
+* gnutls_x509_ext_export_key_usage:      X509 certificate API.
                                                              (line 6019)
+* gnutls_x509_ext_export_name_constraints: X509 certificate API.
+                                                             (line 6038)
+* gnutls_x509_ext_export_policies:       X509 certificate API.
+                                                             (line 6057)
+* gnutls_x509_ext_export_private_key_usage_period: X509 certificate API.
+                                                             (line 6077)
 * gnutls_x509_ext_export_proxy:          X509 certificate API.
-                                                             (line 6040)
+                                                             (line 6098)
 * gnutls_x509_ext_export_subject_alt_names: X509 certificate API.
-                                                             (line 6069)
+                                                             (line 6127)
 * gnutls_x509_ext_export_subject_key_id: X509 certificate API.
-                                                             (line 6088)
+                                                             (line 6146)
 * gnutls_x509_ext_export_tlsfeatures:    X509 certificate API.
-                                                             (line 6107)
+                                                             (line 6165)
 * gnutls_x509_ext_import_aia:            X509 certificate API.
-                                                             (line 6126)
+                                                             (line 6184)
 * gnutls_x509_ext_import_authority_key_id: X509 certificate API.
-                                                             (line 6147)
+                                                             (line 6205)
 * gnutls_x509_ext_import_basic_constraints: X509 certificate API.
-                                                             (line 6168)
+                                                             (line 6226)
 * gnutls_x509_ext_import_crl_dist_points: X509 certificate API.
-                                                             (line 6187)
+                                                             (line 6245)
 * gnutls_x509_ext_import_inhibit_anypolicy: X509 certificate API.
-                                                             (line 6207)
+                                                             (line 6265)
 * gnutls_x509_ext_import_key_purposes:   X509 certificate API.
-                                                             (line 6231)
+                                                             (line 6289)
 * gnutls_x509_ext_import_key_usage:      X509 certificate API.
-                                                             (line 6252)
+                                                             (line 6310)
 * gnutls_x509_ext_import_name_constraints: X509 certificate API.
-                                                             (line 6276)
+                                                             (line 6334)
 * gnutls_x509_ext_import_policies:       X509 certificate API.
-                                                             (line 6309)
+                                                             (line 6367)
 * gnutls_x509_ext_import_private_key_usage_period: X509 certificate API.
-                                                             (line 6328)
+                                                             (line 6386)
 * gnutls_x509_ext_import_proxy:          X509 certificate API.
-                                                             (line 6348)
+                                                             (line 6406)
 * gnutls_x509_ext_import_subject_alt_names: X509 certificate API.
-                                                             (line 6377)
+                                                             (line 6435)
 * gnutls_x509_ext_import_subject_key_id: X509 certificate API.
-                                                             (line 6401)
+                                                             (line 6459)
 * gnutls_x509_ext_import_tlsfeatures:    X509 certificate API.
-                                                             (line 6420)
+                                                             (line 6478)
 * gnutls_x509_ext_print:                 X509 certificate API.
-                                                             (line 6446)
+                                                             (line 6504)
 * gnutls_x509_key_purpose_deinit:        X509 certificate API.
-                                                             (line 6468)
+                                                             (line 6526)
 * gnutls_x509_key_purpose_get:           X509 certificate API.
-                                                             (line 6479)
+                                                             (line 6537)
 * gnutls_x509_key_purpose_init:          X509 certificate API.
-                                                             (line 6502)
+                                                             (line 6560)
 * gnutls_x509_key_purpose_set:           X509 certificate API.
-                                                             (line 6516)
+                                                             (line 6574)
 * gnutls_x509_name_constraints_add_excluded: X509 certificate API.
-                                                             (line 6532)
+                                                             (line 6590)
 * gnutls_x509_name_constraints_add_permitted: X509 certificate API.
-                                                             (line 6558)
+                                                             (line 6616)
 * gnutls_x509_name_constraints_check:    X509 certificate API.
-                                                             (line 6583)
+                                                             (line 6641)
 * gnutls_x509_name_constraints_check_crt: X509 certificate API.
-                                                             (line 6608)
+                                                             (line 6666)
 * gnutls_x509_name_constraints_deinit:   X509 certificate API.
-                                                             (line 6633)
+                                                             (line 6691)
 * gnutls_x509_name_constraints_get_excluded: X509 certificate API.
-                                                             (line 6644)
+                                                             (line 6702)
 * gnutls_x509_name_constraints_get_permitted: X509 certificate API.
-                                                             (line 6674)
+                                                             (line 6732)
 * gnutls_x509_name_constraints_init:     X509 certificate API.
-                                                             (line 6704)
+                                                             (line 6762)
 * gnutls_x509_othername_to_virtual:      X509 certificate API.
-                                                             (line 6718)
-* gnutls_x509_policies_deinit:           X509 certificate API.
-                                                             (line 6740)
-* gnutls_x509_policies_get:              X509 certificate API.
-                                                             (line 6751)
-* gnutls_x509_policies_init:             X509 certificate API.
                                                              (line 6776)
+* gnutls_x509_policies_deinit:           X509 certificate API.
+                                                             (line 6798)
+* gnutls_x509_policies_get:              X509 certificate API.
+                                                             (line 6809)
+* gnutls_x509_policies_init:             X509 certificate API.
+                                                             (line 6834)
 * gnutls_x509_policies_set:              X509 certificate API.
-                                                             (line 6790)
+                                                             (line 6848)
 * gnutls_x509_policy_release:            X509 certificate API.
-                                                             (line 6807)
+                                                             (line 6865)
 * gnutls_x509_privkey_cpy:               X509 certificate API.
-                                                             (line 6820)
+                                                             (line 6878)
 * gnutls_x509_privkey_deinit:            X509 certificate API.
-                                                             (line 6835)
+                                                             (line 6893)
 * gnutls_x509_privkey_export:            X509 certificate API.
-                                                             (line 6844)
+                                                             (line 6902)
 * gnutls_x509_privkey_export2:           X509 certificate API.
-                                                             (line 6873)
+                                                             (line 6931)
 * gnutls_x509_privkey_export2_pkcs8:     X509 certificate API.
-                                                             (line 6898)
+                                                             (line 6957)
 * gnutls_x509_privkey_export_dsa_raw:    X509 certificate API.
-                                                             (line 6934)
+                                                             (line 6993)
 * gnutls_x509_privkey_export_ecc_raw:    X509 certificate API.
-                                                             (line 6960)
+                                                             (line 7019)
 * gnutls_x509_privkey_export_pkcs8:      X509 certificate API.
-                                                             (line 6986)
+                                                             (line 7045)
 * gnutls_x509_privkey_export_rsa_raw:    X509 certificate API.
-                                                             (line 7025)
+                                                             (line 7084)
 * gnutls_x509_privkey_export_rsa_raw2:   X509 certificate API.
-                                                             (line 7053)
+                                                             (line 7112)
 * gnutls_x509_privkey_fix:               X509 certificate API.
-                                                             (line 7088)
+                                                             (line 7147)
 * gnutls_x509_privkey_generate:          X509 certificate API.
-                                                             (line 7100)
+                                                             (line 7159)
 * gnutls_x509_privkey_generate2:         X509 certificate API.
-                                                             (line 7134)
+                                                             (line 7199)
 * gnutls_x509_privkey_get_key_id:        X509 certificate API.
-                                                             (line 7176)
+                                                             (line 7251)
 * gnutls_x509_privkey_get_pk_algorithm:  X509 certificate API.
-                                                             (line 7203)
+                                                             (line 7278)
 * gnutls_x509_privkey_get_pk_algorithm2: X509 certificate API.
-                                                             (line 7216)
+                                                             (line 7291)
 * gnutls_x509_privkey_get_seed:          X509 certificate API.
-                                                             (line 7231)
+                                                             (line 7306)
 * gnutls_x509_privkey_get_spki:          X509 certificate API.
-                                                             (line 7256)
+                                                             (line 7331)
 * gnutls_x509_privkey_import:            X509 certificate API.
-                                                             (line 7272)
+                                                             (line 7347)
 * gnutls_x509_privkey_import2:           Managing encrypted keys.
                                                              (line   51)
 * gnutls_x509_privkey_import2 <1>:       X509 certificate API.
-                                                             (line 7294)
+                                                             (line 7369)
 * gnutls_x509_privkey_import_dsa_raw:    X509 certificate API.
-                                                             (line 7324)
+                                                             (line 7399)
 * gnutls_x509_privkey_import_ecc_raw:    X509 certificate API.
-                                                             (line 7350)
+                                                             (line 7425)
 * gnutls_x509_privkey_import_openssl:    Managing encrypted keys.
                                                              (line  237)
 * gnutls_x509_privkey_import_openssl <1>: X509 certificate API.
-                                                             (line 7377)
+                                                             (line 7452)
 * gnutls_x509_privkey_import_pkcs8:      X509 certificate API.
-                                                             (line 7401)
+                                                             (line 7476)
 * gnutls_x509_privkey_import_rsa_raw:    X509 certificate API.
-                                                             (line 7438)
+                                                             (line 7513)
 * gnutls_x509_privkey_import_rsa_raw2:   X509 certificate API.
-                                                             (line 7467)
+                                                             (line 7542)
 * gnutls_x509_privkey_init:              X509 certificate API.
-                                                             (line 7501)
+                                                             (line 7576)
 * gnutls_x509_privkey_sec_param:         X509 certificate API.
-                                                             (line 7512)
+                                                             (line 7587)
 * gnutls_x509_privkey_set_flags:         X509 certificate API.
-                                                             (line 7527)
+                                                             (line 7602)
 * gnutls_x509_privkey_set_pin_function:  X509 certificate API.
-                                                             (line 7543)
+                                                             (line 7618)
 * gnutls_x509_privkey_set_spki:          X509 certificate API.
-                                                             (line 7563)
+                                                             (line 7638)
 * gnutls_x509_privkey_sign_data:         X509 certificate API.
-                                                             (line 7579)
-* gnutls_x509_privkey_sign_hash:         Compatibility API.  (line  190)
+                                                             (line 7654)
+* gnutls_x509_privkey_sign_hash:         Compatibility API.  (line  154)
 * gnutls_x509_privkey_verify_params:     X509 certificate API.
-                                                             (line 7614)
+                                                             (line 7689)
 * gnutls_x509_privkey_verify_seed:       X509 certificate API.
-                                                             (line 7626)
+                                                             (line 7701)
 * gnutls_x509_rdn_get:                   X509 certificate API.
-                                                             (line 7651)
-* gnutls_x509_rdn_get2:                  X509 certificate API.
-                                                             (line 7674)
-* gnutls_x509_rdn_get_by_oid:            X509 certificate API.
-                                                             (line 7698)
-* gnutls_x509_rdn_get_oid:               X509 certificate API.
                                                              (line 7726)
-* gnutls_x509_spki_deinit:               X509 certificate API.
+* gnutls_x509_rdn_get2:                  X509 certificate API.
                                                              (line 7749)
+* gnutls_x509_rdn_get_by_oid:            X509 certificate API.
+                                                             (line 7773)
+* gnutls_x509_rdn_get_oid:               X509 certificate API.
+                                                             (line 7801)
+* gnutls_x509_spki_deinit:               X509 certificate API.
+                                                             (line 7824)
 * gnutls_x509_spki_get_rsa_pss_params:   X509 certificate API.
-                                                             (line 7759)
+                                                             (line 7834)
 * gnutls_x509_spki_init:                 X509 certificate API.
-                                                             (line 7779)
+                                                             (line 7854)
 * gnutls_x509_spki_set_rsa_pss_params:   X509 certificate API.
-                                                             (line 7794)
+                                                             (line 7869)
 * gnutls_x509_tlsfeatures_add:           X509 certificate API.
-                                                             (line 7811)
+                                                             (line 7886)
 * gnutls_x509_tlsfeatures_check_crt:     X509 certificate API.
-                                                             (line 7828)
+                                                             (line 7903)
 * gnutls_x509_tlsfeatures_deinit:        X509 certificate API.
-                                                             (line 7847)
+                                                             (line 7922)
 * gnutls_x509_tlsfeatures_get:           X509 certificate API.
-                                                             (line 7859)
+                                                             (line 7934)
 * gnutls_x509_tlsfeatures_init:          X509 certificate API.
-                                                             (line 7879)
+                                                             (line 7954)
 * gnutls_x509_trust_list_add_cas:        Verifying X.509 certificate paths.
                                                              (line    9)
 * gnutls_x509_trust_list_add_cas <1>:    X509 certificate API.
-                                                             (line 7894)
+                                                             (line 7969)
 * gnutls_x509_trust_list_add_crls:       Verifying X.509 certificate paths.
                                                              (line   64)
 * gnutls_x509_trust_list_add_crls <1>:   X509 certificate API.
-                                                             (line 7920)
+                                                             (line 7995)
 * gnutls_x509_trust_list_add_named_crt:  Verifying X.509 certificate paths.
                                                              (line   32)
 * gnutls_x509_trust_list_add_named_crt <1>: X509 certificate API.
-                                                             (line 7956)
+                                                             (line 8031)
 * gnutls_x509_trust_list_add_system_trust: Verifying X.509 certificate paths.
                                                              (line  277)
 * gnutls_x509_trust_list_add_system_trust <1>: X509 certificate API.
-                                                             (line 7991)
+                                                             (line 8066)
 * gnutls_x509_trust_list_add_trust_dir:  X509 certificate API.
-                                                             (line 8015)
+                                                             (line 8090)
 * gnutls_x509_trust_list_add_trust_file: Verifying X.509 certificate paths.
                                                              (line  225)
 * gnutls_x509_trust_list_add_trust_file <1>: X509 certificate API.
-                                                             (line 8042)
+                                                             (line 8117)
 * gnutls_x509_trust_list_add_trust_mem:  Verifying X.509 certificate paths.
                                                              (line  253)
 * gnutls_x509_trust_list_add_trust_mem <1>: X509 certificate API.
-                                                             (line 8073)
+                                                             (line 8148)
 * gnutls_x509_trust_list_deinit:         X509 certificate API.
-                                                             (line 8100)
+                                                             (line 8175)
 * gnutls_x509_trust_list_get_issuer:     X509 certificate API.
-                                                             (line 8117)
+                                                             (line 8192)
 * gnutls_x509_trust_list_get_issuer_by_dn: X509 certificate API.
-                                                             (line 8147)
+                                                             (line 8222)
 * gnutls_x509_trust_list_get_issuer_by_subject_key_id: X509 certificate API.
-                                                             (line 8171)
+                                                             (line 8246)
 * gnutls_x509_trust_list_init:           X509 certificate API.
-                                                             (line 8198)
+                                                             (line 8273)
 * gnutls_x509_trust_list_iter_deinit:    X509 certificate API.
-                                                             (line 8215)
+                                                             (line 8290)
 * gnutls_x509_trust_list_iter_get_ca:    X509 certificate API.
-                                                             (line 8226)
+                                                             (line 8301)
 * gnutls_x509_trust_list_remove_cas:     X509 certificate API.
-                                                             (line 8255)
+                                                             (line 8330)
 * gnutls_x509_trust_list_remove_trust_file: X509 certificate API.
-                                                             (line 8280)
+                                                             (line 8355)
 * gnutls_x509_trust_list_remove_trust_mem: X509 certificate API.
-                                                             (line 8302)
+                                                             (line 8377)
 * gnutls_x509_trust_list_verify_crt:     Verifying X.509 certificate paths.
                                                              (line   97)
 * gnutls_x509_trust_list_verify_crt <1>: X509 certificate API.
-                                                             (line 8323)
+                                                             (line 8398)
 * gnutls_x509_trust_list_verify_crt2:    Verifying X.509 certificate paths.
                                                              (line  127)
 * gnutls_x509_trust_list_verify_crt2 <1>: X509 certificate API.
-                                                             (line 8356)
+                                                             (line 8431)
 * gnutls_x509_trust_list_verify_named_crt: Verifying X.509 certificate paths.
                                                              (line  188)
 * gnutls_x509_trust_list_verify_named_crt <1>: X509 certificate API.
-                                                             (line 8420)
+                                                             (line 8495)
 
 
 File: gnutls.info,  Node: Concept Index,  Prev: Function and Data Index,  Up: Top
@@ -2700,10 +3525,14 @@ Concept Index
                                                               (line   6)
 * client certificate authentication:     Client Authentication.
                                                               (line   6)
+* CMS:                                   Cryptographic Message Syntax / PKCS#7.
+                                                              (line   6)
 * compression algorithms:                Compression algorithms and the record layer.
                                                               (line   6)
 * contributing:                          Contributing.        (line   6)
 * CRL:                                   PKIX certificate revocation lists.
+                                                              (line   6)
+* cryptographic message syntax:          Cryptographic Message Syntax / PKCS#7.
                                                               (line   6)
 * DANE:                                  Verifying a certificate using DANE.
                                                               (line   6)
@@ -2731,8 +3560,8 @@ Concept Index
                                                               (line   6)
 * False Start:                           False Start.         (line   6)
 * FDL, GNU Free Documentation License:   Copying Information. (line   6)
-* file signing:                          Public key algorithms.
-                                                              (line  14)
+* file signing:                          Cryptographic Message Syntax / PKCS#7.
+                                                              (line   6)
 * fork:                                  Sessions and fork.   (line   6)
 * generating parameters:                 Parameter generation.
                                                               (line   6)
@@ -2814,8 +3643,8 @@ Concept Index
                                                               (line   6)
 * PKCS #12:                              Managing encrypted keys.
                                                               (line 125)
-* PKCS #7:                               Public key algorithms.
-                                                              (line  14)
+* PKCS #7:                               Cryptographic Message Syntax / PKCS#7.
+                                                              (line   6)
 * PKCS #8:                               Managing encrypted keys.
                                                               (line  86)
 * Priority strings:                      Priority Strings.    (line   6)
@@ -2824,6 +3653,8 @@ Concept Index
 * psktool:                               psktool Invocation.  (line   6)
 * psktool help:                          psktool Invocation.  (line  16)
 * public key algorithms:                 Public key algorithms.
+                                                              (line   6)
+* public key algorithms <1>:             Cryptographic Message Syntax / PKCS#7.
                                                               (line   6)
 * random numbers:                        Random number generation.
                                                               (line   6)

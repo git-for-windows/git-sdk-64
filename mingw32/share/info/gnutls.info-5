@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 6 March 2017 for version 3.6.0 of GnuTLS.
+This manual is last updated 6 March 2017 for version 3.6.1 of GnuTLS.
 
 Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2017 Nikos Mavrogiannopoulos
@@ -2888,6 +2888,10 @@ gnutls_pkcs11_privkey_generate3
      substituted in the place of the bits parameter using the
      'GNUTLS_CURVE_TO_BITS()' macro.
 
+     It is highly recommended flags to contain
+     'GNUTLS_PKCS11_OBJ_FLAG_MARK_SENSITIVE' unless there is a strong
+     reason not to.
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
@@ -3467,7 +3471,7 @@ gnutls_certificate_set_retrieve_function2
      encoded.  To get a more meaningful value use the function
      'gnutls_x509_rdn_get()' .
 
-     'pk_algos' contains a list with server's acceptable signature
+     'pk_algos' contains a list with server's acceptable public key
      algorithms.  The certificate returned should support the server's
      given algorithms.
 
@@ -3961,9 +3965,13 @@ gnutls_privkey_generate
      FLAGS: Must be zero or flags from 'gnutls_privkey_flags_t' .
 
      This function will generate a random private key.  Note that this
-     function must be called on an empty private key.  The flag
-     'GNUTLS_PRIVKEY_FLAG_PROVABLE' instructs the key generation process
-     to use algorithms which generate provable parameters out of a seed.
+     function must be called on an initialized private key.
+
+     The flag 'GNUTLS_PRIVKEY_FLAG_PROVABLE' instructs the key
+     generation process to use algorithms like Shawe-Taylor (from FIPS
+     PUB186-4) which generate provable parameters out of a seed for RSA
+     and DSA keys.  See 'gnutls_privkey_generate2()' for more
+     information.
 
      Note that when generating an elliptic curve key, the curve can be
      substituted in the place of the bits parameter using the
@@ -3975,6 +3983,8 @@ gnutls_privkey_generate
 
      It is recommended to do not set the number of 'bits' directly, use
      'gnutls_sec_param_to_pk_bits()' instead .
+
+     See also 'gnutls_privkey_generate2()' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -4001,17 +4011,31 @@ gnutls_privkey_generate2
      DATA_SIZE: The number of 'data' available.
 
      This function will generate a random private key.  Note that this
-     function must be called on an empty private key.  The flag
-     'GNUTLS_PRIVKEY_FLAG_PROVABLE' instructs the key generation process
-     to use algorithms like Shawe-Taylor which generate provable
-     parameters out of a seed.
+     function must be called on an initialized private key.
+
+     The flag 'GNUTLS_PRIVKEY_FLAG_PROVABLE' instructs the key
+     generation process to use algorithms like Shawe-Taylor (from FIPS
+     PUB186-4) which generate provable parameters out of a seed for RSA
+     and DSA keys.  On DSA keys the PQG parameters are generated using
+     the seed, while on RSA the two primes.  To specify an explicit seed
+     (by default a random seed is used), use the 'data' with a
+     'GNUTLS_KEYGEN_SEED' type.
 
      Note that when generating an elliptic curve key, the curve can be
      substituted in the place of the bits parameter using the
      'GNUTLS_CURVE_TO_BITS()' macro.
 
-     Do not set the number of bits directly, use
-     'gnutls_sec_param_to_pk_bits()' .
+     To export the generated keys in memory or in files it is
+     recommended to use the PKCS'8' form as it can handle all key types,
+     and can store additional parameters such as the seed, in case of
+     provable RSA or DSA keys.  Generated keys can be exported in memory
+     using 'gnutls_privkey_export_x509()' , and then with
+     'gnutls_x509_privkey_export2_pkcs8()' .
+
+     If key generation is part of your application, avoid setting the
+     number of bits directly, and instead use
+     'gnutls_sec_param_to_pk_bits()' .  That way the generated keys will
+     adapt to the security levels of the underlying GnuTLS library.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -5883,6 +5907,10 @@ gnutls_x509_crl_privkey_sign
      will not be fully functional (e.g., for signature verification),
      until it is exported an re-imported.
 
+     After GnuTLS 3.6.1 the value of 'dig' may be 'GNUTLS_DIG_UNKNOWN' ,
+     and in that case, a suitable but reasonable for the key algorithm
+     will be selected.
+
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
@@ -5909,6 +5937,14 @@ gnutls_x509_crq_privkey_sign
 
      This must be the last step in a certificate request generation
      since all the previously set parameters are now signed.
+
+     A known limitation of this function is, that a newly-signed request
+     will not be fully functional (e.g., for signature verification),
+     until it is exported an re-imported.
+
+     After GnuTLS 3.6.1 the value of 'dig' may be 'GNUTLS_DIG_UNKNOWN' ,
+     and in that case, a suitable but reasonable for the key algorithm
+     will be selected.
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.  'GNUTLS_E_ASN1_VALUE_NOT_FOUND' is returned if you
@@ -5960,6 +5996,10 @@ gnutls_x509_crt_privkey_sign
      A known limitation of this function is, that a newly-signed
      certificate will not be fully functional (e.g., for signature
      verification), until it is exported an re-imported.
+
+     After GnuTLS 3.6.1 the value of 'dig' may be 'GNUTLS_DIG_UNKNOWN' ,
+     and in that case, a suitable but reasonable for the key algorithm
+     will be selected.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -6406,861 +6446,4 @@ dane_verify_session_crt
      whether they were verified (see 'verify' for that information).  If
      no usable entries were encountered
      'DANE_E_REQUESTED_DATA_NOT_AVAILABLE' will be returned.
-
-
-File: gnutls.info,  Node: Cryptographic API,  Next: Compatibility API,  Prev: DANE API,  Up: API reference
-
-E.12 Cryptographic API
-======================
-
-The following functions are to be used for low-level cryptographic
-operations.  Their prototypes lie in 'gnutls/crypto.h'.
-
-Note that due to historic reasons several functions, (e.g.  *note
-gnutls_mac_list::, *note gnutls_mac_get_name::) of this API are part of
-the *note Core TLS API::.
-
-gnutls_aead_cipher_decrypt
---------------------------
-
- -- Function: int gnutls_aead_cipher_decrypt (gnutls_aead_cipher_hd_t
-          HANDLE, const void * NONCE, size_t NONCE_LEN, const void *
-          AUTH, size_t AUTH_LEN, size_t TAG_SIZE, const void * CTEXT,
-          size_t CTEXT_LEN, void * PTEXT, size_t * PTEXT_LEN)
-     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
-
-     NONCE: the nonce to set
-
-     NONCE_LEN: The length of the nonce
-
-     AUTH: the data to be authenticated
-
-     AUTH_LEN: The length of the data
-
-     TAG_SIZE: The size of the tag to use (use zero for the default)
-
-     CTEXT: the data to decrypt
-
-     CTEXT_LEN: the length of data to decrypt (includes tag size)
-
-     PTEXT: the decrypted data
-
-     PTEXT_LEN: the length of decrypted data (initially must hold the
-     maximum available size)
-
-     This function will decrypt the given data using the algorithm
-     specified by the context.  This function must be provided the whole
-     data to be decrypted, including the tag, and will fail if the tag
-     verification fails.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 3.4.0
-
-gnutls_aead_cipher_deinit
--------------------------
-
- -- Function: void gnutls_aead_cipher_deinit (gnutls_aead_cipher_hd_t
-          HANDLE)
-     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
-
-     This function will deinitialize all resources occupied by the given
-     authenticated-encryption context.
-
-     *Since:* 3.4.0
-
-gnutls_aead_cipher_encrypt
---------------------------
-
- -- Function: int gnutls_aead_cipher_encrypt (gnutls_aead_cipher_hd_t
-          HANDLE, const void * NONCE, size_t NONCE_LEN, const void *
-          AUTH, size_t AUTH_LEN, size_t TAG_SIZE, const void * PTEXT,
-          size_t PTEXT_LEN, void * CTEXT, size_t * CTEXT_LEN)
-     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
-
-     NONCE: the nonce to set
-
-     NONCE_LEN: The length of the nonce
-
-     AUTH: the data to be authenticated
-
-     AUTH_LEN: The length of the data
-
-     TAG_SIZE: The size of the tag to use (use zero for the default)
-
-     PTEXT: the data to encrypt
-
-     PTEXT_LEN: The length of data to encrypt
-
-     CTEXT: the encrypted data
-
-     CTEXT_LEN: the length of encrypted data (initially must hold the
-     maximum available size, including space for tag)
-
-     This function will encrypt the given data using the algorithm
-     specified by the context.  The output data will contain the
-     authentication tag.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 3.4.0
-
-gnutls_aead_cipher_init
------------------------
-
- -- Function: int gnutls_aead_cipher_init (gnutls_aead_cipher_hd_t *
-          HANDLE, gnutls_cipher_algorithm_t CIPHER, const gnutls_datum_t
-          * KEY)
-     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
-
-     CIPHER: the authenticated-encryption algorithm to use
-
-     KEY: The key to be used for encryption
-
-     This function will initialize an context that can be used for
-     encryption/decryption of data.  This will effectively use the
-     current crypto backend in use by gnutls or the cryptographic
-     accelerator in use.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 3.4.0
-
-gnutls_cipher_add_auth
-----------------------
-
- -- Function: int gnutls_cipher_add_auth (gnutls_cipher_hd_t HANDLE,
-          const void * PTEXT, size_t PTEXT_SIZE)
-     HANDLE: is a 'gnutls_cipher_hd_t' type
-
-     PTEXT: the data to be authenticated
-
-     PTEXT_SIZE: the length of the data
-
-     This function operates on authenticated encryption with associated
-     data (AEAD) ciphers and authenticate the input data.  This function
-     can only be called once and before any encryption operations.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 3.0
-
-gnutls_cipher_decrypt
----------------------
-
- -- Function: int gnutls_cipher_decrypt (gnutls_cipher_hd_t HANDLE, void
-          * CTEXT, size_t CTEXT_LEN)
-     HANDLE: is a 'gnutls_cipher_hd_t' type
-
-     CTEXT: the data to decrypt
-
-     CTEXT_LEN: the length of data to decrypt
-
-     This function will decrypt the given data using the algorithm
-     specified by the context.
-
-     Note that in AEAD ciphers, this will not check the tag.  You will
-     need to compare the tag sent with the value returned from
-     'gnutls_cipher_tag()' .
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.10.0
-
-gnutls_cipher_decrypt2
-----------------------
-
- -- Function: int gnutls_cipher_decrypt2 (gnutls_cipher_hd_t HANDLE,
-          const void * CTEXT, size_t CTEXT_LEN, void * PTEXT, size_t
-          PTEXT_LEN)
-     HANDLE: is a 'gnutls_cipher_hd_t' type
-
-     CTEXT: the data to decrypt
-
-     CTEXT_LEN: the length of data to decrypt
-
-     PTEXT: the decrypted data
-
-     PTEXT_LEN: the available length for decrypted data
-
-     This function will decrypt the given data using the algorithm
-     specified by the context.  For block ciphers the 'ctext_len' must
-     be a multiple of the block size.  For the supported ciphers the
-     plaintext data length will equal the ciphertext size.
-
-     Note that in AEAD ciphers, this will not check the tag.  You will
-     need to compare the tag sent with the value returned from
-     'gnutls_cipher_tag()' .
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.12.0
-
-gnutls_cipher_deinit
---------------------
-
- -- Function: void gnutls_cipher_deinit (gnutls_cipher_hd_t HANDLE)
-     HANDLE: is a 'gnutls_cipher_hd_t' type
-
-     This function will deinitialize all resources occupied by the given
-     encryption context.
-
-     *Since:* 2.10.0
-
-gnutls_cipher_encrypt
----------------------
-
- -- Function: int gnutls_cipher_encrypt (gnutls_cipher_hd_t HANDLE, void
-          * PTEXT, size_t PTEXT_LEN)
-     HANDLE: is a 'gnutls_cipher_hd_t' type
-
-     PTEXT: the data to encrypt
-
-     PTEXT_LEN: the length of data to encrypt
-
-     This function will encrypt the given data using the algorithm
-     specified by the context.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.10.0
-
-gnutls_cipher_encrypt2
-----------------------
-
- -- Function: int gnutls_cipher_encrypt2 (gnutls_cipher_hd_t HANDLE,
-          const void * PTEXT, size_t PTEXT_LEN, void * CTEXT, size_t
-          CTEXT_LEN)
-     HANDLE: is a 'gnutls_cipher_hd_t' type
-
-     PTEXT: the data to encrypt
-
-     PTEXT_LEN: the length of data to encrypt
-
-     CTEXT: the encrypted data
-
-     CTEXT_LEN: the available length for encrypted data
-
-     This function will encrypt the given data using the algorithm
-     specified by the context.  For block ciphers the 'ptext_len' must
-     be a multiple of the block size.  For the supported ciphers the
-     encrypted data length will equal the plaintext size.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.12.0
-
-gnutls_cipher_get_block_size
-----------------------------
-
- -- Function: unsigned gnutls_cipher_get_block_size
-          (gnutls_cipher_algorithm_t ALGORITHM)
-     ALGORITHM: is an encryption algorithm
-
-     *Returns:* the block size of the encryption algorithm.
-
-     *Since:* 2.10.0
-
-gnutls_cipher_get_iv_size
--------------------------
-
- -- Function: unsigned gnutls_cipher_get_iv_size
-          (gnutls_cipher_algorithm_t ALGORITHM)
-     ALGORITHM: is an encryption algorithm
-
-     Get block size for encryption algorithm.
-
-     *Returns:* block size for encryption algorithm.
-
-     *Since:* 3.2.0
-
-gnutls_cipher_get_tag_size
---------------------------
-
- -- Function: unsigned gnutls_cipher_get_tag_size
-          (gnutls_cipher_algorithm_t ALGORITHM)
-     ALGORITHM: is an encryption algorithm
-
-     This function returns the tag size of an authenticated encryption
-     algorithm.  For non-AEAD algorithms, it returns zero.
-
-     *Returns:* the tag size of the authenticated encryption algorithm.
-
-     *Since:* 3.2.2
-
-gnutls_cipher_init
-------------------
-
- -- Function: int gnutls_cipher_init (gnutls_cipher_hd_t * HANDLE,
-          gnutls_cipher_algorithm_t CIPHER, const gnutls_datum_t * KEY,
-          const gnutls_datum_t * IV)
-     HANDLE: is a 'gnutls_cipher_hd_t' type
-
-     CIPHER: the encryption algorithm to use
-
-     KEY: the key to be used for encryption/decryption
-
-     IV: the IV to use (if not applicable set NULL)
-
-     This function will initialize the 'handle' context to be usable for
-     encryption/decryption of data.  This will effectively use the
-     current crypto backend in use by gnutls or the cryptographic
-     accelerator in use.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.10.0
-
-gnutls_cipher_set_iv
---------------------
-
- -- Function: void gnutls_cipher_set_iv (gnutls_cipher_hd_t HANDLE, void
-          * IV, size_t IVLEN)
-     HANDLE: is a 'gnutls_cipher_hd_t' type
-
-     IV: the IV to set
-
-     IVLEN: the length of the IV
-
-     This function will set the IV to be used for the next encryption
-     block.
-
-     *Since:* 3.0
-
-gnutls_cipher_tag
------------------
-
- -- Function: int gnutls_cipher_tag (gnutls_cipher_hd_t HANDLE, void *
-          TAG, size_t TAG_SIZE)
-     HANDLE: is a 'gnutls_cipher_hd_t' type
-
-     TAG: will hold the tag
-
-     TAG_SIZE: the length of the tag to return
-
-     This function operates on authenticated encryption with associated
-     data (AEAD) ciphers and will return the output tag.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 3.0
-
-gnutls_crypto_register_aead_cipher
-----------------------------------
-
- -- Function: int gnutls_crypto_register_aead_cipher
-          (gnutls_cipher_algorithm_t ALGORITHM, int PRIORITY,
-          gnutls_cipher_init_func INIT, gnutls_cipher_setkey_func
-          SETKEY, gnutls_cipher_aead_encrypt_func AEAD_ENCRYPT,
-          gnutls_cipher_aead_decrypt_func AEAD_DECRYPT,
-          gnutls_cipher_deinit_func DEINIT)
-     ALGORITHM: is the gnutls AEAD cipher identifier
-
-     PRIORITY: is the priority of the algorithm
-
-     INIT: A function which initializes the cipher
-
-     SETKEY: A function which sets the key of the cipher
-
-     AEAD_ENCRYPT: Perform the AEAD encryption
-
-     AEAD_DECRYPT: Perform the AEAD decryption
-
-     DEINIT: A function which deinitializes the cipher
-
-     This function will register a cipher algorithm to be used by
-     gnutls.  Any algorithm registered will override the included
-     algorithms and by convention kernel implemented algorithms have
-     priority of 90 and CPU-assisted of 80.  The algorithm with the
-     lowest priority will be used by gnutls.
-
-     In the case the registered init or setkey functions return
-     'GNUTLS_E_NEED_FALLBACK' , GnuTLS will attempt to use the next in
-     priority registered cipher.
-
-     The functions registered will be used with the new AEAD API
-     introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
-     API.
-
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
-     error code.
-
-     *Since:* 3.4.0
-
-gnutls_crypto_register_cipher
------------------------------
-
- -- Function: int gnutls_crypto_register_cipher
-          (gnutls_cipher_algorithm_t ALGORITHM, int PRIORITY,
-          gnutls_cipher_init_func INIT, gnutls_cipher_setkey_func
-          SETKEY, gnutls_cipher_setiv_func SETIV,
-          gnutls_cipher_encrypt_func ENCRYPT, gnutls_cipher_decrypt_func
-          DECRYPT, gnutls_cipher_deinit_func DEINIT)
-     ALGORITHM: is the gnutls algorithm identifier
-
-     PRIORITY: is the priority of the algorithm
-
-     INIT: A function which initializes the cipher
-
-     SETKEY: A function which sets the key of the cipher
-
-     SETIV: A function which sets the nonce/IV of the cipher (non-AEAD)
-
-     ENCRYPT: A function which performs encryption (non-AEAD)
-
-     DECRYPT: A function which performs decryption (non-AEAD)
-
-     DEINIT: A function which deinitializes the cipher
-
-     This function will register a cipher algorithm to be used by
-     gnutls.  Any algorithm registered will override the included
-     algorithms and by convention kernel implemented algorithms have
-     priority of 90 and CPU-assisted of 80.  The algorithm with the
-     lowest priority will be used by gnutls.
-
-     In the case the registered init or setkey functions return
-     'GNUTLS_E_NEED_FALLBACK' , GnuTLS will attempt to use the next in
-     priority registered cipher.
-
-     The functions which are marked as non-AEAD they are not required
-     when registering a cipher to be used with the new AEAD API
-     introduced in GnuTLS 3.4.0.  Internally GnuTLS uses the new AEAD
-     API.
-
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
-     error code.
-
-     *Since:* 3.4.0
-
-gnutls_crypto_register_digest
------------------------------
-
- -- Function: int gnutls_crypto_register_digest
-          (gnutls_digest_algorithm_t ALGORITHM, int PRIORITY,
-          gnutls_digest_init_func INIT, gnutls_digest_hash_func HASH,
-          gnutls_digest_output_func OUTPUT, gnutls_digest_deinit_func
-          DEINIT, gnutls_digest_fast_func HASH_FAST)
-     ALGORITHM: is the gnutls digest identifier
-
-     PRIORITY: is the priority of the algorithm
-
-     INIT: A function which initializes the digest
-
-     HASH: Perform the hash operation
-
-     OUTPUT: Provide the output of the digest
-
-     DEINIT: A function which deinitializes the digest
-
-     HASH_FAST: Perform the digest operation in one go
-
-     This function will register a digest algorithm to be used by
-     gnutls.  Any algorithm registered will override the included
-     algorithms and by convention kernel implemented algorithms have
-     priority of 90 and CPU-assisted of 80.  The algorithm with the
-     lowest priority will be used by gnutls.
-
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
-     error code.
-
-     *Since:* 3.4.0
-
-gnutls_crypto_register_mac
---------------------------
-
- -- Function: int gnutls_crypto_register_mac (gnutls_mac_algorithm_t
-          ALGORITHM, int PRIORITY, gnutls_mac_init_func INIT,
-          gnutls_mac_setkey_func SETKEY, gnutls_mac_setnonce_func
-          SETNONCE, gnutls_mac_hash_func HASH, gnutls_mac_output_func
-          OUTPUT, gnutls_mac_deinit_func DEINIT, gnutls_mac_fast_func
-          HASH_FAST)
-     ALGORITHM: is the gnutls MAC identifier
-
-     PRIORITY: is the priority of the algorithm
-
-     INIT: A function which initializes the MAC
-
-     SETKEY: A function which sets the key of the MAC
-
-     SETNONCE: A function which sets the nonce for the mac (may be
-     'NULL' for common MAC algorithms)
-
-     HASH: Perform the hash operation
-
-     OUTPUT: Provide the output of the MAC
-
-     DEINIT: A function which deinitializes the MAC
-
-     HASH_FAST: Perform the MAC operation in one go
-
-     This function will register a MAC algorithm to be used by gnutls.
-     Any algorithm registered will override the included algorithms and
-     by convention kernel implemented algorithms have priority of 90 and
-     CPU-assisted of 80.  The algorithm with the lowest priority will be
-     used by gnutls.
-
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
-     error code.
-
-     *Since:* 3.4.0
-
-gnutls_decode_ber_digest_info
------------------------------
-
- -- Function: int gnutls_decode_ber_digest_info (const gnutls_datum_t *
-          INFO, gnutls_digest_algorithm_t * HASH, unsigned char *
-          DIGEST, unsigned int * DIGEST_SIZE)
-     INFO: an RSA BER encoded DigestInfo structure
-
-     HASH: will contain the hash algorithm of the structure
-
-     DIGEST: will contain the hash output of the structure
-
-     DIGEST_SIZE: will contain the hash size of the structure; initially
-     must hold the maximum size of 'digest'
-
-     This function will parse an RSA PKCS'1' 1.5 DigestInfo structure
-     and report the hash algorithm used as well as the digest data.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise an error code is returned.
-
-     *Since:* 3.5.0
-
-gnutls_decode_rs_value
-----------------------
-
- -- Function: int gnutls_decode_rs_value (const gnutls_datum_t *
-          SIG_VALUE, gnutls_datum_t * R, gnutls_datum_t * S)
-     SIG_VALUE: holds a Dss-Sig-Value DER or BER encoded structure
-
-     R: will contain the r value
-
-     S: will contain the s value
-
-     This function will decode the provided 'sig_value' , into 'r' and
-     's' elements.  The Dss-Sig-Value is used for DSA and ECDSA
-     signatures.
-
-     The output values may be padded with a zero byte to prevent them
-     from being interpreted as negative values.  The value should be
-     deallocated using 'gnutls_free()' .
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise an error code is returned.
-
-     *Since:* 3.6.0
-
-gnutls_encode_ber_digest_info
------------------------------
-
- -- Function: int gnutls_encode_ber_digest_info
-          (gnutls_digest_algorithm_t HASH, const gnutls_datum_t *
-          DIGEST, gnutls_datum_t * OUTPUT)
-     HASH: the hash algorithm that was used to get the digest
-
-     DIGEST: must contain the digest data
-
-     OUTPUT: will contain the allocated DigestInfo BER encoded data
-
-     This function will encode the provided digest data, and its
-     algorithm into an RSA PKCS'1' 1.5 DigestInfo structure.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise an error code is returned.
-
-     *Since:* 3.5.0
-
-gnutls_encode_rs_value
-----------------------
-
- -- Function: int gnutls_encode_rs_value (gnutls_datum_t * SIG_VALUE,
-          const gnutls_datum_t * R, const gnutls_datum_t * S)
-     SIG_VALUE: will hold a Dss-Sig-Value DER encoded structure
-
-     R: must contain the r value
-
-     S: must contain the s value
-
-     This function will encode the provided r and s values, into a
-     Dss-Sig-Value structure, used for DSA and ECDSA signatures.
-
-     The output value should be deallocated using 'gnutls_free()' .
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise an error code is returned.
-
-     *Since:* 3.6.0
-
-gnutls_hash
------------
-
- -- Function: int gnutls_hash (gnutls_hash_hd_t HANDLE, const void *
-          PTEXT, size_t PTEXT_LEN)
-     HANDLE: is a 'gnutls_hash_hd_t' type
-
-     PTEXT: the data to hash
-
-     PTEXT_LEN: the length of data to hash
-
-     This function will hash the given data using the algorithm
-     specified by the context.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.10.0
-
-gnutls_hash_deinit
-------------------
-
- -- Function: void gnutls_hash_deinit (gnutls_hash_hd_t HANDLE, void *
-          DIGEST)
-     HANDLE: is a 'gnutls_hash_hd_t' type
-
-     DIGEST: is the output value of the hash
-
-     This function will deinitialize all resources occupied by the given
-     hash context.
-
-     *Since:* 2.10.0
-
-gnutls_hash_fast
-----------------
-
- -- Function: int gnutls_hash_fast (gnutls_digest_algorithm_t ALGORITHM,
-          const void * PTEXT, size_t PTEXT_LEN, void * DIGEST)
-     ALGORITHM: the hash algorithm to use
-
-     PTEXT: the data to hash
-
-     PTEXT_LEN: the length of data to hash
-
-     DIGEST: is the output value of the hash
-
-     This convenience function will hash the given data and return
-     output on a single call.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.10.0
-
-gnutls_hash_get_len
--------------------
-
- -- Function: unsigned gnutls_hash_get_len (gnutls_digest_algorithm_t
-          ALGORITHM)
-     ALGORITHM: the hash algorithm to use
-
-     This function will return the length of the output data of the
-     given hash algorithm.
-
-     *Returns:* The length or zero on error.
-
-     *Since:* 2.10.0
-
-gnutls_hash_init
-----------------
-
- -- Function: int gnutls_hash_init (gnutls_hash_hd_t * DIG,
-          gnutls_digest_algorithm_t ALGORITHM)
-     DIG: is a 'gnutls_hash_hd_t' type
-
-     ALGORITHM: the hash algorithm to use
-
-     This function will initialize an context that can be used to
-     produce a Message Digest of data.  This will effectively use the
-     current crypto backend in use by gnutls or the cryptographic
-     accelerator in use.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.10.0
-
-gnutls_hash_output
-------------------
-
- -- Function: void gnutls_hash_output (gnutls_hash_hd_t HANDLE, void *
-          DIGEST)
-     HANDLE: is a 'gnutls_hash_hd_t' type
-
-     DIGEST: is the output value of the hash
-
-     This function will output the current hash value and reset the
-     state of the hash.
-
-     *Since:* 2.10.0
-
-gnutls_hmac
------------
-
- -- Function: int gnutls_hmac (gnutls_hmac_hd_t HANDLE, const void *
-          PTEXT, size_t PTEXT_LEN)
-     HANDLE: is a 'gnutls_hmac_hd_t' type
-
-     PTEXT: the data to hash
-
-     PTEXT_LEN: the length of data to hash
-
-     This function will hash the given data using the algorithm
-     specified by the context.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.10.0
-
-gnutls_hmac_deinit
-------------------
-
- -- Function: void gnutls_hmac_deinit (gnutls_hmac_hd_t HANDLE, void *
-          DIGEST)
-     HANDLE: is a 'gnutls_hmac_hd_t' type
-
-     DIGEST: is the output value of the MAC
-
-     This function will deinitialize all resources occupied by the given
-     hmac context.
-
-     *Since:* 2.10.0
-
-gnutls_hmac_fast
-----------------
-
- -- Function: int gnutls_hmac_fast (gnutls_mac_algorithm_t ALGORITHM,
-          const void * KEY, size_t KEYLEN, const void * PTEXT, size_t
-          PTEXT_LEN, void * DIGEST)
-     ALGORITHM: the hash algorithm to use
-
-     KEY: the key to use
-
-     KEYLEN: the length of the key
-
-     PTEXT: the data to hash
-
-     PTEXT_LEN: the length of data to hash
-
-     DIGEST: is the output value of the hash
-
-     This convenience function will hash the given data and return
-     output on a single call.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.10.0
-
-gnutls_hmac_get_len
--------------------
-
- -- Function: unsigned gnutls_hmac_get_len (gnutls_mac_algorithm_t
-          ALGORITHM)
-     ALGORITHM: the hmac algorithm to use
-
-     This function will return the length of the output data of the
-     given hmac algorithm.
-
-     *Returns:* The length or zero on error.
-
-     *Since:* 2.10.0
-
-gnutls_hmac_init
-----------------
-
- -- Function: int gnutls_hmac_init (gnutls_hmac_hd_t * DIG,
-          gnutls_mac_algorithm_t ALGORITHM, const void * KEY, size_t
-          KEYLEN)
-     DIG: is a 'gnutls_hmac_hd_t' type
-
-     ALGORITHM: the HMAC algorithm to use
-
-     KEY: the key to be used for encryption
-
-     KEYLEN: the length of the key
-
-     This function will initialize an context that can be used to
-     produce a Message Authentication Code (MAC) of data.  This will
-     effectively use the current crypto backend in use by gnutls or the
-     cryptographic accelerator in use.
-
-     Note that despite the name of this function, it can be used for
-     other MAC algorithms than HMAC.
-
-     *Returns:* Zero or a negative error code on error.
-
-     *Since:* 2.10.0
-
-gnutls_hmac_output
-------------------
-
- -- Function: void gnutls_hmac_output (gnutls_hmac_hd_t HANDLE, void *
-          DIGEST)
-     HANDLE: is a 'gnutls_hmac_hd_t' type
-
-     DIGEST: is the output value of the MAC
-
-     This function will output the current MAC value and reset the state
-     of the MAC.
-
-     *Since:* 2.10.0
-
-gnutls_hmac_set_nonce
----------------------
-
- -- Function: void gnutls_hmac_set_nonce (gnutls_hmac_hd_t HANDLE, const
-          void * NONCE, size_t NONCE_LEN)
-     HANDLE: is a 'gnutls_hmac_hd_t' type
-
-     NONCE: the data to set as nonce
-
-     NONCE_LEN: the length of data
-
-     This function will set the nonce in the MAC algorithm.
-
-     *Since:* 3.2.0
-
-gnutls_mac_get_nonce_size
--------------------------
-
- -- Function: size_t gnutls_mac_get_nonce_size (gnutls_mac_algorithm_t
-          ALGORITHM)
-     ALGORITHM: is an encryption algorithm
-
-     Returns the size of the nonce used by the MAC in TLS.
-
-     *Returns:* length (in bytes) of the given MAC nonce size, or 0.
-
-     *Since:* 3.2.0
-
-gnutls_rnd
-----------
-
- -- Function: int gnutls_rnd (gnutls_rnd_level_t LEVEL, void * DATA,
-          size_t LEN)
-     LEVEL: a security level
-
-     DATA: place to store random bytes
-
-     LEN: The requested size
-
-     This function will generate random data and store it to output
-     buffer.  The value of 'level' should be one of 'GNUTLS_RND_NONCE' ,
-     'GNUTLS_RND_RANDOM' and 'GNUTLS_RND_KEY' .  See the manual and
-     'gnutls_rnd_level_t' for detailed information.
-
-     This function is thread-safe and also fork-safe.
-
-     *Returns:* Zero on success, or a negative error code on error.
-
-     *Since:* 2.12.0
-
-gnutls_rnd_refresh
-------------------
-
- -- Function: void gnutls_rnd_refresh ( VOID)
-
-     This function refreshes the random generator state.  That is the
-     current precise time, CPU usage, and other values are input into
-     its state.
-
-     On a slower rate input from /dev/urandom is mixed too.
-
-     *Since:* 3.1.7
 
