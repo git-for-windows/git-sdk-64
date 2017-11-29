@@ -608,9 +608,12 @@ also prints "[gone]" whenever unknown upstream ref is
 encountered. Append <code>:track,nobracket</code> to show tracking
 information without brackets (i.e "ahead N, behind M").</p>
 <div class="paragraph">
-<p>(EXPERIMENTAL) Also respects <code>:remotename</code> to state the name of the
-<strong>remote</strong> instead of the ref, and <code>:remoteref</code> to state the name of
-the <strong>reference</strong> as locally known by the remote.</p>
+<p>For any remote-tracking branch <code>%(upstream)</code>, <code>%(upstream:remotename)</code>
+and <code>%(upstream:remoteref)</code> refer to the name of the remote and the
+name of the tracked remote ref, respectively. In other words, the
+remote-tracking branch can be updated explicitly and individually by
+using the refspec <code>%(upstream:remoteref):%(upstream)</code> to fetch from
+<code>%(upstream:remotename)</code>.</p>
 </div>
 <div class="paragraph">
 <p>Has no effect if the ref does not have tracking information associated
@@ -622,9 +625,9 @@ but if used together the last option is selected.</p>
 <dd>
 <p>The name of a local ref which represents the <code>@{push}</code>
 location for the displayed ref. Respects <code>:short</code>, <code>:lstrip</code>,
-<code>:rstrip</code>, <code>:track</code>, <code>:trackshort</code>, (EXPERIMENTAL) <code>:remotename</code>,
-and (EXPERIMENTAL) <code>:remoteref</code> options as <code>upstream</code> does.
-Produces an empty string if no <code>@{push}</code> ref is configured.</p>
+<code>:rstrip</code>, <code>:track</code>, <code>:trackshort</code>, <code>:remotename</code>, and <code>:remoteref</code>
+options as <code>upstream</code> does. Produces an empty string if no <code>@{push}</code>
+ref is configured.</p>
 </dd>
 <dt class="hdlist1">HEAD</dt>
 <dd>
@@ -869,7 +872,7 @@ This prints the authorname, if present.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-30 10:11:08 Coordinated Universal Time
+Last updated 2017-11-29 12:43:52 Coordinated Universal Time
 </div>
 </div>
 </body>

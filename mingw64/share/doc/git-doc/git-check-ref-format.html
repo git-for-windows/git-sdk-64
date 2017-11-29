@@ -530,7 +530,14 @@ It may also be used to select a specific object such as with
 </ol>
 </div>
 <div class="paragraph">
-<p>With the <code>--branch</code> option, it expands the &#8220;previous branch syntax&#8221;
+<p>With the <code>--branch</code> option, the command takes a name and checks if
+it can be used as a valid branch name (e.g. when creating a new
+branch).  The rule <code>git check-ref-format --branch $name</code> implements
+may be stricter than what <code>git check-ref-format refs/heads/$name</code>
+says (e.g. a dash may appear at the beginning of a ref component,
+but it is explicitly forbidden at the beginning of a branch name).
+When run with <code>--branch</code> option in a repository, the input is first
+expanded for the &#8220;previous branch syntax&#8221;
 <code>@{-n}</code>.  For example, <code>@{-1}</code> is a way to refer the last branch you
 were on.  This option should be used by porcelains to accept this
 syntax anywhere a branch name is expected, so they can act as if you
@@ -607,7 +614,7 @@ with a status of 0, otherwise exit with a non-zero status.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-30 10:11:08 Coordinated Universal Time
+Last updated 2017-11-29 12:43:52 Coordinated Universal Time
 </div>
 </div>
 </body>

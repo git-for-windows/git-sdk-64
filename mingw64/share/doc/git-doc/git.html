@@ -1885,14 +1885,15 @@ other operations on the repository.  Defaults to <code>1</code>.</p>
 <dt class="hdlist1"><code>GIT_REDIRECT_STDOUT</code></dt>
 <dt class="hdlist1"><code>GIT_REDIRECT_STDERR</code></dt>
 <dd>
-<p>(EXPERIMENTAL) Windows-only: allow redirecting the standard
-input/output/error handles. This is particularly useful in
-multi-threaded applications where the canonical way to pass
-standard handles via <code>CreateProcess()</code> is not an option because
-it would require the handles to be marked inheritable (and
-consequently <strong>every</strong> spawned process would inherit them, possibly
-blocking regular Git operations). The primary intended use case
-is to use named pipes for communication.</p>
+<p>Windows-only: allow redirecting the standard input/output/error
+handles to paths specified by the environment variables. This is
+particularly useful in multi-threaded applications where the
+canonical way to pass standard handles via <code>CreateProcess()</code> is
+not an option because it would require the handles to be marked
+inheritable (and consequently <strong>every</strong> spawned process would
+inherit them, possibly blocking regular Git operations). The
+primary intended use case is to use named pipes for communication
+(e.g. <code>\\.\pipe\my-git-stdin-123</code>).</p>
 <div class="paragraph">
 <p>Two special values are supported: <code>off</code> will simply close the
 corresponding standard handle, and if <code>GIT_REDIRECT_STDERR</code> is
@@ -2048,7 +2049,7 @@ subscribed to the list to send a message there.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-30 10:11:08 Coordinated Universal Time
+Last updated 2017-11-29 12:43:52 Coordinated Universal Time
 </div>
 </div>
 </body>
