@@ -41,14 +41,14 @@ extern "C" {
 
 /* Individual version numbers in decimal */
 #define NETTLE_VERSION_MAJOR 3
-#define NETTLE_VERSION_MINOR 3
+#define NETTLE_VERSION_MINOR 4
 
 #define NETTLE_USE_MINI_GMP 0
 
 /* We need a preprocessor constant for GMP_NUMB_BITS, simply using
    sizeof(mp_limb_t) * CHAR_BIT is not good enough. */
 #if NETTLE_USE_MINI_GMP
-# define GMP_NUMB_BITS 64
+# define GMP_NUMB_BITS n/a
 #endif
 
 int

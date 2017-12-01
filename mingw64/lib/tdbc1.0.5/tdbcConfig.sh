@@ -19,8 +19,8 @@ tdbc_LIB_FILE=tdbc105.dll
 TDBC_LIB_FILE=tdbc105.dll
 
 # String to pass to the linker to pick up the TDBC library from its build dir
-tdbc_BUILD_LIB_SPEC="-L/scripts/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5 -ltdbc105"
-TDBC_BUILD_LIB_SPEC="-L/scripts/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5 -ltdbc105"
+tdbc_BUILD_LIB_SPEC="-L/c/repo/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5 -ltdbc105"
+TDBC_BUILD_LIB_SPEC="-L/c/repo/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5 -ltdbc105"
 
 # String to pass to the linker to pick up the TDBC library from its installed
 # dir.
@@ -33,8 +33,8 @@ TDBC_STUB_LIB_FILE="libtdbcstub105.a"
 
 # String to pass to the linker to pick up the TDBC stub library from its
 # build directory
-tdbc_BUILD_STUB_LIB_SPEC="-L/scripts/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5 -ltdbcstub105"
-TDBC_BUILD_STUB_LIB_SPEC="-L/scripts/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5 -ltdbcstub105"
+tdbc_BUILD_STUB_LIB_SPEC="-L/c/repo/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5 -ltdbcstub105"
+TDBC_BUILD_STUB_LIB_SPEC="-L/c/repo/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5 -ltdbcstub105"
 
 # String to pass to the linker to pick up the TDBC stub library from its
 # installed directory
@@ -42,8 +42,8 @@ tdbc_STUB_LIB_SPEC="-L/mingw64/lib/tdbc1.0.5 -ltdbcstub105"
 TDBC_STUB_LIB_SPEC="-L/mingw64/lib/tdbc1.0.5 -ltdbcstub105"
 
 # Path name of the TDBC stub library in its build directory
-tdbc_BUILD_STUB_LIB_PATH="/scripts/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5/libtdbcstub105.a"
-TDBC_BUILD_STUB_LIB_PATH="/scripts/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5/libtdbcstub105.a"
+tdbc_BUILD_STUB_LIB_PATH="/c/repo/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5/libtdbcstub105.a"
+TDBC_BUILD_STUB_LIB_PATH="/c/repo/mingw-w64-tcl/src/build-x86_64-w64-mingw32/pkgs/tdbc1.0.5/libtdbcstub105.a"
 
 # Path name of the TDBC stub library in its installed directory
 tdbc_STUB_LIB_PATH="/mingw64/lib/tdbc1.0.5/libtdbcstub105.a"
@@ -54,8 +54,8 @@ TDBC_STUB_LIB_PATH="/mingw64/lib/tdbc1.0.5/libtdbcstub105.a"
 # was compiled in a directory other than the source directory, this still
 # points to the location of the sources, not the location where TDBC was
 # compiled.
-tdbc_SRC_DIR="/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5"
-TDBC_SRC_DIR="/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5"
+tdbc_SRC_DIR="/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5"
+TDBC_SRC_DIR="/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5"
 
 # String to pass to the compiler so that an extension can find installed TDBC
 # headers
@@ -64,16 +64,16 @@ TDBC_INCLUDE_SPEC="-I/mingw64/include"
 
 # String to pass to the compiler so that an extension can find TDBC headers
 # in the source directory
-tdbc_BUILD_INCLUDE_SPEC="-I/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/generic"
-TDBC_BUILD_INCLUDE_SPEC="-I/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/generic"
+tdbc_BUILD_INCLUDE_SPEC="-I/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/generic"
+TDBC_BUILD_INCLUDE_SPEC="-I/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/generic"
 
 # Path name where .tcl files in the tdbc package appear at run time.
 tdbc_LIBRARY_PATH="/mingw64/lib/tdbc1.0.5"
 TDBC_LIBRARY_PATH="/mingw64/lib/tdbc1.0.5"
 
 # Path name where .tcl files in the tdbc package appear at build time.
-tdbc_BUILD_LIBRARY_PATH="/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/library"
-TDBC_BUILD_LIBRARY_PATH="/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/library"
+tdbc_BUILD_LIBRARY_PATH="/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/library"
+TDBC_BUILD_LIBRARY_PATH="/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/library"
 
 # Additional flags that must be passed to the C compiler to use tdbc
 tdbc_CFLAGS=

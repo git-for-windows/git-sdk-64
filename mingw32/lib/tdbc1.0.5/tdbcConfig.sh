@@ -68,8 +68,8 @@ tdbc_BUILD_INCLUDE_SPEC="-IC:/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/gen
 TDBC_BUILD_INCLUDE_SPEC="-IC:/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/generic"
 
 # Path name where .tcl files in the tdbc package appear at run time.
-tdbc_LIBRARY_PATH="/mingw32/lib/tdbc1.0.5"
-TDBC_LIBRARY_PATH="/mingw32/lib/tdbc1.0.5"
+tdbc_LIBRARY_PATH="C:/building/msys64/mingw32/lib/tdbc1.0.5"
+TDBC_LIBRARY_PATH="C:/building/msys64/mingw32/lib/tdbc1.0.5"
 
 # Path name where .tcl files in the tdbc package appear at build time.
 tdbc_BUILD_LIBRARY_PATH="C:/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/tdbc1.0.5/library"

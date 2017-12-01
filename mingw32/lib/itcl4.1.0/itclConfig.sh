@@ -58,10 +58,10 @@ ITCL_STUB_LIB_PATH='C:/building/msys64/mingw32/lib/itcl4.1.0/libitclstub410.a'
 # If [incr Tcl] was compiled in a different place than the directory
 # containing the source files, this points to the location of the sources,
 # not the location where [incr Tcl] was compiled.
-itcl_SRC_DIR='/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/itcl4.1.0'
-ITCL_SRC_DIR='/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/itcl4.1.0'
+itcl_SRC_DIR='/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/itcl4.1.0'
+ITCL_SRC_DIR='/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/itcl4.1.0'
 
 # String to pass to the compiler so that an extension can
 # find installed Itcl headers.
-itcl_INCLUDE_SPEC='/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/itcl4.1.0/generic'
-ITCL_INCLUDE_SPEC='/scripts/mingw-w64-tcl/src/tcl8.6.7/pkgs/itcl4.1.0/generic'
+itcl_INCLUDE_SPEC='/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/itcl4.1.0/generic'
+ITCL_INCLUDE_SPEC='/c/repo/mingw-w64-tcl/src/tcl8.6.7/pkgs/itcl4.1.0/generic'
