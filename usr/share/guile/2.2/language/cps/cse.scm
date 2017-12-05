@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013, 2014, 2015 Free Software Foundation, Inc.
+;; Copyright (C) 2013, 2014, 2015, 2017 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,26 @@
   #:use-module (language cps intset)
   #:export (eliminate-common-subexpressions))
 
+(define (compute-available-expressions succs kfun effects)
+  "Compute and return a map of LABEL->ANCESTOR..., where ANCESTOR... is
+an intset containing ancestor labels whose value is available at LABEL."
+  (let ((init (intmap-map (lambda (label succs) #f) succs))
+        (kill (compute-clobber-map effects))
+        (gen (intmap-map (lambda (label succs) (intset label)) succs))
+        (subtract (lambda (in-1 kill-1)
+                    (if in-1
+                        (intset-subtract in-1 kill-1)
+                        empty-intset)))
+        (add intset-union)
+        (meet (lambda (in-1 in-1*)
+                (if in-1
+                    (intset-intersect in-1 in-1*)
+                    in-1*))))
+    (let ((in (intmap-replace init kfun empty-intset))
+          (out init)
+          (worklist (intset kfun)))
+      (solve-flow-equations succs in out kill gen subtract add meet worklist))))
+
 (define (intset-pop set)
   (match (intset-next set)
     (#f (values set #f))
@@ -56,72 +76,6 @@
   (case-lambda
     ((f worklist seed)
      ((make-worklist-folder* seed) f worklist seed))))
-
-(define (compute-available-expressions conts kfun effects)
-  "Compute and return a map of LABEL->ANCESTOR..., where ANCESTOR... is
-an intset containing ancestor labels whose value is available at LABEL."
-  (define (propagate avail succ out)
-    (let* ((in (intmap-ref avail succ (lambda (_) #f)))
-           (in* (if in (intset-intersect in out) out)))
-      (if (eq? in in*)
-          (values '() avail)
-          (values (list succ)
-                  (intmap-add avail succ in* (lambda (old new) new))))))
-
-  (define (clobber label in)
-    (let ((fx (intmap-ref effects label)))
-      (cond
-       ((not (causes-effect? fx &write))
-        ;; Fast-path if this expression clobbers nothing.
-        in)
-       (else
-        ;; Kill clobbered expressions.  FIXME: there is no need to check
-        ;; on any label before than the last dominating label that
-        ;; clobbered everything.  Another way to speed things up would
-        ;; be to compute a clobber set per-effect, which we could
-        ;; subtract from "in".
-        (let lp ((label 0) (in in))
-          (cond
-           ((intset-next in label)
-            => (lambda (label)
-                 (if (effect-clobbers? fx (intmap-ref effects label))
-                     (lp (1+ label) (intset-remove in label))
-                     (lp (1+ label) in))))
-           (else in)))))))
-
-  (define (visit-cont label avail)
-    (let* ((in (intmap-ref avail label))
-           (out (intset-add (clobber label in) label)))
-      (define (propagate0)
-        (values '() avail))
-      (define (propagate1 succ)
-        (propagate avail succ out))
-      (define (propagate2 succ0 succ1)
-        (let*-values (((changed0 avail) (propagate avail succ0 out))
-                      ((changed1 avail) (propagate avail succ1 out)))
-          (values (append changed0 changed1) avail)))
-
-      (match (intmap-ref conts label)
-        (($ $kargs names vars ($ $continue k src exp))
-         (match exp
-           (($ $branch kt) (propagate2 k kt))
-           (($ $prompt escape? tag handler) (propagate2 k handler))
-           (_ (propagate1 k))))
-        (($ $kreceive arity k)
-         (propagate1 k))
-        (($ $kfun src meta self tail clause)
-         (if clause
-             (propagate1 clause)
-             (propagate0)))
-        (($ $kclause arity kbody kalt)
-         (if kalt
-             (propagate2 kbody kalt)
-             (propagate1 kbody)))
-        (($ $ktail) (propagate0)))))
-
-  (worklist-fold* visit-cont
-                  (intset kfun)
-                  (intmap-add empty-intmap kfun empty-intset)))
 
 (define (compute-truthy-expressions conts kfun)
   "Compute a \"truth map\", indicating which expressions can be shown to
@@ -225,11 +179,16 @@ false.  It could be that both true and false proofs are available."
       (intset-subtract (persistent-intset single)
                        (persistent-intset multiple)))))
 
-(define (compute-equivalent-subexpressions conts kfun effects)
-  (define (visit-fun kfun equiv-labels var-substs)
-    (let* ((succs (compute-successors conts kfun))
+(define (intmap-select map set)
+  (intset->intmap (lambda (label) (intmap-ref map label)) set))
+
+(define (compute-equivalent-subexpressions conts kfun)
+  (define (visit-fun kfun body equiv-labels var-substs)
+    (let* ((conts (intmap-select conts body))
+           (effects (synthesize-definition-effects (compute-effects conts)))
+           (succs (compute-successors conts kfun))
            (singly-referenced (compute-singly-referenced succs))
-           (avail (compute-available-expressions conts kfun effects))
+           (avail (compute-available-expressions succs kfun effects))
            (defs (compute-defs conts kfun))
            (equiv-set (make-hash-table)))
       (define (subst-var var-substs var)
@@ -250,9 +209,9 @@ false.  It could be that both true and false proofs are available."
           (($ $call proc args) #f)
           (($ $callk k proc args) #f)
           (($ $primcall name args)
-           (cons* 'primcall name (subst-vars var-substs args)))
+           (cons* name (subst-vars var-substs args)))
           (($ $branch _ ($ $primcall name args))
-           (cons* 'primcall name (subst-vars var-substs args)))
+           (cons* name (subst-vars var-substs args)))
           (($ $branch) #f)
           (($ $values args) #f)
           (($ $prompt escape? tag handler) #f)))
@@ -266,61 +225,61 @@ false.  It could be that both true and false proofs are available."
               (hash-set! equiv-set aux-key
                          (acons label (list var) equiv))))
           (match exp-key
-            (('primcall 'box val)
+            (('box val)
              (match defs
                ((box)
                 (add-def! `(primcall box-ref ,(subst box)) val))))
-            (('primcall 'box-set! box val)
+            (('box-set! box val)
              (add-def! `(primcall box-ref ,box) val))
-            (('primcall 'cons car cdr)
+            (('cons car cdr)
              (match defs
                ((pair)
                 (add-def! `(primcall car ,(subst pair)) car)
                 (add-def! `(primcall cdr ,(subst pair)) cdr))))
-            (('primcall 'set-car! pair car)
+            (('set-car! pair car)
              (add-def! `(primcall car ,pair) car))
-            (('primcall 'set-cdr! pair cdr)
+            (('set-cdr! pair cdr)
              (add-def! `(primcall cdr ,pair) cdr))
-            (('primcall (or 'make-vector 'make-vector/immediate) len fill)
+            (((or 'make-vector 'make-vector/immediate) len fill)
              (match defs
                ((vec)
                 (add-def! `(primcall vector-length ,(subst vec)) len))))
-            (('primcall 'vector-set! vec idx val)
+            (('vector-set! vec idx val)
              (add-def! `(primcall vector-ref ,vec ,idx) val))
-            (('primcall 'vector-set!/immediate vec idx val)
+            (('vector-set!/immediate vec idx val)
              (add-def! `(primcall vector-ref/immediate ,vec ,idx) val))
-            (('primcall (or 'allocate-struct 'allocate-struct/immediate)
+            (((or 'allocate-struct 'allocate-struct/immediate)
                         vtable size)
              (match defs
                ((struct)
                 (add-def! `(primcall struct-vtable ,(subst struct))
                           vtable))))
-            (('primcall 'struct-set! struct n val)
+            (('struct-set! struct n val)
              (add-def! `(primcall struct-ref ,struct ,n) val))
-            (('primcall 'struct-set!/immediate struct n val)
+            (('struct-set!/immediate struct n val)
              (add-def! `(primcall struct-ref/immediate ,struct ,n) val))
-            (('primcall 'scm->f64 scm)
+            (('scm->f64 scm)
              (match defs
                ((f64)
                 (add-def! `(primcall f64->scm ,f64) scm))))
-            (('primcall 'f64->scm f64)
+            (('f64->scm f64)
              (match defs
                ((scm)
                 (add-def! `(primcall scm->f64 ,scm) f64))))
-            (('primcall 'scm->u64 scm)
+            (('scm->u64 scm)
              (match defs
                ((u64)
                 (add-def! `(primcall u64->scm ,u64) scm))))
-            (('primcall 'u64->scm u64)
+            (('u64->scm u64)
              (match defs
                ((scm)
                 (add-def! `(primcall scm->u64 ,scm) u64)
                 (add-def! `(primcall scm->u64/truncate ,scm) u64))))
-            (('primcall 'scm->s64 scm)
+            (('scm->s64 scm)
              (match defs
                ((s64)
                 (add-def! `(primcall s64->scm ,s64) scm))))
-            (('primcall 's64->scm s64)
+            (('s64->scm s64)
              (match defs
                ((scm)
                 (add-def! `(primcall scm->s64 ,scm) s64))))
@@ -329,55 +288,56 @@ false.  It could be that both true and false proofs are available."
       (define (visit-label label equiv-labels var-substs)
         (match (intmap-ref conts label)
           (($ $kargs names vars ($ $continue k src exp))
-           (let* ((exp-key (compute-exp-key var-substs exp))
-                  (equiv (hash-ref equiv-set exp-key '()))
-                  (fx (intmap-ref effects label))
-                  (avail (intmap-ref avail label)))
-             (define (finish equiv-labels var-substs)
-               ;; If this expression defines auxiliary definitions,
-               ;; as `cons' does for the results of `car' and `cdr',
-               ;; define those.  Do so after finding equivalent
-               ;; expressions, so that we can take advantage of
-               ;; subst'd output vars.
-               (add-auxiliary-definitions! label var-substs exp-key)
-               (values equiv-labels var-substs))
-             (let lp ((candidates equiv))
-               (match candidates
-                 (()
-                  ;; No matching expressions.  Add our expression
-                  ;; to the equivalence set, if appropriate.  Note
-                  ;; that expressions that allocate a fresh object
-                  ;; or change the current fluid environment can't
-                  ;; be eliminated by CSE (though DCE might do it
-                  ;; if the value proves to be unused, in the
-                  ;; allocation case).
-                  (when (and exp-key
-                             (not (causes-effect? fx &allocation))
-                             (not (effect-clobbers? fx (&read-object &fluid))))
-                    (let ((defs (and (intset-ref singly-referenced k)
-                                     (intmap-ref defs label))))
-                      (when defs
-                        (hash-set! equiv-set exp-key
-                                   (acons label defs equiv)))))
-                  (finish equiv-labels var-substs))
-                 (((and head (candidate . vars)) . candidates)
-                  (cond
-                   ((not (intset-ref avail candidate))
-                    ;; This expression isn't available here; try
-                    ;; the next one.
-                    (lp candidates))
-                   (else
-                    ;; Yay, a match.  Mark expression as equivalent.  If
-                    ;; we provide the definitions for the successor, mark
-                    ;; the vars for substitution.
-                    (finish (intmap-add equiv-labels label head)
-                            (let ((defs (and (intset-ref singly-referenced k)
-                                             (intmap-ref defs label))))
-                              (if defs
-                                  (fold (lambda (def var var-substs)
-                                          (intmap-add var-substs def var))
-                                        var-substs defs vars)
-                                  var-substs))))))))))
+           (match (compute-exp-key var-substs exp)
+             (#f (values equiv-labels var-substs))
+             (exp-key
+              (let* ((equiv (hash-ref equiv-set exp-key '()))
+                     (fx (intmap-ref effects label))
+                     (avail (intmap-ref avail label)))
+                (define (finish equiv-labels var-substs)
+                  ;; If this expression defines auxiliary definitions,
+                  ;; as `cons' does for the results of `car' and `cdr',
+                  ;; define those.  Do so after finding equivalent
+                  ;; expressions, so that we can take advantage of
+                  ;; subst'd output vars.
+                  (add-auxiliary-definitions! label var-substs exp-key)
+                  (values equiv-labels var-substs))
+                (let lp ((candidates equiv))
+                  (match candidates
+                    (()
+                     ;; No matching expressions.  Add our expression
+                     ;; to the equivalence set, if appropriate.  Note
+                     ;; that expressions that allocate a fresh object
+                     ;; or change the current fluid environment can't
+                     ;; be eliminated by CSE (though DCE might do it
+                     ;; if the value proves to be unused, in the
+                     ;; allocation case).
+                     (when (and (not (causes-effect? fx &allocation))
+                                (not (effect-clobbers? fx (&read-object &fluid))))
+                       (let ((defs (and (intset-ref singly-referenced k)
+                                        (intmap-ref defs label))))
+                         (when defs
+                           (hash-set! equiv-set exp-key
+                                      (acons label defs equiv)))))
+                     (finish equiv-labels var-substs))
+                    (((and head (candidate . vars)) . candidates)
+                     (cond
+                      ((not (intset-ref avail candidate))
+                       ;; This expression isn't available here; try
+                       ;; the next one.
+                       (lp candidates))
+                      (else
+                       ;; Yay, a match.  Mark expression as equivalent.  If
+                       ;; we provide the definitions for the successor, mark
+                       ;; the vars for substitution.
+                       (finish (intmap-add equiv-labels label head)
+                               (let ((defs (and (intset-ref singly-referenced k)
+                                                (intmap-ref defs label))))
+                                 (if defs
+                                     (fold (lambda (def var var-substs)
+                                             (intmap-add var-substs def var))
+                                           var-substs defs vars)
+                                     var-substs))))))))))))
           (_ (values equiv-labels var-substs))))
 
       ;; Traverse the labels in fun in reverse post-order, which will
@@ -387,8 +347,8 @@ false.  It could be that both true and false proofs are available."
              equiv-labels
              var-substs)))
 
-  (intset-fold visit-fun
-               (intmap-keys (compute-reachable-functions conts kfun))
+  (intmap-fold visit-fun
+               (compute-reachable-functions conts kfun)
                empty-intmap
                empty-intmap))
 
@@ -449,10 +409,7 @@ false.  It could be that both true and false proofs are available."
    conts))
 
 (define (eliminate-common-subexpressions conts)
-  (call-with-values
-      (lambda ()
-        (let ((effects (synthesize-definition-effects (compute-effects conts))))
-          (compute-equivalent-subexpressions conts 0 effects)))
+  (call-with-values (lambda () (compute-equivalent-subexpressions conts 0))
     (lambda (equiv-labels var-substs)
       (let ((truthy-labels (compute-truthy-expressions conts 0)))
         (apply-cse conts equiv-labels var-substs truthy-labels)))))

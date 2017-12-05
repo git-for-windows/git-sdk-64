@@ -5,11 +5,11 @@
             falias-object))
 
 (define <falias-vtable>
-  (make-struct <applicable-struct-vtable>
-               0
-               (make-struct-layout "pwpw")
-               (lambda (object port)
-                 (format port "#<falias ~S>" (falias-object object)))))
+  (make-struct/no-tail
+   <applicable-struct-vtable>
+   (make-struct-layout "pwpw")
+   (lambda (object port)
+     (format port "#<falias ~S>" (falias-object object)))))
 
 (set-struct-vtable-name! <falias-vtable> 'falias)
 
@@ -18,7 +18,7 @@
        (eq? (struct-vtable object) <falias-vtable>)))
 
 (define (make-falias f object)
-  (make-struct <falias-vtable> 0 f object))
+  (make-struct/no-tail <falias-vtable> f object))
 
 (define (falias-function object)
   (struct-ref object 0))

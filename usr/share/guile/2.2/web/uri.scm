@@ -42,11 +42,15 @@
             uri->string
             uri-decode uri-encode
             split-and-decode-uri-path
-            encode-and-join-uri-path))
+            encode-and-join-uri-path
+
+            uri-reference? relative-ref?
+            build-uri-reference build-relative-ref
+            string->uri-reference string->relative-ref))
 
 (define-record-type <uri>
   (make-uri scheme userinfo host port path query fragment)
-  uri?
+  uri-reference?
   (scheme uri-scheme)
   (userinfo uri-userinfo)
   (host uri-host)
@@ -55,8 +59,49 @@
   (query uri-query)
   (fragment uri-fragment))
 
-(define (absolute-uri? obj)
-  (and (uri? obj) (uri-scheme obj) #t))
+;;;
+;;; Predicates.
+;;;
+;;; These are quick, and assume rigid validation at construction time.
+
+;;; RFC 3986, #3.
+;;;
+;;;   URI         = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+;;;
+;;;   hier-part   = "//" authority path-abempty
+;;;               / path-absolute
+;;;               / path-rootless
+;;;               / path-empty
+
+(define (uri? obj)
+  (and (uri-reference? obj)
+       (if (include-deprecated-features)
+           (begin
+             (unless (uri-scheme obj)
+               (issue-deprecation-warning
+                "Use uri-reference? instead of uri?; in the future, uri?
+will require that the object not be a relative-ref."))
+             #t)
+           (uri-scheme obj))
+       #t))
+
+;;; RFC 3986, #4.2.
+;;;
+;;;   relative-ref  = relative-part [ "?" query ] [ "#" fragment ]
+;;;
+;;;   relative-part = "//" authority path-abempty
+;;;                 / path-absolute
+;;;                 / path-noscheme
+;;;                 / path-empty
+
+(define (relative-ref? obj)
+  (and (uri-reference? obj)
+       (not (uri-scheme obj))))
+
+
+;;;
+;;; Constructors.
+;;;
 
 (define (uri-error message . args)
   (throw 'uri-error message args))
@@ -64,10 +109,9 @@
 (define (positive-exact-integer? port)
   (and (number? port) (exact? port) (integer? port) (positive? port)))
 
-(define* (validate-uri scheme userinfo host port path query fragment
-                       #:key reference?)
+(define (validate-uri-reference scheme userinfo host port path query fragment)
   (cond
-   ((and (not reference?) (not (symbol? scheme)))
+   ((and scheme (not (symbol? scheme)))
     (uri-error "Expected a symbol for the URI scheme: ~s" scheme))
    ((and (or userinfo port) (not host))
     (uri-error "Expected a host, given userinfo or port"))
@@ -79,31 +123,64 @@
     (uri-error "Expected string for userinfo: ~s" userinfo))
    ((not (string? path))
     (uri-error "Expected string for path: ~s" path))
-   ((and host (not (string-null? path))
-         (not (eqv? (string-ref path 0) #\/)))
-    (uri-error "Expected path of absolute URI to start with a /: ~a" path))))
+   ((and query (not (string? query)))
+    (uri-error "Expected string for query: ~s" query))
+   ((and fragment (not (string? fragment)))
+    (uri-error "Expected string for fragment: ~s" fragment))
+   ;; Strict validation of allowed paths, based on other components.
+   ;; Refer to RFC 3986 for the details.
+   ((not (string-null? path))
+    (if host
+        (cond
+         ((not (eqv? (string-ref path 0) #\/))
+          (uri-error
+           "Expected absolute path starting with \"/\": ~a" path)))
+        (cond
+         ((string-prefix? "//" path)
+          (uri-error
+           "Expected path not starting with \"//\" (no host): ~a" path))
+         ((and (not scheme)
+               (not (eqv? (string-ref path 0) #\/))
+               (let ((colon (string-index path #\:)))
+                 (and colon (not (string-index path #\/ 0 colon)))))
+          (uri-error
+           "Expected relative path's first segment without \":\": ~a"
+           path)))))))
 
 (define* (build-uri scheme #:key userinfo host port (path "") query fragment
                     (validate? #t))
   "Construct a URI object.  SCHEME should be a symbol, PORT either a
 positive, exact integer or ‘#f’, and the rest of the fields are either
 strings or ‘#f’.  If VALIDATE? is true, also run some consistency checks
-to make sure that the constructed object is a valid absolute URI."
-  (if validate?
-      (validate-uri scheme userinfo host port path query fragment))
+to make sure that the constructed object is a valid URI."
+  (when validate?
+    (unless scheme (uri-error "Missing URI scheme"))
+    (validate-uri-reference scheme userinfo host port path query fragment))
   (make-uri scheme userinfo host port path query fragment))
 
 (define* (build-uri-reference #:key scheme userinfo host port (path "") query
                               fragment (validate? #t))
-  "Construct a URI object.  SCHEME should be a symbol or ‘#f’, PORT
-either a positive, exact integer or ‘#f’, and the rest of the fields
-are either strings or ‘#f’.  If VALIDATE? is true, also run some
+  "Construct a URI-reference object.  SCHEME should be a symbol or ‘#f’,
+PORT either a positive, exact integer or ‘#f’, and the rest of the
+fields are either strings or ‘#f’.  If VALIDATE? is true, also run some
 consistency checks to make sure that the constructed URI is a valid URI
-reference (either an absolute URI or a relative reference)."
-  (if validate?
-      (validate-uri scheme userinfo host port path query fragment
-                    #:reference? #t))
+reference."
+  (when validate?
+    (validate-uri-reference scheme userinfo host port path query fragment))
   (make-uri scheme userinfo host port path query fragment))
+
+(define* (build-relative-ref #:key userinfo host port (path "") query fragment
+                             (validate? #t))
+  "Construct a relative-ref URI object.  The arguments are the same as
+for ‘build-uri’ except there is no scheme."
+  (when validate?
+    (validate-uri-reference #f userinfo host port path query fragment))
+  (make-uri #f userinfo host port path query fragment))
+
+
+;;;
+;;; Converters.
+;;;
 
 ;; See RFC 3986 #3.2.2 for comments on percent-encodings, IDNA (RFC
 ;; 3490), and non-ASCII host names.
@@ -192,16 +269,24 @@ reference (either an absolute URI or a relative reference)."
   (make-regexp uri-pat))
 
 (define (string->uri-reference string)
-  "Parse the URI reference written as STRING into a URI object.  Return
-‘#f’ if the string could not be parsed."
+  "Parse STRING into a URI-reference object.  Return ‘#f’ if the string
+could not be parsed."
   (% (let ((m (regexp-exec uri-regexp string)))
-       (if (not m) (abort))
+       (unless m (abort))
        (let ((scheme (let ((str (match:substring m 2)))
                        (and str (string->symbol (string-downcase str)))))
              (authority (match:substring m 3))
              (path (match:substring m 4))
              (query (match:substring m 6))
              (fragment (match:substring m 8)))
+         ;; The regular expression already ensures all of the validation
+         ;; requirements for URI-references, except the one that the
+         ;; first component of a relative-ref's path can't contain a
+         ;; colon.
+         (unless scheme
+           (let ((colon (string-index path #\:)))
+             (when (and colon (not (string-index path #\/ 0 colon)))
+               (abort))))
          (call-with-values
              (lambda ()
                (if authority
@@ -213,10 +298,19 @@ reference (either an absolute URI or a relative reference)."
        #f)))
 
 (define (string->uri string)
-  "Parse STRING into an absolute URI object.  Return ‘#f’ if the string
-could not be parsed."
-  (let ((uri (string->uri-reference string)))
-    (and uri (uri-scheme uri) uri)))
+  "Parse STRING into a URI object.  Return ‘#f’ if the string could not
+be parsed.  Note that this procedure will require that the URI have a
+scheme."
+  (let ((uri-reference (string->uri-reference string)))
+    (and (not (relative-ref? uri-reference))
+         uri-reference)))
+
+(define (string->relative-ref string)
+  "Parse STRING into a relative-ref URI object.  Return ‘#f’ if the
+string could not be parsed."
+  (let ((uri-reference (string->uri-reference string)))
+    (and (relative-ref? uri-reference)
+         uri-reference)))
 
 (define *default-ports* (make-hash-table))
 
@@ -231,7 +325,7 @@ could not be parsed."
 (declare-default-port! 'http 80)
 (declare-default-port! 'https 443)
 
-(define (uri->string uri)
+(define* (uri->string uri #:key (include-fragment? #t))
   "Serialize URI to a string.  If the URI has a port that is the
 default port for its scheme, the port is not included in the
 serialization."
@@ -261,7 +355,7 @@ serialization."
      (if query
          (string-append "?" query)
          "")
-     (if fragment
+     (if (and fragment include-fragment?)
          (string-append "#" fragment)
          ""))))
 

@@ -184,8 +184,9 @@
                           (sfields (map (lambda (f) (datum->syntax x f)) fields))
                           (ctor (datum->syntax x (symbol-append 'make- stem))))
                      (cons #`(define (#,ctor #,@sfields)
-                               (make-struct (vector-ref %expanded-vtables #,n) 0
-                                            #,@sfields))
+                               (make-struct/no-tail
+                                (vector-ref %expanded-vtables #,n)
+                                #,@sfields))
                            out)))
                #`(begin #,@(reverse out))))))))
 

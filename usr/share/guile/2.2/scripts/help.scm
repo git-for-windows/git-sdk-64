@@ -115,7 +115,7 @@ For help on a specific command, try \"guild help COMMAND\".
 Report guild bugs to ~a
 GNU Guile home page: <http://www.gnu.org/software/guile/>
 General help using GNU software: <http://www.gnu.org/gethelp/>
-For complete documentation, run: info guile 'Using Guile Tools'
+For complete documentation, run: info '(guile)Using Guile Tools'
 " %guile-bug-report-address))
 
 (define (module-commentary mod)

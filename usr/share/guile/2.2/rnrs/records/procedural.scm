@@ -1,6 +1,6 @@
 ;;; procedural.scm --- Procedural interface to R6RS records
 
-;;      Copyright (C) 2010 Free Software Foundation, Inc.
+;;      Copyright (C) 2010, 2017 Free Software Foundation, Inc.
 ;;
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,7 @@
                         and=>
 			throw
 			display
-		        make-struct 
+		        make-struct/no-tail
 			make-vtable 
 			map
 			simple-format
@@ -125,7 +125,7 @@
                (and=> (struct-ref obj 0) private-record-predicate))))
 
     (define (field-binder parent-struct . args)
-      (apply make-struct (cons* late-rtd 0 parent-struct args)))
+      (apply make-struct/no-tail late-rtd parent-struct args))
 
     (if (and parent (struct-ref parent rtd-index-sealed?))
 	(r6rs-raise (make-assertion-violation)))
@@ -150,23 +150,24 @@
 	      matching-rtd
 	      (r6rs-raise (make-assertion-violation)))
           
-	  (let ((rtd (make-struct record-type-vtable 0
+	  (let ((rtd (make-struct/no-tail
+                      record-type-vtable
 
-                                  fields-layout
-                                  (lambda (obj port)
-                                    (simple-format 
-                                     port "#<r6rs:record:~A>" name))
+                      fields-layout
+                      (lambda (obj port)
+                        (simple-format 
+                         port "#<r6rs:record:~A>" name))
 				  
-				  name
-				  uid
-				  parent 
-				  sealed? 
-				  opaque?
+                      name
+                      uid
+                      parent 
+                      sealed? 
+                      opaque?
 				  
-				  private-record-predicate
-				  field-names
-                                  fields-bit-field
-				  field-binder)))
+                      private-record-predicate
+                      field-names
+                      fields-bit-field
+                      field-binder)))
 	    (set! late-rtd rtd)
 	    (if uid (hashq-set! uid-table uid rtd))
 	    rtd))))
@@ -194,7 +195,7 @@
 	   (prot (or protocol (if pcd 
 				  default-inherited-protocol 
 				  default-protocol))))
-      (make-struct record-constructor-vtable 0 rtd pcd prot)))
+      (make-struct/no-tail record-constructor-vtable rtd pcd prot)))
 
   (define (record-constructor rctd)
     (let* ((rtd (struct-ref rctd rctd-index-rtd))

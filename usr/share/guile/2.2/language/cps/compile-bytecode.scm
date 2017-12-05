@@ -81,8 +81,9 @@
                     (_ forwarding-labels)))
                 cps empty-intmap)))
 
-(define (compile-function cps asm)
-  (let* ((allocation (allocate-slots cps))
+(define (compile-function cps asm opts)
+  (let* ((allocation (allocate-slots cps #:precolor-calls?
+                                     (kw-arg-ref opts #:precolor-calls? #t)))
          (forwarding-labels (compute-forwarding-labels cps allocation))
          (frame-size (lookup-nlocals allocation)))
     (define (forward-label k)
@@ -585,7 +586,7 @@
 (define (emit-bytecode exp env opts)
   (let ((asm (make-assembler)))
     (intmap-for-each (lambda (kfun body)
-                       (compile-function (intmap-select exp body) asm))
+                       (compile-function (intmap-select exp body) asm opts))
                      (compute-reachable-functions exp 0))
     (values (link-assembly asm #:page-aligned? (kw-arg-ref opts #:to-file? #f))
             env

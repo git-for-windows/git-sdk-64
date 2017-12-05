@@ -1283,12 +1283,17 @@ minimum, and maximum."
 (define-type-inferrer (logand a b result)
   (define (logand-min a b)
     (if (and (negative? a) (negative? b))
-        (min a b)
+        (let ((min (min a b)))
+          (if (inf? min)
+              -inf.0
+              (- 1 (next-power-of-two (- min)))))
         0))
   (define (logand-max a b)
-    (if (and (positive? a) (positive? b))
-        (min a b)
-        0))
+    (cond
+     ((or (and (positive? a) (positive? b))
+          (and (negative? a) (negative? b)))
+      (min a b))
+     (else (max a b))))
   (restrict! a &exact-integer -inf.0 +inf.0)
   (restrict! b &exact-integer -inf.0 +inf.0)
   (define! result &exact-integer
@@ -1299,7 +1304,7 @@ minimum, and maximum."
 (define-type-inferrer (ulogand a b result)
   (restrict! a &u64 0 &u64-max)
   (restrict! b &u64 0 &u64-max)
-  (define! result &u64 0 (max (&max/u64 a) (&max/u64 b))))
+  (define! result &u64 0 (min (&max/u64 a) (&max/u64 b))))
 
 (define-simple-type-checker (logsub &exact-integer &exact-integer))
 (define-type-inferrer (logsub a b result)
@@ -1315,7 +1320,7 @@ minimum, and maximum."
       (values min-a (if (negative? min-a) +inf.0 max-a)))
      ((negative? min-a)
       ;; Sign bit never set on B -- result will have the sign of A.
-      (values min-a (if (negative? max-a) -1 max-a)))
+      (values -inf.0 max-a))
      (else
       ;; Sign bit never set on A and never set on B -- the nice case.
       (values 0 max-a))))

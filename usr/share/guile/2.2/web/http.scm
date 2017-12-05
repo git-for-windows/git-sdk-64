@@ -1,6 +1,6 @@
 ;;; HTTP messages
 
-;; Copyright (C)  2010-2016 Free Software Foundation, Inc.
+;; Copyright (C)  2010-2017 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -1112,7 +1112,8 @@ symbol, like ‘GET’."
 
 (define* (parse-request-uri str #:optional (start 0) (end (string-length str)))
   "Parse a URI from an HTTP request line.  Note that URIs in requests do
-not have to have a scheme or host name.  The result is a URI object."
+not have to have a scheme or host name.  The result is a URI-reference
+object."
   (cond
    ((= start end)
     (bad-request "Missing Request-URI"))
@@ -1122,10 +1123,10 @@ not have to have a scheme or host name.  The result is a URI object."
     (let* ((q (string-index str #\? start end))
            (f (string-index str #\# start end))
            (q (and q (or (not f) (< q f)) q)))
-      (build-uri 'http
-                 #:path (substring str start (or q f end))
-                 #:query (and q (substring str (1+ q) (or f end)))
-                 #:fragment (and f (substring str (1+ f) end)))))
+      (build-uri-reference
+       #:path (substring str start (or q f end))
+       #:query (and q (substring str (1+ q) (or f end)))
+       #:fragment (and f (substring str (1+ f) end)))))
    (else
     (or (string->uri (substring str start end))
         (bad-request "Invalid URI: ~a" (substring str start end))))))
@@ -1143,31 +1144,7 @@ three values: the method, the URI, and the version."
             (parse-http-version line (1+ d1) (string-length line)))))
 
 (define (write-uri uri port)
-  (when (uri-host uri)
-    (when (uri-scheme uri)
-      (put-symbol port (uri-scheme uri))
-      (put-char port #\:))
-    (put-string port "//")
-    (when (uri-userinfo uri)
-      (put-string port (uri-userinfo uri))
-      (put-char port #\@))
-    (put-string port (uri-host uri))
-    (let ((p (uri-port uri)))
-      (when (and p (not (eqv? p 80)))
-        (put-char port #\:)
-        (put-non-negative-integer port p))))
-  (let* ((path (uri-path uri))
-         (len (string-length path)))
-    (cond
-     ((and (> len 0) (not (eqv? (string-ref path 0) #\/)))
-      (bad-request "Non-absolute URI path: ~s" path))
-     ((and (zero? len) (not (uri-host uri)))
-      (bad-request "Empty path and no host for URI: ~s" uri))
-     (else
-      (put-string port path))))
-  (when (uri-query uri)
-    (put-char port #\?)
-    (put-string port (uri-query uri))))
+  (put-string port (uri->string uri #:include-fragment? #f)))
 
 (define (write-request-line method uri version port)
   "Write the first line of an HTTP request to PORT."
@@ -1181,10 +1158,10 @@ three values: the method, the URI, and the version."
         (put-symbol port scheme)
         (put-string port "://")
         (cond
-         ((host string-index #\:)
-          (put-char #\[ port)
-          (put-string port host
-          (put-char port #\])))
+         ((string-index host #\:)
+          (put-char port #\[)
+          (put-string port host)
+          (put-char port #\]))
          (else
           (put-string port host)))
         (unless ((@@ (web uri) default-port?) scheme host-port)
@@ -1272,20 +1249,13 @@ treated specially, and is just returned as a plain string."
     parse-non-negative-integer non-negative-integer?
     (lambda (val port) (put-non-negative-integer port val))))
 
-;; emacs: (put 'declare-uri-header! 'scheme-indent-function 1)
-(define (declare-uri-header! name)
-  (declare-header! name
-    (lambda (str) (or (string->uri str) (bad-header-component 'uri str)))
-    (@@ (web uri) absolute-uri?)
-    write-uri))
-
 ;; emacs: (put 'declare-uri-reference-header! 'scheme-indent-function 1)
 (define (declare-uri-reference-header! name)
   (declare-header! name
     (lambda (str)
       (or (string->uri-reference str)
-          (bad-header-component 'uri str)))
-    uri?
+          (bad-header-component 'uri-reference str)))
+    uri-reference?
     write-uri))
 
 ;; emacs: (put 'declare-quality-list-header! 'scheme-indent-function 1)

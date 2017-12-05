@@ -80,7 +80,7 @@
                                                    (set! ,tail (cdr ,tail))
                                                    _x)))))
                         opts)
-               (make-struct ,name 0 ,@slot-names))))
+               (make-struct/no-tail ,name ,@slot-names))))
        (define ,(symbol-append stem '?) (record-predicate ,name))
        ,@(map (lambda (sname)
                 `(define ,(symbol-append stem '- sname)

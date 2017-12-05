@@ -1,4 +1,4 @@
-Produced by GNU Guile 2.2.2 from `./libguile/guile-procedures.texi'.
+Produced by GNU Guile 2.2.3 from `./libguile/guile-procedures.texi'.
 
 acons
 
@@ -1149,6 +1149,28 @@ endianness
      Return an object representing the current dynamic root.
 
      These objects are only useful for comparison using `eq?'.
+
+make-struct
+
+- Scheme Procedure: make-struct vtable tail_array_size .  init
+     Create a new structure.
+
+     VTABLE must be a vtable structure (see Vtables).
+
+     TAIL_ARRAY_SIZE must be a non-negative integer.  If the layout
+     specification indicated by VTABLE includes a tail-array, this is
+     the number of elements allocated to that array.
+
+     The INIT1, ... are optional arguments describing how successive
+     fields of the structure should be initialized.  Only fields with
+     protection 'r' or 'w' can be initialized, except for fields of type
+     's', which are automatically initialized to point to the new
+     structure itself.  Fields with protection 'o' can not be
+     initialized by Scheme programs.
+
+     If fewer optional arguments than initializable fields are supplied,
+     fields of type 'p' get default value #f while fields of type 'u'
+     are initialized to 0.
 
 issue-deprecation-warning
 
@@ -7386,19 +7408,15 @@ interval_microseconds value_seconds value_microseconds
      FIELDS must be a string made up of pairs of characters strung
      together.  The first character of each pair describes a field type,
      the second a field protection.  Allowed types are 'p' for
-     GC-protected Scheme data, 'u' for unprotected binary data, and 's'
-     for a field that points to the structure itself.  Allowed
-     protections are 'w' for mutable fields, 'h' for hidden fields, 'r'
-     for read-only fields, and 'o' for opaque fields.
+     GC-protected Scheme data, 'u' for unprotected binary data.  Allowed
+     protections are 'w' for mutable fields, 'h' for hidden fields, and
+     'r' for read-only fields.
 
      Hidden fields are writable, but they will not consume an
      initializer arg passed to `make-struct'.  They are useful to add
      slots to a struct in a way that preserves backward-compatibility
      with existing calls to `make-struct', especially for derived
      vtables.
-
-     The last field protection specification may be capitalized to
-     indicate that the field is a tail-array.
 
 struct?
 
@@ -7424,23 +7442,17 @@ interval_microseconds value_seconds value_microseconds
 
      Fields will be initialized with their default values.
 
-make-struct
+make-struct/no-tail
 
-- Scheme Procedure: make-struct vtable tail_array_size .  init
+- Scheme Procedure: make-struct/no-tail vtable .  init
      Create a new structure.
 
      VTABLE must be a vtable structure (see Vtables).
 
-     TAIL_ARRAY_SIZE must be a non-negative integer.  If the layout
-     specification indicated by VTABLE includes a tail-array, this is
-     the number of elements allocated to that array.
-
      The INIT1, ... are optional arguments describing how successive
      fields of the structure should be initialized.  Only fields with
-     protection 'r' or 'w' can be initialized, except for fields of type
-     's', which are automatically initialized to point to the new
-     structure itself.  Fields with protection 'o' can not be
-     initialized by Scheme programs.
+     protection 'r' or 'w' can be initialized.  Hidden fields (those
+     with protection 'h') have to be manually set.
 
      If fewer optional arguments than initializable fields are supplied,
      fields of type 'p' get default value #f while fields of type 'u'
@@ -7469,6 +7481,18 @@ interval_microseconds value_seconds value_microseconds
 struct-set!
 
 - Scheme Procedure: struct-set! handle pos val
+     Set the slot of the structure HANDLE with index POS to VAL.  Signal
+     an error if the slot can not be written to.
+
+struct-ref/unboxed
+
+- Scheme Procedure: struct-ref/unboxed handle pos
+     Access the POSth field of struct associated with HANDLE.  The field
+     must be of type 'u'.
+
+struct-set!/unboxed
+
+- Scheme Procedure: struct-set!/unboxed handle pos val
      Set the slot of the structure HANDLE with index POS to VAL.  Signal
      an error if the slot can not be written to.
 

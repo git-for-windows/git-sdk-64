@@ -429,17 +429,25 @@ sub-expression, via the @var{breadth-first?} keyword argument."
           (display ")"))
          (else
           (display "#"))))
+       ((bitvector? x)
+        (cond
+         ((>= width (+ 2 (array-length x)))
+          (format #t "~a" x))
+         ;; the truncated bitvector would print as #1b(...), so we print by hand.
+         ((>= width (+ 2 ellipsis-width))
+          (format #t "#*")
+          (array-for-each (lambda (xi) (format #t (if xi "1" "0")))
+                          (make-shared-array x list (- width 2 ellipsis-width)))
+          (format #t ellipsis))
+         (else
+          (display "#"))))
        ((and (array? x) (not (string? x)))
         (let* ((type (array-type x))
                (prefix
                 (if inner?
                   ""
-                  (if (zero? (array-rank x))
-                    (string-append "#0" (if (eq? #t type) "" (symbol->string type)))
-                    (let ((s (format #f "~a"
-                                     (apply make-typed-array type *unspecified*
-                                            (make-list (array-rank x) 0)))))
-                      (substring s 0 (- (string-length s) 2))))))
+                  (call-with-output-string
+                   (lambda (s) ((@@ (ice-9 arrays) array-print-prefix) x s)))))
                (width-prefix (string-length prefix)))
           (cond
            ((>= width (+ 2 width-prefix ellipsis-width))
@@ -447,7 +455,9 @@ sub-expression, via the @var{breadth-first?} keyword argument."
             (if (zero? (array-rank x))
               (print (array-ref x) (- width width-prefix 2))
               (print-sequence x (- width width-prefix 2) (array-length x)
-                              array-cell-ref identity
+                              (let ((base (caar (array-shape x))))
+                                (lambda (x i) (array-cell-ref x (+ base i))))
+                              identity
                               #:inner? (< 1 (array-rank x))))
             (display ")"))
            (else

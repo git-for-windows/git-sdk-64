@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013, 2014, 2015 Free Software Foundation, Inc.
+;; Copyright (C) 2013, 2014, 2015, 2017 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -252,6 +252,7 @@
                          ($continue k src ($values (unspecified))))))
           (letk kvoid ($kargs () () ,body))
           kvoid))
+       (($ $kargs ()) (with-cps cps k))
        (($ $kreceive arity kargs)
         (match arity
           (($ $arity () () (not #f) () #f)
@@ -289,6 +290,7 @@
           (letk kval ($kargs ('val) (val)
                        ($continue k src ($values (val)))))
           kval))
+       (($ $kargs (_)) (with-cps cps k))
        (($ $kreceive arity kargs)
         (match arity
           (($ $arity () () (not #f) () #f)
@@ -321,6 +323,44 @@
 
 ;; cps exp k-name alist -> cps term
 (define (convert cps exp k subst)
+  (define (zero-valued? exp)
+    (match exp
+      ((or ($ <module-set>) ($ <toplevel-set>) ($ <toplevel-define>)
+           ($ <lexical-set>))
+       #t)
+      (($ <let> src names syms vals body) (zero-valued? body))
+      ;; Can't use <fix> here as the hack that <fix> uses to convert its
+      ;; functions relies on continuation being single-valued.
+      ;; (($ <fix> src names syms vals body) (zero-valued? body))
+      (($ <let-values> src exp body) (zero-valued? body))
+      (($ <seq> src head tail) (zero-valued? tail))
+      (($ <primcall> src name args)
+       (match (prim-instruction name)
+         (#f #f)
+         (inst
+          (match (prim-arity inst)
+            ((out . in)
+             (and (eqv? out 0)
+                  (eqv? in (length args))))))))
+      (_ #f)))
+  (define (single-valued? exp)
+    (match exp
+      ((or ($ <void>) ($ <const>) ($ <primitive-ref>) ($ <module-ref>)
+           ($ <toplevel-ref>) ($ <lambda>))
+       #t)
+      (($ <let> src names syms vals body) (single-valued? body))
+      (($ <fix> src names syms vals body) (single-valued? body))
+      (($ <let-values> src exp body) (single-valued? body))
+      (($ <seq> src head tail) (single-valued? tail))
+      (($ <primcall> src name args)
+       (match (prim-instruction name)
+         (#f #f)
+         (inst
+          (match (prim-arity inst)
+            ((out . in)
+             (and (eqv? out 1)
+                  (eqv? in (length args))))))))
+      (_ #f)))
   ;; exp (v-name -> term) -> term
   (define (convert-arg cps exp k)
     (match exp
@@ -334,7 +374,13 @@
             (build-term ($continue kunboxed src ($primcall 'box-ref (box))))))
          ((orig-var subst-var #f) (k cps subst-var))
          (var (k cps var))))
-      (else
+      ((? single-valued?)
+       (with-cps cps
+         (letv arg)
+         (let$ body (k arg))
+         (letk karg ($kargs ('arg) (arg) ,body))
+         ($ (convert exp karg subst))))
+      (_
        (with-cps cps
          (letv arg rest)
          (let$ body (k arg))
@@ -821,12 +867,17 @@
                 ($continue k src ($primcall 'box-set! (box exp))))))))))
 
     (($ <seq> src head tail)
-     (with-cps cps
-       (let$ tail (convert tail k subst))
-       (letv vals)
-       (letk kseq ($kargs ('vals) (vals) ,tail))
-       (letk kreceive ($kreceive '() 'vals kseq))
-       ($ (convert head kreceive subst))))
+     (if (zero-valued? head)
+         (with-cps cps
+           (let$ tail (convert tail k subst))
+           (letk kseq ($kargs () () ,tail))
+           ($ (convert head kseq subst)))
+         (with-cps cps
+           (let$ tail (convert tail k subst))
+           (letv vals)
+           (letk kseq ($kargs ('vals) (vals) ,tail))
+           (letk kreceive ($kreceive '() 'vals kseq))
+           ($ (convert head kreceive subst)))))
 
     (($ <let> src names syms vals body)
      (let lp ((cps cps) (names names) (syms syms) (vals vals))
@@ -836,10 +887,16 @@
           (with-cps cps
             (let$ body (lp names syms vals))
             (let$ body (box-bound-var name sym body))
-            (letv rest)
-            (letk klet ($kargs (name 'rest) ((bound-var sym) rest) ,body))
-            (letk kreceive ($kreceive (list name) 'rest klet))
-            ($ (convert val kreceive subst)))))))
+            ($ ((lambda (cps)
+                  (if (single-valued? val)
+                      (with-cps cps
+                        (letk klet ($kargs (name) ((bound-var sym)) ,body))
+                        ($ (convert val klet subst)))
+                      (with-cps cps
+                        (letv rest)
+                        (letk klet ($kargs (name 'rest) ((bound-var sym) rest) ,body))
+                        (letk kreceive ($kreceive (list name) 'rest klet))
+                        ($ (convert val kreceive subst))))))))))))
 
     (($ <fix> src names gensyms funs body)
      ;; Some letrecs can be contified; that happens later.

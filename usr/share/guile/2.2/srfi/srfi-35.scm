@@ -1,6 +1,6 @@
 ;;; srfi-35.scm --- Conditions                 -*- coding: utf-8 -*-
 
-;; Copyright (C) 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+;; Copyright (C) 2007-2011, 2017 Free Software Foundation, Inc.
 ;;
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -58,10 +58,10 @@
     s))
 
 (define (%make-condition-type layout id parent all-fields)
-  (let ((struct (make-struct %condition-type-vtable 0
-                             (make-struct-layout layout) ;; layout
-                             print-condition             ;; printer
-                             id parent all-fields)))
+  (let ((struct (make-struct/no-tail %condition-type-vtable
+                                     (make-struct-layout layout) ;; layout
+                                     print-condition             ;; printer
+                                     id parent all-fields)))
 
     ;; Hack to associate STRUCT with a name, providing a better name for
     ;; GOOPS classes as returned by `class-of' et al.
@@ -202,7 +202,7 @@ supertypes."
              "Wrong type argument: ~S" c)))
 
 (define (make-condition-from-values type values)
-  (apply make-struct type 0 values))
+  (apply make-struct/no-tail type values))
 
 (define (make-condition type . field+value)
   "Return a new condition of type TYPE with fields initialized as specified
@@ -332,11 +332,11 @@ by C."
 
 (define &condition
   ;; The root condition type.
-  (make-struct %condition-type-vtable 0
-	       (make-struct-layout "")
-	       (lambda (c port)
-		 (display "<&condition>"))
-	       '&condition #f '() '()))
+  (make-struct/no-tail %condition-type-vtable
+                       (make-struct-layout "")
+                       (lambda (c port)
+                         (display "<&condition>"))
+                       '&condition #f '() '()))
 
 (define-condition-type &message &condition
   message-condition?

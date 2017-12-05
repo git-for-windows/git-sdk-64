@@ -511,6 +511,8 @@ already, and always calls the meet procedure."
 
 (define intmap-fold
   (case-lambda
+    ((f map)
+     ((make-intmap-folder #t) f map))
     ((f map seed)
      ((make-intmap-folder #t seed) f map seed))
     ((f map seed0 seed1)
@@ -520,6 +522,8 @@ already, and always calls the meet procedure."
 
 (define intmap-fold-right
   (case-lambda
+    ((f map)
+     ((make-intmap-folder #f) f map))
     ((f map seed)
      ((make-intmap-folder #f seed) f map seed))
     ((f map seed0 seed1)

@@ -1,6 +1,6 @@
 ;;; Traps: stepping, breakpoints, and such.
 
-;; Copyright (C)  2010, 2012, 2013, 2014 Free Software Foundation, Inc.
+;; Copyright (C)  2010, 2012, 2013, 2014, 2017 Free Software Foundation, Inc.
 
 ;;; This library is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU Lesser General Public
@@ -124,7 +124,8 @@
             (end (program-last-ip proc)))
         (lambda (frame)
           (let ((ip (frame-instruction-pointer frame)))
-            (and (<= start ip) (< ip end))))))
+            (and (<= start ip)
+                 end (< ip end))))))
      ((struct? proc)
       (frame-matcher (procedure proc)))
      (else

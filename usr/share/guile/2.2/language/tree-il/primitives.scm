@@ -1,6 +1,6 @@
 ;;; open-coding primitive procedures
 
-;; Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
+;; Copyright (C) 2009-2015, 2017 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -94,7 +94,7 @@
 
     string-length string-ref string-set!
 
-    allocate-struct struct-vtable make-struct struct-ref struct-set!
+    allocate-struct struct-vtable make-struct/no-tail struct-ref struct-set!
 
     bytevector-length
 
@@ -139,7 +139,7 @@
 (define *primitive-constructors*
   ;; Primitives that return a fresh object.
   '(acons cons cons* list vector make-vector
-    allocate-struct make-struct make-struct/no-tail
+    allocate-struct make-struct/no-tail
     make-prompt-tag))
 
 (define *primitive-accessors*
@@ -466,13 +466,6 @@
 
 (define-primitive-expander call/cc (proc)
   (call-with-current-continuation proc))
-
-(define-primitive-expander make-struct (vtable tail-size . args)
-  (if (and (const? tail-size)
-           (let ((n (const-exp tail-size)))
-             (and (number? n) (exact? n) (zero? n))))
-      (make-struct/no-tail vtable . args)
-      #f))
 
 (define-primitive-expander u8vector-ref (vec i)
   (bytevector-u8-ref vec i))

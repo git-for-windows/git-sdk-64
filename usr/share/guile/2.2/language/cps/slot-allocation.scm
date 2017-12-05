@@ -23,6 +23,7 @@
 ;;; Code:
 
 (define-module (language cps slot-allocation)
+  #:use-module (ice-9 control)
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-9)
@@ -194,17 +195,34 @@ by a label, respectively."
 
 (define (compute-reverse-control-flow-order preds)
   "Return a LABEL->ORDER bijection where ORDER is a contiguous set of
-integers starting from 0 and incrementing in sort order."
-  ;; This is more involved than forward control flow because not all
-  ;; live labels are reachable from the tail.
-  (persistent-intmap
-   (fold2 (lambda (component order n)
-            (intset-fold (lambda (label order n)
-                           (values (intmap-add! order label n)
-                                   (1+ n)))
-                         component order n))
-          (reverse (compute-sorted-strongly-connected-components preds))
-          empty-intmap 0)))
+integers starting from 0 and incrementing in sort order.  There is a
+precondition that labels in PREDS are already renumbered in reverse post
+order."
+  (define (has-back-edge? preds)
+    (let/ec return
+      (intmap-fold (lambda (label labels)
+                     (intset-fold (lambda (pred)
+                                    (if (<= label pred)
+                                        (return #t)
+                                        (values)))
+                                  labels)
+                     (values))
+                   preds)
+      #f))
+  (if (has-back-edge? preds)
+      ;; This is more involved than forward control flow because not all
+      ;; live labels are reachable from the tail.
+      (persistent-intmap
+       (fold2 (lambda (component order n)
+                (intset-fold (lambda (label order n)
+                               (values (intmap-add! order label n)
+                                       (1+ n)))
+                             component order n))
+              (reverse (compute-sorted-strongly-connected-components preds))
+              empty-intmap 0))
+      ;; Just reverse forward control flow.
+      (let ((max (intmap-prev preds)))
+        (intmap-map (lambda (label labels) (- max label)) preds))))
 
 (define* (add-prompt-control-flow-edges conts succs #:key complete?)
   "For all prompts in DFG in the range [MIN-LABEL, MIN-LABEL +
@@ -838,14 +856,16 @@ are comparable with eqv?.  A tmp slot may be used."
    cps
    empty-intmap))
 
-(define (allocate-slots cps)
+(define* (allocate-slots cps #:key (precolor-calls? #t))
   (let*-values (((defs uses) (compute-defs-and-uses cps))
                 ((representations) (compute-var-representations cps))
                 ((live-in live-out) (compute-live-variables cps defs uses))
                 ((constants) (compute-constant-values cps))
                 ((needs-slot) (compute-needs-slot cps defs uses))
-                ((lazy) (compute-lazy-vars cps live-in live-out defs
-                                           needs-slot)))
+                ((lazy) (if precolor-calls?
+                            (compute-lazy-vars cps live-in live-out defs
+                                               needs-slot)
+                            empty-intset)))
 
     (define (empty-live-slots)
       #b0)

@@ -16,16 +16,15 @@
 
 (define-module (system base types)
   #:use-module (rnrs bytevectors)
-  #:use-module ((rnrs io ports) #:hide (bytevector->string))
+  #:use-module (rnrs io ports)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-11)
   #:use-module (srfi srfi-26)
   #:use-module (srfi srfi-60)
-  #:use-module (system syntax internal)
   #:use-module (ice-9 match)
-  #:use-module (ice-9 iconv)
+  #:use-module ((ice-9 iconv) #:prefix iconv:)
   #:use-module (ice-9 format)
   #:use-module (ice-9 vlist)
   #:use-module (system foreign)
@@ -48,6 +47,12 @@
             inferior-struct-fields
 
             scm->object))
+
+;; This module can be loaded from GDB-linked-against-2.0, so use 2.2
+;; features conditionally.
+(cond-expand
+  (guile-2.2 (use-modules (system syntax internal))) ;for 'make-syntax'
+  (else #t))
 
 ;;; Commentary:
 ;;;
@@ -420,12 +425,13 @@ using BACKEND."
              (($ <stringbuf> string)
               (substring string start (+ start len)))))
           (((_ & #x047f = %tc7-stringbuf) len (bytevector buf len))
-           (stringbuf (bytevector->string buf "ISO-8859-1")))
+           (stringbuf (iconv:bytevector->string buf "ISO-8859-1")))
           (((_ & #x047f = (bitwise-ior #x400 %tc7-stringbuf))
             len (bytevector buf (* 4 len)))
-           (stringbuf (bytevector->string buf (match (native-endianness)
-                                                ('little "UTF-32LE")
-                                                ('big "UTF-32BE")))))
+           (stringbuf (iconv:bytevector->string buf
+                                                (match (native-endianness)
+                                                  ('little "UTF-32LE")
+                                                  ('big "UTF-32BE")))))
           (((_ & #x7f = %tc7-bytevector) len address)
            (let ((bv-port (memory-port backend address len)))
              (get-bytevector-n bv-port len)))
@@ -467,9 +473,13 @@ using BACKEND."
           (((_ & #x7f = %tc7-keyword) symbol)
            (symbol->keyword (cell->object symbol backend)))
           (((_ & #x7f = %tc7-syntax) expression wrap module)
-           (make-syntax (cell->object expression backend)
-                        (cell->object wrap backend)
-                        (cell->object module backend)))
+           (cond-expand
+             (guile-2.2
+              (make-syntax (cell->object expression backend)
+                           (cell->object wrap backend)
+                           (cell->object module backend)))
+             (else
+              (inferior-object 'syntax address))))
           (((_ & #x7f = %tc7-vm-continuation))
            (inferior-object 'vm-continuation address))
           (((_ & #x7f = %tc7-weak-set))

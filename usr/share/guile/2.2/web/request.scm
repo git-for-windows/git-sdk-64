@@ -170,7 +170,7 @@ the headers are each run through their respective validators."
                 (non-negative-integer? (car version))
                 (non-negative-integer? (cdr version))))
       (bad-request "Bad version: ~a" version))
-     ((not (uri? uri))
+     ((not (uri-reference? uri))
       (bad-request "Bad uri: ~a" uri))
      ((and (not port) (memq method '(POST PUT)))
       (bad-request "Missing port for message ~a" method))

@@ -1,5 +1,5 @@
 ;;; Functional name maps
-;;; Copyright (C) 2014, 2015 Free Software Foundation, Inc.
+;;; Copyright (C) 2014, 2015, 2017 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -464,6 +464,8 @@
 
 (define intset-fold
   (case-lambda
+    ((f set)
+     ((make-intset-folder #t) f set))
     ((f set seed)
      ((make-intset-folder #t seed) f set seed))
     ((f set s0 s1)
@@ -473,6 +475,8 @@
 
 (define intset-fold-right
   (case-lambda
+    ((f set)
+     ((make-intset-folder #f) f set))
     ((f set seed)
      ((make-intset-folder #f seed) f set seed))
     ((f set s0 s1)

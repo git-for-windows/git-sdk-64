@@ -130,16 +130,25 @@ host name without trailing dot."
     ;;(set-log-procedure! log)
 
     (handshake session)
+    ;; FIXME: It appears that session-record-port is entirely
+    ;; sufficient; it's already a port.  The only value of this code is
+    ;; to keep a reference on "port", to keep it alive!  To fix this we
+    ;; need to arrange to either hand GnuTLS its own fd to close, or to
+    ;; arrange a reference from the session-record-port to the
+    ;; underlying socket.
     (let ((record (session-record-port session)))
       (define (read! bv start count)
-        (define read-bv (get-bytevector-n record count))
+        (define read-bv (get-bytevector-some record))
         (if (eof-object? read-bv)
             0  ; read! returns 0 on eof-object
             (let ((read-bv-len (bytevector-length read-bv)))
-              (bytevector-copy! read-bv 0 bv start read-bv-len)
+              (bytevector-copy! read-bv 0 bv start (min read-bv-len count))
+              (when (< count read-bv-len)
+                (unget-bytevector record bv count (- read-bv-len count)))
               read-bv-len)))
       (define (write! bv start count)
         (put-bytevector record bv start count)
+        (force-output record)
         count)
       (define (get-position)
         (rnrs-ports:port-position record))
@@ -150,20 +159,21 @@ host name without trailing dot."
           (close-port port))
         (unless (port-closed? record)
           (close-port record)))
+      (setvbuf record 'block)
       (make-custom-binary-input/output-port "gnutls wrapped port" read! write!
                                             get-position set-position!
                                             close))))
 
-(define (ensure-uri uri-or-string)
+(define (ensure-uri-reference uri-or-string)
   (cond
-   ((string? uri-or-string) (string->uri uri-or-string))
-   ((uri? uri-or-string) uri-or-string)
-   (else (error "Invalid URI" uri-or-string))))
+   ((string? uri-or-string) (string->uri-reference uri-or-string))
+   ((uri-reference? uri-or-string) uri-or-string)
+   (else (error "Invalid URI-reference" uri-or-string))))
 
 (define (open-socket-for-uri uri-or-string)
   "Return an open input/output port for a connection to URI."
   (define http-proxy (current-http-proxy))
-  (define uri (ensure-uri (or http-proxy uri-or-string)))
+  (define uri (ensure-uri-reference (or http-proxy uri-or-string)))
   (define addresses
     (let ((port (uri-port uri)))
       (delete-duplicates
@@ -334,7 +344,7 @@ as is the case by default with a request returned by `build-request'."
                   (streaming? #f)
                   (request
                    (build-request
-                    (ensure-uri uri)
+                    (ensure-uri-reference uri)
                     #:method method
                     #:version version
                     #:headers (if keep-alive?

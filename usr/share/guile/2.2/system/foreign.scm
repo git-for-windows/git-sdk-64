@@ -30,6 +30,7 @@
             uint16 int16
             uint32 int32
             uint64 int64
+            intptr_t uintptr_t
 
             sizeof alignof
 
