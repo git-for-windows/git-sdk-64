@@ -435,16 +435,17 @@ surface or immediately after completing a page with either
 cairo_pdf_surface_add_outline (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>,
                                <em class="parameter"><code><span class="type">int</span> parent_id</code></em>,
                                <em class="parameter"><code>const <span class="type">char</span> *utf8</code></em>,
-                               <em class="parameter"><code>const <span class="type">char</span> *dest</code></em>,
+                               <em class="parameter"><code>const <span class="type">char</span> *link_attribs</code></em>,
                                <em class="parameter"><code><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-outline-flags-t" title="enum cairo_pdf_outline_flags_t"><span class="type">cairo_pdf_outline_flags_t</span></a> flags</code></em>);</pre>
 <p>Add an item to the document outline hierarchy with the name <em class="parameter"><code>utf8</code></em>
- that links to the
-destinaton <em class="parameter"><code>dest</code></em>
-. Destinations are created using
-<a class="link" href="cairo-Tags-and-Links.html#cairo-tag-begin" title="cairo_tag_begin ()"><code class="function">cairo_tag_begin()</code></a>/<a class="link" href="cairo-Tags-and-Links.html#cairo-tag-end" title="cairo_tag_end ()"><code class="function">cairo_tag_end()</code></a> with the
-<a class="link" href="cairo-Tags-and-Links.html#CAIRO-TAG-DEST:CAPS" title="CAIRO_TAG_DEST"><code class="literal">CAIRO_TAG_DEST</code></a>. The item will be a child of the item with id <em class="parameter"><code>parent_id</code></em>
-. Use <a class="link" href="cairo-PDF-Surfaces.html#CAIRO-PDF-OUTLINE-ROOT:CAPS" title="CAIRO_PDF_OUTLINE_ROOT"><code class="literal">CAIRO_PDF_OUTLINE_ROOT</code></a>
-as the parent id of top level items.</p>
+
+that links to the location specified by <em class="parameter"><code>link_attribs</code></em>
+. Link
+attributes have the same keys and values as the <a class="link" href="cairo-Tags-and-Links.html#link" title="Link Tags">Link Tag</a>,
+excluding the "rect" attribute. The item will be a child of the
+item with id <em class="parameter"><code>parent_id</code></em>
+. Use <a class="link" href="cairo-PDF-Surfaces.html#CAIRO-PDF-OUTLINE-ROOT:CAPS" title="CAIRO_PDF_OUTLINE_ROOT"><code class="literal">CAIRO_PDF_OUTLINE_ROOT</code></a> as the parent
+id of top level items.</p>
 <div class="refsect3">
 <a name="cairo-pdf-surface-add-outline.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -470,8 +471,8 @@ as the parent id of top level items.</p>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
-<td class="parameter_name"><p>dest</p></td>
-<td class="parameter_description"><p>the name of the destination</p></td>
+<td class="parameter_name"><p>link_attribs</p></td>
+<td class="parameter_description"><p>the link attributes specifying where this outline links to</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>

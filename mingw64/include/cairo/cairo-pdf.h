@@ -110,7 +110,7 @@ cairo_public int
 cairo_pdf_surface_add_outline (cairo_surface_t	          *surface,
 			       int                         parent_id,
 			       const char                 *utf8,
-			       const char                 *dest,
+			       const char                 *link_attribs,
 			       cairo_pdf_outline_flags_t  flags);
 
 /**
