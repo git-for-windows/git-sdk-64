@@ -152,6 +152,34 @@
 <a name="cairo-PostScript-Surfaces.description"></a><h2>Description</h2>
 <p>The PostScript surface is used to render cairo graphics to Adobe
 PostScript files and is a multi-page vector surface backend.</p>
+<p>The following mime types are supported: <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JPEG:CAPS" title="CAIRO_MIME_TYPE_JPEG"><code class="literal">CAIRO_MIME_TYPE_JPEG</code></a>,
+<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-UNIQUE-ID:CAPS" title="CAIRO_MIME_TYPE_UNIQUE_ID"><code class="literal">CAIRO_MIME_TYPE_UNIQUE_ID</code></a>,
+<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX</code></a>, <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX-PARAMS:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX_PARAMS"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX_PARAMS</code></a>,
+<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX</code></a>, <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX-PARAMS:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX_PARAMS"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX_PARAMS</code></a>,
+<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-EPS:CAPS" title="CAIRO_MIME_TYPE_EPS"><code class="literal">CAIRO_MIME_TYPE_EPS</code></a>, <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-EPS-PARAMS:CAPS" title="CAIRO_MIME_TYPE_EPS_PARAMS"><code class="literal">CAIRO_MIME_TYPE_EPS_PARAMS</code></a>.</p>
+<p>Source surfaces used by the PostScript surface that have a
+<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-UNIQUE-ID:CAPS" title="CAIRO_MIME_TYPE_UNIQUE_ID"><code class="literal">CAIRO_MIME_TYPE_UNIQUE_ID</code></a> mime type will be stored in PostScript
+printer memory for the duration of the print
+job. <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-UNIQUE-ID:CAPS" title="CAIRO_MIME_TYPE_UNIQUE_ID"><code class="literal">CAIRO_MIME_TYPE_UNIQUE_ID</code></a> should only be used for small
+frequently used sources.</p>
+<p>The <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX</code></a> and <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX-PARAMS:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX_PARAMS"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX_PARAMS</code></a> mime types
+are documented in <a class="link" href="cairo-PDF-Surfaces.html#ccitt" title="CCITT Fax Images">CCITT Fax Images</a>.</p>
+<div class="refsect2">
+<a name="eps"></a><h3>Embedding EPS files</h3>
+<p>Encapsulated PostScript files can be embedded in the PS output by
+setting the CAIRO_MIME_TYPE_EPS mime data on a surface to the EPS
+data and painting the surface.  The EPS will be scaled and
+translated to the extents of the surface the EPS data is attached
+to.</p>
+<p>The <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-EPS:CAPS" title="CAIRO_MIME_TYPE_EPS"><code class="literal">CAIRO_MIME_TYPE_EPS</code></a> mime type requires the
+<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-EPS-PARAMS:CAPS" title="CAIRO_MIME_TYPE_EPS_PARAMS"><code class="literal">CAIRO_MIME_TYPE_EPS_PARAMS</code></a> mime data to also be provided in order
+to specify the embeddding parameters.  <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-EPS-PARAMS:CAPS" title="CAIRO_MIME_TYPE_EPS_PARAMS"><code class="literal">CAIRO_MIME_TYPE_EPS_PARAMS</code></a>
+mime data must contain a string of the form "bbox=[llx lly urx
+ury]" that specifies the bounding box (in PS coordinates) of the
+EPS graphics. The parameters are: lower left x, lower left y, upper
+right x, upper right y. Normally the bbox data is identical to the
+%%<code class="literal">BoundingBox</code> data in the EPS file.</p>
+</div>
 </div>
 <div class="refsect1">
 <a name="cairo-PostScript-Surfaces.functions_details"></a><h2>Functions</h2>
@@ -179,7 +207,7 @@ vary. See <a class="link" href="cairo-PostScript-Surfaces.html#cairo-ps-surface-
 <tbody>
 <tr>
 <td class="parameter_name"><p>filename</p></td>
-<td class="parameter_description"><p>a filename for the PS output (must be writable), <code class="literal">NULL</code> may be
+<td class="parameter_description"><p>a filename for the PS output (must be writable), <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> may be
 used to specify no output. This will generate a PS surface that
 may be queried and used as a source, without generating a
 temporary file.</p></td>
@@ -236,7 +264,7 @@ output can vary. See <a class="link" href="cairo-PostScript-Surfaces.html#cairo-
 <tbody>
 <tr>
 <td class="parameter_name"><p>write_func</p></td>
-<td class="parameter_description"><p>a <a class="link" href="cairo-PNG-Support.html#cairo-write-func-t" title="cairo_write_func_t ()"><span class="type">cairo_write_func_t</span></a> to accept the output data, may be <code class="literal">NULL</code>
+<td class="parameter_description"><p>a <a class="link" href="cairo-PNG-Support.html#cairo-write-func-t" title="cairo_write_func_t ()"><span class="type">cairo_write_func_t</span></a> to accept the output data, may be <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 to indicate a no-op <em class="parameter"><code>write_func</code></em>
 . With a no-op <em class="parameter"><code>write_func</code></em>
 ,
@@ -351,7 +379,7 @@ cairo_ps_get_levels (<em class="parameter"><code><a class="link" href="cairo-Pos
 cairo_ps_level_to_string (<em class="parameter"><code><a class="link" href="cairo-PostScript-Surfaces.html#cairo-ps-level-t" title="enum cairo_ps_level_t"><span class="type">cairo_ps_level_t</span></a> level</code></em>);</pre>
 <p>Get the string representation of the given <em class="parameter"><code>level</code></em>
  id. This function
-will return <code class="literal">NULL</code> if <em class="parameter"><code>level</code></em>
+will return <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>level</code></em>
  id isn't valid. See <a class="link" href="cairo-PostScript-Surfaces.html#cairo-ps-get-levels" title="cairo_ps_get_levels ()"><code class="function">cairo_ps_get_levels()</code></a>
 for a way to get the list of valid level ids.</p>
 <div class="refsect3">
@@ -382,7 +410,7 @@ for a way to get the list of valid level ids.</p>
 cairo_ps_surface_set_eps (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>,
                           <em class="parameter"><code><a class="link" href="cairo-Types.html#cairo-bool-t" title="cairo_bool_t"><span class="type">cairo_bool_t</span></a> eps</code></em>);</pre>
 <p>If <em class="parameter"><code>eps</code></em>
- is <code class="literal">TRUE</code>, the PostScript surface will output Encapsulated
+ is <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>, the PostScript surface will output Encapsulated
 PostScript.</p>
 <p>This function should only be called before any drawing operations
 have been performed on the current page. The simplest way to do
@@ -405,7 +433,7 @@ than one page.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>eps</p></td>
-<td class="parameter_description"><p><code class="literal">TRUE</code> to output EPS format PostScript</p></td>
+<td class="parameter_description"><p><a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> to output EPS format PostScript</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 </tbody>
@@ -436,7 +464,7 @@ cairo_ps_surface_get_eps (<em class="parameter"><code><a class="link" href="cair
 </div>
 <div class="refsect3">
 <a name="cairo-ps-surface-get-eps.returns"></a><h4>Returns</h4>
-<p> <code class="literal">TRUE</code> if the surface will output Encapsulated PostScript.</p>
+<p> <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the surface will output Encapsulated PostScript.</p>
 </div>
 <p class="since">Since: 1.6</p>
 </div>

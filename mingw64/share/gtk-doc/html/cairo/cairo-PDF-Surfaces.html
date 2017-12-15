@@ -159,18 +159,59 @@ PDF files and is a multi-page vector surface backend.</p>
 <p>The following mime types are supported: <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JPEG:CAPS" title="CAIRO_MIME_TYPE_JPEG"><code class="literal">CAIRO_MIME_TYPE_JPEG</code></a>,
 <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JP2:CAPS" title="CAIRO_MIME_TYPE_JP2"><code class="literal">CAIRO_MIME_TYPE_JP2</code></a>, <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-UNIQUE-ID:CAPS" title="CAIRO_MIME_TYPE_UNIQUE_ID"><code class="literal">CAIRO_MIME_TYPE_UNIQUE_ID</code></a>,
 <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2:CAPS" title="CAIRO_MIME_TYPE_JBIG2"><code class="literal">CAIRO_MIME_TYPE_JBIG2</code></a>, <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS" title="CAIRO_MIME_TYPE_JBIG2_GLOBAL"><code class="literal">CAIRO_MIME_TYPE_JBIG2_GLOBAL</code></a>,
-<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS" title="CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID"><code class="literal">CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</code></a>.</p>
+<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS" title="CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID"><code class="literal">CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</code></a>,
+<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX</code></a>, <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX-PARAMS:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX_PARAMS"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX_PARAMS</code></a>.</p>
+<div class="refsect2">
+<a name="id-1.5.5.5.4"></a><h3>JBIG2 Images</h3>
 <p>JBIG2 data in PDF must be in the embedded format as described in
 ISO/IEC 11544. Image specific JBIG2 data must be in
 <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2:CAPS" title="CAIRO_MIME_TYPE_JBIG2"><code class="literal">CAIRO_MIME_TYPE_JBIG2</code></a>.  Any global segments in the JBIG2 data
 (segments with page association field set to 0) must be in
 <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS" title="CAIRO_MIME_TYPE_JBIG2_GLOBAL"><code class="literal">CAIRO_MIME_TYPE_JBIG2_GLOBAL</code></a>. The global data may be shared by
 multiple images. All images sharing the same global data must set
-<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS" title="CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID"><code class="literal">CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</code></a> to a unique identifer. At least
+<a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS" title="CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID"><code class="literal">CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</code></a> to a unique identifier. At least
 one of the images must provide the global data using
 <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2-GLOBAL:CAPS" title="CAIRO_MIME_TYPE_JBIG2_GLOBAL"><code class="literal">CAIRO_MIME_TYPE_JBIG2_GLOBAL</code></a>. The global data will only be
-embedded once but shared by all JBIG2 images with the same
+embedded once and shared by all JBIG2 images with the same
 <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-JBIG2-GLOBAL-ID:CAPS" title="CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID"><code class="literal">CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID</code></a>.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="ccitt"></a><h3>CCITT Fax Images</h3>
+<p>The <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX</code></a> mime data requires a number of decoding
+parameters These parameters are specified using <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX-PARAMS:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX_PARAMS"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX_PARAMS</code></a>.</p>
+<p><a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX-PARAMS:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX_PARAMS"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX_PARAMS</code></a> mime data must contain a string of the form
+"param1=value1 param2=value2 ...".</p>
+<p><em class="parameter"><code>Columns</code></em>
+: [required] An integer specifying the width of the image in pixels.</p>
+<p><em class="parameter"><code>Rows</code></em>
+: [required] An integer specifying the height of the image in scan lines.</p>
+<p><em class="parameter"><code>K</code></em>
+: [optional] An integer identifying the encoding scheme used. &lt; 0
+is 2 dimensional Group 4, = 0 is Group3 1 dimensional, &gt; 0 is mixed 1
+and 2 dimensional encoding. Default is 0.</p>
+<p><em class="parameter"><code>EndOfLine</code></em>
+: [optional] If true end-of-line bit patterns are present. Default is false.</p>
+<p><em class="parameter"><code>EncodedByteAlign</code></em>
+: [optional] If true the end of line is padded
+with 0 bits so the next line begins on a byte boundary. Default is false.</p>
+<p><em class="parameter"><code>EndOfBlock</code></em>
+: [optional] If true the data contains an end-of-block pattern. Default is true.</p>
+<p><em class="parameter"><code>BlackIs1</code></em>
+: [optional] If true 1 bits are black pixels. Default is false.</p>
+<p><em class="parameter"><code>DamagedRowsBeforeError</code></em>
+: [optional] An integer specifying the
+number of damages rows tolerated before an error occurs. Default is 0.</p>
+<p>Boolean values may be "true" or "false", or 1 or 0.</p>
+<p>These parameters are the same as the CCITTFaxDecode parameters in the
+<a class="ulink" href="https://www.adobe.com/products/postscript/pdfs/PLRM.pdf" target="_top">PostScript Language Reference</a>
+and <a class="ulink" href="https://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/PDF32000_2008.pdf" target="_top">Portable Document Format (PDF)</a>.
+Refer to these documents for further details.</p>
+<p>An example <a class="link" href="cairo-cairo-surface-t.html#CAIRO-MIME-TYPE-CCITT-FAX-PARAMS:CAPS" title="CAIRO_MIME_TYPE_CCITT_FAX_PARAMS"><code class="literal">CAIRO_MIME_TYPE_CCITT_FAX_PARAMS</code></a> string is:</p>
+<pre class="programlisting">
+"Columns=10230 Rows=40000 K=1 EndOfLine=true EncodedByteAlign=1 BlackIs1=false"
+</pre>
+</div>
 </div>
 <div class="refsect1">
 <a name="cairo-PDF-Surfaces.functions_details"></a><h2>Functions</h2>
@@ -194,7 +235,7 @@ to <em class="parameter"><code>filename</code></em>
 <tbody>
 <tr>
 <td class="parameter_name"><p>filename</p></td>
-<td class="parameter_description"><p>a filename for the PDF output (must be writable), <code class="literal">NULL</code> may be
+<td class="parameter_description"><p>a filename for the PDF output (must be writable), <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> may be
 used to specify no output. This will generate a PDF surface that
 may be queried and used as a source, without generating a
 temporary file.</p></td>
@@ -247,7 +288,7 @@ incrementally to the stream represented by <em class="parameter"><code>write_fun
 <tbody>
 <tr>
 <td class="parameter_name"><p>write_func</p></td>
-<td class="parameter_description"><p>a <a class="link" href="cairo-PNG-Support.html#cairo-write-func-t" title="cairo_write_func_t ()"><span class="type">cairo_write_func_t</span></a> to accept the output data, may be <code class="literal">NULL</code>
+<td class="parameter_description"><p>a <a class="link" href="cairo-PNG-Support.html#cairo-write-func-t" title="cairo_write_func_t ()"><span class="type">cairo_write_func_t</span></a> to accept the output data, may be <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 to indicate a no-op <em class="parameter"><code>write_func</code></em>
 . With a no-op <em class="parameter"><code>write_func</code></em>
 ,
@@ -361,7 +402,7 @@ cairo_pdf_get_versions (<em class="parameter"><code><a class="link" href="cairo-
 cairo_pdf_version_to_string (<em class="parameter"><code><a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-version-t" title="enum cairo_pdf_version_t"><span class="type">cairo_pdf_version_t</span></a> version</code></em>);</pre>
 <p>Get the string representation of the given <em class="parameter"><code>version</code></em>
  id. This function
-will return <code class="literal">NULL</code> if <em class="parameter"><code>version</code></em>
+will return <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>version</code></em>
  isn't valid. See <a class="link" href="cairo-PDF-Surfaces.html#cairo-pdf-get-versions" title="cairo_pdf_get_versions ()"><code class="function">cairo_pdf_get_versions()</code></a>
 for a way to get the list of valid version ids.</p>
 <div class="refsect3">

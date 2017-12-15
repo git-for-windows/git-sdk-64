@@ -1,6 +1,6 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Grapheme cluster breaks in Unicode strings.
-   Copyright (C) 2010-2016 Free Software Foundation, Inc.
+   Copyright (C) 2010-2017 Free Software Foundation, Inc.
    Written by Ben Pfaff <blp@cs.stanford.edu>, 2010.
 
    This program is free software: you can redistribute it and/or
@@ -23,7 +23,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _UNIGBRK_H
 #define _UNIGBRK_H
@@ -62,7 +62,12 @@ enum
   GBP_T            = 9,
   GBP_LV           = 10,
   GBP_LVT          = 11,
-  GBP_RI           = 12
+  GBP_RI           = 12,
+  GBP_ZWJ          = 13,
+  GBP_EB           = 14,
+  GBP_EM           = 15,
+  GBP_GAZ          = 16,
+  GBP_EBG          = 17
 };
 
 /* Return the Grapheme_Cluster_Break property of a Unicode character. */
@@ -128,6 +133,8 @@ extern void
        u32_grapheme_breaks (const uint32_t *s, size_t n, char *p);
 extern void
        ulc_grapheme_breaks (const char *s, size_t n, char *p);
+extern void
+       uc_grapheme_breaks (const ucs4_t *s, size_t n, char *p);
 
 /* ========================================================================= */
 

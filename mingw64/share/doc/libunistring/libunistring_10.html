@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on December, 2 2016 by texi2html 1.78a -->
+<!-- Created on November, 30 2017 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -104,6 +104,11 @@ clusters in a string.
 <dd><p>Returns the start of the next grapheme cluster following <var>s</var>,
 or <var>end</var> if no grapheme cluster break is encountered before it.
 Returns NULL if and only if <code><var>s</var> == <var>end</var></code>.
+</p>
+<p>Note that these functions do not handle the case when a character
+outside of the range between <var>s</var> and <var>end</var> is needed to
+determine the boundary.  Use <code>_grapheme_breaks</code> functions for such
+cases.
 </p></dd></dl>
 
 <dl>
@@ -119,6 +124,11 @@ Returns NULL if and only if <code><var>s</var> == <var>end</var></code>.
 <dd><p>Returns the start of the grapheme cluster preceding <var>s</var>, or
 <var>start</var> if no grapheme cluster break is encountered before it.
 Returns NULL if and only if <code><var>s</var> == <var>start</var></code>.
+</p>
+<p>Note that these functions do not handle the case when a character
+outside of the range between <var>start</var> and <var>s</var> is needed to
+determine the boundary.  Use <code>_grapheme_breaks</code> functions for such
+cases.
 </p></dd></dl>
 
 <p>The following functions determine all of the grapheme cluster
@@ -137,8 +147,11 @@ boundaries in a string.
 <dt><u>Function:</u> void <b>ulc_grapheme_breaks</b><i> (const char *<var>s</var>, size_t <var>n</var>, char *<var>p</var>)</i>
 <a name="IDX721"></a>
 </dt>
+<dt><u>Function:</u> void <b>uc_grapheme_breaks</b><i> (const ucs_t *<var>s</var>, size_t <var>n</var>, char *<var>p</var>)</i>
+<a name="IDX722"></a>
+</dt>
 <dd><p>Determines the grapheme cluster break points in <var>s</var>, an array of
-<var>n</var> units, and stores the result at <code><var>p</var>[0..<var>n</var>-1]</code>.
+<var>n</var> units, and stores the result at <code><var>p</var>[0..<var>nx</var>-1]</code>.
 </p><dl compact="compact">
 <dt> <code><var>p</var>[i] = 1</code></dt>
 <dd><p>means that there is a grapheme cluster boundary between
@@ -151,6 +164,13 @@ same grapheme cluster.
 </dl>
 <p><code><var>p</var>[0]</code> is always set to 1, because there is always a
 grapheme cluster break at start of text.
+</p>
+<p>In addition to the above variants for UTF-8, UTF-16, and UTF-32 strings,
+<code>&lt;unigbrk.h&gt;</code> provides another variant: <code>uc_grapheme_breaks</code>.
+</p>
+<p>This is similar to <code>u32_grapheme_breaks</code>, but it accepts any
+characters which may not be represented in UTF-32, such as control
+characters.
 </p></dd></dl>
 
 <hr size="6">
@@ -169,40 +189,58 @@ property.  More values may be added in the future.
 </p>
 <dl>
 <dt><u>Constant:</u> int <b>GBP_OTHER</b>
-<a name="IDX722"></a>
-</dt>
-<dt><u>Constant:</u> int <b>GBP_CR</b>
 <a name="IDX723"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_LF</b>
+<dt><u>Constant:</u> int <b>GBP_CR</b>
 <a name="IDX724"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_CONTROL</b>
+<dt><u>Constant:</u> int <b>GBP_LF</b>
 <a name="IDX725"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_EXTEND</b>
+<dt><u>Constant:</u> int <b>GBP_CONTROL</b>
 <a name="IDX726"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_PREPEND</b>
+<dt><u>Constant:</u> int <b>GBP_EXTEND</b>
 <a name="IDX727"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_SPACINGMARK</b>
+<dt><u>Constant:</u> int <b>GBP_PREPEND</b>
 <a name="IDX728"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_L</b>
+<dt><u>Constant:</u> int <b>GBP_SPACINGMARK</b>
 <a name="IDX729"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_V</b>
+<dt><u>Constant:</u> int <b>GBP_L</b>
 <a name="IDX730"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_T</b>
+<dt><u>Constant:</u> int <b>GBP_V</b>
 <a name="IDX731"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_LV</b>
+<dt><u>Constant:</u> int <b>GBP_T</b>
 <a name="IDX732"></a>
 </dt>
-<dt><u>Constant:</u> int <b>GBP_LVT</b>
+<dt><u>Constant:</u> int <b>GBP_LV</b>
 <a name="IDX733"></a>
+</dt>
+<dt><u>Constant:</u> int <b>GBP_LVT</b>
+<a name="IDX734"></a>
+</dt>
+<dt><u>Constant:</u> int <b>GBP_RI</b>
+<a name="IDX735"></a>
+</dt>
+<dt><u>Constant:</u> int <b>GBP_ZWJ</b>
+<a name="IDX736"></a>
+</dt>
+<dt><u>Constant:</u> int <b>GBP_EB</b>
+<a name="IDX737"></a>
+</dt>
+<dt><u>Constant:</u> int <b>GBP_EM</b>
+<a name="IDX738"></a>
+</dt>
+<dt><u>Constant:</u> int <b>GBP_GAZ</b>
+<a name="IDX739"></a>
+</dt>
+<dt><u>Constant:</u> int <b>GBP_EBG</b>
+<a name="IDX740"></a>
 </dt>
 </dl>
 
@@ -211,7 +249,7 @@ character.
 </p>
 <dl>
 <dt><u>Function:</u> int <b>uc_graphemeclusterbreak_property</b><i> (ucs4_t <var>uc</var>)</i>
-<a name="IDX734"></a>
+<a name="IDX741"></a>
 </dt>
 <dd><p>Returns the Grapheme_Cluster_Break property of a Unicode character.
 </p></dd></dl>
@@ -222,7 +260,7 @@ the higher-level functions in the previous section are directly based.
 </p>
 <dl>
 <dt><u>Function:</u> bool <b>uc_is_grapheme_break</b><i> (ucs4_t <var>a</var>, ucs4_t <var>b</var>)</i>
-<a name="IDX735"></a>
+<a name="IDX742"></a>
 </dt>
 <dd><p>Returns true if there is an grapheme cluster boundary between Unicode
 characters <var>a</var> and <var>b</var>.
@@ -234,6 +272,10 @@ of text, respectively.
 <p>This implements the extended (not legacy) grapheme cluster rules
 described in the Unicode standard, because the standard says that they
 are preferred.
+</p>
+<p>Note that this function do not handle the case when three ore more
+consecutive characters are needed to determine the boundary.  Use
+<code>uc_grapheme_breaks</code> for such cases.
 </p></dd></dl>
 <hr size="6">
 <table cellpadding="1" cellspacing="1" border="0">
@@ -251,7 +293,7 @@ are preferred.
 </tr></table>
 <p>
  <font size="-1">
-  This document was generated by <em>Daiki Ueno</em> on <em>December, 2 2016</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Daiki Ueno</em> on <em>November, 30 2017</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

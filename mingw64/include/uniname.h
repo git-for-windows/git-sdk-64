@@ -1,6 +1,6 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Association between Unicode characters and their names.
-   Copyright (C) 2000-2002, 2005, 2007, 2009-2016 Free Software Foundation,
+   Copyright (C) 2000-2002, 2005, 2007, 2009-2017 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or
@@ -23,7 +23,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _UNINAME_H
 #define _UNINAME_H

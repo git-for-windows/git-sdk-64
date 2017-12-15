@@ -3,7 +3,7 @@
 #if (__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
 #include <stdbool.h>
 #else
-/* Copyright (C) 2001-2003, 2006-2009 Free Software Foundation, Inc.
+/* Copyright (C) 2001-2003, 2006-2017 Free Software Foundation, Inc.
    Written by Bruno Haible <haible@clisp.cons.org>, 2001.
 
    This program is free software; you can redistribute it and/or modify
@@ -54,50 +54,62 @@
          with this substitute.  With this substitute, only the values 0 and 1
          give the expected result when converted to _Bool' or 'bool'.
 
+       - C99 allows the use of (_Bool)0.0 in constant expressions, but
+         this substitute cannot always provide this property.
+
    Also, it is suggested that programs use 'bool' rather than '_Bool';
    this isn't required, but 'bool' is more common.  */
 
 
 /* 7.16. Boolean type and values */
 
-/* For the sake of symbolic names in gdb, we define true and false as
-   enum constants, not only as macros.
-   It is tempting to write
-      typedef enum { false = 0, true = 1 } _Bool;
-   so that gdb prints values of type 'bool' symbolically. But if we do
-   this, values of type '_Bool' may promote to 'int' or 'unsigned int'
-   (see ISO C 99 6.7.2.2.(4)); however, '_Bool' must promote to 'int'
-   (see ISO C 99 6.3.1.1.(2)).  So we add a negative value to the
-   enum; this ensures that '_Bool' promotes to 'int'.  */
-#if defined __cplusplus
+#ifdef __cplusplus
   /* Assume the compiler has 'bool' and '_Bool'.  */
 #else
-   /* If @HAVE__BOOL@:
-        Some HP-UX cc and AIX IBM C compiler versions have compiler bugs when
-        the built-in _Bool type is used.  See
-          http://gcc.gnu.org/ml/gcc-patches/2003-12/msg02303.html
-          http://lists.gnu.org/archive/html/bug-coreutils/2005-11/msg00161.html
-          http://lists.gnu.org/archive/html/bug-coreutils/2005-10/msg00086.html
-        Similar bugs are likely with other compilers as well; this file
-        wouldn't be used if <stdbool.h> was working.
-        So we override the _Bool type.
-      If !@HAVE__BOOL@:
-        Need to define _Bool ourselves. As 'signed char' or as an enum type?
-        Use of a typedef, with SunPRO C, leads to a stupid
-          "warning: _Bool is a keyword in ISO C99".
-        Use of an enum type, with IRIX cc, leads to a stupid
-          "warning(1185): enumerated type mixed with another type".
-        Even the existence of an enum type, without a typedef,
-          "Invalid enumerator. (badenum)" with HP-UX cc on Tru64.
-        The only benefit of the enum, debuggability, is not important
-        with these compilers.  So use 'signed char' and no enum.  */
-# define _Bool signed char
+  /* <stdbool.h> is known to exist and work with the following compilers:
+       - GNU C 3.0 or newer, on any platform,
+       - Intel C,
+       - MSVC 12 (Visual Studio 2013) or newer,
+       - Sun C, on Solaris, if _STDC_C99 is defined,
+       - AIX xlc, if _ANSI_C_SOURCE is defined,
+       - HP C, on HP-UX 11.31 or newer.
+     It is know not to work with:
+       - Sun C, on Solaris, if __C99FEATURES__ is defined but _STDC_C99 is not,
+       - MIPSpro C 7.30, on IRIX.  */
+# if (__GNUC__ >= 3) \
+     || defined __INTEL_COMPILER \
+     || (_MSC_VER >= 1800) \
+     || (defined __SUNPRO_C && defined _STDC_C99) \
+     || (defined _AIX && !defined __GNUC__ && defined _ANSI_C_SOURCE) \
+     || defined __HP_cc
+   /* Assume the compiler has <stdbool.h>.  */
+#  include <stdbool.h>
+# else
+   /* Need to define _Bool ourselves. As 'signed char' or as an enum type?
+      Use of a typedef, with SunPRO C, leads to a stupid
+        "warning: _Bool is a keyword in ISO C99".
+      Use of an enum type, with IRIX cc, leads to a stupid
+        "warning(1185): enumerated type mixed with another type".
+      Even the existence of an enum type, without a typedef,
+        "Invalid enumerator. (badenum)" with HP-UX cc on Tru64.
+      The only benefit of the enum, debuggability, is not important
+      with these compilers.  So use 'signed char' and no enum.  */
+#  define _Bool signed char
+#  define bool _Bool
+# endif
 #endif
-#define bool _Bool
 
 /* The other macros must be usable in preprocessor directives.  */
-#define false 0
-#define true 1
+#ifdef __cplusplus
+# define false false
+# define true true
+#else
+# undef false
+# define false 0
+# undef true
+# define true 1
+#endif
+
 #define __bool_true_false_are_defined 1
 
 #endif /* _UNISTRING_STDBOOL_H */

@@ -29,7 +29,7 @@ extern "C" {
 
 /* Version number: (major<<16) + (minor<<8) + subminor
    except that for versions <= 0.9.3 the value was 0x000009. */
-#define _LIBUNISTRING_VERSION 0x000907
+#define _LIBUNISTRING_VERSION 0x000908
 extern LIBUNISTRING_DLL_VARIABLE const int _libunistring_version; /* Likewise */
 
 

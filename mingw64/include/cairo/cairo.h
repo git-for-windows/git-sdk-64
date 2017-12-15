@@ -2453,6 +2453,10 @@ cairo_surface_set_user_data (cairo_surface_t		 *surface,
 #define CAIRO_MIME_TYPE_JBIG2 "application/x-cairo.jbig2"
 #define CAIRO_MIME_TYPE_JBIG2_GLOBAL "application/x-cairo.jbig2-global"
 #define CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID "application/x-cairo.jbig2-global-id"
+#define CAIRO_MIME_TYPE_CCITT_FAX "image/g3fax"
+#define CAIRO_MIME_TYPE_CCITT_FAX_PARAMS "application/x-cairo.ccitt.params"
+#define CAIRO_MIME_TYPE_EPS "application/postscript"
+#define CAIRO_MIME_TYPE_EPS_PARAMS "application/x-cairo.eps.params"
 
 cairo_public void
 cairo_surface_get_mime_data (cairo_surface_t		*surface,
