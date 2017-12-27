@@ -103,10 +103,10 @@ typedef struct ItclPreserveInfoEntry {
 } ItclPreserveInfoEntry;
 
 typedef struct ItclPreserveInfo {
-    int refCount;
+    size_t refCount;
     ClientData clientData;
-    int size;
-    int numEntries;
+    size_t size;
+    size_t numEntries;
     ItclPreserveInfoEntry *entries;
 } ItclPreserveInfo;
 
@@ -385,6 +385,7 @@ typedef struct ItclObject {
     int noComponentTrace;         /* don't call component traces if
                                    * setting components in DelegationInstall */
     int hadConstructorError;      /* needed for multiple calls of CallItclObjectCmd */
+    int refCount;
 } ItclObject;
 
 #define ITCL_IGNORE_ERRS  0x002  /* useful for construction/destruction */
@@ -687,6 +688,9 @@ MODULE_SCOPE void ItclReleaseIMF(ClientData imPtr);
 MODULE_SCOPE void ItclPreserveClass(ItclClass *iclsPtr);
 MODULE_SCOPE void ItclReleaseClass(ClientData iclsPtr);
 
+MODULE_SCOPE void ItclPreserveObject(ItclObject *ioPtr);
+MODULE_SCOPE void ItclReleaseObject(ClientData ioPtr);
+
 MODULE_SCOPE ItclFoundation *ItclGetFoundation(Tcl_Interp *interp);
 MODULE_SCOPE Tcl_ObjCmdProc ItclClassCommandDispatcher;
 MODULE_SCOPE Tcl_Command Itcl_CmdAliasProc(Tcl_Interp *interp,
@@ -741,6 +745,7 @@ MODULE_SCOPE int Itcl_CreateMethodVariable (Tcl_Interp *interp,
 	Tcl_Obj *callbackPtr, ItclMethodVariable **imvPtr);
 MODULE_SCOPE int DelegationInstall(Tcl_Interp *interp, ItclObject *ioPtr,
         ItclClass *iclsPtr);
+MODULE_SCOPE ItclClass *ItclNamespace2Class(Tcl_Namespace *nsPtr);
 MODULE_SCOPE const char* ItclGetCommonInstanceVar(Tcl_Interp *interp,
         const char *name, const char *name2, ItclObject *contextIoPtr,
 	ItclClass *contextIclsPtr);
