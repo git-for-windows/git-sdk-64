@@ -181,6 +181,9 @@ limitations in handling dllimport attribute.  */
 #if  __MINGW_GNUC_PREREQ (3, 1)
 #define __MINGW_ATTRIB_USED __attribute__ ((__used__))
 #define __MINGW_ATTRIB_DEPRECATED __attribute__ ((__deprecated__))
+#if __MINGW_GNUC_PREREQ (4, 5) || defined (__clang__)
+#define __MINGW_ATTRIB_DEPRECATED_MSG(x) __attribute__ ((__deprecated__(x)))
+#endif
 #elif __MINGW_MSC_PREREQ(12, 0)
 #define __MINGW_ATTRIB_USED
 #define __MINGW_ATTRIB_DEPRECATED __declspec(deprecated)
@@ -188,6 +191,10 @@ limitations in handling dllimport attribute.  */
 #define __MINGW_ATTRIB_USED __MINGW_ATTRIB_UNUSED
 #define __MINGW_ATTRIB_DEPRECATED
 #endif /* GNUC >= 3.1 */
+
+#ifndef __MINGW_ATTRIB_DEPRECATED_MSG
+#define __MINGW_ATTRIB_DEPRECATED_MSG(x) __MINGW_ATTRIB_DEPRECATED
+#endif
 
 #if  __MINGW_GNUC_PREREQ (3, 3)
 #define __MINGW_NOTHROW __attribute__ ((__nothrow__))
@@ -217,7 +224,7 @@ limitations in handling dllimport attribute.  */
 
 #ifndef __MSVCRT_VERSION__
 /*  High byte is the major version, low byte is the minor. */
-# define __MSVCRT_VERSION__ 0x0700
+# define __MSVCRT_VERSION__ 0x700
 #endif
 
 
@@ -535,12 +542,13 @@ extern "C" {
 #endif
 
 
-#ifndef __has_builtin
-  #define __has_builtin(x) 0
-#endif
-
 #ifdef __MINGW_INTRIN_INLINE
-#if !defined (__clang__) || !__has_builtin(__debugbreak)
+#ifdef __has_builtin
+#define __MINGW_DEBUGBREAK_IMPL !__has_builtin(__debugbreak)
+#else
+#define __MINGW_DEBUGBREAK_IMPL 1
+#endif
+#if __MINGW_DEBUGBREAK_IMPL == 1
 void __cdecl __debugbreak(void);
 __MINGW_INTRIN_INLINE void __cdecl __debugbreak(void)
 {

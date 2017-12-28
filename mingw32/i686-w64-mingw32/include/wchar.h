@@ -52,9 +52,7 @@ extern "C" {
 #define _FILE_DEFINED
 #endif
 
-#if __MSVCRT_VERSION__ >= 0x1400
 _CRTIMP FILE *__cdecl __acrt_iob_func(unsigned index);
-#else
 #ifndef _STDIO_DEFINED
 #ifdef _WIN64
   _CRTIMP FILE *__cdecl __iob_func(void);
@@ -71,18 +69,11 @@ extern FILE (* __MINGW_IMP_SYMBOL(_iob))[];	/* A pointer to an array of FILE */
 
 #define _iob __iob_func()
 #endif
-#endif
 
 #ifndef _STDSTREAM_DEFINED
-#if __MSVCRT_VERSION__ >= 0x1400
 #define stdin (__acrt_iob_func(0))
 #define stdout (__acrt_iob_func(1))
 #define stderr (__acrt_iob_func(2))
-#else
-#define stdin (&__iob_func()[0])
-#define stdout (&__iob_func()[1])
-#define stderr (&__iob_func()[2])
-#endif
 #define _STDSTREAM_DEFINED
 #endif
 
@@ -133,8 +124,8 @@ extern FILE (* __MINGW_IMP_SYMBOL(_iob))[];	/* A pointer to an array of FILE */
 #define _wfinddata_t _wfinddata32_t
 #define _wfinddatai64_t _wfinddata32i64_t
 
-#define _wfindfirst32 _wfindfirst
-#define _wfindnext32 _wfindnext
+#define _wfindfirst _wfindfirst32
+#define _wfindnext _wfindnext32
 #define _wfindfirst32i64 _wfindfirsti64
 #define _wfindnext32i64 _wfindnexti64
 #else
@@ -516,6 +507,10 @@ extern FILE (* __MINGW_IMP_SYMBOL(_iob))[];	/* A pointer to an array of FILE */
 #undef __mingw_ovr
 #if defined (__GNUC__)
 #define __mingw_ovr static __attribute__ ((__unused__)) __inline__ __cdecl
+#ifdef __mingw_static_ovr
+#undef __mingw_static_ovr
+#define __mingw_static_ovr __mingw_ovr
+#endif
 #elif defined(__cplusplus)
 #define __mingw_ovr inline __cdecl
 #else

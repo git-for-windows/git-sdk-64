@@ -153,7 +153,10 @@ extern "C" {
   void __cdecl tzset(void) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
 #endif
 #if !defined (_POSIX_)
-  _CRTIMP void __cdecl _tzset(void);
+#if __MSVCRT_VERSION__ < 0x1400
+  _CRTIMP
+#endif
+  void __cdecl _tzset(void);
 #endif
 
   double __cdecl _difftime64(__time64_t _Time1,__time64_t _Time2);
@@ -211,6 +214,7 @@ extern "C" {
 #endif
 
 #ifndef RC_INVOKED
+#if __MSVCRT_VERSION__ < 0x1400
 double __cdecl difftime(time_t _Time1,time_t _Time2);
 char *__cdecl ctime(const time_t *_Time) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
 struct tm *__cdecl gmtime(const time_t *_Time) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
@@ -219,26 +223,32 @@ struct tm *__cdecl localtime(const time_t *_Time) __MINGW_ATTRIB_DEPRECATED_SEC_
 time_t __cdecl mktime(struct tm *_Tm);
 time_t __cdecl _mkgmtime(struct tm *_Tm);
 time_t __cdecl time(time_t *_Time);
+#endif
 
-#ifndef __CRT__NO_INLINE
-#if !defined(_USE_32BIT_TIME_T)
-__CRT_INLINE double __cdecl difftime(time_t _Time1,time_t _Time2)
-  { return _difftime64(_Time1,_Time2); }
-__CRT_INLINE char *__cdecl ctime(const time_t *_Time) { return _ctime64(_Time); }
-__CRT_INLINE struct tm *__cdecl gmtime(const time_t *_Time) { return _gmtime64(_Time); }
-__CRT_INLINE struct tm *__cdecl localtime(const time_t *_Time) { return _localtime64(_Time); }
-__CRT_INLINE time_t __cdecl mktime(struct tm *_Tm) { return _mktime64(_Tm); }
-__CRT_INLINE time_t __cdecl _mkgmtime(struct tm *_Tm) { return _mkgmtime64(_Tm); }
-__CRT_INLINE time_t __cdecl time(time_t *_Time) { return _time64(_Time); }
+#if !defined(__CRT__NO_INLINE) || __MSVCRT_VERSION__ >= 0x1400
+#if __MSVCRT_VERSION__ >= 0x1400
+#define __TIME_INLINE __mingw_static_ovr
 #else
-__CRT_INLINE double __cdecl difftime(time_t _Time1,time_t _Time2)
+#define __TIME_INLINE __CRT_INLINE
+#endif
+#if !defined(_USE_32BIT_TIME_T)
+__TIME_INLINE double __cdecl difftime(time_t _Time1,time_t _Time2)
+  { return _difftime64(_Time1,_Time2); }
+__TIME_INLINE char *__cdecl ctime(const time_t *_Time) { return _ctime64(_Time); }
+__TIME_INLINE struct tm *__cdecl gmtime(const time_t *_Time) { return _gmtime64(_Time); }
+__TIME_INLINE struct tm *__cdecl localtime(const time_t *_Time) { return _localtime64(_Time); }
+__TIME_INLINE time_t __cdecl mktime(struct tm *_Tm) { return _mktime64(_Tm); }
+__TIME_INLINE time_t __cdecl _mkgmtime(struct tm *_Tm) { return _mkgmtime64(_Tm); }
+__TIME_INLINE time_t __cdecl time(time_t *_Time) { return _time64(_Time); }
+#else
+__TIME_INLINE double __cdecl difftime(time_t _Time1,time_t _Time2)
   { return _difftime32(_Time1,_Time2); }
-__CRT_INLINE char *__cdecl ctime(const time_t *_Time) { return _ctime32(_Time); }
-__CRT_INLINE struct tm *__cdecl localtime(const time_t *_Time) { return _localtime32(_Time); }
-__CRT_INLINE time_t __cdecl mktime(struct tm *_Tm) { return _mktime32(_Tm); }
-__CRT_INLINE struct tm *__cdecl gmtime(const time_t *_Time) { return _gmtime32(_Time); }
-__CRT_INLINE time_t __cdecl _mkgmtime(struct tm *_Tm) { return _mkgmtime32(_Tm); }
-__CRT_INLINE time_t __cdecl time(time_t *_Time) { return _time32(_Time); }
+__TIME_INLINE char *__cdecl ctime(const time_t *_Time) { return _ctime32(_Time); }
+__TIME_INLINE struct tm *__cdecl localtime(const time_t *_Time) { return _localtime32(_Time); }
+__TIME_INLINE time_t __cdecl mktime(struct tm *_Tm) { return _mktime32(_Tm); }
+__TIME_INLINE struct tm *__cdecl gmtime(const time_t *_Time) { return _gmtime32(_Time); }
+__TIME_INLINE time_t __cdecl _mkgmtime(struct tm *_Tm) { return _mkgmtime32(_Tm); }
+__TIME_INLINE time_t __cdecl time(time_t *_Time) { return _time32(_Time); }
 #endif /* !_USE_32BIT_TIME_T */
 #endif /* !__CRT__NO_INLINE */
 
@@ -257,9 +267,19 @@ __forceinline errno_t __cdecl ctime_s(char *_Buf,size_t _SizeInBytes,const time_
 #if !defined(NO_OLDNAMES) || defined(_POSIX)
 #define CLK_TCK CLOCKS_PER_SEC
 
+#if __MSVCRT_VERSION__ >= 0x1400
+#define __MINGW_ATTRIB_DEPRECATED_UCRT \
+    __MINGW_ATTRIB_DEPRECATED_MSG( \
+        "Only provided for source compatibility; this variable might " \
+        "not always be accurate when linking to ucrtbase.dll.")
+#define daylight (_daylight)
+#else
+#define __MINGW_ATTRIB_DEPRECATED_UCRT
   _CRTIMP extern int daylight;
-  _CRTIMP extern long timezone;
-  _CRTIMP extern char *tzname[2];
+#endif
+
+  _CRTIMP extern long timezone __MINGW_ATTRIB_DEPRECATED_UCRT;
+  _CRTIMP extern char *tzname[2] __MINGW_ATTRIB_DEPRECATED_UCRT;
   void __cdecl tzset(void) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
 #endif
 
