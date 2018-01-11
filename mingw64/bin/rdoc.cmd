@@ -1,12 +1,12 @@
 :""||{ ""=> %q<-*- ruby -*-
 @"%~dp0ruby" -x "%~f0" %*
 @exit /b %ERRORLEVEL%
-};{ #
+};{#
 bindir="${0%/*}" #
-exec "$bindir/ruby" -x "$0" "$@" #
->, #
-} #
-#!/mingw64/bin/ruby
+exec "$bindir/ruby" "-x" "$0" "$@" #
+>,
+}
+#!/usr/bin/env ruby
 #
 #  RDoc: Documentation tool for source code
 #        (see lib/rdoc/rdoc.rb for more information)

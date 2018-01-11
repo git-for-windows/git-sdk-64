@@ -1,12 +1,12 @@
 :""||{ ""=> %q<-*- ruby -*-
 @"%~dp0ruby" -x "%~f0" %*
 @exit /b %ERRORLEVEL%
-};{ #
+};{#
 bindir="${0%/*}" #
-exec "$bindir/ruby" -x "$0" "$@" #
->, #
-} #
-#!/mingw32/bin/ruby
+exec "$bindir/ruby" "-x" "$0" "$@" #
+>,
+}
+#!/usr/bin/env ruby
 # Tiny eRuby --- ERB2
 # Copyright (c) 1999-2000,2002 Masatoshi SEKI
 # You can redistribute it and/or modify it under the same terms as Ruby.
@@ -130,7 +130,7 @@ EOU
         exit 1
       end
 
-      $<.set_encoding(Encoding::ASCII_8BIT, nil)
+      $<.set_encoding(Encoding::UTF_8, nil)
       src = $<.read
       filename = $FILENAME
       exit 2 unless src
