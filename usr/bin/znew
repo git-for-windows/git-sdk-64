@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 1998, 2002, 2004, 2007, 2010-2016 Free Software Foundation,
+# Copyright (C) 1998, 2002, 2004, 2007, 2010-2018 Free Software Foundation,
 # Inc.
 # Copyright (C) 1993 Jean-loup Gailly
 
@@ -18,10 +18,10 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-version="znew (gzip) 1.8
-Copyright (C) 2010-2016 Free Software Foundation, Inc.
+version="znew (gzip) 1.9
+Copyright (C) 2010-2017 Free Software Foundation, Inc.
 This is free software.  You may redistribute copies of it under the terms of
-the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
+the GNU General Public License <https://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
 
 Written by Jean-loup Gailly."
@@ -60,8 +60,8 @@ ext=.gz
 for arg
 do
   case "$arg" in
-  --help)      exec echo "$usage";;
-  --version)   exec echo "$version";;
+  --help)      printf '%s\n' "$usage"   || exit 1; exit;;
+  --version)   printf '%s\n' "$version" || exit 1; exit;;
   -*)     opt="$opt $arg"; shift;;
    *)     break;;
   esac
@@ -72,24 +72,24 @@ if test $# -eq 0; then
   exit 1
 fi
 
-opt=`echo "$opt" | sed -e 's/ //g' -e 's/-//g'`
+opt=`printf '%s\n' "$opt" | sed -e 's/ //g' -e 's/-//g'`
 case "$opt" in
-  *t*) check=1; opt=`echo "$opt" | sed 's/t//g'`
+  *t*) check=1; opt=`printf '%s\n' "$opt" | sed 's/t//g'`
 esac
 case "$opt" in
-  *K*) keep=1; check=1; opt=`echo "$opt" | sed 's/K//g'`
+  *K*) keep=1; check=1; opt=`printf '%s\n' "$opt" | sed 's/K//g'`
 esac
 case "$opt" in
-  *P*) pipe=1; opt=`echo "$opt" | sed 's/P//g'`
+  *P*) pipe=1; opt=`printf '%s\n' "$opt" | sed 's/P//g'`
 esac
 if test -n "$opt"; then
   opt="-$opt"
 fi
 
 for i do
-  n=`echo "$i" | sed 's/.Z$//'`
+  n=`printf '%s\n' "$i" | sed 's/.Z$//'`
   if test ! -f "$n.Z" ; then
-    echo "$n.Z not found"
+    printf '%s\n' "$n.Z not found"
     res=1; continue
   fi
   test $keep -eq 1 && old=`wc -c < "$n.Z"`
@@ -99,7 +99,7 @@ for i do
       touch -r"$n.Z" -- "$n$ext" 2>/dev/null
       chmod --reference="$n.Z" -- "$n$ext" 2>/dev/null
     else
-      echo "error while recompressing $n.Z"
+      printf '%s\n' "error while recompressing $n.Z"
       res=1; continue
     fi
   else
@@ -107,7 +107,7 @@ for i do
       if cp -p "$n.Z" "$n.$$"; then
         :
       else
-        echo "cannot backup $n.Z"
+        printf '%s\n' "cannot backup $n.Z"
         res=1; continue
       fi
     fi
@@ -115,7 +115,7 @@ for i do
       :
     else
       test $check -eq 1 && mv "$n.$$" "$n.Z"
-      echo "error while uncompressing $n.Z"
+      printf '%s\n' "error while uncompressing $n.Z"
       res=1; continue
     fi
     if gzip $opt "$n"; then
@@ -123,10 +123,10 @@ for i do
     else
       if test $check -eq 1; then
         mv "$n.$$" "$n.Z" && rm -f "$n"
-        echo "error while recompressing $n"
+        printf '%s\n' "error while recompressing $n"
       else
         # compress $n  (might be dangerous if disk full)
-        echo "error while recompressing $n, left uncompressed"
+        printf '%s\n' "error while recompressing $n, left uncompressed"
       fi
       res=1; continue
     fi
@@ -139,7 +139,7 @@ for i do
     else
       mv "$n.$$" "$n.Z" && rm -f "$n$ext"
     fi
-    echo "$n.Z smaller than $n$ext -- unchanged"
+    printf '%s\n' "$n.Z smaller than $n$ext -- unchanged"
 
   elif test $check -eq 1; then
     if gzip -t "$n$ext" ; then
@@ -147,7 +147,7 @@ for i do
     else
       test $pipe -eq 0 && mv "$n.$$" "$n.Z"
       rm -f "$n$ext"
-      echo "error while testing $n$ext, $n.Z unchanged"
+      printf '%s\n' "error while testing $n$ext, $n.Z unchanged"
       res=1; continue
     fi
   elif test $pipe -eq 1; then

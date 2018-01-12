@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2001-2002, 2007, 2010-2016 Free Software Foundation, Inc.
+# Copyright (C) 2001-2002, 2007, 2010-2018 Free Software Foundation, Inc.
 # Copyright (C) 1992, 1993 Jean-loup Gailly
 
 # This program is free software; you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-version="zmore (gzip) 1.8
-Copyright (C) 2010-2016 Free Software Foundation, Inc.
+version="zmore (gzip) 1.9
+Copyright (C) 2010-2017 Free Software Foundation, Inc.
 This is free software.  You may redistribute copies of it under the terms of
-the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
+the GNU General Public License <https://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
 
 Written by Jean-loup Gailly."
@@ -31,8 +31,8 @@ Like 'more', but operate on the uncompressed contents of any compressed FILEs.
 Report bugs to <bug-gzip@gnu.org>."
 
 case $1 in
-  --h*) exec printf '%s\n' "$usage";;
-  --v*) exec printf '%s\n' "$version";;
+  --h*) printf '%s\n' "$usage"   || exit 1; exit;;
+  --v*) printf '%s\n' "$version" || exit 1; exit;;
   --) shift;;
   -?*) printf >&2 '%s\n' "$0: $1: unknown option; try '$0 --help' for help"
        exit 1;;

@@ -1,7 +1,7 @@
 #!/bin/sh
 # Uncompress files.  This is the inverse of gzip.
 
-# Copyright (C) 2007, 2010-2016 Free Software Foundation, Inc.
+# Copyright (C) 2007, 2010-2018 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-version="gunzip (gzip) 1.8
-Copyright (C) 2007, 2011-2016 Free Software Foundation, Inc.
+version="gunzip (gzip) 1.9
+Copyright (C) 2007, 2011-2017 Free Software Foundation, Inc.
 This is free software.  You may redistribute copies of it under the terms of
-the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
+the GNU General Public License <https://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
 
 Written by Paul Eggert."
@@ -34,8 +34,8 @@ Mandatory arguments to long options are mandatory for short options too.
   -f, --force       force overwrite of output file and compress links
   -k, --keep        keep (don't delete) input files
   -l, --list        list compressed file contents
-  -n, --no-name     do not save or restore the original name and time stamp
-  -N, --name        save or restore the original name and time stamp
+  -n, --no-name     do not save or restore the original name and timestamp
+  -N, --name        save or restore the original name and timestamp
   -q, --quiet       suppress all warnings
   -r, --recursive   operate recursively on directories
   -S, --suffix=SUF  use suffix SUF on compressed files
@@ -50,8 +50,8 @@ With no FILE, or when FILE is -, read standard input.
 Report bugs to <bug-gzip@gnu.org>."
 
 case $1 in
---help)    exec echo "$usage";;
---version) exec echo "$version";;
+--help)    printf '%s\n' "$usage"   || exit 1; exit;;
+--version) printf '%s\n' "$version" || exit 1; exit;;
 esac
 
 exec gzip -d "$@"

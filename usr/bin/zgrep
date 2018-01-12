@@ -3,7 +3,7 @@
 # zgrep -- a wrapper around a grep program that decompresses files as needed
 # Adapted from a version sent by Charles Levert <charles@comm.polymtl.ca>
 
-# Copyright (C) 1998, 2001-2002, 2006-2007, 2009-2016 Free Software Foundation,
+# Copyright (C) 1998, 2001-2002, 2006-2007, 2009-2018 Free Software Foundation,
 # Inc.
 
 # Copyright (C) 1993 Jean-loup Gailly
@@ -24,10 +24,10 @@
 
 grep='${GREP-'\''/usr/bin/grep'\''}'
 
-version='zgrep (gzip) 1.8
-Copyright (C) 2010-2016 Free Software Foundation, Inc.
+version='zgrep (gzip) 1.9
+Copyright (C) 2010-2017 Free Software Foundation, Inc.
 This is free software.  You may redistribute copies of it under the terms of
-the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
+the GNU General Public License <https://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
 
 Written by Jean-loup Gailly.'
@@ -133,18 +133,23 @@ while test $# -ne 0; do
         test -n "$pattmp" && rm -f "$pattmp"
         (exit 2); exit 2
       ' HUP INT PIPE TERM 0
+      case $TMPDIR in
+        / | /*/) ;;
+        /*) TMPDIR=$TMPDIR/;;
+        *) TMPDIR=/tmp/;;
+      esac
       if type mktemp >/dev/null 2>&1; then
-        pattmp=$(mktemp) || exit 2
+        pattmp=$(mktemp "${TMPDIR}zgrepXXXXXXXXX") || exit 2
       else
         set -C
-        pattmp=${TMPDIR-/tmp}/zgrep.$$
+        pattmp=${TMPDIR}zgrep$$
       fi
       eval "cat --$optarg" >"$pattmp" || exit 2
       optarg=' "$pattmp"'
     fi
     have_pat=1;;
   (--h | --he | --hel | --help)
-    echo "$usage" || exit 2
+    printf '%s\n' "$usage" || exit 2
     exit;;
   (-H | --wi | --wit | --with | --with- | --with-f | --with-fi \
   | --with-fil | --with-file | --with-filen | --with-filena | --with-filenam \
@@ -158,7 +163,7 @@ while test $# -ne 0; do
   (-h | --no-f*)
     no_filename=1;;
   (-V | --v | --ve | --ver | --vers | --versi | --versio | --version)
-    echo "$version" || exit 2
+    printf '%s\n' "$version" || exit 2
     exit;;
   esac
 

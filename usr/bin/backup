@@ -92,7 +92,7 @@ do
 	 prev=--time
     	 ;;
   -V|--v|--ve|--ver|--vers|--versi|--versio|--version)
-    	 echo "backup (GNU tar) 1.29"
+    	 echo "backup (GNU tar) 1.30"
 	 license
 	 exit;;
   -h|--h|--he|--hel|--help)
@@ -155,7 +155,10 @@ message 20 "BACKUP_FILES=$BACKUP_FILES"
 # the exit value from various commands more easily.
 (
  message 1 "preparing tapes"
- $MT_BEGIN "${TAPE_FILE}"
+ if ! $MT_BEGIN "${TAPE_FILE}"; then
+    echo >&2 "$0: tape initialization failed"
+    exit 1
+ fi 
  rm -f "${VOLNO_FILE}"
 
  message 1 "processing backup directories"
@@ -191,7 +194,7 @@ message 20 "BACKUP_FILES=$BACKUP_FILES"
      # 'rsh' doesn't exit with the exit status of the remote command.  What
      # stupid lossage.  TODO: think of a reliable workaround.
      if [ $? -ne 0 ] ; then
-	 echo "Backup of ${1} failed." 1>&2
+	 echo "$0: backup of ${1} failed." 1>&2
          # I'm assuming that the tar will have written an empty
          # file to the tape, otherwise I should do a cat here.
      else
@@ -238,17 +241,17 @@ message 20 "BACKUP_FILES=$BACKUP_FILES"
  else
      echo "No miscellaneous files specified"
  fi
-
  message 1 "final cleanup"
 
  $MT_REWIND "${TAPE_FILE}"
  $MT_OFFLINE "${TAPE_FILE}"
  echo "."
 ) 2>&1 | tee -a "${LOGFILE}"
+RC=$?
 
 if test "${ADMINISTRATOR}" != NONE; then
      echo "Sending the dump log to ${ADMINISTRATOR}"
      mail -s "Results of backup started ${startdate}" ${ADMINISTRATOR} < "${LOGFILE}"
 fi
-
+exit $RC
 # EOF

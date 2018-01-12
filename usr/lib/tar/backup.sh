@@ -1,7 +1,8 @@
 #! /bin/sh
 # Make backups.
 
-# Copyright 2004-2006, 2013-2014, 2016 Free Software Foundation, Inc.
+# Copyright 2004-2006, 2013-2014, 2016-2017 Free Software Foundation,
+# Inc.
 
 # This file is part of GNU tar.
 
@@ -293,7 +294,9 @@ backup_host() {
         CMD="exec ${TAR_PART1} -f \"${TAPE_FILE}\" $@"
         message 10 "CMD: $CMD"
         sh -c "$CMD"
-        message 10 "RC: $?"
+        RC=$?
+        message 10 "RC: $RC"
+        return $RC
     fi
 }
 
