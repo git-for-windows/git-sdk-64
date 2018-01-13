@@ -17,6 +17,22 @@ _CRTIMP char **__cdecl __p__acmdln(void);
 _CRTIMP wchar_t **__cdecl __p__wcmdln(void);
 #define _wcmdln (*__p__wcmdln())
 
+typedef void (__cdecl *_PVFV)(void);
+typedef int (__cdecl *_PIFV)(void);
+typedef void (__cdecl *_PVFI)(int);
+
+typedef struct _onexit_table_t {
+    _PVFV* _first;
+    _PVFV* _last;
+    _PVFV* _end;
+} _onexit_table_t;
+
+typedef int (__cdecl *_onexit_t)(void);
+
+_CRTIMP int __cdecl _initialize_onexit_table(_onexit_table_t*);
+_CRTIMP int __cdecl _register_onexit_function(_onexit_table_t*,_onexit_t);
+_CRTIMP int __cdecl _execute_onexit_table(_onexit_table_t*);
+
 #ifdef __cplusplus
 }
 #endif
