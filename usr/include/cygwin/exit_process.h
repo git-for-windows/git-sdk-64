@@ -5,44 +5,14 @@
  * This file contains functions to terminate a Win32 process, as gently as
  * possible.
  *
- * At first, we will attempt to inject a thread that calls ExitProcess(). If
- * that fails, we will fall back to terminating the entire process tree.
+ * If appropriate, we will attempt to generate a console Ctrl event.
+ * Otherwise we will fall back to terminating the entire process tree.
  *
  * As we do not want to export this function in the MSYS2 runtime, these
  * functions are marked as file-local.
  */
 
 #include <tlhelp32.h>
-
-static int
-terminate_process_with_remote_thread(HANDLE process, int exit_code)
-{
-  static LPTHREAD_START_ROUTINE exit_process_address;
-  if (!exit_process_address)
-    {
-      HINSTANCE kernel32 = GetModuleHandle ("kernel32");
-      exit_process_address = (LPTHREAD_START_ROUTINE)
-        GetProcAddress (kernel32, "ExitProcess");
-    }
-  DWORD thread_id;
-  HANDLE thread = !exit_process_address ? NULL :
-    CreateRemoteThread (process, NULL, 0, exit_process_address,
-                      (PVOID)exit_code, 0, &thread_id);
-
-  if (thread)
-    {
-      CloseHandle (thread);
-      /*
-      * Wait 10 seconds (arbitrary constant) for the process to
-      * finish; After that grace period, fall back to terminating
-      * non-gently.
-      */
-      if (WaitForSingleObject (process, 10000) == WAIT_OBJECT_0)
-        return 0;
-    }
-
-  return -1;
-}
 
 /**
  * Terminates the process corresponding to the process ID
@@ -133,51 +103,62 @@ terminate_process_tree(HANDLE main_process, int exit_code, int (*terminate)(HAND
 }
 
 /**
- * Determine whether a process runs in the same architecture as the current
- * one. That test is required before we assume that GetProcAddress() returns
- * a valid address *for the target process*.
- */
-static inline bool
-process_architecture_matches_current(HANDLE process)
-{
-  static BOOL current_is_wow = -1;
-  BOOL is_wow;
-
-  if (current_is_wow == -1 &&
-      !IsWow64Process (GetCurrentProcess (), &current_is_wow))
-        current_is_wow = -2;
-  if (current_is_wow == -2)
-    return false; /* could not determine current process' WoW-ness */
-  if (!IsWow64Process (process, &is_wow))
-    return false; /* cannot determine */
-  return is_wow == current_is_wow;
-}
-
-/**
- * Inject a thread into the given process that runs ExitProcess().
- *
- * Note: as kernel32.dll is loaded before any process, the other process and
- * this process will have ExitProcess() at the same address.
- *
- * This function expects the process handle to have the access rights for
- * CreateRemoteThread(): PROCESS_CREATE_THREAD, PROCESS_QUERY_INFORMATION,
- * PROCESS_VM_OPERATION, PROCESS_VM_WRITE, and PROCESS_VM_READ.
- *
- * The idea comes from the Dr Dobb's article "A Safer Alternative to
- * TerminateProcess()" by Andrew Tucker (July 1, 1999),
- * http://www.drdobbs.com/a-safer-alternative-to-terminateprocess/184416547
- *
- * If this method fails, we fall back to running terminate_process_tree().
+ * For SIGINT/SIGTERM, call GenerateConsoleCtrlEven(). Otherwise fall back to
+ * running terminate_process_tree().
  */
 static int
-exit_process(HANDLE process, int exit_code)
+exit_process(HANDLE process, int exit_code, int okay_to_kill_this_process)
 {
   DWORD code;
 
   if (GetExitCodeProcess (process, &code) && code == STILL_ACTIVE)
     {
-      if (process_architecture_matches_current(process) && (exit_code == SIGINT || exit_code == SIGTERM))
-        return terminate_process_tree (process, exit_code, terminate_process_with_remote_thread);
+      int signal = exit_code & 0x7f;
+      if (signal == SIGINT || signal == SIGTERM)
+        {
+#ifndef __INSIDE_CYGWIN__
+          if (!okay_to_kill_this_process)
+            return -1;
+          FreeConsole();
+          if (!AttachConsole(GetProcessId(process)))
+            return -1;
+          if (GenerateConsoleCtrlEvent(signal == SIGINT ? CTRL_C_EVENT : CTRL_BREAK_EVENT, 0))
+            return 0;
+#else
+          path_conv helper ("/bin/kill.exe");
+          if (helper.exists ())
+            {
+              STARTUPINFOW si = {};
+              PROCESS_INFORMATION pi;
+              size_t len = helper.get_wide_win32_path_len ();
+              WCHAR cmd[len + (2 * strlen (" -f -32 0xffffffff")) + 1];
+              WCHAR title[] = L"kill";
+
+              helper.get_wide_win32_path (cmd);
+              __small_swprintf (cmd + len, L" -f -%d %d", signal, (int)GetProcessId(ch_spawn));
+
+              si.cb = sizeof (si);
+              si.dwFlags = STARTF_USESHOWWINDOW;
+              si.wShowWindow = SW_HIDE;
+              si.lpTitle = title;
+
+              /* Create a new hidden process.  Use the two event handles as
+                 argv[1] and argv[2]. */
+              BOOL x = CreateProcessW (NULL, cmd, &sec_none_nih, &sec_none_nih,
+                  true, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+              if (x)
+                {
+                  CloseHandle (pi.hThread);
+                  if (WaitForSingleObject (pi.hProcess, 10000) == WAIT_OBJECT_0)
+                    {
+                      CloseHandle (pi.hProcess);
+                      return 0;
+                    }
+                  CloseHandle (pi.hProcess);
+                }
+            }
+#endif
+        }
 
       return terminate_process_tree (process, exit_code, terminate_process);
     }
