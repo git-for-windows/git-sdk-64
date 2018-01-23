@@ -137,6 +137,12 @@ ignored, then the directory is not shown, but all contents are shown.
 	update it afterwards if any changes were detected. Defaults to
 	`--lock-index`.
 
+--ahead-behind::
+--no-ahead-behind::
+	EXPERIMENTAL, Display or do not display detailed ahead/behind
+	counts for the branch relative to its upstream branch.  Defaults
+	to true.
+
 <pathspec>...::
 	See the 'pathspec' entry in linkgit:gitglossary[7].
 
@@ -393,6 +399,19 @@ submodules where `submodule.<name>.ignore=all`. To also view the summary for
 ignored submodules you can either use the --ignore-submodules=dirty command
 line option or the 'git submodule summary' command, which shows a similar
 output but does not honor these settings.
+
+BACKGROUND REFRESH
+------------------
+
+By default, `git status` will automatically refresh the index, updating
+the cached stat information from the working tree and writing out the
+result. Writing out the updated index is an optimization that isn't
+strictly necessary (`status` computes the values for itself, but writing
+them out is just to save subsequent programs from repeating our
+computation). When `status` is run in the background, the lock held
+during the write may conflict with other simultaneous processes, causing
+them to fail. Scripts running `status` in the background should consider
+using `git --no-optional-locks status` (see linkgit:git[1] for details).
 
 SEE ALSO
 --------

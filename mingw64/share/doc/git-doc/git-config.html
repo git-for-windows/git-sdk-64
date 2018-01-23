@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.5">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
 <title>git-config(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -89,13 +89,12 @@ strong,b{font-weight:bold;line-height:inherit}
 small{font-size:60%;line-height:inherit}
 code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
 ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
-ul,ol,ul.no-bullet,ol.no-bullet{margin-left:1.5em}
+ul,ol{margin-left:1.5em}
 ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
 ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
 ul.square{list-style-type:square}
 ul.circle{list-style-type:circle}
 ul.disc{list-style-type:disc}
-ul.no-bullet{list-style:none}
 ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
 dl dt{margin-bottom:.3125em;font-weight:bold}
 dl dd{margin-bottom:1.25em}
@@ -131,7 +130,11 @@ strong strong{font-weight:400}
 kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
 .keyseq kbd:first-child{margin-left:0}
 .keyseq kbd:last-child{margin-right:0}
-.menuseq,.menu{color:rgba(0,0,0,.8)}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
 b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
 b.button:before{content:"[";padding:0 3px 0 2px}
 b.button:after{content:"]";padding:0 2px 0 3px}
@@ -198,7 +201,7 @@ table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
 table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
 .admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
 .admonitionblock>table td.icon{text-align:center;width:80px}
-.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon img{max-width:initial}
 .admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
@@ -254,13 +257,13 @@ table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
 table.tableblock{max-width:100%;border-collapse:separate}
 table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
 table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
-table.grid-all th.tableblock,table.grid-all td.tableblock{border-width:0 1px 1px 0}
-table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
-table.grid-cols th.tableblock,table.grid-cols td.tableblock{border-width:0 1px 0 0}
-table.grid-all *>tr>.tableblock:last-child,table.grid-cols *>tr>.tableblock:last-child{border-right-width:0}
-table.grid-rows th.tableblock,table.grid-rows td.tableblock{border-width:0 0 1px 0}
-table.grid-all tbody>tr:last-child>th.tableblock,table.grid-all tbody>tr:last-child>td.tableblock,table.grid-all thead:last-child>tr>th.tableblock,table.grid-rows tbody>tr:last-child>th.tableblock,table.grid-rows tbody>tr:last-child>td.tableblock,table.grid-rows thead:last-child>tr>th.tableblock{border-bottom-width:0}
-table.grid-rows tfoot>tr>th.tableblock,table.grid-rows tfoot>tr>td.tableblock{border-width:1px 0 0 0}
+table.grid-all>thead>tr>.tableblock,table.grid-all>tbody>tr>.tableblock{border-width:0 1px 1px 0}
+table.grid-all>tfoot>tr>.tableblock{border-width:1px 1px 0 0}
+table.grid-cols>*>tr>.tableblock{border-width:0 1px 0 0}
+table.grid-rows>thead>tr>.tableblock,table.grid-rows>tbody>tr>.tableblock{border-width:0 0 1px 0}
+table.grid-rows>tfoot>tr>.tableblock{border-width:1px 0 0 0}
+table.grid-all>*>tr>.tableblock:last-child,table.grid-cols>*>tr>.tableblock:last-child{border-right-width:0}
+table.grid-all>tbody>tr:last-child>.tableblock,table.grid-all>thead:last-child>tr>.tableblock,table.grid-rows>tbody>tr:last-child>.tableblock,table.grid-rows>thead:last-child>tr>.tableblock{border-bottom-width:0}
 table.frame-all{border-width:1px}
 table.frame-sides{border-width:0 1px}
 table.frame-topbot{border-width:1px 0}
@@ -281,10 +284,12 @@ ul li ol{margin-left:1.5em}
 dl dd{margin-left:1.125em}
 dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
 ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
-ul.unstyled,ol.unnumbered,ul.checklist,ul.none{list-style-type:none}
-ul.unstyled,ol.unnumbered,ul.checklist{margin-left:.625em}
-ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1em;font-size:.85em}
-ul.checklist li>p:first-child>input[type="checkbox"]:first-child{width:1em;position:relative;top:1px}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
 ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
 ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
 ul.inline>li>*{display:block}
@@ -301,7 +306,8 @@ ol.lowergreek{list-style-type:lower-greek}
 td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
 td.hdlist1{font-weight:bold;padding-bottom:1.25em}
 .literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
-.colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
+.colist>table tr>td:first-of-type{padding:.4em .75em 0 .75em;line-height:1;vertical-align:top}
+.colist>table tr>td:first-of-type img{max-width:initial}
 .colist>table tr>td:last-of-type{padding:.25em 0}
 .thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
 .imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
@@ -364,6 +370,7 @@ div.unbreakable{page-break-inside:avoid}
 .yellow{color:#bfbf00}
 .yellow-background{background-color:#fafa00}
 span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
 .admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
 .admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
 .admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
@@ -658,6 +665,12 @@ either --bool or --int, as described above.</p>
 specified user.  This option has no effect when setting the
 value (but you can use <code>git config section.variable ~/</code>
 from the command line to let your shell do the expansion).</p>
+</dd>
+<dt class="hdlist1">--expiry-date</dt>
+<dd>
+<p><code>git config</code> will ensure that the output is converted from
+a fixed or relative date-string to a timestamp. This option
+has no effect when setting the value.</p>
 </dd>
 <dt class="hdlist1">-z</dt>
 <dt class="hdlist1">--null</dt>
@@ -1037,11 +1050,13 @@ in the section header, like in the example below:</p>
 </div>
 <div class="paragraph">
 <p>Subsection names are case sensitive and can contain any characters except
-newline (doublequote <code>"</code> and backslash can be included by escaping them
-as <code>\"</code> and <code>\\</code>, respectively).  Section headers cannot span multiple
-lines.  Variables may belong directly to a section or to a given subsection.
-You can have <code>[section]</code> if you have <code>[section "subsection"]</code>, but you
-don&#8217;t need to.</p>
+newline and the null byte. Doublequote <code>"</code> and backslash can be included
+by escaping them as <code>\"</code> and <code>\\</code>, respectively. Backslashes preceding
+other characters are dropped when reading; for example, <code>\t</code> is read as
+<code>t</code> and <code>\0</code> is read as <code>0</code> Section headers cannot span multiple lines.
+Variables may belong directly to a section or to a given subsection. You
+can have <code>[section]</code> if you have <code>[section "subsection"]</code>, but you don&#8217;t
+need to.</p>
 </div>
 <div class="paragraph">
 <p>There is also a deprecated <code>[section.subsection]</code> syntax. With this
@@ -1464,6 +1479,16 @@ show directions on how to proceed from the current state.</p>
 <p>Advice on what to do when you&#8217;ve accidentally added one
 git repo inside of another.</p>
 </dd>
+<dt class="hdlist1">ignoredHook</dt>
+<dd>
+<p>Advice shown if an hook is ignored because the hook is not
+set as executable.</p>
+</dd>
+<dt class="hdlist1">waitingForEditor</dt>
+<dd>
+<p>Print a message to the terminal whenever Git is waiting for
+editor input from the user.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -1538,6 +1563,14 @@ Defaults to <code>true</code> on Mac OS, and <code>false</code> elsewhere.</p>
 cause problems with the NTFS filesystem, e.g. conflict with
 8.3 "short" names.
 Defaults to <code>true</code> on Windows, and <code>false</code> elsewhere.</p>
+</dd>
+<dt class="hdlist1">core.fsmonitor</dt>
+<dd>
+<p>If set, the value of this variable is used as a command which
+will identify all files that may have changed since the
+requested date/time. This information is used to speed up git by
+avoiding unnecessary processing of files that have not changed.
+See the "fsmonitor-watchman" section of <a href="githooks.html">githooks</a>(5).</p>
 </dd>
 <dt class="hdlist1">core.trustctime</dt>
 <dd>
@@ -3798,8 +3831,8 @@ empty string.</p>
 <dt class="hdlist1">http.sslVerify</dt>
 <dd>
 <p>Whether to verify the SSL certificate when fetching or pushing
-over HTTPS. Can be overridden by the <code>GIT_SSL_NO_VERIFY</code> environment
-variable.</p>
+over HTTPS. Defaults to true. Can be overridden by the
+<code>GIT_SSL_NO_VERIFY</code> environment variable.</p>
 </dd>
 <dt class="hdlist1">http.sslCert</dt>
 <dd>
@@ -3976,15 +4009,50 @@ visited as a result of a redirection do not participate in matching.</p>
 </dd>
 <dt class="hdlist1">ssh.variant</dt>
 <dd>
-<p>Depending on the value of the environment variables <code>GIT_SSH</code> or
-<code>GIT_SSH_COMMAND</code>, or the config setting <code>core.sshCommand</code>, Git
-auto-detects whether to adjust its command-line parameters for use
-with plink or tortoiseplink, as opposed to the default (OpenSSH).</p>
+<p>By default, Git determines the command line arguments to use
+based on the basename of the configured SSH command (configured
+using the environment variable <code>GIT_SSH</code> or <code>GIT_SSH_COMMAND</code> or
+the config setting <code>core.sshCommand</code>). If the basename is
+unrecognized, Git will attempt to detect support of OpenSSH
+options by first invoking the configured SSH command with the
+<code>-G</code> (print configuration) option and will subsequently use
+OpenSSH options (if that is successful) or no options besides
+the host and remote command (if it fails).</p>
 <div class="paragraph">
-<p>The config variable <code>ssh.variant</code> can be set to override this auto-detection;
-valid values are <code>ssh</code>, <code>plink</code>, <code>putty</code> or <code>tortoiseplink</code>. Any other value
-will be treated as normal ssh. This setting can be overridden via the
-environment variable <code>GIT_SSH_VARIANT</code>.</p>
+<p>The config variable <code>ssh.variant</code> can be set to override this detection.
+Valid values are <code>ssh</code> (to use OpenSSH options), <code>plink</code>, <code>putty</code>,
+<code>tortoiseplink</code>, <code>simple</code> (no options except the host and remote command).
+The default auto-detection can be explicitly requested using the value
+<code>auto</code>.  Any other value is treated as <code>ssh</code>.  This setting can also be
+overridden via the environment variable <code>GIT_SSH_VARIANT</code>.</p>
+</div>
+<div class="paragraph">
+<p>The current command-line parameters used for each variant are as
+follows:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>ssh</code> - [-p port] [-4] [-6] [-o option] [username@]host command</p>
+</li>
+<li>
+<p><code>simple</code> - [username@]host command</p>
+</li>
+<li>
+<p><code>plink</code> or <code>putty</code> - [-P port] [-4] [-6] [username@]host command</p>
+</li>
+<li>
+<p><code>tortoiseplink</code> - [-P port] [-4] [-6] -batch [username@]host command</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Except for the <code>simple</code> variant, command-line parameters are likely to
+change as git gains new features.</p>
 </div>
 </dd>
 <dt class="hdlist1">i18n.commitEncoding</dt>
@@ -4184,6 +4252,11 @@ a case (equivalent to giving the <code>--no-ff</code> option from the command
 line). When set to <code>only</code>, only such fast-forward merges are
 allowed (equivalent to giving the <code>--ff-only</code> option from the
 command line).</p>
+</dd>
+<dt class="hdlist1">merge.verifySignatures</dt>
+<dd>
+<p>If true, this is equivalent to the --verify-signatures command
+line option. See <a href="git-merge.html">git-merge</a>(1) for details.</p>
 </dd>
 <dt class="hdlist1">merge.branchdesc</dt>
 <dd>
@@ -4667,6 +4740,30 @@ both, you must do so individually.</p>
 </div>
 </div>
 </dd>
+<dt class="hdlist1">protocol.version</dt>
+<dd>
+<p>Experimental. If set, clients will attempt to communicate with a
+server using the specified protocol version.  If unset, no
+attempt will be made by the client to communicate using a
+particular protocol version, this results in protocol version 0
+being used.
+Supported versions:</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>0</code> - the original wire protocol.</p>
+</li>
+<li>
+<p><code>1</code> - the original wire protocol with the addition of a version string
+in the initial response from the server.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
 <dt class="hdlist1">pull.ff</dt>
 <dd>
 <p>By default, Git does not create an extra merge commit when merging
@@ -4795,6 +4892,42 @@ pushes to be signed if the server supports it, as if
 override a value from a lower-priority config file. An explicit
 command-line flag always overrides this config option.</p>
 </dd>
+<dt class="hdlist1">push.pushOption</dt>
+<dd>
+<p>When no <code>--push-option=&lt;option&gt;</code> argument is given from the
+command line, <code>git push</code> behaves as if each &lt;value&gt; of
+this variable is given as <code>--push-option=&lt;value&gt;</code>.</p>
+<div class="paragraph">
+<p>This is a multi-valued variable, and an empty value can be used in a
+higher priority configuration file (e.g. <code>.git/config</code> in a
+repository) to clear the values inherited from a lower priority
+configuration files (e.g. <code>$HOME/.gitconfig</code>).</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="paragraph">
+<p>/etc/gitconfig
+  push.pushoption = a
+  push.pushoption = b</p>
+</div>
+<div class="paragraph">
+<p>~/.gitconfig
+  push.pushoption = c</p>
+</div>
+<div class="paragraph">
+<p>repo/.git/config
+  push.pushoption =
+  push.pushoption = b</p>
+</div>
+<div class="paragraph">
+<p>This will result in only b (a and c are cleared).</p>
+</div>
+</div>
+</div>
+</dd>
 <dt class="hdlist1">push.recurseSubmodules</dt>
 <dd>
 <p>Make sure all submodule commits used by the revisions to be pushed
@@ -4826,6 +4959,8 @@ before the operation begins, and apply it after the operation
 ends.  This means that you can run rebase on a dirty worktree.
 However, use with care: the final stash application after a
 successful rebase might result in non-trivial conflicts.
+This option can be overridden by the <code>--no-autostash</code> and
+<code>--autostash</code> options of <a href="git-rebase.html">git-rebase</a>(1).
 Defaults to false.</p>
 </dd>
 <dt class="hdlist1">rebase.missingCommitsCheck</dt>
@@ -4837,14 +4972,39 @@ the previous warning and stop the rebase, <em>git rebase
 --edit-todo</em> can then be used to correct the error. If set to
 "ignore", no checking is done.
 To drop a commit without warning or error, use the <code>drop</code>
-command in the todo-list.
+command in the todo list.
 Defaults to "ignore".</p>
 </dd>
 <dt class="hdlist1">rebase.instructionFormat</dt>
 <dd>
-<p>A format string, as specified in <a href="git-log.html">git-log</a>(1), to be used for
-the instruction list during an interactive rebase.  The format will automatically
-have the long commit hash prepended to the format.</p>
+<p>A format string, as specified in <a href="git-log.html">git-log</a>(1), to be used for the
+todo list during an interactive rebase.  The format will
+automatically have the long commit hash prepended to the format.</p>
+</dd>
+<dt class="hdlist1">rebase.abbreviateCommands</dt>
+<dd>
+<p>If set to true, <code>git rebase</code> will use abbreviated command names in the
+todo list resulting in something like this:</p>
+<div class="listingblock">
+<div class="content">
+<pre>	p deadbee The oneline of the commit
+	p fa1afe1 The oneline of the next commit
+	...</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>instead of:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>	pick deadbee The oneline of the commit
+	pick fa1afe1 The oneline of the next commit
+	...</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Defaults to false.</p>
+</div>
 </dd>
 <dt class="hdlist1">receive.advertiseAtomic</dt>
 <dd>
@@ -5178,6 +5338,7 @@ identity is selected, through either the command-line or
 <dt class="hdlist1">sendemail.suppresscc</dt>
 <dt class="hdlist1">sendemail.suppressFrom</dt>
 <dt class="hdlist1">sendemail.to</dt>
+<dt class="hdlist1">sendemail.tocmd</dt>
 <dt class="hdlist1">sendemail.smtpDomain</dt>
 <dt class="hdlist1">sendemail.smtpServer</dt>
 <dt class="hdlist1">sendemail.smtpServerPort</dt>
@@ -5665,6 +5826,17 @@ in multiple config files.</p>
 Currently only <a href="git-instaweb.html">git-instaweb</a>(1) and <a href="git-help.html">git-help</a>(1)
 may use it.</p>
 </dd>
+<dt class="hdlist1">worktree.guessRemote</dt>
+<dd>
+<p>With <code>add</code>, if no branch argument, and neither of <code>-b</code> nor
+<code>-B</code> nor <code>--detach</code> are given, the command defaults to
+creating a new branch from HEAD.  If <code>worktree.guessRemote</code> is
+set to true, <code>worktree add</code> tries to find a remote-tracking
+branch whose name uniquely matches the new branch name.  If
+such a branch exists, it is checked out and set as "upstream"
+for the new branch.  If no such match can be found, it falls
+back to creating a new branch from the current HEAD.</p>
+</dd>
 <dt class="hdlist1">sendpack.sideband</dt>
 <dd>
 <p>Allows to disable the side-band-64k capability for send-pack even
@@ -5688,7 +5860,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-11-30 00:29:38 Coordinated Universal Time
+Last updated 2018-01-22 16:09:45 Coordinated Universal Time
 </div>
 </div>
 </body>

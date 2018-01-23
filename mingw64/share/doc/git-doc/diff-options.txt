@@ -80,6 +80,16 @@ endif::git-format-patch[]
 --histogram::
 	Generate a diff using the "histogram diff" algorithm.
 
+--anchored=<text>::
+	Generate a diff using the "anchored diff" algorithm.
++
+This option may be specified more than once.
++
+If a line exists in both the source and destination, exists only once,
+and starts with this text, this algorithm attempts to prevent it from
+appearing as a deletion or addition in the output. It uses the "patience
+diff" algorithm internally.
+
 --diff-algorithm={patience|minimal|histogram|myers}::
 	Choose a diff algorithm. The variants are as follows:
 +
@@ -459,6 +469,12 @@ ifndef::git-format-patch[]
 +
 Also, these upper-case letters can be downcased to exclude.  E.g.
 `--diff-filter=ad` excludes added and deleted paths.
++
+Note that not all diffs can feature all types. For instance, diffs
+from the index to the working tree can never have Added entries
+(because the set of paths included in the diff is limited by what is in
+the index).  Similarly, copied and renamed entries cannot appear if
+detection for those types is disabled.
 
 -S<string>::
 	Look for differences that change the number of occurrences of
@@ -556,6 +572,9 @@ endif::git-format-patch[]
 -a::
 --text::
 	Treat all files as text.
+
+--ignore-cr-at-eol::
+	Ignore carrige-return at the end of line when doing a comparison.
 
 --ignore-space-at-eol::
 	Ignore changes in whitespace at EOL.

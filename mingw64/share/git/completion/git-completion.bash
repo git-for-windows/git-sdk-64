@@ -1204,7 +1204,7 @@ _git_branch ()
 			--color --no-color --verbose --abbrev= --no-abbrev
 			--track --no-track --contains --no-contains --merged --no-merged
 			--set-upstream-to= --edit-description --list
-			--unset-upstream --delete --move --remotes
+			--unset-upstream --delete --move --copy --remotes
 			--column --no-column --sort= --points-at
 			"
 		;;
@@ -1400,7 +1400,7 @@ __git_diff_common_options="--stat --numstat --shortstat --summary
 			--patch-with-stat --name-only --name-status --color
 			--no-color --color-words --no-renames --check
 			--full-index --binary --abbrev --diff-filter=
-			--find-copies-harder
+			--find-copies-harder --ignore-cr-at-eol
 			--text --ignore-space-at-eol --ignore-space-change
 			--ignore-all-space --ignore-blank-lines --exit-code
 			--quiet --ext-diff --no-ext-diff
@@ -1922,6 +1922,7 @@ _git_pull ()
 	--*)
 		__gitcomp "
 			--rebase --no-rebase
+			--autostash --no-autostash
 			$__git_merge_options
 			$__git_fetch_options
 		"
@@ -2350,6 +2351,7 @@ _git_config ()
 		advice.rmHints
 		advice.statusHints
 		advice.statusUoption
+		advice.ignoredHook
 		alias.
 		am.keepcr
 		am.threeWay
@@ -2640,6 +2642,7 @@ _git_config ()
 		sendemail.suppressfrom
 		sendemail.thread
 		sendemail.to
+		sendemail.tocmd
 		sendemail.validate
 		sendemail.smtpbatchsize
 		sendemail.smtprelogindelay
