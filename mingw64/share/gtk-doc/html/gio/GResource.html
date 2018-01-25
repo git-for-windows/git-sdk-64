@@ -8,7 +8,7 @@
 <link rel="up" href="resources.html" title="Resources">
 <link rel="prev" href="resources.html" title="Resources">
 <link rel="next" href="permissions.html" title="Permissions">
-<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -392,7 +392,7 @@ to register it with <a class="link" href="GResource.html#g-resources-register" t
 <tbody>
 <tr>
 <td class="parameter_name"><p>filename</p></td>
-<td class="parameter_description"><p> the path of a filename to load, in the GLib filename encoding. </p></td>
+<td class="parameter_description"><p>the path of a filename to load, in the GLib filename encoding. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
@@ -405,7 +405,7 @@ to register it with <a class="link" href="GResource.html#g-resources-register" t
 </div>
 <div class="refsect3">
 <a name="g-resource-load.returns"></a><h4>Returns</h4>
-<p> a new <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error. </p>
+<p>a new <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -422,6 +422,9 @@ This will keep a reference to <em class="parameter"><code>data</code></em>
 the data should not be modified or freed.</p>
 <p>If you want to use this resource in the global resource namespace you need
 to register it with <a class="link" href="GResource.html#g-resources-register" title="g_resources_register ()"><code class="function">g_resources_register()</code></a>.</p>
+<p>Note: <em class="parameter"><code>data</code></em>
+ must be backed by memory that is at least pointer aligned.
+Otherwise this function will fail and exit the process.</p>
 <div class="refsect3">
 <a name="g-resource-new-from-data.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -446,7 +449,7 @@ to register it with <a class="link" href="GResource.html#g-resources-register" t
 </div>
 <div class="refsect3">
 <a name="g-resource-new-from-data.returns"></a><h4>Returns</h4>
-<p> a new <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error. </p>
+<p>a new <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -562,7 +565,7 @@ the heap and automatically uncompress the data.</p>
 </div>
 <div class="refsect3">
 <a name="g-resource-lookup-data.returns"></a><h4>Returns</h4>
-<p> <a href="../glib-Byte-Arrays.html#GBytes"><span class="type">GBytes</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
+<p><a href="../glib-Byte-Arrays.html#GBytes"><span class="type">GBytes</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Free the returned object with <a href="../glib-Byte-Arrays.html#g-bytes-unref"><code class="function">g_bytes_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -615,7 +618,7 @@ returns a <a class="link" href="GInputStream.html" title="GInputStream"><span cl
 </div>
 <div class="refsect3">
 <a name="g-resource-open-stream.returns"></a><h4>Returns</h4>
-<p> <a class="link" href="GInputStream.html" title="GInputStream"><span class="type">GInputStream</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
+<p><a class="link" href="GInputStream.html" title="GInputStream"><span class="type">GInputStream</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Free the returned object with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -672,7 +675,7 @@ be released with <a href="../glib-String-Utility-Functions.html#g-strfreev"><cod
 </div>
 <div class="refsect3">
 <a name="g-resource-enumerate-children.returns"></a><h4>Returns</h4>
-<p> an array of constant strings. </p>
+<p>an array of constant strings. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -718,13 +721,13 @@ if found returns information about it.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>size</p></td>
-<td class="parameter_description"><p> a location to place the length of the contents of the file,
+<td class="parameter_description"><p>a location to place the length of the contents of the file,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the length is not needed. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
-<td class="parameter_description"><p> a location to place the flags about the file,
+<td class="parameter_description"><p>a location to place the flags about the file,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the length is not needed. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
@@ -821,7 +824,7 @@ and is not typically used by other code.</p>
 </div>
 <div class="refsect3">
 <a name="g-static-resource-get-resource.returns"></a><h4>Returns</h4>
-<p> a <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>. </p>
+<p>a <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -923,7 +926,7 @@ the heap and automatically uncompress the data.</p>
 </div>
 <div class="refsect3">
 <a name="g-resources-lookup-data.returns"></a><h4>Returns</h4>
-<p> <a href="../glib-Byte-Arrays.html#GBytes"><span class="type">GBytes</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
+<p><a href="../glib-Byte-Arrays.html#GBytes"><span class="type">GBytes</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Free the returned object with <a href="../glib-Byte-Arrays.html#g-bytes-unref"><code class="function">g_bytes_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -971,7 +974,7 @@ that lets you read the data.</p>
 </div>
 <div class="refsect3">
 <a name="g-resources-open-stream.returns"></a><h4>Returns</h4>
-<p> <a class="link" href="GInputStream.html" title="GInputStream"><span class="type">GInputStream</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
+<p><a class="link" href="GInputStream.html" title="GInputStream"><span class="type">GInputStream</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Free the returned object with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1020,7 +1023,7 @@ be released with <a href="../glib-String-Utility-Functions.html#g-strfreev"><cod
 </div>
 <div class="refsect3">
 <a name="g-resources-enumerate-children.returns"></a><h4>Returns</h4>
-<p> an array of constant strings. </p>
+<p>an array of constant strings. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -1060,13 +1063,13 @@ globally registered resources and if found returns information about it.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>size</p></td>
-<td class="parameter_description"><p> a location to place the length of the contents of the file,
+<td class="parameter_description"><p>a location to place the length of the contents of the file,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the length is not needed. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
-<td class="parameter_description"><p> a location to place the <a class="link" href="GResource.html#GResourceFlags" title="enum GResourceFlags"><span class="type">GResourceFlags</span></a> about the file,
+<td class="parameter_description"><p>a location to place the <a class="link" href="GResource.html#GResourceFlags" title="enum GResourceFlags"><span class="type">GResourceFlags</span></a> about the file,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the flags are not needed. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
@@ -1203,6 +1206,6 @@ from a <a class="link" href="GResource.html" title="GResource"><span class="type
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25.1</div>
+<hr>Generated by GTK-Doc V1.26.1</div>
 </body>
 </html>

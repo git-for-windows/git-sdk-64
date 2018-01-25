@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.exe
+#!/usr/bin/env python3.exe
 
 # GDBus - GLib D-Bus Library
 #

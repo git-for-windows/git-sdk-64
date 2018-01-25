@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Unicode-Manipulation.html" title="Unicode Manipulation">
 <link rel="next" href="glib-Data-Checksums.html" title="Data Checksums">
-<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -93,6 +93,7 @@
 <div class="refsect1">
 <a name="glib-Base64-Encoding.includes"></a><h2>Includes</h2>
 <pre class="synopsis">#include &lt;glib.h&gt;
+#include &lt;glib/gi18n.h&gt;
 </pre>
 </div>
 <div class="refsect1">
@@ -153,7 +154,7 @@ or certain other protocols.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>in</p></td>
-<td class="parameter_description"><p> the binary data to encode. </p></td>
+<td class="parameter_description"><p>the binary data to encode. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=len][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></td>
 </tr>
 <tr>
@@ -169,17 +170,17 @@ or certain other protocols.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>out</p></td>
-<td class="parameter_description"><p> pointer to destination buffer. </p></td>
+<td class="parameter_description"><p>pointer to destination buffer. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym>][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>state</p></td>
-<td class="parameter_description"><p> Saved state between steps, initialize to 0. </p></td>
+<td class="parameter_description"><p>Saved state between steps, initialize to 0. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>save</p></td>
-<td class="parameter_description"><p> Saved state between steps, initialize to 0. </p></td>
+<td class="parameter_description"><p>Saved state between steps, initialize to 0. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -221,17 +222,17 @@ line-breaking is enabled.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>out</p></td>
-<td class="parameter_description"><p> pointer to destination buffer. </p></td>
+<td class="parameter_description"><p>pointer to destination buffer. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym>][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>state</p></td>
-<td class="parameter_description"><p> Saved state from <a class="link" href="glib-Base64-Encoding.html#g-base64-encode-step" title="g_base64_encode_step ()"><code class="function">g_base64_encode_step()</code></a>. </p></td>
+<td class="parameter_description"><p>Saved state from <a class="link" href="glib-Base64-Encoding.html#g-base64-encode-step" title="g_base64_encode_step ()"><code class="function">g_base64_encode_step()</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>save</p></td>
-<td class="parameter_description"><p> Saved state from <a class="link" href="glib-Base64-Encoding.html#g-base64-encode-step" title="g_base64_encode_step ()"><code class="function">g_base64_encode_step()</code></a>. </p></td>
+<td class="parameter_description"><p>Saved state from <a class="link" href="glib-Base64-Encoding.html#g-base64-encode-step" title="g_base64_encode_step ()"><code class="function">g_base64_encode_step()</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -262,7 +263,7 @@ representation.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>data</p></td>
-<td class="parameter_description"><p> the binary data to encode. </p></td>
+<td class="parameter_description"><p>the binary data to encode. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=len][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></td>
 </tr>
 <tr>
@@ -276,7 +277,7 @@ representation.</p>
 </div>
 <div class="refsect3">
 <a name="g-base64-encode.returns"></a><h4>Returns</h4>
-<p> a newly allocated, zero-terminated Base-64
+<p>a newly allocated, zero-terminated Base-64
 encoded string representing <em class="parameter"><code>data</code></em>
 . The returned string must
 be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>. </p>
@@ -312,7 +313,7 @@ state).</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>in</p></td>
-<td class="parameter_description"><p> binary input data. </p></td>
+<td class="parameter_description"><p>binary input data. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=len][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></td>
 </tr>
 <tr>
@@ -323,17 +324,17 @@ data to decode</p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>out</p></td>
-<td class="parameter_description"><p> output buffer. </p></td>
+<td class="parameter_description"><p>output buffer. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym>][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>state</p></td>
-<td class="parameter_description"><p> Saved state between steps, initialize to 0. </p></td>
+<td class="parameter_description"><p>Saved state between steps, initialize to 0. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>save</p></td>
-<td class="parameter_description"><p> Saved state between steps, initialize to 0. </p></td>
+<td class="parameter_description"><p>Saved state between steps, initialize to 0. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -370,7 +371,7 @@ so it should not be used as a character string.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>out_len</p></td>
-<td class="parameter_description"><p> The length of the decoded data is written here. </p></td>
+<td class="parameter_description"><p>The length of the decoded data is written here. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -378,7 +379,7 @@ so it should not be used as a character string.</p>
 </div>
 <div class="refsect3">
 <a name="g-base64-decode.returns"></a><h4>Returns</h4>
-<p>              newly allocated buffer containing the binary data
+<p>newly allocated buffer containing the binary data
 that <em class="parameter"><code>text</code></em>
 represents. The returned buffer must
 be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>. </p>
@@ -405,13 +406,13 @@ by overwriting the input data.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>text</p></td>
-<td class="parameter_description"><p> zero-terminated
+<td class="parameter_description"><p>zero-terminated
 string with base64 text to decode. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=out_len][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>out_len</p></td>
-<td class="parameter_description"><p> The length of the decoded data is written here. </p></td>
+<td class="parameter_description"><p>The length of the decoded data is written here. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -419,7 +420,7 @@ string with base64 text to decode. </p></td>
 </div>
 <div class="refsect3">
 <a name="g-base64-decode-inplace.returns"></a><h4>Returns</h4>
-<p> The binary data that <em class="parameter"><code>text</code></em>
+<p>The binary data that <em class="parameter"><code>text</code></em>
 responds. This pointer
 is the same as the input <em class="parameter"><code>text</code></em>
 . </p>
@@ -433,6 +434,6 @@ is the same as the input <em class="parameter"><code>text</code></em>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25.1</div>
+<hr>Generated by GTK-Doc V1.26.1</div>
 </body>
 </html>

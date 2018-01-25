@@ -8,7 +8,7 @@
 <link rel="up" href="rn01.html" title="API Reference">
 <link rel="prev" href="gobject-Value-arrays.html" title="Value arrays">
 <link rel="next" href="rn02.html" title="Tools Reference">
-<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -191,6 +191,7 @@
 <div class="refsect1">
 <a name="GBinding.includes"></a><h2>Includes</h2>
 <pre class="synopsis">#include &lt;glib-object.h&gt;
+#include &lt;gobject/gvaluecollector.h&gt;
 </pre>
 </div>
 <div class="refsect1">
@@ -337,7 +338,7 @@ g_binding_get_source (<em class="parameter"><code><a class="link" href="GBinding
 </div>
 <div class="refsect3">
 <a name="g-binding-get-source.returns"></a><h4>Returns</h4>
-<p> the source <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p>
+<p>the source <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -393,7 +394,7 @@ g_binding_get_target (<em class="parameter"><code><a class="link" href="GBinding
 </div>
 <div class="refsect3">
 <a name="g-binding-get-target.returns"></a><h4>Returns</h4>
-<p> the target <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p>
+<p>the target <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -544,7 +545,7 @@ will be updated as well.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>source</p></td>
-<td class="parameter_description"><p> the source <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
+<td class="parameter_description"><p>the source <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.Object]</span></td>
 </tr>
 <tr>
@@ -555,7 +556,7 @@ to bind</p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>target</p></td>
-<td class="parameter_description"><p> the target <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
+<td class="parameter_description"><p>the target <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.Object]</span></td>
 </tr>
 <tr>
@@ -574,7 +575,7 @@ to bind</p></td>
 </div>
 <div class="refsect3">
 <a name="g-object-bind-property.returns"></a><h4>Returns</h4>
-<p> the <a class="link" href="GBinding.html" title="GBinding"><span class="type">GBinding</span></a> instance representing the
+<p>the <a class="link" href="GBinding.html" title="GBinding"><span class="type">GBinding</span></a> instance representing the
 binding between the two <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> instances. The binding is released
 whenever the <a class="link" href="GBinding.html" title="GBinding"><span class="type">GBinding</span></a> reference count reaches zero. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -704,7 +705,7 @@ for each transformation function, please use
 <tbody>
 <tr>
 <td class="parameter_name"><p>source</p></td>
-<td class="parameter_description"><p> the source <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
+<td class="parameter_description"><p>the source <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.Object]</span></td>
 </tr>
 <tr>
@@ -715,7 +716,7 @@ to bind</p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>target</p></td>
-<td class="parameter_description"><p> the target <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
+<td class="parameter_description"><p>the target <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.Object]</span></td>
 </tr>
 <tr>
@@ -731,7 +732,7 @@ to bind</p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>transform_to</p></td>
-<td class="parameter_description"><p> the transformation function
+<td class="parameter_description"><p>the transformation function
 from the <em class="parameter"><code>source</code></em>
 to the <em class="parameter"><code>target</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to use the default. </p></td>
@@ -739,7 +740,7 @@ to the <em class="parameter"><code>target</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>transform_from</p></td>
-<td class="parameter_description"><p> the transformation function
+<td class="parameter_description"><p>the transformation function
 from the <em class="parameter"><code>target</code></em>
 to the <em class="parameter"><code>source</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to use the default. </p></td>
@@ -762,7 +763,7 @@ resources used by the transformation functions</p></td>
 </div>
 <div class="refsect3">
 <a name="g-object-bind-property-full.returns"></a><h4>Returns</h4>
-<p> the <a class="link" href="GBinding.html" title="GBinding"><span class="type">GBinding</span></a> instance representing the
+<p>the <a class="link" href="GBinding.html" title="GBinding"><span class="type">GBinding</span></a> instance representing the
 binding between the two <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> instances. The binding is released
 whenever the <a class="link" href="GBinding.html" title="GBinding"><span class="type">GBinding</span></a> reference count reaches zero. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -802,7 +803,7 @@ function pointers.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>source</p></td>
-<td class="parameter_description"><p> the source <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
+<td class="parameter_description"><p>the source <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.Object]</span></td>
 </tr>
 <tr>
@@ -813,7 +814,7 @@ to bind</p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>target</p></td>
-<td class="parameter_description"><p> the target <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
+<td class="parameter_description"><p>the target <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.Object]</span></td>
 </tr>
 <tr>
@@ -848,7 +849,7 @@ to the <em class="parameter"><code>source</code></em>
 </div>
 <div class="refsect3">
 <a name="g-object-bind-property-with-closures.returns"></a><h4>Returns</h4>
-<p> the <a class="link" href="GBinding.html" title="GBinding"><span class="type">GBinding</span></a> instance representing the
+<p>the <a class="link" href="GBinding.html" title="GBinding"><span class="type">GBinding</span></a> instance representing the
 binding between the two <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> instances. The binding is released
 whenever the <a class="link" href="GBinding.html" title="GBinding"><span class="type">GBinding</span></a> reference count reaches zero. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -971,6 +972,6 @@ as the target of the binding</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25.1</div>
+<hr>Generated by GTK-Doc V1.26.1</div>
 </body>
 </html>

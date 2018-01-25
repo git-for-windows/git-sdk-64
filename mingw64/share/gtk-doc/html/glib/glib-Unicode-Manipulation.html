@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Character-Set-Conversion.html" title="Character Set Conversion">
 <link rel="next" href="glib-Base64-Encoding.html" title="Base64 Encoding">
-<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -614,7 +614,7 @@
 </div>
 <div class="refsect1">
 <a name="glib-Unicode-Manipulation.includes"></a><h2>Includes</h2>
-<pre class="synopsis">#include &lt;glib.h&gt;
+<pre class="synopsis">#include &lt;gmodule.h&gt;
 </pre>
 </div>
 <div class="refsect1">
@@ -1507,7 +1507,7 @@ for details.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>result</p></td>
-<td class="parameter_description"><p> location to store decomposed result, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>location to store decomposed result, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -2111,7 +2111,7 @@ is reached.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>end</p></td>
-<td class="parameter_description"><p> a pointer to the byte following the end of the string,
+<td class="parameter_description"><p>a pointer to the byte following the end of the string,
 or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to indicate that the string is nul-terminated. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
@@ -2120,7 +2120,7 @@ or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code
 </div>
 <div class="refsect3">
 <a name="g-utf8-find-next-char.returns"></a><h4>Returns</h4>
-<p> a pointer to the found character or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if <em class="parameter"><code>end</code></em>
+<p>a pointer to the found character or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if <em class="parameter"><code>end</code></em>
 is
 set and is reached. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
@@ -2492,7 +2492,7 @@ doing anything else with it.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>str</p></td>
-<td class="parameter_description"><p> a pointer to character data. </p></td>
+<td class="parameter_description"><p>a pointer to character data. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=max_len][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></td>
 </tr>
 <tr>
@@ -2502,7 +2502,7 @@ doing anything else with it.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>end</p></td>
-<td class="parameter_description"><p> return location for end of valid data. </p></td>
+<td class="parameter_description"><p>return location for end of valid data. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -2554,7 +2554,7 @@ then the string is nul-terminated.</p></td>
 </div>
 <div class="refsect3">
 <a name="g-utf8-make-valid.returns"></a><h4>Returns</h4>
-<p> a valid UTF-8 string whose content resembles <em class="parameter"><code>str</code></em>
+<p>a valid UTF-8 string whose content resembles <em class="parameter"><code>str</code></em>
 . </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -2924,7 +2924,7 @@ If <em class="parameter"><code>len</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_read</p></td>
-<td class="parameter_description"><p> location to store number of
+<td class="parameter_description"><p>location to store number of
 bytes read, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. If <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, then <a class="link" href="glib-Character-Set-Conversion.html#G-CONVERT-ERROR-PARTIAL-INPUT:CAPS"><code class="literal">G_CONVERT_ERROR_PARTIAL_INPUT</code></a> will
 be returned in case <em class="parameter"><code>str</code></em>
 contains a trailing partial character. If
@@ -2933,7 +2933,7 @@ an error occurs then the index of the invalid input is stored here. </p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_written</p></td>
-<td class="parameter_description"><p> location to store number
+<td class="parameter_description"><p>location to store number
 of <a class="link" href="glib-Unicode-Manipulation.html#gunichar2" title="gunichar2"><span class="type">gunichar2</span></a> written, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. The value stored here does not include
 the trailing 0. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Out parameter, where caller must allocate storage."><span class="acronym">out caller-allocates</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
@@ -2992,7 +2992,7 @@ then the string is nul-terminated.</p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_read</p></td>
-<td class="parameter_description"><p> location to store number of
+<td class="parameter_description"><p>location to store number of
 bytes read, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>.
 If <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, then <a class="link" href="glib-Character-Set-Conversion.html#G-CONVERT-ERROR-PARTIAL-INPUT:CAPS"><code class="literal">G_CONVERT_ERROR_PARTIAL_INPUT</code></a> will be
 returned in case <em class="parameter"><code>str</code></em>
@@ -3003,7 +3003,7 @@ invalid input is stored here. </p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_written</p></td>
-<td class="parameter_description"><p> location to store number
+<td class="parameter_description"><p>location to store number
 of characters written or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. The value here stored does not include
 the trailing 0 character. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Out parameter, where caller must allocate storage."><span class="acronym">out caller-allocates</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
@@ -3062,7 +3062,7 @@ then the string is nul-terminated.</p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_written</p></td>
-<td class="parameter_description"><p> location to store the
+<td class="parameter_description"><p>location to store the
 number of characters in the result, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Out parameter, where caller must allocate storage."><span class="acronym">out caller-allocates</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
@@ -3110,7 +3110,7 @@ If <em class="parameter"><code>len</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_read</p></td>
-<td class="parameter_description"><p> location to store number of
+<td class="parameter_description"><p>location to store number of
 words read, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. If <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, then <a class="link" href="glib-Character-Set-Conversion.html#G-CONVERT-ERROR-PARTIAL-INPUT:CAPS"><code class="literal">G_CONVERT_ERROR_PARTIAL_INPUT</code></a> will
 be returned in case <em class="parameter"><code>str</code></em>
 contains a trailing partial character. If
@@ -3119,7 +3119,7 @@ an error occurs then the index of the invalid input is stored here. </p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_written</p></td>
-<td class="parameter_description"><p> location to store number
+<td class="parameter_description"><p>location to store number
 of characters written, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. The value stored here does not include
 the trailing 0 character. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Out parameter, where caller must allocate storage."><span class="acronym">out caller-allocates</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
@@ -3186,7 +3186,7 @@ If <em class="parameter"><code>len</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_read</p></td>
-<td class="parameter_description"><p> location to store number of
+<td class="parameter_description"><p>location to store number of
 words read, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. If <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, then <a class="link" href="glib-Character-Set-Conversion.html#G-CONVERT-ERROR-PARTIAL-INPUT:CAPS"><code class="literal">G_CONVERT_ERROR_PARTIAL_INPUT</code></a> will
 be returned in case <em class="parameter"><code>str</code></em>
 contains a trailing partial character. If
@@ -3195,7 +3195,7 @@ an error occurs then the index of the invalid input is stored here. </p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_written</p></td>
-<td class="parameter_description"><p> location to store number
+<td class="parameter_description"><p>location to store number
 of bytes written, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. The value stored here does not include the
 trailing 0 byte. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Out parameter, where caller must allocate storage."><span class="acronym">out caller-allocates</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
@@ -3253,14 +3253,14 @@ If <em class="parameter"><code>len</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_read</p></td>
-<td class="parameter_description"><p> location to store number of
+<td class="parameter_description"><p>location to store number of
 bytes read, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. If an error occurs then the index of the invalid
 input is stored here. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Out parameter, where caller must allocate storage."><span class="acronym">out caller-allocates</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_written</p></td>
-<td class="parameter_description"><p> location to store number
+<td class="parameter_description"><p>location to store number
 of <a class="link" href="glib-Unicode-Manipulation.html#gunichar2" title="gunichar2"><span class="type">gunichar2</span></a>  written, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. The value stored here does not include
 the trailing 0. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Out parameter, where caller must allocate storage."><span class="acronym">out caller-allocates</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
@@ -3318,13 +3318,13 @@ If <em class="parameter"><code>len</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_read</p></td>
-<td class="parameter_description"><p> location to store number of
+<td class="parameter_description"><p>location to store number of
 characters read, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Out parameter, where caller must allocate storage."><span class="acronym">out caller-allocates</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>items_written</p></td>
-<td class="parameter_description"><p> location to store number
+<td class="parameter_description"><p>location to store number
 of bytes written or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. The value here stored does not include the
 trailing 0 byte. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Out parameter, where caller must allocate storage."><span class="acronym">out caller-allocates</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
@@ -3371,7 +3371,7 @@ g_unichar_to_utf8 (<em class="parameter"><code><a class="link" href="glib-Unicod
 </tr>
 <tr>
 <td class="parameter_name"><p>outbuf</p></td>
-<td class="parameter_description"><p> output buffer, must have at
+<td class="parameter_description"><p>output buffer, must have at
 least 6 bytes of space. If <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, the length will be computed and
 returned and nothing will be written to <em class="parameter"><code>outbuf</code></em>
 . </p></td>
@@ -3414,7 +3414,7 @@ To scan, use the format string "U+%06"G_GINT32_FORMAT"X".</p>
 2
 3</pre></td>
         <td class="listing_code"><pre class="programlisting">gunichar c<span class="gtkdoc opt">;</span>
-<span class="function">sscanf</span> <span class="gtkdoc opt">(</span><span class="string">&quot;U+0041&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;U+%06&quot;</span>G_GINT32_FORMAT<span class="string">&quot;X&quot;</span><span class="gtkdoc opt">, &amp;</span>amp<span class="gtkdoc opt">;</span>c<span class="gtkdoc opt">)</span>
+<span class="function">sscanf</span> <span class="gtkdoc opt">(</span><span class="string">&quot;U+0041&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;U+%06&quot;</span>G_GINT32_FORMAT<span class="string">&quot;X&quot;</span><span class="gtkdoc opt">, &amp;</span>c<span class="gtkdoc opt">)</span>
 <span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Read U+%04&quot;</span>G_GINT32_FORMAT<span class="string">&quot;X&quot;</span><span class="gtkdoc opt">,</span> c<span class="gtkdoc opt">);</span></pre></td>
       </tr>
     </tbody>
@@ -5118,6 +5118,6 @@ should generally be normalized before comparing them.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25.1</div>
+<hr>Generated by GTK-Doc V1.26.1</div>
 </body>
 </html>

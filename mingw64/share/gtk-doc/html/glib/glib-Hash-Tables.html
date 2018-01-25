@@ -8,7 +8,7 @@
 <link rel="up" href="glib-data-types.html" title="GLib Data Types">
 <link rel="prev" href="glib-Trash-Stacks.html" title="Trash Stacks">
 <link rel="next" href="glib-Strings.html" title="Strings">
-<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -420,7 +420,7 @@
 </div>
 <div class="refsect1">
 <a name="glib-Hash-Tables.includes"></a><h2>Includes</h2>
-<pre class="synopsis">#include &lt;glib.h&gt;
+<pre class="synopsis">#include &lt;gmodule.h&gt;
 </pre>
 </div>
 <div class="refsect1">
@@ -555,14 +555,14 @@ calling <a class="link" href="glib-Hash-Tables.html#g-hash-table-remove-all" tit
 </tr>
 <tr>
 <td class="parameter_name"><p>key_destroy_func</p></td>
-<td class="parameter_description"><p> a function to free the memory allocated for the key
+<td class="parameter_description"><p>a function to free the memory allocated for the key
 used when removing the entry from the <a class="link" href="glib-Hash-Tables.html#GHashTable" title="GHashTable"><span class="type">GHashTable</span></a>, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>
 if you don't want to supply such a function. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>value_destroy_func</p></td>
-<td class="parameter_description"><p> a function to free the memory allocated for the
+<td class="parameter_description"><p>a function to free the memory allocated for the
 value used when removing the entry from the <a class="link" href="glib-Hash-Tables.html#GHashTable" title="GHashTable"><span class="type">GHashTable</span></a>, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>
 if you don't want to supply such a function. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
@@ -899,7 +899,7 @@ and has the value <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" tit
 </div>
 <div class="refsect3">
 <a name="g-hash-table-lookup.returns"></a><h4>Returns</h4>
-<p> the associated value, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the key is not found. </p>
+<p>the associated value, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the key is not found. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 </div>
@@ -941,12 +941,12 @@ of <em class="parameter"><code>hash_table</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>orig_key</p></td>
-<td class="parameter_description"><p> return location for the original key. </p></td>
+<td class="parameter_description"><p>return location for the original key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>value</p></td>
-<td class="parameter_description"><p> return location for the value associated
+<td class="parameter_description"><p>return location for the value associated
 with the key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
@@ -1052,7 +1052,7 @@ values in a hash table ends up needing O(n*n) operations).</p>
 </div>
 <div class="refsect3">
 <a name="g-hash-table-find.returns"></a><h4>Returns</h4>
-<p> The value of the first key/value pair is returned,
+<p>The value of the first key/value pair is returned,
 for which <em class="parameter"><code>predicate</code></em>
 evaluates to <a class="link" href="glib-Standard-Macros.html#TRUE:CAPS" title="TRUE"><code class="literal">TRUE</code></a>. If no pair with the
 requested property is found, <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> is returned. </p>
@@ -1342,7 +1342,7 @@ To iterate over the entries in a <a class="link" href="glib-Hash-Tables.html#GHa
 </div>
 <div class="refsect3">
 <a name="g-hash-table-get-keys.returns"></a><h4>Returns</h4>
-<p> a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> containing all the keys
+<p>a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> containing all the keys
 inside the hash table. The content of the list is owned by the
 hash table and should not be modified or freed. Use <a class="link" href="glib-Doubly-Linked-Lists.html#g-list-free" title="g_list_free ()"><code class="function">g_list_free()</code></a>
 when done using the list. </p>
@@ -1379,7 +1379,7 @@ To iterate over the entries in a <a class="link" href="glib-Hash-Tables.html#GHa
 </div>
 <div class="refsect3">
 <a name="g-hash-table-get-values.returns"></a><h4>Returns</h4>
-<p> a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> containing all the values
+<p>a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> containing all the values
 inside the hash table. The content of the list is owned by the
 hash table and should not be modified or freed. Use <a class="link" href="glib-Doubly-Linked-Lists.html#g-list-free" title="g_list_free ()"><code class="function">g_list_free()</code></a>
 when done using the list. </p>
@@ -1424,7 +1424,7 @@ first to transfer ownership of the keys.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
-<td class="parameter_description"><p> the length of the returned array. </p></td>
+<td class="parameter_description"><p>the length of the returned array. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -1432,7 +1432,7 @@ first to transfer ownership of the keys.</p>
 </div>
 <div class="refsect3">
 <a name="g-hash-table-get-keys-as-array.returns"></a><h4>Returns</h4>
-<p> a
+<p>a
 <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated array containing each key from the table. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Free data container after the code is done."><span class="acronym">transfer container</span></acronym>]</span></p>
 </div>
@@ -1702,12 +1702,12 @@ pointed to as a result of this advancement. If <a class="link" href="glib-Standa
 </tr>
 <tr>
 <td class="parameter_name"><p>key</p></td>
-<td class="parameter_description"><p> a location to store the key. </p></td>
+<td class="parameter_description"><p>a location to store the key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>value</p></td>
-<td class="parameter_description"><p> a location to store the value. </p></td>
+<td class="parameter_description"><p>a location to store the value. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -1886,12 +1886,12 @@ stored in pointers, such as <code class="literal">GINT_TO_POINTER (n)</code>.</p
 <tbody>
 <tr>
 <td class="parameter_name"><p>v1</p></td>
-<td class="parameter_description"><p> a key. </p></td>
+<td class="parameter_description"><p>a key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>v2</p></td>
-<td class="parameter_description"><p> a key to compare with <em class="parameter"><code>v1</code></em>
+<td class="parameter_description"><p>a key to compare with <em class="parameter"><code>v1</code></em>
 . </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
@@ -1925,7 +1925,7 @@ stored in pointers, such as <code class="literal">GINT_TO_POINTER (n)</code>.</p
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>v</p></td>
-<td class="parameter_description"><p> a <a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> key. </p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
@@ -1961,12 +1961,12 @@ directly: if your hash table's keys are of the form
 <tbody>
 <tr>
 <td class="parameter_name"><p>v1</p></td>
-<td class="parameter_description"><p> a pointer to a <a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> key. </p></td>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>v2</p></td>
-<td class="parameter_description"><p> a pointer to a <a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> key to compare with <em class="parameter"><code>v1</code></em>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> key to compare with <em class="parameter"><code>v1</code></em>
 . </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
@@ -2000,7 +2000,7 @@ directly: if your hash table's keys are of the form
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>v</p></td>
-<td class="parameter_description"><p> a pointer to a <a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> key. </p></td>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
@@ -2033,12 +2033,12 @@ parameter, when using non-<a class="link" href="glib-Standard-Macros.html#NULL:C
 <tbody>
 <tr>
 <td class="parameter_name"><p>v1</p></td>
-<td class="parameter_description"><p> a pointer to a <a class="link" href="glib-Basic-Types.html#gint64" title="gint64"><span class="type">gint64</span></a> key. </p></td>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Basic-Types.html#gint64" title="gint64"><span class="type">gint64</span></a> key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>v2</p></td>
-<td class="parameter_description"><p> a pointer to a <a class="link" href="glib-Basic-Types.html#gint64" title="gint64"><span class="type">gint64</span></a> key to compare with <em class="parameter"><code>v1</code></em>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Basic-Types.html#gint64" title="gint64"><span class="type">gint64</span></a> key to compare with <em class="parameter"><code>v1</code></em>
 . </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
@@ -2071,7 +2071,7 @@ when using non-<a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title=
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>v</p></td>
-<td class="parameter_description"><p> a pointer to a <a class="link" href="glib-Basic-Types.html#gint64" title="gint64"><span class="type">gint64</span></a> key. </p></td>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Basic-Types.html#gint64" title="gint64"><span class="type">gint64</span></a> key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
@@ -2105,12 +2105,12 @@ parameter, when using non-<a class="link" href="glib-Standard-Macros.html#NULL:C
 <tbody>
 <tr>
 <td class="parameter_name"><p>v1</p></td>
-<td class="parameter_description"><p> a pointer to a <a class="link" href="glib-Basic-Types.html#gdouble" title="gdouble"><span class="type">gdouble</span></a> key. </p></td>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Basic-Types.html#gdouble" title="gdouble"><span class="type">gdouble</span></a> key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>v2</p></td>
-<td class="parameter_description"><p> a pointer to a <a class="link" href="glib-Basic-Types.html#gdouble" title="gdouble"><span class="type">gdouble</span></a> key to compare with <em class="parameter"><code>v1</code></em>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Basic-Types.html#gdouble" title="gdouble"><span class="type">gdouble</span></a> key to compare with <em class="parameter"><code>v1</code></em>
 . </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
@@ -2144,7 +2144,7 @@ when using non-<a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title=
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>v</p></td>
-<td class="parameter_description"><p> a pointer to a <a class="link" href="glib-Basic-Types.html#gdouble" title="gdouble"><span class="type">gdouble</span></a> key. </p></td>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Basic-Types.html#gdouble" title="gdouble"><span class="type">gdouble</span></a> key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
@@ -2180,12 +2180,12 @@ see <a class="link" href="glib-String-Utility-Functions.html#g-strcmp0" title="g
 <tbody>
 <tr>
 <td class="parameter_name"><p>v1</p></td>
-<td class="parameter_description"><p> a key. </p></td>
+<td class="parameter_description"><p>a key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>v2</p></td>
-<td class="parameter_description"><p> a key to compare with <em class="parameter"><code>v1</code></em>
+<td class="parameter_description"><p>a key to compare with <em class="parameter"><code>v1</code></em>
 . </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
@@ -2224,7 +2224,7 @@ as 2.</p>
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>v</p></td>
-<td class="parameter_description"><p> a string key. </p></td>
+<td class="parameter_description"><p>a string key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
@@ -2258,6 +2258,6 @@ with <a class="link" href="glib-Hash-Tables.html#g-hash-table-iter-init" title="
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25.1</div>
+<hr>Generated by GTK-Doc V1.26.1</div>
 </body>
 </html>

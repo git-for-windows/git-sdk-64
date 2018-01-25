@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Simple-XML-Subset-Parser.html" title="Simple XML Subset Parser">
 <link rel="next" href="glib-Bookmark-file-parser.html" title="Bookmark file parser">
-<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -556,6 +556,7 @@
 <div class="refsect1">
 <a name="glib-Key-value-file-parser.includes"></a><h2>Includes</h2>
 <pre class="synopsis">#include &lt;glib.h&gt;
+#include &lt;glib/gprintf.h&gt;
 </pre>
 </div>
 <div class="refsect1">
@@ -669,7 +670,7 @@ g_key_file_new (<em class="parameter"><code><span class="type">void</span></code
 read an existing key file.</p>
 <div class="refsect3">
 <a name="g-key-file-new.returns"></a><h4>Returns</h4>
-<p> an empty <a class="link" href="glib-Key-value-file-parser.html#GKeyFile" title="GKeyFile"><span class="type">GKeyFile</span></a>. </p>
+<p>an empty <a class="link" href="glib-Key-value-file-parser.html#GKeyFile" title="GKeyFile"><span class="type">GKeyFile</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-6.html#api-index-2.6">2.6</a></p>
@@ -820,7 +821,7 @@ g_key_file_load_from_file (<em class="parameter"><code><a class="link" href="gli
 </tr>
 <tr>
 <td class="parameter_name"><p>file</p></td>
-<td class="parameter_description"><p> the path of a filename to load, in the GLib filename encoding. </p></td>
+<td class="parameter_description"><p>the path of a filename to load, in the GLib filename encoding. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
@@ -979,12 +980,12 @@ set to either a <a class="link" href="glib-File-Utilities.html#GFileError" title
 </tr>
 <tr>
 <td class="parameter_name"><p>file</p></td>
-<td class="parameter_description"><p> a relative path to a filename to open and parse. </p></td>
+<td class="parameter_description"><p>a relative path to a filename to open and parse. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>full_path</p></td>
-<td class="parameter_description"><p> return location for a string containing the full path
+<td class="parameter_description"><p>return location for a string containing the full path
 of the file, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
@@ -1046,17 +1047,17 @@ file, a <a class="link" href="glib-File-Utilities.html#G-FILE-ERROR:CAPS" title=
 </tr>
 <tr>
 <td class="parameter_name"><p>file</p></td>
-<td class="parameter_description"><p> a relative path to a filename to open and parse. </p></td>
+<td class="parameter_description"><p>a relative path to a filename to open and parse. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>search_dirs</p></td>
-<td class="parameter_description"><p> <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated array of directories to search. </p></td>
+<td class="parameter_description"><p><a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated array of directories to search. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>full_path</p></td>
-<td class="parameter_description"><p> return location for a string containing the full path
+<td class="parameter_description"><p>return location for a string containing the full path
 of the file, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
@@ -1107,7 +1108,7 @@ so it is safe to pass <a class="link" href="glib-Standard-Macros.html#NULL:CAPS"
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
-<td class="parameter_description"><p> return location for the length of the
+<td class="parameter_description"><p>return location for the length of the
 returned string, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
@@ -1227,7 +1228,7 @@ The array of returned groups will be <a class="link" href="glib-Standard-Macros.
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
-<td class="parameter_description"><p> return location for the number of returned groups, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>return location for the number of returned groups, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -1235,7 +1236,7 @@ The array of returned groups will be <a class="link" href="glib-Standard-Macros.
 </div>
 <div class="refsect3">
 <a name="g-key-file-get-groups.returns"></a><h4>Returns</h4>
-<p> a newly-allocated <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated array of strings.
+<p>a newly-allocated <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated array of strings.
 Use <a class="link" href="glib-String-Utility-Functions.html#g-strfreev" title="g_strfreev ()"><code class="function">g_strfreev()</code></a> to free it. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1279,7 +1280,7 @@ be found, <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
-<td class="parameter_description"><p> return location for the number of keys returned, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>return location for the number of keys returned, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -1292,7 +1293,7 @@ be found, <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL
 </div>
 <div class="refsect3">
 <a name="g-key-file-get-keys.returns"></a><h4>Returns</h4>
-<p> a newly-allocated <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated array of strings.
+<p>a newly-allocated <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated array of strings.
 Use <a class="link" href="glib-String-Utility-Functions.html#g-strfreev" title="g_strfreev ()"><code class="function">g_strfreev()</code></a> to free it. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1563,7 +1564,7 @@ be found then the untranslated value is returned.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>locale</p></td>
-<td class="parameter_description"><p> a locale identifier or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>a locale identifier or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -1909,7 +1910,7 @@ and <em class="parameter"><code>error</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
-<td class="parameter_description"><p> return location for the number of returned strings, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>return location for the number of returned strings, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -1922,7 +1923,7 @@ and <em class="parameter"><code>error</code></em>
 </div>
 <div class="refsect3">
 <a name="g-key-file-get-string-list.returns"></a><h4>Returns</h4>
-<p> a <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated string array or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the specified
+<p>a <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated string array or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the specified
 key cannot be found. The array should be freed with <a class="link" href="glib-String-Utility-Functions.html#g-strfreev" title="g_strfreev ()"><code class="function">g_strfreev()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1 length=length][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> utf8][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1981,12 +1982,12 @@ be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code
 </tr>
 <tr>
 <td class="parameter_name"><p>locale</p></td>
-<td class="parameter_description"><p> a locale identifier or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>a locale identifier or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
-<td class="parameter_description"><p> return location for the number of returned strings or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>return location for the number of returned strings or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -1999,7 +2000,7 @@ be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code
 </div>
 <div class="refsect3">
 <a name="g-key-file-get-locale-string-list.returns"></a><h4>Returns</h4>
-<p> a newly allocated <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated string array
+<p>a newly allocated <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated string array
 or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the key isn't found. The string array should be freed
 with <a class="link" href="glib-String-Utility-Functions.html#g-strfreev" title="g_strfreev ()"><code class="function">g_strfreev()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1 length=length][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> utf8][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -2053,7 +2054,7 @@ and <em class="parameter"><code>error</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
-<td class="parameter_description"><p> the number of booleans returned. </p></td>
+<td class="parameter_description"><p>the number of booleans returned. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -2066,7 +2067,7 @@ and <em class="parameter"><code>error</code></em>
 </div>
 <div class="refsect3">
 <a name="g-key-file-get-boolean-list.returns"></a><h4>Returns</h4>
-<p>   the values associated with the key as a list of booleans, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the
+<p>the values associated with the key as a list of booleans, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the
 key was not found or could not be parsed. The returned list of booleans
 should be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a> when no longer needed. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> gboolean][<acronym title="Free data container after the code is done."><span class="acronym">transfer container</span></acronym>]</span></p>
@@ -2121,7 +2122,7 @@ and <em class="parameter"><code>error</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
-<td class="parameter_description"><p> the number of integers returned. </p></td>
+<td class="parameter_description"><p>the number of integers returned. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -2134,7 +2135,7 @@ and <em class="parameter"><code>error</code></em>
 </div>
 <div class="refsect3">
 <a name="g-key-file-get-integer-list.returns"></a><h4>Returns</h4>
-<p>    the values associated with the key as a list of integers, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if
+<p>the values associated with the key as a list of integers, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if
 the key was not found or could not be parsed. The returned list of
 integers should be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a> when no longer needed. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> gint][<acronym title="Free data container after the code is done."><span class="acronym">transfer container</span></acronym>]</span></p>
@@ -2188,7 +2189,7 @@ and <em class="parameter"><code>error</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
-<td class="parameter_description"><p> the number of doubles returned. </p></td>
+<td class="parameter_description"><p>the number of doubles returned. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -2201,7 +2202,7 @@ and <em class="parameter"><code>error</code></em>
 </div>
 <div class="refsect3">
 <a name="g-key-file-get-double-list.returns"></a><h4>Returns</h4>
-<p>    the values associated with the key as a list of doubles, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the
+<p>the values associated with the key as a list of doubles, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the
 key was not found or could not be parsed. The returned list of doubles
 should be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a> when no longer needed. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> gdouble][<acronym title="Free data container after the code is done."><span class="acronym">transfer container</span></acronym>]</span></p>
@@ -2245,7 +2246,7 @@ If <em class="parameter"><code>key</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>group_name</p></td>
-<td class="parameter_description"><p> a group name, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>a group name, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -2700,7 +2701,7 @@ If <em class="parameter"><code>group_name</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>list</p></td>
-<td class="parameter_description"><p> an array of string values. </p></td>
+<td class="parameter_description"><p>an array of string values. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1 length=length][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> utf8]</span></td>
 </tr>
 <tr>
@@ -2762,7 +2763,7 @@ it is created.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>list</p></td>
-<td class="parameter_description"><p> a <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated array of locale string values. </p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated array of locale string values. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1 length=length]</span></td>
 </tr>
 <tr>
@@ -2818,7 +2819,7 @@ If <em class="parameter"><code>group_name</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>list</p></td>
-<td class="parameter_description"><p> an array of boolean values. </p></td>
+<td class="parameter_description"><p>an array of boolean values. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length]</span></td>
 </tr>
 <tr>
@@ -2872,7 +2873,7 @@ If <em class="parameter"><code>key</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>list</p></td>
-<td class="parameter_description"><p> an array of integer values. </p></td>
+<td class="parameter_description"><p>an array of integer values. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length]</span></td>
 </tr>
 <tr>
@@ -2926,7 +2927,7 @@ g_key_file_set_double_list (<em class="parameter"><code><a class="link" href="gl
 </tr>
 <tr>
 <td class="parameter_name"><p>list</p></td>
-<td class="parameter_description"><p> an array of double values. </p></td>
+<td class="parameter_description"><p>an array of double values. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length]</span></td>
 </tr>
 <tr>
@@ -2980,12 +2981,12 @@ each line of <em class="parameter"><code>comment</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>group_name</p></td>
-<td class="parameter_description"><p> a group name, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>a group name, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>key</p></td>
-<td class="parameter_description"><p> a key. </p></td>
+<td class="parameter_description"><p>a key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -3135,12 +3136,12 @@ be removed above the first group in the file.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>group_name</p></td>
-<td class="parameter_description"><p> a group name, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>a group name, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>key</p></td>
-<td class="parameter_description"><p> a key. </p></td>
+<td class="parameter_description"><p>a key. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -3527,6 +3528,6 @@ entries representing directories.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25.1</div>
+<hr>Generated by GTK-Doc V1.26.1</div>
 </body>
 </html>

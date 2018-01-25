@@ -8,7 +8,7 @@
 <link rel="up" href="glib-data-types.html" title="GLib Data Types">
 <link rel="prev" href="glib-Datasets.html" title="Datasets">
 <link rel="next" href="glib-GVariant.html" title="GVariant">
-<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -400,6 +400,7 @@
 <div class="refsect1">
 <a name="glib-GVariantType.includes"></a><h2>Includes</h2>
 <pre class="synopsis">#include &lt;glib.h&gt;
+#include &lt;glib/gi18n.h&gt;
 </pre>
 </div>
 <div class="refsect1">
@@ -589,7 +590,7 @@ type constructor functions.</p>
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>type</p></td>
-<td class="parameter_description"><p> a <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
@@ -620,7 +621,7 @@ g_variant_type_copy (<em class="parameter"><code>const <a class="link" href="gli
 </div>
 <div class="refsect3">
 <a name="g-variant-type-copy.returns"></a><h4>Returns</h4>
-<p> a new <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
+<p>a new <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -653,7 +654,7 @@ string.  Use <a class="link" href="glib-GVariantType.html#g-variant-type-string-
 </div>
 <div class="refsect3">
 <a name="g-variant-type-new.returns"></a><h4>Returns</h4>
-<p> a new <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>. </p>
+<p>a new <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-24.html#api-index-2.24">2.24</a></p>
@@ -727,13 +728,13 @@ see <a class="link" href="glib-GVariantType.html#g-variant-type-string-is-valid"
 </tr>
 <tr>
 <td class="parameter_name"><p>limit</p></td>
-<td class="parameter_description"><p> the end of <em class="parameter"><code>string</code></em>
+<td class="parameter_description"><p>the end of <em class="parameter"><code>string</code></em>
 , or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>endptr</p></td>
-<td class="parameter_description"><p> location to store the end pointer, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>location to store the end pointer, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -833,7 +834,7 @@ call <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()
 </div>
 <div class="refsect3">
 <a name="g-variant-type-dup-string.returns"></a><h4>Returns</h4>
-<p> the corresponding type string</p>
+<p>the corresponding type string</p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1130,7 +1131,7 @@ g_variant_type_hash (<em class="parameter"><code><a class="link" href="glib-Basi
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>type</p></td>
-<td class="parameter_description"><p> a <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>. </p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GVariantType]</span></td>
 </tr></tbody>
 </table></div>
@@ -1170,12 +1171,12 @@ both arguments, a valid <a class="link" href="glib-GVariantType.html#GVariantTyp
 <tbody>
 <tr>
 <td class="parameter_name"><p>type1</p></td>
-<td class="parameter_description"><p> a <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>. </p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GVariantType]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>type2</p></td>
-<td class="parameter_description"><p> a <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>. </p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GVariantType]</span></td>
 </tr>
 </tbody>
@@ -1260,7 +1261,7 @@ type <em class="parameter"><code>type</code></em>
 </div>
 <div class="refsect3">
 <a name="g-variant-type-new-maybe.returns"></a><h4>Returns</h4>
-<p> a new maybe <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
+<p>a new maybe <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1292,7 +1293,7 @@ type <em class="parameter"><code>type</code></em>
 </div>
 <div class="refsect3">
 <a name="g-variant-type-new-array.returns"></a><h4>Returns</h4>
-<p> a new array <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
+<p>a new array <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1322,7 +1323,7 @@ g_variant_type_new_tuple (<em class="parameter"><code>const <a class="link" href
 <tbody>
 <tr>
 <td class="parameter_name"><p>items</p></td>
-<td class="parameter_description"><p> an array of <a href="glib-GVariantType.html#GVariantType"><span class="type">GVariantTypes</span></a>, one for each item. </p></td>
+<td class="parameter_description"><p>an array of <a href="glib-GVariantType.html#GVariantType"><span class="type">GVariantTypes</span></a>, one for each item. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length]</span></td>
 </tr>
 <tr>
@@ -1336,7 +1337,7 @@ g_variant_type_new_tuple (<em class="parameter"><code>const <a class="link" href
 </div>
 <div class="refsect3">
 <a name="g-variant-type-new-tuple.returns"></a><h4>Returns</h4>
-<p> a new tuple <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
+<p>a new tuple <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1377,7 +1378,7 @@ of type <em class="parameter"><code>key</code></em>
 </div>
 <div class="refsect3">
 <a name="g-variant-type-new-dict-entry.returns"></a><h4>Returns</h4>
-<p> a new dictionary entry <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
+<p>a new dictionary entry <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a></p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1406,7 +1407,7 @@ g_variant_type_element (<em class="parameter"><code>const <a class="link" href="
 </div>
 <div class="refsect3">
 <a name="g-variant-type-element.returns"></a><h4>Returns</h4>
-<p> the element type of <em class="parameter"><code>type</code></em>
+<p>the element type of <em class="parameter"><code>type</code></em>
 </p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -1479,7 +1480,7 @@ interface over tuple and dictionary entry types.</p>
 </div>
 <div class="refsect3">
 <a name="g-variant-type-first.returns"></a><h4>Returns</h4>
-<p> the first item type of <em class="parameter"><code>type</code></em>
+<p>the first item type of <em class="parameter"><code>type</code></em>
 , or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a></p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -1517,7 +1518,7 @@ entry then this call returns <a class="link" href="glib-Standard-Macros.html#NUL
 </div>
 <div class="refsect3">
 <a name="g-variant-type-next.returns"></a><h4>Returns</h4>
-<p> the next <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a> after <em class="parameter"><code>type</code></em>
+<p>the next <a class="link" href="glib-GVariantType.html#GVariantType" title="GVariantType"><span class="type">GVariantType</span></a> after <em class="parameter"><code>type</code></em>
 , or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a></p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -1549,7 +1550,7 @@ than the additional restriction, this call is equivalent to
 </div>
 <div class="refsect3">
 <a name="g-variant-type-key.returns"></a><h4>Returns</h4>
-<p> the key type of the dictionary entry</p>
+<p>the key type of the dictionary entry</p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -1578,7 +1579,7 @@ g_variant_type_value (<em class="parameter"><code>const <a class="link" href="gl
 </div>
 <div class="refsect3">
 <a name="g-variant-type-value.returns"></a><h4>Returns</h4>
-<p> the value type of the dictionary entry</p>
+<p>the value type of the dictionary entry</p>
 <p>Since 2.24. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -1827,6 +1828,6 @@ the last character in the array.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25.1</div>
+<hr>Generated by GTK-Doc V1.26.1</div>
 </body>
 </html>

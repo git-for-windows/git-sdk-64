@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-File-Utilities.html" title="File Utilities">
 <link rel="next" href="glib-Hostname-Utilities.html" title="Hostname Utilities">
-<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -132,6 +132,7 @@
 <div class="refsect1">
 <a name="glib-URI-Functions.includes"></a><h2>Includes</h2>
 <pre class="synopsis">#include &lt;glib.h&gt;
+#include &lt;glib/gi18n.h&gt;
 </pre>
 </div>
 <div class="refsect1">
@@ -215,7 +216,7 @@ a URI.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>reserved_chars_allowed</p></td>
-<td class="parameter_description"><p> a string of reserved characters that
+<td class="parameter_description"><p>a string of reserved characters that
 are allowed to be used, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
@@ -265,7 +266,7 @@ handling.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>illegal_characters</p></td>
-<td class="parameter_description"><p> a string of illegal characters not to be
+<td class="parameter_description"><p>a string of illegal characters not to be
 allowed, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
@@ -306,18 +307,18 @@ handling.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>escaped_string</p></td>
-<td class="parameter_description"><p> A string, may be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>A string, may be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>escaped_string_end</p></td>
-<td class="parameter_description"><p> Pointer to end of <em class="parameter"><code>escaped_string</code></em>
+<td class="parameter_description"><p>Pointer to end of <em class="parameter"><code>escaped_string</code></em>
 , may be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>illegal_characters</p></td>
-<td class="parameter_description"><p> An optional string of illegal characters not to be allowed, may be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>An optional string of illegal characters not to be allowed, may be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -359,7 +360,7 @@ discarding any comments. The URIs are not validated.</p>
 </div>
 <div class="refsect3">
 <a name="g-uri-list-extract-uris.returns"></a><h4>Returns</h4>
-<p> a newly allocated <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated list
+<p>a newly allocated <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>-terminated list
 of strings holding the individual URIs. The array should be freed
 with <a class="link" href="glib-String-Utility-Functions.html#g-strfreev" title="g_strfreev ()"><code class="function">g_strfreev()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -391,7 +392,7 @@ encoding used for filenames.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>hostname</p></td>
-<td class="parameter_description"><p> Location to store hostname for the URI.
+<td class="parameter_description"><p>Location to store hostname for the URI.
 If there is no hostname in the URI, <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> will be
 stored in this location. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
@@ -407,7 +408,7 @@ errors. Any of the errors in <a class="link" href="glib-Character-Set-Conversion
 </div>
 <div class="refsect3">
 <a name="g-filename-from-uri.returns"></a><h4>Returns</h4>
-<p> a newly-allocated string holding
+<p>a newly-allocated string holding
 the resulting filename, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> on an error. </p>
 <p><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></p>
 </div>
@@ -432,14 +433,14 @@ component following Section 3.3. of RFC 2396.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>filename</p></td>
-<td class="parameter_description"><p> an absolute filename specified in the GLib file
+<td class="parameter_description"><p>an absolute filename specified in the GLib file
 name encoding, which is the on-disk file name bytes on Unix, and UTF-8
 on Windows. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>hostname</p></td>
-<td class="parameter_description"><p> A UTF-8 encoded hostname, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> for none. </p></td>
+<td class="parameter_description"><p>A UTF-8 encoded hostname, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> for none. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -497,6 +498,6 @@ URI, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL">
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25.1</div>
+<hr>Generated by GTK-Doc V1.26.1</div>
 </body>
 </html>

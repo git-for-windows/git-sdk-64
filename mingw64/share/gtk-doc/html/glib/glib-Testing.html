@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Bookmark-file-parser.html" title="Bookmark file parser">
 <link rel="next" href="glib-UNIX-specific-utilities-and-integration.html" title="UNIX-specific utilities and integration">
-<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -592,6 +592,7 @@
 <div class="refsect1">
 <a name="glib-Testing.includes"></a><h2>Includes</h2>
 <pre class="synopsis">#include &lt;glib.h&gt;
+#include &lt;glib/gi18n.h&gt;
 </pre>
 </div>
 <div class="refsect1">
@@ -1105,7 +1106,7 @@ required via the <code class="literal">-p</code> command-line option or <a class
 </tr>
 <tr>
 <td class="parameter_name"><p>test_func</p></td>
-<td class="parameter_description"><p>  The test function to invoke for this test. </p></td>
+<td class="parameter_description"><p>The test function to invoke for this test. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="The callback is valid until first called."><span class="acronym">scope async</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -1177,7 +1178,7 @@ required via the <code class="literal">-p</code> command-line option or <a class
 </tr>
 <tr>
 <td class="parameter_name"><p>test_func</p></td>
-<td class="parameter_description"><p> The test function to invoke for this test. </p></td>
+<td class="parameter_description"><p>The test function to invoke for this test. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="The callback is valid until first called."><span class="acronym">scope async</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -1422,7 +1423,7 @@ but you don't need to free the return value.</p>
 </div>
 <div class="refsect3">
 <a name="g-test-get-dir.returns"></a><h4>Returns</h4>
-<p> the path of the directory, owned by GLib. </p>
+<p>the path of the directory, owned by GLib. </p>
 <p><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-38.html#api-index-2.38">2.38</a></p>
@@ -1465,7 +1466,7 @@ the test.</p>
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>msg</p></td>
-<td class="parameter_description"><p> explanation. </p></td>
+<td class="parameter_description"><p>explanation. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
@@ -1495,7 +1496,7 @@ the test.</p>
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>msg</p></td>
-<td class="parameter_description"><p> explanation. </p></td>
+<td class="parameter_description"><p>explanation. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
@@ -1890,7 +1891,7 @@ expected via <a class="link" href="glib-Testing.html#g-test-expect-message" titl
 <tbody>
 <tr>
 <td class="parameter_name"><p>log_domain</p></td>
-<td class="parameter_description"><p> the log domain of the message. </p></td>
+<td class="parameter_description"><p>the log domain of the message. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -2029,7 +2030,7 @@ message.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>test_path</p></td>
-<td class="parameter_description"><p> Test to run in a subprocess. </p></td>
+<td class="parameter_description"><p>Test to run in a subprocess. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -2656,7 +2657,7 @@ One of ==, !=, &lt;, &gt;, &lt;=, &gt;=.</p></td>
 an error message is logged and the application is either terminated
 or the testcase marked as failed.</p>
 <p>The effect of <code class="literal">g_assert_cmpmem (m1, l1, m2, l2)</code> is
-the same as <code class="literal">g_assert_true (l1 == l2 &amp;&amp; memcmp (m1, m2, l1) == 0)</code>.
+the same as <code class="literal">g_assert_true (l1 == l2 &amp;amp;&amp;amp; memcmp (m1, m2, l1) == 0)</code>.
 The advantage of this macro is that it can produce a message that
 includes the actual values of <em class="parameter"><code>l1</code></em>
  and <em class="parameter"><code>l2</code></em>
@@ -2742,8 +2743,8 @@ the error message and code.</p>
 <p>Debugging macro to check that a method has returned
 the correct <a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a>.</p>
 <p>The effect of <code class="literal">g_assert_error (err, dom, c)</code> is
-the same as <code class="literal">g_assert_true (err != NULL &amp;&amp; err-&gt;domain
-== dom &amp;&amp; err-&gt;code == c)</code>. The advantage of this
+the same as <code class="literal">g_assert_true (err != NULL &amp;amp;&amp;amp; err-&gt;domain
+== dom &amp;amp;&amp;amp; err-&gt;code == c)</code>. The advantage of this
 macro is that it can produce a message that includes the incorrect
 error message and code.</p>
 <p>This can only be used to test for a specific error. If you want to
@@ -2930,7 +2931,7 @@ zero then <em class="parameter"><code>fixture</code></em>
 <tbody>
 <tr>
 <td class="parameter_name"><p>fixture</p></td>
-<td class="parameter_description"><p> the test fixture. </p></td>
+<td class="parameter_description"><p>the test fixture. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -2999,17 +3000,17 @@ called with the same fixture, but varying <em class="parameter"><code>test_name<
 </tr>
 <tr>
 <td class="parameter_name"><p>data_setup</p></td>
-<td class="parameter_description"><p> the function to set up the fixture data. </p></td>
+<td class="parameter_description"><p>the function to set up the fixture data. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="The callback is valid until first called."><span class="acronym">scope async</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>data_test</p></td>
-<td class="parameter_description"><p> the actual test function. </p></td>
+<td class="parameter_description"><p>the actual test function. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="The callback is valid until first called."><span class="acronym">scope async</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>data_teardown</p></td>
-<td class="parameter_description"><p> the function to teardown the fixture data. </p></td>
+<td class="parameter_description"><p>the function to teardown the fixture data. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="The callback is valid until first called."><span class="acronym">scope async</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -3330,6 +3331,6 @@ not show stdout and stderr.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25.1</div>
+<hr>Generated by GTK-Doc V1.26.1</div>
 </body>
 </html>
