@@ -9,7 +9,7 @@ use vars qw/	$AUTHOR $VERSION
 		$sha1 $sha1_short $_revision $_repository
 		$_q $_authors $_authors_prog %users/;
 $AUTHOR = 'Eric Wong <normalperson@yhbt.net>';
-$VERSION = '2.15.0';
+$VERSION = '2.16.1';
 
 use Carp qw/croak/;
 use File::Basename qw/dirname basename/;
@@ -1866,6 +1866,7 @@ sub get_commit_entry {
 			}
 		}
 		$msgbuf =~ s/\s+$//s;
+		$msgbuf =~ s/\r\n/\n/sg; # SVN 1.6+ disallows CRLF
 		if ($Git::SVN::_add_author_from && defined($author)
 		    && !$saw_from) {
 			$msgbuf .= "\n\nFrom: $author";

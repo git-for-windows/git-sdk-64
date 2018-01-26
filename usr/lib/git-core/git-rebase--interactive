@@ -392,9 +392,12 @@ pick_one_preserving_merges () {
 			new_parents=${new_parents# $first_parent}
 			merge_args="--no-log --no-ff"
 			if ! do_with_author output eval \
-			'git merge ${gpg_sign_opt:+"$gpg_sign_opt"} \
-				$allow_rerere_autoupdate $merge_args \
-				$strategy_args -m "$msg_content" $new_parents'
+				git merge ${gpg_sign_opt:+$(git rev-parse \
+					--sq-quote "$gpg_sign_opt")} \
+				$allow_rerere_autoupdate "$merge_args" \
+				"$strategy_args" \
+				-m $(git rev-parse --sq-quote "$msg_content") \
+				"$new_parents"
 			then
 				printf "%s\n" "$msg_content" > "$GIT_DIR"/MERGE_MSG
 				die_with_patch $sha1 "$(eval_gettext "Error redoing merge \$sha1")"
@@ -722,27 +725,6 @@ collapse_todo_ids() {
 	git rebase--helper --shorten-ids
 }
 
-# Add commands after a pick or after a squash/fixup serie
-# in the todo list.
-add_exec_commands () {
-	{
-		first=t
-		while read -r insn rest
-		do
-			case $insn in
-			pick)
-				test -n "$first" ||
-				printf "%s" "$cmd"
-				;;
-			esac
-			printf "%s %s\n" "$insn" "$rest"
-			first=
-		done
-		printf "%s" "$cmd"
-	} <"$1" >"$1.new" &&
-	mv "$1.new" "$1"
-}
-
 # Switch to the branch in $into and notify it in the reflog
 checkout_onto () {
 	GIT_REFLOG_ACTION="$GIT_REFLOG_ACTION: checkout $onto_name"
@@ -914,7 +896,8 @@ fi
 if test t != "$preserve_merges"
 then
 	git rebase--helper --make-script ${keep_empty:+--keep-empty} \
-		$revisions ${restrict_revision+^$restrict_revision} >"$todo"
+		$revisions ${restrict_revision+^$restrict_revision} >"$todo" ||
+	die "$(gettext "Could not generate todo list")"
 else
 	format=$(git config --get rebase.instructionFormat)
 	# the 'rev-list .. | sed' requires %m to parse; the instruction requires %H to parse
@@ -982,7 +965,7 @@ fi
 
 test -s "$todo" || echo noop >> "$todo"
 test -z "$autosquash" || git rebase--helper --rearrange-squash || exit
-test -n "$cmd" && add_exec_commands "$todo"
+test -n "$cmd" && git rebase--helper --add-exec-commands "$cmd"
 
 todocount=$(git stripspace --strip-comments <"$todo" | wc -l)
 todocount=${todocount##* }

@@ -76,6 +76,12 @@ create_stash () {
 			shift
 			stash_msg=${1?"BUG: create_stash () -m requires an argument"}
 			;;
+		-m*)
+			stash_msg=${1#-m}
+			;;
+		--message=*)
+			stash_msg=${1#--message=}
+			;;
 		-u|--include-untracked)
 			shift
 			untracked=${1?"BUG: create_stash () -u requires an argument"}
@@ -193,6 +199,12 @@ store_stash () {
 			shift
 			stash_msg="$1"
 			;;
+		-m*)
+			stash_msg=${1#-m}
+			;;
+		--message=*)
+			stash_msg=${1#--message=}
+			;;
 		-q|--quiet)
 			quiet=t
 			;;
@@ -251,6 +263,12 @@ push_stash () {
 			test -z ${1+x} && usage
 			stash_msg=$1
 			;;
+		-m*)
+			stash_msg=${1#-m}
+			;;
+		--message=*)
+			stash_msg=${1#--message=}
+			;;
 		--help)
 			show_help
 			;;
@@ -260,18 +278,7 @@ push_stash () {
 			;;
 		-*)
 			option="$1"
-			# TRANSLATORS: $option is an invalid option, like
-			# `--blah-blah'. The 7 spaces at the beginning of the
-			# second line correspond to "error: ". So you should line
-			# up the second line with however many characters the
-			# translation of "error: " takes in your language. E.g. in
-			# English this is:
-			#
-			#    $ git stash save --blah-blah 2>&1 | head -n 2
-			#    error: unknown option for 'stash save': --blah-blah
-			#           To provide a message, use git stash save -- '--blah-blah'
-			eval_gettextln "error: unknown option for 'stash save': \$option
-       To provide a message, use git stash save -- '\$option'"
+			eval_gettextln "error: unknown option for 'stash push': \$option"
 			usage
 			;;
 		*)

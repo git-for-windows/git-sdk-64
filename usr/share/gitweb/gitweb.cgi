@@ -10,6 +10,8 @@
 use 5.008;
 use strict;
 use warnings;
+# handle ACL in file access tests
+use filetest 'access';
 use CGI qw(:standard :escapeHTML -nosticky);
 use CGI::Util qw(unescape);
 use CGI::Carp qw(fatalsToBrowser set_message);
@@ -31,7 +33,7 @@ BEGIN {
 	CGI->compile() if $ENV{'MOD_PERL'};
 }
 
-our $version = "2.15.0";
+our $version = "2.16.1";
 
 our ($my_url, $my_uri, $base_url, $path_info, $home_link);
 sub evaluate_uri {

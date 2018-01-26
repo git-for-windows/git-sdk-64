@@ -886,7 +886,9 @@ if (defined $initial_reply_to) {
 }
 
 if (!defined $smtp_server) {
-	foreach (qw( /usr/sbin/sendmail /usr/lib/sendmail )) {
+	my @sendmail_paths = qw( /usr/sbin/sendmail /usr/lib/sendmail );
+	push @sendmail_paths, map {"$_/sendmail"} split /:/, $ENV{PATH};
+	foreach (@sendmail_paths) {
 		if (-x $_) {
 			$smtp_server = $_;
 			last;
@@ -1288,7 +1290,7 @@ sub send_message {
 	@recipients = unique_email_list(@recipients,@cc,@bcclist);
 	@recipients = (map { extract_valid_address_or_die($_) } @recipients);
 	my $date = format_2822_time($time++);
-	my $gitversion = '2.15.0';
+	my $gitversion = '2.16.1';
 	if ($gitversion =~ m/..GIT_VERSION../) {
 	    $gitversion = Git::version();
 	}
