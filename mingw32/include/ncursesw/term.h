@@ -42,7 +42,7 @@
 #define NCURSES_TERM_H_incl 1
 
 #undef  NCURSES_VERSION
-#define NCURSES_VERSION "6.0"
+#define NCURSES_VERSION "6.1"
 
 #include <ncursesw/ncurses_dll.h>
 

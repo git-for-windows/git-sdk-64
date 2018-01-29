@@ -118,7 +118,7 @@ Execute this statement for a hint about where to find CORE:
     perl -MConfig -e 'print $Config{archlib}'
 
 Here's how you'd compile the example in the next section,
-L<Adding a Perl interpreter to your C program>, on my Linux box:
+L</Adding a Perl interpreter to your C program>, on my Linux box:
 
     % gcc -O2 -Dbool=char -DHAS_BOOL -I/usr/local/include
     -I/usr/local/lib/perl5/i586-linux/5.003/CORE
@@ -161,7 +161,7 @@ you:
 
 If the B<ExtUtils::Embed> module isn't part of your Perl distribution,
 you can retrieve it from
-http://www.perl.com/perl/CPAN/modules/by-module/ExtUtils/
+L<http://www.perl.com/perl/CPAN/modules/by-module/ExtUtils/>
 (If this documentation came from your Perl distribution, then you're
 running 5.004 or better and you already have it.)
 
@@ -210,6 +210,9 @@ provide C<env> as an argument to perl_parse().
 Also notice that no matter what arguments you pass to perl_parse(),
 PERL_SYS_INIT3() must be invoked on the C main() argc, argv and env and
 only once.
+
+Mind that argv[argc] must be NULL, same as those passed to a main
+function in C.
 
 Now compile this program (I'll call it I<interp.c>) into an executable:
 
@@ -297,7 +300,7 @@ If you want to pass arguments to the Perl subroutine, you can add
 strings to the C<NULL>-terminated C<args> list passed to
 I<call_argv>.  For other data types, or to examine return values,
 you'll need to manipulate the Perl stack.  That's demonstrated in
-L<Fiddling with the Perl stack from your C program>.
+L</Fiddling with the Perl stack from your C program>.
 
 =head2 Evaluating a Perl statement from your C program
 
@@ -1134,7 +1137,7 @@ Christiansen, Guy Decoux, Hallvard Furuseth, Dov Grobgeld, and Ilya
 Zakharevich.
 
 Doug MacEachern has an article on embedding in Volume 1, Issue 4 of
-The Perl Journal ( http://www.tpj.com/ ).  Doug is also the developer of the
+The Perl Journal ( L<http://www.tpj.com/> ).  Doug is also the developer of the
 most widely-used Perl embedding: the mod_perl system
 (perl.apache.org), which embeds Perl in the Apache web server.
 Oracle, Binary Evolution, ActiveState, and Ben Sugars's nsapi_perl

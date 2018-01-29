@@ -101,6 +101,10 @@ PERLVARI(G, mmap_page_size, IV, 0)
 PERLVAR(G, hints_mutex, perl_mutex)    /* Mutex for refcounted he refcounting */
 PERLVAR(G, locale_mutex, perl_mutex)   /* Mutex for setlocale() changing */
 
+#   ifdef HAS_NEWLOCALE
+PERLVAR(G, C_locale_obj, locale_t)
+#   endif
+
 #endif
 
 #ifdef DEBUGGING
@@ -244,3 +248,10 @@ PERLVAR(G, malloc_mutex, perl_mutex)	/* Mutex for malloc */
 
 PERLVARI(G, hash_seed_set, bool, FALSE)	/* perl.c */
 PERLVARA(G, hash_seed, PERL_HASH_SEED_BYTES, unsigned char) /* perl.c and hv.h */
+
+/* The path separator can vary depending on whether we're running under DCL or
+ * a Unix shell.
+ */
+#ifdef __VMS
+PERLVAR(G, perllib_sep, char)
+#endif

@@ -4,7 +4,7 @@ use Text::Balanced ':ALL';
 
 use vars qw{ $VERSION @EXPORT };
 
-$VERSION = '0.92';
+$VERSION = '0.93';
 
 use Filter::Util::Call;
 use Carp;
@@ -198,6 +198,7 @@ sub gen_filter_import {
                     if ($terminator{terminator} &&
                         m/$terminator{terminator}/) {
                         $lastline = $_;
+                        $count++;
                         last;
                     }
                     $data .= $_;

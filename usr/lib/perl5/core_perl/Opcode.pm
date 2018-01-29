@@ -6,7 +6,7 @@ use strict;
 
 our($VERSION, @ISA, @EXPORT_OK);
 
-$VERSION = "1.34";
+$VERSION = "1.39";
 
 use Carp;
 use Exporter ();
@@ -312,7 +312,7 @@ invert_opset function.
     av2arylen
 
     rv2hv helem hslice kvhslice each values keys exists delete
-    aeach akeys avalues multideref
+    aeach akeys avalues multideref argelem argdefelem argcheck
 
     preinc i_preinc predec i_predec postinc i_postinc
     postdec i_postdec int hex oct abs pow multiply i_multiply
@@ -338,7 +338,7 @@ invert_opset function.
 
     warn die lineseq nextstate scope enter leave
 
-    rv2cv anoncode prototype coreargs anonconst
+    rv2cv anoncode prototype coreargs avhvswitch anonconst
 
     entersub leavesub leavesublv return method method_named
     method_super method_redir method_redir_super
@@ -409,7 +409,7 @@ These are a hotchpotch of opcodes still waiting to be considered
     bless -- could be used to change ownership of objects
 	     (reblessing)
 
-    pushre regcmaybe regcreset regcomp subst substcont
+     regcmaybe regcreset regcomp subst substcont
 
     sprintf prtf -- can core dump
 

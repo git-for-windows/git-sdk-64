@@ -112,7 +112,7 @@ Check for the cases 0 or 3 of cur_env.je_ret, only used inside an eval context.
 See F<cop.h>: je_mustcatch, when set at any runlevel to TRUE, means eval ops must
 establish a local jmpenv to handle exception traps.
 
-	OP*	docatch(OP *o)
+	OP*	docatch(Perl_ppaddr_t firstpp)
 
 =for hackers
 Found in file pp_ctl.c
@@ -284,8 +284,8 @@ associated with the C<PARENT_FAKELEX_FLAGS> field of a fake pad name.
 Note that C<pad_findlex()> is recursive; it recurses up the chain of CVs,
 then comes back down, adding fake entries
 as it goes.  It has to be this way
-because fake names in anon protoypes have to store in C<xlow> the index into
-the parent pad.
+because fake names in anon protoypes have to store in C<xpadn_low> the
+index into the parent pad.
 
 	PADOFFSET pad_findlex(const char *namepv,
 	                      STRLEN namelen, U32 flags,
@@ -1260,9 +1260,11 @@ Found in file intrpvar.h
 =item PL_dowarn
 X<PL_dowarn>
 
-The C variable which corresponds to Perl's C<$^W> warning variable.
+The C variable that roughly corresponds to Perl's C<$^W> warning variable.
+However, C<$^W> is treated as a boolean, whereas C<PL_dowarn> is a
+collection of flag bits.
 
-	bool	PL_dowarn
+	U8	PL_dowarn
 
 =for hackers
 Found in file intrpvar.h
@@ -1345,22 +1347,6 @@ reference or overload conversion.  The caller is expected to have handled
 get-magic already.
 
 	SV*	sv_2num(SV *const sv)
-
-=for hackers
-Found in file sv.c
-
-=item sv_copypv
-X<sv_copypv>
-
-Copies a stringified representation of the source SV into the
-destination SV.  Automatically performs any necessary C<mg_get> and
-coercion of numeric values into strings.  Guaranteed to preserve
-C<UTF8> flag even from overloaded objects.  Similar in nature to
-C<sv_2pv[_flags]> but operates directly on an SV instead of just the
-string.  Mostly uses C<sv_2pv_flags> to do its work, except when that
-would lose the UTF-8'ness of the PV.
-
-	void	sv_copypv(SV *const dsv, SV *const ssv)
 
 =for hackers
 Found in file sv.c
@@ -1602,11 +1588,14 @@ X<Slab_to_rw>
 =item _add_range_to_invlist
 X<_add_range_to_invlist>
 
+=item _byte_dump_string
+X<_byte_dump_string>
+
 =item _core_swash_init
 X<_core_swash_init>
 
-=item _get_encoding
-X<_get_encoding>
+=item _get_regclass_nonbitmap_data
+X<_get_regclass_nonbitmap_data>
 
 =item _get_swash_invlist
 X<_get_swash_invlist>
@@ -1650,11 +1639,20 @@ X<_invlist_union>
 =item _invlist_union_maybe_complement_2nd
 X<_invlist_union_maybe_complement_2nd>
 
+=item _is_grapheme
+X<_is_grapheme>
+
 =item _load_PL_utf8_foldclosures
 X<_load_PL_utf8_foldclosures>
 
+=item _mem_collxfrm
+X<_mem_collxfrm>
+
 =item _new_invlist
 X<_new_invlist>
+
+=item _new_invlist_C_array
+X<_new_invlist_C_array>
 
 =item _setup_canned_invlist
 X<_setup_canned_invlist>
@@ -1674,8 +1672,14 @@ X<_to_upper_title_latin1>
 =item _warn_problematic_locale
 X<_warn_problematic_locale>
 
+=item abort_execution
+X<abort_execution>
+
 =item add_cp_to_invlist
 X<add_cp_to_invlist>
+
+=item alloc_LOGOP
+X<alloc_LOGOP>
 
 =item alloc_maybe_populate_EXACT
 X<alloc_maybe_populate_EXACT>
@@ -1685,6 +1689,9 @@ X<allocmy>
 
 =item amagic_is_enabled
 X<amagic_is_enabled>
+
+=item append_utf8_from_native_byte
+X<append_utf8_from_native_byte>
 
 =item apply
 X<apply>
@@ -1866,6 +1873,9 @@ X<coresub_op>
 =item create_eval_scope
 X<create_eval_scope>
 
+=item croak_caller
+X<croak_caller>
+
 =item croak_no_mem
 X<croak_no_mem>
 
@@ -1907,6 +1917,9 @@ X<defelem_target>
 
 =item delete_eval_scope
 X<delete_eval_scope>
+
+=item delimcpy_no_escape
+X<delimcpy_no_escape>
 
 =item die_unwind
 X<die_unwind>
@@ -1983,6 +1996,9 @@ X<do_vecset>
 =item do_vop
 X<do_vop>
 
+=item does_utf8_overflow
+X<does_utf8_overflow>
+
 =item dofile
 X<dofile>
 
@@ -2036,9 +2052,6 @@ X<form_short_octal_warning>
 
 =item free_tied_hv_pool
 X<free_tied_hv_pool>
-
-=item get_and_check_backslash_N_name
-X<get_and_check_backslash_N_name>
 
 =item get_db_sub
 X<get_db_sub>
@@ -2169,11 +2182,23 @@ X<invlist_trim>
 =item io_close
 X<io_close>
 
-=item isGCB
-X<isGCB>
+=item isFF_OVERLONG
+X<isFF_OVERLONG>
+
+=item isFOO_lc
+X<isFOO_lc>
 
 =item is_utf8_common
 X<is_utf8_common>
+
+=item is_utf8_common_with_len
+X<is_utf8_common_with_len>
+
+=item is_utf8_cp_above_31_bits
+X<is_utf8_cp_above_31_bits>
+
+=item is_utf8_overlong_given_start_byte_ok
+X<is_utf8_overlong_given_start_byte_ok>
 
 =item isinfnansv
 X<isinfnansv>
@@ -2427,6 +2452,9 @@ X<nextargv>
 =item noperl_die
 X<noperl_die>
 
+=item notify_parser_that_changed_to_utf8
+X<notify_parser_that_changed_to_utf8>
+
 =item oopsAV
 X<oopsAV>
 
@@ -2486,9 +2514,6 @@ X<padname_free>
 
 =item padnamelist_free
 X<padnamelist_free>
-
-=item parse_subsignature
-X<parse_subsignature>
 
 =item parse_unicode_opts
 X<parse_unicode_opts>
@@ -2670,6 +2695,12 @@ X<sv_setsv_cow>
 =item sv_unglob
 X<sv_unglob>
 
+=item swash_fetch
+X<swash_fetch>
+
+=item swash_init
+X<swash_init>
+
 =item tied_method
 X<tied_method>
 
@@ -2735,6 +2766,9 @@ X<yylex>
 
 =item yyparse
 X<yyparse>
+
+=item yyquit
+X<yyquit>
 
 =item yyunlex
 X<yyunlex>

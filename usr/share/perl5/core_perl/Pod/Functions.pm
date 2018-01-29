@@ -54,7 +54,7 @@ L<perlfunc/"Perl Functions by Category"> section.
 
 =cut
 
-our $VERSION = '1.10';
+our $VERSION = '1.11';
 
 require Exporter;
 
@@ -312,7 +312,7 @@ sqrt	Math	square root function
 srand	Math	seed the random number generator
 stat	File	get a file's status information
 state	Namespace	declare and assign a persistent lexical variable
-study	Regexp	optimize input data for repeated searches
+study	Regexp	no-op, formerly optimized input data for repeated searches
 sub	Flow	declare a subroutine, possibly anonymously
 __SUB__	Flow	the current subroutine, or C<undef> if not in a subroutine
 substr	String	get or alter a portion of a string

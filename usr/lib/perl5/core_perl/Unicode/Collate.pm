@@ -17,7 +17,7 @@ use File::Spec;
 
 no warnings 'utf8';
 
-our $VERSION = '1.14';
+our $VERSION = '1.19';
 our $PACKAGE = __PACKAGE__;
 
 ### begin XS only ###
@@ -89,9 +89,9 @@ my $DefaultRearrange = [ 0x0E40..0x0E44, 0x0EC0..0x0EC4 ];
 my $HighestVCE = pack(VCE_TEMPLATE, 0, 0xFFFE, 0x20, 0x5, 0xFFFF);
 my $minimalVCE = pack(VCE_TEMPLATE, 0,      1, 0x20, 0x5, 0xFFFE);
 
-sub UCA_Version { "30" }
+sub UCA_Version { "32" }
 
-sub Base_Unicode_Version { "7.0.0" }
+sub Base_Unicode_Version { "8.0.0" }
 
 ######
 
@@ -189,6 +189,7 @@ my %DerivCode = (
    26 => \&_derivCE_24, # 26 == 24
    28 => \&_derivCE_24, # 28 == 24
    30 => \&_derivCE_24, # 30 == 24
+   32 => \&_derivCE_32,
 );
 
 sub checkCollator {
@@ -1097,7 +1098,7 @@ If the revision (previously "tracking version") number of UCA is given,
 behavior of that revision is emulated on collating.
 If omitted, the return value of C<UCA_Version()> is used.
 
-The following revisions are supported.  The default is 30.
+The following revisions are supported.  The default is 32.
 
      UCA       Unicode Standard         DUCET (@version)
    -------------------------------------------------------
@@ -1113,8 +1114,9 @@ The following revisions are supported.  The default is 30.
      26             6.2.0               6.2.0 (6.2.0)
      28             6.3.0               6.3.0 (6.3.0)
      30             7.0.0               7.0.0 (7.0.0)
+     32             8.0.0               8.0.0 (8.0.0)
 
-* See below C<long_contraction> with C<UCA_Version> 22 and 24.
+* See below for C<long_contraction> with C<UCA_Version> 22 and 24.
 
 * Noncharacters (e.g. U+FFFF) are not ignored, and can be overridden
 since C<UCA_Version> 22.
@@ -1229,7 +1231,7 @@ table beforehand.
 
 =item highestFFFF
 
--- see 5.14 Collation Elements, UTS #35.
+-- see 2.4 Tailored noncharacter weights, UTS #35 (LDML) Part 5: Collation.
 
 If the parameter is made true, C<U+FFFF> has a highest primary weight.
 When a boolean of C<$coll-E<gt>ge($str, "abc")> and
@@ -1373,7 +1375,7 @@ contraction C<0FB2 0F71> prohibits C<0FB2 0F71 0F80> from being detected.
 
 =item minimalFFFE
 
--- see 5.14 Collation Elements, UTS #35.
+-- see 1.1.1 U+FFFE, UTS #35 (LDML) Part 5: Collation.
 
 If the parameter is made true, C<U+FFFE> has a minimal primary weight.
 The comparison between C<"$a1\x{FFFE}$a2"> and C<"$b1\x{FFFE}$b2">
@@ -1451,12 +1453,14 @@ those in the CJK Unified Ideographs Extension A etc.
     U+4E00..U+9FBB if UCA_Version is 14 or 16.
     U+4E00..U+9FC3 if UCA_Version is 18.
     U+4E00..U+9FCB if UCA_Version is 20 or 22.
-    U+4E00..U+9FCC if UCA_Version is 24 or later.
+    U+4E00..U+9FCC if UCA_Version is 24 to 30.
+    U+4E00..U+9FD5 if UCA_Version is 32.
 
     In the CJK Unified Ideographs Extension blocks:
     Ext.A (U+3400..U+4DB5) and Ext.B (U+20000..U+2A6D6) in any UCA_Version.
     Ext.C (U+2A700..U+2B734) if UCA_Version is 20 or later.
     Ext.D (U+2B740..U+2B81D) if UCA_Version is 22 or later.
+    Ext.E (U+2B820..U+2CEA1) if UCA_Version is 32.
 
 Through C<overrideCJK>, ordering of CJK unified ideographs (including
 extensions) can be overridden.
@@ -1648,8 +1652,7 @@ rewriting lines on reading an unmodified table every time.
 
 =item suppress
 
--- see suppress contractions in 5.14.11 Special-Purpose Commands,
-UTS #35 (LDML).
+-- see 3.12 Special-Purpose Commands, UTS #35 (LDML) Part 5: Collation.
 
 Contractions beginning with the specified characters are suppressed,
 even if those contractions are defined in C<table>.
@@ -1660,7 +1663,7 @@ An example for Russian and some languages using the Cyrillic script:
 
 where 0x0400 stands for C<U+0400>, CYRILLIC CAPITAL LETTER IE WITH GRAVE.
 
-B<NOTE>: Contractions via C<entry> are not be suppressed.
+B<NOTE>: Contractions via C<entry> will not be suppressed.
 
 =item table
 
@@ -1707,7 +1710,7 @@ specified as a comment (following C<#>) on each line.
 
 =item undefName
 
--- see 6.3.4 Reducing the Repertoire, UTS #10.
+-- see 6.3.3 Reducing the Repertoire, UTS #10.
 
 Undefines the collation element as if it were unassigned in the C<table>.
 This reduces the size of the table.
@@ -2078,16 +2081,16 @@ B<Unicode::Normalize is required to try The Conformance Test.>
 =head1 AUTHOR, COPYRIGHT AND LICENSE
 
 The Unicode::Collate module for perl was written by SADAHIRO Tomoyuki,
-<SADAHIRO@cpan.org>. This module is Copyright(C) 2001-2014,
+<SADAHIRO@cpan.org>. This module is Copyright(C) 2001-2016,
 SADAHIRO Tomoyuki. Japan. All rights reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 The file Unicode/Collate/allkeys.txt was copied verbatim
-from L<http://www.unicode.org/Public/UCA/6.3.0/allkeys.txt>.
-For this file, Copyright (c) 2001-2012 Unicode, Inc.
-Distributed under the Terms of Use in L<http://www.unicode.org/copyright.html>.
+from L<http://www.unicode.org/Public/UCA/8.0.0/allkeys.txt>.
+For this file, Copyright (c) 2001-2015 Unicode, Inc.; distributed
+under the Terms of Use in L<http://www.unicode.org/terms_of_use.html>
 
 =head1 SEE ALSO
 

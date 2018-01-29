@@ -28,7 +28,7 @@ BEGIN {
   }
 }
 
-our $VERSION = "3.08_01";
+our $VERSION = "3.10";
 our @ISA     = qw(Exporter);
 our @EXPORT  = qw(CMD_INFO CMD_OK CMD_MORE CMD_REJECT CMD_ERROR CMD_PENDING);
 
@@ -654,9 +654,14 @@ Net::Cmd - Network Command class (as used by FTP, SMTP etc)
 
 =head1 DESCRIPTION
 
-C<Net::Cmd> is a collection of methods that can be inherited by a sub class
-of C<IO::Handle>. These methods implement the functionality required for a
+C<Net::Cmd> is a collection of methods that can be inherited by a sub-class
+of C<IO::Socket::INET>. These methods implement the functionality required for a
 command based protocol, for example FTP and SMTP.
+
+If your sub-class does not also derive from C<IO::Socket::INET> or similar (e.g.
+C<IO::Socket::IP>, C<IO::Socket::INET6> or C<IO::Socket::SSL>) then you must
+provide the following methods by other means yourself: C<close()> and
+C<timeout()>.
 
 =head1 USER METHODS
 

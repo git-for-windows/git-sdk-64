@@ -9,9 +9,9 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Wed May 31 08:17:19 MSK 2017
- * Configured by     : Alexx
- * Target system     : msys_nt-6.1 warlock 2.7.0(0.30653) 2017-02-14 08:57 x86_64 msys 
+ * Configuration time: Mon Jan 29 12:23:29 PST 2018
+ * Configured by     : ContainerAdministrator
+ * Target system     : msys_nt-10.0 41cac4138e17 2.9.0(0.31853) 2018-01-12 23:37 x86_64 msys 
  */
 
 #ifndef _config_h_
@@ -664,7 +664,7 @@
  *	This symbol, if defined, indicates that <rpcsvc/dbm.h> exists and
  *	should be included.
  */
-#define I_DBM	/**/
+/*#define I_DBM	/ **/
 /*#define I_RPCSVC_DBM	/ **/
 
 /* I_DLFCN:
@@ -689,7 +689,7 @@
  *	This symbol, if defined, indicates that <gdbm.h> exists and should
  *	be included.
  */
-#define I_GDBM	/**/
+/*#define I_GDBM	/ **/
 
 /* I_LIMITS:
  *	This symbol, if defined, indicates to the C program that it should
@@ -1538,7 +1538,7 @@
  *	feature tests from Configure are generally more reliable.
  */
 #define OSNAME "msys"		/**/
-#define OSVERS "2.7.0(0.30653)"		/**/
+#define OSVERS "2.9.0(0.31853)"		/**/
 
 /* CAT2:
  *	This macro concatenates 2 tokens together.
@@ -1669,7 +1669,7 @@
  *	available to query dynamic linker information for an address.
  *	The <dlfcn.h> header must be included to use this routine.
  */
-/*#define HAS_DLADDR	/ **/
+#define HAS_DLADDR	/**/
 
 /* SETUID_SCRIPTS_ARE_SECURE_NOW:
  *	This symbol, if defined, indicates that the bug that prevents
@@ -1907,8 +1907,33 @@
  *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_BE
  *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LE_BE
  *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_LE
+ *	LONG_DOUBLE_IS_VAX_H_FLOAT
  *	LONG_DOUBLE_IS_UNKNOWN_FORMAT
  *	It is only defined if the system supports long doubles.
+ */
+/* LONG_DOUBLE_STYLE_IEEE:
+ *	This symbol, if defined, indicates that the long double
+ *	is any of the IEEE 754 style long doubles:
+ *	LONG_DOUBLE_STYLE_IEEE_STD, LONG_DOUBLE_STYLE_IEEE_EXTENDED,
+ *	LONG_DOUBLE_STYLE_IEEE_DOUBLEDOUBLE.
+ */
+/* LONG_DOUBLE_STYLE_IEEE_DOUBLEDOUBLE:
+ *	This symbol, if defined, indicates that the long double is
+ *	the 128-bit double-double.
+ */
+/* LONG_DOUBLE_STYLE_IEEE_EXTENDED:
+ *	This symbol, if defined, indicates that the long double is
+ *	the 80-bit IEEE 754. Note that despite the 'extended' this
+ *	is less than the 'std', since this is an extension of
+ *	the double precision.
+ */
+/* LONG_DOUBLE_STYLE_IEEE_STD:
+ *	This symbol, if defined, indicates that the long double is
+ *	the 128-bit IEEE 754.
+ */
+/* LONG_DOUBLE_STYLE_VAX:
+ *	This symbol, if defined, indicates that the long double is
+ *	the 128-bit VAX format H.
  */
 #define  HAS_LDEXPL		/**/
 #define HAS_LONG_DOUBLE		/**/
@@ -1924,9 +1949,15 @@
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_BE	6
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LE_BE	7
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_LE	8
+#define LONG_DOUBLE_IS_VAX_H_FLOAT			9
 #define LONG_DOUBLE_IS_UNKNOWN_FORMAT			-1
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LITTLE_ENDIAN	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LE_LE /* back-compat */
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BIG_ENDIAN	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_BE /* back-compat */
+#define LONG_DOUBLE_STYLE_IEEE
+#undef LONG_DOUBLE_STYLE_IEEE_DOUBLEDOUBLE
+#define LONG_DOUBLE_STYLE_IEEE_EXTENDED
+#undef LONG_DOUBLE_STYLE_IEEE_STD
+#undef LONG_DOUBLE_STYLE_VAX
 #endif
 
 /* HAS_LONG_LONG:
@@ -2260,10 +2291,10 @@
  *	parameter information. While ANSI C prototypes are supported in C++,
  *	K&R style function declarations will yield errors.
  */
-#define I_NDBM	/**/
+/*#define I_NDBM	/ **/
 /*#define I_GDBMNDBM	/ **/
 /*#define I_GDBM_NDBM	/ **/
-#define NDBM_H_USES_PROTOTYPES	/**/
+/*#define NDBM_H_USES_PROTOTYPES	/ **/
 /*#define GDBMNDBM_H_USES_PROTOTYPES	/ **/
 /*#define GDBM_NDBM_H_USES_PROTOTYPES	/ **/
 
@@ -2579,7 +2610,7 @@
  *	to the program to supply one.  A good guess is
  *		extern int dbminit(char *);
  */
-#define	HAS_DBMINIT_PROTO	/**/
+/*#define	HAS_DBMINIT_PROTO	/ **/
 
 /* HAS_DIR_DD_FD:
  *	This symbol, if defined, indicates that the the DIR* dirstream
@@ -2844,6 +2875,13 @@
  *	available to change file descriptor time stamps with struct timevals.
  */
 #define HAS_FUTIMES		/**/
+
+/* HAS_GAI_STRERROR:
+ *	This symbol, if defined, indicates that the gai_strerror routine
+ *	is available to translate error codes returned by getaddrinfo()
+ *	into human readable strings.
+ */
+#define HAS_GAI_STRERROR	/**/
 
 /* HAS_GETADDRINFO:
  *	This symbol, if defined, indicates that the getaddrinfo() function
@@ -3211,9 +3249,19 @@
  *	This symbol, if defined, indicates that the uselocale routine is
  *	available to set the current locale for the calling thread.
  */
+/* HAS_QUERYLOCALE:
+ *	This symbol, if defined, indicates that the querylocale routine is
+ *	available to return the name of the locale for a category mask.
+ */
+/* I_XLOCALE:
+ *	This symbol, if defined, indicates to the C program that it should
+ *	include <xlocale.h> to get uselocale() and its friends.
+ */
 #define	HAS_NEWLOCALE	/**/
 #define	HAS_FREELOCALE	/**/
 #define	HAS_USELOCALE	/**/
+/*#define	HAS_QUERYLOCALE	/ **/
+#define	I_XLOCALE               /**/
 
 /* HAS_NEXTAFTER:
  *	This symbol, if defined, indicates that the nextafter routine is
@@ -3467,6 +3515,13 @@
  */
 #define HAS_FSTATVFS		/**/
 
+/* HAS_STRERROR_L:
+ *	This symbol, if defined, indicates that the strerror_l routine is
+ *	available to return the error message for a given errno value in
+ *	a particular locale (identified by a locale_t object).
+ */
+#define HAS_STRERROR_L		/**/
+
 /* HAS_STRFTIME:
  *	This symbol, if defined, indicates that the strftime routine is
  *	available to do time formatting.
@@ -3646,6 +3701,12 @@
  */
 #define HAS_WRITEV		/**/
 
+/* DEFAULT_INC_EXCLUDES_DOT:
+ *	This symbol, if defined, removes the legacy default behavior of
+ *	including '.' at the end of @INC.
+ */
+#define DEFAULT_INC_EXCLUDES_DOT	/**/
+
 /* USE_DYNAMIC_LOADING:
  *	This symbol, if defined, indicates that dynamic loading of
  *	some sort is available.
@@ -3712,9 +3773,9 @@
  */
 #define DB_Hash_t	u_int32_t		/**/
 #define DB_Prefix_t	size_t  	/**/
-#define DB_VERSION_MAJOR_CFG	5  	/**/
-#define DB_VERSION_MINOR_CFG	3  	/**/
-#define DB_VERSION_PATCH_CFG	28  	/**/
+#define DB_VERSION_MAJOR_CFG	  	/**/
+#define DB_VERSION_MINOR_CFG	  	/**/
+#define DB_VERSION_PATCH_CFG	  	/**/
 
 /* I_FENV:
  *	This symbol, if defined, indicates to the C program that it should
@@ -3889,8 +3950,8 @@
  */
 #define DOUBLEINFBYTES  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x7f		/**/
 #define DOUBLENANBYTES  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf8, 0xff		/**/
-#define LONGDBLINFBYTES 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0xff, 0x7f, 0x18, 0x80, 0x01, 0x00, 0x00, 0x00		/**/
-#define LONGDBLNANBYTES 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0xff, 0xff, 0x30, 0x80, 0x01, 0x00, 0x00, 0x00		/**/
+#define LONGDBLINFBYTES 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0xff, 0x7f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00		/**/
+#define LONGDBLNANBYTES 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00		/**/
 
 /* PERL_PRIfldbl:
  *	This symbol, if defined, contains the string used by stdio to
@@ -3918,7 +3979,45 @@
  *	DOUBLE_IS_IEEE_754_128_BIT_BIG_ENDIAN
  *	DOUBLE_IS_IEEE_754_64_BIT_MIXED_ENDIAN_LE_BE
  *	DOUBLE_IS_IEEE_754_64_BIT_MIXED_ENDIAN_BE_LE
+ *	DOUBLE_IS_VAX_F_FLOAT
+ *	DOUBLE_IS_VAX_D_FLOAT
+ *	DOUBLE_IS_VAX_G_FLOAT
+ *	DOUBLE_IS_IBM_SINGLE_32_BIT
+ *	DOUBLE_IS_IBM_DOUBLE_64_BIT
+ *	DOUBLE_IS_CRAY_SINGLE_64_BIT
  *	DOUBLE_IS_UNKNOWN_FORMAT
+ */
+/* DOUBLE_HAS_INF:
+ *	This symbol, if defined, indicates that the double has
+ *	the infinity.
+ */
+/* DOUBLE_HAS_NAN:
+ *	This symbol, if defined, indicates that the double has
+ *	the not-a-number.
+ */
+/* DOUBLE_HAS_NEGATIVE_ZERO:
+ *	This symbol, if defined, indicates that the double has
+ *	the negative_zero.
+ */
+/* DOUBLE_HAS_SUBNORMALS:
+ *	This symbol, if defined, indicates that the double has
+ *	the subnormals (denormals).
+ */
+/* DOUBLE_STYLE_CRAY:
+ *	This symbol, if defined, indicates that the double is
+ *	the 64-bit CRAY mainframe format.
+ */
+/* DOUBLE_STYLE_IBM:
+ *	This symbol, if defined, indicates that the double is
+ *	the 64-bit IBM mainframe format.
+ */
+/* DOUBLE_STYLE_IEEE:
+ *	This symbol, if defined, indicates that the double is
+ *	the 64-bit IEEE 754.
+ */
+/* DOUBLE_STYLE_VAX:
+ *	This symbol, if defined, indicates that the double is
+ *	the 64-bit VAX format D or G.
  */
 #define DOUBLEKIND 3		/**/
 #define DOUBLE_IS_IEEE_754_32_BIT_LITTLE_ENDIAN	1
@@ -3929,11 +4028,25 @@
 #define DOUBLE_IS_IEEE_754_128_BIT_BIG_ENDIAN	6
 #define DOUBLE_IS_IEEE_754_64_BIT_MIXED_ENDIAN_LE_BE	7
 #define DOUBLE_IS_IEEE_754_64_BIT_MIXED_ENDIAN_BE_LE	8
+#define DOUBLE_IS_VAX_F_FLOAT	9
+#define DOUBLE_IS_VAX_D_FLOAT	10
+#define DOUBLE_IS_VAX_G_FLOAT	11
+#define DOUBLE_IS_IBM_SINGLE_32_BIT	12
+#define DOUBLE_IS_IBM_DOUBLE_64_BIT	13
+#define DOUBLE_IS_CRAY_SINGLE_64_BIT	14
 #define DOUBLE_IS_UNKNOWN_FORMAT		-1
 #define PERL_PRIfldbl	"Lf"	/**/
 #define PERL_PRIgldbl	"Lg"	/**/
 #define PERL_PRIeldbl	"Le"	/**/
 #define PERL_SCNfldbl	"Lf"	/**/
+#define DOUBLE_HAS_INF
+#define DOUBLE_HAS_NAN
+#define DOUBLE_HAS_NEGATIVE_ZERO
+#define DOUBLE_HAS_SUBNORMALS
+#undef DOUBLE_STYLE_CRAY
+#undef DOUBLE_STYLE_IBM
+#define DOUBLE_STYLE_IEEE
+#undef DOUBLE_STYLE_VAX
 
 /* DOUBLEMANTBITS:
  *	This symbol, if defined, tells how many mantissa bits
@@ -4201,8 +4314,8 @@
  */
 #define GMTIME_MAX		67767976233532799	/**/
 #define GMTIME_MIN		-62167219200	/**/
-#define LOCALTIME_MAX	67767976233521999	/**/
-#define LOCALTIME_MIN	-62167228217	/**/
+#define LOCALTIME_MAX	67768036191705599	/**/
+#define LOCALTIME_MIN	-62167190822	/**/
 
 /* USE_64_BIT_INT:
  *	This symbol, if defined, indicates that 64-bit integers should
@@ -4435,8 +4548,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_crypt_r
  *	is defined.
  */
-/*#define HAS_CRYPT_R	   / **/
-#define CRYPT_R_PROTO 0	   /**/
+#define HAS_CRYPT_R	   /**/
+#define CRYPT_R_PROTO REENTRANT_PROTO_B_CCS	   /**/
 
 /* HAS_CTERMID_R:
  *	This symbol, if defined, indicates that the ctermid_r routine

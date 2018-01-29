@@ -107,8 +107,7 @@
                                    Used to make it easier to clone and free arbitrary
                                    data that the regops need. Often the ARG field of
                                    a regop is an index into this structure */
-	struct reg_code_block *code_blocks;/* positions of literal (?{}) */
-	int num_code_blocks;	/* size of code_blocks[] */
+	struct reg_code_blocks *code_blocks;/* positions of literal (?{}) */
 	regnode program[1];	/* Unwarranted chumminess with compiler. */
 } regexp_internal;
 
@@ -522,7 +521,7 @@ struct regnode_ssc {
                |ANYOFL_SHARED_UTF8_LOCALE_fold_HAS_MATCHES_nonfold_REQD))   \
              == ANYOFL_SHARED_UTF8_LOCALE_fold_HAS_MATCHES_nonfold_REQD)
 
-/* Spare:                                       0x10 */
+/* Spare: Be sure to change ANYOF_FLAGS_ALL if this gets used  0x10 */
 
 /* If set, the node matches every code point NUM_ANYOF_CODE_POINTS and above.
  * Can be in an SSC */
@@ -1054,7 +1053,7 @@ re.pm, especially to the documentation.
 /* get_sv() can return NULL during global destruction. */
 #define GET_RE_DEBUG_FLAGS DEBUG_r({ \
         SV * re_debug_flags_sv = NULL; \
-        re_debug_flags_sv = PL_curcop ? get_sv(RE_DEBUG_FLAGS, 1) : NULL; \
+        re_debug_flags_sv = PL_curcop ? get_sv(RE_DEBUG_FLAGS, GV_ADD) : NULL; \
         if (re_debug_flags_sv) { \
             if (!SvIOK(re_debug_flags_sv)) \
                 sv_setuv(re_debug_flags_sv, RE_DEBUG_COMPILE_DUMP | RE_DEBUG_EXECUTE_MASK ); \

@@ -16,6 +16,7 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
 	 OPpTRANS_SQUASH OPpTRANS_DELETE OPpTRANS_COMPLEMENT OPpTARGET_MY
 	 OPpEXISTS_SUB OPpSORT_NUMERIC OPpSORT_INTEGER OPpREPEAT_DOLIST
 	 OPpSORT_REVERSE OPpMULTIDEREF_EXISTS OPpMULTIDEREF_DELETE
+         OPpSPLIT_ASSIGN OPpSPLIT_LEX
 	 SVf_IOK SVf_NOK SVf_ROK SVf_POK SVpad_OUR SVf_FAKE SVs_RMG SVs_SMG
 	 SVs_PADTMP SVpad_TYPED
          CVf_METHOD CVf_LVALUE
@@ -46,7 +47,7 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
         MDEREF_SHIFT
     );
 
-$VERSION = '1.37';
+$VERSION = '1.40';
 use strict;
 use vars qw/$AUTOLOAD/;
 use warnings ();
@@ -460,6 +461,7 @@ sub _pessimise_walk_exe {
 sub pessimise {
     my ($self, $root, $start) = @_;
 
+    no warnings 'recursion';
     # walk tree in root-to-branch order
     $self->_pessimise_walk($root);
 
@@ -473,6 +475,9 @@ sub null {
     my $op = shift;
     return class($op) eq "NULL";
 }
+
+
+# Add a CV to the list of subs that still need deparsing.
 
 sub todo {
     my $self = shift;
@@ -490,55 +495,27 @@ sub todo {
     push @{$self->{'subs_todo'}}, [$seq, $cv, $is_form, $name];
 }
 
+
+# Pop the next sub from the todo list and deparse it
+
 sub next_todo {
     my $self = shift;
     my $ent = shift @{$self->{'subs_todo'}};
-    my $cv = $ent->[1];
-    if (ref $ent->[3]) { # lexical sub
+    my ($seq, $cv, $is_form, $name) = @$ent;
+
+    # any 'use strict; package foo' that should come before the sub
+    # declaration to sync with the first COP of the sub
+    my $pragmata = '';
+    if ($cv and !null($cv->START) and is_state($cv->START))  {
+        $pragmata = $self->pragmata($cv->START);
+    }
+
+    if (ref $name) { # lexical sub
+	# emit the sub.
 	my @text;
-
-	# At this point, we may not yet have deparsed the hints that allow
-	# lexical subroutines to be recognized.  So adjust the current
-	# hints and deparse them.
-	# When lex subs cease being experimental, we should be able to
-	# remove this code.
-	{
-	    local $^H = $self->{'hints'};
-	    local %^H = %{ $self->{'hinthash'} || {} };
-	    local ${^WARNING_BITS} = $self->{'warnings'};
-	    feature->import("lexical_subs");
-	    warnings->unimport("experimental::lexical_subs");
-	    # Here we depend on the fact that individual features
-	    # will always set the feature bundle to ‘custom’
-	    # (== $feature::hint_mask).  If we had another specific bundle
-	    # enabled previously, normalise it.
-	    if (($self->{'hints'} & $feature::hint_mask)
-		    != $feature::hint_mask)
-	    {
-		if ($self->{'hinthash'}) {
-		    delete $self->{'hinthash'}{$_}
-			for grep /^feature_/, keys %{$self->{'hinthash'}};
-		}
-		else { $self->{'hinthash'} = {} }
-		$self->{'hinthash'}
-		    = _features_from_bundle(@$self{'hints','hinthash'});
-	    }
-	    push @text, $self->declare_hinthash($self->{'hinthash'}, \%^H,
-						$self->{indent_size}, $^H);
-	    push @text, $self->declare_warnings($self->{'warnings'},
-						${^WARNING_BITS})
-		unless ($self->{'warnings'} // 'u')
-		    eq (${^WARNING_BITS   } // 'u');
-	    $self->{'warnings'} = ${^WARNING_BITS};
-	    $self->{'hints'} = $^H;
-	    $self->{'hinthash'} = {%^H};
-	}
-
-	# Now emit the sub itself.
-	my $padname = $ent->[3];
-	my $flags = $padname->FLAGS;
+	my $flags = $name->FLAGS;
 	push @text,
-	    !$cv || $ent->[0] <= $padname->COP_SEQ_RANGE_LOW
+	    !$cv || $seq <= $name->COP_SEQ_RANGE_LOW
 		? $self->keyword($flags & SVpad_OUR
 				    ? "our"
 				    : $flags & SVpad_STATE
@@ -548,7 +525,7 @@ sub next_todo {
 	# XXX We would do $self->keyword("sub"), but ‘my CORE::sub’
 	#     doesn’t work and ‘my sub’ ignores a &sub in scope.  I.e.,
 	#     we have a core bug here.
-	push @text, "sub " . substr $padname->PVX, 1;
+	push @text, "sub " . substr $name->PVX, 1;
 	if ($cv) {
 	    # my sub foo { }
 	    push @text,  " " . $self->deparse_sub($cv);
@@ -558,19 +535,31 @@ sub next_todo {
 	    # my sub foo;
 	    push @text, ";\n";
 	}
-	return join "", @text;
+	return $pragmata . join "", @text;
     }
+
     my $gv = $cv->GV;
-    my $name = $ent->[3] // $self->gv_name($gv);
-    if ($ent->[2]) {
-	return $self->keyword("format") . " $name =\n"
-	    . $self->deparse_format($ent->[1]). "\n";
+    $name //= $self->gv_name($gv);
+    if ($is_form) {
+	return $pragmata . $self->keyword("format") . " $name =\n"
+	    . $self->deparse_format($cv). "\n";
     } else {
 	my $use_dec;
 	if ($name eq "BEGIN") {
 	    $use_dec = $self->begin_is_use($cv);
 	    if (defined ($use_dec) and $self->{'expand'} < 5) {
-		return () if 0 == length($use_dec);
+		return $pragmata if 0 == length($use_dec);
+
+                #  XXX bit of a hack: Test::More's use_ok() method
+                #  builds a fake use statement which deparses as, e.g.
+                #      use Net::Ping (@{$args[0];});
+                #  As well as being superfluous (the use_ok() is deparsed
+                #  too) and ugly, it fails under use strict and otherwise
+                #  makes use of a lexical var that's not in scope.
+                #  So strip it out.
+                return $pragmata
+                            if $use_dec =~ /^use \S+ \(@\{\$args\[0\];\}\);/;
+
 		$use_dec =~ s/^(use|no)\b/$self->keyword($1)/e;
 	    }
 	}
@@ -591,7 +580,7 @@ sub next_todo {
 	    }
 	}
 	if ($use_dec) {
-	    return "$p$l$use_dec";
+	    return "$pragmata$p$l$use_dec";
 	}
         if ( $name !~ /::/ and $self->lex_in_scope("&$name")
                             || $self->lex_in_scope("&$name", 1) )
@@ -600,12 +589,13 @@ sub next_todo {
         } elsif (defined $stash) {
             $name =~ s/^\Q$stash\E::(?!\z|.*::)//;
         }
-	my $ret = "${p}${l}" . $self->keyword("sub") . " $name "
+	my $ret = "$pragmata${p}${l}" . $self->keyword("sub") . " $name "
 	      . $self->deparse_sub($cv);
 	$self->{'subs_declared'}{$name} = 1;
 	return $ret;
     }
 }
+
 
 # Return a "use" declaration for this BEGIN block, if appropriate
 sub begin_is_use {
@@ -1221,22 +1211,132 @@ sub pad_subs {
 	sort {$a->[0] <=> $b->[0]} @{$self->{'subs_todo'}}, @todo
 }
 
+
+# deparse_argops(): deparse, if possible, a sequence of argcheck + argelem
+# ops into a subroutine signature. If successful, return the first op
+# following the signature ops plus the signature string; else return the
+# empty list.
+#
+# Normally a bunch of argelem ops will have been generated by the
+# signature parsing, but it's possible that ops have been added manually
+# or altered. In this case we "return ()" and fall back to general
+# deparsing of the individual sigelems as 'my $x = $_[N]' etc.
+#
+# We're only called if the first two ops are nextstate and argcheck.
+
+sub deparse_argops {
+    my ($self, $firstop, $cv) = @_;
+
+    my @sig;
+    my $o = $firstop;
+    return if $o->label; #first nextstate;
+
+    # OP_ARGCHECK
+
+    $o = $o->sibling;
+    my ($params, $opt_params, $slurpy) = $o->aux_list($cv);
+    my $mandatory = $params - $opt_params;
+    my $seen_slurpy = 0;
+    my $last_ix = -1;
+
+    # keep looking for valid nextstate + argelem pairs
+
+    while (1) {
+        # OP_NEXTSTATE
+        $o = $o->sibling;
+        last unless $$o;
+        last unless $o->name =~ /^(next|db)state$/;
+        last if $o->label;
+
+        # OP_ARGELEM
+        my $o2 = $o->sibling;
+        last unless $$o2;
+
+        if ($o2->name eq 'argelem') {
+            my $ix  = $o2->string($cv);
+            while (++$last_ix < $ix) {
+                push @sig, $last_ix <  $mandatory ? '$' : '$=';
+            }
+            my $var = $self->padname($o2->targ);
+            if ($var =~ /^[@%]/) {
+                return if $seen_slurpy;
+                $seen_slurpy = 1;
+                return if $ix != $params or !$slurpy
+                            or substr($var,0,1) ne $slurpy;
+            }
+            else {
+                return if $ix >= $params;
+            }
+            if ($o2->flags & OPf_KIDS) {
+                my $kid = $o2->first;
+                return unless $$kid and $kid->name eq 'argdefelem';
+                my $def = $self->deparse($kid->first, 7);
+                $def = "($def)" if $kid->first->flags & OPf_PARENS;
+                $var .= " = $def";
+            }
+            push @sig, $var;
+        }
+        elsif ($o2->name eq 'null'
+               and ($o2->flags & OPf_KIDS)
+               and $o2->first->name eq 'argdefelem')
+        {
+            # special case - a void context default expression: $ = expr
+
+            my $defop = $o2->first;
+            my $ix = $defop->targ;
+            while (++$last_ix < $ix) {
+                push @sig, $last_ix <  $mandatory ? '$' : '$=';
+            }
+            return if $last_ix >= $params
+                    or $last_ix < $mandatory;
+            my $def = $self->deparse($defop->first, 7);
+            $def = "($def)" if $defop->first->flags & OPf_PARENS;
+            push @sig, '$ = ' . $def;
+        }
+        else {
+            last;
+        }
+
+        $o = $o2;
+    }
+
+    while (++$last_ix < $params) {
+        push @sig, $last_ix <  $mandatory ? '$' : '$=';
+    }
+    push @sig, $slurpy if $slurpy and !$seen_slurpy;
+
+    return ($o, join(', ', @sig));
+}
+
+# Deparse a sub. Returns everything except the 'sub foo',
+# e.g.  ($$) : method { ...; }
+# or    ($a, $b) : prototype($$) lvalue;
+
 sub deparse_sub {
     my $self = shift;
     my $cv = shift;
-    my $proto = "";
+    my @attrs;
+    my $protosig; # prototype or signature (what goes in the (....))
+
 Carp::confess("NULL in deparse_sub") if !defined($cv) || $cv->isa("B::NULL");
 Carp::confess("SPECIAL in deparse_sub") if $cv->isa("B::SPECIAL");
     local $self->{'curcop'} = $self->{'curcop'};
+
+    my $has_sig = $self->{hinthash}{feature_signatures};
     if ($cv->FLAGS & SVf_POK) {
-	$proto = "(". $cv->PV . ") ";
+	my $proto = $cv->PV;
+	if ($has_sig) {
+            push @attrs, "prototype($proto)";
+        }
+        else {
+            $protosig = $proto;
+        }
     }
     if ($cv->CvFLAGS & (CVf_METHOD|CVf_LOCKED|CVf_LVALUE|CVf_ANONCONST)) {
-        $proto .= ": ";
-        $proto .= "lvalue " if $cv->CvFLAGS & CVf_LVALUE;
-        $proto .= "locked " if $cv->CvFLAGS & CVf_LOCKED;
-        $proto .= "method " if $cv->CvFLAGS & CVf_METHOD;
-        $proto .= "const "  if $cv->CvFLAGS & CVf_ANONCONST;
+        push @attrs, "lvalue" if $cv->CvFLAGS & CVf_LVALUE;
+        push @attrs, "locked" if $cv->CvFLAGS & CVf_LOCKED;
+        push @attrs, "method" if $cv->CvFLAGS & CVf_METHOD;
+        push @attrs, "const"  if $cv->CvFLAGS & CVf_ANONCONST;
     }
 
     local($self->{'curcv'}) = $cv;
@@ -1251,11 +1351,36 @@ Carp::confess("SPECIAL in deparse_sub") if $cv->isa("B::SPECIAL");
 	$self->pessimise($root, $cv->START);
 	my $lineseq = $root->first;
 	if ($lineseq->name eq "lineseq") {
-	    my @ops;
-	    for(my$o=$lineseq->first; $$o; $o=$o->sibling) {
+	    my $firstop = $lineseq->first;
+
+            if ($has_sig) {
+                my $o2;
+                # try to deparse first few ops as a signature if possible
+                if (     $$firstop
+                     and $firstop->name =~  /^(next|db)state$/
+                     and (($o2 = $firstop->sibling))
+                     and $$o2)
+                {
+                    if ($o2->name eq 'argcheck') {
+                        my ($nexto, $sig) = $self->deparse_argops($firstop, $cv);
+                        if (defined $nexto) {
+                            $firstop = $nexto;
+                            $protosig = $sig;
+                        }
+                    }
+                }
+            }
+
+            my @ops;
+	    for (my $o = $firstop; $$o; $o=$o->sibling) {
 		push @ops, $o;
 	    }
 	    $body = $self->lineseq(undef, 0, @ops).";";
+            if (!$has_sig and $ops[-1]->name =~ /^(next|db)state$/) {
+                # this handles void context in
+                #   use feature signatures; sub ($=1) {}
+                $body .= "\n()";
+            }
 	    my $scope_en = $self->find_scope_en($lineseq);
 	    if (defined $scope_en) {
 		my $subs = join"", $self->seq_subs($scope_en);
@@ -1265,17 +1390,21 @@ Carp::confess("SPECIAL in deparse_sub") if $cv->isa("B::SPECIAL");
 	else {
 	    $body = $self->deparse($root->first, 0);
 	}
+        $body = "{\n\t$body\n\b}";
     }
     else {
 	my $sv = $cv->const_sv;
 	if ($$sv) {
 	    # uh-oh. inlinable sub... format it differently
-	    return $proto . "{ " . $self->const($sv, 0) . " }\n";
+	    $body = "{ " . $self->const($sv, 0) . " }\n";
 	} else { # XSUB? (or just a declaration)
-	    return "$proto;\n";
+	    $body = ';'
 	}
     }
-    return $proto ."{\n\t$body\n\b}" ."\n";
+    $protosig = defined $protosig ? "($protosig) " : "";
+    my $attrs = '';
+    $attrs = ': ' . join('', map "$_ ", @attrs) if @attrs;
+    return "$protosig$attrs$body\n";
 }
 
 sub deparse_format {
@@ -1934,18 +2063,15 @@ sub _features_from_bundle {
     return $hh;
 }
 
-# Notice how subs and formats are inserted between statements here;
-# also $[ assignments and pragmas.
-sub pp_nextstate {
+# generate any pragmas, 'package foo' etc needed to synchronise
+# with the given cop
+
+sub pragmata {
     my $self = shift;
-    my($op, $cx) = @_;
-    $self->{'curcop'} = $op;
+    my($op) = @_;
+
     my @text;
-    push @text, $self->cop_subs($op);
-    if (@text) {
-	# Special marker to swallow up the semicolon
-	push @text, "\cK";
-    }
+
     my $stash = $op->stashpv;
     if ($stash ne $self->{'curstash'}) {
 	push @text, $self->keyword("package") . " $stash;\n";
@@ -2023,6 +2149,29 @@ sub pp_nextstate {
 	);
 	$self->{'hinthash'} = $newhh;
     }
+
+    return join("", @text);
+}
+
+
+# Notice how subs and formats are inserted between statements here;
+# also $[ assignments and pragmas.
+sub pp_nextstate {
+    my $self = shift;
+    my($op, $cx) = @_;
+    $self->{'curcop'} = $op;
+
+    my @text;
+
+    my @subs = $self->cop_subs($op);
+    if (@subs) {
+	# Special marker to swallow up the semicolon
+	push @subs, "\cK";
+    }
+    push @text, @subs;
+
+    push @text, $self->pragmata($op);
+
 
     # This should go after of any branches that add statements, to
     # increase the chances that it refers to the same line it did in
@@ -4021,7 +4170,11 @@ sub pp_multideref {
 
     if ($op->first && ($op->first->flags & OPf_KIDS)) {
         # arbitrary initial expression, e.g. f(1,2,3)->[...]
-        $text .=  $self->deparse($op->first, 24);
+        my $expr = $self->deparse($op->first, 24);
+        # stop "exists (expr)->{...}" being interpreted as
+        #"(exists (expr))->{...}"
+        $expr = "+$expr" if $expr =~ /^\(/;
+        $text .=  $expr;
     }
 
     my @items = $op->aux_list($self->{curcv});
@@ -5478,7 +5631,7 @@ sub matchop {
     my($op, $cx, $name, $delim) = @_;
     my $kid = $op->first;
     my ($binop, $var, $re) = ("", "", "");
-    if ($op->flags & OPf_STACKED) {
+    if ($op->name ne 'split' && $op->flags & OPf_STACKED) {
 	$binop = 1;
 	$var = $self->deparse($kid, 20);
 	$kid = $kid->sibling;
@@ -5517,7 +5670,13 @@ sub matchop {
     } elsif (!$have_kid) {
 	$re = re_uninterp(escape_re(re_unback($op->precomp)));
     } elsif ($kid->name ne 'regcomp') {
-	carp("found ".$kid->name." where regcomp expected");
+        if ($op->name eq 'split') {
+            # split has other kids, not just regcomp
+            $re = re_uninterp(escape_re(re_unback($op->precomp)));
+        }
+        else {
+            carp("found ".$kid->name." where regcomp expected");
+        }
     } else {
 	($re, $quote) = $self->regcomp($kid, 21);
     }
@@ -5557,64 +5716,58 @@ sub matchop {
 }
 
 sub pp_match { matchop(@_, "m", "/") }
-sub pp_pushre { matchop(@_, "m", "/") }
 sub pp_qr { matchop(@_, "qr", "") }
 
 sub pp_runcv { unop(@_, "__SUB__"); }
 
 sub pp_split {
-    maybe_targmy(@_, \&split);
-}
-sub split {
     my $self = shift;
     my($op, $cx) = @_;
     my($kid, @exprs, $ary, $expr);
-    $kid = $op->first;
-
-    # For our kid (an OP_PUSHRE), pmreplroot is never actually the
-    # root of a replacement; it's either empty, or abused to point to
-    # the GV for an array we split into (an optimization to save
-    # assignment overhead). Depending on whether we're using ithreads,
-    # this OP* holds either a GV* or a PADOFFSET. Luckily, B.xs
-    # figures out for us which it is.
-    my $replroot = $kid->pmreplroot;
-    my $gv = 0;
     my $stacked = $op->flags & OPf_STACKED;
-    if (ref($replroot) eq "B::GV") {
-	$gv = $replroot;
-    } elsif (!ref($replroot) and $replroot > 0) {
-	$gv = $self->padval($replroot);
-    } elsif ($kid->targ) {
-	$ary = $self->padname($kid->targ)
-    } elsif ($stacked) {
-	$ary = $self->deparse($op->last, 7);
-    }
-    $ary = $self->maybe_local(@_,
-			      $self->stash_variable('@',
-						     $self->gv_name($gv),
-						     $cx))
-	if $gv;
 
-    # Skip the last kid when OPf_STACKED is set, since it is the array
-    # on the left.
-    for (; !null($stacked ? $kid->sibling : $kid); $kid = $kid->sibling) {
+    $kid = $op->first;
+    $kid = $kid->sibling if $kid->name eq 'regcomp';
+    for (; !null($kid); $kid = $kid->sibling) {
 	push @exprs, $self->deparse($kid, 6);
     }
 
-    # handle special case of split(), and split(' ') that compiles to /\s+/
-    # Under 5.10, the reflags may be undef if the split regexp isn't a constant
-    # Under 5.17.5-5.17.9, the special flag is on split itself.
-    $kid = $op->first;
-    if ( $op->flags & OPf_SPECIAL
-         or (
-            $kid->flags & OPf_SPECIAL
-            and ( $] < 5.009 ? $kid->pmflags & PMf_SKIPWHITE()
-                             : ($kid->reflags || 0) & RXf_SKIPWHITE()
-            )
-         )
-    ) {
-	$exprs[0] = "' '";
+    unshift @exprs, $self->matchop($op, $cx, "m", "/");
+
+    if ($op->private & OPpSPLIT_ASSIGN) {
+        # With C<@array = split(/pat/, str);>,
+        #  array is stored in split's pmreplroot; either
+        # as an integer index into the pad (for a lexical array)
+        # or as GV for a package array (which will be a pad index
+        # on threaded builds)
+        # With my/our @array = split(/pat/, str), the array is instead
+        # accessed via an extra padav/rv2av op at the end of the
+        # split's kid ops.
+
+        if ($stacked) {
+            $ary = pop @exprs;
+        }
+        else {
+            if ($op->private & OPpSPLIT_LEX) {
+                $ary = $self->padname($op->pmreplroot);
+            }
+            else {
+                # union with op_pmtargetoff, op_pmtargetgv
+                my $gv = $op->pmreplroot;
+                $gv = $self->padval($gv) if !ref($gv);
+                $ary = $self->maybe_local(@_,
+			      $self->stash_variable('@',
+						     $self->gv_name($gv),
+						     $cx))
+            }
+            if ($op->private & OPpLVAL_INTRO) {
+                $ary = $op->private & OPpSPLIT_LEX ? "my $ary" : "local $ary";
+            }
+        }
     }
+
+    # handle special case of split(), and split(' ') that compiles to /\s+/
+    $exprs[0] = q{' '} if ($op->reflags // 0) & RXf_SKIPWHITE();
 
     $expr = "split(" . join(", ", @exprs) . ")";
     if ($ary) {
@@ -5771,6 +5924,63 @@ sub pp_lvavref {
 		? maybe_local(@_, rv2x(@_, "\@"))
 		: &pp_padsv)  . ')'
 }
+
+
+sub pp_argcheck {
+    my $self = shift;
+    my($op, $cx) = @_;
+    my ($params, $opt_params, $slurpy) = $op->aux_list($self->{curcv});
+    my $mandatory = $params - $opt_params;
+    my $check = '';
+
+    $check .= <<EOF if !$slurpy;
+die sprintf("Too many arguments for subroutine at %s line %d.\\n", (caller)[1, 2]) unless \@_ <= $params;
+EOF
+
+    $check .= <<EOF if $mandatory > 0;
+die sprintf("Too few arguments for subroutine at %s line %d.\\n", (caller)[1, 2]) unless \@_ >= $mandatory;
+EOF
+
+    my $cond = ($params & 1) ? 'unless' : 'if';
+    $check .= <<EOF if $slurpy eq '%';
+die sprintf("Odd name/value argument for subroutine at %s line %d.\\n", (caller)[1, 2]) if \@_ > $params && ((\@_ - $params) & 1);
+EOF
+
+    $check =~ s/;\n\z//;
+    return $check;
+}
+
+
+sub pp_argelem {
+    my $self = shift;
+    my($op, $cx) = @_;
+    my $var = $self->padname($op->targ);
+    my $ix  = $op->string($self->{curcv});
+    my $expr;
+    if ($op->flags & OPf_KIDS) {
+        $expr = $self->deparse($op->first, 7);
+    }
+    elsif ($var =~ /^[@%]/) {
+        $expr = $ix ? "\@_[$ix .. \$#_]" : '@_';
+    }
+    else {
+        $expr = "\$_[$ix]";
+    }
+    return "my $var = $expr";
+}
+
+
+sub pp_argdefelem {
+    my $self = shift;
+    my($op, $cx) = @_;
+    my $ix  = $op->targ;
+    my $expr = "\@_ >= " . ($ix+1) . " ? \$_[$ix] : ";
+    my $def = $self->deparse($op->first, 7);
+    $def = "($def)" if $op->first->flags & OPf_PARENS;
+    $expr .= $self->deparse($op->first, $cx);
+    return $expr;
+}
+
 
 1;
 __END__
@@ -6256,7 +6466,7 @@ which is not, consequently, deparsed correctly.
 =item *
 
 Lexical (my) variables declared in scopes external to a subroutine
-appear in code2ref output text as package variables.  This is a tricky
+appear in coderef2text output text as package variables.  This is a tricky
 problem, as perl has no native facility for referring to a lexical variable
 defined within a different scope, although L<PadWalker> is a good start.
 

@@ -1398,8 +1398,8 @@
  *	This symbol contains the ~name expanded version of ARCHLIB, to be used
  *	in programs that are not prepared to deal with ~ expansion at run-time.
  */
-/*#define ARCHLIB "/usr/local/lib/perl5/5.24/unknown"		/ **/
-/*#define ARCHLIB_EXP "/usr/local/lib/perl5/5.24/unknown"		/ **/
+/*#define ARCHLIB "/usr/local/lib/perl5/5.26/unknown"		/ **/
+/*#define ARCHLIB_EXP "/usr/local/lib/perl5/5.26/unknown"		/ **/
 
 /* BIN:
  *	This symbol holds the path of the bin directory where the package will
@@ -1452,8 +1452,8 @@
  *	This symbol contains the ~name expanded version of PRIVLIB, to be used
  *	in programs that are not prepared to deal with ~ expansion at run-time.
  */
-#define PRIVLIB "/usr/local/lib/perl5/5.24"		/**/
-#define PRIVLIB_EXP "/usr/local/lib/perl5/5.24"		/**/
+#define PRIVLIB "/usr/local/lib/perl5/5.26"		/**/
+#define PRIVLIB_EXP "/usr/local/lib/perl5/5.26"		/**/
 
 /* SITEARCH:
  *	This symbol contains the name of the private library for this package.
@@ -1470,8 +1470,8 @@
  *	This symbol contains the ~name expanded version of SITEARCH, to be used
  *	in programs that are not prepared to deal with ~ expansion at run-time.
  */
-/*#define SITEARCH "/usr/local/lib/perl5/5.24/unknown"		/ **/
-/*#define SITEARCH_EXP "/usr/local/lib/perl5/5.24/unknown"		/ **/
+/*#define SITEARCH "/usr/local/lib/perl5/5.26/unknown"		/ **/
+/*#define SITEARCH_EXP "/usr/local/lib/perl5/5.26/unknown"		/ **/
 
 /* SITELIB:
  *	This symbol contains the name of the private library for this package.
@@ -1493,8 +1493,8 @@
  *	removed.  The elements in inc_version_list (inc_version_list.U) can
  *	be tacked onto this variable to generate a list of directories to search.
  */
-#define SITELIB "/usr/local/lib/perl5/5.24"		/**/
-#define SITELIB_EXP "/usr/local/lib/perl5/5.24"		/**/
+#define SITELIB "/usr/local/lib/perl5/5.26"		/**/
+#define SITELIB_EXP "/usr/local/lib/perl5/5.26"		/**/
 #define SITELIB_STEM "/usr/local/lib/perl5"		/**/
 
 /* PERL_VENDORARCH:
@@ -1907,8 +1907,33 @@
  *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_BE
  *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LE_BE
  *	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_LE
+ *	LONG_DOUBLE_IS_VAX_H_FLOAT
  *	LONG_DOUBLE_IS_UNKNOWN_FORMAT
  *	It is only defined if the system supports long doubles.
+ */
+/* LONG_DOUBLE_STYLE_IEEE:
+ *	This symbol, if defined, indicates that the long double
+ *	is any of the IEEE 754 style long doubles:
+ *	LONG_DOUBLE_STYLE_IEEE_STD, LONG_DOUBLE_STYLE_IEEE_EXTENDED,
+ *	LONG_DOUBLE_STYLE_IEEE_DOUBLEDOUBLE.
+ */
+/* LONG_DOUBLE_STYLE_IEEE_DOUBLEDOUBLE:
+ *	This symbol, if defined, indicates that the long double is
+ *	the 128-bit double-double.
+ */
+/* LONG_DOUBLE_STYLE_IEEE_EXTENDED:
+ *	This symbol, if defined, indicates that the long double is
+ *	the 80-bit IEEE 754. Note that despite the 'extended' this
+ *	is less than the 'std', since this is an extension of
+ *	the double precision.
+ */
+/* LONG_DOUBLE_STYLE_IEEE_STD:
+ *	This symbol, if defined, indicates that the long double is
+ *	the 128-bit IEEE 754.
+ */
+/* LONG_DOUBLE_STYLE_VAX:
+ *	This symbol, if defined, indicates that the long double is
+ *	the 128-bit VAX format H.
  */
 /*#define  HAS_LDEXPL		/ **/
 /*#define HAS_LONG_DOUBLE		/ **/
@@ -1924,9 +1949,15 @@
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_BE	6
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LE_BE	7
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_LE	8
+#define LONG_DOUBLE_IS_VAX_H_FLOAT			9
 #define LONG_DOUBLE_IS_UNKNOWN_FORMAT			-1
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LITTLE_ENDIAN	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_LE_LE /* back-compat */
 #define LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BIG_ENDIAN	LONG_DOUBLE_IS_DOUBLEDOUBLE_128_BIT_BE_BE /* back-compat */
+#undef LONG_DOUBLE_STYLE_IEEE
+#undef LONG_DOUBLE_STYLE_IEEE_DOUBLEDOUBLE
+#undef LONG_DOUBLE_STYLE_IEEE_EXTENDED
+#undef LONG_DOUBLE_STYLE_IEEE_STD
+#undef LONG_DOUBLE_STYLE_VAX
 #endif
 
 /* HAS_LONG_LONG:
@@ -2845,6 +2876,13 @@
  */
 /*#define HAS_FUTIMES		/ **/
 
+/* HAS_GAI_STRERROR:
+ *	This symbol, if defined, indicates that the gai_strerror routine
+ *	is available to translate error codes returned by getaddrinfo()
+ *	into human readable strings.
+ */
+/*#define HAS_GAI_STRERROR	/ **/
+
 /* HAS_GETADDRINFO:
  *	This symbol, if defined, indicates that the getaddrinfo() function
  *	is available for use.
@@ -3211,9 +3249,19 @@
  *	This symbol, if defined, indicates that the uselocale routine is
  *	available to set the current locale for the calling thread.
  */
+/* HAS_QUERYLOCALE:
+ *	This symbol, if defined, indicates that the querylocale routine is
+ *	available to return the name of the locale for a category mask.
+ */
+/* I_XLOCALE:
+ *	This symbol, if defined, indicates to the C program that it should
+ *	include <xlocale.h> to get uselocale() and its friends.
+ */
 /*#define	HAS_NEWLOCALE	/ **/
 /*#define	HAS_FREELOCALE	/ **/
 /*#define	HAS_USELOCALE	/ **/
+/*#define	HAS_QUERYLOCALE	/ **/
+/*#define	I_XLOCALE               / **/
 
 /* HAS_NEXTAFTER:
  *	This symbol, if defined, indicates that the nextafter routine is
@@ -3467,6 +3515,13 @@
  */
 /*#define HAS_FSTATVFS		/ **/
 
+/* HAS_STRERROR_L:
+ *	This symbol, if defined, indicates that the strerror_l routine is
+ *	available to return the error message for a given errno value in
+ *	a particular locale (identified by a locale_t object).
+ */
+/*#define HAS_STRERROR_L		/ **/
+
 /* HAS_STRFTIME:
  *	This symbol, if defined, indicates that the strftime routine is
  *	available to do time formatting.
@@ -3645,6 +3700,12 @@
  *	available to do scatter writes.
  */
 /*#define HAS_WRITEV		/ **/
+
+/* DEFAULT_INC_EXCLUDES_DOT:
+ *	This symbol, if defined, removes the legacy default behavior of
+ *	including '.' at the end of @INC.
+ */
+/*#define DEFAULT_INC_EXCLUDES_DOT	/ **/
 
 /* USE_DYNAMIC_LOADING:
  *	This symbol, if defined, indicates that dynamic loading of
@@ -3918,7 +3979,45 @@
  *	DOUBLE_IS_IEEE_754_128_BIT_BIG_ENDIAN
  *	DOUBLE_IS_IEEE_754_64_BIT_MIXED_ENDIAN_LE_BE
  *	DOUBLE_IS_IEEE_754_64_BIT_MIXED_ENDIAN_BE_LE
+ *	DOUBLE_IS_VAX_F_FLOAT
+ *	DOUBLE_IS_VAX_D_FLOAT
+ *	DOUBLE_IS_VAX_G_FLOAT
+ *	DOUBLE_IS_IBM_SINGLE_32_BIT
+ *	DOUBLE_IS_IBM_DOUBLE_64_BIT
+ *	DOUBLE_IS_CRAY_SINGLE_64_BIT
  *	DOUBLE_IS_UNKNOWN_FORMAT
+ */
+/* DOUBLE_HAS_INF:
+ *	This symbol, if defined, indicates that the double has
+ *	the infinity.
+ */
+/* DOUBLE_HAS_NAN:
+ *	This symbol, if defined, indicates that the double has
+ *	the not-a-number.
+ */
+/* DOUBLE_HAS_NEGATIVE_ZERO:
+ *	This symbol, if defined, indicates that the double has
+ *	the negative_zero.
+ */
+/* DOUBLE_HAS_SUBNORMALS:
+ *	This symbol, if defined, indicates that the double has
+ *	the subnormals (denormals).
+ */
+/* DOUBLE_STYLE_CRAY:
+ *	This symbol, if defined, indicates that the double is
+ *	the 64-bit CRAY mainframe format.
+ */
+/* DOUBLE_STYLE_IBM:
+ *	This symbol, if defined, indicates that the double is
+ *	the 64-bit IBM mainframe format.
+ */
+/* DOUBLE_STYLE_IEEE:
+ *	This symbol, if defined, indicates that the double is
+ *	the 64-bit IEEE 754.
+ */
+/* DOUBLE_STYLE_VAX:
+ *	This symbol, if defined, indicates that the double is
+ *	the 64-bit VAX format D or G.
  */
 #define DOUBLEKIND 3		/**/
 #define DOUBLE_IS_IEEE_754_32_BIT_LITTLE_ENDIAN	1
@@ -3929,11 +4028,25 @@
 #define DOUBLE_IS_IEEE_754_128_BIT_BIG_ENDIAN	6
 #define DOUBLE_IS_IEEE_754_64_BIT_MIXED_ENDIAN_LE_BE	7
 #define DOUBLE_IS_IEEE_754_64_BIT_MIXED_ENDIAN_BE_LE	8
+#define DOUBLE_IS_VAX_F_FLOAT	9
+#define DOUBLE_IS_VAX_D_FLOAT	10
+#define DOUBLE_IS_VAX_G_FLOAT	11
+#define DOUBLE_IS_IBM_SINGLE_32_BIT	12
+#define DOUBLE_IS_IBM_DOUBLE_64_BIT	13
+#define DOUBLE_IS_CRAY_SINGLE_64_BIT	14
 #define DOUBLE_IS_UNKNOWN_FORMAT		-1
 /*#define PERL_PRIfldbl	"llf"	/ **/
 /*#define PERL_PRIgldbl	"llg"	/ **/
 /*#define PERL_PRIeldbl	"lle"	/ **/
 /*#define PERL_SCNfldbl	"llf"	/ **/
+#define DOUBLE_HAS_INF
+#define DOUBLE_HAS_NAN
+#define DOUBLE_HAS_NEGATIVE_ZERO
+#define DOUBLE_HAS_SUBNORMALS
+#undef DOUBLE_STYLE_CRAY
+#undef DOUBLE_STYLE_IBM
+#define DOUBLE_STYLE_IEEE
+#undef DOUBLE_STYLE_VAX
 
 /* DOUBLEMANTBITS:
  *	This symbol, if defined, tells how many mantissa bits
@@ -5241,6 +5354,6 @@
 #endif
 
 /* Generated from:
- * ce61c4f18e82f6356cdae44c5336ceac1d3253033d7449651927f5633be5c3c2 config_h.SH
- * fc611849cb5b1e14ec1687b255dac15414cc5e2e11b192d94e08136cfe277f75 uconfig.sh
+ * a0cea6273c16c1c5d8625665c84bda01926ce960c26873d4e5596b5b02a53e92 config_h.SH
+ * b1c042726e6a17692921b6947c4e7c196c5c0cee011667ba719b15af7c31e669 uconfig.sh
  * ex: set ro: */

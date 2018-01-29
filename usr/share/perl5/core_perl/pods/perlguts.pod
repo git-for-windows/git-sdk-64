@@ -103,7 +103,7 @@ important.  Note that this function requires you to specify the length of
 the format.
 
 The C<sv_set*()> functions are not generic enough to operate on values
-that have "magic".  See L<Magic Virtual Tables> later in this document.
+that have "magic".  See L</Magic Virtual Tables> later in this document.
 
 All SVs that contain strings should be terminated with a C<NUL> character.
 If it is not C<NUL>-terminated there is a risk of
@@ -186,7 +186,7 @@ sv_insert() or sv_insert_flags().
 If you don't need the existing content of the SV, you can avoid some
 copying with:
 
-    sv_setpvn(sv, "", 0);
+    SvPVCLEAR(sv);
     s = SvGROW(sv, needlen + 1);
     /* something that modifies up to needlen bytes at s, but modifies
        newlen bytes
@@ -252,7 +252,7 @@ SV with the string stored in the second SV.  It also forces the second SV
 to be interpreted as a string.
 
 The C<sv_cat*()> functions are not generic enough to operate on values that
-have "magic".  See L<Magic Virtual Tables> later in this document.
+have "magic".  See L</Magic Virtual Tables> later in this document.
 
 If you know the name of a scalar variable, you can get a pointer to its SV
 by using the following:
@@ -282,7 +282,7 @@ But won't work when called as:
 So to repeat always use SvOK() to check whether an sv is defined.
 
 Also you have to be careful when using C<&PL_sv_undef> as a value in
-AVs or HVs (see L<AVs, HVs and undefined values>).
+AVs or HVs (see L</AVs, HVs and undefined values>).
 
 There are also the two values C<PL_sv_yes> and C<PL_sv_no>, which contain
 boolean TRUE and FALSE values, respectively.  Like C<PL_sv_undef>, their
@@ -304,7 +304,7 @@ bus error, or just weird results.  Change the zero to C<&PL_sv_undef> in the
 first line and all will be well.
 
 To free an SV that you've created, call C<SvREFCNT_dec(SV*)>.  Normally this
-call is not necessary (see L<Reference Counts and Mortality>).
+call is not necessary (see L</Reference Counts and Mortality>).
 
 =head2 Offsets
 
@@ -461,7 +461,7 @@ by using the following:
 
 This returns NULL if the variable does not exist.
 
-See L<Understanding the Magic of Tied Hashes and Arrays> for more
+See L</Understanding the Magic of Tied Hashes and Arrays> for more
 information on how to use the array access functions on tied arrays.
 
 =head2 Working with HVs
@@ -545,7 +545,7 @@ The exact implementation of this macro varies by architecture and version
 of perl, and the return value may change per invocation, so the value
 is only valid for the duration of a single perl process.
 
-See L<Understanding the Magic of Tied Hashes and Arrays> for more
+See L</Understanding the Magic of Tied Hashes and Arrays> for more
 information on how to use the hash access functions on tied hashes.
 
 =head2 Hash API Extensions
@@ -702,7 +702,7 @@ A reference can be blessed into a package with the following function:
 
 The C<sv> argument must be a reference value.  The C<stash> argument
 specifies which class the reference will belong to.  See
-L<Stashes and Globs> for information on converting class names into stashes.
+L</Stashes and Globs> for information on converting class names into stashes.
 
 /* Still under construction */
 
@@ -1076,7 +1076,7 @@ to contain an C<SV*> and is stored as-is with its REFCNT incremented.
 
 The sv_magic function uses C<how> to determine which, if any, predefined
 "Magic Virtual Table" should be assigned to the C<mg_virtual> field.
-See the L<Magic Virtual Tables> section below.  The C<how> argument is also
+See the L</Magic Virtual Tables> section below.  The C<how> argument is also
 stored in the C<mg_type> field.  The value of
 C<how> should be chosen from the set of macros
 C<PERL_MAGIC_foo> found in F<perl.h>.  Note that before
@@ -1087,8 +1087,9 @@ referring to 'U' magic rather than C<PERL_MAGIC_uvar> for example.
 The C<obj> argument is stored in the C<mg_obj> field of the C<MAGIC>
 structure.  If it is not the same as the C<sv> argument, the reference
 count of the C<obj> object is incremented.  If it is the same, or if
-the C<how> argument is C<PERL_MAGIC_arylen>, or if it is a NULL pointer,
-then C<obj> is merely stored, without the reference count being incremented.
+the C<how> argument is C<PERL_MAGIC_arylen>, C<PERL_MAGIC_regdatum>,
+C<PERL_MAGIC_regdata>, or if it is a NULL pointer, then C<obj> is merely
+stored, without the reference count being incremented.
 
 See also C<sv_magicext> in L<perlapi> for a more flexible way to add magic
 to an SV.
@@ -1123,16 +1124,16 @@ applied to that variable.
 The C<MGVTBL> has five (or sometimes eight) pointers to the following
 routine types:
 
-    int  (*svt_get)(SV* sv, MAGIC* mg);
-    int  (*svt_set)(SV* sv, MAGIC* mg);
-    U32  (*svt_len)(SV* sv, MAGIC* mg);
-    int  (*svt_clear)(SV* sv, MAGIC* mg);
-    int  (*svt_free)(SV* sv, MAGIC* mg);
+    int  (*svt_get)  (pTHX_ SV* sv, MAGIC* mg);
+    int  (*svt_set)  (pTHX_ SV* sv, MAGIC* mg);
+    U32  (*svt_len)  (pTHX_ SV* sv, MAGIC* mg);
+    int  (*svt_clear)(pTHX_ SV* sv, MAGIC* mg);
+    int  (*svt_free) (pTHX_ SV* sv, MAGIC* mg);
 
-    int  (*svt_copy)(SV *sv, MAGIC* mg, SV *nsv,
+    int  (*svt_copy) (pTHX_ SV *sv, MAGIC* mg, SV *nsv,
                                           const char *name, I32 namlen);
-    int  (*svt_dup)(MAGIC *mg, CLONE_PARAMS *param);
-    int  (*svt_local)(SV *nsv, MAGIC *mg);
+    int  (*svt_dup)  (pTHX_ MAGIC *mg, CLONE_PARAMS *param);
+    int  (*svt_local)(pTHX_ SV *nsv, MAGIC *mg);
 
 
 This MGVTBL structure is set at compile-time in F<perl.h> and there are
@@ -1371,7 +1372,7 @@ creates a second hash which it blesses into the class which will implement
 the tie methods.  Lastly it ties the two hashes together, and returns a
 reference to the new tied hash.  Note that the code below does NOT call the
 TIEHASH method in the MyTie class -
-see L<Calling Perl Routines from within C Programs> for details on how
+see L</Calling Perl Routines from within C Programs> for details on how
 to do this.
 
     SV*
@@ -1733,7 +1734,7 @@ reuse specially assigned SVs (I<target>s) which are (as a corollary)
 not constantly freed/created.
 
 Each of the targets is created only once (but see
-L<Scratchpads and recursion> below), and when an opcode needs to put
+L</Scratchpads and recursion> below), and when an opcode needs to put
 an integer, a double, or a string on stack, it just sets the
 corresponding parts of its I<target> and puts the I<target> on stack.
 
@@ -2673,6 +2674,20 @@ whatever the compiler has.
 
 If you are printing addresses of pointers, use UVxf combined
 with PTR2UV(), do not use %lx or %p.
+
+=head2 Formatted Printing of Size_t and SSize_t
+
+The most general way to do this is to cast them to a UV or IV, and
+print as in the
+L<previous section|/Formatted Printing of IVs, UVs, and NVs>.
+
+But if you're using C<PerlIO_printf()>, it's less typing and visual
+clutter to use the C<"%z"> length modifier (for I<siZe>):
+
+        PerlIO_printf("STRLEN is %zu\n", len);
+
+This modifier is not portable, so its use should be restricted to
+C<PerlIO_printf()>.
 
 =head2 Pointer-To-Integer and Integer-To-Pointer
 

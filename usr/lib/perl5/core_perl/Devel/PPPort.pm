@@ -128,11 +128,14 @@ in older Perl releases:
     aTHXR_
     AvFILLp
     boolSV
+    C_ARRAY_END
+    C_ARRAY_LENGTH
     call_argv
     call_method
     call_pv
     call_sv
     caller_cx
+    cBOOL
     ckWARN
     CopFILE
     CopFILE_set
@@ -172,7 +175,6 @@ in older Perl releases:
     G_METHOD
     get_av
     get_cv
-    get_cvn_flags
     get_cvs
     get_hv
     get_sv
@@ -184,10 +186,8 @@ in older Perl releases:
     grok_oct
     gv_fetchpvn_flags
     gv_fetchpvs
-    gv_fetchsv
     gv_stashpvn
     gv_stashpvs
-    GvSVn
     HEf_SVKEY
     HeUTF8
     hv_fetchs
@@ -210,7 +210,6 @@ in older Perl releases:
     isBLANK
     isCNTRL
     isGRAPH
-    isGV_with_GP
     isPRINT
     isPSXSPC
     isPUNCT
@@ -265,6 +264,11 @@ in older Perl releases:
     NVff
     NVgf
     NVTYPE
+    OpHAS_SIBLING
+    OpLASTSIB_set
+    OpMAYBESIB_set
+    OpMORESIB_set
+    OpSIBLING
     packWARN
     PERL_ABS
     PERL_BCDVERSION
@@ -347,6 +351,7 @@ in older Perl releases:
     PERL_UNUSED_ARG
     PERL_UNUSED_CONTEXT
     PERL_UNUSED_DECL
+    PERL_UNUSED_RESULT
     PERL_UNUSED_VAR
     PERL_UQUAD_MAX
     PERL_UQUAD_MIN
@@ -513,6 +518,8 @@ in older Perl releases:
     SvREFCNT_inc_void
     SvREFCNT_inc_void_NN
     SvRV_set
+    SvRX
+    SvRXOK
     SvSHARED_HASH
     SvSTASH_set
     SvUOK
@@ -606,7 +613,7 @@ Perl below which it is unsupported:
 
 =over 4
 
-=item perl 5.21.8
+=item perl 5.24.0
 
   BhkDISABLE
   BhkENABLE
@@ -631,6 +638,9 @@ Perl below which it is unsupported:
   PadnamelistMAX
   PadnamelistREFCNT
   PadnamelistREFCNT_dec
+  RESTORE_LC_NUMERIC
+  STORE_LC_NUMERIC_FORCE_TO_UNDERLYING
+  STORE_LC_NUMERIC_SET_TO_NEEDED
   XS_APIVERSION_BOOTCHECK
   XS_EXTERNAL
   XS_INTERNAL
@@ -648,14 +658,53 @@ Perl below which it is unsupported:
   reentrant_retry
   reentrant_size
   ref
-  sv_get_backrefs
   sv_setref_pvs
+
+=item perl 5.23.9
+
+  toFOLD_uvchr
+  toLOWER_uvchr
+  toTITLE_uvchr
+  toUPPER_uvchr
+
+=item perl 5.23.8
+
+  clear_defarray
+  cx_popblock
+  cx_popeval
+  cx_popformat
+  cx_popgiven
+  cx_poploop
+  cx_popsub
+  cx_popsub_args
+  cx_popsub_common
+  cx_popwhen
+  cx_pushblock
+  cx_pusheval
+  cx_pushformat
+  cx_pushgiven
+  cx_pushloop_for
+  cx_pushloop_plain
+  cx_pushsub
+  cx_pushwhen
+  cx_topblock
+  leave_adjust_stacks
+  savetmps
+
+=item perl 5.22.0
+
+  UVCHR_SKIP
+
+=item perl 5.21.10
+
+  DECLARATION_FOR_LC_NUMERIC_MANIPULATION
+
+=item perl 5.21.8
+
+  sv_get_backrefs
 
 =item perl 5.21.7
 
-  OpHAS_SIBLING
-  OpSIBLING
-  OpSIBLING_set
   PadnameUTF8
   is_invariant_string
   newPADNAMELIST
@@ -686,7 +735,6 @@ Perl below which it is unsupported:
 =item perl 5.21.2
 
   grok_number_flags
-  op_parent
   op_sibling_splice
 
 =item perl 5.21.1
@@ -834,7 +882,6 @@ Perl below which it is unsupported:
   gv_fetchmethod_pvn_flags
   gv_fetchmethod_sv_flags
   gv_init_pv
-  gv_init_pvn
   gv_init_sv
   newGVgen_flags
   sv_derived_from_pv
@@ -843,6 +890,7 @@ Perl below which it is unsupported:
   sv_does_pv
   sv_does_pvn
   sv_does_sv
+  sv_ref
   whichsig_pv
   whichsig_pvn
   whichsig_sv
@@ -1054,8 +1102,6 @@ Perl below which it is unsupported:
 =item perl 5.9.5
 
   Perl_signbit
-  SvRX
-  SvRXOK
   av_create_and_push
   av_create_and_unshift_one
   gv_fetchfile_flags
@@ -1228,10 +1274,6 @@ Perl below which it is unsupported:
   sv_nosharing
   sv_recode_to_utf8
   sv_uni_display
-  toFOLD_uni
-  toLOWER_uni
-  toTITLE_uni
-  toUPPER_uni
   to_uni_fold
   to_uni_lower
   to_uni_title
@@ -1301,8 +1343,10 @@ Perl below which it is unsupported:
 
 =item perl 5.6.0
 
+  DO_UTF8
   PERL_SYS_INIT3
   PL_check
+  POPul
   SvIOK_UV
   SvIOK_notUV
   SvIOK_only_UV
@@ -1319,6 +1363,7 @@ Perl below which it is unsupported:
   SvUTF8
   SvUTF8_off
   SvUTF8_on
+  UTF8SKIP
   av_delete
   av_exists
   call_atexit
@@ -1491,6 +1536,7 @@ Perl below which it is unsupported:
   CopyD
   MoveD
   do_binmode
+  my_bcopy
   save_aelem
   save_helem
 
@@ -1500,6 +1546,7 @@ Perl below which it is unsupported:
   G_VOID
   HePV
   HeSVKEY_set
+  POPu
   SvSetMagicSV
   SvSetMagicSV_nosteal
   SvSetSV_nosteal
@@ -1621,7 +1668,7 @@ package Devel::PPPort;
 use strict;
 use vars qw($VERSION $data);
 
-$VERSION = '3.32';
+$VERSION = '3.35';
 
 sub _init_data
 {
@@ -1877,6 +1924,7 @@ SKIP
 |>    -----------------------------------------------------------------------------------------
 |>    PL_parser                 NEED_PL_parser               NEED_PL_parser_GLOBAL
 |>    PL_signals                NEED_PL_signals              NEED_PL_signals_GLOBAL
+|>    SvRX()                    NEED_SvRX                    NEED_SvRX_GLOBAL
 |>    caller_cx()               NEED_caller_cx               NEED_caller_cx_GLOBAL
 |>    eval_pv()                 NEED_eval_pv                 NEED_eval_pv_GLOBAL
 |>    grok_bin()                NEED_grok_bin                NEED_grok_bin_GLOBAL
@@ -1884,6 +1932,7 @@ SKIP
 |>    grok_number()             NEED_grok_number             NEED_grok_number_GLOBAL
 |>    grok_numeric_radix()      NEED_grok_numeric_radix      NEED_grok_numeric_radix_GLOBAL
 |>    grok_oct()                NEED_grok_oct                NEED_grok_oct_GLOBAL
+|>    gv_fetchpvn_flags()       NEED_gv_fetchpvn_flags       NEED_gv_fetchpvn_flags_GLOBAL
 |>    load_module()             NEED_load_module             NEED_load_module_GLOBAL
 |>    mg_findext()              NEED_mg_findext              NEED_mg_findext_GLOBAL
 |>    my_snprintf()             NEED_my_snprintf             NEED_my_snprintf_GLOBAL
@@ -2109,9 +2158,9 @@ my %API = map { /^(\w+)\|([^|]*)\|([^|]*)\|(\w*)$/
 ASCII_TO_NEED||5.007001|n
 AvFILLp|5.004050||p
 AvFILL|||
-BhkDISABLE||5.021008|
-BhkENABLE||5.021008|
-BhkENTRY_set||5.021008|
+BhkDISABLE||5.024000|
+BhkENABLE||5.024000|
+BhkENTRY_set||5.024000|
 BhkENTRY|||
 BhkFLAGS|||
 CALL_BLOCK_HOOKS|||
@@ -2119,6 +2168,8 @@ CLASS|||n
 CPERLscope|5.005000||p
 CX_CURPAD_SAVE|||
 CX_CURPAD_SV|||
+C_ARRAY_END|5.013002||p
+C_ARRAY_LENGTH|5.008001||p
 CopFILEAV|5.006000||p
 CopFILEGV_set|5.006000||p
 CopFILEGV|5.006000||p
@@ -2135,8 +2186,10 @@ Copy|||
 CvPADLIST||5.008001|
 CvSTASH|||
 CvWEAKOUTSIDE|||
+DECLARATION_FOR_LC_NUMERIC_MANIPULATION||5.021010|n
 DEFSV_set|5.010001||p
 DEFSV|5.004050||p
+DO_UTF8||5.006000|
 END_EXTERN_C|5.005000||p
 ENTER|||
 ERRSV|5.004050||p
@@ -2158,7 +2211,6 @@ GetVars|||
 GvAV|||
 GvCV|||
 GvHV|||
-GvSVn|5.009003||p
 GvSV|||
 Gv_AMupdate||5.011000|
 HEf_SVKEY|5.003070||p
@@ -2197,7 +2249,7 @@ LEAVE|||
 LINKLIST||5.013006|
 LVRET|||
 MARK|||
-MULTICALL||5.021008|
+MULTICALL||5.024000|
 MUTABLE_PTR|5.010001||p
 MUTABLE_SV|5.010001||p
 MY_CXT_CLONE|5.009002||p
@@ -2226,9 +2278,11 @@ OP_NAME||5.007003|
 OP_TYPE_IS_OR_WAS||5.019010|
 OP_TYPE_IS||5.019007|
 ORIGMARK|||
-OpHAS_SIBLING||5.021007|
-OpSIBLING_set||5.021007|
-OpSIBLING||5.021007|
+OpHAS_SIBLING|5.021007||p
+OpLASTSIB_set|5.021011||p
+OpMAYBESIB_set|5.021011||p
+OpMORESIB_set|5.021011||p
+OpSIBLING|5.021007||p
 PAD_BASE_SV|||
 PAD_CLONE_VARS|||
 PAD_COMPNAME_FLAGS|||
@@ -2248,7 +2302,7 @@ PAD_SV|||
 PERLIO_FUNCS_CAST|5.009003||p
 PERLIO_FUNCS_DECL|5.009003||p
 PERL_ABS|5.008001||p
-PERL_BCDVERSION|5.021008||p
+PERL_BCDVERSION|5.024000||p
 PERL_GCC_BRACE_GROUPS_FORBIDDEN|5.008001||p
 PERL_HASH|5.003070||p
 PERL_INT_MAX|5.003070||p
@@ -2266,14 +2320,14 @@ PERL_MAGIC_envelem|5.007002||p
 PERL_MAGIC_env|5.007002||p
 PERL_MAGIC_ext|5.007002||p
 PERL_MAGIC_fm|5.007002||p
-PERL_MAGIC_glob|5.021008||p
+PERL_MAGIC_glob|5.024000||p
 PERL_MAGIC_isaelem|5.007002||p
 PERL_MAGIC_isa|5.007002||p
-PERL_MAGIC_mutex|5.021008||p
+PERL_MAGIC_mutex|5.024000||p
 PERL_MAGIC_nkeys|5.007002||p
-PERL_MAGIC_overload_elem|5.021008||p
+PERL_MAGIC_overload_elem|5.024000||p
 PERL_MAGIC_overload_table|5.007002||p
-PERL_MAGIC_overload|5.021008||p
+PERL_MAGIC_overload|5.024000||p
 PERL_MAGIC_pos|5.007002||p
 PERL_MAGIC_qr|5.007002||p
 PERL_MAGIC_regdata|5.007002||p
@@ -2321,7 +2375,7 @@ PERL_SIGNALS_UNSAFE_FLAG|5.008001||p
 PERL_SUBVERSION|5.006000||p
 PERL_SYS_INIT3||5.006000|
 PERL_SYS_INIT|||
-PERL_SYS_TERM||5.021008|
+PERL_SYS_TERM||5.024000|
 PERL_UCHAR_MAX|5.003070||p
 PERL_UCHAR_MIN|5.003070||p
 PERL_UINT_MAX|5.003070||p
@@ -2331,6 +2385,7 @@ PERL_ULONG_MIN|5.003070||p
 PERL_UNUSED_ARG|5.009003||p
 PERL_UNUSED_CONTEXT|5.009004||p
 PERL_UNUSED_DECL|5.007002||p
+PERL_UNUSED_RESULT|5.021001||p
 PERL_UNUSED_VAR|5.007002||p
 PERL_UQUAD_MAX|5.003070||p
 PERL_UQUAD_MIN|5.003070||p
@@ -2343,13 +2398,13 @@ PL_DBsingle|||pn
 PL_DBsub|||pn
 PL_DBtrace|||pn
 PL_Sv|5.005000||p
-PL_bufend|5.021008||p
-PL_bufptr|5.021008||p
+PL_bufend|5.024000||p
+PL_bufptr|5.024000||p
 PL_check||5.006000|
 PL_compiling|5.004050||p
 PL_comppad_name||5.017004|
 PL_comppad||5.008001|
-PL_copline|5.021008||p
+PL_copline|5.024000||p
 PL_curcop|5.004050||p
 PL_curpad||5.005000|
 PL_curstash|5.004050||p
@@ -2359,18 +2414,18 @@ PL_diehook|5.004050||p
 PL_dirty|5.004050||p
 PL_dowarn|||pn
 PL_errgv|5.004050||p
-PL_error_count|5.021008||p
-PL_expect|5.021008||p
+PL_error_count|5.024000||p
+PL_expect|5.024000||p
 PL_hexdigit|5.005000||p
 PL_hints|5.005000||p
-PL_in_my_stash|5.021008||p
-PL_in_my|5.021008||p
+PL_in_my_stash|5.024000||p
+PL_in_my|5.024000||p
 PL_keyword_plugin||5.011002|
 PL_last_in_gv|||n
 PL_laststatval|5.005000||p
-PL_lex_state|5.021008||p
-PL_lex_stuff|5.021008||p
-PL_linestr|5.021008||p
+PL_lex_state|5.024000||p
+PL_lex_stuff|5.024000||p
+PL_linestr|5.024000||p
 PL_modglobal||5.005000|n
 PL_na|5.004050||pn
 PL_no_modify|5.006000||p
@@ -2382,8 +2437,8 @@ PL_perl_destruct_level|5.004050||p
 PL_perldb|5.004050||p
 PL_ppaddr|5.006000||p
 PL_rpeepp||5.013005|n
-PL_rsfp_filters|5.021008||p
-PL_rsfp|5.021008||p
+PL_rsfp_filters|5.024000||p
+PL_rsfp|5.024000||p
 PL_rs|||n
 PL_signals|5.008001||p
 PL_stack_base|5.004050||p
@@ -2396,8 +2451,8 @@ PL_sv_undef|5.004050||pn
 PL_sv_yes|5.004050||pn
 PL_tainted|5.004050||p
 PL_tainting|5.004050||p
-PL_tokenbuf|5.021008||p
-POP_MULTICALL||5.021008|
+PL_tokenbuf|5.024000||p
+POP_MULTICALL||5.024000|
 POPi|||n
 POPl|||n
 POPn|||n
@@ -2405,6 +2460,8 @@ POPpbytex||5.007001|n
 POPpx||5.005030|n
 POPp|||n
 POPs|||n
+POPul||5.006000|n
+POPu||5.004000|n
 PTR2IV|5.006000||p
 PTR2NV|5.006000||p
 PTR2UV|5.006000||p
@@ -2412,7 +2469,7 @@ PTR2nat|5.009003||p
 PTR2ul|5.007001||p
 PTRV|5.006000||p
 PUSHMARK|||
-PUSH_MULTICALL||5.021008|
+PUSH_MULTICALL||5.024000|
 PUSHi|||
 PUSHmortal|5.009002||p
 PUSHn|||
@@ -2420,29 +2477,29 @@ PUSHp|||
 PUSHs|||
 PUSHu|5.004000||p
 PUTBACK|||
-PadARRAY||5.021008|
-PadMAX||5.021008|
-PadlistARRAY||5.021008|
-PadlistMAX||5.021008|
-PadlistNAMESARRAY||5.021008|
-PadlistNAMESMAX||5.021008|
-PadlistNAMES||5.021008|
+PadARRAY||5.024000|
+PadMAX||5.024000|
+PadlistARRAY||5.024000|
+PadlistMAX||5.024000|
+PadlistNAMESARRAY||5.024000|
+PadlistNAMESMAX||5.024000|
+PadlistNAMES||5.024000|
 PadlistREFCNT||5.017004|
 PadnameIsOUR|||
 PadnameIsSTATE|||
-PadnameLEN||5.021008|
+PadnameLEN||5.024000|
 PadnameOURSTASH|||
 PadnameOUTER|||
-PadnamePV||5.021008|
-PadnameREFCNT_dec||5.021008|
-PadnameREFCNT||5.021008|
-PadnameSV||5.021008|
+PadnamePV||5.024000|
+PadnameREFCNT_dec||5.024000|
+PadnameREFCNT||5.024000|
+PadnameSV||5.024000|
 PadnameTYPE|||
 PadnameUTF8||5.021007|
-PadnamelistARRAY||5.021008|
-PadnamelistMAX||5.021008|
-PadnamelistREFCNT_dec||5.021008|
-PadnamelistREFCNT||5.021008|
+PadnamelistARRAY||5.024000|
+PadnamelistMAX||5.024000|
+PadnamelistREFCNT_dec||5.024000|
+PadnamelistREFCNT||5.024000|
 PerlIO_clearerr||5.007003|
 PerlIO_close||5.007003|
 PerlIO_context_layers||5.009004|
@@ -2474,6 +2531,7 @@ PoisonNew|5.009004||p
 PoisonWith|5.009004||p
 Poison|5.008000||p
 READ_XDIGIT||5.017006|
+RESTORE_LC_NUMERIC||5.024000|
 RETVAL|||n
 Renewc|||
 Renew|||
@@ -2488,6 +2546,8 @@ START_EXTERN_C|5.005000||p
 START_MY_CXT|5.007003||p
 STMT_END|||p
 STMT_START|||p
+STORE_LC_NUMERIC_FORCE_TO_UNDERLYING||5.024000|
+STORE_LC_NUMERIC_SET_TO_NEEDED||5.024000|
 STR_WITH_LEN|5.009003||p
 ST|||
 SV_CONST_RETURN|5.009003||p
@@ -2625,8 +2685,8 @@ SvROK_on|||
 SvROK|||
 SvRV_set|5.009003||p
 SvRV|||
-SvRXOK||5.009005|
-SvRX||5.009005|
+SvRXOK|5.009005||p
+SvRX|5.009005||p
 SvSETMAGIC|||
 SvSHARED_HASH|5.009003||p
 SvSHARE||5.007003|
@@ -2660,7 +2720,9 @@ SvVOK||5.008001|
 SvVSTRING_mg|5.009004||p
 THIS|||n
 UNDERBAR|5.009002||p
+UTF8SKIP||5.006000|
 UTF8_MAXBYTES|5.009002||p
+UVCHR_SKIP||5.022000|
 UVSIZE|5.006000||p
 UVTYPE|5.006000||p
 UVXf|5.007001||p
@@ -2669,7 +2731,7 @@ UVuf|5.006000||p
 UVxf|5.006000||p
 WARN_ALL|5.006000||p
 WARN_AMBIGUOUS|5.006000||p
-WARN_ASSERTIONS|5.021008||p
+WARN_ASSERTIONS|5.024000||p
 WARN_BAREWORD|5.006000||p
 WARN_CLOSED|5.006000||p
 WARN_CLOSURE|5.006000||p
@@ -2742,18 +2804,18 @@ XST_mPV|||
 XST_mUNDEF|||
 XST_mUV|5.008001||p
 XST_mYES|||
-XS_APIVERSION_BOOTCHECK||5.021008|
-XS_EXTERNAL||5.021008|
-XS_INTERNAL||5.021008|
-XS_VERSION_BOOTCHECK||5.021008|
+XS_APIVERSION_BOOTCHECK||5.024000|
+XS_EXTERNAL||5.024000|
+XS_INTERNAL||5.024000|
+XS_VERSION_BOOTCHECK||5.024000|
 XS_VERSION|||
 XSprePUSH|5.006000||p
 XS|||
-XopDISABLE||5.021008|
-XopENABLE||5.021008|
-XopENTRYCUSTOM||5.021008|
-XopENTRY_set||5.021008|
-XopENTRY||5.021008|
+XopDISABLE||5.024000|
+XopENABLE||5.024000|
+XopENTRYCUSTOM||5.024000|
+XopENTRY_set||5.024000|
+XopENTRY||5.024000|
 XopFLAGS||5.013007|
 ZeroD|5.009002||p
 Zero|||
@@ -2764,9 +2826,9 @@ _core_swash_init|||
 _get_encoding|||
 _get_regclass_nonbitmap_data|||
 _get_swash_invlist|||
+_invlistEQ|||
 _invlist_array_init|||n
 _invlist_contains_cp|||n
-_invlist_contents|||
 _invlist_dump|||
 _invlist_intersection_maybe_complement_2nd|||
 _invlist_intersection|||
@@ -2796,12 +2858,14 @@ _make_exactf_invlist|||
 _new_invlist_C_array|||
 _new_invlist|||
 _pMY_CXT|5.007003||p
+_setlocale_debug_string|||n
 _setup_canned_invlist|||
 _swash_inversion_hash|||
 _swash_to_invlist|||
 _to_fold_latin1|||
 _to_uni_fold_flags||5.014000|
 _to_upper_title_latin1|||
+_to_utf8_case|||
 _to_utf8_fold_flags||5.019009|
 _to_utf8_lower_flags||5.019009|
 _to_utf8_title_flags||5.019009|
@@ -2809,17 +2873,17 @@ _to_utf8_upper_flags||5.019009|
 _warn_problematic_locale|||n
 aMY_CXT_|5.007003||p
 aMY_CXT|5.007003||p
-aTHXR_|5.021008||p
-aTHXR|5.021008||p
+aTHXR_|5.024000||p
+aTHXR|5.024000||p
 aTHX_|5.006000||p
 aTHX|5.006000||p
-aassign_common_vars|||
 add_above_Latin1_folds|||
 add_cp_to_invlist|||
 add_data|||n
 add_multi_match|||
 add_utf16_textfilter|||
 adjust_size_and_find_bucket|||n
+advance_one_LB|||
 advance_one_SB|||
 advance_one_WB|||
 alloc_maybe_populate_EXACT|||
@@ -2867,6 +2931,7 @@ av_top_index||5.017009|
 av_undef|||
 av_unshift|||
 ax|||n
+backup_one_LB|||
 backup_one_SB|||
 backup_one_WB|||
 bad_type_gv|||
@@ -2883,6 +2948,7 @@ boot_core_mro|||
 bytes_cmp_utf8||5.013007|
 bytes_from_utf8||5.007001|
 bytes_to_utf8||5.006001|
+cBOOL|5.013000||p
 call_argv|5.006000||p
 call_atexit||5.006000|
 call_list||5.004000|
@@ -2911,6 +2977,7 @@ ck_warner||5.011001|v
 ckwarn_common|||
 ckwarn_d||5.009003|
 ckwarn||5.009003|
+clear_defarray||5.023008|
 clear_placeholders|||
 clear_special_blocks|||
 clone_params_del|||n
@@ -2938,14 +3005,13 @@ cophh_fetch_pvs||5.013007|
 cophh_fetch_pv||5.013007|
 cophh_fetch_sv||5.013007|
 cophh_free||5.013007|
-cophh_new_empty||5.021008|
+cophh_new_empty||5.024000|
 cophh_store_pvn||5.013007|
 cophh_store_pvs||5.013007|
 cophh_store_pv||5.013007|
 cophh_store_sv||5.013007|
 core_prototype|||
 coresub_op|||
-could_it_be_a_POSIX_class|||n
 cr_textfilter|||
 create_eval_scope|||
 croak_memory_wrap||5.019003|n
@@ -2982,6 +3048,24 @@ cvgv_set|||
 cvstash_set|||
 cx_dump||5.005000|
 cx_dup|||
+cx_popblock||5.023008|
+cx_popeval||5.023008|
+cx_popformat||5.023008|
+cx_popgiven||5.023008|
+cx_poploop||5.023008|
+cx_popsub_args||5.023008|
+cx_popsub_common||5.023008|
+cx_popsub||5.023008|
+cx_popwhen||5.023008|
+cx_pushblock||5.023008|
+cx_pusheval||5.023008|
+cx_pushformat||5.023008|
+cx_pushgiven||5.023008|
+cx_pushloop_for||5.023008|
+cx_pushloop_plain||5.023008|
+cx_pushsub||5.023008|
+cx_pushwhen||5.023008|
+cx_topblock||5.023008|
 cxinc|||
 dAXMARK|5.009003||p
 dAX|5.007002||p
@@ -2994,7 +3078,7 @@ dNOOP|5.006000||p
 dORIGMARK|||
 dSP|||
 dTHR|5.004050||p
-dTHXR|5.021008||p
+dTHXR|5.024000||p
 dTHXa|5.006000||p
 dTHXoa|5.006000||p
 dTHX|5.006000||p
@@ -3082,7 +3166,7 @@ do_vecget|||
 do_vecset|||
 do_vop|||
 docatch|||
-doeval|||
+doeval_compile|||
 dofile|||
 dofindlabel|||
 doform|||
@@ -3091,7 +3175,7 @@ dooneliner|||
 doopen_pm|||
 doparseform|||
 dopoptoeval|||
-dopoptogiven|||
+dopoptogivenfor|||
 dopoptolabel|||
 dopoptoloop|||
 dopoptosub_at|||
@@ -3101,6 +3185,10 @@ dounwind|||
 dowantarray|||
 drand48_init_r|||n
 drand48_r|||n
+dtrace_probe_call|||
+dtrace_probe_load|||
+dtrace_probe_op|||
+dtrace_probe_phase|||
 dump_all_perl|||
 dump_all||5.006000|
 dump_c_backtrace|||
@@ -3120,6 +3208,7 @@ dump_trie|||
 dump_vindent||5.006000|
 dumpuntil|||
 dup_attrlist|||
+edit_distance|||n
 emulate_cop_io|||
 eval_pv|5.006000||p
 eval_sv|5.006000||p
@@ -3144,7 +3233,6 @@ find_in_my_stash|||
 find_lexical_cv|||
 find_runcv_where|||
 find_runcv||5.008001|
-find_rundefsv2|||
 find_rundefsvoffset||5.009002|
 find_rundefsv||5.013002|
 find_script|||
@@ -3183,7 +3271,7 @@ get_av|5.006000||p
 get_c_backtrace_dump|||
 get_c_backtrace|||
 get_context||5.006000|n
-get_cvn_flags|5.009005||p
+get_cvn_flags|||
 get_cvs|5.011000||p
 get_cv|5.006000||p
 get_db_sub|||
@@ -3257,12 +3345,12 @@ gv_fetchmeth|||
 gv_fetchpvn_flags|5.009002||p
 gv_fetchpvs|5.009004||p
 gv_fetchpv|||
-gv_fetchsv|5.009002||p
+gv_fetchsv|||
 gv_fullname3||5.003070|
 gv_fullname4||5.006001|
 gv_fullname|||
 gv_handler||5.007001|
-gv_init_pvn||5.015004|
+gv_init_pvn|||
 gv_init_pv||5.015004|
 gv_init_svtype|||
 gv_init_sv||5.015004|
@@ -3280,6 +3368,8 @@ gv_stashpv|||
 gv_stashsvpvn_cached|||
 gv_stashsv|||
 gv_try_downgrade|||
+handle_named_backref|||
+handle_possible_posix|||
 handle_regex_sets|||
 he_dup|||
 hek_dup|||
@@ -3367,7 +3457,9 @@ intuit_method|||
 intuit_more|||
 invert|||
 invlist_array|||n
+invlist_clear|||
 invlist_clone|||
+invlist_contents|||
 invlist_extend|||
 invlist_highest|||n
 invlist_is_iterating|||n
@@ -3376,6 +3468,7 @@ invlist_iterinit|||n
 invlist_iternext|||n
 invlist_max|||n
 invlist_previous_index|||n
+invlist_replace_list_destroys_src|||
 invlist_set_len|||
 invlist_set_previous_index|||n
 invlist_trim|||n
@@ -3393,10 +3486,10 @@ isFOO_lc|||
 isFOO_utf8_lc|||
 isGCB|||n
 isGRAPH|5.006000||p
-isGV_with_GP|5.009004||p
 isIDCONT||5.017008|
 isIDFIRST_lazy||5.021001|
 isIDFIRST|||
+isLB|||
 isLOWER|||
 isOCTAL||5.013005|
 isPRINT|5.004000||p
@@ -3483,7 +3576,7 @@ jmaybe|||
 join_exact|||
 keyword_plugin_standard|||
 keyword|||
-leave_common|||
+leave_adjust_stacks||5.023008|
 leave_scope|||
 lex_bufutf8||5.011002|
 lex_discard_to||5.011002|
@@ -3590,7 +3683,10 @@ memEQ|5.004000||p
 memNEs|5.009005||p
 memNE|5.004000||p
 mem_collxfrm|||
+mem_log_alloc|||n
 mem_log_common|||n
+mem_log_free|||n
+mem_log_realloc|||n
 mess_alloc|||
 mess_nocontext|||vn
 mess_sv||5.013001|
@@ -3639,7 +3735,7 @@ multideref_stringify|||
 my_atof2||5.007002|
 my_atof||5.006000|
 my_attrs|||
-my_bcopy|||n
+my_bcopy||5.004050|n
 my_bytes_to_utf8|||n
 my_bzero|||n
 my_chsize|||
@@ -3654,7 +3750,7 @@ my_fflush_all||5.006000|
 my_fork||5.007003|n
 my_kid|||
 my_lstat_flags|||
-my_lstat||5.021008|
+my_lstat||5.024000|
 my_memcmp|||n
 my_memset|||n
 my_pclose||5.003070|
@@ -3666,7 +3762,7 @@ my_snprintf|5.009004||pvn
 my_socketpair||5.007003|n
 my_sprintf|5.009003||pvn
 my_stat_flags|||
-my_stat||5.021008|
+my_stat||5.024000|
 my_strerror||5.021001|
 my_strftime||5.007002|
 my_strlcat|5.009004||pn
@@ -3795,7 +3891,7 @@ op_linklist||5.013006|
 op_lvalue_flags|||
 op_lvalue||5.013007|
 op_null||5.007002|
-op_parent||5.021002|n
+op_parent|||n
 op_prepend_elem||5.013006|
 op_refcnt_dec|||
 op_refcnt_inc|||
@@ -3813,6 +3909,7 @@ opmethod_stash|||
 opslab_force_free|||
 opslab_free_nopad|||
 opslab_free|||
+output_or_return_posix_warnings|||
 pMY_CXT_|5.007003||p
 pMY_CXT|5.007003||p
 pTHX_|5.006000||p
@@ -3912,6 +4009,8 @@ ptr_table_new||5.009005|
 ptr_table_split||5.009005|
 ptr_table_store||5.009005|
 push_scope|||
+put_charclass_bitmap_innards_common|||
+put_charclass_bitmap_innards_invlist|||
 put_charclass_bitmap_innards|||
 put_code_point|||
 put_range|||
@@ -3926,14 +4025,17 @@ quadmath_format_single|||n
 re_compile||5.009005|
 re_croak2|||
 re_dup_guts|||
+re_exec_indentf|||v
+re_indentf|||v
 re_intuit_start||5.019001|
 re_intuit_string||5.006000|
 re_op_compile|||
+re_printf|||v
 realloc||5.007002|n
-reentrant_free||5.021008|
-reentrant_init||5.021008|
-reentrant_retry||5.021008|vn
-reentrant_size||5.021008|
+reentrant_free||5.024000|
+reentrant_init||5.024000|
+reentrant_retry||5.024000|vn
+reentrant_size||5.024000|
 ref_array_or_hash|||
 refcounted_he_chain_2hv|||
 refcounted_he_fetch_pvn|||
@@ -3949,7 +4051,7 @@ refcounted_he_new_sv|||
 refcounted_he_value|||
 refkids|||
 refto|||
-ref||5.021008|
+ref||5.024000|
 reg2Lanode|||
 reg_check_named_buff_matched|||n
 reg_named_buff_all||5.009005|
@@ -3981,6 +4083,7 @@ regdump_extflags|||
 regdump_intflags|||
 regdump||5.005000|
 regdupe_internal|||
+regex_set_precedence|||n
 regexec_flags||5.005000|
 regfree_internal||5.009005|
 reghop3|||n
@@ -3992,9 +4095,7 @@ reginsert|||
 regmatch|||
 regnext||5.005000|
 regnode_guts|||
-regpatws|||n
 regpiece|||
-regpposixcc|||
 regprop|||
 regrepeat|||
 regtail_study|||
@@ -4035,7 +4136,6 @@ save_I8||5.006000|
 save_adelete||5.011000|
 save_aelem_flags||5.011000|
 save_aelem||5.004050|
-save_aliased_sv|||
 save_alloc||5.006000|
 save_aptr|||
 save_ary|||
@@ -4092,6 +4192,7 @@ savesharedsvpv||5.013006|
 savestack_grow_cnt||5.008001|
 savestack_grow|||
 savesvpv||5.009002|
+savetmps||5.023008|
 sawparens|||
 scalar_mod_type|||n
 scalarboolean|||
@@ -4133,6 +4234,7 @@ should_warn_nl|||n
 si_dup|||
 sighandler|||n
 simplify_sort|||
+skip_to_be_ignored_text|||
 skipspace_flags|||
 softref2xv|||
 sortcv_stacked|||
@@ -4274,7 +4376,7 @@ sv_kill_backrefs|||
 sv_len_utf8_nomg|||
 sv_len_utf8||5.006000|
 sv_len|||
-sv_magic_portable|5.021008|5.004000|p
+sv_magic_portable|5.024000|5.004000|p
 sv_magicext_mglob|||
 sv_magicext||5.007003|
 sv_magic|||
@@ -4311,8 +4413,7 @@ sv_pvutf8||5.006000|
 sv_pv||5.006000|
 sv_recode_to_utf8||5.007003|
 sv_reftype|||
-sv_ref|||
-sv_release_COW|||
+sv_ref||5.015004|
 sv_replace|||
 sv_report_used|||
 sv_resetpvn|||
@@ -4338,7 +4439,7 @@ sv_setpv|||
 sv_setref_iv|||
 sv_setref_nv|||
 sv_setref_pvn|||
-sv_setref_pvs||5.021008|
+sv_setref_pvs||5.024000|
 sv_setref_pv|||
 sv_setref_uv||5.007001|
 sv_setsv_cow|||
@@ -4394,19 +4495,19 @@ taint_env|||
 taint_proper|||
 tied_method|||v
 tmps_grow_p|||
-toFOLD_uni||5.007003|
 toFOLD_utf8||5.019001|
+toFOLD_uvchr||5.023009|
 toFOLD||5.019001|
 toLOWER_L1||5.019001|
 toLOWER_LC||5.004000|
-toLOWER_uni||5.007003|
 toLOWER_utf8||5.015007|
+toLOWER_uvchr||5.023009|
 toLOWER|||
-toTITLE_uni||5.007003|
 toTITLE_utf8||5.015007|
+toTITLE_uvchr||5.023009|
 toTITLE||5.019001|
-toUPPER_uni||5.007003|
 toUPPER_utf8||5.015007|
+toUPPER_uvchr||5.023009|
 toUPPER|||
 to_byte_substr|||
 to_lower_latin1|||n
@@ -5805,6 +5906,67 @@ __DATA__
 #ifndef Newxz
 #  define Newxz(v,n,t)                   Newz(0,v,n,t)
 #endif
+#ifndef PERL_MAGIC_qr
+#  define PERL_MAGIC_qr                  'r'
+#endif
+#ifndef cBOOL
+#  define cBOOL(cbool)                   ((cbool) ? (bool)1 : (bool)0)
+#endif
+
+#ifndef OpHAS_SIBLING
+#  define OpHAS_SIBLING(o)               (cBOOL((o)->op_sibling))
+#endif
+
+#ifndef OpSIBLING
+#  define OpSIBLING(o)                   (0 + (o)->op_sibling)
+#endif
+
+#ifndef OpMORESIB_set
+#  define OpMORESIB_set(o, sib)          ((o)->op_sibling = (sib))
+#endif
+
+#ifndef OpLASTSIB_set
+#  define OpLASTSIB_set(o, parent)       ((o)->op_sibling = NULL)
+#endif
+
+#ifndef OpMAYBESIB_set
+#  define OpMAYBESIB_set(o, sib, parent) ((o)->op_sibling = (sib))
+#endif
+
+#ifndef SvRX
+#if defined(NEED_SvRX)
+static void * DPPP_(my_SvRX)(pTHX_ SV *rv);
+static
+#else
+extern void * DPPP_(my_SvRX)(pTHX_ SV *rv);
+#endif
+
+#ifdef SvRX
+#  undef SvRX
+#endif
+#define SvRX(a) DPPP_(my_SvRX)(aTHX_ a)
+
+#if defined(NEED_SvRX) || defined(NEED_SvRX_GLOBAL)
+
+void *
+DPPP_(my_SvRX)(pTHX_ SV *rv)
+{
+	if (SvROK(rv)) {
+		SV *sv = SvRV(rv);
+		if (SvMAGICAL(sv)) {
+			MAGIC *mg = mg_find(sv, PERL_MAGIC_qr);
+			if (mg && mg->mg_obj) {
+				return mg->mg_obj;
+			}
+		}
+	}
+	return 0;
+}
+#endif
+#endif
+#ifndef SvRXOK
+#  define SvRXOK(sv)                     (!!SvRX(sv))
+#endif
 
 #ifndef PERL_UNUSED_DECL
 #  ifdef HASATTRIBUTE
@@ -5836,6 +5998,14 @@ __DATA__
 #    define PERL_UNUSED_CONTEXT PERL_UNUSED_ARG(my_perl)
 #  else
 #    define PERL_UNUSED_CONTEXT
+#  endif
+#endif
+
+#ifndef PERL_UNUSED_RESULT
+#  if defined(__GNUC__) && defined(HASATTRIBUTE_WARN_UNUSED_RESULT)
+#    define PERL_UNUSED_RESULT(v) STMT_START { __typeof__(v) z = (v); (void)sizeof(z); } STMT_END
+#  else
+#    define PERL_UNUSED_RESULT(v) ((void)(v))
 #  endif
 #endif
 #ifndef NOOP
@@ -6172,6 +6342,13 @@ typedef OP* (CPERLscope(*Perl_check_t)) (pTHX_ OP*);
 #endif
 
 #endif
+#ifndef C_ARRAY_LENGTH
+#  define C_ARRAY_LENGTH(a)              (sizeof(a)/sizeof((a)[0]))
+#endif
+
+#ifndef C_ARRAY_END
+#  define C_ARRAY_END(a)                 ((a) + C_ARRAY_LENGTH(a))
+#endif
 
 #ifndef PERL_SIGNALS_UNSAFE_FLAG
 
@@ -6292,7 +6469,7 @@ extern yy_parser DPPP_(dummy_PL_parser);
 /* PL_expect, PL_copline, PL_rsfp, PL_rsfp_filters, PL_linestr, PL_bufptr, PL_bufend, PL_lex_state, PL_lex_stuff, PL_tokenbuf depends on PL_parser */
 /* Warning: PL_expect, PL_copline, PL_rsfp, PL_rsfp_filters, PL_linestr, PL_bufptr, PL_bufend, PL_lex_state, PL_lex_stuff, PL_tokenbuf
  * Do not use this variable unless you know exactly what you're
- * doint. It is internal to the perl parser and may change or even
+ * doing. It is internal to the perl parser and may change or even
  * be removed in the future. As of perl 5.9.5, you have to check
  * for (PL_parser != NULL) for this variable to have any effect.
  * An always non-NULL PL_parser dummy is provided for earlier
@@ -7494,6 +7671,33 @@ DPPP_(my_newSVpvn_share)(pTHX_ const char *src, I32 len, U32 hash)
 #ifndef HvNAMELEN_get
 #  define HvNAMELEN_get(hv)              (HvNAME_get(hv) ? (I32)strlen(HvNAME_get(hv)) : 0)
 #endif
+
+#ifndef gv_fetchpvn_flags
+#if defined(NEED_gv_fetchpvn_flags)
+static GV* DPPP_(my_gv_fetchpvn_flags)(pTHX_ const char* name, STRLEN len, int flags, int types);
+static
+#else
+extern GV* DPPP_(my_gv_fetchpvn_flags)(pTHX_ const char* name, STRLEN len, int flags, int types);
+#endif
+
+#ifdef gv_fetchpvn_flags
+#  undef gv_fetchpvn_flags
+#endif
+#define gv_fetchpvn_flags(a,b,c,d) DPPP_(my_gv_fetchpvn_flags)(aTHX_ a,b,c,d)
+#define Perl_gv_fetchpvn_flags DPPP_(my_gv_fetchpvn_flags)
+
+#if defined(NEED_gv_fetchpvn_flags) || defined(NEED_gv_fetchpvn_flags_GLOBAL)
+
+GV*
+DPPP_(my_gv_fetchpvn_flags)(pTHX_ const char* name, STRLEN len, int flags, int types) {
+	char *namepv = savepvn(name, len);
+	GV* stash = gv_fetchpv(namepv, TRUE, SVt_PVHV);
+	Safefree(namepv);
+	return stash;
+}
+
+#endif
+#endif
 #ifndef GvSVn
 #  define GvSVn(gv)                      GvSV(gv)
 #endif
@@ -7502,15 +7706,15 @@ DPPP_(my_newSVpvn_share)(pTHX_ const char *src, I32 len, U32 hash)
 #  define isGV_with_GP(gv)               isGV(gv)
 #endif
 
-#ifndef gv_fetchpvn_flags
-#  define gv_fetchpvn_flags(name, len, flags, svt) gv_fetchpv(name, flags, svt)
-#endif
-
 #ifndef gv_fetchsv
 #  define gv_fetchsv(name, flags, svt)   gv_fetchpv(SvPV_nolen_const(name), flags, svt)
 #endif
 #ifndef get_cvn_flags
 #  define get_cvn_flags(name, namelen, flags) get_cv(name, flags)
+#endif
+
+#ifndef gv_init_pvn
+#  define gv_init_pvn(gv, stash, ptr, len, flags) gv_init(gv, stash, ptr, len, flags & GV_ADDMULTI ? TRUE : FALSE)
 #endif
 #ifndef WARN_ALL
 #  define WARN_ALL                       0
@@ -7799,13 +8003,16 @@ DPPP_(my_warner)(U32 err, const char *pat, ...)
 #  define HEf_SVKEY                      -2
 #endif
 
+#ifndef MUTABLE_PTR
 #if defined(__GNUC__) && !defined(PERL_GCC_BRACE_GROUPS_FORBIDDEN)
 #  define MUTABLE_PTR(p) ({ void *_p = (p); _p; })
 #else
 #  define MUTABLE_PTR(p) ((void *) (p))
 #endif
-
-#define MUTABLE_SV(p)   ((SV *)MUTABLE_PTR(p))
+#endif
+#ifndef MUTABLE_SV
+#  define MUTABLE_SV(p)                  ((SV *)MUTABLE_PTR(p))
+#endif
 
 /* end of random bits */
 #ifndef PERL_MAGIC_sv

@@ -21,7 +21,31 @@
  *  "_TAIL"       if instead it represents all but the first byte.  This, and
  *                with no additional suffix are both string constants */
 
-#define UNICODE_MAJOR_VERSION   8
+/*
+=head1 Unicode Support
+
+=for apidoc AmU|placeholder|BOM_UTF8
+
+This is a macro that evaluates to a string constant of the  UTF-8 bytes that
+define the Unicode BYTE ORDER MARK (U+FEFF) for the platform that perl
+is compiled on.  This allows code to use a mnemonic for this character that
+works on both ASCII and EBCDIC platforms.
+S<C<sizeof(BOM_UTF8) - 1>> can be used to get its length in
+bytes.
+
+=for apidoc AmU|placeholder|REPLACEMENT_CHARACTER_UTF8
+
+This is a macro that evaluates to a string constant of the  UTF-8 bytes that
+define the Unicode REPLACEMENT CHARACTER (U+FFFD) for the platform that perl
+is compiled on.  This allows code to use a mnemonic for this character that
+works on both ASCII and EBCDIC platforms.
+S<C<sizeof(REPLACEMENT_CHARACTER_UTF8) - 1>> can be used to get its length in
+bytes.
+
+=cut
+*/
+
+#define UNICODE_MAJOR_VERSION   9
 #define UNICODE_DOT_VERSION     0
 #define UNICODE_DOT_DOT_VERSION 0
 
@@ -44,6 +68,10 @@
 #   define HYPHEN_UTF8  "\xE2\x80\x90"    /* U+2010 */
 #   define BOM_UTF8_FIRST_BYTE  0xEF    /* U+FEFF */
 #   define BOM_UTF8_TAIL  "\xBB\xBF"    /* U+FEFF */
+
+#   define BOM_UTF8  "\xEF\xBB\xBF"    /* U+FEFF */
+
+#   define REPLACEMENT_CHARACTER_UTF8  "\xEF\xBF\xBD"    /* U+FFFD */
 
 #   define NBSP_NATIVE  0xA0    /* U+00A0 */
 #   define NBSP_UTF8  "\xC2\xA0"    /* U+00A0 */
@@ -84,6 +112,10 @@
 #   define BOM_UTF8_FIRST_BYTE  0xDD    /* U+FEFF */
 #   define BOM_UTF8_TAIL  "\x73\x66\x73"    /* U+FEFF */
 
+#   define BOM_UTF8  "\xDD\x73\x66\x73"    /* U+FEFF */
+
+#   define REPLACEMENT_CHARACTER_UTF8  "\xDD\x73\x73\x71"    /* U+FFFD */
+
 #   define NBSP_NATIVE  0x41    /* U+00A0 */
 #   define NBSP_UTF8  "\x80\x41"    /* U+00A0 */
 
@@ -123,6 +155,10 @@
 #   define BOM_UTF8_FIRST_BYTE  0xDD    /* U+FEFF */
 #   define BOM_UTF8_TAIL  "\x72\x65\x72"    /* U+FEFF */
 
+#   define BOM_UTF8  "\xDD\x72\x65\x72"    /* U+FEFF */
+
+#   define REPLACEMENT_CHARACTER_UTF8  "\xDD\x72\x72\x70"    /* U+FFFD */
+
 #   define NBSP_NATIVE  0x41    /* U+00A0 */
 #   define NBSP_UTF8  "\x78\x41"    /* U+00A0 */
 
@@ -141,10 +177,10 @@
 #endif	/* EBCDIC 037 */
 
 /* The number of code points not matching \pC */
-#define NON_OTHER_COUNT_FOR_USE_ONLY_BY_REGCOMP_DOT_C  120522
+#define NON_OTHER_COUNT_FOR_USE_ONLY_BY_REGCOMP_DOT_C  128021
 
 /* The highest code point that has any type of case change */
-#define HIGHEST_CASE_CHANGING_CP_FOR_USE_ONLY_BY_UTF8_DOT_C  0x118DF
+#define HIGHEST_CASE_CHANGING_CP_FOR_USE_ONLY_BY_UTF8_DOT_C  0x1E943
 
 #endif /* H_UNICODE_CONSTANTS */
 

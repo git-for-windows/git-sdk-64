@@ -2,13 +2,12 @@ package Test::Builder::Module;
 
 use strict;
 
-use Test::Builder 1.00;
+use Test::Builder;
 
 require Exporter;
 our @ISA = qw(Exporter);
 
-our $VERSION = '1.001014';
-$VERSION = eval $VERSION;      ## no critic (BuiltinFunctions::ProhibitStringyEval)
+our $VERSION = '1.302073';
 
 
 =head1 NAME
@@ -22,7 +21,7 @@ Test::Builder::Module - Base class for test modules
 
   my $CLASS = __PACKAGE__;
 
-  use base 'Test::Builder::Module';
+  use parent 'Test::Builder::Module';
   @EXPORT = qw(ok);
 
   sub ok ($;$) {
@@ -90,7 +89,8 @@ sub import {
 
     $test->plan(@_);
 
-    $class->export_to_level( 1, $class, @imports );
+    local $Exporter::ExportLevel = $Exporter::ExportLevel + 1;
+    $class->Exporter::import(@imports);
 }
 
 sub _strip_imports {

@@ -1,10 +1,10 @@
 #
-# $Id: Encode.pm,v 2.80 2016/01/25 14:54:01 dankogai Exp $
+# $Id: Encode.pm,v 2.88 2016/11/29 23:30:30 dankogai Exp dankogai $
 #
 package Encode;
 use strict;
 use warnings;
-our $VERSION = sprintf "%d.%02d_01", q$Revision: 2.80 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 2.88 $ =~ /(\d+)/g;
 use constant DEBUG => !!$ENV{PERL_ENCODE_DEBUG};
 use XSLoader ();
 XSLoader::load( __PACKAGE__, $VERSION );
@@ -15,7 +15,7 @@ use Exporter 5.57 'import';
 
 our @EXPORT = qw(
   decode  decode_utf8  encode  encode_utf8 str2bytes bytes2str
-  encodings  find_encoding clone_encoding
+  encodings  find_encoding find_mime_encoding clone_encoding
 );
 our @FB_FLAGS = qw(
   DIE_ON_ERR WARN_ON_ERR RETURN_ON_ERR LEAVE_SRC
@@ -102,6 +102,8 @@ sub define_encoding {
 sub getEncoding {
     my ( $class, $name, $skip_external ) = @_;
 
+    defined($name) or return;
+
     $name =~ s/\s+//g; # https://rt.cpan.org/Ticket/Display.html?id=65796
 
     ref($name) && $name->can('renew') and return $name;
@@ -128,6 +130,14 @@ sub getEncoding {
 sub find_encoding($;$) {
     my ( $name, $skip_external ) = @_;
     return __PACKAGE__->getEncoding( $name, $skip_external );
+}
+
+sub find_mime_encoding($;$) {
+    my ( $mime_name, $skip_external ) = @_;
+    eval { require Encode::MIME::Name; };
+    $@ and return;
+    my $name = Encode::MIME::Name::get_encode_name( $mime_name );
+    return find_encoding( $name, $skip_external );
 }
 
 sub resolve_alias($) {
@@ -220,14 +230,41 @@ sub from_to($$$;$) {
         require Carp;
         Carp::croak("Unknown encoding '$to'");
     }
-    my $uni = $f->decode($string);
-    $_[0] = $string = $t->encode( $uni, $check );
+
+    # For Unicode, warnings need to be caught and re-issued at this level
+    # so that callers can disable utf8 warnings lexically.
+    my $uni;
+    if ( ref($f) eq 'Encode::Unicode' ) {
+        my $warn = '';
+        {
+            local $SIG{__WARN__} = sub { $warn = shift };
+            $uni = $f->decode($string);
+        }
+        warnings::warnif('utf8', $warn) if length $warn;
+    }
+    else {
+        $uni = $f->decode($string);
+    }
+
+    if ( ref($t) eq 'Encode::Unicode' ) {
+        my $warn = '';
+        {
+            local $SIG{__WARN__} = sub { $warn = shift };
+            $_[0] = $string = $t->encode( $uni, $check );
+        }
+        warnings::warnif('utf8', $warn) if length $warn;
+    }
+    else {
+        $_[0] = $string = $t->encode( $uni, $check );
+    }
+
     return undef if ( $check && length($uni) );
     return defined( $_[0] ) ? length($string) : undef;
 }
 
 sub encode_utf8($) {
     my ($str) = @_;
+    return undef unless defined $str;
     utf8::encode($str);
     return $str;
 }
@@ -470,6 +507,10 @@ I<ENCODING> and returns a sequence of octets.  I<ENCODING> can be either a
 canonical name or an alias.  For encoding names and aliases, see
 L</"Defining Aliases">.  For CHECK, see L</"Handling Malformed Data">.
 
+B<CAVEAT>: the input scalar I<STRING> might be modified in-place depending
+on what is set in CHECK. See L</LEAVE_SRC> if you want your inputs to be
+left unchanged.
+
 For example, to convert a string from Perl's internal format into
 ISO-8859-1, also known as Latin1:
 
@@ -493,6 +534,10 @@ Perl's internal form.  As with encode(),
 I<ENCODING> can be either a canonical name or an alias. For encoding names
 and aliases, see L</"Defining Aliases">; for I<CHECK>, see L</"Handling
 Malformed Data">.
+
+B<CAVEAT>: the input scalar I<OCTETS> might be modified in-place depending
+on what is set in CHECK. See L</LEAVE_SRC> if you want your inputs to be
+left unchanged.
 
 For example, to convert ISO-8859-1 data into a string in Perl's
 internal format:
@@ -541,6 +586,20 @@ name of the encoding object.
   find_encoding("latin1")->name; # iso-8859-1
 
 See L<Encode::Encoding> for details.
+
+=head3 find_mime_encoding
+
+  [$obj =] find_mime_encoding(MIME_ENCODING)
+
+Returns the I<encoding object> corresponding to I<MIME_ENCODING>.  Acts
+same as C<find_encoding()> but C<mime_name()> of returned object must
+match to I<MIME_ENCODING>.  So as opposite of C<find_encoding()>
+canonical names and aliases are not used when searching for object.
+
+    find_mime_encoding("utf8"); # returns undef because "utf8" is not valid I<MIME_ENCODING>
+    find_mime_encoding("utf-8"); # returns encode object "utf-8-strict"
+    find_mime_encoding("UTF-8"); # same as "utf-8" because I<MIME_ENCODING> is case insensitive
+    find_mime_encoding("utf-8-strict"); returns undef because "utf-8-strict" is not valid I<MIME_ENCODING>
 
 =head3 from_to
 
@@ -608,6 +667,10 @@ from UTF-8 into a sequence of logical characters.
 Because not all sequences of octets are valid UTF-8,
 it is quite possible for this function to fail.
 For CHECK, see L</"Handling Malformed Data">.
+
+B<CAVEAT>: the input I<$octets> might be modified in-place depending on
+what is set in CHECK. See L</LEAVE_SRC> if you want your inputs to be
+left unchanged.
 
 =head2 Listing available encodings
 

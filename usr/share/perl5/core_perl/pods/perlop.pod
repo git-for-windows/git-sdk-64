@@ -71,7 +71,8 @@ values only, not array values.
     left	and
     left	or xor
 
-In the following sections, these operators are covered in precedence order.
+In the following sections, these operators are covered in detail, in the
+same order in which they appear in the table above.
 
 Many operators can be overloaded for objects.  See L<overload>.
 
@@ -128,13 +129,13 @@ To do what you meant properly, you must write:
 
     print(($foo & 255) + 1, "\n");
 
-See L<Named Unary Operators> for more discussion of this.
+See L</Named Unary Operators> for more discussion of this.
 
 Also parsed as terms are the S<C<do {}>> and S<C<eval {}>> constructs, as
 well as subroutine and method calls, and the anonymous
 constructors C<[]> and C<{}>.
 
-See also L<Quote and Quote-like Operators> toward the end of this section,
+See also L</Quote and Quote-like Operators> toward the end of this section,
 as well as L</"I/O Operators">.
 
 =head2 The Arrow Operator
@@ -216,8 +217,8 @@ are platform-dependent.
 =head2 Symbolic Unary Operators
 X<unary operator> X<operator, unary>
 
-Unary C<"!"> performs logical negation, that is, "not".  See also C<not> for a lower
-precedence version of this.
+Unary C<"!"> performs logical negation, that is, "not".  See also
+L<C<not>|/Logical Not> for a lower precedence version of this.
 X<!>
 
 Unary C<"-"> performs arithmetic negation if the operand is numeric,
@@ -235,8 +236,8 @@ B<Argument "the string" isn't numeric in negation (-) at ...>.
 X<-> X<negation, arithmetic>
 
 Unary C<"~"> performs bitwise negation, that is, 1's complement.  For
-example, S<C<0666 & ~027>> is 0640.  (See also L<Integer Arithmetic> and
-L<Bitwise String Operators>.)  Note that the width of the result is
+example, S<C<0666 & ~027>> is 0640.  (See also L</Integer Arithmetic> and
+L</Bitwise String Operators>.)  Note that the width of the result is
 platform-dependent: C<~0> is 32 bits wide on a 32-bit platform, but 64
 bits wide on a 64-bit platform, so if you are expecting a certain bit
 width, remember to use the C<"&"> operator to mask off the excess bits.
@@ -370,13 +371,13 @@ X<shl> X<shr> X<shift, right> X<shift, left>
 
 Binary C<<< "<<" >>> returns the value of its left argument shifted left by the
 number of bits specified by the right argument.  Arguments should be
-integers.  (See also L<Integer Arithmetic>.)
+integers.  (See also L</Integer Arithmetic>.)
 
 Binary C<<< ">>" >>> returns the value of its left argument shifted right by
 the number of bits specified by the right argument.  Arguments should
-be integers.  (See also L<Integer Arithmetic>.)
+be integers.  (See also L</Integer Arithmetic>.)
 
-If S<C<use integer>> (see L<Integer Arithmetic>) is in force then
+If S<C<use integer>> (see L</Integer Arithmetic>) is in force then
 signed C integers are used (I<arithmetic shift>), otherwise unsigned C
 integers are used (I<logical shift>), even for negative shiftees.
 In arithmetic right shift the sign bit is replicated on the left,
@@ -443,7 +444,7 @@ parenthesis rule.  That means, for example, that C<-f($file).".bak"> is
 equivalent to S<C<-f "$file.bak">>.
 X<-X> X<filetest> X<operator, filetest>
 
-See also L<"Terms and List Operators (Leftward)">.
+See also L</"Terms and List Operators (Leftward)">.
 
 =head2 Relational Operators
 X<relational operator> X<operator, relational>
@@ -837,7 +838,7 @@ X<operator, bitwise, and> X<bitwise and> X<&>
 Binary C<"&"> returns its operands ANDed together bit by bit.  Although no
 warning is currently raised, the result is not well defined when this operation
 is performed on operands that aren't either numbers (see
-L<Integer Arithmetic>) nor bitstrings (see L<Bitwise String Operators>).
+L</Integer Arithmetic>) nor bitstrings (see L</Bitwise String Operators>).
 
 Note that C<"&"> has lower priority than relational operators, so for example
 the parentheses are essential in a test like
@@ -859,7 +860,7 @@ Binary C<"^"> returns its operands XORed together bit by bit.
 
 Although no warning is currently raised, the results are not well
 defined when these operations are performed on operands that aren't either
-numbers (see L<Integer Arithmetic>) nor bitstrings (see L<Bitwise String
+numbers (see L</Integer Arithmetic>) nor bitstrings (see L</Bitwise String
 Operators>).
 
 Note that C<"|"> and C<"^"> have lower priority than relational operators, so
@@ -1073,6 +1074,12 @@ If the final value specified is not in the sequence that the magical
 increment would produce, the sequence goes until the next value would
 be longer than the final value specified.
 
+As of Perl 5.26, the list-context range operator on strings works as expected
+in the scope of L<< S<C<"use feature 'unicode_strings">>|feature/The
+'unicode_strings' feature >>. In previous versions, and outside the scope of
+that feature, it exhibits L<perlunicode/The "Unicode Bug">: its behavior
+depends on the internal encoding of the range endpoint.
+
 If the initial value specified isn't part of a magical increment
 sequence (that is, a non-empty string matching C</^[a-zA-Z]*[0-9]*\z/>),
 only the initial value will be returned.  So the following will only
@@ -1261,16 +1268,19 @@ The only operators with lower precedence are the logical operators
 C<"and">, C<"or">, and C<"not">, which may be used to evaluate calls to list
 operators without the need for parentheses:
 
-    open HANDLE, "< :utf8", "filename" or die "Can't open: $!\n";
+    open HANDLE, "< :encoding(UTF-8)", "filename"
+        or die "Can't open: $!\n";
 
 However, some people find that code harder to read than writing
 it with parentheses:
 
-    open(HANDLE, "< :utf8", "filename") or die "Can't open: $!\n";
+    open(HANDLE, "< :encoding(UTF-8)", "filename")
+        or die "Can't open: $!\n";
 
 in which case you might as well just use the more customary C<"||"> operator:
 
-    open(HANDLE, "< :utf8", "filename") || die "Can't open: $!\n";
+    open(HANDLE, "< :encoding(UTF-8)", "filename")
+        || die "Can't open: $!\n";
 
 See also discussion of list operators in L</Terms and List Operators (Leftward)>.
 
@@ -1388,7 +1398,8 @@ Note, however, that this does not always work for quoting Perl code:
 is a syntax error.  The C<L<Text::Balanced>> module (standard as of v5.8,
 and from CPAN before then) is able to do this properly.
 
-There can be whitespace between the operator and the quoting
+There can (and in some cases, must) be whitespace between the operator
+and the quoting
 characters, except when C<#> is being used as the quoting character.
 C<q#foo#> is parsed as the string C<foo>, while S<C<q #foo#>> is the
 operator C<q> followed by a comment.  Its argument will be taken
@@ -1396,6 +1407,12 @@ from the next line.  This allows you to write:
 
     s {foo}  # Replace foo
       {bar}  # with bar.
+
+The cases where whitespace must be used are when the quoting character
+is a word character (meaning it matches C</\w/>):
+
+    q XfooX # Works: means the string 'foo'
+    qXfooX  # WRONG!
 
 The following escape sequences are available in constructs that interpolate,
 and in transliterations:
@@ -1555,12 +1572,9 @@ as a Unicode code point no matter what the native encoding is.  The name of the
 character in the 256th position (indexed by 0) in Unicode is
 C<LATIN CAPITAL LETTER A WITH MACRON>.
 
-There are a couple of exceptions to the above rule.  S<C<\N{U+I<hex number>}>> is
+An exception to the above rule is that S<C<\N{U+I<hex number>}>> is
 always interpreted as a Unicode code point, so that C<\N{U+0050}> is C<"P"> even
-on EBCDIC platforms.  And if C<S<L<use encoding|encoding>>> is in effect, the
-number is considered to be in that encoding, and is translated from that into
-the platform's native encoding if there is a corresponding native character;
-otherwise to Unicode.
+on EBCDIC platforms.
 
 =back
 
@@ -1675,8 +1689,8 @@ X<qr> X</i> X</m> X</o> X</s> X</x> X</p>
 
 This operator quotes (and possibly compiles) its I<STRING> as a regular
 expression.  I<STRING> is interpolated the same way as I<PATTERN>
-in C<m/I<PATTERN>/>.  If C<"'"> is used as the delimiter, no interpolation
-is done.  Returns a Perl value which may be used instead of the
+in C<m/I<PATTERN>/>.  If C<"'"> is used as the delimiter, no variable
+interpolation is done.  Returns a Perl value which may be used instead of the
 corresponding C</I<STRING>/msixpodualn> expression.  The returned value is a
 normalized version of the original pattern.  It magically differs from
 a string containing the same characters: C<ref(qr/x/)> returns "Regexp";
@@ -1729,15 +1743,18 @@ Options (specified by the following modifiers) are:
     m	Treat string as multiple lines.
     s	Treat string as single line. (Make . match a newline)
     i	Do case-insensitive pattern matching.
-    x	Use extended regular expressions.
+    x   Use extended regular expressions; specifying two
+        x's means \t and the SPACE character are ignored within
+        square-bracketed character classes
     p	When matching preserve a copy of the matched string so
         that ${^PREMATCH}, ${^MATCH}, ${^POSTMATCH} will be
         defined (ignored starting in v5.20) as these are always
-        defined starting in that relese
+        defined starting in that release
     o	Compile pattern only once.
-    a   ASCII-restrict: Use ASCII for \d, \s, \w; specifying two
-        a's further restricts things to that that no ASCII
-        character will match a non-ASCII one under /i.
+    a   ASCII-restrict: Use ASCII for \d, \s, \w and [[:posix:]]
+        character classes; specifying two a's adds the further
+        restriction that no ASCII character will match a
+        non-ASCII one under /i.
     l   Use the current run-time locale's rules.
     u   Use Unicode rules.
     d   Use Unicode or native charset, as in 5.12 and earlier.
@@ -1785,7 +1802,7 @@ as delimiters.  This is particularly useful for matching path names
 that contain C<"/">, to avoid LTS (leaning toothpick syndrome).  If C<"?"> is
 the delimiter, then a match-only-once rule applies,
 described in C<m?I<PATTERN>?> below.  If C<"'"> (single quote) is the delimiter,
-no interpolation is performed on the I<PATTERN>.
+no variable interpolation is performed on the I<PATTERN>.
 When using a delimiter character valid in an identifier, whitespace is required
 after the C<m>.
 
@@ -2019,8 +2036,6 @@ Here is the output (split into several lines):
 =item C<m?I<PATTERN>?msixpodualngc>
 X<?> X<operator, match-once>
 
-=item C<?I<PATTERN>?msixpodualngc>
-
 This is just like the C<m/I<PATTERN>/> search, except that it matches
 only once between calls to the C<reset()> operator.  This is a useful
 optimization when you want to see only the first occurrence of
@@ -2049,7 +2064,7 @@ syntax error.  If you encounter this construct in older code, you can just add
 C<m>.
 
 =item C<s/I<PATTERN>/I<REPLACEMENT>/msixpodualngcer>
-X<substitute> X<substitution> X<replace> X<regexp, replace>
+X<s> X<substitute> X<substitution> X<replace> X<regexp, replace>
 X<regexp, substitute> X</m> X</s> X</i> X</x> X</p> X</o> X</g> X</c> X</e> X</r>
 
 Searches a string for a pattern, and if found, replaces that pattern
@@ -2069,7 +2084,7 @@ the string specified must be a scalar variable, an array element, a
 hash element, or an assignment to one of those; that is, some sort of
 scalar lvalue.
 
-If the delimiter chosen is a single quote, no interpolation is
+If the delimiter chosen is a single quote, no variable interpolation is
 done on either the I<PATTERN> or the I<REPLACEMENT>.  Otherwise, if the
 I<PATTERN> contains a C<$> that looks like a variable rather than an
 end-of-string test, the variable will be interpolated into the pattern
@@ -2316,6 +2331,12 @@ failure modes by inspecting C<$?> like this:
         printf "child exited with value %d\n", $? >> 8;
     }
 
+Use the L<open> pragma to control the I/O layers used when reading the
+output of the command, for example:
+
+  use open IN => ":encoding(UTF-8)";
+  my $x = `cmd-producing-utf-8`;
+
 See L</"I/O Operators"> for more discussion.
 
 =item C<qw/I<STRING>/>
@@ -2370,25 +2391,27 @@ of those; in other words, an lvalue.
 A character range may be specified with a hyphen, so C<tr/A-J/0-9/>
 does the same replacement as C<tr/ACEGIBDFHJ/0246813579/>.
 For B<sed> devotees, C<y> is provided as a synonym for C<tr>.  If the
-I<SEARCHLIST> is delimited by bracketing quotes, the I<REPLACEMENTLIST> has
-its own pair of quotes, which may or may not be bracketing quotes;
-for example, C<tr[aeiouy][yuoiea]> or C<tr(+\-*/)/ABCD/>.
+I<SEARCHLIST> is delimited by bracketing quotes, the I<REPLACEMENTLIST>
+must have its own pair of quotes, which may or may not be bracketing
+quotes; for example, C<tr[aeiouy][yuoiea]> or C<tr(+\-*/)/ABCD/>.
 
 Characters may be literals or any of the escape sequences accepted in
-double-quoted strings.  But there is no interpolation, so C<"$"> and
-C<"@"> are treated as literals.  A hyphen at the beginning or end, or
+double-quoted strings.  But there is no variable interpolation, so C<"$">
+and C<"@"> are treated as literals.  A hyphen at the beginning or end, or
 preceded by a backslash is considered a literal.  Escape sequence
 details are in L<the table near the beginning of this section|/Quote and
 Quote-like Operators>.
 
 Note that C<tr> does B<not> do regular expression character classes such as
 C<\d> or C<\pL>.  The C<tr> operator is not equivalent to the C<L<tr(1)>>
-utility.  If you want to map strings between lower/upper cases, see
-L<perlfunc/lc> and L<perlfunc/uc>, and in general consider using the C<s>
-operator if you need regular expressions.  The C<\U>, C<\u>, C<\L>, and
-C<\l> string-interpolation escapes on the right side of a substitution
-operator will perform correct case-mappings, but C<tr[a-z][A-Z]> will not
-(except sometimes on legacy 7-bit data).
+utility.  C<tr[a-z][A-Z]> will uppercase the 26 letters "a" through "z",
+but for case changing not confined to ASCII, use
+L<C<lc>|perlfunc/lc>, L<C<uc>|perlfunc/uc>,
+L<C<lcfirst>|perlfunc/lcfirst>, L<C<ucfirst>|perlfunc/ucfirst>
+(all documented in L<perlfunc>), or the
+L<substitution operator C<sE<sol>I<PATTERN>E<sol>I<REPLACEMENT>E<sol>>|/sE<sol>PATTERNE<sol>REPLACEMENTE<sol>msixpodualngcer>
+(with C<\U>, C<\u>, C<\L>, and C<\l> string-interpolation escapes in the
+I<REPLACEMENT> portion).
 
 Most ranges are unportable between character sets, but certain ones
 signal Perl to do special handling to make them portable.  There are two
@@ -2423,7 +2446,7 @@ controls and characters which have no ASCII equivalents.
 But, even for portable ranges, it is not generally obvious what is
 included without having to look things up.  A sound principle is to use
 only ranges that begin from and end at either ASCII alphabetics of equal
-case (C<b-e>, C<b-E>), or digits (C<1-4>).  Anything else is unclear
+case (C<b-e>, C<B-E>), or digits (C<1-4>).  Anything else is unclear
 (and unportable unless C<\N{...}> is used).  If in doubt, spell out the
 character sets in full.
 
@@ -2502,6 +2525,9 @@ syntax.  Following a C<< << >> you specify a string to terminate
 the quoted material, and all lines following the current line down to
 the terminating string are the value of the item.
 
+Prefixing the terminating string with a C<~> specifies that you
+want to use L</Indented Here-docs> (see below).
+
 The terminating string may be either an identifier (a word), or some
 quoted text.  An unquoted identifier works like double quotes.
 There may not be a space between the C<< << >> and the identifier,
@@ -2562,6 +2588,55 @@ the results of the execution returned.
        print << `EOC`; # execute command and get results
     echo hi there
     EOC
+
+=back
+
+=over 4
+
+=item Indented Here-docs
+
+The here-doc modifier C<~> allows you to indent your here-docs to make
+the code more readable:
+
+    if ($some_var) {
+      print <<~EOF;
+        This is a here-doc
+        EOF
+    }
+
+This will print...
+
+    This is a here-doc
+
+...with no leading whitespace.
+
+The delimiter is used to determine the B<exact> whitespace to
+remove from the beginning of each line.  All lines B<must> have
+at least the same starting whitespace (except lines only
+containing a newline) or perl will croak.  Tabs and spaces can
+be mixed, but are matched exactly.  One tab will not be equal to
+8 spaces!
+
+Additional beginning whitespace (beyond what preceded the
+delimiter) will be preserved:
+
+    print <<~EOF;
+      This text is not indented
+        This text is indented with two spaces
+      		This text is indented with two tabs
+      EOF
+
+Finally, the modifier may be used with all of the forms
+mentioned above:
+
+    <<~\EOF;
+    <<~'EOF'
+    <<~"EOF"
+    <<~`EOF`
+
+And whitespace may be used between the C<~> and quoted delimiters:
+
+    <<~ 'EOF'; # ... "EOF", `EOF`
 
 =back
 
@@ -2837,7 +2912,7 @@ I<sed> hackers who haven't picked up the saner idiom yet.  A warning
 is emitted if the S<C<use warnings>> pragma or the B<-w> command-line flag
 (that is, the C<$^W> variable) was set.
 
-=item C<RE> in C<?RE?>, C</RE/>, C<m/RE/>, C<s/RE/foo/>,
+=item C<RE> in C<m?RE?>, C</RE/>, C<m/RE/>, C<s/RE/foo/>,
 
 Processing of C<\Q>, C<\U>, C<\u>, C<\L>, C<\l>, C<\F>, C<\E>,
 and interpolation happens (almost) as with C<qq//> constructs.
@@ -2880,7 +2955,7 @@ finish the regular expression, C<\/> will be stripped to C</> on
 the previous step, and C<\\/> will be left as is.  Because C</> is
 equivalent to C<\/> inside a regular expression, this does not
 matter unless the delimiter happens to be character special to the
-RE engine, such as in C<s*foo*bar*>, C<m[foo]>, or C<?foo?>; or an
+RE engine, such as in C<s*foo*bar*>, C<m[foo]>, or C<m?foo?>; or an
 alphanumeric char, as in:
 
   m m ^ a \s* b mmx;
@@ -3316,7 +3391,7 @@ still get C<1.4142135623731> or so.
 
 Used on numbers, the bitwise operators (C<&> C<|> C<^> C<~> C<< << >>
 C<< >> >>) always produce integral results.  (But see also
-L<Bitwise String Operators>.)  However, S<C<use integer>> still has meaning for
+L</Bitwise String Operators>.)  However, S<C<use integer>> still has meaning for
 them.  By default, their results are interpreted as unsigned integers, but
 if S<C<use integer>> is in effect, their results are interpreted
 as signed integers.  For example, C<~0> usually evaluates to a large

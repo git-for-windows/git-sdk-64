@@ -32,7 +32,7 @@
  *     and: Thomas E. Dickey                        1996-on                 *
  ****************************************************************************/
 
-/* $Id: curses.h.in,v 1.256 2017/08/11 17:47:51 tom Exp $ */
+/* $Id: curses.h.in,v 1.257 2017/11/21 00:11:37 tom Exp $ */
 
 #ifndef __NCURSES_H
 #define __NCURSES_H
@@ -42,12 +42,12 @@
 
 /* These are defined only in curses.h, and are used for conditional compiles */
 #define NCURSES_VERSION_MAJOR 6
-#define NCURSES_VERSION_MINOR 0
-#define NCURSES_VERSION_PATCH 20170916
+#define NCURSES_VERSION_MINOR 1
+#define NCURSES_VERSION_PATCH 20180127
 
 /* This is defined in more than one ncurses header, for identification */
 #undef  NCURSES_VERSION
-#define NCURSES_VERSION "6.0"
+#define NCURSES_VERSION "6.1"
 
 /*
  * Identify the mouse encoding version.
@@ -421,7 +421,7 @@ typedef struct
     wchar_t	chars[CCHARW_MAX];
 #if 1
 #undef NCURSES_EXT_COLORS
-#define NCURSES_EXT_COLORS 20170916
+#define NCURSES_EXT_COLORS 20180127
     int		ext_color;	/* color pair, must be more than 16-bits */
 #endif
 }
@@ -885,6 +885,12 @@ extern NCURSES_EXPORT(char *) tparm_varargs (NCURSES_CONST char *, ...);	/* spec
 extern NCURSES_EXPORT(char *) tiparm (const char *, ...);		/* special */
 
 /*
+ * X/Open says this returns a bool; SVr4 also checked for out-of-range line.
+ * The macro provides compatibility:
+ */
+#define is_linetouched(w,l) ((!(w) || ((l) > getmaxy(w)) || ((l) < 0)) ? ERR : (is_linetouched)((w),(l)))
+
+/*
  * These functions are not in X/Open, but we use them in macro definitions:
  */
 extern NCURSES_EXPORT(int) getattrs (const WINDOW *);			/* generated */
@@ -909,7 +915,7 @@ extern NCURSES_EXPORT(int) getpary (const WINDOW *);			/* generated */
  */
 #if 1
 #undef  NCURSES_EXT_FUNCS
-#define NCURSES_EXT_FUNCS 20170916
+#define NCURSES_EXT_FUNCS 20180127
 typedef int (*NCURSES_WINDOW_CB)(WINDOW *, void *);
 typedef int (*NCURSES_SCREEN_CB)(SCREEN *, void *);
 extern NCURSES_EXPORT(bool) is_term_resized (int, int);
@@ -971,7 +977,7 @@ extern NCURSES_EXPORT(int) wgetscrreg (const WINDOW *, int *, int *); /* generat
  */
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20170916
+#define NCURSES_SP_FUNCS 20180127
 #define NCURSES_SP_NAME(name) name##_sp
 
 /* Define the sp-funcs helper function */

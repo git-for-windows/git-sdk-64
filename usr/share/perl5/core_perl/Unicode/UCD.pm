@@ -5,7 +5,7 @@ use warnings;
 no warnings 'surrogate';    # surrogates can be inputs to this
 use charnames ();
 
-our $VERSION = '0.64';
+our $VERSION = '0.68';
 
 require Exporter;
 
@@ -98,6 +98,9 @@ Unicode::UCD - Unicode character database
     use Unicode::UCD 'search_invlist';
     my $index = search_invlist(\@invlist, $code_point);
 
+    # The following function should be used only internally in
+    # implementations of the Unicode Normalization Algorithm, and there
+    # are better choices than it.
     use Unicode::UCD 'compexcl';
     my $compexcl = compexcl($codepoint);
 
@@ -128,7 +131,8 @@ Examples:
 
     223     # Decimal 223 in native character set
     0223    # Hexadecimal 223, native (= 547 decimal)
-    0xDF    # Hexadecimal DF, native (= 223 decimal
+    0xDF    # Hexadecimal DF, native (= 223 decimal)
+    '0xDF'  # String form of hexadecimal (= 223 decimal)
     'U+DF'  # Hexadecimal DF, in Unicode's character set
                               (= LATIN SMALL LETTER SHARP S)
 
@@ -150,7 +154,7 @@ sub openunicode {
 	for my $d (@INC) {
 	    use File::Spec;
 	    $f = File::Spec->catfile($d, "unicore", @path);
-	    last if open($$rfh, $f);
+	    last if open($$rfh, '<', $f);
 	    undef $f;
 	}
 	croak __PACKAGE__, ": failed to find ",
@@ -334,7 +338,8 @@ See L</Blocks versus Scripts>.
 
 the script I<code> belongs to.
 The L</prop_value_aliases()> function can be used to get all the synonyms
-of the script name.
+of the script name.  Note that this is the older "Script" property value, and
+not the improved "Script_Extensions" value.
 
 See L</Blocks versus Scripts>.
 
@@ -962,6 +967,10 @@ that it doesn't have scripts, this function returns C<"Unknown">.
 The L</prop_value_aliases()> function can be used to get all the synonyms
 of the script name.
 
+Note that the Script_Extensions property is an improved version of the Script
+property, and you should probably be using that instead, with the
+L</charprop()> function.
+
 If supplied with an argument that can't be a code point, charscript() tries
 to do the opposite and interpret the argument as a script name. The
 return value is a I<range set>: an anonymous array of arrays that contain
@@ -1052,7 +1061,9 @@ names as the keys, and the code point ranges (see L</charscript()>) as
 the values.
 
 L<prop_invmap("script")|/prop_invmap()> can be used to get this same data in a
-different type of data structure.
+different type of data structure.  Since the Script_Extensions property is an
+improved version of the Script property, you should instead use
+L<prop_invmap("scx")|/prop_invmap()>.
 
 L<C<prop_values("Script")>|/prop_values()> can be used to get all
 the known script names as a list, without the code point ranges.
@@ -1198,6 +1209,12 @@ sub bidi_types {
 }
 
 =head2 B<compexcl()>
+
+WARNING: Unicode discourages the use of this function or any of the
+alternative mechanisms listed in this section (the documentation of
+C<compexcl()>), except internally in implementations of the Unicode
+Normalization Algorithm.  You should be using L<Unicode::Normalize> directly
+instead of these.  Using these will likely lead to half-baked results.
 
     use Unicode::UCD 'compexcl';
 
@@ -2458,7 +2475,7 @@ resolving the input property's name as is done for regular expressions.  These
 are also specified in L<perluniprops|perluniprops/Properties accessible
 through \p{} and \P{}>.  Examples of using the "property=value" form are:
 
- say join ", ", prop_invlist("Script=Shavian");
+ say join ", ", prop_invlist("Script_Extensions=Shavian");
 
  prints:
  66640, 66688
@@ -3043,6 +3060,8 @@ L<Unicode::Normalize::NFD()|Unicode::Normalize>.
 
 Note that the mapping is the one that is specified in the Unicode data files,
 and to get the final decomposition, it may need to be applied recursively.
+Unicode in fact discourages use of this property except internally in
+implementations of the Unicode Normalization Algorithm.
 
 The fourth (index [3]) element (C<$default>) in the list returned for this
 format is 0.
@@ -3136,10 +3155,47 @@ return C<undef> if called with one of those.
 The returned values for the Perl extension properties, such as C<Any> and
 C<Greek> are somewhat misleading.  The values are either C<"Y"> or C<"N>".
 All Unicode properties are bipartite, so you can actually use the C<"Y"> or
-C<"N>" in a Perl regular rexpression for these, like C<qr/\p{ID_Start=Y/}> or
+C<"N>" in a Perl regular expression for these, like C<qr/\p{ID_Start=Y/}> or
 C<qr/\p{Upper=N/}>.  But the Perl extensions aren't specified this way, only
 like C</qr/\p{Any}>, I<etc>.  You can't actually use the C<"Y"> and C<"N>" in
 them.
+
+=head3 Getting every available name
+
+Instead of reading the Unicode Database directly from files, as you were able
+to do for a long time, you are encouraged to use the supplied functions. So,
+instead of reading C<Name.pl> - which may disappear without notice in the
+future - directly, as with
+
+  my (%name, %cp);
+  for (split m/\s*\n/ => do "unicore/Name.pl") {
+      my ($cp, $name) = split m/\t/ => $_;
+      $cp{$name} = $cp;
+      $name{$cp} = $name unless $cp =~ m/ /;
+  }
+
+You ought to use L</prop_invmap()> like this:
+
+  my (%name, %cp, %cps, $n);
+  # All codepoints
+  foreach my $cat (qw( Name Name_Alias )) {
+      my ($codepoints, $names, $format, $default) = prop_invmap($cat);
+      # $format => "n", $default => ""
+      foreach my $i (0 .. @$codepoints - 2) {
+          my ($cp, $n) = ($codepoints->[$i], $names->[$i]);
+          # If $n is a ref, the same codepoint has multiple names
+          foreach my $name (ref $n ? @$n : $n) {
+              $name{$cp} //= $name;
+              $cp{$name} //= $cp;
+          }
+      }
+  }
+  # Named sequences
+  {   my %ns = namedseq();
+      foreach my $name (sort { $ns{$a} cmp $ns{$b} } keys %ns) {
+          $cp{$name} //= [ map { ord } split "" => $ns{$name} ];
+      }
+  }
 
 =cut
 

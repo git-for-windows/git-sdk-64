@@ -45,7 +45,7 @@
 #define NCURSES_UNCTRL_H_incl	1
 
 #undef  NCURSES_VERSION
-#define NCURSES_VERSION "6.0"
+#define NCURSES_VERSION "6.1"
 
 #ifdef __cplusplus
 extern "C" {

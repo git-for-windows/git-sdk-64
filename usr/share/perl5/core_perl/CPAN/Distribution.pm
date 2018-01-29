@@ -8,7 +8,7 @@ use CPAN::InfoObj;
 use File::Path ();
 @CPAN::Distribution::ISA = qw(CPAN::InfoObj);
 use vars qw($VERSION);
-$VERSION = "2.04";
+$VERSION = "2.18";
 
 # no prepare, because prepare is not a command on the shell command line
 # TODO: clear instance cache on reload
@@ -207,17 +207,22 @@ sub color_cmd_tmps {
         && $self->{incommandcolor}==$color;
     $CPAN::MAX_RECURSION||=0; # silence 'once' warnings
     if ($depth>=$CPAN::MAX_RECURSION) {
-        die(CPAN::Exception::RecursiveDependency->new($ancestors));
+        my $e = CPAN::Exception::RecursiveDependency->new($ancestors);
+        if ($e->is_resolvable) {
+            return $self->{incommandcolor}=2;
+        } else {
+            die $e;
+        }
     }
     # warn "color_cmd_tmps $depth $color " . $self->id; # sleep 1;
     my $prereq_pm = $self->prereq_pm;
     if (defined $prereq_pm) {
         # XXX also optional_req & optional_breq? -- xdg, 2012-04-01
         # A: no, optional deps may recurse -- ak, 2014-05-07
-      PREREQ: for my $pre (
+      PREREQ: for my $pre (sort(
                 keys %{$prereq_pm->{requires}||{}},
                 keys %{$prereq_pm->{build_requires}||{}},
-            ) {
+            )) {
             next PREREQ if $pre eq "perl";
             my $premo;
             unless ($premo = CPAN::Shell->expand("Module",$pre)) {
@@ -251,7 +256,7 @@ sub as_string {
 #-> sub CPAN::Distribution::containsmods ;
 sub containsmods {
     my $self = shift;
-    return keys %{$self->{CONTAINSMODS}} if exists $self->{CONTAINSMODS};
+    return sort keys %{$self->{CONTAINSMODS}} if exists $self->{CONTAINSMODS};
     my $dist_id = $self->{ID};
     for my $mod ($CPAN::META->all_objects("CPAN::Module")) {
         my $mod_file = $mod->cpan_file or next;
@@ -264,7 +269,7 @@ sub containsmods {
         }
         $self->{CONTAINSMODS}{$mod_id} = undef if $mod_file eq $dist_id;
     }
-    keys %{$self->{CONTAINSMODS}||={}};
+    sort keys %{$self->{CONTAINSMODS}||={}};
 }
 
 #-> sub CPAN::Distribution::upload_date ;
@@ -372,6 +377,7 @@ sub get {
                            ? $ENV{PERL5LIB}
                            : ($ENV{PERLLIB} || "");
     local $ENV{PERL5OPT} = defined $ENV{PERL5OPT} ? $ENV{PERL5OPT} : "";
+    # local $ENV{PERL_USE_UNSAFE_INC} = exists $ENV{PERL_USE_UNSAFE_INC} ? $ENV{PERL_USE_UNSAFE_INC} : 1; # get
     $CPAN::META->set_perl5lib;
     local $ENV{MAKEFLAGS}; # protect us from outer make calls
 
@@ -517,105 +523,66 @@ See also http://rt.cpan.org/Ticket/Display.html?id=38932\n");
         @readdir = grep { $_ ne "pax_global_header" } @readdir;
     }
     $dh->close;
-    my ($packagedir);
-    # XXX here we want in each branch File::Temp to protect all build_dir directories
-    if (CPAN->has_usable("File::Temp")) {
-        my $tdir_base;
-        my $from_dir;
-        my @dirents;
-        if (@readdir == 1 && -d $readdir[0]) {
-            $tdir_base = $readdir[0];
-            $from_dir = File::Spec->catdir(File::Spec->curdir,$readdir[0]);
-            my $dh2;
-            unless ($dh2 = DirHandle->new($from_dir)) {
-                my($mode) = (stat $from_dir)[2];
-                my $why = sprintf
-                    (
-                     "Couldn't opendir '%s', mode '%o': %s",
-                     $from_dir,
-                     $mode,
-                     $!,
-                    );
-                $CPAN::Frontend->mywarn("$why\n");
-                $self->{writemakefile} = CPAN::Distrostatus->new("NO -- $why");
-                return;
-            }
-            @dirents = grep $_ !~ /^\.\.?(?!\n)\Z/s, $dh2->read; ### MAC??
-        } else {
-            my $userid = $self->cpan_userid;
-            CPAN->debug("userid[$userid]");
-            if (!$userid or $userid eq "N/A") {
-                $userid = "anon";
-            }
-            $tdir_base = $userid;
-            $from_dir = File::Spec->curdir;
-            @dirents = @readdir;
+    my $tdir_base;
+    my $from_dir;
+    my @dirents;
+    if (@readdir == 1 && -d $readdir[0]) {
+        $tdir_base = $readdir[0];
+        $from_dir = File::Spec->catdir(File::Spec->curdir,$readdir[0]);
+        my $dh2;
+        unless ($dh2 = DirHandle->new($from_dir)) {
+            my($mode) = (stat $from_dir)[2];
+            my $why = sprintf
+                (
+                 "Couldn't opendir '%s', mode '%o': %s",
+                 $from_dir,
+                 $mode,
+                 $!,
+                );
+            $CPAN::Frontend->mywarn("$why\n");
+            $self->{writemakefile} = CPAN::Distrostatus->new("NO -- $why");
+            return;
         }
-        eval { File::Path::mkpath $builddir; };
-        if ($@) {
-            $CPAN::Frontend->mydie("Cannot create directory $builddir: $@");
+        @dirents = grep $_ !~ /^\.\.?(?!\n)\Z/s, $dh2->read; ### MAC??
+    } else {
+        my $userid = $self->cpan_userid;
+        CPAN->debug("userid[$userid]");
+        if (!$userid or $userid eq "N/A") {
+            $userid = "anon";
         }
-        $packagedir = File::Temp::tempdir(
-                                          "$tdir_base-XXXXXX",
-                                          DIR => $builddir,
-                                          CLEANUP => 0,
-                                         );
-        chmod 0777 &~ umask, $packagedir; # may fail
-        my $f;
-        for $f (@dirents) { # is already without "." and ".."
-            my $from = File::Spec->catfile($from_dir,$f);
-            my $to = File::Spec->catfile($packagedir,$f);
-            unless (File::Copy::move($from,$to)) {
-                my $err = $!;
-                $from = File::Spec->rel2abs($from);
-                Carp::confess("Couldn't move $from to $to: $err");
-            }
+        $tdir_base = $userid;
+        $from_dir = File::Spec->curdir;
+        @dirents = @readdir;
+    }
+    eval { File::Path::mkpath $builddir; };
+    if ($@) {
+        $CPAN::Frontend->mydie("Cannot create directory $builddir: $@");
+    }
+    my $packagedir;
+    my $eexist = $CPAN::META->has_usable("Errno") ? &Errno::EEXIST : undef;
+    for(my $suffix = 0; ; $suffix++) {
+        $packagedir = File::Spec->catdir($builddir, "$tdir_base-$suffix");
+        my $parent = $builddir;
+        mkdir($packagedir, 0777) and last;
+        if((defined($eexist) && $! != $eexist) || $suffix == 999) {
+            $CPAN::Frontend->mydie("Cannot create directory $packagedir: $!\n");
         }
-    } else { # older code below, still better than nothing when there is no File::Temp
-        my($distdir);
-        if (@readdir == 1 && -d $readdir[0]) {
-            $distdir = $readdir[0];
-            $packagedir = File::Spec->catdir($builddir,$distdir);
-            $self->debug("packagedir[$packagedir]builddir[$builddir]distdir[$distdir]")
-                if $CPAN::DEBUG;
-            -d $packagedir and $CPAN::Frontend->myprint("Removing previously used ".
-                                                        "$packagedir\n");
-            File::Path::rmtree($packagedir);
-            unless (File::Copy::move($distdir,$packagedir)) {
-                $CPAN::Frontend->unrecoverable_error(<<EOF);
-Couldn't move '$distdir' to '$packagedir': $!
-
-Cannot continue: Please find the reason why I cannot move
-$builddir/tmp-$$/$distdir
-to
-$packagedir
-and fix the problem, then retry
-
-EOF
-            }
-            $self->debug(sprintf("moved distdir[%s] to packagedir[%s] -e[%s]-d[%s]",
-                                 $distdir,
-                                 $packagedir,
-                                 -e $packagedir,
-                                 -d $packagedir,
-                                )) if $CPAN::DEBUG;
-        } else {
-            my $userid = $self->cpan_userid;
-            CPAN->debug("userid[$userid]") if $CPAN::DEBUG;
-            if (!$userid or $userid eq "N/A") {
-                $userid = "anon";
-            }
-            my $pragmatic_dir = $userid . '000';
-            $pragmatic_dir =~ s/\W_//g;
-            $pragmatic_dir++ while -d "../$pragmatic_dir";
-            $packagedir = File::Spec->catdir($builddir,$pragmatic_dir);
-            $self->debug("packagedir[$packagedir]") if $CPAN::DEBUG;
-            File::Path::mkpath($packagedir);
-            my($f);
-            for $f (@readdir) { # is already without "." and ".."
-                my $to = File::Spec->catdir($packagedir,$f);
-                File::Copy::move($f,$to) or Carp::confess("Couldn't move $f to $to: $!");
-            }
+    }
+    my $f;
+    for $f (@dirents) { # is already without "." and ".."
+        my $from = File::Spec->catfile($from_dir,$f);
+        my $to = File::Spec->catfile($packagedir,$f);
+        unless (File::Copy::move($from,$to)) {
+            my $err = $!;
+            $from = File::Spec->rel2abs($from);
+            $CPAN::Frontend->mydie(
+                "Couldn't move $from to $to: $err; #82295? ".
+                "CPAN::VERSION=$CPAN::VERSION; ".
+                "File::Copy::VERSION=$File::Copy::VERSION; ".
+                "$from " . (-e $from ? "exists; " : "does not exist; ").
+                "$to " . (-e $to ? "exists; " : "does not exist; ").
+                "cwd=" . CPAN::anycwd() . ";"
+            );
         }
     }
     $self->{build_dir} = $packagedir;
@@ -734,7 +701,7 @@ sub satisfy_configure_requires {
     return 1 unless @prereq;
     $self->debug(\@prereq) if $CPAN::DEBUG;
     if ($self->{configure_requires_later}) {
-        for my $k (keys %{$self->{configure_requires_later_for}||{}}) {
+        for my $k (sort keys %{$self->{configure_requires_later_for}||{}}) {
             if ($self->{configure_requires_later_for}{$k}>1) {
                 my $type = "";
                 for my $p (@prereq) {
@@ -1336,6 +1303,7 @@ Could not determine which directory to use for looking at $dist.
                 : ($ENV{PERLLIB} || "");
 
         local $ENV{PERL5OPT} = defined $ENV{PERL5OPT} ? $ENV{PERL5OPT} : "";
+        # local $ENV{PERL_USE_UNSAFE_INC} = exists $ENV{PERL_USE_UNSAFE_INC} ? $ENV{PERL_USE_UNSAFE_INC} : 1; # look
         $CPAN::META->set_perl5lib;
         local $ENV{MAKEFLAGS}; # protect us from outer make calls
 
@@ -1855,6 +1823,7 @@ sub prepare {
                            ? $ENV{PERL5LIB}
                            : ($ENV{PERLLIB} || "");
     local $ENV{PERL5OPT} = defined $ENV{PERL5OPT} ? $ENV{PERL5OPT} : "";
+    local $ENV{PERL_USE_UNSAFE_INC} = exists $ENV{PERL_USE_UNSAFE_INC} ? $ENV{PERL_USE_UNSAFE_INC} : 1; # prepare
     $CPAN::META->set_perl5lib;
     local $ENV{MAKEFLAGS}; # protect us from outer make calls
 
@@ -2149,6 +2118,7 @@ is part of the perl-%s distribution. To install that, you need to run
                            ? $ENV{PERL5LIB}
                            : ($ENV{PERLLIB} || "");
     local $ENV{PERL5OPT} = defined $ENV{PERL5OPT} ? $ENV{PERL5OPT} : "";
+    local $ENV{PERL_USE_UNSAFE_INC} = exists $ENV{PERL_USE_UNSAFE_INC} ? $ENV{PERL_USE_UNSAFE_INC} : 1; # make
     $CPAN::META->set_perl5lib;
     local $ENV{MAKEFLAGS}; # protect us from outer make calls
 
@@ -2228,7 +2198,7 @@ is part of the perl-%s distribution. To install that, you need to run
                                     "system()\n");
         }
     }
-    my $system_ok;
+    my ($system_ok, $system_err);
     if ($want_expect) {
         # XXX probably want to check _should_report here and
         # warn about not being able to use CPAN::Reporter with expect
@@ -2240,7 +2210,9 @@ is part of the perl-%s distribution. To install that, you need to run
         $system_ok = ! $ret;
     }
     else {
-        $system_ok = system($system) == 0;
+        my $rc = system($system);
+        $system_ok = $rc == 0;
+        $system_err = $! if $rc == -1;
     }
     $self->introduce_myself;
     if ( $system_ok ) {
@@ -2250,6 +2222,7 @@ is part of the perl-%s distribution. To install that, you need to run
         $self->{writemakefile} ||= CPAN::Distrostatus->new("YES");
         $self->{make} = CPAN::Distrostatus->new("NO");
         $CPAN::Frontend->mywarn("  $system -- NOT OK\n");
+        $CPAN::Frontend->mywarn("  $system_err\n") if defined $system_err;
     }
     $self->store_persistent_state;
 
@@ -2855,7 +2828,7 @@ sub unsat_prereq {
     $CPAN::META->has_usable("CPAN::Meta::Requirements")
         or die "CPAN::Meta::Requirements not available";
     my $merged = CPAN::Meta::Requirements->from_string_hash($merged_hash);
-    my @merged = $merged->required_modules;
+    my @merged = sort $merged->required_modules;
     CPAN->debug("all merged_prereqs[@merged]") if $CPAN::DEBUG;
   NEED: for my $need_module ( @merged ) {
         my $need_version = $merged->requirements_for_module($need_module);
@@ -2869,9 +2842,23 @@ sub unsat_prereq {
                 $CPAN::SQLite->search("CPAN::Module",$need_module);
             }
             $nmo = $CPAN::META->instance("CPAN::Module",$need_module);
-            next if $nmo->uptodate;
             $inst_file = $nmo->inst_file || '';
             $available_file = $nmo->available_file || '';
+            $available_version = $nmo->available_version;
+            if ($nmo->uptodate) {
+                my $accepts = eval {
+                    $merged->accepts_module($need_module, $available_version);
+                };
+                unless ($accepts) {
+                    my $rq = $merged->requirements_for_module( $need_module );
+                    $CPAN::Frontend->mywarn(
+                        "Warning: Version '$available_version' of ".
+                        "'$need_module' is up to date but does not ".
+                        "fulfill requirements ($rq). I will continue, ".
+                        "but chances to succeed are low.\n");
+                }
+                next NEED;
+            }
 
             # if they have not specified a version, we accept any installed one
             if ( $available_file
@@ -2884,8 +2871,6 @@ sub unsat_prereq {
                     next NEED;
                 }
             }
-
-            $available_version = $nmo->available_version;
         }
 
         # We only want to install prereqs if either they're not installed
@@ -3263,7 +3248,8 @@ sub prereq_pm {
             }
             my $areq;
             my $do_replace;
-            while (my($k,$v) = each %{$req||{}}) {
+            foreach my $k (sort keys %{$req||{}}) {
+                my $v = $req->{$k};
                 next unless defined $v;
                 if ($v =~ /\d/) {
                     $areq->{$k} = $v;
@@ -3500,6 +3486,7 @@ sub test {
                            : ($ENV{PERLLIB} || "");
 
     local $ENV{PERL5OPT} = defined $ENV{PERL5OPT} ? $ENV{PERL5OPT} : "";
+    local $ENV{PERL_USE_UNSAFE_INC} = exists $ENV{PERL_USE_UNSAFE_INC} ? $ENV{PERL_USE_UNSAFE_INC} : 1; # test
     $CPAN::META->set_perl5lib;
     local $ENV{MAKEFLAGS}; # protect us from outer make calls
     local $ENV{PERL_MM_USE_DEFAULT} = 1 if $CPAN::Config->{use_prompt_default};
@@ -3664,7 +3651,7 @@ sub _make_test_illuminate_prereqs {
     my @prereq;
 
     # local $CPAN::DEBUG = 16; # Distribution
-    for my $m (keys %{$self->{sponsored_mods}}) {
+    for my $m (sort keys %{$self->{sponsored_mods}}) {
         next unless $self->{sponsored_mods}{$m} > 0;
         my $m_obj = CPAN::Shell->expand("Module",$m) or next;
         # XXX we need available_version which reflects
@@ -3973,6 +3960,7 @@ sub install {
                            : ($ENV{PERLLIB} || "");
 
     local $ENV{PERL5OPT} = defined $ENV{PERL5OPT} ? $ENV{PERL5OPT} : "";
+    local $ENV{PERL_USE_UNSAFE_INC} = exists $ENV{PERL_USE_UNSAFE_INC} ? $ENV{PERL_USE_UNSAFE_INC} : 1; # install
     $CPAN::META->set_perl5lib;
     local $ENV{PERL_MM_USE_DEFAULT} = 1 if $CPAN::Config->{use_prompt_default};
     local $ENV{NONINTERACTIVE_TESTING} = 1 if $CPAN::Config->{use_prompt_default};
@@ -3992,6 +3980,15 @@ sub install {
         $CPAN::Frontend->myprint("  $system -- OK\n");
         $CPAN::META->is_installed($self->{build_dir});
         $self->{install} = CPAN::Distrostatus->new("YES");
+        if ($CPAN::Config->{'cleanup_after_install'}) {
+            my $parent = File::Spec->catdir( $self->{build_dir}, File::Spec->updir );
+            chdir $parent or $CPAN::Frontend->mydie("Couldn't chdir to $parent: $!\n");
+            File::Path::rmtree($self->{build_dir});
+            my $yml = "$self->{build_dir}.yml";
+            if (-e $yml) {
+                unlink $yml or $CPAN::Frontend->mydie("Couldn't unlink $yml: $!\n");
+            }
+        }
     } else {
         $self->{install} = CPAN::Distrostatus->new("NO");
         $CPAN::Frontend->mywarn("  $system -- NOT OK\n");
@@ -4018,7 +4015,9 @@ sub install {
         }
     }
     delete $self->{force_update};
-    $self->store_persistent_state;
+    unless ($CPAN::Config->{'cleanup_after_install'}) {
+        $self->store_persistent_state;
+    }
 
     $self->post_install();
 

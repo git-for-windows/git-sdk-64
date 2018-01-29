@@ -528,7 +528,8 @@ BEGIN {
 # Debugger for Perl 5.00x; perl5db.pl patch level:
 use vars qw($VERSION $header);
 
-$VERSION = '1.49_05';
+# bump to X.XX in blead, only use X.XX_XX in maint
+$VERSION = '1.51';
 
 $header = "perl5db.pl version $VERSION";
 
@@ -1532,14 +1533,6 @@ We then determine what the console should be on various systems:
         undef $console;
     }
 
-=item * Unix - use F</dev/tty>.
-
-=cut
-
-    elsif ( -e "/dev/tty" ) {
-        $console = "/dev/tty";
-    }
-
 =item * Windows or MSDOS - use C<con>.
 
 =cut
@@ -1562,6 +1555,17 @@ We then determine what the console should be on various systems:
 
     elsif ($^O eq 'VMS') {
         $console = 'sys$command';
+    }
+
+# Keep this penultimate, on the grounds that it satisfies a wide variety of
+# Unix-like systems that would otherwise need to be identified individually.
+
+=item * Unix - use F</dev/tty>.
+
+=cut
+
+    elsif ( -e "/dev/tty" ) {
+        $console = "/dev/tty";
     }
 
 # Keep this last.
@@ -1655,14 +1659,14 @@ and if we can.
             $o = $i unless defined $o;
 
             # read/write on in, or just read, or read on STDIN.
-            open( IN,      "+<$i" )
-              || open( IN, "<$i" )
+                 open( IN, '+<', $i )
+              || open( IN, '<',  $i )
               || open( IN, "<&STDIN" );
 
             # read/write/create/clobber out, or write/create/clobber out,
             # or merge with STDERR, or merge with STDOUT.
-                 open( OUT, "+>$o" )
-              || open( OUT, ">$o" )
+                 open( OUT, '+>', $o )
+              || open( OUT, '>',  $o )
               || open( OUT, ">&STDERR" )
               || open( OUT, ">&STDOUT" );    # so we don't dongle stdout
 
@@ -6827,8 +6831,8 @@ sub setterm {
         if ($tty) {
             my ( $i, $o ) = split $tty, /,/;
             $o = $i unless defined $o;
-            open( IN,  "<$i" ) or die "Cannot open TTY '$i' for read: $!";
-            open( OUT, ">$o" ) or die "Cannot open TTY '$o' for write: $!";
+            open( IN,  '<', $i ) or die "Cannot open TTY '$i' for read: $!";
+            open( OUT, '>', $o ) or die "Cannot open TTY '$o' for write: $!";
             $IN  = \*IN;
             $OUT = \*OUT;
             _autoflush($OUT);
@@ -7751,8 +7755,8 @@ sub TTY {
         }
 
         # Open file onto the debugger's filehandles, if you can.
-        open IN,  $in     or die "cannot open '$in' for read: $!";
-        open OUT, ">$out" or die "cannot open '$out' for write: $!";
+        open IN,  '<', $in or die "cannot open '$in' for read: $!";
+        open OUT, '>', $out or die "cannot open '$out' for write: $!";
 
         # Swap to the new filehandles.
         reset_IN_OUT( \*IN, \*OUT );
