@@ -146,7 +146,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 # define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
 #endif
 
-#if defined (__GNU_LIBRARY__) ? defined (__USE_GNU) : !defined (__STRICT_ANSI__)
+#if defined (__GNU_LIBRARY__) ? defined (__USE_GNU) : defined (__NEWLIB__) ? __GNU_VISIBLE : !defined (__STRICT_ANSI__)
 /* Minimum and maximum values a `signed long long int' can hold.  */
 # undef LONG_LONG_MIN
 # define LONG_LONG_MIN (-LONG_LONG_MAX - 1LL)

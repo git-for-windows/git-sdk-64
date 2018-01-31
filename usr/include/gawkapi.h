@@ -2,22 +2,22 @@
  * gawkapi.h -- Definitions for use by extension functions calling into gawk.
  */
 
-/* 
- * Copyright (C) 2012-2016 the Free Software Foundation, Inc.
- * 
+/*
+ * Copyright (C) 2012-2017 the Free Software Foundation, Inc.
+ *
  * This file is part of GAWK, the GNU implementation of the
  * AWK Programming Language.
- * 
+ *
  * GAWK is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * GAWK is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -53,7 +53,7 @@
  * This API purposely restricts itself to ISO C 90 features.  In particular, no
  * bool, no // comments, no use of the restrict keyword, or anything else,
  * in order to provide maximal portability.
- * 
+ *
  * Exception: the "inline" keyword is used below in the "constructor"
  * functions. If your compiler doesn't support it, you should either
  * -Dinline='' on your command line, or use the autotools and include a
@@ -117,6 +117,32 @@ typedef enum awk_bool {
 	awk_true
 } awk_bool_t;	/* we don't use <stdbool.h> on purpose */
 
+/*
+ * If an input parser would like to specify the field positions in the input
+ * record, it may populate an awk_fieldwidth_info_t structure to indicate
+ * the location of each field. The use_chars boolean controls whether the
+ * field lengths are specified in terms of bytes or potentially multi-byte
+ * characters. Performance will be better if the values are supplied in
+ * terms of bytes. The fields[0].skip value indicates how many bytes (or
+ * characters) to skip before $1, and fields[0].len is the length of $1, etc.
+ */
+
+typedef struct {
+	awk_bool_t	use_chars;	/* false ==> use bytes */
+	size_t		nf;
+	struct awk_field_info {
+		size_t	skip;	/* amount to skip before field starts */
+		size_t	len;	/* length of field */
+	} fields[1];		/* actual dimension should be nf */
+} awk_fieldwidth_info_t;
+
+/*
+ * This macro calculates the total struct size needed. This is useful when
+ * calling malloc or realloc.
+ */
+#define awk_fieldwidth_info_size(NF) (sizeof(awk_fieldwidth_info_t) + \
+			(((NF)-1) * sizeof(struct awk_field_info)))
+
 /* The information about input files that input parsers need to know: */
 typedef struct awk_input {
 	const char *name;	/* filename */
@@ -136,7 +162,7 @@ typedef struct awk_input {
 	 * parser is responsible for managing its own memory buffer.
 	 * Similarly, gawk will make its own copy of RT, so the parser
 	 * is also responsible for managing this memory.
-	 * 
+	 *
 	 * It is guaranteed that errcode is a valid pointer, so there is
 	 * no need to test for a NULL value.  Gawk sets *errcode to 0,
 	 * so there is no need to set it unless an error occurs.
@@ -146,9 +172,19 @@ typedef struct awk_input {
 	 * than zero, gawk will automatically update the ERRNO variable based
 	 * on the value of *errcode (e.g., setting *errcode = errno should do
 	 * the right thing).
+	 *
+	 * If field_width is non-NULL, then *field_width will be initialized
+	 * to NULL, and the function may set it to point to a structure
+	 * supplying field width information to override the default
+	 * gawk field parsing mechanism. Note that this structure will not
+	 * be copied by gawk; it must persist at least until the next call
+	 * to get_record or close_func. Note also that field_width will
+	 * be NULL when getline is assigning the results to a variable, thus
+	 * field parsing is not needed.
 	 */
 	int (*get_record)(char **out, struct awk_input *iobuf, int *errcode,
-			char **rt_start, size_t *rt_len);
+			char **rt_start, size_t *rt_len,
+			const awk_fieldwidth_info_t **field_width);
 
 	/*
 	 * No argument prototype on read_func to allow for older systems
@@ -165,14 +201,14 @@ typedef struct awk_input {
 
 	/* put last, for alignment. bleah */
 	struct stat sbuf;       /* stat buf */
-							
+
 } awk_input_buf_t;
 
 typedef struct awk_input_parser {
 	const char *name;	/* name of parser */
 
 	/*
-	 * The can_take_file function should return non-zero if the parser
+	 * The can_take_file function should return true if the parser
 	 * would like to parse this file.  It should not change any gawk
 	 * state!
 	 */
@@ -183,7 +219,7 @@ typedef struct awk_input_parser {
 	 * It can assume that a previous call to can_take_file was successful,
 	 * and no gawk state has changed since that call.  It should populate
 	 * the awk_input_buf_t's get_record, close_func, and opaque values as needed.
-	 * It should return non-zero if successful.
+	 * It should return true if successful.
 	 */
 	awk_bool_t (*take_control_of)(awk_input_buf_t *iobuf);
 
@@ -218,7 +254,7 @@ typedef struct awk_output_wrapper {
 	const char *name;	/* name of the wrapper */
 
 	/*
-	 * The can_take_file function should return non-zero if the wrapper
+	 * The can_take_file function should return true if the wrapper
 	 * would like to process this file.  It should not change any gawk
 	 * state!
 	 */
@@ -229,7 +265,7 @@ typedef struct awk_output_wrapper {
 	 * It can assume that a previous call to can_take_file was successful,
 	 * and no gawk state has changed since that call.  It should populate
 	 * the awk_output_buf_t function pointers and opaque pointer as needed.
-	 * It should return non-zero if successful.
+	 * It should return true if successful.
 	 */
 	awk_bool_t (*take_control_of)(awk_output_buf_t *outbuf);
 
@@ -241,7 +277,7 @@ typedef struct awk_two_way_processor {
 	const char *name;	/* name of the two-way processor */
 
 	/*
-	 * The can_take_file function should return non-zero if the two-way
+	 * The can_take_file function should return true if the two-way
 	 * processor would like to parse this file.  It should not change
 	 * any gawk state!
 	 */
@@ -252,7 +288,7 @@ typedef struct awk_two_way_processor {
 	 * It can assume that a previous call to can_take_file was successful,
 	 * and no gawk state has changed since that call.  It should populate
 	 * the awk_input_buf_t and awk_otuput_buf_t structures as needed.
-	 * It should return non-zero if successful.
+	 * It should return true if successful.
 	 */
 	awk_bool_t (*take_control_of)(const char *name, awk_input_buf_t *inbuf,
 					awk_output_buf_t *outbuf);
@@ -260,8 +296,8 @@ typedef struct awk_two_way_processor {
 	awk_const struct awk_two_way_processor *awk_const next;  /* for use by gawk */
 } awk_two_way_processor_t;
 
-#define gawk_api_major_version 1
-#define gawk_api_minor_version 1
+#define gawk_api_major_version 2
+#define gawk_api_minor_version 0
 
 /* Current version of the API. */
 enum {
@@ -278,11 +314,24 @@ enum {
  * The API deals exclusively with regular chars; these strings may
  * be multibyte encoded in the current locale's encoding and character
  * set. Gawk will convert internally to wide characters if necessary.
+ *
+ * Note that a string provided by gawk will always be terminated
+ * with a '\0' character.
  */
 typedef struct awk_string {
 	char *str;	/* data */
 	size_t len;	/* length thereof, in chars */
 } awk_string_t;
+
+typedef struct awk_number {
+	double d;	/* always populated in data received from gawk */
+	enum AWK_NUMBER_TYPE {
+		AWK_NUMBER_TYPE_DOUBLE,
+		AWK_NUMBER_TYPE_MPFR,
+		AWK_NUMBER_TYPE_MPZ
+	} type;
+	void *ptr;	/* either NULL or mpfr_ptr or mpz_ptr */
+} awk_number_t;
 
 /* Arrays are represented as an opaque type. */
 typedef void *awk_array_t;
@@ -304,6 +353,8 @@ typedef enum {
 	AWK_UNDEFINED,
 	AWK_NUMBER,
 	AWK_STRING,
+	AWK_REGEX,
+	AWK_STRNUM,
 	AWK_ARRAY,
 	AWK_SCALAR,		/* opaque access to a variable */
 	AWK_VALUE_COOKIE	/* for updating a previously created value */
@@ -317,13 +368,17 @@ typedef struct awk_value {
 	awk_valtype_t	val_type;
 	union {
 		awk_string_t	s;
-		double		d;
+		awk_number_t	n;
 		awk_array_t	a;
 		awk_scalar_t	scl;
 		awk_value_cookie_t vc;
 	} u;
 #define str_value	u.s
-#define num_value	u.d
+#define strnum_value	str_value
+#define regex_value	str_value
+#define num_value	u.n.d
+#define num_type	u.n.type
+#define num_ptr		u.n.ptr
 #define array_cookie	u.a
 #define scalar_cookie	u.scl
 #define value_cookie	u.vc
@@ -345,7 +400,7 @@ typedef struct awk_element {
 		AWK_ELEMENT_DELETE = 1		/* set by extension if
 						   should be deleted */
 	} flags;
-	awk_value_t	index;			/* guaranteed to be a string! */
+	awk_value_t	index;
 	awk_value_t	value;
 } awk_element_t;
 
@@ -365,8 +420,8 @@ typedef struct awk_flat_array {
  * loaded, the extension should pass in one of these to gawk for
  * each C function.
  *
- * Each called function must fill in the result with either a number
- * or string. Gawk takes ownership of any string memory.
+ * Each called function must fill in the result with either a scalar
+ * (number, string, or regex). Gawk takes ownership of any string memory.
  *
  * The called function must return the value of `result'.
  * This is for the convenience of the calling code inside gawk.
@@ -374,11 +429,26 @@ typedef struct awk_flat_array {
  * Each extension function may decide what to do if the number of
  * arguments isn't what it expected.  Following awk functions, it
  * is likely OK to ignore extra arguments.
+ *
+ * 'min_required_args' indicates how many arguments MUST be passed.
+ * The API will throw a fatal error if not enough are passed.
+ *
+ * 'max_expected_args' is more benign; if more than that are passed,
+ * the API prints a lint message (IFF lint is enabled, of course).
+ *
+ * In any case, the extension function itself need not compare the
+ * actual number of arguments passed to those two values if it does
+ * not want to.
  */
 typedef struct awk_ext_func {
 	const char *name;
-	awk_value_t *(*function)(int num_actual_args, awk_value_t *result);
-	size_t num_expected_args;
+	awk_value_t *(*const function)(int num_actual_args,
+					awk_value_t *result,
+					struct awk_ext_func *finfo);
+	const size_t max_expected_args;
+	const size_t min_required_args;
+	awk_bool_t suppress_lint;
+	void *data;		/* opaque pointer to any extra state */
 } awk_ext_func_t;
 
 typedef void *awk_ext_id_t;	/* opaque type for extension id */
@@ -393,6 +463,12 @@ typedef struct gawk_api {
 	/* These are what gawk thinks the API version is. */
 	awk_const int major_version;
 	awk_const int minor_version;
+
+	/* GMP/MPFR versions, if extended-precision is available */
+	awk_const int gmp_major_version;
+	awk_const int gmp_minor_version;
+	awk_const int mpfr_major_version;
+	awk_const int mpfr_minor_version;
 
 	/*
 	 * These can change on the fly as things happen within gawk.
@@ -411,9 +487,14 @@ typedef struct gawk_api {
 
 	/* Next, registration functions: */
 
-	/* Add a function to the interpreter, returns true upon success */
-	awk_bool_t (*api_add_ext_func)(awk_ext_id_t id, const char *namespace,
-			const awk_ext_func_t *func);
+	/*
+	 * Add a function to the interpreter, returns true upon success. 
+	 * Gawk does not modify what func points to, but the extension
+	 * function itself receives this pointer and can modify what it
+	 * points to, thus it's not const.
+	 */
+	awk_bool_t (*api_add_ext_func)(awk_ext_id_t id, const char *name_space,
+			awk_ext_func_t *func);
 
 	/* Register an input parser; for opening files read-only */
 	void (*api_register_input_parser)(awk_ext_id_t id,
@@ -447,6 +528,7 @@ typedef struct gawk_api {
 	void (*api_fatal)(awk_ext_id_t id, const char *format, ...);
 	void (*api_warning)(awk_ext_id_t id, const char *format, ...);
 	void (*api_lintwarn)(awk_ext_id_t id, const char *format, ...);
+	void (*api_nonfatal)(awk_ext_id_t id, const char *format, ...);
 
 	/* Functions to update ERRNO */
 	void (*api_update_ERRNO_int)(awk_ext_id_t id, int errno_val);
@@ -459,39 +541,40 @@ typedef struct gawk_api {
 	 * behave in the same way.
 	 *
 	 * For a function parameter, the return is false if the argument
-	 * count is out of range, or if actual paramater does not match
+	 * count is out of range, or if the actual paramater does not match
 	 * what is specified in wanted. In that case,  result->val_type
 	 * will hold the actual type of what was passed.
 	 *
 	 * Similarly for symbol table access to variables and array elements,
 	 * the return is false if the actual variable or array element does
-	 * not match what was requested, and the result->val_type will hold
+	 * not match what was requested, and result->val_type will hold
 	 * the actual type.
 
 	Table entry is type returned:
 
 
-	                        +-------------------------------------------------+
-	                        |                Type of Actual Value:            |
-	                        +------------+------------+-----------+-----------+
-	                        |   String   |   Number   | Array     | Undefined |
-	+-----------+-----------+------------+------------+-----------+-----------+
-	|           | String    |   String   |   String   | false     | false     |
-	|           |-----------+------------+------------+-----------+-----------+
-	|           | Number    | Number if  |   Number   | false     | false     |
-	|           |           | can be     |            |           |           |
-	|           |           | converted, |            |           |           |
-	|           |           | else false |            |           |           |
-	|           |-----------+------------+------------+-----------+-----------+
-	|   Type    | Array     |   false    |   false    | Array     | false     |
-	| Requested |-----------+------------+------------+-----------+-----------+
-	|           | Scalar    |   Scalar   |   Scalar   | false     | false     |
-	|           |-----------+------------+------------+-----------+-----------+
-	|           | Undefined |  String    |   Number   | Array     | Undefined |
-	|           |-----------+------------+------------+-----------+-----------+
-	|           | Value     |   false    |   false    | false     | false     |
-	|           | Cookie    |            |            |           |           |
-	+-----------+-----------+------------+------------+-----------+-----------+
+	                        +-------------------------------------------------------+
+	                        |                   Type of Actual Value:               |
+	                        +--------+--------+--------+--------+-------+-----------+
+	                        | String | Strnum | Number | Regex  | Array | Undefined |
+	+-----------+-----------+--------+--------+--------+--------+-------+-----------+
+	|           | String    | String | String | String | String | false | false     |
+	|           +-----------+--------+--------+--------+--------+-------+-----------+
+	|           | Strnum    | false  | Strnum | Strnum | false  | false | false     |
+	|           +-----------+--------+--------+--------+--------+-------+-----------+
+	|           | Number    | Number | Number | Number | false  | false | false     |
+	|           +-----------+--------+--------+--------+--------+-------+-----------+
+	|           | Regex     | false  | false  | false  | Regex  | false | false     |
+	|           +-----------+--------+--------+--------+--------+-------+-----------+
+	|   Type    | Array     | false  | false  | false  | false  | Array | false     |
+	| Requested +-----------+--------+--------+--------+--------+-------+-----------+
+	|           | Scalar    | Scalar | Scalar | Scalar | Scalar | false | false     |
+	|           +-----------+--------+--------+--------+--------+-------+-----------+
+	|           | Undefined | String | Strnum | Number | Regex  | Array | Undefined |
+	|           +-----------+--------+--------+--------+--------+-------+-----------+
+	|           | Value     | false  | false  | false  | false  | false | false     |
+	|           | Cookie    |        |        |        |        |       |           |
+	+-----------+-----------+--------+--------+--------+--------+-------+-----------+
 	*/
 
 	/* Functions to handle parameters passed to the extension. */
@@ -507,7 +590,7 @@ typedef struct gawk_api {
 					  awk_value_t *result);
 
 	/*
-	 * Convert a paramter that was undefined into an array
+	 * Convert a parameter that was undefined into an array
 	 * (provide call-by-reference for arrays).  Returns false
 	 * if count is too big, or if the argument's type is
 	 * not undefined.
@@ -521,12 +604,12 @@ typedef struct gawk_api {
 	 * 	- Read-only access to special variables (NF, etc.)
 	 * 	- One special exception: PROCINFO.
 	 *	- Use sym_update() to change a value, including from UNDEFINED
-	 *	  to scalar or array. 
+	 *	  to scalar or array.
 	 */
 	/*
 	 * Lookup a variable, fill in value. No messing with the value
 	 * returned.
-	 * Returns false if the variable doesn't exist* or if the wrong type
+	 * Returns false if the variable doesn't exist or if the wrong type
 	 * was requested.  In the latter case, vaule->val_type will have
 	 * the real type, as described above.
 	 *
@@ -588,7 +671,7 @@ typedef struct gawk_api {
 	 *		use the scalar cookie
 	 *
 	 * Return will be false if the new value is not one of
-	 * AWK_STRING or AWK_NUMBER.
+	 * AWK_STRING, AWK_NUMBER, AWK_REGEX.
 	 *
 	 * Here too, the built-in variables may not be updated.
 	 */
@@ -598,12 +681,12 @@ typedef struct gawk_api {
 	/* Cached values */
 
 	/*
-	 * Create a cached string or numeric value for efficient later
+	 * Create a cached string,regex, or numeric value for efficient later
 	 * assignment. This improves performance when you want to assign
 	 * the same value to one or more variables repeatedly.  Only
-	 * AWK_NUMBER and AWK_STRING values are allowed.  Any other type
-	 * is rejected.  We disallow AWK_UNDEFINED since that case would
-	 * result in inferior performance.
+	 * AWK_NUMBER, AWK_STRING, AWK_REGEX and AWK_STRNUM values are allowed.
+	 * Any other type is rejected.  We disallow AWK_UNDEFINED since that
+	 * case would result in inferior performance.
 	 */
 	awk_bool_t (*api_create_value)(awk_ext_id_t id, awk_value_t *value,
 		    awk_value_cookie_t *result);
@@ -647,21 +730,27 @@ typedef struct gawk_api {
 
 	/*
 	 * Remove the element with the given index.
-	 * Returns success if removed or false if element did not exist.
+	 * Returns true if removed or false if element did not exist.
 	 */
 	awk_bool_t (*api_del_array_element)(awk_ext_id_t id,
 			awk_array_t a_cookie, const awk_value_t* const index);
 
-	/* Create a new array cookie to which elements may be added */
+	/* Create a new array cookie to which elements may be added. */
 	awk_array_t (*api_create_array)(awk_ext_id_t id);
 
-	/* Clear out an array */
+	/* Clear out an array. */
 	awk_bool_t (*api_clear_array)(awk_ext_id_t id, awk_array_t a_cookie);
 
-	/* Flatten out an array so that it can be looped over easily. */
-	awk_bool_t (*api_flatten_array)(awk_ext_id_t id,
+	/*
+	 * Flatten out an array with type conversions as requested.
+	 * This supersedes the earlier api_flatten_array function that
+	 * did not allow the caller to specify the requested types.
+	 * (That API is still available as a macro, defined below.)
+	 */
+	awk_bool_t (*api_flatten_array_typed)(awk_ext_id_t id,
 			awk_array_t a_cookie,
-			awk_flat_array_t **data);
+			awk_flat_array_t **data,
+			awk_valtype_t index_type, awk_valtype_t value_type);
 
 	/* When done, delete any marked elements, release the memory. */
 	awk_bool_t (*api_release_flattened_array)(awk_ext_id_t id,
@@ -677,6 +766,66 @@ typedef struct gawk_api {
 	void *(*api_calloc)(size_t nmemb, size_t size);
 	void *(*api_realloc)(void *ptr, size_t size);
 	void (*api_free)(void *ptr);
+
+	/*
+	 * A function that returns mpfr data should call this function
+	 * to allocate and initialize an mpfr_ptr for use in an
+	 * awk_value_t structure that will be handed to gawk.
+	 */
+	void *(*api_get_mpfr)(awk_ext_id_t id);
+
+	/*
+	 * A function that returns mpz data should call this function
+	 * to allocate and initialize an mpz_ptr for use in an
+	 * awk_value_t structure that will be handed to gawk.
+	 */
+	void *(*api_get_mpz)(awk_ext_id_t id);
+
+        /*
+	 * Look up a file.  If the name is NULL or name_len is 0, it returns
+	 * data for the currently open input file corresponding to FILENAME
+	 * (and it will not access the filetype argument, so that may be
+	 * undefined).
+	 *
+	 * If the file is not already open, try to open it.
+	 *
+	 * The "filetype" argument should be one of:
+	 *
+	 *    ">", ">>", "<", "|>", "|<", and "|&"
+	 *
+	 * If the file is not already open, and the fd argument is non-negative,
+	 * gawk will use that file descriptor instead of opening the file
+	 * in the usual way.
+	 *
+	 * If the fd is non-negative, but the file exists already, gawk
+	 * ignores the fd and returns the existing file.  It is the caller's
+	 * responsibility to notice that the fd in the returned
+	 * awk_input_buf_t does not match the requested value.
+	 *
+	 * Note that supplying a file descriptor is currently NOT supported
+	 * for pipes. It should work for input, output, append, and two-way
+	 * (coprocess) sockets.  If the filetype is two-way, we assume that
+	 * it is a socket!
+	 *
+	 * Note that in the two-way case, the input and output file descriptors
+	 * may differ.  To check for success, one must check that either of
+	 * them matches.
+	 *
+	 * ibufp and obufp point at gawk's internal copies of the
+	 * awk_input_buf_t and awk_output_t associated with the open
+	 * file.  Treat these data structures as read-only!
+	 */
+	awk_bool_t (*api_get_file)(awk_ext_id_t id,
+			const char *name,
+			size_t name_len,
+			const char *filetype,
+			int fd,
+			/*
+			 * Return values (on success, one or both should
+			 * be non-NULL):
+			 */
+			const awk_input_buf_t **ibufp,
+			const awk_output_buf_t **obufp);
 } gawk_api_t;
 
 #ifndef GAWK	/* these are not for the gawk code itself! */
@@ -698,6 +847,7 @@ typedef struct gawk_api {
 	(api->api_set_argument(ext_id, count, new_array))
 
 #define fatal		api->api_fatal
+#define nonfatal	api->api_nonfatal
 #define warning		api->api_warning
 #define lintwarn	api->api_lintwarn
 
@@ -742,8 +892,11 @@ typedef struct gawk_api {
 
 #define clear_array(array)	(api->api_clear_array(ext_id, array))
 
+#define flatten_array_typed(array, data, index_type, value_type) \
+	(api->api_flatten_array_typed(ext_id, array, data, index_type, value_type))
+
 #define flatten_array(array, data) \
-	(api->api_flatten_array(ext_id, array, data))
+	flatten_array_typed(array, data, AWK_STRING, AWK_UNDEFINED)
 
 #define release_flattened_array(array, data) \
 	(api->api_release_flattened_array(ext_id, array, data))
@@ -759,6 +912,12 @@ typedef struct gawk_api {
 #define release_value(value) \
 	(api->api_release_value(ext_id, value))
 
+#define get_file(name, namelen, filetype, fd, ibuf, obuf) \
+	(api->api_get_file(ext_id, name, namelen, filetype, fd, ibuf, obuf))
+
+#define get_mpfr_ptr() (api->api_get_mpfr(ext_id))
+#define get_mpz_ptr() (api->api_get_mpz(ext_id))
+
 #define register_ext_version(version) \
 	(api->api_register_ext_version(ext_id, version))
 
@@ -768,6 +927,12 @@ typedef struct gawk_api {
 			fatal(ext_id, "%s: malloc of %d bytes failed\n", message, size); \
 	} while(0)
 
+#define ezalloc(pointer, type, size, message) \
+	do { \
+		if ((pointer = (type) gawk_calloc(1, size)) == 0) \
+			fatal(ext_id, "%s: calloc of %d bytes failed\n", message, size); \
+	} while(0)
+
 #define erealloc(pointer, type, size, message) \
 	do { \
 		if ((pointer = (type) gawk_realloc(pointer, size)) == 0) \
@@ -775,6 +940,36 @@ typedef struct gawk_api {
 	} while(0)
 
 /* Constructor functions */
+
+/* r_make_string_type --- make a string or strnum or regexp value in result from the passed-in string */
+
+static inline awk_value_t *
+r_make_string_type(const gawk_api_t *api,	/* needed for emalloc */
+		   awk_ext_id_t *ext_id,	/* ditto */
+		   const char *string,
+		   size_t length,
+		   awk_bool_t duplicate,
+		   awk_value_t *result,
+		   awk_valtype_t val_type)
+{
+	char *cp = NULL;
+
+	memset(result, 0, sizeof(*result));
+
+	result->val_type = val_type;
+	result->str_value.len = length;
+
+	if (duplicate) {
+		emalloc(cp, char *, length + 1, "r_make_string");
+		memcpy(cp, string, length);
+		cp[length] = '\0';
+		result->str_value.str = cp;
+	} else {
+		result->str_value.str = (char *) string;
+	}
+
+	return result;
+}
 
 /* r_make_string --- make a string value in result from the passed-in string */
 
@@ -786,27 +981,22 @@ r_make_string(const gawk_api_t *api,	/* needed for emalloc */
 	      awk_bool_t duplicate,
 	      awk_value_t *result)
 {
-	char *cp = NULL;
-
-	memset(result, 0, sizeof(*result));
-
-	result->val_type = AWK_STRING;
-	result->str_value.len = length;
-
-	if (duplicate) {
-		emalloc(cp, char *, length + 2, "r_make_string");
-		memcpy(cp, string, length);
-		cp[length] = '\0';
-		result->str_value.str = cp;
-	} else {
-		result->str_value.str = (char *) string;
-	}
-
-	return result;
+	return r_make_string_type(api, ext_id, string, length, duplicate, result, AWK_STRING);
 }
 
-#define make_const_string(str, len, result)	r_make_string(api, ext_id, str, len, 1, result)
-#define make_malloced_string(str, len, result)	r_make_string(api, ext_id, str, len, 0, result)
+#define make_const_string(str, len, result)	r_make_string(api, ext_id, str, len, awk_true, result)
+#define make_malloced_string(str, len, result)	r_make_string(api, ext_id, str, len, awk_false, result)
+
+#define make_const_regex(str, len, result)	r_make_string_type(api, ext_id, str, len, awk_true, result, AWK_REGEX)
+#define make_malloced_regex(str, len, result)	r_make_string_type(api, ext_id, str, len, awk_false, result, AWK_REGEX)
+
+/*
+ * Note: The caller may not create a STRNUM, but it can create a string that is
+ * flagged as user input that MAY be a STRNUM. Gawk will decide whether it's a
+ * STRNUM or a string by checking whether the string is numeric.
+ */
+#define make_const_user_input(str, len, result)	r_make_string_type(api, ext_id, str, len, 1, result, AWK_STRNUM)
+#define make_malloced_user_input(str, len, result)	r_make_string_type(api, ext_id, str, len, 0, result, AWK_STRNUM)
 
 /* make_null_string --- make a null string value */
 
@@ -824,13 +1014,42 @@ make_null_string(awk_value_t *result)
 static inline awk_value_t *
 make_number(double num, awk_value_t *result)
 {
-	memset(result, 0, sizeof(*result));
-
 	result->val_type = AWK_NUMBER;
 	result->num_value = num;
-
+	result->num_type = AWK_NUMBER_TYPE_DOUBLE;
 	return result;
 }
+
+/*
+ * make_number_mpz --- make an mpz number value in result.
+ * The mpz_ptr must be from a call to get_mpz_ptr. Gawk will now
+ * take ownership of this memory.
+ */
+
+static inline awk_value_t *
+make_number_mpz(void *mpz_ptr, awk_value_t *result)
+{
+	result->val_type = AWK_NUMBER;
+	result->num_type = AWK_NUMBER_TYPE_MPZ;
+	result->num_ptr = mpz_ptr;
+	return result;
+}
+
+/*
+ * make_number_mpfr --- make an mpfr number value in result.
+ * The mpfr_ptr must be from a call to get_mpfr_ptr. Gawk will now
+ * take ownership of this memory.
+ */
+
+static inline awk_value_t *
+make_number_mpfr(void *mpfr_ptr, awk_value_t *result)
+{
+	result->val_type = AWK_NUMBER;
+	result->num_type = AWK_NUMBER_TYPE_MPFR;
+	result->num_ptr = mpfr_ptr;
+	return result;
+}
+
 
 /*
  * Each extension must define a function with this prototype:
@@ -885,7 +1104,7 @@ int dl_load(const gawk_api_t *const api_p, awk_ext_id_t id)  \
 	int errors = 0; \
 \
 	api = api_p; \
-	ext_id = id; \
+	ext_id = (void **) id; \
 \
 	if (api->major_version != GAWK_API_MAJOR_VERSION \
 	    || api->minor_version < GAWK_API_MINOR_VERSION) { \
@@ -895,6 +1114,8 @@ int dl_load(const gawk_api_t *const api_p, awk_ext_id_t id)  \
 			api->major_version, api->minor_version); \
 		exit(1); \
 	} \
+\
+	check_mpfr_version(extension); \
 \
 	/* load functions */ \
 	for (i = 0, j = sizeof(func_table) / sizeof(func_table[0]); i < j; i++) { \
@@ -919,6 +1140,29 @@ int dl_load(const gawk_api_t *const api_p, awk_ext_id_t id)  \
 \
 	return (errors == 0); \
 }
+
+#if defined __GNU_MP_VERSION && defined MPFR_VERSION_MAJOR
+#define check_mpfr_version(extension) do { \
+	if (api->gmp_major_version != __GNU_MP_VERSION \
+	    || api->gmp_minor_version < __GNU_MP_VERSION_MINOR) { \
+		fprintf(stderr, #extension ": GMP version mismatch with gawk!\n"); \
+		fprintf(stderr, "\tmy version (%d, %d), gawk version (%d, %d)\n", \
+			__GNU_MP_VERSION, __GNU_MP_VERSION_MINOR, \
+			api->gmp_major_version, api->gmp_minor_version); \
+		exit(1); \
+	} \
+	if (api->mpfr_major_version != MPFR_VERSION_MAJOR \
+	    || api->mpfr_minor_version < MPFR_VERSION_MINOR) { \
+		fprintf(stderr, #extension ": MPFR version mismatch with gawk!\n"); \
+		fprintf(stderr, "\tmy version (%d, %d), gawk version (%d, %d)\n", \
+			MPFR_VERSION_MAJOR, MPFR_VERSION_MINOR, \
+			api->mpfr_major_version, api->mpfr_minor_version); \
+		exit(1); \
+	} \
+} while (0)
+#else
+#define check_mpfr_version(extension) /* nothing */
+#endif
 
 #endif /* GAWK */
 

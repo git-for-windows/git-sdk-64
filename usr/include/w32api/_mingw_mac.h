@@ -11,8 +11,9 @@
 #define __MINGW64_STRINGIFY(x) \
   __STRINGIFY(x)
 
-#define __MINGW64_VERSION_MAJOR 5
+#define __MINGW64_VERSION_MAJOR 6
 #define __MINGW64_VERSION_MINOR 0
+#define __MINGW64_VERSION_BUGFIX 0
 
 /* This macro holds an monotonic increasing value, which indicates
    a specific fix/patch is present on trunk.  This value isn't related to
@@ -25,7 +26,9 @@
 #define __MINGW64_VERSION_STR	\
   __MINGW64_STRINGIFY(__MINGW64_VERSION_MAJOR) \
   "." \
-  __MINGW64_STRINGIFY(__MINGW64_VERSION_MINOR)
+  __MINGW64_STRINGIFY(__MINGW64_VERSION_MINOR) \
+  "." \
+  __MINGW64_STRINGIFY(__MINGW64_VERSION_BUGFIX)
 
 #define __MINGW64_VERSION_STATE "alpha"
 
@@ -47,10 +50,10 @@
 #    define _M_IX86 400
 #  elif defined(__i586__)
 #    define _M_IX86 500
-#  else
-     /* This gives wrong (600 instead of 300) value if -march=i386 is specified
-      but we cannot check for__i386__ as it is defined for all 32-bit CPUs. */
+#  elif defined(__i686__)
 #    define _M_IX86 600
+#  else
+#    define _M_IX86 300
 #  endif
 #endif /* if defined(_X86_) && !defined(_M_IX86) && !defined(_M_IA64) ... */
 
@@ -75,6 +78,13 @@
 #  endif
 #  ifndef _M_ARM_NT
 #    define _M_ARM_NT 1
+#  endif
+#endif
+
+#if defined(__aarch64__) && !defined(_M_ARM64)
+#  define _M_ARM64 1
+#  ifndef _ARM64_
+#    define _ARM64_ 1
 #  endif
 #endif
 
@@ -267,14 +277,18 @@
   __attribute__((__format__(gnu_scanf, __format,__args)))
 
 #undef __mingw_ovr
+#undef __mingw_static_ovr
 
 #ifdef __cplusplus
 #  define __mingw_ovr  inline __cdecl
+#  define __mingw_static_ovr static __mingw_ovr
 #elif defined (__GNUC__)
 #  define __mingw_ovr static \
       __attribute__ ((__unused__)) __inline__ __cdecl
+#  define __mingw_static_ovr __mingw_ovr
 #else
 #  define __mingw_ovr static __cdecl
+#  define __mingw_static_ovr __mingw_ovr
 #endif /* __cplusplus */
 
 #endif	/* _INC_CRTDEFS_MACRO */

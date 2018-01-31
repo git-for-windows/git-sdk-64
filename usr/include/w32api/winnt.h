@@ -767,6 +767,7 @@ inline ENUMTYPE &operator ^= (ENUMTYPE &a, ENUMTYPE b) { return (ENUMTYPE &)(((i
 #define PRODUCT_SERVER_FOR_SMALLBUSINESS_V        0x23
 #define PRODUCT_STANDARD_SERVER_V                 0x24
 #define PRODUCT_DATACENTER_SERVER_V               0x25
+#define PRODUCT_SERVER_V                          0x25
 #define PRODUCT_ENTERPRISE_SERVER_V               0x26
 #define PRODUCT_DATACENTER_SERVER_CORE_V          0x27
 #define PRODUCT_STANDARD_SERVER_CORE_V            0x28
@@ -787,6 +788,7 @@ inline ENUMTYPE &operator ^= (ENUMTYPE &a, ENUMTYPE b) { return (ENUMTYPE &)(((i
 #define PRODUCT_SERVER_FOR_SB_SOLUTIONS_EM        0x37
 #define PRODUCT_SOLUTION_EMBEDDEDSERVER           0x38
 #define PRODUCT_SOLUTION_EMBEDDEDSERVER_CORE      0x39
+#define PRODUCT_PROFESSIONAL_EMBEDDED             0x3A
 #define PRODUCT_ESSENTIALBUSINESS_SERVER_MGMT     0x3B
 #define PRODUCT_ESSENTIALBUSINESS_SERVER_ADDL     0x3C
 #define PRODUCT_ESSENTIALBUSINESS_SERVER_MGMTSVC  0x3D
@@ -815,16 +817,41 @@ inline ENUMTYPE &operator ^= (ENUMTYPE &a, ENUMTYPE b) { return (ENUMTYPE &)(((i
 #define PRODUCT_EMBEDDED_INDUSTRY_E               0x5B
 #define PRODUCT_EMBEDDED_INDUSTRY_A_E             0x5C
 #define PRODUCT_STORAGE_WORKGROUP_EVALUATION_SERVER 0x5F
-#define PRODUCT_STORAGE_STANDARD_EVALUATION_SERVER 0x60
+#define PRODUCT_STORAGE_STANDARD_EVALUATION_SERVER  0x60
 #define PRODUCT_CORE_ARM                          0x61
 #define PRODUCT_CORE_N                            0x62
 #define PRODUCT_CORE_COUNTRYSPECIFIC              0x63
 #define PRODUCT_CORE_SINGLELANGUAGE               0x64
+#define PRODUCT_CORE_LANGUAGESPECIFIC             0x64
 #define PRODUCT_CORE                              0x65
 #define PRODUCT_PROFESSIONAL_WMC                  0x67
 #define PRODUCT_MOBILE_CORE                       0x68
+#define PRODUCT_EMBEDDED_INDUSTRY_EVAL            0x69
+#define PRODUCT_EMBEDDED_INDUSTRY_E_EVAL          0x6A
+#define PRODUCT_EMBEDDED_EVAL                     0x6B
+#define PRODUCT_EMBEDDED_E_EVAL                   0x6C
+#define PRODUCT_NANO_SERVER                       0x6D
+#define PRODUCT_CLOUD_STORAGE_SERVER              0x6E
+#define PRODUCT_CORE_CONNECTED                    0x6F
+#define PRODUCT_PROFESSIONAL_STUDENT              0x70
+#define PRODUCT_CORE_CONNECTED_N                  0x71
+#define PRODUCT_PROFESSIONAL_STUDENT_N            0x72
+#define PRODUCT_CORE_CONNECTED_SINGLELANGUAGE     0x73
+#define PRODUCT_CORE_CONNECTED_COUNTRYSPECIFIC    0x74
+#define PRODUCT_CONNECTED_CAR                     0x75
+#define PRODUCT_INDUSTRY_HANDHELD                 0x76
+#define PRODUCT_PPI_PRO                           0x77
+#define PRODUCT_ARM64_SERVER                      0x78
 #define PRODUCT_EDUCATION                         0x79
 #define PRODUCT_EDUCATION_N                       0x7a
+#define PRODUCT_IOTUAP                            0x7B
+#define PRODUCT_CLOUD_HOST_INFRASTRUCTURE_SERVER  0x7C
+#define PRODUCT_ENTERPRISE_S                      0x7D
+#define PRODUCT_ENTERPRISE_S_N                    0x7E
+#define PRODUCT_PROFESSIONAL_S                    0x7F
+#define PRODUCT_PROFESSIONAL_S_N                  0x80
+#define PRODUCT_ENTERPRISE_S_EVALUATION           0x81
+#define PRODUCT_ENTERPRISE_S_N_EVALUATION         0x82
 #define PRODUCT_MOBILE_ENTERPRISE                 0x85
 
 #define PRODUCT_UNLICENSED                        0xabcdabcd
@@ -2060,9 +2087,45 @@ extern "C" {
 #define BitScanForward _BitScanForward
 #define BitScanReverse _BitScanReverse
 
+#define InterlockedIncrement16 _InterlockedIncrement16
+#define InterlockedDecrement16 _InterlockedDecrement16
 #define InterlockedCompareExchange16 _InterlockedCompareExchange16
+
+#define InterlockedAnd _InterlockedAnd
+#define InterlockedOr _InterlockedOr
+#define InterlockedXor _InterlockedXor
+#define InterlockedIncrement _InterlockedIncrement
+#define InterlockedIncrementAcquire InterlockedIncrement
+#define InterlockedIncrementRelease InterlockedIncrement
+#define InterlockedDecrement _InterlockedDecrement
+#define InterlockedDecrementAcquire InterlockedDecrement
+#define InterlockedDecrementRelease InterlockedDecrement
 #define InterlockedAdd _InterlockedAdd
+#define InterlockedExchange _InterlockedExchange
+#define InterlockedExchangeAdd _InterlockedExchangeAdd
+#define InterlockedCompareExchange _InterlockedCompareExchange
+#define InterlockedCompareExchangeAcquire InterlockedCompareExchange
+#define InterlockedCompareExchangeRelease InterlockedCompareExchange
+
+#define InterlockedAnd64 _InterlockedAnd64
+#define InterlockedAndAffinity InterlockedAnd64
+#define InterlockedOr64 _InterlockedOr64
+#define InterlockedOrAffinity InterlockedOr64
+#define InterlockedXor64 _InterlockedXor64
+#define InterlockedIncrement64 _InterlockedIncrement64
+#define InterlockedDecrement64 _InterlockedDecrement64
 #define InterlockedAdd64 _InterlockedAdd64
+#define InterlockedExchange64 _InterlockedExchange64
+#define InterlockedExchangeAcquire64 InterlockedExchange64
+#define InterlockedExchangeAdd64 _InterlockedExchangeAdd64
+#define InterlockedCompareExchange64 _InterlockedCompareExchange64
+#define InterlockedCompareExchangeAcquire64 InterlockedCompareExchange64
+#define InterlockedCompareExchangeRelease64 InterlockedCompareExchange64
+
+#define InterlockedExchangePointer _InterlockedExchangePointer
+#define InterlockedCompareExchangePointer(Destination, ExChange, Comperand) (PVOID) (LONG_PTR)InterlockedCompareExchange ((LONG volatile *) (Destination),(LONG) (LONG_PTR) (ExChange),(LONG) (LONG_PTR) (Comperand))
+#define InterlockedCompareExchangePointerAcquire InterlockedCompareExchangePointer
+#define InterlockedCompareExchangePointerRelease InterlockedCompareExchangePointer
 
 #ifdef _PREFIX_
     /* BYTE __readfsbyte(DWORD Offset); moved to psdk_inc/intrin-impl.h */
@@ -4009,69 +4072,132 @@ __buildmemorybarrier()
     typedef enum _PROCESS_MITIGATION_POLICY {
       ProcessDEPPolicy,
       ProcessASLRPolicy,
-      ProcessReserved1MitigationPolicy,
+      ProcessDynamicCodePolicy,
       ProcessStrictHandleCheckPolicy,
       ProcessSystemCallDisablePolicy,
       ProcessMitigationOptionsMask,
       ProcessExtensionPointDisablePolicy,
+      ProcessControlFlowGuardPolicy,
+      ProcessSignaturePolicy,
+      ProcessFontDisablePolicy,
+      ProcessImageLoadPolicy,
       MaxProcessMitigationPolicy
     } PROCESS_MITIGATION_POLICY,*PPROCESS_MITIGATION_POLICY;
 
     typedef struct _PROCESS_MITIGATION_ASLR_POLICY {
       __C89_NAMELESS union {
-	DWORD Flags;
-	__C89_NAMELESS struct {
-	  DWORD EnableBottomUpRandomization : 1;
-	  DWORD EnableForceRelocateImages : 1;
-	  DWORD EnableHighEntropy : 1;
-	  DWORD DisallowStrippedImages : 1;
-	  DWORD ReservedFlags : 28;
-	};
+        DWORD Flags;
+        __C89_NAMELESS struct {
+          DWORD EnableBottomUpRandomization : 1;
+          DWORD EnableForceRelocateImages : 1;
+          DWORD EnableHighEntropy : 1;
+          DWORD DisallowStrippedImages : 1;
+          DWORD ReservedFlags : 28;
+        };
       };
     } PROCESS_MITIGATION_ASLR_POLICY,*PPROCESS_MITIGATION_ASLR_POLICY;
 
     typedef struct _PROCESS_MITIGATION_DEP_POLICY {
       __C89_NAMELESS union {
-	DWORD Flags;
-	__C89_NAMELESS struct {
-	  DWORD Enable : 1;
-	  DWORD DisableAtlThunkEmulation : 1;
-	  DWORD ReservedFlags : 30;
-	};
+        DWORD Flags;
+        __C89_NAMELESS struct {
+          DWORD Enable : 1;
+          DWORD DisableAtlThunkEmulation : 1;
+          DWORD ReservedFlags : 30;
+        };
       };
       BOOLEAN Permanent;
     } PROCESS_MITIGATION_DEP_POLICY,*PPROCESS_MITIGATION_DEP_POLICY;
 
     typedef struct _PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY {
       __C89_NAMELESS union {
-	DWORD Flags;
-	__C89_NAMELESS struct {
-	  DWORD RaiseExceptionOnInvalidHandleReference : 1;
-	  DWORD HandleExceptionsPermanentlyEnabled : 1;
-	  DWORD ReservedFlags : 30;
-	};
+        DWORD Flags;
+        __C89_NAMELESS struct {
+          DWORD RaiseExceptionOnInvalidHandleReference : 1;
+          DWORD HandleExceptionsPermanentlyEnabled : 1;
+          DWORD ReservedFlags : 30;
+        };
       };
     } PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY,*PPROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY;
 
     typedef struct _PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY {
       __C89_NAMELESS union {
-	DWORD Flags;
-	__C89_NAMELESS struct {
-	  DWORD DisallowWin32kSystemCalls : 1;
-	  DWORD ReservedFlags : 31;
-	};
+        DWORD Flags;
+        __C89_NAMELESS struct {
+          DWORD DisallowWin32kSystemCalls : 1;
+          DWORD ReservedFlags : 31;
+        };
       };
     } PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY,*PPROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY;
 
     typedef struct _PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY {
       __C89_NAMELESS union {
-	DWORD Flags;
-	__C89_NAMELESS struct {
-	  DWORD DisableExtensionPoints : 1;
-	  DWORD ReservedFlags : 31;
-	};
+        DWORD Flags;
+        __C89_NAMELESS struct {
+          DWORD DisableExtensionPoints : 1;
+          DWORD ReservedFlags : 31;
+        };
       };
     } PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY,*PPROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY;
+
+    typedef struct _PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY {
+      __C89_NAMELESS union {
+        DWORD  Flags;
+        __C89_NAMELESS struct {
+          DWORD EnableControlFlowGuard  :1;
+          DWORD EnableExportSuppression  :1;
+          DWORD StrictMode  :1;
+          DWORD ReservedFlags  :29;
+        };
+      };
+    } PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY, *PPROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY;
+
+    typedef struct _PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY {
+      __C89_NAMELESS union {
+        DWORD  Flags;
+        __C89_NAMELESS struct {
+          DWORD MicrosoftSignedOnly  :1;
+          DWORD StoreSignedOnly  :1;
+          DWORD MitigationOptIn  :1;
+          DWORD ReservedFlags  :29;
+        };
+      };
+    } PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY, *PPROCESS_MITIGATION_BINARY_SIGNATURE_POLICY;
+
+    typedef struct _PROCESS_MITIGATION_DYNAMIC_CODE_POLICY {
+      __C89_NAMELESS union {
+        DWORD  Flags;
+        __C89_NAMELESS struct {
+          DWORD ProhibitDynamicCode  :1;
+          DWORD AllowThreadOptOut  :1;
+          DWORD AllowRemoteDowngrade  :1;
+          DWORD ReservedFlags  :30;
+        };
+      };
+    } PROCESS_MITIGATION_DYNAMIC_CODE_POLICY, *PPROCESS_MITIGATION_DYNAMIC_CODE_POLICY;
+
+    typedef struct _PROCESS_MITIGATION_FONT_DISABLE_POLICY {
+      __C89_NAMELESS union {
+        DWORD  Flags;
+        __C89_NAMELESS struct {
+          DWORD DisableNonSystemFonts  :1;
+          DWORD AuditNonSystemFontLoading  :1;
+          DWORD ReservedFlags  :30;
+        };
+      };
+    } PROCESS_MITIGATION_FONT_DISABLE_POLICY, *PPROCESS_MITIGATION_FONT_DISABLE_POLICY;
+
+    typedef struct _PROCESS_MITIGATION_IMAGE_LOAD_POLICY {
+      __C89_NAMELESS union {
+        DWORD  Flags;
+        __C89_NAMELESS struct {
+          DWORD NoRemoteImages  :1;
+          DWORD NoLowMandatoryLabelImages  :1;
+          DWORD PreferSystem32Images  :1;
+          DWORD ReservedFlags  :29;
+        };
+      };
+    } PROCESS_MITIGATION_IMAGE_LOAD_POLICY, *PPROCESS_MITIGATION_IMAGE_LOAD_POLICY;
 
     typedef struct _JOBOBJECT_BASIC_ACCOUNTING_INFORMATION {
       LARGE_INTEGER TotalUserTime;
