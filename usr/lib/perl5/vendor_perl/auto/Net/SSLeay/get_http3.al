@@ -3,7 +3,7 @@
 # See AutoSplit.pm.
 package Net::SSLeay;
 
-#line 1386 "blib/lib/Net/SSLeay.pm (autosplit into blib/lib/auto/Net/SSLeay/get_http3.al)"
+#line 1424 "blib/lib/Net/SSLeay.pm (autosplit into blib/lib/auto/Net/SSLeay/get_http3.al)"
 sub get_http3  { do_httpx3(GET  => 0, @_) }
 # end of Net::SSLeay::get_http3
 1;

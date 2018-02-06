@@ -3,7 +3,7 @@
 # See AutoSplit.pm.
 package Net::SSLeay;
 
-#line 894 "blib/lib/Net/SSLeay.pm (autosplit into blib/lib/auto/Net/SSLeay/dump_peer_certificate.al)"
+#line 932 "blib/lib/Net/SSLeay.pm (autosplit into blib/lib/auto/Net/SSLeay/dump_peer_certificate.al)"
 ### Quickly print out with whom we're talking
 
 sub dump_peer_certificate ($) {
