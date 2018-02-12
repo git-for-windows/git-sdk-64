@@ -76,9 +76,9 @@ sub header_files {
 #
 ## Package name      : perl5
 ## Source directory  : .
-## Configuration time: Mon Jan 29 12:23:29 PST 2018
+## Configuration time: Mon Feb 12 12:31:14 PST 2018
 ## Configured by     : ContainerAdministrator
-## Target system     : msys_nt-10.0 41cac4138e17 2.9.0(0.31853) 2018-01-12 23:37 x86_64 msys 
+## Target system     : msys_nt-10.0 ab2b9a2ab836 2.10.0(0.32553) 2018-02-12 08:49 x86_64 msys 
 #
 #: Configure command line arguments.
 #
@@ -237,7 +237,7 @@ ccsymbols=''
 ccversion=''
 cf_by='ContainerAdministrator'
 cf_email=''
-cf_time='Mon Jan 29 12:23:29 PST 2018'
+cf_time='Mon Feb 12 12:31:14 PST 2018'
 charbits='8'
 charsize='1'
 chgrp=''
@@ -1136,12 +1136,12 @@ multiarch='undef'
 mv=''
 myarchname='x86_64-msys'
 mydomain='.nonet'
-myhostname='41cac4138e17'
-myuname='msys_nt-10.0 41cac4138e17 2.9.0(0.31853) 2018-01-12 23:37 x86_64 msys '
+myhostname='ab2b9a2ab836'
+myuname='msys_nt-10.0 ab2b9a2ab836 2.10.0(0.32553) 2018-02-12 08:49 x86_64 msys '
 n='-n'
 need_va_copy='undef'
 netdb_hlen_type='int'
-netdb_host_type='const char *'
+netdb_host_type='const void *'
 netdb_name_type='const char *'
 netdb_net_type='long'
 nm='nm'
@@ -1166,7 +1166,7 @@ old_pthread_create_joinable=''
 optimize='-march=x86-64 -mtune=generic -O2 -pipe'
 orderlib='false'
 osname='msys'
-osvers='2.9.0(0.31853)'
+osvers='2.10.0(0.32553)'
 otherlibdirs=' '
 package='perl5'
 pager='/usr/bin/less.exe -R'
@@ -1174,7 +1174,7 @@ passcat='cat /etc/passwd'
 patchlevel='26'
 path_sep=':'
 perl='perl'
-perl5='/usr/bin/perl'
+perl5=''
 perl_patchlevel=''
 perl_static_inline='static __inline__'
 perladmin=''

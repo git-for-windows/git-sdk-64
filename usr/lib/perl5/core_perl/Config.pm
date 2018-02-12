@@ -98,7 +98,7 @@ tie %Config, 'Config', {
     ldlibpthname => 'PATH',
     libpth => '/usr/lib',
     osname => 'msys',
-    osvers => '2.9.0(0.31853)',
+    osvers => '2.10.0(0.32553)',
     path_sep => ':',
     privlibexp => '/usr/share/perl5/core_perl',
     scriptdir => '/usr/bin/core_perl',

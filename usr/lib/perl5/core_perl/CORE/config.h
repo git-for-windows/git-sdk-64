@@ -9,9 +9,9 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Mon Jan 29 12:23:29 PST 2018
+ * Configuration time: Mon Feb 12 12:31:14 PST 2018
  * Configured by     : ContainerAdministrator
- * Target system     : msys_nt-10.0 41cac4138e17 2.9.0(0.31853) 2018-01-12 23:37 x86_64 msys 
+ * Target system     : msys_nt-10.0 ab2b9a2ab836 2.10.0(0.32553) 2018-02-12 08:49 x86_64 msys 
  */
 
 #ifndef _config_h_
@@ -1538,7 +1538,7 @@
  *	feature tests from Configure are generally more reliable.
  */
 #define OSNAME "msys"		/**/
-#define OSVERS "2.9.0(0.31853)"		/**/
+#define OSVERS "2.10.0(0.32553)"		/**/
 
 /* CAT2:
  *	This macro concatenates 2 tokens together.
@@ -4498,7 +4498,7 @@
  *	This symbol holds the type used for the 1st argument to
  *	getnetbyaddr().
  */
-#define Netdb_host_t		const char * /**/
+#define Netdb_host_t		const void * /**/
 #define Netdb_hlen_t		int /**/
 #define Netdb_name_t		const char * /**/
 #define Netdb_net_t		long /**/

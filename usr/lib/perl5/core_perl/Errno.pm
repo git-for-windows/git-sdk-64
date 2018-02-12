@@ -10,8 +10,8 @@ use strict;
 
 use Config;
 "$Config{'archname'}-$Config{'osvers'}" eq
-"x86_64-msys-thread-multi-2.9.0(0.31853)" or
-	die "Errno architecture (x86_64-msys-thread-multi-2.9.0(0.31853)) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
+"x86_64-msys-thread-multi-2.10.0(0.32553)" or
+	die "Errno architecture (x86_64-msys-thread-multi-2.10.0(0.32553)) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
 
 our $VERSION = "1.28";
 $VERSION = eval $VERSION;
