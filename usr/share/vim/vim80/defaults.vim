@@ -113,7 +113,7 @@ if has("autocmd")
 "      \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
 "      \ |   exe "normal! g`\""
 "      \ | endif
-"
+
   augroup END
 
 endif " has("autocmd")

@@ -48,6 +48,23 @@
         This represents what type a float arg is passed as.  It is used when the type is
         not promoted to double.
 	
+
+   __OBSOLETE_MATH_DEFAULT
+
+	Default value for __OBSOLETE_MATH if that's not set by the user.
+	It should be set here based on predefined feature macros.
+
+   __OBSOLETE_MATH
+
+	If set to 1 then some new math code will be disabled and older libm
+	code will be used instead.  This is necessary because the new math
+	code does not support all targets, it assumes that the toolchain has
+	ISO C99 support (hexfloat literals, standard fenv semantics), the
+	target has IEEE-754 conforming binary32 float and binary64 double
+	(not mixed endian) representation, standard SNaN representation,
+	double and single precision arithmetics has similar latency and it
+	has no legacy SVID matherr support, only POSIX errno and fenv
+	exception based error handling.
 */
 
 #if (defined(__arm__) || defined(__thumb__)) && !defined(__MAVERICK__)
@@ -60,6 +77,9 @@
 #  define __IEEE_LITTLE_ENDIAN
 # else
 #  define __IEEE_BIG_ENDIAN
+# endif
+# if __ARM_FP & 0x8
+#  define __OBSOLETE_MATH_DEFAULT 0
 # endif
 #else
 # define __IEEE_BIG_ENDIAN
@@ -75,6 +95,7 @@
 #else
 #define __IEEE_BIG_ENDIAN
 #endif
+#define __OBSOLETE_MATH_DEFAULT 0
 #endif
 
 #ifdef __epiphany__
@@ -425,6 +446,14 @@
 
 #ifdef __VISIUM__
 #define __IEEE_BIG_ENDIAN
+#endif
+
+#ifndef __OBSOLETE_MATH_DEFAULT
+/* Use old math code by default.  */
+#define __OBSOLETE_MATH_DEFAULT 1
+#endif
+#ifndef __OBSOLETE_MATH
+#define __OBSOLETE_MATH __OBSOLETE_MATH_DEFAULT
 #endif
 
 #ifndef __IEEE_BIG_ENDIAN

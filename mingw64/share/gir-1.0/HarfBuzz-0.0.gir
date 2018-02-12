@@ -117,13 +117,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="4" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="5" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VERSION_MINOR" value="7" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.7.4" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.7.5" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_create"
@@ -874,7 +874,7 @@ callers if just comparing two buffers is needed.</doc>
               glib:nick="eot">
         <doc xml:space="preserve">flag indicating that special handling of the end of text
                      paragraph can be applied to this buffer, similar to
-                     @HB_BUFFER_FLAG_EOT.</doc>
+                     @HB_BUFFER_FLAG_BOT.</doc>
       </member>
       <member name="preserve_default_ignorables"
               value="4"
@@ -882,9 +882,21 @@ callers if just comparing two buffers is needed.</doc>
               glib:nick="preserve-default-ignorables">
         <doc xml:space="preserve">flag indication that character with Default_Ignorable
                      Unicode property should use the corresponding glyph
-                     from the font, instead of hiding them (currently done
-                     by replacing them with the space glyph and zeroing the
-                     advance width.)</doc>
+                     from the font, instead of hiding them (done by
+                     replacing them with the space glyph and zeroing the
+                     advance width.)  This flag takes precedence over
+                     @HB_BUFFER_FLAG_REMOVE_DEFAULT_IGNORABLES.</doc>
+      </member>
+      <member name="remove_default_ignorables"
+              value="8"
+              c:identifier="HB_BUFFER_FLAG_REMOVE_DEFAULT_IGNORABLES"
+              glib:nick="remove-default-ignorables">
+        <doc xml:space="preserve">flag indication that character with Default_Ignorable
+                     Unicode property should be removed from glyph string
+                     instead of hiding them (done by replacing them with the
+                     space glyph and zeroing the advance width.)
+                     @HB_BUFFER_FLAG_PRESERVE_DEFAULT_IGNORABLES takes
+                     precedence over this flag. Since: 1.8.0</doc>
       </member>
     </bitfield>
     <function name="buffer_get_cluster_level"
@@ -1334,6 +1346,14 @@ same cluster number) are reversed again.</doc>
               value="16"
               c:identifier="HB_BUFFER_SERIALIZE_FLAG_GLYPH_FLAGS"
               glib:nick="glyph-flags">
+        <doc xml:space="preserve">serialize glyph flags. Since: 1.5.0</doc>
+      </member>
+      <member name="no_advances"
+              value="32"
+              c:identifier="HB_BUFFER_SERIALIZE_FLAG_NO_ADVANCES"
+              glib:nick="no-advances">
+        <doc xml:space="preserve">do not serialize glyph advances,
+ glyph offsets will reflect absolute glyph positions. Since: 1.8.0</doc>
       </member>
     </bitfield>
     <function name="buffer_serialize_format_from_string"

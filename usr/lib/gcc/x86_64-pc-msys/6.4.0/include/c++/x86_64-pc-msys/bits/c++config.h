@@ -1567,7 +1567,7 @@ namespace std
 #define _GLIBCXX_X86_RDRAND 1
 
 /* Define to 1 if mutex_timedlock is available. */
-#define _GTHREAD_USE_MUTEX_TIMEDLOCK 0
+#define _GTHREAD_USE_MUTEX_TIMEDLOCK 1
 
 /* Define if all C++11 floating point overloads are available in <math.h>.  */
 #if __cplusplus >= 201103L

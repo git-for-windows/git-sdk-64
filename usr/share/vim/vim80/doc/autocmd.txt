@@ -1,4 +1,4 @@
-*autocmd.txt*   For Vim version 8.0.  Last change: 2017 Nov 05
+*autocmd.txt*   For Vim version 8.0.  Last change: 2018 Jan 31
 
 
 		  VIM REFERENCE MANUAL    by Bram Moolenaar
@@ -295,6 +295,8 @@ Name			triggered by ~
 |FileChangedShellPost|	After handling a file changed since editing started
 |FileChangedRO|		before making the first change to a read-only file
 
+|DirChanged|		after the working directory has changed
+
 |ShellCmdPost|		after executing a shell command
 |ShellFilterPost|	after filtering with a shell command
 
@@ -330,6 +332,7 @@ Name			triggered by ~
 
 |TextChanged|		after a change was made to the text in Normal mode
 |TextChangedI|		after a change was made to the text in Insert mode
+|TextYankPost|		after text is yanked or deleted
 
 |ColorScheme|		after loading a color scheme
 
@@ -499,6 +502,13 @@ CmdUndefined			When a user command is used but it isn't
 				command is defined.  An alternative is to
 				always define the user command and have it
 				invoke an autoloaded function.  See |autoload|.
+							*CmdlineChanged*
+CmdlineChanged			After a change was made to the text inside
+				command line.  Be careful not to mess up the
+				command line, it may cause Vim to lock up.
+				<afile> is set to a single character,
+				indicating the type of command-line.
+				|cmdwin-char|
 							*CmdlineEnter*
 CmdlineEnter			After moving the cursor to the command line,
 				where the user can type a command or search
@@ -625,6 +635,16 @@ FileChangedRO			Before making the first change to a read-only
 							*E881*
 				If the number of lines changes saving for undo
 				may fail and the change will be aborted.
+							*DirChanged*
+DirChanged			The working directory has changed in response
+				to the |:cd| or |:lcd| commands, or as a
+				result of the 'autochdir' option.
+				The pattern can be:
+					"window" to trigger on `:lcd
+					"global" to trigger on `:cd`
+					"auto"   to trigger on 'autochdir'.
+					"drop"	 to trigger on editing a file
+				<afile> is set to the new directory name.
 							*FileChangedShell*
 FileChangedShell		When Vim notices that the modification time of
 				a file has changed since editing started.
@@ -956,6 +976,25 @@ TextChangedI			After a change was made to the text in the
 				current buffer in Insert mode.
 				Not triggered when the popup menu is visible.
 				Otherwise the same as TextChanged.
+							*TextYankPost*
+TextYankPost			After text has been yanked or deleted in the
+				current buffer.  The following values of
+				|v:event| can be used to determine the operation
+				that triggered this autocmd:
+				   operator    	The operation performed.
+				   regcontents 	Text that was stored in the
+						register, as a list of lines,
+						like with: >
+						getreg(r, 1, 1)
+<				   regname	Name of the |register| or
+						empty string for the unnamed
+						register.
+				   regtype	Type of the register, see
+						|getregtype()|.
+				Not triggered when |quote_| is used nor when
+				called recursively.
+				It is not allowed to change the buffer text,
+				see |textlock|.
 							*User*
 User				Never executed automatically.  To be used for
 				autocommands that are only executed with
