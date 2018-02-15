@@ -1,26 +1,33 @@
-# Copyrights 1995-2014 by [Mark Overmeer <perl@overmeer.net>].
+# Copyrights 1995-2018 by [Mark Overmeer].
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.01.
-use strict;
+# Pod stripped from pm file by OODoc 2.02.
+# This code is part of the bundle MailTools.  Meta-POD processed with
+# OODoc into POD and HTML manual-pages.  See README.md for Copyright.
+# Licensed under the same terms as Perl itself.
+
 package Mail::Filter;
 use vars '$VERSION';
-$VERSION = '2.14';
+$VERSION = '2.20';
 
 
+use strict;
 use Carp;
+
 
 sub new(@)
 {   my $class = shift;
     bless { filters => [ @_ ] }, $class;
 }
 
+#------------
 
 sub add(@)
 {   my $self = shift;
     push @{$self->{filters}}, @_;
 }
 
+#------------
 
 sub _filter($)
 {   my ($self, $mail) = @_;

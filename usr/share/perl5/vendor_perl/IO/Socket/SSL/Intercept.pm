@@ -77,7 +77,7 @@ sub clone_cert {
     my $hash = CERT_asHash($old_cert);
     if (my $ext = $hash->{ext}) {
 	@$ext = grep {
-	    $_->{sn} !~m{^(?:
+	    defined($_->{sn}) && $_->{sn} !~m{^(?:
 		authorityInfoAccess    |
 		subjectKeyIdentifier   |
 		authorityKeyIdentifier |
@@ -260,7 +260,7 @@ the client yet.
 Establish the SSL connection to the server and verify the servers certificate as
 usually. Then create a new certificate based on the original servers
 certificate, but signed by your proxy CA.
-This a the step where IO::Socket::SSL::Intercept helps.
+This is the step where IO::Socket::SSL::Intercept helps.
 
 =item *
 
@@ -329,8 +329,8 @@ The key for the hash is an C<ident> either given to C<clone_cert> or generated
 from the original certificate.
 
 If the argument is a subroutine it will be called as C<< $cache->(ident) >>
-to get an existing certificate and with C<< $cache->(ident,cert) >> to cache the
-newly created certificate.
+to get an existing (cert,key) and with C<< $cache->(ident,cert,key) >> to cache
+the newly created certificate.
 
 =back
 

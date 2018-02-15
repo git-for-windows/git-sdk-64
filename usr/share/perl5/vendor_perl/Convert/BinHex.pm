@@ -160,7 +160,7 @@ use FileHandle;
 
 
 
-our $VERSION = '1.123'; # VERSION
+our $VERSION = '1.125'; # VERSION
 
 # My identity:
 my $I = 'binhex:';
@@ -1627,7 +1627,7 @@ Basically, it works in a similar fashion to stdio's fread():
        0. There is an internal buffer of decompressed (BIN) data,
           initially empty.
        1. Application asks to read() n bytes of data from object
-       2. If the buffer is not full enough to accomodate the request:
+       2. If the buffer is not full enough to accommodate the request:
             2a. The read() method grabs the next available chunk of input
                 data (the HEX).
             2b. HEX data is converted and decompressed into as many BIN

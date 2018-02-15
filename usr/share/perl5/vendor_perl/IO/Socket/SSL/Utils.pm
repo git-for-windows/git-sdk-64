@@ -57,11 +57,11 @@ sub PEM_file2key {
     my $file = shift;
     my $bio = Net::SSLeay::BIO_new_file($file,'r') or
 	croak "cannot read $file: $!";
-    my $cert = Net::SSLeay::PEM_read_bio_PrivateKey($bio);
+    my $key = Net::SSLeay::PEM_read_bio_PrivateKey($bio);
     Net::SSLeay::BIO_free($bio);
-    $cert or croak "cannot parse $file as PEM private key: ".
+    $key or croak "cannot parse $file as PEM private key: ".
 	Net::SSLeay::ERR_error_string(Net::SSLeay::ERR_get_error());
-    return $cert;
+    return $key;
 }
 
 sub PEM_key2file {
@@ -76,11 +76,11 @@ sub PEM_string2key {
     my $string = shift;
     my $bio = Net::SSLeay::BIO_new( Net::SSLeay::BIO_s_mem());
     Net::SSLeay::BIO_write($bio,$string);
-    my $cert = Net::SSLeay::PEM_read_bio_PrivateKey($bio);
+    my $key = Net::SSLeay::PEM_read_bio_PrivateKey($bio);
     Net::SSLeay::BIO_free($bio);
-    $cert or croak "cannot parse string as PEM private key: ".
+    $key or croak "cannot parse string as PEM private key: ".
 	Net::SSLeay::ERR_error_string(Net::SSLeay::ERR_get_error());
-    return $cert;
+    return $key;
 }
 
 sub PEM_key2string {
@@ -107,6 +107,17 @@ sub KEY_create_rsa {
     return $key;
 }
 
+if (defined &Net::SSLeay::EC_KEY_generate_key) {
+    push @EXPORT,'KEY_create_ec';
+    *KEY_create_ec = sub {
+	my $curve = shift || 'prime256v1';
+	my $key = Net::SSLeay::EVP_PKEY_new();
+	my $ec = Net::SSLeay::EC_KEY_generate_key($curve);
+	Net::SSLeay::EVP_PKEY_assign_EC_KEY($key,$ec);
+	return $key;
+    }
+}
+
 # extract information from cert
 my %gen2i = qw( OTHERNAME 0 EMAIL 1 DNS 2 X400 3 DIRNAME 4 EDIPARTY 5 URI 6 IP 7 RID 8 );
 my %i2gen = reverse %gen2i;
@@ -118,8 +129,10 @@ sub CERT_asHash {
 	version => Net::SSLeay::X509_get_version($cert),
 	not_before => _asn1t2t(Net::SSLeay::X509_get_notBefore($cert)),
 	not_after => _asn1t2t(Net::SSLeay::X509_get_notAfter($cert)),
-	serial => Net::SSLeay::ASN1_INTEGER_get(
+	serial => Net::SSLeay::P_ASN1_INTEGER_get_dec(
 	    Net::SSLeay::X509_get_serialNumber($cert)),
+	signature_alg => Net::SSLeay::OBJ_obj2txt (
+	    Net::SSLeay::P_X509_get_signature_alg($cert)),
 	crl_uri  => [ Net::SSLeay::P_X509_get_crl_distribution_points($cert) ],
 	keyusage => [ Net::SSLeay::P_X509_get_key_usage($cert) ],
 	extkeyusage => {
@@ -155,7 +168,30 @@ sub CERT_asHash {
 		if (length($v) == 4) {
 		    $v = join('.',unpack("CCCC",$v));
 		} elsif ( length($v) == 16 ) {
-		    $v = join(':',map { sprintf( "%x",$_) } unpack("NNNN",$v));
+		    my @v = unpack("nnnnnnnn",$v);
+		    my ($best0,$last0);
+		    for(my $i=0;$i<@v;$i++) {
+			if ($v[$i] == 0) {
+			    if ($last0) {
+				$last0->[1] = $i;
+				$last0->[2]++;
+				$best0 = $last0 if ++$last0->[2]>$best0->[2];
+			    } else {
+				$last0 = [ $i,$i,0 ];
+				$best0 ||= $last0;
+			    }
+			} else {
+			    $last0 = undef;
+			}
+		    }
+		    if ($best0) {
+			$v = '';
+			$v .= join(':', map { sprintf( "%x",$_) } @v[0..$best0->[0]-1]) if $best0->[0]>0;
+			$v .= '::';
+			$v .= join(':', map { sprintf( "%x",$_) } @v[$best0->[1]+1..$#v]) if $best0->[1]<$#v;
+		    } else {
+			$v = join(':', map { sprintf( "%x",$_) } @v);
+		    }
 		}
 	    }
 	    push @$alt,[$t,$v]
@@ -236,9 +272,11 @@ sub CERT_create {
 	commonName => 'IO::Socket::SSL Test'
     };
     while ( my ($k,$v) = each %$subj ) {
-	# 0x1000 = MBSTRING_UTF8
-	Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,
-	    $k, 0x1000, $v, -1, 0)
+	# Not everything we get is nice - try with MBSTRING_UTF8 first and if it
+	# fails try V_ASN1_T61STRING and finally V_ASN1_OCTET_STRING
+	Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,$k,0x1000,$v,-1,0)
+	    or Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,$k,20,$v,-1,0)
+	    or Net::SSLeay::X509_NAME_add_entry_by_txt($subj_e,$k,4,$v,-1,0)
 	    or croak("failed to add entry for $k - ".
 	    Net::SSLeay::ERR_error_string(Net::SSLeay::ERR_get_error()));
     }
@@ -277,20 +315,14 @@ sub CERT_create {
 	    }
 	}
     }
-    if (defined( my $ca = delete $args{CA})) {
-	# add defaults
-	if ($ca) {
-	    %purpose = (
-		ca => 1, sslca => 1, emailca => 1, objca => 1,
-		%purpose
-	    );
-	} else {
-	    %purpose = (
-		server => 1, client => 1,
-		%purpose
-	    );
-	}
-    } elsif (!%purpose) {
+    if (delete $args{CA}) {
+	# add defaults for CA
+	%purpose = (
+	    ca => 1, sslca => 1, emailca => 1, objca => 1,
+	    %purpose
+	);
+    }
+    if (!%purpose) {
 	%purpose = (server => 1, client => 1);
     }
 
@@ -299,6 +331,7 @@ sub CERT_create {
     my %dS = ( digitalSignature => \%key_usage );
     my %kE = ( keyEncipherment => \%key_usage );
     my %CA = ( 'CA:TRUE' => \%basic_constraints, %dS, keyCertSign => \%key_usage );
+    my @disable;
     for(
 	[ client  => { %dS, %kE, clientAuth => \%ext_key_usage, client  => \%cert_type } ],
 	[ server  => { %dS, %kE, serverAuth => \%ext_key_usage, server  => \%cert_type } ],
@@ -323,13 +356,24 @@ sub CERT_create {
 	[ cRLSign          => { cRLSign => \%key_usage } ],
 	[ encipherOnly     => { encipherOnly => \%key_usage } ],
 	[ decipherOnly     => { decipherOnly => \%key_usage } ],
+	[ clientAuth       => { clientAuth   => \%ext_key_usage } ],
+	[ serverAuth       => { serverAuth   => \%ext_key_usage } ],
     ) {
-	delete $purpose{lc($_->[0])} or next;
-	while (my($k,$h) = each %{$_->[1]}) {
-	    $h->{$k} = 1;
+	exists $purpose{lc($_->[0])} or next;
+	if (delete $purpose{lc($_->[0])}) {
+	    while (my($k,$h) = each %{$_->[1]}) {
+		$h->{$k} = 1;
+	    }
+	} else {
+	    push @disable, $_->[1];
 	}
     }
     die "unknown purpose ".join(",",keys %purpose) if %purpose;
+    for(@disable) {
+	while (my($k,$h) = each %$_) {
+	    delete $h->{$k};
+	}
+    }
 
     if (%basic_constraints) {
 	push @ext,&Net::SSLeay::NID_basic_constraints,
@@ -345,10 +389,15 @@ sub CERT_create {
 	=> join(",",sort keys %ext_key_usage) if %ext_key_usage;
     Net::SSLeay::P_X509_add_extensions($cert, $issuer_cert, @ext);
 
+    my %have_ext;
+    for(my $i=0;$i<@ext;$i+=2) {
+	$have_ext{ $ext[$i] }++
+    }
     for my $ext (@{ $args{ext} || [] }) {
 	my $nid = $ext->{nid}
 	    || $ext->{sn} && Net::SSLeay::OBJ_sn2nid($ext->{sn})
 	    || croak "cannot determine NID of extension";
+	$have_ext{$nid} and next;
 	my $val = $ext->{data};
 	if ($nid == 177) {
 	    # authorityInfoAccess:
@@ -481,6 +530,10 @@ Each loaded or created cert and key must be freed to not leak memory.
 
 Creates an RSA key pair, bits defaults to 2048.
 
+=item * KEY_create_ec(curve) -> key
+
+Creates an EC key, curve defaults to C<prime256v1>.
+
 =item * CERT_asHash(cert,[digest_algo]) -> hash
 
 Extracts the information from the certificate into a hash and uses the given
@@ -547,6 +600,10 @@ Fingerprint of the certificate using the given digest algorithm, e.g.
 fingerprint_sha256 if (the default) SHA-256 was used. Contrary to digest_* this
 is an ASCII string with a list if hexadecimal numbers, e.g.
 "73:59:75:5C:6D...".
+
+=item signature_alg
+
+Algorithm used to sign certificate, e.g. C<sha256WithRSAEncryption>.
 
 =item ext
 

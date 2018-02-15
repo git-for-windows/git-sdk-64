@@ -1,16 +1,20 @@
-# Copyrights 1995-2014 by [Mark Overmeer <perl@overmeer.net>].
+# Copyrights 1995-2018 by [Mark Overmeer].
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.01.
-# Based on smtp.pm, adapted by Maciej Żenczykowski
+# Pod stripped from pm file by OODoc 2.02.
+# This code is part of the bundle MailTools.  Meta-POD processed with
+# OODoc into POD and HTML manual-pages.  See README.md for Copyright.
+# Licensed under the same terms as Perl itself.
 
-use strict;
+# Based on smtp.pm, adapted by Maciej Żenczykowski
 
 package Mail::Mailer::smtps;
 use vars '$VERSION';
-$VERSION = '2.14';
+$VERSION = '2.20';
 
 use base 'Mail::Mailer::rfc822';
+
+use strict;
 
 use Net::SMTP::SSL;
 use Mail::Util qw(mailaddress);
@@ -90,7 +94,7 @@ sub close(@)
 
 package Mail::Mailer::smtps::pipe;
 use vars '$VERSION';
-$VERSION = '2.14';
+$VERSION = '2.20';
 
 
 sub TIEHANDLE

@@ -1,12 +1,16 @@
-# Copyrights 1995-2014 by [Mark Overmeer <perl@overmeer.net>].
+# Copyrights 1995-2018 by [Mark Overmeer].
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.01.
+# Pod stripped from pm file by OODoc 2.02.
+# This code is part of the bundle MailTools.  Meta-POD processed with
+# OODoc into POD and HTML manual-pages.  See README.md for Copyright.
+# Licensed under the same terms as Perl itself.
+
 use strict;
 
 package Mail::Field::AddrList;
 use vars '$VERSION';
-$VERSION = '2.14';
+$VERSION = '2.20';
 
 use base 'Mail::Field';
 

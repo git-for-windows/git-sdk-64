@@ -181,6 +181,7 @@ sub _fail_hi {
 
 sub uri_escape_utf8 {
     my $text = shift;
+    return undef unless defined $text;
     utf8::encode($text);
     return uri_escape($text, @_);
 }

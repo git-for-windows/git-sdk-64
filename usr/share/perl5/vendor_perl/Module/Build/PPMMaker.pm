@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Config;
 
-our $VERSION = '0.4212';
+our $VERSION = '0.4224';
 $VERSION = eval $VERSION;
 
 # This code is mostly borrowed from ExtUtils::MM_Unix 6.10_03, with a
@@ -56,11 +56,11 @@ PPD
 
   foreach my $type (qw(requires)) {
     my $prereq = $build->$type();
-    while (my ($modname, $spec) = each %$prereq) {
+    foreach my $modname (sort keys %$prereq) {
       next if $modname eq 'perl';
 
       my $min_version = '0.0';
-      foreach my $c ($build->_parse_conditions($spec)) {
+      foreach my $c ($build->_parse_conditions($prereq->{$modname})) {
         my ($op, $version) = $c =~ /^\s*  (<=?|>=?|==|!=)  \s*  ([\w.]+)  \s*$/x;
 
         # This is a nasty hack because it fails if there is no >= op

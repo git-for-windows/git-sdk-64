@@ -68,6 +68,8 @@ if "%MSYSTEM%" == "MINGW32" (
   set "CONTITLE=MSYS2 MSYS"
 )
 
+set CD_HOME=yes
+
 if "x%MSYSCON%" == "xmintty.exe" goto startmintty
 if "x%MSYSCON%" == "xconemu" goto startconemu
 if "x%MSYSCON%" == "xdefterm" goto startsh
@@ -159,8 +161,8 @@ echo     -here                            Use current directory as working
 echo                                      directory
 echo     -where DIRECTORY                 Use specified DIRECTORY as working
 echo                                      directory
-echo     -[use-]full-path                 Use full currnent PATH variable
-echo                                      instead of triming to minimal
+echo     -[use-]full-path                 Use full current PATH variable
+echo                                      instead of trimming to minimal
 echo     -no-start                        Do not use "start" command and
 echo                                      return bash resulting errorcode as
 echo                                      this batch file resulting errorcode

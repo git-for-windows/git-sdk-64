@@ -4,7 +4,7 @@ package Module::Build::Notes;
 
 use strict;
 use warnings;
-our $VERSION = '0.4212';
+our $VERSION = '0.4224';
 $VERSION = eval $VERSION;
 use Data::Dumper;
 use Module::Build::Dumper;
@@ -178,14 +178,14 @@ sub config { $config->{$_[1]} }
 sub set_config { $config->{$_[1]} = $_[2] }
 sub set_feature { $features->{$_[1]} = 0+!!$_[2] }  # Constrain to 1 or 0
 
-sub auto_feature_names { grep !exists $features->{$_}, keys %$auto_features }
+sub auto_feature_names { sort grep !exists $features->{$_}, keys %$auto_features }
 
 sub feature_names {
-  my @features = (keys %$features, auto_feature_names());
+  my @features = (sort keys %$features, auto_feature_names());
   @features;
 }
 
-sub config_names  { keys %$config }
+sub config_names  { sort keys %$config }
 
 sub write {
   my $me = __FILE__;
@@ -221,18 +221,13 @@ sub feature {
 
   my $info = $auto_features->{$key} or return 0;
 
-  # Under perl 5.005, each(%$foo) isn't working correctly when $foo
-  # was reanimated with Data::Dumper and eval().  Not sure why, but
-  # copying to a new hash seems to solve it.
-  my %info = %$info;
-
   require Module::Build;  # XXX should get rid of this
-  while (my ($type, $prereqs) = each %info) {
+  foreach my $type (sort keys %$info) {
+    my $prereqs = $info->{$type};
     next if $type eq 'description' || $type eq 'recommends';
 
-    my %p = %$prereqs;  # Ditto here.
-    while (my ($modname, $spec) = each %p) {
-      my $status = Module::Build->check_installed_status($modname, $spec);
+    foreach my $modname (sort keys %$prereqs) {
+      my $status = Module::Build->check_installed_status($modname, $prereqs->{$modname});
       if ((!$status->{ok}) xor ($type =~ /conflicts$/)) { return 0; }
       if ( ! eval "require $modname; 1" ) { return 0; }
     }

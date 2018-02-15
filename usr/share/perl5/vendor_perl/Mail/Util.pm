@@ -1,18 +1,22 @@
-# Copyrights 1995-2014 by [Mark Overmeer <perl@overmeer.net>].
+# Copyrights 1995-2018 by [Mark Overmeer].
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.01.
-use strict;
+# Pod stripped from pm file by OODoc 2.02.
+# This code is part of the bundle MailTools.  Meta-POD processed with
+# OODoc into POD and HTML manual-pages.  See README.md for Copyright.
+# Licensed under the same terms as Perl itself.
 
 package Mail::Util;
 use vars '$VERSION';
-$VERSION = '2.14';
+$VERSION = '2.20';
 
 use base 'Exporter';
 
+use strict;
+use Carp;
+
 our @EXPORT_OK = qw(read_mbox maildomain mailaddress);
 
-use Carp;
 sub Version { our $VERSION }
 
 my ($domain, $mailaddress);
@@ -35,13 +39,13 @@ sub read_mbox($)
     while(<FH>)
     {   if($blank && /^From .*\d{4}/)
         {   push @mbox, $mail if @$mail;
-	    $mail  = [ $_ ];
-	    $blank = 0;
-	}
-	else
+            $mail  = [ $_ ];
+            $blank = 0;
+        }
+        else
         {   $blank = m/^$/ ? 1 : 0;
-	    push @$mail, $_;
-	}
+            push @$mail, $_;
+        }
     }
 
     push @mbox, $mail if @$mail;

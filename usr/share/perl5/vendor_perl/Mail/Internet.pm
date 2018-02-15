@@ -1,10 +1,14 @@
-# Copyrights 1995-2014 by [Mark Overmeer <perl@overmeer.net>].
+# Copyrights 1995-2018 by [Mark Overmeer].
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.01.
+# Pod stripped from pm file by OODoc 2.02.
+# This code is part of the bundle MailTools.  Meta-POD processed with
+# OODoc into POD and HTML manual-pages.  See README.md for Copyright.
+# Licensed under the same terms as Perl itself.
+
 package Mail::Internet;
 use vars '$VERSION';
-$VERSION = '2.14';
+$VERSION = '2.20';
 
 use strict;
 # use warnings?  probably breaking too much code
@@ -85,6 +89,7 @@ sub dup()
     $dup;
 }
 
+#---------------
 
 sub body(;$@)
 {   my $self = shift;
@@ -98,6 +103,7 @@ sub body(;$@)
 
 sub head         { shift->{mail_inet_head} ||= Mail::Header->new }
 
+#---------------
 
 sub print($)
 {   my $self = shift;
@@ -138,6 +144,7 @@ sub as_mbox_string($)
     $self->as_string . "\n";
 }
 
+#---------------
 
 sub header       { shift->head->header(@_) }
 sub fold         { shift->head->fold(@_) }
@@ -199,6 +206,7 @@ sub empty()
     1;
 }
 
+#---------------
 
 sub remove_sig($)
 {   my $body   = shift->body;
@@ -251,6 +259,7 @@ sub tidy_body()
     $body;
 }
 
+#---------------
 
 sub reply(@)
 {   my ($self, %arg) = @_;

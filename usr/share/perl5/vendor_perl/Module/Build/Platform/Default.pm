@@ -2,7 +2,7 @@ package Module::Build::Platform::Default;
 
 use strict;
 use warnings;
-our $VERSION = '0.4212';
+our $VERSION = '0.4224';
 $VERSION = eval $VERSION;
 use Module::Build::Base;
 

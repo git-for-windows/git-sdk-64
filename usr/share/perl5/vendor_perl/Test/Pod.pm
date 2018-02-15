@@ -8,11 +8,11 @@ Test::Pod - check for POD errors in files
 
 =head1 VERSION
 
-Version 1.50
+Version 1.51
 
 =cut
 
-our $VERSION = '1.50';
+our $VERSION = '1.51';
 
 =head1 SYNOPSIS
 

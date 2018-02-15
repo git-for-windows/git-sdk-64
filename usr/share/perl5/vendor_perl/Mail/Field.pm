@@ -1,14 +1,19 @@
-# Copyrights 1995-2014 by [Mark Overmeer <perl@overmeer.net>].
+# Copyrights 1995-2018 by [Mark Overmeer].
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.01.
+# Pod stripped from pm file by OODoc 2.02.
+# This code is part of the bundle MailTools.  Meta-POD processed with
+# OODoc into POD and HTML manual-pages.  See README.md for Copyright.
+# Licensed under the same terms as Perl itself.
+
 package Mail::Field;
 use vars '$VERSION';
-$VERSION = '2.14';
+$VERSION = '2.20';
 
+
+use strict;
 
 use Carp;
-use strict;
 use Mail::Field::Generic;
 
 
@@ -108,6 +113,7 @@ sub _build
     @_==1 ? $self->parse(@_) : $self->create(@_);
 }
 
+#-------------
 
 sub new
 {   my $class = shift;
@@ -173,6 +179,7 @@ sub extract
     $class->$method($text);
 }
 
+#-------------
 
 # before 2.00, this method could be called as class method, however
 # not all extensions supported that.
@@ -190,6 +197,7 @@ sub parse
     confess "parse() not implemented";
 }
 
+#-------------
 
 sub stringify { confess "stringify() not implemented" } 
 
@@ -211,11 +219,13 @@ sub set(@) { confess "set() not implemented" }
 # prevent the calling of AUTOLOAD for DESTROY :-)
 sub DESTROY {}
 
+#-------------
 
 sub text
 {   my $self = shift;
     @_ ? $self->parse(@_) : $self->stringify;
 }
 
+#-------------
 
 1;

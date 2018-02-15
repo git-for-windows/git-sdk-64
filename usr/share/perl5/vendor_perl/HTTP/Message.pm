@@ -1,8 +1,9 @@
 package HTTP::Message;
 
 use strict;
-use vars qw($VERSION $AUTOLOAD);
-$VERSION = "6.06";
+use warnings;
+
+our $VERSION = '6.14';
 
 require HTTP::Headers;
 require Carp;
@@ -142,11 +143,11 @@ sub _set_content {
     my $self = $_[0];
     _utf8_downgrade($_[1]);
     if (!ref($_[1]) && ref($self->{_content}) eq "SCALAR") {
-	${$self->{_content}} = $_[1];
+	${$self->{_content}} = defined( $_[1] ) ? $_[1] : '';
     }
     else {
 	die "Can't set content to be a scalar reference" if ref($_[1]) eq "SCALAR";
-	$self->{_content} = $_[1];
+	$self->{_content} = defined( $_[1] ) ? $_[1] : '';
 	delete $self->{_content_ref};
     }
     delete $self->{_parts} unless $_[2];
@@ -292,7 +293,7 @@ sub decoded_content
 	    $h =~ s/\s+$//;
 	    for my $ce (reverse split(/\s*,\s*/, lc($h))) {
 		next unless $ce;
-		next if $ce eq "identity";
+		next if $ce eq "identity" || $ce eq "none";
 		if ($ce eq "gzip" || $ce eq "x-gzip") {
 		    require IO::Uncompress::Gunzip;
 		    my $output;
@@ -359,7 +360,7 @@ sub decoded_content
 		"ISO-8859-1"
 	    );
 	    if ($charset eq "none") {
-		# leave it asis
+		# leave it as is
 	    }
 	    elsif ($charset eq "us-ascii" || $charset eq "iso-8859-1") {
 		if ($$content_ref =~ /[^\x00-\x7F]/ && defined &utf8::upgrade) {
@@ -429,7 +430,7 @@ sub decodable
     };
     eval {
         require IO::Uncompress::Bunzip2;
-        push(@enc, "x-bzip2");
+        push(@enc, "x-bzip2", "bzip2");
     };
     # we don't care about announcing the 'identity', 'base64' and
     # 'quoted-printable' stuff
@@ -461,7 +462,7 @@ sub encode
 
     my $content = $self->content;
     for my $encoding (@enc) {
-	if ($encoding eq "identity") {
+	if ($encoding eq "identity" || $encoding eq "none") {
 	    # nothing to do
 	}
 	elsif ($encoding eq "base64") {
@@ -482,7 +483,7 @@ sub encode
 		or die "Can't deflate content: $IO::Compress::Deflate::DeflateError";
 	    $content = $output;
 	}
-	elsif ($encoding eq "x-bzip2") {
+	elsif ($encoding eq "x-bzip2" || $encoding eq "bzip2") {
 	    require IO::Compress::Bzip2;
 	    my $output;
 	    IO::Compress::Bzip2::bzip2(\$content, \$output)
@@ -574,6 +575,10 @@ sub dump
     return $dump;
 }
 
+# allow subclasses to override what will handle individual parts
+sub _part_class {
+    return __PACKAGE__;
+}
 
 sub parts {
     my $self = shift;
@@ -602,8 +607,10 @@ sub parts {
 sub add_part {
     my $self = shift;
     if (($self->content_type || "") !~ m,^multipart/,) {
-	my $p = HTTP::Message->new($self->remove_content_headers,
-				   $self->content(""));
+	my $p = $self->_part_class->new(
+	    $self->remove_content_headers,
+	    $self->content(""),
+	);
 	$self->content_type("multipart/mixed");
 	$self->{_parts} = [];
         if ($p->headers->header_field_names || $p->content ne "") {
@@ -633,7 +640,8 @@ sub _stale_content {
 }
 
 
-# delegate all other method calls the the headers object.
+# delegate all other method calls to the headers object.
+our $AUTOLOAD;
 sub AUTOLOAD
 {
     my $method = substr($AUTOLOAD, rindex($AUTOLOAD, '::')+2);
@@ -673,7 +681,7 @@ sub _parts {
 	    my $str = $self->content;
 	    $str =~ s/\r?\n--\Q$b\E--.*//s;
 	    if ($str =~ s/(^|.*?\r?\n)--\Q$b\E\r?\n//s) {
-		$self->{_parts} = [map HTTP::Message->parse($_),
+		$self->{_parts} = [map $self->_part_class->parse($_),
 				   split(/\r?\n--\Q$b\E\r?\n/, $str)]
 	    }
 	}
@@ -687,7 +695,7 @@ sub _parts {
 	$self->{_parts} = [$class->parse($content)];
     }
     elsif ($ct =~ m,^message/,) {
-	$self->{_parts} = [ HTTP::Message->parse($self->content) ];
+	$self->{_parts} = [ $self->_part_class->parse($self->content) ];
     }
 
     $self->{_parts} ||= [];
@@ -763,12 +771,17 @@ sub _boundary
 
 1;
 
+=pod
 
-__END__
+=encoding UTF-8
 
 =head1 NAME
 
 HTTP::Message - HTTP style message (base class)
+
+=head1 VERSION
+
+version 6.14
 
 =head1 SYNOPSIS
 
@@ -824,6 +837,9 @@ but it will make your program a whole character shorter :-)
 The content() method sets the raw content if an argument is given.  If no
 argument is given the content is not touched.  In either case the
 original raw content is returned.
+
+If the C<undef> argument is given, the content is reset to its default value,
+which is an empty string.
 
 Note that the content should be a string of bytes.  Strings in perl
 can contain characters outside the range of a byte.  The C<Encode>
@@ -1097,10 +1113,21 @@ details of these methods:
     $mess->authorization_basic
     $mess->proxy_authorization_basic
 
-=head1 COPYRIGHT
+=head1 AUTHOR
 
-Copyright 1995-2004 Gisle Aas.
+Gisle Aas <gisle@activestate.com>
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 1994-2017 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+__END__
+
+
+#ABSTRACT: HTTP style message (base class)
 

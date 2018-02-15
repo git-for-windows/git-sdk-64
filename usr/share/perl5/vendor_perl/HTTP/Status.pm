@@ -1,15 +1,15 @@
 package HTTP::Status;
 
 use strict;
+use warnings;
+
+our $VERSION = '6.14';
+
 require 5.002;   # because we use prototypes
 
-use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
-
-require Exporter;
-@ISA = qw(Exporter);
-@EXPORT = qw(is_info is_success is_redirect is_error status_message);
-@EXPORT_OK = qw(is_client_error is_server_error);
-$VERSION = "6.03";
+use base 'Exporter';
+our @EXPORT = qw(is_info is_success is_redirect is_error status_message);
+our @EXPORT_OK = qw(is_client_error is_server_error);
 
 # Note also addition of mnemonics to @EXPORT below
 
@@ -20,6 +20,7 @@ my %StatusCode = (
     100 => 'Continue',
     101 => 'Switching Protocols',
     102 => 'Processing',                      # RFC 2518 (WebDAV)
+    103 => 'Early Hints',                     # RFC 8297
     200 => 'OK',
     201 => 'Created',
     202 => 'Accepted',
@@ -36,6 +37,7 @@ my %StatusCode = (
     304 => 'Not Modified',
     305 => 'Use Proxy',
     307 => 'Temporary Redirect',
+    308 => 'Permanent Redirect',              # RFC 7238
     400 => 'Bad Request',
     401 => 'Unauthorized',
     402 => 'Payment Required',
@@ -95,7 +97,7 @@ die if $@;
 *RC_MOVED_TEMPORARILY = \&RC_FOUND;  # 302 was renamed in the standard
 push(@EXPORT, "RC_MOVED_TEMPORARILY");
 
-%EXPORT_TAGS = (
+our %EXPORT_TAGS = (
    constants => [grep /^HTTP_/, @EXPORT_OK],
    is => [grep /^is_/, @EXPORT, @EXPORT_OK],
 );
@@ -103,21 +105,26 @@ push(@EXPORT, "RC_MOVED_TEMPORARILY");
 
 sub status_message  ($) { $StatusCode{$_[0]}; }
 
-sub is_info         ($) { $_[0] >= 100 && $_[0] < 200; }
-sub is_success      ($) { $_[0] >= 200 && $_[0] < 300; }
-sub is_redirect     ($) { $_[0] >= 300 && $_[0] < 400; }
-sub is_error        ($) { $_[0] >= 400 && $_[0] < 600; }
-sub is_client_error ($) { $_[0] >= 400 && $_[0] < 500; }
-sub is_server_error ($) { $_[0] >= 500 && $_[0] < 600; }
+sub is_info         ($) { $_[0] && $_[0] >= 100 && $_[0] < 200; }
+sub is_success      ($) { $_[0] && $_[0] >= 200 && $_[0] < 300; }
+sub is_redirect     ($) { $_[0] && $_[0] >= 300 && $_[0] < 400; }
+sub is_error        ($) { $_[0] && $_[0] >= 400 && $_[0] < 600; }
+sub is_client_error ($) { $_[0] && $_[0] >= 400 && $_[0] < 500; }
+sub is_server_error ($) { $_[0] && $_[0] >= 500 && $_[0] < 600; }
 
 1;
 
+=pod
 
-__END__
+=encoding UTF-8
 
 =head1 NAME
 
 HTTP::Status - HTTP Status code processing
+
+=head1 VERSION
+
+version 6.14
 
 =head1 SYNOPSIS
 
@@ -147,6 +154,7 @@ tag to import them all.
    HTTP_CONTINUE                        (100)
    HTTP_SWITCHING_PROTOCOLS             (101)
    HTTP_PROCESSING                      (102)
+   HTTP_EARLY_HINTS                     (103)
 
    HTTP_OK                              (200)
    HTTP_CREATED                         (201)
@@ -165,6 +173,7 @@ tag to import them all.
    HTTP_NOT_MODIFIED                    (304)
    HTTP_USE_PROXY                       (305)
    HTTP_TEMPORARY_REDIRECT              (307)
+   HTTP_PERMANENT_REDIRECT              (308)
 
    HTTP_BAD_REQUEST                     (400)
    HTTP_UNAUTHORIZED                    (401)
@@ -265,3 +274,21 @@ This function is B<not> exported by default.
 For legacy reasons all the C<HTTP_> constants are exported by default
 with the prefix C<RC_>.  It's recommended to use explicit imports and
 the C<:constants> tag instead of relying on this.
+
+=head1 AUTHOR
+
+Gisle Aas <gisle@activestate.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 1994-2017 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+__END__
+
+
+#ABSTRACT: HTTP Status code processing

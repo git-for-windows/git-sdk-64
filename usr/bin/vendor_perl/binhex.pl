@@ -1,8 +1,5 @@
 #!/usr/bin/perl -w
 
-eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
-
 
 =head1 NAME
 
@@ -48,7 +45,7 @@ use File::Basename;
 use Carp;
 require Mac::Files if (($^O||'') eq "MacOS");
 
-our $VERSION = '1.123'; # VERSION
+our $VERSION = '1.125'; # VERSION
 
 use strict;
 use vars qw(

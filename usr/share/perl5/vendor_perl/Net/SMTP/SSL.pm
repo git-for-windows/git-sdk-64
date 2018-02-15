@@ -1,13 +1,19 @@
 package Net::SMTP::SSL;
 use strict;
 
-our $VERSION = '1.02';
+our $VERSION = '1.04';
 
 use IO::Socket::SSL;
 use Net::SMTP;
 
 our @ISA = ( 'IO::Socket::SSL',
              grep { $_ ne 'IO::Socket::INET' } @Net::SMTP::ISA );
+
+sub isa {
+  my $self = shift;
+  return 1 if $_[0] eq 'Net::SMTP';
+  return $self->SUPER::isa(@_);
+}
 
 no strict 'refs';
 foreach ( keys %Net::SMTP:: ) {
@@ -29,6 +35,13 @@ Net::SMTP::SSL - SSL support for Net::SMTP
   use Net::SMTP::SSL;
   
   my $smtps = Net::SMTP::SSL->new("example.com", Port => 465);
+
+=head1 DEPRECATED
+
+B<Hey!  Read this!>
+
+Since Net::SMTP v1.28 (2014-10-08), Net::SMTP itself has support for SMTP over
+SSL, and also for STARTTLS.  Use Net::SMTP, not Net::SMTP::SSL.
 
 =head1 DESCRIPTION
 

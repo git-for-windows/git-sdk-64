@@ -6,7 +6,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.4212';
+our $VERSION = '0.4224';
 $VERSION = eval $VERSION;
 
 use Carp;
@@ -164,8 +164,8 @@ sub _construct {
     $ph->{$_}->restore if -e $file;
     if (exists $p->{$_}) {
       my $vals = delete $p->{$_};
-      while (my ($k, $v) = each %$vals) {
-        $self->$_($k, $v);
+      foreach my $k (sort keys %$vals) {
+        $self->$_($k, $vals->{$k});
       }
     }
   }
@@ -961,6 +961,7 @@ __PACKAGE__->add_property($_) for qw(
   base_dir
   bindoc_dirs
   c_source
+  cover
   create_license
   create_makefile_pl
   create_readme
@@ -1275,7 +1276,7 @@ sub add_to_cleanup {
 sub cleanup {
   my $self = shift;
   my $all = $self->{phash}{cleanup}->read;
-  return keys %$all;
+  return wantarray ? sort keys %$all : keys %$all;
 }
 
 sub config_file {
@@ -1823,6 +1824,11 @@ sub print_build_script {
   my $shebang = $self->_startperl;
   my $magic_number = $self->magic_number;
 
+my $dot_in_inc_code = $INC[-1] eq '.' ? <<'END' : '';
+    if ($INC[-1] ne '.') {
+        push @INC, '.';
+    }
+END
   print $fh <<EOF;
 $shebang
 
@@ -1859,6 +1865,7 @@ BEGIN {
     (
 $quoted_INC
     );
+$dot_in_inc_code
 }
 
 close(*DATA) unless eof(*DATA); # ensure no open handles to this script
@@ -1900,7 +1907,7 @@ sub create_mymeta {
   }
 
   # Try loading META.json or META.yml
-  if ( $self->try_require("CPAN::Meta", "2.110420") ) {
+  if ( $self->try_require("CPAN::Meta", "2.142060") ) {
     for my $file ( @metafiles ) {
       next unless -f $file;
       $meta_obj = eval { CPAN::Meta->load_file($file, { lazy_validation => 0 }) };
@@ -2035,7 +2042,8 @@ sub cull_options {
     my @specs;
     my $args = {};
     # Construct the specifications for GetOptions.
-    while (my ($k, $v) = each %$specs) {
+    foreach my $k (sort keys %$specs) {
+        my $v = $specs->{$k};
         # Throw an error if specs conflict with our own.
         die "Option specification '$k' conflicts with a " . ref $self
           . " option of the same name"
@@ -2060,8 +2068,9 @@ sub cull_options {
 sub unparse_args {
   my ($self, $args) = @_;
   my @out;
-  while (my ($k, $v) = each %$args) {
-    push @out, (ref $v eq 'HASH'  ? map {+"--$k", "$_=$v->{$_}"} keys %$v :
+  foreach my $k (sort keys %$args) {
+    my $v = $args->{$k};
+    push @out, (ref $v eq 'HASH'  ? map {+"--$k", "$_=$v->{$_}"} sort keys %$v :
                 ref $v eq 'ARRAY' ? map {+"--$k", $_} @$v :
                 ("--$k", $v));
   }
@@ -2520,13 +2529,14 @@ sub prereq_report {
   my $info = $self->prereq_data;
 
   my $output = '';
-  foreach my $type (keys %$info) {
+  foreach my $type (sort keys %$info) {
     my $prereqs = $info->{$type};
     $output .= "\n$type:\n";
     my $mod_len = 2;
     my $ver_len = 4;
     my %mods;
-    while ( my ($modname, $spec) = each %$prereqs ) {
+    foreach my $modname (sort keys %$prereqs) {
+      my $spec = $prereqs->{$modname};
       my $len  = length $modname;
       $mod_len = $len if $len > $mod_len;
       $spec    ||= '0';
@@ -2637,7 +2647,7 @@ sub get_test_types {
   my ($self) = @_;
 
   my $t = $self->{properties}->{test_types};
-  return ( defined $t ? ( keys %$t ) : () );
+  return ( defined $t ? ( wantarray ? sort keys %$t : keys %$t ) : () );
 }
 
 
@@ -2718,11 +2728,11 @@ sub do_tests {
 sub run_tap_harness {
   my ($self, $tests) = @_;
 
-  require TAP::Harness;
+  require TAP::Harness::Env;
 
   # TODO allow the test @INC to be set via our API?
 
-  my $aggregate = TAP::Harness->new({
+  my $aggregate = TAP::Harness::Env->create({
     lib => [@INC],
     verbosity => $self->{properties}{verbose},
     switches  => [ $self->harness_switches ],
@@ -2751,7 +2761,11 @@ sub run_visual_script {
 }
 
 sub harness_switches {
-    shift->{properties}{debugger} ? qw(-w -d) : ();
+    my $self = shift;
+    my @res;
+    push @res, qw(-w -d) if $self->{properties}{debugger};
+    push @res, '-MDevel::Cover' if $self->{properties}{cover};
+    return @res;
 }
 
 sub test_files {
@@ -2802,10 +2816,7 @@ sub ACTION_testcover {
           && $self->up_to_date($self->test_files, $cover_files);
   }
 
-  local $Test::Harness::switches    =
-  local $Test::Harness::Switches    =
-  local $ENV{HARNESS_PERL_SWITCHES} = "-MDevel::Cover";
-
+  local $self->{properties}{cover} = 1;
   $self->depends_on('test');
   $self->do_system('cover');
 }
@@ -2845,8 +2856,8 @@ sub process_files_by_extension {
   my $method = "find_${ext}_files";
   my $files = $self->can($method) ? $self->$method() : $self->_find_file_by_type($ext,  'lib');
 
-  while (my ($file, $dest) = each %$files) {
-    $self->copy_if_modified(from => $file, to => File::Spec->catfile($self->blib, $dest) );
+  foreach my $file (sort keys %$files) {
+    $self->copy_if_modified(from => $file, to => File::Spec->catfile($self->blib, $files->{$file}) );
   }
 }
 
@@ -2880,9 +2891,9 @@ sub process_share_dir_files {
   my $share_prefix = File::Spec->catdir($self->blib, qw/lib auto share/);
 
   # copy all share files to blib
-  while (my ($file, $dest) = each %$files) {
+  foreach my $file (sort keys %$files) {
     $self->copy_if_modified(
-      from => $file, to => File::Spec->catfile( $share_prefix, $dest )
+      from => $file, to => File::Spec->catfile( $share_prefix, $files->{$file} )
     );
   }
 }
@@ -2899,7 +2910,7 @@ sub _find_share_dir_files {
   }
 
   if ( $share_dir->{module} ) {
-    for my $mod ( keys %{ $share_dir->{module} } ) {
+    for my $mod ( sort keys %{ $share_dir->{module} } ) {
       (my $altmod = $mod) =~ s{::}{-}g;
       my $prefix = "module/$altmod";
       push @file_map, $self->_share_dir_map($prefix, $share_dir->{module}{$mod});
@@ -2925,7 +2936,8 @@ sub process_PL_files {
   my ($self) = @_;
   my $files = $self->find_PL_files;
 
-  while (my ($file, $to) = each %$files) {
+  foreach my $file (sort keys %$files) {
+    my $to = $files->{$file};
     unless ($self->up_to_date( $file, $to )) {
       $self->run_perl_script($file, [], [@$to]) or die "$file failed";
       $self->add_to_cleanup(@$to);
@@ -2938,7 +2950,8 @@ sub process_xs_files {
   return if $self->pureperl_only && $self->allow_pureperl;
   my $files = $self->find_xs_files;
   croak 'Can\'t build xs files under --pureperl-only' if %$files && $self->pureperl_only;
-  while (my ($from, $to) = each %$files) {
+  foreach my $from (sort keys %$files) {
+    my $to = $files->{$from};
     unless ($from eq $to) {
       $self->add_to_cleanup($to);
       $self->copy_if_modified( from => $from, to => $to );
@@ -2958,7 +2971,7 @@ sub process_script_files {
   my $script_dir = File::Spec->catdir($self->blib, 'script');
   File::Path::mkpath( $script_dir );
 
-  foreach my $file (keys %$files) {
+  foreach my $file (sort keys %$files) {
     my $result = $self->copy_if_modified($file, $script_dir, 'flatten') or next;
     $self->fix_shebang_line($result) unless $self->is_vmsish;
     $self->make_executable($result);
@@ -3016,7 +3029,7 @@ sub find_test_files {
   my $p = $self->{properties};
 
   if (my $files = $p->{test_files}) {
-    $files = [keys %$files] if ref $files eq 'HASH';
+    $files = [sort keys %$files] if ref $files eq 'HASH';
     $files = [map { -d $_ ? $self->expand_test_dir($_) : $_ }
               map glob,
               $self->split_like_shell($files)];
@@ -3076,13 +3089,6 @@ sub fix_shebang_line { # Adapted from fixin() in ExtUtils::MM_Unix 1.35
     $self->log_verbose("Changing sharpbang in $file to $interpreter\n");
     my $shb = '';
     $shb .= $c->get('sharpbang')."$interpreter $arg\n" if $does_shbang;
-
-    # I'm not smart enough to know the ramifications of changing the
-    # embedded newlines here to \n, so I leave 'em in.
-    $shb .= qq{
-eval 'exec $interpreter $arg -S \$0 \${1+"\$\@"}'
-    if 0; # not running under some shell
-} unless $self->is_windowsish; # this won't work on win32, so don't
 
     open(my $FIXOUT, '>', "$file.new")
       or die "Can't create new $file: $!\n";
@@ -3222,7 +3228,7 @@ sub manify_bin_pods {
   File::Path::mkpath( $mandir, 0, oct(777) );
 
   require Pod::Man;
-  foreach my $file (keys %$files) {
+  foreach my $file (sort keys %$files) {
     # Pod::Simple based parsers only support one document per instance.
     # This is expected to change in a future version (Pod::Simple > 3.03).
     my $parser  = Pod::Man->new( %podman_args );
@@ -3248,11 +3254,11 @@ sub manify_lib_pods {
   File::Path::mkpath( $mandir, 0, oct(777) );
 
   require Pod::Man;
-  while (my ($file, $relfile) = each %$files) {
+  foreach my $file (sort keys %$files) {
     # Pod::Simple based parsers only support one document per instance.
     # This is expected to change in a future version (Pod::Simple > 3.03).
     my $parser  = Pod::Man->new( %podman_args );
-    my $manpage = $self->man3page_name( $relfile ) . '.' .
+    my $manpage = $self->man3page_name( $files->{$file} ) . '.' .
                   $self->config( 'man3ext' );
     my $outfile = File::Spec->catfile( $mandir, $manpage);
     next if $self->up_to_date( $file, $outfile );
@@ -3368,7 +3374,7 @@ sub htmlify_pods {
   my $errors = 0;
 
   POD:
-  foreach my $pod ( keys %$pods ) {
+  foreach my $pod ( sort keys %$pods ) {
 
     my ($name, $path) = File::Basename::fileparse($pods->{$pod},
       $self->file_qr('\.(?:pm|plx?|pod)$')
@@ -3399,10 +3405,10 @@ sub htmlify_pods {
         depth => $depth,
       );
       eval {
-        ActivePerl::DocTools::Pod::pod2html(%opts);
+        ActivePerl::DocTools::Pod::pod2html(map { ($_, $opts{$_}) } sort keys %opts);
         1;
       } or $self->log_warn("[$htmltool] pod2html (" .
-        join(", ", map { "q{$_} => q{$opts{$_}}" } (keys %opts)) . ") failed: $@");
+        join(", ", map { "q{$_} => q{$opts{$_}}" } (sort keys %opts)) . ") failed: $@");
     } else {
       my $path2root = File::Spec->catdir((File::Spec->updir) x @dirs);
       open(my $fh, '<', $infile) or die "Can't read $infile: $!";
@@ -3515,7 +3521,7 @@ sub ACTION_diff {
 
   my $text_suffix = $self->file_qr('\.(pm|pod)$');
 
-  while (my $localdir = each %$installmap) {
+  foreach my $localdir (sort keys %$installmap) {
     my @localparts = File::Spec->splitdir($localdir);
     my $files = $self->rscan_dir($localdir, sub {-f});
 
@@ -3628,13 +3634,14 @@ sub ACTION_installdeps {
   }
 
   my @install;
-  while (my ($type, $prereqs) = each %$failures) {
+  foreach my $type (sort keys %$failures) {
+    my $prereqs = $failures->{$type};
     if($type =~ m/^(?:\w+_)?requires$/) {
-      push(@install, keys %$prereqs);
+      push(@install, sort keys %$prereqs);
       next;
     }
     $self->log_info("Checking optional dependencies:\n");
-    while (my ($module, $status) = each %$prereqs) {
+    foreach my $module (sort keys %$prereqs) {
       push(@install, $module) if($self->y_n("Install $module?", 'y'));
     }
   }
@@ -4044,7 +4051,7 @@ sub ACTION_distdir {
   $self->log_info("Creating $dist_dir\n");
   $self->add_to_cleanup($dist_dir);
 
-  foreach my $file (keys %$dist_files) {
+  foreach my $file (sort keys %$dist_files) {
     next if $file =~ m{^MYMETA\.}; # Double check that we skip MYMETA.*
     my $new = $self->copy_if_modified(from => $file, to_dir => $dist_dir, verbose => 0);
   }
@@ -4333,7 +4340,7 @@ sub share_dir {
     if ( defined $share_dir->{module} ) {
       my $mod_hash = $share_dir->{module};
       if ( ref $mod_hash eq 'HASH' ) {
-        for my $k ( keys %$mod_hash ) {
+        for my $k ( sort keys %$mod_hash ) {
           if ( ! ref $mod_hash->{$k} ) {
             $mod_hash->{$k} = [ $mod_hash->{$k} ];
           }
@@ -4440,10 +4447,11 @@ BEGIN { *scripts = \&script_files; }
 sub _software_license_class {
   my ($self, $license) = @_;
   if ($self->valid_licenses->{$license} && eval { require Software::LicenseUtils; Software::LicenseUtils->VERSION(0.103009) }) {
-    my ($class) = Software::LicenseUtils->guess_license_from_meta_key($license, 1);
-	eval "require $class";
-	#die $class;
-	return $class;
+    my @classes = Software::LicenseUtils->guess_license_from_meta_key($license, 1);
+    if (@classes == 1) {
+      eval "require $classes[0]";
+      return $classes[0];
+    }
   }
   LICENSE: for my $l ( $self->valid_licenses->{ $license }, $license ) {
     next unless defined $l;
@@ -4545,7 +4553,7 @@ sub _write_meta_files {
 sub _get_meta_object {
   my $self = shift;
   my %args = @_;
-  return unless $self->try_require("CPAN::Meta", "2.110420");
+  return unless $self->try_require("CPAN::Meta", "2.142060");
 
   my $meta;
   eval {
@@ -4763,7 +4771,7 @@ sub find_dist_packages {
   my %dist_files = map { $self->localize_file_path($_) => $_ }
                        keys %$manifest;
 
-  my @pm_files = grep { $_ !~ m{^t} } # skip things in t/
+  my @pm_files = sort grep { $_ !~ m{^t} } # skip things in t/
                    grep {exists $dist_files{$_}}
                      keys %{ $self->find_pm_files };
 
@@ -4812,7 +4820,7 @@ sub find_packages_in_files {
   # Then we iterate over all the packages found above, identifying conflicts
   # and selecting the "best" candidate for recording the file & version
   # for each package.
-  foreach my $package ( keys( %alt ) ) {
+  foreach my $package ( sort keys( %alt ) ) {
     my $result = $self->_resolve_module_versions( $alt{$package} );
 
     if ( exists( $prime{$package} ) ) { # primary package selected
@@ -5253,7 +5261,7 @@ sub rscan_dir {
              ref($pattern) eq 'CODE' ? sub {push @result, $File::Find::name if $pattern->()} :
              die "Unknown pattern type";
 
-  File::Find::find({wanted => $subr, no_chdir => 1}, $dir);
+  File::Find::find({wanted => $subr, no_chdir => 1, preprocess => sub { sort @_ } }, $dir);
   return \@result;
 }
 
@@ -5344,7 +5352,7 @@ sub link_c {
     module_name => $module_name,
     objects     => [$spec->{obj_file}, @$objects],
     lib_file    => $spec->{lib_file},
-    extra_linker_flags => $p->{extra_linker_flags} );
+    extra_linker_flags => $self->extra_linker_flags );
 
   return $spec->{lib_file};
 }

@@ -2,7 +2,7 @@ package Module::Build::Platform::Windows;
 
 use strict;
 use warnings;
-our $VERSION = '0.4212';
+our $VERSION = '0.4224';
 $VERSION = eval $VERSION;
 
 use Config;
@@ -213,45 +213,40 @@ sub split_like_shell {
   my @argv;
   return @argv unless defined() && length();
 
-  my $arg = '';
-  my( $i, $quote_mode ) = ( 0, 0 );
+  my $length = length;
+  m/\G\s*/gc;
 
-  while ( $i < length() ) {
-
-    my $ch      = substr( $_, $i  , 1 );
-    my $next_ch = substr( $_, $i+1, 1 );
-
-    if ( $ch eq '\\' && $next_ch eq '"' ) {
-      $arg .= '"';
-      $i++;
-    } elsif ( $ch eq '\\' && $next_ch eq '\\' ) {
-      $arg .= '\\';
-      $i++;
-    } elsif ( $ch eq '"' && $next_ch eq '"' && $quote_mode ) {
-      $quote_mode = !$quote_mode;
-      $arg .= '"';
-      $i++;
-    } elsif ( $ch eq '"' && $next_ch eq '"' && !$quote_mode &&
-	      ( $i + 2 == length()  ||
-		substr( $_, $i + 2, 1 ) eq ' ' )
-	    ) { # for cases like: a"" => [ 'a' ]
-      push( @argv, $arg );
-      $arg = '';
-      $i += 2;
-    } elsif ( $ch eq '"' ) {
-      $quote_mode = !$quote_mode;
-    } elsif ( $ch eq ' ' && !$quote_mode ) {
-      push( @argv, $arg ) if $arg;
-      $arg = '';
-      ++$i while substr( $_, $i + 1, 1 ) eq ' ';
-    } else {
-      $arg .= $ch;
+  ARGS: until ( pos == $length ) {
+    my $quote_mode;
+    my $arg = '';
+    CHARS: until ( pos == $length ) {
+      if ( m/\G((?:\\\\)+)(?=\\?(")?)/gc ) {
+          if (defined $2) {
+              $arg .= '\\' x (length($1) / 2);
+          }
+          else {
+              $arg .= $1;
+          }
+      }
+      elsif ( m/\G\\"/gc ) {
+        $arg .= '"';
+      }
+      elsif ( m/\G"/gc ) {
+        if ( $quote_mode && m/\G"/gc ) {
+            $arg .= '"';
+        }
+        $quote_mode = !$quote_mode;
+      }
+      elsif ( !$quote_mode && m/\G\s+/gc ) {
+        last;
+      }
+      elsif ( m/\G(.)/sgc ) {
+        $arg .= $1;
+      }
     }
-
-    $i++;
+    push @argv, $arg;
   }
 
-  push( @argv, $arg ) if defined( $arg ) && length( $arg );
   return @argv;
 }
 

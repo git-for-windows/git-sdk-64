@@ -6,12 +6,14 @@
 # of the Error distribution as a whole is the GPLv1+ and the Artistic
 # licence).
 
+package Error::Simple;
+
 use strict;
 use warnings;
 
 use vars qw($VERSION);
 
-$VERSION = "0.17024";
+$VERSION = "0.17025";
 
 use Error;
 

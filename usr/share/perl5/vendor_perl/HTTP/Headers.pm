@@ -1,14 +1,15 @@
 package HTTP::Headers;
 
 use strict;
-use Carp ();
+use warnings;
 
-use vars qw($VERSION $TRANSLATE_UNDERSCORE);
-$VERSION = "6.05";
+our $VERSION = '6.14';
+
+use Carp ();
 
 # The $TRANSLATE_UNDERSCORE variable controls whether '_' can be used
 # as a replacement for '-' in header field names.
-$TRANSLATE_UNDERSCORE = 1 unless defined $TRANSLATE_UNDERSCORE;
+our $TRANSLATE_UNDERSCORE = 1 unless defined $TRANSLATE_UNDERSCORE;
 
 # "Good Practice" order of HTTP message headers:
 #    - General-Headers
@@ -238,6 +239,18 @@ sub scan
     }
 }
 
+sub flatten {
+	my($self)=@_;
+
+	(
+		map {
+			my $k = $_;
+			map {
+				( $k => $_ )
+			} $self->header($_);
+		} $self->header_field_names
+	);
+}
 
 sub as_string
 {
@@ -250,6 +263,7 @@ sub as_string
 	my $vals = $self->{$key};
 	if ( ref($vals) eq 'ARRAY' ) {
 	    for my $val (@$vals) {
+		$val = '' if not defined $val;
 		my $field = $standard_case{$key} || $self->{'::std_case'}{$key} || $key;
 		$field =~ s/^://;
 		if ( index($val, "\n") >= 0 ) {
@@ -259,6 +273,7 @@ sub as_string
 	    }
 	}
 	else {
+	    $vals = '' if not defined $vals;
 	    my $field = $standard_case{$key} || $self->{'::std_case'}{$key} || $key;
 	    $field =~ s/^://;
 	    if ( index($vals, "\n") >= 0 ) {
@@ -450,11 +465,17 @@ sub _basic_auth {
 
 1;
 
-__END__
+=pod
+
+=encoding UTF-8
 
 =head1 NAME
 
 HTTP::Headers - Class encapsulating HTTP Message headers
+
+=head1 VERSION
+
+version 6.14
 
 =head1 SYNOPSIS
 
@@ -521,7 +542,7 @@ If no such field exists C<undef> will be returned.
 
 A multi-valued field will be returned as separate values in list
 context and will be concatenated with ", " as separator in scalar
-context.  The HTTP spec (RFC 2616) promise that joining multiple
+context.  The HTTP spec (RFC 2616) promises that joining multiple
 values in this way will not change the semantic of a header field, but
 in practice there are cases like old-style Netscape cookies (see
 L<HTTP::Cookies>) where "," is used as part of the syntax of a single
@@ -611,6 +632,10 @@ will be visited in the recommended "Good Practice" order.
 Any return values of the callback routine are ignored.  The loop can
 be broken by raising an exception (C<die>), but the caller of scan()
 would have to trap the exception itself.
+
+=item $h->flatten()
+
+Returns the list of pairs of keys and values.
 
 =item $h->as_string
 
@@ -845,10 +870,21 @@ These field names are returned with the ':' intact for
 $h->header_field_names and the $h->scan callback, but the colons do
 not show in $h->as_string.
 
-=head1 COPYRIGHT
+=head1 AUTHOR
 
-Copyright 1995-2005 Gisle Aas.
+Gisle Aas <gisle@activestate.com>
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 1994-2017 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+__END__
+
+
+#ABSTRACT: Class encapsulating HTTP Message headers
 
