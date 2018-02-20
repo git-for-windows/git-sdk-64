@@ -9,7 +9,7 @@ use vars qw/	$AUTHOR $VERSION
 		$sha1 $sha1_short $_revision $_repository
 		$_q $_authors $_authors_prog %users/;
 $AUTHOR = 'Eric Wong <normalperson@yhbt.net>';
-$VERSION = '2.16.1.windows.4';
+$VERSION = '2.16.2.windows.1';
 
 use Carp qw/croak/;
 use File::Basename qw/dirname basename/;
@@ -932,6 +932,7 @@ sub cmd_dcommit {
 		# information from different SVN repos, and paths
 		# which are not underneath this repository root.
 		my $rooturl = $gs->repos_root;
+	        Git::SVN::remove_username($rooturl);
 		foreach my $d (@$linear_refs) {
 			my %parentshash;
 			read_commit_parents(\%parentshash, $d);
