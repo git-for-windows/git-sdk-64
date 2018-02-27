@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright (C) 2012-2017 the Free Software Foundation, Inc.
+ * Copyright (C) 2012-2018 the Free Software Foundation, Inc.
  *
  * This file is part of GAWK, the GNU implementation of the
  * AWK Programming Language.
@@ -323,13 +323,15 @@ typedef struct awk_string {
 	size_t len;	/* length thereof, in chars */
 } awk_string_t;
 
+enum AWK_NUMBER_TYPE {
+	AWK_NUMBER_TYPE_DOUBLE,
+	AWK_NUMBER_TYPE_MPFR,
+	AWK_NUMBER_TYPE_MPZ
+};
+
 typedef struct awk_number {
 	double d;	/* always populated in data received from gawk */
-	enum AWK_NUMBER_TYPE {
-		AWK_NUMBER_TYPE_DOUBLE,
-		AWK_NUMBER_TYPE_MPFR,
-		AWK_NUMBER_TYPE_MPZ
-	} type;
+	enum AWK_NUMBER_TYPE type;
 	void *ptr;	/* either NULL or mpfr_ptr or mpz_ptr */
 } awk_number_t;
 
@@ -945,7 +947,7 @@ typedef struct gawk_api {
 
 static inline awk_value_t *
 r_make_string_type(const gawk_api_t *api,	/* needed for emalloc */
-		   awk_ext_id_t *ext_id,	/* ditto */
+		   awk_ext_id_t ext_id,		/* ditto */
 		   const char *string,
 		   size_t length,
 		   awk_bool_t duplicate,
@@ -975,7 +977,7 @@ r_make_string_type(const gawk_api_t *api,	/* needed for emalloc */
 
 static inline awk_value_t *
 r_make_string(const gawk_api_t *api,	/* needed for emalloc */
-	      awk_ext_id_t *ext_id,	/* ditto */
+	      awk_ext_id_t ext_id,	/* ditto */
 	      const char *string,
 	      size_t length,
 	      awk_bool_t duplicate,
