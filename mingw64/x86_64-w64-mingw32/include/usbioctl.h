@@ -15,7 +15,6 @@
 #ifndef __USBIOCTL_H__
 #define __USBIOCTL_H__
 
-#include <_mingw_mac.h>
 #include <minwindef.h>
 #include <winapifamily.h>
 
