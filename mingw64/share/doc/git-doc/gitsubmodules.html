@@ -463,7 +463,7 @@ in is called a superproject.</p>
 consists of (i) a Git directory located under the <code>$GIT_DIR/modules/</code>
 directory of its superproject, (ii) a working directory inside the
 superproject&#8217;s working directory, and a <code>.git</code> file at the root of
-the submodule’s working directory pointing to (i).</p>
+the submodule&#8217;s working directory pointing to (i).</p>
 </div>
 <div class="paragraph">
 <p>Assuming the submodule has a Git directory at <code>$GIT_DIR/modules/foo/</code>
@@ -474,12 +474,12 @@ in its <code>.gitmodules</code> file (see <a href="gitmodules.html">gitmodules</
 </div>
 <div class="paragraph">
 <p>The <code>gitlink</code> entry contains the object name of the commit that the
-superproject expects the submodule’s working directory to be at.</p>
+superproject expects the submodule&#8217;s working directory to be at.</p>
 </div>
 <div class="paragraph">
 <p>The section <code>submodule.foo.*</code> in the <code>.gitmodules</code> file gives additional
-hints to Gits porcelain layer such as where to obtain the submodule via
-the <code>submodule.foo.url</code> setting.</p>
+hints to Git&#8217;s porcelain layer. For example, the <code>submodule.foo.url</code>
+setting specifies where to obtain the submodule.</p>
 </div>
 <div class="paragraph">
 <p>Submodules can be used for at least two different use cases:</p>
@@ -498,22 +498,25 @@ fix itself to new versions only when desired.</p>
 <li>
 <p>Splitting a (logically single) project into multiple
 repositories and tying them back together. This can be used to
-overcome current limitations of Gits implementation to have
+overcome current limitations of Git&#8217;s implementation to have
 finer grained access:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Size of the git repository:
+<p>Size of the Git repository:
 In its current form Git scales up poorly for large repositories containing
 content that is not compressed by delta computation between trees.
-However you can also use submodules to e.g. hold large binary assets
-and these repositories are then shallowly cloned such that you do not
+For example, you can use submodules to hold large binary assets
+and these repositories can be shallowly cloned such that you do not
 have a large history locally.</p>
 </li>
 <li>
 <p>Transfer size:
 In its current form Git requires the whole working tree present. It
-does not allow partial trees to be transferred in fetch or clone.</p>
+does not allow partial trees to be transferred in fetch or clone.
+If the project you work on consists of multiple repositories tied
+together as submodules in a superproject, you can avoid fetching the
+working trees of the repositories you are not interested in.</p>
 </li>
 <li>
 <p>Access control:
@@ -537,9 +540,10 @@ read/write policies for different users.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>The command line for those commands that support taking submodule specs.
-Most commands have a boolean flag <em>--recurse-submodules</em> whether to
-recurse into submodules. Examples are <code>ls-files</code> or <code>checkout</code>.
+<p>The command line for those commands that support taking submodules
+as part of their pathspecs. Most commands have a boolean flag
+<code>--recurse-submodules</code> which specify whether to recurse into submodules.
+Examples are <code>grep</code> and <code>checkout</code>.
 Some commands take enums, such as <code>fetch</code> and <code>push</code>, where you can
 specify how submodules are affected.</p>
 </li>
@@ -552,8 +556,8 @@ submodule.</p>
 <p>For example an effect from the submodule&#8217;s <code>.gitignore</code> file
 would be observed when you run <code>git status --ignore-submodules=none</code> in
 the superproject. This collects information from the submodule&#8217;s working
-directory by running <code>status</code> in the submodule, which does pay attention
-to its <code>.gitignore</code> file.</p>
+directory by running <code>status</code> in the submodule while paying attention
+to the <code>.gitignore</code> file of the submodule.</p>
 </div>
 <div class="paragraph">
 <p>The submodule&#8217;s <code>$GIT_DIR/config</code> file would come into play when running
@@ -565,22 +569,22 @@ file.</p>
 </li>
 <li>
 <p>The configuration file <code>$GIT_DIR/config</code> in the superproject.
-Typical configuration at this place is controlling if a submodule
-is recursed into at all via the <code>active</code> flag for example.</p>
+Git only recurses into active submodules (see "ACTIVE SUBMODULES"
+section below).</p>
 <div class="paragraph">
 <p>If the submodule is not yet initialized, then the configuration
-inside the submodule does not exist yet, so configuration where to
+inside the submodule does not exist yet, so where to
 obtain the submodule from is configured here for example.</p>
 </div>
 </li>
 <li>
-<p>the <code>.gitmodules</code> file inside the superproject. Additionally to the
-required mapping between submodule&#8217;s name and path, a project usually
+<p>The <code>.gitmodules</code> file inside the superproject. A project usually
 uses this file to suggest defaults for the upstream collection
-of repositories.</p>
+of repositories for the mapping that is required between a
+submodule&#8217;s name and its path.</p>
 <div class="paragraph">
-<p>This file mainly serves as the mapping between name and path in
-the superproject, such that the submodule&#8217;s git directory can be
+<p>This file mainly serves as the mapping between the name and path of submodules
+in the superproject, such that the submodule&#8217;s Git directory can be
 located.</p>
 </div>
 <div class="paragraph">
@@ -614,20 +618,20 @@ using older versions of Git.</p>
 <p>It is possible to construct these old form repositories manually.</p>
 </div>
 <div class="paragraph">
-<p>When deinitialized or deleted (see below), the submodule’s Git
+<p>When deinitialized or deleted (see below), the submodule&#8217;s Git
 directory is automatically moved to <code>$GIT_DIR/modules/&lt;name&gt;/</code>
 of the superproject.</p>
 </div>
 </li>
 <li>
 <p>Deinitialized submodule: A <code>gitlink</code>, and a <code>.gitmodules</code> entry,
-but no submodule working directory. The submodule’s git directory
-may be there as after deinitializing the git directory is kept around.
+but no submodule working directory. The submodule&#8217;s Git directory
+may be there as after deinitializing the Git directory is kept around.
 The directory which is supposed to be the working directory is empty instead.</p>
 <div class="paragraph">
 <p>A submodule can be deinitialized by running <code>git submodule deinit</code>.
 Besides emptying the working directory, this command only modifies
-the superproject’s <code>$GIT_DIR/config</code> file, so the superproject’s history
+the superproject&#8217;s <code>$GIT_DIR/config</code> file, so the superproject&#8217;s history
 is not affected. This can be undone using <code>git submodule init</code>.</p>
 </div>
 </li>
@@ -636,9 +640,9 @@ is not affected. This can be undone using <code>git submodule init</code>.</p>
 <code>git rm &lt;submodule path&gt; &amp;&amp; git commit</code>. This can be undone
 using <code>git revert</code>.</p>
 <div class="paragraph">
-<p>The deletion removes the superproject’s tracking data, which are
+<p>The deletion removes the superproject&#8217;s tracking data, which are
 both the <code>gitlink</code> entry and the section in the <code>.gitmodules</code> file.
-The submodule’s working directory is removed from the file
+The submodule&#8217;s working directory is removed from the file
 system, but the Git directory is kept around as it to make it
 possible to checkout past commits without requiring fetching
 from another repository.</p>
@@ -649,6 +653,77 @@ from another repository.</p>
 </div>
 </li>
 </ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_active_submodules">ACTIVE SUBMODULES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A submodule is considered active,</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>(a) if `submodule.&lt;name&gt;.active` is set to `true`
+   or
+(b) if the submodule's path matches the pathspec in `submodule.active`
+   or
+(c) if `submodule.&lt;name&gt;.url` is set.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and these are evaluated in this order.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>[submodule "foo"]
+  active = false
+  url = https://example.org/foo
+[submodule "bar"]
+  active = true
+  url = https://example.org/bar
+[submodule "baz"]
+  url = https://example.org/baz</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the above config only the submodule <em>bar</em> and <em>baz</em> are active,
+<em>bar</em> due to (a) and <em>baz</em> due to (c). <em>foo</em> is inactive because
+(a) takes precedence over (c)</p>
+</div>
+<div class="paragraph">
+<p>Note that (c) is a historical artefact and will be ignored if the
+(a) and (b) specify that the submodule is not active. In other words,
+if we have an <code>submodule.&lt;name&gt;.active</code> set to <code>false</code> or if the
+submodule&#8217;s path is excluded in the pathspec in <code>submodule.active</code>, the
+url doesn&#8217;t matter whether it is present or not. This is illustrated in
+the example that follows.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>[submodule "foo"]
+  active = true
+  url = https://example.org/foo
+[submodule "bar"]
+  url = https://example.org/bar
+[submodule "baz"]
+  url = https://example.org/baz
+[submodule "bob"]
+  ignore = true
+[submodule]
+  active = b*
+  active = :(exclude) baz</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In here all submodules except <em>baz</em> (foo, bar, bob) are active.
+<em>foo</em> due to its own active flag and all the others due to the
+submodule active pathspec, which specifies that any submodule
+starting with <em>b</em> except <em>baz</em> are also active, regardless of the
+presence of the .url field.</p>
 </div>
 </div>
 </div>
@@ -755,7 +830,7 @@ your working tree. Alternatively you can set <em>submodule.recurse</em> to have
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-02-20 11:11:17 Coordinated Universal Time
+Last updated 2018-03-23 16:28:08 Coordinated Universal Time
 </div>
 </div>
 </body>

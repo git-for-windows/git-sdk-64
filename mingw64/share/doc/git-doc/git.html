@@ -1455,6 +1455,15 @@ symbolic notation:</p>
 <div class="paragraph">
 <p>Various Git commands use the following environment variables:</p>
 </div>
+<div class="paragraph">
+<p>System
+<sub>~</sub><sub>~</sub><sub>~</sub><sub>~</sub><sub>~</sub><sub>~</sub>
+<code>HOME</code>::
+	Specifies the path to the user&#8217;s home directory. On Windows, if
+	unset, Git will set a process environment variable equal to:
+	<code>$HOMEDRIVE$HOMEPATH</code> if both <code>$HOMEDRIVE</code> and <code>$HOMEPATH</code> exist;
+	otherwise <code>$USERPROFILE</code> if <code>$USERPROFILE</code> exists.</p>
+</div>
 <div class="sect2">
 <h3 id="_the_git_repository">The Git Repository</h3>
 <div class="paragraph">
@@ -1816,6 +1825,18 @@ This option overrides setting the <code>GIT_CURL_VERBOSE</code> environment
 variable.
 See <code>GIT_TRACE</code> for available trace output options.</p>
 </dd>
+<dt class="hdlist1"><code>GIT_TRACE_CURL_NO_DATA</code></dt>
+<dd>
+<p>When a curl trace is enabled (see <code>GIT_TRACE_CURL</code> above), do not dump
+data (that is, only dump info lines and headers).</p>
+</dd>
+<dt class="hdlist1"><code>GIT_REDACT_COOKIES</code></dt>
+<dd>
+<p>This can be set to a comma-separated list of strings. When a curl trace
+is enabled (see <code>GIT_TRACE_CURL</code> above), whenever a "Cookies:" header
+sent by the client is dumped, values of cookies whose key is in that
+list (case-sensitive) are redacted.</p>
+</dd>
 <dt class="hdlist1"><code>GIT_LITERAL_PATHSPECS</code></dt>
 <dd>
 <p>Setting this variable to <code>1</code> will cause Git to treat all
@@ -2076,7 +2097,7 @@ subscribed to the list to send a message there.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-02-20 11:11:17 Coordinated Universal Time
+Last updated 2018-03-23 16:28:07 Coordinated Universal Time
 </div>
 </div>
 </body>

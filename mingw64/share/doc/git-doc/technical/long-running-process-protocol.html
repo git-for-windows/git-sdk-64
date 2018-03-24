@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.5">
-<title>string-list API</title>
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Long-running process protocol</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -89,13 +89,12 @@ strong,b{font-weight:bold;line-height:inherit}
 small{font-size:60%;line-height:inherit}
 code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
 ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
-ul,ol,ul.no-bullet,ol.no-bullet{margin-left:1.5em}
+ul,ol{margin-left:1.5em}
 ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
 ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
 ul.square{list-style-type:square}
 ul.circle{list-style-type:circle}
 ul.disc{list-style-type:disc}
-ul.no-bullet{list-style:none}
 ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
 dl dt{margin-bottom:.3125em;font-weight:bold}
 dl dd{margin-bottom:1.25em}
@@ -131,7 +130,11 @@ strong strong{font-weight:400}
 kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
 .keyseq kbd:first-child{margin-left:0}
 .keyseq kbd:last-child{margin-right:0}
-.menuseq,.menu{color:rgba(0,0,0,.8)}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
 b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
 b.button:before{content:"[";padding:0 3px 0 2px}
 b.button:after{content:"]";padding:0 2px 0 3px}
@@ -198,7 +201,7 @@ table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
 table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
 .admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
 .admonitionblock>table td.icon{text-align:center;width:80px}
-.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon img{max-width:initial}
 .admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
@@ -254,13 +257,13 @@ table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
 table.tableblock{max-width:100%;border-collapse:separate}
 table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
 table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
-table.grid-all th.tableblock,table.grid-all td.tableblock{border-width:0 1px 1px 0}
-table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
-table.grid-cols th.tableblock,table.grid-cols td.tableblock{border-width:0 1px 0 0}
-table.grid-all *>tr>.tableblock:last-child,table.grid-cols *>tr>.tableblock:last-child{border-right-width:0}
-table.grid-rows th.tableblock,table.grid-rows td.tableblock{border-width:0 0 1px 0}
-table.grid-all tbody>tr:last-child>th.tableblock,table.grid-all tbody>tr:last-child>td.tableblock,table.grid-all thead:last-child>tr>th.tableblock,table.grid-rows tbody>tr:last-child>th.tableblock,table.grid-rows tbody>tr:last-child>td.tableblock,table.grid-rows thead:last-child>tr>th.tableblock{border-bottom-width:0}
-table.grid-rows tfoot>tr>th.tableblock,table.grid-rows tfoot>tr>td.tableblock{border-width:1px 0 0 0}
+table.grid-all>thead>tr>.tableblock,table.grid-all>tbody>tr>.tableblock{border-width:0 1px 1px 0}
+table.grid-all>tfoot>tr>.tableblock{border-width:1px 1px 0 0}
+table.grid-cols>*>tr>.tableblock{border-width:0 1px 0 0}
+table.grid-rows>thead>tr>.tableblock,table.grid-rows>tbody>tr>.tableblock{border-width:0 0 1px 0}
+table.grid-rows>tfoot>tr>.tableblock{border-width:1px 0 0 0}
+table.grid-all>*>tr>.tableblock:last-child,table.grid-cols>*>tr>.tableblock:last-child{border-right-width:0}
+table.grid-all>tbody>tr:last-child>.tableblock,table.grid-all>thead:last-child>tr>.tableblock,table.grid-rows>tbody>tr:last-child>.tableblock,table.grid-rows>thead:last-child>tr>.tableblock{border-bottom-width:0}
 table.frame-all{border-width:1px}
 table.frame-sides{border-width:0 1px}
 table.frame-topbot{border-width:1px 0}
@@ -281,10 +284,12 @@ ul li ol{margin-left:1.5em}
 dl dd{margin-left:1.125em}
 dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
 ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
-ul.unstyled,ol.unnumbered,ul.checklist,ul.none{list-style-type:none}
-ul.unstyled,ol.unnumbered,ul.checklist{margin-left:.625em}
-ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1em;font-size:.85em}
-ul.checklist li>p:first-child>input[type="checkbox"]:first-child{width:1em;position:relative;top:1px}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
 ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
 ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
 ul.inline>li>*{display:block}
@@ -301,7 +306,8 @@ ol.lowergreek{list-style-type:lower-greek}
 td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
 td.hdlist1{font-weight:bold;padding-bottom:1.25em}
 .literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
-.colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
+.colist>table tr>td:first-of-type{padding:.4em .75em 0 .75em;line-height:1;vertical-align:top}
+.colist>table tr>td:first-of-type img{max-width:initial}
 .colist>table tr>td:last-of-type{padding:.25em 0}
 .thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
 .imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
@@ -364,6 +370,7 @@ div.unbreakable{page-break-inside:avoid}
 .yellow{color:#bfbf00}
 .yellow-background{background-color:#fafa00}
 span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
 .admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
 .admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
 .admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
@@ -420,305 +427,75 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
-<h1>string-list API</h1>
+<h1>Long-running process protocol</h1>
 </div>
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The string_list API offers a data structure and functions to handle
-sorted and unsorted string lists.  A "sorted" list is one whose
-entries are sorted by string value in <code>strcmp()</code> order.</p>
+<p>This protocol is used when Git needs to communicate with an external
+process throughout the entire life of a single Git command. All
+communication is in pkt-line format (see technical/protocol-common.txt)
+over standard input and standard output.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_handshake">Handshake</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Git starts by sending a welcome message (for example,
+"git-filter-client"), a list of supported protocol version numbers, and
+a flush packet. Git expects to read the welcome message with "server"
+instead of "client" (for example, "git-filter-server"), exactly one
+protocol version number from the previously sent list, and a flush
+packet. All further communication will be based on the selected version.
+The remaining protocol description below documents "version=2". Please
+note that "version=42" in the example below does not exist and is only
+there to illustrate how the protocol would look like with more than one
+version.</p>
 </div>
 <div class="paragraph">
-<p>The <em>string_list</em> struct used to be called <em>path_list</em>, but was renamed
-because it is not specific to paths.</p>
-</div>
-<div class="paragraph">
-<p>The caller:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Allocates and clears a <code>struct string_list</code> variable.</p>
-</li>
-<li>
-<p>Initializes the members. You might want to set the flag <code>strdup_strings</code>
-if the strings should be strdup()ed. For example, this is necessary
-when you add something like git_path("&#8230;&#8203;"), since that function returns
-a static buffer that will change with the next call to git_path().</p>
-<div class="paragraph">
-<p>If you need something advanced, you can manually malloc() the <code>items</code>
-member (you need this if you add things later) and you should set the
-<code>nr</code> and <code>alloc</code> members in that case, too.</p>
-</div>
-</li>
-<li>
-<p>Adds new items to the list, using <code>string_list_append</code>,
-<code>string_list_append_nodup</code>, <code>string_list_insert</code>,
-<code>string_list_split</code>, and/or <code>string_list_split_in_place</code>.</p>
-</li>
-<li>
-<p>Can check if a string is in the list using <code>string_list_has_string</code> or
-<code>unsorted_string_list_has_string</code> and get it from the list using
-<code>string_list_lookup</code> for sorted lists.</p>
-</li>
-<li>
-<p>Can sort an unsorted list using <code>string_list_sort</code>.</p>
-</li>
-<li>
-<p>Can remove duplicate items from a sorted list using
-<code>string_list_remove_duplicates</code>.</p>
-</li>
-<li>
-<p>Can remove individual items of an unsorted list using
-<code>unsorted_string_list_delete_item</code>.</p>
-</li>
-<li>
-<p>Can remove items not matching a criterion from a sorted or unsorted
-list using <code>filter_string_list</code>, or remove empty strings using
-<code>string_list_remove_empty_items</code>.</p>
-</li>
-<li>
-<p>Finally it should free the list using <code>string_list_clear</code>.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Example:</p>
+<p>After the version negotiation Git sends a list of all capabilities that
+it supports and a flush packet. Git expects to read a list of desired
+capabilities, which must be a subset of the supported capabilities list,
+and a flush packet as response:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>struct string_list list = STRING_LIST_INIT_NODUP;
-int i;
-
-string_list_append(&amp;list, "foo");
-string_list_append(&amp;list, "bar");
-for (i = 0; i &lt; list.nr; i++)
-	printf("%s\n", list.items[i].string)</pre>
+<pre>packet:          git&gt; git-filter-client
+packet:          git&gt; version=2
+packet:          git&gt; version=42
+packet:          git&gt; 0000
+packet:          git&lt; git-filter-server
+packet:          git&lt; version=2
+packet:          git&lt; 0000
+packet:          git&gt; capability=clean
+packet:          git&gt; capability=smudge
+packet:          git&gt; capability=not-yet-invented
+packet:          git&gt; 0000
+packet:          git&lt; capability=clean
+packet:          git&lt; capability=smudge
+packet:          git&lt; 0000</pre>
 </div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-It is more efficient to build an unsorted list and sort it
-afterwards, instead of building a sorted list (<code>O(n log n)</code> instead of
-<code>O(n^2)</code>).
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>+
-However, if you use the list to check if a certain string was added
-already, you should not do that (using unsorted_string_list_has_string()),
-because the complexity would be quadratic again (but with a worse factor).</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_functions">Functions</h2>
+<h2 id="_shutdown">Shutdown</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>General ones (works with sorted and unsorted lists as well)</p>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>string_list_init</code></dt>
-<dd>
-<p>Initialize the members of the string_list, set <code>strdup_strings</code>
-member according to the value of the second parameter.</p>
-</dd>
-<dt class="hdlist1"><code>filter_string_list</code></dt>
-<dd>
-<p>Apply a function to each item in a list, retaining only the
-items for which the function returns true.  If free_util is
-true, call free() on the util members of any items that have
-to be deleted.  Preserve the order of the items that are
-retained.</p>
-</dd>
-<dt class="hdlist1"><code>string_list_remove_empty_items</code></dt>
-<dd>
-<p>Remove any empty strings from the list.  If free_util is true,
-call free() on the util members of any items that have to be
-deleted.  Preserve the order of the items that are retained.</p>
-</dd>
-<dt class="hdlist1"><code>print_string_list</code></dt>
-<dd>
-<p>Dump a string_list to stdout, useful mainly for debugging purposes. It
-can take an optional header argument and it writes out the
-string-pointer pairs of the string_list, each one in its own line.</p>
-</dd>
-<dt class="hdlist1"><code>string_list_clear</code></dt>
-<dd>
-<p>Free a string_list. The <code>string</code> pointer of the items will be freed in
-case the <code>strdup_strings</code> member of the string_list is set. The second
-parameter controls if the <code>util</code> pointer of the items should be freed
-or not.</p>
-</dd>
-</dl>
-</div>
-</li>
-<li>
-<p>Functions for sorted lists only</p>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>string_list_has_string</code></dt>
-<dd>
-<p>Determine if the string_list has a given string or not.</p>
-</dd>
-<dt class="hdlist1"><code>string_list_insert</code></dt>
-<dd>
-<p>Insert a new element to the string_list. The returned pointer can be
-handy if you want to write something to the <code>util</code> pointer of the
-string_list_item containing the just added string. If the given
-string already exists the insertion will be skipped and the
-pointer to the existing item returned.</p>
 <div class="paragraph">
-<p>Since this function uses xrealloc() (which die()s if it fails) if the
-list needs to grow, it is safe not to check the pointer. I.e. you may
-write <code>string_list_insert(...)-&gt;util = ...;</code>.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>string_list_lookup</code></dt>
-<dd>
-<p>Look up a given string in the string_list, returning the containing
-string_list_item. If the string is not found, NULL is returned.</p>
-</dd>
-<dt class="hdlist1"><code>string_list_remove_duplicates</code></dt>
-<dd>
-<p>Remove all but the first of consecutive entries that have the
-same string value.  If free_util is true, call free() on the
-util members of any items that have to be deleted.</p>
-</dd>
-</dl>
-</div>
-</li>
-<li>
-<p>Functions for unsorted lists only</p>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>string_list_append</code></dt>
-<dd>
-<p>Append a new string to the end of the string_list.  If
-<code>strdup_string</code> is set, then the string argument is copied;
-otherwise the new <code>string_list_entry</code> refers to the input
-string.</p>
-</dd>
-<dt class="hdlist1"><code>string_list_append_nodup</code></dt>
-<dd>
-<p>Append a new string to the end of the string_list.  The new
-<code>string_list_entry</code> always refers to the input string, even if
-<code>strdup_string</code> is set.  This function can be used to hand
-ownership of a malloc()ed string to a <code>string_list</code> that has
-<code>strdup_string</code> set.</p>
-</dd>
-<dt class="hdlist1"><code>string_list_sort</code></dt>
-<dd>
-<p>Sort the list&#8217;s entries by string value in <code>strcmp()</code> order.</p>
-</dd>
-<dt class="hdlist1"><code>unsorted_string_list_has_string</code></dt>
-<dd>
-<p>It&#8217;s like <code>string_list_has_string()</code> but for unsorted lists.</p>
-</dd>
-<dt class="hdlist1"><code>unsorted_string_list_lookup</code></dt>
-<dd>
-<p>It&#8217;s like <code>string_list_lookup()</code> but for unsorted lists.</p>
-<div class="paragraph">
-<p>The above two functions need to look through all items, as opposed to their
-counterpart for sorted lists, which performs a binary search.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>unsorted_string_list_delete_item</code></dt>
-<dd>
-<p>Remove an item from a string_list. The <code>string</code> pointer of the items
-will be freed in case the <code>strdup_strings</code> member of the string_list
-is set. The third parameter controls if the <code>util</code> pointer of the
-items should be freed or not.</p>
-</dd>
-<dt class="hdlist1"><code>string_list_split</code></dt>
-<dt class="hdlist1"><code>string_list_split_in_place</code></dt>
-<dd>
-<p>Split a string into substrings on a delimiter character and
-append the substrings to a <code>string_list</code>.  If <code>maxsplit</code> is
-non-negative, then split at most <code>maxsplit</code> times.  Return the
-number of substrings appended to the list.</p>
-<div class="paragraph">
-<p><code>string_list_split</code> requires a <code>string_list</code> that has <code>strdup_strings</code>
-set to true; it leaves the input string untouched and makes copies of
-the substrings in newly-allocated memory.
-<code>string_list_split_in_place</code> requires a <code>string_list</code> that has
-<code>strdup_strings</code> set to false; it splits the input string in place,
-overwriting the delimiter characters with NULs and creating new
-string_list_items that point into the original string (the original
-string must therefore not be modified or freed while the <code>string_list</code>
-is in use).</p>
-</div>
-</dd>
-</dl>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_data_structures">Data structures</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><code>struct string_list_item</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Represents an item of the list. The <code>string</code> member is a pointer to the
-string, and you may use the <code>util</code> member for any purpose, if you want.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>struct string_list</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Represents the list itself.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>The array of items are available via the <code>items</code> member.</p>
-</li>
-<li>
-<p>The <code>nr</code> member contains the number of items stored in the list.</p>
-</li>
-<li>
-<p>The <code>alloc</code> member is used to avoid reallocating at every insertion.
-You should not tamper with it.</p>
-</li>
-<li>
-<p>Setting the <code>strdup_strings</code> member to 1 will strdup() the strings
-before adding them, see above.</p>
-</li>
-<li>
-<p>The <code>compare_strings_fn</code> member is used to specify a custom compare
-function, otherwise <code>strcmp()</code> is used as the default function.</p>
-</li>
-</ol>
+<p>Git will close
+the command pipe on exit. The filter is expected to detect EOF
+and exit gracefully on its own. Git will wait until the filter
+process has stopped.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-23 11:21:48 Coordinated Universal Time
+Last updated 2018-03-16 17:15:15 Coordinated Universal Time
 </div>
 </div>
 </body>

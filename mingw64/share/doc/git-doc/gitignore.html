@@ -565,12 +565,11 @@ pathname relative to the location of the <code>.gitignore</code> file
 <code>.gitignore</code> file).</p>
 </li>
 <li>
-<p>Otherwise, Git treats the pattern as a shell glob suitable
-for consumption by fnmatch(3) with the FNM_PATHNAME flag:
-wildcards in the pattern will not match a / in the pathname.
-For example, "Documentation/*.html" matches
-"Documentation/git.html" but not "Documentation/ppc/ppc.html"
-or "tools/perf/Documentation/perf.html".</p>
+<p>Otherwise, Git treats the pattern as a shell glob: "<code>*</code>" matches
+anything except "<code>/</code>", "<code>?</code>" matches any one character except "<code>/</code>"
+and "<code>[]</code>" matches one character in a selected range. See
+fnmatch(3) and the FNM_PATHNAME flag for a more detailed
+description.</p>
 </li>
 <li>
 <p>A leading slash matches the beginning of the pathname.
@@ -707,7 +706,7 @@ everything within <code>foo/bar</code>):</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-02-20 11:11:17 Coordinated Universal Time
+Last updated 2018-03-23 16:28:08 Coordinated Universal Time
 </div>
 </div>
 </body>

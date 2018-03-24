@@ -646,18 +646,19 @@ the status.relativePaths config option below.</p>
 <div class="sect2">
 <h3 id="_short_format">Short Format</h3>
 <div class="paragraph">
-<p>In the short-format, the status of each path is shown as</p>
+<p>In the short-format, the status of each path is shown as one of these
+forms</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>XY PATH1 -&gt; PATH2</pre>
+<pre>XY PATH
+XY ORIG_PATH -&gt; PATH</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>where <code>PATH1</code> is the path in the <code>HEAD</code>, and the " <code>-&gt; PATH2</code>" part is
-shown only when <code>PATH1</code> corresponds to a different path in the
-index/worktree (i.e. the file is renamed). The <code>XY</code> is a two-letter
-status code.</p>
+<p>where <code>ORIG_PATH</code> is where the renamed/copied contents came
+from. <code>ORIG_PATH</code> is only shown when the entry is renamed or
+copied. The <code>XY</code> is a two-letter status code.</p>
 </div>
 <div class="paragraph">
 <p>The fields (including the <code>-&gt;</code>) are separated from each other by a
@@ -706,15 +707,17 @@ in which case <code>XY</code> are <code>!!</code>.</p>
 <div class="content">
 <pre>X          Y     Meaning
 -------------------------------------------------
-          [MD]   not updated
+  [AMD]   not updated
 M        [ MD]   updated in index
 A        [ MD]   added to index
-D         [ M]   deleted from index
+D                deleted from index
 R        [ MD]   renamed in index
 C        [ MD]   copied in index
 [MARC]           index and work tree matches
 [ MARC]     M    work tree changed since index
 [ MARC]     D    deleted in work tree
+[ D]        R    renamed in work tree
+[ D]        C    copied in work tree
 -------------------------------------------------
 D           D    unmerged, both deleted
 A           U    unmerged, added by us
@@ -867,13 +870,13 @@ a space.
 of similarity between the source and target of the
 move or copy). For example "R100" or "C75".
   &lt;path&gt;      The pathname.  In a renamed/copied entry, this
-is the path in the index and in the working tree.
+is the target path.
   &lt;sep&gt;       When the `-z` option is used, the 2 pathnames are separated
 with a NUL (ASCII 0x00) byte; otherwise, a tab (ASCII 0x09)
 byte separates them.
-  &lt;origPath&gt;  The pathname in the commit at HEAD.  This is only
-present in a renamed/copied entry, and tells
-where the renamed/copied contents came from.
+  &lt;origPath&gt;  The pathname in the commit at HEAD or in the index.
+This is only present in a renamed/copied entry, and
+tells where the renamed/copied contents came from.
   --------------------------------------------------------</pre>
 </div>
 </div>
@@ -1008,7 +1011,7 @@ using <code>git --no-optional-locks status</code> (see <a href="git.html">git</a
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-02-20 11:11:17 Coordinated Universal Time
+Last updated 2018-03-23 16:28:07 Coordinated Universal Time
 </div>
 </div>
 </body>
