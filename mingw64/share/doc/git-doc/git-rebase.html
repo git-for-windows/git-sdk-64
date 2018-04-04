@@ -442,7 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	[&lt;upstream&gt; [&lt;branch&gt;]]
 <em>git rebase</em> [-i | --interactive] [options] [--exec &lt;cmd&gt;] [--onto &lt;newbase&gt;]
 	--root [&lt;branch&gt;]
-<em>git rebase</em> --continue | --skip | --abort | --quit | --edit-todo</pre>
+<em>git rebase</em> --continue | --skip | --abort | --quit | --edit-todo | --show-current-patch</pre>
 </div>
 </div>
 </div>
@@ -808,6 +808,12 @@ unchanged as a result.</p>
 <p>Keep the commits that do not change anything from its
 parents in the result.</p>
 </dd>
+<dt class="hdlist1">--allow-empty-message</dt>
+<dd>
+<p>By default, rebasing commits with an empty message will fail.
+This option overrides that behavior, allowing commits with empty
+messages to be rebased.</p>
+</dd>
 <dt class="hdlist1">--skip</dt>
 <dd>
 <p>Restart the rebasing process by skipping the current patch.</p>
@@ -815,6 +821,12 @@ parents in the result.</p>
 <dt class="hdlist1">--edit-todo</dt>
 <dd>
 <p>Edit the todo list during an interactive rebase.</p>
+</dd>
+<dt class="hdlist1">--show-current-patch</dt>
+<dd>
+<p>Show the current patch in an interactive rebase or when rebase
+is stopped because of conflicts. This is the equivalent of
+<code>git show REBASE_HEAD</code>.</p>
 </dd>
 <dt class="hdlist1">-m</dt>
 <dt class="hdlist1">--merge</dt>
@@ -1115,7 +1127,7 @@ the other tree did, declaring <em>our</em> history contains all that happened in
 <dt class="hdlist1">theirs</dt>
 <dd>
 <p>This is the opposite of <em>ours</em>; note that, unlike <em>ours</em>, there is
-no <em>theirs</em> merge stragegy to confuse this merge option with.</p>
+no <em>theirs</em> merge strategy to confuse this merge option with.</p>
 </dd>
 <dt class="hdlist1">patience</dt>
 <dd>
@@ -1721,7 +1733,7 @@ reorder commits tend to produce counterintuitive results.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

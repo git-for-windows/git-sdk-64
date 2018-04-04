@@ -728,6 +728,19 @@ a missing object is encountered.  This is the default action.</p>
 if a missing object is encountered.  Missing objects will silently be
 omitted from the results.</p>
 </div>
+<div class="paragraph">
+<p>The form <em>--missing=allow-promisor</em> is like <em>allow-any</em>, but will only
+allow object traversal to continue for EXPECTED promisor missing objects.
+Unexpected missing object will raise an error.</p>
+</div>
+</dd>
+<dt class="hdlist1">--exclude-promisor-objects</dt>
+<dd>
+<p>Omit objects that are known to be in the promisor remote.  (This
+option has the purpose of operating only on locally created objects,
+so that when we repack, we still maintain a distinction between
+locally created objects [without .promisor] and objects from the
+promisor remote [with .promisor].)  This is used with partial clone.</p>
 </dd>
 </dl>
 </div>
@@ -754,7 +767,7 @@ omitted from the results.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

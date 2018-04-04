@@ -500,9 +500,23 @@ attribute for the path is said to be Unspecified.</p>
 <div class="paragraph">
 <p>When more than one pattern matches the path, a later line
 overrides an earlier line.  This overriding is done per
-attribute.  The rules how the pattern matches paths are the
-same as in <code>.gitignore</code> files; see <a href="gitignore.html">gitignore</a>(5).
-Unlike <code>.gitignore</code>, negative patterns are forbidden.</p>
+attribute.</p>
+</div>
+<div class="paragraph">
+<p>The rules by which the pattern matches paths are the same as in
+<code>.gitignore</code> files (see <a href="gitignore.html">gitignore</a>(5)), with a few exceptions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>negative patterns are forbidden</p>
+</li>
+<li>
+<p>patterns that match a directory do not recursively match paths
+inside that directory (so using the trailing-slash <code>path/</code> syntax is
+pointless in an attributes file; use <code>path/**</code> instead)</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>When deciding what attributes are assigned to a path, Git
@@ -904,52 +918,15 @@ content provided to them on standard input.</p>
 <p>If the filter command (a string value) is defined via
 <code>filter.&lt;driver&gt;.process</code> then Git can process all blobs with a
 single filter invocation for the entire life of a single Git
-command. This is achieved by using a packet format (pkt-line,
-see technical/protocol-common.txt) based protocol over standard
-input and standard output as follows. All packets, except for the
-"*CONTENT" packets and the "0000" flush packet, are considered
-text and therefore are terminated by a LF.</p>
+command. This is achieved by using the long-running process protocol
+(described in technical/long-running-process-protocol.txt).</p>
 </div>
 <div class="paragraph">
-<p>Git starts the filter when it encounters the first file
-that needs to be cleaned or smudged. After the filter started
-Git sends a welcome message ("git-filter-client"), a list of supported
-protocol version numbers, and a flush packet. Git expects to read a welcome
-response message ("git-filter-server"), exactly one protocol version number
-from the previously sent list, and a flush packet. All further
-communication will be based on the selected version. The remaining
-protocol description below documents "version=2". Please note that
-"version=42" in the example below does not exist and is only there
-to illustrate how the protocol would look like with more than one
-version.</p>
-</div>
-<div class="paragraph">
-<p>After the version negotiation Git sends a list of all capabilities that
-it supports and a flush packet. Git expects to read a list of desired
-capabilities, which must be a subset of the supported capabilities list,
-and a flush packet as response:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>packet:          git&gt; git-filter-client
-packet:          git&gt; version=2
-packet:          git&gt; version=42
-packet:          git&gt; 0000
-packet:          git&lt; git-filter-server
-packet:          git&lt; version=2
-packet:          git&lt; 0000
-packet:          git&gt; capability=clean
-packet:          git&gt; capability=smudge
-packet:          git&gt; capability=not-yet-invented
-packet:          git&gt; 0000
-packet:          git&lt; capability=clean
-packet:          git&lt; capability=smudge
-packet:          git&lt; 0000</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Supported filter capabilities in version 2 are "clean", "smudge",
-and "delay".</p>
+<p>When Git encounters the first file that needs to be cleaned or smudged,
+it starts the filter and performs the handshake. In the handshake, the
+welcome message sent by Git is "git-filter-client", only version 2 is
+suppported, and the supported capabilities are "clean", "smudge", and
+"delay".</p>
 </div>
 <div class="paragraph">
 <p>Afterwards Git sends a list of "key=value" pairs terminated with
@@ -1053,13 +1030,6 @@ mechanism.</p>
 the protocol then Git will stop the filter process and restart it
 with the next file that needs to be processed. Depending on the
 <code>filter.&lt;driver&gt;.required</code> flag Git will interpret that as error.</p>
-</div>
-<div class="paragraph">
-<p>After the filter has processed a command it is expected to wait for
-a "key=value" list containing the next command. Git will close
-the command pipe on exit. The filter is expected to detect EOF
-and exit gracefully on its own. Git will wait until the filter
-process has stopped.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1328,6 +1298,9 @@ patterns are available:</p>
 </li>
 <li>
 <p><code>fountain</code> suitable for Fountain documents.</p>
+</li>
+<li>
+<p><code>golang</code> suitable for source code in the Go language.</p>
 </li>
 <li>
 <p><code>html</code> suitable for HTML/XHTML documents.</p>
@@ -1909,7 +1882,7 @@ frotz	unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

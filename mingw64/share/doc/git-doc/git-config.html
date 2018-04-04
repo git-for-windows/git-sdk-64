@@ -730,6 +730,16 @@ config files.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_configuration">CONFIGURATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>pager.config</code> is only respected when listing configuration, i.e., when
+using <code>--list</code> or any of the <code>--get-*</code> which may return multiple results.
+The default is to use a pager.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="FILES">FILES</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -3125,7 +3135,17 @@ especially on slow filesystems.  If not set, the value of
 <dt class="hdlist1">fetch.prune</dt>
 <dd>
 <p>If true, fetch will automatically behave as if the <code>--prune</code>
-option was given on the command line.  See also <code>remote.&lt;name&gt;.prune</code>.</p>
+option was given on the command line.  See also <code>remote.&lt;name&gt;.prune</code>
+and the PRUNING section of <a href="git-fetch.html">git-fetch</a>(1).</p>
+</dd>
+<dt class="hdlist1">fetch.pruneTags</dt>
+<dd>
+<p>If true, fetch will automatically behave as if the
+<code>refs/tags/*:refs/tags/*</code> refspec was provided when pruning,
+if not set already. This allows for setting both this option
+and <code>fetch.prune</code> to maintain a 1=1 mapping to upstream
+refs. See also <code>remote.&lt;name&gt;.pruneTags</code> and the PRUNING
+section of <a href="git-fetch.html">git-fetch</a>(1).</p>
 </dd>
 <dt class="hdlist1">fetch.output</dt>
 <dd>
@@ -5256,6 +5276,17 @@ remove any remote-tracking references that no longer exist on the
 remote (as if the <code>--prune</code> option was given on the command line).
 Overrides <code>fetch.prune</code> settings, if any.</p>
 </dd>
+<dt class="hdlist1">remote.&lt;name&gt;.pruneTags</dt>
+<dd>
+<p>When set to true, fetching from this remote by default will also
+remove any local tags that no longer exist on the remote if pruning
+is activated in general via <code>remote.&lt;name&gt;.prune</code>, <code>fetch.prune</code> or
+<code>--prune</code>. Overrides <code>fetch.pruneTags</code> settings, if any.</p>
+<div class="paragraph">
+<p>See also <code>remote.&lt;name&gt;.prune</code> and the PRUNING section of
+<a href="git-fetch.html">git-fetch</a>(1).</p>
+</div>
+</dd>
 <dt class="hdlist1">remotes.&lt;group&gt;</dt>
 <dd>
 <p>The list of remotes which are fetched by "git remote update
@@ -5568,7 +5599,8 @@ commands.</p>
 <dt class="hdlist1">submodule.recurse</dt>
 <dd>
 <p>Specifies if commands recurse into submodules by default. This
-applies to all commands that have a <code>--recurse-submodules</code> option.
+applies to all commands that have a <code>--recurse-submodules</code> option,
+except <code>clone</code>.
 Defaults to false.</p>
 </dd>
 <dt class="hdlist1">submodule.fetchJobs</dt>
@@ -5720,6 +5752,11 @@ and stdout of the hook are treated as if <code>pack-objects</code> itself
 was run. I.e., <code>upload-pack</code> will feed input intended for
 <code>pack-objects</code> to the hook, and expects a completed packfile on
 stdout.</p>
+</dd>
+<dt class="hdlist1">uploadpack.allowFilter</dt>
+<dd>
+<p>If this option is set, <code>upload-pack</code> will support partial
+clone and partial fetch object filtering.</p>
 <div class="paragraph">
 <p>Note that this configuration variable is ignored if it is seen in the
 repository-level config (this is a safety measure against fetching from
@@ -5869,7 +5906,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

@@ -450,6 +450,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	     [--inetd |
 	      [--listen=&lt;host_or_ipaddr&gt;] [--port=&lt;n&gt;]
 	      [--user=&lt;user&gt; [--group=&lt;group&gt;]]]
+	     [--log-destination=(stderr|syslog|none)]
 	     [&lt;directory&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
@@ -529,7 +530,8 @@ do not have the <em>git-daemon-export-ok</em> file.</p>
 </dd>
 <dt class="hdlist1">--inetd</dt>
 <dd>
-<p>Have the server run as an inetd service. Implies --syslog.
+<p>Have the server run as an inetd service. Implies --syslog (may be
+overridden with <code>--log-destination=</code>).
 Incompatible with --detach, --port, --listen, --user and --group
 options.</p>
 </dd>
@@ -565,8 +567,41 @@ zero for no limit.</p>
 </dd>
 <dt class="hdlist1">--syslog</dt>
 <dd>
-<p>Log to syslog instead of stderr. Note that this option does not imply
---verbose, thus by default only error conditions will be logged.</p>
+<p>Short for <code>--log-destination=syslog</code>.</p>
+</dd>
+<dt class="hdlist1">--log-destination=&lt;destination&gt;</dt>
+<dd>
+<p>Send log messages to the specified destination.
+Note that this option does not imply --verbose,
+thus by default only error conditions will be logged.
+The &lt;destination&gt; must be one of:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">stderr</dt>
+<dd>
+<p>Write to standard error.
+Note that if <code>--detach</code> is specified,
+the process disconnects from the real standard error,
+making this destination effectively equivalent to <code>none</code>.</p>
+</dd>
+<dt class="hdlist1">syslog</dt>
+<dd>
+<p>Write to syslog, using the <code>git-daemon</code> identifier.</p>
+</dd>
+<dt class="hdlist1">none</dt>
+<dd>
+<p>Disable all logging.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The default destination is <code>syslog</code> if <code>--inetd</code> or <code>--detach</code> is specified,
+otherwise <code>stderr</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">--user-path</dt>
 <dt class="hdlist1">--user-path=&lt;path&gt;</dt>
@@ -827,7 +862,7 @@ services are performed.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

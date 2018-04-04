@@ -633,10 +633,15 @@ your publishing repository), use two separate remotes.</p>
 </dd>
 <dt class="hdlist1"><em>prune</em></dt>
 <dd>
-<p>Deletes all stale remote-tracking branches under &lt;name&gt;.
-These stale branches have already been removed from the remote repository
-referenced by &lt;name&gt;, but are still locally available in
-"remotes/&lt;name&gt;".</p>
+<p>Deletes stale references associated with &lt;name&gt;. By default, stale
+remote-tracking branches under &lt;name&gt; are deleted, but depending on
+global configuration and the configuration of the remote we might even
+prune local tags that haven&#8217;t been pushed there. Equivalent to <code>git
+fetch --prune &lt;name&gt;</code>, except that no new references will be fetched.</p>
+<div class="paragraph">
+<p>See the PRUNING section of <a href="git-fetch.html">git-fetch</a>(1) for what it&#8217;ll prune
+depending on various configuration.</p>
+</div>
 <div class="paragraph">
 <p>With <code>--dry-run</code> option, report what branches will be pruned, but do not
 actually prune them.</p>
@@ -651,7 +656,7 @@ remotes.default is not defined, all remotes which do not have the
 configuration parameter remote.&lt;name&gt;.skipDefaultUpdate set to true will
 be updated.  (See <a href="git-config.html">git-config</a>(1)).</p>
 <div class="paragraph">
-<p>With <code>--prune</code> option, prune all the remotes that are updated.</p>
+<p>With <code>--prune</code> option, run pruning against all the remotes that are updated.</p>
 </div>
 </dd>
 </dl>
@@ -740,7 +745,7 @@ $ git merge origin</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

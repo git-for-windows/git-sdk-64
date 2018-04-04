@@ -571,7 +571,24 @@ auto-following or due to a --tags option.  However, if tags
 are fetched due to an explicit refspec (either on the command
 line or in the remote configuration, for example if the remote
 was cloned with the --mirror option), then they are also
-subject to pruning.</p>
+subject to pruning. Supplying <code>--prune-tags</code> is a shorthand for
+providing the tag refspec.</p>
+<div class="paragraph">
+<p>See the PRUNING section below for more details.</p>
+</div>
+</dd>
+<dt class="hdlist1">-P</dt>
+<dt class="hdlist1">--prune-tags</dt>
+<dd>
+<p>Before fetching, remove any local tags that no longer exist on
+the remote if <code>--prune</code> is enabled. This option should be used
+more carefully, unlike <code>--prune</code> it will remove any local
+references (local tags) that have been created. This option is
+a shorthand for providing the explicit tag refspec along with
+<code>--prune</code>, see the discussion about that in its documentation.</p>
+<div class="paragraph">
+<p>See the PRUNING section below for more details.</p>
+</div>
 </dd>
 <dt class="hdlist1">-n</dt>
 <dt class="hdlist1">--no-tags</dt>
@@ -1087,6 +1104,111 @@ command line.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_pruning">PRUNING</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Git has a default disposition of keeping data unless it&#8217;s explicitly
+thrown away; this extends to holding onto local references to branches
+on remotes that have themselves deleted those branches.</p>
+</div>
+<div class="paragraph">
+<p>If left to accumulate, these stale references might make performance
+worse on big and busy repos that have a lot of branch churn, and
+e.g. make the output of commands like <code>git branch -a --contains
+&lt;commit&gt;</code> needlessly verbose, as well as impacting anything else
+that&#8217;ll work with the complete set of known references.</p>
+</div>
+<div class="paragraph">
+<p>These remote-tracking references can be deleted as a one-off with
+either of:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># While fetching
+$ git fetch --prune &lt;name&gt;
+
+# Only prune, don't fetch
+$ git remote prune &lt;name&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To prune references as part of your normal workflow without needing to
+remember to run that, set <code>fetch.prune</code> globally, or
+<code>remote.&lt;name&gt;.prune</code> per-remote in the config. See
+<a href="git-config.html">git-config</a>(1).</p>
+</div>
+<div class="paragraph">
+<p>Here&#8217;s where things get tricky and more specific. The pruning feature
+doesn&#8217;t actually care about branches, instead it&#8217;ll prune local &lt;&#8594;
+remote-references as a function of the refspec of the remote (see
+<code>&lt;refspec&gt;</code> and <a href="#CRTB">CONFIGURED REMOTE-TRACKING BRANCHES</a> above).</p>
+</div>
+<div class="paragraph">
+<p>Therefore if the refspec for the remote includes
+e.g. <code>refs/tags/*:refs/tags/*</code>, or you manually run e.g. <code>git fetch
+--prune &lt;name&gt; "refs/tags/*:refs/tags/*"</code> it won&#8217;t be stale remote
+tracking branches that are deleted, but any local tag that doesn&#8217;t
+exist on the remote.</p>
+</div>
+<div class="paragraph">
+<p>This might not be what you expect, i.e. you want to prune remote
+<code>&lt;name&gt;</code>, but also explicitly fetch tags from it, so when you fetch
+from it you delete all your local tags, most of which may not have
+come from the <code>&lt;name&gt;</code> remote in the first place.</p>
+</div>
+<div class="paragraph">
+<p>So be careful when using this with a refspec like
+<code>refs/tags/*:refs/tags/*</code>, or any other refspec which might map
+references from multiple remotes to the same local namespace.</p>
+</div>
+<div class="paragraph">
+<p>Since keeping up-to-date with both branches and tags on the remote is
+a common use-case the <code>--prune-tags</code> option can be supplied along with
+<code>--prune</code> to prune local tags that don&#8217;t exist on the remote, and
+force-update those tags that differ. Tag pruning can also be enabled
+with <code>fetch.pruneTags</code> or <code>remote.&lt;name&gt;.pruneTags</code> in the config. See
+<a href="git-config.html">git-config</a>(1).</p>
+</div>
+<div class="paragraph">
+<p>The <code>--prune-tags</code> option is equivalent to having
+<code>refs/tags/*:refs/tags/*</code> declared in the refspecs of the remote. This
+can lead to some seemingly strange interactions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># These both fetch tags
+$ git fetch --no-tags origin 'refs/tags/*:refs/tags/*'
+$ git fetch --no-tags --prune-tags origin</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The reason it doesn&#8217;t error out when provided without <code>--prune</code> or its
+config versions is for flexibility of the configured versions, and to
+maintain a 1=1 mapping between what the command line flags do, and
+what the configuration versions do.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s reasonable to e.g. configure <code>fetch.pruneTags=true</code> in
+<code>~/.gitconfig</code> to have tags pruned whenever <code>git fetch --prune</code> is
+run, without making every invocation of <code>git fetch</code> without <code>--prune</code>
+an error.</p>
+</div>
+<div class="paragraph">
+<p>Pruning tags with <code>--prune-tags</code> also works when fetching a URL
+instead of a named remote. These will all prune tags not found on
+origin:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git fetch origin --prune --prune-tags
+$ git fetch origin --prune 'refs/tags/*:refs/tags/*'
+$ git fetch &lt;url of origin&gt; --prune --prune-tags
+$ git fetch &lt;url of origin&gt; --prune 'refs/tags/*:refs/tags/*'</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_output">OUTPUT</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1310,7 +1432,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

@@ -1494,9 +1494,22 @@ if a missing object is encountered.  Missing objects will silently be
 omitted from the results.</p>
 </div>
 <div class="paragraph">
+<p>The form <em>--missing=allow-promisor</em> is like <em>allow-any</em>, but will only
+allow object traversal to continue for EXPECTED promisor missing objects.
+Unexpected missing objects will raise an error.</p>
+</div>
+<div class="paragraph">
 <p>The form <em>--missing=print</em> is like <em>allow-any</em>, but will also print a
 list of the missing objects.  Object IDs are prefixed with a &#8220;?&#8221; character.</p>
 </div>
+</dd>
+<dt class="hdlist1">--exclude-promisor-objects</dt>
+<dd>
+<p>(For internal use only.)  Prefilter object traversal at
+promisor boundary.  This is used with partial clone.  This is
+stronger than <code>--missing=allow-promisor</code> because it limits the
+traversal, rather than just silencing errors about missing
+objects.</p>
 </dd>
 <dt class="hdlist1">--no-walk[=(sorted|unsorted)]</dt>
 <dd>
@@ -2157,7 +2170,7 @@ respectively, except that if the next placeholder takes more spaces
 than given and there are spaces on its left, use those spaces</p>
 </li>
 <li>
-<p><em>%&gt;&lt;(&lt;N&gt;)</em>, <em>%&gt;&lt;|(&lt;N&gt;)</em>: similar to <em>% &lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
+<p><em>%&gt;&lt;(&lt;N&gt;)</em>, <em>%&gt;&lt;|(&lt;N&gt;)</em>: similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
 respectively, but padding both sides (i.e. the text is centered)</p>
 </li>
 <li>
@@ -2259,7 +2272,7 @@ $ git log -2 --pretty=%h 4da45bef</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

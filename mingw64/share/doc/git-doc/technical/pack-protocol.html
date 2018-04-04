@@ -756,6 +756,7 @@ out of what the server said it could do with the first <em>want</em> line.</p>
 <pre>  upload-request    =  want-list
 		       *shallow-line
 		       *1depth-request
+		       [filter-request]
 		       flush-pkt
 
   want-list         =  first-want
@@ -770,7 +771,9 @@ out of what the server said it could do with the first <em>want</em> line.</p>
   first-want        =  PKT-LINE("want" SP obj-id SP capability-list)
   additional-want   =  PKT-LINE("want" SP obj-id)
 
-  depth             =  1*DIGIT</pre>
+  depth             =  1*DIGIT
+
+  filter-request    =  PKT-LINE("filter" SP filter-spec)</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -795,6 +798,12 @@ any commits beyond this depth, nor does it want objects needed only to
 complete those commits. Commits whose parents are not received as a
 result are defined as shallow and marked as such in the server. This
 information is sent back to the client in the next step.</p>
+</div>
+<div class="paragraph">
+<p>The client can optionally request that pack-objects omit various
+objects from the packfile using one of several filtering techniques.
+These are intended for use with partial clone and partial fetch
+operations.  See <code>rev-list</code> for possible "filter-spec" values.</p>
 </div>
 <div class="paragraph">
 <p>Once all the <em>want&#8217;s and 'shallow&#8217;s (and optional 'deepen</em>) are
@@ -1272,7 +1281,7 @@ can be rejected.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:08 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

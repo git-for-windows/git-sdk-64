@@ -9,7 +9,10 @@ package Git;
 
 use 5.008;
 use strict;
+use warnings;
 
+use File::Temp ();
+use File::Spec ();
 
 BEGIN {
 
@@ -101,7 +104,7 @@ increase notwithstanding).
 
 
 use Carp qw(carp croak); # but croak is bad - throw instead
-use Error qw(:try);
+use Git::LoadCPAN::Error qw(:try);
 use Cwd qw(abs_path cwd);
 use IPC::Open2 qw(open2);
 use Fcntl qw(SEEK_SET SEEK_CUR);
@@ -189,7 +192,6 @@ sub repository {
 		};
 
 		if ($dir) {
-			_verify_require();
 			File::Spec->file_name_is_absolute($dir) or $dir = $opts{Directory} . '/' . $dir;
 			$opts{Repository} = abs_path($dir);
 
@@ -534,7 +536,9 @@ If TIME is not supplied, the current local time is used.
 sub get_tz_offset {
 	# some systems don't handle or mishandle %z, so be creative.
 	my $t = shift || time;
-	my $gm = timegm(localtime($t));
+	my @t = localtime($t);
+	$t[5] += 1900;
+	my $gm = timegm(@t);
 	my $sign = qw( + + - )[ $gm <=> $t ];
 	return sprintf("%s%02d%02d", $sign, (gmtime(abs($t - $gm)))[2,1]);
 }
@@ -878,77 +882,6 @@ sub ident_person {
 	my ($self, @ident) = _maybe_self(@_);
 	$#ident == 0 and @ident = $self ? $self->ident($ident[0]) : ident($ident[0]);
 	return "$ident[0] <$ident[1]>";
-}
-
-=item parse_mailboxes
-
-Return an array of mailboxes extracted from a string.
-
-=cut
-
-# Very close to Mail::Address's parser, but we still have minor
-# differences in some cases (see t9000 for examples).
-sub parse_mailboxes {
-	my $re_comment = qr/\((?:[^)]*)\)/;
-	my $re_quote = qr/"(?:[^\"\\]|\\.)*"/;
-	my $re_word = qr/(?:[^]["\s()<>:;@\\,.]|\\.)+/;
-
-	# divide the string in tokens of the above form
-	my $re_token = qr/(?:$re_quote|$re_word|$re_comment|\S)/;
-	my @tokens = map { $_ =~ /\s*($re_token)\s*/g } @_;
-	my $end_of_addr_seen = 0;
-
-	# add a delimiter to simplify treatment for the last mailbox
-	push @tokens, ",";
-
-	my (@addr_list, @phrase, @address, @comment, @buffer) = ();
-	foreach my $token (@tokens) {
-		if ($token =~ /^[,;]$/) {
-			# if buffer still contains undeterminated strings
-			# append it at the end of @address or @phrase
-			if ($end_of_addr_seen) {
-				push @phrase, @buffer;
-			} else {
-				push @address, @buffer;
-			}
-
-			my $str_phrase = join ' ', @phrase;
-			my $str_address = join '', @address;
-			my $str_comment = join ' ', @comment;
-
-			# quote are necessary if phrase contains
-			# special characters
-			if ($str_phrase =~ /[][()<>:;@\\,.\000-\037\177]/) {
-				$str_phrase =~ s/(^|[^\\])"/$1/g;
-				$str_phrase = qq["$str_phrase"];
-			}
-
-			# add "<>" around the address if necessary
-			if ($str_address ne "" && $str_phrase ne "") {
-				$str_address = qq[<$str_address>];
-			}
-
-			my $str_mailbox = "$str_phrase $str_address $str_comment";
-			$str_mailbox =~ s/^\s*|\s*$//g;
-			push @addr_list, $str_mailbox if ($str_mailbox);
-
-			@phrase = @address = @comment = @buffer = ();
-			$end_of_addr_seen = 0;
-		} elsif ($token =~ /^\(/) {
-			push @comment, $token;
-		} elsif ($token eq "<") {
-			push @phrase, (splice @address), (splice @buffer);
-		} elsif ($token eq ">") {
-			$end_of_addr_seen = 1;
-			push @address, (splice @buffer);
-		} elsif ($token eq "@" && !$end_of_addr_seen) {
-			push @address, (splice @buffer), "@";
-		} else {
-			push @buffer, $token;
-		}
-	}
-
-	return @addr_list;
 }
 
 =item hash_object ( TYPE, FILENAME )
@@ -1359,8 +1292,6 @@ sub temp_release {
 sub _temp_cache {
 	my ($self, $name) = _maybe_self(@_);
 
-	_verify_require();
-
 	my $temp_fd = \$TEMP_FILEMAP{$name};
 	if (defined $$temp_fd and $$temp_fd->opened) {
 		if ($TEMP_FILES{$$temp_fd}{locked}) {
@@ -1392,11 +1323,6 @@ sub _temp_cache {
 		$TEMP_FILES{$$temp_fd}{fname} = $fname;
 	}
 	$$temp_fd;
-}
-
-sub _verify_require {
-	eval { require File::Temp; require File::Spec; };
-	$@ and throw Error::Simple($@);
 }
 
 =item temp_reset ( FILEHANDLE )
@@ -1763,7 +1689,6 @@ sub DESTROY {
 # Pipe implementation for ActiveState Perl.
 
 package Git::activestate_pipe;
-use strict;
 
 sub TIEHANDLE {
 	my ($class, @params) = @_;

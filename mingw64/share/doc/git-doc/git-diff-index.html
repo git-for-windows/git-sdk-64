@@ -577,6 +577,15 @@ there are more.</p>
 <code>--stat-name-width=&lt;name-width&gt;</code> and <code>--stat-count=&lt;count&gt;</code>.</p>
 </div>
 </dd>
+<dt class="hdlist1">--compact-summary</dt>
+<dd>
+<p>Output a condensed summary of extended header information such
+as file creations or deletions ("new" or "gone", optionally "+l"
+if it&#8217;s a symlink) and mode changes ("+x" or "-x" for adding
+or removing executable bit respectively) in diffstat. The
+information is put betwen the filename part and the graph
+part. Implies <code>--stat</code>.</p>
+</dd>
 <dt class="hdlist1">--numstat</dt>
 <dd>
 <p>Similar to <code>--stat</code>, but shows number of added and
@@ -1010,6 +1019,17 @@ occurrences of that string did not change).</p>
 <div class="paragraph">
 <p>See the <em>pickaxe</em> entry in <a href="gitdiffcore.html">gitdiffcore</a>(7) for more
 information.</p>
+</div>
+</dd>
+<dt class="hdlist1">--find-object=&lt;object-id&gt;</dt>
+<dd>
+<p>Look for differences that change the number of occurrences of
+the specified object. Similar to <code>-S</code>, just the argument is different
+in that it doesn&#8217;t search for a specific string but for a specific
+object id.</p>
+<div class="paragraph">
+<p>The object can be a blob or a submodule commit. It implies the <code>-t</code> option in
+<code>git-log</code> to also find trees.</p>
 </div>
 </dd>
 <dt class="hdlist1">--pickaxe-all</dt>
@@ -1929,7 +1949,7 @@ always have the special all-zero sha1.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>

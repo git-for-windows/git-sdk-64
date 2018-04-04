@@ -1025,6 +1025,37 @@ command reads the index; while when <code>--[no-|force-]untracked-cache</code>
 are used, the untracked cache is immediately added to or removed from
 the index.</p>
 </div>
+<div class="paragraph">
+<p>Before 2.17, the untracked cache had a bug where replacing a directory
+with a symlink to another directory could cause it to incorrectly show
+files tracked by git as untracked. See the "status: add a failing test
+showing a core.untrackedCache bug" commit to git.git. A workaround for
+that is (and this might work for other undiscovered bugs in the
+future):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git -c core.untrackedCache=false status</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This bug has also been shown to affect non-symlink cases of replacing
+a directory with a file when it comes to the internal structures of
+the untracked cache, but no case has been reported where this resulted in
+wrong "git status" output.</p>
+</div>
+<div class="paragraph">
+<p>There are also cases where existing indexes written by git versions
+before 2.17 will reference directories that don&#8217;t exist anymore,
+potentially causing many "could not open directory" warnings to be
+printed on "git status". These are new warnings for existing issues
+that were previously silently discarded.</p>
+</div>
+<div class="paragraph">
+<p>As with the bug described above the solution is to one-off do a "git
+status" run with <code>core.untrackedCache=false</code> to flush out the leftover
+bad data.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1118,7 +1149,7 @@ ctime for marking files processed) (see <a href="git-config.html">git-config</a>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-03-23 16:28:07 Coordinated Universal Time
+Last updated 2018-04-03 11:15:57 Coordinated Universal Time
 </div>
 </div>
 </body>
