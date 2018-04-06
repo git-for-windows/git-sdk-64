@@ -606,6 +606,9 @@ GFile *                 g_file_new_tmp                    (const char           
                                                            GError                    **error);
 GLIB_AVAILABLE_IN_ALL
 GFile *                 g_file_parse_name                 (const char                 *parse_name);
+GLIB_AVAILABLE_IN_2_56
+GFile *                 g_file_new_build_filename         (const gchar                *first_element,
+                                                           ...) G_GNUC_NULL_TERMINATED;
 GLIB_AVAILABLE_IN_ALL
 GFile *                 g_file_dup                        (GFile                      *file);
 GLIB_AVAILABLE_IN_ALL
@@ -617,6 +620,8 @@ GLIB_AVAILABLE_IN_ALL
 char *                  g_file_get_basename               (GFile                      *file);
 GLIB_AVAILABLE_IN_ALL
 char *                  g_file_get_path                   (GFile                      *file);
+GLIB_AVAILABLE_IN_2_56
+const char *            g_file_peek_path                  (GFile                      *file);
 GLIB_AVAILABLE_IN_ALL
 char *                  g_file_get_uri                    (GFile                      *file);
 GLIB_AVAILABLE_IN_ALL
@@ -1247,6 +1252,22 @@ gboolean g_file_replace_contents_finish      (GFile                  *file,
 
 GLIB_AVAILABLE_IN_ALL
 gboolean g_file_supports_thread_contexts     (GFile                  *file);
+
+GLIB_AVAILABLE_IN_2_56
+GBytes  *g_file_load_bytes                   (GFile                  *file,
+                                              GCancellable           *cancellable,
+                                              gchar                 **etag_out,
+                                              GError                **error);
+GLIB_AVAILABLE_IN_2_56
+void     g_file_load_bytes_async             (GFile                  *file,
+                                              GCancellable           *cancellable,
+                                              GAsyncReadyCallback     callback,
+                                              gpointer                user_data);
+GLIB_AVAILABLE_IN_2_56
+GBytes  *g_file_load_bytes_finish            (GFile                  *file,
+                                              GAsyncResult           *result,
+                                              gchar                 **etag_out,
+                                              GError                **error);
 
 G_END_DECLS
 

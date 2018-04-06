@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Data-HMACs.html" title="Secure HMAC Digests">
 <link rel="next" href="glib-Date-and-Time-Functions.html" title="Date and Time Functions">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -145,8 +145,8 @@ after defining the <code class="literal">GETTEXT_PACKAGE</code> macro suitably f
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc ppc">#define GETTEXT_PACKAGE</span> <span class="gtkdoc pps">&quot;gtk20&quot;</span><span class="gtkdoc ppc"></span>
-<span class="gtkdoc ppc">#include &lt;glib/gi18n-lib.h&gt;</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="preproc">#define</span><span class="normal"> GETTEXT_PACKAGE </span><span class="string">"gtk20"</span>
+<span class="preproc">#include</span><span class="normal"> </span><span class="string">&lt;glib/gi18n-lib.h&gt;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -173,19 +173,19 @@ For an application, note that you also have to call <code class="function">bindt
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc ppc">#include &lt;glib/gi18n.h&gt;</span>
-<span class="gtkdoc ppc">#include &lt;locale.h&gt;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="preproc">#include</span><span class="normal"> </span><span class="string">&lt;glib/gi18n.h&gt;</span>
+<span class="preproc">#include</span><span class="normal"> </span><span class="string">&lt;locale.h&gt;</span>
 
-<span class="gtkdoc kwb">int</span>
-<span class="function">main</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">int</span> argc<span class="gtkdoc opt">,</span> <span class="gtkdoc kwb">char</span> <span class="gtkdoc opt">**</span>argv<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function">setlocale</span> <span class="gtkdoc opt">(</span>LC_ALL<span class="gtkdoc opt">,</span> <span class="string">&quot;&quot;</span><span class="gtkdoc opt">);</span>
-  <span class="function">bindtextdomain</span> <span class="gtkdoc opt">(</span>GETTEXT_PACKAGE<span class="gtkdoc opt">,</span> DATADIR <span class="string">&quot;/locale&quot;</span><span class="gtkdoc opt">);</span>
-  <span class="function">bind_textdomain_codeset</span> <span class="gtkdoc opt">(</span>GETTEXT_PACKAGE<span class="gtkdoc opt">,</span> <span class="string">&quot;UTF-8&quot;</span><span class="gtkdoc opt">);</span>
-  <span class="function">textdomain</span> <span class="gtkdoc opt">(</span>GETTEXT_PACKAGE<span class="gtkdoc opt">);</span>
+<span class="type">int</span>
+<span class="function">main</span><span class="normal"> </span><span class="symbol">(</span><span class="type">int</span><span class="normal"> argc</span><span class="symbol">,</span><span class="normal"> </span><span class="type">char</span><span class="normal"> </span><span class="symbol">**</span><span class="normal">argv</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function">setlocale</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">LC_ALL</span><span class="symbol">,</span><span class="normal"> </span><span class="string">""</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function">bindtextdomain</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">GETTEXT_PACKAGE</span><span class="symbol">,</span><span class="normal"> DATADIR </span><span class="string">"/locale"</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function">bind_textdomain_codeset</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">GETTEXT_PACKAGE</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"UTF-8"</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function">textdomain</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">GETTEXT_PACKAGE</span><span class="symbol">);</span>
 
-  <span class="gtkdoc slc">// Rest of your application.</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="comment">// Rest of your application.</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -261,8 +261,8 @@ they are used.</p>
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting">label1 <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-I18N.html#C-:CAPS">C_</a></span><span class="gtkdoc opt">(</span><span class="string">&quot;Navigation&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;Back&quot;</span><span class="gtkdoc opt">);</span>
-label2 <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-I18N.html#C-:CAPS">C_</a></span><span class="gtkdoc opt">(</span><span class="string">&quot;Body part&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;Back&quot;</span><span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="normal">label1 </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-I18N.html#C-:CAPS">C_</a></span><span class="symbol">(</span><span class="string">"Navigation"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"Back"</span><span class="symbol">);</span>
+<span class="normal">label2 </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-I18N.html#C-:CAPS">C_</a></span><span class="symbol">(</span><span class="string">"Body part"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"Back"</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -325,19 +325,19 @@ at runtime.</p>
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">static const char</span> <span class="gtkdoc opt">*</span>messages<span class="gtkdoc opt">[] = {</span>
-    <span class="function"><a href="glib-I18N.html#N-:CAPS">N_</a></span><span class="gtkdoc opt">(</span><span class="string">&quot;some very meaningful message&quot;</span><span class="gtkdoc opt">),</span>
-    <span class="function"><a href="glib-I18N.html#N-:CAPS">N_</a></span><span class="gtkdoc opt">(</span><span class="string">&quot;and another one&quot;</span><span class="gtkdoc opt">)</span>
-  <span class="gtkdoc opt">};</span>
-  <span class="gtkdoc kwb">const char</span> <span class="gtkdoc opt">*</span>string<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc opt">...</span>
-  string
-    <span class="gtkdoc opt">=</span> index <span class="gtkdoc opt">&gt;</span> <span class="number">1</span> <span class="gtkdoc opt">?</span> <span class="function">_</span><span class="gtkdoc opt">(</span><span class="string">&quot;a default message&quot;</span><span class="gtkdoc opt">) :</span> <span class="function">gettext</span> <span class="gtkdoc opt">(</span>messages<span class="gtkdoc opt">[</span>index<span class="gtkdoc opt">]);</span>
+        <td class="listing_code"><pre class="programlisting"><span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">messages</span><span class="symbol">[]</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="function"><a href="glib-I18N.html#N-:CAPS">N_</a></span><span class="symbol">(</span><span class="string">"some very meaningful message"</span><span class="symbol">),</span>
+<span class="normal">    </span><span class="function"><a href="glib-I18N.html#N-:CAPS">N_</a></span><span class="symbol">(</span><span class="string">"and another one"</span><span class="symbol">)</span>
+<span class="normal">  </span><span class="cbracket">}</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">string</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="symbol">...</span>
+<span class="normal">  string</span>
+<span class="normal">    </span><span class="symbol">=</span><span class="normal"> index </span><span class="symbol">&gt;</span><span class="normal"> </span><span class="number">1</span><span class="normal"> </span><span class="symbol">?</span><span class="normal"> </span><span class="function">_</span><span class="symbol">(</span><span class="string">"a default message"</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">:</span><span class="normal"> </span><span class="function">gettext</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">messages</span><span class="symbol">[</span><span class="normal">index</span><span class="symbol">]);</span>
 
-  <span class="function">fputs</span> <span class="gtkdoc opt">(</span>string<span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">...</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function">fputs</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">string</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="symbol">...</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -387,20 +387,20 @@ translated string, you should call <a class="link" href="glib-I18N.html#g-dpgett
 12
 13
 14</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">static const char</span> <span class="gtkdoc opt">*</span>messages<span class="gtkdoc opt">[] = {</span>
-    <span class="function"><a href="glib-I18N.html#NC-:CAPS">NC_</a></span><span class="gtkdoc opt">(</span><span class="string">&quot;some context&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;some very meaningful message&quot;</span><span class="gtkdoc opt">),</span>
-    <span class="function"><a href="glib-I18N.html#NC-:CAPS">NC_</a></span><span class="gtkdoc opt">(</span><span class="string">&quot;some context&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;and another one&quot;</span><span class="gtkdoc opt">)</span>
-  <span class="gtkdoc opt">};</span>
-  <span class="gtkdoc kwb">const char</span> <span class="gtkdoc opt">*</span>string<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc opt">...</span>
-  string
-    <span class="gtkdoc opt">=</span> index <span class="gtkdoc opt">&gt;</span> <span class="number">1</span> <span class="gtkdoc opt">?</span> <span class="function"><a href="glib-I18N.html#g-dpgettext2">g_dpgettext2</a></span> <span class="gtkdoc opt">(</span>NULL<span class="gtkdoc opt">,</span> <span class="string">&quot;some context&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;a default message&quot;</span><span class="gtkdoc opt">)</span>
-                <span class="gtkdoc opt">:</span> <span class="function"><a href="glib-I18N.html#g-dpgettext2">g_dpgettext2</a></span> <span class="gtkdoc opt">(</span>NULL<span class="gtkdoc opt">,</span> <span class="string">&quot;some context&quot;</span><span class="gtkdoc opt">,</span> messages<span class="gtkdoc opt">[</span>index<span class="gtkdoc opt">]);</span>
+        <td class="listing_code"><pre class="programlisting"><span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">messages</span><span class="symbol">[]</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="function"><a href="glib-I18N.html#NC-:CAPS">NC_</a></span><span class="symbol">(</span><span class="string">"some context"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"some very meaningful message"</span><span class="symbol">),</span>
+<span class="normal">    </span><span class="function"><a href="glib-I18N.html#NC-:CAPS">NC_</a></span><span class="symbol">(</span><span class="string">"some context"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"and another one"</span><span class="symbol">)</span>
+<span class="normal">  </span><span class="cbracket">}</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">string</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="symbol">...</span>
+<span class="normal">  string</span>
+<span class="normal">    </span><span class="symbol">=</span><span class="normal"> index </span><span class="symbol">&gt;</span><span class="normal"> </span><span class="number">1</span><span class="normal"> </span><span class="symbol">?</span><span class="normal"> </span><span class="function"><a href="glib-I18N.html#g-dpgettext2">g_dpgettext2</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> </span><span class="string">"some context"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"a default message"</span><span class="symbol">)</span>
+<span class="normal">                </span><span class="symbol">:</span><span class="normal"> </span><span class="function"><a href="glib-I18N.html#g-dpgettext2">g_dpgettext2</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> </span><span class="string">"some context"</span><span class="symbol">,</span><span class="normal"> messages</span><span class="symbol">[</span><span class="normal">index</span><span class="symbol">]);</span>
 
-  <span class="function">fputs</span> <span class="gtkdoc opt">(</span>string<span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">...</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function">fputs</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">string</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="symbol">...</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -810,6 +810,6 @@ allocated array of newly allocated strings with the locale variants. Free with
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

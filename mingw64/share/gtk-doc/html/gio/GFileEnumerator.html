@@ -8,7 +8,7 @@
 <link rel="up" href="file_ops.html" title="File Operations">
 <link rel="prev" href="GFileInfo.html" title="GFileInfo">
 <link rel="next" href="gio-GIOError.html" title="GIOError">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -256,19 +256,19 @@ is:</p>
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting">direnum <span class="gtkdoc opt">=</span> <span class="function"><a href="GFile.html#g-file-enumerate-children">g_file_enumerate_children</a></span> <span class="gtkdoc opt">(</span>file<span class="gtkdoc opt">, ...);</span>
-<span class="keyword">while</span> <span class="gtkdoc opt">(</span>TRUE<span class="gtkdoc opt">)</span>
-  <span class="gtkdoc opt">{</span>
-    GFileInfo <span class="gtkdoc opt">*</span>info<span class="gtkdoc opt">;</span>
-    <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="GFileEnumerator.html#g-file-enumerator-iterate">g_file_enumerator_iterate</a></span> <span class="gtkdoc opt">(</span>direnum<span class="gtkdoc opt">, &amp;</span>info<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">))</span>
-      <span class="keyword">goto</span> out<span class="gtkdoc opt">;</span>
-    <span class="keyword">if</span> <span class="gtkdoc opt">(!</span>info<span class="gtkdoc opt">)</span>
-      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">...</span> <span class="keyword">do</span> stuff with <span class="string">&quot;info&quot;</span><span class="gtkdoc opt">;</span> <span class="keyword">do not</span> unref it<span class="gtkdoc opt">! ...</span>
-  <span class="gtkdoc opt">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="normal">direnum </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GFile.html#g-file-enumerate-children">g_file_enumerate_children</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">file</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">...);</span>
+<span class="keyword">while</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">)</span>
+<span class="normal">  </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="usertype">GFileInfo</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">info</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="GFileEnumerator.html#g-file-enumerator-iterate">g_file_enumerator_iterate</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">direnum</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">info</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">))</span>
+<span class="normal">      </span><span class="keyword">goto</span><span class="normal"> out</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="normal">info</span><span class="symbol">)</span>
+<span class="normal">      </span><span class="keyword">break</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="symbol">...</span><span class="normal"> </span><span class="keyword">do</span><span class="normal"> </span><span class="usertype">stuff</span><span class="normal"> with </span><span class="string">"info"</span><span class="symbol">;</span><span class="normal"> </span><span class="keyword">do</span><span class="normal"> not </span><span class="usertype">unref</span><span class="normal"> it</span><span class="symbol">!</span><span class="normal"> </span><span class="symbol">...</span>
+<span class="normal">  </span><span class="cbracket">}</span>
 
-out<span class="gtkdoc opt">:</span>
-  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>direnum<span class="gtkdoc opt">);</span> <span class="gtkdoc slc">// Note: frees the last &#64;info</span></pre></td>
+<span class="label">out:</span>
+<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">direnum</span><span class="symbol">);</span><span class="normal"> </span><span class="comment">// Note: frees the last @info</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -760,9 +760,9 @@ inside loops with <a class="link" href="GFileEnumerator.html#g-file-enumerator-n
         <td class="listing_lines" align="right"><pre>1
 2
 3</pre></td>
-        <td class="listing_code"><pre class="programlisting">gchar <span class="gtkdoc opt">*</span>name <span class="gtkdoc opt">=</span> <span class="function"><a href="GFileInfo.html#g-file-info-get-name">g_file_info_get_name</a></span> <span class="gtkdoc opt">(</span>info<span class="gtkdoc opt">);</span>
-GFile <span class="gtkdoc opt">*</span>child <span class="gtkdoc opt">=</span> <span class="function"><a href="GFile.html#g-file-get-child">g_file_get_child</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="GFileEnumerator.html#g-file-enumerator-get-container">g_file_enumerator_get_container</a></span> <span class="gtkdoc opt">(</span>enumr<span class="gtkdoc opt">),</span>
-                                 name<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">name </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GFileInfo.html#g-file-info-get-name">g_file_info_get_name</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">info</span><span class="symbol">);</span>
+<span class="usertype">GFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">child </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GFile.html#g-file-get-child">g_file_get_child</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GFileEnumerator.html#g-file-enumerator-get-container">g_file_enumerator_get_container</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">enumr</span><span class="symbol">),</span>
+<span class="normal">                                 name</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -819,6 +819,6 @@ or the async equivalents.</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

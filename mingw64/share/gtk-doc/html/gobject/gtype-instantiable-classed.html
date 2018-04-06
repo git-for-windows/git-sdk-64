@@ -8,7 +8,7 @@
 <link rel="up" href="chapter-gtype.html" title="The GLib Dynamic Type System">
 <link rel="prev" href="gtype-non-instantiable.html" title="Non-instantiable non-classed fundamental types">
 <link rel="next" href="gtype-non-instantiable-classed.html" title="Non-instantiable classed types: interfaces">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -89,50 +89,50 @@
 42
 43
 44</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
-  GObject parent<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObject</span><span class="normal"> parent</span><span class="symbol">;</span>
 
-  <span class="comment">/* instance members */</span>
-  gchar <span class="gtkdoc opt">*</span>filename<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span> ViewerFile<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="comment">/* instance members */</span>
+<span class="normal">  </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">filename</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="normal"> ViewerFile</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
-  GObjectClass parent<span class="gtkdoc opt">;</span>
+<span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObjectClass</span><span class="normal"> parent</span><span class="symbol">;</span>
 
-  <span class="comment">/* class members */</span>
-  <span class="comment">/* the first is public, pure and virtual */</span>
-  <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span>open<span class="gtkdoc opt">)  (</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                 GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="comment">/* class members */</span>
+<span class="normal">  </span><span class="comment">/* the first is public, pure and virtual */</span>
+<span class="normal">  </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">open</span><span class="symbol">)</span><span class="normal">  </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                 </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">);</span>
 
-  <span class="comment">/* the second is public and virtual */</span>
-  <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span>close<span class="gtkdoc opt">) (</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                 GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span> ViewerFileClass<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="comment">/* the second is public and virtual */</span>
+<span class="normal">  </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">close</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                 </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">);</span>
+<span class="cbracket">}</span><span class="normal"> ViewerFileClass</span><span class="symbol">;</span>
 
-<span class="gtkdoc ppc">#define VIEWER_TYPE_FILE (viewer_file_get_type ())</span>
+<span class="preproc">#define</span><span class="normal"> </span><span class="function">VIEWER_TYPE_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="function">viewer_file_get_type</span><span class="normal"> </span><span class="symbol">())</span>
 
-GType 
-<span class="function">viewer_file_get_type</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">static</span> GType type <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>type <span class="gtkdoc opt">==</span> <span class="number">0</span><span class="gtkdoc opt">) {</span>
-    <span class="gtkdoc kwb">const</span> GTypeInfo info <span class="gtkdoc opt">= {</span>
-      <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>ViewerFileClass<span class="gtkdoc opt">),</span>
-      NULL<span class="gtkdoc opt">,</span>           <span class="comment">/* base_init */</span>
-      NULL<span class="gtkdoc opt">,</span>           <span class="comment">/* base_finalize */</span>
-      <span class="gtkdoc opt">(</span>GClassInitFunc<span class="gtkdoc opt">)</span> viewer_file_class_init<span class="gtkdoc opt">,</span>
-      NULL<span class="gtkdoc opt">,</span>           <span class="comment">/* class_finalize */</span>
-      NULL<span class="gtkdoc opt">,</span>           <span class="comment">/* class_data */</span>
-      <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">),</span>
-      <span class="number">0</span><span class="gtkdoc opt">,</span>              <span class="comment">/* n_preallocs */</span>
-      <span class="gtkdoc opt">(</span>GInstanceInitFunc<span class="gtkdoc opt">)</span> NULL <span class="comment">/* instance_init */</span>
-    <span class="gtkdoc opt">};</span>
-    type <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span> <span class="gtkdoc opt">(</span>G_TYPE_OBJECT<span class="gtkdoc opt">,</span>
-                                   <span class="string">&quot;ViewerFile&quot;</span><span class="gtkdoc opt">,</span>
-                                   <span class="gtkdoc opt">&amp;</span>info<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">}</span>
-  <span class="keyword">return</span> type<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal"><a href="gobject-Type-Information.html#GType">GType</a> </span>
+<span class="function">viewer_file_get_type</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="usertype">GType</span><span class="normal"> type </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">type </span><span class="symbol">==</span><span class="normal"> </span><span class="number">0</span><span class="symbol">)</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GTypeInfo</span><span class="normal"> info </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="keyword">sizeof</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFileClass</span><span class="symbol">),</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">           </span><span class="comment">/* base_init */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">           </span><span class="comment">/* base_finalize */</span>
+<span class="normal">      </span><span class="symbol">(</span><span class="normal"><a href="gobject-Type-Information.html#GClassInitFunc">GClassInitFunc</a></span><span class="symbol">)</span><span class="normal"> viewer_file_class_init</span><span class="symbol">,</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">           </span><span class="comment">/* class_finalize */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">           </span><span class="comment">/* class_data */</span>
+<span class="normal">      </span><span class="keyword">sizeof</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">),</span>
+<span class="normal">      </span><span class="number">0</span><span class="symbol">,</span><span class="normal">              </span><span class="comment">/* n_preallocs */</span>
+<span class="normal">      </span><span class="symbol">(</span><span class="normal"><a href="gobject-Type-Information.html#GInstanceInitFunc">GInstanceInitFunc</a></span><span class="symbol">)</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a> </span><span class="comment">/* instance_init */</span>
+<span class="normal">    </span><span class="cbracket">}</span><span class="symbol">;</span>
+<span class="normal">    type </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="string">"ViewerFile"</span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="symbol">&amp;</span><span class="normal">info</span><span class="symbol">,</span><span class="normal"> </span><span class="number">0</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="cbracket">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> type</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -162,14 +162,14 @@ GType
 6
 7
 8</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">struct</span> _GTypeClass
-<span class="gtkdoc opt">{</span>
-  GType g_type<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">};</span>
-<span class="gtkdoc kwb">struct</span> _GTypeInstance
-<span class="gtkdoc opt">{</span>
-  GTypeClass <span class="gtkdoc opt">*</span>g_class<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">};</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">struct</span><span class="normal"> </span><span class="classname">_GTypeClass</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GType</span><span class="normal"> g_type</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
+<span class="keyword">struct</span><span class="normal"> </span><span class="classname">_GTypeInstance</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTypeClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">g_class</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="symbol">;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -212,28 +212,28 @@ GType
 22
 23</pre></td>
         <td class="listing_code"><pre class="programlisting"><span class="comment">/* A definitions */</span>
-<span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
-  GTypeInstance parent<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">int</span> field_a<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">int</span> field_b<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span> A<span class="gtkdoc opt">;</span>
-<span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
-  GTypeClass parent_class<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span>method_a<span class="gtkdoc opt">) (</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">);</span>
-  <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span>method_b<span class="gtkdoc opt">) (</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span> AClass<span class="gtkdoc opt">;</span>
+<span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTypeInstance</span><span class="normal"> parent</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">int</span><span class="normal"> field_a</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">int</span><span class="normal"> field_b</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="normal"> A</span><span class="symbol">;</span>
+<span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTypeClass</span><span class="normal"> parent_class</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">method_a</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">method_b</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">);</span>
+<span class="cbracket">}</span><span class="normal"> AClass</span><span class="symbol">;</span>
 
 <span class="comment">/* B definitions. */</span>
-<span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
-  A parent<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">int</span> field_c<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">int</span> field_d<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span> B<span class="gtkdoc opt">;</span>
-<span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
-  AClass parent_class<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span>method_c<span class="gtkdoc opt">) (</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">);</span>
-  <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span>method_d<span class="gtkdoc opt">) (</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span> BClass<span class="gtkdoc opt">;</span></pre></td>
+<span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">A</span><span class="normal"> parent</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">int</span><span class="normal"> field_c</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">int</span><span class="normal"> field_d</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="normal"> B</span><span class="symbol">;</span>
+<span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">AClass</span><span class="normal"> parent_class</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">method_c</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">method_d</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">);</span>
+<span class="cbracket">}</span><span class="normal"> BClass</span><span class="symbol">;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -257,8 +257,8 @@ GType
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting">B <span class="gtkdoc opt">*</span>b<span class="gtkdoc opt">;</span>
-b<span class="gtkdoc opt">-&gt;</span>parent<span class="gtkdoc opt">.</span>parent<span class="gtkdoc opt">.</span>g_class<span class="gtkdoc opt">-&gt;</span>g_type</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">B</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">b</span><span class="symbol">;</span>
+<span class="normal">b</span><span class="symbol">-&gt;</span><span class="normal">parent</span><span class="symbol">.</span><span class="normal">parent</span><span class="symbol">.</span><span class="normal">g_class</span><span class="symbol">-&gt;</span><span class="normal">g_type</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -273,8 +273,8 @@ b<span class="gtkdoc opt">-&gt;</span>parent<span class="gtkdoc opt">.</span>par
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting">B <span class="gtkdoc opt">*</span>b<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">((</span>GTypeInstance <span class="gtkdoc opt">*)</span> b<span class="gtkdoc opt">)-&gt;</span>g_class<span class="gtkdoc opt">-&gt;</span>g_type</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">B</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">b</span><span class="symbol">;</span>
+<span class="symbol">((</span><span class="normal"><a href="gobject-Type-Information.html#GTypeInstance">GTypeInstance</a> </span><span class="symbol">*)</span><span class="normal"> b</span><span class="symbol">)-&gt;</span><span class="normal">g_class</span><span class="symbol">-&gt;</span><span class="normal">g_type</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -407,6 +407,6 @@ b<span class="gtkdoc opt">-&gt;</span>parent<span class="gtkdoc opt">.</span>par
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

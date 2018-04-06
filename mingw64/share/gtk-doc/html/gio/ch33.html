@@ -8,7 +8,7 @@
 <link rel="up" href="migrating.html" title="Part III. Migrating to GIO">
 <link rel="prev" href="ch32.html" title="Migrating from POSIX to GIO">
 <link rel="next" href="ch33s02.html" title="Operations on multiple files">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -154,40 +154,40 @@
 32
 33
 34</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">file_changed</span> <span class="gtkdoc opt">(</span>GFileMonitor      <span class="gtkdoc opt">*</span>file_monitor<span class="gtkdoc opt">,</span>
-              GFile             <span class="gtkdoc opt">*</span>child<span class="gtkdoc opt">,</span>
-              GFile             <span class="gtkdoc opt">*</span>other_file<span class="gtkdoc opt">,</span>
-              GFileMonitorEvent  event_type<span class="gtkdoc opt">,</span>
-              gpointer           user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="keyword">switch</span> <span class="gtkdoc opt">(</span>event_type<span class="gtkdoc opt">)</span>
-  <span class="gtkdoc opt">{</span>
-  <span class="keyword">case</span> G_FILE_MONITOR_EVENT_DELETED<span class="gtkdoc opt">:</span>
-    <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;&apos;%s&apos; removed from trash</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> <span class="function"><a href="GFile.html#g-file-get-basename">g_file_get_basename</a></span> <span class="gtkdoc opt">(</span>child<span class="gtkdoc opt">));</span>
-    <span class="keyword">break</span><span class="gtkdoc opt">;</span>
-  <span class="keyword">case</span> G_FILE_MONITOR_EVENT_CREATED<span class="gtkdoc opt">:</span>
-    <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;&apos;%s&apos; added to trash</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> <span class="function"><a href="GFile.html#g-file-get-basename">g_file_get_basename</a></span> <span class="gtkdoc opt">(</span>child<span class="gtkdoc opt">));</span>
-    <span class="keyword">break</span><span class="gtkdoc opt">;</span>
-  <span class="keyword">default</span><span class="gtkdoc opt">: ;</span>
-  <span class="gtkdoc opt">}</span>
-<span class="gtkdoc opt">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">file_changed</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GFileMonitor</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">file_monitor</span><span class="symbol">,</span>
+<span class="normal">              </span><span class="usertype">GFile</span><span class="normal">             </span><span class="symbol">*</span><span class="normal">child</span><span class="symbol">,</span>
+<span class="normal">              </span><span class="usertype">GFile</span><span class="normal">             </span><span class="symbol">*</span><span class="normal">other_file</span><span class="symbol">,</span>
+<span class="normal">              </span><span class="usertype">GFileMonitorEvent</span><span class="normal">  event_type</span><span class="symbol">,</span>
+<span class="normal">              </span><span class="usertype">gpointer</span><span class="normal">           user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">switch</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">event_type</span><span class="symbol">)</span>
+<span class="normal">  </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">case</span><span class="normal"> <a href="GFileMonitor.html#G-FILE-MONITOR-EVENT-DELETED:CAPS">G_FILE_MONITOR_EVENT_DELETED</a></span><span class="symbol">:</span>
+<span class="normal">    </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"'%s' removed from trash</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="GFile.html#g-file-get-basename">g_file_get_basename</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">child</span><span class="symbol">));</span>
+<span class="normal">    </span><span class="keyword">break</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">case</span><span class="normal"> <a href="GFileMonitor.html#G-FILE-MONITOR-EVENT-CREATED:CAPS">G_FILE_MONITOR_EVENT_CREATED</a></span><span class="symbol">:</span>
+<span class="normal">    </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"'%s' added to trash</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="GFile.html#g-file-get-basename">g_file_get_basename</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">child</span><span class="symbol">));</span>
+<span class="normal">    </span><span class="keyword">break</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">default</span><span class="symbol">:</span><span class="normal"> </span><span class="symbol">;</span>
+<span class="normal">  </span><span class="cbracket">}</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">start_monitoring_trash</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GFile <span class="gtkdoc opt">*</span>file<span class="gtkdoc opt">;</span>
-  GFileMonitor <span class="gtkdoc opt">*</span>monitor<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">start_monitoring_trash</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">file</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GFileMonitor</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">monitor</span><span class="symbol">;</span>
 
-  file <span class="gtkdoc opt">=</span> <span class="function"><a href="GFile.html#g-file-new-for-uri">g_file_new_for_uri</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;trash://&quot;</span><span class="gtkdoc opt">);</span>
-  monitor <span class="gtkdoc opt">=</span> <span class="function"><a href="GFile.html#g-file-monitor-directory">g_file_monitor_directory</a></span> <span class="gtkdoc opt">(</span>file<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>file<span class="gtkdoc opt">);</span>
+<span class="normal">  file </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GFile.html#g-file-new-for-uri">g_file_new_for_uri</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"trash://"</span><span class="symbol">);</span>
+<span class="normal">  monitor </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GFile.html#g-file-monitor-directory">g_file_monitor_directory</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">file</span><span class="symbol">,</span><span class="normal"> </span><span class="number">0</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">file</span><span class="symbol">);</span>
 
-  <span class="function"><a href="../gobject-Signals.html#g-signal-connect">g_signal_connect</a></span> <span class="gtkdoc opt">(</span>monitor<span class="gtkdoc opt">,</span> <span class="string">&quot;changed&quot;</span><span class="gtkdoc opt">,</span> <span class="function"><a href="../gobject-Closures.html#G-CALLBACK:CAPS">G_CALLBACK</a></span> <span class="gtkdoc opt">(</span>file_changed<span class="gtkdoc opt">),</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../gobject-Signals.html#g-signal-connect">g_signal_connect</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">monitor</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"changed"</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="../gobject-Closures.html#G-CALLBACK:CAPS">G_CALLBACK</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">file_changed</span><span class="symbol">),</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="comment">/* ... */</span>
+<span class="normal">  </span><span class="comment">/* ... */</span>
 
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -211,6 +211,6 @@
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

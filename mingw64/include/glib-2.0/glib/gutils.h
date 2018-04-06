@@ -181,7 +181,8 @@ typedef enum
 {
   G_FORMAT_SIZE_DEFAULT     = 0,
   G_FORMAT_SIZE_LONG_FORMAT = 1 << 0,
-  G_FORMAT_SIZE_IEC_UNITS   = 1 << 1
+  G_FORMAT_SIZE_IEC_UNITS   = 1 << 1,
+  G_FORMAT_SIZE_BITS        = 1 << 2
 } GFormatSizeFlags;
 
 GLIB_AVAILABLE_IN_2_30
@@ -302,6 +303,7 @@ g_bit_storage_impl (gulong number)
 /* Crashes the program. */
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_50
 #ifndef G_OS_WIN32
+#  include <stdlib.h>
 #  define g_abort() abort ()
 #else
 GLIB_AVAILABLE_IN_2_50

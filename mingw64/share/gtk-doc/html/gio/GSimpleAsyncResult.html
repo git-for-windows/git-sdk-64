@@ -8,7 +8,7 @@
 <link rel="up" href="async.html" title="Asynchronous I/O">
 <link rel="prev" href="gio-GIOScheduler.html" title="GIOScheduler">
 <link rel="next" href="conversion.html" title="Data conversion">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -325,9 +325,10 @@ or it can use <a href="../glib-Threads.html#GThread"><span class="type">GThreads
 from the point where it is called. <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-complete-in-idle" title="g_simple_async_result_complete_in_idle ()"><code class="function">g_simple_async_result_complete_in_idle()</code></a>
 will finish it from an idle handler in the 
 <a href="../glib-The-Main-Event-Loop.html#g-main-context-push-thread-default">thread-default main context</a>
-. <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-run-in-thread" title="g_simple_async_result_run_in_thread ()"><code class="function">g_simple_async_result_run_in_thread()</code></a> will run the
-job in a separate thread and then deliver the result to the
-thread-default main context.</p>
+where the <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a> was created.
+<a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-run-in-thread" title="g_simple_async_result_run_in_thread ()"><code class="function">g_simple_async_result_run_in_thread()</code></a> will run the job in a
+separate thread and then use
+<a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-complete-in-idle" title="g_simple_async_result_complete_in_idle ()"><code class="function">g_simple_async_result_complete_in_idle()</code></a> to deliver the result.</p>
 <p>To set the results of an asynchronous function,
 <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gpointer" title="g_simple_async_result_set_op_res_gpointer ()"><code class="function">g_simple_async_result_set_op_res_gpointer()</code></a>,
 <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gboolean" title="g_simple_async_result_set_op_res_gboolean ()"><code class="function">g_simple_async_result_set_op_res_gboolean()</code></a>, and
@@ -439,98 +440,98 @@ using GSimpleAsyncResult looks something like this:</p>
 90
 91
 92</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">baked_cb</span> <span class="gtkdoc opt">(</span>Cake    <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">,</span>
-          gpointer user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc slc">// In this example, this callback is not given a reference to the cake,</span>
-  <span class="gtkdoc slc">// so the GSimpleAsyncResult has to take a reference to it.</span>
-  GSimpleAsyncResult <span class="gtkdoc opt">*</span>result <span class="gtkdoc opt">=</span> user_data<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">baked_cb</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Cake</span><span class="normal">    </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">,</span>
+<span class="normal">          </span><span class="usertype">gpointer</span><span class="normal"> user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">// In this example, this callback is not given a reference to the cake,</span>
+<span class="normal">  </span><span class="comment">// so the GSimpleAsyncResult has to take a reference to it.</span>
+<span class="normal">  </span><span class="usertype">GSimpleAsyncResult</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">result </span><span class="symbol">=</span><span class="normal"> user_data</span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>cake <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">)</span>
-    <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-error">g_simple_async_result_set_error</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span>
-                                     BAKER_ERRORS<span class="gtkdoc opt">,</span>
-                                     BAKER_ERROR_NO_FLOUR<span class="gtkdoc opt">,</span>
-                                     <span class="string">&quot;Go to the supermarket&quot;</span><span class="gtkdoc opt">);</span>
-  <span class="keyword">else</span>
-    <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gpointer">g_simple_async_result_set_op_res_gpointer</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span>
-                                               <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">),</span>
-                                               g_object_unref<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-error">g_simple_async_result_set_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span>
+<span class="normal">                                     BAKER_ERRORS</span><span class="symbol">,</span>
+<span class="normal">                                     BAKER_ERROR_NO_FLOUR</span><span class="symbol">,</span>
+<span class="normal">                                     </span><span class="string">"Go to the supermarket"</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">else</span>
+<span class="normal">    </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gpointer">g_simple_async_result_set_op_res_gpointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span>
+<span class="normal">                                               </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">),</span>
+<span class="normal">                                               <a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="symbol">);</span>
 
 
-  <span class="gtkdoc slc">// In this example, we assume that baked_cb is called as a callback from</span>
-  <span class="gtkdoc slc">// the mainloop, so it&apos;s safe to complete the operation synchronously here.</span>
-  <span class="gtkdoc slc">// If, however, _baker_prepare_cake () might call its callback without</span>
-  <span class="gtkdoc slc">// first returning to the mainloop — inadvisable, but some APIs do so —</span>
-  <span class="gtkdoc slc">// we would need to use g_simple_async_result_complete_in_idle().</span>
-  <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-complete">g_simple_async_result_complete</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="comment">// In this example, we assume that baked_cb is called as a callback from</span>
+<span class="normal">  </span><span class="comment">// the mainloop, so it's safe to complete the operation synchronously here.</span>
+<span class="normal">  </span><span class="comment">// If, however, _baker_prepare_cake () might call its callback without</span>
+<span class="normal">  </span><span class="comment">// first returning to the mainloop — inadvisable, but some APIs do so —</span>
+<span class="normal">  </span><span class="comment">// we would need to use g_simple_async_result_complete_in_idle().</span>
+<span class="normal">  </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-complete">g_simple_async_result_complete</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">void</span>
-<span class="function">baker_bake_cake_async</span> <span class="gtkdoc opt">(</span>Baker              <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                       guint               radius<span class="gtkdoc opt">,</span>
-                       GAsyncReadyCallback callback<span class="gtkdoc opt">,</span>
-                       gpointer            user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GSimpleAsyncResult <span class="gtkdoc opt">*</span>simple<span class="gtkdoc opt">;</span>
-  Cake               <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">;</span>
+<span class="type">void</span>
+<span class="function">baker_bake_cake_async</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">              </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">guint</span><span class="normal">               radius</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GAsyncReadyCallback</span><span class="normal"> callback</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">gpointer</span><span class="normal">            user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GSimpleAsyncResult</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">simple</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">Cake</span><span class="normal">               </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>radius <span class="gtkdoc opt">&lt;</span> <span class="number">3</span><span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-report-error-in-idle">g_simple_async_report_error_in_idle</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">),</span>
-                                           callback<span class="gtkdoc opt">,</span>
-                                           user_data<span class="gtkdoc opt">,</span>
-                                           BAKER_ERRORS<span class="gtkdoc opt">,</span>
-                                           BAKER_ERROR_TOO_SMALL<span class="gtkdoc opt">,</span>
-                                           <span class="string">&quot;%ucm radius cakes are silly&quot;</span><span class="gtkdoc opt">,</span>
-                                           radius<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">radius </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">3</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-report-error-in-idle">g_simple_async_report_error_in_idle</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">),</span>
+<span class="normal">                                           callback</span><span class="symbol">,</span>
+<span class="normal">                                           user_data</span><span class="symbol">,</span>
+<span class="normal">                                           BAKER_ERRORS</span><span class="symbol">,</span>
+<span class="normal">                                           BAKER_ERROR_TOO_SMALL</span><span class="symbol">,</span>
+<span class="normal">                                           </span><span class="string">"%ucm radius cakes are silly"</span><span class="symbol">,</span>
+<span class="normal">                                           radius</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  simple <span class="gtkdoc opt">=</span> <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-new">g_simple_async_result_new</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">),</span>
-                                      callback<span class="gtkdoc opt">,</span>
-                                      user_data<span class="gtkdoc opt">,</span>
-                                      baker_bake_cake_async<span class="gtkdoc opt">);</span>
-  cake <span class="gtkdoc opt">=</span> <span class="function">_baker_get_cached_cake</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> radius<span class="gtkdoc opt">);</span>
+<span class="normal">  simple </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-new">g_simple_async_result_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">),</span>
+<span class="normal">                                      callback</span><span class="symbol">,</span>
+<span class="normal">                                      user_data</span><span class="symbol">,</span>
+<span class="normal">                                      baker_bake_cake_async</span><span class="symbol">);</span>
+<span class="normal">  cake </span><span class="symbol">=</span><span class="normal"> </span><span class="function">_baker_get_cached_cake</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> radius</span><span class="symbol">);</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>cake <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gpointer">g_simple_async_result_set_op_res_gpointer</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">,</span>
-                                                 <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">),</span>
-                                                 g_object_unref<span class="gtkdoc opt">);</span>
-      <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-complete-in-idle">g_simple_async_result_complete_in_idle</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">);</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">);</span>
-      <span class="gtkdoc slc">// Drop the reference returned by _baker_get_cached_cake();</span>
-      <span class="gtkdoc slc">// the GSimpleAsyncResult has taken its own reference.</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gpointer">g_simple_async_result_set_op_res_gpointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">,</span>
+<span class="normal">                                                 </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">),</span>
+<span class="normal">                                                 <a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-complete-in-idle">g_simple_async_result_complete_in_idle</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="comment">// Drop the reference returned by _baker_get_cached_cake();</span>
+<span class="normal">      </span><span class="comment">// the GSimpleAsyncResult has taken its own reference.</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="function">_baker_prepare_cake</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> radius<span class="gtkdoc opt">,</span> baked_cb<span class="gtkdoc opt">,</span> simple<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function">_baker_prepare_cake</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> radius</span><span class="symbol">,</span><span class="normal"> baked_cb</span><span class="symbol">,</span><span class="normal"> simple</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-Cake <span class="gtkdoc opt">*</span>
-<span class="function">baker_bake_cake_finish</span> <span class="gtkdoc opt">(</span>Baker        <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                        GAsyncResult <span class="gtkdoc opt">*</span>result<span class="gtkdoc opt">,</span>
-                        GError      <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GSimpleAsyncResult <span class="gtkdoc opt">*</span>simple<span class="gtkdoc opt">;</span>
-  Cake               <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">;</span>
+<span class="normal">Cake </span><span class="symbol">*</span>
+<span class="function">baker_bake_cake_finish</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">        </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="usertype">GAsyncResult</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">result</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="usertype">GError</span><span class="normal">      </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GSimpleAsyncResult</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">simple</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">Cake</span><span class="normal">               </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">;</span>
 
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-is-valid">g_simple_async_result_is_valid</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span>
-                                                        <span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">),</span>
-                                                        baker_bake_cake_async<span class="gtkdoc opt">),</span>
-                        NULL<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-is-valid">g_simple_async_result_is_valid</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span>
+<span class="normal">                                                        </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">),</span>
+<span class="normal">                                                        baker_bake_cake_async</span><span class="symbol">),</span>
+<span class="normal">                        <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  simple <span class="gtkdoc opt">= (</span>GSimpleAsyncResult <span class="gtkdoc opt">*)</span> result<span class="gtkdoc opt">;</span>
+<span class="normal">  simple </span><span class="symbol">=</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="GSimpleAsyncResult.html#GSimpleAsyncResult-struct">GSimpleAsyncResult</a> </span><span class="symbol">*)</span><span class="normal"> result</span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-propagate-error">g_simple_async_result_propagate_error</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">))</span>
-    <span class="keyword">return</span> NULL<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-propagate-error">g_simple_async_result_propagate_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">))</span>
+<span class="normal">    </span><span class="keyword">return</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  cake <span class="gtkdoc opt">=</span> <span class="function">CAKE</span> <span class="gtkdoc opt">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-get-op-res-gpointer">g_simple_async_result_get_op_res_gpointer</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">));</span>
-  <span class="keyword">return</span> <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  cake </span><span class="symbol">=</span><span class="normal"> </span><span class="function">CAKE</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-get-op-res-gpointer">g_simple_async_result_get_op_res_gpointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">));</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1725,6 +1726,6 @@ ownership of <em class="parameter"><code>error</code></em>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="application.html" title="Application support">
 <link rel="prev" href="application.html" title="Application support">
 <link rel="next" href="GApplicationCommandLine.html" title="GApplicationCommandLine">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -261,6 +261,30 @@
 <span class="returnvalue">void</span>
 </td>
 <td class="function_name">
+<a class="link" href="GApplication.html#g-application-set-option-context-parameter-string" title="g_application_set_option_context_parameter_string ()">g_application_set_option_context_parameter_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="GApplication.html#g-application-set-option-context-summary" title="g_application_set_option_context_summary ()">g_application_set_option_context_summary</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="GApplication.html#g-application-set-option-context-description" title="g_application_set_option_context_description ()">g_application_set_option_context_description</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
 <a class="link" href="GApplication.html#g-application-set-default" title="g_application_set_default ()">g_application_set_default</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
@@ -457,13 +481,13 @@ GApplication implements
 <p>A <a class="link" href="GApplication.html" title="GApplication"><span class="type">GApplication</span></a> is the foundation of an application.  It wraps some
 low-level platform-specific services and is intended to act as the
 foundation for higher-level application classes such as
-<a href="../gtk4/GtkApplication.html#GtkApplication-struct"><span class="type">GtkApplication</span></a> or <span class="type">MxApplication</span>.  In general, you should not use
+<span class="type">GtkApplication</span> or <span class="type">MxApplication</span>.  In general, you should not use
 this class outside of a higher level framework.</p>
 <p>GApplication provides convenient life cycle management by maintaining
 a "use count" for the primary application instance. The use count can
 be changed using <a class="link" href="GApplication.html#g-application-hold" title="g_application_hold ()"><code class="function">g_application_hold()</code></a> and <a class="link" href="GApplication.html#g-application-release" title="g_application_release ()"><code class="function">g_application_release()</code></a>. If
 it drops to zero, the application exits. Higher-level classes such as
-<a href="../gtk4/GtkApplication.html#GtkApplication-struct"><span class="type">GtkApplication</span></a> employ the use count to ensure that the application
+<span class="type">GtkApplication</span> employ the use count to ensure that the application
 stays alive as long as it has any opened windows.</p>
 <p>Another feature that GApplication (optionally) provides is process
 uniqueness. Applications can make use of this functionality by
@@ -542,7 +566,7 @@ The environment is only added to the platform data if the
 <a class="link" href="GApplication.html#G-APPLICATION-SEND-ENVIRONMENT:CAPS"><code class="literal">G_APPLICATION_SEND_ENVIRONMENT</code></a> flag is set. <a class="link" href="GApplication.html" title="GApplication"><span class="type">GApplication</span></a> subclasses
 can add their own platform data by overriding the <em class="parameter"><code>add_platform_data</code></em>
 
-virtual function. For instance, <a href="../gtk4/GtkApplication.html#GtkApplication-struct"><span class="type">GtkApplication</span></a> adds startup notification
+virtual function. For instance, <span class="type">GtkApplication</span> adds startup notification
 data in this way.</p>
 <p>To parse commandline arguments you may handle the
 <a class="link" href="GApplication.html#GApplication-command-line" title="The “command-line” signal"><span class="type">“command-line”</span></a> signal or override the <code class="function">local_command_line()</code>
@@ -886,7 +910,7 @@ the application ID after that point will not have an impact on the
 resource base path.</p>
 <p>As an example, if the application has an ID of "org.example.app" then
 the default resource base path will be "/org/example/app".  If this
-is a <a href="../gtk4/GtkApplication.html#GtkApplication-struct"><span class="type">GtkApplication</span></a> (and you have not manually changed the path)
+is a <span class="type">GtkApplication</span> (and you have not manually changed the path)
 then Gtk will then search for the menus of the application at
 "/org/example/app/gtk/menus.ui".</p>
 <p>See <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a> for more information about adding resources to your
@@ -1236,7 +1260,11 @@ g_application_quit (<em class="parameter"><code><a class="link" href="GApplicati
 <p>Immediately quits the application.</p>
 <p>Upon return to the mainloop, <a class="link" href="GApplication.html#g-application-run" title="g_application_run ()"><code class="function">g_application_run()</code></a> will return,
 calling only the 'shutdown' function before doing so.</p>
-<p>The hold count is ignored.</p>
+<p>The hold count is ignored.
+Take care if your code has called <a class="link" href="GApplication.html#g-application-hold" title="g_application_hold ()"><code class="function">g_application_hold()</code></a> on the application and
+is therefore still expecting it to exist.
+(Note that you may have called <a class="link" href="GApplication.html#g-application-hold" title="g_application_hold ()"><code class="function">g_application_hold()</code></a> indirectly, for example
+through <code class="function">gtk_application_add_window()</code>.)</p>
 <p>The result of calling <a class="link" href="GApplication.html#g-application-run" title="g_application_run ()"><code class="function">g_application_run()</code></a> again after it returns is
 unspecified.</p>
 <div class="refsect3">
@@ -1543,7 +1571,7 @@ is <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 <tr>
 <td class="parameter_name"><p>argv</p></td>
 <td class="parameter_description"><p>the argv from <code class="function">main()</code>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=argc][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=argc][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> filename][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1762,6 +1790,115 @@ new functionality whereby unrecognised options are rejected even if
 </table></div>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-40.html#api-index-2.40">2.40</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="g-application-set-option-context-parameter-string"></a><h3>g_application_set_option_context_parameter_string ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+g_application_set_option_context_parameter_string
+                               (<em class="parameter"><code><a class="link" href="GApplication.html" title="GApplication"><span class="type">GApplication</span></a> *application</code></em>,
+                                <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *parameter_string</code></em>);</pre>
+<p>Sets the parameter string to be used by the commandline handling of <em class="parameter"><code>application</code></em>
+.</p>
+<p>This function registers the argument to be passed to <a href="../glib-Commandline-option-parser.html#g-option-context-new"><code class="function">g_option_context_new()</code></a>
+when the internal <a href="../glib-Commandline-option-parser.html#GOptionContext"><span class="type">GOptionContext</span></a> of <em class="parameter"><code>application</code></em>
+ is created.</p>
+<p>See <a href="../glib-Commandline-option-parser.html#g-option-context-new"><code class="function">g_option_context_new()</code></a> for more information about <em class="parameter"><code>parameter_string</code></em>
+.</p>
+<div class="refsect3">
+<a name="g-application-set-option-context-parameter-string.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>application</p></td>
+<td class="parameter_description"><p>the <a class="link" href="GApplication.html" title="GApplication"><span class="type">GApplication</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>parameter_string</p></td>
+<td class="parameter_description"><p>a string which is displayed
+in the first line of <code class="literal">--help</code> output, after the usage summary <code class="literal">programname [OPTION...]</code>. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: 2.56</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="g-application-set-option-context-summary"></a><h3>g_application_set_option_context_summary ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+g_application_set_option_context_summary
+                               (<em class="parameter"><code><a class="link" href="GApplication.html" title="GApplication"><span class="type">GApplication</span></a> *application</code></em>,
+                                <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *summary</code></em>);</pre>
+<p>Adds a summary to the <em class="parameter"><code>application</code></em>
+ option context.</p>
+<p>See <a href="../glib-Commandline-option-parser.html#g-option-context-set-summary"><code class="function">g_option_context_set_summary()</code></a> for more information.</p>
+<div class="refsect3">
+<a name="g-application-set-option-context-summary.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>application</p></td>
+<td class="parameter_description"><p>the <a class="link" href="GApplication.html" title="GApplication"><span class="type">GApplication</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>summary</p></td>
+<td class="parameter_description"><p>a string to be shown in <code class="literal">--help</code> output
+before the list of options, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: 2.56</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="g-application-set-option-context-description"></a><h3>g_application_set_option_context_description ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+g_application_set_option_context_description
+                               (<em class="parameter"><code><a class="link" href="GApplication.html" title="GApplication"><span class="type">GApplication</span></a> *application</code></em>,
+                                <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>);</pre>
+<p>Adds a description to the <em class="parameter"><code>application</code></em>
+ option context.</p>
+<p>See <a href="../glib-Commandline-option-parser.html#g-option-context-set-description"><code class="function">g_option_context_set_description()</code></a> for more information.</p>
+<div class="refsect3">
+<a name="g-application-set-option-context-description.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>application</p></td>
+<td class="parameter_description"><p>the <a class="link" href="GApplication.html" title="GApplication"><span class="type">GApplication</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>description</p></td>
+<td class="parameter_description"><p>a string to be shown in <code class="literal">--help</code> output
+after the list of options, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: 2.56</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -2611,6 +2748,6 @@ after registration. See <a class="link" href="GApplication.html#g-application-re
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

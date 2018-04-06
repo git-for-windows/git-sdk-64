@@ -8,7 +8,7 @@
 <link rel="up" href="glib-core.html" title="GLib Core Application Support">
 <link rel="prev" href="glib-Dynamic-Loading-of-Modules.html" title="Dynamic Loading of Modules">
 <link rel="next" href="glib-Memory-Slices.html" title="Memory Slices">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -279,8 +279,13 @@
 <div class="refsect1">
 <a name="glib-Memory-Allocation.description"></a><h2>Description</h2>
 <p>These functions provide support for allocating and freeing memory.</p>
-<p>If any call to allocate memory fails, the application is terminated.
-This also means that there is no need to check if the call succeeded.</p>
+<p>If any call to allocate memory using functions <a class="link" href="glib-Memory-Allocation.html#g-new" title="g_new()"><code class="function">g_new()</code></a>, <a class="link" href="glib-Memory-Allocation.html#g-new0" title="g_new0()"><code class="function">g_new0()</code></a>, <a class="link" href="glib-Memory-Allocation.html#g-renew" title="g_renew()"><code class="function">g_renew()</code></a>,
+<a class="link" href="glib-Memory-Allocation.html#g-malloc" title="g_malloc ()"><code class="function">g_malloc()</code></a>, <a class="link" href="glib-Memory-Allocation.html#g-malloc0" title="g_malloc0 ()"><code class="function">g_malloc0()</code></a>, <a class="link" href="glib-Memory-Allocation.html#g-malloc0-n" title="g_malloc0_n ()"><code class="function">g_malloc0_n()</code></a>, <a class="link" href="glib-Memory-Allocation.html#g-realloc" title="g_realloc ()"><code class="function">g_realloc()</code></a>, and <a class="link" href="glib-Memory-Allocation.html#g-realloc-n" title="g_realloc_n ()"><code class="function">g_realloc_n()</code></a>
+fails, the application is terminated. This also means that there is no
+need to check if the call succeeded. On the other hand, g_try_...() family
+of functions returns <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> on failure that can be used as a check
+for unsuccessful memory allocation. The application is not terminated
+in this case.</p>
 <p>It's important to match <a class="link" href="glib-Memory-Allocation.html#g-malloc" title="g_malloc ()"><code class="function">g_malloc()</code></a> (and wrappers such as <a class="link" href="glib-Memory-Allocation.html#g-new" title="g_new()"><code class="function">g_new()</code></a>) with
 <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>, <a class="link" href="glib-Memory-Slices.html#g-slice-alloc" title="g_slice_alloc ()"><code class="function">g_slice_alloc()</code></a> (and wrappers such as <a class="link" href="glib-Memory-Slices.html#g-slice-new" title="g_slice_new()"><code class="function">g_slice_new()</code></a>) with
 <a class="link" href="glib-Memory-Slices.html#g-slice-free" title="g_slice_free()"><code class="function">g_slice_free()</code></a>, plain <code class="function">malloc()</code> with <code class="function">free()</code>, and (if you're using C++)
@@ -1081,16 +1086,16 @@ the following example (which only works on GCC and clang):</p>
 8
 9
 10</pre></td>
-        <td class="listing_code"><pre class="programlisting">GObject <span class="gtkdoc opt">*</span>
-<span class="function">create_object</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="glib-Miscellaneous-Macros.html#g-autoptr">g_autoptr</a></span><span class="gtkdoc opt">(</span>GObject<span class="gtkdoc opt">)</span> obj <span class="gtkdoc opt">=</span> <span class="function"><a href="../gobject/gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span> <span class="gtkdoc opt">(</span>G_TYPE_OBJECT<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+        <td class="listing_code"><pre class="programlisting"><span class="normal"><a href="../gobject-The-Base-Object-Type.html#GObject-struct">GObject</a> </span><span class="symbol">*</span>
+<span class="function">create_object</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="glib-Miscellaneous-Macros.html#g-autoptr">g_autoptr</a></span><span class="symbol">(</span><span class="normal"><a href="../gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span><span class="normal"> obj </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>early_error_case<span class="gtkdoc opt">)</span>
-    <span class="keyword">return</span> NULL<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">early_error_case</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="keyword">return</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  <span class="keyword">return</span> <span class="function"><a href="glib-Memory-Allocation.html#g-steal-pointer">g_steal_pointer</a></span> <span class="gtkdoc opt">(&amp;</span>obj<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function"><a href="glib-Memory-Allocation.html#g-steal-pointer">g_steal_pointer</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">obj</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1116,19 +1121,19 @@ particularly useful for dealing with optional out parameters:</p>
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting">gboolean
-<span class="function">get_object</span> <span class="gtkdoc opt">(</span>GObject <span class="gtkdoc opt">**</span>obj_out<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="glib-Miscellaneous-Macros.html#g-autoptr">g_autoptr</a></span><span class="gtkdoc opt">(</span>GObject<span class="gtkdoc opt">)</span> obj <span class="gtkdoc opt">=</span> <span class="function"><a href="../gobject/gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span> <span class="gtkdoc opt">(</span>G_TYPE_OBJECT<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+        <td class="listing_code"><pre class="programlisting"><span class="normal"><a href="glib-Basic-Types.html#gboolean">gboolean</a></span>
+<span class="function">get_object</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GObject</span><span class="normal"> </span><span class="symbol">**</span><span class="normal">obj_out</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="glib-Miscellaneous-Macros.html#g-autoptr">g_autoptr</a></span><span class="symbol">(</span><span class="normal"><a href="../gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span><span class="normal"> obj </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>early_error_case<span class="gtkdoc opt">)</span>
-    <span class="keyword">return</span> FALSE<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">early_error_case</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="keyword">return</span><span class="normal"> <a href="glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>obj_out<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">*</span>obj_out <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Memory-Allocation.html#g-steal-pointer">g_steal_pointer</a></span> <span class="gtkdoc opt">(&amp;</span>obj<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">obj_out</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="symbol">*</span><span class="normal">obj_out </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Memory-Allocation.html#g-steal-pointer">g_steal_pointer</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">obj</span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> TRUE<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> <a href="glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1325,7 +1330,8 @@ is <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code
 g_mem_set_vtable (<em class="parameter"><code><a class="link" href="glib-Memory-Allocation.html#GMemVTable" title="struct GMemVTable"><span class="type">GMemVTable</span></a> *vtable</code></em>);</pre>
 <div class="warning">
 <p><code class="literal">g_mem_set_vtable</code> has been deprecated since version 2.46 and should not be used in newly-written code.</p>
-<p>Use other memory profiling tools instead</p>
+<p>This function now does nothing. Use other memory
+profiling tools instead</p>
 </div>
 <p>This function used to let you override the memory allocation function.
 However, its use was incompatible with the use of global constructors
@@ -1468,6 +1474,6 @@ allocation functions, but this variable shouldn't be modified anymore.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

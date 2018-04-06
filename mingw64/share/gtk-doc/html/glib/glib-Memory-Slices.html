@@ -8,7 +8,7 @@
 <link rel="up" href="glib-core.html" title="GLib Core Application Support">
 <link rel="prev" href="glib-Memory-Allocation.html" title="Memory Allocation">
 <link rel="next" href="glib-IO-Channels.html" title="IO Channels">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -169,22 +169,22 @@ object size used at allocation time is still available when freeing.</p>
 14
 15
 16</pre></td>
-        <td class="listing_code"><pre class="programlisting">gchar <span class="gtkdoc opt">*</span>mem<span class="gtkdoc opt">[</span><span class="number">10000</span><span class="gtkdoc opt">];</span>
-gint i<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">mem</span><span class="symbol">[</span><span class="number">10000</span><span class="symbol">];</span>
+<span class="usertype">gint</span><span class="normal"> i</span><span class="symbol">;</span>
 
-<span class="gtkdoc slc">// Allocate 10000 blocks.</span>
-<span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">10000</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++)</span>
-  <span class="gtkdoc opt">{</span>
-    mem<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">] =</span> <span class="function"><a href="glib-Memory-Slices.html#g-slice-alloc">g_slice_alloc</a></span> <span class="gtkdoc opt">(</span><span class="number">50</span><span class="gtkdoc opt">);</span>
+<span class="comment">// Allocate 10000 blocks.</span>
+<span class="keyword">for</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">i </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span><span class="normal"> i </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">10000</span><span class="symbol">;</span><span class="normal"> i</span><span class="symbol">++)</span>
+<span class="normal">  </span><span class="cbracket">{</span>
+<span class="normal">    mem</span><span class="symbol">[</span><span class="normal">i</span><span class="symbol">]</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Memory-Slices.html#g-slice-alloc">g_slice_alloc</a></span><span class="normal"> </span><span class="symbol">(</span><span class="number">50</span><span class="symbol">);</span>
 
-    <span class="gtkdoc slc">// Fill in the memory with some junk.</span>
-    <span class="keyword">for</span> <span class="gtkdoc opt">(</span>j <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> j <span class="gtkdoc opt">&lt;</span> <span class="number">50</span><span class="gtkdoc opt">;</span> j<span class="gtkdoc opt">++)</span>
-      mem<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">][</span>j<span class="gtkdoc opt">] =</span> i <span class="gtkdoc opt">*</span> j<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc opt">}</span>
+<span class="normal">    </span><span class="comment">// Fill in the memory with some junk.</span>
+<span class="normal">    </span><span class="keyword">for</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">j </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span><span class="normal"> j </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">50</span><span class="symbol">;</span><span class="normal"> j</span><span class="symbol">++)</span>
+<span class="normal">      mem</span><span class="symbol">[</span><span class="normal">i</span><span class="symbol">][</span><span class="normal">j</span><span class="symbol">]</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> i </span><span class="symbol">*</span><span class="normal"> j</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="cbracket">}</span>
 
-<span class="gtkdoc slc">// Now free all of the blocks.</span>
-<span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">10000</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++)</span>
-  <span class="function"><a href="glib-Memory-Slices.html#g-slice-free1">g_slice_free1</a></span> <span class="gtkdoc opt">(</span><span class="number">50</span><span class="gtkdoc opt">,</span> mem<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">]);</span></pre></td>
+<span class="comment">// Now free all of the blocks.</span>
+<span class="keyword">for</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">i </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span><span class="normal"> i </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">10000</span><span class="symbol">;</span><span class="normal"> i</span><span class="symbol">++)</span>
+<span class="normal">  </span><span class="function"><a href="glib-Memory-Slices.html#g-slice-free1">g_slice_free1</a></span><span class="normal"> </span><span class="symbol">(</span><span class="number">50</span><span class="symbol">,</span><span class="normal"> mem</span><span class="symbol">[</span><span class="normal">i</span><span class="symbol">]);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -212,21 +212,21 @@ with data structures:</p>
 13
 14
 15</pre></td>
-        <td class="listing_code"><pre class="programlisting">GRealArray <span class="gtkdoc opt">*</span>array<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GRealArray</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">array</span><span class="symbol">;</span>
 
-<span class="gtkdoc slc">// Allocate one block, using the g_slice_new() macro.</span>
-array <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span> <span class="gtkdoc opt">(</span>GRealArray<span class="gtkdoc opt">);</span>
+<span class="comment">// Allocate one block, using the g_slice_new() macro.</span>
+<span class="normal">array </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">GRealArray</span><span class="symbol">);</span>
 
-<span class="gtkdoc slc">// We can now use array just like a normal pointer to a structure.</span>
-array<span class="gtkdoc opt">-&gt;</span>data            <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
-array<span class="gtkdoc opt">-&gt;</span>len             <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-array<span class="gtkdoc opt">-&gt;</span>alloc           <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-array<span class="gtkdoc opt">-&gt;</span>zero_terminated <span class="gtkdoc opt">= (</span>zero_terminated <span class="gtkdoc opt">?</span> <span class="number">1</span> <span class="gtkdoc opt">:</span> <span class="number">0</span><span class="gtkdoc opt">);</span>
-array<span class="gtkdoc opt">-&gt;</span>clear           <span class="gtkdoc opt">= (</span>clear <span class="gtkdoc opt">?</span> <span class="number">1</span> <span class="gtkdoc opt">:</span> <span class="number">0</span><span class="gtkdoc opt">);</span>
-array<span class="gtkdoc opt">-&gt;</span>elt_size        <span class="gtkdoc opt">=</span> elt_size<span class="gtkdoc opt">;</span>
+<span class="comment">// We can now use array just like a normal pointer to a structure.</span>
+<span class="normal">array</span><span class="symbol">-&gt;</span><span class="normal">data            </span><span class="symbol">=</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
+<span class="normal">array</span><span class="symbol">-&gt;</span><span class="normal">len             </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="normal">array</span><span class="symbol">-&gt;</span><span class="normal">alloc           </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="normal">array</span><span class="symbol">-&gt;</span><span class="normal">zero_terminated </span><span class="symbol">=</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">zero_terminated </span><span class="symbol">?</span><span class="normal"> </span><span class="number">1</span><span class="normal"> </span><span class="symbol">:</span><span class="normal"> </span><span class="number">0</span><span class="symbol">);</span>
+<span class="normal">array</span><span class="symbol">-&gt;</span><span class="normal">clear           </span><span class="symbol">=</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">clear </span><span class="symbol">?</span><span class="normal"> </span><span class="number">1</span><span class="normal"> </span><span class="symbol">:</span><span class="normal"> </span><span class="number">0</span><span class="symbol">);</span>
+<span class="normal">array</span><span class="symbol">-&gt;</span><span class="normal">elt_size        </span><span class="symbol">=</span><span class="normal"> elt_size</span><span class="symbol">;</span>
 
-<span class="gtkdoc slc">// We can free the block, so it can be reused.</span>
-<span class="function"><a href="glib-Memory-Slices.html#g-slice-free">g_slice_free</a></span> <span class="gtkdoc opt">(</span>GRealArray<span class="gtkdoc opt">,</span> array<span class="gtkdoc opt">);</span></pre></td>
+<span class="comment">// We can free the block, so it can be reused.</span>
+<span class="function"><a href="glib-Memory-Slices.html#g-slice-free">g_slice_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">GRealArray</span><span class="symbol">,</span><span class="normal"> array</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -241,7 +241,7 @@ array<span class="gtkdoc opt">-&gt;</span>elt_size        <span class="gtkdoc op
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
 g_slice_alloc (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gsize" title="gsize"><span class="type">gsize</span></a> block_size</code></em>);</pre>
 <p>Allocates a block of memory from the slice allocator.
-The block adress handed out can be expected to be aligned
+The block address handed out can be expected to be aligned
 to at least 1 * sizeof (void*),
 though in general slices are 2 * sizeof (void*) bytes aligned,
 if a <code class="function">malloc()</code> fallback implementation is used instead,
@@ -647,6 +647,6 @@ blocks</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="howto-gobject.html" title="How to define and implement a new GObject">
 <link rel="prev" href="howto-gobject-destruction.html" title="Object destruction">
 <link rel="next" href="howto-gobject-chainup.html" title="Chaining up">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -71,19 +71,19 @@
 13
 14</pre></td>
         <td class="listing_code"><pre class="programlisting"><span class="comment">/* declaration in the header. */</span>
-<span class="gtkdoc kwb">void</span> <span class="function">viewer_file_open</span> <span class="gtkdoc opt">(</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                       GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span>
+<span class="type">void</span><span class="normal"> </span><span class="function">viewer_file_open</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">);</span>
 
 <span class="comment">/* implementation in the source file */</span>
-<span class="gtkdoc kwb">void</span>
-<span class="function">viewer_file_open</span> <span class="gtkdoc opt">(</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                  GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function">VIEWER_IS_FILE</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">));</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>error <span class="gtkdoc opt">==</span> NULL <span class="gtkdoc opt">|| *</span>error <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">);</span>
+<span class="type">void</span>
+<span class="function">viewer_file_open</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">VIEWER_IS_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">));</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a> </span><span class="symbol">||</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="comment">/* do stuff here. */</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="comment">/* do stuff here. */</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -167,40 +167,40 @@
 34
 35</pre></td>
         <td class="listing_code"><pre class="programlisting"><span class="comment">/* declaration in viewer-file.h. */</span>
-<span class="gtkdoc ppc">#define VIEWER_TYPE_FILE viewer_file_get_type ()</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-DERIVABLE-TYPE:CAPS">G_DECLARE_DERIVABLE_TYPE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> VIEWER<span class="gtkdoc opt">,</span> <span class="gtkdoc kwb">FILE</span><span class="gtkdoc opt">,</span> GObject<span class="gtkdoc opt">)</span>
+<span class="preproc">#define</span><span class="normal"> </span><span class="usertype">VIEWER_TYPE_FILE</span><span class="normal"> </span><span class="function">viewer_file_get_type</span><span class="normal"> </span><span class="symbol">()</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-DERIVABLE-TYPE:CAPS">G_DECLARE_DERIVABLE_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> VIEWER</span><span class="symbol">,</span><span class="normal"> FILE</span><span class="symbol">,</span><span class="normal"> <a href="gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span>
 
-<span class="gtkdoc kwb">struct</span> _ViewerFileClass
-<span class="gtkdoc opt">{</span>
-  GObjectClass parent_class<span class="gtkdoc opt">;</span>
+<span class="keyword">struct</span><span class="normal"> </span><span class="classname">_ViewerFileClass</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObjectClass</span><span class="normal"> parent_class</span><span class="symbol">;</span>
 
-  <span class="comment">/* stuff */</span>
-  <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span>open<span class="gtkdoc opt">) (</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="comment">/* stuff */</span>
+<span class="normal">  </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">open</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">);</span>
 
-  <span class="comment">/* Padding to allow adding up to 12 new virtual functions without</span>
+<span class="normal">  </span><span class="comment">/* Padding to allow adding up to 12 new virtual functions without</span>
 <span class="comment">   * breaking ABI. */</span>
-  gpointer padding<span class="gtkdoc opt">[</span><span class="number">12</span><span class="gtkdoc opt">];</span>
-<span class="gtkdoc opt">};</span>
+<span class="normal">  </span><span class="usertype">gpointer</span><span class="normal"> padding</span><span class="symbol">[</span><span class="number">12</span><span class="symbol">];</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">void</span> <span class="function">viewer_file_open</span> <span class="gtkdoc opt">(</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                       GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span>
+<span class="type">void</span><span class="normal"> </span><span class="function">viewer_file_open</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">);</span>
 
 <span class="comment">/* implementation in viewer-file.c */</span>
-<span class="gtkdoc kwb">void</span>
-<span class="function">viewer_file_open</span> <span class="gtkdoc opt">(</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                  GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">;</span>
+<span class="type">void</span>
+<span class="function">viewer_file_open</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">;</span>
 
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function">VIEWER_IS_FILE</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">));</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>error <span class="gtkdoc opt">==</span> NULL <span class="gtkdoc opt">|| *</span>error <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">VIEWER_IS_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">));</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a> </span><span class="symbol">||</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  klass <span class="gtkdoc opt">=</span> <span class="function">VIEWER_FILE_GET_CLASS</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>klass<span class="gtkdoc opt">-&gt;</span>open <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">  klass </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE_GET_CLASS</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">klass</span><span class="symbol">-&gt;</span><span class="normal">open </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  klass<span class="gtkdoc opt">-&gt;</span><span class="function">open</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  klass</span><span class="symbol">-&gt;</span><span class="function">open</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -276,59 +276,59 @@
 51
 52
 53</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_real_close</span> <span class="gtkdoc opt">(</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                        GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* Default implementation for the virtual method. */</span>
-<span class="gtkdoc opt">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_real_close</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* Default implementation for the virtual method. */</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* this is not necessary, except for demonstration purposes.</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* this is not necessary, except for demonstration purposes.</span>
 <span class="comment">   *</span>
 <span class="comment">   * pure virtual method: mandates implementation in children.</span>
 <span class="comment">   */</span>
-  klass<span class="gtkdoc opt">-&gt;</span>open <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="normal">  klass</span><span class="symbol">-&gt;</span><span class="normal">open </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  <span class="comment">/* merely virtual method. */</span>
-  klass<span class="gtkdoc opt">-&gt;</span>close <span class="gtkdoc opt">=</span> viewer_file_real_close<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="comment">/* merely virtual method. */</span>
+<span class="normal">  klass</span><span class="symbol">-&gt;</span><span class="normal">close </span><span class="symbol">=</span><span class="normal"> viewer_file_real_close</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">void</span>
-<span class="function">viewer_file_open</span> <span class="gtkdoc opt">(</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                  GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">;</span>
+<span class="type">void</span>
+<span class="function">viewer_file_open</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">;</span>
 
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function">VIEWER_IS_FILE</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">));</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>error <span class="gtkdoc opt">==</span> NULL <span class="gtkdoc opt">|| *</span>error <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">VIEWER_IS_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">));</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a> </span><span class="symbol">||</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  klass <span class="gtkdoc opt">=</span> <span class="function">VIEWER_FILE_GET_CLASS</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">);</span>
+<span class="normal">  klass </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE_GET_CLASS</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">);</span>
 
-  <span class="comment">/* if the method is purely virtual, then it is a good idea to</span>
+<span class="normal">  </span><span class="comment">/* if the method is purely virtual, then it is a good idea to</span>
 <span class="comment">   * check that it has been overridden before calling it, and,</span>
 <span class="comment">   * depending on the intent of the class, either ignore it silently</span>
 <span class="comment">   * or warn the user.</span>
 <span class="comment">   */</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>klass<span class="gtkdoc opt">-&gt;</span>open <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">);</span>
-  klass<span class="gtkdoc opt">-&gt;</span><span class="function">open</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">klass</span><span class="symbol">-&gt;</span><span class="normal">open </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+<span class="normal">  klass</span><span class="symbol">-&gt;</span><span class="function">open</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">void</span>
-<span class="function">viewer_file_close</span> <span class="gtkdoc opt">(</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                   GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">;</span>
+<span class="type">void</span>
+<span class="function">viewer_file_close</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                   </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">;</span>
 
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function">VIEWER_IS_FILE</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">));</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>error <span class="gtkdoc opt">==</span> NULL <span class="gtkdoc opt">|| *</span>error <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">VIEWER_IS_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">));</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a> </span><span class="symbol">||</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  klass <span class="gtkdoc opt">=</span> <span class="function">VIEWER_FILE_GET_CLASS</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">);</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>klass<span class="gtkdoc opt">-&gt;</span>close <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">)</span>
-    klass<span class="gtkdoc opt">-&gt;</span><span class="function">close</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  klass </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE_GET_CLASS</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">klass</span><span class="symbol">-&gt;</span><span class="normal">close </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    klass</span><span class="symbol">-&gt;</span><span class="function">close</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -370,24 +370,24 @@
 18
 19</pre></td>
         <td class="listing_code"><pre class="programlisting"><span class="comment">/* declaration in viewer-file.h. */</span>
-<span class="gtkdoc kwb">struct</span> _ViewerFileClass
-<span class="gtkdoc opt">{</span>
-  GObjectClass parent<span class="gtkdoc opt">;</span>
+<span class="keyword">struct</span><span class="normal"> </span><span class="classname">_ViewerFileClass</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObjectClass</span><span class="normal"> parent</span><span class="symbol">;</span>
 
-  <span class="comment">/* Public virtual method as before. */</span>
-  <span class="gtkdoc kwb">void</span>     <span class="gtkdoc opt">(*</span>open<span class="gtkdoc opt">)           (</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                              GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="comment">/* Public virtual method as before. */</span>
+<span class="normal">  </span><span class="type">void</span><span class="normal">     </span><span class="symbol">(*</span><span class="normal">open</span><span class="symbol">)</span><span class="normal">           </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                              </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">);</span>
 
-  <span class="comment">/* Private helper function to work out whether the file can be loaded via</span>
+<span class="normal">  </span><span class="comment">/* Private helper function to work out whether the file can be loaded via</span>
 <span class="comment">   * memory mapped I/O, or whether it has to be read as a stream. */</span>
-  <span class="function"><a href="../glib-Basic-Types.html#gboolean">gboolean</a></span> <span class="gtkdoc opt">(*</span>can_memory_map<span class="gtkdoc opt">) (</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Basic-Types.html#gboolean">gboolean</a></span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">can_memory_map</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">);</span>
 
-  <span class="comment">/* Padding to allow adding up to 12 new virtual functions without</span>
+<span class="normal">  </span><span class="comment">/* Padding to allow adding up to 12 new virtual functions without</span>
 <span class="comment">   * breaking ABI. */</span>
-  gpointer padding<span class="gtkdoc opt">[</span><span class="number">12</span><span class="gtkdoc opt">];</span>
-<span class="gtkdoc opt">};</span>
+<span class="normal">  </span><span class="usertype">gpointer</span><span class="normal"> padding</span><span class="symbol">[</span><span class="number">12</span><span class="symbol">];</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">void</span> <span class="function">viewer_file_open</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span> GError <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span></pre></td>
+<span class="type">void</span><span class="normal"> </span><span class="function">viewer_file_open</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> </span><span class="usertype">GError</span><span class="normal"> </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -429,32 +429,32 @@
 26
 27</pre></td>
         <td class="listing_code"><pre class="programlisting"><span class="comment">/* this accessor function is static: it is not exported outside of this file. */</span>
-<span class="gtkdoc kwb">static</span> gboolean 
-<span class="function">viewer_file_can_memory_map</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="keyword">return</span> <span class="function">VIEWER_FILE_GET_CLASS</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">)-&gt;</span><span class="function">can_memory_map</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> <a href="../glib-Basic-Types.html#gboolean">gboolean</a> </span>
+<span class="function">viewer_file_can_memory_map</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function">VIEWER_FILE_GET_CLASS</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">)-&gt;</span><span class="function">can_memory_map</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">void</span>
-<span class="function">viewer_file_open</span> <span class="gtkdoc opt">(</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                  GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function">VIEWER_IS_FILE</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">));</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>error <span class="gtkdoc opt">==</span> NULL <span class="gtkdoc opt">|| *</span>error <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">);</span>
+<span class="type">void</span>
+<span class="function">viewer_file_open</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">VIEWER_IS_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">));</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a> </span><span class="symbol">||</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="comment">/*</span>
+<span class="normal">  </span><span class="comment">/*</span>
 <span class="comment">   * Try to load the file using memory mapped I/O, if the implementation of the</span>
 <span class="comment">   * class determines that is possible using its private virtual method.</span>
 <span class="comment">   */</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function">viewer_file_can_memory_map</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">))</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="comment">/* Load the file using memory mapped I/O. */</span>
-    <span class="gtkdoc opt">}</span>
-  <span class="keyword">else</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="comment">/* Fall back to trying to load the file using streaming I/O… */</span>
-    <span class="gtkdoc opt">}</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function">viewer_file_can_memory_map</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">))</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="comment">/* Load the file using memory mapped I/O. */</span>
+<span class="normal">    </span><span class="cbracket">}</span>
+<span class="normal">  </span><span class="keyword">else</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="comment">/* Fall back to trying to load the file using streaming I/O… */</span>
+<span class="normal">    </span><span class="cbracket">}</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -484,20 +484,20 @@
 12
 13
 14</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> gboolean
-<span class="function">viewer_file_real_can_memory_map</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* As an example, always return false. Or, potentially return true if the</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> <a href="../glib-Basic-Types.html#gboolean">gboolean</a></span>
+<span class="function">viewer_file_real_can_memory_map</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* As an example, always return false. Or, potentially return true if the</span>
 <span class="comment">   * file is local. */</span>
-  <span class="keyword">return</span> FALSE<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> <a href="../glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* non-pure virtual method; does not have to be implemented in children. */</span>
-  klass<span class="gtkdoc opt">-&gt;</span>can_memory_map <span class="gtkdoc opt">=</span> viewer_file_real_can_memory_map<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* non-pure virtual method; does not have to be implemented in children. */</span>
+<span class="normal">  klass</span><span class="symbol">-&gt;</span><span class="normal">can_memory_map </span><span class="symbol">=</span><span class="normal"> viewer_file_real_can_memory_map</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -520,14 +520,14 @@
 6
 7
 8</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_audio_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerAudioFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFileClass <span class="gtkdoc opt">*</span>file_class <span class="gtkdoc opt">=</span> <span class="function">VIEWER_FILE_CLASS</span> <span class="gtkdoc opt">(</span>klass<span class="gtkdoc opt">);</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_audio_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerAudioFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">file_class </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE_CLASS</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">klass</span><span class="symbol">);</span>
 
-  <span class="comment">/* implement pure virtual function. */</span>
-  file_class<span class="gtkdoc opt">-&gt;</span>can_memory_map <span class="gtkdoc opt">=</span> viewer_audio_file_can_memory_map<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="comment">/* implement pure virtual function. */</span>
+<span class="normal">  file_class</span><span class="symbol">-&gt;</span><span class="normal">can_memory_map </span><span class="symbol">=</span><span class="normal"> viewer_audio_file_can_memory_map</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -538,6 +538,6 @@
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

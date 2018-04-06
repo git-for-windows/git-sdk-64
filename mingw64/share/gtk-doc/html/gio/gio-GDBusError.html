@@ -8,7 +8,7 @@
 <link rel="up" href="gdbus-lowlevel.html" title="Low-level D-Bus Support">
 <link rel="prev" href="gio-D-Bus-Introspection-Data.html" title="D-Bus Introspection Data">
 <link rel="next" href="GDBusMessage.html" title="GDBusMessage">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -206,41 +206,41 @@ error domain:</p>
 33
 34
 35</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc slc">// foo-bar-error.h:</span>
+        <td class="listing_code"><pre class="programlisting"><span class="comment">// foo-bar-error.h:</span>
 
-<span class="gtkdoc ppc">#define FOO_BAR_ERROR (foo_bar_error_quark ())</span>
-GQuark <span class="function">foo_bar_error_quark</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">);</span>
+<span class="preproc">#define</span><span class="normal"> </span><span class="function">FOO_BAR_ERROR</span><span class="normal"> </span><span class="symbol">(</span><span class="function">foo_bar_error_quark</span><span class="normal"> </span><span class="symbol">())</span>
+<span class="usertype">GQuark</span><span class="normal"> </span><span class="function">foo_bar_error_quark</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">);</span>
 
-<span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">enum</span>
-<span class="gtkdoc opt">{</span>
-  FOO_BAR_ERROR_FAILED<span class="gtkdoc opt">,</span>
-  FOO_BAR_ERROR_ANOTHER_ERROR<span class="gtkdoc opt">,</span>
-  FOO_BAR_ERROR_SOME_THIRD_ERROR<span class="gtkdoc opt">,</span>
-  FOO_BAR_N_ERRORS <span class="gtkdoc opt">/ *&lt;</span> skip <span class="gtkdoc opt">&gt;* /</span>
-<span class="gtkdoc opt">}</span> FooBarError<span class="gtkdoc opt">;</span>
+<span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">enum</span>
+<span class="cbracket">{</span>
+<span class="normal">  FOO_BAR_ERROR_FAILED</span><span class="symbol">,</span>
+<span class="normal">  FOO_BAR_ERROR_ANOTHER_ERROR</span><span class="symbol">,</span>
+<span class="normal">  FOO_BAR_ERROR_SOME_THIRD_ERROR</span><span class="symbol">,</span>
+<span class="normal">  FOO_BAR_N_ERRORS </span><span class="symbol">/</span><span class="normal"> </span><span class="symbol">*&lt;</span><span class="normal"> skip </span><span class="symbol">&gt;*</span><span class="normal"> </span><span class="symbol">/</span>
+<span class="cbracket">}</span><span class="normal"> FooBarError</span><span class="symbol">;</span>
 
-<span class="gtkdoc slc">// foo-bar-error.c:</span>
+<span class="comment">// foo-bar-error.c:</span>
 
-<span class="gtkdoc kwb">static const</span> GDBusErrorEntry foo_bar_error_entries<span class="gtkdoc opt">[] =</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc opt">{</span>FOO_BAR_ERROR_FAILED<span class="gtkdoc opt">,</span>           <span class="string">&quot;org.project.Foo.Bar.Error.Failed&quot;</span><span class="gtkdoc opt">},</span>
-  <span class="gtkdoc opt">{</span>FOO_BAR_ERROR_ANOTHER_ERROR<span class="gtkdoc opt">,</span>    <span class="string">&quot;org.project.Foo.Bar.Error.AnotherError&quot;</span><span class="gtkdoc opt">},</span>
-  <span class="gtkdoc opt">{</span>FOO_BAR_ERROR_SOME_THIRD_ERROR<span class="gtkdoc opt">,</span> <span class="string">&quot;org.project.Foo.Bar.Error.SomeThirdError&quot;</span><span class="gtkdoc opt">},</span>
-<span class="gtkdoc opt">};</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GDBusErrorEntry</span><span class="normal"> foo_bar_error_entries</span><span class="symbol">[]</span><span class="normal"> </span><span class="symbol">=</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="cbracket">{</span><span class="normal">FOO_BAR_ERROR_FAILED</span><span class="symbol">,</span><span class="normal">           </span><span class="string">"org.project.Foo.Bar.Error.Failed"</span><span class="cbracket">}</span><span class="symbol">,</span>
+<span class="normal">  </span><span class="cbracket">{</span><span class="normal">FOO_BAR_ERROR_ANOTHER_ERROR</span><span class="symbol">,</span><span class="normal">    </span><span class="string">"org.project.Foo.Bar.Error.AnotherError"</span><span class="cbracket">}</span><span class="symbol">,</span>
+<span class="normal">  </span><span class="cbracket">{</span><span class="normal">FOO_BAR_ERROR_SOME_THIRD_ERROR</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"org.project.Foo.Bar.Error.SomeThirdError"</span><span class="cbracket">}</span><span class="symbol">,</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="gtkdoc slc">// Ensure that every error code has an associated D-Bus error name</span>
-<span class="function"><a href="../glib-Miscellaneous-Macros.html#G-STATIC-ASSERT:CAPS">G_STATIC_ASSERT</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="../glib-Standard-Macros.html#G-N-ELEMENTS:CAPS">G_N_ELEMENTS</a></span> <span class="gtkdoc opt">(</span>foo_bar_error_entries<span class="gtkdoc opt">) ==</span> FOO_BAR_N_ERRORS<span class="gtkdoc opt">);</span>
+<span class="comment">// Ensure that every error code has an associated D-Bus error name</span>
+<span class="function"><a href="../glib-Miscellaneous-Macros.html#G-STATIC-ASSERT:CAPS">G_STATIC_ASSERT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="../glib-Standard-Macros.html#G-N-ELEMENTS:CAPS">G_N_ELEMENTS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">foo_bar_error_entries</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">==</span><span class="normal"> FOO_BAR_N_ERRORS</span><span class="symbol">);</span>
 
-GQuark
-<span class="function">foo_bar_error_quark</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">static</span> <span class="gtkdoc kwc">volatile</span> gsize quark_volatile <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-  <span class="function"><a href="gio-GDBusError.html#g-dbus-error-register-error-domain">g_dbus_error_register_error_domain</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;foo-bar-error-quark&quot;</span><span class="gtkdoc opt">,</span>
-                                      <span class="gtkdoc opt">&amp;</span>quark_volatile<span class="gtkdoc opt">,</span>
-                                      foo_bar_error_entries<span class="gtkdoc opt">,</span>
-                                      <span class="function"><a href="../glib-Standard-Macros.html#G-N-ELEMENTS:CAPS">G_N_ELEMENTS</a></span> <span class="gtkdoc opt">(</span>foo_bar_error_entries<span class="gtkdoc opt">));</span>
-  <span class="keyword">return</span> <span class="gtkdoc opt">(</span>GQuark<span class="gtkdoc opt">)</span> quark_volatile<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal"><a href="../glib-Quarks.html#GQuark">GQuark</a></span>
+<span class="function">foo_bar_error_quark</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="keyword">volatile</span><span class="normal"> </span><span class="usertype">gsize</span><span class="normal"> quark_volatile </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="function"><a href="gio-GDBusError.html#g-dbus-error-register-error-domain">g_dbus_error_register_error_domain</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"foo-bar-error-quark"</span><span class="symbol">,</span>
+<span class="normal">                                      </span><span class="symbol">&amp;</span><span class="normal">quark_volatile</span><span class="symbol">,</span>
+<span class="normal">                                      foo_bar_error_entries</span><span class="symbol">,</span>
+<span class="normal">                                      </span><span class="function"><a href="../glib-Standard-Macros.html#G-N-ELEMENTS:CAPS">G_N_ELEMENTS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">foo_bar_error_entries</span><span class="symbol">));</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../glib-Quarks.html#GQuark">GQuark</a></span><span class="symbol">)</span><span class="normal"> quark_volatile</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -254,9 +254,9 @@ other peers will see the D-Bus error name org.project.Foo.Bar.Error.AnotherError
 generation itself in the previous example) the peer will see also <code class="literal">FOO_BAR_ERROR_ANOTHER_ERROR</code> instead
 of <a class="link" href="gio-GIOError.html#G-IO-ERROR-DBUS-ERROR:CAPS"><code class="literal">G_IO_ERROR_DBUS_ERROR</code></a>. Note that GDBus clients can still recover
 org.project.Foo.Bar.Error.AnotherError using <a class="link" href="gio-GDBusError.html#g-dbus-error-get-remote-error" title="g_dbus_error_get_remote_error ()"><code class="function">g_dbus_error_get_remote_error()</code></a>.</p>
-<p>Note that errors in the <a class="link" href="gio-GDBusError.html#G-DBUS-ERROR:CAPS" title="G_DBUS_ERROR"><code class="literal">G_DBUS_ERROR</code></a> error domain is intended only
+<p>Note that the <a class="link" href="gio-GDBusError.html#G-DBUS-ERROR:CAPS" title="G_DBUS_ERROR"><code class="literal">G_DBUS_ERROR</code></a> error domain is intended only
 for returning errors from a remote message bus process. Errors
-generated locally in-process by e.g. <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> is from the
+generated locally in-process by e.g. <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> should use the
 <a class="link" href="gio-GIOError.html#G-IO-ERROR:CAPS" title="G_IO_ERROR"><code class="literal">G_IO_ERROR</code></a> domain.</p>
 </div>
 <div class="refsect1">
@@ -388,8 +388,8 @@ g_dbus_error_register_error_domain (<em class="parameter"><code>const <a href=".
 <tr>
 <td class="parameter_name"><p>entries</p></td>
 <td class="parameter_description"><p>A pointer to <em class="parameter"><code>num_entries</code></em>
-<a class="link" href="gio-GDBusError.html#GDBusErrorEntry" title="GDBusErrorEntry"><span class="type">GDBusErrorEntry</span></a> struct items.</p></td>
-<td class="parameter_annotations"> </td>
+<a class="link" href="gio-GDBusError.html#GDBusErrorEntry" title="GDBusErrorEntry"><span class="type">GDBusErrorEntry</span></a> struct items. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=num_entries]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>num_entries</p></td>
@@ -1050,9 +1050,9 @@ can't fix it for compatibility reasons so just be careful.</p>
 <p>Error domain for errors generated by a remote message bus. Errors
 in this domain will be from the <a class="link" href="gio-GDBusError.html#GDBusError" title="enum GDBusError"><span class="type">GDBusError</span></a> enumeration.  See
 <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> for more information on error domains.</p>
-<p>Note that errors in this error domain is intended only for
+<p>Note that this error domain is intended only for
 returning errors from a remote message bus process. Errors
-generated locally in-process by e.g. <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> is from the
+generated locally in-process by e.g. <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> should use the
 <a class="link" href="gio-GIOError.html#G-IO-ERROR:CAPS" title="G_IO_ERROR"><code class="literal">G_IO_ERROR</code></a> domain.</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -1093,6 +1093,6 @@ generated locally in-process by e.g. <a class="link" href="GDBusConnection.html"
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

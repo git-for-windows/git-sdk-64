@@ -8,7 +8,7 @@
 <link rel="up" href="glib-core.html" title="GLib Core Application Support">
 <link rel="prev" href="glib-Asynchronous-Queues.html" title="Asynchronous Queues">
 <link rel="next" href="glib-Memory-Allocation.html" title="Memory Allocation">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -225,48 +225,48 @@ it must ensure that it is never unloaded, by calling <a class="link" href="glib-
 40
 41
 42</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc slc">// the function signature for &apos;say_hello&apos;</span>
-<span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span> SayHelloFunc<span class="gtkdoc opt">) (</span><span class="gtkdoc kwb">const char</span> <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">);</span>
+        <td class="listing_code"><pre class="programlisting"><span class="comment">// the function signature for 'say_hello'</span>
+<span class="keyword">typedef</span><span class="normal"> </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal"> SayHelloFunc</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">);</span>
 
-gboolean
-<span class="function">just_say_hello</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">const char</span> <span class="gtkdoc opt">*</span>filename<span class="gtkdoc opt">,</span> GError <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  SayHelloFunc  say_hello<span class="gtkdoc opt">;</span>
-  GModule      <span class="gtkdoc opt">*</span>module<span class="gtkdoc opt">;</span>
+<span class="normal"><a href="glib-Basic-Types.html#gboolean">gboolean</a></span>
+<span class="function">just_say_hello</span><span class="normal"> </span><span class="symbol">(</span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">filename</span><span class="symbol">,</span><span class="normal"> </span><span class="usertype">GError</span><span class="normal"> </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">SayHelloFunc</span><span class="normal">  say_hello</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GModule</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">module</span><span class="symbol">;</span>
 
-  module <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-open">g_module_open</a></span> <span class="gtkdoc opt">(</span>filename<span class="gtkdoc opt">,</span> G_MODULE_BIND_LAZY<span class="gtkdoc opt">);</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span>module<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="glib-Error-Reporting.html#g-set-error">g_set_error</a></span> <span class="gtkdoc opt">(</span>error<span class="gtkdoc opt">,</span> FOO_ERROR<span class="gtkdoc opt">,</span> FOO_ERROR_BLAH<span class="gtkdoc opt">,</span>
-                   <span class="string">&quot;%s&quot;</span><span class="gtkdoc opt">,</span> <span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span> <span class="gtkdoc opt">());</span>
-      <span class="keyword">return</span> FALSE<span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  module </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-open">g_module_open</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">filename</span><span class="symbol">,</span><span class="normal"> <a href="glib-Dynamic-Loading-of-Modules.html#G-MODULE-BIND-LAZY:CAPS">G_MODULE_BIND_LAZY</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="normal">module</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="glib-Error-Reporting.html#g-set-error">g_set_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error</span><span class="symbol">,</span><span class="normal"> FOO_ERROR</span><span class="symbol">,</span><span class="normal"> FOO_ERROR_BLAH</span><span class="symbol">,</span>
+<span class="normal">                   </span><span class="string">"%s"</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span><span class="normal"> </span><span class="symbol">());</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="normal"> <a href="glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-symbol">g_module_symbol</a></span> <span class="gtkdoc opt">(</span>module<span class="gtkdoc opt">,</span> <span class="string">&quot;say_hello&quot;</span><span class="gtkdoc opt">, (</span>gpointer <span class="gtkdoc opt">*)&amp;</span>say_hello<span class="gtkdoc opt">))</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="glib-Error-Reporting.html#g-set-error">g_set_error</a></span> <span class="gtkdoc opt">(</span>error<span class="gtkdoc opt">,</span> SAY_ERROR<span class="gtkdoc opt">,</span> SAY_ERROR_OPEN<span class="gtkdoc opt">,</span>
-                   <span class="string">&quot;%s: %s&quot;</span><span class="gtkdoc opt">,</span> filename<span class="gtkdoc opt">,</span> <span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span> <span class="gtkdoc opt">());</span>
-      <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-close">g_module_close</a></span> <span class="gtkdoc opt">(</span>module<span class="gtkdoc opt">))</span>
-        <span class="function"><a href="glib-Message-Logging.html#g-warning">g_warning</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;%s: %s&quot;</span><span class="gtkdoc opt">,</span> filename<span class="gtkdoc opt">,</span> <span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span> <span class="gtkdoc opt">());</span>
-      <span class="keyword">return</span> FALSE<span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-symbol">g_module_symbol</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">module</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"say_hello"</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Basic-Types.html#gpointer">gpointer</a> </span><span class="symbol">*)&amp;</span><span class="normal">say_hello</span><span class="symbol">))</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="glib-Error-Reporting.html#g-set-error">g_set_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error</span><span class="symbol">,</span><span class="normal"> SAY_ERROR</span><span class="symbol">,</span><span class="normal"> SAY_ERROR_OPEN</span><span class="symbol">,</span>
+<span class="normal">                   </span><span class="string">"%s: %s"</span><span class="symbol">,</span><span class="normal"> filename</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span><span class="normal"> </span><span class="symbol">());</span>
+<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-close">g_module_close</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">module</span><span class="symbol">))</span>
+<span class="normal">        </span><span class="function"><a href="glib-Message-Logging.html#g-warning">g_warning</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"%s: %s"</span><span class="symbol">,</span><span class="normal"> filename</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span><span class="normal"> </span><span class="symbol">());</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="normal"> <a href="glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>say_hello <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="glib-Error-Reporting.html#g-set-error">g_set_error</a></span> <span class="gtkdoc opt">(</span>error<span class="gtkdoc opt">,</span> SAY_ERROR<span class="gtkdoc opt">,</span> SAY_ERROR_OPEN<span class="gtkdoc opt">,</span>
-                   <span class="string">&quot;symbol say_hello is NULL&quot;</span><span class="gtkdoc opt">);</span>
-      <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-close">g_module_close</a></span> <span class="gtkdoc opt">(</span>module<span class="gtkdoc opt">))</span>
-        <span class="function"><a href="glib-Message-Logging.html#g-warning">g_warning</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;%s: %s&quot;</span><span class="gtkdoc opt">,</span> filename<span class="gtkdoc opt">,</span> <span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span> <span class="gtkdoc opt">());</span>
-      <span class="keyword">return</span> FALSE<span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">say_hello </span><span class="symbol">==</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="glib-Error-Reporting.html#g-set-error">g_set_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error</span><span class="symbol">,</span><span class="normal"> SAY_ERROR</span><span class="symbol">,</span><span class="normal"> SAY_ERROR_OPEN</span><span class="symbol">,</span>
+<span class="normal">                   </span><span class="string">"symbol say_hello is NULL"</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-close">g_module_close</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">module</span><span class="symbol">))</span>
+<span class="normal">        </span><span class="function"><a href="glib-Message-Logging.html#g-warning">g_warning</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"%s: %s"</span><span class="symbol">,</span><span class="normal"> filename</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span><span class="normal"> </span><span class="symbol">());</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="normal"> <a href="glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="gtkdoc slc">// call our function in the module</span>
-  <span class="function">say_hello</span> <span class="gtkdoc opt">(</span><span class="string">&quot;Hello world!&quot;</span><span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="comment">// call our function in the module</span>
+<span class="normal">  </span><span class="function">say_hello</span><span class="normal"> </span><span class="symbol">(</span><span class="string">"Hello world!"</span><span class="symbol">);</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-close">g_module_close</a></span> <span class="gtkdoc opt">(</span>module<span class="gtkdoc opt">))</span>
-    <span class="function"><a href="glib-Message-Logging.html#g-warning">g_warning</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;%s: %s&quot;</span><span class="gtkdoc opt">,</span> filename<span class="gtkdoc opt">,</span> <span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span> <span class="gtkdoc opt">());</span>
-  <span class="keyword">return</span> TRUE<span class="gtkdoc opt">;</span>
- <span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-close">g_module_close</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">module</span><span class="symbol">))</span>
+<span class="normal">    </span><span class="function"><a href="glib-Message-Logging.html#g-warning">g_warning</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"%s: %s"</span><span class="symbol">,</span><span class="normal"> filename</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="glib-Dynamic-Loading-of-Modules.html#g-module-error">g_module_error</a></span><span class="normal"> </span><span class="symbol">());</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> <a href="glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">;</span>
+<span class="normal"> </span><span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -655,6 +655,6 @@ such as <code class="literal">hidden</code>.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="streaming.html" title="Streaming I/O">
 <link rel="prev" href="GBufferedOutputStream.html" title="GBufferedOutputStream">
 <link rel="next" href="GDataOutputStream.html" title="GDataOutputStream">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -1087,6 +1087,7 @@ does not consume the stop character. You have to use
  may contain '\0' if <em class="parameter"><code>stop_chars_len</code></em>
  is
 specified.</p>
+<p>The returned string will always be nul-terminated on success.</p>
 <div class="refsect3">
 <a name="g-data-input-stream-read-upto.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1233,6 +1234,7 @@ g_data_input_stream_read_upto_finish (<em class="parameter"><code><a class="link
 <p>Note that this function does not consume the stop character. You
 have to use <a class="link" href="GDataInputStream.html#g-data-input-stream-read-byte" title="g_data_input_stream_read_byte ()"><code class="function">g_data_input_stream_read_byte()</code></a> to get it before calling
 <a class="link" href="GDataInputStream.html#g-data-input-stream-read-upto-async" title="g_data_input_stream_read_upto_async ()"><code class="function">g_data_input_stream_read_upto_async()</code></a> again.</p>
+<p>The returned string will always be nul-terminated on success.</p>
 <div class="refsect3">
 <a name="g-data-input-stream-read-upto-finish.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1285,6 +1287,11 @@ g_data_input_stream_read_until (<em class="parameter"><code><a class="link" href
                                 <em class="parameter"><code><a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> *length</code></em>,
                                 <em class="parameter"><code><a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> *cancellable</code></em>,
                                 <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
+<div class="warning">
+<p><code class="literal">g_data_input_stream_read_until</code> has been deprecated since version 2.56 and should not be used in newly-written code.</p>
+<p>Use <a class="link" href="GDataInputStream.html#g-data-input-stream-read-upto" title="g_data_input_stream_read_upto ()"><code class="function">g_data_input_stream_read_upto()</code></a> instead, which has more
+    consistent behaviour regarding the stop character.</p>
+</div>
 <p>Reads a string from the data input stream, up to the first
 occurrence of any of the stop characters.</p>
 <p>Note that, in contrast to <a class="link" href="GDataInputStream.html#g-data-input-stream-read-until-async" title="g_data_input_stream_read_until_async ()"><code class="function">g_data_input_stream_read_until_async()</code></a>,
@@ -1351,6 +1358,11 @@ g_data_input_stream_read_until_async (<em class="parameter"><code><a class="link
                                       <em class="parameter"><code><a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> *cancellable</code></em>,
                                       <em class="parameter"><code><a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> callback</code></em>,
                                       <em class="parameter"><code><a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<div class="warning">
+<p><code class="literal">g_data_input_stream_read_until_async</code> has been deprecated since version 2.56 and should not be used in newly-written code.</p>
+<p>Use <a class="link" href="GDataInputStream.html#g-data-input-stream-read-upto-async" title="g_data_input_stream_read_upto_async ()"><code class="function">g_data_input_stream_read_upto_async()</code></a> instead, which
+    has more consistent behaviour regarding the stop character.</p>
+</div>
 <p>The asynchronous version of <a class="link" href="GDataInputStream.html#g-data-input-stream-read-until" title="g_data_input_stream_read_until ()"><code class="function">g_data_input_stream_read_until()</code></a>.
 It is an error to have two outstanding calls to this function.</p>
 <p>Note that, in contrast to <a class="link" href="GDataInputStream.html#g-data-input-stream-read-until" title="g_data_input_stream_read_until ()"><code class="function">g_data_input_stream_read_until()</code></a>,
@@ -1416,6 +1428,11 @@ g_data_input_stream_read_until_finish (<em class="parameter"><code><a class="lin
                                        <em class="parameter"><code><a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a> *result</code></em>,
                                        <em class="parameter"><code><a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> *length</code></em>,
                                        <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
+<div class="warning">
+<p><code class="literal">g_data_input_stream_read_until_finish</code> has been deprecated since version 2.56 and should not be used in newly-written code.</p>
+<p>Use <a class="link" href="GDataInputStream.html#g-data-input-stream-read-upto-finish" title="g_data_input_stream_read_upto_finish ()"><code class="function">g_data_input_stream_read_upto_finish()</code></a> instead, which
+    has more consistent behaviour regarding the stop character.</p>
+</div>
 <p>Finish an asynchronous call started by
 <a class="link" href="GDataInputStream.html#g-data-input-stream-read-until-async" title="g_data_input_stream_read_until_async ()"><code class="function">g_data_input_stream_read_until_async()</code></a>.</p>
 <div class="refsect3">
@@ -1579,6 +1596,6 @@ across various machine architectures.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

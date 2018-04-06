@@ -8,7 +8,7 @@
 <link rel="up" href="rn01.html" title="API Reference">
 <link rel="prev" href="gobject-Varargs-Value-Collection.html" title="Varargs Value Collection">
 <link rel="next" href="gobject-Closures.html" title="Closures">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -1410,8 +1410,8 @@ parameters avoids the need to write a wrapper function.</p>
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Signals.html#g-signal-connect-swapped">g_signal_connect_swapped</a></span> <span class="gtkdoc opt">(</span>button<span class="gtkdoc opt">,</span> <span class="string">&quot;clicked&quot;</span><span class="gtkdoc opt">,</span>
-                          <span class="gtkdoc opt">(</span>GCallback<span class="gtkdoc opt">)</span> gtk_widget_hide<span class="gtkdoc opt">,</span> other_widget<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Signals.html#g-signal-connect-swapped">g_signal_connect_swapped</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">button</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"clicked"</span><span class="symbol">,</span>
+<span class="normal">                          </span><span class="symbol">(</span><span class="normal"><a href="gobject-Closures.html#GCallback">GCallback</a></span><span class="symbol">)</span><span class="normal"> gtk_widget_hide</span><span class="symbol">,</span><span class="normal"> other_widget</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1433,16 +1433,16 @@ parameters avoids the need to write a wrapper function.</p>
 8
 9
 10</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">button_clicked_cb</span> <span class="gtkdoc opt">(</span>GtkButton <span class="gtkdoc opt">*</span>button<span class="gtkdoc opt">,</span> GtkWidget <span class="gtkdoc opt">*</span>other_widget<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-    <span class="function"><a href="../gtk4/GtkWidget.html#gtk-widget-hide">gtk_widget_hide</a></span> <span class="gtkdoc opt">(</span>other_widget<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">button_clicked_cb</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GtkButton</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">button</span><span class="symbol">,</span><span class="normal"> </span><span class="usertype">GtkWidget</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">other_widget</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">    </span><span class="function">gtk_widget_hide</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">other_widget</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc opt">...</span>
+<span class="symbol">...</span>
 
-<span class="function"><a href="gobject-Signals.html#g-signal-connect">g_signal_connect</a></span> <span class="gtkdoc opt">(</span>button<span class="gtkdoc opt">,</span> <span class="string">&quot;clicked&quot;</span><span class="gtkdoc opt">,</span>
-                  <span class="gtkdoc opt">(</span>GCallback<span class="gtkdoc opt">)</span> button_clicked_cb<span class="gtkdoc opt">,</span> other_widget<span class="gtkdoc opt">);</span></pre></td>
+<span class="function"><a href="gobject-Signals.html#g-signal-connect">g_signal_connect</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">button</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"clicked"</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="symbol">(</span><span class="normal"><a href="gobject-Closures.html#GCallback">GCallback</a></span><span class="symbol">)</span><span class="normal"> button_clicked_cb</span><span class="symbol">,</span><span class="normal"> other_widget</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -2937,7 +2937,8 @@ structure which is to be invoked by the new closure</p></td>
 </div>
 <div class="refsect3">
 <a name="g-signal-type-cclosure-new.returns"></a><h4>Returns</h4>
-<p> a new <a class="link" href="gobject-Closures.html#GCClosure" title="struct GCClosure"><span class="type">GCClosure</span></a></p>
+<p>a floating reference to a new <a class="link" href="gobject-Closures.html#GCClosure" title="struct GCClosure"><span class="type">GCClosure</span></a>. </p>
+<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
 </div>
 <hr>
@@ -3332,9 +3333,9 @@ user callbacks, note that the effective callback signature is:</p>
         <td class="listing_lines" align="right"><pre>1
 2
 3</pre></td>
-        <td class="listing_code"><pre class="programlisting">&#64;return_type <span class="function">callback</span> <span class="gtkdoc opt">(</span><span class="gtkdoc ppc">#gpointer     data1,</span>
-<span class="gtkdoc opt">[</span>param_types param_names<span class="gtkdoc opt">,]</span>
-gpointer     data2<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="normal">@</span><span class="usertype">return_type</span><span class="normal"> </span><span class="function">callback</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">#</span><span class="usertype">gpointer</span><span class="normal">     data1</span><span class="symbol">,</span>
+<span class="symbol">[</span><span class="usertype">param_types</span><span class="normal"> param_names</span><span class="symbol">,]</span>
+<span class="usertype">gpointer</span><span class="normal">     data2</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -3370,14 +3371,14 @@ to the corresponding argument of <a class="link" href="gobject-Signals.html#g-si
 6
 7
 8</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Signals.html#g-signal-new">g_signal_new</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;size_request&quot;</span><span class="gtkdoc opt">,</span>
-  <span class="function"><a href="gobject-Type-Information.html#G-TYPE-FROM-CLASS:CAPS">G_TYPE_FROM_CLASS</a></span> <span class="gtkdoc opt">(</span>gobject_class<span class="gtkdoc opt">),</span>
-	 G_SIGNAL_RUN_FIRST<span class="gtkdoc opt">,</span>
-	 <span class="function"><a href="../glib-Standard-Macros.html#G-STRUCT-OFFSET:CAPS">G_STRUCT_OFFSET</a></span> <span class="gtkdoc opt">(</span>GtkWidgetClass<span class="gtkdoc opt">,</span> size_request<span class="gtkdoc opt">),</span>
-	 NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span>
-	 _gtk_marshal_VOID__BOXED<span class="gtkdoc opt">,</span>
-	 G_TYPE_NONE<span class="gtkdoc opt">,</span> <span class="number">1</span><span class="gtkdoc opt">,</span>
-	 GTK_TYPE_REQUISITION <span class="gtkdoc opt">|</span> G_SIGNAL_TYPE_STATIC_SCOPE<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Signals.html#g-signal-new">g_signal_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"size_request"</span><span class="symbol">,</span>
+<span class="normal">  </span><span class="function"><a href="gobject-Type-Information.html#G-TYPE-FROM-CLASS:CAPS">G_TYPE_FROM_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gobject_class</span><span class="symbol">),</span>
+<span class="normal">     <a href="gobject-Signals.html#G-SIGNAL-RUN-FIRST:CAPS">G_SIGNAL_RUN_FIRST</a></span><span class="symbol">,</span>
+<span class="normal">     </span><span class="function"><a href="../glib-Standard-Macros.html#G-STRUCT-OFFSET:CAPS">G_STRUCT_OFFSET</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">GtkWidgetClass</span><span class="symbol">,</span><span class="normal"> size_request</span><span class="symbol">),</span>
+<span class="normal">     <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
+<span class="normal">     _gtk_marshal_VOID__BOXED</span><span class="symbol">,</span>
+<span class="normal">     <a href="gobject-Type-Information.html#G-TYPE-NONE:CAPS">G_TYPE_NONE</a></span><span class="symbol">,</span><span class="normal"> </span><span class="number">1</span><span class="symbol">,</span>
+<span class="normal">     GTK_TYPE_REQUISITION </span><span class="symbol">|</span><span class="normal"> <a href="gobject-Signals.html#G-SIGNAL-TYPE-STATIC-SCOPE:CAPS">G_SIGNAL_TYPE_STATIC_SCOPE</a></span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -3436,6 +3437,6 @@ connection.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

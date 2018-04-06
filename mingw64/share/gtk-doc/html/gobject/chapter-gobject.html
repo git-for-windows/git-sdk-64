@@ -8,7 +8,7 @@
 <link rel="up" href="pt01.html" title="Part I. Concepts">
 <link rel="prev" href="gtype-non-instantiable-classed.html" title="Non-instantiable classed types: interfaces">
 <link rel="next" href="gobject-memory.html" title="Object memory management">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -125,42 +125,42 @@
 34
 35
 36</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc ppc">#define VIEWER_TYPE_FILE viewer_file_get_type ()</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS">G_DECLARE_FINAL_TYPE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> VIEWER<span class="gtkdoc opt">,</span> <span class="gtkdoc kwb">FILE</span><span class="gtkdoc opt">,</span> GObject<span class="gtkdoc opt">)</span>
+        <td class="listing_code"><pre class="programlisting"><span class="preproc">#define</span><span class="normal"> </span><span class="usertype">VIEWER_TYPE_FILE</span><span class="normal"> </span><span class="function">viewer_file_get_type</span><span class="normal"> </span><span class="symbol">()</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS">G_DECLARE_FINAL_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> VIEWER</span><span class="symbol">,</span><span class="normal"> FILE</span><span class="symbol">,</span><span class="normal"> <a href="gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span>
 
-<span class="gtkdoc kwb">struct</span> _ViewerFile
-<span class="gtkdoc opt">{</span>
-  GObject parent_instance<span class="gtkdoc opt">;</span>
+<span class="keyword">struct</span><span class="normal"> </span><span class="classname">_ViewerFile</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObject</span><span class="normal"> parent_instance</span><span class="symbol">;</span>
 
-  <span class="comment">/* instance members */</span>
-<span class="gtkdoc opt">};</span>
+<span class="normal">  </span><span class="comment">/* instance members */</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
 <span class="comment">/* will create viewer_file_get_type and set viewer_file_parent_class */</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS">G_DEFINE_TYPE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> G_TYPE_OBJECT<span class="gtkdoc opt">)</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS">G_DEFINE_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">)</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_constructed</span> <span class="gtkdoc opt">(</span>GObject <span class="gtkdoc opt">*</span>obj<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* update the object state depending on constructor properties */</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_constructed</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GObject</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">obj</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* update the object state depending on constructor properties */</span>
 
-  <span class="comment">/* Always chain up to the parent constructed function to complete object</span>
+<span class="normal">  </span><span class="comment">/* Always chain up to the parent constructed function to complete object</span>
 <span class="comment">   * initialisation. */</span>
-  <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span> <span class="gtkdoc opt">(</span>viewer_file_parent_class<span class="gtkdoc opt">)-&gt;</span><span class="function">constructed</span> <span class="gtkdoc opt">(</span>obj<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">viewer_file_parent_class</span><span class="symbol">)-&gt;</span><span class="function">constructed</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">obj</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GObjectClass <span class="gtkdoc opt">*</span>object_class <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span> <span class="gtkdoc opt">(</span>klass<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObjectClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">object_class </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">klass</span><span class="symbol">);</span>
 
-  object_class<span class="gtkdoc opt">-&gt;</span>constructed <span class="gtkdoc opt">=</span> viewer_file_constructed<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  object_class</span><span class="symbol">-&gt;</span><span class="normal">constructed </span><span class="symbol">=</span><span class="normal"> viewer_file_constructed</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_init</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* initialize the object */</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* initialize the object */</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -174,7 +174,7 @@
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">ViewerFile <span class="gtkdoc opt">*</span>file <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span> <span class="gtkdoc opt">(</span>VIEWER_TYPE_FILE<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">file </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_FILE</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -187,9 +187,9 @@
       This will make sure the class structure of this new object is
       correctly initialized. Here, <code class="function">viewer_file_class_init</code>
       is expected to override the object's class methods and setup the
-      class' own methods. In the example above, the constructor method is
-      the only overridden method: it is set to
-      <code class="function">viewer_file_constructor</code>.
+      class' own methods. In the example above, the <code class="literal">constructed</code>
+      method is the only overridden method: it is set to
+      <code class="function">viewer_file_constructed</code>.
     </p>
 <p>
       Once <code class="function"><a class="link" href="gobject-The-Base-Object-Type.html#g-object-new" title="g_object_new ()">g_object_new</a></code> has obtained a reference to an initialized
@@ -316,6 +316,6 @@
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

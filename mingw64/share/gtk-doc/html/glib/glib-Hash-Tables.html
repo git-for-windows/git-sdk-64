@@ -8,7 +8,7 @@
 <link rel="up" href="glib-data-types.html" title="GLib Data Types">
 <link rel="prev" href="glib-Trash-Stacks.html" title="Trash Stacks">
 <link rel="next" href="glib-Strings.html" title="Strings">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -588,7 +588,7 @@ hash functions which can be used when the key is a <a class="link" href="glib-Ba
 and <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a>* respectively.</p>
 <p>g_direct_hash() is also the appropriate hash function for keys
 of the form <code class="literal">GINT_TO_POINTER (n)</code> (or similar macros).</p>
-<p>&lt;!-- FIXME: Need more here. --&gt; A good hash functions should produce
+<p>A good hash functions should produce
 hash values that are evenly distributed over a fairly large range.
 The modulus is taken with the hash table size (a prime number) to
 find the 'bucket' to place each key into. The function should also
@@ -679,6 +679,9 @@ value is freed using that function. If you supplied a
 <em class="parameter"><code>key_destroy_func</code></em>
  when creating the <a class="link" href="glib-Hash-Tables.html#GHashTable" title="GHashTable"><span class="type">GHashTable</span></a>, the passed
 key is freed using that function.</p>
+<p>Starting from GLib 2.40, this function returns a boolean value to
+indicate whether the newly added value was already in the hash table
+or not.</p>
 <div class="refsect3">
 <a name="g-hash-table-insert.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -727,6 +730,9 @@ the <a class="link" href="glib-Hash-Tables.html#GHashTable" title="GHashTable"><
 If you supplied a <em class="parameter"><code>key_destroy_func</code></em>
  when creating the
 <a class="link" href="glib-Hash-Tables.html#GHashTable" title="GHashTable"><span class="type">GHashTable</span></a>, the old key is freed using that function.</p>
+<p>Starting from GLib 2.40, this function returns a boolean value to
+indicate whether the newly added value was already in the hash table
+or not.</p>
 <div class="refsect3">
 <a name="g-hash-table-replace.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -772,6 +778,9 @@ key and the value.</p>
 <p>When a hash table only ever contains keys that have themselves as the
 corresponding value it is able to be stored more efficiently.  See
 the discussion in the section description.</p>
+<p>Starting from GLib 2.40, this function returns a boolean value to
+indicate whether the newly added value was already in the hash table
+or not.</p>
 <div class="refsect3">
 <a name="g-hash-table-add.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1635,14 +1644,14 @@ invalidates the returned iterator.</p>
 6
 7
 8</pre></td>
-        <td class="listing_code"><pre class="programlisting">GHashTableIter iter<span class="gtkdoc opt">;</span>
-gpointer key<span class="gtkdoc opt">,</span> value<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GHashTableIter</span><span class="normal"> iter</span><span class="symbol">;</span>
+<span class="usertype">gpointer</span><span class="normal"> key</span><span class="symbol">,</span><span class="normal"> value</span><span class="symbol">;</span>
 
-<span class="function"><a href="glib-Hash-Tables.html#g-hash-table-iter-init">g_hash_table_iter_init</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> hash_table<span class="gtkdoc opt">);</span>
-<span class="keyword">while</span> <span class="gtkdoc opt">(</span><span class="function"><a href="glib-Hash-Tables.html#g-hash-table-iter-next">g_hash_table_iter_next</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">, &amp;</span>key<span class="gtkdoc opt">, &amp;</span>value<span class="gtkdoc opt">))</span>
-  <span class="gtkdoc opt">{</span>
-    <span class="gtkdoc slc">// do something with key and value</span>
-  <span class="gtkdoc opt">}</span></pre></td>
+<span class="function"><a href="glib-Hash-Tables.html#g-hash-table-iter-init">g_hash_table_iter_init</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> hash_table</span><span class="symbol">);</span>
+<span class="keyword">while</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="glib-Hash-Tables.html#g-hash-table-iter-next">g_hash_table_iter_next</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">key</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">value</span><span class="symbol">))</span>
+<span class="normal">  </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="comment">// do something with key and value</span>
+<span class="normal">  </span><span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1807,11 +1816,11 @@ values are freed yourself.</p>
 3
 4
 5</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">while</span> <span class="gtkdoc opt">(</span><span class="function"><a href="glib-Hash-Tables.html#g-hash-table-iter-next">g_hash_table_iter_next</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">, &amp;</span>key<span class="gtkdoc opt">, &amp;</span>value<span class="gtkdoc opt">))</span>
-  <span class="gtkdoc opt">{</span>
-    <span class="keyword">if</span> <span class="gtkdoc opt">(</span>condition<span class="gtkdoc opt">)</span>
-      <span class="function"><a href="glib-Hash-Tables.html#g-hash-table-iter-remove">g_hash_table_iter_remove</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">}</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">while</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="glib-Hash-Tables.html#g-hash-table-iter-next">g_hash_table_iter_next</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">key</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">value</span><span class="symbol">))</span>
+<span class="normal">  </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">condition</span><span class="symbol">)</span>
+<span class="normal">      </span><span class="function"><a href="glib-Hash-Tables.html#g-hash-table-iter-remove">g_hash_table_iter_remove</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -2258,6 +2267,6 @@ with <a class="link" href="glib-Hash-Tables.html#g-hash-table-iter-init" title="
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

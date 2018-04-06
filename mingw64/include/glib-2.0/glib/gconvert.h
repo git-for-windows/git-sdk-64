@@ -37,12 +37,17 @@ G_BEGIN_DECLS
  * GConvertError:
  * @G_CONVERT_ERROR_NO_CONVERSION: Conversion between the requested character
  *     sets is not supported.
- * @G_CONVERT_ERROR_ILLEGAL_SEQUENCE: Invalid byte sequence in conversion input.
+ * @G_CONVERT_ERROR_ILLEGAL_SEQUENCE: Invalid byte sequence in conversion input;
+ *    or the character sequence could not be represented in the target
+ *    character set.
  * @G_CONVERT_ERROR_FAILED: Conversion failed for some reason.
  * @G_CONVERT_ERROR_PARTIAL_INPUT: Partial character sequence at end of input.
  * @G_CONVERT_ERROR_BAD_URI: URI is invalid.
  * @G_CONVERT_ERROR_NOT_ABSOLUTE_PATH: Pathname is not an absolute path.
  * @G_CONVERT_ERROR_NO_MEMORY: No memory available. Since: 2.40
+ * @G_CONVERT_ERROR_EMBEDDED_NUL: An embedded NUL character is present in
+ *     conversion output where a NUL-terminated string is expected.
+ *     Since: 2.56
  *
  * Error codes returned by character set conversion routines.
  */
@@ -54,7 +59,8 @@ typedef enum
   G_CONVERT_ERROR_PARTIAL_INPUT,
   G_CONVERT_ERROR_BAD_URI,
   G_CONVERT_ERROR_NOT_ABSOLUTE_PATH,
-  G_CONVERT_ERROR_NO_MEMORY
+  G_CONVERT_ERROR_NO_MEMORY,
+  G_CONVERT_ERROR_EMBEDDED_NUL
 } GConvertError;
 
 /**
@@ -69,7 +75,7 @@ GLIB_AVAILABLE_IN_ALL
 GQuark g_convert_error_quark (void);
 
 /**
- * GIConv:
+ * GIConv: (skip)
  *
  * The GIConv struct wraps an iconv() conversion descriptor. It contains
  * private data and should only be accessed using the following functions.

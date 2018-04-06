@@ -8,7 +8,7 @@
 <link rel="up" href="glib-data-types.html" title="GLib Data Types">
 <link rel="prev" href="glib-String-Chunks.html" title="String Chunks">
 <link rel="next" href="glib-Pointer-Arrays.html" title="Pointer Arrays">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -244,18 +244,18 @@ are the same size), and the array can be automatically cleared to
 10
 11
 12</pre></td>
-        <td class="listing_code"><pre class="programlisting">GArray <span class="gtkdoc opt">*</span>garray<span class="gtkdoc opt">;</span>
-gint i<span class="gtkdoc opt">;</span>
-<span class="gtkdoc slc">// We create a new array to store gint values.</span>
-<span class="gtkdoc slc">// We don&apos;t want it zero-terminated or cleared to 0&apos;s.</span>
-garray <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Arrays.html#g-array-new">g_array_new</a></span> <span class="gtkdoc opt">(</span>FALSE<span class="gtkdoc opt">,</span> FALSE<span class="gtkdoc opt">,</span> <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>gint<span class="gtkdoc opt">));</span>
-<span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">10000</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++)</span>
-  <span class="function"><a href="glib-Arrays.html#g-array-append-val">g_array_append_val</a></span> <span class="gtkdoc opt">(</span>garray<span class="gtkdoc opt">,</span> i<span class="gtkdoc opt">);</span>
-<span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">10000</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++)</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="glib-Arrays.html#g-array-index">g_array_index</a></span> <span class="gtkdoc opt">(</span>garray<span class="gtkdoc opt">,</span> gint<span class="gtkdoc opt">,</span> i<span class="gtkdoc opt">) !=</span> i<span class="gtkdoc opt">)</span>
-    <span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;ERROR: got %d instead of %d</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span>
-             <span class="function"><a href="glib-Arrays.html#g-array-index">g_array_index</a></span> <span class="gtkdoc opt">(</span>garray<span class="gtkdoc opt">,</span> gint<span class="gtkdoc opt">,</span> i<span class="gtkdoc opt">),</span> i<span class="gtkdoc opt">);</span>
-<span class="function"><a href="glib-Arrays.html#g-array-free">g_array_free</a></span> <span class="gtkdoc opt">(</span>garray<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GArray</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">garray</span><span class="symbol">;</span>
+<span class="usertype">gint</span><span class="normal"> i</span><span class="symbol">;</span>
+<span class="comment">// We create a new array to store gint values.</span>
+<span class="comment">// We don't want it zero-terminated or cleared to 0's.</span>
+<span class="normal">garray </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Arrays.html#g-array-new">g_array_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">,</span><span class="normal"> </span><span class="keyword">sizeof</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Basic-Types.html#gint">gint</a></span><span class="symbol">));</span>
+<span class="keyword">for</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">i </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span><span class="normal"> i </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">10000</span><span class="symbol">;</span><span class="normal"> i</span><span class="symbol">++)</span>
+<span class="normal">  </span><span class="function"><a href="glib-Arrays.html#g-array-append-val">g_array_append_val</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">garray</span><span class="symbol">,</span><span class="normal"> i</span><span class="symbol">);</span>
+<span class="keyword">for</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">i </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span><span class="normal"> i </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">10000</span><span class="symbol">;</span><span class="normal"> i</span><span class="symbol">++)</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="glib-Arrays.html#g-array-index">g_array_index</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">garray</span><span class="symbol">,</span><span class="normal"> <a href="glib-Basic-Types.html#gint">gint</a></span><span class="symbol">,</span><span class="normal"> i</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">!=</span><span class="normal"> i</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"ERROR: got %d instead of %d</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span>
+<span class="normal">             </span><span class="function"><a href="glib-Arrays.html#g-array-index">g_array_index</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">garray</span><span class="symbol">,</span><span class="normal"> <a href="glib-Basic-Types.html#gint">gint</a></span><span class="symbol">,</span><span class="normal"> i</span><span class="symbol">),</span><span class="normal"> i</span><span class="symbol">);</span>
+<span class="function"><a href="glib-Arrays.html#g-array-free">g_array_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">garray</span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -900,10 +900,10 @@ value is cast to the given type.</p>
 2
 3
 4</pre></td>
-        <td class="listing_code"><pre class="programlisting">EDayViewEvent <span class="gtkdoc opt">*</span>event<span class="gtkdoc opt">;</span>
-<span class="gtkdoc slc">// This gets a pointer to the 4th element in the array of</span>
-<span class="gtkdoc slc">// EDayViewEvent structs.</span>
-event <span class="gtkdoc opt">= &amp;</span><span class="function"><a href="glib-Arrays.html#g-array-index">g_array_index</a></span> <span class="gtkdoc opt">(</span>events<span class="gtkdoc opt">,</span> EDayViewEvent<span class="gtkdoc opt">,</span> <span class="number">3</span><span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">EDayViewEvent</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">event</span><span class="symbol">;</span>
+<span class="comment">// This gets a pointer to the 4th element in the array of</span>
+<span class="comment">// EDayViewEvent structs.</span>
+<span class="normal">event </span><span class="symbol">=</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="function"><a href="glib-Arrays.html#g-array-index">g_array_index</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">events</span><span class="symbol">,</span><span class="normal"> EDayViewEvent</span><span class="symbol">,</span><span class="normal"> </span><span class="number">3</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -990,7 +990,9 @@ g_array_set_clear_func (<em class="parameter"><code><a class="link" href="glib-A
 <p>The <em class="parameter"><code>clear_func</code></em>
  will be called when an element in the array
 data segment is removed and when the array is freed and data
-segment is deallocated as well.</p>
+segment is deallocated as well. <em class="parameter"><code>clear_func</code></em>
+ will be passed a
+pointer to the element to clear, rather than the element itself.</p>
 <p>Note that in contrast with other uses of <a class="link" href="glib-Datasets.html#GDestroyNotify" title="GDestroyNotify ()"><span class="type">GDestroyNotify</span></a>
 functions, <em class="parameter"><code>clear_func</code></em>
  is expected to clear the contents of
@@ -1111,6 +1113,6 @@ possible terminating zero element.</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

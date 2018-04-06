@@ -8,7 +8,7 @@
 <link rel="up" href="howto-interface.html" title="How to define and implement interfaces">
 <link rel="prev" href="howto-interface-properties.html" title="Interface properties">
 <link rel="next" href="howto-signals.html" title="How to create and use signals">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -75,42 +75,42 @@
 34
 35
 36</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_audio_file_editable_save</span> <span class="gtkdoc opt">(</span>ViewerEditable  <span class="gtkdoc opt">*</span>editable<span class="gtkdoc opt">,</span>
-                                 GError         <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerAudioFile <span class="gtkdoc opt">*</span>self <span class="gtkdoc opt">=</span> <span class="function">VIEWER_AUDIO_FILE</span> <span class="gtkdoc opt">(</span>editable<span class="gtkdoc opt">);</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_audio_file_editable_save</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">editable</span><span class="symbol">,</span>
+<span class="normal">                                 </span><span class="usertype">GError</span><span class="normal">         </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerAudioFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_AUDIO_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">editable</span><span class="symbol">);</span>
 
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Audio file implementation of editable interface save method.</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"Audio file implementation of editable interface save method.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_audio_file_editable_interface_init</span> <span class="gtkdoc opt">(</span>ViewerEditableInterface <span class="gtkdoc opt">*</span>iface<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* Override the implementation of save(). */</span>
-  iface<span class="gtkdoc opt">-&gt;</span>save <span class="gtkdoc opt">=</span> viewer_audio_file_editable_save<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_audio_file_editable_interface_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* Override the implementation of save(). */</span>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">save </span><span class="symbol">=</span><span class="normal"> viewer_audio_file_editable_save</span><span class="symbol">;</span>
 
-  <span class="comment">/*</span>
+<span class="normal">  </span><span class="comment">/*</span>
 <span class="comment">   * Leave iface-&gt;undo and -&gt;redo alone, they are already set to the</span>
 <span class="comment">   * base class implementation.</span>
 <span class="comment">   */</span>
-<span class="gtkdoc opt">}</span>
+<span class="cbracket">}</span>
 
-<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-CODE:CAPS">G_DEFINE_TYPE_WITH_CODE</a></span> <span class="gtkdoc opt">(</span>ViewerAudioFile<span class="gtkdoc opt">,</span> viewer_audio_file<span class="gtkdoc opt">,</span> VIEWER_TYPE_FILE<span class="gtkdoc opt">,</span>
-                         <span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span> <span class="gtkdoc opt">(</span>VIEWER_TYPE_EDITABLE<span class="gtkdoc opt">,</span>
-                                                viewer_audio_file_editable_interface_init<span class="gtkdoc opt">))</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-CODE:CAPS">G_DEFINE_TYPE_WITH_CODE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerAudioFile</span><span class="symbol">,</span><span class="normal"> viewer_audio_file</span><span class="symbol">,</span><span class="normal"> VIEWER_TYPE_FILE</span><span class="symbol">,</span>
+<span class="normal">                         </span><span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_EDITABLE</span><span class="symbol">,</span>
+<span class="normal">                                                viewer_audio_file_editable_interface_init</span><span class="symbol">))</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_audio_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerAudioFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* Nothing here. */</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_audio_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerAudioFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* Nothing here. */</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_audio_file_init</span> <span class="gtkdoc opt">(</span>ViewerAudioFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* Nothing here. */</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_audio_file_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerAudioFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* Nothing here. */</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -176,43 +176,43 @@
 35
 36
 37</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> ViewerEditableInterface <span class="gtkdoc opt">*</span>viewer_editable_parent_interface <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">viewer_editable_parent_interface </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_audio_file_editable_save</span> <span class="gtkdoc opt">(</span>ViewerEditable  <span class="gtkdoc opt">*</span>editable<span class="gtkdoc opt">,</span>
-                                 GError         <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerAudioFile <span class="gtkdoc opt">*</span>self <span class="gtkdoc opt">=</span> <span class="function">VIEWER_AUDIO_FILE</span> <span class="gtkdoc opt">(</span>editable<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_audio_file_editable_save</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">editable</span><span class="symbol">,</span>
+<span class="normal">                                 </span><span class="usertype">GError</span><span class="normal">         </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerAudioFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_AUDIO_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">editable</span><span class="symbol">);</span>
 
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Audio file implementation of editable interface save method.</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"Audio file implementation of editable interface save method.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">);</span>
 
-  <span class="comment">/* Now call the base implementation */</span>
-  viewer_editable_parent_interface<span class="gtkdoc opt">-&gt;</span><span class="function">save</span> <span class="gtkdoc opt">(</span>editable<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="comment">/* Now call the base implementation */</span>
+<span class="normal">  viewer_editable_parent_interface</span><span class="symbol">-&gt;</span><span class="function">save</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">editable</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_audio_file_editable_interface_init</span> <span class="gtkdoc opt">(</span>ViewerEditableInterface <span class="gtkdoc opt">*</span>iface<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  viewer_editable_parent_interface <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Type-Information.html#g-type-interface-peek-parent">g_type_interface_peek_parent</a></span> <span class="gtkdoc opt">(</span>iface<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_audio_file_editable_interface_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  viewer_editable_parent_interface </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Type-Information.html#g-type-interface-peek-parent">g_type_interface_peek_parent</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">iface</span><span class="symbol">);</span>
 
-  iface<span class="gtkdoc opt">-&gt;</span>save <span class="gtkdoc opt">=</span> viewer_audio_file_editable_save<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">save </span><span class="symbol">=</span><span class="normal"> viewer_audio_file_editable_save</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-CODE:CAPS">G_DEFINE_TYPE_WITH_CODE</a></span> <span class="gtkdoc opt">(</span>ViewerAudioFile<span class="gtkdoc opt">,</span> viewer_audio_file<span class="gtkdoc opt">,</span> VIEWER_TYPE_FILE<span class="gtkdoc opt">,</span>
-                         <span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span> <span class="gtkdoc opt">(</span>VIEWER_TYPE_EDITABLE<span class="gtkdoc opt">,</span>
-                                                viewer_audio_file_editable_interface_init<span class="gtkdoc opt">))</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-CODE:CAPS">G_DEFINE_TYPE_WITH_CODE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerAudioFile</span><span class="symbol">,</span><span class="normal"> viewer_audio_file</span><span class="symbol">,</span><span class="normal"> VIEWER_TYPE_FILE</span><span class="symbol">,</span>
+<span class="normal">                         </span><span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_EDITABLE</span><span class="symbol">,</span>
+<span class="normal">                                                viewer_audio_file_editable_interface_init</span><span class="symbol">))</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_audio_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerAudioFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* Nothing here. */</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_audio_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerAudioFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* Nothing here. */</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_audio_file_init</span> <span class="gtkdoc opt">(</span>ViewerAudioFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* Nothing here. */</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_audio_file_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerAudioFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* Nothing here. */</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -222,6 +222,6 @@
     </p>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

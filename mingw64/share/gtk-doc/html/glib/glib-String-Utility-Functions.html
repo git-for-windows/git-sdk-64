@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-utilities.html" title="GLib Utilities">
 <link rel="next" href="glib-Character-Set-Conversion.html" title="Character Set Conversion">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -720,7 +720,7 @@
 <p>This section describes a number of utility functions for creating,
 duplicating, and manipulating strings.</p>
 <p>Note that the functions <a class="link" href="glib-String-Utility-Functions.html#g-printf" title="g_printf ()"><code class="function">g_printf()</code></a>, <a class="link" href="glib-String-Utility-Functions.html#g-fprintf" title="g_fprintf ()"><code class="function">g_fprintf()</code></a>, <a class="link" href="glib-String-Utility-Functions.html#g-sprintf" title="g_sprintf ()"><code class="function">g_sprintf()</code></a>,
-<a class="link" href="glib-String-Utility-Functions.html#g-snprintf" title="g_snprintf ()"><code class="function">g_snprintf()</code></a>, <a class="link" href="glib-String-Utility-Functions.html#g-vprintf" title="g_vprintf ()"><code class="function">g_vprintf()</code></a>, <a class="link" href="glib-String-Utility-Functions.html#g-vfprintf" title="g_vfprintf ()"><code class="function">g_vfprintf()</code></a>, <a class="link" href="glib-String-Utility-Functions.html#g-vsprintf" title="g_vsprintf ()"><code class="function">g_vsprintf()</code></a> and <a class="link" href="glib-String-Utility-Functions.html#g-vsnprintf" title="g_vsnprintf ()"><code class="function">g_vsnprintf()</code></a>
+<a class="link" href="glib-String-Utility-Functions.html#g-vprintf" title="g_vprintf ()"><code class="function">g_vprintf()</code></a>, <a class="link" href="glib-String-Utility-Functions.html#g-vfprintf" title="g_vfprintf ()"><code class="function">g_vfprintf()</code></a>, <a class="link" href="glib-String-Utility-Functions.html#g-vsprintf" title="g_vsprintf ()"><code class="function">g_vsprintf()</code></a> and <a class="link" href="glib-String-Utility-Functions.html#g-vasprintf" title="g_vasprintf ()"><code class="function">g_vasprintf()</code></a>
 are declared in the header <code class="literal">gprintf.h</code> which is not included in <code class="literal">glib.h</code>
 (otherwise using <code class="literal">glib.h</code> would drag in <code class="literal">stdio.h</code>), so you'll have to
 explicitly include <code class="literal">&amp;lt;glib/gprintf.h&gt;</code> in order to use the GLib
@@ -1328,11 +1328,11 @@ faster to call <a class="link" href="glib-String-Utility-Functions.html#g-str-to
 your corpus and build an index on the returned folded tokens, then
 call <a class="link" href="glib-String-Utility-Functions.html#g-str-tokenize-and-fold" title="g_str_tokenize_and_fold ()"><code class="function">g_str_tokenize_and_fold()</code></a> on the search term and
 perform lookups into that index.</p>
-<p>As some examples, searching for "fred" would match the potential hit
-"Smith, Fred" and also "Frédéric".  Searching for "Fréd" would match
-"Frédéric" but not "Frederic" (due to the one-directional nature of
-accent matching).  Searching "fo" would match "Foo" and "Bar Foo
-Baz", but not "SFO" (because no word as "fo" as a prefix).</p>
+<p>As some examples, searching for ‘fred’ would match the potential hit
+‘Smith, Fred’ and also ‘Frédéric’.  Searching for ‘Fréd’ would match
+‘Frédéric’ but not ‘Frederic’ (due to the one-directional nature of
+accent matching).  Searching ‘fo’ would match ‘Foo’ and ‘Bar Foo
+Baz’, but not ‘SFO’ (because no word has ‘fo’ as a prefix).</p>
 <div class="refsect3">
 <a name="g-str-match-string.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1584,6 +1584,7 @@ positional parameters, as specified in the Single Unix Specification.</p>
 new-line character to the message, so typically <em class="parameter"><code>format</code></em>
  should end with its
 own new-line character.</p>
+<p><code class="literal">glib/gprintf.h</code> must be explicitly included in order to use this function.</p>
 <div class="refsect3">
 <a name="g-printf.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1621,6 +1622,7 @@ g_vprintf (<em class="parameter"><code><a class="link" href="glib-Basic-Types.ht
            <em class="parameter"><code><span class="type">va_list</span> args</code></em>);</pre>
 <p>An implementation of the standard <code class="function">vprintf()</code> function which supports 
 positional parameters, as specified in the Single Unix Specification.</p>
+<p><code class="literal">glib/gprintf.h</code> must be explicitly included in order to use this function.</p>
 <div class="refsect3">
 <a name="g-vprintf.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1659,6 +1661,7 @@ g_fprintf (<em class="parameter"><code><span class="type">FILE</span> *file</cod
            <em class="parameter"><code>...</code></em>);</pre>
 <p>An implementation of the standard <code class="function">fprintf()</code> function which supports 
 positional parameters, as specified in the Single Unix Specification.</p>
+<p><code class="literal">glib/gprintf.h</code> must be explicitly included in order to use this function.</p>
 <div class="refsect3">
 <a name="g-fprintf.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1702,6 +1705,7 @@ g_vfprintf (<em class="parameter"><code><span class="type">FILE</span> *file</co
             <em class="parameter"><code><span class="type">va_list</span> args</code></em>);</pre>
 <p>An implementation of the standard <code class="function">fprintf()</code> function which supports 
 positional parameters, as specified in the Single Unix Specification.</p>
+<p><code class="literal">glib/gprintf.h</code> must be explicitly included in order to use this function.</p>
 <div class="refsect3">
 <a name="g-vfprintf.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1747,6 +1751,7 @@ g_sprintf (<em class="parameter"><code><a class="link" href="glib-Basic-Types.ht
 positional parameters, as specified in the Single Unix Specification.</p>
 <p>Note that it is usually better to use <a class="link" href="glib-String-Utility-Functions.html#g-snprintf" title="g_snprintf ()"><code class="function">g_snprintf()</code></a>, to avoid the
 risk of buffer overflow.</p>
+<p><code class="literal">glib/gprintf.h</code> must be explicitly included in order to use this function.</p>
 <p>See also <a class="link" href="glib-String-Utility-Functions.html#g-strdup-printf" title="g_strdup_printf ()"><code class="function">g_strdup_printf()</code></a>.</p>
 <div class="refsect3">
 <a name="g-sprintf.parameters"></a><h4>Parameters</h4>
@@ -1793,6 +1798,7 @@ g_vsprintf (<em class="parameter"><code><a class="link" href="glib-Basic-Types.h
             <em class="parameter"><code><span class="type">va_list</span> args</code></em>);</pre>
 <p>An implementation of the standard <code class="function">vsprintf()</code> function which supports 
 positional parameters, as specified in the Single Unix Specification.</p>
+<p><code class="literal">glib/gprintf.h</code> must be explicitly included in order to use this function.</p>
 <div class="refsect3">
 <a name="g-vsprintf.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1963,6 +1969,7 @@ positional parameters, as specified in the Single Unix Specification.
 This function is similar to <a class="link" href="glib-String-Utility-Functions.html#g-vsprintf" title="g_vsprintf ()"><code class="function">g_vsprintf()</code></a>, except that it allocates a 
 string to hold the output, instead of putting the output in a buffer 
 you allocate in advance.</p>
+<p><code class="literal">glib/gprintf.h</code> must be explicitly included in order to use this function.</p>
 <div class="refsect3">
 <a name="g-vasprintf.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -3610,7 +3617,7 @@ allow nesting such as</p>
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="glib-String-Utility-Functions.html#g-ascii-strup">g_ascii_strup</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="glib-String-Utility-Functions.html#g-strdelimit">g_strdelimit</a></span> <span class="gtkdoc opt">(</span>str<span class="gtkdoc opt">,</span> <span class="string">&quot;abc&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&apos;?&apos;</span><span class="gtkdoc opt">))</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="glib-String-Utility-Functions.html#g-ascii-strup">g_ascii_strup</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="glib-String-Utility-Functions.html#g-strdelimit">g_strdelimit</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">str</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"abc"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">'?'</span><span class="symbol">))</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -3746,7 +3753,7 @@ nesting such as</p>
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="glib-String-Utility-Functions.html#g-ascii-strup">g_ascii_strup</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="glib-String-Utility-Functions.html#g-strcanon">g_strcanon</a></span> <span class="gtkdoc opt">(</span>str<span class="gtkdoc opt">,</span> <span class="string">&quot;abc&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&apos;?&apos;</span><span class="gtkdoc opt">))</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="glib-String-Utility-Functions.html#g-ascii-strup">g_ascii_strup</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="glib-String-Utility-Functions.html#g-strcanon">g_strcanon</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">str</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"abc"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">'?'</span><span class="symbol">))</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -4157,12 +4164,12 @@ as soon as the call returns:</p>
 4
 5
 6</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">int</span> saved_errno<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="type">int</span><span class="normal"> saved_errno</span><span class="symbol">;</span>
 
-ret <span class="gtkdoc opt">=</span> <span class="function">read</span> <span class="gtkdoc opt">(</span>blah<span class="gtkdoc opt">);</span>
-saved_errno <span class="gtkdoc opt">=</span> errno<span class="gtkdoc opt">;</span>
+<span class="normal">ret </span><span class="symbol">=</span><span class="normal"> </span><span class="function">read</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">blah</span><span class="symbol">);</span>
+<span class="normal">saved_errno </span><span class="symbol">=</span><span class="normal"> errno</span><span class="symbol">;</span>
 
-<span class="function"><a href="glib-String-Utility-Functions.html#g-strerror">g_strerror</a></span> <span class="gtkdoc opt">(</span>saved_errno<span class="gtkdoc opt">);</span></pre></td>
+<span class="function"><a href="glib-String-Utility-Functions.html#g-strerror">g_strerror</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">saved_errno</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -4239,9 +4246,9 @@ on systems with 64bit IEEE-compatible doubles.</p>
         <td class="listing_lines" align="right"><pre>1
 2
 3</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">char</span> buf<span class="gtkdoc opt">[</span>G_ASCII_DTOSTR_BUF_SIZE<span class="gtkdoc opt">];</span>
+        <td class="listing_code"><pre class="programlisting"><span class="type">char</span><span class="normal"> buf</span><span class="symbol">[</span><span class="normal"><a href="glib-String-Utility-Functions.html#G-ASCII-DTOSTR-BUF-SIZE:CAPS">G_ASCII_DTOSTR_BUF_SIZE</a></span><span class="symbol">];</span>
 
-<span class="function">fprintf</span> <span class="gtkdoc opt">(</span>out<span class="gtkdoc opt">,</span> <span class="string">&quot;value=%s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> <span class="function"><a href="glib-String-Utility-Functions.html#g-ascii-dtostr">g_ascii_dtostr</a></span> <span class="gtkdoc opt">(</span>buf<span class="gtkdoc opt">,</span> <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>buf<span class="gtkdoc opt">),</span> value<span class="gtkdoc opt">));</span></pre></td>
+<span class="function">fprintf</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">out</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"value=%s</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="glib-String-Utility-Functions.html#g-ascii-dtostr">g_ascii_dtostr</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">buf</span><span class="symbol">,</span><span class="normal"> </span><span class="keyword">sizeof</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">buf</span><span class="symbol">),</span><span class="normal"> value</span><span class="symbol">));</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -4308,6 +4315,6 @@ number.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

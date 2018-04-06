@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Key-value-file-parser.html" title="Key-value file parser">
 <link rel="next" href="glib-Testing.html" title="Testing">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -429,6 +429,7 @@ g_bookmark_file_new (<em class="parameter"><code><span class="type">void</span><
 <p>Use <a class="link" href="glib-Bookmark-file-parser.html#g-bookmark-file-load-from-file" title="g_bookmark_file_load_from_file ()"><code class="function">g_bookmark_file_load_from_file()</code></a>, <a class="link" href="glib-Bookmark-file-parser.html#g-bookmark-file-load-from-data" title="g_bookmark_file_load_from_data ()"><code class="function">g_bookmark_file_load_from_data()</code></a>
 or <a class="link" href="glib-Bookmark-file-parser.html#g-bookmark-file-load-from-data-dirs" title="g_bookmark_file_load_from_data_dirs ()"><code class="function">g_bookmark_file_load_from_data_dirs()</code></a> to read an existing bookmark
 file.</p>
+<p><span class="annotation">[<acronym title="This symbol is a constructor, not a static method."><span class="acronym">constructor</span></acronym>]</span></p>
 <div class="refsect3">
 <a name="g-bookmark-file-new.returns"></a><h4>Returns</h4>
 <p> an empty <a class="link" href="glib-Bookmark-file-parser.html#GBookmarkFile" title="GBookmarkFile"><span class="type">GBookmarkFile</span></a></p>
@@ -531,8 +532,9 @@ structure.  If the object cannot be created then <em class="parameter"><code>err
 </tr>
 <tr>
 <td class="parameter_name"><p>data</p></td>
-<td class="parameter_description"><p>desktop bookmarks loaded in memory</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>desktop bookmarks
+loaded in memory. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
@@ -593,7 +595,7 @@ set to either a <a class="link" href="glib-File-Utilities.html#GFileError" title
 <td class="parameter_name"><p>full_path</p></td>
 <td class="parameter_description"><p>return location for a string
 containing the full path of the file, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -647,8 +649,8 @@ g_bookmark_file_to_data (<em class="parameter"><code><a class="link" href="glib-
 </div>
 <div class="refsect3">
 <a name="g-bookmark-file-to-data.returns"></a><h4>Returns</h4>
-<p> a newly allocated string holding
-the contents of the <a class="link" href="glib-Bookmark-file-parser.html#GBookmarkFile" title="GBookmarkFile"><span class="type">GBookmarkFile</span></a></p>
+<p>a newly allocated string holding the contents of the <a class="link" href="glib-Bookmark-file-parser.html#GBookmarkFile" title="GBookmarkFile"><span class="type">GBookmarkFile</span></a>. </p>
+<p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-12.html#api-index-2.12">2.12</a></p>
 </div>
@@ -1784,8 +1786,9 @@ set group name list is removed.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>groups</p></td>
-<td class="parameter_description"><p>an array of group names, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to remove all groups. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_description"><p>an array of
+group names, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to remove all groups. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> utf8]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>length</p></td>
@@ -2414,6 +2417,6 @@ enumeration. See <a class="link" href="glib-Error-Reporting.html#GError" title="
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

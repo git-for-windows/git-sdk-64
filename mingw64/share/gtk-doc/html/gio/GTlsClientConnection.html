@@ -8,7 +8,7 @@
 <link rel="up" href="tls.html" title="TLS (SSL) support">
 <link rel="prev" href="GTlsConnection.html" title="GTlsConnection">
 <link rel="next" href="GTlsServerConnection.html" title="GTlsServerConnection">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -171,7 +171,7 @@
 </div>
 <div class="refsect1">
 <a name="GTlsClientConnection.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
+<pre class="screen">    GInterface
     <span class="lineart">╰──</span> GTlsClientConnection
 </pre>
 </div>
@@ -382,13 +382,20 @@ g_tls_client_connection_get_validation_flags
 <pre class="programlisting"><span class="returnvalue">void</span>
 g_tls_client_connection_set_use_ssl3 (<em class="parameter"><code><a class="link" href="GTlsClientConnection.html" title="GTlsClientConnection"><span class="type">GTlsClientConnection</span></a> *conn</code></em>,
                                       <em class="parameter"><code><a href="../glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> use_ssl3</code></em>);</pre>
+<div class="warning">
+<p><code class="literal">g_tls_client_connection_set_use_ssl3</code> has been deprecated since version 2.56 and should not be used in newly-written code.</p>
+<p>SSL 3.0 is insecure, and this function does not
+generally enable or disable it, despite its name.</p>
+</div>
 <p>If <em class="parameter"><code>use_ssl3</code></em>
  is <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>, this forces <em class="parameter"><code>conn</code></em>
- to use SSL 3.0 rather than
-trying to properly negotiate the right version of TLS or SSL to use.
-This can be used when talking to servers that do not implement the
-fallbacks correctly and which will therefore fail to handshake with
-a "modern" TLS handshake attempt.</p>
+ to use the lowest-supported
+TLS protocol version rather than trying to properly negotiate the
+highest mutually-supported protocol version with the peer. This can
+be used when talking to broken TLS servers that exhibit protocol
+version intolerance.</p>
+<p>Be aware that SSL 3.0 is generally disabled by the <a class="link" href="GTlsBackend.html" title="GTlsBackend"><span class="type">GTlsBackend</span></a>, so
+the lowest-supported protocol version is probably not SSL 3.0.</p>
 <div class="refsect3">
 <a name="g-tls-client-connection-set-use-ssl3.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -405,7 +412,7 @@ a "modern" TLS handshake attempt.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>use_ssl3</p></td>
-<td class="parameter_description"><p>whether to use SSL 3.0</p></td>
+<td class="parameter_description"><p>whether to use the lowest-supported protocol version</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 </tbody>
@@ -418,10 +425,15 @@ a "modern" TLS handshake attempt.</p>
 <a name="g-tls-client-connection-get-use-ssl3"></a><h3>g_tls_client_connection_get_use_ssl3 ()</h3>
 <pre class="programlisting"><a href="../glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
 g_tls_client_connection_get_use_ssl3 (<em class="parameter"><code><a class="link" href="GTlsClientConnection.html" title="GTlsClientConnection"><span class="type">GTlsClientConnection</span></a> *conn</code></em>);</pre>
+<div class="warning">
+<p><code class="literal">g_tls_client_connection_get_use_ssl3</code> has been deprecated since version 2.56 and should not be used in newly-written code.</p>
+<p>SSL 3.0 is insecure, and this function does not
+actually indicate whether it is enabled.</p>
+</div>
 <p>Gets whether <em class="parameter"><code>conn</code></em>
- will use SSL 3.0 rather than the
-highest-supported version of TLS; see
-<a class="link" href="GTlsClientConnection.html#g-tls-client-connection-set-use-ssl3" title="g_tls_client_connection_set_use_ssl3 ()"><code class="function">g_tls_client_connection_set_use_ssl3()</code></a>.</p>
+ will force the lowest-supported TLS protocol
+version rather than attempt to negotiate the highest mutually-
+supported version of TLS; see <a class="link" href="GTlsClientConnection.html#g-tls-client-connection-set-use-ssl3" title="g_tls_client_connection_set_use_ssl3 ()"><code class="function">g_tls_client_connection_set_use_ssl3()</code></a>.</p>
 <div class="refsect3">
 <a name="g-tls-client-connection-get-use-ssl3.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -440,7 +452,7 @@ highest-supported version of TLS; see
 <div class="refsect3">
 <a name="g-tls-client-connection-get-use-ssl3.returns"></a><h4>Returns</h4>
 <p> whether <em class="parameter"><code>conn</code></em>
-will use SSL 3.0</p>
+will use the lowest-supported TLS protocol version</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
 </div>
@@ -596,15 +608,20 @@ virtual hosts.</p>
 <div class="refsect2">
 <a name="GTlsClientConnection--use-ssl3"></a><h3>The <code class="literal">“use-ssl3”</code> property</h3>
 <pre class="programlisting">  “use-ssl3”                 <a href="../glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a></pre>
-<p>If <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>, tells the connection to use a fallback version of TLS
+<p>If <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>, forces the connection to use a fallback version of TLS
 or SSL, rather than trying to negotiate the best version of TLS
 to use. This can be used when talking to servers that don't
 implement version negotiation correctly and therefore refuse to
-handshake at all with a "modern" TLS handshake.</p>
-<p>Despite the property name, the fallback version is not
-necessarily SSL 3.0; if SSL 3.0 has been disabled, the
-<a class="link" href="GTlsClientConnection.html" title="GTlsClientConnection"><span class="type">GTlsClientConnection</span></a> will use the next highest available version
-(normally TLS 1.0) as the fallback version.</p>
+handshake at all with a modern TLS handshake.</p>
+<p>Despite the property name, the fallback version is usually not
+SSL 3.0, because SSL 3.0 is generally disabled by the <a class="link" href="GTlsBackend.html" title="GTlsBackend"><span class="type">GTlsBackend</span></a>.
+<a class="link" href="GTlsClientConnection.html" title="GTlsClientConnection"><span class="type">GTlsClientConnection</span></a> will use the next-highest available version
+as the fallback version.</p>
+<div class="warning">
+<p><code class="literal">GTlsClientConnection:use-ssl3</code> has been deprecated since version 2.56 and should not be used in newly-written code.</p>
+<p>SSL 3.0 is insecure, and this property does not
+generally enable or disable it, despite its name.</p>
+</div>
 <p>Flags: Read / Write / Construct</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -624,6 +641,6 @@ overrides the default via <a class="link" href="GTlsConnection.html#GTlsConnecti
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

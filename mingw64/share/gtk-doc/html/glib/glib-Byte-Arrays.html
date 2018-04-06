@@ -8,7 +8,7 @@
 <link rel="up" href="glib-data-types.html" title="GLib Data Types">
 <link rel="prev" href="glib-Pointer-Arrays.html" title="Pointer Arrays">
 <link rel="next" href="glib-Balanced-Binary-Trees.html" title="Balanced Binary Trees">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -327,22 +327,22 @@ of bytes which grow automatically as elements are added.</p>
 14
 15
 16</pre></td>
-        <td class="listing_code"><pre class="programlisting">GByteArray <span class="gtkdoc opt">*</span>gbarray<span class="gtkdoc opt">;</span>
-gint i<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GByteArray</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">gbarray</span><span class="symbol">;</span>
+<span class="usertype">gint</span><span class="normal"> i</span><span class="symbol">;</span>
 
-gbarray <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Byte-Arrays.html#g-byte-array-new">g_byte_array_new</a></span> <span class="gtkdoc opt">();</span>
-<span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">10000</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++)</span>
-  <span class="function"><a href="glib-Byte-Arrays.html#g-byte-array-append">g_byte_array_append</a></span> <span class="gtkdoc opt">(</span>gbarray<span class="gtkdoc opt">, (</span>guint8<span class="gtkdoc opt">*)</span> <span class="string">&quot;abcd&quot;</span><span class="gtkdoc opt">,</span> <span class="number">4</span><span class="gtkdoc opt">);</span>
+<span class="normal">gbarray </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Byte-Arrays.html#g-byte-array-new">g_byte_array_new</a></span><span class="normal"> </span><span class="symbol">();</span>
+<span class="keyword">for</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">i </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span><span class="normal"> i </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">10000</span><span class="symbol">;</span><span class="normal"> i</span><span class="symbol">++)</span>
+<span class="normal">  </span><span class="function"><a href="glib-Byte-Arrays.html#g-byte-array-append">g_byte_array_append</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gbarray</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Basic-Types.html#guint8">guint8</a></span><span class="symbol">*)</span><span class="normal"> </span><span class="string">"abcd"</span><span class="symbol">,</span><span class="normal"> </span><span class="number">4</span><span class="symbol">);</span>
 
-<span class="keyword">for</span> <span class="gtkdoc opt">(</span>i <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> <span class="number">10000</span><span class="gtkdoc opt">;</span> i<span class="gtkdoc opt">++)</span>
-  <span class="gtkdoc opt">{</span>
-    <span class="function"><a href="glib-Testing.html#g-assert">g_assert</a></span> <span class="gtkdoc opt">(</span>gbarray<span class="gtkdoc opt">-&gt;</span>data<span class="gtkdoc opt">[</span><span class="number">4</span><span class="gtkdoc opt">*</span>i<span class="gtkdoc opt">] ==</span> <span class="string">&apos;a&apos;</span><span class="gtkdoc opt">);</span>
-    <span class="function"><a href="glib-Testing.html#g-assert">g_assert</a></span> <span class="gtkdoc opt">(</span>gbarray<span class="gtkdoc opt">-&gt;</span>data<span class="gtkdoc opt">[</span><span class="number">4</span><span class="gtkdoc opt">*</span>i<span class="gtkdoc opt">+</span><span class="number">1</span><span class="gtkdoc opt">] ==</span> <span class="string">&apos;b&apos;</span><span class="gtkdoc opt">);</span>
-    <span class="function"><a href="glib-Testing.html#g-assert">g_assert</a></span> <span class="gtkdoc opt">(</span>gbarray<span class="gtkdoc opt">-&gt;</span>data<span class="gtkdoc opt">[</span><span class="number">4</span><span class="gtkdoc opt">*</span>i<span class="gtkdoc opt">+</span><span class="number">2</span><span class="gtkdoc opt">] ==</span> <span class="string">&apos;c&apos;</span><span class="gtkdoc opt">);</span>
-    <span class="function"><a href="glib-Testing.html#g-assert">g_assert</a></span> <span class="gtkdoc opt">(</span>gbarray<span class="gtkdoc opt">-&gt;</span>data<span class="gtkdoc opt">[</span><span class="number">4</span><span class="gtkdoc opt">*</span>i<span class="gtkdoc opt">+</span><span class="number">3</span><span class="gtkdoc opt">] ==</span> <span class="string">&apos;d&apos;</span><span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">}</span>
+<span class="keyword">for</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">i </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span><span class="normal"> i </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">10000</span><span class="symbol">;</span><span class="normal"> i</span><span class="symbol">++)</span>
+<span class="normal">  </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="function"><a href="glib-Testing.html#g-assert">g_assert</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gbarray</span><span class="symbol">-&gt;</span><span class="normal">data</span><span class="symbol">[</span><span class="number">4</span><span class="symbol">*</span><span class="normal">i</span><span class="symbol">]</span><span class="normal"> </span><span class="symbol">==</span><span class="normal"> </span><span class="string">'a'</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="function"><a href="glib-Testing.html#g-assert">g_assert</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gbarray</span><span class="symbol">-&gt;</span><span class="normal">data</span><span class="symbol">[</span><span class="number">4</span><span class="symbol">*</span><span class="normal">i</span><span class="symbol">+</span><span class="number">1</span><span class="symbol">]</span><span class="normal"> </span><span class="symbol">==</span><span class="normal"> </span><span class="string">'b'</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="function"><a href="glib-Testing.html#g-assert">g_assert</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gbarray</span><span class="symbol">-&gt;</span><span class="normal">data</span><span class="symbol">[</span><span class="number">4</span><span class="symbol">*</span><span class="normal">i</span><span class="symbol">+</span><span class="number">2</span><span class="symbol">]</span><span class="normal"> </span><span class="symbol">==</span><span class="normal"> </span><span class="string">'c'</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="function"><a href="glib-Testing.html#g-assert">g_assert</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gbarray</span><span class="symbol">-&gt;</span><span class="normal">data</span><span class="symbol">[</span><span class="number">4</span><span class="symbol">*</span><span class="normal">i</span><span class="symbol">+</span><span class="number">3</span><span class="symbol">]</span><span class="normal"> </span><span class="symbol">==</span><span class="normal"> </span><span class="string">'d'</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="cbracket">}</span>
 
-<span class="function"><a href="glib-Byte-Arrays.html#g-byte-array-free">g_byte_array_free</a></span> <span class="gtkdoc opt">(</span>gbarray<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">);</span></pre></td>
+<span class="function"><a href="glib-Byte-Arrays.html#g-byte-array-free">g_byte_array_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gbarray</span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1088,6 +1088,17 @@ g_bytes_new_from_bytes (<em class="parameter"><code><a class="link" href="glib-B
 <p>A reference to <em class="parameter"><code>bytes</code></em>
  will be held by the newly created <a class="link" href="glib-Byte-Arrays.html#GBytes" title="GBytes"><span class="type">GBytes</span></a> until
 the byte data is no longer needed.</p>
+<p>Since 2.56, if <em class="parameter"><code>offset</code></em>
+ is 0 and <em class="parameter"><code>length</code></em>
+ matches the size of <em class="parameter"><code>bytes</code></em>
+, then
+<em class="parameter"><code>bytes</code></em>
+ will be returned with the reference count incremented by 1. If <em class="parameter"><code>bytes</code></em>
+
+is a slice of another <a class="link" href="glib-Byte-Arrays.html#GBytes" title="GBytes"><span class="type">GBytes</span></a>, then the resulting <a class="link" href="glib-Byte-Arrays.html#GBytes" title="GBytes"><span class="type">GBytes</span></a> will reference
+the same <a class="link" href="glib-Byte-Arrays.html#GBytes" title="GBytes"><span class="type">GBytes</span></a> instead of <em class="parameter"><code>bytes</code></em>
+. This allows consumers to simplify the
+usage of <a class="link" href="glib-Byte-Arrays.html#GBytes" title="GBytes"><span class="type">GBytes</span></a> when asynchronously writing to streams.</p>
 <div class="refsect3">
 <a name="g-bytes-new-from-bytes.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1337,7 +1348,8 @@ g_bytes_ref (<em class="parameter"><code><a class="link" href="glib-Byte-Arrays.
 g_bytes_unref (<em class="parameter"><code><a class="link" href="glib-Byte-Arrays.html#GBytes" title="GBytes"><span class="type">GBytes</span></a> *bytes</code></em>);</pre>
 <p>Releases a reference on <em class="parameter"><code>bytes</code></em>
 .  This may result in the bytes being
-freed.</p>
+freed. If <em class="parameter"><code>bytes</code></em>
+ is <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, it will return immediately.</p>
 <div class="refsect3">
 <a name="g-bytes-unref.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1494,6 +1506,6 @@ a mutable <a class="link" href="glib-Byte-Arrays.html#GByteArray" title="struct 
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

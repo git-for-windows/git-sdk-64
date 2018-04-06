@@ -8,7 +8,7 @@
 <link rel="up" href="gdbus-lowlevel.html" title="Low-level D-Bus Support">
 <link rel="prev" href="GDBusMessage.html" title="GDBusMessage">
 <link rel="next" href="GDBusMethodInvocation.html" title="GDBusMethodInvocation">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -652,7 +652,7 @@ free it with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code
 <div class="refsect3">
 <a name="gdbus-unix-fd-client"></a><h4>An example for file descriptor passing</h4>
 <p>Here is an example for passing UNIX file descriptors:
-<a class="ulink" href="https://git.gnome.org/browse/glib/tree/gio/tests/gdbus-unix-fd-client.c" target="_top">gdbus-unix-fd-client.c</a></p>
+<a class="ulink" href="https://git.gnome.org/browse/glib/tree/gio/tests/gdbus-example-unix-fd-client.c" target="_top">gdbus-unix-fd-client.c</a></p>
 </div>
 <div class="refsect3">
 <a name="gdbus-export"></a><h4>An example for exporting a GObject</h4>
@@ -1865,7 +1865,10 @@ not compatible with the D-Bus protocol, the operation fails with
  is non-<a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> then the reply will be checked for having this type and an
 error will be raised if it does not match.  Said another way, if you give a <em class="parameter"><code>reply_type</code></em>
 
-then any non-<a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> return value will be of this type.</p>
+then any non-<a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> return value will be of this type. Unless it’s
+<a href="../glib-GVariantType.html#G-VARIANT-TYPE-UNIT:CAPS"><code class="literal">G_VARIANT_TYPE_UNIT</code></a>, the <em class="parameter"><code>reply_type</code></em>
+ will be a tuple containing one or more
+values.</p>
 <p>If the <em class="parameter"><code>parameters</code></em>
  <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> is floating, it is consumed. This allows
 convenient 'inline' use of <a href="../glib-GVariant.html#g-variant-new"><code class="function">g_variant_new()</code></a>, e.g.:</p>
@@ -1887,20 +1890,20 @@ convenient 'inline' use of <a href="../glib-GVariant.html#g-variant-new"><code c
 12
 13
 14</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="GDBusConnection.html#g-dbus-connection-call">g_dbus_connection_call</a></span> <span class="gtkdoc opt">(</span>connection<span class="gtkdoc opt">,</span>
-                        <span class="string">&quot;org.freedesktop.StringThings&quot;</span><span class="gtkdoc opt">,</span>
-                        <span class="string">&quot;/org/freedesktop/StringThings&quot;</span><span class="gtkdoc opt">,</span>
-                        <span class="string">&quot;org.freedesktop.StringThings&quot;</span><span class="gtkdoc opt">,</span>
-                        <span class="string">&quot;TwoStrings&quot;</span><span class="gtkdoc opt">,</span>
-                        <span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;(ss)&quot;</span><span class="gtkdoc opt">,</span>
-                                       <span class="string">&quot;Thing One&quot;</span><span class="gtkdoc opt">,</span>
-                                       <span class="string">&quot;Thing Two&quot;</span><span class="gtkdoc opt">),</span>
-                        NULL<span class="gtkdoc opt">,</span>
-                        G_DBUS_CALL_FLAGS_NONE<span class="gtkdoc opt">,</span>
-                        <span class="gtkdoc opt">-</span><span class="number">1</span><span class="gtkdoc opt">,</span>
-                        NULL<span class="gtkdoc opt">,</span>
-                        <span class="gtkdoc opt">(</span>GAsyncReadyCallback<span class="gtkdoc opt">)</span> two_strings_done<span class="gtkdoc opt">,</span>
-                        NULL<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="GDBusConnection.html#g-dbus-connection-call">g_dbus_connection_call</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">connection</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="string">"org.freedesktop.StringThings"</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="string">"/org/freedesktop/StringThings"</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="string">"org.freedesktop.StringThings"</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="string">"TwoStrings"</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"(ss)"</span><span class="symbol">,</span>
+<span class="normal">                                       </span><span class="string">"Thing One"</span><span class="symbol">,</span>
+<span class="normal">                                       </span><span class="string">"Thing Two"</span><span class="symbol">),</span>
+<span class="normal">                        <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
+<span class="normal">                        <a href="GDBusConnection.html#G-DBUS-CALL-FLAGS-NONE:CAPS">G_DBUS_CALL_FLAGS_NONE</a></span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="symbol">-</span><span class="number">1</span><span class="symbol">,</span>
+<span class="normal">                        <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="symbol">(</span><span class="normal"><a href="GAsyncResult.html#GAsyncReadyCallback">GAsyncReadyCallback</a></span><span class="symbol">)</span><span class="normal"> two_strings_done</span><span class="symbol">,</span>
+<span class="normal">                        <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1962,7 +1965,8 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 </tr>
 <tr>
 <td class="parameter_name"><p>reply_type</p></td>
-<td class="parameter_description"><p>the expected type of the reply, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
+<td class="parameter_description"><p>the expected type of the reply (which will be a
+tuple), or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
@@ -2098,19 +2102,19 @@ This allows convenient 'inline' use of <a href="../glib-GVariant.html#g-variant-
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="GDBusConnection.html#g-dbus-connection-call-sync">g_dbus_connection_call_sync</a></span> <span class="gtkdoc opt">(</span>connection<span class="gtkdoc opt">,</span>
-                             <span class="string">&quot;org.freedesktop.StringThings&quot;</span><span class="gtkdoc opt">,</span>
-                             <span class="string">&quot;/org/freedesktop/StringThings&quot;</span><span class="gtkdoc opt">,</span>
-                             <span class="string">&quot;org.freedesktop.StringThings&quot;</span><span class="gtkdoc opt">,</span>
-                             <span class="string">&quot;TwoStrings&quot;</span><span class="gtkdoc opt">,</span>
-                             <span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;(ss)&quot;</span><span class="gtkdoc opt">,</span>
-                                            <span class="string">&quot;Thing One&quot;</span><span class="gtkdoc opt">,</span>
-                                            <span class="string">&quot;Thing Two&quot;</span><span class="gtkdoc opt">),</span>
-                             NULL<span class="gtkdoc opt">,</span>
-                             G_DBUS_CALL_FLAGS_NONE<span class="gtkdoc opt">,</span>
-                             <span class="gtkdoc opt">-</span><span class="number">1</span><span class="gtkdoc opt">,</span>
-                             NULL<span class="gtkdoc opt">,</span>
-                             <span class="gtkdoc opt">&amp;</span>error<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="GDBusConnection.html#g-dbus-connection-call-sync">g_dbus_connection_call_sync</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">connection</span><span class="symbol">,</span>
+<span class="normal">                             </span><span class="string">"org.freedesktop.StringThings"</span><span class="symbol">,</span>
+<span class="normal">                             </span><span class="string">"/org/freedesktop/StringThings"</span><span class="symbol">,</span>
+<span class="normal">                             </span><span class="string">"org.freedesktop.StringThings"</span><span class="symbol">,</span>
+<span class="normal">                             </span><span class="string">"TwoStrings"</span><span class="symbol">,</span>
+<span class="normal">                             </span><span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"(ss)"</span><span class="symbol">,</span>
+<span class="normal">                                            </span><span class="string">"Thing One"</span><span class="symbol">,</span>
+<span class="normal">                                            </span><span class="string">"Thing Two"</span><span class="symbol">),</span>
+<span class="normal">                             <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
+<span class="normal">                             <a href="GDBusConnection.html#G-DBUS-CALL-FLAGS-NONE:CAPS">G_DBUS_CALL_FLAGS_NONE</a></span><span class="symbol">,</span>
+<span class="normal">                             </span><span class="symbol">-</span><span class="number">1</span><span class="symbol">,</span>
+<span class="normal">                             <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
+<span class="normal">                             </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -2479,7 +2483,10 @@ g_dbus_connection_emit_signal (<em class="parameter"><code><a class="link" href=
 <p>Emits a signal.</p>
 <p>If the parameters GVariant is floating, it is consumed.</p>
 <p>This can only fail if <em class="parameter"><code>parameters</code></em>
- is not compatible with the D-Bus protocol.</p>
+ is not compatible with the D-Bus protocol
+(<a class="link" href="gio-GIOError.html#G-IO-ERROR-INVALID-ARGUMENT:CAPS"><code class="literal">G_IO_ERROR_INVALID_ARGUMENT</code></a>), or if <em class="parameter"><code>connection</code></em>
+ has been closed
+(<a class="link" href="gio-GIOError.html#G-IO-ERROR-CLOSED:CAPS"><code class="literal">G_IO_ERROR_CLOSED</code></a>).</p>
 <div class="refsect3">
 <a name="g-dbus-connection-emit-signal.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -3127,15 +3134,15 @@ message can simply return the <em class="parameter"><code>message</code></em>
 7
 8
 9</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> GDBusMessage <span class="gtkdoc opt">*</span>
-<span class="function">passive_filter</span> <span class="gtkdoc opt">(</span>GDBusConnection <span class="gtkdoc opt">*</span>connection
-                GDBusMessage    <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
-                gboolean         incoming<span class="gtkdoc opt">,</span>
-                gpointer         user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc opt">/&lt;!-- --&gt;*</span> inspect &#64;message <span class="gtkdoc opt">*&lt;!-- --&gt;/</span>
-  <span class="keyword">return</span> message<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> <a href="GDBusMessage.html#GDBusMessage-struct">GDBusMessage</a> </span><span class="symbol">*</span>
+<span class="function">passive_filter</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="GDBusConnection.html#GDBusConnection-struct">GDBusConnection</a> </span><span class="symbol">*</span><span class="normal">connection</span>
+<span class="normal">                </span><span class="usertype">GDBusMessage</span><span class="normal">    </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="usertype">gboolean</span><span class="normal">         incoming</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="usertype">gpointer</span><span class="normal">         user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">// inspect @message</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> message</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -3160,19 +3167,19 @@ Filter functions that wants to drop a message can simply return <a href="../glib
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> GDBusMessage <span class="gtkdoc opt">*</span>
-<span class="function">drop_filter</span> <span class="gtkdoc opt">(</span>GDBusConnection <span class="gtkdoc opt">*</span>connection
-             GDBusMessage    <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
-             gboolean         incoming<span class="gtkdoc opt">,</span>
-             gpointer         user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>should_drop_message<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">);</span>
-      message <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
-  <span class="keyword">return</span> message<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> <a href="GDBusMessage.html#GDBusMessage-struct">GDBusMessage</a> </span><span class="symbol">*</span>
+<span class="function">drop_filter</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="GDBusConnection.html#GDBusConnection-struct">GDBusConnection</a> </span><span class="symbol">*</span><span class="normal">connection</span>
+<span class="normal">             </span><span class="usertype">GDBusMessage</span><span class="normal">    </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">             </span><span class="usertype">gboolean</span><span class="normal">         incoming</span><span class="symbol">,</span>
+<span class="normal">             </span><span class="usertype">gpointer</span><span class="normal">         user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">should_drop_message</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">message</span><span class="symbol">);</span>
+<span class="normal">      message </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> message</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -3202,24 +3209,24 @@ Finally, a filter function may modify a message by copying it:</p>
 16
 17
 18</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> GDBusMessage <span class="gtkdoc opt">*</span>
-<span class="function">modifying_filter</span> <span class="gtkdoc opt">(</span>GDBusConnection <span class="gtkdoc opt">*</span>connection
-                  GDBusMessage    <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
-                  gboolean         incoming<span class="gtkdoc opt">,</span>
-                  gpointer         user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GDBusMessage <span class="gtkdoc opt">*</span>copy<span class="gtkdoc opt">;</span>
-  GError <span class="gtkdoc opt">*</span>error<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> <a href="GDBusMessage.html#GDBusMessage-struct">GDBusMessage</a> </span><span class="symbol">*</span>
+<span class="function">modifying_filter</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="GDBusConnection.html#GDBusConnection-struct">GDBusConnection</a> </span><span class="symbol">*</span><span class="normal">connection</span>
+<span class="normal">                  </span><span class="usertype">GDBusMessage</span><span class="normal">    </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">gboolean</span><span class="normal">         incoming</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">gpointer</span><span class="normal">         user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GDBusMessage</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">copy</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GError</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error</span><span class="symbol">;</span>
 
-  error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
-  copy <span class="gtkdoc opt">=</span> <span class="function"><a href="GDBusMessage.html#g-dbus-message-copy">g_dbus_message_copy</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">, &amp;</span>error<span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">/&lt;!-- --&gt;*</span> handle &#64;error being is set <span class="gtkdoc opt">*&lt;!-- --&gt;/</span>
-  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">);</span>
+<span class="normal">  error </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
+<span class="normal">  copy </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GDBusMessage.html#g-dbus-message-copy">g_dbus_message_copy</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">message</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="comment">// handle @error being set</span>
+<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">message</span><span class="symbol">);</span>
 
-  <span class="gtkdoc opt">/&lt;!-- --&gt;*</span> modify &#64;copy <span class="gtkdoc opt">*&lt;!-- --&gt;/</span>
+<span class="normal">  </span><span class="comment">// modify @copy</span>
 
-  <span class="keyword">return</span> copy<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> copy</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -4769,6 +4776,6 @@ remote peer closed its end of the connection</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

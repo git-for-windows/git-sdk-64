@@ -37,7 +37,19 @@ else:
     # parent directory to the python path.
     path = os.path.join(filedir, '..')
 
-sys.path.insert(0, os.path.abspath(path))
+# Canonicalize, then do further testing
+path = os.path.abspath(path)
+
+# If the above path detection failed, use the hard-coded datadir. This can
+# happen when, for instance, bindir and datadir are not in the same prefix or
+# on Windows where we cannot make any guarantees about the directory structure.
+#
+# In these cases our installation cannot be relocatable, but at least we should
+# be able to find the codegen module.
+if not os.path.isfile(os.path.join(path, 'codegen', 'codegen_main.py')):
+    path = os.path.join('/mingw64/share', 'glib-2.0')
+
+sys.path.insert(0, path)
 from codegen import codegen_main
 
 sys.exit(codegen_main.codegen_main())

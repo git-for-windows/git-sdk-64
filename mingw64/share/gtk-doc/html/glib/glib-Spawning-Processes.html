@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Timers.html" title="Timers">
 <link rel="next" href="glib-File-Utilities.html" title="File Utilities">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -146,7 +146,7 @@ convenient than the bare UNIX <code class="function">fork()</code> and <code cla
 and asynchronous variants (<a class="link" href="glib-Spawning-Processes.html#g-spawn-async" title="g_spawn_async ()"><code class="function">g_spawn_async()</code></a>, <a class="link" href="glib-Spawning-Processes.html#g-spawn-async-with-pipes" title="g_spawn_async_with_pipes ()"><code class="function">g_spawn_async_with_pipes()</code></a>),
 as well as convenience variants that take a complete shell-like
 commandline (<a class="link" href="glib-Spawning-Processes.html#g-spawn-command-line-sync" title="g_spawn_command_line_sync ()"><code class="function">g_spawn_command_line_sync()</code></a>, <a class="link" href="glib-Spawning-Processes.html#g-spawn-command-line-async" title="g_spawn_command_line_async ()"><code class="function">g_spawn_command_line_async()</code></a>).</p>
-<p>See <a href="../gio/GSubprocess.html#GSubprocess-struct"><span class="type">GSubprocess</span></a> in GIO for a higher-level API that provides
+<p>See <a href="../GSubprocess.html#GSubprocess-struct"><span class="type">GSubprocess</span></a> in GIO for a higher-level API that provides
 stream interfaces for communication with child processes.</p>
 <p>An example of using <a class="link" href="glib-Spawning-Processes.html#g-spawn-async-with-pipes" title="g_spawn_async_with_pipes ()"><code class="function">g_spawn_async_with_pipes()</code></a>:</p>
 <div class="informalexample">
@@ -192,45 +192,45 @@ stream interfaces for communication with child processes.</p>
 37
 38
 39</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">const</span> gchar <span class="gtkdoc opt">*</span> <span class="gtkdoc kwb">const</span> argv<span class="gtkdoc opt">[] = {</span> <span class="string">&quot;my-favourite-program&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;--args&quot;</span><span class="gtkdoc opt">,</span> NULL <span class="gtkdoc opt">};</span>
-gint child_stdout<span class="gtkdoc opt">,</span> child_stderr<span class="gtkdoc opt">;</span>
-GPid child_pid<span class="gtkdoc opt">;</span>
-<span class="function"><a href="glib-Miscellaneous-Macros.html#g-autoptr">g_autoptr</a></span><span class="gtkdoc opt">(</span>GError<span class="gtkdoc opt">)</span> error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">const</span><span class="normal"> <a href="glib-Basic-Types.html#gchar">gchar</a> </span><span class="symbol">*</span><span class="normal"> </span><span class="keyword">const</span><span class="normal"> argv</span><span class="symbol">[]</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span><span class="normal"> </span><span class="string">"my-favourite-program"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"--args"</span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a> </span><span class="cbracket">}</span><span class="symbol">;</span>
+<span class="usertype">gint</span><span class="normal"> child_stdout</span><span class="symbol">,</span><span class="normal"> child_stderr</span><span class="symbol">;</span>
+<span class="usertype">GPid</span><span class="normal"> child_pid</span><span class="symbol">;</span>
+<span class="function"><a href="glib-Miscellaneous-Macros.html#g-autoptr">g_autoptr</a></span><span class="symbol">(</span><span class="normal"><a href="glib-Error-Reporting.html#GError">GError</a></span><span class="symbol">)</span><span class="normal"> error </span><span class="symbol">=</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-<span class="gtkdoc slc">// Spawn child process.</span>
-<span class="function"><a href="glib-Spawning-Processes.html#g-spawn-async-with-pipes">g_spawn_async_with_pipes</a></span> <span class="gtkdoc opt">(</span>NULL<span class="gtkdoc opt">,</span> argv<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> G_SPAWN_DO_NOT_REAP_CHILD<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span>
-                          NULL<span class="gtkdoc opt">, &amp;</span>child_pid<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">, &amp;</span>child_stdout<span class="gtkdoc opt">,</span>
-                          <span class="gtkdoc opt">&amp;</span>child_stderr<span class="gtkdoc opt">, &amp;</span>error<span class="gtkdoc opt">);</span>
-<span class="keyword">if</span> <span class="gtkdoc opt">(</span>error <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">)</span>
-  <span class="gtkdoc opt">{</span>
-    <span class="function"><a href="glib-Message-Logging.html#g-error">g_error</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Spawning child failed: %s&quot;</span><span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">);</span>
-    <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-  <span class="gtkdoc opt">}</span>
+<span class="comment">// Spawn child process.</span>
+<span class="function"><a href="glib-Spawning-Processes.html#g-spawn-async-with-pipes">g_spawn_async_with_pipes</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> argv</span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="glib-Spawning-Processes.html#G-SPAWN-DO-NOT-REAP-CHILD:CAPS">G_SPAWN_DO_NOT_REAP_CHILD</a></span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
+<span class="normal">                          <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">child_pid</span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">child_stdout</span><span class="symbol">,</span>
+<span class="normal">                          </span><span class="symbol">&amp;</span><span class="normal">child_stderr</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">);</span>
+<span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error </span><span class="symbol">!=</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">  </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="function"><a href="glib-Message-Logging.html#g-error">g_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"Spawning child failed: %s"</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">-&gt;</span><span class="normal">message</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="cbracket">}</span>
 
-<span class="gtkdoc slc">// Add a child watch function which will be called when the child process</span>
-<span class="gtkdoc slc">// exits.</span>
-<span class="function"><a href="glib-The-Main-Event-Loop.html#g-child-watch-add">g_child_watch_add</a></span> <span class="gtkdoc opt">(</span>child_pid<span class="gtkdoc opt">,</span> child_watch_cb<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+<span class="comment">// Add a child watch function which will be called when the child process</span>
+<span class="comment">// exits.</span>
+<span class="function"><a href="glib-The-Main-Event-Loop.html#g-child-watch-add">g_child_watch_add</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">child_pid</span><span class="symbol">,</span><span class="normal"> child_watch_cb</span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-<span class="gtkdoc slc">// You could watch for output on &#64;child_stdout and &#64;child_stderr using</span>
-<span class="gtkdoc slc">// #GUnixInputStream or #GIOChannel here.</span>
+<span class="comment">// You could watch for output on @child_stdout and @child_stderr using</span>
+<span class="comment">// #GUnixInputStream or #GIOChannel here.</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">child_watch_cb</span> <span class="gtkdoc opt">(</span>GPid     pid<span class="gtkdoc opt">,</span>
-                gint     status<span class="gtkdoc opt">,</span>
-                gpointer user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="glib-Message-Logging.html#g-message">g_message</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Child %&quot;</span> G_PID_FORMAT <span class="string">&quot; exited %s&quot;</span><span class="gtkdoc opt">,</span> pid<span class="gtkdoc opt">,</span>
-             <span class="function"><a href="glib-Spawning-Processes.html#g-spawn-check-exit-status">g_spawn_check_exit_status</a></span> <span class="gtkdoc opt">(</span>status<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">) ?</span> <span class="string">&quot;normally&quot;</span> <span class="gtkdoc opt">:</span> <span class="string">&quot;abnormally&quot;</span><span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">child_watch_cb</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GPid</span><span class="normal">     pid</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="usertype">gint</span><span class="normal">     status</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="usertype">gpointer</span><span class="normal"> user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="glib-Message-Logging.html#g-message">g_message</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"Child %"</span><span class="normal"> <a href="glib-The-Main-Event-Loop.html#G-PID-FORMAT:CAPS">G_PID_FORMAT</a> </span><span class="string">" exited %s"</span><span class="symbol">,</span><span class="normal"> pid</span><span class="symbol">,</span>
+<span class="normal">             </span><span class="function"><a href="glib-Spawning-Processes.html#g-spawn-check-exit-status">g_spawn_check_exit_status</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">status</span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">?</span><span class="normal"> </span><span class="string">"normally"</span><span class="normal"> </span><span class="symbol">:</span><span class="normal"> </span><span class="string">"abnormally"</span><span class="symbol">);</span>
 
-  <span class="gtkdoc slc">// Free any resources associated with the child here, such as I/O channels</span>
-  <span class="gtkdoc slc">// on its stdout and stderr FDs. If you have no code to put in the</span>
-  <span class="gtkdoc slc">// child_watch_cb() callback, you can remove it and the g_child_watch_add()</span>
-  <span class="gtkdoc slc">// call, but you must also remove the G_SPAWN_DO_NOT_REAP_CHILD flag,</span>
-  <span class="gtkdoc slc">// otherwise the child process will stay around as a zombie until this</span>
-  <span class="gtkdoc slc">// process exits.</span>
+<span class="normal">  </span><span class="comment">// Free any resources associated with the child here, such as I/O channels</span>
+<span class="normal">  </span><span class="comment">// on its stdout and stderr FDs. If you have no code to put in the</span>
+<span class="normal">  </span><span class="comment">// child_watch_cb() callback, you can remove it and the g_child_watch_add()</span>
+<span class="normal">  </span><span class="comment">// call, but you must also remove the G_SPAWN_DO_NOT_REAP_CHILD flag,</span>
+<span class="normal">  </span><span class="comment">// otherwise the child process will stay around as a zombie until this</span>
+<span class="normal">  </span><span class="comment">// process exits.</span>
 
-  <span class="function"><a href="glib-Spawning-Processes.html#g-spawn-close-pid">g_spawn_close_pid</a></span> <span class="gtkdoc opt">(</span>pid<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function"><a href="glib-Spawning-Processes.html#g-spawn-close-pid">g_spawn_close_pid</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">pid</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -280,8 +280,8 @@ list to the <code class="literal">g_spawn...</code> function.</p>
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>user_data</p></td>
-<td class="parameter_description"><p>user data to pass to the function.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>user data to pass to the function. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
 </div>
@@ -397,7 +397,7 @@ standard error. If you use this flag, <em class="parameter"><code>standard_error
  must be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>.
 <a class="link" href="glib-Spawning-Processes.html#G-SPAWN-CHILD-INHERITS-STDIN:CAPS"><code class="literal">G_SPAWN_CHILD_INHERITS_STDIN</code></a> means that the child will inherit the parent's
 standard input (by default, the child's standard input is attached to
-/dev/null). If you use this flag, <em class="parameter"><code>standard_input</code></em>
+<code class="literal">/dev/null</code>). If you use this flag, <em class="parameter"><code>standard_input</code></em>
  must be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>.
 <a class="link" href="glib-Spawning-Processes.html#G-SPAWN-FILE-AND-ARGV-ZERO:CAPS"><code class="literal">G_SPAWN_FILE_AND_ARGV_ZERO</code></a> means that the first element of <em class="parameter"><code>argv</code></em>
  is
@@ -443,8 +443,8 @@ The caller of <a class="link" href="glib-Spawning-Processes.html#g-spawn-async-w
 when they are no longer in use. If these parameters are <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, the
 corresponding pipe won't be created.</p>
 <p>If <em class="parameter"><code>standard_input</code></em>
- is NULL, the child's standard input is attached to 
-/dev/null unless <a class="link" href="glib-Spawning-Processes.html#G-SPAWN-CHILD-INHERITS-STDIN:CAPS"><code class="literal">G_SPAWN_CHILD_INHERITS_STDIN</code></a> is set.</p>
+ is <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, the child's standard input is attached to
+<code class="literal">/dev/null</code> unless <a class="link" href="glib-Spawning-Processes.html#G-SPAWN-CHILD-INHERITS-STDIN:CAPS"><code class="literal">G_SPAWN_CHILD_INHERITS_STDIN</code></a> is set.</p>
 <p>If <em class="parameter"><code>standard_error</code></em>
  is NULL, the child's standard error goes to the same 
 location as the parent's standard error unless <a class="link" href="glib-Spawning-Processes.html#G-SPAWN-STDERR-TO-DEV-NULL:CAPS"><code class="literal">G_SPAWN_STDERR_TO_DEV_NULL</code></a> 
@@ -472,8 +472,8 @@ and <em class="parameter"><code>standard_error</code></em>
 process reference must be closed using <a class="link" href="glib-Spawning-Processes.html#g-spawn-close-pid" title="g_spawn_close_pid ()"><code class="function">g_spawn_close_pid()</code></a>.</p>
 <p>If you are writing a GTK+ application, and the program you are spawning is a
 graphical application too, then to ensure that the spawned program opens its
-windows on the right screen, you may want to use <a href="../gdk4/gdk4-Application-launching.html#GdkAppLaunchContext-struct"><span class="type">GdkAppLaunchContext</span></a>,
-<span class="type">GAppLaunchcontext</span>, or set the <code class="literal">DISPLAY</code> environment variable.</p>
+windows on the right screen, you may want to use <span class="type">GdkAppLaunchContext</span>,
+<a href="../GAppInfo.html#GAppLaunchContext-struct"><span class="type">GAppLaunchContext</span></a>, or set the <code class="literal">DISPLAY</code> environment variable.</p>
 <div class="refsect3">
 <a name="g-spawn-async-with-pipes.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -485,18 +485,21 @@ windows on the right screen, you may want to use <a href="../gdk4/gdk4-Applicati
 <tbody>
 <tr>
 <td class="parameter_name"><p>working_directory</p></td>
-<td class="parameter_description"><p>child's current working directory, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's, in the GLib file name encoding. </p></td>
+<td class="parameter_description"><p>child's current working
+directory, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's, in the GLib file name encoding. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>argv</p></td>
-<td class="parameter_description"><p>child's argument vector, in the GLib file name encoding. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1]</span></td>
+<td class="parameter_description"><p>child's argument
+vector, in the GLib file name encoding. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>envp</p></td>
-<td class="parameter_description"><p>child's environment, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's, in the GLib file name encoding. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_description"><p>child's environment, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's, in the GLib file
+name encoding. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> filename][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -565,8 +568,8 @@ simply calls the <a class="link" href="glib-Spawning-Processes.html#g-spawn-asyn
 reference when you don't need it any more.</p>
 <p>If you are writing a GTK+ application, and the program you are spawning is a
 graphical application too, then to ensure that the spawned program opens its
-windows on the right screen, you may want to use <a href="../gdk4/gdk4-Application-launching.html#GdkAppLaunchContext-struct"><span class="type">GdkAppLaunchContext</span></a>,
-<span class="type">GAppLaunchcontext</span>, or set the <code class="literal">DISPLAY</code> environment variable.</p>
+windows on the right screen, you may want to use <span class="type">GdkAppLaunchContext</span>,
+<a href="../GAppInfo.html#GAppLaunchContext-struct"><span class="type">GAppLaunchContext</span></a>, or set the <code class="literal">DISPLAY</code> environment variable.</p>
 <p>Note that the returned <em class="parameter"><code>child_pid</code></em>
  on Windows is a handle to the child
 process and not its identifier. Process handles and process identifiers
@@ -582,18 +585,19 @@ are different concepts on Windows.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>working_directory</p></td>
-<td class="parameter_description"><p>child's current working directory, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's. </p></td>
+<td class="parameter_description"><p>child's current working
+directory, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>argv</p></td>
 <td class="parameter_description"><p>child's argument vector. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>envp</p></td>
 <td class="parameter_description"><p>child's environment, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> filename][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -658,7 +662,8 @@ the child is stored there; see the documentation of
 <a class="link" href="glib-Spawning-Processes.html#g-spawn-check-exit-status" title="g_spawn_check_exit_status ()"><code class="function">g_spawn_check_exit_status()</code></a> for how to use and interpret this.
 Note that it is invalid to pass <a class="link" href="glib-Spawning-Processes.html#G-SPAWN-DO-NOT-REAP-CHILD:CAPS"><code class="literal">G_SPAWN_DO_NOT_REAP_CHILD</code></a> in
 <em class="parameter"><code>flags</code></em>
-.</p>
+, and on POSIX platforms, the same restrictions as for
+<a class="link" href="glib-The-Main-Event-Loop.html#g-child-watch-source-new" title="g_child_watch_source_new ()"><code class="function">g_child_watch_source_new()</code></a> apply.</p>
 <p>If an error occurs, no data is returned in <em class="parameter"><code>standard_output</code></em>
 ,
 <em class="parameter"><code>standard_error</code></em>
@@ -678,18 +683,19 @@ how these functions work on Windows.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>working_directory</p></td>
-<td class="parameter_description"><p>child's current working directory, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's. </p></td>
+<td class="parameter_description"><p>child's current working
+directory, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>argv</p></td>
 <td class="parameter_description"><p>child's argument vector. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>envp</p></td>
 <td class="parameter_description"><p>child's environment, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to inherit parent's. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> filename][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -835,8 +841,8 @@ errors are those from <a class="link" href="glib-Shell-related-Utilities.html#g-
 <tbody>
 <tr>
 <td class="parameter_name"><p>command_line</p></td>
-<td class="parameter_description"><p>a command line</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>a command line. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -895,8 +901,8 @@ separator. You need to enclose such paths with single quotes, like
 <tbody>
 <tr>
 <td class="parameter_name"><p>command_line</p></td>
-<td class="parameter_description"><p>a command line </p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>a command line. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>standard_output</p></td>
@@ -1238,6 +1244,6 @@ will be the program exit code.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

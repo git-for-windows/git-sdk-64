@@ -8,7 +8,7 @@
 <link rel="up" href="async.html" title="Asynchronous I/O">
 <link rel="prev" href="GAsyncResult.html" title="GAsyncResult">
 <link rel="next" href="gio-GIOScheduler.html" title="GIOScheduler">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -361,11 +361,13 @@ task object around through your asynchronous operation.
 Eventually, you will call a method such as
 <a class="link" href="GTask.html#g-task-return-pointer" title="g_task_return_pointer ()"><code class="function">g_task_return_pointer()</code></a> or <a class="link" href="GTask.html#g-task-return-error" title="g_task_return_error ()"><code class="function">g_task_return_error()</code></a>, which will
 save the value you give it and then invoke the task's callback
-function (waiting until the next iteration of the main
-loop first, if necessary). The caller will pass the <a class="link" href="GTask.html" title="GTask"><span class="type">GTask</span></a> back
-to the operation's finish function (as a <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a>), and
-you can use <a class="link" href="GTask.html#g-task-propagate-pointer" title="g_task_propagate_pointer ()"><code class="function">g_task_propagate_pointer()</code></a> or the like to extract
-the return value.</p>
+function in the
+<a href="../glib-The-Main-Event-Loop.html#g-main-context-push-thread-default">thread-default main context</a>
+where it was created (waiting until the next iteration of the main
+loop first, if necessary). The caller will pass the <a class="link" href="GTask.html" title="GTask"><span class="type">GTask</span></a> back to
+the operation's finish function (as a <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a>), and you can
+can use <a class="link" href="GTask.html#g-task-propagate-pointer" title="g_task_propagate_pointer ()"><code class="function">g_task_propagate_pointer()</code></a> or the like to extract the
+return value.</p>
 <p>Here is an example for using GTask as a GAsyncResult:</p>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
@@ -462,97 +464,97 @@ the return value.</p>
 89
 90
 91</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
-  CakeFrostingType frosting<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">char</span> <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span> DecorationData<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">CakeFrostingType</span><span class="normal"> frosting</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="normal"> DecorationData</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">decoration_data_free</span> <span class="gtkdoc opt">(</span>DecorationData <span class="gtkdoc opt">*</span>decoration<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Memory-Allocation.html#g-free">g_free</a></span> <span class="gtkdoc opt">(</span>decoration<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../glib-Memory-Slices.html#g-slice-free">g_slice_free</a></span> <span class="gtkdoc opt">(</span>DecorationData<span class="gtkdoc opt">,</span> decoration<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">decoration_data_free</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">DecorationData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">decoration</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Memory-Allocation.html#g-free">g_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">decoration</span><span class="symbol">-&gt;</span><span class="normal">message</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Memory-Slices.html#g-slice-free">g_slice_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">DecorationData</span><span class="symbol">,</span><span class="normal"> decoration</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">baked_cb</span> <span class="gtkdoc opt">(</span>Cake     <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">,</span>
-          gpointer  user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GTask <span class="gtkdoc opt">*</span>task <span class="gtkdoc opt">=</span> user_data<span class="gtkdoc opt">;</span>
-  DecorationData <span class="gtkdoc opt">*</span>decoration <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-get-task-data">g_task_get_task_data</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-  GError <span class="gtkdoc opt">*</span>error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">baked_cb</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Cake</span><span class="normal">     </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">,</span>
+<span class="normal">          </span><span class="usertype">gpointer</span><span class="normal">  user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task </span><span class="symbol">=</span><span class="normal"> user_data</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">DecorationData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">decoration </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-get-task-data">g_task_get_task_data</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="usertype">GError</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>cake <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> BAKER_ERROR<span class="gtkdoc opt">,</span> BAKER_ERROR_NO_FLOUR<span class="gtkdoc opt">,</span>
-                               <span class="string">&quot;Go to the supermarket&quot;</span><span class="gtkdoc opt">);</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> BAKER_ERROR</span><span class="symbol">,</span><span class="normal"> BAKER_ERROR_NO_FLOUR</span><span class="symbol">,</span>
+<span class="normal">                               </span><span class="string">"Go to the supermarket"</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function">cake_decorate</span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">,</span> decoration<span class="gtkdoc opt">-&gt;</span>frosting<span class="gtkdoc opt">,</span> decoration<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">, &amp;</span>error<span class="gtkdoc opt">))</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">);</span>
-      <span class="gtkdoc slc">// g_task_return_error() takes ownership of error</span>
-      <span class="function"><a href="GTask.html#g-task-return-error">g_task_return_error</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function">cake_decorate</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">,</span><span class="normal"> decoration</span><span class="symbol">-&gt;</span><span class="normal">frosting</span><span class="symbol">,</span><span class="normal"> decoration</span><span class="symbol">-&gt;</span><span class="normal">message</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">))</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="comment">// g_task_return_error() takes ownership of error</span>
+<span class="normal">      </span><span class="function"><a href="GTask.html#g-task-return-error">g_task_return_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> cake<span class="gtkdoc opt">,</span> g_object_unref<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> cake</span><span class="symbol">,</span><span class="normal"> <a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">void</span>
-<span class="function">baker_bake_cake_async</span> <span class="gtkdoc opt">(</span>Baker               <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                       guint                radius<span class="gtkdoc opt">,</span>
-                       CakeFlavor           flavor<span class="gtkdoc opt">,</span>
-                       CakeFrostingType     frosting<span class="gtkdoc opt">,</span>
-                       <span class="gtkdoc kwb">const char</span>          <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
-                       GCancellable        <span class="gtkdoc opt">*</span>cancellable<span class="gtkdoc opt">,</span>
-                       GAsyncReadyCallback  callback<span class="gtkdoc opt">,</span>
-                       gpointer             user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GTask <span class="gtkdoc opt">*</span>task<span class="gtkdoc opt">;</span>
-  DecorationData <span class="gtkdoc opt">*</span>decoration<span class="gtkdoc opt">;</span>
-  Cake  <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">;</span>
+<span class="type">void</span>
+<span class="function">baker_bake_cake_async</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">               </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">guint</span><span class="normal">                radius</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">CakeFlavor</span><span class="normal">           flavor</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">CakeFrostingType</span><span class="normal">     frosting</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal">          </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GCancellable</span><span class="normal">        </span><span class="symbol">*</span><span class="normal">cancellable</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GAsyncReadyCallback</span><span class="normal">  callback</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">gpointer</span><span class="normal">             user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">DecorationData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">decoration</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">Cake</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">;</span>
 
-  task <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> callback<span class="gtkdoc opt">,</span> user_data<span class="gtkdoc opt">);</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>radius <span class="gtkdoc opt">&lt;</span> <span class="number">3</span><span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> BAKER_ERROR<span class="gtkdoc opt">,</span> BAKER_ERROR_TOO_SMALL<span class="gtkdoc opt">,</span>
-                               <span class="string">&quot;%ucm radius cakes are silly&quot;</span><span class="gtkdoc opt">,</span>
-                               radius<span class="gtkdoc opt">);</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  task </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> callback</span><span class="symbol">,</span><span class="normal"> user_data</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">radius </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">3</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> BAKER_ERROR</span><span class="symbol">,</span><span class="normal"> BAKER_ERROR_TOO_SMALL</span><span class="symbol">,</span>
+<span class="normal">                               </span><span class="string">"%ucm radius cakes are silly"</span><span class="symbol">,</span>
+<span class="normal">                               radius</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  cake <span class="gtkdoc opt">=</span> <span class="function">_baker_get_cached_cake</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> radius<span class="gtkdoc opt">,</span> flavor<span class="gtkdoc opt">,</span> frosting<span class="gtkdoc opt">,</span> message<span class="gtkdoc opt">);</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>cake <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="gtkdoc slc">// _baker_get_cached_cake() returns a reffed cake</span>
-      <span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> cake<span class="gtkdoc opt">,</span> g_object_unref<span class="gtkdoc opt">);</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  cake </span><span class="symbol">=</span><span class="normal"> </span><span class="function">_baker_get_cached_cake</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> radius</span><span class="symbol">,</span><span class="normal"> flavor</span><span class="symbol">,</span><span class="normal"> frosting</span><span class="symbol">,</span><span class="normal"> message</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="comment">// _baker_get_cached_cake() returns a reffed cake</span>
+<span class="normal">      </span><span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> cake</span><span class="symbol">,</span><span class="normal"> <a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  decoration <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span> <span class="gtkdoc opt">(</span>DecorationData<span class="gtkdoc opt">);</span>
-  decoration<span class="gtkdoc opt">-&gt;</span>frosting <span class="gtkdoc opt">=</span> frosting<span class="gtkdoc opt">;</span>
-  decoration<span class="gtkdoc opt">-&gt;</span>message <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-String-Utility-Functions.html#g-strdup">g_strdup</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> decoration<span class="gtkdoc opt">, (</span>GDestroyNotify<span class="gtkdoc opt">)</span> decoration_data_free<span class="gtkdoc opt">);</span>
+<span class="normal">  decoration </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">DecorationData</span><span class="symbol">);</span>
+<span class="normal">  decoration</span><span class="symbol">-&gt;</span><span class="normal">frosting </span><span class="symbol">=</span><span class="normal"> frosting</span><span class="symbol">;</span>
+<span class="normal">  decoration</span><span class="symbol">-&gt;</span><span class="normal">message </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-String-Utility-Functions.html#g-strdup">g_strdup</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">message</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> decoration</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../glib-Datasets.html#GDestroyNotify">GDestroyNotify</a></span><span class="symbol">)</span><span class="normal"> decoration_data_free</span><span class="symbol">);</span>
 
-  <span class="function">_baker_begin_cake</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> radius<span class="gtkdoc opt">,</span> flavor<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> baked_cb<span class="gtkdoc opt">,</span> task<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function">_baker_begin_cake</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> radius</span><span class="symbol">,</span><span class="normal"> flavor</span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> baked_cb</span><span class="symbol">,</span><span class="normal"> task</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-Cake <span class="gtkdoc opt">*</span>
-<span class="function">baker_bake_cake_finish</span> <span class="gtkdoc opt">(</span>Baker         <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                        GAsyncResult  <span class="gtkdoc opt">*</span>result<span class="gtkdoc opt">,</span>
-                        GError       <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="GTask.html#g-task-is-valid">g_task_is_valid</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span> self<span class="gtkdoc opt">),</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">Cake </span><span class="symbol">*</span>
+<span class="function">baker_bake_cake_finish</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">         </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="usertype">GAsyncResult</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">result</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="usertype">GError</span><span class="normal">       </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GTask.html#g-task-is-valid">g_task_is_valid</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span><span class="normal"> self</span><span class="symbol">),</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> <span class="function"><a href="GTask.html#g-task-propagate-pointer">g_task_propagate_pointer</a></span> <span class="gtkdoc opt">(</span><span class="function">G_TASK</span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">),</span> error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-propagate-pointer">g_task_propagate_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">G_TASK</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">),</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -699,129 +701,129 @@ of waiting for a source to fire (automatically using the correct
 121
 122
 123</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
-  Cake <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">;</span>
-  CakeFrostingType frosting<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">char</span> <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span> BakingData<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">Cake</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">CakeFrostingType</span><span class="normal"> frosting</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="normal"> BakingData</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">decoration_data_free</span> <span class="gtkdoc opt">(</span>BakingData <span class="gtkdoc opt">*</span>bd<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>bd<span class="gtkdoc opt">-&gt;</span>cake<span class="gtkdoc opt">)</span>
-    <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>bd<span class="gtkdoc opt">-&gt;</span>cake<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../glib-Memory-Allocation.html#g-free">g_free</a></span> <span class="gtkdoc opt">(</span>bd<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../glib-Memory-Slices.html#g-slice-free">g_slice_free</a></span> <span class="gtkdoc opt">(</span>BakingData<span class="gtkdoc opt">,</span> bd<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">decoration_data_free</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">BakingData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">bd</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">bd</span><span class="symbol">-&gt;</span><span class="normal">cake</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">bd</span><span class="symbol">-&gt;</span><span class="normal">cake</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Memory-Allocation.html#g-free">g_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">bd</span><span class="symbol">-&gt;</span><span class="normal">message</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Memory-Slices.html#g-slice-free">g_slice_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">BakingData</span><span class="symbol">,</span><span class="normal"> bd</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">decorated_cb</span> <span class="gtkdoc opt">(</span>Cake         <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">,</span>
-              GAsyncResult <span class="gtkdoc opt">*</span>result<span class="gtkdoc opt">,</span>
-              gpointer      user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GTask <span class="gtkdoc opt">*</span>task <span class="gtkdoc opt">=</span> user_data<span class="gtkdoc opt">;</span>
-  GError <span class="gtkdoc opt">*</span>error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">decorated_cb</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Cake</span><span class="normal">         </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">,</span>
+<span class="normal">              </span><span class="usertype">GAsyncResult</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">result</span><span class="symbol">,</span>
+<span class="normal">              </span><span class="usertype">gpointer</span><span class="normal">      user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task </span><span class="symbol">=</span><span class="normal"> user_data</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GError</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function">cake_decorate_finish</span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">,</span> result<span class="gtkdoc opt">, &amp;</span>error<span class="gtkdoc opt">))</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">);</span>
-      <span class="function"><a href="GTask.html#g-task-return-error">g_task_return_error</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function">cake_decorate_finish</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">,</span><span class="normal"> result</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">))</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="GTask.html#g-task-return-error">g_task_return_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="gtkdoc slc">// baking_data_free() will drop its ref on the cake, so we have to</span>
-  <span class="gtkdoc slc">// take another here to give to the caller.</span>
-  <span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">),</span> g_object_unref<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="comment">// baking_data_free() will drop its ref on the cake, so we have to</span>
+<span class="normal">  </span><span class="comment">// take another here to give to the caller.</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">),</span><span class="normal"> <a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static</span> gboolean
-<span class="function">decorator_ready</span> <span class="gtkdoc opt">(</span>gpointer user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GTask <span class="gtkdoc opt">*</span>task <span class="gtkdoc opt">=</span> user_data<span class="gtkdoc opt">;</span>
-  BakingData <span class="gtkdoc opt">*</span>bd <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-get-task-data">g_task_get_task_data</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> <a href="../glib-Basic-Types.html#gboolean">gboolean</a></span>
+<span class="function">decorator_ready</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">gpointer</span><span class="normal"> user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task </span><span class="symbol">=</span><span class="normal"> user_data</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">BakingData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">bd </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-get-task-data">g_task_get_task_data</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
 
-  <span class="function">cake_decorate_async</span> <span class="gtkdoc opt">(</span>bd<span class="gtkdoc opt">-&gt;</span>cake<span class="gtkdoc opt">,</span> bd<span class="gtkdoc opt">-&gt;</span>frosting<span class="gtkdoc opt">,</span> bd<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">,</span>
-                       <span class="function"><a href="GTask.html#g-task-get-cancellable">g_task_get_cancellable</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">),</span>
-                       decorated_cb<span class="gtkdoc opt">,</span> task<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function">cake_decorate_async</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">bd</span><span class="symbol">-&gt;</span><span class="normal">cake</span><span class="symbol">,</span><span class="normal"> bd</span><span class="symbol">-&gt;</span><span class="normal">frosting</span><span class="symbol">,</span><span class="normal"> bd</span><span class="symbol">-&gt;</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="function"><a href="GTask.html#g-task-get-cancellable">g_task_get_cancellable</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">),</span>
+<span class="normal">                       decorated_cb</span><span class="symbol">,</span><span class="normal"> task</span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> G_SOURCE_REMOVE<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> <a href="../glib-The-Main-Event-Loop.html#G-SOURCE-REMOVE:CAPS">G_SOURCE_REMOVE</a></span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">baked_cb</span> <span class="gtkdoc opt">(</span>Cake     <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">,</span>
-          gpointer  user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GTask <span class="gtkdoc opt">*</span>task <span class="gtkdoc opt">=</span> user_data<span class="gtkdoc opt">;</span>
-  BakingData <span class="gtkdoc opt">*</span>bd <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-get-task-data">g_task_get_task_data</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-  GError <span class="gtkdoc opt">*</span>error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">baked_cb</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Cake</span><span class="normal">     </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">,</span>
+<span class="normal">          </span><span class="usertype">gpointer</span><span class="normal">  user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task </span><span class="symbol">=</span><span class="normal"> user_data</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">BakingData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">bd </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-get-task-data">g_task_get_task_data</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="usertype">GError</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>cake <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> BAKER_ERROR<span class="gtkdoc opt">,</span> BAKER_ERROR_NO_FLOUR<span class="gtkdoc opt">,</span>
-                               <span class="string">&quot;Go to the supermarket&quot;</span><span class="gtkdoc opt">);</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> BAKER_ERROR</span><span class="symbol">,</span><span class="normal"> BAKER_ERROR_NO_FLOUR</span><span class="symbol">,</span>
+<span class="normal">                               </span><span class="string">"Go to the supermarket"</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  bd<span class="gtkdoc opt">-&gt;</span>cake <span class="gtkdoc opt">=</span> cake<span class="gtkdoc opt">;</span>
+<span class="normal">  bd</span><span class="symbol">-&gt;</span><span class="normal">cake </span><span class="symbol">=</span><span class="normal"> cake</span><span class="symbol">;</span>
 
-  <span class="gtkdoc slc">// Bail out now if the user has already cancelled</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="GTask.html#g-task-return-error-if-cancelled">g_task_return_error_if_cancelled</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">))</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="comment">// Bail out now if the user has already cancelled</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GTask.html#g-task-return-error-if-cancelled">g_task_return_error_if_cancelled</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">))</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function">cake_decorator_available</span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">))</span>
-    <span class="function">decorator_ready</span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-  <span class="keyword">else</span>
-    <span class="gtkdoc opt">{</span>
-      GSource <span class="gtkdoc opt">*</span>source<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function">cake_decorator_available</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">))</span>
+<span class="normal">    </span><span class="function">decorator_ready</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">else</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="usertype">GSource</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">source</span><span class="symbol">;</span>
 
-      source <span class="gtkdoc opt">=</span> <span class="function">cake_decorator_wait_source_new</span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">);</span>
-      <span class="gtkdoc slc">// Attach &#64;source to &#64;task&apos;s GMainContext and have it call</span>
-      <span class="gtkdoc slc">// decorator_ready() when it is ready.</span>
-      <span class="function"><a href="GTask.html#g-task-attach-source">g_task_attach_source</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> source<span class="gtkdoc opt">,</span> decorator_ready<span class="gtkdoc opt">);</span>
-      <span class="function"><a href="../glib-The-Main-Event-Loop.html#g-source-unref">g_source_unref</a></span> <span class="gtkdoc opt">(</span>source<span class="gtkdoc opt">);</span>
-    <span class="gtkdoc opt">}</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">      source </span><span class="symbol">=</span><span class="normal"> </span><span class="function">cake_decorator_wait_source_new</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="comment">// Attach @source to @task's GMainContext and have it call</span>
+<span class="normal">      </span><span class="comment">// decorator_ready() when it is ready.</span>
+<span class="normal">      </span><span class="function"><a href="GTask.html#g-task-attach-source">g_task_attach_source</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> source</span><span class="symbol">,</span><span class="normal"> decorator_ready</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="../glib-The-Main-Event-Loop.html#g-source-unref">g_source_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">source</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="cbracket">}</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">void</span>
-<span class="function">baker_bake_cake_async</span> <span class="gtkdoc opt">(</span>Baker               <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                       guint                radius<span class="gtkdoc opt">,</span>
-                       CakeFlavor           flavor<span class="gtkdoc opt">,</span>
-                       CakeFrostingType     frosting<span class="gtkdoc opt">,</span>
-                       <span class="gtkdoc kwb">const char</span>          <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
-                       gint                 priority<span class="gtkdoc opt">,</span>
-                       GCancellable        <span class="gtkdoc opt">*</span>cancellable<span class="gtkdoc opt">,</span>
-                       GAsyncReadyCallback  callback<span class="gtkdoc opt">,</span>
-                       gpointer             user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GTask <span class="gtkdoc opt">*</span>task<span class="gtkdoc opt">;</span>
-  BakingData <span class="gtkdoc opt">*</span>bd<span class="gtkdoc opt">;</span>
+<span class="type">void</span>
+<span class="function">baker_bake_cake_async</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">               </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">guint</span><span class="normal">                radius</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">CakeFlavor</span><span class="normal">           flavor</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">CakeFrostingType</span><span class="normal">     frosting</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal">          </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">gint</span><span class="normal">                 priority</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GCancellable</span><span class="normal">        </span><span class="symbol">*</span><span class="normal">cancellable</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GAsyncReadyCallback</span><span class="normal">  callback</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">gpointer</span><span class="normal">             user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">BakingData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">bd</span><span class="symbol">;</span>
 
-  task <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> callback<span class="gtkdoc opt">,</span> user_data<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-set-priority">g_task_set_priority</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> priority<span class="gtkdoc opt">);</span>
+<span class="normal">  task </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> callback</span><span class="symbol">,</span><span class="normal"> user_data</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-set-priority">g_task_set_priority</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> priority</span><span class="symbol">);</span>
 
-  bd <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-Memory-Slices.html#g-slice-new0">g_slice_new0</a></span> <span class="gtkdoc opt">(</span>BakingData<span class="gtkdoc opt">);</span>
-  bd<span class="gtkdoc opt">-&gt;</span>frosting <span class="gtkdoc opt">=</span> frosting<span class="gtkdoc opt">;</span>
-  bd<span class="gtkdoc opt">-&gt;</span>message <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-String-Utility-Functions.html#g-strdup">g_strdup</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> bd<span class="gtkdoc opt">, (</span>GDestroyNotify<span class="gtkdoc opt">)</span> baking_data_free<span class="gtkdoc opt">);</span>
+<span class="normal">  bd </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-Memory-Slices.html#g-slice-new0">g_slice_new0</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">BakingData</span><span class="symbol">);</span>
+<span class="normal">  bd</span><span class="symbol">-&gt;</span><span class="normal">frosting </span><span class="symbol">=</span><span class="normal"> frosting</span><span class="symbol">;</span>
+<span class="normal">  bd</span><span class="symbol">-&gt;</span><span class="normal">message </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-String-Utility-Functions.html#g-strdup">g_strdup</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">message</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> bd</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../glib-Datasets.html#GDestroyNotify">GDestroyNotify</a></span><span class="symbol">)</span><span class="normal"> baking_data_free</span><span class="symbol">);</span>
 
-  <span class="function">_baker_begin_cake</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> radius<span class="gtkdoc opt">,</span> flavor<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> baked_cb<span class="gtkdoc opt">,</span> task<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function">_baker_begin_cake</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> radius</span><span class="symbol">,</span><span class="normal"> flavor</span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> baked_cb</span><span class="symbol">,</span><span class="normal"> task</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-Cake <span class="gtkdoc opt">*</span>
-<span class="function">baker_bake_cake_finish</span> <span class="gtkdoc opt">(</span>Baker         <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                        GAsyncResult  <span class="gtkdoc opt">*</span>result<span class="gtkdoc opt">,</span>
-                        GError       <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="GTask.html#g-task-is-valid">g_task_is_valid</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span> self<span class="gtkdoc opt">),</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">Cake </span><span class="symbol">*</span>
+<span class="function">baker_bake_cake_finish</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">         </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="usertype">GAsyncResult</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">result</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="usertype">GError</span><span class="normal">       </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GTask.html#g-task-is-valid">g_task_is_valid</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span><span class="normal"> self</span><span class="symbol">),</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> <span class="function"><a href="GTask.html#g-task-propagate-pointer">g_task_propagate_pointer</a></span> <span class="gtkdoc opt">(</span><span class="function">G_TASK</span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">),</span> error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-propagate-pointer">g_task_propagate_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">G_TASK</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">),</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -832,9 +834,10 @@ Cake <span class="gtkdoc opt">*</span>
 <div class="refsect3">
 <a name="id-1.4.5.4.9.5"></a><h4>Asynchronous operations from synchronous ones</h4>
 <p>You can use <a class="link" href="GTask.html#g-task-run-in-thread" title="g_task_run_in_thread ()"><code class="function">g_task_run_in_thread()</code></a> to turn a synchronous
-operation into an asynchronous one, by running it in a thread
-which will then dispatch the result back to the caller's
-<a href="../glib-The-Main-Event-Loop.html#GMainContext"><span class="type">GMainContext</span></a> when it completes.</p>
+operation into an asynchronous one, by running it in a thread.
+When it completes, the result will be dispatched to the
+<a href="../glib-The-Main-Event-Loop.html#g-main-context-push-thread-default">thread-default main context</a>
+where the <a class="link" href="GTask.html" title="GTask"><span class="type">GTask</span></a> was created.</p>
 <p>Running a task in a thread:</p>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
@@ -907,73 +910,73 @@ which will then dispatch the result back to the caller's
 65
 66
 67</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
-  guint radius<span class="gtkdoc opt">;</span>
-  CakeFlavor flavor<span class="gtkdoc opt">;</span>
-  CakeFrostingType frosting<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">char</span> <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span> CakeData<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">guint</span><span class="normal"> radius</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">CakeFlavor</span><span class="normal"> flavor</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">CakeFrostingType</span><span class="normal"> frosting</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="normal"> CakeData</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">cake_data_free</span> <span class="gtkdoc opt">(</span>CakeData <span class="gtkdoc opt">*</span>cake_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Memory-Allocation.html#g-free">g_free</a></span> <span class="gtkdoc opt">(</span>cake_data<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../glib-Memory-Slices.html#g-slice-free">g_slice_free</a></span> <span class="gtkdoc opt">(</span>CakeData<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">cake_data_free</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">CakeData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Memory-Allocation.html#g-free">g_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake_data</span><span class="symbol">-&gt;</span><span class="normal">message</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Memory-Slices.html#g-slice-free">g_slice_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">CakeData</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">bake_cake_thread</span> <span class="gtkdoc opt">(</span>GTask         <span class="gtkdoc opt">*</span>task<span class="gtkdoc opt">,</span>
-                  gpointer       source_object<span class="gtkdoc opt">,</span>
-                  gpointer       task_data<span class="gtkdoc opt">,</span>
-                  GCancellable  <span class="gtkdoc opt">*</span>cancellable<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  Baker <span class="gtkdoc opt">*</span>self <span class="gtkdoc opt">=</span> source_object<span class="gtkdoc opt">;</span>
-  CakeData <span class="gtkdoc opt">*</span>cake_data <span class="gtkdoc opt">=</span> task_data<span class="gtkdoc opt">;</span>
-  Cake <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">;</span>
-  GError <span class="gtkdoc opt">*</span>error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">bake_cake_thread</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GTask</span><span class="normal">         </span><span class="symbol">*</span><span class="normal">task</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">gpointer</span><span class="normal">       source_object</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">gpointer</span><span class="normal">       task_data</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">GCancellable</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">cancellable</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">Baker</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self </span><span class="symbol">=</span><span class="normal"> source_object</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">CakeData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake_data </span><span class="symbol">=</span><span class="normal"> task_data</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">Cake</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GError</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  cake <span class="gtkdoc opt">=</span> <span class="function">bake_cake</span> <span class="gtkdoc opt">(</span>baker<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">-&gt;</span>radius<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">-&gt;</span>flavor<span class="gtkdoc opt">,</span>
-                    cake_data<span class="gtkdoc opt">-&gt;</span>frosting<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">,</span>
-                    cancellable<span class="gtkdoc opt">, &amp;</span>error<span class="gtkdoc opt">);</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">)</span>
-    <span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> cake<span class="gtkdoc opt">,</span> g_object_unref<span class="gtkdoc opt">);</span>
-  <span class="keyword">else</span>
-    <span class="function"><a href="GTask.html#g-task-return-error">g_task_return_error</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  cake </span><span class="symbol">=</span><span class="normal"> </span><span class="function">bake_cake</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">baker</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">-&gt;</span><span class="normal">radius</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">-&gt;</span><span class="normal">flavor</span><span class="symbol">,</span>
+<span class="normal">                    cake_data</span><span class="symbol">-&gt;</span><span class="normal">frosting</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">-&gt;</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                    cancellable</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> cake</span><span class="symbol">,</span><span class="normal"> <a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">else</span>
+<span class="normal">    </span><span class="function"><a href="GTask.html#g-task-return-error">g_task_return_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">void</span>
-<span class="function">baker_bake_cake_async</span> <span class="gtkdoc opt">(</span>Baker               <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                       guint                radius<span class="gtkdoc opt">,</span>
-                       CakeFlavor           flavor<span class="gtkdoc opt">,</span>
-                       CakeFrostingType     frosting<span class="gtkdoc opt">,</span>
-                       <span class="gtkdoc kwb">const char</span>          <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
-                       GCancellable        <span class="gtkdoc opt">*</span>cancellable<span class="gtkdoc opt">,</span>
-                       GAsyncReadyCallback  callback<span class="gtkdoc opt">,</span>
-                       gpointer             user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  CakeData <span class="gtkdoc opt">*</span>cake_data<span class="gtkdoc opt">;</span>
-  GTask <span class="gtkdoc opt">*</span>task<span class="gtkdoc opt">;</span>
+<span class="type">void</span>
+<span class="function">baker_bake_cake_async</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">               </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">guint</span><span class="normal">                radius</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">CakeFlavor</span><span class="normal">           flavor</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">CakeFrostingType</span><span class="normal">     frosting</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal">          </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GCancellable</span><span class="normal">        </span><span class="symbol">*</span><span class="normal">cancellable</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GAsyncReadyCallback</span><span class="normal">  callback</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">gpointer</span><span class="normal">             user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">CakeData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake_data</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task</span><span class="symbol">;</span>
 
-  cake_data <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span> <span class="gtkdoc opt">(</span>CakeData<span class="gtkdoc opt">);</span>
-  cake_data<span class="gtkdoc opt">-&gt;</span>radius <span class="gtkdoc opt">=</span> radius<span class="gtkdoc opt">;</span>
-  cake_data<span class="gtkdoc opt">-&gt;</span>flavor <span class="gtkdoc opt">=</span> flavor<span class="gtkdoc opt">;</span>
-  cake_data<span class="gtkdoc opt">-&gt;</span>frosting <span class="gtkdoc opt">=</span> frosting<span class="gtkdoc opt">;</span>
-  cake_data<span class="gtkdoc opt">-&gt;</span>message <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-String-Utility-Functions.html#g-strdup">g_strdup</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">);</span>
-  task <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> callback<span class="gtkdoc opt">,</span> user_data<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">, (</span>GDestroyNotify<span class="gtkdoc opt">)</span> cake_data_free<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-run-in-thread">g_task_run_in_thread</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> bake_cake_thread<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  cake_data </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">CakeData</span><span class="symbol">);</span>
+<span class="normal">  cake_data</span><span class="symbol">-&gt;</span><span class="normal">radius </span><span class="symbol">=</span><span class="normal"> radius</span><span class="symbol">;</span>
+<span class="normal">  cake_data</span><span class="symbol">-&gt;</span><span class="normal">flavor </span><span class="symbol">=</span><span class="normal"> flavor</span><span class="symbol">;</span>
+<span class="normal">  cake_data</span><span class="symbol">-&gt;</span><span class="normal">frosting </span><span class="symbol">=</span><span class="normal"> frosting</span><span class="symbol">;</span>
+<span class="normal">  cake_data</span><span class="symbol">-&gt;</span><span class="normal">message </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-String-Utility-Functions.html#g-strdup">g_strdup</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">message</span><span class="symbol">);</span>
+<span class="normal">  task </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> callback</span><span class="symbol">,</span><span class="normal"> user_data</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../glib-Datasets.html#GDestroyNotify">GDestroyNotify</a></span><span class="symbol">)</span><span class="normal"> cake_data_free</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-run-in-thread">g_task_run_in_thread</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> bake_cake_thread</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-Cake <span class="gtkdoc opt">*</span>
-<span class="function">baker_bake_cake_finish</span> <span class="gtkdoc opt">(</span>Baker         <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                        GAsyncResult  <span class="gtkdoc opt">*</span>result<span class="gtkdoc opt">,</span>
-                        GError       <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="GTask.html#g-task-is-valid">g_task_is_valid</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span> self<span class="gtkdoc opt">),</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">Cake </span><span class="symbol">*</span>
+<span class="function">baker_bake_cake_finish</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">         </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="usertype">GAsyncResult</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">result</span><span class="symbol">,</span>
+<span class="normal">                        </span><span class="usertype">GError</span><span class="normal">       </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GTask.html#g-task-is-valid">g_task_is_valid</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span><span class="normal"> self</span><span class="symbol">),</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> <span class="function"><a href="GTask.html#g-task-propagate-pointer">g_task_propagate_pointer</a></span> <span class="gtkdoc opt">(</span><span class="function">G_TASK</span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">),</span> error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-propagate-pointer">g_task_propagate_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">G_TASK</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">),</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1087,94 +1090,94 @@ synchronous variants of blocking APIs.</p>
 86
 87
 88</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">bake_cake_thread</span> <span class="gtkdoc opt">(</span>GTask         <span class="gtkdoc opt">*</span>task<span class="gtkdoc opt">,</span>
-                  gpointer       source_object<span class="gtkdoc opt">,</span>
-                  gpointer       task_data<span class="gtkdoc opt">,</span>
-                  GCancellable  <span class="gtkdoc opt">*</span>cancellable<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  Baker <span class="gtkdoc opt">*</span>self <span class="gtkdoc opt">=</span> source_object<span class="gtkdoc opt">;</span>
-  CakeData <span class="gtkdoc opt">*</span>cake_data <span class="gtkdoc opt">=</span> task_data<span class="gtkdoc opt">;</span>
-  Cake <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">;</span>
-  GError <span class="gtkdoc opt">*</span>error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">bake_cake_thread</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GTask</span><span class="normal">         </span><span class="symbol">*</span><span class="normal">task</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">gpointer</span><span class="normal">       source_object</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">gpointer</span><span class="normal">       task_data</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="usertype">GCancellable</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">cancellable</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">Baker</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self </span><span class="symbol">=</span><span class="normal"> source_object</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">CakeData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake_data </span><span class="symbol">=</span><span class="normal"> task_data</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">Cake</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GError</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  cake <span class="gtkdoc opt">=</span> <span class="function">bake_cake</span> <span class="gtkdoc opt">(</span>baker<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">-&gt;</span>radius<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">-&gt;</span>flavor<span class="gtkdoc opt">,</span>
-                    cake_data<span class="gtkdoc opt">-&gt;</span>frosting<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">-&gt;</span>message<span class="gtkdoc opt">,</span>
-                    <span class="gtkdoc opt">&amp;</span>error<span class="gtkdoc opt">);</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>error<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="function"><a href="GTask.html#g-task-return-error">g_task_return_error</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
-      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  cake </span><span class="symbol">=</span><span class="normal"> </span><span class="function">bake_cake</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">baker</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">-&gt;</span><span class="normal">radius</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">-&gt;</span><span class="normal">flavor</span><span class="symbol">,</span>
+<span class="normal">                    cake_data</span><span class="symbol">-&gt;</span><span class="normal">frosting</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">-&gt;</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                    </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="function"><a href="GTask.html#g-task-return-error">g_task_return_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="gtkdoc slc">// If the task has already been cancelled, then we don&apos;t want to add</span>
-  <span class="gtkdoc slc">// the cake to the cake cache. Likewise, we don&apos;t  want to have the</span>
-  <span class="gtkdoc slc">// task get cancelled in the middle of updating the cache.</span>
-  <span class="gtkdoc slc">// g_task_set_return_on_cancel() will return %TRUE here if it managed</span>
-  <span class="gtkdoc slc">// to disable return-on-cancel, or %FALSE if the task was cancelled</span>
-  <span class="gtkdoc slc">// before it could.</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="GTask.html#g-task-set-return-on-cancel">g_task_set_return_on_cancel</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> FALSE<span class="gtkdoc opt">))</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="gtkdoc slc">// If the caller cancels at this point, their</span>
-      <span class="gtkdoc slc">// GAsyncReadyCallback won&apos;t be invoked until we return,</span>
-      <span class="gtkdoc slc">// so we don&apos;t have to worry that this code will run at</span>
-      <span class="gtkdoc slc">// the same time as that code does. But if there were</span>
-      <span class="gtkdoc slc">// other functions that might look at the cake cache,</span>
-      <span class="gtkdoc slc">// then we&apos;d probably need a GMutex here as well.</span>
-      <span class="function">baker_add_cake_to_cache</span> <span class="gtkdoc opt">(</span>baker<span class="gtkdoc opt">,</span> cake<span class="gtkdoc opt">);</span>
-      <span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> cake<span class="gtkdoc opt">,</span> g_object_unref<span class="gtkdoc opt">);</span>
-    <span class="gtkdoc opt">}</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="comment">// If the task has already been cancelled, then we don't want to add</span>
+<span class="normal">  </span><span class="comment">// the cake to the cake cache. Likewise, we don't  want to have the</span>
+<span class="normal">  </span><span class="comment">// task get cancelled in the middle of updating the cache.</span>
+<span class="normal">  </span><span class="comment">// g_task_set_return_on_cancel() will return %TRUE here if it managed</span>
+<span class="normal">  </span><span class="comment">// to disable return-on-cancel, or %FALSE if the task was cancelled</span>
+<span class="normal">  </span><span class="comment">// before it could.</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GTask.html#g-task-set-return-on-cancel">g_task_set_return_on_cancel</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">))</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="comment">// If the caller cancels at this point, their</span>
+<span class="normal">      </span><span class="comment">// GAsyncReadyCallback won't be invoked until we return,</span>
+<span class="normal">      </span><span class="comment">// so we don't have to worry that this code will run at</span>
+<span class="normal">      </span><span class="comment">// the same time as that code does. But if there were</span>
+<span class="normal">      </span><span class="comment">// other functions that might look at the cake cache,</span>
+<span class="normal">      </span><span class="comment">// then we'd probably need a GMutex here as well.</span>
+<span class="normal">      </span><span class="function">baker_add_cake_to_cache</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">baker</span><span class="symbol">,</span><span class="normal"> cake</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="function"><a href="GTask.html#g-task-return-pointer">g_task_return_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> cake</span><span class="symbol">,</span><span class="normal"> <a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="symbol">);</span>
+<span class="normal">    </span><span class="cbracket">}</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">void</span>
-<span class="function">baker_bake_cake_async</span> <span class="gtkdoc opt">(</span>Baker               <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                       guint                radius<span class="gtkdoc opt">,</span>
-                       CakeFlavor           flavor<span class="gtkdoc opt">,</span>
-                       CakeFrostingType     frosting<span class="gtkdoc opt">,</span>
-                       <span class="gtkdoc kwb">const char</span>          <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
-                       GCancellable        <span class="gtkdoc opt">*</span>cancellable<span class="gtkdoc opt">,</span>
-                       GAsyncReadyCallback  callback<span class="gtkdoc opt">,</span>
-                       gpointer             user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  CakeData <span class="gtkdoc opt">*</span>cake_data<span class="gtkdoc opt">;</span>
-  GTask <span class="gtkdoc opt">*</span>task<span class="gtkdoc opt">;</span>
+<span class="type">void</span>
+<span class="function">baker_bake_cake_async</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">               </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">guint</span><span class="normal">                radius</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">CakeFlavor</span><span class="normal">           flavor</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">CakeFrostingType</span><span class="normal">     frosting</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal">          </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GCancellable</span><span class="normal">        </span><span class="symbol">*</span><span class="normal">cancellable</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GAsyncReadyCallback</span><span class="normal">  callback</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">gpointer</span><span class="normal">             user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">CakeData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake_data</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task</span><span class="symbol">;</span>
 
-  cake_data <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span> <span class="gtkdoc opt">(</span>CakeData<span class="gtkdoc opt">);</span>
+<span class="normal">  cake_data </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">CakeData</span><span class="symbol">);</span>
 
-  <span class="gtkdoc opt">...</span>
+<span class="normal">  </span><span class="symbol">...</span>
 
-  task <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> callback<span class="gtkdoc opt">,</span> user_data<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">, (</span>GDestroyNotify<span class="gtkdoc opt">)</span> cake_data_free<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-set-return-on-cancel">g_task_set_return_on_cancel</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-run-in-thread">g_task_run_in_thread</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> bake_cake_thread<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  task </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> callback</span><span class="symbol">,</span><span class="normal"> user_data</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../glib-Datasets.html#GDestroyNotify">GDestroyNotify</a></span><span class="symbol">)</span><span class="normal"> cake_data_free</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-set-return-on-cancel">g_task_set_return_on_cancel</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-run-in-thread">g_task_run_in_thread</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> bake_cake_thread</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-Cake <span class="gtkdoc opt">*</span>
-<span class="function">baker_bake_cake_sync</span> <span class="gtkdoc opt">(</span>Baker               <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                      guint                radius<span class="gtkdoc opt">,</span>
-                      CakeFlavor           flavor<span class="gtkdoc opt">,</span>
-                      CakeFrostingType     frosting<span class="gtkdoc opt">,</span>
-                      <span class="gtkdoc kwb">const char</span>          <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
-                      GCancellable        <span class="gtkdoc opt">*</span>cancellable<span class="gtkdoc opt">,</span>
-                      GError             <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  CakeData <span class="gtkdoc opt">*</span>cake_data<span class="gtkdoc opt">;</span>
-  GTask <span class="gtkdoc opt">*</span>task<span class="gtkdoc opt">;</span>
-  Cake <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">;</span>
+<span class="normal">Cake </span><span class="symbol">*</span>
+<span class="function">baker_bake_cake_sync</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">               </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                      </span><span class="usertype">guint</span><span class="normal">                radius</span><span class="symbol">,</span>
+<span class="normal">                      </span><span class="usertype">CakeFlavor</span><span class="normal">           flavor</span><span class="symbol">,</span>
+<span class="normal">                      </span><span class="usertype">CakeFrostingType</span><span class="normal">     frosting</span><span class="symbol">,</span>
+<span class="normal">                      </span><span class="keyword">const</span><span class="normal"> </span><span class="type">char</span><span class="normal">          </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">                      </span><span class="usertype">GCancellable</span><span class="normal">        </span><span class="symbol">*</span><span class="normal">cancellable</span><span class="symbol">,</span>
+<span class="normal">                      </span><span class="usertype">GError</span><span class="normal">             </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">CakeData</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake_data</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">Cake</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">;</span>
 
-  cake_data <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span> <span class="gtkdoc opt">(</span>CakeData<span class="gtkdoc opt">);</span>
+<span class="normal">  cake_data </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-Memory-Slices.html#g-slice-new">g_slice_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">CakeData</span><span class="symbol">);</span>
 
-  <span class="gtkdoc opt">...</span>
+<span class="normal">  </span><span class="symbol">...</span>
 
-  task <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> cake_data<span class="gtkdoc opt">, (</span>GDestroyNotify<span class="gtkdoc opt">)</span> cake_data_free<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-set-return-on-cancel">g_task_set_return_on_cancel</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="GTask.html#g-task-run-in-thread-sync">g_task_run_in_thread_sync</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> bake_cake_thread<span class="gtkdoc opt">);</span>
+<span class="normal">  task </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-set-task-data">g_task_set_task_data</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> cake_data</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../glib-Datasets.html#GDestroyNotify">GDestroyNotify</a></span><span class="symbol">)</span><span class="normal"> cake_data_free</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-set-return-on-cancel">g_task_set_return_on_cancel</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="GTask.html#g-task-run-in-thread-sync">g_task_run_in_thread_sync</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> bake_cake_thread</span><span class="symbol">);</span>
 
-  cake <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-propagate-pointer">g_task_propagate_pointer</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-  <span class="keyword">return</span> cake<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  cake </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-propagate-pointer">g_task_propagate_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> cake</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1216,7 +1219,7 @@ in idle" distinction. (<a class="link" href="GTask.html" title="GTask"><span cla
 whether the task's callback can be invoked directly, or
 if it needs to be sent to another <a href="../glib-The-Main-Event-Loop.html#GMainContext"><span class="type">GMainContext</span></a>, or delayed
 until the next iteration of the current <a href="../glib-The-Main-Event-Loop.html#GMainContext"><span class="type">GMainContext</span></a>.)</p></li>
-<li class="listitem"><p>The "finish" functions for <span class="type">GTask-based</span> operations are generally
+<li class="listitem"><p>The "finish" functions for <a class="link" href="GTask.html" title="GTask"><span class="type">GTask</span></a> based operations are generally
 much simpler than <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a> ones, normally consisting
 of only a single call to <a class="link" href="GTask.html#g-task-propagate-pointer" title="g_task_propagate_pointer ()"><code class="function">g_task_propagate_pointer()</code></a> or the like.
 Since <a class="link" href="GTask.html#g-task-propagate-pointer" title="g_task_propagate_pointer ()"><code class="function">g_task_propagate_pointer()</code></a> "steals" the return value from
@@ -1869,7 +1872,7 @@ g_task_get_source_object (<em class="parameter"><code><a class="link" href="GTas
 <a name="g-task-get-source-object.returns"></a><h4>Returns</h4>
 <p><em class="parameter"><code>task</code></em>
 's source object, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p>
-<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject]</span></p>
+<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-36.html#api-index-2.36">2.36</a></p>
 </div>
@@ -2631,6 +2634,6 @@ context as the task’s callback, immediately after that callback is invoked.</p
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

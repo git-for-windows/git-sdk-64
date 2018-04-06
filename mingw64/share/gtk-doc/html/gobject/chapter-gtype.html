@@ -8,7 +8,7 @@
 <link rel="up" href="pt01.html" title="Part I. Concepts">
 <link rel="prev" href="ch01s02.html" title="Exporting a C API">
 <link rel="next" href="gtype-conventions.html" title="Conventions">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -74,37 +74,37 @@
 29
 30
 31</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> _GTypeInfo               GTypeInfo<span class="gtkdoc opt">;</span>
-<span class="gtkdoc kwb">struct</span> _GTypeInfo
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* interface types, classed types, instantiated types */</span>
-  guint16                class_size<span class="gtkdoc opt">;</span>
-  
-  GBaseInitFunc          base_init<span class="gtkdoc opt">;</span>
-  GBaseFinalizeFunc      base_finalize<span class="gtkdoc opt">;</span>
-  
-  <span class="comment">/* classed types, instantiated types */</span>
-  GClassInitFunc         class_init<span class="gtkdoc opt">;</span>
-  GClassFinalizeFunc     class_finalize<span class="gtkdoc opt">;</span>
-  gconstpointer          class_data<span class="gtkdoc opt">;</span>
-  
-  <span class="comment">/* instantiated types */</span>
-  guint16                instance_size<span class="gtkdoc opt">;</span>
-  guint16                n_preallocs<span class="gtkdoc opt">;</span>
-  GInstanceInitFunc      instance_init<span class="gtkdoc opt">;</span>
-  
-  <span class="comment">/* value handling */</span>
-  <span class="gtkdoc kwb">const</span> GTypeValueTable <span class="gtkdoc opt">*</span>value_table<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">};</span>
-GType <span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span> <span class="gtkdoc opt">(</span>GType             parent_type<span class="gtkdoc opt">,</span>
-                              <span class="gtkdoc kwb">const</span> gchar      <span class="gtkdoc opt">*</span>type_name<span class="gtkdoc opt">,</span>
-                              <span class="gtkdoc kwb">const</span> GTypeInfo  <span class="gtkdoc opt">*</span>info<span class="gtkdoc opt">,</span>
-                              GTypeFlags        flags<span class="gtkdoc opt">);</span>
-GType <span class="function"><a href="gobject-Type-Information.html#g-type-register-fundamental">g_type_register_fundamental</a></span> <span class="gtkdoc opt">(</span>GType                       type_id<span class="gtkdoc opt">,</span>
-                                   <span class="gtkdoc kwb">const</span> gchar                <span class="gtkdoc opt">*</span>type_name<span class="gtkdoc opt">,</span>
-                                   <span class="gtkdoc kwb">const</span> GTypeInfo            <span class="gtkdoc opt">*</span>info<span class="gtkdoc opt">,</span>
-                                   <span class="gtkdoc kwb">const</span> GTypeFundamentalInfo <span class="gtkdoc opt">*</span>finfo<span class="gtkdoc opt">,</span>
-                                   GTypeFlags                  flags<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="classname">_GTypeInfo</span><span class="normal">               <a href="gobject-Type-Information.html#GTypeInfo">GTypeInfo</a></span><span class="symbol">;</span>
+<span class="keyword">struct</span><span class="normal"> </span><span class="classname">_GTypeInfo</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* interface types, classed types, instantiated types */</span>
+<span class="normal">  </span><span class="usertype">guint16</span><span class="normal">                class_size</span><span class="symbol">;</span>
+<span class="normal">  </span>
+<span class="normal">  </span><span class="usertype">GBaseInitFunc</span><span class="normal">          base_init</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GBaseFinalizeFunc</span><span class="normal">      base_finalize</span><span class="symbol">;</span>
+<span class="normal">  </span>
+<span class="normal">  </span><span class="comment">/* classed types, instantiated types */</span>
+<span class="normal">  </span><span class="usertype">GClassInitFunc</span><span class="normal">         class_init</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GClassFinalizeFunc</span><span class="normal">     class_finalize</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">gconstpointer</span><span class="normal">          class_data</span><span class="symbol">;</span>
+<span class="normal">  </span>
+<span class="normal">  </span><span class="comment">/* instantiated types */</span>
+<span class="normal">  </span><span class="usertype">guint16</span><span class="normal">                instance_size</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">guint16</span><span class="normal">                n_preallocs</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GInstanceInitFunc</span><span class="normal">      instance_init</span><span class="symbol">;</span>
+<span class="normal">  </span>
+<span class="normal">  </span><span class="comment">/* value handling */</span>
+<span class="normal">  </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GTypeValueTable</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">value_table</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
+<span class="usertype">GType</span><span class="normal"> </span><span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GType</span><span class="normal">             parent_type</span><span class="symbol">,</span>
+<span class="normal">                              </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">gchar</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">type_name</span><span class="symbol">,</span>
+<span class="normal">                              </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GTypeInfo</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">info</span><span class="symbol">,</span>
+<span class="normal">                              </span><span class="usertype">GTypeFlags</span><span class="normal">        flags</span><span class="symbol">);</span>
+<span class="usertype">GType</span><span class="normal"> </span><span class="function"><a href="gobject-Type-Information.html#g-type-register-fundamental">g_type_register_fundamental</a></span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GType</span><span class="normal">                       type_id</span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">gchar</span><span class="normal">                </span><span class="symbol">*</span><span class="normal">type_name</span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GTypeInfo</span><span class="normal">            </span><span class="symbol">*</span><span class="normal">info</span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GTypeFundamentalInfo</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">finfo</span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="usertype">GTypeFlags</span><span class="normal">                  flags</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -240,51 +240,51 @@ GType <span class="function"><a href="gobject-Type-Information.html#g-type-regis
 43
 44
 45</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span> <span class="function">test_int</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GValue a_value <span class="gtkdoc opt">=</span> G_VALUE_INIT<span class="gtkdoc opt">;</span>
-  GValue b_value <span class="gtkdoc opt">=</span> G_VALUE_INIT<span class="gtkdoc opt">;</span>
-  guint64 a<span class="gtkdoc opt">,</span> b<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span><span class="normal"> </span><span class="function">test_int</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GValue</span><span class="normal"> a_value </span><span class="symbol">=</span><span class="normal"> <a href="gobject-Generic-values.html#G-VALUE-INIT:CAPS">G_VALUE_INIT</a></span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GValue</span><span class="normal"> b_value </span><span class="symbol">=</span><span class="normal"> <a href="gobject-Generic-values.html#G-VALUE-INIT:CAPS">G_VALUE_INIT</a></span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">guint64</span><span class="normal"> a</span><span class="symbol">,</span><span class="normal"> b</span><span class="symbol">;</span>
 
-  a <span class="gtkdoc opt">=</span> <span class="number">0xdeadbeef</span><span class="gtkdoc opt">;</span>
+<span class="normal">  a </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0xdeadbeef</span><span class="symbol">;</span>
 
-  <span class="function"><a href="gobject-Generic-values.html#g-value-init">g_value_init</a></span> <span class="gtkdoc opt">(&amp;</span>a_value<span class="gtkdoc opt">,</span> G_TYPE_UINT64<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-set-uint64">g_value_set_uint64</a></span> <span class="gtkdoc opt">(&amp;</span>a_value<span class="gtkdoc opt">,</span> a<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="gobject-Generic-values.html#g-value-init">g_value_init</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">a_value</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-UINT64:CAPS">G_TYPE_UINT64</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-set-uint64">g_value_set_uint64</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">a_value</span><span class="symbol">,</span><span class="normal"> a</span><span class="symbol">);</span>
 
-  <span class="function"><a href="gobject-Generic-values.html#g-value-init">g_value_init</a></span> <span class="gtkdoc opt">(&amp;</span>b_value<span class="gtkdoc opt">,</span> G_TYPE_UINT64<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="gobject-Generic-values.html#g-value-copy">g_value_copy</a></span> <span class="gtkdoc opt">(&amp;</span>a_value<span class="gtkdoc opt">, &amp;</span>b_value<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="gobject-Generic-values.html#g-value-init">g_value_init</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">b_value</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-UINT64:CAPS">G_TYPE_UINT64</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="gobject-Generic-values.html#g-value-copy">g_value_copy</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">a_value</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">b_value</span><span class="symbol">);</span>
 
-  b <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-get-uint64">g_value_get_uint64</a></span> <span class="gtkdoc opt">(&amp;</span>b_value<span class="gtkdoc opt">);</span>
+<span class="normal">  b </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-get-uint64">g_value_get_uint64</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">b_value</span><span class="symbol">);</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>a <span class="gtkdoc opt">==</span> b<span class="gtkdoc opt">) {</span>
-    <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Yay !! 10 lines of code to copy around a uint64.</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">}</span> <span class="keyword">else</span> <span class="gtkdoc opt">{</span>
-    <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Are you sure this is not a Z80 ?</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">}</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">a </span><span class="symbol">==</span><span class="normal"> b</span><span class="symbol">)</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"Yay !! 10 lines of code to copy around a uint64.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="cbracket">}</span><span class="normal"> </span><span class="keyword">else</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"Are you sure this is not a Z80 ?</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="cbracket">}</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span> <span class="function">test_object</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GObject <span class="gtkdoc opt">*</span>obj<span class="gtkdoc opt">;</span>
-  GValue obj_vala <span class="gtkdoc opt">=</span> G_VALUE_INIT<span class="gtkdoc opt">;</span>
-  GValue obj_valb <span class="gtkdoc opt">=</span> G_VALUE_INIT<span class="gtkdoc opt">;</span>
-  obj <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span> <span class="gtkdoc opt">(</span>VIEWER_TYPE_FILE<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span><span class="normal"> </span><span class="function">test_object</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObject</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">obj</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GValue</span><span class="normal"> obj_vala </span><span class="symbol">=</span><span class="normal"> <a href="gobject-Generic-values.html#G-VALUE-INIT:CAPS">G_VALUE_INIT</a></span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GValue</span><span class="normal"> obj_valb </span><span class="symbol">=</span><span class="normal"> <a href="gobject-Generic-values.html#G-VALUE-INIT:CAPS">G_VALUE_INIT</a></span><span class="symbol">;</span>
+<span class="normal">  obj </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_FILE</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="function"><a href="gobject-Generic-values.html#g-value-init">g_value_init</a></span> <span class="gtkdoc opt">(&amp;</span>obj_vala<span class="gtkdoc opt">,</span> VIEWER_TYPE_FILE<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-set-object">g_value_set_object</a></span> <span class="gtkdoc opt">(&amp;</span>obj_vala<span class="gtkdoc opt">,</span> obj<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="gobject-Generic-values.html#g-value-init">g_value_init</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">obj_vala</span><span class="symbol">,</span><span class="normal"> VIEWER_TYPE_FILE</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-set-object">g_value_set_object</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">obj_vala</span><span class="symbol">,</span><span class="normal"> obj</span><span class="symbol">);</span>
 
-  <span class="function"><a href="gobject-Generic-values.html#g-value-init">g_value_init</a></span> <span class="gtkdoc opt">(&amp;</span>obj_valb<span class="gtkdoc opt">,</span> G_TYPE_OBJECT<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="gobject-Generic-values.html#g-value-init">g_value_init</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">obj_valb</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">);</span>
 
-  <span class="comment">/* g_value_copy&apos;s semantics for G_TYPE_OBJECT types is to copy the reference.</span>
+<span class="normal">  </span><span class="comment">/* g_value_copy's semantics for G_TYPE_OBJECT types is to copy the reference.</span>
 <span class="comment">   * This function thus calls g_object_ref.</span>
 <span class="comment">   * It is interesting to note that the assignment works here because</span>
 <span class="comment">   * VIEWER_TYPE_FILE is a G_TYPE_OBJECT.</span>
 <span class="comment">   */</span>
-  <span class="function"><a href="gobject-Generic-values.html#g-value-copy">g_value_copy</a></span> <span class="gtkdoc opt">(&amp;</span>obj_vala<span class="gtkdoc opt">, &amp;</span>obj_valb<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="gobject-Generic-values.html#g-value-copy">g_value_copy</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">obj_vala</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">obj_valb</span><span class="symbol">);</span>
 
-  <span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>obj<span class="gtkdoc opt">));</span>
-  <span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>obj<span class="gtkdoc opt">));</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">obj</span><span class="symbol">));</span>
+<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">obj</span><span class="symbol">));</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -311,6 +311,6 @@ GType <span class="function"><a href="gobject-Type-Information.html#g-type-regis
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="glib-core.html" title="GLib Core Application Support">
 <link rel="prev" href="glib-Error-Reporting.html" title="Error Reporting">
 <link rel="next" href="glib-Message-Logging.html" title="Message Output and Debugging Functions">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -321,9 +321,26 @@ function, so that it avoids this incorrect call.</p>
  evaluates to <a class="link" href="glib-Standard-Macros.html#FALSE:CAPS" title="FALSE"><code class="literal">FALSE</code></a>,
 the result is usually that a critical message is logged and the current
 function returns.</p>
-<p>If G_DISABLE_CHECKS is defined then the check is not performed.  You
+<p>If <code class="literal">G_DISABLE_CHECKS</code> is defined then the check is not performed.  You
 should therefore not depend on any side effects of <em class="parameter"><code>expr</code></em>
 .</p>
+<p>To debug failure of a <a class="link" href="glib-Warnings-and-Assertions.html#g-return-if-fail" title="g_return_if_fail()"><code class="function">g_return_if_fail()</code></a> check, run the code under a debugger
+with <code class="literal">G_DEBUG=fatal-criticals</code> or <code class="literal">G_DEBUG=fatal-warnings</code> defined in the
+environment (see <a class="ulink" href="glib-running.html" target="_top">Running GLib Applications</a>):</p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="normal">G_DEBUG</span><span class="symbol">=</span><span class="normal">fatal</span><span class="symbol">-</span><span class="usertype">warnings</span><span class="normal"> gdb </span><span class="symbol">./</span><span class="normal">my</span><span class="symbol">-</span><span class="normal">program</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
+<p>Any unrelated failures can be skipped over in
+<a class="ulink" href="https://www.gnu.org/software/gdb/" target="_top">gdb</a> using the <code class="literal">continue</code> command.</p>
 <div class="refsect3">
 <a name="g-return-if-fail.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -358,9 +375,10 @@ function, so that it avoids this incorrect call.</p>
 the result is usually that a critical message is logged and <em class="parameter"><code>val</code></em>
  is
 returned from the current function.</p>
-<p>If G_DISABLE_CHECKS is defined then the check is not performed.  You
+<p>If <code class="literal">G_DISABLE_CHECKS</code> is defined then the check is not performed.  You
 should therefore not depend on any side effects of <em class="parameter"><code>expr</code></em>
 .</p>
+<p>See <a class="link" href="glib-Warnings-and-Assertions.html#g-return-if-fail" title="g_return_if_fail()"><code class="function">g_return_if_fail()</code></a> for guidance on how to debug failure of this check.</p>
 <div class="refsect3">
 <a name="g-return-val-if-fail.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -391,6 +409,7 @@ if the expression is not true</p></td>
 <pre class="programlisting">#define             g_return_if_reached()</pre>
 <p>Logs a critical message and returns from the current function.
 This can only be used in functions which do not return a value.</p>
+<p>See <a class="link" href="glib-Warnings-and-Assertions.html#g-return-if-fail" title="g_return_if_fail()"><code class="function">g_return_if_fail()</code></a> for guidance on how to debug failure of this check.</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -398,6 +417,7 @@ This can only be used in functions which do not return a value.</p>
 <pre class="programlisting">#define             g_return_val_if_reached(val)</pre>
 <p>Logs a critical message and returns <em class="parameter"><code>val</code></em>
 .</p>
+<p>See <a class="link" href="glib-Warnings-and-Assertions.html#g-return-if-fail" title="g_return_if_fail()"><code class="function">g_return_if_fail()</code></a> for guidance on how to debug failure of this check.</p>
 <div class="refsect3">
 <a name="g-return-val-if-reached.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -480,29 +500,29 @@ the <a class="link" href="glib-Message-Logging.html#g-log" title="g_log ()"><co
 21
 22
 23</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc ppc">#include &lt;glib.h&gt;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="preproc">#include</span><span class="normal"> </span><span class="string">&lt;glib.h&gt;</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">log_handler</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">const</span> gchar   <span class="gtkdoc opt">*</span>log_domain<span class="gtkdoc opt">,</span>
-             GLogLevelFlags log_level<span class="gtkdoc opt">,</span>
-             <span class="gtkdoc kwb">const</span> gchar   <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
-             gpointer       user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="glib-Message-Logging.html#g-log-default-handler">g_log_default_handler</a></span> <span class="gtkdoc opt">(</span>log_domain<span class="gtkdoc opt">,</span> log_level<span class="gtkdoc opt">,</span> message<span class="gtkdoc opt">,</span> user_data<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">log_handler</span><span class="normal"> </span><span class="symbol">(</span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">gchar</span><span class="normal">   </span><span class="symbol">*</span><span class="normal">log_domain</span><span class="symbol">,</span>
+<span class="normal">             </span><span class="usertype">GLogLevelFlags</span><span class="normal"> log_level</span><span class="symbol">,</span>
+<span class="normal">             </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">gchar</span><span class="normal">   </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
+<span class="normal">             </span><span class="usertype">gpointer</span><span class="normal">       user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="glib-Message-Logging.html#g-log-default-handler">g_log_default_handler</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">log_domain</span><span class="symbol">,</span><span class="normal"> log_level</span><span class="symbol">,</span><span class="normal"> message</span><span class="symbol">,</span><span class="normal"> user_data</span><span class="symbol">);</span>
 
-  <span class="function"><a href="glib-Warnings-and-Assertions.html#g-on-error-query">g_on_error_query</a></span> <span class="gtkdoc opt">(</span>MY_PROGRAM_NAME<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function"><a href="glib-Warnings-and-Assertions.html#g-on-error-query">g_on_error_query</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MY_PROGRAM_NAME</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">int</span>
-<span class="function">main</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">int</span> argc<span class="gtkdoc opt">,</span> <span class="gtkdoc kwb">char</span> <span class="gtkdoc opt">*</span>argv<span class="gtkdoc opt">[])</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="glib-Message-Logging.html#g-log-set-handler">g_log_set_handler</a></span> <span class="gtkdoc opt">(</span>MY_LOG_DOMAIN<span class="gtkdoc opt">,</span>
-                     G_LOG_LEVEL_WARNING <span class="gtkdoc opt">|</span>
-                     G_LOG_LEVEL_ERROR <span class="gtkdoc opt">|</span>
-                     G_LOG_LEVEL_CRITICAL<span class="gtkdoc opt">,</span>
-                     log_handler<span class="gtkdoc opt">,</span>
-                     NULL<span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">...</span></pre></td>
+<span class="type">int</span>
+<span class="function">main</span><span class="normal"> </span><span class="symbol">(</span><span class="type">int</span><span class="normal"> argc</span><span class="symbol">,</span><span class="normal"> </span><span class="type">char</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">argv</span><span class="symbol">[])</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="glib-Message-Logging.html#g-log-set-handler">g_log_set_handler</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MY_LOG_DOMAIN</span><span class="symbol">,</span>
+<span class="normal">                     <a href="glib-Message-Logging.html#G-LOG-LEVEL-WARNING:CAPS">G_LOG_LEVEL_WARNING</a> </span><span class="symbol">|</span>
+<span class="normal">                     <a href="glib-Message-Logging.html#G-LOG-LEVEL-ERROR:CAPS">G_LOG_LEVEL_ERROR</a> </span><span class="symbol">|</span>
+<span class="normal">                     <a href="glib-Message-Logging.html#G-LOG-LEVEL-CRITICAL:CAPS">G_LOG_LEVEL_CRITICAL</a></span><span class="symbol">,</span>
+<span class="normal">                     log_handler</span><span class="symbol">,</span>
+<span class="normal">                     <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+<span class="normal">  </span><span class="symbol">...</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -530,7 +550,7 @@ a stack trace. The prompt is then shown again.</p>
 option. If <em class="parameter"><code>prg_name</code></em>
 is <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, <a class="link" href="glib-Miscellaneous-Utility-Functions.html#g-get-prgname" title="g_get_prgname ()"><code class="function">g_get_prgname()</code></a> is called to get
 the program name (which will work correctly if <code class="function">gdk_init()</code> or
-<a href="../gtk4/gtk4-General.html#gtk-init"><code class="function">gtk_init()</code></a> has been called)</p></td>
+<code class="function">gtk_init()</code> has been called)</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
 </table></div>
@@ -544,7 +564,7 @@ g_on_error_stack_trace (<em class="parameter"><code>const <a class="link" href="
 <p>Invokes gdb, which attaches to the current process and shows a
 stack trace. Called by <a class="link" href="glib-Warnings-and-Assertions.html#g-on-error-query" title="g_on_error_query ()"><code class="function">g_on_error_query()</code></a> when the "[S]tack trace"
 option is selected. You can get the current process's program name
-with <a class="link" href="glib-Miscellaneous-Utility-Functions.html#g-get-prgname" title="g_get_prgname ()"><code class="function">g_get_prgname()</code></a>, assuming that you have called <a href="../gtk4/gtk4-General.html#gtk-init"><code class="function">gtk_init()</code></a> or
+with <a class="link" href="glib-Miscellaneous-Utility-Functions.html#g-get-prgname" title="g_get_prgname ()"><code class="function">g_get_prgname()</code></a>, assuming that you have called <code class="function">gtk_init()</code> or
 <code class="function">gdk_init()</code>.</p>
 <p>This function may cause different actions on non-UNIX platforms.</p>
 <div class="refsect3">
@@ -579,6 +599,6 @@ and on other architectures it raises a <code class="literal">SIGTRAP</code> sign
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

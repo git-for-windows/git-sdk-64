@@ -20,6 +20,7 @@
 # Author: David Zeuthen <davidz@redhat.com>
 
 from . import utils
+from .utils import print_error
 
 class Annotation:
     def __init__(self, key, value):
@@ -54,6 +55,8 @@ class Arg:
         self.format_out = '@' + self.signature
         self.gvariant_get = 'XXX'
         self.gvalue_get = 'g_value_get_variant'
+        self.array_annotation = ''
+
         if not utils.lookup_annotation(self.annotations, 'org.gtk.GDBus.C.ForceGVariant'):
             if self.signature == 'b':
                 self.ctype_in_g  = 'gboolean '
@@ -200,6 +203,7 @@ class Arg:
                 self.format_out = '^as'
                 self.gvariant_get = 'g_variant_get_strv'
                 self.gvalue_get = 'g_value_get_boxed'
+                self.array_annotation = '(array zero-terminated=1)'
             elif self.signature == 'ao':
                 self.ctype_in_g  = 'const gchar *const *'
                 self.ctype_in  = 'const gchar *const *'
@@ -211,6 +215,7 @@ class Arg:
                 self.format_out = '^ao'
                 self.gvariant_get = 'g_variant_get_objv'
                 self.gvalue_get = 'g_value_get_boxed'
+                self.array_annotation = '(array zero-terminated=1)'
             elif self.signature == 'aay':
                 self.ctype_in_g  = 'const gchar *const *'
                 self.ctype_in  = 'const gchar *const *'
@@ -222,6 +227,8 @@ class Arg:
                 self.format_out = '^aay'
                 self.gvariant_get = 'g_variant_get_bytestring_array'
                 self.gvalue_get = 'g_value_get_boxed'
+                self.array_annotation = '(array zero-terminated=1)'
+
 
 class Method:
     def __init__(self, name):
@@ -316,7 +323,7 @@ class Property:
         elif self.access == 'write':
             self.writable = True
         else:
-            raise RuntimeError('Invalid access type %s'%self.access)
+            print_error('Invalid access type "{}"'.format(self.access))
         self.doc_string = ''
         self.since = ''
         self.deprecated = False
@@ -393,7 +400,7 @@ class Interface:
             self.name_lower = cns_lower + overridden_name.lower()
             self.name_upper = overridden_name.upper()
 
-            #raise RuntimeError('handle Ugly_Case ', overridden_name)
+            #print_error('handle Ugly_Case "{}"'.format(overridden_name))
         else:
             if overridden_name:
                 name = overridden_name

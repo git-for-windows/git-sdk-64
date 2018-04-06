@@ -8,7 +8,7 @@
 <link rel="up" href="application.html" title="Application support">
 <link rel="prev" href="GActionGroup.html" title="GActionGroup">
 <link rel="next" href="GSimpleActionGroup.html" title="GSimpleActionGroup">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -102,7 +102,7 @@
 </div>
 <div class="refsect1">
 <a name="GActionMap.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
+<pre class="screen">    GInterface
     <span class="lineart">╰──</span> GActionMap
 </pre>
 </div>
@@ -219,36 +219,36 @@ and adding them to a <a class="link" href="GActionMap.html" title="GActionMap"><
 28
 29
 30</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">activate_quit</span> <span class="gtkdoc opt">(</span>GSimpleAction <span class="gtkdoc opt">*</span>simple<span class="gtkdoc opt">,</span>
-               GVariant      <span class="gtkdoc opt">*</span>parameter<span class="gtkdoc opt">,</span>
-               gpointer       user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function">exit</span> <span class="gtkdoc opt">(</span><span class="number">0</span><span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">activate_quit</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GSimpleAction</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">simple</span><span class="symbol">,</span>
+<span class="normal">               </span><span class="usertype">GVariant</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">parameter</span><span class="symbol">,</span>
+<span class="normal">               </span><span class="usertype">gpointer</span><span class="normal">       user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function">exit</span><span class="normal"> </span><span class="symbol">(</span><span class="number">0</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">activate_print_string</span> <span class="gtkdoc opt">(</span>GSimpleAction <span class="gtkdoc opt">*</span>simple<span class="gtkdoc opt">,</span>
-                       GVariant      <span class="gtkdoc opt">*</span>parameter<span class="gtkdoc opt">,</span>
-                       gpointer       user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;%s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> <span class="function"><a href="../glib-GVariant.html#g-variant-get-string">g_variant_get_string</a></span> <span class="gtkdoc opt">(</span>parameter<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">));</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">activate_print_string</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GSimpleAction</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">simple</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">GVariant</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">parameter</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="usertype">gpointer</span><span class="normal">       user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"%s</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="../glib-GVariant.html#g-variant-get-string">g_variant_get_string</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">parameter</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">));</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static</span> GActionGroup <span class="gtkdoc opt">*</span>
-<span class="function">create_action_group</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">const</span> GActionEntry entries<span class="gtkdoc opt">[] = {</span>
-    <span class="gtkdoc opt">{</span> <span class="string">&quot;quit&quot;</span><span class="gtkdoc opt">,</span>         activate_quit              <span class="gtkdoc opt">},</span>
-    <span class="gtkdoc opt">{</span> <span class="string">&quot;print-string&quot;</span><span class="gtkdoc opt">,</span> activate_print_string<span class="gtkdoc opt">,</span> <span class="string">&quot;s&quot;</span> <span class="gtkdoc opt">}</span>
-  <span class="gtkdoc opt">};</span>
-  GSimpleActionGroup <span class="gtkdoc opt">*</span>group<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> <a href="GActionGroup.html#GActionGroup-struct">GActionGroup</a> </span><span class="symbol">*</span>
+<span class="function">create_action_group</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GActionEntry</span><span class="normal"> entries</span><span class="symbol">[]</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="cbracket">{</span><span class="normal"> </span><span class="string">"quit"</span><span class="symbol">,</span><span class="normal">         activate_quit              </span><span class="cbracket">}</span><span class="symbol">,</span>
+<span class="normal">    </span><span class="cbracket">{</span><span class="normal"> </span><span class="string">"print-string"</span><span class="symbol">,</span><span class="normal"> activate_print_string</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"s"</span><span class="normal"> </span><span class="cbracket">}</span>
+<span class="normal">  </span><span class="cbracket">}</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GSimpleActionGroup</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">group</span><span class="symbol">;</span>
 
-  group <span class="gtkdoc opt">=</span> <span class="function"><a href="GSimpleActionGroup.html#g-simple-action-group-new">g_simple_action_group_new</a></span> <span class="gtkdoc opt">();</span>
-  <span class="function"><a href="GActionMap.html#g-action-map-add-action-entries">g_action_map_add_action_entries</a></span> <span class="gtkdoc opt">(</span><span class="function">G_ACTION_MAP</span> <span class="gtkdoc opt">(</span>group<span class="gtkdoc opt">),</span> entries<span class="gtkdoc opt">,</span> <span class="function"><a href="../glib-Standard-Macros.html#G-N-ELEMENTS:CAPS">G_N_ELEMENTS</a></span> <span class="gtkdoc opt">(</span>entries<span class="gtkdoc opt">),</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">  group </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GSimpleActionGroup.html#g-simple-action-group-new">g_simple_action_group_new</a></span><span class="normal"> </span><span class="symbol">();</span>
+<span class="normal">  </span><span class="function"><a href="GActionMap.html#g-action-map-add-action-entries">g_action_map_add_action_entries</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">G_ACTION_MAP</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">group</span><span class="symbol">),</span><span class="normal"> entries</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="../glib-Standard-Macros.html#G-N-ELEMENTS:CAPS">G_N_ELEMENTS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">entries</span><span class="symbol">),</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> <span class="function">G_ACTION_GROUP</span> <span class="gtkdoc opt">(</span>group<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function">G_ACTION_GROUP</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">group</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -498,6 +498,6 @@ handler here; stateless actions should not.</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

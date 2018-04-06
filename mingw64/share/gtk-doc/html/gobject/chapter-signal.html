@@ -8,7 +8,7 @@
 <link rel="up" href="pt01.html" title="Part I. Concepts">
 <link rel="prev" href="gobject-properties.html" title="Object properties">
 <link rel="next" href="signal.html" title="Signals">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -54,7 +54,7 @@
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">return_type <span class="function">function_callback</span> <span class="gtkdoc opt">(</span>… <span class="gtkdoc opt">,</span> gpointer user_data<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">return_type</span><span class="normal"> </span><span class="function">function_callback</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">… </span><span class="symbol">,</span><span class="normal"> </span><span class="usertype">gpointer</span><span class="normal"> user_data</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -190,31 +190,31 @@
 23
 24
 25</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Closures.html#g-cclosure-marshal-VOID--INT">g_cclosure_marshal_VOID__INT</a></span> <span class="gtkdoc opt">(</span>GClosure     <span class="gtkdoc opt">*</span>closure<span class="gtkdoc opt">,</span>
-                              GValue       <span class="gtkdoc opt">*</span>return_value<span class="gtkdoc opt">,</span>
-                              guint         n_param_values<span class="gtkdoc opt">,</span>
-                              <span class="gtkdoc kwb">const</span> GValue <span class="gtkdoc opt">*</span>param_values<span class="gtkdoc opt">,</span>
-                              gpointer      invocation_hint<span class="gtkdoc opt">,</span>
-                              gpointer      marshal_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span>GMarshalFunc_VOID__INT<span class="gtkdoc opt">) (</span>gpointer     data1<span class="gtkdoc opt">,</span>
-                                          gint         arg_1<span class="gtkdoc opt">,</span>
-                                          gpointer     data2<span class="gtkdoc opt">);</span>
-  <span class="gtkdoc kwc">register</span> GMarshalFunc_VOID__INT callback<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwc">register</span> GCClosure <span class="gtkdoc opt">*</span>cc <span class="gtkdoc opt">= (</span>GCClosure<span class="gtkdoc opt">*)</span> closure<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwc">register</span> gpointer data1<span class="gtkdoc opt">,</span> data2<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Closures.html#g-cclosure-marshal-VOID--INT">g_cclosure_marshal_VOID__INT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GClosure</span><span class="normal">     </span><span class="symbol">*</span><span class="normal"><a href="chapter-signal.html#closure">closure</a></span><span class="symbol">,</span>
+<span class="normal">                              </span><span class="usertype">GValue</span><span class="normal">       </span><span class="symbol">*</span><span class="normal">return_value</span><span class="symbol">,</span>
+<span class="normal">                              </span><span class="usertype">guint</span><span class="normal">         n_param_values</span><span class="symbol">,</span>
+<span class="normal">                              </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GValue</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">param_values</span><span class="symbol">,</span>
+<span class="normal">                              </span><span class="usertype">gpointer</span><span class="normal">      invocation_hint</span><span class="symbol">,</span>
+<span class="normal">                              </span><span class="usertype">gpointer</span><span class="normal">      marshal_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">typedef</span><span class="normal"> </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">GMarshalFunc_VOID__INT</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">gpointer</span><span class="normal">     data1</span><span class="symbol">,</span>
+<span class="normal">                                          </span><span class="usertype">gint</span><span class="normal">         arg_1</span><span class="symbol">,</span>
+<span class="normal">                                          </span><span class="usertype">gpointer</span><span class="normal">     data2</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">register</span><span class="normal"> </span><span class="usertype">GMarshalFunc_VOID__INT</span><span class="normal"> callback</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">register</span><span class="normal"> </span><span class="usertype">GCClosure</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">cc </span><span class="symbol">=</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="gobject-Closures.html#GCClosure">GCClosure</a></span><span class="symbol">*)</span><span class="normal"> <a href="chapter-signal.html#closure">closure</a></span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">register</span><span class="normal"> </span><span class="usertype">gpointer</span><span class="normal"> data1</span><span class="symbol">,</span><span class="normal"> data2</span><span class="symbol">;</span>
 
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>n_param_values <span class="gtkdoc opt">==</span> <span class="number">2</span><span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">n_param_values </span><span class="symbol">==</span><span class="normal"> </span><span class="number">2</span><span class="symbol">);</span>
 
-  data1 <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Generic-values.html#g-value-peek-pointer">g_value_peek_pointer</a></span> <span class="gtkdoc opt">(</span>param_values <span class="gtkdoc opt">+</span> <span class="number">0</span><span class="gtkdoc opt">);</span>
-  data2 <span class="gtkdoc opt">=</span> closure<span class="gtkdoc opt">-&gt;</span>data<span class="gtkdoc opt">;</span>
+<span class="normal">  data1 </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Generic-values.html#g-value-peek-pointer">g_value_peek_pointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">param_values </span><span class="symbol">+</span><span class="normal"> </span><span class="number">0</span><span class="symbol">);</span>
+<span class="normal">  data2 </span><span class="symbol">=</span><span class="normal"> <a href="chapter-signal.html#closure">closure</a></span><span class="symbol">-&gt;</span><span class="normal">data</span><span class="symbol">;</span>
 
-  callback <span class="gtkdoc opt">= (</span>GMarshalFunc_VOID__INT<span class="gtkdoc opt">) (</span>marshal_data <span class="gtkdoc opt">?</span> marshal_data <span class="gtkdoc opt">:</span> cc<span class="gtkdoc opt">-&gt;</span>callback<span class="gtkdoc opt">);</span>
+<span class="normal">  callback </span><span class="symbol">=</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">GMarshalFunc_VOID__INT</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">marshal_data </span><span class="symbol">?</span><span class="normal"> marshal_data </span><span class="symbol">:</span><span class="normal"> cc</span><span class="symbol">-&gt;</span><span class="normal">callback</span><span class="symbol">);</span>
 
-  <span class="function">callback</span> <span class="gtkdoc opt">(</span>data1<span class="gtkdoc opt">,</span>
-            <span class="function">g_marshal_value_peek_int</span> <span class="gtkdoc opt">(</span>param_values <span class="gtkdoc opt">+</span> <span class="number">1</span><span class="gtkdoc opt">),</span>
-            data2<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function">callback</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">data1</span><span class="symbol">,</span>
+<span class="normal">            </span><span class="function">g_marshal_value_peek_int</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">param_values </span><span class="symbol">+</span><span class="normal"> </span><span class="number">1</span><span class="symbol">),</span>
+<span class="normal">            data2</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -248,6 +248,6 @@
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

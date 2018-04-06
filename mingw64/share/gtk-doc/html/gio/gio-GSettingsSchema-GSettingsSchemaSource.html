@@ -8,7 +8,7 @@
 <link rel="up" href="settings.html" title="Settings">
 <link rel="prev" href="GSettingsBackend.html" title="GSettingsBackend">
 <link rel="next" href="resources.html" title="Resources">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -247,7 +247,7 @@
 </div>
 <div class="refsect1">
 <a name="gio-GSettingsSchema-GSettingsSchemaSource.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-Boxed-Types.html">GBoxed</a>
+<pre class="screen">    GBoxed
     <span class="lineart">├──</span> GSettingsSchema
     <span class="lineart">├──</span> GSettingsSchemaKey
     <span class="lineart">╰──</span> GSettingsSchemaSource
@@ -322,50 +322,50 @@ access to some settings.</p>
 42
 43
 44</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span>
-<span class="gtkdoc opt">{</span>
-   <span class="gtkdoc opt">...</span>
-   GSettingsSchemaSource <span class="gtkdoc opt">*</span>schema_source<span class="gtkdoc opt">;</span>
-   <span class="gtkdoc opt">...</span>
-<span class="gtkdoc opt">}</span> Plugin<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span>
+<span class="cbracket">{</span>
+<span class="normal">   </span><span class="symbol">...</span>
+<span class="normal">   </span><span class="usertype">GSettingsSchemaSource</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">schema_source</span><span class="symbol">;</span>
+<span class="normal">   </span><span class="symbol">...</span>
+<span class="cbracket">}</span><span class="normal"> Plugin</span><span class="symbol">;</span>
 
-Plugin <span class="gtkdoc opt">*</span>
-<span class="function">initialise_plugin</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">const</span> gchar <span class="gtkdoc opt">*</span>dir<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  Plugin <span class="gtkdoc opt">*</span>plugin<span class="gtkdoc opt">;</span>
+<span class="normal">Plugin </span><span class="symbol">*</span>
+<span class="function">initialise_plugin</span><span class="normal"> </span><span class="symbol">(</span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">dir</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">Plugin</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">plugin</span><span class="symbol">;</span>
 
-  <span class="gtkdoc opt">...</span>
+<span class="normal">  </span><span class="symbol">...</span>
 
-  plugin<span class="gtkdoc opt">-&gt;</span>schema_source <span class="gtkdoc opt">=</span>
-    <span class="function">g_settings_new_schema_source_from_directory</span> <span class="gtkdoc opt">(</span>dir<span class="gtkdoc opt">,</span>
-      <span class="function"><a href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-get-default">g_settings_schema_source_get_default</a></span> <span class="gtkdoc opt">(),</span> FALSE<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">  plugin</span><span class="symbol">-&gt;</span><span class="normal">schema_source </span><span class="symbol">=</span>
+<span class="normal">    </span><span class="function"><a href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-new-from-directory">g_settings_schema_source_new_from_directory</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">dir</span><span class="symbol">,</span>
+<span class="normal">      </span><span class="function"><a href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-get-default">g_settings_schema_source_get_default</a></span><span class="normal"> </span><span class="symbol">(),</span><span class="normal"> <a href="../glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  <span class="gtkdoc opt">...</span>
+<span class="normal">  </span><span class="symbol">...</span>
 
-  <span class="keyword">return</span> plugin<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> plugin</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc opt">...</span>
+<span class="symbol">...</span>
 
-GSettings <span class="gtkdoc opt">*</span>
-<span class="function">plugin_get_settings</span> <span class="gtkdoc opt">(</span>Plugin      <span class="gtkdoc opt">*</span>plugin<span class="gtkdoc opt">,</span>
-                     <span class="gtkdoc kwb">const</span> gchar <span class="gtkdoc opt">*</span>schema_id<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GSettingsSchema <span class="gtkdoc opt">*</span>schema<span class="gtkdoc opt">;</span>
+<span class="normal"><a href="GSettings.html#GSettings-struct">GSettings</a> </span><span class="symbol">*</span>
+<span class="function">plugin_get_settings</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Plugin</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">plugin</span><span class="symbol">,</span>
+<span class="normal">                     </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">schema_id</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GSettingsSchema</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">schema</span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>schema_id <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">)</span>
-    schema_id <span class="gtkdoc opt">=</span> plugin<span class="gtkdoc opt">-&gt;</span>identifier<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">schema_id </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    schema_id </span><span class="symbol">=</span><span class="normal"> plugin</span><span class="symbol">-&gt;</span><span class="normal">identifier</span><span class="symbol">;</span>
 
-  schema <span class="gtkdoc opt">=</span> <span class="function"><a href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-lookup">g_settings_schema_source_lookup</a></span> <span class="gtkdoc opt">(</span>plugin<span class="gtkdoc opt">-&gt;</span>schema_source<span class="gtkdoc opt">,</span>
-                                            schema_id<span class="gtkdoc opt">,</span> FALSE<span class="gtkdoc opt">);</span>
+<span class="normal">  schema </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-lookup">g_settings_schema_source_lookup</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">plugin</span><span class="symbol">-&gt;</span><span class="normal">schema_source</span><span class="symbol">,</span>
+<span class="normal">                                            schema_id</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">);</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>schema <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="gtkdoc opt">...</span> disable the plugin <span class="keyword">or</span> abort<span class="gtkdoc opt">,</span> etc <span class="gtkdoc opt">...</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">schema </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="symbol">...</span><span class="normal"> disable the plugin </span><span class="usertype">or</span><span class="normal"> abort</span><span class="symbol">,</span><span class="normal"> etc </span><span class="symbol">...</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="keyword">return</span> <span class="function"><a href="GSettings.html#g-settings-new-full">g_settings_new_full</a></span> <span class="gtkdoc opt">(</span>schema<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function"><a href="GSettings.html#g-settings-new-full">g_settings_new_full</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">schema</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -392,14 +392,14 @@ the following:</p>
 6
 7
 8</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">{</span>
-  GSettings <span class="gtkdoc opt">*</span>settings<span class="gtkdoc opt">;</span>
-  gint some_value<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GSettings</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">settings</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">gint</span><span class="normal"> some_value</span><span class="symbol">;</span>
 
-  settings <span class="gtkdoc opt">=</span> <span class="function">plugin_get_settings</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
-  some_value <span class="gtkdoc opt">=</span> <span class="function"><a href="GSettings.html#g-settings-get-int">g_settings_get_int</a></span> <span class="gtkdoc opt">(</span>settings<span class="gtkdoc opt">,</span> <span class="string">&quot;some-value&quot;</span><span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">...</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  settings </span><span class="symbol">=</span><span class="normal"> </span><span class="function">plugin_get_settings</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+<span class="normal">  some_value </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GSettings.html#g-settings-get-int">g_settings_get_int</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">settings</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"some-value"</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="symbol">...</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -430,7 +430,7 @@ recursively.</p>
 <div class="refsect3">
 <a name="g-settings-schema-source-get-default.returns"></a><h4>Returns</h4>
 <p>the default schema source. </p>
-<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
+<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
 </div>
@@ -1271,6 +1271,6 @@ using the following functions.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -23,6 +23,7 @@
 #error "Only <glib.h> can be included directly."
 #endif
 
+#include <glibconfig.h>
 #include <glib/gerror.h>
 
 G_BEGIN_DECLS
@@ -131,6 +132,9 @@ gchar   *g_build_filename     (const gchar *first_element,
                                ...) G_GNUC_MALLOC G_GNUC_NULL_TERMINATED;
 GLIB_AVAILABLE_IN_ALL
 gchar   *g_build_filenamev    (gchar      **args) G_GNUC_MALLOC;
+GLIB_AVAILABLE_IN_2_56
+gchar   *g_build_filename_valist (const gchar  *first_element,
+                                  va_list      *args) G_GNUC_MALLOC;
 
 GLIB_AVAILABLE_IN_ALL
 gint     g_mkdir_with_parents (const gchar *pathname,
@@ -142,19 +146,11 @@ gint     g_mkdir_with_parents (const gchar *pathname,
  * the search path separator is the semicolon. Note that also the
  * (forward) slash works as directory separator.
  */
-#define G_DIR_SEPARATOR '\\'
-#define G_DIR_SEPARATOR_S "\\"
 #define G_IS_DIR_SEPARATOR(c) ((c) == G_DIR_SEPARATOR || (c) == '/')
-#define G_SEARCHPATH_SEPARATOR ';'
-#define G_SEARCHPATH_SEPARATOR_S ";"
 
 #else  /* !G_OS_WIN32 */
 
-#define G_DIR_SEPARATOR '/'
-#define G_DIR_SEPARATOR_S "/"
 #define G_IS_DIR_SEPARATOR(c) ((c) == G_DIR_SEPARATOR)
-#define G_SEARCHPATH_SEPARATOR ':'
-#define G_SEARCHPATH_SEPARATOR_S ":"
 
 #endif /* !G_OS_WIN32 */
 

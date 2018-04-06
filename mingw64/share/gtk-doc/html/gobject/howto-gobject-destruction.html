@@ -8,7 +8,7 @@
 <link rel="up" href="howto-gobject.html" title="How to define and implement a new GObject">
 <link rel="prev" href="howto-gobject-construction.html" title="Object construction">
 <link rel="next" href="howto-gobject-methods.html" title="Object methods">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -105,70 +105,70 @@
 62
 63
 64</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">struct</span> _ViewerFilePrivate
-<span class="gtkdoc opt">{</span>
-  gchar <span class="gtkdoc opt">*</span>filename<span class="gtkdoc opt">;</span>
-  guint zoom_level<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">struct</span><span class="normal"> </span><span class="classname">_ViewerFilePrivate</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">filename</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">guint</span><span class="normal"> zoom_level</span><span class="symbol">;</span>
 
-  GInputStream <span class="gtkdoc opt">*</span>input_stream<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">};</span>
+<span class="normal">  </span><span class="usertype">GInputStream</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">input_stream</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-PRIVATE:CAPS">G_DEFINE_TYPE_WITH_PRIVATE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> G_TYPE_OBJECT<span class="gtkdoc opt">)</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-PRIVATE:CAPS">G_DEFINE_TYPE_WITH_PRIVATE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">)</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_dispose</span> <span class="gtkdoc opt">(</span>GObject <span class="gtkdoc opt">*</span>gobject<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFilePrivate <span class="gtkdoc opt">*</span>priv <span class="gtkdoc opt">=</span> <span class="function">viewer_file_get_instance_private</span> <span class="gtkdoc opt">(</span><span class="function">VIEWER_FILE</span> <span class="gtkdoc opt">(</span>gobject<span class="gtkdoc opt">));</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_dispose</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GObject</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">gobject</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFilePrivate</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">priv </span><span class="symbol">=</span><span class="normal"> </span><span class="function">viewer_file_get_instance_private</span><span class="normal"> </span><span class="symbol">(</span><span class="function">VIEWER_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gobject</span><span class="symbol">));</span>
 
-  <span class="comment">/* In dispose(), you are supposed to free all types referenced from this</span>
+<span class="normal">  </span><span class="comment">/* In dispose(), you are supposed to free all types referenced from this</span>
 <span class="comment">   * object which might themselves hold a reference to self. Generally,</span>
 <span class="comment">   * the most simple solution is to unref all members on which you own a </span>
 <span class="comment">   * reference.</span>
 <span class="comment">   */</span>
 
-  <span class="comment">/* dispose() might be called multiple times, so we must guard against</span>
+<span class="normal">  </span><span class="comment">/* dispose() might be called multiple times, so we must guard against</span>
 <span class="comment">   * calling g_object_unref() on an invalid GObject by setting the member</span>
 <span class="comment">   * NULL; g_clear_object() does this for us.</span>
 <span class="comment">   */</span>
-  <span class="function"><a href="gobject-The-Base-Object-Type.html#g-clear-object">g_clear_object</a></span> <span class="gtkdoc opt">(&amp;</span>priv<span class="gtkdoc opt">-&gt;</span>input_stream<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-clear-object">g_clear_object</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">input_stream</span><span class="symbol">);</span>
 
-  <span class="comment">/* Always chain up to the parent class; there is no need to check if</span>
+<span class="normal">  </span><span class="comment">/* Always chain up to the parent class; there is no need to check if</span>
 <span class="comment">   * the parent class implements the dispose() virtual function: it is</span>
 <span class="comment">   * always guaranteed to do so</span>
 <span class="comment">   */</span>
-  <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span> <span class="gtkdoc opt">(</span>viewer_file_parent_class<span class="gtkdoc opt">)-&gt;</span><span class="function">dispose</span> <span class="gtkdoc opt">(</span>gobject<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">viewer_file_parent_class</span><span class="symbol">)-&gt;</span><span class="function">dispose</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gobject</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_finalize</span> <span class="gtkdoc opt">(</span>GObject <span class="gtkdoc opt">*</span>gobject<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFilePrivate <span class="gtkdoc opt">*</span>priv <span class="gtkdoc opt">=</span> <span class="function">viewer_file_get_instance_private</span> <span class="gtkdoc opt">(</span><span class="function">VIEWER_FILE</span> <span class="gtkdoc opt">(</span>gobject<span class="gtkdoc opt">));</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_finalize</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GObject</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">gobject</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFilePrivate</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">priv </span><span class="symbol">=</span><span class="normal"> </span><span class="function">viewer_file_get_instance_private</span><span class="normal"> </span><span class="symbol">(</span><span class="function">VIEWER_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gobject</span><span class="symbol">));</span>
 
-  <span class="function"><a href="../glib-Memory-Allocation.html#g-free">g_free</a></span> <span class="gtkdoc opt">(</span>priv<span class="gtkdoc opt">-&gt;</span>filename<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Memory-Allocation.html#g-free">g_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">filename</span><span class="symbol">);</span>
 
-  <span class="comment">/* Always chain up to the parent class; as with dispose(), finalize()</span>
-<span class="comment">   * is guaranteed to exist on the parent&apos;s class virtual function table</span>
+<span class="normal">  </span><span class="comment">/* Always chain up to the parent class; as with dispose(), finalize()</span>
+<span class="comment">   * is guaranteed to exist on the parent's class virtual function table</span>
 <span class="comment">   */</span>
-  <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span> <span class="gtkdoc opt">(</span>viewer_file_parent_class<span class="gtkdoc opt">)-&gt;</span><span class="function">finalize</span> <span class="gtkdoc opt">(</span>gobject<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">viewer_file_parent_class</span><span class="symbol">)-&gt;</span><span class="function">finalize</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">gobject</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GObjectClass <span class="gtkdoc opt">*</span>object_class <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span> <span class="gtkdoc opt">(</span>klass<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObjectClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">object_class </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">klass</span><span class="symbol">);</span>
 
-  object_class<span class="gtkdoc opt">-&gt;</span>dispose <span class="gtkdoc opt">=</span> viewer_file_dispose<span class="gtkdoc opt">;</span>
-  object_class<span class="gtkdoc opt">-&gt;</span>finalize <span class="gtkdoc opt">=</span> viewer_file_finalize<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  object_class</span><span class="symbol">-&gt;</span><span class="normal">dispose </span><span class="symbol">=</span><span class="normal"> viewer_file_dispose</span><span class="symbol">;</span>
+<span class="normal">  object_class</span><span class="symbol">-&gt;</span><span class="normal">finalize </span><span class="symbol">=</span><span class="normal"> viewer_file_finalize</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_init</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFilePrivate <span class="gtkdoc opt">*</span>priv <span class="gtkdoc opt">=</span> <span class="function">viewer_file_get_instance_private</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">);</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFilePrivate</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">priv </span><span class="symbol">=</span><span class="normal"> </span><span class="function">viewer_file_get_instance_private</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">);</span>
 
-  priv<span class="gtkdoc opt">-&gt;</span>input_stream <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span> <span class="gtkdoc opt">(</span>VIEWER_TYPE_INPUT_STREAM<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
-  priv<span class="gtkdoc opt">-&gt;</span>filename <span class="gtkdoc opt">=</span> <span class="comment">/* would be set as a property */</span><span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  priv</span><span class="symbol">-&gt;</span><span class="normal">input_stream </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_INPUT_STREAM</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+<span class="normal">  priv</span><span class="symbol">-&gt;</span><span class="normal">filename </span><span class="symbol">=</span><span class="normal"> </span><span class="comment">/* would be set as a property */</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -184,6 +184,6 @@
     </p>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="volume_mon.html" title="Volumes and Drives">
 <link rel="prev" href="GVolumeMonitor.html" title="GVolumeMonitor">
 <link rel="next" href="GMount.html" title="GMount">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -263,7 +263,7 @@
 </div>
 <div class="refsect1">
 <a name="GVolume.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
+<pre class="screen">    GInterface
     <span class="lineart">╰──</span> GVolume
 </pre>
 </div>
@@ -580,13 +580,13 @@ other words, in code</p>
 5
 6
 7</pre></td>
-        <td class="listing_code"><pre class="programlisting">GMount <span class="gtkdoc opt">*</span>mount<span class="gtkdoc opt">;</span>
-GFile <span class="gtkdoc opt">*</span>mount_root
-GFile <span class="gtkdoc opt">*</span>volume_activation_root<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GMount</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">mount</span><span class="symbol">;</span>
+<span class="usertype">GFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">mount_root</span>
+<span class="usertype">GFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">volume_activation_root</span><span class="symbol">;</span>
 
-mount <span class="gtkdoc opt">=</span> <span class="function"><a href="GVolume.html#g-volume-get-mount">g_volume_get_mount</a></span> <span class="gtkdoc opt">(</span>volume<span class="gtkdoc opt">);</span> <span class="gtkdoc slc">// mounted, so never NULL</span>
-mount_root <span class="gtkdoc opt">=</span> <span class="function"><a href="GMount.html#g-mount-get-root">g_mount_get_root</a></span> <span class="gtkdoc opt">(</span>mount<span class="gtkdoc opt">);</span>
-volume_activation_root <span class="gtkdoc opt">=</span> <span class="function"><a href="GVolume.html#g-volume-get-activation-root">g_volume_get_activation_root</a></span> <span class="gtkdoc opt">(</span>volume<span class="gtkdoc opt">);</span> <span class="gtkdoc slc">// assume not NULL</span></pre></td>
+<span class="normal">mount </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GVolume.html#g-volume-get-mount">g_volume_get_mount</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">volume</span><span class="symbol">);</span><span class="normal"> </span><span class="comment">// mounted, so never NULL</span>
+<span class="normal">mount_root </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GMount.html#g-mount-get-root">g_mount_get_root</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">mount</span><span class="symbol">);</span>
+<span class="normal">volume_activation_root </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GVolume.html#g-volume-get-activation-root">g_volume_get_activation_root</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">volume</span><span class="symbol">);</span><span class="normal"> </span><span class="comment">// assume not NULL</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -600,8 +600,8 @@ then the expression</p>
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">(</span><span class="function"><a href="GFile.html#g-file-has-prefix">g_file_has_prefix</a></span> <span class="gtkdoc opt">(</span>volume_activation_root<span class="gtkdoc opt">,</span> mount_root<span class="gtkdoc opt">) ||</span>
-    <span class="function"><a href="GFile.html#g-file-equal">g_file_equal</a></span> <span class="gtkdoc opt">(</span>volume_activation_root<span class="gtkdoc opt">,</span> mount_root<span class="gtkdoc opt">))</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="symbol">(</span><span class="function"><a href="GFile.html#g-file-has-prefix">g_file_has_prefix</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">volume_activation_root</span><span class="symbol">,</span><span class="normal"> mount_root</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">||</span>
+<span class="normal"> </span><span class="function"><a href="GFile.html#g-file-equal">g_file_equal</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">volume_activation_root</span><span class="symbol">,</span><span class="normal"> mount_root</span><span class="symbol">))</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1370,6 +1370,6 @@ release them so the object can be finalized.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

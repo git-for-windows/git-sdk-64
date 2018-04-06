@@ -8,7 +8,7 @@
 <link rel="up" href="gdbus-lowlevel.html" title="Low-level D-Bus Support">
 <link rel="prev" href="GDBusServer.html" title="GDBusServer">
 <link rel="next" href="gdbus-convenience.html" title="High-level D-Bus Support">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -150,26 +150,26 @@ signal handler like the following:</p>
 18
 19
 20</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> gboolean
-<span class="function">on_authorize_authenticated_peer</span> <span class="gtkdoc opt">(</span>GDBusAuthObserver <span class="gtkdoc opt">*</span>observer<span class="gtkdoc opt">,</span>
-                                 GIOStream         <span class="gtkdoc opt">*</span>stream<span class="gtkdoc opt">,</span>
-                                 GCredentials      <span class="gtkdoc opt">*</span>credentials<span class="gtkdoc opt">,</span>
-                                 gpointer           user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  gboolean authorized<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> <a href="../glib-Basic-Types.html#gboolean">gboolean</a></span>
+<span class="function">on_authorize_authenticated_peer</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GDBusAuthObserver</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">observer</span><span class="symbol">,</span>
+<span class="normal">                                 </span><span class="usertype">GIOStream</span><span class="normal">         </span><span class="symbol">*</span><span class="normal">stream</span><span class="symbol">,</span>
+<span class="normal">                                 </span><span class="usertype">GCredentials</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">credentials</span><span class="symbol">,</span>
+<span class="normal">                                 </span><span class="usertype">gpointer</span><span class="normal">           user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">gboolean</span><span class="normal"> authorized</span><span class="symbol">;</span>
 
-  authorized <span class="gtkdoc opt">=</span> FALSE<span class="gtkdoc opt">;</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>credentials <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      GCredentials <span class="gtkdoc opt">*</span>own_credentials<span class="gtkdoc opt">;</span>
-      own_credentials <span class="gtkdoc opt">=</span> <span class="function"><a href="GCredentials.html#g-credentials-new">g_credentials_new</a></span> <span class="gtkdoc opt">();</span>
-      <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="GCredentials.html#g-credentials-is-same-user">g_credentials_is_same_user</a></span> <span class="gtkdoc opt">(</span>credentials<span class="gtkdoc opt">,</span> own_credentials<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
-        authorized <span class="gtkdoc opt">=</span> TRUE<span class="gtkdoc opt">;</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>own_credentials<span class="gtkdoc opt">);</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  authorized </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">credentials </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="usertype">GCredentials</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">own_credentials</span><span class="symbol">;</span>
+<span class="normal">      own_credentials </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GCredentials.html#g-credentials-new">g_credentials_new</a></span><span class="normal"> </span><span class="symbol">();</span>
+<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GCredentials.html#g-credentials-is-same-user">g_credentials_is_same_user</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">credentials</span><span class="symbol">,</span><span class="normal"> own_credentials</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
+<span class="normal">        authorized </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">;</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">own_credentials</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="keyword">return</span> authorized<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> authorized</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -379,6 +379,6 @@ is authorized.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

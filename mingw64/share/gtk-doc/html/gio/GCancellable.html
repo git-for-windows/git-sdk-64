@@ -8,7 +8,7 @@
 <link rel="up" href="async.html" title="Asynchronous I/O">
 <link rel="prev" href="async.html" title="Asynchronous I/O">
 <link rel="next" href="GAsyncResult.html" title="GAsyncResult">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -795,27 +795,27 @@ like this.</p>
 19
 20
 21</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc slc">// Make sure we don&apos;t do unnecessary work if already cancelled</span>
-<span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="GCancellable.html#g-cancellable-set-error-if-cancelled">g_cancellable_set_error_if_cancelled</a></span> <span class="gtkdoc opt">(</span>cancellable<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">))</span>
-  <span class="keyword">return</span><span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="comment">// Make sure we don't do unnecessary work if already cancelled</span>
+<span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GCancellable.html#g-cancellable-set-error-if-cancelled">g_cancellable_set_error_if_cancelled</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cancellable</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">))</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="symbol">;</span>
 
-<span class="gtkdoc slc">// Set up all the data needed to be able to handle cancellation</span>
-<span class="gtkdoc slc">// of the operation</span>
-my_data <span class="gtkdoc opt">=</span> <span class="function">my_data_new</span> <span class="gtkdoc opt">(...);</span>
+<span class="comment">// Set up all the data needed to be able to handle cancellation</span>
+<span class="comment">// of the operation</span>
+<span class="normal">my_data </span><span class="symbol">=</span><span class="normal"> </span><span class="function">my_data_new</span><span class="normal"> </span><span class="symbol">(...);</span>
 
-id <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-<span class="keyword">if</span> <span class="gtkdoc opt">(</span>cancellable<span class="gtkdoc opt">)</span>
-  id <span class="gtkdoc opt">=</span> <span class="function"><a href="GCancellable.html#g-cancellable-connect">g_cancellable_connect</a></span> <span class="gtkdoc opt">(</span>cancellable<span class="gtkdoc opt">,</span>
-			      <span class="function"><a href="../gobject-Closures.html#G-CALLBACK:CAPS">G_CALLBACK</a></span> <span class="gtkdoc opt">(</span>cancelled_handler<span class="gtkdoc opt">)</span>
-			      data<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">id </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cancellable</span><span class="symbol">)</span>
+<span class="normal">  id </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GCancellable.html#g-cancellable-connect">g_cancellable_connect</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cancellable</span><span class="symbol">,</span>
+<span class="normal">                  </span><span class="function"><a href="../gobject-Closures.html#G-CALLBACK:CAPS">G_CALLBACK</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cancelled_handler</span><span class="symbol">)</span>
+<span class="normal">                  data</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-<span class="gtkdoc slc">// cancellable operation here...</span>
+<span class="comment">// cancellable operation here...</span>
 
-<span class="function"><a href="GCancellable.html#g-cancellable-disconnect">g_cancellable_disconnect</a></span> <span class="gtkdoc opt">(</span>cancellable<span class="gtkdoc opt">,</span> id<span class="gtkdoc opt">);</span>
+<span class="function"><a href="GCancellable.html#g-cancellable-disconnect">g_cancellable_disconnect</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cancellable</span><span class="symbol">,</span><span class="normal"> id</span><span class="symbol">);</span>
 
-<span class="gtkdoc slc">// cancelled_handler is never called after this, it is now safe</span>
-<span class="gtkdoc slc">// to free the data</span>
-<span class="function">my_data_free</span> <span class="gtkdoc opt">(</span>my_data<span class="gtkdoc opt">);</span></pre></td>
+<span class="comment">// cancelled_handler is never called after this, it is now safe</span>
+<span class="comment">// to free the data</span>
+<span class="function">my_data_free</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">my_data</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -852,6 +852,6 @@ cancellable signal should not do something that can block.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

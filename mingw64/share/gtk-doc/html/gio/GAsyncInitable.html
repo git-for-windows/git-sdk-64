@@ -8,7 +8,7 @@
 <link rel="up" href="failable_initialization.html" title="Failable Initialization">
 <link rel="prev" href="GInitable.html" title="GInitable">
 <link rel="next" href="subprocesses.html" title="Subprocesses">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -114,7 +114,7 @@
 </div>
 <div class="refsect1">
 <a name="GAsyncInitable.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
+<pre class="screen">    GInterface
     <span class="lineart">╰──</span> GAsyncInitable
 </pre>
 </div>
@@ -233,87 +233,87 @@ a set <a href="../glib-Error-Reporting.html#GError"><code class="literal">GError
 79
 80
 81</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">enum</span> <span class="gtkdoc opt">{</span>
-   NOT_INITIALIZED<span class="gtkdoc opt">,</span>
-   INITIALIZING<span class="gtkdoc opt">,</span>
-   INITIALIZED
-<span class="gtkdoc opt">};</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">enum</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">   NOT_INITIALIZED</span><span class="symbol">,</span>
+<span class="normal">   INITIALIZING</span><span class="symbol">,</span>
+<span class="normal">   INITIALIZED</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">_foo_ready_cb</span> <span class="gtkdoc opt">(</span>Foo <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GList <span class="gtkdoc opt">*</span>l<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">_foo_ready_cb</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Foo</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GList</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">l</span><span class="symbol">;</span>
 
-  self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>state <span class="gtkdoc opt">=</span> INITIALIZED<span class="gtkdoc opt">;</span>
+<span class="normal">  self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">state </span><span class="symbol">=</span><span class="normal"> INITIALIZED</span><span class="symbol">;</span>
 
-  <span class="keyword">for</span> <span class="gtkdoc opt">(</span>l <span class="gtkdoc opt">=</span> self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>init_results<span class="gtkdoc opt">;</span> l <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">;</span> l <span class="gtkdoc opt">=</span> l<span class="gtkdoc opt">-&gt;</span>next<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      GTask <span class="gtkdoc opt">*</span>task <span class="gtkdoc opt">=</span> l<span class="gtkdoc opt">-&gt;</span>data<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">for</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">l </span><span class="symbol">=</span><span class="normal"> self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">init_results</span><span class="symbol">;</span><span class="normal"> l </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span><span class="normal"> l </span><span class="symbol">=</span><span class="normal"> l</span><span class="symbol">-&gt;</span><span class="normal">next</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task </span><span class="symbol">=</span><span class="normal"> l</span><span class="symbol">-&gt;</span><span class="normal">data</span><span class="symbol">;</span>
 
-      <span class="keyword">if</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>success<span class="gtkdoc opt">)</span>
-        <span class="function"><a href="GTask.html#g-task-return-boolean">g_task_return_boolean</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">);</span>
-      <span class="keyword">else</span>
-        <span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">, ...);</span>
-      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">success</span><span class="symbol">)</span>
+<span class="normal">        </span><span class="function"><a href="GTask.html#g-task-return-boolean">g_task_return_boolean</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">else</span>
+<span class="normal">        </span><span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">...);</span>
+<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="function"><a href="../glib-Doubly-Linked-Lists.html#g-list-free">g_list_free</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>init_results<span class="gtkdoc opt">);</span>
-  self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>init_results <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Doubly-Linked-Lists.html#g-list-free">g_list_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">init_results</span><span class="symbol">);</span>
+<span class="normal">  self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">init_results </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">foo_init_async</span> <span class="gtkdoc opt">(</span>GAsyncInitable       <span class="gtkdoc opt">*</span>initable<span class="gtkdoc opt">,</span>
-                <span class="gtkdoc kwb">int</span>                   io_priority<span class="gtkdoc opt">,</span>
-                GCancellable         <span class="gtkdoc opt">*</span>cancellable<span class="gtkdoc opt">,</span>
-                GAsyncReadyCallback   callback<span class="gtkdoc opt">,</span>
-                gpointer              user_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  Foo <span class="gtkdoc opt">*</span>self <span class="gtkdoc opt">=</span> <span class="function">FOO</span> <span class="gtkdoc opt">(</span>initable<span class="gtkdoc opt">);</span>
-  GTask <span class="gtkdoc opt">*</span>task<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">foo_init_async</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GAsyncInitable</span><span class="normal">       </span><span class="symbol">*</span><span class="normal">initable</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="type">int</span><span class="normal">                   io_priority</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="usertype">GCancellable</span><span class="normal">         </span><span class="symbol">*</span><span class="normal">cancellable</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="usertype">GAsyncReadyCallback</span><span class="normal">   callback</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="usertype">gpointer</span><span class="normal">              user_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">Foo</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self </span><span class="symbol">=</span><span class="normal"> </span><span class="function">FOO</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">initable</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="usertype">GTask</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">task</span><span class="symbol">;</span>
 
-  task <span class="gtkdoc opt">=</span> <span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span> <span class="gtkdoc opt">(</span>initable<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> callback<span class="gtkdoc opt">,</span> user_data<span class="gtkdoc opt">);</span>
+<span class="normal">  task </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-new">g_task_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">initable</span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> callback</span><span class="symbol">,</span><span class="normal"> user_data</span><span class="symbol">);</span>
 
-  <span class="keyword">switch</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>state<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="keyword">case</span> NOT_INITIALIZED<span class="gtkdoc opt">:</span>
-        <span class="function">_foo_get_ready</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">);</span>
-        self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>init_results <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-Doubly-Linked-Lists.html#g-list-append">g_list_append</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>init_results<span class="gtkdoc opt">,</span>
-                                                  task<span class="gtkdoc opt">);</span>
-        self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>state <span class="gtkdoc opt">=</span> INITIALIZING<span class="gtkdoc opt">;</span>
-        <span class="keyword">break</span><span class="gtkdoc opt">;</span>
-      <span class="keyword">case</span> INITIALIZING<span class="gtkdoc opt">:</span>
-        self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>init_results <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-Doubly-Linked-Lists.html#g-list-append">g_list_append</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>init_results<span class="gtkdoc opt">,</span>
-                                                  task<span class="gtkdoc opt">);</span>
-        <span class="keyword">break</span><span class="gtkdoc opt">;</span>
-      <span class="keyword">case</span> INITIALIZED<span class="gtkdoc opt">:</span>
-        <span class="keyword">if</span> <span class="gtkdoc opt">(!</span>self<span class="gtkdoc opt">-&gt;</span>priv<span class="gtkdoc opt">-&gt;</span>success<span class="gtkdoc opt">)</span>
-          <span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">, ...);</span>
-        <span class="keyword">else</span>
-          <span class="function"><a href="GTask.html#g-task-return-boolean">g_task_return_boolean</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">);</span>
-        <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>task<span class="gtkdoc opt">);</span>
-        <span class="keyword">break</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">switch</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">state</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="keyword">case</span><span class="normal"> NOT_INITIALIZED</span><span class="symbol">:</span>
+<span class="normal">        </span><span class="function">_foo_get_ready</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">);</span>
+<span class="normal">        self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">init_results </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-Doubly-Linked-Lists.html#g-list-append">g_list_append</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">init_results</span><span class="symbol">,</span>
+<span class="normal">                                                  task</span><span class="symbol">);</span>
+<span class="normal">        self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">state </span><span class="symbol">=</span><span class="normal"> INITIALIZING</span><span class="symbol">;</span>
+<span class="normal">        </span><span class="keyword">break</span><span class="symbol">;</span>
+<span class="normal">      </span><span class="keyword">case</span><span class="normal"> INITIALIZING</span><span class="symbol">:</span>
+<span class="normal">        self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">init_results </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-Doubly-Linked-Lists.html#g-list-append">g_list_append</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">init_results</span><span class="symbol">,</span>
+<span class="normal">                                                  task</span><span class="symbol">);</span>
+<span class="normal">        </span><span class="keyword">break</span><span class="symbol">;</span>
+<span class="normal">      </span><span class="keyword">case</span><span class="normal"> INITIALIZED</span><span class="symbol">:</span>
+<span class="normal">        </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="normal">self</span><span class="symbol">-&gt;</span><span class="normal">priv</span><span class="symbol">-&gt;</span><span class="normal">success</span><span class="symbol">)</span>
+<span class="normal">          </span><span class="function"><a href="GTask.html#g-task-return-new-error">g_task_return_new_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">...);</span>
+<span class="normal">        </span><span class="keyword">else</span>
+<span class="normal">          </span><span class="function"><a href="GTask.html#g-task-return-boolean">g_task_return_boolean</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">);</span>
+<span class="normal">        </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">task</span><span class="symbol">);</span>
+<span class="normal">        </span><span class="keyword">break</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static</span> gboolean
-<span class="function">foo_init_finish</span> <span class="gtkdoc opt">(</span>GAsyncInitable       <span class="gtkdoc opt">*</span>initable<span class="gtkdoc opt">,</span>
-                 GAsyncResult         <span class="gtkdoc opt">*</span>result<span class="gtkdoc opt">,</span>
-                 GError              <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="GTask.html#g-task-is-valid">g_task_is_valid</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span> initable<span class="gtkdoc opt">),</span> FALSE<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> <a href="../glib-Basic-Types.html#gboolean">gboolean</a></span>
+<span class="function">foo_init_finish</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GAsyncInitable</span><span class="normal">       </span><span class="symbol">*</span><span class="normal">initable</span><span class="symbol">,</span>
+<span class="normal">                 </span><span class="usertype">GAsyncResult</span><span class="normal">         </span><span class="symbol">*</span><span class="normal">result</span><span class="symbol">,</span>
+<span class="normal">                 </span><span class="usertype">GError</span><span class="normal">              </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GTask.html#g-task-is-valid">g_task_is_valid</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span><span class="normal"> initable</span><span class="symbol">),</span><span class="normal"> <a href="../glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> <span class="function"><a href="GTask.html#g-task-propagate-boolean">g_task_propagate_boolean</a></span> <span class="gtkdoc opt">(</span><span class="function">G_TASK</span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">),</span> error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function"><a href="GTask.html#g-task-propagate-boolean">g_task_propagate_boolean</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">G_TASK</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">),</span><span class="normal"> error</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">foo_async_initable_iface_init</span> <span class="gtkdoc opt">(</span>gpointer g_iface<span class="gtkdoc opt">,</span>
-                               gpointer data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GAsyncInitableIface <span class="gtkdoc opt">*</span>iface <span class="gtkdoc opt">=</span> g_iface<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">foo_async_initable_iface_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">gpointer</span><span class="normal"> g_iface</span><span class="symbol">,</span>
+<span class="normal">                               </span><span class="usertype">gpointer</span><span class="normal"> data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GAsyncInitableIface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface </span><span class="symbol">=</span><span class="normal"> g_iface</span><span class="symbol">;</span>
 
-  iface<span class="gtkdoc opt">-&gt;</span>init_async <span class="gtkdoc opt">=</span> foo_init_async<span class="gtkdoc opt">;</span>
-  iface<span class="gtkdoc opt">-&gt;</span>init_finish <span class="gtkdoc opt">=</span> foo_init_finish<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">init_async </span><span class="symbol">=</span><span class="normal"> foo_init_async</span><span class="symbol">;</span>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">init_finish </span><span class="symbol">=</span><span class="normal"> foo_init_finish</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -764,6 +764,6 @@ initialization may fail.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

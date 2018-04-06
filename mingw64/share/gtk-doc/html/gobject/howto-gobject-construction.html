@@ -8,7 +8,7 @@
 <link rel="up" href="howto-gobject.html" title="How to define and implement a new GObject">
 <link rel="prev" href="howto-gobject-code.html" title="Boilerplate code">
 <link rel="next" href="howto-gobject-destruction.html" title="Object destruction">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -46,8 +46,8 @@
 <p>
       It is important to note that object construction cannot <span class="emphasis"><em>ever</em></span>
       fail. If you require a fallible GObject construction, you can use the
-      <a href="../gio/GInitable.html#GInitable-struct"><span class="type">GInitable</span></a> and
-      <a href="../gio/GAsyncInitable.html#GAsyncInitable-struct"><span class="type">GAsyncInitable</span></a>
+      <span class="type">GInitable</span> and
+      <span class="type">GAsyncInitable</span>
       interfaces provided by the GIO library.
     </p>
 <p>
@@ -72,21 +72,21 @@
 13
 14
 15</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-PRIVATE:CAPS">G_DEFINE_TYPE_WITH_PRIVATE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> G_TYPE_OBJECT<span class="gtkdoc opt">)</span>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-PRIVATE:CAPS">G_DEFINE_TYPE_WITH_PRIVATE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">)</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_init</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFilePrivate <span class="gtkdoc opt">*</span>priv <span class="gtkdoc opt">=</span> <span class="function">viewer_file_get_instance_private</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFilePrivate</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">priv </span><span class="symbol">=</span><span class="normal"> </span><span class="function">viewer_file_get_instance_private</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">);</span>
 
-  <span class="comment">/* initialize all public and private members to reasonable default values.</span>
+<span class="normal">  </span><span class="comment">/* initialize all public and private members to reasonable default values.</span>
 <span class="comment">   * They are all automatically initialized to 0 to begin with. */</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -147,43 +147,43 @@
 35
 36
 37</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">enum</span>
-<span class="gtkdoc opt">{</span>
-  PROP_FILENAME <span class="gtkdoc opt">=</span> <span class="number">1</span><span class="gtkdoc opt">,</span>
-  PROP_ZOOM_LEVEL<span class="gtkdoc opt">,</span>
-  N_PROPERTIES
-<span class="gtkdoc opt">};</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">enum</span>
+<span class="cbracket">{</span>
+<span class="normal">  PROP_FILENAME </span><span class="symbol">=</span><span class="normal"> </span><span class="number">1</span><span class="symbol">,</span>
+<span class="normal">  PROP_ZOOM_LEVEL</span><span class="symbol">,</span>
+<span class="normal">  N_PROPERTIES</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">static</span> GParamSpec <span class="gtkdoc opt">*</span>obj_properties<span class="gtkdoc opt">[</span>N_PROPERTIES<span class="gtkdoc opt">] = {</span> NULL<span class="gtkdoc opt">, };</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="usertype">GParamSpec</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">obj_properties</span><span class="symbol">[</span><span class="normal">N_PROPERTIES</span><span class="symbol">]</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> </span><span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GObjectClass <span class="gtkdoc opt">*</span>object_class <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span> <span class="gtkdoc opt">(</span>klass<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObjectClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">object_class </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">klass</span><span class="symbol">);</span>
 
-  object_class<span class="gtkdoc opt">-&gt;</span>set_property <span class="gtkdoc opt">=</span> viewer_file_set_property<span class="gtkdoc opt">;</span>
-  object_class<span class="gtkdoc opt">-&gt;</span>get_property <span class="gtkdoc opt">=</span> viewer_file_get_property<span class="gtkdoc opt">;</span>
+<span class="normal">  object_class</span><span class="symbol">-&gt;</span><span class="normal">set_property </span><span class="symbol">=</span><span class="normal"> viewer_file_set_property</span><span class="symbol">;</span>
+<span class="normal">  object_class</span><span class="symbol">-&gt;</span><span class="normal">get_property </span><span class="symbol">=</span><span class="normal"> viewer_file_get_property</span><span class="symbol">;</span>
 
-  obj_properties<span class="gtkdoc opt">[</span>PROP_FILENAME<span class="gtkdoc opt">] =</span>
-    <span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-param-spec-string">g_param_spec_string</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;filename&quot;</span><span class="gtkdoc opt">,</span>
-                         <span class="string">&quot;Filename&quot;</span><span class="gtkdoc opt">,</span>
-                         <span class="string">&quot;Name of the file to load and display from.&quot;</span><span class="gtkdoc opt">,</span>
-                         NULL  <span class="comment">/* default value */</span><span class="gtkdoc opt">,</span>
-                         G_PARAM_CONSTRUCT_ONLY <span class="gtkdoc opt">|</span> G_PARAM_READWRITE<span class="gtkdoc opt">));</span>
+<span class="normal">  obj_properties</span><span class="symbol">[</span><span class="normal">PROP_FILENAME</span><span class="symbol">]</span><span class="normal"> </span><span class="symbol">=</span>
+<span class="normal">    </span><span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-param-spec-string">g_param_spec_string</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"filename"</span><span class="symbol">,</span>
+<span class="normal">                         </span><span class="string">"Filename"</span><span class="symbol">,</span>
+<span class="normal">                         </span><span class="string">"Name of the file to load and display from."</span><span class="symbol">,</span>
+<span class="normal">                         <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a>  </span><span class="comment">/* default value */</span><span class="symbol">,</span>
+<span class="normal">                         <a href="gobject-GParamSpec.html#G-PARAM-CONSTRUCT-ONLY:CAPS">G_PARAM_CONSTRUCT_ONLY</a> </span><span class="symbol">|</span><span class="normal"> <a href="gobject-GParamSpec.html#G-PARAM-READWRITE:CAPS">G_PARAM_READWRITE</a></span><span class="symbol">));</span>
 
-  obj_properties<span class="gtkdoc opt">[</span>PROP_ZOOM_LEVEL<span class="gtkdoc opt">] =</span>
-    <span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-param-spec-uint">g_param_spec_uint</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;zoom-level&quot;</span><span class="gtkdoc opt">,</span>
-                       <span class="string">&quot;Zoom level&quot;</span><span class="gtkdoc opt">,</span>
-                       <span class="string">&quot;Zoom level to view the file at.&quot;</span><span class="gtkdoc opt">,</span>
-                       <span class="number">0</span>  <span class="comment">/* minimum value */</span><span class="gtkdoc opt">,</span>
-                       <span class="number">10</span> <span class="comment">/* maximum value */</span><span class="gtkdoc opt">,</span>
-                       <span class="number">2</span>  <span class="comment">/* default value */</span><span class="gtkdoc opt">,</span>
-                       G_PARAM_READWRITE<span class="gtkdoc opt">));</span>
+<span class="normal">  obj_properties</span><span class="symbol">[</span><span class="normal">PROP_ZOOM_LEVEL</span><span class="symbol">]</span><span class="normal"> </span><span class="symbol">=</span>
+<span class="normal">    </span><span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-param-spec-uint">g_param_spec_uint</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"zoom-level"</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="string">"Zoom level"</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="string">"Zoom level to view the file at."</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="number">0</span><span class="normal">  </span><span class="comment">/* minimum value */</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="number">10</span><span class="normal"> </span><span class="comment">/* maximum value */</span><span class="symbol">,</span>
+<span class="normal">                       </span><span class="number">2</span><span class="normal">  </span><span class="comment">/* default value */</span><span class="symbol">,</span>
+<span class="normal">                       <a href="gobject-GParamSpec.html#G-PARAM-READWRITE:CAPS">G_PARAM_READWRITE</a></span><span class="symbol">));</span>
 
-  <span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-class-install-properties">g_object_class_install_properties</a></span> <span class="gtkdoc opt">(</span>object_class<span class="gtkdoc opt">,</span>
-                                     N_PROPERTIES<span class="gtkdoc opt">,</span>
-                                     obj_properties<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-class-install-properties">g_object_class_install_properties</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">object_class</span><span class="symbol">,</span>
+<span class="normal">                                     N_PROPERTIES</span><span class="symbol">,</span>
+<span class="normal">                                     obj_properties</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -209,6 +209,6 @@
     </p>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Character-Set-Conversion.html" title="Character Set Conversion">
 <link rel="next" href="glib-Base64-Encoding.html" title="Base64 Encoding">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -1563,7 +1563,7 @@ g_unichar_break_type (<em class="parameter"><code><a class="link" href="glib-Uni
 <a class="link" href="glib-Unicode-Manipulation.html#g-utf8-get-char" title="g_utf8_get_char ()"><code class="function">g_utf8_get_char()</code></a>). The break type is used to find word and line
 breaks ("text boundaries"), Pango implements the Unicode boundary
 resolution algorithms and normally you would use a function such
-as <a href="../pango/pango-Text-Processing.html#pango-break"><code class="function">pango_break()</code></a> instead of caring about break types yourself.</p>
+as <code class="function">pango_break()</code> instead of caring about break types yourself.</p>
 <div class="refsect3">
 <a name="g-unichar-break-type.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1744,7 +1744,7 @@ by Unicode Standard Annex #24). No check is made for <em class="parameter"><code
  being a
 valid Unicode character; if you pass in invalid character, the
 result is undefined.</p>
-<p>This function is equivalent to <a href="../pango/pango-Scripts-and-Languages.html#pango-script-for-unichar"><code class="function">pango_script_for_unichar()</code></a> and the
+<p>This function is equivalent to <code class="function">pango_script_for_unichar()</code> and the
 two are interchangeable.</p>
 <div class="refsect3">
 <a name="g-unichar-get-script.parameters"></a><h4>Parameters</h4>
@@ -2228,6 +2228,10 @@ of characters instead of a given number of bytes. The <em class="parameter"><cod
  string
 must be valid UTF-8 encoded text. (Use <a class="link" href="glib-Unicode-Manipulation.html#g-utf8-validate" title="g_utf8_validate ()"><code class="function">g_utf8_validate()</code></a> on all
 text before trying to use UTF-8 utility functions with it.)</p>
+<p>Note you must ensure <em class="parameter"><code>dest</code></em>
+ is at least 4 * <em class="parameter"><code>n</code></em>
+ to fit the
+largest possible UTF-8 characters</p>
 <div class="refsect3">
 <a name="g-utf8-strncpy.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -3413,9 +3417,9 @@ To scan, use the format string "U+%06"G_GINT32_FORMAT"X".</p>
         <td class="listing_lines" align="right"><pre>1
 2
 3</pre></td>
-        <td class="listing_code"><pre class="programlisting">gunichar c<span class="gtkdoc opt">;</span>
-<span class="function">sscanf</span> <span class="gtkdoc opt">(</span><span class="string">&quot;U+0041&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;U+%06&quot;</span>G_GINT32_FORMAT<span class="string">&quot;X&quot;</span><span class="gtkdoc opt">, &amp;</span>c<span class="gtkdoc opt">)</span>
-<span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Read U+%04&quot;</span>G_GINT32_FORMAT<span class="string">&quot;X&quot;</span><span class="gtkdoc opt">,</span> c<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">gunichar</span><span class="normal"> c</span><span class="symbol">;</span>
+<span class="function">sscanf</span><span class="normal"> </span><span class="symbol">(</span><span class="string">"U+0041"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"U+%06"</span><span class="normal"><a href="glib-Basic-Types.html#G-GINT32-FORMAT:CAPS">G_GINT32_FORMAT</a></span><span class="string">"X"</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">c</span><span class="symbol">)</span>
+<span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"Read U+%04"</span><span class="normal"><a href="glib-Basic-Types.html#G-GINT32-FORMAT:CAPS">G_GINT32_FORMAT</a></span><span class="string">"X"</span><span class="symbol">,</span><span class="normal"> c</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -4016,7 +4020,7 @@ to handle unknown values. They may be regarded as <a class="link" href="glib-Uni
 <p>The <a class="link" href="glib-Unicode-Manipulation.html#GUnicodeScript" title="enum GUnicodeScript"><span class="type">GUnicodeScript</span></a> enumeration identifies different writing
 systems. The values correspond to the names as defined in the
 Unicode standard. The enumeration has been added in GLib 2.14,
-and is interchangeable with <a href="../pango/pango-Scripts-and-Languages.html#PangoScript"><span class="type">PangoScript</span></a>.</p>
+and is interchangeable with <span class="type">PangoScript</span>.</p>
 <p>Note that new types may be added in the future. Applications
 should be ready to handle unknown values.
 See <a class="ulink" href="http://www.unicode.org/reports/tr24/" target="_top">Unicode Standard Annex <span class="type">24</span>: Script names</a>.</p>
@@ -5005,23 +5009,31 @@ See <a class="ulink" href="http://www.unicode.org/reports/tr24/" target="_top">U
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-MASARAM-GONDI:CAPS"></a>G_UNICODE_SCRIPT_MASARAM_GONDI</p></td>
-<td> </td>
-<td> </td>
+<td class="enum_member_description">
+<p>Masaram Gondi. Since: 2.54</p>
+</td>
+<td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-NUSHU:CAPS"></a>G_UNICODE_SCRIPT_NUSHU</p></td>
-<td> </td>
-<td> </td>
+<td class="enum_member_description">
+<p>Nushu. Since: 2.54</p>
+</td>
+<td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-SOYOMBO:CAPS"></a>G_UNICODE_SCRIPT_SOYOMBO</p></td>
-<td> </td>
-<td> </td>
+<td class="enum_member_description">
+<p>Soyombo. Since: 2.54</p>
+</td>
+<td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-ZANABAZAR-SQUARE:CAPS"></a>G_UNICODE_SCRIPT_ZANABAZAR_SQUARE</p></td>
-<td> </td>
-<td> </td>
+<td class="enum_member_description">
+<p>Zanabazar Square. Since: 2.54</p>
+</td>
+<td class="enum_member_annotations"> </td>
 </tr>
 </tbody>
 </table></div>
@@ -5118,6 +5130,6 @@ should generally be normalized before comparing them.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

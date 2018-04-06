@@ -8,7 +8,7 @@
 <link rel="up" href="howto-interface.html" title="How to define and implement interfaces">
 <link rel="prev" href="howto-interface.html" title="How to define and implement interfaces">
 <link rel="next" href="howto-interface-prerequisite.html" title="Interface definition prerequisites">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -47,11 +47,11 @@
 3
 4
 5</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span> <span class="function">viewer_file_editable_interface_init</span> <span class="gtkdoc opt">(</span>ViewerEditableInterface <span class="gtkdoc opt">*</span>iface<span class="gtkdoc opt">);</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span><span class="normal"> </span><span class="function">viewer_file_editable_interface_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">);</span>
 
-<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-CODE:CAPS">G_DEFINE_TYPE_WITH_CODE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> G_TYPE_OBJECT<span class="gtkdoc opt">,</span>
-                         <span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span> <span class="gtkdoc opt">(</span>VIEWER_TYPE_EDITABLE<span class="gtkdoc opt">,</span>
-                                                viewer_file_editable_interface_init<span class="gtkdoc opt">))</span></pre></td>
+<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-CODE:CAPS">G_DEFINE_TYPE_WITH_CODE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">,</span>
+<span class="normal">                         </span><span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_EDITABLE</span><span class="symbol">,</span>
+<span class="normal">                                                viewer_file_editable_interface_init</span><span class="symbol">))</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -113,43 +113,43 @@
 35
 36
 37</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_editable_save</span> <span class="gtkdoc opt">(</span>ViewerFile  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                           GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;File implementation of editable interface save method: %s.</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span>
-           self<span class="gtkdoc opt">-&gt;</span>filename<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_editable_save</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                           </span><span class="usertype">GError</span><span class="normal">     </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"File implementation of editable interface save method: %s.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span>
+<span class="normal">           self</span><span class="symbol">-&gt;</span><span class="normal">filename</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_editable_undo</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                           guint       n_steps<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;File implementation of editable interface undo method: %s.</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span>
-           self<span class="gtkdoc opt">-&gt;</span>filename<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_editable_undo</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                           </span><span class="usertype">guint</span><span class="normal">       n_steps</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"File implementation of editable interface undo method: %s.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span>
+<span class="normal">           self</span><span class="symbol">-&gt;</span><span class="normal">filename</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_editable_redo</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                           guint       n_steps<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;File implementation of editable interface redo method: %s.</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span>
-           self<span class="gtkdoc opt">-&gt;</span>filename<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_editable_redo</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                           </span><span class="usertype">guint</span><span class="normal">       n_steps</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"File implementation of editable interface redo method: %s.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span>
+<span class="normal">           self</span><span class="symbol">-&gt;</span><span class="normal">filename</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_editable_interface_init</span> <span class="gtkdoc opt">(</span>ViewerEditableInterface <span class="gtkdoc opt">*</span>iface<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  iface<span class="gtkdoc opt">-&gt;</span>save <span class="gtkdoc opt">=</span> viewer_file_editable_save<span class="gtkdoc opt">;</span>
-  iface<span class="gtkdoc opt">-&gt;</span>undo <span class="gtkdoc opt">=</span> viewer_file_editable_undo<span class="gtkdoc opt">;</span>
-  iface<span class="gtkdoc opt">-&gt;</span>redo <span class="gtkdoc opt">=</span> viewer_file_editable_redo<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_editable_interface_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">save </span><span class="symbol">=</span><span class="normal"> viewer_file_editable_save</span><span class="symbol">;</span>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">undo </span><span class="symbol">=</span><span class="normal"> viewer_file_editable_undo</span><span class="symbol">;</span>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">redo </span><span class="symbol">=</span><span class="normal"> viewer_file_editable_redo</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_init</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* Instance variable initialisation code. */</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* Instance variable initialisation code. */</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -159,6 +159,6 @@
     </p>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

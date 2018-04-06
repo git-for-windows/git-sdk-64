@@ -8,7 +8,7 @@
 <link rel="up" href="chapter-gtype.html" title="The GLib Dynamic Type System">
 <link rel="prev" href="chapter-gtype.html" title="The GLib Dynamic Type System">
 <link rel="next" href="gtype-non-instantiable.html" title="Non-instantiable non-classed fundamental types">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -98,8 +98,8 @@
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc ppc">#define VIEWER_TYPE_FILE viewer_file_get_type ()</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS">G_DECLARE_FINAL_TYPE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> VIEWER<span class="gtkdoc opt">,</span> <span class="gtkdoc kwb">FILE</span><span class="gtkdoc opt">,</span> GObject<span class="gtkdoc opt">)</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="preproc">#define</span><span class="normal"> </span><span class="usertype">VIEWER_TYPE_FILE</span><span class="normal"> </span><span class="function">viewer_file_get_type</span><span class="normal"> </span><span class="symbol">()</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS">G_DECLARE_FINAL_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> VIEWER</span><span class="symbol">,</span><span class="normal"> FILE</span><span class="symbol">,</span><span class="normal"> <a href="gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -117,7 +117,7 @@
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS">G_DEFINE_TYPE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> G_TYPE_OBJECT<span class="gtkdoc opt">)</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS">G_DEFINE_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">)</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -146,19 +146,19 @@
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting">GType <span class="function">viewer_file_get_type</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">static</span> GType type <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>type <span class="gtkdoc opt">==</span> <span class="number">0</span><span class="gtkdoc opt">) {</span>
-    <span class="gtkdoc kwb">const</span> GTypeInfo info <span class="gtkdoc opt">= {</span>
-      <span class="comment">/* You fill this structure. */</span>
-    <span class="gtkdoc opt">};</span>
-    type <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span> <span class="gtkdoc opt">(</span>G_TYPE_OBJECT<span class="gtkdoc opt">,</span>
-                                   <span class="string">&quot;ViewerFile&quot;</span><span class="gtkdoc opt">,</span>
-                                   <span class="gtkdoc opt">&amp;</span>info<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">}</span>
-  <span class="keyword">return</span> type<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GType</span><span class="normal"> </span><span class="function">viewer_file_get_type</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="usertype">GType</span><span class="normal"> type </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">type </span><span class="symbol">==</span><span class="normal"> </span><span class="number">0</span><span class="symbol">)</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GTypeInfo</span><span class="normal"> info </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="comment">/* You fill this structure. */</span>
+<span class="normal">    </span><span class="cbracket">}</span><span class="symbol">;</span>
+<span class="normal">    type </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="string">"ViewerFile"</span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="symbol">&amp;</span><span class="normal">info</span><span class="symbol">,</span><span class="normal"> </span><span class="number">0</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="cbracket">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> type</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -168,6 +168,6 @@
       </p>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

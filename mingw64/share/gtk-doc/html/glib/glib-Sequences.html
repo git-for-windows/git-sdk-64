@@ -8,7 +8,7 @@
 <link rel="up" href="glib-data-types.html" title="GLib Data Types">
 <link rel="prev" href="glib-Double-ended-Queues.html" title="Double-ended Queues">
 <link rel="next" href="glib-Trash-Stacks.html" title="Trash Stacks">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -409,6 +409,11 @@ Even moving an element to another sequence using for example
 <a class="link" href="glib-Sequences.html#g-sequence-move-range" title="g_sequence_move_range ()"><code class="function">g_sequence_move_range()</code></a> will not invalidate the iterators pointing
 to it. The only operation that will invalidate an iterator is when
 the element it points to is removed from any sequence.</p>
+<p>To sort the data, either use <a class="link" href="glib-Sequences.html#g-sequence-insert-sorted" title="g_sequence_insert_sorted ()"><code class="function">g_sequence_insert_sorted()</code></a> or
+<a class="link" href="glib-Sequences.html#g-sequence-insert-sorted-iter" title="g_sequence_insert_sorted_iter ()"><code class="function">g_sequence_insert_sorted_iter()</code></a> to add data to the <a class="link" href="glib-Sequences.html#GSequence" title="GSequence"><span class="type">GSequence</span></a> or, if
+you want to add a large amount of data, it is more efficient to call
+<a class="link" href="glib-Sequences.html#g-sequence-sort" title="g_sequence_sort ()"><code class="function">g_sequence_sort()</code></a> or <a class="link" href="glib-Sequences.html#g-sequence-sort-iter" title="g_sequence_sort_iter ()"><code class="function">g_sequence_sort_iter()</code></a> after doing unsorted
+insertions.</p>
 </div>
 <div class="refsect1">
 <a name="glib-Sequences.functions_details"></a><h2>Functions</h2>
@@ -591,7 +596,8 @@ g_sequence_foreach (<em class="parameter"><code><a class="link" href="glib-Seque
 <p>Calls <em class="parameter"><code>func</code></em>
  for each item in the sequence passing <em class="parameter"><code>user_data</code></em>
 
-to the function.</p>
+to the function. <em class="parameter"><code>func</code></em>
+ must not modify the sequence itself.</p>
 <div class="refsect3">
 <a name="g-sequence-foreach.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -636,7 +642,9 @@ g_sequence_foreach_range (<em class="parameter"><code><a class="link" href="glib
 , <em class="parameter"><code>end</code></em>
 ) passing
 <em class="parameter"><code>user_data</code></em>
- to the function.</p>
+ to the function. <em class="parameter"><code>func</code></em>
+ must not modify the sequence
+itself.</p>
 <div class="refsect3">
 <a name="g-sequence-foreach-range.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1076,6 +1084,9 @@ otherwise the new position of <em class="parameter"><code>data</code></em>
 It should return 0 if the items are equal, a negative value
 if the first item comes before the second, and a positive value
 if the second  item comes before the first.</p>
+<p>Note that when adding a large amount of data to a <a class="link" href="glib-Sequences.html#GSequence" title="GSequence"><span class="type">GSequence</span></a>,
+it is more efficient to do unsorted insertions and then call
+<a class="link" href="glib-Sequences.html#g-sequence-sort" title="g_sequence_sort ()"><code class="function">g_sequence_sort()</code></a> or <a class="link" href="glib-Sequences.html#g-sequence-sort-iter" title="g_sequence_sort_iter ()"><code class="function">g_sequence_sort_iter()</code></a>.</p>
 <div class="refsect3">
 <a name="g-sequence-insert-sorted.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1138,6 +1149,9 @@ positive value if the second iterator comes before the first.</p>
 return 0 if the iterators are equal, a negative value if the
 first iterator comes before the second, and a positive value
 if the second iterator comes before the first.</p>
+<p>Note that when adding a large amount of data to a <a class="link" href="glib-Sequences.html#GSequence" title="GSequence"><span class="type">GSequence</span></a>,
+it is more efficient to do unsorted insertions and then call
+<a class="link" href="glib-Sequences.html#g-sequence-sort" title="g_sequence_sort ()"><code class="function">g_sequence_sort()</code></a> or <a class="link" href="glib-Sequences.html#g-sequence-sort-iter" title="g_sequence_sort_iter ()"><code class="function">g_sequence_sort_iter()</code></a>.</p>
 <div class="refsect3">
 <a name="g-sequence-insert-sorted-iter.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1416,10 +1430,7 @@ the second item comes before the first.</p>
 <p>If you are simply searching for an existing element of the sequence,
 consider using <a class="link" href="glib-Sequences.html#g-sequence-lookup" title="g_sequence_lookup ()"><code class="function">g_sequence_lookup()</code></a>.</p>
 <p>This function will fail if the data contained in the sequence is
-unsorted.  Use <a class="link" href="glib-Sequences.html#g-sequence-insert-sorted" title="g_sequence_insert_sorted ()"><code class="function">g_sequence_insert_sorted()</code></a> or
-<a class="link" href="glib-Sequences.html#g-sequence-insert-sorted-iter" title="g_sequence_insert_sorted_iter ()"><code class="function">g_sequence_insert_sorted_iter()</code></a> to add data to your sequence or, if
-you want to add a large amount of data, call <a class="link" href="glib-Sequences.html#g-sequence-sort" title="g_sequence_sort ()"><code class="function">g_sequence_sort()</code></a> after
-doing unsorted insertions.</p>
+unsorted.</p>
 <div class="refsect3">
 <a name="g-sequence-search.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1482,10 +1493,7 @@ value if the second iterator comes before the first.</p>
 <p>If you are simply searching for an existing element of the sequence,
 consider using <a class="link" href="glib-Sequences.html#g-sequence-lookup-iter" title="g_sequence_lookup_iter ()"><code class="function">g_sequence_lookup_iter()</code></a>.</p>
 <p>This function will fail if the data contained in the sequence is
-unsorted.  Use <a class="link" href="glib-Sequences.html#g-sequence-insert-sorted" title="g_sequence_insert_sorted ()"><code class="function">g_sequence_insert_sorted()</code></a> or
-<a class="link" href="glib-Sequences.html#g-sequence-insert-sorted-iter" title="g_sequence_insert_sorted_iter ()"><code class="function">g_sequence_insert_sorted_iter()</code></a> to add data to your sequence or, if
-you want to add a large amount of data, call <a class="link" href="glib-Sequences.html#g-sequence-sort" title="g_sequence_sort ()"><code class="function">g_sequence_sort()</code></a> after
-doing unsorted insertions.</p>
+unsorted.</p>
 <div class="refsect3">
 <a name="g-sequence-search-iter.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1554,10 +1562,7 @@ It should return 0 if the items are equal, a negative value if
 the first item comes before the second, and a positive value if
 the second item comes before the first.</p>
 <p>This function will fail if the data contained in the sequence is
-unsorted.  Use <a class="link" href="glib-Sequences.html#g-sequence-insert-sorted" title="g_sequence_insert_sorted ()"><code class="function">g_sequence_insert_sorted()</code></a> or
-<a class="link" href="glib-Sequences.html#g-sequence-insert-sorted-iter" title="g_sequence_insert_sorted_iter ()"><code class="function">g_sequence_insert_sorted_iter()</code></a> to add data to your sequence or, if
-you want to add a large amount of data, call <a class="link" href="glib-Sequences.html#g-sequence-sort" title="g_sequence_sort ()"><code class="function">g_sequence_sort()</code></a> after
-doing unsorted insertions.</p>
+unsorted.</p>
 <div class="refsect3">
 <a name="g-sequence-lookup.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1620,10 +1625,7 @@ It should return 0 if the iterators are equal, a negative value
 if the first iterator comes before the second, and a positive
 value if the second iterator comes before the first.</p>
 <p>This function will fail if the data contained in the sequence is
-unsorted.  Use <a class="link" href="glib-Sequences.html#g-sequence-insert-sorted" title="g_sequence_insert_sorted ()"><code class="function">g_sequence_insert_sorted()</code></a> or
-<a class="link" href="glib-Sequences.html#g-sequence-insert-sorted-iter" title="g_sequence_insert_sorted_iter ()"><code class="function">g_sequence_insert_sorted_iter()</code></a> to add data to your sequence or, if
-you want to add a large amount of data, call <a class="link" href="glib-Sequences.html#g-sequence-sort" title="g_sequence_sort ()"><code class="function">g_sequence_sort()</code></a> after
-doing unsorted insertions.</p>
+unsorted.</p>
 <div class="refsect3">
 <a name="g-sequence-lookup-iter.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -2082,6 +2084,6 @@ iterator pointing into a <a class="link" href="glib-Sequences.html#GSequence" ti
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

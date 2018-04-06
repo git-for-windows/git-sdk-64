@@ -8,7 +8,7 @@
 <link rel="up" href="glib-data-types.html" title="GLib Data Types">
 <link rel="prev" href="glib-Arrays.html" title="Arrays">
 <link rel="next" href="glib-Byte-Arrays.html" title="Byte Arrays">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -271,21 +271,21 @@ elements while iterating over the array.</p>
 13
 14
 15</pre></td>
-        <td class="listing_code"><pre class="programlisting">GPtrArray <span class="gtkdoc opt">*</span>array<span class="gtkdoc opt">;</span>
-gchar <span class="gtkdoc opt">*</span>string1 <span class="gtkdoc opt">=</span> <span class="string">&quot;one&quot;</span><span class="gtkdoc opt">;</span>
-gchar <span class="gtkdoc opt">*</span>string2 <span class="gtkdoc opt">=</span> <span class="string">&quot;two&quot;</span><span class="gtkdoc opt">;</span>
-gchar <span class="gtkdoc opt">*</span>string3 <span class="gtkdoc opt">=</span> <span class="string">&quot;three&quot;</span><span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GPtrArray</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">array</span><span class="symbol">;</span>
+<span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">string1 </span><span class="symbol">=</span><span class="normal"> </span><span class="string">"one"</span><span class="symbol">;</span>
+<span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">string2 </span><span class="symbol">=</span><span class="normal"> </span><span class="string">"two"</span><span class="symbol">;</span>
+<span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">string3 </span><span class="symbol">=</span><span class="normal"> </span><span class="string">"three"</span><span class="symbol">;</span>
 
-array <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-new">g_ptr_array_new</a></span> <span class="gtkdoc opt">();</span>
-<span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-add">g_ptr_array_add</a></span> <span class="gtkdoc opt">(</span>array<span class="gtkdoc opt">, (</span>gpointer<span class="gtkdoc opt">)</span> string1<span class="gtkdoc opt">);</span>
-<span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-add">g_ptr_array_add</a></span> <span class="gtkdoc opt">(</span>array<span class="gtkdoc opt">, (</span>gpointer<span class="gtkdoc opt">)</span> string2<span class="gtkdoc opt">);</span>
-<span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-add">g_ptr_array_add</a></span> <span class="gtkdoc opt">(</span>array<span class="gtkdoc opt">, (</span>gpointer<span class="gtkdoc opt">)</span> string3<span class="gtkdoc opt">);</span>
+<span class="normal">array </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-new">g_ptr_array_new</a></span><span class="normal"> </span><span class="symbol">();</span>
+<span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-add">g_ptr_array_add</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">array</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Basic-Types.html#gpointer">gpointer</a></span><span class="symbol">)</span><span class="normal"> string1</span><span class="symbol">);</span>
+<span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-add">g_ptr_array_add</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">array</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Basic-Types.html#gpointer">gpointer</a></span><span class="symbol">)</span><span class="normal"> string2</span><span class="symbol">);</span>
+<span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-add">g_ptr_array_add</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">array</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Basic-Types.html#gpointer">gpointer</a></span><span class="symbol">)</span><span class="normal"> string3</span><span class="symbol">);</span>
 
-<span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-index">g_ptr_array_index</a></span> <span class="gtkdoc opt">(</span>array<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">) != (</span>gpointer<span class="gtkdoc opt">)</span> string1<span class="gtkdoc opt">)</span>
-  <span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;ERROR: got %p instead of %p</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span>
-           <span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-index">g_ptr_array_index</a></span> <span class="gtkdoc opt">(</span>array<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">),</span> string1<span class="gtkdoc opt">);</span>
+<span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-index">g_ptr_array_index</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">array</span><span class="symbol">,</span><span class="normal"> </span><span class="number">0</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">!=</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="glib-Basic-Types.html#gpointer">gpointer</a></span><span class="symbol">)</span><span class="normal"> string1</span><span class="symbol">)</span>
+<span class="normal">  </span><span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"ERROR: got %p instead of %p</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span>
+<span class="normal">           </span><span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-index">g_ptr_array_index</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">array</span><span class="symbol">,</span><span class="normal"> </span><span class="number">0</span><span class="symbol">),</span><span class="normal"> string1</span><span class="symbol">);</span>
 
-<span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-free">g_ptr_array_free</a></span> <span class="gtkdoc opt">(</span>array<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">);</span></pre></td>
+<span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-free">g_ptr_array_free</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">array</span><span class="symbol">,</span><span class="normal"> <a href="glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -992,7 +992,9 @@ The pointer array should be freed using <a class="link" href="glib-Memory-Alloca
 g_ptr_array_foreach (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *array</code></em>,
                      <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GFunc" title="GFunc ()"><span class="type">GFunc</span></a> func</code></em>,
                      <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
-<p>Calls a function for each element of a <a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a>.</p>
+<p>Calls a function for each element of a <a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a>. <em class="parameter"><code>func</code></em>
+ must not
+add elements to or remove elements from the array.</p>
 <div class="refsect3">
 <a name="g-ptr-array-foreach.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1186,6 +1188,6 @@ array grows</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

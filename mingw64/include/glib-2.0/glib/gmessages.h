@@ -282,6 +282,14 @@ void g_assert_warning         (const char *log_domain,
 		               const char *pretty_function,
 		               const char *expression) G_GNUC_NORETURN;
 
+GLIB_AVAILABLE_IN_2_56
+void g_log_structured_standard (const gchar    *log_domain,
+                                GLogLevelFlags  log_level,
+                                const gchar    *file,
+                                const gchar    *line,
+                                const gchar    *func,
+                                const gchar    *message_format,
+                                ...) G_GNUC_PRINTF (6, 7);
 
 #ifndef G_LOG_DOMAIN
 #define G_LOG_DOMAIN    ((gchar*) 0)
@@ -290,38 +298,26 @@ void g_assert_warning         (const char *log_domain,
 #if defined(G_HAVE_ISO_VARARGS) && !G_ANALYZER_ANALYZING
 #ifdef G_LOG_USE_STRUCTURED
 #define g_error(...)  G_STMT_START {                                            \
-                        g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR,      \
-                                          "CODE_FILE", __FILE__,                \
-                                          "CODE_LINE", G_STRINGIFY (__LINE__),  \
-                                          "CODE_FUNC", G_STRFUNC,                \
-                                          "MESSAGE", __VA_ARGS__);              \
+                        g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, \
+                                                   __FILE__, G_STRINGIFY (__LINE__), \
+                                                   G_STRFUNC, __VA_ARGS__); \
                         for (;;) ;                                              \
                       } G_STMT_END
-#define g_message(...)  g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE,    \
-                                          "CODE_FILE", __FILE__,                \
-                                          "CODE_LINE", G_STRINGIFY (__LINE__),  \
-                                          "CODE_FUNC", G_STRFUNC,                \
-                                          "MESSAGE", __VA_ARGS__)
-#define g_critical(...) g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL,   \
-                                          "CODE_FILE", __FILE__,                \
-                                          "CODE_LINE", G_STRINGIFY (__LINE__),  \
-                                          "CODE_FUNC", G_STRFUNC,                \
-                                          "MESSAGE", __VA_ARGS__)
-#define g_warning(...)  g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,    \
-                                          "CODE_FILE", __FILE__,                \
-                                          "CODE_LINE", G_STRINGIFY (__LINE__),  \
-                                          "CODE_FUNC", G_STRFUNC,                \
-                                          "MESSAGE", __VA_ARGS__)
-#define g_info(...)     g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_INFO,       \
-                                          "CODE_FILE", __FILE__,                \
-                                          "CODE_LINE", G_STRINGIFY (__LINE__),  \
-                                          "CODE_FUNC", G_STRFUNC,                \
-                                          "MESSAGE", __VA_ARGS__)
-#define g_debug(...)    g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,      \
-                                          "CODE_FILE", __FILE__,                \
-                                          "CODE_LINE", G_STRINGIFY (__LINE__),  \
-                                          "CODE_FUNC", G_STRFUNC,                \
-                                          "MESSAGE", __VA_ARGS__)
+#define g_message(...)  g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, \
+                                                   __FILE__, G_STRINGIFY (__LINE__), \
+                                                   G_STRFUNC, __VA_ARGS__)
+#define g_critical(...) g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL, \
+                                                   __FILE__, G_STRINGIFY (__LINE__), \
+                                                   G_STRFUNC, __VA_ARGS__)
+#define g_warning(...)  g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, \
+                                                   __FILE__, G_STRINGIFY (__LINE__), \
+                                                   G_STRFUNC, __VA_ARGS__)
+#define g_info(...)     g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_INFO, \
+                                                   __FILE__, G_STRINGIFY (__LINE__), \
+                                                   G_STRFUNC, __VA_ARGS__)
+#define g_debug(...)    g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, \
+                                                   __FILE__, G_STRINGIFY (__LINE__), \
+                                                   G_STRFUNC, __VA_ARGS__)
 #else
 /* for(;;) ; so that GCC knows that control doesn't go past g_error().
  * Put space before ending semicolon to avoid C++ build warnings.
@@ -351,38 +347,26 @@ void g_assert_warning         (const char *log_domain,
 #elif defined(G_HAVE_GNUC_VARARGS)  && !G_ANALYZER_ANALYZING
 #ifdef G_LOG_USE_STRUCTURED
 #define g_error(format...)   G_STMT_START {                                          \
-                               g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR,    \
-                                                "CODE_FILE", __FILE__,               \
-                                                "CODE_LINE", G_STRINGIFY (__LINE__), \
-                                                "CODE_FUNC", G_STRFUNC,               \
-                                                "MESSAGE", format);                  \
+                               g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, \
+                                                          __FILE__, G_STRINGIFY (__LINE__), \
+                                                          G_STRFUNC, format); \
                                for (;;) ;                                            \
                              } G_STMT_END
-#define g_message(format...)  g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE,   \
-                                               "CODE_FILE", __FILE__,                \
-                                               "CODE_LINE", G_STRINGIFY (__LINE__),  \
-                                               "CODE_FUNC", G_STRFUNC,                \
-                                               "MESSAGE", format)
-#define g_critical(format...) g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL,  \
-                                                "CODE_FILE", __FILE__,               \
-                                                "CODE_LINE", G_STRINGIFY (__LINE__), \
-                                                "CODE_FUNC", G_STRFUNC,               \
-                                                "MESSAGE", format)
-#define g_warning(format...)  g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,   \
-                                                "CODE_FILE", __FILE__,               \
-                                                "CODE_LINE", G_STRINGIFY (__LINE__), \
-                                                "CODE_FUNC", G_STRFUNC,               \
-                                                "MESSAGE", format)
-#define g_info(format...)     g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_INFO,      \
-                                                "CODE_FILE", __FILE__,               \
-                                                "CODE_LINE", G_STRINGIFY (__LINE__), \
-                                                "CODE_FUNC", G_STRFUNC,               \
-                                                "MESSAGE", format)
-#define g_debug(format...)    g_log_structured (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,     \
-                                                "CODE_FILE", __FILE__,               \
-                                                "CODE_LINE", G_STRINGIFY (__LINE__), \
-                                                "CODE_FUNC", G_STRFUNC,               \
-                                                "MESSAGE", format)
+#define g_message(format...)  g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, \
+                                                         __FILE__, G_STRINGIFY (__LINE__), \
+                                                         G_STRFUNC, format)
+#define g_critical(format...) g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL, \
+                                                         __FILE__, G_STRINGIFY (__LINE__), \
+                                                         G_STRFUNC, format)
+#define g_warning(format...)  g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, \
+                                                         __FILE__, G_STRINGIFY (__LINE__), \
+                                                         G_STRFUNC, format)
+#define g_info(format...)     g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_INFO, \
+                                                         __FILE__, G_STRINGIFY (__LINE__), \
+                                                         G_STRFUNC, format)
+#define g_debug(format...)    g_log_structured_standard (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, \
+                                                         __FILE__, G_STRINGIFY (__LINE__), \
+                                                         G_STRFUNC, format)
 #else
 #define g_error(format...)    G_STMT_START {                 \
                                 g_log (G_LOG_DOMAIN,         \
@@ -411,7 +395,7 @@ void g_assert_warning         (const char *log_domain,
 static void g_error (const gchar *format, ...) G_GNUC_NORETURN G_ANALYZER_NORETURN;
 static void g_critical (const gchar *format, ...) G_ANALYZER_NORETURN;
 
-static void
+static inline void
 g_error (const gchar *format,
          ...)
 {
@@ -422,7 +406,7 @@ g_error (const gchar *format,
 
   for(;;) ;
 }
-static void
+static inline void
 g_message (const gchar *format,
            ...)
 {
@@ -431,7 +415,7 @@ g_message (const gchar *format,
   g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, format, args);
   va_end (args);
 }
-static void
+static inline void
 g_critical (const gchar *format,
             ...)
 {
@@ -440,7 +424,7 @@ g_critical (const gchar *format,
   g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL, format, args);
   va_end (args);
 }
-static void
+static inline void
 g_warning (const gchar *format,
            ...)
 {
@@ -449,7 +433,7 @@ g_warning (const gchar *format,
   g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, format, args);
   va_end (args);
 }
-static void
+static inline void
 g_info (const gchar *format,
         ...)
 {
@@ -458,7 +442,7 @@ g_info (const gchar *format,
   g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_INFO, format, args);
   va_end (args);
 }
-static void
+static inline void
 g_debug (const gchar *format,
          ...)
 {
@@ -533,8 +517,19 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
  * the result is usually that a critical message is logged and the current
  * function returns.
  *
- * If G_DISABLE_CHECKS is defined then the check is not performed.  You
+ * If `G_DISABLE_CHECKS` is defined then the check is not performed.  You
  * should therefore not depend on any side effects of @expr.
+ *
+ * To debug failure of a g_return_if_fail() check, run the code under a debugger
+ * with `G_DEBUG=fatal-criticals` or `G_DEBUG=fatal-warnings` defined in the
+ * environment (see [Running GLib Applications](glib-running.html)):
+ *
+ * |[
+ *   G_DEBUG=fatal-warnings gdb ./my-program
+ * ]|
+ *
+ * Any unrelated failures can be skipped over in
+ * [gdb](https://www.gnu.org/software/gdb/) using the `continue` command.
  */
 #define g_return_if_fail(expr) G_STMT_START{ (void)0; }G_STMT_END
 
@@ -557,8 +552,10 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
  * the result is usually that a critical message is logged and @val is
  * returned from the current function.
  *
- * If G_DISABLE_CHECKS is defined then the check is not performed.  You
+ * If `G_DISABLE_CHECKS` is defined then the check is not performed.  You
  * should therefore not depend on any side effects of @expr.
+ *
+ * See g_return_if_fail() for guidance on how to debug failure of this check.
  */
 #define g_return_val_if_fail(expr,val) G_STMT_START{ (void)0; }G_STMT_END
 
@@ -567,6 +564,8 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
  *
  * Logs a critical message and returns from the current function.
  * This can only be used in functions which do not return a value.
+ *
+ * See g_return_if_fail() for guidance on how to debug failure of this check.
  */
 #define g_return_if_reached() G_STMT_START{ return; }G_STMT_END
 
@@ -575,6 +574,8 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
  * @val: the value to return from the current function
  *
  * Logs a critical message and returns @val.
+ *
+ * See g_return_if_fail() for guidance on how to debug failure of this check.
  */
 #define g_return_val_if_reached(val) G_STMT_START{ return (val); }G_STMT_END
 

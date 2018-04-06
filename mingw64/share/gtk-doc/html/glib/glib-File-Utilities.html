@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Spawning-Processes.html" title="Spawning Processes">
 <link rel="next" href="glib-URI-Functions.html" title="URI Functions">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -400,16 +400,26 @@
 <a name="glib-File-Utilities.includes"></a><h2>Includes</h2>
 <pre class="synopsis">#include &lt;glib.h&gt;
 #include &lt;glib/gstdio.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
 </pre>
 </div>
 <div class="refsect1">
 <a name="glib-File-Utilities.description"></a><h2>Description</h2>
+<p>Do not use these APIs unless you are porting a POSIX application to Windows.
+A more high-level file access API is provided as GIO — see the documentation
+for <a href="../GFile.html#GFile-struct"><span class="type">GFile</span></a>.</p>
 <p>There is a group of functions which wrap the common POSIX functions
 dealing with filenames (<a class="link" href="glib-File-Utilities.html#g-open" title="g_open ()"><code class="function">g_open()</code></a>, <a class="link" href="glib-File-Utilities.html#g-rename" title="g_rename ()"><code class="function">g_rename()</code></a>, <a class="link" href="glib-File-Utilities.html#g-mkdir" title="g_mkdir ()"><code class="function">g_mkdir()</code></a>, <a class="link" href="glib-File-Utilities.html#g-stat" title="g_stat ()"><code class="function">g_stat()</code></a>,
 <a class="link" href="glib-File-Utilities.html#g-unlink" title="g_unlink ()"><code class="function">g_unlink()</code></a>, <a class="link" href="glib-File-Utilities.html#g-remove" title="g_remove ()"><code class="function">g_remove()</code></a>, <a class="link" href="glib-File-Utilities.html#g-fopen" title="g_fopen ()"><code class="function">g_fopen()</code></a>, <a class="link" href="glib-File-Utilities.html#g-freopen" title="g_freopen ()"><code class="function">g_freopen()</code></a>). The point of these
 wrappers is to make it possible to handle file names with any Unicode
 characters in them on Windows without having to use ifdefs and the
 wide character API in the application code.</p>
+<p>On some Unix systems, these APIs may be defined as identical to their POSIX
+counterparts. For this reason, you must check for and include the necessary
+header files (such as <code class="literal">fcntl.h</code>) before using functions like <a class="link" href="glib-File-Utilities.html#g-creat" title="g_creat ()"><code class="function">g_creat()</code></a>. You
+must also define the relevant feature test macros.</p>
 <p>The pathname argument should be in the GLib file name encoding.
 On POSIX this is the actual on-disk encoding which might correspond
 to the locale settings of the process (or the <code class="literal">G_FILENAME_ENCODING</code>
@@ -634,12 +644,12 @@ tricked into writing into a different location. It doesn't work!</p>
 4
 5
 6</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc slc">// DON&apos;T DO THIS</span>
-<span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="glib-File-Utilities.html#g-file-test">g_file_test</a></span> <span class="gtkdoc opt">(</span>filename<span class="gtkdoc opt">,</span> G_FILE_TEST_IS_SYMLINK<span class="gtkdoc opt">))</span> 
-  <span class="gtkdoc opt">{</span>
-    fd <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-File-Utilities.html#g-open">g_open</a></span> <span class="gtkdoc opt">(</span>filename<span class="gtkdoc opt">,</span> O_WRONLY<span class="gtkdoc opt">);</span>
-    <span class="gtkdoc slc">// write to fd</span>
-  <span class="gtkdoc opt">}</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="comment">// DON'T DO THIS</span>
+<span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="glib-File-Utilities.html#g-file-test">g_file_test</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">filename</span><span class="symbol">,</span><span class="normal"> <a href="glib-File-Utilities.html#G-FILE-TEST-IS-SYMLINK:CAPS">G_FILE_TEST_IS_SYMLINK</a></span><span class="symbol">))</span><span class="normal"> </span>
+<span class="normal">  </span><span class="cbracket">{</span>
+<span class="normal">    fd </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-File-Utilities.html#g-open">g_open</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">filename</span><span class="symbol">,</span><span class="normal"> O_WRONLY</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="comment">// write to fd</span>
+<span class="normal">  </span><span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -2510,6 +2520,6 @@ system call, depending on the platform and/or compiler being used.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

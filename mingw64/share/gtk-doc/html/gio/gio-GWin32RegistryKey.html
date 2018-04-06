@@ -8,7 +8,7 @@
 <link rel="up" href="registry.html" title="Win32 registry support">
 <link rel="prev" href="registry.html" title="Win32 registry support">
 <link rel="next" href="application.html" title="Application support">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -888,31 +888,31 @@ Enumeration errors can be ignored if <em class="parameter"><code>skip_errors</co
 23
 24
 25</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc slc">// recursively iterate a key</span>
-<span class="gtkdoc kwb">void</span>
-<span class="function">iterate_key_recursive</span> <span class="gtkdoc opt">(</span>GWin32RegistryKey <span class="gtkdoc opt">*</span>key<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GWin32RegistrySubkeyIter iter<span class="gtkdoc opt">;</span>
-  gchar <span class="gtkdoc opt">*</span>name<span class="gtkdoc opt">;</span>
-  GWin32RegistryKey <span class="gtkdoc opt">*</span>child<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="comment">// recursively iterate a key</span>
+<span class="type">void</span>
+<span class="function">iterate_key_recursive</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GWin32RegistryKey</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">key</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GWin32RegistrySubkeyIter</span><span class="normal"> iter</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">name</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GWin32RegistryKey</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">child</span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-init">g_win32_registry_subkey_iter_init</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> key<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
-    <span class="keyword">return</span><span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-init">g_win32_registry_subkey_iter_init</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> key</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
+<span class="normal">    </span><span class="keyword">return</span><span class="symbol">;</span>
 
-  <span class="keyword">while</span> <span class="gtkdoc opt">(</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-next">g_win32_registry_subkey_iter_next</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-get-name">g_win32_registry_subkey_iter_get_name</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">, &amp;</span>name<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
-        <span class="keyword">continue</span><span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">while</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-next">g_win32_registry_subkey_iter_next</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-get-name">g_win32_registry_subkey_iter_get_name</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">name</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
+<span class="normal">        </span><span class="keyword">continue</span><span class="symbol">;</span>
 
-      <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;subkey &apos;%s&apos;</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> name<span class="gtkdoc opt">);</span>
-      child <span class="gtkdoc opt">=</span> <span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-key-get-child">g_win32_registry_key_get_child</a></span> <span class="gtkdoc opt">(</span>key<span class="gtkdoc opt">,</span> name<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">      </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"subkey '%s'</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> name</span><span class="symbol">);</span>
+<span class="normal">      child </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-key-get-child">g_win32_registry_key_get_child</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">key</span><span class="symbol">,</span><span class="normal"> name</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-      <span class="keyword">if</span> <span class="gtkdoc opt">(</span>child<span class="gtkdoc opt">)</span>
-        <span class="function">iterate_key_recursive</span> <span class="gtkdoc opt">(</span>child<span class="gtkdoc opt">);</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">child</span><span class="symbol">)</span>
+<span class="normal">        </span><span class="function">iterate_key_recursive</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">child</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-clear">g_win32_registry_subkey_iter_clear</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-clear">g_win32_registry_subkey_iter_clear</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1204,32 +1204,32 @@ Enumeration errors can be ignored if <em class="parameter"><code>skip_errors</co
 24
 25
 26</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc slc">// iterate values of a key</span>
-<span class="gtkdoc kwb">void</span>
-<span class="function">iterate_values_recursive</span> <span class="gtkdoc opt">(</span>GWin32RegistryKey <span class="gtkdoc opt">*</span>key<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GWin32RegistryValueIter iter<span class="gtkdoc opt">;</span>
-  gchar <span class="gtkdoc opt">*</span>name<span class="gtkdoc opt">;</span>
-  GWin32RegistryValueType val_type<span class="gtkdoc opt">;</span>
-  gchar <span class="gtkdoc opt">*</span>val_data<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="comment">// iterate values of a key</span>
+<span class="type">void</span>
+<span class="function">iterate_values_recursive</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GWin32RegistryKey</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">key</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GWin32RegistryValueIter</span><span class="normal"> iter</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">name</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GWin32RegistryValueType</span><span class="normal"> val_type</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">val_data</span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-init">g_win32_registry_value_iter_init</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> key<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
-    <span class="keyword">return</span><span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-init">g_win32_registry_value_iter_init</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> key</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
+<span class="normal">    </span><span class="keyword">return</span><span class="symbol">;</span>
 
-  <span class="keyword">while</span> <span class="gtkdoc opt">(</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-next">g_win32_registry_value_iter_next</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
-    <span class="gtkdoc opt">{</span>
-      <span class="keyword">if</span> <span class="gtkdoc opt">((!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-get-value-type">g_win32_registry_value_iter_get_value_type</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">, &amp;</span>value<span class="gtkdoc opt">)) ||</span>
-          <span class="gtkdoc opt">((</span>val_type <span class="gtkdoc opt">!=</span> G_WIN32_REGISTRY_VALUE_STR<span class="gtkdoc opt">) &amp;&amp;</span>
-           <span class="gtkdoc opt">(</span>val_type <span class="gtkdoc opt">!=</span> G_WIN32_REGISTRY_VALUE_EXPAND_STR<span class="gtkdoc opt">)))</span>
-        <span class="keyword">continue</span><span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">while</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-next">g_win32_registry_value_iter_next</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">((!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-get-value-type">g_win32_registry_value_iter_get_value_type</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">value</span><span class="symbol">))</span><span class="normal"> </span><span class="symbol">||</span>
+<span class="normal">          </span><span class="symbol">((</span><span class="normal">val_type </span><span class="symbol">!=</span><span class="normal"> <a href="gio-GWin32RegistryKey.html#G-WIN32-REGISTRY-VALUE-STR:CAPS">G_WIN32_REGISTRY_VALUE_STR</a></span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">&amp;&amp;</span>
+<span class="normal">           </span><span class="symbol">(</span><span class="normal">val_type </span><span class="symbol">!=</span><span class="normal"> <a href="gio-GWin32RegistryKey.html#G-WIN32-REGISTRY-VALUE-EXPAND-STR:CAPS">G_WIN32_REGISTRY_VALUE_EXPAND_STR</a></span><span class="symbol">)))</span>
+<span class="normal">        </span><span class="keyword">continue</span><span class="symbol">;</span>
 
-      <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function">g_win32_registry_value_iter_get_value</span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">, &amp;</span>name<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span>
-                                                 <span class="gtkdoc opt">&amp;</span>val_data<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
-        <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;value &apos;%s&apos; = &apos;%s&apos;</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> name<span class="gtkdoc opt">,</span> val_data<span class="gtkdoc opt">);</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function">g_win32_registry_value_iter_get_value</span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">name</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
+<span class="normal">                                                 </span><span class="symbol">&amp;</span><span class="normal">val_data</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
+<span class="normal">        </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"value '%s' = '%s'</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> name</span><span class="symbol">,</span><span class="normal"> val_data</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-clear">g_win32_registry_value_iter_clear</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-clear">g_win32_registry_value_iter_clear</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -2061,6 +2061,6 @@ until the key is put on watch again by calling
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

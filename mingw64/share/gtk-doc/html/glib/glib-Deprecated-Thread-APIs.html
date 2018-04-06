@@ -8,7 +8,7 @@
 <link rel="up" href="deprecated.html" title="Deprecated APIs">
 <link rel="prev" href="deprecated.html" title="Deprecated APIs">
 <link rel="next" href="glib-Caches.html" title="Caches">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -1748,19 +1748,19 @@ a GStaticMutex:</p>
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">int</span>
-<span class="function">give_me_next_number</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">static int</span> current_number <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">int</span> ret_val<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">static</span> GStaticMutex mutex <span class="gtkdoc opt">=</span> G_STATIC_MUTEX_INIT<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="type">int</span>
+<span class="function">give_me_next_number</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="type">int</span><span class="normal"> current_number </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">int</span><span class="normal"> ret_val</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="usertype">GStaticMutex</span><span class="normal"> mutex </span><span class="symbol">=</span><span class="normal"> <a href="glib-Deprecated-Thread-APIs.html#G-STATIC-MUTEX-INIT:CAPS">G_STATIC_MUTEX_INIT</a></span><span class="symbol">;</span>
 
-  <span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-mutex-lock">g_static_mutex_lock</a></span> <span class="gtkdoc opt">(&amp;</span>mutex<span class="gtkdoc opt">);</span>
-  ret_val <span class="gtkdoc opt">=</span> current_number <span class="gtkdoc opt">=</span> <span class="function">calc_next_number</span> <span class="gtkdoc opt">(</span>current_number<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-mutex-unlock">g_static_mutex_unlock</a></span> <span class="gtkdoc opt">(&amp;</span>mutex<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-mutex-lock">g_static_mutex_lock</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">mutex</span><span class="symbol">);</span>
+<span class="normal">  ret_val </span><span class="symbol">=</span><span class="normal"> current_number </span><span class="symbol">=</span><span class="normal"> </span><span class="function">calc_next_number</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">current_number</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-mutex-unlock">g_static_mutex_unlock</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">mutex</span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> ret_val<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> ret_val</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1801,7 +1801,7 @@ cannot be assigned to a variable. In that case you have to use
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">GStaticMutex my_mutex <span class="gtkdoc opt">=</span> G_STATIC_MUTEX_INIT<span class="gtkdoc opt">;</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GStaticMutex</span><span class="normal"> my_mutex </span><span class="symbol">=</span><span class="normal"> <a href="glib-Deprecated-Thread-APIs.html#G-STATIC-MUTEX-INIT:CAPS">G_STATIC_MUTEX_INIT</a></span><span class="symbol">;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1847,7 +1847,7 @@ cannot be assigned to a variable. In that case you have to use
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">GStaticRecMutex my_mutex <span class="gtkdoc opt">=</span> G_STATIC_REC_MUTEX_INIT<span class="gtkdoc opt">;</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GStaticRecMutex</span><span class="normal"> my_mutex </span><span class="symbol">=</span><span class="normal"> <a href="glib-Deprecated-Thread-APIs.html#G-STATIC-REC-MUTEX-INIT:CAPS">G_STATIC_REC_MUTEX_INIT</a></span><span class="symbol">;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1908,39 +1908,39 @@ only one writer may write at a time.</p>
 31
 32
 33</pre></td>
-        <td class="listing_code"><pre class="programlisting">GStaticRWLock rwlock <span class="gtkdoc opt">=</span> G_STATIC_RW_LOCK_INIT<span class="gtkdoc opt">;</span>
-GPtrArray <span class="gtkdoc opt">*</span>array<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GStaticRWLock</span><span class="normal"> rwlock </span><span class="symbol">=</span><span class="normal"> <a href="glib-Deprecated-Thread-APIs.html#G-STATIC-RW-LOCK-INIT:CAPS">G_STATIC_RW_LOCK_INIT</a></span><span class="symbol">;</span>
+<span class="usertype">GPtrArray</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">array</span><span class="symbol">;</span>
 
-gpointer
-<span class="function">my_array_get</span> <span class="gtkdoc opt">(</span>guint index<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  gpointer retval <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="normal"><a href="glib-Basic-Types.html#gpointer">gpointer</a></span>
+<span class="function">my_array_get</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">guint</span><span class="normal"> index</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">gpointer</span><span class="normal"> retval </span><span class="symbol">=</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span>array<span class="gtkdoc opt">)</span>
-    <span class="keyword">return</span> NULL<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="normal">array</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="keyword">return</span><span class="normal"> <a href="glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-  <span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-rw-lock-reader-lock">g_static_rw_lock_reader_lock</a></span> <span class="gtkdoc opt">(&amp;</span>rwlock<span class="gtkdoc opt">);</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>index <span class="gtkdoc opt">&lt;</span> array<span class="gtkdoc opt">-&gt;</span>len<span class="gtkdoc opt">)</span>
-    retval <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-index">g_ptr_array_index</a></span> <span class="gtkdoc opt">(</span>array<span class="gtkdoc opt">,</span> index<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-rw-lock-reader-unlock">g_static_rw_lock_reader_unlock</a></span> <span class="gtkdoc opt">(&amp;</span>rwlock<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-rw-lock-reader-lock">g_static_rw_lock_reader_lock</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">rwlock</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">index </span><span class="symbol">&lt;</span><span class="normal"> array</span><span class="symbol">-&gt;</span><span class="normal">len</span><span class="symbol">)</span>
+<span class="normal">    retval </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-index">g_ptr_array_index</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">array</span><span class="symbol">,</span><span class="normal"> index</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-rw-lock-reader-unlock">g_static_rw_lock_reader_unlock</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">rwlock</span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> retval<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> retval</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">void</span>
-<span class="function">my_array_set</span> <span class="gtkdoc opt">(</span>guint index<span class="gtkdoc opt">,</span> gpointer data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-rw-lock-writer-lock">g_static_rw_lock_writer_lock</a></span> <span class="gtkdoc opt">(&amp;</span>rwlock<span class="gtkdoc opt">);</span>
+<span class="type">void</span>
+<span class="function">my_array_set</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">guint</span><span class="normal"> index</span><span class="symbol">,</span><span class="normal"> </span><span class="usertype">gpointer</span><span class="normal"> data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-rw-lock-writer-lock">g_static_rw_lock_writer_lock</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">rwlock</span><span class="symbol">);</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span>array<span class="gtkdoc opt">)</span>
-    array <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-new">g_ptr_array_new</a></span> <span class="gtkdoc opt">();</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="normal">array</span><span class="symbol">)</span>
+<span class="normal">    array </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-new">g_ptr_array_new</a></span><span class="normal"> </span><span class="symbol">();</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>index <span class="gtkdoc opt">&gt;=</span> array<span class="gtkdoc opt">-&gt;</span>len<span class="gtkdoc opt">)</span>
-    <span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-set-size">g_ptr_array_set_size</a></span> <span class="gtkdoc opt">(</span>array<span class="gtkdoc opt">,</span> index <span class="gtkdoc opt">+</span> <span class="number">1</span><span class="gtkdoc opt">);</span>
-  <span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-index">g_ptr_array_index</a></span> <span class="gtkdoc opt">(</span>array<span class="gtkdoc opt">,</span> index<span class="gtkdoc opt">) =</span> data<span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">index </span><span class="symbol">&gt;=</span><span class="normal"> array</span><span class="symbol">-&gt;</span><span class="normal">len</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-set-size">g_ptr_array_set_size</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">array</span><span class="symbol">,</span><span class="normal"> index </span><span class="symbol">+</span><span class="normal"> </span><span class="number">1</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="glib-Pointer-Arrays.html#g-ptr-array-index">g_ptr_array_index</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">array</span><span class="symbol">,</span><span class="normal"> index</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> data</span><span class="symbol">;</span>
 
-  <span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-rw-lock-writer-unlock">g_static_rw_lock_writer_unlock</a></span> <span class="gtkdoc opt">(&amp;</span>rwlock<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-rw-lock-writer-unlock">g_static_rw_lock_writer_unlock</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">rwlock</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1988,7 +1988,7 @@ cannot be assigned to a variable. In that case you have to use
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">GStaticRWLock my_lock <span class="gtkdoc opt">=</span> G_STATIC_RW_LOCK_INIT<span class="gtkdoc opt">;</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GStaticRWLock</span><span class="normal"> my_lock </span><span class="symbol">=</span><span class="normal"> <a href="glib-Deprecated-Thread-APIs.html#G-STATIC-RW-LOCK-INIT:CAPS">G_STATIC_RW_LOCK_INIT</a></span><span class="symbol">;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -2029,23 +2029,23 @@ similar to the difference between <a class="link" href="glib-Threads.html#GMutex
 15
 16
 17</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">int</span>
-<span class="function">give_me_next_number</span> <span class="gtkdoc opt">()</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">static</span> GStaticPrivate current_number_key <span class="gtkdoc opt">=</span> G_STATIC_PRIVATE_INIT<span class="gtkdoc opt">;</span>
-  <span class="gtkdoc kwb">int</span> <span class="gtkdoc opt">*</span>current_number <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-private-get">g_static_private_get</a></span> <span class="gtkdoc opt">(&amp;</span>current_number_key<span class="gtkdoc opt">);</span>
+        <td class="listing_code"><pre class="programlisting"><span class="type">int</span>
+<span class="function">give_me_next_number</span><span class="normal"> </span><span class="symbol">()</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="usertype">GStaticPrivate</span><span class="normal"> current_number_key </span><span class="symbol">=</span><span class="normal"> <a href="glib-Deprecated-Thread-APIs.html#G-STATIC-PRIVATE-INIT:CAPS">G_STATIC_PRIVATE_INIT</a></span><span class="symbol">;</span>
+<span class="normal">  </span><span class="type">int</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">current_number </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-private-get">g_static_private_get</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">current_number_key</span><span class="symbol">);</span>
 
-  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span>current_number<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-      current_number <span class="gtkdoc opt">=</span> <span class="function"><a href="glib-Memory-Allocation.html#g-new">g_new</a></span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">int</span><span class="gtkdoc opt">,</span> <span class="number">1</span><span class="gtkdoc opt">);</span>
-      <span class="gtkdoc opt">*</span>current_number <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-      <span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-private-set">g_static_private_set</a></span> <span class="gtkdoc opt">(&amp;</span>current_number_key<span class="gtkdoc opt">,</span> current_number<span class="gtkdoc opt">,</span> g_free<span class="gtkdoc opt">);</span>
-    <span class="gtkdoc opt">}</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="normal">current_number</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">      current_number </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="glib-Memory-Allocation.html#g-new">g_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="type">int</span><span class="symbol">,</span><span class="normal"> </span><span class="number">1</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="symbol">*</span><span class="normal">current_number </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="normal">      </span><span class="function"><a href="glib-Deprecated-Thread-APIs.html#g-static-private-set">g_static_private_set</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">current_number_key</span><span class="symbol">,</span><span class="normal"> current_number</span><span class="symbol">,</span><span class="normal"> <a href="glib-Memory-Allocation.html#g-free">g_free</a></span><span class="symbol">);</span>
+<span class="normal">    </span><span class="cbracket">}</span>
 
-  <span class="gtkdoc opt">*</span>current_number <span class="gtkdoc opt">=</span> <span class="function">calc_next_number</span> <span class="gtkdoc opt">(*</span>current_number<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="symbol">*</span><span class="normal">current_number </span><span class="symbol">=</span><span class="normal"> </span><span class="function">calc_next_number</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">current_number</span><span class="symbol">);</span>
 
-  <span class="keyword">return</span> <span class="gtkdoc opt">*</span>current_number<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">current_number</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -2066,7 +2066,7 @@ can be used.</p>
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">GStaticPrivate my_private <span class="gtkdoc opt">=</span> G_STATIC_PRIVATE_INIT<span class="gtkdoc opt">;</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GStaticPrivate</span><span class="normal"> my_private </span><span class="symbol">=</span><span class="normal"> <a href="glib-Deprecated-Thread-APIs.html#G-STATIC-PRIVATE-INIT:CAPS">G_STATIC_PRIVATE_INIT</a></span><span class="symbol">;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -2081,6 +2081,6 @@ can be used.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

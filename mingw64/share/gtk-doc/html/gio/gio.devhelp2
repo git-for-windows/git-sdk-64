@@ -288,11 +288,13 @@
     <keyword type="function" name="g_file_new_for_commandline_arg_and_cwd ()" link="GFile.html#g-file-new-for-commandline-arg-and-cwd" since="2.36"/>
     <keyword type="function" name="g_file_new_tmp ()" link="GFile.html#g-file-new-tmp" since="2.32"/>
     <keyword type="function" name="g_file_parse_name ()" link="GFile.html#g-file-parse-name"/>
+    <keyword type="function" name="g_file_new_build_filename ()" link="GFile.html#g-file-new-build-filename" since="2.56"/>
     <keyword type="function" name="g_file_dup ()" link="GFile.html#g-file-dup"/>
     <keyword type="function" name="g_file_hash ()" link="GFile.html#g-file-hash"/>
     <keyword type="function" name="g_file_equal ()" link="GFile.html#g-file-equal"/>
     <keyword type="function" name="g_file_get_basename ()" link="GFile.html#g-file-get-basename"/>
     <keyword type="function" name="g_file_get_path ()" link="GFile.html#g-file-get-path"/>
+    <keyword type="function" name="g_file_peek_path ()" link="GFile.html#g-file-peek-path" since="2.56"/>
     <keyword type="function" name="g_file_get_uri ()" link="GFile.html#g-file-get-uri"/>
     <keyword type="function" name="g_file_get_parse_name ()" link="GFile.html#g-file-get-parse-name"/>
     <keyword type="function" name="g_file_get_parent ()" link="GFile.html#g-file-get-parent"/>
@@ -386,6 +388,9 @@
     <keyword type="function" name="g_file_monitor_directory ()" link="GFile.html#g-file-monitor-directory"/>
     <keyword type="function" name="g_file_monitor_file ()" link="GFile.html#g-file-monitor-file"/>
     <keyword type="function" name="g_file_monitor ()" link="GFile.html#g-file-monitor" since="2.18"/>
+    <keyword type="function" name="g_file_load_bytes ()" link="GFile.html#g-file-load-bytes" since="2.56"/>
+    <keyword type="function" name="g_file_load_bytes_async ()" link="GFile.html#g-file-load-bytes-async" since="2.56"/>
+    <keyword type="function" name="g_file_load_bytes_finish ()" link="GFile.html#g-file-load-bytes-finish" since="2.56"/>
     <keyword type="function" name="g_file_load_contents ()" link="GFile.html#g-file-load-contents"/>
     <keyword type="function" name="g_file_load_contents_async ()" link="GFile.html#g-file-load-contents-async"/>
     <keyword type="function" name="g_file_load_contents_finish ()" link="GFile.html#g-file-load-contents-finish"/>
@@ -927,9 +932,9 @@
     <keyword type="function" name="g_data_input_stream_read_upto ()" link="GDataInputStream.html#g-data-input-stream-read-upto" since="2.26"/>
     <keyword type="function" name="g_data_input_stream_read_upto_async ()" link="GDataInputStream.html#g-data-input-stream-read-upto-async" since="2.26"/>
     <keyword type="function" name="g_data_input_stream_read_upto_finish ()" link="GDataInputStream.html#g-data-input-stream-read-upto-finish" since="2.24"/>
-    <keyword type="function" name="g_data_input_stream_read_until ()" link="GDataInputStream.html#g-data-input-stream-read-until"/>
-    <keyword type="function" name="g_data_input_stream_read_until_async ()" link="GDataInputStream.html#g-data-input-stream-read-until-async" since="2.20"/>
-    <keyword type="function" name="g_data_input_stream_read_until_finish ()" link="GDataInputStream.html#g-data-input-stream-read-until-finish" since="2.20"/>
+    <keyword type="function" name="g_data_input_stream_read_until ()" link="GDataInputStream.html#g-data-input-stream-read-until" deprecated=""/>
+    <keyword type="function" name="g_data_input_stream_read_until_async ()" link="GDataInputStream.html#g-data-input-stream-read-until-async" deprecated="" since="2.20"/>
+    <keyword type="function" name="g_data_input_stream_read_until_finish ()" link="GDataInputStream.html#g-data-input-stream-read-until-finish" deprecated="" since="2.20"/>
     <keyword type="struct" name="GDataInputStream" link="GDataInputStream.html#GDataInputStream-struct"/>
     <keyword type="enum" name="enum GDataStreamByteOrder" link="GDataInputStream.html#GDataStreamByteOrder"/>
     <keyword type="enum" name="enum GDataStreamNewlineType" link="GDataInputStream.html#GDataStreamNewlineType"/>
@@ -1074,6 +1079,7 @@
     <keyword type="function" name="g_desktop_app_info_get_startup_wm_class ()" link="gio-Desktop-file-based-GAppInfo.html#g-desktop-app-info-get-startup-wm-class" since="2.34"/>
     <keyword type="function" name="g_desktop_app_info_set_desktop_env ()" link="gio-Desktop-file-based-GAppInfo.html#g-desktop-app-info-set-desktop-env" deprecated=""/>
     <keyword type="function" name="g_desktop_app_info_get_string ()" link="gio-Desktop-file-based-GAppInfo.html#g-desktop-app-info-get-string" since="2.36"/>
+    <keyword type="function" name="g_desktop_app_info_get_locale_string ()" link="gio-Desktop-file-based-GAppInfo.html#g-desktop-app-info-get-locale-string" since="2.56"/>
     <keyword type="function" name="g_desktop_app_info_get_boolean ()" link="gio-Desktop-file-based-GAppInfo.html#g-desktop-app-info-get-boolean" since="2.36"/>
     <keyword type="function" name="g_desktop_app_info_has_key ()" link="gio-Desktop-file-based-GAppInfo.html#g-desktop-app-info-has-key" since="2.36"/>
     <keyword type="function" name="GDesktopAppLaunchCallback ()" link="gio-Desktop-file-based-GAppInfo.html#GDesktopAppLaunchCallback"/>
@@ -1244,6 +1250,8 @@
     <keyword type="function" name="g_unix_mount_monitor_new ()" link="gio-Unix-Mounts.html#g-unix-mount-monitor-new" deprecated="2.44:Use g_unix_mount_monitor_get() instead."/>
     <keyword type="function" name="g_unix_mount_monitor_set_rate_limit ()" link="gio-Unix-Mounts.html#g-unix-mount-monitor-set-rate-limit" deprecated="2.44:This function does nothing.  Don't call it." since="2.18"/>
     <keyword type="function" name="g_unix_is_mount_path_system_internal ()" link="gio-Unix-Mounts.html#g-unix-is-mount-path-system-internal"/>
+    <keyword type="function" name="g_unix_is_system_fs_type ()" link="gio-Unix-Mounts.html#g-unix-is-system-fs-type" since="2.56"/>
+    <keyword type="function" name="g_unix_is_system_device_path ()" link="gio-Unix-Mounts.html#g-unix-is-system-device-path" since="2.56"/>
     <keyword type="struct" name="GUnixMountPoint" link="gio-Unix-Mounts.html#GUnixMountPoint-struct"/>
     <keyword type="struct" name="GUnixMountEntry" link="gio-Unix-Mounts.html#GUnixMountEntry-struct"/>
     <keyword type="struct" name="GUnixMountMonitor" link="gio-Unix-Mounts.html#GUnixMountMonitor-struct"/>
@@ -1409,6 +1417,8 @@
     <keyword type="function" name="g_socket_get_credentials ()" link="GSocket.html#g-socket-get-credentials" since="2.26"/>
     <keyword type="function" name="g_socket_join_multicast_group ()" link="GSocket.html#g-socket-join-multicast-group" since="2.32"/>
     <keyword type="function" name="g_socket_leave_multicast_group ()" link="GSocket.html#g-socket-leave-multicast-group" since="2.32"/>
+    <keyword type="function" name="g_socket_join_multicast_group_ssm ()" link="GSocket.html#g-socket-join-multicast-group-ssm" since="2.56"/>
+    <keyword type="function" name="g_socket_leave_multicast_group_ssm ()" link="GSocket.html#g-socket-leave-multicast-group-ssm" since="2.56"/>
     <keyword type="function" name="g_socket_get_multicast_loopback ()" link="GSocket.html#g-socket-get-multicast-loopback" since="2.32"/>
     <keyword type="function" name="g_socket_set_multicast_loopback ()" link="GSocket.html#g-socket-set-multicast-loopback" since="2.32"/>
     <keyword type="function" name="g_socket_get_multicast_ttl ()" link="GSocket.html#g-socket-get-multicast-ttl" since="2.32"/>
@@ -1751,8 +1761,8 @@
     <keyword type="function" name="g_tls_client_connection_get_server_identity ()" link="GTlsClientConnection.html#g-tls-client-connection-get-server-identity" since="2.28"/>
     <keyword type="function" name="g_tls_client_connection_set_validation_flags ()" link="GTlsClientConnection.html#g-tls-client-connection-set-validation-flags" since="2.28"/>
     <keyword type="function" name="g_tls_client_connection_get_validation_flags ()" link="GTlsClientConnection.html#g-tls-client-connection-get-validation-flags" since="2.28"/>
-    <keyword type="function" name="g_tls_client_connection_set_use_ssl3 ()" link="GTlsClientConnection.html#g-tls-client-connection-set-use-ssl3" since="2.28"/>
-    <keyword type="function" name="g_tls_client_connection_get_use_ssl3 ()" link="GTlsClientConnection.html#g-tls-client-connection-get-use-ssl3" since="2.28"/>
+    <keyword type="function" name="g_tls_client_connection_set_use_ssl3 ()" link="GTlsClientConnection.html#g-tls-client-connection-set-use-ssl3" deprecated="" since="2.28"/>
+    <keyword type="function" name="g_tls_client_connection_get_use_ssl3 ()" link="GTlsClientConnection.html#g-tls-client-connection-get-use-ssl3" deprecated="" since="2.28"/>
     <keyword type="function" name="g_tls_client_connection_get_accepted_cas ()" link="GTlsClientConnection.html#g-tls-client-connection-get-accepted-cas" since="2.28"/>
     <keyword type="function" name="g_tls_client_connection_copy_session_state ()" link="GTlsClientConnection.html#g-tls-client-connection-copy-session-state" since="2.46"/>
     <keyword type="struct" name="GTlsClientConnection" link="GTlsClientConnection.html#GTlsClientConnection-struct"/>
@@ -2573,6 +2583,9 @@
     <keyword type="function" name="g_application_add_main_option_entries ()" link="GApplication.html#g-application-add-main-option-entries" since="2.40"/>
     <keyword type="function" name="g_application_add_main_option ()" link="GApplication.html#g-application-add-main-option" since="2.42"/>
     <keyword type="function" name="g_application_add_option_group ()" link="GApplication.html#g-application-add-option-group" since="2.40"/>
+    <keyword type="function" name="g_application_set_option_context_parameter_string ()" link="GApplication.html#g-application-set-option-context-parameter-string" since="2.56"/>
+    <keyword type="function" name="g_application_set_option_context_summary ()" link="GApplication.html#g-application-set-option-context-summary" since="2.56"/>
+    <keyword type="function" name="g_application_set_option_context_description ()" link="GApplication.html#g-application-set-option-context-description" since="2.56"/>
     <keyword type="function" name="g_application_set_default ()" link="GApplication.html#g-application-set-default" since="2.32"/>
     <keyword type="function" name="g_application_get_default ()" link="GApplication.html#g-application-get-default" since="2.32"/>
     <keyword type="function" name="g_application_mark_busy ()" link="GApplication.html#g-application-mark-busy" since="2.38"/>

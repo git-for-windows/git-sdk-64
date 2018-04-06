@@ -8,7 +8,7 @@
 <link rel="up" href="glib-fundamentals.html" title="GLib Fundamentals">
 <link rel="prev" href="glib-Version-Information.html" title="Version Information">
 <link rel="next" href="glib-Standard-Macros.html" title="Standard Macros">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -384,19 +384,21 @@
 <div class="refsect1">
 <a name="glib-Basic-Types.description"></a><h2>Description</h2>
 <p>GLib defines a number of commonly used types, which can be divided
-into 4 groups:</p>
+into several groups:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
 <li class="listitem"><p>New types which are not part of standard C (but are defined in
-various C standard library header files) - <a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="type">gboolean</span></a>, <a class="link" href="glib-Basic-Types.html#gsize" title="gsize"><span class="type">gsize</span></a>,
-<a class="link" href="glib-Basic-Types.html#gssize" title="gssize"><span class="type">gssize</span></a>, <a class="link" href="glib-Basic-Types.html#goffset" title="goffset"><span class="type">goffset</span></a>, <a class="link" href="glib-Basic-Types.html#gintptr" title="gintptr"><span class="type">gintptr</span></a>, <a class="link" href="glib-Basic-Types.html#guintptr" title="guintptr"><span class="type">guintptr</span></a>.</p></li>
+various C standard library header files) — <a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="type">gboolean</span></a>, <a class="link" href="glib-Basic-Types.html#gssize" title="gssize"><span class="type">gssize</span></a>.</p></li>
 <li class="listitem"><p>Integer types which are guaranteed to be the same size across
-all platforms - <a class="link" href="glib-Basic-Types.html#gint8" title="gint8"><span class="type">gint8</span></a>, <a class="link" href="glib-Basic-Types.html#guint8" title="guint8"><span class="type">guint8</span></a>, <a class="link" href="glib-Basic-Types.html#gint16" title="gint16"><span class="type">gint16</span></a>, <a class="link" href="glib-Basic-Types.html#guint16" title="guint16"><span class="type">guint16</span></a>, <a class="link" href="glib-Basic-Types.html#gint32" title="gint32"><span class="type">gint32</span></a>,
+all platforms — <a class="link" href="glib-Basic-Types.html#gint8" title="gint8"><span class="type">gint8</span></a>, <a class="link" href="glib-Basic-Types.html#guint8" title="guint8"><span class="type">guint8</span></a>, <a class="link" href="glib-Basic-Types.html#gint16" title="gint16"><span class="type">gint16</span></a>, <a class="link" href="glib-Basic-Types.html#guint16" title="guint16"><span class="type">guint16</span></a>, <a class="link" href="glib-Basic-Types.html#gint32" title="gint32"><span class="type">gint32</span></a>,
 <a class="link" href="glib-Basic-Types.html#guint32" title="guint32"><span class="type">guint32</span></a>, <a class="link" href="glib-Basic-Types.html#gint64" title="gint64"><span class="type">gint64</span></a>, <a class="link" href="glib-Basic-Types.html#guint64" title="guint64"><span class="type">guint64</span></a>.</p></li>
 <li class="listitem"><p>Types which are easier to use than their standard C counterparts -
 <a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a>, <a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a>, <a class="link" href="glib-Basic-Types.html#guchar" title="guchar"><span class="type">guchar</span></a>, <a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a>, <a class="link" href="glib-Basic-Types.html#gushort" title="gushort"><span class="type">gushort</span></a>, <a class="link" href="glib-Basic-Types.html#gulong" title="gulong"><span class="type">gulong</span></a>.</p></li>
 <li class="listitem"><p>Types which correspond exactly to standard C types, but are
-included for completeness - <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a>, <a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a>, <a class="link" href="glib-Basic-Types.html#gshort" title="gshort"><span class="type">gshort</span></a>, <a class="link" href="glib-Basic-Types.html#glong" title="glong"><span class="type">glong</span></a>,
+included for completeness — <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a>, <a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a>, <a class="link" href="glib-Basic-Types.html#gshort" title="gshort"><span class="type">gshort</span></a>, <a class="link" href="glib-Basic-Types.html#glong" title="glong"><span class="type">glong</span></a>,
 <a class="link" href="glib-Basic-Types.html#gfloat" title="gfloat"><span class="type">gfloat</span></a>, <a class="link" href="glib-Basic-Types.html#gdouble" title="gdouble"><span class="type">gdouble</span></a>.</p></li>
+<li class="listitem"><p>Types which correspond exactly to standard C99 types, but are available
+to use even if your compiler does not support C99 — <a class="link" href="glib-Basic-Types.html#gsize" title="gsize"><span class="type">gsize</span></a>, <a class="link" href="glib-Basic-Types.html#goffset" title="goffset"><span class="type">goffset</span></a>,
+<a class="link" href="glib-Basic-Types.html#gintptr" title="gintptr"><span class="type">gintptr</span></a>, <a class="link" href="glib-Basic-Types.html#guintptr" title="guintptr"><span class="type">guintptr</span></a>.</p></li>
 </ul></div>
 <p>GLib also defines macros for the limits of some of the standard
 integer and floating point types, as well as macros for suitable
@@ -714,8 +716,8 @@ and conversion specifier and append a conversion specifier.</p>
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting">gint16 value <span class="gtkdoc opt">=</span> <span class="number">123</span><span class="gtkdoc opt">;</span>
-<span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;%#&quot;</span> G_GINT16_MODIFIER <span class="string">&quot;x&quot;</span><span class="gtkdoc opt">,</span> value<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">gint16</span><span class="normal"> value </span><span class="symbol">=</span><span class="normal"> </span><span class="number">123</span><span class="symbol">;</span>
+<span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"%#"</span><span class="normal"> <a href="glib-Basic-Types.html#G-GINT16-MODIFIER:CAPS">G_GINT16_MODIFIER</a> </span><span class="string">"x"</span><span class="symbol">,</span><span class="normal"> value</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -742,11 +744,11 @@ modifiers between percent-sign and conversion specifier.</p>
 3
 4
 5</pre></td>
-        <td class="listing_code"><pre class="programlisting">gint16 in<span class="gtkdoc opt">;</span>
-gint32 out<span class="gtkdoc opt">;</span>
-<span class="function">sscanf</span> <span class="gtkdoc opt">(</span><span class="string">&quot;42&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;%&quot;</span> G_GINT16_FORMAT<span class="gtkdoc opt">, &amp;</span>in<span class="gtkdoc opt">)</span>
-out <span class="gtkdoc opt">=</span> in <span class="gtkdoc opt">*</span> <span class="number">1000</span><span class="gtkdoc opt">;</span>
-<span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;%&quot;</span> G_GINT32_FORMAT<span class="gtkdoc opt">,</span> out<span class="gtkdoc opt">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">gint16</span><span class="normal"> in</span><span class="symbol">;</span>
+<span class="usertype">gint32</span><span class="normal"> out</span><span class="symbol">;</span>
+<span class="function">sscanf</span><span class="normal"> </span><span class="symbol">(</span><span class="string">"42"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"%"</span><span class="normal"> <a href="glib-Basic-Types.html#G-GINT16-FORMAT:CAPS">G_GINT16_FORMAT</a></span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">in</span><span class="symbol">)</span>
+<span class="normal">out </span><span class="symbol">=</span><span class="normal"> in </span><span class="symbol">*</span><span class="normal"> </span><span class="number">1000</span><span class="symbol">;</span>
+<span class="function"><a href="glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"%"</span><span class="normal"> <a href="glib-Basic-Types.html#G-GINT32-FORMAT:CAPS">G_GINT32_FORMAT</a></span><span class="symbol">,</span><span class="normal"> out</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1078,7 +1080,9 @@ and printing values of type <a class="link" href="glib-Basic-Types.html#gssize" 
 <pre class="programlisting">typedef gint64 goffset;
 </pre>
 <p>A signed integer type that is used for file offsets,
-corresponding to the C99 type off64_t.
+corresponding to the POSIX type <code class="literal">off_t</code> as if compiling with
+<code class="literal">_FILE_OFFSET_BITS</code> set to 64. <a class="link" href="glib-Basic-Types.html#goffset" title="goffset"><span class="type">goffset</span></a> is always 64 bits wide, even on
+32-bit architectures.
 Values of this type can range from <a class="link" href="glib-Basic-Types.html#G-MINOFFSET:CAPS" title="G_MINOFFSET"><span class="type">G_MINOFFSET</span></a> to
 <a class="link" href="glib-Basic-Types.html#G-MAXOFFSET:CAPS" title="G_MAXOFFSET"><span class="type">G_MAXOFFSET</span></a>.</p>
 <p>To print or scan values of this type, use
@@ -1171,6 +1175,6 @@ for scanning and printing values of type <a class="link" href="glib-Basic-Types.
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

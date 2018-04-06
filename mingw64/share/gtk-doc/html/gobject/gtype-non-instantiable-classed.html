@@ -8,7 +8,7 @@
 <link rel="up" href="chapter-gtype.html" title="The GLib Dynamic Type System">
 <link rel="prev" href="gtype-instantiable-classed.html" title="Instantiable classed types: objects">
 <link rel="next" href="chapter-gobject.html" title="The GObject base class">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -53,18 +53,18 @@
 10
 11
 12</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc ppc">#define VIEWER_TYPE_EDITABLE viewer_editable_get_type ()</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-INTERFACE:CAPS">G_DECLARE_INTERFACE</a></span> <span class="gtkdoc opt">(</span>ViewerEditable<span class="gtkdoc opt">,</span> viewer_editable<span class="gtkdoc opt">,</span> VIEWER<span class="gtkdoc opt">,</span> EDITABLE<span class="gtkdoc opt">,</span> GObject<span class="gtkdoc opt">)</span>
+        <td class="listing_code"><pre class="programlisting"><span class="preproc">#define</span><span class="normal"> </span><span class="usertype">VIEWER_TYPE_EDITABLE</span><span class="normal"> </span><span class="function">viewer_editable_get_type</span><span class="normal"> </span><span class="symbol">()</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-INTERFACE:CAPS">G_DECLARE_INTERFACE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerEditable</span><span class="symbol">,</span><span class="normal"> viewer_editable</span><span class="symbol">,</span><span class="normal"> VIEWER</span><span class="symbol">,</span><span class="normal"> EDITABLE</span><span class="symbol">,</span><span class="normal"> <a href="gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span>
 
-<span class="gtkdoc kwb">struct</span> _ViewerEditableInterface <span class="gtkdoc opt">{</span>
-  GTypeInterface parent<span class="gtkdoc opt">;</span>
+<span class="keyword">struct</span><span class="normal"> </span><span class="classname">_ViewerEditableInterface</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GTypeInterface</span><span class="normal"> parent</span><span class="symbol">;</span>
 
-  <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span>save<span class="gtkdoc opt">) (</span>ViewerEditable  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                GError         <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">};</span>
+<span class="normal">  </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal">save</span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                </span><span class="usertype">GError</span><span class="normal">         </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">);</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">void</span> <span class="function">viewer_editable_save</span> <span class="gtkdoc opt">(</span>ViewerEditable  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                           GError         <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span></pre></td>
+<span class="type">void</span><span class="normal"> </span><span class="function">viewer_editable_save</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                           </span><span class="usertype">GError</span><span class="normal">         </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -91,19 +91,19 @@
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">void</span>
-<span class="function">viewer_editable_save</span> <span class="gtkdoc opt">(</span>ViewerEditable  <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
-                      GError         <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerEditableinterface <span class="gtkdoc opt">*</span>iface<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="type">void</span>
+<span class="function">viewer_editable_save</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
+<span class="normal">                      </span><span class="usertype">GError</span><span class="normal">         </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerEditableinterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">;</span>
 
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function">VIEWER_IS_EDITABLE</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">));</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>error <span class="gtkdoc opt">==</span> NULL <span class="gtkdoc opt">|| *</span>error <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">VIEWER_IS_EDITABLE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">));</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a> </span><span class="symbol">||</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
 
-  iface <span class="gtkdoc opt">=</span> <span class="function">VIEWER_EDITABLE_GET_INTERFACE</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">);</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="gtkdoc opt">(</span>iface<span class="gtkdoc opt">-&gt;</span>save <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">);</span>
-  iface<span class="gtkdoc opt">-&gt;</span><span class="function">save</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  iface </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_EDITABLE_GET_IFACE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">iface</span><span class="symbol">-&gt;</span><span class="normal">save </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="function">save</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -146,21 +146,21 @@
 13
 14
 15</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_save</span> <span class="gtkdoc opt">(</span>ViewerEditable <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;File implementation of editable interface save method.</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_save</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"File implementation of editable interface save method.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_editable_interface_init</span> <span class="gtkdoc opt">(</span>ViewerEditableInterface <span class="gtkdoc opt">*</span>iface<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  iface<span class="gtkdoc opt">-&gt;</span>save <span class="gtkdoc opt">=</span> viewer_file_save<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_editable_interface_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">save </span><span class="symbol">=</span><span class="normal"> viewer_file_save</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-CODE:CAPS">G_DEFINE_TYPE_WITH_CODE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> VIEWER_TYPE_FILE<span class="gtkdoc opt">,</span>
-                         <span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span> <span class="gtkdoc opt">(</span>VIEWER_TYPE_EDITABLE<span class="gtkdoc opt">,</span>
-                                                viewer_file_editable_interface_init<span class="gtkdoc opt">))</span></pre></td>
+<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-CODE:CAPS">G_DEFINE_TYPE_WITH_CODE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> VIEWER_TYPE_FILE</span><span class="symbol">,</span>
+<span class="normal">                         </span><span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_EDITABLE</span><span class="symbol">,</span>
+<span class="normal">                                                viewer_file_editable_interface_init</span><span class="symbol">))</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -225,51 +225,51 @@
 43
 44
 45</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_save</span> <span class="gtkdoc opt">(</span>ViewerEditable <span class="gtkdoc opt">*</span>editable<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;File implementation of editable interface save method.</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_save</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">editable</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"File implementation of editable interface save method.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">);</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_editable_interface_init</span> <span class="gtkdoc opt">(</span>gpointer g_iface<span class="gtkdoc opt">,</span>
-                                     gpointer iface_data<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerEditableInterface <span class="gtkdoc opt">*</span>iface <span class="gtkdoc opt">=</span> g_iface<span class="gtkdoc opt">;</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_editable_interface_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">gpointer</span><span class="normal"> g_iface</span><span class="symbol">,</span>
+<span class="normal">                                     </span><span class="usertype">gpointer</span><span class="normal"> iface_data</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface </span><span class="symbol">=</span><span class="normal"> g_iface</span><span class="symbol">;</span>
 
-  iface<span class="gtkdoc opt">-&gt;</span>save <span class="gtkdoc opt">=</span> viewer_file_save<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">save </span><span class="symbol">=</span><span class="normal"> viewer_file_save</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-GType 
-<span class="function">viewer_file_get_type</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">static</span> GType type <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>type <span class="gtkdoc opt">==</span> <span class="number">0</span><span class="gtkdoc opt">) {</span>
-    <span class="gtkdoc kwb">const</span> GTypeInfo info <span class="gtkdoc opt">= {</span>
-      <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>ViewerFileClass<span class="gtkdoc opt">),</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* base_init */</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* base_finalize */</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* class_init */</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* class_finalize */</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* class_data */</span>
-      <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">),</span>
-      <span class="number">0</span><span class="gtkdoc opt">,</span>      <span class="comment">/* n_preallocs */</span>
-      NULL    <span class="comment">/* instance_init */</span>
-    <span class="gtkdoc opt">};</span>
-    <span class="gtkdoc kwb">const</span> GInterfaceInfo editable_info <span class="gtkdoc opt">= {</span>
-      <span class="gtkdoc opt">(</span>GInterfaceInitFunc<span class="gtkdoc opt">)</span> viewer_file_editable_interface_init<span class="gtkdoc opt">,</span>  <span class="comment">/* interface_init */</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* interface_finalize */</span>
-      NULL    <span class="comment">/* interface_data */</span>
-    <span class="gtkdoc opt">};</span>
-    type <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span> <span class="gtkdoc opt">(</span>VIEWER_TYPE_FILE<span class="gtkdoc opt">,</span>
-                                   <span class="string">&quot;ViewerFile&quot;</span><span class="gtkdoc opt">,</span>
-                                   <span class="gtkdoc opt">&amp;</span>info<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">);</span>
-    <span class="function"><a href="gobject-Type-Information.html#g-type-add-interface-static">g_type_add_interface_static</a></span> <span class="gtkdoc opt">(</span>type<span class="gtkdoc opt">,</span>
-                                 VIEWER_TYPE_EDITABLE<span class="gtkdoc opt">,</span>
-                                 <span class="gtkdoc opt">&amp;</span>editable_info<span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">}</span>
-  <span class="keyword">return</span> type<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal"><a href="gobject-Type-Information.html#GType">GType</a> </span>
+<span class="function">viewer_file_get_type</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="usertype">GType</span><span class="normal"> type </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">type </span><span class="symbol">==</span><span class="normal"> </span><span class="number">0</span><span class="symbol">)</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GTypeInfo</span><span class="normal"> info </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="keyword">sizeof</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFileClass</span><span class="symbol">),</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* base_init */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* base_finalize */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* class_init */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* class_finalize */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* class_data */</span>
+<span class="normal">      </span><span class="keyword">sizeof</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">),</span>
+<span class="normal">      </span><span class="number">0</span><span class="symbol">,</span><span class="normal">      </span><span class="comment">/* n_preallocs */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a>    </span><span class="comment">/* instance_init */</span>
+<span class="normal">    </span><span class="cbracket">}</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GInterfaceInfo</span><span class="normal"> editable_info </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="symbol">(</span><span class="normal"><a href="gobject-Type-Information.html#GInterfaceInitFunc">GInterfaceInitFunc</a></span><span class="symbol">)</span><span class="normal"> viewer_file_editable_interface_init</span><span class="symbol">,</span><span class="normal">  </span><span class="comment">/* interface_init */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* interface_finalize */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a>    </span><span class="comment">/* interface_data */</span>
+<span class="normal">    </span><span class="cbracket">}</span><span class="symbol">;</span>
+<span class="normal">    type </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_FILE</span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="string">"ViewerFile"</span><span class="symbol">,</span>
+<span class="normal">                                   </span><span class="symbol">&amp;</span><span class="normal">info</span><span class="symbol">,</span><span class="normal"> </span><span class="number">0</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="function"><a href="gobject-Type-Information.html#g-type-add-interface-static">g_type_add_interface_static</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">type</span><span class="symbol">,</span>
+<span class="normal">                                 VIEWER_TYPE_EDITABLE</span><span class="symbol">,</span>
+<span class="normal">                                 </span><span class="symbol">&amp;</span><span class="normal">editable_info</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="cbracket">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> type</span><span class="symbol">;</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -295,12 +295,12 @@ GType
 4
 5
 6</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">struct</span> _GInterfaceInfo
-<span class="gtkdoc opt">{</span>
-  GInterfaceInitFunc     interface_init<span class="gtkdoc opt">;</span>
-  GInterfaceFinalizeFunc interface_finalize<span class="gtkdoc opt">;</span>
-  gpointer               interface_data<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">};</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">struct</span><span class="normal"> </span><span class="classname">_GInterfaceInfo</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GInterfaceInitFunc</span><span class="normal">     interface_init</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">GInterfaceFinalizeFunc</span><span class="normal"> interface_finalize</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="usertype">gpointer</span><span class="normal">               interface_data</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="symbol">;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -360,13 +360,13 @@ GType
 5
 6
 7</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Type-Information.html#G-DEFINE-INTERFACE:CAPS">G_DEFINE_INTERFACE</a></span> <span class="gtkdoc opt">(</span>ViewerEditable<span class="gtkdoc opt">,</span> viewer_editable<span class="gtkdoc opt">,</span> G_TYPE_OBJECT<span class="gtkdoc opt">)</span>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Type-Information.html#G-DEFINE-INTERFACE:CAPS">G_DEFINE_INTERFACE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerEditable</span><span class="symbol">,</span><span class="normal"> viewer_editable</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">)</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_editable_default_init</span> <span class="gtkdoc opt">(</span>ViewerEditableInterface <span class="gtkdoc opt">*</span>iface<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* add properties and signals here, will only be called once */</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_editable_default_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* add properties and signals here, will only be called once */</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -410,35 +410,35 @@ GType
 27
 28
 29</pre></td>
-        <td class="listing_code"><pre class="programlisting">GType
-<span class="function">viewer_editable_get_type</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="gtkdoc kwb">static</span> <span class="gtkdoc kwc">volatile</span> gsize type_id <span class="gtkdoc opt">=</span> <span class="number">0</span><span class="gtkdoc opt">;</span>
-  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="../glib-Threads.html#g-once-init-enter">g_once_init_enter</a></span> <span class="gtkdoc opt">(&amp;</span>type_id<span class="gtkdoc opt">)) {</span>
-    <span class="gtkdoc kwb">const</span> GTypeInfo info <span class="gtkdoc opt">= {</span>
-      <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>ViewerEditableInterface<span class="gtkdoc opt">),</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* base_init */</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* base_finalize */</span>
-      viewer_editable_default_init<span class="gtkdoc opt">,</span> <span class="comment">/* class_init */</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* class_finalize */</span>
-      NULL<span class="gtkdoc opt">,</span>   <span class="comment">/* class_data */</span>
-      <span class="number">0</span><span class="gtkdoc opt">,</span>      <span class="comment">/* instance_size */</span>
-      <span class="number">0</span><span class="gtkdoc opt">,</span>      <span class="comment">/* n_preallocs */</span>
-      NULL    <span class="comment">/* instance_init */</span>
-    <span class="gtkdoc opt">};</span>
-    GType type <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span> <span class="gtkdoc opt">(</span>G_TYPE_INTERFACE<span class="gtkdoc opt">,</span>
-                                         <span class="string">&quot;ViewerEditable&quot;</span><span class="gtkdoc opt">,</span>
-                                         <span class="gtkdoc opt">&amp;</span>info<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">);</span>
-    <span class="function"><a href="../glib-Threads.html#g-once-init-leave">g_once_init_leave</a></span> <span class="gtkdoc opt">(&amp;</span>type_id<span class="gtkdoc opt">,</span> type<span class="gtkdoc opt">);</span>
-  <span class="gtkdoc opt">}</span>
-  <span class="keyword">return</span> type_id<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="normal"><a href="gobject-Type-Information.html#GType">GType</a></span>
+<span class="function">viewer_editable_get_type</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="keyword">volatile</span><span class="normal"> </span><span class="usertype">gsize</span><span class="normal"> type_id </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
+<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="../glib-Threads.html#g-once-init-enter">g_once_init_enter</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">type_id</span><span class="symbol">))</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GTypeInfo</span><span class="normal"> info </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
+<span class="normal">      </span><span class="keyword">sizeof</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerEditableInterface</span><span class="symbol">),</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* base_init */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* base_finalize */</span>
+<span class="normal">      viewer_editable_default_init</span><span class="symbol">,</span><span class="normal"> </span><span class="comment">/* class_init */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* class_finalize */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal">   </span><span class="comment">/* class_data */</span>
+<span class="normal">      </span><span class="number">0</span><span class="symbol">,</span><span class="normal">      </span><span class="comment">/* instance_size */</span>
+<span class="normal">      </span><span class="number">0</span><span class="symbol">,</span><span class="normal">      </span><span class="comment">/* n_preallocs */</span>
+<span class="normal">      <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a>    </span><span class="comment">/* instance_init */</span>
+<span class="normal">    </span><span class="cbracket">}</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="usertype">GType</span><span class="normal"> type </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="gobject-Type-Information.html#G-TYPE-INTERFACE:CAPS">G_TYPE_INTERFACE</a></span><span class="symbol">,</span>
+<span class="normal">                                         </span><span class="string">"ViewerEditable"</span><span class="symbol">,</span>
+<span class="normal">                                         </span><span class="symbol">&amp;</span><span class="normal">info</span><span class="symbol">,</span><span class="normal"> </span><span class="number">0</span><span class="symbol">);</span>
+<span class="normal">    </span><span class="function"><a href="../glib-Threads.html#g-once-init-leave">g_once_init_leave</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">type_id</span><span class="symbol">,</span><span class="normal"> type</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="cbracket">}</span>
+<span class="normal">  </span><span class="keyword">return</span><span class="normal"> type_id</span><span class="symbol">;</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_editable_default_init</span> <span class="gtkdoc opt">(</span>ViewerEditableInterface <span class="gtkdoc opt">*</span>iface<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="comment">/* add properties and signals here, will only called once */</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_editable_default_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="comment">/* add properties and signals here, will only called once */</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -559,6 +559,6 @@ GType
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="gdbus-lowlevel.html" title="Low-level D-Bus Support">
 <link rel="prev" href="GDBusConnection.html" title="GDBusConnection">
 <link rel="next" href="GDBusServer.html" title="GDBusServer">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -562,19 +562,19 @@ out-parameters, <em class="parameter"><code>parameters</code></em>
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting">GDBusMethodInvocation <span class="gtkdoc opt">*</span>invocation <span class="gtkdoc opt">=</span> some_invocation<span class="gtkdoc opt">;</span>
-g_autofree gchar <span class="gtkdoc opt">*</span>result_string <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
-<span class="function"><a href="../glib-Miscellaneous-Macros.html#g-autoptr">g_autoptr</a></span> <span class="gtkdoc opt">(</span>GError<span class="gtkdoc opt">)</span> error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="usertype">GDBusMethodInvocation</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">invocation </span><span class="symbol">=</span><span class="normal"> some_invocation</span><span class="symbol">;</span>
+<span class="usertype">g_autofree</span><span class="normal"> </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">result_string </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
+<span class="function"><a href="../glib-Miscellaneous-Macros.html#g-autoptr">g_autoptr</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../glib-Error-Reporting.html#GError">GError</a></span><span class="symbol">)</span><span class="normal"> error </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
 
-result_string <span class="gtkdoc opt">=</span> <span class="function">calculate_result</span> <span class="gtkdoc opt">(&amp;</span>error<span class="gtkdoc opt">);</span>
+<span class="normal">result_string </span><span class="symbol">=</span><span class="normal"> </span><span class="function">calculate_result</span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">error</span><span class="symbol">);</span>
 
-<span class="keyword">if</span> <span class="gtkdoc opt">(</span>error <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">)</span>
-  <span class="function"><a href="GDBusMethodInvocation.html#g-dbus-method-invocation-return-gerror">g_dbus_method_invocation_return_gerror</a></span> <span class="gtkdoc opt">(</span>invocation<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">);</span>
+<span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">error </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
+<span class="normal">  </span><span class="function"><a href="GDBusMethodInvocation.html#g-dbus-method-invocation-return-gerror">g_dbus_method_invocation_return_gerror</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">invocation</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">);</span>
 <span class="keyword">else</span>
-  <span class="function"><a href="GDBusMethodInvocation.html#g-dbus-method-invocation-return-value">g_dbus_method_invocation_return_value</a></span> <span class="gtkdoc opt">(</span>invocation<span class="gtkdoc opt">,</span>
-                                         <span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;(s)&quot;</span><span class="gtkdoc opt">,</span> result_string<span class="gtkdoc opt">));</span>
+<span class="normal">  </span><span class="function"><a href="GDBusMethodInvocation.html#g-dbus-method-invocation-return-value">g_dbus_method_invocation_return_value</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">invocation</span><span class="symbol">,</span>
+<span class="normal">                                         </span><span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"(s)"</span><span class="symbol">,</span><span class="normal"> result_string</span><span class="symbol">));</span>
 
-<span class="gtkdoc opt">/&lt;!-- --&gt;*</span> Do <span class="keyword">not</span> free &#64;invocation here<span class="gtkdoc opt">;</span> returning a value does that <span class="gtkdoc opt">*&lt;!-- --&gt;/</span></pre></td>
+<span class="comment">// Do not free @invocation here; returning a value does that</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -967,6 +967,6 @@ should only be accessed using the provided API.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

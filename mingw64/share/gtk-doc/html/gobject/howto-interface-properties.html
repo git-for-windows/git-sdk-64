@@ -8,7 +8,7 @@
 <link rel="up" href="howto-interface.html" title="How to define and implement interfaces">
 <link rel="prev" href="howto-interface-prerequisite.html" title="Interface definition prerequisites">
 <link rel="next" href="howto-interface-override.html" title="Overriding interface methods">
-<meta name="generator" content="GTK-Doc V1.26.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -54,19 +54,19 @@
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_editable_default_init</span> <span class="gtkdoc opt">(</span>ViewerEditableInterface <span class="gtkdoc opt">*</span>iface<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  <span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-interface-install-property">g_object_interface_install_property</a></span> <span class="gtkdoc opt">(</span>iface<span class="gtkdoc opt">,</span>
-                                       <span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-param-spec-double">g_param_spec_double</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;autosave-frequency&quot;</span><span class="gtkdoc opt">,</span>
-                                                            <span class="string">&quot;Autosave frequency&quot;</span><span class="gtkdoc opt">,</span>
-                                                            <span class="string">&quot;Frequency (in per-seconds) to autosave backups of the editable content at. &quot;</span>
-                                                            <span class="string">&quot;Or zero to disable autosaves.&quot;</span><span class="gtkdoc opt">,</span>
-                                                            <span class="number">0.0</span><span class="gtkdoc opt">,</span>  <span class="comment">/* minimum */</span>
-                                                            G_MAXDOUBLE<span class="gtkdoc opt">,</span>  <span class="comment">/* maximum */</span>
-                                                            <span class="number">0.0</span><span class="gtkdoc opt">,</span>  <span class="comment">/* default */</span>
-                                                            G_PARAM_READWRITE<span class="gtkdoc opt">));</span>
-<span class="gtkdoc opt">}</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_editable_default_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-interface-install-property">g_object_interface_install_property</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">iface</span><span class="symbol">,</span>
+<span class="normal">                                       </span><span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-param-spec-double">g_param_spec_double</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"autosave-frequency"</span><span class="symbol">,</span>
+<span class="normal">                                                            </span><span class="string">"Autosave frequency"</span><span class="symbol">,</span>
+<span class="normal">                                                            </span><span class="string">"Frequency (in per-seconds) to autosave backups of the editable content at. "</span>
+<span class="normal">                                                            </span><span class="string">"Or zero to disable autosaves."</span><span class="symbol">,</span>
+<span class="normal">                                                            </span><span class="number">0.0</span><span class="symbol">,</span><span class="normal">  </span><span class="comment">/* minimum */</span>
+<span class="normal">                                                            <a href="../glib-Basic-Types.html#G-MAXDOUBLE:CAPS">G_MAXDOUBLE</a></span><span class="symbol">,</span><span class="normal">  </span><span class="comment">/* maximum */</span>
+<span class="normal">                                                            </span><span class="number">0.0</span><span class="symbol">,</span><span class="normal">  </span><span class="comment">/* default */</span>
+<span class="normal">                                                            <a href="gobject-GParamSpec.html#G-PARAM-READWRITE:CAPS">G_PARAM_READWRITE</a></span><span class="symbol">));</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -158,69 +158,69 @@
 61
 62
 63</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">struct</span> _ViewerFile
-<span class="gtkdoc opt">{</span>
-  GObject parent_instance<span class="gtkdoc opt">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">struct</span><span class="normal"> </span><span class="classname">_ViewerFile</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObject</span><span class="normal"> parent_instance</span><span class="symbol">;</span>
 
-  gdouble autosave_frequency<span class="gtkdoc opt">;</span>
-<span class="gtkdoc opt">};</span>
+<span class="normal">  </span><span class="usertype">gdouble</span><span class="normal"> autosave_frequency</span><span class="symbol">;</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">enum</span>
-<span class="gtkdoc opt">{</span>
-  PROP_AUTOSAVE_FREQUENCY <span class="gtkdoc opt">=</span> <span class="number">1</span><span class="gtkdoc opt">,</span>
-  N_PROPERTIES
-<span class="gtkdoc opt">};</span>
+<span class="keyword">enum</span>
+<span class="cbracket">{</span>
+<span class="normal">  PROP_AUTOSAVE_FREQUENCY </span><span class="symbol">=</span><span class="normal"> </span><span class="number">1</span><span class="symbol">,</span>
+<span class="normal">  N_PROPERTIES</span>
+<span class="cbracket">}</span><span class="symbol">;</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_set_property</span> <span class="gtkdoc opt">(</span>GObject      <span class="gtkdoc opt">*</span>object<span class="gtkdoc opt">,</span>
-                          guint         prop_id<span class="gtkdoc opt">,</span>
-                          <span class="gtkdoc kwb">const</span> GValue <span class="gtkdoc opt">*</span>value<span class="gtkdoc opt">,</span>
-                          GParamSpec   <span class="gtkdoc opt">*</span>pspec<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFile <span class="gtkdoc opt">*</span>file <span class="gtkdoc opt">=</span> <span class="function">VIEWER_FILE</span> <span class="gtkdoc opt">(</span>object<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_set_property</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GObject</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">object</span><span class="symbol">,</span>
+<span class="normal">                          </span><span class="usertype">guint</span><span class="normal">         prop_id</span><span class="symbol">,</span>
+<span class="normal">                          </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GValue</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">value</span><span class="symbol">,</span>
+<span class="normal">                          </span><span class="usertype">GParamSpec</span><span class="normal">   </span><span class="symbol">*</span><span class="normal">pspec</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">file </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">object</span><span class="symbol">);</span>
 
-  <span class="keyword">switch</span> <span class="gtkdoc opt">(</span>prop_id<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-    <span class="keyword">case</span> PROP_AUTOSAVE_FREQUENCY<span class="gtkdoc opt">:</span>
-      file<span class="gtkdoc opt">-&gt;</span>autosave_frequency <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-get-double">g_value_get_double</a></span> <span class="gtkdoc opt">(</span>value<span class="gtkdoc opt">);</span>
-      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">switch</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">prop_id</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="keyword">case</span><span class="normal"> PROP_AUTOSAVE_FREQUENCY</span><span class="symbol">:</span>
+<span class="normal">      file</span><span class="symbol">-&gt;</span><span class="normal">autosave_frequency </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-get-double">g_value_get_double</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">value</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">break</span><span class="symbol">;</span>
 
-    <span class="keyword">default</span><span class="gtkdoc opt">:</span>
-      <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-WARN-INVALID-PROPERTY-ID:CAPS">G_OBJECT_WARN_INVALID_PROPERTY_ID</a></span> <span class="gtkdoc opt">(</span>object<span class="gtkdoc opt">,</span> prop_id<span class="gtkdoc opt">,</span> pspec<span class="gtkdoc opt">);</span>
-      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
-<span class="gtkdoc opt">}</span>
+<span class="label">    default:</span>
+<span class="normal">      </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-WARN-INVALID-PROPERTY-ID:CAPS">G_OBJECT_WARN_INVALID_PROPERTY_ID</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">object</span><span class="symbol">,</span><span class="normal"> prop_id</span><span class="symbol">,</span><span class="normal"> pspec</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">break</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_get_property</span> <span class="gtkdoc opt">(</span>GObject    <span class="gtkdoc opt">*</span>object<span class="gtkdoc opt">,</span>
-                          guint       prop_id<span class="gtkdoc opt">,</span>
-                          GValue     <span class="gtkdoc opt">*</span>value<span class="gtkdoc opt">,</span>
-                          GParamSpec <span class="gtkdoc opt">*</span>pspec<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  ViewerFile <span class="gtkdoc opt">*</span>file <span class="gtkdoc opt">=</span> <span class="function">VIEWER_FILE</span> <span class="gtkdoc opt">(</span>object<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_get_property</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GObject</span><span class="normal">    </span><span class="symbol">*</span><span class="normal">object</span><span class="symbol">,</span>
+<span class="normal">                          </span><span class="usertype">guint</span><span class="normal">       prop_id</span><span class="symbol">,</span>
+<span class="normal">                          </span><span class="usertype">GValue</span><span class="normal">     </span><span class="symbol">*</span><span class="normal">value</span><span class="symbol">,</span>
+<span class="normal">                          </span><span class="usertype">GParamSpec</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">pspec</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">file </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">object</span><span class="symbol">);</span>
 
-  <span class="keyword">switch</span> <span class="gtkdoc opt">(</span>prop_id<span class="gtkdoc opt">)</span>
-    <span class="gtkdoc opt">{</span>
-    <span class="keyword">case</span> PROP_AUTOSAVE_FREQUENCY<span class="gtkdoc opt">:</span>
-      <span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-set-double">g_value_set_double</a></span> <span class="gtkdoc opt">(</span>value<span class="gtkdoc opt">,</span> file<span class="gtkdoc opt">-&gt;</span>autosave_frequency<span class="gtkdoc opt">);</span>
-      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+<span class="normal">  </span><span class="keyword">switch</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">prop_id</span><span class="symbol">)</span>
+<span class="normal">    </span><span class="cbracket">{</span>
+<span class="normal">    </span><span class="keyword">case</span><span class="normal"> PROP_AUTOSAVE_FREQUENCY</span><span class="symbol">:</span>
+<span class="normal">      </span><span class="function"><a href="gobject-Standard-Parameter-and-Value-Types.html#g-value-set-double">g_value_set_double</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">value</span><span class="symbol">,</span><span class="normal"> file</span><span class="symbol">-&gt;</span><span class="normal">autosave_frequency</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">break</span><span class="symbol">;</span>
 
-    <span class="keyword">default</span><span class="gtkdoc opt">:</span>
-      <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-WARN-INVALID-PROPERTY-ID:CAPS">G_OBJECT_WARN_INVALID_PROPERTY_ID</a></span> <span class="gtkdoc opt">(</span>object<span class="gtkdoc opt">,</span> prop_id<span class="gtkdoc opt">,</span> pspec<span class="gtkdoc opt">);</span>
-      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
-    <span class="gtkdoc opt">}</span>
-<span class="gtkdoc opt">}</span>
+<span class="label">    default:</span>
+<span class="normal">      </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-WARN-INVALID-PROPERTY-ID:CAPS">G_OBJECT_WARN_INVALID_PROPERTY_ID</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">object</span><span class="symbol">,</span><span class="normal"> prop_id</span><span class="symbol">,</span><span class="normal"> pspec</span><span class="symbol">);</span>
+<span class="normal">      </span><span class="keyword">break</span><span class="symbol">;</span>
+<span class="normal">    </span><span class="cbracket">}</span>
+<span class="cbracket">}</span>
 
-<span class="gtkdoc kwb">static void</span>
-<span class="function">viewer_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
-<span class="gtkdoc opt">{</span>
-  GObjectClass <span class="gtkdoc opt">*</span>object_class <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span> <span class="gtkdoc opt">(</span>klass<span class="gtkdoc opt">);</span>
+<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
+<span class="function">viewer_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
+<span class="cbracket">{</span>
+<span class="normal">  </span><span class="usertype">GObjectClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">object_class </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">klass</span><span class="symbol">);</span>
 
-  object_class<span class="gtkdoc opt">-&gt;</span>set_property <span class="gtkdoc opt">=</span> viewer_file_set_property<span class="gtkdoc opt">;</span>
-  object_class<span class="gtkdoc opt">-&gt;</span>get_property <span class="gtkdoc opt">=</span> viewer_file_get_property<span class="gtkdoc opt">;</span>
+<span class="normal">  object_class</span><span class="symbol">-&gt;</span><span class="normal">set_property </span><span class="symbol">=</span><span class="normal"> viewer_file_set_property</span><span class="symbol">;</span>
+<span class="normal">  object_class</span><span class="symbol">-&gt;</span><span class="normal">get_property </span><span class="symbol">=</span><span class="normal"> viewer_file_get_property</span><span class="symbol">;</span>
 
-  <span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-class-override-property">g_object_class_override_property</a></span> <span class="gtkdoc opt">(</span>object_class<span class="gtkdoc opt">,</span> PROP_AUTOSAVE_FREQUENCY<span class="gtkdoc opt">,</span> <span class="string">&quot;autosave-frequency&quot;</span><span class="gtkdoc opt">);</span>
-<span class="gtkdoc opt">}</span></pre></td>
+<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-class-override-property">g_object_class_override_property</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">object_class</span><span class="symbol">,</span><span class="normal"> PROP_AUTOSAVE_FREQUENCY</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"autosave-frequency"</span><span class="symbol">);</span>
+<span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -230,6 +230,6 @@
     </p>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.26.1</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

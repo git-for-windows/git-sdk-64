@@ -1790,7 +1790,7 @@ guint     g_type_get_type_registration_serial (void);
  */
 #define G_IMPLEMENT_INTERFACE(TYPE_IFACE, iface_init)       { \
   const GInterfaceInfo g_implement_interface_info = { \
-    (GInterfaceInitFunc) iface_init, NULL, NULL \
+    (GInterfaceInitFunc)(void (*)(void)) iface_init, NULL, NULL \
   }; \
   g_type_add_interface_static (g_define_type_id, TYPE_IFACE, &g_implement_interface_info); \
 }
@@ -1974,9 +1974,9 @@ type_name##_get_type (void) \
         g_type_register_static_simple (TYPE_PARENT, \
                                        g_intern_static_string (#TypeName), \
                                        sizeof (TypeName##Class), \
-                                       (GClassInitFunc) type_name##_class_intern_init, \
+                                       (GClassInitFunc)(void (*)(void)) type_name##_class_intern_init, \
                                        sizeof (TypeName), \
-                                       (GInstanceInitFunc) type_name##_init, \
+                                       (GInstanceInitFunc)(void (*)(void)) type_name##_init, \
                                        (GTypeFlags) flags); \
       { /* custom code follows */
 #define _G_DEFINE_TYPE_EXTENDED_END()	\
@@ -2008,7 +2008,7 @@ type_name##_get_type (void) \
         g_type_register_static_simple (G_TYPE_INTERFACE, \
                                        g_intern_static_string (#TypeName), \
                                        sizeof (TypeName##Interface), \
-                                       (GClassInitFunc)type_name##_default_init, \
+                                       (GClassInitFunc)(void (*)(void)) type_name##_default_init, \
                                        0, \
                                        (GInstanceInitFunc)NULL, \
                                        (GTypeFlags) 0); \
@@ -2202,9 +2202,9 @@ gboolean         g_type_check_class_is_a        (GTypeClass         *g_class,
 GLIB_AVAILABLE_IN_ALL
 gboolean	 g_type_check_is_value_type     (GType		     type) G_GNUC_CONST;
 GLIB_AVAILABLE_IN_ALL
-gboolean	 g_type_check_value             (GValue		    *value) G_GNUC_PURE;
+gboolean	 g_type_check_value             (const GValue       *value) G_GNUC_PURE;
 GLIB_AVAILABLE_IN_ALL
-gboolean	 g_type_check_value_holds	(GValue		    *value,
+gboolean	 g_type_check_value_holds	(const GValue	    *value,
 						 GType		     type) G_GNUC_PURE;
 GLIB_AVAILABLE_IN_ALL
 gboolean         g_type_test_flags              (GType               type,
@@ -2255,7 +2255,7 @@ const gchar *    g_type_name_from_class         (GTypeClass	*g_class);
   __r; \
 }))
 #  define _G_TYPE_CVH(vl, gt)             (G_GNUC_EXTENSION ({ \
-  GValue *__val = (GValue*) vl; GType __t = gt; gboolean __r; \
+  const GValue *__val = (const GValue*) vl; GType __t = gt; gboolean __r; \
   if (!__val) \
     __r = FALSE; \
   else if (__val->g_type == __t)		\
@@ -2267,7 +2267,7 @@ const gchar *    g_type_name_from_class         (GTypeClass	*g_class);
 #else  /* !__GNUC__ */
 #  define _G_TYPE_CIT(ip, gt)             (g_type_check_instance_is_a ((GTypeInstance*) ip, gt))
 #  define _G_TYPE_CCT(cp, gt)             (g_type_check_class_is_a ((GTypeClass*) cp, gt))
-#  define _G_TYPE_CVH(vl, gt)             (g_type_check_value_holds ((GValue*) vl, gt))
+#  define _G_TYPE_CVH(vl, gt)             (g_type_check_value_holds ((const GValue*) vl, gt))
 #endif /* !__GNUC__ */
 /**
  * G_TYPE_FLAG_RESERVED_ID_BIT:
