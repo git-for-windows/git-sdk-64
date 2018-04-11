@@ -13,7 +13,7 @@
 #define LIBZIP_VERSION_MINOR 5
 /* #undef LIBZIP_VERSION_MICRO */
 
-/* #undef ZIP_STATIC */
+#define ZIP_STATIC
 
 #include <stdint.h>
 

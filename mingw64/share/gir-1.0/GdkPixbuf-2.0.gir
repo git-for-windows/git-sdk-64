@@ -97,7 +97,7 @@ the gdk-pixbuf library.  Currently only RGB is supported.</doc>
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_MICRO" value="11" c:type="GDK_PIXBUF_MICRO">
+    <constant name="PIXBUF_MICRO" value="12" c:type="GDK_PIXBUF_MICRO">
       <doc xml:space="preserve">Micro version of gdk-pixbuf library, that is the "2" in
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
@@ -108,7 +108,7 @@ the gdk-pixbuf library.  Currently only RGB is supported.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="PIXBUF_VERSION"
-              value="2.36.11"
+              value="2.36.12"
               c:type="GDK_PIXBUF_VERSION">
       <doc xml:space="preserve">Contains the full version of the gdk-pixbuf header as a string.
 This is the version being compiled against; contrast with
@@ -288,8 +288,9 @@ allocate the image buffer, or the image file contained invalid data.</doc>
         </return-value>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
-            <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="utf8" c:type="const char*"/>
+            <doc xml:space="preserve">Name of file to load, in the GLib file
+    name encoding</doc>
+            <type name="filename" c:type="char*"/>
           </parameter>
         </parameters>
       </constructor>
@@ -318,8 +319,9 @@ allocate the image buffer, or the image file contained invalid data.</doc>
         </return-value>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
-            <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="utf8" c:type="const char*"/>
+            <doc xml:space="preserve">Name of file to load, in the GLib file
+    name encoding</doc>
+            <type name="filename" c:type="char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve">The width the image should have or -1 to not constrain the width</doc>
@@ -350,7 +352,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="utf8" c:type="const char*"/>
+            <type name="filename" c:type="char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve">The width the image should have or -1 to not constrain the width</doc>
@@ -390,8 +392,9 @@ invalid data.</doc>
         </return-value>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
-            <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="utf8" c:type="const char*"/>
+            <doc xml:space="preserve">Name of file to load, in the GLib file
+    name encoding</doc>
+            <type name="filename" c:type="char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve">The width the image should have or -1 to not constrain the width</doc>
@@ -419,7 +422,7 @@ invalid data.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="utf8" c:type="const char*"/>
+            <type name="filename" c:type="char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve">The width the image should have or -1 to not constrain the width</doc>
@@ -445,7 +448,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="utf8" c:type="const char*"/>
+            <type name="filename" c:type="char*"/>
           </parameter>
         </parameters>
       </constructor>
@@ -774,7 +777,7 @@ newly-allocated memory; otherwise it is reused.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">The name of the file to identify.</doc>
-            <type name="utf8" c:type="const gchar*"/>
+            <type name="filename" c:type="gchar*"/>
           </parameter>
           <parameter name="width"
                      direction="out"
@@ -816,7 +819,7 @@ get the result of the operation.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">The name of the file to identify</doc>
-            <type name="utf8" c:type="const gchar*"/>
+            <type name="filename" c:type="gchar*"/>
           </parameter>
           <parameter name="cancellable"
                      transfer-ownership="none"
@@ -1529,7 +1532,7 @@ See gdk_pixbuf_get_option() for more details.</doc>
         <doc xml:space="preserve">Queries a pointer to the pixel data of a pixbuf.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">A pointer to the pixbuf's pixel data.
-Please see the section on [image data](image-data) for information
+Please see the section on [image data][image-data] for information
 about how the pixel data is stored in memory.
 
 This function will cause an implicit copy of the pixbuf data if the
@@ -1552,7 +1555,7 @@ pixbuf was created from read-only data.</doc>
         <doc xml:space="preserve">Queries a pointer to the pixel data of a pixbuf.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">A pointer to the pixbuf's
-pixel data.  Please see the section on [image data](image-data)
+pixel data.  Please see the section on [image data][image-data]
 for information about how the pixel data is stored in memory.
 
 This function will cause an implicit copy of the pixbuf data if the
@@ -2231,7 +2234,7 @@ See gdk_pixbuf_save () for more details.</doc>
           </instance-parameter>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">name of file to save.</doc>
-            <type name="utf8" c:type="const char*"/>
+            <type name="filename" c:type="char*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve">name of file format.</doc>
@@ -2366,7 +2369,7 @@ copy of @src is returned, avoiding any scaling.
 
 For more complicated scaling/alpha blending see gdk_pixbuf_scale()
 and gdk_pixbuf_composite().</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">the new #GdkPixbuf, or %NULL if not enough memory could be
 allocated for it.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
@@ -2546,8 +2549,9 @@ allocate the image buffer, or the image file contained invalid data.</doc>
         </return-value>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
-            <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="utf8" c:type="const char*"/>
+            <doc xml:space="preserve">Name of file to load, in the GLib file
+    name encoding</doc>
+            <type name="filename" c:type="char*"/>
           </parameter>
         </parameters>
       </constructor>
@@ -2565,7 +2569,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="utf8" c:type="const char*"/>
+            <type name="filename" c:type="char*"/>
           </parameter>
         </parameters>
       </constructor>
