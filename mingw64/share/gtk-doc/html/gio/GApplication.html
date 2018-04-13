@@ -512,10 +512,11 @@ startup signal is emitted and the mainloop runs. If the application
 is not the primary instance then a signal is sent to the primary
 instance and <a class="link" href="GApplication.html#g-application-run" title="g_application_run ()"><code class="function">g_application_run()</code></a> promptly returns. See the code
 examples below.</p>
-<p>If used, the expected form of an application identifier is very close
-to that of of a
-<a class="ulink" href="http://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-names-interface" target="_top">D-Bus bus name</a>.
-Examples include: "com.example.MyApp", "org.example.internal-apps.Calculator".
+<p>If used, the expected form of an application identifier is the same as
+that of of a
+<a class="ulink" href="https://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-names-bus" target="_top">D-Bus well-known bus name</a>.
+Examples include: <code class="literal">com.example.MyApp</code>, <code class="literal">org.example.internal_apps.Calculator</code>,
+<code class="literal">org._7_zip.Archiver</code>.
 For details on valid application identifiers, see <a class="link" href="GApplication.html#g-application-id-is-valid" title="g_application_id_is_valid ()"><code class="function">g_application_id_is_valid()</code></a>.</p>
 <p>On Linux, the application identifier is claimed as a well-known bus name
 on the user's session bus.  This means that the uniqueness of your
@@ -589,19 +590,40 @@ g_application_id_is_valid (<em class="parameter"><code>const <a href="../glib-Ba
  is a valid application identifier.</p>
 <p>A valid ID is required for calls to <a class="link" href="GApplication.html#g-application-new" title="g_application_new ()"><code class="function">g_application_new()</code></a> and
 <a class="link" href="GApplication.html#g-application-set-application-id" title="g_application_set_application_id ()"><code class="function">g_application_set_application_id()</code></a>.</p>
-<p>For convenience, the restrictions on application identifiers are
+<p>Application identifiers follow the same format as
+<a class="ulink" href="https://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-names-bus" target="_top">D-Bus well-known bus names</a>.
+For convenience, the restrictions on application identifiers are
 reproduced here:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
-<li class="listitem"><p>Application identifiers must contain only the ASCII characters
-"A-Z[0-9]_-." and must not begin with a digit.</p></li>
-<li class="listitem"><p>Application identifiers must contain at least one '.' (period)
-character (and thus at least two elements).</p></li>
-<li class="listitem"><p>Application identifiers must not begin or end with a '.' (period)
-character.</p></li>
-<li class="listitem"><p>Application identifiers must not contain consecutive '.' (period)
-characters.</p></li>
+<li class="listitem"><p>Application identifiers are composed of 1 or more elements separated by a
+period (<code class="literal">.</code>) character. All elements must contain at least one character.</p></li>
+<li class="listitem"><p>Each element must only contain the ASCII characters <code class="literal">[A-Z][a-z][0-9]_-</code>,
+with <code class="literal">-</code> discouraged in new application identifiers. Each element must not
+begin with a digit.</p></li>
+<li class="listitem"><p>Application identifiers must contain at least one <code class="literal">.</code> (period) character
+(and thus at least two elements).</p></li>
+<li class="listitem"><p>Application identifiers must not begin with a <code class="literal">.</code> (period) character.</p></li>
 <li class="listitem"><p>Application identifiers must not exceed 255 characters.</p></li>
 </ul></div>
+<p>Note that the hyphen (<code class="literal">-</code>) character is allowed in application identifiers,
+but is problematic or not allowed in various specifications and APIs that
+refer to D-Bus, such as
+<a class="ulink" href="http://docs.flatpak.org/en/latest/introduction.html#identifiers" target="_top">Flatpak application IDs</a>,
+the
+<a class="ulink" href="https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html#dbus" target="_top"><code class="literal">DBusActivatable</code> interface in the Desktop Entry Specification</a>,
+and the convention that an application's "main" interface and object path
+resemble its application identifier and bus name. To avoid situations that
+require special-case handling, it is recommended that new application
+identifiers consistently replace hyphens with underscores.</p>
+<p>Like D-Bus interface names, application identifiers should start with the
+reversed DNS domain name of the author of the interface (in lower-case), and
+it is conventional for the rest of the application identifier to consist of
+words run together, with initial capital letters.</p>
+<p>As with D-Bus interface names, if the author's DNS domain name contains
+hyphen/minus characters they should be replaced by underscores, and if it
+contains leading digits they should be escaped by prepending an underscore.
+For example, if the owner of 7-zip.org used an application identifier for an
+archiving application, it might be named <code class="literal">org._7_zip.Archiver</code>.</p>
 <div class="refsect3">
 <a name="g-application-id-is-valid.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">

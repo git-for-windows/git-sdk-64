@@ -19,7 +19,7 @@ import errno
 import codecs
 import locale
 
-VERSION_STR = '''glib-mkenums version 2.56.0
+VERSION_STR = '''glib-mkenums version 2.56.1
 glib-mkenums comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-mkenums under the terms of
 the GNU General Public License which can be found in the
@@ -457,7 +457,7 @@ def process_file(curfilename):
         if re.match(r'\s*typedef\s+enum.*;', line):
             continue
 
-        m = re.match(r'''\s*typedef\s+enum\s*
+        m = re.match(r'''\s*typedef\s+enum\s*[_A-Za-z]*[_A-Za-z0-9]*\s*
                ({)?\s*
                (?:/\*<
                  (([^*]|\*(?!/))*)
@@ -495,6 +495,8 @@ def process_file(curfilename):
             if groups[0] is None and (len(groups) < 4 or groups[3] is None):
                 while True:
                     line = curfile.readline()
+                    if not line:
+                        print_error("Syntax error when looking for opening { in enum")
                     if re.match(r'\s*\{', line):
                         break
 

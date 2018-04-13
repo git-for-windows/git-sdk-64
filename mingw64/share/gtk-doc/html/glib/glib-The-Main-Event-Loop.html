@@ -2623,7 +2623,7 @@ ensure that no other asynchronous operations accidentally get
 started while the non-default context is active.</p>
 <p>Beware that libraries that predate this function may not correctly
 handle being used from a thread with a thread-default context. Eg,
-see <a href="../GFile.html#g-file-supports-thread-contexts"><code class="function">g_file_supports_thread_contexts()</code></a>.</p>
+see <code class="function">g_file_supports_thread_contexts()</code>.</p>
 <div class="refsect3">
 <a name="g-main-context-push-thread-default.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -3480,7 +3480,7 @@ if the call was interrupted.</p>
 <a name="GSourceDummyMarshal"></a><h3>GSourceDummyMarshal ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 <span class="c_punctuation">(</span>*GSourceDummyMarshal<span class="c_punctuation">)</span> (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
-<p>This is just a placeholder for <a href="../gobject-Closures.html#GClosureMarshal"><span class="type">GClosureMarshal</span></a>,
+<p>This is just a placeholder for <span class="type">GClosureMarshal</span>,
 which cannot be used here for dependency reasons.</p>
 </div>
 <hr>
@@ -3739,7 +3739,7 @@ before the dispatch of your idle handler.</p>
 <span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">-&gt;</span><span class="normal">idle_id</span><span class="symbol">)</span>
 <span class="normal">    </span><span class="function"><a href="glib-The-Main-Event-Loop.html#g-source-remove">g_source_remove</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">-&gt;</span><span class="normal">idle_id</span><span class="symbol">);</span>
 <span class="normal">   </span>
-<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">parent_class</span><span class="symbol">)-&gt;</span><span class="function">finalize</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">object</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function">G_OBJECT_CLASS</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">parent_class</span><span class="symbol">)-&gt;</span><span class="function">finalize</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">object</span><span class="symbol">);</span>
 <span class="cbracket">}</span></pre></td>
       </tr>
     </tbody>
@@ -4602,7 +4602,7 @@ callback), and when <em class="parameter"><code>source</code></em>
 its own prepare/check functions indicate that it is ready.)</p>
 <p>If you don't need <em class="parameter"><code>child_source</code></em>
  to do anything on its own when it
-triggers, you can call <a href="../gobject-Closures.html#g-source-set-dummy-callback"><code class="function">g_source_set_dummy_callback()</code></a> on it to set a
+triggers, you can call <code class="function">g_source_set_dummy_callback()</code> on it to set a
 callback that does nothing (except return <a class="link" href="glib-Standard-Macros.html#TRUE:CAPS" title="TRUE"><code class="literal">TRUE</code></a> if appropriate).</p>
 <p><em class="parameter"><code>source</code></em>
  will hold a reference on <em class="parameter"><code>child_source</code></em>

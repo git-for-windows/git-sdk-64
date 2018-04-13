@@ -723,8 +723,8 @@ more elaborate, and include the values of the compared entities.</p>
 <span class="function">my_object_fixture_tear_down</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">MyObjectFixture</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">fixture</span><span class="symbol">,</span>
 <span class="normal">                             </span><span class="usertype">gconstpointer</span><span class="normal"> user_data</span><span class="symbol">)</span>
 <span class="cbracket">{</span>
-<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-clear-object">g_clear_object</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">fixture</span><span class="symbol">-&gt;</span><span class="normal">helper</span><span class="symbol">);</span>
-<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-clear-object">g_clear_object</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">fixture</span><span class="symbol">-&gt;</span><span class="normal">obj</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function">g_clear_object</span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">fixture</span><span class="symbol">-&gt;</span><span class="normal">helper</span><span class="symbol">);</span>
+<span class="normal">  </span><span class="function">g_clear_object</span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">fixture</span><span class="symbol">-&gt;</span><span class="normal">obj</span><span class="symbol">);</span>
 <span class="cbracket">}</span>
 
 <span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
@@ -1947,9 +1947,9 @@ callback A before callback B will cause <code class="function">B()</code> to be 
 <div class="refsect2">
 <a name="g-test-queue-unref"></a><h3>g_test_queue_unref()</h3>
 <pre class="programlisting">#define             g_test_queue_unref(gobject)</pre>
-<p>Enqueue an object to be released with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> during
+<p>Enqueue an object to be released with <code class="function">g_object_unref()</code> during
 the next teardown phase. This is equivalent to calling
-<a class="link" href="glib-Testing.html#g-test-queue-destroy" title="g_test_queue_destroy ()"><code class="function">g_test_queue_destroy()</code></a> with a destroy callback of <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
+<a class="link" href="glib-Testing.html#g-test-queue-destroy" title="g_test_queue_destroy ()"><code class="function">g_test_queue_destroy()</code></a> with a destroy callback of <code class="function">g_object_unref()</code>.</p>
 <div class="refsect3">
 <a name="g-test-queue-unref.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">

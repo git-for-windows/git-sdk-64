@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2013,2017 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2017,2018 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -32,7 +32,7 @@
 /*    and: Thomas E. Dickey                        1995-on                  */
 /****************************************************************************/
 
-/* $Id: MKterm.h.awk.in,v 1.67 2017/04/06 00:19:26 tom Exp $ */
+/* $Id: MKterm.h.awk.in,v 1.68 2018/04/07 20:51:01 tom Exp $ */
 
 /*
 **	term.h -- Definition of struct term
@@ -782,21 +782,21 @@ extern NCURSES_EXPORT(int) del_curterm (TERMINAL *);
 
 /* miscellaneous entry points */
 extern NCURSES_EXPORT(int) restartterm (NCURSES_CONST char *, int, int *);
-extern NCURSES_EXPORT(int) setupterm (NCURSES_CONST char *,int,int *);
+extern NCURSES_EXPORT(int) setupterm (const char *,int,int *);
 
 /* terminfo entry points, also declared in curses.h */
 #if !defined(__NCURSES_H)
-extern NCURSES_EXPORT(char *) tigetstr (NCURSES_CONST char *);
+extern NCURSES_EXPORT(char *) tigetstr (const char *);
 extern NCURSES_EXPORT_VAR(char) ttytype[];
 extern NCURSES_EXPORT(int) putp (const char *);
-extern NCURSES_EXPORT(int) tigetflag (NCURSES_CONST char *);
-extern NCURSES_EXPORT(int) tigetnum (NCURSES_CONST char *);
+extern NCURSES_EXPORT(int) tigetflag (const char *);
+extern NCURSES_EXPORT(int) tigetnum (const char *);
 
 #if 1 /* NCURSES_TPARM_VARARGS */
-extern NCURSES_EXPORT(char *) tparm (NCURSES_CONST char *, ...);	/* special */
+extern NCURSES_EXPORT(char *) tparm (const char *, ...);	/* special */
 #else
-extern NCURSES_EXPORT(char *) tparm (NCURSES_CONST char *, long,long,long,long,long,long,long,long,long);	/* special */
-extern NCURSES_EXPORT(char *) tparm_varargs (NCURSES_CONST char *, ...);	/* special */
+extern NCURSES_EXPORT(char *) tparm (const char *, long,long,long,long,long,long,long,long,long);	/* special */
+extern NCURSES_EXPORT(char *) tparm_varargs (const char *, ...);	/* special */
 #endif
 
 extern NCURSES_EXPORT(char *) tiparm (const char *, ...);		/* special */
@@ -805,11 +805,11 @@ extern NCURSES_EXPORT(char *) tiparm (const char *, ...);		/* special */
 
 /* termcap database emulation (XPG4 uses const only for 2nd param of tgetent) */
 #if !defined(NCURSES_TERMCAP_H_incl)
-extern NCURSES_EXPORT(char *) tgetstr (NCURSES_CONST char *, char **);
+extern NCURSES_EXPORT(char *) tgetstr (const char *, char **);
 extern NCURSES_EXPORT(char *) tgoto (const char *, int, int);
 extern NCURSES_EXPORT(int) tgetent (char *, const char *);
-extern NCURSES_EXPORT(int) tgetflag (NCURSES_CONST char *);
-extern NCURSES_EXPORT(int) tgetnum (NCURSES_CONST char *);
+extern NCURSES_EXPORT(int) tgetflag (const char *);
+extern NCURSES_EXPORT(int) tgetnum (const char *);
 extern NCURSES_EXPORT(int) tputs (const char *, int, int (*)(int));
 #endif /* NCURSES_TERMCAP_H_incl */
 
@@ -818,24 +818,24 @@ extern NCURSES_EXPORT(int) tputs (const char *, int, int (*)(int));
  */
 #if defined(NCURSES_SP_FUNCS) && (NCURSES_SP_FUNCS != 0)
 
-extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tigetstr) (SCREEN*, NCURSES_CONST char *);
+extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tigetstr) (SCREEN*, const char *);
 extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(putp) (SCREEN*, const char *);
-extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tigetflag) (SCREEN*, NCURSES_CONST char *);
-extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tigetnum) (SCREEN*, NCURSES_CONST char *);
+extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tigetflag) (SCREEN*, const char *);
+extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tigetnum) (SCREEN*, const char *);
 
 #if 1 /* NCURSES_TPARM_VARARGS */
-extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tparm) (SCREEN*, NCURSES_CONST char *, ...);	/* special */
+extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tparm) (SCREEN*, const char *, ...);	/* special */
 #else
-extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tparm) (SCREEN*, NCURSES_CONST char *, long,long,long,long,long,long,long,long,long);	/* special */
-extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tparm_varargs) (SCREEN*, NCURSES_CONST char *, ...);	/* special */
+extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tparm) (SCREEN*, const char *, long,long,long,long,long,long,long,long,long);	/* special */
+extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tparm_varargs) (SCREEN*, const char *, ...);	/* special */
 #endif
 
 /* termcap database emulation (XPG4 uses const only for 2nd param of tgetent) */
-extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tgetstr) (SCREEN*, NCURSES_CONST char *, char **);
+extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tgetstr) (SCREEN*, const char *, char **);
 extern NCURSES_EXPORT(char *)  NCURSES_SP_NAME(tgoto) (SCREEN*, const char *, int, int);
 extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tgetent) (SCREEN*, char *, const char *);
-extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tgetflag) (SCREEN*, NCURSES_CONST char *);
-extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tgetnum) (SCREEN*, NCURSES_CONST char *);
+extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tgetflag) (SCREEN*, const char *);
+extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tgetnum) (SCREEN*, const char *);
 extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(tputs) (SCREEN*, const char *, int, NCURSES_SP_OUTC);
 
 extern NCURSES_EXPORT(TERMINAL *) NCURSES_SP_NAME(set_curterm) (SCREEN*, TERMINAL *);

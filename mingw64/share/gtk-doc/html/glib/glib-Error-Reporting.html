@@ -615,7 +615,7 @@ misinterpretation of error codes.</p>
 <p><a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> has disadvantages though: it requires a memory allocation, and
 formatting the error message string has a performance overhead. This makes it
 unsuitable for use in retry loops where errors are a common case, rather than
-being unusual. For example, using <a href="../gio-GIOError.html#G-IO-ERROR-WOULD-BLOCK:CAPS"><code class="literal">G_IO_ERROR_WOULD_BLOCK</code></a> means hitting these
+being unusual. For example, using <code class="literal">G_IO_ERROR_WOULD_BLOCK</code> means hitting these
 overheads in the normal control flow. String formatting overhead can be
 eliminated by using <a class="link" href="glib-Error-Reporting.html#g-set-error-literal" title="g_set_error_literal ()"><code class="function">g_set_error_literal()</code></a> in some cases.</p>
 <p>These performance issues can be compounded if a function wraps the <a href="glib-Error-Reporting.html#GError"><span class="type">GErrors</span></a>

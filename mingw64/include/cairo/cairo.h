@@ -398,7 +398,7 @@ typedef enum _cairo_content {
  * @CAIRO_FORMAT_A1: each pixel is a 1-bit quantity holding
  *   an alpha value. Pixels are packed together into 32-bit
  *   quantities. The ordering of the bits matches the
- *   endianess of the platform. On a big-endian machine, the
+ *   endianness of the platform. On a big-endian machine, the
  *   first pixel is in the uppermost bit, on a little-endian
  *   machine the first pixel is in the least-significant bit. (Since 1.0)
  * @CAIRO_FORMAT_RGB16_565: each pixel is a 16-bit quantity
@@ -1429,6 +1429,13 @@ cairo_font_options_set_hint_metrics (cairo_font_options_t *options,
 				     cairo_hint_metrics_t  hint_metrics);
 cairo_public cairo_hint_metrics_t
 cairo_font_options_get_hint_metrics (const cairo_font_options_t *options);
+
+cairo_public const char *
+cairo_font_options_get_variations (cairo_font_options_t *options);
+
+cairo_public void
+cairo_font_options_set_variations (cairo_font_options_t *options,
+                                   const char           *variations);
 
 /* This interface is for dealing with text as text, not caring about the
    font object inside the the cairo_t. */
