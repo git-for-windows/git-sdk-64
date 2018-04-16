@@ -10,7 +10,7 @@ use strict;
 use warnings;
 use vars '%Config', '$VERSION';
 
-$VERSION = "5.026001";
+$VERSION = "5.026002";
 
 # Skip @Config::EXPORT because it only contains %Config, which we special
 # case below as it's not a function. @Config::EXPORT won't change in the
@@ -56,11 +56,11 @@ sub import {
     return;
 }
 
-die "$0: Perl lib version (5.26.1) doesn't match executable '$^X' version ($])"
+die "$0: Perl lib version (5.26.2) doesn't match executable '$^X' version ($])"
     unless $^V;
 
-$^V eq 5.26.1
-    or die sprintf "%s: Perl lib version (5.26.1) doesn't match executable '$^X' version (%vd)", $0, $^V;
+$^V eq 5.26.2
+    or die sprintf "%s: Perl lib version (5.26.2) doesn't match executable '$^X' version (%vd)", $0, $^V;
 
 
 sub FETCH {
@@ -107,5 +107,5 @@ tie %Config, 'Config', {
     so => 'dll',
     useithreads => 'define',
     usevendorprefix => 'define',
-    version => '5.26.1',
+    version => '5.26.2',
 };

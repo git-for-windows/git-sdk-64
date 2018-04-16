@@ -9,9 +9,9 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Tue Feb 13 05:41:36 PST 2018
+ * Configuration time: Sat Apr 14 06:44:41 PDT 2018
  * Configured by     : ContainerAdministrator
- * Target system     : msys_nt-10.0 ab2b9a2ab836 2.10.0(0.32553) 2018-02-12 08:49 x86_64 msys 
+ * Target system     : msys_nt-10.0 8d059672d1f9 2.10.0(0.32553) 2018-03-15 14:12 x86_64 msys 
  */
 
 #ifndef _config_h_

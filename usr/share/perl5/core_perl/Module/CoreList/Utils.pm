@@ -5,7 +5,7 @@ use warnings;
 use vars qw[$VERSION %utilities];
 use Module::CoreList;
 
-$VERSION = '5.20170922_26';
+$VERSION = '5.20180414_26';
 
 sub utilities {
     my $perl = shift;
@@ -1312,8 +1312,64 @@ my %delta = (
         removed => {
         }
     },
+    5.024003 => {
+        delta_from => 5.024002,
+        changed => {
+        },
+        removed => {
+        }
+    },
     5.026001 => {
         delta_from => 5.026000,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.027005 => {
+        delta_from => 5.027004,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.027006 => {
+        delta_from => 5.027005,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.027007 => {
+        delta_from => 5.027006,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.027008 => {
+        delta_from => 5.027007,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.027009 => {
+        delta_from => 5.027008,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.027010 => {
+        delta_from => 5.027009,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.026002 => {
+        delta_from => 5.026001,
         changed => {
         },
         removed => {
