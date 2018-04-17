@@ -27,10 +27,10 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.6
-srcdir=		../Python-3.6.4
-VPATH=		../Python-3.6.4
-abs_srcdir=	/scripts/mingw-w64-python3/src/build-i686/../Python-3.6.4
-abs_builddir=	/scripts/mingw-w64-python3/src/build-i686
+srcdir=		../Python-3.6.5
+VPATH=		../Python-3.6.5
+abs_srcdir=	/c/repo/mingw-w64-python3/src/build-i686/../Python-3.6.5
+abs_builddir=	/c/repo/mingw-w64-python3/src/build-i686
 
 
 CC=		i686-w64-mingw32-gcc
@@ -130,9 +130,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.6.4
-VPATH_b2h=		C:/repo/mingw-w64-python3/src/Python-3.6.4
-abs_srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.6.4
+srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.6.5
+VPATH_b2h=		C:/repo/mingw-w64-python3/src/Python-3.6.5
+abs_srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.6.5
 abs_builddir_b2h=	C:/repo/mingw-w64-python3/src/build-i686
 prefix_b2h=		C:/building/msys64/mingw32
 
@@ -562,10 +562,9 @@ coverage-report: regen-grammar regen-importlib
 	$(MAKE) coverage-lcov
 
 # Run "Argument Clinic" over all source files
-# (depends on python having already been built)
 .PHONY=clinic
-clinic: check-clean-src $(BUILDPYTHON) $(srcdir)/Modules/_blake2/blake2s_impl.c
-	$(RUNSHARED) $(PYTHON_FOR_BUILD) ./Tools/clinic/clinic.py --make
+clinic: check-clean-src $(srcdir)/Modules/_blake2/blake2s_impl.c
+	$(PYTHON_FOR_REGEN) ./Tools/clinic/clinic.py --make
 
 pythonnt_rc.h:
 	# FIXME: FIELD3 not set
@@ -613,9 +612,9 @@ Modules/_math.o: Modules/_math.c Modules/_math.h
 	$(CC) -c $(CCSHARED) $(PY_CORE_CFLAGS) -o $@ $<
 
 # blake2s is auto-generated from blake2b
-$(srcdir)/Modules/_blake2/blake2s_impl.c: $(BUILDPYTHON) $(srcdir)/Modules/_blake2/blake2b_impl.c $(srcdir)/Modules/_blake2/blake2b2s.py
-	$(RUNSHARED) $(PYTHON_FOR_BUILD) $(srcdir)/Modules/_blake2/blake2b2s.py
-	$(RUNSHARED) $(PYTHON_FOR_BUILD) $(srcdir)/Tools/clinic/clinic.py -f $@
+$(srcdir)/Modules/_blake2/blake2s_impl.c: $(srcdir)/Modules/_blake2/blake2b_impl.c $(srcdir)/Modules/_blake2/blake2b2s.py
+	$(PYTHON_FOR_REGEN) $(srcdir)/Modules/_blake2/blake2b2s.py
+	$(PYTHON_FOR_REGEN) $(srcdir)/Tools/clinic/clinic.py -f $@
 
 # Build the shared modules
 # Under GNU make, MAKEFLAGS are sorted and normalized; the 's' for
@@ -762,7 +761,8 @@ regen-importlib: Programs/_freeze_importlib$(EXE)
 ############################################################################
 # Regenerate all generated files
 
-regen-all: regen-opcode regen-opcode-targets regen-typeslots regen-grammar regen-ast regen-importlib
+regen-all: regen-opcode regen-opcode-targets regen-typeslots regen-grammar \
+	regen-ast regen-importlib clinic
 
 ############################################################################
 # Special rules for object files

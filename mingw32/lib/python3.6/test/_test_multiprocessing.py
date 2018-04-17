@@ -427,10 +427,19 @@ class _TestProcess(BaseTestCase):
         close_queue(q)
 
     @classmethod
-    def _test_error_on_stdio_flush(self, evt):
+    def _test_error_on_stdio_flush(self, evt, break_std_streams={}):
+        for stream_name, action in break_std_streams.items():
+            if action == 'close':
+                stream = io.StringIO()
+                stream.close()
+            else:
+                assert action == 'remove'
+                stream = None
+            setattr(sys, stream_name, None)
         evt.set()
 
-    def test_error_on_stdio_flush(self):
+    def test_error_on_stdio_flush_1(self):
+        # Check that Process works with broken standard streams
         streams = [io.StringIO(), None]
         streams[0].close()
         for stream_name in ('stdout', 'stderr'):
@@ -444,6 +453,24 @@ class _TestProcess(BaseTestCase):
                     proc.start()
                     proc.join()
                     self.assertTrue(evt.is_set())
+                    self.assertEqual(proc.exitcode, 0)
+                finally:
+                    setattr(sys, stream_name, old_stream)
+
+    def test_error_on_stdio_flush_2(self):
+        # Same as test_error_on_stdio_flush_1(), but standard streams are
+        # broken by the child process
+        for stream_name in ('stdout', 'stderr'):
+            for action in ('close', 'remove'):
+                old_stream = getattr(sys, stream_name)
+                try:
+                    evt = self.Event()
+                    proc = self.Process(target=self._test_error_on_stdio_flush,
+                                        args=(evt, {stream_name: action}))
+                    proc.start()
+                    proc.join()
+                    self.assertTrue(evt.is_set())
+                    self.assertEqual(proc.exitcode, 0)
                 finally:
                     setattr(sys, stream_name, old_stream)
 
@@ -3896,7 +3923,7 @@ class TestNoForkBomb(unittest.TestCase):
 #
 
 class TestForkAwareThreadLock(unittest.TestCase):
-    # We recurisvely start processes.  Issue #17555 meant that the
+    # We recursively start processes.  Issue #17555 meant that the
     # after fork registry would get duplicate entries for the same
     # lock.  The size of the registry at generation n was ~2**n.
 
@@ -4146,7 +4173,7 @@ class TestSemaphoreTracker(unittest.TestCase):
         '''
         r, w = os.pipe()
         p = subprocess.Popen([sys.executable,
-                             '-c', cmd % (w, w)],
+                             '-E', '-c', cmd % (w, w)],
                              pass_fds=[w],
                              stderr=subprocess.PIPE)
         os.close(w)

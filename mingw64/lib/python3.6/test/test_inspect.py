@@ -1564,7 +1564,7 @@ class TestGetattrStatic(unittest.TestCase):
         foo.__dict__['d'] = 1
         self.assertEqual(inspect.getattr_static(foo, 'd'), 1)
 
-        # if the descriptor is a data-desciptor we should return the
+        # if the descriptor is a data-descriptor we should return the
         # descriptor
         descriptor.__set__ = lambda s, i, v: None
         self.assertEqual(inspect.getattr_static(foo, 'd'), Foo.__dict__['d'])
@@ -2525,6 +2525,16 @@ class TestSignatureObject(unittest.TestCase):
                          ((('a', ..., ..., 'positional_or_keyword'),
                            ('c', 1, ..., 'keyword_only')),
                           'spam'))
+
+        class Spam:
+            def test(self: 'anno', x):
+                pass
+
+            g = partialmethod(test, 1)
+
+        self.assertEqual(self.signature(Spam.g),
+                         ((('self', ..., 'anno', 'positional_or_keyword'),),
+                          ...))
 
     def test_signature_on_fake_partialmethod(self):
         def foo(a): pass
