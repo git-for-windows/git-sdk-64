@@ -21,11 +21,11 @@ extern "C" {
 /* version */
 
 #define JANSSON_MAJOR_VERSION  2
-#define JANSSON_MINOR_VERSION  10
+#define JANSSON_MINOR_VERSION  11
 #define JANSSON_MICRO_VERSION  0
 
 /* Micro version is omitted if it's 0 */
-#define JANSSON_VERSION  "2.10"
+#define JANSSON_VERSION  "2.11"
 
 /* Version as a 3-byte hex number, e.g. 0x010201 == 1.2.1. Use this
    for numeric comparisons, e.g. #if JANSSON_VERSION_HEX >= ... */
@@ -33,6 +33,11 @@ extern "C" {
                               (JANSSON_MINOR_VERSION << 8)  |   \
                               (JANSSON_MICRO_VERSION << 0))
 
+/* If __atomic or __sync builtins are available the library is thread
+ * safe for all read-only functions plus reference counting. */
+#if JSON_HAVE_ATOMIC_BUILTINS || JSON_HAVE_SYNC_BUILTINS
+#define JANSSON_THREAD_SAFE_REFCOUNT 1
+#endif
 
 /* types */
 
@@ -49,7 +54,7 @@ typedef enum {
 
 typedef struct json_t {
     json_type type;
-    size_t refcount;
+    volatile size_t refcount;
 } json_t;
 
 #ifndef JANSSON_USING_CMAKE /* disabled if using cmake */
@@ -94,11 +99,23 @@ json_t *json_false(void);
 #define json_boolean(val)      ((val) ? json_true() : json_false())
 json_t *json_null(void);
 
+/* do not call JSON_INTERNAL_INCREF or JSON_INTERNAL_DECREF directly */
+#if JSON_HAVE_ATOMIC_BUILTINS
+#define JSON_INTERNAL_INCREF(json) __atomic_add_fetch(&json->refcount, 1, __ATOMIC_ACQUIRE)
+#define JSON_INTERNAL_DECREF(json) __atomic_sub_fetch(&json->refcount, 1, __ATOMIC_RELEASE)
+#elif JSON_HAVE_SYNC_BUILTINS
+#define JSON_INTERNAL_INCREF(json) __sync_add_and_fetch(&json->refcount, 1)
+#define JSON_INTERNAL_DECREF(json) __sync_sub_and_fetch(&json->refcount, 1)
+#else
+#define JSON_INTERNAL_INCREF(json) (++json->refcount)
+#define JSON_INTERNAL_DECREF(json) (--json->refcount)
+#endif
+
 static JSON_INLINE
 json_t *json_incref(json_t *json)
 {
     if(json && json->refcount != (size_t)-1)
-        ++json->refcount;
+        JSON_INTERNAL_INCREF(json);
     return json;
 }
 
@@ -108,7 +125,7 @@ void json_delete(json_t *json);
 static JSON_INLINE
 void json_decref(json_t *json)
 {
-    if(json && json->refcount != (size_t)-1 && --json->refcount == 0)
+    if(json && json->refcount != (size_t)-1 && JSON_INTERNAL_DECREF(json) == 0)
         json_delete(json);
 }
 
@@ -131,7 +148,7 @@ void json_decrefp(json_t **json)
 #define JSON_ERROR_TEXT_LENGTH    160
 #define JSON_ERROR_SOURCE_LENGTH   80
 
-typedef struct {
+typedef struct json_error_t {
     int line;
     int column;
     int position;
@@ -139,6 +156,30 @@ typedef struct {
     char text[JSON_ERROR_TEXT_LENGTH];
 } json_error_t;
 
+enum json_error_code {
+    json_error_unknown,
+    json_error_out_of_memory,
+    json_error_stack_overflow,
+    json_error_cannot_open_file,
+    json_error_invalid_argument,
+    json_error_invalid_utf8,
+    json_error_premature_end_of_input,
+    json_error_end_of_input_expected,
+    json_error_invalid_syntax,
+    json_error_invalid_format,
+    json_error_wrong_type,
+    json_error_null_character,
+    json_error_null_value,
+    json_error_null_byte_in_key,
+    json_error_duplicate_key,
+    json_error_numeric_overflow,
+    json_error_item_not_found,
+    json_error_index_out_of_range
+};
+
+static JSON_INLINE enum json_error_code json_error_code(const json_error_t *e) {
+    return (enum json_error_code)e->text[JSON_ERROR_TEXT_LENGTH - 1];
+}
 
 /* getters, setters, manipulation */
 
@@ -248,10 +289,15 @@ int json_unpack(json_t *root, const char *fmt, ...);
 int json_unpack_ex(json_t *root, json_error_t *error, size_t flags, const char *fmt, ...);
 int json_vunpack_ex(json_t *root, json_error_t *error, size_t flags, const char *fmt, va_list ap);
 
+/* sprintf */
+
+json_t *json_sprintf(const char *fmt, ...);
+json_t *json_vsprintf(const char *fmt, va_list ap);
+
 
 /* equality */
 
-int json_equal(json_t *value1, json_t *value2);
+int json_equal(const json_t *value1, const json_t *value2);
 
 
 /* copying */
