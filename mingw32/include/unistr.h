@@ -1,6 +1,6 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Elementary Unicode string functions.
-   Copyright (C) 2001-2002, 2005-2017 Free Software Foundation, Inc.
+   Copyright (C) 2001-2002, 2005-2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or
    modify it under the terms of either:
@@ -150,8 +150,8 @@ extern int
    The number of available units, N, must be > 0.  */
 /* Similar to mbtowc(), except that puc and s must not be NULL, n must be > 0,
    and the NUL character is not treated specially.  */
-/* The variants with _safe suffix are safe, even if the library is compiled
-   without --enable-safety.  */
+/* The variants with _unsafe suffix are for backward compatibility with
+   libunistring versions < 0.9.7.  */
 
 #if 1
 # if !UNISTRING_HAVE_INLINE

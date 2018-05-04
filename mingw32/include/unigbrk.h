@@ -1,6 +1,6 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Grapheme cluster breaks in Unicode strings.
-   Copyright (C) 2010-2017 Free Software Foundation, Inc.
+   Copyright (C) 2010-2018 Free Software Foundation, Inc.
    Written by Ben Pfaff <blp@cs.stanford.edu>, 2010.
 
    This program is free software: you can redistribute it and/or

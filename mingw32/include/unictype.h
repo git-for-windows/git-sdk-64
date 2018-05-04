@@ -1,6 +1,6 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Unicode character classification and properties.
-   Copyright (C) 2002, 2005-2017 Free Software Foundation, Inc.
+   Copyright (C) 2002, 2005-2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or
    modify it under the terms of either:

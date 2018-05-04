@@ -51,7 +51,7 @@ extern "C"
 {
 # endif
 
-# define STRINGPREP_VERSION "1.33"
+# define STRINGPREP_VERSION "1.34"
 
 /* Error codes. */
   typedef enum
@@ -110,6 +110,7 @@ extern "C"
     Stringprep_profile_steps operation;
     Stringprep_profile_flags flags;
     const Stringprep_table_element *table;
+	 size_t table_size;
   };
   typedef struct Stringprep_table Stringprep_profile;
 

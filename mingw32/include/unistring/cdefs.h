@@ -19,7 +19,7 @@
 
 /* The definition of _GL_UNUSED_PARAMETER is copied here.  */
 /* A C macro for declaring that specific function parameters are not used.
-   Copyright (C) 2008-2017 Free Software Foundation, Inc.
+   Copyright (C) 2008-2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or
    modify it under the terms of either:
