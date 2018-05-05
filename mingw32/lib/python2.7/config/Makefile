@@ -26,10 +26,10 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	2.7
-srcdir=		../Python-2.7.14
-VPATH=		../Python-2.7.14
-abs_srcdir=	/scripts/mingw-w64-python2/src/build-i686/../Python-2.7.14
-abs_builddir=	/scripts/mingw-w64-python2/src/build-i686
+srcdir=		../Python-2.7.15
+VPATH=		../Python-2.7.15
+abs_srcdir=	/c/repo/mingw-w64-python2/src/build-i686/../Python-2.7.15
+abs_builddir=	/c/repo/mingw-w64-python2/src/build-i686
 build=		i686-w64-mingw32
 host=		i686-w64-mingw32
 
@@ -107,9 +107,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.14
-VPATH_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.14
-abs_srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.14
+srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.15
+VPATH_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.15
+abs_srcdir_b2h=		C:/repo/mingw-w64-python2/src/Python-2.7.15
 abs_builddir_b2h=	C:/repo/mingw-w64-python2/src/build-i686
 prefix_b2h=		C:/building/msys64/mingw32
 
@@ -427,7 +427,16 @@ LIBRARY_OBJS=	\
 
 # Default target
 all:		build_all
-build_all:	$(BUILDPYTHON) oldsharedmods sharedmods gdbhooks
+build_all:	check-clean-src $(BUILDPYTHON) oldsharedmods sharedmods gdbhooks
+
+# Check that the source is clean when building out of source.
+check-clean-src:
+	@if test -n "$(VPATH)" -a -f "$(srcdir)/Modules/python.o"; then \
+		echo "Error: The source directory ($(srcdir)) is not clean" ; \
+		echo "Building Python out of the source tree (in $(abs_builddir)) requires a clean source tree ($(abs_srcdir))" ; \
+		echo "Try to run: make -C \"$(srcdir)\" clean" ; \
+		exit 1; \
+	fi
 
 # Compile a binary with profile guided optimization.
 profile-opt:
@@ -454,7 +463,7 @@ build_all_generate_profile:
 
 run_profile_task:
 	: # FIXME: can't run for a cross build
-	$(LLVM_PROF_FILE) ./$(BUILDPYTHON) $(PROFILE_TASK) || true
+	$(LLVM_PROF_FILE) $(RUNSHARED) ./$(BUILDPYTHON) $(PROFILE_TASK) || true
 
 build_all_merge_profile:
 	$(LLVM_PROF_MERGER)
@@ -933,6 +942,14 @@ memtest:	all platform
 		-$(TESTPYTHON) $(TESTPROG) $(MEMTESTOPTS)
 		$(TESTPYTHON) $(TESTPROG) $(MEMTESTOPTS)
 
+# SSL tests
+.PHONY: multisslcompile multissltest
+multisslcompile: build_all
+	$(RUNSHARED) ./$(BUILDPYTHON) Tools/ssl/multissltests.py --compile-only
+
+multissltest: build_all
+	$(RUNSHARED) ./$(BUILDPYTHON) Tools/ssl/multissltests.py
+
 # Install everything
 install:	 commoninstall bininstall maninstall 
 	if test "x$(ENSUREPIP)" != "xno"  ; then \
@@ -955,7 +972,7 @@ altinstall:	commoninstall
 			$$ensurepip --root=$(DESTDIR)/ ; \
 	fi
 
-commoninstall:	 \
+commoninstall:	check-clean-src  \
 		altbininstall libinstall inclinstall libainstall \
 		sharedinstall oldsharedinstall altmaninstall \
 		
@@ -1409,10 +1426,9 @@ autoconf:
 
 # Create a tags file for vi
 tags::
-	cd $(srcdir); \
-	ctags -w Include/*.h; \
-	for i in $(SRCDIRS); do ctags -f tags -w -a $$i/*.[ch]; \
-	done; \
+	ctags -w $(srcdir)/Include/*.h
+	for i in $(SRCDIRS); do ctags -f tags -w -a $(srcdir)/$$i/*.[ch]; done
+	ctags -f tags -w -a $(srcdir)/Modules/_ctypes/*.[ch]
 	LC_ALL=C sort -o tags tags
 
 # Create a tags file for GNU Emacs
@@ -1512,7 +1528,7 @@ patchcheck:
 Python/thread.o:  $(srcdir)/Python/thread_atheos.h $(srcdir)/Python/thread_beos.h $(srcdir)/Python/thread_cthread.h $(srcdir)/Python/thread_foobar.h $(srcdir)/Python/thread_lwp.h $(srcdir)/Python/thread_nt.h $(srcdir)/Python/thread_os2.h $(srcdir)/Python/thread_pth.h $(srcdir)/Python/thread_pthread.h $(srcdir)/Python/thread_sgi.h $(srcdir)/Python/thread_solaris.h $(srcdir)/Python/thread_wince.h
 
 # Declare targets that aren't real files
-.PHONY: all build_all sharedmods oldsharedmods test quicktest memtest
+.PHONY: all build_all sharedmods check-clean-src oldsharedmods test quicktest memtest
 .PHONY: install altinstall oldsharedinstall bininstall altbininstall
 .PHONY: maninstall libinstall inclinstall libainstall sharedinstall
 .PHONY: frameworkinstall frameworkinstallframework frameworkinstallstructure
