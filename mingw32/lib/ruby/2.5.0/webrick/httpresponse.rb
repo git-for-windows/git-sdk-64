@@ -21,6 +21,8 @@ module WEBrick
   # WEBrick HTTP Servlet.
 
   class HTTPResponse
+    class InvalidHeader < StandardError
+    end
 
     ##
     # HTTP Response version
@@ -287,14 +289,19 @@ module WEBrick
         data = status_line()
         @header.each{|key, value|
           tmp = key.gsub(/\bwww|^te$|\b\w/){ $&.upcase }
-          data << "#{tmp}: #{value}" << CRLF
+          data << "#{tmp}: #{check_header(value)}" << CRLF
         }
         @cookies.each{|cookie|
-          data << "Set-Cookie: " << cookie.to_s << CRLF
+          data << "Set-Cookie: " << check_header(cookie.to_s) << CRLF
         }
         data << CRLF
-        _write_data(socket, data)
+        socket.write(data)
       end
+    rescue InvalidHeader => e
+      @header.clear
+      @cookies.clear
+      set_error e
+      retry
     end
 
     ##
@@ -359,6 +366,14 @@ module WEBrick
 
     private
 
+    def check_header(header_value)
+      if header_value =~ /\r\n/
+        raise InvalidHeader
+      else
+        header_value
+      end
+    end
+
     # :stopdoc:
 
     def error_body(backtrace, ex, host, port)
@@ -401,18 +416,29 @@ module WEBrick
             @body.readpartial(@buffer_size, buf)
             size = buf.bytesize
             data = "#{size.to_s(16)}#{CRLF}#{buf}#{CRLF}"
-            _write_data(socket, data)
+            socket.write(data)
             data.clear
             @sent_size += size
           rescue EOFError
             break
           end while true
           buf.clear
-          _write_data(socket, "0#{CRLF}#{CRLF}")
+          socket.write("0#{CRLF}#{CRLF}")
         else
-          size = @header['content-length'].to_i
-          _send_file(socket, @body, 0, size)
-          @sent_size = size
+          if %r{\Abytes (\d+)-(\d+)/\d+\z} =~ @header['content-range']
+            offset = $1.to_i
+            size = $2.to_i - offset + 1
+          else
+            offset = nil
+            size = @header['content-length']
+            size = size.to_i if size
+          end
+          begin
+            @sent_size = IO.copy_stream(@body, socket, size, offset)
+          rescue NotImplementedError
+            @body.seek(offset, IO::SEEK_SET)
+            @sent_size = IO.copy_stream(@body, socket, size)
+          end
         end
       ensure
         @body.close
@@ -429,13 +455,13 @@ module WEBrick
           size = buf.bytesize
           data = "#{size.to_s(16)}#{CRLF}#{buf}#{CRLF}"
           buf.clear
-          _write_data(socket, data)
+          socket.write(data)
           @sent_size += size
         end
-        _write_data(socket, "0#{CRLF}#{CRLF}")
+        socket.write("0#{CRLF}#{CRLF}")
       else
         if @body && @body.bytesize > 0
-          _write_data(socket, @body)
+          socket.write(@body)
           @sent_size = @body.bytesize
         end
       end
@@ -446,7 +472,7 @@ module WEBrick
         # do nothing
       elsif chunked?
         @body.call(ChunkedWrapper.new(socket, self))
-        _write_data(socket, "0#{CRLF}#{CRLF}")
+        socket.write("0#{CRLF}#{CRLF}")
       else
         size = @header['content-length'].to_i
         @body.call(socket)
@@ -461,40 +487,25 @@ module WEBrick
       end
 
       def write(buf)
-        return if buf.empty?
+        return 0 if buf.empty?
         socket = @socket
         @resp.instance_eval {
           size = buf.bytesize
           data = "#{size.to_s(16)}#{CRLF}#{buf}#{CRLF}"
-          _write_data(socket, data)
+          socket.write(data)
           data.clear
           @sent_size += size
+          size
         }
       end
-      alias :<< :write
-    end
 
-    def _send_file(output, input, offset, size)
-      while offset > 0
-        sz = @buffer_size < size ? @buffer_size : size
-        buf = input.read(sz)
-        offset -= buf.bytesize
-      end
-
-      if size == 0
-        while buf = input.read(@buffer_size)
-          _write_data(output, buf)
-        end
-      else
-        while size > 0
-          sz = @buffer_size < size ? @buffer_size : size
-          buf = input.read(sz)
-          _write_data(output, buf)
-          size -= buf.bytesize
-        end
+      def <<(*buf)
+        write(buf)
+        self
       end
     end
 
+    # preserved for compatibility with some 3rd-party handlers
     def _write_data(socket, data)
       socket << data
     end

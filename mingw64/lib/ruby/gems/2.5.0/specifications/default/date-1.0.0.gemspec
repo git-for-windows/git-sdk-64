@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/ruby/date".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.4.0".freeze)
-  s.rubygems_version = "2.7.3".freeze
+  s.rubygems_version = "2.7.6".freeze
   s.summary = "A subclass of Object includes Comparable module for handling dates.".freeze
 
   if s.respond_to? :specification_version then

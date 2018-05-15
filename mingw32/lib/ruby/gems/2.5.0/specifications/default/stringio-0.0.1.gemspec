@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/ruby/stringio".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.2".freeze)
-  s.rubygems_version = "2.7.3".freeze
+  s.rubygems_version = "2.7.6".freeze
   s.summary = "Pseudo IO on String".freeze
 
   if s.respond_to? :specification_version then

@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/ruby/csv".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.4.0".freeze)
-  s.rubygems_version = "2.7.3".freeze
+  s.rubygems_version = "2.7.6".freeze
   s.summary = "CSV Reading and Writing".freeze
 
   if s.respond_to? :specification_version then

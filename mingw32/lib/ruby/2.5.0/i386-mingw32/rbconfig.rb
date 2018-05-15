@@ -10,7 +10,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("2.5.") or
-    raise "ruby lib version (2.5.0) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (2.5.1) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.5.0/i386-mingw32")
@@ -21,8 +21,8 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "2"
   CONFIG["MINOR"] = "5"
-  CONFIG["TEENY"] = "0"
-  CONFIG["PATCHLEVEL"] = "0"
+  CONFIG["TEENY"] = "1"
+  CONFIG["PATCHLEVEL"] = "57"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/mingw32")
@@ -143,7 +143,7 @@ module RbConfig
   CONFIG["RM"] = "rm -f"
   CONFIG["PKG_CONFIG"] = "pkg-config"
   CONFIG["DOXYGEN"] = "doxygen"
-  CONFIG["DOT"] = ""
+  CONFIG["DOT"] = "dot"
   CONFIG["MAKEDIRS"] = "/usr/bin/mkdir -p"
   CONFIG["MKDIR_P"] = "/usr/bin/mkdir -p"
   CONFIG["INSTALL_DATA"] = "$(INSTALL) -m 644"
@@ -162,7 +162,7 @@ module RbConfig
   CONFIG["AR"] = "ar"
   CONFIG["RANLIB"] = "ranlib"
   CONFIG["try_header"] = ""
-  CONFIG["CC_VERSION_MESSAGE"] = "i686-w64-mingw32-gcc.exe (Rev1, Built by MSYS2 project) 7.2.0\nCopyright (C) 2017 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  CONFIG["CC_VERSION_MESSAGE"] = "i686-w64-mingw32-gcc.exe (Rev2, Built by MSYS2 project) 7.3.0\nCopyright (C) 2017 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
   CONFIG["CC_VERSION"] = "$(CC) --version"
   CONFIG["CSRCFLAG"] = ""
   CONFIG["COUTFLAG"] = "-o "
@@ -197,7 +197,7 @@ module RbConfig
   CONFIG["build_cpu"] = "i686"
   CONFIG["build"] = "i686-w64-mingw32"
   CONFIG["RUBY_API_VERSION"] = "$(MAJOR).$(MINOR)"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.5.0"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.5.1"
   CONFIG["HAVE_GIT"] = "yes"
   CONFIG["GIT"] = "git"
   CONFIG["cxxflags"] = "$(optflags) $(debugflags) $(warnflags)"

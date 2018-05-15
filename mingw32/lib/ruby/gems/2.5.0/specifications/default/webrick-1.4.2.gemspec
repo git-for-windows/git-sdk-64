@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://www.ruby-lang.org".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0".freeze)
-  s.rubygems_version = "2.7.3".freeze
+  s.rubygems_version = "2.7.6".freeze
   s.summary = "HTTP server toolkit".freeze
 
   if s.respond_to? :specification_version then

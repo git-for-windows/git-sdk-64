@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.licenses = ["Ruby".freeze]
   s.rdoc_options = ["--main".freeze, "README.rdoc".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.2.2".freeze)
-  s.rubygems_version = "2.7.3".freeze
+  s.rubygems_version = "2.7.6".freeze
   s.summary = "RDoc produces HTML and command-line documentation for Ruby projects".freeze
 
   if s.respond_to? :specification_version then

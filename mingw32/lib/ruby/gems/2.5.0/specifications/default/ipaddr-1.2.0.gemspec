@@ -9,12 +9,12 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Akinori MUSHA".freeze, "Hajimu UMEMOTO".freeze]
   s.bindir = "exe".freeze
-  s.date = "2017-12-27"
+  s.date = "2018-05-14"
   s.description = "IPAddr provides a set of methods to manipulate an IP address.\nBoth IPv4 and IPv6 are supported.\n".freeze
   s.email = ["knu@idaemons.org".freeze, "ume@mahoroba.org".freeze]
   s.files = [".gitignore".freeze, ".travis.yml".freeze, "Gemfile".freeze, "LICENSE.txt".freeze, "README.md".freeze, "Rakefile".freeze, "bin/console".freeze, "bin/setup".freeze, "ipaddr.gemspec".freeze, "lib/ipaddr.rb".freeze]
   s.homepage = "https://github.com/ruby/ipaddr".freeze
-  s.rubygems_version = "2.7.3".freeze
+  s.rubygems_version = "2.7.6".freeze
   s.summary = "A class to manipulate an IP address in ruby".freeze
 
   if s.respond_to? :specification_version then
