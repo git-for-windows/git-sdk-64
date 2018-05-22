@@ -91,7 +91,7 @@ extern "C"
  * version number.  Used together with idn2_check_version() to verify
  * header file and run-time library consistency.
  */
-#define IDN2_VERSION "2.0.4"
+#define IDN2_VERSION "2.0.5"
 
 /**
  * IDN2_VERSION_NUMBER
@@ -102,7 +102,7 @@ extern "C"
  * digits are used to enumerate development snapshots, but for all
  * public releases they will be 0000.
  */
-#define IDN2_VERSION_NUMBER 0x02000004
+#define IDN2_VERSION_NUMBER 0x02000005
 
 /**
  * IDN2_VERSION_MAJOR
@@ -126,7 +126,7 @@ extern "C"
  * Pre-processor symbol for the patch level number (decimal).
  * The version scheme is major.minor.patchlevel.
  */
-#define IDN2_VERSION_PATCH 4
+#define IDN2_VERSION_PATCH 5
 
 /**
  * IDN2_LABEL_MAX_LENGTH
@@ -151,6 +151,7 @@ extern "C"
  * idn2_flags:
  * @IDN2_NFC_INPUT: Normalize input string using normalization form C.
  * @IDN2_ALABEL_ROUNDTRIP: Perform optional IDNA2008 lookup roundtrip check (not implemented yet).
+ * @IDN2_NO_TR46: Disable Unicode TR46 processing (default).
  * @IDN2_TRANSITIONAL: Perform Unicode TR46 transitional processing.
  * @IDN2_NONTRANSITIONAL: Perform Unicode TR46 non-transitional processing.
  * @IDN2_ALLOW_UNASSIGNED: Libidn compatibility flag, unused.
@@ -169,6 +170,7 @@ extern "C"
     IDN2_NONTRANSITIONAL = 8,
     IDN2_ALLOW_UNASSIGNED = 16,
     IDN2_USE_STD3_ASCII_RULES = 32,
+    IDN2_NO_TR46 = 64
   } idn2_flags;
 
 /* IDNA2008 with UTF-8 encoded inputs. */
