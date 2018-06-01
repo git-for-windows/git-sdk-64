@@ -57,6 +57,7 @@ enum {
 	P11_KIT_MODULE_UNMANAGED = 1 << 0,
 	P11_KIT_MODULE_CRITICAL = 1 << 1,
 	P11_KIT_MODULE_TRUSTED = 1 << 2,
+	P11_KIT_MODULE_MASK = (1 << 3) - 1
 };
 
 typedef void        (* p11_kit_destroyer)                   (void *data);
@@ -111,6 +112,11 @@ void                   p11_kit_be_loud                      (void);
 
 void                   p11_kit_set_progname                 (const char *progname);
 
+void                   p11_kit_override_system_files        (const char *system_conf,
+                                                             const char *user_conf,
+                                                             const char *package_modules,
+                                                             const char *system_modules,
+						             const char *user_modules);
 #endif
 
 const char *           p11_kit_message                      (void);

@@ -15,6 +15,10 @@
 ## its end.  For example, for the "brackets" option, ""')>]}" will match
 ## ", ', ), >, ], and }.
 
+## Make the 'nextword' function (Ctrl+Right) stop at word ends
+## instead of at beginnings.
+# set afterends
+
 ## When soft line wrapping is enabled, make it wrap lines at blanks
 ## (tabs and spaces) instead of always at the edge of the screen.
 # set atblanks
@@ -43,7 +47,6 @@
 ## Constantly display the cursor position in the status bar.  Note that
 ## this overrides "quickblank".
 # set constantshow
-## (The old form, 'const', is deprecated.)
 
 ## Use cut-from-cursor-to-end-of-line by default.
 # set cutfromcursor
@@ -107,7 +110,6 @@
 
 ## Remember the cursor position in each file for the next editing session.
 # set positionlog
-## (The old form, 'poslog', is deprecated.)
 
 ## Preserve the XON and XOFF keys (^Q and ^S).
 # set preserve
@@ -174,6 +176,7 @@
 
 ## Snip whitespace at the end of lines when justifying or hard-wrapping.
 # set trimblanks
+## (The old form, 'justifytrim', is deprecated.)
 
 ## Disallow file modification.  Why would you want this in an rcfile? ;)
 # set view
@@ -196,17 +199,19 @@
 # set wordchars "<_>."
 
 
-## Paint the interface elements of nano.
-## These are examples; by default there are no colors.
+## Paint the interface elements of nano.  These are examples;
+## by default there are no colors, except for errorcolor.
 set titlecolor brightwhite,blue
 set statuscolor brightwhite,green
+set errorcolor brightwhite,red
 set selectedcolor brightwhite,magenta
 set numbercolor cyan
 set keycolor cyan
 set functioncolor green
 ## In root's .nanorc you might want to use:
-# set titlecolor brightwhite,red
-# set statuscolor brightwhite,red
+# set titlecolor brightwhite,magenta
+# set statuscolor brightwhite,magenta
+# set errorcolor brightwhite,red
 # set selectedcolor brightwhite,cyan
 # set numbercolor magenta
 # set keycolor brightmagenta

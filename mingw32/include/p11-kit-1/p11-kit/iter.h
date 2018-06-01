@@ -45,6 +45,16 @@ extern "C" {
 
 #ifdef P11_KIT_FUTURE_UNSTABLE_API
 
+/*
+ * If the caller is using the PKCS#11 GNU calling convention, then we cater
+ * to that here.
+ */
+#ifdef CRYPTOKI_GNU
+typedef unsigned char CK_BBOOL;
+typedef ck_object_handle_t CK_OBJECT_HANDLE;
+typedef ck_session_handle_t CK_SESSION_HANDLE;
+#endif
+
 typedef struct p11_kit_iter P11KitIter;
 typedef P11KitIter p11_kit_iter;
 

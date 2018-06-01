@@ -99,6 +99,16 @@ tidy_strip() {
 			-o -type f -executable ! -name '*.dll' ! -name '*.exe' ! -name '*.so' ! -name '*.so.[0-9]*' ! -name '*.oct' ! -name '*.cmxs' ! -name '*.a' ! -name '*.la' ! -name '*.lib' ! -name '*.exe.manifest' ! -name '*.exe.config' ! -name '*.dll.config' ! -name '*.mdb' ! -name '*-config' ! -name '*.csh' ! -name '*.sh' ! -name '*.pl' ! -name '*.pm' ! -name '*.py' ! -name '*.rb' ! -name '*.tcl' -print0 | \
 		while read -d $'\0' binary
 		do
+			# Skip thin archives from stripping
+			case "${binary##*/}" in
+				*.a)
+					if [ "$(head -c 7 "${binary}")" = '!<thin>' ]
+					then
+						continue
+					fi
+				;;
+			esac
+
 			# assure this is actually a binary object
 			if [ "$(head -c 2 "${binary}")" = '#!' ]
 			then
