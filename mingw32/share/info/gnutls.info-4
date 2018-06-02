@@ -1,9 +1,10 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 6 March 2017 for version 3.6.1 of GnuTLS.
+This manual is last updated 12 February 2018 for version 3.6.2 of
+GnuTLS.
 
-Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2017 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2018 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -5635,6 +5636,30 @@ gnutls_x509_crt_set_spki
 
      *Since:* 3.6.0
 
+gnutls_x509_crt_set_subject_alternative_name
+--------------------------------------------
+
+ -- Function: int gnutls_x509_crt_set_subject_alternative_name
+          (gnutls_x509_crt_t CRT, gnutls_x509_subject_alt_name_t TYPE,
+          const char * DATA_STRING)
+     CRT: a certificate of type 'gnutls_x509_crt_t'
+
+     TYPE: is one of the gnutls_x509_subject_alt_name_t enumerations
+
+     DATA_STRING: The data to be set, a (0) terminated string
+
+     This function will set the subject alternative name certificate
+     extension.  This function assumes that data can be expressed as a
+     null terminated string.
+
+     The name of the function is unfortunate since it is inconsistent
+     with 'gnutls_x509_crt_get_subject_alt_name()' .
+
+     See 'gnutls_x509_crt_set_subject_alt_name()' for more information.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
 gnutls_x509_crt_set_subject_alt_name
 ------------------------------------
 
@@ -5698,30 +5723,6 @@ gnutls_x509_crt_set_subject_alt_othername
      otherwise a negative error value.
 
      *Since:* 3.5.0
-
-gnutls_x509_crt_set_subject_alternative_name
---------------------------------------------
-
- -- Function: int gnutls_x509_crt_set_subject_alternative_name
-          (gnutls_x509_crt_t CRT, gnutls_x509_subject_alt_name_t TYPE,
-          const char * DATA_STRING)
-     CRT: a certificate of type 'gnutls_x509_crt_t'
-
-     TYPE: is one of the gnutls_x509_subject_alt_name_t enumerations
-
-     DATA_STRING: The data to be set, a (0) terminated string
-
-     This function will set the subject alternative name certificate
-     extension.  This function assumes that data can be expressed as a
-     null terminated string.
-
-     The name of the function is unfortunate since it is inconsistent
-     with 'gnutls_x509_crt_get_subject_alt_name()' .
-
-     See 'gnutls_x509_crt_set_subject_alt_name()' for more information.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
 
 gnutls_x509_crt_set_subject_key_id
 ----------------------------------
@@ -8564,7 +8565,10 @@ gnutls_x509_trust_list_iter_get_ca
      'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' is returned and the
      iterator is reset.
 
-     After use, the iterator must be deinitialized usin
+     The iterator is deinitialized and reset to 'NULL' automatically by
+     this function after iterating through all elements until
+     'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' is returned.  If the
+     iteration is aborted early, it must be manually deinitialized using
      'gnutls_x509_trust_list_iter_deinit()' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,

@@ -1,9 +1,10 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 6 March 2017 for version 3.6.1 of GnuTLS.
+This manual is last updated 12 February 2018 for version 3.6.2 of
+GnuTLS.
 
-Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2017 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2018 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -80,7 +81,7 @@ File: gnutls.info,  Node: Keys in TPM,  Next: Key generation,  Up: Trusted Platf
 The RSA keys in the TPM module may either be stored in a flash memory
 within TPM or stored in a file in disk.  In the former case the key can
 provide operations as with PKCS #11 and is identified by a URL. The URL
-is described in [_TPMURI_] and is of the following form.
+is described in [*note TPMURI::] and is of the following form.
 tpmkey:uuid=42309df8-d101-11e1-a89a-97bb33c23ad1;storage=user
 
 It consists from a unique identifier of the key as well as the part of
@@ -286,49 +287,7 @@ is disabled on platforms without a working 'fork(2)' function.  The
 'PAGER' environment variable is used to select the program, defaulting
 to 'more'.  Both will exit with a status code of 0.
 
-     tpmtool - GnuTLS TPM tool
-     Usage:  tpmtool [ -<flag> [<val>] | --<name>[{=| }<val>] ]...
-
-        -d, --debug=num            Enable debugging
-                                     - it must be in the range:
-                                       0 to 9999
-            --infile=file          Input file
-                                     - file must pre-exist
-            --outfile=str          Output file
-            --generate-rsa         Generate an RSA private-public key pair
-            --register             Any generated key will be registered in the TPM
-                                     - requires the option 'generate-rsa'
-            --signing              Any generated key will be a signing key
-                                     - requires the option 'generate-rsa'
-                                     -- and prohibits the option 'legacy'
-            --legacy               Any generated key will be a legacy key
-                                     - requires the option 'generate-rsa'
-                                     -- and prohibits the option 'signing'
-            --user                 Any registered key will be a user key
-                                     - requires the option 'register'
-                                     -- and prohibits the option 'system'
-            --system               Any registered key will be a system key
-                                     - requires the option 'register'
-                                     -- and prohibits the option 'user'
-            --pubkey=str           Prints the public key of the provided key
-            --list                 Lists all stored keys in the TPM
-            --delete=str           Delete the key identified by the given URL (UUID).
-            --test-sign=str        Tests the signature operation of the provided object
-            --sec-param=str        Specify the security level [low, legacy, medium, high, ultra].
-            --bits=num             Specify the number of bits for key generate
-            --inder                Use the DER format for keys.
-                                     - disabled as '--no-inder'
-            --outder               Use DER format for output keys
-                                     - disabled as '--no-outder'
-        -v, --version[=arg]        output version information and exit
-        -h, --help                 display extended usage information and exit
-        -!, --more-help            extended usage information passed thru pager
-
-     Options are specified by doubled hyphens and their name or by a single
-     hyphen and the flag character.
-
-     Program that allows handling cryptographic data from the TPM chip.
-
+     tpmtool is unavailable - no --help
 
 debug option (-d)
 -----------------
@@ -581,7 +540,7 @@ File: gnutls.info,  Node: Common types,  Next: Debugging and auditing,  Prev: Er
 All strings that are to provided as input to GnuTLS functions should be
 in UTF-8 unless otherwise specified.  Output strings are also in UTF-8
 format unless otherwise specified.  When functions take as input
-passwords, they will normalize them using [_rfc7613_] rules (since
+passwords, they will normalize them using [*note RFC7613::] rules (since
 GnuTLS 3.5.7).
 
 When data of a fixed size are provided to GnuTLS functions then the
@@ -655,9 +614,7 @@ Variable               Purpose
                           * 0x400000: Enable VIA PHE SHA512
                        
 'GNUTLS_FORCE_FIPS_MODE'In setups where GnuTLS is compiled with support
-                       for FIPS140-2 (see -enable-fips140-mode in
-                       configure), that option if set to one enforces
-                       the FIPS140 mode.
+                       for FIPS140-2 (see *note FIPS140-2 mode::).
                        
 
 Table 6.1: Environment variables used by the library.
@@ -1880,9 +1837,9 @@ to 2.5 round-trips, it still adds considerable latency, reducing its
 applicability to certain applications.
 
 In client side, it is possible to take advantage of the TCP fast open
-[_RFC7413_] mechanism on operating systems that support it.  That can be
-done either by manually crafting the push and pull callbacks, or by
-utilizing *note gnutls_transport_set_fastopen::.  In that case the
+[*note RFC7413::] mechanism on operating systems that support it.  That
+can be done either by manually crafting the push and pull callbacks, or
+by utilizing *note gnutls_transport_set_fastopen::.  In that case the
 initial TCP handshake is eliminated, reducing the TLS handshake
 round-trip to 2.  Note, that in that case any connection failures will
 be reported during the *note gnutls_handshake:: function call with error
@@ -1961,7 +1918,8 @@ that both client and server side should set the correct maximum transfer
 unit for the layer underneath GnuTLS.  This will allow proper
 fragmentation of DTLS messages and prevent messages from being silently
 discarded by the transport layer.  The "correct" maximum transfer unit
-can be obtained through a path MTU discovery mechanism [_RFC4821_].
+can be obtained through a path MTU discovery mechanism [*note
+RFC4821::].
 
 'VOID *note gnutls_dtls_set_mtu:: (gnutls_session_t SESSION, unsigned int MTU)'
 'UNSIGNED INT *note gnutls_dtls_get_mtu:: (gnutls_session_t SESSION)'
@@ -1979,9 +1937,9 @@ File: gnutls.info,  Node: DTLS and SCTP,  Prev: DTLS sessions,  Up: Setting up t
 -------------------
 
 Although DTLS can run under any reliable or unreliable layer, there are
-special requirements for SCTP according to [_RFC6083_].  We summarize
-the most important below, however for a full treatment we refer to
-[_RFC6083_].
+special requirements for SCTP according to [*note RFC6083::].  We
+summarize the most important below, however for a full treatment we
+refer to [*note RFC6083::].
 
    * The MTU set via *note gnutls_dtls_set_mtu:: must be 2^14.
    * Replay detection must be disabled; use the flag
@@ -2662,9 +2620,10 @@ Keyword                          Description
                                  client hello exceed 512 bytes.
                                  This avoids a black hole
                                  behavior in some firewalls.
-                                 This is the [_rfc7685_] client
-                                 hello padding extension, also
-                                 enabled with %COMPAT.
+                                 This is the [*note RFC7685::]
+                                 client hello padding
+                                 extension, also enabled with
+                                 %COMPAT.
                                  
 %NO_EXTENSIONS                   will prevent the sending of
                                  any TLS extensions in client
@@ -2843,9 +2802,10 @@ File: gnutls.info,  Node: Selecting cryptographic key sizes,  Next: Advanced top
 Because many algorithms are involved in TLS, it is not easy to set a
 consistent security level.  For this reason in *note Table 6.7:
 tab:key-sizes. we present some correspondence between key sizes of
-symmetric algorithms and public key algorithms based on [_ECRYPT_].
-Those can be used to generate certificates with appropriate key sizes as
-well as select parameters for Diffie-Hellman and SRP authentication.
+symmetric algorithms and public key algorithms based on [*note
+ECRYPT::].  Those can be used to generate certificates with appropriate
+key sizes as well as select parameters for Diffie-Hellman and SRP
+authentication.
 
 SecurityRSA, DH   ECC     Security       Description
 bits    and SRP   key     parameter      
@@ -2903,7 +2863,7 @@ be predicted or total failure of the current public key systems by
 quantum computers.  On the other hand though the cryptosystems used in
 TLS are selected in a conservative way and such catastrophic
 breakthroughs or failures are believed to be unlikely.  The NIST
-publication SP 800-57 [_NISTSP80057_] contains a similar table.
+publication SP 800-57 [*note NISTSP80057::] contains a similar table.
 
 When using GnuTLS and a decision on bit sizes for a public key algorithm
 is required, use of the following functions is recommended:
@@ -2957,6 +2917,7 @@ File: gnutls.info,  Node: Advanced topics,  Prev: Selecting cryptographic key si
 
 * Menu:
 
+* Virtual hosts and credentials::
 * Session resumption::
 * Certificate verification::
 * Re-authentication::
@@ -2967,9 +2928,76 @@ File: gnutls.info,  Node: Advanced topics,  Prev: Selecting cryptographic key si
 * Compatibility with the OpenSSL library::
 
 
-File: gnutls.info,  Node: Session resumption,  Next: Certificate verification,  Up: Advanced topics
+File: gnutls.info,  Node: Virtual hosts and credentials,  Next: Session resumption,  Up: Advanced topics
 
-6.12.1 Session resumption
+6.12.1 Virtual hosts and credentials
+------------------------------------
+
+Often when operating with virtual hosts, one may not want to associate a
+particular certificate set to the credentials function early, before the
+virtual host is known.  That can be achieved by calling *note
+gnutls_credentials_set:: within a handshake pre-hook for client hello.
+That message contains the peer's intended hostname, and if read, and the
+appropriate credentials are set, gnutls will be able to continue in the
+handshake process.  A brief usage example is shown below.
+
+     static int
+     handshake_hook_func(gnutls_session_t session, unsigned int htype,
+                         unsigned when, unsigned int incoming, const gnutls_datum_t *msg)
+     {
+         assert(htype == GNUTLS_HANDSHAKE_CLIENT_HELLO);
+         assert(when == GNUTLS_HOOK_PRE);
+
+         gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, cred);
+     }
+
+     int main()
+     {
+       ...
+
+       gnutls_handshake_set_hook_function(server, GNUTLS_HANDSHAKE_CLIENT_HELLO,
+                                          GNUTLS_HOOK_PRE, handshake_hook_func);
+       ...
+     }
+
+ -- Function: void gnutls_handshake_set_hook_function (gnutls_session_t
+          SESSION, unsigned int HTYPE, int WHEN,
+          gnutls_handshake_hook_func FUNC)
+     SESSION: is a 'gnutls_session_t' type
+
+     HTYPE: the 'gnutls_handshake_description_t' of the message to hook
+     at
+
+     WHEN: 'GNUTLS_HOOK_' * depending on when the hook function should
+     be called
+
+     FUNC: is the function to be called
+
+     This function will set a callback to be called after or before the
+     specified handshake message has been received or generated.  This
+     is a generalization of
+     'gnutls_handshake_set_post_client_hello_function()' .
+
+     To call the hook function prior to the message being generated or
+     processed use 'GNUTLS_HOOK_PRE' as 'when' parameter,
+     'GNUTLS_HOOK_POST' to call after, and 'GNUTLS_HOOK_BOTH' for both
+     cases.
+
+     This callback must return 0 on success or a gnutls error code to
+     terminate the handshake.
+
+     To hook at all handshake messages use an 'htype' of
+     'GNUTLS_HANDSHAKE_ANY' .
+
+     *Warning:* You should not use this function to terminate the
+     handshake based on client input unless you know what you are doing.
+     Before the handshake is finished there is no way to know if there
+     is a man-in-the-middle attack being performed.
+
+
+File: gnutls.info,  Node: Session resumption,  Next: Certificate verification,  Prev: Virtual hosts and credentials,  Up: Advanced topics
+
+6.12.2 Session resumption
 -------------------------
 
 Client side
@@ -3074,7 +3102,7 @@ otherwise.
 
 File: gnutls.info,  Node: Certificate verification,  Next: Re-authentication,  Prev: Session resumption,  Up: Advanced topics
 
-6.12.2 Certificate verification
+6.12.3 Certificate verification
 -------------------------------
 
 In this section the functionality for additional certificate
@@ -3082,7 +3110,7 @@ verification methods is listed.  These methods are intended to be used
 in addition to normal PKI verification, in order to reduce the risk of a
 compromised CA being undetected.
 
-6.12.2.1 Trust on first use
+6.12.3.1 Trust on first use
 ...........................
 
 The GnuTLS library includes functionality to use an SSH-like trust on
@@ -3176,8 +3204,9 @@ public keys are listed below.
      *Since:* 3.0.13
 
 In addition to the above the *note gnutls_store_commitment:: can be used
-to implement a key-pinning architecture as in [_KEYPIN_]. This provides
-a way for web server to commit on a public key that is not yet active.
+to implement a key-pinning architecture as in [*note KEYPIN::].  This
+provides a way for web server to commit on a public key that is not yet
+active.
 
  -- Function: int gnutls_store_commitment (const char * DB_NAME,
           gnutls_tdb_t TDB, const char * HOST, const char * SERVICE,
@@ -3226,7 +3255,7 @@ contain storage and retrieval functions and specified as below.
 'VOID *note gnutls_tdb_set_store_func:: (gnutls_tdb_t TDB, gnutls_tdb_store_func STORE)'
 'VOID *note gnutls_tdb_set_store_commitment_func:: (gnutls_tdb_t TDB, gnutls_tdb_store_commitment_func CSTORE)'
 
-6.12.2.2 DANE verification
+6.12.3.2 DANE verification
 ..........................
 
 Since the DANE library is not included in GnuTLS it requires programs to
@@ -3322,7 +3351,7 @@ use danetool (see *note danetool Invocation::).
 
 File: gnutls.info,  Node: Re-authentication,  Next: Parameter generation,  Prev: Certificate verification,  Up: Advanced topics
 
-6.12.3 Re-authentication
+6.12.4 Re-authentication
 ------------------------
 
 In TLS there is no distinction between rekey, re-authentication, and
@@ -3340,7 +3369,7 @@ disable this protection by using the 'GNUTLS_ALLOW_ID_CHANGE' flag in
 The following paragraphs explain how to safely use the rehandshake
 process.
 
-6.12.3.1 Client side
+6.12.4.1 Client side
 ....................
 
 According to the TLS specification a client may initiate a rehandshake
@@ -3369,7 +3398,7 @@ remains the same as the initial.
 
      *Since:* 2.10.0
 
-6.12.3.2 Server side
+6.12.4.2 Server side
 ....................
 
 A server which wants to instruct the client to re-authenticate, should
@@ -3410,13 +3439,13 @@ renegotiation::).
 
 File: gnutls.info,  Node: Parameter generation,  Next: Deriving keys for other applications/protocols,  Prev: Re-authentication,  Up: Advanced topics
 
-6.12.4 Parameter generation
+6.12.5 Parameter generation
 ---------------------------
 
 Prior to GnuTLS 3.6.0 for the ephemeral or anonymous Diffie-Hellman (DH)
 TLS ciphersuites the application was required to generate or provide DH
 parameters.  That is no longer necessary as GnuTLS utilizes DH
-parameters and negotiation from [_RFC7919_].
+parameters and negotiation from [*note RFC7919::].
 
 Applications can tune the used parameters by explicitly specifying them
 in the priority string.  In server side applications can set the minimum
@@ -3431,7 +3460,7 @@ applications should rely on the default settings.
 'INT *note gnutls_anon_set_server_known_dh_params:: (gnutls_anon_server_credentials_t RES, gnutls_sec_param_t SEC_PARAM)'
 'INT *note gnutls_psk_set_server_known_dh_params:: (gnutls_psk_server_credentials_t RES, gnutls_sec_param_t SEC_PARAM)'
 
-6.12.4.1 Legacy parameter generation
+6.12.5.1 Legacy parameter generation
 ....................................
 
 Note that older than 3.5.6 versions of GnuTLS provided functions to
@@ -3440,12 +3469,12 @@ is still supported but discouraged in current versions.  There is no
 known advantage from using random parameters, while there have been
 several occasions where applications were utilizing incorrect, weak or
 insecure parameters.  This is the main reason GnuTLS includes the
-well-known parameters of [_RFC7919_] and recommends applications
+well-known parameters of [*note RFC7919::] and recommends applications
 utilizing them.
 
 In older applications which require to specify explicit DH parameters,
 we recommend using 'certtool' (of GnuTLS 3.5.6 or later) with the
-'--get-dh-params' option to obtain the FFDHE parameters descussed above.
+'--get-dh-params' option to obtain the FFDHE parameters discussed above.
 The output parameters of the tool are in PKCS#3 format and can be
 imported by most existing applications.
 
@@ -3458,7 +3487,7 @@ The following functions are still supported but considered obsolete.
 
 File: gnutls.info,  Node: Deriving keys for other applications/protocols,  Next: Channel Bindings,  Prev: Parameter generation,  Up: Advanced topics
 
-6.12.5 Deriving keys for other applications/protocols
+6.12.6 Deriving keys for other applications/protocols
 -----------------------------------------------------
 
 In several cases, after a TLS connection is established, it is desirable
@@ -3467,12 +3496,50 @@ an other TLS session using pre-shared keys).  The following describe
 GnuTLS' implementation of RFC5705 to extract keys based on a session's
 master secret.
 
-The API to use is *note gnutls_prf::.  The function needs to be provided
-with a label, and additional context data to mix in the 'extra'
-parameter.  Moreover, the API allows to switch the mix of the client and
-server random nonces, using the 'server_random_first' parameter.  In
-typical uses you don't need it, so a zero value should be provided in
-'server_random_first'.
+The API to use is *note gnutls_prf_rfc5705::.  The function needs to be
+provided with a label, and additional context data to mix in the
+'context' parameter.
+
+ -- Function: int gnutls_prf_rfc5705 (gnutls_session_t SESSION, size_t
+          LABEL_SIZE, const char * LABEL, size_t CONTEXT_SIZE, const
+          char * CONTEXT, size_t OUTSIZE, char * OUT)
+     SESSION: is a 'gnutls_session_t' type.
+
+     LABEL_SIZE: length of the 'label' variable.
+
+     LABEL: label used in PRF computation, typically a short string.
+
+     CONTEXT_SIZE: length of the 'extra' variable.
+
+     CONTEXT: optional extra data to seed the PRF with.
+
+     OUTSIZE: size of pre-allocated output buffer to hold the output.
+
+     OUT: pre-allocated buffer to hold the generated data.
+
+     Applies the TLS Pseudo-Random-Function (PRF) on the master secret
+     and the provided data, seeded with the client and server random
+     fields, as specified in RFC5705.
+
+     The 'label' variable usually contains a string denoting the purpose
+     for the generated data.  The 'server_random_first' indicates
+     whether the client random field or the server random field should
+     be first in the seed.  Non-zero indicates that the server random
+     field is first, 0 that the client random field is first.
+
+     The 'context' variable can be used to add more data to the seed,
+     after the random variables.  It can be used to make sure the
+     generated output is strongly connected to some additional data
+     (e.g., a string used in user authentication).
+
+     The output is placed in 'out' , which must be pre-allocated.
+
+     Note that, to provide the RFC5705 context, the 'context' variable
+     must be non-null.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.
+
+     *Since:* 3.4.4
 
 For example, after establishing a TLS session using *note
 gnutls_handshake::, you can obtain 32-bytes to be used as key, using
@@ -3482,20 +3549,24 @@ this call:
      #define MYCONTEXT "my-protocol's-1st-session"
 
      char out[32];
-     rc = gnutls_prf (session, sizeof(MYLABEL)-1, MYLABEL, 0,
-                      sizeof(MYCONTEXT)-1, MYCONTEXT, 32, out);
+     rc = gnutls_prf_rfc5705 (session, sizeof(MYLABEL)-1, MYLABEL,
+                              sizeof(MYCONTEXT)-1, MYCONTEXT, 32, out);
 
 The output key depends on TLS' master secret, and is the same on both
 client and server.
 
-If you don't want to use the RFC5705 interface and not mix in the client
-and server random nonces, there is a low-level TLS PRF interface called
-*note gnutls_prf_raw::.
+For legacy applications which need to use a more flexible API, there is
+*note gnutls_prf::, which in addition, allows to switch the mix of the
+client and server random nonces, using the 'server_random_first'
+parameter.  For additional flexibility and low-level access to the
+TLS1.2 PRF, there is a low-level TLS PRF interface called *note
+gnutls_prf_raw::.  That however is not functional under newer protocol
+versions.
 
 
 File: gnutls.info,  Node: Channel Bindings,  Next: Interoperability,  Prev: Deriving keys for other applications/protocols,  Up: Advanced topics
 
-6.12.6 Channel bindings
+6.12.7 Channel bindings
 -----------------------
 
 In user authentication protocols (e.g., EAP or SASL mechanisms) it is
@@ -3503,12 +3574,12 @@ useful to have a unique string that identifies the secure channel that
 is used, to bind together the user authentication with the secure
 channel.  This can protect against man-in-the-middle attacks in some
 situations.  That unique string is called a "channel binding".  For
-background and discussion see [_RFC5056_].
+background and discussion see [*note RFC5056::].
 
 In GnuTLS you can extract a channel binding using the *note
 gnutls_session_channel_binding:: function.  Currently only the type
 'GNUTLS_CB_TLS_UNIQUE' is supported, which corresponds to the
-'tls-unique' channel binding for TLS defined in [_RFC5929_].
+'tls-unique' channel binding for TLS defined in [*note RFC5929::].
 
 The following example describes how to print the channel binding data.
 Note that it must be run after a successful TLS handshake.
@@ -3536,7 +3607,7 @@ Note that it must be run after a successful TLS handshake.
 
 File: gnutls.info,  Node: Interoperability,  Next: Compatibility with the OpenSSL library,  Prev: Channel Bindings,  Up: Advanced topics
 
-6.12.7 Interoperability
+6.12.8 Interoperability
 -----------------------
 
 The TLS protocols support many ciphersuites, extensions and version
@@ -3564,7 +3635,7 @@ TLS 1.0 as protocols.
 
 File: gnutls.info,  Node: Compatibility with the OpenSSL library,  Prev: Interoperability,  Up: Advanced topics
 
-6.12.8 Compatibility with the OpenSSL library
+6.12.9 Compatibility with the OpenSSL library
 ---------------------------------------------
 
 To ease GnuTLS' integration with existing applications, a compatibility
@@ -3660,7 +3731,6 @@ client example with X.509 certificate support::.
 #define CHECK(x) assert((x)>=0)
 
 #define MAX_BUF 1024
-#define CAFILE "/etc/ssl/certs/ca-certificates.crt"
 #define MSG "GET / HTTP/1.0\r\n\r\n"
 
 extern int tcp_connect(void);
@@ -3687,10 +3757,8 @@ int main(void)
         /* X509 stuff */
         CHECK(gnutls_certificate_allocate_credentials(&xcred));
 
-        /* sets the trusted cas file
-         */
-        CHECK(gnutls_certificate_set_x509_trust_file(xcred, CAFILE,
-                                                     GNUTLS_X509_FMT_PEM));
+        /* sets the system trusted CAs for Internet PKI */
+        CHECK(gnutls_certificate_set_x509_system_trust(xcred));
 
         /* If client holds a certificate it can be set using the following:
          *
@@ -3698,8 +3766,7 @@ int main(void)
          GNUTLS_X509_FMT_PEM);
          */
 
-        /* Initialize TLS session
-         */
+        /* Initialize TLS session */
         CHECK(gnutls_init(&session, GNUTLS_CLIENT));
 
         CHECK(gnutls_server_name_set(session, GNUTLS_NAME_DNS, "my_host_name",
@@ -4055,7 +4122,6 @@ equivalent to the TLS example with X.509 certificates.
 #define CHECK(x) assert((x)>=0)
 
 #define MAX_BUF 1024
-#define CAFILE "/etc/ssl/certs/ca-certificates.crt"
 #define MSG "GET / HTTP/1.0\r\n\r\n"
 
 extern int udp_connect(void);
@@ -4080,9 +4146,8 @@ int main(void)
         /* X509 stuff */
         CHECK(gnutls_certificate_allocate_credentials(&xcred));
 
-        /* sets the trusted cas file */
-        CHECK(gnutls_certificate_set_x509_trust_file(xcred, CAFILE,
-                                                     GNUTLS_X509_FMT_PEM));
+        /* sets the system trusted CAs for Internet PKI */
+        CHECK(gnutls_certificate_set_x509_system_trust(xcred));
 
         /* Initialize TLS session */
         CHECK(gnutls_init(&session, GNUTLS_CLIENT | GNUTLS_DATAGRAM));
@@ -7667,108 +7732,4 @@ are provided.
 'INT *note gnutls_pkcs7_set_crt:: (gnutls_pkcs7_t PKCS7, gnutls_x509_crt_t CRT)'
 'INT *note gnutls_pkcs7_set_crl_raw:: (gnutls_pkcs7_t PKCS7, const gnutls_datum_t * CRL)'
 'INT *note gnutls_pkcs7_set_crl:: (gnutls_pkcs7_t PKCS7, gnutls_x509_crl_t CRL)'
-
-
-File: gnutls.info,  Node: Hash and MAC functions,  Next: Random number generation,  Prev: Cryptographic Message Syntax / PKCS#7,  Up: Using GnuTLS as a cryptographic library
-
-8.4 Hash and MAC functions
-==========================
-
-The available operations to access hash functions and hash-MAC (HMAC)
-algorithms are shown below.  HMAC algorithms provided keyed hash
-functionality.  The supported MAC and HMAC algorithms are listed in
-*note Figure 8.3: gnutls_mac_algorithm_t.  Note that, despite the 'hmac'
-part in the name of the MAC functions listed below, they can be used
-either for HMAC or MAC operations.
-
-'GNUTLS_MAC_UNKNOWN'
-     Unknown MAC algorithm.
-'GNUTLS_MAC_NULL'
-     NULL MAC algorithm (empty output).
-'GNUTLS_MAC_MD5'
-     HMAC-MD5 algorithm.
-'GNUTLS_MAC_SHA1'
-     HMAC-SHA-1 algorithm.
-'GNUTLS_MAC_RMD160'
-     HMAC-RMD160 algorithm.
-'GNUTLS_MAC_MD2'
-     HMAC-MD2 algorithm.
-'GNUTLS_MAC_SHA256'
-     HMAC-SHA-256 algorithm.
-'GNUTLS_MAC_SHA384'
-     HMAC-SHA-384 algorithm.
-'GNUTLS_MAC_SHA512'
-     HMAC-SHA-512 algorithm.
-'GNUTLS_MAC_SHA224'
-     HMAC-SHA-224 algorithm.
-'GNUTLS_MAC_SHA3_224'
-     - undescribed -
-'GNUTLS_MAC_SHA3_256'
-     - undescribed -
-'GNUTLS_MAC_SHA3_384'
-     - undescribed -
-'GNUTLS_MAC_SHA3_512'
-     - undescribed -
-'GNUTLS_MAC_MD5_SHA1'
-     Combined MD5+SHA1 MAC placeholder.
-'GNUTLS_MAC_AEAD'
-     MAC implicit through AEAD cipher.
-'GNUTLS_MAC_UMAC_96'
-     The UMAC-96 MAC algorithm.
-'GNUTLS_MAC_UMAC_128'
-     The UMAC-128 MAC algorithm.
-
-Figure 8.3: The supported MAC and HMAC algorithms.
-
-'INT *note gnutls_hmac_init:: (gnutls_hmac_hd_t * DIG, gnutls_mac_algorithm_t ALGORITHM, const void * KEY, size_t KEYLEN)'
-'INT *note gnutls_hmac:: (gnutls_hmac_hd_t HANDLE, const void * PTEXT, size_t PTEXT_LEN)'
-'VOID *note gnutls_hmac_output:: (gnutls_hmac_hd_t HANDLE, void * DIGEST)'
-'VOID *note gnutls_hmac_deinit:: (gnutls_hmac_hd_t HANDLE, void * DIGEST)'
-'UNSIGNED *note gnutls_hmac_get_len:: (gnutls_mac_algorithm_t ALGORITHM)'
-'INT *note gnutls_hmac_fast:: (gnutls_mac_algorithm_t ALGORITHM, const void * KEY, size_t KEYLEN, const void * PTEXT, size_t PTEXT_LEN, void * DIGEST)'
-
-The available functions to access hash functions are shown below.  The
-supported hash functions are shown in *note Figure 8.4:
-gnutls_digest_algorithm_t.
-
-'INT *note gnutls_hash_init:: (gnutls_hash_hd_t * DIG, gnutls_digest_algorithm_t ALGORITHM)'
-'INT *note gnutls_hash:: (gnutls_hash_hd_t HANDLE, const void * PTEXT, size_t PTEXT_LEN)'
-'VOID *note gnutls_hash_output:: (gnutls_hash_hd_t HANDLE, void * DIGEST)'
-'VOID *note gnutls_hash_deinit:: (gnutls_hash_hd_t HANDLE, void * DIGEST)'
-'UNSIGNED *note gnutls_hash_get_len:: (gnutls_digest_algorithm_t ALGORITHM)'
-'INT *note gnutls_hash_fast:: (gnutls_digest_algorithm_t ALGORITHM, const void * PTEXT, size_t PTEXT_LEN, void * DIGEST)'
-'INT *note gnutls_fingerprint:: (gnutls_digest_algorithm_t ALGO, const gnutls_datum_t * DATA, void * RESULT, size_t * RESULT_SIZE)'
-
-'GNUTLS_DIG_UNKNOWN'
-     Unknown hash algorithm.
-'GNUTLS_DIG_NULL'
-     NULL hash algorithm (empty output).
-'GNUTLS_DIG_MD5'
-     MD5 algorithm.
-'GNUTLS_DIG_SHA1'
-     SHA-1 algorithm.
-'GNUTLS_DIG_RMD160'
-     RMD160 algorithm.
-'GNUTLS_DIG_MD2'
-     MD2 algorithm.
-'GNUTLS_DIG_SHA256'
-     SHA-256 algorithm.
-'GNUTLS_DIG_SHA384'
-     SHA-384 algorithm.
-'GNUTLS_DIG_SHA512'
-     SHA-512 algorithm.
-'GNUTLS_DIG_SHA224'
-     SHA-224 algorithm.
-'GNUTLS_DIG_SHA3_224'
-     SHA3-224 algorithm.
-'GNUTLS_DIG_SHA3_256'
-     SHA3-256 algorithm.
-'GNUTLS_DIG_SHA3_384'
-     SHA3-384 algorithm.
-'GNUTLS_DIG_SHA3_512'
-     SHA3-512 algorithm.
-'GNUTLS_DIG_MD5_SHA1'
-     Combined MD5+SHA1 algorithm.
-
-Figure 8.4: The supported hash algorithms.
 

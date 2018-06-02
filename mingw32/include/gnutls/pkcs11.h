@@ -65,6 +65,7 @@ typedef struct gnutls_pkcs11_obj_st *gnutls_pkcs11_obj_t;
 
 #define GNUTLS_PKCS11_FLAG_MANUAL 0	/* Manual loading of libraries */
 #define GNUTLS_PKCS11_FLAG_AUTO 1	/* Automatically load libraries by reading /etc/gnutls/pkcs11.conf */
+#define GNUTLS_PKCS11_FLAG_AUTO_TRUSTED (1<<1)	/* Automatically load trusted libraries by reading /etc/gnutls/pkcs11.conf */
 
 /* pkcs11.conf format:
  * load = /lib/xxx-pkcs11.so
@@ -373,6 +374,19 @@ int gnutls_pkcs11_token_get_info(const char *url,
 
 #define GNUTLS_PKCS11_TOKEN_HW 1
 #define GNUTLS_PKCS11_TOKEN_TRUSTED (1<<1) /* p11-kit trusted */
+#define GNUTLS_PKCS11_TOKEN_RNG (1<<2) /* CKF_RNG */
+#define GNUTLS_PKCS11_TOKEN_LOGIN_REQUIRED (1<<3) /* CKF_LOGIN_REQUIRED */
+#define GNUTLS_PKCS11_TOKEN_PROTECTED_AUTHENTICATION_PATH (1<<4) /* CKF_PROTECTED_AUTHENTICATION_PATH */
+#define GNUTLS_PKCS11_TOKEN_INITIALIZED (1<<5) /* CKF_TOKEN_INITIALIZED */
+#define GNUTLS_PKCS11_TOKEN_USER_PIN_COUNT_LOW (1<<6) /* CKF_USER_PIN_COUNT_LOW */
+#define GNUTLS_PKCS11_TOKEN_USER_PIN_FINAL_TRY (1<<7) /* CKF_USER_PIN_FINAL_TRY */
+#define GNUTLS_PKCS11_TOKEN_USER_PIN_LOCKED (1<<8) /* CKF_USER_PIN_LOCKED */
+#define GNUTLS_PKCS11_TOKEN_SO_PIN_COUNT_LOW (1<<9) /* CKF_SO_PIN_COUNT_LOW */
+#define GNUTLS_PKCS11_TOKEN_SO_PIN_FINAL_TRY (1<<10) /* CKF_SO_PIN_FINAL_TRY */
+#define GNUTLS_PKCS11_TOKEN_SO_PIN_LOCKED (1<<11) /* CKF_SO_PIN_LOCKED */
+#define GNUTLS_PKCS11_TOKEN_USER_PIN_INITIALIZED (1<<12) /* CKF_USER_PIN_INITIALIZED */
+#define GNUTLS_PKCS11_TOKEN_ERROR_STATE (1<<13) /* CKF_ERROR_STATE */
+
 int gnutls_pkcs11_token_get_flags(const char *url, unsigned int *flags);
 
 #define gnutls_pkcs11_obj_list_import_url(p_list, n_list, url, attrs, flags) gnutls_pkcs11_obj_list_import_url3(p_list, n_list, url, attrs|flags)

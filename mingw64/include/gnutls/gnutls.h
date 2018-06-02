@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.1"
+#define GNUTLS_VERSION "3.6.2"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 1
+#define GNUTLS_VERSION_PATCH 2
 
-#define GNUTLS_VERSION_NUMBER 0x030601
+#define GNUTLS_VERSION_NUMBER 0x030602
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -1579,7 +1579,7 @@ time_t gnutls_db_check_entry_time(gnutls_datum_t * entry);
    * gnutls_handshake_hook_func:
    * @session: the current session
    * @htype: the type of the handshake message (%gnutls_handshake_description_t)
-   * @post: non zero if this is a post-process/generation call and zero otherwise
+   * @when: non zero if this is a post-process/generation call and zero otherwise
    * @incoming: non zero if this is an incoming message and zero if this is an outgoing message
    * @msg: the (const) data of the handshake message without the handshake headers.
    *
@@ -1594,11 +1594,11 @@ time_t gnutls_db_check_entry_time(gnutls_datum_t * entry);
 
 typedef int (*gnutls_handshake_hook_func) (gnutls_session_t,
 					   unsigned int htype,
-					   unsigned post,
+					   unsigned when,
 					   unsigned int incoming,
 					   const gnutls_datum_t *msg);
 void gnutls_handshake_set_hook_function(gnutls_session_t session,
-					unsigned int htype, int post,
+					unsigned int htype, int when,
 					gnutls_handshake_hook_func func);
 
 #define gnutls_handshake_post_client_hello_func gnutls_handshake_simple_hook_func
@@ -2087,6 +2087,9 @@ int gnutls_srp_verifier(const char *username,
 /* The static parameters defined in draft-ietf-tls-srp-05
  * Those should be used as input to gnutls_srp_verifier().
  */
+extern _SYM_EXPORT const gnutls_datum_t gnutls_srp_8192_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_srp_8192_group_generator;
+
 extern _SYM_EXPORT const gnutls_datum_t gnutls_srp_4096_group_prime;
 extern _SYM_EXPORT const gnutls_datum_t gnutls_srp_4096_group_generator;
 

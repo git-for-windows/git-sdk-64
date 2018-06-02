@@ -1,9 +1,10 @@
 This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
 
-This manual is last updated 6 March 2017 for version 3.6.1 of GnuTLS.
+This manual is last updated 12 February 2018 for version 3.6.2 of
+GnuTLS.
 
-Copyright (C) 2001-2017 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2017 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2018 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -25,6 +26,110 @@ START-INFO-DIR-ENTRY
 * psktool: (gnutls)Invoking psktool.	Simple TLS-Pre-Shared-Keys manager.
 * srptool: (gnutls)Invoking srptool.	Simple SRP password tool.
 END-INFO-DIR-ENTRY
+
+
+File: gnutls.info,  Node: Hash and MAC functions,  Next: Random number generation,  Prev: Cryptographic Message Syntax / PKCS#7,  Up: Using GnuTLS as a cryptographic library
+
+8.4 Hash and MAC functions
+==========================
+
+The available operations to access hash functions and hash-MAC (HMAC)
+algorithms are shown below.  HMAC algorithms provided keyed hash
+functionality.  The supported MAC and HMAC algorithms are listed in
+*note Figure 8.3: gnutls_mac_algorithm_t.  Note that, despite the 'hmac'
+part in the name of the MAC functions listed below, they can be used
+either for HMAC or MAC operations.
+
+'GNUTLS_MAC_UNKNOWN'
+     Unknown MAC algorithm.
+'GNUTLS_MAC_NULL'
+     NULL MAC algorithm (empty output).
+'GNUTLS_MAC_MD5'
+     HMAC-MD5 algorithm.
+'GNUTLS_MAC_SHA1'
+     HMAC-SHA-1 algorithm.
+'GNUTLS_MAC_RMD160'
+     HMAC-RMD160 algorithm.
+'GNUTLS_MAC_MD2'
+     HMAC-MD2 algorithm.
+'GNUTLS_MAC_SHA256'
+     HMAC-SHA-256 algorithm.
+'GNUTLS_MAC_SHA384'
+     HMAC-SHA-384 algorithm.
+'GNUTLS_MAC_SHA512'
+     HMAC-SHA-512 algorithm.
+'GNUTLS_MAC_SHA224'
+     HMAC-SHA-224 algorithm.
+'GNUTLS_MAC_SHA3_224'
+     - undescribed -
+'GNUTLS_MAC_SHA3_256'
+     - undescribed -
+'GNUTLS_MAC_SHA3_384'
+     - undescribed -
+'GNUTLS_MAC_SHA3_512'
+     - undescribed -
+'GNUTLS_MAC_MD5_SHA1'
+     Combined MD5+SHA1 MAC placeholder.
+'GNUTLS_MAC_AEAD'
+     MAC implicit through AEAD cipher.
+'GNUTLS_MAC_UMAC_96'
+     The UMAC-96 MAC algorithm.
+'GNUTLS_MAC_UMAC_128'
+     The UMAC-128 MAC algorithm.
+
+Figure 8.3: The supported MAC and HMAC algorithms.
+
+'INT *note gnutls_hmac_init:: (gnutls_hmac_hd_t * DIG, gnutls_mac_algorithm_t ALGORITHM, const void * KEY, size_t KEYLEN)'
+'INT *note gnutls_hmac:: (gnutls_hmac_hd_t HANDLE, const void * PTEXT, size_t PTEXT_LEN)'
+'VOID *note gnutls_hmac_output:: (gnutls_hmac_hd_t HANDLE, void * DIGEST)'
+'VOID *note gnutls_hmac_deinit:: (gnutls_hmac_hd_t HANDLE, void * DIGEST)'
+'UNSIGNED *note gnutls_hmac_get_len:: (gnutls_mac_algorithm_t ALGORITHM)'
+'INT *note gnutls_hmac_fast:: (gnutls_mac_algorithm_t ALGORITHM, const void * KEY, size_t KEYLEN, const void * PTEXT, size_t PTEXT_LEN, void * DIGEST)'
+
+The available functions to access hash functions are shown below.  The
+supported hash functions are shown in *note Figure 8.4:
+gnutls_digest_algorithm_t.
+
+'INT *note gnutls_hash_init:: (gnutls_hash_hd_t * DIG, gnutls_digest_algorithm_t ALGORITHM)'
+'INT *note gnutls_hash:: (gnutls_hash_hd_t HANDLE, const void * PTEXT, size_t PTEXT_LEN)'
+'VOID *note gnutls_hash_output:: (gnutls_hash_hd_t HANDLE, void * DIGEST)'
+'VOID *note gnutls_hash_deinit:: (gnutls_hash_hd_t HANDLE, void * DIGEST)'
+'UNSIGNED *note gnutls_hash_get_len:: (gnutls_digest_algorithm_t ALGORITHM)'
+'INT *note gnutls_hash_fast:: (gnutls_digest_algorithm_t ALGORITHM, const void * PTEXT, size_t PTEXT_LEN, void * DIGEST)'
+'INT *note gnutls_fingerprint:: (gnutls_digest_algorithm_t ALGO, const gnutls_datum_t * DATA, void * RESULT, size_t * RESULT_SIZE)'
+
+'GNUTLS_DIG_UNKNOWN'
+     Unknown hash algorithm.
+'GNUTLS_DIG_NULL'
+     NULL hash algorithm (empty output).
+'GNUTLS_DIG_MD5'
+     MD5 algorithm.
+'GNUTLS_DIG_SHA1'
+     SHA-1 algorithm.
+'GNUTLS_DIG_RMD160'
+     RMD160 algorithm.
+'GNUTLS_DIG_MD2'
+     MD2 algorithm.
+'GNUTLS_DIG_SHA256'
+     SHA-256 algorithm.
+'GNUTLS_DIG_SHA384'
+     SHA-384 algorithm.
+'GNUTLS_DIG_SHA512'
+     SHA-512 algorithm.
+'GNUTLS_DIG_SHA224'
+     SHA-224 algorithm.
+'GNUTLS_DIG_SHA3_224'
+     SHA3-224 algorithm.
+'GNUTLS_DIG_SHA3_256'
+     SHA3-256 algorithm.
+'GNUTLS_DIG_SHA3_384'
+     SHA3-384 algorithm.
+'GNUTLS_DIG_SHA3_512'
+     SHA3-512 algorithm.
+'GNUTLS_DIG_MD5_SHA1'
+     Combined MD5+SHA1 algorithm.
+
+Figure 8.4: The supported hash algorithms.
 
 
 File: gnutls.info,  Node: Random number generation,  Next: Overriding algorithms,  Prev: Hash and MAC functions,  Up: Using GnuTLS as a cryptographic library
@@ -1204,6 +1309,7 @@ to know what happens inside the black box.
 * TLS Extension Handling::
 * Cryptographic Backend::
 * Random Number Generators-internals::
+* FIPS140-2 mode::
 
 
 File: gnutls.info,  Node: The TLS Protocol,  Next: TLS Handshake Protocol,  Up: Internal architecture of GnuTLS
@@ -1545,8 +1651,8 @@ Adding a new Supplemental Data Handshake Message
 ------------------------------------------------
 
 TLS handshake extensions allow to send so called supplemental data
-handshake messages [_RFC4680_].  This short section explains how to
-implement a supplemental data handshake message for a given TLS
+handshake messages [*note RFC4680::].  This short section explains how
+to implement a supplemental data handshake message for a given TLS
 extension.
 
 First of all, modify your extension 'foobar' in the way, to instruct the
@@ -1713,7 +1819,7 @@ and abstract key types::.
 implementation of '/dev/crypto'.
 
 
-File: gnutls.info,  Node: Random Number Generators-internals,  Prev: Cryptographic Backend,  Up: Internal architecture of GnuTLS
+File: gnutls.info,  Node: Random Number Generators-internals,  Next: FIPS140-2 mode,  Prev: Cryptographic Backend,  Up: Internal architecture of GnuTLS
 
 10.6 Random Number Generators
 =============================
@@ -1794,8 +1900,8 @@ Defense against PRNG attacks
 
 This section describes the counter-measures available in the
 Pseudo-random number generator (PRNG) of GnuTLS for known attacks as
-described in [_PRNGATTACKS_]. Note that, the attacks on a PRNG such as
-state-compromise, assume a quite powerful adversary which has in
+described in [*note PRNGATTACKS::].  Note that, the attacks on a PRNG
+such as state-compromise, assume a quite powerful adversary which has in
 practice access to the PRNG state.
 
 Cryptanalytic
@@ -1870,6 +1976,51 @@ This attack assumes that the attacker obtained the PRNG state at two
 distinct times, and being able to recover the state at the third time
 after observing the output of the PRNG. Given the approach described on
 the above paragraph, all levels are immune to such attack.
+
+
+File: gnutls.info,  Node: FIPS140-2 mode,  Prev: Random Number Generators-internals,  Up: Internal architecture of GnuTLS
+
+10.7 FIPS140-2 mode
+===================
+
+GnuTLS can operate in a special mode for FIPS140-2.  That mode of
+operation is for the conformance to NIST's FIPS140-2 publication, which
+consists of policies for cryptographic modules (such as software
+libraries).  Its implementation in GnuTLS is designed for Red Hat
+Enterprise Linux, and can only be enabled when the library is explicitly
+compiled with the '-enable-fips140-mode' configure option.  The
+operation of the library is then modified, as follows.
+
+   * FIPS140-2 mode is enabled when '/proc/sys/crypto/fips_enabled'
+     contains '1' and '/etc/system-fips' is present.
+   * Only approved by FIPS140-2 algorithms are enabled
+   * Only approved by FIPS140-2 key lengths are allowed for key
+     generation
+   * The random generator used switches to DRBG-AES
+   * The integrity of the GnuTLS and dependent libraries is checked on
+     startup
+   * Algorithm self-tests are run on library load
+   * Any cryptographic operation will be refused if any of the
+     self-tests failed
+
+There is a 'zombie' FIPS140-2 mode which is enabled when only one of the
+files described in the first step is available.  In that case the self
+tests will be performed without affecting the operation of the library.
+
+The integrity checks for the dependent libraries and GnuTLS are
+performed using '.hmac' files which are present at the same path as the
+library.  The key for the operations can be provided on compile-time
+with the configure option '-with-fips140-key'.  The MAC algorithm used
+is HMAC-SHA256.
+
+There are also few environment variables which modify that operation.
+The environment variable 'GNUTLS_SKIP_FIPS_INTEGRITY_CHECKS' will
+disable the library integrity tests on startup, and the variable
+'GNUTLS_FORCE_FIPS_MODE' when set to '1' will enable the FIPS140-2 mode,
+when set to '0' will force a disable of it.
+
+On runtime an application can verify whether the library is in FIPS140-2
+using the *note gnutls_fips140_mode_enabled:: function.
 
 
 File: gnutls.info,  Node: Upgrading from previous versions,  Next: Support,  Prev: Internal architecture of GnuTLS,  Up: Top
@@ -2068,6 +2219,11 @@ The hash function      TLS 1.3 no longer uses SHA2-224, and it
 SHA2-224 is a no-op    was never a widespread hash algorithm.
 for TLS1.2             As such it was removed for simplicity.
                        
+The SRP key exchange   The SRP key exchange is restricted to
+accepted parameters    [*note TLSSRP::] spec parameters to
+outside the            protect clients from MitM attacks.
+[*note TLSSRP::]       
+spec
 The                    No longer use 'gnutls_compression_get',
 compression-related    'gnutls_compression_get_name',
 functions are          'gnutls_compression_list', and
@@ -2221,13 +2377,8 @@ algorithms implemented are correct.  The major certifications known are:
      security claims (see
      <http://en.wikipedia.org/wiki/Common_Criteria>).
 
-Obtaining such a certification is an expensive and elaborate job that
-has no immediate value for a continuously developed free software
-library (as the certification is tied to the particular version tested).
-While, as a free software project, we are not actively pursuing this
-kind of certification, GnuTLS has been FIPS-140-2 certified in several
-systems by third parties.  If you are, interested, see *note Commercial
-Support::.
+GnuTLS has support for FIPS 140-2 under Red Hat Enterprise Linux.  See
+*note FIPS140-2 mode:: for more information.
 
 
 File: gnutls.info,  Node: Error codes,  Next: Supported ciphersuites,  Prev: Support,  Up: Top
@@ -6057,14 +6208,14 @@ gnutls_handshake_set_hook_function
 ----------------------------------
 
  -- Function: void gnutls_handshake_set_hook_function (gnutls_session_t
-          SESSION, unsigned int HTYPE, int POST,
+          SESSION, unsigned int HTYPE, int WHEN,
           gnutls_handshake_hook_func FUNC)
      SESSION: is a 'gnutls_session_t' type
 
      HTYPE: the 'gnutls_handshake_description_t' of the message to hook
      at
 
-     POST: 'GNUTLS_HOOK_' * depending on when the hook function should
+     WHEN: 'GNUTLS_HOOK_' * depending on when the hook function should
      be called
 
      FUNC: is the function to be called
@@ -6074,14 +6225,15 @@ gnutls_handshake_set_hook_function
      is a generalization of
      'gnutls_handshake_set_post_client_hello_function()' .
 
-     To call the hook function prior to the message being sent/generated
-     use 'GNUTLS_HOOK_PRE' as 'post' parameter, 'GNUTLS_HOOK_POST' to
-     call after, and 'GNUTLS_HOOK_BOTH' for both cases.
+     To call the hook function prior to the message being generated or
+     processed use 'GNUTLS_HOOK_PRE' as 'when' parameter,
+     'GNUTLS_HOOK_POST' to call after, and 'GNUTLS_HOOK_BOTH' for both
+     cases.
 
      This callback must return 0 on success or a gnutls error code to
      terminate the handshake.
 
-     Note to hook at all handshake messages use an 'htype' of
+     To hook at all handshake messages use an 'htype' of
      'GNUTLS_HANDSHAKE_ANY' .
 
      *Warning:* You should not use this function to terminate the
