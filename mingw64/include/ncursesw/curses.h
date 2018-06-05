@@ -32,7 +32,7 @@
  *     and: Thomas E. Dickey                        1996-on                 *
  ****************************************************************************/
 
-/* $Id: curses.h.in,v 1.258 2018/04/07 20:36:11 tom Exp $ */
+/* $Id: curses.h.in,v 1.260 2018/05/12 23:35:35 tom Exp $ */
 
 #ifndef __NCURSES_H
 #define __NCURSES_H
@@ -43,7 +43,7 @@
 /* These are defined only in curses.h, and are used for conditional compiles */
 #define NCURSES_VERSION_MAJOR 6
 #define NCURSES_VERSION_MINOR 1
-#define NCURSES_VERSION_PATCH 20180407
+#define NCURSES_VERSION_PATCH 20180526
 
 /* This is defined in more than one ncurses header, for identification */
 #undef  NCURSES_VERSION
@@ -421,7 +421,7 @@ typedef struct
     wchar_t	chars[CCHARW_MAX];
 #if 1
 #undef NCURSES_EXT_COLORS
-#define NCURSES_EXT_COLORS 20180407
+#define NCURSES_EXT_COLORS 20180526
     int		ext_color;	/* color pair, must be more than 16-bits */
 #endif
 }
@@ -578,6 +578,13 @@ extern NCURSES_EXPORT(int) wgetnstr_events (WINDOW *,char *,int,_nc_eventlist *)
 
 #ifndef	GCC_UNUSED
 #define	GCC_UNUSED /* nothing */
+#endif
+
+#undef  GCC_DEPRECATED
+#if (__GNUC__ - 0 > 3 || (__GNUC__ - 0 == 3 && __GNUC_MINOR__ - 0 >= 2))
+#define GCC_DEPRECATED(msg) __attribute__((deprecated))
+#else
+#define GCC_DEPRECATED(msg) /* nothing */
 #endif
 
 /*
@@ -915,7 +922,7 @@ extern NCURSES_EXPORT(int) getpary (const WINDOW *);			/* generated */
  */
 #if 1
 #undef  NCURSES_EXT_FUNCS
-#define NCURSES_EXT_FUNCS 20180407
+#define NCURSES_EXT_FUNCS 20180526
 typedef int (*NCURSES_WINDOW_CB)(WINDOW *, void *);
 typedef int (*NCURSES_SCREEN_CB)(SCREEN *, void *);
 extern NCURSES_EXPORT(bool) is_term_resized (int, int);
@@ -977,7 +984,7 @@ extern NCURSES_EXPORT(int) wgetscrreg (const WINDOW *, int *, int *); /* generat
  */
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20180407
+#define NCURSES_SP_FUNCS 20180526
 #define NCURSES_SP_NAME(name) name##_sp
 
 /* Define the sp-funcs helper function */
