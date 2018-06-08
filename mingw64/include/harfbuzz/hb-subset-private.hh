@@ -1,6 +1,5 @@
 /*
- * Copyright © 2011  Martin Hosken
- * Copyright © 2011  SIL International
+ * Copyright © 2018  Google, Inc.
  *
  *  This is part of HarfBuzz, a text shaping library.
  *
@@ -21,32 +20,43 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE COPYRIGHT HOLDER HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ *
+ * Google Author(s): Garret Rieger, Roderick Sheeter
  */
 
-#ifndef HB_GRAPHITE2_H
-#define HB_GRAPHITE2_H
-
-#include "hb.h"
-
-#include <graphite2/Font.h>
-
-HB_BEGIN_DECLS
+#ifndef HB_SUBSET_PRIVATE_HH
+#define HB_SUBSET_PRIVATE_HH
 
 
-#define HB_GRAPHITE2_TAG_SILF HB_TAG('S','i','l','f')
+#include "hb-private.hh"
 
+#include "hb-subset.h"
 
-HB_EXTERN gr_face *
-hb_graphite2_face_get_gr_face (hb_face_t *face);
+#include "hb-font-private.hh"
 
-#ifndef HB_DISABLE_DEPRECATED
+typedef struct hb_subset_face_data_t hb_subset_face_data_t;
 
-HB_EXTERN gr_font *
-hb_graphite2_font_get_gr_font (hb_font_t *font);
+struct hb_subset_input_t {
+  hb_object_header_t header;
+  ASSERT_POD ();
 
-#endif
+  hb_set_t *unicodes;
+  hb_set_t *glyphs;
 
+  hb_bool_t drop_hints;
+  /* TODO
+   *
+   * features
+   * lookups
+   * nameIDs
+   * ...
+   */
+};
 
-HB_END_DECLS
+HB_INTERNAL hb_face_t *
+hb_subset_face_create (void);
 
-#endif /* HB_GRAPHITE2_H */
+HB_INTERNAL hb_bool_t
+hb_subset_face_add_table (hb_face_t *face, hb_tag_t tag, hb_blob_t *blob);
+
+#endif /* HB_SUBSET_PRIVATE_HH */
