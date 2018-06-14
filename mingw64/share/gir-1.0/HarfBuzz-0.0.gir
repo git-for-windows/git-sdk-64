@@ -122,13 +122,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VERSION_MINOR" value="8" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.8.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.8.1" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_copy_writable_or_fail"
@@ -5455,6 +5455,26 @@ the caller.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_layout_lookups_substitute_closure"
+              c:identifier="hb_ot_layout_lookups_substitute_closure"
+              version="1.8.1">
+      <doc xml:space="preserve">Compute the transitive closure of glyphs needed for all of the
+provided lookups.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="lookups" transfer-ownership="none">
+          <type name="set_t" c:type="const hb_set_t*"/>
+        </parameter>
+        <parameter name="glyphs" transfer-ownership="none">
+          <type name="set_t" c:type="hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_layout_script_find_language"
               c:identifier="hb_ot_layout_script_find_language">
       <return-value transfer-ownership="none">
@@ -7583,6 +7603,7 @@ hb_buffer_get_segment_properties(), respectively.</doc>
               c:identifier="hb_set_is_equal"
               version="0.9.7">
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE if the two sets are equal, %FALSE otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -7591,6 +7612,25 @@ hb_buffer_get_segment_properties(), respectively.</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="other" transfer-ownership="none">
+          <doc xml:space="preserve">other set.</doc>
+          <type name="set_t" c:type="const hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="set_is_subset"
+              c:identifier="hb_set_is_subset"
+              version="1.8.1">
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE if the @set is a subset of (or equal to) @larger_set, %FALSE otherwise.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="set" transfer-ownership="none">
+          <doc xml:space="preserve">a set.</doc>
+          <type name="set_t" c:type="const hb_set_t*"/>
+        </parameter>
+        <parameter name="larger_set" transfer-ownership="none">
+          <doc xml:space="preserve">other set.</doc>
           <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
       </parameters>

@@ -1,5 +1,5 @@
 /* Default linker script, for normal executables */
-/* Copyright (C) 2014-2017 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2018 Free Software Foundation, Inc.
    Copying and distribution of this script, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
@@ -20,10 +20,35 @@ SECTIONS
      *(.gnu.linkonce.t.*)
     *(.glue_7t)
     *(.glue_7)
-     ___CTOR_LIST__ = .; __CTOR_LIST__ = . ;
-			LONG (-1);*(.ctors); *(.ctor); *(SORT(.ctors.*));  LONG (0);
-     ___DTOR_LIST__ = .; __DTOR_LIST__ = . ;
-			LONG (-1); *(.dtors); *(.dtor); *(SORT(.dtors.*));  LONG (0);
+       /* Note: we always define __CTOR_LIST__ and ___CTOR_LIST__ here,
+          we do not PROVIDE them.  This is because the ctors.o startup
+	  code in libgcc defines them as common symbols, with the
+          expectation that they will be overridden by the definitions
+	  here.  If we PROVIDE the symbols then they will not be
+	  overridden and global constructors will not be run.
+
+	  This does mean that it is not possible for a user to define
+	  their own __CTOR_LIST__ and __DTOR_LIST__ symbols.  If that
+	  ability is needed a custom linker script will have to be
+	  used.  (The custom script can just be a copy of this script
+	  with the PROVIDE() qualifiers added).
+	  See PR 22762 for more details.  */
+       ___CTOR_LIST__ = .;
+       __CTOR_LIST__ = .;
+       LONG (-1);
+       KEEP(*(.ctors));
+       KEEP(*(.ctor));
+       KEEP(*(SORT_BY_NAME(.ctors.*)));
+       LONG (0);
+       /* See comment about __CTOR_LIST__ above.  The same reasoning
+          applies here too.  */
+       ___DTOR_LIST__ = .;
+       __DTOR_LIST__ = .;
+       LONG (-1);
+       KEEP(*(.dtors));
+       KEEP(*(.dtor));
+       KEEP(*(SORT_BY_NAME(.dtors.*)));
+       LONG (0);
      KEEP (*(.fini))
     /* ??? Why is .gcc_exc here?  */
      *(.gcc_exc)
@@ -49,7 +74,7 @@ SECTIONS
   .rdata BLOCK(__section_alignment__) :
   {
     *(.rdata)
-             *(SORT(.rdata$*))
+	     *(SORT(.rdata$*))
     __rt_psrelocs_start = .;
     KEEP(*(.rdata_runtime_pseudo_reloc))
     __rt_psrelocs_end = .;
@@ -302,5 +327,14 @@ SECTIONS
   .zdebug_types BLOCK(__section_alignment__) (NOLOAD) :
   {
     *(.zdebug_types .gnu.linkonce.wt.*)
+  }
+  /* For Go and Rust.  */
+  .debug_gdb_scripts BLOCK(__section_alignment__) (NOLOAD) :
+  {
+    *(.debug_gdb_scripts)
+  }
+  .zdebug_gdb_scripts BLOCK(__section_alignment__) (NOLOAD) :
+  {
+    *(.zdebug_gdb_scripts)
   }
 }

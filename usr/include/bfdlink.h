@@ -1,5 +1,5 @@
 /* bfdlink.h -- header file for BFD link routines
-   Copyright (C) 1993-2017 Free Software Foundation, Inc.
+   Copyright (C) 1993-2018 Free Software Foundation, Inc.
    Written by Steve Chamberlain and Ian Lance Taylor, Cygnus Support.
 
    This file is part of BFD, the Binary File Descriptor library.
@@ -100,9 +100,13 @@ struct bfd_link_hash_entry
   /* Type of this entry.  */
   ENUM_BITFIELD (bfd_link_hash_type) type : 8;
 
-  /* Symbol is referenced in a normal object file, as distict from a LTO
-     IR object file.  */
-  unsigned int non_ir_ref : 1;
+  /* Symbol is referenced in a normal regular object file,
+     as distinct from a LTO IR object file.  */
+  unsigned int non_ir_ref_regular : 1;
+
+  /* Symbol is referenced in a normal dynamic object file,
+     as distinct from a LTO IR object file.  */
+  unsigned int non_ir_ref_dynamic : 1;
 
   /* Symbol is a built-in define.  These will be overridden by PROVIDE
      in a linker script.  */
@@ -140,9 +144,6 @@ struct bfd_link_hash_entry
 	  struct bfd_link_hash_entry *next;
 	  /* BFD symbol was found in.  */
 	  bfd *abfd;
-	  /* For __start_<name> and __stop_<name> symbols, the first
-	     input section matching the name.  */
-	  asection *section;
 	} undef;
       /* bfd_link_hash_defined, bfd_link_hash_defweak.  */
       struct
@@ -344,6 +345,9 @@ struct bfd_link_info
   /* TRUE if all data symbols should be dynamic.  */
   unsigned int dynamic_data: 1;
 
+  /* TRUE if section groups should be resolved.  */
+  unsigned int resolve_section_groups: 1;
+
   /* Which symbols to strip.  */
   ENUM_BITFIELD (bfd_link_strip) strip : 2;
 
@@ -381,6 +385,9 @@ struct bfd_link_info
 
   /* TRUE if PT_GNU_RELRO segment should be created.  */
   unsigned int relro: 1;
+
+  /* TRUE if separate code segment should be created.  */
+  unsigned int separate_code: 1;
 
   /* Nonzero if .eh_frame_hdr section and PT_GNU_EH_FRAME ELF segment
      should be created.  1 for DWARF2 tables, 2 for compact tables.  */
@@ -467,6 +474,15 @@ struct bfd_link_info
   /* TRUE if BND prefix in PLT entries is always generated.  */
   unsigned int bndplt: 1;
 
+  /* TRUE if IBT-enabled PLT entries should be generated.  */
+  unsigned int ibtplt: 1;
+
+  /* TRUE if GNU_PROPERTY_X86_FEATURE_1_IBT should be generated.  */
+  unsigned int ibt: 1;
+
+  /* TRUE if GNU_PROPERTY_X86_FEATURE_1_SHSTK should be generated.  */
+  unsigned int shstk: 1;
+
   /* TRUE if generation of .interp/PT_INTERP should be suppressed.  */
   unsigned int nointerp: 1;
 
@@ -475,6 +491,9 @@ struct bfd_link_info
 
   /* TRUE if generate a 1-byte NOP as suffix for x86 call instruction.  */
   unsigned int call_nop_as_suffix : 1;
+
+  /* TRUE if common symbols should be treated as undefined.  */
+  unsigned int inhibit_common_definition : 1;
 
   /* The 1-byte NOP for x86 call instruction.  */
   char call_nop_byte;
@@ -584,8 +603,9 @@ struct bfd_link_info
      backend to decide.  */
   int extern_protected_data;
 
-  /* > 0 to treat undefined weak symbol in the executable as dynamic,
-     requiring dynamic relocation.  */
+  /* 1 to make undefined weak symbols dynamic when building a dynamic
+     object.  0 to resolve undefined weak symbols to zero.  -1 to let
+     the backend decide.  */
   int dynamic_undefined_weak;
 
   /* Non-zero if auto-import thunks for DATA items in pei386 DLLs
