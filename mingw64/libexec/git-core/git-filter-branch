@@ -11,6 +11,8 @@
 # The following functions will also be available in the commit filter:
 
 functions=$(cat << \EOF
+EMPTY_TREE=$(git hash-object -t tree /dev/null)
+
 warn () {
 	echo "$*" >&2
 }
@@ -46,7 +48,7 @@ git_commit_non_empty_tree()
 {
 	if test $# = 3 && test "$1" = $(git rev-parse "$3^{tree}"); then
 		map "$3"
-	elif test $# = 1 && test "$1" = 4b825dc642cb6eb9a060e54bf8d69288fbee4904; then
+	elif test $# = 1 && test "$1" = $EMPTY_TREE; then
 		:
 	else
 		git commit-tree "$@"
@@ -251,8 +253,18 @@ done < "$tempdir"/backup-refs
 
 # The refs should be updated if their heads were rewritten
 git rev-parse --no-flags --revs-only --symbolic-full-name \
-	--default HEAD "$@" > "$tempdir"/raw-heads || exit
-sed -e '/^^/d' "$tempdir"/raw-heads >"$tempdir"/heads
+	--default HEAD "$@" > "$tempdir"/raw-refs || exit
+while read ref
+do
+	case "$ref" in ^?*) continue ;; esac
+
+	if git rev-parse --verify "$ref"^0 >/dev/null 2>&1
+	then
+		echo "$ref"
+	else
+		warn "WARNING: not rewriting '$ref' (not a committish)"
+	fi
+done >"$tempdir"/heads <"$tempdir"/raw-refs
 
 test -s "$tempdir"/heads ||
 	die "You must specify a ref to rewrite."
@@ -310,7 +322,7 @@ git rev-list --reverse --topo-order --default HEAD \
 	die "Could not get the commits"
 commits=$(wc -l <../revs | tr -d " ")
 
-test $commits -eq 0 && die "Found nothing to rewrite"
+test $commits -eq 0 && die_with_status 2 "Found nothing to rewrite"
 
 # Rewrite the commits
 report_progress ()

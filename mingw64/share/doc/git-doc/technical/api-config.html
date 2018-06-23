@@ -496,7 +496,7 @@ repo-specific one; by overwriting, the higher-priority repo-specific
 value is left at the end).</p>
 </div>
 <div class="paragraph">
-<p>The <code>git_config_with_options</code> function lets the caller examine config
+<p>The <code>config_with_options</code> function lets the caller examine config
 while adjusting some of the default behavior of <code>git_config</code>. It should
 almost never be used by "regular" Git code that is looking up
 configuration variables. It is intended for advanced callers like
@@ -505,16 +505,18 @@ process. It takes two extra parameters:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>filename</code></dt>
+<dt class="hdlist1"><code>config_source</code></dt>
 <dd>
-<p>If this parameter is non-NULL, it specifies the name of a file to
-parse for configuration, rather than looking in the usual files. Regular
-<code>git_config</code> defaults to <code>NULL</code>.</p>
+<p>If this parameter is non-NULL, it specifies the source to parse for
+configuration, rather than looking in the usual files. See <code>struct
+git_config_source</code> in <code>config.h</code> for details. Regular <code>git_config</code> defaults
+to <code>NULL</code>.</p>
 </dd>
-<dt class="hdlist1"><code>respect_includes</code></dt>
+<dt class="hdlist1"><code>opts</code></dt>
 <dd>
-<p>Specify whether include directives should be followed in parsed files.
-Regular <code>git_config</code> defaults to <code>1</code>.</p>
+<p>Specify options to adjust the behavior of parsing config files. See <code>struct
+config_options</code> in <code>config.h</code> for details. As an example: regular <code>git_config</code>
+sets <code>opts.respect_includes</code> to <code>1</code> by default.</p>
 </dd>
 </dl>
 </div>
@@ -816,7 +818,7 @@ through `new_name` parameter, the section will be removed from the config file.<
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:26 Coordinated Universal Time
+Last updated 2018-06-22 10:51:01 Coordinated Universal Time
 </div>
 </div>
 </body>

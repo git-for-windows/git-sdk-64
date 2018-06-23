@@ -440,7 +440,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="verseblock">
 <pre class="content"><em>git</em> [--version] [--help] [-C &lt;path&gt;] [-c &lt;name&gt;=&lt;value&gt;]
     [--exec-path[=&lt;path&gt;]] [--html-path] [--man-path] [--info-path]
-    [-p|--paginate|--no-pager] [--no-replace-objects] [--bare]
+    [-p|--paginate|-P|--no-pager] [--no-replace-objects] [--bare]
     [--git-dir=&lt;path&gt;] [--work-tree=&lt;path&gt;] [--namespace=&lt;name&gt;]
     [--super-prefix=&lt;path&gt;]
     &lt;command&gt; [&lt;args&gt;]</pre>
@@ -558,6 +558,7 @@ output is a terminal.  This overrides the <code>pager.&lt;cmd&gt;</code>
 configuration options (see the "Configuration Mechanism" section
 below).</p>
 </dd>
+<dt class="hdlist1">-P</dt>
 <dt class="hdlist1">--no-pager</dt>
 <dd>
 <p>Do not pipe Git output into a pager.</p>
@@ -629,6 +630,17 @@ the <code>GIT_ICASE_PATHSPECS</code> environment variable to <code>1</code>.</p>
 <dd>
 <p>Do not perform optional operations that require locks. This is
 equivalent to setting the <code>GIT_OPTIONAL_LOCKS</code> to <code>0</code>.</p>
+</dd>
+<dt class="hdlist1">--list-cmds=group[,group&#8230;&#8203;]</dt>
+<dd>
+<p>List commands by group. This is an internal/experimental
+option and may change or be removed in the future. Supported
+groups are: builtins, parseopt (builtin commands that use
+parse-options), main (all commands in libexec directory),
+others (all other commands in <code>$PATH</code> that have git- prefix),
+list-&lt;category&gt; (see categories in command-list.txt),
+nohelpers (exclude helper commands), alias and config
+(retrieve command list from config variable completion.commands)</p>
 </dd>
 </dl>
 </div>
@@ -1027,6 +1039,10 @@ repositories.</p>
 <dt class="hdlist1"><a href="git-checkout-index.html">git-checkout-index</a>(1)</dt>
 <dd>
 <p>Copy files from the index to the working tree.</p>
+</dd>
+<dt class="hdlist1"><a href="git-commit-graph.html">git-commit-graph</a>(1)</dt>
+<dd>
+<p>Write and verify Git commit graph files.</p>
 </dd>
 <dt class="hdlist1"><a href="git-commit-tree.html">git-commit-tree</a>(1)</dt>
 <dd>
@@ -2106,7 +2122,7 @@ the Git Security mailing list &lt;<a href="mailto:git-security@googlegroups.com"
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:51:00 Coordinated Universal Time
 </div>
 </div>
 </body>

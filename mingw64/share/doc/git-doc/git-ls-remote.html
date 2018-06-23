@@ -439,7 +439,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git ls-remote</em> [--heads] [--tags] [--refs] [--upload-pack=&lt;exec&gt;]
-	      [-q | --quiet] [--exit-code] [--get-url]
+	      [-q | --quiet] [--exit-code] [--get-url] [--sort=&lt;key&gt;]
 	      [--symref] [&lt;repository&gt; [&lt;refs&gt;&#8230;&#8203;]]</pre>
 </div>
 </div>
@@ -504,6 +504,26 @@ ref pointed by it when showing a symbolic ref.  Currently,
 upload-pack only shows the symref HEAD, so it will be the only
 one shown by ls-remote.</p>
 </dd>
+<dt class="hdlist1">--sort=&lt;key&gt;</dt>
+<dd>
+<p>Sort based on the key given. Prefix <code>-</code> to sort in descending order
+of the value. Supports "version:refname" or "v:refname" (tag names
+are treated as versions). The "version:refname" sort order can also
+be affected by the "versionsort.suffix" configuration variable.
+See <a href="git-for-each-ref.html">git-for-each-ref</a>(1) for more sort options, but be aware
+keys like <code>committerdate</code> that require access to the objects
+themselves will not work for refs whose objects have not yet been
+fetched from the remote, and will give a <code>missing object</code> error.</p>
+</dd>
+<dt class="hdlist1">-o &lt;option&gt;</dt>
+<dt class="hdlist1">--server-option=&lt;option&gt;</dt>
+<dd>
+<p>Transmit the given string to the server when communicating using
+protocol version 2.  The given string must not contain a NUL or LF
+character.
+When multiple <code>--server-option=&lt;option&gt;</code> are given, they are all
+sent to the other side in the order listed on the command line.</p>
+</dd>
 <dt class="hdlist1">&lt;repository&gt;</dt>
 <dd>
 <p>The "remote" repository to query.  This parameter can be
@@ -546,6 +566,14 @@ c5db5456ae3b0873fc659c19fafdde22313cc441	refs/tags/v0.99.2
 </div>
 </div>
 <div class="sect1">
+<h2 id="_see_also">SEE ALSO</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="git-check-ref-format.html">git-check-ref-format</a>(1).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -556,7 +584,7 @@ c5db5456ae3b0873fc659c19fafdde22313cc441	refs/tags/v0.99.2
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:24 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

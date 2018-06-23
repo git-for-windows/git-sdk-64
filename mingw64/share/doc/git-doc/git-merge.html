@@ -497,7 +497,7 @@ discouraged: while possible, it may leave you in a state that is hard to
 back out of in the case of a conflict.</p>
 </div>
 <div class="paragraph">
-<p>The fourth syntax ("<code>git merge --continue</code>") can only be run after the
+<p>The third syntax ("<code>git merge --continue</code>") can only be run after the
 merge has resulted in conflicts.</p>
 </div>
 </div>
@@ -1053,8 +1053,9 @@ reported to result in fewer merge conflicts without
 causing mismerges by tests done on actual merge commits
 taken from Linux 2.6 kernel development history.
 Additionally this can detect and handle merges involving
-renames.  This is the default merge strategy when
-pulling or merging one branch.</p>
+renames, but currently cannot make use of detected
+copies.  This is the default merge strategy when pulling
+or merging one branch.</p>
 <div class="paragraph">
 <p>The <em>recursive</em> strategy can take the following options:</p>
 </div>
@@ -1134,13 +1135,15 @@ branches with differing checkin/checkout attributes" in
 </dd>
 <dt class="hdlist1">no-renames</dt>
 <dd>
-<p>Turn off rename detection.
+<p>Turn off rename detection. This overrides the <code>merge.renames</code>
+configuration variable.
 See also <a href="git-diff.html">git-diff</a>(1) <code>--no-renames</code>.</p>
 </dd>
 <dt class="hdlist1">find-renames[=&lt;n&gt;]</dt>
 <dd>
 <p>Turn on rename detection, optionally setting the similarity
-threshold.  This is the default.
+threshold.  This is the default. This overrides the
+<em>merge.renames</em> configuration variable.
 See also <a href="git-diff.html">git-diff</a>(1) <code>--find-renames</code>.</p>
 </dd>
 <dt class="hdlist1">rename-threshold=&lt;n&gt;</dt>
@@ -1254,7 +1257,14 @@ true is a synonym for 20.</p>
 <dd>
 <p>The number of files to consider when performing rename detection
 during a merge; if not specified, defaults to the value of
-diff.renameLimit.</p>
+diff.renameLimit. This setting has no effect if rename detection
+is turned off.</p>
+</dd>
+<dt class="hdlist1">merge.renames</dt>
+<dd>
+<p>Whether and how Git detects renames.  If set to "false",
+rename detection is disabled. If set to "true", basic rename
+detection is enabled.  Defaults to the value of diff.renames.</p>
 </dd>
 <dt class="hdlist1">merge.renormalize</dt>
 <dd>
@@ -1309,6 +1319,9 @@ that a corresponding mergetool.&lt;tool&gt;.cmd variable is defined.</p>
 </li>
 <li>
 <p>examdiff</p>
+</li>
+<li>
+<p>guiffy</p>
 </li>
 <li>
 <p>gvimdiff</p>
@@ -1414,7 +1427,7 @@ values containing whitespace characters are currently not supported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:24 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

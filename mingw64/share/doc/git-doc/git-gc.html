@@ -438,7 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git gc</em> [--aggressive] [--auto] [--quiet] [--prune=&lt;date&gt; | --no-prune] [--force]</pre>
+<pre class="content"><em>git gc</em> [--aggressive] [--auto] [--quiet] [--prune=&lt;date&gt; | --no-prune] [--force] [--keep-largest-pack]</pre>
 </div>
 </div>
 </div>
@@ -448,8 +448,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>Runs a number of housekeeping tasks within the current repository,
 such as compressing file revisions (to reduce disk space and increase
-performance) and removing unreachable objects which may have been
-created from prior invocations of <em>git add</em>.</p>
+performance), removing unreachable objects which may have been
+created from prior invocations of <em>git add</em>, packing refs, pruning
+reflog, rerere metadata or stale working trees.</p>
 </div>
 <div class="paragraph">
 <p>Users are encouraged to run this task on a regular basis within
@@ -487,21 +488,32 @@ few hundred changesets or so.</p>
 <p>With this option, <em>git gc</em> checks whether any housekeeping is
 required; if not, it exits without performing any work.
 Some git commands run <code>git gc --auto</code> after performing
-operations that could create many loose objects.</p>
+operations that could create many loose objects. Housekeeping
+is required if there are too many loose objects or too many
+packs in the repository.</p>
 <div class="paragraph">
-<p>Housekeeping is required if there are too many loose objects or
-too many packs in the repository. If the number of loose objects
-exceeds the value of the <code>gc.auto</code> configuration variable, then
-all loose objects are combined into a single pack using
-<code>git repack -d -l</code>.  Setting the value of <code>gc.auto</code> to 0
-disables automatic packing of loose objects.</p>
+<p>If the number of loose objects exceeds the value of the <code>gc.auto</code>
+configuration variable, then all loose objects are combined into a
+single pack using <code>git repack -d -l</code>.  Setting the value of <code>gc.auto</code>
+to 0 disables automatic packing of loose objects.</p>
 </div>
 <div class="paragraph">
 <p>If the number of packs exceeds the value of <code>gc.autoPackLimit</code>,
-then existing packs (except those marked with a <code>.keep</code> file)
+then existing packs (except those marked with a <code>.keep</code> file
+or over <code>gc.bigPackThreshold</code> limit)
 are consolidated into a single pack by using the <code>-A</code> option of
-<em>git repack</em>. Setting <code>gc.autoPackLimit</code> to 0 disables
-automatic consolidation of packs.</p>
+<em>git repack</em>.
+If the amount of memory is estimated not enough for <code>git repack</code> to
+run smoothly and <code>gc.bigPackThreshold</code> is not set, the largest
+pack will also be excluded (this is the equivalent of running <code>git gc</code>
+with <code>--keep-base-pack</code>).
+Setting <code>gc.autoPackLimit</code> to 0 disables automatic consolidation of
+packs.</p>
+</div>
+<div class="paragraph">
+<p>If houskeeping is required due to many loose objects or packs, all
+other housekeeping tasks (e.g. rerere, working trees, reflog&#8230;&#8203;) will
+be performed as well.</p>
 </div>
 </dd>
 <dt class="hdlist1">--prune=&lt;date&gt;</dt>
@@ -526,12 +538,18 @@ default.</p>
 <p>Force <code>git gc</code> to run even if there may be another <code>git gc</code>
 instance running on this repository.</p>
 </dd>
+<dt class="hdlist1">--keep-largest-pack</dt>
+<dd>
+<p>All packs except the largest pack and those marked with a
+<code>.keep</code> files are consolidated into a single pack. When this
+option is used, <code>gc.bigPackThreshold</code> is ignored.</p>
+</dd>
 </dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_configuration">Configuration</h2>
+<h2 id="_configuration">CONFIGURATION</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The optional configuration variable <code>gc.reflogExpire</code> can be
@@ -583,7 +601,7 @@ This defaults to true.</p>
 much time is spent optimizing the delta compression of the objects in
 the repository when the --aggressive option is specified.  The larger
 the value, the more time is spent optimizing the delta compression.  See
-the documentation for the --window' option in <a href="git-repack.html">git-repack</a>(1) for
+the documentation for the --window option in <a href="git-repack.html">git-repack</a>(1) for
 more details.  This defaults to 250.</p>
 </div>
 <div class="paragraph">
@@ -595,10 +613,15 @@ controls --depth option in <a href="git-repack.html">git-repack</a>(1). This def
 the unreferenced loose objects have to be before they are pruned.  The
 default is "2 weeks ago".</p>
 </div>
+<div class="paragraph">
+<p>Optional configuration variable <code>gc.worktreePruneExpire</code> controls how
+old a stale working tree should be before <code>git worktree prune</code> deletes
+it. Default is "3 months ago".</p>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_notes">Notes</h2>
+<h2 id="_notes">NOTES</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>git gc</em> tries very hard not to delete objects that are referenced
@@ -672,7 +695,7 @@ collection with <em>git config gc.auto 0</em>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:24 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

@@ -441,6 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="content"><em>git replace</em> [-f] &lt;object&gt; &lt;replacement&gt;
 <em>git replace</em> [-f] --edit &lt;object&gt;
 <em>git replace</em> [-f] --graft &lt;commit&gt; [&lt;parent&gt;&#8230;&#8203;]
+<em>git replace</em> [-f] --convert-graft-file
 <em>git replace</em> -d &lt;object&gt;&#8230;&#8203;
 <em>git replace</em> [--format=&lt;format&gt;] [-l [&lt;pattern&gt;]]</pre>
 </div>
@@ -543,9 +544,14 @@ your editor to cleanly read and write binary data.</p>
 content as &lt;commit&gt; except that its parents will be
 [&lt;parent&gt;&#8230;&#8203;] instead of &lt;commit&gt;'s parents. A replacement ref
 is then created to replace &lt;commit&gt; with the newly created
-commit. See contrib/convert-grafts-to-replace-refs.sh for an
-example script based on this option that can convert grafts to
-replace refs.</p>
+commit. Use <code>--convert-graft-file</code> to convert a
+<code>$GIT_DIR/info/grafts</code> file and use replace refs instead.</p>
+</dd>
+<dt class="hdlist1">--convert-graft-file</dt>
+<dd>
+<p>Creates graft commits for all entries in <code>$GIT_DIR/info/grafts</code>
+and deletes that file upon success. The purpose is to help users
+with transitioning off of the now-deprecated graft file.</p>
 </dd>
 <dt class="hdlist1">-l &lt;pattern&gt;</dt>
 <dt class="hdlist1">--list &lt;pattern&gt;</dt>
@@ -649,7 +655,7 @@ pending objects.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

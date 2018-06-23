@@ -438,7 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git rev-parse</em> [ --option ] &lt;args&gt;&#8230;&#8203;</pre>
+<pre class="content"><em>git rev-parse</em> [&lt;options&gt;] &lt;args&gt;&#8230;&#8203;</pre>
 </div>
 </div>
 </div>
@@ -812,6 +812,20 @@ syntax.  Here are various ways to spell object names.  The
 ones listed near the end of this list name trees and
 blobs contained in a commit.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This document shows the "raw" syntax as seen by git. The shell
+and other UIs might require additional quoting to protect special
+characters and to avoid word splitting.
+</td>
+</tr>
+</table>
+</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><em>&lt;sha1&gt;</em>, e.g. <em>dae86e1950b1277e545cee180551750029cfe735</em>, <em>dae86e</em></dt>
@@ -1026,7 +1040,9 @@ commit message. To match messages starting with a string, one can use
 e.g. <em>:/^foo</em>. The special sequence <em>:/!</em> is reserved for modifiers to what
 is matched. <em>:/!-foo</em> performs a negative match, while <em>:/!!foo</em> matches a
 literal <em>!</em> character, followed by <em>foo</em>. Any other sequence beginning with
-<em>:/!</em> is reserved for now.</p>
+<em>:/!</em> is reserved for now.
+Depending on the given text, the shell&#8217;s word splitting rules might
+require additional quoting.</p>
 </dd>
 <dt class="hdlist1"><em>&lt;rev&gt;:&lt;path&gt;</em>, e.g. <em>HEAD:README</em>, <em>:README</em>, <em>master:./README</em></dt>
 <dd>
@@ -1232,28 +1248,28 @@ spelt out:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>Args   Expanded arguments    Selected commits
-D                            G H D
-D F                          G H I J D F
-^G D                         H D
-^D B                         E I J F B
-^D B C                       E I J F B C
-C                            I J F C
-B..C   = ^B C                C
-B...C  = B ^F C              G H D E B C
-B^-    = B^..B
-= ^B^1 B              E I J F B
-C^@    = C^1
-= F                   I J F
-B^@    = B^1 B^2 B^3
-= D E F               D G H E F I J
-C^!    = C ^C^@
-= C ^C^1
-= C ^F                C
-B^!    = B ^B^@
-= B ^B^1 ^B^2 ^B^3
-= B ^D ^E ^F          B
-F^! D  = F ^I ^J D           G H D F</pre>
+<pre>   Args   Expanded arguments    Selected commits
+   D                            G H D
+   D F                          G H I J D F
+   ^G D                         H D
+   ^D B                         E I J F B
+   ^D B C                       E I J F B C
+   C                            I J F C
+   B..C   = ^B C                C
+   B...C  = B ^F C              G H D E B C
+   B^-    = B^..B
+	  = ^B^1 B              E I J F B
+   C^@    = C^1
+	  = F                   I J F
+   B^@    = B^1 B^2 B^3
+	  = D E F               D G H E F I J
+   C^!    = C ^C^@
+	  = C ^C^1
+	  = C ^F                C
+   B^!    = B ^B^@
+	  = B ^B^1 ^B^2 ^B^3
+	  = B ^D ^E ^F          B
+   F^! D  = F ^I ^J D           G H D F</pre>
 </div>
 </div>
 </div>
@@ -1349,7 +1365,7 @@ lines on purpose).</p>
 <div class="listingblock">
 <div class="content">
 <pre>OPTS_SPEC="\
-some-command [options] &lt;args&gt;...
+some-command [&lt;options&gt;] &lt;args&gt;...
 
 some-command does foo and bar!
 --
@@ -1375,7 +1391,7 @@ usage text would be shown:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>usage: some-command [options] &lt;args&gt;...
+<pre>usage: some-command [&lt;options&gt;] &lt;args&gt;...
 
     some-command does foo and bar!
 
@@ -1474,7 +1490,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

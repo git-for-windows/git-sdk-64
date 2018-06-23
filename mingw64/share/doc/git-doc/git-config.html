@@ -438,13 +438,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git config</em> [&lt;file-option&gt;] [type] [--show-origin] [-z|--null] name [value [value_regex]]
-<em>git config</em> [&lt;file-option&gt;] [type] --add name value
-<em>git config</em> [&lt;file-option&gt;] [type] --replace-all name value [value_regex]
-<em>git config</em> [&lt;file-option&gt;] [type] [--show-origin] [-z|--null] --get name [value_regex]
-<em>git config</em> [&lt;file-option&gt;] [type] [--show-origin] [-z|--null] --get-all name [value_regex]
-<em>git config</em> [&lt;file-option&gt;] [type] [--show-origin] [-z|--null] [--name-only] --get-regexp name_regex [value_regex]
-<em>git config</em> [&lt;file-option&gt;] [type] [-z|--null] --get-urlmatch name URL
+<pre class="content"><em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [-z|--null] name [value [value_regex]]
+<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] --add name value
+<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] --replace-all name value [value_regex]
+<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [-z|--null] --get name [value_regex]
+<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [-z|--null] --get-all name [value_regex]
+<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [--show-origin] [-z|--null] [--name-only] --get-regexp name_regex [value_regex]
+<em>git config</em> [&lt;file-option&gt;] [--type=&lt;type&gt;] [-z|--null] --get-urlmatch name URL
 <em>git config</em> [&lt;file-option&gt;] --unset name [value_regex]
 <em>git config</em> [&lt;file-option&gt;] --unset-all name [value_regex]
 <em>git config</em> [&lt;file-option&gt;] --rename-section old_name new_name
@@ -473,12 +473,10 @@ you want to handle the lines that do <strong>not</strong> match the regex, just
 prepend a single exclamation mark in front (see also <a href="#EXAMPLES">EXAMPLES</a>).</p>
 </div>
 <div class="paragraph">
-<p>The type specifier can be either <code>--int</code> or <code>--bool</code>, to make
-<em>git config</em> ensure that the variable(s) are of the given type and
-convert the value to the canonical form (simple decimal number for int,
-a "true" or "false" string for bool), or <code>--path</code>, which does some
-path expansion (see <code>--path</code> below).  If no type specifier is passed, no
-checks or transformations are performed on the value.</p>
+<p>The <code>--type=&lt;type&gt;</code> option instructs <em>git config</em> to ensure that incoming and
+outgoing values are canonicalize-able under the given &lt;type&gt;.  If no
+<code>--type=&lt;type&gt;</code> is given, no canonicalization will be performed. Callers may
+unset an existing <code>--type</code> specifier with <code>--no-type</code>.</p>
 </div>
 <div class="paragraph">
 <p>When reading, the values are read from the system, global and
@@ -642,35 +640,61 @@ ways to spell blob names.</p>
 <dd>
 <p>List all variables set in config file, along with their values.</p>
 </dd>
+<dt class="hdlist1">--type &lt;type&gt;</dt>
+<dd>
+<p><em>git config</em> will ensure that any input or output is valid under the given
+type constraint(s), and will canonicalize outgoing values in <code>&lt;type&gt;</code>'s
+canonical form.</p>
+<div class="paragraph">
+<p>Valid <code>&lt;type&gt;</code>'s include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>bool</em>: canonicalize values as either "true" or "false".</p>
+</li>
+<li>
+<p><em>int</em>: canonicalize values as simple decimal numbers. An optional suffix of
+<em>k</em>, <em>m</em>, or <em>g</em> will cause the value to be multiplied by 1024, 1048576, or
+1073741824 upon input.</p>
+</li>
+<li>
+<p><em>bool-or-int</em>: canonicalize according to either <em>bool</em> or <em>int</em>, as described
+above.</p>
+</li>
+<li>
+<p><em>path</em>: canonicalize by adding a leading <code>~</code> to the value of <code>$HOME</code> and
+<code>~user</code> to the home directory for the specified user. This specifier has no
+effect when setting the value (but you can use <code>git config section.variable
+~/</code> from the command line to let your shell do the expansion.)</p>
+</li>
+<li>
+<p><em>expiry-date</em>: canonicalize by converting from a fixed or relative date-string
+to a timestamp. This specifier has no effect when setting the value.</p>
+</li>
+<li>
+<p><em>color</em>: When getting a value, canonicalize by converting to an ANSI color
+escape sequence. When setting a value, a sanity-check is performed to ensure
+that the given value is canonicalize-able as an ANSI color, but it is written
+as-is.</p>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">--bool</dt>
-<dd>
-<p><em>git config</em> will ensure that the output is "true" or "false"</p>
-</dd>
 <dt class="hdlist1">--int</dt>
-<dd>
-<p><em>git config</em> will ensure that the output is a simple
-decimal number.  An optional value suffix of <em>k</em>, <em>m</em>, or <em>g</em>
-in the config file will cause the value to be multiplied
-by 1024, 1048576, or 1073741824 prior to output.</p>
-</dd>
 <dt class="hdlist1">--bool-or-int</dt>
-<dd>
-<p><em>git config</em> will ensure that the output matches the format of
-either --bool or --int, as described above.</p>
-</dd>
 <dt class="hdlist1">--path</dt>
-<dd>
-<p><code>git config</code> will expand a leading <code>~</code> to the value of
-<code>$HOME</code>, and <code>~user</code> to the home directory for the
-specified user.  This option has no effect when setting the
-value (but you can use <code>git config section.variable ~/</code>
-from the command line to let your shell do the expansion).</p>
-</dd>
 <dt class="hdlist1">--expiry-date</dt>
 <dd>
-<p><code>git config</code> will ensure that the output is converted from
-a fixed or relative date-string to a timestamp. This option
-has no effect when setting the value.</p>
+<p>Historical options for selecting a type specifier. Prefer instead <code>--type</code>,
+(see: above).</p>
+</dd>
+<dt class="hdlist1">--no-type</dt>
+<dd>
+<p>Un-sets the previously set type specifier (if one was previously set). This
+option requests that <em>git config</em> not canonicalize the retrieved variable.
+<code>--no-type</code> has no effect without <code>--type=&lt;type&gt;</code> or <code>--&lt;type&gt;</code>.</p>
 </dd>
 <dt class="hdlist1">-z</dt>
 <dt class="hdlist1">--null</dt>
@@ -711,6 +735,9 @@ When the color setting for <code>name</code> is undefined, the command uses
 output it as the ANSI color escape sequence to the standard
 output.  The optional <code>default</code> parameter is used instead, if
 there is no color configured for <code>name</code>.</p>
+<div class="paragraph">
+<p><code>--type=color [--default=&lt;default&gt;]</code> is preferred over <code>--get-color</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">-e</dt>
 <dt class="hdlist1">--edit</dt>
@@ -724,6 +751,11 @@ there is no color configured for <code>name</code>.</p>
 values. Defaults to <code>off</code> when a specific file is given (e.g.,
 using <code>--file</code>, <code>--global</code>, etc) and <code>on</code> when searching all
 config files.</p>
+</dd>
+<dt class="hdlist1">--default &lt;value&gt;</dt>
+<dd>
+<p>When using <code>--get</code>, and the requested variable is not found, behave as if
+&lt;value&gt; were the value assigned to the that variable.</p>
 </dd>
 </dl>
 </div>
@@ -1696,6 +1728,13 @@ working directory and the repository has LF line endings.
 This variable can be set to <em>input</em>,
 in which case no output conversion is performed.</p>
 </dd>
+<dt class="hdlist1">core.checkRoundtripEncoding</dt>
+<dd>
+<p>A comma and/or whitespace separated list of encodings that Git
+performs UTF-8 round trip checks on if they are used in an
+<code>working-tree-encoding</code> attribute (see <a href="gitattributes.html">gitattributes</a>(5)).
+The default value is <code>SHIFT-JIS</code>.</p>
+</dd>
 <dt class="hdlist1">core.symlinks</dt>
 <dd>
 <p>If false, symbolic links are checked out as small plain files that
@@ -2165,6 +2204,11 @@ notes should be printed.</p>
 the <code>GIT_NOTES_REF</code> environment variable.  See <a href="git-notes.html">git-notes</a>(1).</p>
 </div>
 </dd>
+<dt class="hdlist1">core.commitGraph</dt>
+<dd>
+<p>Enable git commit graph feature. Allows reading from the
+commit-graph file.</p>
+</dd>
 <dt class="hdlist1">core.sparseCheckout</dt>
 <dd>
 <p>Enable "sparse checkout" feature. See section "Sparse checkout" in
@@ -2343,6 +2387,11 @@ supported.</p>
 instead of merging the default branch from the default remote when
 "git pull" is run. See "pull.rebase" for doing this in a non
 branch-specific manner.</p>
+<div class="paragraph">
+<p>When <code>merges</code>, pass the <code>--rebase-merges</code> option to <em>git rebase</em>
+so that the local merge commits are included in the rebase (see
+<a href="git-rebase.html">git-rebase</a>(1) for details).</p>
+</div>
 <div class="paragraph">
 <p>When preserve, also pass <code>--preserve-merges</code> along to <em>git rebase</em>
 so that locally committed merge commits will not be flattened
@@ -2572,6 +2621,39 @@ respectively, when branch and tracking information is displayed in the
 status short-format), or
 <code>unmerged</code> (files which have unmerged changes).</p>
 </dd>
+<dt class="hdlist1">color.blame.repeatedLines</dt>
+<dd>
+<p>Use the customized color for the part of git-blame output that
+is repeated meta information per line (such as commit id,
+author name, date and timezone). Defaults to cyan.</p>
+</dd>
+<dt class="hdlist1">color.blame.highlightRecent</dt>
+<dd>
+<p>This can be used to color the metadata of a blame line depending
+on age of the line.</p>
+<div class="paragraph">
+<p>This setting should be set to a comma-separated list of color and date settings,
+starting and ending with a color, the dates should be set from oldest to newest.
+The metadata will be colored given the colors if the the line was introduced
+before the given timestamp, overwriting older timestamped colors.</p>
+</div>
+<div class="paragraph">
+<p>Instead of an absolute timestamp relative timestamps work as well, e.g.
+2.weeks.ago is valid to address anything older than 2 weeks.</p>
+</div>
+<div class="paragraph">
+<p>It defaults to <em>blue,12 month ago,white,1 month ago,red</em>, which colors
+everything older than one year blue, recent changes between one month and
+one year old are kept white, and lines introduced within the last month are
+colored red.</p>
+</div>
+</dd>
+<dt class="hdlist1">blame.coloring</dt>
+<dd>
+<p>This determines the coloring scheme to be applied to blame
+output. It can be <em>repeatedLines</em>, <em>highlightRecent</em>,
+or <em>none</em> which is the default.</p>
+</dd>
 <dt class="hdlist1">color.transport</dt>
 <dd>
 <p>A boolean to enable/disable color when pushes are rejected. May be
@@ -2757,6 +2839,15 @@ matched.</p>
 <dd>
 <p>Tell git-credential-cache&#8212;&#8203;daemon to ignore SIGHUP, instead of quitting.</p>
 </dd>
+<dt class="hdlist1">completion.commands</dt>
+<dd>
+<p>This is only used by git-completion.bash to add or remove
+commands from the list of completed commands. Normally only
+porcelain commands and a few select others are completed. You
+can add more commands, separated by space, in this
+variable. Prefixing the command with <em>-</em> will remove it from
+the existing list.</p>
+</dd>
 <dt class="hdlist1">diff.autoRefreshIndex</dt>
 <dd>
 <p>When using <em>git diff</em> to compare with work tree
@@ -2912,7 +3003,8 @@ relative to the top of the working tree.</p>
 <dt class="hdlist1">diff.renameLimit</dt>
 <dd>
 <p>The number of files to consider when performing the copy/rename
-detection; equivalent to the <em>git diff</em> option <code>-l</code>.</p>
+detection; equivalent to the <em>git diff</em> option <code>-l</code>. This setting
+has no effect if rename detection is turned off.</p>
 </dd>
 <dt class="hdlist1">diff.renames</dt>
 <dd>
@@ -3017,6 +3109,9 @@ that a corresponding difftool.&lt;tool&gt;.cmd variable is defined.</p>
 </li>
 <li>
 <p>examdiff</p>
+</li>
+<li>
+<p>guiffy</p>
 </li>
 <li>
 <p>gvimdiff</p>
@@ -3356,6 +3451,20 @@ default	value is 50.  Setting this to 0 disables it.</p>
 <dd>
 <p>Make <code>git gc --auto</code> return immediately and run in background
 if the system supports it. Default is true.</p>
+</dd>
+<dt class="hdlist1">gc.bigPackThreshold</dt>
+<dd>
+<p>If non-zero, all packs larger than this limit are kept when
+<code>git gc</code> is run. This is very similar to <code>--keep-base-pack</code>
+except that all packs that meet the threshold are kept, not
+just the base pack. Defaults to zero. Common unit suffixes of
+<em>k</em>, <em>m</em>, or <em>g</em> are supported.</p>
+<div class="paragraph">
+<p>Note that if the number of kept packs is more than gc.autoPackLimit,
+this configuration variable is ignored, all packs except the base pack
+will be repacked. After this the number of packs should go below
+gc.autoPackLimit and gc.bigPackThreshold should be respected again.</p>
+</div>
 </dd>
 <dt class="hdlist1">gc.logExpiry</dt>
 <dd>
@@ -3858,6 +3967,9 @@ this option are:</p>
 <li>
 <p>tlsv1.2</p>
 </li>
+<li>
+<p>tlsv1.3</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -3933,6 +4045,15 @@ unset. Only necessary to disable this if Git consistently errors
 and the message is about checking the revocation status of a
 certificate. This option is ignored if cURL lacks support for
 setting the relevant SSL option at runtime.</p>
+</dd>
+<dt class="hdlist1">http.schannel.useSSLCAInfo</dt>
+<dd>
+<p>As of cURL v7.60.0, the Secure Channel backend can use the
+certificate bundle provided via <code>http.sslCAInfo</code>, but that would
+override the Windows Certificate Store. Since this is not desirable
+by default, Git will tell cURL not to use that bundle by default
+when the <code>schannel</code> backend was configured via <code>http.sslBackend</code>,
+unless <code>useSSLCAInfo</code> overrides this behavior.</p>
 </dd>
 <dt class="hdlist1">http.pinnedpubkey</dt>
 <dd>
@@ -4338,7 +4459,14 @@ true is a synonym for 20.</p>
 <dd>
 <p>The number of files to consider when performing rename detection
 during a merge; if not specified, defaults to the value of
-diff.renameLimit.</p>
+diff.renameLimit. This setting has no effect if rename detection
+is turned off.</p>
+</dd>
+<dt class="hdlist1">merge.renames</dt>
+<dd>
+<p>Whether and how Git detects renames.  If set to "false",
+rename detection is disabled. If set to "true", basic rename
+detection is enabled.  Defaults to the value of diff.renames.</p>
 </dd>
 <dt class="hdlist1">merge.renormalize</dt>
 <dd>
@@ -4393,6 +4521,9 @@ that a corresponding mergetool.&lt;tool&gt;.cmd variable is defined.</p>
 </li>
 <li>
 <p>examdiff</p>
+</li>
+<li>
+<p>guiffy</p>
 </li>
 <li>
 <p>gvimdiff</p>
@@ -4605,7 +4736,8 @@ window size is given on the command line. Defaults to 10.</p>
 <dt class="hdlist1">pack.depth</dt>
 <dd>
 <p>The maximum delta depth used by <a href="git-pack-objects.html">git-pack-objects</a>(1) when no
-maximum depth is given on the command line. Defaults to 50.</p>
+maximum depth is given on the command line. Defaults to 50.
+Maximum value is 4095.</p>
 </dd>
 <dt class="hdlist1">pack.windowMemory</dt>
 <dd>
@@ -4647,7 +4779,8 @@ used to virtually disable this cache. Defaults to 256 MiB.</p>
 <p>The maximum size of a delta, that is cached in
 <a href="git-pack-objects.html">git-pack-objects</a>(1). This cache is used to speed up the
 writing object phase by not having to recompute the final delta
-result once the best match for all objects is found. Defaults to 1000.</p>
+result once the best match for all objects is found.
+Defaults to 1000. Maximum value is 65535.</p>
 </dd>
 <dt class="hdlist1">pack.threads</dt>
 <dd>
@@ -4844,6 +4977,11 @@ command line). This setting overrides <code>merge.ff</code> when pulling.</p>
 of merging the default branch from the default remote when "git
 pull" is run. See "branch.&lt;name&gt;.rebase" for setting this on a
 per-branch basis.</p>
+<div class="paragraph">
+<p>When <code>merges</code>, pass the <code>--rebase-merges</code> option to <em>git rebase</em>
+so that the local merge commits are included in the rebase (see
+<a href="git-rebase.html">git-rebase</a>(1) for details).</p>
+</div>
 <div class="paragraph">
 <p>When preserve, also pass <code>--preserve-merges</code> along to <em>git rebase</em>
 so that locally committed merge commits will not be flattened
@@ -5498,6 +5636,20 @@ prefix before each output line (starting with
 behavior of <a href="git-status.html">git-status</a>(1) in Git 1.8.4 and previous.
 Defaults to false.</p>
 </dd>
+<dt class="hdlist1">status.renameLimit</dt>
+<dd>
+<p>The number of files to consider when performing rename detection
+in <a href="git-status.html">git-status</a>(1) and <a href="git-commit.html">git-commit</a>(1). Defaults to
+the value of diff.renameLimit.</p>
+</dd>
+<dt class="hdlist1">status.renames</dt>
+<dd>
+<p>Whether and how Git detects renames in <a href="git-status.html">git-status</a>(1) and
+<a href="git-commit.html">git-commit</a>(1) .  If set to "false", rename detection is
+disabled. If set to "true", basic rename detection is enabled.
+If set to "copies" or "copy", Git will detect copies, as well.
+Defaults to the value of diff.renames.</p>
+</dd>
 <dt class="hdlist1">status.showStash</dt>
 <dd>
 <p>If set to true, <a href="git-status.html">git-status</a>(1) will display the number of
@@ -5940,7 +6092,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:24 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

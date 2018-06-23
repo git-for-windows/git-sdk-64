@@ -480,14 +480,20 @@ is not sorted, this function has the side effect of sorting it.</p>
 <p>Free all memory associated with the array and return it to the
 initial, empty state.</p>
 </dd>
+<dt class="hdlist1"><code>oid_array_for_each</code></dt>
+<dd>
+<p>Iterate over each element of the list, executing the callback
+function for each one. Does not sort the list, so any custom
+hash order is retained. If the callback returns a non-zero
+value, the iteration ends immediately and the callback&#8217;s
+return is propagated; otherwise, 0 is returned.</p>
+</dd>
 <dt class="hdlist1"><code>oid_array_for_each_unique</code></dt>
 <dd>
-<p>Efficiently iterate over each unique element of the list,
-executing the callback function for each one. If the array is
-not sorted, this function has the side effect of sorting it. If
-the callback returns a non-zero value, the iteration ends
-immediately and the callback&#8217;s return is propagated; otherwise,
-0 is returned.</p>
+<p>Iterate over each unique element of the list in sorted order,
+but otherwise behave like <code>oid_array_for_each</code>. If the array
+is not sorted, this function has the side effect of sorting
+it.</p>
 </dd>
 </dl>
 </div>
@@ -535,7 +541,7 @@ void some_func(void)
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:26 Coordinated Universal Time
+Last updated 2018-06-22 10:51:01 Coordinated Universal Time
 </div>
 </div>
 </body>

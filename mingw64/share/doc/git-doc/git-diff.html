@@ -438,11 +438,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git diff</em> [options] [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [options] --cached [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [options] &lt;commit&gt; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
-<em>git diff</em> [options] &lt;blob&gt; &lt;blob&gt;
-<em>git diff</em> [options] [--no-index] [--] &lt;path&gt; &lt;path&gt;</pre>
+<pre class="content"><em>git diff</em> [&lt;options&gt;] [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
+<em>git diff</em> [&lt;options&gt;] --cached [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
+<em>git diff</em> [&lt;options&gt;] &lt;commit&gt; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]
+<em>git diff</em> [&lt;options&gt;] &lt;blob&gt; &lt;blob&gt;
+<em>git diff</em> [&lt;options&gt;] --no-index [--] &lt;path&gt; &lt;path&gt;</pre>
 </div>
 </div>
 </div>
@@ -456,7 +456,7 @@ two blob objects, or changes between two files on disk.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><em>git diff</em> [--options] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>This form is to view the changes you made relative to
 the index (staging area for the next commit).  In other
@@ -464,7 +464,7 @@ words, the differences are what you <em>could</em> tell Git to
 further add to the index but you still haven&#8217;t.  You can
 stage these changes by using <a href="git-add.html">git-add</a>(1).</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> --no-index [--options] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] --no-index [--] &lt;path&gt; &lt;path&gt;</dt>
 <dd>
 <p>This form is to compare the given two paths on the
 filesystem.  You can omit the <code>--no-index</code> option when
@@ -473,7 +473,7 @@ at least one of the paths points outside the working tree,
 or when running the command outside a working tree
 controlled by Git.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [--options] --cached [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] --cached [&lt;commit&gt;] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>This form is to view the changes you staged for the next
 commit relative to the named &lt;commit&gt;.  Typically you
@@ -483,7 +483,7 @@ If HEAD does not exist (e.g. unborn branches) and
 &lt;commit&gt; is not given, it shows all staged changes.
 --staged is a synonym of --cached.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [--options] &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>This form is to view the changes you have in your
 working tree relative to the named &lt;commit&gt;.  You can
@@ -491,18 +491,18 @@ use HEAD to compare it with the latest commit, or a
 branch name to compare with the tip of a different
 branch.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [--options] &lt;commit&gt; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt; &lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>This is to view the changes between two arbitrary
 &lt;commit&gt;.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [--options] &lt;commit&gt;..&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt;..&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>This is synonymous to the previous form.  If &lt;commit&gt; on
 one side is omitted, it will have the same effect as
 using HEAD instead.</p>
 </dd>
-<dt class="hdlist1"><em>git diff</em> [--options] &lt;commit&gt;...&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;commit&gt;...&lt;commit&gt; [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>This form is to view the changes on the branch containing
 and up to the second &lt;commit&gt;, starting at a common ancestor
@@ -528,7 +528,7 @@ and the range notations ("&lt;commit&gt;..&lt;commit&gt;" and
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><em>git diff</em> [options] &lt;blob&gt; &lt;blob&gt;</dt>
+<dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] &lt;blob&gt; &lt;blob&gt;</dt>
 <dd>
 <p>This form is to view the differences between the raw
 contents of two blob objects.</p>
@@ -572,7 +572,7 @@ Implies <code>-p</code>.</p>
 </dd>
 <dt class="hdlist1">--indent-heuristic</dt>
 <dd>
-<p>Enable the heuristic that shift diff hunk boundaries to make patches
+<p>Enable the heuristic that shifts diff hunk boundaries to make patches
 easier to read. This is the default.</p>
 </dd>
 <dt class="hdlist1">--no-indent-heuristic</dt>
@@ -635,7 +635,7 @@ low-occurrence common elements".</p>
 </div>
 </div>
 <div class="paragraph">
-<p>For instance, if you configured diff.algorithm variable to a
+<p>For instance, if you configured the <code>diff.algorithm</code> variable to a
 non-default value and want to use the default one, then you
 have to use <code>--diff-algorithm=default</code> option.</p>
 </div>
@@ -666,7 +666,7 @@ there are more.</p>
 as file creations or deletions ("new" or "gone", optionally "+l"
 if it&#8217;s a symlink) and mode changes ("+x" or "-x" for adding
 or removing executable bit respectively) in diffstat. The
-information is put betwen the filename part and the graph
+information is put between the filename part and the graph
 part. Implies <code>--stat</code>.</p>
 </dd>
 <dt class="hdlist1">--numstat</dt>
@@ -929,7 +929,7 @@ file gives the default to do so.</p>
 <p>Warn if changes introduce conflict markers or whitespace errors.
 What are considered whitespace errors is controlled by <code>core.whitespace</code>
 configuration.  By default, trailing whitespaces (including
-lines that solely consist of whitespaces) and a space character
+lines that consist solely of whitespaces) and a space character
 that is immediately followed by a tab character inside the
 initial indent of the line are considered whitespace errors.
 Exits with non-zero status if problems are found. Not compatible
@@ -944,7 +944,7 @@ lines of the diff.  Multiple values are separated by comma,
 this option is not given, and the configuration variable
 <code>diff.wsErrorHighlight</code> is not set, only whitespace errors in
 <code>new</code> lines are highlighted. The whitespace errors are colored
-whith <code>color.diff.whitespace</code>.</p>
+with <code>color.diff.whitespace</code>.</p>
 </dd>
 <dt class="hdlist1">--full-index</dt>
 <dd>
@@ -1174,7 +1174,7 @@ pattern if it starts with a hash.</p>
 </div>
 <div class="paragraph">
 <p>Patterns have the same syntax and semantics as patterns used for
-fnmantch(3) without the FNM_PATHNAME flag, except a pathname also
+fnmatch(3) without the FNM_PATHNAME flag, except a pathname also
 matches a pattern if removing any number of the final pathname
 components matches the pattern.  For example, the pattern "<code>foo*bar</code>"
 matches "<code>fooasdfbar</code>" and "<code>foo/bar/baz/asdf</code>" but not "<code>foobarx</code>".</p>
@@ -1201,7 +1201,7 @@ to by giving a &lt;path&gt; as an argument.</p>
 </dd>
 <dt class="hdlist1">--ignore-cr-at-eol</dt>
 <dd>
-<p>Ignore carrige-return at the end of line when doing a comparison.</p>
+<p>Ignore carriage-return at the end of line when doing a comparison.</p>
 </dd>
 <dt class="hdlist1">--ignore-space-at-eol</dt>
 <dd>
@@ -2050,7 +2050,7 @@ rewrites (very expensive).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:24 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

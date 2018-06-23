@@ -552,6 +552,16 @@ requires a bidirectional, full-duplex connection.</p>
 <p>Supported commands: <em>connect</em>.</p>
 </div>
 </dd>
+<dt class="hdlist1"><em>stateless-connect</em></dt>
+<dd>
+<p>Experimental; for internal use only.
+Can attempt to connect to a remote server for communication
+using git&#8217;s wire-protocol version 2.  See the documentation
+for the stateless-connect command for more information.</p>
+<div class="paragraph">
+<p>Supported commands: <em>stateless-connect</em>.</p>
+</div>
+</dd>
 <dt class="hdlist1"><em>push</em></dt>
 <dd>
 <p>Can discover remote refs and push local commits and the
@@ -600,6 +610,16 @@ Git&#8217;s native packfile protocol. This
 requires a bidirectional, full-duplex connection.</p>
 <div class="paragraph">
 <p>Supported commands: <em>connect</em>.</p>
+</div>
+</dd>
+<dt class="hdlist1"><em>stateless-connect</em></dt>
+<dd>
+<p>Experimental; for internal use only.
+Can attempt to connect to a remote server for communication
+using git&#8217;s wire-protocol version 2.  See the documentation
+for the stateless-connect command for more information.</p>
+<div class="paragraph">
+<p>Supported commands: <em>stateless-connect</em>.</p>
 </div>
 </dd>
 <dt class="hdlist1"><em>fetch</em></dt>
@@ -897,6 +917,24 @@ the connection ends, the remote helper exits.</p>
 <p>Supported if the helper has the "connect" capability.</p>
 </div>
 </dd>
+<dt class="hdlist1"><em>stateless-connect</em> &lt;service&gt;</dt>
+<dd>
+<p>Experimental; for internal use only.
+Connects to the given remote service for communication using
+git&#8217;s wire-protocol version 2.  Valid replies to this command
+are empty line (connection established), <em>fallback</em> (no smart
+transport support, fall back to dumb transports) and just
+exiting with error message printed (can&#8217;t connect, don&#8217;t bother
+trying to fall back).  After line feed terminating the positive
+(empty) response, the output of the service starts.  Messages
+(both request and response) must consist of zero or more
+PKT-LINEs, terminating in a flush packet. The client must not
+expect the server to store any state in between request-response
+pairs.  After the connection ends, the remote helper exits.</p>
+<div class="paragraph">
+<p>Supported if the helper has the "stateless-connect" capability.</p>
+</div>
+</dd>
 </dl>
 </div>
 <div class="paragraph">
@@ -1068,7 +1106,7 @@ their dependents.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:51:00 Coordinated Universal Time
 </div>
 </div>
 </body>

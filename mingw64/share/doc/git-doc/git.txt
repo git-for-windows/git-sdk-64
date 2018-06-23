@@ -11,7 +11,7 @@ SYNOPSIS
 [verse]
 'git' [--version] [--help] [-C <path>] [-c <name>=<value>]
     [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
-    [-p|--paginate|--no-pager] [--no-replace-objects] [--bare]
+    [-p|--paginate|-P|--no-pager] [--no-replace-objects] [--bare]
     [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
     [--super-prefix=<path>]
     <command> [<args>]
@@ -103,6 +103,7 @@ foo.bar= ...`) sets `foo.bar` to the empty string which `git config
 	configuration options (see the "Configuration Mechanism" section
 	below).
 
+-P::
 --no-pager::
 	Do not pipe Git output into a pager.
 
@@ -162,6 +163,16 @@ foo.bar= ...`) sets `foo.bar` to the empty string which `git config
 --no-optional-locks::
 	Do not perform optional operations that require locks. This is
 	equivalent to setting the `GIT_OPTIONAL_LOCKS` to `0`.
+
+--list-cmds=group[,group...]::
+	List commands by group. This is an internal/experimental
+	option and may change or be removed in the future. Supported
+	groups are: builtins, parseopt (builtin commands that use
+	parse-options), main (all commands in libexec directory),
+	others (all other commands in `$PATH` that have git- prefix),
+	list-<category> (see categories in command-list.txt),
+	nohelpers (exclude helper commands), alias and config
+	(retrieve command list from config variable completion.commands)
 
 GIT COMMANDS
 ------------

@@ -443,7 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <em>git worktree lock</em> [--reason &lt;string&gt;] &lt;worktree&gt;
 <em>git worktree move</em> &lt;worktree&gt; &lt;new-path&gt;
 <em>git worktree prune</em> [-n] [-v] [--expire &lt;expire&gt;]
-<em>git worktree remove</em> [--force] &lt;worktree&gt;
+<em>git worktree remove</em> [-f] &lt;worktree&gt;
 <em>git worktree unlock</em> &lt;worktree&gt;</pre>
 </div>
 </div>
@@ -460,12 +460,13 @@ out more than one branch at a time.  With <code>git worktree add</code> a new wo
 tree is associated with the repository.  This new working tree is called a
 "linked working tree" as opposed to the "main working tree" prepared by "git
 init" or "git clone".  A repository has one main working tree (if it&#8217;s not a
-bare repository) and zero or more linked working trees.</p>
+bare repository) and zero or more linked working trees. When you are done
+with a linked working tree, remove it with <code>git worktree remove</code>.</p>
 </div>
 <div class="paragraph">
-<p>When you are done with a linked working tree you can simply delete it.
-The working tree&#8217;s administrative files in the repository (see
-"DETAILS" below) will eventually be removed automatically (see
+<p>If a working tree is deleted without using <code>git worktree remove</code>, then
+its associated administrative files, which reside in the repository
+(see "DETAILS" below), will eventually be removed automatically (see
 <code>gc.worktreePruneExpire</code> in <a href="git-config.html">git-config</a>(1)), or you can run
 <code>git worktree prune</code> in the main or any linked working tree to
 clean up any stale administrative files.</p>
@@ -502,8 +503,13 @@ with a matching name, treat as equivalent to:</p>
 </div>
 <div class="paragraph">
 <p>If <code>&lt;commit-ish&gt;</code> is omitted and neither <code>-b</code> nor <code>-B</code> nor <code>--detach</code> used,
-then, as a convenience, a new branch based at HEAD is created automatically,
-as if <code>-b $(basename &lt;path&gt;)</code> was specified.</p>
+then, as a convenience, the new worktree is associated with a branch
+(call it <code>&lt;branch&gt;</code>) named after <code>$(basename &lt;path&gt;)</code>.  If <code>&lt;branch&gt;</code>
+doesn&#8217;t exist, a new branch based on HEAD is automatically created as
+if <code>-b &lt;branch&gt;</code> was given.  If <code>&lt;branch&gt;</code> does exist, it will be
+checked out in the new worktree, if it&#8217;s not checked out anywhere
+else, otherwise the command will refuse to create the worktree (unless
+<code>--force</code> is used).</p>
 </div>
 </dd>
 <dt class="hdlist1">list</dt>
@@ -556,7 +562,7 @@ working tree cannot be removed.</p>
 <p>By default, <code>add</code> refuses to create a new working tree when
 <code>&lt;commit-ish&gt;</code> is a branch name and is already checked out by
 another working tree and <code>remove</code> refuses to remove an unclean
-working tree. This option overrides that safeguard.</p>
+working tree. This option overrides these safeguards.</p>
 </dd>
 <dt class="hdlist1">-b &lt;new-branch&gt;</dt>
 <dt class="hdlist1">-B &lt;new-branch&gt;</dt>
@@ -712,7 +718,7 @@ details on a single line with columns.  For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>S git worktree list
+<pre>$ git worktree list
 /path/to/bare-source            (bare)
 /path/to/linked-worktree        abcd1234 [master]
 /path/to/other-linked-worktree  1234abc  (detached HEAD)</pre>
@@ -729,7 +735,7 @@ example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>S git worktree list --porcelain
+<pre>$ git worktree list --porcelain
 worktree /path/to/bare-source
 bare
 
@@ -765,8 +771,7 @@ $ pushd ../temp
 # ... hack hack hack ...
 $ git commit -a -m 'emergency fix for boss'
 $ popd
-$ rm -rf ../temp
-$ git worktree prune</pre>
+$ git worktree remove ../temp</pre>
 </div>
 </div>
 </div>
@@ -792,7 +797,7 @@ checkouts of a superproject.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:51:00 Coordinated Universal Time
 </div>
 </div>
 </body>

@@ -438,7 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git send-email</em> [options] &lt;file|directory|rev-list options&gt;&#8230;&#8203;
+<pre class="content"><em>git send-email</em> [&lt;options&gt;] &lt;file|directory|rev-list options&gt;&#8230;&#8203;
 <em>git send-email</em> --dump-aliases</pre>
 </div>
 </div>
@@ -745,7 +745,7 @@ connection and authentication problems.</p>
 <dt class="hdlist1">--batch-size=&lt;num&gt;</dt>
 <dd>
 <p>Some email servers (e.g. smtp.163.com) limit the number emails to be
-sent per session (connection) and this will lead to a faliure when
+sent per session (connection) and this will lead to a failure when
 sending many messages.  With this option, send-email will disconnect after
 sending $&lt;num&gt; messages and wait for a few seconds (see --relogin-delay)
 and reconnect, to work around such a limit.  You may want to
@@ -1061,7 +1061,7 @@ in the previous section for the meaning of these values.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example">EXAMPLE</h2>
+<h2 id="_examples">EXAMPLES</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_use_gmail_as_the_smtp_server">Use gmail as the smtp server</h3>
@@ -1081,18 +1081,7 @@ edit ~/.gitconfig to specify your account settings:</p>
 <div class="paragraph">
 <p>If you have multifactor authentication setup on your gmail account, you will
 need to generate an app-specific password for use with <em>git send-email</em>. Visit
-<a href="https://security.google.com/settings/security/apppasswords" class="bare">https://security.google.com/settings/security/apppasswords</a> to setup an
-app-specific password.  Once setup, you can store it with the credentials
-helper:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ git credential fill
-protocol=smtp
-host=smtp.gmail.com
-username=youname@gmail.com
-password=app-password</pre>
-</div>
+<a href="https://security.google.com/settings/security/apppasswords" class="bare">https://security.google.com/settings/security/apppasswords</a> to create it.</p>
 </div>
 <div class="paragraph">
 <p>Once your commits are ready to be sent to the mailing list, run the
@@ -1104,6 +1093,12 @@ following commands:</p>
 $ edit outgoing/0000-*
 $ git send-email outgoing/*</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The first time you run it, you will be prompted for your credentials.  Enter the
+app-specific or your regular password as appropriate.  If you have credential
+helper configured (see <a href="git-credential.html">git-credential</a>(1)), the password will be saved in
+the credential store so you won&#8217;t have to type it the next time.</p>
 </div>
 <div class="paragraph">
 <p>Note: the following perl modules are required
@@ -1131,7 +1126,7 @@ $ git send-email outgoing/*</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:51:00 Coordinated Universal Time
 </div>
 </div>
 </body>

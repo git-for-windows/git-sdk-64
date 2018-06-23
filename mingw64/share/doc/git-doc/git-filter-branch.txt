@@ -222,7 +222,15 @@ this purpose, they are instead rewritten to point at the nearest ancestor that
 was not excluded.
 
 
-Examples
+EXIT STATUS
+-----------
+
+On success, the exit status is `0`.  If the filter can't find any commits to
+rewrite, the exit status is `2`.  On any other error, the exit status may be
+any other non-zero value.
+
+
+EXAMPLES
 --------
 
 Suppose you want to remove a file (containing confidential information
@@ -280,7 +288,7 @@ git filter-branch --parent-filter \
 or even simpler:
 
 -----------------------------------------------
-echo "$commit-id $graft-id" >> .git/info/grafts
+git replace --graft $commit-id $graft-id
 git filter-branch $graft-id..HEAD
 -----------------------------------------------
 
@@ -398,7 +406,7 @@ git filter-branch --index-filter \
 
 
 
-Checklist for Shrinking a Repository
+CHECKLIST FOR SHRINKING A REPOSITORY
 ------------------------------------
 
 git-filter-branch can be used to get rid of a subset of files,
@@ -437,7 +445,7 @@ warned.
   (or if your git-gc is not new enough to support arguments to
   `--prune`, use `git repack -ad; git prune` instead).
 
-Notes
+NOTES
 -----
 
 git-filter-branch allows you to make complex shell-scripted rewrites

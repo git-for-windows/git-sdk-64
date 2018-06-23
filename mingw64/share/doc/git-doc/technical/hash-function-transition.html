@@ -479,11 +479,34 @@ address stored content.</p>
 </div>
 <div class="paragraph">
 <p>Over time some flaws in SHA-1 have been discovered by security
-researchers. <a href="https://shattered.io" class="bare">https://shattered.io</a> demonstrated a practical SHA-1 hash
-collision. As a result, SHA-1 cannot be considered cryptographically
-secure any more. This impacts the communication of hash values because
-we cannot trust that a given hash value represents the known good
-version of content that the speaker intended.</p>
+researchers. On 23 February 2017 the SHAttered attack
+(<a href="https://shattered.io" class="bare">https://shattered.io</a>) demonstrated a practical SHA-1 hash collision.</p>
+</div>
+<div class="paragraph">
+<p>Git v2.13.0 and later subsequently moved to a hardened SHA-1
+implementation by default, which isn&#8217;t vulnerable to the SHAttered
+attack.</p>
+</div>
+<div class="paragraph">
+<p>Thus Git has in effect already migrated to a new hash that isn&#8217;t SHA-1
+and doesn&#8217;t share its vulnerabilities, its new hash function just
+happens to produce exactly the same output for all known inputs,
+except two PDFs published by the SHAttered researchers, and the new
+implementation (written by those researchers) claims to detect future
+cryptanalytic collision attacks.</p>
+</div>
+<div class="paragraph">
+<p>Regardless, it&#8217;s considered prudent to move past any variant of SHA-1
+to a new hash. There&#8217;s no guarantee that future attacks on SHA-1 won&#8217;t
+be published in the future, and those attacks may not have viable
+mitigations.</p>
+</div>
+<div class="paragraph">
+<p>If SHA-1 and its variants were to be truly broken, Git&#8217;s hash function
+could not be considered cryptographically secure any more. This would
+impact the communication of hash values because we could not trust
+that a given hash value represented the known good version of content
+that the speaker intended.</p>
 </div>
 <div class="paragraph">
 <p>SHA-1 still possesses the other properties such as fast object lookup
@@ -641,13 +664,18 @@ Documentation/technical/repository-version.txt) with extensions
 </div>
 </div>
 <div class="paragraph">
-<p>Specifying a repository format extension ensures that versions of Git
-not aware of NewHash do not try to operate on these repositories,
-instead producing an error message:</p>
+<p>The combination of setting <code>core.repositoryFormatVersion=1</code> and
+populating <code>extensions.*</code> ensures that all versions of Git later than
+<code>v0.99.9l</code> will die instead of trying to operate on the NewHash
+repository, instead producing an error message.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git status
+<pre># Between v0.99.9l and v2.7.0
+$ git status
+fatal: Expected git repo version &lt;= 0, found 1
+# After v2.7.0
+$ git status
 fatal: unknown repository extensions found:
 	objectformat
 	compatobjectformat</pre>
@@ -1597,7 +1625,7 @@ Incorporated suggestions from jonathantanmy and sbeller:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:26 Coordinated Universal Time
+Last updated 2018-06-22 10:51:01 Coordinated Universal Time
 </div>
 </div>
 </body>

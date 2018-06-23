@@ -482,8 +482,8 @@ when following the rules for relative URLs - because the evaluation
 of relative URLs in Git is identical to that of relative directories).</p>
 </div>
 <div class="paragraph">
-<p>The default remote is the remote of the remote tracking branch
-of the current branch. If no such remote tracking branch exists or
+<p>The default remote is the remote of the remote-tracking branch
+of the current branch. If no such remote-tracking branch exists or
 the HEAD is detached, "origin" is assumed to be the default remote.
 If the superproject doesn&#8217;t have a default remote configured
 the superproject is its own authoritative upstream and the current
@@ -700,8 +700,8 @@ case when they are initialized or freshly added). This is useful when
 submodule URLs change upstream and you need to update your local
 repositories accordingly.</p>
 <div class="paragraph">
-<p>"git submodule sync" synchronizes all submodules while
-"git submodule sync -- A" synchronizes submodule "A" only.</p>
+<p><code>git submodule sync</code> synchronizes all submodules while
+<code>git submodule sync -- A</code> synchronizes submodule "A" only.</p>
 </div>
 <div class="paragraph">
 <p>If <code>--recursive</code> is specified, this command will recurse into the
@@ -738,6 +738,14 @@ embedded into the superprojects git directory.</p>
 <dt class="hdlist1">--quiet</dt>
 <dd>
 <p>Only print error messages.</p>
+</dd>
+<dt class="hdlist1">--progress</dt>
+<dd>
+<p>This option is only valid for add and update commands.
+Progress status is reported on the standard error stream
+by default when it is attached to a terminal, unless -q
+is specified. This flag forces progress status even if the
+standard error stream is not directed to a terminal.</p>
 </dd>
 <dt class="hdlist1">--all</dt>
 <dd>
@@ -879,7 +887,17 @@ commands sometimes need to clone a remote repository. In this case,
 this option will be passed to the <a href="git-clone.html">git-clone</a>(1) command.</p>
 <div class="paragraph">
 <p><strong>NOTE</strong>: Do <strong>not</strong> use this option unless you have read the note
-for <a href="git-clone.html">git-clone</a>(1)'s <code>--reference</code> and <code>--shared</code> options carefully.</p>
+for <a href="git-clone.html">git-clone</a>(1)'s <code>--reference</code>, <code>--shared</code>, and <code>--dissociate</code>
+options carefully.</p>
+</div>
+</dd>
+<dt class="hdlist1">--dissociate</dt>
+<dd>
+<p>This option is only valid for add and update commands.  These
+commands sometimes need to clone a remote repository. In this case,
+this option will be passed to the <a href="git-clone.html">git-clone</a>(1) command.</p>
+<div class="paragraph">
+<p><strong>NOTE</strong>: see the NOTE for the <code>--reference</code> option.</p>
 </div>
 </dd>
 <dt class="hdlist1">--recursive</dt>
@@ -950,7 +968,7 @@ for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:51:00 Coordinated Universal Time
 </div>
 </div>
 </body>

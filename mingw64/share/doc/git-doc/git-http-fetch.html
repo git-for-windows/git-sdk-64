@@ -449,8 +449,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Downloads a remote Git repository via HTTP.</p>
 </div>
 <div class="paragraph">
-<p><strong>NOTE</strong>: use of this command without -a is deprecated.  The -a
-behaviour will become the default in a future release.</p>
+<p>This command always gets all objects. Historically, there were three options
+<code>-a</code>, <code>-c</code> and <code>-t</code> for choosing which objects to download. They are now
+silently ignored.</p>
 </div>
 </div>
 </div>
@@ -464,17 +465,9 @@ behaviour will become the default in a future release.</p>
 <p>Either the hash or the filename under [URL]/refs/ to
 pull.</p>
 </dd>
-<dt class="hdlist1">-c</dt>
+<dt class="hdlist1">-a, -c, -t</dt>
 <dd>
-<p>Get the commit objects.</p>
-</dd>
-<dt class="hdlist1">-t</dt>
-<dd>
-<p>Get trees associated with the commit objects.</p>
-</dd>
-<dt class="hdlist1">-a</dt>
-<dd>
-<p>Get all the objects.</p>
+<p>These options are ignored for historical reasons.</p>
 </dd>
 <dt class="hdlist1">-v</dt>
 <dd>
@@ -515,7 +508,7 @@ an earlier fetch is interrupted.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:24 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

@@ -438,7 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git svn</em> &lt;command&gt; [options] [arguments]</pre>
+<pre class="content"><em>git svn</em> &lt;command&gt; [&lt;options&gt;] [&lt;arguments&gt;]</pre>
 </div>
 </div>
 </div>
@@ -1293,7 +1293,8 @@ config key: svn.findcopiesharder</pre>
 <dt class="hdlist1">-A&lt;filename&gt;</dt>
 <dt class="hdlist1">--authors-file=&lt;filename&gt;</dt>
 <dd>
-<p>Syntax is compatible with the file used by <em>git cvsimport</em>:</p>
+<p>Syntax is compatible with the file used by <em>git cvsimport</em> but
+an empty email address can be supplied with <em>&lt;&gt;</em>:</p>
 <div class="listingblock">
 <div class="content">
 <pre>	loginname = Joe User &lt;user@example.com&gt;</pre>
@@ -1315,8 +1316,15 @@ after the authors-file is modified should continue operation.</p>
 <p>If this option is specified, for each SVN committer name that
 does not exist in the authors file, the given file is executed
 with the committer name as the first argument.  The program is
-expected to return a single line of the form "Name &lt;email&gt;",
-which will be treated as if included in the authors file.</p>
+expected to return a single line of the form "Name &lt;email&gt;" or
+"Name &lt;&gt;", which will be treated as if included in the authors
+file.</p>
+<div class="paragraph">
+<p>Due to historical reasons a relative <em>filename</em> is first searched
+relative to the current directory for <em>init</em> and <em>clone</em> and relative
+to the root of the working tree for <em>fetch</em>. If <em>filename</em> is
+not found, it is searched like any other command in <em>$PATH</em>.</p>
+</div>
 <div class="verseblock">
 <pre class="content">config key: svn.authorsProg</pre>
 </div>
@@ -1370,7 +1378,7 @@ in the log message and use that as the author string.</p>
 </dd>
 <dt class="hdlist1">--add-author-from</dt>
 <dd>
-<p>When committing to svn from Git (as part of <em>commit-diff</em>, <em>set-tree</em> or <em>dcommit</em>
+<p>When committing to svn from Git (as part of <em>set-tree</em> or <em>dcommit</em>
 operations), if the existing log message doesn&#8217;t already have a
 <code>From:</code> or <code>Signed-off-by:</code> line, append a <code>From:</code> line based on the
 Git commit&#8217;s author string.  If you use this, then <code>--use-log-author</code>
@@ -1956,7 +1964,7 @@ rewinds it.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:51:00 Coordinated Universal Time
 </div>
 </div>
 </body>

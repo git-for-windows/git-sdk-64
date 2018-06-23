@@ -464,7 +464,7 @@ the updated p4 remote branch.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example">EXAMPLE</h2>
+<h2 id="_examples">EXAMPLES</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
@@ -635,6 +635,15 @@ the <em>p4/master</em> branch, use:</p>
 </div>
 </div>
 <div class="paragraph">
+<p>To specify a single commit or a range of commits, use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git p4 submit --commit &lt;sha1&gt;
+$ git p4 submit --commit &lt;sha1..sha1&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
 <p>The upstream reference is generally <em>refs/remotes/p4/master</em>, but can
 be overridden using the <code>--origin=</code> command-line option.</p>
 </div>
@@ -651,6 +660,35 @@ privileges in p4, which can be granted using <em>p4 protect</em>.</p>
 <div class="content">
 <pre>$ git p4 submit --shelve
 $ git p4 submit --update-shelve 1234 --update-shelve 2345</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unshelve">Unshelve</h3>
+<div class="paragraph">
+<p>Unshelving will take a shelved P4 changelist, and produce the equivalent git commit
+in the branch refs/remotes/p4/unshelved/&lt;changelist&gt;.</p>
+</div>
+<div class="paragraph">
+<p>The git commit is created relative to the current origin revision (HEAD by default).
+If the shelved changelist&#8217;s parent revisions differ, git-p4 will refuse to unshelve;
+you need to be unshelving onto an equivalent tree.</p>
+</div>
+<div class="paragraph">
+<p>The origin revision can be changed with the "--origin" option.</p>
+</div>
+<div class="paragraph">
+<p>If the target branch in refs/remotes/p4/unshelved already exists, the old one will
+be renamed.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git p4 sync
+$ git p4 unshelve 12345
+$ git show refs/remotes/p4/unshelved/12345
+&lt;submit more changes via p4 to the same files&gt;
+$ git p4 unshelve 12345
+&lt;refuses to unshelve until git is in sync with p4 again&gt;</pre>
 </div>
 </div>
 </div>
@@ -873,6 +911,22 @@ skipped, or to quit trying to apply commits, without prompting.</p>
 p4/master.  See the "Sync options" section above for more
 information.</p>
 </dd>
+<dt class="hdlist1">--commit &lt;sha1&gt;|&lt;sha1..sha1&gt;</dt>
+<dd>
+<p>Submit only the specified commit or range of commits, instead of the full
+list of changes that are in the current Git branch.</p>
+</dd>
+<dt class="hdlist1">--disable-rebase</dt>
+<dd>
+<p>Disable the automatic rebase after all commits have been successfully
+submitted. Can also be set with git-p4.disableRebase.</p>
+</dd>
+<dt class="hdlist1">--disable-p4sync</dt>
+<dd>
+<p>Disable the automatic sync of p4/master from Perforce after commits have
+been submitted. Implies --disable-rebase. Can also be set with
+git-p4.disableP4Sync. Sync with origin/master still goes ahead if possible.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -886,6 +940,18 @@ information.</p>
 <dt class="hdlist1">--import-labels</dt>
 <dd>
 <p>Import p4 labels.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unshelve_options">Unshelve options</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">--origin</dt>
+<dd>
+<p>Sets the git refspec against which the shelved P4 changelist is compared.
+Defaults to p4/master.</p>
 </dd>
 </dl>
 </div>
@@ -964,7 +1030,7 @@ dedicating a client spec just for <em>git p4</em>.</p>
 <p>The name of the client can be given to <em>git p4</em> in multiple ways.  The
 variable <em>git-p4.client</em> takes precedence if it exists.  Otherwise,
 normal p4 mechanisms of determining the client are used:  environment
-variable P4CLIENT, a file referenced by P4CONFIG, or the local host name.</p>
+variable <code>P4CLIENT</code>, a file referenced by <code>P4CONFIG</code>, or the local host name.</p>
 </div>
 </div>
 </div>
@@ -1060,25 +1126,25 @@ They all are in the <em>git-p4</em> section.</p>
 <dt class="hdlist1">git-p4.user</dt>
 <dd>
 <p>User specified as an option to all p4 commands, with <em>-u &lt;user&gt;</em>.
-The environment variable <em>P4USER</em> can be used instead.</p>
+The environment variable <code>P4USER</code> can be used instead.</p>
 </dd>
 <dt class="hdlist1">git-p4.password</dt>
 <dd>
 <p>Password specified as an option to all p4 commands, with
 <em>-P &lt;password&gt;</em>.
-The environment variable <em>P4PASS</em> can be used instead.</p>
+The environment variable <code>P4PASS</code> can be used instead.</p>
 </dd>
 <dt class="hdlist1">git-p4.port</dt>
 <dd>
 <p>Port specified as an option to all p4 commands, with
 <em>-p &lt;port&gt;</em>.
-The environment variable <em>P4PORT</em> can be used instead.</p>
+The environment variable <code>P4PORT</code> can be used instead.</p>
 </dd>
 <dt class="hdlist1">git-p4.host</dt>
 <dd>
 <p>Host specified as an option to all p4 commands, with
 <em>-h &lt;host&gt;</em>.
-The environment variable <em>P4HOST</em> can be used instead.</p>
+The environment variable <code>P4HOST</code> can be used instead.</p>
 </dd>
 <dt class="hdlist1">git-p4.client</dt>
 <dd>
@@ -1290,6 +1356,14 @@ default value is <em>[a-zA-Z0-9_\-.]+$</em>.</p>
 <p>Specify submit behavior when a conflict with p4 is found, as per
 --conflict.  The default behavior is <em>ask</em>.</p>
 </dd>
+<dt class="hdlist1">git-p4.disableRebase</dt>
+<dd>
+<p>Do not rebase the tree against p4/master following a submit.</p>
+</dd>
+<dt class="hdlist1">git-p4.disableP4Sync</dt>
+<dd>
+<p>Do not sync p4/master with Perforce following a submit. Implies git-p4.disableRebase.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -1325,7 +1399,7 @@ changes are new.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

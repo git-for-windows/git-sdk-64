@@ -438,7 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git repack</em> [-a] [-A] [-d] [-f] [-F] [-l] [-n] [-q] [-b] [--window=&lt;n&gt;] [--depth=&lt;n&gt;] [--threads=&lt;n&gt;]</pre>
+<pre class="content"><em>git repack</em> [-a] [-A] [-d] [-f] [-F] [-l] [-n] [-q] [-b] [--window=&lt;n&gt;] [--depth=&lt;n&gt;] [--threads=&lt;n&gt;] [--keep-pack=&lt;pack-name&gt;]</pre>
 </div>
 </div>
 </div>
@@ -537,8 +537,11 @@ sorted by type, size and optionally names and compared against the
 other objects within <code>--window</code> to see if using delta compression saves
 space. <code>--depth</code> limits the maximum delta depth; making it too deep
 affects the performance on the unpacker side, because delta data needs
-to be applied that many times to get to the necessary object.
-The default value for --window is 10 and --depth is 50.</p>
+to be applied that many times to get to the necessary object.</p>
+<div class="paragraph">
+<p>The default value for --window is 10 and --depth is 50. The maximum
+depth is 4095.</p>
+</div>
 </dd>
 <dt class="hdlist1">--threads=&lt;n&gt;</dt>
 <dd>
@@ -585,6 +588,14 @@ option safe to use when there are concurrent pushes or fetches.
 This option is generally only useful if you are writing bitmaps
 with <code>-b</code> or <code>repack.writeBitmaps</code>, as it ensures that the
 bitmapped packfile has the necessary objects.</p>
+</dd>
+<dt class="hdlist1">--keep-pack=&lt;pack-name&gt;</dt>
+<dd>
+<p>Exclude the given pack from repacking. This is the equivalent
+of having <code>.keep</code> file on the pack. <code>&lt;pack-name&gt;</code> is the the
+pack file name without leading directory (e.g. <code>pack-123.pack</code>).
+The option could be specified multiple times to keep multiple
+packs.</p>
 </dd>
 <dt class="hdlist1">--unpack-unreachable=&lt;when&gt;</dt>
 <dd>
@@ -641,7 +652,7 @@ as needed in that case.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:50:59 Coordinated Universal Time
 </div>
 </div>
 </body>

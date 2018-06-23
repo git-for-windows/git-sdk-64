@@ -42,8 +42,8 @@ have to use '../foo.git' instead of './foo.git' - as one might expect
 when following the rules for relative URLs - because the evaluation
 of relative URLs in Git is identical to that of relative directories).
 +
-The default remote is the remote of the remote tracking branch
-of the current branch. If no such remote tracking branch exists or
+The default remote is the remote of the remote-tracking branch
+of the current branch. If no such remote-tracking branch exists or
 the HEAD is detached, "origin" is assumed to be the default remote.
 If the superproject doesn't have a default remote configured
 the superproject is its own authoritative upstream and the current
@@ -213,8 +213,8 @@ sync [--recursive] [--] [<path>...]::
 	submodule URLs change upstream and you need to update your local
 	repositories accordingly.
 +
-"git submodule sync" synchronizes all submodules while
-"git submodule sync \-- A" synchronizes submodule "A" only.
+`git submodule sync` synchronizes all submodules while
+`git submodule sync -- A` synchronizes submodule "A" only.
 +
 If `--recursive` is specified, this command will recurse into the
 registered submodules, and sync any nested submodules within.
@@ -238,6 +238,13 @@ OPTIONS
 -q::
 --quiet::
 	Only print error messages.
+
+--progress::
+	This option is only valid for add and update commands.
+	Progress status is reported on the standard error stream
+	by default when it is attached to a terminal, unless -q
+	is specified. This flag forces progress status even if the
+	standard error stream is not directed to a terminal.
 
 --all::
 	This option is only valid for the deinit command. Unregister all
@@ -362,7 +369,15 @@ the submodule itself.
 	this option will be passed to the linkgit:git-clone[1] command.
 +
 *NOTE*: Do *not* use this option unless you have read the note
-for linkgit:git-clone[1]'s `--reference` and `--shared` options carefully.
+for linkgit:git-clone[1]'s `--reference`, `--shared`, and `--dissociate`
+options carefully.
+
+--dissociate::
+	This option is only valid for add and update commands.  These
+	commands sometimes need to clone a remote repository. In this case,
+	this option will be passed to the linkgit:git-clone[1] command.
++
+*NOTE*: see the NOTE for the `--reference` option.
 
 --recursive::
 	This option is only valid for foreach, update, status and sync commands.

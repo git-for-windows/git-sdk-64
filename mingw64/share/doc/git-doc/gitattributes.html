@@ -430,7 +430,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>gitattributes(5) Manual Page</h1>
 <h2>NAME</h2>
 <div class="sectionbody">
-<p>gitattributes - defining attributes per path</p>
+<p>gitattributes - Defining attributes per path</p>
 </div>
 </div>
 <div id="content">
@@ -778,6 +778,118 @@ often run to inspect the changes you intend to next <em>git add</em>.  To
 catch potential problems early, safety triggers.</p>
 </li>
 </ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_code_working_tree_encoding_code"><code>working-tree-encoding</code></h4>
+<div class="paragraph">
+<p>Git recognizes files encoded in ASCII or one of its supersets (e.g.
+UTF-8, ISO-8859-1, &#8230;&#8203;) as text files. Files encoded in certain other
+encodings (e.g. UTF-16) are interpreted as binary and consequently
+built-in Git text processing tools (e.g. <em>git diff</em>) as well as most Git
+web front ends do not visualize the contents of these files by default.</p>
+</div>
+<div class="paragraph">
+<p>In these cases you can tell Git the encoding of a file in the working
+directory with the <code>working-tree-encoding</code> attribute. If a file with this
+attribute is added to Git, then Git reencodes the content from the
+specified encoding to UTF-8. Finally, Git stores the UTF-8 encoded
+content in its internal data structure (called "the index"). On checkout
+the content is reencoded back to the specified encoding.</p>
+</div>
+<div class="paragraph">
+<p>Please note that using the <code>working-tree-encoding</code> attribute may have a
+number of pitfalls:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Alternative Git implementations (e.g. JGit or libgit2) and older Git
+versions (as of March 2018) do not support the <code>working-tree-encoding</code>
+attribute. If you decide to use the <code>working-tree-encoding</code> attribute
+in your repository, then it is strongly recommended to ensure that all
+clients working with the repository support it.</p>
+<div class="literalblock">
+<div class="content">
+<pre>For example, Microsoft Visual Studio resources files (`*.rc`) or
+PowerShell script files (`*.ps1`) are sometimes encoded in UTF-16.
+If you declare `*.ps1` as files as UTF-16 and you add `foo.ps1` with
+a `working-tree-encoding` enabled Git client, then `foo.ps1` will be
+stored as UTF-8 internally. A client without `working-tree-encoding`
+support will checkout `foo.ps1` as UTF-8 encoded file. This will
+typically cause trouble for the users of this file.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>If a Git client, that does not support the `working-tree-encoding`
+attribute, adds a new file `bar.ps1`, then `bar.ps1` will be
+stored "as-is" internally (in this example probably as UTF-16).
+A client with `working-tree-encoding` support will interpret the
+internal contents as UTF-8 and try to convert it to UTF-16 on checkout.
+That operation will fail and cause an error.</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Reencoding content to non-UTF encodings can cause errors as the
+conversion might not be UTF-8 round trip safe. If you suspect your
+encoding to not be round trip safe, then add it to
+<code>core.checkRoundtripEncoding</code> to make Git check the round trip
+encoding (see <a href="git-config.html">git-config</a>(1)). SHIFT-JIS (Japanese character
+set) is known to have round trip issues with UTF-8 and is checked by
+default.</p>
+</li>
+<li>
+<p>Reencoding content requires resources that might slow down certain
+Git operations (e.g <em>git checkout</em> or <em>git add</em>).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Use the <code>working-tree-encoding</code> attribute only if you cannot store a file
+in UTF-8 encoding and if you want Git to be able to process the content
+as text.</p>
+</div>
+<div class="paragraph">
+<p>As an example, use the following attributes if your <em>*.ps1</em> files are
+UTF-16 encoded with byte order mark (BOM) and you want Git to perform
+automatic line ending conversion based on your platform.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>*.ps1		text working-tree-encoding=UTF-16</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use the following attributes if your <em>*.ps1</em> files are UTF-16 little
+endian encoded without BOM and you want Git to use Windows line endings
+in the working directory. Please note, it is highly recommended to
+explicitly define the line endings with <code>eol</code> if the <code>working-tree-encoding</code>
+attribute is used to avoid ambiguity.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>*.ps1		text working-tree-encoding=UTF-16LE eol=CRLF</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can get a list of all available encodings on your platform with the
+following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>iconv --list</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you do not know the encoding of a file, then you can use the <code>file</code>
+command to guess the encoding:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>file foo.ps1</pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -1802,7 +1914,7 @@ to:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example_2">EXAMPLE</h2>
+<h2 id="_examples">EXAMPLES</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If you have these three <code>gitattributes</code> file:</p>
@@ -1882,7 +1994,7 @@ frotz	unspecified</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-05-29 18:52:25 Coordinated Universal Time
+Last updated 2018-06-22 10:51:00 Coordinated Universal Time
 </div>
 </div>
 </body>

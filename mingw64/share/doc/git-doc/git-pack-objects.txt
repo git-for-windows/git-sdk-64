@@ -12,7 +12,7 @@ SYNOPSIS
 'git pack-objects' [-q | --progress | --all-progress] [--all-progress-implied]
 	[--no-reuse-delta] [--delta-base-offset] [--non-empty]
 	[--local] [--incremental] [--window=<n>] [--depth=<n>]
-	[--revs [--unpacked | --all]]
+	[--revs [--unpacked | --all]] [--keep-pack=<pack-name>]
 	[--stdout [--filter=<filter-spec>] | base-name]
 	[--shallow] [--keep-true-parents] < object-list
 
@@ -96,7 +96,9 @@ base-name::
 	it too deep affects the performance on the unpacker
 	side, because delta data needs to be applied that many
 	times to get to the necessary object.
-	The default value for --window is 10 and --depth is 50.
++
+The default value for --window is 10 and --depth is 50. The maximum
+depth is 4095.
 
 --window-memory=<n>::
 	This option provides an additional limit on top of `--window`;
@@ -125,6 +127,13 @@ base-name::
 	This flag causes an object already in a local pack that
 	has a .keep file to be ignored, even if it would have
 	otherwise been packed.
+
+--keep-pack=<pack-name>::
+	This flag causes an object already in the given pack to be
+	ignored, even if it would have otherwise been
+	packed. `<pack-name>` is the the pack file name without
+	leading directory (e.g. `pack-123.pack`). The option could be
+	specified multiple times to keep multiple packs.
 
 --incremental::
 	This flag causes an object already in a pack to be ignored
@@ -266,6 +275,19 @@ Unexpected missing object will raise an error.
 	so that when we repack, we still maintain a distinction between
 	locally created objects [without .promisor] and objects from the
 	promisor remote [with .promisor].)  This is used with partial clone.
+
+--keep-unreachable::
+	Objects unreachable from the refs in packs named with
+	--unpacked= option are added to the resulting pack, in
+	addition to the reachable objects that are not in packs marked
+	with *.keep files. This implies `--revs`.
+
+--pack-loose-unreachable::
+	Pack unreachable loose objects (and their loose counterparts
+	removed). This implies `--revs`.
+
+--unpack-unreachable::
+	Keep unreachable objects in loose form. This implies `--revs`.
 
 SEE ALSO
 --------

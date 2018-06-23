@@ -17,6 +17,7 @@ q,quiet!           be quiet. implies --no-stat
 autostash          automatically stash/stash pop before and after
 fork-point         use 'merge-base --fork-point' to refine upstream
 onto=!             rebase onto given branch instead of upstream
+r,rebase-merges?   try to rebase merges instead of skipping them
 p,preserve-merges! try to recreate merges instead of ignoring them
 s,strategy=!       use the given merge strategy
 no-ff!             cherry-pick all commits, even if unchanged
@@ -62,6 +63,7 @@ $(gettext 'Resolve all conflicts manually, mark them as resolved with
 You can instead skip this commit: run "git rebase --skip".
 To abort and get back to the state before "git rebase", run "git rebase --abort".')
 "
+squash_onto=
 unset onto
 unset restrict_revision
 cmd=
@@ -88,10 +90,13 @@ type=
 state_dir=
 # One of {'', continue, skip, abort}, as parsed from command line
 action=
+rebase_merges=
+rebase_cousins=
 preserve_merges=
 autosquash=
 keep_empty=
 allow_empty_message=
+signoff=
 test "$(git config --bool rebase.autosquash)" = "true" && autosquash=t
 case "$(git config --bool commit.gpgsign)" in
 true)	gpg_sign_opt=-S ;;
@@ -121,6 +126,10 @@ read_basic_state () {
 		allow_rerere_autoupdate="$(cat "$state_dir"/allow_rerere_autoupdate)"
 	test -f "$state_dir"/gpg_sign_opt &&
 		gpg_sign_opt="$(cat "$state_dir"/gpg_sign_opt)"
+	test -f "$state_dir"/signoff && {
+		signoff="$(cat "$state_dir"/signoff)"
+		force_rebase=t
+	}
 }
 
 write_basic_state () {
@@ -135,6 +144,7 @@ write_basic_state () {
 	test -n "$allow_rerere_autoupdate" && echo "$allow_rerere_autoupdate" > \
 		"$state_dir"/allow_rerere_autoupdate
 	test -n "$gpg_sign_opt" && echo "$gpg_sign_opt" > "$state_dir"/gpg_sign_opt
+	test -n "$signoff" && echo "$signoff" >"$state_dir"/signoff
 }
 
 output () {
@@ -197,6 +207,7 @@ run_specific_rebase () {
 		autosquash=
 	fi
 	. git-rebase--$type
+	git_rebase__$type${preserve_merges:+__preserve_merges}
 	ret=$?
 	if test $ret -eq 0
 	then
@@ -269,6 +280,22 @@ do
 	--allow-empty-message)
 		allow_empty_message=--allow-empty-message
 		;;
+	--no-keep-empty)
+		keep_empty=
+		;;
+	--rebase-merges)
+		rebase_merges=t
+		test -z "$interactive_rebase" && interactive_rebase=implied
+		;;
+	--rebase-merges=*)
+		rebase_merges=t
+		case "${1#*=}" in
+		rebase-cousins) rebase_cousins=t;;
+		no-rebase-cousins) rebase_cousins=;;
+		*) die "Unknown mode: $1";;
+		esac
+		test -z "$interactive_rebase" && interactive_rebase=implied
+		;;
 	--preserve-merges)
 		preserve_merges=t
 		test -z "$interactive_rebase" && interactive_rebase=implied
@@ -331,7 +358,13 @@ do
 	--ignore-whitespace)
 		git_am_opt="$git_am_opt $1"
 		;;
-	--committer-date-is-author-date|--ignore-date|--signoff|--no-signoff)
+	--signoff)
+		signoff=--signoff
+		;;
+	--no-signoff)
+		signoff=
+		;;
+	--committer-date-is-author-date|--ignore-date)
 		git_am_opt="$git_am_opt $1"
 		force_rebase=t
 		;;
@@ -447,6 +480,11 @@ then
 	test -z "$interactive_rebase" && interactive_rebase=implied
 fi
 
+if test -n "$keep_empty"
+then
+	test -z "$interactive_rebase" && interactive_rebase=implied
+fi
+
 if test -n "$interactive_rebase"
 then
 	type=interactive
@@ -463,6 +501,14 @@ fi
 if test -t 2 && test -z "$GIT_QUIET"
 then
 	git_format_patch_opt="$git_format_patch_opt --progress"
+fi
+
+if test -n "$signoff"
+then
+	test -n "$preserve_merges" &&
+		die "$(gettext "error: cannot combine '--signoff' with '--preserve-merges'")"
+	git_am_opt="$git_am_opt $signoff"
+	force_rebase=t
 fi
 
 if test -z "$rebase_root"
