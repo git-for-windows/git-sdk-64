@@ -3,6 +3,7 @@
 import collections
 import contextlib
 import functools
+import gc
 import io
 import os
 import re
@@ -91,6 +92,20 @@ class BaseTaskTests:
         self.loop = self.new_test_loop()
         self.loop.set_task_factory(self.new_task)
         self.loop.create_future = lambda: self.new_future(self.loop)
+
+    def test_task_del_collect(self):
+        class Evil:
+            def __del__(self):
+                gc.collect()
+
+        @asyncio.coroutine
+        def run():
+            return Evil()
+
+        self.loop.run_until_complete(
+            asyncio.gather(*[
+                self.new_task(self.loop, run()) for _ in range(100)
+            ], loop=self.loop))
 
     def test_other_loop_future(self):
         other_loop = asyncio.new_event_loop()
@@ -1903,7 +1918,7 @@ class BaseTaskTests:
 
         regex = (r'^<CoroWrapper %s\(?\)? .* at %s:%s, .*> '
                     r'was never yielded from\n'
-                 r'Coroutine object created at \(most recent call last\):\n'
+                 r'Coroutine object created at \(most recent call last, truncated to \d+ last lines\):\n'
                  r'.*\n'
                  r'  File "%s", line %s, in test_coroutine_never_yielded\n'
                  r'    coro_noop\(\)$'
@@ -2117,6 +2132,20 @@ def add_subclass_tests(cls):
 class CTask_CFuture_Tests(BaseTaskTests, test_utils.TestCase):
     Task = getattr(tasks, '_CTask', None)
     Future = getattr(futures, '_CFuture', None)
+
+    @support.refcount_test
+    def test_refleaks_in_task___init__(self):
+        gettotalrefcount = support.get_attribute(sys, 'gettotalrefcount')
+        @asyncio.coroutine
+        def coro():
+            pass
+        task = self.new_task(self.loop, coro())
+        self.loop.run_until_complete(task)
+        refs_before = gettotalrefcount()
+        for i in range(100):
+            task.__init__(coro(), loop=self.loop)
+            self.loop.run_until_complete(task)
+        self.assertAlmostEqual(gettotalrefcount() - refs_before, 0, delta=10)
 
 
 @unittest.skipUnless(hasattr(futures, '_CFuture'),

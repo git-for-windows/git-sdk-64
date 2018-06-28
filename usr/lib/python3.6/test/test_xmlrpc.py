@@ -328,6 +328,10 @@ class XMLRPCTestCase(unittest.TestCase):
                 self.handled = True
                 self.close_connection = False
 
+            def log_message(self, format, *args):
+                # don't clobber sys.stderr
+                pass
+
         def run_server():
             server.socket.settimeout(float(1))  # Don't hang if client fails
             server.handle_request()  # First request and attempt at second
@@ -755,7 +759,9 @@ class BaseServerTestCase(unittest.TestCase):
         self.evt = threading.Event()
         # start server thread to handle requests
         serv_args = (self.evt, self.request_count, self.requestHandler)
-        threading.Thread(target=self.threadFunc, args=serv_args).start()
+        thread = threading.Thread(target=self.threadFunc, args=serv_args)
+        thread.start()
+        self.addCleanup(thread.join)
 
         # wait for the server to be ready
         self.evt.wait()
@@ -1207,7 +1213,9 @@ class FailingServerTestCase(unittest.TestCase):
         self.evt = threading.Event()
         # start server thread to handle requests
         serv_args = (self.evt, 1)
-        threading.Thread(target=http_server, args=serv_args).start()
+        thread = threading.Thread(target=http_server, args=serv_args)
+        thread.start()
+        self.addCleanup(thread.join)
 
         # wait for the server to be ready
         self.evt.wait()

@@ -827,7 +827,7 @@ class date:
             month = self._month
         if day is None:
             day = self._day
-        return date(year, month, day)
+        return type(self)(year, month, day)
 
     # Comparisons of date objects with other.
 
@@ -1315,7 +1315,7 @@ class time:
             tzinfo = self.tzinfo
         if fold is None:
             fold = self._fold
-        return time(hour, minute, second, microsecond, tzinfo, fold=fold)
+        return type(self)(hour, minute, second, microsecond, tzinfo, fold=fold)
 
     # Pickle support.
 
@@ -1596,7 +1596,7 @@ class datetime(date):
             tzinfo = self.tzinfo
         if fold is None:
             fold = self.fold
-        return datetime(year, month, day, hour, minute, second,
+        return type(self)(year, month, day, hour, minute, second,
                           microsecond, tzinfo, fold=fold)
 
     def _local_timezone(self):
@@ -2271,7 +2271,8 @@ else:
          _check_tzinfo_arg, _check_tzname, _check_utc_offset, _cmp, _cmperror,
          _date_class, _days_before_month, _days_before_year, _days_in_month,
          _format_time, _is_leap, _isoweek1monday, _math, _ord2ymd,
-         _time, _time_class, _tzinfo_class, _wrap_strftime, _ymd2ord)
+         _time, _time_class, _tzinfo_class, _wrap_strftime, _ymd2ord,
+         _divide_and_round)
     # XXX Since import * above excludes names that start with _,
     # docstring does not get overwritten. In the future, it may be
     # appropriate to maintain a single module level docstring and

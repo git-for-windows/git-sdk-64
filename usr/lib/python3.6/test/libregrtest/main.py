@@ -256,9 +256,13 @@ class Regrtest:
             if isinstance(test, unittest.TestSuite):
                 self._list_cases(test)
             elif isinstance(test, unittest.TestCase):
-                print(test.id())
+                if support.match_test(test):
+                    print(test.id())
 
     def list_cases(self):
+        support.verbose = False
+        support.set_match_tests(self.ns.match_tests)
+
         for test in self.selected:
             abstest = get_abs_module(self.ns, test)
             try:
@@ -411,14 +415,14 @@ class Regrtest:
                 yield test
                 if self.bad:
                     return
+                if self.ns.fail_env_changed and self.environment_changed:
+                    return
 
     def display_header(self):
         # Print basic platform information
         print("==", platform.python_implementation(), *sys.version.split())
         print("==", platform.platform(aliased=True),
                       "%s-endian" % sys.byteorder)
-        print("== hash algorithm:", sys.hash_info.algorithm,
-              "64bit" if sys.maxsize > 2**32 else "32bit")
         print("== cwd:", os.getcwd())
         cpu_count = os.cpu_count()
         if cpu_count:
@@ -426,7 +430,6 @@ class Regrtest:
         print("== encodings: locale=%s, FS=%s"
               % (locale.getpreferredencoding(False),
                  sys.getfilesystemencoding()))
-        print("Testing with flags:", sys.flags)
 
     def run_tests(self):
         # For a partial run, we do not need to clutter the output.
@@ -474,6 +477,8 @@ class Regrtest:
             result = "FAILURE"
         elif self.interrupted:
             result = "INTERRUPTED"
+        elif self.ns.fail_env_changed and self.environment_changed:
+            result = "ENV CHANGED"
         else:
             result = "SUCCESS"
         print("Tests result: %s" % result)
@@ -534,7 +539,13 @@ class Regrtest:
             self.rerun_failed_tests()
 
         self.finalize()
-        sys.exit(len(self.bad) > 0 or self.interrupted)
+        if self.bad:
+            sys.exit(2)
+        if self.interrupted:
+            sys.exit(130)
+        if self.ns.fail_env_changed and self.environment_changed:
+            sys.exit(3)
+        sys.exit(0)
 
 
 def removepy(names):

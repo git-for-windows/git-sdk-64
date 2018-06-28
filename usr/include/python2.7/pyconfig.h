@@ -131,14 +131,29 @@
 /* Define to 1 if you have the `copysign' function. */
 #define HAVE_COPYSIGN 1
 
+/* Define to 1 if you have the <crypt.h> header file. */
+#define HAVE_CRYPT_H 1
+
 /* Define to 1 if you have the `ctermid' function. */
 #define HAVE_CTERMID 1
 
 /* Define if you have the 'ctermid_r' function. */
 /* #undef HAVE_CTERMID_R */
 
+/* Define if you have the 'filter' function. */
+#define HAVE_CURSES_FILTER 1
+
 /* Define to 1 if you have the <curses.h> header file. */
 #define HAVE_CURSES_H 1
+
+/* Define if you have the 'has_key' function. */
+#define HAVE_CURSES_HAS_KEY 1
+
+/* Define if you have the 'immedok' function. */
+#define HAVE_CURSES_IMMEDOK 1
+
+/* Define if you have the 'is_pad' function or macro. */
+#define HAVE_CURSES_IS_PAD 1
 
 /* Define if you have the 'is_term_resized' function. */
 #define HAVE_CURSES_IS_TERM_RESIZED 1
@@ -148,6 +163,18 @@
 
 /* Define if you have the 'resize_term' function. */
 #define HAVE_CURSES_RESIZE_TERM 1
+
+/* Define if you have the 'syncok' function. */
+#define HAVE_CURSES_SYNCOK 1
+
+/* Define if you have the 'typeahead' function. */
+#define HAVE_CURSES_TYPEAHEAD 1
+
+/* Define if you have the 'use_env' function. */
+#define HAVE_CURSES_USE_ENV 1
+
+/* Define if you have the 'wchgat' function. */
+#define HAVE_CURSES_WCHGAT 1
 
 /* Define to 1 if you have the declaration of `isfinite', and to 0 if you
    don't. */
@@ -309,7 +336,7 @@
 #define HAVE_GETITIMER 1
 
 /* Define to 1 if you have the `getloadavg' function. */
-/* #undef HAVE_GETLOADAVG */
+#define HAVE_GETLOADAVG 1
 
 /* Define to 1 if you have the `getlogin' function. */
 #define HAVE_GETLOGIN 1
@@ -782,6 +809,9 @@
 /* Define to 1 if you have the <sys/poll.h> header file. */
 #define HAVE_SYS_POLL_H 1
 
+/* Define to 1 if you have the <sys/random.h> header file. */
+#define HAVE_SYS_RANDOM_H 1
+
 /* Define to 1 if you have the <sys/resource.h> header file. */
 #define HAVE_SYS_RESOURCE_H 1
 
@@ -796,6 +826,9 @@
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
+
+/* Define to 1 if you have the <sys/sysmacros.h> header file. */
+#define HAVE_SYS_SYSMACROS_H 1
 
 /* Define to 1 if you have the <sys/termio.h> header file. */
 #define HAVE_SYS_TERMIO_H 1

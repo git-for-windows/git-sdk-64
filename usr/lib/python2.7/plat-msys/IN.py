@@ -2,51 +2,22 @@
 
 # Included from cygwin/in.h
 
-# Included from cygwin/socket.h
+# Included from sys/socket.h
 
-# Included from sys/types.h
+# Included from features.h
 
-# Included from _ansi.h
+# Included from sys/cdefs.h
 
-# Included from newlib.h
-__NEWLIB_H__ = 1
+# Included from machine/_default_types.h
+
+# Included from sys/features.h
 
 # Included from _newlib_version.h
 _NEWLIB_VERSION_H__ = 1
-_NEWLIB_VERSION = "2.5.0"
-__NEWLIB__ = 2
-__NEWLIB_MINOR__ = 5
+_NEWLIB_VERSION = "3.0.0"
+__NEWLIB__ = 3
+__NEWLIB_MINOR__ = 0
 __NEWLIB_PATCHLEVEL__ = 0
-_WANT_IO_C99_FORMATS = 1
-_WANT_IO_LONG_LONG = 1
-_WANT_IO_LONG_DOUBLE = 1
-_WANT_IO_POS_ARGS = 1
-_MB_CAPABLE = 1
-_MB_LEN_MAX = 8
-_ATEXIT_DYNAMIC_ALLOC = 1
-_HAVE_LONG_DOUBLE = 1
-_HAVE_CC_INHIBIT_LOOP_TO_LIBCALL = 1
-_FVWRITE_IN_STREAMIO = 1
-_FSEEK_OPTIMIZATION = 1
-_WIDE_ORIENT = 1
-_UNBUF_STREAM_OPT = 1
-
-# Included from sys/config.h
-
-# Included from machine/ieeefp.h
-Sudden_Underflow = 1
-def isfinite(__y): return \
-
-def __ieeefp_isnanf(x): return 0
-
-def __ieeefp_isinff(x): return 0
-
-def __ieeefp_finitef(x): return 1
-
-_FLOAT_ARG = float
-_FLOAT_ARG = float
-
-# Included from sys/features.h
 _ATFILE_SOURCE = 1
 _DEFAULT_SOURCE = 1
 _ISOC99_SOURCE = 1
@@ -92,6 +63,9 @@ __XSI_VISIBLE = 500
 __XSI_VISIBLE = 4
 __XSI_VISIBLE = 1
 __XSI_VISIBLE = 0
+__SSP_FORTIFY_LEVEL = 2
+__SSP_FORTIFY_LEVEL = 1
+__SSP_FORTIFY_LEVEL = 0
 _POSIX_JOB_CONTROL = 1
 _POSIX_SAVED_IDS = 1
 _POSIX_VERSION = 199309L
@@ -184,6 +158,7 @@ _POSIX_THREAD_PRIORITY_SCHEDULING = 200809L
 _POSIX_THREAD_PROCESS_SHARED = 200809L
 _POSIX_THREAD_SAFE_FUNCTIONS = 200809L
 _POSIX_THREADS = 200809L
+_POSIX_TIMEOUTS = 200809L
 _POSIX_TIMERS = 200809L
 _POSIX_VDISABLE = ord('\0')
 _POSIX2_C_VERSION = _POSIX2_VERSION
@@ -210,74 +185,13 @@ _XBS5_LPBIG_OFFBIG = _POSIX_V6_LPBIG_OFFBIG
 _XOPEN_CRYPT = 1
 _XOPEN_ENH_I18N = 1
 _XOPEN_SHM = 1
-__STDC_ISO_10646__ = 200305L
-MALLOC_ALIGNMENT = 16
-H8300 = 1
-INT_MAX = 32767
-UINT_MAX = 65535
-H8300 = 1
-INT_MAX = 32767
-INT_MAX = 2147483647
-__LARGE64_FILES = 1
-_LARGEFILE64_SOURCE = 1
-MALLOC_ALIGNMENT = 8
-__BUFSIZ__ = 16
-_POINTER_INT = long
-_POINTER_INT = int
-MALLOC_ALIGNMENT = 8
-_POINTER_INT = long
-__BUFSIZ__ = 16
-MALLOC_ALIGNMENT = 16
-__INT_MAX__ = INT_MAX
-__INT_MAX__ = 2147483647
-__LONG_MAX__ = 9223372036854775807L
-__LONG_MAX__ = 2147483647L
-_POINTER_INT = long
-__RAND_MAX = 32767
-__RAND_MAX = 0x7fffffff
-
-# Included from cygwin/config.h
-__SYMBOL_PREFIX = "_"
-def _SYMSTR(x): return __SYMBOL_PREFIX #x
-
-__FILENAME_MAX__ = 4096
-__LARGE64_FILES = 1
-__USE_INTERNAL_STAT64 = 1
-__LINUX_ERRNO_EXTENSIONS__ = 1
-_MB_EXTENDED_CHARSETS_ALL = 1
-__HAVE_LOCALE_INFO__ = 1
-__HAVE_LOCALE_INFO_EXTENDED__ = 1
-_WANT_C99_TIME_FORMATS = 1
-_GLIBC_EXTENSION = 1
-_STDIO_BSD_SEMANTICS = 1
-DEFAULT_LOCALE = "C.UTF-8"
-__FILENAME_MAX__ = 255
-_READ_WRITE_RETURN_TYPE = int
-_READ_WRITE_BUFSIZE_TYPE = int
-_MB_EXTENDED_CHARSETS_ISO = 1
-_MB_EXTENDED_CHARSETS_WINDOWS = 1
-def _DEFUN_VOID(name): return name(_NOARGS)
-
-def _PARAMS(paramlist): return paramlist
-
-def _DEFUN_VOID(name): return name()
-
-def _PARAMS(paramlist): return ()
-
-def _ATTRIBUTE(attrs): return __attribute__ (attrs)
-
-
-# Included from sys/cdefs.h
-
-# Included from machine/_default_types.h
+__STDC_ISO_10646__ = 200910L
 def __EXP(x): return __##x##__
 
 def __EXP(x): return x
 
 
 # Included from limits.h
-
-# Included from features.h
 
 # Included from bits/wordsize.h
 _WORDSIZE_H = 1
@@ -296,7 +210,6 @@ SHRT_MIN = (-32768)
 SHRT_MAX = 32767
 USHRT_MAX = 65535
 __INT_MAX__ = 2147483647
-INT_MIN = (-INT_MAX-1)
 INT_MAX = __INT_MAX__
 __LONG_MAX__ = 9223372036854775807L
 __LONG_MAX__ = 2147483647L
@@ -392,9 +305,9 @@ _XOPEN_PATH_MAX = 1024
 NL_ARGMAX = 9
 NL_LANGMAX = 14
 NL_MSGMAX = 32767
-NL_NMAX = INT_MAX
 NL_SETMAX = 255
 NL_TEXTMAX = _POSIX2_LINE_MAX
+NL_NMAX = INT_MAX
 NZERO = 20
 __have_longlong64 = 1
 __have_long64 = 1
@@ -486,7 +399,9 @@ def _Alignof(x): return alignof(x)
 
 def _Alignof(x): return __alignof(x)
 
-def __nonnull(x): return __attribute__((__nonnull__(x)))
+def __min_size(x): return static (x)
+
+def __min_size(x): return (x)
 
 def __predict_true(exp): return __builtin_expect((exp), 1)
 
@@ -503,6 +418,102 @@ def __lock_annotate(x): return __attribute__((x))
 def __guarded_by(x): return __lock_annotate(guarded_by(x))
 
 def __pt_guarded_by(x): return __lock_annotate(pt_guarded_by(x))
+
+
+# Included from cygwin/socket.h
+
+# Included from sys/types.h
+
+# Included from _ansi.h
+
+# Included from newlib.h
+__NEWLIB_H__ = 1
+_WANT_IO_C99_FORMATS = 1
+_WANT_IO_LONG_LONG = 1
+_WANT_IO_LONG_DOUBLE = 1
+_WANT_IO_POS_ARGS = 1
+_MB_CAPABLE = 1
+_MB_LEN_MAX = 8
+_ATEXIT_DYNAMIC_ALLOC = 1
+_HAVE_LONG_DOUBLE = 1
+_HAVE_CC_INHIBIT_LOOP_TO_LIBCALL = 1
+_FVWRITE_IN_STREAMIO = 1
+_FSEEK_OPTIMIZATION = 1
+_WIDE_ORIENT = 1
+_UNBUF_STREAM_OPT = 1
+
+# Included from sys/config.h
+
+# Included from machine/ieeefp.h
+__OBSOLETE_MATH_DEFAULT = 0
+__OBSOLETE_MATH_DEFAULT = 0
+Sudden_Underflow = 1
+def isfinite(__y): return \
+
+def __ieeefp_isnanf(x): return 0
+
+def __ieeefp_isinff(x): return 0
+
+def __ieeefp_finitef(x): return 1
+
+_FLOAT_ARG = float
+_FLOAT_ARG = float
+__OBSOLETE_MATH_DEFAULT = 1
+__OBSOLETE_MATH = __OBSOLETE_MATH_DEFAULT
+MALLOC_ALIGNMENT = 16
+H8300 = 1
+INT_MAX = 32767
+UINT_MAX = 65535
+H8300 = 1
+INT_MAX = __INT_MAX__
+INT_MAX = 32767
+INT_MAX = 2147483647
+INT_MAX = __INT_MAX__
+INT_MAX = __INT_MAX__
+__LARGE64_FILES = 1
+_LARGEFILE64_SOURCE = 1
+INT_MAX = __INT_MAX__
+MALLOC_ALIGNMENT = 8
+__BUFSIZ__ = 16
+__BUFSIZ__ = 256
+_POINTER_INT = long
+_POINTER_INT = int
+INT_MAX = __INT_MAX__
+MALLOC_ALIGNMENT = 8
+_POINTER_INT = long
+__BUFSIZ__ = 16
+MALLOC_ALIGNMENT = 16
+__INT_MAX__ = INT_MAX
+__INT_MAX__ = 2147483647
+__LONG_MAX__ = LONG_MAX
+__LONG_MAX__ = 9223372036854775807L
+__LONG_MAX__ = 2147483647L
+_POINTER_INT = long
+__RAND_MAX = 32767
+__RAND_MAX = 0x7fffffff
+
+# Included from cygwin/config.h
+__SYMBOL_PREFIX = "_"
+def _SYMSTR(x): return __SYMBOL_PREFIX #x
+
+__FILENAME_MAX__ = 4096
+__LARGE64_FILES = 1
+__USE_INTERNAL_STAT64 = 1
+__LINUX_ERRNO_EXTENSIONS__ = 1
+_MB_EXTENDED_CHARSETS_ALL = 1
+__HAVE_LOCALE_INFO__ = 1
+__HAVE_LOCALE_INFO_EXTENDED__ = 1
+_WANT_C99_TIME_FORMATS = 1
+_GLIBC_EXTENSION = 1
+_STDIO_BSD_SEMANTICS = 1
+_USE_LONG_TIME_T = 1
+DEFAULT_LOCALE = "C.UTF-8"
+__FILENAME_MAX__ = 255
+_READ_WRITE_RETURN_TYPE = int
+_READ_WRITE_BUFSIZE_TYPE = int
+_MB_EXTENDED_CHARSETS_ISO = 1
+_MB_EXTENDED_CHARSETS_WINDOWS = 1
+def _ATTRIBUTE(attrs): return __attribute__ (attrs)
 
 
 # Included from machine/_types.h
@@ -837,6 +848,20 @@ SHUT_RDWR = 2
 SOPRI_INTERACTIVE = 0
 SOPRI_NORMAL = 1
 SOPRI_BACKGROUND = 2
+
+# Included from ssp/socket.h
+
+# Included from ssp/ssp.h
+def __ssp_real_(fun): return fun
+
+def __ssp_real_(fun): return __ssp_real_ ## fun
+
+def __ssp_real(fun): return __ssp_real_(fun)
+
+def __ssp_bos(ptr): return __builtin_object_size(ptr, __SSP_FORTIFY_LEVEL > 1)
+
+def __ssp_bos0(ptr): return __builtin_object_size(ptr, 0)
+
 __SOCK_SIZE__ = 16
 def IN_CLASSA(a): return ((((in_addr_t) (a)) & 0x80000000) == 0)
 

@@ -45,17 +45,17 @@ extern void _PyWarnings_Init(void);
 
 struct _inittab _PyImport_Inittab[] = {
 
-	{"thread", initthread},
-	{"signal", initsignal},
-	{"posix", initposix},
-	{"errno", initerrno},
-	{"pwd", initpwd},
-	{"_sre", init_sre},
-	{"_codecs", init_codecs},
-	{"_weakref", init_weakref},
-	{"zipimport", initzipimport},
-	{"_symtable", init_symtable},
-	{"xxsubtype", initxxsubtype},
+    {"thread", initthread},
+    {"signal", initsignal},
+    {"posix", initposix},
+    {"errno", initerrno},
+    {"pwd", initpwd},
+    {"_sre", init_sre},
+    {"_codecs", init_codecs},
+    {"_weakref", init_weakref},
+    {"zipimport", initzipimport},
+    {"_symtable", init_symtable},
+    {"xxsubtype", initxxsubtype},
 
 /* -- ADDMODULE MARKER 2 -- */
 

@@ -35,7 +35,7 @@ def try_address(host, port=0, family=socket.AF_INET):
 
 HOST = test_support.HOST
 MSG = b'Michael Gilfix was here\n'
-SUPPORTS_IPV6 = socket.has_ipv6 and try_address('::1', family=socket.AF_INET6)
+SUPPORTS_IPV6 = test_support.IPV6_ENABLED
 
 try:
     import thread
@@ -733,6 +733,7 @@ class GeneralModuleTests(unittest.TestCase):
                 self.assertRaises(socket.timeout, c.sendall,
                                   b"x" * test_support.SOCK_MAX_SIZE)
         finally:
+            signal.alarm(0)
             signal.signal(signal.SIGALRM, old_alarm)
             c.close()
             s.close()
@@ -1357,6 +1358,10 @@ class NetworkConnectionNoServer(unittest.TestCase):
         expected_errnos = [ errno.ECONNREFUSED, ]
         if hasattr(errno, 'ENETUNREACH'):
             expected_errnos.append(errno.ENETUNREACH)
+        if hasattr(errno, 'EADDRNOTAVAIL'):
+            # bpo-31910: socket.create_connection() fails randomly
+            # with EADDRNOTAVAIL on Travis CI
+            expected_errnos.append(errno.EADDRNOTAVAIL)
 
         self.assertIn(cm.exception.errno, expected_errnos)
 
@@ -1707,9 +1712,17 @@ def isTipcAvailable():
     """
     if not hasattr(socket, "AF_TIPC"):
         return False
-    if not os.path.isfile("/proc/modules"):
-        return False
-    with open("/proc/modules") as f:
+    try:
+        f = open("/proc/modules")
+    except IOError as e:
+        # It's ok if the file does not exist, is a directory or if we
+        # have not the permission to read it. In any other case it's a
+        # real error, so raise it again.
+        if e.errno in (errno.ENOENT, errno.EISDIR, errno.EACCES):
+            return False
+        else:
+            raise
+    with f:
         for line in f:
             if line.startswith("tipc "):
                 return True

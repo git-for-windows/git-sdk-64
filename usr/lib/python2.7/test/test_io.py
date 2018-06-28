@@ -396,6 +396,22 @@ class IOTest(unittest.TestCase):
         with self.open(support.TESTFN, "r") as f:
             self.assertRaises(TypeError, f.readline, 5.3)
 
+    def test_readline_nonsizeable(self):
+        # Issue #30061
+        # Crash when readline() returns an object without __len__
+        class R(self.IOBase):
+            def readline(self):
+                return None
+        self.assertRaises((TypeError, StopIteration), next, R())
+
+    def test_next_nonsizeable(self):
+        # Issue #30061
+        # Crash when next() returns an object without __len__
+        class R(self.IOBase):
+            def next(self):
+                return None
+        self.assertRaises(TypeError, R().readlines, 1)
+
     def test_raw_bytes_io(self):
         f = self.BytesIO()
         self.write_ops(f)
@@ -2650,6 +2666,22 @@ class TextIOWrapperTest(unittest.TestCase):
         t = self.TextIOWrapper(NonbytesStream('a'))
         self.assertEqual(t.read(), u'a')
 
+    def test_illegal_encoder(self):
+        # bpo-31271: A TypeError should be raised in case the return value of
+        # encoder's encode() is invalid.
+        class BadEncoder:
+            def encode(self, dummy):
+                return u'spam'
+        def get_bad_encoder(dummy):
+            return BadEncoder()
+        rot13 = codecs.lookup("rot13")
+        with support.swap_attr(rot13, '_is_text_encoding', True), \
+             support.swap_attr(rot13, 'incrementalencoder', get_bad_encoder):
+            t = io.TextIOWrapper(io.BytesIO(b'foo'), encoding="rot13")
+        with self.assertRaises(TypeError):
+            t.write('bar')
+            t.flush()
+
     def test_illegal_decoder(self):
         # Issue #17106
         # Bypass the early encoding check added in issue 20404
@@ -2685,6 +2717,26 @@ class TextIOWrapperTest(unittest.TestCase):
             #self.assertRaises(TypeError, t.readline)
             #t = _make_illegal_wrapper()
             #self.assertRaises(TypeError, t.read)
+
+        # Issue 31243: calling read() while the return value of decoder's
+        # getstate() is invalid should neither crash the interpreter nor
+        # raise a SystemError.
+        def _make_very_illegal_wrapper(getstate_ret_val):
+            class BadDecoder:
+                def getstate(self):
+                    return getstate_ret_val
+            def _get_bad_decoder(dummy):
+                return BadDecoder()
+            quopri = codecs.lookup("quopri_codec")
+            with support.swap_attr(quopri, 'incrementaldecoder',
+                                   _get_bad_decoder):
+                return _make_illegal_wrapper()
+        t = _make_very_illegal_wrapper(42)
+        with self.maybeRaises(TypeError):
+            t.read(42)
+        t = _make_very_illegal_wrapper(())
+        with self.maybeRaises(TypeError):
+            t.read(42)
 
 
 class CTextIOWrapperTest(TextIOWrapperTest):
@@ -2933,6 +2985,7 @@ class MiscIOTest(unittest.TestCase):
                 self.assertRaises(ValueError, f.readinto, bytearray(1024))
             self.assertRaises(ValueError, f.readline)
             self.assertRaises(ValueError, f.readlines)
+            self.assertRaises(ValueError, f.readlines, 1)
             self.assertRaises(ValueError, f.seek, 0)
             self.assertRaises(ValueError, f.tell)
             self.assertRaises(ValueError, f.truncate)
