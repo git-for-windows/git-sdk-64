@@ -362,6 +362,24 @@ class EventLoopTestsMixin:
         self.assertEqual(res, 'yo')
         self.assertNotEqual(thread_id, threading.get_ident())
 
+    def test_run_in_executor_cancel(self):
+        called = False
+
+        def patched_call_soon(*args):
+            nonlocal called
+            called = True
+
+        def run():
+            time.sleep(0.05)
+
+        f2 = self.loop.run_in_executor(None, run)
+        f2.cancel()
+        self.loop.close()
+        self.loop.call_soon = patched_call_soon
+        self.loop.call_soon_threadsafe = patched_call_soon
+        time.sleep(0.4)
+        self.assertFalse(called)
+
     def test_reader_callback(self):
         r, w = test_utils.socketpair()
         r.setblocking(False)
@@ -2448,6 +2466,28 @@ class HandleTests(test_utils.TestCase):
         # Some coroutines might not have '__name__', such as
         # built-in async_gen.asend().
         self.assertEqual(coroutines._format_coroutine(coro), 'Coro()')
+
+        coro = Coro()
+        coro.__qualname__ = 'AAA'
+        coro.cr_code = None
+        self.assertEqual(coroutines._format_coroutine(coro), 'AAA()')
+
+        coro = Coro()
+        coro.__qualname__ = 'AAA'
+        coro.cr_code = None
+        coro.cr_frame = None
+        self.assertEqual(coroutines._format_coroutine(coro), 'AAA()')
+
+        coro = Coro()
+        coro.__qualname__ = None
+        coro.cr_code = None
+        coro.cr_frame = None
+        self.assertEqual(coroutines._format_coroutine(coro), f'{repr(coro)}()')
+
+        coro = Coro()
+        coro.cr_code = None
+        coro.cr_frame = None
+        self.assertEqual(coroutines._format_coroutine(coro), f'{repr(coro)}()')
 
 
 class TimerTests(unittest.TestCase):

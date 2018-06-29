@@ -38,10 +38,10 @@ def _run_pip(args, additional_paths=None):
         sys.path = additional_paths + sys.path
 
     # Install the bundled software
-    import pip
+    import pip._internal
     if args[0] in ["install", "list", "wheel"]:
         args.append('--pre')
-    return pip.main(args)
+    return pip._internal.main(args)
 
 
 def version():
@@ -217,15 +217,15 @@ def _main(argv=None):
         "--altinstall",
         action="store_true",
         default=False,
-        help=("Make an alternate install, installing only the X.Y versioned"
-              "scripts (Default: pipX, pipX.Y, easy_install-X.Y)"),
+        help=("Make an alternate install, installing only the X.Y versioned "
+              "scripts (Default: pipX, pipX.Y, easy_install-X.Y)."),
     )
     parser.add_argument(
         "--default-pip",
         action="store_true",
         default=False,
         help=("Make a default pip install, installing the unqualified pip "
-              "and easy_install in addition to the versioned scripts"),
+              "and easy_install in addition to the versioned scripts."),
     )
 
     args = parser.parse_args(argv)
