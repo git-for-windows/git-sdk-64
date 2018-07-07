@@ -413,8 +413,6 @@ prepare_buildenv() {
 
 	# ensure all necessary build variables are exported
 	export CPPFLAGS CFLAGS CXXFLAGS LDFLAGS MAKEFLAGS CHOST
-	export MINGW_CHOST MINGW_PREFIX MINGW_PACKAGE_PREFIX
-	export DXSDK_DIR ACLOCAL_PATH PKG_CONFIG_PATH
 
 	local ccache=0
 
@@ -1601,6 +1599,9 @@ fi
 mkdir -p "$srcdir"
 chmod a-s "$srcdir"
 cd_safe "$srcdir"
+
+	export MINGW_CHOST MINGW_PREFIX MINGW_PACKAGE_PREFIX
+	export DXSDK_DIR ACLOCAL_PATH PKG_CONFIG_PATH
 
 if (( !REPKG )); then
 	if (( NOEXTRACT && ! VERIFYSOURCE )); then
