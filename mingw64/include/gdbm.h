@@ -102,8 +102,8 @@ typedef struct gdbm_file_info *GDBM_FILE;
 extern const char *gdbm_version;	
 
 # define GDBM_VERSION_MAJOR 1
-# define GDBM_VERSION_MINOR 14
-# define GDBM_VERSION_PATCH 1
+# define GDBM_VERSION_MINOR 16
+# define GDBM_VERSION_PATCH 0
 
 extern int const gdbm_version_number[3];
 
@@ -152,6 +152,7 @@ typedef struct gdbm_recovery_s
   size_t recovered_buckets;
   size_t failed_keys;
   size_t failed_buckets;
+  size_t duplicate_keys;
   char *backup_name;
 } gdbm_recovery;
 
@@ -219,9 +220,14 @@ extern int gdbm_copy_meta (GDBM_FILE dst, GDBM_FILE src);
 # define GDBM_NEED_RECOVERY             29
 # define GDBM_BACKUP_FAILED             30
 # define GDBM_DIR_OVERFLOW              31
+# define GDBM_BAD_BUCKET                32
+# define GDBM_BAD_HEADER                33
+# define GDBM_BAD_AVAIL                 34
+# define GDBM_BAD_HASH_TABLE            35
+# define GDBM_BAD_DIR_ENTRY             36
 
 # define _GDBM_MIN_ERRNO	0
-# define _GDBM_MAX_ERRNO	GDBM_DIR_OVERFLOW
+# define _GDBM_MAX_ERRNO	GDBM_BAD_DIR_ENTRY
 
 /* This one was never used and will be removed in the future */
 # define GDBM_UNKNOWN_UPDATE GDBM_UNKNOWN_ERROR
