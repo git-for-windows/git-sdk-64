@@ -80,7 +80,7 @@ host=x86_64-pc-msys
 host_os=msys
 
 # The build system.
-build_alias=
+build_alias=x86_64-pc-msys
 build=x86_64-pc-msys
 build_os=msys
 
@@ -295,10 +295,10 @@ finish_eval=""
 hardcode_into_libs=no
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/lib/gcc/x86_64-pc-msys/5.3.0 /usr/x86_64-pc-msys/lib /usr/lib /usr/lib/w32api  /usr/lib/w32api"
+sys_lib_search_path_spec="/usr/lib/gcc/x86_64-pc-msys/7.3.0 /usr/x86_64-pc-msys/lib /usr/lib /usr/lib/w32api  /usr/lib/w32api"
 
 # Detected run-time system search path for libraries.
-sys_lib_dlsearch_path_spec="/lib /usr/lib"
+sys_lib_dlsearch_path_spec="/usr/lib /lib"
 
 # Explicit LT_SYS_LIBRARY_PATH set during ./configure time.
 configure_time_lt_sys_library_path=""
@@ -7802,9 +7802,14 @@ func_mode_link ()
       # --sysroot=*          for sysroot support
       # -O*, -g*, -flto*, -fwhopr*, -fuse-linker-plugin GCC link-time optimization
       # -stdlib=*            select c++ std lib with clang
+      # -{shared,static}-libgcc, -static-{libgfortran|libstdc++}
+      #                      link against specified runtime library
       -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
       -t[45]*|-txscale*|-p|-pg|--coverage|-fprofile-*|-F*|@*|-tp=*|--sysroot=*| \
-      -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|-stdlib=*)
+      -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|-stdlib=*| \
+      -ftree-parallelize-loops=*|-fcilkplus|-fgnu-tm|-ffast-math| \
+      -funsafe-math-optimizations|-fvtable-verify*| \
+      -shared-libgcc|-static-libgcc|-static-libgfortran|-static-libstdc++)
         func_quote_for_eval "$arg"
 	arg=$func_quote_for_eval_result
         func_append compile_command " $arg"
@@ -11815,18 +11820,18 @@ file_list_spec=""
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/5.3.0 /usr/lib/gcc/x86_64-pc-msys/5.3.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/5.3.0/../../../../x86_64-pc-msys/lib /usr/lib/w32api"
+compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/7.3.0 /usr/lib/gcc/x86_64-pc-msys/7.3.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/7.3.0/../../../../x86_64-pc-msys/lib /usr/lib/w32api"
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
-predep_objects="/usr/lib/gcc/x86_64-pc-msys/5.3.0/crtbeginS.o"
-postdep_objects="/usr/lib/gcc/x86_64-pc-msys/5.3.0/crtend.o"
+predep_objects="/usr/lib/gcc/x86_64-pc-msys/7.3.0/crtbeginS.o"
+postdep_objects="/usr/lib/gcc/x86_64-pc-msys/7.3.0/crtend.o"
 predeps=""
 postdeps="-lstdc++ -lgcc_s -lgcc -lmsys-2.0 -ladvapi32 -lshell32 -luser32 -lkernel32 -lgcc_s -lgcc"
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/5.3.0 -L/usr/lib/gcc/x86_64-pc-msys/5.3.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/5.3.0/../../../../x86_64-pc-msys/lib -L/usr/lib/w32api"
+compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/7.3.0 -L/usr/lib/gcc/x86_64-pc-msys/7.3.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/7.3.0/../../../../x86_64-pc-msys/lib -L/usr/lib/w32api"
 
 # ### END LIBTOOL TAG CONFIG: CXX
 
@@ -12125,18 +12130,18 @@ file_list_spec=""
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/5.3.0 /usr/lib/gcc/x86_64-pc-msys/5.3.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/5.3.0/../../../../x86_64-pc-msys/lib /usr/lib/w32api"
+compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/7.3.0 /usr/lib/gcc/x86_64-pc-msys/7.3.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/7.3.0/../../../../x86_64-pc-msys/lib /usr/lib/w32api"
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
-predep_objects="/usr/lib/gcc/x86_64-pc-msys/5.3.0/crtbeginS.o"
-postdep_objects="/usr/lib/gcc/x86_64-pc-msys/5.3.0/crtend.o"
+predep_objects="/usr/lib/gcc/x86_64-pc-msys/7.3.0/crtbeginS.o"
+postdep_objects="/usr/lib/gcc/x86_64-pc-msys/7.3.0/crtend.o"
 predeps=""
 postdeps="-lgfortran -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lmsys-2.0 -ladvapi32 -lshell32 -luser32 -lkernel32 -lgcc_s -lgcc"
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/5.3.0 -L/usr/lib/gcc/x86_64-pc-msys/5.3.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/5.3.0/../../../../x86_64-pc-msys/lib -L/usr/lib/w32api"
+compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/7.3.0 -L/usr/lib/gcc/x86_64-pc-msys/7.3.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/7.3.0/../../../../x86_64-pc-msys/lib -L/usr/lib/w32api"
 
 # ### END LIBTOOL TAG CONFIG: FC
 

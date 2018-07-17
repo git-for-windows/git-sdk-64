@@ -36,9 +36,11 @@ typedef struct {
 
 #endif
 
-PyAPI_FUNC(wchar_t) Py_GetSepW(wchar_t *);
+PyAPI_FUNC(wchar_t) Py_GetSepW(const wchar_t *);
+PyAPI_FUNC(char) Py_GetSepA(const char *);
 
 PyAPI_FUNC(void) Py_NormalizeSepsW(wchar_t *);
+PyAPI_FUNC(void) Py_NormalizeSepsA(char *);
 
 
 PyAPI_FUNC(void) Py_SetProgramName(const wchar_t *);
