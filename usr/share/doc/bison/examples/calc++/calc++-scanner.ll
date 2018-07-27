@@ -35,13 +35,13 @@ blank [ \t]
 
 {blank}+   loc.step ();
 [\n]+      loc.lines (yyleng); loc.step ();
-"-"      return yy::calcxx_parser::make_MINUS(loc);
-"+"      return yy::calcxx_parser::make_PLUS(loc);
-"*"      return yy::calcxx_parser::make_STAR(loc);
-"/"      return yy::calcxx_parser::make_SLASH(loc);
-"("      return yy::calcxx_parser::make_LPAREN(loc);
-")"      return yy::calcxx_parser::make_RPAREN(loc);
-":="     return yy::calcxx_parser::make_ASSIGN(loc);
+"-"      return yy::calcxx_parser::make_MINUS  (loc);
+"+"      return yy::calcxx_parser::make_PLUS   (loc);
+"*"      return yy::calcxx_parser::make_STAR   (loc);
+"/"      return yy::calcxx_parser::make_SLASH  (loc);
+"("      return yy::calcxx_parser::make_LPAREN (loc);
+")"      return yy::calcxx_parser::make_RPAREN (loc);
+":="     return yy::calcxx_parser::make_ASSIGN (loc);
 
 
 {int}      {
@@ -49,12 +49,12 @@ blank [ \t]
   long n = strtol (yytext, NULL, 10);
   if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
     driver.error (loc, "integer is out of range");
-  return yy::calcxx_parser::make_NUMBER(n, loc);
+  return yy::calcxx_parser::make_NUMBER (n, loc);
 }
 
-{id}       return yy::calcxx_parser::make_IDENTIFIER(yytext, loc);
+{id}       return yy::calcxx_parser::make_IDENTIFIER (yytext, loc);
 .          driver.error (loc, "invalid character");
-<<EOF>>    return yy::calcxx_parser::make_END(loc);
+<<EOF>>    return yy::calcxx_parser::make_END (loc);
 %%
 
 void

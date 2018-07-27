@@ -1,4 +1,4 @@
-/* Reverse polish notation calculator.  */
+/* Reverse Polish Notation calculator.  */
 
 
 %{

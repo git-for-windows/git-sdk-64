@@ -6,7 +6,8 @@ use Carp 'croak';
 use IO::Socket::SSL::Utils;
 use Net::SSLeay;
 
-our $VERSION = '2.014';
+our $VERSION = '2.056';
+
 
 sub new {
     my ($class,%args) = @_;
@@ -37,13 +38,34 @@ sub new {
     }
 
     my $cache = delete $args{cache} || {};
+    if (ref($cache) eq 'CODE') {
+	# check cache type
+	my $type = $cache->('type');
+	if (!$type) {
+	    # old cache interface - change into new interface
+	    # get: $cache->(fp)
+	    # set: $cache->(fp,cert,key)
+	    my $oc = $cache;
+	    $cache = sub {
+		my ($fp,$create_cb) = @_;
+		my @ck = $oc->($fp);
+		$oc->($fp, @ck = &$create_cb) if !@ck;
+		return @ck;
+	    };
+	} elsif ($type == 1) {
+	    # current interface:
+	    # get/set: $cache->(fp,cb_create)
+	} else {
+	    die "invalid type of cache: $type";
+	}
+    }
 
     my $self = bless {
 	cacert => $cacert,
 	cakey => $cakey,
 	certkey => $certkey,
-	serial => delete $args{serial} || 1,
 	cache => $cache,
+	serial => delete $args{serial},
     };
     return $self;
 }
@@ -67,57 +89,42 @@ sub DESTROY {
 sub clone_cert {
     my ($self,$old_cert,$clone_key) = @_;
 
-    $clone_key ||= substr(unpack("H*",Net::SSLeay::X509_get_fingerprint($old_cert,'sha1')),0,16);
-    if ( my ($clone,$key) = _get_cached($self,$clone_key)) {
-	return ($clone,$key);
-    }
-
-    # create new certificate based on original
-    # copy most but not all extensions
     my $hash = CERT_asHash($old_cert);
-    if (my $ext = $hash->{ext}) {
-	@$ext = grep {
-	    defined($_->{sn}) && $_->{sn} !~m{^(?:
-		authorityInfoAccess    |
-		subjectKeyIdentifier   |
-		authorityKeyIdentifier |
-		certificatePolicies    |
-		crlDistributionPoints
-	    )$}x
-	} @$ext;
-    }
-    my ($clone,$key) = CERT_create(
-	%$hash,
-	serial => $self->{serial}++,
-	issuer_cert => $self->{cacert},
-	issuer_key => $self->{cakey},
-	key => $self->{certkey},
-    );
-
-    # put into cache
-    _set_cached($self,$clone_key,$clone,$key);
-
-    return ($clone,$key);
-}
-
-sub _get_cached {
-    my ($self,$clone_key) = @_;
-    my $c = $self->{cache};
-    return $c->($clone_key) if ref($c) eq 'CODE';
-    my $e = $c->{$clone_key} or return;
-    $e->{atime} = time();
-    return ($e->{cert},$e->{key} || $self->{certkey});
-}
-
-sub _set_cached {
-    my ($self,$clone_key,$cert,$key) = @_;
-    my $c = $self->{cache};
-    return $c->($clone_key,$cert,$key) if ref($c) eq 'CODE';
-    $c->{$clone_key} = { 
-	cert => $cert, 
-	$self->{certkey} && $self->{certkey} == $key ? () : ( key => $key ),
-	atime => time() 
+    my $create_cb = sub {
+	# if not in cache create new certificate based on original
+	# copy most but not all extensions
+	if (my $ext = $hash->{ext}) {
+	    @$ext = grep {
+		defined($_->{sn}) && $_->{sn} !~m{^(?:
+		    authorityInfoAccess    |
+		    subjectKeyIdentifier   |
+		    authorityKeyIdentifier |
+		    certificatePolicies    |
+		    crlDistributionPoints
+		)$}x
+	    } @$ext;
+	}
+	my ($clone,$key) = CERT_create(
+	    %$hash,
+	    issuer_cert => $self->{cacert},
+	    issuer_key => $self->{cakey},
+	    key => $self->{certkey},
+	    serial => defined($self->{serial}) ? ++$self->{serial} : 
+		(unpack('L',$hash->{x509_digest_sha256}))[0],
+	);
+	return ($clone,$key);
     };
+
+    $clone_key ||= substr(unpack("H*", $hash->{x509_digest_sha256}),0,32);
+    my $c = $self->{cache};
+    return $c->($clone_key,$create_cb) if ref($c) eq 'CODE';
+
+    my $e = $c->{$clone_key} ||= do {
+	my ($cert,$key) = &$create_cb;
+	{ cert => $cert, key => $key };
+    };
+    $e->{atime} = time();
+    return ($e->{cert},$e->{key});
 }
 
 
@@ -312,7 +319,8 @@ If not given it will create a new public key on each call of C<new>.
 =item serial INTEGER
 
 This optional argument gives the starting point for the serial numbers of the
-newly created certificates. Default to 1.
+newly created certificates. If not set the serial number will be created based
+on the digest of the original certificate.
 
 =item cache HASH | SUBROUTINE
 
@@ -328,9 +336,13 @@ thus not be simply dumped and restored.
 The key for the hash is an C<ident> either given to C<clone_cert> or generated
 from the original certificate.
 
-If the argument is a subroutine it will be called as C<< $cache->(ident) >>
-to get an existing (cert,key) and with C<< $cache->(ident,cert,key) >> to cache
-the newly created certificate.
+If the argument is a subroutine it will be called as C<< $cache->(ident,sub) >>.
+This call should return either an existing (cached) C<< (cert,key) >> or
+call C<sub> without arguments to create a new C<< (cert,key) >>, store it
+and return it.
+If called with C<< $cache->('type') >> the function should just return 1 to
+signal that it supports the current type of cache. If it reutrns nothing
+instead the older cache interface is assumed for compatibility reasons.
 
 =back
 

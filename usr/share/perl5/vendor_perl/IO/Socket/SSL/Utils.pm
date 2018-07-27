@@ -284,7 +284,6 @@ sub CERT_create {
     my @ext = (
 	&Net::SSLeay::NID_subject_key_identifier => 'hash',
 	&Net::SSLeay::NID_authority_key_identifier => 'keyid',
-	&Net::SSLeay::NID_authority_key_identifier => 'issuer',
     );
     if ( my $altsubj = delete $args{subjectAltNames} ) {
 	push @ext,
@@ -379,7 +378,7 @@ sub CERT_create {
 	push @ext,&Net::SSLeay::NID_basic_constraints,
 	    => join(",",'critical', sort keys %basic_constraints);
     } else {
-	push @ext, &Net::SSLeay::NID_basic_constraints => 'CA:FALSE';
+	push @ext, &Net::SSLeay::NID_basic_constraints => 'critical,CA:FALSE';
     }
     push @ext,&Net::SSLeay::NID_key_usage
 	=> join(",",'critical', sort keys %key_usage) if %key_usage;

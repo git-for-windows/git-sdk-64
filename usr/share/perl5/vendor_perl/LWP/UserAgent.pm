@@ -15,7 +15,7 @@ use LWP::Protocol ();
 use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.31';
+our $VERSION = '6.33';
 
 sub new
 {
@@ -60,6 +60,8 @@ sub new
     $use_eval = 1 unless defined $use_eval;
     my $parse_head = delete $cnf{parse_head};
     $parse_head = 1 unless defined $parse_head;
+    my $send_te = delete $cnf{send_te};
+    $send_te = 1 unless defined $send_te;
     my $show_progress = delete $cnf{show_progress};
     my $max_size = delete $cnf{max_size};
     my $max_redirect = delete $cnf{max_redirect};
@@ -109,6 +111,7 @@ sub new
         protocols_allowed     => $protocols_allowed,
         protocols_forbidden   => $protocols_forbidden,
         requests_redirectable => $requests_redirectable,
+        send_te               => $send_te,
     }, $class;
 
     $self->agent(defined($agent) ? $agent : $class->_agent)
@@ -686,6 +689,7 @@ sub local_address{ shift->_elem('local_address',@_); }
 sub max_size     { shift->_elem('max_size',     @_); }
 sub max_redirect { shift->_elem('max_redirect', @_); }
 sub show_progress{ shift->_elem('show_progress', @_); }
+sub send_te      { shift->_elem('send_te',      @_); }
 
 sub ssl_opts {
     my $self = shift;
@@ -1429,6 +1433,15 @@ is C<['GET', 'HEAD']>, as per L<RFC 2616|https://tools.ietf.org/html/rfc2616>.
 To change to include C<POST>, consider:
 
    push @{ $ua->requests_redirectable }, 'POST';
+
+=head2 send_te
+
+    my $bool = $ua->send_te;
+    $ua->send_te( $boolean );
+
+If true, will send a C<TE> header along with the request. The default is
+true. Set it to false to disable the C<TE> header for systems who can't
+handle it.
 
 =head2 show_progress
 

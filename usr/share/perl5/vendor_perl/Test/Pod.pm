@@ -1,6 +1,7 @@
 package Test::Pod;
 
 use strict;
+use warnings;
 
 =head1 NAME
 
@@ -8,11 +9,11 @@ Test::Pod - check for POD errors in files
 
 =head1 VERSION
 
-Version 1.51
+Version 1.52
 
 =cut
 
-our $VERSION = '1.51';
+our $VERSION = '1.52';
 
 =head1 SYNOPSIS
 
@@ -60,8 +61,6 @@ Check POD files for errors or warnings in a test file, using
 C<Pod::Simple> to do the heavy lifting.
 
 =cut
-
-use 5.008;
 
 use Test::Builder;
 use Pod::Simple;
@@ -155,10 +154,8 @@ be tested. It calls the C<plan()> function for you (one test for each file),
 so you can't have already called C<plan>.
 
 If C<@entries> is empty or not passed, the function finds all POD files in
-files in the F<blib> directory if it exists, or the F<lib> directory if not. A
-POD file is one that ends with a Perl extension (F<.pod>, F<.pl>, F<.pm>,
-F<.PL>, F<.t>), where the first line looks like a Perl shebang, or a batch
-file (F<.bat>) starting with a line containing C<--*-Perl-*-->.
+files in the F<blib> directory if it exists, or the F<lib> directory if not.
+A POD file matches the conditions specified below in L</all_pod_files>.
 
 If you're testing a module, just make a F<t/pod.t>:
 
@@ -190,17 +187,18 @@ sub all_pod_files_ok {
 }
 
 =head2 all_pod_files( [@dirs] )
+X<all_pod_files>
 
-Returns a list of all the Perl files in I<@dirs> and in directories below. If
+Returns a list of all the POD files in I<@dirs> and in directories below. If
 no directories are passed, it defaults to F<blib> if F<blib> exists, or else
 F<lib> if not. Skips any files in F<CVS>, F<.svn>, F<.git> and similar
 directories. See C<%Test::Pod::ignore_dirs> for a list of them.
 
-A Perl file is:
+A POD file is:
 
 =over 4
 
-=item * Any file that ends in F<.PL>, F<.pl>, F<.PL>, F<.pm>, F<.pod>, or F<.t>.
+=item * Any file that ends in F<.pl>, F<.PL>, F<.pm>, F<.pod>, F<.psgi> or F<.t>.
 
 =item * Any file that has a first line with a shebang and "perl" on it.
 
@@ -236,7 +234,7 @@ sub _is_perl {
     my $file = shift;
 
     # accept as a Perl file everything that ends with a well known Perl suffix ...
-    return 1 if $file =~ /[.](?:PL|p(?:[lm]|od)|t)$/;
+    return 1 if $file =~ /[.](?:PL|p(?:[lm]|od|sgi)|t)$/;
 
     open my $fh, '<', $file or return;
     my $first = <$fh>;
@@ -276,7 +274,7 @@ Maintainer emeritus.
 
 =item brian d foy
 
-Orinal author.
+Original author.
 
 =back
 

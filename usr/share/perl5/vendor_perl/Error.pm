@@ -10,56 +10,55 @@
 # but modified ***significantly***
 
 package Error;
-
+$Error::VERSION = '0.17026';
 use strict;
 use warnings;
 
-use vars qw($VERSION);
 use 5.004;
 
-$VERSION = "0.17025";
-
 use overload (
-	'""'	   =>	'stringify',
-	'0+'	   =>	'value',
-	'bool'     =>	sub { return 1; },
-	'fallback' =>	1
+    '""'       => 'stringify',
+    '0+'       => 'value',
+    'bool'     => sub { return 1; },
+    'fallback' => 1
 );
 
-$Error::Depth = 0;	# Depth to pass to caller()
-$Error::Debug = 0;	# Generate verbose stack traces
-@Error::STACK = ();	# Clause stack for try
-$Error::THROWN = undef;	# last error thrown, a workaround until die $ref works
+$Error::Depth  = 0;       # Depth to pass to caller()
+$Error::Debug  = 0;       # Generate verbose stack traces
+@Error::STACK  = ();      # Clause stack for try
+$Error::THROWN = undef;   # last error thrown, a workaround until die $ref works
 
-my $LAST;		# Last error created
-my %ERROR;		# Last error associated with package
+my $LAST;                 # Last error created
+my %ERROR;                # Last error associated with package
 
 sub _throw_Error_Simple
 {
     my $args = shift;
-    return Error::Simple->new($args->{'text'});
+    return Error::Simple->new( $args->{'text'} );
 }
 
 $Error::ObjectifyCallback = \&_throw_Error_Simple;
-
 
 # Exported subs are defined in Error::subs
 
 use Scalar::Util ();
 
-sub import {
+sub import
+{
     shift;
     my @tags = @_;
     local $Exporter::ExportLevel = $Exporter::ExportLevel + 1;
 
     @tags = grep {
-       if( $_ eq ':warndie' ) {
-          Error::WarnDie->import();
-          0;
-       }
-       else {
-          1;
-       }
+        if ( $_ eq ':warndie' )
+        {
+            Error::WarnDie->import();
+            0;
+        }
+        else
+        {
+            1;
+        }
     } @tags;
 
     Error::subs->import(@tags);
@@ -68,35 +67,40 @@ sub import {
 # I really want to use last for the name of this method, but it is a keyword
 # which prevent the syntax  last Error
 
-sub prior {
-    shift; # ignore
+sub prior
+{
+    shift;    # ignore
 
     return $LAST unless @_;
 
     my $pkg = shift;
     return exists $ERROR{$pkg} ? $ERROR{$pkg} : undef
-	unless ref($pkg);
+        unless ref($pkg);
 
     my $obj = $pkg;
     my $err = undef;
-    if($obj->isa('HASH')) {
-	$err = $obj->{'__Error__'}
-	    if exists $obj->{'__Error__'};
+    if ( $obj->isa('HASH') )
+    {
+        $err = $obj->{'__Error__'}
+            if exists $obj->{'__Error__'};
     }
-    elsif($obj->isa('GLOB')) {
-	$err = ${*$obj}{'__Error__'}
-	    if exists ${*$obj}{'__Error__'};
+    elsif ( $obj->isa('GLOB') )
+    {
+        $err = ${*$obj}{'__Error__'}
+            if exists ${*$obj}{'__Error__'};
     }
 
     $err;
 }
 
-sub flush {
-    shift; #ignore
+sub flush
+{
+    shift;    #ignore
 
-    unless (@_) {
-       $LAST = undef;
-       return;
+    unless (@_)
+    {
+        $LAST = undef;
+        return;
     }
 
     my $pkg = shift;
@@ -109,32 +113,35 @@ sub flush {
 # happened. The -stacktrace element only exists if $Error::DEBUG
 # was set when the error was created
 
-sub stacktrace {
+sub stacktrace
+{
     my $self = shift;
 
     return $self->{'-stacktrace'}
-	if exists $self->{'-stacktrace'};
+        if exists $self->{'-stacktrace'};
 
     my $text = exists $self->{'-text'} ? $self->{'-text'} : "Died";
 
-    $text .= sprintf(" at %s line %d.\n", $self->file, $self->line)
-	unless($text =~ /\n$/s);
+    $text .= sprintf( " at %s line %d.\n", $self->file, $self->line )
+        unless ( $text =~ /\n$/s );
 
     $text;
 }
 
-
-sub associate {
+sub associate
+{
     my $err = shift;
     my $obj = shift;
 
     return unless ref($obj);
 
-    if($obj->isa('HASH')) {
-	$obj->{'__Error__'} = $err;
+    if ( $obj->isa('HASH') )
+    {
+        $obj->{'__Error__'} = $err;
     }
-    elsif($obj->isa('GLOB')) {
-	${*$obj}{'__Error__'} = $err;
+    elsif ( $obj->isa('GLOB') )
+    {
+        ${*$obj}{'__Error__'} = $err;
     }
     $obj = ref($obj);
     $ERROR{ ref($obj) } = $err;
@@ -142,33 +149,37 @@ sub associate {
     return;
 }
 
-
-sub new {
+sub new
+{
     my $self = shift;
-    my($pkg,$file,$line) = caller($Error::Depth);
+    my ( $pkg, $file, $line ) = caller($Error::Depth);
 
     my $err = bless {
-	'-package' => $pkg,
-	'-file'    => $file,
-	'-line'    => $line,
-	@_
+        '-package' => $pkg,
+        '-file'    => $file,
+        '-line'    => $line,
+        @_
     }, $self;
 
-    $err->associate($err->{'-object'})
-	if(exists $err->{'-object'});
+    $err->associate( $err->{'-object'} )
+        if ( exists $err->{'-object'} );
 
     # To always create a stacktrace would be very inefficient, so
     # we only do it if $Error::Debug is set
 
-    if($Error::Debug) {
-	require Carp;
-	local $Carp::CarpLevel = $Error::Depth;
-	my $text = defined($err->{'-text'}) ? $err->{'-text'} : "Error";
-	my $trace = Carp::longmess($text);
-	# Remove try calls from the trace
-	$trace =~ s/(\n\s+\S+__ANON__[^\n]+)?\n\s+eval[^\n]+\n\s+Error::subs::try[^\n]+(?=\n)//sog;
-	$trace =~ s/(\n\s+\S+__ANON__[^\n]+)?\n\s+eval[^\n]+\n\s+Error::subs::run_clauses[^\n]+\n\s+Error::subs::try[^\n]+(?=\n)//sog;
-	$err->{'-stacktrace'} = $trace
+    if ($Error::Debug)
+    {
+        require Carp;
+        local $Carp::CarpLevel = $Error::Depth;
+        my $text = defined( $err->{'-text'} ) ? $err->{'-text'} : "Error";
+        my $trace = Carp::longmess($text);
+
+        # Remove try calls from the trace
+        $trace =~
+s/(\n\s+\S+__ANON__[^\n]+)?\n\s+eval[^\n]+\n\s+Error::subs::try[^\n]+(?=\n)//sog;
+        $trace =~
+s/(\n\s+\S+__ANON__[^\n]+)?\n\s+eval[^\n]+\n\s+Error::subs::run_clauses[^\n]+\n\s+Error::subs::try[^\n]+(?=\n)//sog;
+        $err->{'-stacktrace'} = $trace;
     }
 
     $@ = $LAST = $ERROR{$pkg} = $err;
@@ -176,7 +187,8 @@ sub new {
 
 # Throw an error. this contains some very gory code.
 
-sub throw {
+sub throw
+{
     my $self = shift;
     local $Error::Depth = $Error::Depth + 1;
 
@@ -190,7 +202,8 @@ sub throw {
 #
 #    die with Error( ... );
 
-sub with {
+sub with
+{
     my $self = shift;
     local $Error::Depth = $Error::Depth + 1;
 
@@ -201,7 +214,8 @@ sub with {
 #
 #    record Error( ... ) and return;
 
-sub record {
+sub record
+{
     my $self = shift;
     local $Error::Depth = $Error::Depth + 1;
 
@@ -212,80 +226,86 @@ sub record {
 #
 # try { ... } catch CLASS with { ... }
 
-sub catch {
-    my $pkg = shift;
-    my $code = shift;
+sub catch
+{
+    my $pkg     = shift;
+    my $code    = shift;
     my $clauses = shift || {};
-    my $catch = $clauses->{'catch'} ||= [];
+    my $catch   = $clauses->{'catch'} ||= [];
 
-    unshift @$catch,  $pkg, $code;
+    unshift @$catch, $pkg, $code;
 
     $clauses;
 }
 
 # Object query methods
 
-sub object {
+sub object
+{
     my $self = shift;
     exists $self->{'-object'} ? $self->{'-object'} : undef;
 }
 
-sub file {
+sub file
+{
     my $self = shift;
     exists $self->{'-file'} ? $self->{'-file'} : undef;
 }
 
-sub line {
+sub line
+{
     my $self = shift;
     exists $self->{'-line'} ? $self->{'-line'} : undef;
 }
 
-sub text {
+sub text
+{
     my $self = shift;
     exists $self->{'-text'} ? $self->{'-text'} : undef;
 }
 
 # overload methods
 
-sub stringify {
+sub stringify
+{
     my $self = shift;
     defined $self->{'-text'} ? $self->{'-text'} : "Died";
 }
 
-sub value {
+sub value
+{
     my $self = shift;
     exists $self->{'-value'} ? $self->{'-value'} : undef;
 }
 
 package Error::Simple;
-
-use vars qw($VERSION);
-
-$VERSION = "0.17025";
-
+$Error::Simple::VERSION = '0.17026';
 @Error::Simple::ISA = qw(Error);
 
-sub new {
-    my $self  = shift;
-    my $text  = "" . shift;
-    my $value = shift;
-    my(@args) = ();
+sub new
+{
+    my $self   = shift;
+    my $text   = "" . shift;
+    my $value  = shift;
+    my (@args) = ();
 
     local $Error::Depth = $Error::Depth + 1;
 
-    @args = ( -file => $1, -line => $2)
-	if($text =~ s/\s+at\s+(\S+)\s+line\s+(\d+)(?:,\s*<[^>]*>\s+line\s+\d+)?\.?\n?$//s);
-    push(@args, '-value', 0 + $value)
-	if defined($value);
+    @args = ( -file => $1, -line => $2 )
+        if ( $text =~
+        s/\s+at\s+(\S+)\s+line\s+(\d+)(?:,\s*<[^>]*>\s+line\s+\d+)?\.?\n?$//s );
+    push( @args, '-value', 0 + $value )
+        if defined($value);
 
-    $self->SUPER::new(-text => $text, @args);
+    $self->SUPER::new( -text => $text, @args );
 }
 
-sub stringify {
+sub stringify
+{
     my $self = shift;
     my $text = $self->SUPER::stringify;
-    $text .= sprintf(" at %s line %d.\n", $self->file, $self->line)
-	unless($text =~ /\n$/s);
+    $text .= sprintf( " at %s line %d.\n", $self->file, $self->line )
+        unless ( $text =~ /\n$/s );
     $text;
 }
 
@@ -296,148 +316,172 @@ sub stringify {
 # Peter Seibel <peter@weblogic.com>
 
 package Error::subs;
-
+$Error::subs::VERSION = '0.17026';
 use Exporter ();
 use vars qw(@EXPORT_OK @ISA %EXPORT_TAGS);
 
-@EXPORT_OK   = qw(try with finally except otherwise);
-%EXPORT_TAGS = (try => \@EXPORT_OK);
+@EXPORT_OK = qw(try with finally except otherwise);
+%EXPORT_TAGS = ( try => \@EXPORT_OK );
 
 @ISA = qw(Exporter);
 
-sub run_clauses ($$$\@) {
-    my($clauses,$err,$wantarray,$result) = @_;
+sub run_clauses ($$$\@)
+{
+    my ( $clauses, $err, $wantarray, $result ) = @_;
     my $code = undef;
 
-    $err = $Error::ObjectifyCallback->({'text' =>$err}) unless ref($err);
+    $err = $Error::ObjectifyCallback->( { 'text' => $err } ) unless ref($err);
 
-    CATCH: {
+CATCH:
+    {
 
-	# catch
-	my $catch;
-	if(defined($catch = $clauses->{'catch'})) {
-	    my $i = 0;
+        # catch
+        my $catch;
+        if ( defined( $catch = $clauses->{'catch'} ) )
+        {
+            my $i = 0;
 
-	    CATCHLOOP:
-	    for( ; $i < @$catch ; $i += 2) {
-		my $pkg = $catch->[$i];
-		unless(defined $pkg) {
-		    #except
-		    splice(@$catch,$i,2,$catch->[$i+1]->($err));
-		    $i -= 2;
-		    next CATCHLOOP;
-		}
-		elsif(Scalar::Util::blessed($err) && $err->isa($pkg)) {
-		    $code = $catch->[$i+1];
-		    while(1) {
-			my $more = 0;
-			local($Error::THROWN, $@);
-			my $ok = eval {
-			    $@ = $err;
-			    if($wantarray) {
-				@{$result} = $code->($err,\$more);
-			    }
-			    elsif(defined($wantarray)) {
-			        @{$result} = ();
-				$result->[0] = $code->($err,\$more);
-			    }
-			    else {
-				$code->($err,\$more);
-			    }
-			    1;
-			};
-			if( $ok ) {
-			    next CATCHLOOP if $more;
-			    undef $err;
-			}
-			else {
-			    $err = $@ || $Error::THROWN;
-				$err = $Error::ObjectifyCallback->({'text' =>$err})
-					unless ref($err);
-			}
-			last CATCH;
-		    };
-		}
-	    }
-	}
+        CATCHLOOP:
+            for ( ; $i < @$catch ; $i += 2 )
+            {
+                my $pkg = $catch->[$i];
+                unless ( defined $pkg )
+                {
+                    #except
+                    splice( @$catch, $i, 2, $catch->[ $i + 1 ]->($err) );
+                    $i -= 2;
+                    next CATCHLOOP;
+                }
+                elsif ( Scalar::Util::blessed($err) && $err->isa($pkg) )
+                {
+                    $code = $catch->[ $i + 1 ];
+                    while (1)
+                    {
+                        my $more = 0;
+                        local ( $Error::THROWN, $@ );
+                        my $ok = eval {
+                            $@ = $err;
+                            if ($wantarray)
+                            {
+                                @{$result} = $code->( $err, \$more );
+                            }
+                            elsif ( defined($wantarray) )
+                            {
+                                @{$result} = ();
+                                $result->[0] = $code->( $err, \$more );
+                            }
+                            else
+                            {
+                                $code->( $err, \$more );
+                            }
+                            1;
+                        };
+                        if ($ok)
+                        {
+                            next CATCHLOOP if $more;
+                            undef $err;
+                        }
+                        else
+                        {
+                            $err = $@ || $Error::THROWN;
+                            $err = $Error::ObjectifyCallback->(
+                                { 'text' => $err } )
+                                unless ref($err);
+                        }
+                        last CATCH;
+                    }
+                }
+            }
+        }
 
-	# otherwise
-	my $owise;
-	if(defined($owise = $clauses->{'otherwise'})) {
-	    my $code = $clauses->{'otherwise'};
-	    my $more = 0;
-        local($Error::THROWN, $@);
-	    my $ok = eval {
-		$@ = $err;
-		if($wantarray) {
-		    @{$result} = $code->($err,\$more);
-		}
-		elsif(defined($wantarray)) {
-		    @{$result} = ();
-		    $result->[0] = $code->($err,\$more);
-		}
-		else {
-		    $code->($err,\$more);
-		}
-		1;
-	    };
-	    if( $ok ) {
-		undef $err;
-	    }
-	    else {
-		$err = $@ || $Error::THROWN;
+        # otherwise
+        my $owise;
+        if ( defined( $owise = $clauses->{'otherwise'} ) )
+        {
+            my $code = $clauses->{'otherwise'};
+            my $more = 0;
+            local ( $Error::THROWN, $@ );
+            my $ok = eval {
+                $@ = $err;
+                if ($wantarray)
+                {
+                    @{$result} = $code->( $err, \$more );
+                }
+                elsif ( defined($wantarray) )
+                {
+                    @{$result} = ();
+                    $result->[0] = $code->( $err, \$more );
+                }
+                else
+                {
+                    $code->( $err, \$more );
+                }
+                1;
+            };
+            if ($ok)
+            {
+                undef $err;
+            }
+            else
+            {
+                $err = $@ || $Error::THROWN;
 
-		$err = $Error::ObjectifyCallback->({'text' =>$err})
-			unless ref($err);
-	    }
-	}
+                $err = $Error::ObjectifyCallback->( { 'text' => $err } )
+                    unless ref($err);
+            }
+        }
     }
     $err;
 }
 
-sub try (&;$) {
-    my $try = shift;
+sub try (&;$)
+{
+    my $try     = shift;
     my $clauses = @_ ? shift : {};
-    my $ok = 0;
-    my $err = undef;
-    my @result = ();
+    my $ok      = 0;
+    my $err     = undef;
+    my @result  = ();
 
     unshift @Error::STACK, $clauses;
 
     my $wantarray = wantarray();
 
-    do {
-	local $Error::THROWN = undef;
-	local $@ = undef;
+    do
+    {
+        local $Error::THROWN = undef;
+        local $@             = undef;
 
-	$ok = eval {
-	    if($wantarray) {
-		@result = $try->();
-	    }
-	    elsif(defined $wantarray) {
-		$result[0] = $try->();
-	    }
-	    else {
-		$try->();
-	    }
-	    1;
-	};
+        $ok = eval {
+            if ($wantarray)
+            {
+                @result = $try->();
+            }
+            elsif ( defined $wantarray )
+            {
+                $result[0] = $try->();
+            }
+            else
+            {
+                $try->();
+            }
+            1;
+        };
 
-	$err = $@ || $Error::THROWN
-	    unless $ok;
+        $err = $@ || $Error::THROWN
+            unless $ok;
     };
 
     shift @Error::STACK;
 
-    $err = run_clauses($clauses,$err,wantarray,@result)
-    unless($ok);
+    $err = run_clauses( $clauses, $err, wantarray, @result )
+        unless ($ok);
 
     $clauses->{'finally'}->()
-	if(defined($clauses->{'finally'}));
+        if ( defined( $clauses->{'finally'} ) );
 
-    if (defined($err))
+    if ( defined($err) )
     {
-        if (Scalar::Util::blessed($err) && $err->can('throw'))
+        if ( Scalar::Util::blessed($err) && $err->can('throw') )
         {
             throw $err;
         }
@@ -464,11 +508,13 @@ sub try (&;$) {
 # The catch clause is defined in Error.pm, as the syntax causes it to
 # be called as a method
 
-sub with (&;$) {
-    @_
+sub with (&;$)
+{
+    @_;
 }
 
-sub finally (&) {
+sub finally (&)
+{
     my $code = shift;
     my $clauses = { 'finally' => $code };
     $clauses;
@@ -477,23 +523,26 @@ sub finally (&) {
 # The except clause is a block which returns a hashref or a list of
 # key-value pairs, where the keys are the classes and the values are subs.
 
-sub except (&;$) {
-    my $code = shift;
+sub except (&;$)
+{
+    my $code    = shift;
     my $clauses = shift || {};
-    my $catch = $clauses->{'catch'} ||= [];
+    my $catch   = $clauses->{'catch'} ||= [];
 
     my $sub = sub {
-	my $ref;
-	my(@array) = $code->($_[0]);
-	if(@array == 1 && ref($array[0])) {
-	    $ref = $array[0];
-	    $ref = [ %$ref ]
-		if(UNIVERSAL::isa($ref,'HASH'));
-	}
-	else {
-	    $ref = \@array;
-	}
-	@$ref
+        my $ref;
+        my (@array) = $code->( $_[0] );
+        if ( @array == 1 && ref( $array[0] ) )
+        {
+            $ref = $array[0];
+            $ref = [%$ref]
+                if ( UNIVERSAL::isa( $ref, 'HASH' ) );
+        }
+        else
+        {
+            $ref = \@array;
+        }
+        @$ref;
     };
 
     unshift @{$catch}, undef, $sub;
@@ -501,13 +550,15 @@ sub except (&;$) {
     $clauses;
 }
 
-sub otherwise (&;$) {
+sub otherwise (&;$)
+{
     my $code = shift;
     my $clauses = shift || {};
 
-    if(exists $clauses->{'otherwise'}) {
-	require Carp;
-	Carp::croak("Multiple otherwise clauses");
+    if ( exists $clauses->{'otherwise'} )
+    {
+        require Carp;
+        Carp::croak("Multiple otherwise clauses");
     }
 
     $clauses->{'otherwise'} = $code;
@@ -518,17 +569,20 @@ sub otherwise (&;$) {
 1;
 
 package Error::WarnDie;
-
+$Error::WarnDie::VERSION = '0.17026';
 sub gen_callstack($)
 {
-    my ( $start ) = @_;
+    my ($start) = @_;
 
     require Carp;
     local $Carp::CarpLevel = $start;
     my $trace = Carp::longmess("");
+
     # Remove try calls from the trace
-    $trace =~ s/(\n\s+\S+__ANON__[^\n]+)?\n\s+eval[^\n]+\n\s+Error::subs::try[^\n]+(?=\n)//sog;
-    $trace =~ s/(\n\s+\S+__ANON__[^\n]+)?\n\s+eval[^\n]+\n\s+Error::subs::run_clauses[^\n]+\n\s+Error::subs::try[^\n]+(?=\n)//sog;
+    $trace =~
+s/(\n\s+\S+__ANON__[^\n]+)?\n\s+eval[^\n]+\n\s+Error::subs::try[^\n]+(?=\n)//sog;
+    $trace =~
+s/(\n\s+\S+__ANON__[^\n]+)?\n\s+eval[^\n]+\n\s+Error::subs::run_clauses[^\n]+\n\s+Error::subs::try[^\n]+(?=\n)//sog;
     my @callstack = split( m/\n/, $trace );
     return @callstack;
 }
@@ -538,26 +592,29 @@ my $old_WARN;
 
 sub DEATH
 {
-    my ( $e ) = @_;
+    my ($e) = @_;
 
-    local $SIG{__DIE__} = $old_DIE if( defined $old_DIE );
+    local $SIG{__DIE__} = $old_DIE if ( defined $old_DIE );
 
     die @_ if $^S;
 
     my ( $etype, $message, $location, @callstack );
-    if ( ref($e) && $e->isa( "Error" ) ) {
-        $etype = "exception of type " . ref( $e );
-        $message = $e->text;
-        $location = $e->file . ":" . $e->line;
+    if ( ref($e) && $e->isa("Error") )
+    {
+        $etype     = "exception of type " . ref($e);
+        $message   = $e->text;
+        $location  = $e->file . ":" . $e->line;
         @callstack = split( m/\n/, $e->stacktrace );
     }
-    else {
+    else
+    {
         # Don't apply subsequent layer of message formatting
-        die $e if( $e =~ m/^\nUnhandled perl error caught at toplevel:\n\n/ );
+        die $e if ( $e =~ m/^\nUnhandled perl error caught at toplevel:\n\n/ );
         $etype = "perl error";
         my $stackdepth = 0;
-        while( caller( $stackdepth ) =~ m/^Error(?:$|::)/ ) {
-            $stackdepth++
+        while ( caller($stackdepth) =~ m/^Error(?:$|::)/ )
+        {
+            $stackdepth++;
         }
 
         @callstack = gen_callstack( $stackdepth + 1 );
@@ -565,39 +622,43 @@ sub DEATH
         $message = "$e";
         chomp $message;
 
-        if ( $message =~ s/ at (.*?) line (\d+)\.$// ) {
+        if ( $message =~ s/ at (.*?) line (\d+)\.$// )
+        {
             $location = $1 . ":" . $2;
         }
-        else {
-            my @caller = caller( $stackdepth );
+        else
+        {
+            my @caller = caller($stackdepth);
             $location = $caller[1] . ":" . $caller[2];
         }
     }
 
     shift @callstack;
-    # Do it this way in case there are no elements; we don't print a spurious \n
-    my $callstack = join( "", map { "$_\n"} @callstack );
 
-    die "\nUnhandled $etype caught at toplevel:\n\n  $message\n\nThrown from: $location\n\nFull stack trace:\n\n$callstack\n";
+    # Do it this way in case there are no elements; we don't print a spurious \n
+    my $callstack = join( "", map { "$_\n" } @callstack );
+
+    die
+"\nUnhandled $etype caught at toplevel:\n\n  $message\n\nThrown from: $location\n\nFull stack trace:\n\n$callstack\n";
 }
 
 sub TAXES
 {
-    my ( $message ) = @_;
+    my ($message) = @_;
 
-    local $SIG{__WARN__} = $old_WARN if( defined $old_WARN );
+    local $SIG{__WARN__} = $old_WARN if ( defined $old_WARN );
 
     $message =~ s/ at .*? line \d+\.$//;
     chomp $message;
 
-    my @callstack = gen_callstack( 1 );
-    my $location = shift @callstack;
+    my @callstack = gen_callstack(1);
+    my $location  = shift @callstack;
 
     # $location already starts in a leading space
     $message .= $location;
 
     # Do it this way in case there are no elements; we don't print a spurious \n
-    my $callstack = join( "", map { "$_\n"} @callstack );
+    my $callstack = join( "", map { "$_\n" } @callstack );
 
     warn "$message:\n$callstack";
 }
@@ -615,16 +676,17 @@ sub import
 
 __END__
 
+=pod
+
+=encoding UTF-8
+
 =head1 NAME
 
 Error - Error/exception handling in an OO-ish way
 
-=head1 WARNING
+=head1 VERSION
 
-Using the "Error" module is B<no longer recommended> due to the black-magical
-nature of its syntactic sugar, which often tends to break. Its maintainers
-have stopped actively writing code that uses it, and discourage people
-from doing so. See the "SEE ALSO" section below for better recommendations.
+version 0.17026
 
 =head1 SYNOPSIS
 
@@ -673,6 +735,17 @@ subsequent catch, or can simply be recorded.
 
 Errors in the class C<Error> should not be thrown directly, but the
 user should throw errors from a sub-class of C<Error>.
+
+=head1 VERSION
+
+version 0.17026
+
+=head1 WARNING
+
+Using the "Error" module is B<no longer recommended> due to the black-magical
+nature of its syntactic sugar, which often tends to break. Its maintainers
+have stopped actively writing code that uses it, and discourage people
+from doing so. See the "SEE ALSO" section below for better recommendations.
 
 =head1 PROCEDURAL INTERFACE
 
@@ -828,8 +901,6 @@ package or uncaught errors generated using C<record> will be reported.
 
      $Error->flush;
 
-=cut
-
 =back
 
 =head2 OBJECT METHODS
@@ -911,7 +982,6 @@ of the error object.
 This class is used internally if an eval'd block die's with an error
 that is a plain string. (Unless C<$Error::ObjectifyCallback> is modified)
 
-
 =head1 $Error::ObjectifyCallback
 
 This variable holds a reference to a subroutine that converts errors that
@@ -938,8 +1008,6 @@ class MyError::Bar by default:
 
         # Error handling here.
     }
-
-=cut
 
 =head1 MESSAGE HANDLERS
 
@@ -993,8 +1061,6 @@ into
          main::inner('undef') called at examples/warndie.pl line 20
          main::outer('undef') called at examples/warndie.pl line 23
 
-=cut
-
 =head1 SEE ALSO
 
 See L<Exception::Class> for a different module providing Object-Oriented
@@ -1037,5 +1103,131 @@ Copyright (c) 1997-8  Graham Barr. All rights reserved.
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-=cut
+=head1 AUTHOR
 
+Shlomi Fish ( http://www.shlomifish.org/ )
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2018 by Shlomi Fish ( http://www.shlomifish.org/ ).
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website
+L<https://github.com/shlomif/error/issues>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
+
+=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
+
+=head1 SUPPORT
+
+=head2 Perldoc
+
+You can find documentation for this module with the perldoc command.
+
+  perldoc Error
+
+=head2 Websites
+
+The following websites have more information about this module, and may be of help to you. As always,
+in addition to those websites please use your favorite search engine to discover more resources.
+
+=over 4
+
+=item *
+
+MetaCPAN
+
+A modern, open-source CPAN search engine, useful to view POD in HTML format.
+
+L<https://metacpan.org/release/Error>
+
+=item *
+
+Search CPAN
+
+The default CPAN search engine, useful to view POD in HTML format.
+
+L<http://search.cpan.org/dist/Error>
+
+=item *
+
+RT: CPAN's Bug Tracker
+
+The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
+
+L<https://rt.cpan.org/Public/Dist/Display.html?Name=Error>
+
+=item *
+
+AnnoCPAN
+
+The AnnoCPAN is a website that allows community annotations of Perl module documentation.
+
+L<http://annocpan.org/dist/Error>
+
+=item *
+
+CPAN Ratings
+
+The CPAN Ratings is a website that allows community ratings and reviews of Perl modules.
+
+L<http://cpanratings.perl.org/d/Error>
+
+=item *
+
+CPANTS
+
+The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a distribution.
+
+L<http://cpants.cpanauthors.org/dist/Error>
+
+=item *
+
+CPAN Testers
+
+The CPAN Testers is a network of smoke testers who run automated tests on uploaded CPAN distributions.
+
+L<http://www.cpantesters.org/distro/E/Error>
+
+=item *
+
+CPAN Testers Matrix
+
+The CPAN Testers Matrix is a website that provides a visual overview of the test results for a distribution on various Perls/platforms.
+
+L<http://matrix.cpantesters.org/?dist=Error>
+
+=item *
+
+CPAN Testers Dependencies
+
+The CPAN Testers Dependencies is a website that shows a chart of the test results of all dependencies for a distribution.
+
+L<http://deps.cpantesters.org/?module=Error>
+
+=back
+
+=head2 Bugs / Feature Requests
+
+Please report any bugs or feature requests by email to C<bug-error at rt.cpan.org>, or through
+the web interface at L<https://rt.cpan.org/Public/Bug/Report.html?Queue=Error>. You will be automatically notified of any
+progress on the request by the system.
+
+=head2 Source Code
+
+The code is open to the world, and available for you to hack on. Please feel free to browse it and play
+with it, or whatever. If you want to contribute patches, please send me a diff or prod me to pull
+from your repository :)
+
+L<https://github.com/shlomif/error>
+
+  git clone https://bitbucket.org/shlomif/perl-error.pm
+
+=cut

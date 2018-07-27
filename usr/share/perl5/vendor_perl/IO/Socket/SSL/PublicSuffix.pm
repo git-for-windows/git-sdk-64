@@ -3885,8 +3885,17 @@ uenohara.yamanashi.jp
 yamanakako.yamanashi.jp
 yamanashi.yamanashi.jp
 
-// ke : http://www.kenic.or.ke/index.php?option=com_content&task=view&id=117&Itemid=145
-*.ke
+// ke : http://www.kenic.or.ke/index.php/en/ke-domains/ke-domains
+ke
+ac.ke
+co.ke
+go.ke
+info.ke
+me.ke
+mobi.ke
+ne.ke
+or.ke
+sc.ke
 
 // kg : http://www.domain.kg/dmn_n.html
 kg
@@ -11230,6 +11239,7 @@ virtueeldomein.nl
 // Cloud66 : https://www.cloud66.com/
 // Submitted by Khash Sajadi <khash@cloud66.com>
 c66.me
+cloud66.ws
 
 // CloudAccess.net : https://www.cloudaccess.net/
 // Submitted by Pawel Panek <noc@cloudaccess.net>
@@ -11905,10 +11915,6 @@ fbxos.fr
 freebox-os.fr
 freeboxos.fr
 
-// Fusion Intranet : https://www.fusion-intranet.com
-// Submitted by Matthias Burtscher <matthias.burtscher@fusonic.net>
-myfusion.cloud
-
 // Futureweb OG : http://www.futureweb.at
 // Submitted by Andreas Schnederle-Wagner <schnederle@futureweb.at>
 *.futurecms.at
@@ -12128,6 +12134,11 @@ edu.krd
 git-repos.de
 lcube-server.de
 svn-repos.de
+
+// linkyard ldt: https://www.linkyard.ch/
+// Submitted by Mario Siegenthaler <mario.siegenthaler@linkyard.ch>
+linkyard.cloud
+linkyard-cloud.ch
 
 // LiquidNet Ltd : http://www.liquidnetlimited.com/
 // Submitted by Victor Velchev <admin@liquidnetlimited.com>
@@ -12479,6 +12490,10 @@ sandcats.io
 logoip.de
 logoip.com
 
+// schokokeks.org GbR : https://schokokeks.org/
+// Submitted by Hanno Böck <hanno@schokokeks.org>
+schokokeks.net
+
 // Scry Security : http://www.scrysec.com
 // Submitted by Shante Adam <shante@skyhat.io>
 scrysec.com
@@ -12659,6 +12674,10 @@ inc.hk
 // Submitted by Ed Moore <Ed.Moore@lib.de.us>
 lib.de.us
 
+// VeryPositive SIA : http://very.lv
+// Submitted by Danko Aleksejevs <danko@very.lv>
+2038.io
+
 // Viprinet Europe GmbH : http://www.viprinet.com
 // Submitted by Simon Kissel <hostmaster@viprinet.com>
 router.management
@@ -12686,6 +12705,10 @@ wmflabs.org
 cistron.nl
 demon.nl
 xs4all.space
+
+// YesCourse Pty Ltd : https://yescourse.com
+// Submitted by Atul Bhouraskar <atul@yescourse.com>
+official.academy
 
 // Yola : https://www.yola.com/
 // Submitted by Stefano Rivera <stefano@yola.com>

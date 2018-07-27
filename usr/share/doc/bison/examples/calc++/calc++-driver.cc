@@ -27,11 +27,11 @@ calcxx_driver::parse (const std::string &f)
 void
 calcxx_driver::error (const yy::location& l, const std::string& m)
 {
-  std::cerr << l << ": " << m << std::endl;
+  std::cerr << l << ": " << m << '\n';
 }
 
 void
 calcxx_driver::error (const std::string& m)
 {
-  std::cerr << m << std::endl;
+  std::cerr << m << '\n';
 }
