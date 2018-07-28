@@ -41,10 +41,10 @@ unset CDPATH
 # Ensure GREP_OPTIONS doesn't screw with our grep calls
 unset GREP_OPTIONS
 
-declare -r makepkg_version='5.1.0'
+declare -r makepkg_version='5.1.1'
 declare -r confdir='/etc'
 declare -r BUILDSCRIPT='PKGBUILD'
-declare -r startdir="$PWD"
+declare -r startdir="$(pwd -P)"
 
 LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
@@ -536,7 +536,7 @@ find_libdepends() {
 
 	if (( sodepends == 0 )); then
 		(( ${#depends[@]} )) && printf '%s\n' "${depends[@]}"
-		return 0;
+		return 0
 	fi
 
 	local libdeps filename soarch sofile soname;
@@ -712,13 +712,11 @@ write_buildinfo() {
 	write_kv_pair "buildenv" "${BUILDENV[@]}"
 	write_kv_pair "options" "${OPTIONS[@]}"
 
-	local pkglist=($(run_pacman -Qq))
-	local pkginfos="$(LC_ALL=C run_pacman -Qi ${pkglist[@]})"
-	local pkginfos_parsed=($(awk -F': ' '\
-		/^Name .*/ {printf $2} \
-		/^Version .*/ {printf "-"$2} \
+	local pkginfos_parsed=($(LC_ALL=C run_pacman -Qi | awk -F': ' '\
+		/^Name .*/ {printf "%s", $2} \
+		/^Version .*/ {printf "-%s", $2} \
 		/^Architecture .*/ {print "-"$2} \
-		' <<< "${pkginfos}"))
+		'))
 
 	write_kv_pair "installed" "${pkginfos_parsed[@]}"
 }
@@ -1122,13 +1120,25 @@ check_build_status() {
 backup_package_variables() {
 	local var
 	for var in ${splitpkg_overrides[@]}; do
-		declare -p $var 2>/dev/null || printf '%s\n'  "unset $var"
+		local indirect="${var}_backup"
+		eval "${indirect}=(\"\${$var[@]}\")"
+	done
+}
+
+restore_package_variables() {
+	local var
+	for var in ${splitpkg_overrides[@]}; do
+		local indirect="${var}_backup"
+		if [[ -n ${!indirect} ]]; then
+			eval "${var}=(\"\${$indirect[@]}\")"
+		else
+			unset ${var}
+		fi
 	done
 }
 
 run_split_packaging() {
 	local pkgname_backup=("${pkgname[@]}")
-	local restore_package_variables
 	for pkgname in ${pkgname_backup[@]}; do
 		pkgdir="$pkgdirbase/$pkgname"
 		# clean existing pkg directory
@@ -1137,12 +1147,12 @@ run_split_packaging() {
 			rm -rf "$pkgdir"
 		fi
 		mkdir "$pkgdir"
-		restore_package_variables="$(backup_package_variables)"
+		backup_package_variables
 		run_package $pkgname
 		tidy_install
 		lint_package || exit $E_PACKAGE_FAILED
 		create_package
-		eval "$restore_package_variables"
+		restore_package_variables
 	done
 	pkgname=("${pkgname_backup[@]}")
 	create_debug_package
@@ -1183,7 +1193,7 @@ usage() {
 	printf -- "$(gettext "  --nocheck        Do not run the %s function in the %s")\n" "check()" "$BUILDSCRIPT"
 	printf -- "$(gettext "  --noprepare      Do not run the %s function in the %s")\n" "prepare()" "$BUILDSCRIPT"
 	printf -- "$(gettext "  --nosign         Do not create a signature for the package")\n"
-	printf -- "$(gettext "  --packagelist    Only list packages that would be produced, without PKGEXT")\n"
+	printf -- "$(gettext "  --packagelist    Only list package filepaths that would be produced")\n"
 	printf -- "$(gettext "  --printsrcinfo   Print the generated SRCINFO and exit")\n"
 	printf -- "$(gettext "  --sign           Sign the resulting package with %s")\n" "gpg"
 	printf -- "$(gettext "  --skipchecksums  Do not verify checksums of the source files")\n"
@@ -1270,7 +1280,7 @@ while true; do
 		-i|--install)     INSTALL=1 ;;
 		--key)            shift; GPGKEY=$1 ;;
 		-L|--log)         LOGGING=1 ;;
-		-m|--nocolor)     USE_COLOR='n'; PACMAN_OPTS+=("--color never") ;;
+		-m|--nocolor)     USE_COLOR='n'; PACMAN_OPTS+=("--color" "never") ;;
 		--noarchive)      NOARCHIVE=1 ;;
 		--nocheck)        RUN_CHECK='n' ;;
 		--noprepare)      RUN_PREPARE='n' ;;
@@ -1292,7 +1302,7 @@ while true; do
 		-h|--help)        usage; exit $E_OK ;;
 		-V|--version)     version; exit $E_OK ;;
 
-		--)               OPT_IND=0; shift; break ;;
+		--)               shift; break ;;
 	esac
 	shift
 done
@@ -1377,7 +1387,6 @@ if ! ensure_writable_dir "BUILDDIR" "$BUILDDIR"; then
 	plain "$(gettext "Aborting...")"
 	exit $E_FS_PERMISSIONS
 fi
-chmod a-s "$BUILDDIR"
 
 if (( ! (NOBUILD || GENINTEG) )) && ! ensure_writable_dir "PKGDEST" "$PKGDEST"; then
 	plain "$(gettext "Aborting...")"
@@ -1446,7 +1455,7 @@ fi
 
 basever=$(get_full_version)
 
-if [[ $BUILDDIR = "$startdir" ]]; then
+if [[ $BUILDDIR -ef "$startdir" ]]; then
 	srcdir="$BUILDDIR/src"
 	pkgdirbase="$BUILDDIR/pkg"
 else

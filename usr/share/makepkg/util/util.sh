@@ -86,12 +86,12 @@ ensure_writable_dir() {
 	local dirtype="$1" dirpath="$2"
 
 	if ! mkdir -p "$dirpath" 2>/dev/null; then
-		if [[ -d $dirpath && ! -w $dirpath ]]; then
-			error "$(gettext "You do not have write permission for the directory \$%s (%s).")" "$dirtype" "$dirpath"
-		else
-			error "$(gettext "Failed to create the directory \$%s (%s).")" "$dirtype" "$dirpath"
-		fi
+		error "$(gettext "Failed to create the directory \$%s (%s).")" "$dirtype" "$dirpath"
+		return 1
+	elif [[ ! -w $dirpath ]]; then
+		error "$(gettext "You do not have write permission for the directory \$%s (%s).")" "$dirtype" "$dirpath"
 		return 1
 	fi
+
 	return 0
 }

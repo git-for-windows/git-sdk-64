@@ -63,7 +63,7 @@ create_package_signatures() {
 	done
 
 	# check if debug package needs a signature
-	if ! check_option "debug" "y" || ! check_option "strip" "y"; then
+	if check_option "debug" "y" && check_option "strip" "y"; then
 		pkg=$pkgbase-debug
 		pkgarch=$(get_pkg_arch)
 		pkg_file="$PKGDEST/${pkg}-${fullver}-${pkgarch}${PKGEXT}"

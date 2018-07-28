@@ -33,7 +33,7 @@ tidy_modify+=('tidy_strip')
 
 source_files() {
 	LANG=C readelf "$1" --debug-dump | \
-		awk '/DW_AT_name +:/{name=$8}/DW_AT_comp_dir +:/{print $8 "/" name}'
+		awk '/DW_AT_name +:/{name=$8}/DW_AT_comp_dir +:/{{if (name !~ /^\//) {printf "%s/", $8}}{print name}}'
 }
 
 strip_file() {

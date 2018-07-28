@@ -31,15 +31,23 @@ lint_pkgbuild_functions+=('lint_optdepends')
 
 
 lint_optdepends() {
-	local a list name optdepends_list ret=0
-
-	local optdepends_list optdepend name ret=0
+	local optdepends_list optdepend name ver ret=0
 
 	get_pkgbuild_all_split_attributes optdepends optdepends_list
 
-	for optdepend in "${optdepends_list[@]}"; do
-		name=${optdepend%%:[[:space:]]*}
+	# this function requires extglob - save current status to restore later
+	local shellopts=$(shopt -p extglob)
+	shopt -s extglob
+
+	for optdepend in "${optdepends_list[@]%%:[[:space:]]*}"; do
+		name=${optdepend%%@(<|>|=|>=|<=)*}
+		# remove optional epoch in version specifier
+		ver=${optdepend##$name@(<|>|=|>=|<=)?(+([0-9]):)}
 		lint_one_pkgname optdepends "$name" || ret=1
+		if [[ $ver != $optdepend ]]; then
+			# remove optional pkgrel in version specifier
+			check_pkgver "${ver%-+([0-9])?(.+([0-9]))}" optdepends || ret=1
+		fi
 	done
 
 	return $ret

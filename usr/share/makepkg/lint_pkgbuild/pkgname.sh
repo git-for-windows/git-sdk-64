@@ -35,8 +35,7 @@ lint_one_pkgname() {
 
 	if [[ -z $name ]]; then
 		error "$(gettext "%s is not allowed to be empty.")" "$type"
-		ret=1
-		continue
+		return 1
 	fi
 	if [[ ${name:0:1} = "-" ]]; then
 		error "$(gettext "%s is not allowed to start with a hyphen.")" "$type"

@@ -106,7 +106,11 @@ get_pkgbuild_attribute() {
 
 	local pkgname=$1 attrname=$2 isarray=$3 outputvar=$4
 
-	printf -v "$outputvar" %s ''
+	if (( isarray )); then
+		eval "$outputvar=()"
+	else
+		printf -v "$outputvar" %s ''
+	fi
 
 	if [[ $pkgname ]]; then
 		extract_global_variable "$attrname" "$isarray" "$outputvar"
@@ -188,10 +192,11 @@ print_all_package_names() {
 	for pkg in ${pkgname[@]}; do
 		architecture=$(get_pkg_arch $pkg)
 		printf "%s/%s-%s-%s%s\n" "$PKGDEST" "$pkg" "$version" "$architecture" "$PKGEXT"
-		if check_option "debug" "y" && check_option "strip" "y"; then
-			printf "%s/%s-%s-%s-%s%s\n" "$PKGDEST" "$pkg" "debug" "$version" "$architecture" "$PKGEXT"
-		fi
 	done
+	if check_option "debug" "y" && check_option "strip" "y"; then
+		architecture=$(get_pkg_arch)
+		printf "%s/%s-%s-%s-%s%s\n" "$PKGDEST" "$pkgbase" "debug" "$version" "$architecture" "$PKGEXT"
+	fi
 }
 
 get_all_sources() {

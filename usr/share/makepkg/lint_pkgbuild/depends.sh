@@ -46,7 +46,8 @@ lint_depends() {
 		# remove optional epoch in version specifier
 		ver=${depend##$name@(<|>|=|>=|<=)?(+([0-9]):)}
 		lint_one_pkgname depends "$name" || ret=1
-		if [[ $ver != $depend ]]; then
+		# Don't validate empty version because of https://bugs.archlinux.org/task/58776
+		if [[ $ver != $depend && -n $ver ]]; then
 			# remove optional pkgrel in version specifier
 			check_pkgver "${ver%-+([0-9])?(.+([0-9]))}" depends || ret=1
 		fi
