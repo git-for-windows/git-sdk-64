@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.7
 srcdir=		../Python-3.7.0
 VPATH=		../Python-3.7.0
-abs_srcdir=	/mingw_repo/mingw-w64-python3/src/build-i686/../Python-3.7.0
-abs_builddir=	/mingw_repo/mingw-w64-python3/src/build-i686
+abs_srcdir=	/scripts/mingw-w64-python3/src/build-i686/../Python-3.7.0
+abs_builddir=	/scripts/mingw-w64-python3/src/build-i686
 
 
 CC=		i686-w64-mingw32-gcc
@@ -86,7 +86,7 @@ CONFIGURE_CFLAGS=	-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANS
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
 CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Werror=implicit-function-declaration
-CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IF:/msys64/mingw32/include/ncursesw  -I.
+CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncursesw  -I.
 CONFIGURE_LDFLAGS=	-pipe -s 
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
@@ -130,11 +130,11 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		F:/mingw_scripts/mingw-w64-python3/src/Python-3.7.0
-VPATH_b2h=		F:/mingw_scripts/mingw-w64-python3/src/Python-3.7.0
-abs_srcdir_b2h=		F:/mingw_scripts/mingw-w64-python3/src/Python-3.7.0
-abs_builddir_b2h=	F:/mingw_scripts/mingw-w64-python3/src/build-i686
-prefix_b2h=		F:/msys64/mingw32
+srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.7.0
+VPATH_b2h=		C:/repo/mingw-w64-python3/src/Python-3.7.0
+abs_srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.7.0
+abs_builddir_b2h=	C:/repo/mingw-w64-python3/src/build-i686
+prefix_b2h=		C:/building/msys64/mingw32
 
 # Expanded directories
 BINDIR=		${exec_prefix}/bin
@@ -191,9 +191,9 @@ RUNSHARED=
 ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
-OPENSSL_INCLUDES=-IF:/msys64/mingw32/include
+OPENSSL_INCLUDES=-IC:/building/msys64/mingw32/include
 OPENSSL_LIBS=-lssl -lcrypto
-OPENSSL_LDFLAGS=-LF:/msys64/mingw32/lib
+OPENSSL_LDFLAGS=-LC:/building/msys64/mingw32/lib
 
 # Modes for directories, executables and data files created by the
 # install process.  Default to user-only-writable for all file types.
@@ -202,7 +202,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IF:/msys64/mingw32/include/ncursesw ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncursesw ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -300,7 +300,7 @@ IO_OBJS=	\
 
 ##########################################################################
 
-LIBFFI_INCLUDEDIR=	F:/msys64/mingw32/lib/libffi-3.2.1/include
+LIBFFI_INCLUDEDIR=	C:/building/msys64/mingw32/lib/libffi-3.2.1/include
 
 ##########################################################################
 # Parser

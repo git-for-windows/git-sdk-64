@@ -37,10 +37,11 @@ build_time_vars = {'ABIFLAGS': 'm',
  'CONFIGURE_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
                             '-Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
+                            '-Wno-cast-function-type '
                             '-Werror=implicit-function-declaration',
  'CONFIGURE_CPPFLAGS': '-I../Python-3.7.0/PC -D_FORTIFY_SOURCE=2 '
                        '-D__USE_MINGW_ANSI_STDIO=1 '
-                       '-IF:/msys64/mingw64/include/ncursesw  -I.',
+                       '-IC:/building/msys64/mingw64/include/ncursesw  -I.',
  'CONFIGURE_LDFLAGS': '-pipe -s',
  'CONFIG_ARGS': "'--prefix=/mingw64' '--host=x86_64-w64-mingw32' "
                 "'--build=x86_64-w64-mingw32' '--enable-shared' "
@@ -51,20 +52,21 @@ build_time_vars = {'ABIFLAGS': 'm',
                 '-mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 '
                 "-D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -s ' "
                 "'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 "
-                "-IF:/msys64/mingw64/include/ncursesw ' "
+                "-IC:/building/msys64/mingw64/include/ncursesw ' "
                 "'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'",
  'CONFINCLUDEDIR': sys.prefix + '/include',
  'CONFINCLUDEPY': sys.prefix + '/include/python3.7m',
  'COREPYTHONPATH': '',
- 'COVERAGE_INFO': '/mingw_repo/mingw-w64-python3/src/build-x86_64/coverage.info',
- 'COVERAGE_REPORT': '/mingw_repo/mingw-w64-python3/src/build-x86_64/lcov-report',
+ 'COVERAGE_INFO': '/scripts/mingw-w64-python3/src/build-x86_64/coverage.info',
+ 'COVERAGE_REPORT': '/scripts/mingw-w64-python3/src/build-x86_64/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--no-branch-coverage --title "CPython lcov '
                             'report"',
  'CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.0/Include '
              '-I../Python-3.7.0/PC -D_FORTIFY_SOURCE=2 '
-             '-D__USE_MINGW_ANSI_STDIO=1 -IF:/msys64/mingw64/include/ncursesw  '
-             '-I. -D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
-             '-IF:/msys64/mingw64/include/ncursesw',
+             '-D__USE_MINGW_ANSI_STDIO=1 '
+             '-IC:/building/msys64/mingw64/include/ncursesw  -I. '
+             '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
+             '-IC:/building/msys64/mingw64/include/ncursesw',
  'CXX': 'x86_64-w64-mingw32-c++',
  'DESTDIR': '',
  'DESTDIRFINAL': '/',
@@ -529,7 +531,7 @@ build_time_vars = {'ABIFLAGS': 'm',
  'LIBC': '',
  'LIBDEST': sys.prefix + '/lib/python3.7',
  'LIBDIR': sys.prefix + '/lib',
- 'LIBFFI_INCLUDEDIR': 'F:/msys64/mingw64/lib/libffi-3.2.1/include',
+ 'LIBFFI_INCLUDEDIR': 'C:/building/msys64/mingw64/lib/libffi-3.2.1/include',
  'LIBM': '-lm',
  'LIBOBJDIR': 'Python/',
  'LIBOBJS': '',
@@ -587,8 +589,8 @@ build_time_vars = {'ABIFLAGS': 'm',
  'NO_AS_NEEDED': '-Wl,--no-as-needed',
  'NT_THREADS': 1,
  'OBJECT_OBJS': '\\',
- 'OPENSSL_INCLUDES': '-IF:/msys64/mingw64/include',
- 'OPENSSL_LDFLAGS': '-LF:/msys64/mingw64/lib',
+ 'OPENSSL_INCLUDES': '-IC:/building/msys64/mingw64/include',
+ 'OPENSSL_LDFLAGS': '-LC:/building/msys64/mingw64/lib',
  'OPENSSL_LIBS': '-lssl -lcrypto',
  'OPT': '-DNDEBUG',
  'OTHER_LIBTOOL_OPT': '',
@@ -630,6 +632,7 @@ build_time_vars = {'ABIFLAGS': 'm',
               '-DNDEBUG',
  'PY_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
                      '-Wno-unused-parameter -Wno-missing-field-initializers '
+                     '-Wno-cast-function-type '
                      '-Werror=implicit-function-declaration',
  'PY_COERCE_C_LOCALE': 1,
  'PY_CORE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -march=x86-64 '
@@ -638,20 +641,21 @@ build_time_vars = {'ABIFLAGS': 'm',
                    '-march=x86-64 -mtune=generic -O2 -pipe -fwrapv '
                    '-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG '
                    '-std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter '
-                   '-Wno-missing-field-initializers '
+                   '-Wno-missing-field-initializers -Wno-cast-function-type '
                    '-Werror=implicit-function-declaration -IObjects -IInclude '
                    '-IPython -I. -I../Python-3.7.0/Include '
                    '-I../Python-3.7.0/PC -D_FORTIFY_SOURCE=2 '
                    '-D__USE_MINGW_ANSI_STDIO=1 '
-                   '-IF:/msys64/mingw64/include/ncursesw  -I. '
+                   '-IC:/building/msys64/mingw64/include/ncursesw  -I. '
                    '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
-                   '-IF:/msys64/mingw64/include/ncursesw -DPy_BUILD_CORE',
+                   '-IC:/building/msys64/mingw64/include/ncursesw '
+                   '-DPy_BUILD_CORE',
  'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.0/Include '
                 '-I../Python-3.7.0/PC -D_FORTIFY_SOURCE=2 '
                 '-D__USE_MINGW_ANSI_STDIO=1 '
-                '-IF:/msys64/mingw64/include/ncursesw  -I. -D_FORTIFY_SOURCE=2 '
-                '-D__USE_MINGW_ANSI_STDIO=1 '
-                '-IF:/msys64/mingw64/include/ncursesw',
+                '-IC:/building/msys64/mingw64/include/ncursesw  -I. '
+                '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
+                '-IC:/building/msys64/mingw64/include/ncursesw',
  'PY_FORMAT_SIZE_T': '"z"',
  'PY_LDFLAGS': '-pipe -s -pipe -s',
  'PY_SSL_DEFAULT_CIPHERS': 1,
@@ -664,13 +668,14 @@ build_time_vars = {'ABIFLAGS': 'm',
                         '-D_WIN32_WINNT=0x0601 -DNDEBUG -std=c99 -Wextra '
                         '-Wno-unused-result -Wno-unused-parameter '
                         '-Wno-missing-field-initializers '
+                        '-Wno-cast-function-type '
                         '-Werror=implicit-function-declaration -IObjects '
                         '-IInclude -IPython -I. -I../Python-3.7.0/Include '
                         '-I../Python-3.7.0/PC -D_FORTIFY_SOURCE=2 '
                         '-D__USE_MINGW_ANSI_STDIO=1 '
-                        '-IF:/msys64/mingw64/include/ncursesw  -I. '
+                        '-IC:/building/msys64/mingw64/include/ncursesw  -I. '
                         '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
-                        '-IF:/msys64/mingw64/include/ncursesw',
+                        '-IC:/building/msys64/mingw64/include/ncursesw',
  'PY_WARN_ON_C_LOCALE': 1,
  'Py_DEBUG': 0,
  'Py_ENABLE_SHARED': 1,
@@ -734,8 +739,8 @@ build_time_vars = {'ABIFLAGS': 'm',
  'UPDATE_FILE': 'python3.7 ../Python-3.7.0/Tools/scripts/update_file.py',
  'USE_COMPUTED_GOTOS': 0,
  'VERSION': '3.7',
- 'VPATH': 'F:/mingw_scripts/mingw-w64-python3/src/Python-3.7.0',
- 'VPATH_b2h': 'F:/mingw_scripts/mingw-w64-python3/src/Python-3.7.0',
+ 'VPATH': 'C:/repo/mingw-w64-python3/src/Python-3.7.0',
+ 'VPATH_b2h': 'C:/repo/mingw-w64-python3/src/Python-3.7.0',
  'WINDOW_HAS_FLAGS': 1,
  'WITH_DOC_STRINGS': 1,
  'WITH_DTRACE': 0,
@@ -746,13 +751,13 @@ build_time_vars = {'ABIFLAGS': 'm',
  'WITH_VALGRIND': 0,
  'X87_DOUBLE_ROUNDING': 0,
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
- 'abs_builddir': 'F:/mingw_scripts/mingw-w64-python3/src/build-x86_64',
- 'abs_builddir_b2h': 'F:/mingw_scripts/mingw-w64-python3/src/build-x86_64',
- 'abs_srcdir': 'F:/mingw_scripts/mingw-w64-python3/src/Python-3.7.0',
- 'abs_srcdir_b2h': 'F:/mingw_scripts/mingw-w64-python3/src/Python-3.7.0',
+ 'abs_builddir': 'C:/repo/mingw-w64-python3/src/build-x86_64',
+ 'abs_builddir_b2h': 'C:/repo/mingw-w64-python3/src/build-x86_64',
+ 'abs_srcdir': 'C:/repo/mingw-w64-python3/src/Python-3.7.0',
+ 'abs_srcdir_b2h': 'C:/repo/mingw-w64-python3/src/Python-3.7.0',
  'datarootdir': sys.prefix + '/share',
  'exec_prefix': sys.prefix,
- 'prefix': 'F:/msys64/mingw64',
- 'prefix_b2h': 'F:/msys64/mingw64',
- 'srcdir': 'F:/mingw_scripts/mingw-w64-python3/src/Python-3.7.0',
- 'srcdir_b2h': 'F:/mingw_scripts/mingw-w64-python3/src/Python-3.7.0'}
+ 'prefix': 'C:/building/msys64/mingw64',
+ 'prefix_b2h': 'C:/building/msys64/mingw64',
+ 'srcdir': 'C:/repo/mingw-w64-python3/src/Python-3.7.0',
+ 'srcdir_b2h': 'C:/repo/mingw-w64-python3/src/Python-3.7.0'}

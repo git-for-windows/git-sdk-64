@@ -102,7 +102,7 @@ typedef struct gdbm_file_info *GDBM_FILE;
 extern const char *gdbm_version;	
 
 # define GDBM_VERSION_MAJOR 1
-# define GDBM_VERSION_MINOR 16
+# define GDBM_VERSION_MINOR 17
 # define GDBM_VERSION_PATCH 0
 
 extern int const gdbm_version_number[3];
@@ -113,7 +113,7 @@ extern GDBM_FILE gdbm_fd_open (int fd, const char *file_name, int block_size,
 			       int flags, void (*fatal_func) (const char *));
 extern GDBM_FILE gdbm_open (const char *, int, int, int,
 			    void (*)(const char *));
-extern void gdbm_close (GDBM_FILE);
+extern int gdbm_close (GDBM_FILE);
 extern int gdbm_store (GDBM_FILE, datum, datum, int);
 extern datum gdbm_fetch (GDBM_FILE, datum);
 extern int gdbm_delete (GDBM_FILE, datum);
@@ -121,7 +121,7 @@ extern datum gdbm_firstkey (GDBM_FILE);
 extern datum gdbm_nextkey (GDBM_FILE, datum);
 extern int gdbm_reorganize (GDBM_FILE);
   
-extern void gdbm_sync (GDBM_FILE);
+extern int gdbm_sync (GDBM_FILE);
 extern int gdbm_exists (GDBM_FILE, datum);
 extern int gdbm_setopt (GDBM_FILE, int, void *, int);
 extern int gdbm_fdesc (GDBM_FILE);
@@ -225,9 +225,11 @@ extern int gdbm_copy_meta (GDBM_FILE dst, GDBM_FILE src);
 # define GDBM_BAD_AVAIL                 34
 # define GDBM_BAD_HASH_TABLE            35
 # define GDBM_BAD_DIR_ENTRY             36
-
+# define GDBM_FILE_CLOSE_ERROR          37  
+# define GDBM_FILE_SYNC_ERROR           38
+  
 # define _GDBM_MIN_ERRNO	0
-# define _GDBM_MAX_ERRNO	GDBM_BAD_DIR_ENTRY
+# define _GDBM_MAX_ERRNO	GDBM_FILE_SYNC_ERROR
 
 /* This one was never used and will be removed in the future */
 # define GDBM_UNKNOWN_UPDATE GDBM_UNKNOWN_ERROR
