@@ -122,13 +122,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="4" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="5" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VERSION_MINOR" value="8" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.8.4" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.8.5" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_copy_writable_or_fail"
@@ -4778,10 +4778,7 @@ the caller.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="map_create"
-              c:identifier="hb_map_create"
-              version="1.7.7"
-              introspectable="0">
+    <function name="map_create" c:identifier="hb_map_create" version="1.7.7">
       <return-value transfer-ownership="full">
         <type name="map_t" c:type="hb_map_t*"/>
       </return-value>
@@ -4830,8 +4827,7 @@ the caller.</doc>
     </function>
     <function name="map_get_empty"
               c:identifier="hb_map_get_empty"
-              version="1.7.7"
-              introspectable="0">
+              version="1.7.7">
       <return-value transfer-ownership="full">
         <type name="map_t" c:type="hb_map_t*"/>
       </return-value>
@@ -4953,7 +4949,11 @@ the caller.</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="map_t" c:type="hb_map_t" disguised="1">
+    <record name="map_t"
+            c:type="hb_map_t"
+            glib:type-name="hb_map_t"
+            glib:get-type="hb_gobject_map_get_type"
+            c:symbol-prefix="gobject_map">
     </record>
     <enumeration name="memory_mode_t"
                  glib:type-name="hb_memory_mode_t"
@@ -4989,6 +4989,33 @@ the caller.</doc>
       <parameters>
         <parameter name="font" transfer-ownership="none">
           <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_collect_features"
+              c:identifier="hb_ot_layout_collect_features"
+              version="1.8.5">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="table_tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="scripts" transfer-ownership="none">
+          <type name="tag_t" c:type="const hb_tag_t*"/>
+        </parameter>
+        <parameter name="languages" transfer-ownership="none">
+          <type name="tag_t" c:type="const hb_tag_t*"/>
+        </parameter>
+        <parameter name="features" transfer-ownership="none">
+          <type name="tag_t" c:type="const hb_tag_t*"/>
+        </parameter>
+        <parameter name="feature_indexes" transfer-ownership="none">
+          <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
     </function>

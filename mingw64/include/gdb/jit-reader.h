@@ -56,7 +56,7 @@ extern "C" {
 
 /* Represents an address on the target system.  */
 
-typedef unsigned __int128 GDB_CORE_ADDR;
+typedef unsigned long long GDB_CORE_ADDR;
 
 /* Return status codes.  */
 
