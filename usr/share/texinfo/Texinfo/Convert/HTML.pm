@@ -1,8 +1,8 @@
-# $Id: HTML.pm 7353 2016-09-10 13:03:54Z gavin $
+# $Id: HTML.pm 7942 2017-08-28 20:42:04Z gavin $
 # HTML.pm: output tree as HTML.
 #
-# Copyright 2011, 2012, 2013, 2014, 2015,
-# 2016 Free Software Foundation, Inc.
+# Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017 Free Software Foundation, 
+# Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,14 @@
 package Texinfo::Convert::HTML;
 
 use 5.00405;
+
+# See 'The "Unicode Bug"' under 'perlunicode' man page.  This means
+# that regular expressions will treat characters 128-255 in a Perl string
+# the same regardless of whether the string is using a UTF-8 encoding.
+#  For older Perls, you can use utf8::upgrade on the strings, where the
+# difference matters.
+use if $] >= 5.012, feature => 'unicode_strings';
+
 use strict;
 
 use Texinfo::Convert::Converter;
@@ -56,7 +64,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.2';
+$VERSION = '6.5';
 
 # misc commands that are of use for formatting.
 my %formatting_misc_commands = %Texinfo::Convert::Text::formatting_misc_commands;
@@ -205,6 +213,15 @@ sub in_align($)
   }
 }
 
+# $COMMAND should be a tree element which is a possible target of a link.
+#
+# Returns a hash that may have these keys set:
+# 'target': A unique string representing the target.  Used as argument to 
+#           'name' attribute inside <a>.
+# 'node_filename', 'section_filename',
+# 'misc_filename', 'filename'.  Possibly others.
+#
+# Some functions cache their results in these hashes.
 sub _get_target($$)
 {
   my $self = shift;
@@ -232,21 +249,7 @@ sub command_id($$)
   my $command = shift;
   my $target = $self->_get_target($command);
   if ($target) {
-    return $target->{'id'};
-  } else {
-    return undef;
-  }
-}
-
-sub command_contents_id($$$)
-{
-  my $self = shift;
-  my $command = shift;
-  my $contents_or_shortcontents = shift;
-  
-  my $target = $self->_get_target($command);
-  if ($target) {
-    return $target->{$contents_or_shortcontents .'_id'};
+    return $target->{'target'};
   } else {
     return undef;
   }
@@ -268,11 +271,16 @@ sub command_contents_target($$$)
   }
 }
 
+# Return href target for linking to this command
 sub command_target($$)
 {
   my $self = shift;
   my $command = shift;
 
+  if ($command->{'extra'}
+      and $command->{'extra'}->{'associated_node'}) {
+    $command = $command->{'extra'}->{'associated_node'};
+  }
   my $target = $self->_get_target($command);
   if ($target) {
     return $target->{'target'};
@@ -367,6 +375,7 @@ sub command_node($$)
   return undef;
 }
 
+# Return string for linking to $COMMAND with <a href>
 sub command_href($$;$$)
 {
   my $self = shift;
@@ -438,6 +447,13 @@ sub command_contents_href($$$$)
   return $href;
 }
 
+# Return text to be used for a hyperlink to $COMMAND.
+# $TYPE refers to the type of value returned from this function:
+#  'text' - return text
+#  'tree' - return a tree
+#  'tree_nonumber' - return tree representing text without a chapter number
+#                    being included.
+#  'string'
 sub command_text($$;$)
 {
   my $self = shift;
@@ -547,7 +563,6 @@ sub command_text($$;$)
                'contents' => [$tree]};
     }
     
-    print STDERR "DO $target->{'id'}($type)\n" if ($self->get_conf('DEBUG'));
     if ($type =~ /^(.*)_nonumber$/) {
       $tree = $target->{'tree_nonumber'} 
         if (defined($target->{'tree_nonumber'}));
@@ -562,6 +577,7 @@ sub command_text($$;$)
   return undef;
 }
 
+# Return the element in the tree that $LABEL refers to.
 sub label_command($$)
 {
   my $self = shift;
@@ -1567,6 +1583,9 @@ my $foot_num;
 my $foot_lines;
 my $NO_NUMBER_FOOTNOTE_SYMBOL = '*';
 
+my $footid_base = 'FOOT';
+my $docid_base = 'DOCF';
+
 # to avoid duplicate names, use a prefix that cannot happen in anchors
 my $target_prefix = "t_h";
 my %footnote_id_numbers;
@@ -1587,14 +1606,16 @@ sub _convert_footnote_command($$$$)
   
   return "($number_in_doc)" if ($self->in_string());
   #print STDERR "FOOTNOTE $command\n";
-  my $docid  = $self->command_id($command);
   my $footid = $self->command_target($command);
+
   # happens for bogus footnotes
   if (!defined($footid)) {
-    die "docid defined but not footid for footnote $foot_num\n"
-      if (defined($docid));
     return '';
   }
+
+  # ID for linking back to the main text from the footnote.
+  my $docid = $footid;
+  $docid =~ s/^$footid_base/$docid_base/;
 
   my $document_filename;
   my $footnote_filename;
@@ -2346,8 +2367,10 @@ sub _convert_heading_command($$$$$)
         $heading_level = 3;
       }
     }
-  } else {
+  } elsif (defined $command->{'level'}) {
     $heading_level = $command->{'level'};
+  } else {
+    $heading_level = Texinfo::Structuring::section_level($command);
   }
 
   my $heading = $self->command_text($command);
@@ -2379,6 +2402,23 @@ sub _convert_heading_command($$$$$)
     }
   }
   $result .= $content if (defined($content));
+
+  if ($cmdname ne 'node'
+      and $self->{'current_node'}
+      and !$self->{'seenmenus'}->{$self->{'current_node'}}) {
+    $self->{'seenmenus'}->{$self->{'current_node'}} = 1;
+    # Generate a menu for this node.
+    my $menu_text;
+    my $menu_node = Texinfo::Structuring::menu_of_node (undef,
+      $command->{'extra'}{'associated_node'});
+    if ($menu_node) {
+      $menu_text = _convert ($self, $menu_node);
+      if ($menu_text) {
+        $result .= $menu_text;
+        $result .= "\n";
+      }
+    }
+  }
   return $result;
 }
 
@@ -2766,6 +2806,9 @@ sub _convert_menu_command($$$$)
     $begin_row = '<tr><td>';
     $end_row = '</td></tr>';
   }
+  if ($self->{'current_node'}) {
+    $self->{'seenmenus'}->{$self->{'current_node'}} = 1;
+  }
   return $self->_attribute_class('table', 'menu')
     ." border=\"0\" cellspacing=\"0\">${begin_row}\n"
       . $content . "${end_row}</table>\n";
@@ -2940,14 +2983,25 @@ sub _convert_enumerate_command($$$$)
   if ($content eq '') {
     return '';
   }
-  if ($command->{'extra'}{'enumerate_specification'}
-      and $command->{'extra'}{'enumerate_specification'} =~ /^\d*$/
-      and $command->{'extra'}{'enumerate_specification'} ne '1') {
-    return "<ol start=\"$command->{'extra'}{'enumerate_specification'}\">\n"
-           . $content . "</ol>\n";
-  } else {
-    return "<ol>\n" . $content . "</ol>\n";
+  my $specification = $command->{'extra'}{'enumerate_specification'};
+  if (defined $specification) {
+    my ($start, $type);
+    if ($specification =~ /^\d*$/ and $specification ne '1') {
+      $start = $specification;
+    } elsif ($specification =~ /^[A-Z]$/) {
+      $start = 1 + ord($specification) - ord('A');
+      $type = 'A';
+    } elsif ($specification =~ /^[a-z]$/) {
+      $start = 1 + ord($specification) - ord('a');
+      $type = 'a';
+    }
+    if (defined $type and defined $start) {
+      return "<ol type=\"$type\" start=\"$start\">\n" . $content . "</ol>\n";
+    } elsif (defined $start) {
+      return "<ol start=\"$start\">\n" . $content . "</ol>\n";
+    }
   }
+  return "<ol>\n" . $content . "</ol>\n";
 }
 
 $default_commands_conversion{'enumerate'} = \&_convert_enumerate_command;
@@ -3398,7 +3452,7 @@ sub _convert_printindex_command($$$$)
   foreach my $letter_entry (@{$self->{'index_entries_by_letter'}->{$index_name}}) {
     my $letter = $letter_entry->{'letter'};
     my $index_element_id = $self->_element_direction($self->{'current_element'},
-                                                     'This', 'id');
+                                                     'This', 'target');
     if (!defined($index_element_id)) {
       $index_element_id = $target_prefix;
     }
@@ -3599,8 +3653,7 @@ foreach my $type ('empty_line_after_command', 'preamble',
             'preamble_before_setfilename',
             'empty_spaces_after_command', 'spaces_at_end',
             'empty_spaces_before_argument', 'empty_spaces_before_paragraph',
-            'empty_spaces_after_close_brace', 
-            'empty_space_at_end_def_bracketed') {
+            'empty_spaces_after_close_brace') {
   $default_types_conversion{$type} = undef;
 }
 
@@ -5030,30 +5083,36 @@ sub _prepare_css($)
   $self->{'css_rule_lines'} = \@css_rule_lines;
 }
 
+# Get the name of a file containing a node, as well as the anchor within
+# that file to link to that node.  Argument is the 'extra' value on
+# an element hash, or something that looks like it.
 sub _node_id_file($$)
 {
   my $self = shift;
   my $node_info = shift;
 
-  my ($target, $id);
-  my $normalized = $node_info->{'normalized'};
+  my $target;
+  my $normalized; 
+  if ($node_info->{'normalized'}) {
+    $normalized = $node_info->{'normalized'};
+  } elsif ($node_info->{'node_content'}) {
+    $normalized = Texinfo::Convert::NodeNameNormalization::normalize_node (
+      { 'contents' => $node_info->{'node_content'} });
+  }
+
   if (defined($normalized)) {
     $target = _normalized_to_id($normalized);
   } else {
     $target = '';
   }
-  if (!$node_info->{'manual_content'}) {
-    $id = $target;
-  }
   # to find out the Top node, one could check $node_info->{'normalized'}
   if (defined($Texinfo::Config::node_target_name)) {
-    ($target, $id) = &$Texinfo::Config::node_target_name($node_info,
-                                                         $target, $id);
+    $target = &$Texinfo::Config::node_target_name($node_info, $target);
   }
 
   my $filename = $self->_node_filename($node_info);
 
-  return ($filename, $target, $id);
+  return ($filename, $target);
 }
 
 sub _new_sectioning_command_target($$)
@@ -5072,60 +5131,35 @@ sub _new_sectioning_command_target($$)
   my $nr=1;
   my $target = $target_base;
   if ($target ne '') {
-    while ($self->{'ids'}->{$target}) {
+    while ($self->{'seen_ids'}->{$target}) {
       $target = $target_base.'-'.$nr;
       $nr++;
       # Avoid integer overflow
       die if ($nr == 0);
     }
   }
-  my $id = $target;
 
-  if ($command->{'extra'}->{'associated_node'} 
-      and $self->get_conf('USE_NODE_TARGET')) {
-    $target 
-     = $self->{'targets'}->{$command->{'extra'}->{'associated_node'}}->{'id'};
-  }
-
-  # These are undefined if the $id is set to ''.
+  # These are undefined if the $target is set to ''.
   my $target_contents;
-  my $id_contents;
   my $target_shortcontents;
-  my $id_shortcontents;
   if ($Texinfo::Common::sectioning_commands{$command->{'cmdname'}}) {
-    # NOTE id is used as base for both id and target.  In comment an example
-    # showing how target could have been used.
-    #my $target_base_contents;
-    #if ($command->{'extra'}->{'associated_node'} 
-    #    and $self->get_conf('USE_NODE_TARGET') {
-    #  $target_base_contents = $target;
-    #} else {
-    # $target_base_contents = $target_base;
-    #}
-    # $target_content =~ s/^g_t//;
-    #$target_contents = 'toc-'.$target_base_contents;
-    if ($id ne '') {
-      my $id_base_contents = $id;
-      $id_base_contents =~ s/^g_t//;
-      $target_contents = 'toc-'.$id_base_contents;
-      my $target_base_contents = $target_base;
+    if ($target ne '') {
+      my $target_base_contents = $target;
       $target_base_contents =~ s/^g_t//;
+      $target_contents = 'toc-'.$target_base_contents;
       my $toc_nr = $nr -1;
-      while ($self->{'ids'}->{$target_contents}) {
+      while ($self->{'seen_ids'}->{$target_contents}) {
         $target_contents = 'toc-'.$target_base_contents.'-'.$toc_nr;
         $toc_nr++;
         # Avoid integer overflow
         die if ($toc_nr == 0);
       }
-      $id_contents = $target_contents;
 
-      # NOTE id is used as a base for id and target.  target could also
-      # have been used, see above for an example.
-      $target_shortcontents = 'stoc-'.$id_base_contents;
+      $target_shortcontents = 'stoc-'.$target_base_contents;
       my $target_base_shortcontents = $target_base;
       $target_base_shortcontents =~ s/^g_t//;
       my $stoc_nr = $nr -1;
-      while ($self->{'ids'}->{$target_shortcontents}) {
+      while ($self->{'seen_ids'}->{$target_shortcontents}) {
         $target_shortcontents = 'stoc-'.$target_base_shortcontents
                                    .'-'.$stoc_nr;
         $stoc_nr++;
@@ -5133,43 +5167,29 @@ sub _new_sectioning_command_target($$)
         die if ($stoc_nr == 0);
       }
     }
-    $id_shortcontents = $target_shortcontents;
   }
 
   if (defined($Texinfo::Config::sectioning_command_target_name)) {
-    ($target, $id, $target_contents, $id_contents,
-     $target_shortcontents, $id_shortcontents, $filename) 
+    ($target, $target_contents,
+     $target_shortcontents, $filename) 
         = &$Texinfo::Config::sectioning_command_target_name($self, 
-                                     $command, $target, $id,
-                                     $target_contents, $id_contents,
-                                     $target_shortcontents, $id_shortcontents,
+                                     $command, $target,
+                                     $target_contents,
+                                     $target_shortcontents,
                                      $filename);
   }
   if ($self->get_conf('DEBUG')) {
-    print STDERR "Register $command->{'cmdname'} $target, $id\n";
+    print STDERR "Register $command->{'cmdname'} $target\n";
   }
   $self->{'targets'}->{$command} = {
                            'target' => $target,
-                           'id' => $id,
                            'section_filename' => $filename,
                           };
-  $self->{'ids'}->{$id} = $command;
-  if (defined($id_contents)) {
-    $self->{'targets'}->{$command}->{'contents_id'} = $id_contents;
-    $self->{'ids'}->{$id_contents} = $command;
-  } else {
-    $self->{'targets'}->{$command}->{'contents_id'} = '';
-  }
+  $self->{'seen_ids'}->{$target} = 1;
   if (defined($target_contents)) {
     $self->{'targets'}->{$command}->{'contents_target'} = $target_contents;
   } else {
     $self->{'targets'}->{$command}->{'contents_target'} = '';
-  }
-  if (defined($id_shortcontents)) {
-    $self->{'targets'}->{$command}->{'shortcontents_id'} = $id_shortcontents;
-    $self->{'ids'}->{$id_shortcontents} = $command;
-  } else {
-    $self->{'targets'}->{$command}->{'shortcontents_id'} = '';
   }
   if (defined($target_shortcontents)) {
     $self->{'targets'}->{$command}->{'shortcontents_target'} 
@@ -5196,7 +5216,7 @@ sub _set_root_commands_targets_node_files($$)
 
   if ($self->{'labels'}) {
     foreach my $root_command (values(%{$self->{'labels'}})) {
-      my ($filename, $target, $id) = $self->_node_id_file($root_command->{'extra'});
+      my ($filename, $target) = $self->_node_id_file($root_command->{'extra'});
       $filename .= '.'.$self->get_conf('NODE_FILE_EXTENSION') 
         if (defined($self->get_conf('NODE_FILE_EXTENSION')) 
             and $self->get_conf('NODE_FILE_EXTENSION') ne '');
@@ -5208,9 +5228,8 @@ sub _set_root_commands_targets_node_files($$)
         print STDERR "Register label($root_command) $target, $filename\n";
       }
       $self->{'targets'}->{$root_command} = {'target' => $target, 
-                                             'id' => $id,
                                              'node_filename' => $filename};
-      $self->{'ids'}->{$id} = $root_command;
+      $self->{'seen_ids'}->{$target} = 1;
     }
   }
 
@@ -5525,8 +5544,7 @@ sub _prepare_special_elements($$)
     $self->{'special_elements_types'}->{$type} = $element;
     push @$special_elements, $element;
 
-    my $id = $self->{'misc_elements_targets'}->{$type};
-    my $target = $id;
+    my $target = $self->{'misc_elements_targets'}->{$type};
     my $default_filename;
     if ($self->get_conf('SPLIT') or !$self->get_conf('MONOLITHIC')) {
       $default_filename = $self->{'document_name'}.
@@ -5538,11 +5556,11 @@ sub _prepare_special_elements($$)
 
     my $filename;
     if (defined($Texinfo::Config::special_element_target_file_name)) {
-      ($target, $id, $filename) 
+      ($target, $filename) 
                  = &$Texinfo::Config::special_element_target_file_name(
                                                             $self,
                                                             $element,
-                                                            $target, $id,
+                                                            $target,
                                                             $default_filename);
     }
     $filename = $default_filename if (!defined($filename));
@@ -5550,7 +5568,7 @@ sub _prepare_special_elements($$)
     if ($self->get_conf('DEBUG')) {
       my $fileout = $filename;
       $fileout = 'UNDEF' if (!defined($fileout));
-      print STDERR "Add special $element $type: target $target, id $id,\n".
+      print STDERR "Add special $element $type: target $target,\n".
         "    filename $fileout\n" 
     }
     if ($self->get_conf('SPLIT') or !$self->get_conf('MONOLITHIC')
@@ -5559,11 +5577,10 @@ sub _prepare_special_elements($$)
       $self->_set_element_file($element, $filename);
       print STDERR "NEW page for $type ($filename)\n" if ($self->get_conf('DEBUG'));
     }
-    $self->{'targets'}->{$element} = {'id' => $id,
-                                      'target' => $target,
+    $self->{'targets'}->{$element} = {'target' => $target,
                                       'misc_filename' => $filename,
                                      };
-    $self->{'ids'}->{$id} = $element;
+    $self->{'seen_ids'}->{$target} = 1;
   }
   if ($self->get_conf('FRAMES')) {
     foreach my $type (keys(%{$self->{'frame_pages_file_string'}})) {
@@ -5577,13 +5594,13 @@ sub _prepare_special_elements($$)
                                }};
 
       # only the filename is used
-      my ($target, $id, $filename);
+      my ($target, $filename);
       if (defined($Texinfo::Config::special_element_target_file_name)) {
-      ($target, $id, $filename) 
+        ($target, $filename) 
                  = &$Texinfo::Config::special_element_target_file_name(
                                                             $self,
                                                             $element,
-                                                            $target, $id,
+                                                            $target,
                                                             $default_filename);
       }
       $filename = $default_filename if (!defined($filename));
@@ -5624,22 +5641,20 @@ sub _prepare_contents_elements($)
         my $element = {'type' => 'element',
                        'extra' => {'special_element' => $type}};
         $self->{'special_elements_types'}->{$type} = $element;
-        my $id = $self->{'misc_elements_targets'}->{$type};
-        my $target = $id;
+        my $target = $self->{'misc_elements_targets'}->{$type};
         my $filename;
         if (defined($Texinfo::Config::special_element_target_file_name)) {
-          ($target, $id, $filename)
+          ($target, $filename)
                = &$Texinfo::Config::special_element_target_file_name(
                                                           $self,
                                                           $element,
-                                                          $target, $id,
+                                                          $target,
                                                           $default_filename);
         }
         $filename = $default_filename if (!defined($filename));
-        print STDERR "Add content $element $type: target $target, id $id,\n".
+        print STDERR "Add content $element $type: target $target,\n".
            "    filename $filename\n" if ($self->get_conf('DEBUG'));
-        $self->{'targets'}->{$element} = {'id' => $id,
-                                          'target' => $target,
+        $self->{'targets'}->{$element} = {'target' => $target,
                                           'misc_filename' => $filename,
                                           'filename' => $filename,
                                           };
@@ -5715,10 +5730,8 @@ sub _prepare_index_entries($)
     $no_unidecode = 1 if (defined($self->get_conf('USE_UNIDECODE'))
                           and !$self->get_conf('USE_UNIDECODE'));
 
-    my ($index_names, $merged_indices)
-       = $self->{'parser'}->indices_information();
+    my $index_names = $self->{'parser'}->indices_information();
     $self->{'index_names'} = $index_names;
-    #print STDERR "IIII ($index_names, $merged_indices, $index_entries)\n";
     my $merged_index_entries 
         = Texinfo::Structuring::merge_indices($index_names);
     $self->{'index_entries_by_letter'}
@@ -5740,25 +5753,19 @@ sub _prepare_index_entries($)
         my $target_base = "index-" . $region .$normalized_index;
         my $nr=1;
         my $target = $target_base;
-        while ($self->{'ids'}->{$target}) {
+        while ($self->{'seen_ids'}->{$target}) {
           $target = $target_base.'-'.$nr;
           $nr++;
           # Avoid integer overflow
           die if ($nr == 0);
         }
-        my $id = $target;
-        $self->{'ids'}->{$target} = $index_entry->{'command'};
-        $self->{'targets'}->{$index_entry->{'command'}} = { 'id' => $id,
-                                                          'target' => $target,
+        $self->{'seen_ids'}->{$target} = 1;
+        $self->{'targets'}->{$index_entry->{'command'}} = {'target' => $target,
                                                         };
-        #print STDERR "Enter $index_entry $index_entry->{'command'}: $id\n";
       }
     }
   }
 }
-
-my $footid_base = 'FOOT';
-my $docid_base = 'DOCF';
 
 sub _prepare_footnotes($)
 {
@@ -5771,19 +5778,17 @@ sub _prepare_footnotes($)
       my $nr = $footnote_nr;
       my $footid = $footid_base.$nr;
       my $docid = $docid_base.$nr;
-      while ($self->{'ids'}->{$docid} or $self->{'ids'}->{$footid}) {
+      while ($self->{'seen_ids'}->{$docid} or $self->{'seen_ids'}->{$footid}) {
         $nr++;
         $footid = $footid_base.$nr;
         $docid = $docid_base.$nr;
         # Avoid integer overflow
         die if ($nr == 0);
       }
-      $self->{'ids'}->{$footid} = $footnote;
-      $self->{'ids'}->{$docid} = $footnote;
-      $self->{'targets'}->{$footnote} = { 'id' => $docid,
-                                          'target' => $footid,
-                                        };
-      print STDERR "Enter footnote $footnote: id $docid, target $footid, nr $footnote_nr\n"
+      $self->{'seen_ids'}->{$footid} = 1;
+      $self->{'seen_ids'}->{$docid} = 1;
+      $self->{'targets'}->{$footnote} = { 'target' => $footid };
+      print STDERR "Enter footnote $footnote: target $footid, nr $footnote_nr\n"
        .Texinfo::Convert::Texinfo::convert($footnote)."\n"
         if ($self->get_conf('DEBUG'));
     }
@@ -5824,7 +5829,7 @@ sub _external_node_href($$$$)
   }
   
   #print STDERR "external_node: ".join('|', keys(%$external_node))."\n";
-  my ($target_filebase, $target, $id) = $self->_node_id_file($external_node);
+  my ($target_filebase, $target) = $self->_node_id_file($external_node);
 
   my $xml_target = _normalized_to_id($target);
 
@@ -5938,7 +5943,6 @@ my %valid_types = (
   'text' => 1,
   'tree' => 1,
   'target' => 1,
-  'id' => 1,
   'node' => 1,
 );
 
@@ -6023,7 +6027,7 @@ sub _element_direction($$$$;$)
 
   if (exists($target->{$type})) {
     return $target->{$type};
-  } elsif ($type eq 'id' or $type eq 'target') {
+  } elsif ($type eq 'target') {
     return undef;
   } elsif ($command) {
     return $self->command_text($command, $type);
@@ -6087,7 +6091,7 @@ sub _default_contents($$;$$)
         } else {
           $href = $self->command_href($section, $filename);
         }
-        my $toc_id = $self->command_contents_id($section, $cmdname);
+        my $toc_id = $self->command_contents_target($section, $cmdname);
         if ($text ne '') {
           # no indenting for shortcontents
           $result .= (' ' x (2*($section->{'level'} - $min_root_level))) 
@@ -6211,7 +6215,7 @@ sub _file_header_informations($$)
         and $command_string ne $self->{'title_string'}) {
       print STDERR "DO <title>\n"
         if ($self->get_conf('DEBUG'));
-      my $title_tree = $self->gdt('{title}: {element_text}', 
+      my $title_tree = $self->gdt('{element_text} ({title})', 
                    { 'title' => $self->{'title_tree'}, 
                    'element_text' => $self->command_text($command, 'tree')});
       $title = $self->convert_tree_new_formatting_context(
@@ -6324,13 +6328,13 @@ sub _default_begin_file($$$)
 <html>
 $copying_comment<!-- Created by $program_and_version, $program_homepage -->
 <head>
+$encoding
 <title>$title</title>
 
 $description
 <meta name=\"keywords\" content=\"$title\">
 <meta name=\"resource-type\" content=\"document\">
 <meta name=\"distribution\" content=\"global\">${generator}$date
-$encoding
 ${links}$css_lines
 $extra_head
 </head>
@@ -6362,13 +6366,13 @@ sub _default_node_redirection_page($$)
 $copying_comment<!-- Created by $program_and_version, $program_homepage -->
 <!-- This file redirects to the location of a node or anchor -->
 <head>
+$encoding
 <title>$title</title>
 
 $description
 <meta name=\"keywords\" content=\"$title\">
 <meta name=\"resource-type\" content=\"document\">
 <meta name=\"distribution\" content=\"global\">${generator}$date
-$encoding
 $css_lines
 <meta http-equiv=\"Refresh\" content=\"0; url=$href\">
 $extra_head
@@ -7086,7 +7090,8 @@ sub output($$)
       # NOTE 'node_filename' is not used for Top, so the other manual
       # must use the same convention to get it right.  We avoid doing
       # also 'node_filename' to avoid unneeded redirection files.
-      if ($node->{'extra'}->{'normalized'} eq 'Top' 
+      if ($node->{'extra'} and $node->{'extra'}->{'normalized'}
+          and $node->{'extra'}->{'normalized'} eq 'Top' 
           and defined($self->get_conf('TOP_NODE_FILE_TARGET'))) {
         my $extension = '';
         $extension = "." . $self->get_conf('NODE_FILE_EXTENSION')
@@ -7172,7 +7177,7 @@ sub output($$)
         $parsed_new_node = undef;
       }
       if ($parsed_new_node and $parsed_old_node) {
-        my ($filename, $target, $id) = $self->_node_id_file($parsed_old_node);
+        my ($filename, $target) = $self->_node_id_file($parsed_old_node);
         $filename .= '.'.$self->get_conf('NODE_FILE_EXTENSION') 
           if (defined($self->get_conf('NODE_FILE_EXTENSION')) 
             and $self->get_conf('NODE_FILE_EXTENSION') ne '');
@@ -7240,6 +7245,11 @@ sub _parse_node_and_warn_external($$$$$)
          $node_texi), $line_nr);
 
     } else {
+      if ($node_normalized_result->{'node_content'}) {
+        $node_normalized_result->{'normalized'} =
+          Texinfo::Convert::NodeNameNormalization::normalize_node(
+            {'contents' => $node_normalized_result->{'node_content'}});
+      }
       return $node_normalized_result;
     }
   }
@@ -7378,6 +7388,11 @@ sub _convert($$;$)
     # already converted to html, keep it as is
     if ($root->{'type'} and $root->{'type'} eq '_converted') {
       return $root->{'text'};
+    }
+    if ($root->{'type'} and $root->{'type'} eq 'untranslated') {
+      my $translated = $self->gdt($root->{'text'});
+      my $result = $self->_convert($translated);
+      return $result;
     }
     my $result = &{$self->{'types_conversion'}->{'text'}} ($self, 
                                                       $root->{'type'},
@@ -7546,6 +7561,9 @@ sub _convert($$;$)
         pop @{$self->{'document_context'}};
       }
 
+      if ($root->{'cmdname'} eq 'node') {
+        $self->{'current_node'} = $root;
+      }
       # args are formatted, now format the command itself
       my $result;
       if ($args_formatted) {
@@ -7718,7 +7736,7 @@ sub _set_variables_texi2html()
 1;
 
 __END__
-# $Id: HTML.pm 7353 2016-09-10 13:03:54Z gavin $
+# $Id: HTML.pm 7942 2017-08-28 20:42:04Z gavin $
 # Automatically generated from maintain/template.pod
 
 =head1 NAME

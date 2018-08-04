@@ -1,5 +1,5 @@
 #! /usr/bin/perl
-# $Id: pod2texi.pl 6906 2016-01-01 18:33:45Z karl $
+# $Id: pod2texi.pl 7481 2016-10-30 16:08:48Z gavin $
 # pod2texi -- convert Pod to Texinfo.
 # Copyright 2012, 2013, 2014, 2015, 2016 Free Software Foundation, Inc.
 # 
@@ -82,7 +82,7 @@ BEGIN
 use Pod::Simple::Texinfo;
 use Texinfo::Common;
 use Texinfo::Parser;
-use Texinfo::Structuring;
+use Texinfo::Transformations;
 
 {
 # A fake package to be able to use Pod::Simple::PullParser without generating
@@ -247,12 +247,12 @@ sub _fix_texinfo_tree($$$$;$)
   if ($fill_gaps_in_sectioning) {
     my ($added_sections, $added_nodes);
     ($tree->{'contents'}, $added_sections)
-      = Texinfo::Structuring::fill_gaps_in_sectioning($tree);
+      = Texinfo::Transformations::fill_gaps_in_sectioning($tree);
     # there should already be nodes associated with other sections.  Therefore
     # new nodes should only be created for the $added_sections.
     if ($section_nodes) {
       ($tree->{'contents'}, $added_nodes)
-        = Texinfo::Structuring::insert_nodes_for_sectioning_commands($parser, $tree);
+        = Texinfo::Transformations::insert_nodes_for_sectioning_commands($parser, $tree);
       if ($self and $self->texinfo_sectioning_base_level > 0) {
         # prepend the manual name
         foreach my $node (@$added_nodes) {
@@ -265,7 +265,7 @@ sub _fix_texinfo_tree($$$$;$)
           $node_texi =~ s/^\s*(\@asis\{\})?\s*//;
           # complete with manual name
           my $complete_node_name = $self->_node_name($node_texi);
-          # now recreate node arg, similar with Texinfo::Structuring::_new_node
+          # now recreate node arg, similar with Texinfo::Transformations::_new_node
           my $tree = Texinfo::Parser::parse_texi_text(undef, $complete_node_name);
           my $node_arg = $node->{'args'}->[0];
           $node_arg->{'contents'} = $tree->{'contents'};
@@ -290,9 +290,9 @@ sub _fix_texinfo_tree($$$$;$)
     }
   }
   my $structure = Texinfo::Structuring::sectioning_structure($parser, $tree);
-  Texinfo::Structuring::complete_tree_nodes_menus($parser, $tree) 
+  Texinfo::Transformations::complete_tree_nodes_menus($parser, $tree) 
     if ($section_nodes);
-  Texinfo::Structuring::regenerate_master_menu($parser) if ($do_master_menu);
+  Texinfo::Transformations::regenerate_master_menu($parser) if ($do_master_menu);
   return ($parser, $tree);
 }
 

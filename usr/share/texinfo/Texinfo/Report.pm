@@ -54,7 +54,6 @@ use Texinfo::Parser;
 sub errors($)
 {
   my $self = shift;
-  #print STDERR "REPORT ERRORS $self $self->{'errors_warnings'}\n";
   return ($self->{'errors_warnings'}, $self->{'error_nrs'});
 }
 
@@ -111,13 +110,12 @@ sub line_warn($$$)
 }
 
 # format a line error
-sub line_error($$$;$)
+sub line_error($$$)
 {
   my $self = shift;
   my $text = shift;
   chomp ($text);
   my $line_number = shift;
-  my $continuation = shift;
   return if ($self->{'ignore_notice'});
   if (defined($line_number)) {
     my $file = $line_number->{'file_name'};
@@ -129,13 +127,11 @@ sub line_error($$$;$)
        if ($line_number->{'macro'} ne '');
     my $error_text = "$file:$line_number->{'line_nr'}: $text$macro_text\n";
     warn "$error_text" if ($self->get_conf('DEBUG'));
-    my $type = 'error';
-    $type = 'error continuation' if ($continuation);
     push @{$self->{'errors_warnings'}},
-         { 'type' => $type, 'text' => $text, 'error_line' => $error_text,
+         { 'type' => 'error', 'text' => $text, 'error_line' => $error_text,
            %{$line_number} };
   }
-  $self->{'error_nrs'}++ unless ($continuation);
+  $self->{'error_nrs'}++;
 }
 
 sub document_warn($$)
@@ -248,20 +244,13 @@ sub _encode_i18n_string($$)
 # Return a parsed Texinfo tree
 sub gdt($$;$$)
 {
-  my $self = shift;
-  my $message = shift;
-  my $context = shift;
-  my $type = shift;
+  my ($self, $message, $context, $type) = @_;
 
   my $re = join '|', map { quotemeta $_ } keys %$context
       if (defined($context) and ref($context));
 
   my $saved_env_LC_ALL = $ENV{'LC_ALL'};
   my $saved_LANGUAGE = $ENV{'LANGUAGE'};
-#  my $saved_LANG = $ENV{'LANG'};
-#  my $saved_LC_ALL = POSIX::setlocale (LC_ALL);
-#  my $saved_LC_CTYPE = POSIX::setlocale (LC_CTYPE);
-#  my $saved_LC_MESSAGES = POSIX::setlocale (LC_MESSAGES);
 
   Locale::Messages::textdomain($strings_textdomain);
 
@@ -342,22 +331,6 @@ sub gdt($$;$$)
   } else {
     $ENV{'LC_ALL'} = $saved_env_LC_ALL;
   }
-#  my $new_LC_ALL = POSIX::setlocale (LC_ALL);
-#  my $new_LC_CTYPE = POSIX::setlocale (LC_CTYPE);
-#  my $new_LC_MESSAGES = POSIX::setlocale (LC_MESSAGES);
-#  my $new_env_LC_ALL = 'UNDEF';
-#  $new_env_LC_ALL = $ENV{'LC_ALL'} if defined($ENV{'LC_ALL'});
-#  my $saved_str_env_LC_ALL = $saved_env_LC_ALL;
-#  $saved_str_env_LC_ALL = 'UNDEF' if (!defined($saved_str_env_LC_ALL));
-
-#  print STDERR "  LC_ALL $saved_LC_ALL $new_LC_ALL ENV: $saved_str_env_LC_ALL $new_env_LC_ALL\n";
-#  print STDERR "  LC_CTYPE $saved_LC_CTYPE $new_LC_CTYPE\n";
-#  print STDERR "  LC_MESSAGES $saved_LC_MESSAGES $new_LC_MESSAGES\n";
-#  my $new_LANG = 'UNDEF';
-#  $new_LANG = $ENV{'LANG'} if defined($ENV{'LANG'});
-#  my $saved_str_LANG = $saved_LANG;
-#  $saved_str_LANG = 'UNDEF' if (!defined($saved_str_LANG));
-#  print STDERR "  LANG $saved_str_LANG $new_LANG\n";
 
   if ($type and $type eq 'translated_text') {
     if (defined($re)) {
@@ -403,19 +376,14 @@ sub gdt($$;$$)
         if (defined($current_parser->{$duplicated_conf}));
     }
   }
+  $parser_conf->{'in_gdt'} = 1;
   #my $parser = Texinfo::Parser::parser($parser_conf);
   my $parser = Texinfo::Parser::simple_parser($parser_conf);
   if ($parser->{'DEBUG'}) {
     print STDERR "GDT $translation_result\n";
   }
 
-  my $tree;
-  # Right now this is not used anywhere.
-  if ($type and $type eq 'translated_paragraph') {
-    $tree = $parser->parse_texi_text($translation_result);
-  } else {
-    $tree = $parser->parse_texi_line($translation_result);
-  }
+  my $tree = $parser->parse_texi_line($translation_result);
   $tree = _substitute ($tree, $context);
   return $tree;
 }
@@ -429,9 +397,11 @@ sub _substitute_element_array ($$) {
       my $name = $_->{'type'};
       $name =~ s/^_//;
       if (ref($context->{$name}) eq 'HASH') {
-        ( $context->{$name} );
+        $context->{$name};
       } elsif (ref($context->{$name}) eq 'ARRAY') {
         @{$context->{$name}};
+      } else {
+        (); # undefined - shouldn't happen?
       }
     } else {
       _substitute($_, $context);
@@ -550,11 +520,6 @@ In that case the string is not considered to be Texinfo, a plain string
 that is returned after translation and substitution.  The substitutions
 may only be strings in that case.
 
-=item translated_paragraph
-
-In that case, the parsing of the Texinfo string is done in a 
-context of a paragraph, not in the context of an inline text.
-
 =back
 
 For example in the following call, the string 
@@ -593,8 +558,7 @@ the following keys:
 
 =item type
 
-May be C<warning>, C<error>, or C<error continuation> (for a continuation of
-an error line).
+May be C<warning>, or C<error>.
 
 =item text
 
@@ -622,15 +586,14 @@ the error or warning.
 
 =item $converter->line_warn($text, $line_nr)
 
-=item $converter->line_error($text, $line_nr, $continuation)
+=item $converter->line_error($text, $line_nr)
 
 Register a warning or an error.  The I<$text> is the text of the
 error or warning.  The optional I<$line_nr> holds the information
 on the error or warning location.  It is associated with the I<line_nr> 
 key of Texinfo tree elements as described in L<Texinfo::Parser/line_nr>
 for the @-commands.  The I<$line_nr> structure is described in L<errors|($error_warnings_list, $error_count) = errors ($converter)>
-above.  If I<$continuation> is set, the line is an error message continuation
-line and not a new error.
+above.
 
 =item $converter->document_warn($text)
 

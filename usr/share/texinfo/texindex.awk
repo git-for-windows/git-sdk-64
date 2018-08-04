@@ -150,7 +150,7 @@ function version()
   printf _"Copyright (C) %s Free Software Foundation, Inc.\n\
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\
 This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n", "2016";
+There is NO WARRANTY, to the extent permitted by law.\n", "2017";
 
   exit EXIT_SUCCESS
 }
@@ -161,7 +161,7 @@ BEGIN {
   EXIT_SUCCESS = 0
   EXIT_FAILURE = 1
   
-  Texindex_version = "6.3"
+  Texindex_version = "6.5"
   if (! Invocation_name) {
     # provide fallback in case it's not passed in.
     Invocation_name = "texindex"

@@ -1,4 +1,4 @@
-# $Id: Converter.pm 7353 2016-09-10 13:03:54Z gavin $
+# $Id: Converter.pm 7942 2017-08-28 20:42:04Z gavin $
 # Converter.pm: Common code for Converters.
 #
 # Copyright 2011, 2012, 2013, 2014, 2015, 2016 Free Software Foundation, Inc.
@@ -60,7 +60,7 @@ xml_accents
 @EXPORT = qw(
 );
 
-$VERSION = '6.2';
+$VERSION = '6.5';
 
 my %defaults = (
   'ENABLE_ENCODING'      => 1,
@@ -101,7 +101,6 @@ our %all_converters_defaults = (
   'DEBUG'                => 0,
   'TEST'                 => 0,
   'translated_commands'  => {'error' => 'error@arrow{}',},
-  'TEXINFO_COLUMN_FOR_DESCRIPTION' => 32, # same as emacs
 );
 
 # For translation of in document string.
@@ -571,6 +570,9 @@ sub _node_filename($$)
     } else {
       $filename = $node_info->{'normalized'};
     }
+  } elsif (defined($node_info->{'node_content'})) { 
+    $filename = Texinfo::Convert::NodeNameNormalization::normalize_node (
+             { 'contents' => $node_info->{'node_content'} });
   } else {
     $filename = '';
   }
@@ -1134,6 +1136,19 @@ sub _collect_leading_trailing_spaces_arg($$)
   return @result;
 }
 
+sub _register_command_arg($$$)
+{
+  my ($self, $current, $type) = @_;
+
+  my @contents = @{$current->{'contents'}};
+  Texinfo::Common::trim_spaces_comment_from_content(\@contents);
+  if (scalar(@contents)) {
+    push @{$current->{'parent'}->{'extra'}->{$type}}, \@contents;
+  } else {
+    push @{$current->{'parent'}->{'extra'}->{$type}}, undef;
+  }
+}
+
 sub _table_item_content_tree($$$)
 {
   my $self = shift;
@@ -1158,7 +1173,7 @@ sub _table_item_content_tree($$$)
                'contents' => $contents,
                'parent' => $command,};
     $command->{'args'} = [$arg];
-    $self->Texinfo::Parser::_register_command_arg($arg, 'brace_command_contents');
+    _register_command_arg($self, $arg, 'brace_command_contents');
     $contents = [$command];
   }
   $converted_tree->{'contents'} = $contents;

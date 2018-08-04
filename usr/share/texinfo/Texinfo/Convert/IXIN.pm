@@ -54,7 +54,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.2';
+$VERSION = '6.5';
 
 my $ixin_version = 1;
 
@@ -619,8 +619,7 @@ sub output_ixin($$)
   my %dts_information;
 
   if ($self->{'parser'}) {
-    my ($index_names, $merged_indices)
-       = $self->{'parser'}->indices_information();
+    my $index_names = $self->{'parser'}->indices_information();
     my $merged_index_entries
         = Texinfo::Structuring::merge_indices($index_names);
     my $entries 

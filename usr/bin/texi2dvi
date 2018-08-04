@@ -1,10 +1,10 @@
 #! /bin/sh
 # texi2dvi --- produce DVI (or PDF) files from Texinfo (or (La)TeX) sources.
-# $Id: texi2dvi 7353 2016-09-10 13:03:54Z gavin $
+# $Id: texi2dvi 7906 2017-07-05 17:56:51Z gavin $
 #
 # Copyright 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001, 2002,
 # 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013,
-# 2014, 2015, 2016 Free Software Foundation, Inc.
+# 2014, 2015, 2016, 2017 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ set -e
 : ${SED=sed}
 
 # This string is expanded automatically when this file is checked out.
-rcs_revision='$Revision: 7353 $'
+rcs_revision='$Revision: 7906 $'
 rcs_version=`set - $rcs_revision; echo $2`
 program=`echo $0 | $SED -e 's!.*/!!'`
 
@@ -219,9 +219,9 @@ EOF
 version ()
 {
   cat <<EOF
-texi2dvi (GNU Texinfo 6.3) $rcs_version
+texi2dvi (GNU Texinfo 6.5) $rcs_version
 
-Copyright (C) 2016 Free Software Foundation, Inc.
+Copyright (C) 2017 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
@@ -836,6 +836,15 @@ xref_files_changed ()
     fi
   done
 
+  secondary_xref_files=`sorted_index_files`
+  verbose "Secondary xref files = $secondary_xref_files"
+  for this_file in $secondary_xref_files; do
+    if test -f $this_file; then :; else
+      verbose "$this_file missing ..."
+      return 0
+    fi
+  done
+
   # No change.
   return 1
 }
@@ -1013,8 +1022,9 @@ run_bibtex ()
 }
 
 
-# filter_file PREDICATE - Print the names of files in xref_files_new
-#                         that match PREDICATE.
+# filter_file PREDICATE - Go through the list of files in xref_files_new
+# and use PREDICATE on each one to optionally print it or print other files 
+# based on the filename.
 filter_files ()
 {
   test -n "$xref_files_new" || return 0
@@ -1630,13 +1640,18 @@ all_files ()
 {
   echo $in_noext.log
   echo $in_noext.fls
-  filter_files add_all_filter
+  echo $xref_files_new
+  echo `sorted_index_files`
 }
 
-# Echo FILE and any generated file based thereon.
-add_all_filter ()
+sorted_index_files ()
 {
-  echo $1
+  filter_files sorted_index_filter
+}
+
+# Print the name of a generated file based on FILE if there is one.
+sorted_index_filter ()
+{
   case $in_lang in
     texinfo)
       # texindex: texinfo.cp -> texinfo.cps
@@ -1644,13 +1659,20 @@ add_all_filter ()
         echo $1s
       fi
       ;;
+  esac
+}
+
+
+# Not currently used - use with filter_files to add secondary files created by 
+# bibtex
+bibtex_secondary_files ()
+{
+  case $in_lang in
     latex)
       if test -n "`aux_file_p $1`"; then
         # bibtex: *.aux -> *.bbl and *.blg.
         echo $1 | $SED 's/^\(.*\)\.aux$/\1.bbl/'
         echo $1 | $SED 's/^\(.*\)\.aux$/\1.blg/'
-        # -recorder: .fls
-        echo $1 | $SED 's/^\(.*\)\.aux$/\1.fls/'
       fi
       ;;
   esac

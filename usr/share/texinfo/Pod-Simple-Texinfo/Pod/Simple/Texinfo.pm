@@ -34,6 +34,7 @@ use Texinfo::Convert::Texinfo;
 use Texinfo::Convert::TextContent;
 use Texinfo::Common qw(protect_comma_in_tree protect_first_parenthesis
                        protect_hashchar_at_line_beginning);
+use Texinfo::Transformations;
 
 use vars qw(
   @ISA $VERSION
@@ -292,7 +293,7 @@ sub _reference_to_text_in_texi($)
 {
   my $texinfo = shift;
   my $tree = parse_texi_text(undef, $texinfo);
-  Texinfo::Structuring::reference_to_arg_in_tree(undef, $tree);
+  Texinfo::Transformations::reference_to_arg_in_tree(undef, $tree);
   return Texinfo::Convert::Texinfo::convert($tree);
 }  
 

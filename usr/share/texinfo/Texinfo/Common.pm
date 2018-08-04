@@ -1,4 +1,4 @@
-# $Id: Common.pm 7353 2016-09-10 13:03:54Z gavin $
+# $Id: Common.pm 7942 2017-08-28 20:42:04Z gavin $
 # Common.pm: definition of commands. Common code of other Texinfo modules.
 #
 # Copyright 2010, 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
@@ -71,7 +71,7 @@ valid_tree_transformation
 @EXPORT = qw(
 );
 
-$VERSION = '6.2';
+$VERSION = '6.5';
 
 # i18n
 sub N__($)
@@ -122,6 +122,7 @@ our %default_parser_state_configuration = (
   'labels'          => {},    # keys are normalized label names, as described
                               # in the `HTML Xref' node.  Value should be
                               # a node/anchor or float in the tree.
+  'targets' => [],            # array of elements used to build 'labels'
   'macros' => {},             # the key is the user-defined macro name.  The 
                               # value is the reference on a macro element 
                               # as obtained by parsing the @macro
@@ -133,7 +134,8 @@ our %default_parser_state_configuration = (
                               # argument.  A Texinfo tree may also be used.
   'info' => {
     'novalidate' => 0,        # same as setting @novalidate.
-  }
+  },
+  'in_gdt' => 0 # whether we are being called by gdt
 );
 
 # customization options
@@ -203,8 +205,9 @@ my @obsolete_variables = ('TOP_HEADING_AT_BEGINNING', 'USE_SECTIONS',
   'IDX_SUMMARY', 'I18N_PERL_HASH', 'USE_UNICODE', 'USE_NLS',
   'USE_UP_FOR_ADJACENT_NODES', 'SEPARATE_DESCRIPTION', 
   'NEW_CROSSREF_STYLE', 'SHORT_REF', 'IGNORE_PREAMBLE_TEXT',
-  'OUT_ENCODING', 
-  'IN_ENCODING', 'DEFAULT_ENCODING');
+  'OUT_ENCODING', 'IN_ENCODING', 'DEFAULT_ENCODING',
+  'MACRO_BODY_IGNORES_LEADING_SPACE', 'INLINE_INSERTCOPYING'
+);
 
 my @variable_settables_not_used = ('COMPLETE_IMAGE_PATHS', 'TOC_FILE',
   'SPLIT_INDEX');
@@ -220,7 +223,7 @@ my @variable_string_settables = (
   'L2H_HTML_VERSION', 'EXTERNAL_DIR', 'USE_ISO',
   'VERTICAL_HEAD_NAVIGATION', 'INLINE_CONTENTS', 'NODE_FILE_EXTENSION',
   'NO_CSS', 'INLINE_CSS_STYLE', 'USE_TITLEPAGE_FOR_TITLE',
-  'SIMPLE_MENU', 'EXTENSION', 'INLINE_INSERTCOPYING', 'USE_NUMERIC_ENTITY',
+  'SIMPLE_MENU', 'EXTENSION', 'USE_NUMERIC_ENTITY',
   'ENABLE_ENCODING_USE_ENTITY', 'ICONS',
   'USE_UNIDECODE', 'DATE_IN_HEADER', 'OPEN_QUOTE_SYMBOL',
   'CLOSE_QUOTE_SYMBOL', 'TOP_NODE_UP', 'TOP_NODE_UP_URL', 'TOP_NODE_FILE',
@@ -253,10 +256,10 @@ my @variable_string_settables = (
   'KEEP_TOP_EXTERNAL_REF',
   'TEXI2HTML', 'IMAGE_LINK_PREFIX', 'FIX_TEXINFO',
   'TREE_TRANSFORMATIONS', 'BASEFILENAME_LENGTH',
-  'TEXTCONTENT_COMMENT', 'XREF_USE_FLOAT_LABEL', 'XREF_USE_NODE_NAME_ARG',
-  'MACRO_BODY_IGNORES_LEADING_SPACE', 'CHECK_HTMLXREF',
-  'TEXINFO_DTD_VERSION', 'TEXINFO_COLUMN_FOR_DESCRIPTION',
-  'TEXINFO_OUTPUT_FORMAT', 'INFO_SPECIAL_CHARS_WARNING',
+  'TEXTCONTENT_COMMENT', 'XREF_USE_FLOAT_LABEL',
+  'XREF_USE_NODE_NAME_ARG', 'CHECK_HTMLXREF',
+  'TEXINFO_DTD_VERSION', 'TEXINFO_OUTPUT_FORMAT',
+  'INFO_SPECIAL_CHARS_WARNING',
   'INDEX_SPECIAL_CHARS_WARNING', 'INFO_SPECIAL_CHARS_QUOTE',
   'HTMLXREF'
 );
@@ -696,13 +699,13 @@ our %def_map = (
     # shortcuts
     'defun',         {'deffn'     => gdt('Function')},
     'defmac',        {'deffn'     => gdt('Macro')},
-    'defspec',       {'deffn'     => '{'.gdt('Special Form').'}'},
+    'defspec',       {'deffn'     => gdt('Special Form')},
     'defvar',        {'defvr'     => gdt('Variable')},
-    'defopt',        {'defvr'     => '{'.gdt('User Option').'}'},
+    'defopt',        {'defvr'     => gdt('User Option')},
     'deftypefun',    {'deftypefn' => gdt('Function')},
     'deftypevar',    {'deftypevr' => gdt('Variable')},
-    'defivar',       {'defcv'     => '{'.gdt('Instance Variable').'}'},
-    'deftypeivar',   {'deftypecv' => '{'.gdt('Instance Variable').'}'},
+    'defivar',       {'defcv'     => gdt('Instance Variable')},
+    'deftypeivar',   {'deftypecv' => gdt('Instance Variable')},
     'defmethod',     {'defop'     => gdt('Method')},
     'deftypemethod', {'deftypeop' => gdt('Method')},
 );
@@ -1140,9 +1143,10 @@ sub expand_verbatiminclude($$)
                             $current->{'line_nr'});
       }
     } else {
-      if ($self and defined($self->get_conf('INPUT_PERL_ENCODING'))) {
-        binmode(VERBINCLUDE, ":encoding(".
-                            $self->get_conf('INPUT_PERL_ENCODING').")");
+      if (defined $current->{'extra'}->{'input_perl_encoding'}) {
+        binmode(VERBINCLUDE, ":encoding("
+                             . $current->{'extra'}->{'input_perl_encoding'}
+                             . ")");
       }
       $verbatiminclude = { 'cmdname' => 'verbatim',
                            'parent' => $current->{'parent'},
@@ -1204,8 +1208,13 @@ sub expand_today($)
   if ($self->get_conf('TEST')) {
     return {'text' => 'a sunny day'};
   }
-  my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
-   = localtime(time);
+
+  my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+    = ($ENV{SOURCE_DATE_EPOCH}
+        ? gmtime($ENV{SOURCE_DATE_EPOCH})
+        : localtime(time));
+  # See https://reproducible-builds.org/specs/source-date-epoch/.
+
   $year += ($year < 70) ? 2000 : 1900;
   return $self->gdt('{month} {day}, {year}',
           { 'month' => $self->gdt($MONTH_NAMES[$mon]),
@@ -1338,7 +1347,6 @@ sub trim_spaces_comment_from_content($)
        and ($contents->[0]->{'type'} eq 'empty_line_after_command'
             or $contents->[0]->{'type'} eq 'empty_spaces_after_command'
             or $contents->[0]->{'type'} eq 'empty_spaces_before_argument'
-            or $contents->[0]->{'type'} eq 'empty_space_at_end_def_bracketed'
             or $contents->[0]->{'type'} eq 'empty_spaces_after_close_brace'));
 
   while (@$contents 
@@ -1390,29 +1398,15 @@ sub _count_opened_tree_braces($$)
     ($before, $after, $braces_count) = _find_end_brace($current->{'text'},
                                                           $braces_count);
   }
-  if ($current->{'args'}) {
-    foreach my $arg (@{$current->{'args'}}) {
-      $braces_count = _count_opened_tree_braces($arg, $braces_count);
-      return $braces_count if ($braces_count == 0);
-    }
-  }
-  if ($current->{'contents'}) {
-    foreach my $content (@{$current->{'contents'}}) {
-      $braces_count = _count_opened_tree_braces($content, $braces_count);
-      return $braces_count if ($braces_count == 0);
-    }
-  }
   return $braces_count;
 }
 
-# $NODE->{'contents'} is the Texinfo fo the specification of a node.
-# Returned object is a hash with three fields:
+# $NODE->{'contents'} is the Texinfo for the specification of a node.
+# Returned object is a hash with two fields:
 #
 #     manual_content - Texinfo tree for a manual name extracted from the
 #                      node specification.
 #     node_content - Texinfo tree for the node name on its own
-#     normalized - a string with the node name after HTML node name
-#                  normalization is applied
 #
 # retrieve a leading manual name in parentheses, if there is one.
 sub parse_node_manual($)
@@ -1461,12 +1455,14 @@ sub parse_node_manual($)
         }
       }
     }
-    $result->{'manual_content'} = $manual if (defined($manual));
+    if ($braces_count == 0) {
+      $result->{'manual_content'} = $manual if (defined($manual));
+    } else {
+      @contents = @$manual;
+    }
   }
   if (@contents) {
     $result->{'node_content'} = \@contents;
-    $result->{'normalized'} =
-      Texinfo::Convert::NodeNameNormalization::normalize_node({'contents' => \@contents});
   }
   return $result;
 }
@@ -2445,6 +2441,88 @@ sub print_tree($)
 
   return Data::Dumper->Dump([$tree]);
 }
+
+# common parser functions
+
+sub _non_bracketed_contents {
+  my $current = shift;
+
+  if ($current->{'type'} and $current->{'type'} eq 'bracketed') {
+    my $new = {};
+    $new->{'contents'} = $current->{'contents'} if ($current->{'parent'});
+    $new->{'parent'} = $current->{'parent'} if ($current->{'parent'});
+    return $new;
+  } else {
+    return $current;
+  }
+}
+
+# In a handful of cases, we delay storing the contents of the
+# index entry until now to avoid needing Texinfo::Report::gdt
+# in the main code of Parser.pm.  Also set 'in_code' value on
+# index entries.
+
+sub complete_indices {
+  my $self = shift;
+
+  my ($index_entry, $index_contents_normalized);
+    
+  my $save_lang = $self->get_conf('documentlanguage');
+
+  foreach my $index_name (keys(%{$self->{'index_names'}})) {
+    next if !defined $self->{'index_names'}->{$index_name}->{'index_entries'};
+    foreach my $entry (@{$self->{'index_names'}->{$index_name}->{'index_entries'}}) {
+      $entry->{'in_code'} = $self->{'index_names'}->{$index_name}->{'in_code'};
+      
+      if (!defined $entry->{'content'}) {
+        my $def_command = $entry->{'command'}->{'extra'}->{'def_command'};
+
+        my $def_parsed_hash = $entry->{'command'}->{'extra'}->{'def_parsed_hash'}; 
+        if ($def_parsed_hash and $def_parsed_hash->{'class'}
+            and $def_command) {
+          # Use the document language that was current when the command was
+          # used for getting the translation.
+          $self->{'documentlanguage'} = $entry->{'command'}->{'extra'}->{'documentlanguage'};
+          delete $entry->{'command'}->{'extra'}->{'documentlanguage'};
+          if ($def_command eq 'defop'
+              or $def_command eq 'deftypeop'
+              or $def_command eq 'defmethod'
+              or $def_command eq 'deftypemethod') {
+            $index_entry = $self->gdt('{name} on {class}',
+                                  {'name' => $def_parsed_hash->{'name'},
+                                   'class' => $def_parsed_hash->{'class'}});
+           $index_contents_normalized
+             = [_non_bracketed_contents($def_parsed_hash->{'name'}),
+                { 'text' => ' on '},
+                _non_bracketed_contents($def_parsed_hash->{'class'})];
+          } elsif ($def_command eq 'defivar'
+                   or $def_command eq 'deftypeivar'
+                   or $def_command eq 'deftypecv') {
+            $index_entry = $self->gdt('{name} of {class}',
+                                     {'name' => $def_parsed_hash->{'name'},
+                                     'class' => $def_parsed_hash->{'class'}});
+            $index_contents_normalized
+              = [_non_bracketed_contents($def_parsed_hash->{'name'}),
+                 { 'text' => ' of '},
+                 _non_bracketed_contents($def_parsed_hash->{'class'})];
+          }
+        }
+        # 'root_line' is the container returned by gdt.
+        if ($index_entry->{'type'} and $index_entry->{'type'} eq 'root_line') {
+          for my $child (@{$index_entry->{'contents'}}) {
+            delete $child->{'parent'};
+          }
+        }
+        if ($index_entry->{'contents'}) {
+          $entry->{'content'} = [@{$index_entry->{'contents'}}];
+          $entry->{'content_normalized'} = $index_contents_normalized;
+        }
+      }
+    }
+  }
+  $self->{'documentlanguage'} = $save_lang;
+}
+
 1;
 
 __END__

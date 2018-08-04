@@ -1,6 +1,7 @@
 # Text.pm: output tree as simple text.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014 Free Software Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017 Free Software 
+# Foundation, Inc., 
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,9 +31,11 @@ use Texinfo::Convert::Texinfo;
 use Data::Dumper;
 use Carp qw(cluck carp);
 
+use File::Basename;
+
 require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-@ISA = qw(Exporter);
+@ISA = qw(Exporter Texinfo::Convert::Converter);
 
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
@@ -52,7 +55,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.2';
+$VERSION = '6.5';
 
 # this is in fact not needed for 'footnote', 'shortcaption', 'caption'
 # when they have no brace_command_arg, see below.
@@ -158,8 +161,7 @@ my %ignored_types;
 foreach my $type ('empty_line_after_command', 'preamble',
             'empty_spaces_after_command', 'spaces_at_end',
             'empty_spaces_before_argument', 'empty_spaces_before_paragraph',
-            'empty_spaces_after_close_brace', 
-            'empty_space_at_end_def_bracketed') {
+            'empty_spaces_after_close_brace') {
   $ignored_types{$type} = 1;
 }
 
@@ -310,6 +312,9 @@ sub heading($$$;$$)
   } else {
     $indent_length = 0;
   }
+  if (!defined $current->{'level'}) {
+    $current->{'level'} = Texinfo::Structuring::section_level($current);
+  }
   $result .=($underline_symbol{$current->{'level'}} 
      x (Texinfo::Convert::Unicode::string_width($text) - $indent_length))."\n";
   return $result;
@@ -351,20 +356,6 @@ sub _convert($;$)
   my $root = shift;
   my $options = shift;
 
-  if (0) {
-    print STDERR "root $root";
-    print STDERR " cmd: \@$root->{'cmdname'}," if ($root->{'cmdname'});
-    print STDERR " type: $root->{'type'}," if ($root->{'type'});
-    my $text = $root->{'text'};
-    if (defined($text)) {
-      $text =~ s/\n/\\n/;
-      print STDERR " text: `$text'";
-    }
-    print STDERR "\n";
-    #print STDERR "  Special def_command: $root->{'extra'}->{'def_command'}\n"
-    #  if (defined($root->{'extra'}) and $root->{'extra'}->{'def_command'});
-  }
-
   return '' if (!($root->{'type'} and $root->{'type'} eq 'def_line')
      and (($root->{'type'} and $ignored_types{$root->{'type'}})
           or ($root->{'cmdname'} 
@@ -387,19 +378,30 @@ sub _convert($;$)
                      and !$formatting_misc_commands{$root->{'cmdname'}})))));
   my $result = '';
   if (defined($root->{'text'})) {
-    $result = $root->{'text'};
-    if ((! defined($root->{'type'}) 
-         or $root->{'type'} ne 'raw')
-         and !$options->{'raw'}) {
-      if ($options->{'sc'}) {
-        $result = uc($result);
-      }
-      if (!$options->{'code'}) {
-        $result =~ s/``/"/g;
-        $result =~ s/\'\'/"/g;
-        $result =~ s/---/\x{1F}/g;
-        $result =~ s/--/-/g;
-        $result =~ s/\x{1F}/--/g;
+    if ($root->{'type'} and $root->{'type'} eq 'untranslated'
+        and $options and $options->{'converter'}) {
+      my $save_lang = $options->{'converter'}->get_conf('documentlanguage');
+      $options->{'converter'}->{'documentlanguage'}
+        = $root->{'extra'}->{'documentlanguage'};
+      my $tree = Texinfo::Report::gdt($options->{'converter'},
+                                      $root->{'text'});
+      $result = _convert($tree, $options);
+      $options->{'converter'}->{'documentlanguage'} = $save_lang;
+    } else {
+      $result = $root->{'text'};
+      if ((! defined($root->{'type'}) 
+           or $root->{'type'} ne 'raw')
+           and !$options->{'raw'}) {
+        if ($options->{'sc'}) {
+          $result = uc($result);
+        }
+        if (!$options->{'code'}) {
+          $result =~ s/``/"/g;
+          $result =~ s/\'\'/"/g;
+          $result =~ s/---/\x{1F}/g;
+          $result =~ s/--/-/g;
+          $result =~ s/\x{1F}/--/g;
+        }
       }
     }
   }

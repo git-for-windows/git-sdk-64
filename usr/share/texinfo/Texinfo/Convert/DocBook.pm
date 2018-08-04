@@ -1,4 +1,4 @@
-# $Id: DocBook.pm 7353 2016-09-10 13:03:54Z gavin $
+# $Id: DocBook.pm 7942 2017-08-28 20:42:04Z gavin $
 # DocBook.pm: output tree as DocBook.
 #
 # Copyright 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
@@ -55,7 +55,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.2';
+$VERSION = '6.5';
 
 my $nbsp = '&#'.hex('00A0').';';
 my $mdash = '&#'.hex('2014').';';
@@ -232,7 +232,6 @@ my %def_argument_types_docbook = (
 my %ignored_types;
 foreach my $type (
 	    'empty_line_after_command',
-            'empty_space_at_end_def_bracketed',
             'empty_spaces_after_close_brace', 
             'empty_spaces_after_command', 
             'empty_spaces_before_argument',
@@ -852,20 +851,36 @@ sub _convert($$;$)
                 and defined($root->{'extra'}->{'brace_command_contents'}->[3])) {
               $manual_file_contents = $root->{'extra'}->{'brace_command_contents'}->[3];
             }
-            my $section_name_contents;
+            my ($section_name_contents, $section_name);
             if (defined($root->{'extra'}->{'brace_command_contents'}->[2])) {
               $section_name_contents 
                 = $root->{'extra'}->{'brace_command_contents'}->[2];
+              $section_name = $self->_convert(
+                     {'contents' => $section_name_contents});
             } elsif (defined($root->{'extra'}->{'brace_command_contents'}->[1])) {
               $section_name_contents
                 = $root->{'extra'}->{'brace_command_contents'}->[1];
-            } elsif (defined($root->{'extra'}->{'brace_command_contents'}->[0])
-                     and (!$book_contents 
-                          or $root->{'extra'}->{'node_argument'}->{'manual_content'}
-                          or $root->{'extra'}->{'node_argument'}->{'normalized'} ne 'Top')) {
+              $section_name = $self->_convert(
+                     {'contents' => $section_name_contents});
+            } elsif (defined($root->{'extra'}->{'brace_command_contents'}->[0])) {
               $section_name_contents
                 = $root->{'extra'}->{'brace_command_contents'}->[0];
+              $section_name = $self->_convert(
+                     {'contents' => $section_name_contents});
+
+               if ($book_contents
+                   and !$root->{'extra'}->{'node_argument'}->{'manual_content'}) {
+                 if ($section_name eq 'Top') {
+                   $section_name = undef;
+                   $section_name_contents = undef;
+                 }
+               }
+               # Note: it would be nice to re-use $section_name instead of
+               # having 'gdt' convert $section_name_contents again, but
+               # there isn't a good way to pass an already-converted string 
+               # into 'gdt'.
             }
+
             # external ref
             if ($book_contents or $manual_file_contents) {
               return '' if (!$book_contents);
@@ -908,8 +923,7 @@ sub _convert($$;$)
                   and !$root->{'extra'}->{'node_argument'}->{'manual_content'}) {
                 $linkend = " linkend=\"$root->{'extra'}->{'node_argument'}->{'normalized'}\"";
               }
-              my $argument = "<link${linkend}>".$self->_convert({'contents' => 
-                        $section_name_contents}) ."</link>";
+              my $argument = "<link${linkend}>".$section_name."</link>";
               if ($root->{'cmdname'} eq 'ref') {
                 return $self->_convert(
                         $self->gdt('{title_ref}', {'title_ref' => 
@@ -1193,8 +1207,11 @@ sub _convert($$;$)
           }
         }
       } elsif ($root->{'cmdname'} eq 'float') {
-        if ($root->{'extra'} and defined($root->{'extra'}->{'normalized'})) {
-          $result .= "<anchor id=\"$root->{'extra'}->{'normalized'}\"/>\n";
+        if ($root->{'extra'} and defined($root->{'extra'}->{'node_content'})) {
+          my $normalized =
+            Texinfo::Convert::NodeNameNormalization::normalize_node (
+                   { 'contents' => $root->{'extra'}->{'node_content'} });
+          $result .= "<anchor id=\"$normalized\"/>\n";
         }
       } elsif ($root->{'cmdname'} eq 'verbatim') {
         push @elements, 'screen';
@@ -1408,7 +1425,7 @@ sub _convert($$;$)
 1;
 
 __END__
-# $Id: DocBook.pm 7353 2016-09-10 13:03:54Z gavin $
+# $Id: DocBook.pm 7942 2017-08-28 20:42:04Z gavin $
 # Automatically generated from maintain/template.pod
 
 =head1 NAME

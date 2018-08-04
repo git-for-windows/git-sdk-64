@@ -1,6 +1,7 @@
 # Info.pm: output tree as Info.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017
+# Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +26,9 @@ use strict;
 use Texinfo::Convert::Plaintext;
 use Texinfo::Convert::Text;
 
+use Texinfo::Convert::Paragraph;
+
+
 require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Texinfo::Convert::Plaintext);
@@ -45,7 +49,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.2';
+$VERSION = '6.5';
 
 my $STDIN_DOCU_NAME = 'stdin';
 
@@ -85,7 +89,7 @@ sub output($)
   pop @{$self->{'count_context'}};
   return undef unless $self->_create_destination_directory();
 
-  my $header_bytes = $self->count_bytes($header);
+  my $header_bytes = Texinfo::Convert::Plaintext::count_bytes($self, $header);
   my $complete_header_bytes = $header_bytes;
   my $elements = Texinfo::Structuring::split_by_node($root);
 
@@ -134,7 +138,7 @@ sub output($)
         $first_node = 1;
         if (defined($self->{'text_before_first_node'})) {
           $complete_header .= $self->{'text_before_first_node'};
-          $complete_header_bytes += $self->count_bytes($self->{'text_before_first_node'});
+          $complete_header_bytes += Texinfo::Convert::Plaintext::count_bytes($self, $self->{'text_before_first_node'});
         }
         # for the first node, header is prepended, not complete_header
         # as 'text_before_first_node' is already part of the node
@@ -237,25 +241,28 @@ sub output($)
   # This may happen for anchors in @insertcopying
   my %seen_anchors;
   foreach my $label (@{$self->{'count_context'}->[-1]->{'locations'}}) {
-    next unless ($label->{'root'} and $label->{'root'}->{'extra'} 
-                  and defined($label->{'root'}->{'extra'}->{'normalized'}));
+    next unless ($label->{'root'} and $label->{'root'}->{'extra'}
+                   and defined($label->{'root'}->{'extra'}->{'node_content'}));
     my $prefix;
+    
     if ($label->{'root'}->{'cmdname'} eq 'node') {
       $prefix = 'Node';
     } else {
-      if ($seen_anchors{$label->{'root'}->{'extra'}->{'normalized'}}) {
-        $self->line_error(sprintf($self->__("\@%s output more than once: %s"),
-                       $label->{'root'}->{'cmdname'},
-                 Texinfo::Convert::Texinfo::convert({'contents' =>
-                      $label->{'root'}->{'extra'}->{'node_content'}})),
-                      $label->{'root'}->{'line_nr'});
-        next;
-      } else {
-        $seen_anchors{$label->{'root'}->{'extra'}->{'normalized'}} = $label;
-      }
       $prefix = 'Ref';
     }
     my ($label_text, $byte_count) = $self->_node_line($label->{'root'});
+
+    if ($seen_anchors{$label_text}) {
+      $self->line_error(sprintf($self->__("\@%s output more than once: %s"),
+          $label->{'root'}->{'cmdname'},
+          Texinfo::Convert::Texinfo::convert({'contents' =>
+              $label->{'root'}->{'extra'}->{'node_content'}})),
+        $label->{'root'}->{'line_nr'});
+      next;
+    } else {
+      $seen_anchors{$label_text} = 1;
+    }
+
     $tag_text .=  "$prefix: $label_text\x{7F}$label->{'bytes'}\n";
   }
   $tag_text .=  "\x{1F}\nEnd Tag Table\n";
@@ -305,19 +312,19 @@ sub _info_header($)
 
   $self->_set_global_multiple_commands();
   my $paragraph = Texinfo::Convert::Paragraph->new();
-  my $result = $paragraph->add_text("This is ");
+  my $result = add_text($paragraph, "This is ");
   # This ensures that spaces in file are kept.
-  $result .= $paragraph->add_next($self->{'output_filename'});
+  $result .= add_next($paragraph, $self->{'output_filename'});
   my $program = $self->get_conf('PROGRAM');
   my $version = $self->get_conf('PACKAGE_VERSION');
   if (defined($program) and $program ne '') {
-    $result .= $paragraph->add_text(", produced by $program version $version from ");
+    $result .= add_text($paragraph, ", produced by $program version $version from ");
   } else {
-    $result .= $paragraph->add_text(", produced from ");
+    $result .= add_text($paragraph, ", produced from ");
   }
-  $result .= $paragraph->add_next($self->{'input_basename'});
-  $result .= $paragraph->add_text('.');
-  $result .= $paragraph->end();
+  $result .= add_next($paragraph, $self->{'input_basename'});
+  $result .= add_text($paragraph, '.');
+  $result .= Texinfo::Convert::Paragraph::end($paragraph);
   $result .= "\n";
   $self->{'empty_lines_count'} = 1;
 
@@ -388,7 +395,7 @@ sub _node($$)
   my $node = shift;
   
   my $result = '';
-  return '' if (!defined($node->{'extra'}->{'normalized'}));
+  return '' if (!defined($node->{'extra'}->{'node_content'}));
   if (!$self->{'empty_lines_count'}) {
     $result .= "\n";
     $self->_add_text_count("\n");

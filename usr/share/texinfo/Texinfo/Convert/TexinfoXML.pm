@@ -52,7 +52,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.2';
+$VERSION = '6.5';
 
 # XML specific
 my %defaults = (
@@ -436,9 +436,7 @@ sub converter_initialize($)
          if $self->{'expanded_formats_hash'}->{$raw};
   } 
   if ($self->{'parser'}) {
-    my ($index_names, $merged_indices)
-       = $self->{'parser'}->indices_information();
-    $self->{'index_names'} = $index_names;
+    $self->{'index_names'} = $self->{'parser'}->indices_information();
   }
 }
 
@@ -1221,11 +1219,18 @@ sub _convert($$;$)
         }
       } elsif ($Texinfo::Common::ref_commands{$root->{'cmdname'}}) {
         if ($root->{'extra'}->{'brace_command_contents'}) {
+          my $normalized;
           if ($root->{'extra'}->{'node_argument'}
-              and $root->{'extra'}->{'node_argument'}->{'node_content'}
-              and defined($root->{'extra'}->{'node_argument'}->{'normalized'})) {
-            push @$attribute, ('label', 
-                 $root->{'extra'}->{'node_argument'}->{'normalized'});
+              and $root->{'extra'}->{'node_argument'}->{'node_content'}) {
+            my $normalized;
+            if (defined($root->{'extra'}->{'node_argument'}->{'normalized'})) {
+              $normalized = $root->{'extra'}->{'node_argument'}->{'normalized'};
+            } else {
+              $normalized = Texinfo::Convert::NodeNameNormalization::normalize_node( {'contents' => $root->{'extra'}->{'node_argument'}->{'node_content'} } );
+            }
+            if ($normalized) {
+              push @$attribute, ('label', $normalized);
+            }
           }
           my $manual;
           my $manual_arg_index = 3;
@@ -1278,8 +1283,11 @@ sub _convert($$;$)
                and $root->{'extra'}->{'enumerate_specification'}) {
         push @$attribute,('first', $root->{'extra'}->{'enumerate_specification'});
       } elsif ($root->{'cmdname'} eq 'float' and $root->{'extra'}) {
-        if (defined($root->{'extra'}->{'normalized'})) {
-          push @$attribute, ('name', $root->{'extra'}->{'normalized'});
+        if (defined($root->{'extra'}->{'node_content'})) {
+          my $normalized =
+            Texinfo::Convert::NodeNameNormalization::normalize_node (
+                   { 'contents' => $root->{'extra'}->{'node_content'} });
+          push @$attribute, ('name', $normalized);
         }
         if ($root->{'extra'}->{'type'} and 
             defined($root->{'extra'}->{'type'}->{'normalized'})) {
