@@ -113,9 +113,7 @@ sdk () {
 		if test git = "$2" && test ! -f "$src_dir/config.mak"
 		then
 			cat >"$src_dir/config.mak" <<-\EOF
-			ifndef MSVC
 			DEVELOPER=1
-			endif
 			ifndef NDEBUG
 			CFLAGS := $(filter-out -O2,$(CFLAGS))
 			ASLR_OPTION := -Wl,--dynamicbase
