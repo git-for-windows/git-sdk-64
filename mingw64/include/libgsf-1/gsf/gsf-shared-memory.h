@@ -40,7 +40,7 @@ struct _GsfSharedMemory {
 	gboolean needs_unmap;
 };
 
-GType gsf_shared_memory_get_type      (void) G_GNUC_CONST;
+GType gsf_shared_memory_get_type      (void);
 /* void  gsf_shared_memory_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfSharedMemory *gsf_shared_memory_new (void *buf, gsf_off_t size, gboolean needs_free);

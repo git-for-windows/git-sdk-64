@@ -34,7 +34,7 @@ G_BEGIN_DECLS
 
 typedef struct _GsfOutputStdio GsfOutputStdio;
 
-GType gsf_output_stdio_get_type	     (void) G_GNUC_CONST;
+GType gsf_output_stdio_get_type	     (void);
 /* void  gsf_output_stdio_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfOutput *gsf_output_stdio_new        (char const *filename, GError **err);

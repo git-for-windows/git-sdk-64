@@ -60,7 +60,7 @@ struct _GsfOutput {
 #define GSF_OUTPUT(o)          (G_TYPE_CHECK_INSTANCE_CAST ((o), GSF_OUTPUT_TYPE, GsfOutput))
 #define GSF_IS_OUTPUT(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), GSF_OUTPUT_TYPE))
 
-GType gsf_output_get_type      (void) G_GNUC_CONST;
+GType gsf_output_get_type      (void);
 /* void  gsf_output_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 char const   *gsf_output_name	   (GsfOutput const *output);

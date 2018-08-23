@@ -42,7 +42,7 @@ typedef enum {
     GRLOG_SEGMENT = 0x02,
     GRLOG_PASS = 0x04,
     GRLOG_CACHE = 0x08,
-    
+
     GRLOG_OPCODE = 0x80,
     GRLOG_ALL = 0xFF
 } GrLogMask;
@@ -56,7 +56,7 @@ typedef enum {
   * @param face     the gr_face whose segments you want to log to the given file
   * @param log_path a utf8 encoded file name and path to log to.
   */
-GR2_API bool gr_start_logging(GR_MAYBE_UNUSED  gr_face * face, const char *log_path);
+GR2_API bool gr_start_logging(GR_MAYBE_UNUSED gr_face * face, const char *log_path);
 
 
 /** Stop logging on the given face.  This will close the log file created by

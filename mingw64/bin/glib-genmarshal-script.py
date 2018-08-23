@@ -22,7 +22,7 @@ import os
 import re
 import sys
 
-VERSION_STR = '''glib-genmarshal version 2.56.1
+VERSION_STR = '''glib-genmarshal version 2.56.2
 glib-genmarshal comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-genmarshal under the terms of
 the GNU General Public License which can be found in the
@@ -950,7 +950,7 @@ if __name__ == '__main__':
     # warning non-fatal even with --g-fatal-warnings, as it's a deprecation
     compatibility_mode = False
     if args.header and args.body:
-        print_warning('Using --header and --body at the same time time is deprecated; ' +
+        print_warning('Using --header and --body at the same time is deprecated; ' +
                       'use --body --prototypes instead', False)
         args.prototypes = True
         args.header = False

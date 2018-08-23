@@ -102,7 +102,7 @@ typedef struct gdbm_file_info *GDBM_FILE;
 extern const char *gdbm_version;	
 
 # define GDBM_VERSION_MAJOR 1
-# define GDBM_VERSION_MINOR 17
+# define GDBM_VERSION_MINOR 18
 # define GDBM_VERSION_PATCH 0
 
 extern int const gdbm_version_number[3];

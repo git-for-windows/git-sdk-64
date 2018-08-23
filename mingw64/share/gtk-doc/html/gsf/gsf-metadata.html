@@ -8,7 +8,7 @@
 <link rel="up" href="parsers.html" title="Stream Parsers">
 <link rel="prev" href="gsf-MS-OLE2.html" title="MS OLE2">
 <link rel="next" href="gsf-OASIS-Open-Document.html" title="OASIS Open Document">
-<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -507,8 +507,6 @@
 </div>
 <div class="refsect1">
 <a name="gsf-metadata.description"></a><h2>Description</h2>
-<p>
-</p>
 </div>
 <div class="refsect1">
 <a name="gsf-metadata.functions_details"></a><h2>Functions</h2>
@@ -518,7 +516,7 @@
 gsf_doc_meta_data_new (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <div class="refsect3">
 <a name="gsf-doc-meta-data-new.returns"></a><h4>Returns</h4>
-<p> a new metadata property collection. </p>
+<p>a new metadata property collection. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 </div>
@@ -545,10 +543,11 @@ gsf_doc_meta_data_lookup (<em class="parameter"><code><a class="link" href="gsf-
 </div>
 <div class="refsect3">
 <a name="gsf-doc-meta-data-lookup.returns"></a><h4>Returns</h4>
-<p> the property with name <em class="parameter"><code>id</code></em>
+<p>the property with <em class="parameter"><code>name</code></em>
 in <em class="parameter"><code>meta</code></em>
-.  The caller can modify the
-property value and link but not the name.</p>
+.  The caller can
+modify the property value and link but not the name. </p>
+<p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
 </div>
 <hr>
@@ -580,13 +579,13 @@ If a property exists with <em class="parameter"><code>name</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>name</p></td>
-<td class="parameter_description"><p>the id.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>the id. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>value</p></td>
-<td class="parameter_description"><p><span class="type">GValue</span></p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p><span class="type">GValue</span>. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -646,6 +645,13 @@ gsf_doc_meta_data_steal (<em class="parameter"><code><a class="link" href="gsf-m
 </tr></tbody>
 </table></div>
 </div>
+<div class="refsect3">
+<a name="gsf-doc-meta-data-steal.returns"></a><h4>Returns</h4>
+<p>the property with <em class="parameter"><code>name</code></em>
+in <em class="parameter"><code>meta</code></em>
+. </p>
+<p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
 </div>
 <hr>
 <div class="refsect2">
@@ -700,13 +706,13 @@ gsf_doc_meta_data_foreach (<em class="parameter"><code><a class="link" href="gsf
 </tr>
 <tr>
 <td class="parameter_name"><p>func</p></td>
-<td class="parameter_description"><p> the function called once for each element in the collection. </p></td>
+<td class="parameter_description"><p>the function called once for each element in the collection. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="The callback is valid only during the call to the method."><span class="acronym">scope call</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
-<td class="parameter_description"><p>any supplied user data or <code class="literal">NULL</code></p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>any supplied user data. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -826,7 +832,7 @@ into <em class="parameter"><code>md</code></em>
 </div>
 <div class="refsect3">
 <a name="gsf-doc-meta-data-read-from-odf.returns"></a><h4>Returns</h4>
-<p> a <span class="type">GError</span> if there is a problem. </p>
+<p>a <span class="type">GError</span> if there is a problem. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: 1.14.24</p>
@@ -853,8 +859,8 @@ gsf_doc_meta_data_write_to_odf (<em class="parameter"><code><a class="link" href
 </tr>
 <tr>
 <td class="parameter_name"><p>output</p></td>
-<td class="parameter_description"><p>a pointer to a <a class="link" href="gsf-Output-to-unstructured-files.html#GsfOutput"><span class="type">GsfOutput</span></a>.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="gsf-Output-to-unstructured-files.html#GsfOutput"><span class="type">GsfOutput</span></a>. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GsfXMLOut]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -899,7 +905,7 @@ results in <em class="parameter"><code>accum</code></em>
 </div>
 <div class="refsect3">
 <a name="gsf-doc-meta-data-read-from-msole.returns"></a><h4>Returns</h4>
-<p> A <span class="type">GError</span> if there was an error. </p>
+<p>A <span class="type">GError</span> if there was an error. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: 1.14.24</p>
@@ -921,13 +927,13 @@ gsf_doc_meta_data_write_to_msole (<em class="parameter"><code><a class="link" hr
 </colgroup>
 <tbody>
 <tr>
-<td class="parameter_name"><p>meta_data</p></td>
-<td class="parameter_description"><p><a class="link" href="gsf-metadata.html#GsfDocMetaData"><span class="type">GsfDocMetaData</span></a></p></td>
+<td class="parameter_name"><p>out</p></td>
+<td class="parameter_description"><p><a class="link" href="gsf-Output-to-unstructured-files.html#GsfOutput"><span class="type">GsfOutput</span></a></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
-<td class="parameter_name"><p>out</p></td>
-<td class="parameter_description"><p><a class="link" href="gsf-Output-to-unstructured-files.html#GsfOutput"><span class="type">GsfOutput</span></a></p></td>
+<td class="parameter_name"><p>meta_data</p></td>
+<td class="parameter_description"><p><a class="link" href="gsf-metadata.html#GsfDocMetaData"><span class="type">GsfDocMetaData</span></a></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -959,14 +965,14 @@ gsf_doc_prop_new (<em class="parameter"><code><span class="type">char</span> *na
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>name</p></td>
-<td class="parameter_description"><p> The name of the property. </p></td>
+<td class="parameter_description"><p>The name of the property. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
 </div>
 <div class="refsect3">
 <a name="gsf-doc-prop-new.returns"></a><h4>Returns</h4>
-<p> a new <a class="link" href="gsf-metadata.html#GsfDocProp" title="GsfDocProp"><span class="type">GsfDocProp</span></a>. </p>
+<p>a new <a class="link" href="gsf-metadata.html#GsfDocProp" title="GsfDocProp"><span class="type">GsfDocProp</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 </div>
@@ -975,8 +981,7 @@ gsf_doc_prop_new (<em class="parameter"><code><span class="type">char</span> *na
 <a name="gsf-doc-prop-free"></a><h3>gsf_doc_prop_free ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 gsf_doc_prop_free (<em class="parameter"><code><a class="link" href="gsf-metadata.html#GsfDocProp" title="GsfDocProp"><span class="type">GsfDocProp</span></a> *prop</code></em>);</pre>
-<p>If <em class="parameter"><code>prop</code></em>
- is non <code class="literal">NULL</code> free the memory associated with it</p>
+<p>Release the given property.</p>
 <div class="refsect3">
 <a name="gsf-doc-prop-free.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -987,8 +992,8 @@ gsf_doc_prop_free (<em class="parameter"><code><a class="link" href="gsf-metadat
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>prop</p></td>
-<td class="parameter_description"><p> <a class="link" href="gsf-metadata.html#GsfDocProp" title="GsfDocProp"><span class="type">GsfDocProp</span></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_description"><p><a class="link" href="gsf-metadata.html#GsfDocProp" title="GsfDocProp"><span class="type">GsfDocProp</span></a>. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
 </div>
@@ -1015,7 +1020,7 @@ gsf_doc_prop_get_name (<em class="parameter"><code><a class="link" href="gsf-met
 </div>
 <div class="refsect3">
 <a name="gsf-doc-prop-get-name.returns"></a><h4>Returns</h4>
-<p> the name of the property. </p>
+<p>the name of the property. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
 </div>
@@ -1069,7 +1074,7 @@ gsf_doc_prop_set_val (<em class="parameter"><code><a class="link" href="gsf-meta
 </tr>
 <tr>
 <td class="parameter_name"><p>val</p></td>
-<td class="parameter_description"><p> <span class="type">GValue</span>. </p></td>
+<td class="parameter_description"><p><span class="type">GValue</span>. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -1098,9 +1103,9 @@ gsf_doc_prop_get_link (<em class="parameter"><code><a class="link" href="gsf-met
 </div>
 <div class="refsect3">
 <a name="gsf-doc-prop-get-link.returns"></a><h4>Returns</h4>
-<p> the current link descriptor of <em class="parameter"><code>prop</code></em>
+<p>the current link descriptor of <em class="parameter"><code>prop</code></em>
 . </p>
-<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
+<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 </div>
 <hr>
@@ -1128,8 +1133,8 @@ gsf_doc_prop_set_link (<em class="parameter"><code><a class="link" href="gsf-met
 </tr>
 <tr>
 <td class="parameter_name"><p>link</p></td>
-<td class="parameter_description"><p> optionally <code class="literal">NULL</code>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
+<td class="parameter_description"><p>a link. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1236,8 +1241,6 @@ The caller is responsible for freeing the result.</p>
 <a name="gsf-value-get-docprop-varray"></a><h3>gsf_value_get_docprop_varray ()</h3>
 <pre class="programlisting"><span class="returnvalue">GValueArray</span> *
 gsf_value_get_docprop_varray (<em class="parameter"><code><span class="type">GValue</span> const *value</code></em>);</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1264,7 +1267,7 @@ No additional references are created.</p>
 </div>
 <div class="refsect3">
 <a name="gsf-value-get-docprop-vector.returns"></a><h4>Returns</h4>
-<p> A pointer to the <a class="link" href="gsf-metadata.html#GsfDocPropVector"><span class="type">GsfDocPropVector</span></a> structure in <em class="parameter"><code>value</code></em>
+<p>A pointer to the <a class="link" href="gsf-metadata.html#GsfDocPropVector"><span class="type">GsfDocPropVector</span></a> structure in <em class="parameter"><code>value</code></em>
 . </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -1288,8 +1291,6 @@ last modification.</p>
 <div class="refsect2">
 <a name="GsfDocPropVector-struct"></a><h3>GsfDocPropVector</h3>
 <pre class="programlisting">typedef struct _GsfDocPropVector GsfDocPropVector;</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1741,6 +1742,6 @@ initially.
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

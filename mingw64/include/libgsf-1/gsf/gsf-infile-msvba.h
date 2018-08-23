@@ -33,7 +33,7 @@ typedef struct _GsfInfileMSVBA GsfInfileMSVBA;
 #define GSF_INFILE_MSVBA(o)          (G_TYPE_CHECK_INSTANCE_CAST ((o), GSF_INFILE_MSVBA_TYPE, GsfInfileMSVBA))
 #define GSF_IS_INFILE_MSVBA(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), GSF_INFILE_MSVBA_TYPE))
 
-GType gsf_infile_msvba_get_type      (void) G_GNUC_CONST;
+GType gsf_infile_msvba_get_type      (void);
 /* void  gsf_infile_msvba_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfInfile  *gsf_infile_msvba_new (GsfInfile *source, GError **err);

@@ -23,7 +23,7 @@ struct _GsfBlob {
 	GsfBlobPrivate *priv;
 };
 
-GType gsf_blob_get_type (void) G_GNUC_CONST;
+GType gsf_blob_get_type (void);
 /* void  gsf_blob_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfBlob *gsf_blob_new (gsize size,

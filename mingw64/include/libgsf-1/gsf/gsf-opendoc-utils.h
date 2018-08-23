@@ -53,7 +53,7 @@ struct _GsfODFOut {
 #define GSF_ODF_OUT(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GSF_ODF_OUT_TYPE, GsfODFOut))
 #define GSF_IS_ODF_OUT(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), GSF_ODF_OUT_TYPE))
 
-GType gsf_odf_out_get_type      (void) G_GNUC_CONST;
+GType gsf_odf_out_get_type      (void);
 
 int gsf_odf_out_get_version     (GsfODFOut *oout);
 char *gsf_odf_out_get_version_string (GsfODFOut *oout);

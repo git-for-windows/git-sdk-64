@@ -32,7 +32,7 @@ typedef struct _GsfInfileTar GsfInfileTar;
 #define GSF_INFILE_TAR(o)          (G_TYPE_CHECK_INSTANCE_CAST ((o), GSF_INFILE_TAR_TYPE, GsfInfileTar))
 #define GSF_IS_INFILE_TAR(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), GSF_INFILE_TAR_TYPE))
 
-GType gsf_infile_tar_get_type      (void) G_GNUC_CONST;
+GType gsf_infile_tar_get_type      (void);
 GsfInfile *gsf_infile_tar_new      (GsfInput *source, GError **err);
 
 G_END_DECLS

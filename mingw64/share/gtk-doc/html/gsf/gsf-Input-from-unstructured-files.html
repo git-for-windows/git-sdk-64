@@ -8,7 +8,7 @@
 <link rel="up" href="io.html" title="Basic Input/Output">
 <link rel="prev" href="io.html" title="Basic Input/Output">
 <link rel="next" href="gsf-Output-to-unstructured-files.html" title="Output to unstructured files">
-<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -263,8 +263,6 @@
 </div>
 <div class="refsect1">
 <a name="gsf-Input-from-unstructured-files.description"></a><h2>Description</h2>
-<p>
-</p>
 </div>
 <div class="refsect1">
 <a name="gsf-Input-from-unstructured-files.functions_details"></a><h2>Functions</h2>
@@ -300,16 +298,17 @@ the buffer associated with previous calls to gsf_input_read.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>optional_buffer</p></td>
-<td class="parameter_description"><p>Pointer to destination memory area</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>Pointer to destination memory area. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
 <a name="gsf-input-read.returns"></a><h4>Returns</h4>
-<p> pointer to the buffer or <code class="literal">NULL</code> if there is an error or 0
-bytes are requested.</p>
+<p>pointer to the buffer or <code class="literal">NULL</code> if there is
+an error or 0 bytes are requested. </p>
+<p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 </div>
 <hr>
@@ -345,6 +344,7 @@ gsf_input_seek (<em class="parameter"><code><a class="link" href="gsf-Input-from
                 <em class="parameter"><code><a class="link" href="gsf-utils.html#gsf-off-t" title="gsf_off_t"><span class="type">gsf_off_t</span></a> offset</code></em>,
                 <em class="parameter"><code><span class="type">GSeekType</span> whence</code></em>);</pre>
 <p>Move the current location in the input stream.</p>
+<p><span class="annotation">[<acronym title="This is the invoker for a virtual method."><span class="acronym">virtual</span></acronym> Seek]</span></p>
 <div class="refsect3">
 <a name="gsf-input-seek.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -400,9 +400,9 @@ gsf_input_container (<em class="parameter"><code><a class="link" href="gsf-Input
 </div>
 <div class="refsect3">
 <a name="gsf-input-container.returns"></a><h4>Returns</h4>
-<p> <em class="parameter"><code>input</code></em>
-'s container, potentially <code class="literal">NULL</code>. </p>
-<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
+<p><em class="parameter"><code>input</code></em>
+'s container. </p>
+<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 </div>
 <hr>
@@ -411,35 +411,6 @@ gsf_input_container (<em class="parameter"><code><a class="link" href="gsf-Input
 <pre class="programlisting"><a class="link" href="gsf-Input-from-unstructured-files.html#GsfInput"><span class="returnvalue">GsfInput</span></a> *
 gsf_input_dup (<em class="parameter"><code><a class="link" href="gsf-Input-from-unstructured-files.html#GsfInput"><span class="type">GsfInput</span></a> *input</code></em>,
                <em class="parameter"><code><span class="type">GError</span> **err</code></em>);</pre>
-<p>Duplicates input <em class="parameter"><code>src</code></em>
- leaving the new one at the same offset.</p>
-<div class="refsect3">
-<a name="gsf-input-dup.parameters"></a><h4>Parameters</h4>
-<div class="informaltable"><table class="informaltable" width="100%" border="0">
-<colgroup>
-<col width="150px" class="parameters_name">
-<col class="parameters_description">
-<col width="200px" class="parameters_annotations">
-</colgroup>
-<tbody>
-<tr>
-<td class="parameter_name"><p>input</p></td>
-<td class="parameter_description"><p>The input to duplicate</p></td>
-<td class="parameter_annotations"> </td>
-</tr>
-<tr>
-<td class="parameter_name"><p>err</p></td>
-<td class="parameter_description"><p> place to store a <span class="type">GError</span> if anything goes wrong. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
-</tr>
-</tbody>
-</table></div>
-</div>
-<div class="refsect3">
-<a name="gsf-input-dup.returns"></a><h4>Returns</h4>
-<p> the duplicate, or <code class="literal">NULL</code> on error. </p>
-<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
-</div>
 </div>
 <hr>
 <div class="refsect2">
@@ -540,6 +511,7 @@ gsf_input_sibling (<em class="parameter"><code><a class="link" href="gsf-Input-f
 <p>Attempts to open a 'sibling' of <em class="parameter"><code>input</code></em>
 .  The caller is responsible for
 managing the resulting object.</p>
+<p><span class="annotation">[<acronym title="This is the invoker for a virtual method."><span class="acronym">virtual</span></acronym> OpenSibling]</span></p>
 <div class="refsect3">
 <a name="gsf-input-sibling.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -561,7 +533,7 @@ managing the resulting object.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>err</p></td>
-<td class="parameter_description"><p> place to store a <span class="type">GError</span> if anything goes wrong. </p></td>
+<td class="parameter_description"><p>place to store a <span class="type">GError</span> if anything goes wrong. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
 </tr>
 </tbody>
@@ -569,7 +541,7 @@ managing the resulting object.</p>
 </div>
 <div class="refsect3">
 <a name="gsf-input-sibling.returns"></a><h4>Returns</h4>
-<p> A related <a class="link" href="gsf-Input-from-unstructured-files.html#GsfInput"><span class="type">GsfInput</span></a> or <code class="literal">NULL</code> on failure. </p>
+<p>A related <a class="link" href="gsf-Input-from-unstructured-files.html#GsfInput"><span class="type">GsfInput</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 </div>
@@ -608,7 +580,7 @@ gsf_input_name (<em class="parameter"><code><a class="link" href="gsf-Input-from
 </div>
 <div class="refsect3">
 <a name="gsf-input-name.returns"></a><h4>Returns</h4>
-<p> <em class="parameter"><code>input</code></em>
+<p><em class="parameter"><code>input</code></em>
 's name in utf8 form, or <code class="literal">NULL</code> if it
 has no name. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -776,14 +748,14 @@ new one as its output.</p>
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>src</p></td>
-<td class="parameter_description"><p> stream to be uncompressed. </p></td>
+<td class="parameter_description"><p>stream to be uncompressed. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
 </tr></tbody>
 </table></div>
 </div>
 <div class="refsect3">
 <a name="gsf-input-uncompress.returns"></a><h4>Returns</h4>
-<p> A stream equivalent to the source stream,
+<p>A stream equivalent to the source stream,
 but uncompressed if the source was compressed. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -800,8 +772,6 @@ but uncompressed if the source was compressed. </p>
 <div class="refsect2">
 <a name="GsfInputProxy-struct"></a><h3>GsfInputProxy</h3>
 <pre class="programlisting">typedef struct _GsfInputProxy GsfInputProxy;</pre>
-<p>
-</p>
 </div>
 </div>
 <div class="refsect1">
@@ -868,6 +838,6 @@ It is not supported by all derived classes.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

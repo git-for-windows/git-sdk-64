@@ -40,7 +40,7 @@ typedef enum {
 	GSF_OUTPUT_CSV_QUOTING_MODE_ALWAYS
 } GsfOutputCsvQuotingMode;
 
-GType gsf_output_csv_quoting_mode_get_type      (void) G_GNUC_CONST;
+GType gsf_output_csv_quoting_mode_get_type      (void);
 /* void  gsf_output_csv_quoting_mode_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 #define GSF_OUTPUT_CSV_QUOTING_MODE_TYPE (gsf_output_csv_quoting_mode_get_type ())
@@ -67,7 +67,7 @@ typedef struct {
 #define GSF_OUTPUT_CSV_TYPE        (gsf_output_csv_get_type ())
 #define GSF_OUTPUT_CSV(o)          (G_TYPE_CHECK_INSTANCE_CAST ((o), GSF_OUTPUT_CSV_TYPE, GsfOutputCsv))
 #define GSF_IS_OUTPUT_CSV(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), GSF_OUTPUT_CSV_TYPE))
-GType gsf_output_csv_get_type      (void) G_GNUC_CONST;
+GType gsf_output_csv_get_type      (void);
 /* void  gsf_output_csv_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 gboolean gsf_output_csv_write_field (GsfOutputCsv *csv,

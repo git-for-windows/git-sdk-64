@@ -33,7 +33,7 @@ G_BEGIN_DECLS
 
 typedef struct _GsfOutputBzip GsfOutputBzip;
 
-GType gsf_output_bzip_get_type      (void) G_GNUC_CONST;
+GType gsf_output_bzip_get_type      (void);
 /* void  gsf_output_bzip_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfOutput *gsf_output_bzip_new	    (GsfOutput *sink, GError **err);

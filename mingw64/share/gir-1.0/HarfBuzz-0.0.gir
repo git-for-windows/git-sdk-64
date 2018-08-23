@@ -33,6 +33,11 @@ and/or use gtk-doc annotations.  -->
       <type name="font_get_glyph_advance_func_t"
             c:type="hb_font_get_glyph_advance_func_t"/>
     </alias>
+    <alias name="font_get_glyph_h_advances_func_t"
+           c:type="hb_font_get_glyph_h_advances_func_t">
+      <type name="font_get_glyph_advances_func_t"
+            c:type="hb_font_get_glyph_advances_func_t"/>
+    </alias>
     <alias name="font_get_glyph_h_kerning_func_t"
            c:type="hb_font_get_glyph_h_kerning_func_t">
       <type name="font_get_glyph_kerning_func_t"
@@ -47,6 +52,11 @@ and/or use gtk-doc annotations.  -->
            c:type="hb_font_get_glyph_v_advance_func_t">
       <type name="font_get_glyph_advance_func_t"
             c:type="hb_font_get_glyph_advance_func_t"/>
+    </alias>
+    <alias name="font_get_glyph_v_advances_func_t"
+           c:type="hb_font_get_glyph_v_advances_func_t">
+      <type name="font_get_glyph_advances_func_t"
+            c:type="hb_font_get_glyph_advances_func_t"/>
     </alias>
     <alias name="font_get_glyph_v_kerning_func_t"
            c:type="hb_font_get_glyph_v_kerning_func_t">
@@ -122,13 +132,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="5" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="8" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VERSION_MINOR" value="8" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.8.5" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.8.8" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_copy_writable_or_fail"
@@ -1918,6 +1928,29 @@ and output glyphs and their information after shaping.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="directwrite_shape_experimental_width"
+              c:identifier="hb_directwrite_shape_experimental_width">
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="buffer" transfer-ownership="none">
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="features" transfer-ownership="none">
+          <type name="feature_t" c:type="const hb_feature_t*"/>
+        </parameter>
+        <parameter name="num_features" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="width" transfer-ownership="none">
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="face_count" c:identifier="hb_face_count">
       <return-value transfer-ownership="none">
         <type name="guint" c:type="unsigned int"/>
@@ -1997,7 +2030,7 @@ and output glyphs and their information after shaping.</doc>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">a face.</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
+          <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2010,7 +2043,7 @@ and output glyphs and their information after shaping.</doc>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">a face.</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
+          <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2025,7 +2058,7 @@ and output glyphs and their information after shaping.</doc>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">a face.</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
+          <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
           <type name="guint" c:type="unsigned int"/>
@@ -2047,7 +2080,7 @@ and output glyphs and their information after shaping.</doc>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">a face.</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
+          <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2061,7 +2094,7 @@ and output glyphs and their information after shaping.</doc>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">a face.</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
+          <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <type name="user_data_key_t" c:type="hb_user_data_key_t*"/>
@@ -2077,7 +2110,7 @@ and output glyphs and their information after shaping.</doc>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">a face.</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
+          <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2130,7 +2163,7 @@ and output glyphs and their information after shaping.</doc>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">a face.</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
+          <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
         <parameter name="tag" transfer-ownership="none">
           <type name="tag_t" c:type="hb_tag_t"/>
@@ -2739,6 +2772,36 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_funcs_set_glyph_h_advances_func"
+              c:identifier="hb_font_funcs_set_glyph_h_advances_func"
+              version="1.8.6">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="ffuncs" transfer-ownership="none">
+          <doc xml:space="preserve">font functions.</doc>
+          <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+        </parameter>
+        <parameter name="func"
+                   transfer-ownership="none"
+                   scope="notified"
+                   closure="2"
+                   destroy="3">
+          <type name="font_get_glyph_h_advances_func_t"
+                c:type="hb_font_get_glyph_h_advances_func_t"/>
+        </parameter>
+        <parameter name="user_data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" scope="notified">
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_funcs_set_glyph_h_kerning_func"
               c:identifier="hb_font_funcs_set_glyph_h_kerning_func"
               version="0.9.2">
@@ -2847,6 +2910,36 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
                    destroy="3">
           <type name="font_get_glyph_v_advance_func_t"
                 c:type="hb_font_get_glyph_v_advance_func_t"/>
+        </parameter>
+        <parameter name="user_data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" scope="notified">
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_funcs_set_glyph_v_advances_func"
+              c:identifier="hb_font_funcs_set_glyph_v_advances_func"
+              version="1.8.6">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="ffuncs" transfer-ownership="none">
+          <doc xml:space="preserve">font functions.</doc>
+          <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+        </parameter>
+        <parameter name="func"
+                   transfer-ownership="none"
+                   scope="notified"
+                   closure="2"
+                   destroy="3">
+          <type name="font_get_glyph_v_advances_func_t"
+                c:type="hb_font_get_glyph_v_advances_func_t"/>
         </parameter>
         <parameter name="user_data"
                    transfer-ownership="none"
@@ -3163,6 +3256,76 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </callback>
+    <function name="font_get_glyph_advances_for_direction"
+              c:identifier="hb_font_get_glyph_advances_for_direction"
+              version="1.8.6">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font.</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="direction" transfer-ownership="none">
+          <type name="direction_t" c:type="hb_direction_t"/>
+        </parameter>
+        <parameter name="count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_glyph" transfer-ownership="none">
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="glyph_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_advance" transfer-ownership="none">
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="advance_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="font_get_glyph_advances_func_t"
+              c:type="hb_font_get_glyph_advances_func_t">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="font_data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_glyph" transfer-ownership="none">
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="glyph_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_advance" transfer-ownership="none">
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="advance_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="user_data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1"
+                   closure="7">
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <function name="font_get_glyph_contour_point"
               c:identifier="hb_font_get_glyph_contour_point"
               version="0.9.2">
@@ -3449,6 +3612,34 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_get_glyph_h_advances"
+              c:identifier="hb_font_get_glyph_h_advances"
+              version="1.8.6">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font.</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_glyph" transfer-ownership="none">
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="glyph_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_advance" transfer-ownership="none">
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="advance_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_get_glyph_h_kerning"
               c:identifier="hb_font_get_glyph_h_kerning"
               version="0.9.2">
@@ -3694,6 +3885,34 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
         <parameter name="glyph" transfer-ownership="none">
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_get_glyph_v_advances"
+              c:identifier="hb_font_get_glyph_v_advances"
+              version="1.8.6">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font.</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_glyph" transfer-ownership="none">
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="glyph_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_advance" transfer-ownership="none">
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="advance_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned"/>
         </parameter>
       </parameters>
     </function>
@@ -9429,6 +9648,30 @@ of this function type must ensure that they do not write past the provided array
         </parameter>
       </parameters>
     </callback>
+    <function name="uniscribe_font_get_hfont"
+              c:identifier="hb_uniscribe_font_get_hfont"
+              introspectable="0">
+      <return-value>
+        <type c:type="HFONT"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="uniscribe_font_get_logfontw"
+              c:identifier="hb_uniscribe_font_get_logfontw"
+              introspectable="0">
+      <return-value>
+        <type c:type="LOGFONTW*"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <record name="user_data_key_t"
             c:type="hb_user_data_key_t"
             glib:type-name="hb_user_data_key_t"

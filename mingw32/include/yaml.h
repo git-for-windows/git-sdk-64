@@ -28,6 +28,16 @@ extern "C" {
 
 #if defined(__MINGW32__)
 #   define  YAML_DECLARE(type)  type
+#elif defined(_MSC_VER)
+#   if defined(YAML_DECLARE_STATIC)
+#       define  YAML_DECLARE(type)  type
+#   elif defined(YAML_DECLARE_EXPORT)
+#       define  YAML_DECLARE(type)  __declspec(dllexport) type
+#   else
+#       define  YAML_DECLARE(type)  __declspec(dllimport) type
+#   endif
+#else
+#   define  YAML_DECLARE(type)  type
 #endif
 
 /** @} */
@@ -655,7 +665,7 @@ yaml_event_delete(yaml_event_t *event);
 
 /** The tag @c !!null with the only possible value: @c null. */
 #define YAML_NULL_TAG       "tag:yaml.org,2002:null"
-/** The tag @c !!bool with the values: @c true and @c falce. */
+/** The tag @c !!bool with the values: @c true and @c false. */
 #define YAML_BOOL_TAG       "tag:yaml.org,2002:bool"
 /** The tag @c !!str for string values. */
 #define YAML_STR_TAG        "tag:yaml.org,2002:str"
@@ -1930,8 +1940,8 @@ yaml_emitter_close(yaml_emitter_t *emitter);
  *
  * The documen object may be generated using the yaml_parser_load() function
  * or the yaml_document_initialize() function.  The emitter takes the
- * responsibility for the document object and destoys its content after
- * it is emitted. The document object is destroyedeven if the function fails.
+ * responsibility for the document object and destroys its content after
+ * it is emitted. The document object is destroyed even if the function fails.
  *
  * @param[in,out]   emitter     An emitter object.
  * @param[in,out]   document    A document object.

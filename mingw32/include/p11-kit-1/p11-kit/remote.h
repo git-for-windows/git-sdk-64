@@ -58,7 +58,7 @@ int		       p11_kit_remote_serve_token	    (CK_FUNCTION_LIST *module,
 
 int                    p11_kit_remote_serve_tokens          (const char **tokens,
 							     size_t n_tokens,
-							     CK_FUNCTION_LIST *module,
+							     CK_FUNCTION_LIST *provider,
 							     int in_fd,
 							     int out_fd);
 

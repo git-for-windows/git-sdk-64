@@ -49,7 +49,7 @@ struct _GsfClipData {
 	GsfClipDataPrivate *priv;
 };
 
-GType gsf_clip_data_get_type      (void) G_GNUC_CONST;
+GType gsf_clip_data_get_type      (void);
 /* void  gsf_clip_data_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfClipData *gsf_clip_data_new (GsfClipFormat format,

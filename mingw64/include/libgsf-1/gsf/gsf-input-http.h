@@ -33,7 +33,7 @@ G_BEGIN_DECLS
 
 typedef struct _GsfInputHTTP GsfInputHTTP;
 
-GType gsf_input_http_get_type (void) G_GNUC_CONST;
+GType gsf_input_http_get_type (void);
 /* void  gsf_input_http_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfInput *gsf_input_http_new (gchar const *url, GError **error);

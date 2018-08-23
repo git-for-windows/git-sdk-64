@@ -22,6 +22,8 @@
 #ifndef GSF_INPUT_IMPL_H
 #define GSF_INPUT_IMPL_H
 
+#include <sys/stat.h>
+
 #include <gsf/gsf-fwd.h>
 
 G_BEGIN_DECLS
@@ -43,7 +45,7 @@ typedef struct {
 	gboolean      (*Seek) (GsfInput *input, gsf_off_t offset,
 			       GSeekType whence);
 	GsfInput     *(*OpenSibling)  (GsfInput const *input,
-				       char const *path, GError **err);
+				       char const *name, GError **err);
 
 	/* Padding for future expansion */
 	void (*_gsf_reserved0) (void);
@@ -62,6 +64,9 @@ gboolean gsf_input_set_container (GsfInput *input, GsfInfile *container);
 gboolean gsf_input_set_size	 (GsfInput *input, gsf_off_t size);
 gboolean gsf_input_set_modtime   (GsfInput *input, GDateTime *modtime);
 gboolean gsf_input_seek_emulate  (GsfInput *input, gsf_off_t pos);
+
+gboolean gsf_input_set_modtime_from_stat (GsfInput *input,
+					  const struct stat *st);
 
 G_END_DECLS
 

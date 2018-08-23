@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 #define IS_GSF_DOCPROP_VECTOR(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), GSF_DOCPROP_VECTOR_TYPE))
 
 typedef struct _GsfDocPropVector      GsfDocPropVector;
-GType gsf_docprop_vector_get_type	(void) G_GNUC_CONST;
+GType gsf_docprop_vector_get_type	(void);
 /* void  gsf_docprop_vector_register_type	(GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfDocPropVector *gsf_docprop_vector_new	(void);

@@ -33,7 +33,7 @@ G_BEGIN_DECLS
 
 typedef struct _GsfInputTextline GsfInputTextline;
 
-GType gsf_input_textline_get_type      (void) G_GNUC_CONST;
+GType gsf_input_textline_get_type      (void);
 /* void  gsf_input_textline_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 

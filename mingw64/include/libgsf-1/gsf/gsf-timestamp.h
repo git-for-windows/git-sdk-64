@@ -38,7 +38,7 @@ struct _GsfTimestamp {
 	guint32	  timet;
 };
 
-GType gsf_timestamp_get_type      (void) G_GNUC_CONST;
+GType gsf_timestamp_get_type      (void);
 /* void  gsf_timestamp_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfTimestamp *gsf_timestamp_new	(void);

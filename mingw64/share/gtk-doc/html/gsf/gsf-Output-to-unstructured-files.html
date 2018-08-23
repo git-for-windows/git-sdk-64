@@ -8,7 +8,7 @@
 <link rel="up" href="io.html" title="Basic Input/Output">
 <link rel="prev" href="gsf-Input-from-unstructured-files.html" title="Input from unstructured files">
 <link rel="next" href="sources.html" title="Stream Sources">
-<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -254,8 +254,6 @@
 </div>
 <div class="refsect1">
 <a name="gsf-Output-to-unstructured-files.description"></a><h2>Description</h2>
-<p>
-</p>
 </div>
 <div class="refsect1">
 <a name="gsf-Output-to-unstructured-files.functions_details"></a><h2>Functions</h2>
@@ -291,6 +289,7 @@ gsf_output_size (<em class="parameter"><code><a class="link" href="gsf-Output-to
 <pre class="programlisting"><span class="returnvalue">gboolean</span>
 gsf_output_close (<em class="parameter"><code><a class="link" href="gsf-Output-to-unstructured-files.html#GsfOutput"><span class="type">GsfOutput</span></a> *output</code></em>);</pre>
 <p>Close a stream.</p>
+<p><span class="annotation">[<acronym title="This is the invoker for a virtual method."><span class="acronym">virtual</span></acronym> Close]</span></p>
 <div class="refsect3">
 <a name="gsf-output-close.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -353,6 +352,8 @@ relative to: the beginning of the stream (<code class="literal">G_SEEK_SET</code
 the stream (<code class="literal">G_SEEK_CUR</code>) or the end of the stream (<code class="literal">G_SEEK_END</code>).
 This function is similar to</p>
 <span class="citerefentry"><span class="refentrytitle">fseek</span>(3)</span>.
+
+<p><span class="annotation">[<acronym title="This is the invoker for a virtual method."><span class="acronym">virtual</span></acronym> Seek]</span></p>
 <div class="refsect3">
 <a name="gsf-output-seek.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -396,6 +397,7 @@ gsf_output_write (<em class="parameter"><code><a class="link" href="gsf-Output-t
  of <em class="parameter"><code>data</code></em>
  to <em class="parameter"><code>output</code></em>
 .</p>
+<p><span class="annotation">[<acronym title="This is the invoker for a virtual method."><span class="acronym">virtual</span></acronym> Write]</span></p>
 <div class="refsect3">
 <a name="gsf-output-write.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -417,7 +419,7 @@ gsf_output_write (<em class="parameter"><code><a class="link" href="gsf-Output-t
 </tr>
 <tr>
 <td class="parameter_name"><p>data</p></td>
-<td class="parameter_description"><p> Data to write. </p></td>
+<td class="parameter_description"><p>Data to write. </p></td>
 <td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=num_bytes]</span></td>
 </tr>
 </tbody>
@@ -519,6 +521,8 @@ gsf_output_vprintf (<em class="parameter"><code><a class="link" href="gsf-Output
  using the format string <em class="parameter"><code>format</code></em>
 , similar to</p>
 <span class="citerefentry"><span class="refentrytitle">vprintf</span>(3)</span>.
+
+<p><span class="annotation">[<acronym title="This is the invoker for a virtual method."><span class="acronym">virtual</span></acronym> Vprintf]</span></p>
 <div class="refsect3">
 <a name="gsf-output-vprintf.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -559,9 +563,9 @@ gsf_output_vprintf (<em class="parameter"><code><a class="link" href="gsf-Output
 gsf_output_container (<em class="parameter"><code><a class="link" href="gsf-Output-to-unstructured-files.html#GsfOutput"><span class="type">GsfOutput</span></a> const *output</code></em>);</pre>
 <div class="refsect3">
 <a name="gsf-output-container.returns"></a><h4>Returns</h4>
-<p> <em class="parameter"><code>output</code></em>
-'s container, potentially <code class="literal">NULL</code>. </p>
-<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
+<p><em class="parameter"><code>output</code></em>
+'s container. </p>
+<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 </div>
 <hr>
@@ -588,9 +592,9 @@ gsf_output_name (<em class="parameter"><code><a class="link" href="gsf-Output-to
 </div>
 <div class="refsect3">
 <a name="gsf-output-name.returns"></a><h4>Returns</h4>
-<p> <em class="parameter"><code>output</code></em>
+<p><em class="parameter"><code>output</code></em>
 's name in utf8 form. </p>
-<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
+<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 </div>
 <hr>
@@ -617,8 +621,8 @@ outputs.</div>
 </tr>
 <tr>
 <td class="parameter_name"><p>filename</p></td>
-<td class="parameter_description"><p>the (fs-sys encoded) filename</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>the (fs-sys encoded) filename. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -633,8 +637,6 @@ outputs.</div>
 <a name="gsf-output-error-id"></a><h3>gsf_output_error_id ()</h3>
 <pre class="programlisting"><span class="returnvalue">GQuark</span>
 gsf_output_error_id (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -691,8 +693,8 @@ outputs.</div>
 gsf_output_error (<em class="parameter"><code><a class="link" href="gsf-Output-to-unstructured-files.html#GsfOutput"><span class="type">GsfOutput</span></a> const *output</code></em>);</pre>
 <div class="refsect3">
 <a name="gsf-output-error.returns"></a><h4>Returns</h4>
-<p> the last error logged on the output, or <code class="literal">NULL</code>. </p>
-<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
+<p>the last error logged on the output. </p>
+<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 </div>
 <hr>
@@ -807,6 +809,6 @@ do anything with this property.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

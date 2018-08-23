@@ -30,7 +30,7 @@ G_BEGIN_DECLS
 #define GSF_OUTFILE(o)          (G_TYPE_CHECK_INSTANCE_CAST ((o), GSF_OUTFILE_TYPE, GsfOutfile))
 #define GSF_IS_OUTFILE(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), GSF_OUTFILE_TYPE))
 
-GType gsf_outfile_get_type      (void) G_GNUC_CONST;
+GType gsf_outfile_get_type      (void);
 /* void  gsf_outfile_register_type (GTypeModule *module); glib dynamic types are not thread safe */
 
 GsfOutput *gsf_outfile_new_child      (GsfOutfile *outfile,
