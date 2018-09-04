@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Interface definition prerequisites: GObject Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.2">
 <link rel="home" href="index.html" title="GObject Reference Manual">
 <link rel="up" href="howto-interface.html" title="How to define and implement interfaces">
 <link rel="prev" href="howto-interface-implement.html" title="Implementing interfaces">
@@ -22,7 +22,9 @@
 <div class="sect1">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="howto-interface-prerequisite"></a>Interface definition prerequisites</h2></div></div></div>
-<p>
+    
+  
+    <p>
       To specify that an interface requires the presence of other interfaces
       when implemented, GObject introduces the concept of
       <span class="emphasis"><em>prerequisites</em></span>: it is possible to associate
@@ -30,24 +32,16 @@
       object A wishes to implement interface I1, and if interface I1 has a
       prerequisite on interface I2, A has to implement both I1 and I2.
     </p>
-<p>
+  
+    <p>
       The mechanism described above is, in practice, very similar to
       Java's interface I1 extends interface I2. The example below shows
       the GObject equivalent:
 </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="comment">/* Make the ViewerEditableLossy interface require ViewerEditable interface. */</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-INTERFACE:CAPS">G_DEFINE_INTERFACE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerEditableLossy</span><span class="symbol">,</span><span class="normal"> viewer_editable_lossy</span><span class="symbol">,</span><span class="normal"> VIEWER_TYPE_EDITABLE</span><span class="symbol">)</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+<div class="informalexample"><pre class="programlisting">
+/* Make the ViewerEditableLossy interface require ViewerEditable interface. */
+G_DEFINE_INTERFACE (ViewerEditableLossy, viewer_editable_lossy, VIEWER_TYPE_EDITABLE)
+</pre></div>
 <p>
       In the <code class="function"><a class="link" href="gobject-Type-Information.html#G-DEFINE-INTERFACE:CAPS" title="G_DEFINE_INTERFACE()">G_DEFINE_INTERFACE</a></code>
       call above, the third parameter defines the prerequisite type. This
@@ -57,155 +51,78 @@
       below shows how an implementation can implement both interfaces and
       register their implementations:
 </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">viewer_file_editable_lossy_compress</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableLossy</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">editable</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">editable</span><span class="symbol">);</span>
+<div class="informalexample"><pre class="programlisting">
+static void
+viewer_file_editable_lossy_compress (ViewerEditableLossy *editable)
+{
+  ViewerFile *self = VIEWER_FILE (editable);
 
-<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"File implementation of lossy editable interface compress method: %s.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span>
-<span class="normal">           self</span><span class="symbol">-&gt;</span><span class="normal">filename</span><span class="symbol">);</span>
-<span class="cbracket">}</span>
+  g_print ("File implementation of lossy editable interface compress method: %s.\n",
+           self-&gt;filename);
+}
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">viewer_file_editable_lossy_interface_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableLossyInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">compress </span><span class="symbol">=</span><span class="normal"> viewer_file_editable_lossy_compress</span><span class="symbol">;</span>
-<span class="cbracket">}</span>
+static void
+viewer_file_editable_lossy_interface_init (ViewerEditableLossyInterface *iface)
+{
+  iface-&gt;compress = viewer_file_editable_lossy_compress;
+}
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">viewer_file_editable_save</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal">  </span><span class="symbol">*</span><span class="normal">editable</span><span class="symbol">,</span>
-<span class="normal">                           </span><span class="usertype">GError</span><span class="normal">         </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">editable</span><span class="symbol">);</span>
+static void
+viewer_file_editable_save (ViewerEditable  *editable,
+                           GError         **error)
+{
+  ViewerFile *self = VIEWER_FILE (editable);
 
-<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"File implementation of editable interface save method: %s.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span>
-<span class="normal">           self</span><span class="symbol">-&gt;</span><span class="normal">filename</span><span class="symbol">);</span>
-<span class="cbracket">}</span>
+  g_print ("File implementation of editable interface save method: %s.\n",
+           self-&gt;filename);
+}
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">viewer_file_editable_undo</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">editable</span><span class="symbol">,</span>
-<span class="normal">                           </span><span class="usertype">guint</span><span class="normal">           n_steps</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">editable</span><span class="symbol">);</span>
+static void
+viewer_file_editable_undo (ViewerEditable *editable,
+                           guint           n_steps)
+{
+  ViewerFile *self = VIEWER_FILE (editable);
 
-<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"File implementation of editable interface undo method: %s.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span>
-<span class="normal">           self</span><span class="symbol">-&gt;</span><span class="normal">filename</span><span class="symbol">);</span>
-<span class="cbracket">}</span>
+  g_print ("File implementation of editable interface undo method: %s.\n",
+           self-&gt;filename);
+}
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">viewer_file_editable_redo</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditable</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">editable</span><span class="symbol">,</span>
-<span class="normal">                           </span><span class="usertype">guint</span><span class="normal">           n_steps</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self </span><span class="symbol">=</span><span class="normal"> </span><span class="function">VIEWER_FILE</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">editable</span><span class="symbol">);</span>
+static void
+viewer_file_editable_redo (ViewerEditable *editable,
+                           guint           n_steps)
+{
+  ViewerFile *self = VIEWER_FILE (editable);
 
-<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"File implementation of editable interface redo method: %s.</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span>
-<span class="normal">           self</span><span class="symbol">-&gt;</span><span class="normal">filename</span><span class="symbol">);</span>
-<span class="cbracket">}</span>
+  g_print ("File implementation of editable interface redo method: %s.\n",
+           self-&gt;filename);
+}
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">viewer_file_editable_interface_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerEditableInterface</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">iface</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">save </span><span class="symbol">=</span><span class="normal"> viewer_file_editable_save</span><span class="symbol">;</span>
-<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">undo </span><span class="symbol">=</span><span class="normal"> viewer_file_editable_undo</span><span class="symbol">;</span>
-<span class="normal">  iface</span><span class="symbol">-&gt;</span><span class="normal">redo </span><span class="symbol">=</span><span class="normal"> viewer_file_editable_redo</span><span class="symbol">;</span>
-<span class="cbracket">}</span>
+static void
+viewer_file_editable_interface_init (ViewerEditableInterface *iface)
+{
+  iface-&gt;save = viewer_file_editable_save;
+  iface-&gt;undo = viewer_file_editable_undo;
+  iface-&gt;redo = viewer_file_editable_redo;
+}
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">viewer_file_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFileClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="comment">/* Nothing here. */</span>
-<span class="cbracket">}</span>
+static void
+viewer_file_class_init (ViewerFileClass *klass)
+{
+  /* Nothing here. */
+}
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">viewer_file_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">ViewerFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="comment">/* Instance variable initialisation code. */</span>
-<span class="cbracket">}</span>
+static void
+viewer_file_init (ViewerFile *self)
+{
+  /* Instance variable initialisation code. */
+}
 
-<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE-WITH-CODE:CAPS">G_DEFINE_TYPE_WITH_CODE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">,</span>
-<span class="normal">                         </span><span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_EDITABLE</span><span class="symbol">,</span>
-<span class="normal">                                                viewer_file_editable_interface_init</span><span class="symbol">)</span>
-<span class="normal">                         </span><span class="function"><a href="gobject-Type-Information.html#G-IMPLEMENT-INTERFACE:CAPS">G_IMPLEMENT_INTERFACE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">VIEWER_TYPE_EDITABLE_LOSSY</span><span class="symbol">,</span>
-<span class="normal">                                                viewer_file_editable_lossy_interface_init</span><span class="symbol">))</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+G_DEFINE_TYPE_WITH_CODE (ViewerFile, viewer_file, G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (VIEWER_TYPE_EDITABLE,
+                                                viewer_file_editable_interface_init)
+                         G_IMPLEMENT_INTERFACE (VIEWER_TYPE_EDITABLE_LOSSY,
+                                                viewer_file_editable_lossy_interface_init))
+</pre></div>
 <p>
       It is very important to notice that the order in which interface
       implementations are added to the main object is not random:
@@ -215,7 +132,7 @@
       must be invoked first on the interfaces which have no prerequisites and then on
       the others.
     </p>
-</div>
+  </div>
 <div class="footer">
 <hr>Generated by GTK-Doc V1.28</div>
 </body>

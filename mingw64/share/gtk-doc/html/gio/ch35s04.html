@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Creating proxies for well-known names: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.2">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="ch35.html" title="Migrating to GDBus">
 <link rel="prev" href="ch35s03.html" title="Owning bus names">
@@ -22,61 +22,37 @@
 <div class="section">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="id-1.5.5.5"></a>Creating proxies for well-known names</h2></div></div></div>
-<p>
+    
+    <p>
       dbus-glib lets you create proxy objects for well-known names, like the
       following example:
       </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="normal">proxy </span><span class="symbol">=</span><span class="normal"> </span><span class="function">dbus_g_proxy_new_for_name</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">system_bus_connection</span><span class="symbol">,</span>
-<span class="normal">                                   </span><span class="string">"org.freedesktop.Accounts"</span><span class="symbol">,</span>
-<span class="normal">                                   </span><span class="string">"/org/freedesktop/Accounts"</span><span class="symbol">,</span>
-<span class="normal">                                   </span><span class="string">"org.freedesktop.Accounts"</span><span class="symbol">);</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+<div class="informalexample"><pre class="programlisting">
+  proxy = dbus_g_proxy_new_for_name (system_bus_connection,
+                                     "org.freedesktop.Accounts",
+                                     "/org/freedesktop/Accounts",
+                                     "org.freedesktop.Accounts");
+      
+      </pre></div>
 <p>
-      For a <span class="type">DBusGProxy</span> constructed like this, method calls will be sent to
+      For a <a class="link" href=""><span class="type">DBusGProxy</span></a> constructed like this, method calls will be sent to
       the current owner of the name, and that owner can change over time.
     </p>
-<p>
+    <p>
       The same can be achieved with <a class="link" href="GDBusProxy.html" title="GDBusProxy"><span class="type">GDBusProxy</span></a>:
       </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="normal">error </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
-<span class="normal">proxy </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GDBusProxy.html#g-dbus-proxy-new-for-bus-sync">g_dbus_proxy_new_for_bus_sync</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="GDBusConnection.html#G-BUS-TYPE-SYSTEM:CAPS">G_BUS_TYPE_SYSTEM</a></span><span class="symbol">,</span>
-<span class="normal">                                       <a href="GDBusProxy.html#G-DBUS-PROXY-FLAGS-NONE:CAPS">G_DBUS_PROXY_FLAGS_NONE</a></span><span class="symbol">,</span>
-<span class="normal">                                       <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> </span><span class="comment">/* GDBusInterfaceInfo */</span>
-<span class="normal">                                       </span><span class="string">"org.freedesktop.Accounts"</span><span class="symbol">,</span>
-<span class="normal">                                       </span><span class="string">"/org/freedesktop/Accounts"</span><span class="symbol">,</span>
-<span class="normal">                                       </span><span class="string">"org.freedesktop.Accounts"</span><span class="symbol">,</span>
-<span class="normal">                                       <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> </span><span class="comment">/* GCancellable */</span>
-<span class="normal">                                       </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">);</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+<div class="informalexample"><pre class="programlisting">
+  error = NULL;
+  proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SYSTEM,
+                                         G_DBUS_PROXY_FLAGS_NONE,
+                                         NULL, /* GDBusInterfaceInfo */
+                                         "org.freedesktop.Accounts",
+                                         "/org/freedesktop/Accounts",
+                                         "org.freedesktop.Accounts",
+                                         NULL, /* GCancellable */
+                                         &amp;error);
+      
+      </pre></div>
 <p>
       For an added layer of safety, you can specify what D-Bus
       interface the proxy is expected to conform to by using the
@@ -85,11 +61,11 @@
       object. It also sets up match rules so D-Bus signals from the
       remote object are delivered locally.
     </p>
-<p>
+    <p>
       The <a class="link" href="GDBusProxy.html" title="GDBusProxy"><span class="type">GDBusProxy</span></a> type normally isn't used directly - instead
-      proxies subclassing <a class="link" href="GDBusProxy.html" title="GDBusProxy"><span class="type">GDBusProxy</span></a> generated by <span class="command"><strong>gdbus-codegen</strong></span> is used, see <a class="xref" href="gdbus-example-gdbus-codegen.html" title="Using gdbus-codegen">the section called “Using gdbus-codegen”</a>
+      proxies subclassing <a class="link" href="GDBusProxy.html" title="GDBusProxy"><span class="type">GDBusProxy</span></a> generated by <span class="command"><strong><a class="link" href="gdbus-codegen.html" title="gdbus-codegen">gdbus-codegen</a></strong></span> is used, see <a class="xref" href="gdbus-example-gdbus-codegen.html" title="Using gdbus-codegen">the section called “Using gdbus-codegen”</a>
     </p>
-</div>
+  </div>
 <div class="footer">
 <hr>Generated by GTK-Doc V1.28</div>
 </body>

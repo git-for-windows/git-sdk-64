@@ -8,7 +8,7 @@
 
 G_BEGIN_DECLS
 
-/* enumerations from "gioenums.h" */
+/* enumerations from "../glib-2.58.0/gio/gioenums.h" */
 GLIB_AVAILABLE_IN_ALL GType g_app_info_create_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_APP_INFO_CREATE_FLAGS (g_app_info_create_flags_get_type ())
 GLIB_AVAILABLE_IN_ALL GType g_converter_flags_get_type (void) G_GNUC_CONST;
@@ -160,7 +160,7 @@ GLIB_AVAILABLE_IN_ALL GType g_notification_priority_get_type (void) G_GNUC_CONST
 GLIB_AVAILABLE_IN_ALL GType g_network_connectivity_get_type (void) G_GNUC_CONST;
 #define G_TYPE_NETWORK_CONNECTIVITY (g_network_connectivity_get_type ())
 
-/* enumerations from "gsettings.h" */
+/* enumerations from "../glib-2.58.0/gio/gsettings.h" */
 GLIB_AVAILABLE_IN_ALL GType g_settings_bind_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_SETTINGS_BIND_FLAGS (g_settings_bind_flags_get_type ())
 G_END_DECLS

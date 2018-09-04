@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>glib-compile-resources: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.2">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="tools.html" title="GIO Tools">
 <link rel="prev" href="glib-compile-schemas.html" title="glib-compile-schemas">
@@ -21,17 +21,28 @@
 </tr></table>
 <div lang="en" class="refentry">
 <a name="glib-compile-resources"></a><div class="titlepage"></div>
-<div class="refnamediv"><table width="100%"><tr>
-<td valign="top">
+
+
+
+
+
+<div class="refnamediv">
 <h2><span class="refentrytitle">glib-compile-resources</span></h2>
-<p>glib-compile-resources — GLib resource compiler</p>
-</td>
-<td class="gallery_image" valign="top" align="right"></td>
-</tr></table></div>
+<p>
+  glib-compile-resources
+   — GLib resource compiler
+</p>
+</div>
+
 <div class="refsynopsisdiv">
 <h2>Synopsis</h2>
-<div class="cmdsynopsis"><p><code class="command">glib-compile-resources</code>  [OPTION...] {FILE}</p></div>
+  <div class="cmdsynopsis"><p>
+    <code class="command">glib-compile-resources</code> 
+     [OPTION...]
+     {FILE}
+  </p></div>
 </div>
+
 <div class="refsect1">
 <a name="id-1.4.26.5.5"></a><h2>Description</h2>
 <p><span class="command"><strong>glib-compile-resources</strong></span> reads the resource description from
@@ -47,6 +58,7 @@ For a detailed description of the XML file format, see the
 <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a> documentation.
 </p>
 </div>
+
 <div class="refsect1">
 <a name="id-1.4.26.5.6"></a><h2>Options</h2>
 <div class="variablelist"><table border="0" class="variablelist">
@@ -174,7 +186,7 @@ initialization functions as <span class="type">extern</span>.  So they are expor
 unless this is prevented by a link script or other means.  Since libraries
 usually want to use the functions only internally it can be more useful to
 declare them as
-<a href="../glib-Miscellaneous-Macros.html#G-GNUC-INTERNAL:CAPS"><code class="literal">G_GNUC_INTERNAL</code></a>
+<a class="link" href=""><code class="literal">G_GNUC_INTERNAL</code></a>
 which is what <code class="option">--internal</code> does.
 </p></td>
 </tr>
@@ -199,6 +211,7 @@ be used with <code class="literal">make</code>.
 </tbody>
 </table></div>
 </div>
+
 <div class="refsect1">
 <a name="id-1.4.26.5.7"></a><h2>Environment</h2>
 <div class="variablelist"><table border="0" class="variablelist">
@@ -210,19 +223,28 @@ be used with <code class="literal">make</code>.
 <tr>
 <td><p><span class="term"><code class="envar">XMLLINT</code></span></p></td>
 <td><p>
-The full path to the xmllint executable. This is used to preprocess resources
-with the <code class="literal">xml-stripblanks</code> preprocessing option. If this
-environment variable is not set, xmllint is searched in the
-<code class="envar">PATH</code>.
+The full path to the <span class="command"><strong>xmllint</strong></span> executable. This is used to
+preprocess resources with the <code class="literal">xml-stripblanks</code> preprocessing
+option. If this environment variable is not set, <span class="command"><strong>xmllint</strong></span> is
+searched for in the <code class="envar">PATH</code>.
 </p></td>
 </tr>
 <tr>
 <td><p><span class="term"><code class="envar">GDK_PIXBUF_PIXDATA</code></span></p></td>
 <td><p>
-The full path to the gdk-pixbuf-pixdata executable. This is used to preprocess
-resources with the <code class="literal">to-pixdata</code> preprocessing option. If this
-environment variable is not set, gdk-pixbuf-pixdata is searched in the
-<code class="envar">PATH</code>.
+The full path to the <span class="command"><strong>gdk-pixbuf-pixdata</strong></span> executable. This is
+used to preprocess resources with the <code class="literal">to-pixdata</code> preprocessing
+option. If this environment variable is not set, <span class="command"><strong>gdk-pixbuf-pixdata</strong></span>
+is searched for in the <code class="envar">PATH</code>.
+</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="envar">JSON_GLIB_FORMAT</code></span></p></td>
+<td><p>
+The full path to the <span class="command"><strong>json-glib-format</strong></span> executable. This is used
+to preprocess resources with the <code class="literal">json-stripblanks</code> preprocessing
+option. If this environment variable is not set, <span class="command"><strong>json-glib-format</strong></span>
+is searched for in the <code class="envar">PATH</code>.
 </p></td>
 </tr>
 </tbody>

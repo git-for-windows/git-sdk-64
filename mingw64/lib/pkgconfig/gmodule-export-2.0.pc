@@ -1,14 +1,11 @@
 prefix=/mingw64
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
+libdir=${prefix}/lib
 includedir=${prefix}/include
 
 gmodule_supported=true
 
 Name: GModule
 Description: Dynamic module loader for GLib
-Requires: glib-2.0
-Version: 2.56.2
-Libs: -L${libdir}  -lgmodule-2.0 -pthread
-Libs.private: 
-Cflags: -pthread
+Version: 2.58.0
+Requires: gmodule-no-export-2.0, glib-2.0
+Cflags: -I${includedir}

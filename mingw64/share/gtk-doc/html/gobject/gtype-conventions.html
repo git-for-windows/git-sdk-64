@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Conventions: GObject Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.2">
 <link rel="home" href="index.html" title="GObject Reference Manual">
 <link rel="up" href="chapter-gtype.html" title="The GLib Dynamic Type System">
 <link rel="prev" href="chapter-gtype.html" title="The GLib Dynamic Type System">
@@ -22,7 +22,10 @@
 <div class="sect1">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="gtype-conventions"></a>Conventions</h2></div></div></div>
-<p>
+        
+
+
+      <p>
         There are a number of conventions users are expected to follow when creating new types
         which are to be exported in a header file:
         </p>
@@ -49,17 +52,17 @@
             <code class="function">prefix_object_get_type</code>; for example, <code class="function">viewer_file_get_type</code>.
           </p></li>
 <li class="listitem">
-<p>
+            <p>
               Use <a class="link" href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS" title="G_DECLARE_FINAL_TYPE()"><code class="function">G_DECLARE_FINAL_TYPE</code></a>
               or <a class="link" href="gobject-Type-Information.html#G-DECLARE-DERIVABLE-TYPE:CAPS" title="G_DECLARE_DERIVABLE_TYPE()"><code class="function">G_DECLARE_DERIVABLE_TYPE</code></a>
               to define various other conventional macros for your object:
             </p>
-<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+            <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
 <li class="listitem"><p><code class="function">PREFIX_OBJECT (obj)</code>, which 
                 returns a pointer of type <span class="type">PrefixObject</span>. This macro is used to enforce
                 static type safety by doing explicit casts wherever needed. It also enforces
                 dynamic type safety by doing runtime checks. It is possible to disable the dynamic
-                type checks in production builds (see building GLib).
+                type checks in production builds (see <a class="link" href="">building GLib</a>).
                 For example, we would create 
                 <code class="function">VIEWER_FILE (obj)</code> to keep the previous example.
               </p></li>
@@ -85,88 +88,54 @@
                 For example, <code class="function">VIEWER_FILE_GET_CLASS</code>.
               </p></li>
 </ul></div>
-</li>
+          </li>
 </ul></div>
 <p>
         The implementation of these macros is pretty straightforward: a number of simple-to-use 
         macros are provided in <code class="filename">gtype.h</code>. For the example we used above, we would 
         write the following trivial code to declare the macros:
 </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="preproc">#define</span><span class="normal"> </span><span class="usertype">VIEWER_TYPE_FILE</span><span class="normal"> </span><span class="function">viewer_file_get_type</span><span class="normal"> </span><span class="symbol">()</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS">G_DECLARE_FINAL_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> VIEWER</span><span class="symbol">,</span><span class="normal"> FILE</span><span class="symbol">,</span><span class="normal"> <a href="gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+<div class="informalexample"><pre class="programlisting">
+#define VIEWER_TYPE_FILE viewer_file_get_type ()
+G_DECLARE_FINAL_TYPE (ViewerFile, viewer_file, VIEWER, FILE, GObject)
+</pre></div>
 <p>
       </p>
-<p>
+
+      <p>
         Unless your code has special requirements, you can use the
         <code class="function"><a class="link" href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS" title="G_DEFINE_TYPE()">G_DEFINE_TYPE</a></code>
 	macro to define a class:
 </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS">G_DEFINE_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">ViewerFile</span><span class="symbol">,</span><span class="normal"> viewer_file</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">)</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+<div class="informalexample"><pre class="programlisting">
+G_DEFINE_TYPE (ViewerFile, viewer_file, G_TYPE_OBJECT)
+</pre></div>
 <p>
       </p>
-<p>
+
+      <p>
         Otherwise, the <code class="function">viewer_file_get_type</code> function must be
         implemented manually:
 </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="usertype">GType</span><span class="normal"> </span><span class="function">viewer_file_get_type</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="usertype">GType</span><span class="normal"> type </span><span class="symbol">=</span><span class="normal"> </span><span class="number">0</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">type </span><span class="symbol">==</span><span class="normal"> </span><span class="number">0</span><span class="symbol">)</span><span class="normal"> </span><span class="cbracket">{</span>
-<span class="normal">    </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GTypeInfo</span><span class="normal"> info </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
-<span class="normal">      </span><span class="comment">/* You fill this structure. */</span>
-<span class="normal">    </span><span class="cbracket">}</span><span class="symbol">;</span>
-<span class="normal">    type </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Type-Information.html#g-type-register-static">g_type_register_static</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">,</span>
-<span class="normal">                                   </span><span class="string">"ViewerFile"</span><span class="symbol">,</span>
-<span class="normal">                                   </span><span class="symbol">&amp;</span><span class="normal">info</span><span class="symbol">,</span><span class="normal"> </span><span class="number">0</span><span class="symbol">);</span>
-<span class="normal">  </span><span class="cbracket">}</span>
-<span class="normal">  </span><span class="keyword">return</span><span class="normal"> type</span><span class="symbol">;</span>
-<span class="cbracket">}</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+<div class="informalexample"><pre class="programlisting">
+GType viewer_file_get_type (void)
+{
+  static GType type = 0;
+  if (type == 0) {
+    const GTypeInfo info = {
+      /* You fill this structure. */
+    };
+    type = g_type_register_static (G_TYPE_OBJECT,
+                                   "ViewerFile",
+                                   &amp;info, 0);
+  }
+  return type;
+}
+</pre></div>
 <p>
       </p>
-</div>
+
+      </div>
 <div class="footer">
 <hr>Generated by GTK-Doc V1.28</div>
 </body>

@@ -19,7 +19,7 @@ import errno
 import codecs
 import locale
 
-VERSION_STR = '''glib-mkenums version 2.56.2
+VERSION_STR = '''glib-mkenums version 2.58.0
 glib-mkenums comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-mkenums under the terms of
 the GNU General Public License which can be found in the
@@ -99,7 +99,7 @@ codecs.register_error('replace_and_warn', replace_and_warn)
 # glib-mkenums.py
 # Information about the current enumeration
 flags = None # Is enumeration a bitmask?
-option_underscore_name = '' # Overriden underscore variant of the enum name
+option_underscore_name = '' # Overridden underscore variant of the enum name
                             # for example to fix the cases we don't get the
                             # mixed-case -> underscorized transform right.
 option_lowercase_name = ''  # DEPRECATED.  A lower case name to use as part
@@ -218,7 +218,7 @@ def parse_entries(file, file_name):
             if options is not None:
                 options = parse_trigraph(options)
                 if 'skip' not in options:
-                    entries.append((name, value, options['nick']))
+                    entries.append((name, value, options.get('nick')))
             else:
                 entries.append((name, value))
         elif re.match(r's*\#', line):
@@ -303,15 +303,15 @@ parser = argparse.ArgumentParser(epilog=help_epilog,
 parser.add_argument('--identifier-prefix', default='', dest='idprefix',
                     help='Identifier prefix')
 parser.add_argument('--symbol-prefix', default='', dest='symprefix',
-                    help='symbol-prefix')
+                    help='Symbol prefix')
 parser.add_argument('--fhead', default=[], dest='fhead', action='append',
                     help='Output file header')
 parser.add_argument('--ftail', default=[], dest='ftail', action='append',
-                    help='Per input file production')
+                    help='Output file footer')
 parser.add_argument('--fprod', default=[], dest='fprod', action='append',
-                    help='Put out TEXT everytime a new input file is being processed.')
+                    help='Put out TEXT every time a new input file is being processed.')
 parser.add_argument('--eprod', default=[], dest='eprod', action='append',
-                    help='Per enum text (produced prior to value iterations)')
+                    help='Per enum text, produced prior to value iterations')
 parser.add_argument('--vhead', default=[], dest='vhead', action='append',
                     help='Value header, produced before iterating over enum values')
 parser.add_argument('--vprod', default=[], dest='vprod', action='append',
@@ -324,8 +324,9 @@ parser.add_argument('--template', default='', dest='template',
                     help='Template file')
 parser.add_argument('--output', default=None, dest='output')
 parser.add_argument('--version', '-v', default=False, action='store_true', dest='version',
-                    help='Print version informations')
-parser.add_argument('args', nargs='*')
+                    help='Print version information')
+parser.add_argument('args', nargs='*',
+                    help='Input files')
 
 options = parser.parse_args()
 
@@ -415,12 +416,17 @@ def replace_specials(prod):
     prod = prod.rstrip()
     return prod
 
+
+def warn_if_filename_basename_used(section, prod):
+    for substitution in ('\u0040filename\u0040',
+                         '\u0040basename\u0040'):
+        if substitution in prod:
+            print_warning('{} used in {} section.'.format(substitution,
+                                                          section))
+
 if len(fhead) > 0:
     prod = fhead
-    base = os.path.basename(options.args[0])
-
-    prod = prod.replace('\u0040filename\u0040', options.args[0])
-    prod = prod.replace('\u0040basename\u0040', base)
+    warn_if_filename_basename_used('file-header', prod)
     prod = replace_specials(prod)
     write_output(prod)
 
@@ -486,7 +492,7 @@ def process_file(curfilename):
 
             if option_lowercase_name is not None:
                 if option_underscore_name is not None:
-                    print_warning("lowercase_name overriden with underscore_name")
+                    print_warning("lowercase_name overridden with underscore_name")
                     option_lowercase_name = None
                 else:
                     print_warning("lowercase_name is deprecated, use underscore_name")
@@ -712,10 +718,7 @@ for fname in sorted(options.args):
 
 if len(ftail) > 0:
     prod = ftail
-    base = os.path.basename(options.args[-1]) # FIXME, wrong
-
-    prod = prod.replace('\u0040filename\u0040', 'ARGV') # wrong too
-    prod = prod.replace('\u0040basename\u0040', base)
+    warn_if_filename_basename_used('file-tail', prod)
     prod = replace_specials(prod)
     write_output(prod)
 

@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Chaining up: GObject Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.2">
 <link rel="home" href="index.html" title="GObject Reference Manual">
 <link rel="up" href="howto-gobject.html" title="How to define and implement a new GObject">
 <link rel="prev" href="howto-gobject-methods.html" title="Object methods">
@@ -22,7 +22,9 @@
 <div class="sect1">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="howto-gobject-chainup"></a>Chaining up</h2></div></div></div>
-<p>Chaining up is often loosely defined by the following set of
+    
+    
+    <p>Chaining up is often loosely defined by the following set of
     conditions:
       </p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
@@ -47,60 +49,43 @@
 </ul></div>
 <p>
     </p>
-<p>
+
+    <p>
       To explicitly chain up to the implementation of the virtual method in the parent class, 
       you first need a handle to the original parent class structure. This pointer can then be used to 
       access the original virtual function pointer and invoke it directly.
       <a href="#ftn.id-1.6.3.9.3.1" class="footnote" name="id-1.6.3.9.3.1"><sup class="footnote">[7]</sup></a>
     </p>
-<p>
+    
+    <p>
       Use the <code class="function">parent_class</code> pointer created and initialized
       by the
       <a class="link" href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS" title="G_DEFINE_TYPE()"><code class="function">G_DEFINE_TYPE</code></a>
       family of macros, for instance:
 </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">b_method_to_call</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">B</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">obj</span><span class="symbol">,</span><span class="normal"> </span><span class="usertype">gint</span><span class="normal"> some_param</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="comment">/* do stuff before chain up */</span>
+<div class="informalexample"><pre class="programlisting">
+static void
+b_method_to_call (B *obj, gint some_param)
+{
+  /* do stuff before chain up */
 
-<span class="normal">  </span><span class="comment">/* call the method_to_call() virtual function on the</span>
-<span class="comment">   * parent of BClass, AClass.</span>
-<span class="comment">   *</span>
-<span class="comment">   * remember the explicit cast to AClass*</span>
-<span class="comment">   */</span>
-<span class="normal">  </span><span class="function">A_CLASS</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">b_parent_class</span><span class="symbol">)-&gt;</span><span class="function">method_to_call</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">obj</span><span class="symbol">,</span><span class="normal"> some_param</span><span class="symbol">);</span>
+  /* call the method_to_call() virtual function on the
+   * parent of BClass, AClass.
+   *
+   * remember the explicit cast to AClass*
+   */
+  A_CLASS (b_parent_class)-&gt;method_to_call (obj, some_param);
 
-<span class="normal">  </span><span class="comment">/* do stuff after chain up */</span>
-<span class="cbracket">}</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+  /* do stuff after chain up */
+}
+</pre></div>
 <p>
   </p>
-<div class="footnotes">
+
+  <div class="footnotes">
 <br><hr style="width:100; text-align:left;margin-left: 0">
-<div id="ftn.id-1.6.3.9.3.1" class="footnote"><p><a href="#id-1.6.3.9.3.1" class="para"><sup class="para">[7] </sup></a>
+<div id="ftn.id-1.6.3.9.3.1" class="footnote">
+        <p><a href="#id-1.6.3.9.3.1" class="para"><sup class="para">[7] </sup></a>
           The <span class="emphasis"><em>original</em></span> adjective used in this sentence is not innocuous. To fully 
           understand its meaning, recall how class structures are initialized: for each object type,
           the class structure associated with this object is created by first copying the class structure of its
@@ -109,7 +94,8 @@
           with the user re-implementations of the class methods, the modified copy of the parent class
           structure stored in the derived instance cannot be used. A copy of the class structure of an instance of the parent
           class is needed.
-        </p></div>
+        </p>
+      </div>
 </div>
 </div>
 <div class="footer">

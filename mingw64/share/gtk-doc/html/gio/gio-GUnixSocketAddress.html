@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GUnixSocketAddress: GIO Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.2">
+<link rel="home" href="index.html" title="GIO Reference Manual">
+<link rel="up" href="networking.html" title="Low-level network support">
+<link rel="prev" href="GInetSocketAddress.html" title="GInetSocketAddress">
+<link rel="next" href="GSocketControlMessage.html" title="GSocketControlMessage">
+<meta name="generator" content="GTK-Doc V1.28 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts"></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="networking.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="GInetSocketAddress.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="GSocketControlMessage.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="gio-GUnixSocketAddress"></a><div class="titlepage"></div>
+
+<div class="refnamediv">
+<h2><span class="refentrytitle"><a name="gio-GUnixSocketAddress.top_of_page"></a>GUnixSocketAddress</span></h2>
+<p>
+GUnixSocketAddress
+ — UNIX GSocketAddress
+</p>
+</div>
+
+<div class="refsect1">
+<a name="gio-GUnixSocketAddress.other"></a><h2>Types and Values</h2>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody><tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="gio-GUnixSocketAddress.html#GUnixSocketAddressType" title="enum GUnixSocketAddressType">GUnixSocketAddressType</a></td>
+</tr></tbody>
+</table>
+</div>
+</div>
+<div class="refsect1">
+<a name="gio-GUnixSocketAddress.object-hierarchy"></a><h2>Object Hierarchy</h2>
+
+<pre class="screen">    <a class="link" href="">GEnum</a>
+    <span class="lineart">╰──</span> GUnixSocketAddressType
+</pre>
+</div>
+
+<div class="refsect1">
+<a name="gio-GUnixSocketAddress.includes"></a><h2>Includes</h2>
+<pre class="synopsis">#include &lt;gio/gunixsocketaddress.h&gt;
+</pre>
+</div>
+
+<div class="refsect1">
+<a name="gio-GUnixSocketAddress.description"></a><h2>Description</h2>
+
+<p>Support for UNIX-domain (also known as local) sockets.</p>
+<p>UNIX domain sockets are generally visible in the filesystem.
+However, some systems support abstract socket names which are not
+visible in the filesystem and not affected by the filesystem
+permissions, visibility, etc. Currently this is only supported
+under Linux. If you attempt to use abstract sockets on other
+systems, function calls may return <a class="link" href="gio-GIOError.html#G-IO-ERROR-NOT-SUPPORTED:CAPS"><code class="literal">G_IO_ERROR_NOT_SUPPORTED</code></a>
+errors. You can use <a class="link" href=""><code class="function">g_unix_socket_address_abstract_names_supported()</code></a>
+to see if abstract names are supported.</p>
+<p>Note that <code class="literal">&amp;lt;gio/gunixsocketaddress.h&gt;</code> belongs to the UNIX-specific GIO
+interfaces, thus you have to use the <code class="literal">gio-unix-2.0.pc</code> pkg-config file
+when using it.</p>
+
+</div>
+<div class="refsect1">
+<a name="gio-GUnixSocketAddress.functions_details"></a><h2>Functions</h2>
+
+<p></p>
+</div>
+<div class="refsect1">
+<a name="gio-GUnixSocketAddress.other_details"></a><h2>Types and Values</h2>
+
+<div class="refsect2">
+<a name="GUnixSocketAddressType"></a><h3>enum GUnixSocketAddressType</h3>
+
+<a class="indexterm" name="id-1.4.13.8.8.2.2"></a>
+<p>The type of name used by a <a class="link" href=""><span class="type">GUnixSocketAddress</span></a>.
+<a class="link" href="gio-GUnixSocketAddress.html#G-UNIX-SOCKET-ADDRESS-PATH:CAPS"><code class="literal">G_UNIX_SOCKET_ADDRESS_PATH</code></a> indicates a traditional unix domain
+socket bound to a filesystem path. <a class="link" href="gio-GUnixSocketAddress.html#G-UNIX-SOCKET-ADDRESS-ANONYMOUS:CAPS"><code class="literal">G_UNIX_SOCKET_ADDRESS_ANONYMOUS</code></a>
+indicates a socket not bound to any name (eg, a client-side socket,
+or a socket created with <a class="link" href=""><code class="function">socketpair()</code></a>).</p>
+<p>For abstract sockets, there are two incompatible ways of naming
+them; the man pages suggest using the entire <code class="literal">struct sockaddr_un</code>
+as the name, padding the unused parts of the <a class="link" href=""><code class="literal">sun_path</code></a> field with
+zeroes; this corresponds to <a class="link" href="gio-GUnixSocketAddress.html#G-UNIX-SOCKET-ADDRESS-ABSTRACT-PADDED:CAPS"><code class="literal">G_UNIX_SOCKET_ADDRESS_ABSTRACT_PADDED</code></a>.
+However, many programs instead just use a portion of <a class="link" href=""><code class="literal">sun_path</code></a>, and
+pass an appropriate smaller length to <a class="link" href=""><code class="function">bind()</code></a> or <a class="link" href=""><code class="function">connect()</code></a>. This is
+<a class="link" href="gio-GUnixSocketAddress.html#G-UNIX-SOCKET-ADDRESS-ABSTRACT:CAPS"><code class="literal">G_UNIX_SOCKET_ADDRESS_ABSTRACT</code></a>.</p>
+<div class="refsect3">
+<a name="GUnixSocketAddressType.members"></a><h4>Members</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNIX-SOCKET-ADDRESS-INVALID:CAPS"></a>G_UNIX_SOCKET_ADDRESS_INVALID</p></td>
+<td class="enum_member_description">
+<p>invalid</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNIX-SOCKET-ADDRESS-ANONYMOUS:CAPS"></a>G_UNIX_SOCKET_ADDRESS_ANONYMOUS</p></td>
+<td class="enum_member_description">
+<p>anonymous</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNIX-SOCKET-ADDRESS-PATH:CAPS"></a>G_UNIX_SOCKET_ADDRESS_PATH</p></td>
+<td class="enum_member_description">
+<p>a filesystem path</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNIX-SOCKET-ADDRESS-ABSTRACT:CAPS"></a>G_UNIX_SOCKET_ADDRESS_ABSTRACT</p></td>
+<td class="enum_member_description">
+<p>an abstract name</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNIX-SOCKET-ADDRESS-ABSTRACT-PADDED:CAPS"></a>G_UNIX_SOCKET_ADDRESS_ABSTRACT_PADDED</p></td>
+<td class="enum_member_description">
+<p>an abstract name, 0-padded
+  to the full length of a unix socket name</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
+</div>
+
+</div>
+
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.28</div>
+</body>
+</html>

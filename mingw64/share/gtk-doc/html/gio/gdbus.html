@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>gdbus: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.2">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="tools.html" title="GIO Tools">
 <link rel="prev" href="glib-compile-resources.html" title="glib-compile-resources">
@@ -21,31 +21,118 @@
 </tr></table>
 <div lang="en" class="refentry">
 <a name="gdbus"></a><div class="titlepage"></div>
-<div class="refnamediv"><table width="100%"><tr>
-<td valign="top">
+
+
+
+
+
+<div class="refnamediv">
 <h2><span class="refentrytitle">gdbus</span></h2>
-<p>gdbus — Tool for working with D-Bus objects</p>
-</td>
-<td class="gallery_image" valign="top" align="right"></td>
-</tr></table></div>
+<p>
+  gdbus
+   — Tool for working with D-Bus objects
+</p>
+</div>
+
 <div class="refsynopsisdiv">
 <h2>Synopsis</h2>
-<div class="cmdsynopsis"><p><code class="command">gdbus</code>   introspect  [ --system  |   --session  |   --address <em class="replaceable"><code>address</code></em> ]  --dest <em class="replaceable"><code>bus_name</code></em>   --object-path <em class="replaceable"><code>/path/to/object</code></em>  [ --xml ] [ --recurse ] [ --only-properties ]</p></div>
-<div class="cmdsynopsis"><p><code class="command">gdbus</code>   monitor  [ --system  |   --session  |   --address <em class="replaceable"><code>address</code></em> ]  --dest <em class="replaceable"><code>bus_name</code></em>  [ --object-path <em class="replaceable"><code>/path/to/object</code></em> ]</p></div>
-<div class="cmdsynopsis"><p><code class="command">gdbus</code>   call  [ --system  |   --session  |   --address <em class="replaceable"><code>address</code></em> ]  --dest <em class="replaceable"><code>bus_name</code></em>   --object-path <em class="replaceable"><code>/path/to/object</code></em>   --method <em class="replaceable"><code>org.project.InterfaceName.MethodName</code></em>  [ --timeout <em class="replaceable"><code>seconds</code></em> ]  ARG1   ARG2... </p></div>
-<div class="cmdsynopsis"><p><code class="command">gdbus</code>   emit  [ --system  |   --session  |   --address <em class="replaceable"><code>address</code></em> ]  --object-path <em class="replaceable"><code>/path/to/object</code></em>   --signal <em class="replaceable"><code>org.project.InterfaceName.SignalName</code></em>  [ --dest <em class="replaceable"><code>unique_bus_name</code></em> ]  ARG1   ARG2... </p></div>
-<div class="cmdsynopsis"><p><code class="command">gdbus</code>   wait  [ --system  |   --session  |   --address <em class="replaceable"><code>address</code></em> ]  --activate <em class="replaceable"><code>bus_name</code></em>  [ --timeout <em class="replaceable"><code>seconds</code></em> ]  <em class="replaceable"><code>bus_name</code></em> </p></div>
-<div class="cmdsynopsis"><p><code class="command">gdbus</code>   help </p></div>
+  <div class="cmdsynopsis"><p>
+    <code class="command">gdbus</code> 
+      introspect 
+     [
+       --system 
+       |   --session 
+       |   --address <em class="replaceable"><code>address</code></em> 
+    ]
+      --dest <em class="replaceable"><code>bus_name</code></em> 
+      --object-path <em class="replaceable"><code>/path/to/object</code></em> 
+     [
+       --xml 
+    ]
+     [
+       --recurse 
+    ]
+     [
+       --only-properties 
+    ]
+  </p></div>
+  <div class="cmdsynopsis"><p>
+    <code class="command">gdbus</code> 
+      monitor 
+     [
+       --system 
+       |   --session 
+       |   --address <em class="replaceable"><code>address</code></em> 
+    ]
+      --dest <em class="replaceable"><code>bus_name</code></em> 
+     [
+       --object-path <em class="replaceable"><code>/path/to/object</code></em> 
+    ]
+  </p></div>
+  <div class="cmdsynopsis"><p>
+    <code class="command">gdbus</code> 
+      call 
+     [
+       --system 
+       |   --session 
+       |   --address <em class="replaceable"><code>address</code></em> 
+    ]
+      --dest <em class="replaceable"><code>bus_name</code></em> 
+      --object-path <em class="replaceable"><code>/path/to/object</code></em> 
+      --method <em class="replaceable"><code>org.project.InterfaceName.MethodName</code></em> 
+     [
+       --timeout <em class="replaceable"><code>seconds</code></em> 
+    ]
+      ARG1 
+      ARG2... 
+  </p></div>
+  <div class="cmdsynopsis"><p>
+    <code class="command">gdbus</code> 
+      emit 
+     [
+       --system 
+       |   --session 
+       |   --address <em class="replaceable"><code>address</code></em> 
+    ]
+      --object-path <em class="replaceable"><code>/path/to/object</code></em> 
+      --signal <em class="replaceable"><code>org.project.InterfaceName.SignalName</code></em> 
+     [
+       --dest <em class="replaceable"><code>unique_bus_name</code></em> 
+    ]
+      ARG1 
+      ARG2... 
+  </p></div>
+  <div class="cmdsynopsis"><p>
+    <code class="command">gdbus</code> 
+      wait 
+     [
+       --system 
+       |   --session 
+       |   --address <em class="replaceable"><code>address</code></em> 
+    ]
+      --activate <em class="replaceable"><code>bus_name</code></em> 
+     [
+       --timeout <em class="replaceable"><code>seconds</code></em> 
+    ]
+      <em class="replaceable"><code>bus_name</code></em> 
+  </p></div>
+  <div class="cmdsynopsis"><p>
+    <code class="command">gdbus</code> 
+      help 
+  </p></div>
 </div>
+
 <div class="refsect1">
 <a name="id-1.4.26.6.5"></a><h2>Description</h2>
-<p>
+  
+  <p>
     <span class="command"><strong>gdbus</strong></span> is a simple tool for working with D-Bus objects.
   </p>
 </div>
 <div class="refsect1">
 <a name="id-1.4.26.6.6"></a><h2>Commands</h2>
-<div class="variablelist"><table border="0" class="variablelist">
+    
+    <div class="variablelist"><table border="0" class="variablelist">
 <colgroup>
 <col align="left" valign="top">
 <col>
@@ -78,9 +165,9 @@
 <td><p>
           Invokes a method on a remote object.  Each argument to pass to the
           method must be specified as a serialized
-          <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> except that strings do
+          <a class="link" href=""><span class="type">GVariant</span></a> except that strings do
           not need explicit quotes. The return values are printed out as
-          serialized <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a>
+          serialized <a class="link" href=""><span class="type">GVariant</span></a>
           values.
         </p></td>
 </tr>
@@ -88,7 +175,7 @@
 <td><p><span class="term"><code class="option">emit</code></span></p></td>
 <td><p>
           Emits a signal. Each argument to include in the signal must be specified as a serialized
-          <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> except that strings do
+          <a class="link" href=""><span class="type">GVariant</span></a> except that strings do
           not need explicit quotes.
         </p></td>
 </tr>
@@ -110,16 +197,20 @@
 </tbody>
 </table></div>
 </div>
+
 <div class="refsect1">
 <a name="id-1.4.26.6.7"></a><h2>Bash Completion</h2>
-<p>
+  
+  <p>
     <span class="command"><strong>gdbus</strong></span> ships with a bash completion script to
     complete commands, destinations, bus names, object paths and
     interface/method names.
   </p>
 </div>
+
 <div class="refsect1">
 <a name="id-1.4.26.6.8"></a><h2>Examples</h2>
+  
   This shows how to introspect an object - note that the value of each
   property is displayed:
 <pre class="programlisting">
@@ -275,18 +366,21 @@ The name org.freedesktop.NetworkManager is owned by :1.5
 /org/freedesktop/NetworkManager/AccessPoint/4141: org.freedesktop.NetworkManager.AccessPoint.PropertiesChanged ({'Strength': &lt;byte 0x5e&gt;},)
 /org/freedesktop/NetworkManager/AccessPoint/4141: org.freedesktop.NetworkManager.AccessPoint.PropertiesChanged ({'Strength': &lt;byte 0x64&gt;},)
 </pre>
+
 <p>
   Emitting a signal:
 </p>
 <pre class="programlisting">
 $ gdbus emit --session --object-path /foo --signal org.bar.Foo "['foo', 'bar', 'baz']"
 </pre>
+
 <p>
   Emitting a signal to a specific process:
 </p>
 <pre class="programlisting">
 $ gdbus emit --session --object-path /bar --signal org.bar.Bar someString --dest :1.42
 </pre>
+
 <p>
   Waiting for a well-known name to be owned on the bus; this will
   <span class="emphasis"><em>not</em></span> auto-start the service:
@@ -294,12 +388,14 @@ $ gdbus emit --session --object-path /bar --signal org.bar.Bar someString --dest
 <pre class="programlisting">
 $ gdbus wait --session org.bar.SomeName
 </pre>
+
 <p>
   Auto-starting then waiting for a well-known name to be owned on the bus:
 </p>
 <pre class="programlisting">
 $ gdbus wait --session --activate org.bar.SomeName
 </pre>
+
 <p>
   Auto-starting a different service, then waiting for a well-known name to be
   owned on the bus. This is useful in situations where
@@ -308,6 +404,7 @@ $ gdbus wait --session --activate org.bar.SomeName
 <pre class="programlisting">
 $ gdbus wait --session --activate org.bar.PrerequisiteName org.bar.SomeName
 </pre>
+
 <p>
   Waiting for a well-known name and giving up after 30 seconds. By default,
   the timeout is disabled; or set <code class="option">--timeout</code> to 0 to disable it:
@@ -315,21 +412,29 @@ $ gdbus wait --session --activate org.bar.PrerequisiteName org.bar.SomeName
 <pre class="programlisting">
 $ gdbus wait --session --timeout 30 org.bar.SomeName
 </pre>
+
 </div>
+
 <div class="refsect1">
 <a name="id-1.4.26.6.9"></a><h2>Bugs</h2>
-<p>
+  
+  <p>
     Please send bug reports to either the distribution bug tracker
     or the upstream bug tracker at
-    <a class="ulink" href="https://bugzilla.gnome.org/enter_bug.cgi?product=glib" target="_top">https://bugzilla.gnome.org/enter_bug.cgi?product=glib</a>.
+    <a class="ulink" href="https://gitlab.gnome.org/GNOME/glib/issues/new" target="_top">https://gitlab.gnome.org/GNOME/glib/issues/new</a>.
   </p>
 </div>
+
 <div class="refsect1">
 <a name="id-1.4.26.6.10"></a><h2>See Also</h2>
-<p>
-    <span class="citerefentry"><span class="refentrytitle">dbus-send</span>(1)</span>
+  
+  <p>
+    <span class="citerefentry">
+      <span class="refentrytitle">dbus-send</span>(1)
+    </span>
   </p>
 </div>
+
 </div>
 <div class="footer">
 <hr>Generated by GTK-Doc V1.28</div>

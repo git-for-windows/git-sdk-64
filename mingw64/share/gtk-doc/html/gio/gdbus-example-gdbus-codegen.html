@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Using gdbus-codegen: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.2">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="ch35.html" title="Migrating to GDBus">
 <link rel="prev" href="ch35s04.html" title="Creating proxies for well-known names">
@@ -22,50 +22,30 @@
 <div class="section">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="gdbus-example-gdbus-codegen"></a>Using gdbus-codegen</h2></div></div></div>
-<p>
+    
+
+    <p>
       dbus-glib comes with <span class="command"><strong>dbus-binding-tool</strong></span>, which
       can produce somewhat nice client- and server-side wrappers for a D-Bus interface.
-      With GDBus, <span class="command"><strong>gdbus-codegen</strong></span> is used and like
+      With GDBus, <span class="command"><strong><a class="link" href="gdbus-codegen.html" title="gdbus-codegen">gdbus-codegen</a></strong></span> is used and like
       its counterpart, it also takes D-Bus Introspection XML as input:
     </p>
-<div class="example">
+    <div class="example">
 <a name="gdbus-example-codegen-input"></a><p class="title"><b>Example 2. Example D-Bus Introspection XML</b></p>
-<div class="example-contents">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="normal">FIXME</span><span class="symbol">:</span><span class="normal"> MISSING XINCLUDE CONTENT</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
+<div class="example-contents"><pre class="programlisting">FIXME: MISSING XINCLUDE CONTENT</pre></div>
 </div>
-
-</div>
-<br class="example-break"><p>
+<br class="example-break">
+    <p>
       If this XML is processed like this
 </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4
-5
-6</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="normal">gdbus</span><span class="symbol">-</span><span class="normal">codegen </span><span class="symbol">--</span><span class="normal">interface</span><span class="symbol">-</span><span class="usertype">prefix</span><span class="normal"> org</span><span class="symbol">.</span><span class="normal">gtk</span><span class="symbol">.</span><span class="normal">GDBus</span><span class="symbol">.</span><span class="normal">Example</span><span class="symbol">.</span><span class="normal">ObjectManager</span><span class="symbol">.</span><span class="normal"> </span><span class="symbol">\</span>
-<span class="normal">              </span><span class="symbol">--</span><span class="normal">generate</span><span class="symbol">-</span><span class="normal">c</span><span class="symbol">-</span><span class="usertype">code</span><span class="normal"> generated</span><span class="symbol">-</span><span class="normal">code                        </span><span class="symbol">\</span>
-<span class="normal">              </span><span class="symbol">--</span><span class="normal">c</span><span class="symbol">-</span><span class="usertype">namespace</span><span class="normal"> Example                       </span><span class="symbol">\</span>
-<span class="normal">              </span><span class="symbol">--</span><span class="normal">c</span><span class="symbol">-</span><span class="normal">generate</span><span class="symbol">-</span><span class="normal">object</span><span class="symbol">-</span><span class="normal">manager                 </span><span class="symbol">\</span>
-<span class="normal">              </span><span class="symbol">--</span><span class="normal">generate</span><span class="symbol">-</span><span class="usertype">docbook</span><span class="normal"> generated</span><span class="symbol">-</span><span class="normal">docs                       </span><span class="symbol">\</span>
-<span class="normal">              gdbus</span><span class="symbol">-</span><span class="normal">example</span><span class="symbol">-</span><span class="normal">objectmanager</span><span class="symbol">.</span><span class="normal">xml</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+<div class="informalexample"><pre class="programlisting">
+gdbus-codegen --interface-prefix org.gtk.GDBus.Example.ObjectManager. \
+              --generate-c-code generated-code	                      \
+              --c-namespace Example 				      \
+              --c-generate-object-manager			      \
+              --generate-docbook generated-docs                       \
+              gdbus-example-objectmanager.xml
+</pre></div>
 <p>
       then two files <code class="filename">generated-code.h</code> and
       <code class="filename">generated-code.c</code> are
@@ -74,15 +54,16 @@
       <code class="filename">generated-docs-org.gtk.GDBus.Example.ObjectManager.Cat</code>
       with Docbook XML are generated.
     </p>
-<p>
+    <p>
       While the contents of <code class="filename">generated-code.h</code> and
       <code class="filename">generated-code.c</code> are best described by the
-      <span class="command"><strong>gdbus-codegen</strong></span> manual
+      <span class="command"><strong><a class="link" href="gdbus-codegen.html" title="gdbus-codegen">gdbus-codegen</a></strong></span> manual
       page, brief examples of how this generated code can be used can be found in
       <a class="xref" href="">???</a>
       and <a class="xref" href="">???</a>.
     </p>
-</div>
+
+  </div>
 <div class="footer">
 <hr>Generated by GTK-Doc V1.28</div>
 </body>

@@ -63,38 +63,38 @@ def apply_annotation(iface_list, iface, method, signal, prop, arg, key, value):
             iface_obj = i
             break
 
-    if iface_obj == None:
+    if iface_obj is None:
         print_error('No interface "{}"'.format(iface))
 
     target_obj = None
 
     if method:
         method_obj = find_method(iface_obj, method)
-        if method_obj == None:
+        if method_obj is None:
             print_error('No method "{}" on interface "{}"'.format(method, iface))
         if arg:
             arg_obj = find_arg(method_obj.in_args, arg)
-            if (arg_obj == None):
+            if (arg_obj is None):
                 arg_obj = find_arg(method_obj.out_args, arg)
-                if (arg_obj == None):
+                if (arg_obj is None):
                     print_error('No arg "{}" on method "{}" on interface "{}"'.format(arg, method, iface))
             target_obj = arg_obj
         else:
             target_obj = method_obj
     elif signal:
         signal_obj = find_signal(iface_obj, signal)
-        if signal_obj == None:
+        if signal_obj is None:
             print_error('No signal "{}" on interface "{}"'.format(signal, iface))
         if arg:
             arg_obj = find_arg(signal_obj.args, arg)
-            if (arg_obj == None):
+            if (arg_obj is None):
                 print_error('No arg "{}" on signal "{}" on interface "{}"'.format(arg, signal, iface))
             target_obj = arg_obj
         else:
             target_obj = signal_obj
     elif prop:
         prop_obj = find_prop(iface_obj, prop)
-        if prop_obj == None:
+        if prop_obj is None:
             print_error('No property "{}" on interface "{}"'.format(prop, iface))
         target_obj = prop_obj
     else:
@@ -152,7 +152,7 @@ def codegen_main():
     arg_parser.add_argument('files', metavar='FILE', nargs='*',
                             help='D-Bus introspection XML file')
     arg_parser.add_argument('--xml-files', metavar='FILE', action='append', default=[],
-                            help='D-Bus introspection XML file')
+                            help=argparse.SUPPRESS)
     arg_parser.add_argument('--interface-prefix', metavar='PREFIX', default='',
                             help='String to strip from D-Bus interface names for code and docs')
     arg_parser.add_argument('--c-namespace', metavar='NAMESPACE', default='',
@@ -175,6 +175,10 @@ def codegen_main():
                        help='Generate C headers')
     group.add_argument('--body', action='store_true',
                        help='Generate C code')
+    group.add_argument('--interface-info-header', action='store_true',
+                       help='Generate GDBusInterfaceInfo C header')
+    group.add_argument('--interface-info-body', action='store_true',
+                       help='Generate GDBusInterfaceInfo C code')
 
     group = arg_parser.add_mutually_exclusive_group()
     group.add_argument('--output', metavar='FILE',
@@ -210,15 +214,35 @@ def codegen_main():
 
         c_file = args.output
         header_name = os.path.splitext(os.path.basename(c_file))[0] + '.h'
+    elif args.interface_info_header:
+        if args.output is None:
+            print_error('Using --interface-info-header requires --output')
+        if args.c_generate_object_manager:
+            print_error('--c-generate-object-manager is incompatible with '
+                        '--interface-info-header')
+
+        h_file = args.output
+        header_name = os.path.basename(h_file)
+    elif args.interface_info_body:
+        if args.output is None:
+            print_error('Using --interface-info-body requires --output')
+        if args.c_generate_object_manager:
+            print_error('--c-generate-object-manager is incompatible with '
+                        '--interface-info-body')
+
+        c_file = args.output
+        header_name = os.path.splitext(os.path.basename(c_file))[0] + '.h'
 
     all_ifaces = []
+    input_files_basenames = []
     for fname in args.files + args.xml_files:
         with open(fname, 'rb') as f:
             xml_data = f.read()
         parsed_ifaces = parser.parse_dbus_xml(xml_data)
         all_ifaces.extend(parsed_ifaces)
+        input_files_basenames.append(os.path.basename(fname))
 
-    if args.annotate != None:
+    if args.annotate is not None:
         apply_annotations(all_ifaces, args.annotate)
 
     for i in all_ifaces:
@@ -236,6 +260,7 @@ def codegen_main():
                                               args.c_generate_object_manager,
                                               args.c_generate_autocleanup,
                                               header_name,
+                                              input_files_basenames,
                                               args.pragma_once,
                                               outfile)
             gen.generate()
@@ -246,8 +271,26 @@ def codegen_main():
                                         args.c_namespace,
                                         args.c_generate_object_manager,
                                         header_name,
+                                        input_files_basenames,
                                         docbook_gen,
                                         outfile)
+            gen.generate()
+
+    if args.interface_info_header:
+        with open(h_file, 'w') as outfile:
+            gen = codegen.InterfaceInfoHeaderCodeGenerator(all_ifaces,
+                                                           args.c_namespace,
+                                                           header_name,
+                                                           args.pragma_once,
+                                                           outfile)
+            gen.generate()
+
+    if args.interface_info_body:
+        with open(c_file, 'w') as outfile:
+            gen = codegen.InterfaceInfoBodyCodeGenerator(all_ifaces,
+                                                         args.c_namespace,
+                                                         header_name,
+                                                         outfile)
             gen.generate()
 
     sys.exit(0)
