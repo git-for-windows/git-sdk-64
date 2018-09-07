@@ -1,0 +1,83 @@
+#!/bin/sh
+
+usage() {
+	cat <<EOF
+Usage:
+  /mingw64/bin/jemalloc-config <option>
+Options:
+  --help | -h  : Print usage.
+  --version    : Print jemalloc version.
+  --revision   : Print shared library revision number.
+  --config     : Print configure options used to build jemalloc.
+  --prefix     : Print installation directory prefix.
+  --bindir     : Print binary installation directory.
+  --datadir    : Print data installation directory.
+  --includedir : Print include installation directory.
+  --libdir     : Print library installation directory.
+  --mandir     : Print manual page installation directory.
+  --cc         : Print compiler used to build jemalloc.
+  --cflags     : Print compiler flags used to build jemalloc.
+  --cppflags   : Print preprocessor flags used to build jemalloc.
+  --cxxflags   : Print C++ compiler flags used to build jemalloc.
+  --ldflags    : Print library flags used to build jemalloc.
+  --libs       : Print libraries jemalloc was linked against.
+EOF
+}
+
+prefix="/mingw64"
+exec_prefix="/mingw64"
+
+case "$1" in
+--help | -h)
+	usage
+	exit 0
+	;;
+--version)
+	echo "5.1.0-0-g61efbda7098de6fe64c362d309824864308c36d4"
+	;;
+--revision)
+	echo "2"
+	;;
+--config)
+	echo "--prefix=/mingw64 --build=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-autogen --with-xslroot=/mingw64/share/xml/docbook/xsl-stylesheets-1.79.2 --enable-xmalloc build_alias=x86_64-w64-mingw32 host_alias=x86_64-w64-mingw32 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -std=gnu11' LDFLAGS=-pipe 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1' 'CXXFLAGS=-march=x86-64 -mtune=generic -O2 -pipe'"
+	;;
+--prefix)
+	echo "/mingw64"
+	;;
+--bindir)
+	echo "/mingw64/bin"
+	;;
+--datadir)
+	echo "/mingw64/share"
+	;;
+--includedir)
+	echo "/mingw64/include"
+	;;
+--libdir)
+	echo "/mingw64/lib"
+	;;
+--mandir)
+	echo "/mingw64/share/man"
+	;;
+--cc)
+	echo "x86_64-w64-mingw32-gcc"
+	;;
+--cflags)
+	echo "-std=gnu11 -Wall -Wsign-compare -Wundef -Wno-format-zero-length -pipe -g3 -O3 -funroll-loops -march=x86-64 -mtune=generic -O2 -pipe -std=gnu11"
+	;;
+--cppflags)
+	echo "-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -D_REENTRANT"
+	;;
+--cxxflags)
+	echo "-Wall -g3 -O3 -march=x86-64 -mtune=generic -O2 -pipe"
+	;;
+--ldflags)
+	echo "-pipe "
+	;;
+--libs)
+	echo "-lstdc++"
+	;;
+*)
+	usage
+	exit 1
+esac

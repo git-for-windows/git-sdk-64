@@ -1,0 +1,83 @@
+#!/bin/sh
+
+usage() {
+	cat <<EOF
+Usage:
+  /mingw32/bin/jemalloc-config <option>
+Options:
+  --help | -h  : Print usage.
+  --version    : Print jemalloc version.
+  --revision   : Print shared library revision number.
+  --config     : Print configure options used to build jemalloc.
+  --prefix     : Print installation directory prefix.
+  --bindir     : Print binary installation directory.
+  --datadir    : Print data installation directory.
+  --includedir : Print include installation directory.
+  --libdir     : Print library installation directory.
+  --mandir     : Print manual page installation directory.
+  --cc         : Print compiler used to build jemalloc.
+  --cflags     : Print compiler flags used to build jemalloc.
+  --cppflags   : Print preprocessor flags used to build jemalloc.
+  --cxxflags   : Print C++ compiler flags used to build jemalloc.
+  --ldflags    : Print library flags used to build jemalloc.
+  --libs       : Print libraries jemalloc was linked against.
+EOF
+}
+
+prefix="/mingw32"
+exec_prefix="/mingw32"
+
+case "$1" in
+--help | -h)
+	usage
+	exit 0
+	;;
+--version)
+	echo "5.1.0-0-g61efbda7098de6fe64c362d309824864308c36d4"
+	;;
+--revision)
+	echo "2"
+	;;
+--config)
+	echo "--prefix=/mingw32 --build=i686-w64-mingw32 --host=i686-w64-mingw32 --enable-autogen --with-xslroot=/mingw32/share/xml/docbook/xsl-stylesheets-1.79.2 --enable-xmalloc build_alias=i686-w64-mingw32 host_alias=i686-w64-mingw32 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -std=gnu11' LDFLAGS=-pipe 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1' 'CXXFLAGS=-march=i686 -mtune=generic -O2 -pipe'"
+	;;
+--prefix)
+	echo "/mingw32"
+	;;
+--bindir)
+	echo "/mingw32/bin"
+	;;
+--datadir)
+	echo "/mingw32/share"
+	;;
+--includedir)
+	echo "/mingw32/include"
+	;;
+--libdir)
+	echo "/mingw32/lib"
+	;;
+--mandir)
+	echo "/mingw32/share/man"
+	;;
+--cc)
+	echo "i686-w64-mingw32-gcc"
+	;;
+--cflags)
+	echo "-std=gnu11 -Wall -Wsign-compare -Wundef -Wno-format-zero-length -pipe -g3 -O3 -funroll-loops -march=i686 -mtune=generic -O2 -pipe -std=gnu11"
+	;;
+--cppflags)
+	echo "-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -D_REENTRANT"
+	;;
+--cxxflags)
+	echo "-Wall -g3 -O3 -march=i686 -mtune=generic -O2 -pipe"
+	;;
+--ldflags)
+	echo "-pipe "
+	;;
+--libs)
+	echo "-lstdc++"
+	;;
+*)
+	usage
+	exit 1
+esac

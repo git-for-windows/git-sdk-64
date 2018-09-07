@@ -8,7 +8,7 @@
 <link rel="up" href="file_ops.html" title="File Operations">
 <link rel="prev" href="gio-GIOError.html" title="GIOError">
 <link rel="next" href="file_mon.html" title="File System Monitoring">
-<meta name="generator" content="GTK-Doc V1.28 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.29 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -229,6 +229,16 @@ GMountOperation
 <td class="property_flags">Read / Write</td>
 </tr>
 <tr>
+<td class="property_type"><a class="link" href=""><span class="type">gboolean</span></a></td>
+<td class="property_name"><a class="link" href="GMountOperation.html#GMountOperation--is-tcrypt-hidden-volume" title="The “is-tcrypt-hidden-volume” property">is-tcrypt-hidden-volume</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a class="link" href=""><span class="type">gboolean</span></a></td>
+<td class="property_name"><a class="link" href="GMountOperation.html#GMountOperation--is-tcrypt-system-volume" title="The “is-tcrypt-system-volume” property">is-tcrypt-system-volume</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GMountOperation.html#GMountOperation--password" title="The “password” property">password</a></td>
@@ -237,6 +247,11 @@ GMountOperation
 <tr>
 <td class="property_type"><a class="link" href="GMountOperation.html#GPasswordSave" title="enum GPasswordSave"><span class="type">GPasswordSave</span></a></td>
 <td class="property_name"><a class="link" href="GMountOperation.html#GMountOperation--password-save" title="The “password-save” property">password-save</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a class="link" href=""><span class="type">guint</span></a></td>
+<td class="property_name"><a class="link" href="GMountOperation.html#GMountOperation--pim" title="The “pim” property">pim</a></td>
 <td class="property_flags">Read / Write</td>
 </tr>
 <tr>
@@ -1225,8 +1240,31 @@ mount operation. See the <a class="link" href="GMountOperation.html#GMountOperat
 <p>Default value: NULL</p>
 </div>
 <div class="refsect2">
-<a name="GMountOperation--password"></a><h3>The <code class="literal">“password”</code> property</h3>
+<a name="GMountOperation--is-tcrypt-hidden-volume"></a><h3>The <code class="literal">“is-tcrypt-hidden-volume”</code> property</h3>
 <a class="indexterm" name="id-1.4.2.7.12.5.2"></a>
+<pre class="programlisting">  “is-tcrypt-hidden-volume”  <a class="link" href=""><span class="type">gboolean</span></a></pre>
+<p>Whether the device to be unlocked is a TCRYPT hidden volume.
+See https://www.veracrypt.fr/en/Hidden<a class="link" href=""><code class="literal">20Volume</code></a>.html.</p>
+<p>Flags: Read / Write</p>
+<p>Default value: FALSE</p>
+<p class="since">Since: <a class="link" href="">2.58</a></p>
+</div>
+<div class="refsect2">
+<a name="GMountOperation--is-tcrypt-system-volume"></a><h3>The <code class="literal">“is-tcrypt-system-volume”</code> property</h3>
+<a class="indexterm" name="id-1.4.2.7.12.6.2"></a>
+<pre class="programlisting">  “is-tcrypt-system-volume”  <a class="link" href=""><span class="type">gboolean</span></a></pre>
+<p>Whether the device to be unlocked is a TCRYPT system volume.
+In this context, a system volume is a volume with a bootloader
+and operating system installed. This is only supported for Windows
+operating systems. For further documentation, see
+https://www.veracrypt.fr/en/System<a class="link" href=""><code class="literal">20Encryption</code></a>.html.</p>
+<p>Flags: Read / Write</p>
+<p>Default value: FALSE</p>
+<p class="since">Since: <a class="link" href="">2.58</a></p>
+</div>
+<div class="refsect2">
+<a name="GMountOperation--password"></a><h3>The <code class="literal">“password”</code> property</h3>
+<a class="indexterm" name="id-1.4.2.7.12.7.2"></a>
 <pre class="programlisting">  “password”                 <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The password that is used for authentication when carrying out
 the mount operation.</p>
@@ -1235,15 +1273,25 @@ the mount operation.</p>
 </div>
 <div class="refsect2">
 <a name="GMountOperation--password-save"></a><h3>The <code class="literal">“password-save”</code> property</h3>
-<a class="indexterm" name="id-1.4.2.7.12.6.2"></a>
+<a class="indexterm" name="id-1.4.2.7.12.8.2"></a>
 <pre class="programlisting">  “password-save”            <a class="link" href="GMountOperation.html#GPasswordSave" title="enum GPasswordSave"><span class="type">GPasswordSave</span></a></pre>
 <p>Determines if and how the password information should be saved.</p>
 <p>Flags: Read / Write</p>
 <p>Default value: G_PASSWORD_SAVE_NEVER</p>
 </div>
 <div class="refsect2">
+<a name="GMountOperation--pim"></a><h3>The <code class="literal">“pim”</code> property</h3>
+<a class="indexterm" name="id-1.4.2.7.12.9.2"></a>
+<pre class="programlisting">  “pim”                      <a class="link" href=""><span class="type">guint</span></a></pre>
+<p>The VeraCrypt PIM value, when unlocking a VeraCrypt volume. See
+https://www.veracrypt.fr/en/Personal<a class="link" href=""><code class="literal">20Iterations</code></a><a class="link" href=""><code class="literal">20Multiplier</code></a><a class="link" href=""><code class="literal">20</code></a>(PIM).html.</p>
+<p>Flags: Read / Write</p>
+<p>Default value: 0</p>
+<p class="since">Since: <a class="link" href="">2.58</a></p>
+</div>
+<div class="refsect2">
 <a name="GMountOperation--username"></a><h3>The <code class="literal">“username”</code> property</h3>
-<a class="indexterm" name="id-1.4.2.7.12.7.2"></a>
+<a class="indexterm" name="id-1.4.2.7.12.10.2"></a>
 <pre class="programlisting">  “username”                 <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The user name that is used for authentication when carrying out
 the mount operation.</p>
@@ -1574,6 +1622,6 @@ is completed</p></td>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.28</div>
+<hr>Generated by GTK-Doc V1.29</div>
 </body>
 </html>
