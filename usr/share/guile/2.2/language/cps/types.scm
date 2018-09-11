@@ -1,5 +1,5 @@
 ;;; Type analysis on CPS
-;;; Copyright (C) 2014, 2015 Free Software Foundation, Inc.
+;;; Copyright (C) 2014, 2015, 2018 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -1273,32 +1273,79 @@ minimum, and maximum."
       (define! result &u64 0 &u64-max)))
 (define-type-aliases ulsh ulsh/immediate)
 
-(define (next-power-of-two n)
-  (let lp ((out 1))
-    (if (< n out)
-        out
-        (lp (ash out 1)))))
+(define-inlinable (non-negative? n)
+  "Return true if N is non-negative, otherwise return false."
+  (not (negative? n)))
+
+;; Like 'lognot', but handles infinities.
+(define-inlinable (lognot* n)
+  "Return the bitwise complement of N.  If N is infinite, return -N."
+  (- -1 n))
+
+(define saturate+
+  (case-lambda
+    "Let N be the least upper bound of the integer lengths of the
+arguments.  Return the greatest integer whose integer length is N.
+If any of the arguments are infinite, return positive infinity."
+    ((a b)
+     (if (or (inf? a) (inf? b))
+         +inf.0
+         (1- (ash 1 (max (integer-length a)
+                         (integer-length b))))))
+    ((a b c)
+     (saturate+ (saturate+ a b) c))
+    ((a b c d)
+     (saturate+ (saturate+ a b) c d))))
+
+(define saturate-
+  (case-lambda
+    "Let N be the least upper bound of the integer lengths of the
+arguments.  Return the least integer whose integer length is N.
+If any of the arguments are infinite, return negative infinity."
+    ((a b)     (lognot* (saturate+ a b)))
+    ((a b c)   (lognot* (saturate+ a b c)))
+    ((a b c d) (lognot* (saturate+ a b c d)))))
+
+(define (logand-bounds a0 a1 b0 b1)
+  "Return two values: lower and upper bounds for (logand A B)
+where (A0 <= A <= A1) and (B0 <= B <= B1)."
+  ;; For each argument, we consider three cases: (1) the argument is
+  ;; non-negative, (2) its sign is unknown, or (3) it is negative.
+  ;; To handle both arguments, we must consider a total of 9 cases:
+  ;;
+  ;; -----------------------------------------------------------------------
+  ;;    LOGAND      | non-negative B   | unknown-sign B | negative B
+  ;; -----------------------------------------------------------------------
+  ;; non-negative A | 0 .. (min A1 B1) | 0 .. A1        | 0 .. A1
+  ;; -----------------------------------------------------------------------
+  ;; unknown-sign A | 0 .. B1          | (sat- A0 B0)   | (sat- A0 B0)
+  ;;                |                  |      ..        |    .. A1
+  ;;                |                  | (sat+ A1 B1)   |
+  ;; -----------------------------------------------------------------------
+  ;;     negative A | 0 .. B1          | (sat- A0 B0)   | (sat- A0 B0)
+  ;;                |                  |    .. B1       |    .. (min A1 B1)
+  ;; -----------------------------------------------------------------------
+  (values (if (or (non-negative? a0) (non-negative? b0))
+              0
+              (saturate- a0 b0))
+          (cond ((or (and (non-negative? a0) (non-negative? b0))
+                     (and (negative? a1) (negative? b1)))
+                 (min a1 b1))
+                ((or (non-negative? a0) (negative? b1))
+                 a1)
+                ((or (non-negative? b0) (negative? a1))
+                 b1)
+                (else
+                 (saturate+ a1 b1)))))
 
 (define-simple-type-checker (logand &exact-integer &exact-integer))
 (define-type-inferrer (logand a b result)
-  (define (logand-min a b)
-    (if (and (negative? a) (negative? b))
-        (let ((min (min a b)))
-          (if (inf? min)
-              -inf.0
-              (- 1 (next-power-of-two (- min)))))
-        0))
-  (define (logand-max a b)
-    (cond
-     ((or (and (positive? a) (positive? b))
-          (and (negative? a) (negative? b)))
-      (min a b))
-     (else (max a b))))
   (restrict! a &exact-integer -inf.0 +inf.0)
   (restrict! b &exact-integer -inf.0 +inf.0)
-  (define! result &exact-integer
-           (logand-min (&min a) (&min b))
-           (logand-max (&max a) (&max b))))
+  (call-with-values (lambda ()
+                      (logand-bounds (&min a) (&max a) (&min b) (&max b)))
+    (lambda (min max)
+      (define! result &exact-integer min max))))
 
 (define-simple-type-checker (ulogand &u64 &u64))
 (define-type-inferrer (ulogand a b result)
@@ -1306,24 +1353,17 @@ minimum, and maximum."
   (restrict! b &u64 0 &u64-max)
   (define! result &u64 0 (min (&max/u64 a) (&max/u64 b))))
 
+(define (logsub-bounds a0 a1 b0 b1)
+  "Return two values: lower and upper bounds for (logsub A B),
+i.e. (logand A (lognot B)), where (A0 <= A <= A1) and (B0 <= B <= B1)."
+  ;; Here we use 'logand-bounds' to compute the bounds, after
+  ;; computing the bounds of (lognot B) from the bounds of B.
+  ;; From (B0 <= B <= B1) it follows that (~B1 <= ~B <= ~B0),
+  ;; where ~X means (lognot X).
+  (logand-bounds a0 a1 (lognot* b1) (lognot* b0)))
+
 (define-simple-type-checker (logsub &exact-integer &exact-integer))
 (define-type-inferrer (logsub a b result)
-  (define (logsub-bounds min-a max-a min-b max-b)
-    (cond
-     ((negative? max-b)
-      ;; Sign bit always set on B, so result will never be negative.
-      ;; If A might be negative (all leftmost bits 1), we don't know
-      ;; how positive the result might be.
-      (values 0 (if (negative? min-a) +inf.0 max-a)))
-     ((negative? min-b)
-      ;; Sign bit might be set on B.
-      (values min-a (if (negative? min-a) +inf.0 max-a)))
-     ((negative? min-a)
-      ;; Sign bit never set on B -- result will have the sign of A.
-      (values -inf.0 max-a))
-     (else
-      ;; Sign bit never set on A and never set on B -- the nice case.
-      (values 0 max-a))))
   (restrict! a &exact-integer -inf.0 +inf.0)
   (restrict! b &exact-integer -inf.0 +inf.0)
   (call-with-values (lambda ()
@@ -1337,26 +1377,47 @@ minimum, and maximum."
   (restrict! b &u64 0 &u64-max)
   (define! result &u64 0 (&max/u64 a)))
 
+(define (logior-bounds a0 a1 b0 b1)
+  "Return two values: lower and upper bounds for (logior A B)
+where (A0 <= A <= A1) and (B0 <= B <= B1)."
+  ;; For each argument, we consider three cases: (1) the argument is
+  ;; non-negative, (2) its sign is unknown, or (3) it is negative.
+  ;; To handle both arguments, we must consider a total of 9 cases.
+  ;;
+  ;; ---------------------------------------------------------------------
+  ;;    LOGIOR      | non-negative B | unknown-sign B | negative B
+  ;; ---------------------------------------------------------------------
+  ;; non-negative A | (max A0 B0)    | B0             | B0 .. -1
+  ;;                |   ..           |   ..           |
+  ;;                | (sat+ A1 B1)   | (sat+ A1 B1)   |
+  ;; ---------------------------------------------------------------------
+  ;; unknown-sign A | A0             | (sat- A0 B0)   | B0 .. -1
+  ;;                |   ..           |        ..      |
+  ;;                | (sat+ A1 B1)   | (sat+ A1 B1)   |
+  ;; ---------------------------------------------------------------------
+  ;;     negative A | A0 .. -1       | A0 .. -1       | (max A0 B0) .. -1
+  ;; ---------------------------------------------------------------------
+  (values (cond ((or (and (non-negative? a0) (non-negative? b0))
+                     (and (negative? a1) (negative? b1)))
+                 (max a0 b0))
+                ((or (non-negative? a0) (negative? b1))
+                 b0)
+                ((or (non-negative? b0) (negative? a1))
+                 a0)
+                (else
+                 (saturate- a0 b0)))
+          (if (or (negative? a1) (negative? b1))
+              -1
+              (saturate+ a1 b1))))
+
 (define-simple-type-checker (logior &exact-integer &exact-integer))
 (define-type-inferrer (logior a b result)
-  ;; Saturate all bits of val.
-  (define (saturate val)
-    (1- (next-power-of-two val)))
-  (define (logior-min a b)
-    (cond ((and (< a 0) (<= 0 b)) a)
-          ((and (< b 0) (<= 0 a)) b)
-          (else (max a b))))
-  (define (logior-max a b)
-    ;; If either operand is negative, just assume the max is -1.
-    (cond
-     ((or (< a 0) (< b 0)) -1)
-     ((or (inf? a) (inf? b)) +inf.0)
-     (else (saturate (logior a b)))))
   (restrict! a &exact-integer -inf.0 +inf.0)
   (restrict! b &exact-integer -inf.0 +inf.0)
-  (define! result &exact-integer
-           (logior-min (&min a) (&min b))
-           (logior-max (&max a) (&max b))))
+  (call-with-values (lambda ()
+                      (logior-bounds (&min a) (&max a) (&min b) (&max b)))
+    (lambda (min max)
+      (define! result &exact-integer min max))))
 
 (define-simple-type-checker (ulogior &u64 &u64))
 (define-type-inferrer (ulogior a b result)
@@ -1364,23 +1425,70 @@ minimum, and maximum."
   (restrict! b &u64 0 &u64-max)
   (define! result &u64
     (max (&min/0 a) (&min/0 b))
-    (1- (next-power-of-two (logior (&max/u64 a) (&max/u64 b))))))
+    (saturate+ (&max/u64 a) (&max/u64 b))))
 
-;; For our purposes, treat logxor the same as logior.
-(define-type-aliases logior logxor)
+(define (logxor-bounds a0 a1 b0 b1)
+  "Return two values: lower and upper bounds for (logxor A B)
+where (A0 <= A <= A1) and (B0 <= B <= B1)."
+  ;; For each argument, we consider three cases: (1) the argument is
+  ;; non-negative, (2) its sign is unknown, or (3) it is negative.
+  ;; To handle both arguments, we must consider a total of 9 cases.
+  ;;
+  ;; --------------------------------------------------------------------
+  ;;    LOGXOR      | non-negative B | unknown-sign B     | negative B
+  ;; --------------------------------------------------------------------
+  ;; non-negative A | 0              |       (sat- A1 B0) | (sat- A1 B0)
+  ;;                |   ..           |         ..         |   ..
+  ;;                | (sat+ A1 B1)   | (sat+ A1 B1)       |     -1
+  ;; --------------------------------------------------------------------
+  ;; unknown-sign A | (sat- A0 B1)   | (sat- A0 B1 A1 B0) | (sat- A1 B0)
+  ;;                |   ..           |   ..               |   ..
+  ;;                | (sat+ A1 B1)   | (sat+ A1 B1 A0 B0) | (sat+ A0 B0)
+  ;; --------------------------------------------------------------------
+  ;;     negative A | (sat- A0 B1)   | (sat- A0 B1)       | 0
+  ;;                |   ..           |    ..              |   ..
+  ;;                |     -1         |       (sat+ A0 B0) | (sat+ A0 B0)
+  ;; --------------------------------------------------------------------
+  (values (cond ((or (and (non-negative? a0) (non-negative? b0))
+                     (and (negative? a1) (negative? b1)))
+                 0)
+                ((or (non-negative? a0) (negative? b1))
+                 (saturate- a1 b0))
+                ((or (non-negative? b0) (negative? a1))
+                 (saturate- a0 b1))
+                (else
+                 (saturate- a0 b1 a1 b0)))
+          (cond ((or (and (non-negative? a0) (negative? b1))
+                     (and (non-negative? b0) (negative? a1)))
+                 -1)
+                ((or (non-negative? a0) (non-negative? b0))
+                 (saturate+ a1 b1))
+                ((or (negative? a1) (negative? b1))
+                 (saturate+ a0 b0))
+                (else
+                 (saturate+ a1 b1 a0 b0)))))
+
+(define-simple-type-checker (logxor &exact-integer &exact-integer))
+(define-type-inferrer (logxor a b result)
+  (restrict! a &exact-integer -inf.0 +inf.0)
+  (restrict! b &exact-integer -inf.0 +inf.0)
+  (call-with-values (lambda ()
+                      (logxor-bounds (&min a) (&max a) (&min b) (&max b)))
+    (lambda (min max)
+      (define! result &exact-integer min max))))
 
 (define-simple-type-checker (ulogxor &u64 &u64))
 (define-type-inferrer (ulogxor a b result)
   (restrict! a &u64 0 &u64-max)
   (restrict! b &u64 0 &u64-max)
-  (define! result &u64 0 &u64-max))
+  (define! result &u64 0 (saturate+ (&max/u64 a) (&max/u64 b))))
 
 (define-simple-type-checker (lognot &exact-integer))
 (define-type-inferrer (lognot a result)
   (restrict! a &exact-integer -inf.0 +inf.0)
   (define! result &exact-integer
-           (- -1 (&max a))
-           (- -1 (&min a))))
+           (lognot* (&max a))
+           (lognot* (&min a))))
 
 (define-simple-type-checker (logtest &exact-integer &exact-integer))
 (define-predicate-inferrer (logtest a b true?)
@@ -1404,13 +1512,16 @@ minimum, and maximum."
 (define-type-inferrer (sqrt x result)
   (let ((type (&type x)))
     (cond
-     ((and (zero? (logand type &complex)) (<= 0 (&min x)))
+     ((and (zero? (logand type &complex))
+           (non-negative? (&min x)))
       (define! result
                (logior type &flonum)
-               (inexact->exact (floor (sqrt (&min x))))
+               (exact-integer-sqrt (&min x))
                (if (inf? (&max x))
                    +inf.0
-                   (inexact->exact (ceiling (sqrt (&max x)))))))
+                   (call-with-values (lambda () (exact-integer-sqrt (&max x)))
+                     (lambda (s r)
+                       (if (zero? r) s (+ s 1)))))))
      (else
       (define! result (logior type &flonum &complex) -inf.0 +inf.0)))))
 

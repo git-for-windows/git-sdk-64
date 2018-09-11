@@ -1,5 +1,5 @@
 ;;; 'SCM' type tag decoding.
-;;; Copyright (C) 2014, 2015, 2017 Free Software Foundation, Inc.
+;;; Copyright (C) 2014, 2015, 2017, 2018 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU Lesser General Public License as published by
@@ -74,7 +74,7 @@
   memory-backend?
   (peek      memory-backend-peek)
   (open      memory-backend-open)
-  (type-name memory-backend-type-name))           ; for SMOBs and ports
+  (type-name memory-backend-type-name))           ;for SMOBs
 
 (define %ffi-memory-backend
   ;; The FFI back-end to access the current process's memory.  The main
@@ -131,6 +131,18 @@ SIZE is omitted, return an unbounded port to the memory at ADDRESS."
   "Read a word from PORT and return it as an integer."
   (let ((bv (get-bytevector-n port %word-size)))
     (bytevector-uint-ref bv 0 (native-endianness) %word-size)))
+
+(define (read-c-string backend address)
+  "Read a NUL-terminated string from ADDRESS, decode it as UTF-8, and
+return the corresponding string."
+  (define port
+    (memory-port backend address))
+
+  (let loop ((bytes '()))
+    (let ((byte (get-u8 port)))
+      (if (zero? byte)
+          (utf8->string (u8-list->bytevector (reverse bytes)))
+          (loop (cons byte bytes))))))
 
 (define-inlinable (type-number->name backend kind number)
   "Return the name of the type NUMBER of KIND, where KIND is one of
@@ -350,12 +362,24 @@ TYPE-NUMBER."
                        type-number)
                    address))
 
+(define (inferior-port-type backend address)
+  "Return an object representing the 'scm_t_port_type' structure at
+ADDRESS."
+  (inferior-object 'port-type
+                   ;; The 'name' field lives at offset 0.
+                   (let ((name (dereference-word backend address)))
+                     (if (zero? name)
+                         "(nameless)"
+                         (read-c-string backend name)))
+                   address))
+
 (define (inferior-port backend type-number address)
   "Return an object representing the port at ADDRESS whose type is
 TYPE-NUMBER."
   (inferior-object 'port
-                   (or (type-number->name backend 'port type-number)
-                       type-number)
+                   (let ((address (+ address (* 3 %word-size))))
+                     (inferior-port-type backend
+                                         (dereference-word backend address)))
                    address))
 
 (define %visited-cells
@@ -453,8 +477,8 @@ using BACKEND."
            (inferior-object 'fluid address))
           (((_ & #x7f = %tc7-dynamic-state))
            (inferior-object 'dynamic-state address))
-          ((((flags+type << 8) || %tc7-port))
-           (inferior-port backend (logand flags+type #xff) address))
+          ((((flags << 8) || %tc7-port))
+           (inferior-port backend (logand flags #xff) address))
           (((_ & #x7f = %tc7-program))
            (inferior-object 'program address))
           (((_ & #xffff = %tc16-bignum))

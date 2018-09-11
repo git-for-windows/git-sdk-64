@@ -1,6 +1,6 @@
 ;;; Guile ELF linker
 
-;; Copyright (C)  2011, 2012, 2013, 2014 Free Software Foundation, Inc.
+;; Copyright (C)  2011, 2012, 2013, 2014, 2018 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -478,8 +478,8 @@ section index."
                    (bv (linker-object-bv object))
                    (name (elf-section-name section)))
               (and (= (elf-section-type section) SHT_STRTAB)
-                   (equal? (false-if-exception (string-table-ref bv name))
-                           ".shstrtab")
+                   (< name (bytevector-length bv))
+                   (string=? (string-table-ref bv name) ".shstrtab")
                    (elf-section-index section))))
           objects))
 

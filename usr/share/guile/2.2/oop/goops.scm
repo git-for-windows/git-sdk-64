@@ -1,6 +1,7 @@
 ;;;; goops.scm -- The Guile Object-Oriented Programming System
 ;;;;
-;;;; Copyright (C) 1998-2003,2006,2009-2011,2013-2015 Free Software Foundation, Inc.
+;;;; Copyright (C) 1998-2003, 2006, 2009-2011, 2013-2015, 2018
+;;;;   Free Software Foundation, Inc.
 ;;;; Copyright (C) 1993-1998 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
@@ -279,7 +280,8 @@
        (class-has-flags? (struct-vtable obj) vtable-flag-goops-slot)))
 
 (define-inlinable (instance? obj)
-  (class-has-flags? (struct-vtable obj) vtable-flag-goops-class))
+  (and (struct? obj)
+       (class-has-flags? (struct-vtable obj) vtable-flag-goops-class)))
 
 (define (class-has-statically-allocated-slots? class)
   (class-has-flags? class vtable-flag-goops-static))

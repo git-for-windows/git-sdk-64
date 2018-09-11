@@ -69,22 +69,31 @@ typedef struct _RTL_USER_PROCESS_PARAMETERS {
     PVOID Reserved3[2];
     PPEB_LDR_DATA Ldr;
     PRTL_USER_PROCESS_PARAMETERS ProcessParameters;
-    BYTE Reserved4[104];
-    PVOID Reserved5[52];
+    PVOID Reserved4[3];
+    PVOID AtlThunkSListPtr;
+    PVOID Reserved5;
+    ULONG Reserved6;
+    PVOID Reserved7;
+    ULONG Reserved8;
+    ULONG AtlThunkSListPtr32;
+    PVOID Reserved9[45];
+    BYTE Reserved10[96];
     PPS_POST_PROCESS_INIT_ROUTINE PostProcessInitRoutine;
-    BYTE Reserved6[128];
-    PVOID Reserved7[1];
+    BYTE Reserved11[128];
+    PVOID Reserved12[1];
     ULONG SessionId;
   } PEB,*PPEB;
 
   typedef struct _TEB {
-    BYTE Reserved1[1952];
-    PVOID Reserved2[412];
+    PVOID Reserved1[12];
+    PPEB ProcessEnvironmentBlock;
+    PVOID Reserved2[399];
+    BYTE Reserved3[1952];
     PVOID TlsSlots[64];
-    BYTE Reserved3[8];
-    PVOID Reserved4[26];
+    BYTE Reserved4[8];
+    PVOID Reserved5[26];
     PVOID ReservedForOle;
-    PVOID Reserved5[4];
+    PVOID Reserved6[4];
     PVOID TlsExpansionSlots;
   } TEB;
 

@@ -32,7 +32,7 @@
 /*    and: Thomas E. Dickey                        1995-on                  */
 /****************************************************************************/
 
-/* $Id: MKterm.h.awk.in,v 1.68 2018/04/07 20:51:01 tom Exp $ */
+/* $Id: MKterm.h.awk.in,v 1.69 2018/06/23 21:35:06 tom Exp $ */
 
 /*
 **	term.h -- Definition of struct term
@@ -99,7 +99,7 @@ extern "C" {
 
 #else /* !HAVE_TERMIO_H */
 
-#if __MINGW32__
+#if _WIN32
 #  include <ncursesw/ncurses_mingw.h>
 #  define TTY struct termios
 #else

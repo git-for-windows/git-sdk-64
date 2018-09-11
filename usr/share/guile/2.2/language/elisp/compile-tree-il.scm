@@ -1,6 +1,6 @@
 ;;; Guile Emacs Lisp
 
-;; Copyright (C) 2009, 2010, 2011, 2013 Free Software Foundation, Inc.
+;; Copyright (C) 2009-2011, 2013, 2018 Free Software Foundation, Inc.
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
   #:use-module (language tree-il)
   #:use-module (system base pmatch)
   #:use-module (system base compile)
+  #:use-module (system base target)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-8)
   #:use-module (srfi srfi-11)
@@ -460,7 +461,9 @@
                  (map compile-expr args))))
 
 (defspecial eval-when-compile (loc args)
-  (make-const loc (compile `(progn ,@args) #:from 'elisp #:to 'value)))
+  (make-const loc (with-native-target
+                   (lambda ()
+                     (compile `(progn ,@args) #:from 'elisp #:to 'value)))))
 
 (defspecial if (loc args)
   (pmatch args
@@ -702,7 +705,9 @@
                                           args
                                           body))))
                   (make-const loc name))))
-           (compile tree-il #:from 'tree-il #:to 'value)
+           (with-native-target
+            (lambda ()
+              (compile tree-il #:from 'tree-il #:to 'value)))
            tree-il)))))
 
 (defspecial defun (loc args)

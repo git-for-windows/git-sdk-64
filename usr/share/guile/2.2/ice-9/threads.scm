@@ -1,5 +1,5 @@
 ;;;; 	Copyright (C) 1996, 1998, 2001, 2002, 2003, 2006, 2010, 2011,
-;;;;      2012 Free Software Foundation, Inc.
+;;;;      2012, 2018 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -379,5 +379,14 @@ of applying P-PROC on ARGLISTS."
 			      (set-car! my-result (apply p-proc args))
 			      (loop))))))
 		  threads)))))
+
+
+;; Now that thread support is loaded, make module autoloading
+;; thread-safe.
+(set! (@ (guile) call-with-module-autoload-lock)
+  (let ((mutex (make-mutex 'recursive)))
+    (lambda (thunk)
+      (with-mutex mutex
+        (thunk)))))
 
 ;;; threads.scm ends here

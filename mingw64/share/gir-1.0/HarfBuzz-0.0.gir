@@ -124,6 +124,12 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
               c:type="HB_SET_VALUE_INVALID">
       <type name="codepoint_t" c:type="hb_codepoint_t"/>
     </constant>
+    <constant name="UNICODE_MAX"
+              value="1114111"
+              c:type="HB_UNICODE_MAX"
+              version="1.9.0">
+      <type name="gint" c:type="gint"/>
+    </constant>
     <constant name="UNICODE_MAX_DECOMPOSITION_LEN"
               value="19"
               c:type="HB_UNICODE_MAX_DECOMPOSITION_LEN">
@@ -132,13 +138,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="8" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="8" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="9" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.8.8" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.9.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_copy_writable_or_fail"
@@ -261,7 +267,7 @@ See TODO:link object types for more information.</doc>
               c:identifier="hb_blob_get_data"
               version="0.9.2">
       <return-value transfer-ownership="none">
-        <array length="1" zero-terminated="0" c:type="char*">
+        <array length="1" zero-terminated="0" c:type="const char*">
           <type name="utf8" c:type="char"/>
         </array>
       </return-value>
@@ -486,7 +492,7 @@ to ensure it contains a valid Unicode code points.</doc>
         </parameter>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve">an array of Unicode code points to append.</doc>
-          <array length="2" zero-terminated="0" c:type="hb_codepoint_t*">
+          <array length="2" zero-terminated="0" c:type="const hb_codepoint_t*">
             <type name="codepoint_t" c:type="hb_codepoint_t"/>
           </array>
         </parameter>
@@ -523,7 +529,7 @@ Unicode code points that can fit in 8-bit strings.
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve">an array of UTF-8
               characters to append.</doc>
-          <array length="2" zero-terminated="0" c:type="uint8_t*">
+          <array length="2" zero-terminated="0" c:type="const uint8_t*">
             <type name="guint8"/>
           </array>
         </parameter>
@@ -559,7 +565,7 @@ see hb_buffer_set_replacement_codepoint().</doc>
         </parameter>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve">an array of UTF-16 characters to append.</doc>
-          <array length="2" zero-terminated="0" c:type="uint16_t*">
+          <array length="2" zero-terminated="0" c:type="const uint16_t*">
             <type name="guint16" c:type="uint16_t"/>
           </array>
         </parameter>
@@ -595,7 +601,7 @@ see hb_buffer_set_replacement_codepoint().</doc>
         </parameter>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve">an array of UTF-32 characters to append.</doc>
-          <array length="2" zero-terminated="0" c:type="uint32_t*">
+          <array length="2" zero-terminated="0" c:type="const uint32_t*">
             <type name="guint32" c:type="uint32_t"/>
           </array>
         </parameter>
@@ -632,7 +638,7 @@ see hb_buffer_set_replacement_codepoint().</doc>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve">an array of UTF-8
               characters to append.</doc>
-          <array length="2" zero-terminated="0" c:type="char*">
+          <array length="2" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
           </array>
         </parameter>
@@ -781,7 +787,7 @@ hb_buffer_allocation_successful() returns %false.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="buf" transfer-ownership="none">
-          <array length="2" zero-terminated="0" c:type="char*">
+          <array length="2" zero-terminated="0" c:type="const char*">
             <type name="utf8" c:type="char"/>
           </array>
         </parameter>
@@ -1416,7 +1422,7 @@ hb_buffer_serialize_list_formats() to get the list of supported formats.</doc>
       <parameters>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve">a string to parse</doc>
-          <array length="1" zero-terminated="0" c:type="char*">
+          <array length="1" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
           </array>
         </parameter>
@@ -1872,7 +1878,7 @@ and output glyphs and their information after shaping.</doc>
       </return-value>
       <parameters>
         <parameter name="str" transfer-ownership="none">
-          <array length="1" zero-terminated="0" c:type="char*">
+          <array length="1" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
           </array>
         </parameter>
@@ -1948,6 +1954,91 @@ and output glyphs and their information after shaping.</doc>
         </parameter>
         <parameter name="width" transfer-ownership="none">
           <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="face_builder_add_table"
+              c:identifier="hb_face_builder_add_table"
+              version="1.9.0">
+      <doc xml:space="preserve">Add table for @tag with data provided by @blob to the face.  @face must
+be created using hb_face_builder_create().</doc>
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="blob" transfer-ownership="none">
+          <type name="blob_t" c:type="hb_blob_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="face_builder_create"
+              c:identifier="hb_face_builder_create"
+              version="1.9.0">
+      <doc xml:space="preserve">Creates a #hb_face_t that can be used with hb_face_builder_add_table().
+After tables are added to the face, it can be compiled to a binary
+font file by calling hb_face_reference_blob().</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">New face.</doc>
+        <type name="face_t" c:type="hb_face_t*"/>
+      </return-value>
+    </function>
+    <function name="face_collect_unicodes"
+              c:identifier="hb_face_collect_unicodes"
+              version="1.9.0">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="out" transfer-ownership="none">
+          <doc xml:space="preserve">set to add Unicode characters covered by @face to.</doc>
+          <type name="set_t" c:type="hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="face_collect_variation_selectors"
+              c:identifier="hb_face_collect_variation_selectors"
+              version="1.9.0">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="out" transfer-ownership="none">
+          <doc xml:space="preserve">set to add Variation Selector characters covered by @face to.</doc>
+          <type name="set_t" c:type="hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="face_collect_variation_unicodes"
+              c:identifier="hb_face_collect_variation_unicodes"
+              version="1.9.0">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="variation_selector" transfer-ownership="none">
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="out" transfer-ownership="none">
+          <doc xml:space="preserve">set to add Unicode characters for @variation_selector covered by @face to.</doc>
+          <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2266,7 +2357,7 @@ TODO: document the syntax here.</doc>
       <parameters>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve">a string to parse</doc>
-          <array length="1" zero-terminated="0" c:type="char*">
+          <array length="1" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
           </array>
         </parameter>
@@ -3516,7 +3607,7 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="name" transfer-ownership="none">
-          <array length="2" zero-terminated="0" c:type="char*">
+          <array length="2" zero-terminated="0" c:type="const char*">
             <type name="utf8" c:type="char"/>
           </array>
         </parameter>
@@ -4235,7 +4326,7 @@ are not modified.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="s" transfer-ownership="none">
-          <array length="2" zero-terminated="0" c:type="char*">
+          <array length="2" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
           </array>
         </parameter>
@@ -4919,7 +5010,7 @@ The #hb_language_t corresponding to the ISO 639 language code.</doc>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve">a string representing
       ISO 639 language code</doc>
-          <array length="1" zero-terminated="0" c:type="char*">
+          <array length="1" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
           </array>
         </parameter>
@@ -6757,7 +6848,7 @@ hb_script_from_iso15924_tag().</doc>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve">a string representing an
       ISO 15924 tag.</doc>
-          <array length="1" zero-terminated="0" c:type="char*">
+          <array length="1" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
           </array>
         </parameter>
@@ -8120,7 +8211,7 @@ features applied during shaping.</doc>
                    allow-none="1">
           <doc xml:space="preserve">an array of user
    specified #hb_feature_t or %NULL</doc>
-          <array length="3" zero-terminated="0" c:type="hb_feature_t*">
+          <array length="3" zero-terminated="0" c:type="const hb_feature_t*">
             <type name="feature_t" c:type="hb_feature_t"/>
           </array>
         </parameter>
@@ -8153,7 +8244,7 @@ will be used.</doc>
                    allow-none="1">
           <doc xml:space="preserve">an array of user
    specified #hb_feature_t or %NULL</doc>
-          <array length="3" zero-terminated="0" c:type="hb_feature_t*">
+          <array length="3" zero-terminated="0" c:type="const hb_feature_t*">
             <type name="feature_t" c:type="hb_feature_t"/>
           </array>
         </parameter>
@@ -8167,7 +8258,7 @@ will be used.</doc>
                    allow-none="1">
           <doc xml:space="preserve">a %NULL-terminated
    array of shapers to use or %NULL</doc>
-          <array c:type="char**">
+          <array c:type="const char* const*">
             <type name="utf8" c:type="char*"/>
           </array>
         </parameter>
@@ -8180,7 +8271,7 @@ will be used.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">an array of
    constant strings</doc>
-        <array c:type="char**">
+        <array c:type="const char**">
           <type name="utf8"/>
         </array>
       </return-value>
@@ -8200,7 +8291,7 @@ will be used.</doc>
                 c:type="const hb_segment_properties_t*"/>
         </parameter>
         <parameter name="user_features" transfer-ownership="none">
-          <array length="3" zero-terminated="0" c:type="hb_feature_t*">
+          <array length="3" zero-terminated="0" c:type="const hb_feature_t*">
             <type name="feature_t" c:type="hb_feature_t"/>
           </array>
         </parameter>
@@ -8208,7 +8299,7 @@ will be used.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="shaper_list" transfer-ownership="none">
-          <array c:type="char**">
+          <array c:type="const char* const*">
             <type name="utf8" c:type="char*"/>
           </array>
         </parameter>
@@ -8258,7 +8349,7 @@ will be used.</doc>
                 c:type="const hb_segment_properties_t*"/>
         </parameter>
         <parameter name="user_features" transfer-ownership="none">
-          <array length="3" zero-terminated="0" c:type="hb_feature_t*">
+          <array length="3" zero-terminated="0" c:type="const hb_feature_t*">
             <type name="feature_t" c:type="hb_feature_t"/>
           </array>
         </parameter>
@@ -8266,7 +8357,7 @@ will be used.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="shaper_list" transfer-ownership="none">
-          <array c:type="char**">
+          <array c:type="const char* const*">
             <type name="utf8" c:type="char*"/>
           </array>
         </parameter>
@@ -8336,7 +8427,7 @@ will be used.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="features" transfer-ownership="none">
-          <array length="4" zero-terminated="0" c:type="hb_feature_t*">
+          <array length="4" zero-terminated="0" c:type="const hb_feature_t*">
             <type name="feature_t" c:type="hb_feature_t"/>
           </array>
         </parameter>
@@ -8439,7 +8530,7 @@ will be used.</doc>
       </return-value>
       <parameters>
         <parameter name="str" transfer-ownership="none">
-          <array length="1" zero-terminated="0" c:type="char*">
+          <array length="1" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
           </array>
         </parameter>

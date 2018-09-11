@@ -1,6 +1,6 @@
 ;;; Parsing Guile's command-line
 
-;;; Copyright (C) 1994-1998, 2000-2017 Free Software Foundation, Inc.
+;;; Copyright (C) 1994-1998, 2000-2018 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -66,7 +66,7 @@ There is NO WARRANTY, to the extent permitted by law."))
 (define* (version-etc package version #:key
                       (port (current-output-port))
                       ;; FIXME: authors
-                      (copyright-year 2017)
+                      (copyright-year 2018)
                       (copyright-holder "Free Software Foundation, Inc.")
                       (copyright (format #f "Copyright (C) ~a ~a"
                                          copyright-year copyright-holder))

@@ -1,6 +1,6 @@
 ;;; Web client
 
-;; Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016, 2017 Free Software Foundation, Inc.
+;; Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -47,6 +47,7 @@
                 #:prefix rnrs-ports:)
   #:export (current-http-proxy
             open-socket-for-uri
+            http-request
             http-get
             http-get*
             http-head
@@ -332,25 +333,50 @@ as is the case by default with a request returned by `build-request'."
    (else
     (error "unexpected body type" body))))
 
-;; We could expose this to user code if there is demand.
-(define* (request uri #:key
-                  (body #f)
-                  (port (open-socket-for-uri uri))
-                  (method 'GET)
-                  (version '(1 . 1))
-                  (keep-alive? #f)
-                  (headers '())
-                  (decode-body? #t)
-                  (streaming? #f)
-                  (request
-                   (build-request
-                    (ensure-uri-reference uri)
-                    #:method method
-                    #:version version
-                    #:headers (if keep-alive?
-                                  headers
-                                  (cons '(connection close) headers))
-                    #:port port)))
+(define* (http-request uri #:key
+                       (body #f)
+                       (port (open-socket-for-uri uri))
+                       (method 'GET)
+                       (version '(1 . 1))
+                       (keep-alive? #f)
+                       (headers '())
+                       (decode-body? #t)
+                       (streaming? #f)
+                       (request
+                        (build-request
+                         (ensure-uri-reference uri)
+                         #:method method
+                         #:version version
+                         #:headers (if keep-alive?
+                                       headers
+                                       (cons '(connection close) headers))
+                         #:port port)))
+  "Connect to the server corresponding to URI and ask for the resource,
+using METHOD, defaulting to ‘GET’.  If you already have a port open,
+pass it as PORT.  The port will be closed at the end of the request
+unless KEEP-ALIVE? is true.  Any extra headers in the alist HEADERS will
+be added to the request.
+
+If BODY is not ‘#f’, a message body will also be sent with the HTTP
+request.  If BODY is a string, it is encoded according to the
+content-type in HEADERS, defaulting to UTF-8.  Otherwise BODY should be
+a bytevector, or ‘#f’ for no body.  Although it's allowed to send a
+message body along with any request, usually only POST and PUT requests
+have bodies.  See ‘http-put’ and ‘http-post’ documentation, for more.
+
+If DECODE-BODY? is true, as is the default, the body of the
+response will be decoded to string, if it is a textual content-type.
+Otherwise it will be returned as a bytevector.
+
+However, if STREAMING? is true, instead of eagerly reading the response
+body from the server, this function only reads off the headers.  The
+response body will be returned as a port on which the data may be read.
+Unless KEEP-ALIVE? is true, the port will be closed after the full
+response body has been read.
+
+Returns two values: the response read from the server, and the response
+body as a string, bytevector, #f value, or as a port (if STREAMING? is
+true)."
   (call-with-values (lambda () (sanitize-request request body))
     (lambda (request body)
       (let ((request (write-request request port)))
@@ -377,48 +403,6 @@ as is the case by default with a request returned by `build-request'."
                           (decode-response-body response body)
                           body))))))))))
 
-(define* (http-get uri #:key
-                   (body #f)
-                   (port (open-socket-for-uri uri))
-                   (version '(1 . 1)) (keep-alive? #f)
-                   ;; #:headers is the new name of #:extra-headers.
-                   (extra-headers #f) (headers (or extra-headers '()))
-                   (decode-body? #t) (streaming? #f))
-  "Connect to the server corresponding to URI and ask for the
-resource, using the ‘GET’ method.  If you already have a port open,
-pass it as PORT.  The port will be closed at the end of the
-request unless KEEP-ALIVE? is true.  Any extra headers in the
-alist HEADERS will be added to the request.
-
-If BODY is not ‘#f’, a message body will also be sent with the HTTP
-request.  If BODY is a string, it is encoded according to the
-content-type in HEADERS, defaulting to UTF-8.  Otherwise BODY should be
-a bytevector, or ‘#f’ for no body.  Although it's allowed to send a
-message body along with any request, usually only POST and PUT requests
-have bodies.  See ‘http-put’ and ‘http-post’ documentation, for more.
-
-If DECODE-BODY? is true, as is the default, the body of the
-response will be decoded to string, if it is a textual content-type.
-Otherwise it will be returned as a bytevector.
-
-However, if STREAMING? is true, instead of eagerly reading the response
-body from the server, this function only reads off the headers.  The
-response body will be returned as a port on which the data may be read.
-Unless KEEP-ALIVE? is true, the port will be closed after the full
-response body has been read.
-
-Returns two values: the response read from the server, and the response
-body as a string, bytevector, #f value, or as a port (if STREAMING? is
-true)."
-  (when extra-headers
-    (issue-deprecation-warning
-     "The #:extra-headers argument to http-get has been renamed to #:headers. "
-     "Please update your code."))
-  (request uri #:method 'GET #:body body
-           #:port port #:version version #:keep-alive? keep-alive?
-           #:headers headers #:decode-body? decode-body?
-           #:streaming? streaming?))
-
 (define* (http-get* uri #:key
                     (body #f)
                     (port (open-socket-for-uri uri))
@@ -444,20 +428,31 @@ true)."
                       (decode-body? #t)
                       (streaming? #f))
     doc
-    (request uri
-             #:body body #:method method
-             #:port port #:version version #:keep-alive? keep-alive?
-             #:headers headers #:decode-body? decode-body?
-             #:streaming? streaming?)))
+    (http-request uri
+                  #:body body #:method method
+                  #:port port #:version version #:keep-alive? keep-alive?
+                  #:headers headers #:decode-body? decode-body?
+                  #:streaming? streaming?)))
+
+(define-http-verb http-get
+  'GET
+  "Fetch message headers for the given URI using the HTTP \"GET\"
+method.
+
+This function invokes ‘http-request’, with the \"GET\" method.  See
+‘http-request’ for full documentation on the various keyword arguments
+that are accepted by this function.
+
+Returns two values: the resulting response, and the response body.")
 
 (define-http-verb http-head
   'HEAD
   "Fetch message headers for the given URI using the HTTP \"HEAD\"
 method.
 
-This function is similar to ‘http-get’, except it uses the \"HEAD\"
-method.  See ‘http-get’ for full documentation on the various keyword
-arguments that are accepted by this function.
+This function invokes ‘http-request’, with the \"HEAD\" method.  See
+‘http-request’ for full documentation on the various keyword arguments
+that are accepted by this function.
 
 Returns two values: the resulting response, and ‘#f’.  Responses to HEAD
 requests do not have a body.  The second value is only returned so that
@@ -467,9 +462,9 @@ other procedures can treat all of the http-foo verbs identically.")
   'POST
   "Post data to the given URI using the HTTP \"POST\" method.
 
-This function is similar to ‘http-get’, except it uses the \"POST\"
-method.  See ‘http-get’ for full documentation on the various keyword
-arguments that are accepted by this function.
+This function invokes ‘http-request’, with the \"POST\" method.  See
+‘http-request’ for full documentation on the various keyword arguments
+that are accepted by this function.
 
 Returns two values: the resulting response, and the response body.")
 
@@ -477,9 +472,9 @@ Returns two values: the resulting response, and the response body.")
   'PUT
   "Put data at the given URI using the HTTP \"PUT\" method.
 
-This function is similar to ‘http-get’, except it uses the \"PUT\"
-method.  See ‘http-get’ for full documentation on the various keyword
-arguments that are accepted by this function.
+This function invokes ‘http-request’, with the \"PUT\" method.  See
+‘http-request’ for full documentation on the various keyword arguments
+that are accepted by this function.
 
 Returns two values: the resulting response, and the response body.")
 
@@ -487,9 +482,9 @@ Returns two values: the resulting response, and the response body.")
   'DELETE
   "Delete data at the given URI using the HTTP \"DELETE\" method.
 
-This function is similar to ‘http-get’, except it uses the \"DELETE\"
-method.  See ‘http-get’ for full documentation on the various keyword
-arguments that are accepted by this function.
+This function invokes ‘http-request’, with the \"DELETE\" method.  See
+‘http-request’ for full documentation on the various keyword arguments
+that are accepted by this function.
 
 Returns two values: the resulting response, and the response body.")
 
@@ -497,9 +492,9 @@ Returns two values: the resulting response, and the response body.")
   'TRACE
   "Send an HTTP \"TRACE\" request.
 
-This function is similar to ‘http-get’, except it uses the \"TRACE\"
-method.  See ‘http-get’ for full documentation on the various keyword
-arguments that are accepted by this function.
+This function invokes ‘http-request’, with the \"TRACE\" method.  See
+‘http-request’ for full documentation on the various keyword arguments
+that are accepted by this function.
 
 Returns two values: the resulting response, and the response body.")
 
@@ -508,8 +503,8 @@ Returns two values: the resulting response, and the response body.")
   "Query characteristics of an HTTP resource using the HTTP \"OPTIONS\"
 method.
 
-This function is similar to ‘http-get’, except it uses the \"OPTIONS\"
-method.  See ‘http-get’ for full documentation on the various keyword
-arguments that are accepted by this function.
+This function invokes ‘http-request’, with the \"OPTIONS\" method.  See
+‘http-request’ for full documentation on the various keyword arguments
+that are accepted by this function.
 
 Returns two values: the resulting response, and the response body.")

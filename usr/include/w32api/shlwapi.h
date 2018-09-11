@@ -7,8 +7,11 @@
 #define _INC_SHLWAPI
 
 #include <_mingw_unicode.h>
+#include <winapifamily.h>
 
 #ifndef NOSHLWAPI
+
+#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP)
 
 #include <objbase.h>
 #include <shtypes.h>
@@ -855,6 +858,40 @@ extern "C" {
   LWSTDAPI_(WINBOOL) SHUnlockShared(void *pvData);
 #endif
 
+#if (_WIN32_IE >= 0x0501)
+#define PLATFORM_UNKNOWN 0
+#define PLATFORM_IE3 1
+#define PLATFORM_BROWSERONLY 1
+#define PLATFORM_INTEGRATED 2
+
+  LWSTDAPI WhichPlatform(void);
+
+typedef struct {
+  const IID *piid;
+  int dwOffset;
+} QITAB, *LPQITAB;
+typedef const QITAB *LPCQITAB;
+
+#ifndef OFFSETOFCLASS
+#define OFFSETOFCLASS(base, derived) ((DWORD)(DWORD_PTR)(static_cast<base*>((derived*)8))-8)
+#endif
+
+#ifdef __cplusplus
+#define QITABENTMULTI(Cthis, Ifoo, Iimpl) { &__uuidof(Ifoo), OFFSETOFCLASS(Iimpl, Cthis) }
+#else
+#define QITABENTMULTI(Cthis, Ifoo, Iimpl) { (IID*) &IID_##Ifoo, OFFSETOFCLASS(Iimpl, Cthis) }
+#endif
+#define QITABENTMULTI2(Cthis, Ifoo, Iimpl) { (IID*) &Ifoo, OFFSETOFCLASS(Iimpl, Cthis) }
+#define QITABENT(Cthis, Ifoo) QITABENTMULTI(Cthis, Ifoo, Ifoo)
+
+  STDAPI QISearch(void *that, LPCQITAB pqit, REFIID riid, void **ppv);
+
+#define ILMM_IE4 0
+  LWSTDAPI_(BOOL) SHIsLowMemoryMachine(DWORD dwType);
+  LWSTDAPI_(int) GetMenuPosFromId(HMENU hMenu, UINT id);
+  LWSTDAPI SHGetInverseCMAP(__out_bcount(cbMap) BYTE *pbMap, ULONG cbMap);
+#endif
+
 #define SHACF_DEFAULT 0x00000000
 #define SHACF_FILESYSTEM 0x00000001
 #define SHACF_URLALL (SHACF_URLHISTORY | SHACF_URLMRU)
@@ -865,6 +902,10 @@ extern "C" {
 
 #if (_WIN32_IE >= 0x0600)
 #define SHACF_FILESYS_DIRS 0x00000020
+#endif
+
+#if (_WIN32_IE >= 0x0700)
+#define SHACF_VIRTUAL_NAMESPACE 0x00000040
 #endif
 
 #define SHACF_AUTOSUGGEST_FORCE_ON 0x10000000
@@ -939,5 +980,6 @@ LWSTDAPI_(IStream *) SHCreateMemStream(const BYTE *pInit, _In_ UINT cbInit);
 #endif
 
 #include <poppack.h>
+#endif
 #endif
 #endif

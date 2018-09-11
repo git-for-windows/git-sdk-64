@@ -1585,11 +1585,15 @@ top-level bindings from ENV and return the resulting expression."
          (and (not opt) rest (not kw)
               (match body
                 (($ <primcall> _ 'apply
-                    (($ <lambda> _ _ (and lcase ($ <lambda-case>)))
+                    (($ <lambda> _ _ (and lcase ($ <lambda-case> _ req1)))
                      ($ <lexical-ref> _ _ sym)
                      ...))
                  (and (equal? sym gensyms)
                       (not (lambda-case-alternate lcase))
+                      (<= (length req) (length req1))
+                      (every (lambda (s)
+                               (= (lexical-refcount s) 1))
+                             sym)
                       lcase))
                 (_ #f))))
        (let* ((vars (map lookup-var gensyms))

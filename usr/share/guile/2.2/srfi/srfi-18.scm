@@ -1,6 +1,6 @@
 ;;; srfi-18.scm --- Multithreading support
 
-;; Copyright (C) 2008, 2009, 2010, 2012, 2014 Free Software Foundation, Inc.
+;; Copyright (C) 2008, 2009, 2010, 2012, 2014, 2018 Free Software Foundation, Inc.
 ;;
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -139,6 +139,16 @@
 (define current-thread (make-parameter (%make-thread #f #f #f #f #f)))
 (define thread-mutexes (make-parameter #f))
 
+(define (timeout->absolute-time timeout)
+  "Return an absolute time in seconds corresponding to TIMEOUT.  TIMEOUT
+can be any value authorized by SRFI-18: a number (relative time), a time
+object (absolute point in time), or #f."
+  (cond ((number? timeout)                      ;seconds relative to now
+         (+ ((@ (guile) current-time)) timeout))
+        ((time? timeout)                         ;absolute point in time
+         (time->seconds timeout))
+        (else timeout)))                          ;pair or #f
+
 ;; EXCEPTIONS
 
 ;; All threads created by SRFI-18 have an initial handler installed that
@@ -225,9 +235,9 @@
 (define (thread-yield!) (threads:yield) *unspecified*)
 
 (define (thread-sleep! timeout)
-  (let* ((ct (time->seconds (current-time)))
-	 (t (cond ((time? timeout) (- (time->seconds timeout) ct))
-		  ((number? timeout) (- timeout ct))
+  (let* ((t (cond ((time? timeout) (- (time->seconds timeout)
+                                      (time->seconds (current-time))))
+		  ((number? timeout) timeout)
 		  (else (scm-error 'wrong-type-arg "thread-sleep!"
 				   "Wrong type argument: ~S" 
 				   (list timeout) 
@@ -308,7 +318,8 @@
   (with-exception-handlers-here
    (lambda ()
      (cond
-      ((threads:lock-mutex (mutex-prim mutex) timeout)
+      ((threads:lock-mutex (mutex-prim mutex)
+                           (timeout->absolute-time timeout))
        (set-mutex-owner! mutex thread)
        (when (mutex-abandoned? mutex)
          (set-mutex-abandoned?! mutex #f)
@@ -320,20 +331,21 @@
 (define %unlock-sentinel (list 'unlock))
 (define* (mutex-unlock! mutex #:optional (cond-var %unlock-sentinel)
                         (timeout %unlock-sentinel))
-  (when (mutex-owner mutex)
-    (set-mutex-owner! mutex #f)
-    (cond
-     ((eq? cond-var %unlock-sentinel)
-      (threads:unlock-mutex (mutex-prim mutex)))
-     ((eq? timeout %unlock-sentinel)
-      (threads:wait-condition-variable (condition-variable-prim cond-var)
-                                       (mutex-prim mutex))
-      (threads:unlock-mutex (mutex-prim mutex)))
-     ((threads:wait-condition-variable (condition-variable-prim cond-var)
-                                       (mutex-prim mutex)
-                                       timeout)
-      (threads:unlock-mutex (mutex-prim mutex)))
-     (else #f))))
+  (let ((timeout (timeout->absolute-time timeout)))
+    (when (mutex-owner mutex)
+      (set-mutex-owner! mutex #f)
+      (cond
+       ((eq? cond-var %unlock-sentinel)
+        (threads:unlock-mutex (mutex-prim mutex)))
+       ((eq? timeout %unlock-sentinel)
+        (threads:wait-condition-variable (condition-variable-prim cond-var)
+                                         (mutex-prim mutex))
+        (threads:unlock-mutex (mutex-prim mutex)))
+       ((threads:wait-condition-variable (condition-variable-prim cond-var)
+                                         (mutex-prim mutex)
+                                         timeout)
+        (threads:unlock-mutex (mutex-prim mutex)))
+       (else #f)))))
 
 ;; CONDITION VARIABLES
 ;; These functions are all pass-thrus to the existing Guile implementations.

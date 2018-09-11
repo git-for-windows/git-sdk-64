@@ -1,6 +1,6 @@
 ;;; -*- mode: scheme; coding: utf-8; -*-
 
-;;;; Copyright (C) 1995-2014, 2016-2017  Free Software Foundation, Inc.
+;;;; Copyright (C) 1995-2014, 2016-2018  Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -2607,6 +2607,14 @@ interfaces are added to the inports list."
 
 
 
+(define (call-with-module-autoload-lock thunk)
+  ;; This binding is overridden when (ice-9 threads) is available to
+  ;; implement a critical section around the call to THUNK.  It must be
+  ;; used anytime 'autoloads-done' and related variables are accessed
+  ;; and whenever submodules are accessed (via the 'nested-'
+  ;; procedures.)
+  (thunk))
+
 ;; Now that modules are booted, give module-name its final definition.
 ;;
 (define module-name
@@ -2618,7 +2626,9 @@ interfaces are added to the inports list."
             ;; `resolve-module'. This is important as `psyntax' stores module
             ;; names and relies on being able to `resolve-module' them.
             (set-module-name! mod name)
-            (nested-define-module! (resolve-module '() #f) name mod)
+            (call-with-module-autoload-lock
+             (lambda ()
+               (nested-define-module! (resolve-module '() #f) name mod)))
             (accessor mod))))))
 
 (define* (module-gensym #:optional (id " mg") (m (current-module)))
@@ -2700,25 +2710,27 @@ deterministic."
     (module-define-submodule! root 'guile the-root-module)
 
     (lambda* (name #:optional (autoload #t) (version #f) #:key (ensure #t))
-      (let ((already (nested-ref-module root name)))
-        (cond
-         ((and already
-               (or (not autoload) (module-public-interface already)))
-          ;; A hit, a palpable hit.
-          (if (and version
-                   (not (version-matches? version (module-version already))))
-              (error "incompatible module version already loaded" name))
-          already)
-         (autoload
-          ;; Try to autoload the module, and recurse.
-          (try-load-module name version)
-          (resolve-module name #f #:ensure ensure))
-         (else
-          ;; No module found (or if one was, it had no public interface), and
-          ;; we're not autoloading. Make an empty module if #:ensure is true.
-          (or already
-              (and ensure
-                   (make-modules-in root name)))))))))
+      (call-with-module-autoload-lock
+       (lambda ()
+         (let ((already (nested-ref-module root name)))
+           (cond
+            ((and already
+                  (or (not autoload) (module-public-interface already)))
+             ;; A hit, a palpable hit.
+             (if (and version
+                      (not (version-matches? version (module-version already))))
+                 (error "incompatible module version already loaded" name))
+             already)
+            (autoload
+             ;; Try to autoload the module, and recurse.
+             (try-load-module name version)
+             (resolve-module name #f #:ensure ensure))
+            (else
+             ;; No module found (or if one was, it had no public interface), and
+             ;; we're not autoloading. Make an empty module if #:ensure is true.
+             (or already
+                 (and ensure
+                      (make-modules-in root name)))))))))))
 
 
 (define (try-load-module name version)
@@ -2952,9 +2964,6 @@ module '(ice-9 q) '(make-q q-length))}."
 ;;; {Autoloading modules}
 ;;;
 
-;;; XXX FIXME autoloads-in-progress and autoloads-done
-;;;           are not handled in a thread-safe way.
-
 (define autoloads-in-progress '())
 
 ;; This function is called from scm_load_scheme_module in
@@ -2973,37 +2982,40 @@ but it fails to load."
                                                 file-name-separator-string))
                                dir-hint-module-name))))
     (resolve-module dir-hint-module-name #f)
-    (and (not (autoload-done-or-in-progress? dir-hint name))
-         (let ((didit #f))
-           (dynamic-wind
-            (lambda () (autoload-in-progress! dir-hint name))
-            (lambda ()
-              (with-fluids ((current-reader #f))
-                (save-module-excursion
-                 (lambda () 
-                   (define (call/ec proc)
-                     (let ((tag (make-prompt-tag)))
-                       (call-with-prompt
-                        tag
-                        (lambda ()
-                          (proc (lambda () (abort-to-prompt tag))))
-                        (lambda (k) (values)))))
-                   ;; The initial environment when loading a module is a fresh
-                   ;; user module.
-                   (set-current-module (make-fresh-user-module))
-                   ;; Here we could allow some other search strategy (other than
-                   ;; primitive-load-path), for example using versions encoded
-                   ;; into the file system -- but then we would have to figure
-                   ;; out how to locate the compiled file, do auto-compilation,
-                   ;; etc. Punt for now, and don't use versions when locating
-                   ;; the file.
-                   (call/ec
-                    (lambda (abort)
-                      (primitive-load-path (in-vicinity dir-hint name)
-                                           abort)
-                      (set! didit #t)))))))
-            (lambda () (set-autoloaded! dir-hint name didit)))
-           didit))))
+
+    (call-with-module-autoload-lock
+     (lambda ()
+       (and (not (autoload-done-or-in-progress? dir-hint name))
+            (let ((didit #f))
+              (dynamic-wind
+                (lambda () (autoload-in-progress! dir-hint name))
+                (lambda ()
+                  (with-fluids ((current-reader #f))
+                    (save-module-excursion
+                     (lambda ()
+                       (define (call/ec proc)
+                         (let ((tag (make-prompt-tag)))
+                           (call-with-prompt
+                               tag
+                             (lambda ()
+                               (proc (lambda () (abort-to-prompt tag))))
+                             (lambda (k) (values)))))
+                       ;; The initial environment when loading a module is a fresh
+                       ;; user module.
+                       (set-current-module (make-fresh-user-module))
+                       ;; Here we could allow some other search strategy (other than
+                       ;; primitive-load-path), for example using versions encoded
+                       ;; into the file system -- but then we would have to figure
+                       ;; out how to locate the compiled file, do auto-compilation,
+                       ;; etc. Punt for now, and don't use versions when locating
+                       ;; the file.
+                       (call/ec
+                        (lambda (abort)
+                          (primitive-load-path (in-vicinity dir-hint name)
+                                               abort)
+                          (set! didit #t)))))))
+                (lambda () (set-autoloaded! dir-hint name didit)))
+              didit))))))
 
 
 
@@ -3811,10 +3823,7 @@ when none is available, reading FILE-NAME with READER."
                                               scmstat
                                               go-file-name))))))
 
-    (let ((compiled (and scmstat
-                         (or (and (not %fresh-auto-compile)
-                                  (pre-compiled))
-                             (fallback)))))
+    (let ((compiled (and scmstat (or (pre-compiled) (fallback)))))
       (if compiled
           (begin
             (if %load-hook

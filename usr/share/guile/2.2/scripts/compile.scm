@@ -1,6 +1,6 @@
 ;;; Compile --- Command-line Guile Scheme compiler  -*- coding: iso-8859-1 -*-
 
-;; Copyright 2005, 2008-2011, 2013, 2014, 2015 Free Software Foundation, Inc.
+;; Copyright 2005, 2008-2011, 2013, 2014, 2015, 2017 Free Software Foundation, Inc.
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public License
@@ -29,6 +29,7 @@
 ;;; Code:
 
 (define-module (scripts compile)
+  #:use-module ((system base language) #:select (lookup-language))
   #:use-module ((system base compile) #:select (compile-file))
   #:use-module (system base target)
   #:use-module (system base message)
@@ -227,6 +228,13 @@ Note that auto-compilation will be turned off.
 Report bugs to <~A>.~%"
                   %guile-bug-report-address)
           (exit 0)))
+
+    ;; Load FROM and TO before we have changed the load path.  That way, when
+    ;; cross-compiling Guile itself, we can be sure we're loading our own
+    ;; language modules and not those of the Guile being compiled, which may
+    ;; have incompatible .go files.
+    (lookup-language from)
+    (lookup-language to)
 
     (set! %load-path (append load-path %load-path))
     (set! %load-should-auto-compile #f)

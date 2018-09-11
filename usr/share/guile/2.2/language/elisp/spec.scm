@@ -1,6 +1,6 @@
-;;; Guile Emac Lisp
+;;; Guile Emacs Lisp
 
-;; Copyright (C) 2001, 2009, 2010 Free Software Foundation, Inc.
+;; Copyright (C) 2001, 2009, 2010, 2018 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
   #:use-module (language elisp parser)
   #:use-module (system base language)
   #:use-module (system base compile)
+  #:use-module (system base target)
   #:export (elisp))
 
 (define-language elisp
@@ -31,5 +32,12 @@
   #:printer   write
   #:compilers `((tree-il . ,compile-tree-il)))
 
-(compile-and-load (%search-load-path "language/elisp/boot.el")
-                  #:from 'elisp)
+;; Compile and load the Elisp boot code for the native host
+;; architecture.  We must specifically ask for native compilation here,
+;; because this module might be loaded in a dynamic environment where
+;; cross-compilation has been requested using 'with-target'.  For
+;; example, this happens when cross-compiling Guile itself.
+(with-native-target
+  (lambda ()
+    (compile-and-load (%search-load-path "language/elisp/boot.el")
+                      #:from 'elisp)))
