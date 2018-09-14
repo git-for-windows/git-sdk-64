@@ -346,6 +346,16 @@ advice.*::
 		Advice shown when you used linkgit:git-checkout[1] to
 		move to the detach HEAD state, to instruct how to create
 		a local branch after the fact.
+	checkoutAmbiguousRemoteBranchName::
+		Advice shown when the argument to
+		linkgit:git-checkout[1] ambiguously resolves to a
+		remote tracking branch on more than one remote in
+		situations where an unambiguous argument would have
+		otherwise caused a remote-tracking branch to be
+		checked out. See the `checkout.defaultRemote`
+		configuration variable for how to set a given remote
+		to used by default in some situations where this
+		advice would be printed.
 	amWorkDir::
 		Advice that shows the location of the patch file when
 		linkgit:git-am[1] fails to apply it.
@@ -356,7 +366,7 @@ advice.*::
 		Advice on what to do when you've accidentally added one
 		git repo inside of another.
 	ignoredHook::
-		Advice shown if an hook is ignored because the hook is not
+		Advice shown if a hook is ignored because the hook is not
 		set as executable.
 	waitingForEditor::
 		Print a message to the terminal whenever Git is waiting for
@@ -392,16 +402,19 @@ core.hideDotFiles::
 	default mode is 'dotGitOnly'.
 
 core.ignoreCase::
-	If true, this option enables various workarounds to enable
+	Internal variable which enables various workarounds to enable
 	Git to work better on filesystems that are not case sensitive,
-	like FAT. For example, if a directory listing finds
-	"makefile" when Git expects "Makefile", Git will assume
+	like APFS, HFS+, FAT, NTFS, etc. For example, if a directory listing
+	finds "makefile" when Git expects "Makefile", Git will assume
 	it is really the same file, and continue to remember it as
 	"Makefile".
 +
 The default is false, except linkgit:git-clone[1] or linkgit:git-init[1]
 will probe and set core.ignoreCase true if appropriate when the repository
 is created.
++
+Git relies on the proper configuration of this variable for your operating
+and file system. Modifying this value may result in unexpected behavior.
 
 core.precomposeUnicode::
 	This option is only used by Mac OS implementation of Git.
@@ -451,10 +464,20 @@ core.untrackedCache::
 	See linkgit:git-update-index[1]. `keep` by default.
 
 core.checkStat::
-	Determines which stat fields to match between the index
-	and work tree. The user can set this to 'default' or
-	'minimal'. Default (or explicitly 'default'), is to check
-	all fields, including the sub-second part of mtime and ctime.
+	When missing or is set to `default`, many fields in the stat
+	structure are checked to detect if a file has been modified
+	since Git looked at it.  When this configuration variable is
+	set to `minimal`, sub-second part of mtime and ctime, the
+	uid and gid of the owner of the file, the inode number (and
+	the device number, if Git was compiled to use it), are
+	excluded from the check among these fields, leaving only the
+	whole-second part of mtime (and ctime, if `core.trustCtime`
+	is set) and the filesize to be checked.
++
+There are implementations of Git that do not leave usable values in
+some fields (e.g. JGit); by excluding these fields from the
+comparison, the `minimal` mode may help interoperability when the
+same repository is used by these other systems at the same time.
 
 core.quotePath::
 	Commands that output paths (e.g. 'ls-files', 'diff'), will
@@ -926,8 +949,14 @@ This setting defaults to "refs/notes/commits", and it can be overridden by
 the `GIT_NOTES_REF` environment variable.  See linkgit:git-notes[1].
 
 core.commitGraph::
-	Enable git commit graph feature. Allows reading from the
-	commit-graph file.
+	If true, then git will read the commit-graph file (if it exists)
+	to parse the graph structure of commits. Defaults to false. See
+	linkgit:git-commit-graph[1] for more information.
+
+core.useReplaceRefs::
+	If set to `false`, behave as if the `--no-replace-objects`
+	option was given on the command line. See linkgit:git[1] and
+	linkgit:git-replace[1] for more information.
 
 core.sparseCheckout::
 	Enable "sparse checkout" feature. See section "Sparse checkout" in
@@ -995,22 +1024,27 @@ apply.whitespace::
 	Tells 'git apply' how to handle whitespaces, in the same way
 	as the `--whitespace` option. See linkgit:git-apply[1].
 
-blame.showRoot::
-	Do not treat root commits as boundaries in linkgit:git-blame[1].
-	This option defaults to false.
-
 blame.blankBoundary::
 	Show blank commit object name for boundary commits in
 	linkgit:git-blame[1]. This option defaults to false.
 
-blame.showEmail::
-	Show the author email instead of author name in linkgit:git-blame[1].
-	This option defaults to false.
+blame.coloring::
+	This determines the coloring scheme to be applied to blame
+	output. It can be 'repeatedLines', 'highlightRecent',
+	or 'none' which is the default.
 
 blame.date::
 	Specifies the format used to output dates in linkgit:git-blame[1].
 	If unset the iso format is used. For supported values,
 	see the discussion of the `--date` option at linkgit:git-log[1].
+
+blame.showEmail::
+	Show the author email instead of author name in linkgit:git-blame[1].
+	This option defaults to false.
+
+blame.showRoot::
+	Do not treat root commits as boundaries in linkgit:git-blame[1].
+	This option defaults to false.
 
 branch.autoSetupMerge::
 	Tells 'git branch' and 'git checkout' to set up new branches
@@ -1038,6 +1072,12 @@ branch.autoSetupRebase::
 	See "branch.autoSetupMerge" for details on how to set up a
 	branch to track another branch.
 	This option defaults to never.
+
+branch.sort::
+	This variable controls the sort ordering of branches when displayed by
+	linkgit:git-branch[1]. Without the "--sort=<value>" option provided, the
+	value of this variable will be used as the default.
+	See linkgit:git-for-each-ref[1] field names for valid values.
 
 branch.<name>.remote::
 	When on branch <name>, it tells 'git fetch' and 'git push'
@@ -1119,6 +1159,22 @@ browser.<tool>.path::
 	browse HTML help (see `-w` option in linkgit:git-help[1]) or a
 	working repository in gitweb (see linkgit:git-instaweb[1]).
 
+checkout.defaultRemote::
+	When you run 'git checkout <something>' and only have one
+	remote, it may implicitly fall back on checking out and
+	tracking e.g. 'origin/<something>'. This stops working as soon
+	as you have more than one remote with a '<something>'
+	reference. This setting allows for setting the name of a
+	preferred remote that should always win when it comes to
+	disambiguation. The typical use-case is to set this to
+	`origin`.
++
+Currently this is used by linkgit:git-checkout[1] when 'git checkout
+<something>' will checkout the '<something>' branch on another remote,
+and by linkgit:git-worktree[1] when 'git worktree add' refers to a
+remote branch. This setting might be used for other checkout-like
+commands or functionality in the future.
+
 clean.requireForce::
 	A boolean to make git-clean do nothing unless given -f,
 	-i or -n.   Defaults to true.
@@ -1132,6 +1188,28 @@ color.advice::
 
 color.advice.hint::
 	Use customized color for hints.
+
+color.blame.highlightRecent::
+	This can be used to color the metadata of a blame line depending
+	on age of the line.
++
+This setting should be set to a comma-separated list of color and date settings,
+starting and ending with a color, the dates should be set from oldest to newest.
+The metadata will be colored given the colors if the the line was introduced
+before the given timestamp, overwriting older timestamped colors.
++
+Instead of an absolute timestamp relative timestamps work as well, e.g.
+2.weeks.ago is valid to address anything older than 2 weeks.
++
+It defaults to 'blue,12 month ago,white,1 month ago,red', which colors
+everything older than one year blue, recent changes between one month and
+one year old are kept white, and lines introduced within the last month are
+colored red.
+
+color.blame.repeatedLines::
+	Use the customized color for the part of git-blame output that
+	is repeated meta information per line (such as commit id,
+	author name, date and timezone). Defaults to cyan.
 
 color.branch::
 	A boolean to enable/disable color in the output of
@@ -1160,13 +1238,6 @@ This does not affect linkgit:git-format-patch[1] or the
 'git-diff-{asterisk}' plumbing commands.  Can be overridden on the
 command line with the `--color[=<when>]` option.
 
-diff.colorMoved::
-	If set to either a valid `<mode>` or a true value, moved lines
-	in a diff are colored differently, for details of valid modes
-	see '--color-moved' in linkgit:git-diff[1]. If simply set to
-	true the default color mode will be used. When set to false,
-	moved lines are not colored.
-
 color.diff.<slot>::
 	Use customized color for diff colorization.  `<slot>` specifies
 	which part of the patch to use the specified color, and is one
@@ -1177,13 +1248,16 @@ color.diff.<slot>::
 	(highlighting whitespace errors), `oldMoved` (deleted lines),
 	`newMoved` (added lines), `oldMovedDimmed`, `oldMovedAlternative`,
 	`oldMovedAlternativeDimmed`, `newMovedDimmed`, `newMovedAlternative`
-	and `newMovedAlternativeDimmed` (See the '<mode>'
-	setting of '--color-moved' in linkgit:git-diff[1] for details).
+	`newMovedAlternativeDimmed` (See the '<mode>'
+	setting of '--color-moved' in linkgit:git-diff[1] for details),
+	`contextDimmed`, `oldDimmed`, `newDimmed`, `contextBold`,
+	`oldBold`, and `newBold` (see linkgit:git-range-diff[1] for details).
 
 color.decorate.<slot>::
 	Use customized color for 'git log --decorate' output.  `<slot>` is one
 	of `branch`, `remoteBranch`, `tag`, `stash` or `HEAD` for local
-	branches, remote-tracking branches, tags, stash and HEAD, respectively.
+	branches, remote-tracking branches, tags, stash and HEAD, respectively
+	and `grafted` for grafted commits.
 
 color.grep::
 	When set to `always`, always highlight matches.  When `false` (or
@@ -1202,8 +1276,10 @@ color.grep.<slot>::
 	filename prefix (when not using `-h`)
 `function`;;
 	function name lines (when using `-p`)
-`linenumber`;;
+`lineNumber`;;
 	line number prefix (when using `-n`)
+`column`;;
+	column number prefix (when using `--column`)
 `match`;;
 	matching text (same as setting `matchContext` and `matchSelected`)
 `matchContext`;;
@@ -1244,6 +1320,18 @@ color.push::
 color.push.error::
 	Use customized color for push errors.
 
+color.remote::
+	If set, keywords at the start of the line are highlighted. The
+	keywords are "error", "warning", "hint" and "success", and are
+	matched case-insensitively. May be set to `always`, `false` (or
+	`never`) or `auto` (or `true`). If unset, then the value of
+	`color.ui` is used (`auto` by default).
+
+color.remote.<slot>::
+	Use customized color for each remote keyword. `<slot>` may be
+	`hint`, `warning`, `success` or `error` which match the
+	corresponding keyword.
+
 color.showBranch::
 	A boolean to enable/disable color in the output of
 	linkgit:git-show-branch[1]. May be set to `always`,
@@ -1271,33 +1359,6 @@ color.status.<slot>::
 	respectively, when branch and tracking information is displayed in the
 	status short-format), or
 	`unmerged` (files which have unmerged changes).
-
-color.blame.repeatedLines::
-	Use the customized color for the part of git-blame output that
-	is repeated meta information per line (such as commit id,
-	author name, date and timezone). Defaults to cyan.
-
-color.blame.highlightRecent::
-	This can be used to color the metadata of a blame line depending
-	on age of the line.
-+
-This setting should be set to a comma-separated list of color and date settings,
-starting and ending with a color, the dates should be set from oldest to newest.
-The metadata will be colored given the colors if the the line was introduced
-before the given timestamp, overwriting older timestamped colors.
-+
-Instead of an absolute timestamp relative timestamps work as well, e.g.
-2.weeks.ago is valid to address anything older than 2 weeks.
-+
-It defaults to 'blue,12 month ago,white,1 month ago,red', which colors
-everything older than one year blue, recent changes between one month and
-one year old are kept white, and lines introduced within the last month are
-colored red.
-
-blame.coloring::
-	This determines the coloring scheme to be applied to blame
-	output. It can be 'repeatedLines', 'highlightRecent',
-	or 'none' which is the default.
 
 color.transport::
 	A boolean to enable/disable color when pushes are rejected. May be
@@ -1478,10 +1539,19 @@ fetch.recurseSubmodules::
 
 fetch.fsckObjects::
 	If it is set to true, git-fetch-pack will check all fetched
-	objects. It will abort in the case of a malformed object or a
-	broken link. The result of an abort are only dangling objects.
-	Defaults to false. If not set, the value of `transfer.fsckObjects`
-	is used instead.
+	objects. See `transfer.fsckObjects` for what's
+	checked. Defaults to false. If not set, the value of
+	`transfer.fsckObjects` is used instead.
+
+fetch.fsck.<msg-id>::
+	Acts like `fsck.<msg-id>`, but is used by
+	linkgit:git-fetch-pack[1] instead of linkgit:git-fsck[1]. See
+	the `fsck.<msg-id>` documentation for details.
+
+fetch.fsck.skipList::
+	Acts like `fsck.skipList`, but is used by
+	linkgit:git-fetch-pack[1] instead of linkgit:git-fsck[1]. See
+	the `fsck.skipList` documentation for details.
 
 fetch.unpackLimit::
 	If the number of objects fetched over the Git native
@@ -1511,6 +1581,18 @@ fetch.output::
 	Control how ref update status is printed. Valid values are
 	`full` and `compact`. Default value is `full`. See section
 	OUTPUT in linkgit:git-fetch[1] for detail.
+
+fetch.negotiationAlgorithm::
+	Control how information about the commits in the local repository is
+	sent when negotiating the contents of the packfile to be sent by the
+	server. Set to "skipping" to use an algorithm that skips commits in an
+	effort to converge faster, but may result in a larger-than-necessary
+	packfile; The default is "default" which instructs Git to use the default algorithm
+	that never skips commits (unless the server has acknowledged it or one
+	of its descendants).
+	Unknown values will cause 'git fetch' to error out.
++
+See also the `--negotiation-tip` option for linkgit:git-fetch[1].
 
 format.attach::
 	Enable multipart/mixed attachments as the default for
@@ -1611,15 +1693,42 @@ filter.<driver>.smudge::
 	linkgit:gitattributes[5] for details.
 
 fsck.<msg-id>::
-	Allows overriding the message type (error, warn or ignore) of a
-	specific message ID such as `missingEmail`.
+	During fsck git may find issues with legacy data which
+	wouldn't be generated by current versions of git, and which
+	wouldn't be sent over the wire if `transfer.fsckObjects` was
+	set. This feature is intended to support working with legacy
+	repositories containing such data.
 +
-For convenience, fsck prefixes the error/warning with the message ID,
-e.g.  "missingEmail: invalid author/committer line - missing email" means
-that setting `fsck.missingEmail = ignore` will hide that issue.
+Setting `fsck.<msg-id>` will be picked up by linkgit:git-fsck[1], but
+to accept pushes of such data set `receive.fsck.<msg-id>` instead, or
+to clone or fetch it set `fetch.fsck.<msg-id>`.
 +
-This feature is intended to support working with legacy repositories
-which cannot be repaired without disruptive changes.
+The rest of the documentation discusses `fsck.*` for brevity, but the
+same applies for the corresponding `receive.fsck.*` and
+`fetch.<msg-id>.*`. variables.
++
+Unlike variables like `color.ui` and `core.editor` the
+`receive.fsck.<msg-id>` and `fetch.fsck.<msg-id>` variables will not
+fall back on the `fsck.<msg-id>` configuration if they aren't set. To
+uniformly configure the same fsck settings in different circumstances
+all three of them they must all set to the same values.
++
+When `fsck.<msg-id>` is set, errors can be switched to warnings and
+vice versa by configuring the `fsck.<msg-id>` setting where the
+`<msg-id>` is the fsck message ID and the value is one of `error`,
+`warn` or `ignore`. For convenience, fsck prefixes the error/warning
+with the message ID, e.g. "missingEmail: invalid author/committer line
+- missing email" means that setting `fsck.missingEmail = ignore` will
+hide that issue.
++
+In general, it is better to enumerate existing objects with problems
+with `fsck.skipList`, instead of listing the kind of breakages these
+problematic objects share to be ignored, as doing the latter will
+allow new instances of the same breakages go unnoticed.
++
+Setting an unknown `fsck.<msg-id>` value will cause fsck to die, but
+doing the same for `receive.fsck.<msg-id>` and `fetch.fsck.<msg-id>`
+will only cause git to warn.
 
 fsck.skipList::
 	The path to a sorted list of object names (i.e. one SHA-1 per
@@ -1628,6 +1737,15 @@ fsck.skipList::
 	should be accepted despite early commits containing errors that
 	can be safely ignored such as invalid committer email addresses.
 	Note: corrupt objects cannot be skipped with this setting.
++
+Like `fsck.<msg-id>` this variable has corresponding
+`receive.fsck.skipList` and `fetch.fsck.skipList` variants.
++
+Unlike variables like `color.ui` and `core.editor` the
+`receive.fsck.skipList` and `fetch.fsck.skipList` variables will not
+fall back on the `fsck.skipList` configuration if they aren't set. To
+uniformly configure the same fsck settings in different circumstances
+all three of them they must all set to the same values.
 
 gc.aggressiveDepth::
 	The depth parameter used in the delta compression
@@ -1667,6 +1785,13 @@ Note that if the number of kept packs is more than gc.autoPackLimit,
 this configuration variable is ignored, all packs except the base pack
 will be repacked. After this the number of packs should go below
 gc.autoPackLimit and gc.bigPackThreshold should be respected again.
+
+gc.writeCommitGraph::
+	If true, then gc will rewrite the commit-graph file when
+	linkgit:git-gc[1] is run. When using linkgit:git-gc[1]
+	'--auto' the commit-graph will be updated if housekeeping is
+	required. Default is false. See linkgit:git-commit-graph[1]
+	for details.
 
 gc.logExpiry::
 	If the file gc.log exists, then `git gc --auto` won't run
@@ -1818,6 +1943,9 @@ gitweb.snapshot::
 grep.lineNumber::
 	If set to true, enable `-n` option by default.
 
+grep.column::
+	If set to true, enable the `--column` option by default.
+
 grep.patternType::
 	Set the default matching behavior. Using a value of 'basic', 'extended',
 	'fixed', or 'perl' will enable the `--basic-regexp`, `--extended-regexp`,
@@ -1847,6 +1975,16 @@ gpg.program::
 	standard input of "`gpg -bsau $key`" is fed with the contents to be
 	signed, and the program is expected to send the result to its
 	standard output.
+
+gpg.format::
+	Specifies which key format to use when signing with `--gpg-sign`.
+	Default is "openpgp" and another possible value is "x509".
+
+gpg.<format>.program::
+	Use this to customize the program used for the signing format you
+	chose. (see `gpg.program` and `gpg.format`) `gpg.program` can still
+	be used as a legacy synonym for	`gpg.openpgp.program`. The default
+	value for `gpg.x509.program` is "gpgsm".
 
 gui.commitMsgWidth::
 	Defines how wide the commit message window is in the
@@ -2124,21 +2262,21 @@ http.sslBackend::
 	This option is ignored if cURL lacks support for choosing the SSL
 	backend at runtime.
 
-http.schannel.checkRevoke::
+http.schannelCheckRevoke::
 	Used to enforce or disable certificate revocation checks in cURL
 	when http.sslBackend is set to "schannel". Defaults to `true` if
 	unset. Only necessary to disable this if Git consistently errors
 	and the message is about checking the revocation status of a
-	certificate. This option is ignored if cURL lacks support for 
+	certificate. This option is ignored if cURL lacks support for
 	setting the relevant SSL option at runtime.
 
-http.schannel.useSSLCAInfo::
+http.schannelUseSSLCAInfo::
 	As of cURL v7.60.0, the Secure Channel backend can use the
 	certificate bundle provided via `http.sslCAInfo`, but that would
 	override the Windows Certificate Store. Since this is not desirable
 	by default, Git will tell cURL not to use that bundle by default
 	when the `schannel` backend was configured via `http.sslBackend`,
-	unless `useSSLCAInfo` overrides this behavior.
+	unless `http.schannelUseSSLCAInfo` overrides this behavior.
 
 http.pinnedpubkey::
 	Public key of the https service. It may either be the filename of
@@ -2922,32 +3060,21 @@ receive.certNonceSlop::
 
 receive.fsckObjects::
 	If it is set to true, git-receive-pack will check all received
-	objects. It will abort in the case of a malformed object or a
-	broken link. The result of an abort are only dangling objects.
-	Defaults to false. If not set, the value of `transfer.fsckObjects`
-	is used instead.
+	objects. See `transfer.fsckObjects` for what's checked.
+	Defaults to false. If not set, the value of
+	`transfer.fsckObjects` is used instead.
 
 receive.fsck.<msg-id>::
-	When `receive.fsckObjects` is set to true, errors can be switched
-	to warnings and vice versa by configuring the `receive.fsck.<msg-id>`
-	setting where the `<msg-id>` is the fsck message ID and the value
-	is one of `error`, `warn` or `ignore`. For convenience, fsck prefixes
-	the error/warning with the message ID, e.g. "missingEmail: invalid
-	author/committer line - missing email" means that setting
-	`receive.fsck.missingEmail = ignore` will hide that issue.
-+
-This feature is intended to support working with legacy repositories
-which would not pass pushing when `receive.fsckObjects = true`, allowing
-the host to accept repositories with certain known issues but still catch
-other issues.
+	Acts like `fsck.<msg-id>`, but is used by
+	linkgit:git-receive-pack[1] instead of
+	linkgit:git-fsck[1]. See the `fsck.<msg-id>` documentation for
+	details.
 
 receive.fsck.skipList::
-	The path to a sorted list of object names (i.e. one SHA-1 per
-	line) that are known to be broken in a non-fatal way and should
-	be ignored. This feature is useful when an established project
-	should be accepted despite early commits containing errors that
-	can be safely ignored such as invalid committer email addresses.
-	Note: corrupt objects cannot be skipped with this setting.
+	Acts like `fsck.skipList`, but is used by
+	linkgit:git-receive-pack[1] instead of
+	linkgit:git-fsck[1]. See the `fsck.skipList` documentation for
+	details.
 
 receive.keepAlive::
 	After receiving the pack from the client, `receive-pack` may
@@ -3369,12 +3496,13 @@ submodule.<name>.ignore::
 submodule.<name>.active::
 	Boolean value indicating if the submodule is of interest to git
 	commands.  This config option takes precedence over the
-	submodule.active config option.
+	submodule.active config option. See linkgit:gitsubmodules[7] for
+	details.
 
 submodule.active::
 	A repeated field which contains a pathspec used to match against a
 	submodule's path to determine if the submodule is of interest to git
-	commands.
+	commands. See linkgit:gitsubmodules[7] for details.
 
 submodule.recurse::
 	Specifies if commands recurse into submodules by default. This
@@ -3421,6 +3549,40 @@ transfer.fsckObjects::
 	When `fetch.fsckObjects` or `receive.fsckObjects` are
 	not set, the value of this variable is used instead.
 	Defaults to false.
++
+When set, the fetch or receive will abort in the case of a malformed
+object or a link to a nonexistent object. In addition, various other
+issues are checked for, including legacy issues (see `fsck.<msg-id>`),
+and potential security issues like the existence of a `.GIT` directory
+or a malicious `.gitmodules` file (see the release notes for v2.2.1
+and v2.17.1 for details). Other sanity and security checks may be
+added in future releases.
++
+On the receiving side, failing fsckObjects will make those objects
+unreachable, see "QUARANTINE ENVIRONMENT" in
+linkgit:git-receive-pack[1]. On the fetch side, malformed objects will
+instead be left unreferenced in the repository.
++
+Due to the non-quarantine nature of the `fetch.fsckObjects`
+implementation it can not be relied upon to leave the object store
+clean like `receive.fsckObjects` can.
++
+As objects are unpacked they're written to the object store, so there
+can be cases where malicious objects get introduced even though the
+"fetch" failed, only to have a subsequent "fetch" succeed because only
+new incoming objects are checked, not those that have already been
+written to the object store. That difference in behavior should not be
+relied upon. In the future, such objects may be quarantined for
+"fetch" as well.
++
+For now, the paranoid need to find some way to emulate the quarantine
+environment if they'd like the same protection as "push". E.g. in the
+case of an internal mirror do the mirroring in two steps, one to fetch
+the untrusted objects, and then do a second "push" (which will use the
+quarantine) to another internal repo, and have internal clients
+consume this pushed-to repository, or embargo internal fetches and
+only allow them once a full "fsck" has run (and no new fetches have
+happened in the meantime).
 
 transfer.hideRefs::
 	String(s) `receive-pack` and `upload-pack` use to decide which
@@ -3520,6 +3682,13 @@ uploadpack.allowFilter::
 Note that this configuration variable is ignored if it is seen in the
 repository-level config (this is a safety measure against fetching from
 untrusted repositories).
+
+uploadpack.allowRefInWant::
+	If this option is set, `upload-pack` will support the `ref-in-want`
+	feature of the protocol version 2 `fetch` command.  This feature
+	is intended for the benefit of load-balanced servers which may
+	not have the same view of what OIDs their refs point to due to
+	replication delay.
 
 url.<base>.insteadOf::
 	Any URL that starts with this value will be rewritten to

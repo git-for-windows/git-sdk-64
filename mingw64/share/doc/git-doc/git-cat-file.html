@@ -556,6 +556,17 @@ that a process can interactively read and write from
 buffering; this is much more efficient when invoking
 <code>--batch-check</code> on a large number of objects.</p>
 </dd>
+<dt class="hdlist1">--unordered</dt>
+<dd>
+<p>When <code>--batch-all-objects</code> is in use, visit objects in an
+order which may be more efficient for accessing the object
+contents than hash order. The exact details of the order are
+unspecified, but if you do not require a specific order, this
+should generally result in faster output, especially with
+<code>--batch</code>.  Note that <code>cat-file</code> will still show each object
+only once, even if it is stored multiple times in the
+repository.</p>
+</dd>
 <dt class="hdlist1">--allow-unknown-type</dt>
 <dd>
 <p>Allow -s or -t to query broken/corrupt objects of unknown type.</p>
@@ -846,7 +857,7 @@ will be reported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

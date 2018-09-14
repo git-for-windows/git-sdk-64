@@ -446,14 +446,36 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Read the idx file for a Git packfile created with
-<em>git pack-objects</em> command from the standard input, and
-dump its contents.</p>
+<p>Read the <code>.idx</code> file for a Git packfile (created with
+<a href="git-pack-objects.html">git-pack-objects</a>(1) or <a href="git-index-pack.html">git-index-pack</a>(1)) from the
+standard input, and dump its contents. The output consists of one object
+per line, with each line containing two or three space-separated
+columns:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the first column is the offset in bytes of the object within the
+corresponding packfile</p>
+</li>
+<li>
+<p>the second column is the object id of the object</p>
+</li>
+<li>
+<p>if the index version is 2 or higher, the third column contains the
+CRC32 of the object data</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The information it outputs is subset of what you can get from
-<em>git verify-pack -v</em>; this command only shows the packfile
-offset and SHA-1 of each object.</p>
+<p>The objects are output in the order in which they are found in the index
+file, which should be (in a correctly constructed file) sorted by object
+id.</p>
+</div>
+<div class="paragraph">
+<p>Note that you can get more information on a packfile by calling
+<a href="git-verify-pack.html">git-verify-pack</a>(1). However, as this command considers only the
+index file itself, it&#8217;s both faster and more flexible.</p>
 </div>
 </div>
 </div>
@@ -468,7 +490,7 @@ offset and SHA-1 of each object.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:51:00 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

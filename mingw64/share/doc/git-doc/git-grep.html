@@ -442,11 +442,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	   [-v | --invert-match] [-h|-H] [--full-name]
 	   [-E | --extended-regexp] [-G | --basic-regexp]
 	   [-P | --perl-regexp]
-	   [-F | --fixed-strings] [-n | --line-number]
+	   [-F | --fixed-strings] [-n | --line-number] [--column]
 	   [-l | --files-with-matches] [-L | --files-without-match]
 	   [(-O | --open-files-in-pager) [&lt;pager&gt;]]
 	   [-z | --null]
-	   [-c | --count] [--all-match] [-q | --quiet]
+	   [ -o | --only-matching ] [-c | --count] [--all-match] [-q | --quiet]
 	   [--max-depth &lt;depth&gt;]
 	   [--color[=&lt;when&gt;] | --no-color]
 	   [--break] [--heading] [-p | --show-function]
@@ -480,6 +480,10 @@ characters.  An empty string as search expression matches all lines.</p>
 <dt class="hdlist1">grep.lineNumber</dt>
 <dd>
 <p>If set to true, enable <code>-n</code> option by default.</p>
+</dd>
+<dt class="hdlist1">grep.column</dt>
+<dd>
+<p>If set to true, enable the <code>--column</code> option by default.</p>
 </dd>
 <dt class="hdlist1">grep.patternType</dt>
 <dd>
@@ -638,6 +642,11 @@ as a regex).</p>
 <dd>
 <p>Prefix the line number to matching lines.</p>
 </dd>
+<dt class="hdlist1">--column</dt>
+<dd>
+<p>Prefix the 1-indexed byte-offset of the first match from the start of the
+matching line.</p>
+</dd>
 <dt class="hdlist1">-l</dt>
 <dt class="hdlist1">--files-with-matches</dt>
 <dt class="hdlist1">--name-only</dt>
@@ -665,6 +674,12 @@ will be used (see <code>core.pager</code> in <a href="git-config.html">git-confi
 <dd>
 <p>Output \0 instead of the character that normally follows a
 file name.</p>
+</dd>
+<dt class="hdlist1">-o</dt>
+<dt class="hdlist1">--only-matching</dt>
+<dd>
+<p>Print only the matched (non-empty) parts of a matching line, with each such
+part on a separate output line.</p>
 </dd>
 <dt class="hdlist1">-c</dt>
 <dt class="hdlist1">--count</dt>
@@ -828,7 +843,7 @@ files that have lines that match both.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

@@ -88,7 +88,7 @@ call_merge () {
 		;;
 	*)
 		die "Unknown exit code ($rv) from command:" \
-			"git-merge-$strategy $cmt^ -- HEAD $cmt"
+			"git merge-$strategy $cmt^ -- HEAD $cmt"
 		;;
 	esac
 }

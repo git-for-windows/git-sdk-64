@@ -477,6 +477,16 @@ equivalent to</p>
 </div>
 </div>
 <div class="paragraph">
+<p>If the branch exists in multiple remotes and one of them is named by
+the <code>checkout.defaultRemote</code> configuration variable, we&#8217;ll use that
+one for the purposes of disambiguation, even if the <code>&lt;branch&gt;</code> isn&#8217;t
+unique across all remotes. Set it to
+e.g. <code>checkout.defaultRemote=origin</code> to always checkout remote
+branches from there if <code>&lt;branch&gt;</code> is ambiguous but exists on the
+<em>origin</em> remote. See also <code>checkout.defaultRemote</code> in
+<a href="git-config.html">git-config</a>(1).</p>
+</div>
+<div class="paragraph">
 <p>You could omit &lt;branch&gt;, in which case the command degenerates to
 "check out the current branch", which is a glorified no-op with
 rather expensive side-effects to show only the tracking information,
@@ -1089,7 +1099,7 @@ $ git add frotz</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

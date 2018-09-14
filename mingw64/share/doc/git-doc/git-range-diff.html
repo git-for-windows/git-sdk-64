@@ -439,7 +439,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git range-diff</em> [--color=[&lt;when&gt;]] [--no-color] [&lt;diff-options&gt;]
-	[--dual-color] [--creation-factor=&lt;factor&gt;]
+	[--no-dual-color] [--creation-factor=&lt;factor&gt;]
 	( &lt;range1&gt; &lt;range2&gt; | &lt;rev1&gt;&#8230;&#8203;&lt;rev2&gt; | &lt;base&gt; &lt;rev1&gt; &lt;rev2&gt; )</pre>
 </div>
 </div>
@@ -449,14 +449,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="paragraph">
 <p>This command shows the differences between two versions of a patch
-series, or more generally, two commit ranges (ignoring merges).</p>
+series, or more generally, two commit ranges (ignoring merge commits).</p>
 </div>
 <div class="paragraph">
 <p>To that end, it first finds pairs of commits from both commit ranges
 that correspond with each other. Two commits are said to correspond when
 the diff between their patches (i.e. the author information, the commit
 message and the commit diff) is reasonably small compared to the
-patches' size. See ``Algorithm` below for details.</p>
+patches' size. See ``Algorithm`` below for details.</p>
 </div>
 <div class="paragraph">
 <p>Finally, the list of matching commits is shown in the order of the
@@ -470,12 +470,26 @@ all of their ancestors have been shown.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--dual-color</dt>
+<dt class="hdlist1">--no-dual-color</dt>
 <dd>
-<p>When the commit diffs differ, recreate the original diffs'
-coloring, and add outer -/+ diff markers with the <strong>background</strong>
-being red/green to make it easier to see e.g. when there was a
-change in what exact lines were added.</p>
+<p>When the commit diffs differ, <code>git range-diff</code> recreates the
+original diffs' coloring, and adds outer -/+ diff markers with
+the <strong>background</strong> being red/green to make it easier to see e.g.
+when there was a change in what exact lines were added.</p>
+<div class="paragraph">
+<p>Additionally, the commit diff lines that are only present in the first commit
+range are shown "dimmed" (this can be overridden using the <code>color.diff.&lt;slot&gt;</code>
+config setting where <code>&lt;slot&gt;</code> is one of <code>contextDimmed</code>, <code>oldDimmed</code> and
+<code>newDimmed</code>), and the commit diff lines that are only present in the second
+commit range are shown in bold (which can be overridden using the config
+settings <code>color.diff.&lt;slot&gt;</code> with <code>&lt;slot&gt;</code> being one of <code>contextBold</code>,
+<code>oldBold</code> or <code>newBold</code>).</p>
+</div>
+<div class="paragraph">
+<p>This is known to <code>range-diff</code> as "dual coloring". Use <code>--no-dual-color</code>
+to revert to color all lines according to the outer diff markers
+(and completely ignore the inner diff when it comes to color).</p>
+</div>
 </dd>
 <dt class="hdlist1">--creation-factor=&lt;percent&gt;</dt>
 <dd>
@@ -575,16 +589,17 @@ show</code>'s output, and the third line colors the old commit red, the new
 one green and the rest like <code>git show</code>'s commit header.</p>
 </div>
 <div class="paragraph">
-<p>The color-coded diff is actually a bit hard to read, though, as it
-colors the entire lines red or green. The line that added "What is
-unexpected" in the old commit, for example, is completely red, even if
-the intent of the old commit was to add something.</p>
+<p>A naive color-coded diff of diffs is actually a bit hard to read,
+though, as it colors the entire lines red or green. The line that added
+"What is unexpected" in the old commit, for example, is completely red,
+even if the intent of the old commit was to add something.</p>
 </div>
 <div class="paragraph">
-<p>To help with that, use the <code>--dual-color</code> mode. In this mode, the diff
-of diffs will retain the original diff colors, and prefix the lines with
--/+ markers that have their <strong>background</strong> red or green, to make it more
-obvious that they describe how the diff itself changed.</p>
+<p>To help with that, <code>range</code> uses the <code>--dual-color</code> mode by default. In
+this mode, the diff of diffs will retain the original diff colors, and
+prefix the lines with -/+ markers that have their <strong>background</strong> red or
+green, to make it more obvious that they describe how the diff itself
+changed.</p>
 </div>
 </div>
 </div>
@@ -594,6 +609,11 @@ obvious that they describe how the diff itself changed.</p>
 <div class="paragraph">
 <p>The general idea is this: we generate a cost matrix between the commits
 in both commit ranges, then solve the least-cost assignment.</p>
+</div>
+<div class="paragraph">
+<p>The cost matrix is populated thusly: for each pair of commits, both
+diffs are generated and the "diff of diffs" is generated, with 3 context
+lines, then the number of lines in that diff is used as cost.</p>
 </div>
 <div class="paragraph">
 <p>To avoid false positives (e.g. when a patch has been removed, and an
@@ -717,7 +737,7 @@ found in this case will look like this:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-02 21:54:32 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

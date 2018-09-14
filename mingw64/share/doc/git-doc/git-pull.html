@@ -811,6 +811,29 @@ the current repository has the same history as the source repository.</p>
 .git/shallow. This option updates .git/shallow and accept such
 refs.</p>
 </dd>
+<dt class="hdlist1">--negotiation-tip=&lt;commit|glob&gt;</dt>
+<dd>
+<p>By default, Git will report, to the server, commits reachable
+from all local refs to find common commits in an attempt to
+reduce the size of the to-be-received packfile. If specified,
+Git will only report commits reachable from the given tips.
+This is useful to speed up fetches when the user knows which
+local ref is likely to have commits in common with the
+upstream ref being fetched.</p>
+<div class="paragraph">
+<p>This option may be specified more than once; if so, Git will report
+commits reachable from any of the given commits.</p>
+</div>
+<div class="paragraph">
+<p>The argument to this option may be a glob on ref names, a ref, or the (possibly
+abbreviated) SHA-1 of a commit. Specifying a glob is equivalent to specifying
+this option multiple times, one for each matching ref name.</p>
+</div>
+<div class="paragraph">
+<p>See also the <code>fetch.negotiationAlgorithm</code> configuration variable
+documented in <a href="git-config.html">git-config</a>(1).</p>
+</div>
+</dd>
 <dt class="hdlist1">-f</dt>
 <dt class="hdlist1">--force</dt>
 <dd>
@@ -903,7 +926,7 @@ it requests fetching everything up to the given tag.</p>
 </div>
 <div class="paragraph">
 <p>The remote ref that matches &lt;src&gt;
-is fetched, and if &lt;dst&gt; is not empty string, the local
+is fetched, and if &lt;dst&gt; is not an empty string, the local
 ref that matches it is fast-forwarded using &lt;src&gt;.
 If the optional plus <code>+</code> is used, the local ref
 is updated even if it does not result in a fast-forward
@@ -1605,7 +1628,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

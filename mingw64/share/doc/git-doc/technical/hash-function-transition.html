@@ -518,25 +518,21 @@ that are believed to be cryptographically secure.</p>
 <div class="sect1">
 <h2 id="_goals">Goals</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Where NewHash is a strong 256-bit hash function to replace SHA-1 (see
-"Selection of a New Hash", below):</p>
-</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>The transition to NewHash can be done one local repository at a time.</p>
+<p>The transition to SHA-256 can be done one local repository at a time.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
 <p>Requiring no action by any other party.</p>
 </li>
 <li>
-<p>A NewHash repository can communicate with SHA-1 Git servers
+<p>A SHA-256 repository can communicate with SHA-1 Git servers
 (push/fetch).</p>
 </li>
 <li>
-<p>Users can use SHA-1 and NewHash identifiers for objects
+<p>Users can use SHA-1 and SHA-256 identifiers for objects
 interchangeably (see "Object names on the command line", below).</p>
 </li>
 <li>
@@ -580,7 +576,7 @@ repository if compatibility with SHA-1 is no longer needed.</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Add NewHash support to Git protocol. This is valuable and the
+<p>Add SHA-256 support to Git protocol. This is valuable and the
 logical next step but it is out of scope for this initial design.</p>
 </li>
 <li>
@@ -596,12 +592,12 @@ repository.</p>
 protocols.</p>
 </li>
 <li>
-<p>Shallow clones and fetches into a NewHash repository. (This will
-change when we add NewHash support to Git protocol.)</p>
+<p>Shallow clones and fetches into a SHA-256 repository. (This will
+change when we add SHA-256 support to Git protocol.)</p>
 </li>
 <li>
-<p>Skip fetching some submodules of a project into a NewHash
-repository. (This also depends on NewHash support in Git
+<p>Skip fetching some submodules of a project into a SHA-256
+repository. (This also depends on SHA-256 support in Git
 protocol.)</p>
 </li>
 </ol>
@@ -613,19 +609,19 @@ protocol.)</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>We introduce a new repository format extension. Repositories with this
-extension enabled use NewHash instead of SHA-1 to name their objects.
+extension enabled use SHA-256 instead of SHA-1 to name their objects.
 This affects both object names and object content --- both the names
 of objects and all references to other objects within an object are
 switched to the new hash function.</p>
 </div>
 <div class="paragraph">
-<p>NewHash repositories cannot be read by older versions of Git.</p>
+<p>SHA-256 repositories cannot be read by older versions of Git.</p>
 </div>
 <div class="paragraph">
-<p>Alongside the packfile, a NewHash repository stores a bidirectional
-mapping between NewHash and SHA-1 object names. The mapping is generated
+<p>Alongside the packfile, a SHA-256 repository stores a bidirectional
+mapping between SHA-256 and SHA-1 object names. The mapping is generated
 locally and can be verified using "git fsck". Object lookups use this
-mapping to allow naming objects using either their SHA-1 and NewHash names
+mapping to allow naming objects using either their SHA-1 and SHA-256 names
 interchangeably.</p>
 </div>
 <div class="paragraph">
@@ -637,7 +633,7 @@ object database so that they can be named using the appropriate name
 </div>
 <div class="paragraph">
 <p>Fetches from a SHA-1 based server convert the fetched objects into
-NewHash form and record the mapping in the bidirectional mapping table
+SHA-256 form and record the mapping in the bidirectional mapping table
 (see below for details). Pushes to a SHA-1 based server convert the
 objects being pushed into sha1 form so the server does not have to be
 aware of the hash function the client is using.</p>
@@ -650,7 +646,7 @@ aware of the hash function the client is using.</p>
 <div class="sect2">
 <h3 id="_repository_format_extension">Repository format extension</h3>
 <div class="paragraph">
-<p>A NewHash repository uses repository format version <code>1</code> (see
+<p>A SHA-256 repository uses repository format version <code>1</code> (see
 Documentation/technical/repository-version.txt) with extensions
 <code>objectFormat</code> and <code>compatObjectFormat</code>:</p>
 </div>
@@ -659,14 +655,14 @@ Documentation/technical/repository-version.txt) with extensions
 <pre>[core]
 	repositoryFormatVersion = 1
 [extensions]
-	objectFormat = newhash
+	objectFormat = sha256
 	compatObjectFormat = sha1</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>The combination of setting <code>core.repositoryFormatVersion=1</code> and
 populating <code>extensions.*</code> ensures that all versions of Git later than
-<code>v0.99.9l</code> will die instead of trying to operate on the NewHash
+<code>v0.99.9l</code> will die instead of trying to operate on the SHA-256
 repository, instead producing an error message.</p>
 </div>
 <div class="literalblock">
@@ -690,7 +686,7 @@ repository extensions.</p>
 <h3 id="_object_names">Object names</h3>
 <div class="paragraph">
 <p>Objects can be named by their 40 hexadecimal digit sha1-name or 64
-hexadecimal digit newhash-name, plus names derived from those (see
+hexadecimal digit sha256-name, plus names derived from those (see
 gitrevisions(7)).</p>
 </div>
 <div class="paragraph">
@@ -699,26 +695,26 @@ type, length, a nul byte, and the object&#8217;s sha1-content. This is the
 traditional &lt;sha1&gt; used in Git to name objects.</p>
 </div>
 <div class="paragraph">
-<p>The newhash-name of an object is the NewHash of the concatenation of its
-type, length, a nul byte, and the object&#8217;s newhash-content.</p>
+<p>The sha256-name of an object is the SHA-256 of the concatenation of its
+type, length, a nul byte, and the object&#8217;s sha256-content.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_object_format">Object format</h3>
 <div class="paragraph">
 <p>The content as a byte sequence of a tag, commit, or tree object named
-by sha1 and newhash differ because an object named by newhash-name refers to
-other objects by their newhash-names and an object named by sha1-name
+by sha1 and sha256 differ because an object named by sha256-name refers to
+other objects by their sha256-names and an object named by sha1-name
 refers to other objects by their sha1-names.</p>
 </div>
 <div class="paragraph">
-<p>The newhash-content of an object is the same as its sha1-content, except
-that objects referenced by the object are named using their newhash-names
+<p>The sha256-content of an object is the same as its sha1-content, except
+that objects referenced by the object are named using their sha256-names
 instead of sha1-names. Because a blob object does not refer to any
-other object, its sha1-content and newhash-content are the same.</p>
+other object, its sha1-content and sha256-content are the same.</p>
 </div>
 <div class="paragraph">
-<p>The format allows round-trip conversion between newhash-content and
+<p>The format allows round-trip conversion between sha256-content and
 sha1-content.</p>
 </div>
 </div>
@@ -727,7 +723,7 @@ sha1-content.</p>
 <div class="paragraph">
 <p>Loose objects use zlib compression and packed objects use the packed
 format described in Documentation/technical/pack-format.txt, just like
-today. The content that is compressed and stored uses newhash-content
+today. The content that is compressed and stored uses sha256-content
 instead of sha1-content.</p>
 </div>
 </div>
@@ -849,11 +845,11 @@ up to and not including the table of CRC32 values.</p>
 <p>The trailer consists of the following:</p>
 </li>
 <li>
-<p>A copy of the 20-byte NewHash checksum at the end of the
+<p>A copy of the 20-byte SHA-256 checksum at the end of the
 corresponding packfile.</p>
 </li>
 <li>
-<p>20-byte NewHash checksum of all of the above.</p>
+<p>20-byte SHA-256 checksum of all of the above.</p>
 </li>
 </ul>
 </div>
@@ -867,7 +863,7 @@ all loose objects. Its format is</p>
 <div class="literalblock">
 <div class="content">
 <pre># loose-object-idx
-(newhash-name SP sha1-name LF)*</pre>
+(sha256-name SP sha1-name LF)*</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -923,8 +919,8 @@ lock.</p>
 <h3 id="_translation_table">Translation table</h3>
 <div class="paragraph">
 <p>The index files support a bidirectional mapping between sha1-names
-and newhash-names. The lookup proceeds similarly to ordinary object
-lookups. For example, to convert a sha1-name to a newhash-name:</p>
+and sha256-names. The lookup proceeds similarly to ordinary object
+lookups. For example, to convert a sha1-name to a sha256-name:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -942,8 +938,8 @@ name order mapping.</p>
 verify we found the right object. If it is, then</p>
 </li>
 <li>
-<p>Read the corresponding entry in the full newhash-name table.
-That is the object&#8217;s newhash-name.</p>
+<p>Read the corresponding entry in the full sha256-name table.
+That is the object&#8217;s sha256-name.</p>
 </li>
 </ol>
 </div>
@@ -970,30 +966,30 @@ for all objects in the object store.</p>
 <div class="sect2">
 <h3 id="_reading_an_object_s_sha1_content">Reading an object&#8217;s sha1-content</h3>
 <div class="paragraph">
-<p>The sha1-content of an object can be read by converting all newhash-names
-its newhash-content references to sha1-names using the translation table.</p>
+<p>The sha1-content of an object can be read by converting all sha256-names
+its sha256-content references to sha1-names using the translation table.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_fetch">Fetch</h3>
 <div class="paragraph">
 <p>Fetching from a SHA-1 based server requires translating between SHA-1
-and NewHash based representations on the fly.</p>
+and SHA-256 based representations on the fly.</p>
 </div>
 <div class="paragraph">
 <p>SHA-1s named in the ref advertisement that are present on the client
-can be translated to NewHash and looked up as local objects using the
+can be translated to SHA-256 and looked up as local objects using the
 translation table.</p>
 </div>
 <div class="paragraph">
 <p>Negotiation proceeds as today. Any "have"s generated locally are
 converted to SHA-1 before being sent to the server, and SHA-1s
-mentioned by the server are converted to NewHash when looking them up
+mentioned by the server are converted to SHA-256 when looking them up
 locally.</p>
 </div>
 <div class="paragraph">
 <p>After negotiation, the server sends a packfile containing the
-requested objects. We convert the packfile to NewHash format using
+requested objects. We convert the packfile to SHA-256 format using
 the following steps:</p>
 </div>
 <div class="olist arabic">
@@ -1015,14 +1011,14 @@ pack from the server contained additional extraneous objects, then
 they will be discarded.)</p>
 </li>
 <li>
-<p>convert to newhash: open a new (newhash) packfile. Read the topologically
+<p>convert to sha256: open a new (sha256) packfile. Read the topologically
 sorted list just generated. For each object, inflate its
-sha1-content, convert to newhash-content, and write it to the newhash
-pack. Record the new sha1&lt;&#8594;newhash mapping entry for use in the idx.</p>
+sha1-content, convert to sha256-content, and write it to the sha256
+pack. Record the new sha1&lt;&#8594;sha256 mapping entry for use in the idx.</p>
 </li>
 <li>
 <p>sort: reorder entries in the new pack to match the order of objects
-in the pack the server generated and include blobs. Write a newhash idx
+in the pack the server generated and include blobs. Write a sha256 idx
 file</p>
 </li>
 <li>
@@ -1066,17 +1062,17 @@ send-pack.</p>
 <div class="sect2">
 <h3 id="_signed_commits">Signed Commits</h3>
 <div class="paragraph">
-<p>We add a new field "gpgsig-newhash" to the commit object format to allow
+<p>We add a new field "gpgsig-sha256" to the commit object format to allow
 signing commits without relying on SHA-1. It is similar to the
-existing "gpgsig" field. Its signed payload is the newhash-content of the
-commit object with any "gpgsig" and "gpgsig-newhash" fields removed.</p>
+existing "gpgsig" field. Its signed payload is the sha256-content of the
+commit object with any "gpgsig" and "gpgsig-sha256" fields removed.</p>
 </div>
 <div class="paragraph">
 <p>This means commits can be signed
 1. using SHA-1 only, as in existing signed commit objects
-2. using both SHA-1 and NewHash, by using both gpgsig-newhash and gpgsig
+2. using both SHA-1 and SHA-256, by using both gpgsig-sha256 and gpgsig
    fields.
-3. using only NewHash, by only using the gpgsig-newhash field.</p>
+3. using only SHA-256, by only using the gpgsig-sha256 field.</p>
 </div>
 <div class="paragraph">
 <p>Old versions of "git verify-commit" can verify the gpgsig signature in
@@ -1087,17 +1083,17 @@ ordinary unsigned commit.</p>
 <div class="sect2">
 <h3 id="_signed_tags">Signed Tags</h3>
 <div class="paragraph">
-<p>We add a new field "gpgsig-newhash" to the tag object format to allow
+<p>We add a new field "gpgsig-sha256" to the tag object format to allow
 signing tags without relying on SHA-1. Its signed payload is the
-newhash-content of the tag with its gpgsig-newhash field and "-----BEGIN PGP
+sha256-content of the tag with its gpgsig-sha256 field and "-----BEGIN PGP
 SIGNATURE-----" delimited in-body signature removed.</p>
 </div>
 <div class="paragraph">
 <p>This means tags can be signed
 1. using SHA-1 only, as in existing signed tag objects
-2. using both SHA-1 and NewHash, by using gpgsig-newhash and an in-body
+2. using both SHA-1 and SHA-256, by using gpgsig-sha256 and an in-body
    signature.
-3. using only NewHash, by only using the gpgsig-newhash field.</p>
+3. using only SHA-256, by only using the gpgsig-sha256 field.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1107,8 +1103,8 @@ SIGNATURE-----" delimited in-body signature removed.</p>
 sha1-content of a tag that was merged by that commit.</p>
 </div>
 <div class="paragraph">
-<p>The mergetag field in the newhash-content of the same commit contains the
-newhash-content of the same tag.</p>
+<p>The mergetag field in the sha256-content of the same commit contains the
+sha256-content of the same tag.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1213,7 +1209,7 @@ make appropriate choices about which packs to coalesce.</p>
 <div class="sect2">
 <h3 id="_invalid_objects">Invalid objects</h3>
 <div class="paragraph">
-<p>The conversion from sha1-content to newhash-content retains any
+<p>The conversion from sha1-content to sha256-content retains any
 brokenness in the original object (e.g., tree entry modes encoded with
 leading 0, tree objects whose paths are not sorted correctly, and
 commit objects without an author or committer). This is a deliberate
@@ -1237,7 +1233,7 @@ allow lifting this restriction.</p>
 <div class="sect2">
 <h3 id="_alternates">Alternates</h3>
 <div class="paragraph">
-<p>For the same reason, a newhash repository cannot borrow objects from a
+<p>For the same reason, a sha256 repository cannot borrow objects from a
 sha1 repository using objects/info/alternates or
 $GIT_ALTERNATE_OBJECT_REPOSITORIES.</p>
 </div>
@@ -1247,7 +1243,7 @@ $GIT_ALTERNATE_OBJECT_REPOSITORIES.</p>
 <div class="paragraph">
 <p>The "git notes" tool annotates objects using their sha1-name as key.
 This design does not describe a way to migrate notes trees to use
-newhash-names. That migration is expected to happen separately (for
+sha256-names. That migration is expected to happen separately (for
 example using a file at the root of the notes tree to describe which
 hash it uses).</p>
 </div>
@@ -1255,15 +1251,15 @@ hash it uses).</p>
 <div class="sect2">
 <h3 id="_server_side_cost">Server-side cost</h3>
 <div class="paragraph">
-<p>Until Git protocol gains NewHash support, using NewHash based storage
+<p>Until Git protocol gains SHA-256 support, using SHA-256 based storage
 on public-facing Git servers is strongly discouraged. Once Git
-protocol gains NewHash support, NewHash based servers are likely not
+protocol gains SHA-256 support, SHA-256 based servers are likely not
 to support SHA-1 compatibility, to avoid what may be a very expensive
 hash reencode during clone and to encourage peers to modernize.</p>
 </div>
 <div class="paragraph">
 <p>The design described here allows fetches by SHA-1 clients of a
-personal NewHash repository because it&#8217;s not much more difficult than
+personal SHA-256 repository because it&#8217;s not much more difficult than
 allowing pushes from that repository. This support needs to be guarded
 by a configuration option --- servers like git.kernel.org that serve a
 large number of clients would not be expected to bear that cost.</p>
@@ -1275,7 +1271,7 @@ large number of clients would not be expected to bear that cost.</p>
 <p>The signed payload for signed commits and tags does not explicitly
 name the hash used to identify objects. If some day Git adopts a new
 hash function with the same length as the current SHA-1 (40
-hexadecimal digit) or NewHash (64 hexadecimal digit) objects then the
+hexadecimal digit) or SHA-256 (64 hexadecimal digit) objects then the
 intent behind the PGP signed payload in an object signature is
 unclear:</p>
 </div>
@@ -1298,7 +1294,7 @@ e7e07d5a4fcc2a203d9873968ad3e6bd4d7419d7 or the commit with
 new-40-digit-hash-name e7e07d5a4fcc2a203d9873968ad3e6bd4d7419d7?</p>
 </div>
 <div class="paragraph">
-<p>Fortunately NewHash and SHA-1 have different lengths. If Git starts
+<p>Fortunately SHA-256 and SHA-1 have different lengths. If Git starts
 using another hash with the same length to name objects, then it will
 need to change the format of signed payloads using that hash to
 address this issue.</p>
@@ -1315,27 +1311,27 @@ supports four different modes of operation:</p>
 <li>
 <p>("dark launch") Treat object names input by the user as SHA-1 and
 convert any object names written to output to SHA-1, but store
-objects using NewHash.  This allows users to test the code with no
+objects using SHA-256.  This allows users to test the code with no
 visible behavior change except for performance.  This allows
 allows running even tests that assume the SHA-1 hash function, to
 sanity-check the behavior of the new mode.</p>
 </li>
 <li>
-<p>("early transition") Allow both SHA-1 and NewHash object names in
+<p>("early transition") Allow both SHA-1 and SHA-256 object names in
 input. Any object names written to output use SHA-1. This allows
 users to continue to make use of SHA-1 to communicate with peers
 (e.g. by email) that have not migrated yet and prepares for mode 3.</p>
 </li>
 <li>
-<p>("late transition") Allow both SHA-1 and NewHash object names in
-input. Any object names written to output use NewHash. In this
+<p>("late transition") Allow both SHA-1 and SHA-256 object names in
+input. Any object names written to output use SHA-256. In this
 mode, users are using a more secure object naming method by
 default.  The disruption is minimal as long as most of their peers
 are in mode 2 or mode 3.</p>
 </li>
 <li>
 <p>("post-transition") Treat object names input by the user as
-NewHash and write output using NewHash. This is safer than mode 3
+SHA-256 and write output using SHA-256. This is safer than mode 3
 because there is less risk that input is incorrectly interpreted
 using the wrong hash function.</p>
 </li>
@@ -1350,13 +1346,13 @@ particular revision specifier and for output, overriding the mode. For
 example:</p>
 </div>
 <div class="paragraph">
-<p>git --output-format=sha1 log abac87a<sup>{sha1}..f787cac</sup>{newhash}</p>
+<p>git --output-format=sha1 log abac87a<sup>{sha1}..f787cac</sup>{sha256}</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_selection_of_a_new_hash">Selection of a New Hash</h2>
+<h2 id="_choice_of_hash">Choice of Hash</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In early 2005, around the time that Git was written,  Xiaoyun Wang,
@@ -1366,9 +1362,14 @@ Luckily, no practical demonstrations of a collision in full SHA-1 were
 published until 10 years later, in 2017.</p>
 </div>
 <div class="paragraph">
-<p>The hash function NewHash to replace SHA-1 should be stronger than
-SHA-1 was: we would like it to be trustworthy and useful in practice
-for at least 10 years.</p>
+<p>Git v2.13.0 and later subsequently moved to a hardened SHA-1
+implementation by default that mitigates the SHAttered attack, but
+SHA-1 is still believed to be weak.</p>
+</div>
+<div class="paragraph">
+<p>The hash to replace this hardened SHA-1 should be stronger than SHA-1
+was: we would like it to be trustworthy and useful in practice for at
+least 10 years.</p>
 </div>
 <div class="paragraph">
 <p>Some other relevant properties:</p>
@@ -1380,8 +1381,8 @@ for at least 10 years.</p>
 excessively long to hurt performance and disk usage).</p>
 </li>
 <li>
-<p>High quality implementations should be widely available (e.g. in
-OpenSSL).</p>
+<p>High quality implementations should be widely available (e.g., in
+OpenSSL and Apple CommonCrypto).</p>
 </li>
 <li>
 <p>The hash function&#8217;s properties should match Git&#8217;s needs (e.g. Git
@@ -1395,8 +1396,7 @@ many contenders are faster than SHA-1).</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>Some hashes under consideration are SHA-256, SHA-512/256, SHA-256x16,
-K12, and BLAKE2bp-256.</p>
+<p>We choose SHA-256.</p>
 </div>
 </div>
 </div>
@@ -1406,7 +1406,7 @@ K12, and BLAKE2bp-256.</p>
 <div class="paragraph">
 <p>Some initial steps can be implemented independently of one another:
 - adding a hash function API (vtable)
-- teaching fsck to tolerate the gpgsig-newhash field
+- teaching fsck to tolerate the gpgsig-sha256 field
 - excluding gpgsig-* from the fields copied by "git commit --amend"
 - annotating tests that depend on SHA-1 values with a SHA1 test
   prerequisite
@@ -1434,7 +1434,7 @@ extension (without compatObjectFormat). This requires:
 - adding appropriate index entries when adding a new object to the
   object store
 - --output-format option
-- ^{sha1} and ^{newhash} revision notation
+- ^{sha1} and ^{sha256} revision notation
 - configuration to specify default input and output format (see
   "Object names on the command line" above)</p>
 </div>
@@ -1443,7 +1443,7 @@ extension (without compatObjectFormat). This requires:
 - allow pushes to a repository using the compat format
 - generate a topologically sorted list of the SHA-1 names of fetched
   objects
-- convert the fetched packfile to newhash format and generate an idx
+- convert the fetched packfile to sha256 format and generate an idx
   file
 - re-sort to match the order of objects in the fetched packfile</p>
 </div>
@@ -1452,35 +1452,35 @@ extension (without compatObjectFormat). This requires:
 repository. In converted repositories and new clones, end users can
 gain support for the new hash function without any visible change in
 behavior (see "dark launch" in the "Object names on the command line"
-section). In particular this allows users to verify NewHash signatures
+section). In particular this allows users to verify SHA-256 signatures
 on objects in the repository, and it should ensure the transition code
 is stable in production in preparation for using it more widely.</p>
 </div>
 <div class="paragraph">
 <p>Over time projects would encourage their users to adopt the "early
 transition" and then "late transition" modes to take advantage of the
-new, more futureproof NewHash object names.</p>
+new, more futureproof SHA-256 object names.</p>
 </div>
 <div class="paragraph">
 <p>When objectFormat and compatObjectFormat are both set, commands
-generating signatures would generate both SHA-1 and NewHash signatures
+generating signatures would generate both SHA-1 and SHA-256 signatures
 by default to support both new and old users.</p>
 </div>
 <div class="paragraph">
-<p>In projects using NewHash heavily, users could be encouraged to adopt
+<p>In projects using SHA-256 heavily, users could be encouraged to adopt
 the "post-transition" mode to avoid accidentally making implicit use
 of SHA-1 object names.</p>
 </div>
 <div class="paragraph">
 <p>Once a critical mass of users have upgraded to a version of Git that
-can verify NewHash signatures and have converted their existing
+can verify SHA-256 signatures and have converted their existing
 repositories to support verifying them, we can add support for a
-setting to generate only NewHash signatures. This is expected to be at
+setting to generate only SHA-256 signatures. This is expected to be at
 least a year later.</p>
 </div>
 <div class="paragraph">
 <p>That is also a good moment to advertise the ability to convert
-repositories to use NewHash only, stripping out all SHA-1 related
+repositories to use SHA-256 only, stripping out all SHA-1 related
 metadata. This improves performance by eliminating translation
 overhead and security by avoiding the possibility of accidentally
 relying on the safety of SHA-1.</p>
@@ -1529,9 +1529,9 @@ using the old hash function.
 <div class="sect2">
 <h3 id="_signed_objects_with_multiple_hashes">Signed objects with multiple hashes</h3>
 <div class="paragraph">
-<p>Instead of introducing the gpgsig-newhash field in commit and tag objects
-for newhash-content based signatures, an earlier version of this design
-added "hash newhash &lt;newhash-name&gt;" fields to strengthen the existing
+<p>Instead of introducing the gpgsig-sha256 field in commit and tag objects
+for sha256-content based signatures, an earlier version of this design
+added "hash sha256 &lt;sha256-name&gt;" fields to strengthen the existing
 sha1-content based signatures.</p>
 </div>
 <div class="paragraph">
@@ -1539,7 +1539,7 @@ sha1-content based signatures.</p>
 content using both hash functions. This had some advantages:
 * Using one signature instead of two speeds up the signing process.
 * Having one signed payload with both hashes allows the signer to
-  attest to the sha1-name and newhash-name referring to the same object.
+  attest to the sha1-name and sha256-name referring to the same object.
 * All users consume the same signature. Broken signatures are likely
   to be detected quickly using current versions of git.</p>
 </div>
@@ -1549,11 +1549,11 @@ content using both hash functions. This had some advantages:
   objects it references, even after the transition is complete and
   translation table is no longer needed for anything else. To support
   this, the design added fields such as "hash sha1 tree &lt;sha1-name&gt;"
-  and "hash sha1 parent &lt;sha1-name&gt;" to the newhash-content of a signed
+  and "hash sha1 parent &lt;sha1-name&gt;" to the sha256-content of a signed
   commit, complicating the conversion process.
 * Allowing signed objects without a sha1 (for after the transition is
   complete) complicated the design further, requiring a "nohash sha1"
-  field to suppress including "hash sha1" fields in the newhash-content
+  field to suppress including "hash sha1" fields in the sha256-content
   and signed payload.</p>
 </div>
 </div>
@@ -1563,7 +1563,7 @@ content using both hash functions. This had some advantages:
 <p>Some of the work of building the translation table could be deferred to
 push time, but that would significantly complicate and slow down pushes.
 Calculating the sha1-name at object creation time at the same time it is
-being streamed to disk and having its newhash-name calculated should be
+being streamed to disk and having its sha256-name calculated should be
 an acceptable cost.</p>
 </div>
 </div>
@@ -1614,6 +1614,16 @@ Incorporated suggestions from jonathantanmy and sbeller:
   "git gc --auto"</p>
 </div>
 <div class="paragraph">
+<p>Later history:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>See the history of this file in git.git for the history of subsequent
+edits. This document history is no longer being maintained as it
+would now be superfluous to the commit log</pre>
+</div>
+</div>
+<div class="paragraph">
 <p>[1] <a href="http://public-inbox.org/git/CA+55aFzJtejiCjV0e43+9oR3QuJK2PiFiLQemytoLpyJWe6P9w@mail.gmail.com/" class="bare">http://public-inbox.org/git/CA+55aFzJtejiCjV0e43+9oR3QuJK2PiFiLQemytoLpyJWe6P9w@mail.gmail.com/</a>
 [2] <a href="http://public-inbox.org/git/CA+55aFz+gkAsDZ24zmePQuEs1XPS9BP_s8O7Q4wQ7LV7X5-oDA@mail.gmail.com/" class="bare">http://public-inbox.org/git/CA+55aFz+gkAsDZ24zmePQuEs1XPS9BP_s8O7Q4wQ7LV7X5-oDA@mail.gmail.com/</a>
 [3] <a href="http://public-inbox.org/git/20170306084353.nrns455dvkdsfgo5@sigill.intra.peff.net/" class="bare">http://public-inbox.org/git/20170306084353.nrns455dvkdsfgo5@sigill.intra.peff.net/</a>
@@ -1625,7 +1635,7 @@ Incorporated suggestions from jonathantanmy and sbeller:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:51:01 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

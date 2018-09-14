@@ -497,7 +497,8 @@ Parameters", and are supported by the Git, SSH, and HTTP protocols.</p>
 <div class="paragraph">
 <p>Servers that receive any such Extra Parameters MUST ignore all
 unrecognized keys. Currently, the only Extra Parameter recognized is
-"version=1".</p>
+"version" with a value of <em>1</em> or <em>2</em>.  See protocol-v2.txt for more
+information on protocol version 2.</p>
 </div>
 </div>
 </div>
@@ -803,7 +804,9 @@ information is sent back to the client in the next step.</p>
 <p>The client can optionally request that pack-objects omit various
 objects from the packfile using one of several filtering techniques.
 These are intended for use with partial clone and partial fetch
-operations.  See <code>rev-list</code> for possible "filter-spec" values.</p>
+operations. An object that does not meet a filter-spec value is
+omitted unless explicitly requested in a <em>want</em> line. See <code>rev-list</code>
+for possible filter-spec values.</p>
 </div>
 <div class="paragraph">
 <p>Once all the <em>want&#8217;s and 'shallow&#8217;s (and optional 'deepen</em>) are
@@ -1281,7 +1284,7 @@ can be rejected.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:51:01 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

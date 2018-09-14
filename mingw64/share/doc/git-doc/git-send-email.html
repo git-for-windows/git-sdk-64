@@ -604,16 +604,19 @@ will be prompted for if any non-ASCII files are encountered.</p>
 <p>Specify encoding of compose message. Default is the value of the
 <em>sendemail.composeencoding</em>; if that is unspecified, UTF-8 is assumed.</p>
 </dd>
-<dt class="hdlist1">--transfer-encoding=(7bit|8bit|quoted-printable|base64)</dt>
+<dt class="hdlist1">--transfer-encoding=(7bit|8bit|quoted-printable|base64|auto)</dt>
 <dd>
 <p>Specify the transfer encoding to be used to send the message over SMTP.
 7bit will fail upon encountering a non-ASCII message.  quoted-printable
 can be useful when the repository contains files that contain carriage
 returns, but makes the raw patch email file (as saved from a MUA) much
 harder to inspect manually.  base64 is even more fool proof, but also
-even more opaque.  Default is the value of the <code>sendemail.transferEncoding</code>
-configuration value; if that is unspecified, git will use 8bit and not
-add a Content-Transfer-Encoding header.</p>
+even more opaque.  auto will use 8bit when possible, and quoted-printable
+otherwise.</p>
+<div class="paragraph">
+<p>Default is the value of the <code>sendemail.transferEncoding</code> configuration
+value; if that is unspecified, default to <code>auto</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">--xmailer</dt>
 <dt class="hdlist1">--no-xmailer</dt>
@@ -956,8 +959,11 @@ Currently, validation means the following:</p>
 <p>Invoke the sendemail-validate hook if present (see <a href="githooks.html">githooks</a>(5)).</p>
 </li>
 <li>
-<p>Warn of patches that contain lines longer than 998 characters; this
-is due to SMTP limits as described by <a href="http://www.ietf.org/rfc/rfc2821.txt" class="bare">http://www.ietf.org/rfc/rfc2821.txt</a>.</p>
+<p>Warn of patches that contain lines longer than
+998 characters unless a suitable transfer encoding
+(<em>auto</em>, <em>base64</em>, or <em>quoted-printable</em>) is used;
+this is due to SMTP limits as described by
+<a href="http://www.ietf.org/rfc/rfc5322.txt" class="bare">http://www.ietf.org/rfc/rfc5322.txt</a>.</p>
 </li>
 </ul>
 </div>
@@ -1126,7 +1132,7 @@ the credential store so you won&#8217;t have to type it the next time.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:51:00 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

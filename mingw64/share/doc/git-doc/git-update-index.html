@@ -731,11 +731,11 @@ current working directory.  This is useful for minimum-checkout
 merging.</p>
 </div>
 <div class="paragraph">
-<p>To pretend you have a file with mode and sha1 at path, say:</p>
+<p>To pretend you have a file at path with mode and sha1, say:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git update-index --cacheinfo &lt;mode&gt;,&lt;sha1&gt;,&lt;path&gt;</pre>
+<pre>$ git update-index --add --cacheinfo &lt;mode&gt;,&lt;sha1&gt;,&lt;path&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -762,19 +762,9 @@ specifically for scripts.  It can take inputs of three formats:</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>mode         SP sha1          TAB path</p>
-<div class="paragraph">
-<p>The first format is what "git-apply --index-info"
-reports, and used to reconstruct a partial tree
-that is used for phony merge base tree when falling
-back on 3-way merge.</p>
-</div>
-</li>
-<li>
 <p>mode SP type SP sha1          TAB path</p>
 <div class="paragraph">
-<p>The second format is to stuff <em>git ls-tree</em> output
-into the index file.</p>
+<p>This format is to stuff <code>git ls-tree</code> output into the index.</p>
 </div>
 </li>
 <li>
@@ -782,6 +772,13 @@ into the index file.</p>
 <div class="paragraph">
 <p>This format is to put higher order stages into the
 index file and matches <em>git ls-files --stage</em> output.</p>
+</div>
+</li>
+<li>
+<p>mode         SP sha1          TAB path</p>
+<div class="paragraph">
+<p>This format is no longer produced by any Git command, but is
+and will continue to be supported by <code>update-index --index-info</code>.</p>
 </div>
 </li>
 </ol>
@@ -1149,7 +1146,7 @@ ctime for marking files processed) (see <a href="git-config.html">git-config</a>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:51:00 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

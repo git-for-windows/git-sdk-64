@@ -538,7 +538,6 @@ upstream branch, or in <code>HEAD</code> if no upstream was set with
 <dd>
 <p>Shortcut for <code>--delete --force</code>.</p>
 </dd>
-<dt class="hdlist1">-l</dt>
 <dt class="hdlist1">--create-reflog</dt>
 <dd>
 <p>Create the branch&#8217;s reflog.  This activates recording of
@@ -549,6 +548,9 @@ enabled by default by the <code>core.logAllRefUpdates</code> config option.
 The negated form <code>--no-create-reflog</code> only overrides an earlier
 <code>--create-reflog</code>, but currently does not negate the setting of
 <code>core.logAllRefUpdates</code>.</p>
+<div class="paragraph">
+<p>The <code>-l</code> option is a deprecated synonym for <code>--create-reflog</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">-f</dt>
 <dt class="hdlist1">--force</dt>
@@ -749,10 +751,11 @@ option is omitted, the current HEAD will be used instead.</p>
 order of the value. You may use the --sort=&lt;key&gt; option
 multiple times, in which case the last key becomes the primary
 key. The keys supported are the same as those in <code>git
-for-each-ref</code>. Sort order defaults to sorting based on the
+for-each-ref</code>. Sort order defaults to the value configured for the
+<code>branch.sort</code> variable if exists, or to sorting based on the
 full refname (including <code>refs/...</code> prefix). This lists
 detached HEAD (if present) first, then local branches and
-finally remote-tracking branches.</p>
+finally remote-tracking branches. See <a href="git-config.html">git-config</a>(1).</p>
 </dd>
 <dt class="hdlist1">--points-at &lt;object&gt;</dt>
 <dd>
@@ -888,7 +891,7 @@ a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

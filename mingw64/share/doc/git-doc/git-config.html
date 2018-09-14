@@ -1506,6 +1506,18 @@ domain name.</p>
 move to the detach HEAD state, to instruct how to create
 a local branch after the fact.</p>
 </dd>
+<dt class="hdlist1">checkoutAmbiguousRemoteBranchName</dt>
+<dd>
+<p>Advice shown when the argument to
+<a href="git-checkout.html">git-checkout</a>(1) ambiguously resolves to a
+remote tracking branch on more than one remote in
+situations where an unambiguous argument would have
+otherwise caused a remote-tracking branch to be
+checked out. See the <code>checkout.defaultRemote</code>
+configuration variable for how to set a given remote
+to used by default in some situations where this
+advice would be printed.</p>
+</dd>
 <dt class="hdlist1">amWorkDir</dt>
 <dd>
 <p>Advice that shows the location of the patch file when
@@ -1523,7 +1535,7 @@ git repo inside of another.</p>
 </dd>
 <dt class="hdlist1">ignoredHook</dt>
 <dd>
-<p>Advice shown if an hook is ignored because the hook is not
+<p>Advice shown if a hook is ignored because the hook is not
 set as executable.</p>
 </dd>
 <dt class="hdlist1">waitingForEditor</dt>
@@ -1571,16 +1583,20 @@ default mode is <em>dotGitOnly</em>.</p>
 </dd>
 <dt class="hdlist1">core.ignoreCase</dt>
 <dd>
-<p>If true, this option enables various workarounds to enable
+<p>Internal variable which enables various workarounds to enable
 Git to work better on filesystems that are not case sensitive,
-like FAT. For example, if a directory listing finds
-"makefile" when Git expects "Makefile", Git will assume
+like APFS, HFS+, FAT, NTFS, etc. For example, if a directory listing
+finds "makefile" when Git expects "Makefile", Git will assume
 it is really the same file, and continue to remember it as
 "Makefile".</p>
 <div class="paragraph">
 <p>The default is false, except <a href="git-clone.html">git-clone</a>(1) or <a href="git-init.html">git-init</a>(1)
 will probe and set core.ignoreCase true if appropriate when the repository
 is created.</p>
+</div>
+<div class="paragraph">
+<p>Git relies on the proper configuration of this variable for your operating
+and file system. Modifying this value may result in unexpected behavior.</p>
 </div>
 </dd>
 <dt class="hdlist1">core.precomposeUnicode</dt>
@@ -1639,10 +1655,21 @@ See <a href="git-update-index.html">git-update-index</a>(1). <code>keep</code> b
 </dd>
 <dt class="hdlist1">core.checkStat</dt>
 <dd>
-<p>Determines which stat fields to match between the index
-and work tree. The user can set this to <em>default</em> or
-<em>minimal</em>. Default (or explicitly <em>default</em>), is to check
-all fields, including the sub-second part of mtime and ctime.</p>
+<p>When missing or is set to <code>default</code>, many fields in the stat
+structure are checked to detect if a file has been modified
+since Git looked at it.  When this configuration variable is
+set to <code>minimal</code>, sub-second part of mtime and ctime, the
+uid and gid of the owner of the file, the inode number (and
+the device number, if Git was compiled to use it), are
+excluded from the check among these fields, leaving only the
+whole-second part of mtime (and ctime, if <code>core.trustCtime</code>
+is set) and the filesize to be checked.</p>
+<div class="paragraph">
+<p>There are implementations of Git that do not leave usable values in
+some fields (e.g. JGit); by excluding these fields from the
+comparison, the <code>minimal</code> mode may help interoperability when the
+same repository is used by these other systems at the same time.</p>
+</div>
 </dd>
 <dt class="hdlist1">core.quotePath</dt>
 <dd>
@@ -2206,8 +2233,15 @@ the <code>GIT_NOTES_REF</code> environment variable.  See <a href="git-notes.htm
 </dd>
 <dt class="hdlist1">core.commitGraph</dt>
 <dd>
-<p>Enable git commit graph feature. Allows reading from the
-commit-graph file.</p>
+<p>If true, then git will read the commit-graph file (if it exists)
+to parse the graph structure of commits. Defaults to false. See
+<a href="git-commit-graph.html">git-commit-graph</a>(1) for more information.</p>
+</dd>
+<dt class="hdlist1">core.useReplaceRefs</dt>
+<dd>
+<p>If set to <code>false</code>, behave as if the <code>--no-replace-objects</code>
+option was given on the command line. See <a href="git.html">git</a>(1) and
+<a href="git-replace.html">git-replace</a>(1) for more information.</p>
 </dd>
 <dt class="hdlist1">core.sparseCheckout</dt>
 <dd>
@@ -2284,26 +2318,32 @@ See <a href="git-apply.html">git-apply</a>(1).</p>
 <p>Tells <em>git apply</em> how to handle whitespaces, in the same way
 as the <code>--whitespace</code> option. See <a href="git-apply.html">git-apply</a>(1).</p>
 </dd>
-<dt class="hdlist1">blame.showRoot</dt>
-<dd>
-<p>Do not treat root commits as boundaries in <a href="git-blame.html">git-blame</a>(1).
-This option defaults to false.</p>
-</dd>
 <dt class="hdlist1">blame.blankBoundary</dt>
 <dd>
 <p>Show blank commit object name for boundary commits in
 <a href="git-blame.html">git-blame</a>(1). This option defaults to false.</p>
 </dd>
-<dt class="hdlist1">blame.showEmail</dt>
+<dt class="hdlist1">blame.coloring</dt>
 <dd>
-<p>Show the author email instead of author name in <a href="git-blame.html">git-blame</a>(1).
-This option defaults to false.</p>
+<p>This determines the coloring scheme to be applied to blame
+output. It can be <em>repeatedLines</em>, <em>highlightRecent</em>,
+or <em>none</em> which is the default.</p>
 </dd>
 <dt class="hdlist1">blame.date</dt>
 <dd>
 <p>Specifies the format used to output dates in <a href="git-blame.html">git-blame</a>(1).
 If unset the iso format is used. For supported values,
 see the discussion of the <code>--date</code> option at <a href="git-log.html">git-log</a>(1).</p>
+</dd>
+<dt class="hdlist1">blame.showEmail</dt>
+<dd>
+<p>Show the author email instead of author name in <a href="git-blame.html">git-blame</a>(1).
+This option defaults to false.</p>
+</dd>
+<dt class="hdlist1">blame.showRoot</dt>
+<dd>
+<p>Do not treat root commits as boundaries in <a href="git-blame.html">git-blame</a>(1).
+This option defaults to false.</p>
 </dd>
 <dt class="hdlist1">branch.autoSetupMerge</dt>
 <dd>
@@ -2332,6 +2372,13 @@ branches.
 See "branch.autoSetupMerge" for details on how to set up a
 branch to track another branch.
 This option defaults to never.</p>
+</dd>
+<dt class="hdlist1">branch.sort</dt>
+<dd>
+<p>This variable controls the sort ordering of branches when displayed by
+<a href="git-branch.html">git-branch</a>(1). Without the "--sort=&lt;value&gt;" option provided, the
+value of this variable will be used as the default.
+See <a href="git-for-each-ref.html">git-for-each-ref</a>(1) field names for valid values.</p>
 </dd>
 <dt class="hdlist1">branch.&lt;name&gt;.remote</dt>
 <dd>
@@ -2425,6 +2472,24 @@ as arguments. (See <a href="git-web&#45;&#45;browse.html">git-web&#45;&#45;brows
 browse HTML help (see <code>-w</code> option in <a href="git-help.html">git-help</a>(1)) or a
 working repository in gitweb (see <a href="git-instaweb.html">git-instaweb</a>(1)).</p>
 </dd>
+<dt class="hdlist1">checkout.defaultRemote</dt>
+<dd>
+<p>When you run <em>git checkout &lt;something&gt;</em> and only have one
+remote, it may implicitly fall back on checking out and
+tracking e.g. <em>origin/&lt;something&gt;</em>. This stops working as soon
+as you have more than one remote with a <em>&lt;something&gt;</em>
+reference. This setting allows for setting the name of a
+preferred remote that should always win when it comes to
+disambiguation. The typical use-case is to set this to
+<code>origin</code>.</p>
+<div class="paragraph">
+<p>Currently this is used by <a href="git-checkout.html">git-checkout</a>(1) when <em>git checkout
+&lt;something&gt;</em> will checkout the <em>&lt;something&gt;</em> branch on another remote,
+and by <a href="git-worktree.html">git-worktree</a>(1) when <em>git worktree add</em> refers to a
+remote branch. This setting might be used for other checkout-like
+commands or functionality in the future.</p>
+</div>
+</dd>
 <dt class="hdlist1">clean.requireForce</dt>
 <dd>
 <p>A boolean to make git-clean do nothing unless given -f,
@@ -2441,6 +2506,33 @@ unset, then the value of <code>color.ui</code> is used (<code>auto</code> by def
 <dt class="hdlist1">color.advice.hint</dt>
 <dd>
 <p>Use customized color for hints.</p>
+</dd>
+<dt class="hdlist1">color.blame.highlightRecent</dt>
+<dd>
+<p>This can be used to color the metadata of a blame line depending
+on age of the line.</p>
+<div class="paragraph">
+<p>This setting should be set to a comma-separated list of color and date settings,
+starting and ending with a color, the dates should be set from oldest to newest.
+The metadata will be colored given the colors if the the line was introduced
+before the given timestamp, overwriting older timestamped colors.</p>
+</div>
+<div class="paragraph">
+<p>Instead of an absolute timestamp relative timestamps work as well, e.g.
+2.weeks.ago is valid to address anything older than 2 weeks.</p>
+</div>
+<div class="paragraph">
+<p>It defaults to <em>blue,12 month ago,white,1 month ago,red</em>, which colors
+everything older than one year blue, recent changes between one month and
+one year old are kept white, and lines introduced within the last month are
+colored red.</p>
+</div>
+</dd>
+<dt class="hdlist1">color.blame.repeatedLines</dt>
+<dd>
+<p>Use the customized color for the part of git-blame output that
+is repeated meta information per line (such as commit id,
+author name, date and timezone). Defaults to cyan.</p>
 </dd>
 <dt class="hdlist1">color.branch</dt>
 <dd>
@@ -2473,14 +2565,6 @@ default).</p>
 command line with the <code>--color[=&lt;when&gt;]</code> option.</p>
 </div>
 </dd>
-<dt class="hdlist1">diff.colorMoved</dt>
-<dd>
-<p>If set to either a valid <code>&lt;mode&gt;</code> or a true value, moved lines
-in a diff are colored differently, for details of valid modes
-see <em>--color-moved</em> in <a href="git-diff.html">git-diff</a>(1). If simply set to
-true the default color mode will be used. When set to false,
-moved lines are not colored.</p>
-</dd>
 <dt class="hdlist1">color.diff.&lt;slot&gt;</dt>
 <dd>
 <p>Use customized color for diff colorization.  <code>&lt;slot&gt;</code> specifies
@@ -2492,14 +2576,17 @@ of <code>context</code> (context text - <code>plain</code> is a historical synon
 (highlighting whitespace errors), <code>oldMoved</code> (deleted lines),
 <code>newMoved</code> (added lines), <code>oldMovedDimmed</code>, <code>oldMovedAlternative</code>,
 <code>oldMovedAlternativeDimmed</code>, <code>newMovedDimmed</code>, <code>newMovedAlternative</code>
-and <code>newMovedAlternativeDimmed</code> (See the <em>&lt;mode&gt;</em>
-setting of <em>--color-moved</em> in <a href="git-diff.html">git-diff</a>(1) for details).</p>
+<code>newMovedAlternativeDimmed</code> (See the <em>&lt;mode&gt;</em>
+setting of <em>--color-moved</em> in <a href="git-diff.html">git-diff</a>(1) for details),
+<code>contextDimmed</code>, <code>oldDimmed</code>, <code>newDimmed</code>, <code>contextBold</code>,
+<code>oldBold</code>, and <code>newBold</code> (see <a href="git-range-diff.html">git-range-diff</a>(1) for details).</p>
 </dd>
 <dt class="hdlist1">color.decorate.&lt;slot&gt;</dt>
 <dd>
 <p>Use customized color for <em>git log --decorate</em> output.  <code>&lt;slot&gt;</code> is one
 of <code>branch</code>, <code>remoteBranch</code>, <code>tag</code>, <code>stash</code> or <code>HEAD</code> for local
-branches, remote-tracking branches, tags, stash and HEAD, respectively.</p>
+branches, remote-tracking branches, tags, stash and HEAD, respectively
+and <code>grafted</code> for grafted commits.</p>
 </dd>
 <dt class="hdlist1">color.grep</dt>
 <dd>
@@ -2528,9 +2615,13 @@ part of the line to use the specified color, and is one of</p>
 <dd>
 <p>function name lines (when using <code>-p</code>)</p>
 </dd>
-<dt class="hdlist1"><code>linenumber</code></dt>
+<dt class="hdlist1"><code>lineNumber</code></dt>
 <dd>
 <p>line number prefix (when using <code>-n</code>)</p>
+</dd>
+<dt class="hdlist1"><code>column</code></dt>
+<dd>
+<p>column number prefix (when using <code>--column</code>)</p>
 </dd>
 <dt class="hdlist1"><code>match</code></dt>
 <dd>
@@ -2590,6 +2681,20 @@ If unset, then the value of <code>color.ui</code> is used (<code>auto</code> by 
 <dd>
 <p>Use customized color for push errors.</p>
 </dd>
+<dt class="hdlist1">color.remote</dt>
+<dd>
+<p>If set, keywords at the start of the line are highlighted. The
+keywords are "error", "warning", "hint" and "success", and are
+matched case-insensitively. May be set to <code>always</code>, <code>false</code> (or
+<code>never</code>) or <code>auto</code> (or <code>true</code>). If unset, then the value of
+<code>color.ui</code> is used (<code>auto</code> by default).</p>
+</dd>
+<dt class="hdlist1">color.remote.&lt;slot&gt;</dt>
+<dd>
+<p>Use customized color for each remote keyword. <code>&lt;slot&gt;</code> may be
+<code>hint</code>, <code>warning</code>, <code>success</code> or <code>error</code> which match the
+corresponding keyword.</p>
+</dd>
 <dt class="hdlist1">color.showBranch</dt>
 <dd>
 <p>A boolean to enable/disable color in the output of
@@ -2620,39 +2725,6 @@ to red),
 respectively, when branch and tracking information is displayed in the
 status short-format), or
 <code>unmerged</code> (files which have unmerged changes).</p>
-</dd>
-<dt class="hdlist1">color.blame.repeatedLines</dt>
-<dd>
-<p>Use the customized color for the part of git-blame output that
-is repeated meta information per line (such as commit id,
-author name, date and timezone). Defaults to cyan.</p>
-</dd>
-<dt class="hdlist1">color.blame.highlightRecent</dt>
-<dd>
-<p>This can be used to color the metadata of a blame line depending
-on age of the line.</p>
-<div class="paragraph">
-<p>This setting should be set to a comma-separated list of color and date settings,
-starting and ending with a color, the dates should be set from oldest to newest.
-The metadata will be colored given the colors if the the line was introduced
-before the given timestamp, overwriting older timestamped colors.</p>
-</div>
-<div class="paragraph">
-<p>Instead of an absolute timestamp relative timestamps work as well, e.g.
-2.weeks.ago is valid to address anything older than 2 weeks.</p>
-</div>
-<div class="paragraph">
-<p>It defaults to <em>blue,12 month ago,white,1 month ago,red</em>, which colors
-everything older than one year blue, recent changes between one month and
-one year old are kept white, and lines introduced within the last month are
-colored red.</p>
-</div>
-</dd>
-<dt class="hdlist1">blame.coloring</dt>
-<dd>
-<p>This determines the coloring scheme to be applied to blame
-output. It can be <em>repeatedLines</em>, <em>highlightRecent</em>,
-or <em>none</em> which is the default.</p>
 </dd>
 <dt class="hdlist1">color.transport</dt>
 <dd>
@@ -3203,6 +3275,20 @@ whitespace errors are colored with <code>color.diff.whitespace</code>.
 The command line option <code>--ws-error-highlight=&lt;kind&gt;</code>
 overrides this setting.</p>
 </dd>
+<dt class="hdlist1">diff.colorMoved</dt>
+<dd>
+<p>If set to either a valid <code>&lt;mode&gt;</code> or a true value, moved lines
+in a diff are colored differently, for details of valid modes
+see <em>--color-moved</em> in <a href="git-diff.html">git-diff</a>(1). If simply set to
+true the default color mode will be used. When set to false,
+moved lines are not colored.</p>
+</dd>
+<dt class="hdlist1">diff.colorMovedWS</dt>
+<dd>
+<p>When moved lines are colored using e.g. the <code>diff.colorMoved</code> setting,
+this option controls the <code>&lt;mode&gt;</code> how spaces are treated
+for details of valid modes see <em>--color-moved-ws</em> in <a href="git-diff.html">git-diff</a>(1).</p>
+</dd>
 <dt class="hdlist1">difftool.&lt;tool&gt;.path</dt>
 <dd>
 <p>Override the path for the given tool.  This is useful in case
@@ -3244,10 +3330,21 @@ reference.</p>
 <dt class="hdlist1">fetch.fsckObjects</dt>
 <dd>
 <p>If it is set to true, git-fetch-pack will check all fetched
-objects. It will abort in the case of a malformed object or a
-broken link. The result of an abort are only dangling objects.
-Defaults to false. If not set, the value of <code>transfer.fsckObjects</code>
-is used instead.</p>
+objects. See <code>transfer.fsckObjects</code> for what&#8217;s
+checked. Defaults to false. If not set, the value of
+<code>transfer.fsckObjects</code> is used instead.</p>
+</dd>
+<dt class="hdlist1">fetch.fsck.&lt;msg-id&gt;</dt>
+<dd>
+<p>Acts like <code>fsck.&lt;msg-id&gt;</code>, but is used by
+<a href="git-fetch-pack.html">git-fetch-pack</a>(1) instead of <a href="git-fsck.html">git-fsck</a>(1). See
+the <code>fsck.&lt;msg-id&gt;</code> documentation for details.</p>
+</dd>
+<dt class="hdlist1">fetch.fsck.skipList</dt>
+<dd>
+<p>Acts like <code>fsck.skipList</code>, but is used by
+<a href="git-fetch-pack.html">git-fetch-pack</a>(1) instead of <a href="git-fsck.html">git-fsck</a>(1). See
+the <code>fsck.skipList</code> documentation for details.</p>
 </dd>
 <dt class="hdlist1">fetch.unpackLimit</dt>
 <dd>
@@ -3281,6 +3378,20 @@ section of <a href="git-fetch.html">git-fetch</a>(1).</p>
 <p>Control how ref update status is printed. Valid values are
 <code>full</code> and <code>compact</code>. Default value is <code>full</code>. See section
 OUTPUT in <a href="git-fetch.html">git-fetch</a>(1) for detail.</p>
+</dd>
+<dt class="hdlist1">fetch.negotiationAlgorithm</dt>
+<dd>
+<p>Control how information about the commits in the local repository is
+sent when negotiating the contents of the packfile to be sent by the
+server. Set to "skipping" to use an algorithm that skips commits in an
+effort to converge faster, but may result in a larger-than-necessary
+packfile; The default is "default" which instructs Git to use the default algorithm
+that never skips commits (unless the server has acknowledged it or one
+of its descendants).
+Unknown values will cause <em>git fetch</em> to error out.</p>
+<div class="paragraph">
+<p>See also the <code>--negotiation-tip</code> option for <a href="git-fetch.html">git-fetch</a>(1).</p>
+</div>
 </dd>
 <dt class="hdlist1">format.attach</dt>
 <dd>
@@ -3399,16 +3510,49 @@ object to a worktree file upon checkout.  See
 </dd>
 <dt class="hdlist1">fsck.&lt;msg-id&gt;</dt>
 <dd>
-<p>Allows overriding the message type (error, warn or ignore) of a
-specific message ID such as <code>missingEmail</code>.</p>
+<p>During fsck git may find issues with legacy data which
+wouldn&#8217;t be generated by current versions of git, and which
+wouldn&#8217;t be sent over the wire if <code>transfer.fsckObjects</code> was
+set. This feature is intended to support working with legacy
+repositories containing such data.</p>
 <div class="paragraph">
-<p>For convenience, fsck prefixes the error/warning with the message ID,
-e.g.  "missingEmail: invalid author/committer line - missing email" means
-that setting <code>fsck.missingEmail = ignore</code> will hide that issue.</p>
+<p>Setting <code>fsck.&lt;msg-id&gt;</code> will be picked up by <a href="git-fsck.html">git-fsck</a>(1), but
+to accept pushes of such data set <code>receive.fsck.&lt;msg-id&gt;</code> instead, or
+to clone or fetch it set <code>fetch.fsck.&lt;msg-id&gt;</code>.</p>
 </div>
 <div class="paragraph">
-<p>This feature is intended to support working with legacy repositories
-which cannot be repaired without disruptive changes.</p>
+<p>The rest of the documentation discusses <code>fsck.*</code> for brevity, but the
+same applies for the corresponding <code>receive.fsck.*</code> and
+<code>fetch.&lt;msg-id&gt;.*</code>. variables.</p>
+</div>
+<div class="paragraph">
+<p>Unlike variables like <code>color.ui</code> and <code>core.editor</code> the
+<code>receive.fsck.&lt;msg-id&gt;</code> and <code>fetch.fsck.&lt;msg-id&gt;</code> variables will not
+fall back on the <code>fsck.&lt;msg-id&gt;</code> configuration if they aren&#8217;t set. To
+uniformly configure the same fsck settings in different circumstances
+all three of them they must all set to the same values.</p>
+</div>
+<div class="paragraph">
+<p>When <code>fsck.&lt;msg-id&gt;</code> is set, errors can be switched to warnings and
+vice versa by configuring the <code>fsck.&lt;msg-id&gt;</code> setting where the
+<code>&lt;msg-id&gt;</code> is the fsck message ID and the value is one of <code>error</code>,
+<code>warn</code> or <code>ignore</code>. For convenience, fsck prefixes the error/warning
+with the message ID, e.g. "missingEmail: invalid author/committer line
+- missing email" means that setting <code>fsck.missingEmail = ignore</code> will
+hide that issue.</p>
+</div>
+<div class="paragraph">
+<p>+
+In general, it is better to enumerate existing objects with problems
+with <code>fsck.skipList</code>, instead of listing the kind of breakages these
+problematic objects share to be ignored, as doing the latter will
+allow new instances of the same breakages go unnoticed.</p>
+</div>
+<div class="paragraph">
+<p>+
+Setting an unknown <code>fsck.&lt;msg-id&gt;</code> value will cause fsck to die, but
+doing the same for <code>receive.fsck.&lt;msg-id&gt;</code> and <code>fetch.fsck.&lt;msg-id&gt;</code>
+will only cause git to warn.</p>
 </div>
 </dd>
 <dt class="hdlist1">fsck.skipList</dt>
@@ -3419,6 +3563,17 @@ be ignored. This feature is useful when an established project
 should be accepted despite early commits containing errors that
 can be safely ignored such as invalid committer email addresses.
 Note: corrupt objects cannot be skipped with this setting.</p>
+<div class="paragraph">
+<p>Like <code>fsck.&lt;msg-id&gt;</code> this variable has corresponding
+<code>receive.fsck.skipList</code> and <code>fetch.fsck.skipList</code> variants.</p>
+</div>
+<div class="paragraph">
+<p>Unlike variables like <code>color.ui</code> and <code>core.editor</code> the
+<code>receive.fsck.skipList</code> and <code>fetch.fsck.skipList</code> variables will not
+fall back on the <code>fsck.skipList</code> configuration if they aren&#8217;t set. To
+uniformly configure the same fsck settings in different circumstances
+all three of them they must all set to the same values.</p>
+</div>
 </dd>
 <dt class="hdlist1">gc.aggressiveDepth</dt>
 <dd>
@@ -3465,6 +3620,14 @@ this configuration variable is ignored, all packs except the base pack
 will be repacked. After this the number of packs should go below
 gc.autoPackLimit and gc.bigPackThreshold should be respected again.</p>
 </div>
+</dd>
+<dt class="hdlist1">gc.writeCommitGraph</dt>
+<dd>
+<p>If true, then gc will rewrite the commit-graph file when
+<a href="git-gc.html">git-gc</a>(1) is run. When using <a href="git-gc.html">git-gc</a>(1)
+<em>--auto</em> the commit-graph will be updated if housekeeping is
+required. Default is false. See <a href="git-commit-graph.html">git-commit-graph</a>(1)
+for details.</p>
 </dd>
 <dt class="hdlist1">gc.logExpiry</dt>
 <dd>
@@ -3641,6 +3804,10 @@ access method.</p>
 <dd>
 <p>If set to true, enable <code>-n</code> option by default.</p>
 </dd>
+<dt class="hdlist1">grep.column</dt>
+<dd>
+<p>If set to true, enable the <code>--column</code> option by default.</p>
+</dd>
 <dt class="hdlist1">grep.patternType</dt>
 <dd>
 <p>Set the default matching behavior. Using a value of <em>basic</em>, <em>extended</em>,
@@ -3675,6 +3842,18 @@ code 0, and to generate an ASCII-armored detached signature, the
 standard input of "<code>gpg -bsau $key</code>" is fed with the contents to be
 signed, and the program is expected to send the result to its
 standard output.</p>
+</dd>
+<dt class="hdlist1">gpg.format</dt>
+<dd>
+<p>Specifies which key format to use when signing with <code>--gpg-sign</code>.
+Default is "openpgp" and another possible value is "x509".</p>
+</dd>
+<dt class="hdlist1">gpg.&lt;format&gt;.program</dt>
+<dd>
+<p>Use this to customize the program used for the signing format you
+chose. (see <code>gpg.program</code> and <code>gpg.format</code>) <code>gpg.program</code> can still
+be used as a legacy synonym for	<code>gpg.openpgp.program</code>. The default
+value for <code>gpg.x509.program</code> is "gpgsm".</p>
 </dd>
 <dt class="hdlist1">gui.commitMsgWidth</dt>
 <dd>
@@ -4037,7 +4216,7 @@ by the <code>GIT_SSL_CAPATH</code> environment variable.</p>
 This option is ignored if cURL lacks support for choosing the SSL
 backend at runtime.</p>
 </dd>
-<dt class="hdlist1">http.schannel.checkRevoke</dt>
+<dt class="hdlist1">http.schannelCheckRevoke</dt>
 <dd>
 <p>Used to enforce or disable certificate revocation checks in cURL
 when http.sslBackend is set to "schannel". Defaults to <code>true</code> if
@@ -4046,14 +4225,14 @@ and the message is about checking the revocation status of a
 certificate. This option is ignored if cURL lacks support for
 setting the relevant SSL option at runtime.</p>
 </dd>
-<dt class="hdlist1">http.schannel.useSSLCAInfo</dt>
+<dt class="hdlist1">http.schannelUseSSLCAInfo</dt>
 <dd>
 <p>As of cURL v7.60.0, the Secure Channel backend can use the
 certificate bundle provided via <code>http.sslCAInfo</code>, but that would
 override the Windows Certificate Store. Since this is not desirable
 by default, Git will tell cURL not to use that bundle by default
 when the <code>schannel</code> backend was configured via <code>http.sslBackend</code>,
-unless <code>useSSLCAInfo</code> overrides this behavior.</p>
+unless <code>http.schannelUseSSLCAInfo</code> overrides this behavior.</p>
 </dd>
 <dt class="hdlist1">http.pinnedpubkey</dt>
 <dd>
@@ -5248,35 +5427,23 @@ can check <code>GIT_PUSH_CERT_NONCE_STATUS</code> is <code>OK</code>.</p>
 <dt class="hdlist1">receive.fsckObjects</dt>
 <dd>
 <p>If it is set to true, git-receive-pack will check all received
-objects. It will abort in the case of a malformed object or a
-broken link. The result of an abort are only dangling objects.
-Defaults to false. If not set, the value of <code>transfer.fsckObjects</code>
-is used instead.</p>
+objects. See <code>transfer.fsckObjects</code> for what&#8217;s checked.
+Defaults to false. If not set, the value of
+<code>transfer.fsckObjects</code> is used instead.</p>
 </dd>
 <dt class="hdlist1">receive.fsck.&lt;msg-id&gt;</dt>
 <dd>
-<p>When <code>receive.fsckObjects</code> is set to true, errors can be switched
-to warnings and vice versa by configuring the <code>receive.fsck.&lt;msg-id&gt;</code>
-setting where the <code>&lt;msg-id&gt;</code> is the fsck message ID and the value
-is one of <code>error</code>, <code>warn</code> or <code>ignore</code>. For convenience, fsck prefixes
-the error/warning with the message ID, e.g. "missingEmail: invalid
-author/committer line - missing email" means that setting
-<code>receive.fsck.missingEmail = ignore</code> will hide that issue.</p>
-<div class="paragraph">
-<p>This feature is intended to support working with legacy repositories
-which would not pass pushing when <code>receive.fsckObjects = true</code>, allowing
-the host to accept repositories with certain known issues but still catch
-other issues.</p>
-</div>
+<p>Acts like <code>fsck.&lt;msg-id&gt;</code>, but is used by
+<a href="git-receive-pack.html">git-receive-pack</a>(1) instead of
+<a href="git-fsck.html">git-fsck</a>(1). See the <code>fsck.&lt;msg-id&gt;</code> documentation for
+details.</p>
 </dd>
 <dt class="hdlist1">receive.fsck.skipList</dt>
 <dd>
-<p>The path to a sorted list of object names (i.e. one SHA-1 per
-line) that are known to be broken in a non-fatal way and should
-be ignored. This feature is useful when an established project
-should be accepted despite early commits containing errors that
-can be safely ignored such as invalid committer email addresses.
-Note: corrupt objects cannot be skipped with this setting.</p>
+<p>Acts like <code>fsck.skipList</code>, but is used by
+<a href="git-receive-pack.html">git-receive-pack</a>(1) instead of
+<a href="git-fsck.html">git-fsck</a>(1). See the <code>fsck.skipList</code> documentation for
+details.</p>
 </dd>
 <dt class="hdlist1">receive.keepAlive</dt>
 <dd>
@@ -5774,13 +5941,14 @@ affected by this setting.</p>
 <dd>
 <p>Boolean value indicating if the submodule is of interest to git
 commands.  This config option takes precedence over the
-submodule.active config option.</p>
+submodule.active config option. See <a href="gitsubmodules.html">gitsubmodules</a>(7) for
+details.</p>
 </dd>
 <dt class="hdlist1">submodule.active</dt>
 <dd>
 <p>A repeated field which contains a pathspec used to match against a
 submodule&#8217;s path to determine if the submodule is of interest to git
-commands.</p>
+commands. See <a href="gitsubmodules.html">gitsubmodules</a>(7) for details.</p>
 </dd>
 <dt class="hdlist1">submodule.recurse</dt>
 <dd>
@@ -5835,6 +6003,45 @@ archiving user&#8217;s umask will be used instead.  See umask(2) and
 <p>When <code>fetch.fsckObjects</code> or <code>receive.fsckObjects</code> are
 not set, the value of this variable is used instead.
 Defaults to false.</p>
+<div class="paragraph">
+<p>When set, the fetch or receive will abort in the case of a malformed
+object or a link to a nonexistent object. In addition, various other
+issues are checked for, including legacy issues (see <code>fsck.&lt;msg-id&gt;</code>),
+and potential security issues like the existence of a <code>.GIT</code> directory
+or a malicious <code>.gitmodules</code> file (see the release notes for v2.2.1
+and v2.17.1 for details). Other sanity and security checks may be
+added in future releases.</p>
+</div>
+<div class="paragraph">
+<p>On the receiving side, failing fsckObjects will make those objects
+unreachable, see "QUARANTINE ENVIRONMENT" in
+<a href="git-receive-pack.html">git-receive-pack</a>(1). On the fetch side, malformed objects will
+instead be left unreferenced in the repository.</p>
+</div>
+<div class="paragraph">
+<p>Due to the non-quarantine nature of the <code>fetch.fsckObjects</code>
+implementation it can not be relied upon to leave the object store
+clean like <code>receive.fsckObjects</code> can.</p>
+</div>
+<div class="paragraph">
+<p>As objects are unpacked they&#8217;re written to the object store, so there
+can be cases where malicious objects get introduced even though the
+"fetch" failed, only to have a subsequent "fetch" succeed because only
+new incoming objects are checked, not those that have already been
+written to the object store. That difference in behavior should not be
+relied upon. In the future, such objects may be quarantined for
+"fetch" as well.</p>
+</div>
+<div class="paragraph">
+<p>For now, the paranoid need to find some way to emulate the quarantine
+environment if they&#8217;d like the same protection as "push". E.g. in the
+case of an internal mirror do the mirroring in two steps, one to fetch
+the untrusted objects, and then do a second "push" (which will use the
+quarantine) to another internal repo, and have internal clients
+consume this pushed-to repository, or embargo internal fetches and
+only allow them once a full "fsck" has run (and no new fetches have
+happened in the meantime).</p>
+</div>
 </dd>
 <dt class="hdlist1">transfer.hideRefs</dt>
 <dd>
@@ -5948,6 +6155,14 @@ clone and partial fetch object filtering.</p>
 repository-level config (this is a safety measure against fetching from
 untrusted repositories).</p>
 </div>
+</dd>
+<dt class="hdlist1">uploadpack.allowRefInWant</dt>
+<dd>
+<p>If this option is set, <code>upload-pack</code> will support the <code>ref-in-want</code>
+feature of the protocol version 2 <code>fetch</code> command.  This feature
+is intended for the benefit of load-balanced servers which may
+not have the same view of what OIDs their refs point to due to
+replication delay.</p>
 </dd>
 <dt class="hdlist1">url.&lt;base&gt;.insteadOf</dt>
 <dd>
@@ -6082,6 +6297,33 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_bugs">BUGS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using the deprecated <code>[section.subsection]</code> syntax, changing a value
+will result in adding a multi-line key instead of a change, if the subsection
+is given with at least one uppercase character. For example when the config
+looks like</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  [section.subsection]
+    key = value1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and running <code>git config section.Subsection.key value2</code> will result in</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  [section.subsection]
+    key = value1
+    key = value2</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -6092,7 +6334,7 @@ with the dump git protocol. Defaults to true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

@@ -828,19 +828,63 @@ that are added somewhere else in the diff. This mode picks up any
 moved line, but it is not very useful in a review to determine
 if a block of code was moved without permutation.</p>
 </dd>
-<dt class="hdlist1">zebra</dt>
+<dt class="hdlist1">blocks</dt>
 <dd>
 <p>Blocks of moved text of at least 20 alphanumeric characters
 are detected greedily. The detected blocks are
-painted using either the <em>color.diff.{old,new}Moved</em> color or
+painted using either the <em>color.diff.{old,new}Moved</em> color.
+Adjacent blocks cannot be told apart.</p>
+</dd>
+<dt class="hdlist1">zebra</dt>
+<dd>
+<p>Blocks of moved text are detected as in <em>blocks</em> mode. The blocks
+are painted using either the <em>color.diff.{old,new}Moved</em> color or
 <em>color.diff.{old,new}MovedAlternative</em>. The change between
 the two colors indicates that a new block was detected.</p>
 </dd>
-<dt class="hdlist1">dimmed_zebra</dt>
+<dt class="hdlist1">dimmed-zebra</dt>
 <dd>
 <p>Similar to <em>zebra</em>, but additional dimming of uninteresting parts
 of moved code is performed. The bordering lines of two adjacent
-blocks are considered interesting, the rest is uninteresting.</p>
+blocks are considered interesting, the rest is uninteresting.
+<code>dimmed_zebra</code> is a deprecated synonym.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">--color-moved-ws=&lt;modes&gt;</dt>
+<dd>
+<p>This configures how white spaces are ignored when performing the
+move detection for <code>--color-moved</code>.
+It can be set by the <code>diff.colorMovedWS</code> configuration setting.
+These modes can be given as a comma separated list:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">ignore-space-at-eol</dt>
+<dd>
+<p>Ignore changes in whitespace at EOL.</p>
+</dd>
+<dt class="hdlist1">ignore-space-change</dt>
+<dd>
+<p>Ignore changes in amount of whitespace.  This ignores whitespace
+at line end, and considers all other sequences of one or
+more whitespace characters to be equivalent.</p>
+</dd>
+<dt class="hdlist1">ignore-all-space</dt>
+<dd>
+<p>Ignore whitespace when comparing lines. This ignores differences
+even if one line has whitespace where the other line has none.</p>
+</dd>
+<dt class="hdlist1">allow-indentation-change</dt>
+<dd>
+<p>Initially ignore any white spaces in the move detection, then
+group the moved code blocks only into a block if the change in
+whitespace is the same per line. This is incompatible with the
+other modes.</p>
 </dd>
 </dl>
 </div>
@@ -2050,7 +2094,7 @@ rewrites (very expensive).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

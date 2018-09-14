@@ -438,7 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git apply</em> [--stat] [--numstat] [--summary] [--check] [--index] [--3way]
+<pre class="content"><em>git apply</em> [--stat] [--numstat] [--summary] [--check] [--index | --intent-to-add] [--3way]
 	  [--apply] [--no-add] [--build-fake-ancestor=&lt;file&gt;] [-R | --reverse]
 	  [--allow-binary-replacement | --binary] [--reject] [-z]
 	  [-p&lt;n&gt;] [-C&lt;n&gt;] [--inaccurate-eof] [--recount] [--cached]
@@ -519,6 +519,15 @@ causes the index file to be updated.</p>
 <p>Apply a patch without touching the working tree. Instead take the
 cached data, apply the patch, and store the result in the index
 without using the working tree. This implies <code>--index</code>.</p>
+</dd>
+<dt class="hdlist1">--intent-to-add</dt>
+<dd>
+<p>When applying the patch only to the working tree, mark new
+files to be added to the index later (see <code>--intent-to-add</code>
+option in <a href="git-add.html">git-add</a>(1)). This option is ignored unless
+running in a Git repository and <code>--index</code> is not specified.
+Note that <code>--index</code> could be implied by other options such
+as <code>--cached</code> or <code>--3way</code>.</p>
 </dd>
 <dt class="hdlist1">-3</dt>
 <dt class="hdlist1">--3way</dt>
@@ -793,7 +802,7 @@ subdirectory is checked and (if possible) updated.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

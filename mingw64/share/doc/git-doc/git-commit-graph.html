@@ -439,6 +439,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git commit-graph read</em> [--object-dir &lt;dir&gt;]
+<em>git commit-graph verify</em> [--object-dir &lt;dir&gt;]
 <em>git commit-graph write</em> &lt;options&gt; [--object-dir &lt;dir&gt;]</pre>
 </div>
 </div>
@@ -479,13 +480,18 @@ the packfiles are expected to be in &lt;dir&gt;/pack.</p>
 <div class="paragraph">
 <p>With the <code>--stdin-packs</code> option, generate the new commit graph by
 walking objects only in the specified pack-indexes. (Cannot be combined
-with --stdin-commits.)</p>
+with <code>--stdin-commits</code> or <code>--reachable</code>.)</p>
 </div>
 <div class="paragraph">
 <p>With the <code>--stdin-commits</code> option, generate the new commit graph by
 walking commits starting at the commits specified in stdin as a list
 of OIDs in hex, one OID per line. (Cannot be combined with
---stdin-packs.)</p>
+<code>--stdin-packs</code> or <code>--reachable</code>.)</p>
+</div>
+<div class="paragraph">
+<p>With the <code>--reachable</code> option, generate the new commit graph by walking
+commits starting at all refs. (Cannot be combined with <code>--stdin-commits</code>
+or <code>--stdin-packs</code>.)</p>
 </div>
 <div class="paragraph">
 <p>With the <code>--append</code> option, include all commits that are present in the
@@ -496,6 +502,11 @@ existing commit-graph file.</p>
 <dd>
 <p>Read a graph file given by the commit-graph file and output basic
 details about the graph file. Used for debugging purposes.</p>
+</dd>
+<dt class="hdlist1"><em>verify</em></dt>
+<dd>
+<p>Read the commit-graph file and verify its contents against the object
+database. Used to check for corrupted data.</p>
 </dd>
 </dl>
 </div>
@@ -567,7 +578,7 @@ details about the graph file. Used for debugging purposes.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>

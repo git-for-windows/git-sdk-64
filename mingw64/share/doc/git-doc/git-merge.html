@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="content"><em>git merge</em> [-n] [--stat] [--no-commit] [--squash] [--[no-]edit]
 	[-s &lt;strategy&gt;] [-X &lt;strategy-option&gt;] [-S[&lt;keyid&gt;]]
 	[--[no-]allow-unrelated-histories]
-	[--[no-]rerere-autoupdate] [-m &lt;msg&gt;] [&lt;commit&gt;&#8230;&#8203;]
+	[--[no-]rerere-autoupdate] [-m &lt;msg&gt;] [-F &lt;file&gt;] [&lt;commit&gt;&#8230;&#8203;]
 <em>git merge</em> --abort
 <em>git merge</em> --continue</pre>
 </div>
@@ -685,6 +685,16 @@ used to give a good default for automated <em>git merge</em>
 invocations. The automated message can include the branch description.</p>
 </div>
 </dd>
+<dt class="hdlist1">-F &lt;file&gt;</dt>
+<dt class="hdlist1">--file=&lt;file&gt;</dt>
+<dd>
+<p>Read the commit message to be used for the merge commit (in
+case one is created).</p>
+<div class="paragraph">
+<p>If <code>--log</code> is specified, a shortlog of the commits being merged
+will be appended to the specified message.</p>
+</div>
+</dd>
 <dt class="hdlist1">--[no-]rerere-autoupdate</dt>
 <dd>
 <p>Allow the rerere mechanism to update the index with the
@@ -745,9 +755,9 @@ merge</em> may need to update.</p>
 <div class="paragraph">
 <p>To avoid recording unrelated changes in the merge commit,
 <em>git pull</em> and <em>git merge</em> will also abort if there are any changes
-registered in the index relative to the <code>HEAD</code> commit.  (One
-exception is when the changed index entries are in the state that
-would result from the merge already.)</p>
+registered in the index relative to the <code>HEAD</code> commit.  (Special
+narrow exceptions to this rule may exist depending on which merge
+strategy is in use, but generally, the index must match HEAD.)</p>
 </div>
 <div class="paragraph">
 <p>If all named commits are already ancestors of <code>HEAD</code>, <em>git merge</em>
@@ -1427,7 +1437,7 @@ values containing whitespace characters are currently not supported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-06-22 10:50:59 Coordinated Universal Time
+Last updated 2018-09-11 17:59:55 UTC
 </div>
 </div>
 </body>
