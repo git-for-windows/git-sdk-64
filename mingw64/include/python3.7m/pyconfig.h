@@ -1266,7 +1266,7 @@
 #define HAVE_WS2TCPIP_H 1
 
 /* Define if libssl has X509_VERIFY_PARAM_set1_host and related function */
-#define HAVE_X509_VERIFY_PARAM_SET1_HOST 1
+/* #undef HAVE_X509_VERIFY_PARAM_SET1_HOST */
 
 /* Define if the zlib library has inflateCopy */
 #define HAVE_ZLIB_COPY 1

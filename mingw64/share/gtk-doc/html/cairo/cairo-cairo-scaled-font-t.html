@@ -8,7 +8,7 @@
 <link rel="up" href="cairo-fonts.html" title="Fonts">
 <link rel="prev" href="cairo-cairo-font-face-t.html" title="cairo_font_face_t">
 <link rel="next" href="cairo-cairo-font-options-t.html" title="cairo_font_options_t">
-<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -284,7 +284,7 @@ references to a <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scale
 </colgroup>
 <tbody><tr>
 <td class="parameter_name"><p>scaled_font</p></td>
-<td class="parameter_description"><p>a <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-t" title="cairo_scaled_font_t"><span class="type">cairo_scaled_font_t</span></a>, (may be <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> in which case
+<td class="parameter_description"><p>a <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-t" title="cairo_scaled_font_t"><span class="type">cairo_scaled_font_t</span></a>, (may be <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> in which case
 this function does nothing)</p></td>
 <td class="parameter_annotations"> </td>
 </tr></tbody>
@@ -504,7 +504,7 @@ cairo_scaled_font_text_to_glyphs (<em class="parameter"><code><a class="link" hr
 mapping, that can be used to render later using <em class="parameter"><code>scaled_font</code></em>
 .</p>
 <p>If <em class="parameter"><code>glyphs</code></em>
- initially points to a non-<a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> value, that array is used
+ initially points to a non-<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> value, that array is used
 as a glyph buffer, and <em class="parameter"><code>num_glyphs</code></em>
  should point to the number of glyph
 entries available there.  If the provided glyph array is too short for
@@ -518,14 +518,14 @@ after the call, the user is responsible for freeing the allocated glyph
 array using <a class="link" href="cairo-text.html#cairo-glyph-free" title="cairo_glyph_free ()"><code class="function">cairo_glyph_free()</code></a>.  This may happen even if the provided
 array was large enough.</p>
 <p>If <em class="parameter"><code>clusters</code></em>
- is not <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, <em class="parameter"><code>num_clusters</code></em>
+ is not <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, <em class="parameter"><code>num_clusters</code></em>
  and <em class="parameter"><code>cluster_flags</code></em>
- should not be <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>,
+ should not be <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>,
 and cluster mapping will be computed.
 The semantics of how cluster array allocation works is similar to the glyph
 array.  That is,
 if <em class="parameter"><code>clusters</code></em>
- initially points to a non-<a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> value, that array is used
+ initially points to a non-<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> value, that array is used
 as a cluster buffer, and <em class="parameter"><code>num_clusters</code></em>
  should point to the number of cluster
 entries available there.  If the provided cluster array is too short for
@@ -540,83 +540,170 @@ array using <a class="link" href="cairo-text.html#cairo-text-cluster-free" title
 array was large enough.</p>
 <p>In the simplest case, <em class="parameter"><code>glyphs</code></em>
  and <em class="parameter"><code>clusters</code></em>
- can point to <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> initially
+ can point to <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> initially
 and a suitable array will be allocated.  In code:</p>
-<div class="informalexample"><pre class="programlisting">
-cairo_status_t status;
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</pre></td>
+        <td class="listing_code"><pre class="programlisting">cairo_status_t status<span class="gtkdoc opt">;</span>
 
-cairo_glyph_t *glyphs = NULL;
-int num_glyphs;
-cairo_text_cluster_t *clusters = NULL;
-int num_clusters;
-cairo_text_cluster_flags_t cluster_flags;
+cairo_glyph_t <span class="gtkdoc opt">*</span>glyphs <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="gtkdoc kwb">int</span> num_glyphs<span class="gtkdoc opt">;</span>
+cairo_text_cluster_t <span class="gtkdoc opt">*</span>clusters <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="gtkdoc kwb">int</span> num_clusters<span class="gtkdoc opt">;</span>
+cairo_text_cluster_flags_t cluster_flags<span class="gtkdoc opt">;</span>
 
-status = cairo_scaled_font_text_to_glyphs (scaled_font,
-                                           x, y,
-                                           utf8, utf8_len,
-                                           &amp;glyphs, &amp;num_glyphs,
-                                           &amp;clusters, &amp;num_clusters, &amp;cluster_flags);
+status <span class="gtkdoc opt">=</span> <span class="function"><a href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-text-to-glyphs">cairo_scaled_font_text_to_glyphs</a></span> <span class="gtkdoc opt">(</span>scaled_font<span class="gtkdoc opt">,</span>
+                                           x<span class="gtkdoc opt">,</span> y<span class="gtkdoc opt">,</span>
+                                           utf8<span class="gtkdoc opt">,</span> utf8_len<span class="gtkdoc opt">,</span>
+                                           <span class="gtkdoc opt">&amp;</span>glyphs<span class="gtkdoc opt">, &amp;</span>num_glyphs<span class="gtkdoc opt">,</span>
+                                           <span class="gtkdoc opt">&amp;</span>clusters<span class="gtkdoc opt">, &amp;</span>num_clusters<span class="gtkdoc opt">, &amp;</span>cluster_flags<span class="gtkdoc opt">);</span>
 
-if (status == CAIRO_STATUS_SUCCESS) {
-    cairo_show_text_glyphs (cr,
-                            utf8, utf8_len,
-                            glyphs, num_glyphs,
-                            clusters, num_clusters, cluster_flags);
+<span class="keyword">if</span> <span class="gtkdoc opt">(</span>status <span class="gtkdoc opt">==</span> CAIRO_STATUS_SUCCESS<span class="gtkdoc opt">) {</span>
+    <span class="function"><a href="cairo-text.html#cairo-show-text-glyphs">cairo_show_text_glyphs</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">,</span>
+                            utf8<span class="gtkdoc opt">,</span> utf8_len<span class="gtkdoc opt">,</span>
+                            glyphs<span class="gtkdoc opt">,</span> num_glyphs<span class="gtkdoc opt">,</span>
+                            clusters<span class="gtkdoc opt">,</span> num_clusters<span class="gtkdoc opt">,</span> cluster_flags<span class="gtkdoc opt">);</span>
 
-    cairo_glyph_free (glyphs);
-    cairo_text_cluster_free (clusters);
-}
-</pre></div>
+    <span class="function"><a href="cairo-text.html#cairo-glyph-free">cairo_glyph_free</a></span> <span class="gtkdoc opt">(</span>glyphs<span class="gtkdoc opt">);</span>
+    <span class="function"><a href="cairo-text.html#cairo-text-cluster-free">cairo_text_cluster_free</a></span> <span class="gtkdoc opt">(</span>clusters<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p>If no cluster mapping is needed:</p>
-<div class="informalexample"><pre class="programlisting">
-cairo_status_t status;
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16</pre></td>
+        <td class="listing_code"><pre class="programlisting">cairo_status_t status<span class="gtkdoc opt">;</span>
 
-cairo_glyph_t *glyphs = NULL;
-int num_glyphs;
+cairo_glyph_t <span class="gtkdoc opt">*</span>glyphs <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="gtkdoc kwb">int</span> num_glyphs<span class="gtkdoc opt">;</span>
 
-status = cairo_scaled_font_text_to_glyphs (scaled_font,
-                                           x, y,
-                                           utf8, utf8_len,
-                                           &amp;glyphs, &amp;num_glyphs,
-                                           NULL, NULL,
-                                           NULL);
+status <span class="gtkdoc opt">=</span> <span class="function"><a href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-text-to-glyphs">cairo_scaled_font_text_to_glyphs</a></span> <span class="gtkdoc opt">(</span>scaled_font<span class="gtkdoc opt">,</span>
+                                           x<span class="gtkdoc opt">,</span> y<span class="gtkdoc opt">,</span>
+                                           utf8<span class="gtkdoc opt">,</span> utf8_len<span class="gtkdoc opt">,</span>
+                                           <span class="gtkdoc opt">&amp;</span>glyphs<span class="gtkdoc opt">, &amp;</span>num_glyphs<span class="gtkdoc opt">,</span>
+                                           NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span>
+                                           NULL<span class="gtkdoc opt">);</span>
 
-if (status == CAIRO_STATUS_SUCCESS) {
-    cairo_show_glyphs (cr, glyphs, num_glyphs);
-    cairo_glyph_free (glyphs);
-}
-</pre></div>
+<span class="keyword">if</span> <span class="gtkdoc opt">(</span>status <span class="gtkdoc opt">==</span> CAIRO_STATUS_SUCCESS<span class="gtkdoc opt">) {</span>
+    <span class="function"><a href="cairo-text.html#cairo-show-glyphs">cairo_show_glyphs</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">,</span> glyphs<span class="gtkdoc opt">,</span> num_glyphs<span class="gtkdoc opt">);</span>
+    <span class="function"><a href="cairo-text.html#cairo-glyph-free">cairo_glyph_free</a></span> <span class="gtkdoc opt">(</span>glyphs<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p>If stack-based glyph and cluster arrays are to be used for small
 arrays:</p>
-<div class="informalexample"><pre class="programlisting">
-cairo_status_t status;
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></td>
+        <td class="listing_code"><pre class="programlisting">cairo_status_t status<span class="gtkdoc opt">;</span>
 
-cairo_glyph_t stack_glyphs[40];
-cairo_glyph_t *glyphs = stack_glyphs;
-int num_glyphs = sizeof (stack_glyphs) / sizeof (stack_glyphs[0]);
-cairo_text_cluster_t stack_clusters[40];
-cairo_text_cluster_t *clusters = stack_clusters;
-int num_clusters = sizeof (stack_clusters) / sizeof (stack_clusters[0]);
-cairo_text_cluster_flags_t cluster_flags;
+cairo_glyph_t stack_glyphs<span class="gtkdoc opt">[</span><span class="number">40</span><span class="gtkdoc opt">];</span>
+cairo_glyph_t <span class="gtkdoc opt">*</span>glyphs <span class="gtkdoc opt">=</span> stack_glyphs<span class="gtkdoc opt">;</span>
+<span class="gtkdoc kwb">int</span> num_glyphs <span class="gtkdoc opt">=</span> <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>stack_glyphs<span class="gtkdoc opt">) /</span> <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>stack_glyphs<span class="gtkdoc opt">[</span><span class="number">0</span><span class="gtkdoc opt">]);</span>
+cairo_text_cluster_t stack_clusters<span class="gtkdoc opt">[</span><span class="number">40</span><span class="gtkdoc opt">];</span>
+cairo_text_cluster_t <span class="gtkdoc opt">*</span>clusters <span class="gtkdoc opt">=</span> stack_clusters<span class="gtkdoc opt">;</span>
+<span class="gtkdoc kwb">int</span> num_clusters <span class="gtkdoc opt">=</span> <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>stack_clusters<span class="gtkdoc opt">) /</span> <span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>stack_clusters<span class="gtkdoc opt">[</span><span class="number">0</span><span class="gtkdoc opt">]);</span>
+cairo_text_cluster_flags_t cluster_flags<span class="gtkdoc opt">;</span>
 
-status = cairo_scaled_font_text_to_glyphs (scaled_font,
-                                           x, y,
-                                           utf8, utf8_len,
-                                           &amp;glyphs, &amp;num_glyphs,
-                                           &amp;clusters, &amp;num_clusters, &amp;cluster_flags);
+status <span class="gtkdoc opt">=</span> <span class="function"><a href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-text-to-glyphs">cairo_scaled_font_text_to_glyphs</a></span> <span class="gtkdoc opt">(</span>scaled_font<span class="gtkdoc opt">,</span>
+                                           x<span class="gtkdoc opt">,</span> y<span class="gtkdoc opt">,</span>
+                                           utf8<span class="gtkdoc opt">,</span> utf8_len<span class="gtkdoc opt">,</span>
+                                           <span class="gtkdoc opt">&amp;</span>glyphs<span class="gtkdoc opt">, &amp;</span>num_glyphs<span class="gtkdoc opt">,</span>
+                                           <span class="gtkdoc opt">&amp;</span>clusters<span class="gtkdoc opt">, &amp;</span>num_clusters<span class="gtkdoc opt">, &amp;</span>cluster_flags<span class="gtkdoc opt">);</span>
 
-if (status == CAIRO_STATUS_SUCCESS) {
-    cairo_show_text_glyphs (cr,
-                            utf8, utf8_len,
-                            glyphs, num_glyphs,
-                            clusters, num_clusters, cluster_flags);
+<span class="keyword">if</span> <span class="gtkdoc opt">(</span>status <span class="gtkdoc opt">==</span> CAIRO_STATUS_SUCCESS<span class="gtkdoc opt">) {</span>
+    <span class="function"><a href="cairo-text.html#cairo-show-text-glyphs">cairo_show_text_glyphs</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">,</span>
+                            utf8<span class="gtkdoc opt">,</span> utf8_len<span class="gtkdoc opt">,</span>
+                            glyphs<span class="gtkdoc opt">,</span> num_glyphs<span class="gtkdoc opt">,</span>
+                            clusters<span class="gtkdoc opt">,</span> num_clusters<span class="gtkdoc opt">,</span> cluster_flags<span class="gtkdoc opt">);</span>
 
-    if (glyphs != stack_glyphs)
-        cairo_glyph_free (glyphs);
-    if (clusters != stack_clusters)
-        cairo_text_cluster_free (clusters);
-}
-</pre></div>
+    <span class="keyword">if</span> <span class="gtkdoc opt">(</span>glyphs <span class="gtkdoc opt">!=</span> stack_glyphs<span class="gtkdoc opt">)</span>
+        <span class="function"><a href="cairo-text.html#cairo-glyph-free">cairo_glyph_free</a></span> <span class="gtkdoc opt">(</span>glyphs<span class="gtkdoc opt">);</span>
+    <span class="keyword">if</span> <span class="gtkdoc opt">(</span>clusters <span class="gtkdoc opt">!=</span> stack_clusters<span class="gtkdoc opt">)</span>
+        <span class="function"><a href="cairo-text.html#cairo-text-cluster-free">cairo_text_cluster_free</a></span> <span class="gtkdoc opt">(</span>clusters<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p>For details of how <em class="parameter"><code>clusters</code></em>
 , <em class="parameter"><code>num_clusters</code></em>
 , and <em class="parameter"><code>cluster_flags</code></em>
@@ -636,11 +723,6 @@ same <em class="parameter"><code>scaled_font</code></em>
 </colgroup>
 <tbody>
 <tr>
-<td class="parameter_name"><p>scaled_font</p></td>
-<td class="parameter_description"><p>a <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-t" title="cairo_scaled_font_t"><span class="type">cairo_scaled_font_t</span></a></p></td>
-<td class="parameter_annotations"> </td>
-</tr>
-<tr>
 <td class="parameter_name"><p>x</p></td>
 <td class="parameter_description"><p>X position to place first glyph</p></td>
 <td class="parameter_annotations"> </td>
@@ -648,6 +730,11 @@ same <em class="parameter"><code>scaled_font</code></em>
 <tr>
 <td class="parameter_name"><p>y</p></td>
 <td class="parameter_description"><p>Y position to place first glyph</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>scaled_font</p></td>
+<td class="parameter_description"><p>a <a class="link" href="cairo-cairo-scaled-font-t.html#cairo-scaled-font-t" title="cairo_scaled_font_t"><span class="type">cairo_scaled_font_t</span></a></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -673,19 +760,19 @@ in bytes, or -1 if it is NUL-terminated</p></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>clusters</p></td>
-<td class="parameter_description"><p>pointer to array of cluster mapping information to fill, or <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
+<td class="parameter_description"><p>pointer to array of cluster mapping information to fill, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
 <td class="parameter_name"><p>num_clusters</p></td>
-<td class="parameter_description"><p>pointer to number of clusters, or <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
+<td class="parameter_description"><p>pointer to number of clusters, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cluster_flags</p></td>
 <td class="parameter_description"><p>pointer to location to store cluster flags corresponding to the
 output <em class="parameter"><code>clusters</code></em>
-, or <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
+, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 </tbody>
@@ -943,7 +1030,7 @@ cairo_scaled_font_set_user_data (<em class="parameter"><code><a class="link" hre
                                  <em class="parameter"><code><a class="link" href="cairo-Types.html#cairo-destroy-func-t" title="cairo_destroy_func_t ()"><span class="type">cairo_destroy_func_t</span></a> destroy</code></em>);</pre>
 <p>Attach user data to <em class="parameter"><code>scaled_font</code></em>
 .  To remove user data from a surface,
-call this function with the key that was used to set it and <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+call this function with the key that was used to set it and <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 for <em class="parameter"><code>data</code></em>
 .</p>
 <div class="refsect3">
@@ -996,7 +1083,7 @@ cairo_scaled_font_get_user_data (<em class="parameter"><code><a class="link" hre
 <p>Return user data previously attached to <em class="parameter"><code>scaled_font</code></em>
  using the
 specified key.  If no user data has been attached with the given
-key this function returns <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+key this function returns <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <div class="refsect3">
 <a name="cairo-scaled-font-get-user-data.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1022,7 +1109,7 @@ attached to</p></td>
 </div>
 <div class="refsect3">
 <a name="cairo-scaled-font-get-user-data.returns"></a><h4>Returns</h4>
-<p> the user data previously attached or <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+<p> the user data previously attached or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 </div>
 <p class="since">Since: 1.4</p>
 </div>
@@ -1209,6 +1296,6 @@ for vertical text layout as found in East-Asian languages.</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="cairo-surfaces.html" title="Surfaces">
 <link rel="prev" href="cairo-surfaces.html" title="Surfaces">
 <link rel="next" href="cairo-cairo-surface-t.html" title="cairo_surface_t">
-<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -223,28 +223,55 @@ in a multithreaded environment. This is done internally, but can also
 be used by applications.</p>
 <p>Putting this all together, a function that works with devices should
 look something like this:</p>
-<div class="informalexample"><pre class="programlisting">
-void
-my_device_modifying_function (cairo_device_t *device)
-{
-  cairo_status_t status;
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">void</span>
+<span class="function">my_device_modifying_function</span> <span class="gtkdoc opt">(</span>cairo_device_t <span class="gtkdoc opt">*</span>device<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  cairo_status_t status<span class="gtkdoc opt">;</span>
 
-  // Ensure the device is properly reset
-  cairo_device_flush (device);
-  // Try to acquire the device
-  status = cairo_device_acquire (device);
-  if (status != CAIRO_STATUS_SUCCESS) {
-    printf ("Failed to acquire the device: %s\n", cairo_status_to_string (status));
-    return;
-  }
+  <span class="gtkdoc slc">// Ensure the device is properly reset</span>
+  <span class="function"><a href="cairo-cairo-device-t.html#cairo-device-flush">cairo_device_flush</a></span> <span class="gtkdoc opt">(</span>device<span class="gtkdoc opt">);</span>
+  <span class="gtkdoc slc">// Try to acquire the device</span>
+  status <span class="gtkdoc opt">=</span> <span class="function"><a href="cairo-cairo-device-t.html#cairo-device-acquire">cairo_device_acquire</a></span> <span class="gtkdoc opt">(</span>device<span class="gtkdoc opt">);</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>status <span class="gtkdoc opt">!=</span> CAIRO_STATUS_SUCCESS<span class="gtkdoc opt">) {</span>
+    <span class="function">printf</span> <span class="gtkdoc opt">(</span><span class="string">&quot;Failed to acquire the device: %s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> <span class="function"><a href="cairo-Error-handling.html#cairo-status-to-string">cairo_status_to_string</a></span> <span class="gtkdoc opt">(</span>status<span class="gtkdoc opt">));</span>
+    <span class="keyword">return</span><span class="gtkdoc opt">;</span>
+  <span class="gtkdoc opt">}</span>
 
-  // Do the custom operations on the device here.
-  // But do not call any Cairo functions that might acquire devices.
+  <span class="gtkdoc slc">// Do the custom operations on the device here.</span>
+  <span class="gtkdoc slc">// But do not call any Cairo functions that might acquire devices.</span>
   
-  // Release the device when done.
-  cairo_device_release (device);
-}
-</pre></div>
+  <span class="gtkdoc slc">// Release the device when done.</span>
+  <span class="function"><a href="cairo-cairo-device-t.html#cairo-device-release">cairo_device_release</a></span> <span class="gtkdoc opt">(</span>device<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <div class="note"><p>Please refer to the documentation of each backend for
 additional usage requirements, guarantees provided, and
 interactions with existing surface API of the device functions for
@@ -475,7 +502,7 @@ cairo_device_set_user_data (<em class="parameter"><code><a class="link" href="ca
                             <em class="parameter"><code><a class="link" href="cairo-Types.html#cairo-destroy-func-t" title="cairo_destroy_func_t ()"><span class="type">cairo_destroy_func_t</span></a> destroy</code></em>);</pre>
 <p>Attach user data to <em class="parameter"><code>device</code></em>
 .  To remove user data from a surface,
-call this function with the key that was used to set it and <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+call this function with the key that was used to set it and <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 for <em class="parameter"><code>data</code></em>
 .</p>
 <div class="refsect3">
@@ -528,7 +555,7 @@ cairo_device_get_user_data (<em class="parameter"><code><a class="link" href="ca
 <p>Return user data previously attached to <em class="parameter"><code>device</code></em>
  using the
 specified key.  If no user data has been attached with the given
-key this function returns <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+key this function returns <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <div class="refsect3">
 <a name="cairo-device-get-user-data.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -554,7 +581,7 @@ attached to</p></td>
 </div>
 <div class="refsect3">
 <a name="cairo-device-get-user-data.returns"></a><h4>Returns</h4>
-<p> the user data previously attached or <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+<p> the user data previously attached or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 </div>
 <p class="since">Since: 1.10</p>
 </div>
@@ -634,40 +661,30 @@ that function for details.</p>
 <a name="cairo-device-observer-elapsed"></a><h3>cairo_device_observer_elapsed ()</h3>
 <pre class="programlisting"><span class="returnvalue">double</span>
 cairo_device_observer_elapsed (<em class="parameter"><code><a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo_device_t"><span class="type">cairo_device_t</span></a> *device</code></em>);</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
 <a name="cairo-device-observer-fill-elapsed"></a><h3>cairo_device_observer_fill_elapsed ()</h3>
 <pre class="programlisting"><span class="returnvalue">double</span>
 cairo_device_observer_fill_elapsed (<em class="parameter"><code><a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo_device_t"><span class="type">cairo_device_t</span></a> *device</code></em>);</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
 <a name="cairo-device-observer-glyphs-elapsed"></a><h3>cairo_device_observer_glyphs_elapsed ()</h3>
 <pre class="programlisting"><span class="returnvalue">double</span>
 cairo_device_observer_glyphs_elapsed (<em class="parameter"><code><a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo_device_t"><span class="type">cairo_device_t</span></a> *device</code></em>);</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
 <a name="cairo-device-observer-mask-elapsed"></a><h3>cairo_device_observer_mask_elapsed ()</h3>
 <pre class="programlisting"><span class="returnvalue">double</span>
 cairo_device_observer_mask_elapsed (<em class="parameter"><code><a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo_device_t"><span class="type">cairo_device_t</span></a> *device</code></em>);</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
 <a name="cairo-device-observer-paint-elapsed"></a><h3>cairo_device_observer_paint_elapsed ()</h3>
 <pre class="programlisting"><span class="returnvalue">double</span>
 cairo_device_observer_paint_elapsed (<em class="parameter"><code><a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo_device_t"><span class="type">cairo_device_t</span></a> *device</code></em>);</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -676,16 +693,12 @@ cairo_device_observer_paint_elapsed (<em class="parameter"><code><a class="link"
 cairo_device_observer_print (<em class="parameter"><code><a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo_device_t"><span class="type">cairo_device_t</span></a> *device</code></em>,
                              <em class="parameter"><code><a class="link" href="cairo-PNG-Support.html#cairo-write-func-t" title="cairo_write_func_t ()"><span class="type">cairo_write_func_t</span></a> write_func</code></em>,
                              <em class="parameter"><code><span class="type">void</span> *closure</code></em>);</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
 <a name="cairo-device-observer-stroke-elapsed"></a><h3>cairo_device_observer_stroke_elapsed ()</h3>
 <pre class="programlisting"><span class="returnvalue">double</span>
 cairo_device_observer_stroke_elapsed (<em class="parameter"><code><a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo_device_t"><span class="type">cairo_device_t</span></a> *device</code></em>);</pre>
-<p>
-</p>
 </div>
 </div>
 <div class="refsect1">
@@ -803,6 +816,6 @@ the wrong type is undefined.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

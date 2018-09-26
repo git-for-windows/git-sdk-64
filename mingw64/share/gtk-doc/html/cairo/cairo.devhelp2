@@ -328,6 +328,8 @@
     <keyword type="function" name="cairo_font_options_get_hint_style ()" link="cairo-cairo-font-options-t.html#cairo-font-options-get-hint-style" since="1.0"/>
     <keyword type="function" name="cairo_font_options_set_hint_metrics ()" link="cairo-cairo-font-options-t.html#cairo-font-options-set-hint-metrics" since="1.0"/>
     <keyword type="function" name="cairo_font_options_get_hint_metrics ()" link="cairo-cairo-font-options-t.html#cairo-font-options-get-hint-metrics" since="1.0"/>
+    <keyword type="function" name="cairo_font_options_get_variations ()" link="cairo-cairo-font-options-t.html#cairo-font-options-get-variations" since="1.16"/>
+    <keyword type="function" name="cairo_font_options_set_variations ()" link="cairo-cairo-font-options-t.html#cairo-font-options-set-variations" since="1.16"/>
     <keyword type="typedef" name="cairo_font_options_t" link="cairo-cairo-font-options-t.html#cairo-font-options-t" since="1.0"/>
     <keyword type="enum" name="enum cairo_subpixel_order_t" link="cairo-cairo-font-options-t.html#cairo-subpixel-order-t" since="1.0"/>
     <keyword type="enum" name="enum cairo_hint_style_t" link="cairo-cairo-font-options-t.html#cairo-hint-style-t" since="1.0"/>
@@ -488,17 +490,21 @@
     <keyword type="function" name="cairo_win32_surface_create ()" link="cairo-Win32-Surfaces.html#cairo-win32-surface-create" since="1.0"/>
     <keyword type="function" name="cairo_win32_surface_create_with_dib ()" link="cairo-Win32-Surfaces.html#cairo-win32-surface-create-with-dib" since="1.2"/>
     <keyword type="function" name="cairo_win32_surface_create_with_ddb ()" link="cairo-Win32-Surfaces.html#cairo-win32-surface-create-with-ddb" since="1.4"/>
+    <keyword type="function" name="cairo_win32_surface_create_with_format ()" link="cairo-Win32-Surfaces.html#cairo-win32-surface-create-with-format" since="1.14"/>
     <keyword type="function" name="cairo_win32_printing_surface_create ()" link="cairo-Win32-Surfaces.html#cairo-win32-printing-surface-create" since="1.6"/>
     <keyword type="function" name="cairo_win32_surface_get_dc ()" link="cairo-Win32-Surfaces.html#cairo-win32-surface-get-dc" since="1.2"/>
     <keyword type="function" name="cairo_win32_surface_get_image ()" link="cairo-Win32-Surfaces.html#cairo-win32-surface-get-image" since="1.4"/>
     <keyword type="macro" name="CAIRO_HAS_WIN32_SURFACE" link="cairo-Win32-Surfaces.html#CAIRO-HAS-WIN32-SURFACE:CAPS" since="1.0"/>
     <keyword type="function" name="cairo_svg_surface_create ()" link="cairo-SVG-Surfaces.html#cairo-svg-surface-create" since="1.2"/>
     <keyword type="function" name="cairo_svg_surface_create_for_stream ()" link="cairo-SVG-Surfaces.html#cairo-svg-surface-create-for-stream" since="1.2"/>
+    <keyword type="function" name="cairo_svg_surface_get_document_unit ()" link="cairo-SVG-Surfaces.html#cairo-svg-surface-get-document-unit" since="1.16"/>
+    <keyword type="function" name="cairo_svg_surface_set_document_unit ()" link="cairo-SVG-Surfaces.html#cairo-svg-surface-set-document-unit" since="1.16"/>
     <keyword type="function" name="cairo_svg_surface_restrict_to_version ()" link="cairo-SVG-Surfaces.html#cairo-svg-surface-restrict-to-version" since="1.2"/>
     <keyword type="function" name="cairo_svg_get_versions ()" link="cairo-SVG-Surfaces.html#cairo-svg-get-versions" since="1.2"/>
     <keyword type="function" name="cairo_svg_version_to_string ()" link="cairo-SVG-Surfaces.html#cairo-svg-version-to-string" since="1.2"/>
     <keyword type="macro" name="CAIRO_HAS_SVG_SURFACE" link="cairo-SVG-Surfaces.html#CAIRO-HAS-SVG-SURFACE:CAPS" since="1.2"/>
     <keyword type="enum" name="enum cairo_svg_version_t" link="cairo-SVG-Surfaces.html#cairo-svg-version-t" since="1.2"/>
+    <keyword type="enum" name="enum cairo_svg_unit_t" link="cairo-SVG-Surfaces.html#cairo-svg-unit-t" since="1.16"/>
     <keyword type="function" name="cairo_quartz_surface_create ()" link="cairo-Quartz-Surfaces.html#cairo-quartz-surface-create" since="1.6"/>
     <keyword type="function" name="cairo_quartz_surface_create_for_cg_context ()" link="cairo-Quartz-Surfaces.html#cairo-quartz-surface-create-for-cg-context" since="1.6"/>
     <keyword type="function" name="cairo_quartz_surface_get_cg_context ()" link="cairo-Quartz-Surfaces.html#cairo-quartz-surface-get-cg-context" since="1.6"/>
@@ -725,6 +731,16 @@
     <keyword type="constant" name="CAIRO_PS_LEVEL_3" link="cairo-PostScript-Surfaces.html#CAIRO-PS-LEVEL-3:CAPS"/>
     <keyword type="constant" name="CAIRO_SVG_VERSION_1_1" link="cairo-SVG-Surfaces.html#CAIRO-SVG-VERSION-1-1:CAPS"/>
     <keyword type="constant" name="CAIRO_SVG_VERSION_1_2" link="cairo-SVG-Surfaces.html#CAIRO-SVG-VERSION-1-2:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_USER" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-USER:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_EM" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-EM:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_EX" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-EX:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_PX" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-PX:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_IN" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-IN:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_CM" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-CM:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_MM" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-MM:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_PT" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-PT:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_PC" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-PC:CAPS"/>
+    <keyword type="constant" name="CAIRO_SVG_UNIT_PERCENT" link="cairo-SVG-Surfaces.html#CAIRO-SVG-UNIT-PERCENT:CAPS"/>
     <keyword type="constant" name="CAIRO_SCRIPT_MODE_ASCII" link="cairo-Script-Surfaces.html#CAIRO-SCRIPT-MODE-ASCII:CAPS"/>
     <keyword type="constant" name="CAIRO_SCRIPT_MODE_BINARY" link="cairo-Script-Surfaces.html#CAIRO-SCRIPT-MODE-BINARY:CAPS"/>
     <keyword type="constant" name="CAIRO_STATUS_SUCCESS" link="cairo-Error-handling.html#CAIRO-STATUS-SUCCESS:CAPS"/>

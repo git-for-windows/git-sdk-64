@@ -777,10 +777,11 @@ Both of these documents are profiles of ISO 8601.</p>
 variation of ISO 8601 format is required.</p>
 <p>If <em class="parameter"><code>time_</code></em>
  represents a date which is too large to fit into a <code class="literal">struct tm</code>,
-<a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> will be returned. This is platform dependent, but it is safe to assume
-years up to 3000 are supported. The return value of <a class="link" href="glib-Date-and-Time-Functions.html#g-time-val-to-iso8601" title="g_time_val_to_iso8601 ()"><code class="function">g_time_val_to_iso8601()</code></a>
-has been nullable since GLib 2.54; before then, GLib would crash under the
-same conditions.</p>
+<a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> will be returned. This is platform dependent. Note also that since
+<code class="literal">GTimeVal</code> stores the number of seconds as a <code class="literal">glong</code>, on 32-bit systems it
+is subject to the year 2038 problem.</p>
+<p>The return value of <a class="link" href="glib-Date-and-Time-Functions.html#g-time-val-to-iso8601" title="g_time_val_to_iso8601 ()"><code class="function">g_time_val_to_iso8601()</code></a> has been nullable since GLib
+2.54; before then, GLib would crash under the same conditions.</p>
 <div class="refsect3">
 <a name="g-time-val-to-iso8601.parameters"></a><h4>Parameters</h4>
 
@@ -2680,7 +2681,9 @@ Similar to the struct timeval returned by the <a class="link" href=""><code clas
 UNIX system call.</p>
 <p>GLib is attempting to unify around the use of 64bit integers to
 represent microsecond-precision time. As such, this type will be
-removed from a future version of GLib.</p>
+removed from a future version of GLib. A consequence of using <code class="literal">glong</code> for
+<code class="literal">tv_sec</code> is that on 32-bit systems <code class="literal">GTimeVal</code> is subject to the year 2038
+problem.</p>
 <div class="refsect3">
 <a name="GTimeVal.members"></a><h4>Members</h4>
 

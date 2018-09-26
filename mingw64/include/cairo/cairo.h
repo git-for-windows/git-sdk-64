@@ -1063,7 +1063,7 @@ typedef struct _cairo_scaled_font cairo_scaled_font_t;
  *
  * A #cairo_font_face_t specifies all aspects of a font other
  * than the size or font matrix (a font matrix is used to distort
- * a font by sheering it or scaling it unequally in the two
+ * a font by shearing it or scaling it unequally in the two
  * directions) . A font face can be set on a #cairo_t by using
  * cairo_set_font_face(); the size and font matrix are set with
  * cairo_set_font_size() and cairo_set_font_matrix().

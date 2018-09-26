@@ -8,7 +8,7 @@
 <link rel="up" href="cairo-surfaces.html" title="Surfaces">
 <link rel="prev" href="cairo-Win32-Surfaces.html" title="Win32 Surfaces">
 <link rel="next" href="cairo-Quartz-Surfaces.html" title="Quartz Surfaces">
-<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -57,6 +57,22 @@
 </tr>
 <tr>
 <td class="function_type">
+<a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-unit-t" title="enum cairo_svg_unit_t"><span class="returnvalue">cairo_svg_unit_t</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-surface-get-document-unit" title="cairo_svg_surface_get_document_unit ()">cairo_svg_surface_get_document_unit</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-surface-set-document-unit" title="cairo_svg_surface_set_document_unit ()">cairo_svg_surface_set_document_unit</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
 <span class="returnvalue">void</span>
 </td>
 <td class="function_name">
@@ -96,6 +112,10 @@
 <tr>
 <td class="datatype_keyword">enum</td>
 <td class="function_name"><a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-version-t" title="enum cairo_svg_version_t">cairo_svg_version_t</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-unit-t" title="enum cairo_svg_unit_t">cairo_svg_unit_t</a></td>
 </tr>
 </tbody>
 </table></div>
@@ -142,7 +162,7 @@ unique identifier will only be embedded once.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>filename</p></td>
-<td class="parameter_description"><p>a filename for the SVG output (must be writable), <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> may be
+<td class="parameter_description"><p>a filename for the SVG output (must be writable), <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> may be
 used to specify no output. This will generate a SVG surface that
 may be queried and used as a source, without generating a
 temporary file.</p></td>
@@ -195,7 +215,7 @@ incrementally to the stream represented by <em class="parameter"><code>write_fun
 <tbody>
 <tr>
 <td class="parameter_name"><p>write_func</p></td>
-<td class="parameter_description"><p>a <a class="link" href="cairo-PNG-Support.html#cairo-write-func-t" title="cairo_write_func_t ()"><span class="type">cairo_write_func_t</span></a> to accept the output data, may be <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+<td class="parameter_description"><p>a <a class="link" href="cairo-PNG-Support.html#cairo-write-func-t" title="cairo_write_func_t ()"><span class="type">cairo_write_func_t</span></a> to accept the output data, may be <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 to indicate a no-op <em class="parameter"><code>write_func</code></em>
 . With a no-op <em class="parameter"><code>write_func</code></em>
 ,
@@ -232,6 +252,77 @@ pointer to a "nil" surface if an error such as out of memory
 occurs. You can use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-status" title="cairo_surface_status ()"><code class="function">cairo_surface_status()</code></a> to check for this.</p>
 </div>
 <p class="since">Since: 1.2</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="cairo-svg-surface-get-document-unit"></a><h3>cairo_svg_surface_get_document_unit ()</h3>
+<pre class="programlisting"><a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-unit-t" title="enum cairo_svg_unit_t"><span class="returnvalue">cairo_svg_unit_t</span></a>
+cairo_svg_surface_get_document_unit (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>);</pre>
+<p>Get the unit of the SVG surface.</p>
+<p>If the surface passed as an argument is not a SVG surface, the function
+sets the error status to CAIRO_STATUS_SURFACE_TYPE_MISMATCH and returns
+CAIRO_SVG_UNIT_USER.</p>
+<div class="refsect3">
+<a name="cairo-svg-surface-get-document-unit.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>surface</p></td>
+<td class="parameter_description"><p>a SVG <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="cairo-svg-surface-get-document-unit.returns"></a><h4>Returns</h4>
+<p> the SVG unit of the SVG surface.</p>
+</div>
+<p class="since">Since: 1.16</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="cairo-svg-surface-set-document-unit"></a><h3>cairo_svg_surface_set_document_unit ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+cairo_svg_surface_set_document_unit (<em class="parameter"><code><a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a> *surface</code></em>,
+                                     <em class="parameter"><code><a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-unit-t" title="enum cairo_svg_unit_t"><span class="type">cairo_svg_unit_t</span></a> unit</code></em>);</pre>
+<p>Use the specified unit for the width and height of the generated SVG file.
+See <a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-unit-t" title="enum cairo_svg_unit_t"><span class="type">cairo_svg_unit_t</span></a> for a list of available unit values that can be used
+here.</p>
+<p>This function can be called at any time before generating the SVG file.</p>
+<p>However to minimize the risk of ambiguities it's recommended to call it
+before any drawing operations have been performed on the given surface, to
+make it clearer what the unit used in the drawing operations is.</p>
+<p>The simplest way to do this is to call this function immediately after
+creating the SVG surface.</p>
+<p>Note if this function is never called, the default unit for SVG documents
+generated by cairo will be "pt". This is for historical reasons.</p>
+<div class="refsect3">
+<a name="cairo-svg-surface-set-document-unit.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>surface</p></td>
+<td class="parameter_description"><p>a SVG <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-t" title="cairo_surface_t"><span class="type">cairo_surface_t</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>unit</p></td>
+<td class="parameter_description"><p>SVG unit</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: 1.16</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -309,7 +400,7 @@ cairo_svg_get_versions (<em class="parameter"><code><a class="link" href="cairo-
 cairo_svg_version_to_string (<em class="parameter"><code><a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-version-t" title="enum cairo_svg_version_t"><span class="type">cairo_svg_version_t</span></a> version</code></em>);</pre>
 <p>Get the string representation of the given <em class="parameter"><code>version</code></em>
  id. This function
-will return <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>version</code></em>
+will return <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>version</code></em>
  isn't valid. See <a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-get-versions" title="cairo_svg_get_versions ()"><code class="function">cairo_svg_get_versions()</code></a>
 for a way to get the list of valid version ids.</p>
 <div class="refsect3">
@@ -377,6 +468,102 @@ specification that a generated SVG file will conform to.</p>
 </div>
 <p class="since">Since: 1.2</p>
 </div>
+<hr>
+<div class="refsect2">
+<a name="cairo-svg-unit-t"></a><h3>enum cairo_svg_unit_t</h3>
+<p><em class="parameter"><code>CAIRO_SVG_UNIT_USER</code></em>
+: User unit, a value in the current coordinate system.
+  If used in the root element for the initial coordinate systems it
+  corresponds to pixels. (Since 1.16)
+<em class="parameter"><code>CAIRO_SVG_UNIT_EM</code></em>
+: The size of the element's font. (Since 1.16)
+<em class="parameter"><code>CAIRO_SVG_UNIT_EX</code></em>
+: The x-height of the element’s font. (Since 1.16)
+<em class="parameter"><code>CAIRO_SVG_UNIT_PX</code></em>
+: Pixels (1px = 1/96th of 1in). (Since 1.16)
+<em class="parameter"><code>CAIRO_SVG_UNIT_IN</code></em>
+: Inches (1in = 2.54cm = 96px). (Since 1.16)
+<em class="parameter"><code>CAIRO_SVG_UNIT_CM</code></em>
+: Centimeters (1cm = 96px/2.54). (Since 1.16)
+<em class="parameter"><code>CAIRO_SVG_UNIT_MM</code></em>
+: Millimeters (1mm = 1/10th of 1cm). (Since 1.16)
+<em class="parameter"><code>CAIRO_SVG_UNIT_PT</code></em>
+: Points (1pt = 1/72th of 1in). (Since 1.16)
+<em class="parameter"><code>CAIRO_SVG_UNIT_PC</code></em>
+: Picas (1pc = 1/6th of 1in). (Since 1.16)
+<em class="parameter"><code>CAIRO_SVG_UNIT_PERCENT</code></em>
+: Percent, a value that is some fraction of another
+  reference value. (Since 1.16)</p>
+<p><a class="link" href="cairo-SVG-Surfaces.html#cairo-svg-unit-t" title="enum cairo_svg_unit_t"><span class="type">cairo_svg_unit_t</span></a> is used to describe the units valid for coordinates and
+lengths in the SVG specification.</p>
+<p>See also:
+https://www.w3.org/TR/SVG/coords.html<span class="type">Units</span>
+https://www.w3.org/TR/SVG/types.html<span class="type">DataTypeLength</span>
+https://www.w3.org/TR/css-values-3/<span class="type">lengths</span></p>
+<div class="refsect3">
+<a name="cairo-svg-unit-t.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-USER:CAPS"></a>CAIRO_SVG_UNIT_USER</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-EM:CAPS"></a>CAIRO_SVG_UNIT_EM</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-EX:CAPS"></a>CAIRO_SVG_UNIT_EX</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-PX:CAPS"></a>CAIRO_SVG_UNIT_PX</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-IN:CAPS"></a>CAIRO_SVG_UNIT_IN</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-CM:CAPS"></a>CAIRO_SVG_UNIT_CM</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-MM:CAPS"></a>CAIRO_SVG_UNIT_MM</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-PT:CAPS"></a>CAIRO_SVG_UNIT_PT</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-PC:CAPS"></a>CAIRO_SVG_UNIT_PC</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="CAIRO-SVG-UNIT-PERCENT:CAPS"></a>CAIRO_SVG_UNIT_PERCENT</p></td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: 1.16</p>
+</div>
 </div>
 <div class="refsect1">
 <a name="cairo-SVG-Surfaces.see-also"></a><h2>See Also</h2>
@@ -384,6 +571,6 @@ specification that a generated SVG file will conform to.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

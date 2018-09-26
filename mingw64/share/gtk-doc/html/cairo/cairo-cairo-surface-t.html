@@ -8,7 +8,7 @@
 <link rel="up" href="cairo-surfaces.html" title="Surfaces">
 <link rel="prev" href="cairo-cairo-device-t.html" title="cairo_device_t">
 <link rel="next" href="cairo-Image-Surfaces.html" title="Image Surfaces">
-<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -378,27 +378,53 @@ functions. If you do this, keep in mind that it is mandatory that you call
 you must use <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-mark-dirty" title="cairo_surface_mark_dirty ()"><code class="function">cairo_surface_mark_dirty()</code></a> after modifying it.</p>
 <div class="example">
 <a name="id-1.5.3.5.5"></a><p class="title"><b>Example 1. Directly modifying an image surface</b></p>
-<div class="example-contents"><pre class="programlisting">
-void
-modify_image_surface (cairo_surface_t *surface)
-{
-  unsigned char *data;
-  int width, height, stride;
+<div class="example-contents">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">void</span>
+<span class="function">modify_image_surface</span> <span class="gtkdoc opt">(</span>cairo_surface_t <span class="gtkdoc opt">*</span>surface<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="gtkdoc kwb">unsigned char</span> <span class="gtkdoc opt">*</span>data<span class="gtkdoc opt">;</span>
+  <span class="gtkdoc kwb">int</span> width<span class="gtkdoc opt">,</span> height<span class="gtkdoc opt">,</span> stride<span class="gtkdoc opt">;</span>
 
-  // flush to ensure all writing to the image was done
-  cairo_surface_flush (surface);
+  <span class="gtkdoc slc">// flush to ensure all writing to the image was done</span>
+  <span class="function"><a href="cairo-cairo-surface-t.html#cairo-surface-flush">cairo_surface_flush</a></span> <span class="gtkdoc opt">(</span>surface<span class="gtkdoc opt">);</span>
 
-  // modify the image
-  data = cairo_image_surface_get_data (surface);
-  width = cairo_image_surface_get_width (surface);
-  height = cairo_image_surface_get_height (surface);
-  stride = cairo_image_surface_get_stride (surface);
-  modify_image_data (data, width, height, stride);
+  <span class="gtkdoc slc">// modify the image</span>
+  data <span class="gtkdoc opt">=</span> <span class="function"><a href="cairo-Image-Surfaces.html#cairo-image-surface-get-data">cairo_image_surface_get_data</a></span> <span class="gtkdoc opt">(</span>surface<span class="gtkdoc opt">);</span>
+  width <span class="gtkdoc opt">=</span> <span class="function"><a href="cairo-Image-Surfaces.html#cairo-image-surface-get-width">cairo_image_surface_get_width</a></span> <span class="gtkdoc opt">(</span>surface<span class="gtkdoc opt">);</span>
+  height <span class="gtkdoc opt">=</span> <span class="function"><a href="cairo-Image-Surfaces.html#cairo-image-surface-get-height">cairo_image_surface_get_height</a></span> <span class="gtkdoc opt">(</span>surface<span class="gtkdoc opt">);</span>
+  stride <span class="gtkdoc opt">=</span> <span class="function"><a href="cairo-Image-Surfaces.html#cairo-image-surface-get-stride">cairo_image_surface_get_stride</a></span> <span class="gtkdoc opt">(</span>surface<span class="gtkdoc opt">);</span>
+  <span class="function">modify_image_data</span> <span class="gtkdoc opt">(</span>data<span class="gtkdoc opt">,</span> width<span class="gtkdoc opt">,</span> height<span class="gtkdoc opt">,</span> stride<span class="gtkdoc opt">);</span>
 
-  // mark the image dirty so Cairo clears its caches.
-  cairo_surface_mark_dirty (surface);
-}
-</pre></div>
+  <span class="gtkdoc slc">// mark the image dirty so Cairo clears its caches.</span>
+  <span class="function"><a href="cairo-cairo-surface-t.html#cairo-surface-mark-dirty">cairo_surface_mark_dirty</a></span> <span class="gtkdoc opt">(</span>surface<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 </div>
 <br class="example-break"><p>Note that for other surface types it might be necessary to acquire the
 surface's device first. See <a class="link" href="cairo-cairo-device-t.html#cairo-device-acquire" title="cairo_device_acquire ()"><code class="function">cairo_device_acquire()</code></a> for a discussion of
@@ -780,7 +806,7 @@ See <a class="link" href="cairo-cairo-device-t.html#cairo-device-t" title="cairo
 <div class="refsect3">
 <a name="cairo-surface-get-device.returns"></a><h4>Returns</h4>
 <p> The device for <em class="parameter"><code>surface</code></em>
-or <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the surface does
+or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the surface does
 not have an associated device.</p>
 </div>
 <p class="since">Since: 1.10</p>
@@ -1263,7 +1289,7 @@ cairo_surface_set_user_data (<em class="parameter"><code><a class="link" href="c
                              <em class="parameter"><code><a class="link" href="cairo-Types.html#cairo-destroy-func-t" title="cairo_destroy_func_t ()"><span class="type">cairo_destroy_func_t</span></a> destroy</code></em>);</pre>
 <p>Attach user data to <em class="parameter"><code>surface</code></em>
 .  To remove user data from a surface,
-call this function with the key that was used to set it and <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+call this function with the key that was used to set it and <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 for <em class="parameter"><code>data</code></em>
 .</p>
 <div class="refsect3">
@@ -1316,7 +1342,7 @@ cairo_surface_get_user_data (<em class="parameter"><code><a class="link" href="c
 <p>Return user data previously attached to <em class="parameter"><code>surface</code></em>
  using the specified
 key.  If no user data has been attached with the given key this
-function returns <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+function returns <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <div class="refsect3">
 <a name="cairo-surface-get-user-data.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1342,7 +1368,7 @@ attached to</p></td>
 </div>
 <div class="refsect3">
 <a name="cairo-surface-get-user-data.returns"></a><h4>Returns</h4>
-<p> the user data previously attached or <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+<p> the user data previously attached or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 </div>
 <p class="since">Since: 1.0</p>
 </div>
@@ -1409,7 +1435,7 @@ cairo_surface_has_show_text_glyphs (<em class="parameter"><code><a class="link" 
 sophisticated <a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a> operations.  That is,
 whether it actually uses the provided text and cluster data
 to a <a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a> call.</p>
-<p>Note: Even if this function returns <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>, a
+<p>Note: Even if this function returns <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>, a
 <a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a> operation targeted at <em class="parameter"><code>surface</code></em>
  will
 still succeed.  It just will
@@ -1433,9 +1459,9 @@ target surface does not use it.</p>
 </div>
 <div class="refsect3">
 <a name="cairo-surface-has-show-text-glyphs.returns"></a><h4>Returns</h4>
-<p> <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>surface</code></em>
+<p> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>surface</code></em>
 supports
-<a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a>, <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<a class="link" href="cairo-text.html#cairo-show-text-glyphs" title="cairo_show_text_glyphs ()"><code class="function">cairo_show_text_glyphs()</code></a>, <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
 </div>
 <p class="since">Since: 1.8</p>
 </div>
@@ -1453,7 +1479,7 @@ cairo_surface_set_mime_data (<em class="parameter"><code><a class="link" href="c
  to <em class="parameter"><code>surface</code></em>
 . To remove
 the data from a surface, call this function with same mime type
-and <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for <em class="parameter"><code>data</code></em>
+and <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for <em class="parameter"><code>data</code></em>
 .</p>
 <p>The attached image (or filename) data can later be used by backends
 which support it (currently: PDF, PS, SVG and Win32 Printing
@@ -1543,7 +1569,7 @@ cairo_surface_get_mime_data (<em class="parameter"><code><a class="link" href="c
  using the
 specified mime type.  If no data has been attached with the given
 mime type, <em class="parameter"><code>data</code></em>
- is set <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
+ is set <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <div class="refsect3">
 <a name="cairo-surface-get-mime-data.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1611,10 +1637,10 @@ cairo_surface_supports_mime_type (<em class="parameter"><code><a class="link" hr
 </div>
 <div class="refsect3">
 <a name="cairo-surface-supports-mime-type.returns"></a><h4>Returns</h4>
-<p> <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>surface</code></em>
+<p> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>surface</code></em>
 supports
 <em class="parameter"><code>mime_type</code></em>
-, <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+, <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
 </div>
 <p class="since">Since: 1.12</p>
 </div>
@@ -1627,7 +1653,7 @@ cairo_surface_map_to_image (<em class="parameter"><code><a class="link" href="ca
 <p>Returns an image surface that is the most efficient mechanism for
 modifying the backing store of the target surface. The region retrieved
 may be limited to the <em class="parameter"><code>extents</code></em>
- or <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for the whole surface</p>
+ or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for the whole surface</p>
 <p>Note, the use of the original surface as a target or source whilst
 it is mapped is undefined. The result of mapping the surface
 multiple times is undefined. Calling <a class="link" href="cairo-cairo-surface-t.html#cairo-surface-destroy" title="cairo_surface_destroy ()"><code class="function">cairo_surface_destroy()</code></a> or
@@ -1713,8 +1739,6 @@ results in undefined behavior.</p>
 <a name="CAIRO-HAS-MIME-SURFACE:CAPS"></a><h3>CAIRO_HAS_MIME_SURFACE</h3>
 <pre class="programlisting">#define CAIRO_HAS_MIME_SURFACE 1
 </pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -2103,6 +2127,6 @@ the wrong type is undefined.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="cairo-drawing.html" title="Drawing">
 <link rel="prev" href="cairo-cairo-t.html" title="cairo_t">
 <link rel="next" href="cairo-cairo-pattern-t.html" title="cairo_pattern_t">
-<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.27 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -248,7 +248,7 @@ cairo_copy_path (<em class="parameter"><code><a class="link" href="cairo-cairo-t
 <a class="link" href="cairo-Paths.html#cairo-path-t" title="cairo_path_t"><span class="type">cairo_path_t</span></a>. See <a class="link" href="cairo-Paths.html#cairo-path-data-t" title="union cairo_path_data_t"><span class="type">cairo_path_data_t</span></a> for hints on how to iterate
 over the returned data structure.</p>
 <p>This function will always return a valid pointer, but the result
-will have no data (<code class="literal">data==<a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></code> and
+will have no data (<code class="literal">data==<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></code> and
 <code class="literal">num_data==0</code>), if either of the following
 conditions hold:</p>
 <div class="orderedlist"><ol class="orderedlist" type="1">
@@ -297,7 +297,7 @@ value). That is, the result is guaranteed to not have any elements
 of type <a class="link" href="cairo-Paths.html#CAIRO-PATH-CURVE-TO:CAPS"><code class="literal">CAIRO_PATH_CURVE_TO</code></a> which will instead be replaced by a
 series of <a class="link" href="cairo-Paths.html#CAIRO-PATH-LINE-TO:CAPS"><code class="literal">CAIRO_PATH_LINE_TO</code></a> elements.</p>
 <p>This function will always return a valid pointer, but the result
-will have no data (<code class="literal">data==<a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></code> and
+will have no data (<code class="literal">data==<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></code> and
 <code class="literal">num_data==0</code>), if either of the following
 conditions hold:</p>
 <div class="orderedlist"><ol class="orderedlist" type="1">
@@ -629,13 +629,25 @@ in the box given by <em class="parameter"><code>x</code></em>
 , <em class="parameter"><code>width</code></em>
 , <em class="parameter"><code>height</code></em>
 :</p>
-<div class="informalexample"><pre class="programlisting">
-cairo_save (cr);
-cairo_translate (cr, x + width / 2., y + height / 2.);
-cairo_scale (cr, width / 2., height / 2.);
-cairo_arc (cr, 0., 0., 1., 0., 2 * M_PI);
-cairo_restore (cr);
-</pre></div>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="cairo-cairo-t.html#cairo-save">cairo_save</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">);</span>
+<span class="function"><a href="cairo-Transformations.html#cairo-translate">cairo_translate</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">,</span> x <span class="gtkdoc opt">+</span> width <span class="gtkdoc opt">/</span> <span class="number">2</span><span class="gtkdoc opt">.,</span> y <span class="gtkdoc opt">+</span> height <span class="gtkdoc opt">/</span> <span class="number">2</span><span class="gtkdoc opt">.);</span>
+<span class="function"><a href="cairo-Transformations.html#cairo-scale">cairo_scale</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">,</span> width <span class="gtkdoc opt">/</span> <span class="number">2</span><span class="gtkdoc opt">.,</span> height <span class="gtkdoc opt">/</span> <span class="number">2</span><span class="gtkdoc opt">.);</span>
+<span class="function"><a href="cairo-Paths.html#cairo-arc">cairo_arc</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">.,</span> <span class="number">0</span><span class="gtkdoc opt">.,</span> <span class="number">1</span><span class="gtkdoc opt">.,</span> <span class="number">0</span><span class="gtkdoc opt">.,</span> <span class="number">2</span> <span class="gtkdoc opt">*</span> M_PI<span class="gtkdoc opt">);</span>
+<span class="function"><a href="cairo-cairo-t.html#cairo-restore">cairo_restore</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">);</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <div class="refsect3">
 <a name="cairo-arc.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -929,13 +941,25 @@ path at position (<em class="parameter"><code>x</code></em>
 , <em class="parameter"><code>y</code></em>
 ) in user-space coordinates.</p>
 <p>This function is logically equivalent to:</p>
-<div class="informalexample"><pre class="programlisting">
-cairo_move_to (cr, x, y);
-cairo_rel_line_to (cr, width, 0);
-cairo_rel_line_to (cr, 0, height);
-cairo_rel_line_to (cr, -width, 0);
-cairo_close_path (cr);
-</pre></div>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="cairo-Paths.html#cairo-move-to">cairo_move_to</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">,</span> x<span class="gtkdoc opt">,</span> y<span class="gtkdoc opt">);</span>
+<span class="function"><a href="cairo-Paths.html#cairo-rel-line-to">cairo_rel_line_to</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">,</span> width<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">);</span>
+<span class="function"><a href="cairo-Paths.html#cairo-rel-line-to">cairo_rel_line_to</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">,</span> height<span class="gtkdoc opt">);</span>
+<span class="function"><a href="cairo-Paths.html#cairo-rel-line-to">cairo_rel_line_to</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">, -</span>width<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">);</span>
+<span class="function"><a href="cairo-Paths.html#cairo-close-path">cairo_close_path</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">);</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <div class="refsect3">
 <a name="cairo-rectangle.parameters"></a><h4>Parameters</h4>
 <div class="informaltable"><table class="informaltable" width="100%" border="0">
@@ -1051,7 +1075,7 @@ serious text-using applications. See <a class="link" href="cairo-Paths.html#cair
 </tr>
 <tr>
 <td class="parameter_name"><p>utf8</p></td>
-<td class="parameter_description"><p>a NUL-terminated string of text encoded in UTF-8, or <a href="/usr/share/gtk-doc/html/glibglib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
+<td class="parameter_description"><p>a NUL-terminated string of text encoded in UTF-8, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 </tbody>
@@ -1400,34 +1424,67 @@ where the number of points for each element type is as follows:</p>
 with <a class="link" href="cairo-Paths.html#cairo-move-to" title="cairo_move_to ()"><code class="function">cairo_move_to()</code></a>, <a class="link" href="cairo-Paths.html#cairo-line-to" title="cairo_line_to ()"><code class="function">cairo_line_to()</code></a>, <a class="link" href="cairo-Paths.html#cairo-curve-to" title="cairo_curve_to ()"><code class="function">cairo_curve_to()</code></a>, and
 <a class="link" href="cairo-Paths.html#cairo-close-path" title="cairo_close_path ()"><code class="function">cairo_close_path()</code></a>.</p>
 <p>Here is sample code for iterating through a <a class="link" href="cairo-Paths.html#cairo-path-t" title="cairo_path_t"><span class="type">cairo_path_t</span></a>:</p>
-<div class="informalexample"><pre class="programlisting">
-     int i;
-     cairo_path_t *path;
-     cairo_path_data_t *data;
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">int</span> i<span class="gtkdoc opt">;</span>
+cairo_path_t <span class="gtkdoc opt">*</span>path<span class="gtkdoc opt">;</span>
+cairo_path_data_t <span class="gtkdoc opt">*</span>data<span class="gtkdoc opt">;</span>
  
-     path = cairo_copy_path (cr);
+path <span class="gtkdoc opt">=</span> <span class="function"><a href="cairo-Paths.html#cairo-copy-path">cairo_copy_path</a></span> <span class="gtkdoc opt">(</span>cr<span class="gtkdoc opt">);</span>
  
-     for (i=0; i &lt; path-&gt;num_data; i += path-&gt;data[i].header.length) {
-         data = &amp;path-&gt;data[i];
-         switch (data-&gt;header.type) {
-         case CAIRO_PATH_MOVE_TO:
-             do_move_to_things (data[1].point.x, data[1].point.y);
-             break;
-         case CAIRO_PATH_LINE_TO:
-             do_line_to_things (data[1].point.x, data[1].point.y);
-             break;
-         case CAIRO_PATH_CURVE_TO:
-             do_curve_to_things (data[1].point.x, data[1].point.y,
-                                 data[2].point.x, data[2].point.y,
-                                 data[3].point.x, data[3].point.y);
-             break;
-         case CAIRO_PATH_CLOSE_PATH:
-             do_close_path_things ();
-             break;
-         }
-     }
-     cairo_path_destroy (path);
-</pre></div>
+<span class="keyword">for</span> <span class="gtkdoc opt">(</span>i<span class="gtkdoc opt">=</span><span class="number">0</span><span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">&lt;</span> path<span class="gtkdoc opt">-&gt;</span>num_data<span class="gtkdoc opt">;</span> i <span class="gtkdoc opt">+=</span> path<span class="gtkdoc opt">-&gt;</span>data<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">].</span>header<span class="gtkdoc opt">.</span>length<span class="gtkdoc opt">) {</span>
+    data <span class="gtkdoc opt">= &amp;</span>path<span class="gtkdoc opt">-&gt;</span>data<span class="gtkdoc opt">[</span>i<span class="gtkdoc opt">];</span>
+    <span class="keyword">switch</span> <span class="gtkdoc opt">(</span>data<span class="gtkdoc opt">-&gt;</span>header<span class="gtkdoc opt">.</span>type<span class="gtkdoc opt">) {</span>
+    <span class="keyword">case</span> CAIRO_PATH_MOVE_TO<span class="gtkdoc opt">:</span>
+        <span class="function">do_move_to_things</span> <span class="gtkdoc opt">(</span>data<span class="gtkdoc opt">[</span><span class="number">1</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>x<span class="gtkdoc opt">,</span> data<span class="gtkdoc opt">[</span><span class="number">1</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>y<span class="gtkdoc opt">);</span>
+        <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+    <span class="keyword">case</span> CAIRO_PATH_LINE_TO<span class="gtkdoc opt">:</span>
+        <span class="function">do_line_to_things</span> <span class="gtkdoc opt">(</span>data<span class="gtkdoc opt">[</span><span class="number">1</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>x<span class="gtkdoc opt">,</span> data<span class="gtkdoc opt">[</span><span class="number">1</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>y<span class="gtkdoc opt">);</span>
+        <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+    <span class="keyword">case</span> CAIRO_PATH_CURVE_TO<span class="gtkdoc opt">:</span>
+        <span class="function">do_curve_to_things</span> <span class="gtkdoc opt">(</span>data<span class="gtkdoc opt">[</span><span class="number">1</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>x<span class="gtkdoc opt">,</span> data<span class="gtkdoc opt">[</span><span class="number">1</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>y<span class="gtkdoc opt">,</span>
+                            data<span class="gtkdoc opt">[</span><span class="number">2</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>x<span class="gtkdoc opt">,</span> data<span class="gtkdoc opt">[</span><span class="number">2</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>y<span class="gtkdoc opt">,</span>
+                            data<span class="gtkdoc opt">[</span><span class="number">3</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>x<span class="gtkdoc opt">,</span> data<span class="gtkdoc opt">[</span><span class="number">3</span><span class="gtkdoc opt">].</span>point<span class="gtkdoc opt">.</span>y<span class="gtkdoc opt">);</span>
+        <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+    <span class="keyword">case</span> CAIRO_PATH_CLOSE_PATH<span class="gtkdoc opt">:</span>
+        <span class="function">do_close_path_things</span> <span class="gtkdoc opt">();</span>
+        <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+    <span class="gtkdoc opt">}</span>
+<span class="gtkdoc opt">}</span>
+<span class="function"><a href="cairo-Paths.html#cairo-path-destroy">cairo_path_destroy</a></span> <span class="gtkdoc opt">(</span>path<span class="gtkdoc opt">);</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p>As of cairo 1.4, cairo does not mind if there are more elements in
 a portion of the path than needed.  Such elements can be used by
 users of the cairo API to hold extra values in the path data
@@ -1488,6 +1545,6 @@ See <a class="link" href="cairo-Paths.html#cairo-path-data-t" title="union cairo
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.25</div>
+<hr>Generated by GTK-Doc V1.27</div>
 </body>
 </html>
