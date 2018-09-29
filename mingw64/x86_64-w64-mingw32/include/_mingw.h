@@ -229,7 +229,7 @@ limitations in handling dllimport attribute.  */
 
 
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x502
+#define _WIN32_WINNT 0x601
 #endif
 
 #ifndef _INT128_DEFINED

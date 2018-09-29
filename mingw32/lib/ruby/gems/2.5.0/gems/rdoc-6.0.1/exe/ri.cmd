@@ -1,7 +1,7 @@
 :""||{ ""=> %q<-*- ruby -*-
 @"%~dp0ruby" -x "%~f0" %*
 @exit /b %ERRORLEVEL%
-};{#
+};{ #
 bindir="${0%/*}" #
 exec "$bindir/ruby" "-x" "$0" "$@" #
 >,
