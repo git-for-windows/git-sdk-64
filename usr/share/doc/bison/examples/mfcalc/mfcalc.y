@@ -1,4 +1,3 @@
-
 %{
   #include <stdio.h>  /* For printf, etc. */
   #include <math.h>   /* For pow, used in the grammar.  */
@@ -7,19 +6,16 @@
   void yyerror (char const *);
 %}
 
-
 %define api.value.type union /* Generate YYSTYPE from these types:  */
 %token <double>  NUM         /* Simple double precision number.  */
 %token <symrec*> VAR FNCT    /* Symbol table pointer: variable and function.  */
 %type  <double>  exp
-
 
 %precedence '='
 %left '-' '+'
 %left '*' '/'
 %precedence NEG /* negation--unary minus */
 %right '^'      /* exponentiation */
-
 /* Generate the parser description file.  */
 %verbose
 /* Enable run-time traces (yydebug).  */
@@ -30,21 +26,16 @@
 %printer { fprintf (yyoutput, "%s()", $$->name); } FNCT;
 %printer { fprintf (yyoutput, "%g", $$); } <double>;
 %% /* The grammar follows.  */
-
 input:
   %empty
 | input line
 ;
-
-
 
 line:
   '\n'
 | exp '\n'   { printf ("%.10g\n", $1); }
 | error '\n' { yyerrok;                }
 ;
-
-
 
 exp:
   NUM                { $$ = $1;                         }
@@ -59,7 +50,6 @@ exp:
 | exp '^' exp        { $$ = pow ($1, $3);               }
 | '(' exp ')'        { $$ = $2;                         }
 ;
-
 /* End of grammar.  */
 %%
 
@@ -68,8 +58,6 @@ struct init
   char const *fname;
   double (*fnct) (double);
 };
-
-
 
 struct init const arith_fncts[] =
 {
@@ -82,12 +70,8 @@ struct init const arith_fncts[] =
   { 0, 0 },
 };
 
-
-
 /* The symbol table: a chain of 'struct symrec'.  */
 symrec *sym_table;
-
-
 
 /* Put arithmetic functions in table.  */
 static
@@ -105,7 +89,6 @@ init_table (void)
 #include <stdlib.h> /* malloc. */
 #include <string.h> /* strlen. */
 
-
 symrec *
 putsym (char const *sym_name, int sym_type)
 {
@@ -118,8 +101,6 @@ putsym (char const *sym_name, int sym_type)
   sym_table = ptr;
   return ptr;
 }
-
-
 
 symrec *
 getsym (char const *sym_name)
@@ -134,7 +115,6 @@ getsym (char const *sym_name)
 
 #include <ctype.h>
 
-
 int
 yylex (void)
 {
@@ -147,8 +127,6 @@ yylex (void)
   if (c == EOF)
     return 0;
 
-
-
   /* Char starts a number => parse the number.         */
   if (c == '.' || isdigit (c))
     {
@@ -156,7 +134,6 @@ yylex (void)
       scanf ("%lf", &yylval.NUM);
       return NUM;
     }
-
 
   /* Char starts an identifier => read the name.       */
   if (isalpha (c))
@@ -167,13 +144,11 @@ yylex (void)
       static char *symbuf = 0;
       symrec *s;
       int i;
-
       if (!symbuf)
         symbuf = (char *) malloc (length + 1);
 
       i = 0;
       do
-
         {
           /* If buffer is full, make it bigger.        */
           if (i == length)
@@ -186,14 +161,10 @@ yylex (void)
           /* Get another character.                    */
           c = getchar ();
         }
-
-
       while (isalnum (c));
 
       ungetc (c, stdin);
       symbuf[i] = '\0';
-
-
 
       s = getsym (symbuf);
       if (s == 0)
@@ -206,15 +177,12 @@ yylex (void)
   return c;
 }
 
-
 /* Called by yyparse on error.  */
 void
 yyerror (char const *s)
 {
   fprintf (stderr, "%s\n", s);
 }
-
-
 
 int
 main (int argc, char const* argv[])
@@ -227,4 +195,3 @@ main (int argc, char const* argv[])
   init_table ();
   return yyparse ();
 }
-

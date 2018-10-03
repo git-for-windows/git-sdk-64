@@ -1,13 +1,11 @@
 /* Reverse Polish Notation calculator.  */
 
-
 %{
   #include <stdio.h>
   #include <math.h>
   int yylex (void);
   void yyerror (char const *);
 %}
-
 
 %define api.value.type {double}
 %token NUM
@@ -19,14 +17,10 @@ input:
 | input line
 ;
 
-
-
 line:
   '\n'
 | exp '\n'      { printf ("%.10g\n", $1); }
 ;
-
-
 
 exp:
   NUM           { $$ = $1;           }
@@ -37,7 +31,6 @@ exp:
 | exp exp '^'   { $$ = pow ($1, $2); }  /* Exponentiation */
 | exp 'n'       { $$ = -$1;          }  /* Unary minus    */
 ;
-
 %%
 
 /* The lexical analyzer returns a double floating point
@@ -47,8 +40,6 @@ exp:
 
 #include <ctype.h>
 
-
-
 int
 yylex (void)
 {
@@ -57,8 +48,6 @@ yylex (void)
   /* Skip white space.  */
   while ((c = getchar ()) == ' ' || c == '\t')
     continue;
-
-
   /* Process numbers.  */
   if (c == '.' || isdigit (c))
     {
@@ -66,15 +55,12 @@ yylex (void)
       scanf ("%lf", &yylval);
       return NUM;
     }
-
-
   /* Return end-of-input.  */
   if (c == EOF)
     return 0;
   /* Return a single char.  */
   return c;
 }
-
 
 int
 main (void)
@@ -84,11 +70,9 @@ main (void)
 
 #include <stdio.h>
 
-
 /* Called by yyparse on error.  */
 void
 yyerror (char const *s)
 {
   fprintf (stderr, "%s\n", s);
 }
-
