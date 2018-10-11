@@ -347,7 +347,7 @@ BINDTEXTDOMAIN (const char *domainname, const char *dirname)
         }
     }
 #endif
-  if (!access (dirname, R_OK)) {
+  if (!dirname || !access (dirname, R_OK)) {
 	  set_binding_values (domainname, &dirname, NULL);
 #ifdef __EMX__
 	  dirname = saved_dirname;
