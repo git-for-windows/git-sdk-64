@@ -1,6 +1,6 @@
-This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 12 February 2018 for version 3.6.2 of
+This manual is last updated 16 September 2018 for version 3.6.4 of
 GnuTLS.
 
 Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
@@ -19,12 +19,12 @@ END-INFO-DIR-ENTRY
 
 INFO-DIR-SECTION System Administration
 START-INFO-DIR-ENTRY
-* certtool: (gnutls)Invoking certtool.	Manipulate certificates and keys.
-* gnutls-serv: (gnutls)Invoking gnutls-serv.	GnuTLS test server.
-* gnutls-cli: (gnutls)Invoking gnutls-cli.	GnuTLS test client.
-* gnutls-cli-debug: (gnutls)Invoking gnutls-cli-debug.	GnuTLS debug client.
-* psktool: (gnutls)Invoking psktool.	Simple TLS-Pre-Shared-Keys manager.
-* srptool: (gnutls)Invoking srptool.	Simple SRP password tool.
+* certtool: (gnutls)certtool Invocation.	Manipulate certificates and keys.
+* gnutls-serv: (gnutls)gnutls-serv Invocation.	GnuTLS test server.
+* gnutls-cli: (gnutls)gnutls-cli Invocation.	GnuTLS test client.
+* gnutls-cli-debug: (gnutls)gnutls-cli-debug Invocation.	GnuTLS debug client.
+* psktool: (gnutls)psktool Invocation.	Simple TLS-Pre-Shared-Keys manager.
+* srptool: (gnutls)srptool Invocation.	Simple SRP password tool.
 END-INFO-DIR-ENTRY
 
 
@@ -4298,6 +4298,34 @@ gnutls_x509_crt_get_pk_ecc_raw
 
      *Since:* 3.4.1
 
+gnutls_x509_crt_get_pk_gost_raw
+-------------------------------
+
+ -- Function: int gnutls_x509_crt_get_pk_gost_raw (gnutls_x509_crt_t
+          CRT, gnutls_ecc_curve_t * CURVE, gnutls_digest_algorithm_t *
+          DIGEST, gnutls_gost_paramset_t * PARAMSET, gnutls_datum_t * X,
+          gnutls_datum_t * Y)
+     CRT: Holds the certificate
+
+     CURVE: will hold the curve
+
+     DIGEST: - undescribed -
+
+     PARAMSET: will hold paramset
+
+     X: will hold x
+
+     Y: will hold y
+
+     This function will export the GOST public key's parameters found in
+     the given certificate.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.3
+
 gnutls_x509_crt_get_pk_oid
 --------------------------
 
@@ -4869,18 +4897,53 @@ gnutls_x509_crt_list_import2
 
      This function will convert the given PEM encoded certificate list
      to the native gnutls_x509_crt_t format.  The output will be stored
-     in 'certs' which will allocated and initialized.
+     in 'certs' which will be allocated and initialized.
 
      If the Certificate is PEM encoded it should have a header of "X509
      CERTIFICATE", or "CERTIFICATE".
 
      To deinitialize 'certs' , you need to deinitialize each crt
-     structure independently, and use 'gnutls_free()' at
+     structure independently, and use 'gnutls_free()' at 'certs' .
 
      *Returns:* the number of certificates read or a negative error
      value.
 
      *Since:* 3.0
+
+gnutls_x509_crt_list_import_url
+-------------------------------
+
+ -- Function: int gnutls_x509_crt_list_import_url (gnutls_x509_crt_t **
+          CERTS, unsigned int * SIZE, const char * URL,
+          gnutls_pin_callback_t PIN_FN, void * PIN_FN_USERDATA, unsigned
+          int FLAGS)
+     CERTS: Will hold the allocated certificate list.
+
+     SIZE: It will contain the size of the list.
+
+     URL: A PKCS 11 url
+
+     PIN_FN: a PIN callback if not globally set
+
+     PIN_FN_USERDATA: parameter for the PIN callback
+
+     FLAGS: One of GNUTLS_PKCS11_OBJ_* flags for PKCS'11' URLs or zero
+     otherwise
+
+     This function will import a certificate chain present in a PKCS'11'
+     token or any type of back-end that supports URLs.  The certificates
+     must be deinitialized afterwards using 'gnutls_x509_crt_deinit()'
+     and the returned pointer must be freed using 'gnutls_free()' .
+
+     The URI provided must be the first certificate in the chain;
+     subsequent certificates will be retrieved using
+     'gnutls_pkcs11_get_raw_issuer()' or equivalent functionality for
+     the supported URI.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.3
 
 gnutls_x509_crt_list_verify
 ---------------------------
@@ -5636,30 +5699,6 @@ gnutls_x509_crt_set_spki
 
      *Since:* 3.6.0
 
-gnutls_x509_crt_set_subject_alternative_name
---------------------------------------------
-
- -- Function: int gnutls_x509_crt_set_subject_alternative_name
-          (gnutls_x509_crt_t CRT, gnutls_x509_subject_alt_name_t TYPE,
-          const char * DATA_STRING)
-     CRT: a certificate of type 'gnutls_x509_crt_t'
-
-     TYPE: is one of the gnutls_x509_subject_alt_name_t enumerations
-
-     DATA_STRING: The data to be set, a (0) terminated string
-
-     This function will set the subject alternative name certificate
-     extension.  This function assumes that data can be expressed as a
-     null terminated string.
-
-     The name of the function is unfortunate since it is inconsistent
-     with 'gnutls_x509_crt_get_subject_alt_name()' .
-
-     See 'gnutls_x509_crt_set_subject_alt_name()' for more information.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
-
 gnutls_x509_crt_set_subject_alt_name
 ------------------------------------
 
@@ -5723,6 +5762,30 @@ gnutls_x509_crt_set_subject_alt_othername
      otherwise a negative error value.
 
      *Since:* 3.5.0
+
+gnutls_x509_crt_set_subject_alternative_name
+--------------------------------------------
+
+ -- Function: int gnutls_x509_crt_set_subject_alternative_name
+          (gnutls_x509_crt_t CRT, gnutls_x509_subject_alt_name_t TYPE,
+          const char * DATA_STRING)
+     CRT: a certificate of type 'gnutls_x509_crt_t'
+
+     TYPE: is one of the gnutls_x509_subject_alt_name_t enumerations
+
+     DATA_STRING: The data to be set, a (0) terminated string
+
+     This function will set the subject alternative name certificate
+     extension.  This function assumes that data can be expressed as a
+     null terminated string.
+
+     The name of the function is unfortunate since it is inconsistent
+     with 'gnutls_x509_crt_get_subject_alt_name()' .
+
+     See 'gnutls_x509_crt_set_subject_alt_name()' for more information.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
 
 gnutls_x509_crt_set_subject_key_id
 ----------------------------------
@@ -7280,13 +7343,50 @@ gnutls_x509_privkey_export_ecc_raw
 
      This function will export the ECC private key's parameters found in
      the given structure.  The new parameters will be allocated using
-     'gnutls_malloc()' and will be stored in the appropriate datum.  For
-     EdDSA keys, the 'y' value should be 'NULL' .
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     In EdDSA curves the 'y' parameter will be 'NULL' and the other
+     parameters will be in the native format for the curve.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
      *Since:* 3.0
+
+gnutls_x509_privkey_export_gost_raw
+-----------------------------------
+
+ -- Function: int gnutls_x509_privkey_export_gost_raw
+          (gnutls_x509_privkey_t KEY, gnutls_ecc_curve_t * CURVE,
+          gnutls_digest_algorithm_t * DIGEST, gnutls_gost_paramset_t *
+          PARAMSET, gnutls_datum_t * X, gnutls_datum_t * Y,
+          gnutls_datum_t * K)
+     KEY: a key
+
+     CURVE: will hold the curve
+
+     DIGEST: will hold the digest
+
+     PARAMSET: will hold the parameters id
+
+     X: will hold the x coordinate
+
+     Y: will hold the y coordinate
+
+     K: will hold the private key
+
+     This function will export the GOST private key's parameters found
+     in the given structure.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     *Note:* parameters will be stored with least significant byte
+     first.  On version 3.6.3 this was incorrectly returned in
+     big-endian format.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.3
 
 gnutls_x509_privkey_export_pkcs8
 --------------------------------
@@ -7687,13 +7787,50 @@ gnutls_x509_privkey_import_ecc_raw
 
      This function will convert the given elliptic curve parameters to
      the native 'gnutls_x509_privkey_t' format.  The output will be
-     stored in 'key' .  For EdDSA keys, the 'x' and 'k' values will be
-     read.
+     stored in 'key' .  For EdDSA keys, the 'x' and 'k' values must be
+     in the native to curve format.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
      *Since:* 3.0
+
+gnutls_x509_privkey_import_gost_raw
+-----------------------------------
+
+ -- Function: int gnutls_x509_privkey_import_gost_raw
+          (gnutls_x509_privkey_t KEY, gnutls_ecc_curve_t CURVE,
+          gnutls_digest_algorithm_t DIGEST, gnutls_gost_paramset_t
+          PARAMSET, const gnutls_datum_t * X, const gnutls_datum_t * Y,
+          const gnutls_datum_t * K)
+     KEY: The data to store the parsed key
+
+     CURVE: holds the curve
+
+     DIGEST: - undescribed -
+
+     PARAMSET: holds the parameters id
+
+     X: holds the x
+
+     Y: holds the y
+
+     K: holds the k
+
+     This function will convert the given GOST private key's parameters
+     to the native 'gnutls_x509_privkey_t' format.  The output will be
+     stored in 'key' .  'digest' should be one of GNUTLS_DIG_GOSR_94,
+     GNUTLS_DIG_STREEBOG_256 or GNUTLS_DIG_STREEBOG_512.  If 'paramset'
+     is set to GNUTLS_GOST_PARAMSET_UNKNOWN default one will be selected
+     depending on 'digest' .
+
+     *Note:* parameters should be stored with least significant byte
+     first.  On version 3.6.3 big-endian format was used incorrectly.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.3
 
 gnutls_x509_privkey_import_openssl
 ----------------------------------
@@ -8227,14 +8364,23 @@ gnutls_x509_trust_list_add_cas
      FLAGS: flags from 'gnutls_trust_list_flags_t'
 
      This function will add the given certificate authorities to the
-     trusted list.  The list of CAs must not be deinitialized during
-     this structure's lifetime.
+     trusted list.  The CAs in 'clist' must not be deinitialized during
+     the lifetime of 'list' .
 
-     If the flag 'GNUTLS_TL_NO_DUPLICATES' is specified, then the
-     provided 'clist' entries that are duplicates will not be added to
-     the list and will be deinitialized.
+     If the flag 'GNUTLS_TL_NO_DUPLICATES' is specified, then this
+     function will ensure that no duplicates will be present in the
+     final trust list.
 
-     *Returns:* The number of added elements is returned.
+     If the flag 'GNUTLS_TL_NO_DUPLICATE_KEY' is specified, then this
+     function will ensure that no certificates with the same key are
+     present in the final trust list.
+
+     If either 'GNUTLS_TL_NO_DUPLICATE_KEY' or 'GNUTLS_TL_NO_DUPLICATES'
+     are given, 'gnutls_x509_trust_list_deinit()' must be called with
+     parameter 'all' being 1.
+
+     *Returns:* The number of added elements is returned; that includes
+     duplicate entries.
 
      *Since:* 3.0.0
 
@@ -8257,20 +8403,24 @@ gnutls_x509_trust_list_add_crls
      specifies GNUTLS_TL_VERIFY_CRL
 
      This function will add the given certificate revocation lists to
-     the trusted list.  The list of CRLs must not be deinitialized
-     during this structure's lifetime.
+     the trusted list.  The CRLs in 'crl_list' must not be deinitialized
+     during the lifetime of 'list' .
 
      This function must be called after
      'gnutls_x509_trust_list_add_cas()' to allow verifying the CRLs for
-     validity.  If the flag 'GNUTLS_TL_NO_DUPLICATES' is given, then any
-     provided CRLs that are a duplicate, will be deinitialized and not
-     added to the list (that assumes that
-     'gnutls_x509_trust_list_deinit()' will be called with all=1).
+     validity.  If the flag 'GNUTLS_TL_NO_DUPLICATES' is given, then the
+     final CRL list will not contain duplicate entries.
 
-     If GNUTLS_TL_VERIFY_CRL is given the CRLs will be verified before
-     being added.
+     If the flag 'GNUTLS_TL_NO_DUPLICATES' is given,
+     'gnutls_x509_trust_list_deinit()' must be called with parameter
+     'all' being 1.
 
-     *Returns:* The number of added elements is returned.
+     If flag 'GNUTLS_TL_VERIFY_CRL' is given the CRLs will be verified
+     before being added, and if verification fails, they will be
+     skipped.
+
+     *Returns:* The number of added elements is returned; that includes
+     duplicate entries.
 
      *Since:* 3.0
 
@@ -8301,8 +8451,8 @@ gnutls_x509_trust_list_add_named_crt
      certificates that are trusted by the user for that specific server
      but for no other purposes.
 
-     The certificate must not be deinitialized during the lifetime of
-     the trusted list.
+     The certificate 'cert' must not be deinitialized during the
+     lifetime of the 'list' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -8413,6 +8563,9 @@ gnutls_x509_trust_list_add_trust_mem
 
      This function will add the given certificate authorities to the
      trusted list.
+
+     If this function is used 'gnutls_x509_trust_list_deinit()' must be
+     called with parameter 'all' being 1.
 
      *Returns:* The number of added elements is returned.
 

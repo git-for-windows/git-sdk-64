@@ -1,6 +1,6 @@
-This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 12 February 2018 for version 3.6.2 of
+This manual is last updated 16 September 2018 for version 3.6.4 of
 GnuTLS.
 
 Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
@@ -19,13 +19,544 @@ END-INFO-DIR-ENTRY
 
 INFO-DIR-SECTION System Administration
 START-INFO-DIR-ENTRY
-* certtool: (gnutls)Invoking certtool.	Manipulate certificates and keys.
-* gnutls-serv: (gnutls)Invoking gnutls-serv.	GnuTLS test server.
-* gnutls-cli: (gnutls)Invoking gnutls-cli.	GnuTLS test client.
-* gnutls-cli-debug: (gnutls)Invoking gnutls-cli-debug.	GnuTLS debug client.
-* psktool: (gnutls)Invoking psktool.	Simple TLS-Pre-Shared-Keys manager.
-* srptool: (gnutls)Invoking srptool.	Simple SRP password tool.
+* certtool: (gnutls)certtool Invocation.	Manipulate certificates and keys.
+* gnutls-serv: (gnutls)gnutls-serv Invocation.	GnuTLS test server.
+* gnutls-cli: (gnutls)gnutls-cli Invocation.	GnuTLS test client.
+* gnutls-cli-debug: (gnutls)gnutls-cli-debug Invocation.	GnuTLS debug client.
+* psktool: (gnutls)psktool Invocation.	Simple TLS-Pre-Shared-Keys manager.
+* srptool: (gnutls)srptool Invocation.	Simple SRP password tool.
 END-INFO-DIR-ENTRY
+
+
+File: gnutls.info,  Node: PKCS12 structure generation example,  Prev: Listing the ciphersuites in a priority string,  Up: Miscellaneous examples
+
+7.5.4 PKCS #12 structure generation example
+-------------------------------------------
+
+This small program demonstrates the usage of the PKCS #12 API, by
+generating such a structure.
+
+/* This example code is placed in the public domain. */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <gnutls/gnutls.h>
+#include <gnutls/pkcs12.h>
+
+#include "examples.h"
+
+#define OUTFILE "out.p12"
+
+/* This function will write a pkcs12 structure into a file.
+ * cert: is a DER encoded certificate
+ * pkcs8_key: is a PKCS #8 encrypted key (note that this must be
+ *  encrypted using a PKCS #12 cipher, or some browsers will crash)
+ * password: is the password used to encrypt the PKCS #12 packet.
+ */
+int
+write_pkcs12(const gnutls_datum_t * cert,
+             const gnutls_datum_t * pkcs8_key, const char *password)
+{
+        gnutls_pkcs12_t pkcs12;
+        int ret, bag_index;
+        gnutls_pkcs12_bag_t bag, key_bag;
+        char pkcs12_struct[10 * 1024];
+        size_t pkcs12_struct_size;
+        FILE *fd;
+
+        /* A good idea might be to use gnutls_x509_privkey_get_key_id()
+         * to obtain a unique ID.
+         */
+        gnutls_datum_t key_id = { (void *) "\x00\x00\x07", 3 };
+
+        gnutls_global_init();
+
+        /* Firstly we create two helper bags, which hold the certificate,
+         * and the (encrypted) key.
+         */
+
+        gnutls_pkcs12_bag_init(&bag);
+        gnutls_pkcs12_bag_init(&key_bag);
+
+        ret =
+            gnutls_pkcs12_bag_set_data(bag, GNUTLS_BAG_CERTIFICATE, cert);
+        if (ret < 0) {
+                fprintf(stderr, "ret: %s\n", gnutls_strerror(ret));
+                return 1;
+        }
+
+        /* ret now holds the bag's index.
+         */
+        bag_index = ret;
+
+        /* Associate a friendly name with the given certificate. Used
+         * by browsers.
+         */
+        gnutls_pkcs12_bag_set_friendly_name(bag, bag_index, "My name");
+
+        /* Associate the certificate with the key using a unique key
+         * ID.
+         */
+        gnutls_pkcs12_bag_set_key_id(bag, bag_index, &key_id);
+
+        /* use weak encryption for the certificate. 
+         */
+        gnutls_pkcs12_bag_encrypt(bag, password,
+                                  GNUTLS_PKCS_USE_PKCS12_RC2_40);
+
+        /* Now the key.
+         */
+
+        ret = gnutls_pkcs12_bag_set_data(key_bag,
+                                         GNUTLS_BAG_PKCS8_ENCRYPTED_KEY,
+                                         pkcs8_key);
+        if (ret < 0) {
+                fprintf(stderr, "ret: %s\n", gnutls_strerror(ret));
+                return 1;
+        }
+
+        /* Note that since the PKCS #8 key is already encrypted we don't
+         * bother encrypting that bag.
+         */
+        bag_index = ret;
+
+        gnutls_pkcs12_bag_set_friendly_name(key_bag, bag_index, "My name");
+
+        gnutls_pkcs12_bag_set_key_id(key_bag, bag_index, &key_id);
+
+
+        /* The bags were filled. Now create the PKCS #12 structure.
+         */
+        gnutls_pkcs12_init(&pkcs12);
+
+        /* Insert the two bags in the PKCS #12 structure.
+         */
+
+        gnutls_pkcs12_set_bag(pkcs12, bag);
+        gnutls_pkcs12_set_bag(pkcs12, key_bag);
+
+
+        /* Generate a message authentication code for the PKCS #12
+         * structure.
+         */
+        gnutls_pkcs12_generate_mac(pkcs12, password);
+
+        pkcs12_struct_size = sizeof(pkcs12_struct);
+        ret =
+            gnutls_pkcs12_export(pkcs12, GNUTLS_X509_FMT_DER,
+                                 pkcs12_struct, &pkcs12_struct_size);
+        if (ret < 0) {
+                fprintf(stderr, "ret: %s\n", gnutls_strerror(ret));
+                return 1;
+        }
+
+        fd = fopen(OUTFILE, "w");
+        if (fd == NULL) {
+                fprintf(stderr, "cannot open file\n");
+                return 1;
+        }
+        fwrite(pkcs12_struct, 1, pkcs12_struct_size, fd);
+        fclose(fd);
+
+        gnutls_pkcs12_bag_deinit(bag);
+        gnutls_pkcs12_bag_deinit(key_bag);
+        gnutls_pkcs12_deinit(pkcs12);
+
+        return 0;
+}
+
+
+File: gnutls.info,  Node: Using GnuTLS as a cryptographic library,  Next: Other included programs,  Prev: GnuTLS application examples,  Up: Top
+
+8 Using GnuTLS as a cryptographic library
+*****************************************
+
+GnuTLS is not a low-level cryptographic library, i.e., it does not
+provide access to basic cryptographic primitives.  However it abstracts
+the internal cryptographic back-end (see *note Cryptographic Backend::),
+providing symmetric crypto, hash and HMAC algorithms, as well access to
+the random number generation.  For a low-level crypto API the usage of
+nettle (1) library is recommended.
+
+* Menu:
+
+* Symmetric algorithms::
+* Public key algorithms::
+* Cryptographic Message Syntax / PKCS#7::
+* Hash and MAC functions::
+* Random number generation::
+* Overriding algorithms::
+
+   ---------- Footnotes ----------
+
+   (1) See <http://www.lysator.liu.se/~nisse/nettle/>.
+
+
+File: gnutls.info,  Node: Symmetric algorithms,  Next: Public key algorithms,  Up: Using GnuTLS as a cryptographic library
+
+8.1 Symmetric algorithms
+========================
+
+The available functions to access symmetric crypto algorithms operations
+are listed in the sections below.  The supported algorithms are the
+algorithms required by the TLS protocol.  They are listed in *note
+Figure 8.1: gnutls_cipher_algorithm_t.  Note that there two types of
+ciphers, the ones providing an authenticated-encryption with associated
+data (AEAD), and the legacy ciphers which provide raw access to the
+ciphers.  We recommend the use of the AEAD APIs for new applications as
+it is designed to minimize misuse of cryptography.
+
+'GNUTLS_CIPHER_UNKNOWN'
+     Value to identify an unknown/unsupported algorithm.
+'GNUTLS_CIPHER_NULL'
+     The NULL (identity) encryption algorithm.
+'GNUTLS_CIPHER_ARCFOUR_128'
+     ARCFOUR stream cipher with 128-bit keys.
+'GNUTLS_CIPHER_3DES_CBC'
+     3DES in CBC mode.
+'GNUTLS_CIPHER_AES_128_CBC'
+     AES in CBC mode with 128-bit keys.
+'GNUTLS_CIPHER_AES_256_CBC'
+     AES in CBC mode with 256-bit keys.
+'GNUTLS_CIPHER_ARCFOUR_40'
+     ARCFOUR stream cipher with 40-bit keys.
+'GNUTLS_CIPHER_CAMELLIA_128_CBC'
+     Camellia in CBC mode with 128-bit keys.
+'GNUTLS_CIPHER_CAMELLIA_256_CBC'
+     Camellia in CBC mode with 256-bit keys.
+'GNUTLS_CIPHER_AES_192_CBC'
+     AES in CBC mode with 192-bit keys.
+'GNUTLS_CIPHER_AES_128_GCM'
+     AES in GCM mode with 128-bit keys.
+'GNUTLS_CIPHER_AES_256_GCM'
+     AES in GCM mode with 256-bit keys.
+'GNUTLS_CIPHER_CAMELLIA_192_CBC'
+     Camellia in CBC mode with 192-bit keys.
+'GNUTLS_CIPHER_SALSA20_256'
+     Salsa20 with 256-bit keys.
+'GNUTLS_CIPHER_ESTREAM_SALSA20_256'
+     Estream's Salsa20 variant with 256-bit keys.
+'GNUTLS_CIPHER_CAMELLIA_128_GCM'
+     CAMELLIA in GCM mode with 128-bit keys.
+'GNUTLS_CIPHER_CAMELLIA_256_GCM'
+     CAMELLIA in GCM mode with 256-bit keys.
+'GNUTLS_CIPHER_RC2_40_CBC'
+     RC2 in CBC mode with 40-bit keys.
+'GNUTLS_CIPHER_DES_CBC'
+     DES in CBC mode (56-bit keys).
+'GNUTLS_CIPHER_AES_128_CCM'
+     AES in CCM mode with 128-bit keys.
+'GNUTLS_CIPHER_AES_256_CCM'
+     AES in CCM mode with 256-bit keys.
+'GNUTLS_CIPHER_AES_128_CCM_8'
+     AES in CCM mode with 64-bit tag and 128-bit keys.
+'GNUTLS_CIPHER_AES_256_CCM_8'
+     AES in CCM mode with 64-bit tag and 256-bit keys.
+'GNUTLS_CIPHER_CHACHA20_POLY1305'
+     The Chacha20 cipher with the Poly1305 authenticator (AEAD).
+'GNUTLS_CIPHER_GOST28147_TC26Z_CFB'
+     GOST 28147-89 (Magma) cipher in CFB mode with TC26 Z S-box.
+'GNUTLS_CIPHER_GOST28147_CPA_CFB'
+     GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro A S-box.
+'GNUTLS_CIPHER_GOST28147_CPB_CFB'
+     GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro B S-box.
+'GNUTLS_CIPHER_GOST28147_CPC_CFB'
+     GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro C S-box.
+'GNUTLS_CIPHER_GOST28147_CPD_CFB'
+     GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro D S-box.
+'GNUTLS_CIPHER_IDEA_PGP_CFB'
+     IDEA in CFB mode (placeholder - unsupported).
+'GNUTLS_CIPHER_3DES_PGP_CFB'
+     3DES in CFB mode (placeholder - unsupported).
+'GNUTLS_CIPHER_CAST5_PGP_CFB'
+     CAST5 in CFB mode (placeholder - unsupported).
+'GNUTLS_CIPHER_BLOWFISH_PGP_CFB'
+     Blowfish in CFB mode (placeholder - unsupported).
+'GNUTLS_CIPHER_SAFER_SK128_PGP_CFB'
+     Safer-SK in CFB mode with 128-bit keys (placeholder - unsupported).
+'GNUTLS_CIPHER_AES128_PGP_CFB'
+     AES in CFB mode with 128-bit keys (placeholder - unsupported).
+'GNUTLS_CIPHER_AES192_PGP_CFB'
+     AES in CFB mode with 192-bit keys (placeholder - unsupported).
+'GNUTLS_CIPHER_AES256_PGP_CFB'
+     AES in CFB mode with 256-bit keys (placeholder - unsupported).
+'GNUTLS_CIPHER_TWOFISH_PGP_CFB'
+     Twofish in CFB mode (placeholder - unsupported).
+
+Figure 8.1: The supported ciphers.
+
+Authenticated-encryption API
+----------------------------
+
+The AEAD API provides access to all ciphers supported by GnuTLS which
+support authenticated encryption with associated data.  That is
+particularly suitable for message or packet-encryption as it provides
+authentication and encryption on the same API. See 'RFC5116' for more
+information on authenticated encryption.
+
+'INT *note gnutls_aead_cipher_init:: (gnutls_aead_cipher_hd_t * HANDLE, gnutls_cipher_algorithm_t CIPHER, const gnutls_datum_t * KEY)'
+'INT *note gnutls_aead_cipher_encrypt:: (gnutls_aead_cipher_hd_t HANDLE, const void * NONCE, size_t NONCE_LEN, const void * AUTH, size_t AUTH_LEN, size_t TAG_SIZE, const void * PTEXT, size_t PTEXT_LEN, void * CTEXT, size_t * CTEXT_LEN)'
+'INT *note gnutls_aead_cipher_decrypt:: (gnutls_aead_cipher_hd_t HANDLE, const void * NONCE, size_t NONCE_LEN, const void * AUTH, size_t AUTH_LEN, size_t TAG_SIZE, const void * CTEXT, size_t CTEXT_LEN, void * PTEXT, size_t * PTEXT_LEN)'
+'VOID *note gnutls_aead_cipher_deinit:: (gnutls_aead_cipher_hd_t HANDLE)'
+
+Because the encryption function above may be difficult to use with
+scattered data, we provide the following API.
+
+ -- Function: int gnutls_aead_cipher_encryptv (gnutls_aead_cipher_hd_t
+          HANDLE, const void * NONCE, size_t NONCE_LEN, const giovec_t *
+          AUTH_IOV, int AUTH_IOVCNT, size_t TAG_SIZE, const giovec_t *
+          IOV, int IOVCNT, void * CTEXT, size_t * CTEXT_LEN)
+     HANDLE: is a 'gnutls_aead_cipher_hd_t' type.
+
+     NONCE: the nonce to set
+
+     NONCE_LEN: The length of the nonce
+
+     AUTH_IOV: the data to be authenticated
+
+     AUTH_IOVCNT: The number of buffers in 'auth_iov'
+
+     TAG_SIZE: The size of the tag to use (use zero for the default)
+
+     IOV: the data to be encrypted
+
+     IOVCNT: The number of buffers in 'iov'
+
+     CTEXT: the encrypted data
+
+     CTEXT_LEN: the length of encrypted data (initially must hold the
+     maximum available size, including space for tag)
+
+     This function will encrypt the provided data buffers using the
+     algorithm specified by the context.  The output data will contain
+     the authentication tag.
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 3.6.3
+
+Legacy API
+----------
+
+The legacy API provides low-level access to all legacy ciphers supported
+by GnuTLS, and some of the AEAD ciphers (e.g., AES-GCM and CHACHA20).
+The restrictions of the nettle library implementation of the ciphers
+apply verbatim to this API(1).
+
+'INT *note gnutls_cipher_init:: (gnutls_cipher_hd_t * HANDLE, gnutls_cipher_algorithm_t CIPHER, const gnutls_datum_t * KEY, const gnutls_datum_t * IV)'
+'INT *note gnutls_cipher_encrypt2:: (gnutls_cipher_hd_t HANDLE, const void * PTEXT, size_t PTEXT_LEN, void * CTEXT, size_t CTEXT_LEN)'
+'INT *note gnutls_cipher_decrypt2:: (gnutls_cipher_hd_t HANDLE, const void * CTEXT, size_t CTEXT_LEN, void * PTEXT, size_t PTEXT_LEN)'
+'VOID *note gnutls_cipher_set_iv:: (gnutls_cipher_hd_t HANDLE, void * IV, size_t IVLEN)'
+'VOID *note gnutls_cipher_deinit:: (gnutls_cipher_hd_t HANDLE)'
+
+'INT *note gnutls_cipher_add_auth:: (gnutls_cipher_hd_t HANDLE, const void * PTEXT, size_t PTEXT_SIZE)'
+'INT *note gnutls_cipher_tag:: (gnutls_cipher_hd_t HANDLE, void * TAG, size_t TAG_SIZE)'
+While the latter two functions allow the same API can be used with
+authenticated encryption ciphers, it is recommended to use the following
+functions which are solely for AEAD ciphers.  The latter API is designed
+to be simple to use and also hard to misuse, by handling the tag
+verification and addition in transparent way.
+
+   ---------- Footnotes ----------
+
+   (1) See the nettle manual
+<https://www.lysator.liu.se/~nisse/nettle/nettle.html>
+
+
+File: gnutls.info,  Node: Public key algorithms,  Next: Cryptographic Message Syntax / PKCS#7,  Prev: Symmetric algorithms,  Up: Using GnuTLS as a cryptographic library
+
+8.2 Public key algorithms
+=========================
+
+Public key cryptography algorithms such as RSA, DSA and ECDSA, are
+accessed using the abstract key API in *note Abstract key types::.  This
+is a high level API with the advantage of transparently handling keys
+stored in memory and keys present in smart cards.
+
+'INT *note gnutls_privkey_init:: (gnutls_privkey_t * KEY)'
+'INT *note gnutls_privkey_import_url:: (gnutls_privkey_t KEY, const char * URL, unsigned int FLAGS)'
+'INT *note gnutls_privkey_import_x509_raw:: (gnutls_privkey_t PKEY, const gnutls_datum_t * DATA, gnutls_x509_crt_fmt_t FORMAT, const char * PASSWORD, unsigned int FLAGS)'
+'INT *note gnutls_privkey_sign_data:: (gnutls_privkey_t SIGNER, gnutls_digest_algorithm_t HASH, unsigned int FLAGS, const gnutls_datum_t * DATA, gnutls_datum_t * SIGNATURE)'
+'INT *note gnutls_privkey_sign_hash:: (gnutls_privkey_t SIGNER, gnutls_digest_algorithm_t HASH_ALGO, unsigned int FLAGS, const gnutls_datum_t * HASH_DATA, gnutls_datum_t * SIGNATURE)'
+'VOID *note gnutls_privkey_deinit:: (gnutls_privkey_t KEY)'
+
+'INT *note gnutls_pubkey_init:: (gnutls_pubkey_t * KEY)'
+'INT *note gnutls_pubkey_import_url:: (gnutls_pubkey_t KEY, const char * URL, unsigned int FLAGS)'
+'INT *note gnutls_pubkey_import_x509:: (gnutls_pubkey_t KEY, gnutls_x509_crt_t CRT, unsigned int FLAGS)'
+'INT *note gnutls_pubkey_verify_data2:: (gnutls_pubkey_t PUBKEY, gnutls_sign_algorithm_t ALGO, unsigned int FLAGS, const gnutls_datum_t * DATA, const gnutls_datum_t * SIGNATURE)'
+'INT *note gnutls_pubkey_verify_hash2:: (gnutls_pubkey_t KEY, gnutls_sign_algorithm_t ALGO, unsigned int FLAGS, const gnutls_datum_t * HASH, const gnutls_datum_t * SIGNATURE)'
+'VOID *note gnutls_pubkey_deinit:: (gnutls_pubkey_t KEY)'
+
+Keys stored in memory can be imported using functions like *note
+gnutls_privkey_import_x509_raw::, while keys on smart cards or HSMs
+should be imported using their PKCS#11 URL with *note
+gnutls_privkey_import_url::.
+
+If any of the smart card operations require PIN, that should be provided
+either by setting the global PIN function (*note
+gnutls_pkcs11_set_pin_function::), or better with the targetted to
+structures functions such as *note gnutls_privkey_set_pin_function::.
+
+8.2.1 Key generation
+--------------------
+
+All supported key types (including RSA, DSA, ECDSA, Ed25519) can be
+generated with GnuTLS. They can be generated with the simpler *note
+gnutls_privkey_generate:: or with the more advanced *note
+gnutls_privkey_generate2::.
+
+ -- Function: int gnutls_privkey_generate2 (gnutls_privkey_t PKEY,
+          gnutls_pk_algorithm_t ALGO, unsigned int BITS, unsigned int
+          FLAGS, const gnutls_keygen_data_st * DATA, unsigned DATA_SIZE)
+     PKEY: The private key
+
+     ALGO: is one of the algorithms in 'gnutls_pk_algorithm_t' .
+
+     BITS: the size of the modulus
+
+     FLAGS: Must be zero or flags from 'gnutls_privkey_flags_t' .
+
+     DATA: Allow specifying 'gnutls_keygen_data_st' types such as the
+     seed to be used.
+
+     DATA_SIZE: The number of 'data' available.
+
+     This function will generate a random private key.  Note that this
+     function must be called on an initialized private key.
+
+     The flag 'GNUTLS_PRIVKEY_FLAG_PROVABLE' instructs the key
+     generation process to use algorithms like Shawe-Taylor (from FIPS
+     PUB186-4) which generate provable parameters out of a seed for RSA
+     and DSA keys.  On DSA keys the PQG parameters are generated using
+     the seed, while on RSA the two primes.  To specify an explicit seed
+     (by default a random seed is used), use the 'data' with a
+     'GNUTLS_KEYGEN_SEED' type.
+
+     Note that when generating an elliptic curve key, the curve can be
+     substituted in the place of the bits parameter using the
+     'GNUTLS_CURVE_TO_BITS()' macro.
+
+     To export the generated keys in memory or in files it is
+     recommended to use the PKCS'8' form as it can handle all key types,
+     and can store additional parameters such as the seed, in case of
+     provable RSA or DSA keys.  Generated keys can be exported in memory
+     using 'gnutls_privkey_export_x509()' , and then with
+     'gnutls_x509_privkey_export2_pkcs8()' .
+
+     If key generation is part of your application, avoid setting the
+     number of bits directly, and instead use
+     'gnutls_sec_param_to_pk_bits()' .  That way the generated keys will
+     adapt to the security levels of the underlying GnuTLS library.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.5.0
+
+
+File: gnutls.info,  Node: Cryptographic Message Syntax / PKCS#7,  Next: Hash and MAC functions,  Prev: Public key algorithms,  Up: Using GnuTLS as a cryptographic library
+
+8.3 Cryptographic Message Syntax / PKCS#7
+=========================================
+
+The CMS or PKCS #7 format is a commonly used format for digital
+signatures.  PKCS #7 is the name of the original standard when published
+by RSA, though today the standard is adopted by IETF under the name CMS.
+
+The standards include multiple ways of signing a digital document, e.g.,
+by embedding the data into the signature, or creating detached
+signatures of the data, including a timestamp, additional certificates
+etc.  In certain cases the same format is also used to transport lists
+of certificates and CRLs.
+
+It is a relatively popular standard to sign structures, and is being
+used to sign in PDF files, as well as for signing kernel modules and
+other structures.
+
+In GnuTLS, the basic functions to initialize, deinitialize, import,
+export or print information about a PKCS #7 structure are listed below.
+'INT *note gnutls_pkcs7_init:: (gnutls_pkcs7_t * PKCS7)'
+'VOID *note gnutls_pkcs7_deinit:: (gnutls_pkcs7_t PKCS7)'
+'INT *note gnutls_pkcs7_export2:: (gnutls_pkcs7_t PKCS7, gnutls_x509_crt_fmt_t FORMAT, gnutls_datum_t * OUT)'
+'INT *note gnutls_pkcs7_import:: (gnutls_pkcs7_t PKCS7, const gnutls_datum_t * DATA, gnutls_x509_crt_fmt_t FORMAT)'
+'INT *note gnutls_pkcs7_print:: (gnutls_pkcs7_t PKCS7, gnutls_certificate_print_formats_t FORMAT, gnutls_datum_t * OUT)'
+
+The following functions allow the verification of a structure using
+either a trust list, or individual certificates.  The *note
+gnutls_pkcs7_sign:: function is the data signing function.
+
+'INT *note gnutls_pkcs7_verify_direct:: (gnutls_pkcs7_t PKCS7, gnutls_x509_crt_t SIGNER, unsigned IDX, const gnutls_datum_t * DATA, unsigned FLAGS)'
+'INT *note gnutls_pkcs7_verify:: (gnutls_pkcs7_t PKCS7, gnutls_x509_trust_list_t TL, gnutls_typed_vdata_st * VDATA, unsigned int VDATA_SIZE, unsigned IDX, const gnutls_datum_t * DATA, unsigned FLAGS)'
+
+ -- Function: int gnutls_pkcs7_sign (gnutls_pkcs7_t PKCS7,
+          gnutls_x509_crt_t SIGNER, gnutls_privkey_t SIGNER_KEY, const
+          gnutls_datum_t * DATA, gnutls_pkcs7_attrs_t SIGNED_ATTRS,
+          gnutls_pkcs7_attrs_t UNSIGNED_ATTRS, gnutls_digest_algorithm_t
+          DIG, unsigned FLAGS)
+     PKCS7: should contain a 'gnutls_pkcs7_t' type
+
+     SIGNER: the certificate to sign the structure
+
+     SIGNER_KEY: the key to sign the structure
+
+     DATA: The data to be signed or 'NULL' if the data are already
+     embedded
+
+     SIGNED_ATTRS: Any additional attributes to be included in the
+     signed ones (or 'NULL' )
+
+     UNSIGNED_ATTRS: Any additional attributes to be included in the
+     unsigned ones (or 'NULL' )
+
+     DIG: The digest algorithm to use for signing
+
+     FLAGS: Should be zero or one of 'GNUTLS_PKCS7' flags
+
+     This function will add a signature in the provided PKCS '7'
+     structure for the provided data.  Multiple signatures can be made
+     with different signers.
+
+     The available flags are: 'GNUTLS_PKCS7_EMBED_DATA' ,
+     'GNUTLS_PKCS7_INCLUDE_TIME' , 'GNUTLS_PKCS7_INCLUDE_CERT' , and
+     'GNUTLS_PKCS7_WRITE_SPKI' .  They are explained in the
+     'gnutls_pkcs7_sign_flags' definition.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.4.2
+
+'GNUTLS_PKCS7_EMBED_DATA'
+     The signed data will be embedded in the structure.
+'GNUTLS_PKCS7_INCLUDE_TIME'
+     The signing time will be included in the structure.
+'GNUTLS_PKCS7_INCLUDE_CERT'
+     The signer's certificate will be included in the cert list.
+'GNUTLS_PKCS7_WRITE_SPKI'
+     Use the signer's key identifier instead of name.
+
+Figure 8.2: Flags applicable to gnutls_pkcs7_sign()
+
+Other helper functions which allow to access the signatures, or
+certificates attached in the structure are listed below.
+
+'INT *note gnutls_pkcs7_get_signature_count:: (gnutls_pkcs7_t PKCS7)'
+'INT *note gnutls_pkcs7_get_signature_info:: (gnutls_pkcs7_t PKCS7, unsigned IDX, gnutls_pkcs7_signature_info_st * INFO)'
+'INT *note gnutls_pkcs7_get_crt_count:: (gnutls_pkcs7_t PKCS7)'
+'INT *note gnutls_pkcs7_get_crt_raw2:: (gnutls_pkcs7_t PKCS7, unsigned INDX, gnutls_datum_t * CERT)'
+'INT *note gnutls_pkcs7_get_crl_count:: (gnutls_pkcs7_t PKCS7)'
+'INT *note gnutls_pkcs7_get_crl_raw2:: (gnutls_pkcs7_t PKCS7, unsigned INDX, gnutls_datum_t * CRL)'
+
+To append certificates, or CRLs in the structure the following functions
+are provided.
+'INT *note gnutls_pkcs7_set_crt_raw:: (gnutls_pkcs7_t PKCS7, const gnutls_datum_t * CRT)'
+'INT *note gnutls_pkcs7_set_crt:: (gnutls_pkcs7_t PKCS7, gnutls_x509_crt_t CRT)'
+'INT *note gnutls_pkcs7_set_crl_raw:: (gnutls_pkcs7_t PKCS7, const gnutls_datum_t * CRL)'
+'INT *note gnutls_pkcs7_set_crl:: (gnutls_pkcs7_t PKCS7, gnutls_x509_crl_t CRL)'
 
 
 File: gnutls.info,  Node: Hash and MAC functions,  Next: Random number generation,  Prev: Cryptographic Message Syntax / PKCS#7,  Up: Using GnuTLS as a cryptographic library
@@ -70,6 +601,12 @@ either for HMAC or MAC operations.
      - undescribed -
 'GNUTLS_MAC_MD5_SHA1'
      Combined MD5+SHA1 MAC placeholder.
+'GNUTLS_MAC_GOSTR_94'
+     HMAC GOST R 34.11-94 algorithm.
+'GNUTLS_MAC_STREEBOG_256'
+     HMAC GOST R 34.11-2001 (Streebog) algorithm, 256 bit.
+'GNUTLS_MAC_STREEBOG_512'
+     HMAC GOST R 34.11-2001 (Streebog) algorithm, 512 bit.
 'GNUTLS_MAC_AEAD'
      MAC implicit through AEAD cipher.
 'GNUTLS_MAC_UMAC_96'
@@ -128,6 +665,12 @@ gnutls_digest_algorithm_t.
      SHA3-512 algorithm.
 'GNUTLS_DIG_MD5_SHA1'
      Combined MD5+SHA1 algorithm.
+'GNUTLS_DIG_GOSTR_94'
+     GOST R 34.11-94 algorithm.
+'GNUTLS_DIG_STREEBOG_256'
+     GOST R 34.11-2001 (Streebog) algorithm, 256 bit.
+'GNUTLS_DIG_STREEBOG_512'
+     GOST R 34.11-2001 (Streebog) algorithm, 512 bit.
 
 Figure 8.4: The supported hash algorithms.
 
@@ -386,7 +929,8 @@ to 'more'.  Both will exit with a status code of 0.
                                      - may appear multiple times
             --tofu                 Enable trust on first use authentication
                                      - disabled as '--no-tofu'
-            --strict-tofu          Fail to connect if a known certificate has changed
+            --strict-tofu          Fail to connect if a certificate is unknown or a known certificate has
+     changed
                                      - disabled as '--no-strict-tofu'
             --dane                 Enable DANE certificate verification (DNSSEC)
                                      - disabled as '--no-dane'
@@ -400,6 +944,7 @@ to 'more'.  Both will exit with a status code of 0.
         -r, --resume               Establish a session and resume
         -e, --rehandshake          Establish a session and rehandshake
             --sni-hostname=str     Server's hostname for server name indication extension
+            --verify-hostname=str  Server's hostname to use for validation
         -s, --starttls             Connect, establish a plain session and start TLS
             --app-proto=str        an alias for the 'starttls-proto' option
             --starttls-proto=str   The application protocol to be used to obtain the server's certificate
@@ -432,7 +977,6 @@ to 'more'.  Both will exit with a status code of 0.
         -p, --port=str             The port or service to connect to
             --insecure             Don't abort program if server certificate can't be validated
             --verify-allow-broken  Allow broken algorithms, such as MD5 for certificate verification
-            --ranges               Use length-hiding padding to prevent traffic analysis
             --benchmark-ciphers    Benchmark individual ciphers
             --benchmark-tls-kx     Benchmark TLS key exchange methods
             --benchmark-tls-ciphers  Benchmark TLS ciphers
@@ -448,7 +992,8 @@ to 'more'.  Both will exit with a status code of 0.
                                      - it must be in the range:
                                        0 to 4096
             --disable-sni          Do not send a Server Name Indication (SNI)
-            --disable-extensions   Disable all the TLS extensions
+            --single-key-share     Send a single key share under TLS1.3
+            --post-handshake-auth  Enable post-handshake authentication under TLS1.3
             --inline-commands      Inline commands of the form ^<cmd>^
             --inline-commands-prefix=str Change the default delimiter for inline commands.
             --provider=file        Specify the PKCS #11 provider library
@@ -490,14 +1035,15 @@ process.
 strict-tofu option
 ------------------
 
-This is the "fail to connect if a known certificate has changed" option.
+This is the "fail to connect if a certificate is unknown or a known
+certificate has changed" option.
 
 This option has some usage constraints.  It:
    * can be disabled with -no-strict-tofu.
 
 This option will perform authentication as with option -tofu; however,
-while -tofu asks whether to trust a changed public key, this option will
-fail in case of public key changes.
+no questions shall be asked whatsoever, neither to accept an unknown
+certificate nor a changed one.
 
 dane option
 -----------
@@ -564,7 +1110,16 @@ This is the "server's hostname for server name indication extension"
 option.  This option takes a string argument.  Set explicitly the server
 name used in the TLS server name indication extension.  That is useful
 when testing with servers setup on different DNS name than the intended.
-If not specified, the provided hostname is used.
+If not specified, the provided hostname is used.  Even with this option
+server certificate verification still uses the hostname passed on the
+main commandline.  Use -verify-hostname to change this.
+
+verify-hostname option
+----------------------
+
+This is the "server's hostname to use for validation" option.  This
+option takes a string argument.  Set explicitly the server name to be
+used when validating the server's certificate.
 
 starttls option (-s)
 --------------------
@@ -619,6 +1174,8 @@ This is the "use length-hiding padding to prevent traffic analysis"
 option.  When possible (e.g., when using CBC ciphersuites), use
 length-hiding padding to prevent traffic analysis.
 
+*NOTE**: THIS OPTION IS DEPRECATED*
+
 benchmark-ciphers option
 ------------------------
 
@@ -654,6 +1211,12 @@ This is the "print a list of the supported priority strings" option.
 Print a list of the supported priority strings.  The ciphersuites
 corresponding to each priority string can be examined using -l -p.
 
+noticket option
+---------------
+
+This is the "don't allow session tickets" option.  Disable the request
+of receiving of session tickets under TLS1.2 or earlier
+
 alpn option
 -----------
 
@@ -673,13 +1236,28 @@ This is the "disable all the tls extensions" option.  This option
 disables all TLS extensions.  Deprecated option.  Use the priority
 string.
 
+*NOTE**: THIS OPTION IS DEPRECATED*
+
+single-key-share option
+-----------------------
+
+This is the "send a single key share under tls1.3" option.  This option
+switches the default mode of sending multiple key shares, to send a
+single one (the top one).
+
+post-handshake-auth option
+--------------------------
+
+This is the "enable post-handshake authentication under tls1.3" option.
+This option enables post-handshake authentication when under TLS1.3.
+
 inline-commands option
 ----------------------
 
 This is the "inline commands of the form ^<cmd>^" option.  Enable inline
 commands of the form ^<cmd>^.  The inline commands are expected to be in
-a line by themselves.  The available commands are: resume and
-renegotiate.
+a line by themselves.  The available commands are: resume, rekey1 (local
+rekey), rekey (rekey on both peers) and renegotiate.
 
 inline-commands-prefix option
 -----------------------------
@@ -834,6 +1412,7 @@ to 'more'.  Both will exit with a status code of 0.
                                      - may appear multiple times
             --alpn-fatal           Send fatal alert on non-matching ALPN name
             --noticket             Don't accept session tickets
+            --nocookie             Don't require cookie on DTLS sessions
         -g, --generate             Generate Diffie-Hellman parameters
         -q, --quiet                Suppress some messages
             --nodb                 Do not use a resumption database
@@ -845,6 +1424,7 @@ to 'more'.  Both will exit with a status code of 0.
                                        0 to 17000
             --srtp-profiles=str    Offer SRTP profiles
         -a, --disable-client-cert  Do not request a client certificate
+                                     - prohibits the option 'require-client-cert'
         -r, --require-client-cert  Require a client certificate
             --verify-client-cert   If a client certificate is sent then verify it.
         -b, --heartbeat            Activate heartbeat support
@@ -866,8 +1446,9 @@ to 'more'.  Both will exit with a status code of 0.
             --pskpasswd=file       PSK password file to use
                                      - file must pre-exist
             --pskhint=str          PSK identity hint to use
-            --ocsp-response=file   The OCSP response to send to client
-                                     - file must pre-exist
+            --ocsp-response=str    The OCSP response to send to client
+                                     - may appear multiple times
+            --ignore-ocsp-response-errors  Ignore any errors when setting the OCSP response
         -p, --port=num             The port to connect to
         -l, --list                 Print a list of the supported algorithms and modes
             --provider=file        Specify the PKCS #11 provider library
@@ -996,8 +1577,20 @@ ocsp-response option
 --------------------
 
 This is the "the ocsp response to send to client" option.  This option
-takes a file argument.  If the client requested an OCSP response, return
-data from this file to the client.
+takes a string argument.
+
+This option has some usage constraints.  It:
+   * may appear an unlimited number of times.
+
+If the client requested an OCSP response, return data from this file to
+the client.
+
+ignore-ocsp-response-errors option
+----------------------------------
+
+This is the "ignore any errors when setting the ocsp response" option.
+That option instructs gnutls to not attempt to match the provided OCSP
+responses with the certificates.
 
 list option (-l)
 ----------------
@@ -1306,7 +1899,7 @@ to know what happens inside the black box.
 * The TLS Protocol::
 * TLS Handshake Protocol::
 * TLS Authentication Methods::
-* TLS Extension Handling::
+* TLS Hello Extension Handling::
 * Cryptographic Backend::
 * Random Number Generators-internals::
 * FIPS140-2 mode::
@@ -1354,7 +1947,7 @@ illustrate the idea in *note Figure 10.3: fig-gnutls-handshake-sequence.
 Figure 10.3: GnuTLS handshake process sequence.
 
 
-File: gnutls.info,  Node: TLS Authentication Methods,  Next: TLS Extension Handling,  Prev: TLS Handshake Protocol,  Up: Internal architecture of GnuTLS
+File: gnutls.info,  Node: TLS Authentication Methods,  Next: TLS Hello Extension Handling,  Prev: TLS Handshake Protocol,  Up: Internal architecture of GnuTLS
 
 10.3 TLS Authentication Methods
 ===============================
@@ -1402,50 +1995,56 @@ has to be registered in 'gnutls_algorithms.c' in the
    (1) such as the 'gnutls_certificate_credentials_t' structures
 
 
-File: gnutls.info,  Node: TLS Extension Handling,  Next: Cryptographic Backend,  Prev: TLS Authentication Methods,  Up: Internal architecture of GnuTLS
+File: gnutls.info,  Node: TLS Hello Extension Handling,  Next: Cryptographic Backend,  Prev: TLS Authentication Methods,  Up: Internal architecture of GnuTLS
 
 10.4 TLS Extension Handling
 ===========================
 
-As with authentication methods, the TLS extensions handlers can be
-implemented using the interface shown below.
+As with authentication methods, adding TLS hello extensions can be done
+quite easily by implementing the interface shown below.
 
 typedef int (*gnutls_ext_recv_func) (gnutls_session_t session,
                                      const unsigned char *data, size_t len);
 typedef int (*gnutls_ext_send_func) (gnutls_session_t session,
                                      gnutls_buffer_st *extdata);
 
-Here there are two functions, one for receiving the extension data and
-one for sending.  These functions have to check internally whether they
-operate in client or server side.
+Here there are two main functions, one for parsing the received
+extension data and one for formatting the extension data that must be
+send.  These functions have to check internally whether they operate
+within a client or a server session.
 
-A simple example of an extension handler can be seen in 'ext/srp.c' in
-GnuTLS' source code.  After implementing these functions, together with
-the extension number they handle, they have to be registered using
-'_gnutls_ext_register' in 'gnutls_extensions.c' typically within
-'_gnutls_ext_init'.
+A simple example of an extension handler can be seen in 'lib/ext/srp.c'
+in GnuTLS' source code.  After implementing these functions, the
+extension has to be registered.  Registering an extension can be done in
+two ways.  You can create a GnuTLS internal extension and register it in
+'hello_ext.c' or write an external extension (not inside GnuTLS but
+inside an application using GnuTLS) and register it via the exported
+functions *note gnutls_session_ext_register:: or *note
+gnutls_ext_register::.
 
-Adding a new TLS extension
---------------------------
+Adding a new TLS hello extension
+--------------------------------
 
-Adding support for a new TLS extension is done from time to time, and
-the process to do so is not difficult.  Here are the steps you need to
-follow if you wish to do this yourself.  For sake of discussion, let's
-consider adding support for the hypothetical TLS extension 'foobar'.
-The following section is about adding an extension to GnuTLS, for custom
-application extensions you should check the exported functions *note
-gnutls_session_ext_register:: or *note gnutls_ext_register::.
+Adding support for a new TLS hello extension is done from time to time,
+and the process to do so is not difficult.  Here are the steps you need
+to follow if you wish to do this yourself.  For the sake of discussion,
+let's consider adding support for the hypothetical TLS extension
+'foobar'.  The following section is about adding an hello extension to
+GnuTLS itself.  For custom application extensions you should check the
+exported functions *note gnutls_session_ext_register:: or *note
+gnutls_ext_register::.
 
 Add 'configure' option like '--enable-foobar' or '--disable-foobar'.
 ....................................................................
 
 This step is useful when the extension code is large and it might be
-desirable to disable the extension under some circumstances.  Otherwise
-it can be safely skipped.
+desirable under some circumstances to be able to leave out the extension
+during compilation of GnuTLS. If you don't need this kind of feature
+this step can be safely skipped.
 
-Whether to chose enable or disable depends on whether you intend to make
-the extension be enabled by default.  Look at existing checks (i.e.,
-SRP, authz) for how to model the code.  For example:
+Whether to choose enable or disable depends on whether you intend to
+make the extension be enabled by default.  Look at existing checks
+(i.e., SRP, authz) for how to model the code.  For example:
 
      AC_MSG_CHECKING([whether to disable foobar support])
      AC_ARG_ENABLE(foobar,
@@ -1461,101 +2060,120 @@ SRP, authz) for how to model the code.  For example:
      fi
      AM_CONDITIONAL(ENABLE_FOOBAR, test "$ac_enable_foobar" != "no")
 
-These lines should go in 'm4/hooks.m4'.
+These lines should go in 'lib/m4/hooks.m4'.
 
-Add IANA extension value to 'extensions_t' in 'gnutls_int.h'.
-.............................................................
+Add an extension identifier to 'extensions_t' in 'gnutls_int.h'.
+................................................................
 
-A good name for the value would be GNUTLS_EXTENSION_FOOBAR. Check with
-<http://www.iana.org/assignments/tls-extensiontype-values> for allocated
-values.  For experiments, you could pick a number but remember that some
-consider it a bad idea to deploy such modified version since it will
-lead to interoperability problems in the future when the IANA allocates
-that number to someone else, or when the foobar protocol is allocated
-another number.
+A good name for the identifier would be GNUTLS_EXTENSION_FOOBAR. If the
+extension that you are implementing is an extension that is officially
+registered by IANA then it is recommended to use its official name such
+that the extension can be correctly identified by other developers.
+Check with <http://www.iana.org/assignments/tls-extensiontype-values>
+for registered extensions.
 
-Add an entry to '_gnutls_extensions' in 'gnutls_extensions.c'.
-..............................................................
+Register the extension in 'lib/hello_ext.c'.
+............................................
+
+In order for the extension to be executed you need to register it in the
+'static hello_ext_entry_st const *extfunc[]' list in 'lib/hello_ext.c'.
 
 A typical entry would be:
 
-       int ret;
-
-     #if ENABLE_FOOBAR
-       ret = _gnutls_ext_register (&foobar_ext);
-       if (ret != GNUTLS_E_SUCCESS)
-         return ret;
+     #ifdef ENABLE_FOOBAR
+     	[GNUTLS_EXTENSION_FOOBAR] = &ext_mod_foobar,
      #endif
 
-Most likely you'll need to add an '#include "ext/foobar.h"', that will
-contain something like like:
-       extension_entry_st foobar_ext = {
-         .name = "FOOBAR",
-         .type = GNUTLS_EXTENSION_FOOBAR,
-         .parse_type = GNUTLS_EXT_TLS,
-         .recv_func = _foobar_recv_params,
-         .send_func = _foobar_send_params,
-         .pack_func = _foobar_pack,
-         .unpack_func = _foobar_unpack,
-         .deinit_func = NULL
-       }
+Also for every extension you need to create an 'hello_ext_entry_st' that
+describes the extension.  This structure is placed in the designated c
+file for your extension and its name is used in the registration entry
+as depicted above.
 
-The GNUTLS_EXTENSION_FOOBAR is the integer value you added to
-'gnutls_int.h' earlier.  In this structure you specify the functions to
-read the extension from the hello message, the function to send the
-reply to, and two more functions to pack and unpack from stored session
-data (e.g.  when resumming a session).  The 'deinit' function will be
-called to deinitialize the extension's private parameters, if any.
+The structure of 'hello_ext_entry_st' is as follows:
+       const hello_ext_entry_st ext_mod_foobar = {
+         .name = "FOOBAR",
+         .tls_id = 255,
+         .gid = GNUTLS_EXTENSION_FOOBAR,
+         .parse_type = GNUTLS_EXT_TLS,
+         .validity = GNUTLS_EXT_FLAG_CLIENT_HELLO |
+     	GNUTLS_EXT_FLAG_TLS12_SERVER_HELLO |
+     	GNUTLS_EXT_FLAG_TLS13_SERVER_HELLO |
+     	GNUTLS_EXT_FLAG_TLS,
+         .recv_func = _gnutls_foobar_recv_params,
+         .send_func = _gnutls_foobar_send_params,
+         .pack_func = _gnutls_foobar_pack,
+         .unpack_func = _gnutls_foobar_unpack,
+         .deinit_func = _gnutls_foobar_deinit,
+         .cannot_be_overriden = 1
+       };
+
+The GNUTLS_EXTENSION_FOOBAR is the identifier that you've added to
+'gnutls_int.h' earlier.  The '.tls_id' should contain the number that
+IANA has assigned to this extension, or an unassigned number of your
+choice if this is an unregistered extension.  In the rest of this
+structure you specify the functions to handle the extension data.  The
+'receive' function will be called upon reception of the data and will be
+used to parse or interpret the extension data.  The 'send' function will
+be called prior to sending the extension data on the wire and will be
+used to format the data such that it can be send over the wire.  The
+'pack' and 'unpack' functions will be used to prepare the data for
+storage in case of session resumption (and vice versa).  The 'deinit'
+function will be called to deinitialize the extension's private
+parameters, if any.
+
+Look at 'gnutls_ext_parse_type_t' and 'gnutls_ext_flags_t' for a
+complete list of available flags.
 
 Note that the conditional 'ENABLE_FOOBAR' definition should only be used
 if step 1 with the 'configure' options has taken place.
 
-Add new files that implement the extension.
-...........................................
+Add new files that implement the hello extension.
+.................................................
 
-The functions you are responsible to add are those mentioned in the
-previous step.  They should be added in a file such as 'ext/foobar.c'
-and headers should be placed in 'ext/foobar.h'.  As a starter, you could
-add this:
+To keep things structured every extension should have its own files.
+The functions that you should (at least) add are those referenced in the
+struct from the previous step.  Use descriptive file names such as
+'lib/ext/foobar.c' and for the corresponding header 'lib/ext/foobar.h'.
+As a starter, you could add this:
 
      int
-     _foobar_recv_params (gnutls_session_t session, const opaque * data,
+     _gnutls_foobar_recv_params (gnutls_session_t session, const uint8_t * data,
                           size_t data_size)
      {
        return 0;
      }
 
      int
-     _foobar_send_params (gnutls_session_t session, gnutls_buffer_st* data)
+     _gnutls_foobar_send_params (gnutls_session_t session, gnutls_buffer_st* data)
      {
        return 0;
      }
 
      int
-     _foobar_pack (extension_priv_data_t epriv, gnutls_buffer_st * ps)
+     _gnutls_foobar_pack (extension_priv_data_t epriv, gnutls_buffer_st * ps)
      {
         /* Append the extension's internal state to buffer */
         return 0;
      }
 
      int
-     _foobar_unpack (gnutls_buffer_st * ps, extension_priv_data_t * epriv)
+     _gnutls_foobar_unpack (gnutls_buffer_st * ps, extension_priv_data_t * epriv)
      {
         /* Read the internal state from buffer */
         return 0;
      }
 
-The '_foobar_recv_params' function is responsible for parsing incoming
-extension data (both in the client and server).
+The '_gnutls_foobar_recv_params' function is responsible for parsing
+incoming extension data (both in the client and server).
 
-The '_foobar_send_params' function is responsible for sending extension
-data (both in the client and server).  It should append data to provided
-buffer and return a positive (or zero) number on success or a negative
-error code.  Previous to 3.6.0 versions of GnuTLS required that function
-to return the number of bytes that were written.  If zero is returned
-and no bytes are appended the extension will not be sent.  If a zero
-byte extension is to be sent this function must return
-'GNUTLS_E_INT_RET_0'.
+The '_gnutls_foobar_send_params' function is responsible for formatting
+extension data such that it can be send over the wire (both in the
+client and server).  It should append data to provided buffer and return
+a positive (or zero) number on success or a negative error code.
+Previous to 3.6.0 versions of GnuTLS required that function to return
+the number of bytes that were written.  If zero is returned and no bytes
+are appended the extension will not be sent.  If a zero byte extension
+is to be sent this function must return 'GNUTLS_E_INT_RET_0'.
 
 If you receive length fields that don't match, return
 'GNUTLS_E_UNEXPECTED_PACKET_LENGTH'.  If you receive invalid data,
@@ -1564,25 +2182,32 @@ codes from the list in *note Error codes::.  Return 0 on success.
 
 An extension typically stores private information in the 'session' data
 for later usage.  That can be done using the functions
-'_gnutls_ext_set_session_data' and '_gnutls_ext_get_session_data'.  You
-can check simple examples at 'ext/max_record.c' and 'ext/server_name.c'
-extensions.  That private information can be saved and restored across
-session resumption if the following functions are set:
+'_gnutls_hello_ext_set_datum' and '_gnutls_hello_ext_get_datum'.  You
+can check simple examples at 'lib/ext/max_record.c' and
+'lib/ext/server_name.c' extensions.  That private information can be
+saved and restored across session resumption if the following functions
+are set:
 
-The '_foobar_pack' function is responsible for packing internal
+The '_gnutls_foobar_pack' function is responsible for packing internal
 extension data to save them in the session resumption storage.
 
-The '_foobar_unpack' function is responsible for restoring session data
-from the session resumption storage.
+The '_gnutls_foobar_unpack' function is responsible for restoring
+session data from the session resumption storage.
 
-Recall that both the client and server, send and receive parameters, and
-your code most likely will need to do different things depending on
-which mode it is in.  It may be useful to make this distinction explicit
-in the code.  Thus, for example, a better template than above would be:
+When the internal data is stored using the
+'_gnutls_hello_ext_set_datum', then you can rely on the default pack and
+unpack functions: '_gnutls_hello_ext_default_pack' and
+'_gnutls_hello_ext_default_unpack'.
+
+Recall that both for the client and server, the send and receive
+functions most likely will need to do different things depending on
+which mode they are in.  It may be useful to make this distinction
+explicit in the code.  Thus, for example, a better template than above
+would be:
 
      int
      _gnutls_foobar_recv_params (gnutls_session_t session,
-                                 const opaque * data,
+                                 const uint8_t * data,
                                  size_t data_size)
      {
        if (session->security_parameters.entity == GNUTLS_CLIENT)
@@ -1602,50 +2227,32 @@ in the code.  Thus, for example, a better template than above would be:
      }
 
 The functions used would be declared as 'static' functions, of the
-appropriate prototype, in the same file.  When adding the files, you'll
-need to add them to 'ext/Makefile.am' as well, for example:
+appropriate prototype, in the same file.
+
+When adding the new extension files, you'll need to add them to
+'lib/ext/Makefile.am' as well, for example:
 
      if ENABLE_FOOBAR
      libgnutls_ext_la_SOURCES += ext/foobar.c ext/foobar.h
      endif
 
-Add API functions to enable/disable the extension.
-..................................................
+Add API functions to use the extension.
+.......................................
 
-It might be desirable to allow users of the extension to request use of
-the extension, or set extension specific data.  This can be implemented
-by adding extension specific function calls that can be added to
-'includes/gnutls/gnutls.h', as long as the LGPLv2.1+ applies.  The
-implementation of the function should lie in the 'ext/foobar.c' file.
+It might be desirable to allow users of the extension to request the use
+of the extension, or set extension specific data.  This can be
+implemented by adding extension specific function calls that can be
+added to 'includes/gnutls/gnutls.h', as long as the LGPLv2.1+ applies.
+The implementation of these functions should lie in the
+'lib/ext/foobar.c' file.
 
 To make the API available in the shared library you need to add the
-symbol in 'lib/libgnutls.map', so that the symbol is exported properly.
+added symbols in 'lib/libgnutls.map', so that the symbols are exported
+properly.
 
 When writing GTK-DOC style documentation for your new APIs, don't forget
 to add 'Since:' tags to indicate the GnuTLS version the API was
 introduced in.
-
-Heartbeat extension.
-....................
-
-One such extension is HeartBeat protocol (RFC6520:
-<https://tools.ietf.org/html/rfc6520>) implementation.  To enable it use
-option -heartbeat with example client and server supplied with gnutls:
-
-     ./doc/credentials/gnutls-http-serv --priority "NORMAL:-CIPHER-ALL:+NULL" -d 100 \
-         --heartbeat --echo
-     ./src/gnutls-cli --priority "NORMAL:-CIPHER-ALL:+NULL" -d 100 localhost -p 5556 \
-         --insecure --heartbeat
-
-After that pasting
-     **HEARTBEAT**
-command into gnutls-cli will trigger corresponding command on the server
-and it will send HeartBeat Request with random length to client.
-
-Another way is to run capabilities check with:
-
-     ./doc/credentials/gnutls-http-serv -d 100 --heartbeat
-     ./src/gnutls-cli-debug localhost -p 5556
 
 Adding a new Supplemental Data Handshake Message
 ------------------------------------------------
@@ -1723,7 +2330,7 @@ gnutls_session_supplemental_register::, or *note
 gnutls_supplemental_register:: at some point in your program.
 
 
-File: gnutls.info,  Node: Cryptographic Backend,  Next: Random Number Generators-internals,  Prev: TLS Extension Handling,  Up: Internal architecture of GnuTLS
+File: gnutls.info,  Node: Cryptographic Backend,  Next: Random Number Generators-internals,  Prev: TLS Hello Extension Handling,  Up: Internal architecture of GnuTLS
 
 10.5 Cryptographic Backend
 ==========================
@@ -2003,9 +2610,12 @@ operation of the library is then modified, as follows.
    * Any cryptographic operation will be refused if any of the
      self-tests failed
 
-There is a 'zombie' FIPS140-2 mode which is enabled when only one of the
-files described in the first step is available.  In that case the self
-tests will be performed without affecting the operation of the library.
+There are also few environment variables which modify that operation.
+The environment variable 'GNUTLS_SKIP_FIPS_INTEGRITY_CHECKS' will
+disable the library integrity tests on startup, and the variable
+'GNUTLS_FORCE_FIPS_MODE' can be set to force a value from *note Figure
+10.5: gnutls_fips_mode_t, i.e., '1' will enable the FIPS140-2 mode,
+while '0' will disable it.
 
 The integrity checks for the dependent libraries and GnuTLS are
 performed using '.hmac' files which are present at the same path as the
@@ -2013,14 +2623,67 @@ library.  The key for the operations can be provided on compile-time
 with the configure option '-with-fips140-key'.  The MAC algorithm used
 is HMAC-SHA256.
 
-There are also few environment variables which modify that operation.
-The environment variable 'GNUTLS_SKIP_FIPS_INTEGRITY_CHECKS' will
-disable the library integrity tests on startup, and the variable
-'GNUTLS_FORCE_FIPS_MODE' when set to '1' will enable the FIPS140-2 mode,
-when set to '0' will force a disable of it.
-
 On runtime an application can verify whether the library is in FIPS140-2
-using the *note gnutls_fips140_mode_enabled:: function.
+mode using the *note gnutls_fips140_mode_enabled:: function.
+
+Relaxing FIPS140-2 requirements
+-------------------------------
+
+The library by default operates in a strict enforcing mode, ensuring
+that all constraints imposed by the FIPS140-2 specification are
+enforced.  However the application can relax these requirements via
+*note gnutls_fips140_set_mode:: which can switch to alternative modes as
+in *note Figure 10.5: gnutls_fips_mode_t.
+
+'GNUTLS_FIPS140_DISABLED'
+     The FIPS140-2 mode is disabled.
+'GNUTLS_FIPS140_STRICT'
+     The default mode; all forbidden operations will cause an operation
+     failure via error code.
+'GNUTLS_FIPS140_SELFTESTS'
+     A transient state during library initialization.  That state cannot
+     be set or seen by applications.
+'GNUTLS_FIPS140_LAX'
+     The library still uses the FIPS140-2 relevant algorithms but all
+     forbidden by FIPS140-2 operations are allowed; this is useful when
+     the application is aware of the followed security policy, and needs
+     to utilize disallowed operations for other reasons (e.g.,
+     compatibility).
+'GNUTLS_FIPS140_LOG'
+     Similarly to 'GNUTLS_FIPS140_LAX' , it allows forbidden operations;
+     any use of them results to a message to the audit callback
+     functions.
+
+Figure 10.5: The 'gnutls_fips_mode_t' enumeration.
+
+The intention of this API is to be used by applications which need to
+run in FIPS140-2 mode, while they utilize few algorithms not in the
+allowed set, e.g., for non-security related purposes.  In these cases
+applications should wrap the non-compliant code within blocks like the
+following.
+
+     GNUTLS_FIPS140_SET_RELAX_MODE();
+
+     _gnutls_hash_fast(GNUTLS_DIG_MD5, buffer, sizeof(buffer), output);
+
+     GNUTLS_FIPS140_SET_STRICT_MODE();
+
+The 'GNUTLS_FIPS140_SET_RELAX_MODE' and 'GNUTLS_FIPS140_SET_STRICT_MODE'
+are macros to simplify the following sequence of calls.
+
+     if (gnutls_fips140_mode_enabled())
+       gnutls_fips140_set_mode(GNUTLS_FIPS140_SET_MODE_LAX, GNUTLS_FIPS140_SET_MODE_THREAD);
+
+     _gnutls_hash_fast(GNUTLS_DIG_MD5, buffer, sizeof(buffer), output);
+
+     if (gnutls_fips140_mode_enabled())
+       gnutls_fips140_set_mode(GNUTLS_FIPS140_SET_MODE_STRICT, GNUTLS_FIPS140_SET_MODE_THREAD);
+
+The reason of the 'GNUTLS_FIPS140_SET_MODE_THREAD' flag in the previous
+calls is to localize the change in the mode.
+
+Applications could also switch FIPS140-2 mode explicitly off, by calling
+     gnutls_fips140_set_mode(GNUTLS_FIPS140_SET_MODE_LAX, 0);
 
 
 File: gnutls.info,  Node: Upgrading from previous versions,  Next: Support,  Prev: Internal architecture of GnuTLS,  Up: Top
@@ -2215,6 +2878,13 @@ Old functionality      Replacement
 -------------------------------------------------------------------
 The priority strings   TLS compression is no longer available.
 "+COMP" are a no-op    
+The SSL 3.0 protocol   SSL 3.0 is no longer compiled in by
+is a no-op             default.  It is a legacy protocol which
+                       is completely eliminated from public
+                       internet.  As such it was removed to
+                       reduce the attack vector for applications
+                       using the library.
+                       
 The hash function      TLS 1.3 no longer uses SHA2-224, and it
 SHA2-224 is a no-op    was never a widespread hash algorithm.
 for TLS1.2             As such it was removed for simplicity.
@@ -2232,6 +2902,82 @@ deprecated             'gnutls_compression_get_id'.
 *note gnutls_x509_crt_sign::,These signing functions will no longer
 *note gnutls_x509_crl_sign::,sign using SHA1, but with a secure hash
 *note gnutls_x509_crq_sign::algorithm.
+                       
+*note gnutls_certificate_set_ocsp_status_request_file::This function will return an error if the
+                       loaded response doesn't match any of the
+                       present certificates.  To revert to
+                       previous semantics set the
+                       'GNUTLS_CERTIFICATE_SKIP_OCSP_RESPONSE_CHECK'
+                       flag using
+                       *note gnutls_certificate_set_flags::.
+                       
+The callback           It is replaced with
+*note gnutls_privkey_import_ext3::*note gnutls_privkey_import_ext4::
+is not flexible        
+enough for new
+signature algorithms
+such as RSA-PSS
+Re-handshake           It is replaced by separate key update and
+functionality is not   re-authentication functionality which can
+applicable under TLS   be accessed directly via
+1.3.                   *note gnutls_session_key_update:: and
+                       *note gnutls_reauth::.
+                       
+TLS session            The TLS session identifiers are
+identifiers are not    persistent across resumption only on
+shared with the        server side and can be obtained as before
+server under TLS       via *note gnutls_session_get_id2::.
+1.3.                   
+*note gnutls_pkcs11_privkey_generate3::,These functions no longer create an
+*note gnutls_pkcs11_copy_secret_key::,exportable key by default; they require
+*note gnutls_pkcs11_copy_x509_privkey2::the flag
+                       'GNUTLS_PKCS11_OBJ_FLAG_MARK_NOT_SENSITIVE'
+                       to do so.
+                       
+*note gnutls_db_set_retrieve_function::,These functions are no longer relevant
+*note gnutls_db_set_store_function::,under TLS 1.3; resumption under TLS 1.3
+*note gnutls_db_set_remove_function::is done via session tickets, c.f.
+                       *note gnutls_session_ticket_enable_server::.
+                       
+*note gnutls_session_get_data2::,These functions may introduce a slight
+*note gnutls_session_get_data::delay under TLS 1.3 for few milliseconds.
+                       Check output of
+                       *note gnutls_session_get_flags:: for
+                       GNUTLS_SFLAGS_SESSION_TICKET before
+                       calling this function to avoid delays.
+                       
+SRP and RSA-PSK key    SRP and RSA-PSK key exchanges are not
+exchanges are not      supported in TLS 1.3, so when these key
+supported under TLS    exchanges are present in a priority
+1.3                    string, TLS 1.3 is disabled.
+                       
+Anonymous key          There is no anonymous key exchange
+exchange is not        supported under TLS 1.3, so if an
+supported under TLS    anonymous key exchange method is set in a
+1.3                    priority string, and no certificate
+                       credentials are set in the client or
+                       server, TLS 1.3 will not be negotiated.
+                       
+ECDHE-PSK and          In the priority strings, both 'ECDHEPSK'
+DHE-PSK keywords       and 'DHEPSK' indicate the intent to
+have the same          support an ephemeral key exchange with
+meaning under TLS      the pre-shared key.  The parameters of
+1.3                    the key exchange are negotiated with the
+                       supported groups specified in the
+                       priority string.
+                       
+Authentication-only    Ciphersuites with the 'NULL' cipher
+ciphersuites are not   (i.e., authentication-only) are not
+supported under TLS    supported in TLS 1.3, so when they are
+1.3                    specified in a priority string, TLS 1.3
+                       is disabled.
+                       
+Supplemental data is   The TLS supplemental data handshake
+not supported under    message (RFC 4680) is not supported under
+TLS 1.3                TLS 1.3, so if the application calls
+                       *note gnutls_supplemental_register:: or
+                       *note gnutls_session_supplemental_register::,
+                       TLS 1.3 is disabled.
                        
 
 
@@ -2364,21 +3110,13 @@ File: gnutls.info,  Node: Certification,  Prev: Contributing,  Up: Support
 B.5 Certification
 =================
 
-Many cryptographic libraries claim certifications from national or
-international bodies.  These certifications are tied on a specific (and
-often restricted) version of the library or a specific product using the
-library, and typically in the case of software they assure that the
-algorithms implemented are correct.  The major certifications known are:
-   * USA's FIPS 140-2 at Level 1 which certifies that approved
-     algorithms are used (see
-     <http://en.wikipedia.org/wiki/FIPS_140-2>);
-   * Common Criteria for Information Technology Security Evaluation
-     (CC), an international standard for verification of elaborate
-     security claims (see
-     <http://en.wikipedia.org/wiki/Common_Criteria>).
+There are certifications from national or international bodies which
+"prove" to an auditor that the crypto component follows some best
+practices, such as unit testing and reliance on well known crypto
+primitives.
 
-GnuTLS has support for FIPS 140-2 under Red Hat Enterprise Linux.  See
-*note FIPS140-2 mode:: for more information.
+GnuTLS has support for the FIPS 140-2 certification under Red Hat
+Enterprise Linux.  See *note FIPS140-2 mode:: for more information.
 
 
 File: gnutls.info,  Node: Error codes,  Next: Supported ciphersuites,  Prev: Support,  Up: Top
@@ -2438,7 +3176,8 @@ expressions.
                                           certificate has expired.
 -30         GNUTLS_E_DB_ERROR             Error in Database
                                           backend.
--31         GNUTLS_E_SRP_PWD_ERROR        Error in password file.
+-31         GNUTLS_E_SRP_PWD_ERROR        Error in password/key
+                                          file.
 -32         GNUTLS_E_INSUFFICIENT_CREDENTIALSInsufficient credentials
                                           for that request.
 -33         GNUTLS_E_HASH_FAILED          Hashing has failed.
@@ -2544,8 +3283,8 @@ expressions.
                                           verification has failed.
 -90         GNUTLS_E_ILLEGAL_SRP_USERNAME The SRP username supplied
                                           is illegal.
--91         GNUTLS_E_SRP_PWD_PARSING_ERRORParsing error in password
-                                          file.
+-91         GNUTLS_E_SRP_PWD_PARSING_ERRORParsing error in
+                                          password/key file.
 -93         GNUTLS_E_NO_TEMPORARY_DH_PARAMSNo temporary DH
                                           parameters were found.
 -94         GNUTLS_E_OPENPGP_FINGERPRINT_UNSUPPORTEDThe OpenPGP fingerprint
@@ -2576,8 +3315,8 @@ expressions.
                                           failed.
 -108        GNUTLS_E_UNSAFE_RENEGOTIATION_DENIEDUnsafe renegotiation
                                           denied.
--109        GNUTLS_E_UNKNOWN_SRP_USERNAME The SRP username supplied
-                                          is unknown.
+-109        GNUTLS_E_UNKNOWN_SRP_USERNAME The username supplied is
+                                          unknown.
 -110        GNUTLS_E_PREMATURE_TERMINATIONThe TLS connection was
                                           non-properly terminated.
 -111        GNUTLS_E_MALFORMED_CIDR       CIDR name constraint is
@@ -2760,6 +3499,18 @@ expressions.
                                           are invalid.
 -421        GNUTLS_E_PK_NO_VALIDATION_PARAMSThere are no validation
                                           parameters present.
+-422        GNUTLS_E_OCSP_MISMATCH_WITH_CERTSThe OCSP response
+                                          provided doesn't match
+                                          the available
+                                          certificates
+-423        GNUTLS_E_NO_COMMON_KEY_SHARE  No common key share with
+                                          peer.
+-424        GNUTLS_E_REAUTH_REQUEST       Re-authentication was
+                                          requested by the peer.
+-425        GNUTLS_E_TOO_MANY_MATCHES     More than a single object
+                                          matches the criteria.
+-426        GNUTLS_E_CRL_VERIFICATION_ERRORError in the CRL
+                                          verification.
 
 
 File: gnutls.info,  Node: Supported ciphersuites,  Next: API reference,  Prev: Error codes,  Up: Top
@@ -2772,18 +3523,23 @@ Ciphersuites
 
 Ciphersuite name                            TLS ID         Since
 --------------------------------------------------------------------------
-TLS_RSA_NULL_MD5                            0x00 0x01      SSL3.0
-TLS_RSA_NULL_SHA1                           0x00 0x02      SSL3.0
+TLS_AES_128_GCM_SHA256                      0x13 0x01      TLS1.3
+TLS_AES_256_GCM_SHA384                      0x13 0x02      TLS1.3
+TLS_CHACHA20_POLY1305_SHA256                0x13 0x03      TLS1.3
+TLS_AES_128_CCM_SHA256                      0x13 0x04      TLS1.3
+TLS_AES_128_CCM_8_SHA256                    0x13 0x05      TLS1.3
+TLS_RSA_NULL_MD5                            0x00 0x01      TLS1.0
+TLS_RSA_NULL_SHA1                           0x00 0x02      TLS1.0
 TLS_RSA_NULL_SHA256                         0x00 0x3B      TLS1.2
-TLS_RSA_ARCFOUR_128_SHA1                    0x00 0x05      SSL3.0
-TLS_RSA_ARCFOUR_128_MD5                     0x00 0x04      SSL3.0
-TLS_RSA_3DES_EDE_CBC_SHA1                   0x00 0x0A      SSL3.0
-TLS_RSA_AES_128_CBC_SHA1                    0x00 0x2F      SSL3.0
-TLS_RSA_AES_256_CBC_SHA1                    0x00 0x35      SSL3.0
+TLS_RSA_ARCFOUR_128_SHA1                    0x00 0x05      TLS1.0
+TLS_RSA_ARCFOUR_128_MD5                     0x00 0x04      TLS1.0
+TLS_RSA_3DES_EDE_CBC_SHA1                   0x00 0x0A      TLS1.0
+TLS_RSA_AES_128_CBC_SHA1                    0x00 0x2F      TLS1.0
+TLS_RSA_AES_256_CBC_SHA1                    0x00 0x35      TLS1.0
 TLS_RSA_CAMELLIA_128_CBC_SHA256             0x00 0xBA      TLS1.2
 TLS_RSA_CAMELLIA_256_CBC_SHA256             0x00 0xC0      TLS1.2
-TLS_RSA_CAMELLIA_128_CBC_SHA1               0x00 0x41      SSL3.0
-TLS_RSA_CAMELLIA_256_CBC_SHA1               0x00 0x84      SSL3.0
+TLS_RSA_CAMELLIA_128_CBC_SHA1               0x00 0x41      TLS1.0
+TLS_RSA_CAMELLIA_256_CBC_SHA1               0x00 0x84      TLS1.0
 TLS_RSA_AES_128_CBC_SHA256                  0x00 0x3C      TLS1.2
 TLS_RSA_AES_256_CBC_SHA256                  0x00 0x3D      TLS1.2
 TLS_RSA_AES_128_GCM_SHA256                  0x00 0x9C      TLS1.2
@@ -2794,27 +3550,27 @@ TLS_RSA_AES_128_CCM                         0xC0 0x9C      TLS1.2
 TLS_RSA_AES_256_CCM                         0xC0 0x9D      TLS1.2
 TLS_RSA_AES_128_CCM_8                       0xC0 0xA0      TLS1.2
 TLS_RSA_AES_256_CCM_8                       0xC0 0xA1      TLS1.2
-TLS_DHE_DSS_ARCFOUR_128_SHA1                0x00 0x66      SSL3.0
-TLS_DHE_DSS_3DES_EDE_CBC_SHA1               0x00 0x13      SSL3.0
-TLS_DHE_DSS_AES_128_CBC_SHA1                0x00 0x32      SSL3.0
-TLS_DHE_DSS_AES_256_CBC_SHA1                0x00 0x38      SSL3.0
+TLS_DHE_DSS_ARCFOUR_128_SHA1                0x00 0x66      TLS1.0
+TLS_DHE_DSS_3DES_EDE_CBC_SHA1               0x00 0x13      TLS1.0
+TLS_DHE_DSS_AES_128_CBC_SHA1                0x00 0x32      TLS1.0
+TLS_DHE_DSS_AES_256_CBC_SHA1                0x00 0x38      TLS1.0
 TLS_DHE_DSS_CAMELLIA_128_CBC_SHA256         0x00 0xBD      TLS1.2
 TLS_DHE_DSS_CAMELLIA_256_CBC_SHA256         0x00 0xC3      TLS1.2
-TLS_DHE_DSS_CAMELLIA_128_CBC_SHA1           0x00 0x44      SSL3.0
-TLS_DHE_DSS_CAMELLIA_256_CBC_SHA1           0x00 0x87      SSL3.0
+TLS_DHE_DSS_CAMELLIA_128_CBC_SHA1           0x00 0x44      TLS1.0
+TLS_DHE_DSS_CAMELLIA_256_CBC_SHA1           0x00 0x87      TLS1.0
 TLS_DHE_DSS_AES_128_CBC_SHA256              0x00 0x40      TLS1.2
 TLS_DHE_DSS_AES_256_CBC_SHA256              0x00 0x6A      TLS1.2
 TLS_DHE_DSS_AES_128_GCM_SHA256              0x00 0xA2      TLS1.2
 TLS_DHE_DSS_AES_256_GCM_SHA384              0x00 0xA3      TLS1.2
 TLS_DHE_DSS_CAMELLIA_128_GCM_SHA256         0xC0 0x80      TLS1.2
 TLS_DHE_DSS_CAMELLIA_256_GCM_SHA384         0xC0 0x81      TLS1.2
-TLS_DHE_RSA_3DES_EDE_CBC_SHA1               0x00 0x16      SSL3.0
-TLS_DHE_RSA_AES_128_CBC_SHA1                0x00 0x33      SSL3.0
-TLS_DHE_RSA_AES_256_CBC_SHA1                0x00 0x39      SSL3.0
+TLS_DHE_RSA_3DES_EDE_CBC_SHA1               0x00 0x16      TLS1.0
+TLS_DHE_RSA_AES_128_CBC_SHA1                0x00 0x33      TLS1.0
+TLS_DHE_RSA_AES_256_CBC_SHA1                0x00 0x39      TLS1.0
 TLS_DHE_RSA_CAMELLIA_128_CBC_SHA256         0x00 0xBE      TLS1.2
 TLS_DHE_RSA_CAMELLIA_256_CBC_SHA256         0x00 0xC4      TLS1.2
-TLS_DHE_RSA_CAMELLIA_128_CBC_SHA1           0x00 0x45      SSL3.0
-TLS_DHE_RSA_CAMELLIA_256_CBC_SHA1           0x00 0x88      SSL3.0
+TLS_DHE_RSA_CAMELLIA_128_CBC_SHA1           0x00 0x45      TLS1.0
+TLS_DHE_RSA_CAMELLIA_256_CBC_SHA1           0x00 0x88      TLS1.0
 TLS_DHE_RSA_AES_128_CBC_SHA256              0x00 0x67      TLS1.2
 TLS_DHE_RSA_AES_256_CBC_SHA256              0x00 0x6B      TLS1.2
 TLS_DHE_RSA_AES_128_GCM_SHA256              0x00 0x9E      TLS1.2
@@ -2826,19 +3582,19 @@ TLS_DHE_RSA_AES_128_CCM                     0xC0 0x9E      TLS1.2
 TLS_DHE_RSA_AES_256_CCM                     0xC0 0x9F      TLS1.2
 TLS_DHE_RSA_AES_128_CCM_8                   0xC0 0xA2      TLS1.2
 TLS_DHE_RSA_AES_256_CCM_8                   0xC0 0xA3      TLS1.2
-TLS_ECDHE_RSA_NULL_SHA1                     0xC0 0x10      SSL3.0
-TLS_ECDHE_RSA_3DES_EDE_CBC_SHA1             0xC0 0x12      SSL3.0
-TLS_ECDHE_RSA_AES_128_CBC_SHA1              0xC0 0x13      SSL3.0
-TLS_ECDHE_RSA_AES_256_CBC_SHA1              0xC0 0x14      SSL3.0
+TLS_ECDHE_RSA_NULL_SHA1                     0xC0 0x10      TLS1.0
+TLS_ECDHE_RSA_3DES_EDE_CBC_SHA1             0xC0 0x12      TLS1.0
+TLS_ECDHE_RSA_AES_128_CBC_SHA1              0xC0 0x13      TLS1.0
+TLS_ECDHE_RSA_AES_256_CBC_SHA1              0xC0 0x14      TLS1.0
 TLS_ECDHE_RSA_AES_256_CBC_SHA384            0xC0 0x28      TLS1.2
-TLS_ECDHE_RSA_ARCFOUR_128_SHA1              0xC0 0x11      SSL3.0
+TLS_ECDHE_RSA_ARCFOUR_128_SHA1              0xC0 0x11      TLS1.0
 TLS_ECDHE_RSA_CAMELLIA_128_CBC_SHA256       0xC0 0x76      TLS1.2
 TLS_ECDHE_RSA_CAMELLIA_256_CBC_SHA384       0xC0 0x77      TLS1.2
-TLS_ECDHE_ECDSA_NULL_SHA1                   0xC0 0x06      SSL3.0
-TLS_ECDHE_ECDSA_3DES_EDE_CBC_SHA1           0xC0 0x08      SSL3.0
-TLS_ECDHE_ECDSA_AES_128_CBC_SHA1            0xC0 0x09      SSL3.0
-TLS_ECDHE_ECDSA_AES_256_CBC_SHA1            0xC0 0x0A      SSL3.0
-TLS_ECDHE_ECDSA_ARCFOUR_128_SHA1            0xC0 0x07      SSL3.0
+TLS_ECDHE_ECDSA_NULL_SHA1                   0xC0 0x06      TLS1.0
+TLS_ECDHE_ECDSA_3DES_EDE_CBC_SHA1           0xC0 0x08      TLS1.0
+TLS_ECDHE_ECDSA_AES_128_CBC_SHA1            0xC0 0x09      TLS1.0
+TLS_ECDHE_ECDSA_AES_256_CBC_SHA1            0xC0 0x0A      TLS1.0
+TLS_ECDHE_ECDSA_ARCFOUR_128_SHA1            0xC0 0x07      TLS1.0
 TLS_ECDHE_ECDSA_CAMELLIA_128_CBC_SHA256     0xC0 0x72      TLS1.2
 TLS_ECDHE_ECDSA_CAMELLIA_256_CBC_SHA384     0xC0 0x73      TLS1.2
 TLS_ECDHE_ECDSA_AES_128_CBC_SHA256          0xC0 0x23      TLS1.2
@@ -2858,27 +3614,27 @@ TLS_ECDHE_ECDSA_AES_128_CCM                 0xC0 0xAC      TLS1.2
 TLS_ECDHE_ECDSA_AES_256_CCM                 0xC0 0xAD      TLS1.2
 TLS_ECDHE_ECDSA_AES_128_CCM_8               0xC0 0xAE      TLS1.2
 TLS_ECDHE_ECDSA_AES_256_CCM_8               0xC0 0xAF      TLS1.2
-TLS_ECDHE_PSK_3DES_EDE_CBC_SHA1             0xC0 0x34      SSL3.0
-TLS_ECDHE_PSK_AES_128_CBC_SHA1              0xC0 0x35      SSL3.0
-TLS_ECDHE_PSK_AES_256_CBC_SHA1              0xC0 0x36      SSL3.0
+TLS_ECDHE_PSK_3DES_EDE_CBC_SHA1             0xC0 0x34      TLS1.0
+TLS_ECDHE_PSK_AES_128_CBC_SHA1              0xC0 0x35      TLS1.0
+TLS_ECDHE_PSK_AES_256_CBC_SHA1              0xC0 0x36      TLS1.0
 TLS_ECDHE_PSK_AES_128_CBC_SHA256            0xC0 0x37      TLS1.2
 TLS_ECDHE_PSK_AES_256_CBC_SHA384            0xC0 0x38      TLS1.2
-TLS_ECDHE_PSK_ARCFOUR_128_SHA1              0xC0 0x33      SSL3.0
-TLS_ECDHE_PSK_NULL_SHA1                     0xC0 0x39      SSL3.0
+TLS_ECDHE_PSK_ARCFOUR_128_SHA1              0xC0 0x33      TLS1.0
+TLS_ECDHE_PSK_NULL_SHA1                     0xC0 0x39      TLS1.0
 TLS_ECDHE_PSK_NULL_SHA256                   0xC0 0x3A      TLS1.2
 TLS_ECDHE_PSK_NULL_SHA384                   0xC0 0x3B      TLS1.0
 TLS_ECDHE_PSK_CAMELLIA_128_CBC_SHA256       0xC0 0x9A      TLS1.2
 TLS_ECDHE_PSK_CAMELLIA_256_CBC_SHA384       0xC0 0x9B      TLS1.2
-TLS_PSK_ARCFOUR_128_SHA1                    0x00 0x8A      SSL3.0
-TLS_PSK_3DES_EDE_CBC_SHA1                   0x00 0x8B      SSL3.0
-TLS_PSK_AES_128_CBC_SHA1                    0x00 0x8C      SSL3.0
-TLS_PSK_AES_256_CBC_SHA1                    0x00 0x8D      SSL3.0
+TLS_PSK_ARCFOUR_128_SHA1                    0x00 0x8A      TLS1.0
+TLS_PSK_3DES_EDE_CBC_SHA1                   0x00 0x8B      TLS1.0
+TLS_PSK_AES_128_CBC_SHA1                    0x00 0x8C      TLS1.0
+TLS_PSK_AES_256_CBC_SHA1                    0x00 0x8D      TLS1.0
 TLS_PSK_AES_128_CBC_SHA256                  0x00 0xAE      TLS1.2
 TLS_PSK_AES_256_GCM_SHA384                  0x00 0xA9      TLS1.2
 TLS_PSK_CAMELLIA_128_GCM_SHA256             0xC0 0x8E      TLS1.2
 TLS_PSK_CAMELLIA_256_GCM_SHA384             0xC0 0x8F      TLS1.2
 TLS_PSK_AES_128_GCM_SHA256                  0x00 0xA8      TLS1.2
-TLS_PSK_NULL_SHA1                           0x00 0x2C      SSL3.0
+TLS_PSK_NULL_SHA1                           0x00 0x2C      TLS1.0
 TLS_PSK_NULL_SHA256                         0x00 0xB0      TLS1.2
 TLS_PSK_CAMELLIA_128_CBC_SHA256             0xC0 0x94      TLS1.2
 TLS_PSK_CAMELLIA_256_CBC_SHA384             0xC0 0x95      TLS1.2
@@ -2899,13 +3655,13 @@ TLS_RSA_PSK_AES_256_CBC_SHA384              0x00 0xB7      TLS1.2
 TLS_RSA_PSK_NULL_SHA384                     0x00 0xB9      TLS1.2
 TLS_RSA_PSK_CAMELLIA_128_CBC_SHA256         0xC0 0x98      TLS1.2
 TLS_RSA_PSK_CAMELLIA_256_CBC_SHA384         0xC0 0x99      TLS1.2
-TLS_DHE_PSK_ARCFOUR_128_SHA1                0x00 0x8E      SSL3.0
-TLS_DHE_PSK_3DES_EDE_CBC_SHA1               0x00 0x8F      SSL3.0
-TLS_DHE_PSK_AES_128_CBC_SHA1                0x00 0x90      SSL3.0
-TLS_DHE_PSK_AES_256_CBC_SHA1                0x00 0x91      SSL3.0
+TLS_DHE_PSK_ARCFOUR_128_SHA1                0x00 0x8E      TLS1.0
+TLS_DHE_PSK_3DES_EDE_CBC_SHA1               0x00 0x8F      TLS1.0
+TLS_DHE_PSK_AES_128_CBC_SHA1                0x00 0x90      TLS1.0
+TLS_DHE_PSK_AES_256_CBC_SHA1                0x00 0x91      TLS1.0
 TLS_DHE_PSK_AES_128_CBC_SHA256              0x00 0xB2      TLS1.2
 TLS_DHE_PSK_AES_128_GCM_SHA256              0x00 0xAA      TLS1.2
-TLS_DHE_PSK_NULL_SHA1                       0x00 0x2D      SSL3.0
+TLS_DHE_PSK_NULL_SHA1                       0x00 0x2D      TLS1.0
 TLS_DHE_PSK_NULL_SHA256                     0x00 0xB4      TLS1.2
 TLS_DHE_PSK_NULL_SHA384                     0x00 0xB5      TLS1.2
 TLS_DHE_PSK_AES_256_CBC_SHA384              0x00 0xB3      TLS1.2
@@ -2926,34 +3682,34 @@ TLS_DHE_PSK_CHACHA20_POLY1305               0xCC 0xAD      TLS1.2
 TLS_ECDHE_PSK_CHACHA20_POLY1305             0xCC 0xAC      TLS1.2
 TLS_RSA_PSK_CHACHA20_POLY1305               0xCC 0xAE      TLS1.2
 TLS_PSK_CHACHA20_POLY1305                   0xCC 0xAB      TLS1.2
-TLS_DH_ANON_ARCFOUR_128_MD5                 0x00 0x18      SSL3.0
-TLS_DH_ANON_3DES_EDE_CBC_SHA1               0x00 0x1B      SSL3.0
-TLS_DH_ANON_AES_128_CBC_SHA1                0x00 0x34      SSL3.0
-TLS_DH_ANON_AES_256_CBC_SHA1                0x00 0x3A      SSL3.0
+TLS_DH_ANON_ARCFOUR_128_MD5                 0x00 0x18      TLS1.0
+TLS_DH_ANON_3DES_EDE_CBC_SHA1               0x00 0x1B      TLS1.0
+TLS_DH_ANON_AES_128_CBC_SHA1                0x00 0x34      TLS1.0
+TLS_DH_ANON_AES_256_CBC_SHA1                0x00 0x3A      TLS1.0
 TLS_DH_ANON_CAMELLIA_128_CBC_SHA256         0x00 0xBF      TLS1.2
 TLS_DH_ANON_CAMELLIA_256_CBC_SHA256         0x00 0xC5      TLS1.2
-TLS_DH_ANON_CAMELLIA_128_CBC_SHA1           0x00 0x46      SSL3.0
-TLS_DH_ANON_CAMELLIA_256_CBC_SHA1           0x00 0x89      SSL3.0
+TLS_DH_ANON_CAMELLIA_128_CBC_SHA1           0x00 0x46      TLS1.0
+TLS_DH_ANON_CAMELLIA_256_CBC_SHA1           0x00 0x89      TLS1.0
 TLS_DH_ANON_AES_128_CBC_SHA256              0x00 0x6C      TLS1.2
 TLS_DH_ANON_AES_256_CBC_SHA256              0x00 0x6D      TLS1.2
 TLS_DH_ANON_AES_128_GCM_SHA256              0x00 0xA6      TLS1.2
 TLS_DH_ANON_AES_256_GCM_SHA384              0x00 0xA7      TLS1.2
 TLS_DH_ANON_CAMELLIA_128_GCM_SHA256         0xC0 0x84      TLS1.2
 TLS_DH_ANON_CAMELLIA_256_GCM_SHA384         0xC0 0x85      TLS1.2
-TLS_ECDH_ANON_NULL_SHA1                     0xC0 0x15      SSL3.0
-TLS_ECDH_ANON_3DES_EDE_CBC_SHA1             0xC0 0x17      SSL3.0
-TLS_ECDH_ANON_AES_128_CBC_SHA1              0xC0 0x18      SSL3.0
-TLS_ECDH_ANON_AES_256_CBC_SHA1              0xC0 0x19      SSL3.0
-TLS_ECDH_ANON_ARCFOUR_128_SHA1              0xC0 0x16      SSL3.0
-TLS_SRP_SHA_3DES_EDE_CBC_SHA1               0xC0 0x1A      SSL3.0
-TLS_SRP_SHA_AES_128_CBC_SHA1                0xC0 0x1D      SSL3.0
-TLS_SRP_SHA_AES_256_CBC_SHA1                0xC0 0x20      SSL3.0
-TLS_SRP_SHA_DSS_3DES_EDE_CBC_SHA1           0xC0 0x1C      SSL3.0
-TLS_SRP_SHA_RSA_3DES_EDE_CBC_SHA1           0xC0 0x1B      SSL3.0
-TLS_SRP_SHA_DSS_AES_128_CBC_SHA1            0xC0 0x1F      SSL3.0
-TLS_SRP_SHA_RSA_AES_128_CBC_SHA1            0xC0 0x1E      SSL3.0
-TLS_SRP_SHA_DSS_AES_256_CBC_SHA1            0xC0 0x22      SSL3.0
-TLS_SRP_SHA_RSA_AES_256_CBC_SHA1            0xC0 0x21      SSL3.0
+TLS_ECDH_ANON_NULL_SHA1                     0xC0 0x15      TLS1.0
+TLS_ECDH_ANON_3DES_EDE_CBC_SHA1             0xC0 0x17      TLS1.0
+TLS_ECDH_ANON_AES_128_CBC_SHA1              0xC0 0x18      TLS1.0
+TLS_ECDH_ANON_AES_256_CBC_SHA1              0xC0 0x19      TLS1.0
+TLS_ECDH_ANON_ARCFOUR_128_SHA1              0xC0 0x16      TLS1.0
+TLS_SRP_SHA_3DES_EDE_CBC_SHA1               0xC0 0x1A      TLS1.0
+TLS_SRP_SHA_AES_128_CBC_SHA1                0xC0 0x1D      TLS1.0
+TLS_SRP_SHA_AES_256_CBC_SHA1                0xC0 0x20      TLS1.0
+TLS_SRP_SHA_DSS_3DES_EDE_CBC_SHA1           0xC0 0x1C      TLS1.0
+TLS_SRP_SHA_RSA_3DES_EDE_CBC_SHA1           0xC0 0x1B      TLS1.0
+TLS_SRP_SHA_DSS_AES_128_CBC_SHA1            0xC0 0x1F      TLS1.0
+TLS_SRP_SHA_RSA_AES_128_CBC_SHA1            0xC0 0x1E      TLS1.0
+TLS_SRP_SHA_DSS_AES_256_CBC_SHA1            0xC0 0x22      TLS1.0
+TLS_SRP_SHA_RSA_AES_256_CBC_SHA1            0xC0 0x21      TLS1.0
 
 Certificate types
 =================
@@ -2967,6 +3723,7 @@ Protocols
 'TLS1.0'
 'TLS1.1'
 'TLS1.2'
+'TLS1.3'
 'DTLS0.9'
 'DTLS1.0'
 'DTLS1.2'
@@ -2992,6 +3749,11 @@ Ciphers
 'CHACHA20-POLY1305'
 'CAMELLIA-128-GCM'
 'CAMELLIA-256-GCM'
+'GOST28147-TC26Z-CFB'
+'GOST28147-CPA-CFB'
+'GOST28147-CPB-CFB'
+'GOST28147-CPC-CFB'
+'GOST28147-CPD-CFB'
 '3DES-CBC'
 'DES-CBC'
 'RC2-40'
@@ -3009,6 +3771,9 @@ MAC algorithms
 'UMAC-128'
 'AEAD'
 'MD5'
+'GOSTR341194'
+'STREEBOG-256'
+'STREEBOG-512'
 
 Key exchange methods
 ====================
@@ -3036,6 +3801,9 @@ Public key algorithms
 'RSA-PSS'
 'RSA'
 'DSA'
+'GOST R 34.10-2012-512'
+'GOST R 34.10-2012-256'
+'GOST R 34.10-2001'
 'EC/ECDSA'
 'EdDSA (Ed25519)'
 'DH'
@@ -3048,15 +3816,18 @@ Public key signature algorithms
 'RSA-SHA384'
 'RSA-SHA512'
 'RSA-PSS-SHA256'
-'RSA-PSS-SHA256'
+'RSA-PSS-RSAE-SHA256'
 'RSA-PSS-SHA384'
-'RSA-PSS-SHA384'
+'RSA-PSS-RSAE-SHA384'
 'RSA-PSS-SHA512'
-'RSA-PSS-SHA512'
+'RSA-PSS-RSAE-SHA512'
 'EdDSA-Ed25519'
 'ECDSA-SHA256'
 'ECDSA-SHA384'
 'ECDSA-SHA512'
+'ECDSA-SECP256R1-SHA256'
+'ECDSA-SECP384R1-SHA384'
+'ECDSA-SECP521R1-SHA512'
 'ECDSA-SHA3-224'
 'ECDSA-SHA3-256'
 'ECDSA-SHA3-384'
@@ -3083,6 +3854,9 @@ Public key signature algorithms
 'RSA-MD2'
 'ECDSA-SHA1'
 'ECDSA-SHA224'
+'GOSTR341012-512'
+'GOSTR341012-256'
+'GOSTR341001'
 'DSA-SHA384'
 'DSA-SHA512'
 
@@ -3396,6 +4170,9 @@ gnutls_auth_client_get_type
      authentication.  The returned information is to be used to
      distinguish the function used to access authentication data.
 
+     Note that on resumed sessions, this function returns the schema
+     used in the original session authentication.
+
      *Returns:* The type of credentials for the client authentication
      schema, a 'gnutls_credentials_type_t' type.
 
@@ -3414,6 +4191,9 @@ gnutls_auth_get_type
      'GNUTLS_KX_RSA' , 'GNUTLS_KX_DHE_RSA' ), the same function are to
      be used to access the authentication data.
 
+     Note that on resumed sessions, this function returns the schema
+     used in the original session authentication.
+
      *Returns:* The type of credentials for the current authentication
      schema, a 'gnutls_credentials_type_t' type.
 
@@ -3427,6 +4207,9 @@ gnutls_auth_server_get_type
      Returns the type of credentials that were used for server
      authentication.  The returned information is to be used to
      distinguish the function used to access authentication data.
+
+     Note that on resumed sessions, this function returns the schema
+     used in the original session authentication.
 
      *Returns:* The type of credentials for the server authentication
      schema, a 'gnutls_credentials_type_t' type.
@@ -3552,7 +4335,7 @@ gnutls_certificate_allocate_credentials
 gnutls_certificate_client_get_request_status
 --------------------------------------------
 
- -- Function: int gnutls_certificate_client_get_request_status
+ -- Function: unsigned gnutls_certificate_client_get_request_status
           (gnutls_session_t SESSION)
      SESSION: is a gnutls session
 
@@ -3697,6 +4480,38 @@ gnutls_certificate_get_issuer
 
      *Since:* 3.0
 
+gnutls_certificate_get_ocsp_expiration
+--------------------------------------
+
+ -- Function: time_t gnutls_certificate_get_ocsp_expiration
+          (gnutls_certificate_credentials_t SC, unsigned IDX, int OIDX,
+          unsigned FLAGS)
+     SC: is a credentials structure.
+
+     IDX: is a certificate chain index as returned by
+     'gnutls_certificate_set_key()' and friends
+
+     OIDX: is an OCSP response index
+
+     FLAGS: should be zero
+
+     This function returns the validity of the loaded OCSP responses, to
+     provide information on when to reload/refresh them.
+
+     Note that the credentials structure should be read-only when in
+     use, thus when reloading, either the credentials structure must not
+     be in use by any sessions, or a new credentials structure should be
+     allocated for new sessions.
+
+     When 'oidx' is (-1) then the minimum refresh time for all responses
+     is returned.  Otherwise the index specifies the response
+     corresponding to the 'odix' certificate in the certificate chain.
+
+     *Returns:* On success, the expiration time of the OCSP response.
+     Otherwise (time_t)(-1) on error, or (time_t)-2 on out of bounds.
+
+     *Since:* 3.6.3
+
 gnutls_certificate_get_ours
 ---------------------------
 
@@ -3707,6 +4522,12 @@ gnutls_certificate_get_ours
      Gets the certificate as sent to the peer in the last handshake.
      The certificate is in raw (DER) format.  No certificate list is
      being returned.  Only the first certificate.
+
+     This function returns the certificate that was sent in the current
+     handshake.  In subsequent resumed sessions this function will
+     return 'NULL' .  That differs from 'gnutls_certificate_get_peers()'
+     which always returns the peer's certificate used in the original
+     session.
 
      *Returns:* a pointer to a 'gnutls_datum_t' containing our
      certificate, or 'NULL' in case of an error or if no certificate was
@@ -3730,8 +4551,8 @@ gnutls_certificate_get_peers
      servers which violate this principle and thus on certain occasions
      this may be an unsorted list.
 
-     In case of OpenPGP keys a single key will be returned in raw
-     format.
+     In resumed sessions, this function will return the peer's
+     certificate list as used in the first/original session.
 
      *Returns:* a pointer to a 'gnutls_datum_t' containing the peer's
      certificates, or 'NULL' in case of an error or if no certificate
@@ -3872,9 +4693,10 @@ gnutls_certificate_server_set_request
 
      This function specifies if we (in case of a server) are going to
      send a certificate request message to the client.  If 'req' is
-     GNUTLS_CERT_REQUIRE then the server will return an error if the
-     peer does not provide a certificate.  If you do not call this
-     function then the client will not be asked to send a certificate.
+     GNUTLS_CERT_REQUIRE then the server will return the
+     'GNUTLS_E_NO_CERTIFICATE_FOUND' error if the peer does not provide
+     a certificate.  If you do not call this function then the client
+     will not be asked to send a certificate.
 
 gnutls_certificate_set_dh_params
 --------------------------------
@@ -3949,14 +4771,9 @@ gnutls_certificate_set_ocsp_status_request_file
      IDX: is a certificate index as returned by
      'gnutls_certificate_set_key()' and friends
 
-     This function sets the filename of an OCSP response, that will be
-     sent to the client if requests an OCSP certificate status for the
+     This function loads the provided OCSP response.  It will be sent to
+     the client if requests an OCSP certificate status for the
      certificate chain specified by 'idx' .
-
-     This is a convenience function which may be inefficient on busy
-     servers since the file is opened on every access.  Use
-     'gnutls_certificate_set_ocsp_status_request_function2()' to
-     fine-tune file accesses.
 
      *Note:* the ability to set multiple OCSP responses per credential
      structure via the index 'idx' was added in version 3.5.6.  To keep
@@ -3964,6 +4781,57 @@ gnutls_certificate_set_ocsp_status_request_file
      'gnutls_certificate_set_flags()' with the
      'GNUTLS_CERTIFICATE_API_V2' flag to make the set certificate
      functions return an index usable by this function.
+
+     This function can be called multiple times since GnuTLS 3.6.3 when
+     multiple responses which apply to the chain are available.  If the
+     response provided does not match any certificates present in the
+     chain, the code 'GNUTLS_E_OCSP_MISMATCH_WITH_CERTS' is returned.
+     To revert to the previous behavior set the flag
+     'GNUTLS_CERTIFICATE_SKIP_OCSP_RESPONSE_CHECK' in the certificate
+     credentials structure.  In that case, only the end-certificate's
+     OCSP response can be set.  If the response is already expired at
+     the time of loading the code 'GNUTLS_E_EXPIRED' is returned.
+
+     To revert to the previous behavior of this function which does not
+     return any errors, set the flag
+     'GNUTLS_CERTIFICATE_SKIP_OCSP_RESPONSE_CHECK'
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error code is returned.
+
+     *Since:* 3.1.3
+
+gnutls_certificate_set_ocsp_status_request_file2
+------------------------------------------------
+
+ -- Function: int gnutls_certificate_set_ocsp_status_request_file2
+          (gnutls_certificate_credentials_t SC, const char *
+          RESPONSE_FILE, unsigned IDX, gnutls_x509_crt_fmt_t FMT)
+     SC: is a credentials structure.
+
+     RESPONSE_FILE: a filename of the OCSP response
+
+     IDX: is a certificate index as returned by
+     'gnutls_certificate_set_key()' and friends
+
+     FMT: is PEM or DER
+
+     This function loads the OCSP responses to be sent to the peer for
+     the certificate chain specified by 'idx' .  When 'fmt' is set to
+     PEM, multiple responses can be loaded.
+
+     This function must be called after setting any certificates, and
+     cannot be used for certificates that are provided via a callback -
+     that is when 'gnutls_certificate_set_retrieve_function()' is used.
+     In that case consider using
+     'gnutls_certificate_set_retrieve_function3()' .
+
+     This function can be called multiple times when multiple responses
+     applicable to the certificate chain are available.  If the response
+     provided does not match any certificates present in the chain, the
+     code 'GNUTLS_E_OCSP_MISMATCH_WITH_CERTS' is returned.  If the
+     response is already expired at the time of loading the code
+     'GNUTLS_E_EXPIRED' is returned.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.
@@ -4050,6 +4918,48 @@ gnutls_certificate_set_ocsp_status_request_function2
      otherwise a negative error code is returned.
 
      *Since:* 3.5.5
+
+gnutls_certificate_set_ocsp_status_request_mem
+----------------------------------------------
+
+ -- Function: int gnutls_certificate_set_ocsp_status_request_mem
+          (gnutls_certificate_credentials_t SC, const gnutls_datum_t *
+          RESP_DATA, unsigned IDX, gnutls_x509_crt_fmt_t FMT)
+     SC: is a credentials structure.
+
+     RESP_DATA: a memory buffer holding an OCSP response
+
+     IDX: is a certificate index as returned by
+     'gnutls_certificate_set_key()' and friends
+
+     FMT: is PEM or DER
+
+     This function sets the OCSP responses to be sent to the peer for
+     the certificate chain specified by 'idx' .  When 'fmt' is set to
+     PEM, multiple responses can be loaded.
+
+     *Note:* the ability to set multiple OCSP responses per credential
+     structure via the index 'idx' was added in version 3.5.6.  To keep
+     backwards compatibility, it requires using
+     'gnutls_certificate_set_flags()' with the
+     'GNUTLS_CERTIFICATE_API_V2' flag to make the set certificate
+     functions return an index usable by this function.
+
+     This function must be called after setting any certificates, and
+     cannot be used for certificates that are provided via a callback -
+     that is when 'gnutls_certificate_set_retrieve_function()' is used.
+
+     This function can be called multiple times when multiple responses
+     which apply to the certificate chain are available.  If the
+     response provided does not match any certificates present in the
+     chain, the code 'GNUTLS_E_OCSP_MISMATCH_WITH_CERTS' is returned.
+     If the response is already expired at the time of loading the code
+     'GNUTLS_E_EXPIRED' is returned.
+
+     *Returns:* On success, the number of loaded responses is returned,
+     otherwise a negative error code.
+
+     *Since:* 3.6.3
 
 gnutls_certificate_set_params_function
 --------------------------------------
@@ -4736,8 +5646,41 @@ gnutls_certificate_type_get
      The certificate type is by default X.509, unless it is negotiated
      as a TLS extension.
 
+     As of version 3.6.4 it is recommended to use
+     'gnutls_certificate_type_get2()' .
+
      *Returns:* the currently used 'gnutls_certificate_type_t'
-     certificate type.
+     certificate type as negotiated for 'our' side of the connection.
+
+gnutls_certificate_type_get2
+----------------------------
+
+ -- Function: gnutls_certificate_type_t gnutls_certificate_type_get2
+          (gnutls_session_t SESSION, gnutls_ctype_target_t TARGET)
+     SESSION: is a 'gnutls_session_t' type.
+
+     TARGET: is a 'gnutls_ctype_target_t' type.
+
+     The raw public-key extension (RFC7250) introduces a mechanism to
+     specifcy different certificate types for the client and server.  We
+     therefore distinguish between negotiated certificate types for the
+     client and server.  The 'target' parameter specifies whether you
+     want the negotiated certificate type for the client
+     (GNUTLS_CTYPE_CLIENT) or for the server (GNUTLS_CTYPE_SERVER).
+     Additionally, in P2P mode connection set up where you don't know in
+     advance who will be client and who will be server you can use the
+     flag (GNUTLS_CTYPE_OURS) and (GNUTLS_CTYPE_PEERS) to retrieve the
+     corresponding certificate types.
+
+     In case no certificate types were explicitly set via the priority
+     strings to be negotiated during the handshake, then this function
+     will return the default certificate type (X.509) for both the
+     client and the server.
+
+     *Returns:* the currently used 'gnutls_certificate_type_t'
+     certificate type for the client or the server.
+
+     *Since:* 3.6.4
 
 gnutls_certificate_type_get_id
 ------------------------------
@@ -4824,6 +5767,11 @@ gnutls_certificate_verify_peers
      'gnutls_certificate_verify_peers2()' for details in the
      verification process.
 
+     This function will take into account the stapled OCSP responses
+     sent by the server, as well as the following X.509 certificate
+     extensions: Name Constraints, Key Usage, and Basic Constraints
+     (pathlen).
+
      The acceptable 'data' types are 'GNUTLS_DT_DNS_HOSTNAME' ,
      'GNUTLS_DT_RFC822NAME' and 'GNUTLS_DT_KEY_PURPOSE_OID' .  The
      former two accept as data a null-terminated hostname or email
@@ -4838,6 +5786,10 @@ gnutls_certificate_verify_peers
      have the provided key purpose or be marked for any purpose,
      otherwise verification status will have the
      'GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE' flag set.
+
+     To avoid denial of service attacks some default upper limits
+     regarding the certificate key size and chain size are set.  To
+     override them use 'gnutls_certificate_set_verify_limits()' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) when the validation is performed,
      or a negative error code otherwise.  A successful error code means
@@ -4864,19 +5816,19 @@ gnutls_certificate_verify_peers2
      verification flags used by this function can be overridden using
      'gnutls_certificate_set_verify_flags()' .
 
-     This function will take into account the OCSP Certificate Status
-     TLS extension, as well as the following X.509 certificate
+     This function will take into account the stapled OCSP responses
+     sent by the server, as well as the following X.509 certificate
      extensions: Name Constraints, Key Usage, and Basic Constraints
      (pathlen).
-
-     To avoid denial of service attacks some default upper limits
-     regarding the certificate key size and chain size are set.  To
-     override them use 'gnutls_certificate_set_verify_limits()' .
 
      Note that you must also check the peer's name in order to check if
      the verified certificate belongs to the actual peer, see
      'gnutls_x509_crt_check_hostname()' , or use
      'gnutls_certificate_verify_peers3()' .
+
+     To avoid denial of service attacks some default upper limits
+     regarding the certificate key size and chain size are set.  To
+     override them use 'gnutls_certificate_set_verify_limits()' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) when the validation is performed,
      or a negative error code otherwise.  A successful error code means
@@ -4905,6 +5857,11 @@ gnutls_certificate_verify_peers3
      'gnutls_certificate_verify_peers2()' for details in the
      verification process.
 
+     This function will take into account the stapled OCSP responses
+     sent by the server, as well as the following X.509 certificate
+     extensions: Name Constraints, Key Usage, and Basic Constraints
+     (pathlen).
+
      If the 'hostname' provided is non-NULL then this function will
      compare the hostname in the certificate against it.  The comparison
      will follow the RFC6125 recommendations.  If names do not match the
@@ -4912,6 +5869,10 @@ gnutls_certificate_verify_peers3
 
      In order to verify the purpose of the end-certificate (by checking
      the extended key usage), use 'gnutls_certificate_verify_peers()' .
+
+     To avoid denial of service attacks some default upper limits
+     regarding the certificate key size and chain size are set.  To
+     override them use 'gnutls_certificate_set_verify_limits()' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) when the validation is performed,
      or a negative error code otherwise.  A successful error code means
@@ -5190,8 +6151,11 @@ gnutls_db_set_cache_expiration
 
      SECONDS: is the number of seconds.
 
-     Set the expiration time for resumed sessions.  The default is 3600
-     (one hour) at the time of this writing.
+     Set the expiration time for resumed sessions.  The default is 21600
+     (size hours) at the time of writing.
+
+     The maximum value that can be set using this function is 604800 (7
+     days).
 
 gnutls_db_set_ptr
 -----------------
@@ -5804,14 +6768,32 @@ gnutls_est_record_overhead_size
 
      *Since:* 3.2.2
 
+gnutls_ext_get_current_msg
+--------------------------
+
+ -- Function: unsigned gnutls_ext_get_current_msg (gnutls_session_t
+          SESSION)
+     SESSION: a 'gnutls_session_t' opaque pointer
+
+     This function allows an extension handler to obtain the message
+     this extension is being called from.  The returned value is a
+     single entry of the 'gnutls_ext_flags_t' enumeration.  That is, if
+     an extension was registered with the 'GNUTLS_EXT_FLAG_HRR' and
+     'GNUTLS_EXT_FLAG_EE' flags, the value when called during parsing of
+     the encrypted extensions message will be 'GNUTLS_EXT_FLAG_EE' .
+
+     If not called under an extension handler, its value is undefined.
+
+     *Since:* 3.6.3
+
 gnutls_ext_get_data
 -------------------
 
  -- Function: int gnutls_ext_get_data (gnutls_session_t SESSION,
-          unsigned TYPE, gnutls_ext_priv_data_t * DATA)
+          unsigned TLS_ID, gnutls_ext_priv_data_t * DATA)
      SESSION: a 'gnutls_session_t' opaque pointer
 
-     TYPE: the numeric id of the extension
+     TLS_ID: the numeric id of the extension
 
      DATA: a pointer to the private data to retrieve
 
@@ -5834,17 +6816,48 @@ gnutls_ext_get_name
      *Returns:* a pointer to a string that contains the name of the
      specified cipher, or 'NULL' .
 
+gnutls_ext_raw_parse
+--------------------
+
+ -- Function: int gnutls_ext_raw_parse (void * CTX,
+          gnutls_ext_raw_process_func CB, const gnutls_datum_t * DATA,
+          unsigned int FLAGS)
+     CTX: a pointer to pass to callback function
+
+     CB: callback function to process each extension found
+
+     DATA: TLS extension data
+
+     FLAGS: should be zero or 'GNUTLS_EXT_RAW_FLAG_TLS_CLIENT_HELLO' or
+     'GNUTLS_EXT_RAW_FLAG_DTLS_CLIENT_HELLO'
+
+     This function iterates through the TLS extensions as passed in
+     'data' , passing the individual extension data to callback.  The
+     'data' must conform to Extension extensions<0..2^16-1> format.
+
+     If flags is 'GNUTLS_EXT_RAW_TLS_FLAG_CLIENT_HELLO' then this
+     function will parse the extension data from the position, as if the
+     packet in 'data' is a client hello (without record or handshake
+     headers) - as provided by 'gnutls_handshake_set_hook_function()' .
+
+     The return value of the callback will be propagated.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.  On
+     unknown flags it returns 'GNUTLS_E_INVALID_REQUEST' .
+
+     *Since:* 3.6.3
+
 gnutls_ext_register
 -------------------
 
- -- Function: int gnutls_ext_register (const char * NAME, int TYPE,
+ -- Function: int gnutls_ext_register (const char * NAME, int ID,
           gnutls_ext_parse_type_t PARSE_TYPE, gnutls_ext_recv_func
           RECV_FUNC, gnutls_ext_send_func SEND_FUNC,
           gnutls_ext_deinit_data_func DEINIT_FUNC, gnutls_ext_pack_func
           PACK_FUNC, gnutls_ext_unpack_func UNPACK_FUNC)
      NAME: the name of the extension to register
 
-     TYPE: the numeric id of the extension
+     ID: the numeric TLS id of the extension
 
      PARSE_TYPE: the parse type of the extension (see
      gnutls_ext_parse_type_t)
@@ -5870,6 +6883,10 @@ gnutls_ext_register
      gnutls_session_t structure using 'gnutls_ext_set_data()' , and they
      can be retrieved using 'gnutls_ext_get_data()' .
 
+     Any extensions registered with this function are valid for the
+     client and TLS1.2 server hello (or encrypted extensions for
+     TLS1.3).
+
      This function is not thread safe.
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
@@ -5881,10 +6898,10 @@ gnutls_ext_set_data
 -------------------
 
  -- Function: void gnutls_ext_set_data (gnutls_session_t SESSION,
-          unsigned TYPE, gnutls_ext_priv_data_t DATA)
+          unsigned TLS_ID, gnutls_ext_priv_data_t DATA)
      SESSION: a 'gnutls_session_t' opaque pointer
 
-     TYPE: the numeric id of the extension
+     TLS_ID: the numeric id of the extension
 
      DATA: the private data to set
 
@@ -5926,11 +6943,44 @@ gnutls_fips140_mode_enabled
 
  -- Function: unsigned gnutls_fips140_mode_enabled ( VOID)
 
-     Checks whether this library is in FIPS140 mode.
+     Checks whether this library is in FIPS140 mode.  The returned value
+     corresponds to the library mode as set with
+     'gnutls_fips140_set_mode()' .
+
+     If 'gnutls_fips140_set_mode()' was called with
+     'GNUTLS_FIPS140_SET_MODE_THREAD' then this function will return the
+     current thread's FIPS140 mode, otherwise the global value is
+     returned.
 
      *Returns:* return non-zero if true or zero if false.
 
      *Since:* 3.3.0
+
+gnutls_fips140_set_mode
+-----------------------
+
+ -- Function: void gnutls_fips140_set_mode (gnutls_fips_mode_t MODE,
+          unsigned FLAGS)
+     MODE: the FIPS140-2 mode to switch to
+
+     FLAGS: should be zero or 'GNUTLS_FIPS140_SET_MODE_THREAD'
+
+     That function is not thread-safe when changing the mode with no
+     flags (globally), and should be called prior to creating any
+     threads.  Its behavior with no flags after threads are created is
+     undefined.
+
+     When the flag 'GNUTLS_FIPS140_SET_MODE_THREAD' is specified then
+     this call will change the FIPS140-2 mode for this particular thread
+     and not for the whole process.  That way an application can utilize
+     this function to set and reset mode for specific operations.
+
+     This function never fails but will be a no-op if used when the
+     library is not in FIPS140-2 mode.  When asked to switch to unknown
+     values for 'mode' or to 'GNUTLS_FIPS140_SELFTESTS' mode, the
+     library switches to 'GNUTLS_FIPS140_STRICT' mode.
+
+     *Since:* 3.6.2
 
 gnutls_global_deinit
 --------------------
@@ -6064,6 +7114,34 @@ gnutls_global_set_time_function
 
      *Since:* 2.12.0
 
+gnutls_gost_paramset_get_name
+-----------------------------
+
+ -- Function: const char * gnutls_gost_paramset_get_name
+          (gnutls_gost_paramset_t PARAM)
+     PARAM: is a GOST 28147 param set
+
+     Convert a 'gnutls_gost_paramset_t' value to a string.
+
+     *Returns:* a string that contains the name of the specified GOST
+     param set, or 'NULL' .
+
+     *Since:* 3.6.3
+
+gnutls_gost_paramset_get_oid
+----------------------------
+
+ -- Function: const char * gnutls_gost_paramset_get_oid
+          (gnutls_gost_paramset_t PARAM)
+     PARAM: is a GOST 28147 param set
+
+     Convert a 'gnutls_gost_paramset_t' value to its object identifier.
+
+     *Returns:* a string that contains the object identifier of the
+     specified GOST param set, or 'NULL' .
+
+     *Since:* 3.6.3
+
 gnutls_group_get
 ----------------
 
@@ -6123,40 +7201,42 @@ gnutls_handshake
  -- Function: int gnutls_handshake (gnutls_session_t SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
-     This function does the handshake of the TLS/SSL protocol, and
-     initializes the TLS connection.
-
-     This function will fail if any problem is encountered, and will
-     return a negative error code.  In case of a client, if the client
-     has asked to resume a session, but the server couldn't, then a full
-     handshake will be performed.
+     This function performs the handshake of the TLS/SSL protocol, and
+     initializes the TLS session parameters.
 
      The non-fatal errors expected by this function are:
      'GNUTLS_E_INTERRUPTED' , 'GNUTLS_E_AGAIN' ,
-     'GNUTLS_E_WARNING_ALERT_RECEIVED' , and
-     'GNUTLS_E_GOT_APPLICATION_DATA' , the latter only in a case of
-     rehandshake.
+     'GNUTLS_E_WARNING_ALERT_RECEIVED' .  When this function is called
+     for re-handshake under TLS 1.2 or earlier, the non-fatal error code
+     'GNUTLS_E_GOT_APPLICATION_DATA' may also be returned.
 
-     The former two interrupt the handshake procedure due to the lower
-     layer being interrupted, and the latter because of an alert that
-     may be sent by a server (it is always a good idea to check any
-     received alerts).  On these errors call this function again, until
-     it returns 0; cf.  'gnutls_record_get_direction()' and
-     'gnutls_error_is_fatal()' .  In DTLS sessions the non-fatal error
-     'GNUTLS_E_LARGE_PACKET' is also possible, and indicates that the
-     MTU should be adjusted.
+     The former two interrupt the handshake procedure due to the
+     transport layer being interrupted, and the latter because of a
+     "warning" alert that was sent by the peer (it is always a good idea
+     to check any received alerts).  On these non-fatal errors call this
+     function again, until it returns 0; cf.
+     'gnutls_record_get_direction()' and 'gnutls_error_is_fatal()' .  In
+     DTLS sessions the non-fatal error 'GNUTLS_E_LARGE_PACKET' is also
+     possible, and indicates that the MTU should be adjusted.
 
-     If this function is called by a server after a rehandshake request
-     then 'GNUTLS_E_GOT_APPLICATION_DATA' or
-     'GNUTLS_E_WARNING_ALERT_RECEIVED' may be returned.  Note that these
-     are non fatal errors, only in the specific case of a rehandshake.
-     Their meaning is that the client rejected the rehandshake request
-     or in the case of 'GNUTLS_E_GOT_APPLICATION_DATA' it could also
-     mean that some data were pending.  A client may receive that error
-     code if it initiates the handshake and the server doesn't agreed.
+     When this function is called by a server after a rehandshake
+     request under TLS 1.2 or earlier the
+     'GNUTLS_E_GOT_APPLICATION_DATA' error code indicates that some data
+     were pending prior to peer initiating the handshake.  Under TLS 1.3
+     this function when called after a successful handshake, is a no-op
+     and always succeeds in server side; in client side this function is
+     equivalent to 'gnutls_session_key_update()' with 'GNUTLS_KU_PEER'
+     flag.
 
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
-     error code.
+     This function handles both full and abbreviated TLS handshakes
+     (resumption).  For abbreviated handshakes, in client side, the
+     'gnutls_session_set_data()' should be called prior to this function
+     to set parameters from a previous session.  In server side,
+     resumption is handled by either setting a DB back-end, or setting
+     up keys for session tickets.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on a successful handshake, otherwise
+     a negative error code.
 
 gnutls_handshake_description_get_name
 -------------------------------------
@@ -6684,6 +7764,11 @@ gnutls_kx_get
 
      Get currently used key exchange algorithm.
 
+     This function will return 'GNUTLS_KX_ECDHE_RSA' , or
+     'GNUTLS_KX_DHE_RSA' under TLS 1.3, to indicate an elliptic curve DH
+     key exchange or a finite field one.  The precise group used is
+     available by calling 'gnutls_group_get()' instead.
+
      *Returns:* the key exchange algorithm used in the last handshake, a
      'gnutls_kx_algorithm_t' value.
 
@@ -6836,8 +7921,6 @@ gnutls_memset
      This function will operate similarly to 'memset()' , but will not
      be optimized out by the compiler.
 
-     *Returns:* void.
-
      *Since:* 3.4.0
 
 gnutls_ocsp_status_request_enable_client
@@ -6886,6 +7969,32 @@ gnutls_ocsp_status_request_get
      otherwise a negative error code is returned.
 
      *Since:* 3.1.3
+
+gnutls_ocsp_status_request_get2
+-------------------------------
+
+ -- Function: int gnutls_ocsp_status_request_get2 (gnutls_session_t
+          SESSION, unsigned IDX, gnutls_datum_t * RESPONSE)
+     SESSION: is a 'gnutls_session_t' type.
+
+     IDX: the index of peer's certificate
+
+     RESPONSE: a 'gnutls_datum_t' with DER encoded OCSP response
+
+     This function returns the OCSP status response received from the
+     TLS server for the certificate index provided.  The index
+     corresponds to certificates as returned by
+     gnutls_certificate_get_peers.  When index is zero this function
+     operates identically to 'gnutls_ocsp_status_request_get()' .
+
+     The returned 'response' should be treated as constant.  If no OCSP
+     response is available for the given index then
+     'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' is returned.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error code is returned.
+
+     *Since:* 3.6.3
 
 gnutls_ocsp_status_request_is_checked
 -------------------------------------
@@ -6943,6 +8052,21 @@ gnutls_oid_to_ecc_curve
      specified OID, or 'GNUTLS_ECC_CURVE_INVALID' on error.
 
      *Since:* 3.4.3
+
+gnutls_oid_to_gost_paramset
+---------------------------
+
+ -- Function: gnutls_gost_paramset_t gnutls_oid_to_gost_paramset (const
+          char * OID)
+     OID: is an object identifier
+
+     Converts a textual object identifier to a 'gnutls_gost_paramset_t'
+     value.
+
+     *Returns:* a 'gnutls_gost_paramset_get_oid' of the specified GOST
+     28147 param st, or 'GNUTLS_GOST_PARAMSET_UNKNOWN' on failure.
+
+     *Since:* 3.6.3
 
 gnutls_oid_to_mac
 -----------------
@@ -7288,7 +8412,9 @@ gnutls_prf
 
      *Note:* This function produces identical output with
      'gnutls_prf_rfc5705()' when 'server_random_first' is set to 0 and
-     'extra' is 'NULL' .
+     'extra' is 'NULL' .  Under TLS1.3 this function will only operate
+     when these conditions are true, or otherwise return
+     'GNUTLS_E_INVALID_REQUEST' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.
 
@@ -7329,6 +8455,12 @@ gnutls_prf_raw
      the client and server random fields directly, and is recommended if
      you want to generate pseudo random data unique for each session.
 
+     *Note:* This function will only operate under TLS versions prior to
+     1.3.  In TLS1.3 the use of PRF is replaced with HKDF and the
+     generic exporters like 'gnutls_prf_rfc5705()' should be used
+     instead.  Under TLS1.3 this function returns
+     'GNUTLS_E_INVALID_REQUEST' .
+
      *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.
 
 gnutls_prf_rfc5705
@@ -7351,15 +8483,18 @@ gnutls_prf_rfc5705
 
      OUT: pre-allocated buffer to hold the generated data.
 
-     Applies the TLS Pseudo-Random-Function (PRF) on the master secret
-     and the provided data, seeded with the client and server random
-     fields, as specified in RFC5705.
+     Exports keyring material from TLS/DTLS session to an application,
+     as specified in RFC5705.
+
+     In the TLS versions prior to 1.3, it applies the TLS
+     Pseudo-Random-Function (PRF) on the master secret and the provided
+     data, seeded with the client and server random fields.
+
+     In TLS 1.3, it applies HKDF on the exporter master secret derived
+     from the master secret.
 
      The 'label' variable usually contains a string denoting the purpose
-     for the generated data.  The 'server_random_first' indicates
-     whether the client random field or the server random field should
-     be first in the seed.  Non-zero indicates that the server random
-     field is first, 0 that the client random field is first.
+     for the generated data.
 
      The 'context' variable can be used to add more data to the seed,
      after the random variables.  It can be used to make sure the
@@ -7387,9 +8522,34 @@ gnutls_priority_certificate_type_list
      Get a list of available certificate types in the priority
      structure.
 
+     As of version 3.6.4 this function is an alias for
+     gnutls_priority_certificate_type_list2 with the target parameter
+     set to: - GNUTLS_CTYPE_SERVER, if the 'SERVER_PRECEDENCE' option is
+     set - GNUTLS_CTYPE_CLIENT, otherwise.
+
      *Returns:* the number of certificate types, or an error code.
 
      *Since:* 3.0
+
+gnutls_priority_certificate_type_list2
+--------------------------------------
+
+ -- Function: int gnutls_priority_certificate_type_list2
+          (gnutls_priority_t PCACHE, const unsigned int ** LIST,
+          gnutls_ctype_target_t TARGET)
+     PCACHE: is a 'gnutls_prioritity_t' type.
+
+     LIST: will point to an integer list.
+
+     TARGET: is a 'gnutls_ctype_target_t' type.  Valid arguments are
+     GNUTLS_CTYPE_CLIENT and GNUTLS_CTYPE_SERVER
+
+     Get a list of available certificate types for the given target in
+     the priority structure.
+
+     *Returns:* the number of certificate types, or an error code.
+
+     *Since:* 3.6.4
 
 gnutls_priority_cipher_list
 ---------------------------
@@ -7486,6 +8646,36 @@ gnutls_priority_init
      ERR_POS: In case of an error this will have the position in the
      string the error occurred
 
+     For applications that do not modify their crypto settings per
+     release, consider using 'gnutls_priority_init2()' with
+     'GNUTLS_PRIORITY_INIT_DEF_APPEND' flag instead.  We suggest to use
+     centralized crypto settings handled by the GnuTLS library, and
+     applications modifying the default settings to their needs.
+
+     This function is identical to 'gnutls_priority_init2()' with zero
+     flags.
+
+     A 'NULL' 'priorities' string indicates the default priorities to be
+     used (this is available since GnuTLS 3.3.0).
+
+     *Returns:* On syntax error 'GNUTLS_E_INVALID_REQUEST' is returned,
+     'GNUTLS_E_SUCCESS' on success, or an error code.
+
+gnutls_priority_init2
+---------------------
+
+ -- Function: int gnutls_priority_init2 (gnutls_priority_t *
+          PRIORITY_CACHE, const char * PRIORITIES, const char **
+          ERR_POS, unsigned FLAGS)
+     PRIORITY_CACHE: is a 'gnutls_prioritity_t' type.
+
+     PRIORITIES: is a string describing priorities (may be 'NULL' )
+
+     ERR_POS: In case of an error this will have the position in the
+     string the error occurred
+
+     FLAGS: zero or 'GNUTLS_PRIORITY_INIT_DEF_APPEND'
+
      Sets priorities for the ciphers, key exchange methods, and macs.
      The 'priority_cache' should be deinitialized using
      'gnutls_priority_deinit()' .
@@ -7493,6 +8683,9 @@ gnutls_priority_init
      The 'priorities' option allows you to specify a colon separated
      list of the cipher priorities to enable.  Some keywords are defined
      to provide quick access to common preferences.
+
+     When 'flags' is set to 'GNUTLS_PRIORITY_INIT_DEF_APPEND' then the
+     'priorities' specified will be appended to the default options.
 
      Unless there is a special need, use the "NORMAL" keyword to apply a
      reasonable security level, or "NORMAL:%COMPAT" for compatibility.
@@ -7574,6 +8767,8 @@ gnutls_priority_init
      *Returns:* On syntax error 'GNUTLS_E_INVALID_REQUEST' is returned,
      'GNUTLS_E_SUCCESS' on success, or an error code.
 
+     *Since:* 3.6.3
+
 gnutls_priority_kx_list
 -----------------------
 
@@ -7653,7 +8848,8 @@ gnutls_priority_set_direct
      documentation check the 'gnutls_priority_init()' .
 
      To use a reasonable default, consider using
-     'gnutls_set_default_priority()' , instead of this function.
+     'gnutls_set_default_priority()' , or
+     'gnutls_set_default_priority_append()' instead of this function.
 
      *Returns:* On syntax error 'GNUTLS_E_INVALID_REQUEST' is returned,
      'GNUTLS_E_SUCCESS' on success, or an error code.
@@ -7776,8 +8972,11 @@ gnutls_psk_client_get_hint
      username to use.  This should only be called in case of PSK
      authentication and in case of a client.
 
+     *Note:* there is no hint in TLS 1.3, so this function will return
+     'NULL' if TLS 1.3 has been negotiated.
+
      *Returns:* the identity hint of the peer, or 'NULL' in case of an
-     error.
+     error or if TLS 1.3 is being used.
 
      *Since:* 2.4.0
 
@@ -8052,18 +9251,64 @@ gnutls_range_split
      Note that 'orig' is not changed, while the values of 'next' and
      'remainder' are modified to store the resulting values.
 
+gnutls_reauth
+-------------
+
+ -- Function: int gnutls_reauth (gnutls_session_t SESSION, unsigned int
+          FLAGS)
+     SESSION: is a 'gnutls_session_t' type.
+
+     FLAGS: must be zero
+
+     This function performs the post-handshake authentication for TLS
+     1.3.  The post-handshake authentication is initiated by the server
+     by calling this function.  Clients respond when
+     'GNUTLS_E_REAUTH_REQUEST' has been seen while receiving data.
+
+     The non-fatal errors expected by this function are:
+     'GNUTLS_E_INTERRUPTED' , 'GNUTLS_E_AGAIN' , as well as
+     'GNUTLS_E_GOT_APPLICATION_DATA' when called on server side.
+
+     The former two interrupt the authentication procedure due to the
+     transport layer being interrupted, and the latter because there
+     were pending data prior to peer initiating the re-authentication.
+     The server should read/process that data as unauthenticated and
+     retry calling 'gnutls_reauth()' .
+
+     When this function is called under TLS1.2 or earlier or the peer
+     didn't advertise post-handshake auth, it always fails with
+     'GNUTLS_E_INVALID_REQUEST' .  The verification of the received
+     peers certificate is delegated to the session or credentials
+     verification callbacks.  A server can check whether post handshake
+     authentication is supported by the client by checking the session
+     flags with 'gnutls_session_get_flags()' .
+
+     Prior to calling this function in server side, the function
+     'gnutls_certificate_server_set_request()' must be called setting
+     expectations for the received certificate (request or require).  If
+     none are set this function will return with
+     'GNUTLS_E_INVALID_REQUEST' .
+
+     Note that post handshake authentication is available irrespective
+     of the initial negotiation type (PSK or certificate).  In all cases
+     however, certificate credentials must be set to the session prior
+     to calling this function.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on a successful authentication,
+     otherwise a negative error code.
+
 gnutls_record_can_use_length_hiding
 -----------------------------------
 
- -- Function: int gnutls_record_can_use_length_hiding (gnutls_session_t
-          SESSION)
+ -- Function: unsigned gnutls_record_can_use_length_hiding
+          (gnutls_session_t SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
      If the session supports length-hiding padding, you can invoke
-     'gnutls_range_send_message()' to send a message whose length is
+     'gnutls_record_send_range()' to send a message whose length is
      hidden in the given range.  If the session does not support length
      hiding padding, you can use the standard 'gnutls_record_send()'
-     function, or 'gnutls_range_send_message()' making sure that the
+     function, or 'gnutls_record_send_range()' making sure that the
      range is the same as the length of the message you are trying to
      send.
 
@@ -8123,8 +9368,8 @@ gnutls_record_disable_padding
      complain if a server pads the encrypted data.  This of course will
      disable protection against statistical attacks on the data.
 
-     This functions is defunt since 3.1.7.  Random padding is disabled
-     by default unless requested using 'gnutls_range_send_message()' .
+     This function is defunct since 3.1.7.  Random padding is disabled
+     by default unless requested using 'gnutls_record_send_range()' .
 
 gnutls_record_discard_queued
 ----------------------------
@@ -8194,9 +9439,10 @@ gnutls_record_get_state
 
      This function will return the parameters of the current record
      state.  These are only useful to be provided to an external
-     off-loading device or subsystem.
+     off-loading device or subsystem.  The returned values should be
+     considered constant and valid for the lifetime of the session.
 
-     In that case, to sync the state you must call
+     In that case, to sync the state back you must call
      'gnutls_record_set_state()' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.
@@ -8339,6 +9585,39 @@ gnutls_record_send
      number of bytes this function can send in a single call depends on
      the negotiated maximum record size.
 
+gnutls_record_send2
+-------------------
+
+ -- Function: ssize_t gnutls_record_send2 (gnutls_session_t SESSION,
+          const void * DATA, size_t DATA_SIZE, size_t PAD, unsigned
+          FLAGS)
+     SESSION: is a 'gnutls_session_t' type.
+
+     DATA: contains the data to send
+
+     DATA_SIZE: is the length of the data
+
+     PAD: padding to be added to the record
+
+     FLAGS: must be zero
+
+     This function is identical to 'gnutls_record_send()' except that it
+     takes an extra argument to specify padding to be added the record.
+     To determine the maximum size of padding, use
+     'gnutls_record_get_max_size()' and 'gnutls_record_overhead_size()'
+     .
+
+     Note that in order for GnuTLS to provide constant time processing
+     of padding and data in TLS1.3, the flag 'GNUTLS_SAFE_PADDING_CHECK'
+     must be used in 'gnutls_init()' .
+
+     *Returns:* The number of bytes sent, or a negative error code.  The
+     number of bytes sent might be less than 'data_size' .  The maximum
+     number of bytes this function can send in a single call depends on
+     the negotiated maximum record size.
+
+     *Since:* 3.6.3
+
 gnutls_record_send_range
 ------------------------
 
@@ -8368,6 +9647,25 @@ gnutls_record_send_range
      *Returns:* The number of bytes sent (that is data_size in a
      successful invocation), or a negative error code.
 
+gnutls_record_set_max_early_data_size
+-------------------------------------
+
+ -- Function: int gnutls_record_set_max_early_data_size
+          (gnutls_session_t SESSION, size_t SIZE)
+     SESSION: is a 'gnutls_session_t' type.
+
+     SIZE: is the new size
+
+     This function sets the maximum early data size in this connection.
+     This property can only be set to servers.  The client may be
+     provided with the maximum allowed size through the "early_data"
+     extension of the NewSessionTicket handshake message.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error code is returned.
+
+     *Since:* 3.6.4
+
 gnutls_record_set_max_size
 --------------------------
 
@@ -8381,13 +9679,17 @@ gnutls_record_set_max_size
      connection.  This property can only be set to clients.  The server
      may choose not to accept the requested size.
 
-     Acceptable values are 512(=2^9), 1024(=2^10), 2048(=2^11) and
-     4096(=2^12).  The requested record size does get in effect
-     immediately only while sending data.  The receive part will take
-     effect after a successful handshake.
+     The requested record size does get in effect immediately only while
+     sending data.  The receive part will take effect after a successful
+     handshake.
 
-     This function uses a TLS extension called 'max record size'.  Not
-     all TLS implementations use or even understand this extension.
+     Prior to 3.6.4, this function was implemented using a TLS extension
+     called 'max record size', which limits the acceptable values to
+     512(=2^9), 1024(=2^10), 2048(=2^11) and 4096(=2^12).  Since 3.6.4,
+     it uses another TLS extension called 'record size limit', which
+     doesn't have the limitation, as long as the value ranges between
+     512 and 16384.  Note that not all TLS implementations use or even
+     understand those extension.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.
@@ -8396,7 +9698,7 @@ gnutls_record_set_state
 -----------------------
 
  -- Function: int gnutls_record_set_state (gnutls_session_t SESSION,
-          unsigned READ, unsigned char SEQ_NUMBER[8])
+          unsigned READ, const unsigned char SEQ_NUMBER[8])
      SESSION: is a 'gnutls_session_t' type
 
      READ: if non-zero the read parameters are returned, otherwise the
@@ -8463,27 +9765,36 @@ gnutls_rehandshake
  -- Function: int gnutls_rehandshake (gnutls_session_t SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
-     This function will renegotiate security parameters with the client.
-     This should only be called in case of a server.
+     This function can only be called in server side, and instructs a
+     TLS 1.2 or earlier client to renegotiate parameters (perform a
+     handshake), by sending a hello request message.
 
-     This message informs the peer that we want to renegotiate
-     parameters (perform a handshake).
+     If this function succeeds, the calling application should call
+     'gnutls_record_recv()' until 'GNUTLS_E_REHANDSHAKE' is returned to
+     clear any pending data.  If the 'GNUTLS_E_REHANDSHAKE' error code
+     is not seen, then the handshake request was not followed by the
+     peer (the TLS protocol does not require the client to do, and such
+     compliance should be handled by the application protocol).
 
-     If this function succeeds (returns 0), you must call the
-     'gnutls_handshake()' function in order to negotiate the new
-     parameters.
+     Once the 'GNUTLS_E_REHANDSHAKE' error code is seen, the calling
+     application should proceed to calling 'gnutls_handshake()' to
+     negotiate the new parameters.
 
-     Since TLS is full duplex some application data might have been sent
-     during peer's processing of this message.  In that case one should
-     call 'gnutls_record_recv()' until GNUTLS_E_REHANDSHAKE is returned
-     to clear any pending data.  Care must be taken, if rehandshake is
-     mandatory, to terminate if it does not start after some threshold.
-
-     If the client does not wish to renegotiate parameters he should
-     reply with an alert message, thus the return code will be
-     'GNUTLS_E_WARNING_ALERT_RECEIVED' and the alert will be
+     If the client does not wish to renegotiate parameters he may reply
+     with an alert message, and in that case the return code seen by
+     subsequent 'gnutls_record_recv()' will be
+     'GNUTLS_E_WARNING_ALERT_RECEIVED' with the specific alert being
      'GNUTLS_A_NO_RENEGOTIATION' .  A client may also choose to ignore
-     this message.
+     this request.
+
+     Under TLS 1.3 this function is equivalent to
+     'gnutls_session_key_update()' with the 'GNUTLS_KU_PEER' flag.  In
+     that case subsequent calls to 'gnutls_record_recv()' will not
+     return 'GNUTLS_E_REHANDSHAKE' , and calls to 'gnutls_handshake()'
+     in server side are a no-op.
+
+     This function always fails with 'GNUTLS_E_INVALID_REQUEST' when
+     called in client side.
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.
@@ -8682,7 +9993,8 @@ gnutls_session_ext_master_secret_status
      SESSION: is a 'gnutls_session_t' type.
 
      Get the status of the extended master secret extension negotiation.
-     This is in accordance to draft-ietf-tls-session-hash-01
+     This is in accordance to RFC7627.  That information is also
+     available to the more generic 'gnutls_session_get_flags()' .
 
      *Returns:* Non-zero if the negotiation was successful or zero
      otherwise.
@@ -8691,16 +10003,16 @@ gnutls_session_ext_register
 ---------------------------
 
  -- Function: int gnutls_session_ext_register (gnutls_session_t SESSION,
-          const char * NAME, int TYPE, gnutls_ext_parse_type_t
-          PARSE_TYPE, gnutls_ext_recv_func RECV_FUNC,
-          gnutls_ext_send_func SEND_FUNC, gnutls_ext_deinit_data_func
-          DEINIT_FUNC, gnutls_ext_pack_func PACK_FUNC,
-          gnutls_ext_unpack_func UNPACK_FUNC, unsigned FLAGS)
+          const char * NAME, int ID, gnutls_ext_parse_type_t PARSE_TYPE,
+          gnutls_ext_recv_func RECV_FUNC, gnutls_ext_send_func
+          SEND_FUNC, gnutls_ext_deinit_data_func DEINIT_FUNC,
+          gnutls_ext_pack_func PACK_FUNC, gnutls_ext_unpack_func
+          UNPACK_FUNC, unsigned FLAGS)
      SESSION: the session for which this extension will be set
 
      NAME: the name of the extension to register
 
-     TYPE: the numeric id of the extension
+     ID: the numeric id of the extension
 
      PARSE_TYPE: the parse type of the extension (see
      gnutls_ext_parse_type_t)
@@ -8733,6 +10045,11 @@ gnutls_session_ext_register
      gnutls_session_t structure using 'gnutls_ext_set_data()' , and they
      can be retrieved using 'gnutls_ext_get_data()' .
 
+     The validity of the extension registered can be given by the
+     appropriate flags of 'gnutls_ext_flags_t' .  If no validity is
+     given, then the registered extension will be valid for client and
+     TLS1.2 server hello (or encrypted extensions for TLS1.3).
+
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.
 
@@ -8762,13 +10079,9 @@ gnutls_session_get_data
      the function.
 
      Returns all session parameters needed to be stored to support
-     resumption.  The client should call this, and store the returned
-     session data.  A session may be resumed later by calling
-     'gnutls_session_set_data()' .
+     resumption, in a pre-allocated buffer.
 
-     This function will fail if called prior to handshake completion.
-     In case of false start TLS, the handshake completes only after data
-     have been successfully received from the peer.
+     See 'gnutls_session_get_data2()' for more information.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise an error code is returned.
@@ -8782,10 +10095,12 @@ gnutls_session_get_data2
 
      DATA: is a pointer to a datum that will hold the session.
 
-     Returns all session parameters needed to be stored to support
-     resumption.  The client should call this, and store the returned
-     session data.  A session may be resumed later by calling
-     'gnutls_session_set_data()' .
+     Returns necessary parameters to support resumption.  The client
+     should call this function and store the returned session data.  A
+     session can be resumed later by calling 'gnutls_session_set_data()'
+     with the returned data.  Note that under TLS 1.3, it is recommended
+     for clients to use session parameters only once, to prevent
+     passive-observers from correlating the different connections.
 
      The returned 'data' are allocated and must be released using
      'gnutls_free()' .
@@ -8793,6 +10108,19 @@ gnutls_session_get_data2
      This function will fail if called prior to handshake completion.
      In case of false start TLS, the handshake completes only after data
      have been successfully received from the peer.
+
+     Under TLS1.3 session resumption is possible only after a session
+     ticket is received by the client.  To ensure that such a ticket has
+     been received use 'gnutls_session_get_flags()' and check for flag
+     'GNUTLS_SFLAGS_SESSION_TICKET' ; if this flag is not set, this
+     function will wait for a new ticket within 50ms, and if not
+     received will return dummy data which cannot lead to resumption.
+     To get notified when new tickets are received by the server use
+     'gnutls_handshake_set_hook_function()' to wait for
+     'GNUTLS_HANDSHAKE_NEW_SESSION_TICKET' messages.  Each call of
+     'gnutls_session_get_data2()' after a ticket is received, will
+     return session resumption data corresponding to the last received
+     ticket.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise an error code is returned.
@@ -8845,14 +10173,24 @@ gnutls_session_get_id
      SESSION_ID_SIZE: initially should contain the maximum 'session_id'
      size and will be updated.
 
-     Returns the current session ID. This can be used if you want to
-     check if the next session you tried to resume was actually resumed.
-     That is because resumed sessions share the same session ID with the
-     original session.
+     Returns the TLS session identifier.  The session ID is selected by
+     the server, and in older versions of TLS was a unique identifier
+     shared between client and server which was persistent across
+     resumption.  In the latest version of TLS (1.3) or TLS with session
+     tickets, the notion of session identifiers is undefined and cannot
+     be relied for uniquely identifying sessions across client and
+     server.
 
-     The session ID is selected by the server, that identify the current
-     session.  In all supported TLS protocols, the session id is less
-     than 'GNUTLS_MAX_SESSION_ID_SIZE' .
+     In client side this function returns the identifier returned by the
+     server, and cannot be assumed to have any relation to session
+     resumption.  In server side this function is guaranteed to return a
+     persistent identifier of the session since GnuTLS 3.6.4, which may
+     not necessarily map into the TLS session ID value.  Prior to that
+     version the value could only be considered a persistent identifier,
+     under TLS1.2 or earlier and when no session tickets were in use.
+
+     The session identifier value returned is always less than
+     'GNUTLS_MAX_SESSION_ID_SIZE' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise an error code is returned.
@@ -8866,8 +10204,24 @@ gnutls_session_get_id2
 
      SESSION_ID: will point to the session ID.
 
-     Returns the current session ID. The returned data should be treated
-     as constant.
+     Returns the TLS session identifier.  The session ID is selected by
+     the server, and in older versions of TLS was a unique identifier
+     shared between client and server which was persistent across
+     resumption.  In the latest version of TLS (1.3) or TLS 1.2 with
+     session tickets, the notion of session identifiers is undefined and
+     cannot be relied for uniquely identifying sessions across client
+     and server.
+
+     In client side this function returns the identifier returned by the
+     server, and cannot be assumed to have any relation to session
+     resumption.  In server side this function is guaranteed to return a
+     persistent identifier of the session since GnuTLS 3.6.4, which may
+     not necessarily map into the TLS session ID value.  Prior to that
+     version the value could only be considered a persistent identifier,
+     under TLS1.2 or earlier and when no session tickets were in use.
+
+     The session identifier value returned is always less than
+     'GNUTLS_MAX_SESSION_ID_SIZE' and should be treated as constant.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise an error code is returned.
@@ -8946,10 +10300,38 @@ gnutls_session_is_resumed
  -- Function: int gnutls_session_is_resumed (gnutls_session_t SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
-     Check whether session is resumed or not.
+     Checks whether session is resumed or not.  This is functional for
+     both server and client side.
 
      *Returns:* non zero if this session is resumed, or a zero if this
      is a new session.
+
+gnutls_session_key_update
+-------------------------
+
+ -- Function: int gnutls_session_key_update (gnutls_session_t SESSION,
+          unsigned FLAGS)
+     SESSION: is a 'gnutls_session_t' type.
+
+     FLAGS: zero of 'GNUTLS_KU_PEER'
+
+     This function will update/refresh the session keys when the TLS
+     protocol is 1.3 or better.  The peer is notified of the update by
+     sending a message, so this function should be treated similarly to
+     'gnutls_record_send()' -i.e., it may return 'GNUTLS_E_AGAIN' or
+     'GNUTLS_E_INTERRUPTED' .
+
+     When this flag 'GNUTLS_KU_PEER' is specified, this function in
+     addition to updating the local keys, will ask the peer to refresh
+     its keys too.
+
+     If the negotiated version is not TLS 1.3 or better this function
+     will return 'GNUTLS_E_INVALID_REQUEST' .
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.3
 
 gnutls_session_resumption_requested
 -----------------------------------
@@ -9178,6 +10560,9 @@ gnutls_session_supplemental_register
      If the type is already registered or handled by GnuTLS internally
      'GNUTLS_E_ALREADY_REGISTERED' will be returned.
 
+     As supplemental data are not defined under TLS 1.3, this function
+     will disable TLS 1.3 support for the given session.
+
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.
 
@@ -9191,7 +10576,8 @@ gnutls_session_ticket_enable_client
      SESSION: is a 'gnutls_session_t' type.
 
      Request that the client should attempt session resumption using
-     SessionTicket.
+     SessionTicket.  This call is typically unnecessary as session
+     tickets are enabled by default.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned, or an
      error code.
@@ -9208,9 +10594,13 @@ gnutls_session_ticket_enable_server
      KEY: key to encrypt session parameters.
 
      Request that the server should attempt session resumption using
-     SessionTicket.  'key' must be initialized with
-     'gnutls_session_ticket_key_generate()' , and should be overwritten
-     using 'gnutls_memset()' before being released.
+     session tickets, i.e., by delegating storage to the client.  'key'
+     must be initialized using 'gnutls_session_ticket_key_generate()' .
+     To avoid leaking that key, use 'gnutls_memset()' prior to releasing
+     it.
+
+     The default ticket expiration time can be overridden using
+     'gnutls_db_set_cache_expiration()' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned, or an
      error code.
@@ -9233,6 +10623,23 @@ gnutls_session_ticket_key_generate
 
      *Since:* 2.10.0
 
+gnutls_session_ticket_send
+--------------------------
+
+ -- Function: int gnutls_session_ticket_send (gnutls_session_t SESSION,
+          unsigned NR, unsigned FLAGS)
+     SESSION: is a 'gnutls_session_t' type.
+
+     NR: the number of tickets to send
+
+     FLAGS: must be zero
+
+     Sends a fresh session ticket to the peer.  This is relevant only in
+     server side under TLS1.3.  This function may also return
+     'GNUTLS_E_AGAIN' or 'GNUTLS_E_INTERRUPTED' .
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, or a negative error code.
+
 gnutls_set_default_priority
 ---------------------------
 
@@ -9247,6 +10654,9 @@ gnutls_set_default_priority
      compatibility consider calling
      'gnutls_session_enable_compatibility_mode()' after this function.
 
+     For an application to specify additional options to priority string
+     consider using 'gnutls_set_default_priority_append()' .
+
      To allow a user to override the defaults (e.g., when a user
      interface or configuration file is available), the functions
      'gnutls_priority_set_direct()' or 'gnutls_priority_set()' can be
@@ -9255,6 +10665,42 @@ gnutls_set_default_priority
      *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.
 
      *Since:* 2.1.4
+
+gnutls_set_default_priority_append
+----------------------------------
+
+ -- Function: int gnutls_set_default_priority_append (gnutls_session_t
+          SESSION, const char * ADD_PRIO, const char ** ERR_POS,
+          unsigned FLAGS)
+     SESSION: is a 'gnutls_session_t' type.
+
+     ADD_PRIO: is a string describing priorities to be appended to
+     default
+
+     ERR_POS: In case of an error this will have the position in the
+     string the error occurred
+
+     FLAGS: must be zero
+
+     Sets the default priority on the ciphers, key exchange methods, and
+     macs with the additional options in 'add_prio' .  This is the
+     recommended method of setting the defaults when only few additional
+     options are to be added.  This promotes consistency between
+     applications using GnuTLS, and allows GnuTLS using applications to
+     update settings in par with the library.
+
+     The 'add_prio' string should start as a normal priority string,
+     e.g., '-VERS-TLS-ALL:+VERS-TLS1.3:%COMPAT' or '%FORCE_ETM'. That
+     is, it must not start with ':'.
+
+     To allow a user to override the defaults (e.g., when a user
+     interface or configuration file is available), the functions
+     'gnutls_priority_set_direct()' or 'gnutls_priority_set()' can be
+     used.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.
+
+     *Since:* 3.6.3
 
 gnutls_sign_algorithm_get
 -------------------------
@@ -9425,7 +10871,8 @@ gnutls_sign_supports_pk_algorithm
      PK: is a public key algorithm
 
      This function returns non-zero if the public key algorithm
-     corresponds to the given signature algorithm.
+     corresponds to the given signature algorithm.  That is, if that
+     signature can be generated from the given private key algorithm.
 
      *Since:* 3.6.0
 
@@ -10090,7 +11537,9 @@ gnutls_supplemental_register
      registered or handled by GnuTLS internally
      'GNUTLS_E_ALREADY_REGISTERED' will be returned.
 
-     This function is not thread safe.
+     This function is not thread safe.  As supplemental data are not
+     defined under TLS 1.3, this function will disable TLS 1.3 support
+     globally.
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.

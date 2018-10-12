@@ -1,6 +1,6 @@
-This is gnutls.info, produced by makeinfo version 6.3 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 12 February 2018 for version 3.6.2 of
+This manual is last updated 16 September 2018 for version 3.6.4 of
 GnuTLS.
 
 Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
@@ -19,12 +19,12 @@ END-INFO-DIR-ENTRY
 
 INFO-DIR-SECTION System Administration
 START-INFO-DIR-ENTRY
-* certtool: (gnutls)Invoking certtool.	Manipulate certificates and keys.
-* gnutls-serv: (gnutls)Invoking gnutls-serv.	GnuTLS test server.
-* gnutls-cli: (gnutls)Invoking gnutls-cli.	GnuTLS test client.
-* gnutls-cli-debug: (gnutls)Invoking gnutls-cli-debug.	GnuTLS debug client.
-* psktool: (gnutls)Invoking psktool.	Simple TLS-Pre-Shared-Keys manager.
-* srptool: (gnutls)Invoking srptool.	Simple SRP password tool.
+* certtool: (gnutls)certtool Invocation.	Manipulate certificates and keys.
+* gnutls-serv: (gnutls)gnutls-serv Invocation.	GnuTLS test server.
+* gnutls-cli: (gnutls)gnutls-cli Invocation.	GnuTLS test client.
+* gnutls-cli-debug: (gnutls)gnutls-cli-debug Invocation.	GnuTLS debug client.
+* psktool: (gnutls)psktool Invocation.	Simple TLS-Pre-Shared-Keys manager.
+* srptool: (gnutls)srptool Invocation.	Simple SRP password tool.
 END-INFO-DIR-ENTRY
 
 
@@ -956,6 +956,25 @@ gnutls_ocsp_resp_export
      *Returns:* In case of failure a negative error code will be
      returned, and 0 on success.
 
+gnutls_ocsp_resp_export2
+------------------------
+
+ -- Function: int gnutls_ocsp_resp_export2 (gnutls_ocsp_resp_t RESP,
+          gnutls_datum_t * DATA, gnutls_x509_crt_fmt_t FMT)
+     RESP: Holds the OCSP response
+
+     DATA: newly allocate buffer holding DER or PEM encoded OCSP
+     response
+
+     FMT: DER or PEM
+
+     This function will export the OCSP response to DER or PEM format.
+
+     *Returns:* In case of failure a negative error code will be
+     returned, and 0 on success.
+
+     *Since:* 3.6.3
+
 gnutls_ocsp_resp_get_certs
 --------------------------
 
@@ -1275,6 +1294,26 @@ gnutls_ocsp_resp_import
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
+gnutls_ocsp_resp_import2
+------------------------
+
+ -- Function: int gnutls_ocsp_resp_import2 (gnutls_ocsp_resp_t RESP,
+          const gnutls_datum_t * DATA, gnutls_x509_crt_fmt_t FMT)
+     RESP: The data to store the parsed response.
+
+     DATA: DER or PEM encoded OCSP response.
+
+     FMT: DER or PEM
+
+     This function will convert the given OCSP response to the native
+     'gnutls_ocsp_resp_t' format.  It also decodes the Basic OCSP
+     Response part, if any.  The output will be stored in 'resp' .
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.3
+
 gnutls_ocsp_resp_init
 ---------------------
 
@@ -1285,6 +1324,40 @@ gnutls_ocsp_resp_init
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
+
+gnutls_ocsp_resp_list_import2
+-----------------------------
+
+ -- Function: int gnutls_ocsp_resp_list_import2 (gnutls_ocsp_resp_t **
+          OCSPS, unsigned int * SIZE, const gnutls_datum_t * RESP_DATA,
+          gnutls_x509_crt_fmt_t FORMAT, unsigned int FLAGS)
+     OCSPS: Will hold the parsed OCSP response list.
+
+     SIZE: It will contain the size of the list.
+
+     RESP_DATA: The PEM encoded OCSP list.
+
+     FORMAT: One of 'GNUTLS_X509_FMT_PEM' or 'GNUTLS_X509_FMT_DER'
+
+     FLAGS: must be (0) or an OR'd sequence of
+     gnutls_certificate_import_flags.
+
+     This function will convert the given PEM encoded OCSP response list
+     to the native gnutls_ocsp_resp_t format.  The output will be stored
+     in 'ocsps' which will be allocated and initialized.
+
+     The OCSP responses should have a header of "OCSP RESPONSE".
+
+     To deinitialize responses, you need to deinitialize each
+     'gnutls_ocsp_resp_t' structure independently, and use
+     'gnutls_free()' at 'ocsps' .
+
+     In PEM files, when no OCSP responses are detected
+     'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' will be returned.
+
+     *Returns:* the number of responses read or a negative error value.
+
+     *Since:* 3.6.3
 
 gnutls_ocsp_resp_print
 ----------------------
@@ -2023,7 +2096,6 @@ gnutls_pkcs11_copy_pubkey
      This function will copy a public key object into a PKCS '11' token
      specified by a URL. Valid flags to mark the key:
      'GNUTLS_PKCS11_OBJ_FLAG_MARK_TRUSTED' ,
-     'GNUTLS_PKCS11_OBJ_FLAG_MARK_SENSITIVE' ,
      'GNUTLS_PKCS11_OBJ_FLAG_MARK_PRIVATE' ,
      'GNUTLS_PKCS11_OBJ_FLAG_MARK_CA' ,
      'GNUTLS_PKCS11_OBJ_FLAG_MARK_ALWAYS_AUTH' .
@@ -2100,7 +2172,6 @@ gnutls_pkcs11_copy_x509_crt2
      This function will copy a certificate into a PKCS '11' token
      specified by a URL. Valid flags to mark the certificate:
      'GNUTLS_PKCS11_OBJ_FLAG_MARK_TRUSTED' ,
-     'GNUTLS_PKCS11_OBJ_FLAG_MARK_SENSITIVE' ,
      'GNUTLS_PKCS11_OBJ_FLAG_MARK_PRIVATE' ,
      'GNUTLS_PKCS11_OBJ_FLAG_MARK_CA' ,
      'GNUTLS_PKCS11_OBJ_FLAG_MARK_ALWAYS_AUTH' .
@@ -2127,9 +2198,10 @@ gnutls_pkcs11_copy_x509_privkey
      FLAGS: One of GNUTLS_PKCS11_OBJ_* flags
 
      This function will copy a private key into a PKCS '11' token
-     specified by a URL. It is highly recommended flags to contain
-     'GNUTLS_PKCS11_OBJ_FLAG_MARK_SENSITIVE' unless there is a strong
-     reason not to.
+     specified by a URL.
+
+     Since 3.6.3 the objects are marked as sensitive by default unless
+     'GNUTLS_PKCS11_OBJ_FLAG_MARK_NOT_SENSITIVE' is specified.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -2157,9 +2229,10 @@ gnutls_pkcs11_copy_x509_privkey2
      FLAGS: One of GNUTLS_PKCS11_OBJ_* flags
 
      This function will copy a private key into a PKCS '11' token
-     specified by a URL. It is highly recommended flags to contain
-     'GNUTLS_PKCS11_OBJ_FLAG_MARK_SENSITIVE' unless there is a strong
-     reason not to.
+     specified by a URL.
+
+     Since 3.6.3 the objects are marked as sensitive by default unless
+     'GNUTLS_PKCS11_OBJ_FLAG_MARK_NOT_SENSITIVE' is specified.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -2539,6 +2612,33 @@ gnutls_pkcs11_obj_get_info
 
      *Since:* 2.12.0
 
+gnutls_pkcs11_obj_get_ptr
+-------------------------
+
+ -- Function: int gnutls_pkcs11_obj_get_ptr (gnutls_pkcs11_obj_t OBJ,
+          void ** PTR, void ** SESSION, void ** OHANDLE, unsigned long *
+          SLOT_ID, unsigned int FLAGS)
+     OBJ: should contain a 'gnutls_pkcs11_obj_t' type
+
+     PTR: will contain the CK_FUNCTION_LIST_PTR pointer (may be 'NULL' )
+
+     SESSION: will contain the CK_SESSION_HANDLE of the object
+
+     OHANDLE: will contain the CK_OBJECT_HANDLE of the object
+
+     SLOT_ID: the identifier of the slot (may be 'NULL' )
+
+     FLAGS: Or sequence of GNUTLS_PKCS11_OBJ_* flags
+
+     Obtains the PKCS'11' session handles of an object.  'session' and
+     'ohandle' must be deinitialized by the caller.  The returned
+     pointers are independent of the 'obj' lifetime.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' (0) on success or a negative error
+     code on error.
+
+     *Since:* 3.6.3
+
 gnutls_pkcs11_obj_get_type
 --------------------------
 
@@ -2889,9 +2989,8 @@ gnutls_pkcs11_privkey_generate3
      substituted in the place of the bits parameter using the
      'GNUTLS_CURVE_TO_BITS()' macro.
 
-     It is highly recommended flags to contain
-     'GNUTLS_PKCS11_OBJ_FLAG_MARK_SENSITIVE' unless there is a strong
-     reason not to.
+     Since 3.6.3 the objects are marked as sensitive by default unless
+     'GNUTLS_PKCS11_OBJ_FLAG_MARK_NOT_SENSITIVE' is specified.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -3140,6 +3239,28 @@ gnutls_pkcs11_token_get_mechanism
      code on error.
 
      *Since:* 2.12.0
+
+gnutls_pkcs11_token_get_ptr
+---------------------------
+
+ -- Function: int gnutls_pkcs11_token_get_ptr (const char * URL, void **
+          PTR, unsigned long * SLOT_ID, unsigned int FLAGS)
+     URL: should contain a PKCS'11' URL identifying a token
+
+     PTR: will contain the CK_FUNCTION_LIST_PTR pointer
+
+     SLOT_ID: will contain the slot_id (may be 'NULL' )
+
+     FLAGS: should be zero
+
+     This function will return the function pointer of the specified
+     token by the URL. The returned pointers are valid until gnutls is
+     deinitialized, c.f.  '_global_deinit()' .
+
+     *Returns:* 'GNUTLS_E_SUCCESS' (0) on success or a negative error
+     code on error.
+
+     *Since:* 3.6.3
 
 gnutls_pkcs11_token_get_random
 ------------------------------
@@ -3499,6 +3620,57 @@ gnutls_certificate_set_retrieve_function2
 
      *Since:* 3.0
 
+gnutls_certificate_set_retrieve_function3
+-----------------------------------------
+
+ -- Function: void gnutls_certificate_set_retrieve_function3
+          (gnutls_certificate_credentials_t CRED,
+          gnutls_certificate_retrieve_function3 * FUNC)
+     CRED: is a 'gnutls_certificate_credentials_t' type.
+
+     FUNC: is the callback function
+
+     This function sets a callback to be called in order to retrieve the
+     certificate and OCSP responses to be used in the handshake.  'func'
+     will be called only if the peer requests a certificate either
+     during handshake or during post-handshake authentication.
+
+     The callback's function prototype is defined in 'abstract.h': int
+     (*callback)(gnutls_session_t, const struct gnutls_cert_retr_st
+     *info, gnutls_pcert_st **certs, unsigned int *pcert_length,
+     gnutls_datum_t **ocsp, unsigned int *ocsp_length, gnutls_privkey_t
+     * pkey, unsigned int *flags);
+
+     The info field of the callback contains: 'req_ca_dn' which is a
+     list with the CA names that the server considers trusted.  This is
+     a hint and typically the client should send a certificate that is
+     signed by one of these CAs.  These names, when available, are DER
+     encoded.  To get a more meaningful value use the function
+     'gnutls_x509_rdn_get()' .  'pk_algos' contains a list with server's
+     acceptable public key algorithms.  The certificate returned should
+     support the server's given algorithms.
+
+     The callback should fill-in the following values.
+
+     'pcert' should contain an allocated list of certificates and public
+     keys.  'pcert_length' is the size of the previous list.  'ocsp'
+     should contain an allocated list of OCSP responses.  'ocsp_length'
+     is the size of the previous list.  'pkey' is the private key.
+
+     If flags in the callback are set to 'GNUTLS_CERT_RETR_DEINIT_ALL'
+     then all provided values must be allocated using 'gnutls_malloc()'
+     , and will be released by gnutls; otherwise they will not be
+     touched by gnutls.
+
+     The callback function should set the certificate and OCSP response
+     list to be sent, and return 0 on success.  If no certificates are
+     available, the 'pcert_length' and 'ocsp_length' should be set to
+     zero.  The return value (-1) indicates error and the handshake will
+     be terminated.  If both certificates are set in the credentials and
+     a callback is available, the callback takes predence.
+
+     *Since:* 3.6.3
+
 gnutls_pcert_deinit
 -------------------
 
@@ -3607,19 +3779,23 @@ gnutls_pcert_import_x509_list
 -----------------------------
 
  -- Function: int gnutls_pcert_import_x509_list (gnutls_pcert_st *
-          PCERT, gnutls_x509_crt_t * CRT, unsigned * NCRT, unsigned int
-          FLAGS)
-     PCERT: The pcert structure
+          PCERT_LIST, gnutls_x509_crt_t * CRT, unsigned * NCRT, unsigned
+          int FLAGS)
+     PCERT_LIST: The structures to store the certificates; must not
+     contain initialized 'gnutls_pcert_st' structures.
 
      CRT: The certificates to be imported
 
-     NCRT: The number of certificates
+     NCRT: The number of certificates in 'crt' ; will be updated if
+     necessary
 
      FLAGS: zero or 'GNUTLS_X509_CRT_LIST_SORT'
 
-     This convenience function will import the given certificate to a
-     'gnutls_pcert_st' structure.  The structure must be deinitialized
-     afterwards using 'gnutls_pcert_deinit()' ;
+     This convenience function will import the given certificates to an
+     already allocated set of 'gnutls_pcert_st' structures.  The
+     structures must be deinitialized afterwards using
+     'gnutls_pcert_deinit()' .  'pcert_list' should contain space for at
+     least 'ncrt' elements.
 
      In the case 'GNUTLS_X509_CRT_LIST_SORT' is specified and that
      function cannot sort the list, 'GNUTLS_E_CERTIFICATE_LIST_UNSORTED'
@@ -3654,17 +3830,55 @@ gnutls_pcert_import_x509_raw
 
      *Since:* 3.0
 
+gnutls_pcert_list_import_x509_file
+----------------------------------
+
+ -- Function: int gnutls_pcert_list_import_x509_file (gnutls_pcert_st *
+          PCERT_LIST, unsigned * PCERT_LIST_SIZE, const char * FILE,
+          gnutls_x509_crt_fmt_t FORMAT, gnutls_pin_callback_t PIN_FN,
+          void * PIN_FN_USERDATA, unsigned int FLAGS)
+     PCERT_LIST: The structures to store the certificates; must not
+     contain initialized 'gnutls_pcert_st' structures.
+
+     PCERT_LIST_SIZE: Initially must hold the maximum number of certs.
+     It will be updated with the number of certs available.
+
+     FILE: A file or supported URI with the certificates to load
+
+     FORMAT: 'GNUTLS_X509_FMT_DER' or 'GNUTLS_X509_FMT_PEM' if a file is
+     given
+
+     PIN_FN: a PIN callback if not globally set
+
+     PIN_FN_USERDATA: parameter for the PIN callback
+
+     FLAGS: zero or flags from 'gnutls_certificate_import_flags'
+
+     This convenience function will import a certificate chain from the
+     given file or supported URI to 'gnutls_pcert_st' structures.  The
+     structures must be deinitialized afterwards using
+     'gnutls_pcert_deinit()' .
+
+     This function will always return a sorted certificate chain.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value; if the 'pcert' list doesn't have
+     enough space 'GNUTLS_E_SHORT_MEMORY_BUFFER' will be returned.
+
+     *Since:* 3.6.3
+
 gnutls_pcert_list_import_x509_raw
 ---------------------------------
 
  -- Function: int gnutls_pcert_list_import_x509_raw (gnutls_pcert_st *
-          PCERTS, unsigned int * PCERT_MAX, const gnutls_datum_t * DATA,
-          gnutls_x509_crt_fmt_t FORMAT, unsigned int FLAGS)
-     PCERTS: The structures to store the parsed certificate.  Must not
-     be initialized.
+          PCERT_LIST, unsigned int * PCERT_LIST_SIZE, const
+          gnutls_datum_t * DATA, gnutls_x509_crt_fmt_t FORMAT, unsigned
+          int FLAGS)
+     PCERT_LIST: The structures to store the certificates; must not
+     contain initialized 'gnutls_pcert_st' structures.
 
-     PCERT_MAX: Initially must hold the maximum number of certs.  It
-     will be updated with the number of certs available.
+     PCERT_LIST_SIZE: Initially must hold the maximum number of certs.
+     It will be updated with the number of certs available.
 
      DATA: The certificates.
 
@@ -3673,15 +3887,18 @@ gnutls_pcert_list_import_x509_raw
      FLAGS: must be (0) or an OR'd sequence of
      gnutls_certificate_import_flags.
 
-     This function will convert the given PEM encoded certificate list
-     to the native gnutls_x509_crt_t format.  The output will be stored
-     in 'certs' .  They will be automatically initialized.
+     This function will import the provided DER or PEM encoded
+     certificates to an already allocated set of 'gnutls_pcert_st'
+     structures.  The structures must be deinitialized afterwards using
+     'gnutls_pcert_deinit()' .  'pcert_list' should contain space for at
+     least 'pcert_list_size' elements.
 
      If the Certificate is PEM encoded it should have a header of "X509
      CERTIFICATE", or "CERTIFICATE".
 
-     *Returns:* the number of certificates read or a negative error
-     value.
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value; if the 'pcert' list doesn't have
+     enough space 'GNUTLS_E_SHORT_MEMORY_BUFFER' will be returned.
 
      *Since:* 3.0
 
@@ -3825,6 +4042,38 @@ gnutls_privkey_export_ecc_raw2
      error code.
 
      *Since:* 3.6.0
+
+gnutls_privkey_export_gost_raw2
+-------------------------------
+
+ -- Function: int gnutls_privkey_export_gost_raw2 (gnutls_privkey_t KEY,
+          gnutls_ecc_curve_t * CURVE, gnutls_digest_algorithm_t *
+          DIGEST, gnutls_gost_paramset_t * PARAMSET, gnutls_datum_t * X,
+          gnutls_datum_t * Y, gnutls_datum_t * K, unsigned int FLAGS)
+     KEY: Holds the public key
+
+     CURVE: will hold the curve
+
+     DIGEST: will hold the digest
+
+     PARAMSET: - undescribed -
+
+     X: will hold the x coordinate
+
+     Y: will hold the y coordinate
+
+     K: will hold the private key
+
+     FLAGS: flags from 'gnutls_abstract_export_flags_t'
+
+     This function will export the GOST private key's parameters found
+     in the given structure.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.3
 
 gnutls_privkey_export_openpgp
 -----------------------------
@@ -4345,14 +4594,48 @@ gnutls_privkey_import_ext4
 
      The 'info_fn' must provide information on the signature algorithms
      supported by this private key, and should support the flags
-     'GNUTLS_PRIVKEY_INFO_PK_ALGO' and
-     'GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO' .  It must return -1 on
-     unknown flags.
+     'GNUTLS_PRIVKEY_INFO_PK_ALGO' ,
+     'GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO' and
+     'GNUTLS_PRIVKEY_INFO_PK_ALGO_BITS' .  It must return -1 on unknown
+     flags.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
 
      *Since:* 3.6.0
+
+gnutls_privkey_import_gost_raw
+------------------------------
+
+ -- Function: int gnutls_privkey_import_gost_raw (gnutls_privkey_t KEY,
+          gnutls_ecc_curve_t CURVE, gnutls_digest_algorithm_t DIGEST,
+          gnutls_gost_paramset_t PARAMSET, const gnutls_datum_t * X,
+          const gnutls_datum_t * Y, const gnutls_datum_t * K)
+     KEY: The key
+
+     CURVE: holds the curve
+
+     DIGEST: holds the digest
+
+     PARAMSET: - undescribed -
+
+     X: holds the x
+
+     Y: holds the y
+
+     K: holds the k
+
+     This function will convert the given GOST private key's parameters
+     to the native 'gnutls_privkey_t' format.  The output will be stored
+     in 'key' .  'digest' should be one of GNUTLS_DIG_GOSR_94,
+     GNUTLS_DIG_STREEBOG_256 or GNUTLS_DIG_STREEBOG_512.  If 'paramset'
+     is set to GNUTLS_GOST_PARAMSET_UNKNOWN default one will be selected
+     depending on 'digest' .
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.3
 
 gnutls_privkey_import_openpgp
 -----------------------------
@@ -5091,6 +5374,36 @@ gnutls_pubkey_export_ecc_x962
 
      *Since:* 3.3.0
 
+gnutls_pubkey_export_gost_raw2
+------------------------------
+
+ -- Function: int gnutls_pubkey_export_gost_raw2 (gnutls_pubkey_t KEY,
+          gnutls_ecc_curve_t * CURVE, gnutls_digest_algorithm_t *
+          DIGEST, gnutls_gost_paramset_t * PARAMSET, gnutls_datum_t * X,
+          gnutls_datum_t * Y, unsigned int FLAGS)
+     KEY: Holds the public key
+
+     CURVE: will hold the curve (may be 'NULL' )
+
+     DIGEST: will hold the curve (may be 'NULL' )
+
+     PARAMSET: will hold the parameters id (may be 'NULL' )
+
+     X: will hold x (may be 'NULL' )
+
+     Y: will hold y (may be 'NULL' )
+
+     FLAGS: flags from 'gnutls_abstract_export_flags_t'
+
+     This function will export the GOST public key's parameters found in
+     the given key.  The new parameters will be allocated using
+     'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
+     error code.
+
+     *Since:* 3.6.3
+
 gnutls_pubkey_export_rsa_raw
 ----------------------------
 
@@ -5361,6 +5674,37 @@ gnutls_pubkey_import_ecc_x962
      otherwise a negative error value.
 
      *Since:* 3.0
+
+gnutls_pubkey_import_gost_raw
+-----------------------------
+
+ -- Function: int gnutls_pubkey_import_gost_raw (gnutls_pubkey_t KEY,
+          gnutls_ecc_curve_t CURVE, gnutls_digest_algorithm_t DIGEST,
+          gnutls_gost_paramset_t PARAMSET, const gnutls_datum_t * X,
+          const gnutls_datum_t * Y)
+     KEY: The structure to store the parsed key
+
+     CURVE: holds the curve
+
+     DIGEST: holds the digest
+
+     PARAMSET: holds the parameters id
+
+     X: holds the x
+
+     Y: holds the y
+
+     This function will convert the given GOST public key's parameters
+     to a 'gnutls_pubkey_t' .  The output will be stored in 'key' .
+     'digest' should be one of GNUTLS_DIG_GOSR_94,
+     GNUTLS_DIG_STREEBOG_256 or GNUTLS_DIG_STREEBOG_512.  If 'paramset'
+     is set to GNUTLS_GOST_PARAMSET_UNKNOWN default one will be selected
+     depending on 'digest' .
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
+     *Since:* 3.6.3
 
 gnutls_pubkey_import_openpgp
 ----------------------------
@@ -6021,52 +6365,4 @@ gnutls_x509_crt_set_pubkey
      otherwise a negative error value.
 
      *Since:* 2.12.0
-
-
-File: gnutls.info,  Node: Socket specific API,  Next: DANE API,  Prev: Abstract key API,  Up: API reference
-
-E.10 Socket specific API
-========================
-
-The prototypes for the following functions lie in 'gnutls/socket.h'.
-
-gnutls_transport_set_fastopen
------------------------------
-
- -- Function: void gnutls_transport_set_fastopen (gnutls_session_t
-          SESSION, int FD, struct sockaddr * CONNECT_ADDR, socklen_t
-          CONNECT_ADDRLEN, unsigned int FLAGS)
-     SESSION: is a 'gnutls_session_t' type.
-
-     FD: is the session's socket descriptor
-
-     CONNECT_ADDR: is the address we want to connect to
-
-     CONNECT_ADDRLEN: is the length of 'connect_addr'
-
-     FLAGS: must be zero
-
-     Enables TCP Fast Open (TFO) for the specified TLS client session.
-     That means that TCP connection establishment and the transmission
-     of the first TLS client hello packet are combined.  The peer's
-     address must be specified in 'connect_addr' and 'connect_addrlen' ,
-     and the socket specified by 'fd' should not be connected.
-
-     TFO only works for TCP sockets of type AF_INET and AF_INET6.  If
-     the OS doesn't support TCP fast open this function will result to
-     gnutls using 'connect()' transparently during the first write.
-
-     *Note:* This function overrides all the transport callback
-     functions.  If this is undesirable, TCP Fast Open must be
-     implemented on the user callback functions without calling this
-     function.  When using this function, transport callbacks must not
-     be set, and 'gnutls_transport_set_ptr()' or
-     'gnutls_transport_set_int()' must not be called.
-
-     On GNU/Linux TFO has to be enabled at the system layer, that is in
-     /proc/sys/net/ipv4/tcp_fastopen, bit 0 has to be set.
-
-     This function has no effect on server sessions.
-
-     *Since:* 3.5.3
 

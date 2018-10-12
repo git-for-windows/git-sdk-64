@@ -84,6 +84,14 @@ gnutls_aead_cipher_encrypt(gnutls_aead_cipher_hd_t handle,
 			   const void *ptext, size_t ptext_len,
 			   void *ctext, size_t *ctext_len);
 
+int
+gnutls_aead_cipher_encryptv(gnutls_aead_cipher_hd_t handle,
+			    const void *nonce, size_t nonce_len,
+			    const giovec_t *auth_iov, int auth_iovcnt,
+			    size_t tag_size,
+			    const giovec_t *iov, int iovcnt,
+			    void *ctext, size_t *ctext_len);
+
 void gnutls_aead_cipher_deinit(gnutls_aead_cipher_hd_t handle);
 
 /* Hash - MAC API */
@@ -238,6 +246,9 @@ gnutls_decode_ber_digest_info(const gnutls_datum_t * info,
 
 int gnutls_decode_rs_value(const gnutls_datum_t * sig_value, gnutls_datum_t *r, gnutls_datum_t *s);
 int gnutls_encode_rs_value(gnutls_datum_t * sig_value, const gnutls_datum_t * r, const gnutls_datum_t * s);
+
+int gnutls_encode_gost_rs_value(gnutls_datum_t * sig_value, const gnutls_datum_t * r, const gnutls_datum_t  *s);
+int gnutls_decode_gost_rs_value(const gnutls_datum_t * sig_value, gnutls_datum_t * r, gnutls_datum_t * s);
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus

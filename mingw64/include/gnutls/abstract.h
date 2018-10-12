@@ -115,6 +115,9 @@ typedef void (*gnutls_privkey_deinit_func) (gnutls_privkey_t key,
  * (obtained with GNUTLS_FLAGS_TO_SIGN_ALGO) is supported.
  */
 #define GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO (1<<2)
+/* Should return the number of bits of the public key algorithm (required for RSA-PSS)
+ * It is the value that should be retuned by gnutls_pubkey_get_pk_algorithm() */
+#define GNUTLS_PRIVKEY_INFO_PK_ALGO_BITS (1<<3)
 
 /* returns information on the public key associated with userdata */
 typedef int (*gnutls_privkey_info_func) (gnutls_privkey_t key, unsigned int flags, void *userdata);
@@ -213,6 +216,13 @@ int gnutls_pubkey_export_ecc_raw2(gnutls_pubkey_t key,
 				 gnutls_datum_t * x, gnutls_datum_t * y,
 				 unsigned flags);
 
+int gnutls_pubkey_export_gost_raw2(gnutls_pubkey_t key,
+				   gnutls_ecc_curve_t * curve,
+				   gnutls_digest_algorithm_t * digest,
+				   gnutls_gost_paramset_t * paramset,
+				   gnutls_datum_t * x, gnutls_datum_t * y,
+				   unsigned int flags);
+
 #define gnutls_pubkey_get_pk_ecc_raw gnutls_pubkey_export_ecc_raw
 int gnutls_pubkey_export_ecc_raw(gnutls_pubkey_t key,
 				 gnutls_ecc_curve_t * curve,
@@ -270,6 +280,14 @@ gnutls_pubkey_import_ecc_x962(gnutls_pubkey_t key,
 int
 gnutls_pubkey_import_ecc_raw(gnutls_pubkey_t key,
 			     gnutls_ecc_curve_t curve,
+			     const gnutls_datum_t * x,
+			     const gnutls_datum_t * y);
+
+int
+gnutls_pubkey_import_gost_raw(gnutls_pubkey_t key,
+			     gnutls_ecc_curve_t curve,
+			     gnutls_digest_algorithm_t digest,
+			     gnutls_gost_paramset_t paramset,
 			     const gnutls_datum_t * x,
 			     const gnutls_datum_t * y);
 
@@ -488,6 +506,14 @@ int gnutls_privkey_import_ecc_raw(gnutls_privkey_t key,
 				       const gnutls_datum_t * y,
 				       const gnutls_datum_t * k);
 
+int gnutls_privkey_import_gost_raw(gnutls_privkey_t key,
+				       gnutls_ecc_curve_t curve,
+				       gnutls_digest_algorithm_t digest,
+				       gnutls_gost_paramset_t paramset,
+				       const gnutls_datum_t * x,
+				       const gnutls_datum_t * y,
+				       const gnutls_datum_t * k);
+
 
 int gnutls_privkey_sign_data(gnutls_privkey_t signer,
 			     gnutls_digest_algorithm_t hash,
@@ -565,6 +591,17 @@ gnutls_privkey_export_ecc_raw2(gnutls_privkey_t key,
 				       gnutls_datum_t * k,
 				       unsigned flags);
 
+int
+gnutls_privkey_export_gost_raw2(gnutls_privkey_t key,
+				       gnutls_ecc_curve_t * curve,
+				       gnutls_digest_algorithm_t * digest,
+				       gnutls_gost_paramset_t * paramset,
+				       gnutls_datum_t * x,
+				       gnutls_datum_t * y,
+				       gnutls_datum_t * k,
+				       unsigned flags);
+
+
 int gnutls_x509_crt_privkey_sign(gnutls_x509_crt_t crt,
 				 gnutls_x509_crt_t issuer,
 				 gnutls_privkey_t issuer_key,
@@ -617,6 +654,14 @@ gnutls_pcert_list_import_x509_raw(gnutls_pcert_st * pcerts,
 				  gnutls_x509_crt_fmt_t format,
 				  unsigned int flags);
 
+int gnutls_pcert_list_import_x509_file(gnutls_pcert_st *pcert_list,
+				       unsigned *pcert_list_size,
+				       const char *file,
+				       gnutls_x509_crt_fmt_t format,
+				       gnutls_pin_callback_t pin_fn,
+				       void *pin_fn_userdata,
+				       unsigned int flags);
+
 int gnutls_pcert_import_x509_raw(gnutls_pcert_st * pcert,
 				 const gnutls_datum_t * cert,
 				 gnutls_x509_crt_fmt_t format,
@@ -655,7 +700,38 @@ typedef int gnutls_certificate_retrieve_function2(gnutls_session_t,
 
 void gnutls_certificate_set_retrieve_function2
     (gnutls_certificate_credentials_t cred,
-     gnutls_certificate_retrieve_function2 * func);
+     gnutls_certificate_retrieve_function2 *func);
+
+struct gnutls_cert_retr_st {
+	unsigned version; /* set to 1 */
+	gnutls_certificate_credentials_t cred;
+	const gnutls_datum_t *req_ca_rdn;
+	unsigned nreqs;
+	const gnutls_pk_algorithm_t *pk_algos;
+	unsigned pk_algos_length;
+
+	/* other fields may be added if version is > 1 */
+	unsigned char padding[64];
+};
+
+/* When the callback sets this value, gnutls will deinitialize the given
+ * values after use */
+#define GNUTLS_CERT_RETR_DEINIT_ALL 1
+
+typedef int gnutls_certificate_retrieve_function3(
+				gnutls_session_t,
+				const struct gnutls_cert_retr_st *info,
+				gnutls_pcert_st **certs,
+				unsigned int *pcert_length,
+				gnutls_ocsp_data_st **ocsp,
+				unsigned int *ocsp_length,
+				gnutls_privkey_t *privkey,
+				unsigned int *flags);
+
+
+void gnutls_certificate_set_retrieve_function3
+    (gnutls_certificate_credentials_t cred,
+     gnutls_certificate_retrieve_function3 *func);
 
 int
 gnutls_certificate_set_key(gnutls_certificate_credentials_t res,

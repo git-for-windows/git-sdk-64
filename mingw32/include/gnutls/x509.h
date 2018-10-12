@@ -169,6 +169,14 @@ int gnutls_x509_crt_import_url(gnutls_x509_crt_t crt,
 				      /* GNUTLS_PKCS11_OBJ_FLAG_* */
     );
 
+int
+gnutls_x509_crt_list_import_url(gnutls_x509_crt_t **certs,
+				unsigned int *size,
+				const char *url,
+				gnutls_pin_callback_t pin_fn,
+				void *pin_fn_userdata,
+				unsigned int flags);
+
 int gnutls_x509_crt_export(gnutls_x509_crt_t cert,
 			   gnutls_x509_crt_fmt_t format,
 			   void *output_data, size_t * output_data_size);
@@ -447,6 +455,11 @@ int gnutls_x509_crt_get_pk_ecc_raw(gnutls_x509_crt_t crt,
 				   gnutls_ecc_curve_t * curve,
 				   gnutls_datum_t * x,
 				   gnutls_datum_t * y);
+int gnutls_x509_crt_get_pk_gost_raw(gnutls_x509_crt_t crt,
+				    gnutls_ecc_curve_t * curve,
+				    gnutls_digest_algorithm_t * digest,
+				    gnutls_gost_paramset_t *paramset,
+				    gnutls_datum_t * x, gnutls_datum_t * y);
 
 int gnutls_x509_crt_get_subject_alt_name(gnutls_x509_crt_t cert,
 					 unsigned int seq,
@@ -1085,6 +1098,11 @@ unsigned gnutls_x509_crt_check_key_purpose(gnutls_x509_crt_t cert,
  * @GNUTLS_PKCS_PBES2_AES_256: PBES2 AES-256.
  * @GNUTLS_PKCS_PBES2_DES: PBES2 single DES.
  * @GNUTLS_PKCS_PBES2_DES_MD5: PBES1 with single DES; for compatibility with openssl only.
+ * @GNUTLS_PKCS_PBES2_GOST_TC26Z: PBES2 GOST 28147-89 CFB with TC26-Z S-box.
+ * @GNUTLS_PKCS_PBES2_GOST_CPA: PBES2 GOST 28147-89 CFB with CryptoPro-A S-box.
+ * @GNUTLS_PKCS_PBES2_GOST_CPB: PBES2 GOST 28147-89 CFB with CryptoPro-B S-box.
+ * @GNUTLS_PKCS_PBES2_GOST_CPC: PBES2 GOST 28147-89 CFB with CryptoPro-C S-box.
+ * @GNUTLS_PKCS_PBES2_GOST_CPD: PBES2 GOST 28147-89 CFB with CryptoPro-D S-box.
  *
  * Enumeration of different PKCS encryption flags.
  */
@@ -1099,7 +1117,12 @@ typedef enum gnutls_pkcs_encrypt_flags_t {
 	GNUTLS_PKCS_PBES2_AES_256 = 1<<7,
 	GNUTLS_PKCS_NULL_PASSWORD = 1<<8,
 	GNUTLS_PKCS_PBES2_DES = 1<<9,
-	GNUTLS_PKCS_PBES1_DES_MD5 = 1<<10
+	GNUTLS_PKCS_PBES1_DES_MD5 = 1<<10,
+	GNUTLS_PKCS_PBES2_GOST_TC26Z = 1<<11,
+	GNUTLS_PKCS_PBES2_GOST_CPA = 1<<12,
+	GNUTLS_PKCS_PBES2_GOST_CPB = 1<<13,
+	GNUTLS_PKCS_PBES2_GOST_CPC = 1<<14,
+	GNUTLS_PKCS_PBES2_GOST_CPD = 1<<15
 } gnutls_pkcs_encrypt_flags_t;
 
 #define GNUTLS_PKCS_CIPHER_MASK(x) ((x)&(~(GNUTLS_PKCS_NULL_PASSWORD)))
@@ -1111,6 +1134,11 @@ typedef enum gnutls_pkcs_encrypt_flags_t {
 #define GNUTLS_PKCS_USE_PBES2_AES_128 GNUTLS_PKCS_PBES2_AES_128
 #define GNUTLS_PKCS_USE_PBES2_AES_192 GNUTLS_PKCS_PBES2_AES_192
 #define GNUTLS_PKCS_USE_PBES2_AES_256 GNUTLS_PKCS_PBES2_AES_256
+#define GNUTLS_PKCS_USE_PBES2_GOST_TC26Z GNUTLS_PKCS_PBES2_GOST_TC26Z
+#define GNUTLS_PKCS_USE_PBES2_GOST_CPA GNUTLS_PKCS_PBES2_GOST_CPA
+#define GNUTLS_PKCS_USE_PBES2_GOST_CPB GNUTLS_PKCS_PBES2_GOST_CPB
+#define GNUTLS_PKCS_USE_PBES2_GOST_CPC GNUTLS_PKCS_PBES2_GOST_CPC
+#define GNUTLS_PKCS_USE_PBES2_GOST_CPD GNUTLS_PKCS_PBES2_GOST_CPD
 
 const char *gnutls_pkcs_schema_get_name(unsigned int schema);
 const char *gnutls_pkcs_schema_get_oid(unsigned int schema);
@@ -1167,6 +1195,13 @@ int gnutls_x509_privkey_import_rsa_raw2(gnutls_x509_privkey_t key,
 					const gnutls_datum_t * e2);
 int gnutls_x509_privkey_import_ecc_raw(gnutls_x509_privkey_t key,
 				       gnutls_ecc_curve_t curve,
+				       const gnutls_datum_t * x,
+				       const gnutls_datum_t * y,
+				       const gnutls_datum_t * k);
+int gnutls_x509_privkey_import_gost_raw(gnutls_x509_privkey_t key,
+				       gnutls_ecc_curve_t curve,
+				       gnutls_digest_algorithm_t digest,
+				       gnutls_gost_paramset_t paramset,
 				       const gnutls_datum_t * x,
 				       const gnutls_datum_t * y,
 				       const gnutls_datum_t * k);
@@ -1274,6 +1309,13 @@ int gnutls_x509_privkey_export_rsa_raw(gnutls_x509_privkey_t key,
 				       gnutls_datum_t * u);
 int gnutls_x509_privkey_export_ecc_raw(gnutls_x509_privkey_t key,
 				       gnutls_ecc_curve_t * curve,
+				       gnutls_datum_t * x,
+				       gnutls_datum_t * y,
+				       gnutls_datum_t * k);
+int gnutls_x509_privkey_export_gost_raw(gnutls_x509_privkey_t key,
+				       gnutls_ecc_curve_t * curve,
+				       gnutls_digest_algorithm_t * digest,
+				       gnutls_gost_paramset_t * paramset,
 				       gnutls_datum_t * x,
 				       gnutls_datum_t * y,
 				       gnutls_datum_t * k);
@@ -1520,6 +1562,8 @@ int gnutls_x509_trust_list_get_issuer_by_subject_key_id(gnutls_x509_trust_list_t
  * @GNUTLS_TL_GET_COPY: The semantics of this flag are documented to the functions which
  *   are applicable. In general, on returned value, the function will provide a copy
  *   if this flag is provided, rather than a pointer to internal data.
+ * @GNUTLS_TL_FAIL_ON_INVALID_CRL: If an CRL is added which cannot be validated return
+ *   an error instead of ignoring (must be used with %GNUTLS_TL_VERIFY_CRL).
  *
  * Enumeration of different certificate trust list flags.
  */
@@ -1532,8 +1576,10 @@ typedef enum gnutls_trust_list_flags_t {
 #define GNUTLS_TL_NO_DUPLICATES (1<<2)
 	GNUTLS_TL_NO_DUPLICATE_KEY = (1<<3),
 #define GNUTLS_TL_NO_DUPLICATE_KEY (1<<3)
-	GNUTLS_TL_GET_COPY = (1<<4)
+	GNUTLS_TL_GET_COPY = (1<<4),
 #define GNUTLS_TL_GET_COPY (1<<4)
+	GNUTLS_TL_FAIL_ON_INVALID_CRL = (1<<5)
+#define GNUTLS_TL_FAIL_ON_INVALID_CRL (1<<5)
 } gnutls_trust_list_flags_t;
 
 int

@@ -107,6 +107,7 @@ namespace gnutls {
 		session(unsigned int);
 		 virtual ~ session();
 
+		gnutls_session_t ptr();
 		int bye(gnutls_close_request_t how);
 		int handshake();
 
@@ -189,6 +190,7 @@ namespace gnutls {
 						     vec_push_func);
 		void set_transport_pull_function(gnutls_pull_func
 						 pull_func);
+		void set_transport_pull_timeout_function (gnutls_pull_timeout_func pull_timeout_func);
 
 		void set_user_ptr(void *ptr);
 		void *get_user_ptr() const;
@@ -237,6 +239,7 @@ namespace gnutls {
 	class server_session:public session {
 	      public:
 		server_session();
+		server_session(int flags);
 		~server_session();
 		void db_remove() const;
 
@@ -261,8 +264,10 @@ namespace gnutls {
 	class client_session:public session {
 	      public:
 		client_session();
+		client_session(int flags);
 		~client_session();
 
+		void set_verify_cert(const char *hostname, unsigned flags);
 		void set_server_name(gnutls_server_name_type_t type,
 				     const void *name, size_t name_length);
 
