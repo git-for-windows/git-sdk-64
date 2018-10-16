@@ -1339,7 +1339,7 @@ namespace std
 /* #undef _GLIBCXX_HAVE__TANL */
 
 /* Define to 1 if you have the `__cxa_thread_atexit' function. */
-/* #undef _GLIBCXX_HAVE___CXA_THREAD_ATEXIT */
+#define _GLIBCXX_HAVE___CXA_THREAD_ATEXIT 1
 
 /* Define to 1 if you have the `__cxa_thread_atexit_impl' function. */
 /* #undef _GLIBCXX_HAVE___CXA_THREAD_ATEXIT_IMPL */
