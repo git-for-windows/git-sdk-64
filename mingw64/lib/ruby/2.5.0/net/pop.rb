@@ -16,7 +16,7 @@
 # NOTE: You can find Japanese version of this document at:
 # http://docs.ruby-lang.org/ja/latest/library/net=2fpop.html
 #
-#   $Id: pop.rb 59472 2017-08-02 15:10:42Z kazu $
+#   $Id: pop.rb 64443 2018-08-18 08:35:42Z nagachika $
 #
 # See Net::POP3 for documentation.
 #
@@ -196,7 +196,7 @@ module Net
   class POP3 < Protocol
 
     # svn revision of this library
-    Revision = %q$Revision: 59472 $.split[1]
+    Revision = %q$Revision: 64443 $.split[1]
 
     #
     # Class Parameters
@@ -467,7 +467,7 @@ module Net
 
     # Provide human-readable stringification of class state.
     def inspect
-      "#<#{self.class} #{@address}:#{@port} open=#{@started}>"
+      +"#<#{self.class} #{@address}:#{@port} open=#{@started}>"
     end
 
     # *WARNING*: This method causes a serious security hole.
@@ -758,7 +758,7 @@ module Net
 
     # Provide human-readable stringification of class state.
     def inspect
-      "#<#{self.class} #{@number}#{@deleted ? ' deleted' : ''}>"
+      +"#<#{self.class} #{@number}#{@deleted ? ' deleted' : ''}>"
     end
 
     #
@@ -799,7 +799,7 @@ module Net
     #
     # This method raises a POPError if an error occurs.
     #
-    def pop( dest = '', &block ) # :yield: message_chunk
+    def pop( dest = +'', &block ) # :yield: message_chunk
       if block_given?
         @command.retr(@number, &block)
         nil
@@ -819,7 +819,7 @@ module Net
     # The optional +dest+ argument is obsolete.
     #
     # This method raises a POPError if an error occurs.
-    def top(lines, dest = '')
+    def top(lines, dest = +'')
       @command.top(@number, lines) do |chunk|
         dest << chunk
       end
@@ -831,7 +831,7 @@ module Net
     # The optional +dest+ argument is obsolete.
     #
     # This method raises a POPError if an error occurs.
-    def header(dest = '')
+    def header(dest = +'')
       top(0, dest)
     end
 
@@ -898,7 +898,7 @@ module Net
     attr_reader :socket
 
     def inspect
-      "#<#{self.class} socket=#{@socket}>"
+      +"#<#{self.class} socket=#{@socket}>"
     end
 
     def auth(account, password)

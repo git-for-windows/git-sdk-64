@@ -10,7 +10,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("2.5.") or
-    raise "ruby lib version (2.5.1) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (2.5.2) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.5.0/i386-mingw32")
@@ -21,8 +21,8 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "2"
   CONFIG["MINOR"] = "5"
-  CONFIG["TEENY"] = "1"
-  CONFIG["PATCHLEVEL"] = "57"
+  CONFIG["TEENY"] = "2"
+  CONFIG["PATCHLEVEL"] = "104"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/mingw32")
@@ -197,7 +197,7 @@ module RbConfig
   CONFIG["build_cpu"] = "i686"
   CONFIG["build"] = "i686-w64-mingw32"
   CONFIG["RUBY_API_VERSION"] = "$(MAJOR).$(MINOR)"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.5.1"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.5.2"
   CONFIG["HAVE_GIT"] = "yes"
   CONFIG["GIT"] = "git"
   CONFIG["cxxflags"] = "$(optflags) $(debugflags) $(warnflags)"
