@@ -71,6 +71,9 @@ and/or use gtk-doc annotations.  -->
     <alias name="mask_t" c:type="hb_mask_t">
       <type name="guint32" c:type="uint32_t"/>
     </alias>
+    <alias name="name_id_t" c:type="hb_name_id_t">
+      <type name="guint" c:type="unsigned int"/>
+    </alias>
     <alias name="position_t" c:type="hb_position_t">
       <type name="gint32" c:type="int32_t"/>
     </alias>
@@ -85,6 +88,12 @@ and/or use gtk-doc annotations.  -->
 Set to U+FFFD REPLACEMENT CHARACTER.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
+    <constant name="FEATURE_GLOBAL_START"
+              value="0"
+              c:type="HB_FEATURE_GLOBAL_START"
+              version="2.0.0">
+      <type name="gint" c:type="gint"/>
+    </constant>
     <constant name="LANGUAGE_INVALID" value="0" c:type="HB_LANGUAGE_INVALID">
       <type name="language_t" c:type="hb_language_t"/>
     </constant>
@@ -92,6 +101,12 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
               value="4294967295"
               c:type="HB_MAP_VALUE_INVALID">
       <type name="codepoint_t" c:type="hb_codepoint_t"/>
+    </constant>
+    <constant name="NAME_ID_INVALID"
+              value="65535"
+              c:type="HB_NAME_ID_INVALID"
+              version="2.0.0">
+      <type name="gint" c:type="gint"/>
     </constant>
     <constant name="OT_LAYOUT_DEFAULT_LANGUAGE_INDEX"
               value="65535"
@@ -113,6 +128,18 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
               c:type="HB_OT_LAYOUT_NO_VARIATIONS_INDEX">
       <type name="gint" c:type="gint"/>
     </constant>
+    <constant name="OT_MAX_TAGS_PER_LANGUAGE"
+              value="3"
+              c:type="HB_OT_MAX_TAGS_PER_LANGUAGE"
+              version="2.0.0">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="OT_MAX_TAGS_PER_SCRIPT"
+              value="3"
+              c:type="HB_OT_MAX_TAGS_PER_SCRIPT"
+              version="2.0.0">
+      <type name="gint" c:type="gint"/>
+    </constant>
     <constant name="OT_VAR_NO_AXIS_INDEX"
               value="4294967295"
               c:type="HB_OT_VAR_NO_AXIS_INDEX"
@@ -132,19 +159,22 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     </constant>
     <constant name="UNICODE_MAX_DECOMPOSITION_LEN"
               value="19"
-              c:type="HB_UNICODE_MAX_DECOMPOSITION_LEN">
+              c:type="HB_UNICODE_MAX_DECOMPOSITION_LEN"
+              deprecated="1"
+              deprecated-version="2.0.0">
+      <doc xml:space="preserve">See Unicode 6.1 for details on the maximum decomposition length.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MAJOR" value="1" c:type="HB_VERSION_MAJOR">
+    <constant name="VERSION_MAJOR" value="2" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="9" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="0" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.9.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="2.0.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_copy_writable_or_fail"
@@ -714,6 +744,7 @@ the replacement code point.</doc>
       </parameters>
     </function>
     <enumeration name="buffer_cluster_level_t"
+                 version="0.9.42"
                  glib:type-name="hb_buffer_cluster_level_t"
                  glib:get-type="hb_gobject_buffer_cluster_level_get_type"
                  c:type="hb_buffer_cluster_level_t">
@@ -721,21 +752,27 @@ the replacement code point.</doc>
               value="0"
               c:identifier="HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES"
               glib:nick="monotone-graphemes">
+        <doc xml:space="preserve">Return cluster values grouped by graphemes into
+  monotone order.</doc>
       </member>
       <member name="monotone_characters"
               value="1"
               c:identifier="HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS"
               glib:nick="monotone-characters">
+        <doc xml:space="preserve">Return cluster values grouped into monotone order.</doc>
       </member>
       <member name="characters"
               value="2"
               c:identifier="HB_BUFFER_CLUSTER_LEVEL_CHARACTERS"
               glib:nick="characters">
+        <doc xml:space="preserve">Don't group cluster values.</doc>
       </member>
       <member name="default"
               value="0"
               c:identifier="HB_BUFFER_CLUSTER_LEVEL_DEFAULT"
               glib:nick="default">
+        <doc xml:space="preserve">Default cluster level,
+  equal to @HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES.</doc>
       </member>
     </enumeration>
     <enumeration name="buffer_content_type_t"
@@ -835,15 +872,19 @@ callers if just comparing two buffers is needed.</doc>
       </return-value>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">a buffer.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="reference" transfer-ownership="none">
+          <doc xml:space="preserve">other buffer to compare to.</doc>
           <type name="buffer_t" c:type="hb_buffer_t*"/>
         </parameter>
         <parameter name="dottedcircle_glyph" transfer-ownership="none">
+          <doc xml:space="preserve">glyph id of U+25CC DOTTED CIRCLE, or (hb_codepont_t) -1.</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
         <parameter name="position_fuzz" transfer-ownership="none">
+          <doc xml:space="preserve">allowed absolute difference in position values.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
@@ -1069,6 +1110,21 @@ The value valid as long as buffer has not been modified.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="buffer_get_invisible_glyph"
+              c:identifier="hb_buffer_get_invisible_glyph"
+              version="2.0.0">
+      <doc xml:space="preserve">See hb_buffer_set_invisible_glyph().</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">The @buffer invisible #hb_codepoint_t.</doc>
+        <type name="codepoint_t" c:type="hb_codepoint_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_buffer_t.</doc>
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="buffer_get_language"
               c:identifier="hb_buffer_get_language"
               version="0.9.2">
@@ -1203,7 +1259,9 @@ then %HB_DIRECTION_LTR is used.
 Finally, if buffer language is not set (ie. is %HB_LANGUAGE_INVALID),
 it will be set to the process's default language as returned by
 hb_language_get_default().  This may change in the future by
-taking buffer script into consideration when choosing a language.</doc>
+taking buffer script into consideration when choosing a language.
+Note that hb_language_get_default() is NOT threadsafe the first time
+it is called.  See documentation for that function for details.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -1659,6 +1717,27 @@ direction.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="buffer_set_invisible_glyph"
+              c:identifier="hb_buffer_set_invisible_glyph"
+              version="2.0.0">
+      <doc xml:space="preserve">Sets the #hb_codepoint_t that replaces invisible characters in
+the shaping result.  If set to zero (default), the glyph for the
+U+0020 SPACE character is used.  Otherwise, this value is used
+verbatim.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_buffer_t.</doc>
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="invisible" transfer-ownership="none">
+          <doc xml:space="preserve">the invisible #hb_codepoint_t</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="buffer_set_language"
               c:identifier="hb_buffer_set_language"
               version="0.9.2">
@@ -1669,7 +1748,7 @@ buffer which can result in applying language-specific behaviour. Languages
 are orthogonal to the scripts, and though they are related, they are
 different concepts and should not be confused with each other.
 
-Use hb_language_from_string() to convert from ISO 639 language codes to
+Use hb_language_from_string() to convert from BCP 47 language tags to
 #hb_language_t.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -2042,12 +2121,15 @@ font file by calling hb_face_reference_blob().</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="face_count" c:identifier="hb_face_count">
+    <function name="face_count" c:identifier="hb_face_count" version="1.7.7">
+      <doc xml:space="preserve">Get number of faces in a blob.</doc>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Number of faces in @blob</doc>
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="blob" transfer-ownership="none">
+          <doc xml:space="preserve">a blob.</doc>
           <type name="blob_t" c:type="hb_blob_t*"/>
         </parameter>
       </parameters>
@@ -2152,12 +2234,15 @@ font file by calling hb_face_reference_blob().</doc>
           <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
+          <doc xml:space="preserve">index of first tag to return.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="table_count" transfer-ownership="none">
+          <doc xml:space="preserve">input length of @table_tags array, output number of items written.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="table_tags" transfer-ownership="none">
+          <doc xml:space="preserve">array to write tags into.</doc>
           <type name="tag_t" c:type="hb_tag_t*"/>
         </parameter>
       </parameters>
@@ -2819,6 +2904,7 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
                    scope="notified"
                    closure="2"
                    destroy="3">
+          <doc xml:space="preserve">callback function.</doc>
           <type name="font_get_glyph_func_t"
                 c:type="hb_font_get_glyph_func_t"/>
         </parameter>
@@ -2826,9 +2912,11 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
                    transfer-ownership="none"
                    nullable="1"
                    allow-none="1">
+          <doc xml:space="preserve">data to pass to @func.</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="destroy" transfer-ownership="none" scope="notified">
+          <doc xml:space="preserve">function to call when @user_data is not needed anymore.</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
@@ -2895,7 +2983,9 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
     </function>
     <function name="font_funcs_set_glyph_h_kerning_func"
               c:identifier="hb_font_funcs_set_glyph_h_kerning_func"
-              version="0.9.2">
+              version="0.9.2"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -3045,7 +3135,9 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
     </function>
     <function name="font_funcs_set_glyph_v_kerning_func"
               c:identifier="hb_font_funcs_set_glyph_v_kerning_func"
-              version="0.9.2">
+              version="0.9.2"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -3121,6 +3213,36 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
                    destroy="3">
           <type name="font_get_nominal_glyph_func_t"
                 c:type="hb_font_get_nominal_glyph_func_t"/>
+        </parameter>
+        <parameter name="user_data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" scope="notified">
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_funcs_set_nominal_glyphs_func"
+              c:identifier="hb_font_funcs_set_nominal_glyphs_func"
+              version="2.0.0">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="ffuncs" transfer-ownership="none">
+          <doc xml:space="preserve">font functions.</doc>
+          <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+        </parameter>
+        <parameter name="func"
+                   transfer-ownership="none"
+                   scope="notified"
+                   closure="2"
+                   destroy="3">
+          <type name="font_get_nominal_glyphs_func_t"
+                c:type="hb_font_get_nominal_glyphs_func_t"/>
         </parameter>
         <parameter name="user_data"
                    transfer-ownership="none"
@@ -3219,7 +3341,10 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         <parameter name="direction" transfer-ownership="none">
           <type name="direction_t" c:type="hb_direction_t"/>
         </parameter>
-        <parameter name="extents" transfer-ownership="none">
+        <parameter name="extents"
+                   direction="out"
+                   caller-allocates="1"
+                   transfer-ownership="none">
           <type name="font_extents_t" c:type="hb_font_extents_t*"/>
         </parameter>
       </parameters>
@@ -3362,10 +3487,10 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
           <type name="direction_t" c:type="hb_direction_t"/>
         </parameter>
         <parameter name="count" transfer-ownership="none">
-          <type name="guint" c:type="unsigned"/>
+          <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="first_glyph" transfer-ownership="none">
-          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+          <type name="codepoint_t" c:type="const hb_codepoint_t*"/>
         </parameter>
         <parameter name="glyph_stride" transfer-ownership="none">
           <type name="guint" c:type="unsigned"/>
@@ -3394,10 +3519,10 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="count" transfer-ownership="none">
-          <type name="guint" c:type="unsigned"/>
+          <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="first_glyph" transfer-ownership="none">
-          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+          <type name="codepoint_t" c:type="const hb_codepoint_t*"/>
         </parameter>
         <parameter name="glyph_stride" transfer-ownership="none">
           <type name="guint" c:type="unsigned"/>
@@ -3715,10 +3840,10 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="count" transfer-ownership="none">
-          <type name="guint" c:type="unsigned"/>
+          <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="first_glyph" transfer-ownership="none">
-          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+          <type name="codepoint_t" c:type="const hb_codepoint_t*"/>
         </parameter>
         <parameter name="glyph_stride" transfer-ownership="none">
           <type name="guint" c:type="unsigned"/>
@@ -3733,7 +3858,9 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
     </function>
     <function name="font_get_glyph_h_kerning"
               c:identifier="hb_font_get_glyph_h_kerning"
-              version="0.9.2">
+              version="0.9.2"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="position_t" c:type="hb_position_t"/>
       </return-value>
@@ -3780,7 +3907,9 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
     </function>
     <function name="font_get_glyph_kerning_for_direction"
               c:identifier="hb_font_get_glyph_kerning_for_direction"
-              version="0.9.2">
+              version="0.9.2"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -3991,10 +4120,10 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="count" transfer-ownership="none">
-          <type name="guint" c:type="unsigned"/>
+          <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="first_glyph" transfer-ownership="none">
-          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+          <type name="codepoint_t" c:type="const hb_codepoint_t*"/>
         </parameter>
         <parameter name="glyph_stride" transfer-ownership="none">
           <type name="guint" c:type="unsigned"/>
@@ -4009,7 +4138,9 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
     </function>
     <function name="font_get_glyph_v_kerning"
               c:identifier="hb_font_get_glyph_v_kerning"
-              version="0.9.2">
+              version="0.9.2"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="position_t" c:type="hb_position_t"/>
       </return-value>
@@ -4121,6 +4252,45 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
                    nullable="1"
                    allow-none="1"
                    closure="4">
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="font_get_nominal_glyphs_func_t"
+              c:type="hb_font_get_nominal_glyphs_func_t">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="font_data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="first_unicode" transfer-ownership="none">
+          <type name="codepoint_t" c:type="const hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="unicode_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="first_glyph" transfer-ownership="none">
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="glyph_stride" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="user_data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1"
+                   closure="7">
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
@@ -4516,7 +4686,9 @@ are not modified.</doc>
     <function name="font_set_ptem"
               c:identifier="hb_font_set_ptem"
               version="1.6.0">
-      <doc xml:space="preserve">Sets "point size" of the font.</doc>
+      <doc xml:space="preserve">Sets "point size" of the font.  Set to 0 to unset.
+
+There are 72 points in an inch.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -4526,6 +4698,7 @@ are not modified.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="ptem" transfer-ownership="none">
+          <doc xml:space="preserve">font size in points.</doc>
           <type name="gfloat" c:type="float"/>
         </parameter>
       </parameters>
@@ -4863,10 +5036,10 @@ are not modified.</doc>
               glib:type-name="hb_glyph_flags_t"
               glib:get-type="hb_gobject_glyph_flags_get_type"
               c:type="hb_glyph_flags_t">
-      <member name="unsafe_to_break"
+      <member name="break"
               value="1"
               c:identifier="HB_GLYPH_FLAG_UNSAFE_TO_BREAK"
-              glib:nick="unsafe-to-break">
+              glib:nick="break">
         <doc xml:space="preserve">Indicates that if input text is broken at the
 				   beginning of the cluster this glyph is part of,
 				   then both sides need to be re-shaped, as the
@@ -4882,11 +5055,6 @@ are not modified.</doc>
 				   of each line after line-breaking, or limiting
 				   the reshaping to a small piece around the
 				   breaking point only.</doc>
-      </member>
-      <member name="defined"
-              value="1"
-              c:identifier="HB_GLYPH_FLAG_DEFINED"
-              glib:nick="defined">
       </member>
     </bitfield>
     <function name="glyph_info_get_glyph_flags"
@@ -4916,7 +5084,7 @@ glyphs and their relation to input text.</doc>
             (after shaping).</doc>
         <type name="codepoint_t" c:type="hb_codepoint_t"/>
       </field>
-      <field name="mask" writable="1">
+      <field name="mask" readable="0" private="1">
         <type name="mask_t" c:type="hb_mask_t"/>
       </field>
       <field name="cluster" writable="1">
@@ -4999,17 +5167,17 @@ glyph in both horizontal and vertical directions. All positions in
     <function name="language_from_string"
               c:identifier="hb_language_from_string"
               version="0.9.2">
-      <doc xml:space="preserve">Converts @str representing an ISO 639 language code to the corresponding
+      <doc xml:space="preserve">Converts @str representing a BCP 47 language tag to the corresponding
 #hb_language_t.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">
-The #hb_language_t corresponding to the ISO 639 language code.</doc>
+The #hb_language_t corresponding to the BCP 47 language tag.</doc>
         <type name="language_t" c:type="hb_language_t"/>
       </return-value>
       <parameters>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve">a string representing
-      ISO 639 language code</doc>
+      a BCP 47 language tag</doc>
           <array length="1" zero-terminated="0" c:type="const char*">
             <type name="guint8"/>
           </array>
@@ -5023,6 +5191,14 @@ The #hb_language_t corresponding to the ISO 639 language code.</doc>
     <function name="language_get_default"
               c:identifier="hb_language_get_default"
               version="0.9.2">
+      <doc xml:space="preserve">Get default language from current locale.
+
+Note that the first time this function is called, it calls
+"setlocale (LC_CTYPE, nullptr)" to fetch current locale.  The underlying
+setlocale function is, in many implementations, NOT threadsafe.  To avoid
+problems, call this function once before multiple threads can call it.
+This function is only used from hb_buffer_guess_segment_properties() by
+HarfBuzz itself.</doc>
       <return-value transfer-ownership="none">
         <type name="language_t" c:type="hb_language_t"/>
       </return-value>
@@ -5356,6 +5532,56 @@ the caller.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_layout_feature_get_characters"
+              c:identifier="hb_ot_layout_feature_get_characters"
+              version="2.0.0">
+      <doc xml:space="preserve">Fetches characters listed by designer under feature parameters for "Character
+Variant" ("cvXX") features.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Number of total sample characters in the cvXX feature.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="table_tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="feature_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <doc xml:space="preserve">In case the resulting char_count was equal to its input value, there
+               is a chance there were more characters on the tag so this API can be
+               called with an offset till resulting char_count gets to a number
+               lower than input buffer (or consider using just a bigger buffer for
+               one shot copying).</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="char_count"
+                   direction="inout"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   nullable="1"
+                   allow-none="1">
+          <doc xml:space="preserve">The count of characters for which this feature
+             provides glyph variants. (May be zero.)</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="characters"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">A buffer pointer. The Unicode Scalar Value
+             of the characters for which this feature provides glyph variants.</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_layout_feature_get_lookups"
               c:identifier="hb_ot_layout_feature_get_lookups"
               version="0.9.7">
@@ -5380,6 +5606,79 @@ the caller.</doc>
         </parameter>
         <parameter name="lookup_indexes" transfer-ownership="none">
           <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_feature_get_name_ids"
+              c:identifier="hb_ot_layout_feature_get_name_ids"
+              version="2.0.0">
+      <doc xml:space="preserve">Fetches name indices from feature parameters for "Stylistic Set" ('ssXX') or
+"Character Variant" ('cvXX') features.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true if data found, false otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="table_tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="feature_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="label_id"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">The ‘name’ table name ID that specifies a string
+           for a user-interface label for this feature. (May be NULL.)</doc>
+          <type name="name_id_t" c:type="hb_name_id_t*"/>
+        </parameter>
+        <parameter name="tooltip_id"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">The ‘name’ table name ID that specifies a string
+             that an application can use for tooltip text for this
+             feature. (May be NULL.)</doc>
+          <type name="name_id_t" c:type="hb_name_id_t*"/>
+        </parameter>
+        <parameter name="sample_id"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">The ‘name’ table name ID that specifies sample text
+            that illustrates the effect of this feature. (May be NULL.)</doc>
+          <type name="name_id_t" c:type="hb_name_id_t*"/>
+        </parameter>
+        <parameter name="num_named_parameters"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">Number of named parameters. (May be zero.)</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="first_param_id"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">The first ‘name’ table name ID used to specify
+                 strings for user-interface labels for the feature
+                 parameters. (Must be zero if numParameters is zero.)</doc>
+          <type name="name_id_t" c:type="hb_name_id_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -5513,7 +5812,7 @@ the caller.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="subfamily_name_id" transfer-ownership="none">
-          <type name="guint" c:type="unsigned int*"/>
+          <type name="name_id_t" c:type="hb_name_id_t*"/>
         </parameter>
         <parameter name="range_start" transfer-ownership="none">
           <type name="guint" c:type="unsigned int*"/>
@@ -5861,6 +6160,33 @@ provided lookups.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_layout_script_select_language"
+              c:identifier="hb_ot_layout_script_select_language"
+              version="2.0.0">
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="table_tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="script_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="language_count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="language_tags" transfer-ownership="none">
+          <type name="tag_t" c:type="const hb_tag_t*"/>
+        </parameter>
+        <parameter name="language_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_layout_table_choose_script"
               c:identifier="hb_ot_layout_table_choose_script">
       <return-value transfer-ownership="none">
@@ -5984,6 +6310,33 @@ provided lookups.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="script_tags" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_table_select_script"
+              c:identifier="hb_ot_layout_table_select_script"
+              version="2.0.0">
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="table_tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="script_count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="script_tags" transfer-ownership="none">
+          <type name="tag_t" c:type="const hb_tag_t*"/>
+        </parameter>
+        <parameter name="script_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="chosen_script" transfer-ownership="none">
           <type name="tag_t" c:type="hb_tag_t*"/>
         </parameter>
       </parameters>
@@ -6664,6 +7017,94 @@ face.</doc>
         </parameter>
         <parameter name="script_tag_2" transfer-ownership="none">
           <type name="tag_t" c:type="hb_tag_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_tags_from_script_and_language"
+              c:identifier="hb_ot_tags_from_script_and_language"
+              version="2.0.0">
+      <doc xml:space="preserve">Converts an #hb_script_t and an #hb_language_t to script and language tags.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="script" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_script_t to convert.</doc>
+          <type name="script_t" c:type="hb_script_t"/>
+        </parameter>
+        <parameter name="language" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_language_t to convert.</doc>
+          <type name="language_t" c:type="hb_language_t"/>
+        </parameter>
+        <parameter name="script_count"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <doc xml:space="preserve">maximum number of script tags to retrieve (IN)
+and actual number of script tags retrieved (OUT)</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="script_tags"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">array of size at least @script_count to store the
+script tag results</doc>
+          <type name="tag_t" c:type="hb_tag_t*"/>
+        </parameter>
+        <parameter name="language_count"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <doc xml:space="preserve">maximum number of language tags to retrieve
+(IN) and actual number of language tags retrieved (OUT)</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="language_tags"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">array of size at least @language_count to store
+the language tag results</doc>
+          <type name="tag_t" c:type="hb_tag_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_tags_to_script_and_language"
+              c:identifier="hb_ot_tags_to_script_and_language"
+              version="2.0.0">
+      <doc xml:space="preserve">Converts a script tag and a language tag to an #hb_script_t and an
+#hb_language_t.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="script_tag" transfer-ownership="none">
+          <doc xml:space="preserve">a script tag</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="language_tag" transfer-ownership="none">
+          <doc xml:space="preserve">a language tag</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="script"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <doc xml:space="preserve">the #hb_script_t corresponding to @script_tag (OUT).</doc>
+          <type name="script_t" c:type="hb_script_t*"/>
+        </parameter>
+        <parameter name="language"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <doc xml:space="preserve">the #hb_language_t corresponding to @script_tag and
+@language_tag (OUT).</doc>
+          <type name="language_t" c:type="hb_language_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -8968,28 +9409,27 @@ will be used.</doc>
     </function>
     <function name="unicode_decompose_compatibility"
               c:identifier="hb_unicode_decompose_compatibility"
-              version="0.9.2">
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="guint" c:type="unsigned int"/>
       </return-value>
       <parameters>
         <parameter name="ufuncs" transfer-ownership="none">
-          <doc xml:space="preserve">Unicode functions.</doc>
           <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
         </parameter>
         <parameter name="u" transfer-ownership="none">
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
-        <parameter name="decomposed"
-                   direction="out"
-                   caller-allocates="0"
-                   transfer-ownership="full">
+        <parameter name="decomposed" transfer-ownership="none">
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
         </parameter>
       </parameters>
     </function>
     <callback name="unicode_decompose_compatibility_func_t"
-              c:type="hb_unicode_decompose_compatibility_func_t">
+              c:type="hb_unicode_decompose_compatibility_func_t"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <doc xml:space="preserve">Fully decompose @u to its Unicode compatibility decomposition. The codepoints of the decomposition will be written to @decomposed.
 The complete length of the decomposition will be returned.
 
@@ -9054,7 +9494,9 @@ of this function type must ensure that they do not write past the provided array
     </callback>
     <function name="unicode_eastasian_width"
               c:identifier="hb_unicode_eastasian_width"
-              version="0.9.2">
+              version="0.9.2"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="guint" c:type="unsigned int"/>
       </return-value>
@@ -9068,7 +9510,9 @@ of this function type must ensure that they do not write past the provided array
       </parameters>
     </function>
     <callback name="unicode_eastasian_width_func_t"
-              c:type="hb_unicode_eastasian_width_func_t">
+              c:type="hb_unicode_eastasian_width_func_t"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="guint" c:type="unsigned int"/>
       </return-value>
@@ -9262,7 +9706,9 @@ of this function type must ensure that they do not write past the provided array
     </function>
     <function name="unicode_funcs_set_decompose_compatibility_func"
               c:identifier="hb_unicode_funcs_set_decompose_compatibility_func"
-              version="0.9.2">
+              version="0.9.2"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -9322,7 +9768,9 @@ of this function type must ensure that they do not write past the provided array
     </function>
     <function name="unicode_funcs_set_eastasian_width_func"
               c:identifier="hb_unicode_funcs_set_eastasian_width_func"
-              version="0.9.2">
+              version="0.9.2"
+              deprecated="1"
+              deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
