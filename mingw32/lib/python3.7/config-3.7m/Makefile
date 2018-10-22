@@ -28,10 +28,10 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.7
-srcdir=		../Python-3.7.0
-VPATH=		../Python-3.7.0
-abs_srcdir=	/c/repo/mingw-w64-python3/src/build-i686/../Python-3.7.0
-abs_builddir=	/c/repo/mingw-w64-python3/src/build-i686
+srcdir=		../Python-3.7.1
+VPATH=		../Python-3.7.1
+abs_srcdir=	/scripts/mingw-w64-python3/src/build-i686/../Python-3.7.1
+abs_builddir=	/scripts/mingw-w64-python3/src/build-i686
 
 
 CC=		i686-w64-mingw32-gcc
@@ -130,9 +130,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.7.0
-VPATH_b2h=		C:/repo/mingw-w64-python3/src/Python-3.7.0
-abs_srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.7.0
+srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.7.1
+VPATH_b2h=		C:/repo/mingw-w64-python3/src/Python-3.7.1
+abs_srcdir_b2h=		C:/repo/mingw-w64-python3/src/Python-3.7.1
 abs_builddir_b2h=	C:/repo/mingw-w64-python3/src/build-i686
 prefix_b2h=		C:/building/msys64/mingw32
 
