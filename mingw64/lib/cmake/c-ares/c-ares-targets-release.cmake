@@ -9,11 +9,11 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set_property(TARGET c-ares::cares APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(c-ares::cares PROPERTIES
   IMPORTED_IMPLIB_RELEASE "${_IMPORT_PREFIX}/lib/libcares.dll.a"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/libcares-2.dll"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/libcares-3.dll"
   )
 
 list(APPEND _IMPORT_CHECK_TARGETS c-ares::cares )
-list(APPEND _IMPORT_CHECK_FILES_FOR_c-ares::cares "${_IMPORT_PREFIX}/lib/libcares.dll.a" "${_IMPORT_PREFIX}/bin/libcares-2.dll" )
+list(APPEND _IMPORT_CHECK_FILES_FOR_c-ares::cares "${_IMPORT_PREFIX}/lib/libcares.dll.a" "${_IMPORT_PREFIX}/bin/libcares-3.dll" )
 
 # Import target "c-ares::cares_static" for configuration "Release"
 set_property(TARGET c-ares::cares_static APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
