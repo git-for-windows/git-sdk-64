@@ -56,17 +56,18 @@ G_BEGIN_DECLS
  *  Wolberg's "Digital Image Warping", and is formally defined as the
  *  hyperbolic-filter sampling the ideal hyperbolic-filter interpolated
  *  image (the filter is designed to be idempotent for 1:1 pixel mapping).
+ *  **Deprecated**: this interpolation filter is deprecated, as in reality
+ *  it has a lower quality than the @GDK_INTERP_BILINEAR filter
+ *  (Since: 2.38)
  * 
- *  This enumeration describes the different interpolation modes that
- *  can be used with the scaling functions. @GDK_INTERP_NEAREST is 
- *  the fastest scaling method, but has horrible quality when 
- *  scaling down. @GDK_INTERP_BILINEAR is the best choice if you 
- *  aren't sure what to choose, it has a good speed/quality balance.
+ * This enumeration describes the different interpolation modes that
+ * can be used with the scaling functions. @GDK_INTERP_NEAREST is
+ * the fastest scaling method, but has horrible quality when
+ * scaling down. @GDK_INTERP_BILINEAR is the best choice if you
+ * aren't sure what to choose, it has a good speed/quality balance.
  * 
- *  <note>
- * 	Cubic filtering is missing from the list; hyperbolic
- * 	interpolation is just as fast and results in higher quality.
- *  </note>
+ * **Note**: Cubic filtering is missing from the list; hyperbolic
+ * interpolation is just as fast and results in higher quality.
  */
 typedef enum {
 	GDK_INTERP_NEAREST,

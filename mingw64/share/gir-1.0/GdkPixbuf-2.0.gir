@@ -33,15 +33,13 @@ the gdk-pixbuf library.  Currently only RGB is supported.</doc>
                  glib:get-type="gdk_interp_type_get_type"
                  c:type="GdkInterpType">
       <doc xml:space="preserve">This enumeration describes the different interpolation modes that
- can be used with the scaling functions. @GDK_INTERP_NEAREST is
- the fastest scaling method, but has horrible quality when
- scaling down. @GDK_INTERP_BILINEAR is the best choice if you
- aren't sure what to choose, it has a good speed/quality balance.
+can be used with the scaling functions. @GDK_INTERP_NEAREST is
+the fastest scaling method, but has horrible quality when
+scaling down. @GDK_INTERP_BILINEAR is the best choice if you
+aren't sure what to choose, it has a good speed/quality balance.
 
- &lt;note&gt;
-	Cubic filtering is missing from the list; hyperbolic
-	interpolation is just as fast and results in higher quality.
- &lt;/note&gt;</doc>
+**Note**: Cubic filtering is missing from the list; hyperbolic
+interpolation is just as fast and results in higher quality.</doc>
       <member name="nearest"
               value="0"
               c:identifier="GDK_INTERP_NEAREST"
@@ -78,7 +76,10 @@ the gdk-pixbuf library.  Currently only RGB is supported.</doc>
  reconstruction function. It is derived from the hyperbolic filters in
  Wolberg's "Digital Image Warping", and is formally defined as the
  hyperbolic-filter sampling the ideal hyperbolic-filter interpolated
- image (the filter is designed to be idempotent for 1:1 pixel mapping).</doc>
+ image (the filter is designed to be idempotent for 1:1 pixel mapping).
+ **Deprecated**: this interpolation filter is deprecated, as in reality
+ it has a lower quality than the @GDK_INTERP_BILINEAR filter
+ (Since: 2.38)</doc>
       </member>
     </enumeration>
     <constant name="PIXBUF_FEATURES_H"
@@ -86,40 +87,31 @@ the gdk-pixbuf library.  Currently only RGB is supported.</doc>
               c:type="GDK_PIXBUF_FEATURES_H">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_MAGIC_NUMBER"
-              value="1197763408"
-              c:type="GDK_PIXBUF_MAGIC_NUMBER">
-      <doc xml:space="preserve">Magic number for #GdkPixdata structures.</doc>
-      <type name="gint" c:type="gint"/>
-    </constant>
     <constant name="PIXBUF_MAJOR" value="2" c:type="GDK_PIXBUF_MAJOR">
       <doc xml:space="preserve">Major version of gdk-pixbuf library, that is the "0" in
+
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_MICRO" value="12" c:type="GDK_PIXBUF_MICRO">
+    <constant name="PIXBUF_MICRO" value="0" c:type="GDK_PIXBUF_MICRO">
       <doc xml:space="preserve">Micro version of gdk-pixbuf library, that is the "2" in
+
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_MINOR" value="36" c:type="GDK_PIXBUF_MINOR">
+    <constant name="PIXBUF_MINOR" value="38" c:type="GDK_PIXBUF_MINOR">
       <doc xml:space="preserve">Minor version of gdk-pixbuf library, that is the "8" in
+
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_VERSION"
-              value="2.36.12"
-              c:type="GDK_PIXBUF_VERSION">
+    <constant name="PIXBUF_VERSION" value="2.38.0" c:type="GDK_PIXBUF_VERSION">
       <doc xml:space="preserve">Contains the full version of the gdk-pixbuf header as a string.
+
 This is the version being compiled against; contrast with
+
 #gdk_pixbuf_version.</doc>
       <type name="utf8" c:type="gchar*"/>
-    </constant>
-    <constant name="PIXDATA_HEADER_LENGTH"
-              value="24"
-              c:type="GDK_PIXDATA_HEADER_LENGTH">
-      <doc xml:space="preserve">The length of a #GdkPixdata structure without the @pixel_data pointer.</doc>
-      <type name="gint" c:type="gint"/>
     </constant>
     <class name="Pixbuf"
            c:symbol-prefix="pixbuf"
@@ -138,7 +130,7 @@ one row and the start of the next).</doc>
         <doc xml:space="preserve">Creates a new #GdkPixbuf structure and allocates a buffer for it.  The
 buffer has an optimal rowstride.  Note that the buffer is not cleared;
 you will have to fill it completely yourself.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">A newly-created #GdkPixbuf with a reference count of 1, or
 %NULL if not enough memory could be allocated for the image buffer.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
@@ -226,7 +218,7 @@ See also gdk_pixbuf_new_from_bytes().</doc>
         <parameters>
           <parameter name="data" transfer-ownership="none">
             <doc xml:space="preserve">Image data in 8-bit/sample packed format</doc>
-            <array zero-terminated="0" c:type="guchar*">
+            <array zero-terminated="0" c:type="const guchar*">
               <type name="guint8" c:type="guchar"/>
             </array>
           </parameter>
@@ -290,7 +282,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file
     name encoding</doc>
-            <type name="filename" c:type="char*"/>
+            <type name="filename" c:type="const char*"/>
           </parameter>
         </parameters>
       </constructor>
@@ -321,7 +313,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file
     name encoding</doc>
-            <type name="filename" c:type="char*"/>
+            <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve">The width the image should have or -1 to not constrain the width</doc>
@@ -352,7 +344,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="filename" c:type="char*"/>
+            <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve">The width the image should have or -1 to not constrain the width</doc>
@@ -394,7 +386,7 @@ invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file
     name encoding</doc>
-            <type name="filename" c:type="char*"/>
+            <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve">The width the image should have or -1 to not constrain the width</doc>
@@ -422,7 +414,7 @@ invalid data.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="filename" c:type="char*"/>
+            <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve">The width the image should have or -1 to not constrain the width</doc>
@@ -448,67 +440,24 @@ allocate the image buffer, or the image file contained invalid data.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="filename" c:type="char*"/>
+            <type name="filename" c:type="const char*"/>
           </parameter>
         </parameters>
       </constructor>
       <constructor name="new_from_inline"
                    c:identifier="gdk_pixbuf_new_from_inline"
-                   deprecated="1"
-                   deprecated-version="2.32"
                    throws="1">
-        <doc xml:space="preserve">Create a #GdkPixbuf from a flat representation that is suitable for
-storing as inline data in a program. This is useful if you want to
-ship a program with images, but don't want to depend on any
-external files.
-
-gdk-pixbuf ships with a program called [gdk-pixbuf-csource][gdk-pixbuf-csource],
-which allows for conversion of #GdkPixbufs into such a inline representation.
-In almost all cases, you should pass the `--raw` option to
-`gdk-pixbuf-csource`. A sample invocation would be:
-
-|[
- gdk-pixbuf-csource --raw --name=myimage_inline myimage.png
-]|
-
-For the typical case where the inline pixbuf is read-only static data,
-you don't need to copy the pixel data unless you intend to write to
-it, so you can pass %FALSE for @copy_pixels.  (If you pass `--rle` to
-`gdk-pixbuf-csource`, a copy will be made even if @copy_pixels is %FALSE,
-so using this option is generally a bad idea.)
-
-If you create a pixbuf from const inline data compiled into your
-program, it's probably safe to ignore errors and disable length checks,
-since things will always succeed:
-|[
-pixbuf = gdk_pixbuf_new_from_inline (-1, myimage_inline, FALSE, NULL);
-]|
-
-For non-const inline data, you could get out of memory. For untrusted
-inline data located at runtime, you could have corrupt inline data in
-addition.</doc>
-        <doc-deprecated xml:space="preserve">Use #GResource instead.</doc-deprecated>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">A newly-created #GdkPixbuf structure with a reference,
-  count of 1, or %NULL if an error occurred.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
         <parameters>
           <parameter name="data_length" transfer-ownership="none">
-            <doc xml:space="preserve">Length in bytes of the @data argument or -1 to
-   disable length checks</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="data" transfer-ownership="none">
-            <doc xml:space="preserve">Byte data containing a
-   serialized #GdkPixdata structure</doc>
-            <array length="0" zero-terminated="0" c:type="guint8*">
-              <type name="guint8" c:type="guint8"/>
-            </array>
+            <type name="guint8" c:type="const guint8*"/>
           </parameter>
           <parameter name="copy_pixels" transfer-ownership="none">
-            <doc xml:space="preserve">Whether to copy the pixel data, or use direct pointers
-              @data for the resulting pixbuf</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
@@ -699,7 +648,7 @@ the result of including an XPM file into a program's C source.</doc>
         <parameters>
           <parameter name="data" transfer-ownership="none">
             <doc xml:space="preserve">Pointer to inline XPM data.</doc>
-            <array c:type="char**">
+            <array c:type="const char**">
               <type name="utf8" c:type="char*"/>
             </array>
           </parameter>
@@ -738,31 +687,6 @@ check image values without needing to create them.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="from_pixdata"
-                c:identifier="gdk_pixbuf_from_pixdata"
-                deprecated="1"
-                deprecated-version="2.32"
-                throws="1">
-        <doc xml:space="preserve">Converts a #GdkPixdata to a #GdkPixbuf. If @copy_pixels is %TRUE or
-if the pixel data is run-length-encoded, the pixel data is copied into
-newly-allocated memory; otherwise it is reused.</doc>
-        <doc-deprecated xml:space="preserve">Use #GResource instead.</doc-deprecated>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GdkPixbuf.</doc>
-          <type name="Pixbuf" c:type="GdkPixbuf*"/>
-        </return-value>
-        <parameters>
-          <parameter name="pixdata" transfer-ownership="none">
-            <doc xml:space="preserve">a #GdkPixdata to convert into a #GdkPixbuf.</doc>
-            <type name="Pixdata" c:type="const GdkPixdata*"/>
-          </parameter>
-          <parameter name="copy_pixels" transfer-ownership="none">
-            <doc xml:space="preserve">whether to copy raw pixel data; run-length encoded
-    pixel data is always copied.</doc>
-            <type name="gboolean" c:type="gboolean"/>
-          </parameter>
-        </parameters>
-      </function>
       <function name="get_file_info"
                 c:identifier="gdk_pixbuf_get_file_info"
                 version="2.4">
@@ -777,7 +701,7 @@ newly-allocated memory; otherwise it is reused.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">The name of the file to identify.</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
           <parameter name="width"
                      direction="out"
@@ -819,7 +743,7 @@ get the result of the operation.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">The name of the file to identify</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
           <parameter name="cancellable"
                      transfer-ownership="none"
@@ -1230,7 +1154,7 @@ function suitable for many tasks.</doc>
         <doc xml:space="preserve">Creates a new #GdkPixbuf by scaling @src to @dest_width x
 @dest_height and alpha blending the result with a checkboard of colors
 @color1 and @color2.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">the new #GdkPixbuf, or %NULL if not enough memory could be
 allocated for it.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
@@ -1274,7 +1198,7 @@ allocated for it.</doc>
         <doc xml:space="preserve">Creates a new #GdkPixbuf with a copy of the information in the specified
 @pixbuf. Note that this does not copy the options set on the original #GdkPixbuf,
 use gdk_pixbuf_copy_options() for this.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">A newly-created pixbuf with a reference count of 1, or %NULL if
 not enough memory could be allocated.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
@@ -1644,11 +1568,15 @@ to be mutable.</doc>
       <method name="read_pixel_bytes"
               c:identifier="gdk_pixbuf_read_pixel_bytes"
               version="2.32">
+        <doc xml:space="preserve">Provides a #GBytes buffer containing the raw pixel data; the data
+must not be modified.  This function allows skipping the implicit
+copy that must be made if gdk_pixbuf_get_pixels() is called on a
+read-only pixbuf.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A new reference to a read-only copy of
-the pixel data.  Note that for mutable pixbufs, this function will
-incur a one-time copy of the pixel data for conversion into the
-returned #GBytes.</doc>
+  the pixel data.  Note that for mutable pixbufs, this function will
+  incur a one-time copy of the pixel data for conversion into the
+  returned #GBytes.</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
@@ -1661,11 +1589,12 @@ returned #GBytes.</doc>
       <method name="read_pixels"
               c:identifier="gdk_pixbuf_read_pixels"
               version="2.32">
-        <doc xml:space="preserve">Returns a read-only pointer to the raw pixel data; must not be
+        <doc xml:space="preserve">Provides a read-only pointer to the raw pixel data; must not be
 modified.  This function allows skipping the implicit copy that
 must be made if gdk_pixbuf_get_pixels() is called on a read-only
 pixbuf.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a read-only pointer to the raw pixel data</doc>
           <type name="guint8" c:type="const guint8*"/>
         </return-value>
         <parameters>
@@ -2234,7 +2163,7 @@ See gdk_pixbuf_save () for more details.</doc>
           </instance-parameter>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">name of file to save.</doc>
-            <type name="filename" c:type="char*"/>
+            <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
             <doc xml:space="preserve">name of file format.</doc>
@@ -2551,7 +2480,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file
     name encoding</doc>
-            <type name="filename" c:type="char*"/>
+            <type name="filename" c:type="const char*"/>
           </parameter>
         </parameters>
       </constructor>
@@ -2569,7 +2498,7 @@ allocate the image buffer, or the image file contained invalid data.</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">Name of file to load, in the GLib file name encoding</doc>
-            <type name="filename" c:type="char*"/>
+            <type name="filename" c:type="const char*"/>
           </parameter>
         </parameters>
       </constructor>
@@ -3506,7 +3435,7 @@ cannot parse the buffer.</doc>
           </instance-parameter>
           <parameter name="buf" transfer-ownership="none">
             <doc xml:space="preserve">Pointer to image data.</doc>
-            <array length="1" zero-terminated="0" c:type="guchar*">
+            <array length="1" zero-terminated="0" c:type="const guchar*">
               <type name="guint8" c:type="guchar"/>
             </array>
           </parameter>
@@ -3735,7 +3664,7 @@ will fail with the same error.</doc>
       <parameters>
         <parameter name="buf" transfer-ownership="none">
           <doc xml:space="preserve">bytes to be written.</doc>
-          <array length="1" zero-terminated="0" c:type="gchar*">
+          <array length="1" zero-terminated="0" c:type="const gchar*">
             <type name="guint8"/>
           </array>
         </parameter>
@@ -3863,271 +3792,6 @@ was constructed.</doc>
            glib:type-name="GdkPixbufSimpleAnimIter"
            glib:get-type="gdk_pixbuf_simple_anim_iter_get_type">
     </class>
-    <record name="Pixdata" c:type="GdkPixdata">
-      <doc xml:space="preserve">A #GdkPixdata contains pixbuf information in a form suitable for
-serialization and streaming.</doc>
-      <field name="magic" writable="1">
-        <doc xml:space="preserve">magic number. A valid #GdkPixdata structure must have
-   #GDK_PIXBUF_MAGIC_NUMBER here.</doc>
-        <type name="guint32" c:type="guint32"/>
-      </field>
-      <field name="length" writable="1">
-        <doc xml:space="preserve">less than 1 to disable length checks, otherwise
-   #GDK_PIXDATA_HEADER_LENGTH + length of @pixel_data.</doc>
-        <type name="gint32" c:type="gint32"/>
-      </field>
-      <field name="pixdata_type" writable="1">
-        <doc xml:space="preserve">information about colorspace, sample width and
-   encoding, in a #GdkPixdataType.</doc>
-        <type name="guint32" c:type="guint32"/>
-      </field>
-      <field name="rowstride" writable="1">
-        <doc xml:space="preserve">Distance in bytes between rows.</doc>
-        <type name="guint32" c:type="guint32"/>
-      </field>
-      <field name="width" writable="1">
-        <doc xml:space="preserve">Width of the image in pixels.</doc>
-        <type name="guint32" c:type="guint32"/>
-      </field>
-      <field name="height" writable="1">
-        <doc xml:space="preserve">Height of the image in pixels.</doc>
-        <type name="guint32" c:type="guint32"/>
-      </field>
-      <field name="pixel_data" writable="1">
-        <doc xml:space="preserve">@width x @height pixels, encoded according to @pixdata_type
-  and @rowstride.</doc>
-        <array zero-terminated="0" c:type="guint8*">
-          <type name="guint8"/>
-        </array>
-      </field>
-      <method name="deserialize"
-              c:identifier="gdk_pixdata_deserialize"
-              deprecated="1"
-              deprecated-version="2.32"
-              throws="1">
-        <doc xml:space="preserve">Deserializes (reconstruct) a #GdkPixdata structure from a byte stream.
-The byte stream consists of a straightforward writeout of the
-#GdkPixdata fields in network byte order, plus the @pixel_data
-bytes the structure points to.
-The @pixdata contents are reconstructed byte by byte and are checked
-for validity. This function may fail with %GDK_PIXBUF_ERROR_CORRUPT_IMAGE
-or %GDK_PIXBUF_ERROR_UNKNOWN_TYPE.</doc>
-        <doc-deprecated xml:space="preserve">Use #GResource instead.</doc-deprecated>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">Upon successful deserialization %TRUE is returned,
-%FALSE otherwise.</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="pixdata" transfer-ownership="none">
-            <doc xml:space="preserve">a #GdkPixdata structure to be filled in.</doc>
-            <type name="Pixdata" c:type="GdkPixdata*"/>
-          </instance-parameter>
-          <parameter name="stream_length" transfer-ownership="none">
-            <doc xml:space="preserve">length of the stream used for deserialization.</doc>
-            <type name="guint" c:type="guint"/>
-          </parameter>
-          <parameter name="stream" transfer-ownership="none">
-            <doc xml:space="preserve">stream of bytes containing a
-  serialized #GdkPixdata structure.</doc>
-            <array length="0" zero-terminated="0" c:type="guint8*">
-              <type name="guint8" c:type="guint8"/>
-            </array>
-          </parameter>
-        </parameters>
-      </method>
-      <method name="from_pixbuf"
-              c:identifier="gdk_pixdata_from_pixbuf"
-              introspectable="0"
-              deprecated="1"
-              deprecated-version="2.32">
-        <doc xml:space="preserve">Converts a #GdkPixbuf to a #GdkPixdata. If @use_rle is %TRUE, the
-pixel data is run-length encoded into newly-allocated memory and a
-pointer to that memory is returned.</doc>
-        <doc-deprecated xml:space="preserve">Use #GResource instead.</doc-deprecated>
-        <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">If @use_rle is %TRUE, a pointer to the
-  newly-allocated memory for the run-length encoded pixel data,
-  otherwise %NULL.</doc>
-          <type name="gpointer" c:type="gpointer"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="pixdata" transfer-ownership="none">
-            <doc xml:space="preserve">a #GdkPixdata to fill.</doc>
-            <type name="Pixdata" c:type="GdkPixdata*"/>
-          </instance-parameter>
-          <parameter name="pixbuf" transfer-ownership="none">
-            <doc xml:space="preserve">the data to fill @pixdata with.</doc>
-            <type name="Pixbuf" c:type="const GdkPixbuf*"/>
-          </parameter>
-          <parameter name="use_rle" transfer-ownership="none">
-            <doc xml:space="preserve">whether to use run-length encoding for the pixel data.</doc>
-            <type name="gboolean" c:type="gboolean"/>
-          </parameter>
-        </parameters>
-      </method>
-      <method name="serialize"
-              c:identifier="gdk_pixdata_serialize"
-              deprecated="1"
-              deprecated-version="2.32">
-        <doc xml:space="preserve">Serializes a #GdkPixdata structure into a byte stream.
-The byte stream consists of a straightforward writeout of the
-#GdkPixdata fields in network byte order, plus the @pixel_data
-bytes the structure points to.</doc>
-        <doc-deprecated xml:space="preserve">Use #GResource instead.</doc-deprecated>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">A
-newly-allocated string containing the serialized #GdkPixdata
-structure.</doc>
-          <array length="0" zero-terminated="0" c:type="guint8*">
-            <type name="guint8" c:type="guint8"/>
-          </array>
-        </return-value>
-        <parameters>
-          <instance-parameter name="pixdata" transfer-ownership="none">
-            <doc xml:space="preserve">a valid #GdkPixdata structure to serialize.</doc>
-            <type name="Pixdata" c:type="const GdkPixdata*"/>
-          </instance-parameter>
-          <parameter name="stream_length_p"
-                     direction="out"
-                     caller-allocates="0"
-                     transfer-ownership="full">
-            <doc xml:space="preserve">location to store the resulting stream length in.</doc>
-            <type name="guint" c:type="guint*"/>
-          </parameter>
-        </parameters>
-      </method>
-      <method name="to_csource"
-              c:identifier="gdk_pixdata_to_csource"
-              deprecated="1"
-              deprecated-version="2.32">
-        <doc xml:space="preserve">Generates C source code suitable for compiling images directly
-into programs.
-
-gdk-pixbuf ships with a program called
-[gdk-pixbuf-csource][gdk-pixbuf-csource], which offers a command
-line interface to this function.</doc>
-        <doc-deprecated xml:space="preserve">Use #GResource instead.</doc-deprecated>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a newly-allocated string containing the C source form
-  of @pixdata.</doc>
-          <type name="GLib.String" c:type="GString*"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="pixdata" transfer-ownership="none">
-            <doc xml:space="preserve">a #GdkPixdata to convert to C source.</doc>
-            <type name="Pixdata" c:type="GdkPixdata*"/>
-          </instance-parameter>
-          <parameter name="name" transfer-ownership="none">
-            <doc xml:space="preserve">used for naming generated data structures or macros.</doc>
-            <type name="utf8" c:type="const gchar*"/>
-          </parameter>
-          <parameter name="dump_type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GdkPixdataDumpType determining the kind of C
-  source to be generated.</doc>
-            <type name="PixdataDumpType" c:type="GdkPixdataDumpType"/>
-          </parameter>
-        </parameters>
-      </method>
-    </record>
-    <bitfield name="PixdataDumpType" c:type="GdkPixdataDumpType">
-      <doc xml:space="preserve">An enumeration which is used by gdk_pixdata_to_csource() to
-determine the form of C source to be generated. The three values
-@GDK_PIXDATA_DUMP_PIXDATA_STREAM, @GDK_PIXDATA_DUMP_PIXDATA_STRUCT
-and @GDK_PIXDATA_DUMP_MACROS are mutually exclusive, as are
-@GDK_PIXBUF_DUMP_GTYPES and @GDK_PIXBUF_DUMP_CTYPES. The remaining
-elements are optional flags that can be freely added.</doc>
-      <member name="pixdata_stream"
-              value="0"
-              c:identifier="GDK_PIXDATA_DUMP_PIXDATA_STREAM">
-        <doc xml:space="preserve">Generate pixbuf data stream (a single
-   string containing a serialized #GdkPixdata structure in network byte
-   order).</doc>
-      </member>
-      <member name="pixdata_struct"
-              value="1"
-              c:identifier="GDK_PIXDATA_DUMP_PIXDATA_STRUCT">
-        <doc xml:space="preserve">Generate #GdkPixdata structure (needs
-   the #GdkPixdata structure definition from gdk-pixdata.h).</doc>
-      </member>
-      <member name="macros" value="2" c:identifier="GDK_PIXDATA_DUMP_MACROS">
-        <doc xml:space="preserve">Generate &lt;function&gt;*_ROWSTRIDE&lt;/function&gt;,
-   &lt;function&gt;*_WIDTH&lt;/function&gt;, &lt;function&gt;*_HEIGHT&lt;/function&gt;,
-   &lt;function&gt;*_BYTES_PER_PIXEL&lt;/function&gt; and
-   &lt;function&gt;*_RLE_PIXEL_DATA&lt;/function&gt; or &lt;function&gt;*_PIXEL_DATA&lt;/function&gt;
-   macro definitions for the image.</doc>
-      </member>
-      <member name="gtypes" value="0" c:identifier="GDK_PIXDATA_DUMP_GTYPES">
-        <doc xml:space="preserve">Generate GLib data types instead of
-   standard C data types.</doc>
-      </member>
-      <member name="ctypes" value="256" c:identifier="GDK_PIXDATA_DUMP_CTYPES">
-        <doc xml:space="preserve">Generate standard C data types instead of
-   GLib data types.</doc>
-      </member>
-      <member name="static" value="512" c:identifier="GDK_PIXDATA_DUMP_STATIC">
-        <doc xml:space="preserve">Generate static symbols.</doc>
-      </member>
-      <member name="const" value="1024" c:identifier="GDK_PIXDATA_DUMP_CONST">
-        <doc xml:space="preserve">Generate const symbols.</doc>
-      </member>
-      <member name="rle_decoder"
-              value="65536"
-              c:identifier="GDK_PIXDATA_DUMP_RLE_DECODER">
-        <doc xml:space="preserve">Provide a &lt;function&gt;*_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp)&lt;/function&gt;
-   macro definition  to  decode  run-length encoded image data.</doc>
-      </member>
-    </bitfield>
-    <bitfield name="PixdataType" c:type="GdkPixdataType">
-      <doc xml:space="preserve">An enumeration containing three sets of flags for a #GdkPixdata struct:
-one for the used colorspace, one for the width of the samples and one
-for the encoding of the pixel data.</doc>
-      <member name="color_type_rgb"
-              value="1"
-              c:identifier="GDK_PIXDATA_COLOR_TYPE_RGB">
-        <doc xml:space="preserve">each pixel has red, green and blue samples.</doc>
-      </member>
-      <member name="color_type_rgba"
-              value="2"
-              c:identifier="GDK_PIXDATA_COLOR_TYPE_RGBA">
-        <doc xml:space="preserve">each pixel has red, green and blue samples
-   and an alpha value.</doc>
-      </member>
-      <member name="color_type_mask"
-              value="255"
-              c:identifier="GDK_PIXDATA_COLOR_TYPE_MASK">
-        <doc xml:space="preserve">mask for the colortype flags of the enum.</doc>
-      </member>
-      <member name="sample_width_8"
-              value="65536"
-              c:identifier="GDK_PIXDATA_SAMPLE_WIDTH_8">
-        <doc xml:space="preserve">each sample has 8 bits.</doc>
-      </member>
-      <member name="sample_width_mask"
-              value="983040"
-              c:identifier="GDK_PIXDATA_SAMPLE_WIDTH_MASK">
-        <doc xml:space="preserve">mask for the sample width flags of the enum.</doc>
-      </member>
-      <member name="encoding_raw"
-              value="16777216"
-              c:identifier="GDK_PIXDATA_ENCODING_RAW">
-        <doc xml:space="preserve">the pixel data is in raw form.</doc>
-      </member>
-      <member name="encoding_rle"
-              value="33554432"
-              c:identifier="GDK_PIXDATA_ENCODING_RLE">
-        <doc xml:space="preserve">the pixel data is run-length encoded. Runs may
-   be up to 127 bytes long; their length is stored in a single byte
-   preceding the pixel data for the run. If a run is constant, its length
-   byte has the high bit set and the pixel data consists of a single pixel
-   which must be repeated.</doc>
-      </member>
-      <member name="encoding_mask"
-              value="251658240"
-              c:identifier="GDK_PIXDATA_ENCODING_MASK">
-        <doc xml:space="preserve">mask for the encoding flags of the enum.</doc>
-      </member>
-    </bitfield>
     <function name="pixbuf_error_quark"
               c:identifier="gdk_pixbuf_error_quark"
               moved-to="PixbufError.quark">

@@ -14,7 +14,7 @@
 
 G_BEGIN_DECLS
 
-/* enumerations from "gdk-pixbuf-core.h" */
+/* enumerations from "C:/repo/mingw-w64-gdk-pixbuf2/src/build-x86_64-w64-mingw32/../gdk-pixbuf-2.38.0/gdk-pixbuf/gdk-pixbuf-core.h" */
 GDK_PIXBUF_AVAILABLE_IN_ALL
 GType gdk_pixbuf_alpha_mode_get_type (void) G_GNUC_CONST;
 #define GDK_TYPE_PIXBUF_ALPHA_MODE (gdk_pixbuf_alpha_mode_get_type ())
@@ -25,7 +25,7 @@ GDK_PIXBUF_AVAILABLE_IN_ALL
 GType gdk_pixbuf_error_get_type (void) G_GNUC_CONST;
 #define GDK_TYPE_PIXBUF_ERROR (gdk_pixbuf_error_get_type ())
 
-/* enumerations from "gdk-pixbuf-transform.h" */
+/* enumerations from "C:/repo/mingw-w64-gdk-pixbuf2/src/build-x86_64-w64-mingw32/../gdk-pixbuf-2.38.0/gdk-pixbuf/gdk-pixbuf-transform.h" */
 GDK_PIXBUF_AVAILABLE_IN_ALL
 GType gdk_interp_type_get_type (void) G_GNUC_CONST;
 #define GDK_TYPE_INTERP_TYPE (gdk_interp_type_get_type ())
