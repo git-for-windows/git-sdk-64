@@ -109,8 +109,10 @@ sub clone_cert {
 	    issuer_cert => $self->{cacert},
 	    issuer_key => $self->{cakey},
 	    key => $self->{certkey},
-	    serial => defined($self->{serial}) ? ++$self->{serial} : 
-		(unpack('L',$hash->{x509_digest_sha256}))[0],
+	    serial =>
+		! defined($self->{serial}) ? (unpack('L',$hash->{x509_digest_sha256}))[0] :
+		ref($self->{serial}) eq 'CODE' ? $self->{serial}($old_cert,$hash) :
+		++$self->{serial},
 	);
 	return ($clone,$key);
     };
@@ -316,11 +318,13 @@ It can be either given by an EVP_PKEY object from L<Net::SSLeay>s internal
 representation, or using a file in PEM format.
 If not given it will create a new public key on each call of C<new>.
 
-=item serial INTEGER
+=item serial INTEGER|CODE
 
 This optional argument gives the starting point for the serial numbers of the
 newly created certificates. If not set the serial number will be created based
-on the digest of the original certificate.
+on the digest of the original certificate. If the value is code it will be
+called with C<< serial(original_cert,CERT_asHash(original_cert)) >> and should
+return the new serial number.
 
 =item cache HASH | SUBROUTINE
 

@@ -146,7 +146,7 @@ sub CERT_asHash {
 	"x509_digest_$digest_name" => Net::SSLeay::X509_digest(
 	    $cert,_digest($digest_name)),
 	"fingerprint_$digest_name" => Net::SSLeay::X509_get_fingerprint(
-	    $cert,_digest($digest_name)),
+	    $cert,$digest_name),
     );
 
     my $subj = Net::SSLeay::X509_get_subject_name($cert);

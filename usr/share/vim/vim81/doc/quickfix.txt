@@ -46,7 +46,7 @@ compiler (see |errorformat| below).
 
 							*quickfix-ID*
 Each quickfix list has a unique identifier called the quickfix ID and this
-number will not change within a Vim session. The getqflist() function can be
+number will not change within a Vim session. The |getqflist()| function can be
 used to get the identifier assigned to a list. There is also a quickfix list
 number which may change whenever more than ten lists are added to a quickfix
 stack.
@@ -68,7 +68,7 @@ the location list is destroyed.
 Every quickfix and location list has a read-only changedtick variable that
 tracks the total number of changes made to the list.  Every time the quickfix
 list is modified, this count is incremented. This can be used to perform an
-action only when the list has changed.  The getqflist() and getloclist()
+action only when the list has changed.  The |getqflist()| and |getloclist()|
 functions can be used to query the current value of changedtick.  You cannot
 change the changedtick variable.
 
@@ -298,6 +298,10 @@ processing a quickfix or location list command, it will be aborted.
 			from the last error backwards, -1 being the last error.
 			The 'switchbuf' settings are respected when jumping
 			to a buffer.
+			The |:filter| command can be used to display only the
+			quickfix entries matching a supplied pattern. The
+			pattern is matched against the filename, module name,
+			pattern and text of the entry.
 
 :cl[ist] +{count}	List the current and next {count} valid errors.  This
 			is similar to ":clist from from+count", where "from"
@@ -598,7 +602,7 @@ present).  Examples: >
 	echo getloclist(2, {'winid' : 1}).winid
 <
 							*getqflist-examples*
-The getqflist() and getloclist() functions can be used to get the various
+The |getqflist()| and |getloclist()| functions can be used to get the various
 attributes of a quickfix and location list respectively. Some examples for
 using these functions are below:
 >
@@ -655,7 +659,7 @@ using these functions are below:
     :echo getloclist(3, {'winid' : 0}).winid
 <
 							*setqflist-examples*
-The setqflist() and setloclist() functions can be used to set the various
+The |setqflist()| and |setloclist()| functions can be used to set the various
 attributes of a quickfix and location list respectively. Some examples for
 using these functions are below:
 >
@@ -1287,7 +1291,7 @@ to the file.
 Changing directory
 
 The following uppercase conversion characters specify the type of special
-format strings.  At most one of them may be given as a prefix at the begin
+format strings.  At most one of them may be given as a prefix at the beginning
 of a single comma-separated format pattern.
 Some compilers produce messages that consist of directory names that have to
 be prepended to each file name read by %f (example: GNU make).  The following
@@ -1547,6 +1551,22 @@ The backslashes before the pipe character are required to avoid it to be
 recognized as a command separator.  The backslash before each space is
 required for the set command.
 
+					    *cfilter-plugin* *Cfilter* *Lfilter*
+If you have too many matching messages, you can use the cfilter plugin to
+reduce the number of entries.  Load the plugin with: >
+   packadd cfilter
+
+Then you can use these command: >
+   :Cfilter[!] /{pat}/
+   :Lfilter[!] /{pat}/
+
+:Cfilter creates a new quickfix list from entries matching {pat} in the
+current quickfix list. Both the file name and the text of the entries are
+matched against {pat}. If ! is supplied, then entries not matching {pat} are
+used.
+
+:Lfilter does the same as :Cfilter but operates on the current location list.
+
 =============================================================================
 8. The directory stack				*quickfix-directory-stack*
 
@@ -1790,4 +1810,4 @@ start of the file about how to use it.  (This script is deprecated, see
 
 
 
- vim:tw=78:ts=8:ft=help:norl:
+ vim:tw=78:ts=8:noet:ft=help:norl:

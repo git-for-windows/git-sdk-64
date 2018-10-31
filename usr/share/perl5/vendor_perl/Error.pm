@@ -10,7 +10,7 @@
 # but modified ***significantly***
 
 package Error;
-$Error::VERSION = '0.17026';
+$Error::VERSION = '0.17027';
 use strict;
 use warnings;
 
@@ -279,7 +279,7 @@ sub value
 }
 
 package Error::Simple;
-$Error::Simple::VERSION = '0.17026';
+$Error::Simple::VERSION = '0.17027';
 @Error::Simple::ISA = qw(Error);
 
 sub new
@@ -316,7 +316,7 @@ sub stringify
 # Peter Seibel <peter@weblogic.com>
 
 package Error::subs;
-$Error::subs::VERSION = '0.17026';
+$Error::subs::VERSION = '0.17027';
 use Exporter ();
 use vars qw(@EXPORT_OK @ISA %EXPORT_TAGS);
 
@@ -569,7 +569,7 @@ sub otherwise (&;$)
 1;
 
 package Error::WarnDie;
-$Error::WarnDie::VERSION = '0.17026';
+$Error::WarnDie::VERSION = '0.17027';
 sub gen_callstack($)
 {
     my ($start) = @_;
@@ -682,11 +682,11 @@ __END__
 
 =head1 NAME
 
-Error - Error/exception handling in an OO-ish way
+Error
 
 =head1 VERSION
 
-version 0.17026
+version 0.17027
 
 =head1 SYNOPSIS
 
@@ -736,9 +736,13 @@ subsequent catch, or can simply be recorded.
 Errors in the class C<Error> should not be thrown directly, but the
 user should throw errors from a sub-class of C<Error>.
 
+=head1 NAME
+
+Error - Error/exception handling in an OO-ish way
+
 =head1 VERSION
 
-version 0.17026
+version 0.17027
 
 =head1 WARNING
 
@@ -1103,35 +1107,9 @@ Copyright (c) 1997-8  Graham Barr. All rights reserved.
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-=head1 AUTHOR
-
-Shlomi Fish ( http://www.shlomifish.org/ )
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2018 by Shlomi Fish ( http://www.shlomifish.org/ ).
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=head1 BUGS
-
-Please report any bugs or feature requests on the bugtracker website
-L<https://github.com/shlomif/error/issues>
-
-When submitting a bug or request, please include a test-file or a
-patch to an existing test-file that illustrates the bug or desired
-feature.
-
 =for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
 
 =head1 SUPPORT
-
-=head2 Perldoc
-
-You can find documentation for this module with the perldoc command.
-
-  perldoc Error
 
 =head2 Websites
 
@@ -1229,5 +1207,25 @@ from your repository :)
 L<https://github.com/shlomif/error>
 
   git clone https://bitbucket.org/shlomif/perl-error.pm
+
+=head1 AUTHOR
+
+Shlomi Fish ( http://www.shlomifish.org/ )
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website
+L<https://github.com/shlomif/error/issues>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2018 by Shlomi Fish ( http://www.shlomifish.org/ ).
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

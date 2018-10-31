@@ -453,6 +453,7 @@ N  *+timers*		the |timer_start()| function
 N  *+title*		Setting the window 'title' and 'icon'
 N  *+toolbar*		|gui-toolbar|
 N  *+user_commands*	User-defined commands. |user-commands|
+B  *+vartabs*		Variable-width tabstops. |'vartabstop'|
 N  *+viminfo*		|'viminfo'|
    *+vertsplit*		Vertically split windows |:vsplit|; Always enabled
 			since 8.0.1118.
@@ -460,7 +461,7 @@ N  *+viminfo*		|'viminfo'|
 N  *+virtualedit*	|'virtualedit'|
 S  *+visual*		Visual mode |Visual-mode| Always enabled since 7.4.200.
 N  *+visualextra*	extra Visual mode commands |blockwise-operators|
-N  *+vreplace*		|gR| and |gr|
+T  *+vreplace*		|gR| and |gr|
    *+vtp*		on MS-Windows console: support for 'termguicolors'
 N  *+wildignore*	|'wildignore'|
 N  *+wildmenu*		|'wildmenu'|
@@ -564,7 +565,18 @@ N  *+X11*		Unix only: can restore window title |X11|
 			The pattern is matched against the relevant part of
 			the output, not necessarily the whole line. Only some
 			commands support filtering, try it out to check if it
-			works.
+			works. Some of the commands that support filtering:
+                          |:#|          - filter whole line
+                          |:command|    - filter by command name
+                          |:files|      - filter by file name
+                          |:highlight|  - filter by highlight group
+                          |:jumps|      - filter by file name
+                          |:let|        - filter by variable name
+                          |:list|       - filter whole line
+                          |:llist|      - filter by file name or module name
+                          |:oldfiles|   - filter by file name
+                          |:clist|      - filter by file name or module name
+                          |:set|        - filter by variable name
 
 			Only normal messages are filtered, error messages are
 			not.
@@ -728,4 +740,4 @@ LessInitFunc in your vimrc, for example: >
 	endfunc
 <
 
- vim:tw=78:ts=8:ft=help:norl:
+ vim:tw=78:ts=8:noet:ft=help:norl:

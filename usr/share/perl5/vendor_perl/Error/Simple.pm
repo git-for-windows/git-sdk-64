@@ -7,7 +7,7 @@
 # licence).
 
 package Error::Simple;
-$Error::Simple::VERSION = '0.17026';
+$Error::Simple::VERSION = '0.17027';
 use strict;
 use warnings;
 
@@ -23,11 +23,11 @@ __END__
 
 =head1 NAME
 
-Error::Simple - the simple error sub-class of Error
+Error::Simple
 
 =head1 VERSION
 
-version 0.17026
+version 0.17027
 
 =head1 SYNOPSIS
 
@@ -42,9 +42,13 @@ The only purpose of this module is to allow one to say:
 and the only thing it does is "use" Error.pm. Refer to the documentation
 of L<Error> for more information about Error::Simple.
 
+=head1 NAME
+
+Error::Simple - the simple error sub-class of Error
+
 =head1 VERSION
 
-version 0.17026
+version 0.17027
 
 =head1 METHODS
 
@@ -69,35 +73,9 @@ Shlomi Fish ( L<http://www.shlomifish.org/> )
 
 L<Error>
 
-=head1 AUTHOR
-
-Shlomi Fish ( http://www.shlomifish.org/ )
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2018 by Shlomi Fish ( http://www.shlomifish.org/ ).
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=head1 BUGS
-
-Please report any bugs or feature requests on the bugtracker website
-L<https://github.com/shlomif/error/issues>
-
-When submitting a bug or request, please include a test-file or a
-patch to an existing test-file that illustrates the bug or desired
-feature.
-
 =for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
 
 =head1 SUPPORT
-
-=head2 Perldoc
-
-You can find documentation for this module with the perldoc command.
-
-  perldoc Error::Simple
 
 =head2 Websites
 
@@ -195,5 +173,25 @@ from your repository :)
 L<https://github.com/shlomif/error>
 
   git clone https://bitbucket.org/shlomif/perl-error.pm
+
+=head1 AUTHOR
+
+Shlomi Fish ( http://www.shlomifish.org/ )
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website
+L<https://github.com/shlomif/error/issues>
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2018 by Shlomi Fish ( http://www.shlomifish.org/ ).
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

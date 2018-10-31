@@ -295,7 +295,7 @@
 >>13	string	>\ 			DATE %s
 
 #------------------------------------------------------------------------------
-# $File: amigaos,v 1.16 2017/03/17 21:35:28 christos Exp $
+# $File: amigaos,v 1.17 2018/10/16 18:57:19 christos Exp $
 # amigaos:  file(1) magic for AmigaOS binary formats:
 
 #
@@ -361,6 +361,25 @@
 # From: Przemek Kramarczyk <pkramarczyk@gmail.com>
 0	string 		.KEY		AmigaDOS script
 0	string 		.key		AmigaDOS script
+
+# AMOS Basic file formats
+# https://www.exotica.org.uk/wiki/AMOS_file_formats
+0	string		AMOS\040Basic\040 	AMOS Basic source code
+>11	byte		=0x56 			\b, tested
+>11	byte		=0x76 			\b, untested
+0 	string		AMOS\040Pro		AMOS Basic source code
+>11	byte		=0x56 			\b, tested
+>11	byte		=0x76 			\b, untested
+0	string		AmSp			AMOS Basic sprite bank
+>4	beshort		x			\b, %d sprites
+0	string		AmIc			AMOS Basic icon bank
+>4	beshort		x			\b, %d icons
+0	string		AmBk			AMOS Basic memory bank
+>4	beshort		x			\b, bank number %d
+>8	belong&0xFFFFFFF	x		\b, length %d
+>12	regex		.{8}			\b, type %s
+0	string		AmBs			AMOS Basic memory banks
+>4	beshort		x			\b, %d banks
 
 #------------------------------------------------------------
 # $File: android,v 1.10 2017/03/17 21:35:28 christos Exp $
@@ -508,7 +527,7 @@
 0	lelong	0x00080003	Android binary XML
 
 #------------------------------------------------------------------------------
-# $File: animation,v 1.68 2018/05/06 16:08:07 christos Exp $
+# $File: animation,v 1.69 2018/08/21 12:48:06 christos Exp $
 # animation:  file(1) magic for animation/movie formats
 #
 # animation formats
@@ -1363,6 +1382,7 @@
 # conti_count   4 bit	-
 0	belong&0xFF5FFF10	0x47400010
 >188	byte			0x47		MPEG transport stream data
+!:mime  video/MP2T
 
 # DIF digital video file format <mpruett@sgi.com>
 0	belong&0xffffff00	0x1f070000      DIF
@@ -3682,7 +3702,7 @@
 >364	string		>\0		of '%s'
 
 #------------------------------------------------------------------------------
-# $File: audio,v 1.89 2018/07/03 20:55:37 christos Exp $
+# $File: audio,v 1.93 2018/10/18 23:35:42 christos Exp $
 # audio:  file(1) magic for sound formats (see also "iff")
 #
 # Jan Nicolai Langfeldt (janl@ifi.uio.no), Dan Quinlan (quinlan@yggdrasil.com),
@@ -4075,9 +4095,15 @@
 0	string		MED		MED_Song
 0	string		SymM		Symphonie SymMOD music file
 #
+# Track Length (TRL), Tracks (TRK), Samples (SMP), Subsongs (SS)
+# http://lclevy.free.fr/exotica/ahx/ahxformat.txt
 0	string		THX		AHX version
 >3	byte		=0		1 module data
 >3	byte		=1		2 module data
+>10	byte		x		TRL: %u
+>11	byte		x		TRK: %u
+>12	byte		x		SMP: %u
+>13	byte		x		SS: %u
 #
 0	string		OKTASONG	Oktalyzer module data
 #
@@ -4232,6 +4258,14 @@
 
 0	string		ofTAZ!		eXtra Simple Music
 
+0	string		FMK!		FM Kingtracker Song
+
+0	string		DFM		DFM Song
+
+0	string		\<CUD-FM-File\>	CFF Song
+
+0	string		_A2module	A2M Song
+
 # Spectrum 128 tunes (.ay files).
 # From: Emanuel Haupt <ehaupt@critical.ch>
 0	string		ZXAYEMUL	Spectrum 128 tune
@@ -4329,6 +4363,8 @@
 # URL:  http://filext.com/detaillist.php?extdetail=AMR
 # From: Russell Coker <russell@coker.com.au>
 0	string	#!AMR		Adaptive Multi-Rate Codec (GSM telephony)
+!:mime	audio/amr
+!:ext  amr
 
 # Type: SuperCollider 3 Synth Definition File Format
 # From: Mario Lang <mlang@debian.org>
@@ -4863,6 +4899,160 @@
 >>>>>>>>>>>0	regex	=^[@]HD\t.*VN:		\b, with header
 >>>>>>>>>>>>&0	regex	=[0-9.]+		\b version %s
 
+##############################################################################
+#
+#    Magic ids for biomedical signal file formats 
+#    Copyright (C) 2018 Alois Schloegl <alois.schloegl@gmail.com>
+#
+#    The list has been derived from biosig projects
+#      http://biosig.sourceforge.net
+#      https://pub.ist.ac.at/~schloegl/matlab/eeg/
+#      http://pub.ist.ac.at/~schloegl/biosig/TESTED
+#
+##############################################################################
+#
+0	string  ABF\x20					Biosig/Axon Binary format
+!:mime biosig/abf2
+0	string  ABF2\0\0				Biosig/Axon Binary format
+!:mime biosig/abf2
+#
+0	string  ATES\x20MEDICA\x20SOFT.\x20EEG\x20for\x20Windows	Biosig/ATES MEDICA SOFT. EEG for Windows
+!:mime biosig/ates
+#
+0	string  ATF\x09					Biosig/Axon Text fomrat
+!:mime biosig/atf
+#
+0	string  ADU1					Biosig/Axona file format
+!:mime biosig/axona
+0	string  ADU2					Biosig/Axona file format
+!:mime biosig/axona
+#
+0	string  ALPHA-TRACE-MEDICAL			Biosig/alpha trace 
+!:mime biosig/alpha
+#
+0       string  AxGr					Biosig/AXG
+0       string  axgx					Biosig/AXG
+!:mime biosig/axg
+#
+0	string  HeaderLen=				Biosig/BCI2000
+0	string  BCI2000V				Biosig/BCI2000
+!:mime biosig/bci2000
+#
+### Specification: https://www.biosemi.com/faq/file_format.htm
+0	string  \xffBIOSEMI				Biosig/Biosemi data format
+!:mime biosig/bdf
+#
+0	string  Brain\x20Vision\x20Data\x20Exchange\x20Header\x20File			Biosig/Brainvision data file
+0	string  Brain\x20Vision\x20V-Amp\x20Data\x20Header\x20File\x20Version		Biosig/Brainvision V-Amp file
+0	string  Brain\x20Vision\x20Data\x20Exchange\x20Marker\x20File,\x20Version	Biosig/Brainvision Marker file
+!:mime biosig/brainvision
+#
+0	string  CEDFILE					Biosig/CFS: Cambridge Electronic devices File format 
+!:mime biosig/ced
+#
+### Specification: https://www.edfplus.info/specs/index.html
+0	string	0\x20\x20\x20\x20\x20\x20\x20		Biosig/EDF: European Data format
+!:mime biosig/edf
+#
+### Specifications: https://arxiv.org/abs/cs/0608052
+0	string  GDF					Biosig/GDF: General data format for biosignals
+!:mime biosig/gdf
+#
+0	string  DATA\0\0\0\0				Biosig/Heka Patchmaster
+0	string  DAT1\0\0\0\0				Biosig/Heka Patchmaster
+0	string  DAT2\0\0\0\0				Biosig/Heka Patchmaster
+!:mime biosig/heka
+#
+0	string  (C)\x20CED\x2087			Biosig/CED SMR 
+!:mime biosig/ced-smr
+#
+0	string  CFWB\1\0\0\0				Biosig/CFWB
+!:mime biosig/cfwb
+#
+0	string  DEMG					Biosig/DEMG
+!:mime biosig/demg
+#
+0	string  EBS\x94\x0a\x13\x1a\x0d			Biosig/EBS
+!:mime biosig/ebs
+#
+0	string  Embla\x20data\x20file			Biosig/Embla
+!:mime biosig/embla
+#
+0	string  Header\r\nFile Version			Biosig/ETG4000
+!:mime biosig/etg4000
+#
+0	string  GALILEO\x20EEG\x20TRACE\x20FILE		Biosig/Galileo 
+!:mime biosig/galileo
+#
+0	string  IGOR					Biosig/IgorPro ITX file
+!:mime biosig/igorpro
+#
+#	Specification: http://www.ampsmedical.com/uploads/2017-12-7/The_ISHNE_Format.pdf
+0	string  ISHNE1.0				Biosig/ISHNE
+!:mime biosig/ishne
+#
+# 	CEN/ISO 11073/22077 series, http://www.mfer.org/en/document.htm
+0	string  @\x20\x20MFER\x20			Biosig/MFER
+0	string  @\x20MFR\x20				Biosig/MFER
+!:mime biosig/mfer
+#
+0	string  NEURALEV				Biosig/NEV
+0	string  N.EV.\0					Biosig/NEV
+!:mime biosig/nev
+#
+0	string  NEX1					Biosig/NEX
+!:mime biosig/nex1
+#
+0	string  PLEX 					Biosig/Plexon v1.0
+10	string  PLEXON 					Biosig/Plexon v2.0
+!:mime biosig/plexon
+#
+0	string  \x02\x27\x91\xC6			Biosig/RHD2000: Intan RHD2000 format
+#
+#	Specification: CEN 1064:2005/ISO 11073:91064
+16	string  SCPECG\0\0 				Biosig/SCP-ECG format CEN 1064:2005/ISO 11073:91064
+!:mime biosig/scpecg
+#
+0	string  IAvSFo									Biosig/SIGIF
+!:mime biosig/sigif
+#
+0	string  POLY\x20SAMPLE\x20FILEversion\x20					Biosig/TMS32
+!:mime biosig/tms32
+#
+0	string  FileId=TMSi\x20PortiLab\x20sample\x20log\x20file\x0a\x0dVersion=	Biosig/TMSiLOG
+!:mime biosig/tmsilog
+#
+4	string	Synergy\0\48\49\50\46\48\48\51\46\48\48\48\46\48\48\48\0\28\0\0\0\2\0\0\0
+>63	string	CRawDataElement
+>>85	string	CRawDataBuffer								Biosig/SYNERGY
+!:mime biosig/synergy
+#
+4	string	\40\0\4\1\44\1\102\2\146\3\44\0\190\3					Biosig/UNIPRO
+!:mime biosig/unipro
+#
+0	string	VER=9\r\nCTIME=								Biosig/WCP
+!:mime biosig/wcp
+#
+0	string	\xAF\xFE\xDA\xDA							Biosig/Walter Graphtek
+0	string	\xDA\xDA\xFE\xAF							Biosig/Walter Graphtek
+0	string	\x55\x55\xFE\xAF							Biosig/Walter Graphtek
+!:mime biosig/walter-graphtek
+#
+0	string  V3.0\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20
+>32	string  [PatInfo]								Biosig/Sigma
+!:mime biosig/sigma
+#
+0	string  \067\069\078\013\010\0x1a\04\0x84					Biosig/File exchange format (FEF)
+!:mime biosig/fef
+0	string  \67\69\78\0x13\0x10\0x1a\4\0x84						Biosig/File exchange format (FEF)
+!:mime biosig/fef
+#
+0	string  \0\0\0\x64\0\0\0\x1f\0\0\0\x14\0\0\0\0\0\1
+>36  	string  \0\0\0\x65\0\0\0\3\0\0\0\4\0\0
+>>56	string  \0\0\0\x6a\0\0\0\3\0\0\0\4\0\0\0\0\xff\xff\xff\xff\0\0			Biosig/FIFF
+!:mime biosig/fiff
+#
+
 #------------------------------------------------------------------------------
 # $File: blackberry,v 1.2 2017/03/17 21:35:28 christos Exp $
 # blackberry:  file(1) magic for BlackBerry file formats
@@ -5168,7 +5358,7 @@
 
 
 #------------------------------------------------------------------------------
-# $File: cad,v 1.16 2018/05/07 23:26:31 christos Exp $
+# $File: cad,v 1.18 2018/08/02 06:23:27 christos Exp $
 # autocad:  file(1) magic for cad files
 #
 
@@ -5336,8 +5526,29 @@
 >7	regex/9 V[.0-9]{4,5}\020	%s
 !:ext hsf
 
+# AutoCAD Drawing Exchange Format
+0	regex		\^[\ \t]*0\r?\000$
+>1	regex		\^[\ \t]*SECTION\r?$
+>>2	regex		\^[\ \t]*2\r?$
+>>>3	regex		\^[\ \t]*HEADER\r?$	AutoCAD Drawing Exchange Format
+!:mime	application/x-dxf
+!:ext	dxf
+>>>>&1	search/8192	AC1006			\b, R10
+>>>>&1	search/8192	AC1009			\b, R11/R12
+>>>>&1	search/8192	AC1012			\b, R13
+>>>>&1	search/8192	AC1014			\b, R14
+>>>>&1	search/8192	AC1015			\b, version 2000
+>>>>&1	search/8192	AC1018			\b, version 2004
+>>>>&1	search/8192	AC1021			\b, version 2007
+>>>>&1	search/8192	AC1024			\b, version 2010
+
+# The Sketchup 3D model format https://www.sketchup.com/
+0	string	\xff\xfe\xff\x0e\x53\x00\x6b\x00\x65\x00\x74\x00\x63\x00\x68\x00\x55\x00\x70\x00\x20\x00\x4d\x00\x6f\x00\x64\x00\x65\x00\x6c\x00	SketchUp Model
+!:mime application/vnd.sketchup.skp
+!:ext skp
+
 #------------------------------------------------------------------------------
-# $File: cafebabe,v 1.23 2017/05/25 20:07:23 christos Exp $
+# $File: cafebabe,v 1.24 2018/10/01 23:33:15 christos Exp $
 # Cafe Babes unite!
 #
 # Since Java bytecode and Mach-O universal binaries have the same magic number,
@@ -5395,15 +5606,15 @@
 >>4	belong		<20		Mach-O universal binary with %d architectures:
 !:mime application/x-mach-binary
 >>>8	use		mach-o		\b
->>4	belong		2
+>>4	belong		>1
 >>>28	use		mach-o		\b
->>4	belong		3
+>>4	belong		>2
 >>>48	use		mach-o		\b
->>4	belong		4
+>>4	belong		>3
 >>>68	use		mach-o		\b
->>4	belong		5
+>>4	belong		>4
 >>>88	use		mach-o		\b
->>4	belong		6
+>>4	belong		>5
 >>>108	use		mach-o		\b
 
 ### MACH-O END ###
@@ -5617,7 +5828,7 @@
 4	string		prof		CLIPPER instruction profile
 
 #------------------------------------------------------------------------------
-# $File: coff,v 1.2 2017/03/17 21:35:28 christos Exp $
+# $File: coff,v 1.3 2018/08/01 10:34:03 christos Exp $
 # coff: file(1) magic for Common Object Files not specific to known cpu types or manufactures
 #
 # COFF
@@ -5643,6 +5854,10 @@
 >>0	uleshort	0x0550		Hitachi SH little-endian
 # executable (RISC System/6000 V3.1) or obj module (./ibm6000)
 #>>0	uleshort	0x01DF
+# MS Windows COFF Intel Itanium, AMD64
+# https://msdn.microsoft.com/en-us/library/windows/desktop/ms680313(v=vs.85).aspx
+>>0	uleshort	0x0200		Intel ia64
+>>0	uleshort	0x8664		Intel amd64
 # TODO for other COFFs
 #>>0	uleshort	0xABCD		COFF_TEMPLATE
 >>0	default		x
@@ -5833,7 +6048,7 @@
 0	string		msc		Message Sequence Chart (chart)
 0	string		submsc		Message Sequence Chart (subchart)
 #------------------------------------------------------------------------------
-# $File: compress,v 1.72 2018/03/27 23:26:41 christos Exp $
+# $File: compress,v 1.73 2018/09/01 13:52:39 christos Exp $
 # compress:  file(1) magic for pure-compression formats (no archives)
 #
 # compress, gzip, pack, compact, huf, squeeze, crunch, freeze, yabba, etc.
@@ -5883,7 +6098,7 @@
 >9	byte		=0x0B		\b, from NTFS filesystem (NT)
 >9	byte		=0x0C		\b, from QDOS
 >9	byte		=0x0D		\b, from Acorn RISCOS
->-4	lelong		x		\b, original size %d
+>-4	lelong		x		\b, original size %u
 
 # packed data, Huffman (minimum redundancy) codes on a byte-by-byte basis
 0	string		\037\036	packed data
@@ -12721,6 +12936,27 @@
 0	string	#\040GIMP\040Curves\040File	GIMP curve file
 
 #------------------------------------------------------------------------------
+# $File: glibc,v 1.1 2018/10/11 15:35:43 christos Exp $
+# glibc locale files
+#
+# https://sourceware.org/git/?p=glibc.git;f=locale/localeinfo.h;h=68822a63#l32
+
+0	belong	0x20070920	glibc locale file LC_CTYPE
+0	belong	0x14110320	glibc locale file LC_NUMERIC
+0	belong	0x17110320	glibc locale file LC_TIME
+0	belong	0x17100520	glibc locale file LC_COLLATE
+0	belong	0x11110320	glibc locale file LC_MONETARY
+0	belong	0x10110320	glibc locale file LC_MESSAGES
+0	belong	0x13110320	glibc locale file LC_ALL
+0	belong	0x12110320	glibc locale file LC_PAPER
+0	belong	0x1d110320	glibc locale file LC_NAME
+0	belong	0x1c110320	glibc locale file LC_ADDRESS
+0	belong	0x1f110320	glibc locale file LC_TELEPHONE
+0	belong	0x1e110320	glibc locale file LC_MEASUREMENT
+0	belong	0x19110320	glibc locale file LC_IDENTIFICATION
+
+
+#------------------------------------------------------------------------------
 # $File: gnome,v 1.5 2014/04/30 21:41:02 christos Exp $
 # GNOME related files
 
@@ -13328,7 +13564,19 @@
 >13	regex	.\..		\b, bytecode v%s
 
 #------------------------------------------------------------------------------
-# $File: hitachi-sh,v 1.8 2017/03/17 21:35:28 christos Exp $
+# $File: hardware,v 1.1 2018/08/02 06:32:52 christos Exp $
+# hardware magic
+
+# EDID
+# https://en.wikipedia.org/wiki/Extended_Display_Identification_Data
+0	string		\x00\xFF\xFF\xFF\xFF\xFF\xFF\x00
+>19	byte		x
+>>18	byte		x	EDID data, version %u.
+>>19	byte		x	\b%u
+#>>17	ubyte+1990	<255	\b, manufactured %u
+
+#------------------------------------------------------------------------------
+# $File: hitachi-sh,v 1.9 2018/08/21 12:48:41 christos Exp $
 # hitach-sh: file(1) magic for Hitachi Super-H
 #
 # Super-H COFF
@@ -13346,6 +13594,7 @@
 # use big endian variant of subroutine to display name+variables+flags
 # for common object formated files
 >>0	use				\^display-coff
+!:strength -10
 
 0	leshort		0x0550
 # test for unused flag bits in f_flags
@@ -13353,6 +13602,7 @@
 # use little endian variant of subroutine to
 # display name+variables+flags for common object formated files
 >>0	use				display-coff
+!:strength -10
 
 
 #------------------------------------------------------------------------------
@@ -14187,7 +14437,7 @@
 !:mime	application/x-blorb
 
 #------------------------------------------------------------------------------
-# $File: images,v 1.146 2018/07/03 20:55:37 christos Exp $
+# $File: images,v 1.152 2018/10/01 19:10:56 christos Exp $
 # images:  file(1) magic for image formats (see also "iff", and "c-lang" for
 # XPM bitmaps)
 #
@@ -14361,42 +14611,42 @@
 0	search/1	P1
 >0	regex/4		P1[\040\t\f\r\n]
 >>0	use		netpbm
->>>0	string		x	\b, bitmap
+>>0	string		x	\b, bitmap
 !:strength + 45
 !:mime	image/x-portable-bitmap
 
 0	search/1	P2
 >0	regex/4		P2[\040\t\f\r\n]
 >>0	use		netpbm
->>>0	string		x	\b, greymap
+>>0	string		x	\b, greymap
 !:strength + 45
 !:mime	image/x-portable-greymap
 
 0	search/1	P3
 >0	regex/4		P3[\040\t\f\r\n]
 >>0	use		netpbm
->>>0	string		x	\b, pixmap
+>>0	string		x	\b, pixmap
 !:strength + 45
 !:mime	image/x-portable-pixmap
 
 0	string		P4
 >0	regex/4		P4[\040\t\f\r\n]
 >>0	use		netpbm
->>>0	string		x	\b, rawbits, bitmap
+>>0	string		x	\b, rawbits, bitmap
 !:strength + 45
 !:mime	image/x-portable-bitmap
 
 0	string		P5
 >0	regex/4		P5[\040\t\f\r\n]
 >>0	use		netpbm
->>>0	string		x	\b, rawbits, greymap
+>>0	string		x	\b, rawbits, greymap
 !:strength + 45
 !:mime	image/x-portable-greymap
 
 0	string		P6
 >0	regex/4		P6[\040\t\f\r\n]
 >>0	use		netpbm
->>>0	string		x	\b, rawbits, pixmap
+>>0	string		x	\b, rawbits, pixmap
 !:strength + 45
 !:mime	image/x-portable-pixmap
 
@@ -14435,6 +14685,7 @@
 # URL: http://libopenraw.freedesktop.org/wiki/Canon_CR2
 0	string		II\x2a\0\x10\0\0\0CR	Canon CR2 raw image data
 !:mime	image/x-canon-cr2
+!:strength +80
 >10	byte		x	\b, version %d.
 >11	byte		x	\b%d
 
@@ -14624,6 +14875,7 @@
 # Standard PNG image.
 0	string		\x89PNG\x0d\x0a\x1a\x0a\x00\x00\x00\x0DIHDR	PNG image data
 !:mime	image/png
+!:ext   png
 !:strength +10
 >16	use		png-ihdr
 
@@ -14631,6 +14883,7 @@
 0	string		\x89PNG\x0d\x0a\x1a\x0a\x00\x00\x00\x04CgBI
 >24	string  	\x00\x00\x00\x0DIHDR	PNG image data (CgBI)
 !:mime	image/png
+!:ext   png
 !:strength +10
 >>32	use		png-ihdr
 
@@ -15981,6 +16234,19 @@
 >4	leshort	x	(%d
 >>6	leshort	x	x %d)
 
+# reMarkable tablet internal file format (https://www.remarkable.com/)
+# https://github.com/ax3l/lines-are-beautiful
+# https://plasma.ninja/blog/devices/remarkable/binary/format/2017/12/26/\
+#	reMarkable-lines-file-format.html#what-to-do-next
+# from Axel Huebl
+0		string	reMarkable
+>11		string	lines
+>>17		string	with
+>>>22		string	selections
+>>>>33		string	and
+>>>>>37		string	layers
+>>>>>>43	lelong	x	reMarkable tablet notebook lines, 1404 x 1872, %x page(s)
+
 #------------------------------------------------------------------------------
 # $File: inform,v 1.5 2009/09/19 16:28:09 christos Exp $
 # inform:  file(1) magic for Inform interactive fiction language
@@ -15991,7 +16257,7 @@
 0	search/100/cW	constant\ story		Inform source text
 
 #------------------------------------------------------------------------------
-# $File: intel,v 1.16 2017/11/14 15:48:36 christos Exp $
+# $File: intel,v 1.17 2018/08/01 10:34:03 christos Exp $
 # intel:  file(1) magic for x86 Unix
 #
 # Various flavors of x86 UNIX executable/object (other than Xenix, which
@@ -16033,6 +16299,10 @@
 #>12	lelong		>0		not stripped
 # no hint found, that at offset 22 is version
 #>22	leshort		>0		- version %d
+0	leshort		0x0200
+>0	use				display-coff
+0	leshort		0x8664
+>0	use				display-coff
 
 # rom: file(1) magic for BIOS ROM Extensions found in intel machines
 #      mapped into memory between 0xC0000 and 0xFFFFF
@@ -16153,7 +16423,7 @@
 #>36	lelong	x	\b, block size %u
 
 #------------------------------------------------------------
-# $File: java,v 1.18 2015/11/29 22:08:14 christos Exp $
+# $File: java,v 1.19 2018/08/11 11:32:15 christos Exp $
 # Java ByteCode and Mach-O binaries (e.g., Mac OS X) use the
 # same magic number, 0xcafebabe, so they are both handled
 # in the entry called "cafebabe".
@@ -16175,9 +16445,9 @@
 # Java HPROF dumps
 # https://java.net/downloads/heap-snapshot/hprof-binary-format.html
 0	string		JAVA\x20PROFILE\x201.0.
->0x12	short		0
->>0x11	ushort-0x31	<2      Java HPROF dump,
->>0x17	beqdate/1000	x       created %s
+>0x12	byte		0
+>>0x11	ubyte-0x31	<2      Java HPROF dump,
+>>>0x17	beqdate/1000	x       created %s
 
 #------------------------------------------------------------------------------
 # $File: javascript,v 1.1 2012/06/16 13:30:36 christos Exp $
@@ -16197,7 +16467,7 @@
 !:mime application/javascript
 
 #------------------------------------------------------------------------------
-# $File: jpeg,v 1.31 2017/03/17 21:35:28 christos Exp $
+# $File: jpeg,v 1.32 2018/10/01 18:58:29 christos Exp $
 # JPEG images
 # SunOS 5.5.1 had
 #
@@ -16248,21 +16518,21 @@
 >>4	byte		x		\b, baseline, precision %d
 >>7	beshort		x		\b, %dx
 >>5	beshort		x		\b%d
->>9	byte		x		\b, frames %d
+>>9	byte		x		\b, components %d
 
 >0	beshort		0xFFC1
 >>(2.S+2)	use			jpeg_segment
 >>4	byte		x		\b, extended sequential, precision %d
 >>7	beshort		x		\b, %dx
 >>5	beshort		x		\b%d
->>9	byte		x		\b, frames %d
+>>9	byte		x		\b, components %d
 
 >0	beshort		0xFFC2
 >>(2.S+2)	use			jpeg_segment
 >>4	byte		x		\b, progressive, precision %d
 >>7	beshort		x		\b, %dx
 >>5	beshort		x		\b%d
->>9	byte		x		\b, frames %d
+>>9	byte		x		\b, components %d
 
 # Define Huffman Tables
 >0	beshort		0xFFC4
@@ -16406,6 +16676,75 @@
 
 0		belong		0x05020000	Kerberos Keytab file
 >4		use		keytab_entry
+
+#------------------------------------------------------------------------------
+# $File: kicad,v 1.1 2018/10/01 18:39:21 christos Exp $
+# kicad:  file(1) magic for KiCad files
+#
+# See
+#
+#	http://kicad-pcb.org
+#
+
+# KiCad Schematic Document
+0	    string  EESchema
+>8	    byte    0x20
+>>9	    string  Schematic
+>>>18	    byte    0x20		KiCad Schematic Document
+!:ext sch/bak
+>>>>24	    string  Version
+>>>>>31	    byte    0x20
+>>>>>>32    string  x			(Version %s)
+
+# KiCad Symbol Library
+0	    string  EESchema-LIBRARY
+>16	    byte    0x20		KiCad Symbol Library
+!:ext lib
+>>17	    string  Version
+>>>24	    byte    0x20
+>>>>25	    string  x			(Version %s)
+
+# KiCad Symbol Library Documentation
+0	    string  EESchema-DOCLIB
+>15	    byte    0x20		KiCad Symbol Library Documentation
+!:ext dcm
+>>17	    string  Version
+>>>24	    byte    0x20
+>>>>25	    string  x			(Version %s)
+
+# KiCad Board Layout
+0	    string  (kicad_pcb
+>10	    byte    0x20		KiCad Board Layout
+!:ext kicad_pcb/kicad_pcb-bak
+>>11	    string  (version
+>>>19	    byte    0x20
+>>>>20	    byte    x			(Version %c)
+
+# KiCad Footprint
+0	    string  (module
+>7	    byte    0x20		KiCad Footprint
+!:ext kicad_mod
+
+# KiCad Footprint (Legacy)
+0	    string  PCBNEW-LibModule-V1	    KiCad Footprint (Legacy)
+!:ext mod
+
+# KiCad Netlist
+0	    string  (export
+>7	    byte    0x20		KiCad Netlist
+!:ext net
+
+# KiCad Symbol Library Table
+0	    string  (sym_lib_table
+>14	    byte    0xA			KiCad Symbol Library Table
+>14	    byte    0xD			KiCad Symbol Library Table
+>14	    byte    0x20		KiCad Symbol Library Table
+
+# KiCad Footprint Library Table
+0	    string  (fp_lib_table
+>13	    byte    0xA			KiCad Footprint Library Table
+>13	    byte    0xD			KiCad Footprint Library Table
+>13	    byte    0x20		KiCad Footprint Library Table
 
 #------------------------------------------------------------------------------
 # $File: kml,v 1.4 2017/03/17 21:35:28 christos Exp $
@@ -18746,7 +19085,7 @@
 #>4	use	zip-dir-entry
 
 #------------------------------------------------------------------------------
-# $File: msdos,v 1.124 2018/07/10 04:05:50 christos Exp $
+# $File: msdos,v 1.125 2018/07/25 06:05:34 christos Exp $
 # msdos:  file(1) magic for MS-DOS files
 #
 
@@ -18755,12 +19094,16 @@
 0	string/t	@
 >1	string/cW	\ echo\ off	DOS batch file text
 !:mime	text/x-msdos-batch
+!:ext	bat
 >1	string/cW	echo\ off	DOS batch file text
 !:mime	text/x-msdos-batch
+!:ext	bat
 >1	string/cW	rem		DOS batch file text
 !:mime	text/x-msdos-batch
+!:ext	bat
 >1	string/cW	set\ 		DOS batch file text
 !:mime	text/x-msdos-batch
+!:ext	bat
 
 
 # OS/2 batch files are REXX. the second regex is a bit generic, oh well
@@ -18795,6 +19138,9 @@
 # All non-DOS EXE extensions have the relocation table more than 0x40 bytes into the file.
 >0x18	leshort <0x40 MS-DOS executable
 !:mime	application/x-dosexec
+# Windows and later versions of DOS will allow .EXEs to be named with a .COM
+# extension, mostly for compatibility's sake.
+!:ext	exe/com
 # These traditional tests usually work but not always.  When test quality support is
 # implemented these can be turned on.
 #>>0x18	leshort	0x1c	(Borland compiler)
@@ -18813,9 +19159,33 @@
 >>>(0x3c.l+24)	default		x	Unknown PE signature
 >>>>&0 		leshort		x	0x%x
 >>>(0x3c.l+22)	leshort&0x2000	>0	(DLL)
->>>(0x3c.l+92)	leshort		1	(native)
->>>(0x3c.l+92)	leshort		2	(GUI)
->>>(0x3c.l+92)	leshort		3	(console)
+>>>(0x3c.l+92)	leshort		1
+# Native PEs include ntoskrnl.exe, hal.dll, smss.exe, autochk.exe, and all the
+# drivers in Windows/System32/drivers/*.sys.
+>>>>(0x3c.l+22)	leshort&0x2000	>0	(native)
+!:ext	dll/sys
+>>>>(0x3c.l+22)	leshort&0x2000	0	(native)
+!:ext	exe/sys
+>>>(0x3c.l+92)	leshort		2
+>>>>(0x3c.l+22)	leshort&0x2000	>0	(GUI)
+# These could probably be at least partially distinguished from one another by
+# looking for specific exported functions.
+# CPL: Control Panel item
+# TLB: Type library
+# OCX: OLE/ActiveX control
+# ACM: Audio compression manager codec
+# AX: DirectShow source filter
+# IME: Input method editor
+!:ext	dll/cpl/tlb/ocx/acm/ax/ime
+>>>>(0x3c.l+22)	leshort&0x2000	0	(GUI)
+# Screen savers typically include code from the scrnsave.lib static library, but
+# that's not guaranteed.
+!:ext	exe/scr
+>>>(0x3c.l+92)	leshort		3
+>>>>(0x3c.l+22)	leshort&0x2000	>0	(console)
+!:ext	dll/cpl/tlb/ocx/acm/ax/ime
+>>>>(0x3c.l+22)	leshort&0x2000	0	(console)
+!:ext	exe/com
 >>>(0x3c.l+92)	leshort		7	(POSIX)
 >>>(0x3c.l+92)	leshort		9	(Windows CE)
 >>>(0x3c.l+92)	leshort		10	(EFI application)
@@ -18897,8 +19267,16 @@
 >>>(0x3c.l+0x36)	default		x
 >>>>(0x3c.l+0x36)	byte		x (unknown OS %x)
 >>>(0x3c.l+0x36)	byte		0x81 for MS-DOS, Phar Lap DOS extender
->>>(0x3c.l+0x0c)	leshort&0x8003	0x8002 (DLL)
->>>(0x3c.l+0x0c)	leshort&0x8003	0x8001 (driver)
+>>>(0x3c.l+0x0c)	leshort&0x8000	0x8000 (DLL or font)
+# DRV: Driver
+# 3GR: Grabber device driver
+# CPL: Control Panel Item
+# VBX: Visual Basic Extension
+# FON: Bitmap font
+# FOT: Font resource file
+!:ext	dll/drv/3gr/cpl/vbx/fon/fot
+>>>(0x3c.l+0x0c)	leshort&0x8000	0 (EXE)
+!:ext	exe/scr
 >>>&(&0x24.s-1)		string		ARJSFX \b, ARJ self-extracting archive
 >>>(0x3c.l+0x70)	search/0x80	WinZip(R)\ Self-Extractor \b, ZIP self-extracting archive (WinZip)
 
@@ -18945,6 +19323,11 @@
 >>>(0x3c.l+0x0a)	leshort		2 for MS Windows
 >>>(0x3c.l+0x0a)	leshort		3 for DOS
 >>>(0x3c.l+0x0a)	leshort		4 for MS Windows (VxD)
+# VXD: VxD for Windows 95/98/Me
+# 386: VxD for Windows 2.10, 3.0, 3.1x
+# PDR: Port driver
+# MPD: Miniport driver (?)
+!:ext	vxd/386/pdr/mpd
 >>>(&0x7c.l+0x26)	string		UPX \b, UPX compressed
 >>>&(&0x54.l-3)		string		UNACE \b, ACE self-extracting archive
 
@@ -18953,6 +19336,7 @@
 >>0x3c		lelong	>0x20000000
 >>>(4.s*512)	leshort !0x014c \b, MZ for MS-DOS
 !:mime	application/x-dosexec
+!:ext	exe/com
 # header data too small for extended executable
 >2		long	!0
 >>0x18		leshort <0x40
@@ -19194,6 +19578,8 @@
 
 0       name    msdos-com
 >0  byte        x               DOS executable (COM)
+!:mime	application/x-dosexec
+!:ext	com
 >6	string		SFX\ of\ LHarc	\b, %s
 >0x1FE leshort	0xAA55		    \b, boot code
 >85	string		UPX		        \b, UPX compressed
@@ -19260,41 +19646,75 @@
 0	string/b	\x81\xfc
 >4	string	\x77\x02\xcd\x20\xb9
 >>36	string	UPX!			FREE-DOS executable (COM), UPX compressed
+!:mime	application/x-dosexec
+!:ext	com
 252	string Must\ have\ DOS\ version DR-DOS executable (COM)
+!:mime	application/x-dosexec
+!:ext	com
 # added by Joerg Jenderek at Oct 2008
 # GRR search is not working
 #34	search/2	UPX!		FREE-DOS executable (COM), UPX compressed
 34	string	UPX!			FREE-DOS executable (COM), UPX compressed
+!:mime	application/x-dosexec
+!:ext	com
 35	string	UPX!			FREE-DOS executable (COM), UPX compressed
+!:mime	application/x-dosexec
+!:ext	com
 # GRR search is not working
 #2	search/28	\xcd\x21	COM executable for MS-DOS
 #WHICHFAT.cOM
 2	string	\xcd\x21		COM executable for DOS
+!:mime	application/x-dosexec
+!:ext	com
 #DELTREE.cOM DELTREE2.cOM
 4	string	\xcd\x21		COM executable for DOS
+!:mime	application/x-dosexec
+!:ext	com
 #IFMEMDSK.cOM ASSIGN.cOM COMP.cOM
 5	string	\xcd\x21		COM executable for DOS
+!:mime	application/x-dosexec
+!:ext	com
 #DELTMP.COm HASFAT32.cOM
 7	string	\xcd\x21
 >0	byte	!0xb8			COM executable for DOS
+!:mime	application/x-dosexec
+!:ext	com
 #COMP.cOM MORE.COm
 10	string	\xcd\x21
 >5	string	!\xcd\x21		COM executable for DOS
+!:mime	application/x-dosexec
+!:ext	com
 #comecho.com
 13	string	\xcd\x21		COM executable for DOS
+!:mime	application/x-dosexec
+!:ext	com
 #HELP.COm EDIT.coM
 18	string	\xcd\x21		COM executable for MS-DOS
+!:mime	application/x-dosexec
+!:ext	com
 #NWRPLTRM.COm
 23	string	\xcd\x21		COM executable for MS-DOS
+!:mime	application/x-dosexec
+!:ext	com
 #LOADFIX.cOm LOADFIX.cOm
 30	string	\xcd\x21		COM executable for MS-DOS
+!:mime	application/x-dosexec
+!:ext	com
 #syslinux.com 3.11
 70	string	\xcd\x21		COM executable for DOS
+!:mime	application/x-dosexec
+!:ext	com
 # many compressed/converted COMs start with a copy loop instead of a jump
 0x6	search/0xa	\xfc\x57\xf3\xa5\xc3	COM executable for MS-DOS
+!:mime	application/x-dosexec
+!:ext	com
 0x6	search/0xa	\xfc\x57\xf3\xa4\xc3	COM executable for DOS
+!:mime	application/x-dosexec
+!:ext	com
 >0x18	search/0x10	\x50\xa4\xff\xd5\x73	\b, aPack compressed
 0x3c	string		W\ Collis\0\0		COM executable for MS-DOS, Compack compressed
+!:mime	application/x-dosexec
+!:ext	com
 # FIXME: missing diet .com compression
 
 # miscellaneous formats
@@ -19709,6 +20129,7 @@
 # only for windows versions equal or greater 3.0
 0x171	string	MICROSOFT\ PIFEX\0	Windows Program Information File
 !:mime	application/x-dosexec
+!:ext	pif
 #>2	string	 	>\0		\b, Title:%.30s
 >0x24	string		>\0		\b for %.63s
 >0x65	string		>\0		\b, directory=%.64s
@@ -20169,7 +20590,7 @@
 # concatenated.
 
 #------------------------------------------------------------------------------
-# $File: msooxml,v 1.8 2018/05/24 18:11:17 christos Exp $
+# $File: msooxml,v 1.10 2018/10/08 18:25:25 christos Exp $
 # msooxml:  file(1) magic for Microsoft Office XML
 # From: Ralf Brown <ralf.brown@gmail.com>
 
@@ -20198,22 +20619,23 @@
 # skip to the second local file header
 # since some documents include a 520-byte extra field following the file
 # header, we need to scan for the next header
->>(18.l+49)	search/2000	PK\003\004
+>>(18.l+49)	search/6000	PK\003\004
 # now skip to the *third* local file header; again, we need to scan due to a
 # 520-byte extra field following the file header
->>>&26		search/1000	PK\003\004
+>>>&26		search/6000	PK\003\004
 # and check the subdirectory name to determine which type of OOXML
 # file we have.  Correct the mimetype with the registered ones:
 # http://technet.microsoft.com/en-us/library/cc179224.aspx
 >>>>&26		use		msooxml	
 >>>>&26		default		x
 # OpenOffice/Libreoffice orders ZIP entry differently, so check the 4th file
->>>>>&26	search/1000	PK\003\004
+>>>>>&26	search/6000	PK\003\004
 >>>>>>&26	use		msooxml	
 >>>>>>&26	default		x		Microsoft OOXML
+>>>>>&26	default		x		Microsoft OOXML
 
 #------------------------------------------------------------------------------
-# $File: msvc,v 1.9 2017/08/02 08:15:20 christos Exp $
+# $File: msvc,v 1.10 2018/10/01 19:14:03 christos Exp $
 # msvc:  file(1) magic for msvc
 # "H. Nanosecond" <aldomel@ix.netcom.com>
 # Microsoft visual C
@@ -20268,7 +20690,7 @@
 >>>0x32	leshort	x	\b*%d bytes
 
 # Reference: https://github.com/Microsoft/vstest/pull/856/commits/fdc7a9f074ca5a8dfeec83b1be9162bf0cf4000d
-0       string/c bsjb\001\000\001\000\000\000\000\000\f\000\000\000pdb\ v1.0     Microsoft Rosyln C# debugging symbols version 1.0
+0       string/c bsjb\001\000\001\000\000\000\000\000\f\000\000\000pdb\ v1.0     Microsoft Roslyn C# debugging symbols version 1.0
 
 #.sbr
 0	string	\000\002\000\007\000	MSVC .sbr
@@ -24180,7 +24602,7 @@
 
 
 #------------------------------------------------------------------------------
-# $File: sniffer,v 1.19 2013/01/06 01:11:04 christos Exp $
+# $File: sniffer,v 1.20 2018/10/18 16:49:19 christos Exp $
 # sniffer:  file(1) magic for packet capture files
 #
 # From: guy@alum.mit.edu (Guy Harris)
@@ -24222,7 +24644,7 @@
 # Sorry, make that "Network Associates Sniffer capture files."
 # Sorry, make that "Network General old DOS Sniffer capture files."
 #
-0	string		TRSNIFF\ data\ \ \ \ \032	Sniffer capture file
+0	string		TRSNIFF\040data\040\040\040\040\032	Sniffer capture file
 >33	byte		2		(compressed)
 >23	leshort		x		- version %d
 >25	leshort		x		\b.%d
@@ -24257,6 +24679,7 @@
 
 #
 # "libpcap" capture files.
+# https://www.tcpdump.org/manpages/pcap-savefile.5.html
 # (We call them "tcpdump capture file(s)" for now, as "tcpdump" is
 # the main program that uses that format, but there are other programs
 # that use "libpcap", or that use the same capture file format.)
@@ -24367,22 +24790,28 @@
 >20	belong		248		(SCTP
 >16	belong		x		\b, capture length %d)
 
-0	ubelong		0xa1b2c3d4	tcpdump capture file (big-endian)
+# packets time stamps in seconds and microseconds.
+0	ubelong		0xa1b2c3d4	pcap capture file, microseconds ts (big-endian)
 !:mime	application/vnd.tcpdump.pcap
 >0	use	pcap-be
-0	ulelong		0xa1b2c3d4	tcpdump capture file (little-endian)
+0	ulelong		0xa1b2c3d4	pcap capture file, microsecond ts (little-endian)
+!:mime	application/vnd.tcpdump.pcap
+>0	use	\^pcap-be
+
+# packets time stamps in seconds and nanoseconds.
+0	ubelong		0xa1b23c4d	pcap capture file, nanosecond ts (big-endian)
+!:mime	application/vnd.tcpdump.pcap
+>0	use	pcap-be
+0	ulelong		0xa1b23c4d	pcap capture file, nanosecond ts (little-endian)
 !:mime	application/vnd.tcpdump.pcap
 >0	use	\^pcap-be
 
 #
 # "libpcap"-with-Alexey-Kuznetsov's-patches capture files.
-# (We call them "tcpdump capture file(s)" for now, as "tcpdump" is
-# the main program that uses that format, but there are other programs
-# that use "libpcap", or that use the same capture file format.)
 #
-0	ubelong		0xa1b2cd34	extended tcpdump capture file (big-endian)
+0	ubelong		0xa1b2cd34	pcap capture file, microsecond ts, extensions (big-endian)
 >0	use	pcap-be
-0	ulelong		0xa1b2cd34	extended tcpdump capture file (little-endian)
+0	ulelong		0xa1b2cd34	pcap capture file, microsecond ts, extensions (little-endian)
 >0	use	\^pcap-be
 
 #
@@ -24403,19 +24832,19 @@
 #
 # AIX "iptrace" capture files.
 #
-0	string		iptrace\ 1.0	"iptrace" capture file
-0	string		iptrace\ 2.0	"iptrace" capture file
+0	string		iptrace\0401.0	AIX iptrace capture file
+0	string		iptrace\0402.0	AIX iptrace capture file
 
 #
 # Novell LANalyzer capture files.
 #
-0	leshort		0x1001		LANalyzer capture file
-0	leshort		0x1007		LANalyzer capture file
+0	leshort		0x1001		Novell LANalyzer capture file
+0	leshort		0x1007		Novell LANalyzer capture file
 
 #
 # HP-UX "nettl" capture files.
 #
-0	string		\x54\x52\x00\x64\x00	"nettl" capture file
+0	string		\x54\x52\x00\x64\x00	HP/UX nettl capture file
 
 #
 # RADCOM WAN/LAN Analyzer capture files.
@@ -27614,11 +28043,11 @@
 0	ulelong&0x8080FFFF	0x00001204	gfxboot compiled html help file
 
 #------------------------------------------------------------------------------
-# $File: wsdl,v 1.3 2013/02/06 14:18:52 christos Exp $
+# $File: wsdl,v 1.4 2018/10/01 19:12:33 christos Exp $
 # wsdl: PHP WSDL Cache, http://www.php.net/manual/en/book.soap.php
 # Cache format extracted from source:
 # http://svn.php.net/viewvc/php/php-src/trunk/ext/soap/php_sdl.c?revision=HEAD&view=markup
-# Requires file >= 5.05, see http://mx.gw.com/pipermail/file/2010/000683.html
+# Requires file >= 5.05
 # By Elan Ruusamae <glen@delfi.ee>, Patryk Zawadzki <patrys@pld-linux.org>, 2010-2011
 0		string		wsdl		PHP WSDL cache,
 >4		byte		x		version 0x%02x

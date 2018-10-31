@@ -56,6 +56,13 @@ if exists("v:lang") || &langmenu != ""
       let s:lang = substitute(s:lang, '\.[^.]*', "", "")
       exe "runtime! lang/menu_" . s:lang . "[^a-z]*vim"
 
+      if !exists("did_menu_trans") && s:lang =~ '_'
+	" If the language includes a region try matching without that region.
+	" (e.g. find menu_de.vim if s:lang == de_DE).
+	let langonly = substitute(s:lang, '_.*', "", "")
+	exe "runtime! lang/menu_" . langonly . "[^a-z]*vim"
+      endif
+
       if !exists("did_menu_trans") && strlen($LANG) > 1 && s:lang !~ '^en_us'
 	" On windows locale names are complicated, try using $LANG, it might
 	" have been set by set_init_1().  But don't do this for "en" or "en_us".
@@ -153,6 +160,9 @@ vnoremenu 20.350 &Edit.&Copy<Tab>"+y		"+y
 cnoremenu 20.350 &Edit.&Copy<Tab>"+y		<C-Y>
 nnoremenu 20.360 &Edit.&Paste<Tab>"+gP		"+gP
 cnoremenu	 &Edit.&Paste<Tab>"+gP		<C-R>+
+if exists(':tlmenu')
+  tlnoremenu	 &Edit.&Paste<Tab>"+gP		<C-W>"+
+endif
 exe 'vnoremenu <script> &Edit.&Paste<Tab>"+gP	' . paste#paste_cmd['v']
 exe 'inoremenu <script> &Edit.&Paste<Tab>"+gP	' . paste#paste_cmd['i']
 nnoremenu 20.370 &Edit.Put\ &Before<Tab>[p	[p
@@ -349,6 +359,8 @@ func! s:SetupColorSchemes() abort
   let s:did_setup_color_schemes = 1
 
   let n = globpath(&runtimepath, "colors/*.vim", 1, 1)
+  let n += globpath(&runtimepath, "pack/*/start/*/colors/*.vim", 1, 1)
+  let n += globpath(&runtimepath, "pack/*/opt/*/colors/*.vim", 1, 1)
 
   " Ignore case for VMS and windows, sort on name
   let names = sort(map(n, 'substitute(v:val, "\\c.*[/\\\\:\\]]\\([^/\\\\:]*\\)\\.vim", "\\1", "")'), 1)
@@ -809,7 +821,7 @@ func! s:BMMunge(fname, bnum)
   let name = a:fname
   if name == ''
     if !exists("g:menutrans_no_file")
-      let g:menutrans_no_file = "[No file]"
+      let g:menutrans_no_file = "[No Name]"
     endif
     let name = g:menutrans_no_file
   else

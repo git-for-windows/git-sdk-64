@@ -103,7 +103,7 @@ extern const char *gdbm_version;
 
 # define GDBM_VERSION_MAJOR 1
 # define GDBM_VERSION_MINOR 18
-# define GDBM_VERSION_PATCH 0
+# define GDBM_VERSION_PATCH 1
 
 extern int const gdbm_version_number[3];
 
@@ -227,9 +227,10 @@ extern int gdbm_copy_meta (GDBM_FILE dst, GDBM_FILE src);
 # define GDBM_BAD_DIR_ENTRY             36
 # define GDBM_FILE_CLOSE_ERROR          37  
 # define GDBM_FILE_SYNC_ERROR           38
+# define GDBM_FILE_TRUNCATE_ERROR       39
   
 # define _GDBM_MIN_ERRNO	0
-# define _GDBM_MAX_ERRNO	GDBM_FILE_SYNC_ERROR
+# define _GDBM_MAX_ERRNO	GDBM_FILE_TRUNCATE_ERROR
 
 /* This one was never used and will be removed in the future */
 # define GDBM_UNKNOWN_UPDATE GDBM_UNKNOWN_ERROR

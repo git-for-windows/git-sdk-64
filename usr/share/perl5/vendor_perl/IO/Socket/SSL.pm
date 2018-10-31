@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.056';
+our $VERSION = '2.060';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -111,6 +111,20 @@ my $algo2digest = do {
 	};
     }
 };
+
+my $CTX_tlsv1_3_new;
+if ( defined &Net::SSLeay::CTX_set_min_proto_version
+    and defined &Net::SSLeay::CTX_set_max_proto_version
+    and my $tls13 = eval { Net::SSLeay::TLS1_3_VERSION() }
+) {
+    $CTX_tlsv1_3_new = sub {
+	my $ctx = Net::SSLeay::CTX_new();
+	return $ctx if Net::SSLeay::CTX_set_min_proto_version($ctx,$tls13)
+	    && Net::SSLeay::CTX_set_max_proto_version($ctx,$tls13);
+	Net::SSLeay::CTX_free($ctx);
+	return;
+    };
+}
 
 
 # global defaults
@@ -268,7 +282,8 @@ BEGIN{
 # get constants for SSL_OP_NO_* now, instead calling the related functions
 # every time we setup a connection
 my %SSL_OP_NO;
-for(qw( SSLv2 SSLv3 TLSv1 TLSv1_1 TLSv11:TLSv1_1 TLSv1_2 TLSv12:TLSv1_2 )) {
+for(qw( SSLv2 SSLv3 TLSv1 TLSv1_1 TLSv11:TLSv1_1 TLSv1_2 TLSv12:TLSv1_2
+        TLSv1_3 TLSv13:TLSv1_3 )) {
     my ($k,$op) = m{:} ? split(m{:},$_,2) : ($_,$_);
     my $sub = "Net::SSLeay::OP_NO_$op";
     local $SIG{__DIE__};
@@ -335,19 +350,19 @@ BEGIN {
 	    return if $err;
 	    return ($host,$port);
 	};
-	1;
+	'Socket';
     } || eval {
 	require Socket6;
 	Socket6::inet_pton( AF_INET6(),'::1') && AF_INET6() or die;
 	Socket6->import( qw/inet_pton NI_NUMERICHOST NI_NUMERICSERV/ );
 	# behavior different to Socket::getnameinfo - wrap
 	*_getnameinfo = sub { return Socket6::getnameinfo(@_); };
-	1;
-    };
+	'Socket6';
+    } || undef;
 
     # try IO::Socket::IP or IO::Socket::INET6 for IPv6 support
     $family_key = 'Domain'; # traditional
-    if ( $ip6 ) {
+    if ($ip6) {
 	# if we have IO::Socket::IP >= 0.31 we will use this in preference
 	# because it can handle both IPv4 and IPv6
 	if ( eval { 
@@ -367,17 +382,19 @@ BEGIN {
 	    constant->import( CAN_IPV6 => "IO::Socket::INET6" );
 	    $IOCLASS = "IO::Socket::INET6";
 	} else {
-	    $ip6 = 0;
+	    $ip6 = ''
 	}
     }
 
     # fall back to IO::Socket::INET for IPv4 only
-    if ( ! $ip6 ) {
+    if (!$ip6) {
 	@ISA = qw(IO::Socket::INET);
 	$IOCLASS = "IO::Socket::INET";
 	constant->import(CAN_IPV6 => '');
-	constant->import(NI_NUMERICHOST => 1);
-	constant->import(NI_NUMERICSERV => 2);
+	if (!defined $ip6) {
+	    constant->import(NI_NUMERICHOST => 1);
+	    constant->import(NI_NUMERICSERV => 2);
+	}
     }
 
     #Make $DEBUG another name for $Net::SSLeay::trace
@@ -1427,11 +1444,13 @@ sub stop_SSL {
 	# destroy allocated objects for SSL and untie
 	# do not destroy CTX unless explicitly specified
 	Net::SSLeay::free($ssl);
-	delete ${*$self}{_SSL_object};
 	if (my $cert = delete ${*$self}{'_SSL_certificate'}) {
 	    Net::SSLeay::X509_free($cert);
 	}
+	delete ${*$self}{_SSL_object};
 	${*$self}{'_SSL_opened'} = 0;
+	delete $SSL_OBJECT{$ssl};
+	delete $CREATED_IN_THIS_THREAD{$ssl};
 	untie(*$self);
     }
 
@@ -1889,6 +1908,7 @@ sub get_sslversion {
     my $ssl = shift()->_get_ssl_object || return;
     my $version = Net::SSLeay::version($ssl) or return;
     return
+	$version == 0x0304 ? 'TLSv1_3' :
 	$version == 0x0303 ? 'TLSv1_2' :
 	$version == 0x0302 ? 'TLSv1_1' :
 	$version == 0x0301 ? 'TLSv1'   :
@@ -1901,6 +1921,11 @@ sub get_sslversion {
 sub get_sslversion_int {
     my $ssl = shift()->_get_ssl_object || return;
     return Net::SSLeay::version($ssl);
+}
+
+sub get_session_reused {
+    return Net::SSLeay::session_reused(
+	shift()->_get_ssl_object || return);
 }
 
 if ($can_ocsp) {
@@ -2007,11 +2032,12 @@ sub can_ticket_keycb { return $can_tckt_keycb }
 
 sub DESTROY {
     my $self = shift or return;
-    my $ssl = ${*$self}{_SSL_object} or return;
-    delete $SSL_OBJECT{$ssl};
-    if (!$use_threads or delete $CREATED_IN_THIS_THREAD{$ssl}) {
-	$self->close(_SSL_in_DESTROY => 1, SSL_no_shutdown => 1)
-	    if ${*$self}{'_SSL_opened'};
+    if (my $ssl = ${*$self}{_SSL_object}) {
+	delete $SSL_OBJECT{$ssl};
+	if (!$use_threads or delete $CREATED_IN_THIS_THREAD{$ssl}) {
+	    $self->close(_SSL_in_DESTROY => 1, SSL_no_shutdown => 1)
+		if ${*$self}{'_SSL_opened'};
+	}
     }
     delete @{*$self}{@all_my_keys};
 }
@@ -2328,7 +2354,7 @@ sub new {
 
     my $ver;
     for (split(/\s*:\s*/,$arg_hash->{SSL_version})) {
-	m{^(!?)(?:(SSL(?:v2|v3|v23|v2/3))|(TLSv1(?:_?[12])?))$}i
+	m{^(!?)(?:(SSL(?:v2|v3|v23|v2/3))|(TLSv1(?:_?[123])?))$}i
 	or croak("invalid SSL_version specified");
 	my $not = $1;
 	( my $v = lc($2||$3) ) =~s{^(...)}{\U$1};
@@ -2343,14 +2369,17 @@ sub new {
 	}
     }
 
-    my $ctx_new_sub =  UNIVERSAL::can( 'Net::SSLeay',
-	$ver eq 'SSLv2'   ? 'CTX_v2_new' :
-	$ver eq 'SSLv3'   ? 'CTX_v3_new' :
-	$ver eq 'TLSv1'   ? 'CTX_tlsv1_new' :
-	$ver eq 'TLSv1_1' ? 'CTX_tlsv1_1_new' :
-	$ver eq 'TLSv1_2' ? 'CTX_tlsv1_2_new' :
-	'CTX_new'
-    ) or return IO::Socket::SSL->_internal_error("SSL Version $ver not supported",9);
+    my $ctx_new_sub =
+	$ver eq 'TLSv1_3' ? $CTX_tlsv1_3_new :
+	UNIVERSAL::can( 'Net::SSLeay',
+	    $ver eq 'SSLv2'   ? 'CTX_v2_new' :
+	    $ver eq 'SSLv3'   ? 'CTX_v3_new' :
+	    $ver eq 'TLSv1'   ? 'CTX_tlsv1_new' :
+	    $ver eq 'TLSv1_1' ? 'CTX_tlsv1_1_new' :
+	    $ver eq 'TLSv1_2' ? 'CTX_tlsv1_2_new' :
+	    'CTX_new'
+	)
+	or return IO::Socket::SSL->_internal_error("SSL Version $ver not supported",9);
 
     # For SNI in server mode we need a separate context for each certificate.
     my %ctx;
@@ -2497,6 +2526,7 @@ sub new {
 		Net::SSLeay::BIO_free($bio);
 		if ( $crl ) {
 		    Net::SSLeay::X509_STORE_add_crl(Net::SSLeay::CTX_get_cert_store($ctx), $crl);
+		    Net::SSLeay::X509_CRL_free($crl);
 		} else {
 		    return IO::Socket::SSL->error("Invalid certificate revocation list");
 		}
