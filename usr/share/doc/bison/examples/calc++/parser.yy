@@ -1,5 +1,5 @@
 %skeleton "lalr1.cc" /* -*- C++ -*- */
-%require "3.1"
+%require "3.2"
 %defines
 
 %define api.token.constructor
@@ -39,7 +39,7 @@
 %token <int> NUMBER "number"
 %type  <int> exp
 
-%printer { yyoutput << $$; } <*>;
+%printer { yyo << $$; } <*>;
 
 %%
 %start unit;
@@ -55,13 +55,13 @@ assignment:
 %left "+" "-";
 %left "*" "/";
 exp:
-  exp "+" exp   { $$ = $1 + $3; }
+  "number"
+| "identifier"  { $$ = drv.variables[$1]; }
+| exp "+" exp   { $$ = $1 + $3; }
 | exp "-" exp   { $$ = $1 - $3; }
 | exp "*" exp   { $$ = $1 * $3; }
 | exp "/" exp   { $$ = $1 / $3; }
-| "(" exp ")"   { std::swap ($$, $2); }
-| "identifier"  { $$ = drv.variables[$1]; }
-| "number"      { std::swap ($$, $1); };
+| "(" exp ")"   { $$ = $2; }
 %%
 
 void

@@ -22,9 +22,9 @@
 %define parse.trace
 
 /* Formatting semantic values.  */
-%printer { fprintf (yyoutput, "%s", $$->name); } VAR;
-%printer { fprintf (yyoutput, "%s()", $$->name); } FNCT;
-%printer { fprintf (yyoutput, "%g", $$); } <double>;
+%printer { fprintf (yyo, "%s", $$->name); } VAR;
+%printer { fprintf (yyo, "%s()", $$->name); } FNCT;
+%printer { fprintf (yyo, "%g", $$); } <double>;
 %% /* The grammar follows.  */
 input:
   %empty

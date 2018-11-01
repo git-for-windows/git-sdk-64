@@ -18,6 +18,10 @@ and/or use gtk-doc annotations.  -->
     <alias name="codepoint_t" c:type="hb_codepoint_t">
       <type name="guint32" c:type="uint32_t"/>
     </alias>
+    <alias name="color_t" c:type="hb_color_t">
+      <doc xml:space="preserve">Data type for holding color values.</doc>
+      <type name="guint32" c:type="uint32_t"/>
+    </alias>
     <alias name="font_get_font_h_extents_func_t"
            c:type="hb_font_get_font_h_extents_func_t">
       <type name="font_get_font_extents_func_t"
@@ -71,7 +75,10 @@ and/or use gtk-doc annotations.  -->
     <alias name="mask_t" c:type="hb_mask_t">
       <type name="guint32" c:type="uint32_t"/>
     </alias>
-    <alias name="name_id_t" c:type="hb_name_id_t">
+    <alias name="ot_name_id_t" c:type="hb_ot_name_id_t">
+      <doc xml:space="preserve">An integral type representing an OpenType 'name' table name identifier.
+There are predefined name IDs, as well as name IDs return from other
+API.  These can be used to fetch name strings from a font face.</doc>
       <type name="guint" c:type="unsigned int"/>
     </alias>
     <alias name="position_t" c:type="hb_position_t">
@@ -101,12 +108,6 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
               value="4294967295"
               c:type="HB_MAP_VALUE_INVALID">
       <type name="codepoint_t" c:type="hb_codepoint_t"/>
-    </constant>
-    <constant name="NAME_ID_INVALID"
-              value="65535"
-              c:type="HB_NAME_ID_INVALID"
-              version="2.0.0">
-      <type name="gint" c:type="gint"/>
     </constant>
     <constant name="OT_LAYOUT_DEFAULT_LANGUAGE_INDEX"
               value="65535"
@@ -168,13 +169,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="2" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="2" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="0" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="2.0.2" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="2.1.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_copy_writable_or_fail"
@@ -5036,10 +5037,10 @@ There are 72 points in an inch.</doc>
               glib:type-name="hb_glyph_flags_t"
               glib:get-type="hb_gobject_glyph_flags_get_type"
               c:type="hb_glyph_flags_t">
-      <member name="break"
+      <member name="unsafe_to_break"
               value="1"
               c:identifier="HB_GLYPH_FLAG_UNSAFE_TO_BREAK"
-              glib:nick="break">
+              glib:nick="unsafe-to-break">
         <doc xml:space="preserve">Indicates that if input text is broken at the
 				   beginning of the cluster this glyph is part of,
 				   then both sides need to be re-shaped, as the
@@ -5055,6 +5056,12 @@ There are 72 points in an inch.</doc>
 				   of each line after line-breaking, or limiting
 				   the reshaping to a small piece around the
 				   breaking point only.</doc>
+      </member>
+      <member name="defined"
+              value="1"
+              c:identifier="HB_GLYPH_FLAG_DEFINED"
+              glib:nick="defined">
+        <doc xml:space="preserve">All the currently defined flags.</doc>
       </member>
     </bitfield>
     <function name="glyph_info_get_glyph_flags"
@@ -5154,7 +5161,10 @@ glyph in both horizontal and vertical directions. All positions in
     </function>
     <function name="graphite2_font_get_gr_font"
               c:identifier="hb_graphite2_font_get_gr_font"
-              introspectable="0">
+              version="0.9.10"
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="1.4.2">
       <return-value>
         <type c:type="gr_font*"/>
       </return-value>
@@ -5466,6 +5476,309 @@ the caller.</doc>
               glib:nick="readonly-may-make-writable">
       </member>
     </enumeration>
+    <function name="ot_color_glyph_get_layers"
+              c:identifier="hb_ot_color_glyph_get_layers"
+              version="2.1.0">
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Total number of layers a layered color glyph have.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">a layered color glyph id.</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <doc xml:space="preserve">starting offset of layers.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="count"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full">
+          <doc xml:space="preserve">gets number of layers available to be written on buffer
+				and returns number of written layers.</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="layers"
+                   direction="out"
+                   caller-allocates="1"
+                   transfer-ownership="none"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">layers buffer to buffer.</doc>
+          <array length="3" zero-terminated="0" c:type="hb_ot_color_layer_t*">
+            <type name="ot_color_layer_t" c:type="hb_ot_color_layer_t"/>
+          </array>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_glyph_reference_png"
+              c:identifier="hb_ot_color_glyph_reference_png"
+              version="2.1.0">
+      <doc xml:space="preserve">Get PNG image for a glyph.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">respective PNG blob of the glyph, if available.</doc>
+        <type name="blob_t" c:type="hb_blob_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font object, not face. upem should be set on
+	   that font object if one wants to get optimal png blob, otherwise
+	   return the biggest one</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">a glyph index.</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_glyph_reference_svg"
+              c:identifier="hb_ot_color_glyph_reference_svg"
+              version="2.1.0">
+      <doc xml:space="preserve">Get SVG document for a glyph.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">respective svg blob of the glyph, if available.</doc>
+        <type name="blob_t" c:type="hb_blob_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">a svg glyph index.</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_has_layers"
+              c:identifier="hb_ot_color_has_layers"
+              version="2.1.0">
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">whether COLR table is available.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_has_palettes"
+              c:identifier="hb_ot_color_has_palettes"
+              version="2.1.0">
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">whether CPAL table is available.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_has_png"
+              c:identifier="hb_ot_color_has_png"
+              version="2.1.0">
+      <doc xml:space="preserve">Check whether @face has PNG glyph images (either CBDT or sbix tables).
+
+Returns true if available, false otherwise.</doc>
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_has_svg"
+              c:identifier="hb_ot_color_has_svg"
+              version="2.1.0">
+      <doc xml:space="preserve">Check whether @face has SVG glyph images.
+
+Returns true if available, false otherwise.</doc>
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <record name="ot_color_layer_t"
+            c:type="hb_ot_color_layer_t"
+            version="2.1.0">
+      <doc xml:space="preserve">Pairs of glyph and color index.</doc>
+      <field name="glyph" writable="1">
+        <type name="codepoint_t" c:type="hb_codepoint_t"/>
+      </field>
+      <field name="color_index" writable="1">
+        <type name="guint" c:type="unsigned"/>
+      </field>
+    </record>
+    <function name="ot_color_palette_color_get_name_id"
+              c:identifier="hb_ot_color_palette_color_get_name_id"
+              version="2.1.0">
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Name ID associated with a palette entry, e.g. eye color</doc>
+        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="color_index" transfer-ownership="none">
+          <doc xml:space="preserve">palette entry index.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <bitfield name="ot_color_palette_flags_t"
+              version="2.1.0"
+              glib:type-name="hb_ot_color_palette_flags_t"
+              glib:get-type="hb_gobject_ot_color_palette_flags_get_type"
+              c:type="hb_ot_color_palette_flags_t">
+      <member name="default"
+              value="0"
+              c:identifier="HB_OT_COLOR_PALETTE_FLAG_DEFAULT"
+              glib:nick="default">
+        <doc xml:space="preserve">default indicating that there is nothing special
+  to note about a color palette.</doc>
+      </member>
+      <member name="usable_with_light_background"
+              value="1"
+              c:identifier="HB_OT_COLOR_PALETTE_FLAG_USABLE_WITH_LIGHT_BACKGROUND"
+              glib:nick="usable-with-light-background">
+        <doc xml:space="preserve">flag indicating that the color
+  palette is appropriate to use when displaying the font on a light background such as white.</doc>
+      </member>
+      <member name="usable_with_dark_background"
+              value="2"
+              c:identifier="HB_OT_COLOR_PALETTE_FLAG_USABLE_WITH_DARK_BACKGROUND"
+              glib:nick="usable-with-dark-background">
+        <doc xml:space="preserve">flag indicating that the color
+  palette is appropriate to use when displaying the font on a dark background such as black.</doc>
+      </member>
+    </bitfield>
+    <function name="ot_color_palette_get_colors"
+              c:identifier="hb_ot_color_palette_get_colors"
+              version="2.1.0">
+      <doc xml:space="preserve">Retrieves the colors in a color palette.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the total number of colors in the palette.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="palette_index" transfer-ownership="none">
+          <doc xml:space="preserve">the index of the color palette whose colors
+               are being requested.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <doc xml:space="preserve">the index of the first color being requested.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="color_count"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full">
+          <doc xml:space="preserve">on input, how many colors
+               can be maximally stored into the @colors array;
+               on output, how many colors were actually stored.</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="colors"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
+          <doc xml:space="preserve">
+               an array of #hb_color_t records. After calling
+               this function, @colors will be filled with
+               the palette colors. If @colors is NULL, the function
+               will just return the number of total colors
+               without storing any actual colors; this can be used
+               for allocating a buffer of suitable size before calling
+               hb_ot_color_palette_get_colors() a second time.</doc>
+          <array length="3" zero-terminated="0" c:type="hb_color_t*">
+            <type name="color_t" c:type="hb_color_t"/>
+          </array>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_palette_get_count"
+              c:identifier="hb_ot_color_palette_get_count"
+              version="2.1.0">
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the number of color palettes in @face, or zero if @face has
+no colors.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_palette_get_flags"
+              c:identifier="hb_ot_color_palette_get_flags"
+              version="2.1.0">
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the flags for the requested color palette.</doc>
+        <type name="ot_color_palette_flags_t"
+              c:type="hb_ot_color_palette_flags_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="palette_index" transfer-ownership="none">
+          <doc xml:space="preserve">the index of the color palette whose flags are being requested</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_palette_get_name_id"
+              c:identifier="hb_ot_color_palette_get_name_id"
+              version="2.1.0">
+      <doc xml:space="preserve">Retrieves the name id of a color palette. For example, a color font can
+have themed palettes like "Spring", "Summer", "Fall", and "Winter".</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">an identifier within @face's `name` table.
+If the requested palette has no name the result is #HB_OT_NAME_ID_INVALID.</doc>
+        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="palette_index" transfer-ownership="none">
+          <doc xml:space="preserve">the index of the color palette whose name is being requested.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_font_set_funcs"
               c:identifier="hb_ot_font_set_funcs"
               version="0.9.28">
@@ -5547,9 +5860,11 @@ Variant" ("cvXX") features.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
+          <doc xml:space="preserve">table tag to query, "GSUB" or "GPOS".</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="feature_index" transfer-ownership="none">
+          <doc xml:space="preserve">index of feature to query.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="start_offset" transfer-ownership="none">
@@ -5561,24 +5876,23 @@ Variant" ("cvXX") features.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="char_count"
-                   direction="inout"
+                   direction="out"
                    caller-allocates="0"
                    transfer-ownership="full"
-                   nullable="1"
-                   allow-none="1">
+                   nullable="1">
           <doc xml:space="preserve">The count of characters for which this feature
              provides glyph variants. (May be zero.)</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="characters"
                    direction="out"
-                   caller-allocates="0"
-                   transfer-ownership="full"
-                   optional="1"
-                   allow-none="1">
-          <doc xml:space="preserve">A buffer pointer. The Unicode Scalar Value
+                   caller-allocates="1"
+                   transfer-ownership="none">
+          <doc xml:space="preserve">A buffer pointer. The Unicode codepoints
              of the characters for which this feature provides glyph variants.</doc>
-          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+          <array length="4" zero-terminated="0" c:type="hb_codepoint_t*">
+            <type name="codepoint_t" c:type="hb_codepoint_t"/>
+          </array>
         </parameter>
       </parameters>
     </function>
@@ -5624,9 +5938,11 @@ Variant" ("cvXX") features.</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="table_tag" transfer-ownership="none">
+          <doc xml:space="preserve">table tag to query, "GSUB" or "GPOS".</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
         <parameter name="feature_index" transfer-ownership="none">
+          <doc xml:space="preserve">index of feature to query.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="label_id"
@@ -5637,7 +5953,7 @@ Variant" ("cvXX") features.</doc>
                    allow-none="1">
           <doc xml:space="preserve">The ‘name’ table name ID that specifies a string
            for a user-interface label for this feature. (May be NULL.)</doc>
-          <type name="name_id_t" c:type="hb_name_id_t*"/>
+          <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
         <parameter name="tooltip_id"
                    direction="out"
@@ -5648,7 +5964,7 @@ Variant" ("cvXX") features.</doc>
           <doc xml:space="preserve">The ‘name’ table name ID that specifies a string
              that an application can use for tooltip text for this
              feature. (May be NULL.)</doc>
-          <type name="name_id_t" c:type="hb_name_id_t*"/>
+          <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
         <parameter name="sample_id"
                    direction="out"
@@ -5658,7 +5974,7 @@ Variant" ("cvXX") features.</doc>
                    allow-none="1">
           <doc xml:space="preserve">The ‘name’ table name ID that specifies sample text
             that illustrates the effect of this feature. (May be NULL.)</doc>
-          <type name="name_id_t" c:type="hb_name_id_t*"/>
+          <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
         <parameter name="num_named_parameters"
                    direction="out"
@@ -5678,7 +5994,7 @@ Variant" ("cvXX") features.</doc>
           <doc xml:space="preserve">The first ‘name’ table name ID used to specify
                  strings for user-interface labels for the feature
                  parameters. (Must be zero if numParameters is zero.)</doc>
-          <type name="name_id_t" c:type="hb_name_id_t*"/>
+          <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -5812,7 +6128,7 @@ Variant" ("cvXX") features.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="subfamily_name_id" transfer-ownership="none">
-          <type name="name_id_t" c:type="hb_name_id_t*"/>
+          <type name="ot_name_id_t" c:type="hb_ot_name_id_t*"/>
         </parameter>
         <parameter name="range_start" transfer-ownership="none">
           <type name="guint" c:type="unsigned int*"/>
@@ -6929,6 +7245,177 @@ face.</doc>
               glib:nick="bottom-left">
       </member>
     </enumeration>
+    <record name="ot_name_entry_t" c:type="hb_ot_name_entry_t" version="2.1.0">
+      <doc xml:space="preserve">Structure representing a name ID in a particular language.</doc>
+      <field name="name_id" writable="1">
+        <doc xml:space="preserve">name ID</doc>
+        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+      </field>
+      <field name="var" readable="0" private="1">
+        <type name="var_int_t" c:type="hb_var_int_t"/>
+      </field>
+      <field name="language" writable="1">
+        <doc xml:space="preserve">language</doc>
+        <type name="language_t" c:type="hb_language_t"/>
+      </field>
+    </record>
+    <function name="ot_name_get_utf16"
+              c:identifier="hb_ot_name_get_utf16"
+              version="2.1.0">
+      <doc xml:space="preserve">Fetches a font name from the OpenType 'name' table.
+If @language is #HB_LANGUAGE_INVALID, English ("en") is assumed.
+Returns string in UTF-16 encoding.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">full length of the requested string, or 0 if not found.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="name_id" transfer-ownership="none">
+          <doc xml:space="preserve">OpenType name identifier to fetch.</doc>
+          <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+        </parameter>
+        <parameter name="language" transfer-ownership="none">
+          <doc xml:space="preserve">language to fetch the name for.</doc>
+          <type name="language_t" c:type="hb_language_t"/>
+        </parameter>
+        <parameter name="text_size"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   nullable="1">
+          <doc xml:space="preserve">input size of @text buffer, and output size of
+                                  text written to buffer.</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="text"
+                   direction="out"
+                   caller-allocates="1"
+                   transfer-ownership="none">
+          <doc xml:space="preserve">buffer to write fetched name into.</doc>
+          <array length="3" zero-terminated="0" c:type="uint16_t*">
+            <type name="guint16" c:type="uint16_t"/>
+          </array>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_name_get_utf32"
+              c:identifier="hb_ot_name_get_utf32"
+              version="2.1.0">
+      <doc xml:space="preserve">Fetches a font name from the OpenType 'name' table.
+If @language is #HB_LANGUAGE_INVALID, English ("en") is assumed.
+Returns string in UTF-32 encoding.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">full length of the requested string, or 0 if not found.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="name_id" transfer-ownership="none">
+          <doc xml:space="preserve">OpenType name identifier to fetch.</doc>
+          <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+        </parameter>
+        <parameter name="language" transfer-ownership="none">
+          <doc xml:space="preserve">language to fetch the name for.</doc>
+          <type name="language_t" c:type="hb_language_t"/>
+        </parameter>
+        <parameter name="text_size"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   nullable="1">
+          <doc xml:space="preserve">input size of @text buffer, and output size of
+                                  text written to buffer.</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="text"
+                   direction="out"
+                   caller-allocates="1"
+                   transfer-ownership="none">
+          <doc xml:space="preserve">buffer to write fetched name into.</doc>
+          <array length="3" zero-terminated="0" c:type="uint32_t*">
+            <type name="guint32" c:type="uint32_t"/>
+          </array>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_name_get_utf8"
+              c:identifier="hb_ot_name_get_utf8"
+              version="2.1.0">
+      <doc xml:space="preserve">Fetches a font name from the OpenType 'name' table.
+If @language is #HB_LANGUAGE_INVALID, English ("en") is assumed.
+Returns string in UTF-8 encoding.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">full length of the requested string, or 0 if not found.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="name_id" transfer-ownership="none">
+          <doc xml:space="preserve">OpenType name identifier to fetch.</doc>
+          <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+        </parameter>
+        <parameter name="language" transfer-ownership="none">
+          <doc xml:space="preserve">language to fetch the name for.</doc>
+          <type name="language_t" c:type="hb_language_t"/>
+        </parameter>
+        <parameter name="text_size"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   nullable="1">
+          <doc xml:space="preserve">input size of @text buffer, and output size of
+                                  text written to buffer.</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="text"
+                   direction="out"
+                   caller-allocates="1"
+                   transfer-ownership="none">
+          <doc xml:space="preserve">buffer to write fetched name into.</doc>
+          <array length="3" zero-terminated="0" c:type="char*">
+            <type name="utf8" c:type="char"/>
+          </array>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_name_list_names"
+              c:identifier="hb_ot_name_list_names"
+              version="2.1.0">
+      <doc xml:space="preserve">Enumerates all available name IDs and language combinations. Returned
+array is owned by the @face and should not be modified.  It can be
+used as long as @face is alive.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Array of available name entries.</doc>
+        <array length="1"
+               zero-terminated="0"
+               c:type="const hb_ot_name_entry_t*">
+          <type name="ot_name_entry_t" c:type="hb_ot_name_entry_t"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">font face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="num_entries"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full">
+          <doc xml:space="preserve">number of returned entries.</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_shape_glyphs_closure"
               c:identifier="hb_ot_shape_glyphs_closure"
               version="0.9.2">
@@ -9409,6 +9896,7 @@ will be used.</doc>
     </function>
     <function name="unicode_decompose_compatibility"
               c:identifier="hb_unicode_decompose_compatibility"
+              version="0.9.2"
               deprecated="1"
               deprecated-version="2.0.0">
       <return-value transfer-ownership="none">
@@ -9416,12 +9904,16 @@ will be used.</doc>
       </return-value>
       <parameters>
         <parameter name="ufuncs" transfer-ownership="none">
+          <doc xml:space="preserve">Unicode functions.</doc>
           <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
         </parameter>
         <parameter name="u" transfer-ownership="none">
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
-        <parameter name="decomposed" transfer-ownership="none">
+        <parameter name="decomposed"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full">
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
         </parameter>
       </parameters>
