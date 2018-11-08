@@ -169,13 +169,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="2" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="2.1.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="2.1.1" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function name="blob_copy_writable_or_fail"
@@ -3378,7 +3378,7 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
                    allow-none="1">
           <type name="gpointer" c:type="void*"/>
         </parameter>
-        <parameter name="metrics" transfer-ownership="none">
+        <parameter name="extents" transfer-ownership="none">
           <type name="font_extents_t" c:type="hb_font_extents_t*"/>
         </parameter>
         <parameter name="user_data"
@@ -7410,7 +7410,9 @@ used as long as @face is alive.</doc>
         <parameter name="num_entries"
                    direction="out"
                    caller-allocates="0"
-                   transfer-ownership="full">
+                   transfer-ownership="full"
+                   optional="1"
+                   allow-none="1">
           <doc xml:space="preserve">number of returned entries.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
