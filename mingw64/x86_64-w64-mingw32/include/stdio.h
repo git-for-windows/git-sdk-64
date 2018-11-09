@@ -8,8 +8,6 @@
 
 #include <crtdefs.h>
 
-#include <_mingw_print_push.h>
-
 #pragma pack(push,_CRT_PACKING)
 
 #ifdef __cplusplus
@@ -223,7 +221,7 @@ extern
 #if defined(__clang__)
 #define __MINGW_PRINTF_FORMAT printf
 #define __MINGW_SCANF_FORMAT  scanf
-#elif defined(__USE_MINGW_ANSI_STDIO)
+#elif __MSVCRT_VERSION__ >= 0x1400 || __USE_MINGW_ANSI_STDIO
 #define __MINGW_PRINTF_FORMAT gnu_printf
 #define __MINGW_SCANF_FORMAT  gnu_scanf
 #else
@@ -737,7 +735,7 @@ int vsnprintf (char *__stream, size_t __n, const char *__format, __builtin_va_li
   _CRTIMP int __cdecl _vsnprintf(char * __restrict__ _Dest,size_t _Count,const char * __restrict__ _Format,va_list _Args) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
 #endif
 
-#if !defined (__USE_MINGW_ANSI_STDIO) || __USE_MINGW_ANSI_STDIO == 0
+#if __USE_MINGW_ANSI_STDIO == 0
 
 #if __MSVCRT_VERSION__ >= 0x1400
 #ifdef __GNUC__
@@ -1142,7 +1140,7 @@ int vsnwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, __builti
   }
   int __cdecl _vsnwprintf(wchar_t * __restrict__ _Dest,size_t _Count,const wchar_t * __restrict__ _Format,va_list _Args) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
 
-#if !defined (__USE_MINGW_ANSI_STDIO) || __USE_MINGW_ANSI_STDIO == 0
+#if __USE_MINGW_ANSI_STDIO == 0
   __mingw_ovr
   int snwprintf (wchar_t * __restrict__ s, size_t n, const wchar_t * __restrict__ format, ...)
   {
@@ -1192,7 +1190,7 @@ int vsnwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, __builti
 
 #ifndef __NO_ISOCEXT  /* externs in libmingwex.a */
 
-#if !defined (__USE_MINGW_ANSI_STDIO) || __USE_MINGW_ANSI_STDIO == 0
+#if __USE_MINGW_ANSI_STDIO == 0
 #pragma push_macro("snwprintf")
 #pragma push_macro("vsnwprintf")
 # undef snwprintf
@@ -1398,7 +1396,5 @@ void __cdecl __mingw_str_free(void *ptr);
 #pragma pack(pop)
 
 #include <sec_api/stdio_s.h>
-
-#include <_mingw_print_pop.h>
 
 #endif
