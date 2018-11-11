@@ -22,6 +22,7 @@ details. */
 
 #define SIOCATMARK  _IOR('s',  7, long)  /* at oob mark? */
 #define FIONREAD    _IOR('f', 127, long) /* get # bytes to read */
+#define SIOCINQ     FIONREAD
 /* Compatible with termios.h */
 #define FIONBIO     0x8004667e		 /* set/clear non-blocking i/o */
 #define FIOASYNC    _IOW('f', 125, long) /* set/clear async i/o */
@@ -57,6 +58,7 @@ details. */
 #define SO_OOBINLINE    0x0100          /* leave received OOB data in line */
 #define SO_DONTLINGER   (unsigned int)(~SO_LINGER)
 #define SO_PEERCRED	0x0200		/* same as getpeereid */
+#define SO_PASSCRED	0x0400		/* enable receiving of credentials */
 
 /*
  * Additional options.

@@ -47,12 +47,7 @@ struct sockaddr_storage {
 #include <asm/socket.h>			/* arch-dependent defines	*/
 #include <cygwin/sockios.h>		/* the SIOCxxx I/O controls	*/
 #include <sys/uio.h>			/* iovec support		*/
-
-struct ucred {
-  pid_t			pid;
-  uid_t			uid;
-  gid_t			gid;
-};
+#include <cygwin/_ucred.h>		/* struct ucred			*/
 
 struct linger {
   unsigned short	l_onoff;	/* Linger active	*/
@@ -107,7 +102,8 @@ struct cmsghdr
 	((unsigned char *) ((struct cmsghdr *)(cmsg) + 1))
 
 /* "Socket"-level control message types: */
-#define	SCM_RIGHTS	0x01		/* access rights (array of int) */
+#define	SCM_RIGHTS	0x01		/* descriptor passing (array of int) */
+#define	SCM_CREDENTIALS	0x02		/* credential passing (struct ucred) */
 
 #ifdef __INSIDE_CYGWIN__
 /* Definition of struct msghdr up to release 1.5.18 */
@@ -130,20 +126,21 @@ struct OLD_msghdr
 #define SOCK_RDM	4		/* reliably-delivered message	*/
 #define SOCK_SEQPACKET	5		/* sequential packet socket	*/
 
-/* GNU extension flags.  Or them to the type parameter in calls to
-   socket(2) to mark socket as nonblocking and/or close-on-exec. */
-#define SOCK_NONBLOCK	0x01000000
-#define SOCK_CLOEXEC	0x02000000
-#ifdef __INSIDE_CYGWIN__
-#define _SOCK_FLAG_MASK	0xff000000	/* Bits left for more extensions */
-#endif
+/* defines SOCK_NONBLOCK / SOCK_CLOEXEC */
+#include <cygwin/_socketflags.h>
 
 /* Supported address families. */
 /*
  * Address families.
  */
 #define AF_UNSPEC       0               /* unspecified */
+/* FIXME: This is for testing only, while developing the new
+          fhandler_socket_unix class. */
+#if defined (__INSIDE_CYGWIN__) && defined (__WITH_AF_UNIX)
+#define AF_UNIX         31
+#else
 #define AF_UNIX         1               /* local to host (pipes, portals) */
+#endif
 #define AF_LOCAL        1               /* POSIX name for AF_UNIX */
 #define AF_INET         2               /* internetwork: UDP, TCP, etc. */
 #define AF_IMPLINK      3               /* arpanet imp addresses */
@@ -207,6 +204,9 @@ struct OLD_msghdr
 /* Windows-specific flag values returned by recvmsg. */
 #define MSG_BCAST	0x0400		/* Broadcast datagram */
 #define MSG_MCAST	0x0800		/* Multicast datagram */
+/* AF_UNIX specific */
+#define MSG_CMSG_CLOEXEC 0x1000		/* Set O_CLOEXEC on fd's passed via
+					   SCM_RIGHTS */
 
 /* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 #define SOL_IP		0

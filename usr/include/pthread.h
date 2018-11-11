@@ -187,7 +187,7 @@ int pthread_spin_unlock (pthread_spinlock_t *);
 #endif
 
 /* RW Locks */
-#if __XSI_VISIBLE >= 500 || __POSIX_VISIBLE >= 200112
+#if __XSI_VISIBLE >= 500 || __POSIX_VISIBLE >= 200112 || __cplusplus >= 201402L
 int pthread_rwlock_destroy (pthread_rwlock_t *rwlock);
 int pthread_rwlock_init (pthread_rwlock_t *rwlock, const pthread_rwlockattr_t *attr);
 int pthread_rwlock_rdlock (pthread_rwlock_t *rwlock);
@@ -230,6 +230,8 @@ int pthread_getattr_np (pthread_t, pthread_attr_t *);
 int pthread_getname_np (pthread_t, char *, size_t) __attribute__((__nonnull__(2)));
 int pthread_setname_np (pthread_t, const char *) __attribute__((__nonnull__(2)));
 int pthread_sigqueue (pthread_t *, int, const union sigval);
+int pthread_timedjoin_np (pthread_t, void **, const struct timespec *);
+int pthread_tryjoin_np (pthread_t, void **);
 int pthread_yield (void);
 #endif
 #if __MISC_VISIBLE /* HP-UX, others? */
