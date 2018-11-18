@@ -38,15 +38,6 @@
 /* Pointer difference type */
 #define TIFF_PTRDIFF_T ptrdiff_t
 
-/* Define to 1 if the system has the type `int16'. */
-/* #undef HAVE_INT16 */
-
-/* Define to 1 if the system has the type `int32'. */
-/* #undef HAVE_INT32 */
-
-/* Define to 1 if the system has the type `int8'. */
-/* #undef HAVE_INT8 */
-
 /* Compatibility stuff. */
 
 /* Define as 0 or 1 according to the floating point format suported by the
