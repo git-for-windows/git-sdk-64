@@ -498,8 +498,9 @@ least one Git-generated or user-configured trailer and consists of at
 least 25% trailers.
 The group must be preceded by one or more empty (or whitespace-only) lines.
 The group must either be at the end of the message or be the last
-non-whitespace lines before a line that starts with <em>---</em>. Such three
-minus signs start the patch part of the message.</p>
+non-whitespace lines before a line that starts with <em>---</em> (followed by a
+space or the end of the line). Such three minus signs start the patch
+part of the message. See also <code>--no-divider</code> below.</p>
 </div>
 <div class="paragraph">
 <p>When reading trailers, there can be whitespaces after the
@@ -583,6 +584,12 @@ trailer appears on a line by itself with its full content.</p>
 <dd>
 <p>A convenience alias for <code>--only-trailers --only-input
 --unfold</code>.</p>
+</dd>
+<dt class="hdlist1">--no-divider</dt>
+<dd>
+<p>Do not treat <code>---</code> as the end of the commit message. Use this
+when you know your input contains just the commit message itself
+(and not an email or the output of <code>git format-patch</code>).</p>
 </dd>
 </dl>
 </div>
@@ -912,7 +919,7 @@ $ chmod +x .git/hooks/commit-msg</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-10-04 20:49:12 UTC
+Last updated 2018-11-21 19:26:01 UTC
 </div>
 </div>
 </body>

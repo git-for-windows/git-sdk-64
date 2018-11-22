@@ -546,7 +546,7 @@ it is invoked.</p>
 </li>
 <li>
 <p>For each commit, call <code>graph_next_line()</code> repeatedly, until
-<code>graph_is_commit_finished()</code> returns non-zero.  Each call go
+<code>graph_is_commit_finished()</code> returns non-zero.  Each call to
 <code>graph_next_line()</code> will output a single line of the graph.  The resulting
 lines will not contain any newlines.  <code>graph_next_line()</code> returns 1 if the
 resulting line contains the current commit, or 0 if this is merely a line
@@ -596,7 +596,6 @@ order to implement reverse ordering, the graphing API needs an
 struct git_graph *graph = graph_init(opts);
 
 while ((commit = get_revision(opts)) != NULL) {
-	graph_update(graph, commit);
 	while (!graph_is_commit_finished(graph))
 	{
 		struct strbuf sb;
@@ -663,7 +662,7 @@ outputting that information, if desired.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-10-04 20:49:12 UTC
+Last updated 2018-11-21 19:26:01 UTC
 </div>
 </div>
 </body>

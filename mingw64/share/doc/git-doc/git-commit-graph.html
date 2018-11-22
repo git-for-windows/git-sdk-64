@@ -430,7 +430,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>git-commit-graph(1) Manual Page</h1>
 <h2>NAME</h2>
 <div class="sectionbody">
-<p>git-commit-graph - Write and verify Git commit graph files</p>
+<p>git-commit-graph - Write and verify Git commit-graph files</p>
 </div>
 </div>
 <div id="content">
@@ -448,7 +448,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Manage the serialized commit graph file.</p>
+<p>Manage the serialized commit-graph file.</p>
 </div>
 </div>
 </div>
@@ -459,11 +459,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <dl>
 <dt class="hdlist1">--object-dir</dt>
 <dd>
-<p>Use given directory for the location of packfiles and commit graph
+<p>Use given directory for the location of packfiles and commit-graph
 file. This parameter exists to specify the location of an alternate
-that only has the objects directory, not a full .git directory. The
-commit graph file is expected to be at &lt;dir&gt;/info/commit-graph and
-the packfiles are expected to be in &lt;dir&gt;/pack.</p>
+that only has the objects directory, not a full <code>.git</code> directory. The
+commit-graph file is expected to be at <code>&lt;dir&gt;/info/commit-graph</code> and
+the packfiles are expected to be in <code>&lt;dir&gt;/pack</code>.</p>
 </dd>
 </dl>
 </div>
@@ -476,7 +476,7 @@ the packfiles are expected to be in &lt;dir&gt;/pack.</p>
 <dl>
 <dt class="hdlist1"><em>write</em></dt>
 <dd>
-<p>Write a commit graph file based on the commits found in packfiles.</p>
+<p>Write a commit-graph file based on the commits found in packfiles.</p>
 <div class="paragraph">
 <p>With the <code>--stdin-packs</code> option, generate the new commit graph by
 walking objects only in the specified pack-indexes. (Cannot be combined
@@ -500,8 +500,8 @@ existing commit-graph file.</p>
 </dd>
 <dt class="hdlist1"><em>read</em></dt>
 <dd>
-<p>Read a graph file given by the commit-graph file and output basic
-details about the graph file. Used for debugging purposes.</p>
+<p>Read the commit-graph file and output basic details about it.
+Used for debugging purposes.</p>
 </dd>
 <dt class="hdlist1"><em>verify</em></dt>
 <dd>
@@ -518,7 +518,8 @@ database. Used to check for corrupted data.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Write a commit graph file for the packed commits in your local .git folder.</p>
+<p>Write a commit-graph file for the packed commits in your local <code>.git</code>
+directory.</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git commit-graph write</pre>
@@ -526,10 +527,8 @@ database. Used to check for corrupted data.</p>
 </div>
 </li>
 <li>
-<p>Write a graph file, extending the current graph file using commits</p>
-</li>
-<li>
-<p>in &lt;pack-index&gt;.</p>
+<p>Write a commit-graph file, extending the current commit-graph file
+using commits in <code>&lt;pack-index&gt;</code>.</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ echo &lt;pack-index&gt; | git commit-graph write --stdin-packs</pre>
@@ -537,7 +536,7 @@ database. Used to check for corrupted data.</p>
 </div>
 </li>
 <li>
-<p>Write a graph file containing all reachable commits.</p>
+<p>Write a commit-graph file containing all reachable commits.</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git show-ref -s | git commit-graph write --stdin-commits</pre>
@@ -545,10 +544,8 @@ database. Used to check for corrupted data.</p>
 </div>
 </li>
 <li>
-<p>Write a graph file containing all commits in the current</p>
-</li>
-<li>
-<p>commit-graph file along with those reachable from HEAD.</p>
+<p>Write a commit-graph file containing all commits in the current
+commit-graph file along with those reachable from <code>HEAD</code>.</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git rev-parse HEAD | git commit-graph write --stdin-commits --append</pre>
@@ -578,7 +575,7 @@ database. Used to check for corrupted data.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-10-04 20:49:12 UTC
+Last updated 2018-11-21 19:26:01 UTC
 </div>
 </div>
 </body>

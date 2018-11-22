@@ -891,10 +891,6 @@ ancillary user utilities.</p>
 <dd>
 <p>Show what revision and author last modified each line of a file.</p>
 </dd>
-<dt class="hdlist1"><a href="git-cherry.html">git-cherry</a>(1)</dt>
-<dd>
-<p>Find commits yet to be applied to upstream.</p>
-</dd>
 <dt class="hdlist1"><a href="git-count-objects.html">git-count-objects</a>(1)</dt>
 <dd>
 <p>Count unpacked number of objects and their disk consumption.</p>
@@ -906,10 +902,6 @@ ancillary user utilities.</p>
 <dt class="hdlist1"><a href="git-fsck.html">git-fsck</a>(1)</dt>
 <dd>
 <p>Verifies the connectivity and validity of the objects in the database.</p>
-</dd>
-<dt class="hdlist1"><a href="git-get-tar-commit-id.html">git-get-tar-commit-id</a>(1)</dt>
-<dd>
-<p>Extract commit ID from an archive created using git-archive.</p>
 </dd>
 <dt class="hdlist1"><a href="git-help.html">git-help</a>(1)</dt>
 <dd>
@@ -926,10 +918,6 @@ ancillary user utilities.</p>
 <dt class="hdlist1"><a href="git-rerere.html">git-rerere</a>(1)</dt>
 <dd>
 <p>Reuse recorded resolution of conflicted merges.</p>
-</dd>
-<dt class="hdlist1"><a href="git-rev-parse.html">git-rev-parse</a>(1)</dt>
-<dd>
-<p>Pick out and massage parameters.</p>
 </dd>
 <dt class="hdlist1"><a href="git-show-branch.html">git-show-branch</a>(1)</dt>
 <dd>
@@ -964,7 +952,7 @@ people via patch over e-mail.</p>
 <dl>
 <dt class="hdlist1"><a href="git-archimport.html">git-archimport</a>(1)</dt>
 <dd>
-<p>Import an Arch repository into Git.</p>
+<p>Import a GNU Arch repository into Git.</p>
 </dd>
 <dt class="hdlist1"><a href="git-cvsexportcommit.html">git-cvsexportcommit</a>(1)</dt>
 <dd>
@@ -1046,7 +1034,7 @@ repositories.</p>
 </dd>
 <dt class="hdlist1"><a href="git-commit-graph.html">git-commit-graph</a>(1)</dt>
 <dd>
-<p>Write and verify Git commit graph files.</p>
+<p>Write and verify Git commit-graph files.</p>
 </dd>
 <dt class="hdlist1"><a href="git-commit-tree.html">git-commit-tree</a>(1)</dt>
 <dd>
@@ -1119,6 +1107,10 @@ repositories.</p>
 <dd>
 <p>Provide content or type and size information for repository objects.</p>
 </dd>
+<dt class="hdlist1"><a href="git-cherry.html">git-cherry</a>(1)</dt>
+<dd>
+<p>Find commits yet to be applied to upstream.</p>
+</dd>
 <dt class="hdlist1"><a href="git-diff-files.html">git-diff-files</a>(1)</dt>
 <dd>
 <p>Compares files in the working tree and the index.</p>
@@ -1134,6 +1126,10 @@ repositories.</p>
 <dt class="hdlist1"><a href="git-for-each-ref.html">git-for-each-ref</a>(1)</dt>
 <dd>
 <p>Output information on each ref.</p>
+</dd>
+<dt class="hdlist1"><a href="git-get-tar-commit-id.html">git-get-tar-commit-id</a>(1)</dt>
+<dd>
+<p>Extract commit ID from an archive created using git-archive.</p>
 </dd>
 <dt class="hdlist1"><a href="git-ls-files.html">git-ls-files</a>(1)</dt>
 <dd>
@@ -1162,6 +1158,10 @@ repositories.</p>
 <dt class="hdlist1"><a href="git-rev-list.html">git-rev-list</a>(1)</dt>
 <dd>
 <p>Lists commit objects in reverse chronological order.</p>
+</dd>
+<dt class="hdlist1"><a href="git-rev-parse.html">git-rev-parse</a>(1)</dt>
+<dd>
+<p>Pick out and massage parameters.</p>
 </dd>
 <dt class="hdlist1"><a href="git-show-index.html">git-show-index</a>(1)</dt>
 <dd>
@@ -1525,14 +1525,12 @@ archived into shared, read-only directories. This variable
 specifies a ":" separated (on Windows ";" separated) list
 of Git object directories which can be used to search for Git
 objects. New objects will not be written to these directories.</p>
-<div class="literalblock">
-<div class="content">
-<pre>Entries that begin with `"` (double-quote) will be interpreted
+<div class="paragraph">
+<p>Entries that begin with <code>"</code> (double-quote) will be interpreted
 as C-style quoted paths, removing leading and trailing
 double-quotes and respecting backslash escapes. E.g., the value
-`"path-with-\"-and-:-in-it":vanilla-path` has two paths:
-`path-with-"-and-:-in-it` and `vanilla-path`.</pre>
-</div>
+<code>"path-with-\"-and-:-in-it":vanilla-path</code> has two paths:
+<code>path-with-"-and-:-in-it</code> and <code>vanilla-path</code>.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>GIT_DIR</code></dt>
@@ -1781,8 +1779,8 @@ trace messages into this file descriptor.</p>
 <div class="paragraph">
 <p>Alternatively, if the variable is set to an absolute path
 (starting with a <em>/</em> character), Git will interpret this
-as a file path and will try to write the trace messages
-into it.</p>
+as a file path and will try to append the trace messages
+to it.</p>
 </div>
 <div class="paragraph">
 <p>Unsetting the variable, or setting it to empty, "0" or
@@ -2095,7 +2093,9 @@ the authors for specific parts of the project.</p>
 <div class="paragraph">
 <p>Report bugs to the Git mailing list &lt;<a href="mailto:git@vger.kernel.org">git@vger.kernel.org</a>&gt; where the
 development and maintenance is primarily done.  You do not have to be
-subscribed to the list to send a message there.</p>
+subscribed to the list to send a message there.  See the list archive
+at <a href="https://public-inbox.org/git" class="bare">https://public-inbox.org/git</a> for previous bug reports and other
+discussions.</p>
 </div>
 <div class="paragraph">
 <p>Issues which are security relevant should be disclosed privately to
@@ -2126,7 +2126,7 @@ the Git Security mailing list &lt;<a href="mailto:git-security@googlegroups.com"
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-10-04 20:49:12 UTC
+Last updated 2018-11-21 19:26:01 UTC
 </div>
 </div>
 </body>
