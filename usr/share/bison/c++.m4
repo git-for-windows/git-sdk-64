@@ -53,8 +53,14 @@ m4_define([b4_inline],
 # b4_cxx_portability
 # ------------------
 m4_define([b4_cxx_portability],
-[// Support move semantics when possible.
-#if defined __cplusplus && 201103L <= __cplusplus
+[#if defined __cplusplus
+# define YY_CPLUSPLUS __cplusplus
+#else
+# define YY_CPLUSPLUS 199711L
+#endif
+
+// Support move semantics when possible.
+#if 201103L <= YY_CPLUSPLUS
 # define YY_MOVE           std::move
 # define YY_MOVE_OR_COPY   move
 # define YY_MOVE_REF(Type) Type&&
@@ -272,7 +278,7 @@ m4_define([b4_symbol_type_declare],
       location_type location;])[
 
     private:
-#if defined __cplusplus && __cplusplus < 201103L
+#if YY_CPLUSPLUS < 201103L
       /// Assignment operator.
       basic_symbol& operator= (const basic_symbol& other);
 #endif

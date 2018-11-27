@@ -33,9 +33,7 @@ typedef std::vector<std::string> strings_type;
 
 %code // *.cc
 {
-#include <algorithm>
 #include <iostream>
-#include <iterator>
 #include <sstream>
 
   namespace yy
@@ -98,7 +96,7 @@ item:
 namespace yy
 {
   // Use nullptr with pre-C++11.
-#if defined __cplusplus && __cplusplus < 201103L
+#if !defined __cplusplus || __cplusplus < 201103L
 # define NULLPTR 0
 #else
 # define NULLPTR nullptr

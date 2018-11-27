@@ -145,8 +145,8 @@ minimizes the risk of private key leakage when serious bug like
 Heartbleed is exploited.  The neverbleed is disabled by default.  To
 enable it, use ``--with-neverbleed`` configure option.
 
-In order to compile the source code, gcc >= 4.8.3 or clang >= 3.4 is
-required.
+In order to compile the source code, gcc >= 6.0 or clang >= 6.0 is
+required.  C++ source code requires C++14 language features.
 
 .. note::
 
@@ -1332,7 +1332,7 @@ are:
 * Boost::Thread
 
 The server API is designed to build an HTTP/2 server very easily to utilize
-C++11 anonymous functions and closures.  The bare minimum example of
+C++14 anonymous functions and closures.  The bare minimum example of
 an HTTP/2 server looks like this:
 
 .. code-block:: cpp

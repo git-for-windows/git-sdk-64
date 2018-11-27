@@ -2,6 +2,7 @@
 # include <cerrno>
 # include <climits>
 # include <cstdlib>
+# include <cstring> // strerror
 # include <string>
 # include "driver.hh"
 # include "parser.hh"
@@ -23,7 +24,7 @@
 // Of course, when compiling C as C++, expect warnings about NULL.
 #if defined __clang__
 # pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
-#elif defined __GNUC__
+#elif defined __GNUC__ && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
 # pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
 #endif
 

@@ -125,7 +125,7 @@ m4_define([b4_variant_define],
       return *new (yyas_<T> ()) T ();
     }
 
-# if defined __cplusplus && 201103L <= __cplusplus
+# if 201103L <= YY_CPLUSPLUS
     /// Instantiate a \a T in here from \a t.
     template <typename T, typename U>
     T&
@@ -213,7 +213,7 @@ m4_define([b4_variant_define],
     void
     move (self_type& other)
     {
-# if defined __cplusplus && 201103L <= __cplusplus
+# if 201103L <= YY_CPLUSPLUS
       emplace<T> (std::move (other.as<T> ()));
 # else
       emplace<T> ();
@@ -222,7 +222,7 @@ m4_define([b4_variant_define],
       other.destroy<T> ();
     }
 
-# if defined __cplusplus && 201103L <= __cplusplus
+# if 201103L <= YY_CPLUSPLUS
     /// Move the content of \a other to this.
     template <typename T>
     void
@@ -379,26 +379,44 @@ b4_join(b4_symbol_if([$1], [has_type],
 # -----------------------------------
 # Generate a constructor declaration for basic_symbol from given type.
 m4_define([b4_basic_symbol_constructor_declare],
-[[      basic_symbol (]b4_join(
+[[# if 201103L <= YY_CPLUSPLUS
+      basic_symbol (]b4_join(
           [typename Base::kind_type t],
-          b4_symbol_if([$1], [has_type], [YY_RVREF (b4_symbol([$1], [type])) v]),
-          b4_locations_if([YY_RVREF (location_type) l]))[);
+          b4_symbol_if([$1], [has_type], [b4_symbol([$1], [type])&& v]),
+          b4_locations_if([location_type&& l]))[);
+#else
+      basic_symbol (]b4_join(
+          [typename Base::kind_type t],
+          b4_symbol_if([$1], [has_type], [const b4_symbol([$1], [type])& v]),
+          b4_locations_if([const location_type& l]))[);
+#endif
 ]])
 
 # b4_basic_symbol_constructor_define
 # ----------------------------------
 # Generate a constructor implementation for basic_symbol from given type.
 m4_define([b4_basic_symbol_constructor_define],
-[[  template <typename Base>
+[[# if 201103L <= YY_CPLUSPLUS
+  template <typename Base>
   ]b4_parser_class_name[::basic_symbol<Base>::basic_symbol (]b4_join(
           [typename Base::kind_type t],
-          b4_symbol_if([$1], [has_type], [YY_RVREF (b4_symbol([$1], [type])) v]),
-          b4_locations_if([YY_RVREF (location_type) l]))[)
+          b4_symbol_if([$1], [has_type], [b4_symbol([$1], [type])&& v]),
+          b4_locations_if([location_type&& l]))[)
     : Base (t)]b4_symbol_if([$1], [has_type], [
-    , value (YY_MOVE (v))])[]b4_locations_if([
-    , location (YY_MOVE (l))])[
+    , value (std::move (v))])[]b4_locations_if([
+    , location (std::move (l))])[
   {}
-
+#else
+  template <typename Base>
+  ]b4_parser_class_name[::basic_symbol<Base>::basic_symbol (]b4_join(
+          [typename Base::kind_type t],
+          b4_symbol_if([$1], [has_type], [const b4_symbol([$1], [type])& v]),
+          b4_locations_if([const location_type& l]))[)
+    : Base (t)]b4_symbol_if([$1], [has_type], [
+    , value (v)])[]b4_locations_if([
+    , location (l)])[
+  {}
+#endif
 ]])
 
 # b4_symbol_constructor_define
