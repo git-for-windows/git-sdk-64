@@ -87,6 +87,11 @@ API.  These can be used to fetch name strings from a font face.</doc>
     <alias name="tag_t" c:type="hb_tag_t">
       <type name="guint32" c:type="uint32_t"/>
     </alias>
+    <constant name="AAT_LAYOUT_NO_SELECTOR_INDEX"
+              value="65535"
+              c:type="HB_AAT_LAYOUT_NO_SELECTOR_INDEX">
+      <type name="gint" c:type="gint"/>
+    </constant>
     <constant name="BUFFER_REPLACEMENT_CODEPOINT_DEFAULT"
               value="65533"
               c:type="HB_BUFFER_REPLACEMENT_CODEPOINT_DEFAULT"
@@ -144,7 +149,9 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="OT_VAR_NO_AXIS_INDEX"
               value="4294967295"
               c:type="HB_OT_VAR_NO_AXIS_INDEX"
-              version="1.4.2">
+              version="1.4.2"
+              deprecated="1"
+              deprecated-version="2.2.0">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="SET_VALUE_INVALID"
@@ -169,15 +176,1584 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="2" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="3" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="2" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="2.1.3" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="2.2.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
+    <record name="aat_layout_feature_selector_info_t"
+            c:type="hb_aat_layout_feature_selector_info_t">
+      <field name="name_id" writable="1">
+        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+      </field>
+      <field name="enable" writable="1">
+        <type name="aat_layout_feature_selector_t"
+              c:type="hb_aat_layout_feature_selector_t"/>
+      </field>
+      <field name="disable" writable="1">
+        <type name="aat_layout_feature_selector_t"
+              c:type="hb_aat_layout_feature_selector_t"/>
+      </field>
+      <field name="reserved" readable="0" private="1">
+        <type name="guint" c:type="unsigned"/>
+      </field>
+    </record>
+    <enumeration name="aat_layout_feature_selector_t"
+                 version="2.2.0"
+                 glib:type-name="hb_aat_layout_feature_selector_t"
+                 glib:get-type="hb_gobject_aat_layout_feature_selector_get_type"
+                 c:type="hb_aat_layout_feature_selector_t">
+      <member name="invalid"
+              value="65535"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INVALID"
+              glib:nick="invalid">
+      </member>
+      <member name="all_type_features_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALL_TYPE_FEATURES_ON"
+              glib:nick="all-type-features-on">
+      </member>
+      <member name="all_type_features_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALL_TYPE_FEATURES_OFF"
+              glib:nick="all-type-features-off">
+      </member>
+      <member name="required_ligatures_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_REQUIRED_LIGATURES_ON"
+              glib:nick="required-ligatures-on">
+      </member>
+      <member name="required_ligatures_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_REQUIRED_LIGATURES_OFF"
+              glib:nick="required-ligatures-off">
+      </member>
+      <member name="common_ligatures_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_COMMON_LIGATURES_ON"
+              glib:nick="common-ligatures-on">
+      </member>
+      <member name="common_ligatures_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_COMMON_LIGATURES_OFF"
+              glib:nick="common-ligatures-off">
+      </member>
+      <member name="rare_ligatures_on"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_RARE_LIGATURES_ON"
+              glib:nick="rare-ligatures-on">
+      </member>
+      <member name="rare_ligatures_off"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_RARE_LIGATURES_OFF"
+              glib:nick="rare-ligatures-off">
+      </member>
+      <member name="logos_on"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LOGOS_ON"
+              glib:nick="logos-on">
+      </member>
+      <member name="logos_off"
+              value="7"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LOGOS_OFF"
+              glib:nick="logos-off">
+      </member>
+      <member name="rebus_pictures_on"
+              value="8"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_REBUS_PICTURES_ON"
+              glib:nick="rebus-pictures-on">
+      </member>
+      <member name="rebus_pictures_off"
+              value="9"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_REBUS_PICTURES_OFF"
+              glib:nick="rebus-pictures-off">
+      </member>
+      <member name="diphthong_ligatures_on"
+              value="10"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DIPHTHONG_LIGATURES_ON"
+              glib:nick="diphthong-ligatures-on">
+      </member>
+      <member name="diphthong_ligatures_off"
+              value="11"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DIPHTHONG_LIGATURES_OFF"
+              glib:nick="diphthong-ligatures-off">
+      </member>
+      <member name="squared_ligatures_on"
+              value="12"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SQUARED_LIGATURES_ON"
+              glib:nick="squared-ligatures-on">
+      </member>
+      <member name="squared_ligatures_off"
+              value="13"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SQUARED_LIGATURES_OFF"
+              glib:nick="squared-ligatures-off">
+      </member>
+      <member name="abbrev_squared_ligatures_on"
+              value="14"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ABBREV_SQUARED_LIGATURES_ON"
+              glib:nick="abbrev-squared-ligatures-on">
+      </member>
+      <member name="abbrev_squared_ligatures_off"
+              value="15"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ABBREV_SQUARED_LIGATURES_OFF"
+              glib:nick="abbrev-squared-ligatures-off">
+      </member>
+      <member name="symbol_ligatures_on"
+              value="16"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SYMBOL_LIGATURES_ON"
+              glib:nick="symbol-ligatures-on">
+      </member>
+      <member name="symbol_ligatures_off"
+              value="17"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SYMBOL_LIGATURES_OFF"
+              glib:nick="symbol-ligatures-off">
+      </member>
+      <member name="contextual_ligatures_on"
+              value="18"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_LIGATURES_ON"
+              glib:nick="contextual-ligatures-on">
+      </member>
+      <member name="contextual_ligatures_off"
+              value="19"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_LIGATURES_OFF"
+              glib:nick="contextual-ligatures-off">
+      </member>
+      <member name="historical_ligatures_on"
+              value="20"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HISTORICAL_LIGATURES_ON"
+              glib:nick="historical-ligatures-on">
+      </member>
+      <member name="historical_ligatures_off"
+              value="21"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HISTORICAL_LIGATURES_OFF"
+              glib:nick="historical-ligatures-off">
+      </member>
+      <member name="unconnected"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_UNCONNECTED"
+              glib:nick="unconnected">
+      </member>
+      <member name="partially_connected"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PARTIALLY_CONNECTED"
+              glib:nick="partially-connected">
+      </member>
+      <member name="cursive"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CURSIVE"
+              glib:nick="cursive">
+      </member>
+      <member name="upper_and_lower_case"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_UPPER_AND_LOWER_CASE"
+              glib:nick="upper-and-lower-case">
+      </member>
+      <member name="all_caps"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALL_CAPS"
+              glib:nick="all-caps">
+      </member>
+      <member name="all_lower_case"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALL_LOWER_CASE"
+              glib:nick="all-lower-case">
+      </member>
+      <member name="small_caps"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SMALL_CAPS"
+              glib:nick="small-caps">
+      </member>
+      <member name="initial_caps"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INITIAL_CAPS"
+              glib:nick="initial-caps">
+      </member>
+      <member name="initial_caps_and_small_caps"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INITIAL_CAPS_AND_SMALL_CAPS"
+              glib:nick="initial-caps-and-small-caps">
+      </member>
+      <member name="substitute_vertical_forms_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SUBSTITUTE_VERTICAL_FORMS_ON"
+              glib:nick="substitute-vertical-forms-on">
+      </member>
+      <member name="substitute_vertical_forms_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SUBSTITUTE_VERTICAL_FORMS_OFF"
+              glib:nick="substitute-vertical-forms-off">
+      </member>
+      <member name="linguistic_rearrangement_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LINGUISTIC_REARRANGEMENT_ON"
+              glib:nick="linguistic-rearrangement-on">
+      </member>
+      <member name="linguistic_rearrangement_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LINGUISTIC_REARRANGEMENT_OFF"
+              glib:nick="linguistic-rearrangement-off">
+      </member>
+      <member name="monospaced_numbers"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_MONOSPACED_NUMBERS"
+              glib:nick="monospaced-numbers">
+      </member>
+      <member name="proportional_numbers"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PROPORTIONAL_NUMBERS"
+              glib:nick="proportional-numbers">
+      </member>
+      <member name="third_width_numbers"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_THIRD_WIDTH_NUMBERS"
+              glib:nick="third-width-numbers">
+      </member>
+      <member name="quarter_width_numbers"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_QUARTER_WIDTH_NUMBERS"
+              glib:nick="quarter-width-numbers">
+      </member>
+      <member name="word_initial_swashes_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_WORD_INITIAL_SWASHES_ON"
+              glib:nick="word-initial-swashes-on">
+      </member>
+      <member name="word_initial_swashes_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_WORD_INITIAL_SWASHES_OFF"
+              glib:nick="word-initial-swashes-off">
+      </member>
+      <member name="word_final_swashes_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_WORD_FINAL_SWASHES_ON"
+              glib:nick="word-final-swashes-on">
+      </member>
+      <member name="word_final_swashes_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_WORD_FINAL_SWASHES_OFF"
+              glib:nick="word-final-swashes-off">
+      </member>
+      <member name="line_initial_swashes_on"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LINE_INITIAL_SWASHES_ON"
+              glib:nick="line-initial-swashes-on">
+      </member>
+      <member name="line_initial_swashes_off"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LINE_INITIAL_SWASHES_OFF"
+              glib:nick="line-initial-swashes-off">
+      </member>
+      <member name="line_final_swashes_on"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LINE_FINAL_SWASHES_ON"
+              glib:nick="line-final-swashes-on">
+      </member>
+      <member name="line_final_swashes_off"
+              value="7"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LINE_FINAL_SWASHES_OFF"
+              glib:nick="line-final-swashes-off">
+      </member>
+      <member name="non_final_swashes_on"
+              value="8"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NON_FINAL_SWASHES_ON"
+              glib:nick="non-final-swashes-on">
+      </member>
+      <member name="non_final_swashes_off"
+              value="9"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NON_FINAL_SWASHES_OFF"
+              glib:nick="non-final-swashes-off">
+      </member>
+      <member name="show_diacritics"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SHOW_DIACRITICS"
+              glib:nick="show-diacritics">
+      </member>
+      <member name="hide_diacritics"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HIDE_DIACRITICS"
+              glib:nick="hide-diacritics">
+      </member>
+      <member name="decompose_diacritics"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DECOMPOSE_DIACRITICS"
+              glib:nick="decompose-diacritics">
+      </member>
+      <member name="normal_position"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NORMAL_POSITION"
+              glib:nick="normal-position">
+      </member>
+      <member name="superiors"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SUPERIORS"
+              glib:nick="superiors">
+      </member>
+      <member name="inferiors"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INFERIORS"
+              glib:nick="inferiors">
+      </member>
+      <member name="ordinals"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ORDINALS"
+              glib:nick="ordinals">
+      </member>
+      <member name="scientific_inferiors"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SCIENTIFIC_INFERIORS"
+              glib:nick="scientific-inferiors">
+      </member>
+      <member name="no_fractions"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_FRACTIONS"
+              glib:nick="no-fractions">
+      </member>
+      <member name="vertical_fractions"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_VERTICAL_FRACTIONS"
+              glib:nick="vertical-fractions">
+      </member>
+      <member name="diagonal_fractions"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DIAGONAL_FRACTIONS"
+              glib:nick="diagonal-fractions">
+      </member>
+      <member name="prevent_overlap_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PREVENT_OVERLAP_ON"
+              glib:nick="prevent-overlap-on">
+      </member>
+      <member name="prevent_overlap_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PREVENT_OVERLAP_OFF"
+              glib:nick="prevent-overlap-off">
+      </member>
+      <member name="hyphens_to_em_dash_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HYPHENS_TO_EM_DASH_ON"
+              glib:nick="hyphens-to-em-dash-on">
+      </member>
+      <member name="hyphens_to_em_dash_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HYPHENS_TO_EM_DASH_OFF"
+              glib:nick="hyphens-to-em-dash-off">
+      </member>
+      <member name="hyphen_to_en_dash_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HYPHEN_TO_EN_DASH_ON"
+              glib:nick="hyphen-to-en-dash-on">
+      </member>
+      <member name="hyphen_to_en_dash_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HYPHEN_TO_EN_DASH_OFF"
+              glib:nick="hyphen-to-en-dash-off">
+      </member>
+      <member name="slashed_zero_on"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SLASHED_ZERO_ON"
+              glib:nick="slashed-zero-on">
+      </member>
+      <member name="slashed_zero_off"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SLASHED_ZERO_OFF"
+              glib:nick="slashed-zero-off">
+      </member>
+      <member name="form_interrobang_on"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_FORM_INTERROBANG_ON"
+              glib:nick="form-interrobang-on">
+      </member>
+      <member name="form_interrobang_off"
+              value="7"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_FORM_INTERROBANG_OFF"
+              glib:nick="form-interrobang-off">
+      </member>
+      <member name="smart_quotes_on"
+              value="8"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SMART_QUOTES_ON"
+              glib:nick="smart-quotes-on">
+      </member>
+      <member name="smart_quotes_off"
+              value="9"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SMART_QUOTES_OFF"
+              glib:nick="smart-quotes-off">
+      </member>
+      <member name="periods_to_ellipsis_on"
+              value="10"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PERIODS_TO_ELLIPSIS_ON"
+              glib:nick="periods-to-ellipsis-on">
+      </member>
+      <member name="periods_to_ellipsis_off"
+              value="11"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PERIODS_TO_ELLIPSIS_OFF"
+              glib:nick="periods-to-ellipsis-off">
+      </member>
+      <member name="hyphen_to_minus_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HYPHEN_TO_MINUS_ON"
+              glib:nick="hyphen-to-minus-on">
+      </member>
+      <member name="hyphen_to_minus_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HYPHEN_TO_MINUS_OFF"
+              glib:nick="hyphen-to-minus-off">
+      </member>
+      <member name="asterisk_to_multiply_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ASTERISK_TO_MULTIPLY_ON"
+              glib:nick="asterisk-to-multiply-on">
+      </member>
+      <member name="asterisk_to_multiply_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ASTERISK_TO_MULTIPLY_OFF"
+              glib:nick="asterisk-to-multiply-off">
+      </member>
+      <member name="slash_to_divide_on"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SLASH_TO_DIVIDE_ON"
+              glib:nick="slash-to-divide-on">
+      </member>
+      <member name="slash_to_divide_off"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SLASH_TO_DIVIDE_OFF"
+              glib:nick="slash-to-divide-off">
+      </member>
+      <member name="inequality_ligatures_on"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INEQUALITY_LIGATURES_ON"
+              glib:nick="inequality-ligatures-on">
+      </member>
+      <member name="inequality_ligatures_off"
+              value="7"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INEQUALITY_LIGATURES_OFF"
+              glib:nick="inequality-ligatures-off">
+      </member>
+      <member name="exponents_on"
+              value="8"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_EXPONENTS_ON"
+              glib:nick="exponents-on">
+      </member>
+      <member name="exponents_off"
+              value="9"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_EXPONENTS_OFF"
+              glib:nick="exponents-off">
+      </member>
+      <member name="mathematical_greek_on"
+              value="10"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_MATHEMATICAL_GREEK_ON"
+              glib:nick="mathematical-greek-on">
+      </member>
+      <member name="mathematical_greek_off"
+              value="11"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_MATHEMATICAL_GREEK_OFF"
+              glib:nick="mathematical-greek-off">
+      </member>
+      <member name="no_ornaments"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_ORNAMENTS"
+              glib:nick="no-ornaments">
+      </member>
+      <member name="dingbats"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DINGBATS"
+              glib:nick="dingbats">
+      </member>
+      <member name="pi_characters"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PI_CHARACTERS"
+              glib:nick="pi-characters">
+      </member>
+      <member name="fleurons"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_FLEURONS"
+              glib:nick="fleurons">
+      </member>
+      <member name="decorative_borders"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DECORATIVE_BORDERS"
+              glib:nick="decorative-borders">
+      </member>
+      <member name="international_symbols"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INTERNATIONAL_SYMBOLS"
+              glib:nick="international-symbols">
+      </member>
+      <member name="math_symbols"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_MATH_SYMBOLS"
+              glib:nick="math-symbols">
+      </member>
+      <member name="no_alternates"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_ALTERNATES"
+              glib:nick="no-alternates">
+      </member>
+      <member name="design_level1"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DESIGN_LEVEL1"
+              glib:nick="design-level1">
+      </member>
+      <member name="design_level2"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DESIGN_LEVEL2"
+              glib:nick="design-level2">
+      </member>
+      <member name="design_level3"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DESIGN_LEVEL3"
+              glib:nick="design-level3">
+      </member>
+      <member name="design_level4"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DESIGN_LEVEL4"
+              glib:nick="design-level4">
+      </member>
+      <member name="design_level5"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DESIGN_LEVEL5"
+              glib:nick="design-level5">
+      </member>
+      <member name="no_style_options"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_STYLE_OPTIONS"
+              glib:nick="no-style-options">
+      </member>
+      <member name="display_text"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DISPLAY_TEXT"
+              glib:nick="display-text">
+      </member>
+      <member name="engraved_text"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ENGRAVED_TEXT"
+              glib:nick="engraved-text">
+      </member>
+      <member name="illuminated_caps"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ILLUMINATED_CAPS"
+              glib:nick="illuminated-caps">
+      </member>
+      <member name="titling_caps"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TITLING_CAPS"
+              glib:nick="titling-caps">
+      </member>
+      <member name="tall_caps"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TALL_CAPS"
+              glib:nick="tall-caps">
+      </member>
+      <member name="traditional_characters"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TRADITIONAL_CHARACTERS"
+              glib:nick="traditional-characters">
+      </member>
+      <member name="simplified_characters"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SIMPLIFIED_CHARACTERS"
+              glib:nick="simplified-characters">
+      </member>
+      <member name="jis1978_characters"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_JIS1978_CHARACTERS"
+              glib:nick="jis1978-characters">
+      </member>
+      <member name="jis1983_characters"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_JIS1983_CHARACTERS"
+              glib:nick="jis1983-characters">
+      </member>
+      <member name="jis1990_characters"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_JIS1990_CHARACTERS"
+              glib:nick="jis1990-characters">
+      </member>
+      <member name="traditional_alt_one"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TRADITIONAL_ALT_ONE"
+              glib:nick="traditional-alt-one">
+      </member>
+      <member name="traditional_alt_two"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TRADITIONAL_ALT_TWO"
+              glib:nick="traditional-alt-two">
+      </member>
+      <member name="traditional_alt_three"
+              value="7"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TRADITIONAL_ALT_THREE"
+              glib:nick="traditional-alt-three">
+      </member>
+      <member name="traditional_alt_four"
+              value="8"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TRADITIONAL_ALT_FOUR"
+              glib:nick="traditional-alt-four">
+      </member>
+      <member name="traditional_alt_five"
+              value="9"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TRADITIONAL_ALT_FIVE"
+              glib:nick="traditional-alt-five">
+      </member>
+      <member name="expert_characters"
+              value="10"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_EXPERT_CHARACTERS"
+              glib:nick="expert-characters">
+      </member>
+      <member name="jis2004_characters"
+              value="11"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_JIS2004_CHARACTERS"
+              glib:nick="jis2004-characters">
+      </member>
+      <member name="hojo_characters"
+              value="12"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HOJO_CHARACTERS"
+              glib:nick="hojo-characters">
+      </member>
+      <member name="nlccharacters"
+              value="13"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NLCCHARACTERS"
+              glib:nick="nlccharacters">
+      </member>
+      <member name="traditional_names_characters"
+              value="14"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TRADITIONAL_NAMES_CHARACTERS"
+              glib:nick="traditional-names-characters">
+      </member>
+      <member name="lower_case_numbers"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LOWER_CASE_NUMBERS"
+              glib:nick="lower-case-numbers">
+      </member>
+      <member name="upper_case_numbers"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_UPPER_CASE_NUMBERS"
+              glib:nick="upper-case-numbers">
+      </member>
+      <member name="proportional_text"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PROPORTIONAL_TEXT"
+              glib:nick="proportional-text">
+      </member>
+      <member name="monospaced_text"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_MONOSPACED_TEXT"
+              glib:nick="monospaced-text">
+      </member>
+      <member name="half_width_text"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HALF_WIDTH_TEXT"
+              glib:nick="half-width-text">
+      </member>
+      <member name="third_width_text"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_THIRD_WIDTH_TEXT"
+              glib:nick="third-width-text">
+      </member>
+      <member name="quarter_width_text"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_QUARTER_WIDTH_TEXT"
+              glib:nick="quarter-width-text">
+      </member>
+      <member name="alt_proportional_text"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALT_PROPORTIONAL_TEXT"
+              glib:nick="alt-proportional-text">
+      </member>
+      <member name="alt_half_width_text"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALT_HALF_WIDTH_TEXT"
+              glib:nick="alt-half-width-text">
+      </member>
+      <member name="no_transliteration"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_TRANSLITERATION"
+              glib:nick="no-transliteration">
+      </member>
+      <member name="hanja_to_hangul"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HANJA_TO_HANGUL"
+              glib:nick="hanja-to-hangul">
+      </member>
+      <member name="hiragana_to_katakana"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HIRAGANA_TO_KATAKANA"
+              glib:nick="hiragana-to-katakana">
+      </member>
+      <member name="katakana_to_hiragana"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_KATAKANA_TO_HIRAGANA"
+              glib:nick="katakana-to-hiragana">
+      </member>
+      <member name="kana_to_romanization"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_KANA_TO_ROMANIZATION"
+              glib:nick="kana-to-romanization">
+      </member>
+      <member name="romanization_to_hiragana"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ROMANIZATION_TO_HIRAGANA"
+              glib:nick="romanization-to-hiragana">
+      </member>
+      <member name="romanization_to_katakana"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ROMANIZATION_TO_KATAKANA"
+              glib:nick="romanization-to-katakana">
+      </member>
+      <member name="hanja_to_hangul_alt_one"
+              value="7"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HANJA_TO_HANGUL_ALT_ONE"
+              glib:nick="hanja-to-hangul-alt-one">
+      </member>
+      <member name="hanja_to_hangul_alt_two"
+              value="8"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HANJA_TO_HANGUL_ALT_TWO"
+              glib:nick="hanja-to-hangul-alt-two">
+      </member>
+      <member name="hanja_to_hangul_alt_three"
+              value="9"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HANJA_TO_HANGUL_ALT_THREE"
+              glib:nick="hanja-to-hangul-alt-three">
+      </member>
+      <member name="no_annotation"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_ANNOTATION"
+              glib:nick="no-annotation">
+      </member>
+      <member name="box_annotation"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_BOX_ANNOTATION"
+              glib:nick="box-annotation">
+      </member>
+      <member name="rounded_box_annotation"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ROUNDED_BOX_ANNOTATION"
+              glib:nick="rounded-box-annotation">
+      </member>
+      <member name="circle_annotation"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CIRCLE_ANNOTATION"
+              glib:nick="circle-annotation">
+      </member>
+      <member name="inverted_circle_annotation"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INVERTED_CIRCLE_ANNOTATION"
+              glib:nick="inverted-circle-annotation">
+      </member>
+      <member name="parenthesis_annotation"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PARENTHESIS_ANNOTATION"
+              glib:nick="parenthesis-annotation">
+      </member>
+      <member name="period_annotation"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PERIOD_ANNOTATION"
+              glib:nick="period-annotation">
+      </member>
+      <member name="roman_numeral_annotation"
+              value="7"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ROMAN_NUMERAL_ANNOTATION"
+              glib:nick="roman-numeral-annotation">
+      </member>
+      <member name="diamond_annotation"
+              value="8"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DIAMOND_ANNOTATION"
+              glib:nick="diamond-annotation">
+      </member>
+      <member name="inverted_box_annotation"
+              value="9"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INVERTED_BOX_ANNOTATION"
+              glib:nick="inverted-box-annotation">
+      </member>
+      <member name="inverted_rounded_box_annotation"
+              value="10"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_INVERTED_ROUNDED_BOX_ANNOTATION"
+              glib:nick="inverted-rounded-box-annotation">
+      </member>
+      <member name="full_width_kana"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_FULL_WIDTH_KANA"
+              glib:nick="full-width-kana">
+      </member>
+      <member name="proportional_kana"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PROPORTIONAL_KANA"
+              glib:nick="proportional-kana">
+      </member>
+      <member name="full_width_ideographs"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_FULL_WIDTH_IDEOGRAPHS"
+              glib:nick="full-width-ideographs">
+      </member>
+      <member name="proportional_ideographs"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PROPORTIONAL_IDEOGRAPHS"
+              glib:nick="proportional-ideographs">
+      </member>
+      <member name="half_width_ideographs"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HALF_WIDTH_IDEOGRAPHS"
+              glib:nick="half-width-ideographs">
+      </member>
+      <member name="canonical_composition_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CANONICAL_COMPOSITION_ON"
+              glib:nick="canonical-composition-on">
+      </member>
+      <member name="canonical_composition_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CANONICAL_COMPOSITION_OFF"
+              glib:nick="canonical-composition-off">
+      </member>
+      <member name="compatibility_composition_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_COMPATIBILITY_COMPOSITION_ON"
+              glib:nick="compatibility-composition-on">
+      </member>
+      <member name="compatibility_composition_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_COMPATIBILITY_COMPOSITION_OFF"
+              glib:nick="compatibility-composition-off">
+      </member>
+      <member name="transcoding_composition_on"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TRANSCODING_COMPOSITION_ON"
+              glib:nick="transcoding-composition-on">
+      </member>
+      <member name="transcoding_composition_off"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_TRANSCODING_COMPOSITION_OFF"
+              glib:nick="transcoding-composition-off">
+      </member>
+      <member name="no_ruby_kana"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_RUBY_KANA"
+              glib:nick="no-ruby-kana">
+      </member>
+      <member name="ruby_kana"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_RUBY_KANA"
+              glib:nick="ruby-kana">
+      </member>
+      <member name="ruby_kana_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_RUBY_KANA_ON"
+              glib:nick="ruby-kana-on">
+      </member>
+      <member name="ruby_kana_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_RUBY_KANA_OFF"
+              glib:nick="ruby-kana-off">
+      </member>
+      <member name="no_cjk_symbol_alternatives"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_CJK_SYMBOL_ALTERNATIVES"
+              glib:nick="no-cjk-symbol-alternatives">
+      </member>
+      <member name="cjk_symbol_alt_one"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_SYMBOL_ALT_ONE"
+              glib:nick="cjk-symbol-alt-one">
+      </member>
+      <member name="cjk_symbol_alt_two"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_SYMBOL_ALT_TWO"
+              glib:nick="cjk-symbol-alt-two">
+      </member>
+      <member name="cjk_symbol_alt_three"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_SYMBOL_ALT_THREE"
+              glib:nick="cjk-symbol-alt-three">
+      </member>
+      <member name="cjk_symbol_alt_four"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_SYMBOL_ALT_FOUR"
+              glib:nick="cjk-symbol-alt-four">
+      </member>
+      <member name="cjk_symbol_alt_five"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_SYMBOL_ALT_FIVE"
+              glib:nick="cjk-symbol-alt-five">
+      </member>
+      <member name="no_ideographic_alternatives"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_IDEOGRAPHIC_ALTERNATIVES"
+              glib:nick="no-ideographic-alternatives">
+      </member>
+      <member name="ideographic_alt_one"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_IDEOGRAPHIC_ALT_ONE"
+              glib:nick="ideographic-alt-one">
+      </member>
+      <member name="ideographic_alt_two"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_IDEOGRAPHIC_ALT_TWO"
+              glib:nick="ideographic-alt-two">
+      </member>
+      <member name="ideographic_alt_three"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_IDEOGRAPHIC_ALT_THREE"
+              glib:nick="ideographic-alt-three">
+      </member>
+      <member name="ideographic_alt_four"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_IDEOGRAPHIC_ALT_FOUR"
+              glib:nick="ideographic-alt-four">
+      </member>
+      <member name="ideographic_alt_five"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_IDEOGRAPHIC_ALT_FIVE"
+              glib:nick="ideographic-alt-five">
+      </member>
+      <member name="cjk_vertical_roman_centered"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_VERTICAL_ROMAN_CENTERED"
+              glib:nick="cjk-vertical-roman-centered">
+      </member>
+      <member name="cjk_vertical_roman_hbaseline"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_VERTICAL_ROMAN_HBASELINE"
+              glib:nick="cjk-vertical-roman-hbaseline">
+      </member>
+      <member name="no_cjk_italic_roman"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_CJK_ITALIC_ROMAN"
+              glib:nick="no-cjk-italic-roman">
+      </member>
+      <member name="cjk_italic_roman"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_ITALIC_ROMAN"
+              glib:nick="cjk-italic-roman">
+      </member>
+      <member name="cjk_italic_roman_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_ITALIC_ROMAN_ON"
+              glib:nick="cjk-italic-roman-on">
+      </member>
+      <member name="cjk_italic_roman_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CJK_ITALIC_ROMAN_OFF"
+              glib:nick="cjk-italic-roman-off">
+      </member>
+      <member name="case_sensitive_layout_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CASE_SENSITIVE_LAYOUT_ON"
+              glib:nick="case-sensitive-layout-on">
+      </member>
+      <member name="case_sensitive_layout_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CASE_SENSITIVE_LAYOUT_OFF"
+              glib:nick="case-sensitive-layout-off">
+      </member>
+      <member name="case_sensitive_spacing_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CASE_SENSITIVE_SPACING_ON"
+              glib:nick="case-sensitive-spacing-on">
+      </member>
+      <member name="case_sensitive_spacing_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CASE_SENSITIVE_SPACING_OFF"
+              glib:nick="case-sensitive-spacing-off">
+      </member>
+      <member name="alternate_horiz_kana_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALTERNATE_HORIZ_KANA_ON"
+              glib:nick="alternate-horiz-kana-on">
+      </member>
+      <member name="alternate_horiz_kana_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALTERNATE_HORIZ_KANA_OFF"
+              glib:nick="alternate-horiz-kana-off">
+      </member>
+      <member name="alternate_vert_kana_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALTERNATE_VERT_KANA_ON"
+              glib:nick="alternate-vert-kana-on">
+      </member>
+      <member name="alternate_vert_kana_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_ALTERNATE_VERT_KANA_OFF"
+              glib:nick="alternate-vert-kana-off">
+      </member>
+      <member name="no_stylistic_alternates"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_NO_STYLISTIC_ALTERNATES"
+              glib:nick="no-stylistic-alternates">
+      </member>
+      <member name="stylistic_alt_one_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_ONE_ON"
+              glib:nick="stylistic-alt-one-on">
+      </member>
+      <member name="stylistic_alt_one_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_ONE_OFF"
+              glib:nick="stylistic-alt-one-off">
+      </member>
+      <member name="stylistic_alt_two_on"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_TWO_ON"
+              glib:nick="stylistic-alt-two-on">
+      </member>
+      <member name="stylistic_alt_two_off"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_TWO_OFF"
+              glib:nick="stylistic-alt-two-off">
+      </member>
+      <member name="stylistic_alt_three_on"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_THREE_ON"
+              glib:nick="stylistic-alt-three-on">
+      </member>
+      <member name="stylistic_alt_three_off"
+              value="7"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_THREE_OFF"
+              glib:nick="stylistic-alt-three-off">
+      </member>
+      <member name="stylistic_alt_four_on"
+              value="8"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_ON"
+              glib:nick="stylistic-alt-four-on">
+      </member>
+      <member name="stylistic_alt_four_off"
+              value="9"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOUR_OFF"
+              glib:nick="stylistic-alt-four-off">
+      </member>
+      <member name="stylistic_alt_five_on"
+              value="10"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FIVE_ON"
+              glib:nick="stylistic-alt-five-on">
+      </member>
+      <member name="stylistic_alt_five_off"
+              value="11"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FIVE_OFF"
+              glib:nick="stylistic-alt-five-off">
+      </member>
+      <member name="stylistic_alt_six_on"
+              value="12"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_SIX_ON"
+              glib:nick="stylistic-alt-six-on">
+      </member>
+      <member name="stylistic_alt_six_off"
+              value="13"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_SIX_OFF"
+              glib:nick="stylistic-alt-six-off">
+      </member>
+      <member name="stylistic_alt_seven_on"
+              value="14"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_SEVEN_ON"
+              glib:nick="stylistic-alt-seven-on">
+      </member>
+      <member name="stylistic_alt_seven_off"
+              value="15"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_SEVEN_OFF"
+              glib:nick="stylistic-alt-seven-off">
+      </member>
+      <member name="stylistic_alt_eight_on"
+              value="16"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_EIGHT_ON"
+              glib:nick="stylistic-alt-eight-on">
+      </member>
+      <member name="stylistic_alt_eight_off"
+              value="17"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_EIGHT_OFF"
+              glib:nick="stylistic-alt-eight-off">
+      </member>
+      <member name="stylistic_alt_nine_on"
+              value="18"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_NINE_ON"
+              glib:nick="stylistic-alt-nine-on">
+      </member>
+      <member name="stylistic_alt_nine_off"
+              value="19"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_NINE_OFF"
+              glib:nick="stylistic-alt-nine-off">
+      </member>
+      <member name="stylistic_alt_ten_on"
+              value="20"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_TEN_ON"
+              glib:nick="stylistic-alt-ten-on">
+      </member>
+      <member name="stylistic_alt_ten_off"
+              value="21"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_TEN_OFF"
+              glib:nick="stylistic-alt-ten-off">
+      </member>
+      <member name="stylistic_alt_eleven_on"
+              value="22"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_ELEVEN_ON"
+              glib:nick="stylistic-alt-eleven-on">
+      </member>
+      <member name="stylistic_alt_eleven_off"
+              value="23"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_ELEVEN_OFF"
+              glib:nick="stylistic-alt-eleven-off">
+      </member>
+      <member name="stylistic_alt_twelve_on"
+              value="24"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_TWELVE_ON"
+              glib:nick="stylistic-alt-twelve-on">
+      </member>
+      <member name="stylistic_alt_twelve_off"
+              value="25"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_TWELVE_OFF"
+              glib:nick="stylistic-alt-twelve-off">
+      </member>
+      <member name="stylistic_alt_thirteen_on"
+              value="26"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_THIRTEEN_ON"
+              glib:nick="stylistic-alt-thirteen-on">
+      </member>
+      <member name="stylistic_alt_thirteen_off"
+              value="27"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_THIRTEEN_OFF"
+              glib:nick="stylistic-alt-thirteen-off">
+      </member>
+      <member name="stylistic_alt_fourteen_on"
+              value="28"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOURTEEN_ON"
+              glib:nick="stylistic-alt-fourteen-on">
+      </member>
+      <member name="stylistic_alt_fourteen_off"
+              value="29"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FOURTEEN_OFF"
+              glib:nick="stylistic-alt-fourteen-off">
+      </member>
+      <member name="stylistic_alt_fifteen_on"
+              value="30"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FIFTEEN_ON"
+              glib:nick="stylistic-alt-fifteen-on">
+      </member>
+      <member name="stylistic_alt_fifteen_off"
+              value="31"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_FIFTEEN_OFF"
+              glib:nick="stylistic-alt-fifteen-off">
+      </member>
+      <member name="stylistic_alt_sixteen_on"
+              value="32"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_SIXTEEN_ON"
+              glib:nick="stylistic-alt-sixteen-on">
+      </member>
+      <member name="stylistic_alt_sixteen_off"
+              value="33"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_SIXTEEN_OFF"
+              glib:nick="stylistic-alt-sixteen-off">
+      </member>
+      <member name="stylistic_alt_seventeen_on"
+              value="34"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_SEVENTEEN_ON"
+              glib:nick="stylistic-alt-seventeen-on">
+      </member>
+      <member name="stylistic_alt_seventeen_off"
+              value="35"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_SEVENTEEN_OFF"
+              glib:nick="stylistic-alt-seventeen-off">
+      </member>
+      <member name="stylistic_alt_eighteen_on"
+              value="36"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_EIGHTEEN_ON"
+              glib:nick="stylistic-alt-eighteen-on">
+      </member>
+      <member name="stylistic_alt_eighteen_off"
+              value="37"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_EIGHTEEN_OFF"
+              glib:nick="stylistic-alt-eighteen-off">
+      </member>
+      <member name="stylistic_alt_nineteen_on"
+              value="38"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_NINETEEN_ON"
+              glib:nick="stylistic-alt-nineteen-on">
+      </member>
+      <member name="stylistic_alt_nineteen_off"
+              value="39"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_NINETEEN_OFF"
+              glib:nick="stylistic-alt-nineteen-off">
+      </member>
+      <member name="stylistic_alt_twenty_on"
+              value="40"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_TWENTY_ON"
+              glib:nick="stylistic-alt-twenty-on">
+      </member>
+      <member name="stylistic_alt_twenty_off"
+              value="41"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_STYLISTIC_ALT_TWENTY_OFF"
+              glib:nick="stylistic-alt-twenty-off">
+      </member>
+      <member name="contextual_alternates_on"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_ALTERNATES_ON"
+              glib:nick="contextual-alternates-on">
+      </member>
+      <member name="contextual_alternates_off"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_ALTERNATES_OFF"
+              glib:nick="contextual-alternates-off">
+      </member>
+      <member name="swash_alternates_on"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SWASH_ALTERNATES_ON"
+              glib:nick="swash-alternates-on">
+      </member>
+      <member name="swash_alternates_off"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_SWASH_ALTERNATES_OFF"
+              glib:nick="swash-alternates-off">
+      </member>
+      <member name="contextual_swash_alternates_on"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_SWASH_ALTERNATES_ON"
+              glib:nick="contextual-swash-alternates-on">
+      </member>
+      <member name="contextual_swash_alternates_off"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_CONTEXTUAL_SWASH_ALTERNATES_OFF"
+              glib:nick="contextual-swash-alternates-off">
+      </member>
+      <member name="default_lower_case"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DEFAULT_LOWER_CASE"
+              glib:nick="default-lower-case">
+      </member>
+      <member name="lower_case_small_caps"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LOWER_CASE_SMALL_CAPS"
+              glib:nick="lower-case-small-caps">
+      </member>
+      <member name="lower_case_petite_caps"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_LOWER_CASE_PETITE_CAPS"
+              glib:nick="lower-case-petite-caps">
+      </member>
+      <member name="default_upper_case"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DEFAULT_UPPER_CASE"
+              glib:nick="default-upper-case">
+      </member>
+      <member name="upper_case_small_caps"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_UPPER_CASE_SMALL_CAPS"
+              glib:nick="upper-case-small-caps">
+      </member>
+      <member name="upper_case_petite_caps"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_UPPER_CASE_PETITE_CAPS"
+              glib:nick="upper-case-petite-caps">
+      </member>
+      <member name="half_width_cjk_roman"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_HALF_WIDTH_CJK_ROMAN"
+              glib:nick="half-width-cjk-roman">
+      </member>
+      <member name="proportional_cjk_roman"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_PROPORTIONAL_CJK_ROMAN"
+              glib:nick="proportional-cjk-roman">
+      </member>
+      <member name="default_cjk_roman"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_DEFAULT_CJK_ROMAN"
+              glib:nick="default-cjk-roman">
+      </member>
+      <member name="full_width_cjk_roman"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_SELECTOR_FULL_WIDTH_CJK_ROMAN"
+              glib:nick="full-width-cjk-roman">
+      </member>
+    </enumeration>
+    <function name="aat_layout_feature_type_get_name_id"
+              c:identifier="hb_aat_layout_feature_type_get_name_id"
+              version="2.2.0">
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Name ID index</doc>
+        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a face object</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="feature_type" transfer-ownership="none">
+          <doc xml:space="preserve">feature id</doc>
+          <type name="aat_layout_feature_type_t"
+                c:type="hb_aat_layout_feature_type_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="aat_layout_feature_type_get_selector_infos"
+              c:identifier="hb_aat_layout_feature_type_get_selector_infos">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="feature_type" transfer-ownership="none">
+          <type name="aat_layout_feature_type_t"
+                c:type="hb_aat_layout_feature_type_t"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="selector_count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="selectors" transfer-ownership="none">
+          <type name="aat_layout_feature_selector_info_t"
+                c:type="hb_aat_layout_feature_selector_info_t*"/>
+        </parameter>
+        <parameter name="default_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <enumeration name="aat_layout_feature_type_t"
+                 version="2.2.0"
+                 glib:type-name="hb_aat_layout_feature_type_t"
+                 glib:get-type="hb_gobject_aat_layout_feature_type_get_type"
+                 c:type="hb_aat_layout_feature_type_t">
+      <member name="invalid"
+              value="65535"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_INVALID"
+              glib:nick="invalid">
+      </member>
+      <member name="all_typographic"
+              value="0"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_ALL_TYPOGRAPHIC"
+              glib:nick="all-typographic">
+      </member>
+      <member name="ligatures"
+              value="1"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_LIGATURES"
+              glib:nick="ligatures">
+      </member>
+      <member name="curisve_connection"
+              value="2"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_CURISVE_CONNECTION"
+              glib:nick="curisve-connection">
+      </member>
+      <member name="letter_case"
+              value="3"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_LETTER_CASE"
+              glib:nick="letter-case">
+      </member>
+      <member name="vertical_substitution"
+              value="4"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_VERTICAL_SUBSTITUTION"
+              glib:nick="vertical-substitution">
+      </member>
+      <member name="linguistic_rearrangement"
+              value="5"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_LINGUISTIC_REARRANGEMENT"
+              glib:nick="linguistic-rearrangement">
+      </member>
+      <member name="number_spacing"
+              value="6"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_NUMBER_SPACING"
+              glib:nick="number-spacing">
+      </member>
+      <member name="smart_swash_type"
+              value="8"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_SMART_SWASH_TYPE"
+              glib:nick="smart-swash-type">
+      </member>
+      <member name="diacritics_type"
+              value="9"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_DIACRITICS_TYPE"
+              glib:nick="diacritics-type">
+      </member>
+      <member name="vertical_position"
+              value="10"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_VERTICAL_POSITION"
+              glib:nick="vertical-position">
+      </member>
+      <member name="fractions"
+              value="11"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_FRACTIONS"
+              glib:nick="fractions">
+      </member>
+      <member name="overlapping_characters_type"
+              value="13"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_OVERLAPPING_CHARACTERS_TYPE"
+              glib:nick="overlapping-characters-type">
+      </member>
+      <member name="typographic_extras"
+              value="14"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_TYPOGRAPHIC_EXTRAS"
+              glib:nick="typographic-extras">
+      </member>
+      <member name="mathematical_extras"
+              value="15"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_MATHEMATICAL_EXTRAS"
+              glib:nick="mathematical-extras">
+      </member>
+      <member name="ornament_sets_type"
+              value="16"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_ORNAMENT_SETS_TYPE"
+              glib:nick="ornament-sets-type">
+      </member>
+      <member name="character_alternatives"
+              value="17"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_CHARACTER_ALTERNATIVES"
+              glib:nick="character-alternatives">
+      </member>
+      <member name="design_complexity_type"
+              value="18"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_DESIGN_COMPLEXITY_TYPE"
+              glib:nick="design-complexity-type">
+      </member>
+      <member name="style_options"
+              value="19"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_STYLE_OPTIONS"
+              glib:nick="style-options">
+      </member>
+      <member name="character_shape"
+              value="20"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_CHARACTER_SHAPE"
+              glib:nick="character-shape">
+      </member>
+      <member name="number_case"
+              value="21"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_NUMBER_CASE"
+              glib:nick="number-case">
+      </member>
+      <member name="text_spacing"
+              value="22"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_TEXT_SPACING"
+              glib:nick="text-spacing">
+      </member>
+      <member name="transliteration"
+              value="23"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_TRANSLITERATION"
+              glib:nick="transliteration">
+      </member>
+      <member name="annotation_type"
+              value="24"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_ANNOTATION_TYPE"
+              glib:nick="annotation-type">
+      </member>
+      <member name="kana_spacing_type"
+              value="25"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_KANA_SPACING_TYPE"
+              glib:nick="kana-spacing-type">
+      </member>
+      <member name="ideographic_spacing_type"
+              value="26"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_IDEOGRAPHIC_SPACING_TYPE"
+              glib:nick="ideographic-spacing-type">
+      </member>
+      <member name="unicode_decomposition_type"
+              value="27"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_UNICODE_DECOMPOSITION_TYPE"
+              glib:nick="unicode-decomposition-type">
+      </member>
+      <member name="ruby_kana"
+              value="28"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_RUBY_KANA"
+              glib:nick="ruby-kana">
+      </member>
+      <member name="cjk_symbol_alternatives_type"
+              value="29"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_CJK_SYMBOL_ALTERNATIVES_TYPE"
+              glib:nick="cjk-symbol-alternatives-type">
+      </member>
+      <member name="ideographic_alternatives_type"
+              value="30"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_IDEOGRAPHIC_ALTERNATIVES_TYPE"
+              glib:nick="ideographic-alternatives-type">
+      </member>
+      <member name="cjk_vertical_roman_placement_type"
+              value="31"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_CJK_VERTICAL_ROMAN_PLACEMENT_TYPE"
+              glib:nick="cjk-vertical-roman-placement-type">
+      </member>
+      <member name="italic_cjk_roman"
+              value="32"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_ITALIC_CJK_ROMAN"
+              glib:nick="italic-cjk-roman">
+      </member>
+      <member name="case_sensitive_layout"
+              value="33"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_CASE_SENSITIVE_LAYOUT"
+              glib:nick="case-sensitive-layout">
+      </member>
+      <member name="alternate_kana"
+              value="34"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_ALTERNATE_KANA"
+              glib:nick="alternate-kana">
+      </member>
+      <member name="stylistic_alternatives"
+              value="35"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_STYLISTIC_ALTERNATIVES"
+              glib:nick="stylistic-alternatives">
+      </member>
+      <member name="contextual_alternatives"
+              value="36"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_CONTEXTUAL_ALTERNATIVES"
+              glib:nick="contextual-alternatives">
+      </member>
+      <member name="lower_case"
+              value="37"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_LOWER_CASE"
+              glib:nick="lower-case">
+      </member>
+      <member name="upper_case"
+              value="38"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_UPPER_CASE"
+              glib:nick="upper-case">
+      </member>
+      <member name="language_tag_type"
+              value="39"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_LANGUAGE_TAG_TYPE"
+              glib:nick="language-tag-type">
+      </member>
+      <member name="cjk_roman_spacing_type"
+              value="103"
+              c:identifier="HB_AAT_LAYOUT_FEATURE_TYPE_CJK_ROMAN_SPACING_TYPE"
+              glib:nick="cjk-roman-spacing-type">
+      </member>
+    </enumeration>
+    <function name="aat_layout_get_feature_types"
+              c:identifier="hb_aat_layout_get_feature_types"
+              version="2.2.0">
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Number of all available feature types.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a face object</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <doc xml:space="preserve">iteration's start offset</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="feature_count"
+                   direction="out"
+                   caller-allocates="0"
+                   transfer-ownership="full"
+                   nullable="1">
+          <doc xml:space="preserve">buffer size as input, filled size as output</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="features"
+                   direction="out"
+                   caller-allocates="1"
+                   transfer-ownership="none">
+          <doc xml:space="preserve">features buffer</doc>
+          <array length="2"
+                 zero-terminated="0"
+                 c:type="hb_aat_layout_feature_type_t*">
+            <type name="aat_layout_feature_type_t"
+                  c:type="hb_aat_layout_feature_type_t"/>
+          </array>
+        </parameter>
+      </parameters>
+    </function>
     <function name="blob_copy_writable_or_fail"
               c:identifier="hb_blob_copy_writable_or_fail"
               version="1.8.0">
@@ -5034,6 +6610,7 @@ There are 72 points in an inch.</doc>
       </field>
     </record>
     <bitfield name="glyph_flags_t"
+              version="1.5.0"
               glib:type-name="hb_glyph_flags_t"
               glib:get-type="hb_gobject_glyph_flags_get_type"
               c:type="hb_glyph_flags_t">
@@ -7597,12 +9174,56 @@ the language tag results</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="ot_var_axis_t" c:type="hb_ot_var_axis_t" version="1.4.2">
+    <bitfield name="ot_var_axis_flags_t"
+              version="2.2.0"
+              glib:type-name="hb_ot_var_axis_flags_t"
+              glib:get-type="hb_gobject_ot_var_axis_flags_get_type"
+              c:type="hb_ot_var_axis_flags_t">
+      <member name="hidden"
+              value="1"
+              c:identifier="HB_OT_VAR_AXIS_FLAG_HIDDEN"
+              glib:nick="hidden">
+        <doc xml:space="preserve">The axis should not be exposed directly in user interfaces.</doc>
+      </member>
+    </bitfield>
+    <record name="ot_var_axis_info_t"
+            c:type="hb_ot_var_axis_info_t"
+            version="2.2.0">
+      <field name="axis_index" writable="1">
+        <type name="guint" c:type="unsigned"/>
+      </field>
       <field name="tag" writable="1">
         <type name="tag_t" c:type="hb_tag_t"/>
       </field>
       <field name="name_id" writable="1">
+        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+      </field>
+      <field name="flags" writable="1">
+        <type name="ot_var_axis_flags_t" c:type="hb_ot_var_axis_flags_t"/>
+      </field>
+      <field name="min_value" writable="1">
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="default_value" writable="1">
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="max_value" writable="1">
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="reserved" readable="0" private="1">
         <type name="guint" c:type="unsigned"/>
+      </field>
+    </record>
+    <record name="ot_var_axis_t"
+            c:type="hb_ot_var_axis_t"
+            version="1.4.2"
+            deprecated="1"
+            deprecated-version="2.2.0">
+      <field name="tag" writable="1">
+        <type name="tag_t" c:type="hb_tag_t"/>
+      </field>
+      <field name="name_id" writable="1">
+        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
       </field>
       <field name="min_value" writable="1">
         <type name="gfloat" c:type="float"/>
@@ -7616,7 +9237,9 @@ the language tag results</doc>
     </record>
     <function name="ot_var_find_axis"
               c:identifier="hb_ot_var_find_axis"
-              version="1.4.2">
+              version="1.4.2"
+              deprecated="1"
+              deprecated-version="2.2.0">
       <return-value transfer-ownership="none">
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
@@ -7635,9 +9258,29 @@ the language tag results</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_var_find_axis_info"
+              c:identifier="hb_ot_var_find_axis_info"
+              version="2.2.0">
+      <return-value transfer-ownership="none">
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="axis_tag" transfer-ownership="none">
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="axis_info" transfer-ownership="none">
+          <type name="ot_var_axis_info_t" c:type="hb_ot_var_axis_info_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_var_get_axes"
               c:identifier="hb_ot_var_get_axes"
-              version="1.4.2">
+              version="1.4.2"
+              deprecated="1"
+              deprecated-version="2.2.0">
       <return-value transfer-ownership="none">
         <type name="guint" c:type="unsigned int"/>
       </return-value>
@@ -7668,11 +9311,42 @@ the language tag results</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_var_get_axis_infos"
+              c:identifier="hb_ot_var_get_axis_infos"
+              version="2.2.0">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="axes_count" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="axes_array" transfer-ownership="none">
+          <type name="ot_var_axis_info_t" c:type="hb_ot_var_axis_info_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_var_get_named_instance_count"
+              c:identifier="hb_ot_var_get_named_instance_count">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_var_has_data"
               c:identifier="hb_ot_var_has_data"
               version="1.4.2">
-      <doc xml:space="preserve">This function allows to verify the presence of OpenType variation data on the face.
-Alternatively, use hb_ot_var_get_axis_count().</doc>
+      <doc xml:space="preserve">This function allows to verify the presence of OpenType variation data on the face.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">true if face has a `fvar' table and false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
@@ -7681,6 +9355,54 @@ Alternatively, use hb_ot_var_get_axis_count().</doc>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">#hb_face_t to test</doc>
           <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_var_named_instance_get_design_coords"
+              c:identifier="hb_ot_var_named_instance_get_design_coords">
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="instance_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="coords_length" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="coords" transfer-ownership="none">
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_var_named_instance_get_postscript_name_id"
+              c:identifier="hb_ot_var_named_instance_get_postscript_name_id">
+      <return-value transfer-ownership="none">
+        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="instance_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_var_named_instance_get_subfamily_name_id"
+              c:identifier="hb_ot_var_named_instance_get_subfamily_name_id">
+      <return-value transfer-ownership="none">
+        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="instance_index" transfer-ownership="none">
+          <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
     </function>

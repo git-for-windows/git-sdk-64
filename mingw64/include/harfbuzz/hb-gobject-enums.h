@@ -40,6 +40,12 @@
 
 HB_BEGIN_DECLS
 HB_EXTERN GType
+hb_gobject_aat_layout_feature_type_get_type (void) G_GNUC_CONST;
+#define HB_GOBJECT_TYPE_AAT_LAYOUT_FEATURE_TYPE (hb_gobject_aat_layout_feature_type_get_type ())
+HB_EXTERN GType
+hb_gobject_aat_layout_feature_selector_get_type (void) G_GNUC_CONST;
+#define HB_GOBJECT_TYPE_AAT_LAYOUT_FEATURE_SELECTOR (hb_gobject_aat_layout_feature_selector_get_type ())
+HB_EXTERN GType
 hb_gobject_memory_mode_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_MEMORY_MODE (hb_gobject_memory_mode_get_type ())
 HB_EXTERN GType
@@ -84,6 +90,9 @@ hb_gobject_ot_math_kern_get_type (void) G_GNUC_CONST;
 HB_EXTERN GType
 hb_gobject_ot_math_glyph_part_flags_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_MATH_GLYPH_PART_FLAGS (hb_gobject_ot_math_glyph_part_flags_get_type ())
+HB_EXTERN GType
+hb_gobject_ot_var_axis_flags_get_type (void) G_GNUC_CONST;
+#define HB_GOBJECT_TYPE_OT_VAR_AXIS_FLAGS (hb_gobject_ot_var_axis_flags_get_type ())
 HB_EXTERN GType
 hb_gobject_unicode_general_category_get_type (void) G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_UNICODE_GENERAL_CATEGORY (hb_gobject_unicode_general_category_get_type ())
