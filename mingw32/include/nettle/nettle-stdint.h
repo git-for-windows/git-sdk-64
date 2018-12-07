@@ -2,7 +2,7 @@
 #define __NETTLE_STDINT_H 1
 #ifndef _GENERATED_STDINT_H
 #define _GENERATED_STDINT_H " "
-/* generated using gnu compiler i686-w64-mingw32-gcc.exe (Rev1, Built by MSYS2 project) 7.2.0 */
+/* generated using gnu compiler i686-w64-mingw32-gcc.exe (Rev2, Built by MSYS2 project) 7.3.0 */
 #define _STDINT_HAVE_STDINT_H 1
 
 /* ................... shortcircuit part ........................... */
