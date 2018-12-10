@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.4"
+#define GNUTLS_VERSION "3.6.5"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 4
+#define GNUTLS_VERSION_PATCH 5
 
-#define GNUTLS_VERSION_NUMBER 0x030604
+#define GNUTLS_VERSION_NUMBER 0x030605
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -99,6 +99,9 @@ extern "C" {
  * @GNUTLS_CIPHER_AES_128_CBC: AES in CBC mode with 128-bit keys.
  * @GNUTLS_CIPHER_AES_192_CBC: AES in CBC mode with 192-bit keys.
  * @GNUTLS_CIPHER_AES_256_CBC: AES in CBC mode with 256-bit keys.
+ * @GNUTLS_CIPHER_AES_128_CFB8: AES in CFB8 mode with 128-bit keys.
+ * @GNUTLS_CIPHER_AES_192_CFB8: AES in CFB8 mode with 192-bit keys.
+ * @GNUTLS_CIPHER_AES_256_CFB8: AES in CFB8 mode with 256-bit keys.
  * @GNUTLS_CIPHER_ARCFOUR_40: ARCFOUR stream cipher with 40-bit keys.
  * @GNUTLS_CIPHER_CAMELLIA_128_CBC: Camellia in CBC mode with 128-bit keys.
  * @GNUTLS_CIPHER_CAMELLIA_192_CBC: Camellia in CBC mode with 192-bit keys.
@@ -163,6 +166,9 @@ typedef enum gnutls_cipher_algorithm {
 	GNUTLS_CIPHER_GOST28147_CPB_CFB = 26,
 	GNUTLS_CIPHER_GOST28147_CPC_CFB = 27,
 	GNUTLS_CIPHER_GOST28147_CPD_CFB = 28,
+	GNUTLS_CIPHER_AES_128_CFB8 = 29,
+	GNUTLS_CIPHER_AES_192_CFB8 = 30,
+	GNUTLS_CIPHER_AES_256_CFB8 = 31,
 
 	/* used only for PGP internals. Ignored in TLS/SSL
 	 */
@@ -271,6 +277,12 @@ typedef enum {
  * @GNUTLS_MAC_AEAD: MAC implicit through AEAD cipher.
  * @GNUTLS_MAC_UMAC_96: The UMAC-96 MAC algorithm.
  * @GNUTLS_MAC_UMAC_128: The UMAC-128 MAC algorithm.
+ * @GNUTLS_MAC_AES_CMAC_128: The AES-CMAC-128 MAC algorithm.
+ * @GNUTLS_MAC_AES_CMAC_256: The AES-CMAC-256 MAC algorithm.
+ * @GNUTLS_MAC_SHA3_224: Reserved; unimplemented.
+ * @GNUTLS_MAC_SHA3_256: Reserved; unimplemented.
+ * @GNUTLS_MAC_SHA3_384: Reserved; unimplemented.
+ * @GNUTLS_MAC_SHA3_512: Reserved; unimplemented.
  *
  * Enumeration of different Message Authentication Code (MAC)
  * algorithms.
@@ -299,6 +311,8 @@ typedef enum {
 	GNUTLS_MAC_AEAD = 200,	/* indicates that MAC is on the cipher */
 	GNUTLS_MAC_UMAC_96 = 201,
 	GNUTLS_MAC_UMAC_128 = 202,
+	GNUTLS_MAC_AES_CMAC_128 = 203,
+	GNUTLS_MAC_AES_CMAC_256 = 204,
 } gnutls_mac_algorithm_t;
 
 /**
@@ -387,6 +401,7 @@ typedef enum {
  *   finish; similarly to false start the handshake will be completed once data are received by the
  *   client, while the server is able to transmit sooner. This is not enabled by default as it could
  *   break certain existing server assumptions and use-cases. Since 3.6.4.
+ * @GNUTLS_ENABLE_EARLY_DATA: Under TLS1.3 allow the server to receive early data sent as part of the initial ClientHello (0-RTT). This is not enabled by default as early data has weaker security properties than other data. Since 3.6.5.
  * @GNUTLS_FORCE_CLIENT_CERT: When in client side and only a single cert is specified, send that certificate irrespective of the issuers expected by the server. Since 3.5.0.
  * @GNUTLS_NO_TICKETS: Flag to indicate that the session should not use resumption with session tickets.
  * @GNUTLS_KEY_SHARE_TOP3: Generate key shares for the top-3 different groups which are enabled.
@@ -409,6 +424,14 @@ typedef enum {
  *   are already taking steps to hide the data processing time. This comes at a performance
  *   penalty.
  * @GNUTLS_ENABLE_CERT_TYPE_NEG: Enable certificate type negotiation extensions (RFC7250).
+ * @GNUTLS_AUTO_REAUTH: Enable transparent re-authentication in client side when the server
+ *    requests to. That is, reauthentication is handled within gnutls_record_recv(), and
+ *    the %GNUTLS_E_REHANDSHAKE or %GNUTLS_E_REAUTH_REQUEST are not returned. This must be
+ *    enabled with %GNUTLS_POST_HANDSHAKE_AUTH for TLS1.3. Enabling this flag requires to restore
+ *    interrupted calls to gnutls_record_recv() based on the output of gnutls_record_get_direction(),
+ *    since gnutls_record_recv() could be interrupted when sending when this flag is enabled.
+ *    Note this flag may not be used if you are using the same session for sending and receiving
+ *    in different threads.
  *
  * Enumeration of different flags for gnutls_init() function. All the flags
  * can be combined except @GNUTLS_SERVER and @GNUTLS_CLIENT which are mutually
@@ -437,7 +460,9 @@ typedef enum {
 	GNUTLS_NO_AUTO_REKEY = (1<<15),
 	GNUTLS_SAFE_PADDING_CHECK = (1<<16),
 	GNUTLS_ENABLE_EARLY_START = (1<<17),
-	GNUTLS_ENABLE_CERT_TYPE_NEG = (1<<18)
+	GNUTLS_ENABLE_CERT_TYPE_NEG = (1<<18),
+	GNUTLS_AUTO_REAUTH = (1<<19),
+	GNUTLS_ENABLE_EARLY_DATA = (1<<20)
 } gnutls_init_flags_t;
 
 /* compatibility defines (previous versions of gnutls
@@ -489,14 +514,15 @@ typedef enum {
  * @GNUTLS_A_EXPORT_RESTRICTION: Export restriction.
  * @GNUTLS_A_PROTOCOL_VERSION: Error in protocol version.
  * @GNUTLS_A_INSUFFICIENT_SECURITY: Insufficient security.
- * @GNUTLS_A_USER_CANCELED: User canceled.
  * @GNUTLS_A_INTERNAL_ERROR: Internal error.
  * @GNUTLS_A_INAPPROPRIATE_FALLBACK: Inappropriate fallback,
+ * @GNUTLS_A_USER_CANCELED: User canceled.
  * @GNUTLS_A_NO_RENEGOTIATION: No renegotiation is allowed.
- * @GNUTLS_A_CERTIFICATE_UNOBTAINABLE: Could not retrieve the
- *   specified certificate.
+ * @GNUTLS_A_MISSING_EXTENSION: An extension was expected but was not seen
  * @GNUTLS_A_UNSUPPORTED_EXTENSION: An unsupported extension was
  *   sent.
+ * @GNUTLS_A_CERTIFICATE_UNOBTAINABLE: Could not retrieve the
+ *   specified certificate.
  * @GNUTLS_A_UNRECOGNIZED_NAME: The server name sent was not
  *   recognized.
  * @GNUTLS_A_UNKNOWN_PSK_IDENTITY: The SRP/PSK username is missing
@@ -532,6 +558,7 @@ typedef enum {
 	GNUTLS_A_INAPPROPRIATE_FALLBACK = 86,
 	GNUTLS_A_USER_CANCELED = 90,
 	GNUTLS_A_NO_RENEGOTIATION = 100,
+	GNUTLS_A_MISSING_EXTENSION = 109,
 	GNUTLS_A_UNSUPPORTED_EXTENSION = 110,
 	GNUTLS_A_CERTIFICATE_UNOBTAINABLE = 111,
 	GNUTLS_A_UNRECOGNIZED_NAME = 112,
@@ -561,6 +588,7 @@ typedef enum {
  * @GNUTLS_HANDSHAKE_SUPPLEMENTAL: Supplemental.
  * @GNUTLS_HANDSHAKE_CHANGE_CIPHER_SPEC: Change Cipher Spec.
  * @GNUTLS_HANDSHAKE_CLIENT_HELLO_V2: SSLv2 Client Hello.
+ * @GNUTLS_HANDSHAKE_ENCRYPTED_EXTENSIONS: Encrypted extensions message.
  *
  * Enumeration of different TLS handshake packets.
  */
@@ -1412,7 +1440,14 @@ ssize_t gnutls_record_set_max_size(gnutls_session_t session, size_t size);
 size_t gnutls_record_check_pending(gnutls_session_t session);
 size_t gnutls_record_check_corked(gnutls_session_t session);
 
+size_t gnutls_record_get_max_early_data_size(gnutls_session_t session);
 int gnutls_record_set_max_early_data_size(gnutls_session_t session, size_t size);
+ssize_t gnutls_record_send_early_data(gnutls_session_t session,
+				      const void *data,
+				      size_t length);
+ssize_t gnutls_record_recv_early_data(gnutls_session_t session,
+				      void *data,
+				      size_t data_size);
 
 void gnutls_session_force_valid(gnutls_session_t session);
 
@@ -1480,6 +1515,7 @@ unsigned gnutls_session_etm_status(gnutls_session_t session);
  * @GNUTLS_SFLAGS_SESSION_TICKET: A session ticket has been received by the server.
  * @GNUTLS_SFLAGS_POST_HANDSHAKE_AUTH: Indicates client capability for post-handshake auth; set only on server side.
  * @GNUTLS_SFLAGS_EARLY_START: The TLS1.3 server session returned early.
+ * @GNUTLS_SFLAGS_EARLY_DATA: The TLS1.3 early data has been received by the server.
  *
  * Enumeration of different session parameters.
  */
@@ -1493,7 +1529,8 @@ typedef enum {
 	GNUTLS_SFLAGS_RFC7919 = 1<<6,
 	GNUTLS_SFLAGS_SESSION_TICKET = 1<<7,
 	GNUTLS_SFLAGS_POST_HANDSHAKE_AUTH = 1<<8,
-	GNUTLS_SFLAGS_EARLY_START = 1<<9
+	GNUTLS_SFLAGS_EARLY_START = 1<<9,
+	GNUTLS_SFLAGS_EARLY_DATA = 1<<10
 } gnutls_session_flags_t;
 
 unsigned gnutls_session_get_flags(gnutls_session_t session);
@@ -1766,6 +1803,7 @@ void *gnutls_db_get_ptr(gnutls_session_t session);
 int gnutls_db_check_entry(gnutls_session_t session,
 			  gnutls_datum_t session_entry);
 time_t gnutls_db_check_entry_time(gnutls_datum_t * entry);
+time_t gnutls_db_check_entry_expire_time(gnutls_datum_t * entry);
 
   /**
    * gnutls_handshake_hook_func:
@@ -2956,6 +2994,26 @@ void gnutls_supplemental_recv(gnutls_session_t session, unsigned do_recv_supplem
 
 void gnutls_supplemental_send(gnutls_session_t session, unsigned do_send_supplemental);
 
+/* Anti-replay related functions */
+
+typedef struct gnutls_anti_replay_st *gnutls_anti_replay_t;
+
+int gnutls_anti_replay_init(gnutls_anti_replay_t *anti_replay);
+void gnutls_anti_replay_deinit(gnutls_anti_replay_t anti_replay);
+void gnutls_anti_replay_set_window(gnutls_anti_replay_t anti_replay,
+				   unsigned int window);
+void gnutls_anti_replay_enable(gnutls_session_t session,
+			       gnutls_anti_replay_t anti_replay);
+
+typedef int (*gnutls_db_add_func) (void *, time_t exp_time, const gnutls_datum_t *key,
+				   const gnutls_datum_t *data);
+
+void gnutls_anti_replay_set_add_function(gnutls_anti_replay_t,
+					 gnutls_db_add_func add_func);
+
+void gnutls_anti_replay_set_ptr(gnutls_anti_replay_t, void *ptr);
+
+
 /* FIPS140-2 related functions */
 unsigned gnutls_fips140_mode_enabled(void);
 
@@ -2986,6 +3044,16 @@ typedef enum gnutls_fips_mode_t {
 #define GNUTLS_FIPS140_SET_MODE_THREAD 1
 
 void gnutls_fips140_set_mode(gnutls_fips_mode_t mode, unsigned flags);
+
+#define GNUTLS_FIPS140_SET_LAX_MODE() do { \
+	if (gnutls_fips140_mode_enabled()) \
+		gnutls_fips140_set_mode(GNUTLS_FIPS140_LAX, GNUTLS_FIPS140_SET_MODE_THREAD); \
+	} while(0)
+
+#define GNUTLS_FIPS140_SET_STRICT_MODE() do { \
+	if (gnutls_fips140_mode_enabled()) \
+		gnutls_fips140_set_mode(GNUTLS_FIPS140_STRICT, GNUTLS_FIPS140_SET_MODE_THREAD); \
+	} while(0)
 
   /* Gnutls error codes. The mapping to a TLS alert is also shown in
    * comments.
@@ -3223,6 +3291,9 @@ void gnutls_fips140_set_mode(gnutls_fips_mode_t mode, unsigned flags);
 #define GNUTLS_E_REAUTH_REQUEST -424
 #define GNUTLS_E_TOO_MANY_MATCHES -425
 #define GNUTLS_E_CRL_VERIFICATION_ERROR -426
+#define GNUTLS_E_MISSING_EXTENSION -427
+#define GNUTLS_E_DB_ENTRY_EXISTS -428
+#define GNUTLS_E_EARLY_DATA_REJECTED -429
 
 #define GNUTLS_E_UNIMPLEMENTED_FEATURE -1250
 

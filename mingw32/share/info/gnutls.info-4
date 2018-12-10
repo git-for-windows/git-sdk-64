@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 16 September 2018 for version 3.6.4 of
+This manual is last updated 16 September 2018 for version 3.6.5 of
 GnuTLS.
 
 Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
@@ -4285,13 +4285,16 @@ gnutls_x509_crt_get_pk_ecc_raw
 
      CURVE: will hold the curve
 
-     X: will hold x
+     X: will hold the x-coordinate
 
-     Y: will hold y
+     Y: will hold the y-coordinate
 
      This function will export the ECC public key's parameters found in
      the given certificate.  The new parameters will be allocated using
      'gnutls_malloc()' and will be stored in the appropriate datum.
+
+     In EdDSA curves the 'y' parameter will be 'NULL' and the other
+     parameters will be in the native format for the curve.
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, otherwise a negative
      error code.
@@ -4309,13 +4312,13 @@ gnutls_x509_crt_get_pk_gost_raw
 
      CURVE: will hold the curve
 
-     DIGEST: - undescribed -
+     DIGEST: will hold the digest
 
-     PARAMSET: will hold paramset
+     PARAMSET: will hold the GOST parameter set ID
 
-     X: will hold x
+     X: will hold the x-coordinate
 
-     Y: will hold y
+     Y: will hold the y-coordinate
 
      This function will export the GOST public key's parameters found in
      the given certificate.  The new parameters will be allocated using
@@ -7335,9 +7338,9 @@ gnutls_x509_privkey_export_ecc_raw
 
      CURVE: will hold the curve
 
-     X: will hold the x coordinate
+     X: will hold the x-coordinate
 
-     Y: will hold the y coordinate
+     Y: will hold the y-coordinate
 
      K: will hold the private key
 
@@ -7367,11 +7370,11 @@ gnutls_x509_privkey_export_gost_raw
 
      DIGEST: will hold the digest
 
-     PARAMSET: will hold the parameters id
+     PARAMSET: will hold the GOST parameter set ID
 
-     X: will hold the x coordinate
+     X: will hold the x-coordinate
 
-     Y: will hold the y coordinate
+     Y: will hold the y-coordinate
 
      K: will hold the private key
 
@@ -7779,9 +7782,9 @@ gnutls_x509_privkey_import_ecc_raw
 
      CURVE: holds the curve
 
-     X: holds the x
+     X: holds the x-coordinate
 
-     Y: holds the y
+     Y: holds the y-coordinate
 
      K: holds the k
 
@@ -7807,15 +7810,15 @@ gnutls_x509_privkey_import_gost_raw
 
      CURVE: holds the curve
 
-     DIGEST: - undescribed -
+     DIGEST: will hold the digest
 
-     PARAMSET: holds the parameters id
+     PARAMSET: will hold the GOST parameter set ID
 
-     X: holds the x
+     X: holds the x-coordinate
 
-     Y: holds the y
+     Y: holds the y-coordinate
 
-     K: holds the k
+     K: holds the k (private key)
 
      This function will convert the given GOST private key's parameters
      to the native 'gnutls_x509_privkey_t' format.  The output will be

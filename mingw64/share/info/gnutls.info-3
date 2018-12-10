@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 16 September 2018 for version 3.6.4 of
+This manual is last updated 16 September 2018 for version 3.6.5 of
 GnuTLS.
 
 Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
@@ -26,6 +26,270 @@ START-INFO-DIR-ENTRY
 * psktool: (gnutls)psktool Invocation.	Simple TLS-Pre-Shared-Keys manager.
 * srptool: (gnutls)srptool Invocation.	Simple SRP password tool.
 END-INFO-DIR-ENTRY
+
+
+File: gnutls.info,  Node: Miscellaneous examples,  Prev: OCSP example,  Up: GnuTLS application examples
+
+7.5 Miscellaneous examples
+==========================
+
+* Menu:
+
+* Checking for an alert::
+* X.509 certificate parsing example::
+* Listing the ciphersuites in a priority string::
+* PKCS12 structure generation example::
+
+
+File: gnutls.info,  Node: Checking for an alert,  Next: X.509 certificate parsing example,  Up: Miscellaneous examples
+
+7.5.1 Checking for an alert
+---------------------------
+
+This is a function that checks if an alert has been received in the
+current session.
+
+/* This example code is placed in the public domain. */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <gnutls/gnutls.h>
+
+#include "examples.h"
+
+/* This function will check whether the given return code from
+ * a gnutls function (recv/send), is an alert, and will print
+ * that alert.
+ */
+void check_alert(gnutls_session_t session, int ret)
+{
+        int last_alert;
+
+        if (ret == GNUTLS_E_WARNING_ALERT_RECEIVED
+            || ret == GNUTLS_E_FATAL_ALERT_RECEIVED) {
+                last_alert = gnutls_alert_get(session);
+
+                /* The check for renegotiation is only useful if we are 
+                 * a server, and we had requested a rehandshake.
+                 */
+                if (last_alert == GNUTLS_A_NO_RENEGOTIATION &&
+                    ret == GNUTLS_E_WARNING_ALERT_RECEIVED)
+                        printf("* Received NO_RENEGOTIATION alert. "
+                               "Client Does not support renegotiation.\n");
+                else
+                        printf("* Received alert '%d': %s.\n", last_alert,
+                               gnutls_alert_get_name(last_alert));
+        }
+}
+
+
+File: gnutls.info,  Node: X.509 certificate parsing example,  Next: Listing the ciphersuites in a priority string,  Prev: Checking for an alert,  Up: Miscellaneous examples
+
+7.5.2 X.509 certificate parsing example
+---------------------------------------
+
+To demonstrate the X.509 parsing capabilities an example program is
+listed below.  That program reads the peer's certificate, and prints
+information about it.
+
+/* This example code is placed in the public domain. */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <gnutls/gnutls.h>
+#include <gnutls/x509.h>
+
+#include "examples.h"
+
+static const char *bin2hex(const void *bin, size_t bin_size)
+{
+        static char printable[110];
+        const unsigned char *_bin = bin;
+        char *print;
+        size_t i;
+
+        if (bin_size > 50)
+                bin_size = 50;
+
+        print = printable;
+        for (i = 0; i < bin_size; i++) {
+                sprintf(print, "%.2x ", _bin[i]);
+                print += 2;
+        }
+
+        return printable;
+}
+
+/* This function will print information about this session's peer
+ * certificate.
+ */
+void print_x509_certificate_info(gnutls_session_t session)
+{
+        char serial[40];
+        char dn[256];
+        size_t size;
+        unsigned int algo, bits;
+        time_t expiration_time, activation_time;
+        const gnutls_datum_t *cert_list;
+        unsigned int cert_list_size = 0;
+        gnutls_x509_crt_t cert;
+        gnutls_datum_t cinfo;
+
+        /* This function only works for X.509 certificates.
+         */
+        if (gnutls_certificate_type_get(session) != GNUTLS_CRT_X509)
+                return;
+
+        cert_list = gnutls_certificate_get_peers(session, &cert_list_size);
+
+        printf("Peer provided %d certificates.\n", cert_list_size);
+
+        if (cert_list_size > 0) {
+                int ret;
+
+                /* we only print information about the first certificate.
+                 */
+                gnutls_x509_crt_init(&cert);
+
+                gnutls_x509_crt_import(cert, &cert_list[0],
+                                       GNUTLS_X509_FMT_DER);
+
+                printf("Certificate info:\n");
+
+                /* This is the preferred way of printing short information about
+                   a certificate. */
+
+                ret =
+                    gnutls_x509_crt_print(cert, GNUTLS_CRT_PRINT_ONELINE,
+                                          &cinfo);
+                if (ret == 0) {
+                        printf("\t%s\n", cinfo.data);
+                        gnutls_free(cinfo.data);
+                }
+
+                /* If you want to extract fields manually for some other reason,
+                   below are popular example calls. */
+
+                expiration_time =
+                    gnutls_x509_crt_get_expiration_time(cert);
+                activation_time =
+                    gnutls_x509_crt_get_activation_time(cert);
+
+                printf("\tCertificate is valid since: %s",
+                       ctime(&activation_time));
+                printf("\tCertificate expires: %s",
+                       ctime(&expiration_time));
+
+                /* Print the serial number of the certificate.
+                 */
+                size = sizeof(serial);
+                gnutls_x509_crt_get_serial(cert, serial, &size);
+
+                printf("\tCertificate serial number: %s\n",
+                       bin2hex(serial, size));
+
+                /* Extract some of the public key algorithm's parameters
+                 */
+                algo = gnutls_x509_crt_get_pk_algorithm(cert, &bits);
+
+                printf("Certificate public key: %s",
+                       gnutls_pk_algorithm_get_name(algo));
+
+                /* Print the version of the X.509
+                 * certificate.
+                 */
+                printf("\tCertificate version: #%d\n",
+                       gnutls_x509_crt_get_version(cert));
+
+                size = sizeof(dn);
+                gnutls_x509_crt_get_dn(cert, dn, &size);
+                printf("\tDN: %s\n", dn);
+
+                size = sizeof(dn);
+                gnutls_x509_crt_get_issuer_dn(cert, dn, &size);
+                printf("\tIssuer's DN: %s\n", dn);
+
+                gnutls_x509_crt_deinit(cert);
+
+        }
+}
+
+
+File: gnutls.info,  Node: Listing the ciphersuites in a priority string,  Next: PKCS12 structure generation example,  Prev: X.509 certificate parsing example,  Up: Miscellaneous examples
+
+7.5.3 Listing the ciphersuites in a priority string
+---------------------------------------------------
+
+This is a small program to list the enabled ciphersuites by a priority
+string.
+
+/* This example code is placed in the public domain. */
+
+#include <config.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <gnutls/gnutls.h>
+
+static void print_cipher_suite_list(const char *priorities)
+{
+        size_t i;
+        int ret;
+        unsigned int idx;
+        const char *name;
+        const char *err;
+        unsigned char id[2];
+        gnutls_protocol_t version;
+        gnutls_priority_t pcache;
+
+        if (priorities != NULL) {
+                printf("Cipher suites for %s\n", priorities);
+
+                ret = gnutls_priority_init(&pcache, priorities, &err);
+                if (ret < 0) {
+                        fprintf(stderr, "Syntax error at: %s\n", err);
+                        exit(1);
+                }
+
+                for (i = 0;; i++) {
+                        ret =
+                            gnutls_priority_get_cipher_suite_index(pcache,
+                                                                   i,
+                                                                   &idx);
+                        if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
+                                break;
+                        if (ret == GNUTLS_E_UNKNOWN_CIPHER_SUITE)
+                                continue;
+
+                        name =
+                            gnutls_cipher_suite_info(idx, id, NULL, NULL,
+                                                     NULL, &version);
+
+                        if (name != NULL)
+                                printf("%-50s\t0x%02x, 0x%02x\t%s\n",
+                                       name, (unsigned char) id[0],
+                                       (unsigned char) id[1],
+                                       gnutls_protocol_get_name(version));
+                }
+
+                return;
+        }
+}
+
+int main(int argc, char **argv)
+{
+        if (argc > 1)
+                print_cipher_suite_list(argv[1]);
+        return 0;
+}
 
 
 File: gnutls.info,  Node: PKCS12 structure generation example,  Prev: Listing the ciphersuites in a priority string,  Up: Miscellaneous examples
@@ -268,6 +532,12 @@ it is designed to minimize misuse of cryptography.
      GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro C S-box.
 'GNUTLS_CIPHER_GOST28147_CPD_CFB'
      GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro D S-box.
+'GNUTLS_CIPHER_AES_128_CFB8'
+     AES in CFB8 mode with 128-bit keys.
+'GNUTLS_CIPHER_AES_192_CFB8'
+     AES in CFB8 mode with 192-bit keys.
+'GNUTLS_CIPHER_AES_256_CFB8'
+     AES in CFB8 mode with 256-bit keys.
 'GNUTLS_CIPHER_IDEA_PGP_CFB'
      IDEA in CFB mode (placeholder - unsupported).
 'GNUTLS_CIPHER_3DES_PGP_CFB'
@@ -592,13 +862,13 @@ either for HMAC or MAC operations.
 'GNUTLS_MAC_SHA224'
      HMAC-SHA-224 algorithm.
 'GNUTLS_MAC_SHA3_224'
-     - undescribed -
+     Reserved; unimplemented.
 'GNUTLS_MAC_SHA3_256'
-     - undescribed -
+     Reserved; unimplemented.
 'GNUTLS_MAC_SHA3_384'
-     - undescribed -
+     Reserved; unimplemented.
 'GNUTLS_MAC_SHA3_512'
-     - undescribed -
+     Reserved; unimplemented.
 'GNUTLS_MAC_MD5_SHA1'
      Combined MD5+SHA1 MAC placeholder.
 'GNUTLS_MAC_GOSTR_94'
@@ -613,6 +883,10 @@ either for HMAC or MAC operations.
      The UMAC-96 MAC algorithm.
 'GNUTLS_MAC_UMAC_128'
      The UMAC-128 MAC algorithm.
+'GNUTLS_MAC_AES_CMAC_128'
+     The AES-CMAC-128 MAC algorithm.
+'GNUTLS_MAC_AES_CMAC_256'
+     The AES-CMAC-256 MAC algorithm.
 
 Figure 8.3: The supported MAC and HMAC algorithms.
 
@@ -942,6 +1216,7 @@ to 'more'.  Both will exit with a status code of 0.
             --ocsp                 Enable OCSP certificate verification
                                      - disabled as '--no-ocsp'
         -r, --resume               Establish a session and resume
+            --earlydata=str        Send early data on resumption from the specified file
         -e, --rehandshake          Establish a session and rehandshake
             --sni-hostname=str     Server's hostname for server name indication extension
             --verify-hostname=str  Server's hostname to use for validation
@@ -1412,6 +1687,10 @@ to 'more'.  Both will exit with a status code of 0.
                                      - may appear multiple times
             --alpn-fatal           Send fatal alert on non-matching ALPN name
             --noticket             Don't accept session tickets
+            --earlydata            Accept early data
+            --maxearlydata=num     The maximum early data size to accept
+                                     - it must be in the range:
+                                       1 to 4294967296
             --nocookie             Don't require cookie on DTLS sessions
         -g, --generate             Generate Diffie-Hellman parameters
         -q, --quiet                Suppress some messages
@@ -2656,34 +2935,36 @@ in *note Figure 10.5: gnutls_fips_mode_t.
 
 Figure 10.5: The 'gnutls_fips_mode_t' enumeration.
 
-The intention of this API is to be used by applications which need to
-run in FIPS140-2 mode, while they utilize few algorithms not in the
-allowed set, e.g., for non-security related purposes.  In these cases
+The intention of this API is to be used by applications which may run in
+FIPS140-2 mode, while they utilize few algorithms not in the allowed
+set, e.g., for non-security related purposes.  In these cases
 applications should wrap the non-compliant code within blocks like the
 following.
 
-     GNUTLS_FIPS140_SET_RELAX_MODE();
+     GNUTLS_FIPS140_SET_LAX_MODE();
 
      _gnutls_hash_fast(GNUTLS_DIG_MD5, buffer, sizeof(buffer), output);
 
      GNUTLS_FIPS140_SET_STRICT_MODE();
 
-The 'GNUTLS_FIPS140_SET_RELAX_MODE' and 'GNUTLS_FIPS140_SET_STRICT_MODE'
+The 'GNUTLS_FIPS140_SET_LAX_MODE' and 'GNUTLS_FIPS140_SET_STRICT_MODE'
 are macros to simplify the following sequence of calls.
 
      if (gnutls_fips140_mode_enabled())
-       gnutls_fips140_set_mode(GNUTLS_FIPS140_SET_MODE_LAX, GNUTLS_FIPS140_SET_MODE_THREAD);
+       gnutls_fips140_set_mode(GNUTLS_FIPS140_LAX, GNUTLS_FIPS140_SET_MODE_THREAD);
 
      _gnutls_hash_fast(GNUTLS_DIG_MD5, buffer, sizeof(buffer), output);
 
      if (gnutls_fips140_mode_enabled())
-       gnutls_fips140_set_mode(GNUTLS_FIPS140_SET_MODE_STRICT, GNUTLS_FIPS140_SET_MODE_THREAD);
+       gnutls_fips140_set_mode(GNUTLS_FIPS140_STRICT, GNUTLS_FIPS140_SET_MODE_THREAD);
 
 The reason of the 'GNUTLS_FIPS140_SET_MODE_THREAD' flag in the previous
-calls is to localize the change in the mode.
+calls is to localize the change in the mode.  Note also, that such a
+block has no effect when the library is not operating under FIPS140-2
+mode, and thus it can be considered a no-op.
 
 Applications could also switch FIPS140-2 mode explicitly off, by calling
-     gnutls_fips140_set_mode(GNUTLS_FIPS140_SET_MODE_LAX, 0);
+     gnutls_fips140_set_mode(GNUTLS_FIPS140_LAX, 0);
 
 
 File: gnutls.info,  Node: Upgrading from previous versions,  Next: Support,  Prev: Internal architecture of GnuTLS,  Up: Top
@@ -3511,6 +3792,12 @@ expressions.
                                           matches the criteria.
 -426        GNUTLS_E_CRL_VERIFICATION_ERRORError in the CRL
                                           verification.
+-427        GNUTLS_E_MISSING_EXTENSION    An required TLS extension
+                                          was received.
+-428        GNUTLS_E_DB_ENTRY_EXISTS      The Database entry
+                                          already exists.
+-429        GNUTLS_E_EARLY_DATA_REJECTED  The early data were
+                                          rejected.
 
 
 File: gnutls.info,  Node: Supported ciphersuites,  Next: API reference,  Prev: Error codes,  Up: Top
@@ -3754,6 +4041,9 @@ Ciphers
 'GOST28147-CPB-CFB'
 'GOST28147-CPC-CFB'
 'GOST28147-CPD-CFB'
+'AES-128-CFB8'
+'AES-192-CFB8'
+'AES-256-CFB8'
 '3DES-CBC'
 'DES-CBC'
 'RC2-40'
@@ -3872,6 +4162,7 @@ Groups
 'FFDHE2048'
 'FFDHE3072'
 'FFDHE4096'
+'FFDHE6144'
 'FFDHE8192'
 
 
@@ -4158,6 +4449,106 @@ gnutls_anon_set_server_params_function
      *Deprecated:* This function is unnecessary and discouraged on
      GnuTLS 3.6.0 or later.  Since 3.6.0, DH parameters are negotiated
      following RFC7919.
+
+gnutls_anti_replay_deinit
+-------------------------
+
+ -- Function: void gnutls_anti_replay_deinit (gnutls_anti_replay_t
+          ANTI_REPLAY)
+     ANTI_REPLAY: is a 'gnutls_anti_replay' type
+
+     This function will deinitialize all resources occupied by the given
+     anti-replay context.
+
+     *Since:* 3.6.5
+
+gnutls_anti_replay_enable
+-------------------------
+
+ -- Function: void gnutls_anti_replay_enable (gnutls_session_t SESSION,
+          gnutls_anti_replay_t ANTI_REPLAY)
+     SESSION: is a 'gnutls_session_t' type.
+
+     ANTI_REPLAY: is a 'gnutls_anti_replay_t' type.
+
+     Request that the server should use anti-replay mechanism.
+
+     *Since:* 3.6.5
+
+gnutls_anti_replay_init
+-----------------------
+
+ -- Function: int gnutls_anti_replay_init (gnutls_anti_replay_t *
+          ANTI_REPLAY)
+     ANTI_REPLAY: is a pointer to 'gnutls_anti_replay_t' type
+
+     This function will allocate and initialize the 'anti_replay'
+     context to be usable for detect replay attacks.  The context can
+     then be attached to a 'gnutls_session_t' with
+     'gnutls_anti_replay_enable()' .
+
+     *Returns:* Zero or a negative error code on error.
+
+     *Since:* 3.6.5
+
+gnutls_anti_replay_set_add_function
+-----------------------------------
+
+ -- Function: void gnutls_anti_replay_set_add_function
+          (gnutls_anti_replay_t ANTI_REPLAY, gnutls_db_add_func
+          ADD_FUNC)
+     ANTI_REPLAY: is a 'gnutls_anti_replay_t' type.
+
+     ADD_FUNC: is the function.
+
+     Sets the function that will be used to store an entry if it is not
+     already present in the resumed sessions database.  This function
+     returns 0 if the entry is successfully stored, and a negative error
+     code otherwise.  In particular, if the entry is found in the
+     database, it returns 'GNUTLS_E_DB_ENTRY_EXISTS' .
+
+     The arguments to the 'add_func' are: - 'ptr' : the pointer set with
+     'gnutls_anti_replay_set_ptr()' - 'exp_time' : the expiration time
+     of the entry - 'key' : a pointer to the key - 'data' : a pointer to
+     data to store
+
+     The data set by this function can be examined using
+     'gnutls_db_check_entry_expire_time()' and
+     'gnutls_db_check_entry_time()' .
+
+     *Since:* 3.6.5
+
+gnutls_anti_replay_set_ptr
+--------------------------
+
+ -- Function: void gnutls_anti_replay_set_ptr (gnutls_anti_replay_t
+          ANTI_REPLAY, void * PTR)
+     ANTI_REPLAY: is a 'gnutls_anti_replay_t' type.
+
+     PTR: is the pointer
+
+     Sets the pointer that will be provided to db add function as the
+     first argument.
+
+gnutls_anti_replay_set_window
+-----------------------------
+
+ -- Function: void gnutls_anti_replay_set_window (gnutls_anti_replay_t
+          ANTI_REPLAY, unsigned int WINDOW)
+     ANTI_REPLAY: is a 'gnutls_anti_replay_t' type.
+
+     WINDOW: is the time window recording ClientHello, in milliseconds
+
+     Sets the time window used for ClientHello recording.  In order to
+     protect against replay attacks, the server records ClientHello
+     messages within this time period from the last update, and
+     considers it a replay when a ClientHello outside of the period; if
+     a ClientHello arrives within this period, the server checks the
+     database and detects duplicates.
+
+     For the details of the algorithm, see RFC 8446, section 8.2.
+
+     *Since:* 3.6.5
 
 gnutls_auth_client_get_type
 ---------------------------
@@ -5643,11 +6034,16 @@ gnutls_certificate_type_get
           (gnutls_session_t SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
-     The certificate type is by default X.509, unless it is negotiated
-     as a TLS extension.
+     This function returns the type of the certificate that is
+     negotiated for this side to send to the peer.  The certificate type
+     is by default X.509, unless an alternative certificate type is
+     enabled by 'gnutls_init()' and negotiated during the session.
+
+     Resumed sessions will return the certificate type that was
+     negotiated and used in the original session.
 
      As of version 3.6.4 it is recommended to use
-     'gnutls_certificate_type_get2()' .
+     'gnutls_certificate_type_get2()' which is more fine-grained.
 
      *Returns:* the currently used 'gnutls_certificate_type_t'
      certificate type as negotiated for 'our' side of the connection.
@@ -5661,21 +6057,23 @@ gnutls_certificate_type_get2
 
      TARGET: is a 'gnutls_ctype_target_t' type.
 
-     The raw public-key extension (RFC7250) introduces a mechanism to
-     specifcy different certificate types for the client and server.  We
-     therefore distinguish between negotiated certificate types for the
-     client and server.  The 'target' parameter specifies whether you
-     want the negotiated certificate type for the client
-     (GNUTLS_CTYPE_CLIENT) or for the server (GNUTLS_CTYPE_SERVER).
-     Additionally, in P2P mode connection set up where you don't know in
-     advance who will be client and who will be server you can use the
-     flag (GNUTLS_CTYPE_OURS) and (GNUTLS_CTYPE_PEERS) to retrieve the
+     This function returns the type of the certificate that a side is
+     negotiated to use.  The certificate type is by default X.509,
+     unless an alternative certificate type is enabled by
+     'gnutls_init()' and negotiated during the session.
+
+     The 'target' parameter specifies whether to request the negotiated
+     certificate type for the client ('GNUTLS_CTYPE_CLIENT' ), or for
+     the server ('GNUTLS_CTYPE_SERVER' ).  Additionally, in P2P mode
+     connection set up where you don't know in advance who will be
+     client and who will be server you can use the flag
+     ('GNUTLS_CTYPE_OURS' ) and ('GNUTLS_CTYPE_PEERS' ) to retrieve the
      corresponding certificate types.
 
-     In case no certificate types were explicitly set via the priority
-     strings to be negotiated during the handshake, then this function
-     will return the default certificate type (X.509) for both the
-     client and the server.
+     Resumed sessions will return the certificate type that was
+     negotiated and used in the original session.  That is, this
+     function can be used to reliably determine the type of the
+     certificate returned by 'gnutls_certificate_get_peers()' .
 
      *Returns:* the currently used 'gnutls_certificate_type_t'
      certificate type for the client or the server.
@@ -5907,7 +6305,7 @@ gnutls_cipher_get
           (gnutls_session_t SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
-     Get currently used cipher.
+     Get the currently used cipher.
 
      *Returns:* the currently used cipher, a 'gnutls_cipher_algorithm_t'
      type.
@@ -6097,6 +6495,22 @@ gnutls_db_check_entry
 
      *Returns:* Returns 'GNUTLS_E_EXPIRED' , if the database entry has
      expired or 0 otherwise.
+
+     *Deprecated:* This function is deprecated.
+
+gnutls_db_check_entry_expire_time
+---------------------------------
+
+ -- Function: time_t gnutls_db_check_entry_expire_time (gnutls_datum_t *
+          ENTRY)
+     ENTRY: is a pointer to a 'gnutls_datum_t' type.
+
+     This function returns the time that this entry will expire.  It can
+     be used for database entry expiration.
+
+     *Returns:* The time this entry will expire, or zero on error.
+
+     *Since:* 3.6.5
 
 gnutls_db_check_entry_time
 --------------------------
@@ -7762,7 +8176,7 @@ gnutls_kx_get
           SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
-     Get currently used key exchange algorithm.
+     Get the currently used key exchange algorithm.
 
      This function will return 'GNUTLS_KX_ECDHE_RSA' , or
      'GNUTLS_KX_DHE_RSA' under TLS 1.3, to indicate an elliptic curve DH
@@ -7833,7 +8247,7 @@ gnutls_mac_get
           SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
-     Get currently used MAC algorithm.
+     Get the currently used MAC algorithm.
 
      *Returns:* the currently used mac algorithm, a
      'gnutls_mac_algorithm_t' value.
@@ -8119,7 +8533,7 @@ gnutls_openpgp_send_cert
           gnutls_openpgp_crt_status_t STATUS)
      SESSION: is a gnutls session
 
-     STATUS: - undescribed -
+     STATUS: is ignored
 
      This function is no-op.
 
@@ -8826,9 +9240,13 @@ gnutls_priority_set
      PRIORITY: is a 'gnutls_priority_t' type.
 
      Sets the priorities to use on the ciphers, key exchange methods,
-     and macs.
+     and macs.  Note that this function is expected to be called once
+     per session; when called multiple times (e.g., before a
+     re-handshake, the caller should make sure that any new settings are
+     not incompatible with the original session).
 
-     *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code on
+     error.
 
 gnutls_priority_set_direct
 --------------------------
@@ -9392,19 +9810,38 @@ gnutls_record_get_direction
  -- Function: int gnutls_record_get_direction (gnutls_session_t SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
-     This function provides information about the internals of the
-     record protocol and is only useful if a prior gnutls function call,
-     e.g.  'gnutls_handshake()' , was interrupted for some reason.  That
-     is, if a function returned 'GNUTLS_E_INTERRUPTED' or
-     'GNUTLS_E_AGAIN' .  In such a case, you might want to call
-     'select()' or 'poll()' before restoring the interrupted gnutls
-     function.
+     This function is useful to determine whether a GnuTLS function was
+     interrupted while sending or receiving, so that 'select()' or
+     'poll()' may be called appropriately.
+
+     It provides information about the internals of the record protocol
+     and is only useful if a prior gnutls function call, e.g.
+     'gnutls_handshake()' , was interrupted and returned
+     'GNUTLS_E_INTERRUPTED' or 'GNUTLS_E_AGAIN' .  After such an
+     interrupt applications may call 'select()' or 'poll()' before
+     restoring the interrupted GnuTLS function.
 
      This function's output is unreliable if you are using the same
      'session' in different threads, for sending and receiving.
 
      *Returns:* 0 if interrupted while trying to read data, or 1 while
      trying to write data.
+
+gnutls_record_get_max_early_data_size
+-------------------------------------
+
+ -- Function: size_t gnutls_record_get_max_early_data_size
+          (gnutls_session_t SESSION)
+     SESSION: is a 'gnutls_session_t' type.
+
+     This function returns the maximum early data size in this
+     connection.  This property can only be set to servers.  The client
+     may be provided with the maximum allowed size through the
+     "early_data" extension of the NewSessionTicket handshake message.
+
+     *Returns:* The maximum early data size in this connection.
+
+     *Since:* 3.6.5
 
 gnutls_record_get_max_size
 --------------------------
@@ -9423,7 +9860,7 @@ gnutls_record_get_state
 
  -- Function: int gnutls_record_get_state (gnutls_session_t SESSION,
           unsigned READ, gnutls_datum_t * MAC_KEY, gnutls_datum_t * IV,
-          gnutls_datum_t * CIPHER_KEY, unsigned char SEQ_NUMBER[8])
+          gnutls_datum_t * CIPHER_KEY, unsigned char [8] SEQ_NUMBER)
      SESSION: is a 'gnutls_session_t' type
 
      READ: if non-zero the read parameters are returned, otherwise the
@@ -9435,7 +9872,7 @@ gnutls_record_get_state
 
      CIPHER_KEY: the cipher key
 
-     SEQ_NUMBER[8]: - undescribed -
+     SEQ_NUMBER: A 64-bit sequence number
 
      This function will return the parameters of the current record
      state.  These are only useful to be provided to an external
@@ -9493,6 +9930,34 @@ gnutls_record_recv
      connections).  A negative error code is returned in case of an
      error.  The number of bytes received might be less than the
      requested 'data_size' .
+
+gnutls_record_recv_early_data
+-----------------------------
+
+ -- Function: ssize_t gnutls_record_recv_early_data (gnutls_session_t
+          SESSION, void * DATA, size_t DATA_SIZE)
+     SESSION: is a 'gnutls_session_t' type.
+
+     DATA: the buffer that the data will be read into
+
+     DATA_SIZE: the number of requested bytes
+
+     This function can be used by a searver to retrieve data sent early
+     in the handshake processes when resuming a session.  This is used
+     to implement a zero-roundtrip (0-RTT) mode.  It has the same
+     semantics as 'gnutls_record_recv()' .
+
+     This function can be called either in a handshake hook, or after
+     the handshake is complete.
+
+     *Returns:* The number of bytes received and zero when early data
+     reading is complete.  A negative error code is returned in case of
+     an error.  If no early data is received during the handshake, this
+     function returns 'GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE' .  The
+     number of bytes received might be less than the requested
+     'data_size' .
+
+     *Since:* 3.6.5
 
 gnutls_record_recv_packet
 -------------------------
@@ -9618,6 +10083,34 @@ gnutls_record_send2
 
      *Since:* 3.6.3
 
+gnutls_record_send_early_data
+-----------------------------
+
+ -- Function: ssize_t gnutls_record_send_early_data (gnutls_session_t
+          SESSION, const void * DATA, size_t DATA_SIZE)
+     SESSION: is a 'gnutls_session_t' type.
+
+     DATA: contains the data to send
+
+     DATA_SIZE: is the length of the data
+
+     This function can be used by a client to send data early in the
+     handshake processes when resuming a session.  This is used to
+     implement a zero-roundtrip (0-RTT) mode.  It has the same semantics
+     as 'gnutls_record_send()' .
+
+     There may be a limit to the amount of data sent as early data.  Use
+     'gnutls_record_get_max_early_data_size()' to check the limit.  If
+     the limit exceeds, this function returns
+     'GNUTLS_E_RECORD_LIMIT_REACHED' .
+
+     *Returns:* The number of bytes sent, or a negative error code.  The
+     number of bytes sent might be less than 'data_size' .  The maximum
+     number of bytes this function can send in a single call depends on
+     the negotiated maximum record size.
+
+     *Since:* 3.6.5
+
 gnutls_record_send_range
 ------------------------
 
@@ -9698,13 +10191,13 @@ gnutls_record_set_state
 -----------------------
 
  -- Function: int gnutls_record_set_state (gnutls_session_t SESSION,
-          unsigned READ, const unsigned char SEQ_NUMBER[8])
+          unsigned READ, const unsigned char [8] SEQ_NUMBER)
      SESSION: is a 'gnutls_session_t' type
 
      READ: if non-zero the read parameters are returned, otherwise the
      write
 
-     SEQ_NUMBER[8]: - undescribed -
+     SEQ_NUMBER: A 64-bit sequence number
 
      This function will set the sequence number in the current record
      state.  This function is useful if sending and receiving are

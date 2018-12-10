@@ -75,6 +75,12 @@ typedef int (*gnutls_privkey_decrypt_func) (gnutls_privkey_t key,
 					    const gnutls_datum_t *ciphertext,
 					    gnutls_datum_t * plaintext);
 
+typedef int (*gnutls_privkey_decrypt_func2) (gnutls_privkey_t key,
+					     void *userdata,
+					     const gnutls_datum_t *ciphertext,
+					     unsigned char * plaintext,
+					     size_t plaintext_size);
+
 /* to be called to sign pre-hashed data. The input will be
  * the output of the hash (such as SHA256) corresponding to
  * the signature algorithm. The algorithm GNUTLS_SIGN_RSA_RAW
@@ -542,11 +548,16 @@ int gnutls_privkey_sign_hash2(gnutls_privkey_t signer,
 			      const gnutls_datum_t * hash_data,
 			      gnutls_datum_t * signature);
 
-
 int gnutls_privkey_decrypt_data(gnutls_privkey_t key,
 				unsigned int flags,
 				const gnutls_datum_t * ciphertext,
 				gnutls_datum_t * plaintext);
+
+int gnutls_privkey_decrypt_data2(gnutls_privkey_t key,
+				 unsigned int flags,
+				 const gnutls_datum_t * ciphertext,
+				 unsigned char * plaintext,
+                                 size_t plaintext_size);
 
 int
 gnutls_privkey_export_rsa_raw(gnutls_privkey_t key,

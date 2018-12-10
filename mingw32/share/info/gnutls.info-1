@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 16 September 2018 for version 3.6.4 of
+This manual is last updated 16 September 2018 for version 3.6.5 of
 GnuTLS.
 
 Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
@@ -33,7 +33,7 @@ File: gnutls.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS
 ******
 
-This manual is last updated 16 September 2018 for version 3.6.4 of
+This manual is last updated 16 September 2018 for version 3.6.5 of
 GnuTLS.
 
 Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
@@ -623,6 +623,9 @@ GNUTLS_A_INAPPROPRIATE_FALLBACK          86      Inappropriate
 GNUTLS_A_USER_CANCELED                   90      User canceled
 GNUTLS_A_NO_RENEGOTIATION                100     No renegotiation is
                                                  allowed
+GNUTLS_A_MISSING_EXTENSION               109     An extension was
+                                                 expected but was not
+                                                 seen
 GNUTLS_A_UNSUPPORTED_EXTENSION           110     An unsupported
                                                  extension was sent
 GNUTLS_A_CERTIFICATE_UNOBTAINABLE        111     Could not retrieve
@@ -3338,7 +3341,7 @@ the obsolete PBES1 scheme cannot be decrypted.
 'GNUTLS_PKCS_PBES2_DES'
      PBES2 single DES.
 'GNUTLS_PKCS_PBES1_DES_MD5'
-     - undescribed -
+     PBES1 with single DES; for compatibility with openssl only.
 'GNUTLS_PKCS_PBES2_GOST_TC26Z'
      PBES2 GOST 28147-89 CFB with TC26-Z S-box.
 'GNUTLS_PKCS_PBES2_GOST_CPA'
@@ -3635,6 +3638,10 @@ to 'more'.  Both will exit with a status code of 0.
             --ask-pass             Enable interaction for entering password when in batch mode.
             --pkcs-cipher=str      Cipher to use for PKCS #8 and #12 operations
             --provider=str         Specify the PKCS #11 provider library
+            --text                 Output textual information before PEM-encoded certificates, private
+     keys, etc
+                                     - disabled as '--no-text'
+                                     - enabled by default
 
      Version, usage and configuration options:
 
@@ -4217,6 +4224,18 @@ provider option.
 This is the "specify the pkcs #11 provider library" option.  This option
 takes a string argument.  This will override the default options in
 /etc/gnutls/pkcs11.conf
+
+text option.
+............
+
+This is the "output textual information before pem-encoded certificates,
+private keys, etc" option.
+
+This option has some usage constraints.  It:
+   * can be disabled with -no-text.
+   * It is enabled by default.
+
+Output textual information before PEM-encoded data
 
 certtool exit status
 ....................
@@ -6957,7 +6976,7 @@ to 'more'.  Both will exit with a status code of 0.
             --list-mechanisms      List all available mechanisms in a token
             --initialize           Initializes a PKCS #11 token
             --initialize-pin       Initializes/Resets a PKCS #11 token user PIN
-            --initialize-so-pin    Initializes/Resets a PKCS #11 token security officer PIN
+            --initialize-so-pin    Initializes/Resets a PKCS #11 token security officer PIN.
             --set-pin=str          Specify the PIN to use on token operations
             --set-so-pin=str       Specify the Security Officer's PIN to use on token initialization
 
@@ -7101,6 +7120,14 @@ list-token-urls option.
 This is the "list the urls available tokens" option.  This is a more
 compact version of -list-tokens.
 
+initialize-so-pin option.
+.........................
+
+This is the "initializes/resets a pkcs #11 token security officer pin."
+option.  This initializes the security officer's PIN. When used
+non-interactively use the GNUTLS_NEW_SO_PIN environment variables to
+initialize SO's PIN.
+
 set-pin option.
 ...............
 
@@ -7220,8 +7247,8 @@ generate-privkey option.
 
 This is the "generate private-public key pair of given type" option.
 This option takes a string argument.  Generates a private-public key
-pair in the specified token.  Acceptable types are RSA, ECDSA, and DSA.
-Should be combined with -sec-param or -bits.
+pair in the specified token.  Acceptable types are RSA, ECDSA, Ed25519,
+and DSA. Should be combined with -sec-param or -bits.
 
 generate-rsa option.
 ....................

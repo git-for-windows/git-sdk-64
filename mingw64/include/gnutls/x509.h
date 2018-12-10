@@ -1097,7 +1097,7 @@ unsigned gnutls_x509_crt_check_key_purpose(gnutls_x509_crt_t cert,
  * @GNUTLS_PKCS_PBES2_AES_192: PBES2 AES-192.
  * @GNUTLS_PKCS_PBES2_AES_256: PBES2 AES-256.
  * @GNUTLS_PKCS_PBES2_DES: PBES2 single DES.
- * @GNUTLS_PKCS_PBES2_DES_MD5: PBES1 with single DES; for compatibility with openssl only.
+ * @GNUTLS_PKCS_PBES1_DES_MD5: PBES1 with single DES; for compatibility with openssl only.
  * @GNUTLS_PKCS_PBES2_GOST_TC26Z: PBES2 GOST 28147-89 CFB with TC26-Z S-box.
  * @GNUTLS_PKCS_PBES2_GOST_CPA: PBES2 GOST 28147-89 CFB with CryptoPro-A S-box.
  * @GNUTLS_PKCS_PBES2_GOST_CPB: PBES2 GOST 28147-89 CFB with CryptoPro-B S-box.

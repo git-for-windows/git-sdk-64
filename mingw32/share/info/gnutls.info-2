@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 16 September 2018 for version 3.6.4 of
+This manual is last updated 16 September 2018 for version 3.6.5 of
 GnuTLS.
 
 Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
@@ -364,6 +364,12 @@ This option has some usage constraints.  It:
    * can be disabled with -no-outder.
 
 The output will be in the TPM portable DER format.
+
+srk-well-known option
+---------------------
+
+This is the "srk has well known password (20 bytes of zeros)" option.
+This option has no 'doc' documentation.
 
 tpmtool exit status
 -------------------
@@ -993,6 +999,22 @@ underlying protocol type, i.e., datagram (UDP) or reliable (TCP).
      Since 3.6.4.
 'GNUTLS_ENABLE_CERT_TYPE_NEG'
      Enable certificate type negotiation extensions (RFC7250).
+'GNUTLS_AUTO_REAUTH'
+     Enable transparent re-authentication in client side when the server
+     requests to.  That is, reauthentication is handled within
+     'gnutls_record_recv()' , and the 'GNUTLS_E_REHANDSHAKE' or
+     'GNUTLS_E_REAUTH_REQUEST' are not returned.  This must be enabled
+     with 'GNUTLS_POST_HANDSHAKE_AUTH' for TLS1.3.  Enabling this flag
+     requires to restore interrupted calls to 'gnutls_record_recv()'
+     based on the output of 'gnutls_record_get_direction()' , since
+     'gnutls_record_recv()' could be interrupted when sending when this
+     flag is enabled.  Note this flag may not be used if you are using
+     the same session for sending and receiving in different threads.
+'GNUTLS_ENABLE_EARLY_DATA'
+     Under TLS1.3 allow the server to receive early data sent as part of
+     the initial ClientHello (0-RTT). This is not enabled by default as
+     early data has weaker security properties than other data.  Since
+     3.6.5.
 
 Figure 6.2: The 'gnutls_init_flags_t' enumeration.
 
@@ -1777,6 +1799,8 @@ be called again.
 
 * Asynchronous operation::
 * Reducing round-trips::
+* Zero-roundtrip mode::
+* Anti-replay protection::
 * DTLS sessions::
 * DTLS and SCTP::
 
@@ -1848,13 +1872,16 @@ which direction to check prior to restoring a function call.
  -- Function: int gnutls_record_get_direction (gnutls_session_t SESSION)
      SESSION: is a 'gnutls_session_t' type.
 
-     This function provides information about the internals of the
-     record protocol and is only useful if a prior gnutls function call,
-     e.g.  'gnutls_handshake()' , was interrupted for some reason.  That
-     is, if a function returned 'GNUTLS_E_INTERRUPTED' or
-     'GNUTLS_E_AGAIN' .  In such a case, you might want to call
-     'select()' or 'poll()' before restoring the interrupted gnutls
-     function.
+     This function is useful to determine whether a GnuTLS function was
+     interrupted while sending or receiving, so that 'select()' or
+     'poll()' may be called appropriately.
+
+     It provides information about the internals of the record protocol
+     and is only useful if a prior gnutls function call, e.g.
+     'gnutls_handshake()' , was interrupted and returned
+     'GNUTLS_E_INTERRUPTED' or 'GNUTLS_E_AGAIN' .  After such an
+     interrupt applications may call 'select()' or 'poll()' before
+     restoring the interrupted GnuTLS function.
 
      This function's output is unreliable if you are using the same
      'session' in different threads, for sending and receiving.
@@ -1868,7 +1895,7 @@ function *note gnutls_dtls_get_timeout:: should be used to estimate when
 to call *note gnutls_handshake:: if no data have been received.
 
 
-File: gnutls.info,  Node: Reducing round-trips,  Next: DTLS sessions,  Prev: Asynchronous operation,  Up: Setting up the transport layer
+File: gnutls.info,  Node: Reducing round-trips,  Next: Zero-roundtrip mode,  Prev: Asynchronous operation,  Up: Setting up the transport layer
 
 6.5.2 Reducing round-trips
 --------------------------
@@ -1941,9 +1968,152 @@ gnutls_handshake:: function will return early, allowing the server to
 send data earlier.
 
 
-File: gnutls.info,  Node: DTLS sessions,  Next: DTLS and SCTP,  Prev: Reducing round-trips,  Up: Setting up the transport layer
+File: gnutls.info,  Node: Zero-roundtrip mode,  Next: Anti-replay protection,  Prev: Reducing round-trips,  Up: Setting up the transport layer
 
-6.5.3 DTLS sessions
+6.5.3 Zero-roundtrip mode
+-------------------------
+
+Under TLS 1.3, when the client has already connected to the server and
+is resuming a session, it can start transmitting application data during
+handshake.  This is called zero round-trip time (0-RTT) mode, and the
+application data sent in this mode is called early data.  The client can
+send early data with *note gnutls_record_send_early_data::.  The client
+should call this function before calling *note gnutls_handshake:: and
+after calling *note gnutls_session_set_data::.
+
+Note, however, that early data has weaker security properties than
+normal application data sent after handshake, such as lack of forward
+secrecy, no guarantees of non-replay between connections.  Thus it is
+disabled on the server side by default.  To enable it, the server needs
+to:
+  1. Set GNUTLS_ENABLE_EARLY_DATA on *note gnutls_init::.  Note that
+     this option only has effect on server.
+
+  2. Enable anti-replay measure.  See *note Anti-replay protection:: for
+     the details.
+
+The server caches the received early data until it is read.  To set the
+maximum amount of data to be stored in the cache, use *note
+gnutls_record_set_max_early_data_size::.  After receiving the
+EndOfEarlyData handshake message, the server can start retrieving the
+received data with *note gnutls_record_recv_early_data::.  You can call
+the function either after the handshake is complete, or through a
+handshake hook (*note gnutls_handshake_set_hook_function::).
+
+When sending early data, the client should respect the maximum amount of
+early data, which may have been previously advertised by the server.  It
+can be checked using *note gnutls_record_get_max_early_data_size::,
+right after calling *note gnutls_session_set_data::.
+
+After sending early data, to check whether the sent early data was
+accepted by the server, use *note gnutls_session_get_flags:: and compare
+the result with GNUTLS_SFLAGS_EARLY_DATA.  Similarly, on the server
+side, the same function and flag can be used to check whether it has
+actually accepted early data.
+
+
+File: gnutls.info,  Node: Anti-replay protection,  Next: DTLS sessions,  Prev: Zero-roundtrip mode,  Up: Setting up the transport layer
+
+6.5.4 Anti-replay protection
+----------------------------
+
+When 0-RTT mode is used, the server must protect itself from replay
+attacks, where adversary client reuses duplicate session ticket to send
+early data, before the server authenticates the client.
+
+GnuTLS provides a simple mechanism against replay attacks, following the
+method called ClientHello recording.  When a session ticket is accepted,
+the server checks if the ClientHello message has been already seen.  If
+there is a duplicate, the server rejects early data.
+
+The problem of this approach is that the number of recorded messages
+grows indefinitely.  To prevent that, the server can limit the recording
+to a certain time window, which can be configured with *note
+gnutls_anti_replay_set_window::.
+
+The anti-replay mechanism shall be globally initialized with *note
+gnutls_anti_replay_init::, and then attached to a session using *note
+gnutls_anti_replay_enable::.  It can be deinitialized with *note
+gnutls_anti_replay_deinit::.
+
+The server must also set up a database back-end to store ClientHello
+messages.  That can be achieved using *note
+gnutls_anti_replay_set_add_function:: and *note
+gnutls_anti_replay_set_ptr::.
+
+Note that, if the back-end stores arbitrary number of ClientHello, it
+needs to periodically clean up the stored entries based on the time
+window set with *note gnutls_anti_replay_set_window::.  The cleanup can
+be implemented by iterating through the database entries and calling
+*note gnutls_db_check_entry_expire_time::.  This is similar to session
+database cleanup used by TLS1.2 sessions.
+
+The full set up of the server using early data would be like the
+following example:
+     #define MAX_EARLY_DATA_SIZE 16384
+
+     static int
+     db_add_func(void *dbf, gnutls_datum_t key, gnutls_datum_t data)
+     {
+         /* Return GNUTLS_E_DB_ENTRY_EXISTS, if KEY is found in the database.
+          * Otherwise, store it and return 0.
+          */
+     }
+
+     static int
+     handshake_hook_func(gnutls_session_t session, unsigned int htype,
+                         unsigned when, unsigned int incoming, const gnutls_datum_t *msg)
+     {
+         int ret;
+         char buf[MAX_EARLY_DATA_SIZE];
+
+         assert(htype == GNUTLS_HANDSHAKE_END_OF_EARLY_DATA);
+         assert(when == GNUTLS_HOOK_POST);
+
+         if (gnutls_session_get_flags(session) & GNUTLS_SFLAGS_EARLY_DATA) {
+             ret = gnutls_record_recv_early_data(session, buf, sizeof(buf));
+             assert(ret >= 0);
+         }
+
+         return ret;
+     }
+
+     int main()
+     {
+       ...
+       /* Initialize anti-replay measure, which can be shared
+        * among multiple sessions.
+        */
+       gnutls_anti_replay_init(&anti_replay);
+
+       /* Set the database back-end function for the anti-replay data. */
+       gnutls_anti_replay_set_add_function(anti_replay, db_add_func);
+       gnutls_anti_replay_set_ptr(anti_replay, NULL);
+
+       ...
+
+       gnutls_init(&server, GNUTLS_SERVER | GNUTLS_ENABLE_EARLY_DATA);
+       gnutls_record_set_max_early_data_size(server, MAX_EARLY_DATA_SIZE);
+
+       ...
+
+       /* Set the anti-replay measure to the session.
+        */
+       gnutls_anti_replay_enable(server, anti_replay);
+       ...
+
+       /* Retrieve early data in a handshake hook;
+        * you can also do that after handshake.
+        */
+       gnutls_handshake_set_hook_function(server, GNUTLS_HANDSHAKE_END_OF_EARLY_DATA,
+                                          GNUTLS_HOOK_POST, handshake_hook_func);
+       ...
+     }
+
+
+File: gnutls.info,  Node: DTLS sessions,  Next: DTLS and SCTP,  Prev: Anti-replay protection,  Up: Setting up the transport layer
+
+6.5.5 DTLS sessions
 -------------------
 
 Because datagram TLS can operate over connections where the client
@@ -1986,7 +2156,7 @@ purpose.
 
 File: gnutls.info,  Node: DTLS and SCTP,  Prev: DTLS sessions,  Up: Setting up the transport layer
 
-6.5.4 DTLS and SCTP
+6.5.6 DTLS and SCTP
 -------------------
 
 Although DTLS can run under any reliable or unreliable layer, there are
@@ -3047,12 +3217,15 @@ handshake process.  A brief usage example is shown below.
      		name = data+5;
      		name_size = size-5;
      	}
+     	return 0;
      }
 
      static int
      handshake_hook_func(gnutls_session_t session, unsigned int htype,
                          unsigned when, unsigned int incoming, const gnutls_datum_t *msg)
      {
+         int ret;
+
          assert(htype == GNUTLS_HANDSHAKE_CLIENT_HELLO);
          assert(when == GNUTLS_HOOK_PRE);
 
@@ -3061,6 +3234,8 @@ handshake process.  A brief usage example is shown below.
          assert(ret >= 0);
 
          gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, cred);
+
+         return ret;
      }
 
      int main()
@@ -3206,9 +3381,22 @@ gnutls_db_check_entry:: for expiration.
 A server supporting session tickets must generate ticket encryption and
 authentication keys using *note gnutls_session_ticket_key_generate::.
 Those keys should be associated with the GnuTLS session using *note
-gnutls_session_ticket_enable_server::, and should be rotated regularly
-(e.g., every few hours), to prevent them from becoming long-term keys
-which if revealed could be used to decrypt all previous sessions.
+gnutls_session_ticket_enable_server::.
+
+Those will be the initial keys, but GnuTLS will rotate them regularly.
+The key rotation interval can be changed with *note
+gnutls_db_set_cache_expiration:: and will be set to three times the
+ticket expiration time (ie.  three times the value given in that
+function).  Every such interval, new keys will be generated from those
+initial keys.  This is a necessary mechanism to prevent the keys from
+becoming long-term keys and as such preserve forward-secrecy in the
+issued session tickets.  If no explicit key rotation interval is
+provided, GnuTLS will rotate them every 18 hours by default.
+
+The master key can be shared between processes or between systems.
+Processes which share the same master key will generate the same rotated
+subkeys, assuming they share the same time (irrespective of timezone
+differences).
 
  -- Function: int gnutls_session_ticket_enable_server (gnutls_session_t
           SESSION, const gnutls_datum_t * KEY)
@@ -3254,7 +3442,10 @@ which if revealed could be used to decrypt all previous sessions.
      not.
 
 The expiration time for session resumption, either in tickets or stored
-data is set using *note gnutls_db_set_cache_expiration::.
+data is set using *note gnutls_db_set_cache_expiration::.  This function
+also controls the ticket key rotation period.  Currently, the session
+key rotation interval is set to 3 times the expiration time set by this
+function.
 
 Under TLS 1.3, the server can send a new session ticket at any time
 using *note gnutls_session_ticket_send::.
@@ -3560,6 +3751,12 @@ whether safe renegotiation is in place, i.e., using *note
 gnutls_safe_renegotiation_status::, which ensures that the server
 remains the same as the initial.
 
+To make re-authentication transparent to the application when requested
+by the server, use the 'GNUTLS_AUTO_REAUTH' flag on the *note
+gnutls_init:: call.  In that case the re-authentication will happen in
+the call of *note gnutls_record_recv:: that received the
+reauthentication request.
+
  -- Function: unsigned gnutls_safe_renegotiation_status
           (gnutls_session_t SESSION)
      SESSION: is a 'gnutls_session_t' type.
@@ -3648,6 +3845,12 @@ handshake authentication using the 'GNUTLS_POST_HANDSHAKE_AUTH' flag at
 A client receiving a re-authentication request will "see" the error code
 'GNUTLS_E_REAUTH_REQUEST' at *note gnutls_record_recv::.  At this point,
 it should also call *note gnutls_reauth::.
+
+To make re-authentication transparent to the application when requested
+by the server, use the 'GNUTLS_AUTO_REAUTH' and
+'GNUTLS_POST_HANDSHAKE_AUTH' flags on the *note gnutls_init:: call.  In
+that case the re-authentication will happen in the call of *note
+gnutls_record_recv:: that received the reauthentication request.
 
 
 File: gnutls.info,  Node: Parameter generation,  Next: Deriving keys for other applications/protocols,  Prev: TLS 1.3 re-authentication and re-key,  Up: Advanced topics
@@ -7218,269 +7421,5 @@ size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp)
         ud->size += size;
 
         return size;
-}
-
-
-File: gnutls.info,  Node: Miscellaneous examples,  Prev: OCSP example,  Up: GnuTLS application examples
-
-7.5 Miscellaneous examples
-==========================
-
-* Menu:
-
-* Checking for an alert::
-* X.509 certificate parsing example::
-* Listing the ciphersuites in a priority string::
-* PKCS12 structure generation example::
-
-
-File: gnutls.info,  Node: Checking for an alert,  Next: X.509 certificate parsing example,  Up: Miscellaneous examples
-
-7.5.1 Checking for an alert
----------------------------
-
-This is a function that checks if an alert has been received in the
-current session.
-
-/* This example code is placed in the public domain. */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <gnutls/gnutls.h>
-
-#include "examples.h"
-
-/* This function will check whether the given return code from
- * a gnutls function (recv/send), is an alert, and will print
- * that alert.
- */
-void check_alert(gnutls_session_t session, int ret)
-{
-        int last_alert;
-
-        if (ret == GNUTLS_E_WARNING_ALERT_RECEIVED
-            || ret == GNUTLS_E_FATAL_ALERT_RECEIVED) {
-                last_alert = gnutls_alert_get(session);
-
-                /* The check for renegotiation is only useful if we are 
-                 * a server, and we had requested a rehandshake.
-                 */
-                if (last_alert == GNUTLS_A_NO_RENEGOTIATION &&
-                    ret == GNUTLS_E_WARNING_ALERT_RECEIVED)
-                        printf("* Received NO_RENEGOTIATION alert. "
-                               "Client Does not support renegotiation.\n");
-                else
-                        printf("* Received alert '%d': %s.\n", last_alert,
-                               gnutls_alert_get_name(last_alert));
-        }
-}
-
-
-File: gnutls.info,  Node: X.509 certificate parsing example,  Next: Listing the ciphersuites in a priority string,  Prev: Checking for an alert,  Up: Miscellaneous examples
-
-7.5.2 X.509 certificate parsing example
----------------------------------------
-
-To demonstrate the X.509 parsing capabilities an example program is
-listed below.  That program reads the peer's certificate, and prints
-information about it.
-
-/* This example code is placed in the public domain. */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <gnutls/gnutls.h>
-#include <gnutls/x509.h>
-
-#include "examples.h"
-
-static const char *bin2hex(const void *bin, size_t bin_size)
-{
-        static char printable[110];
-        const unsigned char *_bin = bin;
-        char *print;
-        size_t i;
-
-        if (bin_size > 50)
-                bin_size = 50;
-
-        print = printable;
-        for (i = 0; i < bin_size; i++) {
-                sprintf(print, "%.2x ", _bin[i]);
-                print += 2;
-        }
-
-        return printable;
-}
-
-/* This function will print information about this session's peer
- * certificate.
- */
-void print_x509_certificate_info(gnutls_session_t session)
-{
-        char serial[40];
-        char dn[256];
-        size_t size;
-        unsigned int algo, bits;
-        time_t expiration_time, activation_time;
-        const gnutls_datum_t *cert_list;
-        unsigned int cert_list_size = 0;
-        gnutls_x509_crt_t cert;
-        gnutls_datum_t cinfo;
-
-        /* This function only works for X.509 certificates.
-         */
-        if (gnutls_certificate_type_get(session) != GNUTLS_CRT_X509)
-                return;
-
-        cert_list = gnutls_certificate_get_peers(session, &cert_list_size);
-
-        printf("Peer provided %d certificates.\n", cert_list_size);
-
-        if (cert_list_size > 0) {
-                int ret;
-
-                /* we only print information about the first certificate.
-                 */
-                gnutls_x509_crt_init(&cert);
-
-                gnutls_x509_crt_import(cert, &cert_list[0],
-                                       GNUTLS_X509_FMT_DER);
-
-                printf("Certificate info:\n");
-
-                /* This is the preferred way of printing short information about
-                   a certificate. */
-
-                ret =
-                    gnutls_x509_crt_print(cert, GNUTLS_CRT_PRINT_ONELINE,
-                                          &cinfo);
-                if (ret == 0) {
-                        printf("\t%s\n", cinfo.data);
-                        gnutls_free(cinfo.data);
-                }
-
-                /* If you want to extract fields manually for some other reason,
-                   below are popular example calls. */
-
-                expiration_time =
-                    gnutls_x509_crt_get_expiration_time(cert);
-                activation_time =
-                    gnutls_x509_crt_get_activation_time(cert);
-
-                printf("\tCertificate is valid since: %s",
-                       ctime(&activation_time));
-                printf("\tCertificate expires: %s",
-                       ctime(&expiration_time));
-
-                /* Print the serial number of the certificate.
-                 */
-                size = sizeof(serial);
-                gnutls_x509_crt_get_serial(cert, serial, &size);
-
-                printf("\tCertificate serial number: %s\n",
-                       bin2hex(serial, size));
-
-                /* Extract some of the public key algorithm's parameters
-                 */
-                algo = gnutls_x509_crt_get_pk_algorithm(cert, &bits);
-
-                printf("Certificate public key: %s",
-                       gnutls_pk_algorithm_get_name(algo));
-
-                /* Print the version of the X.509
-                 * certificate.
-                 */
-                printf("\tCertificate version: #%d\n",
-                       gnutls_x509_crt_get_version(cert));
-
-                size = sizeof(dn);
-                gnutls_x509_crt_get_dn(cert, dn, &size);
-                printf("\tDN: %s\n", dn);
-
-                size = sizeof(dn);
-                gnutls_x509_crt_get_issuer_dn(cert, dn, &size);
-                printf("\tIssuer's DN: %s\n", dn);
-
-                gnutls_x509_crt_deinit(cert);
-
-        }
-}
-
-
-File: gnutls.info,  Node: Listing the ciphersuites in a priority string,  Next: PKCS12 structure generation example,  Prev: X.509 certificate parsing example,  Up: Miscellaneous examples
-
-7.5.3 Listing the ciphersuites in a priority string
----------------------------------------------------
-
-This is a small program to list the enabled ciphersuites by a priority
-string.
-
-/* This example code is placed in the public domain. */
-
-#include <config.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <gnutls/gnutls.h>
-
-static void print_cipher_suite_list(const char *priorities)
-{
-        size_t i;
-        int ret;
-        unsigned int idx;
-        const char *name;
-        const char *err;
-        unsigned char id[2];
-        gnutls_protocol_t version;
-        gnutls_priority_t pcache;
-
-        if (priorities != NULL) {
-                printf("Cipher suites for %s\n", priorities);
-
-                ret = gnutls_priority_init(&pcache, priorities, &err);
-                if (ret < 0) {
-                        fprintf(stderr, "Syntax error at: %s\n", err);
-                        exit(1);
-                }
-
-                for (i = 0;; i++) {
-                        ret =
-                            gnutls_priority_get_cipher_suite_index(pcache,
-                                                                   i,
-                                                                   &idx);
-                        if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
-                                break;
-                        if (ret == GNUTLS_E_UNKNOWN_CIPHER_SUITE)
-                                continue;
-
-                        name =
-                            gnutls_cipher_suite_info(idx, id, NULL, NULL,
-                                                     NULL, &version);
-
-                        if (name != NULL)
-                                printf("%-50s\t0x%02x, 0x%02x\t%s\n",
-                                       name, (unsigned char) id[0],
-                                       (unsigned char) id[1],
-                                       gnutls_protocol_get_name(version));
-                }
-
-                return;
-        }
-}
-
-int main(int argc, char **argv)
-{
-        if (argc > 1)
-                print_cipher_suite_list(argv[1]);
-        return 0;
 }
 
