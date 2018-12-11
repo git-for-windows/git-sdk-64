@@ -23,6 +23,8 @@ SYNOPSIS
 		   [(--reroll-count|-v) <n>]
 		   [--to=<email>] [--cc=<email>]
 		   [--[no-]cover-letter] [--quiet] [--notes[=<ref>]]
+		   [--interdiff=<previous>]
+		   [--range-diff=<previous> [--creation-factor=<percent>]]
 		   [--progress]
 		   [<common diff options>]
 		   [ <since> | <revision range> ]
@@ -227,6 +229,38 @@ feeding the result to `git send-email`.
 	In addition to the patches, generate a cover letter file
 	containing the branch description, shortlog and the overall diffstat.  You can
 	fill in a description in the file before sending it out.
+
+--interdiff=<previous>::
+	As a reviewer aid, insert an interdiff into the cover letter,
+	or as commentary of the lone patch of a 1-patch series, showing
+	the differences between the previous version of the patch series and
+	the series currently being formatted. `previous` is a single revision
+	naming the tip of the previous series which shares a common base with
+	the series being formatted (for example `git format-patch
+	--cover-letter --interdiff=feature/v1 -3 feature/v2`).
+
+--range-diff=<previous>::
+	As a reviewer aid, insert a range-diff (see linkgit:git-range-diff[1])
+	into the cover letter, or as commentary of the lone patch of a
+	1-patch series, showing the differences between the previous
+	version of the patch series and the series currently being formatted.
+	`previous` can be a single revision naming the tip of the previous
+	series if it shares a common base with the series being formatted (for
+	example `git format-patch --cover-letter --range-diff=feature/v1 -3
+	feature/v2`), or a revision range if the two versions of the series are
+	disjoint (for example `git format-patch --cover-letter
+	--range-diff=feature/v1~3..feature/v1 -3 feature/v2`).
++
+Note that diff options passed to the command affect how the primary
+product of `format-patch` is generated, and they are not passed to
+the underlying `range-diff` machinery used to generate the cover-letter
+material (this may change in the future).
+
+--creation-factor=<percent>::
+	Used with `--range-diff`, tweak the heuristic which matches up commits
+	between the previous and current series of patches by adjusting the
+	creation/deletion cost fudge factor. See linkgit:git-range-diff[1])
+	for details.
 
 --notes[=<ref>]::
 	Append the notes (see linkgit:git-notes[1]) for the commit

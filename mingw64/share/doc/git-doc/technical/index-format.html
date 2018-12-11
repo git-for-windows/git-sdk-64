@@ -1004,10 +1004,89 @@ is not CE_FSMONITOR_VALID.</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_end_of_index_entry">End of Index Entry</h2>
+<div class="sectionbody">
+<div class="literalblock">
+<div class="content">
+<pre>The End of Index Entry (EOIE) is used to locate the end of the variable
+length index entries and the begining of the extensions. Code can take
+advantage of this to quickly locate the index extensions without having
+to parse through all of the index entries.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Because it must be able to be loaded before the variable length cache
+entries and other index extensions, this extension must be written last.
+The signature for this extension is { 'E', 'O', 'I', 'E' }.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>The extension consists of:</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>32-bit offset to the end of the index entries</p>
+</li>
+<li>
+<p>160-bit SHA-1 over the extension types and their sizes (but not
+their contents).  E.g. if we have "TREE" extension that is N-bytes
+long, "REUC" extension that is M-bytes long, followed by "EOIE",
+then the hash would be:</p>
+<div class="literalblock">
+<div class="content">
+<pre>SHA-1("TREE" + &lt;binary representation of N&gt; +
+	"REUC" + &lt;binary representation of M&gt;)</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_index_entry_offset_table">Index Entry Offset Table</h2>
+<div class="sectionbody">
+<div class="literalblock">
+<div class="content">
+<pre>The Index Entry Offset Table (IEOT) is used to help address the CPU
+cost of loading the index by enabling multi-threading the process of
+converting cache entries from the on-disk format to the in-memory format.
+The signature for this extension is { 'I', 'E', 'O', 'T' }.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>The extension consists of:</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>32-bit version (currently 1)</p>
+</li>
+<li>
+<p>A number of index offset entries each consisting of:</p>
+</li>
+<li>
+<p>32-bit offset from the begining of the file to the first cache entry
+in this block of entries.</p>
+</li>
+<li>
+<p>32-bit count of cache entries in this block</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

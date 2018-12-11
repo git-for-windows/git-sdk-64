@@ -571,8 +571,18 @@ working tree cannot be removed.</p>
 <dd>
 <p>By default, <code>add</code> refuses to create a new working tree when
 <code>&lt;commit-ish&gt;</code> is a branch name and is already checked out by
-another working tree and <code>remove</code> refuses to remove an unclean
-working tree. This option overrides these safeguards.</p>
+another working tree, or if <code>&lt;path&gt;</code> is already assigned to some
+working tree but is missing (for instance, if <code>&lt;path&gt;</code> was deleted
+manually). This option overrides these safeguards. To add a missing but
+locked working tree path, specify <code>--force</code> twice.</p>
+<div class="paragraph">
+<p><code>move</code> refuses to move a locked working tree unless <code>--force</code> is specified
+twice.</p>
+</div>
+<div class="paragraph">
+<p><code>remove</code> refuses to remove an unclean working tree unless <code>--force</code> is used.
+To remove a locked working tree, specify <code>--force</code> twice.</p>
+</div>
 </dd>
 <dt class="hdlist1">-b &lt;new-branch&gt;</dt>
 <dt class="hdlist1">-B &lt;new-branch&gt;</dt>
@@ -667,6 +677,87 @@ then "ghi" or "def/ghi" is enough to point to the former working tree.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_refs">REFS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In multiple working trees, some refs may be shared between all working
+trees, some refs are local. One example is HEAD is different for all
+working trees. This section is about the sharing rules and how to access
+refs of one working tree from another.</p>
+</div>
+<div class="paragraph">
+<p>In general, all pseudo refs are per working tree and all refs starting
+with "refs/" are shared. Pseudo refs are ones like HEAD which are
+directly under GIT_DIR instead of inside GIT_DIR/refs. There are one
+exception to this: refs inside refs/bisect and refs/worktree is not
+shared.</p>
+</div>
+<div class="paragraph">
+<p>Refs that are per working tree can still be accessed from another
+working tree via two special paths, main-worktree and worktrees. The
+former gives access to per-worktree refs of the main working tree,
+while the latter to all linked working trees.</p>
+</div>
+<div class="paragraph">
+<p>For example, main-worktree/HEAD or main-worktree/refs/bisect/good
+resolve to the same value as the main working tree&#8217;s HEAD and
+refs/bisect/good respectively. Similarly, worktrees/foo/HEAD or
+worktrees/bar/refs/bisect/bad are the same as
+GIT_COMMON_DIR/worktrees/foo/HEAD and
+GIT_COMMON_DIR/worktrees/bar/refs/bisect/bad.</p>
+</div>
+<div class="paragraph">
+<p>To access refs, it&#8217;s best not to look inside GIT_DIR directly. Instead
+use commands such as <a href="git-rev-parse.html">git-rev-parse</a>(1) or <a href="git-update-ref.html">git-update-ref</a>(1)
+which will handle refs correctly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration_file">CONFIGURATION FILE</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, the repository "config" file is shared across all working
+trees. If the config variables <code>core.bare</code> or <code>core.worktree</code> are
+already present in the config file, they will be applied to the main
+working trees only.</p>
+</div>
+<div class="paragraph">
+<p>In order to have configuration specific to working trees, you can turn
+on "worktreeConfig" extension, e.g.:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git config extensions.worktreeConfig true</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this mode, specific configuration stays in the path pointed by <code>git
+rev-parse --git-path config.worktree</code>. You can add or update
+configuration in this file with <code>git config --worktree</code>. Older Git
+versions will refuse to access repositories with this extension.</p>
+</div>
+<div class="paragraph">
+<p>Note that in this file, the exception for <code>core.bare</code> and <code>core.worktree</code>
+is gone. If you have them in $GIT_DIR/config before, you must move
+them to the <code>config.worktree</code> of the main working tree. You may also
+take this opportunity to review and move other configuration that you
+do not want to share to all working trees:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>core.worktree</code> and <code>core.bare</code> should never be shared</p>
+</li>
+<li>
+<p><code>core.sparseCheckout</code> is recommended per working tree, unless you
+are sure you always use sparse checkout for all working trees.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_details">DETAILS</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -694,7 +785,8 @@ linked working tree <code>git rev-parse --git-path HEAD</code> returns
 <code>/path/other/test-next/.git/HEAD</code> or <code>/path/main/.git/HEAD</code>) while <code>git
 rev-parse --git-path refs/heads/master</code> uses
 $GIT_COMMON_DIR and returns <code>/path/main/.git/refs/heads/master</code>,
-since refs are shared across all working trees.</p>
+since refs are shared across all working trees, except refs/bisect and
+refs/worktree.</p>
 </div>
 <div class="paragraph">
 <p>See <a href="gitrepository-layout.html">gitrepository-layout</a>(5) for more information. The rule of
@@ -721,6 +813,10 @@ to <code>/path/main/.git/worktrees/test-next</code> then a file named
 <code>/path/main/.git/worktrees/test-next/locked</code> will prevent the
 <code>test-next</code> entry from being pruned.  See
 <a href="gitrepository-layout.html">gitrepository-layout</a>(5) for details.</p>
+</div>
+<div class="paragraph">
+<p>When extensions.worktreeConfig is enabled, the config file
+<code>.git/worktrees/&lt;id&gt;/config.worktree</code> is read after <code>.git/config</code> is.</p>
 </div>
 </div>
 </div>
@@ -812,7 +908,7 @@ checkouts of a superproject.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

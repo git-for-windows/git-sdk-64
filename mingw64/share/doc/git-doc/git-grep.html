@@ -447,7 +447,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	   [(-O | --open-files-in-pager) [&lt;pager&gt;]]
 	   [-z | --null]
 	   [ -o | --only-matching ] [-c | --count] [--all-match] [-q | --quiet]
-	   [--max-depth &lt;depth&gt;]
+	   [--max-depth &lt;depth&gt;] [--[no-]recursive]
 	   [--color[=&lt;when&gt;] | --no-color]
 	   [--break] [--heading] [-p | --show-function]
 	   [-A &lt;post-context&gt;] [-B &lt;pre-context&gt;] [-C &lt;context&gt;]
@@ -580,10 +580,19 @@ files.</p>
 <dt class="hdlist1">--max-depth &lt;depth&gt;</dt>
 <dd>
 <p>For each &lt;pathspec&gt; given on command line, descend at most &lt;depth&gt;
-levels of directories. A negative value means no limit.
+levels of directories. A value of -1 means no limit.
 This option is ignored if &lt;pathspec&gt; contains active wildcards.
 In other words if "a*" matches a directory named "a*",
 "*" is matched literally so --max-depth is still effective.</p>
+</dd>
+<dt class="hdlist1">-r</dt>
+<dt class="hdlist1">--recursive</dt>
+<dd>
+<p>Same as <code>--max-depth=-1</code>; this is the default.</p>
+</dd>
+<dt class="hdlist1">--no-recursive</dt>
+<dd>
+<p>Same as <code>--max-depth=0</code>.</p>
 </dd>
 <dt class="hdlist1">-w</dt>
 <dt class="hdlist1">--word-regexp</dt>
@@ -843,7 +852,7 @@ files that have lines that match both.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

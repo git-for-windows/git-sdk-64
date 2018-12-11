@@ -530,6 +530,28 @@ diff options passed to <code>git log</code> when generating those patches.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_output_stability">OUTPUT STABILITY</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The output of the <code>range-diff</code> command is subject to change. It is
+intended to be human-readable porcelain output, not something that can
+be used across versions of Git to get a textually stable <code>range-diff</code>
+(as opposed to something like the <code>--stable</code> option to
+<a href="git-patch-id.html">git-patch-id</a>(1)). There&#8217;s also no equivalent of
+<a href="git-apply.html">git-apply</a>(1) for <code>range-diff</code>, the output is not intended to
+be machine-readable.</p>
+</div>
+<div class="paragraph">
+<p>This is particularly true when passing in diff options. Currently some
+options like <code>--stat</code> can, as an emergent effect, produce output
+that&#8217;s quite useless in the context of <code>range-diff</code>. Future versions
+of <code>range-diff</code> may learn to interpret such options in a manner
+specific to <code>range-diff</code> (e.g. for <code>--stat</code> producing human-readable
+output which summarizes how the diffstat changed).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_configuration">CONFIGURATION</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -737,7 +759,7 @@ found in this case will look like this:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

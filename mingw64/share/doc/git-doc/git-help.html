@@ -438,7 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git help</em> [-a|--all [--verbose]] [-g|--guide]
+<pre class="content"><em>git help</em> [-a|--all [--[no-]verbose]] [-g|--guide]
 	   [-i|--info|-m|--man|-w|--web] [COMMAND|GUIDE]</pre>
 </div>
 </div>
@@ -466,6 +466,11 @@ purpose, but this can be overridden by other options or configuration
 variables.</p>
 </div>
 <div class="paragraph">
+<p>If an alias is given, git shows the definition of the alias on
+standard output. To get the manual page for the aliased command, use
+<code>git COMMAND --help</code>.</p>
+</div>
+<div class="paragraph">
 <p>Note that <code>git --help ...</code> is identical to <code>git help ...</code> because the
 former is internally converted into the latter.</p>
 </div>
@@ -486,9 +491,12 @@ former is internally converted into the latter.</p>
 <dt class="hdlist1">--all</dt>
 <dd>
 <p>Prints all the available commands on the standard output. This
-option overrides any given command or guide name.
-When used with <code>--verbose</code> print description for all recognized
-commands.</p>
+option overrides any given command or guide name.</p>
+</dd>
+<dt class="hdlist1">--verbose</dt>
+<dd>
+<p>When used with <code>--all</code> print description for all recognized
+commands. This is the default.</p>
 </dd>
 <dt class="hdlist1">-c</dt>
 <dt class="hdlist1">--config</dt>
@@ -698,7 +706,7 @@ See <a href="git-config.html">git-config</a>(1) for more information about this.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

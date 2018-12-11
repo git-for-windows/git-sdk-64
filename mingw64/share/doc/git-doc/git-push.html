@@ -518,25 +518,66 @@ without any <code>&lt;refspec&gt;</code> on the command line.  Otherwise, missin
 </div>
 <div class="paragraph">
 <p>The object referenced by &lt;src&gt; is used to update the &lt;dst&gt; reference
-on the remote side.  By default this is only allowed if &lt;dst&gt; is not
-a tag (annotated or lightweight), and then only if it can fast-forward
-&lt;dst&gt;.  By having the optional leading <code>+</code>, you can tell Git to update
-the &lt;dst&gt; ref even if it is not allowed by default (e.g., it is not a
-fast-forward.)  This does <strong>not</strong> attempt to merge &lt;src&gt; into &lt;dst&gt;.  See
-EXAMPLES below for details.</p>
+on the remote side. Whether this is allowed depends on where in
+<code>refs/*</code> the &lt;dst&gt; reference lives as described in detail below, in
+those sections "update" means any modifications except deletes, which
+as noted after the next few sections are treated differently.</p>
 </div>
 <div class="paragraph">
-<p><code>tag &lt;tag&gt;</code> means the same as <code>refs/tags/&lt;tag&gt;:refs/tags/&lt;tag&gt;</code>.</p>
+<p>The <code>refs/heads/*</code> namespace will only accept commit objects, and
+updates only if they can be fast-forwarded.</p>
 </div>
 <div class="paragraph">
-<p>Pushing an empty &lt;src&gt; allows you to delete the &lt;dst&gt; ref from
-the remote repository.</p>
+<p>The <code>refs/tags/*</code> namespace will accept any kind of object (as
+commits, trees and blobs can be tagged), and any updates to them will
+be rejected.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s possible to push any type of object to any namespace outside of
+<code>refs/{tags,heads}/*</code>. In the case of tags and commits, these will be
+treated as if they were the commits inside <code>refs/heads/*</code> for the
+purposes of whether the update is allowed.</p>
+</div>
+<div class="paragraph">
+<p>I.e. a fast-forward of commits and tags outside <code>refs/{tags,heads}/*</code>
+is allowed, even in cases where what&#8217;s being fast-forwarded is not a
+commit, but a tag object which happens to point to a new commit which
+is a fast-forward of the commit the last tag (or commit) it&#8217;s
+replacing. Replacing a tag with an entirely different tag is also
+allowed, if it points to the same commit, as well as pushing a peeled
+tag, i.e. pushing the commit that existing tag object points to, or a
+new tag object which an existing commit points to.</p>
+</div>
+<div class="paragraph">
+<p>Tree and blob objects outside of <code>refs/{tags,heads}/*</code> will be treated
+the same way as if they were inside <code>refs/tags/*</code>, any update of them
+will be rejected.</p>
+</div>
+<div class="paragraph">
+<p>All of the rules described above about what&#8217;s not allowed as an update
+can be overridden by adding an the optional leading <code>+</code> to a refspec
+(or using <code>--force</code> command line option). The only exception to this
+is that no amount of forcing will make the <code>refs/heads/*</code> namespace
+accept a non-commit object. Hooks and configuration can also override
+or amend these rules, see e.g. <code>receive.denyNonFastForwards</code> in
+<a href="git-config.html">git-config</a>(1) and <code>pre-receive</code> and <code>update</code> in
+<a href="githooks.html">githooks</a>(5).</p>
+</div>
+<div class="paragraph">
+<p>Pushing an empty &lt;src&gt; allows you to delete the &lt;dst&gt; ref from the
+remote repository. Deletions are always accepted without a leading <code>+</code>
+in the refspec (or <code>--force</code>), except when forbidden by configuration
+or hooks. See <code>receive.denyDeletes</code> in <a href="git-config.html">git-config</a>(1) and
+<code>pre-receive</code> and <code>update</code> in <a href="githooks.html">githooks</a>(5).</p>
 </div>
 <div class="paragraph">
 <p>The special refspec <code>:</code> (or <code>+:</code> to allow non-fast-forward updates)
 directs Git to push "matching" branches: for every branch that exists on
 the local side, the remote side is updated if a branch of the same name
 already exists on the remote side.</p>
+</div>
+<div class="paragraph">
+<p><code>tag &lt;tag&gt;</code> means the same as <code>refs/tags/&lt;tag&gt;:refs/tags/&lt;tag&gt;</code>.</p>
 </div>
 </dd>
 <dt class="hdlist1">--all</dt>
@@ -1517,7 +1558,7 @@ The delta reveals regions of X that are similar to Y to the attacker.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

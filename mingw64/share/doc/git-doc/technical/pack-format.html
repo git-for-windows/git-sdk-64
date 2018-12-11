@@ -813,10 +813,139 @@ corresponding packfile.</pre>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_multi_pack_index_midx_files_have_the_following_format">multi-pack-index (MIDX) files have the following format:</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The multi-pack-index files refer to multiple pack-files and loose objects.</p>
+</div>
+<div class="paragraph">
+<p>In order to allow extensions that add extra data to the MIDX, we organize
+the body into "chunks" and provide a lookup table at the beginning of the
+body. The header includes certain length values, such as the number of packs,
+the number of base MIDX files, hash lengths and types.</p>
+</div>
+<div class="paragraph">
+<p>All 4-byte numbers are in network order.</p>
+</div>
+<div class="paragraph">
+<p>HEADER:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>4-byte signature:
+    The signature is: {'M', 'I', 'D', 'X'}</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>1-byte version number:
+    Git only writes or recognizes version 1.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>1-byte Object Id Version
+    Git only writes or recognizes version 1 (SHA1).</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>1-byte number of "chunks"</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>1-byte number of base multi-pack-index files:
+    This value is currently always zero.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>4-byte number of pack files</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>CHUNK LOOKUP:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>(C + 1) * 12 bytes providing the chunk offsets:
+    First 4 bytes describe chunk id. Value 0 is a terminating label.
+    Other 8 bytes provide offset in current file for chunk to start.
+    (Chunks are provided in file-order, so you can infer the length
+    using the next chunk position if necessary.)</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>The remaining data in the body is described one chunk at a time, and
+these chunks may be given in any order. Chunks are required unless
+otherwise specified.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>CHUNK DATA:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Packfile Names (ID: {'P', 'N', 'A', 'M'})
+    Stores the packfile names as concatenated, null-terminated strings.
+    Packfiles must be listed in lexicographic order for fast lookups by
+    name. This is the only chunk not guaranteed to be a multiple of four
+    bytes in length, so should be the last chunk for alignment reasons.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>OID Fanout (ID: {'O', 'I', 'D', 'F'})
+    The ith entry, F[i], stores the number of OIDs with first
+    byte at most i. Thus F[255] stores the total
+    number of objects.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>OID Lookup (ID: {'O', 'I', 'D', 'L'})
+    The OIDs for all objects in the MIDX are stored in lexicographic
+    order in this chunk.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Object Offsets (ID: {'O', 'O', 'F', 'F'})
+    Stores two 4-byte values for every object.
+    1: The pack-int-id for the pack storing this object.
+    2: The offset within the pack.
+	If all offsets are less than 2^31, then the large offset chunk
+	will not exist and offsets are stored as in IDX v1.
+	If there is at least one offset value larger than 2^32-1, then
+	the large offset chunk must exist. If the large offset chunk
+	exists and the 31st bit is on, then removing that bit reveals
+	the row in the large offsets containing the 8-byte offset of
+	this object.</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>[Optional] Object Large Offsets (ID: {'L', 'O', 'F', 'F'})
+    8-byte offsets into large packfiles.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>TRAILER:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>20-byte SHA1-checksum of the above contents.</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

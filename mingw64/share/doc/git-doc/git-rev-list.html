@@ -1470,6 +1470,12 @@ the requested refs.</p>
 <p>The form <em>--filter=sparse:path=&lt;path&gt;</em> similarly uses a sparse-checkout
 specification contained in &lt;path&gt;.</p>
 </div>
+<div class="paragraph">
+<p>The form <em>--filter=tree:&lt;depth&gt;</em> omits all blobs and trees whose depth
+from the root tree is &gt;= &lt;depth&gt; (minimum depth if an object is located
+at multiple depths in the commits traversed). Currently, only &lt;depth&gt;=0
+is supported, which omits all blobs and trees.</p>
+</div>
 </dd>
 <dt class="hdlist1">--no-filter</dt>
 <dd>
@@ -2079,6 +2085,13 @@ and "N" for no signature</p>
 <p><em>%GK</em>: show the key used to sign a signed commit</p>
 </li>
 <li>
+<p><em>%GF</em>: show the fingerprint of the key used to sign a signed commit</p>
+</li>
+<li>
+<p><em>%GP</em>: show the fingerprint of the primary key whose subkey was used
+to sign a signed commit</p>
+</li>
+<li>
 <p><em>%gD</em>: reflog selector, e.g., <code>refs/stash@{1}</code> or
 <code>refs/stash@{2 minutes ago</code>}; the format follows the rules described
 for the <code>-g</code> option. The portion before the <code>@</code> is the refname as
@@ -2272,7 +2285,7 @@ $ git log -2 --pretty=%h 4da45bef</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

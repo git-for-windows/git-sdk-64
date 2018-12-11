@@ -453,7 +453,7 @@ depending on the subcommand:</p>
 <pre class="content"><em>git reflog</em> [<em>show</em>] [log-options] [&lt;ref&gt;]
 <em>git reflog expire</em> [--expire=&lt;time&gt;] [--expire-unreachable=&lt;time&gt;]
 	[--rewrite] [--updateref] [--stale-fix]
-	[--dry-run | -n] [--verbose] [--all | &lt;refs&gt;&#8230;&#8203;]
+	[--dry-run | -n] [--verbose] [--all [--single-worktree] | &lt;refs&gt;&#8230;&#8203;]
 <em>git reflog delete</em> [--rewrite] [--updateref]
 	[--dry-run | -n] [--verbose] ref@{specifier}&#8230;&#8203;
 <em>git reflog exists</em> &lt;ref&gt;</pre>
@@ -514,6 +514,12 @@ not.</p>
 <dt class="hdlist1">--all</dt>
 <dd>
 <p>Process the reflogs of all references.</p>
+</dd>
+<dt class="hdlist1">--single-worktree</dt>
+<dd>
+<p>By default when <code>--all</code> is specified, reflogs from all working
+trees are processed. This option limits the processing to reflogs
+from the current working tree only.</p>
 </dd>
 <dt class="hdlist1">--expire=&lt;time&gt;</dt>
 <dd>
@@ -594,7 +600,7 @@ used with <code>expire</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

@@ -837,11 +837,11 @@ documented in <a href="git-config.html">git-config</a>(1).</p>
 <dt class="hdlist1">-f</dt>
 <dt class="hdlist1">--force</dt>
 <dd>
-<p>When <em>git fetch</em> is used with <code>&lt;rbranch&gt;:&lt;lbranch&gt;</code>
-refspec, it refuses to update the local branch
-<code>&lt;lbranch&gt;</code> unless the remote branch <code>&lt;rbranch&gt;</code> it
-fetches is a descendant of <code>&lt;lbranch&gt;</code>.  This option
-overrides that check.</p>
+<p>When <em>git fetch</em> is used with <code>&lt;src&gt;:&lt;dst&gt;</code> refspec it may
+refuse to update the local branch as discussed
+in the <code>&lt;refspec&gt;</code> part of the <a href="git-fetch.html">git-fetch</a>(1)
+documentation.
+This option overrides that check.</p>
 </dd>
 <dt class="hdlist1">-k</dt>
 <dt class="hdlist1">--keep</dt>
@@ -926,11 +926,45 @@ it requests fetching everything up to the given tag.</p>
 </div>
 <div class="paragraph">
 <p>The remote ref that matches &lt;src&gt;
-is fetched, and if &lt;dst&gt; is not an empty string, the local
-ref that matches it is fast-forwarded using &lt;src&gt;.
-If the optional plus <code>+</code> is used, the local ref
-is updated even if it does not result in a fast-forward
-update.</p>
+is fetched, and if &lt;dst&gt; is not an empty string, an attempt
+is made to update the local ref that matches it.</p>
+</div>
+<div class="paragraph">
+<p>Whether that update is allowed without <code>--force</code> depends on the ref
+namespace it&#8217;s being fetched to, the type of object being fetched, and
+whether the update is considered to be a fast-forward. Generally, the
+same rules apply for fetching as when pushing, see the <code>&lt;refspec&gt;...</code>
+section of <a href="git-push.html">git-push</a>(1) for what those are. Exceptions to those
+rules particular to <em>git fetch</em> are noted below.</p>
+</div>
+<div class="paragraph">
+<p>Until Git version 2.20, and unlike when pushing with
+<a href="git-push.html">git-push</a>(1), any updates to <code>refs/tags/*</code> would be accepted
+without <code>+</code> in the refspec (or <code>--force</code>). When fetching, we promiscuously
+considered all tag updates from a remote to be forced fetches.  Since
+Git version 2.20, fetching to update <code>refs/tags/*</code> works the same way
+as when pushing. I.e. any updates will be rejected without <code>+</code> in the
+refspec (or <code>--force</code>).</p>
+</div>
+<div class="paragraph">
+<p>Unlike when pushing with <a href="git-push.html">git-push</a>(1), any updates outside of
+<code>refs/{tags,heads}/*</code> will be accepted without <code>+</code> in the refspec (or
+<code>--force</code>), whether that&#8217;s swapping e.g. a tree object for a blob, or
+a commit for another commit that&#8217;s doesn&#8217;t have the previous commit as
+an ancestor etc.</p>
+</div>
+<div class="paragraph">
+<p>Unlike when pushing with <a href="git-push.html">git-push</a>(1), there is no
+configuration which&#8217;ll amend these rules, and nothing like a
+<code>pre-fetch</code> hook analogous to the <code>pre-receive</code> hook.</p>
+</div>
+<div class="paragraph">
+<p>As with pushing with <a href="git-push.html">git-push</a>(1), all of the rules described
+above about what&#8217;s not allowed as an update can be overridden by
+adding an the optional leading <code>+</code> to a refspec (or using <code>--force</code>
+command line option). The only exception to this is that no amount of
+forcing will make the <code>refs/heads/*</code> namespace accept a non-commit
+object.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1628,7 +1662,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

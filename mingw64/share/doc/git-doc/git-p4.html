@@ -667,25 +667,25 @@ $ git p4 submit --update-shelve 1234 --update-shelve 2345</pre>
 <h3 id="_unshelve">Unshelve</h3>
 <div class="paragraph">
 <p>Unshelving will take a shelved P4 changelist, and produce the equivalent git commit
-in the branch refs/remotes/p4/unshelved/&lt;changelist&gt;.</p>
+in the branch refs/remotes/p4-unshelved/&lt;changelist&gt;.</p>
 </div>
 <div class="paragraph">
 <p>The git commit is created relative to the current origin revision (HEAD by default).
-If the shelved changelist&#8217;s parent revisions differ, git-p4 will refuse to unshelve;
-you need to be unshelving onto an equivalent tree.</p>
+A parent commit is created based on the origin, and then the unshelve commit is
+created based on that.</p>
 </div>
 <div class="paragraph">
 <p>The origin revision can be changed with the "--origin" option.</p>
 </div>
 <div class="paragraph">
-<p>If the target branch in refs/remotes/p4/unshelved already exists, the old one will
+<p>If the target branch in refs/remotes/p4-unshelved already exists, the old one will
 be renamed.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre>$ git p4 sync
 $ git p4 unshelve 12345
-$ git show refs/remotes/p4/unshelved/12345
+$ git show p4-unshelved/12345
 &lt;submit more changes via p4 to the same files&gt;
 $ git p4 unshelve 12345
 &lt;refuses to unshelve until git is in sync with p4 again&gt;</pre>
@@ -1410,7 +1410,7 @@ changes are new.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

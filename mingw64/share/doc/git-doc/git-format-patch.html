@@ -452,6 +452,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 		   [(--reroll-count|-v) &lt;n&gt;]
 		   [--to=&lt;email&gt;] [--cc=&lt;email&gt;]
 		   [--[no-]cover-letter] [--quiet] [--notes[=&lt;ref&gt;]]
+		   [--interdiff=&lt;previous&gt;]
+		   [--range-diff=&lt;previous&gt; [--creation-factor=&lt;percent&gt;]]
 		   [--progress]
 		   [&lt;common diff options&gt;]
 		   [ &lt;since&gt; | &lt;revision range&gt; ]</pre>
@@ -1158,6 +1160,42 @@ line.</p>
 containing the branch description, shortlog and the overall diffstat.  You can
 fill in a description in the file before sending it out.</p>
 </dd>
+<dt class="hdlist1">--interdiff=&lt;previous&gt;</dt>
+<dd>
+<p>As a reviewer aid, insert an interdiff into the cover letter,
+or as commentary of the lone patch of a 1-patch series, showing
+the differences between the previous version of the patch series and
+the series currently being formatted. <code>previous</code> is a single revision
+naming the tip of the previous series which shares a common base with
+the series being formatted (for example <code>git format-patch
+--cover-letter --interdiff=feature/v1 -3 feature/v2</code>).</p>
+</dd>
+<dt class="hdlist1">--range-diff=&lt;previous&gt;</dt>
+<dd>
+<p>As a reviewer aid, insert a range-diff (see <a href="git-range-diff.html">git-range-diff</a>(1))
+into the cover letter, or as commentary of the lone patch of a
+1-patch series, showing the differences between the previous
+version of the patch series and the series currently being formatted.
+<code>previous</code> can be a single revision naming the tip of the previous
+series if it shares a common base with the series being formatted (for
+example <code>git format-patch --cover-letter --range-diff=feature/v1 -3
+feature/v2</code>), or a revision range if the two versions of the series are
+disjoint (for example <code>git format-patch --cover-letter
+--range-diff=feature/v1~3..feature/v1 -3 feature/v2</code>).</p>
+<div class="paragraph">
+<p>Note that diff options passed to the command affect how the primary
+product of <code>format-patch</code> is generated, and they are not passed to
+the underlying <code>range-diff</code> machinery used to generate the cover-letter
+material (this may change in the future).</p>
+</div>
+</dd>
+<dt class="hdlist1">--creation-factor=&lt;percent&gt;</dt>
+<dd>
+<p>Used with <code>--range-diff</code>, tweak the heuristic which matches up commits
+between the previous and current series of patches by adjusting the
+creation/deletion cost fudge factor. See <a href="git-range-diff.html">git-range-diff</a>(1))
+for details.</p>
+</dd>
 <dt class="hdlist1">--notes[=&lt;ref&gt;]</dt>
 <dd>
 <p>Append the notes (see <a href="git-notes.html">git-notes</a>(1)) for the commit
@@ -1719,7 +1757,7 @@ as e-mailable patches:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

@@ -481,14 +481,16 @@ unset an existing <code>--type</code> specifier with <code>--no-type</code>.</p>
 <div class="paragraph">
 <p>When reading, the values are read from the system, global and
 repository local configuration files by default, and options
-<code>--system</code>, <code>--global</code>, <code>--local</code> and <code>--file &lt;filename&gt;</code> can be
-used to tell the command to read from only that location (see <a href="#FILES">FILES</a>).</p>
+<code>--system</code>, <code>--global</code>, <code>--local</code>, <code>--worktree</code> and
+<code>--file &lt;filename&gt;</code> can be used to tell the command to read from only
+that location (see <a href="#FILES">FILES</a>).</p>
 </div>
 <div class="paragraph">
 <p>When writing, the new value is written to the repository local
 configuration file by default, and options <code>--system</code>, <code>--global</code>,
-<code>--file &lt;filename&gt;</code> can be used to tell the command to write to
-that location (you can say <code>--local</code> but that is the default).</p>
+<code>--worktree</code>, <code>--file &lt;filename&gt;</code> can be used to tell the command to
+write to that location (you can say <code>--local</code> but that is the
+default).</p>
 </div>
 <div class="paragraph">
 <p>This command will fail with non-zero status upon error.  Some exit
@@ -606,6 +608,12 @@ from all available files.</p>
 <p>See also <a href="#FILES">FILES</a>.</p>
 </div>
 </dd>
+<dt class="hdlist1">--worktree</dt>
+<dd>
+<p>Similar to <code>--local</code> except that <code>.git/config.worktree</code> is
+read from or written to if <code>extensions.worktreeConfig</code> is
+present. If not it&#8217;s the same as <code>--local</code>.</p>
+</dd>
 <dt class="hdlist1">-f config-file</dt>
 <dt class="hdlist1">--file config-file</dt>
 <dd>
@@ -687,8 +695,8 @@ as-is.</p>
 <dt class="hdlist1">--path</dt>
 <dt class="hdlist1">--expiry-date</dt>
 <dd>
-<p>Historical options for selecting a type specifier. Prefer instead <code>--type</code>,
-(see: above).</p>
+<p>Historical options for selecting a type specifier. Prefer instead <code>--type</code>
+(see above).</p>
 </dd>
 <dt class="hdlist1">--no-type</dt>
 <dd>
@@ -811,6 +819,11 @@ configuration file.</p>
 <dd>
 <p>Repository specific configuration file.</p>
 </dd>
+<dt class="hdlist1">$GIT_DIR/config.worktree</dt>
+<dd>
+<p>This is optional and is only searched when
+<code>extensions.worktreeConfig</code> is present in $GIT_DIR/config.</p>
+</dd>
 </dl>
 </div>
 <div class="paragraph">
@@ -836,9 +849,10 @@ and <code>--unset</code>. <strong><em>git config</em> will only ever change one 
 </div>
 <div class="paragraph">
 <p>You can override these rules either by command-line options or by environment
-variables. The <code>--global</code> and the <code>--system</code> options will limit the file used
-to the global or system-wide file respectively. The <code>GIT_CONFIG</code> environment
-variable has a similar effect, but you can specify any filename you want.</p>
+variables. The <code>--global</code>, <code>--system</code> and <code>--worktree</code> options will limit
+the file used to the global, system-wide or per-worktree file respectively.
+The <code>GIT_CONFIG</code> environment variable has a similar effect, but you
+can specify any filename you want.</p>
 </div>
 </div>
 </div>
@@ -1031,9 +1045,9 @@ false, while it is set to <code>true</code> for all others:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>% git config --bool --get-urlmatch http.sslverify https://good.example.com
+<pre>% git config --type=bool --get-urlmatch http.sslverify https://good.example.com
 true
-% git config --bool --get-urlmatch http.sslverify https://weak.example.com
+% git config --type=bool --get-urlmatch http.sslverify https://weak.example.com
 false
 % git config --get-urlmatch http https://weak.example.com
 http.cookieFile /tmp/cookie.txt
@@ -1047,8 +1061,9 @@ http.sslverify false</pre>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The Git configuration file contains a number of variables that affect
-the Git commands' behavior. The <code>.git/config</code> file in each repository
-is used to store the configuration for that repository, and
+the Git commands' behavior. The files <code>.git/config</code> and optionally
+<code>config.worktree</code> (see <code>extensions.worktreeConfig</code> below) in each
+repository are used to store the configuration for that repository, and
 <code>$HOME/.gitconfig</code> is used to store a per-user configuration as
 fallback values for the <code>.git/config</code> file. The file <code>/etc/gitconfig</code>
 can be used to store a system-wide default configuration. On Windows,
@@ -1344,7 +1359,7 @@ is taken as true.</p>
 <p>Boolean false literals are <code>no</code>, <code>off</code>, <code>false</code>,
 <code>0</code> and the empty string.</p>
 <div class="paragraph">
-<p>When converting value to the canonical form using <code>--bool</code> type
+<p>When converting a value to its canonical form using the <code>--type=bool</code> type
 specifier, <em>git config</em> will ensure that the output is "true" or
 "false" (spelled in lowercase).</p>
 </div>
@@ -1488,6 +1503,12 @@ files.</p>
 <dd>
 <p>Advice shown when <a href="git-merge.html">git-merge</a>(1) refuses to
 merge to avoid overwriting local changes.</p>
+</dd>
+<dt class="hdlist1">resetQuiet</dt>
+<dd>
+<p>Advice to consider using the <code>--quiet</code> option to <a href="git-reset.html">git-reset</a>(1)
+when the command takes more than 2 seconds to enumerate unstaged
+changes after reset.</p>
 </dd>
 <dt class="hdlist1">resolveConflict</dt>
 <dd>
@@ -1830,6 +1851,27 @@ and other symbolic reference files, use symbolic links.
 This is sometimes needed to work with old scripts that
 expect HEAD to be a symbolic link.</p>
 </dd>
+<dt class="hdlist1">core.alternateRefsCommand</dt>
+<dd>
+<p>When advertising tips of available history from an alternate, use the shell to
+execute the specified command instead of <a href="git-for-each-ref.html">git-for-each-ref</a>(1). The
+first argument is the absolute path of the alternate. Output must contain one
+hex object id per line (i.e., the same as produced by <code>git for-each-ref
+--format='%(objectname)'</code>).</p>
+<div class="paragraph">
+<p>Note that you cannot generally put <code>git for-each-ref</code> directly into the config
+value, as it does not take a repository path as an argument (but you can wrap
+the command above in a shell script).</p>
+</div>
+</dd>
+<dt class="hdlist1">core.alternateRefsPrefixes</dt>
+<dd>
+<p>When listing references from an alternate, list only references that begin
+with the given prefix. Prefixes match as if they were given as arguments to
+<a href="git-for-each-ref.html">git-for-each-ref</a>(1). To list multiple prefixes, separate them with
+whitespace. If <code>core.alternateRefsCommand</code> is set, setting
+<code>core.alternateRefsPrefixes</code> has no effect.</p>
+</dd>
 <dt class="hdlist1">core.bare</dt>
 <dd>
 <p>If true this repository is assumed to be <em>bare</em> and has no
@@ -2081,13 +2123,6 @@ lock the <code>packed-refs</code> file. Value 0 means not to retry at
 all; -1 means to try indefinitely. Default is 1000 (i.e.,
 retry for 1 second).</p>
 </dd>
-<dt class="hdlist1">sequence.editor</dt>
-<dd>
-<p>Text editor used by <code>git rebase -i</code> for editing the rebase instruction file.
-The value is meant to be interpreted by the shell when it is used.
-It can be overridden by the <code>GIT_SEQUENCE_EDITOR</code> environment variable.
-When not configured the default commit message editor is used instead.</p>
-</dd>
 <dt class="hdlist1">core.pager</dt>
 <dd>
 <p>Text viewer for use by Git commands (e.g., <em>less</em>).  The value
@@ -2204,10 +2239,10 @@ doing and are prepared to live with a few quirks.</p>
 </dd>
 <dt class="hdlist1">core.unsetenvvars</dt>
 <dd>
-<p>EXPERIMENTAL, Windows-only: comma-separated list of environment
-variables' names that need to be unset before spawning any other
-process. Defaults to <code>PERL5LIB</code> to account for the fact that Git
-for Windows insists on using its own Perl interpreter.</p>
+<p>Windows-only: comma-separated list of environment variables'
+names that need to be unset before spawning any other process.
+Defaults to <code>PERL5LIB</code> to account for the fact that Git for
+Windows insists on using its own Perl interpreter.</p>
 </dd>
 <dt class="hdlist1">core.createObject</dt>
 <dd>
@@ -2242,6 +2277,12 @@ to parse the graph structure of commits. Defaults to false. See
 <p>If set to <code>false</code>, behave as if the <code>--no-replace-objects</code>
 option was given on the command line. See <a href="git.html">git</a>(1) and
 <a href="git-replace.html">git-replace</a>(1) for more information.</p>
+</dd>
+<dt class="hdlist1">core.multiPackIndex</dt>
+<dd>
+<p>Use the multi-pack-index file to track multiple packfiles using a
+single index. See <a href="technical/multi-pack-index.html">the
+multi-pack-index design document</a>.</p>
 </dd>
 <dt class="hdlist1">core.sparseCheckout</dt>
 <dd>
@@ -2489,6 +2530,15 @@ and by <a href="git-worktree.html">git-worktree</a>(1) when <em>git worktree add
 remote branch. This setting might be used for other checkout-like
 commands or functionality in the future.</p>
 </div>
+</dd>
+<dt class="hdlist1">checkout.optimizeNewBranch</dt>
+<dd>
+<p>Optimizes the performance of "git checkout -b &lt;new_branch&gt;" when
+using sparse-checkout.  When set to true, git will not update the
+repo based on the current sparse-checkout settings.  This means it
+will not update the skip-worktree bit in the index nor add/remove
+files in the working directory to reflect the current sparse checkout
+settings nor will it show the local changes.</p>
 </dd>
 <dt class="hdlist1">clean.requireForce</dt>
 <dd>
@@ -3150,6 +3200,15 @@ This variable overrides the value configured in <code>merge.tool</code>.
 The list below shows the valid built-in values.
 Any other value is treated as a custom diff tool and requires
 that a corresponding difftool.&lt;tool&gt;.cmd variable is defined.</p>
+</dd>
+<dt class="hdlist1">diff.guitool</dt>
+<dd>
+<p>Controls which diff tool is used by <a href="git-difftool.html">git-difftool</a>(1) when
+the -g/--gui flag is specified. This variable overrides the value
+configured in <code>merge.guitool</code>. The list below shows the valid
+built-in values. Any other value is treated as a custom diff tool
+and requires that a corresponding difftool.&lt;guitool&gt;.cmd variable
+is defined.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -3557,12 +3616,17 @@ will only cause git to warn.</p>
 </dd>
 <dt class="hdlist1">fsck.skipList</dt>
 <dd>
-<p>The path to a sorted list of object names (i.e. one SHA-1 per
+<p>The path to a list of object names (i.e. one unabbreviated SHA-1 per
 line) that are known to be broken in a non-fatal way and should
-be ignored. This feature is useful when an established project
-should be accepted despite early commits containing errors that
-can be safely ignored such as invalid committer email addresses.
-Note: corrupt objects cannot be skipped with this setting.</p>
+be ignored. On versions of Git 2.20 and later comments (<em>#</em>), empty
+lines, and any leading and trailing whitespace is ignored. Everything
+but a SHA-1 per line will error out on older versions.</p>
+<div class="paragraph">
+<p>This feature is useful when an established project should be accepted
+despite early commits containing errors that can be safely ignored
+such as invalid committer email addresses.  Note: corrupt objects
+cannot be skipped with this setting.</p>
+</div>
 <div class="paragraph">
 <p>Like <code>fsck.&lt;msg-id&gt;</code> this variable has corresponding
 <code>receive.fsck.skipList</code> and <code>fetch.fsck.skipList</code> variants.</p>
@@ -3573,6 +3637,16 @@ Note: corrupt objects cannot be skipped with this setting.</p>
 fall back on the <code>fsck.skipList</code> configuration if they aren&#8217;t set. To
 uniformly configure the same fsck settings in different circumstances
 all three of them they must all set to the same values.</p>
+</div>
+<div class="paragraph">
+<p>Older versions of Git (before 2.20) documented that the object names
+list should be sorted. This was never a requirement, the object names
+could appear in any order, but when reading the list we tracked whether
+the list was sorted for the purposes of an internal binary search
+implementation, which could save itself some work with an already sorted
+list. Unless you had a humongous list there was no reason to go out of
+your way to pre-sort the list. After Git version 2.20 a hash implementation
+is used instead, so there&#8217;s now no reason to pre-sort the list.</p>
 </div>
 </dd>
 <dt class="hdlist1">gc.aggressiveDepth</dt>
@@ -3631,7 +3705,8 @@ for details.</p>
 </dd>
 <dt class="hdlist1">gc.logExpiry</dt>
 <dd>
-<p>If the file gc.log exists, then <code>git gc --auto</code> won&#8217;t run
+<p>If the file gc.log exists, then <code>git gc --auto</code> will print
+its content and exit with status zero instead of running
 unless that file is more than <em>gc.logExpiry</em> old.  Default is
 "1.day".  See <code>gc.pruneExpire</code> for more ways to specify its
 value.</p>
@@ -4116,6 +4191,23 @@ input unless http.saveCookies is set.</p>
 <p>If set, store cookies received during requests to the file specified by
 http.cookieFile. Has no effect if http.cookieFile is unset.</p>
 </dd>
+<dt class="hdlist1">http.version</dt>
+<dd>
+<p>Use the specified HTTP protocol version when communicating with a server.
+If you want to force the default. The available and default version depend
+on libcurl. Actually the possible values of
+this option are:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP/2</p>
+</li>
+<li>
+<p>HTTP/1.1</p>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">http.sslVersion</dt>
 <dd>
 <p>The SSL version to use when negotiating an SSL connection, if you
@@ -4370,54 +4462,6 @@ matched against are those given directly to Git commands.  This means any URLs
 visited as a result of a redirection do not participate in matching.</p>
 </div>
 </dd>
-<dt class="hdlist1">ssh.variant</dt>
-<dd>
-<p>By default, Git determines the command line arguments to use
-based on the basename of the configured SSH command (configured
-using the environment variable <code>GIT_SSH</code> or <code>GIT_SSH_COMMAND</code> or
-the config setting <code>core.sshCommand</code>). If the basename is
-unrecognized, Git will attempt to detect support of OpenSSH
-options by first invoking the configured SSH command with the
-<code>-G</code> (print configuration) option and will subsequently use
-OpenSSH options (if that is successful) or no options besides
-the host and remote command (if it fails).</p>
-<div class="paragraph">
-<p>The config variable <code>ssh.variant</code> can be set to override this detection.
-Valid values are <code>ssh</code> (to use OpenSSH options), <code>plink</code>, <code>putty</code>,
-<code>tortoiseplink</code>, <code>simple</code> (no options except the host and remote command).
-The default auto-detection can be explicitly requested using the value
-<code>auto</code>.  Any other value is treated as <code>ssh</code>.  This setting can also be
-overridden via the environment variable <code>GIT_SSH_VARIANT</code>.</p>
-</div>
-<div class="paragraph">
-<p>The current command-line parameters used for each variant are as
-follows:</p>
-</div>
-<div class="openblock">
-<div class="content">
-<div class="ulist">
-<ul>
-<li>
-<p><code>ssh</code> - [-p port] [-4] [-6] [-o option] [username@]host command</p>
-</li>
-<li>
-<p><code>simple</code> - [username@]host command</p>
-</li>
-<li>
-<p><code>plink</code> or <code>putty</code> - [-P port] [-4] [-6] [username@]host command</p>
-</li>
-<li>
-<p><code>tortoiseplink</code> - [-P port] [-4] [-6] -batch [username@]host command</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>Except for the <code>simple</code> variant, command-line parameters are likely to
-change as git gains new features.</p>
-</div>
-</dd>
 <dt class="hdlist1">i18n.commitEncoding</dt>
 <dd>
 <p>Character encoding the commit messages are stored in; Git itself
@@ -4431,10 +4475,85 @@ porcelains). See e.g. <a href="git-mailinfo.html">git-mailinfo</a>(1). Defaults 
 <p>Character encoding the commit messages are converted to when
 running <em>git log</em> and friends.</p>
 </dd>
-<dt class="hdlist1">imap</dt>
+<dt class="hdlist1">imap.folder</dt>
 <dd>
-<p>The configuration variables in the <em>imap</em> section are described
-in <a href="git-imap-send.html">git-imap-send</a>(1).</p>
+<p>The folder to drop the mails into, which is typically the Drafts
+folder. For example: "INBOX.Drafts", "INBOX/Drafts" or
+"[Gmail]/Drafts". Required.</p>
+</dd>
+<dt class="hdlist1">imap.tunnel</dt>
+<dd>
+<p>Command used to setup a tunnel to the IMAP server through which
+commands will be piped instead of using a direct network connection
+to the server. Required when imap.host is not set.</p>
+</dd>
+<dt class="hdlist1">imap.host</dt>
+<dd>
+<p>A URL identifying the server. Use an <code>imap://</code> prefix for non-secure
+connections and an <code>imaps://</code> prefix for secure connections.
+Ignored when imap.tunnel is set, but required otherwise.</p>
+</dd>
+<dt class="hdlist1">imap.user</dt>
+<dd>
+<p>The username to use when logging in to the server.</p>
+</dd>
+<dt class="hdlist1">imap.pass</dt>
+<dd>
+<p>The password to use when logging in to the server.</p>
+</dd>
+<dt class="hdlist1">imap.port</dt>
+<dd>
+<p>An integer port number to connect to on the server.
+Defaults to 143 for imap:// hosts and 993 for imaps:// hosts.
+Ignored when imap.tunnel is set.</p>
+</dd>
+<dt class="hdlist1">imap.sslverify</dt>
+<dd>
+<p>A boolean to enable/disable verification of the server certificate
+used by the SSL/TLS connection. Default is <code>true</code>. Ignored when
+imap.tunnel is set.</p>
+</dd>
+<dt class="hdlist1">imap.preformattedHTML</dt>
+<dd>
+<p>A boolean to enable/disable the use of html encoding when sending
+a patch.  An html encoded patch will be bracketed with &lt;pre&gt;
+and have a content type of text/html.  Ironically, enabling this
+option causes Thunderbird to send the patch as a plain/text,
+format=fixed email.  Default is <code>false</code>.</p>
+</dd>
+<dt class="hdlist1">imap.authMethod</dt>
+<dd>
+<p>Specify authenticate method for authentication with IMAP server.
+If Git was built with the NO_CURL option, or if your curl version is older
+than 7.34.0, or if you&#8217;re running git-imap-send with the <code>--no-curl</code>
+option, the only supported method is <em>CRAM-MD5</em>. If this is not set
+then <em>git imap-send</em> uses the basic IMAP plaintext LOGIN command.</p>
+</dd>
+<dt class="hdlist1">index.recordEndOfIndexEntries</dt>
+<dd>
+<p>Specifies whether the index file should include an "End Of Index
+Entry" section. This reduces index load time on multiprocessor
+machines but produces a message "ignoring EOIE extension" when
+reading the index using Git versions before 2.20. Defaults to
+<em>true</em> if index.threads has been explicitly enabled, <em>false</em>
+otherwise.</p>
+</dd>
+<dt class="hdlist1">index.recordOffsetTable</dt>
+<dd>
+<p>Specifies whether the index file should include an "Index Entry
+Offset Table" section. This reduces index load time on
+multiprocessor machines but produces a message "ignoring IEOT
+extension" when reading the index using Git versions before 2.20.
+Defaults to <em>true</em> if index.threads has been explicitly enabled,
+<em>false</em> otherwise.</p>
+</dd>
+<dt class="hdlist1">index.threads</dt>
+<dd>
+<p>Specifies the number of threads to spawn when loading the index.
+This is meant to reduce index load time on multiprocessor machines.
+Specifying 0 or <em>true</em> will cause Git to auto-detect the number of
+CPU&#8217;s and set the number of threads accordingly. Specifying 1 or
+<em>false</em> will disable multithreading. Defaults to <em>true</em>.</p>
 </dd>
 <dt class="hdlist1">index.version</dt>
 <dd>
@@ -4669,6 +4788,13 @@ at the end of the merge.  True by default.</p>
 The list below shows the valid built-in values.
 Any other value is treated as a custom merge tool and requires
 that a corresponding mergetool.&lt;tool&gt;.cmd variable is defined.</p>
+</dd>
+<dt class="hdlist1">merge.guitool</dt>
+<dd>
+<p>Controls which merge tool is used by <a href="git-mergetool.html">git-mergetool</a>(1) when the
+-g/--gui flag is specified. The list below shows the valid built-in values.
+Any other value is treated as a custom merge tool and requires that a
+corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -4940,6 +5066,23 @@ to level 6)."</p>
 all existing objects. You can force recompression by passing the -F option
 to <a href="git-repack.html">git-repack</a>(1).</p>
 </div>
+</dd>
+<dt class="hdlist1">pack.island</dt>
+<dd>
+<p>An extended regular expression configuring a set of delta
+islands. See "DELTA ISLANDS" in <a href="git-pack-objects.html">git-pack-objects</a>(1)
+for details.</p>
+</dd>
+<dt class="hdlist1">pack.islandCore</dt>
+<dd>
+<p>Specify an island name which gets to have its objects be
+packed first. This creates a kind of pseudo-pack at the front
+of one pack, so that the objects from the specified island are
+hopefully faster to copy into any pack that should be served
+to a user requesting these objects. In practice this means
+that the island specified should likely correspond to what is
+the most commonly cloned in the repo. See also "DELTA ISLANDS"
+in <a href="git-pack-objects.html">git-pack-objects</a>(1).</p>
 </dd>
 <dt class="hdlist1">pack.deltaCacheSize</dt>
 <dd>
@@ -5326,6 +5469,23 @@ is <em>no</em> then default behavior of ignoring submodules when pushing
 is retained. You may override this configuration at time of push by
 specifying <em>--recurse-submodules=check|on-demand|no</em>.</p>
 </dd>
+<dt class="hdlist1">rebase.useBuiltin</dt>
+<dd>
+<p>Set to <code>false</code> to use the legacy shellscript implementation of
+<a href="git-rebase.html">git-rebase</a>(1). Is <code>true</code> by default, which means use
+the built-in rewrite of it in C.</p>
+<div class="paragraph">
+<p>The C rewrite is first included with Git version 2.20. This option
+serves an an escape hatch to re-enable the legacy version in case any
+bugs are found in the rewrite. This option and the shellscript version
+of <a href="git-rebase.html">git-rebase</a>(1) will be removed in some future release.</p>
+</div>
+<div class="paragraph">
+<p>If you find some reason to set this option to <code>false</code> other than
+one-off testing you should report the behavior difference as a bug in
+git.</p>
+</div>
+</dd>
 <dt class="hdlist1">rebase.stat</dt>
 <dd>
 <p>Whether to show a diffstat of what changed upstream since the last
@@ -5651,6 +5811,11 @@ details. Defaults to <code>false</code> normally, but <code>true</code> if a bit
 index is being written (either via <code>--write-bitmap-index</code> or
 <code>repack.writeBitmaps</code>).</p>
 </dd>
+<dt class="hdlist1">repack.useDeltaIslands</dt>
+<dd>
+<p>If set to true, makes <code>git repack</code> act as if <code>--delta-islands</code>
+was passed. Defaults to <code>false</code>.</p>
+</dd>
 <dt class="hdlist1">repack.writeBitmaps</dt>
 <dd>
 <p>When true, git will write a bitmap index when packing all
@@ -5675,6 +5840,10 @@ encountered again.  By default, <a href="git-rerere.html">git-rerere</a>(1) is
 enabled if there is an <code>rr-cache</code> directory under the
 <code>$GIT_DIR</code>, e.g. if "rerere" was previously used in the
 repository.</p>
+</dd>
+<dt class="hdlist1">reset.quiet</dt>
+<dd>
+<p>When set to true, <em>git reset</em> will default to the <em>--quiet</em> option.</p>
 </dd>
 <dt class="hdlist1">sendemail.identity</dt>
 <dd>
@@ -5749,7 +5918,21 @@ See also the <code>--batch-size</code> option of <a href="git-send-email.html">g
 <p>Seconds wait before reconnecting to smtp server.
 See also the <code>--relogin-delay</code> option of <a href="git-send-email.html">git-send-email</a>(1).</p>
 </dd>
-<dt class="hdlist1">showbranch.default</dt>
+<dt class="hdlist1">sendpack.sideband</dt>
+<dd>
+<p>Allows to disable the side-band-64k capability for send-pack even
+when it is advertised by the server. Makes it possible to work
+around a limitation in the git for windows implementation together
+with the dump git protocol. Defaults to true.</p>
+</dd>
+<dt class="hdlist1">sequence.editor</dt>
+<dd>
+<p>Text editor used by <code>git rebase -i</code> for editing the rebase instruction file.
+The value is meant to be interpreted by the shell when it is used.
+It can be overridden by the <code>GIT_SEQUENCE_EDITOR</code> environment variable.
+When not configured the default commit message editor is used instead.</p>
+</dd>
+<dt class="hdlist1">showBranch.default</dt>
 <dd>
 <p>The default set of branches for <a href="git-show-branch.html">git-show-branch</a>(1).
 See <a href="git-show-branch.html">git-show-branch</a>(1).</p>
@@ -5780,6 +5963,54 @@ Note that a shared index file is considered modified (for the
 purpose of expiration) each time a new split-index file is
 either created based on it or read from it.
 See <a href="git-update-index.html">git-update-index</a>(1).</p>
+</dd>
+<dt class="hdlist1">ssh.variant</dt>
+<dd>
+<p>By default, Git determines the command line arguments to use
+based on the basename of the configured SSH command (configured
+using the environment variable <code>GIT_SSH</code> or <code>GIT_SSH_COMMAND</code> or
+the config setting <code>core.sshCommand</code>). If the basename is
+unrecognized, Git will attempt to detect support of OpenSSH
+options by first invoking the configured SSH command with the
+<code>-G</code> (print configuration) option and will subsequently use
+OpenSSH options (if that is successful) or no options besides
+the host and remote command (if it fails).</p>
+<div class="paragraph">
+<p>The config variable <code>ssh.variant</code> can be set to override this detection.
+Valid values are <code>ssh</code> (to use OpenSSH options), <code>plink</code>, <code>putty</code>,
+<code>tortoiseplink</code>, <code>simple</code> (no options except the host and remote command).
+The default auto-detection can be explicitly requested using the value
+<code>auto</code>.  Any other value is treated as <code>ssh</code>.  This setting can also be
+overridden via the environment variable <code>GIT_SSH_VARIANT</code>.</p>
+</div>
+<div class="paragraph">
+<p>The current command-line parameters used for each variant are as
+follows:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>ssh</code> - [-p port] [-4] [-6] [-o option] [username@]host command</p>
+</li>
+<li>
+<p><code>simple</code> - [username@]host command</p>
+</li>
+<li>
+<p><code>plink</code> or <code>putty</code> - [-P port] [-4] [-6] [username@]host command</p>
+</li>
+<li>
+<p><code>tortoiseplink</code> - [-P port] [-4] [-6] -batch [username@]host command</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Except for the <code>simple</code> variant, command-line parameters are likely to
+change as git gains new features.</p>
+</div>
 </dd>
 <dt class="hdlist1">status.relativePaths</dt>
 <dd>
@@ -6287,13 +6518,6 @@ such a branch exists, it is checked out and set as "upstream"
 for the new branch.  If no such match can be found, it falls
 back to creating a new branch from the current HEAD.</p>
 </dd>
-<dt class="hdlist1">sendpack.sideband</dt>
-<dd>
-<p>Allows to disable the side-band-64k capability for send-pack even
-when it is advertised by the server. Makes it possible to work
-around a limitation in the git for windows implementation together
-with the dump git protocol. Defaults to true.</p>
-</dd>
 </dl>
 </div>
 </div>
@@ -6337,7 +6561,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

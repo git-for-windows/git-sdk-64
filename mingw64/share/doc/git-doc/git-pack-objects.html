@@ -769,7 +769,120 @@ removed). This implies <code>--revs</code>.</p>
 <dd>
 <p>Keep unreachable objects in loose form. This implies <code>--revs</code>.</p>
 </dd>
+<dt class="hdlist1">--delta-islands</dt>
+<dd>
+<p>Restrict delta matches based on "islands". See DELTA ISLANDS
+below.</p>
+</dd>
 </dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_delta_islands">DELTA ISLANDS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When possible, <code>pack-objects</code> tries to reuse existing on-disk deltas to
+avoid having to search for new ones on the fly. This is an important
+optimization for serving fetches, because it means the server can avoid
+inflating most objects at all and just send the bytes directly from
+disk. This optimization can&#8217;t work when an object is stored as a delta
+against a base which the receiver does not have (and which we are not
+already sending). In that case the server "breaks" the delta and has to
+find a new one, which has a high CPU cost. Therefore it&#8217;s important for
+performance that the set of objects in on-disk delta relationships match
+what a client would fetch.</p>
+</div>
+<div class="paragraph">
+<p>In a normal repository, this tends to work automatically. The objects
+are mostly reachable from the branches and tags, and that&#8217;s what clients
+fetch. Any deltas we find on the server are likely to be between objects
+the client has or will have.</p>
+</div>
+<div class="paragraph">
+<p>But in some repository setups, you may have several related but separate
+groups of ref tips, with clients tending to fetch those groups
+independently. For example, imagine that you are hosting several "forks"
+of a repository in a single shared object store, and letting clients
+view them as separate repositories through <code>GIT_NAMESPACE</code> or separate
+repos using the alternates mechanism. A naive repack may find that the
+optimal delta for an object is against a base that is only found in
+another fork. But when a client fetches, they will not have the base
+object, and we&#8217;ll have to find a new delta on the fly.</p>
+</div>
+<div class="paragraph">
+<p>A similar situation may exist if you have many refs outside of
+<code>refs/heads/</code> and <code>refs/tags/</code> that point to related objects (e.g.,
+<code>refs/pull</code> or <code>refs/changes</code> used by some hosting providers). By
+default, clients fetch only heads and tags, and deltas against objects
+found only in those other groups cannot be sent as-is.</p>
+</div>
+<div class="paragraph">
+<p>Delta islands solve this problem by allowing you to group your refs into
+distinct "islands". Pack-objects computes which objects are reachable
+from which islands, and refuses to make a delta from an object <code>A</code>
+against a base which is not present in all of <code>A</code>'s islands. This
+results in slightly larger packs (because we miss some delta
+opportunities), but guarantees that a fetch of one island will not have
+to recompute deltas on the fly due to crossing island boundaries.</p>
+</div>
+<div class="paragraph">
+<p>When repacking with delta islands the delta window tends to get
+clogged with candidates that are forbidden by the config. Repacking
+with a big --window helps (and doesn&#8217;t take as long as it otherwise
+might because we can reject some object pairs based on islands before
+doing any computation on the content).</p>
+</div>
+<div class="paragraph">
+<p>Islands are configured via the <code>pack.island</code> option, which can be
+specified multiple times. Each value is a left-anchored regular
+expressions matching refnames. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[pack]
+island = refs/heads/
+island = refs/tags/</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>puts heads and tags into an island (whose name is the empty string; see
+below for more on naming). Any refs which do not match those regular
+expressions (e.g., <code>refs/pull/123</code>) is not in any island. Any object
+which is reachable only from <code>refs/pull/</code> (but not heads or tags) is
+therefore not a candidate to be used as a base for <code>refs/heads/</code>.</p>
+</div>
+<div class="paragraph">
+<p>Refs are grouped into islands based on their "names", and two regexes
+that produce the same name are considered to be in the same
+island. The names are computed from the regexes by concatenating any
+capture groups from the regex, with a <em>-</em> dash in between. (And if
+there are no capture groups, then the name is the empty string, as in
+the above example.) This allows you to create arbitrary numbers of
+islands. Only up to 14 such capture groups are supported though.</p>
+</div>
+<div class="paragraph">
+<p>For example, imagine you store the refs for each fork in
+<code>refs/virtual/ID</code>, where <code>ID</code> is a numeric identifier. You might then
+configure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[pack]
+island = refs/virtual/([0-9]+)/heads/
+island = refs/virtual/([0-9]+)/tags/
+island = refs/virtual/([0-9]+)/(pull)/</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That puts the heads and tags for each fork in their own island (named
+"1234" or similar), and the pull refs for each go into their own
+"1234-pull".</p>
+</div>
+<div class="paragraph">
+<p>Note that we pick a single island for each regex to go into, using "last
+one wins" ordering (which allows repo-specific config to take precedence
+over user-wide config, and so forth).</p>
 </div>
 </div>
 </div>
@@ -794,7 +907,7 @@ removed). This implies <code>--revs</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>

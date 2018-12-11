@@ -669,7 +669,9 @@ forces using only the listed mechanisms. Example:</p>
 <p>If at least one of the specified mechanisms matches the ones advertised by the
 SMTP server and if it is supported by the utilized SASL library, the mechanism
 is used for authentication. If neither <em>sendemail.smtpAuth</em> nor <code>--smtp-auth</code>
-is specified, all mechanisms supported by the SASL library can be used.</p>
+is specified, all mechanisms supported by the SASL library can be used. The
+special value <em>none</em> maybe specified to completely disable authentication
+independently of <code>--smtp-user</code></p>
 </div>
 </dd>
 <dt class="hdlist1">--smtp-pass[=&lt;password&gt;]</dt>
@@ -685,6 +687,10 @@ or on the command line. If a username has been specified (with
 specified (with <code>--smtp-pass</code> or <code>sendemail.smtpPass</code>), then
 a password is obtained using <em>git-credential</em>.</p>
 </div>
+</dd>
+<dt class="hdlist1">--no-smtp-auth</dt>
+<dd>
+<p>Disable SMTP authentication. Short hand for <code>--smtp-auth=none</code></p>
 </dd>
 <dt class="hdlist1">--smtp-server=&lt;host&gt;</dt>
 <dd>
@@ -828,10 +834,10 @@ auto-cc of:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><em>author</em> will avoid including the patch author</p>
+<p><em>author</em> will avoid including the patch author.</p>
 </li>
 <li>
-<p><em>self</em> will avoid including the sender</p>
+<p><em>self</em> will avoid including the sender.</p>
 </li>
 <li>
 <p><em>cc</em> will avoid including anyone mentioned in Cc lines in the patch header
@@ -846,10 +852,15 @@ patch body (commit message) except for self (use <em>self</em> for that).</p>
 for self (use <em>self</em> for that).</p>
 </li>
 <li>
+<p><em>misc-by</em> will avoid including anyone mentioned in Acked-by,
+Reviewed-by, Tested-by and other "-by" lines in the patch body,
+except Signed-off-by (use <em>sob</em> for that).</p>
+</li>
+<li>
 <p><em>cccmd</em> will avoid running the --cc-cmd.</p>
 </li>
 <li>
-<p><em>body</em> is equivalent to <em>sob</em> + <em>bodycc</em></p>
+<p><em>body</em> is equivalent to <em>sob</em> + <em>bodycc</em> + <em>misc-by</em>.</p>
 </li>
 <li>
 <p><em>all</em> will suppress all auto cc values.</p>
@@ -1132,7 +1143,7 @@ the credential store so you won&#8217;t have to type it the next time.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-21 19:26:01 UTC
+Last updated 2018-12-10 11:18:12 UTC
 </div>
 </div>
 </body>
