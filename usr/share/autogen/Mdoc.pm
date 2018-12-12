@@ -3,11 +3,11 @@
 ## Mdoc.pm -- Perl functions for mdoc processing
 ##
 ## Author:	Oliver Kindernay (GSoC project for NTP.org)
-##		
+##
 ##
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -127,7 +127,7 @@ provide a macro definition that should be executed on a .El call.
 The C<CODE> is called after a Rs/Re block is done. With a hash reference as a
 parameter, describing the reference.
 
-=back 
+=back
 
 =head1 CONSTANTS
 
@@ -140,7 +140,7 @@ Indicate 'no space' between to members of the list.
 =item pp ( STRING )
 
 The string is 'punctuation point'. It means that every punctuation
-preceeding that element is put behind it. 
+preceeding that element is put behind it.
 
 =item soff
 
@@ -189,7 +189,7 @@ use constant {
     hs      => ['hardspace'],
 };
 
-sub pp { 
+sub pp {
     my $c = shift;
     return ['pp', $c ];
 }
@@ -203,7 +203,7 @@ sub mapwords(&@) {
     my @res;
     for my $el (@l) {
         local $_ = $el;
-        push @res, $el =~ /^(?:[,\.\{\}\(\):;\[\]\|])$/ || ref $el eq 'ARRAY' ? 
+        push @res, $el =~ /^(?:[,\.\{\}\(\):;\[\]\|])$/ || ref $el eq 'ARRAY' ?
                     $el : $f->();
     }
     return @res;
@@ -240,7 +240,7 @@ def_macro('Ns',  sub {ns, @_});
     sub set_Re_callback {
         my ($sub) = @_;
         croak 'Not a CODE reference' if not ref $sub eq 'CODE';
-        def_macro('.Re', sub { 
+        def_macro('.Re', sub {
             my @ret = $sub->(\%reference);
             %reference = (); @ret
         });
@@ -253,7 +253,7 @@ def_macro('.It', sub { die ".It called outside of list context - maybe near line
 def_macro('.El', sub { die '.El requires .Bl first' });
 
 
-{ 
+{
     my $elcb = sub { () };
 
     sub set_El_callback {
@@ -266,7 +266,7 @@ def_macro('.El', sub { die '.El requires .Bl first' });
     sub set_Bl_callback {
         my ($blcb, %defs) = @_;
         croak 'Not a CODE reference' if ref $blcb ne 'CODE';
-        def_macro('.Bl', sub { 
+        def_macro('.Bl', sub {
 
             my $orig_it   = get_macro('.It');
             my $orig_el   = get_macro('.El');
@@ -282,24 +282,24 @@ def_macro('.El', sub { die '.El requires .Bl first' });
                     $elcb = $orig_elcb;
                     @ret
                 });
-            $blcb->(@_) 
+            $blcb->(@_)
         }, %defs);
         return;
     }
 }
 
-def_macro('.Sm', sub { 
+def_macro('.Sm', sub {
     my ($arg) = @_;
     if (defined $arg) {
         space($arg);
     } else {
-        space() eq 'off' ? 
-            space('on') : 
-            space('off'); 
+        space() eq 'off' ?
+            space('on') :
+            space('off');
     }
-    () 
+    ()
 } );
-def_macro('Sm', do { my $off; sub { 
+def_macro('Sm', do { my $off; sub {
     my ($arg) = @_;
     if (defined $arg && $arg =~ /^(on|off)$/) {
         shift;
@@ -322,7 +322,7 @@ sub def_macro {
     my ($macro, $sub, %def) = @_;
     croak 'Not a CODE reference' if ref $sub ne 'CODE';
 
-    $macros{ $macro } = { 
+    $macros{ $macro } = {
         run          => $sub,
         greedy       => delete $def{greedy} || 0,
         raw          => delete $def{raw}    || 0,
@@ -373,7 +373,7 @@ sub _is_control {
     my $sep = ' ';
 
     sub to_string {
-        if (@_ > 0) { 
+        if (@_ > 0) {
             # Handle punctunation
             my ($in_brace, @punct) = '';
             my @new = map {
@@ -410,8 +410,8 @@ sub _is_control {
                 elsif (_is_control($el, 'nospace'))     { $no_space = 1;             }
                 elsif (_is_control($el, 'spaceoff'))    { $space_off = 1;            }
                 elsif (_is_control($el, 'spaceon'))     { space('on');               }
-                elsif (_is_control($el, 'spacetoggle')) { space() eq 'on' ? 
-                                                            $space_off = 1 : 
+                elsif (_is_control($el, 'spacetoggle')) { space() eq 'on' ?
+                                                            $space_off = 1 :
                                                             space('on')              }
                 else {
                     if ($no_space) {
@@ -427,7 +427,7 @@ sub _is_control {
             }
             $res
         }
-        else { 
+        else {
             '';
         }
     }
@@ -453,7 +453,7 @@ sub _unquote {
 
 sub call_macro {
     my ($macro, @args) = @_;
-    my @ret; 
+    my @ret;
 
     my @newargs;
     my $i = 0;
@@ -479,7 +479,7 @@ sub call_macro {
     if ($macros{ $macro }{concat_until}) {
         my ($n_macro, @n_args) = ('');
         while (1) {
-            die "EOF was reached and no $macros{ $macro }{concat_until} found" 
+            die "EOF was reached and no $macros{ $macro }{concat_until} found"
                 if not defined $n_macro;
             ($n_macro, @n_args) = parse_line(undef, sub { push @ret, shift });
             if ($n_macro eq $macros{ $macro }{concat_until}) {
@@ -510,15 +510,15 @@ sub call_macro {
         $out_sub        = $_[1] if defined $_[1] || !defined $out_sub;
         $preprocess_sub = $_[2] if defined $_[2] || !defined $preprocess_sub;
 
-        croak 'out_sub not a CODE reference' 
+        croak 'out_sub not a CODE reference'
             if not ref $out_sub eq 'CODE';
-        croak 'preprocess_sub not a CODE reference' 
+        croak 'preprocess_sub not a CODE reference'
             if defined $preprocess_sub && not ref $preprocess_sub eq 'CODE';
 
         while (my $line = <$in_fh>) {
             chomp $line;
-            if ($line =~ /^\.[A-z][a-z0-9]+/ || $line =~ /^\.%[A-Z]/ || 
-                $line =~ /^\.\\"/) 
+            if ($line =~ /^\.[A-z][a-z0-9]+/ || $line =~ /^\.%[A-Z]/ ||
+                $line =~ /^\.\\"/)
             {
                 $line =~ s/ +/ /g;
                 my ($macro, @args) = quotewords(' ', 1, $line);

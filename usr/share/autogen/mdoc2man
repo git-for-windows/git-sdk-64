@@ -3,11 +3,11 @@
 ## mdoc2man.pl -- Convert mdoc tags to man tags
 ##
 ## Author:	Harlan Stenn <stenn@ntp.org>
-##		
+##
 ##
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -146,7 +146,7 @@ Mdoc::set_Bl_callback(do { my $nested = 0; sub {
     if (defined $type && $type =~ /-(\w+)/ && exists $lists{$1}) {
 
         # Wrap nested lists with .RS and .RE
-        Mdoc::set_El_callback(sub { 
+        Mdoc::set_El_callback(sub {
                 return '.RE' if $nested-- > 1;
                 return '.PP';
             });
@@ -170,7 +170,7 @@ Mdoc::set_Bl_callback(do { my $nested = 0; sub {
 Mdoc::def_macro('.Bd', sub { ".br\n.in +4\n.nf" } );
 Mdoc::def_macro('.Ed', sub { ".in -4\n.fi" } );
 
-Mdoc::set_Re_callback(sub { 
+Mdoc::set_Re_callback(sub {
         my ($reference) = @_;
         <<"REF";
 $reference->{authors},

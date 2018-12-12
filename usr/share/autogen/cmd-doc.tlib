@@ -6,7 +6,7 @@
 #
 #  This file is part of AutoOpts, a companion to AutoGen.
 #  AutoOpts is free software.
-#  Copyright (C) 1992-2013, 2015 Bruce Korb - all rights reserved
+#  Copyright (C) 1992-2018 Bruce Korb - all rights reserved
 #
 #  AutoOpts is available under any one of two licenses.  The license
 #  in use must be one of these two and the choice is under the control
@@ -244,6 +244,7 @@ FOR doc-section                       :+][+:
   (shell (string-append
     "fn='" cvt-fn "'\n"
     "test -f ${fn} || die ${fn} not found from $PWD\n"
+    "export PERL5LIB=`dirname \"$fn\"`\n"
     "${fn} <<\\_EndOfDocSection_ || die ${fn} failed in $PWD\n"
     (get "ds-text")
     "\n_EndOfDocSection_"

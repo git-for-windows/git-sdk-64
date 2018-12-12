@@ -2,7 +2,7 @@
 
 # This file is part of AutoOpts, a companion to AutoGen.
 # AutoOpts is free software.
-# AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+# AutoOpts is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 #
 # AutoOpts is available under any one of two licenses.  The license
 # in use must be one of these two and the choice is under the control
@@ -443,7 +443,7 @@ DEFINE save-name-morphs
          (set! is-extern #f)
          (set! have-proc #t)    =][=
 
-    ~*   hier|nest              =][=
+    ~*   hier|nest  =][=
          (set! proc-name "optionNestedVal")
          (set! is-lib-cb #t)
          (set! test-name proc-name)
@@ -1143,13 +1143,19 @@ DEFINE help-strs
 
   IF (exist? "version")
 
-=]
+=][=
+    CASE version-type           =][=
+    ~*   [vcn]                  =]
+#define VER_FLAGS        (OPTST_SET_ARGTYPE(OPARG_TYPE_STATIC) | \
+                          OPTST_IMM | OPTST_NO_INIT)[=
+    *                           =]
 #ifdef NO_OPTIONAL_OPT_ARGS
 #  define VER_FLAGS     (OPTST_IMM | OPTST_NO_INIT)
 #else
 #  define VER_FLAGS     (OPTST_SET_ARGTYPE(OPARG_TYPE_STRING) | \
                          OPTST_ARG_OPTIONAL | OPTST_IMM | OPTST_NO_INIT)
-#endif
+#endif[=
+    ESAC                        =]
 #define VER_DESC        ([=
     (define tmp-text "output version information and exit")
     (if xlate-desc-p
@@ -1329,5 +1335,10 @@ DEFINE emit-opt-desc    =][=
   ENDIF =][=
 
 ENDDEF opt-desc
+
+## Local Variables:
+## mode: text
+## indent-tabs-mode: nil
+## End:
 
 optlib.tlib ends here \=]

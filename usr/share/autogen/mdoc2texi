@@ -3,11 +3,11 @@
 ## mdoc2texi.pl -- Convert mdoc tags to texi tags
 ##
 ## Author:	Harlan Stenn <stenn@ntp.org>
-##		
+##
 ##
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -28,7 +28,7 @@
 ### To Do:
 
 # the Bl -column command needs work:
-# - support for "-offset" 
+# - support for "-offset"
 # - support for the header widths
 
 ###
@@ -55,11 +55,11 @@ Mdoc::def_macro( '.Ql',  gen_encloser(qw(@quoteleft{} @quoteright{})),
     greedy => 1);
 Mdoc::def_macro( '.Sq',  gen_encloser(qw(@quoteleft{} @quoteright{})),
     greedy => 1);
-Mdoc::def_macro( '.Dq',  gen_encloser(qw(@quotedblleft{} @quotedblright{})), 
+Mdoc::def_macro( '.Dq',  gen_encloser(qw(@quotedblleft{} @quotedblright{})),
     greedy => 1);
-Mdoc::def_macro( '.Eq', sub { 
-        my ($o, $c) = (shift, pop); 
-        gen_encloser($o, $c)->(@_) 
+Mdoc::def_macro( '.Eq', sub {
+        my ($o, $c) = (shift, pop);
+        gen_encloser($o, $c)->(@_)
 },  greedy => 1);
 Mdoc::def_macro( '.D1', sub { "\@example\n", ns, @_, ns, "\n\@end example" },
     greedy => 1);
@@ -88,8 +88,8 @@ Mdoc::def_macro( '.Va', sub { mapwords {"\@code{$_}"} @_ } );
 Mdoc::def_macro( '.Em', sub { mapwords {"\@emph{$_}"} @_ } );
 Mdoc::def_macro( '.Fn', sub { '@code{'.(shift).'()}' } );
 Mdoc::def_macro( '.Ss', sub { "\@subsubsection", hs, @_ });
-Mdoc::def_macro( '.Sh', sub { 
-        my $name = "@_"; 
+Mdoc::def_macro( '.Sh', sub {
+        my $name = "@_";
         "\@node", hs, "$name\n", ns, "\@subsection", hs, $name
     });
 Mdoc::def_macro( '.Ss', sub { "\@subsubsection", hs, @_ });
@@ -124,7 +124,7 @@ my %displays = (
 
 Mdoc::def_macro( '.Bd', sub {
         (my $type = shift) =~ s/^-//;
-        die "Not supported display type <$type>" 
+        die "Not supported display type <$type>"
             if not exists $displays{ $type };
 
         my $orig_ed = Mdoc::get_macro('.Ed');
@@ -170,7 +170,7 @@ sub preprocess_args {
 }
 
 sub run {
-    while (my ($macro, @args) = Mdoc::parse_line(\*STDIN, \&print_line, 
+    while (my ($macro, @args) = Mdoc::parse_line(\*STDIN, \&print_line,
             \&preprocess_args)
     ) {
         my @ret = Mdoc::call_macro($macro, @args);

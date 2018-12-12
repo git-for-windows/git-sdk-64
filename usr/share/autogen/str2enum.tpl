@@ -5,7 +5,7 @@
 
 ##  This file is part of AutoGen.
 ##  AutoGen is free software.
-##  AutoGen is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+##  AutoGen is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 ##
 ## AutoGen is free software: you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -87,10 +87,18 @@ extern [=
 (define find-arg-list (string-append "char const * str" len-arg))
 (string-append enum-name "\n"
 find-func-name "(" find-arg-list ");\n")
-=][= IF (not (exist? "no-name")) =]
+=][=
+
+IF (not (exist? "no-name"))
+
+=]
 extern char const *
 [=(. base-type-name)=]_name([= (. enum-name) =] id);
-[=  ENDIF no-name               =][=
+[=
+
+ENDIF no-name
+
+=][=
 
     IF (define disp-text "")
        (exist? "dispatch")      =][=
@@ -604,11 +612,16 @@ done | $CLexe --spread=1 -S, -I12 --end ' };'[=
             if (lo > hi)
                 return [=(. invalid-cmd)=];
         }
+        res = map->[=(. enum-field)=];
+        /*
+         * If we have an exact match, accept it.
+         */
+        if (map->[= (. name-field) =][[= (. len-param-name) =]] == NUL)
+            return res;
         /*
          * Check for a duplicate partial match (a partial match
          * with a higher or lower index than "av".
          */
-        res = map->[=(. enum-field)=];
         if (av < HI) {
             map = [=(. base-type-name)=]_table + ix_map[av + 1];
             if ([=(. cmp-call)=] == 0)
@@ -769,6 +782,28 @@ ENDFOR \=]
 \=]
 outdir=$PWD
 cd ${tmp_dir}
+use_args() {
+  while IFS='' read line
+  do
+    case "$line" in
+    *ARGSUSED* ) break ;;
+    * ) echo "$line" ;;
+    esac
+  done
+
+  while IFS='' read line
+  do
+    case "$line" in
+    *' return '* )
+        printf $'  (void)str;\n  (void)len;\n%s\n' "$line"
+        cat
+        return 0
+        ;;
+    * ) echo "$line"
+        ;;
+    esac
+  done
+}
 
 gperf [= (. base-file-name) =].gp | \
     sed -e '/^_*inline$/d' \
@@ -800,8 +835,22 @@ sedcmd=`
             echo "/^#define *${nm}/d;s@${nm}@${val}@g"
         done`
 
-sed "${sedcmd}" baseline[=
+grep -q -F '/*ARGSUSED*/' baseline && useargs=true || useargs=false
+if $useargs
+then
+  sed "${sedcmd}" baseline | use_args
+else
+  sed "${sedcmd}" baseline
+fi
+[=
 (shell (out-pop #t)) =][=
 
 ENDDEF run-gperf    =]
-/* end of [= (out-name)  =] */
+/* end of [= (out-name)  =] */[=
+
+ #
+ * Local Variables:
+ * mode: text
+ * indent-tabs-mode: nil
+ * End:
+ * end of str2mask.tpl =]

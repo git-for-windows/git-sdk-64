@@ -5,7 +5,7 @@
 
 #  This file is part of AutoGen.
 #  AutoGen is free software.
-#  AutoGen is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+#  AutoGen is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 #
 # AutoGen is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -81,7 +81,7 @@
   "gperf=`command -v gperf` 2>/dev/null\n"
   "test -x \"$gperf\" || die 'gperf not installed'\n"
   "CLexe=`echo ${AGexe} | sed 's@/autogen@/columns@'`
-  test -x \"${CLexe}\" || CLexe=`which columns`")
+  test -x \"${CLexe}\" || CLexe=`command -v columns`")
 
 
 =][=
@@ -129,5 +129,11 @@ CASE invalid-val        =][=
   =][=
 
 ESAC
+
+ * Local Variables:
+ * mode: scheme
+ * indent-tabs-mode: nil
+ * End:
+ * end of str2mask.tpl
 
 \=]

@@ -2,7 +2,7 @@
 
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -32,13 +32,9 @@
   (if (exist? "config-header")
       (ag-fprintf 0 "\n#include \"%s\"" (get "config-header")) )
 
-  (emit "\n#include <autoopts/options.h>\n")
-
-  (if have-noret-funcs (begin
-     (emit "#include <stdarg.h>\n")
-     (if (exist? "no-return")
-         (emit "#include <stdnoreturn.h>\n"))
-  )  )
+  (emit "\n#include <autoopts/options.h>\n"
+        "#include <stdarg.h>\n"
+        "#include <stdnoreturn.h>\n")
 
   (define option-ct      0)
   (define index-sep-str "")
@@ -67,6 +63,12 @@ IF  (not (exist? "library"))            =]
   Choke Me.
 #endif
 [= ENDIF not a library =]
+#if GCC_VERSION > 40400
+#define NOT_REACHED __builtin_unreachable();
+#else
+#define NOT_REACHED
+#endif
+
 /**
  *  Enumeration of each option type for [= prog-name =]
  */
@@ -265,20 +267,12 @@ extern "C" {
 #endif
 [=
 INVOKE join-or-expand  join-type = "export" =][=
-INVOKE nls-header-code                  =][=
+INVOKE nls-header-code =]
+[=
 
   IF
-     (define no-return-str "extern void")
-     (if (and have-noret-funcs (exist? "no-return")) (begin
-         (set! no-return-str (get "no-return"))
-
-         (if (== no-return-str "") (begin
-             (emit "#ifndef  noreturn\n# define noreturn\n#endif\n")
-             (set! no-return-str "noreturn") ))
-
-         (set! no-return-str (string-append "extern " no-return-str " void"))
-     )   )
-     (set! no-return-str (string-append no-return-str " " lc-prefix))
+     (define no-return-str (string-append
+             "noreturn extern void" "\n" lc-prefix))
 
      (exist? "usage-message")
 
@@ -301,8 +295,7 @@ INVOKE nls-header-code                  =][=
  * @param[in] what   what that object was going to be
  * @noreturn
  */
-static inline void
-[=(. lc-prefix)=]nomem_err(size_t sz, char const * what)
+noreturn static inline void nomem_err(size_t sz, char const * what)
 {
     char const * fmt = _("could not allocate %zu bytes for %s\n");
     die([=(. nomem-exit-code)=], fmt, sz, what);

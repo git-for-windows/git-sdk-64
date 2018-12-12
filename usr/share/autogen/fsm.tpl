@@ -4,7 +4,7 @@ h=%s-fsm.h  c=%s-fsm.c
 =]
 [= (define cright-years
 
-   "Copyright (C) 1992-2016 Bruce Korb - all rights reserved"
+   "Copyright (C) 1992-2018 Bruce Korb - all rights reserved"
 
    ) =][= #
 /*

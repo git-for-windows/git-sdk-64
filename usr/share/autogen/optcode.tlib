@@ -2,7 +2,7 @@
 
 ##  This file is part of AutoOpts, a companion to AutoGen.
 ##  AutoOpts is free software.
-##  AutoOpts is Copyright (C) 1992-2015 by Bruce Korb - all rights reserved
+##  AutoOpts is Copyright (C) 1992-2018 by Bruce Korb - all rights reserved
 ##
 ##  AutoOpts is available under any one of two licenses.  The license
 ##  in use must be one of these two and the choice is under the control
@@ -99,44 +99,22 @@ INCLUDE "optmain.tlib"
 =]
 #ifndef __doxygen__
 #define OPTION_CODE_COMPILE 1
-#include "[= (define lib-externs "") header-file=]"[=
-
-IF (== (get "main.main-type" "") "for-each")
-
-=]
+#include "[= (define lib-externs "") header-file=]"
 #include <sys/types.h>
 #include <sys/stat.h>
+[=
 
-#include <ctype.h>
+ (if (== (get "main.main-type" "") "for-each")
+     (emit "\n#include <ctype.h>") )
+
+=]
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>[=
-
-ELSE
-
-=]
-#include <sys/types.h>
-
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>[=
-
- (if (exist? "flag.arg-range")
-     (emit "\n#include <errno.h>"))
-
- (if (and (exist? "resettable") (exist? "flag.open-file"))
-     (emit "
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>" )) =][=
-
-ENDIF
-
-=]
+#include <unistd.h>
 
 #ifdef  __cplusplus
 extern "C" {
@@ -642,12 +620,12 @@ static void bogus_function(void) {
      extract the correct strings.  These strings are actually referenced
      by a field name in the [=(. pname)=]Options structure noted in the
      comments below.  The literal text is defined in [=(. pname)=]_opt_strs.
-   
+
      NOTE: the strings below are segmented with respect to the source string
      [=(. pname)=]_opt_strs.  The strings above are handed off for translation
      at run time a paragraph at a time.  Consequently, they are presented here
      for translation a paragraph at a time.
-   
+
      ALSO: often the description for an option will reference another option
      by name.  These are set off with apostrophe quotes (I hope).  Do not
      translate option names.
@@ -657,9 +635,10 @@ static void bogus_function(void) {
 (emit (out-pop #t))
 
 (out-push-new) \=]
+test "X${CDPATH}" = X || CDPATH=''
 incdir=[= (if (defined? 'inc-dir) inc-dir "") ;;' 4emacs =]
 test -d "$incdir" || incdir=`dirname [=(tpl-file #t)=]`/..
-incdir=`cd $incdir/autoopts >/dev/null 2>&1 && pwd`
+incdir=`cd $incdir/autoopts && pwd`
 test -f ${incdir}/usage-txt.h && {
     sedcmd='/LIBOPTS-MESSAGES:/,/END-[=
 
@@ -735,7 +714,9 @@ IF (exist? "version")   =]
      /* equivalenced to  */ NO_EQUIVALENT,
      /* min, max, act ct */ 0, 1, 0,
      /* opt state flags  */ VER_FLAGS, AOUSE_VERSION,
-     /* last opt argumnt */ { NULL },
+     /* last opt argumnt */ { [=(if (exist? "version-type")
+            (string-append "(char const*)\"" (get "version-type") "\"")
+            "NULL")=] },
      /* arg list/cookie  */ NULL,
      /* must/cannot opts */ NULL, NULL,
      /* option proc      */ VER_PROC,
