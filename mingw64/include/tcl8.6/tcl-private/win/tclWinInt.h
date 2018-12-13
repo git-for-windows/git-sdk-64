@@ -55,7 +55,7 @@ MODULE_SCOPE TclWinProcs tclWinProcs;
 
 #ifdef _WIN64
 # ifdef __USE_MINGW_ANSI_STDIO
-#         define TCL_I_MODIFIER        "z"
+#         define TCL_I_MODIFIER        "I64"
 # else
 #         define TCL_I_MODIFIER        "I"
 # endif
@@ -93,6 +93,8 @@ MODULE_SCOPE Tcl_Mutex *TclpNewAllocMutex(void);
 MODULE_SCOPE void *	TclpGetAllocCache(void);
 MODULE_SCOPE void	TclpSetAllocCache(void *);
 #endif /* TCL_THREADS */
+
+MODULE_SCOPE const char*TclpGetUserName(Tcl_DString *bufferPtr);
 
 /* Needed by tclWinFile.c and tclWinFCmd.c */
 #ifndef FILE_ATTRIBUTE_REPARSE_POINT

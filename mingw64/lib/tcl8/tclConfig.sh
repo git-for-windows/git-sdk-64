@@ -15,7 +15,7 @@ TCL_DLL_FILE="tcl86.dll"
 TCL_VERSION='8.6'
 TCL_MAJOR_VERSION='8'
 TCL_MINOR_VERSION='6'
-TCL_PATCH_LEVEL='.8'
+TCL_PATCH_LEVEL='.9'
 
 # C compiler to use for compilation.
 TCL_CC='x86_64-w64-mingw32-gcc'
