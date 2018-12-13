@@ -635,6 +635,7 @@ AC_DEFUN([SC_CONFIG_CFLAGS], [
 
     if test "${GCC}" = "yes" ; then
 	extra_cflags="-pipe"
+	extra_ldflags="-pipe "
 	AC_CACHE_CHECK(for mingw32 version of gcc,
 	    ac_cv_win32,
 	    AC_TRY_COMPILE([
@@ -690,7 +691,6 @@ AC_DEFUN([SC_CONFIG_CFLAGS], [
 	if test "${SHARED_BUILD}" = "0" ; then
 	    # static
             AC_MSG_RESULT([using static flags])
-            extra_ldflags="-pipe -static-libgcc"
 	    runtime=
 	    LIBRARIES="\${STATIC_LIBRARIES}"
 	    EXESUFFIX="s\${DBGX}.exe"
