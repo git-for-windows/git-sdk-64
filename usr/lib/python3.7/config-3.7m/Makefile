@@ -185,7 +185,7 @@ ENSUREPIP=      no
 
 # OpenSSL options for setup.py so sysconfig can pick up AC_SUBST() vars.
 OPENSSL_INCLUDES=
-OPENSSL_LIBS=-lssl -lz -lcrypto -lz
+OPENSSL_LIBS=-lssl -lcrypto -lz
 OPENSSL_LDFLAGS=
 
 # Modes for directories, executables and data files created by the
@@ -235,8 +235,8 @@ LIBOBJS=
 PYTHON=		python$(EXE)
 BUILDPYTHON=	python$(BUILDEXE)
 
-PYTHON_FOR_REGEN=python3
-UPDATE_FILE=python3 $(srcdir)/Tools/scripts/update_file.py
+PYTHON_FOR_REGEN=python3.7
+UPDATE_FILE=python3.7 $(srcdir)/Tools/scripts/update_file.py
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 _PYTHON_HOST_PLATFORM=
 BUILD_GNU_TYPE=	x86_64-pc-msys
