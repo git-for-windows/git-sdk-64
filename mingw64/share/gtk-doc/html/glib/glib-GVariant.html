@@ -4177,6 +4177,10 @@ entries.  It is an error to call this function on any other type of
 in the container.  See <a class="link" href="glib-GVariant.html#g-variant-n-children" title="g_variant_n_children ()"><code class="function">g_variant_n_children()</code></a>.</p>
 <p>The returned value is never floating.  You should free it with
 <a class="link" href="glib-GVariant.html#g-variant-unref" title="g_variant_unref ()"><code class="function">g_variant_unref()</code></a> when you're done with it.</p>
+<p>There may be implementation specific restrictions on deeply nested values,
+which would result in the unit tuple being returned as the child value,
+instead of further nested children. <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a> is guaranteed to handle
+nesting up to at least 64 levels.</p>
 <p>This function is O(1).</p>
 <div class="refsect3">
 <a name="g-variant-get-child-value.parameters"></a><h4>Parameters</h4>
@@ -4938,6 +4942,8 @@ check.</p>
  is found to be in normal form then it will be marked as
 being trusted.  If the value was already marked as being trusted then
 this function will immediately return <a class="link" href="glib-Standard-Macros.html#TRUE:CAPS" title="TRUE"><code class="literal">TRUE</code></a>.</p>
+<p>There may be implementation specific restrictions on deeply nested values.
+GVariant is guaranteed to handle nesting up to at least 64 levels.</p>
 <div class="refsect3">
 <a name="g-variant-is-normal-form.parameters"></a><h4>Parameters</h4>
 

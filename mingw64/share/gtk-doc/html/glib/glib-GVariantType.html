@@ -491,7 +491,10 @@ The valid basic type strings are "b", "y", "n", "q", "i", "u", "x", "t",
 "h", "d", "s", "o", "g" and "?".</p>
 <p>The above definition is recursive to arbitrary depth. "aaaaai" and
 "(ui(nq((y)))s)" are both valid type strings, as is
-"a(aa(ui)(qna{ya(yd)}))".</p>
+"a(aa(ui)(qna{ya(yd)}))". In order to not hit memory limits, <a class="link" href="glib-GVariant.html#GVariant" title="GVariant"><span class="type">GVariant</span></a>
+imposes a limit on recursion depth of 65 nested containers. This is the
+limit in the D-Bus specification (64) plus one to allow a <a class="link" href=""><span class="type">GDBusMessage</span></a> to
+be nested in a top-level tuple.</p>
 <p>The meaning of each of the characters is as follows:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
 <li class="listitem"><p><code class="literal">b</code>: the type string of <a class="link" href="glib-GVariantType.html#G-VARIANT-TYPE-BOOLEAN:CAPS" title="G_VARIANT_TYPE_BOOLEAN"><code class="literal">G_VARIANT_TYPE_BOOLEAN</code></a>; a boolean value.</p></li>

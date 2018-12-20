@@ -16,7 +16,7 @@
  * system printf functions.  This is useful to know, for example,
  * when using glibc's register_printf_function().
  */
-#define GLIB_USING_SYSTEM_PRINTF
+#undef GLIB_USING_SYSTEM_PRINTF
 
 /* #undef GLIB_STATIC_COMPILATION */
 /* #undef GOBJECT_STATIC_COMPILATION */
@@ -115,7 +115,7 @@ typedef unsigned long long guintptr;
 
 #define GLIB_MAJOR_VERSION 2
 #define GLIB_MINOR_VERSION 58
-#define GLIB_MICRO_VERSION 1
+#define GLIB_MICRO_VERSION 2
 
 #define G_OS_WIN32
 #define G_PLATFORM_WIN32
@@ -139,7 +139,7 @@ typedef unsigned long long guintptr;
 #  undef G_HAVE_ISO_VARARGS
 #endif
 
-#undef G_HAVE_GROWING_STACK
+#define G_HAVE_GROWING_STACK 0
 /* #undef G_HAVE_GNUC_VISIBILITY */
 
 #ifndef _MSC_VER

@@ -776,8 +776,8 @@ New in 1.14.9.</doc>
           </instance-parameter>
           <parameter name="names" transfer-ownership="none">
             <doc xml:space="preserve">A %NULL terminated array of names (e.g. from g_strsplit)</doc>
-            <array c:type="char*">
-              <type name="utf8" c:type="char"/>
+            <array c:type="const char**">
+              <type name="utf8" c:type="char*"/>
             </array>
           </parameter>
         </parameters>
@@ -1211,7 +1211,7 @@ the buffer associated with previous calls to gsf_input_read.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">pointer to the buffer or %NULL if there is
 an error or 0 bytes are requested.</doc>
-          <array zero-terminated="0" c:type="guint8*">
+          <array zero-terminated="0" c:type="const guint8*">
             <type name="guint8" c:type="guint8"/>
           </array>
         </return-value>
@@ -1381,7 +1381,7 @@ the buffer associated with previous calls to gsf_input_read.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">pointer to the buffer or %NULL if there is
 an error or 0 bytes are requested.</doc>
-          <array zero-terminated="0" c:type="guint8*">
+          <array zero-terminated="0" c:type="const guint8*">
             <type name="guint8" c:type="guint8"/>
           </array>
         </return-value>
@@ -1724,7 +1724,7 @@ It is not supported by all derived classes.</doc>
           <return-value transfer-ownership="none" nullable="1">
             <doc xml:space="preserve">pointer to the buffer or %NULL if there is
 an error or 0 bytes are requested.</doc>
-            <array zero-terminated="0" c:type="guint8*">
+            <array zero-terminated="0" c:type="const guint8*">
               <type name="guint8" c:type="guint8"/>
             </array>
           </return-value>
@@ -1971,7 +1971,7 @@ an error or 0 bytes are requested.</doc>
         <parameters>
           <parameter name="buf" transfer-ownership="none">
             <doc xml:space="preserve">The input bytes</doc>
-            <array length="1" zero-terminated="0" c:type="guint8*">
+            <array length="1" zero-terminated="0" c:type="const guint8*">
               <type name="guint8" c:type="guint8"/>
             </array>
           </parameter>
@@ -1993,7 +1993,7 @@ an error or 0 bytes are requested.</doc>
         <parameters>
           <parameter name="buf" transfer-ownership="none">
             <doc xml:space="preserve">The input bytes</doc>
-            <array length="1" zero-terminated="0" c:type="guint8*">
+            <array length="1" zero-terminated="0" c:type="const guint8*">
               <type name="guint8" c:type="guint8"/>
             </array>
           </parameter>
@@ -2980,7 +2980,7 @@ children.
           </instance-parameter>
           <parameter name="clsid" transfer-ownership="none">
             <doc xml:space="preserve">Identifier (often a GUID in MS Windows apps)</doc>
-            <array zero-terminated="0" c:type="guint8*" fixed-size="16">
+            <array zero-terminated="0" c:type="const guint8*" fixed-size="16">
               <type name="guint8" c:type="guint8"/>
             </array>
           </parameter>
@@ -3387,7 +3387,7 @@ This function is similar to
           </parameter>
           <parameter name="data" transfer-ownership="none">
             <doc xml:space="preserve">Data to write.</doc>
-            <array length="0" zero-terminated="0" c:type="guint8*">
+            <array length="0" zero-terminated="0" c:type="const guint8*">
               <type name="guint8" c:type="guint8"/>
             </array>
           </parameter>
@@ -3715,7 +3715,7 @@ outputs.&lt;/note&gt;</doc>
           </parameter>
           <parameter name="data" transfer-ownership="none">
             <doc xml:space="preserve">Data to write.</doc>
-            <array length="0" zero-terminated="0" c:type="guint8*">
+            <array length="0" zero-terminated="0" c:type="const guint8*">
               <type name="guint8" c:type="guint8"/>
             </array>
           </parameter>
@@ -3860,7 +3860,7 @@ do anything with this property.</doc>
             </parameter>
             <parameter name="data" transfer-ownership="none">
               <doc xml:space="preserve">Data to write.</doc>
-              <array length="1" zero-terminated="0" c:type="guint8*">
+              <array length="1" zero-terminated="0" c:type="const guint8*">
                 <type name="guint8" c:type="guint8"/>
               </array>
             </parameter>
@@ -4197,7 +4197,7 @@ in the target encoding.  NULL means use \u1234 or \U12345678 format.</doc>
       <method name="get_bytes" c:identifier="gsf_output_memory_get_bytes">
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">The data that has been written to @mem</doc>
-          <array zero-terminated="0" c:type="guint8*">
+          <array zero-terminated="0" c:type="const guint8*">
             <type name="guint8" c:type="guint8"/>
           </array>
         </return-value>
@@ -4682,7 +4682,7 @@ namespace or the current default namespace.</doc>
           </parameter>
           <parameter name="attrs" transfer-ownership="none">
             <doc xml:space="preserve">array of xmlChar const *</doc>
-            <array zero-terminated="0" c:type="xmlChar**">
+            <array zero-terminated="0" c:type="const xmlChar**">
               <type name="utf8"/>
             </array>
           </parameter>
@@ -4725,13 +4725,13 @@ data structures necessary to validate a doument based on that description.</doc>
         <parameters>
           <parameter name="nodes" transfer-ownership="none">
             <doc xml:space="preserve">an array of node descriptors</doc>
-            <array c:type="GsfXMLInNode*">
+            <array c:type="const GsfXMLInNode*">
               <type name="XMLInNode" c:type="GsfXMLInNode"/>
             </array>
           </parameter>
           <parameter name="ns" transfer-ownership="none">
             <doc xml:space="preserve">an array of namespace identifiers</doc>
-            <array c:type="GsfXMLInNS*">
+            <array c:type="const GsfXMLInNS*">
               <type name="XMLInNS" c:type="GsfXMLInNS"/>
             </array>
           </parameter>
@@ -4749,7 +4749,7 @@ data structures necessary to validate a doument based on that description.</doc>
           </instance-parameter>
           <parameter name="nodes" transfer-ownership="none">
             <doc xml:space="preserve">%NULL terminated array of #GsfXMLInNode</doc>
-            <array c:type="GsfXMLInNode*">
+            <array c:type="const GsfXMLInNode*">
               <type name="XMLInNode" c:type="GsfXMLInNode"/>
             </array>
           </parameter>
@@ -4968,7 +4968,7 @@ data structures necessary to validate a doument based on that description.</doc>
           </parameter>
           <parameter name="data" transfer-ownership="none">
             <doc xml:space="preserve">Data to be written</doc>
-            <array length="2" zero-terminated="0" c:type="guint8*">
+            <array length="2" zero-terminated="0" c:type="const guint8*">
               <type name="guint8" c:type="guint8"/>
             </array>
           </parameter>
@@ -5516,7 +5516,7 @@ gsf_xml_out_set_pretty_print will return the same value.</doc>
       <parameters>
         <parameter name="in" transfer-ownership="none">
           <doc xml:space="preserve">input stream</doc>
-          <array zero-terminated="0" c:type="guint8*">
+          <array zero-terminated="0" c:type="const guint8*">
             <type name="guint8" c:type="guint8"/>
           </array>
         </parameter>
@@ -5557,7 +5557,7 @@ flush off the last little bit.</doc>
       <parameters>
         <parameter name="in" transfer-ownership="none">
           <doc xml:space="preserve">Data to be encoded</doc>
-          <array length="1" zero-terminated="0" c:type="guint8*">
+          <array length="1" zero-terminated="0" c:type="const guint8*">
             <type name="guint8" c:type="guint8"/>
           </array>
         </parameter>
@@ -5601,7 +5601,7 @@ flush off the last little bit.</doc>
       <parameters>
         <parameter name="data" transfer-ownership="none">
           <doc xml:space="preserve">data stream</doc>
-          <array zero-terminated="0" c:type="guint8*">
+          <array zero-terminated="0" c:type="const guint8*">
             <type name="guint8" c:type="guint8"/>
           </array>
         </parameter>
@@ -5622,7 +5622,7 @@ the output @out at a time, saves left-over state in @state and @save
       <parameters>
         <parameter name="in" transfer-ownership="none">
           <doc xml:space="preserve">input stream</doc>
-          <array zero-terminated="0" c:type="guint8*">
+          <array zero-terminated="0" c:type="const guint8*">
             <type name="guint8" c:type="guint8"/>
           </array>
         </parameter>
@@ -6294,7 +6294,7 @@ Open one of @opkg's relationships with type=@type.</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="params" transfer-ownership="none">
-          <array length="2" zero-terminated="0" c:type="GParameter*">
+          <array length="2" zero-terminated="0" c:type="const GParameter*">
             <type name="GObject.Parameter" c:type="GParameter"/>
           </array>
         </parameter>
