@@ -25,10 +25,10 @@ LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
 source "$LIBRARY/util/message.sh"
 
-lint_config_functions+=('lint_variable')
+lint_config_functions+=('lint_config_variables')
 
 
-lint_variable() {
+lint_config_variables() {
 	local array=(DLAGENTS VCSCLIENTS BUILDENV OPTIONS INTEGRITY_CHECK MAN_DIRS
 	             DOC_DIRS PURGE_TARGETS COMPRESSGZ COMPRESSBZ2 COMPRESSXZ
 	             COMPRESSLRZ COMPRESSLZO COMPRESSZ)
