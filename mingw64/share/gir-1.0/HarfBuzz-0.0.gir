@@ -179,29 +179,12 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="2" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="3" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="2.2.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="2.3.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
-    <record name="aat_layout_feature_selector_info_t"
-            c:type="hb_aat_layout_feature_selector_info_t">
-      <field name="name_id" writable="1">
-        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
-      </field>
-      <field name="enable" writable="1">
-        <type name="aat_layout_feature_selector_t"
-              c:type="hb_aat_layout_feature_selector_t"/>
-      </field>
-      <field name="disable" writable="1">
-        <type name="aat_layout_feature_selector_t"
-              c:type="hb_aat_layout_feature_selector_t"/>
-      </field>
-      <field name="reserved" readable="0" private="1">
-        <type name="guint" c:type="unsigned"/>
-      </field>
-    </record>
     <enumeration name="aat_layout_feature_selector_t"
                  version="2.2.0"
                  glib:type-name="hb_aat_layout_feature_selector_t"
@@ -1463,53 +1446,6 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
               glib:nick="full-width-cjk-roman">
       </member>
     </enumeration>
-    <function name="aat_layout_feature_type_get_name_id"
-              c:identifier="hb_aat_layout_feature_type_get_name_id"
-              version="2.2.0">
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">Name ID index</doc>
-        <type name="ot_name_id_t" c:type="hb_ot_name_id_t"/>
-      </return-value>
-      <parameters>
-        <parameter name="face" transfer-ownership="none">
-          <doc xml:space="preserve">a face object</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
-        </parameter>
-        <parameter name="feature_type" transfer-ownership="none">
-          <doc xml:space="preserve">feature id</doc>
-          <type name="aat_layout_feature_type_t"
-                c:type="hb_aat_layout_feature_type_t"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="aat_layout_feature_type_get_selector_infos"
-              c:identifier="hb_aat_layout_feature_type_get_selector_infos">
-      <return-value transfer-ownership="none">
-        <type name="guint" c:type="unsigned int"/>
-      </return-value>
-      <parameters>
-        <parameter name="face" transfer-ownership="none">
-          <type name="face_t" c:type="hb_face_t*"/>
-        </parameter>
-        <parameter name="feature_type" transfer-ownership="none">
-          <type name="aat_layout_feature_type_t"
-                c:type="hb_aat_layout_feature_type_t"/>
-        </parameter>
-        <parameter name="start_offset" transfer-ownership="none">
-          <type name="guint" c:type="unsigned int"/>
-        </parameter>
-        <parameter name="selector_count" transfer-ownership="none">
-          <type name="guint" c:type="unsigned int*"/>
-        </parameter>
-        <parameter name="selectors" transfer-ownership="none">
-          <type name="aat_layout_feature_selector_info_t"
-                c:type="hb_aat_layout_feature_selector_info_t*"/>
-        </parameter>
-        <parameter name="default_index" transfer-ownership="none">
-          <type name="guint" c:type="unsigned int*"/>
-        </parameter>
-      </parameters>
-    </function>
     <enumeration name="aat_layout_feature_type_t"
                  version="2.2.0"
                  glib:type-name="hb_aat_layout_feature_type_t"
@@ -1716,44 +1652,6 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
               glib:nick="cjk-roman-spacing-type">
       </member>
     </enumeration>
-    <function name="aat_layout_get_feature_types"
-              c:identifier="hb_aat_layout_get_feature_types"
-              version="2.2.0">
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">Number of all available feature types.</doc>
-        <type name="guint" c:type="unsigned int"/>
-      </return-value>
-      <parameters>
-        <parameter name="face" transfer-ownership="none">
-          <doc xml:space="preserve">a face object</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
-        </parameter>
-        <parameter name="start_offset" transfer-ownership="none">
-          <doc xml:space="preserve">iteration's start offset</doc>
-          <type name="guint" c:type="unsigned int"/>
-        </parameter>
-        <parameter name="feature_count"
-                   direction="out"
-                   caller-allocates="0"
-                   transfer-ownership="full"
-                   nullable="1">
-          <doc xml:space="preserve">buffer size as input, filled size as output</doc>
-          <type name="guint" c:type="unsigned int*"/>
-        </parameter>
-        <parameter name="features"
-                   direction="out"
-                   caller-allocates="1"
-                   transfer-ownership="none">
-          <doc xml:space="preserve">features buffer</doc>
-          <array length="2"
-                 zero-terminated="0"
-                 c:type="hb_aat_layout_feature_type_t*">
-            <type name="aat_layout_feature_type_t"
-                  c:type="hb_aat_layout_feature_type_t"/>
-          </array>
-        </parameter>
-      </parameters>
-    </function>
     <function name="blob_copy_writable_or_fail"
               c:identifier="hb_blob_copy_writable_or_fail"
               version="1.8.0">
@@ -9015,24 +8913,6 @@ used as long as @face is alive.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="glyphs" transfer-ownership="none">
-          <type name="set_t" c:type="hb_set_t*"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="ot_shape_plan_collect_lookups"
-              c:identifier="hb_ot_shape_plan_collect_lookups"
-              version="0.9.7">
-      <return-value transfer-ownership="none">
-        <type name="none" c:type="void"/>
-      </return-value>
-      <parameters>
-        <parameter name="shape_plan" transfer-ownership="none">
-          <type name="shape_plan_t" c:type="hb_shape_plan_t*"/>
-        </parameter>
-        <parameter name="table_tag" transfer-ownership="none">
-          <type name="tag_t" c:type="hb_tag_t"/>
-        </parameter>
-        <parameter name="lookup_indexes" transfer-ownership="none">
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
       </parameters>

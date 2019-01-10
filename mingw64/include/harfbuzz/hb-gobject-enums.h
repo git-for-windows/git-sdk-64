@@ -40,64 +40,64 @@
 
 HB_BEGIN_DECLS
 HB_EXTERN GType
-hb_gobject_aat_layout_feature_type_get_type (void) G_GNUC_CONST;
+hb_gobject_aat_layout_feature_type_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_AAT_LAYOUT_FEATURE_TYPE (hb_gobject_aat_layout_feature_type_get_type ())
 HB_EXTERN GType
-hb_gobject_aat_layout_feature_selector_get_type (void) G_GNUC_CONST;
+hb_gobject_aat_layout_feature_selector_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_AAT_LAYOUT_FEATURE_SELECTOR (hb_gobject_aat_layout_feature_selector_get_type ())
 HB_EXTERN GType
-hb_gobject_memory_mode_get_type (void) G_GNUC_CONST;
+hb_gobject_memory_mode_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_MEMORY_MODE (hb_gobject_memory_mode_get_type ())
 HB_EXTERN GType
-hb_gobject_glyph_flags_get_type (void) G_GNUC_CONST;
+hb_gobject_glyph_flags_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_GLYPH_FLAGS (hb_gobject_glyph_flags_get_type ())
 HB_EXTERN GType
-hb_gobject_buffer_content_type_get_type (void) G_GNUC_CONST;
+hb_gobject_buffer_content_type_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_BUFFER_CONTENT_TYPE (hb_gobject_buffer_content_type_get_type ())
 HB_EXTERN GType
-hb_gobject_buffer_flags_get_type (void) G_GNUC_CONST;
+hb_gobject_buffer_flags_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_BUFFER_FLAGS (hb_gobject_buffer_flags_get_type ())
 HB_EXTERN GType
-hb_gobject_buffer_cluster_level_get_type (void) G_GNUC_CONST;
+hb_gobject_buffer_cluster_level_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_BUFFER_CLUSTER_LEVEL (hb_gobject_buffer_cluster_level_get_type ())
 HB_EXTERN GType
-hb_gobject_buffer_serialize_flags_get_type (void) G_GNUC_CONST;
+hb_gobject_buffer_serialize_flags_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_BUFFER_SERIALIZE_FLAGS (hb_gobject_buffer_serialize_flags_get_type ())
 HB_EXTERN GType
-hb_gobject_buffer_serialize_format_get_type (void) G_GNUC_CONST;
+hb_gobject_buffer_serialize_format_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_BUFFER_SERIALIZE_FORMAT (hb_gobject_buffer_serialize_format_get_type ())
 HB_EXTERN GType
-hb_gobject_buffer_diff_flags_get_type (void) G_GNUC_CONST;
+hb_gobject_buffer_diff_flags_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_BUFFER_DIFF_FLAGS (hb_gobject_buffer_diff_flags_get_type ())
 HB_EXTERN GType
-hb_gobject_direction_get_type (void) G_GNUC_CONST;
+hb_gobject_direction_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_DIRECTION (hb_gobject_direction_get_type ())
 HB_EXTERN GType
-hb_gobject_script_get_type (void) G_GNUC_CONST;
+hb_gobject_script_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_SCRIPT (hb_gobject_script_get_type ())
 HB_EXTERN GType
-hb_gobject_ot_color_palette_flags_get_type (void) G_GNUC_CONST;
+hb_gobject_ot_color_palette_flags_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_COLOR_PALETTE_FLAGS (hb_gobject_ot_color_palette_flags_get_type ())
 HB_EXTERN GType
-hb_gobject_ot_layout_glyph_class_get_type (void) G_GNUC_CONST;
+hb_gobject_ot_layout_glyph_class_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_LAYOUT_GLYPH_CLASS (hb_gobject_ot_layout_glyph_class_get_type ())
 HB_EXTERN GType
-hb_gobject_ot_math_constant_get_type (void) G_GNUC_CONST;
+hb_gobject_ot_math_constant_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_MATH_CONSTANT (hb_gobject_ot_math_constant_get_type ())
 HB_EXTERN GType
-hb_gobject_ot_math_kern_get_type (void) G_GNUC_CONST;
+hb_gobject_ot_math_kern_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_MATH_KERN (hb_gobject_ot_math_kern_get_type ())
 HB_EXTERN GType
-hb_gobject_ot_math_glyph_part_flags_get_type (void) G_GNUC_CONST;
+hb_gobject_ot_math_glyph_part_flags_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_MATH_GLYPH_PART_FLAGS (hb_gobject_ot_math_glyph_part_flags_get_type ())
 HB_EXTERN GType
-hb_gobject_ot_var_axis_flags_get_type (void) G_GNUC_CONST;
+hb_gobject_ot_var_axis_flags_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_OT_VAR_AXIS_FLAGS (hb_gobject_ot_var_axis_flags_get_type ())
 HB_EXTERN GType
-hb_gobject_unicode_general_category_get_type (void) G_GNUC_CONST;
+hb_gobject_unicode_general_category_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_UNICODE_GENERAL_CATEGORY (hb_gobject_unicode_general_category_get_type ())
 HB_EXTERN GType
-hb_gobject_unicode_combining_class_get_type (void) G_GNUC_CONST;
+hb_gobject_unicode_combining_class_get_type () G_GNUC_CONST;
 #define HB_GOBJECT_TYPE_UNICODE_COMBINING_CLASS (hb_gobject_unicode_combining_class_get_type ())
 
 HB_END_DECLS
