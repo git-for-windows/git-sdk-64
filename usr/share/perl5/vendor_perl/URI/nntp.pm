@@ -3,7 +3,7 @@ package URI::nntp;  # draft-gilman-news-url-01
 use strict;
 use warnings;
 
-our $VERSION = '1.74';
+our $VERSION = '1.76';
 
 use parent 'URI::news';
 

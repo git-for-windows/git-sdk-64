@@ -14,7 +14,7 @@ use parent qw(URI::_server URI::_userpass);
 
 use URI::Escape qw(uri_unescape);
 
-our $VERSION = '1.74';
+our $VERSION = '1.76';
 
 sub default_port { 5060 }
 
