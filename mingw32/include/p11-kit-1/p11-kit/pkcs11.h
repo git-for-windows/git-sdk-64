@@ -750,8 +750,6 @@ typedef unsigned long ck_mechanism_type_t;
 #define CKM_KIP_DERIVE			(0x510UL)
 #define CKM_KIP_WRAP			(0x511UL)
 #define CKM_KIP_MAC			(0x512UL)
-#define CKM_CAMELLIA_KEY_GEN		(0x550UL)
-#define CKM_CAMELLIA_CTR		(0x558UL)
 #define CKM_ARIA_KEY_GEN		(0x560UL)
 #define CKM_ARIA_ECB			(0x561UL)
 #define CKM_ARIA_CBC			(0x562UL)
@@ -861,7 +859,7 @@ typedef unsigned long ck_mechanism_type_t;
 
 #define CKM_VENDOR_DEFINED		((unsigned long) (1UL << 31))
 
-/* Ammendments */
+/* Amendments */
 #define CKM_SHA224			(0x255UL)
 #define CKM_SHA224_HMAC			(0x256UL)
 #define CKM_SHA224_HMAC_GENERAL		(0x257UL)
@@ -877,6 +875,7 @@ typedef unsigned long ck_mechanism_type_t;
 #define CKM_CAMELLIA_CBC_PAD		(0x555UL)
 #define CKM_CAMELLIA_ECB_ENCRYPT_DATA	(0x556UL)
 #define CKM_CAMELLIA_CBC_ENCRYPT_DATA	(0x557UL)
+#define CKM_CAMELLIA_CTR		(0x558UL)
 
 #define CKM_AES_KEY_WRAP		(0x2109UL)
 #define CKM_AES_KEY_WRAP_PAD		(0x210aUL)

@@ -19,7 +19,7 @@ import errno
 import codecs
 import locale
 
-VERSION_STR = '''glib-mkenums version 2.58.2
+VERSION_STR = '''glib-mkenums version 2.58.3
 glib-mkenums comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-mkenums under the terms of
 the GNU General Public License which can be found in the
