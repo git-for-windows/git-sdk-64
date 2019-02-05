@@ -1,10 +1,9 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 16 September 2018 for version 3.6.5 of
-GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.6 of GnuTLS.
 
-Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2018 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2019 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -2330,7 +2329,7 @@ gnutls_pkcs11_get_raw_issuer
 
      This function will return the issuer of a given certificate, if it
      is stored in the token.  By default only marked as trusted issuers
-     are retuned.  If any issuer should be returned specify
+     are returned.  If any issuer should be returned specify
      'GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_ANY' in 'flags' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
@@ -2356,7 +2355,7 @@ gnutls_pkcs11_get_raw_issuer_by_dn
 
      This function will return the certificate with the given DN, if it
      is stored in the token.  By default only marked as trusted issuers
-     are retuned.  If any issuer should be returned specify
+     are returned.  If any issuer should be returned specify
      'GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_ANY' in 'flags' .
 
      The name of the function includes issuer because it can be used to
@@ -2388,7 +2387,7 @@ gnutls_pkcs11_get_raw_issuer_by_subject_key_id
 
      This function will return the certificate with the given DN and
      'spki' , if it is stored in the token.  By default only marked as
-     trusted issuers are retuned.  If any issuer should be returned
+     trusted issuers are returned.  If any issuer should be returned
      specify 'GNUTLS_PKCS11_OBJ_FLAG_RETRIEVE_ANY' in 'flags' .
 
      The name of the function includes issuer because it can be used to
@@ -2449,7 +2448,7 @@ gnutls_pkcs11_obj_export
      replaced by the actual size of parameters)
 
      This function will export the PKCS11 object data.  It is normal for
-     data to be inaccesible and in that case 'GNUTLS_E_INVALID_REQUEST'
+     data to be inaccessible and in that case 'GNUTLS_E_INVALID_REQUEST'
      will be returned.
 
      If the buffer provided is not long enough to hold the output, then
@@ -2471,7 +2470,7 @@ gnutls_pkcs11_obj_export2
      OUT: will contain the object data
 
      This function will export the PKCS11 object data.  It is normal for
-     data to be inaccesible and in that case 'GNUTLS_E_INVALID_REQUEST'
+     data to be inaccessible and in that case 'GNUTLS_E_INVALID_REQUEST'
      will be returned.
 
      The output buffer is allocated using 'gnutls_malloc()' .
@@ -2493,7 +2492,7 @@ gnutls_pkcs11_obj_export3
      OUT: will contain the object data
 
      This function will export the PKCS11 object data.  It is normal for
-     data to be inaccesible and in that case 'GNUTLS_E_INVALID_REQUEST'
+     data to be inaccessible and in that case 'GNUTLS_E_INVALID_REQUEST'
      will be returned.
 
      The output buffer is allocated using 'gnutls_malloc()' .
@@ -2595,13 +2594,18 @@ gnutls_pkcs11_obj_get_info
 
      OUTPUT: where output will be stored
 
-     OUTPUT_SIZE: contains the maximum size of the output and will be
-     overwritten with actual
+     OUTPUT_SIZE: contains the maximum size of the output buffer and
+     will be overwritten with the actual size.
 
      This function will return information about the PKCS11 certificate
      such as the label, id as well as token information where the key is
-     stored.  When output is text it returns null terminated string
-     although 'output_size' contains the size of the actual data only.
+     stored.
+
+     When output is text, a null terminated string is written to
+     'output' and its string length is written to 'output_size' (without
+     null terminator).  If the buffer is too small, 'output_size' will
+     contain the expected buffer size (with null terminator for text)
+     and return 'GNUTLS_E_SHORT_MEMORY_BUFFER' .
 
      In versions previously to 3.6.0 this function included the null
      terminator to 'output_size' .  After 3.6.0 the output size doesn't
@@ -3209,11 +3213,17 @@ gnutls_pkcs11_token_get_info
 
      OUTPUT: where output will be stored
 
-     OUTPUT_SIZE: contains the maximum size of the output and will be
-     overwritten with actual
+     OUTPUT_SIZE: contains the maximum size of the output buffer and
+     will be overwritten with the actual size.
 
      This function will return information about the PKCS 11 token such
      as the label, id, etc.
+
+     When output is text, a null terminated string is written to
+     'output' and its string length is written to 'output_size' (without
+     null terminator).  If the buffer is too small, 'output_size' will
+     contain the expected buffer size (with null terminator for text)
+     and return 'GNUTLS_E_SHORT_MEMORY_BUFFER' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) on success or a negative error
      code on error.

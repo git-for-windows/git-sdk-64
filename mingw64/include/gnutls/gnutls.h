@@ -55,13 +55,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.5"
+#define GNUTLS_VERSION "3.6.6"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 5
+#define GNUTLS_VERSION_PATCH 6
 
-#define GNUTLS_VERSION_NUMBER 0x030605
+#define GNUTLS_VERSION_NUMBER 0x030606
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -423,7 +423,6 @@ typedef enum {
  *   applications which hide the length of transferred data via the TLS1.3 padding mechanism and
  *   are already taking steps to hide the data processing time. This comes at a performance
  *   penalty.
- * @GNUTLS_ENABLE_CERT_TYPE_NEG: Enable certificate type negotiation extensions (RFC7250).
  * @GNUTLS_AUTO_REAUTH: Enable transparent re-authentication in client side when the server
  *    requests to. That is, reauthentication is handled within gnutls_record_recv(), and
  *    the %GNUTLS_E_REHANDSHAKE or %GNUTLS_E_REAUTH_REQUEST are not returned. This must be
@@ -432,6 +431,9 @@ typedef enum {
  *    since gnutls_record_recv() could be interrupted when sending when this flag is enabled.
  *    Note this flag may not be used if you are using the same session for sending and receiving
  *    in different threads.
+ * @GNUTLS_ENABLE_EARLY_DATA: Under TLS1.3 allow the server to receive early data sent as part of the initial ClientHello (0-RTT). 
+ *    This is not enabled by default as early data has weaker security properties than other data. Since 3.6.5.
+ * @GNUTLS_ENABLE_RAWPK: Allows raw public-keys to be negotiated during the handshake. Since 3.6.6.
  *
  * Enumeration of different flags for gnutls_init() function. All the flags
  * can be combined except @GNUTLS_SERVER and @GNUTLS_CLIENT which are mutually
@@ -460,7 +462,7 @@ typedef enum {
 	GNUTLS_NO_AUTO_REKEY = (1<<15),
 	GNUTLS_SAFE_PADDING_CHECK = (1<<16),
 	GNUTLS_ENABLE_EARLY_START = (1<<17),
-	GNUTLS_ENABLE_CERT_TYPE_NEG = (1<<18),
+	GNUTLS_ENABLE_RAWPK = (1<<18),
 	GNUTLS_AUTO_REAUTH = (1<<19),
 	GNUTLS_ENABLE_EARLY_DATA = (1<<20)
 } gnutls_init_flags_t;
@@ -478,6 +480,8 @@ typedef enum {
 #define GNUTLS_ENABLE_FALSE_START (1<<8)
 #define GNUTLS_FORCE_CLIENT_CERT (1<<9)
 #define GNUTLS_NO_TICKETS (1<<10)
+#define GNUTLS_ENABLE_CERT_TYPE_NEG 0
+	// Here for compatibility reasons
 
 /**
  * gnutls_alert_level_t:
@@ -632,7 +636,7 @@ const char
  * @GNUTLS_CERT_SIGNER_NOT_FOUND: The certificate's issuer is not known. 
  *   This is the case if the issuer is not included in the trusted certificate list.
  * @GNUTLS_CERT_SIGNER_NOT_CA: The certificate's signer was not a CA. This
- *   may happen if this was a version 1 certificate, which is common with 
+ *   may happen if this was a version 1 certificate, which is common with
  *   some CAs, or a version 3 certificate without the basic constrains extension.
  * @GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE: The certificate's signer constraints were
  *   violated.
@@ -1407,7 +1411,7 @@ ssize_t gnutls_record_recv(gnutls_session_t session, void *data,
 typedef struct mbuffer_st *gnutls_packet_t;
 
 ssize_t
-gnutls_record_recv_packet(gnutls_session_t session, 
+gnutls_record_recv_packet(gnutls_session_t session,
 			  gnutls_packet_t *packet);
 
 void gnutls_packet_get(gnutls_packet_t packet, gnutls_datum_t *data, unsigned char *sequence);
@@ -1687,7 +1691,7 @@ const char *
 	gnutls_protocol_get_name(gnutls_protocol_t version) __GNUTLS_CONST__;
 
 
-/* get/set session 
+/* get/set session
  */
 int gnutls_session_set_data(gnutls_session_t session,
 			    const void *session_data,
@@ -1778,7 +1782,7 @@ int gnutls_session_channel_binding(gnutls_session_t session,
 				   gnutls_channel_binding_t cbtype,
 				   gnutls_datum_t * cb);
 
-/* checks if this session is a resumed one 
+/* checks if this session is a resumed one
  */
 int gnutls_session_is_resumed(gnutls_session_t session);
 int gnutls_session_resumption_requested(gnutls_session_t session);
@@ -2132,6 +2136,29 @@ gnutls_ocsp_status_request_get2(gnutls_session_t session,
 			        unsigned idx,
 			        gnutls_datum_t * response);
 
+/* RAW public key functions (RFC7250) */
+int gnutls_certificate_set_rawpk_key_mem(gnutls_certificate_credentials_t cred,
+				    const gnutls_datum_t* spki,
+				    const gnutls_datum_t* pkey,
+				    gnutls_x509_crt_fmt_t format,
+				    const char* pass,
+				    unsigned int key_usage,
+				    const char **names,
+				    unsigned int names_length,
+				    unsigned int flags);
+
+int gnutls_certificate_set_rawpk_key_file(gnutls_certificate_credentials_t cred,
+				      const char* rawpkfile,
+				      const char* privkeyfile,
+				      gnutls_x509_crt_fmt_t format,
+				      const char *pass,
+				      unsigned int key_usage,
+				      const char **names,
+				      unsigned int names_length,
+				      unsigned int privkey_flags,
+				      unsigned int pkcs11_flags);
+
+
 /* global state functions
  */
 int gnutls_global_init(void);
@@ -2277,7 +2304,7 @@ void gnutls_transport_set_errno_function(gnutls_session_t session,
 
 void gnutls_transport_set_errno(gnutls_session_t session, int err);
 
-/* session specific 
+/* session specific
  */
 void gnutls_session_set_ptr(gnutls_session_t session, void *ptr);
 void *gnutls_session_get_ptr(gnutls_session_t session);
@@ -2310,7 +2337,7 @@ int gnutls_random_art(gnutls_random_art_t type,
 int gnutls_idna_map(const char * input, unsigned ilen, gnutls_datum_t *out, unsigned flags);
 int gnutls_idna_reverse_map(const char *input, unsigned ilen, gnutls_datum_t *out, unsigned flags);
 
-/* SRP 
+/* SRP
  */
 
 typedef struct gnutls_srp_server_credentials_st
@@ -2979,13 +3006,13 @@ typedef int (*gnutls_supp_recv_func) (gnutls_session_t session,
 typedef int (*gnutls_supp_send_func) (gnutls_session_t session,
 			       gnutls_buffer_t buf);
 
-int gnutls_supplemental_register(const char *name, 
-				gnutls_supplemental_data_format_type_t type, 
+int gnutls_supplemental_register(const char *name,
+				gnutls_supplemental_data_format_type_t type,
 				gnutls_supp_recv_func supp_recv_func,
 				gnutls_supp_send_func supp_send_func);
 
 int gnutls_session_supplemental_register(gnutls_session_t session, const char *name,
-				gnutls_supplemental_data_format_type_t type, 
+				gnutls_supplemental_data_format_type_t type,
 				gnutls_supp_recv_func supp_recv_func,
 				gnutls_supp_send_func supp_send_func,
 				unsigned int flags);

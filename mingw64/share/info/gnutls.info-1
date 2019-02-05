@@ -1,10 +1,9 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 16 September 2018 for version 3.6.5 of
-GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.6 of GnuTLS.
 
-Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2018 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2019 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -33,11 +32,10 @@ File: gnutls.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS
 ******
 
-This manual is last updated 16 September 2018 for version 3.6.5 of
-GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.6 of GnuTLS.
 
-Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2018 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2019 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -1382,6 +1380,7 @@ Table 4.1: Supported key exchange algorithms.
 
 * X.509 certificates::
 * OpenPGP certificates::
+* Raw public-keys::
 * Advanced certificate verification::
 * Digital signatures::
 
@@ -2312,7 +2311,7 @@ GNUTLS_KP_OCSP_SIGNING1.3.6.1.5.5.7.3.9The certificate is to be used for signing
                               OCSP responses.  When in a CA
                               certificate, it indicates that the CA is
                               allowed to sign certificates which sign
-                              OCSP reponses.
+                              OCSP responses.
                               
 GNUTLS_KP_ANY  2.5.29.37.0    The certificate is to be used for any
                               purpose.  When in a CA certificate, it
@@ -2334,7 +2333,7 @@ requested from the trusted authorities.
    (1) see <http://p11-glue.freedesktop.org/trust-module.html>.
 
 
-File: gnutls.info,  Node: OpenPGP certificates,  Next: Advanced certificate verification,  Prev: X.509 certificates,  Up: Certificate authentication
+File: gnutls.info,  Node: OpenPGP certificates,  Next: Raw public-keys,  Prev: X.509 certificates,  Up: Certificate authentication
 
 4.1.2 OpenPGP certificates
 --------------------------
@@ -2350,9 +2349,53 @@ consumes considerable resources for improving and testing the library.
 For that we have decided to drop this functionality completely in 3.6.0.
 
 
-File: gnutls.info,  Node: Advanced certificate verification,  Next: Digital signatures,  Prev: OpenPGP certificates,  Up: Certificate authentication
+File: gnutls.info,  Node: Raw public-keys,  Next: Advanced certificate verification,  Prev: OpenPGP certificates,  Up: Certificate authentication
 
-4.1.3 Advanced certificate verification
+4.1.3 Raw public-keys
+---------------------
+
+There are situations in which a rather large certificate / certificate
+chain is undesirable or impractical.  An example could be a resource
+contrained sensor network in which you do want to use authentication of
+and encryption between your devices but where your devices lack loads of
+memory or processing power.  Furthermore, there are situations in which
+you don't want to or can't rely on a PKIX. TLS is, next to a PKIX
+environment, also commonly used with self-signed certificates in smaller
+deployments where the self-signed certificates are distributed to all
+involved protocol endpoints out-of-band.  This practice does, however,
+still require the overhead of the certificate generation even though
+none of the information found in the certificate is actually used.
+
+With raw public-keys, only a subset of the information found in typical
+certificates is utilized: namely, the SubjectPublicKeyInfo structure (in
+ASN.1 format) of a PKIX certificate that carries the parameters
+necessary to describe the public-key.  Other parameters found in PKIX
+certificates are omitted.  By omitting various certificate-related
+structures, the resulting raw public-key is kept fairly small in
+comparison to the original certificate, and the code to process the keys
+can be simpler.
+
+It should be noted however, that the authenticity of these raw keys must
+be verified by an out-of-band mechanism or something like TOFU.
+
+* Menu:
+
+* Importing raw public-keys::
+
+
+File: gnutls.info,  Node: Importing raw public-keys,  Up: Raw public-keys
+
+4.1.3.1 Importing raw public-keys
+.................................
+
+Raw public-keys and their private counterparts can best be handled by
+using the abstract types 'gnutls_pubkey_t' and 'gnutls_privkey_t'
+respectively.  To learn how to use these see *note Abstract key types::.
+
+
+File: gnutls.info,  Node: Advanced certificate verification,  Next: Digital signatures,  Prev: Raw public-keys,  Up: Certificate authentication
+
+4.1.4 Advanced certificate verification
 ---------------------------------------
 
 The verification of X.509 certificates in the HTTPS and other Internet
@@ -2373,7 +2416,7 @@ methods.
 
 File: gnutls.info,  Node: Verifying a certificate using trust on first use authentication,  Next: Verifying a certificate using DANE,  Up: Advanced certificate verification
 
-4.1.3.1 Verifying a certificate using trust on first use authentication
+4.1.4.1 Verifying a certificate using trust on first use authentication
 .......................................................................
 
 It is possible to use a trust on first use (TOFU) authentication method
@@ -2395,7 +2438,7 @@ functionality.
 
 File: gnutls.info,  Node: Verifying a certificate using DANE,  Prev: Verifying a certificate using trust on first use authentication,  Up: Advanced certificate verification
 
-4.1.3.2 Verifying a certificate using DANE (DNSSEC)
+4.1.4.2 Verifying a certificate using DANE (DNSSEC)
 ...................................................
 
 The DANE protocol is a protocol that can be used to verify TLS
@@ -2424,7 +2467,7 @@ on top of DANE.
 
 File: gnutls.info,  Node: Digital signatures,  Prev: Advanced certificate verification,  Up: Certificate authentication
 
-4.1.4 Digital signatures
+4.1.5 Digital signatures
 ------------------------
 
 In this section we will provide some information about digital
@@ -2477,7 +2520,7 @@ computer power available sometime in the future, SHA-1 will be disabled
 as well.  The collision attacks on SHA-1 may also get better, given the
 new interest in tools for creating them.
 
-4.1.4.1 Trading security for interoperability
+4.1.5.1 Trading security for interoperability
 .............................................
 
 If you connect to a server and use GnuTLS' functions to verify the
@@ -5838,7 +5881,7 @@ used to perform operations in an abstract way.  For example in order to
 sign an X.509 certificate with a key that resides in a token the
 following steps can be used.
 
-     #inlude <gnutls/abstract.h>
+     #include <gnutls/abstract.h>
 
      void sign_cert( gnutls_x509_crt_t to_be_signed)
      {
@@ -5871,10 +5914,15 @@ File: gnutls.info,  Node: Abstract public keys,  Next: Abstract private keys,  U
 5.1.1 Public keys
 -----------------
 
-An abstract 'gnutls_pubkey_t' can be initialized using the functions
-below.  It can be imported through an existing structure like
-'gnutls_x509_crt_t', or through an ASN.1 encoding of the X.509
-'SubjectPublicKeyInfo' sequence.
+An abstract 'gnutls_pubkey_t' can be initialized and freed by using the
+functions below.
+
+'INT *note gnutls_pubkey_init:: (gnutls_pubkey_t * KEY)'
+'VOID *note gnutls_pubkey_deinit:: (gnutls_pubkey_t KEY)'
+
+After initialization its values can be imported from an existing
+structure like 'gnutls_x509_crt_t', or through an ASN.1 encoding of the
+X.509 'SubjectPublicKeyInfo' sequence.
 
 'INT *note gnutls_pubkey_import_x509:: (gnutls_pubkey_t KEY, gnutls_x509_crt_t CRT, unsigned int FLAGS)'
 'INT *note gnutls_pubkey_import_pkcs11:: (gnutls_pubkey_t KEY, gnutls_pkcs11_obj_t OBJ, unsigned int FLAGS)'
@@ -5957,11 +6005,16 @@ File: gnutls.info,  Node: Abstract private keys,  Next: Operations,  Prev: Abstr
 5.1.2 Private keys
 ------------------
 
-An abstract 'gnutls_privkey_t' can be initialized using the functions
-below.  It can be imported through an existing structure like
-'gnutls_x509_privkey_t', but unlike public keys it cannot be exported.
-That is to allow abstraction over keys stored in hardware that makes
-available only operations.
+An abstract 'gnutls_privkey_t' can be initialized and freed by using the
+functions below.
+
+'INT *note gnutls_privkey_init:: (gnutls_privkey_t * KEY)'
+'VOID *note gnutls_privkey_deinit:: (gnutls_privkey_t KEY)'
+
+After initialization its values can be imported from an existing
+structure like 'gnutls_x509_privkey_t', but unlike public keys it cannot
+be exported.  That is to allow abstraction over keys stored in hardware
+that makes available only operations.
 
 'INT *note gnutls_privkey_import_x509:: (gnutls_privkey_t PKEY, gnutls_x509_privkey_t KEY, unsigned int FLAGS)'
 'INT *note gnutls_privkey_import_pkcs11:: (gnutls_privkey_t PKEY, gnutls_pkcs11_privkey_t KEY, unsigned int FLAGS)'
@@ -6521,7 +6574,7 @@ after having called *note gnutls_pkcs11_init:: specifying the
      *Since:* 2.12.0
 
 In that case, the application will only have access to the modules
-explictly loaded.  If the 'GNUTLS_PKCS11_FLAG_MANUAL' flag is specified
+explicitly loaded.  If the 'GNUTLS_PKCS11_FLAG_MANUAL' flag is specified
 and no calls to *note gnutls_pkcs11_add_provider:: are made, then the
 PKCS #11 functionality is effectively disabled.
 
@@ -6649,13 +6702,18 @@ objects are shown below.
 
      OUTPUT: where output will be stored
 
-     OUTPUT_SIZE: contains the maximum size of the output and will be
-     overwritten with actual
+     OUTPUT_SIZE: contains the maximum size of the output buffer and
+     will be overwritten with the actual size.
 
      This function will return information about the PKCS11 certificate
      such as the label, id as well as token information where the key is
-     stored.  When output is text it returns null terminated string
-     although 'output_size' contains the size of the actual data only.
+     stored.
+
+     When output is text, a null terminated string is written to
+     'output' and its string length is written to 'output_size' (without
+     null terminator).  If the buffer is too small, 'output_size' will
+     contain the expected buffer size (with null terminator for text)
+     and return 'GNUTLS_E_SHORT_MEMORY_BUFFER' .
 
      In versions previously to 3.6.0 this function included the null
      terminator to 'output_size' .  After 3.6.0 the output size doesn't

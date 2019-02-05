@@ -122,7 +122,7 @@ typedef void (*gnutls_privkey_deinit_func) (gnutls_privkey_t key,
  */
 #define GNUTLS_PRIVKEY_INFO_HAVE_SIGN_ALGO (1<<2)
 /* Should return the number of bits of the public key algorithm (required for RSA-PSS)
- * It is the value that should be retuned by gnutls_pubkey_get_pk_algorithm() */
+ * It is the value that should be returned by gnutls_pubkey_get_pk_algorithm() */
 #define GNUTLS_PRIVKEY_INFO_PK_ALGO_BITS (1<<3)
 
 /* returns information on the public key associated with userdata */
@@ -644,8 +644,7 @@ typedef struct gnutls_pcert_st {
 	gnutls_certificate_type_t type;
 } gnutls_pcert_st;
 
-/* Do not initialize the "cert" element of
- * the certificate */
+/* This flag is unused/ignored */
 #define GNUTLS_PCERT_NO_CERT 1
 
 int gnutls_pcert_import_x509(gnutls_pcert_st * pcert,
@@ -693,6 +692,14 @@ int gnutls_pcert_export_openpgp(gnutls_pcert_st * pcert,
                                 gnutls_openpgp_crt_t * crt);
 
 void gnutls_pcert_deinit(gnutls_pcert_st * pcert);
+
+int gnutls_pcert_import_rawpk(gnutls_pcert_st* pcert,
+			     gnutls_pubkey_t key, unsigned int flags);
+
+int gnutls_pcert_import_rawpk_raw(gnutls_pcert_st* pcert,
+				    const gnutls_datum_t* rawpubkey,
+				    gnutls_x509_crt_fmt_t format,
+				    unsigned int key_usage, unsigned int flags);
 
 /* For certificate credentials */
 	/* This is the same as gnutls_certificate_retrieve_function()

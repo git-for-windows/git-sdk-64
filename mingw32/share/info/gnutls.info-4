@@ -1,10 +1,9 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 16 September 2018 for version 3.6.5 of
-GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.6 of GnuTLS.
 
-Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2018 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2019 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -3582,11 +3581,8 @@ gnutls_x509_crt_get_expiration_time
           (gnutls_x509_crt_t CERT)
      CERT: should contain a 'gnutls_x509_crt_t' type
 
-     This function will return the time this Certificate was or will be
+     This function will return the time this certificate was or will be
      expired.
-
-     The no well defined expiration time can be checked against with the
-     'GNUTLS_X509_NO_WELL_DEFINED_EXPIRATION' macro.
 
      *Returns:* expiration time, or (time_t)-1 on error.
 
@@ -5022,7 +5018,7 @@ gnutls_x509_crt_set_activation_time
 
      ACT_TIME: The actual time
 
-     This function will set the time this Certificate was or will be
+     This function will set the time this certificate was or will be
      activated.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
@@ -5275,8 +5271,7 @@ gnutls_x509_crt_set_expiration_time
      EXP_TIME: The actual time
 
      This function will set the time this Certificate will expire.
-     Setting an expiration time to (time_t)-1 or to
-     'GNUTLS_X509_NO_WELL_DEFINED_EXPIRATION' will set to the no
+     Setting an expiration time to (time_t)-1 will set to the no
      well-defined expiration date value.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
@@ -5702,6 +5697,30 @@ gnutls_x509_crt_set_spki
 
      *Since:* 3.6.0
 
+gnutls_x509_crt_set_subject_alternative_name
+--------------------------------------------
+
+ -- Function: int gnutls_x509_crt_set_subject_alternative_name
+          (gnutls_x509_crt_t CRT, gnutls_x509_subject_alt_name_t TYPE,
+          const char * DATA_STRING)
+     CRT: a certificate of type 'gnutls_x509_crt_t'
+
+     TYPE: is one of the gnutls_x509_subject_alt_name_t enumerations
+
+     DATA_STRING: The data to be set, a (0) terminated string
+
+     This function will set the subject alternative name certificate
+     extension.  This function assumes that data can be expressed as a
+     null terminated string.
+
+     The name of the function is unfortunate since it is inconsistent
+     with 'gnutls_x509_crt_get_subject_alt_name()' .
+
+     See 'gnutls_x509_crt_set_subject_alt_name()' for more information.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error value.
+
 gnutls_x509_crt_set_subject_alt_name
 ------------------------------------
 
@@ -5765,30 +5784,6 @@ gnutls_x509_crt_set_subject_alt_othername
      otherwise a negative error value.
 
      *Since:* 3.5.0
-
-gnutls_x509_crt_set_subject_alternative_name
---------------------------------------------
-
- -- Function: int gnutls_x509_crt_set_subject_alternative_name
-          (gnutls_x509_crt_t CRT, gnutls_x509_subject_alt_name_t TYPE,
-          const char * DATA_STRING)
-     CRT: a certificate of type 'gnutls_x509_crt_t'
-
-     TYPE: is one of the gnutls_x509_subject_alt_name_t enumerations
-
-     DATA_STRING: The data to be set, a (0) terminated string
-
-     This function will set the subject alternative name certificate
-     extension.  This function assumes that data can be expressed as a
-     null terminated string.
-
-     The name of the function is unfortunate since it is inconsistent
-     with 'gnutls_x509_crt_get_subject_alt_name()' .
-
-     See 'gnutls_x509_crt_set_subject_alt_name()' for more information.
-
-     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
-     otherwise a negative error value.
 
 gnutls_x509_crt_set_subject_key_id
 ----------------------------------
@@ -6321,7 +6316,7 @@ gnutls_x509_ext_export_key_purposes
 
      This function will convert the key purposes type to a DER-encoded
      PKIX ExtKeyUsageSyntax (2.5.29.37) extension.  The output data in
-     'ext' will be allocated usin 'gnutls_malloc()' .
+     'ext' will be allocated using 'gnutls_malloc()' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -6359,7 +6354,7 @@ gnutls_x509_ext_export_name_constraints
 
      This function will convert the provided name constraints type to a
      DER-encoded PKIX NameConstraints (2.5.29.30) extension.  The output
-     data in 'ext' will be allocated usin 'gnutls_malloc()' .
+     data in 'ext' will be allocated using 'gnutls_malloc()' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.

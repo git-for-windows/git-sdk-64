@@ -50,7 +50,7 @@ extern "C" {
 /* gnutls_connection_end_t was made redundant in 2.99.0 */
 typedef unsigned int gnutls_connection_end_t _GNUTLS_GCC_ATTR_DEPRECATED;
 
-/* Stuff deprected in 2.x */
+/* Stuff deprecated in 2.x */
 typedef gnutls_cipher_algorithm_t gnutls_cipher_algorithm
     _GNUTLS_GCC_ATTR_DEPRECATED;
 typedef gnutls_kx_algorithm_t gnutls_kx_algorithm

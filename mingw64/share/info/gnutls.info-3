@@ -1,10 +1,9 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 16 September 2018 for version 3.6.5 of
-GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.6 of GnuTLS.
 
-Copyright (C) 2001-2018 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2018 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2019 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -26,6 +25,631 @@ START-INFO-DIR-ENTRY
 * psktool: (gnutls)psktool Invocation.	Simple TLS-Pre-Shared-Keys manager.
 * srptool: (gnutls)srptool Invocation.	Simple SRP password tool.
 END-INFO-DIR-ENTRY
+
+
+File: gnutls.info,  Node: Echo server with anonymous authentication,  Next: Helper functions for TCP connections,  Prev: Echo server with SRP authentication,  Up: More advanced client and servers
+
+7.3.11 Echo server with anonymous authentication
+------------------------------------------------
+
+This example server supports anonymous authentication, and could be used
+to serve the example client for anonymous authentication.
+
+/* This example code is placed in the public domain. */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <string.h>
+#include <unistd.h>
+#include <gnutls/gnutls.h>
+
+/* This is a sample TLS 1.0 echo server, for anonymous authentication only.
+ */
+
+
+#define SOCKET_ERR(err,s) if(err==-1) {perror(s);return(1);}
+#define MAX_BUF 1024
+#define PORT 5556               /* listen to 5556 port */
+
+int main(void)
+{
+        int err, listen_sd;
+        int sd, ret;
+        struct sockaddr_in sa_serv;
+        struct sockaddr_in sa_cli;
+        socklen_t client_len;
+        char topbuf[512];
+        gnutls_session_t session;
+        gnutls_anon_server_credentials_t anoncred;
+        char buffer[MAX_BUF + 1];
+        int optval = 1;
+
+        if (gnutls_check_version("3.1.4") == NULL) {
+                fprintf(stderr, "GnuTLS 3.1.4 or later is required for this example\n");
+                exit(1);
+        }
+
+        /* for backwards compatibility with gnutls < 3.3.0 */
+        gnutls_global_init();
+
+        gnutls_anon_allocate_server_credentials(&anoncred);
+
+        gnutls_anon_set_server_known_dh_params(anoncred, GNUTLS_SEC_PARAM_MEDIUM);
+
+        /* Socket operations
+         */
+        listen_sd = socket(AF_INET, SOCK_STREAM, 0);
+        SOCKET_ERR(listen_sd, "socket");
+
+        memset(&sa_serv, '\0', sizeof(sa_serv));
+        sa_serv.sin_family = AF_INET;
+        sa_serv.sin_addr.s_addr = INADDR_ANY;
+        sa_serv.sin_port = htons(PORT); /* Server Port number */
+
+        setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR, (void *) &optval,
+                   sizeof(int));
+
+        err =
+            bind(listen_sd, (struct sockaddr *) &sa_serv, sizeof(sa_serv));
+        SOCKET_ERR(err, "bind");
+        err = listen(listen_sd, 1024);
+        SOCKET_ERR(err, "listen");
+
+        printf("Server ready. Listening to port '%d'.\n\n", PORT);
+
+        client_len = sizeof(sa_cli);
+        for (;;) {
+                gnutls_init(&session, GNUTLS_SERVER);
+                gnutls_priority_set_direct(session,
+                                           "NORMAL:+ANON-ECDH:+ANON-DH",
+                                           NULL);
+                gnutls_credentials_set(session, GNUTLS_CRD_ANON, anoncred);
+
+                sd = accept(listen_sd, (struct sockaddr *) &sa_cli,
+                            &client_len);
+
+                printf("- connection from %s, port %d\n",
+                       inet_ntop(AF_INET, &sa_cli.sin_addr, topbuf,
+                                 sizeof(topbuf)), ntohs(sa_cli.sin_port));
+
+                gnutls_transport_set_int(session, sd);
+
+                do {
+                        ret = gnutls_handshake(session);
+                }
+                while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+
+                if (ret < 0) {
+                        close(sd);
+                        gnutls_deinit(session);
+                        fprintf(stderr,
+                                "*** Handshake has failed (%s)\n\n",
+                                gnutls_strerror(ret));
+                        continue;
+                }
+                printf("- Handshake was completed\n");
+
+                /* see the Getting peer's information example */
+                /* print_info(session); */
+
+                for (;;) {
+                        ret = gnutls_record_recv(session, buffer, MAX_BUF);
+
+                        if (ret == 0) {
+                                printf
+                                    ("\n- Peer has closed the GnuTLS connection\n");
+                                break;
+                        } else if (ret < 0
+                                   && gnutls_error_is_fatal(ret) == 0) {
+                                fprintf(stderr, "*** Warning: %s\n",
+                                        gnutls_strerror(ret));
+                        } else if (ret < 0) {
+                                fprintf(stderr, "\n*** Received corrupted "
+                                        "data(%d). Closing the connection.\n\n",
+                                        ret);
+                                break;
+                        } else if (ret > 0) {
+                                /* echo data back to the client
+                                 */
+                                gnutls_record_send(session, buffer, ret);
+                        }
+                }
+                printf("\n");
+                /* do not wait for the peer to close the connection.
+                 */
+                gnutls_bye(session, GNUTLS_SHUT_WR);
+
+                close(sd);
+                gnutls_deinit(session);
+
+        }
+        close(listen_sd);
+
+        gnutls_anon_free_server_credentials(anoncred);
+
+        gnutls_global_deinit();
+
+        return 0;
+
+}
+
+
+File: gnutls.info,  Node: Helper functions for TCP connections,  Next: Helper functions for UDP connections,  Prev: Echo server with anonymous authentication,  Up: More advanced client and servers
+
+7.3.12 Helper functions for TCP connections
+-------------------------------------------
+
+Those helper function abstract away TCP connection handling from the
+other examples.  It is required to build some examples.
+
+/* This example code is placed in the public domain. */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <unistd.h>
+
+/* tcp.c */
+int tcp_connect(void);
+void tcp_close(int sd);
+
+/* Connects to the peer and returns a socket
+ * descriptor.
+ */
+extern int tcp_connect(void)
+{
+        const char *PORT = "5556";
+        const char *SERVER = "127.0.0.1";
+        int err, sd;
+        struct sockaddr_in sa;
+
+        /* connects to server
+         */
+        sd = socket(AF_INET, SOCK_STREAM, 0);
+
+        memset(&sa, '\0', sizeof(sa));
+        sa.sin_family = AF_INET;
+        sa.sin_port = htons(atoi(PORT));
+        inet_pton(AF_INET, SERVER, &sa.sin_addr);
+
+        err = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
+        if (err < 0) {
+                fprintf(stderr, "Connect error\n");
+                exit(1);
+        }
+
+        return sd;
+}
+
+/* closes the given socket descriptor.
+ */
+extern void tcp_close(int sd)
+{
+        shutdown(sd, SHUT_RDWR);        /* no more receptions */
+        close(sd);
+}
+
+
+File: gnutls.info,  Node: Helper functions for UDP connections,  Prev: Helper functions for TCP connections,  Up: More advanced client and servers
+
+7.3.13 Helper functions for UDP connections
+-------------------------------------------
+
+The UDP helper functions abstract away UDP connection handling from the
+other examples.  It is required to build the examples using UDP.
+
+/* This example code is placed in the public domain. */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <unistd.h>
+
+/* udp.c */
+int udp_connect(void);
+void udp_close(int sd);
+
+/* Connects to the peer and returns a socket
+ * descriptor.
+ */
+extern int udp_connect(void)
+{
+        const char *PORT = "5557";
+        const char *SERVER = "127.0.0.1";
+        int err, sd;
+#if defined(IP_DONTFRAG) || defined(IP_MTU_DISCOVER)
+        int optval;
+#endif
+        struct sockaddr_in sa;
+
+        /* connects to server
+         */
+        sd = socket(AF_INET, SOCK_DGRAM, 0);
+
+        memset(&sa, '\0', sizeof(sa));
+        sa.sin_family = AF_INET;
+        sa.sin_port = htons(atoi(PORT));
+        inet_pton(AF_INET, SERVER, &sa.sin_addr);
+
+#if defined(IP_DONTFRAG)
+        optval = 1;
+        setsockopt(sd, IPPROTO_IP, IP_DONTFRAG,
+                   (const void *) &optval, sizeof(optval));
+#elif defined(IP_MTU_DISCOVER)
+        optval = IP_PMTUDISC_DO;
+        setsockopt(sd, IPPROTO_IP, IP_MTU_DISCOVER,
+                   (const void *) &optval, sizeof(optval));
+#endif
+
+        err = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
+        if (err < 0) {
+                fprintf(stderr, "Connect error\n");
+                exit(1);
+        }
+
+        return sd;
+}
+
+/* closes the given socket descriptor.
+ */
+extern void udp_close(int sd)
+{
+        close(sd);
+}
+
+
+File: gnutls.info,  Node: OCSP example,  Next: Miscellaneous examples,  Prev: More advanced client and servers,  Up: GnuTLS application examples
+
+7.4 OCSP example
+================
+
+Generate OCSP request
+---------------------
+
+A small tool to generate OCSP requests.
+
+/* This example code is placed in the public domain. */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <gnutls/gnutls.h>
+#include <gnutls/crypto.h>
+#include <gnutls/ocsp.h>
+#ifndef NO_LIBCURL
+#include <curl/curl.h>
+#endif
+#include "read-file.h"
+
+size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp);
+static gnutls_x509_crt_t load_cert(const char *cert_file);
+static void _response_info(const gnutls_datum_t * data);
+static void
+_generate_request(gnutls_datum_t * rdata, gnutls_x509_crt_t cert,
+                  gnutls_x509_crt_t issuer, gnutls_datum_t *nonce);
+static int
+_verify_response(gnutls_datum_t * data, gnutls_x509_crt_t cert,
+                 gnutls_x509_crt_t signer, gnutls_datum_t *nonce);
+
+/* This program queries an OCSP server.
+   It expects three files. argv[1] containing the certificate to
+   be checked, argv[2] holding the issuer for this certificate,
+   and argv[3] holding a trusted certificate to verify OCSP's response.
+   argv[4] is optional and should hold the server host name.
+   
+   For simplicity the libcurl library is used.
+ */
+
+int main(int argc, char *argv[])
+{
+        gnutls_datum_t ud, tmp;
+        int ret;
+        gnutls_datum_t req;
+        gnutls_x509_crt_t cert, issuer, signer;
+#ifndef NO_LIBCURL
+        CURL *handle;
+        struct curl_slist *headers = NULL;
+#endif
+        int v, seq;
+        const char *cert_file = argv[1];
+        const char *issuer_file = argv[2];
+        const char *signer_file = argv[3];
+        char *hostname = NULL;
+        unsigned char noncebuf[23];
+        gnutls_datum_t nonce = { noncebuf, sizeof(noncebuf) };
+
+        gnutls_global_init();
+
+        if (argc > 4)
+                hostname = argv[4];
+
+        ret = gnutls_rnd(GNUTLS_RND_NONCE, nonce.data, nonce.size);
+        if (ret < 0)
+                exit(1);
+
+        cert = load_cert(cert_file);
+        issuer = load_cert(issuer_file);
+        signer = load_cert(signer_file);
+
+        if (hostname == NULL) {
+
+                for (seq = 0;; seq++) {
+                        ret =
+                            gnutls_x509_crt_get_authority_info_access(cert,
+                                                                      seq,
+                                                                      GNUTLS_IA_OCSP_URI,
+                                                                      &tmp,
+                                                                      NULL);
+                        if (ret == GNUTLS_E_UNKNOWN_ALGORITHM)
+                                continue;
+                        if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE) {
+                                fprintf(stderr,
+                                        "No URI was found in the certificate.\n");
+                                exit(1);
+                        }
+                        if (ret < 0) {
+                                fprintf(stderr, "error: %s\n",
+                                        gnutls_strerror(ret));
+                                exit(1);
+                        }
+
+                        printf("CA issuers URI: %.*s\n", tmp.size,
+                               tmp.data);
+
+                        hostname = malloc(tmp.size + 1);
+                        memcpy(hostname, tmp.data, tmp.size);
+                        hostname[tmp.size] = 0;
+
+                        gnutls_free(tmp.data);
+                        break;
+                }
+
+        }
+
+        /* Note that the OCSP servers hostname might be available
+         * using gnutls_x509_crt_get_authority_info_access() in the issuer's
+         * certificate */
+
+        memset(&ud, 0, sizeof(ud));
+        fprintf(stderr, "Connecting to %s\n", hostname);
+
+        _generate_request(&req, cert, issuer, &nonce);
+
+#ifndef NO_LIBCURL
+        curl_global_init(CURL_GLOBAL_ALL);
+
+        handle = curl_easy_init();
+        if (handle == NULL)
+                exit(1);
+
+        headers =
+            curl_slist_append(headers,
+                              "Content-Type: application/ocsp-request");
+
+        curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, (void *) req.data);
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDSIZE, req.size);
+        curl_easy_setopt(handle, CURLOPT_URL, hostname);
+        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_data);
+        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &ud);
+
+        ret = curl_easy_perform(handle);
+        if (ret != 0) {
+                fprintf(stderr, "curl[%d] error %d\n", __LINE__, ret);
+                exit(1);
+        }
+
+        curl_easy_cleanup(handle);
+#endif
+
+        _response_info(&ud);
+
+        v = _verify_response(&ud, cert, signer, &nonce);
+
+        gnutls_x509_crt_deinit(cert);
+        gnutls_x509_crt_deinit(issuer);
+        gnutls_x509_crt_deinit(signer);
+        gnutls_global_deinit();
+
+        return v;
+}
+
+static void _response_info(const gnutls_datum_t * data)
+{
+        gnutls_ocsp_resp_t resp;
+        int ret;
+        gnutls_datum buf;
+
+        ret = gnutls_ocsp_resp_init(&resp);
+        if (ret < 0)
+                exit(1);
+
+        ret = gnutls_ocsp_resp_import(resp, data);
+        if (ret < 0)
+                exit(1);
+
+        ret = gnutls_ocsp_resp_print(resp, GNUTLS_OCSP_PRINT_FULL, &buf);
+        if (ret != 0)
+                exit(1);
+
+        printf("%.*s", buf.size, buf.data);
+        gnutls_free(buf.data);
+
+        gnutls_ocsp_resp_deinit(resp);
+}
+
+static gnutls_x509_crt_t load_cert(const char *cert_file)
+{
+        gnutls_x509_crt_t crt;
+        int ret;
+        gnutls_datum_t data;
+        size_t size;
+
+        ret = gnutls_x509_crt_init(&crt);
+        if (ret < 0)
+                exit(1);
+
+        data.data = (void *) read_binary_file(cert_file, &size);
+        data.size = size;
+
+        if (!data.data) {
+                fprintf(stderr, "Cannot open file: %s\n", cert_file);
+                exit(1);
+        }
+
+        ret = gnutls_x509_crt_import(crt, &data, GNUTLS_X509_FMT_PEM);
+        free(data.data);
+        if (ret < 0) {
+                fprintf(stderr, "Cannot import certificate in %s: %s\n",
+                        cert_file, gnutls_strerror(ret));
+                exit(1);
+        }
+
+        return crt;
+}
+
+static void
+_generate_request(gnutls_datum_t * rdata, gnutls_x509_crt_t cert,
+                  gnutls_x509_crt_t issuer, gnutls_datum_t *nonce)
+{
+        gnutls_ocsp_req_t req;
+        int ret;
+
+        ret = gnutls_ocsp_req_init(&req);
+        if (ret < 0)
+                exit(1);
+
+        ret = gnutls_ocsp_req_add_cert(req, GNUTLS_DIG_SHA1, issuer, cert);
+        if (ret < 0)
+                exit(1);
+
+
+        ret = gnutls_ocsp_req_set_nonce(req, 0, nonce);
+        if (ret < 0)
+                exit(1);
+
+        ret = gnutls_ocsp_req_export(req, rdata);
+        if (ret != 0)
+                exit(1);
+
+        gnutls_ocsp_req_deinit(req);
+
+        return;
+}
+
+static int
+_verify_response(gnutls_datum_t * data, gnutls_x509_crt_t cert,
+                 gnutls_x509_crt_t signer, gnutls_datum_t *nonce)
+{
+        gnutls_ocsp_resp_t resp;
+        int ret;
+        unsigned verify;
+        gnutls_datum_t rnonce;
+
+        ret = gnutls_ocsp_resp_init(&resp);
+        if (ret < 0)
+                exit(1);
+
+        ret = gnutls_ocsp_resp_import(resp, data);
+        if (ret < 0)
+                exit(1);
+
+        ret = gnutls_ocsp_resp_check_crt(resp, 0, cert);
+        if (ret < 0)
+                exit(1);
+
+	ret = gnutls_ocsp_resp_get_nonce(resp, NULL, &rnonce);
+	if (ret < 0)
+		exit(1);
+
+	if (rnonce.size != nonce->size || memcmp(nonce->data, rnonce.data,
+		nonce->size) != 0) {
+		exit(1);
+	}
+
+        ret = gnutls_ocsp_resp_verify_direct(resp, signer, &verify, 0);
+        if (ret < 0)
+                exit(1);
+
+        printf("Verifying OCSP Response: ");
+        if (verify == 0)
+                printf("Verification success!\n");
+        else
+                printf("Verification error!\n");
+
+        if (verify & GNUTLS_OCSP_VERIFY_SIGNER_NOT_FOUND)
+                printf("Signer cert not found\n");
+
+        if (verify & GNUTLS_OCSP_VERIFY_SIGNER_KEYUSAGE_ERROR)
+                printf("Signer cert keyusage error\n");
+
+        if (verify & GNUTLS_OCSP_VERIFY_UNTRUSTED_SIGNER)
+                printf("Signer cert is not trusted\n");
+
+        if (verify & GNUTLS_OCSP_VERIFY_INSECURE_ALGORITHM)
+                printf("Insecure algorithm\n");
+
+        if (verify & GNUTLS_OCSP_VERIFY_SIGNATURE_FAILURE)
+                printf("Signature failure\n");
+
+        if (verify & GNUTLS_OCSP_VERIFY_CERT_NOT_ACTIVATED)
+                printf("Signer cert not yet activated\n");
+
+        if (verify & GNUTLS_OCSP_VERIFY_CERT_EXPIRED)
+                printf("Signer cert expired\n");
+
+        gnutls_free(rnonce.data);
+        gnutls_ocsp_resp_deinit(resp);
+
+        return verify;
+}
+
+size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+        gnutls_datum_t *ud = userp;
+
+        size *= nmemb;
+
+        ud->data = realloc(ud->data, size + ud->size);
+        if (ud->data == NULL) {
+                fprintf(stderr, "Not enough memory for the request\n");
+                exit(1);
+        }
+
+        memcpy(&ud->data[ud->size], buffer, size);
+        ud->size += size;
+
+        return size;
+}
 
 
 File: gnutls.info,  Node: Miscellaneous examples,  Prev: OCSP example,  Up: GnuTLS application examples
@@ -668,7 +1292,7 @@ gnutls_privkey_import_url::.
 
 If any of the smart card operations require PIN, that should be provided
 either by setting the global PIN function (*note
-gnutls_pkcs11_set_pin_function::), or better with the targetted to
+gnutls_pkcs11_set_pin_function::), or better with the targeted to
 structures functions such as *note gnutls_privkey_set_pin_function::.
 
 8.2.1 Key generation
@@ -2750,7 +3374,7 @@ second is shared for the 'GNUTLS_RND_KEY' and 'GNUTLS_RND_RANDOM'
 levels.  For the rest of this section we refer to the first as the nonce
 generator and the second as the key generator.
 
-The nonce generator will reseed after outputing a fixed amount of bytes
+The nonce generator will reseed after outputting a fixed amount of bytes
 (typically few megabytes), or after few hours of operation without
 reaching the limit has passed.  It is being re-seed using the key
 generator to obtain a new key for the CHACHA cipher, which is mixed with
@@ -3259,6 +3883,12 @@ TLS 1.3                TLS 1.3, so if the application calls
                        *note gnutls_supplemental_register:: or
                        *note gnutls_session_supplemental_register::,
                        TLS 1.3 is disabled.
+                       
+The                    The macro was non-functional and because
+GNUTLS_X509_NO_WELL_DEFINED_EXPIRATIONof the nature of the definition of the
+macro is a no-op       no-well-defined date for certificates (a
+                       real date), it will not be fixed or
+                       re-introduced.
                        
 
 
@@ -4269,7 +4899,7 @@ gnutls_alert_send_appropriate
           SESSION, int ERR)
      SESSION: is a 'gnutls_session_t' type.
 
-     ERR: is an integer
+     ERR: is an error code returned by another GnuTLS function
 
      Sends an alert to the peer depending on the error code returned by
      a gnutls function.  This function will call
@@ -4279,8 +4909,11 @@ gnutls_alert_send_appropriate
      This function may also return 'GNUTLS_E_AGAIN' , or
      'GNUTLS_E_INTERRUPTED' .
 
-     If the return value is 'GNUTLS_E_INVALID_REQUEST' , then no alert
-     has been sent to the peer.
+     This function historically was always sending an alert to the peer,
+     even if 'err' was inappropriate to respond with an alert (e.g.,
+     'GNUTLS_E_SUCCESS' ).  Since 3.6.6 this function returns success
+     without transmitting any data on error codes that should not result
+     to an alert.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise an error code is returned.
@@ -5392,6 +6025,151 @@ gnutls_certificate_set_pin_function
 
      *Since:* 3.1.0
 
+gnutls_certificate_set_rawpk_key_file
+-------------------------------------
+
+ -- Function: int gnutls_certificate_set_rawpk_key_file
+          (gnutls_certificate_credentials_t CRED, const char* RAWPKFILE,
+          const char* PRIVKEYFILE, gnutls_x509_crt_fmt_t FORMAT, const
+          char * PASS, unsigned int KEY_USAGE, const char ** NAMES,
+          unsigned int NAMES_LENGTH, unsigned int PRIVKEY_FLAGS,
+          unsigned int PKCS11_FLAGS)
+     CRED: is a 'gnutls_certificate_credentials_t' type.
+
+     RAWPKFILE: contains a raw public key in PKIX.SubjectPublicKeyInfo
+     format.
+
+     PRIVKEYFILE: contains a file path to a private key.
+
+     FORMAT: encoding of the keys.  DER or PEM.
+
+     PASS: an optional password to unlock the private key privkeyfile.
+
+     KEY_USAGE: an ORed sequence of 'GNUTLS_KEY_' * flags.
+
+     NAMES: is an array of DNS names belonging to the public-key (NULL
+     if none).
+
+     NAMES_LENGTH: holds the length of the names list.
+
+     PRIVKEY_FLAGS: an ORed sequence of 'gnutls_pkcs_encrypt_flags_t' .
+     These apply to the private key pkey.
+
+     PKCS11_FLAGS: one of gnutls_pkcs11_obj_flags.  These apply to URLs.
+
+     This function sets a public/private keypair read from file in the
+     'gnutls_certificate_credentials_t' type to be used for
+     authentication and/or encryption.  'spki' and 'privkey' should
+     match otherwise set signatures cannot be validated.  In case of no
+     match this function returns 'GNUTLS_E_CERTIFICATE_KEY_MISMATCH' .
+     This function should be called once for the client because there is
+     currently no mechanism to determine which raw public-key to select
+     for the peer when there are multiple present.  Multiple raw public
+     keys for the server can be distinghuished by setting the 'names' .
+
+     Note here that 'spki' is a raw public-key as defined in RFC7250.
+     It means that there is no surrounding certificate that holds the
+     public key and that there is therefore no direct mechanism to prove
+     the authenticity of this key.  The keypair can be used during a TLS
+     handshake but its authenticity should be established via a
+     different mechanism (e.g.  TOFU or known fingerprint).
+
+     The supported formats are basic unencrypted key, PKCS8, PKCS12, and
+     the openssl format and will be autodetected.
+
+     If the raw public-key and the private key are given in PEM encoding
+     then the strings that hold their values must be null terminated.
+
+     Key usage (as defined by X.509 extension (2.5.29.15)) can be
+     explicitly set because there is no certificate structure around the
+     key to define this value.  See for more info
+     'gnutls_x509_crt_get_key_usage()' .
+
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used in other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned, in case
+     the key pair does not match 'GNUTLS_E_CERTIFICATE_KEY_MISMATCH' is
+     returned, in other erroneous cases a different negative error code
+     is returned.
+
+     *Since:* 3.6.6
+
+gnutls_certificate_set_rawpk_key_mem
+------------------------------------
+
+ -- Function: int gnutls_certificate_set_rawpk_key_mem
+          (gnutls_certificate_credentials_t CRED, const gnutls_datum_t*
+          SPKI, const gnutls_datum_t* PKEY, gnutls_x509_crt_fmt_t
+          FORMAT, const char* PASS, unsigned int KEY_USAGE, const char
+          ** NAMES, unsigned int NAMES_LENGTH, unsigned int FLAGS)
+     CRED: is a 'gnutls_certificate_credentials_t' type.
+
+     SPKI: contains a raw public key in PKIX.SubjectPublicKeyInfo
+     format.
+
+     PKEY: contains a raw private key.
+
+     FORMAT: encoding of the keys.  DER or PEM.
+
+     PASS: an optional password to unlock the private key pkey.
+
+     KEY_USAGE: An ORed sequence of 'GNUTLS_KEY_' * flags.
+
+     NAMES: is an array of DNS names belonging to the public-key (NULL
+     if none).
+
+     NAMES_LENGTH: holds the length of the names list.
+
+     FLAGS: an ORed sequence of 'gnutls_pkcs_encrypt_flags_t' .  These
+     apply to the private key pkey.
+
+     This function sets a public/private keypair in the
+     'gnutls_certificate_credentials_t' type to be used for
+     authentication and/or encryption.  'spki' and 'privkey' should
+     match otherwise set signatures cannot be validated.  In case of no
+     match this function returns 'GNUTLS_E_CERTIFICATE_KEY_MISMATCH' .
+     This function should be called once for the client because there is
+     currently no mechanism to determine which raw public-key to select
+     for the peer when there are multiple present.  Multiple raw public
+     keys for the server can be distinghuished by setting the 'names' .
+
+     Note here that 'spki' is a raw public-key as defined in RFC7250.
+     It means that there is no surrounding certificate that holds the
+     public key and that there is therefore no direct mechanism to prove
+     the authenticity of this key.  The keypair can be used during a TLS
+     handshake but its authenticity should be established via a
+     different mechanism (e.g.  TOFU or known fingerprint).
+
+     The supported formats are basic unencrypted key, PKCS8, PKCS12, and
+     the openssl format and will be autodetected.
+
+     If the raw public-key and the private key are given in PEM encoding
+     then the strings that hold their values must be null terminated.
+
+     Key usage (as defined by X.509 extension (2.5.29.15)) can be
+     explicitly set because there is no certificate structure around the
+     key to define this value.  See for more info
+     'gnutls_x509_crt_get_key_usage()' .
+
+     Note that, this function by default returns zero on success and a
+     negative value on error.  Since 3.5.6, when the flag
+     'GNUTLS_CERTIFICATE_API_V2' is set using
+     'gnutls_certificate_set_flags()' it returns an index (greater or
+     equal to zero).  That index can be used in other functions to refer
+     to the added key-pair.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned, in case
+     the key pair does not match 'GNUTLS_E_CERTIFICATE_KEY_MISMATCH' is
+     returned, in other erroneous cases a different negative error code
+     is returned.
+
+     *Since:* 3.6.6
+
 gnutls_certificate_set_retrieve_function
 ----------------------------------------
 
@@ -6189,6 +6967,11 @@ gnutls_certificate_verify_peers
      regarding the certificate key size and chain size are set.  To
      override them use 'gnutls_certificate_set_verify_limits()' .
 
+     Note that when using raw public-keys verification will not work
+     because there is no corresponding certificate body belonging to the
+     raw key that can be verified.  In that case this function will
+     return 'GNUTLS_E_INVALID_REQUEST' .
+
      *Returns:* 'GNUTLS_E_SUCCESS' (0) when the validation is performed,
      or a negative error code otherwise.  A successful error code means
      that the 'status' parameter must be checked to obtain the
@@ -6227,6 +7010,11 @@ gnutls_certificate_verify_peers2
      To avoid denial of service attacks some default upper limits
      regarding the certificate key size and chain size are set.  To
      override them use 'gnutls_certificate_set_verify_limits()' .
+
+     Note that when using raw public-keys verification will not work
+     because there is no corresponding certificate body belonging to the
+     raw key that can be verified.  In that case this function will
+     return 'GNUTLS_E_INVALID_REQUEST' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) when the validation is performed,
      or a negative error code otherwise.  A successful error code means
@@ -6271,6 +7059,11 @@ gnutls_certificate_verify_peers3
      To avoid denial of service attacks some default upper limits
      regarding the certificate key size and chain size are set.  To
      override them use 'gnutls_certificate_set_verify_limits()' .
+
+     Note that when using raw public-keys verification will not work
+     because there is no corresponding certificate body belonging to the
+     raw key that can be verified.  In that case this function will
+     return 'GNUTLS_E_INVALID_REQUEST' .
 
      *Returns:* 'GNUTLS_E_SUCCESS' (0) when the validation is performed,
      or a negative error code otherwise.  A successful error code means
@@ -7151,7 +7944,7 @@ gnutls_error_to_alert
      no renegotiation will be performed.
 
      If there is no mapping to a valid alert the alert to indicate
-     internal error is returned.
+     internal error ('GNUTLS_A_INTERNAL_ERROR' ) is returned.
 
      *Returns:* the alert code to use for a particular error code.
 
@@ -9446,9 +10239,10 @@ gnutls_psk_set_client_credentials
      This function sets the username and password, in a
      gnutls_psk_client_credentials_t type.  Those will be used in PSK
      authentication.  'username' should be an ASCII string or UTF-8
-     strings prepared using the "SASLprep" profile of "stringprep".  The
-     key can be either in raw byte format or in Hex format (without the
-     0x prefix).
+     string.  In case of a UTF-8 string it is recommended to be
+     following the PRECIS framework for usernames (rfc8265).  The key
+     can be either in raw byte format or in Hex format (without the 0x
+     prefix).
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise an error code is returned.
@@ -9469,8 +10263,9 @@ gnutls_psk_set_client_credentials_function
      char** username, gnutls_datum_t* key);
 
      The 'username' and 'key' ->data must be allocated using
-     'gnutls_malloc()' .  'username' should be ASCII strings or UTF-8
-     strings prepared using the "SASLprep" profile of "stringprep".
+     'gnutls_malloc()' .  The 'username' should be an ASCII string or
+     UTF-8 string.  In case of a UTF-8 string it is recommended to be
+     following the PRECIS framework for usernames (rfc8265).
 
      The callback function will be called once per handshake.
 
@@ -11526,9 +12321,11 @@ gnutls_srp_set_client_credentials
 
      This function sets the username and password, in a
      'gnutls_srp_client_credentials_t' type.  Those will be used in SRP
-     authentication.  'username' and 'password' should be ASCII strings
-     or UTF-8 strings prepared using the "SASLprep" profile of
-     "stringprep".
+     authentication.  'username' should be an ASCII string or UTF-8
+     string.  In case of a UTF-8 string it is recommended to be
+     following the PRECIS framework for usernames (rfc8265).  The
+     password can be in ASCII format, or normalized using
+     'gnutls_utf8_password_normalize()' .
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned, or an
      error code.
@@ -11550,9 +12347,12 @@ gnutls_srp_set_client_credentials_function
      int (*callback)(gnutls_session_t, char** username, char**password);
 
      The 'username' and 'password' must be allocated using
-     'gnutls_malloc()' .  'username' and 'password' should be ASCII
-     strings or UTF-8 strings prepared using the "SASLprep" profile of
-     "stringprep".
+     'gnutls_malloc()' .
+
+     The 'username' should be an ASCII string or UTF-8 string.  In case
+     of a UTF-8 string it is recommended to be following the PRECIS
+     framework for usernames (rfc8265).  The password can be in ASCII
+     format, or normalized using 'gnutls_utf8_password_normalize()' .
 
      The callback function will be called once per handshake before the
      initial hello message is sent.
@@ -11893,7 +12693,7 @@ gnutls_store_commitment
      of stored public keys.  The key with the given hash will be
      considered valid until the provided expiration time.
 
-     The 'store' variable if non-null specifies a custom backend for the
+     The 'tdb' variable if non-null specifies a custom backend for the
      storage of entries.  If it is NULL then the default file backend
      will be used.
 
@@ -11929,11 +12729,12 @@ gnutls_store_pubkey
 
      FLAGS: should be 0.
 
-     This function will store the provided (raw or DER-encoded)
-     certificate to the list of stored public keys.  The key will be
-     considered valid until the provided expiration time.
+     This function will store a raw public-key or a public-key provided
+     via a raw (DER-encoded) certificate to the list of stored public
+     keys.  The key will be considered valid until the provided
+     expiration time.
 
-     The 'store' variable if non-null specifies a custom backend for the
+     The 'tdb' variable if non-null specifies a custom backend for the
      storage of entries.  If it is NULL then the default file backend
      will be used.
 
@@ -11945,6 +12746,8 @@ gnutls_store_pubkey
      expiration time in seconds since the epoch (0 for no expiration),
      and a base64 encoding of the raw (DER) public key information
      (SPKI) of the peer.
+
+     As of GnuTLS 3.6.6 this function also accepts raw public keys.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error value.
@@ -12485,11 +13288,12 @@ gnutls_verify_stored_pubkey
 
      FLAGS: should be 0.
 
-     This function will try to verify the provided (raw or DER-encoded)
-     certificate using a list of stored public keys.  The 'service'
-     field if non-NULL should be a port number.
+     This function will try to verify a raw public-key or a public-key
+     provided via a raw (DER-encoded) certificate using a list of stored
+     public keys.  The 'service' field if non-NULL should be a port
+     number.
 
-     The 'retrieve' variable if non-null specifies a custom backend for
+     The 'db_name' variable if non-null specifies a custom backend for
      the retrieval of entries.  If it is NULL then the default file
      backend will be used.  In POSIX-like systems the file backend uses
      the $HOME/.gnutls/known_hosts file.
@@ -12500,6 +13304,8 @@ gnutls_verify_stored_pubkey
      'GNUTLS_E_NO_CERTIFICATE_FOUND' if no such host/service with the
      given key is found, and 0 if it was found.  The storage function
      should return 0 on success.
+
+     As of GnuTLS 3.6.6 this function also verifies raw public keys.
 
      *Returns:* If no associated public key is found then
      'GNUTLS_E_NO_CERTIFICATE_FOUND' will be returned.  If a key is
