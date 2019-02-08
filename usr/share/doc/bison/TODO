@@ -1,4 +1,82 @@
+* Bison 3.4
+** injection rules
+** glr.cc
+move glr.c into the yy namespace
+** improve syntax errors (UTF-8, internationalization)
+Bison depends on the current locale.  For instance:
+
+%define parse.error verbose
+%code top {
+ #include <stdio.h>
+ #include <stdlib.h>
+ void yyerror(const char* msg) { fprintf(stderr, "%s\n", msg); }
+ int yylex() { return 0; }
+}
+%%
+exp: "↦" | "🎅🐃" | '\n'
+%%
+int main() { return yyparse(); }
+
+gives different results with/without LC_ALL=C.
+
+$ LC_ALL=C /opt/local/bin/bison /tmp/mangle.y -o ascii.c
+$ /opt/local/bin/bison /tmp/mangle.y -o utf8.c
+$ diff -u ascii.c utf8.c -I#line
+--- ascii.c     2019-01-12 08:15:35.878010093 +0100
++++ utf8.c      2019-01-12 08:15:38.856495929 +0100
+@@ -415,9 +415,8 @@
+    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
+ static const char *const yytname[] =
+ {
+-  "$end", "error", "$undefined", "\"\\342\\206\\246\"",
+-  "\"\\360\\237\\216\\205\\360\\237\\220\\203\"", "'\\n'", "$accept",
+-  "exp", YY_NULLPTR
++  "$end", "error", "$undefined", "\"↦\"", "\"🎅🐃\"", "'\\n'",
++  "$accept", "exp", YY_NULLPTR
+ };
+ #endif
+
+$ gcc ascii.c -o ascii && ./ascii
+syntax error, unexpected $end, expecting "\342\206\246" or "\360\237\216\205\360\237\220\203" or '\n'
+$ gcc utf8.c -o utf8 && ./utf8
+syntax error, unexpected $end, expecting ↦ or 🎅🐃 or '\n'
+
+
+While at it, we should stop using "$end" by default, in favor of "end of
+file", or "end of input", whatever.
+
+** use gettext-h in gnulib instead of gettext
+** use gnulib-po
+For some reason, according to syntax-check, we have to keep getopt.c in
+POTIFILES.in, but not bitset/stats.c, although both come from gnulib.  But
+bitset/stats.c is a symlink, not getopt.c.  This is fishy and should be
+fixed.
+
+Meanwhile, bitset/stats.c is removed from the set of translations, which is
+not too much of a problem as users are not expected to see this.
+
+
+* Completion
+Several features are not available in all the backends.
+
+- push parsers: glr.cc, lalr1.cc
+- ielr: C++ and Java
+- glr: Java
+- token constructors: Java and C
+
+* Bugs
+** Autotest has quotation issues
+tests/input.at:1730:AT_SETUP([%define errors])
+
+->
+
+$ ./tests/testsuite -l | grep errors | sed q
+  38: input.at:1730      errors
+
 * Short term
+** consistency
+token vs terminal
+
 ** yacc.c
 Now that ylwrap is fixed, we should include foo.tab.h from foo.tab.c rather
 than duplicating it.
@@ -70,11 +148,6 @@ back-ported.
     yytoken = yytranslate_ (yychar);
 
 
-** stack.hh
-Get rid of it.  The original idea is nice, but actually it makes
-the code harder to follow, and uselessly different from the other
-skeletons.
-
 ** Get rid of fake #lines [Bison: ...]
 Possibly as simple as checking whether the column number is nonnegative.
 
@@ -102,6 +175,11 @@ since it is no longer bound to a particular parser, it's just a
 as lr0.cc, why upper case?
 
 * Various
+** Rewrite glr.cc in C++
+As a matter of fact, it would be very interesting to see how much we can
+share between lalr1.cc and glr.cc.  Most of the skeletons should be common.
+It would be a very nice source of inspiration for the other languages.
+
 ** YYERRCODE
 Defined to 256, but not used, not documented.  Probably the token
 number for the error token, which POSIX wants to be 256, but which
@@ -207,9 +285,10 @@ Provide better assistance for understanding the conflicts by providing
 a sample text exhibiting the (LALR) ambiguity.  See the paper from
 DeRemer and Penello: they already provide the algorithm.
 
-** Statically check for potential ambiguities in GLR grammars.  See
-<http://www.i3s.unice.fr/~schmitz/papers.html#expamb> for an approach.
-
+** Statically check for potential ambiguities in GLR grammars
+See <http://www.lsv.fr/~schmitz/pub/expamb.pdf> for an approach.
+An Experimental Ambiguity Detection Tool ∗ Sylvain Schmitz
+LORIA, INRIA Nancy - Grand Est, Nancy, France
 
 * Extensions
 ** Multiple start symbols
@@ -277,7 +356,9 @@ https://lists.gnu.org/archive/html/bug-bison/2016-06/msg00000.html
 http://www.cs.cornell.edu/andru/papers/cupex/
 
 * Unit rules
-Maybe we could expand unit rules, i.e., transform
+Maybe we could expand unit rules (or "injections", see
+https://homepages.cwi.nl/~daybuild/daily-books/syntax/2-sdf/sdf.html), i.e.,
+transform
 
         exp: arith | bool;
         arith: exp '+' exp;
@@ -287,11 +368,11 @@ into
 
         exp: exp '+' exp | exp '&' exp;
 
-when there are no actions.  This can significantly speed up some
-grammars.  I can't find the papers.  In particular the book 'LR
-parsing: Theory and Practice' is impossible to find, but according to
-'Parsing Techniques: a Practical Guide', it includes information about
-this issue.  Does anybody have it?
+when there are no actions.  This can significantly speed up some grammars.
+I can't find the papers.  In particular the book 'LR parsing: Theory and
+Practice' is impossible to find, but according to 'Parsing Techniques: a
+Practical Guide', it includes information about this issue.  Does anybody
+have it?
 
 
 
@@ -330,10 +411,6 @@ It is unfortunate that there is a total order for precedence.  It
 makes it impossible to have modular precedence information.  We should
 move to partial orders (sounds like series/parallel orders to me).
 
-** RR conflicts
-See if we can use precedence between rules to solve RR conflicts.  See
-what POSIX says.
-
 
 * $undefined
 From Hans:
@@ -343,20 +420,6 @@ addition to the $undefined value.
 
 Suggest: Change the name $undefined to undefined; looks better in outputs.
 
-
-* Default Action
-From Hans:
-- For use with my C++ parser, I transported the "switch (yyn)" statement
-that Bison writes to the bison.simple skeleton file. This way, I can remove
-the current default rule $$ = $1 implementation, which causes a double
-assignment to $$ which may not be OK under C++, replacing it with a
-"default:" part within the switch statement.
-
-Note that the default rule $$ = $1, when typed, is perfectly OK under C,
-but in the C++ implementation I made, this rule is different from
-$<type_name>$ = $<type_name>1. I therefore think that one should implement
-a Bison option where every typed default rule is explicitly written out
-(same typed ruled can of course be grouped together).
 
 * Pre and post actions.
 From: Florian Krohm <florian@edamail.fishkill.ibm.com>
@@ -415,8 +478,8 @@ End:
 
 -----
 
-Copyright (C) 2001-2004, 2006, 2008-2015, 2018 Free Software Foundation,
-Inc.
+Copyright (C) 2001-2004, 2006, 2008-2015, 2018-2019 Free Software
+Foundation, Inc.
 
 This file is part of Bison, the GNU Compiler Compiler.
 
