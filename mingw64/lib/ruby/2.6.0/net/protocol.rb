@@ -12,7 +12,7 @@
 # modify this program under the same terms as Ruby itself,
 # Ruby Distribute License or GNU General Public License.
 #
-# $Id: protocol.rb 66308 2018-12-10 07:11:18Z usa $
+# $Id: protocol.rb 66799 2019-01-12 21:02:26Z naruse $
 #++
 #
 # WARNING: This file is going to remove.
@@ -286,7 +286,7 @@ module Net # :nodoc:
               # next string
             end
           elsif len < 0
-            str = str[len, -len]
+            str = str.byteslice(len, -len)
           else # len > 0
             need_retry = false
             # next string

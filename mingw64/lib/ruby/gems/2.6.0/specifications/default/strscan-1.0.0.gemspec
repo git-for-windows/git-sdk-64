@@ -9,11 +9,11 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Minero Aoki".freeze]
-  s.date = "2018-12-26"
+  s.date = "2019-02-08"
   s.description = "Provides lexical scanning operations on a String.".freeze
   s.email = [nil]
   s.extensions = ["ext/strscan/extconf.rb".freeze]
-  s.files = ["ext/strscan/extconf.rb".freeze, "ext/strscan/regenc.h".freeze, "ext/strscan/regint.h".freeze, "ext/strscan/strscan.c".freeze]
+  s.files = ["ext/strscan/extconf.rb".freeze, "strscan.so".freeze]
   s.homepage = "https://github.com/ruby/strscan".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.4.0".freeze)

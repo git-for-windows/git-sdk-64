@@ -9,10 +9,10 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["SHIBATA Hiroshi".freeze]
   s.bindir = "exe".freeze
-  s.date = "2018-12-26"
+  s.date = "2019-02-08"
   s.description = "Provides a simple logging utility for outputting messages.".freeze
   s.email = ["hsbt@ruby-lang.org".freeze]
-  s.files = [".gitignore".freeze, ".travis.yml".freeze, "Gemfile".freeze, "LICENSE.txt".freeze, "README.md".freeze, "Rakefile".freeze, "bin/console".freeze, "bin/setup".freeze, "lib/logger.rb".freeze, "logger.gemspec".freeze]
+  s.files = ["logger.rb".freeze]
   s.homepage = "https://github.com/ruby/logger".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.rubygems_version = "3.0.1".freeze

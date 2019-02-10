@@ -9,10 +9,10 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Tadayoshi Funaba".freeze]
   s.bindir = "exe".freeze
-  s.date = "2018-12-26"
+  s.date = "2019-02-08"
   s.description = "CMath is a library that provides trigonometric and transcendental functions for complex numbers. The functions in this module accept integers, floating-point numbers or complex numbers as arguments.".freeze
   s.email = [nil]
-  s.files = ["lib/cmath.rb".freeze]
+  s.files = ["cmath.rb".freeze]
   s.homepage = "https://github.com/ruby/cmath".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0".freeze)

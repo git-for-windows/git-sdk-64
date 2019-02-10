@@ -9,10 +9,10 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Marc-Andre Lafortune".freeze]
   s.bindir = "exe".freeze
-  s.date = "2018-12-26"
+  s.date = "2019-02-08"
   s.description = "An implementation of Matrix and Vector classes.".freeze
   s.email = ["ruby-core@marc-andre.ca".freeze]
-  s.files = [".gitignore".freeze, ".travis.yml".freeze, "Gemfile".freeze, "LICENSE.txt".freeze, "README.md".freeze, "Rakefile".freeze, "bin/console".freeze, "bin/setup".freeze, "lib/matrix.rb".freeze, "matrix.gemspec".freeze]
+  s.files = ["matrix.rb".freeze, "matrix/eigenvalue_decomposition.rb".freeze, "matrix/lup_decomposition.rb".freeze]
   s.homepage = "https://github.com/ruby/matrix".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.rubygems_version = "3.0.1".freeze

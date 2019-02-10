@@ -9,11 +9,11 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
-  s.date = "2018-12-26"
+  s.date = "2019-02-08"
   s.description = "Provides a wrapper for the UNIX-style Database Manager Library".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.extensions = ["ext/dbm/extconf.rb".freeze]
-  s.files = ["ext/dbm/dbm.c".freeze, "ext/dbm/extconf.rb".freeze]
+  s.files = ["dbm.so".freeze, "ext/dbm/extconf.rb".freeze]
   s.homepage = "https://github.com/ruby/dbm".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0".freeze)

@@ -9,10 +9,10 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Keiju ISHITSUKA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2018-12-26"
+  s.date = "2019-02-08"
   s.description = "Module for defining custom exceptions with specific messages.".freeze
   s.email = ["keiju@ruby-lang.org".freeze]
-  s.files = [".gitignore".freeze, "Gemfile".freeze, "LICENSE.txt".freeze, "README.md".freeze, "Rakefile".freeze, "bin/console".freeze, "bin/setup".freeze, "e2mmap.gemspec".freeze, "lib/e2mmap.rb".freeze, "lib/e2mmap/version.rb".freeze]
+  s.files = ["e2mmap.rb".freeze]
   s.homepage = "https://github.com/ruby/e2mmap".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.rubygems_version = "3.0.1".freeze
