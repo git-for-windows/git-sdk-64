@@ -9,11 +9,11 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 2.6".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Nobu Nakada".freeze]
-  s.date = "2018-12-26"
+  s.date = "2019-02-08"
   s.description = "Pseudo `IO` class from/to `String`.".freeze
   s.email = "nobu@ruby-lang.org".freeze
   s.extensions = ["ext/stringio/extconf.rb".freeze]
-  s.files = ["README.md".freeze, "ext/stringio/extconf.rb".freeze, "ext/stringio/stringio.c".freeze]
+  s.files = ["ext/stringio/extconf.rb".freeze, "stringio.so".freeze]
   s.homepage = "https://github.com/ruby/stringio".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.2".freeze)

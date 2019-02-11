@@ -9,10 +9,10 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Keiju ISHITSUKA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2018-12-26"
+  s.date = "2019-02-08"
   s.description = "An idiomatic Ruby interface for common UNIX shell commands.".freeze
   s.email = ["keiju@ruby-lang.org".freeze]
-  s.files = [".gitignore".freeze, ".travis.yml".freeze, "Gemfile".freeze, "LICENSE.txt".freeze, "README.md".freeze, "Rakefile".freeze, "bin/console".freeze, "bin/setup".freeze, "lib/shell.rb".freeze, "lib/shell/builtin-command.rb".freeze, "lib/shell/command-processor.rb".freeze, "lib/shell/error.rb".freeze, "lib/shell/filter.rb".freeze, "lib/shell/process-controller.rb".freeze, "lib/shell/system-command.rb".freeze, "lib/shell/version.rb".freeze, "shell.gemspec".freeze]
+  s.files = ["shell.rb".freeze, "shell/builtin-command.rb".freeze, "shell/command-processor.rb".freeze, "shell/error.rb".freeze, "shell/filter.rb".freeze, "shell/process-controller.rb".freeze, "shell/system-command.rb".freeze, "shell/version.rb".freeze]
   s.homepage = "https://github.com/ruby/shell".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.rubygems_version = "3.0.1".freeze

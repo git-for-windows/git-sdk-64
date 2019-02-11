@@ -4149,12 +4149,39 @@ void ruby_xfree(void*);
 #define _Analysis_assume_nullterminated_(expr) 
 #define __in 
 #define __out 
+#define __bcount(size) 
+#define __ecount(size) 
 #define __in_bcount(size) 
+#define __in_bcount_nz(size) 
+#define __in_bcount_z(size) 
 #define __in_ecount(size) 
+#define __in_ecount_nz(size) 
+#define __in_ecount_z(size) 
 #define __out_bcount(size) 
+#define __out_bcount_nz(size) 
+#define __out_bcount_z(size) 
+#define __out_bcount_full(size) 
+#define __out_bcount_full_z(size) 
 #define __out_bcount_part(size,length) 
+#define __out_bcount_part_z(size,length) 
 #define __out_ecount(size) 
+#define __out_ecount_nz(size) 
+#define __out_ecount_z(size) 
+#define __out_ecount_full(size) 
+#define __out_ecount_full_z(size) 
+#define __out_ecount_part(size,length) 
+#define __out_ecount_part_z(size,length) 
 #define __inout 
+#define __inout_bcount(size) 
+#define __inout_bcount_nz(size) 
+#define __inout_bcount_z(size) 
+#define __inout_bcount_full(size) 
+#define __inout_bcount_part(size,length) 
+#define __inout_ecount(size) 
+#define __inout_ecount_nz(size) 
+#define __inout_ecount_z(size) 
+#define __inout_ecount_full(size) 
+#define __inout_ecount_part(size,length) 
 #define __deref_out_ecount(size) 
 #define SAL__deref_in 
 #define SAL__deref_in_ecount(size) 
@@ -4412,11 +4439,25 @@ void ruby_xfree(void*);
 #define __STDC_WANT_SECURE_LIB__ 0
 #define _CRT_SECURE_NO_DEPRECATE 
 #define DECLSPEC_ADDRSAFE 
+#define DRIVERSPECS_H 
 #define __drv_dispatchType(x) 
 #define __drv_dispatchType_other 
 #define __drv_aliasesMem 
 #define __drv_allocatesMem(kind) 
 #define __drv_freesMem(kind) 
+#define __drv_arg(x,y) 
+#define __drv_at(x,y) 
+#define __drv_deref(x) 
+#define __drv_in(x) 
+#define __drv_in_deref(x) 
+#define __drv_out(x) 
+#define __drv_out_deref(x) 
+#define __drv_when(x,y) 
+#define __internal_kernel_driver 
+#define __kernel_code 
+#define __kernel_driver 
+#define __user_code 
+#define __user_driver 
 #define STRICT 1
 #define BASETYPES 
   typedef unsigned long ULONG;
@@ -76138,7 +76179,7 @@ int rb_singleton_class_internal_p(VALUE sklass);
 static inline void
 RCLASS_SET_ORIGIN(VALUE klass, VALUE origin)
 {
-    rb_obj_write((VALUE)(klass), (VALUE *)(&((((struct RClass*)(klass))->ptr)->origin_)), (VALUE)(origin), "../ruby-2.6.0/internal.h", 1006);
+    rb_obj_write((VALUE)(klass), (VALUE *)(&((((struct RClass*)(klass))->ptr)->origin_)), (VALUE)(origin), "../ruby-2.6.1/internal.h", 1006);
     if (klass != origin) ((!(((VALUE)(origin) & RUBY_IMMEDIATE_MASK) || !!(((VALUE)(origin) & (VALUE)~((VALUE)RUBY_Qnil)) == 0)) && (int)(((struct RBasic*)(origin))->flags & RUBY_T_MASK) != RUBY_T_NODE) ? (void)(((struct RBasic*)(origin))->flags |= (((VALUE)RUBY_FL_USER5))) : (void)0);
 }
 #undef RCLASS_SUPER
@@ -76154,7 +76195,7 @@ RCLASS_SET_SUPER(VALUE klass, VALUE super)
  rb_class_remove_from_super_subclasses(klass);
  rb_class_subclass_add(super, klass);
     }
-    rb_obj_write((VALUE)(klass), (VALUE *)(&((struct RClass*)(klass))->super), (VALUE)(super), "../ruby-2.6.0/internal.h", 1024);
+    rb_obj_write((VALUE)(klass), (VALUE *)(&((struct RClass*)(klass))->super), (VALUE)(super), "../ruby-2.6.1/internal.h", 1024);
     return super;
 }
 #define IMEMO_DEBUG 0
@@ -76556,6 +76597,7 @@ enum ruby_num_rounding_mode {
 #define ROUND_CALL(mode,name,args) ROUND_TO(mode, name ##_half_even args, name ##_half_up args, name ##_half_down args)
 int rb_num_to_uint(VALUE val, unsigned int *ret);
 VALUE ruby_num_interval_step_size(VALUE from, VALUE to, VALUE step, int excl);
+double ruby_float_step_size(double beg, double end, double unit, int excl);
 int ruby_float_step(VALUE from, VALUE to, VALUE step, int excl, int allow_endless);
 double ruby_float_mod(double x, double y);
 int rb_num_negative_p(VALUE);
@@ -76564,8 +76606,10 @@ VALUE rb_int_pred(VALUE num);
 VALUE rb_int_uminus(VALUE num);
 VALUE rb_float_uminus(VALUE num);
 VALUE rb_int_plus(VALUE x, VALUE y);
+VALUE rb_float_plus(VALUE x, VALUE y);
 VALUE rb_int_minus(VALUE x, VALUE y);
 VALUE rb_int_mul(VALUE x, VALUE y);
+VALUE rb_float_mul(VALUE x, VALUE y);
 VALUE rb_int_idiv(VALUE x, VALUE y);
 VALUE rb_int_modulo(VALUE x, VALUE y);
 VALUE rb_int_round(VALUE num, int ndigits, enum ruby_num_rounding_mode mode);
@@ -76777,6 +76821,7 @@ void rb_last_status_clear(void);
 VALUE rb_rational_canonicalize(VALUE x);
 VALUE rb_rational_uminus(VALUE self);
 VALUE rb_rational_plus(VALUE self, VALUE other);
+VALUE rb_rational_mul(VALUE self, VALUE other);
 VALUE rb_lcm(VALUE x, VALUE y);
 VALUE rb_rational_reciprocal(VALUE x);
 VALUE rb_cstr_to_rat(const char *, int);
@@ -77990,8 +78035,8 @@ static inline void list_del_init_(struct list_node *n, const char *abortstr)
 }
 static inline void list_del_from(struct list_head *h, struct list_node *n)
 {
- (void) ((!!(!list_empty_(h, "../ruby-2.6.0/ccan/list/list.h" ":" "328"))) || (_assert("!list_empty(h)","../ruby-2.6.0/ccan/list/list.h",328),0));
- list_del_(n, "../ruby-2.6.0/ccan/list/list.h" ":" "329");
+ (void) ((!!(!list_empty_(h, "../ruby-2.6.1/ccan/list/list.h" ":" "328"))) || (_assert("!list_empty(h)","../ruby-2.6.1/ccan/list/list.h",328),0));
+ list_del_(n, "../ruby-2.6.1/ccan/list/list.h" ":" "329");
 }
 #define list_swap(o,n) list_swap_(o, n, LIST_LOC)
 static inline void list_swap_(struct list_node *o,
@@ -78007,7 +78052,7 @@ static inline void list_swap_(struct list_node *o,
 #define list_top(h,type,member) ((type *)list_top_((h), list_off_(type, member)))
 static inline const void *list_top_(const struct list_head *h, size_t off)
 {
- if (list_empty_(h, "../ruby-2.6.0/ccan/list/list.h" ":" "399"))
+ if (list_empty_(h, "../ruby-2.6.1/ccan/list/list.h" ":" "399"))
   return ((void *)0);
  return (const char *)h->n.next - off;
 }
@@ -78015,16 +78060,16 @@ static inline const void *list_top_(const struct list_head *h, size_t off)
 static inline const void *list_pop_(const struct list_head *h, size_t off)
 {
  struct list_node *n;
- if (list_empty_(h, "../ruby-2.6.0/ccan/list/list.h" ":" "425"))
+ if (list_empty_(h, "../ruby-2.6.1/ccan/list/list.h" ":" "425"))
   return ((void *)0);
  n = h->n.next;
- list_del_(n, "../ruby-2.6.0/ccan/list/list.h" ":" "428");
+ list_del_(n, "../ruby-2.6.1/ccan/list/list.h" ":" "428");
  return (const char *)n - off;
 }
 #define list_tail(h,type,member) ((type *)list_tail_((h), list_off_(type, member)))
 static inline const void *list_tail_(const struct list_head *h, size_t off)
 {
- if (list_empty_(h, "../ruby-2.6.0/ccan/list/list.h" ":" "451"))
+ if (list_empty_(h, "../ruby-2.6.1/ccan/list/list.h" ":" "451"))
   return ((void *)0);
  return (const char *)h->n.prev - off;
 }
@@ -78045,7 +78090,7 @@ static inline void list_append_list_(struct list_head *to,
  from_tail->next = &to->n;
  to_tail->next = &from->n;
  from->n.prev = to_tail;
- list_del_(&from->n, "../ruby-2.6.0/ccan/list/list.h" ":" "600");
+ list_del_(&from->n, "../ruby-2.6.1/ccan/list/list.h" ":" "600");
  list_head_init(from);
 }
 #define list_prepend_list(t,f) list_prepend_list_(t, f, LIST_LOC)
@@ -78059,7 +78104,7 @@ static inline void list_prepend_list_(struct list_head *to,
  from->n.prev = &to->n;
  to_head->prev = from_tail;
  from_tail->next = to_head;
- list_del_(&from->n, "../ruby-2.6.0/ccan/list/list.h" ":" "632");
+ list_del_(&from->n, "../ruby-2.6.1/ccan/list/list.h" ":" "632");
  list_head_init(from);
 }
 #define list_for_each_off_dir_(h,i,off,dir) for (i = list_node_to_off_(list_debug(h, LIST_LOC)->n.dir, (off)); list_node_from_off_((void *)i, (off)) != &(h)->n; i = list_node_to_off_(list_node_from_off_((void *)i, (off))->dir, (off)))
@@ -79189,13 +79234,13 @@ rb_vm_living_threads_init(rb_vm_t *vm)
 static inline void
 rb_vm_living_threads_insert(rb_vm_t *vm, rb_thread_t *th)
 {
-    list_add_tail_(&vm->living_threads, &th->vmlt_node, "../ruby-2.6.0/vm_core.h" ":" "1648");
+    list_add_tail_(&vm->living_threads, &th->vmlt_node, "../ruby-2.6.1/vm_core.h" ":" "1648");
     vm->living_thread_num++;
 }
 static inline void
 rb_vm_living_threads_remove(rb_vm_t *vm, rb_thread_t *th)
 {
-    list_del_(&th->vmlt_node, "../ruby-2.6.0/vm_core.h" ":" "1655");
+    list_del_(&th->vmlt_node, "../ruby-2.6.1/vm_core.h" ":" "1655");
     vm->living_thread_num--;
 }
 typedef int rb_backtrace_iter_func(void *, VALUE, int, VALUE);
@@ -79361,6 +79406,11 @@ rb_vm_global_hooks(const rb_execution_context_t *ec)
 }
 #define EXEC_EVENT_HOOK(ec_,flag_,self_,id_,called_id_,klass_,data_) EXEC_EVENT_HOOK_ORIG(ec_, rb_vm_global_hooks(ec_), flag_, self_, id_, called_id_, klass_, data_, 0)
 #define EXEC_EVENT_HOOK_AND_POP_FRAME(ec_,flag_,self_,id_,called_id_,klass_,data_) EXEC_EVENT_HOOK_ORIG(ec_, rb_vm_global_hooks(ec_), flag_, self_, id_, called_id_, klass_, data_, 1)
+static inline void
+rb_exec_event_hook_script_compiled(rb_execution_context_t *ec, const rb_iseq_t *iseq, VALUE eval_script)
+{
+    do { const rb_event_flag_t flag_arg_ = (0x2000); rb_hook_list_t *hooks_arg_ = (rb_vm_global_hooks(ec)); if ((__builtin_expect(!!((hooks_arg_)->events & (flag_arg_)), 0))) { rb_exec_event_hook_orig(ec, hooks_arg_, flag_arg_, ec->cfp->self, 0, 0, 0, !((VALUE)(eval_script) != ((VALUE)RUBY_Qnil)) ? (VALUE)iseq : __extension__ ({ const VALUE args_to_new_ary[] = {eval_script, (VALUE)iseq}; if (__builtin_constant_p(2)) { _Static_assert(((int)(sizeof(args_to_new_ary) / sizeof((args_to_new_ary)[0]))) == (2), "rb_ary_new_from_args" ": " "numberof(args_to_new_ary) == (2)"); } rb_ary_new_from_values(((int)(sizeof(args_to_new_ary) / sizeof((args_to_new_ary)[0]))), args_to_new_ary); }), 0); } } while (0);
+}
 
 #pragma GCC visibility push(default)
 
@@ -79682,7 +79732,7 @@ CREF_REFINEMENTS(const rb_cref_t *cref)
 static inline void
 CREF_REFINEMENTS_SET(rb_cref_t *cref, VALUE refs)
 {
-    rb_obj_write((VALUE)(cref), (VALUE *)(&cref->refinements), (VALUE)(refs), "../ruby-2.6.0/eval_intern.h", 237);
+    rb_obj_write((VALUE)(cref), (VALUE *)(&cref->refinements), (VALUE)(refs), "../ruby-2.6.1/eval_intern.h", 237);
 }
 static inline int
 CREF_PUSHED_BY_EVAL(const rb_cref_t *cref)
@@ -79982,13 +80032,13 @@ void
 rb_vm_block_ep_update(VALUE obj, const struct rb_block *dst, const VALUE *ep)
 {
     *((const VALUE **)&dst->as.captured.ep) = ep;
-    rb_obj_written((VALUE)(obj), (VALUE)(((VALUE)RUBY_Qundef)), (VALUE)(VM_ENV_ENVVAL(ep)), "../ruby-2.6.0/vm.c", 292);
+    rb_obj_written((VALUE)(obj), (VALUE)(((VALUE)RUBY_Qundef)), (VALUE)(VM_ENV_ENVVAL(ep)), "../ruby-2.6.1/vm.c", 292);
 }
 static void
 vm_bind_update_env(VALUE bindval, rb_binding_t *bind, VALUE envval)
 {
     const rb_env_t *env = (rb_env_t *)envval;
-    rb_obj_write((VALUE)(bindval), (VALUE *)(&bind->block.as.captured.code.iseq), (VALUE)(env->iseq), "../ruby-2.6.0/vm.c", 299);
+    rb_obj_write((VALUE)(bindval), (VALUE *)(&bind->block.as.captured.code.iseq), (VALUE)(env->iseq), "../ruby-2.6.1/vm.c", 299);
     rb_vm_block_ep_update(bindval, &bind->block, env->ep);
 }
 static VALUE vm_make_env_object(const rb_execution_context_t *ec, rb_control_frame_t *cfp);
@@ -80796,7 +80846,7 @@ lep_svar_write(const rb_execution_context_t *ec, const VALUE *lep, const struct 
  vm_env_write(lep, (-2), (VALUE)svar);
     }
     else {
- rb_obj_write((VALUE)(rb_ec_thread_ptr(ec)->self), (VALUE *)(&ec->root_svar), (VALUE)(svar), "../ruby-2.6.0/vm_insnhelper.c", 441);
+ rb_obj_write((VALUE)(rb_ec_thread_ptr(ec)->self), (VALUE *)(&ec->root_svar), (VALUE)(svar), "../ruby-2.6.1/vm_insnhelper.c", 441);
     }
 }
 static VALUE
@@ -80834,15 +80884,15 @@ lep_svar_set(const rb_execution_context_t *ec, const VALUE *lep, rb_num_t key, V
     }
     switch (key) {
       case VM_SVAR_LASTLINE:
- rb_obj_write((VALUE)(svar), (VALUE *)(&svar->lastline), (VALUE)(val), "../ruby-2.6.0/vm_insnhelper.c", 487);
+ rb_obj_write((VALUE)(svar), (VALUE *)(&svar->lastline), (VALUE)(val), "../ruby-2.6.1/vm_insnhelper.c", 487);
  return;
       case VM_SVAR_BACKREF:
- rb_obj_write((VALUE)(svar), (VALUE *)(&svar->backref), (VALUE)(val), "../ruby-2.6.0/vm_insnhelper.c", 490);
+ rb_obj_write((VALUE)(svar), (VALUE *)(&svar->backref), (VALUE)(val), "../ruby-2.6.1/vm_insnhelper.c", 490);
  return;
       default: {
  VALUE ary = svar->others;
  if (!((VALUE)(ary) != ((VALUE)RUBY_Qnil))) {
-     rb_obj_write((VALUE)(svar), (VALUE *)(&svar->others), (VALUE)(ary = rb_ary_new()), "../ruby-2.6.0/vm_insnhelper.c", 496);
+     rb_obj_write((VALUE)(svar), (VALUE *)(&svar->others), (VALUE)(ary = rb_ary_new()), "../ruby-2.6.1/vm_insnhelper.c", 496);
  }
  rb_ary_store(ary, key - VM_SVAR_EXTRA_START, val);
       }
@@ -80983,7 +81033,7 @@ cref_replace_with_duplicated_cref_each_frame(const VALUE *vptr, int can_be_svar,
      cref = (rb_cref_t *)v;
      new_cref = vm_cref_dup(cref);
      if (parent) {
-  rb_obj_write((VALUE)(parent), (VALUE *)(vptr), (VALUE)(new_cref), "../ruby-2.6.0/vm_insnhelper.c", 671);
+  rb_obj_write((VALUE)(parent), (VALUE *)(vptr), (VALUE)(new_cref), "../ruby-2.6.1/vm_insnhelper.c", 671);
      }
      else {
   VM_FORCE_WRITE(vptr, (VALUE)new_cref);
@@ -81284,7 +81334,7 @@ vm_setivar(VALUE obj, ID id, VALUE val, IC ic, struct rb_call_cache *cc, int is_
      VALUE *ptr = ((((struct RBasic*)(obj))->flags & ROBJECT_EMBED) ? ((struct RObject*)(obj))->as.ary : ((struct RObject*)(obj))->as.heap.ivptr);
      index = !is_attr ? ic->ic_value.index : cc->aux.index-1;
      if ((index < ((((struct RBasic*)(obj))->flags & ROBJECT_EMBED) ? ROBJECT_EMBED_LEN_MAX : ((struct RObject*)(obj))->as.heap.numiv))) {
-  rb_obj_write((VALUE)(obj), (VALUE *)(&ptr[index]), (VALUE)(val), "../ruby-2.6.0/vm_insnhelper.c", 1025);
+  rb_obj_write((VALUE)(obj), (VALUE *)(&ptr[index]), (VALUE)(val), "../ruby-2.6.1/vm_insnhelper.c", 1025);
   ((void)0);
   return val;
      }
@@ -81842,7 +81892,7 @@ args_copy(struct args_info *args)
  args->argc = 0;
         arg_rest_dup(args);
  while (args->rest_index > 0 && argc > 0) {
-     do { const VALUE _ary = (args->rest); const VALUE _v = (args->argv[--argc]); VALUE *ptr = (VALUE *)rb_array_ptr_use_start(_ary, 1); rb_obj_write((VALUE)(_ary), (VALUE *)(&ptr[--args->rest_index]), (VALUE)(_v), "../ruby-2.6.0/vm_args.c", 150); rb_array_ptr_use_end(_ary, 1); } while (0);
+     do { const VALUE _ary = (args->rest); const VALUE _v = (args->argv[--argc]); VALUE *ptr = (VALUE *)rb_array_ptr_use_start(_ary, 1); rb_obj_write((VALUE)(_ary), (VALUE *)(&ptr[--args->rest_index]), (VALUE)(_v), "../ruby-2.6.1/vm_args.c", 150); rb_array_ptr_use_end(_ary, 1); } while (0);
  }
  while (argc > 0) {
      rb_ary_unshift(args->rest, args->argv[--argc]);
@@ -81913,7 +81963,7 @@ args_pop_keyword_hash(struct args_info *args, VALUE *kw_hash_ptr)
      *kw_hash_ptr = (rb_array_const_ptr_transient(args->rest)[len - 1]);
      if (keyword_hash_p(kw_hash_ptr, &rest_hash)) {
   if (rest_hash) {
-      do { const VALUE _ary = (args->rest); const VALUE _v = (rest_hash); VALUE *ptr = (VALUE *)rb_array_ptr_use_start(_ary, 1); rb_obj_write((VALUE)(_ary), (VALUE *)(&ptr[len - 1]), (VALUE)(_v), "../ruby-2.6.0/vm_args.c", 231); rb_array_ptr_use_end(_ary, 1); } while (0);
+      do { const VALUE _ary = (args->rest); const VALUE _v = (rest_hash); VALUE *ptr = (VALUE *)rb_array_ptr_use_start(_ary, 1); rb_obj_write((VALUE)(_ary), (VALUE *)(&ptr[len - 1]), (VALUE)(_v), "../ruby-2.6.1/vm_args.c", 231); rb_array_ptr_use_end(_ary, 1); } while (0);
   }
   else {
       arg_rest_dup(args);
@@ -82430,13 +82480,19 @@ refine_sym_proc_call(VALUE yielded_arg, VALUE callback_arg, int argc, const VALU
     rb_execution_context_t *ec;
     const VALUE symbol = (rb_array_const_ptr_transient(callback_arg)[0]);
     const VALUE refinements = (rb_array_const_ptr_transient(callback_arg)[1]);
+    VALUE klass;
     if (argc-- < 1) {
  rb_raise(rb_eArgError, "no receiver given");
     }
     obj = *argv++;
     mid = (rb_sym2id(symbol));
-    me = rb_callable_method_entry(rb_class_of((VALUE)(obj)), mid);
-    me = rb_resolve_refined_method_callable(refinements, me);
+    for (klass = rb_class_of((VALUE)(obj)); klass; klass = RCLASS_SUPER(klass)) {
+        me = rb_callable_method_entry(klass, mid);
+        if (me) {
+            me = rb_resolve_refined_method_callable(refinements, me);
+            if (me) break;
+        }
+    }
     ec = rb_current_execution_context();
     if (!!((VALUE)(blockarg) != ((VALUE)RUBY_Qnil))) {
  vm_passed_block_handler_set(ec, blockarg);
@@ -82465,8 +82521,8 @@ vm_caller_setup_arg_block(const rb_execution_context_t *ec, rb_control_frame_t *
   VALUE func = rb_hash_lookup(ref, block_code);
   if (!((VALUE)(func) != ((VALUE)RUBY_Qnil))) {
                     VALUE callback_arg = rb_ary_tmp_new(2);
-                    do { const VALUE _ary = (callback_arg); const VALUE _v = (block_code); VALUE *ptr = (VALUE *)rb_array_ptr_use_start(_ary, 1); rb_obj_write((VALUE)(_ary), (VALUE *)(&ptr[0]), (VALUE)(_v), "../ruby-2.6.0/vm_args.c", 897); rb_array_ptr_use_end(_ary, 1); } while (0);
-                    do { const VALUE _ary = (callback_arg); const VALUE _v = (ref); VALUE *ptr = (VALUE *)rb_array_ptr_use_start(_ary, 1); rb_obj_write((VALUE)(_ary), (VALUE *)(&ptr[1]), (VALUE)(_v), "../ruby-2.6.0/vm_args.c", 898); rb_array_ptr_use_end(_ary, 1); } while (0);
+                    do { const VALUE _ary = (callback_arg); const VALUE _v = (block_code); VALUE *ptr = (VALUE *)rb_array_ptr_use_start(_ary, 1); rb_obj_write((VALUE)(_ary), (VALUE *)(&ptr[0]), (VALUE)(_v), "../ruby-2.6.1/vm_args.c", 903); rb_array_ptr_use_end(_ary, 1); } while (0);
+                    do { const VALUE _ary = (callback_arg); const VALUE _v = (ref); VALUE *ptr = (VALUE *)rb_array_ptr_use_start(_ary, 1); rb_obj_write((VALUE)(_ary), (VALUE *)(&ptr[1]), (VALUE)(_v), "../ruby-2.6.1/vm_args.c", 904); rb_array_ptr_use_end(_ary, 1); } while (0);
                     (void)(((struct RBasic*)(callback_arg))->flags |= RUBY_FL_FREEZE);
                     func = rb_func_proc_new(refine_sym_proc_call, callback_arg);
       rb_hash_aset(ref, block_code, func);
@@ -82966,7 +83022,7 @@ aliased_callable_method_entry(const rb_callable_method_entry_t *me)
  ((void)0);
  cme = rb_method_entry_complement_defined_class(orig_me, me->called_id, defined_class);
  if (me->def->alias_count + me->def->complemented_count == 0) {
-     rb_obj_write((VALUE)(me), (VALUE *)(&me->def->body.alias.original_me), (VALUE)(cme), "../ruby-2.6.0/vm_insnhelper.c", 2195);
+     rb_obj_write((VALUE)(me), (VALUE *)(&me->def->body.alias.original_me), (VALUE)(cme), "../ruby-2.6.1/vm_insnhelper.c", 2195);
  }
  else {
      rb_method_definition_t *def =
@@ -83900,7 +83956,7 @@ vm_once_dispatch(rb_execution_context_t *ec, ISEQ iseq, ISE is)
  VALUE val;
  is->once.running_thread = th;
  val = rb_ensure(vm_once_exec, (VALUE)iseq, vm_once_clear, (VALUE)is);
- rb_obj_write((VALUE)(ec->cfp->iseq), (VALUE *)(&is->once.value), (VALUE)(val), "../ruby-2.6.0/vm_insnhelper.c", 3291);
+ rb_obj_write((VALUE)(ec->cfp->iseq), (VALUE *)(&is->once.value), (VALUE)(val), "../ruby-2.6.1/vm_insnhelper.c", 3291);
  is->once.running_thread = RUNNING_THREAD_ONCE_DONE;
  return val;
     }

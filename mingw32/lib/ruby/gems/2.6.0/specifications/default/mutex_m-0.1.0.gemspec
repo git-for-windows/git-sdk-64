@@ -9,10 +9,10 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Keiju ISHITSUKA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2018-12-26"
+  s.date = "2019-02-08"
   s.description = "Mixin to extend objects to be handled like a Mutex.".freeze
   s.email = ["keiju@ruby-lang.org".freeze]
-  s.files = [".gitignore".freeze, ".travis.yml".freeze, "Gemfile".freeze, "LICENSE.txt".freeze, "README.md".freeze, "Rakefile".freeze, "bin/console".freeze, "bin/setup".freeze, "lib/mutex_m.rb".freeze, "mutex_m.gemspec".freeze]
+  s.files = ["mutex_m.rb".freeze]
   s.homepage = "https://github.com/ruby/mutex_m".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.rubygems_version = "3.0.1".freeze
