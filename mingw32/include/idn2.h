@@ -26,10 +26,11 @@
    not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _IDN2_H
-#define _IDN2_H
+#ifndef IDN2_H
+#define IDN2_H
 
 /* *INDENT-OFF* */
+/* see https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html */
 #ifndef _IDN2_API
 # if defined IDN2_BUILDING && defined HAVE_VISIBILITY && HAVE_VISIBILITY
 #  define _IDN2_API __attribute__((__visibility__("default")))
@@ -52,37 +53,64 @@ extern "C"
 #endif
 
 /**
+ * GCC_VERSION_AT_LEAST
+ *
+ * Pre-processor symbol to check the gcc version.
+ */
+#if defined __GNUC__ && defined __GNUC_MINOR__
+# define GCC_VERSION_AT_LEAST(major, minor) ((__GNUC__ > (major)) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
+#else
+# define GCC_VERSION_AT_LEAST(major, minor) 0
+#endif
+
+/* the following G_GNUC_ prefixes are for gtk-doc to recognize the attributes */
+
+/**
  * G_GNUC_IDN2_ATTRIBUTE_PURE
  *
  * Function attribute: Function is a pure function.
  */
+#if GCC_VERSION_AT_LEAST(2,96)
+#	define G_GNUC_IDN2_ATTRIBUTE_PURE __attribute__ ((pure))
+#else
+#	define G_GNUC_IDN2_ATTRIBUTE_PURE
+#endif
 
 /**
  * G_GNUC_IDN2_ATTRIBUTE_CONST
  *
  * Function attribute: Function is a const function.
  */
+#if GCC_VERSION_AT_LEAST(2,5)
+# define G_GNUC_IDN2_ATTRIBUTE_CONST __attribute__ ((const))
+#else
+# define G_GNUC_IDN2_ATTRIBUTE_CONST
+#endif
+
+/**
+ * G_GNUC_DEPRECATED
+ *
+ * Function attribute: Function is deprecated.
+ */
+#if GCC_VERSION_AT_LEAST(3,1)
+# define G_GNUC_DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+# define G_GNUC_DEPRECATED __declspec(deprecated)
+#else
+# define G_GNUC_DEPRECATED /* empty */
+#endif
 
 /**
  * G_GNUC_UNUSED
  *
  * Parameter attribute: Parameter is not used.
  */
-
-/* the following G_GNUC_ prefix is for gtk-doc to recognize the attributes */
-#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
-# define _IDN2_ATTRIBUTE_PURE __attribute__ ((__pure__))
-# define _IDN2_ATTRIBUTE_CONST __attribute__ ((__const__))
-# define G_GNUC_IDN2_ATTRIBUTE_PURE __attribute__ ((__pure__))
-# define G_GNUC_IDN2_ATTRIBUTE_CONST __attribute__ ((__const__))
+#if GCC_VERSION_AT_LEAST(2,95)
 # define G_GNUC_UNUSED __attribute__ ((__unused__))
 #else
-# define _IDN2_ATTRIBUTE_PURE /* empty */
-# define _IDN2_ATTRIBUTE_CONST /* empty */
-# define G_GNUC_IDN2_ATTRIBUTE_PURE /* empty */
-# define G_GNUC_IDN2_ATTRIBUTE_CONST /* empty */
 # define G_GNUC_UNUSED /* empty */
 #endif
+
 
 /**
  * IDN2_VERSION
@@ -91,7 +119,7 @@ extern "C"
  * version number.  Used together with idn2_check_version() to verify
  * header file and run-time library consistency.
  */
-#define IDN2_VERSION "2.1.0"
+#define IDN2_VERSION "2.1.1"
 
 /**
  * IDN2_VERSION_NUMBER
@@ -102,7 +130,7 @@ extern "C"
  * digits are used to enumerate development snapshots, but for all
  * public releases they will be 0000.
  */
-#define IDN2_VERSION_NUMBER 0x02010000
+#define IDN2_VERSION_NUMBER 0x02010001
 
 /**
  * IDN2_VERSION_MAJOR
@@ -126,7 +154,7 @@ extern "C"
  * Pre-processor symbol for the patch level number (decimal).
  * The version scheme is major.minor.patchlevel.
  */
-#define IDN2_VERSION_PATCH 0
+#define IDN2_VERSION_PATCH 1
 
 /**
  * IDN2_LABEL_MAX_LENGTH
@@ -263,8 +291,10 @@ extern "C"
 
 /* Auxiliary functions. */
 
-  extern _IDN2_API int
+  extern _IDN2_API G_GNUC_DEPRECATED int
     idn2_to_ascii_4i (const uint32_t * input, size_t inlen, char * output, int flags);
+  extern _IDN2_API int
+    idn2_to_ascii_4i2 (const uint32_t * input, size_t inlen, char ** output, int flags);
   extern _IDN2_API int
     idn2_to_ascii_4z (const uint32_t * input, char ** output, int flags);
   extern _IDN2_API int
@@ -273,7 +303,7 @@ extern "C"
     idn2_to_ascii_lz (const char * input, char ** output, int flags);
 
   extern _IDN2_API int
-    idn2_to_unicode_8z4z (const char * input, uint32_t ** output, int flags G_GNUC_UNUSED);
+    idn2_to_unicode_8z4z (const char * input, uint32_t ** output, G_GNUC_UNUSED int flags);
   extern _IDN2_API int
     idn2_to_unicode_4z4z (const uint32_t * input, uint32_t ** output, int flags);
   extern _IDN2_API int
@@ -285,13 +315,13 @@ extern "C"
   extern _IDN2_API int
     idn2_to_unicode_lzlz (const char * input, char ** output, int flags);
 
-  extern _IDN2_API const char *
-    idn2_strerror (int rc) G_GNUC_IDN2_ATTRIBUTE_CONST;
-  extern _IDN2_API const char *
-    idn2_strerror_name (int rc) G_GNUC_IDN2_ATTRIBUTE_CONST;
+  extern _IDN2_API G_GNUC_IDN2_ATTRIBUTE_CONST const char *
+    idn2_strerror (int rc);
+  extern _IDN2_API G_GNUC_IDN2_ATTRIBUTE_CONST const char *
+    idn2_strerror_name (int rc);
 
-  extern _IDN2_API const char *
-    idn2_check_version (const char *req_version) G_GNUC_IDN2_ATTRIBUTE_PURE;
+  extern _IDN2_API G_GNUC_IDN2_ATTRIBUTE_PURE const char *
+    idn2_check_version (const char *req_version);
 
   extern _IDN2_API void
     idn2_free (void *ptr);
@@ -346,4 +376,4 @@ extern "C"
 }
 #endif
 
-#endif				/* _IDN2_H */
+#endif				/* IDN2_H */
