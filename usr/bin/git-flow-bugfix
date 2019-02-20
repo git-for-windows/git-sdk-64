@@ -11,7 +11,7 @@
 #    http://github.com/petervanderdoes/gitflow
 #
 # Authors:
-# Copyright 2012-2017 Peter van der Does. All rights reserved.
+# Copyright 2012-2019 Peter van der Does. All rights reserved.
 #
 # Original Author:
 # Copyright 2010 Vincent Driessen. All rights reserved.
@@ -199,7 +199,6 @@ F,[no]fetch      Fetch from origin before performing local operation
 
 	require_base_is_local_branch "$base"
 	gitflow_require_name_arg
-	gitflow_config_set_base_branch $base $BRANCH
 
 	# Update the local repo with remote changes, if asked
 	if flag fetch; then
@@ -217,6 +216,7 @@ F,[no]fetch      Fetch from origin before performing local operation
 
 	run_pre_hook "$NAME" "$ORIGIN" "$BRANCH" "$base"
 
+	gitflow_config_set_base_branch $base $BRANCH
 
 	# create branch
 	git_do checkout -b "$BRANCH" "$base" || die "Could not create bugfix branch '$BRANCH'."
@@ -438,6 +438,10 @@ helper_finish_cleanup() {
 	remotebranchdeleted=$FLAGS_FALSE
 	localbranchdeleted=$FLAGS_FALSE
 
+	if flag push; then
+		git_do push "$ORIGIN" "$BASE_BRANCH" || die "Could not push branch '$BASE_BRANCH' to remote '$ORIGIN'."
+	fi
+
 	if noflag keep; then
 
 		# Always delete remote first
@@ -467,10 +471,6 @@ helper_finish_cleanup() {
 		if ! git_remote_branch_exists "$ORIGIN/$BRANCH" -a ! git_local_branch_exists "$BRANCH"; then
 			gitflow_config_remove_base_section "$BRANCH"
 		fi
-	fi
-
-	if flag push; then
-		git_do push "$ORIGIN" "$BASE_BRANCH" || die "Could not push branch '$BASE_BRANCH' to remote '$ORIGIN'."
 	fi
 
 	echo
@@ -598,7 +598,7 @@ showcommands!    Show git commands while executing them
 	base=$(gitflow_config_get_base_branch $BRANCH)
 	base=${base:-$DEVELOP_BRANCH}
 
-	git_do diff "$base..$BRANCH"
+	git_do diff "$base...$BRANCH"
 }
 
 cmd_checkout() {

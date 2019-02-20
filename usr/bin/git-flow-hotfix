@@ -11,7 +11,7 @@
 #    http://github.com/petervanderdoes/gitflow
 #
 # Authors:
-# Copyright 2012-2017 Peter van der Does. All rights reserved.
+# Copyright 2012-2019 Peter van der Does. All rights reserved.
 #
 # Original Author:
 # Copyright 2010 Vincent Driessen. All rights reserved.
@@ -189,7 +189,6 @@ F,[no]fetch       Fetch from origin before performing local operation
 	# No need to continue if not clean
 	require_base_is_local_branch "$base"
 	git_config_bool_exists "gitflow.allowdirty" || require_clean_working_tree
-	gitflow_config_set_base_branch $base $BRANCH
 
 	# Update the local repo with remote changes, if asked
 	if flag fetch; then
@@ -218,6 +217,8 @@ F,[no]fetch       Fetch from origin before performing local operation
 	fi
 
 	run_pre_hook "$VERSION_PREFIX$VERSION" "$ORIGIN" "$BRANCH" "$base"
+
+	gitflow_config_set_base_branch $base $BRANCH
 
 	# Create branch
 	git_do checkout -b "$BRANCH" "$base"  || die "Could not create hotfix branch '$BRANCH'."
@@ -581,6 +582,16 @@ T,tagname!            Use given tag name
 
 	run_post_hook "$VERSION_PREFIX$TAGNAME" "$ORIGIN" "$BRANCH"
 
+	if flag push; then
+		if [ "$BASE_BRANCH" = "$MASTER_BRANCH" ]; then
+			git_do push "$ORIGIN" "$DEVELOP_BRANCH" || die "Could not push branch '$DEVELOP_BRANCH' to remote '$ORIGIN'."
+		fi
+		git_do push "$ORIGIN" "$BASE_BRANCH" || die "Could not push branch '$BASE_BRANCH' to remote '$ORIGIN'."
+		if noflag notag; then
+			git_do push --tags "$ORIGIN" || die "Could not push tags to remote '$ORIGIN'."
+		fi
+	fi
+
 	# Delete branch
 	if noflag keep; then
 
@@ -608,16 +619,6 @@ T,tagname!            Use given tag name
 			gitflow_config_remove_base_section "$BRANCH"
 		fi
 
-	fi
-
-	if flag push; then
-		if [ "$BASE_BRANCH" = "$MASTER_BRANCH" ]; then
-			git_do push "$ORIGIN" "$DEVELOP_BRANCH" || die "Could not push branch '$DEVELOP_BRANCH' to remote '$ORIGIN'."
-		fi
-		git_do push "$ORIGIN" "$BASE_BRANCH" || die "Could not push branch '$BASE_BRANCH' to remote '$ORIGIN'."
-		if noflag notag; then
-			git_do push --tags "$ORIGIN" || die "Could not push tags to remote '$ORIGIN'."
-		fi
 	fi
 
 	echo

@@ -90,7 +90,7 @@
 
 <p>OpenSSL memory allocation is handled by the <b>OPENSSL_xxx</b> API. These are generally macro&#39;s that add the standard C <b>__FILE__</b> and <b>__LINE__</b> parameters and call a lower-level <b>CRYPTO_xxx</b> API. Some functions do not add those parameters, but exist for consistency.</p>
 
-<p>OPENSSL_malloc_init() sets the lower-level memory allocation functions to their default implementation. It is generally not necessary to call this, except perhaps in certain shared-library situations.</p>
+<p>OPENSSL_malloc_init() does nothing and does not need to be called. It is included for compatibility with older versions of OpenSSL.</p>
 
 <p>OPENSSL_malloc(), OPENSSL_realloc(), and OPENSSL_free() are like the C malloc(), realloc(), and free() functions. OPENSSL_zalloc() calls memset() to zero the memory before returning.</p>
 

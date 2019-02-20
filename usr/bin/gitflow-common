@@ -11,7 +11,7 @@
 #    http://github.com/petervanderdoes/gitflow
 #
 # Authors:
-# Copyright 2012-2017 Peter van der Does. All rights reserved.
+# Copyright 2012-2019 Peter van der Does. All rights reserved.
 #
 # Original Author:
 # Copyright 2010 Vincent Driessen. All rights reserved.
@@ -294,7 +294,7 @@ gitflow_is_initialized() {
 	gitflow_has_master_configured                    && \
 	gitflow_has_develop_configured                   && \
 	[ "$(git config --get gitflow.branch.master)" != "$(git config --get gitflow.branch.develop)" ] && \
-	$(git config --get-regexp gitflow.prefix >/dev/null 2>&1)
+	git config --get-regexp gitflow.prefix >/dev/null 2>&1
 }
 
 # Loading settings that can be overridden using git config

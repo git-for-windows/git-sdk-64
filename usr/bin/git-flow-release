@@ -11,7 +11,7 @@
 #    http://github.com/petervanderdoes/gitflow
 #
 # Authors:
-# Copyright 2012-2017 Peter van der Does. All rights reserved.
+# Copyright 2012-2019 Peter van der Does. All rights reserved.
 #
 # Original Author:
 # Copyright 2010 Vincent Driessen. All rights reserved.
@@ -143,34 +143,48 @@ _finish_from_develop() {
 		merge_branch="$BRANCH"
 	fi
 
-	# Try to merge into develop.
+	# Try to merge into develop unless 'nodevelopmerge' has been specified.
 	# In case a previous attempt to finish this release branch has failed,
 	# but the merge into develop was successful, we skip it now
-	if ! git_is_branch_merged_into "$merge_branch" "$DEVELOP_BRANCH"; then
-		git_do checkout "$DEVELOP_BRANCH" || die "Could not check out branch '$DEVELOP_BRANCH'."
+	if noflag nodevelopmerge; then
+		if ! git_is_branch_merged_into "$merge_branch" "$DEVELOP_BRANCH"; then
+			git_do checkout "$DEVELOP_BRANCH" || die "Could not check out branch '$DEVELOP_BRANCH'."
 
-		if noflag nobackmerge; then
-			# Accounting for 'git describe', if a release is tagged
-			# we use the tag commit instead of the branch.
-			if noflag notag; then
-				commit="$VERSION_PREFIX$TAGNAME"
-			else
-				commit="$MASTER_BRANCH"
-			fi
-			git_do merge --no-ff "$commit" || die "There were merge conflicts." # TODO: What do we do now?
-		else
-			commit="$BRANCH"
-			if noflag squash; then
+			if noflag nobackmerge; then
+				# Accounting for 'git describe', if a release is tagged
+				# we use the tag commit instead of the branch.
+				if noflag notag; then
+					commit="$VERSION_PREFIX$TAGNAME"
+				else
+					commit="$MASTER_BRANCH"
+				fi
 				git_do merge --no-ff "$commit" || die "There were merge conflicts." # TODO: What do we do now?
 			else
-				git_do merge --squash "$commit" || die "There were merge conflicts." # TODO: What do we do now?
-				flag squash_info && gitflow_create_squash_message "Merged release branch '$BRANCH'" "$DEVELOP_BRANCH" "$BRANCH" > "$DOT_GIT_DIR/SQUASH_MSG"
-				git_do commit
+				commit="$BRANCH"
+				if noflag squash; then
+					git_do merge --no-ff "$commit" || die "There were merge conflicts." # TODO: What do we do now?
+				else
+					git_do merge --squash "$commit" || die "There were merge conflicts." # TODO: What do we do now?
+					flag squash_info && gitflow_create_squash_message "Merged release branch '$BRANCH'" "$DEVELOP_BRANCH" "$BRANCH" > "$DOT_GIT_DIR/SQUASH_MSG"
+					git_do commit
+				fi
 			fi
 		fi
 	fi
 
 	run_post_hook "$VERSION_PREFIX$TAGNAME" "$ORIGIN" "$BRANCH"
+
+	if flag push; then
+		if flag pushdevelop; then
+			git_do push "$ORIGIN" "$DEVELOP_BRANCH" || die "Could not push branch '$DEVELOP_BRANCH' to remote '$ORIGIN'."
+		fi
+		if flag pushproduction; then
+			git_do push "$ORIGIN" "$MASTER_BRANCH" || die "Could not push branch '$MASTER_BRANCH' to remote '$ORIGIN'."
+		fi
+		if noflag notag && flag pushtag; then
+			git_do push --tags "$ORIGIN" || die "Could not push tags to remote '$ORIGIN'."
+		fi
+	fi
 
 	# Delete branch
 	if noflag keep; then
@@ -202,18 +216,6 @@ _finish_from_develop() {
 		# no more branches: we can safely remove config section
 		if ! git_remote_branch_exists "$ORIGIN/$BRANCH" -a ! git_local_branch_exists "$BRANCH"; then
 			gitflow_config_remove_base_section "$BRANCH"
-		fi
-	fi
-
-	if flag push; then
-		if flag pushdevelop; then
-			git_do push "$ORIGIN" "$DEVELOP_BRANCH" || die "Could not push branch '$DEVELOP_BRANCH' to remote '$ORIGIN'."
-		fi
-		if flag pushproduction; then
-			git_do push "$ORIGIN" "$MASTER_BRANCH" || die "Could not push branch '$MASTER_BRANCH' to remote '$ORIGIN'."
-		fi
-		if noflag notag && flag pushtag; then
-			git_do push --tags "$ORIGIN" || die "Could not push tags to remote '$ORIGIN'."
 		fi
 	fi
 
@@ -562,7 +564,6 @@ v,verbose!           Verbose (more) output
 
 	require_base_is_local_branch "$base"
 	gitflow_require_version_arg
-	gitflow_config_set_base_branch $base $BRANCH
 
 	require_no_existing_release_branches
 
@@ -578,6 +579,8 @@ v,verbose!           Verbose (more) output
 	fi
 
 	run_pre_hook "$VERSION_PREFIX$VERSION" "$ORIGIN" "$BRANCH" "$base"
+
+	gitflow_config_set_base_branch $base $BRANCH
 
 	# Create branch
 	git_do checkout -b "$BRANCH" "$base" || die "Could not create release branch '$BRANCH'."
@@ -625,6 +628,7 @@ b,[no]nobackmerge   Don't back-merge master, or tag if applicable, in develop
 S,[no]squash        Squash release during merge
 [no]ff-master       Fast forward master branch if possible
 T,tagname!          Use given tag name
+nodevelopmerge!  Don't back-merge develop branch
 "
 	# Define flags
 	DEFINE_boolean 'fetch' false "fetch from $ORIGIN before performing finish" F
@@ -646,6 +650,7 @@ T,tagname!          Use given tag name
 	DEFINE_boolean 'squash-info' false "add branch info during squash"
 	DEFINE_boolean 'ff-master' false "fast forward master branch if possible"
 	DEFINE_string  'tagname' "" "use the given tag name" T
+	DEFINE_boolean 'nodevelopmerge' false "don't merge $BRANCH into $DEVELOP_BRANCH "
 
 	# Override defaults with values from config
 	gitflow_override_flag_boolean   "release.finish.fetch"          "fetch"
@@ -666,6 +671,7 @@ T,tagname!          Use given tag name
 	gitflow_override_flag_string    "release.finish.signingkey"     "signingkey"
 	gitflow_override_flag_string    "release.finish.message"        "message"
 	gitflow_override_flag_string    "release.finish.messagefile"    "messagefile"
+	gitflow_override_flag_boolean   "release.finish.nodevelopmerge" "nodevelopmerge"
 
 	# Parse arguments
 	parse_args "$@"
