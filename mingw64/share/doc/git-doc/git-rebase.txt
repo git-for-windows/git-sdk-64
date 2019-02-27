@@ -501,18 +501,15 @@ See also INCOMPATIBLE OPTIONS below.
 	with care: the final stash application after a successful
 	rebase might result in non-trivial conflicts.
 
+--reschedule-failed-exec::
+--no-reschedule-failed-exec::
+	Automatically reschedule `exec` commands that failed. This only makes
+	sense in interactive mode (or when an `--exec` option was provided).
+
 INCOMPATIBLE OPTIONS
 --------------------
 
-git-rebase has many flags that are incompatible with each other,
-predominantly due to the fact that it has three different underlying
-implementations:
-
- * one based on linkgit:git-am[1] (the default)
- * one based on git-merge-recursive (merge backend)
- * one based on linkgit:git-cherry-pick[1] (interactive backend)
-
-Flags only understood by the am backend:
+The following options:
 
  * --committer-date-is-author-date
  * --ignore-date
@@ -520,26 +517,22 @@ Flags only understood by the am backend:
  * --ignore-whitespace
  * -C
 
-Flags understood by both merge and interactive backends:
+are incompatible with the following options:
 
  * --merge
  * --strategy
  * --strategy-option
  * --allow-empty-message
-
-Flags only understood by the interactive backend:
-
  * --[no-]autosquash
  * --rebase-merges
  * --preserve-merges
  * --interactive
  * --exec
  * --keep-empty
- * --autosquash
  * --edit-todo
  * --root when used in combination with --onto
 
-Other incompatible flag pairs:
+In addition, the following pairs of options are incompatible:
 
  * --preserve-merges and --interactive
  * --preserve-merges and --signoff
@@ -560,8 +553,6 @@ commit started empty (had no changes relative to its parent to
 start with) or ended empty (all changes were already applied
 upstream in other commits).
 
-The merge backend does the same.
-
 The interactive backend drops commits by default that
 started empty and halts if it hits a commit that ended up empty.
 The `--keep-empty` option exists for the interactive backend to allow
@@ -570,8 +561,9 @@ it to keep commits that started empty.
 Directory rename detection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The merge and interactive backends work fine with
-directory rename detection.  The am backend sometimes does not.
+Directory rename heuristics are enabled in the merge and interactive
+backends.  Due to the lack of accurate tree information, directory
+rename detection is disabled in the am backend.
 
 include::merge-strategies.txt[]
 
@@ -979,7 +971,7 @@ when the merge operation did not even start), it is rescheduled immediately.
 
 At this time, the `merge` command will *always* use the `recursive`
 merge strategy for regular merges, and `octopus` for octopus merges,
-strategy, with no way to choose a different one. To work around
+with no way to choose a different one. To work around
 this, an `exec` command can be used to call `git merge` explicitly,
 using the fact that the labels are worktree-local refs (the ref
 `refs/rewritten/onto` would correspond to the label `onto`, for example).
