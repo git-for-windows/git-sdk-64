@@ -438,7 +438,7 @@ __gitcomp_nl ()
 # Callers must take care of providing only paths that match the current path
 # to be completed and adding any prefix path components, if necessary.
 # 1: List of newline-separated matching paths, complete with all prefix
-#    path componens.
+#    path components.
 __gitcomp_file_direct ()
 {
 	local IFS=$'\n'
@@ -855,7 +855,7 @@ __git_compute_merge_strategies ()
 
 __git_complete_revlist_file ()
 {
-	local pfx ls ref cur_="$cur"
+	local dequoted_word pfx ls ref cur_="$cur"
 	case "$cur_" in
 	*..?*:*)
 		return
@@ -863,14 +863,18 @@ __git_complete_revlist_file ()
 	?*:*)
 		ref="${cur_%%:*}"
 		cur_="${cur_#*:}"
-		case "$cur_" in
+
+		__git_dequote "$cur_"
+
+		case "$dequoted_word" in
 		?*/*)
-			pfx="${cur_%/*}"
-			cur_="${cur_##*/}"
+			pfx="${dequoted_word%/*}"
+			cur_="${dequoted_word##*/}"
 			ls="$ref:$pfx"
 			pfx="$pfx/"
 			;;
 		*)
+			cur_="$dequoted_word"
 			ls="$ref"
 			;;
 		esac
@@ -880,21 +884,10 @@ __git_complete_revlist_file ()
 		*)   pfx="$ref:$pfx" ;;
 		esac
 
-		__gitcomp_nl "$(__git ls-tree "$ls" \
-				| sed '/^100... blob /{
-				           s,^.*	,,
-				           s,$, ,
-				       }
-				       /^120000 blob /{
-				           s,^.*	,,
-				           s,$, ,
-				       }
-				       /^040000 tree /{
-				           s,^.*	,,
-				           s,$,/,
-				       }
-				       s/^.*	//')" \
-			"$pfx" "$cur_" ""
+		__gitcomp_file "$(__git ls-tree "$ls" \
+				| sed 's/^.*	//
+				       s/$//')" \
+			"$pfx" "$cur_"
 		;;
 	*...*)
 		pfx="${cur_%...*}..."
@@ -2993,7 +2986,7 @@ if [[ -n ${ZSH_VERSION-} ]] &&
 
 		local IFS=$'\n'
 		compset -P '*[=:]'
-		compadd -Q -f -- ${=1} && _ret=0
+		compadd -f -- ${=1} && _ret=0
 	}
 
 	__gitcomp_file ()
@@ -3002,7 +2995,7 @@ if [[ -n ${ZSH_VERSION-} ]] &&
 
 		local IFS=$'\n'
 		compset -P '*[=:]'
-		compadd -Q -p "${2-}" -f -- ${=1} && _ret=0
+		compadd -p "${2-}" -f -- ${=1} && _ret=0
 	}
 
 	_git ()

@@ -48,6 +48,7 @@ skip!              skip current patch and continue
 edit-todo!         edit the todo list during an interactive rebase
 quit!              abort but keep HEAD where it is
 show-current-patch! show the patch file being applied or merged
+reschedule-failed-exec automatically reschedule failed exec commands
 "
 . git-sh-setup
 set_reflog_action rebase
@@ -92,11 +93,14 @@ autosquash=
 keep_empty=
 allow_empty_message=--allow-empty-message
 signoff=
+reschedule_failed_exec=
 test "$(git config --bool rebase.autosquash)" = "true" && autosquash=t
 case "$(git config --bool commit.gpgsign)" in
 true)	gpg_sign_opt=-S ;;
 *)	gpg_sign_opt= ;;
 esac
+test "$(git config --bool rebase.reschedulefailedexec)" = "true" &&
+reschedule_failed_exec=--reschedule-failed-exec
 . git-rebase--common
 
 read_basic_state () {
@@ -113,7 +117,7 @@ read_basic_state () {
 	else
 		orig_head=$(cat "$state_dir"/head)
 	fi &&
-	GIT_QUIET=$(cat "$state_dir"/quiet) &&
+	test -f "$state_dir"/quiet && GIT_QUIET=t
 	test -f "$state_dir"/verbose && verbose=t
 	test -f "$state_dir"/strategy && strategy="$(cat "$state_dir"/strategy)"
 	test -f "$state_dir"/strategy_opts &&
@@ -126,6 +130,8 @@ read_basic_state () {
 		signoff="$(cat "$state_dir"/signoff)"
 		force_rebase=t
 	}
+	test -f "$state_dir"/reschedule-failed-exec &&
+		reschedule_failed_exec=t
 }
 
 finish_rebase () {
@@ -163,13 +169,14 @@ run_interactive () {
 		"$allow_empty_message" "$autosquash" "$verbose" \
 		"$force_rebase" "$onto_name" "$head_name" "$strategy" \
 		"$strategy_opts" "$cmd" "$switch_to" \
-		"$allow_rerere_autoupdate" "$gpg_sign_opt" "$signoff"
+		"$allow_rerere_autoupdate" "$gpg_sign_opt" "$signoff" \
+		"$reschedule_failed_exec"
 }
 
 run_specific_rebase () {
 	if [ "$interactive_rebase" = implied ]; then
-		GIT_EDITOR=:
-		export GIT_EDITOR
+		GIT_SEQUENCE_EDITOR=:
+		export GIT_SEQUENCE_EDITOR
 		autosquash=
 	fi
 
@@ -218,6 +225,7 @@ then
 	state_dir="$apply_dir"
 elif test -d "$merge_dir"
 then
+	type=interactive
 	if test -d "$merge_dir"/rewritten
 	then
 		type=preserve-merges
@@ -225,10 +233,7 @@ then
 		preserve_merges=t
 	elif test -f "$merge_dir"/interactive
 	then
-		type=interactive
 		interactive_rebase=explicit
-	else
-		type=merge
 	fi
 	state_dir="$merge_dir"
 fi
@@ -378,6 +383,12 @@ do
 	--gpg-sign=*)
 		gpg_sign_opt="-S${1#--gpg-sign=}"
 		;;
+	--reschedule-failed-exec)
+		reschedule_failed_exec=--reschedule-failed-exec
+		;;
+	--no-reschedule-failed-exec)
+		reschedule_failed_exec=
+		;;
 	--)
 		shift
 		break
@@ -477,6 +488,7 @@ then
 	test -z "$interactive_rebase" && interactive_rebase=implied
 fi
 
+actually_interactive=
 if test -n "$interactive_rebase"
 then
 	if test -z "$preserve_merges"
@@ -485,11 +497,12 @@ then
 	else
 		type=preserve-merges
 	fi
-
+	actually_interactive=t
 	state_dir="$merge_dir"
 elif test -n "$do_merge"
 then
-	type=merge
+	interactive_rebase=implied
+	type=interactive
 	state_dir="$merge_dir"
 else
 	type=am
@@ -501,28 +514,20 @@ then
 	git_format_patch_opt="$git_format_patch_opt --progress"
 fi
 
-if test -n "$git_am_opt"; then
-	incompatible_opts=$(echo " $git_am_opt " | \
-			    sed -e 's/ -q / /g' -e 's/^ \(.*\) $/\1/')
-	if test -n "$interactive_rebase"
+incompatible_opts=$(echo " $git_am_opt " | \
+		    sed -e 's/ -q / /g' -e 's/^ \(.*\) $/\1/')
+if test -n "$incompatible_opts"
+then
+	if test -n "$actually_interactive" || test "$do_merge"
 	then
-		if test -n "$incompatible_opts"
-		then
-			die "$(gettext "error: cannot combine interactive options (--interactive, --exec, --rebase-merges, --preserve-merges, --keep-empty, --root + --onto) with am options ($incompatible_opts)")"
-		fi
-	fi
-	if test -n "$do_merge"; then
-		if test -n "$incompatible_opts"
-		then
-			die "$(gettext "error: cannot combine merge options (--merge, --strategy, --strategy-option) with am options ($incompatible_opts)")"
-		fi
+		die "$(gettext "fatal: cannot combine am options with either interactive or merge options")"
 	fi
 fi
 
 if test -n "$signoff"
 then
 	test -n "$preserve_merges" &&
-		die "$(gettext "error: cannot combine '--signoff' with '--preserve-merges'")"
+		die "$(gettext "fatal: cannot combine '--signoff' with '--preserve-merges'")"
 	git_am_opt="$git_am_opt $signoff"
 	force_rebase=t
 fi
@@ -533,15 +538,18 @@ then
 	# Note: incompatibility with --interactive is just a strong warning;
 	#       git-rebase.txt caveats with "unless you know what you are doing"
 	test -n "$rebase_merges" &&
-		die "$(gettext "error: cannot combine '--preserve-merges' with '--rebase-merges'")"
+		die "$(gettext "fatal: cannot combine '--preserve-merges' with '--rebase-merges'")"
+
+	test -n "$reschedule_failed_exec" &&
+		die "$(gettext "error: cannot combine '--preserve-merges' with '--reschedule-failed-exec'")"
 fi
 
 if test -n "$rebase_merges"
 then
 	test -n "$strategy_opts" &&
-		die "$(gettext "error: cannot combine '--rebase-merges' with '--strategy-option'")"
+		die "$(gettext "fatal: cannot combine '--rebase-merges' with '--strategy-option'")"
 	test -n "$strategy" &&
-		die "$(gettext "error: cannot combine '--rebase-merges' with '--strategy'")"
+		die "$(gettext "fatal: cannot combine '--rebase-merges' with '--strategy'")"
 fi
 
 if test -z "$rebase_root"
@@ -680,7 +688,7 @@ require_clean_work_tree "rebase" "$(gettext "Please commit or stash them.")"
 # but this should be done only when upstream and onto are the same
 # and if this is not an interactive rebase.
 mb=$(git merge-base "$onto" "$orig_head")
-if test -z "$interactive_rebase" && test "$upstream" = "$onto" &&
+if test -z "$actually_interactive" && test "$upstream" = "$onto" &&
 	test "$mb" = "$onto" && test -z "$restrict_revision" &&
 	# linear history?
 	! (git rev-list --parents "$onto".."$orig_head" | sane_grep " .* ") > /dev/null
@@ -730,6 +738,19 @@ then
 	GIT_PAGER='' git diff --stat --summary "$mb_tree" "$onto"
 fi
 
+if test -z "$actually_interactive" && test "$mb" = "$orig_head"
+then
+	say "$(eval_gettext "Fast-forwarded \$branch_name to \$onto_name.")"
+	GIT_REFLOG_ACTION="$GIT_REFLOG_ACTION: checkout $onto_name" \
+		git checkout -q "$onto^0" || die "could not detach HEAD"
+	# If the $onto is a proper descendant of the tip of the branch, then
+	# we just fast-forwarded.
+	git update-ref ORIG_HEAD $orig_head
+	move_to_original_branch
+	finish_rebase
+	exit 0
+fi
+
 test -n "$interactive_rebase" && run_specific_rebase
 
 # Detach HEAD and reset the tree
@@ -738,16 +759,6 @@ say "$(gettext "First, rewinding head to replay your work on top of it...")"
 GIT_REFLOG_ACTION="$GIT_REFLOG_ACTION: checkout $onto_name" \
 	git checkout -q "$onto^0" || die "could not detach HEAD"
 git update-ref ORIG_HEAD $orig_head
-
-# If the $onto is a proper descendant of the tip of the branch, then
-# we just fast-forwarded.
-if test "$mb" = "$orig_head"
-then
-	say "$(eval_gettext "Fast-forwarded \$branch_name to \$onto_name.")"
-	move_to_original_branch
-	finish_rebase
-	exit 0
-fi
 
 if test -n "$rebase_root"
 then

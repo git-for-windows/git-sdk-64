@@ -10,7 +10,7 @@ write_basic_state () {
 	echo "$head_name" > "$state_dir"/head-name &&
 	echo "$onto" > "$state_dir"/onto &&
 	echo "$orig_head" > "$state_dir"/orig-head &&
-	echo "$GIT_QUIET" > "$state_dir"/quiet &&
+	test t = "$GIT_QUIET" && : > "$state_dir"/quiet
 	test t = "$verbose" && : > "$state_dir"/verbose
 	test -n "$strategy" && echo "$strategy" > "$state_dir"/strategy
 	test -n "$strategy_opts" && echo "$strategy_opts" > \
@@ -19,6 +19,7 @@ write_basic_state () {
 		"$state_dir"/allow_rerere_autoupdate
 	test -n "$gpg_sign_opt" && echo "$gpg_sign_opt" > "$state_dir"/gpg_sign_opt
 	test -n "$signoff" && echo "$signoff" >"$state_dir"/signoff
+	test -n "$reschedule_failed_exec" && : > "$state_dir"/reschedule-failed-exec
 }
 
 apply_autostash () {

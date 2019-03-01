@@ -237,18 +237,18 @@
 !:mime	application/x-adrift
 
 #------------------------------------------------------------------------------
-# $File: algol68,v 1.2 2016/10/17 14:17:48 christos Exp $
+# $File: algol68,v 1.3 2018/10/19 01:04:21 christos Exp $
 # algol68:  file(1) magic for Algol 68 source
 #
 0	search/8192	(input,			Algol 68 source text
 !:mime	text/x-Algol68
-0	regex		\^PROC			Algol 68 source text
+0	regex/1024	\^PROC			Algol 68 source text
 !:mime	text/x-Algol68
-0	regex           MODE[\t\ ]		Algol 68 source text
+0	regex/1024	\bMODE[\t\ ]		Algol 68 source text
 !:mime	text/x-Algol68
-0	regex          	REF[\t\ ]		Algol 68 source text
+0	regex/1024	\bREF[\t\ ]		Algol 68 source text
 !:mime	text/x-Algol68
-0	regex          	FLEX[\t\ ]\*\\[		Algol 68 source text
+0	regex/1024	\bFLEX[\t\ ]\*\\[	Algol 68 source text
 !:mime	text/x-Algol68
 #0	regex          	[\t\ ]OD		Algol 68 source text
 #!:mime	text/x-Algol68
@@ -382,7 +382,7 @@
 >4	beshort		x			\b, %d banks
 
 #------------------------------------------------------------
-# $File: android,v 1.10 2017/03/17 21:35:28 christos Exp $
+# $File: android,v 1.11 2018/12/04 14:24:01 christos Exp $
 # Various android related magic entries
 #------------------------------------------------------------
 
@@ -414,29 +414,64 @@
 
 # Android Backup archive
 # From: Ariel Shkedi
-# File extension: .ab
-# No mime-type defined
+# Update: Joerg Jenderek 
 # URL: https://github.com/android/platform_frameworks_base/blob/\
 # 0bacfd2ba68d21a68a3df345b830bc2a1e515b5a/services/java/com/\
 # android/server/BackupManagerService.java#L2367
+# Reference: http://sourceforge.net/projects/adbextractor/
+#            android-backup-extractor/perl/backupencrypt.pl 
+# Note:	only unix line feeds "\n" found
 # After the header comes a tar file
 # If compressed, the entire tar file is compressed with JAVA deflate
 #
 # Include the version number hardcoded with the magic string to avoid
 # false positives
-0	string/b	ANDROID\ BACKUP\n1\n	Android Backup
+0	string/b	ANDROID\ BACKUP\n	Android Backup
+# maybe look for some more characteristics like linefeed '\n' or version
+#>16	string		\n			
+# No mime-type defined offically
+!:mime	application/x-google-ab
+!:ext	ab
+# on 2nd line version (often 1, 2 on kitkat 4.4.3+, 4 on 7.1.2)
+>15	string		>\0			\b, version %s
+# "1" on 3rd line means compressed
 >17	string		0\n			\b, Not-Compressed
 >17	string		1\n			\b, Compressed
+# The 4th line is encryption "none" or "AES-256"
 # any string as long as it's not the word none (which is matched below)
+>19	string		none\n			\b, Not-Encrypted
+# look for backup content after line with encryption info
+#>>19	search/7	\n
+# data part after header for not encrypted Android Backup 
+#>>>&0	ubequad		x	\b, content 0x%16.16llx...
+# look for zlib compressed by ./compress after message with 1 space at end
+#>>>&0	indirect	x	\b; contains 
+# look for tar archive block by ./archive for package name manifest
+>>288	string		ustar	\b; contains
+>>>31	use	tar-file
+# look for zip/jar archive by ./archive ./zip after message with 1 space at end
+#>>2079	search/1025/s	PK\003\004	\b; contains 
+#>>>&0	indirect	x
+>19	string		!none			
 >>19    regex/1l	\^([^n\n]|n[^o]|no[^n]|non[^e]|none.+).*	\b, Encrypted (%s)
->>19	string		none\n			\b, Not-Encrypted
 # Commented out because they don't seem useful to print
 # (but they are part of the header - the tar file comes after them):
+# The 5th line is User Password Salt (128 Hex)
+# string length too high with standard src configuration
+#>>>&1		string	>\0	\b, PASSWORD salt: "%-128.128s"
 #>>>&1		regex/1l .*	\b, Password salt: %s
+# The 6th line is Master Key Checksum Salt (128 Hex)
 #>>>>&1		regex/1l .*	\b, Master salt: %s
+# The 7th line is Number of PBDKF2 Rounds (10000)
 #>>>>>&1	regex/1l .*	\b, PBKDF2 rounds: %s
+# The 8th line is User key Initialization Vector (IV) (32 Hex)
 #>>>>>>&1	regex/1l .*	\b, IV: %s
+#>>>>>>&1	regex/1l .*	\b, IV: %s
+# The 9th line is Master IV+Key+Checksum (192 Hex)
 #>>>>>>>&1	regex/1l .*	\b, Key: %s
+# look for new line separator char after line number 9
+#>>>0x204	ubyte	0x0a	NL found
+#>>>>&1		ubequad	x	\b, Content magic %16.16llx
 
 # *.pit files by Joerg Jenderek
 # http://forum.xda-developers.com/showthread.php?p=9122369
@@ -2195,7 +2230,7 @@
 >>5	ubyte	    	x		\b.%u, little-endian
 >>0	use		\^apt-cache-be
 #------------------------------------------------------------------------------
-# $File: archive,v 1.119 2018/04/24 23:19:45 christos Exp $
+# $File: archive,v 1.124 2019/02/20 15:07:44 christos Exp $
 # archive:  file(1) magic for archive formats (see also "msdos" for self-
 #           extracting compressed archives)
 #
@@ -2453,15 +2488,35 @@
 >19	string	B			and an EB hash table
 >22	string	X			-- out of date
 
-0	search/1	-h-		Software Tools format archive text
-
 #
 # BSD/SVR2-and-later portable archive formats.
 #
+# Update: Joerg Jenderek
+# URL:		http://fileformats.archiveteam.org/wiki/AR
+# Reference:	https://www.unix.com/man-page/opensolaris/3HEAD/ar.h/
+# Note:		Mach-O universal binary in ./cafebabe is dependent
+# TODO:		unify current ar archive, MIPS archive, Debian package
+#		distinguish BSD, SVR; 32, 64 bit; HP from other 32-bit SVR;
+#		*.ar packages from *.a libraries. handle empty archive
 0	string		=!<arch>\n		current ar archive
+# print first and possibly second ar_name[16] for debugging purpose
+#>8			string	x	\b, 1st "%.16s"
+#>68			string	x	\b, 2nd "%.16s"
 !:mime	application/x-archive
+# a in most case for libraries; lib for Microsoft libraries; ar else cases
+!:ext	a/lib/ar
 >8	string		__.SYMDEF	random library
+# first member with long marked name __.SYMDEF SORTED implies BSD library
 >68	string		__.SYMDEF\ SORTED	random library
+# Reference: https://parisc.wiki.kernel.org/images-parisc/b/b2/Rad_11_0_32.pdf
+# "archive file" entry moved from ./hp
+# LST header system_id 0210h~PA-RISC 1.1,... identifies the target architecture
+# LST header a_magic 0619h~relocatable library
+>68	belong 		0x020b0619	- PA-RISC1.0 relocatable library
+>68	belong	 	0x02100619	- PA-RISC1.1 relocatable library
+>68	belong 		0x02110619	- PA-RISC1.2 relocatable library
+>68	belong 		0x02140619	- PA-RISC2.0 relocatable library
+#EOF for common ar archives
 
 #
 # "Thin" archive, as can be produced by GNU ar.
@@ -2470,6 +2525,8 @@
 >68	belong		0		no symbol entries
 >68	belong		1		%d symbol entry
 >68	belong		>1		%d symbol entries
+
+0	search/1	-h-		Software Tools format archive text
 
 # ARC archiver, from Daniel Quinlan (quinlan@yggdrasil.com)
 #
@@ -3216,6 +3273,7 @@
 0	string		PK\005\006	Zip archive data (empty)
 !:mime application/zip
 !:ext zip/cbz
+!:strength +1
 0	string		PK\003\004
 
 # Specialised zip formats which start with a member named 'mimetype'
@@ -3502,6 +3560,16 @@
 >5	byte	x		\b.%d
 >6	belong	x		(%d bytes)
 
+# From:		Joerg Jenderek
+# URL:		https://help.foxitsoftware.com/kb/install-fzip-file.php
+# reference:	http://mark0.net/download/triddefs_xml.7z/
+#		defs/f/fzip.trid.xml
+# Note: unknown compression; No "PK" zip magic; normally in directory like
+#	"%APPDATA%\Foxit Software\Addon\Foxit Reader\Install"
+0	ubequad	0x2506781901010000	Foxit add-on/update
+!:mime	application/x-fzip
+!:ext	fzip
+
 # From: "Robert Dale" <robdale@gmail.com>
 0	belong	123		dar archive,
 >4	belong	x		label "%.8x
@@ -3623,6 +3691,38 @@
 
 # LyNX archive
 56	string	USE\040LYNX\040TO\040DISSOLVE\040THIS\040FILE	 LyNX archive
+
+# From: Joerg Jenderek
+# URL: http://www.acronis.com/
+# Reference: http://en.wikipedia.org/wiki/TIB_(file_format)
+# Note: only tested with True Image 2013 Build 5962 and 2019 Build 14110
+0	ubequad		0xce24b9a220000000	Acronis True Image backup
+!:mime	application/x-acronis-tib
+!:ext	tib
+# 01000000
+#>20	ubelong		x			\b, at 20 0x%x
+# 20000000
+#>28	ubelong		x			\b, at 28 0x%x
+# strings like "Generic- SD/MMC 1.00" "Unknown Disk" "Msft Virtual Disk 1.0"
+# ???
+# strings like "\Device\0000011e" "\Device\0000015a"
+#>0	search/0x6852300/cs	\\Device\\
+#>>&-1	pstring		x			\b, %s
+# "\Device\HarddiskVolume30" "\Device\HarddiskVolume39"
+#>>>&1	search/180/cs	\\Device\\
+#>>>>&-1	pstring		x			\b, %s
+#>>>>>&0	search/29/cs	\0\0\xc8\0
+# disk label
+#>>>>>>&10	lestring16	x		\b, disk label %11.11s
+#>>>>>>&9	plestring16	x		\b, disk label "%11.11s"
+#>>>>>>&10	ubequad	x			%16.16llx
+
+
+# Gentoo XPAK binary package
+# by Michal Gorny <mgorny@gentoo.org>
+# https://gitweb.gentoo.org/proj/portage.git/tree/man/xpak.5
+-4	string	STOP
+>-16	string	XPAKSTOP	Gentoo binary package (XPAK)
 #------------------------------------------------------------------------------
 # $File: assembler,v 1.6 2013/12/11 14:14:20 christos Exp $
 # make:  file(1) magic for assembler source
@@ -3702,7 +3802,7 @@
 >364	string		>\0		of '%s'
 
 #------------------------------------------------------------------------------
-# $File: audio,v 1.93 2018/10/18 23:35:42 christos Exp $
+# $File: audio,v 1.96 2019/01/16 19:35:21 christos Exp $
 # audio:  file(1) magic for sound formats (see also "iff")
 #
 # Jan Nicolai Langfeldt (janl@ifi.uio.no), Dan Quinlan (quinlan@yggdrasil.com),
@@ -4243,6 +4343,10 @@
 
 # adlib sound files
 # From: Alex Myczko <alex@aiei.ch>
+
+# https://github.com/rerrahkr/BambooTracker
+0	string		BambooTrackerMod	BambooTracker
+
 0    	string		RAWADATA	RdosPlay RAW
 
 1068	string		RoR		AMUSIC Adlib Tracker
@@ -4446,7 +4550,7 @@
 # Summary:	Garmin Voice Processing Module (WAVE audios)
 # From:		Joerg Jenderek
 # URL:		http://www.garmin.com/
-# Reference:	http://turboccc.wikispaces.com/share/view/28622555
+# Reference:	http://www.poi-factory.com/node/19580
 # NOTE:		there exist 2 other Garmin VPM formats
 0		string	AUDIMG
 # skip text files starting with string "AUDIMG"
@@ -4470,16 +4574,35 @@
 # if you select a language like german on your garmin device
 # you can only select voice modules with corresponding language byte ID like 1
 >>18		ubyte		x	\b, language ID %d
+# structure for phrases/sentences?
+# number of voice sample in the 1st phrase?
+#>>19		uleshort		x	\b, 0x%x samples
+#>>>21		uleshort		>0	\b, at 0x%4.4x
+#>>>(21.s)	ubequad			x	0x%llx
+# 2nd phrase?
+#>>23		uleshort		x	\b, 0x%x samples
+#>>>25		uleshort		>0	\b, at 0x%4.4x
+#>>>(25.s)	ubequad			x	0x%llx
 # pointer to 1st audio WAV sample
 >>16		uleshort	>0
->>>(16.s)	ulelong		>0	\b, at offset 0x%x
+>>>(16.s)	ulelong		>0	\b, at 0x%x
 # WAV length
->>>>(16.s+4)	ulelong		>0	%d Bytes
+# 1 space char after "bytes" to get phrase "bytes RIFF"
+>>>>(16.s+4)	ulelong		>0	%u bytes 
 # look for magic
 >>>>>(&-8.l)	string		RIFF
 # determine type by ./riff
->>>>>>&-4	indirect	x	\b
+>>>>>>&-4	indirect	x
 # 2 - ~ 131 WAV samples following same way
+#
+# Summary:	encrypted Garmin Voice Processing Module
+# From:		Joerg Jenderek
+# URL:		https://www.garmin.com/us/products/ontheroad/voicestudio
+# NOTE:		Encrypted variant used in voices like DrNightmare, Elfred, Yeti.
+#		There exist 2 other Garmin VPM formats
+0	ubequad		0xa141190fecc8ced6	Garmin Voice Processing Module (encrypted)
+!:mime	audio/x-vpm-garmin
+!:ext	vpm
 
 # From Martin Mueller Skarbiniks Pedersen
 0		string		GDM
@@ -5826,6 +5949,36 @@
 >54	byte		4		-Cscb
 4	string		pipe		CLIPPER instruction trace
 4	string		prof		CLIPPER instruction profile
+#------------------------------------------------------------------------------
+# file:  file(1) magic for Clojure
+# URL:  https://clojure.org/
+# From: Jason Felice <jason.m.felice@gmail.com>
+
+0	string/w	#!\ /usr/bin/clj	Clojure script text executable
+!:mime	text/x-clojure
+0	string/w	#!\ /usr/local/bin/clj	Clojure script text executable
+!:mime	text/x-clojure
+0	string/w	#!\ /usr/bin/clojure	Clojure script text executable
+!:mime	text/x-clojure
+0	string/w	#!\ /usr/local/bin/clojure	Clojure script text executable
+!:mime	text/x-clojure
+0	string/W	#!/usr/bin/env\ clj	Clojure script text executable
+!:mime	text/x-clojure
+0	string/W	#!/usr/bin/env\ clojure	Clojure script text executable
+!:mime	text/x-clojure
+0	string/W	#!\ /usr/bin/env\ clj	Clojure script text executable
+!:mime	text/x-clojure
+0	string/W	#!\ /usr/bin/env\ clojure	Clojure script text executable
+!:mime	text/x-clojure
+
+0	regex	\^\\\(ns[[:space:]]+[a-z]	Clojure module source text
+!:mime	text/x-clojure
+
+0	regex	\^\\\(ns[[:space:]]+\\\^\\{:	Clojure module source text
+!:mime	text/x-clojure
+
+0	regex	\^\\\(defn-?[[:space:]]	Clojure module source text
+!:mime	text/x-clojure
 
 #------------------------------------------------------------------------------
 # $File: coff,v 1.3 2018/08/01 10:34:03 christos Exp $
@@ -8789,7 +8942,7 @@
 >4	lelong	>2		Universal EFI binary with %d architectures
 
 #------------------------------------------------------------------------------
-# $File: elf,v 1.74 2018/06/23 16:39:53 christos Exp $
+# $File: elf,v 1.77 2019/01/16 19:33:35 christos Exp $
 # elf:  file(1) magic for ELF executables
 #
 # We have to check the byte order flag to see what byte order all the
@@ -8827,6 +8980,8 @@
 >0	lelong&0x3		2		relaxed memory ordering,
 
 0	name		elf-pa-risc
+>2	leshort		0x0208		1.0
+>2	leshort		0x0210		1.1
 >2	leshort		0x0214		2.0
 >0	leshort		&0x0008		(LP64)
 
@@ -9052,6 +9207,8 @@
 >18	leshort		217		iCelero CoolEngine,
 >18	leshort		218		Nanoradio Optimized RISC,
 >18	leshort		243		UCB RISC-V,
+>18	leshort		247		eBPF,
+>18	leshort		251             NEC VE,
 >18	leshort		0x1057		AVR (unofficial),
 >18	leshort		0x1059		MSP430 (unofficial),
 >18	leshort		0x1223		Adapteva Epiphany (unofficial),
@@ -9222,6 +9379,63 @@
 
 0	bequad	0x0000000000ABCDEF	Erlang DETS file
 
+# $File: espressif,v 1.1 2018/11/20 18:57:17 christos Exp $
+# configuration dump of Tasmota firmware for ESP8266 based devices by Espressif
+# URL: https://github.com/arendst/Sonoff-Tasmota/
+# Reference: https://codeload.github.com/arendst/Sonoff-Tasmota/zip/release-6.2/
+# Sonoff-Tasmota-release-6.2.zip/Sonoff-Tasmota-release-6.2/sonoff/settings.h 
+# From: Joerg Jenderek
+#
+# cfg_holder=4617=0x1209
+0		uleshort	4617
+# remainig settings normally 0x5A+offset XORed; free_1D5[20] empty since 5.12.0e
+>0x1D5		ubequad		0x2f30313233343536	configuration of Tasmota firmware (ESP8266)
+!:mime	application/x-tasmota-dmp
+!:ext	dmp
+# version like 6.2.1.0 ~ 0x06020100 XORed to 0x63666262
+>>11		ubyte^0x65	x			\b, version %u
+>>10		ubyte^0x64	x			\b.%u
+>>9		ubyte^0x63	x			\b.%u
+>>8		ubyte^0x62	x			\b.%u
+#>8		ubelong		x			(0x%x)
+# hostname[33] XORed
+>>0x165		ubyte^0x1BF	x			\b, hostname %c
+>>0x166		ubyte^0x1C0	>037			\b%c
+>>0x167		ubyte^0x1C1	>037			\b%c
+>>0x168		ubyte^0x1C2	>037			\b%c
+>>0x169		ubyte^0x1C3	>037			\b%c
+>>0x16A		ubyte^0x1C4	>037			\b%c
+>>0x16B		ubyte^0x1C5	>037			\b%c
+>>0x16C		ubyte^0x1C6	>037			\b%c
+>>0x16D		ubyte^0x1C7	>037			\b%c
+>>0x16E		ubyte^0x1C8	>037			\b%c
+>>0x16F		ubyte^0x1C9	>037			\b%c
+>>0x170		ubyte^0x1CA	>037			\b%c
+>>0x171		ubyte^0x1CB	>037			\b%c
+>>0x172		ubyte^0x1CC 	>037			\b%c
+>>0x173		ubyte^0x1CD	>037			\b%c
+>>0x174		ubyte^0x1CE	>037			\b%c
+>>0x175		ubyte^0x1CF	>037			\b%c
+>>0x176		ubyte^0x1D0	>037			\b%c
+>>0x177		ubyte^0x1D1	>037			\b%c
+>>0x178		ubyte^0x1D2	>037			\b%c
+>>0x179		ubyte^0x1D3	>037			\b%c
+>>0x17A		ubyte^0x1D4	>037			\b%c
+>>0x17B		ubyte^0x1D5	>037			\b%c
+>>0x17C		ubyte^0x1D6	>037			\b%c
+>>0x17D		ubyte^0x1D7	>037			\b%c
+>>0x17E		ubyte^0x1D8	>037			\b%c
+>>0x17F		ubyte^0x1D9	>037			\b%c
+>>0x180		ubyte^0x1DA	>037			\b%c
+>>0x181		ubyte^0x1DB	>037			\b%c
+>>0x182		ubyte^0x1DC	>037			\b%c
+>>0x183		ubyte^0x1DD	>037			\b%c
+>>0x184		ubyte^0x1DE	>037			\b%c
+>>0x185		ubyte^0x1DF	>037			\b%c
+#>>0x165		string		x			(%.33s)
+
+
+
 #------------------------------------------------------------------------------
 # $File: esri,v 1.4 2009/09/19 16:28:09 christos Exp $
 # ESRI Shapefile format (.shp .shx .dbf=DBaseIII)
@@ -9259,7 +9473,7 @@
 0       string          FCS3.0          Flow Cytometry Standard (FCS) data, version 3.0
 
 #------------------------------------------------------------------------------
-# $File: filesystems,v 1.124 2018/01/12 12:35:30 christos Exp $
+# $File: filesystems,v 1.125 2018/12/10 21:06:53 christos Exp $
 # filesystems:  file(1) magic for different filesystems
 #
 0	name	partid
@@ -11256,10 +11470,13 @@
 # Other fields are used to determine what type of CISO this is:
 # - 0x04 == 0x00200000: GameCube/Wii CISO (block_size)
 # - 0x10 == 0x00000800: PSP CISO (ISO-9660 sector size)
+# - 0x10 == 0x00004000: For >2GB files using maxcso...
+# 			https://github.com/unknownbrackets/maxcso/issues/26
 # - None of the above: Compact ISO.
 >4	lelong	!0
 >>4	lelong	!0x200000
->>>0x10	lelong	!0x800		Compressed ISO CD image
+>>>16	lelong	!0x800
+>>>>16	lelong	!0x4000		Compressed ISO CD image
 
 # cramfs filesystem - russell@coker.com.au
 0       lelong    0x28cd3d45      Linux Compressed ROM File System data, little endian
@@ -11795,7 +12012,7 @@
 >>4	string	=d	\b, RGBA, interlaced
 
 #------------------------------------------------------------------------------
-# $File: fonts,v 1.38 2017/11/14 15:48:36 christos Exp $
+# $File: fonts,v 1.39 2018/12/10 20:58:34 christos Exp $
 # fonts:  file(1) magic for font data
 #
 0	search/1	FONT		ASCII vfont text
@@ -11962,16 +12179,14 @@
 >>12	regex/4l	\^[A-Za-z][A-Za-z][A-Za-z/][A-Za-z2\ ]	
 #>>>0	ubelong	x	\b, sfnt version 0x%x
 >>>0	ubelong	!0x4f54544f	TrueType
-!:mime	application/font-sfnt
-#!:mime	font/ttf
+!:mime	font/sfnt
 !:apple	????tfil
 # .ttf for TrueType font
 # EUDC.tte created by privat character editor %WINDIR%\system32\eudcedit.exe
 !:ext	ttf/tte
 # sfnt version 4F54544Fh~OTTO
 >>>0	ubelong	=0x4f54544f	OpenType
-!:mime	application/font-sfnt
-#!:mime	font/otf
+!:mime	font/otf
 !:apple	????OTTO
 !:ext	otf
 >>>0	ubelong	x		Font data
@@ -12060,17 +12275,16 @@
 >4	ubyte		0		
 # sfnt version often 0x00010000 of 1st table is TrueType
 >>(12.L)	ubelong	!0x4f54544f	TrueType
-#!:mime	font/ttf
+!:mime	font/ttf
 !:apple	????tfil
 !:ext	ttc
 # sfnt version 4F54544Fh~OTTO of 1st table is OpenType font 
 >>(12.L)	ubelong	=0x4f54544f	OpenType
-#!:mime	font/otf
+!:mime	font/otf
 !:apple	????OTTO
 # no example found for otc
 !:ext	ttc/otc
 >>4	ubyte		x		font collection data
-!:mime	application/font-sfnt
 #!:mime	font/collection
 # TCC version
 >>4	belong		0x00010000	\b, 1.0
@@ -12331,7 +12545,7 @@
 >>11	byte	x		%d chars high
 
 #------------------------------------------------------------------------------
-# $File: fsav,v 1.15 2018/07/16 12:30:41 christos Exp $
+# $File: fsav,v 1.18 2018/12/10 20:57:41 christos Exp $
 # fsav:  file(1) magic for datafellows fsav virus definition files
 # Anthon van der Neut (anthon@mnt.org)
 
@@ -12371,25 +12585,64 @@
 #>>>>>>13	ubyte	x		\b%02x bytes
 
 # Joerg Jenderek: joerg dot jenderek at web dot de
-# http://www.clamav.net/doc/latest/html/node45.html
-# .cvd files start with a 512 bytes colon separated header
+# clamav-0.100.2\docs\html\node60.html 
+# https://github.com/vrtadmin/clamav-faq/raw/master/manual/clamdoc.pdf
+# ClamAV virus database files start with a 512 bytes colon separated header
 # ClamAV-VDB:buildDate:version:signaturesNumbers:functionalityLevelRequired:MD5:Signature:builder:buildTime
-# + gzipped tarball files
-0	string		ClamAV-VDB:
->11	string		>\0		Clam AntiVirus database %-.23s
->>34	string		:
->>>35		string		!:	\b, version
->>>>35		string		x 	\b %-.1s
->>>>>36		string		!:
->>>>>>36	string		x 	\b%-.1s
->>>>>>>37	string		!:
->>>>>>>>37	string		x 	\b%-.1s
->>>>>>>>>38	string		!:
->>>>>>>>>>38	string		x 	\b%-.1s
->>>>>>>>>>>39	string		!:
->>>>>>>>>>>>39	string		x 	\b%-.1s
->512	string		\037\213	\b, gzipped
->769	string		ustar\0		\b, tarred
+# + gzipped (optional) tarball files
+# output can often be verified by `sigtool --info=FILE`
+0	string		ClamAV-VDB:	Clam AntiVirus
+# padding spaces implies database
+>511	ubyte		=0x20		database
+!:mime	application/x-clamav-database
+# empty build time
+>>10	string		=::		(unsigned)
+# sigtool(1) man page
+!:ext	cud
+# display some text to avoid error like:
+# Magdir/fsav, 78: Warning: Current entry does not yet have a description for adding a EXTENSION type
+# file: could not find any valid magic files! (No error)
+>>10	default		x		(with buildtime)
+#>>10	default		x
+# clamtmp is used for temporily database like update process
+# for pure tar database only cld extension found
+!:ext	cld/cvd/clamtmp/cud
+>511	default		x		file
+!:mime	application/x-clamav
+!:ext	info
+>11	string		>\0
+# buildDate empty or like "22 Mar 2017 12-57 -0400"; verified by `sigtool -i FILE`
+>>11	regex		\^[^:]{0,23}	\b, %s
+# version like 25170
+>>>&1	regex		\^[^:]{1,6}	\b, version %s
+# signaturesNumbers like 4566249
+>>>>&1	regex		\^[^:]{1,10}	\b, %s signatures
+# functionalityLevelRequired like 60
+>>>>>&1	regex		\^[^:]{1,4}	\b, level %s
+# X for nothing or MD5
+#>>>>>>&1	regex	\^[^:]{1,32}	\b, MD5 "%s"
+>>>>>>&1	regex	\^[^:]{1,32}
+# X for nothing or digital signature starting like AIzk/LYbX
+#>>>>>>>&1	regex	\^[^:]{1,255}	\b, signature "%s"
+>>>>>>>&1	regex	\^[^:]{1,255}
+# builder like neo
+>>>>>>>>&1	regex	\^[^:]{1,32}	\b, builder %s
+# buildTime like 1506611558
+#>>>>>>>>>&1	regex	\^[^:]{1,10}	\b, %s
+>>>>>>>>>&1	regex	\^[^:]{1,10}	
+# padding with spaces
+#>>>>>>>>>>&1	ubequad	x		\b, padding 0x%16.16llx
+>510	ubyte		=0x20
+# inspect real database content
+#>>512	ubeshort	x		\b, database MAGIC 0x%x
+# ./archive handle pure tar archives
+>>1012	quad		=0		\b, with
+>>>512	use		tar-file
+# not pure tar
+>>1012	quad		!0
+# one space at the end of text and then handles gziped archives by ./compress
+>>>512	string		\037\213	\b, with 
+>>>>512	indirect	x
 
 # Type: Grisoft AVG AntiVirus
 # From: David Newgas <david@newgas.net>
@@ -12397,6 +12650,27 @@
 
 0	string	X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR
 >33	string	-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*	EICAR virus test files
+
+# From: Joerg Jenderek
+# URL: http://www.avira.com/
+# Note: found in directory %ProgramData%\Avira\Antivirus\INFECTED (Windows)
+# tested with version 15.0.43.23 at November 2019
+0	string		AntiVir\ Qua	Avira AntiVir quarantined
+!:mime	application/x-avira-qua
+#!:mime	application/octet-stream
+!:ext	qua
+>156	string		SUSPICIOUS_FILE
+# file path of suspicious file
+>>220	lestring16	x		%s
+>156	string		!SUSPICIOUS_FILE
+# file path of virus file
+>>228	lestring16	x		%s
+# quarantined date
+>60	ldate		x		at %s
+# virus/danger name
+>156	string		!SUSPICIOUS_FILE
+>>156	string		x		\b, category "%s"
+
 
 #------------------------------------------------------------------------------
 # $File: fusecompress,v 1.2 2011/08/08 09:05:55 christos Exp $
@@ -13606,7 +13880,7 @@
 
 
 #------------------------------------------------------------------------------
-# $File: hp,v 1.24 2014/04/30 21:41:02 christos Exp $
+# $File: hp,v 1.25 2019/01/13 00:32:38 christos Exp $
 # hp:  file(1) magic for Hewlett Packard machines (see also "printer")
 #
 # XXX - somebody should figure out whether any byte order needs to be
@@ -13725,12 +13999,6 @@
 
 0	belong 		0x020b010d	PA-RISC1.0 dynamic load library
 >96	belong		>0		- not stripped
-
-0	belong		0x213c6172	archive file
->68	belong 		0x020b0619	- PA-RISC1.0 relocatable library
->68	belong	 	0x02100619	- PA-RISC1.1 relocatable library
->68	belong 		0x02110619	- PA-RISC1.2 relocatable library
->68	belong 		0x02140619	- PA-RISC2.0 relocatable library
 
 #### 500
 0	long		0x02080106	HP s500 relocatable executable
@@ -14437,7 +14705,7 @@
 !:mime	application/x-blorb
 
 #------------------------------------------------------------------------------
-# $File: images,v 1.152 2018/10/01 19:10:56 christos Exp $
+# $File: images,v 1.154 2019/02/09 17:56:01 christos Exp $
 # images:  file(1) magic for image formats (see also "iff", and "c-lang" for
 # XPM bitmaps)
 #
@@ -14612,42 +14880,42 @@
 >0	regex/4		P1[\040\t\f\r\n]
 >>0	use		netpbm
 >>0	string		x	\b, bitmap
-!:strength + 45
+!:strength + 65
 !:mime	image/x-portable-bitmap
 
 0	search/1	P2
 >0	regex/4		P2[\040\t\f\r\n]
 >>0	use		netpbm
 >>0	string		x	\b, greymap
-!:strength + 45
+!:strength + 65
 !:mime	image/x-portable-greymap
 
 0	search/1	P3
 >0	regex/4		P3[\040\t\f\r\n]
 >>0	use		netpbm
 >>0	string		x	\b, pixmap
-!:strength + 45
+!:strength + 65
 !:mime	image/x-portable-pixmap
 
 0	string		P4
 >0	regex/4		P4[\040\t\f\r\n]
 >>0	use		netpbm
 >>0	string		x	\b, rawbits, bitmap
-!:strength + 45
+!:strength + 65
 !:mime	image/x-portable-bitmap
 
 0	string		P5
 >0	regex/4		P5[\040\t\f\r\n]
 >>0	use		netpbm
 >>0	string		x	\b, rawbits, greymap
-!:strength + 45
+!:strength + 65
 !:mime	image/x-portable-greymap
 
 0	string		P6
 >0	regex/4		P6[\040\t\f\r\n]
 >>0	use		netpbm
 >>0	string		x	\b, rawbits, pixmap
-!:strength + 45
+!:strength + 65
 !:mime	image/x-portable-pixmap
 
 0	string		P7		Netpbm PAM image file
@@ -16247,6 +16515,14 @@
 >>>>>37		string	layers
 >>>>>>43	lelong	x	reMarkable tablet notebook lines, 1404 x 1872, %x page(s)
 
+# newer per-page files for the reMarkable
+0		string	reMarkable
+>11		string	.lines
+>>18		string	file,
+>>>24		string	version=
+>>>>32		byte	x	reMarkable tablet page (v%c), 1404 x 1872,
+>>>>>43		lelong	x	%d layer(s)
+
 #------------------------------------------------------------------------------
 # $File: inform,v 1.5 2009/09/19 16:28:09 christos Exp $
 # inform:  file(1) magic for Inform interactive fiction language
@@ -16423,7 +16699,7 @@
 #>36	lelong	x	\b, block size %u
 
 #------------------------------------------------------------
-# $File: java,v 1.19 2018/08/11 11:32:15 christos Exp $
+# $File: java,v 1.21 2019/02/18 17:58:50 christos Exp $
 # Java ByteCode and Mach-O binaries (e.g., Mac OS X) use the
 # same magic number, 0xcafebabe, so they are both handled
 # in the entry called "cafebabe".
@@ -16448,6 +16724,24 @@
 >0x12	byte		0
 >>0x11	ubyte-0x31	<2      Java HPROF dump,
 >>>0x17	beqdate/1000	x       created %s
+
+# Java jmod module
+# See https://hg.openjdk.java.net/jdk9/jdk9/jdk/file/tip/src/java.base/share/classes/jdk/internal/jmod/JmodFile.java
+# Grr. 2 byte magic "JM", really? In 2019?
+0	belong		0x4a4d0100	Java jmod module version 1.0
+!:mime	application/x-java-jmod
+
+# Java jlinked image
+# See https://hg.openjdk.java.net/jdk9/jdk9/jdk/file/tip/src/java.base/share/native/libjimage/imageFile.hpp
+0	belong	0xcafedada	Java module image (big endian)
+>4	beshort	>0x00	\b, version %d
+>6	beshort	x	\b.%d
+!:mime	application/x-java-image
+
+0	lelong	0xcafedada	Java module image (little endian)
+>6	leshort	>0x00	\b, version %d
+>4	leshort	x	\b.%d
+!:mime	application/x-java-image
 
 #------------------------------------------------------------------------------
 # $File: javascript,v 1.1 2012/06/16 13:30:36 christos Exp $
@@ -18278,7 +18572,7 @@
 
 
 #------------------------------------------------------------------------------
-# $File: map,v 1.4 2015/08/10 05:18:27 christos Exp $
+# $File: map,v 1.5 2018/12/28 00:22:34 christos Exp $
 # map:  file(1) magic for Map data
 #
 
@@ -18302,6 +18596,157 @@
 >>53	byte	4		\b (Activity)
 >>53	byte	8		\b (Elevations)
 >>53	byte	10		\b (Totals)
+
+# Summary: Garmin map
+# From:	Joerg Jenderek
+# URL: https://en.wikipedia.org/wiki/Garmin_.img
+# Reference: https://wiki.openstreetmap.org/wiki/OSM_Map_On_Garmin/IMG_File_Format
+# sourceforge.net/projects/garmin-img/files/IMG%20File%20Format/1.0/imgformat-1.0.pdf
+# GRR: similar to MBR boot sector handled by ./filesystems
+0x1FE	leshort		=0xAA55
+# look for valid map signature
+>0x13	string		=IMG\0
+>>0	use		garmin-map
+0	name				garmin-map
+>0	ubyte		x		Garmin
+!:mime	application/x-garmin-map
+# If non-zero, every byte of the entire .img file is to be XORed with this value
+>0	ubyte		!0		\b, 0x%x XORed
+# goto block before FAT
+>(0x40.b*512)	ubyte	x
+# 1st fat name "DLLINFO TXT" only found for vpm
+>>&512 		string	=DLLINFO\ TXT 	map (Voice Processing)
+# there exist 2 other Garmin VPM formats; see ./audio
+!:ext	vpm
+# Deutsch__Yannick_D4481-00_0210.vpm
+#>>>512	search/0x0116da60/s	RIFF	\b; with
+# determine type voice type by ./riff
+#>>>>&0	indirect	x	\b
+>>&512 		string	!DLLINFO\ TXT 	map
+!:ext	img
+# 9 zeros
+>1 	ubelong		!0 		\b, zeroes 0x%x
+# Map's version major
+>8	ubyte		x		v%u
+# Map's version minor
+>9	ubyte		x		\b.%.2u
+# Map description[20], 0x20 padded
+>0x49	string		x		%.20s
+# Map name, continued (0x20 padded, \0 terminated)
+>0x65	string		>\ 		\b%.31s
+# Update year (+1900 for val >= 0x63, +2000 for val <= 0x62)
+>0xB	ubyte		x		\b, updated
+>>0xB	ubyte		>0x62
+>>>0xB	ubyte-100	x		20%.2u
+>>0xB	ubyte		<0x63
+>>>0xB	ubyte		x		20%.2u
+# Update month (0-11)
+>0xA	ubyte		x		\b-%.2u
+# All zeroes
+>0xc 	uleshort	!0 		\b, zeroes 0x%x
+# Mapsource flag, 1 - file created by Mapsource, 0 - Garmin map visible in Basecamp and Homeport 
+#>0xE	ubyte		!0		\b, Mapsource flag 0x%x
+>0xE	ubyte		1		\b, Mapsource
+# Checksum, sum of all bytes modulo 256 should be 0
+#>0xF	ubyte		x		\b, Checksum 0x%x
+# Signature: DSKIMG 0x00 or DSDIMG 0x00 for demo map 
+>0x10	string		!DSKIMG		\b, signature "%.7s"
+# Creation year
+>0x39 	uleshort	x 		\b, created %u
+# Creation month (0-11)
+>0x3b	ubyte		x		\b-%.2u
+# Creation day (1-31)
+>0x3c	ubyte		x		\b-%.2u
+# Creation hour (0-23)
+>0x3d	ubyte		x		%u
+# Creation minute (0-59)
+>0x3e	ubyte		x		\b:%.2u
+# Creation second (0-59)
+>0x3f	ubyte		x		\b:%.2u
+# Map file identifier like GARMIN\0
+>0x41	string		!GARMIN		\b, id "%.7s"
+# Block size exponent, E1; appears to always be 0x09; minimum block size 512 bytes
+>0x61	ubyte		!0x09		\b, E1=%u
+# Block size exponent, E2 ; file blocksize=2**(E1+E2)
+>>0x62	ubyte		x		\b, E2=%u
+>0x61	ubyte		=0x09		\b, blocksize
+>>0x62	ubyte		0		512
+>>0x62	ubyte		1		1024
+>>0x62	ubyte		2		2048
+>>0x62	ubyte		3		4096
+>>0x62	ubyte		4		8192
+>>0x62	ubyte		5		16384
+>>0x62	default		x
+>>>0x62	ubyte		x		E2=%u
+# MBR signature
+>0x1FE	leshort		!0xAA55		\b, invalid MBR
+# 512 zeros
+>0x200 	uquad		!0		\b, zeroes 0x%llx
+# First sub-file offset (absolute); sometimes NO/UNKNOWN sub file!
+>0x40C	ulelong		>0		\b, at 0x%x
+# sub-file Header length
+#>>(0x40C.l)	uleshort	x	\b, header len 0x%x
+>>(0x40C.l)	uleshort	x	%u bytes
+# sub-file Type[10] like "GARMIN RGN" "GARMIN TRE", "GARMIN TYP", etc.
+>>(0x40C.l+2)	ubyte	>0x1F
+>>>(0x40C.l+2)	ubyte	<0xFF
+>>>>(0x40C.l+2)	string	x		"%.10s"
+# 0x00 for most maps, 0x80 for locked maps (City Nav, City Select, etc.) 
+>>>>(0x40C.l+13)	ubyte	>0		\b, locked 0x%x
+# Block sequence numbers like 0000 0100 0200 ... FFFF
+# >0x420	ubequad		>0	\b, seq. 0x%16.16llx
+# >>0x428	ubequad		>0	\b%16.16llx
+# >>>0x430	ubequad	>0	\b%16.16llx
+# >>>>0x438	ubequad	>0	\b%16.16llx
+# >>>>>0x440	ubequad	>0	\b%16.16llx
+# >>>>>>0x448	ubequad	>0	\b%16.16llx
+# >>>>>>>0x450	ubequad	>0	\b%16.16llx
+# >>>>>>>>0x458	ubequad	>0	\b%16.16llx
+# >>>>>>>>>0x460	ubequad	>0	\b%16.16llx
+# >>>>>>>>>>0x468	ubequad	>0	\b%16.16llx
+# >>>>>>>>>>>0x470	ubequad	>0	\b%16.16llx
+# >>>>>>>>>>>>0x478	ubequad	>0	\b%16.16llx
+# >>>>>>>>>>>>>0x480	ubequad	>0	\b%16.16llx
+# >>>>>>>>>>>>>>0x488	ubequad	>0	\b%16.16llx
+# >>>>>>>>>>>>>>>0x490	ubequad	>0	\b%16.16llx
+# >>>>>>>>>>>>>>>>0x498	ubequad	>0	\b%16.16llx
+# >>>>>>>>>>>>>>>>>0x4A0	ubequad	>0	\b%16.16llx
+# >>>>>>>>>>>>>>>>>>0x4A8	ubequad	>0	\b%16.16llx
+# look for end of FAT
+#>>0x420	search/512/s	\xff\xff	FAT END
+# Physical block number of FAT header
+#>0x40	ubyte		x		\b, FAT at phy. block %u
+>0x40	ubyte		x
+>>(0x40.b*512)	ubyte	x
+# 1st FAT block
+>>>&511 	use	garmin-fat
+# 2nd FAT block
+>>>&1023 	use	garmin-fat
+# 3th FAT block
+>>>&1535 	use	garmin-fat
+# 4th FAT block
+>>>&2047 	use	garmin-fat
+# ... xth FAT block
+#
+# 314 zeros but not in vpm and also gmaptz.img
+>0x84 	uquad		!0		\b, at 0x84 0x%llx
+# display FileAllocationTable block entry in garmin map
+0	name				garmin-fat
+>0	ubyte		x		\b;
+# sub file part; 0x0003 seems to be garbage
+>0x10	uleshort	!0		next 0x%4.4x
+>0x10	uleshort	=0
+# fat flag 0~dummy block 1~true sub file
+>>0	ubyte		!1		flag %u 
+>>0	ubyte		=1
+# sub-file name like MAKEGMAP 12345678
+>>>0x1	string		x		%.8s
+# sub-file typ like RGN TRE MDR LBL
+>>>0x9	string		x		\b.%.3s
+# size of sub file
+>>>0xC	ulelong		x		\b, %u bytes
+# 32-bit block sequence numbers
+#>>>0x20	ubequad		x		\b, seq. 0x%16.16llx
 
 # TOM TOM GPS watches ttbin files:
 # http://github.com/ryanbinns/ttwatch/tree/master/ttbin
@@ -19063,14 +19508,29 @@
 >8      beshort         x               (version %04x)
 
 #------------------------------------------------------------------------------
-# $File: mozilla,v 1.8 2018/01/17 12:08:36 christos Exp $
+# $File: mozilla,v 1.9 2018/11/26 16:24:40 christos Exp $
 # mozilla:  file(1) magic for Mozilla XUL fastload files
 # (XUL.mfasl and XPC.mfasl)
 # URL:	http://www.mozilla.org/
 # From:	Josh Triplett <josh@freedesktop.org>
 
 0	string	XPCOM\nMozFASL\r\n\x1A		Mozilla XUL fastload data
+# Probably the next magic line contains misspelled "mozLz40\0"
 0	string	mozLz4a				Mozilla lz4 compressed bookmark data
+# From: Joerg Jenderek
+# URL: https://lz4.github.io/lz4/
+# Reference: https://github.com/avih/dejsonlz4/archive/master.zip/
+# dejsonlz4-master\src\dejsonlz4.c 
+# Note: mostly JSON compressed with a non-standard LZ4 header
+# can be unpacked by dejsonlz4 but not lz4 programm.
+0	string	mozLz40\0			Mozilla lz4 compressed data
+!:mime	application/x-lz4+json
+# mozlz4 extension seems to be used for search/store, while jsonlz4 for bookmarks
+!:ext	jsonlz4/mozlz4
+# decomp_size
+>8	ulelong	x				\b, originally %u bytes
+# lz4 data
+#>12	ubequad	x				\b, lz4 data 0x%16.16llx
 
 # From: Joerg Jenderek
 # URL: https://en.wikipedia.org/wiki/Firefox_4
@@ -19085,7 +19545,7 @@
 #>4	use	zip-dir-entry
 
 #------------------------------------------------------------------------------
-# $File: msdos,v 1.125 2018/07/25 06:05:34 christos Exp $
+# $File: msdos,v 1.126 2018/11/11 01:58:19 christos Exp $
 # msdos:  file(1) magic for MS-DOS files
 #
 
@@ -20009,8 +20469,9 @@
 # skip remaining worksheets, because valid only for DIB image (40) or PNG image (\x89PNG)
 >>(18.l)	ulelong		x		MS Windows
 >>>0		ubelong		0x00000100	icon resource
-#!:mime		image/vnd.microsoft.icon
-!:mime		image/x-icon
+# https://www.iana.org/assignments/media-types/image/vnd.microsoft.icon
+!:mime		image/vnd.microsoft.icon
+#!:mime		image/x-icon
 !:ext		ico
 >>>>4 		uleshort	x		- %d icon
 # plural s
@@ -20056,7 +20517,8 @@
 #>12		ulelong		x		\b, offset 0x%x
 # PNG header (\x89PNG)
 >(12.l)		ubelong		=0x89504e47
->>&-4		indirect	x	\b with
+# 1 space char after "with" to get phrase "with PNG image" by magic in ./images
+>>&-4		indirect	x	\b with 
 # DIB image
 >(12.l)		ubelong		!0x89504e47
 #>>&-4		use     	dib-image
@@ -20590,7 +21052,7 @@
 # concatenated.
 
 #------------------------------------------------------------------------------
-# $File: msooxml,v 1.10 2018/10/08 18:25:25 christos Exp $
+# $File: msooxml,v 1.11 2019/01/18 15:39:18 christos Exp $
 # msooxml:  file(1) magic for Microsoft Office XML
 # From: Ralf Brown <ralf.brown@gmail.com>
 
@@ -20615,7 +21077,7 @@
 !:strength +10
 # make sure the first file is correct
 >0x1E		use		msooxml
->0x1E		regex		\\[Content_Types\\]\\.xml|_rels/\\.rels
+>0x1E		regex		\\[Content_Types\\]\\.xml|_rels/\\.rels|docProps
 # skip to the second local file header
 # since some documents include a 520-byte extra field following the file
 # header, we need to scan for the next header
@@ -21146,7 +21608,7 @@
 
 
 #------------------------------------------------------------------------------
-# $File: netbsd,v 1.25 2017/09/28 02:37:47 christos Exp $
+# $File: netbsd,v 1.26 2019/01/01 03:11:23 christos Exp $
 # netbsd:  file(1) magic for NetBSD objects
 #
 # All new-style magic numbers are in network byte order.
@@ -21155,184 +21617,149 @@
 # in aout.
 #
 
-0	belong&0377777777	041400413	a.out NetBSD/i386 demand paged
+0	name	netbsd-detail
+>20	lelong	x		@%#x
+>4	lelong	>0		\b+T=%d
+>8	lelong	>0		\b+D=%d
+>12	lelong	>0		\b+B=%d
+>16	lelong	>0		\b+S=%d
+>24	lelong	>0		\b+TR=%d
+>28	lelong	>0		\b+TD=%d
+
+0	name			netbsd-4096
 >0	byte			&0x80
 >>20	lelong			<4096		shared library
 >>20	lelong			=4096		dynamically linked executable
 >>20	lelong			>4096		dynamically linked executable
 >0	byte			^0x80		executable
 >16	lelong			>0		not stripped
-0	belong&0377777777	041400410	a.out NetBSD/i386 pure
->0	byte			&0x80		dynamically linked executable
+
+0	name			netbsd-8192
+>0	byte			&0x80
+>>20	lelong			<8192		shared library
+>>20	lelong			=8192		dynamically linked executable
+>>20	lelong			>8192		dynamically linked executable
 >0	byte			^0x80		executable
 >16	lelong			>0		not stripped
-0	belong&0377777777	041400407	a.out NetBSD/i386
+>0	use			netbsd-detail
+
+0	name			netbsd-normal
 >0	byte			&0x80		dynamically linked executable
 >0	byte			^0x80
 >>0	byte			&0x40		position independent
 >>20	lelong			!0		executable
 >>20	lelong			=0		object file
 >16	lelong			>0		not stripped
-0	belong&0377777777	041400507	a.out NetBSD/i386 core
+>0	use			netbsd-detail
+
+0	name			netbsd-pure
+>0	byte			&0x80		dynamically linked executable
+>0	byte			^0x80		executable
+>16	lelong			>0		not stripped
+>0	use			netbsd-detail
+
+0	name			netbsd-core
 >12	string			>\0		from '%s'
 >32	lelong			!0		(signal %d)
+
+0	belong&0377777777	041400413	a.out NetBSD/i386 demand paged
+>0	use			netbsd-4096
+
+0	belong&0377777777	041400410	a.out NetBSD/i386 pure
+>0	use			netbsd-pure
+
+0	belong&0377777777	041400407	a.out NetBSD/i386
+>0	use			netbsd-normal
+
+0	belong&0377777777	041400507	a.out NetBSD/i386 core
+>0	use			netbsd-core
 
 0	belong&0377777777	041600413	a.out NetBSD/m68k demand paged
->0	byte			&0x80
->>20	belong			<8192		shared library
->>20	belong			=8192		dynamically linked executable
->>20	belong			>8192		dynamically linked executable
->0	byte			^0x80		executable
->16	belong			>0		not stripped
+>0	use			\^netbsd-8192
+
 0	belong&0377777777	041600410	a.out NetBSD/m68k pure
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80		executable
->16	belong			>0		not stripped
+>0	use			\^netbsd-pure
+
 0	belong&0377777777	041600407	a.out NetBSD/m68k
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80
->>0	byte			&0x40		position independent
->>20	belong			!0		executable
->>20	belong			=0		object file
->16	belong			>0		not stripped
+>0	use			\^netbsd-normal
+
 0	belong&0377777777	041600507	a.out NetBSD/m68k core
->12	string			>\0		from '%s'
->32	belong			!0		(signal %d)
+>0	use			\^netbsd-core
 
 0	belong&0377777777	042000413	a.out NetBSD/m68k4k demand paged
->0	byte			&0x80
->>20	belong			<4096		shared library
->>20	belong			=4096		dynamically linked executable
->>20	belong			>4096		dynamically linked executable
->0	byte			^0x80		executable
->16	belong			>0		not stripped
+>0	use			\^netbsd-4096
+
 0	belong&0377777777	042000410	a.out NetBSD/m68k4k pure
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80		executable
->16	belong			>0		not stripped
+>0	use			\^netbsd-pure
+
 0	belong&0377777777	042000407	a.out NetBSD/m68k4k
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80
->>0	byte			&0x40		position independent
->>20	belong			!0		executable
->>20	belong			=0		object file
->16	belong			>0		not stripped
+>0	use			\^netbsd-normal
+
 0	belong&0377777777	042000507	a.out NetBSD/m68k4k core
->12	string			>\0		from '%s'
->32	belong			!0		(signal %d)
+>0	use			\^netbsd-core
 
 0	belong&0377777777	042200413	a.out NetBSD/ns32532 demand paged
->0	byte			&0x80
->>20	lelong			<4096		shared library
->>20	lelong			=4096		dynamically linked executable
->>20	lelong			>4096		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			netbsd-4096
+
 0	belong&0377777777	042200410	a.out NetBSD/ns32532 pure
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			netbsd-pure
+
 0	belong&0377777777	042200407	a.out NetBSD/ns32532
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80
->>0	byte			&0x40		position independent
->>20	lelong			!0		executable
->>20	lelong			=0		object file
->16	lelong			>0		not stripped
+>0	use			netbsd-normal
+
 0	belong&0377777777	042200507	a.out NetBSD/ns32532 core
->12	string			>\0		from '%s'
->32	lelong			!0		(signal %d)
+>0	use			netbsd-core
 
 0	belong&0377777777	045200507	a.out NetBSD/powerpc core
->12	string			>\0		from '%s'
+>0	use			netbsd-core
 
 0	belong&0377777777	042400413	a.out NetBSD/SPARC demand paged
->0	byte			&0x80
->>20	belong			<8192		shared library
->>20	belong			=8192		dynamically linked executable
->>20	belong			>8192		dynamically linked executable
->0	byte			^0x80		executable
->16	belong			>0		not stripped
+>0	use			\^netbsd-8192
+
 0	belong&0377777777	042400410	a.out NetBSD/SPARC pure
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80		executable
->16	belong			>0		not stripped
+>0	use			\^netbsd-pure
+
 0	belong&0377777777	042400407	a.out NetBSD/SPARC
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80
->>0	byte			&0x40		position independent
->>20	belong			!0		executable
->>20	belong			=0		object file
->16	belong			>0		not stripped
+>0	use			\^netbsd-normal
+
 0	belong&0377777777	042400507	a.out NetBSD/SPARC core
->12	string			>\0		from '%s'
->32	belong			!0		(signal %d)
+>0	use			\^netbsd-core
 
 0	belong&0377777777	042600413	a.out NetBSD/pmax demand paged
->0	byte			&0x80
->>20	lelong			<4096		shared library
->>20	lelong			=4096		dynamically linked executable
->>20	lelong			>4096		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			netbsd-4096
+
 0	belong&0377777777	042600410	a.out NetBSD/pmax pure
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			\^netbsd-pure
+
 0	belong&0377777777	042600407	a.out NetBSD/pmax
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80
->>0	byte			&0x40		position independent
->>20	lelong			!0		executable
->>20	lelong			=0		object file
->16	lelong			>0		not stripped
+>0	use			netbsd-normal
+
 0	belong&0377777777	042600507	a.out NetBSD/pmax core
->12	string			>\0		from '%s'
->32	lelong			!0		(signal %d)
+>0	use			netbsd-core
 
 0	belong&0377777777	043000413	a.out NetBSD/vax 1k demand paged
->0	byte			&0x80
->>20	lelong			<4096		shared library
->>20	lelong			=4096		dynamically linked executable
->>20	lelong			>4096		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			netbsd-4096
+
 0	belong&0377777777	043000410	a.out NetBSD/vax 1k pure
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			netbsd-pure
+
 0	belong&0377777777	043000407	a.out NetBSD/vax 1k
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80
->>0	byte			&0x40		position independent
->>20	lelong			!0		executable
->>20	lelong			=0		object file
->16	lelong			>0		not stripped
+>0	use			netbsd-normal
+
 0	belong&0377777777	043000507	a.out NetBSD/vax 1k core
->12	string			>\0		from '%s'
->32	lelong			!0		(signal %d)
+>0	use			netbsd-core
 
 0	belong&0377777777	045400413	a.out NetBSD/vax 4k demand paged
->0	byte			&0x80
->>20	lelong			<4096		shared library
->>20	lelong			=4096		dynamically linked executable
->>20	lelong			>4096		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			netbsd-4096
+
 0	belong&0377777777	045400410	a.out NetBSD/vax 4k pure
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			netbsd-pure
+
 0	belong&0377777777	045400407	a.out NetBSD/vax 4k
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80
->>0	byte			&0x40		position independent
->>20	lelong			!0		executable
->>20	lelong			=0		object file
->16	lelong			>0		not stripped
+>0	use			netbsd-normal
+
 0	belong&0377777777	045400507	a.out NetBSD/vax 4k core
->12	string			>\0		from '%s'
->32	lelong			!0		(signal %d)
+>0	use			netbsd-core
 
 # NetBSD/alpha does not support (and has never supported) a.out objects,
 # so no rules are provided for them.  NetBSD/alpha ELF objects are
@@ -21345,50 +21772,31 @@
 >32	lelong			!0		(signal %d)
 
 0	belong&0377777777	043400413	a.out NetBSD/mips demand paged
->0	byte			&0x80
->>20	belong			<8192		shared library
->>20	belong			=8192		dynamically linked executable
->>20	belong			>8192		dynamically linked executable
->0	byte			^0x80		executable
+>0	use			\^netbsd-8192
+
 >16	belong			>0		not stripped
 0	belong&0377777777	043400410	a.out NetBSD/mips pure
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80		executable
->16	belong			>0		not stripped
+>0	use			netbsd-pure
+
 0	belong&0377777777	043400407	a.out NetBSD/mips
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80
->>0	byte			&0x40		position independent
->>20	belong			!0		executable
->>20	belong			=0		object file
->16	belong			>0		not stripped
+>0	use			netbsd-normal
+
 0	belong&0377777777	043400507	a.out NetBSD/mips core
->12	string			>\0		from '%s'
->32	belong			!0		(signal %d)
+>0	use			netbsd-core
 
 0	belong&0377777777	043600413	a.out NetBSD/arm32 demand paged
->0	byte			&0x80
->>20	lelong			<4096		shared library
->>20	lelong			=4096		dynamically linked executable
->>20	lelong			>4096		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			netbsd-4096
+
 0	belong&0377777777	043600410	a.out NetBSD/arm32 pure
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80		executable
->16	lelong			>0		not stripped
+>0	use			netbsd-pure
+
 0	belong&0377777777	043600407	a.out NetBSD/arm32
->0	byte			&0x80		dynamically linked executable
->0	byte			^0x80
->>0	byte			&0x40		position independent
->>20	lelong			!0		executable
->>20	lelong			=0		object file
->16	lelong			>0		not stripped
+>0	use			netbsd-normal
+
 # NetBSD/arm26 has always used ELF objects, but it shares a core file
 # format with NetBSD/arm32.
 0	belong&0377777777	043600507	a.out NetBSD/arm core
->12	string			>\0		from '%s'
->32	lelong			!0		(signal %d)
+>0	use			netbsd-core
 
 # Kernel core dump format
 0	belong&0x0000ffff 0x00008fca	NetBSD kernel core file
@@ -22397,7 +22805,7 @@
 #>>(4.l+12)	lelong x level 2 size: %d
 
 #------------------------------------------------------------------------------
-# $File: pgp,v 1.15 2018/02/24 16:11:23 christos Exp $
+# $File: pgp,v 1.16 2018/10/28 22:37:02 christos Exp $
 # pgp:  file(1) magic for Pretty Good Privacy
 # see http://lists.gnupg.org/pipermail/gnupg-devel/1999-September/016052.html
 #
@@ -22914,9 +23322,9 @@
 
 # PGP RSA (e=65537) secret (sub-)key header
 
-0	byte	0x95			PGP	Secret Key -
+0	byte	0x95			PGP Secret Key -
 >1	use	pgpkey
-0	byte	0x97			PGP	Secret Sub-key -
+0	byte	0x97			PGP Secret Sub-key -
 >1	use	pgpkey
 0	byte	0x9d
 # Update: Joerg Jenderek
@@ -24602,7 +25010,7 @@
 
 
 #------------------------------------------------------------------------------
-# $File: sniffer,v 1.20 2018/10/18 16:49:19 christos Exp $
+# $File: sniffer,v 1.21 2019/02/09 17:52:18 christos Exp $
 # sniffer:  file(1) magic for packet capture files
 #
 # From: guy@alum.mit.edu (Guy Harris)
@@ -24815,17 +25223,17 @@
 >0	use	\^pcap-be
 
 #
-# "pcap-ng" capture files.
-# http://www.winpcap.org/ntar/draft/PCAP-DumpFileFormat.html
-# Pcap-ng files can contain multiple sections. Printing the endianness,
+# "pcapng" capture files.
+# https://github.com/pcapng/pcapng
+# Pcapng files can contain multiple sections. Printing the endianness,
 # snaplen, or other information from the first SHB may be misleading.
 #
 0	ubelong		0x0a0d0d0a
->8	ubelong		0x1a2b3c4d	pcap-ng capture file
+>8	ubelong		0x1a2b3c4d	pcapng capture file
 >>12	beshort		x		- version %d
 >>14	beshort		x		\b.%d
 0	ulelong		0x0a0d0d0a
->8	ulelong		0x1a2b3c4d	pcap-ng capture file
+>8	ulelong		0x1a2b3c4d	pcapng capture file
 >>12	leshort		x		- version %d
 >>14	leshort		x		\b.%d
 
@@ -26209,7 +26617,7 @@
 0	string	\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\6\0	old timezone data
 
 #------------------------------------------------------------------------------
-# $File: tplink,v 1.2 2017/12/14 05:52:56 christos Exp $
+# $File: tplink,v 1.3 2018/12/21 17:37:33 christos Exp $
 # tplink: File magic for openwrt firmware files
 
 # URL: https://wiki.openwrt.org/doc/techref/header
@@ -26220,7 +26628,9 @@
 >0		ulelong		!0
 # test for header padding with nulls
 >>0x100		long		0
->>>0		use		firmware-tplink
+# skip Norton Commander Cleanup Utility NCCLEAN.INI by looking for valid vendor
+>>>4		ubelong		>0x1F000000
+>>>>0		use		firmware-tplink
 
 0		name		firmware-tplink
 >0		ubyte		x		firmware
@@ -26272,11 +26682,13 @@
 # look for kernel type (gzip compressed vmlinux.bin by ./compress)
 >(0x80.L)	indirect	x
 # root file system data offset
+# WRONG in 5.35 with above indirect expression
 >0x88		ubelong		x		\b, at 0x%x
 # rootfs data length and 1 space
 >0x8C		ubelong		x		%u bytes 
 # in 5.32 only true for offset ~< FILE_BYTES_MAX=9 MB defined in ../../src/file.h 
 >(0x88.L)	indirect	x
+# 'qshs' for wr940nv1_en_3_13_7_up(111228).bin
 #>(0x88.L)	string		x		\b, file system '%.4s'
 #>(0x88.L)	ubequad		x		\b, file system 0x%llx
 # bootloader data offset
@@ -26345,11 +26757,10 @@
 >>17	string		>\0			%s)
 
 #------------------------------------------------------------------------------
-# $File: unicode,v 1.6 2010/09/20 18:55:20 rrt Exp $
+# $File: unicode,v 1.7 2019/02/19 20:34:42 christos Exp $
 # Unicode:  BOM prefixed text files - Adrian Havill <havill@turbolinux.co.jp>
-# GRR: These types should be recognised in file_ascmagic so these
-# encodings can be treated by text patterns.
-# Missing types are already dealt with internally.
+# These types are recognised in file_ascmagic so these encodings can be
+# treated by text patterns.  Missing types are already dealt with internally.
 #
 0	string	+/v8			Unicode text, UTF-7
 0	string	+/v9			Unicode text, UTF-7
@@ -26637,15 +27048,198 @@
 43	string	SFDU_LABEL	VICAR label file
 
 #------------------------------------------------------------------------------
-# $File: virtual,v 1.6 2014/05/07 21:25:41 christos Exp $
+# $File: virtual,v 1.9 2018/12/15 18:56:07 christos Exp $
 # From: James Nobis <quel@quelrod.net>
 # Microsoft hard disk images for:
 # Virtual Server
 # Virtual PC
-# http://technet.microsoft.com/en-us/virtualserver/bb676673.aspx
-# .vhd
+# VirtualBox
+# URL: http://fileformats.archiveteam.org/wiki/VHD_(Virtual_Hard_Disk)
+# Reference: https://download.microsoft.com/download/f/f/e/ffef50a5-07dd-4cf8-aaa3-442c0673a029/
+# Virtual%20Hard%20Disk%20Format%20Spec_10_18_06.doc
 0	string	conectix	Microsoft Disk Image, Virtual Server or Virtual PC
+# alternative shorter names
+#0	string	conectix	Microsoft Virtual Hard Disk image
+#0	string	conectix	Microsoft Virtual HD image
+!:mime	application/x-virtualbox-vhd
+!:ext   vhd
+# Features is a bit field used to indicate specific feature support
+#>8	ubelong		!0x00000002	\b, Features 0x%x
+# Reserved. This bit must always be set to 1.
+#>8	ubelong		&0x00000002	\b, Reserved 0x%x
+# File Format Version for the current specification 0x00010000
+#>12	ubelong		!0x00010000	\b, Version 0x%8.8x
+# Data Offset only found 0x200
+#>16	ubequad		!0x200		\b, Data Offset 0x%llx
+#>16	ubequad		x		\b, at 0x%llx
+# Dynamic Disk Header cookie like cxsparse
+#>(16.Q)	string		x		"%-.8s"
+# This field contains a Unicode string (UTF-16) of the parent hard disk filename
+#>(16.Q+64)	ubequad	x		\b, parent name 0x%llx
+# Creator Application
+# vpc~Microsoft Virtual PC, vs~Microsoft Virtual Server, vbox~VirtualBox, d2v~disk2vhd
+>28	string		x		\b, Creator %-4.4s
+# Creator Version: 0x00010000~Virtual Server 2004, 0x00050000~Virtual PC 2004
+# holds the major/minor version of the application that created the image
+>32	ubeshort	x		%x
+>34	ubeshort	x		\b.%x
+#>32	ubelong		x		\b, Version 0x%8.8x
+# Creator Host OS: 0x5769326B~Windows (Wi2k), 0x4D616320~Macintosh (Mac)
+>36	ubelong		x		(
+>>36	ubelong		0x5769326B	\bW2k
+>>36	ubelong		0x4D616320	\bMac
+>>36	default		x		\b0x
+>>>36	ubelong		x		\b%8.8x
+# creation Time in seconds since 1 Jan 2000 UTC~946684800 sec. since Unix Epoch
+>24	bedate+946684800	x	\b) %s
+# Original Size
+#>40	ubequad		x		\b, o.-Size 0x%llx
+# Current Size is same as original size, but change when disk is expanded
+#>48	ubequad		x		\b, Size 0x%llx
+>48	ubequad		x		\b, %llu bytes
+# Disk Geometry: cylinder, heads, and sectors/track for hard disk
+#>56	ubeshort	x		\b, Cylinder 0x%x
+>56	ubeshort	x		\b, CHS %u
+# Heads
+#>58	ubyte		x		\b, Heads 0x%x
+>58	ubyte		x		\b/%u
+# Sectors per track
+#>59	ubyte		x		\b, Sectors 0x%x
+>59	ubyte		x		\b/%u
+# Disk Type: 3~Dynamic hard disk
+>60	ubelong		!0x3		\b, type 0x%x
+# Checksum
+#>64	ubelong		x		\b, cksum 0x%x
+# universally unique identifier (UUID) to associate a parent with its differencing image
+#>68	ubequad		x		\b, id 0x%16.16llx
+#>76	ubequad		x		\b-%16.16llx
+# Saved State: 1~Saved State
+>84	ubyte		!0		\b, State 0x%x
+# Reserved 427 bytes with nils
+#>85	ubequad	!0			\b, Reserved 0x%16.16llx
 
+# From: Joerg Jenderek
+# URL: https://msdn.microsoft.com/en-us/library/mt740058.aspx
+# Reference: https://winprotocoldoc.blob.core.windows.net/productionwindowsarchives/
+# MS-VHDX/[MS-VHDX].pdf
+# Note: extends the VHD format with new capabilities, such as a 16TB maximum size
+# TODO:	find and display values like virtual size, disk size, cluster_size, etc
+#	display id in GUID format
+#
+# VHDX_FILE_IDENTIFIER signature 0x656C696678646876
+0	string			vhdxfile
+# VHDX_HEADER signature. 1 header is stored at offset 64KB and the other at 128KB
+>0x10000	string		head		Microsoft Disk Image eXtended
+#>0x20000	string			head	\b, 2nd header
+#!:mime	application/x-virtualbox-vhdx
+!:ext	vhdx
+# Creator[256] like "QEMU v3.0.0", "Microsoft Windows 6.3.9600.18512"
+>>8		lestring16		x	\b, by %.256s
+# The Checksum field is a CRC-32C hash over the entire 4 KB structure
+#>>0x10004	ulelong			x	\b, CRC 0x%x
+# SequenceNumber
+>>0x10008	ulequad			x	\b, sequence 0x%llx
+# FileWriteGuid
+#>>0x10010	ubequad			x	\b, file id 0x%llx
+#>>>0x10018	ubequad			x	\b-%llx
+# DataWriteGuid
+#>>0x10020	ubequad			x	\b, data id 0x%llx
+#>>>0x10028	ubequad			x	\b-%llx
+# LogGuid. If this field is zero, then the log is empty or has no valid entries 
+>>0x10030	ubequad			>0	\b, log id 0x%llx
+>>>0x10038	ubequad			x	\b-%llx
+# LogVersion. If not 0 there is a log to replay
+>>0x10040	uleshort		>0	\b, LogVersion 0x%x
+# Version. This field must be set to 1
+>>0x10042	uleshort		!1	\b, Version 0x%x
+# LogLength must be multiples of 1 MB
+>>0x10044	ulelong/1048576		>1	\b, LogLength %u MB
+# LogOffset (normally 0x100000 when log direct after header); multiples of 1 MB
+>>0x10048	ulequad			!0x100000 \b, LogOffset 0x%llx
+# Log Entry Signature must be 0x65676F6C~loge
+>>(0x10048.q)	ulelong			!0x65676F6C \b, NO Log Signature
+>>(0x10048.q)	ulelong			=0x65676F6C	\b; LOG
+# Log Entry Checksum
+#>>>(0x10048.q+4)	ulelong		x	\b, Log CRC 0x%x
+# Log Entry Length must be a multiple of 4 KB
+>>>(0x10048.q+8)	ulelong/1024	>4	\b, EntryLength %u KB
+# Log Entry Tail must be a multiple of 4 KB
+#>>>(0x10048.q+12)	ulelong		x	\b, Tail 0x%x
+# Log Entry SequenceNumber
+#>>>(0x10048.q+16)	ulequad		x	\b, # 0x%llx
+# Log Entry DescriptorCount may be zero. only 4 bytes in other docs instead 8
+#>>>(0x10048.q+24)	ulelong		x	\b, DescriptorCount 0x%llx
+# Log Entry Reserved must be set to 0
+>>>(0x10048.q+28)	ulelong		!0	\b, Reserved 0x%x
+# Log Entry LogGuid
+#>>>(0x10048.q+32)	ubequad		x	\b, Log id 0x%llx
+#>>>(0x10048.q+40)	ubequad		x	\b-%llx
+# Log Entry FlushedFileOffset should VHDX size when entry is written.
+#>>>(0x10048.q+48)	ulequad		x	\b, FlushedFileOffset %llu
+# Log Entry LastFileOffset
+#>>>(0x10048.q+56)	ulequad		x	\b, LastFileOffset %llu
+# filling
+#>>>(0x10048.q+64)	ulequad		>0	\b, filling %llx
+# Reserved[4016]
+#>>0x10050	ulequad			>0	\b, Reserved 0x%llx
+# VHDX_REGION_TABLE_HEADER Signature 0x69676572~regi at offset 192 KB and 256 KB
+>0x30000	ulelong			!0x69676572 \b, 1st region INVALID
+>0x30000	ulelong			=0x69676572 \b; region
+# region Checksum. CRC-32C hash over the entire 64-KB table
+#>>0x30004	ulelong			x	\b, CRC 0x%x
+# The EntryCount specifies number of valid entries; Found 2; This must be =< 2047. 
+>>0x30008	ulelong			x	\b, %u entries
+# reserved must be zero
+#>>0x3000C	ulelong			!0	\b, RESERVED 0x%x
+# Region Table Entry starts with identifier for the object. often BAT id
+>>0x30010	use			vhdx-id
+# FileOffset
+>>0x30020	ulequad		x		\b, at 0x%llx
+# Length. Specifies the length of the object within the file
+#>>0x30028	ulelong		x		\b, Length 0x%x
+# 1 means region entry is required. if region not recognized, then REFUSE to load VHDX
+>>0x3002C	ulelong		x		\b, Required %u
+# 2nd region entry often metadata id
+>>0x30030	use			vhdx-id
+# 2nd entry FileOffset
+>>0x30040	ulequad		x		\b, at 0x%llx
+# 1 means region entry is required. if region not recognized, then REFUSE to load VHDX
+>>0x3004C	ulelong		x		\b, Required %u
+# 2nd region
+>>0x40000	ulelong		!0x69676572	\b, 2nd region INVALID
+# check in vhdx images for known id and show names instead hexadecimal
+0	name		vhdx-id
+# http://www.windowstricks.in/online-windows-guid-converter
+# 2DC27766-F623-4200-9D64-115E9BFD4A08		BAT GUID
+# 6677C22D23F600429D64115E9BFD4A08		BAT ID
+>0	ubequad		=0x6677C22D23F60042
+>>8	ubequad		=0x9D64115E9BFD4A08	\b, id BAT
+# no BAT id
+>>8	default		x
+>>>0	use		vhdx-id-hex
+# 8B7CA206-4790-4B9A-B8FE-575F050F886E		Metadata region GUID
+# 06A27C8B90479A4BB8FE575F050F886E		Metadata region ID
+>0	ubequad		=0x06A27C8B90479A4B
+>>8	ubequad		=0xB8FE575F050F886E	\b, id Metadata
+# no Metadata id
+>>8	default		x
+>>>0	use		vhdx-id-hex
+# 2FA54224-CD1B-4876-B211-5DBED83BF4B8		Virtual Disk Size GUID
+# 2442A52F1BCD7648B2115DBED83BF4B8		Virtual Disk Size ID
+# value "virtual size" can be verified by command `qemu-img info `
+>0	ubequad		=0x2442A52F1BCD7648
+>>8	ubequad		=0xB2115DBED83BF4B8	\b, id vsize
+# no Virtual Disk Size ID
+>>8	default		x
+>>>0	use		vhdx-id-hex
+# other ids
+>0	default		x
+>>0	use		vhdx-id-hex
+# in vhdx images show id as hexadecimal
+0	name		vhdx-id-hex
+>0	ubequad		x			\b, ID 0x%16.16llx
+>8	ubequad		x			\b-%16.16llx
+#
 # libvirt
 # From: Philipp Hahn <hahn@univention.de>
 0	string	LibvirtQemudSave	Libvirt QEMU Suspend Image
@@ -26673,7 +27267,7 @@
 # Updated by Adam Buchbinder (adam.buchbinder@gmail.com)
 # Made by reading sources, reading documentation, and doing trial and error
 # on existing QCOW files
-0	string/b	QFI\xFB	QEMU QCOW Image
+0	string/b	QFI\xFB
 
 # Uncomment the following line to display Magic (only used for debugging
 # this magic number)
@@ -26681,7 +27275,8 @@
 
 # There are currently 2 Versions: "1" and "2".
 # http://www.gnome.org/~markmc/qcow-image-format-version-1.html
->4	belong	1	(v1)
+>4	belong		!1	QEMU QCOW2 Image
+>4	belong		1	QEMU QCOW Image (v1)
 
 # Using the existence of the Backing File Offset to determine whether
 # to read Backing File Information
@@ -27056,7 +27651,7 @@
 >4	lelong	>1	version %#x
 
 #------------------------------------------------------------------------------
-# $File: windows,v 1.22 2018/02/16 15:44:00 christos Exp $
+# $File: windows,v 1.23 2019/01/11 21:00:26 christos Exp $
 # windows:  file(1) magic for Microsoft Windows
 #
 # This file is mainly reserved for files where programs
@@ -27112,6 +27707,17 @@
 >0x78	lelong		&1		\b, DIRTY
 >0x78	lelong		&2		\b, FULL
 
+# Summary:	Windows Error Report text files
+# URL:		https://en.wikipedia.org/wiki/Windows_Error_Reporting
+# Reference:	https://www.nirsoft.net/utils/app_crash_view.html
+# Created by:	Joerg Jenderek
+# Note:		in directories	%ProgramData%\Microsoft\Windows\WER\{ReportArchive,ReportQueue}
+#				%LOCALAPPDATA%\Microsoft\Windows\WER\{ReportArchive,ReportQueue}
+0	lestring16	Version=	
+>22	lestring16	EventType	Windows Error Report
+!:mime	text/plain
+# Report.wer
+!:ext	wer
 
 # Summary: Windows 3.1 group files
 # Extension: .grp
