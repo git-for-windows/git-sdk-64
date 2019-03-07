@@ -93,7 +93,7 @@ interpolation is just as fast and results in higher quality.</doc>
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_MICRO" value="0" c:type="GDK_PIXBUF_MICRO">
+    <constant name="PIXBUF_MICRO" value="1" c:type="GDK_PIXBUF_MICRO">
       <doc xml:space="preserve">Micro version of gdk-pixbuf library, that is the "2" in
 
 "0.8.2" for example.</doc>
@@ -105,7 +105,7 @@ interpolation is just as fast and results in higher quality.</doc>
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_VERSION" value="2.38.0" c:type="GDK_PIXBUF_VERSION">
+    <constant name="PIXBUF_VERSION" value="2.38.1" c:type="GDK_PIXBUF_VERSION">
       <doc xml:space="preserve">Contains the full version of the gdk-pixbuf header as a string.
 
 This is the version being compiled against; contrast with
@@ -446,18 +446,61 @@ allocate the image buffer, or the image file contained invalid data.</doc>
       </constructor>
       <constructor name="new_from_inline"
                    c:identifier="gdk_pixbuf_new_from_inline"
+                   deprecated="1"
+                   deprecated-version="2.32"
                    throws="1">
+        <doc xml:space="preserve">Create a #GdkPixbuf from a flat representation that is suitable for
+storing as inline data in a program. This is useful if you want to
+ship a program with images, but don't want to depend on any
+external files.
+
+gdk-pixbuf ships with a program called [gdk-pixbuf-csource][gdk-pixbuf-csource],
+which allows for conversion of #GdkPixbufs into such a inline representation.
+In almost all cases, you should pass the `--raw` option to
+`gdk-pixbuf-csource`. A sample invocation would be:
+
+|[
+ gdk-pixbuf-csource --raw --name=myimage_inline myimage.png
+]|
+
+For the typical case where the inline pixbuf is read-only static data,
+you don't need to copy the pixel data unless you intend to write to
+it, so you can pass %FALSE for @copy_pixels.  (If you pass `--rle` to
+`gdk-pixbuf-csource`, a copy will be made even if @copy_pixels is %FALSE,
+so using this option is generally a bad idea.)
+
+If you create a pixbuf from const inline data compiled into your
+program, it's probably safe to ignore errors and disable length checks,
+since things will always succeed:
+|[
+pixbuf = gdk_pixbuf_new_from_inline (-1, myimage_inline, FALSE, NULL);
+]|
+
+For non-const inline data, you could get out of memory. For untrusted
+inline data located at runtime, you could have corrupt inline data in
+addition.</doc>
+        <doc-deprecated xml:space="preserve">Use #GResource instead.</doc-deprecated>
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A newly-created #GdkPixbuf structure with a reference,
+  count of 1, or %NULL if an error occurred.</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
         </return-value>
         <parameters>
           <parameter name="data_length" transfer-ownership="none">
+            <doc xml:space="preserve">Length in bytes of the @data argument or -1 to
+   disable length checks</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="data" transfer-ownership="none">
-            <type name="guint8" c:type="const guint8*"/>
+            <doc xml:space="preserve">Byte data containing a
+   serialized #GdkPixdata structure</doc>
+            <array length="0" zero-terminated="0" c:type="const guint8*">
+              <type name="guint8" c:type="guint8"/>
+            </array>
           </parameter>
           <parameter name="copy_pixels" transfer-ownership="none">
+            <doc xml:space="preserve">Whether to copy the pixel data, or use direct pointers
+              @data for the resulting pixbuf</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
