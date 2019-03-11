@@ -214,18 +214,7 @@ extern "C" {
 #endif
 
 #ifndef RC_INVOKED
-#if __MSVCRT_VERSION__ < 0x1400
-double __cdecl difftime(time_t _Time1,time_t _Time2);
-char *__cdecl ctime(const time_t *_Time) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-struct tm *__cdecl gmtime(const time_t *_Time) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-struct tm *__cdecl localtime(const time_t *_Time) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
 
-time_t __cdecl mktime(struct tm *_Tm);
-time_t __cdecl _mkgmtime(struct tm *_Tm);
-time_t __cdecl time(time_t *_Time);
-#endif
-
-#if !defined(__CRT__NO_INLINE) || __MSVCRT_VERSION__ >= 0x1400
 #if __MSVCRT_VERSION__ >= 0x1400
 #define __TIME_INLINE __mingw_static_ovr
 #else
@@ -250,18 +239,17 @@ __TIME_INLINE struct tm *__cdecl gmtime(const time_t *_Time) { return _gmtime32(
 __TIME_INLINE time_t __cdecl _mkgmtime(struct tm *_Tm) { return _mkgmtime32(_Tm); }
 __TIME_INLINE time_t __cdecl time(time_t *_Time) { return _time32(_Time); }
 #endif /* !_USE_32BIT_TIME_T */
-#endif /* !__CRT__NO_INLINE */
 
 #ifdef _USE_32BIT_TIME_T
 __forceinline errno_t __cdecl localtime_s(struct tm *_Tm,const time_t *_Time) { return _localtime32_s(_Tm,_Time); }
 __forceinline errno_t __cdecl gmtime_s(struct tm *_Tm, const time_t *_Time)   { return _gmtime32_s(_Tm, _Time); }
 __forceinline errno_t __cdecl ctime_s(char *_Buf,size_t _SizeInBytes,const time_t *_Time) { return _ctime32_s(_Buf,_SizeInBytes,_Time); }
-
 #else
 __forceinline errno_t __cdecl localtime_s(struct tm *_Tm,const time_t *_Time) { return _localtime64_s(_Tm,_Time); }
 __forceinline errno_t __cdecl gmtime_s(struct tm *_Tm, const time_t *_Time) { return _gmtime64_s(_Tm, _Time); }
 __forceinline errno_t __cdecl ctime_s(char *_Buf,size_t _SizeInBytes,const time_t *_Time) { return _ctime64_s(_Buf,_SizeInBytes,_Time); }
 #endif
+
 #endif /* !RC_INVOKED */
 
 #if !defined(NO_OLDNAMES) || defined(_POSIX)
