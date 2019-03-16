@@ -9,13 +9,13 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yuki Sonoda".freeze]
   s.bindir = "exe".freeze
-  s.date = "2019-02-08"
+  s.date = "2019-03-14"
   s.description = "Prime numbers and factorization library.".freeze
   s.email = ["yugui@yugui.jp".freeze]
   s.files = ["prime.rb".freeze]
   s.homepage = "https://github.com/ruby/prime".freeze
   s.licenses = ["BSD-2-Clause".freeze]
-  s.rubygems_version = "3.0.1".freeze
+  s.rubygems_version = "3.0.3".freeze
   s.summary = "Prime numbers and factorization library.".freeze
 
   if s.respond_to? :specification_version then
