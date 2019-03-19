@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright 2000-2018 by
+# Copyright (C) 2000-2019 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -41,11 +41,11 @@ else
   includedir="/mingw64/include"
   libdir="/mingw64/lib"
 
-  version=22.1.16
+  version=23.0.17
 
   cflags="-I${SYSROOT}$includedir/freetype2"
   dynamic_libs="-lfreetype"
-  static_libs="-lfreetype -L/mingw64/lib -lz -L/mingw64/lib -lbz2 -L/mingw64/lib -lpng16 -lz -L/mingw64/lib -lharfbuzz -lm -lglib-2.0 -lintl -pthread -lws2_32 -lole32 -lwinmm -lshlwapi -lpcre -lintl -lpcre -lgraphite2"
+  static_libs="-lfreetype -L/mingw64/lib -lz -L/mingw64/lib -lbz2 -L/mingw64/lib -lpng16 -lz -L/mingw64/lib -lharfbuzz -lm -lusp10 -lgdi32 -lrpcrt4 -ldwrite -lglib-2.0 -lintl -pthread -lws2_32 -lwinmm -lws2_32 -lole32 -lwinmm -lshlwapi -lpcre -lgraphite2"
   if test "${SYSROOT}$libdir" != "/usr/lib"   &&
      test "${SYSROOT}$libdir" != "/usr/lib64" ; then
     libs_L="-L${SYSROOT}$libdir"

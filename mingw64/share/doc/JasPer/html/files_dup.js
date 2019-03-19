@@ -1,4 +1,4 @@
-var files =
+var files_dup =
 [
     [ "bmp_cod.h", "bmp__cod_8h_source.html", null ],
     [ "bmp_enc.h", "bmp__enc_8h_source.html", null ],
