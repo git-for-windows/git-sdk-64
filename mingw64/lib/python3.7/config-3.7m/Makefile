@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.7
 srcdir=		../Python-3.7.2
 VPATH=		../Python-3.7.2
-abs_srcdir=	/c/repo/mingw-w64-python3/src/build-x86_64/../Python-3.7.2
-abs_builddir=	/c/repo/mingw-w64-python3/src/build-x86_64
+abs_srcdir=	/scripts/mingw-w64-python3/src/build-x86_64/../Python-3.7.2
+abs_builddir=	/scripts/mingw-w64-python3/src/build-x86_64
 
 
 CC=		x86_64-w64-mingw32-gcc

@@ -2,6 +2,7 @@
 
 import os
 import sys
+import textwrap
 from os.path import pardir, realpath
 
 __all__ = [
@@ -254,7 +255,6 @@ def _parse_makefile(filename, vars=None):
     # if the expansion uses the name without a prefix.
     renamed_variables = ('CFLAGS', 'LDFLAGS', 'CPPFLAGS')
 
-    done['prefix']='${SYS_PREFIX}'
     while len(variables) > 0:
         for name in tuple(variables):
             value = notdone[name]
@@ -410,24 +410,29 @@ def _generate_posix_vars():
     os.makedirs(pybuilddir, exist_ok=True)
     destfile = os.path.join(pybuilddir, name + '.py')
 
+    replacement = """
+        keys_to_replace = [
+            'BINDIR', 'BINLIBDEST', 'CONFINCLUDEDIR',
+            'CONFINCLUDEPY', 'DESTDIRS', 'DESTLIB', 'DESTSHARED',
+            'INCLDIRSTOMAKE', 'INCLUDEDIR', 'INCLUDEPY',
+            'LIBDEST', 'LIBDIR', 'LIBPC', 'LIBPL', 'MACHDESTLIB',
+            'MANDIR', 'SCRIPTDIR', 'datarootdir', 'exec_prefix',
+        ]
+
+        prefix = build_time_vars['BINDIR'][:-4]
+
+        for key in keys_to_replace:
+            value = build_time_vars[key]
+            build_time_vars[key] = value.replace(prefix, sys.prefix)
+    """
+
     with open(destfile, 'w', encoding='utf8') as f:
+        f.write('import sys\n')
         f.write('# system configuration generated and used by'
                 ' the sysconfig module\n')
         f.write('build_time_vars = ')
         pprint.pprint(vars, stream=f)
-
-    # Now reload the file and replace:
-    replacements = {": '${SYS_PREFIX}'" : ": sys.prefix",
-                    ": '${SYS_PREFIX}"  : ": sys.prefix + '",
-                     "${SYS_PREFIX}'" : "' + sys.prefix",
-                     "${SYS_PREFIX}"  : "' + sys.prefix + '"}
-
-    contents = open(destfile).read()
-    for rep in replacements.keys():
-        contents = contents.replace(rep, replacements[rep])
-    with open(destfile, 'w', encoding='utf8') as f:
-        f.write('import sys\n')
-        f.write(contents)
+        f.write('\n%s' % textwrap.dedent(replacement))
 
     # Create file used for sys.path fixup -- see Modules/getpath.c
     with open('pybuilddir.txt', 'w', encoding='ascii') as f:
