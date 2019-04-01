@@ -116,7 +116,7 @@
 
 <h1 id="WARNING">WARNING</h1>
 
-<p>The RSA_padding_check_PKCS1_type_2() padding check leaks timing information which can potentially be used to mount a Bleichenbacher padding oracle attack. This is an inherent weakness in the PKCS #1 v1.5 padding design. Prefer PKCS1_OAEP padding.</p>
+<p>The RSA_padding_check_PKCS1_type_2() padding check leaks timing information which can potentially be used to mount a Bleichenbacher padding oracle attack. This is an inherent weakness in the PKCS #1 v1.5 padding design. Prefer PKCS1_OAEP padding. Otherwise it can be recommended to pass zero-padded <b>f</b>, so that <b>fl</b> equals to <b>rsa_len</b>, and if fixed by protocol, <b>tlen</b> being set to the expected length. In such case leakage would be minimal, it would take attacker&#39;s ability to observe memory access pattern with byte granilarity as it occurs, post-factum timing analysis won&#39;t do.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

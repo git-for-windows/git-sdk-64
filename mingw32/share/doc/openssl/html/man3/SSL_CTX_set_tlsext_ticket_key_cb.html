@@ -45,7 +45,7 @@
 
 <p>In order to reuse a session, a TLS client must send the a session ticket extension to the server. The client can only send exactly one session ticket. The server, through the callback function, either agrees to reuse the session ticket information or it starts a full TLS handshake to create a new session ticket.</p>
 
-<p>Before the callback function is started <i>ctx</i> and <i>hctx</i> have been initialised with EVP_CIPHER_CTX_init and HMAC_CTX_init respectively.</p>
+<p>Before the callback function is started <i>ctx</i> and <i>hctx</i> have been initialised with <a href="../man3/EVP_CIPHER_CTX_reset.html">EVP_CIPHER_CTX_reset(3)</a> and <a href="../man3/HMAC_CTX_reset.html">HMAC_CTX_reset(3)</a> respectively.</p>
 
 <p>For new sessions tickets, when the client doesn&#39;t present a session ticket, or an attempted retrieval of the ticket failed, or a renew option was indicated, the callback function will be called with <i>enc</i> equal to 1. The OpenSSL library expects that the function will set an arbitrary <i>name</i>, initialize <i>iv</i>, and set the cipher context <i>ctx</i> and the hash context <i>hctx</i>.</p>
 

@@ -45,6 +45,8 @@
 
 <p>SSL_shutdown() tries to send the close_notify shutdown alert to the peer. Whether the operation succeeds or not, the SSL_SENT_SHUTDOWN flag is set and a currently open session is considered closed and good and will be kept in the session cache for further reuse.</p>
 
+<p>Note that SSL_shutdown() must not be called if a previous fatal error has occurred on a connection i.e. if SSL_get_error() has returned SSL_ERROR_SYSCALL or SSL_ERROR_SSL.</p>
+
 <p>The shutdown procedure consists of two steps: sending of the close_notify shutdown alert, and reception of the peer&#39;s close_notify shutdown alert. The order of those two steps depends on the application.</p>
 
 <p>It is acceptable for an application to only send its shutdown alert and then close the underlying connection without waiting for the peer&#39;s response. This way resources can be saved, as the process can already terminate or serve another connection. This should only be done when it is known that the other side will not send more data, otherwise there is a risk of a truncation attack.</p>

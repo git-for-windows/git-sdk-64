@@ -50,6 +50,8 @@
 
 <p>It is strongly recommended to use absolute paths with the <b>.include</b> directive. Relative paths are evaluated based on the application current working directory so unless the configuration file containing the <b>.include</b> directive is application specific the inclusion will not work as expected.</p>
 
+<p>There can be optional <b>=</b> character and whitespace characters between <b>.include</b> directive and the path which can be useful in cases the configuration file needs to be loaded by old OpenSSL versions which do not support the <b>.include</b> syntax. They would bail out with error if the <b>=</b> character is not present but with it they just ignore the include.</p>
+
 <p>Each section in a configuration file consists of a number of name and value pairs of the form <b>name=value</b></p>
 
 <p>The <b>name</b> string can contain any alphanumeric characters as well as a few punctuation symbols such as <b>.</b> <b>,</b> <b>;</b> and <b>_</b>.</p>
@@ -333,7 +335,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

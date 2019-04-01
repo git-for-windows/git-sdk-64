@@ -108,7 +108,7 @@
 <dt id="SSL_ERROR_SYSCALL">SSL_ERROR_SYSCALL</dt>
 <dd>
 
-<p>Some non-recoverable I/O error occurred. The OpenSSL error queue may contain more information on the error. For socket I/O on Unix systems, consult <b>errno</b> for details.</p>
+<p>Some non-recoverable, fatal I/O error occurred. The OpenSSL error queue may contain more information on the error. For socket I/O on Unix systems, consult <b>errno</b> for details. If this error occurs then no further I/O operations should be performed on the connection and SSL_shutdown() must not be called.</p>
 
 <p>This value can also be returned for other errors, check the error queue for details.</p>
 
@@ -116,7 +116,7 @@
 <dt id="SSL_ERROR_SSL">SSL_ERROR_SSL</dt>
 <dd>
 
-<p>A failure in the SSL library occurred, usually a protocol error. The OpenSSL error queue contains more information on the error.</p>
+<p>A non-recoverable, fatal error in the SSL library occurred, usually a protocol error. The OpenSSL error queue contains more information on the error. If this error occurs then no further I/O operations should be performed on the connection and SSL_shutdown() must not be called.</p>
 
 </dd>
 </dl>
@@ -127,7 +127,7 @@
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>SSL_ERROR_WANT_ASYNC was added in OpenSSL 1.1.0. SSL_ERROR_WANT_CLIENT_HELLO_CB was added in OpenSSL 1.1.1.</p>
+<p>The SSL_ERROR_WANT_ASYNC error code was added in OpenSSL 1.1.0. The SSL_ERROR_WANT_CLIENT_HELLO_CB error code was added in OpenSSL 1.1.1.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

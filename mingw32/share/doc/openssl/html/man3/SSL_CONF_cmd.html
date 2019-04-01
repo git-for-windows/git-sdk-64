@@ -281,12 +281,6 @@
 <p>Attempts to pad TLSv1.3 records so that they are a multiple of <b>value</b> in length on send. A <b>value</b> of 0 or 1 turns off padding. Otherwise, the <b>value</b> must be &gt;1 or &lt;=16384.</p>
 
 </dd>
-<dt id="NoRenegotiation"><b>NoRenegotiation</b></dt>
-<dd>
-
-<p>Disables all attempts at renegotiation in TLSv1.2 and earlier, same as setting <b>SSL_OP_NO_RENEGOTIATION</b>.</p>
-
-</dd>
 <dt id="SignatureAlgorithms"><b>SignatureAlgorithms</b></dt>
 <dd>
 
@@ -377,6 +371,8 @@
 <p><b>PrioritizeChaCha</b>: prioritizes ChaCha ciphers when the client has a ChaCha20 cipher at the top of its preference list. This usually indicates a mobile client is in use. Equivalent to <b>SSL_OP_PRIORITIZE_CHACHA</b>. Only used by servers.</p>
 
 <p><b>NoResumptionOnRenegotiation</b>: set <b>SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION</b> flag. Only used by servers.</p>
+
+<p><b>NoRenegotiation</b>: disables all attempts at renegotiation in TLSv1.2 and earlier, same as setting <b>SSL_OP_NO_RENEGOTIATION</b>.</p>
 
 <p><b>UnsafeLegacyRenegotiation</b>: permits the use of unsafe legacy renegotiation. Equivalent to <b>SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION</b>.</p>
 
@@ -536,11 +532,11 @@
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>SSL_CONF_cmd() was first added to OpenSSL 1.0.2</p>
+<p>The SSL_CONF_cmd() function was added in OpenSSL 1.0.2.</p>
 
-<p><b>SSL_OP_NO_SSL2</b> doesn&#39;t have effect since 1.1.0, but the macro is retained for backwards compatibility.</p>
+<p>The <b>SSL_OP_NO_SSL2</b> option doesn&#39;t have effect since 1.1.0, but the macro is retained for backwards compatibility.</p>
 
-<p><b>SSL_CONF_TYPE_NONE</b> was first added to OpenSSL 1.1.0. In earlier versions of OpenSSL passing a command which didn&#39;t take an argument would return <b>SSL_CONF_TYPE_UNKNOWN</b>.</p>
+<p>The <b>SSL_CONF_TYPE_NONE</b> was added in OpenSSL 1.1.0. In earlier versions of OpenSSL passing a command which didn&#39;t take an argument would return <b>SSL_CONF_TYPE_UNKNOWN</b>.</p>
 
 <p><b>MinProtocol</b> and <b>MaxProtocol</b> where added in OpenSSL 1.1.0.</p>
 
@@ -548,7 +544,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2012-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2012-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
