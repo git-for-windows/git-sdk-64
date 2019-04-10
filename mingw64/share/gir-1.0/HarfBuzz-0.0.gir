@@ -176,13 +176,13 @@ Set to U+FFFD REPLACEMENT CHARACTER.</doc>
     <constant name="VERSION_MAJOR" value="2" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="3" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="4" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="2.3.1" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="2.4.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <enumeration name="aat_layout_feature_selector_t"
@@ -2464,6 +2464,14 @@ callers if just comparing two buffers is needed.</doc>
                      @HB_BUFFER_FLAG_PRESERVE_DEFAULT_IGNORABLES takes
                      precedence over this flag. Since: 1.8.0</doc>
       </member>
+      <member name="do_not_insert_dotted_circle"
+              value="16"
+              c:identifier="HB_BUFFER_FLAG_DO_NOT_INSERT_DOTTED_CIRCLE"
+              glib:nick="do-not-insert-dotted-circle">
+        <doc xml:space="preserve">flag indicating that a dotted circle should
+                     not be inserted in the rendering of incorrect
+                     character sequences (such at &lt;0905 093E&gt;). Since: 2.4</doc>
+      </member>
     </bitfield>
     <function name="buffer_get_cluster_level"
               c:identifier="hb_buffer_get_cluster_level"
@@ -3909,7 +3917,41 @@ font file by calling hb_face_reference_blob().</doc>
               version="0.9.5">
       <doc xml:space="preserve">Parses a string into a #hb_feature_t.
 
-TODO: document the syntax here.</doc>
+The format for specifying feature strings follows. All valid CSS
+font-feature-settings values other than 'normal' and the global values are
+also accepted, though not documented below. CSS string escapes are not
+supported.
+
+The range indices refer to the positions between Unicode characters. The
+position before the first character is always 0.
+
+The format is Python-esque.  Here is how it all works:
+
+&lt;informaltable pgwide='1' align='left' frame='none'&gt;
+&lt;tgroup cols='5'&gt;
+&lt;thead&gt;
+&lt;row&gt;&lt;entry&gt;Syntax&lt;/entry&gt;    &lt;entry&gt;Value&lt;/entry&gt; &lt;entry&gt;Start&lt;/entry&gt; &lt;entry&gt;End&lt;/entry&gt;&lt;/row&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;row&gt;&lt;entry&gt;Setting value:&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;kern&lt;/entry&gt;      &lt;entry&gt;1&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;      &lt;entry&gt;∞&lt;/entry&gt;   &lt;entry&gt;Turn feature on&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;+kern&lt;/entry&gt;     &lt;entry&gt;1&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;      &lt;entry&gt;∞&lt;/entry&gt;   &lt;entry&gt;Turn feature on&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;-kern&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;      &lt;entry&gt;∞&lt;/entry&gt;   &lt;entry&gt;Turn feature off&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;kern=0&lt;/entry&gt;    &lt;entry&gt;0&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;      &lt;entry&gt;∞&lt;/entry&gt;   &lt;entry&gt;Turn feature off&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;kern=1&lt;/entry&gt;    &lt;entry&gt;1&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;      &lt;entry&gt;∞&lt;/entry&gt;   &lt;entry&gt;Turn feature on&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;aalt=2&lt;/entry&gt;    &lt;entry&gt;2&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;      &lt;entry&gt;∞&lt;/entry&gt;   &lt;entry&gt;Choose 2nd alternate&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;Setting index:&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;kern[]&lt;/entry&gt;    &lt;entry&gt;1&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;      &lt;entry&gt;∞&lt;/entry&gt;   &lt;entry&gt;Turn feature on&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;kern[:]&lt;/entry&gt;   &lt;entry&gt;1&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;      &lt;entry&gt;∞&lt;/entry&gt;   &lt;entry&gt;Turn feature on&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;kern[5:]&lt;/entry&gt;  &lt;entry&gt;1&lt;/entry&gt;     &lt;entry&gt;5&lt;/entry&gt;      &lt;entry&gt;∞&lt;/entry&gt;   &lt;entry&gt;Turn feature on, partial&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;kern[:5]&lt;/entry&gt;  &lt;entry&gt;1&lt;/entry&gt;     &lt;entry&gt;0&lt;/entry&gt;      &lt;entry&gt;5&lt;/entry&gt;   &lt;entry&gt;Turn feature on, partial&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;kern[3:5]&lt;/entry&gt; &lt;entry&gt;1&lt;/entry&gt;     &lt;entry&gt;3&lt;/entry&gt;      &lt;entry&gt;5&lt;/entry&gt;   &lt;entry&gt;Turn feature on, range&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;kern[3]&lt;/entry&gt;   &lt;entry&gt;1&lt;/entry&gt;     &lt;entry&gt;3&lt;/entry&gt;      &lt;entry&gt;3+1&lt;/entry&gt; &lt;entry&gt;Turn feature on, single char&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;Mixing it all:&lt;/entry&gt;&lt;/row&gt;
+&lt;row&gt;&lt;entry&gt;aalt[3:5]=2&lt;/entry&gt; &lt;entry&gt;2&lt;/entry&gt;   &lt;entry&gt;3&lt;/entry&gt;      &lt;entry&gt;5&lt;/entry&gt;   &lt;entry&gt;Turn 2nd alternate on for range&lt;/entry&gt;&lt;/row&gt;
+&lt;/tbody&gt;
+&lt;/tgroup&gt;
+&lt;/informaltable&gt;</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%true if @str is successfully parsed, %false otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
@@ -10150,6 +10192,26 @@ hb_script_from_iso15924_tag().</doc>
               value="1399809892"
               c:identifier="HB_SCRIPT_SOGDIAN"
               glib:nick="sogdian">
+      </member>
+      <member name="elymaic"
+              value="1164736877"
+              c:identifier="HB_SCRIPT_ELYMAIC"
+              glib:nick="elymaic">
+      </member>
+      <member name="nandinagari"
+              value="1315008100"
+              c:identifier="HB_SCRIPT_NANDINAGARI"
+              glib:nick="nandinagari">
+      </member>
+      <member name="nyiakeng_puachue_hmong"
+              value="1215131248"
+              c:identifier="HB_SCRIPT_NYIAKENG_PUACHUE_HMONG"
+              glib:nick="nyiakeng-puachue-hmong">
+      </member>
+      <member name="wancho"
+              value="1466132591"
+              c:identifier="HB_SCRIPT_WANCHO"
+              glib:nick="wancho">
       </member>
       <member name="invalid"
               value="0"
