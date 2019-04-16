@@ -1,7 +1,8 @@
 #ifndef ISL_MULTI_H
 #define ISL_MULTI_H
 
-#include <isl/space.h>
+#include <isl/val_type.h>
+#include <isl/space_type.h>
 #include <isl/list.h>
 #include <isl/set_type.h>
 
@@ -10,7 +11,7 @@ extern "C" {
 #endif
 
 #define ISL_DECLARE_MULTI(BASE)						\
-unsigned isl_multi_##BASE##_dim(__isl_keep isl_multi_##BASE *multi,	\
+isl_size isl_multi_##BASE##_dim(__isl_keep isl_multi_##BASE *multi,	\
 	enum isl_dim_type type);					\
 isl_ctx *isl_multi_##BASE##_get_ctx(					\
 	__isl_keep isl_multi_##BASE *multi);				\

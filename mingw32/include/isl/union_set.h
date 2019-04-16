@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-unsigned isl_union_set_dim(__isl_keep isl_union_set *uset,
+isl_size isl_union_set_dim(__isl_keep isl_union_set *uset,
 	enum isl_dim_type type);
 
 __isl_constructor
@@ -94,6 +94,8 @@ __isl_give isl_union_set *isl_union_set_preimage_union_pw_multi_aff(
 __isl_give isl_union_set *isl_union_set_project_out(
 	__isl_take isl_union_set *uset,
 	enum isl_dim_type type, unsigned first, unsigned n);
+__isl_give isl_union_set *isl_union_set_project_out_all_params(
+	__isl_take isl_union_set *uset);
 __isl_give isl_union_set *isl_union_set_remove_divs(
 	__isl_take isl_union_set *bset);
 
@@ -115,16 +117,23 @@ isl_bool isl_union_set_is_strict_subset(__isl_keep isl_union_set *uset1,
 
 uint32_t isl_union_set_get_hash(__isl_keep isl_union_set *uset);
 
-int isl_union_set_n_set(__isl_keep isl_union_set *uset);
+isl_size isl_union_set_n_set(__isl_keep isl_union_set *uset);
 __isl_export
 isl_stat isl_union_set_foreach_set(__isl_keep isl_union_set *uset,
 	isl_stat (*fn)(__isl_take isl_set *set, void *user), void *user);
+__isl_export
+isl_bool isl_union_set_every_set(__isl_keep isl_union_set *uset,
+	isl_bool (*test)(__isl_keep isl_set *set, void *user), void *user);
 __isl_give isl_basic_set_list *isl_union_set_get_basic_set_list(
+	__isl_keep isl_union_set *uset);
+__isl_give isl_set_list *isl_union_set_get_set_list(
 	__isl_keep isl_union_set *uset);
 isl_bool isl_union_set_contains(__isl_keep isl_union_set *uset,
 	__isl_keep isl_space *space);
 __isl_give isl_set *isl_union_set_extract_set(__isl_keep isl_union_set *uset,
 	__isl_take isl_space *dim);
+__isl_export
+isl_bool isl_union_set_isa_set(__isl_keep isl_union_set *uset);
 __isl_give isl_set *isl_set_from_union_set(__isl_take isl_union_set *uset);
 __isl_export
 isl_stat isl_union_set_foreach_point(__isl_keep isl_union_set *uset,
@@ -164,7 +173,7 @@ __isl_give isl_printer *isl_printer_print_union_set(__isl_take isl_printer *p,
 	__isl_keep isl_union_set *uset);
 void isl_union_set_dump(__isl_keep isl_union_set *uset);
 
-ISL_DECLARE_LIST_FN(union_set)
+ISL_DECLARE_EXPORTED_LIST_FN(union_set)
 
 __isl_give isl_union_set *isl_union_set_list_union(
 	__isl_take isl_union_set_list *list);

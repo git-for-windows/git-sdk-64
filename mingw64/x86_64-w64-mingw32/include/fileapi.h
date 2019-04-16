@@ -26,7 +26,7 @@ extern "C" {
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
 #endif
 
-#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || defined(WINSTORECOMPAT)
+#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || _WIN32_WINNT >= _WIN32_WINNT_WIN10
 WINBASEAPI HANDLE WINAPI CreateFileW (LPCWSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
 #define CreateFile __MINGW_NAME_AW(CreateFile)
 WINBASEAPI DWORD WINAPI GetFileAttributesW (LPCWSTR lpFileName);
@@ -60,7 +60,7 @@ WINBASEAPI DWORD WINAPI SetFilePointer (HANDLE hFile, LONG lDistanceToMove, PLON
   WINBASEAPI WINBOOL WINAPI FindVolumeClose (HANDLE hFindVolume);
   WINBASEAPI WINBOOL WINAPI GetFileInformationByHandle (HANDLE hFile, LPBY_HANDLE_FILE_INFORMATION lpFileInformation);
 #endif
-#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || defined(WINSTORECOMPAT)
+#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_DESKTOP) || _WIN32_WINNT >= _WIN32_WINNT_WIN10
   WINBASEAPI LONG WINAPI CompareFileTime (CONST FILETIME *lpFileTime1, CONST FILETIME *lpFileTime2);
   WINBASEAPI WINBOOL WINAPI DeleteVolumeMountPointW (LPCWSTR lpszVolumeMountPoint);
   WINBASEAPI WINBOOL WINAPI FileTimeToLocalFileTime (CONST FILETIME *lpFileTime, LPFILETIME lpLocalFileTime);
@@ -83,6 +83,7 @@ WINBASEAPI DWORD WINAPI SetFilePointer (HANDLE hFile, LONG lDistanceToMove, PLON
   WINBASEAPI DWORD WINAPI GetLongPathNameA (LPCSTR lpszShortPath, LPSTR lpszLongPath, DWORD cchBuffer);
   WINBASEAPI DWORD WINAPI GetLongPathNameW (LPCWSTR lpszShortPath, LPWSTR lpszLongPath, DWORD cchBuffer);
   WINBASEAPI DWORD WINAPI GetShortPathNameW (LPCWSTR lpszLongPath, LPWSTR lpszShortPath, DWORD cchBuffer);
+  WINBASEAPI UINT WINAPI GetTempFileNameA (LPCSTR lpPathName, LPCSTR lpPrefixString, UINT uUnique, LPSTR lpTempFileName);
   WINBASEAPI UINT WINAPI GetTempFileNameW (LPCWSTR lpPathName, LPCWSTR lpPrefixString, UINT uUnique, LPWSTR lpTempFileName);
   WINBASEAPI WINBOOL WINAPI GetVolumeInformationW (LPCWSTR lpRootPathName, LPWSTR lpVolumeNameBuffer, DWORD nVolumeNameSize, LPDWORD lpVolumeSerialNumber, LPDWORD lpMaximumComponentLength, LPDWORD lpFileSystemFlags, LPWSTR lpFileSystemNameBuffer, DWORD nFileSystemNameSize);
   WINBASEAPI WINBOOL WINAPI GetVolumePathNameW (LPCWSTR lpszFileName, LPWSTR lpszVolumePathName, DWORD cchBufferLength);
@@ -98,6 +99,8 @@ WINBASEAPI DWORD WINAPI SetFilePointer (HANDLE hFile, LONG lDistanceToMove, PLON
   WINBASEAPI WINBOOL WINAPI WriteFileGather (HANDLE hFile, FILE_SEGMENT_ELEMENT aSegmentArray[], DWORD nNumberOfBytesToWrite, LPDWORD lpReserved, LPOVERLAPPED lpOverlapped);
   WINBASEAPI WINBOOL WINAPI GetVolumeNameForVolumeMountPointW (LPCWSTR lpszVolumeMountPoint, LPWSTR lpszVolumeName, DWORD cchBufferLength);
   WINBASEAPI WINBOOL WINAPI GetVolumePathNamesForVolumeNameW (LPCWSTR lpszVolumeName, LPWCH lpszVolumePathNames, DWORD cchBufferLength, PDWORD lpcchReturnLength);
+  WINBASEAPI DWORD WINAPI GetTempPathA (DWORD nBufferLength, LPSTR lpBuffer);
+  WINBASEAPI DWORD WINAPI GetTempPathW (DWORD nBufferLength, LPWSTR lpBuffer);
 
 #ifdef UNICODE
 #define DefineDosDevice DefineDosDeviceW
@@ -106,7 +109,6 @@ WINBASEAPI DWORD WINAPI SetFilePointer (HANDLE hFile, LONG lDistanceToMove, PLON
 #define FindNextVolume FindNextVolumeW
 #define GetLogicalDriveStrings GetLogicalDriveStringsW
 #define GetShortPathName GetShortPathNameW
-#define GetTempFileName GetTempFileNameW
 #define GetVolumeInformation GetVolumeInformationW
 #define GetVolumePathName GetVolumePathNameW
 #define QueryDosDevice QueryDosDeviceW
@@ -119,6 +121,9 @@ WINBASEAPI DWORD WINAPI SetFilePointer (HANDLE hFile, LONG lDistanceToMove, PLON
 #define GetDriveType __MINGW_NAME_AW(GetDriveType)
 #define GetFullPathName __MINGW_NAME_AW(GetFullPathName)
 #define GetLongPathName __MINGW_NAME_AW(GetLongPathName)
+#define GetTempPath __MINGW_NAME_AW(GetTempPath)
+#define GetTempFileName __MINGW_NAME_AW(GetTempFileName)
+
 
 #if _WIN32_WINNT >= 0x0600
   WINBASEAPI DWORD WINAPI GetFinalPathNameByHandleA (HANDLE hFile, LPSTR lpszFilePath, DWORD cchFilePath, DWORD dwFlags);
@@ -128,8 +133,8 @@ WINBASEAPI DWORD WINAPI SetFilePointer (HANDLE hFile, LONG lDistanceToMove, PLON
 #define GetFinalPathNameByHandle __MINGW_NAME_AW(GetFinalPathNameByHandle)
 #endif
 #endif
-  
-#if WINAPI_FAMILY_PARTITION (WINAPI_PARTITION_APP)
+
+#if WINAPI_FAMILY_PARTITION (WINAPI_FAMILY_DESKTOP_APP)
   typedef struct _WIN32_FILE_ATTRIBUTE_DATA {
     DWORD dwFileAttributes;
     FILETIME ftCreationTime;
@@ -166,7 +171,6 @@ WINBASEAPI DWORD WINAPI SetFilePointer (HANDLE hFile, LONG lDistanceToMove, PLON
   WINBASEAPI DWORD WINAPI GetFileType (HANDLE hFile);
   WINBASEAPI WINBOOL WINAPI GetFileAttributesExA (LPCSTR lpFileName, GET_FILEEX_INFO_LEVELS fInfoLevelId, LPVOID lpFileInformation);
   WINBASEAPI WINBOOL WINAPI GetFileAttributesExW (LPCWSTR lpFileName, GET_FILEEX_INFO_LEVELS fInfoLevelId, LPVOID lpFileInformation);
-  WINBASEAPI DWORD WINAPI GetTempPathW (DWORD nBufferLength, LPWSTR lpBuffer);
   WINBASEAPI WINBOOL WINAPI LockFileEx (HANDLE hFile, DWORD dwFlags, DWORD dwReserved, DWORD nNumberOfBytesToLockLow, DWORD nNumberOfBytesToLockHigh, LPOVERLAPPED lpOverlapped);
   WINBASEAPI WINBOOL WINAPI ReadFile (HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped);
   WINBASEAPI WINBOOL WINAPI RemoveDirectoryA (LPCSTR lpPathName);
@@ -186,9 +190,6 @@ WINBASEAPI DWORD WINAPI SetFilePointer (HANDLE hFile, LONG lDistanceToMove, PLON
 #define GetFileAttributesEx __MINGW_NAME_AW(GetFileAttributesEx)
 #define RemoveDirectory __MINGW_NAME_AW(RemoveDirectory)
 #define SetFileAttributes __MINGW_NAME_AW(SetFileAttributes)
-#ifdef UNICODE
-#define GetTempPath GetTempPathW
-#endif
 
 #if _WIN32_WINNT >= 0x0600
   WINBASEAPI WINBOOL WINAPI SetFileInformationByHandle (HANDLE hFile, FILE_INFO_BY_HANDLE_CLASS FileInformationClass, LPVOID lpFileInformation, DWORD dwBufferSize);
