@@ -1753,6 +1753,12 @@ guint     g_type_get_type_registration_serial (void);
  * name `t_n ## _default_init`, and the interface structure to have the
  * name `TN ## Interface`.
  *
+ * The initialization function has signature
+ * `static void t_n ## _default_init (TypeName##Interface *klass);`, rather than
+ * the full #GInterfaceInitFunc signature, for brevity and convenience. If you
+ * need to use an initialization function with an `iface_data` argument, you
+ * must write the #GTypeInterface definitions manually.
+ *
  * Since: 2.24
  */
 #define G_DEFINE_INTERFACE(TN, t_n, T_P)		    G_DEFINE_INTERFACE_WITH_CODE(TN, t_n, T_P, ;)
@@ -1779,7 +1785,7 @@ guint     g_type_get_type_registration_serial (void);
 /**
  * G_IMPLEMENT_INTERFACE:
  * @TYPE_IFACE: The #GType of the interface to add
- * @iface_init: The interface init function
+ * @iface_init: (type GInterfaceInitFunc): The interface init function, of type #GInterfaceInitFunc
  *
  * A convenience macro to ease interface addition in the `_C_` section
  * of G_DEFINE_TYPE_WITH_CODE() or G_DEFINE_ABSTRACT_TYPE_WITH_CODE().
