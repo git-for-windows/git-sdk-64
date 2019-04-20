@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 3 January 2019 for version 3.6.6 of GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.7 of GnuTLS.
 
 Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2019 Nikos Mavrogiannopoulos
@@ -1081,7 +1081,7 @@ nettle (1) library is recommended.
 
    ---------- Footnotes ----------
 
-   (1) See <http://www.lysator.liu.se/~nisse/nettle/>.
+   (1) See <https://www.lysator.liu.se/~nisse/nettle/>.
 
 
 File: gnutls.info,  Node: Symmetric algorithms,  Next: Public key algorithms,  Up: Using GnuTLS as a cryptographic library
@@ -1210,7 +1210,7 @@ scattered data, we provide the following API.
 
      NONCE_LEN: The length of the nonce
 
-     AUTH_IOV: the data to be authenticated
+     AUTH_IOV: additional data to be authenticated
 
      AUTH_IOVCNT: The number of buffers in 'auth_iov'
 
@@ -1220,7 +1220,7 @@ scattered data, we provide the following API.
 
      IOVCNT: The number of buffers in 'iov'
 
-     CTEXT: the encrypted data
+     CTEXT: the encrypted data including authentication tag
 
      CTEXT_LEN: the length of encrypted data (initially must hold the
      maximum available size, including space for tag)
@@ -1898,6 +1898,7 @@ to 'more'.  Both will exit with a status code of 0.
             --provider=file        Specify the PKCS #11 provider library
                                      - file must pre-exist
             --fips140-mode         Reports the status of the FIPS140-2 mode in gnutls library
+            --logfile=str          Redirect informational messages to a specific file.
         -v, --version[=arg]        output version information and exit
         -h, --help                 display extended usage information and exit
         -!, --more-help            extended usage information passed thru pager
@@ -2314,7 +2315,7 @@ to 'more'.  Both will exit with a status code of 0.
             --earlydata            Accept early data
             --maxearlydata=num     The maximum early data size to accept
                                      - it must be in the range:
-                                       1 to 4294967296
+                                       1 to 4294967295
             --nocookie             Don't require cookie on DTLS sessions
         -g, --generate             Generate Diffie-Hellman parameters
         -q, --quiet                Suppress some messages
@@ -2972,7 +2973,7 @@ A good name for the identifier would be GNUTLS_EXTENSION_FOOBAR. If the
 extension that you are implementing is an extension that is officially
 registered by IANA then it is recommended to use its official name such
 that the extension can be correctly identified by other developers.
-Check with <http://www.iana.org/assignments/tls-extensiontype-values>
+Check with <https://www.iana.org/assignments/tls-extensiontype-values>
 for registered extensions.
 
 Register the extension in 'lib/hello_ext.c'.
@@ -3323,10 +3324,10 @@ and abstract key types::.
    ---------- Footnotes ----------
 
    (1) See
-<http://lists.gnu.org/archive/html/gnutls-devel/2011-02/msg00079.html>.
+<https://lists.gnu.org/archive/html/gnutls-devel/2011-02/msg00079.html>.
 
-   (2) Check <http://home.gna.org/cryptodev-linux/> for the Linux kernel
-implementation of '/dev/crypto'.
+   (2) Check <https://home.gna.org/cryptodev-linux/> for the Linux
+kernel implementation of '/dev/crypto'.
 
 
 File: gnutls.info,  Node: Random Number Generators-internals,  Next: FIPS140-2 mode,  Prev: Cryptographic Backend,  Up: Internal architecture of GnuTLS
@@ -3915,10 +3916,10 @@ A mailing list where users may help each other exists, and you can reach
 it by sending e-mail to <gnutls-help@gnutls.org>.  Archives of the
 mailing list discussions, and an interface to manage subscriptions, is
 available through the World Wide Web at
-<http://lists.gnutls.org/pipermail/gnutls-help/>.
+<https://lists.gnutls.org/pipermail/gnutls-help/>.
 
 A mailing list for developers are also available, see
-<http://www.gnutls.org/lists.html>.  Bug reports should be sent to
+<https://www.gnutls.org/lists.html>.  Bug reports should be sent to
 <bugs@gnutls.org>, see *note Bug Reports::.
 
 
@@ -3928,7 +3929,7 @@ B.2 Commercial Support
 ======================
 
 Commercial support is available for users of GnuTLS. See
-<http://www.gnutls.org/commercial.html> for more information.
+<https://www.gnutls.org/commercial.html> for more information.
 
 
 File: gnutls.info,  Node: Bug Reports,  Next: Contributing,  Prev: Commercial Support,  Up: Support
@@ -4181,6 +4182,8 @@ expressions.
 -81         GNUTLS_E_TOO_MANY_HANDSHAKE_PACKETSToo many handshake
                                           packets have been
                                           received.
+-82         GNUTLS_E_RECEIVED_DISALLOWED_NAMEA disallowed SNI server
+                                          name has been received.
 -84         GNUTLS_E_NO_TEMPORARY_RSA_PARAMSNo temporary RSA
                                           parameters were found.
 -86         GNUTLS_E_NO_COMPRESSION_ALGORITHMSNo supported compression
@@ -4233,6 +4236,7 @@ expressions.
 -111        GNUTLS_E_MALFORMED_CIDR       CIDR name constraint is
                                           malformed in size or
                                           structure.
+-112        GNUTLS_E_CERTIFICATE_REQUIRED Certificate is required.
 -201        GNUTLS_E_BASE64_ENCODING_ERRORBase64 encoding error.
 -202        GNUTLS_E_INCOMPATIBLE_GCRYPT_LIBRARYThe crypto library
                                           version is too old.
@@ -4632,6 +4636,7 @@ Certificate types
 =================
 
 'X.509'
+'Raw Public Key'
 
 Protocols
 =========
@@ -5407,10 +5412,9 @@ gnutls_certificate_free_cas
           (gnutls_certificate_credentials_t SC)
      SC: is a 'gnutls_certificate_credentials_t' type.
 
-     This function will delete all the CAs associated with the given
-     credentials.  Servers that do not use
-     'gnutls_certificate_verify_peers2()' may call this to save some
-     memory.
+     This function was operational on very early versions of gnutls.
+     Due to internal refactorings and the fact that this was hardly ever
+     used, it is currently a no-op.
 
 gnutls_certificate_free_credentials
 -----------------------------------
@@ -7122,7 +7126,7 @@ gnutls_cipher_get_key_size
           (gnutls_cipher_algorithm_t ALGORITHM)
      ALGORITHM: is an encryption algorithm
 
-     Get key size for cipher.
+     This function returns the key size of the provided algorithm.
 
      *Returns:* length (in bytes) of the given cipher's key size, or 0
      if the given cipher is invalid.
@@ -10617,7 +10621,7 @@ gnutls_record_get_direction
      restoring the interrupted GnuTLS function.
 
      This function's output is unreliable if you are using the same
-     'session' in different threads, for sending and receiving.
+     'session' in different threads for sending and receiving.
 
      *Returns:* 0 if interrupted while trying to read data, or 1 while
      trying to write data.
@@ -10964,8 +10968,7 @@ gnutls_record_set_max_size
      SIZE: is the new size
 
      This function sets the maximum record packet size in this
-     connection.  This property can only be set to clients.  The server
-     may choose not to accept the requested size.
+     connection.
 
      The requested record size does get in effect immediately only while
      sending data.  The receive part will take effect after a successful
@@ -10978,6 +10981,9 @@ gnutls_record_set_max_size
      doesn't have the limitation, as long as the value ranges between
      512 and 16384.  Note that not all TLS implementations use or even
      understand those extension.
+
+     In TLS 1.3, the value is the length of plaintext content plus its
+     padding, excluding content type octet.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.
@@ -11401,8 +11407,10 @@ gnutls_session_get_data2
      ticket is received by the client.  To ensure that such a ticket has
      been received use 'gnutls_session_get_flags()' and check for flag
      'GNUTLS_SFLAGS_SESSION_TICKET' ; if this flag is not set, this
-     function will wait for a new ticket within 50ms, and if not
-     received will return dummy data which cannot lead to resumption.
+     function will wait for a new ticket within an estimated rountrip,
+     and if not received will return dummy data which cannot lead to
+     resumption.
+
      To get notified when new tickets are received by the server use
      'gnutls_handshake_set_hook_function()' to wait for
      'GNUTLS_HANDSHAKE_NEW_SESSION_TICKET' messages.  Each call of
@@ -11924,7 +11932,8 @@ gnutls_session_ticket_send
 
      Sends a fresh session ticket to the peer.  This is relevant only in
      server side under TLS1.3.  This function may also return
-     'GNUTLS_E_AGAIN' or 'GNUTLS_E_INTERRUPTED' .
+     'GNUTLS_E_AGAIN' or 'GNUTLS_E_INTERRUPTED' and in that case it must
+     be called again.
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, or a negative error code.
 
@@ -13039,6 +13048,9 @@ gnutls_transport_set_errno
      replacements may not have access to the same 'errno' variable that
      is used by GnuTLS (e.g., the application is linked to msvcr71.dll
      and gnutls is linked to msvcrt.dll).
+
+     This function is unreliable if you are using the same 'session' in
+     different threads for sending and receiving.
 
 gnutls_transport_set_errno_function
 -----------------------------------

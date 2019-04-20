@@ -17,7 +17,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
  *
  */
 
@@ -37,15 +37,12 @@
 #ifndef GNUTLS_H
 #define GNUTLS_H
 
+/* Get ssize_t. */
+#include <sys/types.h>
+
 /* Get size_t. */
 #include <stddef.h>
-/* Get ssize_t. */
-#ifndef HAVE_SSIZE_T
-#define HAVE_SSIZE_T
-/* *INDENT-OFF* */
-#include <sys/types.h>
-/* *INDENT-ON* */
-#endif
+
 /* Get time_t. */
 #include <time.h>
 
@@ -55,13 +52,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.6"
+#define GNUTLS_VERSION "3.6.7"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 6
+#define GNUTLS_VERSION_PATCH 7
 
-#define GNUTLS_VERSION_NUMBER 0x030606
+#define GNUTLS_VERSION_NUMBER 0x030607
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -531,6 +528,7 @@ typedef enum {
  *   recognized.
  * @GNUTLS_A_UNKNOWN_PSK_IDENTITY: The SRP/PSK username is missing
  *   or not known.
+ * @GNUTLS_A_CERTIFICATE_REQUIRED: Certificate is required.
  * @GNUTLS_A_NO_APPLICATION_PROTOCOL: The ALPN protocol requested is
  *   not supported by the peer.
  *
@@ -567,6 +565,7 @@ typedef enum {
 	GNUTLS_A_CERTIFICATE_UNOBTAINABLE = 111,
 	GNUTLS_A_UNRECOGNIZED_NAME = 112,
 	GNUTLS_A_UNKNOWN_PSK_IDENTITY = 115,
+	GNUTLS_A_CERTIFICATE_REQUIRED = 116,
 	GNUTLS_A_NO_APPLICATION_PROTOCOL = 120,
 	GNUTLS_A_MAX = GNUTLS_A_NO_APPLICATION_PROTOCOL
 } gnutls_alert_description_t;
@@ -2199,6 +2198,10 @@ extern _SYM_EXPORT gnutls_realloc_function gnutls_realloc;
 extern _SYM_EXPORT gnutls_calloc_function gnutls_calloc;
 extern _SYM_EXPORT gnutls_free_function gnutls_free;
 
+#ifdef GNUTLS_INTERNAL_BUILD
+#define gnutls_free(a) gnutls_free((void *) (a)), a=NULL
+#endif
+
 extern _SYM_EXPORT char *(*gnutls_strdup) (const char *);
 
 /* a variant of memset that doesn't get optimized out */
@@ -3146,6 +3149,8 @@ void gnutls_fips140_set_mode(gnutls_fips_mode_t mode, unsigned flags);
 #define GNUTLS_E_TOO_MANY_EMPTY_PACKETS -78
 #define GNUTLS_E_UNKNOWN_PK_ALGORITHM -80
 #define GNUTLS_E_TOO_MANY_HANDSHAKE_PACKETS -81
+#define GNUTLS_E_RECEIVED_DISALLOWED_NAME -82 /* GNUTLS_A_ILLEGAL_PARAMETER */
+#define GNUTLS_E_CERTIFICATE_REQUIRED -112 /* GNUTLS_A_CERTIFICATE_REQUIRED */
 
   /* returned if you need to generate temporary RSA
    * parameters. These are needed for export cipher suites.

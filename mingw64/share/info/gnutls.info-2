@@ -1,6 +1,6 @@
 This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
 
-This manual is last updated 3 January 2019 for version 3.6.6 of GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.7 of GnuTLS.
 
 Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2019 Nikos Mavrogiannopoulos
@@ -662,12 +662,24 @@ access to objects, for example the credentials holding structures, is
 also thread-safe.
 
 A 'gnutls_session_t' object could also be shared by two threads, one
-sending, the other receiving.  In that case however, care must be taken
-during key updates and re-handshakes to be handled only by a single
-thread.  The termination of a session should be handled, either by a
-single thread being active, or by the sender thread using *note
-gnutls_bye:: with 'GNUTLS_SHUT_WR' and the receiving thread waiting for
-a return value of zero.
+sending, the other receiving.  However, care must be taken on the
+following use cases:
+   * The re-handshake process in TLS 1.2 or earlier must be handled only
+     in a single thread and no other thread may be performing any
+     operation.
+   * The flag 'GNUTLS_AUTO_REAUTH' cannot be used safely in this mode of
+     operation.
+   * Any other operation which may send or receive data, like key update
+     (c.f., *note gnutls_session_key_update::), must not be performed
+     while threads are receiving or writing.
+   * The termination of a session should be handled, either by a single
+     thread being active, or by the sender thread using *note
+     gnutls_bye:: with 'GNUTLS_SHUT_WR' and the receiving thread waiting
+     for a return value of zero (or timeout on certain servers which do
+     not respond).
+   * The functions *note gnutls_transport_set_errno:: and *note
+     gnutls_record_get_direction:: should not be relied during parallel
+     operation.
 
 For several aspects of the library (e.g., the random generator, PKCS#11
 operations), the library may utilize mutex locks (e.g., pthreads on
@@ -722,7 +734,7 @@ is recommended to test your program in all the targeted platforms when
 filters like seccomp are in place.
 
 An example with a seccomp filter from GnuTLS' test suite is at:
-<http://gitlab.com/gnutls/gnutls/blob/master/tests/seccomp.c>.
+<https://gitlab.com/gnutls/gnutls/blob/master/tests/seccomp.c>.
 
 
 File: gnutls.info,  Node: Sessions and fork,  Next: Callback functions,  Prev: Running in a sandbox,  Up: Introduction to the library
@@ -1761,6 +1773,9 @@ intended errno value instead of setting 'errno' directly.
      is used by GnuTLS (e.g., the application is linked to msvcr71.dll
      and gnutls is linked to msvcrt.dll).
 
+     This function is unreliable if you are using the same 'session' in
+     different threads for sending and receiving.
+
 GnuTLS currently only interprets the EINTR, EAGAIN and EMSGSIZE errno
 values and returns the corresponding GnuTLS error codes:
    * 'GNUTLS_E_INTERRUPTED'
@@ -1923,7 +1938,7 @@ which direction to check prior to restoring a function call.
      restoring the interrupted GnuTLS function.
 
      This function's output is unreliable if you are using the same
-     'session' in different threads, for sending and receiving.
+     'session' in different threads for sending and receiving.
 
      *Returns:* 0 if interrupted while trying to read data, or 1 while
      trying to write data.
@@ -3492,8 +3507,9 @@ also controls the ticket key rotation period.  Currently, the session
 key rotation interval is set to 3 times the expiration time set by this
 function.
 
-Under TLS 1.3, the server can send a new session ticket at any time
-using *note gnutls_session_ticket_send::.
+Under TLS 1.3, the server sends by default 2 tickets, and can send
+additional session tickets at any time using *note
+gnutls_session_ticket_send::.
 
  -- Function: int gnutls_session_ticket_send (gnutls_session_t SESSION,
           unsigned NR, unsigned FLAGS)
@@ -3505,7 +3521,8 @@ using *note gnutls_session_ticket_send::.
 
      Sends a fresh session ticket to the peer.  This is relevant only in
      server side under TLS1.3.  This function may also return
-     'GNUTLS_E_AGAIN' or 'GNUTLS_E_INTERRUPTED' .
+     'GNUTLS_E_AGAIN' or 'GNUTLS_E_INTERRUPTED' and in that case it must
+     be called again.
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, or a negative error code.
 

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2019-03-14"
+  s.date = "2019-04-19"
   s.description = "Ruby extension for GNU dbm.".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.extensions = ["ext/gdbm/extconf.rb".freeze]

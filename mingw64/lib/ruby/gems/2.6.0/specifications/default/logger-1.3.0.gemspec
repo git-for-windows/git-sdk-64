@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["SHIBATA Hiroshi".freeze]
   s.bindir = "exe".freeze
-  s.date = "2019-03-14"
+  s.date = "2019-04-19"
   s.description = "Provides a simple logging utility for outputting messages.".freeze
   s.email = ["hsbt@ruby-lang.org".freeze]
   s.files = ["logger.rb".freeze]
