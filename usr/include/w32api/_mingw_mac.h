@@ -11,7 +11,7 @@
 #define __MINGW64_STRINGIFY(x) \
   __STRINGIFY(x)
 
-#define __MINGW64_VERSION_MAJOR 6
+#define __MINGW64_VERSION_MAJOR 7
 #define __MINGW64_VERSION_MINOR 0
 #define __MINGW64_VERSION_BUGFIX 0
 
@@ -290,5 +290,12 @@
 #  define __mingw_ovr static __cdecl
 #  define __mingw_static_ovr __mingw_ovr
 #endif /* __cplusplus */
+
+/* Enable workaround for ABI incompatibility on affected platforms */
+#ifndef WIDL_EXPLICIT_AGGREGATE_RETURNS
+#if defined(__GNUC__) && defined(__cplusplus) && (defined(__x86_64__) || defined(__i386__))
+#define  WIDL_EXPLICIT_AGGREGATE_RETURNS
+#endif
+#endif
 
 #endif	/* _INC_CRTDEFS_MACRO */

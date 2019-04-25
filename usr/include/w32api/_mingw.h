@@ -7,8 +7,6 @@
 #ifndef _INC__MINGW_H
 #define _INC__MINGW_H
 
-
-
 #include "_mingw_mac.h"
 #include "_mingw_secapi.h"
 
@@ -229,7 +227,7 @@ limitations in handling dllimport attribute.  */
 
 
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x502
+#define _WIN32_WINNT 0x601
 #endif
 
 #ifndef _INT128_DEFINED
@@ -428,6 +426,15 @@ typedef int __int128 __attribute__ ((__mode__ (TI)));
 #  define __USE_MINGW_ANSI_STDIO			1
 #endif
 
+/* We are defining __USE_MINGW_ANSI_STDIO as 0 or 1 */
+#if !defined(__USE_MINGW_ANSI_STDIO)
+#define __USE_MINGW_ANSI_STDIO 0      /* was not defined so it should be 0 */
+#elif (__USE_MINGW_ANSI_STDIO + 0) != 0 || (1 - __USE_MINGW_ANSI_STDIO - 1) == 2
+#define __USE_MINGW_ANSI_STDIO 1      /* was defined as nonzero or empty so it should be 1 */
+#else
+#define __USE_MINGW_ANSI_STDIO 0      /* was defined as (int)zero and non-empty so it should be 0 */
+#endif
+
 /* _dowildcard is an int that controls the globbing of the command line.
  * The MinGW32 (mingw.org) runtime calls it _CRT_glob, so we are adding
  * a compatibility definition here:  you can use either of _CRT_glob or
@@ -586,10 +593,13 @@ const char *__mingw_get_crt_info (void);
 #ifndef MINGW_SDK_INIT
 #define MINGW_SDK_INIT
 
-#ifdef MINGW_HAS_SECURE_API
+/* for backward compatibility */
+#ifndef MINGW_HAS_SECURE_API
+#define MINGW_HAS_SECURE_API 1
+#endif
+
 #define __STDC_SECURE_LIB__ 200411L
 #define __GOT_SECURE_LIB__ __STDC_SECURE_LIB__
-#endif
 
 #ifndef __WIDL__
 #include "sdks/_mingw_directx.h"
