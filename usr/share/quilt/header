@@ -154,6 +154,9 @@ else
 		LANG=$ORIGINAL_LANG $EDITOR "$tmp" || exit 1
 	fi
 
+	# Ensure there is a trailing newline before we append the rest
+	ensure_trailing_newline $tmp
+
 	maybe_strip_diffstat < $tmp \
 	| maybe_strip_trailing_whitespace > $tmp2
 

@@ -45,12 +45,28 @@
       (or (getenv "QUILT_PATCHES")
           "patches")))
 
+(defun quilt-pc-directory ()
+  "Return the location of patch files."
+  (or (with-current-buffer (generate-new-buffer " *cmd")
+        (shell-command
+         (concat "test -f ~/.quiltrc && . ~/.quiltrc ;"
+                 "echo -n $QUILT_PC")
+         t)
+        (unwind-protect
+            (let ((v (buffer-string)))
+              (if (string= "" (buffer-string))
+                  nil
+                v))
+          (kill-buffer (current-buffer))))
+      (or (getenv "QUILT_PC")
+          ".pc")))
+
 (defun quilt-find-dir (fn &optional prefn)
   "Return the top level dir of quilt from FN."
   (if (or (not fn) (equal fn "/") (equal fn prefn))
       nil
     (let ((d (file-name-directory fn)))
-      (if (file-accessible-directory-p (concat d "/.pc"))
+      (if (file-accessible-directory-p (concat d "/" (quilt-pc-directory)))
 	  d
 	(quilt-find-dir (directory-file-name d) d)))))
 
@@ -84,7 +100,7 @@
       (and
        (not (string-match "\\(~$\\|\\.rej$\\)" fn))
        (not (equal pd (quilt-patches-directory)))
-       (not (equal pd ".pc"))
+       (not (equal pd (quilt-pc-directory)))
        (quilt-p fn)))))
 
 (defun quilt-cmd (cmd &optional buf)
@@ -152,8 +168,7 @@
   "Return the top patch name.  return nil if there is the bottom of patch stack."
   (if (quilt-bottom-p)
       nil
-    (file-name-nondirectory
-     (substring (quilt-cmd-to-string "top")  0 -1))))
+    (substring (quilt-cmd-to-string "top")  0 -1)))
 
 (defun quilt-complete-list (p l)
   "Call 'completing-read' with prompt P and list L."
@@ -166,6 +181,7 @@
       (setq n (1+ n))))
   (completing-read p l nil t))
 
+(defvar quilt-edit-top-only 't)
 (defun quilt-editable (f)
   "Return t if F is editable in terms of current patch.  Return nil if otherwise."
   (let ((qd (quilt-dir))
@@ -176,19 +192,19 @@
 	    (quilt-cmd "applied")	; to print error message
 	  (setq dirs (if quilt-edit-top-only
 			 (list (substring (quilt-cmd-to-string "top")  0 -1))
-			 (cdr (cdr (directory-files (concat qd ".pc/"))))))
+			 (cdr (cdr (directory-files (concat qd (quilt-pc-directory) "/"))))))
 	  (while (and (not result) dirs)
-	    (if (file-exists-p (concat qd ".pc/" (car dirs) "/" fn))
+	    (if (file-exists-p (concat qd (quilt-pc-directory) "/" (car dirs) "/" fn))
 		(setq result t)
 	      (setq dirs (cdr dirs))))
 	  result))))
 
 (defun quilt-short-patchname ()
-  "Return shortened name of top patch.  Return nil if there is on the bottom of patch stack."
+  "Return shortened name of top patch.  Return \"none\" when on the bottom patch stack."
   (let ((p (quilt-top-patch)))
     (if (not p)
 	"none"
-      (let ((p2 (file-name-sans-extension p)))
+      (let ((p2 (file-name-sans-extension (file-name-nondirectory p))))
 	   (if (< (length p2) 10)
 	       p2
 	     (concat (substring p2 0 8) ".."))))))
@@ -280,7 +296,7 @@ editability adjusted."
 	    (message "no patch name is supplied")
 	  (quilt-save)
 	  (let (cmd first last)
-	    (if (file-exists-p (concat qd ".pc/" arg))
+	    (if (file-exists-p (concat qd (quilt-pc-directory) "/" arg))
 		(progn
 		  (setq cmd "pop")
 		  (setq first (car (quilt-cmd-to-list (concat "next " arg))))
@@ -375,7 +391,7 @@ editability adjusted."
 			    patch)))
 	    (if (file-exists-p pf)
 		(progn (find-file pf)
-		       (toggle-read-only))
+		       (read-only-mode 0))
 	      (message (format "%s doesn't exist yet." pf)))))))))
 
 (defun quilt-patches ()
@@ -537,7 +553,6 @@ editability adjusted."
 
 (defvar quilt-mode nil)
 (make-variable-buffer-local 'quilt-mode)
-(defvar quilt-edit-top-only 't)
 
 (defun quilt-mode (&optional arg)
   "Toggle 'quilt-mode'.  Enable 'quilt-mode' if ARG is positive.
@@ -552,8 +567,8 @@ editability adjusted."
       (let ((f (quilt-buffer-file-name-safe)))
 	(if (quilt-owned-p f)
 	    (if (not (quilt-editable f))
-		(toggle-read-only 1)
-	      (toggle-read-only 0)))
+            (read-only-mode 1)
+	      (read-only-mode 0)))
 	(quilt-update-modeline))))
 
 (defun quilt-hook ()

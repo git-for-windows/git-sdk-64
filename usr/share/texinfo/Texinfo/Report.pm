@@ -1,6 +1,7 @@
 # Report.pm: prepare error messages and translate strings.
 #
-# Copyright 2010, 2011, 2012, 2014 Free Software Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018 Free Software 
+# Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,13 +22,6 @@ require Exporter;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Exporter);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration      use Texinfo::Parser ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   errors
   gdt
@@ -57,26 +51,12 @@ sub errors($)
   return ($self->{'errors_warnings'}, $self->{'error_nrs'});
 }
 
-sub __($$)
-{
-  my $self = shift;
-  return &{$self->{'gettext'}}(@_);
-}
-
-sub __p($$$)
-{
-  my $self = shift;
-  return &{$self->{'pgettext'}}(@_);
-}
-
 sub new($)
 {
   my $self = shift;
   $self->{'errors_warnings'} = [];
   #print STDERR "REPORT NEW $self $self->{'errors_warnings'}\n";
   $self->{'errors_nrs'} = 0;
-  $self->{'gettext'} = sub {return $_[0];} if (!defined($self->{'gettext'}));
-  $self->{'pgettext'} = sub {return $_[1];} if (!defined($self->{'pgettext'}));
   return $self;
 }
 
@@ -95,11 +75,11 @@ sub line_warn($$$)
     if ($self->get_conf('TEST'));
   my $warn_line;
   if ($line_number->{'macro'} ne '') {
-    $warn_line = sprintf($self->__p("Texinfo source file warning",
+    $warn_line = sprintf(__p("Texinfo source file warning",
                              "%s:%d: warning: %s (possibly involving \@%s)\n"),
              $file, $line_number->{'line_nr'}, $text, $line_number->{'macro'});
   } else {
-    $warn_line = sprintf($self->__p("Texinfo source file warning", 
+    $warn_line = sprintf(__p("Texinfo source file warning", 
                                     "%s:%d: warning: %s\n"),
                          $file, $line_number->{'line_nr'}, $text);
   }
@@ -143,10 +123,10 @@ sub document_warn($$)
 
   my $warn_line;
   if (defined($self->get_conf('PROGRAM')) and $self->get_conf('PROGRAM') ne '') {
-    $warn_line = sprintf($self->__p("whole document warning", "%s: warning: %s\n"), 
+    $warn_line = sprintf(__p("whole document warning", "%s: warning: %s\n"), 
                          $self->get_conf('PROGRAM'), $text);
   } else {
-    $warn_line = sprintf($self->__p("whole document warning", "warning: %s\n"), 
+    $warn_line = sprintf(__p("whole document warning", "warning: %s\n"), 
                          $text);
   }
   push @{$self->{'errors_warnings'}},
@@ -181,12 +161,12 @@ sub file_line_warn($$$;$)
 
   my $warn_line;
   if (!defined($file)) {
-    $warn_line = sprintf($self->__p("file warning", "warning: %s\n"), $text);
+    $warn_line = sprintf(__p("file warning", "warning: %s\n"), $text);
   } elsif (!defined($line_nr)) {
-    $warn_line = sprintf($self->__p("file warning", "%s: warning: %s\n"), 
+    $warn_line = sprintf(__p("file warning", "%s: warning: %s\n"), 
                          $file, $text);
   } else {
-    $warn_line = sprintf($self->__p("file warning", "%s:%d: warning: %s\n"), 
+    $warn_line = sprintf(__p("file warning", "%s:%d: warning: %s\n"), 
                          $file, $line_nr, $text);
   }
   #print STDERR "REPORT FILE_LINE_WARN $self $self->{'errors_warnings'}\n";
@@ -226,9 +206,21 @@ my $DEFAULT_LANGUAGE = 'en';
 # gettext.
 Locale::Messages->select_package ('gettext_pp');
 
-# FIXME make those configurable?  Set them with call to new?
 my $strings_textdomain = 'texinfo_document';
 my $messages_textdomain = 'texinfo';
+
+sub __($) {
+  my $msgid = shift;
+  return Locale::Messages::dgettext($messages_textdomain, $msgid);
+}
+  
+sub __p($$) {
+  my $context = shift;
+  my $msgid = shift;
+  return Locale::Messages::dpgettext($messages_textdomain, $context, $msgid);
+}
+
+
 
 # libintl converts between encodings but doesn't decode them into the
 # perl internal format.  This is only called if the encoding is a proper
@@ -309,15 +301,7 @@ sub gdt($$;$$)
 
   Locale::Messages::nl_putenv("LANGUAGE=$locales");
 
-  my $translation_result;
-  if (!defined($context) or ref($context)) {
-    $translation_result = Locale::Messages::gettext($message);
-  } else {
-    # In practice this is not used anywhere, context is always a HASH.
-    # for strings substitution not a context for translation.
-    $translation_result = Locale::Messages::pgettext($context, $message);
-  }
-  #print STDERR "$locales $message ----> $translation_result\n";
+  my $translation_result = Locale::Messages::gettext($message);
 
   Locale::Messages::textdomain($messages_textdomain);
   # old perl complains 'Use of uninitialized value in scalar assignment'
@@ -422,15 +406,6 @@ sub _substitute ($$) {
 
   if ($tree->{'args'}) {
     _substitute_element_array ($tree->{'args'}, $context);
-  }
-
-  # Used for @email and @url
-  if ($tree->{'extra'} and $tree->{'extra'}{'brace_command_contents'}) {
-    for my $arg (@{$tree->{'extra'}{'brace_command_contents'}}) {
-      if ($arg) {
-        _substitute_element_array ($arg, $context);
-      }
-    }
   }
 
   return $tree;
@@ -617,14 +592,5 @@ the line I<$line_nr> in the file.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License,
-or (at your option) any later version.
 
 =cut

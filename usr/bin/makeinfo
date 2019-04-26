@@ -2,8 +2,7 @@
 
 # texi2any: Texinfo converter.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017
-# Free Software Foundation, Inc.
+# Copyright 2010-2019 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,6 +38,8 @@ use Getopt::Long qw(GetOptions);
 
 Getopt::Long::Configure("gnu_getopt");
 
+my ($real_command_name, $command_directory, $command_suffix);
+
 # This big BEGIN block deals with finding modules and 
 # some dependencies that we ship 
 # * in source or
@@ -48,7 +49,7 @@ BEGIN
 {
   # emulate -w
   $^W = 1;
-  my ($real_command_name, $command_directory, $command_suffix) 
+  ($real_command_name, $command_directory, $command_suffix) 
      = fileparse($0, '.pl');
   my $updir = File::Spec->updir();
 
@@ -67,13 +68,9 @@ BEGIN
     # To find Texinfo::ModulePath
     if (!defined($ENV{'top_builddir'})) {
       $ENV{'top_builddir'} = File::Spec->catdir($command_directory, $updir);
+      $ENV{'top_srcdir'} = File::Spec->catdir($command_directory, $updir);
     }
     unshift @INC, File::Spec->catdir($ENV{'top_builddir'}, 'tp');
-
-    if (defined($ENV{'top_srcdir'})) {
-      my $lib_dir = File::Spec->catdir($ENV{'top_srcdir'}, 'tp');
-      unshift @INC, $lib_dir;
-    }
 
     require Texinfo::ModulePath;
     Texinfo::ModulePath::init();
@@ -81,15 +78,6 @@ BEGIN
     # Look for modules in their installed locations.
 
     my $lib_dir = File::Spec->catdir($datadir, $package);
-
-    # try to make package relocatable, will only work if
-    # standard relative paths are used
-    if (! -f File::Spec->catfile($lib_dir, 'Texinfo', 'Parser.pm')
-        and -f File::Spec->catfile($command_directory, $updir, 'share', 
-                                   'texinfo', 'Texinfo', 'Parser.pm')) {
-      $lib_dir = File::Spec->catdir($command_directory, $updir, 
-                                          'share', 'texinfo');
-    }
     unshift @INC, $lib_dir;
 
     require Texinfo::ModulePath;
@@ -97,6 +85,7 @@ BEGIN
   }
 } # end BEGIN
 
+# This allows disabling use of XS modules when Texinfo is built.
 BEGIN {
   my $enable_xs = 'yes';
   if ($enable_xs eq 'no') {
@@ -109,9 +98,6 @@ BEGIN {
 use Locale::Messages;
 use Texinfo::Common;
 use Texinfo::Convert::Converter;
-
-my ($real_command_name, $command_directory, $command_suffix) 
-   = fileparse($0, '.pl');
 
 # this associates the command line options to the arrays set during
 # command line parsing.
@@ -179,17 +165,6 @@ my $strings_textdomain = 'texinfo' . '_document';
 $strings_textdomain = 'texinfo_document' 
    if ($strings_textdomain eq '@'.'PACKAGE@' . '_document');
 
-sub __($) {
-  my $msgid = shift;
-  return Locale::Messages::dgettext($messages_textdomain, $msgid);
-}
-
-sub __p($$) {
-  my $context = shift;
-  my $msgid = shift;
-  return Locale::Messages::dpgettext($messages_textdomain, $context, $msgid);
-}
-
 my $srcdir;
 if (defined($ENV{'top_srcdir'})) {
   $srcdir = File::Spec->catdir($ENV{'top_srcdir'}, 'tp');
@@ -253,7 +228,7 @@ if (($command_suffix eq '.pl' and !(defined($ENV{'TEXINFO_DEV_SOURCE'})
 # in practice as a regexp extracts the version from configure.ac.
 my $hardcoded_version = "0.00-hardcoded";
 # Version set in configure.ac
-my $configured_version = '6.5';
+my $configured_version = '6.6';
 if ($configured_version eq '@' . 'PACKAGE_VERSION@') {
   # if not configured, and $hardcoded_version is set search for the version 
   # in configure.ac
@@ -273,8 +248,8 @@ if ($configured_version eq '@' . 'PACKAGE_VERSION@') {
   } else {
     # used in the standalone perl module, as $hardcoded_version is undef
     # and it should never be configured in that setup
-    require Texinfo::Parser;
-    $configured_version = $Texinfo::Parser::VERSION;
+    require Texinfo::Common;
+    $configured_version = $Texinfo::Common::VERSION;
   }
 }
 
@@ -302,7 +277,7 @@ my $configured_url = 'http://www.gnu.org/software/texinfo/';
 $configured_url = 'http://www.gnu.org/software/texinfo/'
   if ($configured_url eq '@' .'PACKAGE_URL@');
 
-my $texinfo_dtd_version = '6.4';
+my $texinfo_dtd_version = '6.6';
 # $hardcoded_version is undef for a standalone perl module
 if ($texinfo_dtd_version eq '@' . 'TEXINFO_DTD_VERSION@') {
   $texinfo_dtd_version = undef;
@@ -342,7 +317,6 @@ my $converter_default_options = {
 # determine configuration directories.
 
 my $conf_file_name = 'Config' ;
-my $texinfo_htmlxref = 'htmlxref.cnf';
 
 # directories for texinfo configuration files
 my @language_config_dirs = File::Spec->catdir($curdir, '.texinfo');
@@ -411,9 +385,6 @@ sub set_from_init_file($$) {
     main::document_warn(sprintf(main::__("%s: unknown variable %s"), 
                                 'set_from_init_file', $var));
     return 0;
-  } elsif (Texinfo::Common::obsolete_option($var)) {
-    main::document_warn(sprintf(main::__("%s: obsolete variable %s\n"), 
-                                  'set_from_init_file', $var));
   }
   return 0 if (defined($cmdline_options->{$var}));
   delete $default_options->{$var};
@@ -430,9 +401,6 @@ sub set_from_cmdline($$) {
     main::document_warn(sprintf(main::__("%s: unknown variable %s\n"), 
                                 'set_from_cmdline', $var));
     return 0;
-  } elsif (Texinfo::Common::obsolete_option($var)) {
-    main::document_warn(sprintf(main::__("obsolete variable %s\n"), 
-                                'set_from_cmdline', $var));
   }
   $cmdline_options->{$var} = $value;
   return 1;
@@ -457,42 +425,12 @@ sub get_conf($) {
 }
 # back in main program namespace
 
-# file:        file name to locate. It can be a file path.
-# directories: a reference on a array containing a list of directories to
-#              search the file in. 
-# all_files:   if true collect all the files with that name, otherwise stop
-#              at first match.
-sub locate_init_file($$$)
-{
-  my $file = shift;
-  my $directories = shift;
-  my $all_files = shift;
-
-  if (File::Spec->file_name_is_absolute($file)) {
-    return $file if (-e $file and -r $file);
-  } else {
-    my @files;
-    foreach my $dir (@$directories) {
-      next unless (-d $dir);
-      my $possible_file = File::Spec->catfile($dir, $file);
-      if ($all_files) {
-        push (@files, $possible_file) 
-          if (-e $possible_file and -r $possible_file);
-      } else {
-        return $possible_file if (-e $possible_file and -r $possible_file);
-      }
-    }
-    return @files if ($all_files);
-  }
-  return undef;
-}
-
 sub locate_and_load_init_file($$)
 {
   my $filename = shift;
   my $directories = shift;
 
-  my $file = locate_init_file($filename, $directories, 0);
+  my $file = Texinfo::Common::locate_init_file($filename, $directories, 0);
   if (defined($file)) {
     Texinfo::Config::_load_init_file($file);
   } else {
@@ -501,7 +439,7 @@ sub locate_and_load_init_file($$)
 }
 
 # read initialization files
-foreach my $file (locate_init_file($conf_file_name, 
+foreach my $file (Texinfo::Common::locate_init_file($conf_file_name, 
                   [ reverse(@program_config_dirs) ], 1)) {
   Texinfo::Config::_load_init_file($file);
 }
@@ -533,9 +471,7 @@ my @prepend_dirs = ();
 
 # options for all the files
 my $parser_default_options = {'expanded_formats' => [], 
-                              'values' => {'txicommandconditionals' => 1},
-                              'gettext' => \&__,
-                              'pgettext' => \&__p,};
+                              'values' => {'txicommandconditionals' => 1}};
 
 Texinfo::Config::_load_config($converter_default_options, $cmdline_options);
 
@@ -908,7 +844,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"), "2017";
   },
  'split=s' => sub {  my $split = $_[1];
                      my @messages 
-                       = Texinfo::Common::warn_unknown_split($_[1], \&__);
+                       = Texinfo::Common::warn_unknown_split($_[1]);
                      if (@messages) {
                        foreach my $message (@messages) {
                          document_warn($message);
@@ -942,7 +878,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"), "2017";
                       set_from_cmdline('documentlanguage', $_[1]); 
                       $parser_default_options->{'documentlanguage'} = $_[1];
                       my @messages 
-                       = Texinfo::Common::warn_unknown_language($_[1], \&__);
+                       = Texinfo::Common::warn_unknown_language($_[1]);
                       foreach my $message (@messages) {
                         document_warn($message);
                       }
@@ -952,11 +888,16 @@ There is NO WARRANTY, to the extent permitted by law.\n"), "2017";
     my @field = split (/\s+/, $var, 2);
     if (@field == 1) {
       $parser_default_options->{'values'}->{$var} = 1;
+      push @texi2dvi_args, "--command=\@set $var 1";
     } else {
       $parser_default_options->{'values'}->{$field[0]} = $field[1];
+      push @texi2dvi_args, "--command=\@set $var $field[1]";
     }
  },
- 'U=s' => sub {delete $parser_default_options->{'values'}->{$_[1]};},
+ 'U=s' => sub {
+    delete $parser_default_options->{'values'}->{$_[1]};
+    push @texi2dvi_args, "--command=\@clear $_[1]";
+ },
  'init-file=s' => sub {
     locate_and_load_init_file($_[1], [ @conf_dirs, @program_init_dirs ]);
  },
@@ -972,7 +913,7 @@ There is NO WARRANTY, to the extent permitted by law.\n"), "2017";
      if ($var eq 'TEXINFO_OUTPUT_FORMAT') {
        $format = set_format($value, $format, 1);
      } elsif ($var eq 'TEXI2HTML') {
-       $format = set_format('html');
+       $format = set_format('html', $format, 1);
        $parser_default_options->{'values'}->{'texi2html'} = 1;
      }
      set_from_cmdline($var, $value);
@@ -1120,9 +1061,8 @@ if (defined($formats_table{$format}->{'module'})) {
         .'->converter(@_)};';
 }
 
-# This gets the class right, even though there is a sub...
-if (defined($formats_table{$format}->{'converter'})) {
-  $converter_class = ref(&{$formats_table{$format}->{'converter'}});
+if (defined($formats_table{$format}->{'module'})) {
+  $converter_class = $formats_table{$format}->{'module'};
   %converter_defaults = $converter_class->converter_defaults();
 }
 
@@ -1131,7 +1071,7 @@ if (defined($formats_table{$format}->{'converter'})) {
 # using no warnings is wrong, but a way to avoid a spurious warning.
 no warnings 'once';
 foreach my $parser_settable_option (
-                keys(%Texinfo::Parser::default_customization_values)) {
+                keys(%Texinfo::Common::default_customization_values)) {
   if (defined(get_conf($parser_settable_option))) {
     $parser_default_options->{$parser_settable_option} 
        = get_conf($parser_settable_option);
@@ -1189,28 +1129,6 @@ while(@input_files) {
 
   my $input_file_base = $input_file_name;
   $input_file_base =~ s/\.te?x(i|info)?$//;
-
-  my @htmlxref_dirs;
-  if (get_conf('TEST')) {
-    # to have reproducible tests, do not use system or user
-    # directories if TEST is set.
-    @htmlxref_dirs = File::Spec->catdir($curdir, '.texinfo');
-  } else {
-    @htmlxref_dirs = @language_config_dirs;
-  }
-  if ($input_directory ne '.' and $input_directory ne '') {
-    unshift @htmlxref_dirs, $input_directory;
-  }
-  unshift @htmlxref_dirs, '.';
-
-  my @texinfo_htmlxref_files;
-  my $init_file_from_conf = get_conf('HTMLXREF');
-  if ($init_file_from_conf) {
-    @texinfo_htmlxref_files = ( $init_file_from_conf );
-  } else {
-    @texinfo_htmlxref_files 
-      = locate_init_file ($texinfo_htmlxref, \@htmlxref_dirs, 1);
-  }
 
   my $parser_options = { %$parser_default_options };
 
@@ -1356,7 +1274,9 @@ while(@input_files) {
 
   $converter_options->{'parser'} = $parser;
   $converter_options->{'output_format'} = $format;
-  $converter_options->{'htmlxref_files'} = \@texinfo_htmlxref_files;
+  $converter_options->{'language_config_dirs'} = \@language_config_dirs;
+
+
   my $converter = &{$formats_table{$format}->{'converter'}}($converter_options);
   $converter->output($tree);
   push @opened_files, $converter->converter_opened_files();

@@ -135,6 +135,9 @@ apply_patch()
 	elif [ "${patch_file:(-5)}" = ".lzma" ]
 	then
 		lzma -cd "$patch_file" | "$@" 2>&1
+	elif [ "${patch_file:(-3)}" = ".lz" ]
+	then
+		lzip -cd "$patch_file" | "$@" 2>&1
 	else
 		"$@" -i "$patch_file" 2>&1
 	fi

@@ -1,7 +1,6 @@
-# $Id: Converter.pm 7942 2017-08-28 20:42:04Z gavin $
 # Converter.pm: Common code for Converters.
 #
-# Copyright 2011, 2012, 2013, 2014, 2015, 2016 Free Software Foundation, Inc.
+# Copyright 2011-2019 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,13 +40,6 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Exporter Texinfo::Report);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration       use Texinfo::Convert::Converter ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
 xml_protect_text
 xml_comment
@@ -60,7 +52,7 @@ xml_accents
 @EXPORT = qw(
 );
 
-$VERSION = '6.5';
+$VERSION = '6.6';
 
 my %defaults = (
   'ENABLE_ENCODING'      => 1,
@@ -72,7 +64,7 @@ my %defaults = (
 # defaults for all converters.  Maybe more could be added, especially what
 # can be set with --set and should be the same for all the formats.
 our %all_converters_defaults = (
-  'htmlxref_files'       => undef,
+  'language_config_dirs' => undef,
   'output_format'        => undef,
   'SPLIT_SIZE'           => 300000,
   'paragraphindent'      => 3,
@@ -89,8 +81,6 @@ our %all_converters_defaults = (
   'footnotestyle'        => 'end',
   'deftypefnnewline'     => 'off',
   'BASEFILENAME_LENGTH'  => 255 - 10,
-# This is not used much as converters do their best to give a sane output
-  'FIX_TEXINFO'          => 1,
 # This is the default, mainly for tests; the caller should set them.  These
 # values are what is used in tests of the Converters.
   'PACKAGE_AND_VERSION'  => 'texinfo',
@@ -244,8 +234,6 @@ sub converter(;$)
           }
         }
       }
-      $converter->{'gettext'} = $converter->{'parser'}->{'gettext'};
-      $converter->{'pgettext'} = $converter->{'parser'}->{'pgettext'};
       delete $conf->{'parser'};
     }
     foreach my $key (keys(%$conf)) {
@@ -382,8 +370,6 @@ sub set_conf($$$)
   if (!Texinfo::Common::valid_option($conf)) {
     die "BBUG: unknown option $conf\n";
     return undef;
-  } elsif (Texinfo::Common::obsolete_option($conf)) {
-    warn(sprintf(main::__("Obsolete variable %s\n"), $conf));
   }
   if ($self->{'set'}->{$conf}) {
     return 0;
@@ -401,8 +387,6 @@ sub force_conf($$$)
   if (!Texinfo::Common::valid_option($conf)) {
     die "ABUG: unknown option $conf\n";
     return undef;
-  } elsif (Texinfo::Common::obsolete_option($conf)) {
-    warn(sprintf(main::__("Obsolete variable %s\n"), $conf));
   }
   $self->{'conf'}->{$conf} = $value;
   return 1;
@@ -542,7 +526,7 @@ sub _sectioning_command_normalized_filename($$)
                         and !$self->get_conf('USE_UNIDECODE'));
 
   my $normalized_name = Texinfo::Convert::NodeNameNormalization::transliterate_texinfo(
-       {'contents' => $command->{'extra'}->{'misc_content'}},
+       {'contents' => $command->{'args'}->[0]->{'contents'}},
                 $no_unidecode);
 
   my $filename = $self->_id_to_filename($normalized_name);
@@ -785,7 +769,7 @@ sub output($$)
            or $self->get_conf('OUTFILE') eq '-'
            or $self->get_conf('OUTFILE') eq '')) {
     if ($self->get_conf('SPLIT')) {
-      $self->document_warn(sprintf($self->__("%s: output incompatible with split"),
+      $self->document_warn(sprintf(__("%s: output incompatible with split"),
                                    $self->get_conf('OUTFILE')));
       $self->force_conf('SPLIT', 0);
     }
@@ -846,7 +830,7 @@ sub output($$)
         if ($self->get_conf('DEBUG'));
       $fh = $self->Texinfo::Common::open_out($outfile);
       if (!$fh) {
-        $self->document_error(sprintf($self->__("could not open %s for writing: %s"),
+        $self->document_error(sprintf(__("could not open %s for writing: %s"),
                                       $outfile, $!));
         return undef;
       }
@@ -867,7 +851,7 @@ sub output($$)
     if ($fh and $outfile ne '-') {
       $self->register_close_file($outfile);
       if (!close($fh)) {
-        $self->document_error(sprintf($self->__("error on closing %s: %s"),
+        $self->document_error(sprintf(__("error on closing %s: %s"),
                                       $outfile, $!));
       }
     }
@@ -884,7 +868,7 @@ sub output($$)
       if (!$files{$element->{'filename'}}->{'fh'}) {
         $file_fh = $self->Texinfo::Common::open_out($element->{'out_filename'});
         if (!$file_fh) {
-          $self->document_error(sprintf($self->__("could not open %s for writing: %s"),
+          $self->document_error(sprintf(__("could not open %s for writing: %s"),
                                     $element->{'out_filename'}, $!));
           return undef;
         }
@@ -900,7 +884,7 @@ sub output($$)
         if ($element->{'out_filename'} ne '-') {
           $self->register_close_file($element->{'out_filename'});
           if (!close($file_fh)) {
-            $self->document_error(sprintf($self->__("error on closing %s: %s"),
+            $self->document_error(sprintf(__("error on closing %s: %s"),
                                   $element->{'out_filename'}, $!));
             return undef;
           }
@@ -977,7 +961,7 @@ sub _create_destination_directory($)
                  $directories . '.' . $self->get_conf('EXTENSION'), $file);
         if (! -d $new_directory) {
           if (!mkdir($new_directory, oct(755))) {
-            $self->document_error(sprintf($self->__(
+            $self->document_error(sprintf(__(
               "could not create directories `%s' or `%s': %s"), 
               $self->{'destination_directory'}, $new_directory, $!));
             return undef;
@@ -985,7 +969,7 @@ sub _create_destination_directory($)
         }
         $self->{'destination_directory'} = $new_directory;
       } else {
-        $self->document_error(sprintf($self->__(
+        $self->document_error(sprintf(__(
              "could not create directory `%s': %s"), 
              $self->{'destination_directory'}, $!));
         return undef;
@@ -1028,16 +1012,18 @@ sub _float_type_number($$)
 sub _end_line_or_comment($$)
 {
   my $self = shift;
-  my $contents_possible_comment = shift;
+  my $root = shift;
+
   my $end_line;
-  if ($contents_possible_comment
-      and $contents_possible_comment->[-1]->{'cmdname'}
-      and ($contents_possible_comment->[-1]->{'cmdname'} eq 'c'
-          or $contents_possible_comment->[-1]->{'cmdname'} eq 'comment')) {
-    $end_line = $self->convert_tree($contents_possible_comment->[-1]);
-  } elsif ($contents_possible_comment      
-           and $contents_possible_comment->[-1]->{'text'}) {
-    my $text = $contents_possible_comment->[-1]->{'text'};
+
+  my $comment = $root->{'args'}->[-1]->{'extra'}->{'comment_at_end'}
+    if $root->{'args'}->[-1]->{'extra'};
+
+  if ($comment) {
+    $end_line = $self->convert_tree($comment);
+  } elsif ($root->{'args'}->[-1]->{'extra'}
+      and $root->{'args'}->[-1]->{'extra'}->{'spaces_after_argument'}) {
+    my $text = $root->{'args'}->[-1]->{'extra'}->{'spaces_after_argument'};
     if (chomp($text)) {
       $end_line = "\n";
     } else {
@@ -1049,57 +1035,16 @@ sub _end_line_or_comment($$)
   return $end_line;
 }
 
-sub _tree_without_comment($)
-{
-  my $contents_possible_comment = shift;
-  my $comment;
-  my $tree;
-
-  if ($contents_possible_comment->{'contents'}
-      and $contents_possible_comment->{'contents'}->[-1]->{'cmdname'}
-      and ($contents_possible_comment->{'contents'}->[-1]->{'cmdname'} eq 'c'
-           or $contents_possible_comment->{'contents'}->[-1]->{'cmdname'} eq 'comment')) {
-    my @contents = @{$contents_possible_comment->{'contents'}};
-    $comment = pop @contents;
-    $tree = {'contents' => \@contents};
-    # FIXME why this selection, and not everything?
-    foreach my $key ('extra', 'type', 'cmdname', 'parent', 'line_nr') {
-      $tree->{$key} = $contents_possible_comment->{$key}
-        if (exists($contents_possible_comment->{$key}));
-    }
-  } else {
-   $tree = $contents_possible_comment;
-  }
-  return ($comment, $tree);
-}
-
-sub _convert_argument_and_end_line($$)
-{
-  my $self = shift;
-  my $root = shift;
-  my ($comment, $tree) 
-    = _tree_without_comment($root);
-  my $converted = $self->convert_tree($tree);
-  my $end_line;
-  if ($comment) {
-    $end_line = $self->convert_tree($comment);
-  } else {
-    if (chomp($converted)) {
-      $end_line = "\n";
-    } else {
-      $end_line = "";
-    }
-  }
-  return ($converted, $end_line);
-}
-
 sub _collect_leading_trailing_spaces_arg($$)
 {
   my $self = shift;
   my $arg = shift;
   #print STDERR "$arg->{'type'}: @{$arg->{'contents'}}\n";
   my @result;
-  if ($arg->{'contents'} and $arg->{'contents'}->[0] 
+  if ($arg->{'extra'} and
+      $arg->{'extra'}->{'spaces_before_argument'}) {
+    $result[0] = $arg->{'extra'}->{'spaces_before_argument'};
+  } elsif ($arg->{'contents'} and $arg->{'contents'}->[0] 
       and defined($arg->{'contents'}->[0]->{'text'})
       and $arg->{'contents'}->[0]->{'text'} !~ /\S/
       and defined($arg->{'contents'}->[0]->{'type'})) {
@@ -1113,7 +1058,11 @@ sub _collect_leading_trailing_spaces_arg($$)
     $result[0] = $arg->{'contents'}->[0]->{'text'};
     return @result if (scalar(@{$arg->{'contents'}}) == 1);
   }
-  if ($arg->{'contents'}) {
+
+  if ($arg->{'extra'} and
+      $arg->{'extra'}->{'spaces_after_argument'}) {
+    $result[1] = $arg->{'extra'}->{'spaces_after_argument'};
+  } elsif ($arg->{'contents'}) {
     my $index = -1;
     $index-- if ($arg->{'contents'}->[-1] 
                  and $arg->{'contents'}->[-1]->{'cmdname'}
@@ -1173,7 +1122,6 @@ sub _table_item_content_tree($$$)
                'contents' => $contents,
                'parent' => $command,};
     $command->{'args'} = [$arg];
-    _register_command_arg($self, $arg, 'brace_command_contents');
     $contents = [$command];
   }
   $converted_tree->{'contents'} = $contents;
@@ -1208,7 +1156,7 @@ sub output_no_split($$)
   if (! $self->{'output_file'} eq '') {
     $fh = $self->Texinfo::Common::open_out($self->{'output_file'});
     if (!$fh) {
-      $self->document_error(sprintf($self->__("could not open %s for writing: %s"),
+      $self->document_error(sprintf(__("could not open %s for writing: %s"),
                                     $self->{'output_file'}, $!));
       return undef;
     }
@@ -1277,8 +1225,7 @@ sub convert_document_nodes($$;$)
 
 # if in this container, we are 'inline', within a running text
 my @inline_types = ('def_line', 'paragraph', 'preformatted',
-  'misc_command_arg', 'misc_line_arg', 'block_line_arg',
-  'menu_entry_name', 'menu_entry_node');
+  'line_arg', 'block_line_arg', 'menu_entry_name', 'menu_entry_node');
 
 my %inline_types;
 foreach my $type (@inline_types) {
@@ -1500,6 +1447,7 @@ $default_xml_commands_formatting{'normal'} = {
                'ordm'         => '&ordm;',
                'comma'        => ',',
                'atchar'       => '@',
+               'ampchar'      => '&amp;',
                'lbracechar'   => '{',
                'rbracechar'   => '}',
                'backslashchar' => '\\',
@@ -1527,6 +1475,8 @@ foreach my $no_brace_command (keys(%Texinfo::Common::no_brace_commands)) {
   $default_xml_commands_formatting{'normal'}->{$no_brace_command}
     = $Texinfo::Common::no_brace_commands{$no_brace_command};
 }
+
+$default_xml_commands_formatting{'normal'}->{'&'} = '&amp;';
 
 sub xml_comment($$)
 {
@@ -1823,14 +1773,5 @@ and L<Texinfo::Parser>.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at 
-your option) any later version.
 
 =cut

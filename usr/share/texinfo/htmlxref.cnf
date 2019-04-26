@@ -1,9 +1,9 @@
 # htmlxref.cnf - reference file for free Texinfo manuals on the web.
 
-htmlxrefversion=2016-07-11.22; # UTC
+htmlxrefversion=2018-08-23.18; # UTC
 
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016 Free Software
-# Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 Free
+# Software Foundation, Inc.
 # 
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
@@ -37,7 +37,7 @@ htmlxrefversion=2016-07-11.22; # UTC
 # associated, and thus gnu.org/manual can't include them.
 
 # shorten references to manuals on www.gnu.org.
-G = http://www.gnu.org
+G = https://www.gnu.org
 GS = ${G}/software
 
 3dldf		mono	${GS}/3dldf/manual/user_ref/3DLDF.html
@@ -68,12 +68,12 @@ autogen		node	${GS}/autoconf/manual/html_node/
 automake	mono	${GS}/automake/manual/automake.html
 automake	node	${GS}/automake/manual/html_node/
 
-avl		node	http://www.stanford.edu/~blp/avl/libavl.html/
+avl		node	http://adtinfo.org/libavl.html/
 
 bash		mono	${GS}/bash/manual/bash.html
 bash		node	${GS}/bash/manual/html_node/
 
-BINUTILS = http://sourceware.org/binutils/docs
+BINUTILS = https://sourceware.org/binutils/docs
 binutils	node	${BINUTILS}/binutils/
  as		node	${BINUTILS}/as/
  bfd		node	${BINUTILS}/bfd/
@@ -110,13 +110,15 @@ cpio		node	${GS}/cpio/manual/html_node/
 
 cssc		node	${GS}/cssc/manual/
 
-#cvs cannot be handled here; see http://ximbiot.com/cvs/manual.
+CVS = ${GS}/trans-coord/manual
+cvs            mono    ${CVS}/cvs/cvs.html
+cvs            node    ${CVS}/cvs/html_node/
 
 ddd		mono	${GS}/ddd/manual/html_mono/ddd.html
 
 ddrescue	mono	${GS}/ddrescue/manual/ddrescue_manual.html
 
-DICO = http://puszcza.gnu.org.ua/software/dico/manual
+DICO = https://puszcza.gnu.org.ua/software/dico/manual
 dico		mono	${DICO}/dico.html
 dico		chapter	${DICO}/html_chapter/
 dico		section	${DICO}/html_section/
@@ -230,8 +232,7 @@ emms		node	${GS}/emms/manual/
 findutils	mono	${GS}/findutils/manual/html_mono/find.html
 findutils	node	${GS}/findutils/manual/html_node/find_html
 
-FLEX = http://flex.sourceforge.net
-flex		node	${FLEX}/manual/
+flex		node	https://westes.github.io/flex/manual/
 
 gama		mono	${GS}/gama/manual/gama.html
 gama		node	${GS}/gama/manual/html_node/
@@ -245,10 +246,9 @@ gawk		node	${GAWK}/html_node/
 gcal		mono	${GS}/gcal/manual/gcal.html
 gcal		node	${GS}/gcal/manual/html_node/
 
-GCC = http://gcc.gnu.org/onlinedocs
+GCC = https://gcc.gnu.org/onlinedocs
 gcc		node	${GCC}/gcc/
  cpp		node	${GCC}/cpp/
- gcj		node	${GCC}/gcj/
  gfortran	node	${GCC}/gfortran/
  gnat_rm	node	${GCC}/gnat_rm/
  gnat_ugn	node	${GCC}/gnat_ugn/
@@ -261,7 +261,7 @@ gcc		node	${GCC}/gcc/
  gnat-style	node	${GCC}/gnat-style/
  libiberty	node	${GCC}/libiberty/
 
-GDB = http://sourceware.org/gdb/current/onlinedocs
+GDB = https://sourceware.org/gdb/current/onlinedocs
 gdb		node	${GDB}/gdb/
  stabs		node	${GDB}/stabs/
 
@@ -274,13 +274,13 @@ gdbm		node	${GDBM}/html_node/
 gettext		mono	${GS}/gettext/manual/gettext.html
 gettext		node	${GS}/gettext/manual/html_node/
 
-gforth		node	http://www.complang.tuwien.ac.at/forth/gforth/Docs-html/
+gforth		node	https://www.complang.tuwien.ac.at/forth/gforth/Docs-html/
 
 global		mono	${GS}/global/manual/global.html
 
 gmediaserver	node	${GS}/gmediaserver/manual/
 
-gmp		node	http://www.gmplib.org/manual/
+gmp		node	https://www.gmplib.org/manual/
 
 gnu-arch	node	${GS}/gnu-arch/tutorial/
 
@@ -303,7 +303,7 @@ gnun		node	${GNUN}/gnun/html_node/
  web-trans	mono	${GNUN}/web-trans/web-trans.html
  web-trans	node	${GNUN}/web-trans/html_node/
 
-GNUPG = http://www.gnupg.org/documentation/manuals
+GNUPG = https://www.gnupg.org/documentation/manuals
 gnupg		node	${GNUPG}/gnupg/
  dirmngr	node	${GNUPG}/dirmngr/
  gcrypt		node	${GNUPG}/gcrypt/
@@ -469,7 +469,7 @@ make		node	${GS}/make/manual/html_node/
 mdk		mono	${GS}/mdk/manual/mdk.html
 mdk		node	${GS}/mdk/manual/html_node/
 
-METAEXCHANGE = http://ftp.gwdg.de/pub/gnu2/iwfmdh/doc/texinfo
+METAEXCHANGE = https://ftp.gwdg.de/pub/gnu2/iwfmdh/doc/texinfo
  iwf_mh		node	${METAEXCHANGE}/iwf_mh.html
  scantest	node	${METAEXCHANGE}/scantest.html
 
@@ -489,9 +489,9 @@ mpfr		mono	http://www.mpfr.org/mpfr-current/mpfr.html
 
 mtools		mono	${GS}/mtools/manual/mtools.html
 
-myserver	node	http://www.myserverproject.net/documentation/
+myserver	mono	http://www.myserverproject.net/doc.php
 
-nano		mono	http://www.nano-editor.org/dist/latest/nano.html
+nano		mono	https://www.nano-editor.org/dist/latest/nano.html
 
 nettle		chapter	http://www.lysator.liu.se/~nisse/nettle/nettle.html
 
@@ -524,7 +524,7 @@ pspp		node	${GS}/pspp/manual/html_node/
 pyconfigure	mono	${GS}/pyconfigure/manual/pyconfigure.html
 pyconfigure	node	${GS}/pyconfigure/manual/html_node/
 
-R = http://cran.r-project.org/doc/manuals
+R = https://cran.r-project.org/doc/manuals
  R-intro	mono	${R}/R-intro.html
  R-lang		mono	${R}/R-lang.html
  R-exts		mono	${R}/R-exts.html
@@ -535,7 +535,7 @@ R = http://cran.r-project.org/doc/manuals
 rcs		mono	${GS}/rcs/manual/rcs.html
 rcs		node	${GS}/rcs/manual/html_node/
 
-READLINE = http://cnswww.cns.cwru.edu/php/chet/readline
+READLINE = https://tiswww.cwru.edu/php/chet/readline
 readline        mono    ${READLINE}/readline.html
  rluserman      mono    ${READLINE}/rluserman.html
  history        mono    ${READLINE}/history.html
@@ -598,9 +598,6 @@ TEXINFO = ${GS}/texinfo/manual
 texinfo		mono	${TEXINFO}/texinfo/texinfo.html
 texinfo		node	${TEXINFO}/texinfo/html_node/
  #
- info		mono	${TEXINFO}/info/info.html
- info		node	${TEXINFO}/info/html_node/
- #
  info-stnd	mono	${TEXINFO}/info-stnd/info-stnd.html
  info-stnd	node	${TEXINFO}/info-stnd/html_node/
 
@@ -627,7 +624,7 @@ xboard		node	${GS}/xboard/manual/html_node/
 # emacs-page
 # Free TeX-related Texinfo manuals on tug.org.
 
-T = http://tug.org/texinfohtml
+T = https://tug.org/texinfohtml
 
 dvipng		mono	${T}/dvipng.html
 dvips		mono	${T}/dvips.html

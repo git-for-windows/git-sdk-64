@@ -1,6 +1,6 @@
 # Texinfo.pm: output a Texinfo tree as Texinfo.
 #
-# Copyright 2010, 2011, 2012, 2016 Free Software Foundation, Inc.
+# Copyright 2010-2018 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,13 +30,6 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Exporter);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration   use Texinfo::Convert::Texinfo ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   convert
   node_extra_to_texi
@@ -47,57 +40,69 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.5';
+$VERSION = '6.6';
 
 my %misc_commands            = %Texinfo::Common::misc_commands;
 my %brace_commands           = %Texinfo::Common::brace_commands;    
 my %block_commands           = %Texinfo::Common::block_commands;    
 my %def_commands             = %Texinfo::Common::def_commands;    
 
-sub convert ($;$);
+my @ignored_types = ('spaces_inserted', 'bracketed_inserted',
+'command_as_argument_inserted');
+my %ignored_types;
+for my $a (@ignored_types) {
+  $ignored_types{$a} = 1;
+}
+
 # Following subroutines deal with transforming a texinfo tree into texinfo
 # text.  Should give the text that was used parsed, except for a few cases.
-# Second argument is undocumented for now, as it may change, for instance
-# become a hash if more has to be given.
 
 # expand a tree to the corresponding texinfo.
-sub convert ($;$)
+sub convert
 {
   my $root = shift;
-  my $fix = shift;
+
   die "convert: root undef\n" if (!defined($root));
   die "convert: bad root type (".ref($root).") $root\n" 
      if (ref($root) ne 'HASH');
   my $result = '';
 
+  return '' if ($root->{'type'} and $ignored_types{$root->{'type'}});
+
   if (defined($root->{'text'})) {
     $result .= $root->{'text'};
   } else {
-    if ($fix and $root->{'extra'} and $root->{'extra'}->{'invalid_nesting'}) {
-      return '';
-    }
     if ($root->{'cmdname'} 
        or ($root->{'type'} and ($root->{'type'} eq 'def_line'
                                 or $root->{'type'} eq 'menu_entry'
                                 or $root->{'type'} eq 'menu_comment'))) {
-      $result .= _expand_cmd_args_to_texi($root, $fix);
+      $result .= _expand_cmd_args_to_texi($root);
     }
-    $result .= '{' if ($root->{'type'}
-                       and ($root->{'type'} eq 'bracketed'
-                            or $root->{'type'} eq 'bracketed_def_content'));
-    if (defined($root->{'contents'})) {
-      die "bad contents type(" . ref($root->{'contents'})
-          . ") $root->{'contents'}\n" if (ref($root->{'contents'}) ne 'ARRAY');
-      foreach my $child (@{$root->{'contents'}}) {
-        $result .= convert($child, $fix);
+    if ($root->{'type'}
+        and ($root->{'type'} eq 'bracketed'
+             or $root->{'type'} eq 'bracketed_def_content')) {
+      $result .= '{';
+      if ($root->{'extra'}
+          and $root->{'extra'}->{'spaces_before_argument'}) {
+         $result .= $root->{'extra'}->{'spaces_before_argument'};
       }
+    }
+    if (defined($root->{'contents'})) {
+      foreach my $child (@{$root->{'contents'}}) {
+        $result .= convert($child);
+      }
+    }
+    if ($root->{'extra'} and $root->{'extra'}->{'spaces_after_argument'}) {
+      $result .= $root->{'extra'}->{'spaces_after_argument'};
+    }
+    if ($root->{'extra'} and $root->{'extra'}->{'comment_at_end'}) {
+      $result .= convert($root->{'extra'}->{'comment_at_end'});
     }
     $result .= '}' if ($root->{'type'}
                        and ($root->{'type'} eq 'bracketed'
                             or $root->{'type'} eq 'bracketed_def_content'));
-    if ($root->{'cmdname'} and (defined($block_commands{$root->{'cmdname'}}))
-        and ($block_commands{$root->{'cmdname'}} eq 'raw' 
-          or ($fix and !($root->{'extra'} and $root->{'extra'}->{'end_command'})))) {
+    if ($root->{'cmdname'} and defined($block_commands{$root->{'cmdname'}})
+        and $block_commands{$root->{'cmdname'}} eq 'raw') {
       $result .= '@end '.$root->{'cmdname'};
       $result .= "\n" if ($block_commands{$root->{'cmdname'}} ne 'raw');
     } 
@@ -123,9 +128,9 @@ sub node_extra_to_texi($)
 
 
 # expand a command argument as texinfo.
-sub _expand_cmd_args_to_texi ($;$) {
+sub _expand_cmd_args_to_texi {
   my $cmd = shift;
-  my $fix = shift;
+
   my $cmdname = $cmd->{'cmdname'};
   $cmdname = '' if (!$cmd->{'cmdname'}); 
   my $result = '';
@@ -141,24 +146,30 @@ sub _expand_cmd_args_to_texi ($;$) {
          and ($def_commands{$cmdname}
               or $block_commands{$cmdname} eq 'multitable')
          and $cmd->{'args'}) {
+     $result .= $cmd->{'extra'}->{'spaces_before_argument'}
+       if $cmd->{'extra'} and $cmd->{'extra'}->{'spaces_before_argument'};
      foreach my $arg (@{$cmd->{'args'}}) {
-        $result .= convert($arg, $fix);
+        $result .= convert($arg);
     }
   # for misc_commands with type special
   } elsif (($cmd->{'extra'} or $cmdname eq 'macro' or $cmdname eq 'rmacro') 
            and defined($cmd->{'extra'}->{'arg_line'})) {
+    $result .= $cmd->{'extra'}->{'spaces_before_argument'}
+      if $cmd->{'extra'} and $cmd->{'extra'}->{'spaces_before_argument'};
     $result .= $cmd->{'extra'}->{'arg_line'};
   } elsif (($block_commands{$cmdname} or $cmdname eq 'node')
             and defined($cmd->{'args'})) {
-    die "bad args type (".ref($cmd->{'args'}).") $cmd->{'args'}\n"
-      if (ref($cmd->{'args'}) ne 'ARRAY');
+    $result .= $cmd->{'extra'}->{'spaces_before_argument'}
+      if $cmd->{'extra'} and $cmd->{'extra'}->{'spaces_before_argument'};
     foreach my $arg (@{$cmd->{'args'}}) {
-       $result .= convert($arg, $fix) . ',';
+      next if $arg->{'type'} and $ignored_types{$arg->{'type'}};
+      if ($arg->{'extra'} and $arg->{'extra'}->{'spaces_before_argument'}) {
+        $result .= $arg->{'extra'}->{'spaces_before_argument'};
+      }
+      $result .= convert($arg);
+      $result .= ',';
     }
     $result =~ s/,$//;
-  } elsif ($fix and $misc_commands{$cmdname}
-      and $misc_commands{$cmdname} eq 'skipline') {
-    $result .="\n";
   } elsif (defined($cmd->{'args'})) {
     my $braces;
     $braces = 1 if ($cmd->{'args'}->[0]->{'type'} 
@@ -166,7 +177,11 @@ sub _expand_cmd_args_to_texi ($;$) {
                          or $cmd->{'args'}->[0]->{'type'} eq 'brace_command_context'));
     $result .= '{' if ($braces);
     if ($cmdname eq 'verb') {
-      $result .= $cmd->{'type'};
+      $result .= $cmd->{'extra'}->{'delimiter'};
+    }
+    if ($cmd->{'extra'}
+        and $cmd->{'extra'}->{'spaces_before_argument'}) {
+      $result .= $cmd->{'extra'}->{'spaces_before_argument'};
     }
     my $arg_nr = 0;
     foreach my $arg (@{$cmd->{'args'}}) {
@@ -175,13 +190,19 @@ sub _expand_cmd_args_to_texi ($;$) {
         $result .= ',' if ($arg_nr);
         $arg_nr++;
       }
-      $result .= convert($arg, $fix);
+      if ($arg->{'extra'} and $arg->{'extra'}->{'spaces_before_argument'}) {
+        $result .= $arg->{'extra'}->{'spaces_before_argument'};
+      }
+      $result .= convert($arg);
     }
     if ($cmdname eq 'verb') {
-      $result .= $cmd->{'type'};
+      $result .= $cmd->{'extra'}->{'delimiter'};
     }
     #die "Shouldn't have args: $cmdname\n";
     $result .= '}' if ($braces);
+  } else {
+    $result .= $cmd->{'extra'}->{'spaces_before_argument'}
+      if $cmd->{'extra'} and $cmd->{'extra'}->{'spaces_before_argument'};
   }
   $result .= '{'.$cmd->{'type'}.'}' if ($cmdname eq 'value');
   return $result;
@@ -221,14 +242,5 @@ Converts the Texinfo tree I<$tree> to Texinfo code.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at 
-your option) any later version.
 
 =cut

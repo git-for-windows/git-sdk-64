@@ -4,7 +4,7 @@
 #
 # chm.pm: convert to chm intermediate formats hhp, hhc, hhk and html files
 #
-#    Copyright 2004, 2006, 2009, 2011, 2012, 2013 Free Software
+#    Copyright 2004, 2006, 2009, 2011, 2012, 2013, 2018 Free Software
 #    Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -318,8 +318,7 @@ sub chm_init($)
           $level--;
         }
       }
-      my $text = convert_tree($self,
-              {'contents' => $section->{'extra'}->{'misc_content'}});
+      my $text = convert_tree($self, $section->{'args'}->[0]);
       $text = $self->Texinfo::Common::numbered_heading($section, $text,
                           $self->get_conf('NUMBER_SECTIONS')); 
       my $file = $self->command_filename($section);

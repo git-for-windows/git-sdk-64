@@ -440,9 +440,6 @@
 /* Define to 1 if you have the 'lchflags' function. */
 /* #undef HAVE_LCHFLAGS */
 
-/* Define to 1 if you have the `lchmod' function. */
-/* #undef HAVE_LCHMOD */
-
 /* Define to 1 if you have the `lchown' function. */
 #define HAVE_LCHOWN 1
 

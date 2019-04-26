@@ -1,6 +1,6 @@
 # TexinfoSXML.pm: output tree as Texinfo SXML.
 #
-# Copyright 2013 Free Software Foundation, Inc.
+# Copyright 2013, 2014, 2015, 2016, 2017, 2018 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,13 +32,6 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Exporter Texinfo::Convert::TexinfoXML);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration       use Texinfo::Convert::TexinfoXML ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   convert
   convert_tree
@@ -50,7 +43,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.5';
+$VERSION = '6.6';
 
 # SXML specific
 my %defaults = (

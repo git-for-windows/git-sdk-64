@@ -1,7 +1,6 @@
 # Transformations.pm: some transformations of the document tree
 #
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016 Free Software Foundation, 
-# Inc.
+# Copyright 2010-2019 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -108,14 +107,9 @@ sub fill_gaps_in_sectioning($)
           $new_section->{'contents'} = [{'type' => 'empty_line', 
                                          'text' => "\n",
                                          'parent' => $new_section}];
-          $new_section->{'args'} = [{'type' => 'misc_line_arg',
+          $new_section->{'args'} = [{'type' => 'line_arg',
                                      'parent' => $new_section}];
           $new_section->{'args'}->[0]->{'contents'} = [
-             {'type' => 'empty_spaces_after_command',
-              'text' => " ",
-              'extra' => {'command' => $new_section},
-              'parent' => $new_section->{'args'}->[0]
-             },
              {'cmdname' => 'asis',
               'parent' => $new_section->{'args'}->[0]
              },
@@ -123,13 +117,12 @@ sub fill_gaps_in_sectioning($)
               'text' => "\n",
               'parent' => $new_section->{'args'}->[0]
              }];
-          $new_section->{'args'}->[0]->{'contents'}->[1]->{'args'}
+          $new_section->{'args'}->[0]->{'extra'}
+            = {'spaces_before_argument' => ' '};
+          $new_section->{'args'}->[0]->{'contents'}->[0]->{'args'}
              = [{'type' => 'brace_command_arg',
                  'contents' => [],
                  'parent' => $new_section->{'args'}->[0]->{'contents'}->[1]}];
-          my @misc_contents = @{$new_section->{'args'}->[0]->{'contents'}};
-          Texinfo::Common::trim_spaces_comment_from_content(\@misc_contents);
-          $new_section->{'extra'}->{'misc_content'} = \@misc_contents;
           push @contents, $new_section;
           push @added_sections, $new_section;
           #print STDERR "  -> "._print_root_command_texi($new_section)."\n";
@@ -153,8 +146,7 @@ sub _reference_to_arg($$$)
 
   if ($current->{'cmdname'} and 
       $Texinfo::Common::ref_commands{$current->{'cmdname'}}
-      and $current->{'extra'} 
-      and $current->{'extra'}->{'brace_command_contents'}) {
+      and $current->{'args'}) {
     my @args_try_order;
     if ($current->{'cmdname'} eq 'inforef') {
       @args_try_order = (0, 1, 2);
@@ -162,14 +154,13 @@ sub _reference_to_arg($$$)
       @args_try_order = (0, 1, 2, 4, 3);
     }
     foreach my $index (@args_try_order) {
-      if (defined($current->{'args'}->[$index]) 
-          and defined($current->{'extra'}->{'brace_command_contents'}->[$index])) {
+      if (defined($current->{'args'}->[$index])) {
         # This a double checking that there is some content.
         # Not sure that it is useful.
         my $text = Texinfo::Convert::Text::convert($current->{'args'}->[$index]);
         if (defined($text) and $text =~ /\S/) {
-          my $result = {'contents' => 
-                $current->{'extra'}->{'brace_command_contents'}->[$index],
+          my $result
+            = {'contents' => $current->{'args'}->[$index]->{'contents'},
                         'parent' => $current->{'parent'}};
           return ($result);
         }
@@ -188,7 +179,7 @@ sub reference_to_arg_in_tree($$)
   return Texinfo::Common::modify_tree($self, $tree, \&_reference_to_arg);
 }
 
-# prepare a new node and register it
+# prepare a new node
 sub _new_node($$)
 {
   my $self = shift;
@@ -236,7 +227,7 @@ sub _new_node($$)
     foreach my $content (@{$node_arg->{'contents'}}) {
       $content->{'parent'} = $node_arg;
     }
-    $parsed_node = Texinfo::Parser::_parse_node_manual($node_arg);
+    $parsed_node = Texinfo::Common::parse_node_manual($node_arg);
     if ($parsed_node and $parsed_node->{'node_content'}) {
       $parsed_node->{'normalized'} =
       Texinfo::Convert::NodeNameNormalization::normalize_node (
@@ -258,8 +249,9 @@ sub _new_node($$)
     $self->{'labels'}->{$parsed_node->{'normalized'}} = $node;
     $node->{'extra'}->{'normalized'} = $parsed_node->{'normalized'};
   }
-  if (!Texinfo::Parser::_register_label($self, $node, $parsed_node, undef)) {
-    print STDERR "BUG: node unique, register failed:  $parsed_node->{'normalized'}\n";
+  push @{$self->{'targets'}}, $node;
+  if ($parsed_node->{'node_content'}) {
+    $node->{'extra'}->{'node_content'} = $parsed_node->{'node_content'};
   }
   push @{$self->{'nodes'}}, $node;
   return $node;
@@ -327,7 +319,7 @@ sub insert_nodes_for_sectioning_commands($$)
         $new_node_tree = {'contents' => [{'text' => 'Top'}]};
       } else {
         $new_node_tree = Texinfo::Common::copy_tree({'contents' 
-          => $content->{'extra'}->{'misc_content'}});
+          => $content->{'args'}->[0]->{'contents'}});
       }
       my $new_node = _new_node($self, $new_node_tree);
       if (defined($new_node)) {
@@ -422,7 +414,7 @@ sub complete_node_menu($$)
         }
       } else {
         my $entry = Texinfo::Structuring::new_node_menu_entry($self, 
-                              $node_entry->{'extra'}->{'node_content'});
+                              $node_entry, 0);
         push @pending, $entry;
       }
     }
@@ -510,10 +502,11 @@ sub _print_down_menus($$;$)
       # Prepend node title
       my $node_title_contents;
       if ($node->{'extra'}->{'associated_section'}
-          and $node->{'extra'}->{'associated_section'}->{'extra'}
-          and $node->{'extra'}->{'associated_section'}->{'extra'}->{'misc_content'}) {
+          and $node->{'extra'}->{'associated_section'}->{'args'}
+          and $node->{'extra'}->{'associated_section'}->{'args'}->[0]
+          and $node->{'extra'}->{'associated_section'}->{'args'}->[0]->{'contents'}) {
         $node_title_contents
-          = _copy_contents($node->{'extra'}->{'associated_section'}->{'extra'}->{'misc_content'});
+          = _copy_contents($node->{'extra'}->{'associated_section'}->{'args'}->[0]->{'contents'});
       } else {
         $node_title_contents = _copy_contents($node->{'extra'}->{'node_content'});
       }
@@ -808,14 +801,5 @@ L<Texinfo::Parser>.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License,
-or (at your option) any later version.
 
 =cut

@@ -22,7 +22,7 @@ use 5.00405;
 use strict;
 use warnings;
 
-our $VERSION = '6.5';
+our $VERSION = '6.6';
 
 use Texinfo::XSLoader;
 

@@ -1,6 +1,6 @@
 # NodeNameNormalization.pm: output tree as normalized node name.
 #
-# Copyright 2010, 2011, 2012, 2016 Free Software Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2016, 2017, 2018 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,13 +38,6 @@ require Exporter;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Exporter);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration   use Texinfo::Convert::NodeNameNormalization ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   normalize_node
   transliterate_texinfo
@@ -204,10 +197,10 @@ sub _convert($;$)
   return '' if (($root->{'type'} and $ignored_types{$root->{'type'}})
           or ($root->{'cmdname'} 
              and ($ignored_brace_commands{$root->{'cmdname'}} 
-             # here ignore the misc commands
+             # here ignore the line commands
                  or ($root->{'args'} and $root->{'args'}->[0] 
                      and $root->{'args'}->[0]->{'type'} 
-                     and ($root->{'args'}->[0]->{'type'} eq 'misc_line_arg'
+                     and ($root->{'args'}->[0]->{'type'} eq 'line_arg'
                          or $root->{'args'}->[0]->{'type'} eq 'misc_arg')))));
   my $result = '';
   if (defined($root->{'text'})) {
@@ -340,14 +333,5 @@ is not used for characters whose transliteration is not built-in.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at 
-your option) any later version.
 
 =cut

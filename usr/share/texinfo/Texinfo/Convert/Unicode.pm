@@ -1,6 +1,7 @@
 # Unicode.pm: handle conversion to unicode.
 #
-# Copyright 2010, 2011, 2012, 2015, 2016, 2017 Free Software Foundation, Inc.
+# Copyright 2010, 2011, 2012, 2015, 2016, 2017, 2018 Free Software Foundation, 
+# Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,14 +50,6 @@ sub import {
   goto &Exporter::import;
 }
 
-
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration       use Texinfo::Convert::Unicode ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   unicode_accent
   encoded_accents
@@ -522,6 +515,7 @@ our %unicode_map = (
                'ordm'              => '00BA',
                'comma'             => '002C',
                'atchar'            => '0040',
+               'ampchar'           => '0026',
                'lbracechar'        => '007B',
                'rbracechar'        => '007D',
                'backslashchar'     => '005C',
@@ -1590,15 +1584,6 @@ have a zero width (like composing accents) while some have a width of 2
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License,
-or (at your option) any later version.
 
 =cut
 

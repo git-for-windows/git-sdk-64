@@ -1,6 +1,6 @@
 # TexinfoXML.pm: output tree as Texinfo XML.
 #
-# Copyright 2011, 2012, 2013, 2016 Free Software Foundation, Inc.
+# Copyright 2011, 2012, 2013, 2016, 2017, 2018 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,13 +34,6 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Exporter Texinfo::Convert::Converter);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration       use Texinfo::Convert::TexinfoXML ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   convert
   convert_tree
@@ -52,7 +45,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.5';
+$VERSION = '6.6';
 
 # XML specific
 my %defaults = (
@@ -86,6 +79,7 @@ our %commands_formatting = (
            '@' => 'arobase',
            '{' => 'lbrace',
            '}' => 'rbrace',
+           '&' => 'amp',
            '\\' => 'backslash',  # should only appear in math
 
            'TeX' => 'tex',
@@ -108,6 +102,7 @@ our %commands_formatting = (
            'today'        => ['today'],
            'comma'        => 'comma',
            'atchar'       => 'atchar',
+           'ampchar'      => 'ampchar',
            'lbracechar'   => 'lbracechar',
            'rbracechar'   => 'rbracechar',
            'backslashchar' => 'backslashchar',
@@ -453,7 +448,7 @@ sub output($$)
   if (! $self->{'output_file'} eq '') {
     $fh = $self->Texinfo::Common::open_out($self->{'output_file'});
     if (!$fh) {
-      $self->document_error(sprintf($self->__("could not open %s for writing: %s"),
+      $self->document_error(sprintf(__("could not open %s for writing: %s"),
                                     $self->{'output_file'}, $!));
       return undef;
     }
@@ -472,7 +467,7 @@ sub output($$)
   if ($fh and $self->{'output_file'} ne '-') {
     $self->register_close_file($self->{'output_file'});
     if (!close ($fh)) {
-      $self->document_error(sprintf($self->__("error on closing %s: %s"),
+      $self->document_error(sprintf(__("error on closing %s: %s"),
                                     $self->{'output_file'}, $!));
     }
   }
@@ -584,10 +579,10 @@ sub _protect_in_spaces($)
 sub _leading_spaces($)
 {
   my $root = shift;
-  if ($root->{'extra'} and $root->{'extra'}->{'spaces_after_command'}
-      and $root->{'extra'}->{'spaces_after_command'}->{'type'} eq 'empty_spaces_after_command') {
+  if ($root->{'extra'} and $root->{'extra'}->{'spaces_before_argument'}
+      and $root->{'extra'}->{'spaces_before_argument'} ne '') {
     return ('spaces', _protect_in_spaces(
-         $root->{'extra'}->{'spaces_after_command'}->{'text'}));
+         $root->{'extra'}->{'spaces_before_argument'}));
   } else {
     return ();
   }
@@ -597,36 +592,24 @@ sub _leading_spaces_before_argument($)
 {
   my $root = shift;
   if ($root->{'extra'} and $root->{'extra'}->{'spaces_before_argument'}
-      and $root->{'extra'}->{'spaces_before_argument'}->{'type'} eq 'empty_spaces_before_argument'
-      and $root->{'extra'}->{'spaces_before_argument'}->{'text'} ne '') {
+      and $root->{'extra'}->{'spaces_before_argument'} ne '') {
     return ('spaces', _protect_in_spaces(
-                 $root->{'extra'}->{'spaces_before_argument'}->{'text'}));
+                 $root->{'extra'}->{'spaces_before_argument'}));
   } else {
     return ();
   }
 }
 
-sub _end_line_spaces($$)
+sub _end_line_spaces
 {
   my $root = shift;
-  my $type = shift;
 
   my $end_spaces = undef;
-  if ($root->{'args'}->[-1]->{'contents'}) {
-    my $index = -1;
-    if ($root->{'args'}->[-1]->{'contents'}->[-1]->{'cmdname'}
-        and ($root->{'args'}->[-1]->{'contents'}->[-1]->{'cmdname'} eq 'c' 
-             or $root->{'args'}->[-1]->{'contents'}->[-1]->{'cmdname'} eq 'comment')) {
-      $index = -2;
-    }
-    if ($root->{'args'}->[-1]->{'contents'}->[$index]
-        and $root->{'args'}->[-1]->{'contents'}->[$index]->{'type'}
-        and $root->{'args'}->[-1]->{'contents'}->[$index]->{'type'} eq $type
-        and defined($root->{'args'}->[-1]->{'contents'}->[$index]->{'text'})
-        and $root->{'args'}->[-1]->{'contents'}->[$index]->{'text'} !~ /\S/) {
-      $end_spaces = $root->{'args'}->[-1]->{'contents'}->[$index]->{'text'};
-      chomp $end_spaces;
-    }
+  if ($root->{'args'}->[-1]
+      and $root->{'args'}->[-1]->{'extra'}
+      and $root->{'args'}->[-1]->{'extra'}->{'spaces_after_argument'}) {
+    $end_spaces = $root->{'args'}->[-1]->{'extra'}->{'spaces_after_argument'};
+    chomp $end_spaces;
   }
   return $end_spaces;
 }
@@ -660,29 +643,15 @@ sub _trailing_spaces_arg($$)
   return ();
 }
 
-sub _leading_spaces_arg($$)
-{
-  my $self = shift;
-  my $root = shift;
-
-  my @result = ();
-  my @spaces = $self->_collect_leading_trailing_spaces_arg($root);
-  if (defined($spaces[0]) and $spaces[0] ne '') {
-    @result = ('spaces', _protect_in_spaces($spaces[0]));
-  }
-  return @result;
-}
-
 sub _leading_trailing_spaces_arg($$)
 {
   my $self = shift;
   my $root = shift;
 
   my @result;
+  @result = _leading_spaces_before_argument($root);
+
   my @spaces = $self->_collect_leading_trailing_spaces_arg($root);
-  if (defined($spaces[0]) and $spaces[0] ne '') {
-    push @result, ('spaces', _protect_in_spaces($spaces[0]));
-  }
   if (defined($spaces[1])) {
     chomp($spaces[1]);
     if ($spaces[1] ne '') {
@@ -697,15 +666,38 @@ sub _texinfo_line($$)
   my $self = shift;
   my $root = shift;
 
-  my ($comment, $tree) = Texinfo::Convert::Converter::_tree_without_comment(
-                                                                        $root);
-  my $line = Texinfo::Convert::Texinfo::convert($tree);
+  my $line = Texinfo::Convert::Texinfo::convert($root->{'args'}->[-1]);
   chomp($line);
   if ($line ne '') {
     return ('line', $line);
   } else {
     return ();
   }
+}
+
+sub _convert_argument_and_end_line($$)
+{
+  my $self = shift;
+  my $root = shift;
+
+  my $converted = $self->convert_tree($root->{'args'}->[-1]);
+
+  my $end_line = '';
+
+  if ($root->{'args'}->[-1]->{'extra'} and $root->{'args'}->[-1]->{'extra'}->{'spaces_after_argument'}) {
+    $converted .= $root->{'args'}->[-1]->{'extra'}->{'spaces_after_argument'};
+  }
+
+  if ($root->{'args'}->[-1]->{'extra'} and $root->{'args'}->[-1]->{'extra'}->{'comment_at_end'}) {
+    $end_line = $self->convert_tree($root->{'args'}->[-1]->{'extra'}->{'comment_at_end'});
+  } else {
+    if (chomp($converted)) {
+      $end_line = "\n";
+    } else {
+      $end_line = "";
+    }
+  }
+  return ($converted, $end_line);
 }
 
 my @node_directions = ('Next', 'Prev', 'Up');
@@ -744,15 +736,6 @@ sub _convert($$;$)
         return '';
       } else {
         return $root->{'text'};
-      }
-    } elsif ($root->{'type'} 
-             and $root->{'type'} eq 'empty_line_after_command'
-             and $root->{'extra'}->{'command'}) {
-      my $command_name = $root->{'extra'}->{'command'}->{'cmdname'};
-      
-      if ($Texinfo::Common::format_raw_commands{$command_name} and 
-          $self->{'expanded_formats_hash'}->{$command_name}) {
-        return '';
       }
     }
     $result = $self->format_text($root);
@@ -798,12 +781,10 @@ sub _convert($$;$)
                or $root->{'parent'}->{'cmdname'} eq 'enumerate')) {
         $result .= $self->open_element('listitem', [_leading_spaces($root)]);
         if ($root->{'parent'}->{'cmdname'} eq 'itemize'
-            and $root->{'parent'}->{'extra'} 
-            and $root->{'parent'}->{'extra'}->{'block_command_line_contents'}
-            and $root->{'parent'}->{'extra'}->{'block_command_line_contents'}->[0]) {
+            and $root->{'parent'}->{'args'}
+            and @{$root->{'parent'}->{'args'}}) {
           $result .= $self->open_element('prepend')
-            .$self->_convert({'contents' 
-        => $root->{'parent'}->{'extra'}->{'block_command_line_contents'}->[0]})
+            .$self->_convert($root->{'parent'}->{'args'}->[0])
             .$self->close_element('prepend');
         }
         unshift @close_elements, 'listitem';
@@ -844,6 +825,12 @@ sub _convert($$;$)
             if (defined($in_monospace_not_normal));
 
         $result .= $self->_convert($root->{'args'}->[0]);
+        if ($root->{'args'}->[0]->{'extra'} and $root->{'args'}->[0]->{'extra'}->{'spaces_after_argument'}) {
+          $result .= $root->{'args'}->[0]->{'extra'}->{'spaces_after_argument'};
+         }
+        if ($root->{'args'}->[-1]->{'extra'} and $root->{'args'}->[-1]->{'extra'}->{'comment_at_end'}) {
+          $result .= $self->_convert($root->{'args'}->[-1]->{'extra'}->{'comment_at_end'});
+        }
         pop @{$self->{'document_context'}->[-1]->{'monospace'}} 
           if (defined($in_monospace_not_normal));
         chomp ($result);
@@ -878,7 +865,7 @@ sub _convert($$;$)
       push @$attribute, _leading_spaces($root);
       my $end_line;
       if ($root->{'args'}->[0]) {
-        $end_line = $self->_end_line_or_comment($root->{'args'}->[0]->{'contents'});
+        $end_line = $self->_end_line_or_comment($root);
       } else {
         # May that happen?
         $end_line = '';
@@ -897,8 +884,7 @@ sub _convert($$;$)
                   $root->{'extra'}->{'text_arg'});
           }
         }
-        my ($arg, $end_line)
-            = $self->_convert_argument_and_end_line($root->{'args'}->[0]);
+        my ($arg, $end_line) = $self->_convert_argument_and_end_line($root);
         push @$attribute, _leading_spaces($root);
         return $self->open_element($command, $attribute).$arg
                 .$self->close_element($command).${end_line};
@@ -962,7 +948,7 @@ sub _convert($$;$)
           my $end_line;
           if ($root->{'args'}->[0]) {
             $end_line 
-              = $self->_end_line_or_comment($root->{'args'}->[-1]->{'contents'});
+              = $self->_end_line_or_comment($root);
           } else {
             $end_line = "\n";
           }
@@ -986,8 +972,7 @@ sub _convert($$;$)
           }
 
           if ($root->{'args'} and $root->{'args'}->[0]) {
-            my ($arg, $end_line)
-              = $self->_convert_argument_and_end_line($root->{'args'}->[0]);
+            my ($arg, $end_line) = $self->_convert_argument_and_end_line($root);
             $result .= $self->open_element('sectiontitle').$arg
                       .$self->close_element('sectiontitle')
                       .$closed_section_element.$end_line;
@@ -1001,8 +986,7 @@ sub _convert($$;$)
               and defined($root->{'extra'}->{'type'}->{'normalized'})) {
             unshift @$attribute, ('type', $root->{'extra'}->{'type'}->{'normalized'});
           }
-          my ($arg, $end_line)
-            = $self->_convert_argument_and_end_line($root->{'args'}->[0]);
+          my ($arg, $end_line) = $self->_convert_argument_and_end_line($root);
           return $self->open_element($command, ${attribute}).$arg
                .$self->close_element($command).$end_line;
         }
@@ -1016,7 +1000,6 @@ sub _convert($$;$)
             and !($root->{'parent'}->{'extra'}
                   and ($root->{'parent'}->{'extra'}->{'no_section'}
                        or $root->{'parent'}->{'extra'}->{'no_node'}))) {
-          #print STDERR "$root->{'parent'} $root->{'parent'}->{'type'}\n";
           $self->{'pending_bye'} = $self->open_element($command)
                     .$self->close_element($command)."\n";
           return '';
@@ -1033,9 +1016,9 @@ sub _convert($$;$)
                  .$self->close_element($command)."\n";
       } elsif ($type eq 'noarg' or $type eq 'skipspace') {
         my $spaces = '';
-        $spaces = $root->{'extra'}->{'spaces_after_command'}->{'text'}
+        $spaces = $root->{'extra'}->{'spaces_after_command'}
           if ($root->{'extra'} and $root->{'extra'}->{'spaces_after_command'}
-              and $root->{'extra'}->{'spaces_after_command'}->{'type'} eq 'empty_spaces_after_command');
+              and $root->{'extra'}->{'spaces_after_command'} ne '');
         return $self->open_element($command)
                 .$self->close_element($command).$spaces;
       } elsif ($type eq 'special') {
@@ -1110,9 +1093,8 @@ sub _convert($$;$)
         }
         my $end_line;
         if ($root->{'args'}->[0]) {
-          $end_line = $self->_end_line_or_comment(
-                                         $root->{'args'}->[0]->{'contents'});
-          push @$attribute, $self->_texinfo_line($root->{'args'}->[0]);
+          $end_line = $self->_end_line_or_comment($root);
+          push @$attribute, $self->_texinfo_line($root);
         } else {
           $end_line = "\n";
         }
@@ -1149,10 +1131,11 @@ sub _convert($$;$)
           push @{$self->{'document_context'}}, {'monospace' => [0]};
           $self->{'document_context'}->[-1]->{'raw'} = 1;
         }
-        if (scalar (@{$root->{'extra'}->{'brace_command_contents'}}) == 2
-            and defined($root->{'extra'}->{'brace_command_contents'}->[-1])) {
+        if (scalar (@{$root->{'args'}}) == 2
+              and defined($root->{'args'}->[-1])
+              and @{$root->{'args'}->[-1]->{'contents'}}) {
           $result .= $self->_convert({'contents' 
-                        => $root->{'extra'}->{'brace_command_contents'}->[-1]});
+                        => $root->{'args'}->[-1]->{'contents'}});
         }
         if ($root->{'cmdname'} eq 'inlineraw') {
           pop @{$self->{'document_context'}};
@@ -1168,7 +1151,7 @@ sub _convert($$;$)
       # first argument
       my $attribute = [];
       if ($root->{'cmdname'} eq 'verb') {
-        push @$attribute, ('delimiter', $root->{'type'});
+        push @$attribute, ('delimiter', $root->{'extra'}->{'delimiter'});
       } elsif ($root->{'cmdname'} eq 'anchor') {
         my $anchor_name;
         if (defined($root->{'extra'}->{'normalized'})) {
@@ -1192,9 +1175,15 @@ sub _convert($$;$)
             $in_monospace_not_normal
               if (defined($in_monospace_not_normal));
           my $arg = $self->_convert($root->{'args'}->[$arg_index]);
-          if ($arg_index > 0) {
+          if ($root->{'args'}->[$arg_index]->{'extra'}
+              and $root->{'args'}->[$arg_index]->{'extra'}->{'spaces_after_argument'}) {
+            $arg .= $root->{'args'}->[$arg_index]
+                   ->{'extra'}->{'spaces_after_argument'};
+          }
+          if (!$Texinfo::Common::context_brace_commands{$root->{'cmdname'}}
+              and $root->{'cmdname'} ne 'verb') {
             push @$attribute, 
-              $self->_leading_spaces_arg($root->{'args'}->[$arg_index]);
+              _leading_spaces_before_argument($root->{'args'}->[$arg_index]);
           }
           if (!defined($command) or $arg ne '' or scalar(@$attribute) > 0) {
             # ${attribute} is only set for @verb
@@ -1218,7 +1207,7 @@ sub _convert($$;$)
           push @$attribute, ('where', 'inline');
         }
       } elsif ($Texinfo::Common::ref_commands{$root->{'cmdname'}}) {
-        if ($root->{'extra'}->{'brace_command_contents'}) {
+        if ($root->{'args'}) {
           my $normalized;
           if ($root->{'extra'}->{'node_argument'}
               and $root->{'extra'}->{'node_argument'}->{'node_content'}) {
@@ -1237,9 +1226,10 @@ sub _convert($$;$)
           if ($root->{'cmdname'} eq 'inforef') {
             $manual_arg_index = 2;
           }
-          if ($root->{'extra'}->{'brace_command_contents'}->[$manual_arg_index]) {
+          if (defined($root->{'args'}->[$manual_arg_index])
+              and @{$root->{'args'}->[$manual_arg_index]->{'contents'}}) {
             $manual = Texinfo::Convert::Text::convert({'contents'
-             => $root->{'extra'}->{'brace_command_contents'}->[$manual_arg_index]}, 
+                     => $root->{'args'}->[$manual_arg_index]->{'contents'}},
                       {'code' => 1,
                        Texinfo::Common::_convert_text_options($self)});
           }
@@ -1343,13 +1333,13 @@ sub _convert($$;$)
                 if ($arg_index+1 eq scalar(@{$root->{'args'}})) {
                   # last argument
                   ($arg, $end_line) 
-                    = $self->_convert_argument_and_end_line($root->{'args'}->[$arg_index]);
+                    = $self->_convert_argument_and_end_line($root);
                 } else {
                   $arg = $self->_convert($root->{'args'}->[$arg_index]);
                 }
                 my $spaces = [];
                 if ($arg_index != 0) {
-                  push @$spaces, $self->_leading_spaces_arg(
+                  push @$spaces, _leading_spaces_before_argument(
                                               $root->{'args'}->[$arg_index]);
                 }
                 if ($arg ne '' or scalar(@$spaces)) {
@@ -1431,8 +1421,7 @@ sub _convert($$;$)
                   $first_proto = 0;
                 }
                 $result .= $self->close_element('columnprototypes');
-                $contents_possible_comment 
-                  = $root->{'args'}->[-1]->{'contents'};
+                $contents_possible_comment = $root;
               } elsif ($root->{'extra'}
                          and $root->{'extra'}->{'columnfractions'}) {
                 my $cmd;
@@ -1443,26 +1432,22 @@ sub _convert($$;$)
                     last;
                   }
                 }
-                my $attribute = [$self->_texinfo_line($cmd->{'args'}->[0])];
+                my $attribute = [$self->_texinfo_line($cmd)];
                 $result .= $self->open_element('columnfractions', $attribute);
-                foreach my $fraction (@{$root->{'extra'}->{'columnfractions'}}) {
+                foreach my $fraction (@{$root->{'extra'}->{'columnfractions'}
+                                             ->{'extra'}->{'misc_args'}}) {
                   $result .= $self->open_element('columnfraction', 
                                                 ['value', $fraction])
                              .$self->close_element('columnfraction');
                 }
                 $result .= $self->close_element('columnfractions');
-                $contents_possible_comment 
-                  = $root->{'args'}->[-1]->{'contents'}->[-1]->{'args'}->[-1]->{'contents'}
-                    if ($root->{'args'}->[-1]->{'contents'}
-                        and $root->{'args'}->[-1]->{'contents'}->[-1]->{'args'}
-                        and $root->{'args'}->[-1]->{'contents'}->[-1]->{'args'}->[-1]->{'contents'});
+                $contents_possible_comment = $cmd;
               } else { # bogus multitable
                 $result .= "\n";
               }
             } else {
               # get end of lines from @*table.
-              my $end_spaces = _end_line_spaces($root, 
-                                           'space_at_end_block_command');
+              my $end_spaces = _end_line_spaces($root);
               if (defined($end_spaces)) {
                 $end_line .= $end_spaces 
                 # This also catches block @-commands with no argument that
@@ -1470,8 +1455,7 @@ sub _convert($$;$)
                 #print STDERR "NOT xtable: $root->{'cmdname'}\n" 
                 #  if (!$Texinfo::Common::item_line_commands{$root->{'cmdname'}});
               }
-              $contents_possible_comment = $root->{'args'}->[-1]->{'contents'}
-                if ($root->{'args'}->[-1]->{'contents'});
+              $contents_possible_comment = $root;
             }
             $end_line .= $self->_end_line_or_comment($contents_possible_comment);
           }
@@ -1505,7 +1489,8 @@ sub _convert($$;$)
       $result .= $self->open_element('definitionterm');
       $result .= $self->_index_entry($root);
       push @{$self->{'document_context'}->[-1]->{'monospace'}}, 1;
-      if ($root->{'extra'} and $root->{'extra'}->{'def_args'}) {
+      if ($root->{'args'} and @{$root->{'args'}}
+          and $root->{'args'}->[0]->{'contents'}) {
         my $main_command;
         my $alias;
         if ($Texinfo::Common::def_aliases{$root->{'extra'}->{'def_command'}}) {
@@ -1515,10 +1500,15 @@ sub _convert($$;$)
           $main_command = $root->{'extra'}->{'def_command'};
           $alias = 0;
         }
-        foreach my $arg (@{$root->{'extra'}->{'def_args'}}) {
-          my $type = $arg->[0];
-          my $content = $self->_convert($arg->[1]);
+        foreach my $arg (@{$root->{'args'}->[0]->{'contents'}}) {
+          next if $arg->{'type'}
+                   and ($arg->{'type'} eq 'empty_spaces_after_command'
+                         or $arg->{'type'} eq 'empty_line_after_command');
+          my $type = $arg->{'extra'}->{'def_role'};
+          next if !$type and $arg->{'type'} eq 'spaces';
+          my $content = $self->_convert($arg);
           if ($type eq 'spaces') {
+            $content =~ s/\n$//;
             $result .= $content;
           } else {
             my $attribute = [];
@@ -1535,10 +1525,11 @@ sub _convert($$;$)
             } else {
               $element = $type;
             }
-            if ($arg->[1]->{'type'}
-                and $arg->[1]->{'type'} eq 'bracketed_def_content') {
+            if ($arg->{'type'}
+                and ($arg->{'type'} eq 'bracketed_def_content'
+                  or ($arg->{'type'} eq 'bracketed_inserted'))) {
               push @$attribute, ('bracketed', 'on');
-              push @$attribute, _leading_spaces_before_argument($arg->[1]);
+              push @$attribute, _leading_spaces_before_argument($arg);
             }
             $result .= $self->open_element("def$element", $attribute).$content
                       .$self->close_element("def$element");
@@ -1605,7 +1596,7 @@ sub _convert($$;$)
      if ($root->{'type'} and $root->{'type'} eq 'bracketed'
          and (!$root->{'parent'}->{'type'} or
               ($root->{'parent'}->{'type'} ne 'block_line_arg'
-               and $root->{'parent'}->{'type'} ne 'misc_line_arg')));
+               and $root->{'parent'}->{'type'} ne 'line_arg')));
   foreach my $element (@close_elements) {
     $result .= $self->close_element($element);
   }
@@ -1616,12 +1607,11 @@ sub _convert($$;$)
     } else {
       my $end_line = '';
       if ($end_command) {
-        my $end_spaces = _end_line_spaces($end_command, 'spaces_at_end');
+        my $end_spaces = _end_line_spaces($end_command);
         $end_line .= $end_spaces if (defined($end_spaces));
         $end_line 
-         .= $self->_end_line_or_comment($end_command->{'args'}->[0]->{'contents'})
-           if ($end_command->{'args'}->[0]
-               and $end_command->{'args'}->[0]->{'contents'});
+         .= $self->_end_line_or_comment($end_command)
+          if ($end_command->{'args'});
       } else {
         #$end_line = "\n";
       }
@@ -1753,14 +1743,5 @@ portions.  For a full document use C<convert>.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2015 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at 
-your option) any later version.
 
 =cut

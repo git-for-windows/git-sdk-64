@@ -1,4 +1,4 @@
-# Copyright 2014, 2015, 2016 Free Software Foundation, Inc.
+# Copyright 2014, 2015, 2016, 2017, 2018 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ use 5.00405;
 use strict;
 use warnings;
 
-our $VERSION = '6.5';
+our $VERSION = '6.6';
 
 use Texinfo::XSLoader;
 
@@ -57,10 +57,10 @@ BEGIN {
 
   my $package = Texinfo::XSLoader::init (
     "Texinfo::Convert::Paragraph",
-    "Texinfo::Convert::XSParagraph::XSParagraph",
+    "Texinfo::XS::XSParagraph",
     "Texinfo::Convert::ParagraphNonXS",
     "XSParagraph",
-    1,
+    0,
     $warning_message,
     $fatal_message
   );

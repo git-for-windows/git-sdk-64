@@ -1,6 +1,6 @@
 # TextContent.pm: return the text contents stripped of commands
 #
-# Copyright 2012, 2016 Free Software Foundation, Inc.
+# Copyright 2012-2018 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ sub _convert($$)
              # here ignore most of the misc commands
                  or ($root->{'args'} and $root->{'args'}->[0]
                      and $root->{'args'}->[0]->{'type'}
-                     and ($root->{'args'}->[0]->{'type'} eq 'misc_line_arg'
+                     and ($root->{'args'}->[0]->{'type'} eq 'line_arg'
                          or $root->{'args'}->[0]->{'type'} eq 'misc_arg')
                      and !$self->{'formatting_misc_commands'}->{$root->{'cmdname'}})))));
   if (defined($root->{'text'})) {
@@ -157,7 +157,7 @@ sub _convert($$)
      if ($root->{'type'} and $root->{'type'} eq 'bracketed'
          and (!$root->{'parent'}->{'type'} or
               ($root->{'parent'}->{'type'} ne 'block_line_arg'
-               and $root->{'parent'}->{'type'} ne 'misc_line_arg')));
+               and $root->{'parent'}->{'type'} ne 'line_arg')));
 
   return $result;
 }

@@ -189,6 +189,23 @@ unzip_input_file()
 	return 1
 }
 
+_7z_input_file()
+{
+	while [ $# -gt 0 ]
+	do
+		case "$1" in
+		-*|e|x)
+			shift
+			;;
+		*)
+			echo "$1"
+			return
+			;;
+		esac
+	done
+	return 1
+}
+
 tar_opt_C()
 {
 	case "$1" in
@@ -239,6 +256,11 @@ unzip)
 	echo -n Z >&4
 	[ -n "$QUILT_SETUP_FAST" ] && exec unzip "$@"
 	inputfile=$(unzip_input_file "$@")
+	;;
+7z)
+	echo -n 7 >&4
+	[ -n "$QUILT_SETUP_FAST" ] && exec 7z "$@"
+	inputfile=$(_7z_input_file "$@")
 	;;
 esac
 
@@ -295,6 +317,10 @@ tar)
 unzip)
 	dir=$(pwd_to_dir)
 	echo "unzip ${dir:-.} $unpackfile" >&3
+	;;
+7z)
+	dir=$(pwd_to_dir)
+	echo "7z ${dir:-.} $unpackfile" >&3
 	;;
 esac
 

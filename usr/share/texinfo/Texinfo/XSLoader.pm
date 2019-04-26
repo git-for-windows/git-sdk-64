@@ -1,4 +1,4 @@
-# Copyright 2014, 2015, 2016 Free Software Foundation, Inc.
+# Copyright 2014, 2015, 2016, 2017, 2018 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ use warnings;
 
 our $TEXINFO_XS;
 
-our $VERSION = '6.5';
+our $VERSION = '6.6';
 
 our $disable_XS;
 
@@ -50,6 +50,7 @@ sub _fatal($) {
 sub _find_file($) {
   my $file = shift;
   for my $dir (@INC) {
+    next if ref($dir);
     _debug "checking $dir/$file";
     if (-f "$dir/$file") {
       _debug "found $dir/$file";
@@ -238,7 +239,9 @@ FALLBACK:
     warn "falling back to pure Perl module\n";
   }
   if (!defined $fallback_module) {
-    die "no fallback module for $full_module_name";
+    warn "no fallback module for $full_module_name\n";
+    die "unset the TEXINFO_XS and TEXINFO_XS_PARSER environment variables "
+       ."to use the pure Perl modules\n";
   }
 
   # Fall back to using the Perl code.

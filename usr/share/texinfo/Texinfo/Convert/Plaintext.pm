@@ -1,8 +1,6 @@
-# $Id: Plaintext.pm 7942 2017-08-28 20:42:04Z gavin $
 # Plaintext.pm: output tree as text with filling.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015,
-# 2016, 2017 Free Software Foundation, Inc.
+# Copyright 2010-2019 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,13 +51,6 @@ sub import {
   goto &Exporter::import;
 }
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration       use Texinfo::Convert::Plaintext ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   convert
   output
@@ -70,7 +61,7 @@ sub import {
 @EXPORT = qw(
 );
 
-$VERSION = '6.5';
+$VERSION = '6.6';
 
 # misc commands that are of use for formatting.
 my %formatting_misc_commands = %Texinfo::Convert::Text::formatting_misc_commands;
@@ -90,7 +81,7 @@ my %no_brace_commands = %Texinfo::Common::no_brace_commands;
 my %brace_no_arg_commands;
 foreach my $command (keys (%Texinfo::Common::brace_commands)) {
   $brace_no_arg_commands{$command} = 1 
-    if ($Texinfo::Common::brace_commands{$command} == 0);
+    if ($Texinfo::Common::brace_commands{$command} eq '0');
 }
 my %accent_commands = %Texinfo::Common::accent_commands;
 my %misc_commands = %Texinfo::Common::misc_commands;
@@ -278,7 +269,7 @@ foreach my $command (keys(%style_map)) {
 }
 
 # math is special
-my @asis_commands = ('asis', 'w', 'b', 'ctrl', 'i', 'sc', 't', 'r',
+my @asis_commands = ('asis', 'w', 'b', 'i', 'sc', 't', 'r',
   'slanted', 'sansserif', 'var', 'verb', 'clicksequence',
   'headitemfont', 'dmn');
 
@@ -1055,15 +1046,15 @@ sub _contents($$$)
           $section_title_tree = $self->gdt('Appendix {number} {section_title}',
                            {'number' => {'text' => $section->{'number'}},
                             'section_title' 
-                              => {'contents' => $section->{'extra'}->{'misc_content'}}});
+                              => {'contents' => $section->{'args'}->[0]->{'contents'}}});
         } else {
           $section_title_tree = $self->gdt('{number} {section_title}',
                            {'number' => {'text' => $section->{'number'}},
                             'section_title' 
-                              => {'contents' => $section->{'extra'}->{'misc_content'}}});
+                              => {'contents' => $section->{'args'}->[0]->{'contents'}}});
         }
       } else {
-        $section_title_tree = {'contents' => $section->{'extra'}->{'misc_content'}};
+        $section_title_tree = {'contents' => $section->{'args'}->[0]->{'contents'}};
       }
       my $section_title = $self->convert_line(
             {'contents' => [$section_title_tree],
@@ -1249,7 +1240,7 @@ sub _printindex_formatted($$;$)
     next if ($entry_text !~ /\S/);
     # FIXME protect instead
     if ($entry_text =~ /:/ and $self->get_conf('INDEX_SPECIAL_CHARS_WARNING')) {
-      $self->line_warn (sprintf($self->__("Index entry in \@%s with : produces invalid Info: %s"),
+      $self->line_warn (sprintf(__("Index entry in \@%s with : produces invalid Info: %s"),
                                  $entry->{'index_at_command'},
           Texinfo::Convert::Texinfo::convert($entry_tree)), 
                         $entry->{'command'}->{'line_nr'});
@@ -1296,7 +1287,7 @@ sub _printindex_formatted($$;$)
       # done by the Parser.
       # Warn, only once.
       if (!$self->{'index_entries_no_node'}->{$entry}) {
-        $self->line_warn(sprintf($self->__("entry for index `%s' outside of any node"),
+        $self->line_warn(sprintf(__("entry for index `%s' outside of any node"),
                                  $index_name), $entry->{'command'}->{'line_nr'});
         $self->{'index_entries_no_node'}->{$entry} = 1;
       }
@@ -1408,12 +1399,12 @@ sub _image_text($$$)
       # remove last end of line
       chomp ($result);
       if (!close ($filehandle)) {
-        $self->document_warn(sprintf($self->__("error on closing image text file %s: %s"),
+        $self->document_warn(sprintf(__("error on closing image text file %s: %s"),
                                      $txt_file, $!));
       }
       return ($result, $max_width);
     } else {
-      $self->line_warn(sprintf($self->__("\@image file `%s' unreadable: %s"), 
+      $self->line_warn(sprintf(__("\@image file `%s' unreadable: %s"), 
                                $txt_file, $!), $root->{'line_nr'});
     }
   }
@@ -1427,12 +1418,13 @@ sub _image_formatted_text($$$$)
   my $result;
   if (defined($text)) {
     $result = $text;
-  } elsif (defined($root->{'extra'}->{'brace_command_contents'}->[3])) {
+  } elsif (defined($root->{'args'}->[3])
+      and @{$root->{'args'}->[3]->{'contents'}}) {
     $result = '[' .Texinfo::Convert::Text::convert(
-      {'contents' => $root->{'extra'}->{'brace_command_contents'}->[3]},
+      {'contents' => $root->{'args'}->[3]->{'contents'}},
       $self->{'convert_text_options'}) .']';
   } else {
-    $self->line_warn(sprintf($self->__(
+    $self->line_warn(sprintf(__(
                     "could not find \@image file `%s.txt' nor alternate text"),
                              $basefile), $root->{'line_nr'});
     $result = '['.$basefile.']';
@@ -1444,9 +1436,10 @@ sub _image($$)
 {
   my ($self, $root) = @_;
 
-  if (defined($root->{'extra'}->{'brace_command_contents'}->[0])) {
+  if (defined($root->{'args'}->[0])
+        and @{$root->{'args'}->[0]->{'contents'}}) {
     my $basefile = Texinfo::Convert::Text::convert(
-     {'contents' => $root->{'extra'}->{'brace_command_contents'}->[0]},
+     {'contents' => $root->{'args'}->[0]->{'contents'}},
      {'code' => 1, %{$self->{'convert_text_options'}}});
     my ($text, $width) = $self->_image_text($root, $basefile);
     my $result = $self->_image_formatted_text($root, $basefile, $text);
@@ -1791,7 +1784,7 @@ sub _convert($$)
              and $root->{'args'}->[0]->{'contents'}->[0]->{'text'} =~ /^Note\s/i
              and $self->{'output_format'}
              and $self->{'output_format'} eq 'info') {
-          $self->line_warn($self->__(
+          $self->line_warn(__(
     "\@strong{Note...} produces a spurious cross-reference in Info; reword to avoid that"), 
                            $root->{'line_nr'});
         }
@@ -1853,15 +1846,17 @@ sub _convert($$)
     } elsif ($command eq 'email') {
       # nothing is output for email, instead the command is substituted.
       my @email_contents;
-      if ($root->{'extra'} and $root->{'extra'}->{'brace_command_contents'}) {
+      if ($root->{'args'}) {
         my $name;
         my $email;
-        if (scalar (@{$root->{'extra'}->{'brace_command_contents'}}) == 2
-            and defined($root->{'extra'}->{'brace_command_contents'}->[-1])) {
-          $name = $root->{'extra'}->{'brace_command_contents'}->[1];
+        if (scalar (@{$root->{'args'}}) == 2
+            and defined($root->{'args'}->[1])
+            and @{$root->{'args'}->[1]->{'contents'}}) {
+          $name = $root->{'args'}->[1]->{'contents'};
         }
-        if (defined($root->{'extra'}->{'brace_command_contents'}->[0])) {
-          $email = $root->{'extra'}->{'brace_command_contents'}->[0];
+        if (defined($root->{'args'}->[0])
+            and @{$root->{'args'}->[0]->{'contents'}}) {
+          $email = $root->{'args'}->[0]->{'contents'};
         }
         my $prepended;
         if ($name and $email) {
@@ -1879,19 +1874,21 @@ sub _convert($$)
       }
       return '';
     } elsif ($command eq 'uref' or $command eq 'url') {
-      if ($root->{'extra'} and $root->{'extra'}->{'brace_command_contents'}) {
-        if (scalar(@{$root->{'extra'}->{'brace_command_contents'}}) == 3
-             and defined($root->{'extra'}->{'brace_command_contents'}->[2])) {
+      if ($root->{'args'}) {
+        if (scalar(@{$root->{'args'}}) == 3
+             and defined($root->{'args'}->[2])
+             and @{$root->{'args'}->[2]->{'contents'}}) {
           unshift @{$self->{'current_contents'}->[-1]}, 
-            {'contents' => $root->{'extra'}->{'brace_command_contents'}->[2]};
-        } elsif (defined($root->{'extra'}->{'brace_command_contents'}->[0])) {
+            {'contents' => $root->{'args'}->[2]->{'contents'}};
+        } elsif (@{$root->{'args'}->[0]->{'contents'}}) {
           # no mangling of --- and similar in url.
           my $url = {'type' => '_code',
-              'contents' => $root->{'extra'}->{'brace_command_contents'}->[0]};
-          if (scalar(@{$root->{'extra'}->{'brace_command_contents'}}) == 2
-             and defined($root->{'extra'}->{'brace_command_contents'}->[1])) {
+              'contents' => $root->{'args'}->[0]->{'contents'}};
+          if (scalar(@{$root->{'args'}}) == 2
+             and defined($root->{'args'}->[1])
+             and @{$root->{'args'}->[1]->{'contents'}}) {
             my $prepended = $self->gdt('{text} ({url})', 
-                 {'text' => $root->{'extra'}->{'brace_command_contents'}->[1],
+                 {'text' => $root->{'args'}->[1]->{'contents'},
                   'url' => $url });
             unshift @{$self->{'current_contents'}->[-1]}, $prepended;
           } else {
@@ -1899,10 +1896,11 @@ sub _convert($$)
                                         {'url' => $url});
             unshift @{$self->{'current_contents'}->[-1]}, $prepended
           }
-        } elsif (scalar(@{$root->{'extra'}->{'brace_command_contents'}}) == 2
-                 and defined($root->{'extra'}->{'brace_command_contents'}->[1])) {
+        } elsif (scalar(@{$root->{'args'}}) == 2
+                 and defined($root->{'args'}->[1])
+                 and @{$root->{'args'}->[1]->{'contents'}}) {
           unshift @{$self->{'current_contents'}->[-1]}, 
-            {'contents' => $root->{'extra'}->{'brace_command_contents'}->[1]};
+            {'contents' => $root->{'args'}->[1]->{'contents'}};
         }
       }
       return '';
@@ -1927,9 +1925,15 @@ sub _convert($$)
         $result .= _convert($self, {'contents' => 
          [{'text' => ' ('},
           {'cmdname' => 'pxref',
-           'extra' => {'brace_command_contents' => 
-          [[@{$self->{'node'}->{'extra'}->{'node_content'}},
-                   {'text' => "-Footnote-$self->{'footnote_index'}"}]]}},
+           'args' => [
+             {'type' => 'brace_command_arg',
+              'contents' => [
+                 @{$self->{'node'}->{'extra'}->{'node_content'}},
+                 {'text' => "-Footnote-$self->{'footnote_index'}"}
+              ]
+             }
+           ]
+          },
           {'text' => ')'}],
           });
       }
@@ -1940,9 +1944,15 @@ sub _convert($$)
       $result .= $self->_anchor($root);
       return $result;
     } elsif ($ref_commands{$command}) {
-      if ($root->{'extra'} and $root->{'extra'}->{'brace_command_contents'}
-          and scalar(@{$root->{'extra'}->{'brace_command_contents'}})) {
-        my @args = @{$root->{'extra'}->{'brace_command_contents'}};
+      if (scalar(@{$root->{'args'}})) {
+        my @args;
+        for my $a (@{$root->{'args'}}) {
+          if (defined $a->{'contents'} and @{$a->{'contents'}}) {
+            push @args, $a->{'contents'};
+          } else {
+            push @args, undef;
+          }
+        }
         $args[0] = [{'text' => ''}] if (!defined($args[0]));
 
         # normalize node name, to get a ref with the right formatting
@@ -2022,7 +2032,7 @@ sub _convert($$)
           my $quoting_required = 0;
           if ($name_text_checked =~ /:/m) { 
               if ($self->get_conf('INFO_SPECIAL_CHARS_WARNING')) {
-                $self->line_warn(sprintf($self->__(
+                $self->line_warn(sprintf(__(
                    "\@%s cross-reference name should not contain `:'"),
                                                $command), $root->{'line_nr'});
               }
@@ -2045,16 +2055,22 @@ sub _convert($$)
           }
           # node name
           $self->{'formatters'}->[-1]->{'suppress_styles'} = 1;
+
+          my $maybe_file
+            = get_pending($self->{'formatters'}->[-1]->{'container'});
           my $node_text = _convert($self, {'type' => '_code',
                                            'contents' => $node_content});
           delete $self->{'formatters'}->[-1]->{'suppress_styles'};
 
           my $node_text_checked = $node_text 
              .get_pending($self->{'formatters'}->[-1]->{'container'});
+          $maybe_file =~ s/^\s*//;
+          $maybe_file = quotemeta $maybe_file;
+          $node_text_checked =~ s/^\s*$maybe_file//;
           $quoting_required = 0;
           if ($node_text_checked =~ /([,\t\.])/m ) {
               if ($self->get_conf('INFO_SPECIAL_CHARS_WARNING')) {
-                $self->line_warn(sprintf($self->__(
+                $self->line_warn(sprintf(__(
                    "\@%s node name should not contain `%s'"), $command, $1),
                                  $root->{'line_nr'});
               }
@@ -2087,7 +2103,7 @@ sub _convert($$)
           my $quoting_required = 0;
           if ($node_text_checked =~ /:/m) {
             if ($self->get_conf('INFO_SPECIAL_CHARS_WARNING')) {
-              $self->line_warn(sprintf($self->__(
+              $self->line_warn(sprintf(__(
                  "\@%s node name should not contain `:'"), $command),
                                $root->{'line_nr'});
             }
@@ -2124,6 +2140,7 @@ sub _convert($$)
         # If command is @xref, the punctuation must always follow the
         # command, for other commands it may be in the argument, hence the
         # use of $pending.
+        # FIXME: is @xref really special here?
         if ($name and ($command eq 'xref'
             or ($pending !~ /[\.,]$/ and $pending !~ /::$/))) {
           my $next = $self->{'current_contents'}->[-1]->[0];
@@ -2133,17 +2150,20 @@ sub _convert($$)
                 my $text = $next->{'text'};
                 $text =~ s/^\s*//;
                 my $char = substr($text, 0, 1);
-                $self->line_warn(sprintf($self->__(
+                $self->line_warn(sprintf(__(
                             "`.' or `,' must follow \@xref, not %s"), 
                                          $char), $root->{'line_nr'});
               } else {
-                $self->line_warn($self->__("`.' or `,' must follow \@xref"), 
+                $self->line_warn(__("`.' or `,' must follow \@xref"), 
                                  $root->{'line_nr'});
               }
             }
             my @added = ({'text' => '.'});
-            # the added dot do not end a sentence for pxref or ref.
-            push @added, {'cmdname' => ':'} if ($command ne 'xref');
+            # The added full stop does not end a sentence.  Info readers will
+            # have a chance of guessing correctly whether the full stop was
+            # added by whether it is followed by 2 spaces (although this
+            # doesn't help at the end of a line).
+            push @added, {'cmdname' => ':'};
             unshift @{$self->{'current_contents'}->[-1]}, @added;
           }
         }
@@ -2160,22 +2180,23 @@ sub _convert($$)
       }
       return '';
     } elsif ($explained_commands{$command}) {
-      if ($root->{'extra'} and $root->{'extra'}->{'brace_command_contents'}
-          and defined($root->{'extra'}->{'brace_command_contents'}->[0])) {
+      if ($root->{'args'}
+          and defined($root->{'args'}->[0])
+          and @{$root->{'args'}->[0]->{'contents'}}) {
         # in abbr spaces never end a sentence.
         my $argument;
         if ($command eq 'abbr') {
           $argument = {'type' => 'frenchspacing',
-                     'contents' => $root->{'extra'}->{'brace_command_contents'}->[0]};
+                       'contents' => $root->{'args'}->[0]->{'contents'}};
         } else {
-          $argument = {'contents' => $root->{'extra'}->{'brace_command_contents'}->[0]};
+          $argument = { 'contents' => $root->{'args'}->[0]->{'contents'}};
         }
-        if (scalar (@{$root->{'extra'}->{'brace_command_contents'}}) == 2
-           and defined($root->{'extra'}->{'brace_command_contents'}->[-1])) {
+        if (scalar (@{$root->{'args'}}) == 2
+            and defined($root->{'args'}->[-1])
+            and @{$root->{'args'}->[-1]->{'contents'}}) {
           my $prepended = $self->gdt('{abbr_or_acronym} ({explanation})', 
                            {'abbr_or_acronym' => $argument, 
-                            'explanation' => 
-                             $root->{'extra'}->{'brace_command_contents'}->[-1]});
+                            'explanation' => $root->{'args'}->[-1]->{'contents'}});
           unshift @{$self->{'current_contents'}->[-1]}, $prepended;
           return '';
         } else {
@@ -2194,14 +2215,14 @@ sub _convert($$)
                or !$self->{'expanded_formats_hash'}->{$root->{'extra'}->{'format'}})) {
         $arg_index = 2;
       }
-      if (scalar(@{$root->{'extra'}->{'brace_command_contents'}}) > $arg_index
-         and defined($root->{'extra'}->{'brace_command_contents'}->[$arg_index])) {
+      if (scalar(@{$root->{'args'}}) > $arg_index
+         and defined($root->{'args'}->[$arg_index])
+         and @{$root->{'args'}->[$arg_index]->{'contents'}}) {
         my $argument;
         if ($command eq 'inlineraw') {
           $argument->{'type'} = '_code';
         }
-        $argument->{'contents'} 
-            = $root->{'extra'}->{'brace_command_contents'}->[$arg_index];
+        $argument->{'contents'} = $root->{'args'}->[$arg_index]->{'contents'};
         unshift @{$self->{'current_contents'}->[-1]}, ($argument);
       }
       return '';
@@ -2230,9 +2251,15 @@ sub _convert($$)
       return $result;
 
     } elsif ($command eq 'U') {
-      my $arg = $root->{'extra'}->{'brace_command_contents'}
-                ->[0]->[0]->{'text'};
-      if (defined($arg) && $arg) {
+      my $arg;
+      if ($root->{'args'}
+          and $root->{'args'}->[0]
+          and $root->{'args'}->[0]->{'contents'}
+          and $root->{'args'}->[0]->{'contents'}->[0]
+          and $root->{'args'}->[0]->{'contents'}->[0]->{'text'}) {
+        $arg = $root->{'args'}->[0]->{'contents'}->[0]->{'text'};
+      }
+      if ($arg) {
         # The general idea is to output UTF-8 if that has been
         # explicitly given as the encoding, else simple ASCII.
         # 
@@ -2354,9 +2381,11 @@ sub _convert($$)
       }
       if ($command eq 'quotation'
           or $command eq 'smallquotation') {
-        if ($root->{'extra'} and $root->{'extra'}->{'block_command_line_contents'}) {
+        if ($root->{'args'} and $root->{'args'}->[0]
+            and $root->{'args'}->[0]->{'contents'}
+            and @{$root->{'args'}->[0]->{'contents'}}) {
           my $prepended = $self->gdt('@b{{quotation_arg}:} ', 
-             {'quotation_arg' => $root->{'extra'}->{'block_command_line_contents'}->[0]});
+             {'quotation_arg' => $root->{'args'}->[0]->{'contents'}});
           $prepended->{'type'} = 'frenchspacing';
           $result .= $self->convert_line($prepended);
           $self->{'text_element_context'}->[-1]->{'counter'} += 
@@ -2368,7 +2397,8 @@ sub _convert($$)
       } elsif ($command eq 'multitable') {
         my $columnsize;
         if ($root->{'extra'}->{'columnfractions'}) {
-          foreach my $fraction (@{$root->{'extra'}->{'columnfractions'}}) {
+          foreach my $fraction (@{$root->{'extra'}->{'columnfractions'}
+                                       ->{'extra'}->{'misc_args'}}) {
             push @$columnsize, int($fraction * $self->{'text_element_context'}->[-1]->{'max'} +0.5);
           }
         } elsif ($root->{'extra'}->{'prototypes'}) {
@@ -2399,16 +2429,17 @@ sub _convert($$)
       # use settitle for empty @top
       # ignore @part
       my $contents;
-      if ($root->{'extra'}->{'misc_content'} 
-          and @{$root->{'extra'}->{'misc_content'}} 
+      if ($root->{'args'}->[0]->{'contents'} 
+          and @{$root->{'args'}->[0]->{'contents'}} 
           and $command ne 'part') {
-        $contents = $root->{'extra'}->{'misc_content'};
+        $contents = $root->{'args'}->[0]->{'contents'};
       } elsif ($command eq 'top'
           and $self->{'extra'}->{'settitle'} 
-          and $self->{'extra'}->{'settitle'}->{'extra'}
-          and $self->{'extra'}->{'settitle'}->{'extra'}->{'misc_content'}
-          and @{$self->{'extra'}->{'settitle'}->{'extra'}->{'misc_content'}}) {
-        $contents = $self->{'extra'}->{'settitle'}->{'extra'}->{'misc_content'};
+          and $self->{'extra'}->{'settitle'}->{'args'}
+          and @{$self->{'extra'}->{'settitle'}->{'args'}}
+          and $self->{'extra'}->{'settitle'}->{'args'}->[0]->{'contents'}
+          and @{$self->{'extra'}->{'settitle'}->{'args'}->[0]->{'contents'}}) {
+        $contents = $self->{'extra'}->{'settitle'}->{'args'}->[0]->{'contents'};
       }
              
       if ($contents) {
@@ -2436,11 +2467,12 @@ sub _convert($$)
     } elsif (($command eq 'item' or $command eq 'itemx')
             and $root->{'args'} and $root->{'args'}->[0] 
             and $root->{'args'}->[0]->{'type'}
-            and $root->{'args'}->[0]->{'type'} eq 'misc_line_arg') {
-      if ($root->{'extra'} and $root->{'extra'}->{'misc_content'}) {
+            and $root->{'args'}->[0]->{'type'} eq 'line_arg') {
+      if ($root->{'args'} and @{$root->{'args'}}
+          and $root->{'args'}->[0]->{'contents'}) {
 
         my $converted_tree = $self->_table_item_content_tree($root,
-                                         $root->{'extra'}->{'misc_content'});
+                                         $root->{'args'}->[0]->{'contents'});
 
         $converted_tree->{'type'} = 'frenchspacing';
         $result = $self->convert_line($converted_tree,
@@ -2466,14 +2498,12 @@ sub _convert($$)
                Texinfo::Common::enumerate_item_representation(
                  $root->{'parent'}->{'extra'}->{'enumerate_specification'},
                  $root->{'extra'}->{'item_number'}) . '. '));
-      } elsif ($root->{'parent'}->{'extra'}->{'block_command_line_contents'}) {
+      } elsif ($root->{'parent'}->{'args'}
+          and $root->{'parent'}->{'args'}->[0]) {
         # this is the text prepended to items.
         
-        $result = _convert($self, 
-          {'contents' => 
-             [@{$root->{'parent'}->{'extra'}->{'block_command_line_contents'}->[0]},
-              { 'text' => ' ' }]
-          });
+        $result = _convert($self, $root->{'parent'}->{'args'}->[0]);
+        $result .= _convert($self, { 'text' => ' ' });
       }
       $result .= _count_added($self, $line->{'container'}, 
                       Texinfo::Convert::Paragraph::end($line->{'container'}));
@@ -2505,7 +2535,7 @@ sub _convert($$)
                                                    'locations' => []};
       $result = $self->convert_line (
                        {'type' => 'frenchspacing',
-                        'contents' => $root->{'extra'}->{'misc_content'}},
+                        'contents' => $root->{'args'}->[0]->{'contents'}},
                        {'indent_length' => 0});
       if ($result ne '') {
         $result = $self->ensure_end_of_line($result);
@@ -2521,11 +2551,11 @@ sub _convert($$)
       return $result;
     } elsif ($command eq 'exdent') {
       if ($self->{'preformatted_context_commands'}->{$self->{'context'}->[-1]}) {
-        $result = $self->convert_unfilled({'contents' => $root->{'extra'}->{'misc_content'}},
+        $result = $self->convert_unfilled({'contents' => $root->{'args'}->[0]->{'contents'}},
          {'indent_level'
           => $self->{'format_context'}->[-1]->{'indent_level'} -1});
       } else {
-        $result = $self->convert_line({'contents' => $root->{'extra'}->{'misc_content'}},
+        $result = $self->convert_line({'contents' => $root->{'args'}->[0]->{'contents'}},
          {'indent_level' 
           => $self->{'format_context'}->[-1]->{'indent_level'} -1});
       }
@@ -2563,10 +2593,10 @@ sub _convert($$)
         $result .= "* Menu:\n\n";
         $lines_count += 2;
         foreach my $float (@{$self->{'floats'}->{$root->{'extra'}->{'type'}->{'normalized'}}}) {
-          next if (!defined($float->{'extra'}->{'block_command_line_contents'}->[1]));
+          next if !$float->{'args'} or !$float->{'args'}->[1]
+                   or !@{$float->{'args'}->[1]->{'contents'}};
           my $float_label_text = $self->convert_line({'type' => '_code',
-             'contents' 
-                 => $float->{'extra'}->{'block_command_line_contents'}->[1]});
+             'contents' => $float->{'args'}->[1]->{'contents'}});
           my $float_entry = $self->_float_type_number($float);
           my $float_entry_text = ':';
           if (defined($float_entry)) {
@@ -2730,8 +2760,8 @@ sub _convert($$)
         }
       }
     } elsif ($root->{'type'} eq 'def_line') {
-      if ($root->{'extra'} and $root->{'extra'}->{'def_args'}
-             and @{$root->{'extra'}->{'def_args'}}) {
+      if ($root->{'extra'} and $root->{'extra'}->{'def_parsed_hash'}
+             and %{$root->{'extra'}->{'def_parsed_hash'}}) {
         my $arguments = Texinfo::Common::definition_arguments_content($root);
         my $tree;
         my $command;
@@ -2746,7 +2776,6 @@ sub _convert($$)
         } else {
           $name = '';
         }
-        
         
         if ($command eq 'deffn'
             or $command eq 'defvr'
@@ -2919,7 +2948,7 @@ sub _convert($$)
           if ($entry_name_seen) {
             if ($node_text =~ /([,\t]|\.\s)/) {
               if ($self->get_conf('INFO_SPECIAL_CHARS_WARNING')) {
-                $self->line_warn(sprintf($self->__(
+                $self->line_warn(sprintf(__(
                    "menu entry node name should not contain `%s'"), $1),
                                $root->{'line_nr'});
               }
@@ -2930,7 +2959,7 @@ sub _convert($$)
           } else {
             if ($node_text =~ /:/) {
               if ($self->get_conf('INFO_SPECIAL_CHARS_WARNING')) {
-                $self->line_warn($self->__(
+                $self->line_warn(__(
                  "menu entry node name should not contain `:'"),
                                $root->{'line_nr'});
               }
@@ -2950,7 +2979,7 @@ sub _convert($$)
           $pre_quote = $post_quote = '';
           if ($entry_name =~ /:/) {
             if ($self->get_conf('INFO_SPECIAL_CHARS_WARNING')) {
-              $self->line_warn($self->__(
+              $self->line_warn(__(
                  "menu entry name should not contain `:'"),
                                $root->{'line_nr'});
             }
@@ -3203,7 +3232,7 @@ sub _convert($$)
       foreach my $author (@{$root->{'extra'}->{'authors'}}) {
         $result .= _convert($self, 
                  $self->gdt("\@center --- \@emph{{author}}\n",
-                    {'author' => $author->{'extra'}->{'misc_content'}}));
+                    {'author' => $author->{'args'}->[0]->{'contents'}}));
       }
     } elsif (($command eq 'multitable')) {
       $self->{'document_context'}->[-1]->{'in_multitable'}--;
@@ -3215,7 +3244,8 @@ sub _convert($$)
       if ($node) {
         if (!$self->{'seenmenus'}->{$node}) {
           $self->{'seenmenus'}->{$node} = 1;
-          my $menu_node = Texinfo::Structuring::menu_of_node (undef, $node);
+          my $menu_node
+            = Texinfo::Structuring::node_menu_of_node (undef, $node);
           if ($menu_node) {
             my $menu_text = $self->_convert ($menu_node);
             if ($menu_text) {
@@ -3267,7 +3297,7 @@ sub _convert($$)
 1;
 
 __END__
-# $Id: Plaintext.pm 7942 2017-08-28 20:42:04Z gavin $
+# $Id$
 # Automatically generated from maintain/template.pod
 
 =head1 NAME
@@ -3324,14 +3354,5 @@ portions.  For a full document use C<convert>.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2015 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at 
-your option) any later version.
 
 =cut

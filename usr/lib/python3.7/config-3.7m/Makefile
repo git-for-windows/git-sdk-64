@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.7
 srcdir=		.
 
-abs_srcdir=	/msys_scripts/python3/src/Python-3.7.2
-abs_builddir=	/msys_scripts/python3/src/Python-3.7.2
+abs_srcdir=	/msys_scripts/python3/src/Python-3.7.3
+abs_builddir=	/msys_scripts/python3/src/Python-3.7.3
 
 
 CC=		x86_64-pc-msys-gcc
@@ -228,7 +228,7 @@ LDLIBRARYDIR=
 INSTSONAME=	$(LDLIBRARY)
 
 
-LIBS=		-lintl -ldl 
+LIBS=		-lcrypt -lintl -ldl 
 LIBM=		
 LIBC=		
 SYSLIBS=	$(LIBM) $(LIBC)

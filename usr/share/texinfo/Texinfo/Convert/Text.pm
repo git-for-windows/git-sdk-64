@@ -1,7 +1,6 @@
 # Text.pm: output tree as simple text.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017 Free Software 
-# Foundation, Inc., 
+# Copyright 2010-2018 Free Software Foundation, Inc., 
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,13 +36,6 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Exporter Texinfo::Convert::Converter);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration       use Texinfo::Convert::Text ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   convert
   ascii_accent
@@ -55,7 +47,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.5';
+$VERSION = '6.6';
 
 # this is in fact not needed for 'footnote', 'shortcaption', 'caption'
 # when they have no brace_command_arg, see below.
@@ -113,6 +105,7 @@ our %text_brace_no_arg_commands = (
                'ordm'         => 'o',
                'comma'        => ',',
                'atchar'       => '@',
+               'ampchar'      => '&',
                'lbracechar'   => '{',
                'rbracechar'   => '}',
                'backslashchar' => '\\',
@@ -373,7 +366,7 @@ sub _convert($;$)
              # here ignore most of the misc commands
                  or ($root->{'args'} and $root->{'args'}->[0] 
                      and $root->{'args'}->[0]->{'type'} 
-                     and ($root->{'args'}->[0]->{'type'} eq 'misc_line_arg'
+                     and ($root->{'args'}->[0]->{'type'} eq 'line_arg'
                          or $root->{'args'}->[0]->{'type'} eq 'misc_arg') 
                      and !$formatting_misc_commands{$root->{'cmdname'}})))));
   my $result = '';
@@ -541,8 +534,8 @@ sub _convert($;$)
   }
   if ($root->{'type'} and $root->{'type'} eq 'def_line') {
     #print STDERR "$root->{'extra'}->{'def_command'}\n";
-    if ($root->{'extra'} and $root->{'extra'}->{'def_args'}
-             and @{$root->{'extra'}->{'def_args'}}) {
+    if ($root->{'extra'} and $root->{'extra'}->{'def_parsed_hash'}
+             and %{$root->{'extra'}->{'def_parsed_hash'}}) {
       my $parsed_definition_category
         = Texinfo::Common::definition_category ($options->{'converter'}, $root);
       my @contents = ($parsed_definition_category, {'text' => ': '});
@@ -592,7 +585,7 @@ sub _convert($;$)
      if ($root->{'type'} and $root->{'type'} eq 'bracketed'
          and (!$root->{'parent'}->{'type'} or
               ($root->{'parent'}->{'type'} ne 'block_line_arg'
-               and $root->{'parent'}->{'type'} ne 'misc_line_arg')));
+               and $root->{'parent'}->{'type'} ne 'line_arg')));
   #print STDERR "  RR ($root) -> $result\n";
   return $result;
 }
@@ -858,14 +851,5 @@ lower-cased.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2010, 2011, 2012 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License,
-or (at your option) any later version.
 
 =cut

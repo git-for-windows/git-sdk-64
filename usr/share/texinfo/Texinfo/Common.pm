@@ -1,7 +1,6 @@
-# $Id: Common.pm 7942 2017-08-28 20:42:04Z gavin $
 # Common.pm: definition of commands. Common code of other Texinfo modules.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
+# Copyright 2010-2019 Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,13 +38,6 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Exporter);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration       use Texinfo::Covert::Text ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
 debug_hash
 debug_list
@@ -69,9 +61,10 @@ valid_tree_transformation
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 @EXPORT = qw(
+__ __p print_tree
 );
 
-$VERSION = '6.5';
+$VERSION = '6.6';
 
 # i18n
 sub N__($)
@@ -90,18 +83,27 @@ if ($Config{osname} eq 'dos' and $Config{osvers} eq 'djgpp') {
   $null_device_file{'NUL'} = 1;
 }
 
+use Locale::Messages;
+
+my $messages_textdomain = 'texinfo';
+
+sub __($) {
+  my $msgid = shift;
+  return Locale::Messages::dgettext($messages_textdomain, $msgid);
+}
+
+sub __p($$) {
+  my $context = shift;
+  my $msgid = shift;
+  return Locale::Messages::dpgettext($messages_textdomain, $context, $msgid);
+}
+
 # these are the default values for the parser state that may be 
 # initialized to values given by the user.
 # They are defined here, because they are used below and we 
 # don't want Texinfo::Common to use Texinfo::Parser.
 our %default_parser_state_configuration = (
-  # this is the initial context.  It is put at the bottom of the 
-  # 'context_stack'.  It is not clear if this is really useful to be
-  # able to customize that value.
-  'context' => '_root',
   'expanded_formats' => [],
-  'gettext' => sub {return $_[0];},
-  'pgettext' => sub {return $_[1];},
   'include_directories' => [ '.' ],
   # these are the user-added indices.  May be an array reference on names
   # or an hash reference in the same format than %index_names below
@@ -137,6 +139,35 @@ our %default_parser_state_configuration = (
   },
   'in_gdt' => 0 # whether we are being called by gdt
 );
+
+
+# Customization variables obeyed by the parser and other modules, and the 
+# default values.
+our %default_customization_values = (
+  'TEST' => 0,
+  'DEBUG' => 0,     # if >= 10, tree is printed in texi2any.pl after parsing.
+                    # If >= 100 tree is printed every line.
+  'SHOW_MENU' => 1,             # if false no menu error related.
+  'IGNORE_BEFORE_SETFILENAME' => 1,
+  'IGNORE_SPACE_AFTER_BRACED_COMMAND_NAME' => 1,
+  'INPUT_PERL_ENCODING' => undef, # input perl encoding name, set from 
+                              # @documentencoding in the default case
+  'INPUT_ENCODING_NAME' => undef, # encoding name normalized as preferred
+                              # IANA, set from @documentencoding in the default
+                              # case
+  'CPP_LINE_DIRECTIVES' => 1, # handle cpp like synchronization lines
+  'MAX_MACRO_CALL_NESTING' => 100000, # max number of nested macro calls
+  # This is not used directly, but passed to Convert::Text through 
+  # Texinfo::Common::_convert_text_options
+  'ENABLE_ENCODING' => 1,     # output accented and special characters
+                              # based on @documentencoding
+  # following are used in Texinfo::Structuring
+  'TOP_NODE_UP' => '(dir)',   # up node of Top node
+  'SIMPLE_MENU' => 0,         # not used in the parser but in structuring
+  'USE_UP_NODE_FOR_ELEMENT_UP' => 0, # Use node up for Up if there is no 
+                                     # section up.
+);
+
 
 # customization options
 our %document_settable_at_commands = (
@@ -201,14 +232,6 @@ my @command_line_settables = ('FILLCOLUMN', 'SPLIT', 'SPLIT_SIZE',
 # all are lower cased in texi2any.pl
 my @parser_options = map {uc($_)} (keys(%default_parser_state_configuration));
 
-my @obsolete_variables = ('TOP_HEADING_AT_BEGINNING', 'USE_SECTIONS',
-  'IDX_SUMMARY', 'I18N_PERL_HASH', 'USE_UNICODE', 'USE_NLS',
-  'USE_UP_FOR_ADJACENT_NODES', 'SEPARATE_DESCRIPTION', 
-  'NEW_CROSSREF_STYLE', 'SHORT_REF', 'IGNORE_PREAMBLE_TEXT',
-  'OUT_ENCODING', 'IN_ENCODING', 'DEFAULT_ENCODING',
-  'MACRO_BODY_IGNORES_LEADING_SPACE', 'INLINE_INSERTCOPYING'
-);
-
 my @variable_settables_not_used = ('COMPLETE_IMAGE_PATHS', 'TOC_FILE',
   'SPLIT_INDEX');
 
@@ -227,7 +250,8 @@ my @variable_string_settables = (
   'ENABLE_ENCODING_USE_ENTITY', 'ICONS',
   'USE_UNIDECODE', 'DATE_IN_HEADER', 'OPEN_QUOTE_SYMBOL',
   'CLOSE_QUOTE_SYMBOL', 'TOP_NODE_UP', 'TOP_NODE_UP_URL', 'TOP_NODE_FILE',
-  'TOP_NODE_FILE_TARGET', 'SHOW_TITLE', 'WORDS_IN_PAGE',
+  'TOP_NODE_FILE_TARGET', 'SECTION_NAME_IN_TITLE',
+  'SHOW_TITLE', 'WORDS_IN_PAGE',
   'HEADER_IN_TABLE', 'USE_ACCESSKEY', 'USE_REL_REV', 'USE_LINKS',
   'OVERVIEW_LINK_TO_TOC', 'AVOID_MENU_REDUNDANCY', 'NODE_NAME_IN_MENU',
   'NODE_NAME_IN_INDEX', 'NO_USE_SETFILENAME', 'USE_SETFILENAME_EXTENSION',
@@ -254,7 +278,7 @@ my @variable_string_settables = (
   'BEFORE_TOC_LINES', 'AFTER_TOC_LINES',
   'SORT_ELEMENT_COUNT', 'SORT_ELEMENT_COUNT_WORDS',
   'KEEP_TOP_EXTERNAL_REF',
-  'TEXI2HTML', 'IMAGE_LINK_PREFIX', 'FIX_TEXINFO',
+  'TEXI2HTML', 'IMAGE_LINK_PREFIX',
   'TREE_TRANSFORMATIONS', 'BASEFILENAME_LENGTH',
   'TEXTCONTENT_COMMENT', 'XREF_USE_FLOAT_LABEL',
   'XREF_USE_NODE_NAME_ARG', 'CHECK_HTMLXREF',
@@ -282,26 +306,14 @@ foreach my $var (keys(%document_settable_at_commands),
          keys(%document_settable_unique_at_commands),
          @command_line_settables, @variable_string_settables, 
          @variable_other_settables, @parser_options,
-         @formats_settable,
-         @obsolete_variables, @variable_settables_not_used) {
+         @formats_settable, @variable_settables_not_used) {
   $valid_options{$var} = 1;
-}
-
-my %obsolete_options;
-foreach my $var (@obsolete_variables) {
-  $obsolete_options{$var} = 1;
 }
 
 sub valid_option($)
 {
   my $option = shift;
   return $valid_options{$option};
-}
-
-sub obsolete_option($)
-{
-  my $option = shift;
-  return $obsolete_options{$option};
 }
 
 my %customization_variable_classes = (
@@ -312,7 +324,7 @@ my %customization_variable_classes = (
   'variable_other_settables' => \@variable_other_settables,
   'parser_options' => \@parser_options,
   #'formats_settable' => \@formats_settable,
-  'obsolete_variables' => \@obsolete_variables,
+  #'obsolete_variables' => \@obsolete_variables,
   'variable_settables_not_used' => \@variable_settables_not_used,
 );
 
@@ -366,6 +378,7 @@ our %no_brace_commands;             # commands never taking braces
            '@', '@',
            '}', '}',
            '{', '{',
+           '&', '&',
            '\\', '\\',  # should only appear in math
 );
 
@@ -380,8 +393,6 @@ our %no_brace_commands;             # commands never taking braces
 # lineraw:     no value and macro expansion, the line is kept as-is, not 
 #              analysed
 # skipline:    no argument, everything else on the line is skipped
-# skipspace:   no argument, following spaces are skipped.
-# noarg:       no argument
 # text:        the line is parsed as texinfo, and the argument is converted
 #              to simple text (in _end_line)
 # line:        the line is parsed as texinfo
@@ -391,9 +402,9 @@ our %no_brace_commands;             # commands never taking braces
 #              The number is an indication of the number of arguments of 
 #              the command.
 #
-# Beware that @item and @itemx may be like 'line' or 'skipspace' depending
-# on the context.
-our %misc_commands = (
+# Beware that @item may be a 'line' command or an 'other' command
+# depending on the context.
+our %line_commands = (
   'node'              => 'line', # special arg
   'bye'               => 'skipline', # no arg
   'end'               => 'text',
@@ -419,7 +430,7 @@ our %misc_commands = (
   'contents'          => 'skipline', # no arg
   'shortcontents'     => 'skipline', # no arg
   'summarycontents'   => 'skipline', # no arg
-  'insertcopying'     => 'noarg', # no arg
+  'insertcopying'     => 'skipline', # no arg
   'clickstyle'        => 'special', # arg should be an @-command
   # more relevant in preamble
   'documentencoding'  => 'text', # or 1?
@@ -472,8 +483,6 @@ our %misc_commands = (
   'oddheadingmarks'   => 1,
   'evenfootingmarks'  => 1,
   'oddfootingmarks'   => 1,
-  # not valid for info (should be in @iftex)
-  'cropmarks'         => 'skipline', # no arg
 
   # formatting
   'center'            => 'line',
@@ -490,31 +499,47 @@ our %misc_commands = (
   'page'              => 'skipline', # no arg (pagebreak)
   'need'              => 1, # one numerical/real arg
   # formatting
-  'noindent'          => 'skipspace', # no arg
-  'indent'            => 'skipspace',
   'exdent'            => 'line',
-  'headitem'          => 'skipspace',
-  'item'              => 'skipspace', # or line, depending on the context
-  'itemx'             => 'skipspace', # or line, depending on the context
-  'tab'               => 'skipspace', 
-  # only valid in heading or footing
-  'thischapter'       => 'noarg',
-  'thischaptername'   => 'noarg',
-  'thischapternum'    => 'noarg',
-  'thisfile'          => 'noarg',
-  'thispage'          => 'noarg',
-  'thistitle'         => 'noarg',
+  'item'              => 'line', # or skipspace, depending on the context
+  'itemx'             => 'line',
   # not valid for info (should be in @iftex)
   'vskip'             => 'lineraw', # arg line in TeX
   # obsolete @-commands.
-  'refill'            => 'noarg',   # no arg (obsolete, to be ignored)
   'setcontentsaftertitlepage'      => 'skipline', # no arg
   'setshortcontentsaftertitlepage' => 'skipline', # no arg
-  # Remove spaces and end of lines after the 
-  # commands? If no, they can lead to empty lines
-  'quote-arg'         => 'skipline',
-  'allow-recursion'   => 'skipline',
 );
+
+# commands that do not take the whole line as argument
+#
+# skipspace:   no argument, following spaces are skipped.
+# noarg:       no argument
+#
+our %other_commands = (
+  # formatting
+  'noindent'          => 'skipspace',
+  'indent'            => 'skipspace',
+  'headitem'          => 'skipspace',
+  'item'              => 'skipspace', # or line, depending on the context
+  'tab'               => 'skipspace', 
+  'refill'            => 'noarg',     # obsolete
+);
+
+# only valid in heading or footing
+our %in_heading_commands;
+foreach my $in_heading_command ('thischapter', 'thischaptername',
+  'thischapternum', 'thisfile', 'thispage', 'thistitle') {
+  $in_heading_commands{$in_heading_command} = 1;
+
+  $other_commands{$in_heading_command} = 'noarg';
+}
+
+
+# only valid in index entries
+our %in_index_commands;
+foreach my $in_index_command ('sortas') {
+  $in_index_commands{$in_index_command} = 1;
+}
+
 
 our %index_names = (
  'cp' => {'in_code' => 0},
@@ -535,7 +560,7 @@ foreach my $index_name (keys (%index_names)) {
   if ($index_name =~ /^(.).$/) {
     my $index_prefix = $1;
     # only put the one letter versions in the hash.
-    $misc_commands{$index_prefix.'index'} = 'line';
+    $line_commands{$index_prefix.'index'} = 'line';
     $default_index_commands{$index_prefix.'index'} = 1;
   }
 }
@@ -555,6 +580,7 @@ foreach my $no_arg_command ('TeX','LaTeX','bullet','copyright',
   'minus','point','print','result','today',
   'exclamdown','questiondown','pounds','ordf','ordm',
   'atchar', 'lbracechar', 'rbracechar', 'backslashchar', 'hashchar', 'comma',
+  'ampchar',
   'euro', 'geq','leq','tie','textdegree','click',
   'quotedblleft','quotedblright','quoteleft','quoteright','quotedblbase',
   'quotesinglbase','guillemetleft','guillemetright','guillemotleft',
@@ -568,7 +594,7 @@ foreach my $accent_command ('"','~','^','`',"'",',','=',
                            'ringaccent','H','dotaccent','u','ubaraccent',
                            'udotaccent','v','ogonek','tieaccent', 'dotless') {
   $accent_commands{$accent_command} = 1;
-  $brace_commands{$accent_command} = 1;
+  $brace_commands{$accent_command} = 'accent';
 }
 
 our %style_commands;
@@ -577,28 +603,37 @@ foreach my $style_command ('asis','cite','clicksequence',
   'sc', 't', 'var',
   'headitemfont', 'code', 'command', 'env', 'file', 'kbd',
   'option', 'samp', 'strong', 'sub', 'sup') {
-  $brace_commands{$style_command} = 1;
+  $brace_commands{$style_command} = 'style';
   $style_commands{$style_command} = 1;
 }
 
 our %regular_font_style_commands;
 foreach my $command ('r', 'i', 'b', 'sansserif', 'slanted') {
   $regular_font_style_commands{$command} = 1;
-  $brace_commands{$command} = 1;
+  $brace_commands{$command} = 'style';
   $style_commands{$command} = 1;
 }
 
-foreach my $one_arg_command ('U', 'ctrl', 'dmn', 'w', 'key',
-    'titlefont', 'hyphenation', 'anchor', 'errormsg', 'sortas') {
+foreach my $one_arg_command ('U', 'dmn', 'key',
+    'titlefont', 'anchor', 'errormsg', 'sortas') {
   $brace_commands{$one_arg_command} = 1;
+}
+
+# FIXME: 'key', 'verb', 't'?
+foreach my $other_arg_command ('w', 'hyphenation') {
+  $brace_commands{$other_arg_command} = 'other';
 }
 
 our %code_style_commands;
 foreach my $command ('code', 'command', 'env', 'file', 'kbd', 'key', 'option',
-   'samp', 'indicateurl', 'verb', 't') {
+   'samp', 'verb', 't') {
   $code_style_commands{$command} = 1;
-  $brace_commands{$command} = 1;
+  $brace_commands{$command} = 'style';
 }
+
+# FIXME: a special case?
+$code_style_commands{'indicateurl'} = 1;
+$brace_commands{'indicateurl'} = 1;
 
 
 # Commands that enclose full texts, that can contain multiple paragraphs.
@@ -606,7 +641,7 @@ our %context_brace_commands;
 foreach my $context_brace_command ('footnote', 'caption',
     'shortcaption', 'math') {
   $context_brace_commands{$context_brace_command} = $context_brace_command;
-  $brace_commands{$context_brace_command} = 1;
+  $brace_commands{$context_brace_command} = 'context';
 }
 
 our %explained_commands;
@@ -614,6 +649,7 @@ foreach my $explained_command ('abbr', 'acronym') {
   $explained_commands{$explained_command} = 1;
   $brace_commands{$explained_command} = 2;
 }
+
 
 our %inline_format_commands;
 our %inline_commands;
@@ -632,9 +668,6 @@ foreach my $inline_conditional_command ('inlineifclear', 'inlineifset') {
   $brace_commands{$inline_conditional_command} = 2;
   $inline_commands{$inline_conditional_command} = 1;
 }
-
-# 'inlineset', 'inlineclear'
-#$brace_commands{'inlineclear'} = 1;
 
 foreach my $two_arg_command('email') {
   $brace_commands{$two_arg_command} = 2;
@@ -655,12 +688,6 @@ foreach my $ref_command ('xref','ref','pxref','inforef') {
   $ref_commands{$ref_command} = 1;
 }
 
-
-our %in_heading_commands;
-foreach my $in_heading_command ('thischapter', 'thischaptername',
-  'thischapternum', 'thisfile', 'thispage', 'thistitle') {
-  $in_heading_commands{$in_heading_command} = 1;
-}
 
 # brace command that is not replaced with text.
 my %unformatted_brace_commands;
@@ -738,7 +765,7 @@ foreach my $def_command(keys %def_map) {
     $def_aliases{$def_command} = $real_command;
   }
   $block_commands{$def_command} = 'def';
-  $misc_commands{$def_command.'x'} = 'line';
+  $line_commands{$def_command.'x'} = 'line';
   $def_commands{$def_command} = 1;
   $def_commands{$def_command.'x'} = 1;
   $command_index{$def_command.'x'} = $command_index{$def_command};
@@ -861,10 +888,6 @@ foreach my $item_line_command ('table', 'ftable', 'vtable') {
 }
 
 our %deprecated_commands = (
-  'ctrl' => '',
-  'allow-recursion' => N__('recursion is always allowed'),
-  'quote-arg' => N__('arguments are quoted by default'),
-
   'setcontentsaftertitlepage' =>
 N__('move your @contents command if you want the contents after the title page'),
 
@@ -940,7 +963,7 @@ $command_structuring_level{'centerchap'} = 1;
 our %sectioning_commands;
 
 foreach my $sectioning_command (keys (%command_structuring_level)) {
-  $misc_commands{$sectioning_command} = 'line';
+  $line_commands{$sectioning_command} = 'line';
   if ($sectioning_command =~ /heading/) {
     $close_paragraph_commands{$sectioning_command} = 1;
   } else {
@@ -948,6 +971,7 @@ foreach my $sectioning_command (keys (%command_structuring_level)) {
   }
   $sectioning_commands{$sectioning_command} = 1;
 }
+
 
 # misc commands that may be formatted as text.
 # index commands may be too, but index command may be added with
@@ -960,6 +984,9 @@ foreach my $formatted_misc_command ('insertcopying', 'contents',
    'itemx', 'tab', 'node', keys(%sectioning_commands)) {
   $formatted_misc_commands{$formatted_misc_command} = 1;
 }
+
+
+our %misc_commands = (%line_commands, %other_commands);
 
 $root_commands{'node'} = 1;
 
@@ -980,6 +1007,36 @@ our @MONTH_NAMES =
      'June', 'July', 'August', 'September', 'October',
      'November', 'December'
     );
+
+# file:        file name to locate. It can be a file path.
+# directories: a reference on a array containing a list of directories to
+#              search the file in. 
+# all_files:   if true collect all the files with that name, otherwise stop
+#              at first match.
+sub locate_init_file($$$)
+{
+  my $file = shift;
+  my $directories = shift;
+  my $all_files = shift;
+
+  if (File::Spec->file_name_is_absolute($file)) {
+    return $file if (-e $file and -r $file);
+  } else {
+    my @files;
+    foreach my $dir (@$directories) {
+      next unless (-d $dir);
+      my $possible_file = File::Spec->catfile($dir, $file);
+      if ($all_files) {
+        push (@files, $possible_file) 
+          if (-e $possible_file and -r $possible_file);
+      } else {
+        return $possible_file if (-e $possible_file and -r $possible_file);
+      }
+    }
+    return @files if ($all_files);
+  }
+  return undef;
+}
 
 sub locate_include_file($$)
 {
@@ -1079,9 +1136,8 @@ sub open_out($$;$$)
   return $filehandle;
 }
 
-sub warn_unknown_language($$) {
+sub warn_unknown_language($) {
   my $lang = shift;
-  my $gettext = shift;
 
   my @messages = ();
   my $lang_code = $lang;
@@ -1093,12 +1149,12 @@ sub warn_unknown_language($$) {
   }
 
   if (! $Texinfo::Documentlanguages::language_codes{$lang_code}) {
-    push @messages, sprintf(&$gettext(N__("%s is not a valid language code")), 
+    push @messages, sprintf(__("%s is not a valid language code"), 
                             $lang_code);
   }
   if (defined($region_code) 
        and ! $Texinfo::Documentlanguages::region_codes{$region_code}) {
-    push @messages, sprintf(&$gettext(N__("%s is not a valid region code")), 
+    push @messages, sprintf(__("%s is not a valid region code"), 
                             $region_code);
   }
   return @messages;
@@ -1110,14 +1166,12 @@ my %possible_split = (
   'node' => 1,
 );
 
-sub warn_unknown_split($$) {
+sub warn_unknown_split($) {
   my $split = shift;
-  my $gettext = shift;
 
   my @messages = ();
   if ($split and !$possible_split{$split}) {
-    push @messages, sprintf(&$gettext(N__("%s is not a valid split possibility")),
-                            $split);
+    push @messages, sprintf(__("%s is not a valid split possibility"), $split);
   }
   return @messages;
 }
@@ -1139,7 +1193,7 @@ sub expand_verbatiminclude($$)
   if (defined($file)) {
     if (!open(VERBINCLUDE, $file)) {
       if ($self) {
-        $self->line_error(sprintf($self->__("could not read %s: %s"), $file, $!), 
+        $self->line_error(sprintf(__("could not read %s: %s"), $file, $!), 
                             $current->{'line_nr'});
       }
     } else {
@@ -1158,14 +1212,14 @@ sub expand_verbatiminclude($$)
       }
       if (!close (VERBINCLUDE)) {
         if ($self) {
-          $self->document_warn(sprintf($self->__(
+          $self->document_warn(sprintf(__(
                       "error on closing \@verbatiminclude file %s: %s"),
                              $file, $!));
         }
       }
     }
   } elsif ($self) {
-    $self->line_error(sprintf($self->__("\@%s: could not find %s"), 
+    $self->line_error(sprintf(__("\@%s: could not find %s"), 
                     $current->{'cmdname'}, $text), $current->{'line_nr'});
   }
   return $verbatiminclude;
@@ -1176,7 +1230,8 @@ sub definition_category($$)
   my $self = shift;
   my $current = shift;
 
-  return undef if (!$current->{'extra'} or !$current->{'extra'}->{'def_args'});
+  return undef if (!$current->{'extra'}
+      or !$current->{'extra'}->{'def_parsed_hash'});
 
   my $arg_category = $current->{'extra'}->{'def_parsed_hash'}->{'category'};
   my $arg_class = $current->{'extra'}->{'def_parsed_hash'}->{'class'};
@@ -1275,19 +1330,21 @@ sub definition_arguments_content($)
   my $result;
 
   return undef if (!defined($root->{'extra'}) 
-                    or !defined($root->{'extra'}->{'def_args'}));
-  my @args = @{$root->{'extra'}->{'def_args'}};
+                    or !defined($root->{'extra'}->{'def_parsed_hash'}));
+  my @args = @{$root->{'args'}->[0]->{'contents'}};
   while (@args) {
-    last if ($args[0]->[0] ne 'spaces'
-             and !$root->{'extra'}->{'def_parsed_hash'}->{$args[0]->[0]});
+    last if (defined($args[0]->{'extra'})
+             and defined($args[0]->{'extra'}->{'def_role'})
+             and $args[0]->{'extra'}->{'def_role'} ne 'spaces'
+             and !$root->{'extra'}->{'def_parsed_hash'}
+                       ->{$args[0]->{'extra'}->{'def_role'}});
     shift @args;
   }
-  if (@args) {
-    foreach my $arg (@args) {
-      push @$result, $arg->[1];
-    }
+  if (scalar(@args) > 0) {
+    return \@args;
+  } else {
+    return undef;
   }
-  return $result;
 }
 
 # find the accent commands stack and the innermost text contents
@@ -1323,8 +1380,7 @@ sub find_innermost_accent_contents($;$)
     # inside the argument of an accent
     my $text_contents = [];
     foreach my $content (@{$arg->{'contents'}}) {
-      if (!($content->{'extra'} and $content->{'extra'}->{'invalid_nesting'})
-         and !($content->{'cmdname'} and ($content->{'cmdname'} eq 'c'
+      if (!($content->{'cmdname'} and ($content->{'cmdname'} eq 'c'
                                   or $content->{'cmdname'} eq 'comment'))) {
         if ($content->{'cmdname'} and $accent_commands{$content->{'cmdname'}}) {
           $current = $content;
@@ -1413,11 +1469,11 @@ sub parse_node_manual($)
 {
   my $node = shift;
   my @contents = @{$node->{'contents'}};
-  trim_spaces_comment_from_content(\@contents);
 
   my $manual;
   my $result;
-#print STDERR "RRR $contents[0] and $contents[0]->{'text'} \n";
+  my ($end_paren, $spaces_after);
+
   if ($contents[0] and $contents[0]->{'text'} and $contents[0]->{'text'} =~ /^\(/) {
     my $braces_count = 1;
     if ($contents[0]->{'text'} !~ /^\($/) {
@@ -1443,10 +1499,12 @@ sub parse_node_manual($)
         ($before, $after, $braces_count) = _find_end_brace($content->{'text'},
                                                               $braces_count);
         if ($braces_count == 0) {
-          $before =~ s/\)$//;
+          $before =~ s/(\))$//;
+          $end_paren = $1;
           push @$manual, { 'text' => $before, 'parent' => $content->{'parent'} }
             if ($before ne '');
-          $after =~ s/^\s*//;
+          $after =~ s/^(\s*)//;
+          $spaces_after = $1;
           unshift @contents,  { 'text' => $after, 'parent' => $content->{'parent'} }
             if ($after ne '');
           last;
@@ -1458,12 +1516,29 @@ sub parse_node_manual($)
     if ($braces_count == 0) {
       $result->{'manual_content'} = $manual if (defined($manual));
     } else {
-      @contents = @$manual;
+      @contents = ({ 'text' => '(', 'parent' => $node }, @$manual);
     }
   }
   if (@contents) {
     $result->{'node_content'} = \@contents;
   }
+
+  # Overwrite the contents array so that all the elements in 'manual_content'
+  # and 'node_content' are in the main tree.
+  my $new_contents = [];
+  if (defined($result) and defined($result->{'manual_content'})) {
+    @$new_contents = ({ 'text' => '(', 'parent' => $node },
+                      @$manual);
+    push @$new_contents, {  'text' => ')', 'parent' => $node }
+      if $end_paren;
+    push @$new_contents, { 'text' => $spaces_after, 'parent' => $node }
+      if $spaces_after;
+  }
+  if (@contents) {
+    @$new_contents = (@$new_contents, @contents);
+  }
+  $node->{'contents'} = $new_contents;
+
   return $result;
 }
 
@@ -1610,7 +1685,13 @@ sub parse_renamed_nodes_file($$;$$)
   my $renamed_nodes = shift;
   my $renamed_nodes_lines = shift;
 
-  if (open(RENAMEDFILE, "<$renamed_nodes_file")) {
+  my $input_directory = $self->{'info'}->{'input_directory'};
+  
+  # check for noderename.cnf in directory of source, and in current
+  # directory.
+  if ($input_directory
+        and open(RENAMEDFILE, "<$input_directory$renamed_nodes_file")
+      or open(RENAMEDFILE, "<$renamed_nodes_file")) {
     if ($self->get_conf('INPUT_PERL_ENCODING')) {
       binmode(RENAMEDFILE, ":encoding(".
                        $self->get_conf('INPUT_PERL_ENCODING').")");
@@ -1630,7 +1711,7 @@ sub parse_renamed_nodes_file($$;$$)
           $renamed_nodes_lines->{$_} = $renamed_nodes_line_nr;
           @old_names = ();
         } else {
-          $self->file_line_warn($self->__("no node to be renamed"),
+          $self->file_line_warn(__("no node to be renamed"),
                         $renamed_nodes_file, $renamed_nodes_line_nr);
         }
       } else {
@@ -1641,17 +1722,17 @@ sub parse_renamed_nodes_file($$;$$)
       }
     }
     if (scalar(@old_names)) {
-      $self->file_line_warn($self->__("nodes without a new name at the end of file"),
+      $self->file_line_warn(__("nodes without a new name at the end of file"),
              $renamed_nodes_file, $renamed_nodes_line_nr);
     }
     if (!close(RENAMEDFILE)) {
-      $self->document_warn(sprintf($self->__p(
+      $self->document_warn(sprintf(__p(
           "see HTML Xref Link Preservation in the Texinfo manual for context",
           "error on closing node-renaming configuration file %s: %s"), 
                             $renamed_nodes_file, $!));
     }
   } else {
-    $self->document_warn(sprintf($self->__("could not open %s: %s"), 
+    $self->document_warn(sprintf(__("could not open %s: %s"), 
                          $renamed_nodes_file, $!));
   }
   return ($renamed_nodes, $renamed_nodes_lines);
@@ -1671,6 +1752,7 @@ sub collect_renamed_nodes($$;$$)
     $renamed_nodes_file = $basename . '-noderename.cnf';
   }
   if (defined($renamed_nodes_file)) {
+    $self->document_warn(sprintf(__("using a renamed nodes file (`%s') is deprecated"), $renamed_nodes_file));
     my ($renamed_nodes, $renamed_nodes_lines)
      = parse_renamed_nodes_file($self, $renamed_nodes_file, $renamed_nodes,
                                 $renamed_nodes_lines);
@@ -1768,8 +1850,7 @@ sub count_bytes($$;$)
 # extra->index_entry extra->type
 #
 # extra that should point to other elements: 
-# command_as_argument
-# @block_command_line_contents @brace_command_contents @misc_content end_command
+# command_as_argument end_command
 # associated_section part_associated_section associated_node associated_part
 # @prototypes @columnfractions titlepage quotation @author command
 # menu_entry_description menu_entry_name
@@ -1782,7 +1863,6 @@ sub count_bytes($$;$)
 # extra->node_argument
 # extra->explanation_contents
 # extra->menu_entry_node
-# extra->def_arg
 
 
 sub _copy_tree($$$);
@@ -2170,7 +2250,7 @@ sub _protect_hashchar_at_line_beginning($$$)
         my $parent = $current->{'parent'};
         while ($parent) {
           if ($parent->{'cmdname'} and $parent->{'line_nr'}) {
-            $self->line_warn(sprintf($self->__(
+            $self->line_warn(sprintf(__(
                   "could not protect hash character in \@%s"), 
                              $parent->{'cmdname'}), $parent->{'line_nr'});
             last;
@@ -2348,11 +2428,15 @@ sub move_index_entries_after_items($) {
           foreach my $entry(@gathered_index_entries) {
             $entry->{'parent'} = $item_container;
           }
-          if ($item_container->{'contents'} 
+          if ($item->{'extra'} 
+              and $item->{'extra'}->{'spaces_before_argument'}
+       and $item->{'extra'}->{'spaces_before_argument'} !~ /\n$/) {
+            $item->{'extra'}->{'spaces_before_argument'} .= "\n";
+          # TODO: could we delete all these cases down here?
+          } elsif ($item_container->{'contents'} 
               and $item_container->{'contents'}->[0]
               and $item_container->{'contents'}->[0]->{'type'}) {
             if ($item_container->{'contents'}->[0]->{'type'} eq 'empty_line_after_command') {
-              
               unshift @gathered_index_entries, shift @{$item_container->{'contents'}};
             } elsif ($item_container->{'contents'}->[0]->{'type'} eq 'empty_spaces_after_command') {
                unshift @gathered_index_entries, shift @{$item_container->{'contents'}};
@@ -2426,7 +2510,10 @@ sub debug_hash
 
 use Data::Dumper;
 
-my @kept_keys = ('contents', 'cmdname', 'type', 'text', 'args');
+my @kept_keys = ('contents', 'cmdname', 'type', 'text', 'args',
+  'extra', 'def_role', 'spaces_before_argument',
+  'spaces_after_argument', 'comment_at_end', 'index_entry'
+);
 my %kept_keys;
 foreach my $key (@kept_keys) {
   $kept_keys{$key} = 1;
@@ -2521,6 +2608,74 @@ sub complete_indices {
     }
   }
   $self->{'documentlanguage'} = $save_lang;
+}
+
+# Called from Texinfo::Parser and Texinfo::XS::parsetexi::Parsetexi.
+sub labels_information
+{
+  my $self = shift;
+  if (defined $self->{'targets'}) {
+    my %labels = ();
+    for my $target (@{$self->{'targets'}}) {
+      if ($target->{'cmdname'} eq 'node') {
+        if ($target->{'extra'}->{'nodes_manuals'}) {
+          for my $node_manual (@{$target->{'extra'}{'nodes_manuals'}}) {
+            if (defined $node_manual
+                  and defined $node_manual->{'node_content'}) {
+              my $normalized = Texinfo::Convert::NodeNameNormalization::normalize_node({'contents' => $node_manual->{'node_content'}});
+              $node_manual->{'normalized'} = $normalized;
+            }
+          }
+        }
+      }
+      if (defined $target->{'extra'}
+            and defined $target->{'extra'}->{'node_content'}) {
+        my $normalized = Texinfo::Convert::NodeNameNormalization::normalize_node({'contents' => $target->{'extra'}->{'node_content'}});
+
+        if ($normalized !~ /[^-]/) {
+          $self->line_error (sprintf(__("empty node name after expansion `%s'"),
+                Texinfo::Convert::Texinfo::convert({'contents' 
+                               => $target->{'extra'}->{'node_content'}})), 
+                $target->{'line_nr'});
+          delete $target->{'extra'}->{'node_content'};
+        } else {
+          if (defined $labels{$normalized}) {
+            $self->line_error(
+              sprintf(__("\@%s `%s' previously defined"), 
+                         $target->{'cmdname'}, 
+                   Texinfo::Convert::Texinfo::convert({'contents' => 
+                       $target->{'extra'}->{'node_content'}})), 
+                           $target->{'line_nr'});
+            $self->line_error(
+              sprintf(__("here is the previous definition as \@%s"),
+                               $labels{$normalized}->{'cmdname'}),
+                       $labels{$normalized}->{'line_nr'});
+            delete $target->{'extra'}->{'node_content'};
+          } else {
+            $labels{$normalized} = $target;
+            $target->{'extra'}->{'normalized'} = $normalized;
+            if ($target->{'cmdname'} eq 'node') {
+              if ($target->{'extra'}
+                  and $target->{'extra'}{'node_argument'}) {
+                $target->{'extra'}{'node_argument'}{'normalized'}
+                  = $normalized;
+              }
+              push @{$self->{'nodes'}}, $target;
+            }
+          }
+        }
+      } else {
+        if ($target->{'cmdname'} eq 'node') {
+          $self->line_error (sprintf(__("empty argument in \@%s"),
+                  $target->{'cmdname'}), $target->{'line_nr'});
+          delete $target->{'extra'}->{'node_content'};
+        }
+      }
+    }
+    $self->{'labels'} = \%labels;
+    delete $self->{'targets'};
+  }
+  return $self->{'labels'};
 }
 
 1;
@@ -2828,14 +2983,5 @@ L<Texinfo::Parser>, L<Texinfo::Convert::Converter> and L<Texinfo::Report>.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2010, 2011, 2012, 2013, 2014, 2015 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License,
-or (at your option) any later version.
 
 =cut

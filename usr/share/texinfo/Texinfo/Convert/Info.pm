@@ -1,6 +1,6 @@
 # Info.pm: output tree as Info.
 #
-# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017
+# Copyright 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018
 # Free Software Foundation, Inc.
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,7 @@ package Texinfo::Convert::Info;
 use 5.00405;
 use strict;
 
+use Texinfo::Common;
 use Texinfo::Convert::Plaintext;
 use Texinfo::Convert::Text;
 
@@ -33,13 +34,6 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @ISA = qw(Texinfo::Convert::Plaintext);
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration       use Texinfo::Convert::Info ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
 %EXPORT_TAGS = ( 'all' => [ qw(
   convert
 ) ] );
@@ -49,7 +43,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.5';
+$VERSION = '6.6';
 
 my $STDIN_DOCU_NAME = 'stdin';
 
@@ -107,7 +101,7 @@ sub output($)
   my $out_file_nr = 0;
   my @indirect_files;
   if (!defined($elements) or $elements->[0]->{'extra'}->{'no_node'}) {
-    $self->file_line_warn($self->__("document without nodes"), 
+    $self->file_line_warn(__("document without nodes"), 
                           $self->{'info'}->{'input_file_name'});
     my $output = $header.$self->_convert($root);
     $self->_count_context_bug_message('no element ');
@@ -124,7 +118,7 @@ sub output($)
   } else {
     unless ($self->{'structuring'} and $self->{'structuring'}->{'top_node'}
      and $self->{'structuring'}->{'top_node'}->{'extra'}->{'normalized'} eq 'Top') {
-      $self->file_line_warn($self->__("document without Top node"),
+      $self->file_line_warn(__("document without Top node"),
                             $self->{'info'}->{'input_file_name'});
     }
     $out_file_nr = 1;
@@ -162,7 +156,7 @@ sub output($)
         if ($out_file_nr == 1) {
           $self->register_close_file($self->{'output_file'});
           if (defined($close_error)) {
-            $self->document_error(sprintf($self->__("error on closing %s: %s"),
+            $self->document_error(sprintf(__("error on closing %s: %s"),
                                   $self->{'output_file'}, $close_error));
             return undef;
           }
@@ -172,7 +166,7 @@ sub output($)
           }
           unless (rename($self->{'output_file'}, 
                          $self->{'output_file'}.'-'.$out_file_nr)) {
-            $self->document_error(sprintf($self->__("rename %s failed: %s"),
+            $self->document_error(sprintf(__("rename %s failed: %s"),
                                          $self->{'output_file'}, $!));
             return undef;
           }
@@ -188,7 +182,7 @@ sub output($)
         } else {
           $self->register_close_file($self->{'output_file'}.'-'.$out_file_nr);
           if (defined($close_error)) {
-            $self->document_error(sprintf($self->__("error on closing %s: %s"),
+            $self->document_error(sprintf(__("error on closing %s: %s"),
                                   $self->{'output_file'}.'-'.$out_file_nr, 
                                   $close_error));
             return undef;
@@ -216,7 +210,7 @@ sub output($)
   if ($out_file_nr > 1) {
     $self->register_close_file($self->{'output_file'}.'-'.$out_file_nr);
     if (!close ($fh)) {
-      $self->document_error(sprintf($self->__("error on closing %s: %s"),
+      $self->document_error(sprintf(__("error on closing %s: %s"),
                             $self->{'output_file'}.'-'.$out_file_nr, $!));
       return undef;
     }
@@ -253,7 +247,7 @@ sub output($)
     my ($label_text, $byte_count) = $self->_node_line($label->{'root'});
 
     if ($seen_anchors{$label_text}) {
-      $self->line_error(sprintf($self->__("\@%s output more than once: %s"),
+      $self->line_error(sprintf(__("\@%s output more than once: %s"),
           $label->{'root'}->{'cmdname'},
           Texinfo::Convert::Texinfo::convert({'contents' =>
               $label->{'root'}->{'extra'}->{'node_content'}})),
@@ -279,7 +273,7 @@ sub output($)
     unless ($self->{'output_file'} eq '-') {
       $self->register_close_file($self->{'output_file'});
       if (!close ($fh)) {
-        $self->document_error(sprintf($self->__("error on closing %s: %s"),
+        $self->document_error(sprintf(__("error on closing %s: %s"),
                               $self->{'output_file'}, $!));
       }
     }
@@ -299,7 +293,7 @@ sub _open_info_file($$)
   my $fh = $self->Texinfo::Common::open_out($filename, undef, 'use_binmode');
   if (!$fh) {
     $self->document_error(sprintf(
-        $self->__("could not open %s for writing: %s"),
+        __("could not open %s for writing: %s"),
         $filename, $!));
     return undef;
   }
@@ -341,10 +335,10 @@ sub _info_header($)
     $self->{'ignored_commands'}->{'direntry'} = 0;
     foreach my $command (@{$self->{'info'}->{'dircategory_direntry'}}) {
       if ($command->{'cmdname'} eq 'dircategory') {
-        if ($command->{'extra'} 
-            and defined($command->{'extra'}->{'misc_content'})) {
+        if ($command->{'args'} and @{$command->{'args'}}
+            and defined($command->{'args'}->[0]->{'contents'})) {
           my $dircategory = "INFO-DIR-SECTION ".$self->convert_line(
-             {'contents' => $command->{'extra'}->{'misc_content'}});
+             {'contents' => $command->{'args'}->[0]->{'contents'}});
           $result .= $self->ensure_end_of_line($dircategory);
         }
         $self->{'empty_lines_count'} = 0;
@@ -383,7 +377,7 @@ sub _error_outside_of_any_node($$)
   my $self = shift;
   my $root = shift;
   if (!$self->{'node'}) {
-    $self->line_warn(sprintf($self->__("\@%s outside of any node"),
+    $self->line_warn(sprintf(__("\@%s outside of any node"),
                      $root->{'cmdname'}), $root->{'line_nr'});
   }
 }
@@ -425,7 +419,7 @@ sub _node($$)
   my $post_quote = '';
   if ($node_text =~ /,/) {
     if ($self->get_conf('INFO_SPECIAL_CHARS_WARNING')) {
-      $self->line_warn(sprintf($self->__(
+      $self->line_warn(sprintf(__(
                  "\@node name should not contain `,': %s"), $node_text),
                                $node->{'line_nr'});
     }
@@ -473,13 +467,15 @@ sub _image($$)
 
   my $lines_count = 0;
 
-  if (defined($root->{'extra'}->{'brace_command_contents'}->[0])) {
+  if (defined($root->{'args'}->[0])
+      and @{$root->{'args'}->[0]->{'contents'}}) {
     my $basefile = Texinfo::Convert::Text::convert(
-      {'contents' => $root->{'extra'}->{'brace_command_contents'}->[0]},
+      {'contents' => $root->{'args'}->[0]->{'contents'}},
       {'code' => 1, Texinfo::Common::_convert_text_options($self)});
-    if (defined($root->{'extra'}->{'brace_command_contents'}->[4])) {
+    if (defined($root->{'args'}->[4])
+        and @{$root->{'args'}->[4]->{'contents'}}) {
       my $extension = Texinfo::Convert::Text::convert(
-        {'contents' => $root->{'extra'}->{'brace_command_contents'}->[4]},
+        {'contents' => $root->{'args'}->[4]->{'contents'}},
         {'code' => 1, Texinfo::Common::_convert_text_options($self)});
       unshift @extensions, ".$extension";
       unshift @extensions, "$extension";
@@ -495,9 +491,10 @@ sub _image($$)
     }
     my ($text, $width) = $self->_image_text($root, $basefile);
     my $alt;
-    if (defined($root->{'extra'}->{'brace_command_contents'}->[3])) {
+    if (defined($root->{'args'}->[3])
+        and @{$root->{'args'}->[3]->{'contents'}}) {
      $alt = Texinfo::Convert::Text::convert(
-       {'contents' => $root->{'extra'}->{'brace_command_contents'}->[3]},
+       {'contents' => $root->{'args'}->[3]->{'contents'}},
        {Texinfo::Common::_convert_text_options($self)});
     }
 
@@ -508,7 +505,8 @@ sub _image($$)
       $image_file =~ s/\"/\\\"/g;
       $result = "\x{00}\x{08}[image src=\"$image_file\"";
 
-      if (defined($root->{'extra'}->{'brace_command_contents'}->[3])) {
+      if (defined($root->{'args'}->[3])
+          and @{$root->{'args'}->[3]->{'contents'}}) {
         $alt =~ s/\\/\\\\/g;
         $alt =~ s/\"/\\\"/g;
         $result .= " alt=\"$alt\"";
@@ -594,14 +592,5 @@ portions.  For a full document use C<convert>.
 =head1 AUTHOR
 
 Patrice Dumas, E<lt>pertusus@free.frE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2015 Free Software Foundation, Inc.
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at 
-your option) any later version.
 
 =cut

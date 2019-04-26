@@ -141,7 +141,7 @@ create_md5sums()
 				;;
 			# In fast mode, we are only interested in patches, so filter out
 			# archives
-			*.tar|*.tar.Z|*.tar.gz|*.tgz|*.tar.bz2|*.tar.xz|*.zip)
+			*.tar|*.tar.Z|*.tar.gz|*.tgz|*.tar.bz2|*.tar.xz|*.tar.lz|*.zip|*.7z)
 				[ -n "$QUILT_SETUP_FAST" ] && continue
 				;;
 		esac
@@ -191,6 +191,12 @@ create_md5sums()
 				set -- $(lzma -cd "$file" | md5sum)
 				echo "$1 $basename"
 				;;
+			lzip*)
+				echo -n "l" >&4
+				echo "lzip -cd $file | md5sum" >&5
+				set -- $(lzip -cd "$file" | md5sum)
+				echo "$1 $basename"
+				;;
 		esac
 	done > $output
 	echo >&4
@@ -220,6 +226,7 @@ inspect()
 	ln -s $QUILT_DIR/scripts/inspect-wrapper $tmpdir/bin/patch
 	ln -s $QUILT_DIR/scripts/inspect-wrapper $tmpdir/bin/tar
 	ln -s $QUILT_DIR/scripts/inspect-wrapper $tmpdir/bin/unzip
+	ln -s $QUILT_DIR/scripts/inspect-wrapper $tmpdir/bin/7z
 
 	# Redirect file descriptors
 	# 5 is used in verbose mode, 4 in non-verbose mode, and 2 for both (real errors)
@@ -253,6 +260,7 @@ inspect()
 		 --eval "%define __patch    $tmpdir/bin/patch" \
 		 --eval "%define __tar      $tmpdir/bin/tar" \
 		 --eval "%define __unzip    $tmpdir/bin/unzip" \
+		 --eval "%define __7zip     $tmpdir/bin/7z" \
 		 --eval "$DEFINE_FUZZ" \
 		 --nodeps \
 		 -bp "$specdir/$specfile" < /dev/null >&5 2>&5
@@ -287,8 +295,7 @@ Initializes a source tree from an rpm spec file or a quilt series file.
 
 --fast	Use an alternative, faster method to process the spec file. In this
 	mode, rpmbuild is told to generate a working tree directly in the
-	target directory. If the input is a series file, it is assumed that
-	all archives have been extracted manually beforehand.
+	target directory.
 "
 		exit 0
 	else
@@ -396,6 +403,9 @@ case "$1" in
 			Zip*)
 				echo "unzip ${tar_dir:-.} ${source// /\\ }"
 				;;
+			7z*)
+				echo "7z ${tar_dir:-.} ${source// /\\ }"
+				;;
 			*)
 				echo "tar ${tar_dir:-.} ${source// /\\ }"
 				;;
@@ -415,7 +425,9 @@ case "$1" in
 	;;
 esac
 
-if [ -z "$QUILT_SETUP_FAST" ]
+# If running on a spec file in fast mode, the source tree is already unpacked;
+# in all other cases, we must prepare the source tree now
+if [ -z "$QUILT_SETUP_FAST" -o -n "$series_file" ]
 then
 	# Make sure that unpacking will not overwrite anything
 	check_for_existing_directories || exit 1
@@ -448,6 +460,17 @@ then
 			mkdir -p "${prefix:-.}" "$prefix$dir"
 			unzip -qqo "$tarball" -d "$prefix$dir"
 			;;
+		7z)
+			tarball=$sourcedir$arg1
+			if [ ! -e "$tarball" ]
+			then
+				printf $"File %s not found\n" "$tarball" >&2
+				exit 1
+			fi
+			printf $"Unpacking archive %s\n" "$tarball"
+			mkdir -p "${prefix:-.}" "$prefix$dir"
+			7z x -bd "$tarball" -o"$prefix$dir"
+			;;
 		esac
 	done < $tmpfile
 fi
@@ -474,7 +497,7 @@ series_header()
 while read tag dir arg1 arg2
 do
 	case "$tag" in
-	tar|unzip)
+	tar|unzip|7z)
 		tar_dir=$dir
 		[ "$tar_dir" = . ] && tar_dir=
 		tar_file=$arg1

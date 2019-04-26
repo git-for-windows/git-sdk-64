@@ -95,7 +95,7 @@ extract_header_value()
 
       # Long Header Fields may span multiple lines, in which case CRLF
       # is followed by space or tab (RFC 2822)
-      sed -n "/^${header}/,/^[^[:blank:]]/ { /^${header}/ { s/^${header}//p; n; }; /^[^[:blank:]]/q; /^$/q; p; }"
+      sed -ne "/^${header}/I,/^[^[:blank:]]/ { /^${header}/I { s/^${header}//I; p; n; }; /^[^[:blank:]]/q; /^$/q; p; }"
 }
 
 # See RFC 2822 Internet Message Format for how the In-Reply-To and
@@ -448,16 +448,24 @@ add_exit_handler "rm -rf $tmpdir"
 
 for patch in "${patches[@]}"
 do
+	patch_file="$(patch_file_name "$patch")"
 	mkdir -p "$tmpdir/$(dirname "$patch")"
-	cat_file "$(patch_file_name "$patch")" \
+	cat_file "$patch_file" \
 	| quilt_mail_patch_filter "$patch" > "$tmpdir/$patch"
 	status=${PIPESTATUS[1]}
 
 	subject=$(extract_header_value Replace-Subject: < "$tmpdir/$patch" | join_lines)
 	if [ $status -ne 0 -o -z "$subject" ]
 	then
-		printf \
+		if [ ! -r "$patch_file" ]
+		then
+			printf \
+$"Patch %s does not exist\n" "$(print_patch "$patch")" >&2
+		else
+			printf \
 $"Unable to extract a subject header from %s\n" "$(print_patch "$patch")" >&2
+		fi
+
 		rm -rf $tmpdir
 		exit 1
 	fi
@@ -504,8 +512,8 @@ fi
 introduction="$(gen_tempfile)"
 (
 	cat <<-EOF
-	Message-Id: <$(msgid)>
-	User-Agent: quilt/0.65
+	Message-ID: <$(msgid)>
+	User-Agent: quilt/0.66
 	Date: $(date --rfc-822)
 	From: ${opt_from:-$opt_sender}
 	To: $(IFS=,; echo "${opt_to[*]}")
@@ -628,7 +636,7 @@ for patch in "${patches[@]}"; do
 	# Make pipes fail if any of their commands fail (requires bash 3):
 	set -o pipefail
 
-	( (	echo "Message-Id: <$(msgid)>"
+	( (	echo "Message-ID: <$(msgid)>"
 		awk '
 		    /^$/	{ exit }
 		    tolower($0) !~ /^(message-id|references|in-reply-to):/ \
@@ -637,7 +645,6 @@ for patch in "${patches[@]}"; do
 		references_header $introduction
 		echo "MIME-Version: 1.0"
 		echo "Content-Type: text/plain; charset=$opt_charset"
-		echo "Content-Disposition: inline; filename=$patch"
 		awk '
 		    kill_header { if (/^[ \t]/) next ; kill_header = 0 }
 		    !in_body && tolower($0) ~ /^(recipient|replace)-.*:/ \
