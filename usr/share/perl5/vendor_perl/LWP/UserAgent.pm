@@ -15,7 +15,7 @@ use LWP::Protocol ();
 use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.36';
+our $VERSION = '6.38';
 
 sub new
 {
@@ -1059,7 +1059,7 @@ sub proxy {
         my $url = shift;
         if (defined($url) && length($url)) {
             Carp::croak("Proxy must be specified as absolute URI; '$url' is not") unless $url =~ /^$URI::scheme_re:/;
-            Carp::croak("Bad http proxy specification '$url'") if $url =~ /^https?:/ && $url !~ m,^https?://\w,;
+            Carp::croak("Bad http proxy specification '$url'") if $url =~ /^https?:/ && $url !~ m,^https?://[\w[],;
         }
         $self->{proxy}{$key} = $url;
         $self->set_my_handler("request_preprepare", \&_need_proxy)
@@ -1141,7 +1141,7 @@ LWP::UserAgent - Web user agent class
  $ua->timeout(10);
  $ua->env_proxy;
 
- my $response = $ua->get('http://search.cpan.org/');
+ my $response = $ua->get('http://example.com');
 
  if ($response->is_success) {
      print $response->decoded_content;  # or whatever
@@ -1596,7 +1596,7 @@ The possible values C<$phase> and the corresponding callback signatures are:
 
 =over
 
-=item response_data => sub { my($response, $ua, $h, $data) = @_; ... }
+=item response_data => sub { my($response, $ua, $handler, $data) = @_; ... }
 
 This handler is called for each chunk of data received for the
 response.  The handler might croak to abort the request.
@@ -1604,37 +1604,37 @@ response.  The handler might croak to abort the request.
 This handler needs to return a TRUE value to be called again for
 subsequent chunks for the same request.
 
-=item response_done => sub { my($response, $ua, $h) = @_; ... }
+=item response_done => sub { my($response, $ua, $handler) = @_; ... }
 
 The handler is called after the response has been fully received, but
 before any redirect handling is attempted.  The handler can be used to
 extract information or modify the response.
 
-=item response_header => sub { my($response, $ua, $h) = @_; ... }
+=item response_header => sub { my($response, $ua, $handler) = @_; ... }
 
 This handler is called right after the response headers have been
 received, but before any content data.  The handler might set up
 handlers for data and might croak to abort the request.
 
-The handler might set the $response->{default_add_content} value to
+The handler might set the C<< $response->{default_add_content} >> value to
 control if any received data should be added to the response object
-directly.  This will initially be false if the $ua->request() method
-was called with a $content_file or $content_cb argument; otherwise true.
+directly.  This will initially be false if the C<< $ua->request() >> method
+was called with a C<$content_file> or C<$content_cb argument>; otherwise true.
 
-=item request_prepare => sub { my($request, $ua, $h) = @_; ... }
+=item request_prepare => sub { my($request, $ua, $handler) = @_; ... }
 
 The handler is called before the request is sent and can modify the
 request any way it see fit.  This can for instance be used to add
 certain headers to specific requests.
 
-The method can assign a new request object to $_[0] to replace the
+The method can assign a new request object to C<$_[0]> to replace the
 request that is sent fully.
 
 The return value from the callback is ignored.  If an exception is
 raised it will abort the request and make the request method return a
 "400 Bad request" response.
 
-=item request_preprepare => sub { my($request, $ua, $h) = @_; ... }
+=item request_preprepare => sub { my($request, $ua, $handler) = @_; ... }
 
 The handler is called before the C<request_prepare> and other standard
 initialization of the request.  This can be used to set up headers
@@ -1642,22 +1642,25 @@ and attributes that the C<request_prepare> handler depends on.  Proxy
 initialization should take place here; but in general don't register
 handlers for this phase.
 
-=item request_send => sub { my($request, $ua, $h) = @_; ... }
+=item request_send => sub { my($request, $ua, $handler) = @_; ... }
 
 This handler gets a chance of handling requests before they're sent to the
-protocol handlers.  It should return an HTTP::Response object if it
+protocol handlers.  It should return an L<HTTP::Response> object if it
 wishes to terminate the processing; otherwise it should return nothing.
 
 The C<response_header> and C<response_data> handlers will not be
 invoked for this response, but the C<response_done> will be.
 
-=item response_redirect => sub { my($response, $ua, $h) = @_; ... }
+=item response_redirect => sub { my($response, $ua, $handler) = @_; ... }
 
-The handler is called in $ua->request after C<response_done>.  If the
-handler returns an HTTP::Request object we'll start over with processing
+The handler is called in C<< $ua->request >> after C<response_done>.  If the
+handler returns an L<HTTP::Request> object we'll start over with processing
 this request instead.
 
 =back
+
+For all of these, C<$handler> is a code reference to the handler that
+is currently being run.
 
 =head2 get_my_handler
 

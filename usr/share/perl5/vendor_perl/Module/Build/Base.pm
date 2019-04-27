@@ -6,7 +6,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.4224';
+our $VERSION = '0.4229';
 $VERSION = eval $VERSION;
 
 use Carp;
@@ -1517,7 +1517,11 @@ sub auto_require {
   # If set, we need ExtUtils::CBuilder (and a compiler)
   my $xs_files = $self->find_xs_files;
   if ( ! defined $p->{needs_compiler} ) {
-    $self->needs_compiler( keys %$xs_files || defined $self->c_source );
+    if ( $self->pureperl_only && $self->allow_pureperl ) {
+      $self->needs_compiler( 0 );
+    } else {
+      $self->needs_compiler( keys %$xs_files || defined $self->c_source );
+    }
   }
   if ($self->needs_compiler) {
     $self->_add_prereq('build_requires', 'ExtUtils::CBuilder', 0);
@@ -2865,6 +2869,7 @@ sub process_support_files {
   my $self = shift;
   my $p = $self->{properties};
   return unless $p->{c_source};
+  return if $self->pureperl_only && $self->allow_pureperl;
 
   my $files;
   if (ref($p->{c_source}) eq "ARRAY") {

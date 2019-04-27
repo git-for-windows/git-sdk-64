@@ -2,7 +2,7 @@ package Module::Build::Compat;
 
 use strict;
 use warnings;
-our $VERSION = '0.4224';
+our $VERSION = '0.4229';
 
 use File::Basename ();
 use File::Spec;
@@ -477,6 +477,13 @@ F<Makefile.PL> for you, in one of several different styles.
 C<Module::Build::Compat> also provides some code that helps out the
 F<Makefile.PL> at runtime.
 
+=head1 WARNING
+
+Note that C<Module::Build::Compat> more often causes installation issues
+than solves them, and each of the three F<Makefile.PL> generation styles
+has unique compatibility or functionality issues that are unlikely to be
+fixed. Thus, the use of this module and C<create_makefile_pl> is
+discouraged.
 
 =head1 METHODS
 
@@ -506,6 +513,8 @@ You don't want to use this style if during the C<perl Build.PL> stage
 you ask the user questions, or do some auto-sensing about the user's
 environment, or if you subclass C<Module::Build> to do some
 customization, because the vanilla F<Makefile.PL> won't do any of that.
+Many standard C<Module::Build> features such as C<test_requires> are also
+not supported.
 
 =item small
 
@@ -513,6 +522,13 @@ A small F<Makefile.PL> will be created that passes all functionality
 through to the F<Build.PL> script in the same directory.  The user must
 already have C<Module::Build> installed in order to use this, or else
 they'll get a module-not-found error.
+
+This style attempts (with varying success) to translate the F<Makefile.PL>
+protocol to F<Build.PL>, and is unnecessary on any modern toolchain that
+recognizes C<configure_requires> metadata described below, as F<Build.PL>
+will be run by default in this case. See
+L<https://rt.cpan.org/Public/Bug/Display.html?id=75936> for an example of
+the issues it may cause.
 
 =item passthrough (DEPRECATED)
 
