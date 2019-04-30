@@ -1,4 +1,4 @@
-*eval.txt*	For Vim version 8.1.  Last change: 2019 Feb 03
+*eval.txt*	For Vim version 8.1.  Last change: 2019 Apr 27
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -27,10 +27,11 @@ done, the features in this document are not available.  See |+eval| and
 7.  Commands			|expression-commands|
 8.  Exception handling		|exception-handling|
 9.  Examples			|eval-examples|
-10. No +eval feature		|no-eval-feature|
-11. The sandbox			|eval-sandbox|
-12. Textlock			|textlock|
-13. Testing			|testing|
+10. Vim script version		|vimscript-version|
+11. No +eval feature		|no-eval-feature|
+12. The sandbox			|eval-sandbox|
+13. Textlock			|textlock|
+14. Testing			|testing|
 
 {Vi does not have any of these commands}
 
@@ -625,8 +626,11 @@ Functions that can be used with a Dictionary: >
 
 1.5 Blobs ~
 						*blob* *Blob* *Blobs* *E978*
-A Blob mostly behaves like a |List| of numbers, where the numbers have an
-8-bit value, from 0 to 255.
+A Blob is a binary object.  It can be used to read an image from a file and
+send it over a channel, for example.
+
+A Blob mostly behaves like a |List| of numbers, where each number has the
+value of an 8-bit byte, from 0 to 255.
 
 
 Blob creation ~
@@ -783,10 +787,10 @@ Expression syntax summary, from least to most significant:
 	expr2 ? expr1 : expr1	if-then-else
 
 |expr2|	expr3
-	expr3 || expr3 ..	logical OR
+	expr3 || expr3 ...	logical OR
 
 |expr3|	expr4
-	expr4 && expr4 ..	logical AND
+	expr4 && expr4 ...	logical AND
 
 |expr4|	expr5
 	expr5 == expr5		equal
@@ -808,14 +812,15 @@ Expression syntax summary, from least to most significant:
 				instance
 
 |expr5|	expr6
-	expr6 +	 expr6 ..	number addition, list or blob concatenation
-	expr6 -	 expr6 ..	number subtraction
-	expr6 .	 expr6 ..	string concatenation
+	expr6 +	 expr6 ...	number addition, list or blob concatenation
+	expr6 -	 expr6 ...	number subtraction
+	expr6 .	 expr6 ...	string concatenation
+	expr6 .. expr6 ...	string concatenation
 
 |expr6|	expr7
-	expr7 *	 expr7 ..	number multiplication
-	expr7 /	 expr7 ..	number division
-	expr7 %	 expr7 ..	number modulo
+	expr7 *	 expr7 ...	number multiplication
+	expr7 /	 expr7 ...	number division
+	expr7 %	 expr7 ...	number modulo
 
 |expr7|	expr8
 	! expr7			logical NOT
@@ -844,7 +849,7 @@ Expression syntax summary, from least to most significant:
 	{args -> expr1}		lambda expression
 
 
-".." indicates that the operations in this level can be concatenated.
+"..." indicates that the operations in this level can be concatenated.
 Example: >
 	&nu || &list && &shell == "csh"
 
@@ -1023,18 +1028,23 @@ can be matched like an ordinary character.  Examples:
 
 expr5 and expr6						*expr5* *expr6*
 ---------------
-expr6 + expr6  Number addition, |List| or |Blob| concatenation	*expr-+*
-expr6 - expr6  Number subtraction				*expr--*
-expr6 . expr6  String concatenation				*expr-.*
+expr6 + expr6   Number addition, |List| or |Blob| concatenation	*expr-+*
+expr6 - expr6   Number subtraction				*expr--*
+expr6 . expr6   String concatenation				*expr-.*
+expr6 .. expr6  String concatenation				*expr-..*
 
 For |Lists| only "+" is possible and then both expr6 must be a list.  The
 result is a new list with the two lists Concatenated.
+
+For String concatenation ".." is preferred, since "." is ambiguous, it is also
+used for |Dict| member access and floating point numbers.
+When |vimscript-version| is 2 or higher, using "." is not allowed.
 
 expr7 * expr7  Number multiplication				*expr-star*
 expr7 / expr7  Number division					*expr-/*
 expr7 % expr7  Number modulo					*expr-%*
 
-For all, except ".", Strings are converted to Numbers.
+For all, except "." and "..", Strings are converted to Numbers.
 For bitwise operators see |and()|, |or()| and |xor()|.
 
 Note the difference between "+" and ".":
@@ -1678,7 +1688,8 @@ v:count		The count given for the last Normal mode command.  Can be used
 		When there are two counts, as in "3d2w", they are multiplied,
 		just like what happens in the command, "d6w" for the example.
 		Also used for evaluating the 'formatexpr' option.
-		"count" also works, for backwards compatibility.
+		"count" also works, for backwards compatibility, unless
+		|scriptversion| is 3 or higher.
 
 					*v:count1* *count1-variable*
 v:count1	Just like "v:count", but defaults to one when no count is
@@ -1710,7 +1721,8 @@ v:errmsg	Last given error message.  It's allowed to set this variable.
 	:silent! next
 	:if v:errmsg != ""
 	:  ... handle error
-<		"errmsg" also works, for backwards compatibility.
+<		"errmsg" also works, for backwards compatibility, unless
+		|scriptversion| is 3 or higher.
 
 				*v:errors* *errors-variable* *assert-return*
 v:errors	Errors found by assert functions, such as |assert_true()|.
@@ -2013,7 +2025,8 @@ v:shell_error	Result of the last shell command.  When non-zero, the last
 	:if v:shell_error
 	:  echo 'could not rename "foo" to "bar"!'
 	:endif
-<		"shell_error" also works, for backwards compatibility.
+<		"shell_error" also works, for backwards compatibility, unless
+		|scriptversion| is 3 or higher.
 
 					*v:statusmsg* *statusmsg-variable*
 v:statusmsg	Last given status message.  It's allowed to set this variable.
@@ -2113,7 +2126,8 @@ v:testing	Must be set before using `test_garbagecollect_now()`.
 v:this_session	Full filename of the last loaded or saved session file.  See
 		|:mksession|.  It is allowed to set this variable.  When no
 		session file has been saved, this variable is empty.
-		"this_session" also works, for backwards compatibility.
+		"this_session" also works, for backwards compatibility, unless
+		|scriptversion| is 3 or higher
 
 					*v:throwpoint* *throwpoint-variable*
 v:throwpoint	The point where the exception most recently caught and not
@@ -2144,7 +2158,7 @@ v:val		Value of the current item of a |List| or |Dictionary|.  Only
 v:version	Version number of Vim: Major version number times 100 plus
 		minor version number.  Version 5.0 is 500.  Version 5.1 (5.01)
 		is 501.  Read-only.  "version" also works, for backwards
-		compatibility.
+		compatibility, unless |scriptversion| is 3 or higher.
 		Use |has()| to check if a certain patch was included, e.g.: >
 			if has("patch-7.4.123")
 <		Note that patch numbers are specific to the version, thus both
@@ -2262,11 +2276,12 @@ ch_status({handle} [, {options}])
 changenr()			Number	current change number
 char2nr({expr} [, {utf8}])	Number	ASCII/UTF8 value of first char in {expr}
 cindent({lnum})			Number	C indent for line {lnum}
-clearmatches()			none	clear all matches
+clearmatches([{win}])		none	clear all matches
 col({expr})			Number	column nr of cursor or mark
 complete({startcol}, {matches}) none	set Insert mode completion
 complete_add({expr})		Number	add completion match
 complete_check()		Number	check for key typed during completion
+complete_info([{what}])		Dict	get current completion information
 confirm({msg} [, {choices} [, {default} [, {type}]]])
 				Number	number of choice picked by user
 copy({expr})			any	make a shallow copy of {expr}
@@ -2355,7 +2370,7 @@ getjumplist([{winnr} [, {tabnr}]])
 getline({lnum})			String	line {lnum} of current buffer
 getline({lnum}, {end})		List	lines {lnum} to {end} of current buffer
 getloclist({nr} [, {what}])	List	list of location list items
-getmatches()			List	list of current matches
+getmatches([{win}])		List	list of current matches
 getpid()			Number	process ID of Vim
 getpos({expr})			List	position of cursor, mark, etc.
 getqflist([{what}])		List	list of quickfix items
@@ -2383,6 +2398,7 @@ has({feature})			Number	|TRUE| if feature {feature} supported
 has_key({dict}, {key})		Number	|TRUE| if {dict} has entry {key}
 haslocaldir([{winnr} [, {tabnr}]])
 				Number	|TRUE| if the window executed |:lcd|
+					or |:tcd|
 hasmapto({what} [, {mode} [, {abbr}]])
 				Number	|TRUE| if mapping to {what} exists
 histadd({history}, {item})	String	add an item to a history
@@ -2407,6 +2423,8 @@ inputsecret({prompt} [, {text}]) String	like input() but hiding the text
 insert({object}, {item} [, {idx}]) List	insert {item} in {object} [before {idx}]
 invert({expr})			Number	bitwise invert
 isdirectory({directory})	Number	|TRUE| if {directory} is a directory
+isinf({expr})			Number	determine if {expr} is infinity value
+					(positive or negative)
 islocked({expr})		Number	|TRUE| if {expr} is locked
 isnan({expr})			Number	|TRUE| if {expr} is NaN
 items({dict})			List	key-value pairs in {dict}
@@ -2429,6 +2447,7 @@ libcallnr({lib}, {func}, {arg})	Number	idem, but return a Number
 line({expr})			Number	line nr of cursor, last line or mark
 line2byte({lnum})		Number	byte count of line {lnum}
 lispindent({lnum})		Number	Lisp indent for line {lnum}
+list2str({list} [, {utf8}])	String	turn numbers in {list} into a String
 localtime()			Number	current time
 log({expr})			Float	natural logarithm (base e) of {expr}
 log10({expr})			Float	logarithm of Float {expr} to base 10
@@ -2446,7 +2465,7 @@ matchadd({group}, {pattern} [, {priority} [, {id} [, {dict}]]])
 matchaddpos({group}, {pos} [, {priority} [, {id} [, {dict}]]])
 				Number	highlight positions with {group}
 matcharg({nr})			List	arguments of |:match|
-matchdelete({id})		Number	delete match identified by {id}
+matchdelete({id} [, {win}])	Number	delete match identified by {id}
 matchend({expr}, {pat} [, {start} [, {count}]])
 				Number	position where {pat} ends in {expr}
 matchlist({expr}, {pat} [, {start} [, {count}]])
@@ -2494,6 +2513,7 @@ py3eval({expr})			any	evaluate |python3| expression
 pyxeval({expr})			any	evaluate |python_x| expression
 range({expr} [, {max} [, {stride}]])
 				List	items from {expr} to {max}
+readdir({dir} [, {expr}])	List	file names in {dir} selected by {expr}
 readfile({fname} [, {type} [, {max}]])
 				List	get list of lines from file {fname}
 reg_executing()			String	get the executing register name
@@ -2521,10 +2541,13 @@ repeat({expr}, {count})		String	repeat {expr} {count} times
 resolve({filename})		String	get filename a shortcut points to
 reverse({list})			List	reverse {list} in-place
 round({expr})			Float	round off {expr}
+rubyeval({expr})		any	evaluate |Ruby| expression
 screenattr({row}, {col})	Number	attribute at screen position
 screenchar({row}, {col})	Number	character at screen position
+screenchars({row}, {col})	List	List of characters at screen position
 screencol()			Number	current cursor column
 screenrow()			Number	current cursor row
+screenstring({row}, {col})	String	characters at screen position
 search({pattern} [, {flags} [, {stopline} [, {timeout}]]])
 				Number	search for {pattern}
 searchdecl({name} [, {global} [, {thisblock}]])
@@ -2549,7 +2572,7 @@ setfperm({fname}, {mode})	Number	set {fname} file permissions to {mode}
 setline({lnum}, {line})		Number	set line {lnum} to {line}
 setloclist({nr}, {list} [, {action} [, {what}]])
 				Number	modify location list using {list}
-setmatches({list})		Number	restore a list of matches
+setmatches({list} [, {win}])	Number	restore a list of matches
 setpos({expr}, {list})		Number	set the {expr} position to {list}
 setqflist({list} [, {action} [, {what}]])
 				Number	modify quickfix list using {list}
@@ -2590,6 +2613,8 @@ split({expr} [, {pat} [, {keepempty}]])
 				List	make |List| from {pat} separated {expr}
 sqrt({expr})			Float	square root of {expr}
 str2float({expr})		Float	convert String to Float
+str2list({expr} [, {utf8}])	List	convert each character of {expr} to
+					ASCII/UTF8 value
 str2nr({expr} [, {base}])	Number	convert String to Number
 strchars({expr} [, {skipcc}])	Number	character length of the String {expr}
 strcharpart({str}, {start} [, {len}])
@@ -2655,7 +2680,7 @@ term_setkill({buf}, {how})	none	set signal to stop job in terminal
 term_setrestore({buf}, {command}) none	set command to restore terminal
 term_setsize({buf}, {rows}, {cols})
 				none	set the size of a terminal
-term_start({cmd}, {options})	Number	open a terminal window and run a job
+term_start({cmd} [, {options}])	Number	open a terminal window and run a job
 term_wait({buf} [, {time}])	Number  wait for screen to be updated
 test_alloc_fail({id}, {countdown}, {repeat})
 				none	make memory allocation fail
@@ -2672,6 +2697,7 @@ test_null_partial()		Funcref	null value for testing
 test_null_string()		String	null value for testing
 test_option_not_set({name})	none	reset flag indicating option was set
 test_override({expr}, {val})	none	test with Vim internal overrides
+test_refcount({expr})		Number	get the reference count of {expr}
 test_scrollbar({which}, {value}, {dragging})
 				none	scroll in the GUI for testing
 test_settime({expr})		none	set current time for testing
@@ -2893,9 +2919,9 @@ assert_false({actual} [, {msg}])				*assert_false()*
 		"Expected False but got {actual}" is produced.
 
 assert_inrange({lower}, {upper}, {actual} [, {msg}])	 *assert_inrange()*
-		This asserts number values.  When {actual}  is lower than
-		{lower} or higher than {upper} an error message is added to
-		|v:errors|.  Also see |assert-return|.
+		This asserts number and |Float| values.  When {actual}  is lower
+		than {lower} or higher than {upper} an error message is added
+		to |v:errors|.  Also see |assert-return|.
 		When {msg} is omitted an error in the form
 		"Expected range {lower} - {upper}, but got {actual}" is
 		produced.
@@ -3439,6 +3465,10 @@ char2nr({expr} [, {utf8}])					*char2nr()*
 <		With {utf8} set to 1, always treat as utf-8 characters.
 		A combining character is a separate character.
 		|nr2char()| does the opposite.
+		To turn a string into a list of character numbers: >
+		    let str = "ABC"
+		    let list = map(split(str, '\zs'), {_, val -> char2nr(val)})
+<		Result: [65, 66, 67]
 
 cindent({lnum})						*cindent()*
 		Get the amount of indent for line {lnum} according the C
@@ -3449,9 +3479,11 @@ cindent({lnum})						*cindent()*
 		feature, -1 is returned.
 		See |C-indenting|.
 
-clearmatches()						*clearmatches()*
-		Clears all matches previously defined by |matchadd()| and the
-		|:match| commands.
+clearmatches([{win}])					*clearmatches()*
+		Clears all matches previously defined for the current window
+		by |matchadd()| and the |:match| commands.
+		If {win} is specified, use the window with this number or
+		window ID instead of the current window.
 
 							*col()*
 col({expr})	The result is a Number, which is the byte index of the column
@@ -3536,9 +3568,58 @@ complete_check()				*complete_check()*
 		Only to be used by the function specified with the
 		'completefunc' option.
 
+							*complete_info()*
+complete_info([{what}])
+		Returns a Dictionary with information about Insert mode
+		completion.  See |ins-completion|.
+		The items are:
+		   mode		Current completion mode name string.
+				See |complete_info_mode| for the values.
+		   pum_visible	|TRUE| if popup menu is visible.
+				See |pumvisible()|.
+		   items	List of completion matches.  Each item is a
+				dictionary containing the entries "word",
+				"abbr", "menu", "kind", "info" and "user_data".
+				See |complete-items|.
+		   selected	Selected item index.  First index is zero.
+				Index is -1 if no item is selected (showing
+				typed text only)
+		   inserted	Inserted string. [NOT IMPLEMENT YET]
+
+							*complete_info_mode*
+		mode values are:
+		   ""		     Not in completion mode
+		   "keyword"	     Keyword completion |i_CTRL-X_CTRL-N|
+		   "ctrl_x"	     Just pressed CTRL-X |i_CTRL-X|
+		   "whole_line"	     Whole lines |i_CTRL-X_CTRL-L|
+		   "files"	     File names |i_CTRL-X_CTRL-F|
+		   "tags"	     Tags |i_CTRL-X_CTRL-]|
+		   "path_defines"    Definition completion |i_CTRL-X_CTRL-D|
+		   "path_patterns"   Include completion |i_CTRL-X_CTRL-I|
+		   "dictionary"	     Dictionary |i_CTRL-X_CTRL-K|
+		   "thesaurus"	     Thesaurus |i_CTRL-X_CTRL-T|
+		   "cmdline"	     Vim Command line |i_CTRL-X_CTRL-V|
+		   "function"	     User defined completion |i_CTRL-X_CTRL-U|
+		   "omni"	     Omni completion |i_CTRL-X_CTRL-O|
+		   "spell"	     Spelling suggestions |i_CTRL-X_s|
+		   "eval"            |complete()| completion
+		   "unknown"	     Other internal modes
+
+		If the optional {what} list argument is supplied, then only
+		the items listed in {what} are returned.  Unsupported items in
+		{what} are silently ignored.
+
+		Examples: >
+			" Get all items
+			call complete_info()
+			" Get only 'mode'
+			call complete_info(['mode'])
+			" Get only 'mode' and 'pum_visible'
+			call complete_info(['mode', 'pum_visible'])
+<
 						*confirm()*
 confirm({msg} [, {choices} [, {default} [, {type}]]])
-		Confirm() offers the user a dialog, from which a choice can be
+		confirm() offers the user a dialog, from which a choice can be
 		made.  It returns the number of the choice.  For the first
 		choice this is 1.
 		Note: confirm() is only supported when compiled with dialog
@@ -4061,7 +4142,7 @@ expand({expr} [, {nosuf} [, {list}]])				*expand()*
 		all "README" files in the current directory and below: >
 			:echo expand("**/README")
 <
-		Expand() can also be used to expand variables and environment
+		expand() can also be used to expand variables and environment
 		variables that are only known in a shell.  But this can be
 		slow, because a shell may be used to do the expansion.  See
 		|expr-env-expand|.
@@ -4838,9 +4919,28 @@ getcwd([{winnr} [, {tabnr}]])
 		directory.  See also |haslocaldir()|.
 
 		With {winnr} and {tabnr} return the local current directory of
-		the window in the specified tab page.
+		the window in the specified tab page. If {winnr} is -1 return
+		the working directory of the tabpage.
+		If {winnr} is zero use the current window, if {tabnr} is zero
+		use the current tabpage.
+		Without any arguments, return the working directory of the
+		current window.
 		Return an empty string if the arguments are invalid.
 
+		Examples: >
+			" Get the working directory of the current window
+			:echo getcwd()
+			:echo getcwd(0)
+			:echo getcwd(0, 0)
+			" Get the working directory of window 3 in tabpage 2
+			:echo getcwd(3, 2)
+			" Get the global working directory
+			:echo getcwd(-1)
+			" Get the working directory of tabpage 3
+			:echo getcwd(-1, 3)
+			" Get the working directory of current tabpage
+			:echo getcwd(-1, 0)
+<
 getfsize({fname})					*getfsize()*
 		The result is a Number, which is the size in bytes of the
 		given file {fname}.
@@ -4964,16 +5064,23 @@ getloclist({nr} [, {what}])				*getloclist()*
 		If the optional {what} dictionary argument is supplied, then
 		returns the items listed in {what} as a dictionary. Refer to
 		|getqflist()| for the supported items in {what}.
-		If {what} contains 'filewinid', then returns the id of the
-		window used to display files from the location list. This
-		field is applicable only when called from a location list
-		window. See |location-list-file-window| for more details.
 
-getmatches()						*getmatches()*
-		Returns a |List| with all matches previously defined by
-		|matchadd()| and the |:match| commands.  |getmatches()| is
-		useful in combination with |setmatches()|, as |setmatches()|
-		can restore a list of matches saved by |getmatches()|.
+		In addition to the items supported by |getqflist()| in {what},
+		the following item is supported by |getloclist()|:
+
+			filewinid 	id of the window used to display files
+					from the location list. This field is
+					applicable only when called from a
+					location list window. See
+					|location-list-file-window| for more
+					details.
+
+getmatches([{win}])					*getmatches()*
+		Returns a |List| with all matches previously defined for the
+		current window by |matchadd()| and the |:match| commands.
+		|getmatches()| is useful in combination with |setmatches()|,
+		as |setmatches()| can restore a list of matches saved by
+		|getmatches()|.
 		Example: >
 			:echo getmatches()
 <			[{'group': 'MyGroup1', 'pattern': 'TODO',
@@ -5069,6 +5176,9 @@ getqflist([{what}])					*getqflist()*
 			nr	get information for this quickfix list; zero
 				means the current quickfix list and "$" means
 				the last quickfix list
+			qfbufnr number of the buffer displayed in the quickfix
+				window. Returns 0 if the quickfix buffer is
+				not present. See |quickfix-buffer|.
 			size	number of entries in the quickfix list
 			title	get the list title |quickfix-title|
 			winid	get the quickfix |window-ID|
@@ -5097,6 +5207,8 @@ getqflist([{what}])					*getqflist()*
 			items	quickfix list entries. If not present, set to
 				an empty list.
 			nr	quickfix list number. If not present, set to 0
+			qfbufnr	number of the buffer displayed in the quickfix
+				window. If not present, set to 0.
 			size	number of entries in the quickfix list. If not
 				present, set to 0.
 			title	quickfix list title text. If not present, set
@@ -5151,7 +5263,7 @@ gettabinfo([{arg}])					*gettabinfo()*
 			tabnr		tab page number.
 			variables	a reference to the dictionary with
 					tabpage-local variables
-			windows		List of |window-ID|s in the tag page.
+			windows		List of |window-ID|s in the tab page.
 
 gettabvar({tabnr}, {varname} [, {def}])				*gettabvar()*
 		Get the value of a tab-local variable {varname} in tab page
@@ -5228,6 +5340,7 @@ getwininfo([{winid}])					*getwininfo()*
 		tab pages is returned.
 
 		Each List item is a Dictionary with the following entries:
+			botline		last displayed buffer line
 			bufnr		number of buffer in the window
 			height		window height (excluding winbar)
 			loclist		1 if showing a location list
@@ -5237,6 +5350,7 @@ getwininfo([{winid}])					*getwininfo()*
 			terminal	1 if a terminal window
 					{only with the +terminal feature}
 			tabnr		tab page number
+			topline		first displayed buffer line 
 			variables	a reference to the dictionary with
 					window-local variables
 			width		window width
@@ -5305,6 +5419,9 @@ glob({expr} [, {nosuf} [, {list} [, {alllinks}]]])		*glob()*
 		matches, they are separated by <NL> characters.
 
 		If the expansion fails, the result is an empty String or List.
+
+		You can also use |readdir()| if you need to do complicated
+		things, such as limiting the number of matches.
 
 		A name for a non-existing file is not included.  A symbolic
 		link is only included if it points to an existing file.
@@ -5381,16 +5498,39 @@ has_key({dict}, {key})					*has_key()*
 		an entry with key {key}.  Zero otherwise.
 
 haslocaldir([{winnr} [, {tabnr}]])			*haslocaldir()*
-		The result is a Number, which is 1 when the window has set a
-		local path via |:lcd|, and 0 otherwise.
+		The result is a Number:
+		    1   when the window has set a local directory via |:lcd|
+		    2   when the tab-page has set a local directory via |:tcd|
+		    0   otherwise.
 
 		Without arguments use the current window.
 		With {winnr} use this window in the current tab page.
 		With {winnr} and {tabnr} use the window in the specified tab
 		page.
 		{winnr} can be the window number or the |window-ID|.
+		If {winnr} is -1 it is ignored and only the tabpage is used.
 		Return 0 if the arguments are invalid.
+		Examples: >
+			if haslocaldir() == 1
+			  " window local directory case
+			elseif haslocaldir() == 2
+			  " tab-local directory case
+			else
+			  " global directory case
+			endif
 
+			" current window
+			:echo haslocaldir()
+			:echo haslocaldir(0)
+			:echo haslocaldir(0, 0)
+			" window n in current tab page
+			:echo haslocaldir(n)
+			:echo haslocaldir(n, 0)
+			" window n in tab page m
+			:echo haslocaldir(n, m)
+			" tab page m
+			:echo haslocaldir(-1, m)
+<
 hasmapto({what} [, {mode} [, {abbr}]])			*hasmapto()*
 		The result is a Number, which is 1 if there is a mapping that
 		contains {what} in somewhere in the rhs (what it is mapped to)
@@ -5538,7 +5678,6 @@ iconv({expr}, {from}, {to})				*iconv()*
 <		Note that Vim uses UTF-8 for all Unicode encodings, conversion
 		from/to UCS-2 is automatically changed to use UTF-8.  You
 		cannot use UCS-2 in a string anyway, because of the NUL bytes.
-		{only available when compiled with the |+multi_byte| feature}
 
 							*indent()*
 indent({lnum})	The result is a Number, which is indent of line {lnum} in the
@@ -5696,6 +5835,16 @@ isdirectory({directory})				*isdirectory()*
 		exist, or isn't a directory, the result is |FALSE|.  {directory}
 		is any expression, which is used as a String.
 
+isinf({expr})						*isinf()*
+		Return 1 if {expr} is a positive infinity, or -1 a negative
+		infinity, otherwise 0. >
+			:echo isinf(1.0 / 0.0)
+<			1 >
+			:echo isinf(-1.0 / 0.0)
+<			-1
+
+		{only available when compiled with the |+float| feature}
+
 islocked({expr})					*islocked()* *E786*
 		The result is a Number, which is |TRUE| when {expr} is the
 		name of a locked variable.
@@ -5712,7 +5861,7 @@ islocked({expr})					*islocked()* *E786*
 isnan({expr})						*isnan()*
 		Return |TRUE| if {expr} is a float with value NaN. >
 			echo isnan(0.0 / 0.0)
-<			1 ~
+<			1
 
 		{only available when compiled with the |+float| feature}
 
@@ -5749,6 +5898,11 @@ job_info([{job}])					*job_info()*
 		   "termsig"	the signal which terminated the process
 				(See |job_stop()| for the values)
 				only valid when "status" is "dead"
+
+		   Only in MS-Windows:
+		   "tty_type"	Type of virtual console in use.
+				Values are "winpty" or "conpty".
+				See 'termwintype'.
 
 		Without any arguments, returns a List with all Job objects.
 
@@ -6090,6 +6244,20 @@ lispindent({lnum})					*lispindent()*
 		When {lnum} is invalid or Vim was not compiled the
 		|+lispindent| feature, -1 is returned.
 
+list2str({list} [, {utf8}])				*list2str()*
+		Convert each number in {list} to a character string can
+		concatenate them all.  Examples: >
+			list2str([32])		returns " "
+			list2str([65, 66, 67])	returns "ABC"
+<		The same can be done (slowly) with: >
+			join(map(list, {nr, val -> nr2char(val)}), '')
+<		|str2list()| does the opposite.
+
+		When {utf8} is omitted or zero, the current 'encoding' is used.
+		With {utf8} is 1, always return utf-8 characters.
+		With utf-8 composing characters work as expected: >
+			list2str([97, 769])	returns "aÌ"
+<
 localtime()						*localtime()*
 		Return the current time, measured as seconds since 1st Jan
 		1970.  See also |strftime()| and |getftime()|.
@@ -6327,7 +6495,7 @@ matchadd({group}, {pattern} [, {priority} [, {id} [, {dict}]]])
 		Defines a pattern to be highlighted in the current window (a
 		"match").  It will be highlighted with {group}.  Returns an
 		identification number (ID), which can be used to delete the
-		match using |matchdelete()|.
+		match using |matchdelete()|.  The ID is bound to the window.
 		Matching is case sensitive and magic, unless case sensitivity
 		or magicness are explicitly overridden in {pattern}.  The
 		'magic', 'smartcase' and 'ignorecase' options are not used.
@@ -6423,11 +6591,13 @@ matcharg({nr})							*matcharg()*
 		Highlighting matches using the |:match| commands are limited
 		to three matches. |matchadd()| does not have this limitation.
 
-matchdelete({id})			       *matchdelete()* *E802* *E803*
+matchdelete({id} [, {win})		       *matchdelete()* *E802* *E803*
 		Deletes a match with ID {id} previously defined by |matchadd()|
 		or one of the |:match| commands.  Returns 0 if successful,
 		otherwise -1.  See example for |matchadd()|.  All matches can
 		be deleted in one operation by |clearmatches()|.
+		If {win} is specified, use the window with this number or
+		window ID instead of the current window.
 
 matchend({expr}, {pat} [, {start} [, {count}]])			*matchend()*
 		Same as |match()|, but return the index of first character
@@ -6616,6 +6786,10 @@ nr2char({expr} [, {utf8}])				*nr2char()*
 		nr2char(10), because NULs are represented with newline
 		characters.  nr2char(0) is a real NUL and terminates the
 		string, thus results in an empty string.
+		To turn a list of character numbers into a string: >
+		    let list = [65, 66, 67]
+		    let str = join(map(list, {_, val -> nr2char(val)}), '')
+<		Result: "ABC"
 
 or({expr}, {expr})					*or()*
 		Bitwise OR on the two arguments.  The arguments are converted
@@ -6811,8 +6985,7 @@ printf({fmt}, {expr1} ...)				*printf()*
 							*printf-S*
 		S	The text of the String argument is used.  If a
 			precision is specified, no more display cells than the
-			number specified are used.  Without the |+multi_byte|
-			feature works just like 's'.
+			number specified are used.
 
 							*printf-f* *E807*
 		f F	The Float argument is converted into a string of the
@@ -7151,6 +7324,35 @@ range({expr} [, {max} [, {stride}]])				*range()*
 			range(0)		" []
 			range(2, 0)		" error!
 <
+							*readdir()*
+readdir({directory} [, {expr}])
+		Return a list with file and directory names in {directory}.
+		You can also use |glob()| if you don't need to do complicated
+		things, such as limiting the number of matches.
+
+		When {expr} is omitted all entries are included.
+		When {expr} is given, it is evaluated to check what to do:
+			If {expr} results in -1 then no further entries will
+			be handled.
+			If {expr} results in 0 then this entry will not be
+			added to the list.
+			If {expr} results in 1 then this entry will be added
+			to the list.
+		Each time {expr} is evaluated |v:val| is set to the entry name.
+		When {expr} is a function the name is passed as the argument.
+		For example, to get a list of files ending in ".txt": >
+		  readdir(dirname, {n -> n =~ '.txt$'})
+<		To skip hidden and backup files: >
+		  readdir(dirname, {n -> n !~ '^\.\|\~$'})
+
+<		If you want to get a directory tree: >
+                  function! s:tree(dir)
+                      return {a:dir : map(readdir(a:dir),
+		      \ {_, x -> isdirectory(x) ?
+		      \          {x : s:tree(a:dir . '/' . x)} : x})}
+                  endfunction
+                  echo s:tree(".")
+<
 							*readfile()*
 readfile({fname} [, {type} [, {max}]])
 		Read file {fname} and return a |List|, each line of the file
@@ -7192,7 +7394,7 @@ reg_executing()						*reg_executing()*
 
 reg_recording()						*reg_recording()*
 		Returns the single letter name of the register being recorded.
-		Returns an empty string string when not recording.  See |q|.
+		Returns an empty string when not recording.  See |q|.
 
 reltime([{start} [, {end}]])				*reltime()*
 		Return an item that represents a time value.  The format of
@@ -7380,6 +7582,9 @@ repeat({expr}, {count})					*repeat()*
 resolve({filename})					*resolve()* *E655*
 		On MS-Windows, when {filename} is a shortcut (a .lnk file),
 		returns the path the shortcut points to in a simplified form.
+		When {filename} is a symbolic link or junction point, return
+		the full path to the target. If the target of junction is
+		removed, return {filename}.
 		On Unix, repeat resolving symbolic links in all path
 		components of {filename} and return the simplified result.
 		To cope with link cycles, resolving of symbolic links is
@@ -7412,6 +7617,17 @@ round({expr})							*round()*
 <			-5.0
 		{only available when compiled with the |+float| feature}
 
+rubyeval({expr})					*rubyeval()*
+		Evaluate Ruby expression {expr} and return its result
+		converted to Vim data structures.
+		Numbers, floats and strings are returned as they are (strings
+		are copied though).
+		Arrays are represented as Vim |List| type.
+		Hashes are represented as Vim |Dictionary| type.
+		Other objects are represented as strings resulted from their
+		"Object#to_s" method.
+		{only available when compiled with the |+ruby| feature}
+
 screenattr({row}, {col})					*screenattr()*
 		Like |screenchar()|, but return the attribute.  This is a rather
 		arbitrary number that can only be used to compare to the
@@ -7426,6 +7642,13 @@ screenchar({row}, {col})					*screenchar()*
 		encodings it may only be the first byte.
 		This is mainly to be used for testing.
 		Returns -1 when row or col is out of range.
+
+screenchars({row}, {col})					*screenchars()*
+		The result is a List of Numbers.  The first number is the same
+		as what |screenchar()| returns.  Further numbers are
+		composing characters on top of the base character.
+		This is mainly to be used for testing.
+		Returns an empty List when row or col is out of range.
 
 screencol()							*screencol()*
 		The result is a Number, which is the current screen column of
@@ -7447,6 +7670,14 @@ screenrow()							*screenrow()*
 		Alternatively you can use |winline()|.
 
 		Note: Same restrictions as with |screencol()|.
+
+screenstring({row}, {col})					*screenstring()*
+		The result is a String that contains the base character and
+		any composing characters at position [row, col] on the screen.
+		This is like |screenchars()| but returning a String with the
+		characters.
+		This is mainly to be used for testing.
+		Returns an empty String when row or col is out of range.
 
 search({pattern} [, {flags} [, {stopline} [, {timeout}]]])	*search()*
 		Search for regexp pattern {pattern}.  The search starts at the
@@ -7806,10 +8037,13 @@ setloclist({nr}, {list} [, {action} [, {what}]])		*setloclist()*
 		only the items listed in {what} are set. Refer to |setqflist()|
 		for the list of supported keys in {what}.
 
-setmatches({list})					*setmatches()*
-		Restores a list of matches saved by |getmatches()|.  Returns 0
-		if successful, otherwise -1.  All current matches are cleared
-		before the list is restored.  See example for |getmatches()|.
+setmatches({list} [, {win}])				*setmatches()*
+		Restores a list of matches saved by |getmatches() for the
+		current window|.  Returns 0 if successful, otherwise -1.  All
+		current matches are cleared before the list is restored.  See
+		example for |getmatches()|.
+		If {win} is specified, use the window with this number or
+		window ID instead of the current window.
 
 							*setpos()*
 setpos({expr}, {list})
@@ -8555,6 +8789,18 @@ str2float({expr})					*str2float()*
 			let f = str2float(substitute(text, ',', '', 'g'))
 <		{only available when compiled with the |+float| feature}
 
+str2list({expr} [, {utf8}])				*str2list()*
+		Return a list containing the number values which represent
+		each character in String {expr}.  Examples: >
+			str2list(" ")		returns [32]
+			str2list("ABC")		returns [65, 66, 67]
+<		|list2str()| does the opposite.
+
+		When {utf8} is omitted or zero, the current 'encoding' is used.
+		With {utf8} set to 1, always treat the String as utf-8
+		characters.  With utf-8 composing characters are handled
+		properly: >
+			str2list("aÌ")		returns [97, 769]
 
 str2nr({expr} [, {base}])				*str2nr()*
 		Convert string {expr} to a number.
@@ -8603,10 +8849,10 @@ strcharpart({src}, {start} [, {len}])			*strcharpart()*
 
 strdisplaywidth({expr} [, {col}])			*strdisplaywidth()*
 		The result is a Number, which is the number of display cells
-		String {expr} occupies on the screen when it starts at {col}.
-		When {col} is omitted zero is used.  Otherwise it is the
-		screen column where to start.  This matters for Tab
-		characters.
+		String {expr} occupies on the screen when it starts at {col}
+		(first column is zero).  When {col} is omitted zero is used.
+		Otherwise it is the screen column where to start.  This
+		matters for Tab characters.
 		The option settings of the current window are used.  This
 		matters for anything that's displayed differently, such as
 		'tabstop' and 'display'.
@@ -9237,6 +9483,7 @@ term_getcursor({buf})					*term_getcursor()*
 				is not blinking.
 		   "shape"	1 for a block cursor, 2 for underline and 3
 				for a vertical bar.
+		   "color"	color of the cursor, e.g. "green"
 
 		{buf} must be the buffer number of a terminal window. If the
 		buffer does not exist or is not a terminal window, an empty
@@ -9407,7 +9654,7 @@ term_setsize({buf}, {rows}, {cols})		*term_setsize()* *E955*
 		exist or is not a terminal window, an error is given.
 		{only available when compiled with the |+terminal| feature}
 
-term_start({cmd}, {options})				*term_start()*
+term_start({cmd} [, {options}])			*term_start()*
 		Open a terminal window and run {cmd} in it.
 
 		{cmd} can be a string or a List, like with |job_start()|. The
@@ -9469,10 +9716,8 @@ term_start({cmd}, {options})				*term_start()*
 		   "ansi_colors"     A list of 16 color names or hex codes
 				     defining the ANSI palette used in GUI
 				     color modes.  See |g:terminal_ansi_colors|.
-		   "term_mode"	     (MS-Windows only): Specify which pty to
-				     use:
-					"winpty": Use winpty
-					"conpty": Use ConPTY (if available)
+		   "tty_type"	     (MS-Windows only): Specify which pty to
+				     use.  See 'termwintype' for the values.
 
 		{only available when compiled with the |+terminal| feature}
 
@@ -9571,6 +9816,11 @@ test_override({name}, {val})				*test_override()*
 			call test_override('starting', 1)
 <		The value of "starting" is saved.  It is restored by: >
 			call test_override('starting', 0)
+
+test_refcount({expr})					*test_refcount()*
+		Return the reference count of {expr}.  When {expr} is of a
+		type that does not have a reference count, returns -1.  Only
+		to be used for testing.
 
 test_scrollbar({which}, {value}, {dragging})		*test_scrollbar()*
 		Pretend using scrollbar {which} to move it to position
@@ -9996,17 +10246,30 @@ winline()	The result is a Number, which is the screen line of the cursor
 							*winnr()*
 winnr([{arg}])	The result is a Number, which is the number of the current
 		window.  The top window has number 1.
-		When the optional argument is "$", the number of the
-		last window is returned (the window count). >
-			let window_count = winnr('$')
-<		When the optional argument is "#", the number of the last
-		accessed window is returned (where |CTRL-W_p| goes to).
-		If there is no previous window or it is in another tab page 0
-		is returned.
+
+		The optional argument {arg} supports the following values:
+			$	the number of the last window (the window
+				count).
+			#	the number of the last accessed window (where
+				|CTRL-W_p| goes to).  If there is no previous
+				window or it is in another tab page 0 is
+				returned.
+			{N}j	the number of the Nth window below the
+				current window (where |CTRL-W_j| goes to).
+			{N}k	the number of the Nth window above the current
+				window (where |CTRL-W_k| goes to).
+			{N}h	the number of the Nth window left of the
+				current window (where |CTRL-W_h| goes to).
+			{N}l	the number of the Nth window right of the
+				current window (where |CTRL-W_l| goes to).
 		The number can be used with |CTRL-W_w| and ":wincmd w"
 		|:wincmd|.
 		Also see |tabpagewinnr()| and |win_getid()|.
-
+		Examples: >
+			let window_count = winnr('$')
+			let prev_window = winnr('#')
+			let wnum = winnr('3k')
+<
 							*winrestcmd()*
 winrestcmd()	Returns a sequence of |:resize| commands that should restore
 		the current window sizes.  Only works properly when no windows
@@ -10266,7 +10529,7 @@ mouse_sgr		Compiled with support for sgr mouse.
 mouse_urxvt		Compiled with support for urxvt mouse.
 mouse_xterm		Compiled with support for xterm mouse.
 mouseshape		Compiled with support for 'mouseshape'.
-multi_byte		Compiled with support for 'encoding'
+multi_byte		Compiled with support for 'encoding' (always true)
 multi_byte_encoding	'encoding' is set to a multi-byte encoding.
 multi_byte_ime		Compiled with support for IME input method.
 multi_lang		Compiled with support for multiple languages.
@@ -10312,10 +10575,8 @@ syntax_items		There are active syntax highlighting items for the
 system			Compiled to use system() instead of fork()/exec().
 tag_binary		Compiled with binary searching in tags files
 			|tag-binary-search|.
-tag_old_static		Compiled with support for old static tags
+tag_old_static		Support for old static tags was removed, see
 			|tag-old-static|.
-tag_any_white		Compiled with support for any white characters in tags
-			files |tag-any-white|.
 tcl			Compiled with Tcl interface.
 termguicolors		Compiled with true color in terminal support.
 terminal		Compiled with |terminal| support.
@@ -10332,7 +10593,7 @@ ttyin			input is a terminal (tty)
 ttyout			output is a terminal (tty)
 unix			Unix version of Vim. *+unix*
 unnamedplus		Compiled with support for "unnamedplus" in 'clipboard'
-user_commands		User-defined commands.
+user_commands		User-defined commands. (always true)
 vcon			Win32: Virtual console support is working, can use
 			'termguicolors'. Also see |+vtp|.
 vertsplit		Compiled with vertically split windows |:vsplit|.
@@ -10340,6 +10601,9 @@ vertsplit		Compiled with vertically split windows |:vsplit|.
 vim_starting		True while initial source'ing takes place. |startup|
 			*vim_starting*
 viminfo			Compiled with viminfo support.
+vimscript-1		Compiled Vim script version 1 support
+vimscript-2		Compiled Vim script version 2 support
+vimscript-3		Compiled Vim script version 3 support
 virtualedit		Compiled with 'virtualedit' option. (always true)
 visual			Compiled with Visual mode. (always true)
 visualextra		Compiled with extra Visual mode commands. (always
@@ -10830,12 +11094,19 @@ This does NOT work: >
 			When the selected range of items is partly past the
 			end of the list, items will be added.
 
-					*:let+=* *:let-=* *:let.=* *E734*
+			*:let+=* *:let-=* *:letstar=*
+			*:let/=* *:let%=* *:let.=* *:let..=* *E734* *E985*
 :let {var} += {expr1}	Like ":let {var} = {var} + {expr1}".
 :let {var} -= {expr1}	Like ":let {var} = {var} - {expr1}".
+:let {var} *= {expr1}	Like ":let {var} = {var} * {expr1}".
+:let {var} /= {expr1}	Like ":let {var} = {var} / {expr1}".
+:let {var} %= {expr1}	Like ":let {var} = {var} % {expr1}".
 :let {var} .= {expr1}	Like ":let {var} = {var} . {expr1}".
+:let {var} ..= {expr1}	Like ":let {var} = {var} .. {expr1}".
 			These fail if {var} was not set yet and when the type
 			of {var} and {expr1} don't fit the operator.
+			`.=` is not supported with Vim script version 2 and
+			later, see |vimscript-version|.
 
 
 :let ${env-name} = {expr1}			*:let-environment* *:let-$*
@@ -11193,14 +11464,14 @@ This does NOT work: >
 			commands are skipped.
 			When {pattern} is omitted all errors are caught.
 			Examples: >
-		:catch /^Vim:Interrupt$/	" catch interrupts (CTRL-C)
-		:catch /^Vim\%((\a\+)\)\=:E/	" catch all Vim errors
-		:catch /^Vim\%((\a\+)\)\=:/	" catch errors and interrupts
-		:catch /^Vim(write):/		" catch all errors in :write
-		:catch /^Vim\%((\a\+)\)\=:E123/	" catch error E123
-		:catch /my-exception/		" catch user exception
-		:catch /.*/			" catch everything
-		:catch				" same as /.*/
+		:catch /^Vim:Interrupt$/	 " catch interrupts (CTRL-C)
+		:catch /^Vim\%((\a\+)\)\=:E/	 " catch all Vim errors
+		:catch /^Vim\%((\a\+)\)\=:/	 " catch errors and interrupts
+		:catch /^Vim(write):/		 " catch all errors in :write
+		:catch /^Vim\%((\a\+)\)\=:E123:/ " catch error E123
+		:catch /my-exception/		 " catch user exception
+		:catch /.*/			 " catch everything
+		:catch				 " same as /.*/
 <
 			Another character can be used instead of / around the
 			{pattern}, so long as it does not have a special
@@ -12469,7 +12740,39 @@ code can be used: >
     unlet scriptnames_output
 
 ==============================================================================
-10. No +eval feature				*no-eval-feature*
+10. Vim script versions		*vimscript-version* *vimscript-versions*
+							*scriptversion*
+Over time many features have been added to Vim script.  This includes Ex
+commands, functions, variable types, etc.  Each individual feature can be
+checked with the |has()| and |exists()| functions.
+
+Sometimes old syntax of functionality gets in the way of making Vim better.
+When support is taken away this will break older Vim scripts.  To make this
+explicit the |:scriptversion| command can be used.  When a Vim script is not
+compatible with older versions of Vim this will give an explicit error,
+instead of failing in mysterious ways. >
+
+ :scriptversion 1
+<	This is the original Vim script, same as not using a |:scriptversion|
+	command.  Can be used to go back to old syntax for a range of lines.
+	Test for support with: >
+		has('vimscript-1')
+
+ :scriptversion 2
+< 	String concatenation with "." is not supported, use ".." instead.
+	This avoids the ambiguity using "." for Dict member access and
+	floating point numbers.  Now ".5" means the number 0.5.
+>
+ :scriptversion 3
+<	All |vim-variable|s must be prefixed by "v:".  E.g. "version" doesn't
+	work as |v:version| anymore, it can be used as a normal variable.
+	Same for some obvious names as "count" and others.
+
+	Test for support with: >
+		has('vimscript-3')
+
+==============================================================================
+11. No +eval feature				*no-eval-feature*
 
 When the |+eval| feature was disabled at compile time, none of the expression
 evaluation commands are available.  To prevent this from causing Vim scripts
@@ -12500,7 +12803,7 @@ When the |+eval| feature is available the command is skipped because of the
 silently ignored, and the command is executed.
 
 ==============================================================================
-11. The sandbox					*eval-sandbox* *sandbox* *E48*
+12. The sandbox					*eval-sandbox* *sandbox* *E48*
 
 The 'foldexpr', 'formatexpr', 'includeexpr', 'indentexpr', 'statusline' and
 'foldtext' options may be evaluated in a sandbox.  This means that you are
@@ -12539,7 +12842,7 @@ Note that when in the sandbox and saving an option value and restoring it, the
 option will still be marked as it was set in the sandbox.
 
 ==============================================================================
-12. Textlock							*textlock*
+13. Textlock							*textlock*
 
 In a few situations it is not allowed to change the text in the buffer, jump
 to another window and some other things that might confuse or break what Vim
@@ -12555,7 +12858,7 @@ This is not allowed when the textlock is active:
 	- etc.
 
 ==============================================================================
-13. Testing							*testing*
+14. Testing							*testing*
 
 Vim can be tested after building it, usually with "make test".
 The tests are located in the directory "src/testdir".
