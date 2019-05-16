@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2019-04-19"
+  s.date = "2019-05-15"
   s.description = "Provides access to information typically stored in UNIX /etc directory.".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.extensions = ["ext/etc/extconf.rb".freeze]

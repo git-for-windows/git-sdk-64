@@ -623,6 +623,7 @@ typedef struct gawk_api {
 	 *	}
 	 */
 	awk_bool_t (*api_sym_lookup)(awk_ext_id_t id,
+				const char *name_space,
 				const char *name,
 				awk_valtype_t wanted,
 				awk_value_t *result);
@@ -634,6 +635,7 @@ typedef struct gawk_api {
 	 * Such an attempt returns false.
 	 */
 	awk_bool_t (*api_sym_update)(awk_ext_id_t id,
+				const char *name_space,
 				const char *name,
 				awk_value_t *value);
 
@@ -867,11 +869,17 @@ typedef struct gawk_api {
 #define awk_atexit(funcp, arg0)	(api->api_awk_atexit(ext_id, funcp, arg0))
 
 #define sym_lookup(name, wanted, result) \
-	(api->api_sym_lookup(ext_id, name, wanted, result))
+	sym_lookup_ns("", name, wanted, result)
+#define sym_update(name, value) \
+	sym_update_ns("", name, value)
+
+#define sym_lookup_ns(name_space, name, wanted, result) \
+	(api->api_sym_lookup(ext_id, name_space, name, wanted, result))
+#define sym_update_ns(name_space, name, value) \
+	(api->api_sym_update(ext_id, name_space, name, value))
+
 #define sym_lookup_scalar(scalar_cookie, wanted, result) \
 	(api->api_sym_lookup_scalar(ext_id, scalar_cookie, wanted, result))
-#define sym_update(name, value) \
-	(api->api_sym_update(ext_id, name, value))
 #define sym_update_scalar(scalar_cookie, value) \
 	(api->api_sym_update_scalar)(ext_id, scalar_cookie, value)
 
@@ -926,19 +934,19 @@ typedef struct gawk_api {
 #define emalloc(pointer, type, size, message) \
 	do { \
 		if ((pointer = (type) gawk_malloc(size)) == 0) \
-			fatal(ext_id, "%s: malloc of %d bytes failed\n", message, size); \
+			fatal(ext_id, "%s: malloc of %d bytes failed", message, size); \
 	} while(0)
 
 #define ezalloc(pointer, type, size, message) \
 	do { \
 		if ((pointer = (type) gawk_calloc(1, size)) == 0) \
-			fatal(ext_id, "%s: calloc of %d bytes failed\n", message, size); \
+			fatal(ext_id, "%s: calloc of %d bytes failed", message, size); \
 	} while(0)
 
 #define erealloc(pointer, type, size, message) \
 	do { \
 		if ((pointer = (type) gawk_realloc(pointer, size)) == 0) \
-			fatal(ext_id, "%s: realloc of %d bytes failed\n", message, size); \
+			fatal(ext_id, "%s: realloc of %d bytes failed", message, size); \
 	} while(0)
 
 /* Constructor functions */
@@ -1111,7 +1119,7 @@ int dl_load(const gawk_api_t *const api_p, awk_ext_id_t id)  \
 	if (api->major_version != GAWK_API_MAJOR_VERSION \
 	    || api->minor_version < GAWK_API_MINOR_VERSION) { \
 		fprintf(stderr, #extension ": version mismatch with gawk!\n"); \
-		fprintf(stderr, "\tmy version (%d, %d), gawk version (%d, %d)\n", \
+		fprintf(stderr, "\tmy version (API %d.%d), gawk version (API %d.%d)\n", \
 			GAWK_API_MAJOR_VERSION, GAWK_API_MINOR_VERSION, \
 			api->major_version, api->minor_version); \
 		exit(1); \
@@ -1124,7 +1132,7 @@ int dl_load(const gawk_api_t *const api_p, awk_ext_id_t id)  \
 		if (func_table[i].name == NULL) \
 			break; \
 		if (! add_ext_func(name_space, & func_table[i])) { \
-			warning(ext_id, #extension ": could not add %s\n", \
+			warning(ext_id, #extension ": could not add %s", \
 					func_table[i].name); \
 			errors++; \
 		} \
@@ -1132,7 +1140,7 @@ int dl_load(const gawk_api_t *const api_p, awk_ext_id_t id)  \
 \
 	if (init_func != NULL) { \
 		if (! init_func()) { \
-			warning(ext_id, #extension ": initialization function failed\n"); \
+			warning(ext_id, #extension ": initialization function failed"); \
 			errors++; \
 		} \
 	} \

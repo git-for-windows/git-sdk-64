@@ -1,0 +1,468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Reference counted strings: GLib Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.2">
+<link rel="home" href="index.html" title="GLib Reference Manual">
+<link rel="up" href="glib-data-types.html" title="GLib Data Types">
+<link rel="prev" href="glib-Atomically-reference-counted-data.html" title="Atomically reference counted data">
+<link rel="next" href="deprecated.html" title="Deprecated APIs">
+<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts"></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="glib-data-types.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="glib-Atomically-reference-counted-data.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="deprecated.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="glib-Reference-counted-strings"></a><div class="titlepage"></div>
+
+<div class="refnamediv">
+<h2><span class="refentrytitle"><a name="glib-Reference-counted-strings.top_of_page"></a>Reference counted strings</span></h2>
+<p>
+Reference counted strings
+ — Strings with reference counted memory management
+</p>
+</div>
+
+<div class="refsect1">
+<a name="glib-Reference-counted-strings.functions"></a><h2>Functions</h2>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">char</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="glib-Reference-counted-strings.html#g-ref-string-new" title="g_ref_string_new ()">g_ref_string_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">char</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="glib-Reference-counted-strings.html#g-ref-string-new-intern" title="g_ref_string_new_intern ()">g_ref_string_new_intern</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">char</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="glib-Reference-counted-strings.html#g-ref-string-new-len" title="g_ref_string_new_len ()">g_ref_string_new_len</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">char</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="glib-Reference-counted-strings.html#g-ref-string-acquire" title="g_ref_string_acquire ()">g_ref_string_acquire</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">void</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="glib-Reference-counted-strings.html#g-ref-string-release" title="g_ref_string_release ()">g_ref_string_release</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="glib-Basic-Types.html#gsize" title="gsize"><span class="returnvalue">gsize</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="glib-Reference-counted-strings.html#g-ref-string-length" title="g_ref_string_length ()">g_ref_string_length</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="refsect1">
+<a name="glib-Reference-counted-strings.other"></a><h2>Types and Values</h2>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody><tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="glib-Reference-counted-strings.html#GRefString" title="GRefString">GRefString</a></td>
+</tr></tbody>
+</table>
+</div>
+</div>
+
+<div class="refsect1">
+<a name="glib-Reference-counted-strings.includes"></a><h2>Includes</h2>
+<pre class="synopsis">#include &lt;glib.h&gt;
+#include &lt;glib/gi18n.h&gt;
+</pre>
+</div>
+
+<div class="refsect1">
+<a name="glib-Reference-counted-strings.description"></a><h2>Description</h2>
+
+<p>Reference counted strings are normal C strings that have been augmented
+with a reference counter to manage their resources. You allocate a new
+reference counted string and acquire and release references as needed,
+instead of copying the string among callers; when the last reference on
+the string is released, the resources allocated for it are freed.</p>
+<p>Typically, reference counted strings can be used when parsing data from
+files and storing them into data structures that are passed to various
+callers:</p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="n">PersonDetails</span> <span class="o">*</span>
+<span class="nf">person_details_from_data</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="c1">// Use g_autoptr() to simplify error cases</span>
+  <span class="n">g_autoptr</span><span class="p">(</span><span class="n">GRefString</span><span class="p">)</span> <span class="n">full_name</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+  <span class="n">g_autoptr</span><span class="p">(</span><span class="n">GRefString</span><span class="p">)</span> <span class="n">address</span> <span class="o">=</span>  <span class="nb">NULL</span><span class="p">;</span>
+  <span class="n">g_autoptr</span><span class="p">(</span><span class="n">GRefString</span><span class="p">)</span> <span class="n">city</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+  <span class="n">g_autoptr</span><span class="p">(</span><span class="n">GRefString</span><span class="p">)</span> <span class="n">state</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+  <span class="n">g_autoptr</span><span class="p">(</span><span class="n">GRefString</span><span class="p">)</span> <span class="n">zip_code</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+  <span class="c1">// parse_person_details() is defined elsewhere; returns refcounted strings</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">parse_person_details</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">full_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">address</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">city</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">state</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">zip_code</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">validate_zip_code</span> <span class="p">(</span><span class="n">zip_code</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+
+  <span class="c1">// add_address_to_cache() and add_full_name_to_cache() are defined</span>
+  <span class="c1">// elsewhere; they add strings to various caches, using refcounted</span>
+  <span class="c1">// strings to avoid copying data over and over again</span>
+  <span class="n">add_address_to_cache</span> <span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">city</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">zip_code</span><span class="p">);</span>
+  <span class="n">add_full_name_to_cache</span> <span class="p">(</span><span class="n">full_name</span><span class="p">);</span>
+
+  <span class="c1">// person_details_new() is defined elsewhere; it takes a reference</span>
+  <span class="c1">// on each string</span>
+  <span class="n">PersonDetails</span> <span class="o">*</span><span class="n">res</span> <span class="o">=</span> <span class="n">person_details_new</span> <span class="p">(</span><span class="n">full_name</span><span class="p">,</span>
+                                           <span class="n">address</span><span class="p">,</span>
+                                           <span class="n">city</span><span class="p">,</span>
+                                           <span class="n">state</span><span class="p">,</span>
+                                           <span class="n">zip_code</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
+<p>In the example above, we have multiple functions taking the same strings
+for different uses; with typical C strings, we'd have to copy the strings
+every time the life time rules of the data differ from the life time of
+the string parsed from the original buffer. With reference counted strings,
+each caller can take a reference on the data, and keep it as long as it
+needs to own the string.</p>
+<p>Reference counted strings can also be "interned" inside a global table
+owned by GLib; while an interned string has at least a reference, creating
+a new interned reference counted string with the same contents will return
+a reference to the existing string instead of creating a new reference
+counted string instance. Once the string loses its last reference, it will
+be automatically removed from the global interned strings table.</p>
+
+</div>
+<div class="refsect1">
+<a name="glib-Reference-counted-strings.functions_details"></a><h2>Functions</h2>
+
+<div class="refsect2">
+<a name="g-ref-string-new"></a><h3>g_ref_string_new ()</h3>
+
+<a class="indexterm" name="id-1.6.25.7.2.2"></a>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">char</span></a> *
+g_ref_string_new (<em class="parameter"><code>const <a class="link" href=""><span class="type">char</span></a> *str</code></em>);</pre>
+<p>Creates a new reference counted string and copies the contents of <em class="parameter"><code>str</code></em>
+
+into it.</p>
+<div class="refsect3">
+<a name="g-ref-string-new.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>str</p></td>
+<td class="parameter_description"><p>a NUL-terminated string. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">not nullable</acronym>]</span></td>
+</tr></tbody>
+</table>
+</div>
+</div>
+<div class="refsect3">
+<a name="g-ref-string-new.returns"></a><h4>Returns</h4>
+
+<p>the newly created reference counted string. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>][<acronym class="acronym">not nullable</acronym>]</span></p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-58.html#api-index-2.58">2.58</a></p>
+</div>
+<div class="refsect2">
+<a name="g-ref-string-new-intern"></a><h3>g_ref_string_new_intern ()</h3>
+
+<a class="indexterm" name="id-1.6.25.7.3.2"></a>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">char</span></a> *
+g_ref_string_new_intern (<em class="parameter"><code>const <a class="link" href=""><span class="type">char</span></a> *str</code></em>);</pre>
+<p>Creates a new reference counted string and copies the content of <em class="parameter"><code>str</code></em>
+
+into it.</p>
+<p>If you call this function multiple times with the same <em class="parameter"><code>str</code></em>
+, or with
+the same contents of <em class="parameter"><code>str</code></em>
+, it will return a new reference, instead of
+creating a new string.</p>
+<div class="refsect3">
+<a name="g-ref-string-new-intern.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>str</p></td>
+<td class="parameter_description"><p>a NUL-terminated string. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">not nullable</acronym>]</span></td>
+</tr></tbody>
+</table>
+</div>
+</div>
+<div class="refsect3">
+<a name="g-ref-string-new-intern.returns"></a><h4>Returns</h4>
+
+<p>the newly created reference
+counted string, or a new reference to an existing string. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>][<acronym class="acronym">not nullable</acronym>]</span></p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-58.html#api-index-2.58">2.58</a></p>
+</div>
+<div class="refsect2">
+<a name="g-ref-string-new-len"></a><h3>g_ref_string_new_len ()</h3>
+
+<a class="indexterm" name="id-1.6.25.7.4.2"></a>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">char</span></a> *
+g_ref_string_new_len (<em class="parameter"><code>const <a class="link" href=""><span class="type">char</span></a> *str</code></em>,
+                      <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gssize" title="gssize"><span class="type">gssize</span></a> len</code></em>);</pre>
+<p>Creates a new reference counted string and copies the contents of <em class="parameter"><code>str</code></em>
+
+into it, up to <em class="parameter"><code>len</code></em>
+ bytes.</p>
+<p>Since this function does not stop at nul bytes, it is the caller's
+responsibility to ensure that <em class="parameter"><code>str</code></em>
+ has at least <em class="parameter"><code>len</code></em>
+ addressable bytes.</p>
+<div class="refsect3">
+<a name="g-ref-string-new-len.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>str</p></td>
+<td class="parameter_description"><p>a string. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">not nullable</acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>len</p></td>
+<td class="parameter_description"><p>length of <em class="parameter"><code>str</code></em>
+to use, or -1 if <em class="parameter"><code>str</code></em>
+is nul-terminated</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="refsect3">
+<a name="g-ref-string-new-len.returns"></a><h4>Returns</h4>
+
+<p>the newly created reference counted string. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>][<acronym class="acronym">not nullable</acronym>]</span></p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-58.html#api-index-2.58">2.58</a></p>
+</div>
+<div class="refsect2">
+<a name="g-ref-string-acquire"></a><h3>g_ref_string_acquire ()</h3>
+
+<a class="indexterm" name="id-1.6.25.7.5.2"></a>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">char</span></a> *
+g_ref_string_acquire (<em class="parameter"><code><a class="link" href=""><span class="type">char</span></a> *str</code></em>);</pre>
+<p>Acquires a reference on a string.</p>
+<div class="refsect3">
+<a name="g-ref-string-acquire.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>str</p></td>
+<td class="parameter_description"><p>a reference counted string</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table>
+</div>
+</div>
+<div class="refsect3">
+<a name="g-ref-string-acquire.returns"></a><h4>Returns</h4>
+
+<p> the given string, with its reference count increased</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-58.html#api-index-2.58">2.58</a></p>
+</div>
+<div class="refsect2">
+<a name="g-ref-string-release"></a><h3>g_ref_string_release ()</h3>
+
+<a class="indexterm" name="id-1.6.25.7.6.2"></a>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
+g_ref_string_release (<em class="parameter"><code><a class="link" href=""><span class="type">char</span></a> *str</code></em>);</pre>
+<p>Releases a reference on a string; if it was the last reference, the
+resources allocated by the string are freed as well.</p>
+<div class="refsect3">
+<a name="g-ref-string-release.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>str</p></td>
+<td class="parameter_description"><p>a reference counted string</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table>
+</div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-58.html#api-index-2.58">2.58</a></p>
+</div>
+<div class="refsect2">
+<a name="g-ref-string-length"></a><h3>g_ref_string_length ()</h3>
+
+<a class="indexterm" name="id-1.6.25.7.7.2"></a>
+<pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gsize" title="gsize"><span class="returnvalue">gsize</span></a>
+g_ref_string_length (<em class="parameter"><code><a class="link" href=""><span class="type">char</span></a> *str</code></em>);</pre>
+<p>Retrieves the length of <em class="parameter"><code>str</code></em>
+.</p>
+<div class="refsect3">
+<a name="g-ref-string-length.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>str</p></td>
+<td class="parameter_description"><p>a reference counted string</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table>
+</div>
+</div>
+<div class="refsect3">
+<a name="g-ref-string-length.returns"></a><h4>Returns</h4>
+
+<p> the length of the given string, in bytes</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-58.html#api-index-2.58">2.58</a></p>
+</div>
+
+</div>
+<div class="refsect1">
+<a name="glib-Reference-counted-strings.other_details"></a><h2>Types and Values</h2>
+
+<div class="refsect2">
+<a name="GRefString"></a><h3>GRefString</h3>
+
+<a class="indexterm" name="id-1.6.25.8.2.2"></a>
+<pre class="programlisting">typedef char GRefString;
+</pre>
+<p>A typedef for a reference-counted string. A pointer to a <a class="link" href="glib-Reference-counted-strings.html#GRefString" title="GRefString"><span class="type">GRefString</span></a> can be
+treated like a standard <code class="literal">char*</code> array by all code, but can additionally have
+<code class="literal">g_ref_string_*()</code> methods called on it. <code class="literal">g_ref_string_*()</code> methods cannot be
+called on <code class="literal">char*</code> arrays not allocated using <a class="link" href="glib-Reference-counted-strings.html#g-ref-string-new" title="g_ref_string_new ()"><code class="function">g_ref_string_new()</code></a>.</p>
+<p>If using <a class="link" href="glib-Reference-counted-strings.html#GRefString" title="GRefString"><span class="type">GRefString</span></a> with autocleanups, <a class="link" href="glib-Miscellaneous-Macros.html#g-autoptr" title="g_autoptr()"><code class="function">g_autoptr()</code></a> must be used rather than
+<a class="link" href="glib-Miscellaneous-Macros.html#g-autofree" title="g_autofree"><code class="function">g_autofree()</code></a>, so that the reference counting metadata is also freed.</p>
+<p class="since">Since: <a class="link" href="api-index-2-58.html#api-index-2.58">2.58</a></p>
+</div>
+
+</div>
+
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.30</div>
+</body>
+</html>

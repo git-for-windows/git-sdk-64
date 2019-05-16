@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Keiju ISHITSUKA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2019-04-19"
+  s.date = "2019-05-15"
   s.description = "Mixin to extend objects to be handled like a Mutex.".freeze
   s.email = ["keiju@ruby-lang.org".freeze]
   s.files = ["mutex_m.rb".freeze]

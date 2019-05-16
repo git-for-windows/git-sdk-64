@@ -1,11 +1,10 @@
 prefix=/mingw64
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
+libdir=${prefix}/lib
 includedir=${prefix}/include
 
 Name: Pixman
 Description: The pixman library (version 1)
-Version: 0.38.2
-Cflags: -I${includedir}/pixman-1
+Version: 0.38.4
 Libs: -L${libdir} -lpixman-1
-
+Libs.private: -lm -pthread -L${libdir}   
+Cflags: -I${includedir}/pixman-1
