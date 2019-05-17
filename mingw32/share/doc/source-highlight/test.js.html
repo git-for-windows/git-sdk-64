@@ -1,0 +1,468 @@
+<!-- Generator: GNU source-highlight 
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><i><font color="#9A1900">/* single line comment */</font></i>
+
+<font color="#FF6600">/myregex/gi</font>
+
+<i><font color="#9A1900">// check that division operator is highlighted correctly</font></i>
+document<font color="#990000">.</font><b><font color="#000000">write</font></b><font color="#990000">(</font><font color="#FF0000">'&lt;table&gt;&lt;tr&gt;&lt;td&gt;25% = '</font><font color="#990000">+(</font><font color="#993399">25</font><font color="#990000">/</font><font color="#993399">100</font><font color="#990000">)+</font><font color="#FF0000">'&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;'</font><font color="#990000">);</font> 
+
+<i><font color="#9A1900">/* unusual, but valid JavaScript */</font></i>
+<b><font color="#0000FF">throw</font></b> <font color="#FF6600">/foo/</font><font color="#990000">;</font>
+
+<i><font color="#9A1900">/* this is more likely to occur in practice */</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">f</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+  <b><font color="#0000FF">return</font></b> <font color="#FF6600">/foo/</font><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+
+<i><font color="#9A1900">/* or this */</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">g</font></b><font color="#990000">(</font>bar<font color="#990000">)</font> <font color="#FF0000">{</font>
+  <b><font color="#0000FF">return</font></b> <font color="#FF6600">/foo/</font><font color="#990000">.</font><b><font color="#000000">test</font></b><font color="#990000">(</font>bar<font color="#990000">);</font>
+<font color="#FF0000">}</font>
+
+<i><font color="#9A1900">/*</font></i>
+<i><font color="#9A1900">* Sarissa XML library v 0.9 beta 4</font></i>
+<i><font color="#9A1900">* Author: Manos Batsis, mailto: </font></i><u><font color="#0000FF">mbatsis@netsmart.gr</font></u>
+<i><font color="#9A1900">*</font></i>
+<i><font color="#9A1900">* This source code is distributed under the GNU GPL version 2 (see sarissa_license_gpl.txt) or higher, if </font></i>
+<i><font color="#9A1900">* a more recent version has been released.</font></i>
+<i><font color="#9A1900">* In case your copy of Sarissa does not include a copy of the license, you may find it online at </font></i>
+<i><font color="#9A1900">* </font></i><u><font color="#0000FF">http://www.gnu.org/copyleft/gpl.html</font></u>
+<i><font color="#9A1900">*/</font></i>
+
+<i><font color="#9A1900">// some basic browser detection</font></i>
+<b><font color="#0000FF">var</font></b> _SARISSA_IS_IE <font color="#990000">=</font> <font color="#990000">(</font>navigator<font color="#990000">.</font>userAgent<font color="#990000">.</font><b><font color="#000000">toLowerCase</font></b><font color="#990000">().</font><b><font color="#000000">indexOf</font></b><font color="#990000">(</font><font color="#FF0000">"msie"</font><font color="#990000">)</font> <font color="#990000">&gt;</font> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">)?</font><b><font color="#0000FF">true</font></b><font color="#990000">:</font><b><font color="#0000FF">false</font></b><font color="#990000">;</font>
+<b><font color="#0000FF">var</font></b> _SARISSA_IS_MOZ <font color="#990000">=</font> <font color="#990000">(</font>document<font color="#990000">.</font>implementation <font color="#990000">&amp;&amp;</font> document<font color="#990000">.</font>implementation<font color="#990000">.</font>createDocument<font color="#990000">)?</font><b><font color="#0000FF">true</font></b><font color="#990000">:</font><b><font color="#0000FF">false</font></b><font color="#990000">;</font>
+<b><font color="#0000FF">var</font></b> _sarissa_iNsCounter <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+<b><font color="#0000FF">var</font></b> _SARISSA_IEPREFIX4XSLPARAM <font color="#990000">=</font> <font color="#FF0000">""</font><font color="#990000">;</font>
+<b><font color="#0000FF">if</font></b> <font color="#990000">(</font>_SARISSA_IS_MOZ<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// Section: Factory methods for Moz</font></i>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// @param sUri the namespace of the root node (if any)</font></i>
+	<i><font color="#9A1900">// @param sUri the local name of the root node (if any)</font></i>
+	<i><font color="#9A1900">// @return a DOM Document</font></i>
+	Sarissa<font color="#990000">.</font>getDomDocument <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>sUri<font color="#990000">,</font> sName<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> oDoc <font color="#990000">=</font> document<font color="#990000">.</font>implementation<font color="#990000">.</font><b><font color="#000000">createDocument</font></b><font color="#990000">(</font>sUri<font color="#990000">,</font> sName<font color="#990000">,</font> <b><font color="#0000FF">null</font></b><font color="#990000">);</font>
+		oDoc<font color="#990000">.</font><b><font color="#000000">addEventListener</font></b><font color="#990000">(</font><font color="#FF0000">"load"</font><font color="#990000">,</font> _sarissa__XMLDocument_onload<font color="#990000">,</font> <b><font color="#0000FF">false</font></b><font color="#990000">);</font>
+		<b><font color="#0000FF">return</font></b> oDoc<font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// AFAIK, the object behaves exactly like </font></i>
+	<i><font color="#9A1900">// IE's IXMLHTTPRequest)</font></i>
+	<i><font color="#9A1900">// @return a XmlHttpRequst object suitable for Moz</font></i>
+	Sarissa<font color="#990000">.</font>getXmlHttpRequest <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">()</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">XMLHttpRequest</font></b><font color="#990000">();</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// Section: utility functions for internal use</font></i>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// Attached by an event handler to the load event.</font></i>
+	<b><font color="#0000FF">function</font></b> <b><font color="#000000">_sarissa__XMLDocument_onload</font></b><font color="#990000">()</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#000000">_sarissa_loadHandler</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Ensures the document was loaded correctly, otherwise sets the parseError to -1</font></i>
+	<i><font color="#9A1900">// to indicate something went wrong.</font></i>
+	<b><font color="#0000FF">function</font></b> <b><font color="#000000">_sarissa_loadHandler</font></b><font color="#990000">(</font>oDoc<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">if</font></b> <font color="#990000">(!</font>oDoc<font color="#990000">.</font>documentElement <font color="#990000">||</font> oDoc<font color="#990000">.</font>documentElement<font color="#990000">.</font>tagName <font color="#990000">==</font> <font color="#FF0000">"parsererror"</font><font color="#990000">)</font>
+			oDoc<font color="#990000">.</font>parseError <font color="#990000">=</font> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+		<b><font color="#000000">_sarissa_setReadyState</font></b><font color="#990000">(</font>oDoc<font color="#990000">,</font> <font color="#993399">4</font><font color="#990000">);</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Sets the readyState property</font></i>
+	<b><font color="#0000FF">function</font></b> <b><font color="#000000">_sarissa_setReadyState</font></b><font color="#990000">(</font>oDoc<font color="#990000">,</font> iReadyState<font color="#990000">)</font> 
+	<font color="#FF0000">{</font>
+		oDoc<font color="#990000">.</font>readyState <font color="#990000">=</font> iReadyState<font color="#990000">;</font>
+		<b><font color="#0000FF">if</font></b> <font color="#990000">(</font>oDoc<font color="#990000">.</font>onreadystatechange <font color="#990000">!=</font> <b><font color="#0000FF">null</font></b> <font color="#990000">&amp;&amp;</font> <b><font color="#0000FF">typeof</font></b> oDoc<font color="#990000">.</font>onreadystatechange <font color="#990000">==</font> <font color="#FF0000">"function"</font><font color="#990000">)</font>
+			oDoc<font color="#990000">.</font><b><font color="#000000">onreadystatechange</font></b><font color="#990000">();</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	
+	XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>_sarissa_clearDOM <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">()</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">while</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">hasChildNodes</font></b><font color="#990000">())</font>
+			<b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">removeChild</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">.</font>firstChild<font color="#990000">);</font>
+	<font color="#FF0000">}</font>
+	<i><font color="#9A1900">// Replaces the contents of the object with the contents of </font></i>
+	<i><font color="#9A1900">// the object given as the parameter</font></i>
+	XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>_sarissa_copyDOM <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>oDoc<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">_sarissa_clearDOM</font></b><font color="#990000">();</font>
+		<i><font color="#9A1900">// importNode is not yet needed in Moz due to a bug but it will be </font></i>
+		<i><font color="#9A1900">// fixed so...</font></i>
+            <b><font color="#0000FF">var</font></b> oNodes <font color="#990000">=</font> oDoc<font color="#990000">.</font>childNodes<font color="#990000">;</font>
+            <b><font color="#0000FF">for</font></b><font color="#990000">(</font>i<font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font>i<font color="#990000">&lt;</font>oNodes<font color="#990000">.</font>length<font color="#990000">;</font>i<font color="#990000">++)</font>
+                  <b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">appendChild</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">importNode</font></b><font color="#990000">(</font>oNodes<font color="#990000">[</font>i<font color="#990000">],</font> <b><font color="#0000FF">true</font></b><font color="#990000">));</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<b><font color="#0000FF">var</font></b> _SARISSA_WSMULT <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">RegExp</font></b><font color="#990000">(</font><font color="#FF0000">"^</font><font color="#CC33CC">\\</font><font color="#FF0000">s*|</font><font color="#CC33CC">\\</font><font color="#FF0000">s*$"</font><font color="#990000">,</font> <font color="#FF0000">"g"</font><font color="#990000">);</font>
+	<b><font color="#0000FF">var</font></b> _SARISSA_WSENDS <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">RegExp</font></b><font color="#990000">(</font><font color="#FF0000">"</font><font color="#CC33CC">\\</font><font color="#FF0000">s</font><font color="#CC33CC">\\</font><font color="#FF0000">s+"</font><font color="#990000">,</font> <font color="#FF0000">"g"</font><font color="#990000">);</font>
+	<b><font color="#0000FF">function</font></b> <b><font color="#000000">_sarissa_normalizeText</font></b><font color="#990000">(</font>sIn<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">return</font></b> sIn<font color="#990000">.</font><b><font color="#000000">replace</font></b><font color="#990000">(</font>_SARISSA_WSENDS<font color="#990000">,</font> <font color="#FF0000">" "</font><font color="#990000">).</font><b><font color="#000000">replace</font></b><font color="#990000">(</font>_SARISSA_WSMULT<font color="#990000">,</font> <font color="#FF0000">" "</font><font color="#990000">);</font>
+	<font color="#FF0000">}</font>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// Section: Extending Mozilla's DOM implementation </font></i>
+	<i><font color="#9A1900">// to emulate IE extentions</font></i>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// Parses the String given as parameter to build the document content</font></i>
+	<i><font color="#9A1900">// for the object, exactly like IE's loadXML().</font></i>
+	<i><font color="#9A1900">// @return the old contents serialized to String (xml)</font></i>
+	XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>loadXML <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>strXML<font color="#990000">)</font> 
+	<font color="#FF0000">{</font>
+		<b><font color="#000000">_sarissa_setReadyState</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">);</font>
+		<b><font color="#0000FF">var</font></b> sOldXML <font color="#990000">=</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>xml<font color="#990000">;</font>
+		<b><font color="#0000FF">var</font></b> oDoc <font color="#990000">=</font> <font color="#990000">(</font><b><font color="#0000FF">new</font></b> <b><font color="#000000">DOMParser</font></b><font color="#990000">()).</font><b><font color="#000000">parseFromString</font></b><font color="#990000">(</font>strXML<font color="#990000">,</font> <font color="#FF0000">"text/xml"</font><font color="#990000">);</font>
+		<b><font color="#000000">_sarissa_setReadyState</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#993399">2</font><font color="#990000">);</font>
+		<b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">_sarissa_copyDOM</font></b><font color="#990000">(</font>oDoc<font color="#990000">);</font>
+		<b><font color="#000000">_sarissa_setReadyState</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#993399">3</font><font color="#990000">);</font>
+		<b><font color="#000000">_sarissa_loadHandler</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+		<b><font color="#0000FF">return</font></b> sOldXML<font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Emulates IE's xml property. Gives an XML serialization of the DOM Object</font></i>
+    XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font><b><font color="#000000">__defineGetter__</font></b><font color="#990000">(</font><font color="#FF0000">"xml"</font><font color="#990000">,</font> <b><font color="#0000FF">function</font></b> <font color="#990000">()</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">return</font></b> <font color="#990000">(</font><b><font color="#0000FF">new</font></b> <b><font color="#000000">XMLSerializer</font></b><font color="#990000">()).</font><b><font color="#000000">serializeToString</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+	<font color="#FF0000">}</font><font color="#990000">);</font>
+	<i><font color="#9A1900">// Emulates IE's xml property. Gives an XML serialization of the DOM Object</font></i>
+    Node<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font><b><font color="#000000">__defineGetter__</font></b><font color="#990000">(</font><font color="#FF0000">"xml"</font><font color="#990000">,</font> <b><font color="#0000FF">function</font></b> <font color="#990000">()</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">return</font></b> <font color="#990000">(</font><b><font color="#0000FF">new</font></b> <b><font color="#000000">XMLSerializer</font></b><font color="#990000">()).</font><b><font color="#000000">serializeToString</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+	<font color="#FF0000">}</font><font color="#990000">);</font>
+	<i><font color="#9A1900">// Ensures and informs the xml property is read only</font></i>
+	XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font><b><font color="#000000">__defineSetter__</font></b><font color="#990000">(</font><font color="#FF0000">"xml"</font><font color="#990000">,</font> <b><font color="#0000FF">function</font></b> <font color="#990000">()</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">throw</font></b> <font color="#FF0000">"Invalid assignment on read-only property 'xml'. Hint: Use the 'loadXML(String xml)' method instead. (original exception: "</font><font color="#990000">+</font>e<font color="#990000">+</font><font color="#FF0000">")"</font><font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">);</font>
+	<i><font color="#9A1900">// Emulates IE's innerText (write). Note that this removes all childNodes of </font></i>
+	<i><font color="#9A1900">// an Element and just replaces it with a textNode</font></i>
+	HTMLElement<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font><b><font color="#000000">__defineSetter__</font></b><font color="#990000">(</font><font color="#FF0000">"innerText"</font><font color="#990000">,</font> <b><font color="#0000FF">function</font></b> <font color="#990000">(</font>sText<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> s <font color="#990000">=</font> <font color="#FF0000">""</font> <font color="#990000">+</font> sText<font color="#990000">;</font>
+		<b><font color="#0000FF">this</font></b><font color="#990000">.</font>innerHTML <font color="#990000">=</font> s<font color="#990000">.</font><b><font color="#000000">replace</font></b><font color="#990000">(</font><font color="#FF6600">/\&amp;/g</font><font color="#990000">,</font> <font color="#FF0000">"&amp;amp;"</font><font color="#990000">).</font><b><font color="#000000">replace</font></b><font color="#990000">(</font><font color="#FF6600">/&lt;/g</font><font color="#990000">,</font> <font color="#FF0000">"&amp;lt;"</font><font color="#990000">).</font><b><font color="#000000">replace</font></b><font color="#990000">(</font><font color="#FF6600">/&gt;/g</font><font color="#990000">,</font> <font color="#FF0000">"&amp;gt;"</font><font color="#990000">);</font>
+	<font color="#FF0000">}</font><font color="#990000">);</font>
+	<i><font color="#9A1900">// Emulate IE's innerText (read). Gives the concatenation of all text nodes under the Element</font></i>
+	HTMLElement<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font><b><font color="#000000">__defineGetter__</font></b><font color="#990000">(</font><font color="#FF0000">"innerText"</font><font color="#990000">,</font> <b><font color="#0000FF">function</font></b> <font color="#990000">()</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">return</font></b> <b><font color="#000000">_sarissa_normalizeText</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">.</font>innerHTML<font color="#990000">.</font><b><font color="#000000">replace</font></b><font color="#990000">(</font><font color="#FF6600">/&lt;[^&gt;]+&gt;/g</font><font color="#990000">,</font><font color="#FF0000">""</font><font color="#990000">));</font>
+	<font color="#FF0000">}</font><font color="#990000">);</font>
+	<i><font color="#9A1900">// Emulate IE's onreadystatechange attribute </font></i>
+	<i><font color="#9A1900">// used as a listener to the onreadystatechange event (also emulated)</font></i>
+    Document<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>onreadystatechange <font color="#990000">=</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+    <i><font color="#9A1900">// Emulate IE's parseError attribute</font></i>
+    Document<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>parseError <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Emulates IE's readyState property, which always gives an integer from 0 to 4:</font></i>
+	<i><font color="#9A1900">// 1 == LOADING</font></i>
+	<i><font color="#9A1900">// 2 == LOADED</font></i>
+	<i><font color="#9A1900">// 3 == INTERACTIVE</font></i>
+	<i><font color="#9A1900">// 4 == COMPLETED </font></i>
+    XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>readyState <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Emulates IE's async property. It controls whether loading of </font></i>
+	<i><font color="#9A1900">// remote XML files works synchronously or asynchronously.</font></i>
+	<i><font color="#9A1900">// NOTE: setting async to false will only work with documents </font></i>
+	<i><font color="#9A1900">// called over HTTP (meaning a server), not the local file system,</font></i>
+	<i><font color="#9A1900">// unless you are using Moz 1.4.</font></i>
+	<i><font color="#9A1900">// BTW the try&gt;catch block is for 1.4; I haven't found a way to check if the property is implemented without </font></i>
+	<i><font color="#9A1900">// causing an error and I dont want to use user agent stuff for that...</font></i>
+	<b><font color="#0000FF">try</font></b><font color="#FF0000">{</font>
+		XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>async <font color="#990000">=</font> <b><font color="#0000FF">true</font></b><font color="#990000">;</font>
+	<font color="#FF0000">}</font><b><font color="#0000FF">catch</font></b><font color="#990000">(</font>e<font color="#990000">)</font><font color="#FF0000">{</font><i><font color="#9A1900">/*trap*/</font></i><font color="#FF0000">}</font>
+	<i><font color="#9A1900">// Keeps a handle to the original load() method</font></i>
+	XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>_sarissa_load <font color="#990000">=</font> XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>load<font color="#990000">;</font>
+	<i><font color="#9A1900">/** Extends the load method to provide synchronous loading</font></i>
+<i><font color="#9A1900">	* using an XMLHttpRequest object (if async is set to false)</font></i>
+<i><font color="#9A1900">	* </font></i><font color="#009900">@return</font><i><font color="#9A1900"> the DOM Object as it was before the load() call (may be empty)</font></i>
+<i><font color="#9A1900">	*/</font></i>
+    XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>load <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>sURI<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> oDoc <font color="#990000">=</font> document<font color="#990000">.</font>implementation<font color="#990000">.</font><b><font color="#000000">createDocument</font></b><font color="#990000">(</font><font color="#FF0000">""</font><font color="#990000">,</font> <font color="#FF0000">""</font><font color="#990000">,</font> <b><font color="#0000FF">null</font></b><font color="#990000">);</font>
+		oDoc<font color="#990000">.</font><b><font color="#000000">_sarissa_copyDOM</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+		<b><font color="#0000FF">this</font></b><font color="#990000">.</font>parseError <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+		<b><font color="#000000">_sarissa_setReadyState</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">);</font>
+		<b><font color="#0000FF">try</font></b>
+		<font color="#FF0000">{</font>
+			<b><font color="#0000FF">if</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">.</font>async <font color="#990000">==</font> <b><font color="#0000FF">false</font></b><font color="#990000">)</font>
+			<font color="#FF0000">{</font>
+				<b><font color="#0000FF">var</font></b> tmp <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">XMLHttpRequest</font></b><font color="#990000">();</font>
+				tmp<font color="#990000">.</font><b><font color="#000000">open</font></b><font color="#990000">(</font><font color="#FF0000">"GET"</font><font color="#990000">,</font> sURI<font color="#990000">,</font> <b><font color="#0000FF">false</font></b><font color="#990000">);</font>
+				tmp<font color="#990000">.</font><b><font color="#000000">overrideMimeType</font></b><font color="#990000">(</font><font color="#FF0000">"text/xml"</font><font color="#990000">);</font>
+				tmp<font color="#990000">.</font><b><font color="#000000">send</font></b><font color="#990000">(</font><b><font color="#0000FF">null</font></b><font color="#990000">);</font>
+				<b><font color="#000000">_sarissa_setReadyState</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#993399">2</font><font color="#990000">);</font>
+				<b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">_sarissa_copyDOM</font></b><font color="#990000">(</font>tmp<font color="#990000">.</font>responseXML<font color="#990000">);</font>
+				<b><font color="#000000">_sarissa_setReadyState</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> <font color="#993399">3</font><font color="#990000">);</font>
+			<font color="#FF0000">}</font>
+			<b><font color="#0000FF">else</font></b>
+				<b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">_sarissa_load</font></b><font color="#990000">(</font>sURI<font color="#990000">);</font>
+		<font color="#FF0000">}</font>
+		<b><font color="#0000FF">catch</font></b> <font color="#990000">(</font>objException<font color="#990000">)</font>
+		<font color="#FF0000">{</font>
+			<b><font color="#0000FF">this</font></b><font color="#990000">.</font>parseError <font color="#990000">=</font> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+		<font color="#FF0000">}</font>
+		<b><font color="#0000FF">finally</font></b>
+		<font color="#FF0000">{</font>
+			<b><font color="#000000">_sarissa_loadHandler</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+		<font color="#FF0000">}</font>
+		<b><font color="#0000FF">return</font></b> oDoc<font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font> 
+	<i><font color="#9A1900">// Emulate IE's transformNodeToObject</font></i>
+	Document<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>transformNodeToObject <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>xslDoc<font color="#990000">,</font> oResult<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> xsltProcessor <font color="#990000">=</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+		<b><font color="#0000FF">try</font></b>
+		<font color="#FF0000">{</font>
+		    xsltProcessor <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">XSLTProcessor</font></b><font color="#990000">();</font>
+		    <b><font color="#0000FF">if</font></b><font color="#990000">(</font>xsltProcessor<font color="#990000">.</font>reset<font color="#990000">)</font>
+		    <font color="#FF0000">{</font>
+				<i><font color="#9A1900">// new nsIXSLTProcessor is available</font></i>
+				xsltProcessor<font color="#990000">.</font><b><font color="#000000">importStylesheet</font></b><font color="#990000">(</font>xslDoc<font color="#990000">);</font>
+				<b><font color="#0000FF">var</font></b> newFragment <font color="#990000">=</font> xsltProcessor<font color="#990000">.</font><b><font color="#000000">transformToFragment</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> oResult<font color="#990000">);</font>
+				oResult<font color="#990000">.</font><b><font color="#000000">_sarissa_copyDOM</font></b><font color="#990000">(</font>newFragment<font color="#990000">);</font>
+            <font color="#FF0000">}</font>
+            <b><font color="#0000FF">else</font></b>
+		    <font color="#FF0000">{</font>
+				<i><font color="#9A1900">// only nsIXSLTProcessorObsolete is available</font></i>
+				xsltProcessor<font color="#990000">.</font><b><font color="#000000">transformDocument</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">,</font> xslDoc<font color="#990000">,</font> oResult<font color="#990000">,</font> <b><font color="#0000FF">null</font></b><font color="#990000">);</font>
+            <font color="#FF0000">}</font>
+		<font color="#FF0000">}</font>
+		<b><font color="#0000FF">catch</font></b><font color="#990000">(</font>e<font color="#990000">)</font>
+		<font color="#FF0000">{</font>
+			<b><font color="#0000FF">if</font></b><font color="#990000">(</font>xslDoc <font color="#990000">&amp;&amp;</font> oResult<font color="#990000">)</font>
+				<b><font color="#0000FF">throw</font></b> <font color="#FF0000">"Sarissa_TransformNodeToObjectException: Failed to transform document. (original exception: "</font><font color="#990000">+</font>e<font color="#990000">+</font><font color="#FF0000">")"</font><font color="#990000">;</font>
+			<b><font color="#0000FF">else</font></b> <b><font color="#0000FF">if</font></b><font color="#990000">(!</font>xslDoc<font color="#990000">)</font>
+				<b><font color="#0000FF">throw</font></b> <font color="#FF0000">"Sarissa_TransformNodeToObjectException: No Stylesheet Document was provided. (original exception: "</font><font color="#990000">+</font>e<font color="#990000">+</font><font color="#FF0000">")"</font><font color="#990000">;</font>
+			<b><font color="#0000FF">else</font></b> <b><font color="#0000FF">if</font></b><font color="#990000">(!</font>oResult<font color="#990000">)</font>
+				<b><font color="#0000FF">throw</font></b> <font color="#FF0000">"Sarissa_TransformNodeToObjectException: No Result Document was provided. (original exception: "</font><font color="#990000">+</font>e<font color="#990000">+</font><font color="#FF0000">")"</font><font color="#990000">;</font>
+			<b><font color="#0000FF">else</font></b> <b><font color="#0000FF">if</font></b><font color="#990000">(</font>xsltProcessor <font color="#990000">==</font> <b><font color="#0000FF">null</font></b><font color="#990000">)</font>
+                            <b><font color="#0000FF">throw</font></b> <font color="#FF0000">"Sarissa_XSLTProcessorNotAvailableException: Could not instantiate an XSLTProcessor object. (original exception: "</font><font color="#990000">+</font>e<font color="#990000">+</font><font color="#FF0000">")"</font><font color="#990000">;</font>
+                        <b><font color="#0000FF">else</font></b>
+                            <b><font color="#0000FF">throw</font></b> e<font color="#990000">;</font>
+		<font color="#FF0000">}</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Emulate IE's transformNode() method. Gives the result XML serialised to a String</font></i>
+	Document<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>transformNode <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>xslDoc<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> out <font color="#990000">=</font> document<font color="#990000">.</font>implementation<font color="#990000">.</font><b><font color="#000000">createDocument</font></b><font color="#990000">(</font><font color="#FF0000">""</font><font color="#990000">,</font> <font color="#FF0000">""</font><font color="#990000">,</font> <b><font color="#0000FF">null</font></b><font color="#990000">);</font>
+		<b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">transformNodeToObject</font></b><font color="#990000">(</font>xslDoc<font color="#990000">,</font> out<font color="#990000">);</font>
+		<b><font color="#0000FF">var</font></b> str <font color="#990000">=</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+		<b><font color="#0000FF">try</font></b>
+		<font color="#FF0000">{</font>
+			<b><font color="#0000FF">var</font></b> serializer <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">XMLSerializer</font></b><font color="#990000">();</font>
+			str <font color="#990000">=</font> serializer<font color="#990000">.</font><b><font color="#000000">serializeToString</font></b><font color="#990000">(</font>out<font color="#990000">);</font>
+		<font color="#FF0000">}</font>
+		<b><font color="#0000FF">catch</font></b><font color="#990000">(</font>e<font color="#990000">)</font>
+		<font color="#FF0000">{</font>
+			<b><font color="#0000FF">throw</font></b> <font color="#FF0000">"Sarissa_TransformNodeException: Failed to serialize result document. (original exception: "</font><font color="#990000">+</font>e<font color="#990000">+</font><font color="#FF0000">")"</font><font color="#990000">;</font>
+		<font color="#FF0000">}</font>
+		<b><font color="#0000FF">return</font></b> str<font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Extend the Array to behave as a NodeList	</font></i>
+	Array<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>item <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>i<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">return</font></b> <b><font color="#0000FF">this</font></b><font color="#990000">[</font>i<font color="#990000">];</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// add IE's expr property</font></i>
+	Array<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>expr <font color="#990000">=</font> <font color="#FF0000">""</font><font color="#990000">;</font>
+    <i><font color="#9A1900">// dummy, used to accept IE's stuff without throwing errors</font></i>
+	XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>setProperty  <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>x<font color="#990000">,</font>y<font color="#990000">)</font><font color="#FF0000">{}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Emulate IE's selectNodes</font></i>
+	XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>selectNodes <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>sExpr<font color="#990000">,</font> contextNode<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> oResult <font color="#990000">=</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">evaluate</font></b><font color="#990000">(</font>sExpr<font color="#990000">,</font> <font color="#990000">(</font>contextNode<font color="#990000">?</font>contextNode<font color="#990000">:</font><b><font color="#0000FF">this</font></b><font color="#990000">),</font> 
+							<b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">createNSResolver</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">.</font>documentElement<font color="#990000">),</font>
+							XPathResult<font color="#990000">.</font>ORDERED_NODE_SNAPSHOT_TYPE<font color="#990000">,</font> <b><font color="#0000FF">null</font></b><font color="#990000">);</font>
+		<b><font color="#0000FF">var</font></b> nodeList <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Array</font></b><font color="#990000">(</font>oResult<font color="#990000">.</font>snapshotLength<font color="#990000">);</font>
+		nodeList<font color="#990000">.</font>expr <font color="#990000">=</font> sExpr<font color="#990000">;</font>
+		<b><font color="#0000FF">for</font></b><font color="#990000">(</font>i<font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font>i<font color="#990000">&lt;</font>nodeList<font color="#990000">.</font>length<font color="#990000">;</font>i<font color="#990000">++)</font>
+			nodeList<font color="#990000">[</font>i<font color="#990000">]</font> <font color="#990000">=</font> oResult<font color="#990000">.</font><b><font color="#000000">snapshotItem</font></b><font color="#990000">(</font>i<font color="#990000">);</font>
+		<b><font color="#0000FF">return</font></b> nodeList<font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	Element<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>selectNodes <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>sExpr<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> doc <font color="#990000">=</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>ownerDocument<font color="#990000">;</font>
+		<b><font color="#0000FF">if</font></b><font color="#990000">(</font>doc<font color="#990000">.</font>selectNodes<font color="#990000">)</font>
+			<b><font color="#0000FF">return</font></b> doc<font color="#990000">.</font><b><font color="#000000">selectNodes</font></b><font color="#990000">(</font>sExpr<font color="#990000">,</font> <b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+		<b><font color="#0000FF">else</font></b>
+			<b><font color="#0000FF">throw</font></b> <font color="#FF0000">"SarissaXPathOperationException: Method selectNodes is only supported by XML Nodes"</font><font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Emulate IE's selectSingleNode</font></i>
+	XMLDocument<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>selectSingleNode <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>sExpr<font color="#990000">,</font> contextNode<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> ctx <font color="#990000">=</font> contextNode<font color="#990000">?</font>contextNode<font color="#990000">:</font><b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+		sExpr <font color="#990000">+=</font> <font color="#FF0000">"[1]"</font><font color="#990000">;</font>
+		<b><font color="#0000FF">var</font></b> nodeList <font color="#990000">=</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font><b><font color="#000000">selectNodes</font></b><font color="#990000">(</font>sExpr<font color="#990000">,</font> ctx<font color="#990000">);</font>
+		<b><font color="#0000FF">if</font></b><font color="#990000">(</font>nodeList<font color="#990000">.</font>length <font color="#990000">&gt;</font> <font color="#993399">0</font><font color="#990000">)</font>
+			<b><font color="#0000FF">return</font></b> nodeList<font color="#990000">[</font><font color="#993399">0</font><font color="#990000">];</font>
+		<b><font color="#0000FF">else</font></b> 
+			<b><font color="#0000FF">return</font></b> <b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	Element<font color="#990000">.</font><b><font color="#0000FF">prototype</font></b><font color="#990000">.</font>selectSingleNode <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>sExpr<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> doc <font color="#990000">=</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>ownerDocument<font color="#990000">;</font>
+		<b><font color="#0000FF">if</font></b><font color="#990000">(</font>doc<font color="#990000">.</font>selectSingleNode<font color="#990000">)</font>
+			<b><font color="#0000FF">return</font></b> doc<font color="#990000">.</font><b><font color="#000000">selectSingleNode</font></b><font color="#990000">(</font>sExpr<font color="#990000">,</font> <b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+		<b><font color="#0000FF">else</font></b>
+			<b><font color="#0000FF">throw</font></b> <font color="#FF0000">"SarissaXPathOperationException: Method selectSingleNode is only supported by XML Nodes. (original exception: "</font><font color="#990000">+</font>e<font color="#990000">+</font><font color="#FF0000">")"</font><font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+<b><font color="#0000FF">else</font></b> <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>_SARISSA_IS_IE<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// Section: IE Initialization</font></i>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// Add NodeType constants; missing in IE4, 5 and 6</font></i>
+	<b><font color="#0000FF">if</font></b><font color="#990000">(!</font>window<font color="#990000">.</font>Node<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> Node <font color="#990000">=</font> <font color="#FF0000">{</font>
+			ELEMENT_NODE<font color="#990000">:</font> <font color="#993399">1</font><font color="#990000">,</font>
+			ATTRIBUTE_NODE<font color="#990000">:</font> <font color="#993399">2</font><font color="#990000">,</font>
+			TEXT_NODE<font color="#990000">:</font> <font color="#993399">3</font><font color="#990000">,</font>
+			CDATA_SECTION_NODE<font color="#990000">:</font> <font color="#993399">4</font><font color="#990000">,</font>
+			ENTITY_REFERENCE_NODE<font color="#990000">:</font> <font color="#993399">5</font><font color="#990000">,</font>
+			ENTITY_NODE<font color="#990000">:</font> <font color="#993399">6</font><font color="#990000">,</font>
+			PROCESSING_INSTRUCTION_NODE<font color="#990000">:</font> <font color="#993399">7</font><font color="#990000">,</font>
+			COMMENT_NODE<font color="#990000">:</font> <font color="#993399">8</font><font color="#990000">,</font>
+			DOCUMENT_NODE<font color="#990000">:</font> <font color="#993399">9</font><font color="#990000">,</font>
+			DOCUMENT_TYPE_NODE<font color="#990000">:</font> <font color="#993399">10</font><font color="#990000">,</font>
+			DOCUMENT_FRAGMENT_NODE<font color="#990000">:</font> <font color="#993399">11</font><font color="#990000">,</font>
+			NOTATION_NODE<font color="#990000">:</font> <font color="#993399">12</font>
+		<font color="#FF0000">}</font>
+	<font color="#FF0000">}</font>
+	<i><font color="#9A1900">// for XSLT parameter names</font></i>
+	_SARISSA_IEPREFIX4XSLPARAM <font color="#990000">=</font> <font color="#FF0000">"xsl:"</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// used to store the most recent ProgID available out of the above</font></i>
+	<b><font color="#0000FF">var</font></b> _SARISSA_DOM_PROGID <font color="#990000">=</font> <font color="#FF0000">""</font><font color="#990000">;</font>
+	<b><font color="#0000FF">var</font></b> _SARISSA_XMLHTTP_PROGID <font color="#990000">=</font> <font color="#FF0000">""</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// used to pick most recent ProgIDs</font></i>
+	<b><font color="#0000FF">function</font></b> <b><font color="#000000">pickRecentProgID</font></b><font color="#990000">(</font>idList<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<i><font color="#9A1900">// found progID flag</font></i>
+		<b><font color="#0000FF">var</font></b> bFound <font color="#990000">=</font> <b><font color="#0000FF">false</font></b><font color="#990000">;</font>
+		<b><font color="#0000FF">for</font></b> <font color="#990000">(</font><b><font color="#0000FF">var</font></b> i<font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font> i <font color="#990000">&lt;</font> idList<font color="#990000">.</font>length <font color="#990000">&amp;&amp;</font> <font color="#990000">!</font>bFound<font color="#990000">;</font> i<font color="#990000">++)</font>
+		<font color="#FF0000">{</font>
+			<b><font color="#0000FF">try</font></b>
+			<font color="#FF0000">{</font>
+				<b><font color="#0000FF">var</font></b> oDoc <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">ActiveXObject</font></b><font color="#990000">(</font>idList<font color="#990000">[</font>i<font color="#990000">]);</font>
+				o2Store <font color="#990000">=</font> idList<font color="#990000">[</font>i<font color="#990000">];</font>
+				bFound <font color="#990000">=</font> <b><font color="#0000FF">true</font></b><font color="#990000">;</font>
+			<font color="#FF0000">}</font>
+			<b><font color="#0000FF">catch</font></b> <font color="#990000">(</font>objException<font color="#990000">)</font>
+			<font color="#FF0000">{</font>
+				<i><font color="#9A1900">// trap; try next progID</font></i>
+			<font color="#FF0000">}</font>
+		<font color="#FF0000">}</font>
+		<b><font color="#0000FF">if</font></b> <font color="#990000">(!</font>bFound<font color="#990000">)</font>
+			<b><font color="#0000FF">throw</font></b> <font color="#FF0000">"Sarissa_Exception: Could not retreive a valid progID of Class: "</font> <font color="#990000">+</font> idList<font color="#990000">[</font>idList<font color="#990000">.</font>length<font color="#990000">-</font><font color="#993399">1</font><font color="#990000">]+</font><font color="#FF0000">". (original exception: "</font><font color="#990000">+</font>e<font color="#990000">+</font><font color="#FF0000">")"</font><font color="#990000">;</font>
+		idList <font color="#990000">=</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+		<b><font color="#0000FF">return</font></b> o2Store<font color="#990000">;</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// store proper progIDs</font></i>
+	_SARISSA_DOM_PROGID <font color="#990000">=</font> <b><font color="#000000">pickRecentProgID</font></b><font color="#990000">([</font><font color="#FF0000">"Msxml2.DOMDocument.4.0"</font><font color="#990000">,</font> <font color="#FF0000">"Msxml2.DOMDocument.3.0"</font><font color="#990000">,</font> <font color="#FF0000">"MSXML2.DOMDocument"</font><font color="#990000">,</font> <font color="#FF0000">"MSXML.DOMDocument"</font><font color="#990000">,</font> <font color="#FF0000">"Microsoft.XmlDom"</font><font color="#990000">]);</font>
+	_SARISSA_XMLHTTP_PROGID <font color="#990000">=</font> <b><font color="#000000">pickRecentProgID</font></b><font color="#990000">([</font><font color="#FF0000">"Msxml2.XMLHTTP.4.0"</font><font color="#990000">,</font> <font color="#FF0000">"MSXML2.XMLHTTP.3.0"</font><font color="#990000">,</font> <font color="#FF0000">"MSXML2.XMLHTTP"</font><font color="#990000">,</font> <font color="#FF0000">"Microsoft.XMLHTTP"</font><font color="#990000">]);</font>
+	<i><font color="#9A1900">// we dont need this anymore</font></i>
+	pickRecentProgID <font color="#990000">=</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// Section: Factory methods (IE)</font></i>
+	<i><font color="#9A1900">//============================================</font></i>
+	<i><font color="#9A1900">// Factory method, returns a DOMDocument suitable for IE</font></i>
+    Sarissa<font color="#990000">.</font>getDomDocument <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>sUri<font color="#990000">,</font> sName<font color="#990000">)</font>
+    <font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> oDoc <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">ActiveXObject</font></b><font color="#990000">(</font>_SARISSA_DOM_PROGID<font color="#990000">);</font>
+		<i><font color="#9A1900">// if a root tag name was provided, we need to load it in the DOM object</font></i>
+		<b><font color="#0000FF">if</font></b> <font color="#990000">(</font>sName<font color="#990000">)</font>
+		<font color="#FF0000">{</font>
+			<i><font color="#9A1900">// if needed, create an artifical namespace prefix the way Moz does</font></i>
+			<b><font color="#0000FF">if</font></b> <font color="#990000">(</font>sUri<font color="#990000">)</font>
+			<font color="#FF0000">{</font>
+				oDoc<font color="#990000">.</font><b><font color="#000000">loadXML</font></b><font color="#990000">(</font><font color="#FF0000">"&lt;a"</font> <font color="#990000">+</font> _sarissa_iNsCounter <font color="#990000">+</font> <font color="#FF0000">":"</font> <font color="#990000">+</font> sName <font color="#990000">+</font> <font color="#FF0000">" xmlns:a"</font> <font color="#990000">+</font> _sarissa_iNsCounter <font color="#990000">+</font> <font color="#FF0000">"=</font><font color="#CC33CC">\"</font><font color="#FF0000">"</font> <font color="#990000">+</font> sUri <font color="#990000">+</font> <font color="#FF0000">"</font><font color="#CC33CC">\"</font><font color="#FF0000"> /&gt;"</font><font color="#990000">);</font>
+				<i><font color="#9A1900">// don't use the same prefix again</font></i>
+				<font color="#990000">++</font>_sarissa_iNsCounter<font color="#990000">;</font>
+			<font color="#FF0000">}</font>
+			<b><font color="#0000FF">else</font></b>
+				oDoc<font color="#990000">.</font><b><font color="#000000">loadXML</font></b><font color="#990000">(</font><font color="#FF0000">"&lt;"</font> <font color="#990000">+</font> sName <font color="#990000">+</font> <font color="#FF0000">"/&gt;"</font><font color="#990000">);</font>
+		<font color="#FF0000">}</font>
+		<b><font color="#0000FF">return</font></b> oDoc<font color="#990000">;</font>
+    <font color="#FF0000">}</font><font color="#990000">;</font>
+	<i><font color="#9A1900">// Factory method, returns an IXMLHTTPRequest object </font></i>
+	<i><font color="#9A1900">// AFAIK, the object behaves exactly like </font></i>
+	<i><font color="#9A1900">// Mozilla's XmlHttpRequest</font></i>
+	Sarissa<font color="#990000">.</font>getXmlHttpRequest <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">()</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">ActiveXObject</font></b><font color="#990000">(</font>_SARISSA_XMLHTTP_PROGID<font color="#990000">);</font>
+	<font color="#FF0000">}</font><font color="#990000">;</font>
+<font color="#FF0000">}</font>
+<i><font color="#9A1900">// Factory Class</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">Sarissa</font></b><font color="#990000">()</font><font color="#FF0000">{}</font>
+<i><font color="#9A1900">// Common factory method, used to set xslt parameters.</font></i>
+<i><font color="#9A1900">// TODO: figure out how to implement support for both Mozilla's and IE's </font></i>
+<i><font color="#9A1900">// XSL Processor objects to improove performance for reusable stylesheets.</font></i>
+<i><font color="#9A1900">// @param oXslDoc the target XSLT DOM Document</font></i>
+<i><font color="#9A1900">// @param sParamName the name of the XSLT parameter</font></i>
+<i><font color="#9A1900">// @param sParamValue the value of the XSLT parameter</font></i>
+<i><font color="#9A1900">// @return whether the parameter was set succefully</font></i>
+Sarissa<font color="#990000">.</font>setXslParameter <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>oXslDoc<font color="#990000">,</font> sParamQName<font color="#990000">,</font> sParamValue<font color="#990000">)</font>
+<font color="#FF0000">{</font>
+	<b><font color="#0000FF">try</font></b>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">var</font></b> params <font color="#990000">=</font> oXslDoc<font color="#990000">.</font><b><font color="#000000">getElementsByTagName</font></b><font color="#990000">(</font>_SARISSA_IEPREFIX4XSLPARAM<font color="#990000">+</font><font color="#FF0000">"param"</font><font color="#990000">);</font>
+		<b><font color="#0000FF">var</font></b> iLength <font color="#990000">=</font> params<font color="#990000">.</font>length<font color="#990000">;</font>
+		<b><font color="#0000FF">var</font></b> bFound <font color="#990000">=</font> <b><font color="#0000FF">false</font></b><font color="#990000">;</font>
+		<b><font color="#0000FF">var</font></b> param<font color="#990000">;</font>
+		
+		<b><font color="#0000FF">if</font></b><font color="#990000">(</font>sParamValue<font color="#990000">)</font>
+		<font color="#FF0000">{</font>
+			<b><font color="#0000FF">for</font></b><font color="#990000">(</font>i<font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font> i <font color="#990000">&lt;</font> iLength <font color="#990000">&amp;&amp;</font> <font color="#990000">!</font>bFound<font color="#990000">;</font>i<font color="#990000">++)</font>
+			<font color="#FF0000">{</font>
+				<i><font color="#9A1900">// match a param name attribute with the name given as argument</font></i>
+				<b><font color="#0000FF">if</font></b><font color="#990000">(</font>params<font color="#990000">[</font>i<font color="#990000">].</font><b><font color="#000000">getAttribute</font></b><font color="#990000">(</font><font color="#FF0000">"name"</font><font color="#990000">)</font> <font color="#990000">==</font> sParamQName<font color="#990000">)</font>
+				<font color="#FF0000">{</font>
+					param <font color="#990000">=</font> params<font color="#990000">[</font>i<font color="#990000">];</font>
+					<i><font color="#9A1900">// clean up the parameter</font></i>
+					<b><font color="#0000FF">while</font></b><font color="#990000">(</font>param<font color="#990000">.</font>firstChild<font color="#990000">)</font>
+						param<font color="#990000">.</font><b><font color="#000000">removeChild</font></b><font color="#990000">(</font>param<font color="#990000">.</font>firstChild<font color="#990000">);</font>
+					<b><font color="#0000FF">if</font></b><font color="#990000">(!</font>sParamValue <font color="#990000">||</font> sParamValue <font color="#990000">==</font> <b><font color="#0000FF">null</font></b><font color="#990000">)</font>
+					<font color="#FF0000">{</font>
+						<i><font color="#9A1900">// do nothing; we've cleaned up the parameter anyway</font></i>
+					<font color="#FF0000">}</font>
+					<i><font color="#9A1900">// if String</font></i>
+					<b><font color="#0000FF">else</font></b> <b><font color="#0000FF">if</font></b><font color="#990000">(</font><b><font color="#0000FF">typeof</font></b> sParamValue <font color="#990000">==</font> <font color="#FF0000">"string"</font><font color="#990000">)</font>
+					<font color="#FF0000">{</font> 
+						param<font color="#990000">.</font><b><font color="#000000">setAttribute</font></b><font color="#990000">(</font><font color="#FF0000">"select"</font><font color="#990000">,</font> sParamValue<font color="#990000">);</font>
+						bFound <font color="#990000">=</font> <b><font color="#0000FF">true</font></b><font color="#990000">;</font>
+					<font color="#FF0000">}</font>
+					<i><font color="#9A1900">// if node</font></i>
+					<b><font color="#0000FF">else</font></b> <b><font color="#0000FF">if</font></b><font color="#990000">(</font>sParamValue<font color="#990000">.</font>nodeName<font color="#990000">)</font>
+					<font color="#FF0000">{</font>
+						param<font color="#990000">.</font><b><font color="#000000">removeAttribute</font></b><font color="#990000">(</font><font color="#FF0000">"select"</font><font color="#990000">);</font>
+						param<font color="#990000">.</font><b><font color="#000000">appendChild</font></b><font color="#990000">(</font>sParamValue<font color="#990000">.</font><b><font color="#000000">cloneNode</font></b><font color="#990000">(</font><b><font color="#0000FF">true</font></b><font color="#990000">));</font>
+						bFound <font color="#990000">=</font> <b><font color="#0000FF">true</font></b><font color="#990000">;</font>
+					<font color="#FF0000">}</font>
+					<i><font color="#9A1900">// if NodeList</font></i>
+					<b><font color="#0000FF">else</font></b> <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>sParamValue<font color="#990000">.</font><b><font color="#000000">item</font></b><font color="#990000">(</font><font color="#993399">0</font><font color="#990000">)</font>
+						<font color="#990000">&amp;&amp;</font> sParamValue<font color="#990000">.</font><b><font color="#000000">item</font></b><font color="#990000">(</font><font color="#993399">0</font><font color="#990000">).</font>nodeType<font color="#990000">)</font>
+					<font color="#FF0000">{</font>
+						<b><font color="#0000FF">for</font></b><font color="#990000">(</font>j<font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font>j <font color="#990000">&lt;</font> sParamValue<font color="#990000">.</font>length<font color="#990000">;</font>j<font color="#990000">++)</font>
+						<b><font color="#0000FF">if</font></b><font color="#990000">(</font>sParamValue<font color="#990000">.</font><b><font color="#000000">item</font></b><font color="#990000">(</font>j<font color="#990000">).</font>nodeType<font color="#990000">)</font> <i><font color="#9A1900">// check if this is a Node</font></i>
+							param<font color="#990000">.</font><b><font color="#000000">appendChild</font></b><font color="#990000">(</font>sParamValue<font color="#990000">.</font><b><font color="#000000">item</font></b><font color="#990000">(</font>j<font color="#990000">).</font><b><font color="#000000">cloneNode</font></b><font color="#990000">(</font><b><font color="#0000FF">true</font></b><font color="#990000">));</font>
+						bFound <font color="#990000">=</font> <b><font color="#0000FF">true</font></b><font color="#990000">;</font>
+					<font color="#FF0000">}</font>
+					<i><font color="#9A1900">// if Array or IE's IXMLDOMNodeList</font></i>
+					<b><font color="#0000FF">else</font></b>
+						<b><font color="#0000FF">throw</font></b> <font color="#FF0000">"SarissaTypeMissMatchException in method: Sarissa.setXslParameter. (original exception: "</font><font color="#990000">+</font>e<font color="#990000">+</font><font color="#FF0000">")"</font><font color="#990000">;</font>
+				<font color="#FF0000">}</font>
+			<font color="#FF0000">}</font>
+		<font color="#FF0000">}</font>
+		<b><font color="#0000FF">return</font></b> bFound<font color="#990000">;</font>
+	<font color="#FF0000">}</font>
+	<b><font color="#0000FF">catch</font></b><font color="#990000">(</font>e<font color="#990000">)</font>
+	<font color="#FF0000">{</font>
+		<b><font color="#0000FF">throw</font></b> e<font color="#990000">;</font>
+		<b><font color="#0000FF">return</font></b> <b><font color="#0000FF">false</font></b><font color="#990000">;</font>
+	<font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+<i><font color="#9A1900">// EOF</font></i>
+
+
+</tt></pre>

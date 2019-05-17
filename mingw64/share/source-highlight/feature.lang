@@ -1,0 +1,26 @@
+# Cucumber / feature file lang definition file
+# Probably can remove some definitions, since FFs are so simple
+
+include "number.lang"
+
+string delim "\"" "\"" escape "\\"
+string delim "'" "'"  escape "\\"
+string delim "<" ">"
+
+keyword ="Feature|Background|Scenario|Scenario Outline|Examples"
+
+# type = '(\$[#]?|@@|@)([[:word:]]+|\'|\"|/)'
+
+include "script_comment.lang"
+
+# Define cucumber tables
+table = '^\s*\|([^|]*)\|([^|]*)\|\s*$'
+ 
+# tags
+cuketag = '(?<!\S)(@[[:word:]]+)(?!\S)'
+
+# The Gherken statements
+given = '^\s*(Given)'
+when = '^\s*(When)'
+then = '^\s*(Then)'
+and_but = '^\s*(And|But)'

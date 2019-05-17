@@ -1,0 +1,15 @@
+environment keyword delim $DELAYEDMACROSTART $DELAYEDMACROEND multiline nested begin
+    attribute = $MACROATTR
+    keyword = $MACRO
+    include "tml_macros2.lang"
+    include "tml_macrosdelayed2.lang"
+    environment string delim "\\\"" "\\\"" escape "\\\\" multiline begin
+        keyword = $MACRO
+        include "tml_macros2.lang"
+        include "tml_macrosdelayed2.lang"
+        include "tml_macrotokens.lang"
+        include "tml_macrolinks.lang"
+        include "tml_formatting.lang"
+    end
+    include "tml_macrotokens.lang"
+end

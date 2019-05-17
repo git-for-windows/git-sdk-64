@@ -1,0 +1,553 @@
+source-highlight -- History of visible changes.
+
+Copyright (C) 1999-2011 Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite
+
+See the end for copying conditions.
+
+Please send source-highlight bug reports to bug-source-highlight at gnu.org
+
+Version 3.1.8
+
+   * fixed some compilation bugs in some systems
+   * fixed tcl.lang
+   * fixed bash.lang
+   * New language definition files:
+   * added coffeescript
+   * added Cucumber / feature
+   * added Go
+   * added Groovy
+   * added Json
+   * added Zsh
+   * New output formats:
+   * added HTML5
+   * added S-expressions
+   * added Groff
+
+Version 3.1.7
+
+   * fixed compilation bugs in MacOsX systems (thanks to 
+     Trevor Spiteri)
+   * language definition for Lilypond (thanks to Federico Bruni)
+   * language definition for R statistics programming language
+   * language definition for ISLISP (thanks to Christian Jullien)
+   * improved Erlang definition file (thanks to Erik S�e S�rensen)
+   * new output format: ESC 256 ascii code (thanks to
+     Xavier-Emmanuel Vincent).
+
+Version 3.1.6
+
+   * language definition file for T/Foswiki TML markup (thanks to
+     Paul W. Harvey)
+   * new output format: ODF (e.g. for LibreOffice or to generate ODF 
+     color-highlighted snippets to be used by ODF back-ends,
+     like asciidoc-odf).  Thanks to Dag Wieers.
+   * new output format: MediaWiki thanks to Abe Skolnik
+
+Version 3.1.5
+
+   * boost m4 macro finds boost in lib64
+   * boost m4 macro files are not installed
+   * updated php lang definition with new php 5 keywords
+   * language definition for Scheme (thanks to Orlando Hill)
+   * language definition for Po files (thanks to Mikel Olasagasti)
+   * language definition for Opa (thanks to Valentin Gatien-Baron)
+   * language definition for Javalog (thanks to Mark Silberbauer)
+   * language definition for UPC (thanks to Viraj Sinha)
+   * fixed a bug in scala.lang dealing with keywords
+   * updated sql.lang (thanks to Xavier-Emmanuel Vincent)
+   * Emacs lisp files highlighted as Lisp (thanks to Xavier-Emmanuel Vincent)
+   * improved logtalk.lang (thanks to Paulo Moura)
+   * embed inputlang in the output file (thanks to Masatake Yamato)
+   * highlight _ in variable declarations (thanks to Masatake Yamato)
+   * correctly highlight for less when filenames contain spaces
+
+Version 3.1.4
+
+   * fixed compilation problems for Sun CC
+   * php handles embedded html
+   * html handles embedded css and javascript
+   * Google's Protocol Buffers language definition added
+     (thanks to Joel Smith)
+   * CakePhp template files highlighted as php
+   * haskell literate programming highlighting
+   * vala language definition (thanks to Luca Bruno)
+   * lisp language definition (thanks to Michael McDermott)
+
+Version 3.1.3
+
+   * --tab option is correcly handled
+   * install script with the executable bit
+   * bash is highlighted
+
+Version 3.1.2
+
+   * infer language for files starting with <? and <!doctype
+   * language definition for manifest files, asm, applescript,
+     vbscript, awk, bat, clipper, cobol, D, Erlang
+   * lang def file for compiler output errors
+   * style for label and path
+   * label element recognized in C/C++
+   * qmake based build system available
+   * searches for home directory also on windows
+   * improved logtalk.lang
+   * improved email regular expression in url.lang
+
+Version 3.1.1
+
+   * access to static global LangDefManager, LangMaps is provided
+     through the class Instances
+   * mechanism for setting a global data dir value (e.g., to ensure
+     consistency in a library) and for checking settings
+   * library utility functions to retrieve .lang and .outlang files
+   * fixed default output format to "html.outlang" not "html.lang"
+   * SourceHighlight class return the output file extension
+   * the background color for the document is kept empty if it is
+     not specified in the style file
+   * SourceHighlight.setLineNumberDigits: to
+	 explicitly set the number of digits for line numbers
+   * utils.h file is installed in the header directory
+   * white is a standard color in style files
+   * language definition file for Texinfo
+   * language definition file for Haskell (thanks to Sergey Astanin)
+
+Version 3.1
+
+   * library utility functions to retrieve .style and .css files
+   * fixed library manual link in index.html
+   * doxyfile is now distributed
+   * better formatting for < and > in latex output
+   * doxygen documentation can be built even when building in
+     a separate directory
+   * added man page for source-highlight-settings
+   * language definition for Oz, thanks to David Bremners
+
+Version 3.0
+
+   * provides a library for highlighting that can be used
+     by other programs.
+   *  --regex-range (highlight only specified lines of an input file,
+     according to specific regular expressions describing the delimiting
+     lines).
+   * deal with HTML5 features (thanks to Simon Pieters)
+   * use --docdir for documentation directory
+   * --binary-output command line option to write output files in binary
+     mode
+   * Added the program source-highlight-settings to write a configuration
+     file for source-highlight (and its library) in the user home directory.
+   * languange definition for generic configuration files
+   * languange definition for pkg-config files
+   * the input language is now discovered also using the whole file
+     name (besides the file extension if any)
+   * in .lang files one can specify the exit level
+
+Version 2.11.1
+
+   * fixed an installation bug in non-root mode (thanks to Britton Kerin)
+   * fortran.lang improved with new keywords from Fortran 90 
+     through Fortran 2003 (thanks to Jason Blevins)
+   * javascript.lang improved (thanks to gnombat)
+   * added keywords to caml language definition
+   * Ada language definition file (thanks to Reto Buerki)
+   * lang and outlang files can also be downloaded independently from
+     the source-highlight site
+
+Version 2.11
+
+   * optimized the procedure for finding the best matching expression
+   * improved boost regex library search in configure script
+   * fixed regexp element in javascript lang definition
+   * highlight types used in variable/parameter declarations in C++ and Java
+   * fixed language def files for properties and desktop files
+   * newline chars can be inserted (and ignored) in regular expression
+     specifications
+   * --line-range (highlight only specified lines of an input file,
+     --range-context to specify the number of surrounding context lines,
+     --range-separator the separator line between ranges)
+   * language definition for Xorg configuration files
+   * language definition for Scala (thanks to Dean Wampler)
+   * bash completion file for source-highlight (thanks to Tiziano Muller)
+
+Version 2.10
+
+   * formatting is applied even when generating anchors and references
+   * noref is handled also for output languages using onestyle (e.g., xhtml)
+   * improved fortran highlighting
+   * improved python highlighting
+   * fixed title in docbook output
+   * language definition for ldap files (e.g., ldiff files)
+   * language definition for autoconf files
+   * improved m4 language definition
+   * improved logtalk language definition
+   * url.lang handles ~ in urls
+   * language definition for glsl.lang (provided by Cesare Tirabassi)
+
+Version 2.9
+
+   * language definition for C (not C++) files
+   * language definition for properties files
+   * language definition for KDE desktop and ini files
+   * language definition for lsm files (Linux Software Map)
+   * language definition for rpm spec files
+   * language definition for Haxe files (thanks to Jos Hirth)
+   * style.defaults for associating a style for an element (whose style is
+     not specified) to the style of another element
+   * highlight some KDE programming files (e.g., .rc, .kcfg, etc.)
+   * correctly highlight for less when filenames contain paths
+   * fixed a bug in file inclusion of langdef files
+   * fixed compilation problems for fileutil.cc (thanks to Adrian Reber)
+   * xml elements are correctly recognized when containing .
+     (thanks to Toby White)
+   * references for xhtml output files
+
+Version 2.8
+
+   * lang definition for slang (by John E. Davis)
+   * correctly handle words in ' and ` regular expression strings
+   * the right delimiter of a delim element can refer to marked subexpressions
+     in the left delimiter
+   * fixed the definition of C-style comments which are not nested
+   * improved perl syntax highlighting
+   * javascript regular expression highlighting
+   * padding character for line numbers can be specified (thanks to
+     Roger Nilsson)
+   * removed non standard % make rules
+
+Version 2.7
+
+   * fixed language association for log files.
+   * use standard sed arguments
+   * check that the ctags program supports the options used by source-highlight
+     and disable ctags tests if it does not
+   * removed some memory leaks from scanners and parsers
+   * fixed regular expression highlighting strings in perl 
+     (thanks to Elias Pipping)
+   * regexp language element
+   * infer script languages also checking for the env specification
+   * improved error reporting for lang definition files
+   * ` ` syntax for regular expressions that permits backreferences
+     and conditionals
+   * explicit naming for subexpressions syntax
+   * added a program, check-regexp, for checking regular expressions 
+     on the command line
+   * fix html tag definitions
+   * fix ruby regexp definition
+   * --doc option and references for docbook output
+   * xhtml output with non fixed font
+
+Version 2.6
+
+   * language definition for makefiles
+   * language definition for css files
+   * language definition for m4 files
+   * fixed some problems in xml.lang
+   * fixed some problems in sh.lang
+   * the ctags found during configure is correctly used in makefiles
+   * --quiet option showing no progress information
+     (thanks to C. Michael Pilato)
+   * handle direct color specifications in double quotes in style files
+   * in style files can specify formatting options for more than one
+     element on the same line
+   * accept css specifications as style specifications (limited support)
+   * handle background color for some output formats (e.g., xhtml)
+   * in style files the background color (for the entire output)
+     can be specified
+   * fixed a problem in configure script on some BSD systems
+     (thanks to Thomas Klausner)
+
+Version 2.5
+
+   * fixed lang.map for php files
+   * fixed url.lang
+   * --debug-langdef can be interactive
+   * nohilite.lang that does not perform any highlighting, but
+     only formats the input file into the output format (dealing
+     with output format special characters)
+   * default.lang to which source-highlight falls back when no
+     input language is specified or available
+   * infer script languages
+   * --header and --footer options do not require --doc option
+   * --statistics print elapsed time
+   * highlight cls, dtx and sty LaTeX files
+   * language definition for Tcl
+   * language definition for Sql
+   * language definition for bibtex
+   * infer language of script files
+
+Version 2.4
+
+   * language definition for C# (thanks to Hemmi Shigeru)
+   * language definition for XML (thanks to Andy Buckley)
+   * language definition for shell scripts (thanks to Dirk Jagdmann)
+   * fixed language definition for HTML (tags with numbers are highlighted,
+     e.g., <h1>)
+   * updated language definition for logtalk (thanks to Paulo Moura)
+   * produces the list of elements of a language definition file
+     (--show-lang-elements)
+   * output format definition for HTML where fonts by default are
+     not fixed width.
+   * bug fix in url regular expressions
+   * bug fix with nonsensitive keywords (thanks to Andrea Ercolino)
+   * improved documentation concerning installation of Boost regex library
+
+Version 2.3
+
+   * the regex automaton is printed on the standard output
+     (instead of the standard error)
+   * language definition for postscript
+   * DocBook output format
+   * fixed bug in .map files with \r characters
+   * fixed expression for email
+
+Version 2.2
+
+   * fixed a bug that sigsegv when more than one input file
+     is provided
+   * fixed a compilation error with gcc 4.0
+   * generate references using ctags
+   * fixed a bug with LaTeX output of " with some inputencs
+     and with latexcolor
+   * handle direct color specifications independently from HTML
+   * fixed conversion of hexadecimal characters in output language
+     definitions
+   * fixed compilation error with regex 1.33
+   * include man page
+   * language definition for diff output
+   * fixed bugs in generation of the regular expression automaton
+   * extended documentation with some tutorials on input language
+     definitions
+   * generate more compact output (reduced size)
+   * in LaTeX output longtable is not used anymore
+
+Version 2.1
+
+   * Included obsolete man page.
+   * output language format specifications are read at run-time
+     so that new output languages can be easily added dynamically
+     (without recompiling the sources) by using a simple syntax.
+   * "fixed" and "notfixed" styles can be specified.
+   * fixed the handling of end-of-line (processed only once)
+   * LaTeX output
+   * TeXinfo output
+   * debug of a language definition
+   * tags.j2h files are now called style files.
+   * renamed --tags-file option in --style-file
+   * allows to specify a prefix for the generated line number anchors
+   * --header and --footer do not imply --doc
+   * language definition for LogTalk (thanks to Paulo Moura) and LaTeX
+
+Version 2.0
+
+   * Language specifications are read at run-time, so that
+     new languages can be easily added dynamically (without recompiling
+     the sources) by using a simple syntax.
+   * "nonsensitive" for simple definitions
+   * cgi version not built automatically
+   * failsafe option to simply output the input file when no
+     language definition is found
+   * functionalities with less improved.
+
+Version 1.11.1
+
+   * fixed compilations problems on some Unix compilers
+
+Version 1.11
+
+   * errors in tags error files are reported more correctly and make
+     the program exit
+   * more tag options added
+   * "linenum" tag for specifying the style of line numbers
+
+Version 1.10
+
+   * Added scanner for log files (also for iptables and apache logs)
+     thanks to Jan Tatarik
+   * Fixed some bugs in the perl scanner (thanks to Geir Nilsen)
+   * configure checks for ios_base
+   * check for the right ar to use, fixes problems under Sun compilers
+     (thanks to Paul Townsend)
+
+Version 1.9
+
+   * --no-doc option added to cancel the --doc option even if
+     it is implied (e.g., when css is given) (as suggested by Keith Lea
+     and Grant McLean)
+   * deal with \r correctly
+   * added scanner for language LUA (thanks to Marc Cote')
+   * added scanner for CAML and SML (with the help of Jean-Baptiste Rouquier
+     and James Riely)
+   * fixed a bug in C++ scanner concerning tabs after # (reported by
+     Don Stauffer).
+   * If not specified, the source language will be guessed from the
+     input file extension.
+   * Added src-hilite-lesspipe.sh a script that can be used with less
+     in order to higlight the files processed with less
+     (suggested by Konstantine Serebriany)
+   * fixed a bug in perl scanning when \" is used in regular expressions
+     (reported by Geir Nilsen)
+   * html attribute values are generated in quotes (bug fixed by
+     Patrick Wagstrom)
+   * can generate anchors for line numbers (thanks to Oliver Fischer)
+
+Version 1.8
+
+   * scanner for Javascript
+   * new output format: ESC ascii code (e.g. for less, with the
+     help of Konstantine Serebriany).
+   * tab character are correctly handled by --tab option is given
+     (thanks to Don Stauffer).
+   * presence of getopt_long is handled in a cleaner way.
+   * some changes in how changelog files are highlighted
+   * =head =cut sections in perl sources are correctly handled
+     (reported by Grant McLean)
+   * added Java keywords true and false
+
+Version 1.7
+
+   * scanner for Ruby programming language (thanks to Noritsugu Nakamura).
+   * fixed explicit rules in Makefiles that generated errors with some
+     versions of non-GNU makes.
+
+Version 1.6.3
+
+   * Fixed problems in compilation in systems that do not provide
+     getopt_long and yywrap (reported by Jackie Goodwin).
+   * Added .spec file for generating .rpm and .rpm.src (thanks to
+     Christian W. Zuckschwerdt).
+
+Version 1.6.2
+
+   * compliant to C++ standard headers (iostream etc.), no more
+     backward compatibility warnings with gcc 3.2 (Thanks to
+     Maurizio Loreti for the report).
+
+Version 1.6.1
+
+   * fixed a bug in the configure phase that used to make the compilation
+     fail with compilers not providing the function getop_long
+     (reported by Horacio Montenegro).
+
+Version 1.6
+
+   * scanners for flex and ChangeLog added by John Millaway
+   * default to stdout when no --output is given along with the -i option
+     and when --output="STDOUT" (as suggested by Hugh S. Myers)
+   * fixed a problem with string comments in Python scanner
+   * a separate executable is built, source-highlight-cgi, that can be
+     used as a CGI program
+
+Version 1.5.1
+
+   * xhtml doctype generated correctly (thanks to Christian W. Zuckschwerdt
+     and Josh Ghiloni) reported
+     by Martin Gebert
+   * Anonymous CVS Access is now available
+     http://savannah.gnu.org/projects/src-highlite
+
+Version 1.5
+
+   * xhtml output format is now handled (thanks to Christian W. Zuckschwerdt
+     and Josh Ghiloni)
+   * assert is now recognized as a Java keyword (thanks to Fabio Calefato)
+   * a scanner for Python has been written by Martin Gebert.
+   * when in Php3 strings can span more than one lines and line numbers are
+     correctly formatted.
+
+Version 1.4
+
+   * fixed compilation error with some compilers due to headers istream.h
+     and ostream.h (thanks to Dan barthel)
+   * a scanner for Php3 has been written by Alain Barbet.
+   * reading from stdin does not kill line numbers (notified by Keith
+     Robertson)
+   * line number count is correctly reset when handling multiple files (bug
+     fixed)
+   * for Java sources, if, while, and other keywords that use '(' ')' are
+     now correctly highlighted as keywords instead of as functions (reported
+     by Manuel Kauers and Fabio Calefato)
+   * tabs are correctly handled for Prolog and Perl sources (reported by
+     Martin Gebert)
+
+Version 1.3
+
+   * now there is only one program, namely source-highlight, that accepts a
+     command line option, --src-lang or -s, specifying the source language
+     (for the moment java, cpp and prolog).  Previous programs, java2html
+     and cpp2html are provided as shell scripts, just for compatibility, but
+     their use is not advised.
+   * --out-format, -f, command line option added for specifying the output
+     format (for the moment only html is accepted).  Though only html is
+     handled, this option is required.
+   * a scanner for Prolog has been written by Martin Gebert.
+     This scanner is still to be considered beta,
+     and actually it was written for Visual Prolog, so it should be tested
+     against other Prolog dialects.
+   * a scanner for Perl has been written by Alain Barbet.
+   * Correctly check whether it is possible to write to a file (notified by
+     Martin)
+   * --tab option is correctly handled even for C/C++ files (bug fixed,
+     notified by Martin)
+   * Added option --line-number (-n) in order to print line numbers (as
+     suggested by Ed Scott and Andre Charbonneau).
+   * Man page added.
+
+Version 1.2.1
+
+   * Fixed a problem of compilation for gcc 3.0 (thanks to Alexios Zavras
+     and Bruno Schweizer)
+   * much more recent versions of getopt.h, getopt.c, getopt1.c are provided
+     (the previous ones were very very old!), that do not rely on alloca
+     anymore.
+
+Version 1.2
+
+   * Added normal text decoration (specify "normal" in tags.j2h) (suggested
+     by Bernie Boudet).
+   * fixed a bug for multiple input files (notified by Christian Paulsen)
+
+Version 1.1
+
+   * Included some standard headers; otherwise gcc 2.96 didn't compile
+     (thanks to Arto Viitanen).
+   * fixed bug (seg.fault) with foreign character (thanks to
+     Martin Gebert).
+   * --output-dir added to specify the output directory.
+   * --enable-input-chroot configure option to hardcode the path to prepend
+     for input files (useful when the programs are built for CGI, as
+     suggested by Robert Wetzel).
+
+Version 1.0
+
+   * This is the first release of source-highlight, but it includes already
+     existing programs (cpp2html and java2html), so the changes are related
+     to these programs.
+   * CGI support enabled (thanks to Robert Wetzel);
+     I haven't tested it personally yet, so
+     you may ask him directly.
+   * newline handled correctly according to HTML specifications (again
+     thanks to Robert Wetzel).
+   * Added preprocessor highlighting [preproc], symbol (+,-,^, etc.)
+     highlighting [symbol], curly bracket highlighting [cbracket], function
+     highlighting [function] (thanks to Geurt Vos).
+   * for tags.j2h, added support to enter direct RGB color values (#rrggbb)
+     and colors teal, gray, and darkblue added (thanks to Geurt Vos).
+   * green, darkgreen and brightgreen handled correctly (thanks to Martin
+     Gebert).
+
+-------------------------------------------------------
+Copying information:
+
+Copyright (C) 1999-2008 Lorenzo Bettini Lorenzo Bettini
+http://www.lorenzobettini.it
+
+   Permission is granted to anyone to make or distribute verbatim copies
+   of this document as received, in any medium, provided that the
+   copyright notice and this permission notice are preserved,
+   thus giving the recipient permission to redistribute in turn.
+
+   Permission is granted to distribute modified versions
+   of this document, or of portions of it,
+   under the above conditions, provided also that they
+   carry prominent notices stating who last changed them.
+

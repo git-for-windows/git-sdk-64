@@ -1,0 +1,57 @@
+<!-- Generator: GNU source-highlight 
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">vardef</font></b> <font color="#009900">basic_time</font> <font color="#990000">=</font> <font color="#FF6600">'[[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}'</font>
+<b><font color="#0000FF">vardef</font></b> <font color="#009900">time</font> <font color="#990000">=</font> <font color="#FF6600">'\&lt;'</font> <font color="#990000">+</font> <font color="#009900">$basic_time</font> <font color="#990000">+</font> <font color="#FF6600">'\&gt;'</font>
+<b><font color="#0000FF">vardef</font></b> <font color="#009900">ip</font> <font color="#990000">=</font> <font color="#FF6600">'[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\&gt;'</font>
+<b><font color="#0000FF">vardef</font></b> <font color="#009900">non_empty</font> <font color="#990000">=</font> <font color="#FF6600">'[^[:blank:]]+'</font>
+
+<b><font color="#0000FF">state</font></b> <font color="#009900">date</font> <b><font color="#0000FF">start</font></b> <font color="#FF6600">'^[[:alpha:]]{3}[[:blank:]]{1,2}[[:digit:]]{1,2}(?=[[:blank:]]'</font> <font color="#990000">+</font> <font color="#009900">$basic_time</font> <font color="#990000">+</font> <font color="#FF6600">')'</font> <b><font color="#0000FF">begin</font></b>
+  <b><font color="#0000FF">state</font></b> <font color="#009900">time</font> <b><font color="#0000FF">start</font></b> <font color="#009900">$time</font> <b><font color="#0000FF">begin</font></b>
+    <b><font color="#0000FF">state</font></b> <font color="#009900">symbol</font> <b><font color="#0000FF">start</font></b> <font color="#009900">$non_empty</font> <b><font color="#0000FF">begin</font></b>
+      <font color="#009900">normal</font> <font color="#990000">=</font> <font color="#FF0000">":"</font> <b><font color="#0000FF">exitall</font></b>
+      <font color="#009900">function</font> <font color="#990000">=</font> <font color="#FF6600">'[^:\(\[]+'</font>
+      <font color="#009900">number</font> <b><font color="#0000FF">delim</font></b> <font color="#FF0000">"["</font> <font color="#FF0000">"]"</font>
+      <font color="#009900">number</font> <b><font color="#0000FF">delim</font></b> <font color="#FF0000">"("</font> <font color="#FF0000">")"</font>
+    <b><font color="#0000FF">end</font></b>
+  <b><font color="#0000FF">end</font></b>
+<b><font color="#0000FF">end</font></b>
+
+<b><font color="#0000FF">state</font></b> <font color="#009900">ip</font> <b><font color="#0000FF">start</font></b> <font color="#FF6600">'^'</font> <font color="#990000">+</font> <font color="#009900">$ip</font> <b><font color="#0000FF">begin</font></b>
+  <font color="#009900">string</font> <font color="#990000">=</font> <font color="#FF6600">'[[:alnum:]]+(?=[[:blank:]]\[[[:digit:]]{2}/[[:alpha:]]{3}/[[:digit:]]{4})'</font>
+  <font color="#009900">date</font> <font color="#990000">=</font> <font color="#FF6600">'[[:digit:]]{2}/[[:alpha:]]{3}/[[:digit:]]{4}(?=:'</font> <font color="#990000">+</font> <font color="#009900">$basic_time</font> <font color="#990000">+</font> <font color="#FF6600">')'</font>
+  <font color="#009900">time</font> <font color="#990000">=</font> <font color="#009900">$basic_time</font> <font color="#990000">+</font> <font color="#FF6600">'[[:blank:]][+-][[:digit:]]{4}'</font>
+  <font color="#009900">twonumbers</font> <font color="#990000">=</font> <font color="#FF6600">'[1-5][[:digit:]]{2}[[:blank:]][-0-9]+'</font>
+  <b><font color="#0000FF">state</font></b> <font color="#009900">webmethod</font> <font color="#990000">=</font> <font color="#FF0000">"OPTIONS|GET|HEAD|POST|PUT|DELETE|TRACE|CONNECT|PROPFIND|MKCOL|COPY|MOVE|LOCK|UNLOCK"</font> <b><font color="#0000FF">begin</font></b>
+    <font color="#009900">string</font> <font color="#990000">=</font> <font color="#009900">$non_empty</font> <b><font color="#0000FF">exit</font></b>
+  <b><font color="#0000FF">end</font></b>
+<b><font color="#0000FF">end</font></b>
+
+<b><font color="#0000FF">vardef</font></b> <font color="#009900">weekday_date</font> <font color="#990000">=</font> <font color="#FF6600">'\[[[:alpha:]]{3}[[:blank:]][[:alpha:]]{3}[[:blank:]]{1,2}[[:digit:]]{1,2}[[:blank:]](?='</font> <font color="#990000">+</font> <font color="#009900">$basic_time</font> <font color="#990000">+</font> <font color="#FF6600">')'</font>
+
+<b><font color="#0000FF">state</font></b> <font color="#009900">date</font> <b><font color="#0000FF">start</font></b> <font color="#FF6600">'^'</font> <font color="#990000">+</font> <font color="#009900">$weekday_date</font> <b><font color="#0000FF">begin</font></b>
+  <font color="#009900">time</font> <font color="#990000">=</font> <font color="#009900">$time</font>
+  <font color="#009900">date</font> <font color="#990000">=</font> <font color="#FF6600">'[[:digit:]]{4}\]'</font>
+  <font color="#009900">date</font> <font color="#990000">=</font> <font color="#009900">$weekday_date</font>
+  <font color="#009900">string</font> <font color="#990000">=</font> <font color="#FF0000">"[error]"</font>
+  <font color="#009900">comment</font> <font color="#990000">=</font> <font color="#FF0000">"[notice]"</font>
+  <font color="#009900">ip</font> <font color="#990000">=</font> <font color="#009900">$ip</font>
+<b><font color="#0000FF">end</font></b>
+
+<font color="#009900">ip</font> <font color="#990000">=</font> <font color="#009900">$ip</font>
+
+<font color="#009900">string</font> <font color="#990000">=</font> <font color="#FF0000">"root"</font><font color="#990000">,</font><font color="#FF0000">"failure"</font>
+
+<font color="#990000">(</font><font color="#009900">normal</font><font color="#990000">,</font><font color="#009900">port</font><font color="#990000">)</font> <font color="#990000">=</font> <font color="#FF6600">`((?:port|pid)[[:blank:]])([[:digit:]]+)`</font>
+
+<b><font color="#0000FF">state</font></b> <font color="#009900">normal</font> <b><font color="#0000FF">start</font></b> <font color="#FF6600">'[[:blank:]](?=(IN|OUT)=)'</font> <b><font color="#0000FF">begin</font></b>
+  <b><font color="#0000FF">state</font></b> <font color="#009900">normal</font> <font color="#990000">=</font> <font color="#FF6600">'(IN|OUT|PROTO)=(?=[^[:blank:]]+)'</font> <b><font color="#0000FF">begin</font></b>
+    <font color="#009900">string</font> <font color="#990000">=</font> <font color="#009900">$non_empty</font> <b><font color="#0000FF">exit</font></b>
+  <b><font color="#0000FF">end</font></b>
+  <b><font color="#0000FF">state</font></b> <font color="#009900">normal</font> <font color="#990000">=</font> <font color="#FF6600">'(SPT|DPT|TYPE|SEQ)=(?=[^[:blank:]]+)'</font> <b><font color="#0000FF">begin</font></b>
+    <font color="#009900">cbracket</font> <font color="#990000">=</font> <font color="#009900">$non_empty</font> <b><font color="#0000FF">exit</font></b>
+  <b><font color="#0000FF">end</font></b>
+  <font color="#009900">number</font> <font color="#990000">=</font> <font color="#FF0000">"CWR|ECE|URG|ACK|PSH|RST|SYN|FIN"</font>
+  <font color="#009900">ip</font> <font color="#990000">=</font> <font color="#009900">$ip</font>
+<b><font color="#0000FF">end</font></b></tt></pre>

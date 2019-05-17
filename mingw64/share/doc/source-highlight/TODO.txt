@@ -1,0 +1,148 @@
+TODO list
+=========
+
+test for always flush (together with line number), and command line option
+
+use <ol> lists and css for changing colors of lines,
+see http://shiflett.org/code/highlight.php
+
+shjs_css_transform.sh in share
+
+background color in some .css in doc (for TODO)
+
+the default ctags command line option should contain the
+actual found ctags
+
+line numbers in table in a smarter way, so that code is separated by lines
+(different columns).
+
+CODE CLEANUP
+
+the style file is always parsed even for output formats that don't need it...
+but how to infer whether the style must be read or not?
+IMPORTANT: this is crucial for output generation such as CSS that produces
+elements with the class syntax: if that element is not in the style file that
+element will be generated with class normal but this is not really correct...
+
+GROUPS
+
+also string def as StringDef
+
+Is there an element class that is not a StateStartLangElem?
+
+check empty alternative in string def: "foo||" which would lead
+to a non-terminating program
+
+LANG FILES
+----------
+recognize kde rc files
+
+LIBRARY
+---------------
+- RegexPreprocessor should not contain code dealing with boost::regex?
+
+- in LineRule is it really required to put the [^...]?
+
+- use also line prefix in order to write line number in a different column
+than the source highlighted code.
+
+- outputfilename and outputfilename extension do not concern the formatter?
+the only thing that should be passed to format() should be linenumber and filename?
+  - why refentry.filename == fileinfo->filename || refentry.filename
+                    == fileinfo->input_file_name) also input_file_name (no path)?
+                    
+- line numbers and code in different columns when generating tables (probably use
+linesuffix)?
+
+- ctags:
+  Are the input and output file useful in ctagsformatter?  Or could we put it into
+  FormatterParams?
+
+LIBRARY
+
+- use namespaces (for copyright and reportbugs?)
+- class for parsers (or for langdefparserfun.h) in order to use namespaces
+- document LangElem
+
+- should library headers use <srchilite/...> ?
+- who calls createMissingFormatter?
+
+Configuration: a class with data dir, LangMap, keep all the related
+objects consistent: e.g., if we change dataDir, then change it also in 
+lang map objects. (?)
+
+move .lang, .outlang and others in another directory?
+
+Makefile.lang:
+- add VAR += VALUE and -= VALUE
+
+remove @author in files (and check doxygen documentation)
+
+Java annotations @Override, etc.?
+
+accept rgb colors in the style and .outlang can
+express a way to use the colors in this format
+
+TextStyleFormatterFactory: PreFormatter is never used!
+
+3.1.2
+
+improve source-highlight-settings interface
+add help and some command lines (--show)
+
+in less handle file names with spaces (use " ?)
+
+increment x:X:x for library (languageinfer.cpp)
+
+string delim "\"" '\"(c|w|d)' build a multiline regex!
+
+  rule (string) "`(?:[^`])*`" (exit level: 0, next: 0)
+  rule (string) "\"" (exit level: 0, next: 4)
+    STATE 4 default: string
+      rule (string) "\"(?:c|w|d)" (exit level: 1, next: 0)
+
+move .lang, .outlang, .map, etc in a share directory
+in source folder, together with style and css files.
+
+in this case
+
+df =
+include "c_comment.lang"
+
+reports as file name error c_comment.lang!
+
+if the included file cannot be found it does not report an error?
+
+QMAKE
+-----
+ABSOLUTEDATADIR=\\\"/usr/local\\\" make it configurable
+
+PREFIX variable to pass to qmake
+
+texinfo generate html and put in the doc source folder
+
+common.pri for files in src
+
+LANGUAGES
+
+doxygen
+doxygen in C/C++ (\ syntax)
+
+deal with php in html title and other special cases
+
+qmake .pro and .pri files
+
+.ini files (e.g., php.ini) comment lines start with ;
+
+in latex.outlang
+"~" "{\\raise.17ex\\hbox{$\\scriptstyle\\sim$}}"
+
+texinfo generated files in the doc source folder
+
+BEFORE RELEASING
+
+remember to update the version and library version in
+defines.pri
+
+remember to update the version in .directive
+

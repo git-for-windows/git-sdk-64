@@ -1,0 +1,11 @@
+environment keyword delim $MACROSTART $MACROEND multiline nested begin
+    attribute = $MACROATTR
+    keyword = $MACRO
+    environment string delim "\"" "\"" escape "\\" multiline begin
+        keyword = $MACRO
+        include "tml_glue.lang"
+        include "tml_macrosdelayed3.lang"
+        include "tml_macrotokens.lang"
+        include "tml_macrolinks.lang"
+    end
+end

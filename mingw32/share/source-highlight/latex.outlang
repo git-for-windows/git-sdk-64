@@ -1,0 +1,59 @@
+extension "tex"
+
+doctemplate
+"% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+\documentclass{article}
+$header
+\title{$title}
+\date{}
+\begin{document}
+\maketitle
+\noindent
+"
+"
+$footer
+\end{document}
+"
+end
+
+nodoctemplate
+"% Generator: GNU source-highlight, by Lorenzo Bettini, http://www.gnu.org/software/src-highlite
+$header\noindent
+"
+"
+$footer"
+end
+
+bold "\textbf{$text}"
+italics "\textit{$text}"
+underline "\underline{$text}"
+fixed "\texttt{$text}"
+
+anchor "\label{$infilename:$linenum}$text"
+reference "{\hfill $text $\rightarrow$ $infile:$linenum, page~\pageref{$infilename:$linenum}}"
+
+lineprefix "\mbox{}"
+
+translations
+"_" "$\\_$"
+"{" "\\{"
+"}" "\\}"
+"<" "\\textless{}"
+">" "\\textgreater{}"
+"&" "\\&"
+"\\" "\\textbackslash{}"
+"^" "\\textasciicircum{}"
+"~" "\\textasciitilde{}"
+"\n" " \\\\\n"
+#"  " "\\hspace*{2ex} "
+#"\t" "\\hspace*{8ex} "
+" " "\\ "
+"\t" "\\ \\ \\ \\ \\ \\ \\ \\ "
+"%" "\\%"
+"#" "\\#"
+"$" "\\$"
+"|" "$|$"
+"---" "-\\/-\\/-"
+"--" "-\\/-"
+"\"" "\"{}" # avoids problems with some inputenc
+end

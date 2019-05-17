@@ -1,0 +1,42 @@
+extension "groff"
+doctemplate
+"
+$header
+$title
+"
+"
+$footer
+"
+end
+
+nodoctemplate
+"
+.nf
+"
+"
+.fi
+"
+end
+
+bold "\fB$text\fP"
+italics "\fB$text\fP"
+underline "\fH$text\fP"
+fixed "\fC$text\fP"
+
+anchor "$infilename : $linenum - $text"
+reference "$text \(-> $infile:$linenum, page : $infilename:$linenum"
+
+#lineprefix "\fC\(em\fP   "
+#lineprefix "\fC\n(ln\fP   "
+lineprefix " "
+
+translations
+##"_" "\_"
+##"\n" " \\\\\n"
+##" " "\\ "
+##"\t" "\\ \\ \\ \\ \\ \\ \\ \\ "
+"\t" "    "
+"|" "|"
+"---" "\(em"
+"--" "\(mi"
+end

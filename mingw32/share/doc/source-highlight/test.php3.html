@@ -1,0 +1,339 @@
+<!-- Generator: GNU source-highlight 
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><font color="#990000">&lt;?php</font>
+<i><font color="#9A1900">/*</font></i>
+<i><font color="#9A1900">CircaLib.php3 : provide function to perform search on Circa with PHP</font></i>
+<i><font color="#9A1900">Copyright 2000 A.Barbet </font></i><u><font color="#0000FF">alian@alianwebserver.com</font></u><i><font color="#9A1900">.  All rights reserved.</font></i>
+
+<i><font color="#9A1900">Revision 1.1  2000/11/23 22:51:17  Administrateur</font></i>
+<i><font color="#9A1900">addSite.php3</font></i>
+
+<i><font color="#9A1900">Revision 1.2  2000/10/27 16:01:12  Administrateur</font></i>
+<i><font color="#9A1900">- Navigation par categorie</font></i>
+<i><font color="#9A1900">- Passer le prefixe en variable globale</font></i>
+<i><font color="#9A1900">- Passer la database en variable globale</font></i>
+
+<i><font color="#9A1900">Revision 1.1  2000/10/22 22:43:47  Administrateur</font></i>
+<i><font color="#9A1900">Premiere version fonctionnelle. Supporte:</font></i>
+<i><font color="#9A1900">- Requetes booleenes</font></i>
+<i><font color="#9A1900">- Affichage par pages de 10 liens</font></i>
+
+<i><font color="#9A1900">*/</font></i>
+
+<i><font color="#9A1900">/*</font></i>
+
+<i><font color="#9A1900">Fonction permettant d'effectuer une recherche par mot dans Circa</font></i>
+
+<i><font color="#9A1900">Paramètres :</font></i>
+
+<i><font color="#9A1900"> $template : Masque HTML pour le resultat de chaque lien. La liste des variables définies au</font></i>
+<i><font color="#9A1900"> moment du eval sont : $indiceG,$titre,$description,$url,$facteur,$last_update,$langue</font></i>
+
+<i><font color="#9A1900">  Exemple de masque :</font></i>
+
+<i><font color="#9A1900">  '"&lt;p&gt;$indiceG - &lt;a href=\"$url\"&gt;$titre&lt;/a&gt; $description&lt;br&gt;</font></i>
+<i><font color="#9A1900">   &lt;font class=\"small\"&gt;&lt;b&gt;Url:&lt;/b&gt; $url &lt;b&gt;Facteur:&lt;/b&gt; $facteur</font></i>
+<i><font color="#9A1900">   &lt;b&gt;Last update:&lt;/b&gt; $last_update &lt;/font&gt;&lt;/p&gt;\n"'</font></i>
+
+<i><font color="#9A1900"> $mot    : Séquence des mots recherchés tel que tapé par l'utilisateur</font></i>
+<i><font color="#9A1900"> first   : Indice du premier site affiché dans le résultat</font></i>
+<i><font color="#9A1900"> $id     : Id du site dans lequel effectué la recherche</font></i>
+<i><font color="#9A1900"> $langue : Restriction par langue (facultatif)</font></i>
+<i><font color="#9A1900"> $Url    : Restriction par url : les url trouvées commenceront par $Url (facultatif)</font></i>
+<i><font color="#9A1900"> $create : Restriction par date inscription. Format YYYY-MM-JJ HH:MM:SS (facultatif)</font></i>
+<i><font color="#9A1900"> $update : Restriction par date de mise à jour des pages. Format YYYY-MM-JJ HH:MM:SS (facultatif)</font></i>
+<i><font color="#9A1900"> $catego : Restriction par categorie (facultatif)</font></i>
+
+<i><font color="#9A1900">Retourne ($resultat,$links,$indice)</font></i>
+
+<i><font color="#9A1900"> $resultat : Buffer HTML contenant la liste des sites trouves formaté en fonction</font></i>
+<i><font color="#9A1900">             de $template et des mots present dans $mots</font></i>
+<i><font color="#9A1900"> $links    : Liens vers les pages suivantes / precedentes</font></i>
+<i><font color="#9A1900"> $indice   : Nombre de sites trouves</font></i>
+
+<i><font color="#9A1900">*/</font></i>
+
+<b><font color="#000080">include</font></b><font color="#990000">(</font><font color="#FF0000">"foo.php"</font><font color="#990000">);</font>
+<b><font color="#000080">include_once</font></b><font color="#990000">(</font><font color="#FF0000">"bar.php"</font><font color="#990000">);</font>
+
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">search</font></b><font color="#990000">(</font><font color="#009900">$template</font><font color="#990000">,</font><font color="#009900">$word</font><font color="#990000">,</font><font color="#009900">$first</font><font color="#990000">,</font><font color="#009900">$idc</font><font color="#990000">,</font><font color="#009900">$langue</font><font color="#990000">,</font><font color="#009900">$Url</font><font color="#990000">,</font><font color="#009900">$create</font><font color="#990000">,</font><font color="#009900">$update</font><font color="#990000">,</font><font color="#009900">$categorie</font><font color="#990000">)</font>
+         <font color="#FF0000">{</font>
+         <font color="#009900">$mots</font> <font color="#990000">=</font> <b><font color="#000000">split</font></b><font color="#990000">(</font> <font color="#FF0000">" "</font><font color="#990000">,</font> <b><font color="#000000">strtolower</font></b><font color="#990000">(</font><font color="#009900">$word</font><font color="#990000">));</font>
+         <font color="#009900">$i</font><font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font>
+         <i><font color="#9A1900"># Recherche des requetes booleenes</font></i>
+         <b><font color="#0000FF">while</font></b><font color="#990000">(</font> <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$key</font><font color="#990000">,</font><font color="#009900">$valeur</font><font color="#990000">)</font> <font color="#990000">=</font> <b><font color="#0000FF">each</font></b> <font color="#990000">(</font><font color="#009900">$mots</font><font color="#990000">))</font>
+                <font color="#FF0000">{</font>
+                <b><font color="#0000FF">if</font></b>    <font color="#990000">(</font><font color="#009900">$valeur</font> <font color="#990000">==</font> <font color="#FF0000">'+'</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$ind_and</font><font color="#990000">[]=</font><font color="#009900">$i</font><font color="#990000">;</font><font color="#FF0000">}</font> <i><font color="#9A1900"># Reperage de la position des mots 'and'</font></i>
+                <b><font color="#0000FF">else</font></b> <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$valeur</font> <font color="#990000">==</font> <font color="#FF0000">'-'</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$ind_not</font><font color="#990000">[]=</font><font color="#009900">$i</font><font color="#990000">;</font><font color="#FF0000">}</font> <i><font color="#9A1900"># Reperage de la position des mots 'not'</font></i>
+                <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$mots_tmp</font><font color="#990000">[]=</font><font color="#009900">$valeur</font><font color="#990000">;</font><font color="#FF0000">}</font>
+                <font color="#009900">$i</font><font color="#990000">++;</font>
+                <font color="#FF0000">}</font>
+         <i><font color="#9A1900"># Recherche SQL</font></i>
+         <font color="#009900">$tab</font> <font color="#990000">=</font> <b><font color="#000000">search_word</font></b><font color="#990000">(</font><b><font color="#000000">join</font></b><font color="#990000">(</font><font color="#FF0000">"','"</font><font color="#990000">,</font><font color="#009900">$mots_tmp</font><font color="#990000">),</font><font color="#009900">$idc</font><font color="#990000">,</font><font color="#FF0000">''</font><font color="#990000">,</font><font color="#FF0000">''</font><font color="#990000">,</font><font color="#FF0000">''</font><font color="#990000">,</font><font color="#FF0000">''</font><font color="#990000">,</font><font color="#FF0000">''</font><font color="#990000">);</font>
+         <i><font color="#9A1900"># On supprime tout ceux qui ne repondent pas aux criteres and si present</font></i>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><b><font color="#000000">is_array</font></b><font color="#990000">(</font><font color="#009900">$ind_and</font><font color="#990000">))</font>
+             <font color="#FF0000">{</font><b><font color="#0000FF">while</font></b><font color="#990000">(</font> <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$key</font><font color="#990000">,</font><font color="#009900">$ind</font><font color="#990000">)</font> <font color="#990000">=</font> <b><font color="#0000FF">each</font></b><font color="#990000">(</font><font color="#009900">$ind_and</font><font color="#990000">))</font> <font color="#FF0000">{</font><b><font color="#0000FF">while</font></b><font color="#990000">(</font> <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$url</font><font color="#990000">,</font><font color="#009900">$tab_url</font><font color="#990000">)</font> <font color="#990000">=</font> <b><font color="#0000FF">each</font></b> <font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">))</font>
+                       <font color="#FF0000">{</font><b><font color="#0000FF">if</font></b> <font color="#990000">(!</font><b><font color="#000000">appartient</font></b><font color="#990000">(</font><font color="#009900">$mots</font><font color="#990000">[</font><font color="#009900">$ind</font><font color="#990000">+</font><font color="#993399">1</font><font color="#990000">],</font><font color="#009900">$tab_url</font><font color="#990000">[</font><font color="#993399">5</font><font color="#990000">]))</font> <font color="#FF0000">{</font><b><font color="#0000FF">unset</font></b><font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$url</font><font color="#990000">]);</font><font color="#FF0000">}}}</font><b><font color="#000000">reset</font></b><font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">);</font><font color="#FF0000">}</font>
+         <i><font color="#9A1900"># On supprime tout ceux qui ne repondent pas aux criteres not si present</font></i>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><b><font color="#000000">is_array</font></b><font color="#990000">(</font><font color="#009900">$ind_not</font><font color="#990000">))</font>
+             <font color="#FF0000">{</font><b><font color="#0000FF">while</font></b><font color="#990000">(</font> <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$key</font><font color="#990000">,</font><font color="#009900">$ind</font><font color="#990000">)</font> <font color="#990000">=</font> <b><font color="#0000FF">each</font></b><font color="#990000">(</font><font color="#009900">$ind_not</font><font color="#990000">))</font> <font color="#FF0000">{</font><b><font color="#0000FF">while</font></b><font color="#990000">(</font> <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$url</font><font color="#990000">,</font><font color="#009900">$tab_url</font><font color="#990000">)</font> <font color="#990000">=</font> <b><font color="#0000FF">each</font></b> <font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">))</font>
+                       <font color="#FF0000">{</font><b><font color="#0000FF">if</font></b> <font color="#990000">(</font><b><font color="#000000">appartient</font></b><font color="#990000">(</font><font color="#009900">$mots</font><font color="#990000">[</font><font color="#009900">$ind</font><font color="#990000">+</font><font color="#993399">1</font><font color="#990000">],</font><font color="#009900">$tab_url</font><font color="#990000">[</font><font color="#993399">5</font><font color="#990000">]))</font> <font color="#FF0000">{</font><b><font color="#0000FF">unset</font></b><font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$url</font><font color="#990000">]);</font><font color="#FF0000">}}}</font><b><font color="#000000">reset</font></b><font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">);</font><font color="#FF0000">}</font>
+         <font color="#009900">$indice</font><font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font><font color="#009900">$nbResultPerPage</font><font color="#990000">=</font><font color="#993399">10</font><font color="#990000">;</font>
+         <font color="#009900">$lasto</font> <font color="#990000">=</font> <font color="#009900">$first</font> <font color="#990000">+</font> <font color="#009900">$nbResultPerPage</font><font color="#990000">;</font>
+         <i><font color="#9A1900"># On met en forme le resultat</font></i>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><b><font color="#000000">is_array</font></b><font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">))</font>
+             <font color="#FF0000">{</font>
+             <b><font color="#0000FF">while</font></b><font color="#990000">(</font> <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$url</font><font color="#990000">,</font><font color="#009900">$tab_url</font><font color="#990000">)</font> <font color="#990000">=</font> <b><font color="#0000FF">each</font></b> <font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">))</font>
+                <font color="#FF0000">{</font>
+                <font color="#009900">$indiceG</font><font color="#990000">=</font><font color="#009900">$indice</font><font color="#990000">+</font><font color="#993399">1</font><font color="#990000">;</font>
+                <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$titre</font><font color="#990000">,</font><font color="#009900">$description</font><font color="#990000">,</font><font color="#009900">$facteur</font><font color="#990000">,</font><font color="#009900">$langue</font><font color="#990000">,</font><font color="#009900">$last_update</font><font color="#990000">,</font><font color="#009900">$mot</font><font color="#990000">)=</font><font color="#009900">$tab_url</font><font color="#990000">;</font>
+
+                <b><font color="#0000FF">if</font></b> <font color="#990000">((</font><font color="#009900">$indice</font><font color="#990000">&gt;=</font><font color="#009900">$first</font><font color="#990000">)&amp;&amp;(</font><font color="#009900">$indice</font><font color="#990000">&lt;</font><font color="#009900">$lasto</font><font color="#990000">))</font> <font color="#FF0000">{</font><b><font color="#0000FF">eval</font></b><font color="#990000">(</font><font color="#009900">$template</font><font color="#990000">);</font><font color="#FF0000">}</font>
+                <i><font color="#9A1900"># Constitution des liens suivants / precedents</font></i>
+                <b><font color="#0000FF">if</font></b> <font color="#990000">(!(</font><font color="#009900">$indice</font><font color="#990000">%</font><font color="#009900">$nbResultPerPage</font><font color="#990000">))</font>
+                        <font color="#FF0000">{</font>
+                        <font color="#009900">$nbPage</font><font color="#990000">++;</font>
+                        <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$indice</font><font color="#990000">==</font><font color="#009900">$first</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$links</font><font color="#990000">.=</font><font color="#FF0000">"$nbPage- "</font><font color="#990000">;</font><font color="#FF0000">}</font>
+                        <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$links</font><font color="#990000">.=</font><font color="#FF0000">'&lt;a href="'</font><font color="#990000">.</font><b><font color="#000000">get_link</font></b><font color="#990000">(</font><font color="#009900">$indice</font><font color="#990000">,</font><font color="#009900">$word</font><font color="#990000">,</font><font color="#009900">$idc</font><font color="#990000">).</font><font color="#FF0000">'"&gt;'</font><font color="#990000">.</font><font color="#009900">$nbPage</font><font color="#990000">.</font><font color="#FF0000">'&lt;/a&gt;- '</font><font color="#990000">.</font><font color="#FF0000">"\n"</font><font color="#990000">;</font><font color="#FF0000">}</font>
+                        <font color="#FF0000">}</font>
+                <font color="#009900">$indice</font><font color="#990000">++;</font>
+                <font color="#FF0000">}</font>
+             <font color="#FF0000">}</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$indice</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$indice</font><font color="#990000">=</font><font color="#FF0000">"$indice sites trouves"</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$indice</font><font color="#990000">=</font><font color="#FF0000">"&lt;p&gt;Aucun document trouvé.&lt;/p&gt;"</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">array</font></b><font color="#990000">(</font><font color="#009900">$resultat</font><font color="#990000">,</font><font color="#009900">$links</font><font color="#990000">,</font><font color="#009900">$indice</font><font color="#990000">);</font>
+         <font color="#FF0000">}</font>
+
+<i><font color="#9A1900">/*</font></i>
+
+<i><font color="#9A1900">Construction de la requete SQL. Son exploitation est faite par search</font></i>
+
+<i><font color="#9A1900"> $tab    : Reference du hash où mettre le resultat</font></i>
+<i><font color="#9A1900"> $word   : Mot recherché</font></i>
+<i><font color="#9A1900"> $id     : Id du site dans lequel effectué la recherche</font></i>
+<i><font color="#9A1900"> $langue : Restriction par langue (facultatif)</font></i>
+<i><font color="#9A1900"> $Url    : Restriction par url</font></i>
+<i><font color="#9A1900"> $create : Restriction par date inscription</font></i>
+<i><font color="#9A1900"> $update : Restriction par date de mise à jour des pages</font></i>
+<i><font color="#9A1900"> $catego : Restriction par categorie</font></i>
+
+<i><font color="#9A1900">Retourne le tableau avec le resultat de la recherche</font></i>
+<i><font color="#9A1900">Le hash est constitué comme tel:</font></i>
+
+<i><font color="#9A1900">      $tab{$url}[0] : titre</font></i>
+<i><font color="#9A1900">      $tab{$url}[1] : description</font></i>
+<i><font color="#9A1900">      $tab{$url}[2] : facteur</font></i>
+<i><font color="#9A1900">      $tab{$url}[3] : langue</font></i>
+<i><font color="#9A1900">      $tab{$url}[4] : date de dernière modification</font></i>
+<i><font color="#9A1900">   @{$$tab{$url}[5]}: liste des mots trouves pour cet url</font></i>
+
+<i><font color="#9A1900">*/</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">search_word</font></b><font color="#990000">(</font><font color="#009900">$word</font><font color="#990000">,</font><font color="#009900">$idc</font><font color="#990000">,</font><font color="#009900">$langue</font><font color="#990000">,</font><font color="#009900">$Url</font><font color="#990000">,</font><font color="#009900">$create</font><font color="#990000">,</font><font color="#009900">$update</font><font color="#990000">,</font><font color="#009900">$categorie</font><font color="#990000">)</font>
+         <font color="#FF0000">{</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$prefix</font><font color="#990000">;</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$database</font><font color="#990000">;</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$langue</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$langue</font><font color="#990000">=</font><font color="#FF0000">" and langue='$langue' "</font><font color="#990000">;</font><font color="#FF0000">}</font> <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$langue</font><font color="#990000">=</font> <font color="#FF0000">' '</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">((</font><font color="#009900">$Url</font><font color="#990000">)&amp;&amp;(</font><font color="#009900">$Url</font> <font color="#990000">!=</font> <font color="#FF0000">'http://'</font><font color="#990000">))</font> <font color="#FF0000">{</font><font color="#009900">$Url</font><font color="#990000">=</font><font color="#FF0000">" and url like '$Url%' "</font><font color="#990000">;</font><font color="#FF0000">}</font>          <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$Url</font><font color="#990000">=</font><font color="#FF0000">' '</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$create</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$create</font><font color="#990000">=</font><font color="#FF0000">"and unix_timestamp('$create')&lt; unix_timestamp(last_check) "</font><font color="#990000">;</font><font color="#FF0000">}</font>  <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$create</font><font color="#990000">=</font><font color="#FF0000">' '</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$update</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$update</font><font color="#990000">=</font><font color="#FF0000">"and unix_timestamp('$update')&lt; unix_timestamp(last_update) "</font><font color="#990000">;</font><font color="#FF0000">}</font> <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$update</font><font color="#990000">=</font><font color="#FF0000">' '</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$categorie</font><font color="#990000">)</font> <font color="#FF0000">{}</font>
+         <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$categorie</font><font color="#990000">=</font><font color="#FF0000">' '</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <font color="#009900">$requete</font> <font color="#990000">=</font> <font color="#FF0000">"</font>
+<font color="#FF0000">                select facteur,url,titre,description,langue,last_update,mot</font>
+<font color="#FF0000">                from   "</font><font color="#990000">.</font><font color="#009900">$prefix</font><font color="#990000">.</font><font color="#009900">$idc</font><font color="#990000">.</font><font color="#FF0000">"links l,"</font><font color="#990000">.</font><font color="#009900">$prefix</font><font color="#990000">.</font><font color="#009900">$idc</font><font color="#990000">.</font><font color="#FF0000">"relation r</font>
+<font color="#FF0000">                where  r.id_site=l.id</font>
+<font color="#FF0000">                and    r.mot in ('$word')</font>
+<font color="#FF0000">                $langue $Url $create $update $categorie</font>
+<font color="#FF0000">                order  by facteur desc"</font><font color="#990000">;</font>
+         <font color="#009900">$result</font> <font color="#990000">=</font> <b><font color="#000000">mysql_db_query</font></b><font color="#990000">(</font><font color="#009900">$database</font><font color="#990000">,</font><font color="#009900">$requete</font><font color="#990000">);</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font><font color="#009900">$result</font><font color="#990000">)</font> <font color="#FF0000">{</font><b><font color="#0000FF">print</font></b> <font color="#FF0000">"$requete"</font><font color="#990000">;</font><b><font color="#0000FF">return</font></b> <font color="#990000">;</font><font color="#FF0000">}</font>
+         <font color="#009900">$RowCount</font> <font color="#990000">=</font> <b><font color="#000000">MySQL_NUMROWS</font></b><font color="#990000">(</font><font color="#009900">$result</font><font color="#990000">);</font>
+         <b><font color="#0000FF">while</font></b> <font color="#990000">(</font><font color="#009900">$i</font><font color="#990000">&lt;</font><font color="#009900">$RowCount</font><font color="#990000">)</font>
+                <font color="#FF0000">{</font>
+                <b><font color="#0000FF">list</font></b> <font color="#990000">(</font><font color="#009900">$facteur</font><font color="#990000">,</font><font color="#009900">$url</font><font color="#990000">,</font><font color="#009900">$titre</font><font color="#990000">,</font><font color="#009900">$description</font><font color="#990000">,</font><font color="#009900">$langue</font><font color="#990000">,</font><font color="#009900">$last_update</font><font color="#990000">,</font><font color="#009900">$mot</font><font color="#990000">)=</font> <b><font color="#000000">mysql_fetch_row</font></b><font color="#990000">(</font><font color="#009900">$result</font><font color="#990000">);</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$url</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">]</font> <font color="#990000">=</font> <font color="#009900">$titre</font><font color="#990000">;</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$url</font><font color="#990000">][</font><font color="#993399">1</font><font color="#990000">]=</font><font color="#009900">$description</font><font color="#990000">;</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$url</font><font color="#990000">][</font><font color="#993399">2</font><font color="#990000">]+=</font><font color="#009900">$facteur</font><font color="#990000">;</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$url</font><font color="#990000">][</font><font color="#993399">3</font><font color="#990000">]=</font><font color="#009900">$langue</font><font color="#990000">;</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$url</font><font color="#990000">][</font><font color="#993399">4</font><font color="#990000">]=</font><font color="#009900">$last_update</font><font color="#990000">;</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$url</font><font color="#990000">][</font><font color="#993399">5</font><font color="#990000">][]=</font><font color="#009900">$mot</font><font color="#990000">;</font>
+                <font color="#009900">$i</font><font color="#990000">++;</font>
+                <font color="#FF0000">}</font>
+         <b><font color="#0000FF">return</font></b> <font color="#009900">$tab</font><font color="#990000">;</font>
+         <font color="#FF0000">}</font>
+
+<i><font color="#9A1900">/*</font></i>
+
+<i><font color="#9A1900">Fonction retournant la liste des categories de la categorie $id dans le site $idr</font></i>
+
+<i><font color="#9A1900"> $id       : Id de la categorie de depart. Si undef, 0 est utilisé (Considéré comme le "Home")</font></i>
+<i><font color="#9A1900"> $idr           : Id du responsable</font></i>
+<i><font color="#9A1900"> $template : Masque HTML pour le resultat de chaque lien. Si undef, le masque par defaut</font></i>
+<i><font color="#9A1900">             (defini en haut de ce module) sera utlise</font></i>
+
+<i><font color="#9A1900">Retourne ($resultat,$nom_categorie) :</font></i>
+
+<i><font color="#9A1900"> $resultat : Buffer contenant la liste des sites formatées en ft de $template</font></i>
+<i><font color="#9A1900"> $nom_categorie : Nom court de la categorie</font></i>
+
+<i><font color="#9A1900">*/</font></i>
+
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">categories_in_categorie</font></b><font color="#990000">(</font><font color="#009900">$id</font><font color="#990000">,</font><font color="#009900">$idr</font><font color="#990000">,</font><font color="#009900">$template</font><font color="#990000">)</font>
+         <font color="#FF0000">{</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$database</font><font color="#990000">;</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$prefix</font><font color="#990000">;</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font><font color="#009900">$idr</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$idr</font><font color="#990000">=</font><font color="#993399">1</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font><font color="#009900">$id</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$id</font><font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <font color="#009900">$requete</font> <font color="#990000">=</font> <font color="#FF0000">"select id,nom,parent from "</font><font color="#990000">.</font><font color="#009900">$prefix</font><font color="#990000">.</font><font color="#009900">$idr</font><font color="#990000">.</font><font color="#FF0000">"categorie"</font><font color="#990000">;</font>
+         <font color="#009900">$result</font> <font color="#990000">=</font> <b><font color="#000000">mysql_db_query</font></b><font color="#990000">(</font><font color="#009900">$database</font><font color="#990000">,</font><font color="#009900">$requete</font><font color="#990000">);</font>
+         <font color="#009900">$RowCount</font> <font color="#990000">=</font> <b><font color="#000000">MySQL_NUMROWS</font></b><font color="#990000">(</font><font color="#009900">$result</font><font color="#990000">);</font>
+         <font color="#009900">$i</font><font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font>
+         <b><font color="#0000FF">while</font></b> <font color="#990000">(</font><font color="#009900">$i</font><font color="#990000">&lt;</font><font color="#009900">$RowCount</font><font color="#990000">)</font>
+                <font color="#FF0000">{</font>
+                <b><font color="#0000FF">list</font></b> <font color="#990000">(</font><font color="#009900">$idc</font><font color="#990000">,</font><font color="#009900">$nom</font><font color="#990000">,</font><font color="#009900">$parent</font><font color="#990000">)=</font> <b><font color="#000000">mysql_fetch_row</font></b><font color="#990000">(</font><font color="#009900">$result</font><font color="#990000">);</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$idc</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">]=</font><font color="#009900">$nom</font><font color="#990000">;</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$idc</font><font color="#990000">][</font><font color="#993399">1</font><font color="#990000">]=</font><font color="#009900">$parent</font><font color="#990000">;</font>
+                <font color="#009900">$i</font><font color="#990000">++;</font>
+                <font color="#FF0000">}</font>
+        <b><font color="#0000FF">while</font></b><font color="#990000">(</font> <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$key</font><font color="#990000">,</font><font color="#009900">$val</font><font color="#990000">)</font> <font color="#990000">=</font> <b><font color="#0000FF">each</font></b> <font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">))</font>
+                <font color="#FF0000">{</font>
+                <font color="#009900">$nom</font><font color="#990000">=</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$key</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">];</font>
+                <font color="#009900">$parent</font><font color="#990000">=</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$key</font><font color="#990000">][</font><font color="#993399">1</font><font color="#990000">];</font>
+                <font color="#009900">$nom_complet</font><font color="#990000">=</font><font color="#FF0000">"&lt;a href=\""</font><font color="#990000">.</font><b><font color="#000000">getenv</font></b><font color="#990000">(</font><font color="#FF0000">'SCRIPT_NAME'</font><font color="#990000">).</font><font color="#FF0000">"?browse=1&amp;id=$idr\"&gt;Accueil&lt;/a&gt;"</font><font color="#990000">.</font><b><font color="#000000">getParent</font></b><font color="#990000">(</font><font color="#009900">$key</font><font color="#990000">,</font><font color="#009900">$idr</font><font color="#990000">,</font><font color="#009900">$tab</font><font color="#990000">);</font>
+                <font color="#009900">$links</font> <font color="#990000">=</font> <b><font color="#000000">get_link_categorie</font></b><font color="#990000">(</font><font color="#009900">$key</font><font color="#990000">,</font><font color="#009900">$idr</font><font color="#990000">);</font>
+                <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$parent</font><font color="#990000">==</font><font color="#009900">$id</font><font color="#990000">)</font> <font color="#FF0000">{</font><b><font color="#0000FF">eval</font></b><font color="#990000">(</font><font color="#009900">$template</font><font color="#990000">);</font><font color="#FF0000">}</font>
+                <font color="#FF0000">}</font>
+        <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$i</font><font color="#990000">==</font><font color="#993399">0</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$resultat</font><font color="#990000">=</font><font color="#FF0000">"&lt;p&gt;Plus de catégorie&lt;/p&gt;"</font><font color="#990000">;</font><font color="#FF0000">}</font>
+        <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$id</font><font color="#990000">!=</font><font color="#993399">0</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$titre</font> <font color="#990000">=</font> <font color="#FF0000">"&lt;a href=\""</font><font color="#990000">.</font><b><font color="#000000">getenv</font></b><font color="#990000">(</font><font color="#FF0000">'SCRIPT_NAME'</font><font color="#990000">).</font><font color="#FF0000">"?browse=1&amp;id=$idr\"&gt;Accueil&lt;/a&gt; "</font><font color="#990000">.</font><b><font color="#000000">getParent</font></b><font color="#990000">(</font><font color="#009900">$id</font><font color="#990000">,</font><font color="#009900">$idr</font><font color="#990000">,</font><font color="#009900">$tab</font><font color="#990000">);</font><font color="#FF0000">}</font>
+        <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$titre</font><font color="#990000">=</font><font color="#FF0000">" "</font><font color="#990000">;</font><font color="#FF0000">}</font>
+        <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">array</font></b><font color="#990000">(</font><font color="#009900">$resultat</font><font color="#990000">,</font><font color="#009900">$titre</font><font color="#990000">);</font>
+        <font color="#FF0000">}</font>
+
+<i><font color="#9A1900">/*</font></i>
+
+<i><font color="#9A1900">Fonction retournant la liste des pages de la categorie $id dans le site $idr</font></i>
+
+<i><font color="#9A1900"> $id       : Id de la categorie de depart. Si undef, 0 est utilisé (Considéré comme le "Home")</font></i>
+<i><font color="#9A1900"> $idr           : Id du responsable</font></i>
+<i><font color="#9A1900"> $template : Masque HTML pour le resultat de chaque lien. Si undef, le masque par defaut</font></i>
+<i><font color="#9A1900">             (defini en haut de ce module) sera utlise</font></i>
+
+<i><font color="#9A1900">Retourne le buffer contenant la liste des sites formatées en ft de $template</font></i>
+
+<i><font color="#9A1900">*/</font></i>
+
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">sites_in_categorie</font></b><font color="#990000">(</font><font color="#009900">$id</font><font color="#990000">,</font><font color="#009900">$idr</font><font color="#990000">,</font><font color="#009900">$template</font><font color="#990000">)</font>
+         <font color="#FF0000">{</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$database</font><font color="#990000">;</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$prefix</font><font color="#990000">;</font>
+         <font color="#009900">$indiceG</font><font color="#990000">=</font><font color="#993399">1</font><font color="#990000">;</font><font color="#009900">$facteur</font><font color="#990000">=</font><font color="#993399">100</font><font color="#990000">;</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font><font color="#009900">$idr</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$idr</font><font color="#990000">=</font><font color="#993399">1</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font><font color="#009900">$id</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$id</font><font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <font color="#009900">$i</font><font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font>
+         <font color="#009900">$requete</font> <font color="#990000">=</font> <font color="#FF0000">"select url,titre,description,langue,last_update from "</font><font color="#990000">.</font><font color="#009900">$prefix</font><font color="#990000">.</font><font color="#009900">$idr</font><font color="#990000">.</font><font color="#FF0000">"links where categorie=$id and browse_categorie='1' and parse='1'"</font><font color="#990000">;</font>
+         <font color="#009900">$result</font> <font color="#990000">=</font> <b><font color="#000000">mysql_db_query</font></b><font color="#990000">(</font><font color="#009900">$database</font><font color="#990000">,</font><font color="#009900">$requete</font><font color="#990000">);</font>
+         <font color="#009900">$RowCount</font> <font color="#990000">=</font> <b><font color="#000000">MySQL_NUMROWS</font></b><font color="#990000">(</font><font color="#009900">$result</font><font color="#990000">);</font>
+         <b><font color="#0000FF">while</font></b> <font color="#990000">(</font><font color="#009900">$i</font><font color="#990000">&lt;</font><font color="#009900">$RowCount</font><font color="#990000">)</font>
+                <font color="#FF0000">{</font>
+                <b><font color="#0000FF">list</font></b> <font color="#990000">(</font><font color="#009900">$url</font><font color="#990000">,</font><font color="#009900">$titre</font><font color="#990000">,</font><font color="#009900">$description</font><font color="#990000">,</font><font color="#009900">$langue</font><font color="#990000">,</font><font color="#009900">$last_update</font><font color="#990000">)=</font> <b><font color="#000000">mysql_fetch_row</font></b><font color="#990000">(</font><font color="#009900">$result</font><font color="#990000">);</font>
+                <b><font color="#0000FF">eval</font></b><font color="#990000">(</font><font color="#009900">$template</font><font color="#990000">);</font>
+                <font color="#009900">$indiceG</font><font color="#990000">++;</font><font color="#009900">$i</font><font color="#990000">++;</font>
+                <font color="#FF0000">}</font>
+        <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$i</font><font color="#990000">==</font><font color="#993399">0</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$resultat</font><font color="#990000">=</font><font color="#FF0000">"&lt;p&gt;Pas de pages dans cette catégorie&lt;/p&gt;"</font><font color="#990000">;</font><font color="#FF0000">}</font>
+        <b><font color="#0000FF">return</font></b> <font color="#009900">$resultat</font><font color="#990000">;</font>
+        <font color="#FF0000">}</font>
+
+<i><font color="#9A1900">/*</font></i>
+
+<i><font color="#9A1900">Rend la chaine correspondante à la catégorie $id avec ses rubriques parentes</font></i>
+
+<i><font color="#9A1900">*/</font></i>
+
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">getParent</font></b><font color="#990000">(</font><font color="#009900">$id</font><font color="#990000">,</font><font color="#009900">$idr</font><font color="#990000">,</font><font color="#009900">$tab</font><font color="#990000">)</font>
+        <font color="#FF0000">{</font>
+        <b><font color="#0000FF">if</font></b> <font color="#990000">((</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">1</font><font color="#990000">]!=</font><font color="#993399">0</font><font color="#990000">)&amp;&amp;(</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">]))</font> <font color="#FF0000">{</font><font color="#009900">$parent</font> <font color="#990000">=</font> <b><font color="#000000">getParent</font></b><font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">1</font><font color="#990000">],</font><font color="#009900">$idr</font><font color="#990000">,</font><font color="#009900">$tab</font><font color="#990000">);</font><font color="#FF0000">}</font>
+        <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">])</font> <font color="#FF0000">{</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">]=</font><font color="#FF0000">'Home'</font><font color="#990000">;</font><font color="#FF0000">}</font>
+        <font color="#009900">$parent</font><font color="#990000">.=</font><font color="#FF0000">"&amp;gt;&lt;a href=\""</font><font color="#990000">.</font><b><font color="#000000">get_link_categorie</font></b><font color="#990000">(</font><font color="#009900">$id</font><font color="#990000">,</font><font color="#009900">$idr</font><font color="#990000">).</font><font color="#FF0000">'"&gt;'</font><font color="#990000">.</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">].</font><font color="#FF0000">"&lt;/a&gt;"</font><font color="#990000">;</font>
+        <b><font color="#0000FF">return</font></b> <font color="#009900">$parent</font><font color="#990000">;</font>
+        <font color="#FF0000">}</font>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">getWLParent</font></b><font color="#990000">(</font><font color="#009900">$id</font><font color="#990000">,</font><font color="#009900">$idr</font><font color="#990000">,</font><font color="#009900">$tab</font><font color="#990000">)</font>
+        <font color="#FF0000">{</font>
+        <b><font color="#0000FF">if</font></b> <font color="#990000">((</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">1</font><font color="#990000">]!=</font><font color="#993399">0</font><font color="#990000">)&amp;&amp;(</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">]))</font> <font color="#FF0000">{</font><font color="#009900">$parent</font> <font color="#990000">=</font> <b><font color="#000000">getWLParent</font></b><font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">1</font><font color="#990000">],</font><font color="#009900">$idr</font><font color="#990000">,</font><font color="#009900">$tab</font><font color="#990000">);</font><font color="#FF0000">}</font>
+        <b><font color="#0000FF">if</font></b> <font color="#990000">(!</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">])</font> <font color="#FF0000">{</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">]=</font><font color="#FF0000">'Home'</font><font color="#990000">;</font><font color="#FF0000">}</font>
+        <font color="#009900">$parent</font><font color="#990000">.=</font><font color="#FF0000">"&amp;gt;"</font><font color="#990000">.</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$id</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">];</font>
+        <b><font color="#0000FF">return</font></b> <font color="#009900">$parent</font><font color="#990000">;</font>
+        <font color="#FF0000">}</font>
+<i><font color="#9A1900">/*</font></i>
+
+<i><font color="#9A1900">Retourne 1 si $var appartient à $liste, 0 sinon.</font></i>
+
+<i><font color="#9A1900">*/</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">appartient</font></b><font color="#990000">(</font><font color="#009900">$var</font><font color="#990000">,</font><font color="#009900">$liste</font><font color="#990000">)</font>
+         <font color="#FF0000">{</font>
+         <b><font color="#0000FF">while</font></b><font color="#990000">(</font> <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$key</font><font color="#990000">,</font><font color="#009900">$val</font><font color="#990000">)</font> <font color="#990000">=</font> <b><font color="#0000FF">each</font></b> <font color="#990000">(</font><font color="#009900">$liste</font><font color="#990000">))</font> <font color="#FF0000">{</font><b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$val</font><font color="#990000">==</font><font color="#009900">$var</font><font color="#990000">)</font> <font color="#FF0000">{</font><b><font color="#0000FF">return</font></b> <font color="#993399">1</font><font color="#990000">;</font><font color="#FF0000">}}</font>
+         <b><font color="#0000FF">return</font></b> <font color="#993399">0</font><font color="#990000">;</font>
+         <font color="#FF0000">}</font>
+<i><font color="#9A1900">/**</font></i>
+<i><font color="#9A1900"> * Retourne l'URL correspondant à la page no $no_page dans la recherche en cours</font></i>
+<i><font color="#9A1900"> */</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">get_link</font></b><font color="#990000">(</font><font color="#009900">$no_page</font><font color="#990000">,</font><font color="#009900">$word</font><font color="#990000">,</font><font color="#009900">$id</font><font color="#990000">)</font>
+         <font color="#FF0000">{</font>
+         <font color="#009900">$buf</font> <font color="#990000">=</font> <b><font color="#000000">getenv</font></b><font color="#990000">(</font><font color="#FF0000">'SCRIPT_NAME'</font><font color="#990000">).</font><font color="#FF0000">"?word="</font><font color="#990000">.</font><b><font color="#000000">urlencode</font></b><font color="#990000">(</font><font color="#009900">$word</font><font color="#990000">).</font><font color="#FF0000">"&amp;id="</font><font color="#990000">.</font><font color="#009900">$id</font><font color="#990000">.</font><font color="#FF0000">"&amp;first="</font><font color="#990000">.</font><font color="#009900">$no_page</font><font color="#990000">;</font>
+         <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$nbResultPerPage</font><font color="#990000">)</font> <font color="#FF0000">{</font><font color="#009900">$buf</font><font color="#990000">.=</font><font color="#FF0000">"&amp;nbResultPerPage="</font><font color="#990000">.</font><font color="#009900">$nbResultPerPage</font><font color="#990000">;</font><font color="#FF0000">}</font>
+         <b><font color="#0000FF">return</font></b> <font color="#009900">$buf</font><font color="#990000">;</font>
+         <font color="#FF0000">}</font>
+<i><font color="#9A1900">/**</font></i>
+<i><font color="#9A1900"> * Retourne l'URL correspondant à la categorie no $no_categorie</font></i>
+<i><font color="#9A1900"> */</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">get_link_categorie</font></b><font color="#990000">(</font><font color="#009900">$no_categorie</font><font color="#990000">,</font><font color="#009900">$id</font><font color="#990000">)</font> <font color="#FF0000">{</font><b><font color="#0000FF">return</font></b> <b><font color="#000000">getenv</font></b><font color="#990000">(</font><font color="#FF0000">'SCRIPT_NAME'</font><font color="#990000">).</font><font color="#FF0000">"?categorie=$no_categorie&amp;id=$id"</font><font color="#990000">;</font><font color="#FF0000">}</font>
+
+<i><font color="#9A1900">/**</font></i>
+<i><font color="#9A1900"> * Retourne le nom du site dans la table responsable correspondant à l'id $id</font></i>
+<i><font color="#9A1900"> */</font></i>
+
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">get_name_site</font></b><font color="#990000">(</font><font color="#009900">$id</font><font color="#990000">,</font><font color="#009900">$prefix</font><font color="#990000">)</font>
+        <font color="#FF0000">{</font>
+        <i><font color="#9A1900">#$result = mysql_db_query("circa","select titre from ".$this-&gt;{PREFIX_TABLE}."responsable where id=$id");</font></i>
+        <i><font color="#9A1900">#$sth-&gt;execute() || print "Erreur: $DBI::errstr\n";</font></i>
+        <i><font color="#9A1900">#my ($titre)=$sth-&gt;fetchrow_array;</font></i>
+        <i><font color="#9A1900">#$sth-&gt;finish;</font></i>
+        <b><font color="#0000FF">return</font></b> <font color="#009900">$titre</font><font color="#990000">;</font>
+        <font color="#FF0000">}</font>
+
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">get_liste_categorie</font></b><font color="#990000">(</font><font color="#009900">$idr</font><font color="#990000">)</font>
+         <font color="#FF0000">{</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$database</font><font color="#990000">;</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$prefix</font><font color="#990000">;</font>
+         <font color="#009900">$requete</font> <font color="#990000">=</font> <font color="#FF0000">"select id,nom,parent from "</font><font color="#990000">.</font><font color="#009900">$prefix</font><font color="#990000">.</font><font color="#009900">$idr</font><font color="#990000">.</font><font color="#FF0000">"categorie"</font><font color="#990000">;</font>
+         <font color="#009900">$result</font> <font color="#990000">=</font> <b><font color="#000000">mysql_db_query</font></b><font color="#990000">(</font><font color="#009900">$database</font><font color="#990000">,</font><font color="#009900">$requete</font><font color="#990000">);</font>
+         <font color="#009900">$RowCount</font> <font color="#990000">=</font> <b><font color="#000000">MySQL_NUMROWS</font></b><font color="#990000">(</font><font color="#009900">$result</font><font color="#990000">);</font>
+         <font color="#009900">$i</font><font color="#990000">=</font><font color="#993399">0</font><font color="#990000">;</font>
+         <b><font color="#0000FF">while</font></b> <font color="#990000">(</font><font color="#009900">$i</font><font color="#990000">&lt;</font><font color="#009900">$RowCount</font><font color="#990000">)</font>
+                <font color="#FF0000">{</font>
+                <b><font color="#0000FF">list</font></b> <font color="#990000">(</font><font color="#009900">$idc</font><font color="#990000">,</font><font color="#009900">$nom</font><font color="#990000">,</font><font color="#009900">$parent</font><font color="#990000">)=</font> <b><font color="#000000">mysql_fetch_row</font></b><font color="#990000">(</font><font color="#009900">$result</font><font color="#990000">);</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$idc</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">]=</font><font color="#009900">$nom</font><font color="#990000">;</font>
+                <font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$idc</font><font color="#990000">][</font><font color="#993399">1</font><font color="#990000">]=</font><font color="#009900">$parent</font><font color="#990000">;</font>
+                <font color="#009900">$i</font><font color="#990000">++;</font>
+                <font color="#FF0000">}</font>
+        <b><font color="#0000FF">while</font></b><font color="#990000">(</font> <b><font color="#0000FF">list</font></b><font color="#990000">(</font><font color="#009900">$key</font><font color="#990000">,</font><font color="#009900">$val</font><font color="#990000">)</font> <font color="#990000">=</font> <b><font color="#0000FF">each</font></b> <font color="#990000">(</font><font color="#009900">$tab</font><font color="#990000">))</font>
+                <font color="#FF0000">{</font>
+                <font color="#009900">$nom</font><font color="#990000">=</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$key</font><font color="#990000">][</font><font color="#993399">0</font><font color="#990000">];</font>
+                <font color="#009900">$parent</font><font color="#990000">=</font><font color="#009900">$tab</font><font color="#990000">[</font><font color="#009900">$key</font><font color="#990000">][</font><font color="#993399">1</font><font color="#990000">];</font>
+                <font color="#009900">$buf</font><font color="#990000">.=</font><font color="#FF0000">"&lt;option value=\"$key\"&gt;"</font><font color="#990000">.</font><b><font color="#000000">getWLParent</font></b><font color="#990000">(</font><font color="#009900">$key</font><font color="#990000">,</font><font color="#009900">$idr</font><font color="#990000">,</font><font color="#009900">$tab</font><font color="#990000">).</font><font color="#FF0000">"&lt;/option&gt;"</font><font color="#990000">;</font>
+                <font color="#FF0000">}</font>
+        <b><font color="#0000FF">return</font></b> <font color="#009900">$buf</font><font color="#990000">;</font>
+        <font color="#FF0000">}</font>
+
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">addSite</font></b><font color="#990000">(</font><font color="#009900">$url</font><font color="#990000">,</font><font color="#009900">$categorie</font><font color="#990000">)</font>
+         <font color="#FF0000">{</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$database</font><font color="#990000">;</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$prefix</font><font color="#990000">;</font>
+         <b><font color="#0000FF">global</font></b> <font color="#009900">$idr</font><font color="#990000">;</font>
+         <font color="#009900">$requete</font><font color="#990000">=</font><font color="#FF0000">"insert into "</font><font color="#990000">.</font><font color="#009900">$prefix</font><font color="#990000">.</font><font color="#009900">$idr</font><font color="#990000">.</font><font color="#FF0000">"links (url,titre,description,langue,valide,categorie,browse_categorie)</font>
+<font color="#FF0000">                   values ('$url',' ',' ','fr',0,$categorie,'1')"</font><font color="#990000">;</font>
+         <font color="#009900">$result</font> <font color="#990000">=</font> <b><font color="#000000">mysql_db_query</font></b><font color="#990000">(</font><font color="#009900">$database</font><font color="#990000">,</font><font color="#009900">$requete</font><font color="#990000">);</font>
+         <font color="#FF0000">}</font>
+<font color="#990000">?&gt;</font>
+</tt></pre>

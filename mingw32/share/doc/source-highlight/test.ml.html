@@ -1,0 +1,43 @@
+<!-- Generator: GNU source-highlight 
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#000080">open</font></b> <font color="#009900">Graphics</font>
+<b><font color="#000080">open</font></b> <font color="#009900">Types</font>
+<i><font color="#9A1900">(* #load "graphics.cma" *)</font></i>
+<i><font color="#9A1900">(* #load "fixed.cmo" *)</font></i>
+
+<b><font color="#0000FF">let</font></b> _ <font color="#990000">=</font> open_graph <font color="#FF0000">" 1024x768"</font>
+<b><font color="#0000FF">let</font></b> _ <font color="#990000">=</font> set_color black
+
+<b><font color="#0000FF">let</font></b> plot_car <font color="#990000">=</font>
+  <b><font color="#0000FF">let</font></b> size_y <font color="#990000">=</font> size_y <font color="#990000">()</font> <b><font color="#0000FF">in</font></b>
+  <b><font color="#0000FF">fun</font></b> <font color="#990000">(</font><font color="#FF0000">{</font>x<font color="#990000">=</font>x<font color="#990000">;</font> y<font color="#990000">=</font>y<font color="#FF0000">}</font><font color="#990000">,</font>_<font color="#990000">,</font>_<font color="#990000">)</font> <font color="#990000">-&gt;</font>
+    <b><font color="#000080">Graphics</font></b><font color="#990000">.</font>plot <font color="#990000">(</font><b><font color="#000080">Fixed</font></b><font color="#990000">.</font>to_coord x<font color="#990000">)</font> <font color="#990000">(</font>size_y <font color="#990000">-</font> <b><font color="#000080">Fixed</font></b><font color="#990000">.</font>to_coord y<font color="#990000">)</font>
+
+<b><font color="#0000FF">let</font></b> plot freq cars <font color="#990000">=</font>
+  ignore
+  <font color="#990000">(</font><b><font color="#000080">List</font></b><font color="#990000">.</font>fold_left <font color="#990000">(</font><b><font color="#0000FF">fun</font></b> counter car <font color="#990000">-&gt;</font> <b><font color="#0000FF">if</font></b> counter <font color="#990000">&lt;=</font> <font color="#993399">0</font>
+		   <b><font color="#0000FF">then</font></b> <font color="#990000">(</font>plot_car car<font color="#990000">;</font> freq<font color="#990000">)</font>
+		   <b><font color="#0000FF">else</font></b> pred counter<font color="#990000">)</font> freq cars<font color="#990000">)</font>
+
+<b><font color="#0000FF">let</font></b> list_iteri f l <font color="#990000">=</font>
+  ignore <font color="#990000">(</font><b><font color="#000080">List</font></b><font color="#990000">.</font>fold_left <font color="#990000">(</font><b><font color="#0000FF">fun</font></b> i elt <font color="#990000">-&gt;</font> f i elt<font color="#990000">;</font> i<font color="#990000">+</font><font color="#993399">1</font><font color="#990000">)</font> <font color="#993399">0</font> l<font color="#990000">)</font>
+
+<b><font color="#0000FF">let</font></b> array_for_all f a <font color="#990000">=</font>
+  <b><font color="#0000FF">let</font></b> length <font color="#990000">=</font> <b><font color="#000080">Array</font></b><font color="#990000">.</font>length a <b><font color="#0000FF">in</font></b>
+  <b><font color="#0000FF">let</font></b> <b><font color="#0000FF">rec</font></b> loop i <font color="#990000">=</font>
+    <b><font color="#0000FF">if</font></b> i <font color="#990000">=</font> length <b><font color="#0000FF">then</font></b> <b><font color="#0000FF">true</font></b> <b><font color="#0000FF">else</font></b> f a<font color="#990000">.(</font>i<font color="#990000">)</font> <font color="#990000">&amp;&amp;</font> loop <font color="#990000">(</font>i<font color="#990000">+</font><font color="#993399">1</font><font color="#990000">)</font> <b><font color="#0000FF">in</font></b>
+    loop <font color="#993399">0</font>
+
+<b><font color="#0000FF">let</font></b> <b><font color="#0000FF">rec</font></b> dedoublonne <font color="#990000">=</font> <b><font color="#0000FF">function</font></b>
+  <font color="#990000">|</font>a<font color="#990000">::</font>b<font color="#990000">::</font>q <font color="#990000">-&gt;</font> <b><font color="#0000FF">if</font></b> a <font color="#990000">=</font> b <b><font color="#0000FF">then</font></b> dedoublonne <font color="#990000">(</font>b<font color="#990000">::</font>q<font color="#990000">)</font> <b><font color="#0000FF">else</font></b> a <font color="#990000">::</font> dedoublonne <font color="#990000">(</font>b<font color="#990000">::</font>q<font color="#990000">)</font>
+  <font color="#990000">|[</font>a<font color="#990000">]</font> <font color="#990000">-&gt;</font> <font color="#990000">[</font>a<font color="#990000">]</font>
+  <font color="#990000">|[]</font> <font color="#990000">-&gt;</font> <font color="#990000">[]</font>
+
+<b><font color="#0000FF">let</font></b> merge_songs db <font color="#990000">=</font> <b><font color="#0000FF">function</font></b>
+  <font color="#990000">|</font> <font color="#990000">[]</font> <font color="#990000">|</font> <font color="#990000">[</font>_<font color="#990000">]</font> <font color="#990000">-&gt;</font> <font color="#990000">()</font>
+  <font color="#990000">|</font> id <font color="#990000">::</font> id's <font color="#990000">-&gt;</font>
+    <b><font color="#0000FF">let</font></b> mysql_ids <font color="#990000">=</font> <b><font color="#000080">List</font></b><font color="#990000">.</font>map ml642int id's <b><font color="#0000FF">in</font></b>
+    <font color="#990000">()</font>
+</tt></pre>

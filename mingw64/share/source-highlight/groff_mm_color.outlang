@@ -1,0 +1,74 @@
+extension "groff"
+doctemplate
+"
+.MT 0
+$header
+.TL 
+$title
+.AU \"\"
+.ND
+.SA 0
+.DS I
+"
+".DE
+$footer
+"
+end
+
+nodoctemplate
+"
+.DS I
+.fam C
+"
+"
+.fam
+.DE"
+end
+
+bold "\f[CB]$text\fP"
+italics "\f[CI]$text\fP"
+underline "\f[CI]$text\fP"
+fixed "\fC$text\fP"
+color "\m[$style]$text\m[]"
+
+anchor "$infilename : $linenum - $text"
+reference "$text \(-> $infile:$linenum, page : $infilename:$linenum"
+
+#lineprefix "\fC\(em\fP   "
+#lineprefix "\fC\n(ln\fP   "
+
+lineprefix ""
+
+
+colormap
+"green" "green"
+"red" "red"
+"darkred" "darkred"
+"blue" "blue"
+"brown" "brown"
+"pink" "pink"
+"yellow" "yellow"
+"cyan" "cyan"
+"purple" "purple"
+"orange" "orange"
+"brightorange" "brightorange"
+"brightgreen" "brightgreen"
+"darkgreen" "darkgreen"
+"black" "black"
+"teal" "teal"
+"gray" "gray"
+"darkblue" "darkblue"
+default "black"
+end
+
+translations
+"\\" "\\\\"
+##"\n" " \\\\\n"
+##" " "\\ "
+##"\t" "\\ \\ \\ \\ \\ \\ \\ \\ "
+"\t" "    "
+"|" "|"
+"---" "\(em"
+"--" "\(mi"
+end
+

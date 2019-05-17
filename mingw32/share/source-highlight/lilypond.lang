@@ -1,0 +1,143 @@
+# LilyPond v2.16.0
+# Federico Bruni
+
+string delim "\"" "\"" multiline
+
+comment delim "%{" "%}" multiline nested
+comment start "%"
+
+# Scheme
+environment scheme delim '#\'?\(' ")" multiline nested begin
+  string delim "\"" "\"" multiline
+  comment start ";"
+  environment scheme delim "(" ")" multiline nested begin
+    string delim "\"" "\"" multiline
+    comment start ";"
+  end
+end
+
+vardef SCHEME_VALUE = '##(t|f)', '#{1,2}\'?[[:alnum:]\.:+-]+'
+scheme_value = $SCHEME_VALUE
+
+
+# Symbols
+vardef CBRACKET = "{|}|<<|>>"
+cbracket = $CBRACKET
+
+symbol = "(|)|~|^|_"
+dynamic = '\\(<|>|!|f{1,5}|p{1,5}|m(f|p)|fp|(r|s)fz|s(f|p){1,2})(?!\w)'
+
+# Numbers
+specialchar = '(?<!#)-[1-5]\b', '\\[0-9]\b' # strings and fingerings
+note_duration = '(?<=[a-zR\',!?>\*])(1|2|4|8|16|32|64|128)(\.+|\b)'
+value = '[[:digit:]/]+'
+
+# Markup commands (any \command inside \markup{})
+environment markup delim '\\markup\s*\{' "}" multiline nested begin
+  # definitions I want to preserve in this environment
+  cbracket = $CBRACKET
+  string delim "\"" "\"" multiline
+  comment delim "%{" "%}" multiline nested
+  comment start "%"
+  scheme_value = $SCHEME_VALUE
+  environment scheme delim '#\'?\(' ")" multiline nested begin
+    string delim "\"" "\"" multiline
+    comment start ";"
+    environment scheme delim "(" ")" multiline nested begin
+      string delim "\"" "\"" multiline
+      comment start ";"
+    end
+  end
+  # actual definition
+  markup_command = '\\[[:alpha:]-]+'
+
+  # needed for nested blocks inside \markup{}
+  environment markup delim "{" "}" multiline nested begin
+    cbracket = $CBRACKET
+    string delim "\"" "\"" multiline
+    comment delim "%{" "%}" multiline nested
+    comment start "%"
+    scheme_value = $SCHEME_VALUE
+    environment scheme delim '#\'?\(' ")" multiline nested begin
+      string delim "\"" "\"" multiline
+      comment start ";"
+      environment scheme delim "(" ")" multiline nested begin
+        string delim "\"" "\"" multiline
+        comment start ";"
+      end
+    end
+    markup_command = '\\[[:alpha:]-]+'
+  end
+end
+
+lyric_command = '\\(lyricmode|lyrics(to)?)'
+
+# Main commands
+preproc = '\\(book(part)?|context|consists|header|include|language|layout',
+    'midi|once|override(Property)?|paper|remove(WithTag)?',
+    'revert|score|(un)?set|version|with)\b'
+
+# Variables of music functions
+variable = '(alto|baritone|bass|french|mezzosoprano|percussion',
+    'soprano|subbass|tenor|treble|varbaritone',
+    'percent|tremolo|unfold|volta',
+    '\\(aeolian|dorian|ionian|lydian|locrian|minor|major|mixolydian|phrygian))\b'
+
+header_variable = 'arranger', 'breakbefore', 'composer', 'copyright', 'date',
+    'dedication', 'enteredby', 'filename', 'footer', 'instrument\b', 'lastupdated',
+    'maintainer(Email|Web)?', 'meter', 'moreInfo',
+    'mutopia(composer|instrument|opus|poet|title)?',
+    'opus', 'poet', 'piece', 'source(url)?', 'style', '(sub){0,2}title',
+    'tagline', 'texidoc'
+
+# Contexts
+# old regexp: '([A-Z][a-z]+){2,}' <-- too greedy, a list is better
+context = '\\?(ChoirStaff|ChordNames|CueVoice|Devnull|Drum(Staff|Voice)',
+    'Dynamics|FiguredBass|FretBoards|Global|GrandStaff',
+    'GregorianTranscription(Staff|Voice)|Lyrics|Mensural(Staff|Voice)',
+    'NoteNames|PianoStaff|RhythmicStaff|Score|Staff(Group)?',
+    'Tab(Staff|Voice)|Vaticana(Staff|Voice)|Voice)\b'
+
+# Layout objects
+layout_object = 'Accidental(Cautionary|Placement|Suggestion)?',
+    'Ambitus(Accidental|Line|NoteHead)?', 'Arpeggio', 'BalloonTextItem',
+    'Bar(Line|Number)?', 'BassFigure(Alignment(Positioning)?|Bracket|Continuation|Line)?',
+    'Beam', 'BendAfter', 'Break(AlignGroup|Alignment)?', 'BreathingSign',
+    'ChordName', 'Clef', 'Cluster(Spanner(Beacon)?)', 'CombineTextScript',
+    'Cue(Clef|EndClef)?', 'Custos', 'Dot(Column|s)?',
+    'Double(PercentRepeat(Counter)?|RepeatSlash)?',
+    'Dynamic(LineSpanner|Text|TextSpanner)?\b', 'Episema', 'Fingering', 'Flag',
+    'Footnote(Item|Spanner)', 'FretBoard', 'Glissando', 'GraceSpacing',
+    'Grid(Line|Point)', 'Hairpin', 'HorizontalBracket',
+    'Instrument(Name|Switch)', 'Key(Cancellation|Signature)',
+    'Laissez(VibrerTie(Column)?)', 'LedgerLineSpanner',
+    'LeftEdge', 'LigatureBracket',
+    'Lyric(Extender|Hyphen|Space|Text)', 'MeasureGrouping',
+    'MelodyItem', 'MensuralLigature', 'MetronomeMark',
+    'MultiMeasureRest(Number|Text)?', 'NonMusicalPaperColumn',
+    'Note(Collision|Column|Head|Name|Spacing)', 'OctavateEight',
+    'OttavaBracket', 'PaperColumn', 'ParenthesesItem',
+    'Percent(Repeat(Counter)?)', 'PhrasingSlur', 'PianoPedalBracket',
+    'RehearsalMark', 'Repeat(Slash|Tie(Column)?)', 'Rest(Collision)?',
+    'Script(Column|Row)?', 'Slur', 'Sostenuto(Pedal(LineSpanner)?)',
+    'SpacingSpanner', 'SpanBar', 'Staff(Grouper|Spacing|Symbol)',
+    'StanzaNumber', 'Stem(Tremolo)?', 'StringNumber', 'StrokeFinger',
+    'SustainPedal(LineSpanner)?',
+    'System(StartBar|StartBrace|StartBracket|StartSquare)?',
+    'TabNoteHead', 'Text(Script|Spanner)', 'Tie(Column)?', 'TimeSignature',
+    'TrillPitch(Accidental|Group|Head)', 'TrillSpanner',
+    'Tuplet(Bracket|Number)', 'UnaCordaPedal(LineSpanner)?',
+    'VaticanaLigature', 'Vertical(Alignment|AxisGroup)', 'VoiceFollower',
+    'VoltaBracket(Spanner)?'
+
+# Context properties
+context_property = '\b[a-z]+([A-Z]+[a-z]+)+',
+                   'ottavation|output|stanza|timing|tonic'
+
+# Layout properties
+layout_property = '\b[a-z]+(-[a-z]+)+', 'indent'
+
+# All the other commands (including variables defined by users).
+# It must be at the end, otherwise the other \command definitions are overwritten.
+function = '\\[[:alpha:]-]+'
+

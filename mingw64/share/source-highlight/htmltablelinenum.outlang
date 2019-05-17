@@ -1,0 +1,39 @@
+# this output format must be used with line numbers
+
+include "html_common.outlang"
+
+# line numbers are in a separate column (and start the column for the code)
+linenum "<td style=\"vertical-align: top;\">$text</td><td>"
+
+lineprefix "<tr>"
+
+doctemplate
+"<table  BGCOLOR=\"$docbgcolor\" 
+	style=\"text-align: left; width: 100%;\" border=\"0\"
+ 	cellpadding=\"2\" cellspacing=\"2\"
+ 	NOSAVE >
+<tbody>
+<pre><tt>"
+"</tt></pre>
+</tbody>
+</table>
+"
+end
+
+nodoctemplate
+"<table  BGCOLOR=\"$docbgcolor\" 
+	style=\"text-align: left; width: 100%;\" border=\"0\"
+ 	cellpadding=\"2\" cellspacing=\"2\"
+ 	NOSAVE >
+<tbody>
+<pre><tt>"
+"</tt></pre>
+</tbody>
+</table>
+"
+end
+
+# terminate each line by closing the table column and the table row
+translations
+"\n" "</td></tr>\n"
+end

@@ -1,0 +1,13 @@
+# [[Wiki][Links]] inside %MACRO{"arguments"}% - Eg.
+# %MACRO{"[[Wiki][Link $token(token-arg) %X%]]"}%
+environment url delim "[[" "]]" begin
+    keyword = $MACRO
+    environment keyword delim $MACROSTART $MACROEND multiline nested begin
+        keyword = $MACRO
+        attribute = $MACROATTR
+        environment string delim "\"" "\"" escape "\\" multiline begin
+            include "tml_formatting_all.lang"
+        end
+    end
+    include "tml_macrotokens.lang"
+end

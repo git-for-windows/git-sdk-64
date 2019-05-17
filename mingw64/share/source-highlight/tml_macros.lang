@@ -1,0 +1,31 @@
+# %MACRO%
+vardef MACRO = '%[A-Za-z][A-Za-z0-9_:]*%'
+keyword = $MACRO
+
+# $percntMACRO{\"...\"}$percnt
+vardef DELAYEDMACROSTART = '\$perce?nt[A-Za-z][A-Za-z0-9_:]*\{?'
+vardef DELAYEDMACROEND = '\}?\$perce?nt'
+
+# foo=
+vardef MACROATTR = '[[:word:]-]+='
+
+# %MACRO{"..."}% or the GluePlugin syntax:
+# %~~ MACRO{"...
+# ~~~ }%
+vardef MACROSTART = '%(~~[[:space:]]+)?[A-Za-z][A-Za-z0-9_:]*\{'
+vardef MACROEND = '(^~~~[[:space:]]*)?\}%'
+
+environment keyword delim $MACROSTART $MACROEND multiline nested begin
+    attribute = $MACROATTR
+    keyword = $MACRO
+    include "tml_macros1.lang"
+    include "tml_glue.lang"
+    environment string delim "\"" "\"" escape "\\" multiline begin
+        keyword = $MACRO
+        include "tml_macros1.lang"
+        include "tml_macrosdelayed1.lang"
+        include "tml_macrotokens.lang"
+        include "tml_macrolinks.lang"
+        include "tml_formatting.lang"
+    end
+end

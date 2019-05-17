@@ -1,0 +1,41 @@
+<!-- Generator: GNU source-highlight 
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><i><font color="#9A1900">#! /usr/bin/python</font></i>
+
+<b><font color="#000080">import</font></b> posix
+<b><font color="#000080">from</font></b> string <b><font color="#000080">import</font></b> splitfields
+
+<b><font color="#0000FF">def</font></b> <b><font color="#000000">userinfo</font></b><font color="#990000">(</font>filename<font color="#990000">):</font>
+<i><font color="#9A1900">  """</font></i>
+<i><font color="#9A1900">  This function returns the list of users</font></i>
+<i><font color="#9A1900">  and a table containing users and their passwords</font></i>
+<i><font color="#9A1900">  """</font></i>
+  users<font color="#990000">,</font> table <font color="#990000">=</font> <font color="#990000">[],</font> <font color="#990000">{}</font>
+  file <font color="#990000">=</font> <b><font color="#000000">open</font></b><font color="#990000">(</font>filename<font color="#990000">,</font> <font color="#FF0000">'r'</font><font color="#990000">)</font>
+  <b><font color="#0000FF">for</font></b> line <b><font color="#0000FF">in</font></b> file<font color="#990000">.</font><b><font color="#000000">readlines</font></b><font color="#990000">():</font>
+    <font color="#990000">[</font>name<font color="#990000">,</font> password<font color="#990000">]</font> <font color="#990000">=</font> <b><font color="#000000">splitfields</font></b><font color="#990000">(</font>line<font color="#990000">,</font> <font color="#FF0000">':'</font><font color="#990000">)[:</font><font color="#993399">2</font><font color="#990000">]</font>
+    users<font color="#990000">.</font><b><font color="#000000">append</font></b><font color="#990000">(</font>name<font color="#990000">)</font>
+    table<font color="#990000">[</font>name<font color="#990000">]</font> <font color="#990000">=</font> password
+  <b><font color="#0000FF">return</font></b> users<font color="#990000">,</font> table
+
+<b><font color="#0000FF">def</font></b> <b><font color="#000000">main</font></b><font color="#990000">():</font>
+  <b><font color="#0000FF">for</font></b> filename <b><font color="#0000FF">in</font></b> <font color="#990000">(</font><font color="#FF0000">'/etc/passwd'</font><font color="#990000">,</font> <font color="#FF0000">'etc/passwd.bak'</font><font color="#990000">):</font>
+    <b><font color="#0000FF">try</font></b><font color="#990000">:</font>
+      users<font color="#990000">,</font> table <font color="#990000">=</font> <b><font color="#000000">userinfo</font></b><font color="#990000">(</font>filename<font color="#990000">)</font>
+      <b><font color="#0000FF">print</font></b> table<font color="#990000">.</font><b><font color="#000000">keys</font></b><font color="#990000">()[</font><font color="#993399">3</font><font color="#990000">:</font><font color="#993399">7</font><font color="#990000">],</font> table<font color="#990000">[</font><font color="#FF0000">'postgres'</font><font color="#990000">]</font>
+      posix<font color="#990000">.</font><b><font color="#000000">system</font></b><font color="#990000">(</font><font color="#FF0000">'ls -al '</font> <font color="#990000">+</font> filename<font color="#990000">)</font>
+    <b><font color="#0000FF">except</font></b><font color="#990000">:</font>
+      <b><font color="#0000FF">print</font></b> <font color="#FF0000">'File "'</font> <font color="#990000">+</font> filename <font color="#990000">+</font> <font color="#FF0000">'" not found!'</font>
+
+<b><font color="#000000">main</font></b><font color="#990000">()</font>
+
+q<font color="#990000">.</font><b><font color="#000000">execute</font></b><font color="#990000">(</font><font color="#FF0000">'''</font>
+<font color="#FF0000">    select * from</font>
+<font color="#FF0000">        foo,bar,baz</font>
+<font color="#FF0000">    where</font>
+<font color="#FF0000">        foo.blah=bar.blah</font>
+<font color="#FF0000">        and baz.spam="eggs"</font>
+<font color="#FF0000">    '''</font><font color="#990000">)</font>
+</tt></pre>

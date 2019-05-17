@@ -1,0 +1,20 @@
+# T/Foswiki "Topic Markup Language" - TML
+# Author: Paul.W.Harvey@csiro.au
+#
+# This is a wiki markup language with the usual text formatting capabilities,
+# but has an added challenge: it features an "inside-out, left-to-right" text-
+# replacement macro capability. This is exploited in weird and wonderful ways,
+# such as writing macro expressions that emit other macro expressions (sometimes
+# recursively). See http://foswiki.org/System/Macros#InsideOutLeftToRight
+#
+# This first attempt has resulted in a spaghetti-esque pile of tml_*.lang files,
+# a better solution would be very welcome. It does up to three levels of
+# %MACROS{"%within{"%macros%"}%"}%, & the same for the $percntDELAYED equivalent.
+# Foswiki itself does 16 levels.
+
+#   * Set = statements
+(normal, preproc, preproc, normal, keyword, normal, normal) = `(^\t+|^ {3}|^ {6}|^ {9}|^ {12})(\*[[:blank:]]+)(Set|Local)([[:space:]]+)([^=]+)([[:blank:]])(=)`
+preproc = '<nop>'
+include "tml_macros.lang"
+include "tml_formatting.lang"
+include "html.lang"

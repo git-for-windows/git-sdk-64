@@ -1,0 +1,14 @@
+# [[Wiki][Links with %MACROs{"and $tokens in MACROs"}%]]
+environment url delim "[[" "]]" begin
+    # %MACROs without any wikitext formatting in their args
+    keyword = $MACRO
+    environment keyword delim $MACROSTART $MACROEND multiline nested begin
+        keyword = $MACRO
+        attribute = $MACROATTR
+        environment string delim "\"" "\"" escape "\\" multiline begin
+            include "tml_macrotokens.lang"
+        end
+    end
+    include "tml_formatting_all.lang"
+end
+include "tml_formatting_all.lang"

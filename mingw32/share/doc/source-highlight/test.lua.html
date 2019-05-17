@@ -1,0 +1,155 @@
+<!-- Generator: GNU source-highlight 
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><i><font color="#9A1900">--[=[ first --[[ second ]=] still second ]] first ]=]</font></i> outside
+
+<i><font color="#9A1900">--[[ long comment</font></i>
+<i><font color="#9A1900">	XXXXXXXXXXXXX [[ long comment</font></i>
+<i><font color="#9A1900">		[[ long comment</font></i>
+<i><font color="#9A1900">			[[ long comment write to </font></i><u><font color="#0000FF">&lt;foo.bar@bar.foo.it&gt;</font></u>
+<i><font color="#9A1900">				[[ long comment xxxxxxxxxxxxxx ]]</font></i>
+<i><font color="#9A1900">				xxxxxxxxxxxxxx ]]</font></i>
+<i><font color="#9A1900">			xxxxxxxxxxxxxx visit </font></i><u><font color="#0000FF">http://www.gnu.org</font></u><i><font color="#9A1900"> ]]</font></i>
+<i><font color="#9A1900">		XXXXXXXX ]]</font></i>
+<i><font color="#9A1900">	XXXXX ]]</font></i>
+
+
+T <font color="#990000">=</font> <font color="#FF0000">[[ long string comment</font>
+<font color="#FF0000">	[[ long comment</font>
+<font color="#FF0000">		[[ long comment</font>
+<font color="#FF0000">			[[ long comment</font>
+<font color="#FF0000">				[[ long comment xxxxxxxxxxxxxx ]]</font>
+<font color="#FF0000">				xxxxxxxxxxxxxx ]]</font>
+<font color="#FF0000">			xxxxxxxxxxxxxx ]]</font>
+<font color="#FF0000">		XXXXXXXX ]]</font>
+<font color="#FF0000">	XXXXX ]]</font>
+
+<i><font color="#9A1900">-- life.lua</font></i>
+<i><font color="#9A1900">-- original by Dave Bollinger </font></i><u><font color="#0000FF">&lt;DBollinger@compuserve.com&gt;</font></u><i><font color="#9A1900"> posted to lua-l</font></i>
+<i><font color="#9A1900">-- modified to use ANSI terminal escape sequences</font></i>
+<i><font color="#9A1900">-- modified to use for instead of while. write to </font></i><u><font color="#0000FF">&lt;foo.bar@bar.foo.it&gt;</font></u><i><font color="#9A1900"> visit </font></i><u><font color="#0000FF">http://www.gnu.org</font></u>
+
+<b><font color="#0000FF">local</font></b> write<font color="#990000">=</font>io<font color="#990000">.</font>write
+
+<i><font color="#9A1900">-- short comments</font></i>
+
+C <font color="#990000">=</font> <font color="#FF0000">"short string"</font>
+
+D <font color="#990000">=</font> <font color="#FF0000">'another short string'</font>
+
+<i><font color="#9A1900">--[[	exemple of long comments</font></i>
+<i><font color="#9A1900">	sdf dfsgsdf g [[ sdf sdf sd f ]] sd fgsd</font></i>
+<i><font color="#9A1900">	fgs dfg sdf gsd fgs</font></i>
+<i><font color="#9A1900">	dfg sdfgsdfgsdfg ]]</font></i>
+
+longstring <font color="#990000">=</font> <font color="#FF0000">[[ sdaf sdf sdf d</font>
+<font color="#FF0000">		sfg	 dfg sdf [[  sdfsdf  ]]  gs dfg sdf</font>
+<font color="#FF0000">		s dfgs dfg sdf gsdf</font>
+<font color="#FF0000">		gs dfgsdfgsdf ]]</font>
+
+ALIVE<font color="#990000">=</font><font color="#FF0000">"¥"</font>	DEAD<font color="#990000">=</font><font color="#FF0000">"þ"</font>
+ALIVE<font color="#990000">=</font><font color="#FF0000">"O"</font>	DEAD<font color="#990000">=</font><font color="#FF0000">"-"</font>
+
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">delay</font></b><font color="#990000">()</font> <i><font color="#9A1900">-- NOTE: SYSTEM-DEPENDENT, adjust as necessary</font></i>
+  <b><font color="#0000FF">for</font></b> i<font color="#990000">=</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">10000</font> <b><font color="#0000FF">do</font></b> <b><font color="#0000FF">end</font></b>
+  <i><font color="#9A1900">-- local i=os.clock()+1 while(os.clock()&lt;i) do end</font></i>
+<b><font color="#0000FF">end</font></b>
+
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">ARRAY2D</font></b><font color="#990000">(</font>w<font color="#990000">,</font>h<font color="#990000">)</font>
+  <b><font color="#0000FF">local</font></b> t <font color="#990000">=</font> <font color="#FF0000">{</font>w<font color="#990000">=</font>w<font color="#990000">,</font>h<font color="#990000">=</font>h<font color="#FF0000">}</font>
+  <b><font color="#0000FF">for</font></b> y<font color="#990000">=</font><font color="#993399">1</font><font color="#990000">,</font>h <b><font color="#0000FF">do</font></b>
+    t<font color="#990000">[</font>y<font color="#990000">]</font> <font color="#990000">=</font> <font color="#FF0000">{}</font>
+    <b><font color="#0000FF">for</font></b> x<font color="#990000">=</font><font color="#993399">1</font><font color="#990000">,</font>w <b><font color="#0000FF">do</font></b>
+      t<font color="#990000">[</font>y<font color="#990000">][</font>x<font color="#990000">]=</font><font color="#993399">0</font>
+    <b><font color="#0000FF">end</font></b>
+  <b><font color="#0000FF">end</font></b>
+  <b><font color="#0000FF">return</font></b> t
+<b><font color="#0000FF">end</font></b>
+
+_CELLS <font color="#990000">=</font> <font color="#FF0000">{}</font>
+
+<i><font color="#9A1900">-- give birth to a "shape" within the cell array</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">_CELLS:spawn</font></b><font color="#990000">(</font>shape<font color="#990000">,</font>left<font color="#990000">,</font>top<font color="#990000">)</font>
+  <b><font color="#0000FF">for</font></b> y<font color="#990000">=</font><font color="#993399">0</font><font color="#990000">,</font>shape<font color="#990000">.</font>h<font color="#990000">-</font><font color="#993399">1</font> <b><font color="#0000FF">do</font></b>
+    <b><font color="#0000FF">for</font></b> x<font color="#990000">=</font><font color="#993399">0</font><font color="#990000">,</font>shape<font color="#990000">.</font>w<font color="#990000">-</font><font color="#993399">1</font> <b><font color="#0000FF">do</font></b>
+      self<font color="#990000">[</font>top<font color="#990000">+</font>y<font color="#990000">][</font>left<font color="#990000">+</font>x<font color="#990000">]</font> <font color="#990000">=</font> shape<font color="#990000">[</font>y<font color="#990000">*</font>shape<font color="#990000">.</font>w<font color="#990000">+</font>x<font color="#990000">+</font><font color="#993399">1</font><font color="#990000">]</font>
+    <b><font color="#0000FF">end</font></b>
+  <b><font color="#0000FF">end</font></b>
+<b><font color="#0000FF">end</font></b>
+
+<i><font color="#9A1900">-- run the CA and produce the next generation</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">_CELLS:evolve</font></b><font color="#990000">(</font>next<font color="#990000">)</font>
+  <b><font color="#0000FF">local</font></b> ym1<font color="#990000">,</font>y<font color="#990000">,</font>yp1<font color="#990000">,</font>yi<font color="#990000">=</font>self<font color="#990000">.</font>h<font color="#990000">-</font><font color="#993399">1</font><font color="#990000">,</font>self<font color="#990000">.</font>h<font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font>self<font color="#990000">.</font>h
+  <b><font color="#0000FF">while</font></b> yi <font color="#990000">&gt;</font> <font color="#993399">0</font> <b><font color="#0000FF">do</font></b>
+    <b><font color="#0000FF">local</font></b> xm1<font color="#990000">,</font>x<font color="#990000">,</font>xp1<font color="#990000">,</font>xi<font color="#990000">=</font>self<font color="#990000">.</font>w<font color="#990000">-</font><font color="#993399">1</font><font color="#990000">,</font>self<font color="#990000">.</font>w<font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font>self<font color="#990000">.</font>w
+    <b><font color="#0000FF">while</font></b> xi <font color="#990000">&gt;</font> <font color="#993399">0</font> <b><font color="#0000FF">do</font></b>
+      <b><font color="#0000FF">local</font></b> sum <font color="#990000">=</font> self<font color="#990000">[</font>ym1<font color="#990000">][</font>xm1<font color="#990000">]</font> <font color="#990000">+</font> self<font color="#990000">[</font>ym1<font color="#990000">][</font>x<font color="#990000">]</font> <font color="#990000">+</font> self<font color="#990000">[</font>ym1<font color="#990000">][</font>xp1<font color="#990000">]</font> <font color="#990000">+</font>
+                  self<font color="#990000">[</font>y<font color="#990000">][</font>xm1<font color="#990000">]</font> <font color="#990000">+</font> self<font color="#990000">[</font>y<font color="#990000">][</font>xp1<font color="#990000">]</font> <font color="#990000">+</font>
+                  self<font color="#990000">[</font>yp1<font color="#990000">][</font>xm1<font color="#990000">]</font> <font color="#990000">+</font> self<font color="#990000">[</font>yp1<font color="#990000">][</font>x<font color="#990000">]</font> <font color="#990000">+</font> self<font color="#990000">[</font>yp1<font color="#990000">][</font>xp1<font color="#990000">]</font>
+      next<font color="#990000">[</font>y<font color="#990000">][</font>x<font color="#990000">]</font> <font color="#990000">=</font> <font color="#990000">((</font>sum<font color="#990000">==</font><font color="#993399">2</font><font color="#990000">)</font> <b><font color="#0000FF">and</font></b> self<font color="#990000">[</font>y<font color="#990000">][</font>x<font color="#990000">])</font> <b><font color="#0000FF">or</font></b> <font color="#990000">((</font>sum<font color="#990000">==</font><font color="#993399">3</font><font color="#990000">)</font> <b><font color="#0000FF">and</font></b> <font color="#993399">1</font><font color="#990000">)</font> <b><font color="#0000FF">or</font></b> <font color="#993399">0</font>
+      xm1<font color="#990000">,</font>x<font color="#990000">,</font>xp1<font color="#990000">,</font>xi <font color="#990000">=</font> x<font color="#990000">,</font>xp1<font color="#990000">,</font>xp1<font color="#990000">+</font><font color="#993399">1</font><font color="#990000">,</font>xi<font color="#990000">-</font><font color="#993399">1</font>
+    <b><font color="#0000FF">end</font></b>
+    ym1<font color="#990000">,</font>y<font color="#990000">,</font>yp1<font color="#990000">,</font>yi <font color="#990000">=</font> y<font color="#990000">,</font>yp1<font color="#990000">,</font>yp1<font color="#990000">+</font><font color="#993399">1</font><font color="#990000">,</font>yi<font color="#990000">-</font><font color="#993399">1</font>
+  <b><font color="#0000FF">end</font></b>
+<b><font color="#0000FF">end</font></b>
+
+<i><font color="#9A1900">-- output the array to screen</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">_CELLS:draw</font></b><font color="#990000">()</font>
+  <b><font color="#0000FF">local</font></b> out<font color="#990000">=</font><font color="#FF0000">""</font> <i><font color="#9A1900">-- accumulate to reduce flicker</font></i>
+  <b><font color="#0000FF">for</font></b> y<font color="#990000">=</font><font color="#993399">1</font><font color="#990000">,</font>self<font color="#990000">.</font>h <b><font color="#0000FF">do</font></b>
+   <b><font color="#0000FF">for</font></b> x<font color="#990000">=</font><font color="#993399">1</font><font color="#990000">,</font>self<font color="#990000">.</font>w <b><font color="#0000FF">do</font></b>
+      out<font color="#990000">=</font>out<font color="#990000">..(((</font>self<font color="#990000">[</font>y<font color="#990000">][</font>x<font color="#990000">]&gt;</font><font color="#993399">0</font><font color="#990000">)</font> <b><font color="#0000FF">and</font></b> ALIVE<font color="#990000">)</font> <b><font color="#0000FF">or</font></b> DEAD<font color="#990000">)</font>
+    <b><font color="#0000FF">end</font></b>
+    out<font color="#990000">=</font>out<font color="#990000">..</font><font color="#FF0000">"\n"</font>
+  <b><font color="#0000FF">end</font></b>
+  <b><font color="#000000">write</font></b><font color="#990000">(</font>out<font color="#990000">)</font>
+<b><font color="#0000FF">end</font></b>
+
+<i><font color="#9A1900">-- constructor</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">CELLS</font></b><font color="#990000">(</font>w<font color="#990000">,</font>h<font color="#990000">)</font>
+  <b><font color="#0000FF">local</font></b> c <font color="#990000">=</font> <b><font color="#000000">ARRAY2D</font></b><font color="#990000">(</font>w<font color="#990000">,</font>h<font color="#990000">)</font>
+  c<font color="#990000">.</font>spawn <font color="#990000">=</font> _CELLS<font color="#990000">.</font>spawn
+  c<font color="#990000">.</font>evolve <font color="#990000">=</font> _CELLS<font color="#990000">.</font>evolve
+  c<font color="#990000">.</font>draw <font color="#990000">=</font> _CELLS<font color="#990000">.</font>draw
+  <b><font color="#0000FF">return</font></b> c
+<b><font color="#0000FF">end</font></b>
+
+<i><font color="#9A1900">--</font></i>
+<i><font color="#9A1900">-- shapes suitable for use with spawn() above</font></i>
+<i><font color="#9A1900">--</font></i>
+HEART <font color="#990000">=</font> <font color="#FF0000">{</font> <font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">;</font> w<font color="#990000">=</font><font color="#993399">3</font><font color="#990000">,</font>h<font color="#990000">=</font><font color="#993399">3</font> <font color="#FF0000">}</font>
+GLIDER <font color="#990000">=</font> <font color="#FF0000">{</font> <font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">;</font> w<font color="#990000">=</font><font color="#993399">3</font><font color="#990000">,</font>h<font color="#990000">=</font><font color="#993399">3</font> <font color="#FF0000">}</font>
+EXPLODE <font color="#990000">=</font> <font color="#FF0000">{</font> <font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">;</font> w<font color="#990000">=</font><font color="#993399">3</font><font color="#990000">,</font>h<font color="#990000">=</font><font color="#993399">4</font> <font color="#FF0000">}</font>
+FISH <font color="#990000">=</font> <font color="#FF0000">{</font> <font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">;</font> w<font color="#990000">=</font><font color="#993399">5</font><font color="#990000">,</font>h<font color="#990000">=</font><font color="#993399">4</font> <font color="#FF0000">}</font>
+BUTTERFLY <font color="#990000">=</font> <font color="#FF0000">{</font> <font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font><font color="#993399">1</font><font color="#990000">;</font> w<font color="#990000">=</font><font color="#993399">5</font><font color="#990000">,</font>h<font color="#990000">=</font><font color="#993399">5</font> <font color="#FF0000">}</font>
+
+<i><font color="#9A1900">-- the main routine</font></i>
+<b><font color="#0000FF">function</font></b> <b><font color="#000000">LIFE</font></b><font color="#990000">(</font>w<font color="#990000">,</font>h<font color="#990000">)</font>
+  <i><font color="#9A1900">-- create two arrays</font></i>
+  <b><font color="#0000FF">local</font></b> thisgen <font color="#990000">=</font> <b><font color="#000000">CELLS</font></b><font color="#990000">(</font>w<font color="#990000">,</font>h<font color="#990000">)</font>
+  <b><font color="#0000FF">local</font></b> nextgen <font color="#990000">=</font> <b><font color="#000000">CELLS</font></b><font color="#990000">(</font>w<font color="#990000">,</font>h<font color="#990000">)</font>
+
+  <i><font color="#9A1900">-- create some life</font></i>
+  <i><font color="#9A1900">-- about 1000 generations of fun, then a glider steady-state</font></i>
+  <b><font color="#000000">thisgen:spawn</font></b><font color="#990000">(</font>GLIDER<font color="#990000">,</font><font color="#993399">5</font><font color="#990000">,</font><font color="#993399">4</font><font color="#990000">)</font>
+  <b><font color="#000000">thisgen:spawn</font></b><font color="#990000">(</font>EXPLODE<font color="#990000">,</font><font color="#993399">25</font><font color="#990000">,</font><font color="#993399">10</font><font color="#990000">)</font>
+  <b><font color="#000000">thisgen:spawn</font></b><font color="#990000">(</font>FISH<font color="#990000">,</font><font color="#993399">4</font><font color="#990000">,</font><font color="#993399">12</font><font color="#990000">)</font>
+
+  <i><font color="#9A1900">-- run until break</font></i>
+  <b><font color="#0000FF">local</font></b> gen<font color="#990000">=</font><font color="#993399">1</font>
+  <b><font color="#000000">write</font></b><font color="#990000">(</font><font color="#FF0000">"\027[2J"</font><font color="#990000">)</font>	<i><font color="#9A1900">-- ANSI clear screen</font></i>
+  <b><font color="#0000FF">while</font></b> <font color="#993399">1</font> <b><font color="#0000FF">do</font></b>
+    <b><font color="#000000">thisgen:evolve</font></b><font color="#990000">(</font>nextgen<font color="#990000">)</font>
+    thisgen<font color="#990000">,</font>nextgen <font color="#990000">=</font> nextgen<font color="#990000">,</font>thisgen
+    <b><font color="#000000">write</font></b><font color="#990000">(</font><font color="#FF0000">"\027[H"</font><font color="#990000">)</font>	<i><font color="#9A1900">-- ANSI home cursor</font></i>
+    <b><font color="#000000">thisgen:draw</font></b><font color="#990000">()</font>
+    <b><font color="#000000">write</font></b><font color="#990000">(</font><font color="#FF0000">"Life - generation "</font><font color="#990000">,</font>gen<font color="#990000">,</font><font color="#FF0000">"\n"</font><font color="#990000">)</font>
+    gen<font color="#990000">=</font>gen<font color="#990000">+</font><font color="#993399">1</font>
+    <b><font color="#0000FF">if</font></b> gen<font color="#990000">&gt;</font><font color="#993399">2000</font> <b><font color="#0000FF">then</font></b> <b><font color="#0000FF">break</font></b> <b><font color="#0000FF">end</font></b>
+    <i><font color="#9A1900">--delay()		-- no delay</font></i>
+  <b><font color="#0000FF">end</font></b>
+<b><font color="#0000FF">end</font></b>
+
+<b><font color="#000000">LIFE</font></b><font color="#990000">(</font><font color="#993399">40</font><font color="#990000">,</font><font color="#993399">20</font><font color="#990000">)</font>
+				</tt></pre>

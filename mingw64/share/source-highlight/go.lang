@@ -1,0 +1,35 @@
+# see http://golang.org/ref/spec
+
+include "c_comment.lang"
+
+label = '^[[:blank:]]*[[:alnum:]]+:[[:blank:]]*\z'
+
+(keyword,normal,classname) =
+  `(\<(?:interface|struct))([[:blank:]]+)([[:alnum:]_]+)`
+
+environment string delim "\"" "\"" escape "\\" begin
+  specialchar = '\\.'
+end
+environment string delim "'" "'" escape "\\" begin
+  specialchar = '\\.'
+end
+string delim "`" "`"  multiline
+
+keyword = "break|case|chan|const|continue|default|defer|else|fallthrough",
+	"for|func|go|goto|if|import|interface|map|package|range|return",
+	"select|struct|switch|type|var"
+
+type = "bool",
+	"uint8|uint16|uint32|uint64|int8|int16|int32|int64|float32|float64|complex64|complex128|byte|rune",
+	"string"
+
+include "number.lang"
+
+symbol = "+","-","*","/","%","&","\|","^","<<",">>","&^",
+       "+=","-=","*=","/=","%=","&=","\|=","^=","<<=",">>=","&^=",
+       "&&","\|\|","<-","++","--","==","<",">","=","!",
+       "!=","<=",">=",":=","...","(",")","[","]",",",".",";",":"
+
+cbracket = "{|}"
+
+function = '([[:alpha:]]|_)[[:word:]:]*(?=\()'

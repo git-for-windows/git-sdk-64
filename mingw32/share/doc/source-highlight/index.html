@@ -1,0 +1,510 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="Lorenzo Bettini"><title>GNU Source-highlight - GNU Project - Free Software Foundation (FSF)</title></head>
+<body style="background-color: rgb(255, 255, 255);">
+<h1><a class="mozTocH1" name="mozTocId593827"></a>
+GNU Source-highlight 3.1.8</h1>
+<p>by <a href="http://www.lorenzobettini.it">Lorenzo
+Bettini</a> </p>
+<p>This program, <i>given a source file, produces a
+document with
+syntax highlighting</i>. It also provides a <b>C++ highlight library</b>
+<font color="red">(new)</font>
+(since version 3.0).</p>
+<p>
+Source-highlight reads source language specifications
+dynamically, thus it can be easily extended (without recompiling
+the sources) for handling new languages. It also reads output format
+specifications dynamically, and
+thus it can be easily extended (without recompiling
+the sources) for handling new output formats.
+The syntax for these specifications is quite easy (take a look at the
+manual).</p>
+<p>Source-highlight is a command line program, and it can also be
+used as a <a href="source-highlight.html#Using-source_002dhighlight-as-a-CGI">CGI</a>.</p>
+<p>Notice that source-highlight can also be used as a formatter
+(i.e.,
+without highlighting): you can, for instance, format a txt file in HTML
+(and it will take care of translating special characters, such as,
+&lt;, &gt;, &amp;). </p>
+<p>
+Since version 2.2, source-highlight can also generate cross
+references; in order to do this it relies on
+<i>GNU Ctags</i>,
+<a href="http://ctags.sourceforge.net">http://ctags.sourceforge.net</a>.
+</p>
+<p>These are the output formats already supported:<br>
+</p>
+<ul>
+<li> <i>HTML</i></li>
+<li><i>HTML5</i>&nbsp; &nbsp; &nbsp;<font color="red">(new)</font></li>
+<li> <i>XHTML</i></li>
+<li> <i>LATEX</i></li>
+<li> <i>MediaWiki</i></li>
+<li> <i>ODF</i></li>
+<li> <i>TEXINFO</i></li>
+<li><i>ANSI color escape sequences</i> (you can
+use this feature with less)</li>
+<li><span style="font-style: italic;">DocBook</span></li>
+<li><i>S-expressions</i>&nbsp; &nbsp; &nbsp;<font color="red">(new)</font></li>
+<li><i>Groff</i>&nbsp; &nbsp; &nbsp;<font color="red">(new)</font></li>
+</ul>
+<p>These are the input languages (or input formats) already
+supported
+(in alphabetical order):<br>
+</p>
+<ul>
+<li> <i>Ada</i></li>
+<li> <i>Asm</i></li>
+<li> <i>Applescript</i></li>
+<li> <i>Awk</i></li>
+<li> <i>Autoconf files</i></li>
+<li> <i>Bat</i></li>
+<li> <i>Bib</i></li>
+<li> <i>Bison</i></li>
+<li> <i>C/C++</i></li>
+<li> <i>C#</i></li>
+<li> <i>CakePhp templates</i></li>
+<li> <i>Clipper</i></li>
+<li> <i>Cobol</i></li>
+<li> <i>CoffeeScript</i></li>
+<li> <i>Configuration files (generic)</i></li>
+<li> <i>Caml</i></li>
+<li> <i>Changelog</i></li>
+<li> <i>Css</i></li>
+<li> <i>Cucumber / feature</i>&nbsp; &nbsp; &nbsp;<font color="red">(new)</font></li>
+<li> <i>D</i></li>
+<li> <i>Diff</i></li>
+<li> <i>Emacs Lisp</i></li>
+<li> <i>Erlang</i></li>
+<li> <i>errors (compiler output)</i></li>
+<li> <i>Flex</i></li>
+<li> <i>Fortran</i></li>
+<li> <i>GLSL</i></li>
+<li> <i>Go</i>&nbsp; &nbsp; &nbsp;<font color="red">(new)</font></li>
+<li> <i>Groovy</i>&nbsp; &nbsp; &nbsp;<font color="red">(new)</font></li>
+<li> <i>Haskell</i></li>
+<li> <i>Haskell literate programming</i></li>
+<li> <i>Haxe</i></li>
+<li> <i>Html</i></li>
+<li> <i>ini files</i></li>
+<li> <i>IsLisp</i></li>
+<li> <i>Java</i></li>
+<li> <i>Javalog</i></li>
+<li> <i>Javascript</i></li>
+<li> <i>JSON</i>&nbsp; &nbsp; &nbsp;<font color="red">(new)</font></li>
+<li> <i>KDE desktop files</i></li>
+<li> <i>Latex</i></li>
+<li> <i>Ldap files</i></li>
+<li> <i>Lilypond</i></li>
+<li> <i>Lisp</i></li>
+<li> <i>Logtalk</i></li>
+<li> <i>Log files</i></li>
+<li> <i>lsm files (Linux Software Map)</i></li>
+<li> <i>Lua</i></li>
+<li> <i>Makefile</i></li>
+<li> <i>Manifest</i></li>
+<li> <i>M4</i></li>
+<li> <i>ML</i></li>
+<li> <i>Opa</i></li>
+<li> <i>Oz</i></li>
+<li> <i>Pascal</i></li>
+<li> <i>Perl</i></li>
+<li> <i>pkg-config files</i></li>
+<li> <i>PHP</i></li>
+<li> <i>Po</i></li>
+<li> <i>Postscript</i></li>
+<li> <i>Prolog</i></li>
+<li> <i>Properties files</i></li>
+<li> <i>Protobuf (Google's Protocol Buffers)</i></li>
+<li> <i>Python</i></li>
+<li> <i>R statistics programming language</i></li>
+<li> <i>RPM Spec files</i></li>
+<li> <i>Ruby</i></li>
+<li> <i>Scala</i></li>
+<li> <i>Scheme</i></li>
+<li> <i>Shell</i></li>
+<li> <i>S-Lang</i></li>
+<li> <i>Sql</i></li>
+<li> <i>T/Foswiki TML markup</i></li>
+<li> <i>Tcl</i></li>
+<li> <i>Texinfo</i></li>
+<li> <i>UPC (unified parallel C)</i></li>
+<li> <i>Vala</i></li>
+<li> <i>VBscript</i></li>
+<li> <i>XML</i></li>
+<li> <i>XOrg conf files</i></li>
+<li> <i>Zsh</i>&nbsp; &nbsp; &nbsp;<font color="red">(new)</font></li>
+</ul>
+<p><font color="#990000">NOTICE: now the name of the
+program is </font><b><i><font color="#663366">source-highlight</font></i></b><font color="#990000">:
+there are no two separate programs, namely <i>java2html</i>
+and <i>cpp2html</i>,
+anymore.&nbsp; However there are two shell scripts with the same
+name
+in order to facilitate the migration (however their use is not
+advised).</font> </p>
+<p>GNU Source-highlight is <b><font color="#009900">free
+software</font></b>.
+Please see the file <a href="COPYING">COPYING</a>
+for details. For
+documentation, please read this file. </p>
+<p>GNU Source-highlight is a <a href="http://www.gnu.org">GNU</a>
+program and its main home page is at GNU site: <br>
+<a href="http://www.gnu.org/software/src-highlite">http://www.gnu.org/software/src-highlite</a>
+</p>
+<ol id="mozToc">
+<!--mozToc h1 1 h2 2 h3 3 h4 4 h5 5 h6 6--><li><a href="#mozTocId593827"> GNU Source-highlight</a>
+<ol>
+<li><a href="#mozTocId705198">On-line Manual</a></li>
+<li><a href="#mozTocId127780"> Download</a>
+<ol>
+<li><a href="#mozTocId637057"> Anonymous
+Git Checkout</a></li>
+<li><a href="#Installation">Installation</a></li>
+</ol>
+</li>
+<li><a href="#mozTocId579563"> Changes in this
+release</a></li>
+<li><a href="#mozTocId839282">What you need to
+build source-highlight</a></li>
+<li><a href="#mozTocId120994">Usage and
+examples</a></li>
+<li><a href="#mozTocId323328">Style files</a></li>
+<li><a href="#mozTocId222354">Related Software
+and Links</a></li>
+<li><a href="#mozTocId477197">Credits</a></li>
+<li><a href="#mozTocId209397"> Feedback</a></li>
+<li><a href="#mozTocId319277"> TODO</a></li>
+<li><a href="#mozTocId238205"> Mailing Lists</a></li>
+</ol>
+</li>
+</ol>
+<br>
+<h2><a class="mozTocH2" name="mozTocId705198"></a>On-line
+Manual</h2>
+This is the <a href="source-highlight.html">complete
+manual</a> shipped with source-highlight.
+It details all the file formats used by source-highlight and
+also contains documentation on how to create your own language
+definitions.
+<p>
+If you want to use source-highlight library inside your C++
+programs, you may want to read the <a href="source-highlight-lib.html">manual of the library</a> and the <a href="api/index.html">API documentation</a>.
+</p><h2><a class="mozTocH2" name="mozTocId127780"></a>
+Download</h2>
+You can download it from GNU's ftp site: <br>
+<a href="ftp://ftp.gnu.org/gnu/src-highlite/">ftp://ftp.gnu.org/gnu/src-highlite/</a>
+or from one of its mirrors (see <a href="http://www.gnu.org/prep/ftp.html">http://www.gnu.org/prep/ftp.html</a>).
+<p>I do not distribute Windows binaries anymore; since, they can be built
+by using Cygnus C/C++ compiler, available at
+<a href="http://www.cygwin.com">http://www.cygwin.com</a>. However, if you don't feel like
+downloading such compiler or you experience problems with the Boost
+Regex library (please also keep in mind that if you don't have these libraries
+installed, and your C/C++ compiler distribution does not provide a
+prebuilt package, it might take some time, even hours, to build the
+Boost libraries from sources), you can request such binaries directly to
+me, by e-mail (find my e-mail at my home page) and I'll be happy to send
+them to you. An MS-Windows port of Source-highlight is available from
+<a href="http://gnuwin32.sourceforge.net">http://gnuwin32.sourceforge.net</a>; however, I don't maintain those
+binaries personally, and they might be out of date.
+<br>
+</p>
+
+<p>Language definition files and output language definition files,
+which are part of source-highlight distribution, can also be downloaded
+independently from, respectively:
+
+</p><ul>
+<li><a href="http://www.gnu.org/software/src-highlite/lang_files/">http://www.gnu.org/software/src-highlite/lang_files/</a></li>
+<li><a href="http://www.gnu.org/software/src-highlite/outlang_files/">http://www.gnu.org/software/src-highlite/outlang_files/</a></li>
+</ul>
+
+<p></p>
+
+<p>
+However, note that the files you find at the above urls are tested with the
+latest version of source-highlight (thus, e.g., they may require features
+that are not present in an earlier version of source-highlight);
+</p>
+
+<h3><a class="mozTocH3" name="mozTocId637057"></a>
+Anonymous Git Checkout</h3>
+
+This project's git repository can be checked out through the following
+clone instruction:
+
+<pre>git clone git://git.savannah.gnu.org/src-highlite.git</pre>
+
+   <p>Further instructions can be found at the address:
+
+   <p><a href="http://savannah.gnu.org/projects/src-highlite">http://savannah.gnu.org/projects/src-highlite</a>.
+
+   <p>And the git repository can also browsed on-line at
+<a href="http://git.savannah.gnu.org/cgit/src-highlite.git">http://git.savannah.gnu.org/cgit/src-highlite.git</a>.
+
+<p><i>NOTE: Since version 3.1.2 of Source-highlight the
+CVS repository was dismissed in favor of Git
+(<a href="http://git-scm.com/">http://git-scm.com/</a>)</i>.
+
+<p>
+Please notice that this way you will get the latest
+development sources
+of Source-highlight, which may also be unstable. This solution is the
+best if you intend to correct/extend this program: you should send me
+patches against the latest git repository sources.</p>
+<p>If, on the contrary, you want to get the sources of a given
+release,
+through git, say, e.g., version X.Y.Z, you must specify the git tag
+<tt>rel_X_Y_Z</tt>.</p>
+
+<p>When you compile the sources that you get from the git
+repository,
+before running the <tt>configure</tt> and <tt>make</tt>
+commands, you must run the command:</p>
+<pre>autoreconf -i<br></pre>
+<p>This will run the autotools commands in the correct order, and
+also copy
+possibly missing files. You should have installed recent versions of
+<tt>automake</tt>, <tt>autoconf</tt> and <tt>libtool</tt>
+in order for this to succeed.</p>
+
+<p>
+We strongly suggest to use shadow builds, thus, create a build
+directory, say <tt>build</tt> and run configuration and make in that
+directory.  To summarize, the steps to get the sources from git and make the first build
+are:
+
+<pre>     git clone git://git.savannah.gnu.org/src-highlite.git
+     cd src-highlite
+     autoreconf -i
+     mkdir build
+     cd build
+     ../configure
+     make
+</pre>
+</p>
+
+
+<h3><a class="mozTocH3" name="Installation"></a>
+Installation</h3>
+
+Please, take a look at the 
+<a href="source-highlight.html#Installation">Installation section of the manual</a>.
+Since version 3.1.2, also a 
+<a href="source-highlight.html#Building-with-qmake">qmake based building mechanism is available</a>,
+though discouraged.
+
+<h2><a class="mozTocH2" name="mozTocId579563"></a>
+Changes in this release</h2>
+<ul>
+<li> see <a href="NEWS">NEWS</a> file for a
+summary of new features
+in
+this release and</li>
+<li> see ChangeLog for the complete list of changes sources</li>
+</ul>
+You can also find details about new features of source-highlight on my
+blog, in this area: <a href="http://tronprog.blogspot.com/search/label/source-highlight">http://tronprog.blogspot.com/search/label/source-highlight</a>.
+<h2><a class="mozTocH2" name="mozTocId839282"></a>What
+you need to build source-highlight</h2>
+Since version 2.0 Source-highlight relies on regular expressions as
+provided by boost (<a href="http://www.boost.org">http://www.boost.org</a>),
+so you need to install at least the regex library from boost.&nbsp;
+Most GNU/Linux distributions provide this library already in a compiled
+form.<br>
+<h2><a class="mozTocH2" name="mozTocId120994"></a><a href="examples.html">Usage
+and examples</a></h2>
+<h2><a class="mozTocH2" name="mozTocId222354"></a>Related
+Software and Links</h2>
+<p>Here we list some software related to source-highlight in the
+sense that
+it uses it as a backend (i.e., provides an interface to
+source-highlight) or it uses some of its features (e.g., definition
+files):</p><ul><li>Source-highlight-qt is a library for performing syntax highlighting in
+Qt documents by relying on GNU Source-Highlight library.  This library
+provides an implementation of the qt abstract class QSyntaxHighlighter
+class, and it deals both with Qt3 and Qt4.
+
+     <p><a href="http://srchiliteqt.sourceforge.net/">http://srchiliteqt.sourceforge.net</a>.
+
+     </p></li><li>QSource-Highlight is a Qt4 front-end for GNU Source-Highlight (it relies
+on the library Source-Highlight-Qt).  You can highlight your code on the
+fly, and have the highlighted output in all the formats supported by
+source-highlight (e.g., HTML, LaTeX, Texinfo, etc.). You can then copy
+the formatted output and paste it (e.g., in your blog), or save it to a
+file.  A preview of the highlighted output is available for some output
+formats (e.g., HTML, XHTML, etc.).
+
+     <p><a href="http://qsrchilite.sourceforge.net/">http://qsrchilite.sourceforge.net</a>.</p></li></ul>
+<ul>
+<li>SourceHighlightIDE is a small IDE (for KDE) I wrote for
+developing
+and debugging new language definitions for source-highlight:
+<p><a href="http://srchighliteide.sourceforge.net">http://srchighliteide.sourceforge.net</a>.
+</p>
+</li>
+<li>Martin Gebert implemented a KDE interface to
+source-highlight programs
+(and he did a wonderful job!), and it is called <em>Ksrc2highlight</em>;
+if you want to test it:
+<p><a href="http://www.mgebert.de/Ksrc2highlight">http://www.mgebert.de/Ksrc2highlight</a>.
+</p>
+</li>
+<li>There's also a Java version of java2html, you can find it
+at
+<p><a href="http://www.generationjava.com/projects/Java2Html.shtml">http://www.generationjava.com/projects/Java2Html.shtml</a>.
+</p>
+</li>
+<li>This web site provides a web interface to source-highlight
+so that you can highlight your code on-line:
+<p><a href="http://www.alaide.com/outils_colorsyntaxe.php">http://www.alaide.com/outils_colorsyntaxe.php</a>
+</p>
+</li>
+<li>SHJS is a JavaScript program that highlights source code
+passages in
+HTML documents. Documents using SHJS are highlighted on the client side
+by the web browser. SHJS uses language definitions from
+Source-highlight.
+<p><a href="http://shjs.sourceforge.net/">http://shjs.sourceforge.net</a>
+</p>
+</li>
+<li>Code2blog is a pyGTK front-end to source-highlight for easy
+conversion
+from source code to HTML.
+<p><a href="http://code.google.com/p/code2blog">http://code.google.com/p/code2blog</a>
+</p>
+</li>
+<li>Andy Buckley wrote a wrapper around source-highlight, which
+can be used
+as an Apache filter to highlight source code in Web pages on the fly.
+<p><a href="http://www.insectnation.org/projects/filter-src-highlight">http://www.insectnation.org/projects/filter-src-highlight</a>
+</p>
+</li>
+<li>Roger Nilsson wrote a frontend for source-highlight that is
+used in a
+popular webdesign app for OSX called RapidWeaver. The frontend is
+called
+High-Light and allows users to easily add syntax-colored code inside
+RapidWeaver.
+<p><a href="http://nilrogsplace.se/webdesign/rapidweaver/plugins/high-light/index_en.html">http://nilrogsplace.se/webdesign/rapidweaver/plugins/high-light/index_en.html</a>
+</p>
+</li>
+<li>
+Mauricio Zepeda published in his blog an article with a script
+to automatically highlight a file and show it in Firefox:
+
+     <p><a href="http://chillorb.com/?p=122">http://chillorb.com/?p=122</a>
+</p>
+</li>
+<li>
+Jason Blevins made a plugin for Ikiwiki that enables syntax highlighting
+of source code fragments and whole files via source-highlight.
+
+     <p><a href="http://jblevins.org/projects/ikiwiki/code">http://jblevins.org/projects/ikiwiki/code</a>
+</p>
+</li>
+<li>
+Pascal Bleser created a PHP extension that uses the GNU source-highlight
+library directly from PHP, instead of relying on spawning a process or
+using the source-highlight CGI.
+
+     <p><a href="http://code.google.com/p/php-source-highlight/">http://code.google.com/p/php-source-highlight/</a>
+</p>
+</li>
+<li>
+Roberto Alsina made a partial python binding using SIP so
+that you can use Source-Highlight-Qt in PyQt programs.
+
+     <p><a href="http://marave.googlecode.com/svn/trunk/marave/highlight/">http://marave.googlecode.com/svn/trunk/marave/highlight/</a>
+</p>
+</li>
+
+<li>A perl binding for source-highlight is available at CPAN:
+
+     <p><a href="http://search.cpan.org/perldoc?Syntax::SourceHighlight">http://search.cpan.org/perldoc?Syntax::SourceHighlight</a>
+</p>
+</li>
+
+     <li><a name="index-Pastebin-36"></a>Danijel Tasov wrote a pastebin service based on
+perl source-highlight binding:
+
+     <p><a href="http://pb.rbfh.de">http://pb.rbfh.de</a>
+</p>
+</li>
+
+</ul>
+<h2><a class="mozTocH2" name="mozTocId477197"></a>Credits</h2>
+See CREDITS for detailed contributions and THANKS&nbsp; for a
+complete
+list of people that
+helped me with Source-highlight :-)
+<h2><a class="mozTocH2" name="mozTocId209397"></a>
+Feedback</h2>
+Please tell me if you like this software :-)
+<p>Actually I want to extend it, so if you have some ideas... <br>
+The most import one will be to make source-highlight more powerful
+:-) </p>
+<p>Please send all bug reports by electronic mail to: <br>
+<font color="#3333ff">bug-source-highlight at gnu dot org</font>
+</p>
+<p>
+Or, even better, use
+</p>
+
+<p><a href="https://savannah.gnu.org/bugs/?group=src-highlite">https://savannah.gnu.org/bugs/?group=src-highlite</a>
+</p>
+<h2><a class="mozTocH2" name="mozTocId319277"></a>
+TODO</h2>
+Here's the <a href="TODO.txt">list of TODO stuff</a>,
+if you'd like to
+contribute :-)
+<h2><a class="mozTocH2" name="mozTocId238205"></a>
+Mailing Lists</h2>
+The following mailing lists are available:
+<ul>
+<li> <font color="#3333ff">help-source-highlight
+at gnu dot org</font>,
+for generic discussions about the program and for asking for help about
+it (open mailing list), <a href="http://mail.gnu.org/mailman/listinfo/help-source-highlight">http://mail.gnu.org/mailman/listinfo/help-source-highlight</a></li>
+<li> <font color="#3333ff">info-source-highlight
+at gnu dot org</font>,
+for receiving information about new releases and features (read-only
+mailing list), <a href="http://mail.gnu.org/mailman/listinfo/info-source-highlight">http://mail.gnu.org/mailman/listinfo/info-source-highlight</a></li>
+</ul>
+if you want to subscribe to a mailing list just go to the URL and
+follow the instructions, or send me an e-mail and I'll subscribe
+you.
+<p>My home page is <a href="http://www.lorenzobettini.it">http://www.lorenzobettini.it</a>
+</p>
+<p>source-highlight is free software. See the file COPYING for
+copying
+conditions. Anyway I won't get offended if you send me a postcard :-) </p>
+<p> </p>
+<hr>
+<p>Return to <a href="/home.html">GNU's home page</a>.
+</p>
+<p>Please send FSF &amp; GNU inquiries &amp; questions to
+<i><a href="mailto:gnu@gnu.org">gnu@gnu.org</a></i>.
+There are also <a href="http://www.gnu.org/home.html#ContactInfo">other
+ways to contact</a>
+the FSF. </p>
+<p>Please send comments on these web pages to <i><a href="mailto:webmasters@gnu.org">webmasters@gnu.org</a></i>,
+send
+other questions to <i><a href="mailto:gnu@gnu.org">gnu@gnu.org</a></i>.</p>
+<p>Copyright (C) 2001 Free Software Foundation, Inc., 59 Temple
+Place -
+Suite 330, Boston, MA 02111, USA </p>
+<p>Verbatim copying and distribution of this entire article is
+permitted in any medium, provided this notice is preserved. </p>
+<p>Updated:<!-- hhmts start -->9 Jan 2001 mhw<!-- hhmts end -->
+<br>
+</p>
+<hr> <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body></html>

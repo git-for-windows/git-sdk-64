@@ -1,0 +1,58 @@
+<!-- Generator: GNU source-highlight 
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">fun</font></b> map <font color="#990000">(</font>f <font color="#990000">:</font> 'a <font color="#990000">-&gt;</font> 'b<font color="#990000">,</font> xs <font color="#990000">:</font> 'a list<font color="#990000">)</font> <font color="#990000">:</font> 'b list <font color="#990000">=</font>
+  <b><font color="#0000FF">case</font></b> xs <b><font color="#0000FF">of</font></b>
+    nil <font color="#990000">=&gt;</font> nil
+  <font color="#990000">|</font> <font color="#990000">(</font>y<font color="#990000">::</font>ys<font color="#990000">)</font> <font color="#990000">=&gt;</font> <font color="#990000">(</font>f <font color="#990000">(</font>y<font color="#990000">))::(</font>map <font color="#990000">(</font>f<font color="#990000">,</font> ys<font color="#990000">));</font>
+
+<b><font color="#0000FF">fun</font></b> zip <font color="#990000">(</font>xs <font color="#990000">:</font> 'a list<font color="#990000">,</font> ys <font color="#990000">:</font> 'b list<font color="#990000">)</font> <font color="#990000">:</font> <font color="#990000">(</font>'a <font color="#990000">*</font> 'b<font color="#990000">)</font> list <font color="#990000">=</font>
+  <b><font color="#0000FF">case</font></b> <font color="#990000">(</font>xs<font color="#990000">,</font> ys<font color="#990000">)</font> <b><font color="#0000FF">of</font></b>
+    <font color="#990000">(</font>nil<font color="#990000">,</font> _<font color="#990000">)</font> <font color="#990000">=&gt;</font> nil
+  <font color="#990000">|</font> <font color="#990000">(</font>_<font color="#990000">,</font> nil<font color="#990000">)</font> <font color="#990000">=&gt;</font> nil
+  <font color="#990000">|</font> <font color="#990000">(</font>b<font color="#990000">::</font>bs<font color="#990000">,</font> c<font color="#990000">::</font>cs<font color="#990000">)</font> <font color="#990000">=&gt;</font> <font color="#990000">(</font>b<font color="#990000">,</font> c<font color="#990000">)::(</font>zip <font color="#990000">(</font>bs<font color="#990000">,</font> cs<font color="#990000">));</font>
+
+<b><font color="#0000FF">fun</font></b> filter <font color="#990000">(</font>f <font color="#990000">:</font> 'a <font color="#990000">-&gt;</font> bool<font color="#990000">,</font> xs <font color="#990000">:</font> 'a list<font color="#990000">)</font> <font color="#990000">:</font> 'a list <font color="#990000">=</font>
+  <b><font color="#0000FF">case</font></b> xs <b><font color="#0000FF">of</font></b>
+    nil <font color="#990000">=&gt;</font> nil
+  <font color="#990000">|</font> <font color="#990000">(</font>y<font color="#990000">::</font>ys<font color="#990000">)</font> <font color="#990000">=&gt;</font>
+      <b><font color="#0000FF">if</font></b> f <font color="#990000">(</font>y<font color="#990000">)</font> <b><font color="#0000FF">then</font></b>
+        y<font color="#990000">::(</font>filter <font color="#990000">(</font>f<font color="#990000">,</font> ys<font color="#990000">))</font>
+      <b><font color="#0000FF">else</font></b>
+        filter <font color="#990000">(</font>f<font color="#990000">,</font> ys<font color="#990000">);</font>
+
+<b><font color="#0000FF">fun</font></b> foldl <font color="#990000">(</font>f <font color="#990000">:</font> 'a <font color="#990000">*</font> 'b <font color="#990000">-&gt;</font> 'a<font color="#990000">,</font> n <font color="#990000">:</font> 'a<font color="#990000">,</font> xs <font color="#990000">:</font> 'b list<font color="#990000">)</font> <font color="#990000">:</font> 'a <font color="#990000">=</font>
+  <b><font color="#0000FF">case</font></b> xs <b><font color="#0000FF">of</font></b>
+    nil <font color="#990000">=&gt;</font> n
+  <font color="#990000">|</font> <font color="#990000">(</font>y<font color="#990000">::</font>ys<font color="#990000">)</font> <font color="#990000">=&gt;</font> foldl <font color="#990000">(</font>f<font color="#990000">,</font> f <font color="#990000">(</font>n<font color="#990000">,</font> y<font color="#990000">),</font> ys<font color="#990000">);</font>
+
+<b><font color="#0000FF">fun</font></b> upto <font color="#990000">(</font>x <font color="#990000">:</font> <font color="#009900">int</font><font color="#990000">,</font> y <font color="#990000">:</font> <font color="#009900">int</font><font color="#990000">)</font> <font color="#990000">:</font> <font color="#009900">int</font> list <font color="#990000">=</font>
+  <b><font color="#0000FF">if</font></b> x <font color="#990000">&lt;=</font> y <b><font color="#0000FF">then</font></b>
+    x<font color="#990000">::(</font>upto <font color="#990000">(</font>x <font color="#990000">+</font> <font color="#993399">1</font><font color="#990000">,</font> y<font color="#990000">))</font>
+  <b><font color="#0000FF">else</font></b>
+    nil<font color="#990000">;</font>
+
+<b><font color="#0000FF">fun</font></b> sum <font color="#990000">(</font>xs <font color="#990000">:</font> <font color="#009900">int</font> list<font color="#990000">)</font> <font color="#990000">:</font> <font color="#009900">int</font> <font color="#990000">=</font> 
+  <b><font color="#0000FF">case</font></b> xs <b><font color="#0000FF">of</font></b>
+    nil <font color="#990000">=&gt;</font> <font color="#993399">0</font>
+  <font color="#990000">|</font> <font color="#990000">(</font>x'<font color="#990000">::</font>xs'<font color="#990000">)</font> <font color="#990000">=&gt;</font> x' <font color="#990000">+</font> sum <font color="#990000">(</font>xs'<font color="#990000">);</font>
+  
+<b><font color="#0000FF">fun</font></b> fold <font color="#990000">(</font>opr<font color="#990000">:</font> <font color="#009900">int</font><font color="#990000">*</font><font color="#009900">int</font><font color="#990000">-&gt;</font><font color="#009900">int</font><font color="#990000">,</font> base<font color="#990000">:</font> <font color="#009900">int</font><font color="#990000">,</font> xs<font color="#990000">:</font> <font color="#009900">int</font> list<font color="#990000">)</font> <font color="#990000">:</font> <font color="#009900">int</font> <font color="#990000">=</font> 
+  <b><font color="#0000FF">case</font></b> xs <b><font color="#0000FF">of</font></b>
+    nil <font color="#990000">=&gt;</font> base
+  <font color="#990000">|</font> <font color="#990000">(</font>x'<font color="#990000">::</font>xs'<font color="#990000">)</font> <font color="#990000">=&gt;</font> opr<font color="#990000">(</font>x'<font color="#990000">,</font> fold<font color="#990000">(</font>opr<font color="#990000">,</font> base<font color="#990000">,</font> xs'<font color="#990000">));</font>
+
+<b><font color="#0000FF">fun</font></b> add<font color="#990000">(</font>x<font color="#990000">,</font>y<font color="#990000">)</font> <font color="#990000">=</font> x<font color="#990000">+</font>y<font color="#990000">;</font>
+
+<b><font color="#0000FF">fun</font></b> foldsum <font color="#990000">(</font>xs<font color="#990000">:</font> <font color="#009900">int</font> list<font color="#990000">)</font> <font color="#990000">=</font> fold <font color="#990000">(</font>add<font color="#990000">,</font><font color="#993399">0</font><font color="#990000">,</font> xs<font color="#990000">);</font>
+
+<b><font color="#0000FF">fun</font></b> foldr <font color="#990000">(</font>opr<font color="#990000">:</font> 'b<font color="#990000">*</font>'a<font color="#990000">-&gt;</font>'a<font color="#990000">,</font> base<font color="#990000">:</font> 'a<font color="#990000">,</font> xs<font color="#990000">:</font> 'b list<font color="#990000">)</font> <font color="#990000">:</font> 'a <font color="#990000">=</font> 
+  <b><font color="#0000FF">case</font></b> xs <b><font color="#0000FF">of</font></b>
+    nil <font color="#990000">=&gt;</font> base
+  <font color="#990000">|</font> <font color="#990000">(</font>x'<font color="#990000">::</font>xs'<font color="#990000">)</font> <font color="#990000">=&gt;</font> opr<font color="#990000">(</font>x'<font color="#990000">,</font> foldr<font color="#990000">(</font>opr<font color="#990000">,</font> base<font color="#990000">,</font> xs'<font color="#990000">));</font>
+
+
+
+
+</tt></pre>

@@ -1,0 +1,12 @@
+# provided by Mark Silberbauer <mark@stonethree.com>
+
+vardef basic_time = '[[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}'
+
+comment = '^INFO:'
+keyword = '^WARNING:','^SEVERE:.*', '^Exception[[:blank:]]in[[:blank:]]thread.*'
+string = '^[[:blank:]]{8}at.*'
+
+specialchar = '[[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}', $basic_time, '[[:digit:]]{1}:[[:digit:]]{2}:[[:digit:]]{2}[[:blank:]](AM|PM)', '(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[[:blank:]][[:digit:]]{1,2},[[:blank:]]20[[:digit:]]{2}'
+number = '\b[[:digit:]]+\b'
+
+type = '[[:blank:]](?=\w*\d)\w*((_|\-)(?=\w*\d)\w*)+'

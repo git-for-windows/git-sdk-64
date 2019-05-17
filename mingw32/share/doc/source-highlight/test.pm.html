@@ -1,0 +1,267 @@
+<!-- Generator: GNU source-highlight 
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><i><font color="#9A1900"># Here an extract of package MIME::Lite::HTML</font></i>
+
+<b><font color="#0000FF">package</font></b> MIME<font color="#990000">::</font>Lite<font color="#990000">::</font>HTML<font color="#990000">;</font>
+
+<i><font color="#9A1900"># module MIME::Lite::HTML : Provide routine to transform a HTML page in </font></i>
+<i><font color="#9A1900"># a MIME::Lite mail</font></i>
+<i><font color="#9A1900"># Copyright 2001 A.Barbet alian@alianwebserver.com.  All rights reserved.</font></i>
+
+<i><font color="#9A1900"># Revision 1.1  2002/02/07 15:58:35  bettini</font></i>
+<i><font color="#9A1900"># added scanner for perl</font></i>
+<i><font color="#9A1900">#</font></i>
+<i><font color="#9A1900"># Revision 1.12  2002/01/07 20:18:53  alian</font></i>
+<i><font color="#9A1900"># - Add replace links for frame &amp; iframe</font></i>
+<i><font color="#9A1900"># - Correct incorrect parsing in include_css for &lt;LINK REL="SHORTCUT ICON"&gt;</font></i>
+<i><font color="#9A1900"># tag. Tks to doggy@miniasp.com for idea and patch</font></i>
+<i><font color="#9A1900">#</font></i>
+<i><font color="#9A1900"># Revision 1.11  2001/12/13 22:42:33  alian</font></i>
+<i><font color="#9A1900"># - Correct a bug with relative anchor</font></i>
+<i><font color="#9A1900">#</font></i>
+<i><font color="#9A1900"># Revision 1.10  2001/11/07 10:52:43  alian</font></i>
+<i><font color="#9A1900"># - Add feature for get restricted url. Add LoginDetails parameter for that</font></i>
+<i><font color="#9A1900"># (tks to Leon.Halford@ing-barings.com for idea)</font></i>
+<i><font color="#9A1900"># - Change error in POD doc rfc2257 =&gt; rfc2557 (tks to</font></i>
+<i><font color="#9A1900"># justin.zaglio@morganstanley.com)</font></i>
+<i><font color="#9A1900"># - Correct warning when $url_html is undef</font></i>
+
+<b><font color="#0000FF">use</font></b> LWP<font color="#990000">::</font>UserAgent<font color="#990000">;</font>
+<b><font color="#0000FF">use</font></b> HTML<font color="#990000">::</font>LinkExtor<font color="#990000">;</font>
+<b><font color="#0000FF">use</font></b> URI<font color="#990000">::</font>URL<font color="#990000">;</font>
+<b><font color="#0000FF">use</font></b> MIME<font color="#990000">::</font>Lite<font color="#990000">;</font>
+<b><font color="#0000FF">use</font></b> strict<font color="#990000">;</font>
+<b><font color="#0000FF">use</font></b> vars <b><font color="#0000FF">qw</font></b><font color="#990000">(</font><font color="#009900">$VERSION</font> <font color="#009900">@ISA</font> <font color="#009900">@EXPORT</font> <font color="#009900">@EXPORT_OK</font><font color="#990000">);</font>
+
+<b><font color="#0000FF">require</font></b> Exporter<font color="#990000">;</font>
+
+<font color="#009900">@ISA</font> <font color="#990000">=</font> <b><font color="#0000FF">qw</font></b><font color="#990000">(</font>Exporter<font color="#990000">);</font>
+<font color="#009900">@EXPORT</font> <font color="#990000">=</font> <b><font color="#0000FF">qw</font></b><font color="#990000">();</font>
+
+<b><font color="#0000FF">my</font></b> <font color="#009900">$LOGINDETAILS</font><font color="#990000">;</font>
+
+<i><font color="#9A1900">#------------------------------------------------------------------------------</font></i>
+<i><font color="#9A1900"># redefine get_basic_credentials</font></i>
+<i><font color="#9A1900">#------------------------------------------------------------------------------</font></i>
+<font color="#FF0000">{</font>
+    <b><font color="#0000FF">package</font></b> RequestAgent<font color="#990000">;</font>
+    <b><font color="#0000FF">use</font></b> vars <b><font color="#0000FF">qw</font></b><font color="#990000">(</font><font color="#009900">@ISA</font><font color="#990000">);</font>
+    <font color="#009900">@ISA</font> <font color="#990000">=</font> <b><font color="#0000FF">qw</font></b><font color="#990000">(</font>LWP<font color="#990000">::</font>UserAgent<font color="#990000">);</font>
+
+    <b><font color="#0000FF">sub</font></b> new
+    <font color="#FF0000">{</font> 
+	<b><font color="#0000FF">my</font></b> <font color="#009900">$self</font> <font color="#990000">=</font> LWP<font color="#990000">::</font>UserAgent<font color="#990000">::</font><b><font color="#000000">new</font></b><font color="#990000">(</font><font color="#009900">@_</font><font color="#990000">);</font>
+	<font color="#009900">$self</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+
+    <b><font color="#0000FF">sub</font></b> get_basic_credentials
+	<font color="#FF0000">{</font>	
+	  <b><font color="#0000FF">my</font></b><font color="#990000">(</font><font color="#009900">$self</font><font color="#990000">,</font> <font color="#009900">$realm</font><font color="#990000">,</font> <font color="#009900">$uri</font><font color="#990000">)</font> <font color="#990000">=</font> <font color="#009900">@_</font><font color="#990000">;</font>
+	  <i><font color="#9A1900"># Use parameter of MIME-Lite-HTML, key LoginDetails</font></i>
+	  <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><b><font color="#0000FF">defined</font></b> <font color="#009900">$LOGINDETAILS</font><font color="#990000">)</font> <font color="#FF0000">{</font> <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">split</font></b><font color="#990000">(</font><font color="#FF0000">':'</font><font color="#990000">,</font> <font color="#009900">$LOGINDETAILS</font><font color="#990000">,</font> <font color="#993399">2</font><font color="#990000">);</font> <font color="#FF0000">}</font> 
+	  <i><font color="#9A1900"># Ask user on STDIN</font></i>
+	  <b><font color="#0000FF">elsif</font></b> <font color="#990000">(-</font>t<font color="#990000">)</font> 
+	    <font color="#FF0000">{</font>
+		<b><font color="#0000FF">my</font></b> <font color="#009900">$netloc</font> <font color="#990000">=</font> <font color="#009900">$uri</font><font color="#990000">-&gt;</font>host_port<font color="#990000">;</font>
+		<b><font color="#0000FF">print</font></b> <font color="#FF0000">"Enter username for $realm at $netloc: "</font><font color="#990000">;</font>
+		<b><font color="#0000FF">my</font></b> <font color="#009900">$user</font> <font color="#990000">=</font> <font color="#FF0000">&lt;STDIN&gt;</font><font color="#990000">;</font>
+		<b><font color="#0000FF">chomp</font></b><font color="#990000">(</font><font color="#009900">$user</font><font color="#990000">);</font>
+		<i><font color="#9A1900"># 403 if no user given</font></i>
+		<b><font color="#0000FF">return</font></b> <font color="#990000">(</font><b><font color="#0000FF">undef</font></b><font color="#990000">,</font> <b><font color="#0000FF">undef</font></b><font color="#990000">)</font> <b><font color="#0000FF">unless</font></b> <b><font color="#0000FF">length</font></b> <font color="#009900">$user</font><font color="#990000">;</font>
+		<b><font color="#0000FF">print</font></b> <font color="#FF0000">"Password: "</font><font color="#990000">;</font>
+		<b><font color="#0000FF">system</font></b><font color="#990000">(</font><font color="#FF0000">"stty -echo"</font><font color="#990000">);</font>
+		<b><font color="#0000FF">my</font></b> <font color="#009900">$password</font> <font color="#990000">=</font> <font color="#FF0000">&lt;STDIN&gt;</font><font color="#990000">;</font>
+		<b><font color="#0000FF">system</font></b><font color="#990000">(</font><font color="#FF0000">"stty echo"</font><font color="#990000">);</font>
+		<b><font color="#0000FF">print</font></b> <font color="#FF0000">"\n"</font><font color="#990000">;</font>  <i><font color="#9A1900"># because we disabled echo</font></i>
+		<b><font color="#0000FF">chomp</font></b><font color="#990000">(</font><font color="#009900">$password</font><font color="#990000">);</font>
+		<b><font color="#0000FF">return</font></b> <font color="#990000">(</font><font color="#009900">$user</font><font color="#990000">,</font> <font color="#009900">$password</font><font color="#990000">);</font>
+	    <font color="#FF0000">}</font>
+	  <i><font color="#9A1900"># Damm we got 403 with CGI (use param LoginDetails)  ...</font></i>
+	  <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font> <b><font color="#0000FF">return</font></b> <font color="#990000">(</font><b><font color="#0000FF">undef</font></b><font color="#990000">,</font> <b><font color="#0000FF">undef</font></b><font color="#990000">)</font> <font color="#FF0000">}</font>
+	<font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+
+<i><font color="#9A1900">#------------------------------------------------------------------------------</font></i>
+<i><font color="#9A1900"># new</font></i>
+<i><font color="#9A1900">#------------------------------------------------------------------------------</font></i>
+<b><font color="#0000FF">sub</font></b> new
+  <font color="#FF0000">{</font>
+    <b><font color="#0000FF">my</font></b> <font color="#009900">$class</font> <font color="#990000">=</font> <b><font color="#0000FF">shift</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">my</font></b> <font color="#009900">$self</font> <font color="#990000">=</font> <font color="#FF0000">{}</font><font color="#990000">;</font>
+    <b><font color="#0000FF">bless</font></b> <font color="#009900">$self</font><font color="#990000">,</font> <font color="#009900">$class</font><font color="#990000">;</font>
+    <b><font color="#0000FF">my</font></b> <font color="#009900">%param</font> <font color="#990000">=</font> <font color="#009900">@_</font><font color="#990000">;</font>
+    <i><font color="#9A1900"># Agent name</font></i>
+    <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_AGENT<font color="#FF0000">}</font> <font color="#990000">=</font> new RequestAgent<font color="#990000">;</font>
+    <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_AGENT<font color="#FF0000">}</font><font color="#990000">-&gt;</font><b><font color="#000000">agent</font></b><font color="#990000">(</font><font color="#FF0000">"MIME-Lite-HTML $VERSION"</font><font color="#990000">);</font>
+    <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_AGENT<font color="#FF0000">}</font><font color="#990000">-&gt;</font><b><font color="#000000">from</font></b><font color="#990000">(</font><font color="#FF0000">'mime-lite-html@alianwebserver.com'</font> <font color="#990000">);</font>
+    <i><font color="#9A1900"># Set debug level</font></i>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'Debug'</font><font color="#FF0000">}</font><font color="#990000">)</font>
+      <font color="#FF0000">{</font>
+	<font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_DEBUG<font color="#FF0000">}</font> <font color="#990000">=</font> <font color="#993399">1</font><font color="#990000">;</font>
+	<b><font color="#0000FF">delete</font></b> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'Debug'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+      <font color="#FF0000">}</font>
+    <i><font color="#9A1900"># Set Login information</font></i>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'LoginDetails'</font><font color="#FF0000">}</font><font color="#990000">)</font>
+      <font color="#FF0000">{</font>
+	  <font color="#009900">$LOGINDETAILS</font> <font color="#990000">=</font> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'LoginDetails'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+	  <b><font color="#0000FF">delete</font></b> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'LoginDetails'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+      <font color="#FF0000">}</font>
+    <i><font color="#9A1900"># Set type of include to do</font></i>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'IncludeType'</font><font color="#FF0000">}</font><font color="#990000">)</font>
+      <font color="#FF0000">{</font>
+	<b><font color="#0000FF">die</font></b> <font color="#FF0000">"IncludeType must be in 'extern', 'cid' or 'location'\n"</font> <b><font color="#0000FF">if</font></b>
+	  <font color="#990000">(</font> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'IncludeType'</font><font color="#FF0000">}</font> ne <font color="#FF0000">'extern'</font><font color="#990000">)</font> <b><font color="#0000FF">and</font></b>
+	    <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'IncludeType'</font><font color="#FF0000">}</font> ne <font color="#FF0000">'cid'</font><font color="#990000">)</font> <b><font color="#0000FF">and</font></b>
+	    <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'IncludeType'</font><font color="#FF0000">}</font> ne <font color="#FF0000">'location'</font><font color="#990000">));</font>	
+	<font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_include<font color="#FF0000">}</font> <font color="#990000">=</font> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'IncludeType'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+	<b><font color="#0000FF">delete</font></b> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'IncludeType'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+      <font color="#FF0000">}</font>
+    <i><font color="#9A1900"># Defaut type: use a Content-Location field</font></i>
+    <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font><font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_include<font color="#FF0000">}</font><font color="#990000">=</font><font color="#FF0000">'location'</font><font color="#990000">;</font><font color="#FF0000">}</font>
+
+<i><font color="#9A1900">## Added by Michalis@linuxmail.org to manipulate non-us mails</font></i>
+   <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'TextCharset'</font><font color="#FF0000">}</font><font color="#990000">)</font> <font color="#FF0000">{</font>
+     <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_textcharset<font color="#FF0000">}</font><font color="#990000">=</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'TextCharset'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+     <b><font color="#0000FF">delete</font></b> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'TextCharset'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+   <font color="#FF0000">}</font>
+   <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font> <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_textcharset<font color="#FF0000">}</font><font color="#990000">=</font><font color="#FF0000">'iso-8859-1'</font><font color="#990000">;</font> <font color="#FF0000">}</font>
+   <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HTMLCharset'</font><font color="#FF0000">}</font><font color="#990000">)</font> <font color="#FF0000">{</font>
+     <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_htmlcharset<font color="#FF0000">}</font><font color="#990000">=</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HTMLCharset'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+     <b><font color="#0000FF">delete</font></b> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HTMLCharset'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+   <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font> <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_htmlcharset<font color="#FF0000">}</font><font color="#990000">=</font><font color="#FF0000">'iso-8859-1'</font><font color="#990000">;</font> <font color="#FF0000">}</font>
+
+   <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'TextEncoding'</font><font color="#FF0000">}</font><font color="#990000">)</font> <font color="#FF0000">{</font>
+     <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_textencoding<font color="#FF0000">}</font><font color="#990000">=</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'TextEncoding'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+     <b><font color="#0000FF">delete</font></b> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'TextEncoding'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+   <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font> <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_textencoding<font color="#FF0000">}</font><font color="#990000">=</font><font color="#FF0000">'7bit'</font><font color="#990000">;</font> <font color="#FF0000">}</font>
+
+   <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HTMLEncoding'</font><font color="#FF0000">}</font><font color="#990000">)</font> <font color="#FF0000">{</font>
+     <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_htmlencoding<font color="#FF0000">}</font><font color="#990000">=</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HTMLEncoding'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+     <b><font color="#0000FF">delete</font></b> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HTMLEncoding'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+   <b><font color="#0000FF">else</font></b> <font color="#FF0000">{</font> <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_htmlencoding<font color="#FF0000">}</font><font color="#990000">=</font><font color="#FF0000">'quoted-printable'</font><font color="#990000">;</font> <font color="#FF0000">}</font>
+<i><font color="#9A1900">## End. Default values remain as they were initially set.</font></i>
+<i><font color="#9A1900">## No need to change existing scripts if you send US-ASCII. </font></i>
+<i><font color="#9A1900">## If you DON't send us-ascii, you wouldn't be able to use </font></i>
+<i><font color="#9A1900">## MIME::Lite::HTML anyway :-)</font></i>
+
+    <i><font color="#9A1900"># Set proxy to use to get file</font></i>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'Proxy'</font><font color="#FF0000">}</font><font color="#990000">)</font>
+      <font color="#FF0000">{</font>
+	<font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_AGENT<font color="#FF0000">}</font><font color="#990000">-&gt;</font><b><font color="#000000">proxy</font></b><font color="#990000">(</font><font color="#FF0000">'http'</font><font color="#990000">,</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'Proxy'</font><font color="#FF0000">}</font><font color="#990000">)</font> <font color="#990000">;</font>
+	<b><font color="#0000FF">print</font></b> <font color="#FF0000">"Set proxy for http : "</font><font color="#990000">,</font> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'Proxy'</font><font color="#FF0000">}</font><font color="#990000">,</font><font color="#FF0000">"\n"</font> 
+	  <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_DEBUG<font color="#FF0000">}</font><font color="#990000">);</font>
+	<b><font color="#0000FF">delete</font></b> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'Proxy'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+      <font color="#FF0000">}</font>
+    <i><font color="#9A1900"># Set hash to use with template</font></i>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HashTemplate'</font><font color="#FF0000">}</font><font color="#990000">)</font>
+      <font color="#FF0000">{</font>
+	<font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HashTemplate'</font><font color="#FF0000">}</font> <font color="#990000">=</font> <b><font color="#0000FF">ref</font></b><font color="#990000">(</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HashTemplate'</font><font color="#FF0000">}</font><font color="#990000">)</font> <b><font color="#0000FF">eq</font></b> <font color="#FF0000">"HASH"</font> 
+	  <font color="#990000">?</font> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HashTemplate'</font><font color="#FF0000">}</font> <font color="#990000">:</font> <font color="#990000">%</font><font color="#FF0000">{</font><font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HashTemplate'</font><font color="#FF0000">}}</font><font color="#990000">;</font>
+	<font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_HASH_TEMPLATE<font color="#FF0000">}</font><font color="#990000">=</font> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HashTemplate'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+	<b><font color="#0000FF">delete</font></b> <font color="#009900">$param</font><font color="#FF0000">{</font><font color="#FF0000">'HashTemplate'</font><font color="#FF0000">}</font><font color="#990000">;</font>
+      <font color="#FF0000">}</font>
+    <font color="#009900">$self</font><font color="#990000">-&gt;</font><font color="#FF0000">{</font>_param<font color="#FF0000">}</font> <font color="#990000">=</font> <font color="#990000">\</font><font color="#009900">%param</font><font color="#990000">;</font>
+    <i><font color="#9A1900"># Ok I hope I known what I do ;-)</font></i>
+    MIME<font color="#990000">::</font>Lite<font color="#990000">-&gt;</font><b><font color="#000000">quiet</font></b><font color="#990000">(</font><font color="#993399">1</font><font color="#990000">);</font>
+    <b><font color="#0000FF">return</font></b> <font color="#009900">$self</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+<i><font color="#9A1900">#------------------------------------------------------------------------------</font></i>
+<i><font color="#9A1900"># POD Documentation</font></i>
+<i><font color="#9A1900">#------------------------------------------------------------------------------</font></i>
+
+<i><font color="#9A1900">=head1 NAME</font></i>
+
+<i><font color="#9A1900">MIME::Lite::HTML - Provide routine to transform a HTML page in a MIME-Lite mail</font></i>
+
+<i><font color="#9A1900">=head1 SYNOPSIS</font></i>
+
+<i><font color="#9A1900">  #!/usr/bin/perl -w </font></i>
+<i><font color="#9A1900">  # A cgi program that do "Mail this page to a friend";</font></i>
+<i><font color="#9A1900">  # Call this script like this :</font></i>
+<i><font color="#9A1900">  # script.cgi?email=myfriend@isp.com&amp;url=http://www.go.com</font></i>
+<i><font color="#9A1900">  use strict;</font></i>
+<i><font color="#9A1900">  use CGI qw/:standard/;</font></i>
+<i><font color="#9A1900">  use CGI::Carp qw/fatalsToBrowser/;</font></i>
+<i><font color="#9A1900">  use MIME::Lite::HTML;</font></i>
+<i><font color="#9A1900">  </font></i>
+<i><font color="#9A1900">  my $mailHTML = new MIME::Lite::HTML</font></i>
+<i><font color="#9A1900">     From     =&gt; 'MIME-Lite@alianwebserver.com',</font></i>
+<i><font color="#9A1900">     To       =&gt; param('email'),</font></i>
+<i><font color="#9A1900">     Subject =&gt; 'Your url: '.param('url');</font></i>
+<i><font color="#9A1900">  </font></i>
+<i><font color="#9A1900">  my $MIMEmail = $mailHTML-&gt;parse(param('url'));</font></i>
+<i><font color="#9A1900">  $MIMEmail-&gt;send; # or for win user : $mail-&gt;send_by_smtp('smtp.fai.com');</font></i>
+<i><font color="#9A1900">  print header,"Mail envoye (", param('url'), " to ", param('email'),")&lt;br&gt;\n";</font></i>
+
+<i><font color="#9A1900">=head1 DESCRIPTION</font></i>
+
+<i><font color="#9A1900">This module is a Perl mail client interface for sending message that </font></i>
+<i><font color="#9A1900">support HTML format and build them for you..</font></i>
+<i><font color="#9A1900">This module provide routine to transform a HTML page in MIME::Lite mail.</font></i>
+<i><font color="#9A1900">So you need this module to use MIME-Lite-HTML possibilities</font></i>
+
+<i><font color="#9A1900">=head2 What's happen ?</font></i>
+
+<i><font color="#9A1900">The job done is:</font></i>
+
+<i><font color="#9A1900">=over</font></i>
+
+<i><font color="#9A1900">=item *</font></i>
+
+<i><font color="#9A1900">Get the file (LWP) if needed</font></i>
+
+<i><font color="#9A1900">=item *</font></i>
+
+<i><font color="#9A1900">Parse page to find include images (gif, jpg, flash)</font></i>
+
+<i><font color="#9A1900">=item *</font></i>
+
+<i><font color="#9A1900">Attach them to mail with adequat header if asked (default)</font></i>
+
+<i><font color="#9A1900">=item *</font></i>
+
+<i><font color="#9A1900">Include external CSS,Javascript file</font></i>
+
+<i><font color="#9A1900">=item *</font></i>
+
+<i><font color="#9A1900">Replace relative url with absolute one</font></i>
+
+<i><font color="#9A1900">=item *</font></i>
+
+<i><font color="#9A1900">Build the final MIME-Lite object with each part found</font></i>
+
+<i><font color="#9A1900">=back</font></i>
+
+<i><font color="#9A1900">=cut</font></i>
+
+<i><font color="#9A1900">## the next one is just to see if =cut is recognized</font></i>
+<b><font color="#0000FF">sub</font></b> foo
+  <font color="#FF0000">{</font>
+    <b><font color="#0000FF">my</font></b> <font color="#009900">$class</font> <font color="#990000">=</font> <b><font color="#0000FF">shift</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">my</font></b> <font color="#009900">$self</font> <font color="#990000">=</font> <font color="#FF0000">{}</font><font color="#990000">;</font>
+    <b><font color="#0000FF">bless</font></b> <font color="#009900">$self</font><font color="#990000">,</font> <font color="#009900">$class</font><font color="#990000">;</font>
+    <font color="#009900">$content</font> <font color="#990000">=~</font> <b><font color="#0000FF">s</font></b><font color="#FF6600">/^.*content:.*?\"//</font><b><font color="#0000FF">i</font></b><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+
+<font color="#009900">$theline</font> <font color="#990000">=~</font> <b><font color="#0000FF">s</font></b><font color="#FF6600">/(&lt;=|=&gt;|=|\-|\+|\*|\/|\*\*|;|:|\\|\'|\"|,|\.|\(|\)|\[|\]|\{|\}|&lt;|&gt;)/\&lt;span class\=\"op\"\&gt;$1\&lt;\/span&gt;/</font><b><font color="#0000FF">g</font></b><font color="#990000">;</font>
+
+<font color="#009900">$theline</font> <font color="#990000">=~</font> <b><font color="#0000FF">s</font></b><font color="#FF6600">/(&lt;=|=&gt;|=|\-|\+|\*|\/|\*\*|;|:|\\|\'|\"|,|\.|\(|\)|\[|\]|\{|\}|&lt;|&gt;)/</font><b><font color="#0000FF">g</font></b><font color="#990000">;</font>
+
+<b><font color="#0000FF">if</font></b><font color="#990000">(</font><font color="#009900">$#ARGV</font><font color="#990000">==</font><font color="#993399">2</font><font color="#990000">)</font><font color="#FF0000">{}</font>
+
+<font color="#009900">$someString</font> <font color="#990000">=~</font> <b><font color="#0000FF">m</font></b><font color="#FF6600">/anything/</font>gix <font color="#990000">;</font>
+<font color="#009900">$someString</font> <font color="#990000">=~</font>  <font color="#FF0000">/anything/</font>    <font color="#990000">;</font>
+<b><font color="#0000FF">if</font></b><font color="#990000">(</font><font color="#009900">$someString</font> <font color="#990000">=~</font>  <font color="#FF0000">/anything/</font><b><font color="#0000FF">g</font></b>   <font color="#990000">)</font><font color="#FF0000">{}</font>
+<b><font color="#0000FF">if</font></b><font color="#990000">(</font>                <font color="#FF0000">/anything/</font>    <font color="#990000">)</font><font color="#FF0000">{}</font>
+
+<b><font color="#0000FF">if</font></b><font color="#990000">(</font><font color="#009900">$somestring</font> <font color="#990000">=~</font>  <b><font color="#0000FF">s</font></b><font color="#FF6600">/something/something else/</font><b><font color="#0000FF">gi</font></b> <font color="#990000">)</font><font color="#FF0000">{}</font>
+<font color="#009900">$somestring</font> <font color="#990000">=~</font>   <font color="#FF0000">/something/something else/</font>   <font color="#990000">;</font>
+<font color="#009900">$somestring</font> <font color="#990000">=~</font> <b><font color="#0000FF">qr</font></b><font color="#FF6600">/something/</font>something <b><font color="#0000FF">else</font></b><font color="#990000">/</font>   <font color="#990000">;</font>
+</tt></pre>

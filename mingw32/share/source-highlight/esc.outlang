@@ -1,0 +1,46 @@
+extension "txt"
+
+styletemplate "\x1b[$stylem$text\x1b[m"
+styleseparator ";"
+
+bold "01$style"
+underline "04$style"
+italics "$style"
+color "$style"
+
+
+colormap
+"green" "32"
+"red" "31"
+"darkred" "31"
+"blue" "34"
+"brown" "31"
+"pink" "35"
+"yellow" "33"
+"cyan" "36"
+"purple" "35"
+"orange" "31"
+"brightorange" "31"
+"brightgreen" "32"
+"darkgreen" "32"
+"black" "30"
+"teal" "37"
+"gray" "37"
+"darkblue" "34"
+default "30;"
+end
+
+# Decorate text with terminal control sequences (escape sequences).
+# To set the attribute/fg_color/bg_color we need to print
+#   "\033[AA;FF;BBm"
+# where AA is one of these:
+# 00=none 01=bold 04=underscore 05=blink 07=reverse 08=concealed,
+# FF is one of these:
+# 30=black 31=red 32=green 33=yellow 34=blue 35=magenta 36=cyan 37=white
+# BB is one of these:
+# 40=black 41=red 42=green 43=yellow 44=blue 45=magenta 46=cyan 47=white
+#
+# Any of AA,FF,BB may be omited.
+#
+# To reset do default color/attribute we need to print
+# "\033[m"
