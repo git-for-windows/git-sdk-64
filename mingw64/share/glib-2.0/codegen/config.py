@@ -19,4 +19,4 @@
 #
 # Author: David Zeuthen <davidz@redhat.com>
 
-VERSION = "2.60.2"
+VERSION = "2.60.3"
