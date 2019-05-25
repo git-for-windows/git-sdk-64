@@ -15,6 +15,11 @@
 #pragma pack(push,_CRT_PACKING)
 #endif
 
+#if !defined(_UCRT) && ((__MSVCRT_VERSION__ >= 0x1400) || (__MSVCRT_VERSION__ >= 0xE00 && __MSVCRT_VERSION__ < 0x1000))
+// Allow both 0x1400 and 0xE00 to identify UCRT
+#define _UCRT
+#endif
+
 #ifdef __ERRCODE_DEFINED_MS
 /* #define __ERRCODE_DEFINED_MS */
 typedef int errcode;
@@ -450,7 +455,7 @@ typedef struct tagLC_ID {
 #ifndef _THREADLOCALEINFO
 #define _THREADLOCALEINFO
 typedef struct threadlocaleinfostruct {
-#if __MSVCRT_VERSION__ >= 0x1400
+#ifdef _UCRT
   const unsigned short *_locale_pctype;
   int _locale_mb_cur_max;
   unsigned int _locale_lc_codepage;
