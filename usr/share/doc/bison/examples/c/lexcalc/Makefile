@@ -15,7 +15,7 @@ all: $(BASE)
 	$(FLEX) $(FLEXFLAGS) -o$@ $<
 
 scan.o: parse.h
-lexcalc: parse.o scan.o
+$(BASE): parse.o scan.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 run: $(BASE)

@@ -1,14 +1,14 @@
 %{
   #include <stdio.h>  /* For printf, etc. */
-  #include <math.h>   /* For pow, used in the grammar.  */
-  #include "calc.h"   /* Contains definition of 'symrec'.  */
+  #include <math.h>   /* For pow, used in the grammar. */
+  #include "calc.h"   /* Contains definition of 'symrec'. */
   int yylex (void);
   void yyerror (char const *);
 %}
 
-%define api.value.type union /* Generate YYSTYPE from these types:  */
-%token <double>  NUM         /* Simple double precision number.  */
-%token <symrec*> VAR FNCT    /* Symbol table pointer: variable and function.  */
+%define api.value.type union /* Generate YYSTYPE from these types: */
+%token <double>  NUM     /* Double precision number. */
+%token <symrec*> VAR FUN /* Symbol table pointer: variable/function. */
 %type  <double>  exp
 
 %precedence '='
@@ -16,16 +16,16 @@
 %left '*' '/'
 %precedence NEG /* negation--unary minus */
 %right '^'      /* exponentiation */
-/* Generate the parser description file.  */
+/* Generate the parser description file. */
 %verbose
-/* Enable run-time traces (yydebug).  */
+/* Enable run-time traces (yydebug). */
 %define parse.trace
 
-/* Formatting semantic values.  */
+/* Formatting semantic values. */
 %printer { fprintf (yyo, "%s", $$->name); } VAR;
-%printer { fprintf (yyo, "%s()", $$->name); } FNCT;
+%printer { fprintf (yyo, "%s()", $$->name); } FUN;
 %printer { fprintf (yyo, "%g", $$); } <double>;
-%% /* The grammar follows.  */
+%% /* The grammar follows. */
 input:
   %empty
 | input line
@@ -38,10 +38,10 @@ line:
 ;
 
 exp:
-  NUM                { $$ = $1;                         }
+  NUM
 | VAR                { $$ = $1->value.var;              }
 | VAR '=' exp        { $$ = $3; $1->value.var = $3;     }
-| FNCT '(' exp ')'   { $$ = (*($1->value.fnctptr))($3); }
+| FUN '(' exp ')'    { $$ = $1->value.fun ($3);         }
 | exp '+' exp        { $$ = $1 + $3;                    }
 | exp '-' exp        { $$ = $1 - $3;                    }
 | exp '*' exp        { $$ = $1 * $3;                    }
@@ -50,16 +50,16 @@ exp:
 | exp '^' exp        { $$ = pow ($1, $3);               }
 | '(' exp ')'        { $$ = $2;                         }
 ;
-/* End of grammar.  */
+/* End of grammar. */
 %%
 
 struct init
 {
-  char const *fname;
-  double (*fnct) (double);
+  char const *name;
+  func_t *fun;
 };
 
-struct init const arith_fncts[] =
+struct init const arith_funs[] =
 {
   { "atan", atan },
   { "cos",  cos  },
@@ -70,19 +70,17 @@ struct init const arith_fncts[] =
   { 0, 0 },
 };
 
-/* The symbol table: a chain of 'struct symrec'.  */
+/* The symbol table: a chain of 'struct symrec'. */
 symrec *sym_table;
 
-/* Put arithmetic functions in table.  */
-static
-void
+/* Put arithmetic functions in table. */
+static void
 init_table (void)
 {
-  int i;
-  for (i = 0; arith_fncts[i].fname != 0; i++)
+  for (int i = 0; arith_funs[i].name; i++)
     {
-      symrec *ptr = putsym (arith_fncts[i].fname, FNCT);
-      ptr->value.fnctptr = arith_fncts[i].fnct;
+      symrec *ptr = putsym (arith_funs[i].name, FUN);
+      ptr->value.fun = arith_funs[i].fun;
     }
 }
 
@@ -90,27 +88,24 @@ init_table (void)
 #include <string.h> /* strlen. */
 
 symrec *
-putsym (char const *sym_name, int sym_type)
+putsym (char const *name, int sym_type)
 {
-  symrec *ptr = (symrec *) malloc (sizeof (symrec));
-  ptr->name = (char *) malloc (strlen (sym_name) + 1);
-  strcpy (ptr->name,sym_name);
-  ptr->type = sym_type;
-  ptr->value.var = 0; /* Set value to 0 even if fctn.  */
-  ptr->next = (struct symrec *)sym_table;
-  sym_table = ptr;
-  return ptr;
+  symrec *res = (symrec *) malloc (sizeof (symrec));
+  res->name = strdup (name);
+  res->type = sym_type;
+  res->value.var = 0; /* Set value to 0 even if fun. */
+  res->next = sym_table;
+  sym_table = res;
+  return res;
 }
 
 symrec *
-getsym (char const *sym_name)
+getsym (char const *name)
 {
-  symrec *ptr;
-  for (ptr = sym_table; ptr != (symrec *) 0;
-       ptr = (symrec *)ptr->next)
-    if (strcmp (ptr->name, sym_name) == 0)
-      return ptr;
-  return 0;
+  for (symrec *p = sym_table; p; p = p->next)
+    if (strcmp (p->name, name) == 0)
+      return p;
+  return NULL;
 }
 
 #include <ctype.h>
@@ -120,14 +115,14 @@ yylex (void)
 {
   int c;
 
-  /* Ignore white space, get first nonwhite character.  */
+  /* Ignore white space, get first nonwhite character. */
   while ((c = getchar ()) == ' ' || c == '\t')
     continue;
 
   if (c == EOF)
     return 0;
 
-  /* Char starts a number => parse the number.         */
+  /* Char starts a number => parse the number. */
   if (c == '.' || isdigit (c))
     {
       ungetc (c, stdin);
@@ -135,30 +130,28 @@ yylex (void)
       return NUM;
     }
 
-  /* Char starts an identifier => read the name.       */
+  /* Char starts an identifier => read the name. */
   if (isalpha (c))
     {
       /* Initially make the buffer long enough
-         for a 40-character symbol name.  */
+         for a 40-character symbol name. */
       static size_t length = 40;
       static char *symbuf = 0;
-      symrec *s;
-      int i;
       if (!symbuf)
-        symbuf = (char *) malloc (length + 1);
+        symbuf = malloc (length + 1);
 
-      i = 0;
+      int i = 0;
       do
         {
-          /* If buffer is full, make it bigger.        */
+          /* If buffer is full, make it bigger. */
           if (i == length)
             {
               length *= 2;
-              symbuf = (char *) realloc (symbuf, length + 1);
+              symbuf = realloc (symbuf, length + 1);
             }
-          /* Add this character to the buffer.         */
+          /* Add this character to the buffer. */
           symbuf[i++] = c;
-          /* Get another character.                    */
+          /* Get another character. */
           c = getchar ();
         }
       while (isalnum (c));
@@ -166,32 +159,28 @@ yylex (void)
       ungetc (c, stdin);
       symbuf[i] = '\0';
 
-      s = getsym (symbuf);
-      if (s == 0)
+      symrec *s = getsym (symbuf);
+      if (!s)
         s = putsym (symbuf, VAR);
-      *((symrec**) &yylval) = s;
+      yylval.VAR = s; /* or yylval.FUN = s. */
       return s->type;
     }
 
-  /* Any other character is a token by itself.        */
+  /* Any other character is a token by itself. */
   return c;
 }
 
-/* Called by yyparse on error.  */
-void
-yyerror (char const *s)
+/* Called by yyparse on error. */
+void yyerror (char const *s)
 {
   fprintf (stderr, "%s\n", s);
 }
 
-int
-main (int argc, char const* argv[])
+int main (int argc, char const* argv[])
 {
-  int i;
-  /* Enable parse traces on option -p.  */
-  for (i = 1; i < argc; ++i)
-    if (!strcmp(argv[i], "-p"))
-      yydebug = 1;
+  /* Enable parse traces on option -p. */
+  if (argc == 2 && strcmp(argv[1], "-p") == 0)
+    yydebug = 1;
   init_table ();
   return yyparse ();
 }

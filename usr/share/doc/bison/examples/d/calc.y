@@ -18,17 +18,15 @@
        MINUS  "-"
        STAR   "*"
        SLASH  "/"
-       BANG   "!"
        LPAR   "("
        RPAR   ")"
        EOL    "end of line"
 %token <ival> NUM "number"
 %type  <ival> exp
 
-%nonassoc "="       /* comparison            */
 %left "-" "+"
 %left "*" "/"
-%precedence NEG     /* negation--unary minus */
+%precedence UNARY   /* unary operators */
 
 /* Grammar follows */
 %%
@@ -44,96 +42,86 @@ line:
 ;
 
 exp:
-  NUM                { $$ = $1; }
-| exp "=" exp
-  {
-    if ($1 != $3)
-      yyerror (format ("calc: error: %d != %d", $1, $3));
-  }
-| exp "+" exp        { $$ = $1 + $3; }
-| exp "-" exp        { $$ = $1 - $3; }
-| exp "*" exp        { $$ = $1 * $3; }
-| exp "/" exp        { $$ = $1 / $3; }
-| "-" exp  %prec NEG { $$ = -$2; }
-| "(" exp ")"        { $$ = $2; }
-| "(" error ")"      { $$ = 1111; }
-| "!"                { $$ = 0; return YYERROR; }
-| "-" error          { $$ = 0; return YYERROR; }
+  NUM                  { $$ = $1; }
+| exp "+" exp          { $$ = $1 + $3; }
+| exp "-" exp          { $$ = $1 - $3; }
+| exp "*" exp          { $$ = $1 * $3; }
+| exp "/" exp          { $$ = $1 / $3; }
+| "+" exp  %prec UNARY { $$ = -$2; }
+| "-" exp  %prec UNARY { $$ = -$2; }
+| "(" exp ")"          { $$ = $2; }
 ;
 
-
 %%
-class CalcLexer : Lexer {
+import std.range.primitives;
+import std.stdio;
 
-  this ()
-    {}
+auto calcLexer(R)(R range)
+  if (isInputRange!R && is (ElementType!R : dchar))
+{
+  return new CalcLexer!R(range);
+}
 
-  int
-  get_char ()
-  {
-    import stdc = core.stdc.stdio;
-    return stdc.getc (stdc.stdin);
-  }
+auto calcLexer (File f)
+{
+  import std.algorithm : map, joiner;
+  import std.utf : byDchar;
 
-  void
-  unget_char (int c)
-  {
-    import stdc = core.stdc.stdio;
-    stdc.ungetc (c, stdc.stdin);
-  }
+  return f.byChunk(1024)        // avoid making a syscall roundtrip per char
+          .map!(chunk => cast(char[]) chunk) // because byChunk returns ubyte[]
+          .joiner               // combine chunks into a single virtual range of char
+          .calcLexer;           // forward to other overload
+}
+
+class CalcLexer(R) : Lexer
+  if (isInputRange!R && is (ElementType!R : dchar))
+{
+  R input;
+
+  this(R r) { input = r; }
+
+  // Should be a local in main, shared with %parse-param.
+  int exit_status = 0;
 
   public void yyerror (string s)
   {
+    exit_status = 1;
     stderr.writeln (s);
-  }
-
-  int
-  read_signed_integer ()
-  {
-    int c = get_char ();
-    int sign = 1;
-    int n = 0;
-
-    if (c == '-')
-      {
-        c = get_char ();
-        sign = -1;
-      }
-
-    while (isDigit (c))
-      {
-        n = 10 * n + (c - '0');
-        c = get_char ();
-      }
-
-    unget_char (c);
-    return sign * n;
   }
 
   YYSemanticType semanticVal_;
 
-  public final @property YYSemanticType semanticVal()
+  public final @property YYSemanticType semanticVal ()
   {
     return semanticVal_;
   }
 
-  YYTokenType yylex ()
+  int yylex ()
   {
-    int c;
-    /* Skip white spaces.  */
-    do
-      {}
-    while ((c = get_char ()) == ' ' || c == '\t');
+    import std.uni : isWhite, isNumber;
 
-    /* process numbers   */
-    if (c == '.' || isDigit (c))
+    // Skip initial spaces
+    while (!input.empty && input.front != '\n' && isWhite (input.front))
+    {
+      input.popFront;
+    }
+
+    // Handle EOF.
+    if (input.empty)
+      return YYTokenType.EOF;
+
+    // Numbers.
+    if (input.front == '.' || input.front.isNumber)
       {
-        unget_char (c);
-        semanticVal_.ival = read_signed_integer ();
+        import std.conv : parse;
+        semanticVal_.ival = input.parse!int;
         return YYTokenType.NUM;
       }
 
-    switch (c)
+    // Individual characters
+    auto ch = input.front;
+    input.popFront;
+    switch (ch)
       {
       case EOF: return YYTokenType.EOF;
       case '=': return YYTokenType.EQ;
@@ -141,7 +129,6 @@ class CalcLexer : Lexer {
       case '-': return YYTokenType.MINUS;
       case '*': return YYTokenType.STAR;
       case '/': return YYTokenType.SLASH;
-      case '!': return YYTokenType.BANG;
       case '(': return YYTokenType.LPAR;
       case ')': return YYTokenType.RPAR;
       case '\n': return YYTokenType.EOL;
@@ -150,9 +137,10 @@ class CalcLexer : Lexer {
   }
 }
 
-void main ()
+int main ()
 {
-  CalcLexer l = new CalcLexer ();
-  Calc p = new Calc (l);
+  auto l = calcLexer (stdin);
+  auto p = new Calc (l);
   p.parse ();
+  return l.exit_status;
 }
