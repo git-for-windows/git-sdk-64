@@ -16,10 +16,10 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#WARNINGS">WARNINGS</a></li>
   <li><a href="#BUGS">BUGS</a></li>
-  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -139,6 +139,14 @@
 </dd>
 </dl>
 
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>d2i_TYPE(), d2i_TYPE_bio() and d2i_TYPE_fp() return a valid <b>TYPE</b> structure or <b>NULL</b> if an error occurs. If the &quot;reuse&quot; capability has been used with a valid structure being passed in via <b>a</b>, then the object is not freed in the event of error but may be in a potentially invalid or inconsistent state.</p>
+
+<p>i2d_TYPE() returns the number of bytes successfully encoded or a negative value if an error occurs.</p>
+
+<p>i2d_TYPE_bio() and i2d_TYPE_fp() return 1 for success and 0 if an error occurs.</p>
+
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>Allocate and encode the DER encoding of an X509 structure:</p>
@@ -209,17 +217,9 @@
 
 <p>Any function which encodes a structure (i2d_TYPE(), i2d_TYPE() or i2d_TYPE()) may return a stale encoding if the structure has been modified after deserialization or previous serialization. This is because some objects cache the encoding for efficiency reasons.</p>
 
-<h1 id="RETURN-VALUES">RETURN VALUES</h1>
-
-<p>d2i_TYPE(), d2i_TYPE_bio() and d2i_TYPE_fp() return a valid <b>TYPE</b> structure or <b>NULL</b> if an error occurs. If the &quot;reuse&quot; capability has been used with a valid structure being passed in via <b>a</b>, then the object is not freed in the event of error but may be in a potentially invalid or inconsistent state.</p>
-
-<p>i2d_TYPE() returns the number of bytes successfully encoded or a negative value if an error occurs.</p>
-
-<p>i2d_TYPE_bio() and i2d_TYPE_fp() return 1 for success and 0 if an error occurs.</p>
-
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 1998-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 1998-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

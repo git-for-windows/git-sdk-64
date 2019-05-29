@@ -3281,8 +3281,6 @@ extern inline __attribute__((__gnu_inline__)) int ftruncate(int __fd, off32_t __
 #define _POSIX_SPIN_LOCKS 200112L
 #undef _POSIX_BARRIERS
 #define _POSIX_BARRIERS 200112L
-#undef _POSIX_THREAD_SAFE_FUNCTIONS
-#define _POSIX_THREAD_SAFE_FUNCTIONS 200112L
 #undef _POSIX_TIMEOUTS
 #define _POSIX_TIMEOUTS 200112L
 #undef _POSIX_CLOCK_SELECTION
@@ -3355,15 +3353,6 @@ struct _exception;
       int res0 : 32;
     } lh;
   } __mingw_ldbl_type_t;
-  typedef union __mingw_fp_types_t
-  {
-    long double *ld;
-    double *d;
-    float *f;
-    __mingw_ldbl_type_t *ldt;
-    __mingw_dbl_type_t *dt;
-    __mingw_flt_type_t *ft;
-  } __mingw_fp_types_t;
   extern double * _imp___HUGE;
 #define _HUGE (* __MINGW_IMP_SYMBOL(_HUGE))
 #define HUGE_VAL __builtin_huge_val()
@@ -3597,7 +3586,7 @@ typedef long double double_t;
   extern inline __attribute__((__gnu_inline__)) float frexpf(float _X,int *_Y) { return ((float)frexp((double)_X,_Y)); }
   extern long double __attribute__((__cdecl__)) frexpl(long double,int *);
 #define FP_ILOGB0 ((int)0x80000000)
-#define FP_ILOGBNAN ((int)0x80000000)
+#define FP_ILOGBNAN ((int)0x7fffffff)
   extern int __attribute__((__cdecl__)) ilogb (double);
   extern int __attribute__((__cdecl__)) ilogbf (float);
   extern int __attribute__((__cdecl__)) ilogbl (long double);
@@ -62810,8 +62799,8 @@ __attribute__((dllimport)) int __attribute__((__stdcall__)) WSASetSocketSecurity
   LPWSAOVERLAPPED_COMPLETION_ROUTINE CompletionRoutine
 );
 #define InetNtopA inet_ntop
-__attribute__((dllimport)) LPCWSTR __attribute__((__stdcall__)) InetNtopW(INT Family, PVOID pAddr, LPWSTR pStringBuf, size_t StringBufSIze);
-__attribute__((dllimport)) LPCSTR __attribute__((__stdcall__)) inet_ntop(INT Family, PVOID pAddr, LPSTR pStringBuf, size_t StringBufSize);
+__attribute__((dllimport)) LPCWSTR __attribute__((__stdcall__)) InetNtopW(INT Family, LPCVOID pAddr, LPWSTR pStringBuf, size_t StringBufSIze);
+__attribute__((dllimport)) LPCSTR __attribute__((__stdcall__)) inet_ntop(INT Family, LPCVOID pAddr, LPSTR pStringBuf, size_t StringBufSize);
 #define InetNtop __MINGW_NAME_AW(InetNtop)
 #define InetPtonA inet_pton
 __attribute__((dllimport)) INT __attribute__((__stdcall__)) InetPtonW(INT Family, LPCWSTR pStringBuf, PVOID pAddr);
@@ -67941,18 +67930,6 @@ struct timezone {
 };
   extern int __attribute__((__cdecl__)) mingw_gettimeofday (struct timeval *p, struct timezone *z);
 #pragma pack(pop)
-extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) struct tm *__attribute__((__cdecl__)) localtime_r(const time_t *_Time, struct tm *_Tm) {
-  return localtime_s(_Tm, _Time) ? ((void *)0) : _Tm;
-}
-extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) struct tm *__attribute__((__cdecl__)) gmtime_r(const time_t *_Time, struct tm *_Tm) {
-  return gmtime_s(_Tm, _Time) ? ((void *)0) : _Tm;
-}
-extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) char *__attribute__((__cdecl__)) ctime_r(const time_t *_Time, char *_Str) {
-  return ctime_s(_Str, 0x7fffffff, _Time) ? ((void *)0) : _Str;
-}
-extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) char *__attribute__((__cdecl__)) asctime_r(const struct tm *_Tm, char * _Str) {
-  return asctime_s(_Str, 0x7fffffff, _Tm) ? ((void *)0) : _Str;
-}
 #define _TIMEB_H_ 
 #pragma pack(push,_CRT_PACKING)
 #define _TIMEB_DEFINED 
@@ -73456,6 +73433,8 @@ struct tms {
  long tms_cstime;
 };
 int rb_w32_times(struct tms *);
+struct tm *gmtime_r(const time_t *, struct tm *);
+struct tm *localtime_r(const time_t *, struct tm *);
 int rb_w32_sleep(unsigned long msec);
 int rb_w32_open(const char *, int, ...);
 int rb_w32_uopen(const char *, int, ...);
@@ -78188,9 +78167,13 @@ typedef struct rb_global_vm_lock_struct {
 #define _JMP_BUF_DEFINED 
 __attribute__ ((__dllimport__)) __attribute__ ((__noreturn__)) __attribute__ ((__nothrow__)) void __attribute__((__cdecl__)) longjmp(jmp_buf _Buf,int _Value);
 void * __attribute__((__cdecl__)) __attribute__ ((__nothrow__)) mingw_getsp (void);
+       
+#define __has_builtin(x) 0
 #define setjmp(BUF) _setjmp3((BUF), NULL)
   int __attribute__((__cdecl__)) __attribute__ ((__nothrow__,__returns_twice__)) _setjmp(jmp_buf _Buf, void *_Ctx);
   int __attribute__((__cdecl__)) __attribute__ ((__nothrow__,__returns_twice__)) _setjmp3(jmp_buf _Buf, void *_Ctx);
+       
+#undef __has_builtin
 #pragma pack(pop)
 #define RUBY_NSIG NSIG
 #define RUBY_SIGCHLD (0)

@@ -17,8 +17,8 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
-  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -118,6 +118,28 @@
 
 <p>Use the ASN1_TIME_normalize() function to normalize the time value before printing to get GMT results.</p>
 
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>ASN1_TIME_set(), ASN1_UTCTIME_set(), ASN1_GENERALIZEDTIME_set(), ASN1_TIME_adj(), ASN1_UTCTIME_adj and ASN1_GENERALIZEDTIME_set return a pointer to a time structure or NULL if an error occurred.</p>
+
+<p>ASN1_TIME_set_string(), ASN1_UTCTIME_set_string(), ASN1_GENERALIZEDTIME_set_string() ASN1_TIME_set_string_X509() return 1 if the time value is successfully set and 0 otherwise.</p>
+
+<p>ASN1_TIME_normalize() returns 1 on success, and 0 on error.</p>
+
+<p>ASN1_TIME_check(), ASN1_UTCTIME_check and ASN1_GENERALIZEDTIME_check() return 1 if the structure is syntactically correct and 0 otherwise.</p>
+
+<p>ASN1_TIME_print(), ASN1_UTCTIME_print() and ASN1_GENERALIZEDTIME_print() return 1 if the time is successfully printed out and 0 if an error occurred (I/O error or invalid time format).</p>
+
+<p>ASN1_TIME_to_tm() returns 1 if the time is successfully parsed and 0 if an error occurred (invalid time format).</p>
+
+<p>ASN1_TIME_diff() returns 1 for success and 0 for failure. It can fail if the passed-in time structure has invalid syntax, for example.</p>
+
+<p>ASN1_TIME_cmp_time_t() and ASN1_UTCTIME_cmp_time_t() return -1 if <b>s</b> is before <b>t</b>, 0 if <b>s</b> equals <b>t</b>, or 1 if <b>s</b> is after <b>t</b>. -2 is returned on error.</p>
+
+<p>ASN1_TIME_compare() returns -1 if <b>a</b> is before <b>b</b>, 0 if <b>a</b> equals <b>b</b>, or 1 if <b>a</b> is after <b>b</b>. -2 is returned on error.</p>
+
+<p>ASN1_TIME_to_generalizedtime() returns a pointer to the appropriate time structure on success or NULL if an error occurred.</p>
+
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>Set a time structure to one hour after the current time and print it out:</p>
@@ -150,35 +172,13 @@
  else
      printf(&quot;Same\n&quot;);</code></pre>
 
-<h1 id="RETURN-VALUES">RETURN VALUES</h1>
-
-<p>ASN1_TIME_set(), ASN1_UTCTIME_set(), ASN1_GENERALIZEDTIME_set(), ASN1_TIME_adj(), ASN1_UTCTIME_adj and ASN1_GENERALIZEDTIME_set return a pointer to a time structure or NULL if an error occurred.</p>
-
-<p>ASN1_TIME_set_string(), ASN1_UTCTIME_set_string(), ASN1_GENERALIZEDTIME_set_string() ASN1_TIME_set_string_X509() return 1 if the time value is successfully set and 0 otherwise.</p>
-
-<p>ASN1_TIME_normalize() returns 1 on success, and 0 on error.</p>
-
-<p>ASN1_TIME_check(), ASN1_UTCTIME_check and ASN1_GENERALIZEDTIME_check() return 1 if the structure is syntactically correct and 0 otherwise.</p>
-
-<p>ASN1_TIME_print(), ASN1_UTCTIME_print() and ASN1_GENERALIZEDTIME_print() return 1 if the time is successfully printed out and 0 if an error occurred (I/O error or invalid time format).</p>
-
-<p>ASN1_TIME_to_tm() returns 1 if the time is successfully parsed and 0 if an error occurred (invalid time format).</p>
-
-<p>ASN1_TIME_diff() returns 1 for success and 0 for failure. It can fail if the passed-in time structure has invalid syntax, for example.</p>
-
-<p>ASN1_TIME_cmp_time_t() and ASN1_UTCTIME_cmp_time_t() return -1 if <b>s</b> is before <b>t</b>, 0 if <b>s</b> equals <b>t</b>, or 1 if <b>s</b> is after <b>t</b>. -2 is returned on error.</p>
-
-<p>ASN1_TIME_compare() returns -1 if <b>a</b> is before <b>b</b>, 0 if <b>a</b> equals <b>b</b>, or 1 if <b>a</b> is after <b>b</b>. -2 is returned on error.</p>
-
-<p>ASN1_TIME_to_generalizedtime() returns a pointer to the appropriate time structure on success or NULL if an error occurred.</p>
-
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The ASN1_TIME_to_tm() function was added in OpenSSL 1.1.1. The ASN1_TIME_set_string_X509() function was added in OpenSSL 1.1.1. The ASN1_TIME_normalize() function was added in OpenSSL 1.1.1. The ASN1_TIME_cmp_time_t() function was added in OpenSSL 1.1.1. The ASN1_TIME_compare() function was added in OpenSSL 1.1.1.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -16,13 +16,13 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#PEM-FUNCTION-ARGUMENTS">PEM FUNCTION ARGUMENTS</a></li>
-  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#PEM-ENCRYPTION-FORMAT">PEM ENCRYPTION FORMAT</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
-  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -221,68 +221,6 @@
 
 <p><b>buf</b> is the buffer to write the passphrase to. <b>size</b> is the maximum length of the passphrase (i.e. the size of buf). <b>rwflag</b> is a flag which is set to 0 when reading and 1 when writing. A typical routine will ask the user to verify the passphrase (for example by prompting for it twice) if <b>rwflag</b> is 1. The <b>u</b> parameter has the same value as the <b>u</b> parameter passed to the PEM routine. It allows arbitrary data to be passed to the callback by the application (for example a window handle in a GUI application). The callback <b>must</b> return the number of characters in the passphrase or -1 if an error occurred.</p>
 
-<h1 id="EXAMPLES">EXAMPLES</h1>
-
-<p>Although the PEM routines take several arguments in almost all applications most of them are set to 0 or NULL.</p>
-
-<p>Read a certificate in PEM format from a BIO:</p>
-
-<pre><code> X509 *x;
-
- x = PEM_read_bio_X509(bp, NULL, 0, NULL);
- if (x == NULL)
-     /* Error */</code></pre>
-
-<p>Alternative method:</p>
-
-<pre><code> X509 *x = NULL;
-
- if (!PEM_read_bio_X509(bp, &amp;x, 0, NULL))
-     /* Error */</code></pre>
-
-<p>Write a certificate to a BIO:</p>
-
-<pre><code> if (!PEM_write_bio_X509(bp, x))
-     /* Error */</code></pre>
-
-<p>Write a private key (using traditional format) to a BIO using triple DES encryption, the pass phrase is prompted for:</p>
-
-<pre><code> if (!PEM_write_bio_PrivateKey(bp, key, EVP_des_ede3_cbc(), NULL, 0, 0, NULL))
-     /* Error */</code></pre>
-
-<p>Write a private key (using PKCS#8 format) to a BIO using triple DES encryption, using the pass phrase &quot;hello&quot;:</p>
-
-<pre><code> if (!PEM_write_bio_PKCS8PrivateKey(bp, key, EVP_des_ede3_cbc(),
-                                    NULL, 0, 0, &quot;hello&quot;))
-     /* Error */</code></pre>
-
-<p>Read a private key from a BIO using a pass phrase callback:</p>
-
-<pre><code> key = PEM_read_bio_PrivateKey(bp, NULL, pass_cb, &quot;My Private Key&quot;);
- if (key == NULL)
-     /* Error */</code></pre>
-
-<p>Skeleton pass phrase callback:</p>
-
-<pre><code> int pass_cb(char *buf, int size, int rwflag, void *u)
- {
-
-     /* We&#39;d probably do something else if &#39;rwflag&#39; is 1 */
-     printf(&quot;Enter pass phrase for \&quot;%s\&quot;\n&quot;, (char *)u);
-
-     /* get pass phrase, length &#39;len&#39; into &#39;tmp&#39; */
-     char *tmp = &quot;hello&quot;;
-     if (tmp == NULL) /* An error occurred */
-         return -1;
-
-     size_t len = strlen(tmp);
-
-     if (len &gt; size)
-         len = size;
-     memcpy(buf, tmp, len);
-     return len;
- }</code></pre>
-
 <h1 id="NOTES">NOTES</h1>
 
 <p>The old <b>PrivateKey</b> write routines are retained for compatibility. New applications should write private keys using the PEM_write_bio_PKCS8PrivateKey() or PEM_write_PKCS8PrivateKey() routines because they are more secure (they use an iteration count of 2048 whereas the traditional routines use a count of 1) unless compatibility with older versions of OpenSSL is important.</p>
@@ -354,17 +292,79 @@
 
 <p>The write routines return 1 for success or 0 for failure.</p>
 
-<h1 id="HISTORY">HISTORY</h1>
+<h1 id="EXAMPLES">EXAMPLES</h1>
 
-<p>The old Netscape certificate sequences were no longer documented in OpenSSL 1.1.0; applications should use the PKCS7 standard instead as they will be formally deprecated in a future releases.</p>
+<p>Although the PEM routines take several arguments in almost all applications most of them are set to 0 or NULL.</p>
+
+<p>Read a certificate in PEM format from a BIO:</p>
+
+<pre><code> X509 *x;
+
+ x = PEM_read_bio_X509(bp, NULL, 0, NULL);
+ if (x == NULL)
+     /* Error */</code></pre>
+
+<p>Alternative method:</p>
+
+<pre><code> X509 *x = NULL;
+
+ if (!PEM_read_bio_X509(bp, &amp;x, 0, NULL))
+     /* Error */</code></pre>
+
+<p>Write a certificate to a BIO:</p>
+
+<pre><code> if (!PEM_write_bio_X509(bp, x))
+     /* Error */</code></pre>
+
+<p>Write a private key (using traditional format) to a BIO using triple DES encryption, the pass phrase is prompted for:</p>
+
+<pre><code> if (!PEM_write_bio_PrivateKey(bp, key, EVP_des_ede3_cbc(), NULL, 0, 0, NULL))
+     /* Error */</code></pre>
+
+<p>Write a private key (using PKCS#8 format) to a BIO using triple DES encryption, using the pass phrase &quot;hello&quot;:</p>
+
+<pre><code> if (!PEM_write_bio_PKCS8PrivateKey(bp, key, EVP_des_ede3_cbc(),
+                                    NULL, 0, 0, &quot;hello&quot;))
+     /* Error */</code></pre>
+
+<p>Read a private key from a BIO using a pass phrase callback:</p>
+
+<pre><code> key = PEM_read_bio_PrivateKey(bp, NULL, pass_cb, &quot;My Private Key&quot;);
+ if (key == NULL)
+     /* Error */</code></pre>
+
+<p>Skeleton pass phrase callback:</p>
+
+<pre><code> int pass_cb(char *buf, int size, int rwflag, void *u)
+ {
+
+     /* We&#39;d probably do something else if &#39;rwflag&#39; is 1 */
+     printf(&quot;Enter pass phrase for \&quot;%s\&quot;\n&quot;, (char *)u);
+
+     /* get pass phrase, length &#39;len&#39; into &#39;tmp&#39; */
+     char *tmp = &quot;hello&quot;;
+     if (tmp == NULL) /* An error occurred */
+         return -1;
+
+     size_t len = strlen(tmp);
+
+     if (len &gt; size)
+         len = size;
+     memcpy(buf, tmp, len);
+     return len;
+ }</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/EVP_EncryptInit.html">EVP_EncryptInit(3)</a>, <a href="../man3/EVP_BytesToKey.html">EVP_BytesToKey(3)</a>, <a href="../man7/passphrase-encoding.html">passphrase-encoding(7)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The old Netscape certificate sequences were no longer documented in OpenSSL 1.1.0; applications should use the PKCS7 standard instead as they will be formally deprecated in a future releases.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

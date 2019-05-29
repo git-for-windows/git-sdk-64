@@ -40,7 +40,13 @@
 <dt id="EVP_chacha20">EVP_chacha20()</dt>
 <dd>
 
-<p>The ChaCha20 stream cipher. The key length is 256 bits, the IV is 96 bits long.</p>
+<p>The ChaCha20 stream cipher. The key length is 256 bits, the IV is 128 bits long. The first 32 bits consists of a counter in little-endian order followed by a 96 bit nonce. For example a nonce of:</p>
+
+<p>000000000000000000000002</p>
+
+<p>With an initial counter of 42 (2a in hex) would be expressed as:</p>
+
+<p>2a000000000000000000000000000002</p>
 
 </dd>
 <dt id="EVP_chacha20_poly1305">EVP_chacha20_poly1305()</dt>
@@ -61,7 +67,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -17,8 +17,8 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#WARNINGS">WARNINGS</a></li>
-  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -76,21 +76,6 @@
 
 <p>If several CA certificates matching the name, key identifier, and serial number condition are available, only the first one will be examined. This may lead to unexpected results if the same CA certificate is available with different expiration dates. If a &quot;certificate expired&quot; verification error occurs, no other certificate will be searched. Make sure to not have expired certificates mixed with valid ones.</p>
 
-<h1 id="EXAMPLES">EXAMPLES</h1>
-
-<p>Generate a CA certificate file with descriptive text from the CA certificates ca1.pem ca2.pem ca3.pem:</p>
-
-<pre><code> #!/bin/sh
- rm CAfile.pem
- for i in ca1.pem ca2.pem ca3.pem ; do
-     openssl x509 -in $i -text &gt;&gt; CAfile.pem
- done</code></pre>
-
-<p>Prepare the directory /some/where/certs containing several CA certificates for use as <b>CApath</b>:</p>
-
-<pre><code> cd /some/where/certs
- c_rehash .</code></pre>
-
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>For SSL_CTX_load_verify_locations the following return values can occur:</p>
@@ -113,13 +98,28 @@
 
 <p>SSL_CTX_set_default_verify_paths(), SSL_CTX_set_default_verify_dir() and SSL_CTX_set_default_verify_file() all return 1 on success or 0 on failure. A missing default location is still treated as a success.</p>
 
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<p>Generate a CA certificate file with descriptive text from the CA certificates ca1.pem ca2.pem ca3.pem:</p>
+
+<pre><code> #!/bin/sh
+ rm CAfile.pem
+ for i in ca1.pem ca2.pem ca3.pem ; do
+     openssl x509 -in $i -text &gt;&gt; CAfile.pem
+ done</code></pre>
+
+<p>Prepare the directory /some/where/certs containing several CA certificates for use as <b>CApath</b>:</p>
+
+<pre><code> cd /some/where/certs
+ c_rehash .</code></pre>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_client_CA_list.html">SSL_CTX_set_client_CA_list(3)</a>, <a href="../man3/SSL_get_client_CA_list.html">SSL_get_client_CA_list(3)</a>, <a href="../man3/SSL_CTX_use_certificate.html">SSL_CTX_use_certificate(3)</a>, <a href="../man3/SSL_CTX_add_extra_chain_cert.html">SSL_CTX_add_extra_chain_cert(3)</a>, <a href="../man3/SSL_CTX_set_cert_store.html">SSL_CTX_set_cert_store(3)</a>, <a href="../man3/SSL_CTX_set_client_CA_list.html">SSL_CTX_set_client_CA_list(3)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

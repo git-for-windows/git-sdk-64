@@ -77,7 +77,7 @@ CFLAGS=		$(BASECFLAGS) -march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MING
 # Both CPPFLAGS and LDFLAGS need to contain the shell's value for setup.py to
 # be able to build extension modules using the directories specified in the
 # environment variables
-CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncursesw 
+CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/pdcurses 
 LDFLAGS=	-pipe -s 
 LDLAST=		
 SGI_ABI=	
@@ -167,7 +167,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncursesw ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/pdcurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code

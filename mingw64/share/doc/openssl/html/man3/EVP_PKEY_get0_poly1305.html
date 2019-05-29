@@ -16,15 +16,15 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
-  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_PKEY_set1_RSA, EVP_PKEY_set1_DSA, EVP_PKEY_set1_DH, EVP_PKEY_set1_EC_KEY, EVP_PKEY_get1_RSA, EVP_PKEY_get1_DSA, EVP_PKEY_get1_DH, EVP_PKEY_get1_EC_KEY, EVP_PKEY_get0_RSA, EVP_PKEY_get0_DSA, EVP_PKEY_get0_DH, EVP_PKEY_get0_EC_KEY, EVP_PKEY_assign_RSA, EVP_PKEY_assign_DSA, EVP_PKEY_assign_DH, EVP_PKEY_assign_EC_KEY, EVP_PKEY_assign_POLY1305, EVP_PKEY_assign_SIPHASH, EVP_PKEY_get0_hmac, EVP_PKEY_get0_poly1305, EVP_PKEY_get0_siphash, EVP_PKEY_type, EVP_PKEY_id, EVP_PKEY_base_id, EVP_PKEY_set_alias_type, EVP_PKEY_set1_engine - EVP_PKEY assignment functions</p>
+<p>EVP_PKEY_set1_RSA, EVP_PKEY_set1_DSA, EVP_PKEY_set1_DH, EVP_PKEY_set1_EC_KEY, EVP_PKEY_get1_RSA, EVP_PKEY_get1_DSA, EVP_PKEY_get1_DH, EVP_PKEY_get1_EC_KEY, EVP_PKEY_get0_RSA, EVP_PKEY_get0_DSA, EVP_PKEY_get0_DH, EVP_PKEY_get0_EC_KEY, EVP_PKEY_assign_RSA, EVP_PKEY_assign_DSA, EVP_PKEY_assign_DH, EVP_PKEY_assign_EC_KEY, EVP_PKEY_assign_POLY1305, EVP_PKEY_assign_SIPHASH, EVP_PKEY_get0_hmac, EVP_PKEY_get0_poly1305, EVP_PKEY_get0_siphash, EVP_PKEY_type, EVP_PKEY_id, EVP_PKEY_base_id, EVP_PKEY_set_alias_type, EVP_PKEY_set1_engine, EVP_PKEY_get0_engine - EVP_PKEY assignment functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -60,6 +60,7 @@
  int EVP_PKEY_type(int type);
  int EVP_PKEY_set_alias_type(EVP_PKEY *pkey, int type);
 
+ ENGINE *EVP_PKEY_get0_engine(const EVP_PKEY *pkey);
  int EVP_PKEY_set1_engine(EVP_PKEY *pkey, ENGINE *engine);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
@@ -78,6 +79,8 @@
 
 <p>EVP_PKEY_type() returns the underlying type of the NID <b>type</b>. For example EVP_PKEY_type(EVP_PKEY_RSA2) will return <b>EVP_PKEY_RSA</b>.</p>
 
+<p>EVP_PKEY_get0_engine() returns a reference to the ENGINE handling <b>pkey</b>.</p>
+
 <p>EVP_PKEY_set1_engine() sets the ENGINE handling <b>pkey</b> to <b>engine</b>. It must be called after the key algorithm and components are set up. If <b>engine</b> does not include an <b>EVP_PKEY_METHOD</b> for <b>pkey</b> an error occurs.</p>
 
 <p>EVP_PKEY_set_alias_type() allows modifying a EVP_PKEY to use a different set of algorithms than the default. This is currently used to support SM2 keys, which use an identical encoding to ECDSA.</p>
@@ -94,12 +97,6 @@
 
 <p>EVP_PKEY_set1_engine() is typically used by an ENGINE returning an HSM key as part of its routine to load a private key.</p>
 
-<h1 id="EXAMPLES">EXAMPLES</h1>
-
-<p>After loading an ECC key, it is possible to convert it to using SM2 algorithms with EVP_PKEY_set_alias_type:</p>
-
-<pre><code> EVP_PKEY_set_alias_type(pkey, EVP_PKEY_SM2);</code></pre>
-
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>EVP_PKEY_set1_RSA(), EVP_PKEY_set1_DSA(), EVP_PKEY_set1_DH() and EVP_PKEY_set1_EC_KEY() return 1 for success or 0 for failure.</p>
@@ -114,13 +111,19 @@
 
 <p>EVP_PKEY_set_alias_type() returns 1 for success and 0 for error.</p>
 
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<p>After loading an ECC key, it is possible to convert it to using SM2 algorithms with EVP_PKEY_set_alias_type:</p>
+
+<pre><code> EVP_PKEY_set_alias_type(pkey, EVP_PKEY_SM2);</code></pre>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/EVP_PKEY_new.html">EVP_PKEY_new(3)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

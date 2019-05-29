@@ -16,8 +16,8 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
-  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -99,7 +99,7 @@
 <dt id="protocol-version">&lt;protocol version&gt;</dt>
 <dd>
 
-<p>Protocol version, such as <b>TLSv1.2</b>, when the cipher was first defined.</p>
+<p>The minimum protocol version that the ciphersuite supports, such as <b>TLSv1.2</b>. Note that this is not always the same as the protocol version in which the ciphersuite was first defined because some ciphersuites are backwards compatible with earlier protocol versions.</p>
 
 </dd>
 <dt id="Kx-key-exchange">Kx=&lt;key exchange&gt;</dt>
@@ -151,6 +151,10 @@
 
 <p>SSL_CIPHER_get_protocol_id() returns a 2-byte integer representing the TLS protocol-specific ID.</p>
 
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_get_current_cipher.html">SSL_get_current_cipher(3)</a>, <a href="../man3/SSL_get_ciphers.html">SSL_get_ciphers(3)</a>, <a href="../man1/ciphers.html">ciphers(1)</a></p>
+
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The SSL_CIPHER_get_version() function was updated to always return the correct protocol string in OpenSSL 1.1.0.</p>
@@ -163,13 +167,9 @@
 
 <p>The OPENSSL_cipher_name() function was added in OpenSSL 1.1.1.</p>
 
-<h1 id="SEE-ALSO">SEE ALSO</h1>
-
-<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_get_current_cipher.html">SSL_get_current_cipher(3)</a>, <a href="../man3/SSL_get_ciphers.html">SSL_get_ciphers(3)</a>, <a href="../man1/ciphers.html">ciphers(1)</a></p>
-
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

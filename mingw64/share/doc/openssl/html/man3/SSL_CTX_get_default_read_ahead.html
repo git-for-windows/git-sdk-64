@@ -46,7 +46,7 @@
 
 <p>These functions have no impact when used with DTLS. The return values for SSL_CTX_get_read_head() and SSL_get_read_ahead() are undefined for DTLS. Setting <b>read_ahead</b> can impact the behaviour of the SSL_pending() function (see <a href="../man3/SSL_pending.html">SSL_pending(3)</a>).</p>
 
-<p>Since SSL_read() can return <b>SSL_ERROR_WANT_READ</b> for non-application data records, and SSL_has_pending() can&#39;t tell the difference between processed and unprocessed data, it&#39;s recommended that if read ahead is turned on that <b>SSL_MODE_AUTO_RETRY</b> is not turned off using SSL_CTX_clear_mode(). That will prevent getting <b>SSL_ERROR_WANT_READ</b> when there is still a complete record availale that hasn&#39;t been processed.</p>
+<p>Since SSL_read() can return <b>SSL_ERROR_WANT_READ</b> for non-application data records, and SSL_has_pending() can&#39;t tell the difference between processed and unprocessed data, it&#39;s recommended that if read ahead is turned on that <b>SSL_MODE_AUTO_RETRY</b> is not turned off using SSL_CTX_clear_mode(). That will prevent getting <b>SSL_ERROR_WANT_READ</b> when there is still a complete record available that hasn&#39;t been processed.</p>
 
 <p>If the application wants to continue to use the underlying transport (e.g. TCP connection) after the SSL connection is finished using SSL_shutdown() reading ahead should be turned off. Otherwise the SSL structure might read data that it shouldn&#39;t.</p>
 
@@ -60,7 +60,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

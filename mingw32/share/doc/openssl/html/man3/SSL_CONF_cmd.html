@@ -19,8 +19,8 @@
   <li><a href="#SUPPORTED-CONFIGURATION-FILE-COMMANDS">SUPPORTED CONFIGURATION FILE COMMANDS</a></li>
   <li><a href="#SUPPORTED-COMMAND-TYPES">SUPPORTED COMMAND TYPES</a></li>
   <li><a href="#NOTES">NOTES</a></li>
-  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -475,6 +475,16 @@
 
 <p>The function SSL_CONF_cmd_value_type() can be used by applications to check for the existence of a command or to perform additional syntax checking or translation of the command value. For example if the return value is <b>SSL_CONF_TYPE_FILE</b> an application could translate a relative pathname to an absolute pathname.</p>
 
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>SSL_CONF_cmd() returns 1 if the value of <b>cmd</b> is recognised and <b>value</b> is <b>NOT</b> used and 2 if both <b>cmd</b> and <b>value</b> are used. In other words it returns the number of arguments processed. This is useful when processing command lines.</p>
+
+<p>A return value of -2 means <b>cmd</b> is not recognised.</p>
+
+<p>A return value of -3 means <b>cmd</b> is recognised and the command requires a value but <b>value</b> is NULL.</p>
+
+<p>A return code of 0 indicates that both <b>cmd</b> and <b>value</b> are valid but an error occurred attempting to perform the operation: for example due to an error in the syntax of <b>value</b> in this case the error queue may provide additional information.</p>
+
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>Set supported signature algorithms:</p>
@@ -515,16 +525,6 @@
 <p>Set supported curves to P-256, P-384:</p>
 
 <pre><code> SSL_CONF_cmd(ctx, &quot;Curves&quot;, &quot;P-256:P-384&quot;);</code></pre>
-
-<h1 id="RETURN-VALUES">RETURN VALUES</h1>
-
-<p>SSL_CONF_cmd() returns 1 if the value of <b>cmd</b> is recognised and <b>value</b> is <b>NOT</b> used and 2 if both <b>cmd</b> and <b>value</b> are used. In other words it returns the number of arguments processed. This is useful when processing command lines.</p>
-
-<p>A return value of -2 means <b>cmd</b> is not recognised.</p>
-
-<p>A return value of -3 means <b>cmd</b> is recognised and the command requires a value but <b>value</b> is NULL.</p>
-
-<p>A return code of 0 indicates that both <b>cmd</b> and <b>value</b> are valid but an error occurred attempting to perform the operation: for example due to an error in the syntax of <b>value</b> in this case the error queue may provide additional information.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

@@ -16,8 +16,8 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
-  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -49,6 +49,12 @@
 
 <p>The process of calling BIO_push() and BIO_pop() on a BIO may have additional consequences (a control call is made to the affected BIOs) any effects will be noted in the descriptions of individual BIOs.</p>
 
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>BIO_push() returns the end of the chain, <b>b</b>.</p>
+
+<p>BIO_pop() returns the next BIO in the chain, or NULL if there is no next BIO.</p>
+
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>For these examples suppose <b>md1</b> and <b>md2</b> are digest BIOs, <b>b64</b> is a base64 BIO and <b>f</b> is a file BIO.</p>
@@ -70,12 +76,6 @@
 
 <p>The call will return <b>b64</b> and the new chain will be <b>md1-b64-f</b> data can be written to <b>md1</b> as before.</p>
 
-<h1 id="RETURN-VALUES">RETURN VALUES</h1>
-
-<p>BIO_push() returns the end of the chain, <b>b</b>.</p>
-
-<p>BIO_pop() returns the next BIO in the chain, or NULL if there is no next BIO.</p>
-
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="/../man7/bio.html">bio</a></p>
@@ -86,7 +86,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

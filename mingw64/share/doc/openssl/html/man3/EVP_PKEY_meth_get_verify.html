@@ -269,13 +269,13 @@
  int (*signctx) (EVP_PKEY_CTX *ctx, unsigned char *sig, size_t *siglen,
                  EVP_MD_CTX *mctx);</code></pre>
 
-<p>The signctx_init() and signctx() methods are used to sign a digest present by a <b>EVP_MD_CTX</b> object. They are called by the EVP_DigestSign functions. See <a href="../man3/EVP_DigestSignInit.html">EVP_DigestSignInit(3)</a> for detail.</p>
+<p>The signctx_init() and signctx() methods are used to sign a digest present by a <b>EVP_MD_CTX</b> object. They are called by the EVP_DigestSign functions. See <a href="../man3/EVP_DigestSignInit.html">EVP_DigestSignInit(3)</a> for details.</p>
 
 <pre><code> int (*verifyctx_init) (EVP_PKEY_CTX *ctx, EVP_MD_CTX *mctx);
  int (*verifyctx) (EVP_PKEY_CTX *ctx, const unsigned char *sig, int siglen,
                    EVP_MD_CTX *mctx);</code></pre>
 
-<p>The verifyctx_init() and verifyctx() methods are used to verify a signature against the data in a <b>EVP_MD_CTX</b> object. They are called by the various EVP_DigestVerify functions. See <a href="../man3/EVP_DigestVerifyInit.html">EVP_DigestVerifyInit(3)</a> for detail.</p>
+<p>The verifyctx_init() and verifyctx() methods are used to verify a signature against the data in a <b>EVP_MD_CTX</b> object. They are called by the various EVP_DigestVerify functions. See <a href="../man3/EVP_DigestVerifyInit.html">EVP_DigestVerifyInit(3)</a> for details.</p>
 
 <pre><code> int (*encrypt_init) (EVP_PKEY_CTX *ctx);
  int (*encrypt) (EVP_PKEY_CTX *ctx, unsigned char *out, size_t *outlen,
@@ -297,7 +297,7 @@
 <pre><code> int (*ctrl) (EVP_PKEY_CTX *ctx, int type, int p1, void *p2);
  int (*ctrl_str) (EVP_PKEY_CTX *ctx, const char *type, const char *value);</code></pre>
 
-<p>The ctrl() and ctrl_str() methods are used to adjust algorithm-specific settings. See <a href="../man3/EVP_PKEY_CTX_ctrl.html">EVP_PKEY_CTX_ctrl(3)</a> and related functions for detail.</p>
+<p>The ctrl() and ctrl_str() methods are used to adjust algorithm-specific settings. See <a href="../man3/EVP_PKEY_CTX_ctrl.html">EVP_PKEY_CTX_ctrl(3)</a> and related functions for details.</p>
 
 <pre><code> int (*digestsign) (EVP_MD_CTX *ctx, unsigned char *sig, size_t *siglen,
                     const unsigned char *tbs, size_t tbslen);
@@ -305,7 +305,7 @@
                       size_t siglen, const unsigned char *tbs,
                       size_t tbslen);</code></pre>
 
-<p>The digestsign() and digestverify() methods are used to generate or verify a signature in a one-shot mode. They could be called by <a href="../man3/EVP_DigetSign.html">EVP_DigetSign(3)</a> and <a href="../man3/EVP_DigestVerify.html">EVP_DigestVerify(3)</a>.</p>
+<p>The digestsign() and digestverify() methods are used to generate or verify a signature in a one-shot mode. They could be called by <a href="../man3/EVP_DigestSign.html">EVP_DigestSign(3)</a> and <a href="../man3/EVP_DigestVerify.html">EVP_DigestVerify(3)</a>.</p>
 
 <pre><code> int (*check) (EVP_PKEY *pkey);
  int (*public_check) (EVP_PKEY *pkey);
@@ -358,7 +358,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

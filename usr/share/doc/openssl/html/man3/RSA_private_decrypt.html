@@ -30,10 +30,10 @@
 
 <pre><code> #include &lt;openssl/rsa.h&gt;
 
- int RSA_public_encrypt(int flen, unsigned char *from,
+ int RSA_public_encrypt(int flen, const unsigned char *from,
                         unsigned char *to, RSA *rsa, int padding);
 
- int RSA_private_decrypt(int flen, unsigned char *from,
+ int RSA_private_decrypt(int flen, const unsigned char *from,
                          unsigned char *to, RSA *rsa, int padding);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
@@ -47,7 +47,7 @@
 <dt id="RSA_PKCS1_PADDING">RSA_PKCS1_PADDING</dt>
 <dd>
 
-<p>PKCS #1 v1.5 padding. This currently is the most widely used mode.</p>
+<p>PKCS #1 v1.5 padding. This currently is the most widely used mode. However, it is highly recommended to use RSA_PKCS1_OAEP_PADDING in new applications. SEE WARNING BELOW.</p>
 
 </dd>
 <dt id="RSA_PKCS1_OAEP_PADDING">RSA_PKCS1_OAEP_PADDING</dt>
@@ -70,13 +70,13 @@
 </dd>
 </dl>
 
-<p><b>flen</b> must be less than RSA_size(<b>rsa</b>) - 11 for the PKCS #1 v1.5 based padding modes, less than RSA_size(<b>rsa</b>) - 41 for RSA_PKCS1_OAEP_PADDING and exactly RSA_size(<b>rsa</b>) for RSA_NO_PADDING. The random number generator must be seeded prior to calling RSA_public_encrypt().</p>
+<p><b>flen</b> must not be more than RSA_size(<b>rsa</b>) - 11 for the PKCS #1 v1.5 based padding modes, not more than RSA_size(<b>rsa</b>) - 42 for RSA_PKCS1_OAEP_PADDING and exactly RSA_size(<b>rsa</b>) for RSA_NO_PADDING. When a padding mode other than RSA_NO_PADDING is in use, then RSA_public_encrypt() will include some random bytes into the ciphertext and therefore the ciphertext will be different each time, even if the plaintext and the public key are exactly identical. The returned ciphertext in <b>to</b> will always be zero padded to exactly RSA_size(<b>rsa</b>) bytes. <b>to</b> and <b>from</b> may overlap.</p>
 
-<p>RSA_private_decrypt() decrypts the <b>flen</b> bytes at <b>from</b> using the private key <b>rsa</b> and stores the plaintext in <b>to</b>. <b>to</b> must point to a memory section large enough to hold the decrypted data (which is smaller than RSA_size(<b>rsa</b>)). <b>padding</b> is the padding mode that was used to encrypt the data.</p>
+<p>RSA_private_decrypt() decrypts the <b>flen</b> bytes at <b>from</b> using the private key <b>rsa</b> and stores the plaintext in <b>to</b>. <b>flen</b> should be equal to RSA_size(<b>rsa</b>) but may be smaller, when leading zero bytes are in the ciphertext. Those are not important and may be removed, but RSA_public_encrypt() does not do that. <b>to</b> must point to a memory section large enough to hold the maximal possible decrypted data (which is equal to RSA_size(<b>rsa</b>) for RSA_NO_PADDING, RSA_size(<b>rsa</b>) - 11 for the PKCS #1 v1.5 based padding modes and RSA_size(<b>rsa</b>) - 42 for RSA_PKCS1_OAEP_PADDING). <b>padding</b> is the padding mode that was used to encrypt the data. <b>to</b> and <b>from</b> may overlap.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>RSA_public_encrypt() returns the size of the encrypted data (i.e., RSA_size(<b>rsa</b>)). RSA_private_decrypt() returns the size of the recovered plaintext.</p>
+<p>RSA_public_encrypt() returns the size of the encrypted data (i.e., RSA_size(<b>rsa</b>)). RSA_private_decrypt() returns the size of the recovered plaintext. A return value of 0 is not an error and means only that the plaintext was empty.</p>
 
 <p>On error, -1 is returned; the error codes can be obtained by <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>.</p>
 
@@ -94,7 +94,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

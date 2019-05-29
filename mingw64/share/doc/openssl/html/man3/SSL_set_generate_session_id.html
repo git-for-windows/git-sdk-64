@@ -16,8 +16,8 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
-  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -62,6 +62,12 @@
 
 <p>The callback must return 0 if it cannot generate a session id for whatever reason and return 1 on success.</p>
 
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>SSL_CTX_set_generate_session_id() and SSL_set_generate_session_id() always return 1.</p>
+
+<p>SSL_has_matching_session_id() returns 1 if another session with the same id is already in the cache.</p>
+
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>The callback function listed will generate a session id with the server id given, and will fill the rest with pseudo random bytes:</p>
@@ -92,19 +98,13 @@
      return 1;
  }</code></pre>
 
-<h1 id="RETURN-VALUES">RETURN VALUES</h1>
-
-<p>SSL_CTX_set_generate_session_id() and SSL_set_generate_session_id() always return 1.</p>
-
-<p>SSL_has_matching_session_id() returns 1 if another session with the same id is already in the cache.</p>
-
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_get_version.html">SSL_get_version(3)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

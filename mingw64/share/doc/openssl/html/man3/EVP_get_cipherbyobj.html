@@ -265,7 +265,7 @@
 <dt id="EVP_CIPHER_CTX_ctrl-ctx-EVP_CTRL_AEAD_SET_TAG-taglen-tag1">EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, taglen, tag)</dt>
 <dd>
 
-<p>This call is made to set the expected <b>CCM</b> tag value when decrypting or the length of the tag (with the <code>tag</code> parameter set to NULL) when encrypting. The tag length is often referred to as <b>M</b>. If not set a default value is used (12 for AES).</p>
+<p>This call is made to set the expected <b>CCM</b> tag value when decrypting or the length of the tag (with the <code>tag</code> parameter set to NULL) when encrypting. The tag length is often referred to as <b>M</b>. If not set a default value is used (12 for AES). When decrypting, the tag needs to be set before passing in data to be decrypted, but as in GCM and OCB mode, it can be set after passing additional authenticated data (see <a href="#AEAD-Interface">&quot;AEAD Interface&quot;</a>).</p>
 
 </dd>
 <dt id="EVP_CIPHER_CTX_ctrl-ctx-EVP_CTRL_CCM_SET_L-ivlen-NULL">EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_L, ivlen, NULL)</dt>
@@ -291,7 +291,7 @@
 <dt id="EVP_CIPHER_CTX_ctrl-ctx-EVP_CTRL_AEAD_SET_IVLEN-ivlen-NULL2">EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_IVLEN, ivlen, NULL)</dt>
 <dd>
 
-<p>Sets the nonce length. This call can only be made before specifying the nonce. If not called a default nonce length of 12 (i.e. 96 bits) is used. The maximum nonce length is 16 (<b>CHACHA_CTR_SIZE</b>, i.e. 128-bits).</p>
+<p>Sets the nonce length. This call can only be made before specifying the nonce. If not called a default nonce length of 12 (i.e. 96 bits) is used. The maximum nonce length is 12 bytes (i.e. 96-bits). If a nonce of less than 12 bytes is set then the nonce is automatically padded with leading 0 bytes to make it 12 bytes in length.</p>
 
 </dd>
 <dt id="EVP_CIPHER_CTX_ctrl-ctx-EVP_CTRL_AEAD_GET_TAG-taglen-tag1">EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG, taglen, tag)</dt>
@@ -453,7 +453,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

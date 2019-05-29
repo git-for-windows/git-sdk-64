@@ -16,8 +16,8 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
-  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -62,6 +62,10 @@
 <p>Errors during configuration may also be handled differently by different applications. For example in some cases an error may simply print out a warning message and the application continue. In other cases an application might consider a configuration file error as fatal and exit immediately.</p>
 
 <p>Applications can use the CONF_modules_load() function if they wish to load a configuration file themselves and have finer control over how errors are treated.</p>
+
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>These functions return 1 for success and a zero or negative value for failure. If module errors are not ignored the return code will reflect the return value of the failing module (this will always be zero or negative).</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -114,10 +118,6 @@
      fclose(fp);
      NCONF_free(cnf);
  }</code></pre>
-
-<h1 id="RETURN-VALUES">RETURN VALUES</h1>
-
-<p>These functions return 1 for success and a zero or negative value for failure. If module errors are not ignored the return code will reflect the return value of the failing module (this will always be zero or negative).</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

@@ -54,6 +54,8 @@ extern "C"
 
 /**
  * GCC_VERSION_AT_LEAST
+ * @major: gcc major version number to compare with
+ * @minor: gcc minor version number to compare with
  *
  * Pre-processor symbol to check the gcc version.
  */
@@ -119,7 +121,7 @@ extern "C"
  * version number.  Used together with idn2_check_version() to verify
  * header file and run-time library consistency.
  */
-#define IDN2_VERSION "2.1.1"
+#define IDN2_VERSION "2.2.0"
 
 /**
  * IDN2_VERSION_NUMBER
@@ -130,7 +132,7 @@ extern "C"
  * digits are used to enumerate development snapshots, but for all
  * public releases they will be 0000.
  */
-#define IDN2_VERSION_NUMBER 0x02010001
+#define IDN2_VERSION_NUMBER 0x02020000
 
 /**
  * IDN2_VERSION_MAJOR
@@ -146,7 +148,7 @@ extern "C"
  * Pre-processor symbol for the minor version number (decimal).
  * The version scheme is major.minor.patchlevel.
  */
-#define IDN2_VERSION_MINOR 1
+#define IDN2_VERSION_MINOR 2
 
 /**
  * IDN2_VERSION_PATCH
@@ -154,7 +156,7 @@ extern "C"
  * Pre-processor symbol for the patch level number (decimal).
  * The version scheme is major.minor.patchlevel.
  */
-#define IDN2_VERSION_PATCH 1
+#define IDN2_VERSION_PATCH 0
 
 /**
  * IDN2_LABEL_MAX_LENGTH
@@ -178,10 +180,11 @@ extern "C"
 /**
  * idn2_flags:
  * @IDN2_NFC_INPUT: Normalize input string using normalization form C.
- * @IDN2_ALABEL_ROUNDTRIP: Perform optional IDNA2008 lookup roundtrip check (not implemented yet).
- * @IDN2_NO_TR46: Disable Unicode TR46 processing (default).
+ * @IDN2_ALABEL_ROUNDTRIP: Perform optional IDNA2008 lookup roundtrip check (default).
+ * @IDN2_NO_ALABEL_ROUNDTRIP: Disable ALabel lookup roundtrip check.
+ * @IDN2_NO_TR46: Disable Unicode TR46 processing.
  * @IDN2_TRANSITIONAL: Perform Unicode TR46 transitional processing.
- * @IDN2_NONTRANSITIONAL: Perform Unicode TR46 non-transitional processing.
+ * @IDN2_NONTRANSITIONAL: Perform Unicode TR46 non-transitional processing (default).
  * @IDN2_ALLOW_UNASSIGNED: Libidn compatibility flag, unused.
  * @IDN2_USE_STD3_ASCII_RULES: Use STD3 ASCII rules.
  * This is a #TR46 only flag, and will be ignored when set without either
@@ -198,7 +201,8 @@ extern "C"
     IDN2_NONTRANSITIONAL = 8,
     IDN2_ALLOW_UNASSIGNED = 16,
     IDN2_USE_STD3_ASCII_RULES = 32,
-    IDN2_NO_TR46 = 64
+    IDN2_NO_TR46 = 64,
+    IDN2_NO_ALABEL_ROUNDTRIP = 128
   } idn2_flags;
 
 /* IDNA2008 with UTF-8 encoded inputs. */
@@ -249,6 +253,7 @@ extern "C"
  * @IDN2_DOT_IN_LABEL: Label has forbidden dot (TR46).
  * @IDN2_INVALID_TRANSITIONAL: Label has character forbidden in transitional mode (TR46).
  * @IDN2_INVALID_NONTRANSITIONAL: Label has character forbidden in non-transitional mode (TR46).
+ * @IDN2_ALABEL_ROUNDTRIP_FAILED: ALabel -> Ulabel -> ALabel result differs from input.
  *
  * Return codes for IDN2 functions.  All return codes are negative
  * except for the successful code IDN2_OK which are guaranteed to be
@@ -287,6 +292,7 @@ extern "C"
     IDN2_DOT_IN_LABEL = -311,
     IDN2_INVALID_TRANSITIONAL = -312,
     IDN2_INVALID_NONTRANSITIONAL = -313,
+    IDN2_ALABEL_ROUNDTRIP_FAILED = -314,
   } idn2_rc;
 
 /* Auxiliary functions. */
@@ -303,7 +309,7 @@ extern "C"
     idn2_to_ascii_lz (const char * input, char ** output, int flags);
 
   extern _IDN2_API int
-    idn2_to_unicode_8z4z (const char * input, uint32_t ** output, G_GNUC_UNUSED int flags);
+    idn2_to_unicode_8z4z (const char * input, uint32_t ** output, int flags G_GNUC_UNUSED);
   extern _IDN2_API int
     idn2_to_unicode_4z4z (const uint32_t * input, uint32_t ** output, int flags);
   extern _IDN2_API int
@@ -330,6 +336,27 @@ extern "C"
 /*** libidn compatibility layer ***/
 #if !defined IDNA_H && !defined IDN2_SKIP_LIBIDN_COMPAT
 
+/**
+ * Idna_rc:
+ * @IDNA_SUCCESS: Same as %IDN2_OK
+ * @IDNA_STRINGPREP_ERROR: Same as %IDN2_ENCODING_ERROR
+ * @IDNA_PUNYCODE_ERROR: Same as %IDN2_PUNYCODE_BAD_INPUT
+ * @IDNA_CONTAINS_NON_LDH: Same as %IDN2_ENCODING_ERROR
+ * @IDNA_CONTAINS_LDH: Same as %IDNA_CONTAINS_NON_LDH
+ * @IDNA_CONTAINS_MINUS: Same as %IDN2_ENCODING_ERROR
+ * @IDNA_INVALID_LENGTH: Same as %IDN2_DISALLOWED
+ * @IDNA_NO_ACE_PREFIX: Same as %IDN2_ENCODING_ERROR
+ * @IDNA_ROUNDTRIP_VERIFY_ERROR: Same as %IDN2_ENCODING_ERROR
+ * @IDNA_CONTAINS_ACE_PREFIX: Same as %IDN2_ENCODING_ERROR
+ * @IDNA_ICONV_ERROR: Same as %IDN2_ENCODING_ERROR
+ * @IDNA_MALLOC_ERROR: Same as %IDN2_MALLOC
+ * @IDNA_DLOPEN_ERROR: Same as %IDN2_MALLOC
+ *
+ * Return codes for transition to / compatibility with libidn2.
+ *
+ * Please be aware that return codes from idna_ functions might be unexpected
+ * when linked / built with libidn2.
+ */
   typedef enum
   {
     IDNA_SUCCESS = IDN2_OK,
@@ -347,7 +374,13 @@ extern "C"
     IDNA_DLOPEN_ERROR = IDN2_MALLOC
   } Idna_rc;
 
-  /* IDNA flags */
+/**
+ * Idna_flags:
+ * @IDNA_ALLOW_UNASSIGNED: Same as %IDN2_ALLOW_UNASSIGNED
+ * @IDNA_USE_STD3_ASCII_RULES: Same as %IDN2_USE_STD3_ASCII_RULES
+ *
+ * Flags for transition to / compatibility with libidn2.
+ */
   typedef enum
   {
     IDNA_ALLOW_UNASSIGNED = IDN2_ALLOW_UNASSIGNED,

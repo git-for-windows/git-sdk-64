@@ -65,7 +65,7 @@
 
 <p>It places the result in <b>md</b> (which must have space for the output of the hash function, which is no more than <b>EVP_MAX_MD_SIZE</b> bytes). If <b>md</b> is NULL, the digest is placed in a static array. The size of the output is placed in <b>md_len</b>, unless it is <b>NULL</b>. Note: passing a NULL value for <b>md</b> to use the static array is not thread safe.</p>
 
-<p><b>evp_md</b> can be EVP_sha1(), EVP_ripemd160() etc.</p>
+<p><b>evp_md</b> is a message digest such as EVP_sha1(), EVP_ripemd160() etc. HMAC does not support variable output length digests such as EVP_shake128() and EVP_shake256().</p>
 
 <p>HMAC_CTX_new() creates a new HMAC_CTX in heap memory.</p>
 

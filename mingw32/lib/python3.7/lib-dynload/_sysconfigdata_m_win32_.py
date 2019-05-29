@@ -40,7 +40,7 @@ build_time_vars = {'ABIFLAGS': 'm',
                             '-Werror=implicit-function-declaration',
  'CONFIGURE_CPPFLAGS': '-I../Python-3.7.3/PC -D_FORTIFY_SOURCE=2 '
                        '-D__USE_MINGW_ANSI_STDIO=1 '
-                       '-IC:/building/msys64/mingw32/include/ncursesw  -I.',
+                       '-IC:/building/msys64/mingw32/include/pdcurses  -I.',
  'CONFIGURE_LDFLAGS': '-pipe -s',
  'CONFIGURE_LDFLAGS_NODIST': '',
  'CONFIG_ARGS': "'--prefix=/mingw32' '--host=i686-w64-mingw32' "
@@ -52,7 +52,7 @@ build_time_vars = {'ABIFLAGS': 'm',
                 "-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' "
                 "'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 "
                 '-D__USE_MINGW_ANSI_STDIO=1 '
-                "-IC:/building/msys64/mingw32/include/ncursesw ' "
+                "-IC:/building/msys64/mingw32/include/pdcurses ' "
                 "'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'",
  'CONFINCLUDEDIR': '/mingw32/include',
  'CONFINCLUDEPY': '/mingw32/include/python3.7m',
@@ -64,9 +64,9 @@ build_time_vars = {'ABIFLAGS': 'm',
  'CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.3/Include '
              '-I../Python-3.7.3/PC -D_FORTIFY_SOURCE=2 '
              '-D__USE_MINGW_ANSI_STDIO=1 '
-             '-IC:/building/msys64/mingw32/include/ncursesw  -I. '
+             '-IC:/building/msys64/mingw32/include/pdcurses  -I. '
              '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
-             '-IC:/building/msys64/mingw32/include/ncursesw',
+             '-IC:/building/msys64/mingw32/include/pdcurses',
  'CXX': 'i686-w64-mingw32-c++',
  'DESTDIR': '',
  'DESTDIRFINAL': '/',
@@ -148,9 +148,9 @@ build_time_vars = {'ABIFLAGS': 'm',
  'HAVE_CURSES_H': 1,
  'HAVE_CURSES_HAS_KEY': 1,
  'HAVE_CURSES_IMMEDOK': 1,
- 'HAVE_CURSES_IS_PAD': 1,
- 'HAVE_CURSES_IS_TERM_RESIZED': 1,
- 'HAVE_CURSES_RESIZETERM': 1,
+ 'HAVE_CURSES_IS_PAD': 0,
+ 'HAVE_CURSES_IS_TERM_RESIZED': 0,
+ 'HAVE_CURSES_RESIZETERM': 0,
  'HAVE_CURSES_RESIZE_TERM': 1,
  'HAVE_CURSES_SYNCOK': 1,
  'HAVE_CURSES_TYPEAHEAD': 1,
@@ -309,7 +309,7 @@ build_time_vars = {'ABIFLAGS': 'm',
  'HAVE_MKTIME': 1,
  'HAVE_MMAP': 0,
  'HAVE_MREMAP': 0,
- 'HAVE_NCURSES_H': 1,
+ 'HAVE_NCURSES_H': 0,
  'HAVE_NDIR_H': 0,
  'HAVE_NETPACKET_PACKET_H': 0,
  'HAVE_NET_IF_H': 0,
@@ -641,10 +641,10 @@ build_time_vars = {'ABIFLAGS': 'm',
                              '-IInclude -IPython -I. -I../Python-3.7.3/Include '
                              '-I../Python-3.7.3/PC -D_FORTIFY_SOURCE=2 '
                              '-D__USE_MINGW_ANSI_STDIO=1 '
-                             '-IC:/building/msys64/mingw32/include/ncursesw  '
+                             '-IC:/building/msys64/mingw32/include/pdcurses  '
                              '-I. -D_FORTIFY_SOURCE=2 '
                              '-D__USE_MINGW_ANSI_STDIO=1 '
-                             '-IC:/building/msys64/mingw32/include/ncursesw '
+                             '-IC:/building/msys64/mingw32/include/pdcurses '
                              '-DPy_BUILD_CORE_BUILTIN',
  'PY_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -march=i686 '
               '-mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 '
@@ -666,17 +666,17 @@ build_time_vars = {'ABIFLAGS': 'm',
                    '-IPython -I. -I../Python-3.7.3/Include '
                    '-I../Python-3.7.3/PC -D_FORTIFY_SOURCE=2 '
                    '-D__USE_MINGW_ANSI_STDIO=1 '
-                   '-IC:/building/msys64/mingw32/include/ncursesw  -I. '
+                   '-IC:/building/msys64/mingw32/include/pdcurses  -I. '
                    '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
-                   '-IC:/building/msys64/mingw32/include/ncursesw '
+                   '-IC:/building/msys64/mingw32/include/pdcurses '
                    '-DPy_BUILD_CORE',
  'PY_CORE_LDFLAGS': '-pipe -s -pipe -s',
  'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.3/Include '
                 '-I../Python-3.7.3/PC -D_FORTIFY_SOURCE=2 '
                 '-D__USE_MINGW_ANSI_STDIO=1 '
-                '-IC:/building/msys64/mingw32/include/ncursesw  -I. '
+                '-IC:/building/msys64/mingw32/include/pdcurses  -I. '
                 '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
-                '-IC:/building/msys64/mingw32/include/ncursesw',
+                '-IC:/building/msys64/mingw32/include/pdcurses',
  'PY_FORMAT_SIZE_T': '"z"',
  'PY_LDFLAGS': '-pipe -s -pipe -s',
  'PY_LDFLAGS_NODIST': '',
@@ -693,9 +693,9 @@ build_time_vars = {'ABIFLAGS': 'm',
                         '-IInclude -IPython -I. -I../Python-3.7.3/Include '
                         '-I../Python-3.7.3/PC -D_FORTIFY_SOURCE=2 '
                         '-D__USE_MINGW_ANSI_STDIO=1 '
-                        '-IC:/building/msys64/mingw32/include/ncursesw  -I. '
+                        '-IC:/building/msys64/mingw32/include/pdcurses  -I. '
                         '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
-                        '-IC:/building/msys64/mingw32/include/ncursesw',
+                        '-IC:/building/msys64/mingw32/include/pdcurses',
  'Py_DEBUG': 0,
  'Py_ENABLE_SHARED': 1,
  'Py_HASH_ALGORITHM': 0,
