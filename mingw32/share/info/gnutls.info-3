@@ -1,6 +1,6 @@
-This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.6 from gnutls.texi.
 
-This manual is last updated 3 January 2019 for version 3.6.7 of GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.8 of GnuTLS.
 
 Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2019 Nikos Mavrogiannopoulos
@@ -1074,7 +1074,7 @@ nettle (1) library is recommended.
 
 * Symmetric algorithms::
 * Public key algorithms::
-* Cryptographic Message Syntax / PKCS#7::
+* Cryptographic Message Syntax / PKCS7::
 * Hash and MAC functions::
 * Random number generation::
 * Overriding algorithms::
@@ -1162,6 +1162,14 @@ it is designed to minimize misuse of cryptography.
      AES in CFB8 mode with 192-bit keys.
 'GNUTLS_CIPHER_AES_256_CFB8'
      AES in CFB8 mode with 256-bit keys.
+'GNUTLS_CIPHER_AES_128_XTS'
+     AES in XTS mode with 128-bit key + 128bit tweak key.
+'GNUTLS_CIPHER_AES_256_XTS'
+     AES in XTS mode with 256-bit key + 256bit tweak key.  Note that the
+     XTS ciphers are message oriented.  The whole message needs to be
+     provided with a single call, because cipher-stealing requires to
+     know where the message actually terminates in order to be able to
+     compute where the stealing occurs.
 'GNUTLS_CIPHER_IDEA_PGP_CFB'
      IDEA in CFB mode (placeholder - unsupported).
 'GNUTLS_CIPHER_3DES_PGP_CFB'
@@ -1261,7 +1269,7 @@ verification and addition in transparent way.
 <https://www.lysator.liu.se/~nisse/nettle/nettle.html>
 
 
-File: gnutls.info,  Node: Public key algorithms,  Next: Cryptographic Message Syntax / PKCS#7,  Prev: Symmetric algorithms,  Up: Using GnuTLS as a cryptographic library
+File: gnutls.info,  Node: Public key algorithms,  Next: Cryptographic Message Syntax / PKCS7,  Prev: Symmetric algorithms,  Up: Using GnuTLS as a cryptographic library
 
 8.2 Public key algorithms
 =========================
@@ -1352,10 +1360,10 @@ gnutls_privkey_generate2::.
      *Since:* 3.5.0
 
 
-File: gnutls.info,  Node: Cryptographic Message Syntax / PKCS#7,  Next: Hash and MAC functions,  Prev: Public key algorithms,  Up: Using GnuTLS as a cryptographic library
+File: gnutls.info,  Node: Cryptographic Message Syntax / PKCS7,  Next: Hash and MAC functions,  Prev: Public key algorithms,  Up: Using GnuTLS as a cryptographic library
 
-8.3 Cryptographic Message Syntax / PKCS#7
-=========================================
+8.3 Cryptographic Message Syntax / PKCS7
+========================================
 
 The CMS or PKCS #7 format is a commonly used format for digital
 signatures.  PKCS #7 is the name of the original standard when published
@@ -1453,7 +1461,7 @@ are provided.
 'INT *note gnutls_pkcs7_set_crl:: (gnutls_pkcs7_t PKCS7, gnutls_x509_crl_t CRL)'
 
 
-File: gnutls.info,  Node: Hash and MAC functions,  Next: Random number generation,  Prev: Cryptographic Message Syntax / PKCS#7,  Up: Using GnuTLS as a cryptographic library
+File: gnutls.info,  Node: Hash and MAC functions,  Next: Random number generation,  Prev: Cryptographic Message Syntax / PKCS7,  Up: Using GnuTLS as a cryptographic library
 
 8.4 Hash and MAC functions
 ==========================
@@ -1876,29 +1884,31 @@ to 'more'.  Both will exit with a status code of 0.
         -p, --port=str             The port or service to connect to
             --insecure             Don't abort program if server certificate can't be validated
             --verify-allow-broken  Allow broken algorithms, such as MD5 for certificate verification
-            --benchmark-ciphers    Benchmark individual ciphers
-            --benchmark-tls-kx     Benchmark TLS key exchange methods
-            --benchmark-tls-ciphers  Benchmark TLS ciphers
+        -", --benchmark-ciphers    Benchmark individual ciphers
+        -#, --benchmark-tls-kx     Benchmark TLS key exchange methods
+        -$, --benchmark-tls-ciphers  Benchmark TLS ciphers
         -l, --list                 Print a list of the supported algorithms and modes
                                      - prohibits the option 'port'
-            --priority-list        Print a list of the supported priority strings
-            --noticket             Don't allow session tickets
-            --srtp-profiles=str    Offer SRTP profiles
-            --alpn=str             Application layer protocol
+        -%, --priority-list        Print a list of the supported priority strings
+        -&, --noticket             Don't allow session tickets
+        -', --srtp-profiles=str    Offer SRTP profiles
+        -(, --alpn=str             Application layer protocol
                                      - may appear multiple times
         -b, --heartbeat            Activate heartbeat support
-            --recordsize=num       The maximum record size to advertize
+        -), --recordsize=num       The maximum record size to advertize
                                      - it must be in the range:
                                        0 to 4096
-            --disable-sni          Do not send a Server Name Indication (SNI)
-            --single-key-share     Send a single key share under TLS1.3
-            --post-handshake-auth  Enable post-handshake authentication under TLS1.3
-            --inline-commands      Inline commands of the form ^<cmd>^
-            --inline-commands-prefix=str Change the default delimiter for inline commands.
-            --provider=file        Specify the PKCS #11 provider library
+        -*, --disable-sni          Do not send a Server Name Indication (SNI)
+        -,, --single-key-share     Send a single key share under TLS1.3
+        --, --post-handshake-auth  Enable post-handshake authentication under TLS1.3
+        -., --inline-commands      Inline commands of the form ^<cmd>^
+        -/, --inline-commands-prefix=str Change the default delimiter for inline commands.
+        -0, --provider=file        Specify the PKCS #11 provider library
                                      - file must pre-exist
-            --fips140-mode         Reports the status of the FIPS140-2 mode in gnutls library
-            --logfile=str          Redirect informational messages to a specific file.
+        -1, --fips140-mode         Reports the status of the FIPS140-2 mode in gnutls library
+        -2, --logfile=str          Redirect informational messages to a specific file.
+        -3, --keymatexport=str     Label used for exporting keying material
+        -4, --keymatexportsize=num Size of the exported keying material
         -v, --version[=arg]        output version information and exit
         -h, --help                 display extended usage information and exit
         -!, --more-help            extended usage information passed thru pager
@@ -2355,8 +2365,10 @@ to 'more'.  Both will exit with a status code of 0.
             --ignore-ocsp-response-errors  Ignore any errors when setting the OCSP response
         -p, --port=num             The port to connect to
         -l, --list                 Print a list of the supported algorithms and modes
-            --provider=file        Specify the PKCS #11 provider library
+        -!, --provider=file        Specify the PKCS #11 provider library
                                      - file must pre-exist
+        -", --keymatexport=str     Label used for exporting keying material
+        -#, --keymatexportsize=num Size of the exported keying material
         -v, --version[=arg]        output version information and exit
         -h, --help                 display extended usage information and exit
         -!, --more-help            extended usage information passed thru pager
@@ -4679,6 +4691,8 @@ Ciphers
 'AES-128-CFB8'
 'AES-192-CFB8'
 'AES-256-CFB8'
+'AES-128-XTS'
+'AES-256-XTS'
 '3DES-CBC'
 'DES-CBC'
 'RC2-40'
@@ -5717,14 +5731,16 @@ gnutls_certificate_server_set_request
           (gnutls_session_t SESSION, gnutls_certificate_request_t REQ)
      SESSION: is a 'gnutls_session_t' type.
 
-     REQ: is one of GNUTLS_CERT_REQUEST, GNUTLS_CERT_REQUIRE
+     REQ: is one of GNUTLS_CERT_REQUEST, GNUTLS_CERT_REQUIRE,
+     GNUTLS_CERT_IGNORE
 
      This function specifies if we (in case of a server) are going to
      send a certificate request message to the client.  If 'req' is
      GNUTLS_CERT_REQUIRE then the server will return the
      'GNUTLS_E_NO_CERTIFICATE_FOUND' error if the peer does not provide
      a certificate.  If you do not call this function then the client
-     will not be asked to send a certificate.
+     will not be asked to send a certificate.  Invoking the function
+     with 'req' GNUTLS_CERT_IGNORE has the same effect.
 
 gnutls_certificate_set_dh_params
 --------------------------------
@@ -7171,8 +7187,13 @@ gnutls_cipher_suite_get_name
 
      MAC_ALGORITHM: is a MAC algorithm
 
-     Note that the full cipher suite name must be prepended by TLS or
-     SSL depending of the protocol in use.
+     This function returns the ciphersuite name under TLS1.2 or earlier
+     versions when provided with individual algorithms.  The full cipher
+     suite name must be prepended by TLS or SSL depending of the
+     protocol in use.
+
+     To get a description of the current ciphersuite across versions, it
+     is recommended to use 'gnutls_session_get_desc()' .
 
      *Returns:* a string that contains the name of a TLS cipher suite,
      specified by the given algorithms, or 'NULL' .
@@ -7722,6 +7743,27 @@ gnutls_dh_params_import_raw2
      GENERATOR: holds the new generator
 
      KEY_BITS: the private key bits (set to zero when unknown)
+
+     This function will replace the pair of prime and generator for use
+     in the Diffie-Hellman key exchange.  The new parameters should be
+     stored in the appropriate gnutls_datum.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error code is returned.
+
+gnutls_dh_params_import_raw3
+----------------------------
+
+ -- Function: int gnutls_dh_params_import_raw3 (gnutls_dh_params_t
+          DH_PARAMS, const gnutls_datum_t * PRIME, const gnutls_datum_t
+          * Q, const gnutls_datum_t * GENERATOR)
+     DH_PARAMS: The parameters
+
+     PRIME: holds the new prime
+
+     Q: holds the subgroup if available, otherwise NULL
+
+     GENERATOR: holds the new generator
 
      This function will replace the pair of prime and generator for use
      in the Diffie-Hellman key exchange.  The new parameters should be
@@ -9629,6 +9671,51 @@ gnutls_prf
 
      *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.
 
+gnutls_prf_early
+----------------
+
+ -- Function: int gnutls_prf_early (gnutls_session_t SESSION, size_t
+          LABEL_SIZE, const char * LABEL, size_t CONTEXT_SIZE, const
+          char * CONTEXT, size_t OUTSIZE, char * OUT)
+     SESSION: is a 'gnutls_session_t' type.
+
+     LABEL_SIZE: length of the 'label' variable.
+
+     LABEL: label used in PRF computation, typically a short string.
+
+     CONTEXT_SIZE: length of the 'extra' variable.
+
+     CONTEXT: optional extra data to seed the PRF with.
+
+     OUTSIZE: size of pre-allocated output buffer to hold the output.
+
+     OUT: pre-allocated buffer to hold the generated data.
+
+     This function is similar to 'gnutls_prf_rfc5705()' , but only works
+     in TLS 1.3 or later to export early keying material.
+
+     Note that the keying material is only available after the
+     ClientHello message is processed and before the application traffic
+     keys are established.  Therefore this function shall be called in a
+     handshake hook function for 'GNUTLS_HANDSHAKE_CLIENT_HELLO' .
+
+     The 'label' variable usually contains a string denoting the purpose
+     for the generated data.
+
+     The 'context' variable can be used to add more data to the seed,
+     after the random variables.  It can be used to make sure the
+     generated output is strongly connected to some additional data
+     (e.g., a string used in user authentication).
+
+     The output is placed in 'out' , which must be pre-allocated.
+
+     Note that, to provide the RFC5705 context, the 'context' variable
+     must be non-null.
+
+     *Returns:* 'GNUTLS_E_SUCCESS' on success, or an error code.
+
+     *Since:* 3.6.6
+
 gnutls_prf_raw
 --------------
 
@@ -9694,8 +9781,8 @@ gnutls_prf_rfc5705
 
      OUT: pre-allocated buffer to hold the generated data.
 
-     Exports keyring material from TLS/DTLS session to an application,
-     as specified in RFC5705.
+     Exports keying material from TLS/DTLS session to an application, as
+     specified in RFC5705.
 
      In the TLS versions prior to 1.3, it applies the TLS
      Pseudo-Random-Function (PRF) on the master secret and the provided
@@ -10958,6 +11045,28 @@ gnutls_record_set_max_early_data_size
 
      *Since:* 3.6.4
 
+gnutls_record_set_max_recv_size
+-------------------------------
+
+ -- Function: ssize_t gnutls_record_set_max_recv_size (gnutls_session_t
+          SESSION, size_t SIZE)
+     SESSION: is a 'gnutls_session_t' type.
+
+     SIZE: is the new size
+
+     This function sets the maximum amount of plaintext received in a
+     record in this connection.
+
+     The limit is also negotiated through a TLS extension called 'record
+     size limit'.  Note that while the 'record size limit' extension is
+     preferred, not all TLS implementations use or even understand the
+     extension.
+
+     *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
+     otherwise a negative error code is returned.
+
+     *Since:* 3.6.8
+
 gnutls_record_set_max_size
 --------------------------
 
@@ -10967,23 +11076,22 @@ gnutls_record_set_max_size
 
      SIZE: is the new size
 
-     This function sets the maximum record packet size in this
-     connection.
-
-     The requested record size does get in effect immediately only while
-     sending data.  The receive part will take effect after a successful
-     handshake.
+     This function sets the maximum amount of plaintext sent and
+     received in a record in this connection.
 
      Prior to 3.6.4, this function was implemented using a TLS extension
-     called 'max record size', which limits the acceptable values to
-     512(=2^9), 1024(=2^10), 2048(=2^11) and 4096(=2^12).  Since 3.6.4,
-     it uses another TLS extension called 'record size limit', which
-     doesn't have the limitation, as long as the value ranges between
-     512 and 16384.  Note that not all TLS implementations use or even
-     understand those extension.
+     called 'max fragment length', which limits the acceptable values to
+     512(=2^9), 1024(=2^10), 2048(=2^11) and 4096(=2^12).
 
-     In TLS 1.3, the value is the length of plaintext content plus its
-     padding, excluding content type octet.
+     Since 3.6.4, the limit is also negotiated through a new TLS
+     extension called 'record size limit', which doesn't have the
+     limitation, as long as the value ranges between 512 and 16384.
+     Note that while the 'record size limit' extension is preferred, not
+     all TLS implementations use or even understand the extension.
+
+     *Deprecated:* if the client can assume that the 'record size limit'
+     extension is supported by the server, we recommend using
+     'gnutls_record_set_max_recv_size()' instead.
 
      *Returns:* On success, 'GNUTLS_E_SUCCESS' (0) is returned,
      otherwise a negative error code is returned.
@@ -11535,6 +11643,8 @@ gnutls_session_get_master_secret
 
      This function returns pointers to the master secret used in the TLS
      session.  The pointers are not to be modified or deallocated.
+
+     This function is only applicable under TLS 1.2 or earlier versions.
 
      *Since:* 3.5.0
 
@@ -12153,7 +12263,8 @@ gnutls_sign_list
 
  -- Function: const gnutls_sign_algorithm_t * gnutls_sign_list ( VOID)
 
-     Get a list of supported public key signature algorithms.
+     Get a list of supported public key signature algorithms.  This
+     function is not thread safe.
 
      *Returns:* a (0)-terminated list of 'gnutls_sign_algorithm_t'
      integers indicating the available ciphers.

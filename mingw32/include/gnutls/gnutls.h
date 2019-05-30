@@ -52,13 +52,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.7"
+#define GNUTLS_VERSION "3.6.8"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 7
+#define GNUTLS_VERSION_PATCH 8
 
-#define GNUTLS_VERSION_NUMBER 0x030607
+#define GNUTLS_VERSION_NUMBER 0x030608
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -121,6 +121,12 @@ extern "C" {
  * @GNUTLS_CIPHER_GOST28147_CPB_CFB: GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro B S-box.
  * @GNUTLS_CIPHER_GOST28147_CPC_CFB: GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro C S-box.
  * @GNUTLS_CIPHER_GOST28147_CPD_CFB: GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro D S-box.
+ * @GNUTLS_CIPHER_AES_128_XTS: AES in XTS mode with 128-bit key + 128bit tweak key.
+ * @GNUTLS_CIPHER_AES_256_XTS: AES in XTS mode with 256-bit key + 256bit tweak key.
+ *                             Note that the XTS ciphers are message oriented.
+ *                             The whole message needs to be provided with a single call, because
+ *                             cipher-stealing requires to know where the message actually terminates
+ *                             in order to be able to compute where the stealing occurs.
  * @GNUTLS_CIPHER_IDEA_PGP_CFB: IDEA in CFB mode (placeholder - unsupported).
  * @GNUTLS_CIPHER_3DES_PGP_CFB: 3DES in CFB mode (placeholder - unsupported).
  * @GNUTLS_CIPHER_CAST5_PGP_CFB: CAST5 in CFB mode (placeholder - unsupported).
@@ -166,6 +172,8 @@ typedef enum gnutls_cipher_algorithm {
 	GNUTLS_CIPHER_AES_128_CFB8 = 29,
 	GNUTLS_CIPHER_AES_192_CFB8 = 30,
 	GNUTLS_CIPHER_AES_256_CFB8 = 31,
+	GNUTLS_CIPHER_AES_128_XTS = 32,
+	GNUTLS_CIPHER_AES_256_XTS = 33,
 
 	/* used only for PGP internals. Ignored in TLS/SSL
 	 */
@@ -748,6 +756,8 @@ typedef enum {
 	GNUTLS_TLS_VERSION_MAX = GNUTLS_TLS1_3,
 	GNUTLS_VERSION_UNKNOWN = 0xff	/* change it to 0xffff */
 } gnutls_protocol_t;
+
+#define GNUTLS_CRT_RAW GNUTLS_CRT_RAWPK
 
 /**
  * gnutls_certificate_type_t:
@@ -1439,6 +1449,7 @@ int gnutls_record_get_direction(gnutls_session_t session);
 
 size_t gnutls_record_get_max_size(gnutls_session_t session);
 ssize_t gnutls_record_set_max_size(gnutls_session_t session, size_t size);
+ssize_t gnutls_record_set_max_recv_size(gnutls_session_t session, size_t size);
 
 size_t gnutls_record_check_pending(gnutls_session_t session);
 size_t gnutls_record_check_corked(gnutls_session_t session);
@@ -1463,6 +1474,10 @@ int gnutls_prf_rfc5705(gnutls_session_t session,
 	       size_t label_size, const char *label,
 	       size_t context_size, const char *context,
 	       size_t outsize, char *out);
+int gnutls_prf_early(gnutls_session_t session,
+		     size_t label_size, const char *label,
+		     size_t context_size, const char *context,
+		     size_t outsize, char *out);
 
 int gnutls_prf_raw(gnutls_session_t session,
 		   size_t label_size, const char *label,
@@ -2228,6 +2243,10 @@ int gnutls_dh_params_import_raw2(gnutls_dh_params_t dh_params,
 				 const gnutls_datum_t * prime,
 				 const gnutls_datum_t * generator,
 				 unsigned key_bits);
+int gnutls_dh_params_import_raw3(gnutls_dh_params_t dh_params,
+				 const gnutls_datum_t * prime,
+				 const gnutls_datum_t * q,
+				 const gnutls_datum_t * generator);
 int gnutls_dh_params_import_pkcs3(gnutls_dh_params_t params,
 				  const gnutls_datum_t * pkcs3_params,
 				  gnutls_x509_crt_fmt_t format);
@@ -2403,22 +2422,27 @@ extern _SYM_EXPORT const gnutls_datum_t gnutls_srp_1024_group_generator;
  */
 
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_8192_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_8192_group_q;
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_8192_group_generator;
 extern _SYM_EXPORT const unsigned int gnutls_ffdhe_8192_key_bits;
 
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_6144_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_6144_group_q;
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_6144_group_generator;
 extern _SYM_EXPORT const unsigned int gnutls_ffdhe_6144_key_bits;
 
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_4096_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_4096_group_q;
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_4096_group_generator;
 extern _SYM_EXPORT const unsigned int gnutls_ffdhe_4096_key_bits;
 
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_3072_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_3072_group_q;
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_3072_group_generator;
 extern _SYM_EXPORT const unsigned int gnutls_ffdhe_3072_key_bits;
 
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_2048_group_prime;
+extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_2048_group_q;
 extern _SYM_EXPORT const gnutls_datum_t gnutls_ffdhe_2048_group_generator;
 extern _SYM_EXPORT const unsigned int gnutls_ffdhe_2048_key_bits;
 

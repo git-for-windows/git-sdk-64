@@ -154,6 +154,7 @@ typedef int (*gnutls_cipher_init_func) (gnutls_cipher_algorithm_t, void **ctx, i
 typedef int (*gnutls_cipher_setkey_func) (void *ctx, const void *key, size_t keysize);
 /* old style ciphers */
 typedef int (*gnutls_cipher_setiv_func) (void *ctx, const void *iv, size_t ivsize);
+typedef int (*gnutls_cipher_getiv_func) (void *ctx, void *iv, size_t ivsize);
 typedef int (*gnutls_cipher_encrypt_func) (void *ctx, const void *plain, size_t plainsize,
 				void *encr, size_t encrsize);
 typedef int (*gnutls_cipher_decrypt_func) (void *ctx, const void *encr, size_t encrsize,

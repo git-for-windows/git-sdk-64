@@ -1,6 +1,6 @@
-This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.6 from gnutls.texi.
 
-This manual is last updated 3 January 2019 for version 3.6.7 of GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.8 of GnuTLS.
 
 Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2019 Nikos Mavrogiannopoulos
@@ -619,7 +619,9 @@ Variable               Purpose
                           * 0x400000: Enable VIA PHE SHA512
                        
 'GNUTLS_FORCE_FIPS_MODE'In setups where GnuTLS is compiled with support
-                       for FIPS140-2 (see *note FIPS140-2 mode::).
+                       for FIPS140-2 (see *note FIPS140-2 mode::) if
+                       set to one it will force the FIPS mode
+                       enablement.
                        
 
 Table 6.1: Environment variables used by the library.
@@ -1295,14 +1297,16 @@ signed by server's acceptable signers.
           (gnutls_session_t SESSION, gnutls_certificate_request_t REQ)
      SESSION: is a 'gnutls_session_t' type.
 
-     REQ: is one of GNUTLS_CERT_REQUEST, GNUTLS_CERT_REQUIRE
+     REQ: is one of GNUTLS_CERT_REQUEST, GNUTLS_CERT_REQUIRE,
+     GNUTLS_CERT_IGNORE
 
      This function specifies if we (in case of a server) are going to
      send a certificate request message to the client.  If 'req' is
      GNUTLS_CERT_REQUIRE then the server will return the
      'GNUTLS_E_NO_CERTIFICATE_FOUND' error if the peer does not provide
      a certificate.  If you do not call this function then the client
-     will not be asked to send a certificate.
+     will not be asked to send a certificate.  Invoking the function
+     with 'req' GNUTLS_CERT_IGNORE has the same effect.
 
  -- Function: void gnutls_certificate_send_x509_rdn_sequence
           (gnutls_session_t SESSION, int STATUS)
@@ -3065,7 +3069,7 @@ Keyword                          Description
                                  
 %VERIFY_ALLOW_X509_V1_CA_CRT     will allow V1 CAs in chains.
                                  
-%PROFILE_(LOW|LEGACY|MEDIUM|HIGH|ULTRA)require a certificate
+%PROFILE_(LOW|LEGACY|MEDIUM|HIGH|ULTRA|FUTURE)require a certificate
                                  verification profile the
                                  corresponds to the specified
                                  security level, see
@@ -4001,8 +4005,8 @@ provided with a label, and additional context data to mix in the
 
      OUT: pre-allocated buffer to hold the generated data.
 
-     Exports keyring material from TLS/DTLS session to an application,
-     as specified in RFC5705.
+     Exports keying material from TLS/DTLS session to an application, as
+     specified in RFC5705.
 
      In the TLS versions prior to 1.3, it applies the TLS
      Pseudo-Random-Function (PRF) on the master secret and the provided
@@ -6158,6 +6162,7 @@ verify_certificate_chain(const char *hostname,
                                               GNUTLS_TL_VERIFY_CRL, 0));
 
         cert = malloc(sizeof(*cert) * cert_chain_length);
+        assert(cert != NULL);
 
         /* Import all the certificates in the chain to
          * native certificate format.

@@ -1,6 +1,6 @@
-This is gnutls.info, produced by makeinfo version 6.5 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 6.6 from gnutls.texi.
 
-This manual is last updated 3 January 2019 for version 3.6.7 of GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.8 of GnuTLS.
 
 Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2019 Nikos Mavrogiannopoulos
@@ -32,7 +32,7 @@ File: gnutls.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS
 ******
 
-This manual is last updated 3 January 2019 for version 3.6.7 of GnuTLS.
+This manual is last updated 3 January 2019 for version 3.6.8 of GnuTLS.
 
 Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
 2001-2019 Nikos Mavrogiannopoulos
@@ -3640,50 +3640,50 @@ to 'more'.  Both will exit with a status code of 0.
      PKCS#7 structure options:
 
             --p7-generate          Generate a PKCS #7 structure
-            --p7-sign              Signs using a PKCS #7 structure
-            --p7-detached-sign     Signs using a detached PKCS #7 structure
-            --p7-include-cert      The signer's certificate will be included in the cert list.
+        -!, --p7-sign              Signs using a PKCS #7 structure
+        -", --p7-detached-sign     Signs using a detached PKCS #7 structure
+        -#, --p7-include-cert      The signer's certificate will be included in the cert list.
                                      - disabled as '--no-p7-include-cert'
                                      - enabled by default
-            --p7-time              Will include a timestamp in the PKCS #7 structure
+        -$, --p7-time              Will include a timestamp in the PKCS #7 structure
                                      - disabled as '--no-p7-time'
-            --p7-show-data         Will show the embedded data in the PKCS #7 structure
+        -%, --p7-show-data         Will show the embedded data in the PKCS #7 structure
                                      - disabled as '--no-p7-show-data'
-            --p7-info              Print information on a PKCS #7 structure
-            --p7-verify            Verify the provided PKCS #7 structure
-            --smime-to-p7          Convert S/MIME to PKCS #7 structure
+        -&, --p7-info              Print information on a PKCS #7 structure
+        -', --p7-verify            Verify the provided PKCS #7 structure
+        -(, --smime-to-p7          Convert S/MIME to PKCS #7 structure
 
      Other options:
 
-            --get-dh-params        List the included PKCS #3 encoded Diffie-Hellman parameters
-            --dh-info              Print information PKCS #3 encoded Diffie-Hellman parameters
-            --load-privkey=str     Loads a private key file
-            --load-pubkey=str      Loads a public key file
-            --load-request=str     Loads a certificate request file
-            --load-certificate=str Loads a certificate file
-            --load-ca-privkey=str  Loads the certificate authority's private key file
-            --load-ca-certificate=str Loads the certificate authority's certificate file
-            --load-crl=str         Loads the provided CRL
-            --load-data=str        Loads auxiliary data
-            --password=str         Password to use
-            --null-password        Enforce a NULL password
-            --empty-password       Enforce an empty password
-            --hex-numbers          Print big number in an easier format to parse
-            --cprint               In certain operations it prints the information in C-friendly format
-            --hash=str             Hash algorithm to use for signing
-            --salt-size=num        Specify the RSA-PSS key default salt size
-            --inder                Use DER format for input certificates, private keys, and DH parameters
+        -*, --get-dh-params        List the included PKCS #3 encoded Diffie-Hellman parameters
+        -+, --dh-info              Print information PKCS #3 encoded Diffie-Hellman parameters
+        -,, --load-privkey=str     Loads a private key file
+        --, --load-pubkey=str      Loads a public key file
+        -., --load-request=str     Loads a certificate request file
+        -/, --load-certificate=str Loads a certificate file
+        -0, --load-ca-privkey=str  Loads the certificate authority's private key file
+        -1, --load-ca-certificate=str Loads the certificate authority's certificate file
+        -2, --load-crl=str         Loads the provided CRL
+        -3, --load-data=str        Loads auxiliary data
+        -4, --password=str         Password to use
+        -5, --null-password        Enforce a NULL password
+        -6, --empty-password       Enforce an empty password
+        -7, --hex-numbers          Print big number in an easier format to parse
+        -8, --cprint               In certain operations it prints the information in C-friendly format
+        -=, --hash=str             Hash algorithm to use for signing
+        ->, --salt-size=num        Specify the RSA-PSS key default salt size
+        -?, --inder                Use DER format for input certificates, private keys, and DH parameters
                                      - disabled as '--no-inder'
-            --inraw                an alias for the 'inder' option
-            --outder               Use DER format for output certificates, private keys, and DH parameters
+        -@, --inraw                an alias for the 'inder' option
+        -A, --outder               Use DER format for output certificates, private keys, and DH parameters
                                      - disabled as '--no-outder'
-            --outraw               an alias for the 'outder' option
-            --template=str         Template file to use for non-interactive operation
-            --stdout-info          Print information to stdout instead of stderr
-            --ask-pass             Enable interaction for entering password when in batch mode.
-            --pkcs-cipher=str      Cipher to use for PKCS #8 and #12 operations
-            --provider=str         Specify the PKCS #11 provider library
-            --text                 Output textual information before PEM-encoded certificates, private
+        -B, --outraw               an alias for the 'outder' option
+        -D, --template=str         Template file to use for non-interactive operation
+        -E, --stdout-info          Print information to stdout instead of stderr
+        -F, --ask-pass             Enable interaction for entering password when in batch mode.
+        -G, --pkcs-cipher=str      Cipher to use for PKCS #8 and #12 operations
+        -H, --provider=str         Specify the PKCS #11 provider library
+        -I, --text                 Output textual information before PEM-encoded certificates, private
      keys, etc
                                      - disabled as '--no-text'
                                      - enabled by default
@@ -3838,7 +3838,9 @@ key-type option.
 This is the "specify the key type to use on key generation" option.
 This option takes a string argument.  This option can be combined with
 -generate-privkey, to specify the key type to be generated.  Valid
-options are, 'rsa', 'rsa-pss', 'dsa', 'ecdsa', and 'ed25519'.
+options are, 'rsa', 'rsa-pss', 'dsa', 'ecdsa', and 'ed25519'.  When
+combined with certificate generation it can be used to specify an
+RSA-PSS certificate when an RSA key is given.
 
 curve option.
 .............
@@ -4606,12 +4608,12 @@ certificate request or a self signed certificate follows.
 
 
      # Whether this certificate will be used for a TLS client;
-     # this sets the id-kp-serverAuth (1.3.6.1.5.5.7.3.1) of
+     # this sets the id-kp-clientAuth (1.3.6.1.5.5.7.3.2) of
      # extended key usage.
      #tls_www_client
 
      # Whether this certificate will be used for a TLS server;
-     # This sets the id-kp-clientAuth (1.3.6.1.5.5.7.3.2) of
+     # this sets the id-kp-serverAuth (1.3.6.1.5.5.7.3.1) of
      # extended key usage.
      #tls_www_server
 
@@ -7089,33 +7091,33 @@ to 'more'.  Both will exit with a status code of 0.
                                      write
                                      set-id
             --write                Writes the loaded objects to a PKCS #11 token
-            --delete               Deletes the objects matching the given PKCS #11 URL
-            --label=str            Sets a label for the write operation
-            --id=str               Sets an ID for the write operation
-            --mark-wrap            Marks the generated key to be a wrapping key
+        -!, --delete               Deletes the objects matching the given PKCS #11 URL
+        -", --label=str            Sets a label for the write operation
+        -#, --id=str               Sets an ID for the write operation
+        -$, --mark-wrap            Marks the generated key to be a wrapping key
                                      - disabled as '--no-mark-wrap'
-            --mark-trusted         Marks the object to be written as trusted
+        -%, --mark-trusted         Marks the object to be written as trusted
                                      - prohibits the option 'mark-distrusted'
                                      - disabled as '--no-mark-trusted'
-            --mark-distrusted      When retrieving objects, it requires the objects to be distrusted
+        -&, --mark-distrusted      When retrieving objects, it requires the objects to be distrusted
      (blacklisted)
                                      - prohibits the option 'mark-trusted'
-            --mark-decrypt         Marks the object to be written for decryption
+        -', --mark-decrypt         Marks the object to be written for decryption
                                      - disabled as '--no-mark-decrypt'
-            --mark-sign            Marks the object to be written for signature generation
+        -(, --mark-sign            Marks the object to be written for signature generation
                                      - disabled as '--no-mark-sign'
-            --mark-ca              Marks the object to be written as a CA
+        -), --mark-ca              Marks the object to be written as a CA
                                      - disabled as '--no-mark-ca'
-            --mark-private         Marks the object to be written as private
+        -*, --mark-private         Marks the object to be written as private
                                      - disabled as '--no-mark-private'
-            --ca                   an alias for the 'mark-ca' option
-            --private              an alias for the 'mark-private' option
-            --secret-key=str       Provide a hex encoded secret key
-            --load-privkey=file    Private key file to use
+        -+, --ca                   an alias for the 'mark-ca' option
+        -,, --private              an alias for the 'mark-private' option
+        --, --secret-key=str       Provide a hex encoded secret key
+        -., --load-privkey=file    Private key file to use
                                      - file must pre-exist
-            --load-pubkey=file     Public key file to use
+        -/, --load-pubkey=file     Public key file to use
                                      - file must pre-exist
-            --load-certificate=file Certificate file to use
+        -0, --load-certificate=file Certificate file to use
                                      - file must pre-exist
 
      Other options:
@@ -7123,28 +7125,28 @@ to 'more'.  Both will exit with a status code of 0.
         -d, --debug=num            Enable debugging
                                      - it must be in the range:
                                        0 to 9999
-            --outfile=str          Output file
-            --login                Force (user) login to token
+        -1, --outfile=str          Output file
+        -2, --login                Force (user) login to token
                                      - disabled as '--no-login'
-            --so-login             Force security officer login to token
+        -3, --so-login             Force security officer login to token
                                      - disabled as '--no-so-login'
-            --admin-login          an alias for the 'so-login' option
-            --test-sign            Tests the signature operation of the provided object
-            --sign-params=str      Sign with a specific signature algorithm
-            --hash=str             Hash algorithm to use for signing
-            --generate-random=num  Generate random data
+        -4, --admin-login          an alias for the 'so-login' option
+        -5, --test-sign            Tests the signature operation of the provided object
+        -6, --sign-params=str      Sign with a specific signature algorithm
+        -7, --hash=str             Hash algorithm to use for signing
+        -8, --generate-random=num  Generate random data
         -8, --pkcs8                Use PKCS #8 format for private keys
-            --inder                Use DER/RAW format for input
+        -9, --inder                Use DER/RAW format for input
                                      - disabled as '--no-inder'
-            --inraw                an alias for the 'inder' option
-            --outder               Use DER format for output certificates, private keys, and DH parameters
+        -:, --inraw                an alias for the 'inder' option
+        -;, --outder               Use DER format for output certificates, private keys, and DH parameters
                                      - disabled as '--no-outder'
-            --outraw               an alias for the 'outder' option
-            --provider=file        Specify the PKCS #11 provider library
-            --detailed-url         Print detailed URLs
+        -<, --outraw               an alias for the 'outder' option
+        -=, --provider=file        Specify the PKCS #11 provider library
+        -?, --detailed-url         Print detailed URLs
                                      - disabled as '--no-detailed-url'
-            --only-urls            Print a compact listing using only the URLs
-            --batch                Disable all interaction with the tool
+        -@, --only-urls            Print a compact listing using only the URLs
+        -A, --batch                Disable all interaction with the tool
 
      Version, usage and configuration options:
 

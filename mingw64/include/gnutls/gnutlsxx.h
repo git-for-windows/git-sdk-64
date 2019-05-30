@@ -309,7 +309,7 @@ namespace gnutls {
 					 gnutls_x509_crt_fmt_t type);
 		void set_x509_trust(const gnutls_datum_t & CA,
 				    gnutls_x509_crt_fmt_t type);
-		// FIXME: use classes instead of gnutls_x509_crt_t
+
 		void set_x509_trust(gnutls_x509_crt_t * ca_list,
 				    int ca_list_size);
 
@@ -326,7 +326,7 @@ namespace gnutls {
 		void set_x509_key(const gnutls_datum_t & CERT,
 				  const gnutls_datum_t & KEY,
 				  gnutls_x509_crt_fmt_t type);
-		// FIXME: use classes
+
 		void set_x509_key(gnutls_x509_crt_t * cert_list,
 				  int cert_list_size,
 				  gnutls_x509_privkey_t key);
