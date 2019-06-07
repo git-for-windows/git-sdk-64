@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.exe
+#!C:/git-sdk-64-ci/mingw64/bin/python3.exe
 # GLib Testing Framework Utility			-*- Mode: python; -*-
 # Copyright (C) 2007 Imendio AB
 # Authors: Tim Janik

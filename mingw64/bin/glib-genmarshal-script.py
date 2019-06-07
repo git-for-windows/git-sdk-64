@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.exe
+#!C:/git-sdk-64-ci/mingw64/bin/python3.exe
 
 # pylint: disable=too-many-lines, missing-docstring, invalid-name
 
