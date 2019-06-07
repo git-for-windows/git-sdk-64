@@ -57,7 +57,7 @@ __gtar_parse_help_opt()
             separator=
             ;;
         *)
-            echo >&2 "not an option $opt"
+            echo "bash_completion: $FUNCNAME: unknown option $opt" >&2
             return 1
             ;;
     esac
@@ -136,11 +136,11 @@ __gnu_tar_parse_help()
 __gtar_parse_warnings()
 {
     local line
-    while IFS= read line; do
+    LC_ALL=C tar --warning= 2>&1 | while IFS= read line; do
         if [[ $line =~ ^[[:blank:]]*-[[:blank:]]*[\`\']([a-zA-Z0-9-]+)\'$ ]]; then
             echo "${BASH_REMATCH[1]} no-${BASH_REMATCH[1]}"
         fi
-    done <<<"$(LC_ALL=C tar --warning= 2>&1)"
+    done
 }
 
 
@@ -313,7 +313,7 @@ __tar_complete_mode()
         generated+=" $cur$c"
     done
 
-    COMPREPLY=( $( compgen -W "$generated" ) )
+    COMPREPLY=( $(compgen -W "$generated") )
 
     return 0
 }
@@ -322,7 +322,7 @@ __tar_complete_mode()
 __gtar_complete_lopts()
 {
     local rv
-    COMPREPLY=( $( compgen -W "$long_opts" -- "$cur" ) )
+    COMPREPLY=( $(compgen -W "$long_opts" -- "$cur") )
     rv=$?
     [[ $COMPREPLY == *= ]] && compopt -o nospace
     return $rv
@@ -341,7 +341,7 @@ __gtar_complete_sopts()
         generated+=" $cur$c"
     done
 
-    COMPREPLY=( $( compgen -W "$generated" -- "$cur" ) )
+    COMPREPLY=( $(compgen -W "$generated" -- "$cur") )
 }
 
 
@@ -426,16 +426,16 @@ __tar_try_list_archive()
 __tar_cleanup_prev()
 {
     if [[ "$prev" =~ ^-[a-zA-Z0-9?]*$ ]]; then
-        # transformate '-caf' ~> '-f'
+        # transform '-caf' ~> '-f'
         prev="-$(__tar_last_char "$prev")"
     fi
 }
 
 __tar_detect_ext()
 {
-    local tars='@(@(tar|gem|spkg)?(.@(Z|[bgx]z|bz2|lz?(ma|o)))|t@([abglx]z|b?(z)2))'
+    local tars='@(@(tar|gem|spkg)?(.@(Z|[bgx]z|bz2|lz?(ma|o)|zst))|t@([abglx]z|b?(z)2|zst))'
     ext="$tars"
-    regex='\(\(tar\|gem\|spkg\)\(\.\(Z\|[bgx]z\|bz2\|lz\(ma\|o\)\?\)\)\?\|t\([abglx]z\|bz\?2\)\)'
+    regex='\(\(tar\|gem\|spkg\)\(\.\(Z\|[bgx]z\|bz2\|lz\(ma\|o\)\?\|zst\)\)\?\|t\([abglx]z\|bz\?2\|zst\)\)'
 
     case "$tar_mode_arg" in
         --*)
@@ -452,8 +452,7 @@ __tar_detect_ext()
             esac
             ;;
         +([^ZzJjy])f)
-            ext="$tars"
-            regex='\(\(tar\|gem\|spkg\)\(\.\(Z\|[bgx]z\|bz2\|lz\(ma\|o\)\?\)\)\?\|t\([abglx]z\|bz\?2\)\)'
+            # Pass through using defaults above
             ;;
         *[Zz]*f)
             ext='@(@(t?(ar.)|gem.|spkg.)@(gz|Z)|taz)'
@@ -513,53 +512,53 @@ _gtar()
         # user (TODO: is there any sane way to deal with this?).  This case
         # statement successes only if there already is PREV.
         case $prev in
-            -C|--directory)
+            --directory|-!(-*)C)
                 _filedir -d
                 break
                 ;;
             --atime-preserve)
-                COMPREPLY=( $( compgen -W 'replace system' -- "$cur" ) )
+                COMPREPLY=( $(compgen -W 'replace system' -- "$cur") )
                 break
                 ;;
             --group)
-                COMPREPLY=( $( compgen -g -- "$cur" ) )
+                COMPREPLY=( $(compgen -g -- "$cur") )
                 break
                 ;;
             --owner)
-                COMPREPLY=( $( compgen -u -- "$cur" ) )
+                COMPREPLY=( $(compgen -u -- "$cur") )
                 break
                 ;;
-            -F|--info-script|--new-volume-script|--rmt-command|--rsh-command|\
-            -I|--use-compress-program)
+            --info-script|--new-volume-script|--rmt-command|--rsh-command|\
+            --use-compress-program|-!(-*)[FI])
                 compopt -o filenames
-                COMPREPLY=( $( compgen -c -- "$cur" ) )
+                COMPREPLY=( $(compgen -c -- "$cur") )
                 break
                 ;;
-            --volno-file|--add-file|-T|--files-from|-X|--exclude-from|\
-            --index-file|--listed-incremental|-g)
+            --volno-file|--add-file|--files-from|--exclude-from|\
+            --index-file|--listed-incremental|-!(-*)[TXg])
                 _filedir
                 break
                 ;;
-            -H|--format)
-                COMPREPLY=( $( compgen -W 'gnu oldgnu pax posix ustar v7' \
-                    -- "$cur" ) )
+            --format|-!(-*)H)
+                COMPREPLY=( $(compgen -W 'gnu oldgnu pax posix ustar v7' \
+                    -- "$cur") )
                 break
                 ;;
             --quoting-style)
-                COMPREPLY=( $( compgen -W 'literal shell shell-always c c-maybe
-                    escape locale clocale' -- "$cur" ) )
+                COMPREPLY=( $(compgen -W 'literal shell shell-always c c-maybe
+                    escape locale clocale' -- "$cur") )
                 break
                 ;;
             --totals)
-                COMPREPLY=( $( compgen -W 'SIGHUP SIGQUIT SIGINT SIGUSR1 SIGUSR2' \
-                    -- "$cur" ) )
+                COMPREPLY=( $(compgen -W 'SIGHUP SIGQUIT SIGINT SIGUSR1 SIGUSR2' \
+                    -- "$cur") )
                 break
                 ;;
             --warning)
-                COMPREPLY=( $( compgen -W "$(__gtar_parse_warnings)" -- "$cur" ) )
+                COMPREPLY=( $(compgen -W "$(__gtar_parse_warnings)" -- "$cur") )
                 break
                 ;;
-            --file|-f|-!(-*)f)
+            --file|-!(-*)f)
                 __tar_file_option "$ext"
                 break
                 ;;
@@ -579,7 +578,7 @@ _gtar()
                 # Most probably, when code goes here, the PREV variable contains
                 # some string from "$long_arg_none" and we want continue.
                 ;;
-            -[a-zA-Z0-9?])
+            -!(-*)[a-zA-Z0-9?])
                 # argument required but no completion yet
                 [[ "$short_arg_req" =~ ${prev##-} ]] && break
                 ;;
@@ -695,7 +694,7 @@ _posix_tar()
 _tar()
 {
     local cmd=${COMP_WORDS[0]} func line
-    read line <<<"$($cmd --version 2>/dev/null)"
+    line="$($cmd --version 2>/dev/null)"
     case "$line" in
     *GNU*)
         func=_gtar
