@@ -444,7 +444,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git branch</em> [--color[=&lt;when&gt;] | --no-color] [-r | -a]
-	[--list] [-v [--abbrev=&lt;length&gt; | --no-abbrev]]
+	[--list] [--show-current] [-v [--abbrev=&lt;length&gt; | --no-abbrev]]
 	[--column[=&lt;options&gt;] | --no-column] [--sort=&lt;key&gt;]
 	[(--merged | --no-merged) [&lt;commit&gt;]]
 	[--contains [&lt;commit]] [--no-contains [&lt;commit&gt;]]
@@ -485,7 +485,11 @@ branch).</p>
 </div>
 <div class="paragraph">
 <p>The command&#8217;s second form creates a new branch head named &lt;branchname&gt;
-which points to the current <code>HEAD</code>, or &lt;start-point&gt; if given.</p>
+which points to the current <code>HEAD</code>, or &lt;start-point&gt; if given. As a
+special case, for &lt;start-point&gt;, you may use <code>"A...B"</code> as a shortcut for
+the merge base of <code>A</code> and <code>B</code> if there is exactly one merge base. You
+can leave out at most one of <code>A</code> and <code>B</code>, in which case it defaults to
+<code>HEAD</code>.</p>
 </div>
 <div class="paragraph">
 <p>Note that this will create the new branch, but it will not switch the
@@ -625,6 +629,11 @@ without options are equivalent to <em>always</em> and <em>never</em> respectivel
 <p>List branches.  With optional <code>&lt;pattern&gt;...</code>, e.g. <code>git
 branch --list 'maint-*'</code>, list only the branches that match
 the pattern(s).</p>
+</dd>
+<dt class="hdlist1">--show-current</dt>
+<dd>
+<p>Print the name of the current branch. In detached HEAD state,
+nothing is printed.</p>
 </dd>
 <dt class="hdlist1">-v</dt>
 <dt class="hdlist1">-vv</dt>
@@ -889,7 +898,7 @@ a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

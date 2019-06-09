@@ -547,7 +547,9 @@ Additionally, <code>$BASE</code> is set in the environment.</p>
 <p>When <em>git-difftool</em> is invoked with the <code>-g</code> or <code>--gui</code> option
 the default diff tool will be read from the configured
 <code>diff.guitool</code> variable instead of <code>diff.tool</code>. The <code>--no-gui</code>
-option can be used to override this setting.</p>
+option can be used to override this setting. If <code>diff.guitool</code>
+is not set, we will fallback in the order of <code>merge.guitool</code>,
+<code>diff.tool</code>, <code>merge.tool</code> until a tool is found.</p>
 </dd>
 <dt class="hdlist1">--[no-]trust-exit-code</dt>
 <dd>
@@ -643,7 +645,7 @@ your tool is not in the PATH.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

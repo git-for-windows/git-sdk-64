@@ -498,7 +498,7 @@ browsed using gitweb itself.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Various aspects of gitweb&#8217;s behavior can be controlled through the configuration
-file <em>gitweb_config.perl</em> or <em>/etc/gitweb.conf</em>.  See the <a href="gitweb.conf.html">gitweb.conf</a>(5)
+file <code>gitweb_config.perl</code> or <code>/etc/gitweb.conf</code>.  See the <a href="gitweb.conf.html">gitweb.conf</a>(5)
 for details.</p>
 </div>
 <div class="sect2">
@@ -516,7 +516,7 @@ projects' root" subsection).</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The default value for <code>$projectroot</code> is <em>/pub/git</em>.  You can change it during
+<p>The default value for <code>$projectroot</code> is <code>/pub/git</code>.  You can change it during
 building gitweb via <code>GITWEB_PROJECTROOT</code> build configuration variable.</p>
 </div>
 <div class="paragraph">
@@ -747,7 +747,7 @@ repository).  Plain text file; HTML will be escaped.  By default set to</p>
 </div>
 <div class="paragraph">
 <p>from the template during repository creation, usually installed in
-<em>/usr/share/git-core/templates/</em>.  You can use the <code>gitweb.description</code> repo
+<code>/usr/share/git-core/templates/</code>.  You can use the <code>gitweb.description</code> repo
 configuration variable, but the file takes precedence.</p>
 </div>
 </dd>
@@ -979,7 +979,7 @@ in the instructions so they can be included in a future release.</p>
 <h3 id="_apache_as_cgi">Apache as CGI</h3>
 <div class="paragraph">
 <p>Apache must be configured to support CGI scripts in the directory in
-which gitweb is installed.  Let&#8217;s assume that it is <em>/var/www/cgi-bin</em>
+which gitweb is installed.  Let&#8217;s assume that it is <code>/var/www/cgi-bin</code>
 directory.</p>
 </div>
 <div class="listingblock">
@@ -1011,7 +1011,7 @@ directory.</p>
 this support.</p>
 </div>
 <div class="paragraph">
-<p>Assuming that gitweb is installed to <em>/var/www/perl</em>, the following
+<p>Assuming that gitweb is installed to <code>/var/www/perl</code>, the following
 Apache configuration (for mod_perl 2.x) is suitable.</p>
 </div>
 <div class="listingblock">
@@ -1043,7 +1043,7 @@ Apache configuration (for mod_perl 2.x) is suitable.</p>
 <div class="paragraph">
 <p>Gitweb works with Apache and FastCGI.  First you need to rename, copy
 or symlink gitweb.cgi to gitweb.fcgi.  Let&#8217;s assume that gitweb is
-installed in <em>/usr/share/gitweb</em> directory.  The following Apache
+installed in <code>/usr/share/gitweb</code> directory.  The following Apache
 configuration is suitable (UNTESTED!)</p>
 </div>
 <div class="listingblock">
@@ -1102,24 +1102,24 @@ repositories, you can configure Apache like this:</p>
 </div>
 <div class="paragraph">
 <p>The above configuration expects your public repositories to live under
-<em>/pub/git</em> and will serve them as <code>http://git.domain.org/dir-under-pub-git</code>,
+<code>/pub/git</code> and will serve them as <code>http://git.domain.org/dir-under-pub-git</code>,
 both as clonable Git URL and as browseable gitweb interface.  If you then
 start your <a href="git-daemon.html">git-daemon</a>(1) with <code>--base-path=/pub/git --export-all</code>
 then you can even use the <code>git://</code> URL with exactly the same path.</p>
 </div>
 <div class="paragraph">
 <p>Setting the environment variable <code>GITWEB_CONFIG</code> will tell gitweb to use the
-named file (i.e. in this example <em>/etc/gitweb.conf</em>) as a configuration for
+named file (i.e. in this example <code>/etc/gitweb.conf</code>) as a configuration for
 gitweb.  You don&#8217;t really need it in above example; it is required only if
 your configuration file is in different place than built-in (during
-compiling gitweb) <em>gitweb_config.perl</em> or <em>/etc/gitweb.conf</em>.  See
+compiling gitweb) <em>gitweb_config.perl</em> or <code>/etc/gitweb.conf</code>.  See
 <a href="gitweb.conf.html">gitweb.conf</a>(5) for details, especially information about precedence
 rules.</p>
 </div>
 <div class="paragraph">
 <p>If you use the rewrite rules from the example you <strong>might</strong> also need
 something like the following in your gitweb configuration file
-(<em>/etc/gitweb.conf</em> following example):</p>
+(<code>/etc/gitweb.conf</code> following example):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1185,7 +1185,7 @@ like this:</p>
 <div class="paragraph">
 <p>Here actual project root is passed to gitweb via <code>GITWEB_PROJECT_ROOT</code>
 environment variable from a web server, so you need to put the following
-line in gitweb configuration file (<em>/etc/gitweb.conf</em> in above example):</p>
+line in gitweb configuration file (<code>/etc/gitweb.conf</code> in above example):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1200,7 +1200,7 @@ referenced by <code>$per_request_config</code>;</p>
 <div class="paragraph">
 <p>These configurations enable two things. First, each unix user (<code>&lt;user&gt;</code>) of
 the server will be able to browse through gitweb Git repositories found in
-<em>~/public_git/</em> with the following url:</p>
+<code>~/public_git/</code> with the following url:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1217,7 +1217,7 @@ use the '~' as first character, just comment or remove the second rewrite
 rule, and uncomment one of the following according to what you want.</p>
 </div>
 <div class="paragraph">
-<p>Second, repositories found in <em>/pub/scm/</em> and <em>/var/git/</em> will be accessible
+<p>Second, repositories found in <code>/pub/scm/</code> and <code>/var/git/</code> will be accessible
 through <code>http://git.example.org/scm/</code> and <code>http://git.example.org/var/</code>.
 You can add as many project roots as you want by adding rewrite rules like
 the third and the fourth.</p>
@@ -1244,7 +1244,7 @@ that it consumes and produces URLs in the form</p>
 </div>
 <div class="paragraph">
 <p>i.e. without <em>gitweb.cgi</em> part, by using a configuration such as the
-following.  This configuration assumes that <em>/var/www/gitweb</em> is the
+following.  This configuration assumes that <code>/var/www/gitweb</code> is the
 DocumentRoot of your webserver, contains the gitweb.cgi script and
 complementary static files (stylesheet, favicon, JavaScript):</p>
 </div>
@@ -1279,9 +1279,9 @@ parameter.</p>
 <code>@stylesheets</code>, <code>$my_uri</code> and <code>$home_link</code>, but you lose "dumb client"
 access to your project .git dirs (described in "Single URL for gitweb and
 for fetching" section).  A possible workaround for the latter is the
-following: in your project root dir (e.g. <em>/pub/git</em>) have the projects
-named <strong>without</strong> a .git extension (e.g. <em>/pub/git/project</em> instead of
-<em>/pub/git/project.git</em>) and configure Apache as follows:</p>
+following: in your project root dir (e.g. <code>/pub/git</code>) have the projects
+named <strong>without</strong> a .git extension (e.g. <code>/pub/git/project</code> instead of
+<code>/pub/git/project.git</code>) and configure Apache as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1327,7 +1327,7 @@ cloned), while</p>
 </div>
 <div class="paragraph">
 <p>This solution is not 100% bulletproof, in the sense that if some project has
-a named ref (branch, tag) starting with <em>git/</em>, then paths such as</p>
+a named ref (branch, tag) starting with <code>git/</code>, then paths such as</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1356,7 +1356,7 @@ putting "gitweb" in the subject of email.</p>
 <p><a href="gitweb.conf.html">gitweb.conf</a>(5), <a href="git-instaweb.html">git-instaweb</a>(1)</p>
 </div>
 <div class="paragraph">
-<p><em>gitweb/README</em>, <em>gitweb/INSTALL</em></p>
+<p><code>gitweb/README</code>, <code>gitweb/INSTALL</code></p>
 </div>
 </div>
 </div>
@@ -1371,7 +1371,7 @@ putting "gitweb" in the subject of email.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

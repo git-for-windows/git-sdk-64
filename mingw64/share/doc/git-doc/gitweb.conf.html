@@ -500,12 +500,12 @@ following order:</p>
 </li>
 <li>
 <p>common system-wide configuration file (defaults to
-<em>/etc/gitweb-common.conf</em>),</p>
+<code>/etc/gitweb-common.conf</code>),</p>
 </li>
 <li>
 <p>either per-instance configuration file (defaults to <em>gitweb_config.perl</em>
 in the same directory as the installed gitweb), or if it does not exists
-then fallback system-wide configuration file (defaults to <em>/etc/gitweb.conf</em>).</p>
+then fallback system-wide configuration file (defaults to <code>/etc/gitweb.conf</code>).</p>
 </li>
 </ul>
 </div>
@@ -539,7 +539,7 @@ stops declaring it.</p>
 subroutine.  For example, one might want to put gitweb configuration
 related to access control for viewing repositories via Gitolite (one
 of Git repository management tools) in a separate file, e.g. in
-<em>/etc/gitweb-gitolite.conf</em>.  To include it, put</p>
+<code>/etc/gitweb-gitolite.conf</code>.  To include it, put</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -614,7 +614,7 @@ in gitweb config file:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>will map to the path <em>/srv/git/foo/bar.git</em> on the filesystem.</p>
+<p>will map to the path <code>/srv/git/foo/bar.git</code> on the filesystem.</p>
 </div>
 </dd>
 <dt class="hdlist1">$projects_list</dt>
@@ -729,9 +729,9 @@ work.</p>
 <dt class="hdlist1">$mimetypes_file</dt>
 <dd>
 <p>File to use for (filename extension based) guessing of MIME types before
-trying <em>/etc/mime.types</em>.  <strong>NOTE</strong> that this path, if relative, is taken
+trying <code>/etc/mime.types</code>.  <strong>NOTE</strong> that this path, if relative, is taken
 as relative to the current Git repository, not to CGI script.  If unset,
-only <em>/etc/mime.types</em> is used (if present on filesystem).  If no mimetypes
+only <code>/etc/mime.types</code> is used (if present on filesystem).  If no mimetypes
 file is found, mimetype guessing based on extension of file is disabled.
 Unset by default.</p>
 </dd>
@@ -804,8 +804,8 @@ relative to base URI of gitweb.</p>
 <div class="paragraph">
 <p>This list should contain the URI of gitweb&#8217;s standard stylesheet.  The default
 URI of gitweb stylesheet can be set at build time using the <code>GITWEB_CSS</code>
-makefile variable.  Its default value is <em>static/gitweb.css</em>
-(or <em>static/gitweb.min.css</em> if the <code>CSSMIN</code> variable is defined,
+makefile variable.  Its default value is <code>static/gitweb.css</code>
+(or <code>static/gitweb.min.css</code> if the <code>CSSMIN</code> variable is defined,
 i.e. if CSS minifier is used during build).</p>
 </div>
 <div class="paragraph">
@@ -821,7 +821,7 @@ server, or to be more the generic URI of logo, 72x27 size).  This image
 is displayed in the top right corner of each gitweb page and used as
 a logo for the Atom feed.  Relative to the base URI of gitweb (as a path).
 Can be adjusted when building gitweb using <code>GITWEB_LOGO</code> variable
-By default set to <em>static/git-logo.png</em>.</p>
+By default set to <code>static/git-logo.png</code>.</p>
 </dd>
 <dt class="hdlist1">$favicon</dt>
 <dd>
@@ -831,7 +831,7 @@ as "image/png" type.  Web browsers that support favicons (website icons)
 may display them in the browser&#8217;s URL bar and next to the site name in
 bookmarks.  Relative to the base URI of gitweb.  Can be adjusted at
 build time using <code>GITWEB_FAVICON</code> variable.
-By default set to <em>static/git-favicon.png</em>.</p>
+By default set to <code>static/git-favicon.png</code>.</p>
 </dd>
 <dt class="hdlist1">$javascript</dt>
 <dd>
@@ -840,7 +840,7 @@ or to be more generic the URI of JavaScript code used by gitweb.
 Relative to the base URI of gitweb.  Can be set at build time using
 the <code>GITWEB_JS</code> build-time configuration variable.</p>
 <div class="paragraph">
-<p>The default value is either <em>static/gitweb.js</em>, or <em>static/gitweb.min.js</em> if
+<p>The default value is either <code>static/gitweb.js</code>, or <code>static/gitweb.min.js</code> if
 the <code>JSMIN</code> build variable was defined, i.e. if JavaScript minifier was used
 at build time.  <strong>Note</strong> that this single file is generated from multiple
 individual JavaScript "modules".</p>
@@ -983,7 +983,7 @@ commit).</p>
 doesn&#8217;t result in some other type; by default "text/plain".
 Gitweb guesses mimetype of a file to display based on extension
 of its filename, using <code>$mimetypes_file</code> (if set and file exists)
-and <em>/etc/mime.types</em> files (see <strong>mime.types</strong>(5) manpage; only
+and <code>/etc/mime.types</code> files (see <strong>mime.types</strong>(5) manpage; only
 filename extension rules are supported by gitweb).</p>
 </dd>
 <dt class="hdlist1">$default_text_plain_charset</dt>
@@ -1035,7 +1035,7 @@ for each element of this list. You can set up multiple base URLs
 (for example one for <code>git://</code> protocol, and one for <code>http://</code>
 protocol).</p>
 <div class="paragraph">
-<p>Note that per repository configuration can be set in <em>$GIT_DIR/cloneurl</em>
+<p>Note that per repository configuration can be set in <code>$GIT_DIR/cloneurl</code>
 file, or as values of multi-value <code>gitweb.url</code> configuration variable in
 project config.  Per-repository configuration takes precedence over value
 composed from <code>@git_base_url_list</code> elements and project name.</p>
@@ -1075,7 +1075,7 @@ False by default (set to 0).</p>
 If the server load exceeds this value then gitweb will return
 "503 Service Unavailable" error.  The server load is taken to be 0
 if gitweb cannot determine its value.  Currently it works only on Linux,
-where it uses <em>/proc/loadavg</em>; the load there is the number of active
+where it uses <code>/proc/loadavg</code>; the load there is the number of active
 tasks on the system&#8201;&#8212;&#8201;processes that are actually running&#8201;&#8212;&#8201;averaged
 over the last minute.</p>
 <div class="paragraph">
@@ -1095,7 +1095,7 @@ projects list page. It can save a bit of I/O and a fork per repository.</p>
 <dt class="hdlist1">$per_request_config</dt>
 <dd>
 <p>If this is set to code reference, it will be run once for each request.
-You can	set parts of configuration that change per session this way.
+You can set parts of configuration that change per session this way.
 For example, one might use the following code in a gitweb configuration
 file</p>
 <div class="listingblock">
@@ -1356,7 +1356,7 @@ the email of each committer and author.</p>
 Only one provider at a time can be selected (<em>default</em> is one element list).
 If an unknown provider is specified, the feature is disabled.
 <strong>Note</strong> that some providers might require extra Perl packages to be
-installed; see <em>gitweb/INSTALL</em> for more details.</p>
+installed; see <code>gitweb/INSTALL</code> for more details.</p>
 </div>
 <div class="paragraph">
 <p>This feature can be configured on a per-repository basis via
@@ -1675,7 +1675,7 @@ file.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

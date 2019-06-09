@@ -704,9 +704,11 @@ See <em>Option Callbacks</em> below for a more elaborate description.</p>
 The filename will be prefixed by passing the filename along with
 the prefix argument of <code>parse_options()</code> to <code>prefix_filename()</code>.</p>
 </dd>
-<dt class="hdlist1"><code>OPT_ARGUMENT(long, description)</code></dt>
+<dt class="hdlist1"><code>OPT_ARGUMENT(long, &amp;int_var, description)</code></dt>
 <dd>
-<p>Introduce a long-option argument that will be kept in <code>argv[]</code>.</p>
+<p>Introduce a long-option argument that will be kept in <code>argv[]</code>.
+If this option was seen, <code>int_var</code> will be set to one (except
+if a <code>NULL</code> pointer was passed).</p>
 </dd>
 <dt class="hdlist1"><code>OPT_NUMBER_CALLBACK(&amp;var, description, func_ptr)</code></dt>
 <dd>
@@ -862,7 +864,7 @@ for real-world examples.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

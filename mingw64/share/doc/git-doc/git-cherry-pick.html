@@ -517,6 +517,14 @@ feed all &lt;commit&gt;&#8230;&#8203; arguments to a single revision walk
 <p>With this option, <em>git cherry-pick</em> will let you edit the commit
 message prior to committing.</p>
 </dd>
+<dt class="hdlist1">--cleanup=&lt;mode&gt;</dt>
+<dd>
+<p>This option determines how the commit message will be cleaned up before
+being passed on to the commit machinery. See <a href="git-commit.html">git-commit</a>(1) for more
+details. In particular, if the <em>&lt;mode&gt;</em> is given a value of <code>scissors</code>,
+scissors will be appended to <code>MERGE_MSG</code> before being passed on in the case
+of a conflict.</p>
+</dd>
 <dt class="hdlist1">-x</dt>
 <dd>
 <p>When recording the commit, append a line that says
@@ -621,6 +629,12 @@ for details.</p>
 <p>Pass the merge strategy-specific option through to the
 merge strategy.  See <a href="git-merge.html">git-merge</a>(1) for details.</p>
 </dd>
+<dt class="hdlist1">--rerere-autoupdate</dt>
+<dt class="hdlist1">--no-rerere-autoupdate</dt>
+<dd>
+<p>Allow the rerere mechanism to update the index with the
+result of auto-conflict resolution if possible.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -633,7 +647,7 @@ merge strategy.  See <a href="git-merge.html">git-merge</a>(1) for details.</p>
 <dt class="hdlist1">--continue</dt>
 <dd>
 <p>Continue the operation in progress using the information in
-<em>.git/sequencer</em>.  Can be used to continue after resolving
+<code>.git/sequencer</code>.  Can be used to continue after resolving
 conflicts in a failed cherry-pick or revert.</p>
 </dd>
 <dt class="hdlist1">--quit</dt>
@@ -762,7 +776,7 @@ matching context lines.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

@@ -555,6 +555,11 @@ such a line is found.</p>
 variable <code>GIT_EDITOR=:</code> if the command will not bring up an editor
 to modify the commit message.</p>
 </div>
+<div class="paragraph">
+<p>The default <em>pre-commit</em> hook, when enabled&#8212;&#8203;and with the
+<code>hooks.allownonascii</code> config option unset or set to false&#8212;&#8203;prevents
+the use of non-ASCII filenames.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_prepare_commit_msg">prepare-commit-msg</h3>
@@ -1037,6 +1042,28 @@ from standard input. Exiting with non-zero status from this script prevent
 <code>git-p4 submit</code> from launching. Run <code>git-p4 submit --help</code> for details.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_post_index_change">post-index-change</h3>
+<div class="paragraph">
+<p>This hook is invoked when the index is written in read-cache.c
+do_write_locked_index.</p>
+</div>
+<div class="paragraph">
+<p>The first parameter passed to the hook is the indicator for the
+working directory being updated.  "1" meaning working directory
+was updated or "0" when the working directory was not updated.</p>
+</div>
+<div class="paragraph">
+<p>The second parameter passed to the hook is the indicator for whether
+or not the index was updated and the skip-worktree bit could have
+changed.  "1" meaning skip-worktree bits could have been updated
+and "0" meaning they were not.</p>
+</div>
+<div class="paragraph">
+<p>Only one parameter should be set to "1" when the hook runs.  The hook
+running passing "1", "1" should not be possible.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1050,7 +1077,7 @@ from standard input. Exiting with non-zero status from this script prevent
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

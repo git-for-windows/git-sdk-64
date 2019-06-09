@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<title> Git Wire Protocol, Version 2</title>
+<title>Git Wire Protocol, Version 2</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -432,7 +432,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
-<h1> Git Wire Protocol, Version 2</h1>
+<h1>Git Wire Protocol, Version 2</h1>
 </div>
 <div id="content">
 <div id="preamble">
@@ -478,7 +478,7 @@ commands be executed.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_packet_line_framing"> Packet-Line Framing</h2>
+<h2 id="_packet_line_framing">Packet-Line Framing</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>All communication is done using packet-line framing, just as in v1.  See
@@ -495,19 +495,14 @@ commands be executed.</p>
 </li>
 <li>
 <p><em>0001</em> Delimiter Packet (delim-pkt) - separates sections of a message</p>
-<div class="literalblock">
-<div class="content">
-<pre>Initial Client Request</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre></pre>
-</div>
-</div>
 </li>
 </ul>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_initial_client_request">Initial Client Request</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>In general a client can request to speak protocol v2 by sending
 <code>version=2</code> through the respective side-channel for the transport being
@@ -516,7 +511,7 @@ found in <code>pack-protocol.txt</code> and <code>http-protocol.txt</code>.  In 
 response from the server is the capability advertisement.</p>
 </div>
 <div class="sect2">
-<h3 id="_git_transport"> Git Transport</h3>
+<h3 id="_git_transport">Git Transport</h3>
 <div class="paragraph">
 <p>When using the git:// transport, you can request to use protocol v2 by
 sending "version=2" as an extra parameter:</p>
@@ -528,14 +523,14 @@ sending "version=2" as an extra parameter:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ssh_and_file_transport"> SSH and File Transport</h3>
+<h3 id="_ssh_and_file_transport">SSH and File Transport</h3>
 <div class="paragraph">
 <p>When using either the ssh:// or file:// transport, the GIT_PROTOCOL
 environment variable must be set explicitly to include "version=2".</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_http_transport"> HTTP Transport</h3>
+<h3 id="_http_transport">HTTP Transport</h3>
 <div class="paragraph">
 <p>When using the http:// or https:// transport a client makes a "smart"
 info/refs request as described in <code>http-protocol.txt</code> and requests that
@@ -568,7 +563,7 @@ S: &lt;capability-advertisement&gt;</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_capability_advertisement"> Capability Advertisement</h2>
+<h2 id="_capability_advertisement">Capability Advertisement</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A server which decides to communicate (based on a request from a client)
@@ -602,7 +597,7 @@ value = 1*(ALPHA | DIGIT | " -_.,?\/{}[]()&lt;&gt;!@#$%^&amp;*+=:;")</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_command_request"> Command Request</h2>
+<h2 id="_command_request">Command Request</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>After receiving the capability advertisement, a client can then issue a
@@ -649,7 +644,7 @@ indicate that no more requests will be made.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_capabilities"> Capabilities</h2>
+<h2 id="_capabilities">Capabilities</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>There are two different types of capabilities: normal capabilities,
@@ -667,7 +662,7 @@ permits simple round-robin load-balancing on the server side, without
 needing to worry about state management.</p>
 </div>
 <div class="sect2">
-<h3 id="_agent"> agent</h3>
+<h3 id="_agent">agent</h3>
 <div class="paragraph">
 <p>The server can advertise the <code>agent</code> capability with a value <code>X</code> (in the
 form <code>agent=X</code>) to notify the client that the server is running version
@@ -683,7 +678,7 @@ the presence or absence of particular features.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ls_refs"> ls-refs</h3>
+<h3 id="_ls_refs">ls-refs</h3>
 <div class="paragraph">
 <p><code>ls-refs</code> is the command used to request a reference advertisement in v2.
 Unlike the current reference advertisement, ls-refs takes in arguments
@@ -724,7 +719,7 @@ peeled = "peeled:" obj-id</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_fetch"> fetch</h3>
+<h3 id="_fetch">fetch</h3>
 <div class="paragraph">
 <p><code>fetch</code> is the command used to fetch a packfile in v2.  It can be looked
 at as a modified version of the v1 fetch where the ref-advertisement is
@@ -1069,15 +1064,12 @@ stream code, followed by the actual data.</p>
 3 - fatal error message just before stream aborts</pre>
 </div>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre> server-option
-~~~~~~~~~~~~~~~</pre>
-</div>
-</div>
 </li>
 </ul>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_server_option">server-option</h3>
 <div class="paragraph">
 <p>If advertised, indicates that any number of server specific options can be
 included in a request.  This is done by sending each option as a
@@ -1093,7 +1085,7 @@ a request.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

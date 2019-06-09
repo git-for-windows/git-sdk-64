@@ -966,7 +966,12 @@ all <code>filemodify</code>, <code>filecopy</code>, <code>filerename</code> and 
 the same commit, as <code>filedeleteall</code> wipes the branch clean (see below).</p>
 </div>
 <div class="paragraph">
-<p>The <code>LF</code> after the command is optional (it used to be required).</p>
+<p>The <code>LF</code> after the command is optional (it used to be required).  Note
+that for reasons of backward compatibility, if the commit ends with a
+<code>data</code> command (i.e. it has has no <code>from</code>, <code>merge</code>, <code>filemodify</code>,
+<code>filedelete</code>, <code>filecopy</code>, <code>filerename</code>, <code>filedeleteall</code> or
+<code>notemodify</code> commands) then two <code>LF</code> commands may appear at the end of
+the command instead of just one.</p>
 </div>
 <div class="sect3">
 <h4 id="_author"><code>author</code></h4>
@@ -1687,11 +1692,6 @@ might want to refer to in their commit messages.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This command can be used anywhere in the stream that comments are
-accepted.  In particular, the <code>get-mark</code> command can be used in the
-middle of a commit but not in the middle of a <code>data</code> command.</p>
-</div>
-<div class="paragraph">
 <p>See &#8220;Responses To Commands&#8221; below for details about how to read
 this output safely.</p>
 </div>
@@ -1729,9 +1729,10 @@ ready to be written.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This command can be used anywhere in the stream that comments are
-accepted.  In particular, the <code>cat-blob</code> command can be used in the
-middle of a commit but not in the middle of a <code>data</code> command.</p>
+<p>This command can be used where a <code>filemodify</code> directive can appear,
+allowing it to be used in the middle of a commit.  For a <code>filemodify</code>
+using an inline directive, it can also appear right before the <code>data</code>
+directive.</p>
 </div>
 <div class="paragraph">
 <p>See &#8220;Responses To Commands&#8221; below for details about how to read
@@ -1748,8 +1749,8 @@ blob or tree from a previous commit for use in the current one (with
 <code>filemodify</code>).</p>
 </div>
 <div class="paragraph">
-<p>The <code>ls</code> command can be used anywhere in the stream that comments are
-accepted, including the middle of a commit.</p>
+<p>The <code>ls</code> command can also be used where a <code>filemodify</code> directive can
+appear, allowing it to be used in the middle of a commit.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -2271,6 +2272,15 @@ deltas are suboptimal (see above) then also adding the <code>-f</code> option
 to force recomputation of all deltas can significantly reduce the
 final packfile size (30-50% smaller can be quite typical).</p>
 </div>
+<div class="paragraph">
+<p>Instead of running <code>git repack</code> you can also run <code>git gc
+--aggressive</code>, which will also optimize other things after an import
+(e.g. pack loose refs). As noted in the "AGGRESSIVE" section in
+<a href="git-gc.html">git-gc</a>(1) the <code>--aggressive</code> option will find new deltas with
+the <code>-f</code> option to <a href="git-repack.html">git-repack</a>(1). For the reasons elaborated
+on above using <code>--aggressive</code> after a fast-import is one of the few
+cases where it&#8217;s known to be worthwhile.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2402,7 +2412,7 @@ compression.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

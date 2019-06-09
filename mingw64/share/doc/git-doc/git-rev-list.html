@@ -1463,10 +1463,6 @@ to omit blobs that would not be not required for a sparse checkout on
 the requested refs.</p>
 </div>
 <div class="paragraph">
-<p>The form <em>--filter=sparse:path=&lt;path&gt;</em> similarly uses a sparse-checkout
-specification contained in &lt;path&gt;.</p>
-</div>
-<div class="paragraph">
 <p>The form <em>--filter=tree:&lt;depth&gt;</em> omits all blobs and trees whose depth
 from the root tree is &gt;= &lt;depth&gt; (minimum depth if an object is located
 at multiple depths in the commits traversed). &lt;depth&gt;=0 will not include
@@ -1477,6 +1473,11 @@ tree and blobs which are referenced directly by a commit reachable from
 while also including trees and blobs one more level removed from an
 explicitly-given commit or tree.</p>
 </div>
+<div class="paragraph">
+<p>Note that the form <em>--filter=sparse:path=&lt;path&gt;</em> that wants to read
+from an arbitrary path on the filesystem has been dropped for security
+reasons.</p>
+</div>
 </dd>
 <dt class="hdlist1">--no-filter</dt>
 <dd>
@@ -1485,7 +1486,7 @@ explicitly-given commit or tree.</p>
 <dt class="hdlist1">--filter-print-omitted</dt>
 <dd>
 <p>Only useful with <code>--filter=</code>; prints a list of the objects omitted
-by the filter.	Object IDs are prefixed with a &#8220;~&#8221; character.</p>
+by the filter.  Object IDs are prefixed with a &#8220;~&#8221; character.</p>
 </dd>
 <dt class="hdlist1">--missing=&lt;missing-action&gt;</dt>
 <dd>
@@ -1628,6 +1629,8 @@ value for the log command&#8217;s <code>--date</code> option. By default, dates
 are shown in the original time zone (either committer&#8217;s or
 author&#8217;s). If <code>-local</code> is appended to the format (e.g.,
 <code>iso-local</code>), the user&#8217;s local time zone is used instead.</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
 <p><code>--date=relative</code> shows dates relative to the current time,
 e.g. &#8220;2 hours ago&#8221;. The <code>-local</code> option has no effect for
@@ -1658,17 +1661,14 @@ The differences to the strict ISO 8601 format are:</p>
 ISO 8601 format.</p>
 </div>
 <div class="paragraph">
-<p>+
-<code>--date=rfc</code> (or <code>--date=rfc2822</code>) shows timestamps in RFC 2822
+<p><code>--date=rfc</code> (or <code>--date=rfc2822</code>) shows timestamps in RFC 2822
 format, often found in email messages.</p>
 </div>
 <div class="paragraph">
-<p>+
-<code>--date=short</code> shows only the date, but not the time, in <code>YYYY-MM-DD</code> format.</p>
+<p><code>--date=short</code> shows only the date, but not the time, in <code>YYYY-MM-DD</code> format.</p>
 </div>
 <div class="paragraph">
-<p>+
-<code>--date=raw</code> shows the date as seconds since the epoch (1970-01-01
+<p><code>--date=raw</code> shows the date as seconds since the epoch (1970-01-01
 00:00:00 UTC), followed by a space, and then the timezone as an offset
 from UTC (a <code>+</code> or <code>-</code> with four digits; the first two are hours, and
 the second two are minutes). I.e., as if the timestamp were formatted
@@ -1678,8 +1678,7 @@ value (which is always measured in UTC), but does switch the accompanying
 timezone value.</p>
 </div>
 <div class="paragraph">
-<p>+
-<code>--date=human</code> shows the timezone if the timezone does not match the
+<p><code>--date=human</code> shows the timezone if the timezone does not match the
 current time-zone, and doesn&#8217;t print the whole date if that matches
 (ie skip printing year for dates that are "this year", but also skip
 the whole date itself if it&#8217;s in the last few days and we can just say
@@ -1687,14 +1686,12 @@ what weekday it was).  For older dates the hour and minute is also
 omitted.</p>
 </div>
 <div class="paragraph">
-<p>+
-<code>--date=unix</code> shows the date as a Unix epoch timestamp (seconds since
+<p><code>--date=unix</code> shows the date as a Unix epoch timestamp (seconds since
 1970).  As with <code>--raw</code>, this is always in UTC and therefore <code>-local</code>
 has no effect.</p>
 </div>
 <div class="paragraph">
-<p>+
-<code>--date=format:...</code> feeds the format <code>...</code> to your system <code>strftime</code>,
+<p><code>--date=format:...</code> feeds the format <code>...</code> to your system <code>strftime</code>,
 except for %z and %Z, which are handled internally.
 Use <code>--date=format:%c</code> to show the date in your system locale&#8217;s
 preferred format.  See the <code>strftime</code> manual for a complete list of
@@ -1702,9 +1699,10 @@ format placeholders. When using <code>-local</code>, the correct syntax is
 <code>--date=format-local:...</code>.</p>
 </div>
 <div class="paragraph">
-<p>+
-<code>--date=default</code> is the default format, and is similar to
+<p><code>--date=default</code> is the default format, and is similar to
 <code>--date=rfc2822</code>, with a few exceptions:</p>
+</div>
+</div>
 </div>
 <div class="ulist">
 <ul>
@@ -1973,117 +1971,260 @@ The title was &gt;&gt;t4119: test autocomputing -p&lt;n&gt; for traditional diff
 <div class="ulist">
 <ul>
 <li>
-<p><em>%H</em>: commit hash</p>
+<p>Placeholders that expand to a single literal character:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>%n</em></dt>
+<dd>
+<p>newline</p>
+</dd>
+<dt class="hdlist1"><em>%%</em></dt>
+<dd>
+<p>a raw <em>%</em></p>
+</dd>
+<dt class="hdlist1"><em>%x00</em></dt>
+<dd>
+<p>print a byte from a hex code</p>
+</dd>
+</dl>
+</div>
 </li>
 <li>
-<p><em>%h</em>: abbreviated commit hash</p>
+<p>Placeholders that affect formatting of later placeholders:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>%Cred</em></dt>
+<dd>
+<p>switch color to red</p>
+</dd>
+<dt class="hdlist1"><em>%Cgreen</em></dt>
+<dd>
+<p>switch color to green</p>
+</dd>
+<dt class="hdlist1"><em>%Cblue</em></dt>
+<dd>
+<p>switch color to blue</p>
+</dd>
+<dt class="hdlist1"><em>%Creset</em></dt>
+<dd>
+<p>reset color</p>
+</dd>
+<dt class="hdlist1"><em>%C(&#8230;&#8203;)</em></dt>
+<dd>
+<p>color specification, as described under Values in the
+"CONFIGURATION FILE" section of <a href="git-config.html">git-config</a>(1).  By
+default, colors are shown only when enabled for log output
+(by <code>color.diff</code>, <code>color.ui</code>, or <code>--color</code>, and respecting
+the <code>auto</code> settings of the former if we are going to a
+terminal). <code>%C(auto,...)</code> is accepted as a historical
+synonym for the default (e.g., <code>%C(auto,red)</code>). Specifying
+<code>%C(always,...)</code> will show the colors even when color is
+not otherwise enabled (though consider just using
+<code>--color=always</code> to enable color for the whole output,
+including this format and anything else git might color).
+<code>auto</code> alone (i.e. <code>%C(auto)</code>) will turn on auto coloring
+on the next placeholders until the color is switched
+again.</p>
+</dd>
+<dt class="hdlist1"><em>%m</em></dt>
+<dd>
+<p>left (<code>&lt;</code>), right (<code>&gt;</code>) or boundary (<code>-</code>) mark</p>
+</dd>
+<dt class="hdlist1"><em>%w([&lt;w&gt;[,&lt;i1&gt;[,&lt;i2&gt;]]])</em></dt>
+<dd>
+<p>switch line wrapping, like the -w option of
+<a href="git-shortlog.html">git-shortlog</a>(1).</p>
+</dd>
+<dt class="hdlist1"><em>%&lt;(&lt;N&gt;[,trunc|ltrunc|mtrunc])</em></dt>
+<dd>
+<p>make the next placeholder take at
+least N columns, padding spaces on
+the right if necessary.  Optionally
+truncate at the beginning (ltrunc),
+the middle (mtrunc) or the end
+(trunc) if the output is longer than
+N columns.  Note that truncating
+only works correctly with N &gt;= 2.</p>
+</dd>
+<dt class="hdlist1"><em>%&lt;|(&lt;N&gt;)</em></dt>
+<dd>
+<p>make the next placeholder take at least until Nth
+columns, padding spaces on the right if necessary</p>
+</dd>
+<dt class="hdlist1"><em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em></dt>
+<dd>
+<p>similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em> respectively,
+but padding spaces on the left</p>
+</dd>
+<dt class="hdlist1"><em>%&gt;&gt;(&lt;N&gt;)</em>, <em>%&gt;&gt;|(&lt;N&gt;)</em></dt>
+<dd>
+<p>similar to <em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em>
+respectively, except that if the next
+placeholder takes more spaces than given and
+there are spaces on its left, use those
+spaces</p>
+</dd>
+<dt class="hdlist1"><em>%&gt;&lt;(&lt;N&gt;)</em>, <em>%&gt;&lt;|(&lt;N&gt;)</em></dt>
+<dd>
+<p>similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
+respectively, but padding both sides
+(i.e. the text is centered)</p>
+</dd>
+</dl>
+</div>
 </li>
 <li>
-<p><em>%T</em>: tree hash</p>
-</li>
-<li>
-<p><em>%t</em>: abbreviated tree hash</p>
-</li>
-<li>
-<p><em>%P</em>: parent hashes</p>
-</li>
-<li>
-<p><em>%p</em>: abbreviated parent hashes</p>
-</li>
-<li>
-<p><em>%an</em>: author name</p>
-</li>
-<li>
-<p><em>%aN</em>: author name (respecting .mailmap, see <a href="git-shortlog.html">git-shortlog</a>(1)
+<p>Placeholders that expand to information extracted from the commit:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>%H</em></dt>
+<dd>
+<p>commit hash</p>
+</dd>
+<dt class="hdlist1"><em>%h</em></dt>
+<dd>
+<p>abbreviated commit hash</p>
+</dd>
+<dt class="hdlist1"><em>%T</em></dt>
+<dd>
+<p>tree hash</p>
+</dd>
+<dt class="hdlist1"><em>%t</em></dt>
+<dd>
+<p>abbreviated tree hash</p>
+</dd>
+<dt class="hdlist1"><em>%P</em></dt>
+<dd>
+<p>parent hashes</p>
+</dd>
+<dt class="hdlist1"><em>%p</em></dt>
+<dd>
+<p>abbreviated parent hashes</p>
+</dd>
+<dt class="hdlist1"><em>%an</em></dt>
+<dd>
+<p>author name</p>
+</dd>
+<dt class="hdlist1"><em>%aN</em></dt>
+<dd>
+<p>author name (respecting .mailmap, see <a href="git-shortlog.html">git-shortlog</a>(1)
 or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%ae</em>: author email</p>
-</li>
-<li>
-<p><em>%aE</em>: author email (respecting .mailmap, see
+</dd>
+<dt class="hdlist1"><em>%ae</em></dt>
+<dd>
+<p>author email</p>
+</dd>
+<dt class="hdlist1"><em>%aE</em></dt>
+<dd>
+<p>author email (respecting .mailmap, see <a href="git-shortlog.html">git-shortlog</a>(1)
+or <a href="git-blame.html">git-blame</a>(1))</p>
+</dd>
+<dt class="hdlist1"><em>%ad</em></dt>
+<dd>
+<p>author date (format respects --date= option)</p>
+</dd>
+<dt class="hdlist1"><em>%aD</em></dt>
+<dd>
+<p>author date, RFC2822 style</p>
+</dd>
+<dt class="hdlist1"><em>%ar</em></dt>
+<dd>
+<p>author date, relative</p>
+</dd>
+<dt class="hdlist1"><em>%at</em></dt>
+<dd>
+<p>author date, UNIX timestamp</p>
+</dd>
+<dt class="hdlist1"><em>%ai</em></dt>
+<dd>
+<p>author date, ISO 8601-like format</p>
+</dd>
+<dt class="hdlist1"><em>%aI</em></dt>
+<dd>
+<p>author date, strict ISO 8601 format</p>
+</dd>
+<dt class="hdlist1"><em>%cn</em></dt>
+<dd>
+<p>committer name</p>
+</dd>
+<dt class="hdlist1"><em>%cN</em></dt>
+<dd>
+<p>committer name (respecting .mailmap, see
 <a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%ad</em>: author date (format respects --date= option)</p>
-</li>
-<li>
-<p><em>%aD</em>: author date, RFC2822 style</p>
-</li>
-<li>
-<p><em>%ar</em>: author date, relative</p>
-</li>
-<li>
-<p><em>%at</em>: author date, UNIX timestamp</p>
-</li>
-<li>
-<p><em>%ai</em>: author date, ISO 8601-like format</p>
-</li>
-<li>
-<p><em>%aI</em>: author date, strict ISO 8601 format</p>
-</li>
-<li>
-<p><em>%cn</em>: committer name</p>
-</li>
-<li>
-<p><em>%cN</em>: committer name (respecting .mailmap, see
+</dd>
+<dt class="hdlist1"><em>%ce</em></dt>
+<dd>
+<p>committer email</p>
+</dd>
+<dt class="hdlist1"><em>%cE</em></dt>
+<dd>
+<p>committer email (respecting .mailmap, see
 <a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%ce</em>: committer email</p>
-</li>
-<li>
-<p><em>%cE</em>: committer email (respecting .mailmap, see
-<a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%cd</em>: committer date (format respects --date= option)</p>
-</li>
-<li>
-<p><em>%cD</em>: committer date, RFC2822 style</p>
-</li>
-<li>
-<p><em>%cr</em>: committer date, relative</p>
-</li>
-<li>
-<p><em>%ct</em>: committer date, UNIX timestamp</p>
-</li>
-<li>
-<p><em>%ci</em>: committer date, ISO 8601-like format</p>
-</li>
-<li>
-<p><em>%cI</em>: committer date, strict ISO 8601 format</p>
-</li>
-<li>
-<p><em>%d</em>: ref names, like the --decorate option of <a href="git-log.html">git-log</a>(1)</p>
-</li>
-<li>
-<p><em>%D</em>: ref names without the " (", ")" wrapping.</p>
-</li>
-<li>
-<p><em>%S</em>: ref name given on the command line by which the commit was reached
+</dd>
+<dt class="hdlist1"><em>%cd</em></dt>
+<dd>
+<p>committer date (format respects --date= option)</p>
+</dd>
+<dt class="hdlist1"><em>%cD</em></dt>
+<dd>
+<p>committer date, RFC2822 style</p>
+</dd>
+<dt class="hdlist1"><em>%cr</em></dt>
+<dd>
+<p>committer date, relative</p>
+</dd>
+<dt class="hdlist1"><em>%ct</em></dt>
+<dd>
+<p>committer date, UNIX timestamp</p>
+</dd>
+<dt class="hdlist1"><em>%ci</em></dt>
+<dd>
+<p>committer date, ISO 8601-like format</p>
+</dd>
+<dt class="hdlist1"><em>%cI</em></dt>
+<dd>
+<p>committer date, strict ISO 8601 format</p>
+</dd>
+<dt class="hdlist1"><em>%d</em></dt>
+<dd>
+<p>ref names, like the --decorate option of <a href="git-log.html">git-log</a>(1)</p>
+</dd>
+<dt class="hdlist1"><em>%D</em></dt>
+<dd>
+<p>ref names without the " (", ")" wrapping.</p>
+</dd>
+<dt class="hdlist1"><em>%S</em></dt>
+<dd>
+<p>ref name given on the command line by which the commit was reached
 (like <code>git log --source</code>), only works with <code>git log</code></p>
-</li>
-<li>
-<p><em>%e</em>: encoding</p>
-</li>
-<li>
-<p><em>%s</em>: subject</p>
-</li>
-<li>
-<p><em>%f</em>: sanitized subject line, suitable for a filename</p>
-</li>
-<li>
-<p><em>%b</em>: body</p>
-</li>
-<li>
-<p><em>%B</em>: raw body (unwrapped subject and body)</p>
-</li>
-<li>
-<p><em>%GG</em>: raw verification message from GPG for a signed commit</p>
-</li>
-<li>
-<p><em>%G?</em>: show "G" for a good (valid) signature,
+</dd>
+<dt class="hdlist1"><em>%e</em></dt>
+<dd>
+<p>encoding</p>
+</dd>
+<dt class="hdlist1"><em>%s</em></dt>
+<dd>
+<p>subject</p>
+</dd>
+<dt class="hdlist1"><em>%f</em></dt>
+<dd>
+<p>sanitized subject line, suitable for a filename</p>
+</dd>
+<dt class="hdlist1"><em>%b</em></dt>
+<dd>
+<p>body</p>
+</dd>
+<dt class="hdlist1"><em>%B</em></dt>
+<dd>
+<p>raw body (unwrapped subject and body)</p>
+</dd>
+<dt class="hdlist1"><em>%GG</em></dt>
+<dd>
+<p>raw verification message from GPG for a signed commit</p>
+</dd>
+<dt class="hdlist1"><em>%G?</em></dt>
+<dd>
+<p>show "G" for a good (valid) signature,
 "B" for a bad signature,
 "U" for a good signature with unknown validity,
 "X" for a good signature that has expired,
@@ -2091,123 +2232,113 @@ or <a href="git-blame.html">git-blame</a>(1))</p>
 "R" for a good signature made by a revoked key,
 "E" if the signature cannot be checked (e.g. missing key)
 and "N" for no signature</p>
-</li>
-<li>
-<p><em>%GS</em>: show the name of the signer for a signed commit</p>
-</li>
-<li>
-<p><em>%GK</em>: show the key used to sign a signed commit</p>
-</li>
-<li>
-<p><em>%GF</em>: show the fingerprint of the key used to sign a signed commit</p>
-</li>
-<li>
-<p><em>%GP</em>: show the fingerprint of the primary key whose subkey was used
+</dd>
+<dt class="hdlist1"><em>%GS</em></dt>
+<dd>
+<p>show the name of the signer for a signed commit</p>
+</dd>
+<dt class="hdlist1"><em>%GK</em></dt>
+<dd>
+<p>show the key used to sign a signed commit</p>
+</dd>
+<dt class="hdlist1"><em>%GF</em></dt>
+<dd>
+<p>show the fingerprint of the key used to sign a signed commit</p>
+</dd>
+<dt class="hdlist1"><em>%GP</em></dt>
+<dd>
+<p>show the fingerprint of the primary key whose subkey was used
 to sign a signed commit</p>
-</li>
-<li>
-<p><em>%gD</em>: reflog selector, e.g., <code>refs/stash@{1}</code> or
-<code>refs/stash@{2 minutes ago</code>}; the format follows the rules described
-for the <code>-g</code> option. The portion before the <code>@</code> is the refname as
-given on the command line (so <code>git log -g refs/heads/master</code> would
-yield <code>refs/heads/master@{0}</code>).</p>
-</li>
-<li>
-<p><em>%gd</em>: shortened reflog selector; same as <code>%gD</code>, but the refname
-portion is shortened for human readability (so <code>refs/heads/master</code>
-becomes just <code>master</code>).</p>
-</li>
-<li>
-<p><em>%gn</em>: reflog identity name</p>
-</li>
-<li>
-<p><em>%gN</em>: reflog identity name (respecting .mailmap, see
+</dd>
+<dt class="hdlist1"><em>%gD</em></dt>
+<dd>
+<p>reflog selector, e.g., <code>refs/stash@{1}</code> or <code>refs/stash@{2
+minutes ago</code>}; the format follows the rules described for the
+<code>-g</code> option. The portion before the <code>@</code> is the refname as
+given on the command line (so <code>git log -g refs/heads/master</code>
+would yield <code>refs/heads/master@{0}</code>).</p>
+</dd>
+<dt class="hdlist1"><em>%gd</em></dt>
+<dd>
+<p>shortened reflog selector; same as <code>%gD</code>, but the refname
+portion is shortened for human readability (so
+<code>refs/heads/master</code> becomes just <code>master</code>).</p>
+</dd>
+<dt class="hdlist1"><em>%gn</em></dt>
+<dd>
+<p>reflog identity name</p>
+</dd>
+<dt class="hdlist1"><em>%gN</em></dt>
+<dd>
+<p>reflog identity name (respecting .mailmap, see
 <a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%ge</em>: reflog identity email</p>
-</li>
-<li>
-<p><em>%gE</em>: reflog identity email (respecting .mailmap, see
+</dd>
+<dt class="hdlist1"><em>%ge</em></dt>
+<dd>
+<p>reflog identity email</p>
+</dd>
+<dt class="hdlist1"><em>%gE</em></dt>
+<dd>
+<p>reflog identity email (respecting .mailmap, see
 <a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
+</dd>
+<dt class="hdlist1"><em>%gs</em></dt>
+<dd>
+<p>reflog subject</p>
+</dd>
+<dt class="hdlist1"><em>%(trailers[:options])</em></dt>
+<dd>
+<p>display the trailers of the body as
+interpreted by
+<a href="git-interpret-trailers.html">git-interpret-trailers</a>(1). The
+<code>trailers</code> string may be followed by a colon
+and zero or more comma-separated options:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><em>key=&lt;K&gt;</em>: only show trailers with specified key. Matching is done
+case-insensitively and trailing colon is optional. If option is
+given multiple times trailer lines matching any of the keys are
+shown. This option automatically enables the <code>only</code> option so that
+non-trailer lines in the trailer block are hidden. If that is not
+desired it can be disabled with <code>only=false</code>.  E.g.,
+<code>%(trailers:key=Reviewed-by)</code> shows trailer lines with key
+<code>Reviewed-by</code>.</p>
 </li>
 <li>
-<p><em>%gs</em>: reflog subject</p>
+<p><em>only[=val]</em>: select whether non-trailer lines from the trailer
+block should be included. The <code>only</code> keyword may optionally be
+followed by an equal sign and one of <code>true</code>, <code>on</code>, <code>yes</code> to omit or
+<code>false</code>, <code>off</code>, <code>no</code> to show the non-trailer lines. If option is
+given without value it is enabled. If given multiple times the last
+value is used.</p>
 </li>
 <li>
-<p><em>%Cred</em>: switch color to red</p>
+<p><em>separator=&lt;SEP&gt;</em>: specify a separator inserted between trailer
+lines. When this option is not given each trailer line is
+terminated with a line feed character. The string SEP may contain
+the literal formatting codes described above. To use comma as
+separator one must use <code>%x2C</code> as it would otherwise be parsed as
+next option. If separator option is given multiple times only the
+last one is used. E.g., <code>%(trailers:key=Ticket,separator=%x2C )</code>
+shows all trailer lines whose key is "Ticket" separated by a comma
+and a space.</p>
 </li>
 <li>
-<p><em>%Cgreen</em>: switch color to green</p>
+<p><em>unfold[=val]</em>: make it behave as if interpret-trailer&#8217;s <code>--unfold</code>
+option was given. In same way as to for <code>only</code> it can be followed
+by an equal sign and explicit value. E.g.,
+<code>%(trailers:only,unfold=true)</code> unfolds and shows all trailer lines.</p>
 </li>
 <li>
-<p><em>%Cblue</em>: switch color to blue</p>
+<p><em>valueonly[=val]</em>: skip over the key part of the trailer line and only
+show the value part. Also this optionally allows explicit value.</p>
 </li>
-<li>
-<p><em>%Creset</em>: reset color</p>
-</li>
-<li>
-<p><em>%C(&#8230;&#8203;)</em>: color specification, as described under Values in the
-"CONFIGURATION FILE" section of <a href="git-config.html">git-config</a>(1).
-By default, colors are shown only when enabled for log output (by
-<code>color.diff</code>, <code>color.ui</code>, or <code>--color</code>, and respecting the <code>auto</code>
-settings of the former if we are going to a terminal). <code>%C(auto,...)</code>
-is accepted as a historical synonym for the default (e.g.,
-<code>%C(auto,red)</code>). Specifying <code>%C(always,...)</code> will show the colors
-even when color is not otherwise enabled (though consider
-just using <code>--color=always</code> to enable color for the whole output,
-including this format and anything else git might color).  <code>auto</code>
-alone (i.e. <code>%C(auto)</code>) will turn on auto coloring on the next
-placeholders until the color is switched again.</p>
-</li>
-<li>
-<p><em>%m</em>: left (<code>&lt;</code>), right (<code>&gt;</code>) or boundary (<code>-</code>) mark</p>
-</li>
-<li>
-<p><em>%n</em>: newline</p>
-</li>
-<li>
-<p><em>%%</em>: a raw <em>%</em></p>
-</li>
-<li>
-<p><em>%x00</em>: print a byte from a hex code</p>
-</li>
-<li>
-<p><em>%w([&lt;w&gt;[,&lt;i1&gt;[,&lt;i2&gt;]]])</em>: switch line wrapping, like the -w option of
-<a href="git-shortlog.html">git-shortlog</a>(1).</p>
-</li>
-<li>
-<p><em>%&lt;(&lt;N&gt;[,trunc|ltrunc|mtrunc])</em>: make the next placeholder take at
-least N columns, padding spaces on the right if necessary.
-Optionally truncate at the beginning (ltrunc), the middle (mtrunc)
-or the end (trunc) if the output is longer than N columns.
-Note that truncating only works correctly with N &gt;= 2.</p>
-</li>
-<li>
-<p><em>%&lt;|(&lt;N&gt;)</em>: make the next placeholder take at least until Nth
-columns, padding spaces on the right if necessary</p>
-</li>
-<li>
-<p><em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em>: similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
-respectively, but padding spaces on the left</p>
-</li>
-<li>
-<p><em>%&gt;&gt;(&lt;N&gt;)</em>, <em>%&gt;&gt;|(&lt;N&gt;)</em>: similar to <em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em>
-respectively, except that if the next placeholder takes more spaces
-than given and there are spaces on its left, use those spaces</p>
-</li>
-<li>
-<p><em>%&gt;&lt;(&lt;N&gt;)</em>, <em>%&gt;&lt;|(&lt;N&gt;)</em>: similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
-respectively, but padding both sides (i.e. the text is centered)</p>
-</li>
-<li>
-<p>%(trailers[:options]): display the trailers of the body as interpreted
-by <a href="git-interpret-trailers.html">git-interpret-trailers</a>(1). The <code>trailers</code> string may be
-followed by a colon and zero or more comma-separated options. If the
-<code>only</code> option is given, omit non-trailer lines from the trailer block.
-If the <code>unfold</code> option is given, behave as if interpret-trailer&#8217;s
-<code>--unfold</code> option was given.  E.g., <code>%(trailers:only,unfold)</code> to do
-both.</p>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
 </li>
 </ul>
 </div>
@@ -2299,7 +2430,7 @@ $ git log -2 --pretty=%h 4da45bef</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

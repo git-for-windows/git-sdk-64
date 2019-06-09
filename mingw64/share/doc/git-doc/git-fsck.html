@@ -515,9 +515,18 @@ with --no-full.</p>
 </dd>
 <dt class="hdlist1">--connectivity-only</dt>
 <dd>
-<p>Check only the connectivity of tags, commits and tree objects. By
-avoiding to unpack blobs, this speeds up the operation, at the
-expense of missing corrupt objects or other problematic issues.</p>
+<p>Check only the connectivity of reachable objects, making sure
+that any objects referenced by a reachable tag, commit, or tree
+is present. This speeds up the operation by avoiding reading
+blobs entirely (though it does still check that referenced blobs
+exist). This will detect corruption in commits and trees, but
+not do any semantic checks (e.g., for format errors). Corruption
+in blob objects will not be detected at all.</p>
+<div class="paragraph">
+<p>Unreachable tags, commits, and trees will also be accessed to find the
+tips of dangling segments of history. Use <code>--no-dangling</code> if you don&#8217;t
+care about this output and want to speed it up further.</p>
+</div>
 </dd>
 <dt class="hdlist1">--strict</dt>
 <dd>
@@ -656,7 +665,7 @@ This indicates a serious data integrity problem.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

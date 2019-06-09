@@ -479,8 +479,20 @@ show the patch by default, or to cancel the effect of <code>--patch</code>.</p>
 <dt class="hdlist1">--unified=&lt;n&gt;</dt>
 <dd>
 <p>Generate diffs with &lt;n&gt; lines of context instead of
-the usual three.
+the usual three. Implies <code>--patch</code>.
 Implies <code>-p</code>.</p>
+</dd>
+<dt class="hdlist1">--output=&lt;file&gt;</dt>
+<dd>
+<p>Output to a specific file instead of stdout.</p>
+</dd>
+<dt class="hdlist1">--output-indicator-new=&lt;char&gt;</dt>
+<dt class="hdlist1">--output-indicator-old=&lt;char&gt;</dt>
+<dt class="hdlist1">--output-indicator-context=&lt;char&gt;</dt>
+<dd>
+<p>Specify the character used to indicate new, old or context
+lines in the generated patch. Normally they are <em>+</em>, <em>-</em> and
+' ' respectively.</p>
 </dd>
 <dt class="hdlist1">--raw</dt>
 <dd>
@@ -604,6 +616,7 @@ binary files, outputs two <code>-</code> instead of saying
 number of modified files, as well as number of added and deleted
 lines.</p>
 </dd>
+<dt class="hdlist1">-X[&lt;param1,param2,&#8230;&#8203;&gt;]</dt>
 <dt class="hdlist1">--dirstat[=&lt;param1,param2,&#8230;&#8203;&gt;]</dt>
 <dd>
 <p>Output the distribution of relative amount of changes for each
@@ -664,6 +677,14 @@ directories with less than 10% of the total amount of changed files,
 and accumulating child directory counts in the parent directories:
 <code>--dirstat=files,10,cumulative</code>.</p>
 </div>
+</dd>
+<dt class="hdlist1">--cumulative</dt>
+<dd>
+<p>Synonym for --dirstat=cumulative</p>
+</dd>
+<dt class="hdlist1">--dirstat-by-file[=&lt;param1,param2&gt;&#8230;&#8203;]</dt>
+<dd>
+<p>Synonym for --dirstat=files,param1,param2&#8230;&#8203;</p>
 </dd>
 <dt class="hdlist1">--summary</dt>
 <dd>
@@ -899,6 +920,10 @@ specified) <code>--word-diff-regex=&lt;regex&gt;</code>.</p>
 <p>Turn off rename detection, even when the configuration
 file gives the default to do so.</p>
 </dd>
+<dt class="hdlist1">--[no-]rename-empty</dt>
+<dd>
+<p>Whether to use empty blobs as rename source.</p>
+</dd>
 <dt class="hdlist1">--check</dt>
 <dd>
 <p>Warn if changes introduce conflict markers or whitespace errors.
@@ -930,7 +955,7 @@ line when generating patch format output.</p>
 <dt class="hdlist1">--binary</dt>
 <dd>
 <p>In addition to <code>--full-index</code>, output a binary diff that
-can be applied with <code>git-apply</code>.</p>
+can be applied with <code>git-apply</code>. Implies <code>--patch</code>.</p>
 </dd>
 <dt class="hdlist1">--abbrev[=&lt;n&gt;]</dt>
 <dd>
@@ -1511,16 +1536,34 @@ from the format described above in the following way:</p>
 <p>no optional "score" number</p>
 </li>
 <li>
-<p>single path, only for "dst"</p>
+<p>tab-separated pathname(s) of the file</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>Example:</p>
+<p>For <code>-c</code> and <code>--cc</code>, only the destination or final path is shown even
+if the file was renamed on any side of history.  With
+<code>--combined-all-paths</code>, the name of the path in each parent is shown
+followed by the name of the path in the merge commit.</p>
+</div>
+<div class="paragraph">
+<p>Examples for <code>-c</code> and <code>--cc</code> without <code>--combined-all-paths</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>::100644 100644 100644 fabadb8 cc95eb0 4866510 MM	describe.c</pre>
+<pre>::100644 100644 100644 fabadb8 cc95eb0 4866510 MM	desc.c
+::100755 100755 100755 52b7a2d 6d1ac04 d2ac7d7 RM	bar.sh
+::100644 100644 100644 e07d6c5 9042e82 ee91881 RR	phooey.c</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Examples when <code>--combined-all-paths</code> added to either <code>-c</code> or <code>--cc</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>::100644 100644 100644 fabadb8 cc95eb0 4866510 MM	desc.c	desc.c	desc.c
+::100755 100755 100755 52b7a2d 6d1ac04 d2ac7d7 RM	foo.sh	bar.sh	bar.sh
+::100644 100644 100644 e07d6c5 9042e82 ee91881 RR	fooey.c	fuey.c	phooey.c</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1723,6 +1766,24 @@ copying detection) are designed to work with diff of two
 format, <code>/dev/null</code> is used to signal created or deleted
 files.</p>
 </div>
+<div class="paragraph">
+<p>However, if the --combined-all-paths option is provided, instead of a
+two-line from-file/to-file you get a N+1 line from-file/to-file header,
+where N is the number of parents in the merge commit</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>--- a/file
+--- a/file
+--- a/file
++++ b/file</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This extended format can be useful if rename or copy detection is
+active, to allow you to see the original name of the file in different
+parents.</p>
+</div>
 </li>
 <li>
 <p>Chunk header format is modified to prevent people from
@@ -1894,7 +1955,7 @@ the pathname, but if that is <code>NUL</code>, the record will show two paths.</
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

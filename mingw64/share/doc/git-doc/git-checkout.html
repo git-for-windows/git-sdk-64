@@ -723,6 +723,9 @@ should result in deletion of the path).</p>
 <p>When checking out paths from the index, this option lets you recreate
 the conflicted merge in the specified paths.</p>
 </div>
+<div class="paragraph">
+<p>When switching branches with <code>--merge</code>, staged changes may be lost.</p>
+</div>
 </dd>
 <dt class="hdlist1">--conflict=&lt;style&gt;</dt>
 <dd>
@@ -743,6 +746,10 @@ working tree (and if a &lt;tree-ish&gt; was specified, the index).</p>
 <p>This means that you can use <code>git checkout -p</code> to selectively discard
 edits from your current working tree. See the &#8220;Interactive Mode&#8221;
 section of <a href="git-add.html">git-add</a>(1) to learn how to operate the <code>--patch</code> mode.</p>
+</div>
+<div class="paragraph">
+<p>Note that this option uses the no overlay mode by default (see also
+<code>--[no-]overlay</code>), and currently doesn&#8217;t support overlay mode.</p>
 </div>
 </dd>
 <dt class="hdlist1">--ignore-other-worktrees</dt>
@@ -766,6 +773,14 @@ submodules HEAD.</p>
 <dd>
 <p>Do not attempt to create a branch if a remote tracking branch
 of the same name exists.</p>
+</dd>
+<dt class="hdlist1">--[no-]overlay</dt>
+<dd>
+<p>In the default overlay mode, <code>git checkout</code> never
+removes files from the index or the working tree.  When
+specifying <code>--no-overlay</code>, files that appear in the index and
+working tree, but not in &lt;tree-ish&gt; are removed, to make them
+match &lt;tree-ish&gt; exactly.</p>
 </dd>
 <dt class="hdlist1">&lt;branch&gt;</dt>
 <dd>
@@ -793,6 +808,11 @@ leave out at most one of <code>A</code> and <code>B</code>, in which case it def
 <dd>
 <p>The name of a commit at which to start the new branch; see
 <a href="git-branch.html">git-branch</a>(1) for details. Defaults to HEAD.</p>
+<div class="paragraph">
+<p>As a special case, you may use <code>"A...B"</code> as a shortcut for the
+merge base of <code>A</code> and <code>B</code> if there is exactly one merge base. You can
+leave out at most one of <code>A</code> and <code>B</code>, in which case it defaults to <code>HEAD</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">&lt;tree-ish&gt;</dt>
 <dd>
@@ -1109,7 +1129,7 @@ $ git add frotz</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

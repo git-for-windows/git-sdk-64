@@ -741,89 +741,108 @@ if (!git_configset_get_bool(gm_config, "submodule.frotz.ignore", &amp;b)) {
 }
 
 /* when we are done with the configset */
-git_configset_clear(&amp;gm_config);
-----------------------------------------
-
-Configset API provides functions for the above mentioned work flow, including:
-
-`void git_configset_init(struct config_set *cs)`::
-
-	Initializes the config_set `cs`.
-
-`int git_configset_add_file(struct config_set *cs, const char *filename)`::
-
-	Parses the file and adds the variable-value pairs to the `config_set`,
-	dies if there is an error in parsing the file. Returns 0 on success, or
-	-1 if the file does not exist or is inaccessible. The user has to decide
-	if he wants to free the incomplete configset or continue using it when
-	the function returns -1.
-
-`int git_configset_get_value(struct config_set *cs, const char *key, const char **value)`::
-
-	Finds the highest-priority value for the configuration variable `key`
-	and config set `cs`, stores the pointer to it in `value` and returns 0.
-	When the configuration variable `key` is not found, returns 1 without
-	touching `value`. The caller should not free or modify `value`, as it
-	is owned by the cache.
-
-`const struct string_list *git_configset_get_value_multi(struct config_set *cs, const char *key)`::
-
-	Finds and returns the value list, sorted in order of increasing priority
-	for the configuration variable `key` and config set `cs`. When the
-	configuration variable `key` is not found, returns NULL. The caller
-	should not free or modify the returned pointer, as it is owned by the cache.
-
-`void git_configset_clear(struct config_set *cs)`::
-
-	Clears `config_set` structure, removes all saved variable-value pairs.
-
-In addition to above functions, the `config_set` API provides type specific
-functions in the vein of `git_config_get_int` and family but with an extra
-parameter, pointer to struct `config_set`.
-They all behave similarly to the `git_config_get*()` family described in
-"Querying For Specific Variables" above.
-
-Writing Config Files
---------------------
-
-Git gives multiple entry points in the Config API to write config values to
-files namely `git_config_set_in_file` and `git_config_set`, which write to
-a specific config file or to `.git/config` respectively. They both take a
-key/value pair as parameter.
-In the end they both call `git_config_set_multivar_in_file` which takes four
-parameters:
-
-- the name of the file, as a string, to which key/value pairs will be written.
-
-- the name of key, as a string. This is in canonical "flat" form: the section,
-  subsection, and variable segments will be separated by dots, and the section
-  and variable segments will be all lowercase.
-  E.g., `core.ignorecase`, `diff.SomeType.textconv`.
-
-- the value of the variable, as a string. If value is equal to NULL, it will
-  remove the matching key from the config file.
-
-- the value regex, as a string. It will disregard key/value pairs where value
-  does not match.
-
-- a multi_replace value, as an int. If value is equal to zero, nothing or only
-  one matching key/value is replaced, else all matching key/values (regardless
-  how many) are removed, before the new pair is written.
-
-It returns 0 on success.
-
-Also, there are functions `git_config_rename_section` and
-`git_config_rename_section_in_file` with parameters `old_name` and `new_name`
-for renaming or removing sections in the config files. If NULL is passed
-through `new_name` parameter, the section will be removed from the config file.</pre>
+git_configset_clear(&amp;gm_config);</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Configset API provides functions for the above mentioned work flow, including:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>void git_configset_init(struct config_set *cs)</code></dt>
+<dd>
+<p>Initializes the config_set <code>cs</code>.</p>
+</dd>
+<dt class="hdlist1"><code>int git_configset_add_file(struct config_set *cs, const char *filename)</code></dt>
+<dd>
+<p>Parses the file and adds the variable-value pairs to the <code>config_set</code>,
+dies if there is an error in parsing the file. Returns 0 on success, or
+-1 if the file does not exist or is inaccessible. The user has to decide
+if he wants to free the incomplete configset or continue using it when
+the function returns -1.</p>
+</dd>
+<dt class="hdlist1"><code>int git_configset_get_value(struct config_set *cs, const char *key, const char **value)</code></dt>
+<dd>
+<p>Finds the highest-priority value for the configuration variable <code>key</code>
+and config set <code>cs</code>, stores the pointer to it in <code>value</code> and returns 0.
+When the configuration variable <code>key</code> is not found, returns 1 without
+touching <code>value</code>. The caller should not free or modify <code>value</code>, as it
+is owned by the cache.</p>
+</dd>
+<dt class="hdlist1"><code>const struct string_list *git_configset_get_value_multi(struct config_set *cs, const char *key)</code></dt>
+<dd>
+<p>Finds and returns the value list, sorted in order of increasing priority
+for the configuration variable <code>key</code> and config set <code>cs</code>. When the
+configuration variable <code>key</code> is not found, returns NULL. The caller
+should not free or modify the returned pointer, as it is owned by the cache.</p>
+</dd>
+<dt class="hdlist1"><code>void git_configset_clear(struct config_set *cs)</code></dt>
+<dd>
+<p>Clears <code>config_set</code> structure, removes all saved variable-value pairs.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>In addition to above functions, the <code>config_set</code> API provides type specific
+functions in the vein of <code>git_config_get_int</code> and family but with an extra
+parameter, pointer to struct <code>config_set</code>.
+They all behave similarly to the <code>git_config_get*()</code> family described in
+"Querying For Specific Variables" above.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_writing_config_files">Writing Config Files</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Git gives multiple entry points in the Config API to write config values to
+files namely <code>git_config_set_in_file</code> and <code>git_config_set</code>, which write to
+a specific config file or to <code>.git/config</code> respectively. They both take a
+key/value pair as parameter.
+In the end they both call <code>git_config_set_multivar_in_file</code> which takes four
+parameters:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the name of the file, as a string, to which key/value pairs will be written.</p>
+</li>
+<li>
+<p>the name of key, as a string. This is in canonical "flat" form: the section,
+subsection, and variable segments will be separated by dots, and the section
+and variable segments will be all lowercase.
+E.g., <code>core.ignorecase</code>, <code>diff.SomeType.textconv</code>.</p>
+</li>
+<li>
+<p>the value of the variable, as a string. If value is equal to NULL, it will
+remove the matching key from the config file.</p>
+</li>
+<li>
+<p>the value regex, as a string. It will disregard key/value pairs where value
+does not match.</p>
+</li>
+<li>
+<p>a multi_replace value, as an int. If value is equal to zero, nothing or only
+one matching key/value is replaced, else all matching key/values (regardless
+how many) are removed, before the new pair is written.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It returns 0 on success.</p>
+</div>
+<div class="paragraph">
+<p>Also, there are functions <code>git_config_rename_section</code> and
+<code>git_config_rename_section_in_file</code> with parameters <code>old_name</code> and <code>new_name</code>
+for renaming or removing sections in the config files. If NULL is passed
+through <code>new_name</code> parameter, the section will be removed from the config file.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

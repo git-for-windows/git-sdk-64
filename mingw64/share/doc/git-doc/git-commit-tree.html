@@ -462,6 +462,11 @@ emits the new commit object id on stdout. The log message is read
 from the standard input, unless <code>-m</code> or <code>-F</code> options are given.</p>
 </div>
 <div class="paragraph">
+<p>The <code>-m</code> and <code>-F</code> options can be given any number of times, in any
+order. The commit log message will be composed in the order in which
+the options are given.</p>
+</div>
+<div class="paragraph">
 <p>A commit object may have any number of parents. With exactly one
 parent, it is an ordinary commit. Having more than one parent makes
 the commit a merge between several lines of history. Initial (root)
@@ -488,7 +493,7 @@ state was.</p>
 <dl>
 <dt class="hdlist1">&lt;tree&gt;</dt>
 <dd>
-<p>An existing tree object</p>
+<p>An existing tree object.</p>
 </dd>
 <dt class="hdlist1">-p &lt;parent&gt;</dt>
 <dd>
@@ -502,7 +507,8 @@ once and each &lt;message&gt; becomes its own paragraph.</p>
 <dt class="hdlist1">-F &lt;file&gt;</dt>
 <dd>
 <p>Read the commit log message from the given file. Use <code>-</code> to read
-from the standard input.</p>
+from the standard input. This can be given more than once and the
+content of each file becomes its own paragraph.</p>
 </dd>
 <dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
 <dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
@@ -740,7 +746,7 @@ reversible operation.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

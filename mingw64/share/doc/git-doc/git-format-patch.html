@@ -546,7 +546,19 @@ reference.</p>
 <dt class="hdlist1">--unified=&lt;n&gt;</dt>
 <dd>
 <p>Generate diffs with &lt;n&gt; lines of context instead of
-the usual three.</p>
+the usual three. Implies <code>--patch</code>.</p>
+</dd>
+<dt class="hdlist1">--output=&lt;file&gt;</dt>
+<dd>
+<p>Output to a specific file instead of stdout.</p>
+</dd>
+<dt class="hdlist1">--output-indicator-new=&lt;char&gt;</dt>
+<dt class="hdlist1">--output-indicator-old=&lt;char&gt;</dt>
+<dt class="hdlist1">--output-indicator-context=&lt;char&gt;</dt>
+<dd>
+<p>Specify the character used to indicate new, old or context
+lines in the generated patch. Normally they are <em>+</em>, <em>-</em> and
+' ' respectively.</p>
 </dd>
 <dt class="hdlist1">--indent-heuristic</dt>
 <dd>
@@ -661,6 +673,7 @@ binary files, outputs two <code>-</code> instead of saying
 number of modified files, as well as number of added and deleted
 lines.</p>
 </dd>
+<dt class="hdlist1">-X[&lt;param1,param2,&#8230;&#8203;&gt;]</dt>
 <dt class="hdlist1">--dirstat[=&lt;param1,param2,&#8230;&#8203;&gt;]</dt>
 <dd>
 <p>Output the distribution of relative amount of changes for each
@@ -722,6 +735,14 @@ and accumulating child directory counts in the parent directories:
 <code>--dirstat=files,10,cumulative</code>.</p>
 </div>
 </dd>
+<dt class="hdlist1">--cumulative</dt>
+<dd>
+<p>Synonym for --dirstat=cumulative</p>
+</dd>
+<dt class="hdlist1">--dirstat-by-file[=&lt;param1,param2&gt;&#8230;&#8203;]</dt>
+<dd>
+<p>Synonym for --dirstat=files,param1,param2&#8230;&#8203;</p>
+</dd>
 <dt class="hdlist1">--summary</dt>
 <dd>
 <p>Output a condensed summary of extended header information
@@ -732,6 +753,10 @@ such as creations, renames and mode changes.</p>
 <p>Turn off rename detection, even when the configuration
 file gives the default to do so.</p>
 </dd>
+<dt class="hdlist1">--[no-]rename-empty</dt>
+<dd>
+<p>Whether to use empty blobs as rename source.</p>
+</dd>
 <dt class="hdlist1">--full-index</dt>
 <dd>
 <p>Instead of the first handful of characters, show the full
@@ -741,7 +766,7 @@ line when generating patch format output.</p>
 <dt class="hdlist1">--binary</dt>
 <dd>
 <p>In addition to <code>--full-index</code>, output a binary diff that
-can be applied with <code>git-apply</code>.</p>
+can be applied with <code>git-apply</code>. Implies <code>--patch</code>.</p>
 </dd>
 <dt class="hdlist1">--abbrev[=&lt;n&gt;]</dt>
 <dd>
@@ -1762,7 +1787,7 @@ as e-mailable patches:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

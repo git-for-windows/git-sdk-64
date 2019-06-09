@@ -518,9 +518,15 @@ merge has resulted in conflicts.</p>
 <p>Perform the merge and commit the result. This option can
 be used to override --no-commit.</p>
 <div class="paragraph">
-<p>With --no-commit perform the merge but pretend the merge
-failed and do not autocommit, to give the user a chance to
-inspect and further tweak the merge result before committing.</p>
+<p>With --no-commit perform the merge and stop just before creating
+a merge commit, to give the user a chance to inspect and further
+tweak the merge result before committing.</p>
+</div>
+<div class="paragraph">
+<p>Note that fast-forward updates do not create a merge commit and
+therefore there is no way to stop those merges with --no-commit.
+Thus, if you want to ensure your branch is not changed or updated
+by the merge command, use --no-ff with --no-commit.</p>
 </div>
 </dd>
 <dt class="hdlist1">--edit</dt>
@@ -542,6 +548,14 @@ they run <code>git merge</code>. To make it easier to adjust such scripts to the
 updated behaviour, the environment variable <code>GIT_MERGE_AUTOEDIT</code> can be
 set to <code>no</code> at the beginning of them.</p>
 </div>
+</dd>
+<dt class="hdlist1">--cleanup=&lt;mode&gt;</dt>
+<dd>
+<p>This option determines how the merge message will be cleaned up before
+commiting. See <a href="git-commit.html">git-commit</a>(1) for more details. In addition, if
+the <em>&lt;mode&gt;</em> is given a value of <code>scissors</code>, scissors will be appended
+to <code>MERGE_MSG</code> before being passed on to the commit machinery in the
+case of a merge conflict.</p>
 </dd>
 <dt class="hdlist1">--ff</dt>
 <dd>
@@ -700,7 +714,8 @@ case one is created).</p>
 will be appended to the specified message.</p>
 </div>
 </dd>
-<dt class="hdlist1">--[no-]rerere-autoupdate</dt>
+<dt class="hdlist1">--rerere-autoupdate</dt>
+<dt class="hdlist1">--no-rerere-autoupdate</dt>
 <dd>
 <p>Allow the rerere mechanism to update the index with the
 result of auto-conflict resolution if possible.</p>
@@ -1277,9 +1292,23 @@ is turned off.</p>
 </dd>
 <dt class="hdlist1">merge.renames</dt>
 <dd>
-<p>Whether and how Git detects renames.  If set to "false",
-rename detection is disabled. If set to "true", basic rename
-detection is enabled.  Defaults to the value of diff.renames.</p>
+<p>Whether Git detects renames.  If set to "false", rename detection
+is disabled. If set to "true", basic rename detection is enabled.
+Defaults to the value of diff.renames.</p>
+</dd>
+<dt class="hdlist1">merge.directoryRenames</dt>
+<dd>
+<p>Whether Git detects directory renames, affecting what happens at
+merge time to new files added to a directory on one side of
+history when that directory was renamed on the other side of
+history.  If merge.directoryRenames is set to "false", directory
+rename detection is disabled, meaning that such new files will be
+left behind in the old directory.  If set to "true", directory
+rename detection is enabled, meaning that such new files will be
+moved into the new directory.  If set to "conflict", a conflict
+will be reported for such paths.  If merge.renames is false,
+merge.directoryRenames is ignored and treated as false.  Defaults
+to "conflict".</p>
 </dd>
 <dt class="hdlist1">merge.renormalize</dt>
 <dd>
@@ -1367,6 +1396,9 @@ corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
 <p>p4merge</p>
 </li>
 <li>
+<p>smerge</p>
+</li>
+<li>
 <p>tkdiff</p>
 </li>
 <li>
@@ -1449,7 +1481,7 @@ values containing whitespace characters are currently not supported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

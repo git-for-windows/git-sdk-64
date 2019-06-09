@@ -891,7 +891,7 @@ when you run <code>git cherry-pick</code>.</p>
 </div>
 <div class="paragraph">
 <p>Note that any of the <em>refs/*</em> cases above may come either from
-the <em>$GIT_DIR/refs</em> directory or from the <em>$GIT_DIR/packed-refs</em> file.
+the <code>$GIT_DIR/refs</code> directory or from the <code>$GIT_DIR/packed-refs</code> file.
 While the ref name encoding is unspecified, UTF-8 is preferred as
 some output processing may assume ref names in UTF-8.</p>
 </div>
@@ -903,7 +903,7 @@ some output processing may assume ref names in UTF-8.</p>
 <dd>
 <p><em>@</em> alone is a shortcut for <code>HEAD</code>.</p>
 </dd>
-<dt class="hdlist1"><em>&lt;refname&gt;@{&lt;date&gt;}</em>, e.g. <em>master@{yesterday}</em>, <em>HEAD@{5 minutes ago}</em></dt>
+<dt class="hdlist1"><em>[&lt;refname&gt;]@{&lt;date&gt;}</em>, e.g. <em>master@{yesterday}</em>, <em>HEAD@{5 minutes ago}</em></dt>
 <dd>
 <p>A ref followed by the suffix <em>@</em> with a date specification
 enclosed in a brace
@@ -937,7 +937,7 @@ branch <em>blabla</em> then <em>@{1}</em> means the same as <em>blabla@{1}</em>.
 <p>The construct <em>@{-&lt;n&gt;}</em> means the &lt;n&gt;th branch/commit checked out
 before the current one.</p>
 </dd>
-<dt class="hdlist1"><em>&lt;branchname&gt;@{upstream}</em>, e.g. <em>master@{upstream}</em>, <em>@{u}</em></dt>
+<dt class="hdlist1"><em>[&lt;branchname&gt;]@{upstream}</em>, e.g. <em>master@{upstream}</em>, <em>@{u}</em></dt>
 <dd>
 <p>The suffix <em>@{upstream}</em> to a branchname (short form <em>&lt;branchname&gt;@{u}</em>)
 refers to the branch that the branch specified by branchname is set to build on
@@ -946,13 +946,13 @@ top of (configured with <code>branch.&lt;name&gt;.remote</code> and
 current one. These suffixes are also accepted when spelled in uppercase, and
 they mean the same thing no matter the case.</p>
 </dd>
-<dt class="hdlist1"><em>&lt;branchname&gt;@{push}</em>, e.g. <em>master@{push}</em>, <em>@{push}</em></dt>
+<dt class="hdlist1"><em>[&lt;branchname&gt;]@{push}</em>, e.g. <em>master@{push}</em>, <em>@{push}</em></dt>
 <dd>
 <p>The suffix <em>@{push}</em> reports the branch "where we would push to" if
 <code>git push</code> were run while <code>branchname</code> was checked out (or the current
 <code>HEAD</code> if no branchname is specified). Since our push destination is
 in a remote repository, of course, we report the local tracking branch
-that corresponds to that branch (i.e., something in <em>refs/remotes/</em>).</p>
+that corresponds to that branch (i.e., something in <code>refs/remotes/</code>).</p>
 <div class="paragraph">
 <p>Here&#8217;s an example to make it more clear:</p>
 </div>
@@ -979,7 +979,7 @@ from one location and push to another. In a non-triangular workflow,
 thing no matter the case.</p>
 </div>
 </dd>
-<dt class="hdlist1"><em>&lt;rev&gt;^</em>, e.g. <em>HEAD^, v1.5.1^0</em></dt>
+<dt class="hdlist1"><em>&lt;rev&gt;^[&lt;n&gt;]</em>, e.g. <em>HEAD^, v1.5.1^0</em></dt>
 <dd>
 <p>A suffix <em>^</em> to a revision parameter means the first parent of
 that commit object.  <em>^&lt;n&gt;</em> means the &lt;n&gt;th parent (i.e.
@@ -988,9 +988,11 @@ is equivalent to <em>&lt;rev&gt;^1</em>).  As a special rule,
 <em>&lt;rev&gt;^0</em> means the commit itself and is used when <em>&lt;rev&gt;</em> is the
 object name of a tag object that refers to a commit object.</p>
 </dd>
-<dt class="hdlist1"><em>&lt;rev&gt;~&lt;n&gt;</em>, e.g. <em>master~3</em></dt>
+<dt class="hdlist1"><em>&lt;rev&gt;~[&lt;n&gt;]</em>, e.g. <em>HEAD~, master~3</em></dt>
 <dd>
-<p>A suffix <em>~&lt;n&gt;</em> to a revision parameter means the commit
+<p>A suffix <em>~</em> to a revision parameter means the first parent of
+that commit object.
+A suffix <em>~&lt;n&gt;</em> to a revision parameter means the commit
 object that is the &lt;n&gt;th generation ancestor of the named
 commit object, following only the first parents.  I.e. <em>&lt;rev&gt;~3</em> is
 equivalent to <em>&lt;rev&gt;^^^</em> which is equivalent to
@@ -1010,13 +1012,13 @@ describes the corresponding tree object.
 <em>&lt;rev&gt;^0</em>
 is a short-hand for <em>&lt;rev&gt;^{commit}</em>.</p>
 <div class="paragraph">
-<p><em>rev^{object}</em> can be used to make sure <em>rev</em> names an
-object that exists, without requiring <em>rev</em> to be a tag, and
-without dereferencing <em>rev</em>; because a tag is already an object,
+<p><em>&lt;rev&gt;^{object}</em> can be used to make sure <em>&lt;rev&gt;</em> names an
+object that exists, without requiring <em>&lt;rev&gt;</em> to be a tag, and
+without dereferencing <em>&lt;rev&gt;</em>; because a tag is already an object,
 it does not have to be dereferenced even once to get to an object.</p>
 </div>
 <div class="paragraph">
-<p><em>rev^{tag}</em> can be used to ensure that <em>rev</em> identifies an
+<p><em>&lt;rev&gt;^{tag}</em> can be used to ensure that <em>&lt;rev&gt;</em> identifies an
 existing tag object.</p>
 </div>
 </dd>
@@ -1050,20 +1052,17 @@ literal <em>!</em> character, followed by <em>foo</em>. Any other sequence begin
 Depending on the given text, the shell&#8217;s word splitting rules might
 require additional quoting.</p>
 </dd>
-<dt class="hdlist1"><em>&lt;rev&gt;:&lt;path&gt;</em>, e.g. <em>HEAD:README</em>, <em>:README</em>, <em>master:./README</em></dt>
+<dt class="hdlist1"><em>&lt;rev&gt;:&lt;path&gt;</em>, e.g. <em>HEAD:README</em>, <em>master:./README</em></dt>
 <dd>
 <p>A suffix <em>:</em> followed by a path names the blob or tree
 at the given path in the tree-ish object named by the part
 before the colon.
-<em>:path</em> (with an empty part before the colon)
-is a special case of the syntax described next: content
-recorded in the index at the given path.
 A path starting with <em>./</em> or <em>../</em> is relative to the current working directory.
 The given path will be converted to be relative to the working tree&#8217;s root directory.
 This is most useful to address a blob or tree from a commit or tree that has
 the same tree structure as the working tree.</p>
 </dd>
-<dt class="hdlist1"><em>:&lt;n&gt;:&lt;path&gt;</em>, e.g. <em>:0:README</em>, <em>:README</em></dt>
+<dt class="hdlist1"><em>:[&lt;n&gt;:]&lt;path&gt;</em>, e.g. <em>:0:README</em>, <em>:README</em></dt>
 <dd>
 <p>A colon, optionally followed by a stage number (0 to 3) and a
 colon, followed by a path, names a blob object in the
@@ -1186,7 +1185,7 @@ for naming a set that is formed by a commit and its parent commits.</p>
 By itself, this notation denotes the single commit <em>r1</em>.</p>
 </div>
 <div class="paragraph">
-<p>The <em>&lt;rev&gt;^-&lt;n&gt;</em> notation includes <em>&lt;rev&gt;</em> but excludes the &lt;n&gt;th
+<p>The <em>&lt;rev&gt;^-[&lt;n&gt;]</em> notation includes <em>&lt;rev&gt;</em> but excludes the &lt;n&gt;th
 parent (i.e. a shorthand for <em>&lt;rev&gt;^&lt;n&gt;..&lt;rev&gt;</em>), with <em>&lt;n&gt;</em> = 1 if
 not given. This is typically useful for merge commits where you
 can just pass <em>&lt;commit&gt;^-</em> to get all the commits in the branch
@@ -1496,7 +1495,7 @@ $ sh your-git-script.sh "a b'c"</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

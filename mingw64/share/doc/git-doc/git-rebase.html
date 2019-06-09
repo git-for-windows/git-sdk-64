@@ -698,20 +698,11 @@ desired resolution, you can continue the rebasing process with</p>
 <dl>
 <dt class="hdlist1">rebase.useBuiltin</dt>
 <dd>
-<p>Set to <code>false</code> to use the legacy shellscript implementation of
-<a href="git-rebase.html">git-rebase</a>(1). Is <code>true</code> by default, which means use
-the built-in rewrite of it in C.</p>
-<div class="paragraph">
-<p>The C rewrite is first included with Git version 2.20. This option
-serves an an escape hatch to re-enable the legacy version in case any
-bugs are found in the rewrite. This option and the shellscript version
-of <a href="git-rebase.html">git-rebase</a>(1) will be removed in some future release.</p>
-</div>
-<div class="paragraph">
-<p>If you find some reason to set this option to <code>false</code> other than
-one-off testing you should report the behavior difference as a bug in
-git.</p>
-</div>
+<p>Unused configuration variable. Used in Git versions 2.20 and
+2.21 as an escape hatch to enable the legacy shellscript
+implementation of rebase. Now the built-in rewrite of it in C
+is always used. Setting this will emit a warning, to alert any
+remaining users that setting this now does nothing.</p>
 </dd>
 <dt class="hdlist1">rebase.stat</dt>
 <dd>
@@ -906,6 +897,12 @@ specified, <code>-s recursive</code>.  Note the reversal of <em>ours</em> and
 <p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
 </dd>
+<dt class="hdlist1">--rerere-autoupdate</dt>
+<dt class="hdlist1">--no-rerere-autoupdate</dt>
+<dd>
+<p>Allow the rerere mechanism to update the index with the
+result of auto-conflict resolution if possible.</p>
+</dd>
 <dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
 <dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
 <dd>
@@ -1040,15 +1037,15 @@ resolved/re-applied manually.</p>
 <div class="paragraph">
 <p>By default, or when <code>no-rebase-cousins</code> was specified, commits which do not
 have <code>&lt;upstream&gt;</code> as direct ancestor will keep their original branch point,
-i.e. commits that would be excluded by git<a href="git-log">1</a>'s
+i.e. commits that would be excluded by <a href="git-log.html">git-log</a>(1)'s
 <code>--ancestry-path</code> option will keep their original ancestry by default. If
 the <code>rebase-cousins</code> mode is turned on, such commits are instead rebased
 onto <code>&lt;upstream&gt;</code> (or <code>&lt;onto&gt;</code>, if specified).</p>
 </div>
 <div class="paragraph">
-<p>The <code>--rebase-merges</code> mode is similar in spirit to <code>--preserve-merges</code>, but
-in contrast to that option works well in interactive rebases: commits can be
-reordered, inserted and dropped at will.</p>
+<p>The <code>--rebase-merges</code> mode is similar in spirit to the deprecated
+<code>--preserve-merges</code>, but in contrast to that option works well in interactive
+rebases: commits can be reordered, inserted and dropped at will.</p>
 </div>
 <div class="paragraph">
 <p>It is currently only possible to recreate the merge commits using the
@@ -1062,9 +1059,10 @@ explicit <code>exec git merge -s &lt;strategy&gt; [...]</code> commands.</p>
 <dt class="hdlist1">-p</dt>
 <dt class="hdlist1">--preserve-merges</dt>
 <dd>
-<p>Recreate merge commits instead of flattening the history by replaying
-commits a merge commit introduces. Merge conflict resolutions or manual
-amendments to merge commits are not preserved.</p>
+<p>[DEPRECATED: use <code>--rebase-merges</code> instead] Recreate merge commits
+instead of flattening the history by replaying commits a merge commit
+introduces. Merge conflict resolutions or manual amendments to merge
+commits are not preserved.</p>
 <div class="paragraph">
 <p>This uses the <code>--interactive</code> machinery internally, but combining it
 with the <code>--interactive</code> option explicitly is generally not a good
@@ -1622,7 +1620,8 @@ was HEAD~4 becomes the new HEAD. To achieve that, you would call
 <p>And move the first patch to the end of the list.</p>
 </div>
 <div class="paragraph">
-<p>You might want to preserve merges, if you have a history like this:</p>
+<p>You might want to recreate merge commits, e.g. if you have a history
+like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1639,7 +1638,7 @@ sure that the current HEAD is "B", and call</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git rebase -i -p --onto Q O</pre>
+<pre>$ git rebase -i -r --onto Q O</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2064,11 +2063,11 @@ merge cmake</pre>
 <h2 id="_bugs">BUGS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The todo list presented by <code>--preserve-merges --interactive</code> does not
-represent the topology of the revision graph.  Editing commits and
-rewording their commit messages should work fine, but attempts to
-reorder commits tend to produce counterintuitive results. Use
-<code>--rebase-merges</code> in such scenarios instead.</p>
+<p>The todo list presented by the deprecated <code>--preserve-merges --interactive</code>
+does not represent the topology of the revision graph (use <code>--rebase-merges</code>
+instead).  Editing commits and rewording their commit messages should work
+fine, but attempts to reorder commits tend to produce counterintuitive results.
+Use <code>--rebase-merges</code> in such scenarios instead.</p>
 </div>
 <div class="paragraph">
 <p>For example, an attempt to rearrange</p>
@@ -2109,7 +2108,7 @@ reorder commits tend to produce counterintuitive results. Use
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

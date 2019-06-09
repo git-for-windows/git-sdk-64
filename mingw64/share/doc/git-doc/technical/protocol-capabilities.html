@@ -437,6 +437,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+this document describes capabilities for versions 0 and 1 of the pack
+protocol. For version 2, please refer to the <a href="protocol-v2.html">protocol-v2</a>
+doc.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Servers SHOULD support all capabilities defined in this document.</p>
 </div>
@@ -661,6 +675,25 @@ or absence of particular features.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_symref">symref</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This parameterized capability is used to inform the receiver which symbolic ref
+points to which ref; for example, "symref=HEAD:refs/heads/master" tells the
+receiver that HEAD points to master. This capability can be repeated to
+represent multiple symrefs.</p>
+</div>
+<div class="paragraph">
+<p>Servers SHOULD include this capability for the HEAD symref if it is one of the
+refs being sent.</p>
+</div>
+<div class="paragraph">
+<p>Clients MAY use the parameters from this capability to select the proper initial
+branch when cloning a repository.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_shallow">shallow</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -858,7 +891,7 @@ from the packfile.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

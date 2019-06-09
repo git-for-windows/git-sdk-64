@@ -560,9 +560,15 @@ be fetched and updated, too (see <a href="git-config.html">git-config</a>(1) and
 <p>Perform the merge and commit the result. This option can
 be used to override --no-commit.</p>
 <div class="paragraph">
-<p>With --no-commit perform the merge but pretend the merge
-failed and do not autocommit, to give the user a chance to
-inspect and further tweak the merge result before committing.</p>
+<p>With --no-commit perform the merge and stop just before creating
+a merge commit, to give the user a chance to inspect and further
+tweak the merge result before committing.</p>
+</div>
+<div class="paragraph">
+<p>Note that fast-forward updates do not create a merge commit and
+therefore there is no way to stop those merges with --no-commit.
+Thus, if you want to ensure your branch is not changed or updated
+by the merge command, use --no-ff with --no-commit.</p>
 </div>
 </dd>
 <dt class="hdlist1">--edit</dt>
@@ -581,6 +587,14 @@ they run <code>git merge</code>. To make it easier to adjust such scripts to the
 updated behaviour, the environment variable <code>GIT_MERGE_AUTOEDIT</code> can be
 set to <code>no</code> at the beginning of them.</p>
 </div>
+</dd>
+<dt class="hdlist1">--cleanup=&lt;mode&gt;</dt>
+<dd>
+<p>This option determines how the merge message will be cleaned up before
+commiting. See <a href="git-commit.html">git-commit</a>(1) for more details. In addition, if
+the <em>&lt;mode&gt;</em> is given a value of <code>scissors</code>, scissors will be appended
+to <code>MERGE_MSG</code> before being passed on to the commit machinery in the
+case of a merge conflict.</p>
 </dd>
 <dt class="hdlist1">--ff</dt>
 <dd>
@@ -711,8 +725,9 @@ the local merge commits are included in the rebase (see
 <a href="git-rebase.html">git-rebase</a>(1) for details).</p>
 </div>
 <div class="paragraph">
-<p>When set to preserve, rebase with the <code>--preserve-merges</code> option passed
-to <code>git rebase</code> so that locally created merge commits will not be flattened.</p>
+<p>When set to <code>preserve</code> (deprecated in favor of <code>merges</code>), rebase with the
+<code>--preserve-merges</code> option passed to <code>git rebase</code> so that locally created
+merge commits will not be flattened.</p>
 </div>
 <div class="paragraph">
 <p>When false, merge the current branch into the upstream branch.</p>
@@ -890,7 +905,8 @@ standard error stream is not directed to a terminal.</p>
 <dd>
 <p>Transmit the given string to the server when communicating using
 protocol version 2.  The given string must not contain a NUL or LF
-character.
+character.  The server&#8217;s handling of server options, including
+unknown ones, is server-specific.
 When multiple <code>--server-option=&lt;option&gt;</code> are given, they are all
 sent to the other side in the order listed on the command line.</p>
 </dd>
@@ -1131,7 +1147,7 @@ may be used:</p>
 <div class="paragraph">
 <p>where &lt;address&gt; may be a path, a server and path, or an arbitrary
 URL-like string recognized by the specific remote helper being
-invoked. See <a href="gitremote-helpers.html">gitremote-helpers</a>(1) for details.</p>
+invoked. See <a href="gitremote-helpers.html">gitremote-helpers</a>(7) for details.</p>
 </div>
 <div class="paragraph">
 <p>If there are a large number of similarly-named remote repositories and
@@ -1667,7 +1683,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

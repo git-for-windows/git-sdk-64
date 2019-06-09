@@ -444,8 +444,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git diff-tree</em> [--stdin] [-m] [-s] [-v] [--no-commit-id] [--pretty]
-	      [-t] [-r] [-c | --cc] [--root] [&lt;common diff options&gt;]
-	      &lt;tree-ish&gt; [&lt;tree-ish&gt;] [&lt;path&gt;&#8230;&#8203;]</pre>
+	      [-t] [-r] [-c | --cc] [--combined-all-paths] [--root]
+	      [&lt;common diff options&gt;] &lt;tree-ish&gt; [&lt;tree-ish&gt;] [&lt;path&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -485,8 +485,20 @@ show the patch by default, or to cancel the effect of <code>--patch</code>.</p>
 <dt class="hdlist1">--unified=&lt;n&gt;</dt>
 <dd>
 <p>Generate diffs with &lt;n&gt; lines of context instead of
-the usual three.
+the usual three. Implies <code>--patch</code>.
 Implies <code>-p</code>.</p>
+</dd>
+<dt class="hdlist1">--output=&lt;file&gt;</dt>
+<dd>
+<p>Output to a specific file instead of stdout.</p>
+</dd>
+<dt class="hdlist1">--output-indicator-new=&lt;char&gt;</dt>
+<dt class="hdlist1">--output-indicator-old=&lt;char&gt;</dt>
+<dt class="hdlist1">--output-indicator-context=&lt;char&gt;</dt>
+<dd>
+<p>Specify the character used to indicate new, old or context
+lines in the generated patch. Normally they are <em>+</em>, <em>-</em> and
+' ' respectively.</p>
 </dd>
 <dt class="hdlist1">--raw</dt>
 <dd>
@@ -610,6 +622,7 @@ binary files, outputs two <code>-</code> instead of saying
 number of modified files, as well as number of added and deleted
 lines.</p>
 </dd>
+<dt class="hdlist1">-X[&lt;param1,param2,&#8230;&#8203;&gt;]</dt>
 <dt class="hdlist1">--dirstat[=&lt;param1,param2,&#8230;&#8203;&gt;]</dt>
 <dd>
 <p>Output the distribution of relative amount of changes for each
@@ -670,6 +683,14 @@ directories with less than 10% of the total amount of changed files,
 and accumulating child directory counts in the parent directories:
 <code>--dirstat=files,10,cumulative</code>.</p>
 </div>
+</dd>
+<dt class="hdlist1">--cumulative</dt>
+<dd>
+<p>Synonym for --dirstat=cumulative</p>
+</dd>
+<dt class="hdlist1">--dirstat-by-file[=&lt;param1,param2&gt;&#8230;&#8203;]</dt>
+<dd>
+<p>Synonym for --dirstat=files,param1,param2&#8230;&#8203;</p>
 </dd>
 <dt class="hdlist1">--summary</dt>
 <dd>
@@ -905,6 +926,10 @@ specified) <code>--word-diff-regex=&lt;regex&gt;</code>.</p>
 <p>Turn off rename detection, even when the configuration
 file gives the default to do so.</p>
 </dd>
+<dt class="hdlist1">--[no-]rename-empty</dt>
+<dd>
+<p>Whether to use empty blobs as rename source.</p>
+</dd>
 <dt class="hdlist1">--check</dt>
 <dd>
 <p>Warn if changes introduce conflict markers or whitespace errors.
@@ -936,7 +961,7 @@ line when generating patch format output.</p>
 <dt class="hdlist1">--binary</dt>
 <dd>
 <p>In addition to <code>--full-index</code>, output a binary diff that
-can be applied with <code>git-apply</code>.</p>
+can be applied with <code>git-apply</code>. Implies <code>--patch</code>.</p>
 </dd>
 <dt class="hdlist1">--abbrev[=&lt;n&gt;]</dt>
 <dd>
@@ -1507,6 +1532,14 @@ without modification.  When all hunks are uninteresting, the commit
 itself and the commit log message is not shown, just like in any other
 "empty diff" case.</p>
 </dd>
+<dt class="hdlist1">--combined-all-paths</dt>
+<dd>
+<p>This flag causes combined diffs (used for merge commits) to
+list the name of the file from all parents.  It thus only has
+effect when -c or --cc are specified, and is likely only
+useful if filename changes are detected (i.e. when either
+rename or copy detection have been requested).</p>
+</dd>
 <dt class="hdlist1">--always</dt>
 <dd>
 <p>Show the commit itself and the commit log message even
@@ -1681,120 +1714,264 @@ The title was &gt;&gt;t4119: test autocomputing -p&lt;n&gt; for traditional diff
 <div class="ulist">
 <ul>
 <li>
-<p><em>%H</em>: commit hash</p>
+<p>Placeholders that expand to a single literal character:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>%n</em></dt>
+<dd>
+<p>newline</p>
+</dd>
+<dt class="hdlist1"><em>%%</em></dt>
+<dd>
+<p>a raw <em>%</em></p>
+</dd>
+<dt class="hdlist1"><em>%x00</em></dt>
+<dd>
+<p>print a byte from a hex code</p>
+</dd>
+</dl>
+</div>
 </li>
 <li>
-<p><em>%h</em>: abbreviated commit hash</p>
+<p>Placeholders that affect formatting of later placeholders:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>%Cred</em></dt>
+<dd>
+<p>switch color to red</p>
+</dd>
+<dt class="hdlist1"><em>%Cgreen</em></dt>
+<dd>
+<p>switch color to green</p>
+</dd>
+<dt class="hdlist1"><em>%Cblue</em></dt>
+<dd>
+<p>switch color to blue</p>
+</dd>
+<dt class="hdlist1"><em>%Creset</em></dt>
+<dd>
+<p>reset color</p>
+</dd>
+<dt class="hdlist1"><em>%C(&#8230;&#8203;)</em></dt>
+<dd>
+<p>color specification, as described under Values in the
+"CONFIGURATION FILE" section of <a href="git-config.html">git-config</a>(1).  By
+default, colors are shown only when enabled for log output
+(by <code>color.diff</code>, <code>color.ui</code>, or <code>--color</code>, and respecting
+the <code>auto</code> settings of the former if we are going to a
+terminal). <code>%C(auto,...)</code> is accepted as a historical
+synonym for the default (e.g., <code>%C(auto,red)</code>). Specifying
+<code>%C(always,...)</code> will show the colors even when color is
+not otherwise enabled (though consider just using
+<code>--color=always</code> to enable color for the whole output,
+including this format and anything else git might color).
+<code>auto</code> alone (i.e. <code>%C(auto)</code>) will turn on auto coloring
+on the next placeholders until the color is switched
+again.</p>
+</dd>
+<dt class="hdlist1"><em>%m</em></dt>
+<dd>
+<p>left (<code>&lt;</code>), right (<code>&gt;</code>) or boundary (<code>-</code>) mark</p>
+</dd>
+<dt class="hdlist1"><em>%w([&lt;w&gt;[,&lt;i1&gt;[,&lt;i2&gt;]]])</em></dt>
+<dd>
+<p>switch line wrapping, like the -w option of
+<a href="git-shortlog.html">git-shortlog</a>(1).</p>
+</dd>
+<dt class="hdlist1"><em>%&lt;(&lt;N&gt;[,trunc|ltrunc|mtrunc])</em></dt>
+<dd>
+<p>make the next placeholder take at
+least N columns, padding spaces on
+the right if necessary.  Optionally
+truncate at the beginning (ltrunc),
+the middle (mtrunc) or the end
+(trunc) if the output is longer than
+N columns.  Note that truncating
+only works correctly with N &gt;= 2.</p>
+</dd>
+<dt class="hdlist1"><em>%&lt;|(&lt;N&gt;)</em></dt>
+<dd>
+<p>make the next placeholder take at least until Nth
+columns, padding spaces on the right if necessary</p>
+</dd>
+<dt class="hdlist1"><em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em></dt>
+<dd>
+<p>similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em> respectively,
+but padding spaces on the left</p>
+</dd>
+<dt class="hdlist1"><em>%&gt;&gt;(&lt;N&gt;)</em>, <em>%&gt;&gt;|(&lt;N&gt;)</em></dt>
+<dd>
+<p>similar to <em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em>
+respectively, except that if the next
+placeholder takes more spaces than given and
+there are spaces on its left, use those
+spaces</p>
+</dd>
+<dt class="hdlist1"><em>%&gt;&lt;(&lt;N&gt;)</em>, <em>%&gt;&lt;|(&lt;N&gt;)</em></dt>
+<dd>
+<p>similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
+respectively, but padding both sides
+(i.e. the text is centered)</p>
+</dd>
+</dl>
+</div>
 </li>
 <li>
-<p><em>%T</em>: tree hash</p>
-</li>
-<li>
-<p><em>%t</em>: abbreviated tree hash</p>
-</li>
-<li>
-<p><em>%P</em>: parent hashes</p>
-</li>
-<li>
-<p><em>%p</em>: abbreviated parent hashes</p>
-</li>
-<li>
-<p><em>%an</em>: author name</p>
-</li>
-<li>
-<p><em>%aN</em>: author name (respecting .mailmap, see <a href="git-shortlog.html">git-shortlog</a>(1)
+<p>Placeholders that expand to information extracted from the commit:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>%H</em></dt>
+<dd>
+<p>commit hash</p>
+</dd>
+<dt class="hdlist1"><em>%h</em></dt>
+<dd>
+<p>abbreviated commit hash</p>
+</dd>
+<dt class="hdlist1"><em>%T</em></dt>
+<dd>
+<p>tree hash</p>
+</dd>
+<dt class="hdlist1"><em>%t</em></dt>
+<dd>
+<p>abbreviated tree hash</p>
+</dd>
+<dt class="hdlist1"><em>%P</em></dt>
+<dd>
+<p>parent hashes</p>
+</dd>
+<dt class="hdlist1"><em>%p</em></dt>
+<dd>
+<p>abbreviated parent hashes</p>
+</dd>
+<dt class="hdlist1"><em>%an</em></dt>
+<dd>
+<p>author name</p>
+</dd>
+<dt class="hdlist1"><em>%aN</em></dt>
+<dd>
+<p>author name (respecting .mailmap, see <a href="git-shortlog.html">git-shortlog</a>(1)
 or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%ae</em>: author email</p>
-</li>
-<li>
-<p><em>%aE</em>: author email (respecting .mailmap, see
+</dd>
+<dt class="hdlist1"><em>%ae</em></dt>
+<dd>
+<p>author email</p>
+</dd>
+<dt class="hdlist1"><em>%aE</em></dt>
+<dd>
+<p>author email (respecting .mailmap, see <a href="git-shortlog.html">git-shortlog</a>(1)
+or <a href="git-blame.html">git-blame</a>(1))</p>
+</dd>
+<dt class="hdlist1"><em>%ad</em></dt>
+<dd>
+<p>author date (format respects --date= option)</p>
+</dd>
+<dt class="hdlist1"><em>%aD</em></dt>
+<dd>
+<p>author date, RFC2822 style</p>
+</dd>
+<dt class="hdlist1"><em>%ar</em></dt>
+<dd>
+<p>author date, relative</p>
+</dd>
+<dt class="hdlist1"><em>%at</em></dt>
+<dd>
+<p>author date, UNIX timestamp</p>
+</dd>
+<dt class="hdlist1"><em>%ai</em></dt>
+<dd>
+<p>author date, ISO 8601-like format</p>
+</dd>
+<dt class="hdlist1"><em>%aI</em></dt>
+<dd>
+<p>author date, strict ISO 8601 format</p>
+</dd>
+<dt class="hdlist1"><em>%cn</em></dt>
+<dd>
+<p>committer name</p>
+</dd>
+<dt class="hdlist1"><em>%cN</em></dt>
+<dd>
+<p>committer name (respecting .mailmap, see
 <a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%ad</em>: author date (format respects --date= option)</p>
-</li>
-<li>
-<p><em>%aD</em>: author date, RFC2822 style</p>
-</li>
-<li>
-<p><em>%ar</em>: author date, relative</p>
-</li>
-<li>
-<p><em>%at</em>: author date, UNIX timestamp</p>
-</li>
-<li>
-<p><em>%ai</em>: author date, ISO 8601-like format</p>
-</li>
-<li>
-<p><em>%aI</em>: author date, strict ISO 8601 format</p>
-</li>
-<li>
-<p><em>%cn</em>: committer name</p>
-</li>
-<li>
-<p><em>%cN</em>: committer name (respecting .mailmap, see
+</dd>
+<dt class="hdlist1"><em>%ce</em></dt>
+<dd>
+<p>committer email</p>
+</dd>
+<dt class="hdlist1"><em>%cE</em></dt>
+<dd>
+<p>committer email (respecting .mailmap, see
 <a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%ce</em>: committer email</p>
-</li>
-<li>
-<p><em>%cE</em>: committer email (respecting .mailmap, see
-<a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%cd</em>: committer date (format respects --date= option)</p>
-</li>
-<li>
-<p><em>%cD</em>: committer date, RFC2822 style</p>
-</li>
-<li>
-<p><em>%cr</em>: committer date, relative</p>
-</li>
-<li>
-<p><em>%ct</em>: committer date, UNIX timestamp</p>
-</li>
-<li>
-<p><em>%ci</em>: committer date, ISO 8601-like format</p>
-</li>
-<li>
-<p><em>%cI</em>: committer date, strict ISO 8601 format</p>
-</li>
-<li>
-<p><em>%d</em>: ref names, like the --decorate option of <a href="git-log.html">git-log</a>(1)</p>
-</li>
-<li>
-<p><em>%D</em>: ref names without the " (", ")" wrapping.</p>
-</li>
-<li>
-<p><em>%S</em>: ref name given on the command line by which the commit was reached
+</dd>
+<dt class="hdlist1"><em>%cd</em></dt>
+<dd>
+<p>committer date (format respects --date= option)</p>
+</dd>
+<dt class="hdlist1"><em>%cD</em></dt>
+<dd>
+<p>committer date, RFC2822 style</p>
+</dd>
+<dt class="hdlist1"><em>%cr</em></dt>
+<dd>
+<p>committer date, relative</p>
+</dd>
+<dt class="hdlist1"><em>%ct</em></dt>
+<dd>
+<p>committer date, UNIX timestamp</p>
+</dd>
+<dt class="hdlist1"><em>%ci</em></dt>
+<dd>
+<p>committer date, ISO 8601-like format</p>
+</dd>
+<dt class="hdlist1"><em>%cI</em></dt>
+<dd>
+<p>committer date, strict ISO 8601 format</p>
+</dd>
+<dt class="hdlist1"><em>%d</em></dt>
+<dd>
+<p>ref names, like the --decorate option of <a href="git-log.html">git-log</a>(1)</p>
+</dd>
+<dt class="hdlist1"><em>%D</em></dt>
+<dd>
+<p>ref names without the " (", ")" wrapping.</p>
+</dd>
+<dt class="hdlist1"><em>%S</em></dt>
+<dd>
+<p>ref name given on the command line by which the commit was reached
 (like <code>git log --source</code>), only works with <code>git log</code></p>
-</li>
-<li>
-<p><em>%e</em>: encoding</p>
-</li>
-<li>
-<p><em>%s</em>: subject</p>
-</li>
-<li>
-<p><em>%f</em>: sanitized subject line, suitable for a filename</p>
-</li>
-<li>
-<p><em>%b</em>: body</p>
-</li>
-<li>
-<p><em>%B</em>: raw body (unwrapped subject and body)</p>
-</li>
-<li>
-<p><em>%N</em>: commit notes</p>
-</li>
-<li>
-<p><em>%GG</em>: raw verification message from GPG for a signed commit</p>
-</li>
-<li>
-<p><em>%G?</em>: show "G" for a good (valid) signature,
+</dd>
+<dt class="hdlist1"><em>%e</em></dt>
+<dd>
+<p>encoding</p>
+</dd>
+<dt class="hdlist1"><em>%s</em></dt>
+<dd>
+<p>subject</p>
+</dd>
+<dt class="hdlist1"><em>%f</em></dt>
+<dd>
+<p>sanitized subject line, suitable for a filename</p>
+</dd>
+<dt class="hdlist1"><em>%b</em></dt>
+<dd>
+<p>body</p>
+</dd>
+<dt class="hdlist1"><em>%B</em></dt>
+<dd>
+<p>raw body (unwrapped subject and body)</p>
+</dd>
+<dt class="hdlist1"><em>%N</em></dt>
+<dd>
+<p>commit notes</p>
+</dd>
+<dt class="hdlist1"><em>%GG</em></dt>
+<dd>
+<p>raw verification message from GPG for a signed commit</p>
+</dd>
+<dt class="hdlist1"><em>%G?</em></dt>
+<dd>
+<p>show "G" for a good (valid) signature,
 "B" for a bad signature,
 "U" for a good signature with unknown validity,
 "X" for a good signature that has expired,
@@ -1802,123 +1979,113 @@ or <a href="git-blame.html">git-blame</a>(1))</p>
 "R" for a good signature made by a revoked key,
 "E" if the signature cannot be checked (e.g. missing key)
 and "N" for no signature</p>
-</li>
-<li>
-<p><em>%GS</em>: show the name of the signer for a signed commit</p>
-</li>
-<li>
-<p><em>%GK</em>: show the key used to sign a signed commit</p>
-</li>
-<li>
-<p><em>%GF</em>: show the fingerprint of the key used to sign a signed commit</p>
-</li>
-<li>
-<p><em>%GP</em>: show the fingerprint of the primary key whose subkey was used
+</dd>
+<dt class="hdlist1"><em>%GS</em></dt>
+<dd>
+<p>show the name of the signer for a signed commit</p>
+</dd>
+<dt class="hdlist1"><em>%GK</em></dt>
+<dd>
+<p>show the key used to sign a signed commit</p>
+</dd>
+<dt class="hdlist1"><em>%GF</em></dt>
+<dd>
+<p>show the fingerprint of the key used to sign a signed commit</p>
+</dd>
+<dt class="hdlist1"><em>%GP</em></dt>
+<dd>
+<p>show the fingerprint of the primary key whose subkey was used
 to sign a signed commit</p>
-</li>
-<li>
-<p><em>%gD</em>: reflog selector, e.g., <code>refs/stash@{1}</code> or
-<code>refs/stash@{2 minutes ago</code>}; the format follows the rules described
-for the <code>-g</code> option. The portion before the <code>@</code> is the refname as
-given on the command line (so <code>git log -g refs/heads/master</code> would
-yield <code>refs/heads/master@{0}</code>).</p>
-</li>
-<li>
-<p><em>%gd</em>: shortened reflog selector; same as <code>%gD</code>, but the refname
-portion is shortened for human readability (so <code>refs/heads/master</code>
-becomes just <code>master</code>).</p>
-</li>
-<li>
-<p><em>%gn</em>: reflog identity name</p>
-</li>
-<li>
-<p><em>%gN</em>: reflog identity name (respecting .mailmap, see
+</dd>
+<dt class="hdlist1"><em>%gD</em></dt>
+<dd>
+<p>reflog selector, e.g., <code>refs/stash@{1}</code> or <code>refs/stash@{2
+minutes ago</code>}; the format follows the rules described for the
+<code>-g</code> option. The portion before the <code>@</code> is the refname as
+given on the command line (so <code>git log -g refs/heads/master</code>
+would yield <code>refs/heads/master@{0}</code>).</p>
+</dd>
+<dt class="hdlist1"><em>%gd</em></dt>
+<dd>
+<p>shortened reflog selector; same as <code>%gD</code>, but the refname
+portion is shortened for human readability (so
+<code>refs/heads/master</code> becomes just <code>master</code>).</p>
+</dd>
+<dt class="hdlist1"><em>%gn</em></dt>
+<dd>
+<p>reflog identity name</p>
+</dd>
+<dt class="hdlist1"><em>%gN</em></dt>
+<dd>
+<p>reflog identity name (respecting .mailmap, see
 <a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
-</li>
-<li>
-<p><em>%ge</em>: reflog identity email</p>
-</li>
-<li>
-<p><em>%gE</em>: reflog identity email (respecting .mailmap, see
+</dd>
+<dt class="hdlist1"><em>%ge</em></dt>
+<dd>
+<p>reflog identity email</p>
+</dd>
+<dt class="hdlist1"><em>%gE</em></dt>
+<dd>
+<p>reflog identity email (respecting .mailmap, see
 <a href="git-shortlog.html">git-shortlog</a>(1) or <a href="git-blame.html">git-blame</a>(1))</p>
+</dd>
+<dt class="hdlist1"><em>%gs</em></dt>
+<dd>
+<p>reflog subject</p>
+</dd>
+<dt class="hdlist1"><em>%(trailers[:options])</em></dt>
+<dd>
+<p>display the trailers of the body as
+interpreted by
+<a href="git-interpret-trailers.html">git-interpret-trailers</a>(1). The
+<code>trailers</code> string may be followed by a colon
+and zero or more comma-separated options:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><em>key=&lt;K&gt;</em>: only show trailers with specified key. Matching is done
+case-insensitively and trailing colon is optional. If option is
+given multiple times trailer lines matching any of the keys are
+shown. This option automatically enables the <code>only</code> option so that
+non-trailer lines in the trailer block are hidden. If that is not
+desired it can be disabled with <code>only=false</code>.  E.g.,
+<code>%(trailers:key=Reviewed-by)</code> shows trailer lines with key
+<code>Reviewed-by</code>.</p>
 </li>
 <li>
-<p><em>%gs</em>: reflog subject</p>
+<p><em>only[=val]</em>: select whether non-trailer lines from the trailer
+block should be included. The <code>only</code> keyword may optionally be
+followed by an equal sign and one of <code>true</code>, <code>on</code>, <code>yes</code> to omit or
+<code>false</code>, <code>off</code>, <code>no</code> to show the non-trailer lines. If option is
+given without value it is enabled. If given multiple times the last
+value is used.</p>
 </li>
 <li>
-<p><em>%Cred</em>: switch color to red</p>
+<p><em>separator=&lt;SEP&gt;</em>: specify a separator inserted between trailer
+lines. When this option is not given each trailer line is
+terminated with a line feed character. The string SEP may contain
+the literal formatting codes described above. To use comma as
+separator one must use <code>%x2C</code> as it would otherwise be parsed as
+next option. If separator option is given multiple times only the
+last one is used. E.g., <code>%(trailers:key=Ticket,separator=%x2C )</code>
+shows all trailer lines whose key is "Ticket" separated by a comma
+and a space.</p>
 </li>
 <li>
-<p><em>%Cgreen</em>: switch color to green</p>
+<p><em>unfold[=val]</em>: make it behave as if interpret-trailer&#8217;s <code>--unfold</code>
+option was given. In same way as to for <code>only</code> it can be followed
+by an equal sign and explicit value. E.g.,
+<code>%(trailers:only,unfold=true)</code> unfolds and shows all trailer lines.</p>
 </li>
 <li>
-<p><em>%Cblue</em>: switch color to blue</p>
+<p><em>valueonly[=val]</em>: skip over the key part of the trailer line and only
+show the value part. Also this optionally allows explicit value.</p>
 </li>
-<li>
-<p><em>%Creset</em>: reset color</p>
-</li>
-<li>
-<p><em>%C(&#8230;&#8203;)</em>: color specification, as described under Values in the
-"CONFIGURATION FILE" section of <a href="git-config.html">git-config</a>(1).
-By default, colors are shown only when enabled for log output (by
-<code>color.diff</code>, <code>color.ui</code>, or <code>--color</code>, and respecting the <code>auto</code>
-settings of the former if we are going to a terminal). <code>%C(auto,...)</code>
-is accepted as a historical synonym for the default (e.g.,
-<code>%C(auto,red)</code>). Specifying <code>%C(always,...)</code> will show the colors
-even when color is not otherwise enabled (though consider
-just using <code>--color=always</code> to enable color for the whole output,
-including this format and anything else git might color).  <code>auto</code>
-alone (i.e. <code>%C(auto)</code>) will turn on auto coloring on the next
-placeholders until the color is switched again.</p>
-</li>
-<li>
-<p><em>%m</em>: left (<code>&lt;</code>), right (<code>&gt;</code>) or boundary (<code>-</code>) mark</p>
-</li>
-<li>
-<p><em>%n</em>: newline</p>
-</li>
-<li>
-<p><em>%%</em>: a raw <em>%</em></p>
-</li>
-<li>
-<p><em>%x00</em>: print a byte from a hex code</p>
-</li>
-<li>
-<p><em>%w([&lt;w&gt;[,&lt;i1&gt;[,&lt;i2&gt;]]])</em>: switch line wrapping, like the -w option of
-<a href="git-shortlog.html">git-shortlog</a>(1).</p>
-</li>
-<li>
-<p><em>%&lt;(&lt;N&gt;[,trunc|ltrunc|mtrunc])</em>: make the next placeholder take at
-least N columns, padding spaces on the right if necessary.
-Optionally truncate at the beginning (ltrunc), the middle (mtrunc)
-or the end (trunc) if the output is longer than N columns.
-Note that truncating only works correctly with N &gt;= 2.</p>
-</li>
-<li>
-<p><em>%&lt;|(&lt;N&gt;)</em>: make the next placeholder take at least until Nth
-columns, padding spaces on the right if necessary</p>
-</li>
-<li>
-<p><em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em>: similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
-respectively, but padding spaces on the left</p>
-</li>
-<li>
-<p><em>%&gt;&gt;(&lt;N&gt;)</em>, <em>%&gt;&gt;|(&lt;N&gt;)</em>: similar to <em>%&gt;(&lt;N&gt;)</em>, <em>%&gt;|(&lt;N&gt;)</em>
-respectively, except that if the next placeholder takes more spaces
-than given and there are spaces on its left, use those spaces</p>
-</li>
-<li>
-<p><em>%&gt;&lt;(&lt;N&gt;)</em>, <em>%&gt;&lt;|(&lt;N&gt;)</em>: similar to <em>%&lt;(&lt;N&gt;)</em>, <em>%&lt;|(&lt;N&gt;)</em>
-respectively, but padding both sides (i.e. the text is centered)</p>
-</li>
-<li>
-<p>%(trailers[:options]): display the trailers of the body as interpreted
-by <a href="git-interpret-trailers.html">git-interpret-trailers</a>(1). The <code>trailers</code> string may be
-followed by a colon and zero or more comma-separated options. If the
-<code>only</code> option is given, omit non-trailer lines from the trailer block.
-If the <code>unfold</code> option is given, behave as if interpret-trailer&#8217;s
-<code>--unfold</code> option was given.  E.g., <code>%(trailers:only,unfold)</code> to do
-both.</p>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
 </li>
 </ul>
 </div>
@@ -1994,206 +2161,345 @@ equivalent:</p>
 $ git log -2 --pretty=%h 4da45bef</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Raw output format</p>
-</div>
 </li>
 </ul>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_raw_output_format">Raw output format</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The raw output format from "git-diff-index", "git-diff-tree",
+"git-diff-files" and "git diff --raw" are very similar.</p>
+</div>
+<div class="paragraph">
+<p>These commands all compare two sets of things; what is
+compared differs:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">git-diff-index &lt;tree-ish&gt;</dt>
+<dd>
+<p>compares the &lt;tree-ish&gt; and the files on the filesystem.</p>
+</dd>
+<dt class="hdlist1">git-diff-index --cached &lt;tree-ish&gt;</dt>
+<dd>
+<p>compares the &lt;tree-ish&gt; and the index.</p>
+</dd>
+<dt class="hdlist1">git-diff-tree [-r] &lt;tree-ish-1&gt; &lt;tree-ish-2&gt; [&lt;pattern&gt;&#8230;&#8203;]</dt>
+<dd>
+<p>compares the trees named by the two arguments.</p>
+</dd>
+<dt class="hdlist1">git-diff-files [&lt;pattern&gt;&#8230;&#8203;]</dt>
+<dd>
+<p>compares the index and the files on the filesystem.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The "git-diff-tree" command begins its output by printing the hash of
+what is being compared. After that, all the commands print one output
+line per changed file.</p>
+</div>
+<div class="paragraph">
+<p>An output line is formatted this way:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre>The raw output format from "git-diff-index", "git-diff-tree",
-"git-diff-files" and "git diff --raw" are very similar.
-
-These commands all compare two sets of things; what is
-compared differs:
-
-git-diff-index &lt;tree-ish&gt;::
-        compares the &lt;tree-ish&gt; and the files on the filesystem.
-
-git-diff-index --cached &lt;tree-ish&gt;::
-        compares the &lt;tree-ish&gt; and the index.
-
-git-diff-tree [-r] &lt;tree-ish-1&gt; &lt;tree-ish-2&gt; [&lt;pattern&gt;...]::
-        compares the trees named by the two arguments.
-
-git-diff-files [&lt;pattern&gt;...]::
-        compares the index and the files on the filesystem.
-
-The "git-diff-tree" command begins its output by printing the hash of
-what is being compared. After that, all the commands print one output
-line per changed file.
-
-An output line is formatted this way:
-
-------------------------------------------------
-in-place edit  :100644 100644 bcd1234 0123456 M file0
+<pre>in-place edit  :100644 100644 bcd1234 0123456 M file0
 copy-edit      :100644 100644 abcd123 1234567 C68 file1 file2
 rename-edit    :100644 100644 abcd123 1234567 R86 file1 file3
 create         :000000 100644 0000000 1234567 A file4
 delete         :100644 000000 1234567 0000000 D file5
-unmerged       :000000 000000 0000000 0000000 U file6
-------------------------------------------------
-
-That is, from the left to the right:
-
-. a colon.
-. mode for "src"; 000000 if creation or unmerged.
-. a space.
-. mode for "dst"; 000000 if deletion or unmerged.
-. a space.
-. sha1 for "src"; 0\{40\} if creation or unmerged.
-. a space.
-. sha1 for "dst"; 0\{40\} if creation, unmerged or "look at work tree".
-. a space.
-. status, followed by optional "score" number.
-. a tab or a NUL when `-z` option is used.
-. path for "src"
-. a tab or a NUL when `-z` option is used; only exists for C or R.
-. path for "dst"; only exists for C or R.
-. an LF or a NUL when `-z` option is used, to terminate the record.
-
-Possible status letters are:
-
-- A: addition of a file
-- C: copy of a file into a new one
-- D: deletion of a file
-- M: modification of the contents or mode of a file
-- R: renaming of a file
-- T: change in the type of the file
-- U: file is unmerged (you must complete the merge before it can
-be committed)
-- X: "unknown" change type (most probably a bug, please report it)
-
-Status letters C and R are always followed by a score (denoting the
+unmerged       :000000 000000 0000000 0000000 U file6</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That is, from the left to the right:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>a colon.</p>
+</li>
+<li>
+<p>mode for "src"; 000000 if creation or unmerged.</p>
+</li>
+<li>
+<p>a space.</p>
+</li>
+<li>
+<p>mode for "dst"; 000000 if deletion or unmerged.</p>
+</li>
+<li>
+<p>a space.</p>
+</li>
+<li>
+<p>sha1 for "src"; 0{40} if creation or unmerged.</p>
+</li>
+<li>
+<p>a space.</p>
+</li>
+<li>
+<p>sha1 for "dst"; 0{40} if creation, unmerged or "look at work tree".</p>
+</li>
+<li>
+<p>a space.</p>
+</li>
+<li>
+<p>status, followed by optional "score" number.</p>
+</li>
+<li>
+<p>a tab or a NUL when <code>-z</code> option is used.</p>
+</li>
+<li>
+<p>path for "src"</p>
+</li>
+<li>
+<p>a tab or a NUL when <code>-z</code> option is used; only exists for C or R.</p>
+</li>
+<li>
+<p>path for "dst"; only exists for C or R.</p>
+</li>
+<li>
+<p>an LF or a NUL when <code>-z</code> option is used, to terminate the record.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Possible status letters are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A: addition of a file</p>
+</li>
+<li>
+<p>C: copy of a file into a new one</p>
+</li>
+<li>
+<p>D: deletion of a file</p>
+</li>
+<li>
+<p>M: modification of the contents or mode of a file</p>
+</li>
+<li>
+<p>R: renaming of a file</p>
+</li>
+<li>
+<p>T: change in the type of the file</p>
+</li>
+<li>
+<p>U: file is unmerged (you must complete the merge before it can
+be committed)</p>
+</li>
+<li>
+<p>X: "unknown" change type (most probably a bug, please report it)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Status letters C and R are always followed by a score (denoting the
 percentage of similarity between the source and target of the move or
 copy).  Status letter M may be followed by a score (denoting the
-percentage of dissimilarity) for file rewrites.
-
-&lt;sha1&gt; is shown as all 0's if a file is new on the filesystem
-and it is out of sync with the index.
-
-Example:
-
-------------------------------------------------
-:100644 100644 5be4a4a 0000000 M file.c
-------------------------------------------------
-
-Without the `-z` option, pathnames with "unusual" characters are
-quoted as explained for the configuration variable `core.quotePath`
-(see linkgit:git-config[1]).  Using `-z` the filename is output
-verbatim and the line is terminated by a NUL byte.
-
-diff format for merges
-----------------------
-
-"git-diff-tree", "git-diff-files" and "git-diff --raw"
-can take `-c` or `--cc` option
+percentage of dissimilarity) for file rewrites.</p>
+</div>
+<div class="paragraph">
+<p>&lt;sha1&gt; is shown as all 0&#8217;s if a file is new on the filesystem
+and it is out of sync with the index.</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>:100644 100644 5be4a4a 0000000 M file.c</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Without the <code>-z</code> option, pathnames with "unusual" characters are
+quoted as explained for the configuration variable <code>core.quotePath</code>
+(see <a href="git-config.html">git-config</a>(1)).  Using <code>-z</code> the filename is output
+verbatim and the line is terminated by a NUL byte.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_diff_format_for_merges">diff format for merges</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>"git-diff-tree", "git-diff-files" and "git-diff --raw"
+can take <code>-c</code> or <code>--cc</code> option
 to generate diff output also for merge commits.  The output differs
-from the format described above in the following way:
-
-. there is a colon for each parent
-. there are more "src" modes and "src" sha1
-. status is concatenated status characters for each parent
-. no optional "score" number
-. single path, only for "dst"
-
-Example:
-
-------------------------------------------------
-::100644 100644 100644 fabadb8 cc95eb0 4866510 MM	describe.c
-------------------------------------------------
-
-Note that 'combined diff' lists only files which were modified from
-all parents.
-
-
-Generating patches with -p
---------------------------
-
-When "git-diff-index", "git-diff-tree", or "git-diff-files" are run
-with a `-p` option, "git diff" without the `--raw` option, or
+from the format described above in the following way:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>there is a colon for each parent</p>
+</li>
+<li>
+<p>there are more "src" modes and "src" sha1</p>
+</li>
+<li>
+<p>status is concatenated status characters for each parent</p>
+</li>
+<li>
+<p>no optional "score" number</p>
+</li>
+<li>
+<p>tab-separated pathname(s) of the file</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For <code>-c</code> and <code>--cc</code>, only the destination or final path is shown even
+if the file was renamed on any side of history.  With
+<code>--combined-all-paths</code>, the name of the path in each parent is shown
+followed by the name of the path in the merge commit.</p>
+</div>
+<div class="paragraph">
+<p>Examples for <code>-c</code> and <code>--cc</code> without <code>--combined-all-paths</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>::100644 100644 100644 fabadb8 cc95eb0 4866510 MM	desc.c
+::100755 100755 100755 52b7a2d 6d1ac04 d2ac7d7 RM	bar.sh
+::100644 100644 100644 e07d6c5 9042e82 ee91881 RR	phooey.c</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Examples when <code>--combined-all-paths</code> added to either <code>-c</code> or <code>--cc</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>::100644 100644 100644 fabadb8 cc95eb0 4866510 MM	desc.c	desc.c	desc.c
+::100755 100755 100755 52b7a2d 6d1ac04 d2ac7d7 RM	foo.sh	bar.sh	bar.sh
+::100644 100644 100644 e07d6c5 9042e82 ee91881 RR	fooey.c	fuey.c	phooey.c</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that <em>combined diff</em> lists only files which were modified from
+all parents.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generating_patches_with_p">Generating patches with -p</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When "git-diff-index", "git-diff-tree", or "git-diff-files" are run
+with a <code>-p</code> option, "git diff" without the <code>--raw</code> option, or
 "git log" with the "-p" option, they
 do not produce the output described above; instead they produce a
 patch file.  You can customize the creation of such patches via the
-`GIT_EXTERNAL_DIFF` and the `GIT_DIFF_OPTS` environment variables.
-
-What the -p option produces is slightly different from the traditional
-diff format:
-
-1.   It is preceded with a "git diff" header that looks like this:
-
-       diff --git a/file1 b/file2
-+
-The `a/` and `b/` filenames are the same unless rename/copy is
+<code>GIT_EXTERNAL_DIFF</code> and the <code>GIT_DIFF_OPTS</code> environment variables.</p>
+</div>
+<div class="paragraph">
+<p>What the -p option produces is slightly different from the traditional
+diff format:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>It is preceded with a "git diff" header that looks like this:</p>
+<div class="literalblock">
+<div class="content">
+<pre>diff --git a/file1 b/file2</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>a/</code> and <code>b/</code> filenames are the same unless rename/copy is
 involved.  Especially, even for a creation or a deletion,
-`/dev/null` is _not_ used in place of the `a/` or `b/` filenames.
-+
-When rename/copy is involved, `file1` and `file2` show the
+<code>/dev/null</code> is <em>not</em> used in place of the <code>a/</code> or <code>b/</code> filenames.</p>
+</div>
+<div class="paragraph">
+<p>When rename/copy is involved, <code>file1</code> and <code>file2</code> show the
 name of the source file of the rename/copy and the name of
-the file that rename/copy produces, respectively.
-
-2.   It is followed by one or more extended header lines:
-
-       old mode &lt;mode&gt;
-       new mode &lt;mode&gt;
-       deleted file mode &lt;mode&gt;
-       new file mode &lt;mode&gt;
-       copy from &lt;path&gt;
-       copy to &lt;path&gt;
-       rename from &lt;path&gt;
-       rename to &lt;path&gt;
-       similarity index &lt;number&gt;
-       dissimilarity index &lt;number&gt;
-       index &lt;hash&gt;..&lt;hash&gt; &lt;mode&gt;
-+
-File modes are printed as 6-digit octal numbers including the file type
-and file permission bits.
-+
-Path names in extended headers do not include the `a/` and `b/` prefixes.
-+
-The similarity index is the percentage of unchanged lines, and
+the file that rename/copy produces, respectively.</p>
+</div>
+</li>
+<li>
+<p>It is followed by one or more extended header lines:</p>
+<div class="literalblock">
+<div class="content">
+<pre>old mode &lt;mode&gt;
+new mode &lt;mode&gt;
+deleted file mode &lt;mode&gt;
+new file mode &lt;mode&gt;
+copy from &lt;path&gt;
+copy to &lt;path&gt;
+rename from &lt;path&gt;
+rename to &lt;path&gt;
+similarity index &lt;number&gt;
+dissimilarity index &lt;number&gt;
+index &lt;hash&gt;..&lt;hash&gt; &lt;mode&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>File modes are printed as 6-digit octal numbers including the file type
+and file permission bits.</p>
+</div>
+<div class="paragraph">
+<p>Path names in extended headers do not include the <code>a/</code> and <code>b/</code> prefixes.</p>
+</div>
+<div class="paragraph">
+<p>The similarity index is the percentage of unchanged lines, and
 the dissimilarity index is the percentage of changed lines.  It
 is a rounded down integer, followed by a percent sign.  The
 similarity index value of 100% is thus reserved for two equal
 files, while 100% dissimilarity means that no line from the old
-file made it into the new one.
-+
-The index line includes the SHA-1 checksum before and after the change.
+file made it into the new one.</p>
+</div>
+<div class="paragraph">
+<p>The index line includes the SHA-1 checksum before and after the change.
 The &lt;mode&gt; is included if the file mode does not change; otherwise,
-separate lines indicate the old and the new mode.
-
-3.  Pathnames with "unusual" characters are quoted as explained for
-    the configuration variable `core.quotePath` (see
-    linkgit:git-config[1]).
-
-4.  All the `file1` files in the output refer to files before the
-    commit, and all the `file2` files refer to files after the commit.
-    It is incorrect to apply each change to each file sequentially.  For
-    example, this patch will swap a and b:
-
-      diff --git a/a b/b
-      rename from a
-      rename to b
-      diff --git a/b b/a
-      rename from b
-      rename to a
-
-
-combined diff format
---------------------
-
-Any diff-generating command can take the `-c` or `--cc` option to
-produce a 'combined diff' when showing a merge. This is the default
-format when showing merges with linkgit:git-diff[1] or
-linkgit:git-show[1]. Note also that you can give the `-m` option to any
+separate lines indicate the old and the new mode.</p>
+</div>
+</li>
+<li>
+<p>Pathnames with "unusual" characters are quoted as explained for
+the configuration variable <code>core.quotePath</code> (see
+<a href="git-config.html">git-config</a>(1)).</p>
+</li>
+<li>
+<p>All the <code>file1</code> files in the output refer to files before the
+commit, and all the <code>file2</code> files refer to files after the commit.
+It is incorrect to apply each change to each file sequentially.  For
+example, this patch will swap a and b:</p>
+<div class="literalblock">
+<div class="content">
+<pre>diff --git a/a b/b
+rename from a
+rename to b
+diff --git a/b b/a
+rename from b
+rename to a</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_combined_diff_format">combined diff format</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Any diff-generating command can take the <code>-c</code> or <code>--cc</code> option to
+produce a <em>combined diff</em> when showing a merge. This is the default
+format when showing merges with <a href="git-diff.html">git-diff</a>(1) or
+<a href="git-show.html">git-show</a>(1). Note also that you can give the <code>-m</code> option to any
 of these commands to force generation of diffs with individual parents
-of a merge.
-
-A 'combined diff' format looks like this:
-
-------------
-diff --combined describe.c
+of a merge.</p>
+</div>
+<div class="paragraph">
+<p>A <em>combined diff</em> format looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>diff --combined describe.c
 index fabadb8,cc95eb0..4866510
 --- a/describe.c
 +++ b/describe.c
@@ -2219,152 +2525,250 @@ index fabadb8,cc95eb0..4866510
  +
 	if (!initialized) {
 		initialized = 1;
-		for_each_ref(get_name);
-------------
-
-1.   It is preceded with a "git diff" header, that looks like
-     this (when `-c` option is used):
-
-       diff --combined file
-+
-or like this (when `--cc` option is used):
-
-       diff --cc file
-
-2.   It is followed by one or more extended header lines
-     (this example shows a merge with two parents):
-
-       index &lt;hash&gt;,&lt;hash&gt;..&lt;hash&gt;
-       mode &lt;mode&gt;,&lt;mode&gt;..&lt;mode&gt;
-       new file mode &lt;mode&gt;
-       deleted file mode &lt;mode&gt;,&lt;mode&gt;
-+
-The `mode &lt;mode&gt;,&lt;mode&gt;..&lt;mode&gt;` line appears only if at least one of
+		for_each_ref(get_name);</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>It is preceded with a "git diff" header, that looks like
+this (when <code>-c</code> option is used):</p>
+<div class="literalblock">
+<div class="content">
+<pre>diff --combined file</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or like this (when <code>--cc</code> option is used):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>diff --cc file</pre>
+</div>
+</div>
+</li>
+<li>
+<p>It is followed by one or more extended header lines
+(this example shows a merge with two parents):</p>
+<div class="literalblock">
+<div class="content">
+<pre>index &lt;hash&gt;,&lt;hash&gt;..&lt;hash&gt;
+mode &lt;mode&gt;,&lt;mode&gt;..&lt;mode&gt;
+new file mode &lt;mode&gt;
+deleted file mode &lt;mode&gt;,&lt;mode&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>mode &lt;mode&gt;,&lt;mode&gt;..&lt;mode&gt;</code> line appears only if at least one of
 the &lt;mode&gt; is different from the rest. Extended headers with
 information about detected contents movement (renames and
 copying detection) are designed to work with diff of two
-&lt;tree-ish&gt; and are not used by combined diff format.
-
-3.   It is followed by two-line from-file/to-file header
-
-       --- a/file
-       +++ b/file
-+
-Similar to two-line header for traditional 'unified' diff
-format, `/dev/null` is used to signal created or deleted
-files.
-
-4.   Chunk header format is modified to prevent people from
-     accidentally feeding it to `patch -p1`. Combined diff format
-     was created for review of merge commit changes, and was not
-     meant for apply. The change is similar to the change in the
-     extended 'index' header:
-
-       @@@ &lt;from-file-range&gt; &lt;from-file-range&gt; &lt;to-file-range&gt; @@@
-+
-There are (number of parents + 1) `@` characters in the chunk
-header for combined diff format.
-
-Unlike the traditional 'unified' diff format, which shows two
-files A and B with a single column that has `-` (minus --
-appears in A but removed in B), `+` (plus -- missing in A but
-added to B), or `" "` (space -- unchanged) prefix, this format
-compares two or more files file1, file2,... with one file X, and
+&lt;tree-ish&gt; and are not used by combined diff format.</p>
+</div>
+</li>
+<li>
+<p>It is followed by two-line from-file/to-file header</p>
+<div class="literalblock">
+<div class="content">
+<pre>--- a/file
++++ b/file</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Similar to two-line header for traditional <em>unified</em> diff
+format, <code>/dev/null</code> is used to signal created or deleted
+files.</p>
+</div>
+<div class="paragraph">
+<p>However, if the --combined-all-paths option is provided, instead of a
+two-line from-file/to-file you get a N+1 line from-file/to-file header,
+where N is the number of parents in the merge commit</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>--- a/file
+--- a/file
+--- a/file
++++ b/file</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This extended format can be useful if rename or copy detection is
+active, to allow you to see the original name of the file in different
+parents.</p>
+</div>
+</li>
+<li>
+<p>Chunk header format is modified to prevent people from
+accidentally feeding it to <code>patch -p1</code>. Combined diff format
+was created for review of merge commit changes, and was not
+meant for apply. The change is similar to the change in the
+extended <em>index</em> header:</p>
+<div class="literalblock">
+<div class="content">
+<pre>@@@ &lt;from-file-range&gt; &lt;from-file-range&gt; &lt;to-file-range&gt; @@@</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are (number of parents + 1) <code>@</code> characters in the chunk
+header for combined diff format.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Unlike the traditional <em>unified</em> diff format, which shows two
+files A and B with a single column that has <code>-</code> (minus&#8201;&#8212;&#8201;appears in A but removed in B), <code>+</code> (plus&#8201;&#8212;&#8201;missing in A but
+added to B), or <code>" "</code> (space&#8201;&#8212;&#8201;unchanged) prefix, this format
+compares two or more files file1, file2,&#8230;&#8203; with one file X, and
 shows how X differs from each of fileN.  One column for each of
-fileN is prepended to the output line to note how X's line is
-different from it.
-
-A `-` character in the column N means that the line appears in
-fileN but it does not appear in the result.  A `+` character
+fileN is prepended to the output line to note how X&#8217;s line is
+different from it.</p>
+</div>
+<div class="paragraph">
+<p>A <code>-</code> character in the column N means that the line appears in
+fileN but it does not appear in the result.  A <code>+</code> character
 in the column N means that the line appears in the result,
 and fileN does not have that line (in other words, the line was
-added, from the point of view of that parent).
-
-In the above example output, the function signature was changed
-from both files (hence two `-` removals from both file1 and
-file2, plus `++` to mean one line that was added does not appear
+added, from the point of view of that parent).</p>
+</div>
+<div class="paragraph">
+<p>In the above example output, the function signature was changed
+from both files (hence two <code>-</code> removals from both file1 and
+file2, plus <code>++</code> to mean one line that was added does not appear
 in either file1 or file2).  Also eight other lines are the same
-from file1 but do not appear in file2 (hence prefixed with `+`).
-
-When shown by `git diff-tree -c`, it compares the parents of a
+from file1 but do not appear in file2 (hence prefixed with <code>+</code>).</p>
+</div>
+<div class="paragraph">
+<p>When shown by <code>git diff-tree -c</code>, it compares the parents of a
 merge commit with the merge result (i.e. file1..fileN are the
-parents).  When shown by `git diff-files -c`, it compares the
+parents).  When shown by <code>git diff-files -c</code>, it compares the
 two unresolved merge parents with the working tree file
 (i.e. file1 is stage 2 aka "our version", file2 is stage 3 aka
-"their version").
-
-
-other diff formats
-------------------
-
-The `--summary` option describes newly added, deleted, renamed and
-copied files.  The `--stat` option adds diffstat(1) graph to the
+"their version").</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_other_diff_formats">other diff formats</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>--summary</code> option describes newly added, deleted, renamed and
+copied files.  The <code>--stat</code> option adds diffstat(1) graph to the
 output.  These options can be combined with other options, such as
-`-p`, and are meant for human consumption.
-
-When showing a change that involves a rename or a copy, `--stat` output
+<code>-p</code>, and are meant for human consumption.</p>
+</div>
+<div class="paragraph">
+<p>When showing a change that involves a rename or a copy, <code>--stat</code> output
 formats the pathnames compactly by combining common prefix and suffix of
-the pathnames.  For example, a change that moves `arch/i386/Makefile` to
-`arch/x86/Makefile` while modifying 4 lines will be shown like this:
-
-------------------------------------
-arch/{i386 =&gt; x86}/Makefile    |   4 +--
-------------------------------------
-
-The `--numstat` option gives the diffstat(1) information but is designed
-for easier machine consumption.  An entry in `--numstat` output looks
-like this:
-
-----------------------------------------
-1	2	README
-3	1	arch/{i386 =&gt; x86}/Makefile
-----------------------------------------
-
-That is, from left to right:
-
-. the number of added lines;
-. a tab;
-. the number of deleted lines;
-. a tab;
-. pathname (possibly with rename/copy information);
-. a newline.
-
-When `-z` output option is in effect, the output is formatted this way:
-
-----------------------------------------
-1	2	README NUL
-3	1	NUL arch/i386/Makefile NUL arch/x86/Makefile NUL
-----------------------------------------
-
-That is:
-
-. the number of added lines;
-. a tab;
-. the number of deleted lines;
-. a tab;
-. a NUL (only exists if renamed/copied);
-. pathname in preimage;
-. a NUL (only exists if renamed/copied);
-. pathname in postimage (only exists if renamed/copied);
-. a NUL.
-
-The extra `NUL` before the preimage path in renamed case is to allow
+the pathnames.  For example, a change that moves <code>arch/i386/Makefile</code> to
+<code>arch/x86/Makefile</code> while modifying 4 lines will be shown like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>arch/{i386 =&gt; x86}/Makefile    |   4 +--</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>--numstat</code> option gives the diffstat(1) information but is designed
+for easier machine consumption.  An entry in <code>--numstat</code> output looks
+like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>1	2	README
+3	1	arch/{i386 =&gt; x86}/Makefile</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That is, from left to right:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>the number of added lines;</p>
+</li>
+<li>
+<p>a tab;</p>
+</li>
+<li>
+<p>the number of deleted lines;</p>
+</li>
+<li>
+<p>a tab;</p>
+</li>
+<li>
+<p>pathname (possibly with rename/copy information);</p>
+</li>
+<li>
+<p>a newline.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>When <code>-z</code> output option is in effect, the output is formatted this way:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>1	2	README NUL
+3	1	NUL arch/i386/Makefile NUL arch/x86/Makefile NUL</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That is:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>the number of added lines;</p>
+</li>
+<li>
+<p>a tab;</p>
+</li>
+<li>
+<p>the number of deleted lines;</p>
+</li>
+<li>
+<p>a tab;</p>
+</li>
+<li>
+<p>a NUL (only exists if renamed/copied);</p>
+</li>
+<li>
+<p>pathname in preimage;</p>
+</li>
+<li>
+<p>a NUL (only exists if renamed/copied);</p>
+</li>
+<li>
+<p>pathname in postimage (only exists if renamed/copied);</p>
+</li>
+<li>
+<p>a NUL.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The extra <code>NUL</code> before the preimage path in renamed case is to allow
 scripts that read the output to tell if the current record being read is
 a single-path record or a rename/copy record without reading ahead.
-After reading added and deleted lines, reading up to `NUL` would yield
-the pathname, but if that is `NUL`, the record will show two paths.
-
-GIT
----
-Part of the linkgit:git[1] suite</pre>
+After reading added and deleted lines, reading up to <code>NUL</code> would yield
+the pathname, but if that is <code>NUL</code>, the record will show two paths.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_git">GIT</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Part of the <a href="git.html">git</a>(1) suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>

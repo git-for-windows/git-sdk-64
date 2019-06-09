@@ -443,11 +443,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git submodule</em> [--quiet] add [&lt;options&gt;] [--] &lt;repository&gt; [&lt;path&gt;]
+<pre class="content"><em>git submodule</em> [--quiet] [--cached]
+<em>git submodule</em> [--quiet] add [&lt;options&gt;] [--] &lt;repository&gt; [&lt;path&gt;]
 <em>git submodule</em> [--quiet] status [--cached] [--recursive] [--] [&lt;path&gt;&#8230;&#8203;]
 <em>git submodule</em> [--quiet] init [--] [&lt;path&gt;&#8230;&#8203;]
 <em>git submodule</em> [--quiet] deinit [-f|--force] (--all|[--] &lt;path&gt;&#8230;&#8203;)
 <em>git submodule</em> [--quiet] update [&lt;options&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
+<em>git submodule</em> [--quiet] set-branch [&lt;options&gt;] [--] &lt;path&gt;
 <em>git submodule</em> [--quiet] summary [&lt;options&gt;] [--] [&lt;path&gt;&#8230;&#8203;]
 <em>git submodule</em> [--quiet] foreach [--recursive] &lt;command&gt;
 <em>git submodule</em> [--quiet] sync [--recursive] [--] [&lt;path&gt;&#8230;&#8203;]
@@ -469,6 +471,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_commands">COMMANDS</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>With no arguments, shows the status of existing submodules.  Several
+subcommands are available to perform operations on the submodules.</p>
+</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">add [-b &lt;branch&gt;] [-f|--force] [--name &lt;name&gt;] [--reference &lt;repository&gt;] [--depth &lt;depth&gt;] [--] &lt;repository&gt; [&lt;path&gt;]</dt>
@@ -482,7 +488,7 @@ This may be either an absolute URL, or (if it begins with ./
 or ../), the location relative to the superproject&#8217;s default remote
 repository (Please note that to specify a repository <em>foo.git</em>
 which is located right next to a superproject <em>bar.git</em>, you&#8217;ll
-have to use <em>../foo.git</em> instead of <em>./foo.git</em> - as one might expect
+have to use <code>../foo.git</code> instead of <code>./foo.git</code> - as one might expect
 when following the rules for relative URLs - because the evaluation
 of relative URLs in Git is identical to that of relative directories).</p>
 </div>
@@ -654,6 +660,13 @@ registered submodules, and update any nested submodules within.</p>
 </div>
 </div>
 </dd>
+<dt class="hdlist1">set-branch -d|--default)|(-b|--branch &lt;branch&gt; [--] &lt;path&gt;</dt>
+<dd>
+<p>Sets the default remote tracking branch for the submodule. The
+<code>--branch</code> option allows the remote branch to be specified. The
+<code>--default</code> option removes the submodule.&lt;name&gt;.branch configuration
+key, which causes the tracking branch to default to <em>master</em>.</p>
+</dd>
 <dt class="hdlist1">summary [--cached|--files] [(-n|--summary-limit) &lt;n&gt;] [commit] [--] [&lt;path&gt;&#8230;&#8203;]</dt>
 <dd>
 <p>Show commit summary between the given commit (defaults to HEAD) and
@@ -762,14 +775,15 @@ standard error stream is not directed to a terminal.</p>
 <p>This option is only valid for the deinit command. Unregister all
 submodules in the working tree.</p>
 </dd>
-<dt class="hdlist1">-b</dt>
-<dt class="hdlist1">--branch</dt>
+<dt class="hdlist1">-b &lt;branch&gt;</dt>
+<dt class="hdlist1">--branch &lt;branch&gt;</dt>
 <dd>
 <p>Branch of repository to add as submodule.
 The name of the branch is recorded as <code>submodule.&lt;name&gt;.branch</code> in
 <code>.gitmodules</code> for <code>update --remote</code>.  A special value of <code>.</code> is used to
 indicate that the name of the branch in the submodule should be the
-same name as the current branch in the current repository.</p>
+same name as the current branch in the current repository.  If the
+option is not specified, it defaults to <em>master</em>.</p>
 </dd>
 <dt class="hdlist1">-f</dt>
 <dt class="hdlist1">--force</dt>
@@ -978,7 +992,7 @@ for details.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-02-26 19:31:11 UTC
+Last updated 2019-06-08 06:14:44 UTC
 </div>
 </div>
 </body>
