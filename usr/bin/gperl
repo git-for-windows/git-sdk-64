@@ -5,20 +5,20 @@
 # Source file position: <groff-source>/contrib/gperl/gperl.pl
 # Installed position: <prefix>/bin/gperl
 
-# Copyright (C) 2014  Free Software Foundation, Inc.
+# Copyright (C) 2014-2018 Free Software Foundation, Inc.
 
 # Written by Bernd Warken <groff-bernd.warken-72@web.de>.
 
 my $version = '1.2.6';
 
-# This file is part of `gperl', which is part of `groff'.
+# This file is part of 'gperl', which is part of 'groff'.
 
-# `groff' is free software; you can redistribute it and/or modify it
+# 'groff' is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 
-# `groff' is distributed in the hope that it will be useful, but
+# 'groff' is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
@@ -38,7 +38,7 @@ use File::Temp qw/ tempfile tempdir /;
 # needed for temporary dir
 use File::Spec;
 
-# for `copy' and `move'
+# for 'copy' and 'move'
 use File::Copy;
 
 # for fileparse, dirname and basename
@@ -65,10 +65,10 @@ our $File_split_env_sh;
 our $File_version_sh;
 our $Groff_Version;
 
-my $before_make;		# script before run of `make'
+my $before_make;		# script before run of 'make'
 {
   my $at = '@';
-  $before_make = 1 if '1.22.3' eq "${at}VERSION${at}";
+  $before_make = 1 if '1.22.4' eq "${at}VERSION${at}";
 }
 
 my %at_at;
@@ -91,15 +91,15 @@ if ($before_make) {
 
 foreach (@ARGV) {
   if ( /^(-h|--h|--he|--hel|--help)$/ ) {
-    print q(Usage for the `gperl' program:);
+    print q(Usage for the 'gperl' program:);
     print 'gperl [-] [--] [filespec...] normal file name arguments';
     print 'gperl [-h|--help]        gives usage information';
     print 'gperl [-v|--version]     displays the version number';
-    print q(This program is a `groff' preprocessor that handles Perl ) .
-      q(parts in `roff' files.);
+    print q(This program is a 'groff' preprocessor that handles Perl ) .
+      q(parts in 'roff' files.);
     exit;
   } elsif ( /^(-v|--v|--ve|--ver|--vers|--versi|--versio|--version)$/ ) {
-    print q(`gperl' version ) . $version;
+    print q('gperl' version ) . $version;
     exit;
   }
 }
@@ -138,7 +138,7 @@ foreach (<>) {
   my $line = $_;
   my $is_dot_Perl = $line =~ /^[.']\s*Perl(|\s+.*)$/;
 
-  unless ( $is_dot_Perl ) {	# not a `.Perl' line
+  unless ( $is_dot_Perl ) {	# not a '.Perl' line
     if ( $perl_mode ) {		# is running in Perl mode
       print OUT $line;
     } else {			# normal line, not Perl-related
@@ -149,7 +149,7 @@ foreach (<>) {
 
 
   ##########
-  # now the line is a `.Perl' line
+  # now the line is a '.Perl' line
 
   my $args = $line;
   $args =~ s/\s+$//;	# remove final spaces
@@ -160,11 +160,11 @@ foreach (<>) {
   ##########
   # start Perl mode
   if ( @args == 0 || @args == 1 && $args[0] eq 'start' ) {
-    # For `.Perl' no args or first arg `start' means opening `Perl' mode.
+    # For '.Perl' no args or first arg 'start' means opening 'Perl' mode.
     # Everything else means an ending command.
     if ( $perl_mode ) {
-      # `.Perl' was started twice, ignore
-      print STDERR q(`.Perl' starter was run several times);
+      # '.Perl' was started twice, ignore
+      print STDERR q('.Perl' starter was run several times);
       next;
     } else {	# new Perl start
       $perl_mode = 1;
@@ -183,15 +183,15 @@ foreach (<>) {
     next;
   }
 
-  $perl_mode = 0;	# `Perl' stop calling is correct
-  close OUT;		# close the storing of `Perl' commands
+  $perl_mode = 0;	# 'Perl' stop calling is correct
+  close OUT;		# close the storing of 'Perl' commands
 
   ##########
-  # run this `Perl' part, later on about storage of the result
+  # run this 'Perl' part, later on about storage of the result
   # array stores prints with \n
   my @print_res = `perl $out_file`;
 
-  # remove `stop' arg if exists
+  # remove 'stop' arg if exists
   shift @args if ( $args[0] eq 'stop' );
 
   if ( @args == 0 ) {

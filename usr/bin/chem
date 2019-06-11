@@ -8,13 +8,13 @@
 my $Copyright = 'Copyright (C) 2006-2014 Free Software Foundation, Inc.';
 # Written by Bernd Warken <groff-bernd.warken-72@web.de>.
 
-# This file is part of `chem', which is part of `groff'.
+# This file is part of 'chem', which is part of 'groff'.
 
-# `groff' is free software; you can redistribute it and/or modify it
+# 'groff' is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License (GPL) version 2 as
 # published by the Free Software Foundation.
 
-# `groff' is distributed in the hope that it will be useful, but
+# 'groff' is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
@@ -29,7 +29,7 @@ my $Copyright = 'Copyright (C) 2006-2014 Free Software Foundation, Inc.';
 my $Program_Version = '1.0.5';
 
 # this setting of the groff version is only used before make is run,
-# otherwise 1.22.3 will set it.
+# otherwise 1.22.4 will set it.
 my $Groff_Version_Preset='1.20preset';
 
 # test on Perl version
@@ -57,10 +57,10 @@ my $File_pic_tmac;
 
 BEGIN {
   {
-    my $before_make;		# script before run of `make'
+    my $before_make;		# script before run of 'make'
     {
       my $at = '@';
-      $before_make = 1 if '1.22.3' eq "${at}VERSION${at}";
+      $before_make = 1 if '1.22.4' eq "${at}VERSION${at}";
     }
 
     my %at_at;
@@ -74,11 +74,11 @@ BEGIN {
       $Groff_Version = '';
       $Chem_Name = 'chem';
     } else {
-      $Groff_Version = '1.22.3';
+      $Groff_Version = '1.22.4';
       $at_at{'BINDIR'} = '/usr/bin';
       $at_at{'G'} = '';
-      $at_at{'PICDIR'} = '/usr/share/groff/1.22.3/pic';
-      $at_at{'TMACDIR'} = '/usr/share/groff/1.22.3/tmac';
+      $at_at{'PICDIR'} = '/usr/share/groff/1.22.4/pic';
+      $at_at{'TMACDIR'} = '/usr/share/groff/1.22.4/tmac';
       $File_chem_pic =
 	File::Spec->catfile($at_at{'PICDIR'}, 'chem.pic');
       $File_pic_tmac = File::Spec->catfile($at_at{'TMACDIR'}, 'pic.tmac');
@@ -337,9 +337,9 @@ my $Line = '';
       return 1;
     }
     if ($line =~ /^[\.']\s*cstart\s*$/) {
-      # line: `.cstart'
+      # line: '.cstart'
       if ($is_chem) {
-	&error("additional `.cstart'; chem is already active.");
+	&error("additional '.cstart'; chem is already active.");
 	return 1;
       }
       unless ($is_pic) {
@@ -352,10 +352,10 @@ my $Line = '';
     }
 ### main_line()
     if ($line =~ /^\s*begin\s+chem\s*$/) {
-      # line: `begin chem'
+      # line: 'begin chem'
       if ($is_pic) {
 	if ($is_chem) {
-	  &error("additional `begin chem'; chem is already active.");
+	  &error("additional 'begin chem'; chem is already active.");
 	  return 1;
 	}
 	$is_chem = 'begin chem';
@@ -366,9 +366,9 @@ my $Line = '';
       return 1;
     }
     if ($line =~ /^[\.']\s*cend\s*/) {
-      # line `.cend'
+      # line '.cend'
       if ($is_chem) {
-	&error("you end chem with `.cend', but started it with `begin chem'.")
+	&error("you end chem with '.cend', but started it with 'begin chem'.")
 	  if $is_chem eq 'begin chem';
 	if ($is_pic eq 'by chem') {
 	  &print_pe();
@@ -381,9 +381,9 @@ my $Line = '';
       return 1;
     }
     if ($line =~ /^\s*end\s*$/) {
-      # line: `end'
+      # line: 'end'
       if ($is_chem) {
-	&error("you end chem with `end', but started it with `.cstart'.")
+	&error("you end chem with 'end', but started it with '.cstart'.")
 	  if $is_chem eq '.cstart';
 	if ($is_pic eq 'by chem') {
 	  &print_pe();
@@ -421,10 +421,10 @@ my $Line = '';
 
     if ($Words[0] eq 'textht') {
       if ($#Words == 0) {
-	&error("`textht' needs a single argument.");
+	&error("'textht' needs a single argument.");
 	return 0;
       }
-      &error("only the last argument is taken for `textht', " .
+      &error("only the last argument is taken for 'textht', " .
 	     "all others are ignored.")
 	unless $#Words <= 1 or ($#Words == 2 && $Words[1] =~ /^=/);
       $Params{'textht'} = $Words[$#Words];
@@ -433,10 +433,10 @@ my $Line = '';
 ### main_line()
     if ($Words[0] eq 'cwid') {	# character width
       if ($#Words == 0) {
-	&error("`cwid' needs a single argument.");
+	&error("'cwid' needs a single argument.");
 	return 0;
       }
-      &error("only the last argument is taken for `cwid', " .
+      &error("only the last argument is taken for 'cwid', " .
 	     "all others are ignored.")
 	unless $#Words <= 1 or ($#Words == 2 && $Words[1] =~ /^=/);
       $Params{'cwid'} = $Words[$#Words];
@@ -444,10 +444,10 @@ my $Line = '';
     }
     if ($Words[0] eq 'db') {	# bond length
       if ($#Words == 0) {
-	&error("`db' needs a single argument.");
+	&error("'db' needs a single argument.");
 	return 0;
       }
-      &error("only the last argument is taken for `db', " .
+      &error("only the last argument is taken for 'db', " .
 	     "all others are ignored.")
 	unless $#Words <= 1 or ($#Words == 2 && $Words[1] =~ /^=/);
       $Params{'db'} = $Words[$#Words];
@@ -456,10 +456,10 @@ my $Line = '';
     if ($Words[0] eq 'size') {	# size for all parts of the whole diagram
       my $size;
       if ($#Words == 0) {
-	&error("`size' needs a single argument.");
+	&error("'size' needs a single argument.");
 	return 0;
       }
-      &error("only the last argument is taken for `size', " .
+      &error("only the last argument is taken for 'size', " .
 	     "all others are ignored.")
 	unless $#Words <= 1 or ($#Words == 2 && $Words[1] =~ /^=/);
       if ($Words[$#Words] <= 4) {
@@ -578,7 +578,7 @@ my $Line = '';
     return 1 unless $line;
 #    print STDERR "# $Line\n";
 #    &error('This is not a chem command.  To include a command for pic, ' .
-#	   "add `pic' as the first word to the command.");
+#           "add 'pic' as the first word to the command.");
     print $line, "\n";
     $Last_Type = $Types{'OTHER'};
     1;
@@ -636,7 +636,7 @@ sub bond {
   $moiety = '';
   for ($i = 1; $i <= $#Words; $i++) {
     if ($Words[$i] eq ';') {
-      &error("a colon `;' must be followed by a space and a single word.")
+      &error("a colon ';' must be followed by a space and a single word.")
        if $i != $#Words - 1;
       $moiety = $Words[$i + 1] if $#Words > $i;
       $#Words = $i - 1;

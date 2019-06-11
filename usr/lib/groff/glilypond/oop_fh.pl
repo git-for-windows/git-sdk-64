@@ -3,29 +3,29 @@ my $License = q*
 # Legalese
 ########################################################################
 
-Source file position: `<groff-source>/contrib/glilypond/oop_fh.pl'
-Installed position: `<prefix>/lib/groff/glilypond/oop_fh.pl'
+Source file position: '<groff-source>/contrib/glilypond/oop_fh.pl'
+Installed position: '<prefix>/lib/groff/glilypond/oop_fh.pl'
 
-Copyright (C) 2013-2013  Free Software Foundation, Inc.
+Copyright (C) 2013-2013 Free Software Foundation, Inc.
   Written by Bernd Warken <groff-bernd.warken-72@web.de>
 
-This file is part of `glilypond', which is part of `GNU groff'.
+This file is part of 'glilypond', which is part of 'GNU groff'.
 
-glilypond - integrate `lilypond' into `groff' files
+glilypond - integrate 'lilypond' into 'groff' files
 
-  `GNU groff' is free software: you can redistribute it and/or modify it
-under the terms of the `GNU General Public License' as published by the
-`Free Software Foundation', either version 3 of the License, or (at your
+  'GNU groff' is free software: you can redistribute it and/or modify it
+under the terms of the 'GNU General Public License' as published by the
+'Free Software Foundation', either version 3 of the License, or (at your
 option) any later version.
 
-  `GNU groff' is distributed in the hope that it will be useful, but
+  'GNU groff' is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the `GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 'GNU
 General Public License' for more details.
 
-  You should have received a copy of the 'GNU General Public License`
-along with `groff', see the files `COPYING' and `LICENSE' in the top
-directory of the `groff' source package.  If not, see
+  You should have received a copy of the 'GNU General Public License'
+along with 'groff', see the files 'COPYING' and 'LICENSE' in the top
+directory of the 'groff' source package.  If not, see
 <http://www.gnu.org/licenses/>.
 *;
 
@@ -135,7 +135,7 @@ use integer;
       die "$file is a directory" if ( -d $file );
     }
     open $self->{'fh'}, ">", $self->{'file'}
-      or die "could not open file `$file' for writing: $!";
+      or die "could not open file '$file' for writing: $!";
     $self->{'opened'} = main::TRUE;
   }
 
@@ -230,7 +230,7 @@ use integer;
 
   sub new {
     my ( $pkg, $file ) = @_;
-    die "File `$file' cannot be read." unless ( -f $file && -r $file );
+    die "File '$file' cannot be read." unless ( -f $file && -r $file );
     bless {
 	   'fh' => undef,
 	   'file' => $file,
@@ -251,7 +251,7 @@ use integer;
       die "$file is a directory" if ( -d $file );
     }
     open $self->{'fh'}, "<", $self->{'file'}
-      or die "could not read file `$file': $!";
+      or die "could not read file '$file': $!";
     $self->{'opened'} = main::TRUE;
   }
 

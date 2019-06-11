@@ -6,20 +6,22 @@
 # Source file position: <groff-source>/src/roff/grog/subs.pl
 # Installed position: <prefix>/lib/grog/subs.pl
 
-# Copyright (C) 1993-2014  Free Software Foundation, Inc.
+# Copyright (C) 1993-2018 Free Software Foundation, Inc.
 # This file was split from grog.pl and put under GPL2 by
 #               Bernd Warken <groff-bernd.warken-72@web.de>.
 # The macros for identifying the devices were taken from Ralph
-# Corderoy's `grog.sh' of 2006.
+# Corderoy's 'grog.sh' of 2006.
 
-# This file is part of `grog', which is part of `groff'.
+# Last update: 10 Sep 2015
 
-# `groff' is free software; you can redistribute it and/or modify it
+# This file is part of 'grog', which is part of 'groff'.
+
+# 'groff' is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 
-# `groff' is distributed in the hope that it will be useful, but
+# 'groff' is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
@@ -40,6 +42,9 @@ use File::Spec;
 # printing of hashes: my %hash = ...; print Dumper(\%hash);
 use Data::Dumper;
 
+# for running shell based programs within Perl; use `` instead of
+# use IPC::System::Simple qw(capture capturex run runx system systemx);
+
 $\ = "\n";
 
 # my $Sp = "[\\s\\n]";
@@ -47,15 +52,16 @@ $\ = "\n";
 # my $Sp = '' if $arg eq '-C';
 my $Sp = '';
 
-# from `src/roff/groff/groff.cpp' near `getopt_long'
+# from 'src/roff/groff/groff.cpp' near 'getopt_long'
 my $groff_opts =
   'abcCd:D:eEf:F:gGhiI:jJkK:lL:m:M:n:No:pP:r:RsStT:UvVw:W:XzZ';
 
 my @Command = ();		# stores the final output
-my @Mparams = ();		# stores the options `-m*'
-my @devices = ();
-my $do_run = 0;			# run generated `groff' command
-my $pdf_with_ligatures = 0;	# `-P-y -PU' for `pdf' device
+my @Mparams = ();		# stores the options '-m*'
+my @devices = ();		# stores -T
+
+my $do_run = 0;			# run generated 'groff' command
+my $pdf_with_ligatures = 0;	# '-P-y -PU' for 'pdf' device
 my $with_warnings = 0;
 
 my $Prog = $0;
@@ -105,6 +111,7 @@ my %Groff =
    'AI' => 0,		# ms
    'AU' => 0,		# ms
    'NH' => 0,		# ms
+   'TH_later' => 0,	# TH not 1st command is ms
    'TL' => 0,		# ms
    'UL' => 0,		# ms
    'XP' => 0,		# ms
@@ -118,7 +125,7 @@ my %Groff =
    'OP' => 0,		# man
    'SS' => 0,		# man
    'SY' => 0,		# man
-   'TH' => 0,		# man
+   'TH_first' => 0,	# TH as 1st command is man
    'TP' => 0,		# man
    'UR' => 0,		# man
    'YS' => 0,		# man
@@ -165,6 +172,16 @@ my $tmac_ext = '';
 
 
 ########################################################################
+# err()
+########################################################################
+
+sub err {
+  my $text = shift;
+  print STDERR $text;
+}
+
+
+########################################################################
 # handle_args()
 ########################################################################
 
@@ -208,7 +225,7 @@ sub handle_args {
       next;
     }
 
-    # now $arg starts with `-'
+    # now $arg starts with '-'
 
     if ($arg eq '-') {
       unless ($was_minus) {
@@ -308,11 +325,11 @@ sub handle_file_ext {
     # test for each file name in the arguments
     unless ( open(FILE, $file eq "-" ? $file : "< $file") ) {
       print STDERR __FILE__ . ' ' .  __LINE__ . ': ' .
-	"$Prog: can't open \`$file\': $!";
+	"$Prog: can't open \'$file\': $!";
       next;
     }
 
-    next unless ( $file =~ /\./ ); # file name has no dot `.'
+    next unless ( $file =~ /\./ ); # file name has no dot '.'
 
 ##### handle_file_ext()
     # get extension
@@ -330,20 +347,20 @@ sub handle_file_ext {
     next if ( $ext =~ /^(
 			 chem|
 			 eqn|
-			 pic|
-			 tbl|
-			 ref|
-			 t|
-			 tr|
 			 g|
-			 groff|
-			 roff|
-			 www|
-			 hdtbl|
 			 grap|
 			 grn|
+			 groff|
+			 hdtbl|
 			 pdfroff|
-			 pinyin
+			 pic|
+			 pinyin|
+			 ref|
+			 roff|
+			 t|
+			 tbl|
+			 tr|
+			 www
 		       )$/x );
 
 ##### handle_file_ext()
@@ -354,9 +371,9 @@ sub handle_file_ext {
 		      n|
 		      1b
 		    )$/x ) {
-      # `man|n' from `groff' source
-      # `1b' from `heirloom'
-      # `[1-9lno]' from man-pages
+      # 'man|n' from 'groff' source
+      # '1b' from 'heirloom'
+      # '[1-9lno]' from man-pages
       if ( $tmac_ext && $tmac_ext ne 'man' ) {
 	# found tmac is not 'man'
 	print STDERR __FILE__ . ' ' .  __LINE__ . ': ' .
@@ -413,7 +430,7 @@ sub handle_whole_files {
   foreach my $file ( @filespec ) {
     unless ( open(FILE, $file eq "-" ? $file : "< $file") ) {
       print STDERR __FILE__ . ' ' .  __LINE__ . ': ' .
-	"$Prog: can't open \`$file\': $!";
+	"$Prog: can't open \'$file\': $!";
       next;
     }
     my $line = <FILE>; # get single line
@@ -430,7 +447,7 @@ sub handle_whole_files {
 	# not an option line
 	&do_line( $line, $file );
       }
-    } else { # emptry line
+    } else { # empty line
       next;
     }
 
@@ -447,13 +464,13 @@ sub handle_whole_files {
 # do_first_line()
 ########################################################################
 
-# As documented for the `man' program, the first line can be
+# As documented for the 'man' program, the first line can be
 # used as a groff option line.  This is done by:
 # - start the line with '\" (apostrophe, backslash, double quote)
 # - add a space character
-# - a word using the following characters can be appended: `egGjJpRst'.
+# - a word using the following characters can be appended: 'egGjJpRst'.
 #     Each of these characters means an option for the generated
-#     `groff' command line, e.g. `-t'.
+#     'groff' command line, e.g. '-t'.
 
 sub do_first_line {
   my ( $line, $file ) = @_;
@@ -537,6 +554,8 @@ sub do_first_line {
 # do_line()
 ########################################################################
 
+my $before_first_command = 1; # for check of .TH
+
 sub do_line {
   my ( $line, $file ) = @_;
 
@@ -551,6 +570,16 @@ sub do_line {
   return if ( $line =~ /^\.$/ );	# ignore .
   return if ( $line =~ /^\.\.$/ );	# ignore ..
 
+  if ( $before_first_command ) { # so far without 1st command
+    if ( $line =~ /^\.TH/ ) {
+      # check if .TH is 1st command for man
+      $Groff{'TH_first'} = 1 if ( $line =~ /^\.\s*TH/ );
+    }
+    if ( $line =~ /^\./ ) {
+      $before_first_command = 0;
+    }
+  }
+
   # split command
   $line =~ /^(\.\w+)\s*(.*)$/;
   my $command = $1;
@@ -562,12 +591,12 @@ sub do_line {
   ######################################################################
   # soelim
   if ( $line =~ /^\.(do)?\s*(so|mso|PS\s*<|SO_START).*$/ ) {
-    # `.so', `.mso', `.PS<...', `.SO_START'
+    # '.so', '.mso', '.PS<...', '.SO_START'
     $Groff{'soelim'}++;
     return;
   }
   if ( $line =~ /^\.(do)?\s*(so|mso|PS\s*<|SO_START).*$/ ) {
-    # `.do so', `.do mso', `.do PS<...', `.do SO_START'
+    # '.do so', '.do mso', '.do PS<...', '.do SO_START'
     $Groff{'soelim'}++;
     return;
   }
@@ -658,6 +687,12 @@ sub do_line {
     $Groff{'tbl'}++;		# for tbl
     return;
   }
+  if ( $command =~ /^\.TH$/ ) {
+    unless ( $Groff{'TH_first'} ) {
+      $Groff{'TH_later'}++;		# for tbl
+    }
+    return;
+  }
 
 
   ######################################################################
@@ -673,8 +708,8 @@ sub do_line {
   }
 
 ####### do_line()
-  # In the old version of -mdoc `Oo' is a toggle, in the new it's
-  # closed by `Oc'.
+  # In the old version of -mdoc 'Oo' is a toggle, in the new it's
+  # closed by 'Oc'.
   if ( $command =~ /^\.Oc$/ ) {
     $Groff{'Oc'}++;		# only for modern mdoc
     return;
@@ -777,10 +812,6 @@ sub do_line {
     $Groff{'SY'}++;
     return;
   }
-  if ( $command =~ /^\.TH$/ ) {
-    $Groff{'TH'}++;		# for man
-    return;
-  }
   if ( $command =~ /^\.TP$/ ) {	# for man
     $Groff{'TP'}++;
     return;
@@ -871,43 +902,37 @@ my $correct_tmac = '';
 sub make_groff_device {
   # globals: @devices
 
-  # default device is empty, i.e. it is `ps' when without `-T'
-  return '' unless ( @devices );
-
-  for ( @devices ) {
-    print STDERR __FILE__ . ' ' .  __LINE__ . ': ' .
-      $_ . ': not a suitable device'
-      unless (
-	      /^(
-		 dvi|
-		 html|
-		 xhtml|
-		 lbp|
-		 lj4|
-		 ps|
-		 pdf|
-		 ascii|
-		 cp1047|
-		 latin1|
-		 utf8
-	       )$/x );
-  }
+  # default device is 'ps' when without '-T'
+  my $device;
+  push @devices, 'ps' unless ( @devices );
 
 ###### make_groff_device()
-  my $device = pop( @devices );
-  if ( @devices ) {
-    for ( @devices ) {
-      next if ( $_ eq $device );
-      print STDERR __FILE__ . ' ' .  __LINE__ . ': ' .
-	'additional device: ' . $_;
+  for my $d ( @devices ) {
+    if ( $d =~ /^(		# suitable devices
+		  dvi|
+		  html|
+		  xhtml|
+		  lbp|
+		  lj4|
+		  ps|
+		  pdf|
+		  ascii|
+		  cp1047|
+		  latin1|
+		  utf8
+		)$/x ) {
+###### make_groff_device()
+      $device = $d;
+    } else {
+      next;
     }
-    print STDERR __FILE__ . ' ' .  __LINE__ . ': ' .
-      'device ' . $device . ' taken instead';
-  }
 
-  return '' unless ( $device );
-  push @Command, '-T';
-  push @Command, $device;
+
+    if ( $device ) {
+      push @Command, '-T';
+      push @Command, $device;
+    }
+  }
 
 ###### make_groff_device()
   if ( $device eq 'pdf' ) {
@@ -917,11 +942,11 @@ sub make_groff_device {
     } else {	# no --ligature argument
       if ( $with_warnings ) {
 	print STDERR <<EOF;
-If you have trouble with ligatures like `fi' in the `groff' output, you
+If you have trouble with ligatures like 'fi' in the 'groff' output, you
 can proceed as one of
-- add `grog' option `--with_ligatures' or
-- use the `grog' option combination `-P-y -PU' or
-- try to remove the font named similar to `fonts-texgyre' from your system.
+- add 'grog' option '--with_ligatures' or
+- use the 'grog' option combination '-P-y -PU' or
+- try to remove the font named similar to 'fonts-texgyre' from your system.
 EOF
       }	# end of warning
     }	# end of ligature
@@ -936,7 +961,7 @@ EOF
 sub make_groff_preproc {
   # globals: %Groff, @preprograms, @Command
 
-  # preprocessors without `groff' option
+  # preprocessors without 'groff' option
   if ( $Groff{'lilypond'} ) {
     push @preprograms, 'glilypond';
   }
@@ -947,7 +972,7 @@ sub make_groff_preproc {
     push @preprograms, 'gpinyin';
   }
 
-  # preprocessors with `groff' option
+  # preprocessors with 'groff' option
   if ( ( $Groff{'PS'} ||  $Groff{'PF'} ) &&  $Groff{'PE'} ) {
     $Groff{'pic'} = 1;
   }
@@ -985,9 +1010,9 @@ sub make_groff_preproc {
 sub make_groff_tmac_man_ms {
   # globals: @filespec, $tmac_ext, %Groff
 
-  # `man' requests, not from `ms'
+  # 'man' requests, not from 'ms'
   if ( $Groff{'SS'} || $Groff{'SY'} || $Groff{'OP'} ||
-       $Groff{'TH'} || $Groff{'TP'} || $Groff{'UR'} ) {
+       $Groff{'TH_first'} || $Groff{'TP'} || $Groff{'UR'} ) {
     $Groff{'man'} = 1;
     push(@m, '-man');
 
@@ -999,12 +1024,13 @@ sub make_groff_tmac_man_ms {
   }
 
 ###### make_groff_tmac_man_ms()
-  # `ms' requests, not from `man'
+  # 'ms' requests, not from 'man'
   if (
       $Groff{'1C'} || $Groff{'2C'} ||
       $Groff{'AB'} || $Groff{'AE'} || $Groff{'AI'} || $Groff{'AU'} ||
       $Groff{'BX'} || $Groff{'CD'} || $Groff{'DA'} || $Groff{'DE'} ||
-      $Groff{'DS'} || $Groff{'LD'} || $Groff{'ID'} || $Groff{'NH'} ||
+      $Groff{'DS'} || $Groff{'ID'} || $Groff{'LD'} || $Groff{'NH'} ||
+      $Groff{'TH_later'} ||
       $Groff{'TL'} || $Groff{'UL'} || $Groff{'XP'}
      ) {
     $Groff{'ms'} = 1;
@@ -1019,7 +1045,7 @@ sub make_groff_tmac_man_ms {
 
 ###### make_groff_tmac_man_ms()
 
-  # both `man' and `ms' requests
+  # both 'man' and 'ms' requests
   if ( $Groff{'P'} || $Groff{'IP'}  ||
        $Groff{'LP'} || $Groff{'PP'} || $Groff{'SH'} ) {
     if ( $tmac_ext eq 'man' ) {
@@ -1103,6 +1129,7 @@ sub make_groff_line_rest {
     $file_args_included = 0;
   }
 
+###### make_groff_line_rest()
   foreach (@Command) {
     next unless /\s/;
     # when one argument has several words, use accents
@@ -1110,6 +1137,7 @@ sub make_groff_line_rest {
   }
 
 
+###### make_groff_line_rest()
   ##########
   # -m arguments
   my $nr_m_guessed = scalar @m;
@@ -1118,7 +1146,6 @@ sub make_groff_line_rest {
       'argument for -m found: ' . @m;
   }
 
-###### make_groff_line()
 
   my $nr_m_args = scalar @Mparams;	# m-arguments for grog
   my $last_m_arg = '';	# last provided -m option
@@ -1127,13 +1154,14 @@ sub make_groff_line_rest {
     # ignore other -m arguments and the found ones
     $last_m_arg = $Mparams[-1];	# take the last -m argument
     print STDERR __FILE__ . ' ' .  __LINE__ . ': ' .
-      $Prog . ": more than 1 `-m' argument: @Mparams";
+      $Prog . ": more than 1 '-m' argument: @Mparams";
     print STDERR __FILE__ . ' ' .  __LINE__ . ': ' .
       'We take the last one: ' . $last_m_arg;
   } elsif ( $nr_m_args == 1 ) {
     $last_m_arg = $Mparams[0];
   }
 
+###### make_groff_line_rest()
   my $final_m = '';
   if ( $last_m_arg ) {
     my $is_equal = 0;
@@ -1154,7 +1182,7 @@ sub make_groff_line_rest {
 	'The argument is taken.';
       $final_m = $last_m_arg;
     }
-###### make_groff_line()
+###### make_groff_line_rest()
   } else {	# no -m arg provided
     if ( $nr_m_guessed > 1 ) {
       print STDERR __FILE__ . ' ' .  __LINE__ . ': ' .
@@ -1172,7 +1200,7 @@ sub make_groff_line_rest {
   push(@Command, @filespec) unless ( $file_args_included );
 
   #########
-  # execute the `groff' command here with option `--run'
+  # execute the 'groff' command here with option '--run'
   if ( $do_run ) { # with --run
     print STDERR __FILE__ . ' ' .  __LINE__ . ': ' . "@Command";
     my $cmd = join ' ', @Command;
@@ -1182,7 +1210,7 @@ sub make_groff_line_rest {
   }
 
   exit 0;
-} # make_groff_line()
+} # make_groff_line_rest()
 
 
 ########################################################################
@@ -1194,24 +1222,24 @@ sub help {
 usage: grog [option]... [--] [filespec]...
 
 "filespec" is either the name of an existing, readable file or "-" for
-standard input.  If no `filespec' is specified, standard input is
-assumed automatically.  All arguments after a `--' are regarded as file
-names, even if they start with a `-' character.
+standard input.  If no 'filespec' is specified, standard input is
+assumed automatically.  All arguments after a '--' are regarded as file
+names, even if they start with a '-' character.
 
-`option' is either a `groff' option or one of these:
+'option' is either a 'groff' option or one of these:
 
 -h|--help	print this uasge message and exit
 -v|--version	print version information and exit
 
 -C		compatibility mode
---ligatures	include options `-P-y -PU' for internal font, which
-		preserverses the ligatures like `fi'
+--ligatures	include options '-P-y -PU' for internal font, which
+		preserves the ligatures like 'fi'
 --run		run the checked-out groff command
 --warnings	display more warnings to standard error
 
-All other options should be `groff' 1-character options.  These are then
-appended to the generated `groff' command line.  The `-m' options will
-be checked by `grog'.
+All other options should be 'groff' 1-character options.  These are then
+appended to the generated 'groff' command line.  The '-m' options will
+be checked by 'grog'.
 
 EOF
   exit 0;

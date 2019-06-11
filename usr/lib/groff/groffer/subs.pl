@@ -5,23 +5,25 @@
 # Source file position: <groff-source>/contrib/groffer/subs.pl
 # Installed position: <prefix>/lib/groff/groffer/subs.pl
 
-# Copyright (C) 2006-2014  Free Software Foundation, Inc.
+# Copyright (C) 2006-2018 Free Software Foundation, Inc.
 # Written by Bernd Warken <groff-bernd.warken-72@web.de>.
 
-# This file is part of `groffer', which is part of `groff'.
+# Last update: 27 Aug 2015
 
-# `groff' is free software; you can redistribute it and/or modify it
+# This file is part of 'groffer', which is part of 'groff'.
+
+# 'groff' is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 
-# `groff' is distributed in the hope that it will be useful, but
+# 'groff' is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program. If not, see
+# along with this program.  If not, see
 # <http://www.gnu.org/licenses/gpl-2.0.html>.
 
 ########################################################################
@@ -46,7 +48,7 @@ sub cat_z {
     unless $n == 1;
 
   my $file = $_[0];
-  die "cat_z(): `$file' is not a readable file;" unless -f $file && -r $file;
+  die "cat_z(): '$file' is not a readable file;" unless -f $file && -r $file;
   return () if -z $file;
 
   my @res;
@@ -57,7 +59,7 @@ sub cat_z {
 	@res = `bzip2 -c -d $file 2>$main::Dev_Null`;
 	return @res;
       }
-      # if not compressed with gz, gzip will act like `cat'
+      # if not compressed with gz, gzip will act like 'cat'
       @res = `gzip -c -d -f $file 2>$main::Dev_Null`;
       return @res;
     }
@@ -525,8 +527,8 @@ on-the-fly with all formats that gzip can handle.
   "name.n"	man page "name" in section "n"
   "n name"	man page "name" in section "n"
   "name"	man page "name" in first section found
-where `section' is a single character out of [1-9on], optionally followed
-by some more letters that are called the `extension'.
+where 'section' is a single character out of [1-9on], optionally followed
+by some more letters that are called the 'extension'.
 
 -h --help         print this usage message.
 -T --device=name  pass to groff using output device "name".
@@ -556,7 +558,7 @@ The most important groffer long options are
 --help		display this helping output.
 --html		display in a web browser.
 --man		check file parameters first whether they are man pages.
---mode=auto|dvi|groff|html|pdf|ps|source|text|tty|utf8|www|x|X
+--mode=auto|dvi|groff|html|pdf|ps|source|text|tty|utf8|www|x|X|xhtml
 		choose display mode.
 --no-man	disable man-page facility.
 --no-special	disable --all, --apropos*, and --whatis
@@ -572,6 +574,7 @@ The most important groffer long options are
 --whatis	display the file name and description of man pages
 --www		same as --html.
 --x --X		display with "gxditview" using an X* device.
+--xhtml		display html in XML mode using a web browser.
 
 The usual X Windows toolkit options transformed into GNU long options:
 --background=color, --bd=size, --bg=color, --bordercolor=color,
@@ -594,7 +597,7 @@ EOF
 # option.  The old options are only ignored:
 # --dvi-viewer=prog choose the viewer program for dvi mode.
 # --html-viewer=program
-#                  choose the web browser for html mode.
+#                  choose the web browser for html or xhtml mode.
 # --pdf-viewer=prog choose the viewer program for pdf mode.
 # --ps-viewer=prog  choose the viewer program for ps mode.
 # --tty-viewer=prog select a pager for tty mode; same as --pager.
@@ -656,7 +659,7 @@ EOF
 # in $PATH.
 #
 # Arguments : 1, <program> can have spaces and arguments.
-# Return    : a hash with `dir', `file', `fullname', `args' if
+# Return    : a hash with 'dir', 'file', 'fullname', 'args' if
 #             argument exists or is a program in $PATH, empty hash else.
 #
 sub where_is_prog {
@@ -749,7 +752,7 @@ sub where_is_prog {
     my @baseargs = ($n);
     while (@base) {
       my $base = join(' ', @base);
-      foreach my $d (@maon::Path) {
+      foreach my $d (@main::Path) {
 	my $file = File::Spec->catfile($d, $base);
 	if (-f $file && -x $file) {
 	  my $baseargs = join(' ', @baseargs);

@@ -5,25 +5,26 @@
 # Source file position: <groff-source>/contrib/groffer/groffer.pl
 # Installed position: <prefix>/bin/groffer
 
-# Copyright (C) 2006-2014
-#   Free Software Foundation, Inc.
+# Copyright (C) 2006-2018 Free Software Foundation, Inc.
 
 # Written by Bernd Warken <groff-bernd.warken-72@web.de>.
 
-# This file is part of `groffer', which is part of `groff'.
+# Last update: 27 Aug 2015
 
-# `groff' is free software; you can redistribute it and/or modify it
+# This file is part of 'groffer', which is part of 'groff'.
+
+# 'groff' is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 
-# `groff' is distributed in the hope that it will be useful, but
+# 'groff' is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program. If not, see
+# along with this program.  If not, see
 # <http://www.gnu.org/licenses/gpl-2.0.html>.
 
 ########################################################################
@@ -38,7 +39,7 @@ use File::Temp qw/ tempfile tempdir /;
 # needed for temporary dir
 use File::Spec;
 
-# for `copy' and `move'
+# for 'copy' and 'move'
 use File::Copy;
 
 # for fileparse, dirname and basename
@@ -106,10 +107,10 @@ our $File_split_env_sh;
 our $File_version_sh;
 our $Groff_Version;
 
-my $before_make;		# script before run of `make'
+my $before_make;		# script before run of 'make'
 {
   my $at = '@';
-  $before_make = 1 if '1.22.3' eq "${at}VERSION${at}";
+  $before_make = 1 if '1.22.4' eq "${at}VERSION${at}";
 }
 
 my %at_at;
@@ -124,7 +125,7 @@ if ($before_make) {
   $File_version_sh = File::Spec->catfile($groffer_source_dir, 'version.sh');
   $Groff_Version = '';
 } else {
-  $Groff_Version = '1.22.3';
+  $Groff_Version = '1.22.4';
   $at_at{'BINDIR'} = '/usr/bin';
   $at_at{'G'} = '';
   $at_at{'LIBDIR'} = '/usr/lib';
@@ -163,7 +164,8 @@ our @Conf_Files = (File::Spec->catfile(File::Spec->rootdir(),
 				      'groffer.conf')
 		 );
 
-our @Default_Modes = ('pdf', 'pdf2', 'html', 'ps', 'x', 'dvi', 'tty');
+our @Default_Modes = ('pdf', 'pdf2', 'html', 'xhtml', 'ps', 'x', 'dvi',
+		      'tty');
 our $Default_Resolution = 100;
 our $Default_tty_Device = 'utf8';
 
@@ -179,6 +181,9 @@ our %Viewer_tty = ('DVI' => [],
 
 our %Viewer_X = ('DVI' => ['kdvi', 'xdvi', 'dvilx'],
 		'HTML' => ['konqueror', 'epiphany'. 'mozilla-firefox',
+			   'firefox', 'mozilla', 'netscape', 'galeon',
+			   'opera', 'amaya','arena', 'mosaic'],
+		'XHTML' => ['konqueror', 'epiphany'. 'mozilla-firefox',
 			   'firefox', 'mozilla', 'netscape', 'galeon',
 			   'opera', 'amaya','arena', 'mosaic'],
 		'PDF' => ['okular', 'kpdf', 'acroread', 'evince',

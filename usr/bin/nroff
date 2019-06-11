@@ -1,24 +1,24 @@
 #! /bin/sh
 # Emulate nroff with groff.
 #
-# Copyright (C) 1992-2014  Free Software Foundation, Inc.
+# Copyright (C) 1992-2018 Free Software Foundation, Inc.
 #
-# Written by James Clark, maintained by Werner Lemberg.
+# Written by James Clark.
 
-# This file is of `groff'.
+# This file is of 'groff'.
 
-# `groff' is free software; you can redistribute it and/or modify it
+# 'groff' is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License (GPL) as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# `groff' is distributed in the hope that it will be useful, but
+# 'groff' is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 prog="$0"
 
@@ -27,7 +27,7 @@ prog="$0"
 # Check the GROFF_TYPESETTER environment variable.
 Tenv=$GROFF_TYPESETTER
 
-# Try the `locale charmap' command first because it is most reliable.
+# Try the 'locale charmap' command first because it is most reliable.
 # On systems where it doesn't exist, look at the environment variables.
 case "`exec 2>/dev/null ; locale charmap`" in
   UTF-8)
@@ -59,7 +59,7 @@ case "`exec 2>/dev/null ; locale charmap`" in
     esac ;;
 esac
 
-# `for i; do' doesn't work with some versions of sh
+# 'for i; do' doesn't work with some versions of sh
 
 Topt=
 opts=
@@ -81,13 +81,13 @@ for i
     -T*)
       Topt=$1 ;;
     -u*)
-      # Solaris 2.2 through at least Solaris 9 `man' invokes
-      # `nroff -u0 ... | col -x'.  Ignore the -u0,
-      # since `less' and `more' can use the emboldening info.
-      # However, disable SGR, since Solaris `col' mishandles it.
+      # Solaris 2.2 through at least Solaris 9 'man' invokes
+      # 'nroff -u0 ... | col -x'.  Ignore the -u0,
+      # since 'less' and 'more' can use the emboldening info.
+      # However, disable SGR, since Solaris 'col' mishandles it.
       opts="$opts -P-c" ;;
     -v | --version)
-      echo "GNU nroff (groff) version 1.22.3"
+      echo "GNU nroff (groff) version 1.22.4"
       exit 0 ;;
     --help)
       echo "usage: nroff [-CchipStUv] [-dCS] [-MDIR] [-mNAME] [-nNUM] [-oLIST]"
@@ -123,8 +123,8 @@ case $T in
     T=-T$Tloc ;;
 esac
 
-# Set up the `GROFF_BIN_PATH' variable
-# to be exported in the current `GROFF_RUNTIME' environment.
+# Set up the 'GROFF_BIN_PATH' variable
+# to be exported in the current 'GROFF_RUNTIME' environment.
 
 GROFF_RUNTIME="${GROFF_BIN_PATH=/usr/bin}:"
 export GROFF_BIN_PATH

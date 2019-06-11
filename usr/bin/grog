@@ -6,26 +6,28 @@
 # Source file position: <groff-source>/src/roff/grog/grog.pl
 # Installed position: <prefix>/bin/grog
 
-# Copyright (C) 1993-2014  Free Software Foundation, Inc.
-# Written by James Clark, maintained by Werner Lemberg.
+# Copyright (C) 1993-2018 Free Software Foundation, Inc.
+# Written by James Clark.
 # Rewritten with Perl by Bernd Warken <groff-bernd.warken-72@web.de>.
 # The macros for identifying the devices were taken from Ralph
-# Corderoy's `grog.sh' from 2006.
+# Corderoy's 'grog.sh' of 2006.
 
-# This file is part of `grog', which is part of `groff'.
+# Last update: 19 Jul 2015
 
-# `groff' is free software; you can redistribute it and/or modify it
+# This file is part of 'grog', which is part of 'groff'.
+
+# 'groff' is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 
-# `groff' is distributed in the hope that it will be useful, but
+# 'groff' is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program. If not, see
+# along with this program.  If not, see
 # <http://www.gnu.org/licenses/gpl-2.0.html>.
 
 ########################################################################
@@ -38,10 +40,10 @@ use strict;
 # $Bin is the directory where this script is located
 use FindBin;
 
-my $before_make;	# script before run of `make'
+my $before_make;	# script before run of 'make'
 {
   my $at = '@';
-  $before_make = 1 if '1.22.3' eq "${at}VERSION${at}";
+  $before_make = 1 if '1.22.4' eq "${at}VERSION${at}";
 }
 
 
@@ -65,7 +67,7 @@ if ($before_make) { # before installation
   chomp $revision;
   $at_at{'GROFF_VERSION'} = $version . '.' . $revision;
 } else { # after installation}
-  $at_at{'GROFF_VERSION'} = '1.22.3';
+  $at_at{'GROFF_VERSION'} = '1.22.4';
   $at_at{'BINDIR'} = '/usr/bin';
   $grog_dir = '/usr/lib/groff/grog';
 } # before make

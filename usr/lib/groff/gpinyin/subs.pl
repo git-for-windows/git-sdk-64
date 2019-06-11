@@ -1,22 +1,22 @@
 #! /usr/bin/env perl
 
-# gpinyin - European-like Chinese writing `pinyin' into `groff'
+# gpinyin - European-like Chinese writing 'pinyin' into 'groff'
 
 # Source file position: <groff-source>/contrib/gpinyin/gpinyin.pl
 # Installed position: <prefix>/bin/gpinyin
 
-# Copyright (C) 2014  Free Software Foundation, Inc.
+# Copyright (C) 2014-2018 Free Software Foundation, Inc.
 
 # Written by Bernd Warken <groff-bernd.warken-72@web.de>.
 
-# This file is part of `gpinyin', which is part of `groff'.
+# This file is part of 'gpinyin', which is part of 'groff'.
 
-# `groff' is free software; you can redistribute it and/or modify it
+# 'groff' is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 
-# `groff' is distributed in the hope that it will be useful, but
+# 'groff' is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
@@ -312,7 +312,7 @@ sub handle_line {
 
     # this is a word, maybe composed of several syllables
     my $punctuation = $1 if ( $word =~ s/([,.?!:;]*)$// );
-    # `$word' is now without punctuation
+    # '$word' is now without punctuation
 
     my %outword = &handle_word($word);
     next unless ( %outword );
@@ -477,7 +477,7 @@ sub handle_syll {
   }
 
 #  unless ( $vowel =~ /^[aeiouAEIOU]$/ ) {
-#    print STDERR q(The argument `) . $vowel . q(' is not a vowel!);
+#    print STDERR q(The argument ') . $vowel . q(' is not a vowel!);
 #    return {};
 #  }
 

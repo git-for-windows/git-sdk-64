@@ -33,8 +33,8 @@
 # intended as a pic translator; we can live with eqn defaults. 
 #
 groffpic_opts=""
-gs_opts=""
 convert_opts=""
+convert_trim_arg="-trim"
 format="png"
 eqndelim='$$'
 
@@ -50,7 +50,7 @@ do
 	eqndelim=$2
 	shift;;
     -v | --version)
-	echo "GNU pic2graph (groff) version 1.22.3"
+	echo "GNU pic2graph (groff) version 1.22.4"
 	exit 0;;
     --help)
 	echo "usage: pic2graph [ option ...] < in > out"
@@ -68,23 +68,45 @@ fi
 
 # create temporary directory
 tmp=
-for d in "$GROFF_TMPDIR" "$TMPDIR" "$TMP" "$TEMP" /tmp; do
-    test -z "$d" && continue
+for d in "$GROFF_TMPDIR" "$TMPDIR" "$TMP" "$TEMP" /tmp
+do
+    test -n "$d" && break
+done
 
-    tmp=`(umask 077 && mktemp -d -q "$d/pic2graph-XXXXXX") 2> /dev/null` \
-    && test -n "$tmp" && test -d "$tmp" \
-    && break
-
-    tmp=$d/pic2graph$$-$RANDOM
-    (umask 077 && mkdir $tmp) 2> /dev/null \
-    && break
-done;
-if test -z "$tmp"; then
-    echo "$0: cannot create temporary directory" >&2
-    { (exit 1); exit 1; }
+if ! test -d "$d"
+then
+    echo "$0: error: temporary directory \"$d\" does not exist or is" \
+        "not a directory" >&2
+    exit 1
 fi
 
-trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' EXIT INT TERM
+if ! tmp=`(umask 077 && mktemp -d -q "$d/pic2graph-XXXXXX") 2> /dev/null`
+then
+    # mktemp failed--not installed or is a version that doesn't support those
+    # flags?  Fall back to older method which uses more predictable naming.
+    #
+    # $RANDOM is a Bashism.  The fallback of $PPID is not good pseudorandomness,
+    # but is supported by the stripped-down dash shell, for instance.
+    tmp="$d/pic2graph$$-${RANDOM:-$PPID}"
+    (umask 077 && mkdir "$tmp") 2> /dev/null
+fi
+
+if ! test -d "$tmp"
+then
+    echo "$0: error: cannot create temporary directory \"$tmp\"" >&2
+    exit 1
+fi
+
+# See if the installed version of convert(1) is new enough to support the -trim
+# option.  Versions that didn't were described as "old" as early as 2008.
+is_convert_recent=`convert -help | grep -e -trim`
+if test -z "$is_convert_recent"
+then
+    echo "$0: warning: falling back to old '-crop 0x0' trim method" >&2
+    convert_trim_arg="-crop 0x0"
+fi
+
+trap 'exit_status=$?; rm -rf "$tmp" && exit $exit_status' EXIT INT TERM
 
 # Here goes:
 # 1. Wrap the input in dummy .PS/PE macros (and add possibly null .EQ/.EN)
@@ -92,8 +114,9 @@ trap 'exit_status=$?; rm -rf $tmp && exit $exit_status' EXIT INT TERM
 # 3. Process through groff to emit Postscript.
 # 4. Use convert(1) to crop the PostScript and turn it into a bitmap.
 (echo ".EQ"; echo $eqndelim; echo ".EN"; echo ".PS"; cat; echo ".PE") | \
-    groff -e -p $groffpic_opts -Tps -P-pletter > $tmp/pic2graph.ps \
-    && convert -trim $convert_opts $tmp/pic2graph.ps $tmp/pic2graph.$format \
-    && cat $tmp/pic2graph.$format
+    groff -e -p $groffpic_opts -Tps -P-pletter > "$tmp"/pic2graph.ps \
+    && convert $convert_trim_arg $convert_opts "$tmp"/pic2graph.ps \
+       "$tmp"/pic2graph.$format \
+    && cat "$tmp"/pic2graph.$format
 
 # End

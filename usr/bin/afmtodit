@@ -1,6 +1,6 @@
 #! /usr/bin/perl -w
 # -*- Perl -*-
-# Copyright (C) 1989-2014  Free Software Foundation, Inc.
+# Copyright (C) 1989-2018 Free Software Foundation, Inc.
 #      Written by James Clark (jjc@jclark.com)
 #
 # This file is part of groff.
@@ -16,7 +16,7 @@
 # for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use strict;
 
@@ -2060,7 +2060,7 @@ my %unicode_decomposed = (
 
 # This table has been algorithmically derived from the file glyphlist.txt,
 # version 2.0, available from partners.adobe.com, on 2005-12-09.  For glyphs
-# `Delta', `Omega', and `mu', the values have been manually changed to the
+# 'Delta', 'Omega', and 'mu', the values have been manually changed to the
 # ones from aglfn.txt, version 1.6.
 my %AGL_to_unicode = (
   "A", "0041",
@@ -6157,7 +6157,7 @@ my %AGL_to_unicode = (
 my $prog = $0;
 $prog =~ s@.*/@@;
 
-my $groff_sys_fontdir = "/usr/share/groff/1.22.3/font";
+my $groff_sys_fontdir = "/usr/share/groff/1.22.4/font";
 
 use Getopt::Std;
 getopts('a:cd:e:f:i:kmno:svx');
@@ -6166,7 +6166,7 @@ our ($opt_a, $opt_c, $opt_d, $opt_e, $opt_f, $opt_i, $opt_k,
      $opt_m, $opt_n, $opt_o, $opt_s, $opt_v, $opt_x);
 
 if ($opt_v) {
-    print "GNU afmtodit (groff) version 1.22.3\n";
+    print "GNU afmtodit (groff) version 1.22.4\n";
     exit 0;
 }
 
@@ -6197,7 +6197,7 @@ my (@encoding, %in_encoding);
 my (%width, %height, %depth);
 my (%left_side_bearing, %right_side_bearing);
 
-open(AFM, $afm) || die "$prog: can't open \`$ARGV[0]': $!\n";
+open(AFM, $afm) || die "$prog: can't open '$ARGV[0]': $!\n";
 
 while (<AFM>) {
     chomp;
@@ -6311,7 +6311,7 @@ my ($sizescale, $resolution, $unitwidth);
 $sizescale = 1;
 
 open(DESC, $desc) || open(DESC, $sys_desc) ||
-    die "$prog: can't open \`$desc' or \`$sys_desc': $!\n";
+    die "$prog: can't open '$desc' or '$sys_desc': $!\n";
 while (<DESC>) {
     next if /^#/;
     chop;
@@ -6335,7 +6335,7 @@ if ($opt_e) {
 
     my $sys_opt_e = $groff_sys_fontdir . "/devps/" . $opt_e;
     open(ENCODING, $opt_e) || open(ENCODING, $sys_opt_e) ||
-	die "$prog: can't open \`$opt_e' or \`$sys_opt_e': $!\n";
+	die "$prog: can't open '$opt_e' or '$sys_opt_e': $!\n";
     while (<ENCODING>) {
 	next if /^#/;
 	chop;
@@ -6356,7 +6356,7 @@ if ($opt_e) {
 my (%nmap, %map);
 
 open(MAP, $map) || open(MAP, $sys_map) ||
-    die "$prog: can't open \`$map' or \`$sys_map': $!\n";
+    die "$prog: can't open '$map' or '$sys_map': $!\n";
 while (<MAP>) {
     next if /^#/;
     chop;
@@ -6367,11 +6367,11 @@ while (<MAP>) {
 	    # The PostScript character "space" is automatically mapped
 	    # to the groff character "space"; this is for grops.
 	    warn "you are not allowed to map to " .
-		 "the groff character \`space'";
+		 "the groff character 'space'";
 	}
 	elsif ($field[0] eq "space") {
 	    warn "you are not allowed to map " .
-		 "the PostScript character \`space'";
+		 "the PostScript character 'space'";
 	}
 	else {
 	    $nmap{$field[0]} += 0;
@@ -6379,7 +6379,7 @@ while (<MAP>) {
 	    $nmap{$field[0]} += 1;
 
 	    # There is more than one way to make a PS glyph name;
-	    # let us try Unicode names with both `uni' and `u' prefixes.
+	    # let us try Unicode names with both 'uni' and 'u' prefixes.
 	    my $utmp = $AGL_to_unicode{$field[0]};
 	    if (defined $utmp && $utmp =~ /^[0-9A-F]{4}$/) {
 		foreach my $unicodepsname ("uni" . $utmp, "u" . $utmp) {
@@ -6427,19 +6427,19 @@ if (!$opt_x) {
 	    #   Drop all characters from the glyph name starting with the
 	    #   first occurrence of a period (U+002E FULL STOP), if any.
 	    #   ?? We avoid mapping of glyphs with periods, since they are
-	    #   likely to be variant glyphs, leading to a `many ps glyphs --
+	    #   likely to be variant glyphs, leading to a 'many ps glyphs --
 	    #   one groff glyph' conflict.
 	    #
 	    #   If multiple glyphs in the font represent the same character
-	    #   in the Unicode standard, as do `A' and `A.swash', for example,
+	    #   in the Unicode standard, as do 'A' and 'A.swash', for example,
 	    #   they can be differentiated by using the same base name with
 	    #   different suffixes.  This suffix (the part of glyph name that
 	    #   follows the first period) does not participate in the
 	    #   computation of a character sequence.  It can be used by font
 	    #   designers to indicate some characteristics of the glyph.  The
 	    #   suffix may contain periods or any other permitted characters.
-	    #   Small cap A, for example, could be named `uni0041.sc' or
-	    #   `A.sc'.
+	    #   Small cap A, for example, could be named 'uni0041.sc' or
+	    #   'A.sc'.
 
 	    next if $ch =~ /\./;
 
@@ -6463,7 +6463,7 @@ if (!$opt_x) {
 		    $utmp = "U+" . $utmp;
 		}
 
-		#   * Otherwise, if the component is of the form `uni'
+		#   * Otherwise, if the component is of the form 'uni'
 		#     (U+0075 U+006E U+0069) followed by a sequence of
 		#     uppercase hexadecimal digits (0 .. 9, A .. F, i.e.,
 		#     U+0030 .. U+0039, U+0041 .. U+0046), the length of
@@ -6486,7 +6486,7 @@ if (!$opt_x) {
 		    }
 		}
 
-		#   * Otherwise, if the component is of the form `u' (U+0075)
+		#   * Otherwise, if the component is of the form 'u' (U+0075)
 		#     followed by a sequence of four to six uppercase
 		#     hexadecimal digits {0 .. 9, A .. F} (U+0030 .. U+0039,
 		#     U+0041 .. U+0046), and those digits represent a number
@@ -6529,7 +6529,7 @@ if (!$opt_x) {
 }
 
 # Check explicitly for groff's standard ligatures -- many afm files don't
-# have proper `L' entries.
+# have proper 'L' entries.
 
 my %default_ligatures = (
   "fi", "f i",
@@ -6547,11 +6547,11 @@ while (my ($lig, $components) = each %default_ligatures) {
 
 # print it all out
 
-open(FONT, ">$outfile") || die "$prog: can't open \`$outfile' for output: $!\n";
+open(FONT, ">$outfile") || die "$prog: can't open '$outfile' for output: $!\n";
 select(FONT);
 
 print("# This file has been generated with " .
-      "GNU afmtodit (groff) version 1.22.3\n");
+      "GNU afmtodit (groff) version 1.22.4\n");
 print("#\n");
 print("#   $fullname\n") if defined $fullname;
 print("#   $version\n") if defined $version;

@@ -2,8 +2,8 @@
 #
 #	gropdf		: PDF post processor for groff
 #
-# Copyright (C) 2011-2014  Free Software Foundation, Inc.
-#      Written by Deri James <deri@chuzzlewit.demon.co.uk>
+# Copyright (C) 2011-2018 Free Software Foundation, Inc.
+#      Written by Deri James <deri@chuzzlewit.myzen.co.uk>
 #
 # This file is part of groff.
 #
@@ -22,12 +22,38 @@
 
 use strict;
 use Getopt::Long qw(:config bundling);
-use Compress::Zlib;
+
+use constant
+{
+    WIDTH		=> 0,
+    CHRCODE		=> 1,
+    PSNAME		=> 2,
+    ASSIGNED		=> 3,
+    USED		=> 4,
+};
+
+my $gotzlib=0;
+
+my $rc = eval
+{
+  require Compress::Zlib;
+  Compress::Zlib->import();
+  1;
+};
+
+if($rc)
+{
+  $gotzlib=1;
+}
+else
+{
+    Msg(0,"Perl module Compress::Zlib not available - cannot compress this pdf");
+}
 
 my %cfg;
 
-$cfg{GROFF_VERSION}='1.22.3';
-$cfg{GROFF_FONT_PATH}='/usr/share/groff/site-font:/usr/share/groff/1.22.3/font:/usr/lib/font';
+$cfg{GROFF_VERSION}='1.22.4';
+$cfg{GROFF_FONT_PATH}='/usr/share/groff/site-font:/usr/share/groff/1.22.4/font:/usr/lib/font';
 $cfg{RT_SEP}=':';
 binmode(STDOUT);
 
@@ -95,12 +121,24 @@ my $wt=-1;
 my $thislev=1;
 my $mark=undef;
 my $suspendmark=undef;
+
+
+
 my $n_flg=1;
 my $pginsert=-1;    # Growth point for kids array
 my %pgnames;        # 'names' of pages for switchtopage
 my @outlines=();    # State of Bookmark Outlines at end of each page
 my $custompaper=0;  # Has there been an X papersize
 my $textenccmap=''; # CMap for groff text.enc encoding
+my @XOstream=();
+my @PageAnnots={};
+my $noslide=0;
+my $transition={PAGE => {Type => '/Trans', S => '', D => 1, Dm => '/H', M => '/I', Di => 0, SS => 1.0, B => 0},
+		BLOCK => {Type => '/Trans', S => '', D => 1, Dm => '/H', M => '/I', Di => 0, SS => 1.0, B => 0}};
+my $firstpause=0;
+my $present=0;
+
+$noslide=1 if exists($ENV{GROPDF_NOSLIDE}) and $ENV{GROPDF_NOSLIDE};
 
 my %ppsz=(	'ledger'=>[1224,792],
 	'legal'=>[612,1008],
@@ -163,10 +201,13 @@ my $debug=0;
 my $version=0;
 my $stats=0;
 my $unicodemap;
+my @idirs;
 
 #Load_Config();
 
-GetOptions("F=s" => \$fd, 'l' => \$frot, 'p=s' => \$fpsz, 'd!' => \$debug, 'v' => \$version, 'e' => \$embedall, 'y=s' => \$Foundry, 's' => \$stats, 'u:s' => \$unicodemap);
+GetOptions("F=s" => \$fd, 'I=s' => \@idirs, 'l' => \$frot, 'p=s' => \$fpsz, 'd!' => \$debug, 'v' => \$version, 'version' => \$version, 'e' => \$embedall, 'y=s' => \$Foundry, 's' => \$stats, 'u:s' => \$unicodemap);
+
+unshift(@idirs,'.');
 
 if ($version)
 {
@@ -239,13 +280,14 @@ elsif (exists($ppsz{$papersz}))
     @defaultmb=@mediabox=(0,0,$ppsz{$papersz}->[0],$ppsz{$papersz}->[1]);
 }
 
-my (@dt)=localtime(time);
+my (@dt)=localtime($ENV{SOURCE_DATE_EPOCH} || time);
 my $dt=PDFDate(\@dt);
 
 my %info=('Creator' => "(groff version $cfg{GROFF_VERSION})",
 				'Producer' => "(gropdf version $cfg{GROFF_VERSION})",
 				'ModDate' => "($dt)",
 				'CreationDate' => "($dt)");
+
 while (<>)
 {
     chomp;
@@ -298,14 +340,34 @@ while (<>)
 
 }
 
+exit 0 if $lct==0;
 
 if ($cpageno > 0)
 {
-    $cpage->{MediaBox}=\@mediabox if $custompaper;
-    PutObj($cpageno);
-    OutStream($cpageno+1);
+	my $trans='BLOCK';
+
+	$trans='PAGE' if $firstpause;
+
+	if (scalar(@XOstream))
+	{
+	    MakeXO() if $stream;
+	    $stream=join("\n",@XOstream)."\n";
+	}
+
+	my %t=%{$transition->{$trans}};
+	$cpage->{MediaBox}=\@mediabox if $custompaper;
+	$cpage->{Trans}=FixTrans(\%t) if $t{S};
+
+	if ($#PageAnnots >= 0)
+	{
+	    @{$cpage->{Annots}}=@PageAnnots;
+	}
+
+	PutObj($cpageno);
+	OutStream($cpageno+1);
 }
 
+$cat->{PageMode}='/FullScreen' if $present;
 
 PutOutlines(\@outlev);
 
@@ -318,13 +380,24 @@ PutObj($objct);
 foreach my $fontno (keys %fontlst)
 {
     my $o=$fontlst{$fontno}->{FNT};
+
+    foreach my $ch (@{$o->{NO}})
+    {
+	my $psname=$o->{NAM}->{$ch->[1]}->[PSNAME] || '/.notdef';
+	my $wid=$o->{NAM}->{$ch->[1]}->[WIDTH] || 0;
+
+	push(@{$o->{DIFF}},$psname);
+	push(@{$o->{WIDTH}},$wid);
+	last if $#{$o->{DIFF}} >= 255;
+    }
+    unshift(@{$o->{DIFF}},0);
     my $p=GetObj($fontlst{$fontno}->{OBJ});
 
     if (exists($p->{LastChar}) and $p->{LastChar} > 255)
     {
 	$p->{LastChar} = 255;
-	splice(@{$o->{GNO}},256);
-	splice(@{$o->{WID}},256);
+	splice(@{$o->{DIFF}},256);
+	splice(@{$o->{WIDTH}},256);
     }
 }
 
@@ -465,7 +538,7 @@ sub GetObj
 sub PDFDate
 {
     my $dt=shift;
-    return(sprintf("D:%04d%02d%02d%02d%02d%02d% +02d'00'",$dt->[5]+1900,$dt->[4]+1,$dt->[3],$dt->[2],$dt->[1],$dt->[0],( localtime time() + 3600*( 12 - (gmtime)[2] ) )[2] - 12));
+    return(sprintf("D:%04d%02d%02d%02d%02d%02d%+03d'00'",$dt->[5]+1900,$dt->[4]+1,$dt->[3],$dt->[2],$dt->[1],$dt->[0],( localtime time() + 3600*( 12 - (gmtime)[2] ) )[2] - 12));
 }
 
 sub ToPoints
@@ -521,26 +594,36 @@ sub Load_Config
 sub LoadDownload
 {
     my $f;
+    my $found=0;
 
-    OpenFile(\$f,$fontdir,"download");
-    Msg(1,"Failed to open 'download'") if !defined($f);
+    my (@dirs)=split($cfg{RT_SEP},$fontdir);
 
-    while (<$f>)
+    foreach my $dir (@dirs)
     {
-	chomp;
-	s/#.*$//;
-	next if $_ eq '';
-	my ($foundry,$name,$file)=split(/\t+/);
-	if (substr($file,0,1) eq '*')
+	$f=undef;
+	OpenFile(\$f,$dir,"download");
+	next if !defined($f);
+	$found++;
+
+	while (<$f>)
 	{
-	    next if !$embedall;
-	    $file=substr($file,1);
+	    chomp;
+	    s/#.*$//;
+	    next if $_ eq '';
+	    my ($foundry,$name,$file)=split(/\t+/);
+	    if (substr($file,0,1) eq '*')
+	    {
+		next if !$embedall;
+		$file=substr($file,1);
+	    }
+
+	    $download{"$foundry $name"}=$file;
 	}
 
-	$download{"$foundry $name"}=$file;
+	close($f);
     }
 
-    close($f);
+    Msg(1,"Failed to open 'download'") if !$found;
 }
 
 sub OpenFile
@@ -705,6 +788,53 @@ sub do_x
 		$linecap=$1;
 		$stream.="$linecap J\n";
 	    }
+	    elsif ($par=~m/exec %%%%PAUSE/i and !$noslide)
+	    {
+		my $trans='BLOCK';
+
+		if ($firstpause)
+		{
+		    $trans='PAGE';
+		    $firstpause=0;
+		}
+		MakeXO();
+		NewPage($trans);
+		$present=1;
+	    }
+	    elsif ($par=~m/exec %%%%BEGINONCE/)
+	    {
+		if ($noslide)
+		{
+		    $suppress=1;
+		}
+		else
+		{
+		    my $trans='BLOCK';
+
+		    if ($firstpause)
+		    {
+			$trans='PAGE';
+			$firstpause=0;
+		    }
+		    MakeXO();
+		    NewPage($trans);
+		    $present=1;
+		}
+	    }
+	    elsif ($par=~m/exec %%%%ENDONCE/)
+	    {
+		if ($noslide)
+		{
+		    $suppress=0;
+		}
+		else
+		{
+		    MakeXO();
+		    NewPage('BLOCK');
+		    $cat->{PageMode}='/FullScreen';
+		    pop(@XOstream);
+		}
+	    }
 	    elsif ($par=~m/\[(.+) pdfmark/)
 	    {
 		my $pdfmark=$1;
@@ -763,11 +893,18 @@ sub do_x
 		    $annot->{DATA}->{Type}='/Annot';
 		    FixRect($annot->{DATA}->{Rect}); # Y origin to ll
 		    FixPDFColour($annot->{DATA});
-		    push(@{$cpage->{Annots}},$annotno);
+		    push(@PageAnnots,$annotno);
 		}
 		elsif ($pdfmark=~m/(.+) \/OUT/)
 		{
-		    my @xwds=split(' ',"<< $1 >>");
+		    my $t=$1;
+		    $t=~s/\\\) /\\\\\) /g;
+		    $t=~s/\\e/\\\\/g;
+		    $t=~m/(^.*\/Title \()(.*)(\).*)/;
+		    my ($pre,$title,$post)=($1,$2,$3);
+		    $title=~s/(?<!\\)\(/\\\(/g;
+		    $title=~s/(?<!\\)\)/\\\)/g;
+		    my @xwds=split(' ',"<< $pre$title$post >>");
 		    my $out=ParsePDFValue(\@xwds);
 
 		    my $this=[$out,[]];
@@ -890,8 +1027,11 @@ sub do_x
 		    if ($fil=~m/\.pdf$/)
 		    {
 			my $bbox=$incfil{$fil}->[1];
-			my $xscale=$wid/($bbox->[2]-$bbox->[0]+1);
-			my $yscale=($hgt<=0)?$xscale:($hgt/($bbox->[3]-$bbox->[1]+1));
+			my $xscale=d3($wid/($bbox->[2]-$bbox->[0]+1));
+			my $yscale=d3(($hgt<=0)?$xscale:($hgt/($bbox->[3]-$bbox->[1]+1)));
+			$wid=($bbox->[2]-$bbox->[0])*$xscale;
+			$hgt=($bbox->[3]-$bbox->[1])*$yscale;
+			$ypos+=$hgt;
 			$stream.="q $xscale 0 0 $yscale ".PutXY($xpos,$ypos)." cm";
 			$stream.=" 0 1 -1 0 0 0 cm" if $rot;
 			$stream.=" /$incfil{$fil}->[0] Do Q\n";
@@ -905,7 +1045,7 @@ sub do_x
 	    elsif (lc($xprm[1]) eq 'pdfpic')
 	    {
 		my $fil=$xprm[2];
-		my $flag=uc($xprm[3])||'-L';
+		my $flag=uc($xprm[3]||'-L');
 		my $wid=GetPoints($xprm[4])||-1;
 		my $hgt=GetPoints($xprm[5]||-1);
 		my $ll=GetPoints($xprm[6]||0);
@@ -921,8 +1061,8 @@ sub do_x
 		    IsGraphic();
 		    my $bbox=$incfil{$fil}->[1];
 		    $wid=($bbox->[2]-$bbox->[0]) if $wid <= 0;
-		    my $xscale=$wid/($bbox->[2]-$bbox->[0]);
-		    my $yscale=($hgt<=0)?$xscale:($hgt/($bbox->[3]-$bbox->[1]));
+		    my $xscale=d3($wid/($bbox->[2]-$bbox->[0]));
+		    my $yscale=d3(($hgt<=0)?$xscale:($hgt/($bbox->[3]-$bbox->[1])));
 		    $xscale=($wid<=0)?$yscale:$xscale;
 		    $xscale=$yscale if $yscale < $xscale;
 		    $yscale=$xscale if $xscale < $yscale;
@@ -1060,6 +1200,33 @@ sub do_x
 		    }
 		}
 	    }
+	    elsif (lc($xprm[1]) eq 'transition' and !$noslide)
+	    {
+		if (uc($xprm[2]) eq 'PAGE' or uc($xprm[2] eq 'SLIDE'))
+		{
+		    $transition->{PAGE}->{S}='/'.ucfirst($xprm[3]) if $xprm[3] and $xprm[3] ne '.';
+		    $transition->{PAGE}->{D}=$xprm[4] if $xprm[4] and $xprm[4] ne '.';
+		    $transition->{PAGE}->{Dm}='/'.$xprm[5] if $xprm[5] and $xprm[5] ne '.';
+		    $transition->{PAGE}->{M}='/'.$xprm[6] if $xprm[6] and $xprm[6] ne '.';
+		    $xprm[7]='/None' if $xprm[7] and uc($xprm[7]) eq 'NONE';
+		    $transition->{PAGE}->{Di}=$xprm[7] if $xprm[7] and $xprm[7] ne '.';
+		    $transition->{PAGE}->{SS}=$xprm[8] if $xprm[8] and $xprm[8] ne '.';
+		    $transition->{PAGE}->{B}=$xprm[9] if $xprm[9] and $xprm[9] ne '.';
+		}
+		elsif (uc($xprm[2]) eq 'BLOCK')
+		{
+		    $transition->{BLOCK}->{S}='/'.ucfirst($xprm[3]) if $xprm[3] and $xprm[3] ne '.';
+		    $transition->{BLOCK}->{D}=$xprm[4] if $xprm[4] and $xprm[4] ne '.';
+		    $transition->{BLOCK}->{Dm}='/'.$xprm[5] if $xprm[5] and $xprm[5] ne '.';
+		    $transition->{BLOCK}->{M}='/'.$xprm[6] if $xprm[6] and $xprm[6] ne '.';
+		    $xprm[7]='/None' if $xprm[7] and uc($xprm[7]) eq 'NONE';
+		    $transition->{BLOCK}->{Di}=$xprm[7] if $xprm[7] and $xprm[7] ne '.';
+		    $transition->{BLOCK}->{SS}=$xprm[8] if $xprm[8] and $xprm[8] ne '.';
+		    $transition->{BLOCK}->{B}=$xprm[9] if $xprm[9] and $xprm[9] ne '.';
+		}
+
+		$present=1;
+	    }
 	}
 	elsif (lc(substr($xprm[0],0,9)) eq 'papersize')
 	{
@@ -1132,7 +1299,7 @@ sub PutHotSpot
     $annot->{DATA}->{Rect}=[$mark->{xpos},$mark->{ypos}-$mark->{rsb},$endx+$mark->{lead},$mark->{ypos}-$mark->{rst}];
     FixPDFColour($annot->{DATA});
     FixRect($annot->{DATA}->{Rect}); # Y origin to ll
-    push(@{$cpage->{Annots}},$annotno);
+    push(@PageAnnots,$annotno);
 }
 
 sub sgn
@@ -1155,7 +1322,7 @@ sub GetPoints
 {
     my $val=shift;
 
-    $val=ToPoints($1,$2) if ($val=~m/(-?[\d.]+)([cipnz])/);
+    $val=ToPoints($1,$2) if ($val and $val=~m/(-?[\d.]+)([cipnz])/);
 
     return $val;
 }
@@ -1282,6 +1449,35 @@ sub LoadSWF
     return $xonm;
 }
 
+sub OpenInc
+{
+    my $fn=shift;
+    my $fnm=$fn;
+    my $F;
+
+    if (substr($fnm,0,1)  eq '/' or substr($fnm,1,1) eq ':') # dos
+    {
+	if (-r $fnm and open($F,"<$fnm"))
+	{
+	    return($F,$fnm);
+	}
+    }
+    else
+    {
+	foreach my $dir (@idirs)
+	{
+	    $fnm="$dir/$fn";
+
+	    if (-r "$fnm" and open($F,"<$fnm"))
+	    {
+		return($F,$fnm);
+	    }
+	}
+    }
+
+    return(undef,$fn);
+}
+
 sub LoadPDF
 {
     my $pdfnm=shift;
@@ -1295,18 +1491,22 @@ sub LoadPDF
     my $curobj=-1;
     my $instream=0;
     my $cont;
+    my $adj=0;
+    my $keepsep=$/;
 
-    if (!open(PD,"<$pdfnm"))
+    my ($PD,$PDnm)=OpenInc($pdfnm);
+
+    if (!defined($PD))
     {
 	Msg(0,"Failed to open PDF '$pdfnm'");
 	return undef;
     }
 
-    my $hdr=<PD>;
+    my $hdr=<$PD>;
 
-    $/="\r" if (length($hdr) > 10);
+    $/="\r",$adj=1 if (length($hdr) > 10);
 
-    while (<PD>)
+    while (<$PD>)
     {
 	chomp;
 
@@ -1343,8 +1543,8 @@ sub LoadPDF
 	{
 	    if ($curobj > -1)
 	    {
-		$pdf->[$curobj]->{STREAMPOS}=[tell(PD),$strmlen];
-		seek(PD,$strmlen,1);
+		$pdf->[$curobj]->{STREAMPOS}=[tell($PD)+$adj,$strmlen];
+		seek($PD,$strmlen,1);
 		$instream=1;
 	    }
 	    else
@@ -1357,9 +1557,9 @@ sub LoadPDF
 	$pdftxt.=$_.' ';
     }
 
-    close(PD);
+    close($PD);
 
-    open(PD,"<$pdfnm");
+    open(PD,"<$PDnm");
 #	$pdftxt=~s/\]/ \]/g;
     my (@pdfwds)=split(' ',$pdftxt);
     my $wd;
@@ -1404,7 +1604,7 @@ sub LoadPDF
 	    sysseek(PD,$o->{STREAMPOS}->[0],0);
 	    Msg(0,'Failed to read all the stream') if $l != sysread(PD,$o->{STREAM},$l);
 
-	    if (exists($o->{OBJ}->{'Filter'}) and $o->{OBJ}->{'Filter'} eq '/FlateDecode')
+	    if ($gotzlib and exists($o->{OBJ}->{'Filter'}) and $o->{OBJ}->{'Filter'} eq '/FlateDecode')
 	    {
 		$o->{STREAM}=Compress::Zlib::uncompress($o->{STREAM});
 		delete($o->{OBJ }->{'Filter'});
@@ -1427,8 +1627,8 @@ sub LoadPDF
     $BBox=[0,0,595,842] if !defined($BBox);
 
     $wid=($BBox->[2]-$BBox->[0]+1) if $wid==0;
-    my $xscale=abs($wid)/($BBox->[2]-$BBox->[0]+1);
-    my $yscale=($hgt<=0)?$xscale:(abs($hgt)/($BBox->[3]-$BBox->[1]+1));
+    my $xscale=d3(abs($wid)/($BBox->[2]-$BBox->[0]+1));
+    my $yscale=d3(($hgt<=0)?$xscale:(abs($hgt)/($BBox->[3]-$BBox->[1]+1)));
     $hgt=($BBox->[3]-$BBox->[1]+1)*$yscale;
 
     if ($type eq "import")
@@ -1462,6 +1662,7 @@ sub LoadPDF
 
     BuildStream($xobj,$pdf,$pdf->[$page]->{OBJ}->{Contents});
 
+    $/=$keepsep;
     return([$xonm,$BBox] );
 }
 
@@ -1851,12 +2052,12 @@ sub PutXY
 
     if ($frot)
     {
-	return("$y $x");
+	return(d3($y)." ".d3($x));
     }
     else
     {
 	$y=$mediabox[3]-$y;
-	return("$x $y");
+	return(d3($x)." ".d3($y));
     }
 }
 
@@ -1889,10 +2090,10 @@ sub PutObj
     $obj[$ono]->{XREF}=$fct;
     if (exists($obj[$ono]->{STREAM}))
     {
-	if (!$debug && !exists($obj[$ono]->{DATA}->{'Filter'}))
+	if ($gotzlib && !$debug && !exists($obj[$ono]->{DATA}->{'Filter'}))
 	{
 	    $obj[$ono]->{STREAM}=Compress::Zlib::compress($obj[$ono]->{STREAM});
-	    $obj[$ono]->{DATA}->{'Filter'}=['/FlateDecode'];
+	    $obj[$ono]->{DATA}->{'Filter'}='/FlateDecode';
 	}
 
 	$obj[$ono]->{DATA}->{'Length'}=length($obj[$ono]->{STREAM});
@@ -1984,6 +2185,7 @@ sub LoadFont
     my @fntbbox=(0,0,0,0);
     my $capheight=0;
     my $lastchr=0;
+    my $lastnm;
     my $t1flags=0;
     my $fixwid=-1;
     my $ascent=0;
@@ -2012,7 +2214,7 @@ sub LoadFont
 	    $stg=3,next if lc($_) eq 'charset';
 
 	    my ($ch1,$ch2,$k)=split;
-	    $fnt{KERN}->{$ch1}->{$ch2}=$k;
+# 	    $fnt{KERN}->{$ch1}->{$ch2}=$k;
 	}
 	else
 	{
@@ -2021,15 +2223,16 @@ sub LoadFont
 
 	    if ($r[1] eq '"')
 	    {
-		$fnt{GNM}->{$r[0]}=$lastchr;
+		$fnt{NAM}->{$r[0]}=$fnt{NAM}->{$lastnm};
 		next;
 	    }
 
 	    $r[0]='u0020' if $r[3] == 32;
+	    $r[0]="u00".hex($r[3]) if $r[0] eq '---';
 #	    next if $r[3] >255;
-	    $fnt{GNM}->{$r[0]}=$r[3];
-	    $fnt{GNO}->[$r[3]]='/'.$r[4];
-	    $fnt{WID}->[$r[3]]=$p[0];
+	    $fnt{NAM}->{$r[0]}=[$p[0],$r[3],'/'.$r[4],$r[3],0];
+	    $fnt{NO}->[$r[3]]=[$r[0],$r[0]];
+	    $lastnm=$r[0];
 	    $lastchr=$r[3] if $r[3] > $lastchr;
 	    $fixwid=$p[0] if $fixwid == -1;
 	    $fixwid=-2 if $fixwid > 0 and $p[0] != $fixwid;
@@ -2045,20 +2248,16 @@ sub LoadFont
 
     close($f);
 
-    unshift(@{$fnt{GNO}},0);
-
-    foreach my $glyph (@{$fnt{GNO}})
+    foreach my $j (0..$lastchr)
     {
-	$glyph='/.notdef' if !defined($glyph);
-    }
-
-    foreach my $w (@{$fnt{WID}})
-    {
-	$w=0 if !defined($w);
+	$fnt{NO}->[$j]=['',''] if !defined($fnt{NO}->[$j]);
     }
 
     my $fno=0;
     my $slant=0;
+    $fnt{DIFF}=[];
+    $fnt{WIDTH}=[];
+    $fnt{NAM}->{''}=[0,-1,'/.notdef',-1,0];
     $slant=-$fnt{'slant'} if exists($fnt{'slant'});
     $fnt{'spacewidth'}=700 if !exists($fnt{'spacewidth'});
 
@@ -2077,12 +2276,12 @@ sub LoadFont
 			{'Type' => '/Font',
 			'Subtype' => '/Type1',
 			'BaseFont' => '/'.$fnt{internalname},
-			'Widths' => $fnt{WID},
+			'Widths' => $fnt{WIDTH},
 			'FirstChar' => 0,
 			'LastChar' => $lastchr,
 			'Encoding' => BuildObj($objct+1,
 				    {'Type' => '/Encoding',
-				    'Differences' => $fnt{GNO}
+				    'Differences' => $fnt{DIFF}
 				    }
 				    ),
 			'FontDescriptor' => BuildObj($objct+2,
@@ -2095,7 +2294,7 @@ sub LoadFont
 					'Descent' => $fntbbox[1],
 					'CapHeight' => $capheight,
 					'StemV' => 0,
-					'CharSet' => "($charset)",
+#					'CharSet' => "($charset)",
 					'FontFile' => BuildObj($objct+3,
 						    {'Length1' => $l1,
 						    'Length2' => $l2,
@@ -2121,14 +2320,31 @@ sub LoadFont
 			{'Type' => '/Font',
 			'Subtype' => '/Type1',
 			'BaseFont' => '/'.$fnt{internalname},
+			'Widths' => $fnt{WIDTH},
+			'FirstChar' => 0,
+			'LastChar' => $lastchr,
 			'Encoding' => BuildObj($objct+1,
 				    {'Type' => '/Encoding',
-				    'Differences' => $fnt{GNO}
+				    'Differences' => $fnt{DIFF}
 				    }
-				    )
+				    ),
+			'FontDescriptor' => BuildObj($objct+2,
+					{'Type' => '/FontDescriptor',
+					'FontName' => '/'.$fnt{internalname},
+					'Flags' => $t1flags,
+					'FontBBox' => \@fntbbox,
+					'ItalicAngle' => $slant,
+					'Ascent' => $ascent,
+					'Descent' => $fntbbox[1],
+					'CapHeight' => $capheight,
+					'StemV' => 0,
+					'CharSet' => "($charset)",
+					}
+					)
 			}
 			);
-	$objct+=1;
+
+	$objct+=2;
 	$fontlst{$fontno}->{NM}='/F'.$fontno;
 	$pages->{'Resources'}->{'Font'}->{'F'.$fontno}=$fontlst{$fontno}->{OBJ};
 	$fontlst{$fontno}->{FNT}=\%fnt;
@@ -2160,121 +2376,10 @@ sub GetType1
 
     OpenFile(\$f,$fontdir,"$file");
     Msg(1,"Failed to open '$file'") if !defined($f);
-    binmode($f);
 
-    my $l=<$f>;
-
-    if (substr($l,0,1) eq "\x80")
-    {
-	# PFB file
-	sysseek($f,0,0);
-	my $hdr='';
-	$l1=$l2=$l3=0;
-	my $typ=0;
-	my $data='';
-	my $sl=0;
-
-	while ($typ != 3)
-	{
-	    my $chk=sysread($f,$hdr,6);
-
-	    if ($chk < 2)
-	    {
-		# eof($f) uses buffered i/o (since file was open not sysopen)
-		# which screws up next sysread. So this will terminate loop if font
-		# has no terminating section type 3.
-		last if $l3;
-		return(5,$l2,$l3,undef);
-	    }
-
-	    $typ=ord(substr($hdr,1,1));
-
-	    if ($chk == 6)
-	    {
-		$sl=unpack('L',substr($hdr,2,4));
-		$chk=sysread($f,$data,$sl);
-		return(1,$l2,$l3,undef) if $chk != $sl;
-	    }
-
-	    if ($typ == 1)
-	    {
-		if ($l2 == 0)
-		{
-		    # First text bit(s) must be head
-		    $head.=$data;
-		    $l1+=$sl;
-		}
-		else
-		{
-		    # A text bit after the binary sections must be tail
-		    $tail.=$data;
-		    $l3+=$sl;
-		}
-	    }
-	    elsif ($typ == 2)
-	    {
-		return(2,$l2,$l3,undef) if $l3; # Found a binary bit after the tail
-		$body.=$data;
-		$l2+=$sl;
-	    }
-	    elsif ($typ != 3)
-	    {
-		# What segment type is this!
-		return(3,$l2,$l3,undef);
-	    }
-	}
-
-	close($f);
-	return($l1,$l2,$l3,"$head$body$tail");
-    }
-
-    my (@lines)=(<$f>);
-    unshift(@lines,$l);
-
-    close($f);
-
-    Msg(1,"Font file '$file' must be an Adobe type 1 font file") if $lines[0]!~m/\%\!PS.Adobe/i;
-    $head=$body=$tail='';
-
-    foreach my $line (@lines)
-    {
-	if (!defined($l1))
-	{
-	    if (length($line) > 19 and $line=~s/^(currentfile eexec)//)
-	    {
-		$head.=$1;
-		$l1=length($head);
-		redo;
-	    }
-
-	    $head.=$line;
-
-	    if ($line=~m/eexec$/)
-	    {
-		#				chomp($head);
-		#				$head.="\x0d";
-		$l1=length($head);
-	    }
-	}
-	elsif (!defined($l2))
-	{
-	    #$line=~s/(\0\0)0+$/&1/;
-	    if ($line=~m/^0+$/)
-	    {
-		$l2=length($body);
-		$tail=$line;
-	    }
-	    else
-	    {
-		chomp($line);
-		$body.=pack('H*',$line);
-	    }
-	}
-	else
-	{
-	    $tail.=$line;
-	}
-    }
+    $head=GetChunk($f,1,"currentfile eexec");
+    $body=GetChunk($f,2,"00000000") if !eof($f);
+    $tail=GetChunk($f,3,"cleartomark") if !eof($f);
 
     $l1=length($head);
     $l2=length($body);
@@ -2283,6 +2388,95 @@ sub GetType1
     return($l1,$l2,$l3,"$head$body$tail");
 }
 
+sub GetChunk
+{
+    my $F=shift;
+    my $segno=shift;
+    my $ascterm=shift;
+    my ($type,$hdr,$chunk,@msg);
+    binmode($F);
+    my $enc="ascii";
+
+    while (1)
+    {
+	# There may be multiple chunks of the same type
+
+	my $ct=read($F,$hdr,2);
+
+	if ($ct==2)
+	{
+	    if (substr($hdr,0,1) eq "\x80")
+	    {
+		# binary chunk
+
+		my $chunktype=ord(substr($hdr,1,1));
+		$enc="binary";
+
+		if (defined($type) and $type != $chunktype)
+		{
+		    seek($F,-2,1);
+		    last;
+		}
+
+		$type=$chunktype;
+		return if $chunktype == 3;
+
+		$ct=read($F,$hdr,4);
+
+		Msg(1,"Failed to read binary segment length"), return if $ct != 4;
+
+		my $sl=unpack('V',$hdr);
+		my $data;
+		my $chk=read($F,$data,$sl);
+
+		Msg(1 ,"Failed to read binary segment"), return if $chk != $sl;
+
+		$chunk.=$data;
+	    }
+	    else
+	    {
+		# ascii chunk
+
+		my $hex=0;
+		seek($F,-2,1);
+		my $ct=0;
+
+		while (1)
+		{
+		    my $lin=<$F>;
+
+		    last if !$lin;
+
+		    $hex=1,$enc.=" hex" if $segno == 2 and !$ct and $lin=~m/^[A-F0-9a-f]{4,4}/;
+
+		    if ($segno !=2 and $lin=~m/^(.*$ascterm\n?)(.*)/)
+		    {
+			$chunk.=$1;
+			seek($F,-length($2)-1,1) if $2;
+			last;
+		    }
+		    elsif ($segno == 2 and $lin=~m/^(.*?)($ascterm.*)/)
+		    {
+			$chunk.=$1;
+			seek($F,-length($2)-1,1) if $2;
+			last;
+		    }
+
+		    chomp($lin), $lin=pack('H*',$lin) if $hex;
+		    $chunk.=$lin; $ct++;
+		}
+
+		last;
+	    }
+	}
+	else
+	{
+	    push(@msg,"Failed to read 2 header bytes");
+	}
+    }
+
+    return $chunk;
+}
 
 sub OutStream
 {
@@ -2298,11 +2492,54 @@ sub OutStream
 
 sub do_p
 {
+    my $trans='BLOCK';
+
+    $trans='PAGE' if $firstpause;
+    NewPage($trans);
+    @XOstream=();
+    @PageAnnots=();
+    $firstpause=1;
+}
+
+sub FixTrans
+{
+    my $t=shift;
+    my $style=$t->{S};
+
+    if ($style)
+    {
+	delete($t->{Dm}) if $style ne '/Split' and $style ne '/Blinds';
+	delete($t->{M})  if !($style eq '/Split' or $style eq '/Box' or $style eq '/Fly');
+	delete($t->{Di}) if !($style eq '/Wipe' or $style eq '/Glitter' or $style eq '/Fly' or $style eq '/Cover' or $style eq '/Uncover' or $style eq '/Push') or ($style eq '/Fly' and $t->{Di} eq '/None' and $t->{SS} != 1);
+	delete($t->{SS}) if !($style eq '/Fly');
+	delete($t->{B})  if !($style eq '/Fly');
+    }
+
+    return($t);
+}
+
+sub NewPage
+{
+    my $trans=shift;
     # Start of pages
 
     if ($cpageno > 0)
     {
+	if ($#XOstream>=0)
+	{
+	    MakeXO() if $stream;
+	    $stream=join("\n",@XOstream,'');
+	}
+
+	my %t=%{$transition->{$trans}};
 	$cpage->{MediaBox}=\@mediabox if $custompaper;
+	$cpage->{Trans}=FixTrans(\%t) if $t{S};
+
+	if ($#PageAnnots >= 0)
+	{
+	    @{$cpage->{Annots}}=@PageAnnots;
+	}
+
 	PutObj($cpageno);
 	OutStream($cpageno+1);
     }
@@ -2325,24 +2562,45 @@ sub do_p
     $objct+=1;
     $cpage=$obj[$cpageno]->{DATA};
     $pages->{'Count'}++;
-    $stream="q 1 0 0 1 0 0 cm\n$linejoin J\n$linecap j\n";
+    $stream="q 1 0 0 1 0 0 cm\n$linejoin J\n$linecap j\n0.4 w\n";
     $stream.=$strkcol."\n", $curstrk=$strkcol if $strkcol ne '';
     $mode='g';
     $curfill='';
 #    @mediabox=@defaultmb;
 }
 
+sub MakeXO
+{
+    $stream.="%mode=$mode\n";
+    IsGraphic();
+    $stream.="Q\n";
+    my $xobj=++$objct;
+    my $xonm="XO$xobj";
+    $pages->{'Resources'}->{'XObject'}->{$xonm}=BuildObj($xobj,{'Type' => '/XObject', 'BBox' => \@mediabox, 'Name' => "/$xonm", 'FormType' => 1, 'Subtype' => '/Form', 'Length' => 0, 'Type' => "/XObject"});
+    $obj[$xobj]->{STREAM}=$stream;
+    $stream='';
+    push(@XOstream,"q") if $#XOstream==-1;
+    push(@XOstream,"/$xonm Do");
+}
+
 sub do_f
 {
     my $par=shift;
+    my $fnt=$fontlst{$par}->{FNT};
 
 #	IsText();
     $cft="$par";
     $fontchg=1;
 #	$stream.="/F$cft $cftsz Tf\n" if $cftsz;
     $widtbl=CacheWid($par);
-    $origwidtbl=$fontlst{$par}->{FNT}->{WID};
-    $krntbl=$fontlst{$par}->{FNT}->{KERN};
+    $origwidtbl=[];
+
+    foreach my $w (@{$fnt->{NO}})
+    {
+	push(@{$origwidtbl},$fnt->{NAM}->{$w->[1]}->[WIDTH]);
+    }
+
+#     $krntbl=$fnt->{KERN};
 }
 
 sub CacheWid
@@ -2351,7 +2609,7 @@ sub CacheWid
 
     if (!defined($fontlst{$par}->{CACHE}->{$cftsz}))
     {
-	$fontlst{$par}->{CACHE}->{$cftsz}=BuildCache($fontlst{$par}->{FNT}->{WID});
+	$fontlst{$par}->{CACHE}->{$cftsz}=BuildCache($fontlst{$par}->{FNT});
     }
 
     return($fontlst{$par}->{CACHE}->{$cftsz});
@@ -2359,13 +2617,15 @@ sub CacheWid
 
 sub BuildCache
 {
-    my $wid=shift;
-    return([]);
+    my $fnt=shift;
     my @cwid;
+    $origwidtbl=[];
 
-    foreach my $w (@{$wid})
+    foreach my $w (@{$fnt->{NO}})
     {
-	push(@cwid,$w*$cftsz);
+	my $wid=(defined($w) and defined($w->[1]))?$fnt->{NAM}->{$w->[1]}->[WIDTH]:0;
+	push(@cwid,$wid*$cftsz);
+	push(@{$origwidtbl},$wid);
     }
 
     return(\@cwid);
@@ -2512,22 +2772,22 @@ sub set_col
     if ($mcmd eq 'c')
     {
 	# Text CMY
-	return(($c[0]/65535).' '.($c[1]/65535).' '.($c[2]/65535)." 0 $oper[1]");
+	return(d3($c[0]/65535).' '.d3($c[1]/65535).' '.d3($c[2]/65535)." 0 $oper[1]");
     }
     elsif ($mcmd eq 'k')
     {
 	# Text CMYK
-	return(($c[0]/65535).' '.($c[1]/65535).' '.($c[2]/65535).' '.($c[3]/65535)." $oper[1]");
+	return(d3($c[0]/65535).' '.d3($c[1]/65535).' '.d3($c[2]/65535).' '.d3($c[3]/65535)." $oper[1]");
     }
     elsif ($mcmd eq 'g')
     {
 	# Text Grey
-	return(($c[0]/65535)." $oper[0]");
+	return(d3($c[0]/65535)." $oper[0]");
     }
     elsif ($mcmd eq 'r')
     {
 	# Text RGB0
-	return(($c[0]/65535).' '.($c[1]/65535).' '.($c[2]/65535)." $oper[2]");
+	return(d3($c[0]/65535).' '.d3($c[1]/65535).' '.d3($c[2]/65535)." $oper[2]");
     }
 }
 
@@ -2683,7 +2943,7 @@ sub do_D
 	$ypos+=$p[1];
 	$stream.=PutXY($xpos,$ypos)." l\n";
 
-	$stream.="s\n";
+	$stream.="S\n";
 	$poschg=1;
     }
     elsif ($Dcmd eq 't')
@@ -2866,6 +3126,16 @@ sub PutLine
     $pendmv-=$nomove;
     $lin[$#lin]->[1]=-$pendmv/$cftsz if ($pendmv != 0);
 
+    foreach my $wd (@lin)
+    {
+	next if !defined($wd->[0]);
+	$wd->[0]=~s/\\/\\\\/g;
+	$wd->[0]=~s/\(/\\(/g;
+	$wd->[0]=~s/\)/\\)/g;
+	$wd->[0]=~s/!\|!\|/\\/g;
+	$wd->[1]=d3($wd->[1]);
+    }
+
     if (0)
     {
 	if (scalar(@lin) == 1 and (!defined($lin[0]->[1]) or $lin[0]->[1] == 0))
@@ -2967,6 +3237,11 @@ sub PutLine
     $wt=-1;
 }
 
+sub d3
+{
+    return(sprintf("%.3f",shift || 0));
+}
+
 sub  LoadAhead
 {
     my $no=shift;
@@ -3005,11 +3280,11 @@ sub do_V
     {
 	$xpos=substr($ahead[0],1)/$unitwidth;
 
+	$nomove=$pendmv=0;
 	@ahead=();
 
     }
 
-#    $nomove=$pendmv=0;
     $poschg=1;
 }
 
@@ -3017,7 +3292,7 @@ sub do_v
 {
     my $par=shift;
 
-    PutLine();
+    PutLine() if $mode eq 't';
 
     $ypos+=$par/$unitwidth;
 
@@ -3027,6 +3302,7 @@ sub do_v
 sub TextWid
 {
     my $txt=shift;
+    my $fnt=shift;
     my $w=0;
     my $ck=0;
 
@@ -3045,6 +3321,7 @@ sub TextWid
 sub do_t
 {
     my $par=shift;
+    my $fnt=$fontlst{$cft}->{FNT};
 
     if ($kernadjust != $curkern)
     {
@@ -3053,9 +3330,44 @@ sub do_t
 	$curkern=$kernadjust;
     }
 
-    my $wid=TextWid($par);
+    my $par2=$par;
+    $par2=~s/^!\|!\|(\d\d\d)/chr(oct($1))/e;
 
-    $par=reverse(split('',$par)) if $xrev;
+    foreach my $j (0..length($par2)-1)
+    {
+	my $cn=ord(substr($par2,$j,1));
+	my $chnm=$fnt->{NAM}->{$fnt->{NO}->[$cn]->[1]};
+
+	if ($chnm->[USED]==0)
+	{
+	    $chnm->[USED]=1;
+	}
+	elsif ($fnt->{NO}->[$cn]->[0] ne $fnt->{NO}->[$cn]->[1])
+	{
+	    # A glyph has already been remapped to this char, so find a spare
+
+	    my $cn2=RemapChr($cn,$fnt,$fnt->{NO}->[$cn]->[0]);
+	    $stream.="% MMM Remap $cn to $cn2\n" if $debug;
+
+	    if ($cn2)
+	    {
+		substr($par2,$j,1)=chr($cn2);
+
+		if ($par=~m/^!\|!\|(\d\d\d)/)
+		{
+		    substr($par,4,3)=sprintf("%03o",$cn2);
+		}
+		else
+		{
+		    substr($par,$j,1)=chr($cn2);
+		}
+	    }
+	}
+    }
+    my $wid=TextWid($par2,$fnt);
+
+    $par=reverse(split('',$par)) if $xrev and $par!~m/^!\|!\|(\d\d\d)/;
+
     if ($n_flg and defined($mark))
     {
 	$mark->{ypos}=$ypos;
@@ -3069,9 +3381,6 @@ sub do_t
     $xpos+=($pendmv-$nomove)/$unitwidth;
 
     $stream.="% == '$par'=$wid 'xpos=$xpos\n" if $debug;
-    $par=~s/\\(?!\d\d\d)/\\\\/g;
-    $par=~s/\)/\\)/g;
-    $par=~s/\(/\\(/g;
 
     # $pendmv = 'h' move since last 't'
     # $nomove = width of char(s) added by 'C', 'N' or 'c'
@@ -3181,12 +3490,11 @@ sub do_H
 sub do_C
 {
     my $par=shift;
-    my $nm;
 
-    ($par,$nm)=FindChar($par);
+    my ($par2,$nm)=FindChar($par);
 
-    do_t($par);
-    $nomove=$nm;
+    do_t($par2);
+    $nomove=$fontlst{$cft}->{FNT}->{NAM}->{$par}->[WIDTH]*$cftsz ;
 }
 
 sub FindChar
@@ -3194,12 +3502,13 @@ sub FindChar
     my $chnm=shift;
     my $fnt=$fontlst{$cft}->{FNT};
 
-    if (exists($fnt->{GNM}->{$chnm}))
+    if (exists($fnt->{NAM}->{$chnm}))
     {
-	my $ch=$fnt->{GNM}->{$chnm};
+	my $ch=$fnt->{NAM}->{$chnm}->[ASSIGNED];
 	$ch=RemapChr($ch,$fnt,$chnm) if ($ch > 255);
+	$fnt->{NAM}->{$chnm}->[USED]=0 if $fnt->{NO}->[$ch]->[1] eq $chnm;
 
-	return(($ch<32)?sprintf("\\%03o",$ch):chr($ch),$fnt->{WID}->[$ch]*$cftsz);
+	return(($ch<32)?sprintf("!|!|%03o",$ch):chr($ch),$widtbl->[$ch]);
     }
     else
     {
@@ -3214,17 +3523,33 @@ sub RemapChr
     my $chnm=shift;
     my $unused=0;
 
-    foreach my $un (2..$#{$fnt->{GNO}})
+    foreach my $un (0..$#{$fnt->{NO}})
     {
-	$unused=$un,last if $fnt->{GNO}->[$un] eq '/.notdef';
+	next if $un >= 139 and $un <= 144;
+	$unused=$un,last if $fnt->{NO}->[$un]->[1] eq '';
     }
 
-    if (--$unused <= 255)
+    if (!$unused)
     {
-	$fnt->{GNM}->{$chnm}=$unused++;
-	$fnt->{GNO}->[$unused]=$fnt->{GNO}->[$ch+1];
-	$fnt->{WID}->[$unused]=$fnt->{WID}->[$ch+1];
-	$ch=$unused-1;
+	foreach my $un (128..255)
+	{
+	    next if $un >= 139 and $un <= 144;
+	    my $glyph=$fnt->{NO}->[$un]->[1];
+	    $unused=$un,last if $fnt->{NAM}->{$glyph}->[USED] == 0;
+	}
+    }
+
+    if ($unused && $unused <= 255)
+    {
+	my $glyph=$fnt->{NO}->[$unused]->[1];
+	delete($fontlst{$cft}->{CACHE}->{$cftsz});
+	$fnt->{NAM}->{$chnm}->[ASSIGNED]=$unused;
+	$fnt->{NO}->[$unused]->[1]=$chnm;
+	$widtbl=CacheWid($cft);
+
+	$stream.="% AAA Assign $chnm ($ch) to $unused\n" if $debug;
+
+	$ch=$unused;
 	return($ch);
     }
     else
@@ -3242,34 +3567,27 @@ sub do_c
     $par=substr($par,0,1);
     my $ch=ord($par);
     do_N($ch);
-    $nomove=$fontlst{$cft}->{FNT}->{WID}->[$ch]*$cftsz;
 }
 
 sub do_N
 {
     my $par=shift;
+    my $fnt=$fontlst{$cft}->{FNT};
 
-    if ($par > 255)
+    if (!defined($fnt->{NO}->[$par]))
     {
-	my $fnt=$fontlst{$cft}->{FNT};
-	my $chnm='';
-
-	foreach my $c (keys %{$fnt->{GNM}})
-	{
-	    $chnm=$c,last if $fnt->{GNM}->{$c} == $par;
-	}
-
-	$par=RemapChr($par,$fnt,$chnm);
+	Msg(0,"No chr($par) in font $fnt->{internalname}");
+	return;
     }
 
-    do_t(chr($par));
-    $nomove=$fontlst{$cft}->{FNT}->{WID}->[$par]*$cftsz;
+    my $chnm=$fnt->{NO}->[$par]->[0];
+    do_C($chnm);
 }
 
 sub do_n
 {
     $gotT=0;
-    PutLine();
+    PutLine(0);
     $pendmv=$nomove=0;
     $n_flg=1;
     @lin=();

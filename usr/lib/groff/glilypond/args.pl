@@ -3,29 +3,31 @@
 ########################################################################
 
 my $License = q*
-groff_lilypond - integrate `lilypond' into `groff' files
+groff_lilypond - integrate 'lilypond' into 'groff' files
 
-Source file position: `<groff-source>/contrib/glilypond/args.pl'
-Installed position: `<prefix>/lib/groff/glilypond'
+Source file position: '<groff-source>/contrib/glilypond/args.pl'
+Installed position: '<prefix>/lib/groff/glilypond'
 
-Copyright (C) 2013-2014 Free Software Foundation, Inc.
+Copyright (C) 2013-2018 Free Software Foundation, Inc.
   Written by Bernd Warken <groff-bernd.warken-72@web.de>
 
-This file is part of `GNU groff'.
+Last update: 10 Sep 2015
 
-  `GNU groff' is free software: you can redistribute it and/or modify it
-under the terms of the `GNU General Public License' as published by the
-`Free Software Foundation', either version 3 of the License, or (at your
+This file is part of 'GNU groff'.
+
+  'GNU groff' is free software: you can redistribute it and/or modify it
+under the terms of the 'GNU General Public License' as published by the
+'Free Software Foundation', either version 3 of the License, or (at your
 option) any later version.
 
-  `GNU groff' is distributed in the hope that it will be useful, but
+  'GNU groff' is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the `GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 'GNU
 General Public License' for more details.
 
-  You should have received a copy of the 'GNU General Public License`
-along with `groff', see the files `COPYING' and `LICENSE' in the top
-directory of the `groff' source package.  If not, see
+  You should have received a copy of the 'GNU General Public License'
+along with 'groff', see the files 'COPYING' and 'LICENSE' in the top
+directory of the 'groff' source package.  If not, see
 <http://www.gnu.org/licenses/>.
 *;
 
@@ -110,7 +112,7 @@ my @files = EMPTYARRAY;
 
 
 #----------
-# first run for command line arguments
+# first run for command-line arguments
 #----------
 
 # global variables for first run
@@ -122,8 +124,8 @@ my $has_arg = FALSE;
 
 
 # Split short option collections and transfer these to suitable long
-# options from above.  Note that `-v' now means `--verbose' in version
-# `v1.1', earlier versions had `--version' for `-v'.
+# options from above.  Note that '-v' now means '--verbose' in version
+# 'v1.1', earlier versions had '--version' for '-v'.
 
 my %short_opts =
   (
@@ -153,7 +155,7 @@ $long_opts[3] =
    '--o' => '--output',
    '--p' => '--prefix',		# and --file_prefix
    '--t' => '--temp_dir',
-   '--u' => '--help',		# '--usage' is mapped to `--help'
+   '--u' => '--help',		# '--usage' is mapped to '--help'
   };
 
 $long_opts[4] =
@@ -177,13 +179,13 @@ my $split_short = sub {
 
   my @chars = split //, $1;	# omit leading dash
 
-     # if result is TRUE: run `next SPLIT' afterwards
+     # if result is TRUE: run 'next SPLIT' afterwards
 
    CHARS: while ( @chars ) {
        my $c = shift @chars;
 
        unless ( exists $short_opts{$c} ) {
-	 $stderr->print( "Unknown short option `-$c'." );
+	 $stderr->print( "Unknown short option '-$c'." );
 	 next CHARS;
        }
 
@@ -206,12 +208,12 @@ my $split_short = sub {
 	   # in this arg, the rest of characters in @chars
 	   push @splitted_args, join "", @chars;
 	   @chars = EMPTYARRAY;
-	   return TRUE;		# use `next SPLIT' afterwards
+	   return TRUE;		# use 'next SPLIT' afterwards
 	 }
 
 	 # optarg is the next argument
 	 $has_arg = $transopt;
-	 return TRUE;		# use `next SPLIT' afterwards
+	 return TRUE;		# use 'next SPLIT' afterwards
        }			# end of if %opts_with_arg
      }				# end of while CHARS
      return FALSE;		# do not do anything
@@ -253,7 +255,7 @@ my $split_long = sub {
 		      $from_arg . '.' ) if ( defined($optarg) );
       push @splitted_args, $transopt;
       $Args->{'verbose'} = TRUE if ( $transopt eq '--verbose' );
-      return TRUE;		# use `next SPLIT' afterwards
+      return TRUE;		# use 'next SPLIT' afterwards
     }				# end of if %opts_noarg
 
     # test on option with arg
@@ -263,18 +265,18 @@ my $split_long = sub {
       # test on optarg in arg
       if ( defined($optarg) ) {
 	push @splitted_args, $1;
-	return TRUE; # use `next SPLIT' afterwards
+	return TRUE; # use 'next SPLIT' afterwards
       } # end of if optarg in arg
 
       # has optarg in next arg
       $has_arg = $transopt;
-      return TRUE; # use `next SPLIT' afterwards
+      return TRUE; # use 'next SPLIT' afterwards
     } # end of if %opts_with_arg
 
     # not with and without option, so is not permitted
-    $stderr->print( "`" . $transopt .
-		    "' is unknown long option from `" . $from_arg . "'" );
-    return TRUE; # use `next SPLIT' afterwards
+    $stderr->print( "'" . $transopt .
+		    "' is unknown long option from '" . $from_arg . "'" );
+    return TRUE; # use 'next SPLIT' afterwards
   } # end of for N
   return FALSE; # do nothing
 }; # end of split_long()
@@ -287,7 +289,7 @@ sub run_first {
 
  SPLIT: foreach (@ARGV) {
     # Transform long and short options into some given long options.
-    # Split long opts with arg into 2 args (no `=').
+    # Split long opts with arg into 2 args (no '=').
     # Transform short option collections into given long options.
     chomp;
 
@@ -302,12 +304,12 @@ sub run_first {
       next SPLIT;
     }
 
-    if ( $_ eq '-' ) {		# file arg `-'
+    if ( $_ eq '-' ) {		# file arg '-'
       push @files, $_;
       next SPLIT;
     }
 
-    if ( $_ eq '--' ) {		# POSIX arg `--'
+    if ( $_ eq '--' ) {		# POSIX arg '--'
       push @splitted_args, $_;
       $double_minus = TRUE;
       next SPLIT;
@@ -337,7 +339,7 @@ sub run_first {
   }				# end of foreach SPLIT
 
 				# all args are considered
-  $stderr->print( "Option `$has_arg' needs an argument." )
+  $stderr->print( "Option '$has_arg' needs an argument." )
     if ( $has_arg );
 
 
@@ -351,7 +353,7 @@ sub run_first {
 # open or ignore verbose output
 #----------
 sub install_verbose {
-  if ( $Args->{'verbose'} ) { # `--verbose' was used
+  if ( $Args->{'verbose'} ) { # '--verbose' was used
     # make verbose output into $v
     my $s = $v->get(); # get content of string so far as array ref, close
 
@@ -363,11 +365,11 @@ sub install_verbose {
       }
     }
     # verbose output is now active (into STDERR)
-    $v->print( "Option `-v' means `--verbose'." );
-    $v->print( "Version information is printed by option `--version'." );
+    $v->print( "Option '-v' means '--verbose'." );
+    $v->print( "Version information is printed by option '--version'." );
     $v->print( "#" x 72 );
 
-  } else { # `--verbose' was not used
+  } else { # '--verbose' was not used
     # do not be verbose, make verbose invisible
 
     $v->close(); # close and ignore the string content
@@ -376,7 +378,7 @@ sub install_verbose {
     # this is either into /dev/null or in an ignored string
 
   } # end if-else about verbose
-  # `$v->print' works now in any case
+  # '$v->print' works now in any case
 
   $v->print( "Verbose output was chosen." );
 
@@ -384,20 +386,20 @@ sub install_verbose {
   $v->print( $Globals->{'prog'} . " is" . $s .
 	     " installed." );
 
-  $v->print( 'The command line options are:' );
+  $v->print( 'The command-line options are:' );
 
   $s = "  options:";
-  $s .= " `" . $_ . "'" for ( @ARGV );
+  $s .= " '" . $_ . "'" for ( @ARGV );
   $v->print( $s );
 
   $s = "  file names:";
-  $s .= " `" . $_ . "'\n" for ( @files );
+  $s .= " '" . $_ . "'\n" for ( @files );
   $v->print( $s );
 } # end install_verbose()
 
 
 #----------
-# second run of command line arguments
+# second run of command-line arguments
 #----------
 sub run_second {
     # Second run of args with new @ARGV from the former splitting.
@@ -408,12 +410,12 @@ sub run_second {
 
   ARGS: for my $arg ( @ARGV ) {
 
-      # ignore `--', file names are handled later on
+      # ignore '--', file names are handled later on
       last ARGS if ( $arg eq '--' );
 
       if ( $has_arg ) {
 	unless ( exists $opts_with_arg{$has_arg} ) {
-	  $stderr->print( "`\%opts_with_args' does not have key `" .
+	  $stderr->print( "'\%opts_with_args' does not have key '" .
 			    $has_arg . "'." );
 	  next ARGS;
 	}
@@ -434,14 +436,14 @@ sub run_second {
       }
 
       # not a suitable option
-      $stderr->print( "Wrong option `" . $arg . "'." );
+      $stderr->print( "Wrong option '" . $arg . "'." );
       next ARGS;
 
     } # end of for ARGS:
 
 
     if ( $has_arg ) { # after last argument
-      die "Option `$has_arg' needs an argument.";
+      die "Option '$has_arg' needs an argument.";
     }
 
   }; # end of second run
@@ -450,40 +452,40 @@ sub run_second {
 sub handle_args {
   # handling the output of args
 
-  if ( $Args->{'output'} ) { # `--output' was set in the arguments
+  if ( $Args->{'output'} ) { # '--output' was set in the arguments
     my $out_path = &path2abs($Args->{'output'});
     die "Output file name $Args->{'output'} cannot be used."
       unless ( $out_path );
 
     my ( $file, $dir );
     ( $file, $dir ) = File::Basename::fileparse($out_path)
-      or die "Could not handle output file path `" . $out_path . "': " .
-	"directory name `" . $dir . "' and file name `" . $file . "'.";
+      or die "Could not handle output file path '" . $out_path . "': " .
+	"directory name '" . $dir . "' and file name '" . $file . "'.";
 
-    die "Could not find output directory for `" . $Args->{'output'} . "'"
+    die "Could not find output directory for '" . $Args->{'output'} . "'"
       unless ( $dir );
-    die "Could not find output file: `" . $Args->{'output'} .
+    die "Could not find output file: '" . $Args->{'output'} .
       "'" unless ( $file );
 
     if ( -d $dir ) {
-      die "Could not write to output directory `" . $dir . "'."
+      die "Could not write to output directory '" . $dir . "'."
 	unless ( -w $dir );
     } else {
       $dir = &make_dir($dir);
-      die "Could not create output directory in: `" . $out_path . "'."
+      die "Could not create output directory in: '" . $out_path . "'."
 	unless ( $dir );
     }
 
     # now $dir is a writable directory
 
     if ( -e $out_path ) {
-      die "Could not write to output file `" . $out_path . "'."
+      die "Could not write to output file '" . $out_path . "'."
 	unless ( -w $out_path );
     }
 
     $out = new FH_FILE( $out_path );
-    $v->print( "Output goes to file `" . $out_path . "'." );
-  } else { # `--output' was not set
+    $v->print( "Output goes to file '" . $out_path . "'." );
+  } else { # '--output' was not set
     $out = new FH_STDOUT();
   }
   # no $out is the right behavior for standard output

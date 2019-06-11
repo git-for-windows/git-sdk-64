@@ -15,7 +15,7 @@ use LWP::Protocol ();
 use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.38';
+our $VERSION = '6.39';
 
 sub new
 {
@@ -1133,22 +1133,48 @@ LWP::UserAgent - Web user agent class
 
 =head1 SYNOPSIS
 
- use strict;
- use warnings;
- use LWP::UserAgent ();
+    use strict;
+    use warnings;
 
- my $ua = LWP::UserAgent->new;
- $ua->timeout(10);
- $ua->env_proxy;
+    use LWP::UserAgent ();
 
- my $response = $ua->get('http://example.com');
+    my $ua = LWP::UserAgent->new(timeout => 10);
+    $ua->env_proxy;
 
- if ($response->is_success) {
-     print $response->decoded_content;  # or whatever
- }
- else {
-     die $response->status_line;
- }
+    my $response = $ua->get('http://example.com');
+
+    if ($response->is_success) {
+        print $response->decoded_content;
+    }
+    else {
+        die $response->status_line;
+    }
+
+Extra layers of security (note the C<cookie_jar> and C<protocols_allowed>):
+
+    use strict;
+    use warnings;
+
+    use HTTP::CookieJar::LWP ();
+    use LWP::UserAgent       ();
+
+    my $jar = HTTP::CookieJar::LWP->new;
+    my $ua  = LWP::UserAgent->new(
+        cookie_jar        => $jar,
+        protocols_allowed => ['http', 'https'],
+        timeout           => 10,
+    );
+
+    $ua->env_proxy;
+
+    my $response = $ua->get('http://example.com');
+
+    if ($response->is_success) {
+        print $response->decoded_content;
+    }
+    else {
+        die $response->status_line;
+    }
 
 =head1 DESCRIPTION
 
@@ -1276,7 +1302,16 @@ the cookie jar object must implement the C<extract_cookies($response)> and
 C<add_cookie_header($request)> methods.  These methods will then be
 invoked by the user agent as requests are sent and responses are
 received.  Normally this will be a L<HTTP::Cookies> object or some
-subclass.
+subclass.  You are, however, encouraged to use L<HTTP::CookieJar::LWP>
+instead.  See L</"BEST PRACTICES"> for more information.
+
+    use HTTP::CookieJar::LWP ();
+
+    my $jar = HTTP::CookieJar::LWP->new;
+    my $ua = LWP::UserAgent->new( cookie_jar => $jar );
+
+    # or after object creation
+    $ua->cookie_jar( $cookie_jar );
 
 The default is to have no cookie jar, i.e. never automatically add
 C<Cookie> headers to the requests.
@@ -1592,34 +1627,27 @@ the active handlers:
 Add handler to be invoked in the given processing phase.  For how to
 specify C<%matchspec> see L<HTTP::Config/"Matching">.
 
-The possible values C<$phase> and the corresponding callback signatures are:
+The possible values C<$phase> and the corresponding callback signatures are as
+follows.  Note that the handlers are documented in the order in which they will
+be run, which is:
+
+    request_preprepare
+    request_prepare
+    request_send
+    response_header
+    response_data
+    response_done
+    response_redirect
 
 =over
 
-=item response_data => sub { my($response, $ua, $handler, $data) = @_; ... }
+=item request_preprepare => sub { my($request, $ua, $handler) = @_; ... }
 
-This handler is called for each chunk of data received for the
-response.  The handler might croak to abort the request.
-
-This handler needs to return a TRUE value to be called again for
-subsequent chunks for the same request.
-
-=item response_done => sub { my($response, $ua, $handler) = @_; ... }
-
-The handler is called after the response has been fully received, but
-before any redirect handling is attempted.  The handler can be used to
-extract information or modify the response.
-
-=item response_header => sub { my($response, $ua, $handler) = @_; ... }
-
-This handler is called right after the response headers have been
-received, but before any content data.  The handler might set up
-handlers for data and might croak to abort the request.
-
-The handler might set the C<< $response->{default_add_content} >> value to
-control if any received data should be added to the response object
-directly.  This will initially be false if the C<< $ua->request() >> method
-was called with a C<$content_file> or C<$content_cb argument>; otherwise true.
+The handler is called before the C<request_prepare> and other standard
+initialization of the request.  This can be used to set up headers
+and attributes that the C<request_prepare> handler depends on.  Proxy
+initialization should take place here; but in general don't register
+handlers for this phase.
 
 =item request_prepare => sub { my($request, $ua, $handler) = @_; ... }
 
@@ -1634,14 +1662,6 @@ The return value from the callback is ignored.  If an exception is
 raised it will abort the request and make the request method return a
 "400 Bad request" response.
 
-=item request_preprepare => sub { my($request, $ua, $handler) = @_; ... }
-
-The handler is called before the C<request_prepare> and other standard
-initialization of the request.  This can be used to set up headers
-and attributes that the C<request_prepare> handler depends on.  Proxy
-initialization should take place here; but in general don't register
-handlers for this phase.
-
 =item request_send => sub { my($request, $ua, $handler) = @_; ... }
 
 This handler gets a chance of handling requests before they're sent to the
@@ -1650,6 +1670,31 @@ wishes to terminate the processing; otherwise it should return nothing.
 
 The C<response_header> and C<response_data> handlers will not be
 invoked for this response, but the C<response_done> will be.
+
+=item response_header => sub { my($response, $ua, $handler) = @_; ... }
+
+This handler is called right after the response headers have been
+received, but before any content data.  The handler might set up
+handlers for data and might croak to abort the request.
+
+The handler might set the C<< $response->{default_add_content} >> value to
+control if any received data should be added to the response object
+directly.  This will initially be false if the C<< $ua->request() >> method
+was called with a C<$content_file> or C<$content_cb argument>; otherwise true.
+
+=item response_data => sub { my($response, $ua, $handler, $data) = @_; ... }
+
+This handler is called for each chunk of data received for the
+response.  The handler might croak to abort the request.
+
+This handler needs to return a TRUE value to be called again for
+subsequent chunks for the same request.
+
+=item response_done => sub { my($response, $ua, $handler) = @_; ... }
+
+The handler is called after the response has been fully received, but
+before any redirect handling is attempted.  The handler can be used to
+extract information or modify the response.
 
 =item response_redirect => sub { my($response, $ua, $handler) = @_; ... }
 
@@ -1987,6 +2032,47 @@ The base implementation will return false unless the method
 is in the object's C<requests_redirectable> list,
 false if the proposed redirection is to a C<file://...>
 URL, and true otherwise.
+
+=head1 BEST PRACTICES
+
+The default settings can get you up and running quickly, but there are settings
+you can change in order to make your life easier.
+
+=head2 Handling Cookies
+
+You are encouraged to install L<Mozilla::PublicSuffix> and use
+L<HTTP::CookieJar::LWP> as your cookie jar.  L<HTTP::CookieJar::LWP> provides a
+better security model matching that of current Web browsers when
+L<Mozilla::PublicSuffix> is installed.
+
+    use HTTP::CookieJar::LWP ();
+
+    my $jar = HTTP::CookieJar::LWP->new;
+    my $ua = LWP::UserAgent->new( cookie_jar => $jar );
+
+See L</"cookie_jar"> for more information.
+
+=head2 Managing Protocols
+
+C<protocols_allowed> gives you the ability to whitelist the protocols you're
+willing to allow.
+
+    my $ua = LWP::UserAgent->new(
+        protocols_allowed => [ 'http', 'https' ]
+    );
+
+This will prevent you from inadvertently following URLs like
+C<file:///etc/passwd>.  See L</"protocols_allowed">.
+
+C<protocols_forbidden> gives you the ability to blacklist the protocols you're
+unwilling to allow.
+
+    my $ua = LWP::UserAgent->new(
+        protocols_forbidden => [ 'file', 'mailto', 'ssh', ]
+    );
+
+This can also prevent you from inadvertently following URLs like
+C<file:///etc/passwd>.  See L</protocols_forbidden>.
 
 =head1 SEE ALSO
 
