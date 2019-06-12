@@ -22,7 +22,7 @@ import os
 import re
 import sys
 
-VERSION_STR = '''glib-genmarshal version 2.60.3
+VERSION_STR = '''glib-genmarshal version 2.60.4
 glib-genmarshal comes with ABSOLUTELY NO WARRANTY.
 You may redistribute copies of glib-genmarshal under the terms of
 the GNU General Public License which can be found in the
@@ -330,6 +330,7 @@ IN_ARGS = {
         'ctype': 'gpointer',
         'getter': 'g_marshal_value_peek_string',
         'box': ['g_strdup', 'g_free'],
+        'static-check': True,
     },
     'PARAM': {
         'signal': 'PARAM',
@@ -360,7 +361,7 @@ IN_ARGS = {
         'signal': 'VARIANT',
         'ctype': 'gpointer',
         'getter': 'g_marshal_value_peek_variant',
-        'box': ['g_variant_ref', 'g_variant_unref'],
+        'box': ['g_variant_ref_sink', 'g_variant_unref'],
         'static-check': True,
         'takes-type': False,
     },
