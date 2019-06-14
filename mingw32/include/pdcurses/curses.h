@@ -56,6 +56,10 @@ PDCurses portable platform definitions list:
 # include <wchar.h>
 #endif
 
+#if defined(__cplusplus) && __cplusplus >= 199711L
+# define PDC_PP98       1
+#endif
+
 #if defined(__STDC_VERSION__) && __STDC_VERSION >= 199901L && \
     !defined(__bool_true_false_are_defined)
 # include <stdbool.h>
@@ -64,7 +68,9 @@ PDCurses portable platform definitions list:
 #ifdef __cplusplus
 extern "C"
 {
-# define bool _bool
+# ifndef PDC_PP98
+#  define bool _bool
+# endif
 #endif
 
 /*----------------------------------------------------------------------
@@ -83,11 +89,13 @@ extern "C"
 
 #else
 
-typedef unsigned char bool;
-
 # define FALSE 0
 # define TRUE 1
 
+#endif
+
+#if !defined(PDC_PP98) && !defined(__bool_true_false_are_defined)
+typedef unsigned char bool;
 #endif
 
 #undef ERR
@@ -1840,7 +1848,9 @@ PDCEX  int     sb_refresh(void);
 #define PDC_KEY_MODIFIER_REPEAT  16
 
 #ifdef __cplusplus
-# undef bool
+# ifndef PDC_PP98
+#  undef bool
+# endif
 }
 #endif
 
