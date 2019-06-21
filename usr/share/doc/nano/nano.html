@@ -46,7 +46,7 @@ ul.no-bullet {list-style: none}
 
 
 <span id="Top"></span><span id="SEC_Top"></span>
-<p>This manual documents the GNU <code>nano</code> editor, version 4.2.
+<p>This manual documents the GNU <code>nano</code> editor, version 4.3.
 </p>
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Introduction" accesskey="1">Introduction</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
@@ -89,8 +89,8 @@ See <a href="#Pico-Compatibility">Pico Compatibility</a> for more details on how
 Pico differ.
 </p>
 <p>Starting with version 4.0, <code>nano</code> no longer hard-wraps an overlong
-line by default, uses smooth scrolling by default, and by default makes
-use of the line below the title bar.
+line by default.  It further uses smooth scrolling by default, and by
+default includes the line below the title bar into the editing area.
 </p>
 <p>If you want the old, Pico behavior back, you can use the
 following options: <samp>--breaklonglines</samp>,
@@ -204,7 +204,8 @@ mouse support.
 </dd>
 <dt><samp>-L</samp></dt>
 <dt><samp>--nonewlines</samp></dt>
-<dd><p>Don&rsquo;t automatically add a newline when a file does not end with one.
+<dd><p>Don&rsquo;t automatically add a newline when a text does not end with one.
+(This can cause you to save non-POSIX text files.)
 </p>
 </dd>
 <dt><samp>-M</samp></dt>
@@ -234,7 +235,7 @@ and place it at that position again upon reopening such a file.
 <dt><samp>-Q &quot;<var>regex</var>&quot;</samp></dt>
 <dt><samp>--quotestr=&quot;<var>regex</var>&quot;</samp></dt>
 <dd><p>Set the regular expression for matching the quoting part of a line.
-The default value is <tt>&quot;^([&nbsp;<!-- /@w -->\t]*([!#%:;&gt;|}]|//|--))+&quot;</tt>.
+The default value is <tt>&quot;^([&nbsp;<!-- /@w -->\t]*([!#%:;&gt;|}]|//))+&quot;</tt>.
 (Note that <code>\t</code> stands for a literal Tab character.)
 This makes it possible to rejustify blocks of quoted text when composing
 email, and to rewrap blocks of line comments when writing source code.
@@ -733,10 +734,8 @@ take an argument are unset by default.  So using the <code>unset</code> command
 is only needed when wanting to override a setting of the system&rsquo;s nanorc
 file in your own nanorc.  Options that take an argument cannot be unset.
 </p>
-<p>Quotes inside string parameters don&rsquo;t have to be escaped with
-backslashes.  The last double quote in the string will be treated as its
-end.  For example, for the <code>brackets</code> option, <tt>&quot;&quot;')&gt;]}&quot;</tt> will match
-<code>&quot;</code>, <code>'</code>, <code>)</code>, <code>&gt;</code>, <code>]</code>, and <code>}</code>.
+<p>Quotes inside the <var>characters</var> parameters below should not be escaped.
+The last double quote on the line will be seen as the closing quote.
 </p>
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Settings" accesskey="1">Settings</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
@@ -793,7 +792,7 @@ setting the options <code>titlecolor</code>, <code>statuscolor</code>, <code>key
 <code>functioncolor</code>, <code>numbercolor</code>, and <code>selectedcolor</code>.
 </p>
 </dd>
-<dt><code>set brackets &quot;<var>string</var>&quot;</code></dt>
+<dt><code>set brackets &quot;<var>characters</var>&quot;</code></dt>
 <dd><p>Set the characters treated as closing brackets when justifying
 paragraphs.  This may not include blank characters.  Only closing
 punctuation (see <code>set punct</code>), optionally followed by the specified
@@ -824,6 +823,7 @@ Note that this overrides <samp>quickblank</samp>.
 </dd>
 <dt><code>set errorcolor <var>fgcolor</var>,<var>bgcolor</var></code></dt>
 <dd><p>Use this color combination for the status bar when an error message is displayed.
+The default value is <tt>brightwhite,red</tt>.
 See <a href="#set-functioncolor"><code>set functioncolor</code></a> for valid color names.
 </p>
 </dd>
@@ -874,7 +874,7 @@ See <a href="#set-functioncolor"><code>set functioncolor</code></a> for valid co
 <dd><p>Enable vim-style lock-files for when editing files.
 </p>
 </dd>
-<dt><code>set matchbrackets &quot;<var>string</var>&quot;</code></dt>
+<dt><code>set matchbrackets &quot;<var>characters</var>&quot;</code></dt>
 <dd><p>Set the opening and closing brackets that can be found by bracket
 searches.  This may not include blank characters.  The opening set must
 come before the closing set, and the two sets must be in the same order.
@@ -904,7 +904,8 @@ cursor, set the mark (with a double click), or execute shortcuts.
 </p>
 </dd>
 <dt><code>set nonewlines</code></dt>
-<dd><p>Don&rsquo;t automatically add a newline when a file does not end with one.
+<dd><p>Don&rsquo;t automatically add a newline when a text does not end with one.
+(This can cause you to save non-POSIX text files.)
 </p>
 </dd>
 <dt><code>set nopauses</code></dt>
@@ -938,7 +939,7 @@ The cursor position is remembered for the 200 most-recently edited files.
 <dd><p>Preserve the XON and XOFF keys (<kbd>^Q</kbd> and <kbd>^S</kbd>).
 </p>
 </dd>
-<dt><code>set punct &quot;<var>string</var>&quot;</code></dt>
+<dt><code>set punct &quot;<var>characters</var>&quot;</code></dt>
 <dd><p>Set the characters treated as closing punctuation when justifying
 paragraphs.  This may not include blank characters.  Only the
 specified closing punctuation, optionally followed by closing brackets
@@ -953,7 +954,7 @@ keystroke instead of 25.  Note that <samp>constantshow</samp> overrides this.
 </dd>
 <dt><code>set quotestr &quot;<var>regex</var>&quot;</code></dt>
 <dd><p>Set the regular expression for matching the quoting part of a line.
-The default value is <tt>&quot;^([&nbsp;<!-- /@w -->\t]*([!#%:;&gt;|}]|//|--))+&quot;</tt>.
+The default value is <tt>&quot;^([&nbsp;<!-- /@w -->\t]*([!#%:;&gt;|}]|//))+&quot;</tt>.
 (Note that <code>\t</code> stands for a literal Tab character.)
 This makes it possible to rejustify blocks of quoted text when composing
 email, and to rewrap blocks of line comments when writing source code.
@@ -973,7 +974,8 @@ system either Backspace acts like Delete or Delete acts like Backspace.
 </p>
 </dd>
 <dt><code>set regexp</code></dt>
-<dd><p>Do extended regular expression searches by default.
+<dd><p>Do regular-expression searches by default.
+Regular expressions in <code>nano</code> are of the extended type (ERE).
 </p>
 </dd>
 <dt><code>set selectedcolor <var>fgcolor</var>,<var>bgcolor</var></code></dt>
@@ -1058,7 +1060,7 @@ This mode allows the user to open also other files for viewing,
 unless <samp>--restricted</samp> is given on the command line.
 </p>
 <span id="Whitespace"></span></dd>
-<dt><code>set whitespace &quot;<var>string</var>&quot;</code></dt>
+<dt><code>set whitespace &quot;<var>characters</var>&quot;</code></dt>
 <dd><p>Set the two characters used to indicate the presence of tabs and
 spaces.  They must be single-column characters.  The default pair
 for a UTF-8 locale is <tt>&quot;»·&quot;</tt>, and for other locales <tt>&quot;&gt;.&quot;</tt>.
@@ -1069,7 +1071,7 @@ for a UTF-8 locale is <tt>&quot;»·&quot;</tt>, and for other locales <tt>&quot
 characters as part of a word.
 </p>
 </dd>
-<dt><code>set wordchars &quot;<var>string</var>&quot;</code></dt>
+<dt><code>set wordchars &quot;<var>characters</var>&quot;</code></dt>
 <dd><p>Specify which other characters (besides the normal alphanumeric ones)
 should be considered as parts of words.  This overrides the option
 <code>wordbounds</code>.
@@ -1091,6 +1093,20 @@ This is inherently imperfect, because regular expressions are not
 powerful enough to fully parse a file.  Nevertheless, regular
 expressions can do a lot and are easy to make, so they are a
 good fit for a small editor like <code>nano</code>.
+</p>
+<p>All regular expressions in <code>nano</code> are extended regular expressions
+(ERE).  This means that <code>.</code>, <code>?</code>, <code>*</code>, <code>+</code>, <code>^</code>,
+<code>$</code>, and several other characters are special.
+The period <code>.</code> matches any single character,
+<code>?</code> means the preceding item is optional,
+<code>*</code> means the preceding item may be matched zero or more times,
+<code>+</code> means the preceding item must be matched one or more times,
+<code>^</code> matches the beginning of a line, and <code>$</code> the end,
+<code>\&lt;</code> matches the start of a word, and <code>\&gt;</code> the end,
+and <code>\s</code> matches a blank.
+It also means that lookahead and lookbehind are not possible.
+A complete explanation can be found in the manual of GNU grep:
+<code>info grep regular</code>.
 </p>
 <p>A separate syntax can be defined for each kind of file
 via the following commands in a nanorc file:
