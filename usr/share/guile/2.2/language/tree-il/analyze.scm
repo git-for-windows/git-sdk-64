@@ -1,6 +1,6 @@
 ;;; TREE-IL -> GLIL compiler
 
-;; Copyright (C) 2001, 2008-2014 Free Software Foundation, Inc.
+;; Copyright (C) 2001, 2008-2014, 2018 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@
             analyze-tree
             unused-variable-analysis
             unused-toplevel-analysis
+            shadowed-toplevel-analysis
             unbound-variable-analysis
             macro-use-before-definition-analysis
             arity-analysis
@@ -812,6 +813,37 @@ given `tree-il' element."
                            unused))))
 
      (make-reference-graph vlist-null vlist-null #f))))
+
+
+;;;
+;;; Shadowed top-level definition analysis.
+;;;
+
+(define shadowed-toplevel-analysis
+  ;; Report top-level definitions that shadow previous top-level
+  ;; definitions from the same compilation unit.
+  (make-tree-analysis
+   (lambda (x defs env locs)
+     ;; Going down into X.
+     (record-case x
+                  ((<toplevel-define> name src)
+                   (match (vhash-assq name defs)
+                     ((_ . previous-definition)
+                      (warning 'shadowed-toplevel src name
+                               (toplevel-define-src previous-definition))
+                      defs)
+                     (#f
+                      (vhash-consq name x defs))))
+                  (else defs)))
+
+   (lambda (x defs env locs)
+     ;; Leaving X's scope.
+     defs)
+
+   (lambda (defs env)
+     #t)
+
+   vlist-null))
 
 
 ;;;

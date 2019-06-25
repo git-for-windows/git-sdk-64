@@ -32,6 +32,8 @@
              (srfi-let* . let*)
              (srfi-letrec . letrec)))
 
+(cond-expand-provide (current-module) '(srfi-71))
+
 (define-syntax r5rs-let
   (syntax-rules ()
     ((r5rs-let ((v x) ...) body1 body ...)

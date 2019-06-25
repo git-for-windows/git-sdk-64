@@ -1,6 +1,6 @@
 ;;; simple.scm --- The R6RS simple I/O library
 
-;;      Copyright (C) 2010, 2011, 2014 Free Software Foundation, Inc.
+;;      Copyright (C) 2010, 2011, 2014, 2018 Free Software Foundation, Inc.
 ;;
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -118,10 +118,10 @@
   (define display (@@ (rnrs io ports) display))
 
   (define (call-with-input-file filename proc)
-    (call-with-port (open-file-input-port filename) proc))
+    (call-with-port (open-input-file filename) proc))
 
   (define (call-with-output-file filename proc)
-    (call-with-port (open-file-output-port filename) proc))
+    (call-with-port (open-output-file filename) proc))
 
   (define (with-input-from-file filename thunk)
     (call-with-input-file filename

@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013, 2014, 2015, 2017 Free Software Foundation, Inc.
+;; Copyright (C) 2013, 2014, 2015, 2017, 2018 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -1014,6 +1014,7 @@ integer."
 (define %warning-passes
   `((unused-variable             . ,unused-variable-analysis)
     (unused-toplevel             . ,unused-toplevel-analysis)
+    (shadowed-toplevel           . ,shadowed-toplevel-analysis)
     (unbound-variable            . ,unbound-variable-analysis)
     (macro-use-before-definition . ,macro-use-before-definition-analysis)
     (arity-mismatch              . ,arity-analysis)

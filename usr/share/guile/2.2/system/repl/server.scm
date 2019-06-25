@@ -230,7 +230,7 @@ and then close it.  Return the drained input as a string."
              (string-append
               "^(OPTIONS|GET|HEAD|POST|PUT|DELETE|TRACE|CONNECT) "
               "[^ ]+ "
-              "HTTP/[0-9]+.[0-9]+$"))))
+              "HTTP/[0123456789]+.[0123456789]+$"))))
     (lambda (line)
       "Return true if LINE might plausibly be an HTTP request-line,
 otherwise return #f."

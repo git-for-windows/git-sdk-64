@@ -1,6 +1,6 @@
 ;;; snarf-check-and-output-texi --- called by the doc snarfer.
 
-;; Copyright (C) 2001, 2002, 2006, 2011, 2014 Free Software Foundation, Inc.
+;; Copyright (C) 2001, 2002, 2006, 2011, 2014, 2019 Free Software Foundation, Inc.
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public License
@@ -28,14 +28,6 @@
 
 (define %include-in-guild-list #f)
 (define %summary "Transform snarfed .doc files into texinfo documentation.")
-
-;;; why aren't these in some module?
-
-(define-macro (when cond . body)
-  `(if ,cond (begin ,@body)))
-
-(define-macro (unless cond . body)
-  `(if (not ,cond) (begin ,@body)))
 
 (define *manual-flag* #f)
 

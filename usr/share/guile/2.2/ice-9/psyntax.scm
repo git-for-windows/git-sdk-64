@@ -1,7 +1,7 @@
 ;;;; -*-scheme-*-
 ;;;;
 ;;;; Copyright (C) 2001, 2003, 2006, 2009, 2010, 2011,
-;;;;   2012, 2013, 2015, 2016 Free Software Foundation, Inc.
+;;;;   2012, 2013, 2015, 2016, 2019 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -292,29 +292,7 @@
       (define session-id
         (let ((v (module-variable (current-module) 'syntax-session-id)))
           (lambda ()
-            ((variable-ref v)))))
-
-      (define put-global-definition-hook
-        (lambda (symbol type val)
-          (module-define! (current-module)
-                          symbol
-                          (make-syntax-transformer symbol type val))))
-    
-      (define get-global-definition-hook
-        (lambda (symbol module)
-          (if (and (not module) (current-module))
-              (warn "module system is booted, we should have a module" symbol))
-          (and (not (equal? module '(primitive)))
-               (let ((v (module-variable (if module
-                                             (resolve-module (cdr module))
-                                             (current-module))
-                                         symbol)))
-                 (and v (variable-bound? v)
-                      (let ((val (variable-ref v)))
-                        (and (macro? val) (macro-type val)
-                             (cons (macro-type val)
-                                   (macro-binding val))))))))))
-
+            ((variable-ref v))))))
 
     (define (decorate-source e s)
       (if (and s (supports-source-properties? e))
@@ -513,11 +491,10 @@
     ;;   wrap : id --> label
     ;;   env : label --> <element>
 
-    ;; environments are represented in two parts: a lexical part and a global
-    ;; part.  The lexical part is a simple list of associations from labels
-    ;; to bindings.  The global part is implemented by
-    ;; {put,get}-global-definition-hook and associates symbols with
-    ;; bindings.
+    ;; environments are represented in two parts: a lexical part and a
+    ;; global part.  The lexical part is a simple list of associations
+    ;; from labels to bindings.  The global part is implemented by
+    ;; Guile's module system and associates symbols with bindings.
 
     ;; global (assumed global variable) and displaced-lexical (see below)
     ;; do not show up in any environment; instead, they are fabricated by
@@ -528,7 +505,7 @@
     ;; identifier bindings include a type and a value
 
     ;; <binding> ::= (macro . <procedure>)           macros
-    ;;               (syntax-parameter . (<procedure>)) syntax parameters
+    ;;               (syntax-parameter . <procedure>) syntax parameters
     ;;               (core . <procedure>)            core forms
     ;;               (module-ref . <procedure>)      @ or @@
     ;;               (begin)                         begin
@@ -610,7 +587,9 @@
 
     (define global-extend
       (lambda (type sym val)
-        (put-global-definition-hook sym type val)))
+        (module-define! (current-module)
+                        sym
+                        (make-syntax-transformer sym type val))))
 
 
     ;; Conceptually, identifiers are always syntax objects.  Internally,
@@ -892,27 +871,75 @@
                              results)))))))
         (scan (wrap-subst w) '())))
 
-    ;; Returns three values: binding type, binding value, the module (for
-    ;; resolving toplevel vars).
+    ;; Returns three values: binding type, binding value, and the module
+    ;; (for resolving toplevel vars).
     (define (resolve-identifier id w r mod resolve-syntax-parameters?)
-      (define (resolve-syntax-parameters b)
-        (if (and resolve-syntax-parameters?
-                 (eq? (binding-type b) 'syntax-parameter))
-            (or (assq-ref r (binding-value b))
-                (make-binding 'macro (car (binding-value b))))
-            b))
       (define (resolve-global var mod)
-        (let ((b (resolve-syntax-parameters
-                  (or (get-global-definition-hook var mod)
-                      (make-binding 'global)))))
-          (if (eq? (binding-type b) 'global)
-              (values 'global var mod)
-              (values (binding-type b) (binding-value b) mod))))
+        (when (and (not mod) (current-module))
+          (warn "module system is booted, we should have a module" var))
+        (let ((v (and (not (equal? mod '(primitive)))
+                      (module-variable (if mod
+                                           (resolve-module (cdr mod))
+                                           (current-module))
+                                       var))))
+          ;; The expander needs to know when a top-level definition from
+          ;; outside the compilation unit is a macro.
+          ;;
+          ;; Additionally if a macro is actually a syntax-parameter, we
+          ;; might need to resolve its current binding.  If the syntax
+          ;; parameter is locally bound (via syntax-parameterize), then
+          ;; its variable will be present in `r', the expand-time
+          ;; environment.  It's a kind of double lookup: first we see
+          ;; that a name is bound to a syntax parameter, then we look
+          ;; for the current binding of the syntax parameter.
+          ;;
+          ;; We use the variable (box) holding the syntax parameter
+          ;; definition as the key for the second lookup.  We use the
+          ;; variable for two reasons:
+          ;;
+          ;;   1. If the syntax parameter is redefined in parallel
+          ;;   (perhaps via a parallel module compilation), the
+          ;;   redefinition keeps the same variable.  We don't want to
+          ;;   use a "key" that could change during a redefinition.  See
+          ;;   https://debbugs.gnu.org/cgi/bugreport.cgi?bug=27476.
+          ;;
+          ;;   2. Using the variable instead of its (symname, modname)
+          ;;   pair allows for syntax parameters to be renamed or
+          ;;   aliased while preserving the syntax parameter's identity.
+          ;;
+          (if (and v (variable-bound? v) (macro? (variable-ref v)))
+              (let* ((m (variable-ref v))
+                     (type (macro-type m))
+                     (trans (macro-binding m))
+                     (trans (if (pair? trans) (car trans) trans)))
+                (if (eq? type 'syntax-parameter)
+                    (if resolve-syntax-parameters?
+                        (let ((lexical (assq-ref r v)))
+                          ;; A resolved syntax parameter is
+                          ;; indistinguishable from a macro.
+                          (values 'macro
+                                  (if lexical
+                                      (binding-value lexical)
+                                      trans)
+                                  mod))
+                        ;; Return box as value for use in second lookup.
+                        (values type v mod))
+                    (values type trans mod)))
+              (values 'global var mod))))
       (define (resolve-lexical label mod)
-        (let ((b (resolve-syntax-parameters
-                  (or (assq-ref r label)
-                      (make-binding 'displaced-lexical)))))
-          (values (binding-type b) (binding-value b) mod)))
+        (let ((b (assq-ref r label)))
+          (if b
+              (let ((type (binding-type b))
+                    (value (binding-value b)))
+                (if (eq? type 'syntax-parameter)
+                    (if resolve-syntax-parameters?
+                        (values 'macro value mod)
+                        ;; If the syntax parameter was defined within
+                        ;; this compilation unit, use its label as its
+                        ;; lookup key.
+                        (values type label mod))
+                    (values type value mod)))
+              (values 'displaced-lexical #f #f))))
       (let ((n (id-var-name id w mod)))
         (cond
          ((syntax-object? n)
@@ -1245,13 +1272,12 @@
          (build-primcall
           no-source
           'make-syntax-transformer
-          (if (eq? type 'define-syntax-parameter-form)
-              (list (build-data no-source name)
-                    (build-data no-source 'syntax-parameter)
-                    (build-primcall no-source 'list (list e)))
-              (list (build-data no-source name)
-                    (build-data no-source 'macro)
-                    e))))))
+          (list (build-data no-source name)
+                (build-data no-source
+                            (if (eq? type 'define-syntax-parameter-form)
+                                'syntax-parameter
+                                'macro))
+                e)))))
     
     (define parse-when-list
       (lambda (e when-list)
@@ -1641,7 +1667,7 @@
                                         (cdr r)))
                            (parse (cdr body) (cons id ids) labels var-ids vars vals bindings)))
                         ((define-syntax-parameter-form)
-                         ;; Same as define-syntax-form, but different format of the binding.
+                         ;; Same as define-syntax-form, different binding type though.
                          (let ((id (wrap value w mod))
                                (label (gen-label))
                                (trans-r (macros-only-env er)))
@@ -1650,9 +1676,9 @@
                                         (list label)
                                         (list (make-binding
                                                'syntax-parameter
-                                               (list (eval-local-transformer
-                                                      (expand e trans-r w mod)
-                                                      mod))))
+                                               (eval-local-transformer
+                                                (expand e trans-r w mod)
+                                                mod)))
                                         (cdr r)))
                            (parse (cdr body) (cons id ids) labels var-ids vars vals bindings)))
                         ((begin-form)
@@ -2053,14 +2079,14 @@
                  (let ((trans-r (macros-only-env r)))
                    (map (lambda (x)
                           (make-binding
-                           'macro
+                           'syntax-parameter
                            (eval-local-transformer (expand x trans-r w mod) mod)))
                         #'(val ...)))))
             (expand-body #'(e1 e2 ...)
-                      (source-wrap e w s mod)
-                      (extend-env names bindings r)
-                      w
-                      mod)))
+                         (source-wrap e w s mod)
+                         (extend-env names bindings r)
+                         w
+                         mod)))
          (_ (syntax-violation 'syntax-parameterize "bad syntax"
                               (source-wrap e w s mod))))))
 
@@ -2799,7 +2825,7 @@
                (case type
                  ((lexical) (values 'lexical value))
                  ((macro) (values 'macro value))
-                 ((syntax-parameter) (values 'syntax-parameter (car value)))
+                 ((syntax-parameter) (values 'syntax-parameter value))
                  ((syntax) (values 'pattern-variable value))
                  ((displaced-lexical) (values 'displaced-lexical #f))
                  ((global)

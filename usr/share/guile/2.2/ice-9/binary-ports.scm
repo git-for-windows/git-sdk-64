@@ -36,6 +36,7 @@
             get-bytevector-n
             get-bytevector-n!
             get-bytevector-some
+            get-bytevector-some!  ; Guile extension, not in R6RS
             get-bytevector-all
             get-string-n!
             put-u8

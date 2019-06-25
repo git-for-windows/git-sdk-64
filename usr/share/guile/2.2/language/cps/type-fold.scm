@@ -1,5 +1,5 @@
 ;;; Abstract constant folding on CPS
-;;; Copyright (C) 2014, 2015 Free Software Foundation, Inc.
+;;; Copyright (C) 2014, 2015, 2018 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -69,8 +69,8 @@
 
 ;; All the cases that are in compile-bytecode.
 (define-unary-type-predicate-folder pair? &pair)
-(define-unary-type-predicate-folder null? &null)
-(define-unary-type-predicate-folder nil? &nil)
+(define-unary-type-predicate-folder null? (logior &nil &null))
+(define-unary-type-predicate-folder nil? (logior &false &nil &null))
 (define-unary-type-predicate-folder symbol? &symbol)
 (define-unary-type-predicate-folder variable? &box)
 (define-unary-type-predicate-folder vector? &vector)

@@ -1,7 +1,7 @@
 ;;;; i18n.scm --- internationalization support    -*- coding: utf-8 -*-
 
 ;;;;	Copyright (C) 2006, 2007, 2009, 2010, 2012,
-;;;;      2017 Free Software Foundation, Inc.
+;;;;      2017, 2019 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -212,7 +212,7 @@
 (define-simple-langinfo-mapping locale-monetary-negative-sign
   NEGATIVE_SIGN        "-")
 (define-simple-langinfo-mapping locale-monetary-decimal-point
-  MON_DECIMAL_POINT    "")
+  MON_DECIMAL_POINT    ".")
 (define-simple-langinfo-mapping locale-monetary-thousands-separator
   MON_THOUSANDS_SEP    "")
 (define-simple-langinfo-mapping locale-monetary-grouping

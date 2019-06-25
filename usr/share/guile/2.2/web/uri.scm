@@ -1,6 +1,6 @@
 ;;;; (web uri) --- URI manipulation tools
 ;;;;
-;;;; Copyright (C) 1997,2001,2002,2010,2011,2012,2013,2014 Free Software Foundation, Inc.
+;;;; Copyright (C) 1997,2001,2002,2010,2011,2012,2013,2014,2019 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -182,17 +182,28 @@ for ‘build-uri’ except there is no scheme."
 ;;; Converters.
 ;;;
 
+;; Since character ranges in regular expressions may depend on the
+;; current locale, we use explicit lists of characters instead.  See
+;; <https://bugs.gnu.org/35785> for details.
+(define digits "0123456789")
+(define hex-digits "0123456789ABCDEFabcdef")
+(define letters "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+
 ;; See RFC 3986 #3.2.2 for comments on percent-encodings, IDNA (RFC
 ;; 3490), and non-ASCII host names.
 ;;
 (define ipv4-regexp
-  (make-regexp "^([0-9.]+)$"))
+  (make-regexp (string-append "^([" digits ".]+)$")))
 (define ipv6-regexp
-  (make-regexp "^([0-9a-fA-F:.]+)$"))
+  (make-regexp (string-append "^([" hex-digits ":.]+)$")))
 (define domain-label-regexp
-  (make-regexp "^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"))
+  (make-regexp
+   (string-append "^[" letters digits "]"
+                  "([" letters digits "-]*[" letters digits "])?$")))
 (define top-label-regexp
-  (make-regexp "^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"))
+  (make-regexp
+   (string-append "^[" letters "]"
+                  "([" letters digits "-]*[" letters digits "])?$")))
 
 (define (valid-host? host)
   (cond
@@ -210,13 +221,13 @@ for ‘build-uri’ except there is no scheme."
             (regexp-exec top-label-regexp host start)))))))
 
 (define userinfo-pat
-  "[a-zA-Z0-9_.!~*'();:&=+$,-]+")
+  (string-append "[" letters digits "_.!~*'();:&=+$,-]+"))
 (define host-pat
-  "[a-zA-Z0-9.-]+")
+  (string-append "[" letters digits ".-]+"))
 (define ipv6-host-pat
-  "[0-9a-fA-F:.]+")
+  (string-append "[" hex-digits ":.]+"))
 (define port-pat
-  "[0-9]*")
+  (string-append "[" digits "]*"))
 (define authority-regexp
   (make-regexp
    (format #f "^//((~a)@)?((~a)|(\\[(~a)\\]))(:(~a))?$"
@@ -253,7 +264,7 @@ for ‘build-uri’ except there is no scheme."
 ;;;   either.
 
 (define scheme-pat
-  "[a-zA-Z][a-zA-Z0-9+.-]*")
+  (string-append "[" letters "][" letters digits "+.-]*"))
 (define authority-pat
   "[^/?#]*")
 (define path-pat

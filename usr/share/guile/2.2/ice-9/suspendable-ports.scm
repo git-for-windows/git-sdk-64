@@ -1,5 +1,5 @@
 ;;; Ports, implemented in Scheme
-;;; Copyright (C) 2016 Free Software Foundation, Inc.
+;;; Copyright (C) 2016, 2019 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -246,51 +246,101 @@
         (fast-path buf bv cur buffered)))
   (peek-bytes port 1 fast-path slow-path))
 
-(define* (get-bytevector-n port count)
-  (let ((ret (make-bytevector count)))
-    (define (port-buffer-take! pos buf cur to-copy)
-      (bytevector-copy! (port-buffer-bytevector buf) cur
-                        ret pos to-copy)
-      (set-port-buffer-cur! buf (+ cur to-copy))
-      (+ pos to-copy))
-    (define (take-already-buffered)
-      (let* ((buf (port-read-buffer port))
-             (cur (port-buffer-cur buf))
-             (buffered (max (- (port-buffer-end buf) cur) 0)))
-        (port-buffer-take! 0 buf cur (min count buffered))))
-    (define (trim-and-return len)
-      (if (zero? len)
-          the-eof-object
-          (let ((partial (make-bytevector len)))
-            (bytevector-copy! ret 0 partial 0 len)
-            partial)))
-    (define (buffer-and-fill pos)
+(define (get-bytevector-n! port bv start count)
+  (define (port-buffer-take! pos buf cur to-copy)
+    (bytevector-copy! (port-buffer-bytevector buf) cur
+                      bv pos to-copy)
+    (set-port-buffer-cur! buf (+ cur to-copy))
+    (+ pos to-copy))
+  (define (take-already-buffered)
+    (let* ((buf (port-read-buffer port))
+           (cur (port-buffer-cur buf))
+           (buffered (max (- (port-buffer-end buf) cur) 0)))
+      (port-buffer-take! start buf cur (min count buffered))))
+  (define (buffer-and-fill pos)
+    (call-with-values (lambda () (fill-input port 1 'binary))
+      (lambda (buf cur buffered)
+        (if (zero? buffered)
+            ;; We found EOF, which is marked in the port read buffer.
+            ;; If we haven't read any bytes yet, clear the EOF from the
+            ;; buffer and return it.  Otherwise return the number of
+            ;; bytes that we have read.
+            (if (= pos start)
+                (begin
+                  (set-port-buffer-has-eof?! buf #f)
+                  the-eof-object)
+                (- pos start))
+            (let ((pos (port-buffer-take! pos buf cur
+                                          (min (- (+ start count) pos)
+                                               buffered))))
+              (if (= pos (+ start count))
+                  count
+                  (buffer-and-fill pos)))))))
+  (define (fill-directly pos)
+    (when (port-random-access? port)
+      (flush-output port))
+    (port-clear-stream-start-for-bom-read port)
+    (let lp ((pos pos))
+      (let ((read (read-bytes port bv pos (- (+ start count) pos))))
+        (cond
+         ((= (+ pos read) (+ start count))
+          count)
+         ((zero? read)
+          ;; We found EOF.  If we haven't read any bytes yet, return
+          ;; EOF.  Otherwise save the EOF in the port read buffer.
+          (if (= pos start)
+              the-eof-object
+              (begin
+                (set-port-buffer-has-eof?! (port-read-buffer port) #t)
+                (- pos start))))
+         (else (lp (+ pos read)))))))
+  (let ((pos (take-already-buffered)))
+    (cond
+     ((= pos (+ start count))
+      count)
+     ((< (- (+ start count) pos) (port-read-buffering port))
+      (buffer-and-fill pos))
+     (else (fill-directly pos)))))
+
+(define (get-bytevector-n port count)
+  (let* ((bv (make-bytevector count))
+         (result (get-bytevector-n! port bv 0 count)))
+    (cond ((eof-object? result)
+           result)
+          ((= result count)
+           bv)
+          (else
+           (let ((bv* (make-bytevector result)))
+             (bytevector-copy! bv 0 bv* 0 result)
+             bv*)))))
+
+(define (get-bytevector-some port)
+  (call-with-values (lambda () (fill-input port 1 'binary))
+    (lambda (buf cur buffered)
+      (if (zero? buffered)
+          (begin
+            (set-port-buffer-has-eof?! buf #f)
+            the-eof-object)
+          (let ((result (make-bytevector buffered)))
+            (bytevector-copy! (port-buffer-bytevector buf) cur
+                              result 0 buffered)
+            (set-port-buffer-cur! buf (+ cur buffered))
+            result)))))
+
+(define (get-bytevector-some! port bv start count)
+  (if (zero? count)
+      0
       (call-with-values (lambda () (fill-input port 1 'binary))
         (lambda (buf cur buffered)
           (if (zero? buffered)
               (begin
                 (set-port-buffer-has-eof?! buf #f)
-                (trim-and-return pos))
-              (let ((pos (port-buffer-take! pos buf cur
-                                            (min (- count pos) buffered))))
-                (if (= pos count)
-                    ret
-                    (buffer-and-fill pos)))))))
-    (define (fill-directly pos)
-      (when (port-random-access? port)
-        (flush-output port))
-      (port-clear-stream-start-for-bom-read port)
-      (let lp ((pos pos))
-        (let ((read (read-bytes port ret pos (- count pos))))
-          (cond
-           ((= read (- count pos)) ret)
-           ((zero? read) (trim-and-return pos))
-           (else (lp (+ pos read)))))))
-    (let ((pos (take-already-buffered)))
-      (cond
-       ((= pos count) (if (zero? pos) the-eof-object ret))
-       ((< (- count pos) (port-read-buffering port)) (buffer-and-fill pos))
-       (else (fill-directly pos))))))
+                the-eof-object)
+              (let ((transfer-size (min count buffered)))
+                (bytevector-copy! (port-buffer-bytevector buf) cur
+                                  transfer-size start buffered)
+                (set-port-buffer-cur! buf (+ cur transfer-size))
+                transfer-size))))))
 
 (define (put-u8 port byte)
   (let* ((buf (port-write-buffer port))
@@ -702,7 +752,8 @@
      read-char peek-char force-output close-port
      accept connect)
     ((ice-9 binary-ports)
-     get-u8 lookahead-u8 get-bytevector-n
+     get-u8 lookahead-u8 get-bytevector-n get-bytevector-n!
+     get-bytevector-some get-bytevector-some!
      put-u8 put-bytevector)
     ((ice-9 textual-ports)
      put-char put-string)

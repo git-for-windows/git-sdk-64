@@ -1,7 +1,7 @@
 ;; popen emulation, for non-stdio based ports.
 
-;;;; Copyright (C) 1998, 1999, 2000, 2001, 2003, 2006, 2010, 2011, 2012,
-;;;;   2013 Free Software Foundation, Inc.
+;;;; Copyright (C) 1998-2001, 2003, 2006, 2010-2013, 2019
+;;;;   Free Software Foundation, Inc.
 ;;;; 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -19,10 +19,12 @@
 ;;;; 
 
 (define-module (ice-9 popen)
-  :use-module (ice-9 threads)
-  :use-module (srfi srfi-9)
-  :export (port/pid-table open-pipe* open-pipe close-pipe open-input-pipe
-	   open-output-pipe open-input-output-pipe))
+  #:use-module (rnrs bytevectors)
+  #:use-module (ice-9 binary-ports)
+  #:use-module (ice-9 threads)
+  #:use-module (srfi srfi-9)
+  #:export (port/pid-table open-pipe* open-pipe close-pipe open-input-pipe
+            open-output-pipe open-input-output-pipe))
 
 (eval-when (expand load eval)
   (load-extension (string-append "libguile-" (effective-version))
@@ -34,14 +36,43 @@
   (pid pipe-info-pid set-pipe-info-pid!))
 
 (define (make-rw-port read-port write-port)
-  (make-soft-port
-   (vector
-    (lambda (c) (write-char c write-port))
-    (lambda (s) (display s write-port))
-    (lambda () (force-output write-port))
-    (lambda () (read-char read-port))
-    (lambda () (close-port read-port) (close-port write-port)))
-   "r+"))
+  (define (read! bv start count)
+    (let ((result (get-bytevector-some! read-port bv start count)))
+      (if (eof-object? result)
+          0
+          result)))
+
+  (define (write! bv start count)
+    (put-bytevector write-port bv start count)
+    count)
+
+  (define (close)
+    (close-port read-port)
+    (close-port write-port))
+
+  (define rw-port
+    (make-custom-binary-input/output-port "ice-9-popen-rw-port"
+                                          read!
+                                          write!
+                                          #f ;get-position
+                                          #f ;set-position!
+                                          close))
+  ;; Enable buffering on 'read-port' so that 'get-bytevector-some' will
+  ;; return non-trivial blocks.
+  (setvbuf read-port 'block 16384)
+
+  ;; Inherit the port-encoding from the read-port.
+  (set-port-encoding! rw-port (port-encoding read-port))
+
+  ;; Reset the port encoding on the underlying ports to inhibit BOM
+  ;; handling there.  Instead, the BOM handling (if any) will be handled
+  ;; in the rw-port.  In the current implementation of Guile ports,
+  ;; using binary I/O primitives alone is not enough to reliably inhibit
+  ;; BOM handling, if the port encoding is set to UTF-{8,16,32}.
+  (set-port-encoding! read-port "ISO-8859-1")
+  (set-port-encoding! write-port "ISO-8859-1")
+
+  rw-port)
 
 ;; a guardian to ensure the cleanup is done correctly when
 ;; an open pipe is gc'd or a close-port is used.

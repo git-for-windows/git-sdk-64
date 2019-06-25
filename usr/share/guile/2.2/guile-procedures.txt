@@ -1,4 +1,4 @@
-Produced by GNU Guile 2.2.4 from `./libguile/guile-procedures.texi'.
+Produced by GNU Guile 2.2.5 from `./libguile/guile-procedures.texi'.
 
 acons
 
@@ -487,7 +487,13 @@ Produced by GNU Guile 2.2.4 from `./libguile/guile-procedures.texi'.
 nil?
 
 - Scheme Procedure: nil? x
-     Return `#t' iff X is nil, else return `#f'.
+     Return `#t' if X would be interpreted as `nil' by Emacs Lisp code,
+     else return `#f'.
+
+          (nil? #nil) ==> #t
+          (nil? #f)   ==> #t
+          (nil? '())  ==> #t
+          (nil? 3)    ==> #f
 
 boolean?
 
@@ -5015,6 +5021,14 @@ get_position_proc set_position_proc close_proc
      a new bytevector containing some of the available bytes (at least
      one), and update the port position to point just past these bytes.
 
+get-bytevector-some!
+
+- Scheme Procedure: get-bytevector-some! port bv start count
+     Read up to COUNT bytes from PORT, blocking as necessary until at
+     least one byte is available or an end-of-file is reached.  Store
+     them in BV starting at index START.  Return the number of bytes
+     actually read, or an end-of-file object.
+
 get-bytevector-all
 
 - Scheme Procedure: get-bytevector-all port
@@ -8604,6 +8618,10 @@ interval_microseconds value_seconds value_microseconds
 
      will set the access time to one hour in the past and the
      modification time to the current time.
+
+     Last, FLAGS may be either `0' or the `AT_SYMLINK_NOFOLLOW'
+     constant, to set the time of PATHNAME even if it is a symbolic
+     link.
 
 getpid
 

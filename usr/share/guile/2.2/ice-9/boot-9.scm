@@ -1971,7 +1971,7 @@ name extensions listed in %load-extensions."
   ;; NOTE: If you change the set of fields or their order, you also need to
   ;; change the constants in libguile/modules.h.
   ;;
-  ;; NOTE: The getter `module-transfomer' is defined libguile/modules.c.
+  ;; NOTE: The getter `module-transformer' is defined libguile/modules.c.
   ;; NOTE: The getter `module-name' is defined later, due to boot reasons.
   ;; NOTE: The getter `module-public-interface' is used in libguile/modules.c.
   ;;
@@ -3681,7 +3681,8 @@ but it fails to load."
 
 (define %auto-compilation-options
   ;; Default `compile-file' option when auto-compiling.
-  '(#:warnings (unbound-variable macro-use-before-definition arity-mismatch
+  '(#:warnings (unbound-variable shadowed-toplevel
+                macro-use-before-definition arity-mismatch
                 format duplicate-case-datum bad-case-datum)))
 
 (define* (load-in-vicinity dir file-name #:optional reader)

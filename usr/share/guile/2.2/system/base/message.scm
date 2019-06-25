@@ -1,6 +1,6 @@
 ;;; User interface messages
 
-;; Copyright (C) 2009, 2010, 2011, 2012 Free Software Foundation, Inc.
+;; Copyright (C) 2009, 2010, 2011, 2012, 2018 Free Software Foundation, Inc.
 
 ;;; This library is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU Lesser General Public
@@ -108,6 +108,13 @@
             ,(lambda (port loc name)
                (emit port "~A: warning: possibly unused local top-level variable `~A'~%"
                      loc name)))
+
+           (shadowed-toplevel
+            "report shadowed top-level variables"
+            ,(lambda (port loc name previous-loc)
+               (emit port "~A: warning: shadows previous definition of `~A' at ~A~%"
+                     loc name
+                     (location-string previous-loc))))
 
            (unbound-variable
             "report possibly unbound variables"

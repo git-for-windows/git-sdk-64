@@ -529,13 +529,14 @@ minimum, and maximum."
 
 (define-syntax-rule (define-simple-predicate-inferrer predicate type)
   (define-predicate-inferrer (predicate val true?)
-    (let ((type (if true?
-                    type
-                    (logand (&type val) (lognot type)))))
-      (restrict! val type -inf.0 +inf.0))))
+    (let ((type* (logand (&type val)
+                         (if true?
+                             type
+                             (lognot type)))))
+      (restrict! val type* -inf.0 +inf.0))))
 (define-simple-predicate-inferrer pair? &pair)
-(define-simple-predicate-inferrer null? &null)
-(define-simple-predicate-inferrer nil? &nil)
+(define-simple-predicate-inferrer null? (logior &nil &null))
+(define-simple-predicate-inferrer nil? (logior &false &nil &null))
 (define-simple-predicate-inferrer symbol? &symbol)
 (define-simple-predicate-inferrer variable? &box)
 (define-simple-predicate-inferrer vector? &vector)

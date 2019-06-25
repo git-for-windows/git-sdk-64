@@ -1,4 +1,4 @@
-;;;; 	Copyright (C) 2001, 2004, 2006 Free Software Foundation, Inc.
+;;;; 	Copyright (C) 2001, 2004, 2006, 2018 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -29,13 +29,13 @@
 ;;; Code:
 
 (define-module (ice-9 time)
-  :use-module (ice-9 format)
-  :export (time))
+  #:use-module (ice-9 format)
+  #:export (time))
 
 (define (time-proc proc)
   (let* ((gc-start (gc-run-time))
          (tms-start (times))
-         (result (proc))
+         (results (call-with-values proc list))
          (tms-end (times))
          (gc-end (gc-run-time)))
     ;; FIXME: We would probably like format ~f to accept rationals, but
@@ -50,9 +50,9 @@
             (get tms:cutime tms-start tms-end)
             (get tms:cstime tms-start tms-end)
             (get identity gc-start gc-end))
-    result))
+    (apply values results)))
 
-(define-macro (time exp)
-  `((@@ (ice-9 time) time-proc) (lambda () ,exp)))
+(define-syntax-rule (time exp)
+  (time-proc (lambda () exp)))
 
 ;;; time.scm ends here

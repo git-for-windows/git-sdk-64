@@ -1,6 +1,6 @@
 ;;;; ports.scm --- R6RS port API                    -*- coding: utf-8 -*-
 
-;;;;	Copyright (C) 2009, 2010, 2011, 2013 Free Software Foundation, Inc.
+;;;; Copyright (C) 2009-2011, 2013, 2019 Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -269,13 +269,21 @@ if the port has no transcoder."
                                 "unsupported error handling mode"))))))
 
 (define (binary-port? port)
-  "Always returns @code{#t}, as all ports can be used for binary I/O in
-Guile."
+  "Return @code{#t} if @var{port} appears to be a binary port, else
+return @code{#f}.  Note that Guile does not currently distinguish
+between binary and textual ports, so this predicate is not a reliable
+indicator of whether the port was created as a binary port.  Currently,
+it returns @code{#t} if and only if the port encoding is ``ISO-8859-1'',
+because Guile uses this encoding when creating a binary port."
   (equal? (port-encoding port) "ISO-8859-1"))
 
 (define (textual-port? port)
-  "Always returns @code{#t}, as all ports can be used for textual I/O in
-Guile."
+  "Return @code{#t} if @var{port} appears to be a textual port, else
+return @code{#f}.  Note that Guile does not currently distinguish
+between binary and textual ports, so this predicate is not a reliable
+indicator of whether the port was created as a textual port.  Currently,
+it always returns @code{#t}, because all ports can be used for textual
+I/O in Guile."
   #t)
 
 (define (port-eof? port)
