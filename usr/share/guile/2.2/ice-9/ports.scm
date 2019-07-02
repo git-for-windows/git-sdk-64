@@ -1,5 +1,5 @@
 ;;; Ports
-;;; Copyright (C) 2016 Free Software Foundation, Inc.
+;;; Copyright (C) 2016, 2019 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -31,6 +31,7 @@
             %set-port-property!
             current-input-port current-output-port
             current-error-port current-warning-port
+            current-load-port
             set-current-input-port set-current-output-port
             set-current-error-port
             port-mode

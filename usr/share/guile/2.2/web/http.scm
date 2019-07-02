@@ -1,6 +1,6 @@
 ;;; HTTP messages
 
-;; Copyright (C) 2010-2017, 2019 Free Software Foundation, Inc.
+;; Copyright (C)  2010-2017 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -152,35 +152,18 @@ The default writer will call ‘put-string’."
         (lambda (val port)
           (put-string port val)))))
 
-(define spaces-and-tabs
-  (char-set #\space #\tab))
-
-(define (space-or-tab? c)
-  (case c
-    ((#\space #\tab) #t)
-    (else #f)))
-
 (define (read-header-line port)
-  "Read an HTTP header line, including any continuation lines, and
-return the combined string without its final CRLF or LF.  Raise a
-'bad-header' exception if the line does not end in CRLF or LF, or if EOF
-is reached."
+  "Read an HTTP header line and return it without its final CRLF or LF.
+Raise a 'bad-header' exception if the line does not end in CRLF or LF,
+or if EOF is reached."
   (match (%read-line port)
     (((? string? line) . #\newline)
      ;; '%read-line' does not consider #\return a delimiter; so if it's
      ;; there, remove it.  We are more tolerant than the RFC in that we
      ;; tolerate LF-only endings.
-     (let ((line (if (string-suffix? "\r" line)
-                     (string-drop-right line 1)
-                     line)))
-       ;; If the next character is a space or tab, then there's at least
-       ;; one continuation line.  Read the continuation lines by calling
-       ;; 'read-header-line' recursively, and append them to this header
-       ;; line, folding the leading spaces and tabs to a single space.
-       (if (space-or-tab? (lookahead-char port))
-           (string-append line " " (string-trim (read-header-line port)
-                                                spaces-and-tabs))
-           line)))
+     (if (string-suffix? "\r" line)
+         (string-drop-right line 1)
+         line))
     ((line . _)                                ;EOF or missing delimiter
      (bad-header 'read-header-line line))))
 
