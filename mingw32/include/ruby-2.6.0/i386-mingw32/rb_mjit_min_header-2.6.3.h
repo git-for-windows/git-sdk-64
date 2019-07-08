@@ -1,12 +1,12 @@
 #define __STDC__ 1
-#define __STDC_VERSION__ 201112L
+#define __STDC_VERSION__ 201710L
 #define __STDC_UTF_16__ 1
 #define __STDC_UTF_32__ 1
 #define __STDC_HOSTED__ 1
-#define __GNUC__ 7
-#define __GNUC_MINOR__ 4
+#define __GNUC__ 9
+#define __GNUC_MINOR__ 1
 #define __GNUC_PATCHLEVEL__ 0
-#define __VERSION__ "7.4.0"
+#define __VERSION__ "9.1.0"
 #define __ATOMIC_RELAXED 0
 #define __ATOMIC_SEQ_CST 5
 #define __ATOMIC_ACQUIRE 2
@@ -68,7 +68,7 @@
 #define __UINTPTR_TYPE__ unsigned int
 #define __has_include(STR) __has_include__(STR)
 #define __has_include_next(STR) __has_include_next__(STR)
-#define __GXX_ABI_VERSION 1011
+#define __GXX_ABI_VERSION 1013
 #define __SCHAR_MAX__ 0x7f
 #define __SHRT_MAX__ 0x7fff
 #define __INT_MAX__ 0x7fffffff
@@ -298,6 +298,7 @@
 #define __GCC_ATOMIC_LLONG_LOCK_FREE 2
 #define __GCC_ATOMIC_TEST_AND_SET_TRUEVAL 1
 #define __GCC_ATOMIC_POINTER_LOCK_FREE 2
+#define __HAVE_SPECULATION_SAFE_VALUE 1
 #define __GCC_HAVE_DWARF2_CFI_ASM 1
 #define __PRAGMA_REDEFINE_EXTNAME 1
 #define __SIZEOF_WCHAR_T__ 2
@@ -496,6 +497,7 @@
 #define DEPRECATED_TYPE(mesg,x) __attribute__ ((__deprecated__ mesg)) x
 #define NOINLINE(x) __attribute__ ((__noinline__)) x
 #define ALWAYS_INLINE(x) __attribute__ ((__always_inline__)) x
+#define NO_SANITIZE(san,x) __attribute__ ((__no_sanitize__(san))) x
 #define NO_SANITIZE_ADDRESS(x) __attribute__ ((__no_sanitize_address__)) x
 #define NO_ADDRESS_SAFETY_ANALYSIS(x) __attribute__ ((__no_address_safety_analysis__)) x
 #define WARN_UNUSED_RESULT(x) __attribute__ ((__warn_unused_result__)) x
@@ -3828,6 +3830,7 @@ void ruby_xfree(void*);
 #define _WIN32_IE_IE80 0x0800
 #define _WIN32_IE_IE90 0x0900
 #define _WIN32_IE_IE100 0x0a00
+#define _WIN32_IE_IE110 0x0A00
 #define _WIN32_IE_NT4 _WIN32_IE_IE20
 #define _WIN32_IE_NT4SP1 _WIN32_IE_IE20
 #define _WIN32_IE_NT4SP2 _WIN32_IE_IE20
@@ -3853,6 +3856,8 @@ void ruby_xfree(void*);
 #define _WIN32_IE_WIN7 _WIN32_IE_IE80
 #define _WIN32_IE_WIN8 _WIN32_IE_IE100
 #define _WIN32_IE_WINBLUE _WIN32_IE_IE100
+#define _WIN32_IE_WINTHRESHOLD _WIN32_IE_IE110
+#define _WIN32_IE_WIN10 _WIN32_IE_IE110
 #define NTDDI_WIN2K 0x05000000
 #define NTDDI_WIN2KSP1 0x05000100
 #define NTDDI_WIN2KSP2 0x05000200
@@ -3892,6 +3897,9 @@ void ruby_xfree(void*);
 #define NTDDI_WIN10_RS1 0x0A000002
 #define NTDDI_WIN10_RS2 0x0A000003
 #define NTDDI_WIN10_RS3 0x0A000004
+#define NTDDI_WIN10_RS4 0x0A000005
+#define NTDDI_WIN10_RS5 0x0A000006
+#define NTDDI_WIN10_19H1 0x0A000007
 #define OSVERSION_MASK 0xFFFF0000U
 #define SPVERSION_MASK 0x0000FF00
 #define SUBVERSION_MASK 0x000000FF
@@ -3974,86 +3982,97 @@ void ruby_xfree(void*);
 #define __inner_checkReturn __attribute__((warn_unused_result))
 #define __checkReturn __inner_checkReturn
 #define _In_ 
-#define _Out_ 
-#define _Inout_ 
-#define _In_z_ 
-#define _Inout_z_ 
-#define _In_reads_(s) 
-#define _In_reads_bytes_(s) 
-#define _In_reads_z_(s) 
-#define _In_reads_or_z_(s) 
-#define _Out_writes_(s) 
-#define _Out_writes_bytes_(s) 
-#define _Out_writes_z_(s) 
-#define _Inout_updates_(s) 
-#define _Inout_updates_bytes_(s) 
-#define _Inout_updates_z_(s) 
-#define _Out_writes_to_(s,c) 
-#define _Out_writes_bytes_to_(s,c) 
-#define _Out_writes_all_(s) 
-#define _Out_writes_bytes_all_(s) 
-#define _Inout_updates_to_(s,c) 
-#define _Inout_updates_bytes_to_(s,c) 
-#define _Inout_updates_all_(s) 
-#define _Inout_updates_bytes_all_(s) 
-#define _In_reads_to_ptr_(p) 
-#define _In_reads_to_ptr_z_(p) 
-#define _Out_writes_to_ptr_(p) 
-#define _Out_writes_to_ptr_z(p) 
-#define __in_opt 
-#define __out_opt 
-#define __inout_opt 
 #define _In_opt_ 
-#define _Out_opt_ 
-#define _Inout_opt_ 
+#define _In_z_ 
 #define _In_opt_z_ 
-#define _Inout_opt_z_ 
+#define _In_reads_(s) 
 #define _In_reads_opt_(s) 
+#define _In_reads_bytes_(s) 
 #define _In_reads_bytes_opt_(s) 
+#define _In_reads_z_(s) 
 #define _In_reads_opt_z_(s) 
-#define _Out_writes_opt_(s) 
-#define _Out_writes_opt_z_(s) 
-#define _Inout_updates_opt_(s) 
-#define _Inout_updates_bytes_opt_(s) 
-#define _Inout_updates_opt_z_(s) 
-#define _Out_writes_to_opt_(s,c) 
-#define _Out_writes_bytes_to_opt_(s,c) 
-#define _Out_writes_all_opt_(s) 
-#define _Out_writes_bytes_all_opt_(s) 
-#define _Inout_updates_to_opt_(s,c) 
-#define _Inout_updates_bytes_to_opt_(s,c) 
-#define _Inout_updates_all_opt_(s) 
-#define _Inout_updates_bytes_all_opt_(s) 
+#define _In_reads_or_z_(s) 
+#define _In_reads_or_z_opt_(s) 
+#define _In_reads_to_ptr_(p) 
 #define _In_reads_to_ptr_opt_(p) 
+#define _In_reads_to_ptr_z_(p) 
 #define _In_reads_to_ptr_opt_z_(p) 
+#define _Out_ 
+#define _Out_opt_ 
+#define _Out_writes_(s) 
+#define _Out_writes_opt_(s) 
+#define _Out_writes_bytes_(s) 
+#define _Out_writes_bytes_opt_(s) 
+#define _Out_writes_z_(s) 
+#define _Out_writes_opt_z_(s) 
+#define _Out_writes_to_(s,c) 
+#define _Out_writes_to_opt_(s,c) 
+#define _Out_writes_all_(s) 
+#define _Out_writes_all_opt_(s) 
+#define _Out_writes_bytes_to_(s,c) 
+#define _Out_writes_bytes_to_opt_(s,c) 
+#define _Out_writes_bytes_all_(s) 
+#define _Out_writes_bytes_all_opt_(s) 
+#define _Out_writes_to_ptr_(p) 
 #define _Out_writes_to_ptr_opt_(p) 
+#define _Out_writes_to_ptr_z_(p) 
 #define _Out_writes_to_ptr_opt_z_(p) 
+#define _Inout_ 
+#define _Inout_opt_ 
+#define _Inout_z_ 
+#define _Inout_opt_z_ 
+#define _Inout_updates_(s) 
+#define _Inout_updates_opt_(s) 
+#define _Inout_updates_z_(s) 
+#define _Inout_updates_opt_z_(s) 
+#define _Inout_updates_to_(s,c) 
+#define _Inout_updates_to_opt_(s,c) 
+#define _Inout_updates_all_(s) 
+#define _Inout_updates_all_opt_(s) 
+#define _Inout_updates_bytes_(s) 
+#define _Inout_updates_bytes_opt_(s) 
+#define _Inout_updates_bytes_to_(s,c) 
+#define _Inout_updates_bytes_to_opt_(s,c) 
+#define _Inout_updates_bytes_all_(s) 
+#define _Inout_updates_bytes_all_opt_(s) 
 #define _Outptr_ 
-#define _Outptr_opt_ 
 #define _Outptr_result_maybenull_ 
+#define _Outptr_opt_ 
 #define _Outptr_opt_result_maybenull_ 
 #define _Outptr_result_z_ 
 #define _Outptr_opt_result_z_ 
 #define _Outptr_result_maybenull_z_ 
 #define _Outptr_opt_result_maybenull_z_ 
-#define _COM_Outptr_ 
-#define _COM_Outptr_opt_ 
-#define _COM_Outptr_result_maybenull_ 
-#define _COM_Outptr_opt_result_maybenull_ 
-#define _Outptr_result_buffer_(s) 
-#define _Outptr_result_bytebuffer_(s) 
-#define _Outptr_opt_result_buffer_(s) 
-#define _Outptr_opt_result_bytebuffer_(s) 
-#define _Outptr_result_buffer_to_(s,c) 
-#define _Outptr_result_bytebuffer_to_(s,c) 
-#define _Outptr_result_bytebuffer_maybenull_(s) 
-#define _Outptr_opt_result_buffer_to_(s,c) 
-#define _Outptr_opt_result_bytebuffer_to_(s,c) 
-#define _Result_nullonfailure_ 
-#define _Result_zeroonfailure_ 
 #define _Outptr_result_nullonfailure_ 
 #define _Outptr_opt_result_nullonfailure_ 
-#define _Outref_result_nullonfailure_ 
+#define _COM_Outptr_ 
+#define _COM_Outptr_result_maybenull_ 
+#define _COM_Outptr_opt_ 
+#define _COM_Outptr_opt_result_maybenull_ 
+#define _Outptr_result_buffer_(s) 
+#define _Outptr_opt_result_buffer_(s) 
+#define _Outptr_result_buffer_to_(s,c) 
+#define _Outptr_opt_result_buffer_to_(s,c) 
+#define _Outptr_result_buffer_all_(s) 
+#define _Outptr_opt_result_buffer_all_(s) 
+#define _Outptr_result_buffer_maybenull_(s) 
+#define _Outptr_opt_result_buffer_maybenull_(s) 
+#define _Outptr_result_buffer_to_maybenull_(s,c) 
+#define _Outptr_opt_result_buffer_to_maybenull_(s,c) 
+#define _Outptr_result_buffer_all_maybenull_(s) 
+#define _Outptr_opt_result_buffer_all_maybenull_(s) 
+#define _Outptr_result_bytebuffer_(s) 
+#define _Outptr_opt_result_bytebuffer_(s) 
+#define _Outptr_result_bytebuffer_to_(s,c) 
+#define _Outptr_opt_result_bytebuffer_to_(s,c) 
+#define _Outptr_result_bytebuffer_all_(s) 
+#define _Outptr_opt_result_bytebuffer_all_(s) 
+#define _Outptr_result_bytebuffer_maybenull_(s) 
+#define _Outptr_opt_result_bytebuffer_maybenull_(s) 
+#define _Outptr_result_bytebuffer_to_maybenull_(s,c) 
+#define _Outptr_opt_result_bytebuffer_to_maybenull_(s,c) 
+#define _Outptr_result_bytebuffer_all_maybenull_(s) 
+#define _Outptr_opt_result_bytebuffer_all_maybenull_(s) 
 #define _Outref_ 
 #define _Outref_result_maybenull_ 
 #define _Outref_result_buffer_(s) 
@@ -4068,21 +4087,35 @@ void ruby_xfree(void*);
 #define _Outref_result_bytebuffer_to_maybenull_(s,c) 
 #define _Outref_result_buffer_all_maybenull_(s) 
 #define _Outref_result_bytebuffer_all_maybenull_(s) 
+#define _Outref_result_nullonfailure_ 
+#define _Result_nullonfailure_ 
+#define _Result_zeroonfailure_ 
 #define _Ret_z_ 
-#define _Ret_writes_(s) 
-#define _Ret_writes_bytes_(s) 
-#define _Ret_writes_z_(s) 
-#define _Ret_writes_bytes_to_(s,c) 
-#define _Ret_writes_maybenull_(s) 
-#define _Ret_writes_to_maybenull_(s,c) 
-#define _Ret_writes_maybenull_z_(s) 
-#define _Ret_maybenull_ 
 #define _Ret_maybenull_z_ 
-#define _Ret_null_ 
 #define _Ret_notnull_ 
-#define _Ret_writes_bytes_to_(s,c) 
+#define _Ret_maybenull_ 
+#define _Ret_null_ 
+#define _Ret_valid_ 
+#define _Ret_writes_(s) 
+#define _Ret_writes_z_(s) 
+#define _Ret_writes_bytes_(s) 
+#define _Ret_writes_maybenull_(s) 
+#define _Ret_writes_maybenull_z_(s) 
 #define _Ret_writes_bytes_maybenull_(s) 
+#define _Ret_writes_to_(s,c) 
+#define _Ret_writes_bytes_to_(s,c) 
+#define _Ret_writes_to_maybenull_(s,c) 
 #define _Ret_writes_bytes_to_maybenull_(s,c) 
+#define _Points_to_data_ 
+#define _Literal_ 
+#define _Notliteral_ 
+#define _Deref_ret_range_(l,u) 
+#define _Unchanged_(e) 
+#define _Pre_satisfies_(c) 
+#define _Post_satisfies_(c) 
+#define __in_opt 
+#define __out_opt 
+#define __inout_opt 
 #define _In_range_(low,hi) 
 #define _Out_range_(low,hi) 
 #define _Ret_range_(low,hi) 
@@ -4431,6 +4464,7 @@ void ruby_xfree(void*);
 #define SAL__control_entrypoint(category) 
 #define SAL__data_entrypoint(category) 
 #define __encoded_pointer 
+#define _Post_equals_last_error_ 
 #define __fallthrough 
 #define __analysis_assume(expr) 
 #define __CLR_OR_THIS_CALL 
@@ -6518,6 +6552,7 @@ extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) void MemoryB
 #define SECURITY_BUILTIN_CAPABILITY_RID_COUNT (__MSABI_LONG(2))
 #define SECURITY_CAPABILITY_RID_COUNT (__MSABI_LONG(5))
 #define SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE (__MSABI_LONG(0x00000001))
+#define SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE (__MSABI_LONG(0x00000002))
 #define SECURITY_CAPABILITY_INTERNET_CLIENT (__MSABI_LONG(0x00000001))
 #define SECURITY_CAPABILITY_INTERNET_CLIENT_SERVER (__MSABI_LONG(0x00000002))
 #define SECURITY_CAPABILITY_PRIVATE_NETWORK_CLIENT_SERVER (__MSABI_LONG(0x00000003))
@@ -6528,6 +6563,8 @@ extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) void MemoryB
 #define SECURITY_CAPABILITY_ENTERPRISE_AUTHENTICATION (__MSABI_LONG(0x00000008))
 #define SECURITY_CAPABILITY_SHARED_USER_CERTIFICATES (__MSABI_LONG(0x00000009))
 #define SECURITY_CAPABILITY_REMOVABLE_STORAGE (__MSABI_LONG(0x0000000a))
+#define SECURITY_CAPABILITY_APPOINTMENTS (__MSABI_LONG(0x0000000b))
+#define SECURITY_CAPABILITY_CONTACTS (__MSABI_LONG(0x0000000c))
 #define SECURITY_CAPABILITY_INTERNET_EXPLORER (__MSABI_LONG(0x00001000))
 #define SECURITY_MANDATORY_LABEL_AUTHORITY {0,0,0,0,0,16}
 #define SECURITY_MANDATORY_UNTRUSTED_RID (__MSABI_LONG(0x00000000))
@@ -7853,6 +7890,9 @@ extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) void MemoryB
 #define PROCESSOR_ARCHITECTURE_AMD64 9
 #define PROCESSOR_ARCHITECTURE_IA32_ON_WIN64 10
 #define PROCESSOR_ARCHITECTURE_NEUTRAL 11
+#define PROCESSOR_ARCHITECTURE_ARM64 12
+#define PROCESSOR_ARCHITECTURE_ARM32_ON_WIN64 13
+#define PROCESSOR_ARCHITECTURE_IA32_ON_ARM64 14
 #define PROCESSOR_ARCHITECTURE_UNKNOWN 0xffff
 #define PF_FLOATING_POINT_PRECISION_ERRATA 0
 #define PF_FLOATING_POINT_EMULATED 1
@@ -12447,6 +12487,11 @@ __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) TerminateProcess
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) SetProcessAffinityUpdateMode (HANDLE hProcess, DWORD dwFlags);
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) QueryProcessAffinityUpdateMode (HANDLE hProcess, LPDWORD lpdwFlags);
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) UpdateProcThreadAttribute (LPPROC_THREAD_ATTRIBUTE_LIST lpAttributeList, DWORD dwFlags, DWORD_PTR Attribute, PVOID lpValue, SIZE_T cbSize, PVOID lpPreviousValue, PSIZE_T lpReturnSize);
+#define MEMORY_PRIORITY_VERY_LOW 1
+#define MEMORY_PRIORITY_LOW 2
+#define MEMORY_PRIORITY_MEDIUM 3
+#define MEMORY_PRIORITY_BELOW_NORMAL 4
+#define MEMORY_PRIORITY_NORMAL 5
   __attribute__((dllimport)) HANDLE __attribute__((__stdcall__)) GetCurrentProcess (void);
   __attribute__((dllimport)) DWORD __attribute__((__stdcall__)) GetCurrentProcessId (void);
   __attribute__((dllimport)) HANDLE __attribute__((__stdcall__)) GetCurrentThread (void);
@@ -75789,8 +75834,9 @@ void ruby_sig_finalize(void);
 #define HALF_LONG_MSB ((SIGNED_VALUE)1<<((SIZEOF_LONG*CHAR_BIT-1)/2))
 #define LIKELY(x) RB_LIKELY(x)
 #define UNLIKELY(x) RB_UNLIKELY(x)
-#define ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS(x) NO_SANITIZE_ADDRESS(NOINLINE(x))
-#define NO_SANITIZE(x,y) y
+#define ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS(x) NO_SANITIZE("address", NOINLINE(x))
+#undef NO_SANITIZE
+#define NO_SANITIZE(x,y) COMPILER_WARNING_PUSH; COMPILER_WARNING_IGNORED(-Wattributes); __attribute__((__no_sanitize__(x))) y; COMPILER_WARNING_POP
 #define VALGRIND_MAKE_MEM_DEFINED(p,n) 0
 #define VALGRIND_MAKE_MEM_UNDEFINED(p,n) 0
 #define numberof(array) ((int)(sizeof(array) / sizeof((array)[0])))

@@ -127,6 +127,7 @@
 #define DEPRECATED_TYPE(mesg,x) __attribute__ ((__deprecated__ mesg)) x
 #define NOINLINE(x) __attribute__ ((__noinline__)) x
 #define ALWAYS_INLINE(x) __attribute__ ((__always_inline__)) x
+#define NO_SANITIZE(san, x) __attribute__ ((__no_sanitize__(san))) x
 #define NO_SANITIZE_ADDRESS(x) __attribute__ ((__no_sanitize_address__)) x
 #define NO_ADDRESS_SAFETY_ANALYSIS(x) __attribute__ ((__no_address_safety_analysis__)) x
 #define WARN_UNUSED_RESULT(x) __attribute__ ((__warn_unused_result__)) x
