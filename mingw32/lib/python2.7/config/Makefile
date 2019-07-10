@@ -28,8 +28,8 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	2.7
 srcdir=		../Python-2.7.16
 VPATH=		../Python-2.7.16
-abs_srcdir=	/scripts/mingw-w64-python2/src/build-i686/../Python-2.7.16
-abs_builddir=	/scripts/mingw-w64-python2/src/build-i686
+abs_srcdir=	/e/mingwbuild/mingw-w64-python2/src/build-i686/../Python-2.7.16
+abs_builddir=	/e/mingwbuild/mingw-w64-python2/src/build-i686
 build=		i686-w64-mingw32
 host=		i686-w64-mingw32
 
@@ -1013,11 +1013,8 @@ bininstall:	altbininstall
 	fi
 	-rm -f $(DESTDIR)$(BINDIR)/python2$(EXE)
 	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)$(EXE) python2$(EXE))
-	(cd $(DESTDIR)$(BINDIR); $(LN) -s python2$(EXE) $(PYTHON))
 	-rm -f $(DESTDIR)$(BINDIR)/python2-config
 	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-config python2-config)
-	-rm -f $(DESTDIR)$(BINDIR)/python-config
-	(cd $(DESTDIR)$(BINDIR); $(LN) -s python2-config python-config)
 	-test -d $(DESTDIR)$(LIBPC) || $(INSTALL) -d -m $(DIRMODE) $(DESTDIR)$(LIBPC)
 	-rm -f $(DESTDIR)$(LIBPC)/python2.pc
 	(cd $(DESTDIR)$(LIBPC); $(LN) -s python-$(VERSION).pc python2.pc)
@@ -1213,8 +1210,8 @@ python-config: $(srcdir)/Misc/python-config.in
 	# is not available in configure
 	sed -e "s,@EXENAME@,$(BINDIR)/python$(VERSION)$(EXE)," < $(srcdir)/Misc/python-config.in >python-config
 	# Replace makefile compat. variable references with shell script compat. ones; $(VAR) -> ${VAR}
-	sed -e "s,\$$(\([A-Za-z0-9_]*\)),\$$\{\1\},g" < Misc/python-config.sh >python-config.sh
-	-sed -e "s,\$$(\([A-Za-z0-9_]*\)),\$$\{\1\},g" < Misc/python-config-u.sh >python-config-u.sh
+	sed -e "s,\$$(\([A-Za-z0-9_]*\)),\$$\{\1\},g" < Misc/python2-config.sh >python2-config.sh
+	-sed -e "s,\$$(\([A-Za-z0-9_]*\)),\$$\{\1\},g" < Misc/python2-config-u.sh >python2-config-u.sh
 
 # Install the include files
 INCLDIRSTOMAKE=$(INCLUDEDIR) $(CONFINCLUDEDIR) $(INCLUDEPY) $(CONFINCLUDEPY)
@@ -1273,8 +1270,8 @@ libainstall:	all python-config
 	$(INSTALL_SCRIPT) $(srcdir)/Modules/makesetup $(DESTDIR)$(LIBPL)/makesetup
 	$(INSTALL_SCRIPT) $(srcdir)/install-sh $(DESTDIR)$(LIBPL)/install-sh
 	$(INSTALL_SCRIPT) python-config $(DESTDIR)$(BINDIR)/python$(VERSION)-config
-	$(INSTALL_SCRIPT) python-config.sh $(DESTDIR)$(BINDIR)/python-config.sh
-	-test -f python-config-u.sh && $(INSTALL_SCRIPT) python-config-u.sh $(DESTDIR)$(BINDIR)/python-config-u.sh
+	$(INSTALL_SCRIPT) python2-config.sh $(DESTDIR)$(BINDIR)/python2-config.sh
+	-test -f python2-config-u.sh && $(INSTALL_SCRIPT) python2-config-u.sh $(DESTDIR)$(BINDIR)/python2-config-u.sh
 	rm python-config
 	@if [ -s Modules/python.exp -a \
 		"`echo $(MACHDEP) | sed 's/^\(...\).*/\1/'`" = "aix" ]; then \

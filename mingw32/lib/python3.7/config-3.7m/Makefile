@@ -28,10 +28,10 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.7
-srcdir=		../Python-3.7.3
-VPATH=		../Python-3.7.3
-abs_srcdir=	/scripts/mingw-w64-python3/src/build-i686/../Python-3.7.3
-abs_builddir=	/scripts/mingw-w64-python3/src/build-i686
+srcdir=		../Python-3.7.4
+VPATH=		../Python-3.7.4
+abs_srcdir=	/e/mingwbuild/mingw-w64-python3/src/build-i686/../Python-3.7.4
+abs_builddir=	/e/mingwbuild/mingw-w64-python3/src/build-i686
 
 
 CC=		i686-w64-mingw32-gcc
@@ -107,6 +107,8 @@ NO_AS_NEEDED=	-Wl,--no-as-needed
 LDLAST=		
 SGI_ABI=	@SGI_ABI@
 CCSHARED=	
+# LINKFORSHARED are the flags passed to the $(CC) command that links
+# the python executable -- this is only needed for a few systems
 LINKFORSHARED=	
 ARFLAGS=	rcs
 # Extra C flags added for building the interpreter object files.
@@ -138,9 +140,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.3
-VPATH_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.3
-abs_srcdir_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.3
+srcdir_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4
+VPATH_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4
+abs_srcdir_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4
 abs_builddir_b2h=	E:/mingwbuild/mingw-w64-python3/src/build-i686
 prefix_b2h=		C:/building/msys64/mingw32
 
@@ -214,7 +216,7 @@ CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mi
 
 
 # Subdirectories with code
-SRCDIRS= 	Parser Objects Python Modules Programs PC
+SRCDIRS= 	Parser Objects Python Modules Modules/_io Programs PC
 
 # Other subdirectories
 SUBDIRSTOO=	Include Lib Misc
@@ -1262,12 +1264,15 @@ bininstall: altbininstall
 	else true; \
 	fi
 	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)$(EXE) python3$(EXE))
+	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)$(EXE) python$(EXE))
 	-if test "$(VERSION)" != "$(LDVERSION)"; then \
 		rm -f $(DESTDIR)$(BINDIR)/python$(VERSION)-config; \
 		(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(LDVERSION)-config python$(VERSION)-config); \
 		rm -f $(DESTDIR)$(LIBPC)/python-$(LDVERSION).pc; \
 		(cd $(DESTDIR)$(LIBPC); $(LN) -s python-$(VERSION).pc python-$(LDVERSION).pc); \
 	fi
+	-rm -f $(DESTDIR)$(BINDIR)/python-config
+	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-config python-config)
 	-rm -f $(DESTDIR)$(BINDIR)/python3-config
 	(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-config python3-config)
 	-rm -f $(DESTDIR)$(LIBPC)/python3.pc

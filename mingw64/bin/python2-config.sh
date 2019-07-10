@@ -7,7 +7,7 @@ exit_with_usage ()
 }
 
 # Really, python-config.py (and thus .sh) should be called directly, but
-# sometimes software (e.g. GDB) calls python-config.sh as if it were the
+# sometimes software (e.g. GDB) calls python2-config.sh as if it were the
 # Python executable, passing python-config.py as the first argument.
 # Work around that oddness by ignoring any .py passed as first arg.
 case "$1" in
@@ -40,7 +40,7 @@ installed_prefix ()
     echo $RESULT
 }
 
-prefix_build="C:/building/msys64/mingw32"
+prefix_build="C:/building/msys64/mingw64"
 prefix_real=$(installed_prefix "$0")
 
 # Use sed to fix paths from their built to locations to their installed to locations.
@@ -49,7 +49,7 @@ exec_prefix_build="${prefix}"
 exec_prefix=$(echo "$exec_prefix_build" | sed "s#$exec_prefix_build#$prefix_real#")
 includedir=$(echo "${prefix}/include" | sed "s#$prefix_build#$prefix_real#")
 libdir=$(echo "${exec_prefix}/lib" | sed "s#$prefix_build#$prefix_real#")
-CFLAGS=$(echo "-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG " | sed "s#$prefix_build#$prefix_real#")
+CFLAGS=$(echo "-march=x86-64 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG " | sed "s#$prefix_build#$prefix_real#")
 VERSION="2.7"
 LIBM="-lm"
 LIBC=""
