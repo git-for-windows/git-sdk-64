@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.7
 srcdir=		.
 
-abs_srcdir=	/msys_scripts/python3/src/Python-3.7.3
-abs_builddir=	/msys_scripts/python3/src/Python-3.7.3
+abs_srcdir=	/msys_scripts/python3/src/Python-3.7.4
+abs_builddir=	/msys_scripts/python3/src/Python-3.7.4
 
 
 CC=		x86_64-pc-msys-gcc
@@ -85,7 +85,7 @@ CONFIGURE_CFLAGS=	-march=x86-64 -mtune=generic -O2 -pipe
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
-CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Werror=implicit-function-declaration
+CONFIGURE_CFLAGS_NODIST= -std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-missing-field-initializers -Wno-cast-function-type -Werror=implicit-function-declaration
 # LDFLAGS_NODIST is used in the same manner as CFLAGS_NODIST.
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
@@ -107,6 +107,8 @@ NO_AS_NEEDED=	-Wl,--no-as-needed
 LDLAST=		
 SGI_ABI=	@SGI_ABI@
 CCSHARED=	
+# LINKFORSHARED are the flags passed to the $(CC) command that links
+# the python executable -- this is only needed for a few systems
 LINKFORSHARED=	
 ARFLAGS=	rcs
 # Extra C flags added for building the interpreter object files.
@@ -207,7 +209,7 @@ CONFIG_ARGS=	 '--prefix=/usr' '--build=x86_64-pc-msys' '--host=x86_64-pc-msys' '
 
 
 # Subdirectories with code
-SRCDIRS= 	Parser Objects Python Modules Programs
+SRCDIRS= 	Parser Objects Python Modules Modules/_io Programs
 
 # Other subdirectories
 SUBDIRSTOO=	Include Lib Misc

@@ -30,6 +30,7 @@ build_time_vars = {'ABIFLAGS': 'm',
  'CONFIGURE_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
                             '-Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
+                            '-Wno-cast-function-type '
                             '-Werror=implicit-function-declaration',
  'CONFIGURE_CPPFLAGS': '-I/usr/include/ncursesw',
  'CONFIGURE_LDFLAGS': '-pipe -L.',
@@ -48,8 +49,8 @@ build_time_vars = {'ABIFLAGS': 'm',
  'CONFINCLUDEDIR': '/usr/include',
  'CONFINCLUDEPY': '/usr/include/python3.7m',
  'COREPYTHONPATH': '',
- 'COVERAGE_INFO': '/msys_scripts/python3/src/Python-3.7.3/coverage.info',
- 'COVERAGE_REPORT': '/msys_scripts/python3/src/Python-3.7.3/lcov-report',
+ 'COVERAGE_INFO': '/msys_scripts/python3/src/Python-3.7.4/coverage.info',
+ 'COVERAGE_REPORT': '/msys_scripts/python3/src/Python-3.7.4/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--no-branch-coverage --title "CPython lcov '
                             'report"',
  'CPPFLAGS': '-I. -I./Include -I/usr/include/ncursesw  -I/usr/include/ncursesw',
@@ -611,6 +612,7 @@ build_time_vars = {'ABIFLAGS': 'm',
                              '-march=x86-64 -mtune=generic -O2 -pipe -std=c99 '
                              '-Wextra -Wno-unused-result -Wno-unused-parameter '
                              '-Wno-missing-field-initializers '
+                             '-Wno-cast-function-type '
                              '-Werror=implicit-function-declaration -I. '
                              '-I./Include -I/usr/include/ncursesw  '
                              '-I/usr/include/ncursesw -DPy_BUILD_CORE_BUILTIN',
@@ -619,6 +621,7 @@ build_time_vars = {'ABIFLAGS': 'm',
               '-mtune=generic -O2 -pipe -march=x86-64 -mtune=generic -O2 -pipe',
  'PY_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
                      '-Wno-unused-parameter -Wno-missing-field-initializers '
+                     '-Wno-cast-function-type '
                      '-Werror=implicit-function-declaration',
  'PY_COERCE_C_LOCALE': 1,
  'PY_CORE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 '
@@ -626,6 +629,7 @@ build_time_vars = {'ABIFLAGS': 'm',
                    '-mtune=generic -O2 -pipe -march=x86-64 -mtune=generic -O2 '
                    '-pipe -std=c99 -Wextra -Wno-unused-result '
                    '-Wno-unused-parameter -Wno-missing-field-initializers '
+                   '-Wno-cast-function-type '
                    '-Werror=implicit-function-declaration -I. -I./Include '
                    '-I/usr/include/ncursesw  -I/usr/include/ncursesw '
                    '-DPy_BUILD_CORE',
@@ -643,6 +647,7 @@ build_time_vars = {'ABIFLAGS': 'm',
                         '-mtune=generic -O2 -pipe -std=c99 -Wextra '
                         '-Wno-unused-result -Wno-unused-parameter '
                         '-Wno-missing-field-initializers '
+                        '-Wno-cast-function-type '
                         '-Werror=implicit-function-declaration -I. -I./Include '
                         '-I/usr/include/ncursesw  -I/usr/include/ncursesw',
  'Py_DEBUG': 0,
@@ -680,7 +685,7 @@ build_time_vars = {'ABIFLAGS': 'm',
  'SIZEOF_WCHAR_T': 2,
  'SIZEOF__BOOL': 1,
  'SOABI': 'cpython-37m',
- 'SRCDIRS': 'Parser Objects Python Modules Programs',
+ 'SRCDIRS': 'Parser Objects Python Modules Modules/_io Programs',
  'SRC_GDB_HOOKS': './Tools/gdb/libpython.py',
  'STDC_HEADERS': 1,
  'STRICT_SYSV_CURSES': "/* Don't use ncurses extensions */",
@@ -716,8 +721,8 @@ build_time_vars = {'ABIFLAGS': 'm',
  'WITH_VALGRIND': 0,
  'X87_DOUBLE_ROUNDING': 0,
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
- 'abs_builddir': '/msys_scripts/python3/src/Python-3.7.3',
- 'abs_srcdir': '/msys_scripts/python3/src/Python-3.7.3',
+ 'abs_builddir': '/msys_scripts/python3/src/Python-3.7.4',
+ 'abs_srcdir': '/msys_scripts/python3/src/Python-3.7.4',
  'datarootdir': '/usr/share',
  'exec_prefix': '/usr',
  'prefix': '/usr',
