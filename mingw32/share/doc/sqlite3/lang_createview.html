@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: CREATE VIEW</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>CREATE VIEW</h2></div><p><b><a href="syntax/create-view-stmt.html">create-view-stmt:</a></b>
+<button id='x1381' onclick='hideorshow("x1381","x1382")'>hide</button></p>
+ <div id='x1382' class='imgcontainer'>
+ <img alt="syntax diagram create-view-stmt" src="images/syntax/create-view-stmt.gif" />
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1383' onclick='hideorshow("x1383","x1384")'>show</button></p>
+ <div id='x1384' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x1385' onclick='hideorshow("x1385","x1386")'>show</button></p>
+ <div id='x1386' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1387' onclick='hideorshow("x1387","x1388")'>show</button></p>
+ <div id='x1388' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x1389' onclick='hideorshow("x1389","x1390")'>show</button></p>
+ <div id='x1390' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x1391' onclick='hideorshow("x1391","x1392")'>show</button></p>
+ <div id='x1392' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x1393' onclick='hideorshow("x1393","x1394")'>show</button></p>
+ <div id='x1394' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x1395' onclick='hideorshow("x1395","x1396")'>show</button></p>
+ <div id='x1396' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x1397' onclick='hideorshow("x1397","x1398")'>show</button></p>
+ <div id='x1398' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1399' onclick='hideorshow("x1399","x1400")'>show</button></p>
+ <div id='x1400' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1401' onclick='hideorshow("x1401","x1402")'>show</button></p>
+ <div id='x1402' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1403' onclick='hideorshow("x1403","x1404")'>show</button></p>
+ <div id='x1404' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1405' onclick='hideorshow("x1405","x1406")'>show</button></p>
+ <div id='x1406' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1407' onclick='hideorshow("x1407","x1408")'>show</button></p>
+ <div id='x1408' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1409' onclick='hideorshow("x1409","x1410")'>show</button></p>
+ <div id='x1410' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1411' onclick='hideorshow("x1411","x1412")'>show</button></p>
+ <div id='x1412' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1413' onclick='hideorshow("x1413","x1414")'>show</button></p>
+ <div id='x1414' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1415' onclick='hideorshow("x1415","x1416")'>show</button></p>
+ <div id='x1416' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+</div>
+
+
+<p>The CREATE VIEW command assigns a name to a pre-packaged 
+<a href="lang_select.html">SELECT</a> statement. 
+Once the view is created, it can be used in the FROM clause
+of another <a href="lang_select.html">SELECT</a> in place of a table name.
+</p>
+
+<p>If the "TEMP" or "TEMPORARY" keyword occurs in between "CREATE"
+and "VIEW" then the view that is created is only visible to the
+<a href="c3ref/sqlite3.html">database connection</a> that created it and is automatically deleted when
+the database connection is closed.</p>
+
+<p> If a <span class='yyterm'>schema-name</span> is specified, then the view 
+is created in the specified database.
+It is an error to specify both a <span class='yyterm'>schema-name</span>
+and the TEMP keyword on a VIEW, unless the <span class='yyterm'>schema-name</span> 
+is "temp".
+If no schema name is specified, and the TEMP keyword is not present,
+the VIEW is created in the main database.</p>
+
+<p>You cannot <a href="lang_delete.html">DELETE</a>, <a href="lang_insert.html">INSERT</a>, or <a href="lang_update.html">UPDATE</a> a view.  Views are read-only 
+in SQLite.  However, in many cases you can use an
+<a href="lang_createtrigger.html#instead_of_trigger">INSTEAD OF trigger</a> on the view to accomplish 
+the same thing.  Views are removed 
+with the <a href="lang_dropview.html">DROP VIEW</a> command.</p>
+
+<p>If a <span class='yyterm'>column-name</span> list follows 
+the <span class='yyterm'>view-name</span>, then that list determines
+the names of the columns for the view.  If the <span class='yyterm'>column-name</span>
+list is omitted, then the names of the columns in the view are derived
+from the names of the result-set columns in the <a href="syntax/select-stmt.html">select-stmt</a>.
+The use of <span class='yyterm'>column-name</span> list is recommended.  Or, if
+<span class='yyterm'>column-name</span> list is omitted, then the result
+columns in the <a href="lang_select.html">SELECT</a> statement that defines the view should have
+well-defined names using the 
+"<a href="syntax/result-column.html">AS column-alias</a>" syntax.
+SQLite allows you to create views that depend on automatically 
+generated column names, but you should avoid using them since the 
+rules used to generate column names are not a defined part of the
+interface and might change in future releases of SQLite.
+
+<p>The <span class='yyterm'>column-name</span> list syntax was added in
+SQLite versions 3.9.0 (2015-10-14).
+
+

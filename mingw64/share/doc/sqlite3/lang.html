@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Query Language Understood by SQLite</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+
+<h1 align=center>SQL As Understood By SQLite</h1>
+
+<p>SQLite understands most of the standard SQL
+language.  But it does <a href="omitted.html">omit some features</a>
+while at the same time
+adding a few features of its own.  This document attempts to
+describe precisely what parts of the SQL language SQLite does
+and does not support.  A list of <a href="lang_keywords.html">SQL keywords</a> is 
+also provided.  The SQL language syntax is described by
+<a href="syntaxdiagrams.html">syntax diagrams</a>.
+
+<p>The following syntax documentation topics are available:</p>
+
+<table width="100%" cellpadding="5" border="0">
+<tr><td valign="top"><ul>
+
+<style>
+#listtab31 tr td {vertical-align:top;}
+</style>
+<table id='listtab31' width='100%'></table>
+<script>
+var listitems31 = [{"u":"lang_aggfunc.html","x":"aggregate functions","s":0},
+{"u":"lang_altertable.html","x":"ALTER TABLE","s":0},
+{"u":"lang_analyze.html","x":"ANALYZE","s":0},
+{"u":"lang_attach.html","x":"ATTACH DATABASE","s":0},
+{"u":"lang_transaction.html","x":"BEGIN TRANSACTION","s":0},
+{"u":"lang_comment.html","x":"comment","s":0},
+{"u":"lang_transaction.html","x":"COMMIT TRANSACTION","s":0},
+{"u":"lang_corefunc.html","x":"core functions","s":0},
+{"u":"lang_createindex.html","x":"CREATE INDEX","s":0},
+{"u":"lang_createtable.html","x":"CREATE TABLE","s":0},
+{"u":"lang_createtrigger.html","x":"CREATE TRIGGER","s":0},
+{"u":"lang_createview.html","x":"CREATE VIEW","s":0},
+{"u":"lang_createvtab.html","x":"CREATE VIRTUAL TABLE","s":0},
+{"u":"lang_datefunc.html","x":"date and time functions","s":0},
+{"u":"lang_delete.html","x":"DELETE","s":0},
+{"u":"lang_detach.html","x":"DETACH DATABASE","s":0},
+{"u":"lang_dropindex.html","x":"DROP INDEX","s":0},
+{"u":"lang_droptable.html","x":"DROP TABLE","s":0},
+{"u":"lang_droptrigger.html","x":"DROP TRIGGER","s":0},
+{"u":"lang_dropview.html","x":"DROP VIEW","s":0},
+{"u":"lang_transaction.html","x":"END TRANSACTION","s":0},
+{"u":"lang_explain.html","x":"EXPLAIN","s":0},
+{"u":"lang_expr.html","x":"expression","s":0},
+{"u":"lang_indexedby.html","x":"INDEXED BY","s":0},
+{"u":"lang_insert.html","x":"INSERT","s":0},
+{"u":"lang_keywords.html","x":"keywords","s":0},
+{"u":"lang_conflict.html","x":"ON CONFLICT clause","s":0},
+{"u":"pragma.html#syntax","x":"PRAGMA","s":0},
+{"u":"lang_reindex.html","x":"REINDEX","s":0},
+{"u":"lang_savepoint.html","x":"RELEASE SAVEPOINT","s":0},
+{"u":"lang_replace.html","x":"REPLACE","s":0},
+{"u":"lang_transaction.html","x":"ROLLBACK TRANSACTION","s":0},
+{"u":"lang_savepoint.html","x":"SAVEPOINT","s":0},
+{"u":"lang_select.html","x":"SELECT","s":0},
+{"u":"lang_update.html","x":"UPDATE","s":0},
+{"u":"lang_UPSERT.html","x":"UPSERT","s":0},
+{"u":"lang_vacuum.html","x":"VACUUM","s":0},
+{"u":"lang_with.html","x":"WITH clause","s":0}];
+var j = 0;
+var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
+var nCol = Math.floor(w/340);
+if(nCol<=0) nCol=1;
+var nRow = Math.ceil((listitems31.length+1)/nCol);
+var h="<tr><td><ul class='multicol_list'>"
+var ea
+for(var i=0; i<listitems31.length; i++){
+  if( (++j)>nRow ){
+    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
+    j = 1;
+  }
+  if(listitems31[i].u=="" || listitems31[i].s==2){
+    h += "<li>"
+    ea = ""
+  }else{
+    h += "<li><a href='";
+    h += listitems31[i].u;
+    h += "'>";
+    ea = "</a>"
+  }
+  if(listitems31[i].s==2 || listitems31[i].s==3) h += "<s>"
+  h += listitems31[i].x;
+  if(listitems31[i].s==2 || listitems31[i].s==3) h += "</s>"
+  h += ea
+  if(listitems31[i].s==1) h += "<small><i>(exp)</i></small>\n";
+  if(listitems31[i].s==3) h += "&sup1\n";
+  if(listitems31[i].s==4) h += "&sup2\n";
+  if(listitems31[i].s==5) h += "&sup3\n";
+}
+document.getElementById("listtab31").innerHTML = h;
+</script>
+
+</ul></td></tr></table>
+
+<p>The routines <a href="c3ref/prepare.html">sqlite3_prepare_v2()</a>, <a href="c3ref/prepare.html">sqlite3_prepare()</a>,
+<a href="c3ref/prepare.html">sqlite3_prepare16()</a>, <a href="c3ref/prepare.html">sqlite3_prepare16_v2()</a>, 
+<a href="c3ref/exec.html">sqlite3_exec()</a>, and <a href="c3ref/free_table.html">sqlite3_get_table()</a> accept
+an SQL statement list (sql-stmt-list) which is a semicolon-separated
+list of statements.</p>
+
+<p><b><a href="syntax/sql-stmt-list.html">sql-stmt-list:</a></b></p><div class='imgcontainer'>
+ <img alt="syntax diagram sql-stmt-list" src="images/syntax/sql-stmt-list.gif"></img>
+ </div>
+
+
+<p>Each SQL statement in the statement list is an instance of the
+following:</p>
+
+<p><b><a href="syntax/sql-stmt.html">sql-stmt:</a></b></p><div class='imgcontainer'>
+ <img alt="syntax diagram sql-stmt" src="images/syntax/sql-stmt.gif"></img>
+ </div>
+
+
+

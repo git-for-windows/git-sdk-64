@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>In-Memory Databases</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+
+
+<h1 align="center">In-Memory Databases</h1>
+
+<p>An SQLite database is normally stored in a single ordinary disk
+file. However, in certain circumstances, the database might be stored in
+memory.</p>
+
+<p>The most common way to force an SQLite database to exist purely 
+in memory is to open the database using the special filename
+"<b>:memory:</b>".  In other words, instead of passing the name of
+a real disk file into one of the <a href="c3ref/open.html">sqlite3_open()</a>, <a href="c3ref/open.html">sqlite3_open16()</a>, or
+<a href="c3ref/open.html">sqlite3_open_v2()</a> functions, pass in the string ":memory:".  For
+example:</p>
+
+<blockquote><pre>
+rc = sqlite3_open(":memory:", &amp;db);
+</pre></blockquote>
+
+<p>When this is done, no disk file is opened.  
+Instead, a new database is created
+purely in memory.  The database ceases to exist as soon as the database
+connection is closed.  Every :memory: database is distinct from every
+other.  So, opening two database connections each with the filename
+":memory:" will create two independent in-memory databases.</p>
+
+<p>The special filename ":memory:" can be used anywhere that a database
+filename is permitted.  For example, it can be used as the
+<i>filename</i> in an <a href="lang_attach.html">ATTACH</a> command:</p>
+
+<blockquote><pre>
+ATTACH DATABASE ':memory:' AS aux1;
+</pre></blockquote>
+
+<p>Note that in order for the special ":memory:" name to apply and to
+create a pure in-memory database, there must be no additional text in the
+filename.  Thus, a disk-based database can be created in a file by prepending
+a pathname, like this:  "./:memory:".</p>
+
+<p>The special ":memory:" filename also works when using <a href="uri.html">URI filenames</a>.
+For example:
+
+<blockquote><pre>
+rc = sqlite3_open("file::memory:", &amp;db);
+</pre></blockquote>
+
+Or,
+
+<blockquote><pre>
+ATTACH DATABASE 'file::memory:' AS aux1;
+</pre></blockquote>
+
+<a name="sharedmemdb"></a>
+
+<h2>In-memory Databases And Shared Cache</h2>
+
+<p>In-memory databases are allowed to use <a href="sharedcache.html">shared cache</a> if they are
+opened using a <a href="uri.html">URI filename</a>.  If the unadorned ":memory:" name is used
+to specify the in-memory database, then that database always has a private
+cache and is this only visible to the database connection that originally
+opened it.  However, the same in-memory database can be opened by two or
+more database connections as follows:
+
+<blockquote><pre>
+rc = sqlite3_open("file::memory:?cache=shared", &amp;db);
+</pre></blockquote>
+
+Or,
+
+<blockquote><pre>
+ATTACH DATABASE 'file::memory:?cache=shared' AS aux1;
+</pre></blockquote>
+
+<p>This allows separate database connections to share the same
+in-memory database.  Of course, all database connections sharing the
+in-memory database need to be in the same process.  The database is
+automatically deleted and memory is reclaimed when the last connection
+to the database closes.
+
+<p>If two or more distinct but shareable in-memory databases are needed
+in a single process, then the <a href="uri.html#coreqp">mode=memory</a> query parameter can
+be used with a <a href="uri.html">URI filename</a> to create a named in-memory database:
+
+<blockquote><pre>
+rc = sqlite3_open("file:memdb1?mode=memory&amp;cache=shared", &amp;db);
+</pre></blockquote>
+
+Or,
+
+<blockquote><pre>
+ATTACH DATABASE 'file:memdb1?mode=memory&amp;cache=shared' AS aux1;
+</pre></blockquote>
+
+<p>When an in-memory database is named in this way, it will only share its
+cache with another connection that uses exactly the same name.
+
+
+
+<a name="temp_db"></a>
+
+<h2>Temporary Databases</h2>
+
+<p>When the name of the database file handed to <a href="c3ref/open.html">sqlite3_open()</a> or to
+<a href="lang_attach.html">ATTACH</a> is an empty string, then a new temporary file is created to hold
+the database.</p>
+
+<blockquote><pre>
+rc = sqlite3_open("", &amp;db);
+</pre></blockquote>
+
+<blockquote><pre>
+ATTACH DATABASE '' AS aux2;
+</pre></blockquote>
+
+<p>A different temporary file is created each time, so that just like as
+with the special ":memory:" string, two database connections to temporary
+databases each have their own private database.  Temporary databases are
+automatically deleted when the connection that created them closes.</p>
+
+<p>Even though a disk file is allocated for each temporary database, in
+practice the temporary database usually resides in the in-memory pager
+cache and hence is very little difference between a pure in-memory database
+created by ":memory:" and a temporary database created by an empty filename.
+The sole difference is that a ":memory:" database must remain in memory
+at all times whereas parts of a temporary database might be flushed to
+disk if database becomes large or if SQLite comes under memory pressure.</p>
+
+<p>The previous paragraphs describe the behavior of temporary databases
+under the default SQLite configuration.  An application can use the
+<a href="pragma.html#pragma_temp_store">temp_store pragma</a> and the <a href="compile.html#temp_store">SQLITE_TEMP_STORE</a> compile-time parameter to
+force temporary databases to behave as pure in-memory databases, if desired.
+</p>
+

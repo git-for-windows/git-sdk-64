@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: BEGIN TRANSACTION</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>BEGIN TRANSACTION</h2></div><p><b><a href="syntax/begin-stmt.html">begin-stmt:</a></b>
+<button id='x1165' onclick='hideorshow("x1165","x1166")'>hide</button></p>
+ <div id='x1166' class='imgcontainer'>
+ <img alt="syntax diagram begin-stmt" src="images/syntax/begin-stmt.gif" />
+</div>
+<p><b><a href="syntax/commit-stmt.html">commit-stmt:</a></b>
+<button id='x1167' onclick='hideorshow("x1167","x1168")'>hide</button></p>
+ <div id='x1168' class='imgcontainer'>
+ <img alt="syntax diagram commit-stmt" src="images/syntax/commit-stmt.gif" />
+</div>
+<p><b><a href="syntax/rollback-stmt.html">rollback-stmt:</a></b>
+<button id='x1169' onclick='hideorshow("x1169","x1170")'>hide</button></p>
+ <div id='x1170' class='imgcontainer'>
+ <img alt="syntax diagram rollback-stmt" src="images/syntax/rollback-stmt.gif" />
+</div>
+
+
+<p>
+No changes can be made to the database except within a transaction.
+Any command that changes the database (basically, any SQL command
+other than <a href="lang_select.html">SELECT</a>) will automatically start a transaction if
+one is not already in effect.  Automatically started transactions
+are committed when the last query finishes.
+</p>
+
+<p>
+Transactions can be started manually using the BEGIN
+command.  Such transactions usually persist until the next
+COMMIT or ROLLBACK command.  But a transaction will also 
+ROLLBACK if the database is closed or if an error occurs
+and the ROLLBACK conflict resolution algorithm is specified.
+See the documentation on the <a href="lang_conflict.html">ON CONFLICT</a>
+clause for additional information about the ROLLBACK
+conflict resolution algorithm.
+</p>
+
+<p>
+END TRANSACTION is an alias for COMMIT.
+</p>
+
+<p> Transactions created using BEGIN...COMMIT do not nest.
+For nested transactions, use the <a href="lang_savepoint.html">SAVEPOINT</a> and <a href="lang_savepoint.html">RELEASE</a> commands.
+The "TO SAVEPOINT <span class='yyterm'>name</span>" clause of the ROLLBACK command shown
+in the syntax diagram above is only applicable to <a href="lang_savepoint.html">SAVEPOINT</a>
+transactions.  An attempt to invoke the BEGIN command within
+a transaction will fail with an error, regardless of whether
+the transaction was started by <a href="lang_savepoint.html">SAVEPOINT</a> or a prior BEGIN.
+The COMMIT command and the ROLLBACK command without the TO clause
+work the same on <a href="lang_savepoint.html">SAVEPOINT</a> transactions as they do with transactions
+started by BEGIN.</p>
+
+<a name="immediate"></a>
+
+<p>
+Transactions can be deferred, immediate, or exclusive.  
+The default transaction behavior is deferred.
+Deferred means that no locks are acquired
+on the database until the database is first accessed.  Thus with a
+deferred transaction, the BEGIN statement itself does nothing to the
+filesystem.  Locks
+are not acquired until the first read or write operation.  The first read
+operation against a database creates a <a href="lockingv3.html#shared_lock">SHARED</a> lock and the first
+write operation creates a <a href="lockingv3.html#reserved_lock">RESERVED</a> lock.   Because the acquisition of
+locks is deferred until they are needed, it is possible that another
+thread or process could create a separate transaction and write to
+the database after the BEGIN on the current thread has executed.
+If the transaction is immediate, then <a href="lockingv3.html#reserved_lock">RESERVED</a> locks
+are acquired on all databases as soon as the BEGIN command is
+executed, without waiting for the
+database to be used.  After a BEGIN IMMEDIATE, 
+no other <a href="c3ref/sqlite3.html">database connection</a> will be able to write to the database or
+do a BEGIN IMMEDIATE or BEGIN EXCLUSIVE.  Other processes can continue
+to read from the database, however.  An exclusive transaction causes
+<a href="lockingv3.html#excl_lock">EXCLUSIVE</a> locks to be acquired on all databases.  After a BEGIN
+EXCLUSIVE, no other <a href="c3ref/sqlite3.html">database connection</a> except for <a href="pragma.html#pragma_read_uncommitted">read_uncommitted</a>
+connections will be able to read the database and no other connection without
+exception will be able to write the database until the transaction is
+complete.
+</p>
+
+<p>
+An implicit transaction (a transaction that is started automatically,
+not a transaction started by BEGIN) is committed automatically when
+the last active statement finishes.  A statement finishes when its
+prepared statement is <a href="c3ref/reset.html">reset</a> or
+<a href="c3ref/finalize.html">finalized</a>.  An open <a href="c3ref/blob.html">sqlite3_blob</a> used for
+incremental BLOB I/O counts as an unfinished statement.  The <a href="c3ref/blob.html">sqlite3_blob</a>
+finishes when it is <a href="c3ref/blob_close.html">closed</a>.
+</p>
+
+<p>
+The explicit COMMIT command runs immediately, even if there are
+pending <a href="lang_select.html">SELECT</a> statements.  However, if there are pending
+write operations, the COMMIT command
+will fail with an error code <a href="rescode.html#busy">SQLITE_BUSY</a>.
+</p>
+
+<p>
+An attempt to execute COMMIT might also result in an <a href="rescode.html#busy">SQLITE_BUSY</a> return code
+if an another thread or process has a <a href="lockingv3.html#shared_lock">shared lock</a> on the database
+that prevented the database from being updated.  When COMMIT fails in this
+way, the transaction remains active and the COMMIT can be retried later
+after the reader has had a chance to clear.
+</p>
+
+<p>
+In very old versions of SQLite (before version 3.7.11 - 2012-03-20)
+the ROLLBACK will fail with an error code 
+<a href="rescode.html#busy">SQLITE_BUSY</a> if there are any pending queries.  In more recent
+versions of SQLite, the ROLLBACK will proceed and pending statements
+will often be aborted, causing them to return an <a href="rescode.html#abort">SQLITE_ABORT</a> or
+<a href="rescode.html#abort_rollback">SQLITE_ABORT_ROLLBACK</a> error.
+In SQLite version 3.8.8 (2015-01-16) and later,
+a pending read will continue functioning
+after the ROLLBACK as long as the ROLLBACK does not modify the database
+schema.
+</p>
+
+<p>
+If <a href="pragma.html#pragma_journal_mode">PRAGMA journal_mode</a> is set to OFF (thus disabling the rollback journal
+file) then the behavior of the ROLLBACK command is undefined.
+</p>
+
+<h3>Response To Errors Within A Transaction</h3>
+
+<p> If certain kinds of errors occur within a transaction, the
+transaction may or may not be rolled back automatically.  The
+errors that can cause an automatic rollback include:</p>
+
+<ul>
+<li> <a href="rescode.html#full">SQLITE_FULL</a>: database or disk full
+<li> <a href="rescode.html#ioerr">SQLITE_IOERR</a>: disk I/O error
+<li> <a href="rescode.html#busy">SQLITE_BUSY</a>: database in use by another process
+<li> <a href="rescode.html#nomem">SQLITE_NOMEM</a>: out or memory
+</ul>
+
+<p>
+For all of these errors, SQLite attempts to undo just the one statement
+it was working on and leave changes from prior statements within the
+same transaction intact and continue with the transaction.  However, 
+depending on the statement being evaluated and the point at which the
+error occurs, it might be necessary for SQLite to rollback and
+cancel the entire transaction.  An application can tell which
+course of action SQLite took by using the
+<a href="c3ref/get_autocommit.html">sqlite3_get_autocommit()</a> C-language interface.</p>
+
+<p>It is recommended that applications respond to the errors
+listed above by explicitly issuing a ROLLBACK command.  If the 
+transaction has already been rolled back automatically
+by the error response, then the ROLLBACK command will fail with an
+error, but no harm is caused by this.</p>
+
+<p>Future versions of SQLite may extend the list of errors which
+might cause automatic transaction rollback.  Future versions of
+SQLite might change the error response.  In particular, we may
+choose to simplify the interface in future versions of SQLite by
+causing the errors above to force an unconditional rollback.</p>
+
+

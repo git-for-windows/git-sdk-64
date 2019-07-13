@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Distinctive Features Of SQLite</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+<h1 align=center>Distinctive Features Of SQLite</h1>
+
+<p>
+This page highlights some of the characteristics of SQLite that are
+unusual and which make SQLite different from many other SQL
+database engines.
+</p>
+
+<a name="zeroconfig"></a>
+<p><b>Zero-Configuration</b></p>
+<blockquote>
+  SQLite does not need to be "installed" before it is used. 
+  There is no "setup" procedure.  There is no
+  server process that needs to be started, stopped, or configured.
+  There is
+  no need for an administrator to create a new database instance or assign
+  access permissions to users.
+  SQLite uses no configuration files.
+  Nothing needs to be done to tell the system that SQLite is running.
+  No actions are required to recover after a system crash or power failure.
+  There is nothing to troubleshoot.
+  <p>
+  SQLite just works.
+  <p>
+  Other more familiar database engines run great once you get them going.
+  But doing the initial installation and configuration can be
+  intimidatingly complex.
+</blockquote>
+<a name="serverless"></a>
+<p><b>Serverless</b></p>
+<blockquote>
+  <p>
+  <i>(See also the <a href="serverless.html">serverless</a> documentation page.)</i>
+  <p>
+  Most SQL database engines are implemented as a separate server
+  process.  Programs that want to access the database communicate
+  with the server using some kind of interprocess communication
+  (typically TCP/IP) to send requests to the server and to receive
+  back results.  SQLite does not work this way.  With SQLite, the
+  process that wants to access the database reads and writes
+  directly from the database files on disk.  There is no intermediary
+  server process.
+  <p>
+  There are advantages and disadvantages to being serverless.  The
+  main advantage is that there is no separate server process
+  to install, setup, configure, initialize, manage, and troubleshoot.
+  This is one reason why SQLite is a "zero-configuration" database
+  engine.  Programs that use SQLite require no administrative support
+  for setting up the database engine before they are run.  Any program
+  that is able to access the disk is able to use an SQLite database.
+  <p>
+  On the other hand, a database engine that uses a server can provide
+  better protection from bugs in the client application - stray pointers
+  in a client cannot corrupt memory on the server.  And because a server
+  is a single persistent process, it is able control database access with
+  more precision, allowing for finer grain locking and better concurrency.
+  <p>
+  Most SQL database engines are client/server based.  Of those that are
+  serverless, SQLite is the only one that this author knows of that
+  allows multiple applications to access the same database at the same time.
+</blockquote>
+<a name="onefile"></a>
+<p><b>Single Database File</b></p>
+<blockquote>
+  An SQLite database is a single ordinary disk file that can be located
+  anywhere in the directory hierarchy.  If SQLite can read
+  the disk file then it can read anything in the database.  If the disk
+  file and its directory are writable, then SQLite can change anything
+  in the database.   Database files can easily be copied onto a USB
+  memory stick or emailed for sharing.
+  <p>
+  Other SQL database engines tend to store data as a large collection of
+  files.  Often these files are in a standard location that only the
+  database engine itself can access.  This makes the data more secure,
+  but also makes it harder to access.  Some SQL database engines provide
+  the option of writing directly to disk and bypassing the filesystem
+  all together.  This provides added performance, but at the cost of
+  considerable setup and maintenance complexity.
+</blockquote>
+<a name="onefile"></a>
+<p><b>Stable Cross-Platform Database File</b></p>
+<blockquote>
+  The SQLite file format is cross-platform.  A database file written
+  on one machine can be copied to and used on a different machine with
+  a different architecture.  Big-endian or little-endian, 32-bit or
+  64-bit does not matter.  All machines use the same file format.
+  Furthermore, the developers have pledged to keep the file format
+  stable and backwards compatible, so newer versions of SQLite can
+  read and write older database files.
+  <p>
+  Most other SQL database engines require you to dump and restore
+  the database when moving from one platform to another and often
+  when upgrading to a newer version of the software.
+</blockquote>
+<a name="small"></a>
+<p><b>Compact</b></p>
+<blockquote>
+  When optimized for size, the whole SQLite library with everything enabled
+  is <a href="footprint.html">less than 500KiB in size</a>
+  (as measured on an ix86 using the "size"
+  utility from the GNU compiler suite.)  Unneeded features can be disabled
+  at compile-time to further reduce the size of the library to under
+  300KiB if desired.
+  <p>
+  Most other SQL database engines are much larger than this.  IBM boasts
+  that its recently released CloudScape database engine is "only" a 2MiB
+  jar file - an order of magnitude larger than SQLite even after it is
+  compressed!
+  Firebird boasts that its client-side library is only 350KiB.  That's
+  as big as SQLite and does not even contain the database engine.
+  The Berkeley DB library from Oracle is 450KiB and it omits SQL
+  support, providing the programmer with only simple key/value pairs.
+</blockquote>
+<a name="typing"></a>
+<p><b>Manifest typing</b></p>
+<blockquote>
+  Most SQL database engines use static typing.  A datatype is associated
+  with each column in a table and only values of that particular datatype
+  are allowed to be stored in that column.  SQLite relaxes this restriction
+  by using manifest typing.
+  In manifest typing, the datatype is a property of the value itself, not 
+  of the column in which the value is stored.
+  SQLite thus allows the user to store
+  any value of any datatype into any column regardless of the declared type
+  of that column.  (There are some exceptions to this rule: An INTEGER
+  PRIMARY KEY column may only store integers.  And SQLite attempts to coerce
+  values into the declared datatype of the column when it can.)
+  <p>
+  As far as we can tell, the SQL language specification allows the use
+  of manifest typing.   Nevertheless, most other SQL database engines are
+  statically typed and so some people
+  feel that the use of manifest typing is a bug in SQLite.  But the authors
+  of SQLite feel very strongly that this is a feature.  The use of manifest
+  typing in SQLite is a deliberate design decision which has proven in practice
+  to make SQLite more reliable and easier to use, especially when used in
+  combination with dynamically typed programming languages such as Tcl and
+  Python.
+</blockquote>
+<a name="flex"></a>
+<p><b>Variable-length records</b></p>
+<blockquote>
+  Most other SQL database engines allocated a fixed amount of disk space
+  for each row in most tables.  They play special tricks for handling
+  BLOBs and CLOBs which can be of wildly varying length.  But for most
+  tables, if you declare a column to be a VARCHAR(100) then the database
+  engine will allocate
+  100 bytes of disk space regardless of how much information you actually
+  store in that column.
+  <p>
+  SQLite, in contrast, use only the amount of disk space actually
+  needed to store the information in a row.  If you store a single
+  character in a VARCHAR(100) column, then only a single byte of disk
+  space is consumed.  (Actually two bytes - there is some overhead at
+  the beginning of each column to record its datatype and length.)
+  <p>
+  The use of variable-length records by SQLite has a number of advantages.
+  It results in smaller database files, obviously.  It also makes the
+  database run faster, since there is less information to move to and from
+  disk.  And, the use of variable-length records makes it possible for
+  SQLite to employ manifest typing instead of static typing.
+</blockquote>
+<a name="readable"></a>
+<p><b>Readable source code</b></p>
+<blockquote>
+  The source code to SQLite is designed to be readable and accessible to
+  the average programmer.  All procedures and data structures and many
+  automatic variables are carefully commented with useful information about
+  what they do.  Boilerplate commenting is omitted.
+</blockquote>
+<a name="vdbe"></a>
+<p><b>SQL statements compile into virtual machine code</b></p>
+<blockquote>
+  Every SQL database engine compiles each SQL statement into some kind of
+  internal data structure which is then used to carry out the work of the
+  statement.  But in most SQL engines that internal data structure is a
+  complex web of interlinked structures and objects.  In SQLite, the compiled
+  form of statements is a short program in a machine-language like
+  representation.  Users of the database can view this 
+  <a href="opcode.html">virtual machine language</a>
+  by prepending the <a href="lang_explain.html">EXPLAIN</a> keyword
+  to a query.
+  <p>
+  The use of a virtual machine in SQLite has been a great benefit to the
+  library's development.  The virtual machine provides a crisp, well-defined
+  junction between the front-end of SQLite (the part that parses SQL
+  statements and generates virtual machine code) and the back-end (the
+  part that executes the virtual machine code and computes a result.)
+  The virtual machine allows the developers to see clearly and in an
+  easily readable form what SQLite is trying to do with each statement
+  it compiles, which is a tremendous help in debugging.
+  Depending on how it is compiled, SQLite also has the capability of
+  tracing the execution of the virtual machine - printing each
+  virtual machine instruction and its result as it executes.
+</blockquote>
+<a name="license"></a>
+<p><b>Public domain</b></p>
+<blockquote>
+  The source code for SQLite is in the public domain.  No claim of copyright
+  is made on any part of the core source code.  (The documentation and test
+  code is a different matter - some sections of documentation and test logic
+  are governed by open-source licenses.)  All contributors to the
+  SQLite core software have signed affidavits specifically disavowing any
+  copyright interest in the code.  This means that anybody is able to legally
+  do anything they want with the SQLite source code.
+  <p>
+  There are other SQL database engines with liberal licenses that allow
+  the code to be broadly and freely used.  But those other engines are
+  still governed by copyright law.  SQLite is different in that copyright
+  law simply does not apply.  
+  <p>
+  The source code files for other SQL database engines typically begin
+  with a comment describing your legal rights to view and copy that file.
+  The SQLite source code contains no license since it is not governed by
+  copyright.  Instead of a license, the SQLite source code offers a blessing:
+  <blockquote>
+  <i>May you do good and not evil<br>
+  May you find forgiveness for yourself and forgive others<br>
+  May you share freely, never taking more than you give.</i>
+  </blockquote>
+</blockquote>
+<a name="extensions"></a>
+<p><b>SQL language extensions</b></p>
+<blockquote>
+  SQLite provides a number of enhancements to the SQL language 
+  not normally found in other database engines.
+  The EXPLAIN keyword and manifest typing have already been mentioned
+  above.  SQLite also provides statements such as 
+  <a href="lang_replace.html">REPLACE</a> and the
+  <a href="lang_conflict.html">ON CONFLICT</a> clause that allow for
+  added control over the resolution of constraint conflicts.
+  SQLite supports <a href="lang_attach.html">ATTACH</a> and
+  <a href="lang_detach.html">DETACH</a> commands that allow multiple
+  independent databases to be used together in the same query.
+  And SQLite defines APIs that allows the user to add new
+  <a href="c3ref/create_function.html">SQL functions</a>
+  and <a href="c3ref/create_collation.html">collating sequences</a>.
+</blockquote>
+
+

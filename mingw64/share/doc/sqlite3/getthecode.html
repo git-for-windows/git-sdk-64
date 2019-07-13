@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>How To Download Canonical SQLite Source Code</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+How To Download Canonical SQLite Source Code
+</div>
+</div>
+
+
+
+
+
+<h1 id="introduction"><span>1. </span>Introduction</h1>
+
+<p>Most programmers compile SQLite into their applications using
+the <a href="amalgamation.html">amalgamation</a>.  The <a href="amalgamation.html">amalgamation</a> is C-code but it is not
+"source code".  The <a href="amalgamation.html">amalgamation</a> is generated from source code
+by scripts.
+
+</p><p>This document describes how to obtain the canonical source code
+for SQLite - the raw source files from which the amalgamation is
+built.  See the <a href="howtocompile.html">How To Compile SQLite</a> page for additional information
+on what to do with the canonical source code once it is obtained.
+
+</p><h1 id="direct_downloads"><span>2. </span>Direct Downloads</h1>
+
+<p>Snapshots of official releases of SQLite source code can often
+be obtained directly from the <a href="download.html">download page</a> of the SQLite website.
+Even if the specific version desired is not listed on the download page,
+the naming conventions are fairly clear and so programmers can often
+guess the name of an historical release and download it that way.
+
+</p><h1 id="obtaining_code_directly_from_the_version_control_system"><span>3. </span>Obtaining Code Directly From the Version Control System</h1>
+
+<p>For any historical version of SQLite, the source tree can be obtained
+from the <a href="http://www.fossil-scm.org/">Fossil</a> version control system,
+either downloading a tarball or ZIP archive for a specific version, or
+by cloning the entire project history.
+
+</p><p>SQLite sources are maintained on three geographically dispersed
+servers:
+
+</p><blockquote>
+<a href="https://www.sqlite.org/cgi/src">https://www.sqlite.org/cgi/src</a> (Dallas)<br>
+<a href="https://www2.sqlite.org/cgi/src">https://www2.sqlite.org/cgi/src</a> (Newark)<br>
+<a href="https://www3.sqlite.org/cgi/src">https://www3.sqlite.org/cgi/src</a> (San Francisco)<br>
+</blockquote>
+
+<p>The documentation is maintained in separate source repositories on
+those same servers:
+
+</p><blockquote>
+<a href="https://www.sqlite.org/cgi/docsrc">https://www.sqlite.org/cgi/docsrc</a> (Dallas)<br>
+<a href="https://www2.sqlite.org/cgi/docsrc">https://www2.sqlite.org/cgi/docsrc</a> (Newark)<br>
+<a href="https://www3.sqlite.org/cgi/docsrc">https://www3.sqlite.org/cgi/docsrc</a> (San Francisco)<br>
+</blockquote>
+
+<p>To download a specific historical version, first locate the specific
+version desired by visiting the timeline page on one of these servers
+(for example: <a href="http://www.sqlite.org/cgi/src/timeline">http://www.sqlite.org/cgi/src/timeline</a>).  If
+you know the approximate date of the version you want to download, you
+can add a query parameter like "c=YYYY-MM-DD" to the "timeline" URL to
+see a timeline centered on that date.  For example, to see all the check-ins
+that occurred around August 26, 2013, visit
+<a href="http://www.sqlite.org/cgi/src/timeline?c=2013-08-26">http://www.sqlite.org/cgi/src/timeline?c=2013-08-26</a>.
+If you are looking for an official release, visit the
+<a href="chronology.html">chronology</a> page, click on the date to the left of the release
+you are looking for, and that will take you immediately to the
+check-in corresponding to the release.
+
+</p><p>Once you locate a specific version, click on the hyperlink for that
+version to see the "Check-in Information Page".
+Then click on either the "Tarball" link or the
+"ZIP archive" link to download the complete source tree.
+
+<a name="clone"></a>
+
+</p><h1 id="cloning_the_complete_development_history"><span>4. </span>Cloning The Complete Development History</h1>
+
+<p>To clone the entire history of SQLite, first go to the
+<a href="http://www.fossil-scm.org/download.html">http://www.fossil-scm.org/download.html</a> page and grab a precompiled binary
+for the Fossil version control program.  Or get the source code on the
+same page and compile it yourself.
+
+</p><p>As of 2017-03-12, you must use Fossil version
+2.0 or later for the following instructions to work.  
+The SQLite repository started using
+artifacts named using SHA3 hashes instead of SHA1 hashes on that date,
+and Fossil 2.0 or later is needed in order to understand the new SHA3
+hashes.  To find out what version of Fossil you are running, 
+type "fossil -v".</p>
+
+<p>Fossil is a completely stand-alone
+program, so install it simply by putting the "fossil" or "fossil.exe"
+executable someplace on your $PATH or %PATH%.  After you have Fossil
+installed, do this:
+
+</p><div class="codeblock"><pre>fossil clone http://www.sqlite.org/cgi/src sqlite.fossil
+</pre></div>
+
+<p>The command above
+will make a copy of the complete development history of
+SQLite into the "sqlite.fossil" file on your computer.  Making this copy
+takes about a minute and uses about 32 megabytes of transfer.  After
+making the copy, "open" the repository by typing:
+
+</p><div class="codeblock"><pre>fossil open sqlite.fossil
+</pre></div>
+
+<p>This second command will "checkout" the latest check-in from the SQLite
+source tree into your current directory.  Subsequently, you can easily switch
+to a different version by typing:
+
+</p><div class="codeblock"><pre>fossil update VERSION
+</pre></div>
+
+<p>Where VERSION can be a branch name (like "trunk" or "session") to get the
+latest check-in on a specific branch, or VERSION can be a SHA1 hash or a
+prefix of a SHA1 hash for a specific check-in, or VERSION can be a tag
+such as "version-3.8.8".  Every time you run "fossil update" it will
+automatically reach out to the original repository at
+http://www.sqlite.org/cgi/src to obtain new check-ins that might have been
+made by others since your previous update.
+</p>

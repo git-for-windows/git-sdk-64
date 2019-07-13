@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: ATTACH DATABASE</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>ATTACH DATABASE</h2></div><p><b><a href="syntax/attach-stmt.html">attach-stmt:</a></b>
+<button id='x1127' onclick='hideorshow("x1127","x1128")'>hide</button></p>
+ <div id='x1128' class='imgcontainer'>
+ <img alt="syntax diagram attach-stmt" src="images/syntax/attach-stmt.gif" />
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x1129' onclick='hideorshow("x1129","x1130")'>show</button></p>
+ <div id='x1130' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x1131' onclick='hideorshow("x1131","x1132")'>show</button></p>
+ <div id='x1132' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x1133' onclick='hideorshow("x1133","x1134")'>show</button></p>
+ <div id='x1134' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x1135' onclick='hideorshow("x1135","x1136")'>show</button></p>
+ <div id='x1136' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1137' onclick='hideorshow("x1137","x1138")'>show</button></p>
+ <div id='x1138' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x1139' onclick='hideorshow("x1139","x1140")'>show</button></p>
+ <div id='x1140' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1141' onclick='hideorshow("x1141","x1142")'>show</button></p>
+ <div id='x1142' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1143' onclick='hideorshow("x1143","x1144")'>show</button></p>
+ <div id='x1144' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1145' onclick='hideorshow("x1145","x1146")'>show</button></p>
+ <div id='x1146' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1147' onclick='hideorshow("x1147","x1148")'>show</button></p>
+ <div id='x1148' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1149' onclick='hideorshow("x1149","x1150")'>show</button></p>
+ <div id='x1150' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1151' onclick='hideorshow("x1151","x1152")'>show</button></p>
+ <div id='x1152' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1153' onclick='hideorshow("x1153","x1154")'>show</button></p>
+ <div id='x1154' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x1155' onclick='hideorshow("x1155","x1156")'>show</button></p>
+ <div id='x1156' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1157' onclick='hideorshow("x1157","x1158")'>show</button></p>
+ <div id='x1158' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1159' onclick='hideorshow("x1159","x1160")'>show</button></p>
+ <div id='x1160' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1161' onclick='hideorshow("x1161","x1162")'>show</button></p>
+ <div id='x1162' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1163' onclick='hideorshow("x1163","x1164")'>show</button></p>
+ <div id='x1164' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+</div>
+</div>
+</div>
+
+
+<p> The ATTACH DATABASE statement adds another database 
+file to the current <a href="c3ref/sqlite3.html">database connection</a>. 
+Database files that were previously attached can be removed using
+the <a href="lang_detach.html">DETACH DATABASE</a> command.
+
+<p>The filename for the database to be attached is the value of
+the expression that occurs before the AS keyword.
+The filename of the database follows the same semantics as the
+filename argument to <a href="c3ref/open.html">sqlite3_open()</a> and <a href="c3ref/open.html">sqlite3_open_v2()</a>; the
+special name "<a href="inmemorydb.html">:memory:</a>" results in an <a href="inmemorydb.html">in-memory database</a> and an
+empty string results in a new temporary database.
+The filename argument can be a <a href="uri.html">URI filename</a> if URI filename processing
+is enable on the database connection.  The default behavior is for
+URI filenames to be disabled, however that might change in a future release
+of SQLite, so application developers are advised to plan accordingly.
+
+<p>The name that occurs after the AS keyword is the name of the database
+used internally by SQLite.
+The schema-names 'main' and 
+'temp' refer to the main database and the database used for 
+temporary tables.  The main and temp databases cannot be attached or
+detached.</p>
+
+<p> Tables in an attached database can be referred to using the syntax 
+<i>schema-name.table-name</i>.  If the name of the table is unique
+across all attached databases and the main and temp databases, then the
+<i>schema-name</i> prefix is not required.  If two or more tables in
+different databases have the same name and the 
+<i>schema-name</i> prefix is not used on a table reference, then the
+table chosen is the one in the database that was least recently attached.</p>
+
+<p>
+Transactions involving multiple attached databases are atomic,
+assuming that the main database is not "<a href="inmemorydb.html">:memory:</a>" and the 
+<a href="pragma.html#pragma_journal_mode">journal_mode</a> is not <a href="wal.html">WAL</a>.  If the main
+database is ":memory:" or if the journal_mode is WAL, then 
+transactions continue to be atomic within each individual
+database file. But if the host computer crashes in the middle
+of a <a href="lang_transaction.html">COMMIT</a> where two or more database files are updated,
+some of those files might get the changes where others
+might not.
+</p>
+
+<p> There is a limit, set using <a href="c3ref/limit.html">sqlite3_limit()</a> and 
+<a href="c3ref/c_limit_attached.html#sqlitelimitattached">SQLITE_LIMIT_ATTACHED</a>, to the number of databases that can be
+simultaneously attached to a single database connection.</p>
+
+

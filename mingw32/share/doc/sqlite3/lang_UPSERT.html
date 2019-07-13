@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: upsert</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>upsert</h2></div><p><b><a href="syntax/upsert-clause.html">upsert-clause:</a></b>
+<button id='x1583' onclick='hideorshow("x1583","x1584")'>hide</button></p>
+ <div id='x1584' class='imgcontainer'>
+ <img alt="syntax diagram upsert-clause" src="images/syntax/upsert-clause.gif" />
+<p><b><a href="syntax/column-name-list.html">column-name-list:</a></b>
+<button id='x1585' onclick='hideorshow("x1585","x1586")'>show</button></p>
+ <div id='x1586' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram column-name-list" src="images/syntax/column-name-list.gif" />
+</div>
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x1587' onclick='hideorshow("x1587","x1588")'>show</button></p>
+ <div id='x1588' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x1589' onclick='hideorshow("x1589","x1590")'>show</button></p>
+ <div id='x1590' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x1591' onclick='hideorshow("x1591","x1592")'>show</button></p>
+ <div id='x1592' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x1593' onclick='hideorshow("x1593","x1594")'>show</button></p>
+ <div id='x1594' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1595' onclick='hideorshow("x1595","x1596")'>show</button></p>
+ <div id='x1596' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x1597' onclick='hideorshow("x1597","x1598")'>show</button></p>
+ <div id='x1598' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1599' onclick='hideorshow("x1599","x1600")'>show</button></p>
+ <div id='x1600' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1601' onclick='hideorshow("x1601","x1602")'>show</button></p>
+ <div id='x1602' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1603' onclick='hideorshow("x1603","x1604")'>show</button></p>
+ <div id='x1604' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1605' onclick='hideorshow("x1605","x1606")'>show</button></p>
+ <div id='x1606' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1607' onclick='hideorshow("x1607","x1608")'>show</button></p>
+ <div id='x1608' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1609' onclick='hideorshow("x1609","x1610")'>show</button></p>
+ <div id='x1610' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1611' onclick='hideorshow("x1611","x1612")'>show</button></p>
+ <div id='x1612' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x1613' onclick='hideorshow("x1613","x1614")'>show</button></p>
+ <div id='x1614' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1615' onclick='hideorshow("x1615","x1616")'>show</button></p>
+ <div id='x1616' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1617' onclick='hideorshow("x1617","x1618")'>show</button></p>
+ <div id='x1618' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1619' onclick='hideorshow("x1619","x1620")'>show</button></p>
+ <div id='x1620' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1621' onclick='hideorshow("x1621","x1622")'>show</button></p>
+ <div id='x1622' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/indexed-column.html">indexed-column:</a></b>
+<button id='x1623' onclick='hideorshow("x1623","x1624")'>show</button></p>
+ <div id='x1624' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram indexed-column" src="images/syntax/indexed-column.gif" />
+</div>
+</div>
+
+
+<p>UPSERT is a special syntax addition to <a href="lang_insert.html">INSERT</a> that causes the
+INSERT to behave as an <a href="lang_update.html">UPDATE</a> or a no-op if the INSERT would violate
+a uniqueness constraint.
+UPSERT is not standard SQL.  UPSERT in SQLite follows the
+syntax established by PostgreSQL.
+UPSERT syntax was added to SQLite with version 3.24.0 (2018-06-04).
+
+<p>An UPSERT is an ordinary <a href="lang_insert.html">INSERT</a> statement that is followed by
+the special ON CONFLICT clause shown above.
+
+<p>The syntax that occurs in between the "ON CONFLICT" and "DO" keywords
+is called the "conflict target".  The conflict target specifies a specific
+uniqueness constraint that will trigger the upsert.  The conflict target
+is required for DO UPDATE upserts, but is optional for DO NOTHING.  When
+the conflict target is omitted, the upsert behavior is triggered by a
+violation of any uniqueness constraint on the table of the INSERT.
+
+<p>If the insert operation would cause the uniqueness constraint identified
+by the conflict-target clause to fail, then the insert is omitted and
+either the DO NOTHING or DO UPDATE operation is performed instead.
+In the case of a multi-row insert, this decision is made separately
+for each row of the insert.
+
+<p>The special UPSERT processing happens only for uniqueness constraint on
+the table that is receiving the INSERT. A "uniqueness constraint"
+is an explicit UNIQUE or PRIMARY KEY constraint within
+the CREATE TABLE statement, or a <a href="lang_createindex.html#uniqueidx">unique index</a>.
+UPSERT does not intervene for failed NOT NULL or foreign key constraints
+or for constraints that are implemented using triggers.
+
+<p>Column names in the expressions of a DO UPDATE refer to the original
+unchanged value of the column, before the attempted INSERT.  To use the
+value that would have been inserted had the constraint not failed,
+add the special "excluded." table qualifier to the column name.
+
+<p>Some examples will help illustrate the difference:
+
+<blockquote><pre>
+CREATE TABLE vocabulary(word TEXT PRIMARY KEY, count INT DEFAULT 1);
+INSERT INTO vocabulary(word) VALUES('jovial')
+  ON CONFLICT(word) DO UPDATE SET count=count+1;
+</pre></blockquote>
+
+<p>The upsert above inserts the new vocabulary word "jovial" if that
+word is not already in the dictionary, or if it is already in the
+dictionary, it increments the counter.  The "count+1" expression
+could also be written as "vocabulary.count".  PostgreSQL requires the
+second form, but SQLite accepts either.
+
+<blockquote><pre>
+CREATE TABLE phonebook(name TEXT PRIMARY KEY, phonenumber TEXT);
+INSERT INTO phonebook(name,phonenumber) VALUES('Alice','704-555-1212')
+  ON CONFLICT(name) DO UPDATE SET phonenumber=excluded.phonenumber;
+</pre></blockquote>
+
+<p>In the second example, the expression in the DO UPDATE clause is
+of the form "excluded.phonenumber".  The "excluded." prefix causes the
+"phonenumber" to refer to the value for phonenumber that would have been
+inserted had there been no conflict.  Hence, the effect of the upsert
+is to insert a phonenumber of Alice if none exists, or to overwrite
+any prior phonenumber for Alice with the new one.
+
+<p>Note that the DO UPDATE clause acts only on the single row
+that experienced the constraint error during INSERT.  It is not
+necessary to include a WHERE clause that restrictions the action
+to that one row.  The only use for the WHERE clause at
+the end of the DO UPDATE is to optionally change the DO UPDATE
+into a no-op depending on the original and/or new values.
+For example:
+
+<blockquote><pre>
+CREATE TABLE phonebook2(
+  name TEXT PRIMARY KEY,
+  phonenumber TEXT,
+  validDate DATE
+);
+INSERT INTO phonebook2(name,phonenumber,validDate)
+  VALUES('Alice','704-555-1212','2018-05-08')
+  ON CONFLICT(name) DO UPDATE SET
+    phonenumber=excluded.phonenumber,
+    validDate=excluded.validDate
+  WHERE excluded.validDate>phonebook2.validDate;
+</pre></blockquote>
+
+<p>In this last example, the phonebook2 entry is only
+updated if the validDate for the newly inserted value is
+newer than the entry already in the table.  If the table already
+contains an entry with the same name and a current validDate,
+then the WHERE clause causes the DO UPDATE to become a no-op.
+
+<a name="parseambig"></a>
+
+<h3>Parsing Ambiguity</h3>
+
+<p>When the <a href="lang_insert.html">INSERT</a> statement to which the UPSERT is attached
+takes its values from a <a href="lang_select.html">SELECT</a> statement, there is a potential
+parsing ambiguity.  The parser might not be able to tell if the
+"ON" keyword is introducing the UPSERT or if it is the ON clause
+of a join.  To work around this, the SELECT statement should always
+include a WHERE clause, even if that WHERE clause is just
+"WHERE true".
+
+<p>Ambiguous use of ON:
+
+<blockquote><pre>
+INSERT INTO t1 SELECT * FROM t2
+ON CONFLICT(x) DO UPDATE SET y=excluded.y;
+</pre></blockquote>
+
+<p>Ambiguity resolved using a WHERE clause:
+
+<blockquote><pre>
+INSERT INTO t1 SELECT * FROM t2 <font color="blue">WHERE true</font>
+ON CONFLICT(x) DO UPDATE SET y=excluded.y;
+</pre></blockquote>
+
+<h3>Limitations</h3>
+
+<p>UPSERT does not currently work for <a href="vtab.html">virtual tables</a>.
+
+
+

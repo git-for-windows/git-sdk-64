@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Memory-Mapped I/O</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+
+
+<h1 align="center">Memory-Mapped I/O</h1>
+
+<p>The default mechanism by which SQLite accesses and updates database disk
+files is the xRead() and xWrite() methods of the
+<a href="c3ref/io_methods.html">sqlite3_io_methods</a> VFS object.  These methods are typically implemented as
+"read()" and "write()" system calls which cause the operating system
+to copy disk content between the kernel buffer cache and user space.</p>
+
+<p>Beginning with <a href="releaselog/3_7_17.html">version 3.7.17</a> (2013-05-20), SQLite has the option of 
+accessing disk content directly using memory-mapped I/O and the new
+xFetch() and xUnfetch() methods on <a href="c3ref/io_methods.html">sqlite3_io_methods</a>.</p>
+
+<p>There are advantages and disadvantages to using memory-mapped I/O.
+Advantages include:</p>
+
+<ol>
+<li><p>Many operations, especially I/O intensive operations, can be
+    faster since content does need to be copied between kernel space
+    and user space.</p>
+
+<li><p>The SQLite library may need less RAM since it shares pages with
+    the operating-system page cache and does not always need its own copy of
+    working pages.</p>
+</ol>
+
+<p>But there are also disadvantages:</p>
+
+<ol>
+<li><p>An I/O error on a memory-mapped file cannot be caught and dealt with by
+    SQLite.  Instead, the I/O error causes a signal which, if not caught
+    by the application, results in a program crash.</p>
+
+<li><p>The operating system must have a unified buffer cache in order for
+    the memory-mapped I/O extension to work correctly, especially in
+    situations where two processes are accessing the same database
+    file and one process is using memory-mapped I/O while the other
+    is not.  Not all operating systems have a unified buffer cache.
+    In some operating systems that claim to have a unified buffer cache,
+    the implementation is buggy and can lead to corrupt databases.</p>
+
+<li><p>Performance does not always increase with memory-mapped I/O.  In fact,
+    it is possible to construct test cases where performance is reduced
+    by the use of memory-mapped I/O.</p>
+
+<li><p>Windows is unable to truncate a memory-mapped file.  Hence, on Windows,
+    if an operation such as <a href="lang_vacuum.html">VACUUM</a> or <a href="pragma.html#pragma_auto_vacuum">auto_vacuum</a> tries to reduce the
+    size of a memory-mapped database file, the size reduction attempt will
+    silently fail, leaving unused space at the end of the database file.
+    No data is lost due to this problem, and the unused space will be
+    reused again the next time the database grows.  However if a version 
+    of SQLite prior to 3.7.0 runs <a href="pragma.html#pragma_integrity_check">PRAGMA integrity_check</a> on such a 
+    database, it will (incorrectly) report database corruption due to 
+    the unused space at the end.  Or if a version of SQLite prior to 3.7.0
+    writes to the database while it still has unused space at the end, it
+    may make that unused space inaccessible and unavailable for reuse until
+    after the next <a href="lang_vacuum.html">VACUUM</a>.
+</ol>
+
+<p>Because of the potential disadvantages, memory-mapped I/O is disabled
+by default.  To activate memory-mapped I/O, use the <a href="pragma.html#pragma_mmap_size">mmap_size pragma</a>
+and set the mmap_size to some large number, usually 256MB or larger, depending
+on how much address space your application can spare.  The rest is
+automatic.  The <a href="pragma.html#pragma_mmap_size">PRAGMA mmap_size</a> statement will be a silent no-op on
+systems that do not support memory-mapped I/O.</p>
+
+<h2>How Memory-Mapped I/O Works</h2>
+
+<p>To read a page of database content using the legacy xRead() method,
+SQLite first allocates a page-size chunk of heap memory then invokes
+the xRead() method which causes the database page content to be copied
+into the newly allocated heap memory.  This involves (at a minimum)
+a copy of the entire page.</p>
+
+<p>But if SQLite wants to access a page of the database file and
+memory mapped I/O is enabled, it first calls the xFetch() method.
+The xFetch() method asks the operating system to return a pointer to
+the requested page, if possible.  If the requested page has been or
+can be mapped into the application address space, then xFetch returns
+a pointer to that page for SQLite to use without having to copy anything.
+Skipping the copy step is what makes memory mapped I/O faster.</p>
+
+<p>SQLite does not assume that the xFetch() method will work.  If
+a call to xFetch() returns a NULL pointer (indicating that the requested
+page is not currently mapped into the applications address space) then
+SQLite silently falls back to using xRead().  An error is only reported
+if xRead() also fails.</p>
+
+<p>When updating the database file, SQLite always makes a copy of the
+page content into heap memory before modifying the page.  This is necessary
+for two reasons.  First, changes to the database
+are not supposed to be visible to other processes until
+after the transaction commits and so the changes must occur in private memory.
+Second, SQLite uses a read-only memory map to prevent stray pointers in the 
+application from overwriting and corrupting the database file.
+
+<p>
+After all needed changes are completed, xWrite() is used to move the content
+back into the database file.
+Hence the use of memory mapped I/O does not significantly change the
+performance of database changes.
+Memory mapped I/O is mostly a benefit for queries.</p>
+
+<h2>Configuring Memory-Mapped I/O</h2>
+
+<p>The "mmap_size" is the maximum number of bytes of the database file that
+SQLite will try to map into the process address space at one time.  The
+mmap_size applies separately to each database file, so the total amount
+of process address space that could potentially be used is the mmap_size
+times the number of open database files.</p>
+
+<p>To activate memory-mapped I/O, an application can set the mmap_size to some
+large value.  For example:</p>
+
+<blockquote><pre>
+PRAGMA mmap_size=268435456;
+</pre></blockquote>
+
+<p>To disable memory-mapped I/O, simply set the mmap_size to zero:</p>
+
+<blockquote><pre>
+PRAGMA mmap_size=0;
+</pre></blockquote>
+
+<p>If mmap_size is set to N then all current implementations map the first
+N bytes of the database file and use legacy xRead() calls for any content
+beyond N bytes.  If the database file is smaller than N bytes, then the entire
+file is mapped.  In the future, new OS interfaces could, in theory, map
+regions of the file other than the first N bytes, but no such 
+implementation currently exists.</p>
+
+<p>The mmap_size is set separately for each database file using the
+"<a href="pragma.html#pragma_mmap_size">PRAGMA mmap_size</a>" statement.  The usual default mmap_size is zero,
+meaning that memory mapped I/O is disabled by default.  However, the
+default mmap_size can be increased either at compile-time using
+the <a href="compile.html#default_mmap_size">SQLITE_DEFAULT_MMAP_SIZE</a> macro or at start-time using the
+<a href="c3ref/config.html">sqlite3_config</a>(<a href="c3ref/c_config_covering_index_scan.html#sqliteconfigmmapsize">SQLITE_CONFIG_MMAP_SIZE</a>,...) interface.</p>
+
+<p>SQLite also maintains a hard upper bound on the mmap_size.  Attempts
+to increase the mmap_size above this hard upper bound (using
+<a href="pragma.html#pragma_mmap_size">PRAGMA mmap_size</a>) will automatically cap the mmap_size at the hard
+upper bound.  If the hard upper bound is zero, then memory mapped I/O
+is impossible.  The hard upper bound can be set at compile-time using
+the <a href="compile.html#max_mmap_size">SQLITE_MAX_MMAP_SIZE</a> macro.  If <a href="compile.html#max_mmap_size">SQLITE_MAX_MMAP_SIZE</a> is set to
+zero, then the code used to implement memory mapped I/O is omitted from
+the build.  The hard upper bound is automatically set to zero on certain
+platforms (ex: OpenBSD) where memory mapped I/O does not work due to the
+lack of a unified buffer cache.</p>
+
+<p>If the hard upper bound on mmap_size is non-zero at compilation time,
+it may still be reduced or zeroed at start-time using the
+<a href="c3ref/config.html">sqlite3_config</a>(<a href="c3ref/c_config_covering_index_scan.html#sqliteconfigmmapsize">SQLITE_CONFIG_MMAP_SIZE</a>,X,Y) interface.  The X and
+Y parameters must both be 64-bit signed integers. The X parameter
+is the default mmap_size of the process and the Y is the new hard upper bound.
+The hard upper bound cannot be increased above its compile-time setting
+using <a href="c3ref/c_config_covering_index_scan.html#sqliteconfigmmapsize">SQLITE_CONFIG_MMAP_SIZE</a> but it can be reduced or zeroed.</p>
+

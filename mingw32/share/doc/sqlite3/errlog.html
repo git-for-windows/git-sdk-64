@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>The Error And Warning Log</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+The Error And Warning Log
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#setting_up_the_error_logging_callback">1. Setting Up The Error Logging Callback</a></div>
+<div class="fancy-toc1"><a href="#interface_details">2. Interface Details</a></div>
+<div class="fancy-toc1"><a href="#variety_of_error_messages">3. Variety of Error Messages</a></div>
+<div class="fancy-toc1"><a href="#summary">4. Summary</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+<h2 style="margin-left:1.0em" notoc="1" id="overview"> Overview</h2> 
+
+<p>SQLite can be configured to invoke a callback function containing
+an error code and a terse error message whenever anomalies occur.
+This mechanism is very helpful in tracking obscure problems that
+occur rarely and in the field.  Application developers are encouraged
+to take advantage of the error logging facility of SQLite in their
+products, as it is very low CPU and memory cost but can be a
+huge aid for debugging.</p>
+
+<h1 id="setting_up_the_error_logging_callback"><span>1. </span>Setting Up The Error Logging Callback</h1>
+
+<p>There can only be a single error logging callback per process.
+The error logging callback is registered at start-time using C-code
+similar to the following:
+
+</p><blockquote><pre>
+<a href="c3ref/config.html">sqlite3_config</a>(<a href="c3ref/c_config_covering_index_scan.html#sqliteconfiglog">SQLITE_CONFIG_LOG</a>, errorLogCallback, pData);
+</pre></blockquote>
+
+<p>The error logger callback function might look something like this:</p>
+
+<blockquote><pre>
+void errorLogCallback(void *pArg, int iErrCode, const char *zMsg){
+  fprintf(stderr, "(%d) %s\n", iErrCode, zMsg);
+}
+</pre></blockquote>
+
+<p>The example above illustrates the signature of the error logger callback.
+However, in an embedded application, one usually does not print
+messages on stderr.  Instead, one might store the messages in a
+preallocated circular buffer where they can be accessed when diagnostic
+information is needed during debugging.  Or perhaps the messages can be
+sent to <a href="http://en.wikipedia.org/wiki/Syslog">Syslog</a>.  Somehow, the
+messages need to be stored where they are accessible to developers,
+not displayed to end users.</p>
+
+<p>Do not misunderstand: There is nothing technically wrong with displaying 
+the error logger messages to end users.  The messages do not contain
+sensitive or private information that must be protected from unauthorized
+viewing.  Rather the messages are technical in nature and are not useful
+or meaningful to the typical end user.  The messages coming from the
+error logger are intended for database geeks.  Display them accordingly.</p>
+
+<h1 id="interface_details"><span>2. </span>Interface Details</h1>
+
+<p>The third argument to the <a href="c3ref/config.html">sqlite3_config</a>(<a href="c3ref/c_config_covering_index_scan.html#sqliteconfiglog">SQLITE_CONFIG_LOG</a>,...) 
+interface (the "pData" argument in the example above) is a pointer to arbitrary
+data.  SQLite passes this pointer through to the first argument of the
+error logger callback.  The pointer can be used to pass application-specific 
+setup or state information, if desired.  Or it can simply be a NULL 
+pointer which is ignored by the callback.</p>
+
+<p>The second argument to the error logger callback is an integer
+<a href="rescode.html#extrc">extended error code</a>.  The third argument to the error logger is the
+text of the error message.  The error message text is stored in a fixed-length
+stack buffer in the calling function and so will only be valid for the
+duration of the error logger callback function.  The error logger should
+make a copy of this message into persistent storage if retention of the
+message is needed.</p>
+
+<p>The error logger callback should be treated like a signal handler.
+The application should save off or otherwise process the error, then return
+as soon as possible.  No other SQLite APIs should be invoked, directly or
+indirectly, from the error logger.  SQLite is <u>not</u> reentrant through
+the error logger callback.  In particular, the error logger callback
+is invoked when a memory allocation fails, so it is generally a bad idea
+to try to allocate memory inside the error logger.  Do not even think
+about trying to store the error message in another SQLite database.</p>
+
+<p>Applications can use the <a href="c3ref/log.html">sqlite3_log(E,F,..)</a> API to send new messages
+to the log, if desired, but this is discouraged.  The <a href="c3ref/log.html">sqlite3_log()</a>
+interface is intended for use by extensions only, not by applications.</p>
+
+<h1 id="variety_of_error_messages"><span>3. </span>Variety of Error Messages</h1>
+
+<p>The error messages that might be sent to the error logger and their
+exact format is subject to changes from one release to the next.  So
+applications should not depend on any particular error message text formats or
+error codes.  Things do not change capriciously, but they do sometimes
+changes.</p>
+
+<p>The following is a partial list of the kinds of messages that might
+appear in the error logger callback.</p>
+
+<ul>
+<li><p>
+Any time there is an error either compiling an SQL statement 
+(using <a href="c3ref/prepare.html">sqlite3_prepare_v2()</a> or its siblings) or running an SQL
+statement (using <a href="c3ref/step.html">sqlite3_step()</a>) that error is logged.
+</p>
+
+</li><li><p>
+When a schema change occurs that requires a prepared statement to be reparsed
+and reprepared, that event is logged with the error code SQLITE_SCHEMA.
+The reparse and reprepare is normally automatic (assuming that
+<a href="c3ref/prepare.html">sqlite3_prepare_v2()</a> has been used to prepared the statements originally,
+which is recommended) and so these logging events are normally the only
+way to know that reprepares are taking place.</p>
+
+</li><li><p>
+SQLITE_NOTICE messages are logged whenever a database has to be recovered
+because the previous writer crashed without completing its transaction.
+The error code is SQLITE_NOTICE_RECOVER_ROLLBACK when recovering a
+<a href="lockingv3.html#rollback">rollback journal</a> and SQLITE_NOTICE_RECOVER_WAL when recovering a 
+<a href="wal.html">write-ahead log</a>.
+</p>
+
+</li><li><p>
+SQLITE_WARNING messages are logged when database files are renamed or
+aliased in ways that can lead to database corruption.
+(See <a href="howtocorrupt.html#unlink">1</a> and <a href="howtocorrupt.html#alias">2</a> for
+additional information.)
+</p>
+
+</li><li><p>
+Out of memory (OOM) error conditions generate error logging events
+with the SQLITE_NOMEM error code and a message that says how many bytes
+of memory were requested by the failed allocation.
+</p>
+
+</li><li><p>I/O errors in the OS-interface generate error logging events.
+The message to these events gives the line number in the source code where
+the error originated and the filename associated with the event when
+there is a corresponding file. </p>
+
+</li><li><p>When database corruption is detected, an SQLITE_CORRUPT error
+logger callback is invoked.  As with I/O errors, the error message text
+contains the line number in the original source code where the error
+was first detected.</p>
+
+</li><li><p>
+An error logger callback is invoked on SQLITE_MISUSE errors.
+This is useful in detecting application design issues when return codes
+are not consistently checked in the application code.
+</p></li></ul>
+
+<p>SQLite strives to keep error logger traffic low and only send messages
+to the error logger when there really is something wrong.  Applications
+might further cull the error message traffic 
+by deliberately ignore certain classes of error
+messages that they do not care about.  For example, an application that
+makes frequent database schema changes might want to ignore all
+SQLITE_SCHEMA errors.</p>
+
+<h1 id="summary"><span>4. </span>Summary</h1>
+
+<p>The use of the error logger callback is highly recommended.
+The debugging information that the error logger provides has proven
+very useful in tracking down obscure problems that occurs with applications
+after they get into the field.  The error logger callback has also 
+proven useful in catching errors occasional errors that the application
+misses because of inconsistent checking of API return codes.
+Developers are encouraged to implement an error logger callback early
+in the development cycle in order to spot unexpected behavior quickly,
+and to leave the error logger callback turned on through deployment.
+If the error logger never finds a problem, then no harm is done.  
+But failure to set up an appropriate error logger might compromise
+diagnostic capabilities later on.</p>
+

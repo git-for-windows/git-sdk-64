@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Features Of SQLite</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+
+<h1 align=center>Features Of SQLite</h1>
+
+<p><ul>
+<li><a href="transactional.html">Transactions</a>
+    are atomic, consistent, isolated, and durable (ACID)
+    even after system crashes and power failures.</li>
+<li><a href="zeroconf.html">Zero-configuration</a>
+     - no setup or administration needed.</li>
+<li><a href="fullsql.html">Full-featured SQL</a> implementation
+    with advanced capabilities like <a href="partialindex.html">partial indexes</a>,
+    <a href="expridx.html">indexes on expressions</a>, <a href="json1.html">JSON</a>,
+    <a href="lang_with.html">common table expressions</a>, and <a href="windowfunctions.html">window functions</a>.
+    (<a href="omitted.html">Omitted features</a>)</li>
+<li>A complete database is stored in a 
+    <a href="onefile.html">single cross-platform disk file</a>.
+    Great for use as an <a href="appfileformat.html">application file format</a>.</li>
+<li>Supports terabyte-sized databases and gigabyte-sized strings
+    and blobs.  (See <a href="limits.html">limits.html</a>.)
+<li>Small code <a href="footprint.html">footprint</a>: 
+    less than 600KiB fully configured or much less
+    with optional features omitted.</li>
+<li>Simple, easy to use <a href="cintro.html">API</a>.</li>
+<li>Fast:  In some cases, SQLite is 
+    <a href="fasterthanfs.html">faster than direct filesystem I/O</a>
+<li>Written in ANSI-C.  <a href="tclsqlite.html">TCL bindings</a> included.
+    Bindings for dozens of other languages available separately.</li>
+<li>Well-commented source code with
+    <a href="testing.html#coverage">100% branch test coverage</a>.</li>
+<li>Available as a 
+    <a href="amalgamation.html">single ANSI-C source-code file</a> 
+    that is <a href="howtocompile.html">easy to compile</a> and hence is easy
+    to add into a larger project.
+<li><a href="selfcontained.html">Self-contained</a>:
+    no external dependencies.</li>
+<li>Cross-platform: Android, *BSD, iOS, Linux, Mac, Solaris, VxWorks, 
+    and Windows (Win32, WinCE, WinRT)
+    are supported out of the box.  Easy to port to other systems.
+<li>Sources are in the <a href="copyright.html">public domain</a>.
+    Use for any purpose.</li>
+<li>Comes with a standalone <a href="cli.html">command-line interface</a>
+    (CLI) client that can be used to administer SQLite databases.</li>
+</ul>
+</p>
+
+<h2>Suggested Uses For SQLite:</h2>
+
+<p><ul>
+<li><p><b>Database For The Internet Of Things.</b>
+SQLite is popular choice for the database engine in cellphones,
+PDAs, MP3 players, set-top boxes, and other electronic gadgets.
+SQLite has a small code footprint, makes efficient use of memory,
+disk space, and disk bandwidth, is highly reliable, and requires
+no maintenance from a Database Administrator.</p></li>
+
+<li><p><b>Application File Format.</b>
+Rather than using fopen() to write XML, JSON, CSV,
+or some proprietary format into
+disk files used by your application, use an SQLite database.
+You'll avoid having to write and troubleshoot a parser, your data
+will be more easily accessible and cross-platform, and your updates
+will be transactional.  (<a href="appfileformat.html">more...</a>)</p></li>
+
+<li><p><b>Website Database.</b>
+Because it requires no configuration and stores information in ordinary
+disk files, SQLite is a popular choice as the database to back small
+to medium-sized websites.</p></li>
+
+<li><p><b>Stand-in For An Enterprise RDBMS.</b>
+SQLite is often used as a surrogate for an enterprise RDBMS for
+demonstration purposes or for testing.  SQLite is fast and requires
+no setup, which takes a lot of the hassle out of testing and which
+makes demos perky and easy to launch.</p></li>
+
+<li><p><a href="./whentouse.html">More suggestions...</a></p></li>
+</ul>
+

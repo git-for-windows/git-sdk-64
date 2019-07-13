@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>List of SQLite Syntax Diagrams</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+
+<h1 align="center">List of SQLite Syntax Diagrams</h1>
+
+<style>
+#listtab42 tr td {vertical-align:top;}
+</style>
+<table id='listtab42' width='100%'></table>
+<script>
+var listitems42 = [{"u":"syntax/alter-table-stmt.html","x":"alter-table-stmt","s":0},
+{"u":"syntax/analyze-stmt.html","x":"analyze-stmt","s":0},
+{"u":"syntax/attach-stmt.html","x":"attach-stmt","s":0},
+{"u":"syntax/begin-stmt.html","x":"begin-stmt","s":0},
+{"u":"syntax/column-constraint.html","x":"column-constraint","s":0},
+{"u":"syntax/column-def.html","x":"column-def","s":0},
+{"u":"syntax/column-name-list.html","x":"column-name-list","s":0},
+{"u":"syntax/comment-syntax.html","x":"comment-syntax","s":0},
+{"u":"syntax/commit-stmt.html","x":"commit-stmt","s":0},
+{"u":"syntax/common-table-expression.html","x":"common-table-expression","s":0},
+{"u":"syntax/compound-operator.html","x":"compound-operator","s":0},
+{"u":"syntax/compound-select-stmt.html","x":"compound-select-stmt","s":0},
+{"u":"syntax/conflict-clause.html","x":"conflict-clause","s":0},
+{"u":"syntax/create-index-stmt.html","x":"create-index-stmt","s":0},
+{"u":"syntax/create-table-stmt.html","x":"create-table-stmt","s":0},
+{"u":"syntax/create-trigger-stmt.html","x":"create-trigger-stmt","s":0},
+{"u":"syntax/create-view-stmt.html","x":"create-view-stmt","s":0},
+{"u":"syntax/create-virtual-table-stmt.html","x":"create-virtual-table-stmt","s":0},
+{"u":"syntax/cte-table-name.html","x":"cte-table-name","s":0},
+{"u":"syntax/delete-stmt.html","x":"delete-stmt","s":0},
+{"u":"syntax/delete-stmt-limited.html","x":"delete-stmt-limited","s":0},
+{"u":"syntax/detach-stmt.html","x":"detach-stmt","s":0},
+{"u":"syntax/drop-index-stmt.html","x":"drop-index-stmt","s":0},
+{"u":"syntax/drop-table-stmt.html","x":"drop-table-stmt","s":0},
+{"u":"syntax/drop-trigger-stmt.html","x":"drop-trigger-stmt","s":0},
+{"u":"syntax/drop-view-stmt.html","x":"drop-view-stmt","s":0},
+{"u":"syntax/expr.html","x":"expr","s":0},
+{"u":"syntax/factored-select-stmt.html","x":"factored-select-stmt","s":0},
+{"u":"syntax/filter.html","x":"filter","s":0},
+{"u":"syntax/foreign-key-clause.html","x":"foreign-key-clause","s":0},
+{"u":"syntax/frame-spec.html","x":"frame-spec","s":0},
+{"u":"syntax/function-invocation.html","x":"function-invocation","s":0},
+{"u":"syntax/indexed-column.html","x":"indexed-column","s":0},
+{"u":"syntax/insert-stmt.html","x":"insert-stmt","s":0},
+{"u":"syntax/join-clause.html","x":"join-clause","s":0},
+{"u":"syntax/join-constraint.html","x":"join-constraint","s":0},
+{"u":"syntax/join-operator.html","x":"join-operator","s":0},
+{"u":"syntax/literal-value.html","x":"literal-value","s":0},
+{"u":"syntax/numeric-literal.html","x":"numeric-literal","s":0},
+{"u":"syntax/ordering-term.html","x":"ordering-term","s":0},
+{"u":"syntax/pragma-stmt.html","x":"pragma-stmt","s":0},
+{"u":"syntax/pragma-value.html","x":"pragma-value","s":0},
+{"u":"syntax/qualified-table-name.html","x":"qualified-table-name","s":0},
+{"u":"syntax/raise-function.html","x":"raise-function","s":0},
+{"u":"syntax/recursive-cte.html","x":"recursive-cte","s":0},
+{"u":"syntax/reindex-stmt.html","x":"reindex-stmt","s":0},
+{"u":"syntax/release-stmt.html","x":"release-stmt","s":0},
+{"u":"syntax/result-column.html","x":"result-column","s":0},
+{"u":"syntax/rollback-stmt.html","x":"rollback-stmt","s":0},
+{"u":"syntax/savepoint-stmt.html","x":"savepoint-stmt","s":0},
+{"u":"syntax/select-core.html","x":"select-core","s":0},
+{"u":"syntax/select-stmt.html","x":"select-stmt","s":0},
+{"u":"syntax/signed-number.html","x":"signed-number","s":0},
+{"u":"syntax/simple-select-stmt.html","x":"simple-select-stmt","s":0},
+{"u":"syntax/sql-stmt.html","x":"sql-stmt","s":0},
+{"u":"syntax/sql-stmt-list.html","x":"sql-stmt-list","s":0},
+{"u":"syntax/table-constraint.html","x":"table-constraint","s":0},
+{"u":"syntax/table-or-subquery.html","x":"table-or-subquery","s":0},
+{"u":"syntax/type-name.html","x":"type-name","s":0},
+{"u":"syntax/update-stmt.html","x":"update-stmt","s":0},
+{"u":"syntax/update-stmt-limited.html","x":"update-stmt-limited","s":0},
+{"u":"syntax/upsert-clause.html","x":"upsert-clause","s":0},
+{"u":"syntax/vacuum-stmt.html","x":"vacuum-stmt","s":0},
+{"u":"syntax/window-defn.html","x":"window-defn","s":0},
+{"u":"syntax/window-function-invocation.html","x":"window-function-invocation","s":0},
+{"u":"syntax/with-clause.html","x":"with-clause","s":0}];
+var j = 0;
+var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
+var nCol = Math.floor(w/300);
+if(nCol<=0) nCol=1;
+var nRow = Math.ceil((listitems42.length+1)/nCol);
+var h="<tr><td><ul class='multicol_list'>"
+var ea
+for(var i=0; i<listitems42.length; i++){
+  if( (++j)>nRow ){
+    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
+    j = 1;
+  }
+  if(listitems42[i].u=="" || listitems42[i].s==2){
+    h += "<li>"
+    ea = ""
+  }else{
+    h += "<li><a href='";
+    h += listitems42[i].u;
+    h += "'>";
+    ea = "</a>"
+  }
+  if(listitems42[i].s==2 || listitems42[i].s==3) h += "<s>"
+  h += listitems42[i].x;
+  if(listitems42[i].s==2 || listitems42[i].s==3) h += "</s>"
+  h += ea
+  if(listitems42[i].s==1) h += "<small><i>(exp)</i></small>\n";
+  if(listitems42[i].s==3) h += "&sup1\n";
+  if(listitems42[i].s==4) h += "&sup2\n";
+  if(listitems42[i].s==5) h += "&sup3\n";
+}
+document.getElementById("listtab42").innerHTML = h;
+</script>
+
+

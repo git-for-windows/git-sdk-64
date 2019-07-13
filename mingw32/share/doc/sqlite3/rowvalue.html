@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Row Values</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Row Values
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#definitions">1. Definitions</a></div>
+<div class="fancy-toc1"><a href="#syntax">2. Syntax</a></div>
+<div class="fancy-toc2"><a href="#row_value_comparisons">2.1. Row Value Comparisons</a></div>
+<div class="fancy-toc2"><a href="#row_values_in_update_statements">2.2. Row Values In UPDATE Statements</a></div>
+<div class="fancy-toc1"><a href="#example_uses_of_row_values">3. Example Uses Of Row Values</a></div>
+<div class="fancy-toc2"><a href="#scrolling_window_queries">3.1. Scrolling Window Queries</a></div>
+<div class="fancy-toc2"><a href="#comparison_of_dates_stored_as_separate_fields">3.2. Comparison of dates stored as separate fields</a></div>
+<div class="fancy-toc2"><a href="#search_against_multi_column_keys">3.3. Search against multi-column keys</a></div>
+<div class="fancy-toc2"><a href="#update_multiple_columns_of_a_table_based_on_a_query">3.4. Update multiple columns of a table based on a query</a></div>
+<div class="fancy-toc2"><a href="#clarity_of_presentation">3.5. Clarity of presentation</a></div>
+<div class="fancy-toc1"><a href="#backwards_compatibility">4. Backwards Compatibility</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+
+<h1 id="definitions"><span>1. </span>Definitions</h1>
+
+<p>A "value" is a single number, string, BLOB or NULL.
+Sometimes the qualified name "scalar value" is used to emphasize that
+only a single quantity is involved.
+
+</p><p>A "row value" is an ordered list of two or more scalar values.
+In other words, a "row value" is a vector.
+
+</p><p>The "size" of a row value is the number of scalar values the row value contains.
+The size of a row value is always at least 2.
+A row value with a single column is just a scalar value.
+A row value with no columns is a syntax error.
+
+</p><h1 id="syntax"><span>2. </span>Syntax</h1>
+
+<p>SQLite allows row values to be expressed in two ways:
+</p><ol>
+<li>A parenthesized, comma-separated list of scalar values.
+</li><li>A subquery expression with two or more result columns.
+</li></ol>
+
+<p>SQLite can use row values in two contexts:
+</p><ol>
+<li>Two row values of the same size 
+can be compared using operators &lt;, &lt;=, &gt;, &gt;=,
+=, &lt;&gt;, IS, IS NOT, IN, NOT IN, BETWEEN, or CASE.
+</li><li>In an <a href="lang_update.html">UPDATE</a> statement, a list of column names can be set to a row value of
+the same size.
+</li></ol>
+
+<p>The syntax for row values and the circumstances in which row values
+can be used are illustrated in examples below.
+
+</p><h2 id="row_value_comparisons"><span>2.1. </span>Row Value Comparisons</h2>
+
+<p>Two row values are compared by looking at the constituent scalar
+values from left to right.
+A NULL means of "unknown".  
+The overall result of comparison is NULL if it is possible to make the
+result either true or false by substituting alternative values in place
+of the constituent NULLs.
+The following query demonstrates some row value comparisons:
+
+</p><div class="codeblock"><pre>SELECT
+  (1,2,3) = (1,2,3),          -- 1
+  (1,2,3) = (1,NULL,3),       -- NULL
+  (1,2,3) = (1,NULL,4),       -- 0
+  (1,2,3) &lt; (2,3,4),          -- 1
+  (1,2,3) &lt; (1,2,4),          -- 1
+  (1,2,3) &lt; (1,3,NULL),       -- 1
+  (1,2,3) &lt; (1,2,NULL),       -- NULL
+  (1,3,5) &lt; (1,2,NULL),       -- 0
+  (1,2,NULL) IS (1,2,NULL);   -- 1
+</pre></div>
+
+<p>The result of "(1,2,3)=(1,NULL,3)" is NULL because the result might be
+true if we replaced NULL&rarr;2 or false if we replaced NULL&rarr;9.
+The result of "(1,2,3)=(1,NULL,4)" is not NULL because there is no
+substitutions of the constituent NULL that will make the expression true,
+since 3 will never equal 4 in the third column.
+
+</p><p>Any of the row values in the previous example could be replace by a
+subquery that returns three columns and the same answer would result.
+For example:
+
+</p><div class="codeblock"><pre>CREATE TABLE t1(a,b,c);
+INSERT INTO t1(a,b,c) VALUES(1,2,3);
+SELECT (1,2,3)=(SELECT * FROM t1); -- 1
+</pre></div>
+
+<p>For a row-value <a href="lang_expr.html#in_op">IN operator</a>, the left-hand side (hereafter "LHS") can be either
+a parenthesized list of values or a subquery with multiple columns.  But the
+right-hand side (hereafter "RHS") must be a subquery expression.
+
+</p><div class="codeblock"><pre>CREATE TABLE t2(x,y,z);
+INSERT INTO t2(x,y,z) VALUES(1,2,3),(2,3,4),(1,NULL,5);
+SELECT
+   (1,2,3) IN (SELECT * FROM t2),  -- 1
+   (7,8,9) IN (SELECT * FROM t2),  -- 0
+   (1,3,5) IN (SELECT * FROM t2);  -- NULL
+</pre></div>
+
+<h2 id="row_values_in_update_statements"><span>2.2. </span>Row Values In UPDATE Statements</h2>
+
+<p>Row values can also be used in the SET clause of an <a href="lang_update.html">UPDATE</a> statement.
+The LHS must be a list of column names.  The RHS can be any row value.
+For example:
+
+</p><div class="codeblock"><pre>UPDATE tab3 
+   SET (a,b,c) = (SELECT x,y,z
+                    FROM tab4
+                   WHERE tab4.w=tab3.d)
+ WHERE tab3.e BETWEEN 55 AND 66;
+</pre></div>
+
+<h1 id="example_uses_of_row_values"><span>3. </span>Example Uses Of Row Values</h1>
+
+<h2 id="scrolling_window_queries"><span>3.1. </span>Scrolling Window Queries</h2>
+
+<p>Suppose an application wants to display a list of contacts
+in alphabetical order by lastname, firstname, in a scrolling window
+that can only show 7 contacts at a time.  Initialize the scrolling
+window to the first 7 entries is easy:
+
+</p><div class="codeblock"><pre>SELECT * FROM contacts
+ ORDER BY lastname, firstname
+ LIMIT 7;
+</pre></div>
+
+<p>When the user scrolls down, the application needs to find the
+second set of 7 entries.  One way to do this is to use the OFFSET clause:
+
+</p><div class="codeblock"><pre>SELECT * FROM contacts
+ ORDER BY lastname, firstname
+ LIMIT 7 OFFSET 7;
+</pre></div>
+
+<p>OFFSET gives the correct answer.  However, OFFSET requires time
+proportional to the offset value.  What really happens
+with "LIMIT x OFFSET y" is that SQLite computes the query as
+"LIMIT x+y" and discards the first y values without returning them
+to the application.  So as the window scrolls down toward
+the bottom of a long list, and the y value becomes larger and larger,
+successive offset computations take more and more time.
+
+</p><p>A more efficient approach is to remember the last entry currently
+displayed and then use a row value comparison in the WHERE
+clause:
+
+</p><div class="codeblock"><pre>SELECT * FROM contacts
+ WHERE (lastname,firstname) &gt; (?1,?2)
+ ORDER BY lastname, firstname
+ LIMIT 7;
+</pre></div>
+
+<p>If the lastname and firstname on the bottom row of the previous
+screen are bound to ?1 and ?2, then the query above computes the next
+7 rows.  And, assuming there is an appropriate index, it does so
+very efficiently &mdash; much more efficiently than OFFSET.
+
+</p><h2 id="comparison_of_dates_stored_as_separate_fields"><span>3.2. </span>Comparison of dates stored as separate fields</h2>
+
+<p>The usual way of storing a date in a database table is as a single
+field, as either a unix timestamp, a julian day number, or an ISO-8601
+dates string.  But some application store dates as three separate
+fields for the year, month, and day.  
+
+</p><div class="codeblock"><pre>CREATE TABLE info(
+  year INT,          -- 4 digit year
+  month INT,         -- 1 through 12
+  day INT,           -- 1 through 31
+  other_stuff BLOB   -- blah blah blah
+);
+</pre></div>
+
+<p>When dates are stored this way, row value comparisons provide a
+convenient way to compare dates:
+
+</p><div class="codeblock"><pre>SELECT * FROM info
+ WHERE (year,month,day) BETWEEN (2015,9,12) AND (2016,9,12);
+</pre></div>
+
+<h2 id="search_against_multi_column_keys"><span>3.3. </span>Search against multi-column keys</h2>
+
+<p>Suppose we want to know the order number, product number, and quantity
+for any item in which the product number and quantity match the product
+number and quantity of any item in order number 365:
+
+</p><div class="codeblock"><pre>SELECT ordid, prodid, qty
+  FROM item
+ WHERE (prodid, qty) IN (SELECT prodid, qty
+                           FROM item
+                          WHERE ordid = 365);
+</pre></div>
+
+<p>The query above could be rewritten as a join and without the use
+of row values:
+
+</p><div class="codeblock"><pre>SELECT t1.ordid, t1.prodid, t1.qty
+  FROM item AS t1, item AS t2
+ WHERE t1.prodid=t2.prodid
+   AND t1.qty=t2.qty
+   AND t2.ordid=365;
+</pre></div>
+
+<p>Because the same query could be written without the use of row values,
+row values do not provide new capabilities.  However, many developers say
+that the row value format is easier to read, write, and debug.
+
+</p><p>Even in the JOIN form, the query can be made clearer through the use of
+row values:
+
+</p><div class="codeblock"><pre>SELECT t1.ordid, t1.prodid, t1.qty
+  FROM item AS t1, item AS t2
+ WHERE (t1.prodid,t1.qty) = (t2.prodid,t2.qty)
+   AND t2.ordid=365;
+</pre></div>
+
+<p>This later query generates exactly the same <a href="opcode.html">bytecode</a> as the previous
+scalar formulation, but using syntax that it cleaner and
+easier to read.
+
+</p><h2 id="update_multiple_columns_of_a_table_based_on_a_query"><span>3.4. </span>Update multiple columns of a table based on a query</h2>
+
+<p>The row-value notation is useful for updating two or more columns
+of a table from the result of a single query.
+An example of this is in the full-text search feature of the
+<a href="https://www.fossil-scm.org/">Fossil version control system</a>.
+
+</p><p>In the Fossil full-text search system,
+documents that participate in the full-text search (wiki pages, tickets,
+check-ins, documentation files, etc) are tracked by a table called
+"ftsdocs" (<u>f</u>ull <u>t</u>ext <u>s</u>earch <u>doc</u>ument<u>s</u>).
+As new documents are added to the repository, they are not indexed right
+away.  Indexing is deferred until there is a search request.  The
+ftsdocs table contains an "idxed" field which is true if the document
+has been indexed and false if not.
+
+</p><p>When a search request occurs and pending documents are indexed for the
+first time, the ftsdocs table must be updated by setting the idxed column
+to true and also filling in several other columns with information pertinent
+to the search.  That other information is obtained from a join.  The
+query is this:
+
+</p><div class="codeblock"><pre>UPDATE ftsdocs SET
+  idxed=1,
+  name=NULL,
+  (label,url,mtime) = 
+      (SELECT printf('Check-in &#91;%%.16s&#93; on %%s',blob.uuid,
+                     datetime(event.mtime)),
+              printf('/timeline?y=ci&amp;c=%%.20s',blob.uuid),
+              event.mtime
+         FROM event, blob
+        WHERE event.objid=ftsdocs.rid
+          AND blob.rid=ftsdocs.rid)
+WHERE ftsdocs.type='c' AND NOT ftsdocs.idxed
+</pre></div>
+
+<p>(See the 
+<a href="https://www.fossil-scm.org/fossil/artifact/e5d6a82d?ln=1594-1605">source code</a>
+for further detail.  Other examples
+<a href="https://www.fossil-scm.org/fossil/artifact/e5d6a82d?ln=1618-1628">here</a> and
+<a href="https://www.fossil-scm.org/fossil/artifact/e5d6a82d?ln=1641-1650">here</a>.)
+
+</p><p>Five out of nine columns in the ftsdocs table are updated.  Two of
+the modified columns, "idxed" and "name", can be updated independently of
+the query.  But the three columns "label", "url", and "mtime" all require
+a join query against the "event" and "blob" tables.  Without row values,
+the equivalent UPDATE would require that the join be repeated three times, 
+once for each column to be updated.
+
+</p><h2 id="clarity_of_presentation"><span>3.5. </span>Clarity of presentation</h2>
+
+<p>Sometimes the use of row values just makes the SQL easier to read
+and write.  Consider the following two UPDATE statements:
+
+</p><div class="codeblock"><pre>UPDATE tab1 SET (a,b)=(b,a);
+UPDATE tab1 SET a=b, b=a;
+</pre></div>
+
+<p>Both UPDATE statements do exactly the same thing.  (They generate
+identical <a href="opcode.html">bytecode</a>.)  But the first form, the row value form, seems
+to make it clearer that the intent of the statement is to swap the
+values in columns A and B.
+
+</p><p>Or consider these identical queries:
+
+</p><div class="codeblock"><pre>SELECT * FROM tab1 WHERE a=?1 AND b=?2;
+SELECT * FROM tab1 WHERE (a,b)=(?1,?2);
+</pre></div>
+
+<p>Once again, the SQL statements generate identical bytecode and thus
+do exactly the same job in exactly the same way.  But the second form
+is made easier for humans to read by grouping the query parameters together
+into a single row value rather than scattering them across the WHERE
+clause.
+
+</p><h1 id="backwards_compatibility"><span>4. </span>Backwards Compatibility</h1>
+
+<p>Row values were added to SQLite
+<a href="releaselog/3_15_0.html">version 3.15.0</a> (2016-10-14).  Attempts to use row values in
+prior versions of SQLite will generate syntax errors.
+</p>

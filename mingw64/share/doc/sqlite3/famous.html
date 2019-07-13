@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Well-Known Users Of SQLite</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+
+<h2>Well-Known Users of SQLite</h2>
+
+<p>
+SQLite is used by literally millions of applications
+with literally billions and billions of deployments.
+SQLite is the <a href="mostdeployed.html">most widely deployed</a> database engine in the
+world today.
+
+<p>
+A few of the better-known users of SQLite are shown below
+in alphabetical order.
+This is not a complete list.
+SQLite is in the 
+<a href="copyright.html">public domain</a> and so most
+developers use it in their projects without ever telling us.
+</p>
+
+<div class='mobileonly'>
+<hr class='xhr'>
+<center><a href='http://www.adobe.com/' border=0>
+<img src='images/foreignlogos/adobe.gif' width=215></a></center>
+<p>
+  <a href="http://www.adobe.com/">Adobe</a> uses SQLite as the 
+  <a href="whentouse.html#appfileformat">application 
+  file format</a> for their 
+  <a href="http://www.adobe.com/products/photoshoplightroom/">Photoshop Lightroom</a>
+  product.
+  SQLite is also a standard part of the
+  <a href="http://labs.adobe.com/technologies/air/">Adobe Integrated Runtime (AIR)</a>.
+  It is reported that 
+  <a href="http://www.adobe.com/products/acrobat/readstep2.html">Acrobat Reader</a>
+  also uses SQLite.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.airbus.com/' border=0>
+<img src='images/foreignlogos/airbus2.gif' width=215></a></center>
+<p>
+  <a href="http://www.airbus.com/">Airbus</a> confirms that SQLite is being
+  used in the flight software for the 
+  <a href="http://www.aircraft.airbus.com/aircraftfamilies/passengeraircraft/a350xwbfamily/">A350 XWB</a> family
+  of aircraft.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.apple.com/' border=0>
+<img src='images/foreignlogos/apple.gif' width=215></a></center>
+<p>
+  <a href="http://www.apple.com/">Apple</a> uses SQLite in many (most?) of the
+  native applications running on Mac OS-X desktops and servers and
+  on iOS devices such as iPhones and iPods.  SQLite is also used in
+  <a href="http://www.apple.com/itunes/">iTunes</a>, even on non-Apple hardware.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.bentley.com/' border=0>
+<img src='images/foreignlogos/bentley.gif' width=215></a></center>
+<p>
+  <a href="http://www.bentley.com/">Bentley Systems</a> uses SQLite as the
+  <a href="aff_short.html">application file format</a> for their
+  <a href="https://www.bentley.com/en/products/product-line/modeling-and-visualization-software/microstation">Microstation</a>
+  CAD/CAM product.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://oss.bosch-cm.com/index.html' border=0>
+<img src='images/foreignlogos/bosch_logo1.gif' width=215></a></center>
+<p>
+  <a href="http://www.bosch.com/">Bosch</a> uses SQLite in the multimedia
+  systems install on GM, Nissan, and Suzuki automobiles.
+  (<a href="http://oss.bosch-cm.com/index.html">link</a>)
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.dropbox.com/' border=0>
+<img src='images/foreignlogos/dropbox.gif' width=215></a></center>
+<p>
+  The increasingly popular <a href="http://www.dropbox.com/">Dropbox</a> file
+  archiving and synchronization service is reported to use SQLite as
+  the primary data store on the client side.
+</p>
+
+<hr class='xhr'>
+<center><a href='https://www.expensify.com/' border=0>
+<img src='images/foreignlogos/expensify.png' width=215></a></center>
+<p>
+  <a href="https://www.expensify.com/">Expensify</a> uses SQLite as a server-side
+  database engine for their enterprise-scale expense reporting software.
+</p>
+
+<hr class='xhr'>
+<center><a href='https://www.facebook.com/' border=0>
+<img src='images/foreignlogos/fb.gif' width=215></a></center>
+<p>
+  <a href="https://www.facebook.com/">Facebook</a> uses SQLite as the SQL database
+  engine in their 
+  <a href="https://code.facebook.com/projects/658950180885092">osquery</a> product.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://en.wikipedia.org/wiki/Flame_%28malware%29' border=0>
+<img src='images/foreignlogos/flame.gif' width=215></a></center>
+<p>
+  <a href="http://en.wikipedia.org/wiki/Flame_%28malware%29">Flame</a>
+  is a malware spy program that is reported to make heavy use of SQLite.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.ge.com/' border=0>
+<img src='images/foreignlogos/ge.gif' width=215></a></center>
+<p>
+  We believe that <a href="http://www.ge.com/">General Electric</a>
+  uses SQLite in some product or 
+  another because they written to the SQLite developers at 
+  least four separate times requesting 
+  the US Export Control Number for SQLite. So presumably GE is using
+  SQLite in something that they are exporting. But nobody
+  (outside of GE) seems to know what that might be.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.google.com/' border=0>
+<img src='images/foreignlogos/google.gif' width=215></a></center>
+<p>
+  uses SQLite in their 
+  in the <a href="http://code.google.com/android/">Android</a> cell-phone 
+  operating system, and in the 
+  <a href="http://www.google.com/chrome">Chrome Web Browser</a>.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.intuit.com/' border=0>
+<img src='images/foreignlogos/intuit.gif' width=215></a></center>
+<p>
+  <a href="http://www.intuit.com/">Intuit</a> apparently uses SQLite in 
+  <a href="http://www.quickbooks.com/">QuickBooks</a> and in
+  <a href="http://turbotax.intuit.com/">TurboTax</a> to judge from some error
+  reports from users seen 
+  <a href="http://community.intuit.com/posts/database-error-sqlite-error-code1">here</a> and
+  <a href="https://ttlc.intuit.com/post/show_full/cJf8mIhC4r4jjracfArQzM/when-i-try-to-update-turbotax-i-receive-an-unexpected-error-message">here</a>.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.loc.gov/' border=0>
+<img src='images/foreignlogos/loc.jpg' width=215></a></center>
+<p>
+  The United States Library of Congress recognizes SQLite as a
+  <a href="locrsf.html">recommended storage format</a> for preservation of digital content.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.mcafee.com/' border=0>
+<img src='images/foreignlogos/mcaffee.gif' width=215></a></center>
+<p>
+  <a href="http://www.mcafee.com/">McAfee</a> uses SQLite in its antivirus 
+  programs.  
+  Mentioned <a href="http://www.mail-archive.com/sqlite-users@sqlite.org/msg16931.html">here</a> and implied 
+  <a href="http://forums.mcafeehelp.com/showthread.php?t=173519">here</a>.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.microsoft.com/' border=0>
+<img src='images/foreignlogos/microsoft.gif' width=215></a></center>
+<p>
+  <a href="http://www.microsoft.com/">Microsoft</a> uses SQLite as a core component
+  of Windows 10, and in other products.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.mozilla.com/' border=0>
+<img src='images/foreignlogos/firefox.gif' width=215></a></center>
+<p>
+  SQLite is the primary meta-data storage format for
+  the <a href="http://www.mozilla.com/">Firefox Web Browser</a> and the
+  <a href="http://www.mozilla.com/thunderbird/">Thunderbird Email Reader</a> from
+  Mozilla.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.nds-association.org/' border=0>
+<img src='images/foreignlogos/nds.png' width=215></a></center>
+<p>
+  <a href="http://www.nds-association.org/">The Navigation Data Standard</a> uses 
+  SQLite as its <a href="aff_short.html">application file format</a>.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.php.net/' border=0>
+<img src='images/foreignlogos/php.gif' width=215></a></center>
+<p>
+  The popular <a href="http://www.php.net/">PHP</a>
+  programming language comes with both SQLite2 and SQLite3 built in.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.python.org/' border=0>
+<img src='images/foreignlogos/python.gif' width=215></a></center>
+<p>
+  All <a href="http://docs.python.org/lib/module-sqlite3.html">Python</a>
+  distributions since Python 2.5 include SQLite.
+</p>
+
+<hr class='xhr'>
+<center><a href='https://en.wikipedia.org/wiki/RPM_Package_Manager' border=0>
+<img src='images/foreignlogos/rpm_logo.png' width=215></a></center>
+<p>
+  The <a href="https://en.wikipedia.org/wiki/RPM_Package_Manager">RedHat Package Manager (RPM)</a>
+  uses SQLite to track its state.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.skype.com/' border=0>
+<img src='images/foreignlogos/skype.gif' width=215></a></center>
+<p>
+  There are 
+  <a href="http://www.mail-archive.com/sqlite-users%40sqlite.org/msg27326.html">multiple</a>
+  <a href="http://www.mail-archive.com/sqlite-users%40sqlite.org/msg27332.html">sightings</a>
+  of SQLite in the Skype client for Mac OS X and Windows.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.tcl-lang.org/' border=0>
+<img src='images/foreignlogos/tcl.gif' width=215></a></center>
+<p>
+  The Tcl/Tk programming language now comes with SQLite built-in.  SQLite works
+  particularly well with Tcl since SQLite was originally a Tcl extension that
+  subsequently "escaped" into the wild.
+</p>
+
+<hr class='xhr'>
+<center><a href='http://www.xojo.com/' border=0>
+<img src='images/foreignlogos/xojo.png' width=215></a></center>
+<p>
+  SQLite comes bundled with the <a href="http://www.xojo.com/">Xojo</a>
+  programming environment
+  (formerly <a href="http://www.realbasic.com/">REALbasic</a>)
+</p>
+
+</div>
+<div class='desktoponly'>
+<table border=0 cellpadding=15>
+<tr><td valign='top'>
+<a href='http://www.adobe.com/' border=0>
+<img src='images/foreignlogos/adobe.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://www.adobe.com/">Adobe</a> uses SQLite as the 
+  <a href="whentouse.html#appfileformat">application 
+  file format</a> for their 
+  <a href="http://www.adobe.com/products/photoshoplightroom/">Photoshop Lightroom</a>
+  product.
+  SQLite is also a standard part of the
+  <a href="http://labs.adobe.com/technologies/air/">Adobe Integrated Runtime (AIR)</a>.
+  It is reported that 
+  <a href="http://www.adobe.com/products/acrobat/readstep2.html">Acrobat Reader</a>
+  also uses SQLite.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.airbus.com/' border=0>
+<img src='images/foreignlogos/airbus2.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://www.airbus.com/">Airbus</a> confirms that SQLite is being
+  used in the flight software for the 
+  <a href="http://www.aircraft.airbus.com/aircraftfamilies/passengeraircraft/a350xwbfamily/">A350 XWB</a> family
+  of aircraft.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.apple.com/' border=0>
+<img src='images/foreignlogos/apple.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://www.apple.com/">Apple</a> uses SQLite in many (most?) of the
+  native applications running on Mac OS-X desktops and servers and
+  on iOS devices such as iPhones and iPods.  SQLite is also used in
+  <a href="http://www.apple.com/itunes/">iTunes</a>, even on non-Apple hardware.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.bentley.com/' border=0>
+<img src='images/foreignlogos/bentley.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://www.bentley.com/">Bentley Systems</a> uses SQLite as the
+  <a href="aff_short.html">application file format</a> for their
+  <a href="https://www.bentley.com/en/products/product-line/modeling-and-visualization-software/microstation">Microstation</a>
+  CAD/CAM product.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://oss.bosch-cm.com/index.html' border=0>
+<img src='images/foreignlogos/bosch_logo1.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://www.bosch.com/">Bosch</a> uses SQLite in the multimedia
+  systems install on GM, Nissan, and Suzuki automobiles.
+  (<a href="http://oss.bosch-cm.com/index.html">link</a>)
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.dropbox.com/' border=0>
+<img src='images/foreignlogos/dropbox.gif' width=215></a>
+</td><td valign='top'>
+
+  The increasingly popular <a href="http://www.dropbox.com/">Dropbox</a> file
+  archiving and synchronization service is reported to use SQLite as
+  the primary data store on the client side.
+</td></tr>
+<tr><td valign='top'>
+<a href='https://www.expensify.com/' border=0>
+<img src='images/foreignlogos/expensify.png' width=215></a>
+</td><td valign='top'>
+
+  <a href="https://www.expensify.com/">Expensify</a> uses SQLite as a server-side
+  database engine for their enterprise-scale expense reporting software.
+</td></tr>
+<tr><td valign='top'>
+<a href='https://www.facebook.com/' border=0>
+<img src='images/foreignlogos/fb.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="https://www.facebook.com/">Facebook</a> uses SQLite as the SQL database
+  engine in their 
+  <a href="https://code.facebook.com/projects/658950180885092">osquery</a> product.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://en.wikipedia.org/wiki/Flame_%28malware%29' border=0>
+<img src='images/foreignlogos/flame.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://en.wikipedia.org/wiki/Flame_%28malware%29">Flame</a>
+  is a malware spy program that is reported to make heavy use of SQLite.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.ge.com/' border=0>
+<img src='images/foreignlogos/ge.gif' width=215></a>
+</td><td valign='top'>
+
+  We believe that <a href="http://www.ge.com/">General Electric</a>
+  uses SQLite in some product or 
+  another because they written to the SQLite developers at 
+  least four separate times requesting 
+  the US Export Control Number for SQLite. So presumably GE is using
+  SQLite in something that they are exporting. But nobody
+  (outside of GE) seems to know what that might be.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.google.com/' border=0>
+<img src='images/foreignlogos/google.gif' width=215></a>
+</td><td valign='top'>
+
+  uses SQLite in their 
+  in the <a href="http://code.google.com/android/">Android</a> cell-phone 
+  operating system, and in the 
+  <a href="http://www.google.com/chrome">Chrome Web Browser</a>.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.intuit.com/' border=0>
+<img src='images/foreignlogos/intuit.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://www.intuit.com/">Intuit</a> apparently uses SQLite in 
+  <a href="http://www.quickbooks.com/">QuickBooks</a> and in
+  <a href="http://turbotax.intuit.com/">TurboTax</a> to judge from some error
+  reports from users seen 
+  <a href="http://community.intuit.com/posts/database-error-sqlite-error-code1">here</a> and
+  <a href="https://ttlc.intuit.com/post/show_full/cJf8mIhC4r4jjracfArQzM/when-i-try-to-update-turbotax-i-receive-an-unexpected-error-message">here</a>.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.loc.gov/' border=0>
+<img src='images/foreignlogos/loc.jpg' width=215></a>
+</td><td valign='top'>
+
+  The United States Library of Congress recognizes SQLite as a
+  <a href="locrsf.html">recommended storage format</a> for preservation of digital content.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.mcafee.com/' border=0>
+<img src='images/foreignlogos/mcaffee.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://www.mcafee.com/">McAfee</a> uses SQLite in its antivirus 
+  programs.  
+  Mentioned <a href="http://www.mail-archive.com/sqlite-users@sqlite.org/msg16931.html">here</a> and implied 
+  <a href="http://forums.mcafeehelp.com/showthread.php?t=173519">here</a>.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.microsoft.com/' border=0>
+<img src='images/foreignlogos/microsoft.gif' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://www.microsoft.com/">Microsoft</a> uses SQLite as a core component
+  of Windows 10, and in other products.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.mozilla.com/' border=0>
+<img src='images/foreignlogos/firefox.gif' width=215></a>
+</td><td valign='top'>
+
+  SQLite is the primary meta-data storage format for
+  the <a href="http://www.mozilla.com/">Firefox Web Browser</a> and the
+  <a href="http://www.mozilla.com/thunderbird/">Thunderbird Email Reader</a> from
+  Mozilla.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.nds-association.org/' border=0>
+<img src='images/foreignlogos/nds.png' width=215></a>
+</td><td valign='top'>
+
+  <a href="http://www.nds-association.org/">The Navigation Data Standard</a> uses 
+  SQLite as its <a href="aff_short.html">application file format</a>.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.php.net/' border=0>
+<img src='images/foreignlogos/php.gif' width=215></a>
+</td><td valign='top'>
+
+  The popular <a href="http://www.php.net/">PHP</a>
+  programming language comes with both SQLite2 and SQLite3 built in.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.python.org/' border=0>
+<img src='images/foreignlogos/python.gif' width=215></a>
+</td><td valign='top'>
+
+  All <a href="http://docs.python.org/lib/module-sqlite3.html">Python</a>
+  distributions since Python 2.5 include SQLite.
+</td></tr>
+<tr><td valign='top'>
+<a href='https://en.wikipedia.org/wiki/RPM_Package_Manager' border=0>
+<img src='images/foreignlogos/rpm_logo.png' width=215></a>
+</td><td valign='top'>
+
+  The <a href="https://en.wikipedia.org/wiki/RPM_Package_Manager">RedHat Package Manager (RPM)</a>
+  uses SQLite to track its state.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.skype.com/' border=0>
+<img src='images/foreignlogos/skype.gif' width=215></a>
+</td><td valign='top'>
+
+  There are 
+  <a href="http://www.mail-archive.com/sqlite-users%40sqlite.org/msg27326.html">multiple</a>
+  <a href="http://www.mail-archive.com/sqlite-users%40sqlite.org/msg27332.html">sightings</a>
+  of SQLite in the Skype client for Mac OS X and Windows.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.tcl-lang.org/' border=0>
+<img src='images/foreignlogos/tcl.gif' width=215></a>
+</td><td valign='top'>
+
+  The Tcl/Tk programming language now comes with SQLite built-in.  SQLite works
+  particularly well with Tcl since SQLite was originally a Tcl extension that
+  subsequently "escaped" into the wild.
+</td></tr>
+<tr><td valign='top'>
+<a href='http://www.xojo.com/' border=0>
+<img src='images/foreignlogos/xojo.png' width=215></a>
+</td><td valign='top'>
+
+  SQLite comes bundled with the <a href="http://www.xojo.com/">Xojo</a>
+  programming environment
+  (formerly <a href="http://www.realbasic.com/">REALbasic</a>)
+</td></tr>
+</table>
+</div>
+
+

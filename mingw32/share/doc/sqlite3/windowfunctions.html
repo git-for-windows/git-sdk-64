@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Window Functions</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Window Functions
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#introduction_to_window_functions">1. Introduction to Window Functions</a></div>
+<div class="fancy-toc1"><a href="#aggregate_window_functions">2. Aggregate Window Functions</a></div>
+<div class="fancy-toc2"><a href="#the_partition_by_clause">2.1. The PARTITION BY Clause</a></div>
+<div class="fancy-toc2"><a href="#frame_specifications">2.2. Frame Specifications</a></div>
+<div class="fancy-toc3"><a href="#frame_type">2.2.1. Frame Type</a></div>
+<div class="fancy-toc3"><a href="#frame_boundaries">2.2.2. Frame Boundaries</a></div>
+<div class="fancy-toc3"><a href="#the_exclude_clause">2.2.3. The EXCLUDE Clause</a></div>
+<div class="fancy-toc2"><a href="#the_filter_clause">2.3. The FILTER Clause</a></div>
+<div class="fancy-toc1"><a href="#built_in_window_functions">3. Built-in Window Functions</a></div>
+<div class="fancy-toc1"><a href="#window_chaining">4. Window Chaining</a></div>
+<div class="fancy-toc1"><a href="#user_defined_aggregate_window_functions">5. User-Defined Aggregate Window Functions</a></div>
+<div class="fancy-toc1"><a href="#history">6. History</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+
+<h1 id="introduction_to_window_functions"><span>1. </span>Introduction to Window Functions</h1>
+
+<p>A window function is an SQL function where the input
+values are taken from
+a "window" of one or more rows in the results set of a SELECT statement.
+
+</p><p>Window functions are distinguished from other SQL functions by the
+presence of an OVER clause. If a function has an OVER clause,
+then it is a window function. If it lacks an OVER clause, then it is an
+ordinary aggregate or scalar function. Window functions might also
+have a FILTER clause in between the function and the OVER clause.
+
+</p><p>The syntax for a window function is like this:
+
+
+<p><b><a href="syntax/window-function-invocation.html">window-function-invocation:</a></b>
+<button id='x2043' onclick='hideorshow("x2043","x2044")'>hide</button></p>
+ <div id='x2044' class='imgcontainer'>
+ <img alt="syntax diagram window-function-invocation" src="images/syntax/window-function-invocation.gif" />
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x2045' onclick='hideorshow("x2045","x2046")'>show</button></p>
+ <div id='x2046' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x2047' onclick='hideorshow("x2047","x2048")'>show</button></p>
+ <div id='x2048' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x2049' onclick='hideorshow("x2049","x2050")'>show</button></p>
+ <div id='x2050' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x2051' onclick='hideorshow("x2051","x2052")'>show</button></p>
+ <div id='x2052' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x2053' onclick='hideorshow("x2053","x2054")'>show</button></p>
+ <div id='x2054' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x2055' onclick='hideorshow("x2055","x2056")'>show</button></p>
+ <div id='x2056' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x2057' onclick='hideorshow("x2057","x2058")'>show</button></p>
+ <div id='x2058' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x2059' onclick='hideorshow("x2059","x2060")'>show</button></p>
+ <div id='x2060' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x2061' onclick='hideorshow("x2061","x2062")'>show</button></p>
+ <div id='x2062' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x2063' onclick='hideorshow("x2063","x2064")'>show</button></p>
+ <div id='x2064' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x2065' onclick='hideorshow("x2065","x2066")'>show</button></p>
+ <div id='x2066' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x2067' onclick='hideorshow("x2067","x2068")'>show</button></p>
+ <div id='x2068' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x2069' onclick='hideorshow("x2069","x2070")'>show</button></p>
+ <div id='x2070' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x2071' onclick='hideorshow("x2071","x2072")'>show</button></p>
+ <div id='x2072' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x2073' onclick='hideorshow("x2073","x2074")'>hide</button></p>
+ <div id='x2074' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x2075' onclick='hideorshow("x2075","x2076")'>hide</button></p>
+ <div id='x2076' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x2077' onclick='hideorshow("x2077","x2078")'>hide</button></p>
+ <div id='x2078' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x2079' onclick='hideorshow("x2079","x2080")'>show</button></p>
+ <div id='x2080' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+</div>
+</div>
+
+
+
+</p><p>Unlike ordinary functions, window functions
+cannot use the DISTINCT keyword.
+Also, Window functions may only appear in the result set and in the
+ORDER BY clause of a SELECT statement.
+
+</p><p>Window functions come in two varieties: 
+<a href="windowfunctions.html#aggwinfunc">aggregate window functions</a> and
+<a href="windowfunctions.html#builtins">built-in window functions</a>.  Every aggregate window function
+can also work as a ordinary aggregate function, simply by omitting
+the OVER and FILTER clauses.  Furthermore, all of the built-in
+<a href="lang_aggfunc.html">aggregate functions</a> of SQLite can be used as an
+aggregate window function by adding an appropriate OVER clause.
+Applications can register new aggregate window functions using
+the <a href="c3ref/create_function.html">sqlite3_create_window_function()</a> interface.
+The built-in window functions, however, require special-case
+handling in the query planner and hence new window functions
+that exhibit the exceptional properties found in the built-in
+window functions cannot be added by the application.
+
+</p><p>Here is an example using the built-in row_number()
+window function:
+
+</p><div class="codeblock"><pre>CREATE TABLE t0(x INTEGER PRIMARY KEY, y TEXT);
+INSERT INTO t0 VALUES (1, 'aaa'), (2, 'ccc'), (3, 'bbb');
+
+<i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   x | y | row_number</i>
+-----------------------
+<i>--   1 | aaa | 1         </i>
+<i>--   2 | ccc | 3         </i>
+<i>--   3 | bbb | 2         </i>
+<i>-- </i>
+SELECT x, y, row_number() OVER (ORDER BY y) AS row_number FROM t0 ORDER BY x;
+</pre></div>
+
+<p>
+The row_number() window function
+assigns consecutive integers to each
+row in order of the "ORDER BY" clause within the
+<span class='yynonterm'>window-defn</span> (in this case "ORDER BY y"). Note that 
+this does not affect the order in which results are returned from
+the overall query.  The order of the final output is
+still governed by the ORDER BY clause attached to the SELECT
+statement (in this case "ORDER BY x").
+
+</p><p>Named <span class='yynonterm'>window-defn</span> clauses may also be added to a SELECT 
+statement using a WINDOW clause and then referred to by name within window
+function invocations. For example, the following SELECT statement contains
+two named <span class='yynonterm'>window-defs</span> clauses, "win1" and "win2":
+
+</p><div class="codeblock"><pre>SELECT x, y, row_number() OVER <b>win1</b>, rank() OVER <b>win2</b> 
+FROM t0 
+WINDOW <b>win1</b> AS (ORDER BY y RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+       <b>win2</b> AS (PARTITION BY y ORDER BY x)
+ORDER BY x;
+</pre></div>
+
+<p>The WINDOW clause, when one is present, comes after any HAVING clause and
+before any ORDER BY.
+
+<a name="aggwinfunc"></a>
+
+</p><h1 id="aggregate_window_functions"><span>2. </span>Aggregate Window Functions</h1>
+
+<p> The examples in this section all assume that the database is populated as
+follows:
+
+</p><div class="codeblock"><pre>CREATE TABLE t1(a INTEGER PRIMARY KEY, b, c);
+INSERT INTO t1 VALUES   (1, 'A', 'one'  ),
+                        (2, 'B', 'two'  ),
+                        (3, 'C', 'three'),
+                        (4, 'D', 'one'  ),
+                        (5, 'E', 'two'  ),
+                        (6, 'F', 'three'),
+                        (7, 'G', 'one'  );
+</pre></div>
+
+<p> An aggregate window function is similar to an 
+<a href="lang_aggfunc.html">ordinary aggregate function</a>, except
+adding it to a query does not change the number of rows returned. Instead,
+for each row the result of the aggregate window function is as if the
+corresponding aggregate were run over all rows in the "window frame"
+specified by the OVER clause.
+
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   a | b | group_concat</i>
+-------------------------
+<i>--   1 | A | A.B         </i>
+<i>--   2 | B | A.B.C       </i>
+<i>--   3 | C | B.C.D       </i>
+<i>--   4 | D | C.D.E       </i>
+<i>--   5 | E | D.E.F       </i>
+<i>--   6 | F | E.F.G       </i>
+<i>--   7 | G | F.G         </i>
+<i>-- </i>
+SELECT a, b, group_concat(b, '.') OVER (
+  ORDER BY a ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+) AS group_concat FROM t1;
+</pre></div>
+
+<p> In the example above, the window frame consists of all rows between the
+previous row ("1 PRECEDING") and the following row ("1 FOLLOWING"), inclusive,
+where rows are sorted according to the ORDER BY clause in the
+<span class='yynonterm'>window-defn</span> (in this case "ORDER BY a"). 
+For example, the frame for the row with (a=3) consists of rows (2, 'B', 'two'),
+(3, 'C', 'three') and (4, 'D', 'one'). The result of group_concat(b, '.') 
+for that row is therefore 'B.C.D'.
+
+</p><p> All of SQLite's <a href="lang_aggfunc.html">aggregate functions</a> may
+be used as aggregate window functions. It is also possible to 
+<a href="windowfunctions.html#udfwinfunc">create user-defined aggregate window functions</a>.
+
+
+<a name="ptxn"></a>
+
+</p><h2 id="the_partition_by_clause"><span>2.1. </span>The PARTITION BY Clause</h2>
+
+<p> For the purpose of computing window functions, the result set
+of a query is divided into one or more "partitions".  A partition consists
+of all rows that have the same value for all terms of the PARTITION BY clause
+in the <span class='yynonterm'>window-defn</span>.  If there is no PARTITION BY clause,
+then the entire result set of the query is a single partition.
+Window-function processing is performed separately for each partition.
+
+</p><p> For example:
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   c     | a | b | group_concat</i>
+---------------------------------
+<i>--   one   | 1 | A | A.D.G       </i>
+<i>--   one   | 4 | D | D.G         </i>
+<i>--   one   | 7 | G | G           </i>
+<i>--   three | 3 | C | C.F         </i>
+<i>--   three | 6 | F | F           </i>
+<i>--   two   | 2 | B | B.E         </i>
+<i>--   two   | 5 | E | E           </i>
+<i>-- </i>
+SELECT c, a, b, group_concat(b, '.') OVER (
+  PARTITION BY c ORDER BY a RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+) AS group_concat
+FROM t1 ORDER BY c, a;
+</pre></div>
+
+<p> In the query above, the "PARTITION BY c" clause breaks the
+result set up into three partitions. The first partition has
+three rows with c=='one'.  The second partition has two rows with
+c=='three' and the third partition has two rows with c=='two'.
+
+</p><p> In the example above, all the rows for each partition are
+grouped together in the final output.  This is because the PARTITION BY
+clause is a prefix of the ORDER BY clause on the overall query.  
+But that does not have
+to be the case.  A partition can be composed of rows scattered
+about haphazardly within the result set.  For example:
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   c     | a | b | group_concat</i>
+---------------------------------
+<i>--   one   | 1 | A | A.D.G       </i>
+<i>--   two   | 2 | B | B.E         </i>
+<i>--   three | 3 | C | C.F         </i>
+<i>--   one   | 4 | D | D.G         </i>
+<i>--   two   | 5 | E | E           </i>
+<i>--   three | 6 | F | F           </i>
+<i>--   one   | 7 | G | G           </i>
+<i>-- </i>
+SELECT c, a, b, group_concat(b, '.') OVER (
+  PARTITION BY c ORDER BY a RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+) AS group_concat
+FROM t1 ORDER BY a;
+</pre></div>
+
+
+<a name="framespec"></a>
+
+<h2 id="frame_specifications"><span>2.2. </span>Frame Specifications</h2>
+
+<p> The <span class='yynonterm'>frame-spec</span> determines which output rows are
+read by an aggregate window function.  The
+<span class='yynonterm'>frame-spec</span> consists of four parts:
+
+</p><ul>
+  <li> A frame type - either ROWS, RANGE or GROUPS,
+  </li><li> A starting frame boundary,
+  </li><li> An ending frame boundary,
+  </li><li> An EXCLUDE clause.
+</li></ul>
+
+<p> Here are the syntax details:
+
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x2081' onclick='hideorshow("x2081","x2082")'>hide</button></p>
+ <div id='x2082' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x2083' onclick='hideorshow("x2083","x2084")'>show</button></p>
+ <div id='x2084' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x2085' onclick='hideorshow("x2085","x2086")'>show</button></p>
+ <div id='x2086' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x2087' onclick='hideorshow("x2087","x2088")'>show</button></p>
+ <div id='x2088' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x2089' onclick='hideorshow("x2089","x2090")'>show</button></p>
+ <div id='x2090' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x2091' onclick='hideorshow("x2091","x2092")'>show</button></p>
+ <div id='x2092' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x2093' onclick='hideorshow("x2093","x2094")'>show</button></p>
+ <div id='x2094' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x2095' onclick='hideorshow("x2095","x2096")'>show</button></p>
+ <div id='x2096' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x2097' onclick='hideorshow("x2097","x2098")'>show</button></p>
+ <div id='x2098' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x2099' onclick='hideorshow("x2099","x2100")'>show</button></p>
+ <div id='x2100' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x2101' onclick='hideorshow("x2101","x2102")'>show</button></p>
+ <div id='x2102' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x2103' onclick='hideorshow("x2103","x2104")'>show</button></p>
+ <div id='x2104' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x2105' onclick='hideorshow("x2105","x2106")'>show</button></p>
+ <div id='x2106' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x2107' onclick='hideorshow("x2107","x2108")'>show</button></p>
+ <div id='x2108' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x2109' onclick='hideorshow("x2109","x2110")'>show</button></p>
+ <div id='x2110' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x2111' onclick='hideorshow("x2111","x2112")'>show</button></p>
+ <div id='x2112' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x2113' onclick='hideorshow("x2113","x2114")'>show</button></p>
+ <div id='x2114' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x2115' onclick='hideorshow("x2115","x2116")'>show</button></p>
+ <div id='x2116' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+</div>
+</div>
+</div>
+
+
+
+</p><p>The ending frame boundary can be omitted (if the
+BETWEEN and AND keywords that surround the starting frame boundary
+are also omitted),
+in which case the ending frame boundary defaults to CURRENT ROW.
+
+</p><p> If the frame type is RANGE or GROUPS, then rows with the same values for
+all ORDER BY expressions are considered "peers". Or, if there are no ORDER BY
+terms, all rows are peers. Peers are always within the same frame.
+
+</p><p>The default <span class='yynonterm'>frame-spec</span> is:
+
+</p><div class="codeblock"><pre>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE NO OTHERS
+</pre></div>
+
+<p>The default means that aggregate window functions read all
+rows from the beginning of the partition up to and including the
+current row and its peers. This implies that rows that have the same values for
+all ORDER BY expressions will also have the same value for the result of the
+window function (as the window frame is the same). For example:
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   a | b | c | group_concat</i>
+-----------------------------
+<i>--   1 | A | one   | A.D.G       </i>
+<i>--   2 | B | two   | A.D.G.C.F.B.E</i>
+<i>--   3 | C | three | A.D.G.C.F   </i>
+<i>--   4 | D | one   | A.D.G       </i>
+<i>--   5 | E | two   | A.D.G.C.F.B.E</i>
+<i>--   6 | F | three | A.D.G.C.F   </i>
+<i>--   7 | G | one   | A.D.G       </i>
+<i>-- </i>
+SELECT a, b, c, 
+       group_concat(b, '.') OVER (ORDER BY c) AS group_concat 
+FROM t1 ORDER BY a;
+</pre></div>
+
+<a name="frametype"></a>
+
+<h3 id="frame_type"><span>2.2.1. </span>Frame Type</h3>
+
+<p>
+There are three frame types:  ROWS, GROUPS, and RANGE.
+The frame type determines how the starting and ending boundaries
+of the frame are measured.
+
+</p><ul>
+<li><p><b>ROWS</b>: 
+The ROWS frame type means that the starting and ending boundaries
+for the frame are determined by counting individual rows relative
+to the current row.
+
+<a name="grouptype"></a>
+
+</p></li><li><p><b>GROUPS</b>:
+The GROUPS frame type means that the starting and ending boundaries
+are determine by counting "groups" relative to the current group.
+A "group" is a set of rows that all have equivalent values for all
+all terms of the window ORDER BY clause.  ("Equivalent" means that
+the <a href="lang_expr.html#isisnot">IS operator</a> is true when comparing the two values.)
+In other words, a group consists of all peers of a row.
+
+<a name="rangetype"></a>
+
+</p></li><li><p><b>RANGE</b>:
+The RANGE frame type requires that the ORDER BY clause of the
+window have exactly one term.  Call that term "X".  With the
+RANGE frame type, the elements of the frame are determined by
+computing the value of expression X for all rows in the partition
+and framing those rows for which the value of X is within a certain
+range of the value of X for the current row.  See the description
+in the "<a href="windowfunctions.html#exprrange">&lt;expr&gt; PRECEDING</a>" boundary
+specification below for details.
+</p></li></ul>
+
+<p>The ROWS and GROUPS frame types are similar in that they
+both determine the extent of a frame by counting relative to
+the current row.  The difference is that ROWS counts individual
+rows and GROUPS counts peer groups.
+The RANGE frame type is different.
+The RANGE frame type determines the extent of a frame by
+looking for expression values that are within some band of
+values relative to the current row.
+
+<a name="frameboundary"></a>
+
+</p><h3 id="frame_boundaries"><span>2.2.2. </span>Frame Boundaries</h3>
+
+<p> There are five ways to describe starting and ending frame boundaries:
+
+</p><ol>
+<li><p> <b>UNBOUNDED PRECEDING</b><br>
+     The frame boundary is the first
+     row in the <a href="windowfunctions.html#ptxn">partition</a>.
+
+</p></li><li><p> <b>&lt;expr&gt; PRECEDING</b><br>
+        &lt;expr&gt; must be a non-negative constant numeric expression.
+        The boundary is a row that is &lt;expr&gt; "units" prior to
+        the current row.  The meaning of "units" here depends on the
+        frame type:
+        </p><ul>
+        <li><p> <b>ROWS &rarr;</b>
+        The frame boundary is the row that is &lt;expr&gt;
+        rows before the current row, or the first row of the
+        partition if there are fewer than &lt;expr&gt; rows
+        before the current row.  &lt;expr&gt; must be an integer.
+        </p></li><li><p> <b>GROUPS &rarr;</b>
+        A "group" is a set of peer rows - rows that all have
+        the same values for every term in the ORDER BY clause.
+        The frame boundary is the group that is &lt;expr&gt;
+        groups before the group containing the current row, or the
+        first group of the partition if there are fewer
+        than &lt;expr&gt; groups before the current row.
+        For the starting boundary of a frame, the first
+        row of the group is used and for the ending boundary
+        of a frame, the last row of the group is used.
+        &lt;expr&gt; must be an integer.
+        <a name="exprrange"></a>
+
+        </p></li><li><p> <b>RANGE &rarr;</b>
+        For this form, the ORDER BY clause of the
+        <span class='yynonterm'>window-defn</span> must have a single
+        term.  Call that ORDER BY term "X".  Let
+        X<sub><small>i</small></sub> be the value of the X
+        expression for the i-th row in the partition and let
+        X<sub><small>c</small></sub> be the value of X for the
+        current row.  Informally, a RANGE bound is the first row
+        for which X<sub><small>i</small></sub> is within
+        the &lt;expr&gt; of X<sub><small>c</small></sub>.
+        More precisely:
+        </p><ol type="a">
+        <li> If either X<sub><small>i</small></sub> or
+             X<sub><small>c</small></sub> are non-numeric, then
+             the boundary is the first row for which the expression
+             "X<sub><small>i</small></sub> IS X<sub><small>c</small></sub>"
+             is true.
+        </li><li> Else if the ORDER BY is ASC then the boundary
+             is the first row for which
+             X<sub><small>i</small></sub>&gt;=X<sub><small>c</small></sub>-&lt;expr&gt;.
+        </li><li> Else if the ORDER BY is DESC then the boundary
+        is the first row for which
+        X<sub><small>i</small></sub>&lt;=X<sub><small>c</small></sub>-&lt;expr&gt;.
+        </li></ol>
+        For this form, the &lt;expr&gt; does not have to be an
+        integer. It can evaluate to a real number as long as
+        it is constant and non-negative.
+        </li></ul>
+    The boundary description "0 PRECEDING" always means the same
+    thing as "CURRENT ROW".
+
+</li><li><p><b>CURRENT ROW</b><br>
+        The current row. For RANGE and GROUPS frame types,
+        peers of the current row are also included in the frame,
+        unless specifically excluded by the EXCLUDE clause.
+        This is true regardless of whether CURRENT ROW is used
+        as the starting or ending frame boundary.
+
+</p></li><li><p><b>&lt;expr&gt; FOLLOWING</b><br>
+        This is the same as "&lt;expr&gt; PRECEDING" except that
+        the boundary is &lt;expr&gt; units after the current
+        rather than before the current row.
+
+</p></li><li><p> <b>UNBOUNDED FOLLOWING</b><br>
+   The frame boundary is the last
+   row in the <a href="windowfunctions.html#ptxn">partition</a>.
+
+</p></li></ol>
+
+<p> The ending frame boundary may not take a form that appears higher in
+the above list than the starting frame boundary.
+
+</p><p> In the following example, the window frame for each row consists of all
+rows from the current row to the end of the set, where rows are sorted
+according to "ORDER BY a".
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   c     | a | b | group_concat</i>
+---------------------------------
+<i>--   one   | 1 | A | A.D.G.C.F.B.E</i>
+<i>--   one   | 4 | D | D.G.C.F.B.E </i>
+<i>--   one   | 7 | G | G.C.F.B.E   </i>
+<i>--   three | 3 | C | C.F.B.E     </i>
+<i>--   three | 6 | F | F.B.E       </i>
+<i>--   two   | 2 | B | B.E         </i>
+<i>--   two   | 5 | E | E           </i>
+<i>-- </i>
+SELECT c, a, b, group_concat(b, '.') OVER (
+  ORDER BY c, a ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+) AS group_concat
+FROM t1 ORDER BY c, a;
+</pre></div>
+
+<a name="wexcls"></a>
+ 
+<h3 id="the_exclude_clause"><span>2.2.3. </span>The EXCLUDE Clause</h3>
+
+<p> The optional EXCLUDE clause may take any of the following four forms:
+
+</p><ul>
+  <li> <p><b> EXCLUDE NO OTHERS</b>: This is the default. In this case no
+  rows are excluded from the window frame as defined by its starting and ending
+  frame boundaries.
+
+  </p></li><li> <p><b> EXCLUDE CURRENT ROW</b>: In this case the current row is 
+  excluded from the window frame.  Peers of the current row remain in
+  the frame for the GROUPS and RANGE frame types.
+
+  </p></li><li> <p><b> EXCLUDE GROUP</b>: In this case the current row and all other
+  rows that are peers of the current row are excluded from the frame. When
+  processing an EXCLUDE clause, all rows with the same ORDER BY values, or all
+  rows in the partition if there is no ORDER BY clause, are considered peers,
+  even if the frame type is ROWS.
+
+  </p></li><li> <p><b> EXCLUDE TIES</b>: In this case the current row is part of the
+  frame, but peers of the current row are excluded.
+</p></li></ul>
+
+<p> The following example demonstrates the effect of the various
+forms of the EXCLUDE clause:
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   c    | a | b | no_others     | current_row | grp       | ties</i>
+<i>--  one   | 1 | A | A.D.G         | D.G         |           | A</i>
+<i>--  one   | 4 | D | A.D.G         | A.G         |           | D</i>
+<i>--  one   | 7 | G | A.D.G         | A.D         |           | G</i>
+<i>--  three | 3 | C | A.D.G.C.F     | A.D.G.F     | A.D.G     | A.D.G.C</i>
+<i>--  three | 6 | F | A.D.G.C.F     | A.D.G.C     | A.D.G     | A.D.G.F</i>
+<i>--  two   | 2 | B | A.D.G.C.F.B.E | A.D.G.C.F.E | A.D.G.C.F | A.D.G.C.F.B</i>
+<i>--  two   | 5 | E | A.D.G.C.F.B.E | A.D.G.C.F.B | A.D.G.C.F | A.D.G.C.F.E</i>
+<i>-- </i>
+SELECT c, a, b,
+  group_concat(b, '.') OVER (
+    ORDER BY c GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE NO OTHERS
+  ) AS no_others,
+  group_concat(b, '.') OVER (
+    ORDER BY c GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW
+  ) AS current_row,
+  group_concat(b, '.') OVER (
+    ORDER BY c GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE GROUP
+  ) AS grp,
+  group_concat(b, '.') OVER (
+    ORDER BY c GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE TIES
+  ) AS ties
+FROM t1 ORDER BY c, a;
+</pre></div>
+
+<h2 id="the_filter_clause"><span>2.3. </span>The FILTER Clause</h2>
+
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x2117' onclick='hideorshow("x2117","x2118")'>hide</button></p>
+ <div id='x2118' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x2119' onclick='hideorshow("x2119","x2120")'>show</button></p>
+ <div id='x2120' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x2121' onclick='hideorshow("x2121","x2122")'>show</button></p>
+ <div id='x2122' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x2123' onclick='hideorshow("x2123","x2124")'>show</button></p>
+ <div id='x2124' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x2125' onclick='hideorshow("x2125","x2126")'>show</button></p>
+ <div id='x2126' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x2127' onclick='hideorshow("x2127","x2128")'>show</button></p>
+ <div id='x2128' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x2129' onclick='hideorshow("x2129","x2130")'>show</button></p>
+ <div id='x2130' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x2131' onclick='hideorshow("x2131","x2132")'>show</button></p>
+ <div id='x2132' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x2133' onclick='hideorshow("x2133","x2134")'>show</button></p>
+ <div id='x2134' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x2135' onclick='hideorshow("x2135","x2136")'>show</button></p>
+ <div id='x2136' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x2137' onclick='hideorshow("x2137","x2138")'>show</button></p>
+ <div id='x2138' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x2139' onclick='hideorshow("x2139","x2140")'>show</button></p>
+ <div id='x2140' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x2141' onclick='hideorshow("x2141","x2142")'>show</button></p>
+ <div id='x2142' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x2143' onclick='hideorshow("x2143","x2144")'>show</button></p>
+ <div id='x2144' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x2145' onclick='hideorshow("x2145","x2146")'>show</button></p>
+ <div id='x2146' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x2147' onclick='hideorshow("x2147","x2148")'>show</button></p>
+ <div id='x2148' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x2149' onclick='hideorshow("x2149","x2150")'>show</button></p>
+ <div id='x2150' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x2151' onclick='hideorshow("x2151","x2152")'>show</button></p>
+ <div id='x2152' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+</div>
+</div>
+</div>
+
+
+<p>If a FILTER clause is provided, then only rows for which the <i>expr</i> is
+true are included in the window frame. The aggregate window still returns a
+value for every row, but those for which the FILTER expression evaluates to
+other than true are not included in the window frame for any row. For example:
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   c     | a | b | group_concat</i>
+---------------------------------
+<i>--   one   | 1 | A | A           </i>
+<i>--   two   | 2 | B | A           </i>
+<i>--   three | 3 | C | A.C         </i>
+<i>--   one   | 4 | D | A.C.D       </i>
+<i>--   two   | 5 | E | A.C.D       </i>
+<i>--   three | 6 | F | A.C.D.F     </i>
+<i>--   one   | 7 | G | A.C.D.F.G   </i>
+<i>-- </i>
+SELECT c, a, b, group_concat(b, '.') FILTER (WHERE c!='two') OVER (
+  ORDER BY a
+) AS group_concat
+FROM t1 ORDER BY a;
+</pre></div>
+
+
+<a name="builtins"></a>
+
+<h1 id="built_in_window_functions"><span>3. </span>Built-in Window Functions</h1>
+
+<p> As well as aggregate window functions, SQLite features a set of built-in
+window functions based on 
+<a href="https://www.postgresql.org/docs/10/static/functions-window.html">
+those supported by PostgreSQL</a>.
+
+</p><p> Built-in window functions honor any PARTITION BY clause in the same way
+as aggregate window functions - each selected row is assigned to a partition 
+and each partition is processed separately. The ways in which any ORDER BY
+clause affects each built-in window function is described below. Some of
+the window functions (rank(), dense_rank(), percent_rank() and ntile()) use
+the concept of "peer groups" (rows within the same partition that have the
+same values for all ORDER BY expressions). In these cases, it does not matter
+whether the <span class='yynonterm'>frame-spec</span> specifies ROWS, GROUPS, or RANGE.
+For the purposes of built-in window function processing, rows with the same values
+for all ORDER BY expressions are considered peers regardless of the frame type.
+
+</p><p> Most built-in window functions ignore the
+<span class='yynonterm'>frame-spec</span>, the exceptions being first_value(),
+last_value() and nth_value(). It is a syntax error to specify a FILTER 
+clause as part of a built-in window function invocation.
+
+<a name="biwinfunc"></a>
+
+</p><p> SQLite supports the following 11 built-in window functions:
+
+</p><dl>
+  <dt><p><b>row_number()</b>
+  </p></dt><dd><p> The number of the row within the current partition. Rows are
+       numbered starting from 1 in the order defined by the ORDER BY clause in
+       the window definition, or in arbitrary order otherwise.
+  </p></dd><dt><p><b>rank()</b>
+  </p></dt><dd><p> The row_number() of the first peer in each group - the rank of the
+       current row with gaps. If there is no ORDER BY clause, then all rows
+       are considered peers and this function always returns 1.
+  </p></dd><dt><p><b>dense_rank()</b>
+  </p></dt><dd><p> The number of the current row's peer group within its partition - the
+       rank of the current row without gaps. Partitions are numbered starting
+       from 1 in the order defined by the ORDER BY clause in the window
+       definition. If there is no ORDER BY clause, then all rows are
+       considered peers and this function always returns 1.
+  </p></dd><dt><p><b>percent_rank()</b>
+  </p></dt><dd><p> Despite the name, this function always returns a value between 0.0
+       and 1.0 equal to (<i>rank</i> - 1)/(<i>partition-rows</i> - 1), where
+       <i>rank</i> is the value returned by built-in window function rank()
+       and <i>partition-rows</i> is the total number of rows in the
+       partition. If the partition contains only one row, this function
+       returns 0.0.
+  </p></dd><dt><p><b>cume_dist()</b>
+  </p></dt><dd><p> The cumulative distribution. Calculated as
+       <i>row-number</i>/<i>partition-rows</i>, where <i>row-number</i> is
+       the value returned by row_number() for the last peer in the group
+       and <i>partition-rows</i> the number of rows in the partition.
+  </p></dd><dt><p><b>ntile(N)</b>
+  </p></dt><dd><p> Argument <i>N</i> is handled as an integer. This function divides the
+       partition into N groups as evenly as possible and assigns an integer
+       between 1 and <i>N</i> to each group, in the order defined by the ORDER
+       BY clause, or in arbitrary order otherwise. If necessary, larger groups
+       occur first. This function returns the integer value assigned to the
+       group that the current row is a part of.
+
+  </p></dd><dt><p><b>lag(expr)<br>lag(expr, offset)<br>lag(expr, offset, default)</b>
+  </p></dt><dd><p> The first form of the lag() function returns the result of evaluating
+       expression <i>expr</i> against the previous row in the partition. Or, if
+       there is no previous row (because the current row is the first), NULL.
+
+      </p><p> If the <i>offset</i> argument is provided, then it must be a
+       non-negative integer. In this case the value returned is the result
+       of evaluating <i>expr</i> against the row <i>offset</i> rows before the
+       current row within the partition. If <i>offset</i> is 0, then
+       <i>expr</i> is evaluated against the current row. If there is no row
+       <i>offset</i> rows before the current row, NULL is returned.
+
+      </p><p> If <i>default</i> is also provided, then it is returned instead of
+      NULL if the row identified by <i>offset</i> does not exist.
+       
+  </p></dd><dt><p><b>lead(expr)<br>lead(expr, offset)<br>lead(expr, offset, default)</b>
+  </p></dt><dd><p> The first form of the lead() function returns the result of evaluating
+       expression <i>expr</i> against the next row in the partition. Or, if
+       there is no next row (because the current row is the last), NULL.
+
+      </p><p> If the <i>offset</i> argument is provided, then it must be a
+       non-negative integer. In this case the value returned is the result
+       of evaluating <i>expr</i> against the row <i>offset</i> rows after the
+       current row within the partition. If <i>offset</i> is 0, then
+       <i>expr</i> is evaluated against the current row. If there is no row
+       <i>offset</i> rows after the current row, NULL is returned.
+
+      </p><p> If <i>default</i> is also provided, then it is returned instead of
+      NULL if the row identified by <i>offset</i> does not exist.
+  </p></dd><dt><p><b>first_value(expr)</b>
+  </p></dt><dd><p> This built-in window function calculates the window frame for each
+       row in the same way as an aggregate window function. It returns the
+       value of <i>expr</i> evaluated against the first row in the window frame
+       for each row.
+  </p></dd><dt><p><b>last_value(expr)</b>
+  </p></dt><dd><p> This built-in window function calculates the window frame for each
+       row in the same way as an aggregate window function. It returns the
+       value of <i>expr</i> evaluated against the last row in the window frame
+       for each row.
+  </p></dd><dt><p><b>nth_value(expr, N)</b>
+  </p></dt><dd><p> This built-in window function calculates the window frame for each
+       row in the same way as an aggregate window function. It returns the
+       value of <i>expr</i> evaluated against the row <i>N</i> of the window
+       frame. Rows are numbered within the window frame starting from 1 in
+       the order defined by the ORDER BY clause if one is present, or in
+       arbitrary order otherwise. If there is no <i>N</i>th row in the
+       partition, then NULL is returned.
+  </p></dd><dd>
+</dd></dl>
+
+<p>The examples in this section all assume the following data:
+
+</p><div class="codeblock"><pre>CREATE TABLE t2(a, b);
+INSERT INTO t2 VALUES('a', 'one'), 
+                     ('a', 'two'), 
+                     ('a', 'three'), 
+                     ('b', 'four'), 
+                     ('c', 'five'), 
+                     ('c', 'six');
+</pre></div>
+
+<p>The following example illustrates the behaviour of the five ranking
+functions - row_number(), rank(), dense_rank(), percent_rank() and 
+cume_dist().
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   a | row_number | rank | dense_rank | percent_rank | cume_dist</i>
+------------------------------------------------------------------
+<i>--   a |          1 |    1 |          1 |          0.0 |       0.5</i>
+<i>--   a |          2 |    1 |          1 |          0.0 |       0.5</i>
+<i>--   a |          3 |    1 |          1 |          0.0 |       0.5</i>
+<i>--   b |          4 |    4 |          2 |          0.6 |       0.66</i>
+<i>--   c |          5 |    5 |          3 |          0.8 |       1.0</i>
+<i>--   c |          6 |    5 |          3 |          0.8 |       1.0</i>
+<i>-- </i>
+SELECT a                        AS a,
+       row_number() OVER win    AS row_number,
+       rank() OVER win          AS rank,
+       dense_rank() OVER win    AS dense_rank,
+       percent_rank() OVER win  AS percent_rank,
+       cume_dist() OVER win     AS cume_dist
+FROM t2
+WINDOW win AS (ORDER BY a);
+</pre></div>
+
+<p>The example below uses ntile() to divide the six rows into two groups (the
+ntile(2) call) and into four groups (the ntile(4) call). For ntile(2), there
+are three rows assigned to each group. For ntile(4), there are two groups of
+two and two groups of one. The larger groups of two appear first.
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   a | b     | ntile_2 | ntile_4</i>
+----------------------------------
+<i>--   a | one   |       1 |       1</i>
+<i>--   a | two   |       1 |       1</i>
+<i>--   a | three |       1 |       2</i>
+<i>--   b | four  |       2 |       2</i>
+<i>--   c | five  |       2 |       3</i>
+<i>--   c | six   |       2 |       4</i>
+<i>-- </i>
+SELECT a                        AS a,
+       b                        AS b,
+       ntile(2) OVER win        AS ntile_2,
+       ntile(4) OVER win        AS ntile_4
+FROM t2
+WINDOW win AS (ORDER BY a);
+</pre></div>
+
+<p> The next example demonstrates lag(), lead(), first_value(), last_value()
+and nth_value(). The <span class='yynonterm'>frame-spec</span> is ignored by 
+both lag() and lead(), but respected by first_value(), last_value()
+and nth_value().
+
+</p><div class="codeblock"><pre><i>-- The following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   b | lead | lag  | first_value | last_value | nth_value_3</i>
+-------------------------------------------------------------
+<i>--   A | C    | NULL | A           | A          | NULL       </i>
+<i>--   B | D    | A    | A           | B          | NULL       </i>
+<i>--   C | E    | B    | A           | C          | C          </i>
+<i>--   D | F    | C    | A           | D          | C          </i>
+<i>--   E | G    | D    | A           | E          | C          </i>
+<i>--   F | n/a  | E    | A           | F          | C          </i>
+<i>--   G | n/a  | F    | A           | G          | C          </i>
+<i>-- </i>
+SELECT b                          AS b,
+       lead(b, 2, 'n/a') OVER win AS lead,
+       lag(b) OVER win            AS lag,
+       first_value(b) OVER win    AS first_value,
+       last_value(b) OVER win     AS last_value,
+       nth_value(b, 3) OVER win   AS nth_value_3
+FROM t1
+WINDOW win AS (ORDER BY b ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+</pre></div>
+
+
+<a name="wchaining"></a>
+
+<h1 id="window_chaining"><span>4. </span>Window Chaining</h1>
+
+<p>
+Window chaining is a shorthand that allows one window to be defined in terms 
+of another. Specifically, the shorthand allows the new window to implicitly
+copy the PARTITION BY and optionally ORDER BY clauses of the base window. For
+example, in the following:
+
+</p><div class="codeblock"><pre>SELECT group_concat(b, '.') OVER (
+  win ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+)
+FROM t1
+WINDOW win AS (PARTITION BY a ORDER BY c)
+</pre></div>
+
+<p>
+the window used by the group_concat() function is equivalent
+to "PARTITION BY a ORDER BY c ROWS BETWEEN UNBOUNDED PRECEDING
+AND CURRENT ROW". In order to use window
+chaining, all of the following must be true:
+
+</p><ul>
+  <li><p>The new window definition must not include a PARTITION BY clause. The
+       PARTITION BY clause, if there is one, must be supplied by the base
+       window specification.
+
+  </p></li><li><p>If the base window has an ORDER BY clause, it is copied into the new
+       window. In this case the new window must not specify an ORDER BY clause.
+       If the base window has no ORDER BY clause, one may be specified as part
+       of the new window definition.
+  
+  </p></li><li><p>The base window may not specify a frame specification.  The frame
+      specification can only be given in the new window specification.
+</p></li></ul>
+
+<p>The two fragments of SQL below are similar, but not entirely equivalent, as
+the latter will fail if the definition of window "win" contains a frame
+specification.
+
+</p><div class="codeblock"><pre>SELECT group_concat(b, '.') OVER win ...
+SELECT group_concat(b, '.') OVER (win) ...
+</pre></div>
+
+<a name="udfwinfunc"></a>
+
+<h1 id="user_defined_aggregate_window_functions"><span>5. </span>User-Defined Aggregate Window Functions</h1>
+
+<p> User-defined aggregate window functions may be created using the
+<a href="c3ref/create_function.html">sqlite3_create_window_function</a>() API. Implementing an aggregate window
+function is very similar to an ordinary aggregate function. Any user-defined
+aggregate window function may also be used as an ordinary aggregate. To 
+implement a user-defined aggregate window function the application must
+supply four callback functions:
+
+</p><table striped="1" style="margin:1em auto; width:80%; border-spacing:0">
+<tr style="text-align:left"><th>Callback </th><th>Description
+</th></tr><tr style="text-align:left;background-color:#DDDDDD"><td>xStep </td><td>
+      This method is required by both window aggregate and legacy aggregate
+      function implementations. It is invoked to add a row to the current
+      window. The function arguments, if any, corresponding to the row being
+      added are passed to the implementation of xStep.
+
+</td></tr><tr style="text-align:left"><td>xFinal </td><td>
+      This method is required by both window aggregate and legacy aggregate
+      function implementations. It is invoked to return the current value
+      of the aggregate (determined by the contents of the current window),
+      and to free any resources allocated by earlier calls to xStep.
+
+</td></tr><tr style="text-align:left;background-color:#DDDDDD"><td>xValue </td><td>
+      This method is only required window aggregate functions, not legacy
+      aggregate function implementations. It is invoked to return the current
+      value of the aggregate. Unlike xFinal, the implementation should not
+      delete any context.
+
+</td></tr><tr style="text-align:left"><td>xInverse </td><td>
+      This method is only required window aggregate functions, not legacy
+      aggregate function implementations. It is invoked to remove a row
+      from the current window. The function arguments, if any, correspond
+      to the row being removed.
+</td></tr></table>
+
+<p> The C code below implements a simple window aggregate function named
+sumint(). This works in the same way as the built-in sum() function, except
+that it throws an exception if passed an argument that is not an integer
+value.
+
+</p><div class="codeblock"><pre><pre>
+<i>/*</i>
+<i>** xStep for sumint().</i>
+<i>**</i>
+<i>** Add the value of the argument to the aggregate context (an integer).</i>
+<i>*/</i>
+static void sumintStep(
+  <a href="c3ref/context.html">sqlite3_context</a> *ctx, 
+  int nArg, 
+  <a href="c3ref/value.html">sqlite3_value</a> *apArg[]
+){
+  <a href="c3ref/int64.html">sqlite3_int64</a> *pInt;
+
+  assert( nArg==1 );
+  if( <a href="c3ref/value_blob.html">sqlite3_value_type</a>(apArg[0])!=SQLITE_INTEGER ){
+    <a href="c3ref/result_blob.html">sqlite3_result_error</a>(ctx, "invalid argument", -1);
+    return;
+  }
+  pInt = (sqlite3_int64*)sqlite3_aggregate_context(ctx, sizeof(<a href="c3ref/int64.html">sqlite3_int64</a>));
+  if( pInt ){
+    *pInt += <a href="c3ref/value_blob.html">sqlite3_value_int64</a>(apArg[0]);
+  }
+}
+
+<i>/*</i>
+<i>** xInverse for sumint().</i>
+<i>**</i>
+<i>** This does the opposite of xStep() - subtracts the value of the argument</i>
+<i>** from the current context value. The error checking can be omitted from</i>
+<i>** this function, as it is only ever called after xStep() (so the aggregate</i>
+<i>** context has already been allocated) and with a value that has already</i>
+<i>** been passed to xStep() without error (so it must be an integer).</i>
+<i>*/</i>
+static void sumintInverse(
+  <a href="c3ref/context.html">sqlite3_context</a> *ctx, 
+  int nArg, 
+  <a href="c3ref/value.html">sqlite3_value</a> *apArg[]
+){
+  <a href="c3ref/int64.html">sqlite3_int64</a> *pInt;
+  assert( <a href="c3ref/value_blob.html">sqlite3_value_type</a>(apArg[0])==SQLITE_INTEGER );
+  pInt = (sqlite3_int64*)sqlite3_aggregate_context(ctx, sizeof(<a href="c3ref/int64.html">sqlite3_int64</a>));
+  *pInt -= <a href="c3ref/value_blob.html">sqlite3_value_int64</a>(apArg[0]);
+}
+
+<i>/*</i>
+<i>** xFinal for sumint().</i>
+<i>**</i>
+<i>** Return the current value of the aggregate window function. Because</i>
+<i>** this implementation does not allocate any resources beyond the buffer</i>
+<i>** returned by <a href="c3ref/aggregate_context.html">sqlite3_aggregate_context</a>, which is automatically freed</i>
+<i>** by the system, there are no resources to free. And so this method is</i>
+<i>** identical to xValue().</i>
+<i>*/</i>
+static void sumintFinal(<a href="c3ref/context.html">sqlite3_context</a> *ctx){
+  <a href="c3ref/int64.html">sqlite3_int64</a> res = 0;
+  <a href="c3ref/int64.html">sqlite3_int64</a> *pInt;
+  pInt = (sqlite3_int64*)<a href="c3ref/aggregate_context.html">sqlite3_aggregate_context</a>(ctx, 0);
+  if( pInt ) res = *pInt;
+  <a href="c3ref/result_blob.html">sqlite3_result_int64</a>(ctx, res);
+}
+
+<i>/*</i>
+<i>** xValue for sumint().</i>
+<i>**</i>
+<i>** Return the current value of the aggregate window function. Because</i>
+<i>*/</i>
+static void sumintValue(<a href="c3ref/context.html">sqlite3_context</a> *ctx){
+  <a href="c3ref/int64.html">sqlite3_int64</a> res = 0;
+  <a href="c3ref/int64.html">sqlite3_int64</a> *pInt;
+  pInt = (sqlite3_int64*)<a href="c3ref/aggregate_context.html">sqlite3_aggregate_context</a>(ctx, 0);
+  if( pInt ) res = *pInt;
+  <a href="c3ref/result_blob.html">sqlite3_result_int64</a>(ctx, res);
+}
+
+<i>/*</i>
+<i>** Register sumint() window aggregate with database handle db. </i>
+<i>*/</i>
+int register_sumint(<a href="c3ref/sqlite3.html">sqlite3</a> *db){
+  return <a href="c3ref/create_function.html">sqlite3_create_window_function</a>(db, "sumint", 1, SQLITE_UTF8, 0,
+      sumintStep, sumintFinal, sumintValue, sumintInverse, 0
+  );
+}
+</pre>
+
+</pre></div>
+
+<p> The following example uses the sumint() function implemented by the above
+C code. For each row, the window consists of the preceding row (if any), the current row and the following row (again, if any):
+
+</p><div class="codeblock"><pre>CREATE TABLE t3(x, y);
+INSERT INTO t3 VALUES('a', 4),
+                     ('b', 5),
+                     ('c', 3),
+                     ('d', 8),
+                     ('e', 1);
+
+<i>-- Assuming the database is populated using the above script, the </i>
+<i>-- following SELECT statement returns:</i>
+<i>-- </i>
+<i>--   x | sum_y</i>
+--------------
+<i>--   a | 9    </i>
+<i>--   b | 12   </i>
+<i>--   c | 16   </i>
+<i>--   d | 12   </i>
+<i>--   e | 9    </i>
+<i>-- </i>
+SELECT x, sumint(y) OVER (
+  ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+) AS sum_y
+FROM t3 ORDER BY x;
+</pre></div>
+
+<p>In processing the query above, SQLite invokes the sumint callbacks as
+follows:
+
+</p><p>
+</p><ol>
+  <li> <b>xStep(4)</b> - add "4" to the current window.
+  </li><li> <b>xStep(5)</b> - add "5" to the current window.
+  </li><li> <b>xValue()</b> - invoke xValue() to obtain the value of sumint() for
+       the row with (x='a'). The window currently consists of values 4 and 5, 
+       and so the result is 9.
+  </li><li> <b>xStep(3)</b> - add "3" to the current window.
+  </li><li> <b>xValue()</b> - invoke xValue() to obtain the value of sumint() for
+       the row with (x='b'). The window currently consists of values 4, 5 and
+       3, and so the result is 12.
+  </li><li> <b>xInverse(4)</b> - remove "4" from the window. 
+  </li><li> <b>xStep(8)</b> - add "8" to the current window. The window now consists
+       of values 5, 3 and 8.
+  </li><li> <b>xValue()</b> - invoked to obtain the value for the row with (x='c').
+       In this case, 16.
+  </li><li> <b>xInverse(5)</b> - remove value "5" from the window.
+  </li><li> <b>xStep(1)</b> - add value "1" to the window.
+  </li><li> <b>xValue()</b> - invoked to obtain the value for row (x='d').
+  </li><li> <b>xInverse(3)</b> - remove value "3" from the window. The window now
+       contains values 8 and 1 only.
+  </li><li> <b>xValue()</b> - invoked to obtain the value for row (x='d'). 9.
+</li></ol>
+
+<h1 id="history"><span>6. </span>History</h1>
+
+<p>Window function support was first added to SQLite with release
+<a href="releaselog/3_25_0.html">version 3.25.0</a> (2018-09-15). The SQLite developers used
+the <a href="http://www.postgresql.org">PostgreSQL</a> window function
+documentation as their primary reference for how window functions
+ought to behave.  Many test cases have been run against PostgreSQL
+to ensure that window functions operate the same way in both
+SQLite and PostgreSQL.
+
+</p><p>In SQLite <a href="releaselog/3_28_0.html">version 3.28.0</a> (2019-04-16),
+windows function support was extended to include the EXCLUDE clause,
+GROUPS frame types, window chaining, and support for
+"&lt;expr&gt; PRECEDING" and "&lt;expr&gt; FOLLOWING" boundaries
+in RANGE frames.
+</p>

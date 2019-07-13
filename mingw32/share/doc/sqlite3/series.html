@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>The generate_series Table-Valued Function</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+The generate_series Table-Valued Function
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#overview">1. Overview</a></div>
+<div class="fancy-toc2"><a href="#equivalent_recursive_common_table_expression">1.1. Equivalent Recursive Common Table Expression</a></div>
+<div class="fancy-toc1"><a href="#usage_examples">2. Usage Examples</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
+
+<p>The generate_series(START,END,STEP) <a href="vtab.html#tabfunc2">table-valued function</a> is a
+<a href="loadext.html">loadable extension</a> included in the SQLite source tree, and compiled into
+the <a href="cli.html">command-line shell</a>.  The generate_series() table has a single
+result column named "value" holding integer values
+and a number of rows determined by the
+parameters START, END, and STEP.  The first row of the table has
+a value of START.  Subsequent rows increase by STEP up to END.
+
+</p><p>Omitted parameters take on default values.  STEP defaults to 1.
+END defaults to 9223372036854775807.  START defaults to 0.
+
+</p><h2 id="equivalent_recursive_common_table_expression"><span>1.1. </span>Equivalent Recursive Common Table Expression</h2>
+
+<p>The generate_series table can be simulated using a
+<a href="lang_with.html#recursivecte">recursive common table expression</a>.  If the three parameters
+are $start, $end, and $step, then the equivalent common table
+expression is:
+
+</p><div class="codeblock"><pre>WITH RECURSIVE generate_series(value) AS (
+  SELECT $start
+  UNION ALL
+  SELECT value+$step FROM generate_series
+   WHERE value+$step&lt;=$end
+) ...
+</pre></div>
+
+<p>The common table expression works without having to load an
+extension.  On the other hand, the extension is easier to program
+and faster.
+
+</p><h1 id="usage_examples"><span>2. </span>Usage Examples</h1>
+
+<p>Generate all multiples of 5 less than or equal to 100:
+
+</p><div class="codeblock"><pre>SELECT value FROM generate_series(5,100,5);
+</pre></div>
+
+<p>Generate the 20 random integer values:
+
+</p><div class="codeblock"><pre>SELECT random() FROM generate_series LIMIT 20;
+</pre></div>
+
+<p>Find the name of every customer whose account number
+   is an even multiple of 100 between 10000 and 20000.
+
+</p><div class="codeblock"><pre>SELECT customer.name
+  FROM customer, generate_series(10000,20000,100)
+ WHERE customer.id=value;
+/* or */
+SELECT name FROM customer
+ WHERE id IN (SELECT value
+                FROM generate_series(10000,20000,200));
+</pre></div>
+

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Using SQLite In Multi-Threaded Applications</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Using SQLite In Multi-Threaded Applications
+</div>
+</div>
+
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
+
+<p>SQLite supports three different threading modes:</p>
+
+<ol>
+<li><p><b>Single-thread</b>.
+In this mode, all mutexes are disabled and SQLite is unsafe to use in
+more than a single thread at once.</p></li>
+
+<li><p><b>Multi-thread</b>.
+In this mode, SQLite can be safely used by multiple threads provided that
+no single database connection is used simultaneously in two or more threads.
+</p></li>
+
+<li><p><b>Serialized</b>.
+In serialized mode, SQLite can be safely used by multiple threads with no
+restriction.</p></li>
+</ol>
+
+<p>
+The threading mode can be selected at compile-time (when the SQLite
+library is being compiled from source code) or at start-time (when the
+application that intends to use SQLite is initializing) or at
+run-time (when a new SQLite database connection is being created).
+Generally speaking, run-time overrides start-time and start-time
+overrides compile-time.  Except, single-thread mode cannot be 
+overridden once selected.
+</p>
+
+<p>
+The default mode is serialized.
+</p>
+
+<h1 id="compile_time_selection_of_threading_mode"><span>2. </span>Compile-time selection of threading mode</h1>
+
+<p>
+Use the <a href="compile.html#threadsafe">SQLITE_THREADSAFE</a> compile-time parameter to selected the
+threading mode.  If no <a href="compile.html#threadsafe">SQLITE_THREADSAFE</a> compile-time parameter is
+present, then serialized mode is used.
+This can be made explicit with 
+<a href="compile.html#threadsafe">-DSQLITE_THREADSAFE=1</a>.
+With
+<a href="compile.html#threadsafe">-DSQLITE_THREADSAFE=0</a> the threading mode is
+single-thread.  With
+<a href="compile.html#threadsafe">-DSQLITE_THREADSAFE=2</a> the threading mode is
+multi-thread.
+</p>
+
+<p>
+The return value of the <a href="c3ref/threadsafe.html">sqlite3_threadsafe()</a> interface is determined
+by the compile-time threading mode selection.  If single-thread mode
+is selected at compile-time, then <a href="c3ref/threadsafe.html">sqlite3_threadsafe()</a> returns false.
+If either the multi-thread or serialized modes are selected, then
+<a href="c3ref/threadsafe.html">sqlite3_threadsafe()</a> returns true.  The <a href="c3ref/threadsafe.html">sqlite3_threadsafe()</a>
+interface predates the multi-thread mode and start-time and run-time
+mode selection and so is unable to distinguish
+between multi-thread and serialized mode nor is it able to report start-time
+or run-time mode changes.
+</p>
+
+<p>
+If single-thread mode is selected at compile-time, then critical
+mutexing logic is omitted from the build and it is impossible to
+enable either multi-thread or serialized modes at start-time or
+run-time.
+</p>
+
+<h1 id="start_time_selection_of_threading_mode"><span>3. </span>Start-time selection of threading mode</h1>
+
+<p>
+Assuming that the compile-time threading mode is not single-thread, then
+the threading mode can be changed during initialization using the
+<a href="c3ref/config.html">sqlite3_config()</a> interface.  The <a href="c3ref/c_config_covering_index_scan.html#sqliteconfigsinglethread">SQLITE_CONFIG_SINGLETHREAD</a> verb
+puts SQLite into single-thread mode, the <a href="c3ref/c_config_covering_index_scan.html#sqliteconfigmultithread">SQLITE_CONFIG_MULTITHREAD</a>
+verb sets multi-thread mode, and the <a href="c3ref/c_config_covering_index_scan.html#sqliteconfigserialized">SQLITE_CONFIG_SERIALIZED</a> verb
+sets serialized mode.
+</p>
+
+<h1 id="run_time_selection_of_threading_mode"><span>4. </span>Run-time selection of threading mode</h1>
+
+<p>If single-thread mode has not been selected at compile-time or start-time,
+then individual database connections can be created as either multi-thread
+or serialized.  It is not possible to downgrade an individual database
+connection to single-thread mode.  Nor is it possible to escalate an
+individual database connection if the compile-time or start-time mode
+is single-thread.</p>
+
+<p>The threading mode for an individual database connection is determined
+by flags given as the third argument to <a href="c3ref/open.html">sqlite3_open_v2()</a>.  The
+<a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_NOMUTEX</a> flag causes the database connection to be in the
+multi-thread mode and the <a href="c3ref/c_open_autoproxy.html">SQLITE_OPEN_FULLMUTEX</a> flag causes the connection
+to be in serialized mode.  If neither flag is specified or if
+<a href="c3ref/open.html">sqlite3_open()</a> or <a href="c3ref/open.html">sqlite3_open16()</a> are used instead of 
+<a href="c3ref/open.html">sqlite3_open_v2()</a>, then the default
+mode determined by the compile-time and start-time settings is used.
+</p>
+

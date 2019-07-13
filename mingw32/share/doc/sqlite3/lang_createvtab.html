@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: CREATE VIRTUAL TABLE</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>CREATE VIRTUAL TABLE</h2></div><p><b><a href="syntax/create-virtual-table-stmt.html">create-virtual-table-stmt:</a></b>
+<button id='x1417' onclick='hideorshow("x1417","x1418")'>hide</button></p>
+ <div id='x1418' class='imgcontainer'>
+ <img alt="syntax diagram create-virtual-table-stmt" src="images/syntax/create-virtual-table-stmt.gif" />
+</div>
+
+
+<p>A <a href="vtab.html">virtual table</a> is an interface to an external storage or computation
+engine that appears to be a table but does not actually store information
+in the database file.</p>
+
+<p>In general, you can do anything with a <a href="vtab.html">virtual table</a> that can be done
+with an ordinary table, except that you cannot create indices or triggers on a
+virtual table.  Some virtual table implementations might impose additional
+restrictions.  For example, many virtual tables are read-only.</p>
+
+<p>The <span class='yyterm'>module-name</span> is the name of an object that implements
+the virtual table.  The <span class='yyterm'>module-name</span> must be registered with
+the SQLite database connection using
+<a href="c3ref/create_module.html">sqlite3_create_module()</a> or <a href="c3ref/create_module.html">sqlite3_create_module_v2()</a>
+prior to issuing the CREATE VIRTUAL TABLE statement.
+The module takes zero or more comma-separated arguments.
+The arguments can be just about any text as long as it has balanced
+parentheses.  The argument syntax is sufficiently general that the
+arguments can be made to appear as <a href="lang_createtable.html#tablecoldef">column definitions</a> in a traditional
+<a href="lang_createtable.html">CREATE TABLE</a> statement.  
+SQLite passes the module arguments directly
+to the <a href="vtab.html#xcreate">xCreate</a> and <a href="vtab.html#xconnect">xConnect</a> methods of the module implementation
+without any interpretation.  It is the responsibility
+of the module implementation to parse and interpret its own arguments.</p>
+
+<p>A virtual table is destroyed using the ordinary
+<a href="lang_droptable.html">DROP TABLE</a> statement.  There is no
+DROP VIRTUAL TABLE statement.</p>
+
+

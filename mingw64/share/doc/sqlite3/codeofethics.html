@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Code Of Ethics</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Code Of Ethics
+</div>
+</div>
+
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
+
+<p>This document was originally called a "Code of Conduct" and
+was created (in a slightly different format) for the purpose of
+filling in a box on "supplier registration" forms
+submitted to the SQLite developers by various minor clients.  However,
+we subsequently learned that "Code of Conduct" has a specific technical
+meaning within many software development communities, a meaning which
+was at odds with the intent of this document.  Hence, this document
+is now renamed and replaced by a 
+<a href="codeofconduct.html">Code of Conduct</a> that does comply with the
+specific technical requirements was inserted in the place of
+the old name.
+
+</p><p>
+This document is still sometimes used as a "Code of Conduct" on supplier
+registration forms.  But it is not a Code of Conduct in the same sense
+that many communities mean a Code of Conduct.  Rather,
+this document describes the ethical principles upon
+which SQLite is based.  Another way to look at this document is
+as a succinct description of the SQLite Founder's idea of what it
+means to be "virtuous".
+
+</p><p>
+Readers can also interpret this document as a primer on the
+world-view of the SQLite Founder, to help them better understand
+"where he is coming from".
+
+</p><h2 id="instruments_of_good_works"><span>1.1. </span>Instruments of Good Works</h2>
+
+<p>The founder of SQLite, and all of the current developers at the time
+when this document was composed, have pledged to govern their
+interactions with each other, with their clients,
+and with the larger SQLite user community in
+accordance with the "instruments of good works" from chapter 4 of
+<a href="https://en.wikipedia.org/wiki/Rule_of_Saint_Benedict">The Rule of St. Benedict</a>
+(hereafter: "The Rule").
+This code of ethics has proven its mettle in thousands of diverse
+communities for over 1,500 years, and has served as a baseline for many
+civil law codes since the time of Charlemagne.
+
+</p><h2 id="scope_of_application"><span>1.2. </span>Scope of Application</h2>
+
+<p>
+No one is required to follow The Rule, to know The Rule, or even
+to think that The Rule is a good idea.  The Founder of SQLite believes
+that anyone who follows The Rule will live a happier and more productive 
+life, but individuals are free to dispute or ignore that advice if
+they wish.
+
+</p><p>
+The founder of SQLite and all
+current developers have pledged to follow spirit of The Rule
+to the best of their ability. They
+view The Rule as their promise to all SQLite users of how the developers
+are expected to behave in community.
+This is a one-way promise, or covenant.
+In other words, the developers are saying: "We will treat you this
+way regardless of how you treat us."
+
+
+</p><h1 id="the_rule"><span>2. </span>The Rule</h1>
+
+<ol>
+<li> First of all, love the Lord God with your whole heart,
+     your whole soul, and your whole strength.
+</li><li> Then, love your neighbor as yourself.
+</li><li> Do not murder.
+</li><li> Do not commit adultery.
+</li><li> Do not steal.
+</li><li> Do not covet.
+</li><li> Do not bear false witness.
+</li><li> Honor all.
+</li><li> Do not do to another what you would not have done to yourself.
+</li><li> Deny oneself in order to follow Christ.
+</li><li> Chastise the body.
+</li><li> Do not become attached to pleasures.
+</li><li> Love fasting.
+</li><li> Relieve the poor.
+</li><li> Clothe the naked.
+</li><li> Visit the sick.
+</li><li> Bury the dead.
+</li><li> Be a help in times of trouble.
+</li><li> Console the sorrowing.
+</li><li> Be a stranger to the world's ways.
+</li><li> Prefer nothing more than the love of Christ.
+</li><li> Do not give way to anger.
+</li><li> Do not nurse a grudge.
+</li><li> Do not entertain deceit in your heart.
+</li><li> Do not give a false peace.
+</li><li> Do not forsake charity.
+</li><li> Do not swear, for fear of perjuring yourself.
+</li><li> Utter only truth from heart and mouth.
+</li><li> Do not return evil for evil.
+</li><li> Do no wrong to anyone, and bear patiently wrongs done to yourself.
+</li><li> Love your enemies.
+</li><li> Do not curse those who curse you, but rather bless them.
+</li><li> Bear persecution for justice's sake.
+</li><li> Be not proud.
+</li><li> Be not addicted to wine.
+</li><li> Be not a great eater.
+</li><li> Be not drowsy.
+</li><li> Be not lazy.
+</li><li> Be not a grumbler.
+</li><li> Be not a detractor.
+</li><li> Put your hope in God.
+</li><li> Attribute to God, and not to self, whatever good you see in yourself.
+</li><li> Recognize always that evil is your own doing,
+     and to impute it to yourself.
+</li><li> Fear the Day of Judgment.
+</li><li> Be in dread of hell.
+</li><li> Desire eternal life with all the passion of the spirit.
+</li><li> Keep death daily before your eyes.
+</li><li> Keep constant guard over the actions of your life.
+</li><li> Know for certain that God sees you everywhere.
+</li><li> When wrongful thoughts come into your heart, dash them against
+     Christ immediately.
+</li><li> Disclose wrongful thoughts to your spiritual mentor.
+</li><li> Guard your tongue against evil and depraved speech.
+</li><li> Do not love much talking.
+</li><li> Speak no useless words or words that move to laughter.
+</li><li> Do not love much or boisterous laughter.
+</li><li> Listen willingly to holy reading.
+</li><li> Devote yourself frequently to prayer.
+</li><li> Daily in your prayers, with tears and sighs, confess your
+     past sins to God, and amend them for the future.
+</li><li> Fulfill not the desires of the flesh; hate your own will.
+</li><li> Obey in all things the commands of those whom God has placed
+     in authority over you even though they (which God forbid) should 
+     act otherwise, mindful of the Lord's precept, "Do what they say, 
+     but not what they do."
+</li><li> Do not wish to be called holy before one is holy; but first to be
+     holy, that you may be truly so called.
+</li><li> Fulfill God's commandments daily in your deeds.
+</li><li> Love chastity.
+</li><li> Hate no one.
+</li><li> Be not jealous, nor harbor envy.
+</li><li> Do not love quarreling.
+</li><li> Shun arrogance.
+</li><li> Respect your seniors.
+</li><li> Love your juniors.
+</li><li> Pray for your enemies in the love of Christ.
+</li><li> Make peace with your adversary before the sun sets.
+</li><li> Never despair of God's mercy.
+</li></ol>
+

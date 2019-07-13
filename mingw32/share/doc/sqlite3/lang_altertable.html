@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: ALTER TABLE</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>ALTER TABLE</h2></div><p><b><a href="syntax/alter-table-stmt.html">alter-table-stmt:</a></b>
+<button id='x1077' onclick='hideorshow("x1077","x1078")'>hide</button></p>
+ <div id='x1078' class='imgcontainer'>
+ <img alt="syntax diagram alter-table-stmt" src="images/syntax/alter-table-stmt.gif" />
+<p><b><a href="syntax/column-def.html">column-def:</a></b>
+<button id='x1079' onclick='hideorshow("x1079","x1080")'>show</button></p>
+ <div id='x1080' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram column-def" src="images/syntax/column-def.gif" />
+<p><b><a href="syntax/column-constraint.html">column-constraint:</a></b>
+<button id='x1081' onclick='hideorshow("x1081","x1082")'>show</button></p>
+ <div id='x1082' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram column-constraint" src="images/syntax/column-constraint.gif" />
+<p><b><a href="syntax/conflict-clause.html">conflict-clause:</a></b>
+<button id='x1083' onclick='hideorshow("x1083","x1084")'>show</button></p>
+ <div id='x1084' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram conflict-clause" src="images/syntax/conflict-clause.gif" />
+</div>
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x1085' onclick='hideorshow("x1085","x1086")'>show</button></p>
+ <div id='x1086' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x1087' onclick='hideorshow("x1087","x1088")'>show</button></p>
+ <div id='x1088' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x1089' onclick='hideorshow("x1089","x1090")'>show</button></p>
+ <div id='x1090' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1091' onclick='hideorshow("x1091","x1092")'>show</button></p>
+ <div id='x1092' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x1093' onclick='hideorshow("x1093","x1094")'>show</button></p>
+ <div id='x1094' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1095' onclick='hideorshow("x1095","x1096")'>show</button></p>
+ <div id='x1096' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1097' onclick='hideorshow("x1097","x1098")'>show</button></p>
+ <div id='x1098' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1099' onclick='hideorshow("x1099","x1100")'>show</button></p>
+ <div id='x1100' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1101' onclick='hideorshow("x1101","x1102")'>show</button></p>
+ <div id='x1102' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1103' onclick='hideorshow("x1103","x1104")'>show</button></p>
+ <div id='x1104' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1105' onclick='hideorshow("x1105","x1106")'>show</button></p>
+ <div id='x1106' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1107' onclick='hideorshow("x1107","x1108")'>show</button></p>
+ <div id='x1108' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1109' onclick='hideorshow("x1109","x1110")'>show</button></p>
+ <div id='x1110' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1111' onclick='hideorshow("x1111","x1112")'>show</button></p>
+ <div id='x1112' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1113' onclick='hideorshow("x1113","x1114")'>show</button></p>
+ <div id='x1114' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/foreign-key-clause.html">foreign-key-clause:</a></b>
+<button id='x1115' onclick='hideorshow("x1115","x1116")'>show</button></p>
+ <div id='x1116' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram foreign-key-clause" src="images/syntax/foreign-key-clause.gif" />
+</div>
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x1117' onclick='hideorshow("x1117","x1118")'>show</button></p>
+ <div id='x1118' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1119' onclick='hideorshow("x1119","x1120")'>show</button></p>
+ <div id='x1120' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x1121' onclick='hideorshow("x1121","x1122")'>show</button></p>
+ <div id='x1122' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1123' onclick='hideorshow("x1123","x1124")'>show</button></p>
+ <div id='x1124' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+</div>
+</div>
+
+
+<p>SQLite supports a limited subset of ALTER TABLE.
+The ALTER TABLE command in SQLite allows the user to rename a table,
+to rename a column within a table, or to add a new column to an existing table.
+
+<a name="altertabrename"></a>
+
+<h3>ALTER TABLE RENAME</h3>
+
+<p> The RENAME TO syntax changes the name of <span class='yyterm'>table-name</span>
+to <span class='yyterm'>new-table-name</span>.
+This command 
+cannot be used to move a table between attached databases, only to rename 
+a table within the same database.
+If the table being renamed has triggers or indices, then these remain
+attached to the table after it has been renamed.
+
+<blockquote style='background-color: #ffd0d0;'>
+<b>Compatibility Note:</b>
+The behavior of ALTER TABLE when renaming a table was enhanced
+in versions 3.25.0 (2018-09-15) and 3.26.0 (2018-12-01)
+in order to carry the rename operation forward into triggers and
+views that reference the renamed table.  This is considered an
+improvement. Applications that depend on the older (and
+arguably buggy) behavior can use the
+<a href="pragma.html#pragma_legacy_alter_table">PRAGMA legacy_alter_table=ON</a> statement or the
+<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfiglegacyaltertable">SQLITE_DBCONFIG_LEGACY_ALTER_TABLE</a> configuration parameter
+on <a href="c3ref/db_config.html">sqlite3_db_config()</a> interface to make ALTER TABLE RENAME
+behave as it did prior to version 3.25.0.
+</blockquote>
+
+<p>
+Beginning with release 3.25.0 (2018-09-15), references to the table
+within trigger bodies and view definitions are also renamed.
+</p>
+
+<p> Prior to version 3.26.0 (2018-12-01), FOREIGN KEY references
+to a table that is renamed were only edited if the
+<a href="pragma.html#pragma_foreign_keys">PRAGMA foreign_keys=ON</a>, or in other words if
+<a href="foreignkeys.html">foreign key constraints</a> were begin enforced.  With
+<a href="pragma.html#pragma_foreign_keys">PRAGMA foreign_keys=OFF</a>, FOREIGN KEY constraints would not be changed
+when the table that the foreign key referred to (the "<a href="foreignkeys.html#parentchild">parent table</a>")
+was renamed.  Beginning with version 3.26.0, FOREIGN KEY constraints
+are always converted when a table is renamed, unless the
+<a href="pragma.html#pragma_legacy_alter_table">PRAGMA legacy_alter_table=ON</a> setting is engaged.  The following
+table summaries the difference:</p>
+
+<blockquote>
+<table border="1" cellpadding="2" cellspacing="0">
+<tr>
+<th>PRAGMA foreign_keys
+<th>PRAGMA legacy_alter_table
+<th><a href="foreignkeys.html#parentchild">Parent Table</a>
+references are updated
+<th>SQLite version
+<tr><td align="center">Off<td align="center">Off<td align="center">No<td align="center">&lt; 3.26.0
+<tr><td align="center">Off<td align="center">Off<td align="center">Yes<td align="center">&gt;= 3.26.0
+<tr><td align="center">On<td align="center">Off<td align="center">Yes<td align="center">all
+<tr><td align="center">Off<td align="center">On<td align="center">No<td align="center">all
+<tr><td align="center">On<td align="center">On<td align="center">Yes<td align="center">all
+</table>
+</blockquote>
+
+<a name="altertabmvcol"></a>
+
+<h3>ALTER TABLE RENAME COLUMN</h3>
+
+<p> The RENAME COLUMN TO syntax changes the
+<span class='yyterm'>column-name</span> of table <span class='yyterm'>table-name</span>
+into <span class='yyterm'>new-column-name</span>.  The column name is changed both
+within the table definition itself and also within all indexes, triggers,
+and views that reference the column.  If the column name change would
+result in a semantic ambiguity in a trigger or view, then the RENAME
+COLUMN fails with an error and no changes are applied.
+
+<a name="altertabaddcol"></a>
+
+<h3>ALTER TABLE ADD COLUMN</h3>
+
+<p> The ADD COLUMN syntax
+is used to add a new column to an existing table.
+The new column is always appended to the end of the list of existing columns.
+The <a href="syntax/column-def.html">column-def</a> rule defines the characteristics of the new column.
+The new column may take any of the forms permissible in a <a href="lang_createtable.html">CREATE TABLE</a>
+statement, with the following restrictions:
+<ul>
+<li>The column may not have a PRIMARY KEY or UNIQUE constraint.</li>
+<li>The column may not have a default value of CURRENT_TIME, CURRENT_DATE, 
+    CURRENT_TIMESTAMP, or an expression in parentheses.</li>
+<li>If a NOT NULL constraint is specified, then the column must have a
+    default value other than NULL.
+<li>If <a href="foreignkeys.html">foreign key constraints</a> are <a href="pragma.html#pragma_foreign_keys">enabled</a> and
+    a column with a <a href="syntax/foreign-key-clause.html">REFERENCES clause</a>
+    is added, the column must have a default value of NULL.
+</ul>
+
+<p>Note also that when adding a <a href="lang_createtable.html#ckconst">CHECK constraint</a>, the CHECK constraint
+is not tested against preexisting rows of the table.
+This can result in a table that contains data that
+is in violation of the CHECK constraint.  Future versions of SQLite might
+change to validate CHECK constraints as they are added.</p>
+
+<p>The ALTER TABLE command works by modifying the SQL text of the schema
+stored in the <a href="fileformat2.html#sqlite_master">sqlite_master table</a>.
+No changes are made to table content.
+Because of this,
+the execution time of the ALTER TABLE command is independent of
+the amount of data in the table.  The ALTER TABLE command runs as quickly
+on a table with 10 million rows as it does on a table with 1 row.
+</p>
+
+<p>After ADD COLUMN has been run on a database, that database will not
+be readable by SQLite version 3.1.3 (2005-02-20) and earlier.</p>
+
+<a name="otheralter"></a>
+
+<h3>Making Other Kinds Of Table Schema Changes</h3>
+
+<p> The only schema altering commands directly supported by SQLite are the
+"<a href="lang_altertable.html#altertabrename">rename table</a>", "<a href="lang_altertable.html#altertabmvcol">rename column</a>", and "<a href="lang_altertable.html#altertabaddcol">add column</a>" commands shown above.  
+However, applications
+can make other arbitrary changes to the format of a table using a simple
+sequence of operations.
+The steps to make arbitrary changes to the schema design of some table X
+are as follows:
+
+<ol>
+<li><p>
+If foreign key constraints are enabled, disable them using <a href="pragma.html#pragma_foreign_keys">PRAGMA foreign_keys=OFF</a>.
+
+<li><p>
+Start a transaction.
+
+<li><p>
+Remember the format of all indexes, triggers, and views associated with table X.
+This information will be needed in step 8 below.  One way to do this is
+to run a query like the following:
+SELECT type, sql FROM sqlite_master WHERE tbl_name='X'.
+
+<li><p>
+Use <a href="lang_createtable.html">CREATE TABLE</a> to construct a new table "new_X" that is in the desired
+revised format of table X.  Make sure that the name "new_X" does not collide
+with any existing table name, of course.
+
+<li><p>
+Transfer content from X into new_X using a statement
+like: INSERT INTO new_X SELECT ... FROM X.
+
+<li><p>
+Drop the old table X:  <a href="lang_droptable.html">DROP TABLE X</a>.
+
+<li><p>
+Change the name of new_X to X using: ALTER TABLE new_X RENAME TO X.
+
+<li><p>
+Use <a href="lang_createindex.html">CREATE INDEX</a>, <a href="lang_createtrigger.html">CREATE TRIGGER</a>, and <a href="lang_createview.html">CREATE VIEW</a>
+to reconstruct indexes, triggers, and views
+associated with table X.  Perhaps use the old format of the triggers,
+indexes, and views saved from step 3 above as a guide, making changes
+as appropriate for the alteration.
+
+<li><p>If any views refer to table X in a way that is affected by the
+schema change, then drop those views using <a href="lang_dropview.html">DROP VIEW</a> and recreate them
+with whatever changes are necessary to accommodate the schema change
+using <a href="lang_createview.html">CREATE VIEW</a>.
+
+<li><p>
+If foreign key constraints were originally enabled
+then run <a href="pragma.html#pragma_foreign_key_check">PRAGMA foreign_key_check</a> to verify that the schema
+change did not break any foreign key constraints.
+
+
+<li><p>
+Commit the transaction started in step 2.
+
+<li><p>
+If foreign keys constraints were originally enabled, reenable them now.
+</ol>
+
+<a name="caution"></a>
+
+<p>
+<b>Caution:</b>
+Take care to follow the procedure above precisely.  The boxes below
+summarize two procedures for modifying a table definition.  At first
+glance, they both appear to accomplish the same thing.  However, the
+procedure on the right does not always work, especially with the
+enhanced <a href="lang_altertable.html#altertabrename">rename table</a> capabilities added by versions 3.25.0 and
+3.26.0.  In the procedure on the right, the initial rename of the
+table to a temporary name might corrupt references to that table in
+triggers, views, and foreign key constraints.  The safe procedure on
+the left constructs the revised table definition using a new temporary
+name, then renames the table into its final name, which does not break
+links.
+
+<center>
+<table border="1" cellpadding="10" cellspacing="0">
+<tr>
+<td valign="top">
+<ol>
+<li>Create new table
+<li>Copy data
+<li>Drop old table
+<li>Rename new into old
+</ol>
+<td valign="top">
+<ol>
+<li>Rename old table
+<li>Create new table
+<li>Copy data
+<li>Drop old table
+</ol>
+<tr>
+<th>&uarr;<br>Correct
+<th>&uarr;<br>Incorrect
+</table>
+</center>
+
+<p>The 12-step <a href="lang_altertable.html#otheralter">generalized ALTER TABLE procedure</a>
+above will work even if the
+schema change causes the information stored in the table to change.
+So the full 12-step procedure above is appropriate for dropping a column,
+changing the order of columns, adding or removing a UNIQUE constraint
+or PRIMARY KEY, adding CHECK or FOREIGN KEY or NOT NULL constraints,
+or changing the datatype for a column, for example.  However, a simpler
+and faster procedure can optionally be used for
+some changes that do no affect the on-disk content in any way.
+The following simpler procedure is appropriate for removing
+CHECK or FOREIGN KEY or NOT NULL constraints,
+or adding, removing, or changing default values on
+a column.
+
+<ol>
+<lI><p> Start a transaction.
+
+<li><p> Run <a href="pragma.html#pragma_schema_version">PRAGMA schema_version</a> to determine the current schema
+version number.  This number will be needed for step 6 below.
+
+<li><p> Activate schema editing using 
+<a href="pragma.html#pragma_writable_schema">PRAGMA writable_schema=ON</a>.
+
+<li><p> Run an <a href="lang_update.html">UPDATE</a> statement to change the definition of table X
+in the <a href="fileformat2.html#sqlite_master">sqlite_master table</a>: 
+UPDATE sqlite_master SET sql=... WHERE type='table' AND name='X';
+<p><em>Caution:</em>  Making a change to the sqlite_master table like this will
+render the database corrupt and unreadable if the change contains
+a syntax error.  It is suggested that careful testing of the UPDATE
+statement be done on a separate blank database prior to using it on
+a database containing important data.
+
+<li><p> If the change to table X also affects other tables or indexes or
+triggers are views within schema, then run <a href="lang_update.html">UPDATE</a> statements to modify
+those other tables indexes and views too.  For example, if the name of
+a column changes, all FOREIGN KEY constraints, triggers, indexes, and
+views that refer to that column must be modified.
+<p><em>Caution:</em>  Once again, making changes to the sqlite_master 
+table like this will render the database corrupt and unreadable if the 
+change contains an error.  Carefully test this entire procedure
+on a separate test database prior to using it on
+a database containing important data and/or make backup copies of
+important databases prior to running this procedure.
+
+<li><p> Increment the schema version number using
+<a href="pragma.html#pragma_schema_version">PRAGMA schema_version=X</a> where X is one
+more than the old schema version number found in step 2 above.
+
+<li><p> Disable schema editing using 
+<a href="pragma.html#pragma_writable_schema">PRAGMA writable_schema=OFF</a>.
+
+<li><p> (Optional) Run <a href="pragma.html#pragma_integrity_check">PRAGMA integrity_check</a> to verify that the
+schema changes did not damage the database.
+
+<li><p> Commit the transaction started on step 1 above.
+</ol>
+
+<p>If some future version of SQLite adds new ALTER TABLE capabilities, 
+those capabilities will very likely use one of the two procedures
+outlined above.
+
+<a name="altertableishard"></a>
+
+<h3>Why ALTER TABLE is such a problem for SQLite</h3>
+
+<p>Most SQL database engines store the schema already parsed into
+various system tables.  On those database engines, ALTER TABLE merely 
+has to make modifications to the corresponding system tables.
+
+<p>SQLite is different in that it stores the schema
+in the <a href="fileformat2.html#sqlite_master">sqlite_master</a> table as the original text of the CREATE
+statements that define the schema.  Hence ALTER TABLE needs
+to revise the text of the CREATE statement.  Doing
+so can be tricky for certain "creative" schema designs.
+
+<p>The SQLite approach of storing the schema as text has advantages
+for an embedded relational database.  For one, it means that the
+schema takes up less space in the database file.  This is important
+since a common SQLite usage pattern is to have many small,
+separate database files instead of putting everything in one
+big global database file, which is the usual approach for client/server
+database engines.
+Since the schema is duplicated in each separate database file, it is
+important to keep the schema representation compact.
+
+<p>Storing the schema as text rather than as parsed tables also
+give flexibility to the implementation.  Since the internal parse
+of the schema is regenerated each time the database is opened, the
+internal representation of the schema can change from one release
+to the next.  This is important, as sometimes new features require
+enhancements to the internal schema representation.  Changing the
+internal schema representation would be much more difficult if the
+schema representation was exposed in the database file.  So, in other
+words, storing the schema as text helps maintain backwards 
+compatibility, and helps ensure that older database files can be
+read and written by newer versions of SQLite.
+
+<p>Storing the schema a text also makes the 
+<a href="fileformat2.html">SQLite database file format</a> easier to define, document, and 
+understand. This helps make SQLite database files a
+<a href="locrsf.html">recommended storage format</a> for long-term archiving of data.
+
+<p>The downside of storing schema a text is that it can make
+the schema tricky to modify.  And for that reason, the ALTER TABLE
+support in SQLite has traditionally lagged behind other SQL
+database engines that store their schemas as parsed system tables
+that are easier to modify.
+
+
+
+
+
+
+

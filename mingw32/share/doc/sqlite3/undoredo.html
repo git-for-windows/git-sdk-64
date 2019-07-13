@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Automatic Undo/Redo With SQLite</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+
+
+<h1 align="center">
+Automatic Undo/Redo Using SQLite
+</h1>
+
+<p>
+This page demonstrates how to use triggers to implement undo/redo 
+logic for an application that uses SQLite as its 
+<a href="appfileformat.html">application file format</a>.
+
+<h2>Object-Oriented Design</h2>
+
+<p>
+This design note considers the database to be a collection of objects.
+Each SQL table is a class.
+Each row is an instance of that class.
+There are, of course, other ways to interpret an SQL database schema,
+and the techniques described here work equally well under alternative
+interpretations, but an object-oriented view seems be more natural
+to most contemporary programmers.
+
+<h2>Capture Changes Using Triggers</h2>
+
+<p>
+The core idea is to create a special table (named "UNDOLOG" in the example)
+that holds information needed to undo/redo changes to the database. 
+For each class (table) in the database that wants to participate in 
+the undo/redo, triggers are created that cause entries to be made in 
+the UNDOLOG table for each DELETE, INSERT, and UPDATE of the participating
+class.
+The UNDOLOG entries consist of ordinary SQL statements the can be
+played back to reverse the changes.
+
+<p>
+For example, suppose you wanted undo/redo on a class (table)
+that looks like this:
+
+<blockquote><pre>
+CREATE TABLE ex1(a,b,c);
+</pre></blockquote>
+
+<p>
+Triggers to record changes to table EX1 might look like this:
+
+<blockquote><pre>
+CREATE TEMP TRIGGER ex1_it AFTER INSERT ON ex1 BEGIN
+  INSERT INTO undolog VALUES(NULL,'DELETE FROM ex1 WHERE rowid='||new.rowid);
+END;
+CREATE TEMP TRIGGER ex1_ut AFTER UPDATE ON ex1 BEGIN
+  INSERT INTO undolog VALUES(NULL,'UPDATE ex1
+     SET a='||quote(old.a)||',b='||quote(old.b)||',c='||quote(old.c)||'
+   WHERE rowid='||old.rowid);
+END;
+CREATE TEMP TRIGGER ex1_dt BEFORE DELETE ON ex1 BEGIN
+  INSERT INTO undolog VALUES(NULL,'INSERT INTO ex1(rowid,a,b,c)
+    VALUES('||old.rowid||','||quote(old.a)||','||quote(old.b)||
+           ','||quote(old.c)||')');
+END;
+</pre></blockquote>
+
+<p>
+After each INSERT on ex1, the ex1_it trigger constructs text of a 
+DELETE statement that will undo the INSERT. The ex1_ut trigger constructs 
+an UPDATE statement that will undo the effects of an UPDATE. 
+And the ex1_dt trigger constructs a statement that will undo the 
+effects of a DELETE.
+
+<p>
+Note the use of the <a href="lang_corefunc.html#quote">quote() SQL function</a> in these triggers.
+The quote() function converts its argument into a form 
+that is appropriate for inclusion in an SQL statement. Numeric values 
+come through unchanged. Single quotes are added before and after 
+strings and any internal single quotes are escaped.  BLOB values
+are rendered using SQL-standard hexadecimal BLOB notation.  The
+use of the quote() function ensures that the SQL statements used to
+undo and redo are always safe from SQL injection.
+
+<h2>Automatic Creation Of Triggers</h2>
+
+<p>
+Triggers such as the above could be entered manually, but that is tedious.
+An important feature of the technique demonstrated below is 
+that the triggers are generated automatically.
+
+<p>
+The implementation language for the example code is 
+<a href="http://www.tcl-lang.org">TCL</a>, though you can easily do the same thing 
+in another programming language.
+Remember that the code here is a demonstration of the technique,
+not a drop-in module that will automatically do everything for you.
+The demonstration code shown below is derived from actual code 
+in production use. But you will need to make changes to tailor it 
+to your application.
+
+<p>
+To activate the undo/redo logic, invoke the undo::activate command 
+with all classes (tables) that are to participate in the undo/redo 
+as arguments. Use undo::deactivate, undo::freeze, and undo::unfreeze 
+to control the state of the undo/redo mechanism.
+
+<p>
+The undo::activate command creates temporary triggers in the database
+that record all changes made to the tables named in the arguments.
+
+<h2>Application Interface</h2>
+
+<p>
+After a sequence of changes that define a single undo/redo step, 
+invoke the undo::barrier command to define the limit of that step. 
+In an interactive program, you can call undo::event after any change 
+and undo::barrier will be called automatically as an idle callback.
+
+<p>
+When the user presses the Undo button, invoke undo::undo. 
+Invoke undo::redo when the user presses the Redo button.
+
+<p>
+On each call to undo::undo or undo::redo, the undo/redo module 
+automatically invokes methods status_refresh and reload_all in 
+all toplevel namespaces. These methods should be defined to 
+reconstruct the display or otherwise update the state of the 
+program based on the undone/redone changes to the database.
+
+<p>
+The demonstration code below includes a status_refresh method 
+that grays-out or activates the Undo and Redo buttons and menu 
+entries depending on whether or not there is anything to be 
+undone or redone. You will need to redefine this method to 
+control the Undo and Redo buttons in your application.
+
+<p>
+The demonstration code assumes that the SQLite database is 
+opened used as a database object named "db".
+
+<h2>Example Code</h2>
+
+<blockquote><pre>
+# Everything goes in a private namespace
+namespace eval ::undo {
+
+# proc:  ::undo::activate TABLE ...
+# title: Start up the undo/redo system
+#
+# Arguments should be one or more database tables (in the database associated
+# with the handle "db") whose changes are to be recorded for undo/redo
+# purposes.
+#
+proc activate {args} {
+  variable _undo
+  if {$_undo(active)} return
+  eval _create_triggers db $args
+  set _undo(undostack) {}
+  set _undo(redostack) {}
+  set _undo(active) 1
+  set _undo(freeze) -1
+  _start_interval
+}
+
+# proc:  ::undo::deactivate
+# title: Halt the undo/redo system and delete the undo/redo stacks
+#
+proc deactivate {} {
+  variable _undo
+  if {!$_undo(active)} return
+  _drop_triggers db
+  set _undo(undostack) {}
+  set _undo(redostack) {}
+  set _undo(active) 0
+  set _undo(freeze) -1
+}
+
+# proc:  ::undo::freeze
+# title: Stop accepting database changes into the undo stack
+#
+# From the point when this routine is called up until the next unfreeze,
+# new database changes are rejected from the undo stack.
+#
+proc freeze {} {
+  variable _undo
+  if {!}; hd_resolve_one {info exists _undo(freeze)}; hd_puts {} return
+  if {$_undo(freeze)>=0} {error "recursive call to ::undo::freeze"}
+  set _undo(freeze) }; hd_resolve_one {db one {SELECT coalesce(max(seq),0) FROM undolog}}; hd_puts {
+}
+
+# proc:  ::undo::unfreeze
+# title: Begin accepting undo actions again.
+#
+proc unfreeze {} {
+  variable _undo
+  if {!}; hd_resolve_one {info exists _undo(freeze)}; hd_puts {} return
+  if {$_undo(freeze)<0} {error "called ::undo::unfreeze while not frozen"}
+  db eval "DELETE FROM undolog WHERE seq>$_undo(freeze)"
+  set _undo(freeze) -1
+}
+
+# proc:  ::undo::event
+# title: Something undoable has happened
+#
+# This routine is called whenever an undoable action occurs.  Arrangements
+# are made to invoke ::undo::barrier no later than the next idle moment.
+#
+proc event {} {
+  variable _undo
+  if {$_undo(pending)==""} {
+    set _undo(pending) }; hd_resolve_one {after idle ::undo::barrier}; hd_puts {
+  }
+}
+
+# proc:  ::undo::barrier
+# title: Create an undo barrier right now.
+#
+proc barrier {} {
+  variable _undo
+  catch {after cancel $_undo(pending)}
+  set _undo(pending) {}
+  if {!$_undo(active)} {
+    refresh
+    return
+  }
+  set end }; hd_resolve_one {db one {SELECT coalesce(max(seq),0) FROM undolog}}; hd_puts {
+  if {$_undo(freeze)>=0 && $end>$_undo(freeze)} {set end $_undo(freeze)}
+  set begin $_undo(firstlog)
+  _start_interval
+  if {$begin==$_undo(firstlog)} {
+    refresh
+    return
+  }
+  lappend _undo(undostack) }; hd_resolve_one {list $begin $end}; hd_puts {
+  set _undo(redostack) {}
+  refresh
+}
+
+# proc:  ::undo::undo
+# title: Do a single step of undo
+#
+proc undo {} {
+  _step undostack redostack
+}
+
+# proc:  ::undo::redo
+# title: Redo a single step
+#
+proc redo {} {
+  _step redostack undostack
+}
+
+# proc:   ::undo::refresh
+# title:  Update the status of controls after a database change
+#
+# The undo module calls this routine after any undo/redo in order to
+# cause controls gray out appropriately depending on the current state
+# of the database.  This routine works by invoking the status_refresh
+# module in all top-level namespaces.
+#
+proc refresh {} {
+  set body {}
+  foreach ns }; hd_resolve_one {namespace children ::}; hd_puts { {
+    if {}; hd_resolve_one {info proc ${ns}::status_refresh}; hd_puts {==""} continue
+    append body ${ns}::status_refresh\n
+  }
+  proc ::undo::refresh {} $body
+  refresh
+}
+
+# proc:   ::undo::reload_all
+# title:  Redraw everything based on the current database
+#
+# The undo module calls this routine after any undo/redo in order to
+# cause the screen to be completely redrawn based on the current database
+# contents.  This is accomplished by calling the "reload" module in
+# every top-level namespace other than ::undo.
+#
+proc reload_all {} {
+  set body {}
+  foreach ns }; hd_resolve_one {namespace children ::}; hd_puts { {
+    if {}; hd_resolve_one {info proc ${ns}::reload}; hd_puts {==""} continue
+    append body ${ns}::reload\n
+  }
+  proc ::undo::reload_all {} $body
+  reload_all
+}
+
+##############################################################################
+# The public interface to this module is above.  Routines and variables that
+# follow (and whose names begin with "_") are private to this module.
+##############################################################################
+
+# state information
+#
+set _undo(active) 0
+set _undo(undostack) {}
+set _undo(redostack) {}
+set _undo(pending) {}
+set _undo(firstlog) 1
+set _undo(startstate) {}
+
+
+# proc:  ::undo::status_refresh
+# title: Enable and/or disable menu options a buttons
+#
+proc status_refresh {} {
+  variable _undo
+  if {!$_undo(active) || }; hd_resolve_one {llength $_undo(undostack)}; hd_puts {==0} {
+    .mb.edit entryconfig Undo -state disabled
+    .bb.undo config -state disabled
+  } else {
+    .mb.edit entryconfig Undo -state normal
+    .bb.undo config -state normal
+  }
+  if {!$_undo(active) || }; hd_resolve_one {llength $_undo(redostack)}; hd_puts {==0} {
+    .mb.edit entryconfig Redo -state disabled
+    .bb.redo config -state disabled
+  } else {
+    .mb.edit entryconfig Redo -state normal
+    .bb.redo config -state normal
+  }
+}
+
+# xproc:  ::undo::_create_triggers DB TABLE1 TABLE2 ...
+# title:  Create change recording triggers for all tables listed
+#
+# Create a temporary table in the database named "undolog".  Create
+# triggers that fire on any insert, delete, or update of TABLE1, TABLE2, ....
+# When those triggers fire, insert records in undolog that contain
+# SQL text for statements that will undo the insert, delete, or update.
+#
+proc _create_triggers {db args} {
+  catch {$db eval {DROP TABLE undolog}}
+  $db eval {CREATE TEMP TABLE undolog(seq integer primary key, sql text)}
+  foreach tbl $args {
+    set collist }; hd_resolve_one {$db eval "pragma table_info($tbl)"}; hd_puts {
+    set sql "CREATE TEMP TRIGGER _${tbl}_it AFTER INSERT ON $tbl BEGIN\n"
+    append sql "  INSERT INTO undolog VALUES(NULL,"
+    append sql "'DELETE FROM $tbl WHERE rowid='||new.rowid);\nEND;\n"
+
+    append sql "CREATE TEMP TRIGGER _${tbl}_ut AFTER UPDATE ON $tbl BEGIN\n"
+    append sql "  INSERT INTO undolog VALUES(NULL,"
+    append sql "'UPDATE $tbl "
+    set sep "SET "
+    foreach {x1 name x2 x3 x4 x5} $collist {
+      append sql "$sep$name='||quote(old.$name)||'"
+      set sep ","
+    }
+    append sql " WHERE rowid='||old.rowid);\nEND;\n"
+
+    append sql "CREATE TEMP TRIGGER _${tbl}_dt BEFORE DELETE ON $tbl BEGIN\n"
+    append sql "  INSERT INTO undolog VALUES(NULL,"
+    append sql "'INSERT INTO ${tbl}(rowid"
+    foreach {x1 name x2 x3 x4 x5} $collist {append sql ,$name}
+    append sql ") VALUES('||old.rowid||'"
+    foreach {x1 name x2 x3 x4 x5} $collist {append sql ,'||quote(old.$name)||'}
+    append sql ")');\nEND;\n"
+
+    $db eval $sql
+  }
+}
+
+# xproc:  ::undo::_drop_triggers DB
+# title:  Drop all of the triggers that _create_triggers created
+#
+proc _drop_triggers {db} {
+  set tlist }; hd_resolve_one {$db eval {SELECT name FROM sqlite_temp_master
+                       WHERE type='trigger'}}; hd_puts {
+  foreach trigger $tlist {
+    if {!}; hd_resolve_one {regexp {_.*_(i|u|d)t$} $trigger}; hd_puts {} continue
+    $db eval "DROP TRIGGER $trigger;"
+  }
+  catch {$db eval {DROP TABLE undolog}}
+}
+
+# xproc: ::undo::_start_interval
+# title: Record the starting conditions of an undo interval
+#
+proc _start_interval {} {
+  variable _undo
+  set _undo(firstlog) }; hd_resolve_one {db one {SELECT coalesce(max(seq),0)+1 FROM undolog}}; hd_puts {
+}
+
+# xproc: ::undo::_step V1 V2
+# title: Do a single step of undo or redo
+#
+# For an undo V1=="undostack" and V2=="redostack".  For a redo,
+# V1=="redostack" and V2=="undostack".
+#
+proc _step {v1 v2} {
+  variable _undo
+  set op }; hd_resolve_one {lindex $_undo($v1) end}; hd_puts {
+  set _undo($v1) }; hd_resolve_one {lrange $_undo($v1) 0 end-1}; hd_puts {
+  foreach {begin end} $op break
+  db eval BEGIN
+  set q1 "SELECT sql FROM undolog WHERE seq>=$begin AND seq<=$end
+          ORDER BY seq DESC"
+  set sqllist }; hd_resolve_one {db eval $q1}; hd_puts {
+  db eval "DELETE FROM undolog WHERE seq>=$begin AND seq<=$end"
+  set _undo(firstlog) }; hd_resolve_one {db one {SELECT coalesce(max(seq),0)+1 FROM undolog}}; hd_puts {
+  foreach sql $sqllist {
+    db eval $sql
+  }
+  db eval COMMIT
+  reload_all
+
+  set end }; hd_resolve_one {db one {SELECT coalesce(max(seq),0) FROM undolog}}; hd_puts {
+  set begin $_undo(firstlog)
+  lappend _undo($v2) }; hd_resolve_one {list $begin $end}; hd_puts {
+  _start_interval
+  refresh
+}
+
+
+# End of the ::undo namespace
+}
+</pre></blockquote>
+

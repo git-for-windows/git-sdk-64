@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: Aggregate Functions</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>Aggregate Functions</h2></div>
+
+
+<p>
+The aggregate functions shown below are available by default.  Additional
+aggregate functions written in C may be added using the 
+<a href="c3ref/create_function.html">sqlite3_create_function()</a></a>
+API.</p>
+
+<p>
+In any aggregate function that takes a single argument, that argument
+can be preceded by the keyword DISTINCT.  In such cases, duplicate
+elements are filtered before being passed into the aggregate function.
+For example, the function "count(distinct X)" will return the number
+of distinct values of column X instead of the total number of non-null
+values in column X.
+</p>
+
+<style>
+#listtab33 tr td {vertical-align:top;}
+</style>
+<table id='listtab33' width='100%'></table>
+<script>
+var listitems33 = [{"u":"lang_aggfunc.html#avg","x":"avg(X)","s":0},
+{"u":"lang_aggfunc.html#count","x":"count(*)","s":0},
+{"u":"lang_aggfunc.html#count","x":"count(X)","s":0},
+{"u":"lang_aggfunc.html#groupconcat","x":"group_concat(X)","s":0},
+{"u":"lang_aggfunc.html#groupconcat","x":"group_concat(X,Y)","s":0},
+{"u":"lang_corefunc.html#maxoreunc","x":"max(X)","s":0},
+{"u":"lang_corefunc.html#minoreunc","x":"min(X)","s":0},
+{"u":"lang_aggfunc.html#sumunc","x":"sum(X)","s":0},
+{"u":"lang_aggfunc.html#sumunc","x":"total(X)","s":0}];
+var j = 0;
+var w = Math.max(document.documentElement.clientWidth,  window.innerWidth || 0);
+var nCol = Math.floor(w/225);
+if(nCol<=0) nCol=1;
+var nRow = Math.ceil((listitems33.length+1)/nCol);
+var h="<tr><td><ul class='multicol_list'>"
+var ea
+for(var i=0; i<listitems33.length; i++){
+  if( (++j)>nRow ){
+    h += "</ul></td>\n<td><ul class='multicol_list'>\n";
+    j = 1;
+  }
+  if(listitems33[i].u=="" || listitems33[i].s==2){
+    h += "<li>"
+    ea = ""
+  }else{
+    h += "<li><a href='";
+    h += listitems33[i].u;
+    h += "'>";
+    ea = "</a>"
+  }
+  if(listitems33[i].s==2 || listitems33[i].s==3) h += "<s>"
+  h += listitems33[i].x;
+  if(listitems33[i].s==2 || listitems33[i].s==3) h += "</s>"
+  h += ea
+  if(listitems33[i].s==1) h += "<small><i>(exp)</i></small>\n";
+  if(listitems33[i].s==3) h += "&sup1\n";
+  if(listitems33[i].s==4) h += "&sup2\n";
+  if(listitems33[i].s==5) h += "&sup3\n";
+}
+document.getElementById("listtab33").innerHTML = h;
+</script>
+<hr class='xhr'>
+<dl>
+<a name="avg"></a>
+<dt><p><b>avg(<i>X</i>)</b></dt><dd><p>
+  The avg() function
+  returns the average value of all non-NULL <i>X</i> within a
+  group.  String and BLOB values that do not look like numbers are
+  interpreted as 0.
+  The result of avg() is always a floating point value as long as
+  at there is at least one non-NULL input even if all
+  inputs are integers.  The result of avg() is NULL if and only if
+  there are no non-NULL inputs.  
+</dd>
+<a name="count"></a>
+<dt><p><b>count(<i>X</i>)<br />count(*)</b></dt><dd><p>
+  The count(X) function returns
+  a count of the number of times
+  that <i>X</i> is not NULL in a group.  The count(*) function
+  (with no arguments) returns the total number of rows in the group.
+</dd>
+<a name="groupconcat"></a>
+<dt><p><b>group_concat(<i>X</i>)<br />group_concat(<i>X</i>,<i>Y</i>)</b></dt><dd><p>
+  The group_concat() function returns
+  a string which is the concatenation of
+  all non-NULL values of <i>X</i>.  If parameter <i>Y</i> is present then
+  it is used as the separator
+  between instances of <i>X</i>.  A comma (",") is used as the separator
+  if <i>Y</i> is omitted.  The order of the concatenated elements is
+  arbitrary.
+</dd>
+<a name="maxggunc"></a>
+<dt><p><b>max(<i>X</i>)</b></dt><dd><p>
+  The max() aggregate function
+  returns the maximum value of all values in the group.
+  The maximum value is the value that would be returned last in an
+  ORDER BY on the same column.  Aggregate max() returns NULL 
+  if and only if there are no non-NULL values in the group.
+</dd>
+<a name="minggunc"></a>
+<dt><p><b>min(<i>X</i>)</b></dt><dd><p>
+  The min() aggregate function
+  returns the minimum non-NULL value of all values in the group.
+  The minimum value is the first non-NULL value that would appear
+  in an ORDER BY of the column.
+  Aggregate min() returns NULL if and only if there are no non-NULL
+  values in the group.
+</dd>
+<a name="sumunc"></a>
+<dt><p><b>sum(<i>X</i>)<br />total(<i>X</i>)</b></dt><dd><p>
+  The sum() and total() aggregate functions
+  return sum of all non-NULL values in the group.
+  If there are no non-NULL input rows then sum() returns
+  NULL but total() returns 0.0.
+  NULL is not normally a helpful result for the sum of no rows
+  but the SQL standard requires it and most other
+  SQL database engines implement sum() that way so SQLite does it in the
+  same way in order to be compatible.   The non-standard total() function
+  is provided as a convenient way to work around this design problem
+  in the SQL language.</p>
+
+  <p>The result of total() is always a floating point value.
+  The result of sum() is an integer value if all non-NULL inputs are integers.
+  If any input to sum() is neither an integer or a NULL
+  then sum() returns a floating point value
+  which might be an approximation to the true sum.</p>
+
+  <p>Sum() will throw an "integer overflow" exception if all inputs
+  are integers or NULL
+  and an integer overflow occurs at any point during the computation.
+  Total() never throws an integer overflow.
+</dd>
+</dl>
+

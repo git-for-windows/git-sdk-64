@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Internal Versus External BLOBs</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+
+<body>
+<h1 align="center">
+Internal Versus External BLOBs in SQLite
+</h1>
+
+<p>
+If you have a database of large BLOBs, do you get better read performance
+when you store the complete
+BLOB content directly in the database or is it faster to store each BLOB
+in a separate file and store just the corresponding filename in the database?
+</p>
+
+<p>
+To try to answer this, we ran 49 test cases with various BLOB sizes and
+SQLite page sizes on a Linux workstation (Ubuntu circa 2011 with the
+Ext4 filesystem on a fast SATA disk).
+For each test case, a database was created that contains 100MB of BLOB
+content.  The sizes of the BLOBs ranged from 10KB to 1MB.  The number
+of BLOBs varied in order to keep the total BLOB content at about 100MB.
+(Hence, 100 BLOBs for the 1MB size and 10000 BLOBs for the 10K size and
+so forth.)  SQLite <a href="releaselog/3_7_8.html">version 3.7.8</a> (2011-09-19) was used.
+</p>
+
+<blockquote><i>
+Update: New measurements for SQLite version 3.19.0
+(2017-05-22) show that SQLite is about 
+<a href="fasterthanfs.html">35% faster</a> than direct disk I/O for 
+both reads and writes of 10KB blobs.
+</i></blockquote>
+
+<p>
+The matrix below shows the time needed to read BLOBs stored in separate files
+divided by the time needed to read BLOBs stored entirely in the database.  
+Hence, for numbers larger than 1.0, it is faster to store the BLOBs directly 
+in the database.  For numbers smaller than 1.0, it is faster to store the BLOBs
+in separate files.
+</p>
+
+<p>
+In every case, the pager cache size was adjusted to keep the amount of
+cache memory at about 2MB.  
+For example, a 2000 page cache was used for 1024 byte pages
+and a 31 page cache was used for 65536 byte pages.
+The BLOB values were read in a random order.
+</p>
+
+<table border="1" cellpadding="5" cellspacing="0" align="center">
+<tr>
+<th rowspan="2">Database Page Size<th colspan="7">BLOB size
+<tr>
+<th>10k<th>20k<th>50k<th>100k<th>200k<th>500k<th>1m
+
+<tr>
+<td>1024<td bgcolor="#b1d3a8">1.535<td bgcolor="#b1d3a8">1.020<td bgcolor="#ffc0d0">0.608<td bgcolor="#ffc0d0">0.456<td bgcolor="#ffc0d0">0.330<td bgcolor="#ffc0d0">0.247<td bgcolor="#ffc0d0">0.233
+
+<tr>
+<td>2048<td bgcolor="#b1d3a8">2.004<td bgcolor="#b1d3a8">1.437<td bgcolor="#ffc0d0">0.870<td bgcolor="#ffc0d0">0.636<td bgcolor="#ffc0d0">0.483<td bgcolor="#ffc0d0">0.372<td bgcolor="#ffc0d0">0.340
+
+<tr>
+<td>4096<td bgcolor="#b1d3a8">2.261<td bgcolor="#b1d3a8">1.886<td bgcolor="#b1d3a8">1.173<td bgcolor="#ffc0d0">0.890<td bgcolor="#ffc0d0">0.701<td bgcolor="#ffc0d0">0.526<td bgcolor="#ffc0d0">0.487
+
+<tr>
+<td>8192<td bgcolor="#b1d3a8">2.240<td bgcolor="#b1d3a8">1.866<td bgcolor="#b1d3a8">1.334<td bgcolor="#b1d3a8">1.035<td bgcolor="#ffc0d0">0.830<td bgcolor="#ffc0d0">0.625<td bgcolor="#ffc0d0">0.720
+
+<tr>
+<td>16384<td bgcolor="#b1d3a8">2.439<td bgcolor="#b1d3a8">1.757<td bgcolor="#b1d3a8">1.292<td bgcolor="#b1d3a8">1.023<td bgcolor="#ffc0d0">0.829<td bgcolor="#ffc0d0">0.820<td bgcolor="#ffc0d0">0.598
+
+<tr>
+<td>32768<td bgcolor="#b1d3a8">1.878<td bgcolor="#b1d3a8">1.843<td bgcolor="#b1d3a8">1.296<td bgcolor="#ffc0d0">0.981<td bgcolor="#ffc0d0">0.976<td bgcolor="#ffc0d0">0.675<td bgcolor="#ffc0d0">0.613
+
+<tr>
+<td>65536<td bgcolor="#b1d3a8">1.256<td bgcolor="#b1d3a8">1.255<td bgcolor="#b1d3a8">1.339<td bgcolor="#ffc0d0">0.983<td bgcolor="#ffc0d0">0.769<td bgcolor="#ffc0d0">0.687<td bgcolor="#ffc0d0">0.609
+
+</table>
+
+
+<p>We deduce the following rules of thumb from the matrix above:</p>
+
+<ul>
+<li><p>
+A database page size of 8192 or 16384 gives the best performance
+for large BLOB I/O.
+
+<li><p>For BLOBs smaller than 100KB, reads are faster when
+the BLOBs are stored directly in the database file.  For BLOBs larger than
+100KB, reads from a separate file are faster.
+</ul>
+
+<p>Of course, your mileage may vary depending on hardware, filesystem,
+and operating system.  Double-check these figures on target hardware
+before committing to a particular design.
+

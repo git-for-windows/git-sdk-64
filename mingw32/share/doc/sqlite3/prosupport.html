@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Pro Support</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+
+
+
+<h1 align="center">
+Professional Support &amp; Extension Products
+</h1>
+
+
+
+<h2>Support
+<font size=2>(<a href="#detail">details below</a>)</font></h2>
+
+<div class='desktoponly'>
+<table border=0 cellspacing=20 width='100%'>
+<tr><td valign=top><b>1.</b></td><td valign=top><b>Public Mailing List.</b> 
+  Help and advice via email from a world-wide
+  community of experts.
+</td>
+<td valign=top width=165>Free</td>
+<td valign=top align=left width=145><a class='button' href='http://www.mail-archive.com/sqlite-users%40mailinglists.sqlite.org/'>Archives</a><br>
+<a class='button' href='http://sqlite.org:8080/cgi-bin/mailman/listinfo/sqlite-users'>Sign-up</a></td>
+</tr>
+<tr><td valign=top><b>2.</b></td><td valign=top><b>Annual Maintenance Subscription.</b> 
+  Private, expert email advice from the developers of SQLite.
+</td>
+<td valign=top width=165>$1500/year</td>
+<td valign=top align=left width=145><a class='button' href='https://www.hwaci.com/sw/sqlite/ams.html'>More Info</a><br>
+<a class='button' href='https://www.hwaci.com/cgi-bin/sams-step1'>Buy Now!</a></td>
+</tr>
+<tr><td valign=top><b>3.</b></td><td valign=top><b>Technical Support.</b> 
+  High-priority email and phone support directly from the SQLite developers.
+  Guaranteed response time available as an option.
+</td>
+<td valign=top width=165>$8K-50K/year</td>
+<td valign=top align=left width=145><a class='button' href='https://www.hwaci.com/sw/sqlite/tech.html'>More Info</a><br>
+<a class='button' href='https://www.hwaci.com/sw/sqlite/contact.html'>Request A Quote</a></td>
+</tr>
+<tr><td valign=top><b>4.</b></td><td valign=top><b>SQLite Consortium Membership.</b> 
+  Premium enterprise support including on-site visits and
+  access to all proprietary extensions and test suites.
+</td>
+<td valign=top width=165>$85K/year</td>
+<td valign=top align=left width=145><a class='button' href='https://www.hwaci.com/sw/sqlite/member.html'>More Info</a><br>
+<a class='button' href='https://www.hwaci.com/sw/sqlite/contact.html'>Request A Quote</a></td>
+</tr>
+</table></div>
+<div class='mobileonly'>
+<ol>
+<li value=1><p>
+<b>Public Mailing List.</b> 
+  Help and advice via email from a world-wide
+  community of experts.
+
+<p>Cost: Free
+<p><a class='button' href='http://www.mail-archive.com/sqlite-users%40mailinglists.sqlite.org/'>Archives</a>
+<a class='button' href='http://sqlite.org:8080/cgi-bin/mailman/listinfo/sqlite-users'>Sign-up</a>
+</li>
+<li value=2><p>
+<b>Annual Maintenance Subscription.</b> 
+  Private, expert email advice from the developers of SQLite.
+
+<p>Cost: $1500/year
+<p><a class='button' href='https://www.hwaci.com/sw/sqlite/ams.html'>More Info</a>
+<a class='button' href='https://www.hwaci.com/cgi-bin/sams-step1'>Buy Now!</a>
+</li>
+<li value=3><p>
+<b>Technical Support.</b> 
+  High-priority email and phone support directly from the SQLite developers.
+  Guaranteed response time available as an option.
+
+<p>Cost: $8K-50K/year
+<p><a class='button' href='https://www.hwaci.com/sw/sqlite/tech.html'>More Info</a>
+<a class='button' href='https://www.hwaci.com/sw/sqlite/contact.html'>Request A Quote</a>
+</li>
+<li value=4><p>
+<b>SQLite Consortium Membership.</b> 
+  Premium enterprise support including on-site visits and
+  access to all proprietary extensions and test suites.
+
+<p>Cost: $85K/year
+<p><a class='button' href='https://www.hwaci.com/sw/sqlite/member.html'>More Info</a>
+<a class='button' href='https://www.hwaci.com/sw/sqlite/contact.html'>Request A Quote</a>
+</li>
+</ol></div>
+
+
+<h2>Licenses
+<font size=2>(<a href="#ext">details below</a>)</font></h2>
+
+<div class='desktoponly'>
+<table border=0 cellspacing=20 width='100%'>
+<tr><td valign=top><b>5.</b></td><td valign=top><b>SQLite License.</b> 
+  Warranty of title and perpetual right-to-use for the SQLite source code. 
+</td>
+<td valign=top width=165>$6000 one time fee</td>
+<td valign=top align=left width=145><a class='button' href='https://www.sqlite.org/copyright.html'>More Info</a><br>
+<a class='button' href='https://www.hwaci.com/cgi-bin/license-step1'>Buy Now!</a></td>
+</tr>
+<tr><td valign=top><b>6.</b></td><td valign=top><b>SQLite Encryption Extension (SEE).</b> 
+   A drop-in replacement for public-domain SQLite source code that has 
+   the added ability to read/write AES-encrypted databases. 
+</td>
+<td valign=top width=165>$2000 one time fee</td>
+<td valign=top align=left width=145><a class='button' href='https://www.hwaci.com/sw/sqlite/see.html'>More Info</a><br>
+<a class='button' href='https://www.hwaci.com/cgi-bin/see-step1'>Buy Now!</a></td>
+</tr>
+<tr><td valign=top><b>7.</b></td><td valign=top><b>Compressed And Encrypted Read-Only Database (CEROD).</b> 
+   A drop-in replacement for public-domain SQLite source code
+   that has the added ability to read database that has been both 
+   compressed and encrypted. 
+</td>
+<td valign=top width=165>$2000 one time fee</td>
+<td valign=top align=left width=145><a class='button' href='https://www.hwaci.com/sw/sqlite/cerod.html'>More Info</a><br>
+<a class='button' href='https://www.hwaci.com/cgi-bin/scerod-step1'>Buy Now!</a></td>
+</tr>
+<tr><td valign=top><b>8.</b></td><td valign=top><b>The ZIPVFS Read/Write Compressed Database Extension.</b> 
+   The ZIPVFS extension automatically compresses and encrypts
+   your data as it is written to disk, and decompressed and decrypts
+   it while reading.
+</td>
+<td valign=top width=165>$4000 one time fee</td>
+<td valign=top align=left width=145><a class='button' href='https://www.hwaci.com/sw/sqlite/zipvfs.html'>More Info</a><br>
+<a class='button' href='https://www.hwaci.com/cgi-bin/zipvfs-step1'>Buy Now!</a></td>
+</tr>
+</table></div>
+<div class='mobileonly'>
+<ol>
+<li value=5><p>
+<b>SQLite License.</b> 
+  Warranty of title and perpetual right-to-use for the SQLite source code. 
+
+<p>Cost: $6000 one time fee
+<p><a class='button' href='https://www.sqlite.org/copyright.html'>More Info</a>
+<a class='button' href='https://www.hwaci.com/cgi-bin/license-step1'>Buy Now!</a>
+</li>
+<li value=6><p>
+<b>SQLite Encryption Extension (SEE).</b> 
+   A drop-in replacement for public-domain SQLite source code that has 
+   the added ability to read/write AES-encrypted databases. 
+
+<p>Cost: $2000 one time fee
+<p><a class='button' href='https://www.hwaci.com/sw/sqlite/see.html'>More Info</a>
+<a class='button' href='https://www.hwaci.com/cgi-bin/see-step1'>Buy Now!</a>
+</li>
+<li value=7><p>
+<b>Compressed And Encrypted Read-Only Database (CEROD).</b> 
+   A drop-in replacement for public-domain SQLite source code
+   that has the added ability to read database that has been both 
+   compressed and encrypted. 
+
+<p>Cost: $2000 one time fee
+<p><a class='button' href='https://www.hwaci.com/sw/sqlite/cerod.html'>More Info</a>
+<a class='button' href='https://www.hwaci.com/cgi-bin/scerod-step1'>Buy Now!</a>
+</li>
+<li value=8><p>
+<b>The ZIPVFS Read/Write Compressed Database Extension.</b> 
+   The ZIPVFS extension automatically compresses and encrypts
+   your data as it is written to disk, and decompressed and decrypts
+   it while reading.
+
+<p>Cost: $4000 one time fee
+<p><a class='button' href='https://www.hwaci.com/sw/sqlite/zipvfs.html'>More Info</a>
+<a class='button' href='https://www.hwaci.com/cgi-bin/zipvfs-step1'>Buy Now!</a>
+</li>
+</ol></div>
+
+
+<h2>Special Services
+<font size=2>(<a href="#th3">details below</a>)</font></h2>
+
+<div class='desktoponly'>
+<table border=0 cellspacing=20 width='100%'>
+<tr><td valign=top><b>9.</b></td><td valign=top><b>TH3 Testing Support.</b> 
+  The <a href="https://sqlite.org/th3.html">TH3 test harness</a>
+  is an aviation-grade test suite for SQLite. SQLite developers 
+  can run TH3 on specialized hardware and/or using specialized
+  compile-time options, according to customer specification, 
+  either remotely or on customer premises. Pricing for this 
+  services is on a case-by-case basis depending on requirements.
+</td>
+<td valign=top width=165>call</td>
+<td valign=top align=left width=145><a class='button' href='https://www.sqlite.org/th3.html'>More Info</a><br>
+<a class='button' href='https://www.hwaci.com/sw/sqlite/contact.html'>Request A Quote</a></td>
+</tr>
+</table></div>
+<div class='mobileonly'>
+<ol>
+<li value=9><p>
+<b>TH3 Testing Support.</b> 
+  The <a href="https://sqlite.org/th3.html">TH3 test harness</a>
+  is an aviation-grade test suite for SQLite. SQLite developers 
+  can run TH3 on specialized hardware and/or using specialized
+  compile-time options, according to customer specification, 
+  either remotely or on customer premises. Pricing for this 
+  services is on a case-by-case basis depending on requirements.
+
+<p>Cost: call
+<p><a class='button' href='https://www.sqlite.org/th3.html'>More Info</a>
+<a class='button' href='https://www.hwaci.com/sw/sqlite/contact.html'>Request A Quote</a>
+</li>
+</ol></div>
+
+
+<a name="detail"></a>
+<h2>Further Information</h2>
+
+<p>SQLite is free and works great.
+Most people use SQLite without
+any kind of license or support.</p>
+
+<p>Free support for SQLite is available on the public
+SQLite mailing list: 
+<a href="mailto:sqlite-users@mailinglists.sqlite.org">sqlite-users@mailinglists.sqlite.org</a>.
+The mailing list is monitored by a large
+community of experts, including the core SQLite development team,
+who are able to resolve just about
+any problems with SQLite that you are likely to have.</p>
+
+<p>You can browse the 
+<a href="http://www.mail-archive.com/sqlite-users%40mailinglists.sqlite.org/">
+mailing list archives</a> or
+<a href="http://mailinglists.sqlite.org/cgi-bin/mailman/listinfo/sqlite-users">
+sign-up</a> as a mailing list member.
+To send a question to the mailing list, it is recommended that you
+<a href="http://mailinglists.sqlite.org/cgi-bin/mailman/listinfo/sqlite-users">
+sign-up</a>, but you can simply send an email message to
+<a href="mailto:sqlite-users@mailinglists.sqlite.org">sqlite-users@mailinglists.sqlite.org</a> and
+your question will probably appear on the mailing list in about 24 hours.
+(Questions from non-members are moderated, which is the reason for the
+24-hour delay.)
+
+<p>If you do not want to discuss your issues on a public and open forum, an
+<a href="https://www.hwaci.com/sw/sqlite/ams.html">Annual Maintenance 
+Subscription</a> or "AMS" might
+serve your needs better.
+An AMS entitles you to private email support directly from the developers of
+SQLite.  The level of support with an AMS is similar to the support one
+gets from the public mail list except that an AMS includes a unilateral 
+promise of non-disclosure, so with an AMS you can discuss your issues
+with the SQLite developers in private, without the whole world watching.
+An AMS costs $1500 per year.</p>
+
+<p>Users with more advanced support needs can opt for a
+<a href="https://www.hwaci.com/sw/sqlite/tech.html">Technical Support
+Agreement</a>.
+Technical support agreements are customized to the needs of each
+individual client, but generally include direct telephone support
+and priority handling of issues and bugs.  Guaranteed response time
+is available as an option.  The cost of
+technical support varies but is generally
+in the range of $8000 to $35000 per year.</p>
+
+<p>If SQLite is "mission critical" to your company, then you may
+want to becoming an 
+<a href="https://www.hwaci.com/sw/sqlite/member.html">SQLite Consortium 
+Member</a>.  The SQLite
+Consortium is a collaboration of companies who sponsor ongoing development
+of SQLite in exchange for enterprise-level technical support, on-site
+visits from the SQLite developers, unlimited access to all licensed
+products, and strong guarantees that SQLite will remain in the public
+domain, free and independent, and will not come under the control of
+a competitor.</p>
+
+<a name="ext"></a>
+<h2>Software Licenses</h2>
+
+<p>The SQLite source code is in the 
+<a href="https://www.sqlite.org/copyright.html">public domain</a>,
+and is free for use
+by anyone and for any purpose.  No license is required.  However, some
+users desire a license so that they can have warranty of title, or just
+because their company lawyers say they need one.  A
+<a href="https://www.hwaci.com/cgi-bin/license-step1">perpetual license</a> 
+and warranty
+of title for the core SQLite source code is available for this purpose.</p>
+
+<p>The 
+<a href="https://www.hwaci.com/cgi-bin/see-step1">SQLite Encryption
+Extension (SEE)</a>,
+the <a href="https://www.hwaci.com/cgi-bin/zipvfs-step1">ZIPVFS Extension</a>,
+and the <a href="https://www.hwaci.com/cgi-bin/scerod-step1">Compressed and
+Encrypted ReadOnly Database (CEROD)</a> extension are enhanced versions 
+of SQLite that handle encrypted
+and/or compressed databases.  SEE can read and write encrypted databases.
+SEE encrypts all database content, including metadata, so that the database
+file appears as white noise.  ZIPVFS 
+compresses the database on-the-fly using application-supplied 
+compression and decompression functions.
+CEROD reads a compressed database that is
+also optionally encrypted.  All of SEE, ZIPVFS, and CEROD are 
+supplied in source code form only; the licensee is responsible for 
+compiling the products for their chosen platform.  It is not difficult 
+to compile any of these extension.  All products come in the form of an
+<a href="https://www.sqlite.org/amalgamation.html">amalgamated source file</a>
+named "sqlite3.c".  So compiling SEE, ZIPVFS, or CEROD into an application 
+is simply a matter of substituting the SEE-, ZIPVFS-, or CEROD-enabled sqlite3.c 
+source file in place of the public-domain sqlite3.c source file and recompiling.
+Licenses for SEE, ZIPVFS, and CEROD are perpetual.
+All three extension can read and write ordinary,
+uncompressed and unencrypted database files.</p>
+
+<a name="th3"></a>
+<h2>Testing Services</h2>
+
+<p>The <a href="https://www.sqlite.org/th3.html">Test Harness #3 (TH3)</a> is 
+a suite of test cases for SQLite that provide 100% branch test coverage
+(and 100% modified condition/decision coverage) for the core SQLite in
+an as-deployed configuration using only published and documented interfaces.
+TH3 is designed for use with embedded devices, and is compatible with
+DO-178B.  Every release of the public-domain SQLite is tested using TH3,
+and so all users benefit from the TH3 tests.  But the TH3 tests are not
+themselves public.  Hardware or system manufactures who want to have
+TH3 test run on their systems can negotiate a service agreement to have
+the SQLite Developers run those tests.</p>
+
+<h2>About The SQLite Team</h2>
+
+<p>Paid support options and products are provided by
+Hipp, Wyrick &amp; Company, Inc., (Hwaci), a 
+<a href="http://en.wikipedia.org/wiki/Georgia_(U.S._state)">Georgia</a>
+corporation 
+with headquarters in
+<a href="http://en.wikipedia.org/wiki/Charlotte,_North_Carolina">
+Charlotte, North Carolina</a> and has been in business since
+1992.
+Hwaci has an international team of
+employees and associates representing the best available talent.  
+We are a 100% engineering company.  There is
+no sales staff.
+Our goal is to provide outstanding service and honest advice
+without spin or sales-talk.</p>
+
+<p>Hwaci is a small company but it is
+also closely held and debt-free and has low
+fixed costs, which means that it is largely immune to buy-outs,
+take-overs, and market down-turns.  Hwaci intends to 
+continue operating in its current form, and at roughly its current 
+size until at least the year 2050.
+We expect to be here when you need us,
+even if that need is many years in the future.</p>
+</body></html>
+

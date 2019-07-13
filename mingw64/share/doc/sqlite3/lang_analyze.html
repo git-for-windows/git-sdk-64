@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: ANALYZE</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>ANALYZE</h2></div><p><b><a href="syntax/analyze-stmt.html">analyze-stmt:</a></b>
+<button id='x1125' onclick='hideorshow("x1125","x1126")'>hide</button></p>
+ <div id='x1126' class='imgcontainer'>
+ <img alt="syntax diagram analyze-stmt" src="images/syntax/analyze-stmt.gif" />
+</div>
+
+
+<p> The ANALYZE command gathers statistics about tables and
+indices and stores the collected information
+in <a href="fileformat2.html#intschema">internal tables</a> of the database where the query optimizer can
+access the information and use it to help make better query planning choices.
+If no arguments are given, all attached databases are
+analyzed.  If a schema name is given as the argument, then all tables
+and indices in that one database are analyzed.  
+If the argument is a table name, then only that table and the
+indices associated with that table are analyzed.  If the argument
+is an index name, then only that one index is analyzed.</p>
+
+<p> The default implementation stores all statistics in a single
+table named "<a href="fileformat2.html#stat1tab">sqlite_stat1</a>".  If SQLite is compiled with the
+<a href="compile.html#enable_stat3">SQLITE_ENABLE_STAT3</a> option and without the <a href="compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a>
+option, then additional histogram data is
+collected and stored in <a href="fileformat2.html#stat3tab">sqlite_stat3</a>.
+ If SQLite is compiled with the
+<a href="compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a> option, then additional histogram data is
+collected and stored in <a href="fileformat2.html#stat4tab">sqlite_stat4</a>.
+Older versions of SQLite would make use of the <a href="fileformat2.html#stat2tab">sqlite_stat2</a> table
+when compiled with <a href="compile.html#enable_stat2">SQLITE_ENABLE_STAT2</a> but all recent versions of
+SQLite ignore the sqlite_stat2 table.
+Future enhancements may create
+additional <a href="fileformat2.html#intschema">internal tables</a> with the same name pattern except with
+final digit larger than "4".
+All of these tables are collectively referred to as "statistics tables".
+</p>
+
+<p> The content of the statistics tables can be queried using <a href="lang_select.html">SELECT</a>
+and can be changed using the <a href="lang_delete.html">DELETE</a>, <a href="lang_insert.html">INSERT</a>, and <a href="lang_update.html">UPDATE</a> commands.
+The <a href="lang_droptable.html">DROP TABLE</a> command works on statistics tables
+as of SQLite version 3.7.9. (2011-11-01)
+The <a href="lang_altertable.html">ALTER TABLE</a> command does not work on statistics tables.
+Appropriate care should be used when changing the content of the statistics
+tables as invalid content can cause SQLite to select inefficient
+query plans.  Generally speaking, one should not modify the content of
+the statistics tables by any mechanism other than invoking the
+ANALYZE command.  
+See "<a href="optoverview.html#manctrl">Manual Control Of Query Plans Using SQLITE_STAT Tables</a>" for
+further information.</p>
+
+<p> Statistics gathered by ANALYZE are not automatically updated as
+the content of the database changes.  If the content of the database
+changes significantly, or if the database schema changes, then one should
+consider rerunning the ANALYZE command in order to update the statistics.</p>
+
+<p> The query planner loads the content of the statistics tables
+into memory when the schema is read.  Hence, when an application
+changes the statistics tables directly, SQLite will not immediately
+notice the changes. An application
+can force the query planner to reread the statistics tables by running
+<b>ANALYZE sqlite_master</b>. </p>
+
+<a name="autoanalyze"></a>
+
+<h2>Automatically Running ANALYZE</h2>
+
+<p>The <a href="pragma.html#pragma_optimize">PRAGMA optimize</a> command will automatically run ANALYZE on individual
+tables on an as-needed basis.  The recommended practice is for applications
+to invoke the <a href="pragma.html#pragma_optimize">PRAGMA optimize</a> statement just before closing each database
+connection.</p>
+
+<p>Each SQLite <a href="c3ref/sqlite3.html">database connection</a> records cases when the query planner would
+benefit from having accurate results of ANALYZE at hand.  These records
+are held in memory and accumulate over the life of a database connection.
+The <a href="pragma.html#pragma_optimize">PRAGMA optimize</a> command looks at those records and runs ANALYZE on only
+those tables for which new or updated ANALYZE data seems likely to be useful.
+In most cases <a href="pragma.html#pragma_optimize">PRAGMA optimize</a> will not run ANALYZE, but it will occasionally
+do so either for tables that have never before been analyzed, or for tables
+that have grown significantly since they were last analyzed.</p>
+
+<p>Since the actions of <a href="pragma.html#pragma_optimize">PRAGMA optimize</a> are determined to some extent by
+prior queries that have been evaluated on the same database connection, it
+is recommended that <a href="pragma.html#pragma_optimize">PRAGMA optimize</a> be deferred until the database connection
+is closing and has thus had an opportunity to accumulate as much usage information
+as possible.  It is also reasonable to set a timer to run <a href="pragma.html#pragma_optimize">PRAGMA optimize</a>
+every few hours, or every few days, for database connections that stay open
+for a long time.</p>
+
+<p>Applications that desire more control can run <a href="pragma.html#pragma_optimize">PRAGMA optimize(0x03)</a> to 
+obtain a list of ANALYZE commands that SQLite thinks are appropriate to run,
+but without actually running those commands.  If the returned set is 
+non-empty, the application can then make a decision about whether or not
+to run the suggested ANALYZE commands, perhaps after prompting the user
+for guidance.</p>
+
+<p>The <a href="pragma.html#pragma_optimize">PRAGMA optimize</a> command was first introduced with 
+SQLite 3.18.0 (2017-03-28) and is a no-op for all prior releases
+of SQLite.</p>
+
+<h2>Anticipated Future Enhancements</h2>
+
+<p>All existing versions of SQLite do a full table scan for ANALYZE.  This can be
+slow for multi-gigabyte and larger databases.  Future versions of SQLite might
+use random sampling rather than a full table scan to obtain estimates for the
+database shape, especially on larger tables.  The results would approximate, but 
+will be close enough for query planning purposes.  As of 2017-03-20, this
+concept has been tested in experimental branches and appears to work well, but
+has not been folded into an official release.</p>
+
+

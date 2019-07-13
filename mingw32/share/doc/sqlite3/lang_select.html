@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: SELECT</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>SELECT</h2></div><p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1671' onclick='hideorshow("x1671","x1672")'>hide</button></p>
+ <div id='x1672' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x1673' onclick='hideorshow("x1673","x1674")'>show</button></p>
+ <div id='x1674' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1675' onclick='hideorshow("x1675","x1676")'>show</button></p>
+ <div id='x1676' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x1677' onclick='hideorshow("x1677","x1678")'>show</button></p>
+ <div id='x1678' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x1679' onclick='hideorshow("x1679","x1680")'>show</button></p>
+ <div id='x1680' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x1681' onclick='hideorshow("x1681","x1682")'>show</button></p>
+ <div id='x1682' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x1683' onclick='hideorshow("x1683","x1684")'>show</button></p>
+ <div id='x1684' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x1685' onclick='hideorshow("x1685","x1686")'>show</button></p>
+ <div id='x1686' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1687' onclick='hideorshow("x1687","x1688")'>show</button></p>
+ <div id='x1688' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1689' onclick='hideorshow("x1689","x1690")'>show</button></p>
+ <div id='x1690' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1691' onclick='hideorshow("x1691","x1692")'>show</button></p>
+ <div id='x1692' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1693' onclick='hideorshow("x1693","x1694")'>show</button></p>
+ <div id='x1694' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1695' onclick='hideorshow("x1695","x1696")'>show</button></p>
+ <div id='x1696' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1697' onclick='hideorshow("x1697","x1698")'>show</button></p>
+ <div id='x1698' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1699' onclick='hideorshow("x1699","x1700")'>show</button></p>
+ <div id='x1700' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1701' onclick='hideorshow("x1701","x1702")'>show</button></p>
+ <div id='x1702' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1703' onclick='hideorshow("x1703","x1704")'>show</button></p>
+ <div id='x1704' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+
+
+
+<p>The SELECT statement is used to query the database.  The
+result of a SELECT is zero or more rows of data where each row
+has a fixed number of columns.  A SELECT statement does not make
+any changes to the database.
+
+<p>The "<a href="syntax/select-stmt.html">select-stmt</a>" syntax diagram above attempts to show as much of the
+SELECT statement syntax as possible in a single diagram, because some readers
+find that helpful.  The following "<a href="syntax/factored-select-stmt.html">factored-select-stmt</a>" is an alternative
+syntax diagrams that expresses the same syntax but tries to break the syntax 
+down into smaller chunks.
+
+<p><b><a href="syntax/factored-select-stmt.html">factored-select-stmt:</a></b>
+<button id='x1705' onclick='hideorshow("x1705","x1706")'>show</button></p>
+ <div id='x1706' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram factored-select-stmt" src="images/syntax/factored-select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x1707' onclick='hideorshow("x1707","x1708")'>show</button></p>
+ <div id='x1708' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1709' onclick='hideorshow("x1709","x1710")'>show</button></p>
+ <div id='x1710' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1711' onclick='hideorshow("x1711","x1712")'>show</button></p>
+ <div id='x1712' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1713' onclick='hideorshow("x1713","x1714")'>show</button></p>
+ <div id='x1714' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1715' onclick='hideorshow("x1715","x1716")'>show</button></p>
+ <div id='x1716' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1717' onclick='hideorshow("x1717","x1718")'>show</button></p>
+ <div id='x1718' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1719' onclick='hideorshow("x1719","x1720")'>show</button></p>
+ <div id='x1720' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1721' onclick='hideorshow("x1721","x1722")'>show</button></p>
+ <div id='x1722' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1723' onclick='hideorshow("x1723","x1724")'>show</button></p>
+ <div id='x1724' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+</div>
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1725' onclick='hideorshow("x1725","x1726")'>show</button></p>
+ <div id='x1726' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x1727' onclick='hideorshow("x1727","x1728")'>show</button></p>
+ <div id='x1728' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x1729' onclick='hideorshow("x1729","x1730")'>show</button></p>
+ <div id='x1730' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x1731' onclick='hideorshow("x1731","x1732")'>show</button></p>
+ <div id='x1732' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x1733' onclick='hideorshow("x1733","x1734")'>show</button></p>
+ <div id='x1734' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1735' onclick='hideorshow("x1735","x1736")'>show</button></p>
+ <div id='x1736' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1737' onclick='hideorshow("x1737","x1738")'>show</button></p>
+ <div id='x1738' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1739' onclick='hideorshow("x1739","x1740")'>show</button></p>
+ <div id='x1740' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1741' onclick='hideorshow("x1741","x1742")'>show</button></p>
+ <div id='x1742' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1743' onclick='hideorshow("x1743","x1744")'>show</button></p>
+ <div id='x1744' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1745' onclick='hideorshow("x1745","x1746")'>show</button></p>
+ <div id='x1746' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x1747' onclick='hideorshow("x1747","x1748")'>show</button></p>
+ <div id='x1748' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1749' onclick='hideorshow("x1749","x1750")'>show</button></p>
+ <div id='x1750' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1751' onclick='hideorshow("x1751","x1752")'>show</button></p>
+ <div id='x1752' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1753' onclick='hideorshow("x1753","x1754")'>show</button></p>
+ <div id='x1754' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1755' onclick='hideorshow("x1755","x1756")'>show</button></p>
+ <div id='x1756' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/select-core.html">select-core:</a></b>
+<button id='x1757' onclick='hideorshow("x1757","x1758")'>show</button></p>
+ <div id='x1758' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-core" src="images/syntax/select-core.gif" />
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1759' onclick='hideorshow("x1759","x1760")'>show</button></p>
+ <div id='x1760' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1761' onclick='hideorshow("x1761","x1762")'>show</button></p>
+ <div id='x1762' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1763' onclick='hideorshow("x1763","x1764")'>show</button></p>
+ <div id='x1764' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1765' onclick='hideorshow("x1765","x1766")'>show</button></p>
+ <div id='x1766' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1767' onclick='hideorshow("x1767","x1768")'>show</button></p>
+ <div id='x1768' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1769' onclick='hideorshow("x1769","x1770")'>show</button></p>
+ <div id='x1770' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1771' onclick='hideorshow("x1771","x1772")'>show</button></p>
+ <div id='x1772' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1773' onclick='hideorshow("x1773","x1774")'>show</button></p>
+ <div id='x1774' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+</div>
+
+
+<p>Note that there are paths through the syntax diagrams that
+are not allowed in practice.  Some examples:
+<ul>
+<li>A <a href="lang_select.html#values">VALUES</a> clause can be the first element in a <a href="lang_select.html#compound">compound SELECT</a>
+    that uses a <a href="lang_with.html">WITH</a> clause, but a <a href="lang_select.html#simpleselect">simple SELECT</a> that consists of
+    just a <a href="lang_select.html#values">VALUES</a> clause cannot be preceded by a <a href="lang_with.html">WITH</a> clause.
+<li>The <a href="lang_with.html">WITH</a> clause must occur on the first SELECT of a <a href="lang_select.html#compound">compound SELECT</a>.
+    It cannot follow a <a href="syntax/compound-operator.html">compound-operator</a>.
+</ul>
+These and other similar syntax restrictions are described in the text.
+
+<p>The SELECT statement is the most complicated command in the SQL language.
+To make the description easier to follow, some of the passages below describe
+the way the data returned by a SELECT statement is determined as a series of
+steps. It is important to keep in mind that this is purely illustrative -
+in practice neither SQLite nor any other SQL engine is required to follow 
+this or any other specific process.
+
+<a name="simpleselect"></a>
+
+<h3>Simple Select Processing</h3>
+
+<p>The core of a SELECT statement is a "simple SELECT" shown by the
+<a href="syntax/select-core.html">select-core</a> and <a href="syntax/simple-select-stmt.html">simple-select-stmt</a> syntax diagrams below.  
+In practice, most SELECT statements are simple SELECT statements.
+
+<p><b><a href="syntax/simple-select-stmt.html">simple-select-stmt:</a></b>
+<button id='x1775' onclick='hideorshow("x1775","x1776")'>hide</button></p>
+ <div id='x1776' class='imgcontainer'>
+ <img alt="syntax diagram simple-select-stmt" src="images/syntax/simple-select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x1777' onclick='hideorshow("x1777","x1778")'>show</button></p>
+ <div id='x1778' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1779' onclick='hideorshow("x1779","x1780")'>show</button></p>
+ <div id='x1780' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1781' onclick='hideorshow("x1781","x1782")'>show</button></p>
+ <div id='x1782' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1783' onclick='hideorshow("x1783","x1784")'>show</button></p>
+ <div id='x1784' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1785' onclick='hideorshow("x1785","x1786")'>show</button></p>
+ <div id='x1786' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1787' onclick='hideorshow("x1787","x1788")'>show</button></p>
+ <div id='x1788' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1789' onclick='hideorshow("x1789","x1790")'>show</button></p>
+ <div id='x1790' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1791' onclick='hideorshow("x1791","x1792")'>show</button></p>
+ <div id='x1792' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1793' onclick='hideorshow("x1793","x1794")'>show</button></p>
+ <div id='x1794' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1795' onclick='hideorshow("x1795","x1796")'>show</button></p>
+ <div id='x1796' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+</div>
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x1797' onclick='hideorshow("x1797","x1798")'>show</button></p>
+ <div id='x1798' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x1799' onclick='hideorshow("x1799","x1800")'>show</button></p>
+ <div id='x1800' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x1801' onclick='hideorshow("x1801","x1802")'>show</button></p>
+ <div id='x1802' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x1803' onclick='hideorshow("x1803","x1804")'>show</button></p>
+ <div id='x1804' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1805' onclick='hideorshow("x1805","x1806")'>show</button></p>
+ <div id='x1806' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1807' onclick='hideorshow("x1807","x1808")'>show</button></p>
+ <div id='x1808' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1809' onclick='hideorshow("x1809","x1810")'>show</button></p>
+ <div id='x1810' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1811' onclick='hideorshow("x1811","x1812")'>show</button></p>
+ <div id='x1812' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1813' onclick='hideorshow("x1813","x1814")'>show</button></p>
+ <div id='x1814' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1815' onclick='hideorshow("x1815","x1816")'>show</button></p>
+ <div id='x1816' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1817' onclick='hideorshow("x1817","x1818")'>show</button></p>
+ <div id='x1818' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x1819' onclick='hideorshow("x1819","x1820")'>show</button></p>
+ <div id='x1820' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1821' onclick='hideorshow("x1821","x1822")'>show</button></p>
+ <div id='x1822' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1823' onclick='hideorshow("x1823","x1824")'>show</button></p>
+ <div id='x1824' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1825' onclick='hideorshow("x1825","x1826")'>show</button></p>
+ <div id='x1826' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1827' onclick='hideorshow("x1827","x1828")'>show</button></p>
+ <div id='x1828' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/select-core.html">select-core:</a></b>
+<button id='x1829' onclick='hideorshow("x1829","x1830")'>hide</button></p>
+ <div id='x1830' class='imgcontainer'>
+ <img alt="syntax diagram select-core" src="images/syntax/select-core.gif" />
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1831' onclick='hideorshow("x1831","x1832")'>show</button></p>
+ <div id='x1832' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1833' onclick='hideorshow("x1833","x1834")'>show</button></p>
+ <div id='x1834' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1835' onclick='hideorshow("x1835","x1836")'>show</button></p>
+ <div id='x1836' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1837' onclick='hideorshow("x1837","x1838")'>show</button></p>
+ <div id='x1838' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1839' onclick='hideorshow("x1839","x1840")'>show</button></p>
+ <div id='x1840' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1841' onclick='hideorshow("x1841","x1842")'>show</button></p>
+ <div id='x1842' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1843' onclick='hideorshow("x1843","x1844")'>show</button></p>
+ <div id='x1844' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1845' onclick='hideorshow("x1845","x1846")'>show</button></p>
+ <div id='x1846' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1847' onclick='hideorshow("x1847","x1848")'>show</button></p>
+ <div id='x1848' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+</div>
+
+
+<p>Generating the results of a simple SELECT
+statement is presented as a four step process in the description below:
+
+<ol>
+  <li> <p><a href="lang_select.html#fromclause">FROM clause</a> processing: The input data for the simple SELECT is
+       determined. The input data is either implicitly a single row with 0
+       columns (if there is no FROM clause) or is determined by the FROM
+       clause.
+  <li> <p><a href="lang_select.html#whereclause">WHERE clause</a> processing: The input data is filtered using the WHERE
+       clause expression.  
+  <li> <p><a href="lang_select.html#resultset">GROUP BY, HAVING and result-column expression</a> processing: 
+       The set of result rows is computed by aggregating the data according to
+       any GROUP BY clause and calculating the result-set expressions for the
+       rows of the filtered input dataset.  
+  <li> <p><a href="lang_select.html#distinct">DISTINCT/ALL keyword</a> processing: If the query is a "SELECT
+       DISTINCT" query, duplicate rows are removed from the set of result rows.
+</ol>
+
+<p>There are two types of simple SELECT statement - aggregate and 
+non-aggregate queries. A simple SELECT statement is an aggregate query if
+it contains either a GROUP BY clause or one or more aggregate functions
+in the result-set. Otherwise, if a simple SELECT contains no aggregate
+functions or a GROUP BY clause, it is a non-aggregate query.
+
+<p><b>1. Determination of input data (FROM clause processing).</b>
+<a name="fromclause"></a>
+
+
+
+<p>The input data used by a simple SELECT query is a set of <i>N</i> rows 
+each <i>M</i> columns wide.
+
+<p>If the FROM clause is omitted from a simple SELECT statement, then the 
+input data is implicitly a single row zero columns wide (i.e. <i>N</i>=1 and
+<i>M</i>=0).
+
+<p>If a FROM clause is specified, the data on which a simple SELECT query
+operates comes from the one or more tables or subqueries (SELECT statements
+in parenthesis) specified following the FROM keyword. A subquery specified
+in the <span class='yyterm'>table-or-subquery</span> following the FROM clause in a 
+simple SELECT statement is
+handled as if it was a table containing the data returned by executing the
+subquery statement. Each column of the subquery has the
+<a href="datatype3.html#collation">collation sequence</a> and <a href="datatype3.html#affinity">affinity</a> of the corresponding expression
+in the subquery statement.
+
+<p>If there is only a single table or subquery in the FROM
+clause, then the input data used by the SELECT statement is the contents of the
+named table. If there is more than one table or subquery in FROM clause
+then the contents of all tables and/or subqueries
+are joined into a single dataset for the simple SELECT statement to operate on.
+Exactly how the data is combined depends on the specific <a href="syntax/join-operator.html">join-operator</a> and
+<a href="syntax/join-constraint.html">join-constraint</a> used to connect the tables or subqueries together.
+
+<p>All joins in SQLite are based on the cartesian product of the left and
+right-hand datasets. The columns of the cartesian product dataset are, in 
+order, all the columns of the left-hand dataset followed by all the columns
+of the right-hand dataset. There is a row in the cartesian product dataset
+formed by combining each unique combination of a row from the left-hand 
+and right-hand datasets. In other words, if the left-hand dataset consists of
+<i>N<sub><small>left</small></sub></i> rows of 
+<i>M<sub><small>left</small></sub></i> columns, and the right-hand dataset of
+<i>N<sub><small>right</small></sub></i> rows of
+<i>M<sub><small>right</small></sub></i> columns, then the cartesian product is a
+dataset of 
+<i>N<sub><small>left</small></sub>&times;N<sub><small>right</small></sub></i>
+rows, each containing 
+<i>M<sub><small>left</small></sub>+M<sub><small>right</small></sub></i> columns.
+
+<p>If the join-operator is "CROSS JOIN", "INNER JOIN", "JOIN" or a comma
+(",") and there is no ON or USING clause, then the result of the join is
+simply the cartesian product of the left and right-hand datasets. 
+If join-operator does have ON or USING clauses, those are handled according to
+the following bullet points:
+
+<ul>
+  <li> <p>If there is an ON clause then the ON expression is
+       evaluated for each row of the cartesian product as a 
+       <a href="lang_expr.html#booleanexpr">boolean expression</a>. Only rows for which the expression evaluates to 
+       true are included from the dataset.
+
+  <li> <p>If there is a USING clause
+       then each of the column names specified must exist in the datasets to 
+       both the left and right of the join-operator. For each pair of named
+       columns, the expression "lhs.X = rhs.X" is evaluated for each row of
+       the cartesian product as a <a href="lang_expr.html#booleanexpr">boolean expression</a>. Only rows for which
+       all such expressions evaluates to true are included from the
+       result set. When comparing values as a result of a USING clause, the
+       normal rules for handling affinities, collation sequences and NULL
+       values in comparisons apply. The column from the dataset on the
+       left-hand side of the join-operator is considered to be on the left-hand
+       side of the comparison operator (=) for the purposes of collation 
+       sequence and affinity precedence.
+
+       <p>For each pair of columns identified by a USING clause, the column
+       from the right-hand dataset is omitted from the joined dataset. This 
+       is the only difference between a USING clause and its equivalent ON
+       constraint.
+
+  <li> <p>If the NATURAL keyword is in the join-operator then an
+       implicit USING clause is added to the join-constraints. The implicit
+       USING clause contains each of the column names that appear in both
+       the left and right-hand input datasets. If the left and right-hand
+       input datasets feature no common column names, then the NATURAL keyword
+       has no effect on the results of the join. A USING or ON clause may
+       not be added to a join that specifies the NATURAL keyword.
+
+  <li> <p>If the join-operator is a "LEFT JOIN" or "LEFT OUTER JOIN", then
+       after
+       the ON or USING filtering clauses have been applied, an extra row is 
+       added to the output for each row in the original left-hand input 
+       dataset that corresponds to no rows at all in the composite
+       dataset (if any). The added rows contain NULL values in the columns
+       that would normally contain values copied from the right-hand input
+       dataset.  
+</ul>
+
+<p>When more than two tables are joined together as part of a FROM clause,
+the join operations are processed in order from left to right. In other 
+words, the FROM clause (A join-op-1 B join-op-2 C) is computed as 
+((A join-op-1 B) join-op-2 C).
+
+<a name="crossjoin"></a>
+
+<p><b>Side note: Special handling of CROSS JOIN.</b>
+There is no difference between the "INNER JOIN", "JOIN" and "," join
+operators. They are completely interchangeable in SQLite.
+The "CROSS JOIN" join operator produces the same result as the 
+"INNER JOIN", "JOIN" and "," operators, but is 
+<a href="optoverview.html#crossjoin">handled differently by the query optimizer</a>
+in that it prevents the query optimizer from reordering
+the tables in the join.  An application programmer can use the CROSS JOIN 
+operator to directly influence the algorithm that is chosen to implement
+the SELECT statement.  Avoid using CROSS JOIN except in specific situations 
+where manual control of the query optimizer is desired.  Avoid using
+CROSS JOIN early in the development of an application as doing so is
+a <a href="http://c2.com/cgi/wiki?PrematureOptimization">premature
+optimization</a>.  The special handling of CROSS JOIN is an SQLite-specific
+feature and is not a part of standard SQL.
+       
+
+<a name="whereclause"></a>
+
+
+<p><b>2. WHERE clause filtering.</b>
+
+<p>If a WHERE clause is specified, the WHERE expression is evaluated for 
+each row in the input data as a <a href="lang_expr.html#booleanexpr">boolean expression</a>. Only rows for which the
+WHERE clause expression evaluates to true are included from the dataset before
+continuing.  Rows are excluded from the result if the WHERE clause
+evaluates to either false or NULL.
+
+<p>For a JOIN or INNER JOIN or CROSS JOIN, there is no difference between 
+a constraint expression in the WHERE clause and one in the ON clause.  However,
+for a LEFT JOIN or LEFT OUTER JOIN, the difference is very important.  
+In a LEFT JOIN,
+the extra NULL row for the right-hand table is added after ON clause processing
+but before WHERE clause processing.  A constraint of the form "left.x=right.y"
+in an ON clause will therefore allow through the added all-NULL rows of the
+right table.  But if that same constraint is in the WHERE clause a NULL in
+"right.y" will prevent the expression "left.x=right.y" from being true, and
+thus exclude that row from the output.
+
+<p><b>3. Generation of the set of result rows.</b>
+<a name="resultset"></a>
+
+
+
+<p>Once the input data from the FROM clause has been filtered by the
+WHERE clause expression (if any), the set of result rows for the simple 
+SELECT are calculated. Exactly how this is done depends on whether the simple 
+SELECT is an aggregate or non-aggregate query, and whether or not a GROUP
+BY clause was specified.
+
+<p> The list of expressions between the SELECT and FROM keywords is known as
+the result expression list.  If a result expression is the special expression
+"*" then all columns in the input data are substituted for that one expression.
+If the expression is the alias of a table or subquery in the FROM clause
+followed by ".*" then all columns from the named table or subquery are
+substituted for the single expression. It is an error to use a "*" or
+"alias.*" expression in any context other than a result expression list.
+It is also an error to use a "*" or "alias.*" expression in a simple SELECT
+query that does not have a FROM clause.
+
+<p> The number of columns in the rows returned by a simple SELECT statement
+is equal to the number of expressions in the result expression list after
+substitution of * and alias.* expressions. Each result row is calculated by
+evaluating the expressions in the result expression list with respect to a
+single row of input data or, for aggregate queries, with respect to a group
+of rows.
+
+<ul>
+  <li><p>If the SELECT statement is <b>a non-aggregate query</b>, then 
+    each expression in the result expression list is evaluated for each row in
+    the dataset filtered by the WHERE clause.
+
+  <li><p>If the SELECT statement is <b>an aggregate query without a GROUP
+    BY</b> clause, then each aggregate expression in the result-set is 
+    evaluated once across the entire dataset. Each non-aggregate expression
+    in the result-set is evaluated once for an arbitrarily selected row of
+    the dataset. The same arbitrarily selected row is used for each
+    non-aggregate expression. Or, if the dataset contains zero rows, then 
+    each non-aggregate expression is evaluated against a row consisting
+    entirely of NULL values.
+
+   <p>The single row of result-set data created by evaluating the aggregate
+    and non-aggregate expressions in the result-set forms the result of an
+    aggregate query without a GROUP BY clause. An aggregate query without a
+    GROUP BY clause always returns exactly one row of data, even if there are
+    zero rows of input data.
+
+  <li><p>If the SELECT statement is <b>an aggregate query with a GROUP
+    BY</b> clause, then each of the expressions specified as part of the
+    GROUP BY clause is evaluated for each row of the dataset. Each row
+    is then assigned to a "group" based on the results; rows for which
+    the results of evaluating the GROUP BY expressions are the same get
+    assigned to the same group. For the purposes of grouping rows, NULL 
+    values are considered equal. The usual rules for <a href="datatype3.html#collation">selecting a
+    collation sequence</a> with which to compare text values apply when evaluating
+    expressions in a GROUP BY clause.  The expressions in the GROUP BY clause
+    do <em>not</em> have to be expressions that appear in the result. The
+    expressions in a GROUP BY clause may not be aggregate expressions.
+
+    <p>If a HAVING clause is specified, it is evaluated once for each group 
+    of rows as a <a href="lang_expr.html#booleanexpr">boolean expression</a>. If the result of evaluating the
+    HAVING clause is false, the group is discarded. If the HAVING clause is
+    an aggregate expression, it is evaluated across all rows in the group. If
+    a HAVING clause is a non-aggregate expression, it is evaluated with respect
+    to an arbitrarily selected row from the group.  The HAVING expression may
+    refer to values, even aggregate functions, that are not in the result.</p>
+
+    <p>Each expression in the result-set is then evaluated once for each
+    group of rows. If the expression is an aggregate expression, it is 
+    evaluated across all rows in the group. Otherwise, it is evaluated against
+    a single arbitrarily chosen row from within the group. If there is more
+    than one non-aggregate expression in the result-set, then all such
+    expressions are evaluated for the same row.
+
+    <p>Each group of input dataset rows contributes a single row to the 
+    set of result rows. Subject to filtering associated with the DISTINCT
+    keyword, the number of rows returned by an aggregate query with a GROUP
+    BY clause is the same as the number of groups of rows produced by applying
+    the GROUP BY and HAVING clauses to the filtered input dataset.
+</ul>
+
+<a name="bareagg"></a>
+
+<p><b>Side note: Bare columns in an aggregate queries.</b>
+The usual case is that all column names in an aggregate query are either
+arguments to <a href="lang_aggfunc.html">aggregate functions</a> or else appear in the GROUP BY clause.
+A result column which contains a column name that is not within an
+aggregate function and that does not appear in the GROUP BY clause (if
+one exists) is called a "bare" column.
+Example:
+<blockquote><pre>
+SELECT a, b, sum(c) FROM tab1 GROUP BY a;
+</pre></blockquote>
+<p>In the query above, the "a" column is part of the GROUP BY clause
+and so each row of the output contains one of the distinct values for
+"a".  The "c" column is contained within the <a href="lang_aggfunc.html#sumunc">sum()</a> aggregate function
+and so that output column is the sum of all "c" values in rows that
+have the same value for "a".  But what is the result of the bare 
+column "b"? The answer is that the "b" result will be the
+value for "b" in one of the input rows that form the aggregate.
+The problem is that you usually do not know which input row is used
+to compute "b", and so in many cases the value for "b" is undefined.
+</p>
+<p>
+Special processing occurs occurs when the aggregate function is 
+either <a href="lang_aggfunc.html#maxggunc">min()</a> or <a href="lang_aggfunc.html#minggunc">max()</a>.  Example:
+<blockquote><pre>
+SELECT a, b, max(c) FROM tab1 GROUP BY a;
+</pre></blockquote>
+When the <a href="lang_aggfunc.html#maxggunc">min()</a> or <a href="lang_aggfunc.html#minggunc">max()</a> aggregate functions 
+are used in an aggregate query, all bare columns in the result set 
+take values from the input
+row which also contains the minimum or maximum.  So in the query
+above, the value of the "b" column in the output will be the value of
+the "b" column in the input row that has the largest "c" value.
+There is still an ambiguity if two or more of the input rows have the
+same minimum or maximum value or if the query contains more than one
+min() and/or max() aggregate function. Only the built-in <a href="lang_aggfunc.html#minggunc">min()</a> 
+and <a href="lang_aggfunc.html#maxggunc">max()</a> functions work this way.
+</p>
+
+<p><b>4. Removal of duplicate rows (DISTINCT processing).</b>
+<a name="distinct"></a>
+
+
+
+<p>One of the ALL or DISTINCT keywords may follow the SELECT keyword in a 
+simple SELECT statement. If the simple SELECT is a SELECT ALL, then the
+entire set of result rows are returned by the SELECT. If neither ALL or
+DISTINCT are present, then the behavior is as if ALL were specified. 
+If the simple SELECT is a SELECT DISTINCT, then duplicate rows are removed
+from the set of result rows before it is returned. For the purposes of
+detecting duplicate rows, two NULL values are considered to be equal. The
+<a href="datatype3.html#colrules">usual rules</a> apply for selecting a collation
+sequence to compare text values.
+
+<a name="compound"></a>
+
+<h3>Compound Select Statements</h3>
+
+<p>Two or more <a href="lang_select.html#simpleselect">simple SELECT</a> statements may be connected together to form
+a compound SELECT using the UNION, UNION ALL, INTERSECT or EXCEPT operator,
+as shown by the following diagram:
+
+<p><b><a href="syntax/compound-select-stmt.html">compound-select-stmt:</a></b>
+<button id='x1849' onclick='hideorshow("x1849","x1850")'>hide</button></p>
+ <div id='x1850' class='imgcontainer'>
+ <img alt="syntax diagram compound-select-stmt" src="images/syntax/compound-select-stmt.gif" />
+<p><b><a href="syntax/common-table-expression.html">common-table-expression:</a></b>
+<button id='x1851' onclick='hideorshow("x1851","x1852")'>show</button></p>
+ <div id='x1852' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram common-table-expression" src="images/syntax/common-table-expression.gif" />
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1853' onclick='hideorshow("x1853","x1854")'>show</button></p>
+ <div id='x1854' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1855' onclick='hideorshow("x1855","x1856")'>show</button></p>
+ <div id='x1856' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1857' onclick='hideorshow("x1857","x1858")'>show</button></p>
+ <div id='x1858' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1859' onclick='hideorshow("x1859","x1860")'>show</button></p>
+ <div id='x1860' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1861' onclick='hideorshow("x1861","x1862")'>show</button></p>
+ <div id='x1862' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1863' onclick='hideorshow("x1863","x1864")'>show</button></p>
+ <div id='x1864' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1865' onclick='hideorshow("x1865","x1866")'>show</button></p>
+ <div id='x1866' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1867' onclick='hideorshow("x1867","x1868")'>show</button></p>
+ <div id='x1868' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1869' onclick='hideorshow("x1869","x1870")'>show</button></p>
+ <div id='x1870' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+</div>
+<p><b><a href="syntax/expr.html">expr:</a></b>
+<button id='x1871' onclick='hideorshow("x1871","x1872")'>show</button></p>
+ <div id='x1872' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram expr" src="images/syntax/expr.gif" />
+<p><b><a href="syntax/filter.html">filter:</a></b>
+<button id='x1873' onclick='hideorshow("x1873","x1874")'>show</button></p>
+ <div id='x1874' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram filter" src="images/syntax/filter.gif" />
+</div>
+<p><b><a href="syntax/literal-value.html">literal-value:</a></b>
+<button id='x1875' onclick='hideorshow("x1875","x1876")'>show</button></p>
+ <div id='x1876' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram literal-value" src="images/syntax/literal-value.gif" />
+</div>
+<p><b><a href="syntax/raise-function.html">raise-function:</a></b>
+<button id='x1877' onclick='hideorshow("x1877","x1878")'>show</button></p>
+ <div id='x1878' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram raise-function" src="images/syntax/raise-function.gif" />
+</div>
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1879' onclick='hideorshow("x1879","x1880")'>show</button></p>
+ <div id='x1880' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1881' onclick='hideorshow("x1881","x1882")'>show</button></p>
+ <div id='x1882' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1883' onclick='hideorshow("x1883","x1884")'>show</button></p>
+ <div id='x1884' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1885' onclick='hideorshow("x1885","x1886")'>show</button></p>
+ <div id='x1886' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1887' onclick='hideorshow("x1887","x1888")'>show</button></p>
+ <div id='x1888' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1889' onclick='hideorshow("x1889","x1890")'>show</button></p>
+ <div id='x1890' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1891' onclick='hideorshow("x1891","x1892")'>show</button></p>
+ <div id='x1892' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+</div>
+</div>
+<p><b><a href="syntax/type-name.html">type-name:</a></b>
+<button id='x1893' onclick='hideorshow("x1893","x1894")'>show</button></p>
+ <div id='x1894' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram type-name" src="images/syntax/type-name.gif" />
+<p><b><a href="syntax/signed-number.html">signed-number:</a></b>
+<button id='x1895' onclick='hideorshow("x1895","x1896")'>show</button></p>
+ <div id='x1896' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1897' onclick='hideorshow("x1897","x1898")'>show</button></p>
+ <div id='x1898' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1899' onclick='hideorshow("x1899","x1900")'>show</button></p>
+ <div id='x1900' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/ordering-term.html">ordering-term:</a></b>
+<button id='x1901' onclick='hideorshow("x1901","x1902")'>show</button></p>
+ <div id='x1902' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram ordering-term" src="images/syntax/ordering-term.gif" />
+</div>
+<p><b><a href="syntax/select-core.html">select-core:</a></b>
+<button id='x1903' onclick='hideorshow("x1903","x1904")'>show</button></p>
+ <div id='x1904' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-core" src="images/syntax/select-core.gif" />
+<p><b><a href="syntax/join-clause.html">join-clause:</a></b>
+<button id='x1905' onclick='hideorshow("x1905","x1906")'>show</button></p>
+ <div id='x1906' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-clause" src="images/syntax/join-clause.gif" />
+<p><b><a href="syntax/join-constraint.html">join-constraint:</a></b>
+<button id='x1907' onclick='hideorshow("x1907","x1908")'>show</button></p>
+ <div id='x1908' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-constraint" src="images/syntax/join-constraint.gif" />
+</div>
+<p><b><a href="syntax/join-operator.html">join-operator:</a></b>
+<button id='x1909' onclick='hideorshow("x1909","x1910")'>show</button></p>
+ <div id='x1910' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram join-operator" src="images/syntax/join-operator.gif" />
+</div>
+</div>
+<p><b><a href="syntax/result-column.html">result-column:</a></b>
+<button id='x1911' onclick='hideorshow("x1911","x1912")'>show</button></p>
+ <div id='x1912' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram result-column" src="images/syntax/result-column.gif" />
+</div>
+<p><b><a href="syntax/table-or-subquery.html">table-or-subquery:</a></b>
+<button id='x1913' onclick='hideorshow("x1913","x1914")'>show</button></p>
+ <div id='x1914' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram table-or-subquery" src="images/syntax/table-or-subquery.gif" />
+<p><b><a href="syntax/select-stmt.html">select-stmt:</a></b>
+<button id='x1915' onclick='hideorshow("x1915","x1916")'>show</button></p>
+ <div id='x1916' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram select-stmt" src="images/syntax/select-stmt.gif" />
+<p><b><a href="syntax/compound-operator.html">compound-operator:</a></b>
+<button id='x1917' onclick='hideorshow("x1917","x1918")'>show</button></p>
+ <div id='x1918' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram compound-operator" src="images/syntax/compound-operator.gif" />
+</div>
+</div>
+</div>
+<p><b><a href="syntax/window-defn.html">window-defn:</a></b>
+<button id='x1919' onclick='hideorshow("x1919","x1920")'>show</button></p>
+ <div id='x1920' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram window-defn" src="images/syntax/window-defn.gif" />
+<p><b><a href="syntax/frame-spec.html">frame-spec:</a></b>
+<button id='x1921' onclick='hideorshow("x1921","x1922")'>show</button></p>
+ <div id='x1922' style='display:none;' class='imgcontainer'>
+ <img alt="syntax diagram frame-spec" src="images/syntax/frame-spec.gif" />
+</div>
+</div>
+</div>
+</div>
+
+
+<p>In a compound SELECT, all the constituent SELECTs must return the same 
+number of result columns. As the components of a compound SELECT must
+be simple SELECT statements, they may not contain <a href="lang_select.html#orderby">ORDER BY</a> or <a href="lang_select.html#limitoffset">LIMIT</a> clauses.
+<a href="lang_select.html#orderby">ORDER BY</a> and <a href="lang_select.html#limitoffset">LIMIT</a> clauses may only occur at the end of the entire compound
+SELECT, and then only if the final element of the compound is not a <a href="lang_select.html#values">VALUES</a> clause.
+
+<p>A compound SELECT created using UNION ALL operator returns all the rows
+from the SELECT to the left of the UNION ALL operator, and all the rows
+from the SELECT to the right of it. The UNION operator works the same way as
+UNION ALL, except that duplicate rows are removed from the final result set.
+The INTERSECT operator returns the intersection of the results of the left and
+right SELECTs.  The EXCEPT operator returns the subset of rows returned by the
+left SELECT that are not also returned by the right-hand SELECT. Duplicate
+rows are removed from the results of INTERSECT and EXCEPT operators before the
+result set is returned.
+
+<p>For the purposes of determining duplicate rows for the results of compound
+SELECT operators, NULL values are considered equal to other NULL values and
+distinct from all non-NULL values. The collation sequence used to compare 
+two text values is determined as if the columns of the left and right-hand
+SELECT statements were the left and right-hand operands of the equals (=)
+operator, except that greater precedence is not assigned to a collation 
+sequence specified with the postfix COLLATE operator. No affinity
+transformations are applied to any values when comparing rows as part of a
+compound SELECT. 
+
+<p>When three or more simple SELECTs are connected into a compound SELECT,
+they group from left to right. In other words, if "A", "B" and "C" are all
+simple SELECT statements, (A op B op C) is processed as ((A op B) op C).
+
+</p>
+
+<a name="orderby"></a>
+
+<h3>The ORDER BY clause</h3>
+
+<p>If a SELECT statement that returns more than one row does not have an
+ORDER BY clause, the order in which the rows are returned is undefined.
+Or, if a SELECT statement does have an ORDER BY clause, then the list of
+expressions attached to the ORDER BY determine the order in which rows
+are returned to the user.
+
+<p>
+In a <a href="lang_select.html#compound">compound SELECT</a> statement, only the last or right-most <a href="lang_select.html#simpleselect">simple SELECT</a>
+may have an ORDER BY clause. That ORDER BY clause will apply across all elements of
+the compound. If the right-most element of a <a href="lang_select.html#compound">compound SELECT</a> is a <a href="lang_select.html#values">VALUES</a> clause,
+then no ORDER BY clause is allowed on that statement.
+
+
+<p>Rows are first sorted based on the results of
+evaluating the left-most expression in the ORDER BY list, then ties are broken
+by evaluating the second left-most expression and so on. The order in which
+two rows for which all ORDER BY expressions evaluate to equal values are
+returned is undefined. Each ORDER BY expression may be optionally followed
+by one of the keywords ASC (smaller values are returned first) or DESC (larger
+values are returned first). If neither ASC or DESC are specified, rows
+are sorted in ascending (smaller values first) order by default.
+
+<p>Each ORDER BY expression is processed as follows:</p>
+
+<ol>
+<li><p>If the ORDER BY expression is a constant integer K then the
+expression is considered an alias for the K-th column of the result set
+(columns are numbered from left to right starting with 1).
+
+<li><p>If the ORDER BY expression is an identifier that corresponds to
+the alias of one of the output columns, then the expression is considered
+an alias for that column.
+
+<li><p>Otherwise, if the ORDER BY expression is any other expression, it 
+is evaluated and the returned value used to order the output rows. If
+the SELECT statement is a simple SELECT, then an ORDER BY may contain any
+arbitrary expressions. However, if the SELECT is a compound SELECT, then
+ORDER BY expressions that are not aliases to output columns must be exactly
+the same as an expression used as an output column.
+</ol>
+
+<p>For the purposes of sorting rows, values are compared in the same way
+as for <a href="datatype3.html#comparisons">comparison expressions</a>. The collation sequence used to compare
+two text values is determined as follows:
+
+<ol>
+  <li><p>If the ORDER BY expression is assigned a collation sequence using
+  the postfix <a href="lang_expr.html#collateop">COLLATE operator</a>, then the specified collation sequence is
+  used.
+  <li><p>Otherwise, if the ORDER BY expression is an alias to an expression
+  that has been assigned a collation sequence using the postfix 
+  <a href="lang_expr.html#collateop">COLLATE operator</a>, then the collation sequence assigned to the aliased
+  expression is used.
+  <li><p>Otherwise, if the ORDER BY expression is a column or an alias of
+  an expression that is a column, then the default collation sequence for
+  the column is used. 
+  <li><p>Otherwise, the <a href="datatype3.html#collation">BINARY</a> collation sequence is used.
+</ol>
+
+<p>In a <a href="lang_select.html#compound">compound SELECT</a> statement, all ORDER BY expressions are handled
+as aliases for one of the result columns of the compound.
+If an ORDER BY expression is not an integer alias, then SQLite searches
+the left-most SELECT in the compound for a result column that matches either
+the second or third rules above. If a match is found, the search stops and
+the expression is handled as an alias for the result column that it has been
+matched against. Otherwise, the next SELECT to the right is tried, and so on.
+If no matching expression can be found in the result columns of any
+constituent SELECT, it is an error. Each term of the ORDER BY clause is
+processed separately and may be matched against result columns from different
+SELECT statements in the compound.</p>
+
+<a name="limitoffset"></a>
+
+<h3>The LIMIT clause</h3>
+
+<p>The LIMIT clause is used to place an upper bound on the number of rows
+returned by the entire SELECT statement.
+
+<p>In a <a href="lang_select.html#compound">compound SELECT</a>, only the
+last or right-most <a href="lang_select.html#simpleselect">simple SELECT</a> may contain a LIMIT clause.  
+In a <a href="lang_select.html#compound">compound SELECT</a>, 
+the LIMIT clause applies to the entire compound, not just the final SELECT.
+If the right-most <a href="lang_select.html#simpleselect">simple SELECT</a> is a <a href="lang_select.html#values">VALUES clause</a> then no LIMIT clause
+is allowed.
+
+<p>Any scalar expression may be used in the 
+LIMIT clause, so long as it evaluates to an integer or a value that can be
+losslessly converted to an integer. If the expression evaluates to a NULL 
+value or any other value that cannot be losslessly converted to an integer, an
+error is returned. If the LIMIT expression evaluates to a negative value,
+then there is no upper bound on the number of rows returned. Otherwise, the
+SELECT returns the first N rows of its result set only, where N is the value
+that the LIMIT expression evaluates to. Or, if the SELECT statement would
+return less than N rows without a LIMIT clause, then the entire result set is
+returned. 
+
+<p>The expression attached to the optional OFFSET clause that may follow a
+LIMIT clause must also evaluate to an integer, or a value that can be
+losslessly converted to an integer. If an expression has an OFFSET clause,
+then the first M rows are omitted from the result set returned by the SELECT
+statement and the next N rows are returned, where M and N are the values that
+the OFFSET and LIMIT clauses evaluate to, respectively. Or, if the SELECT
+would return less than M+N rows if it did not have a LIMIT clause, then the
+first M rows are skipped and the remaining rows (if any) are returned. If the
+OFFSET clause evaluates to a negative value, the results are the same as if it
+had evaluated to zero.
+
+<p>Instead of a separate OFFSET clause, the LIMIT clause may specify two
+scalar expressions separated by a comma. In this case, the first expression
+is used as the OFFSET expression and the second as the LIMIT expression.
+This is counter-intuitive, as when using the OFFSET clause the second of
+the two expressions is the OFFSET and the first the LIMIT. 
+This reversal of the offset and limit is intentional
+- it maximizes compatibility with other SQL database systems.
+However, to avoid confusion, programmers are strongly encouraged to use
+the form of the LIMIT clause that uses the "OFFSET" keyword and avoid
+using a LIMIT clause with a comma-separated offset.
+
+<a name="values"></a>
+
+<h3>The VALUES clause</h3>
+
+<p>The phrase "VALUES(<i>expr-list</i>)" means the same thing
+as "SELECT <i>expr-list</i>".  The phrase
+"VALUES(<i>expr-list-1</i>),...,(<i>expr-list-N</i>)" means the same
+thing as "SELECT <i>expr-list-1</i> UNION ALL ... UNION ALL
+SELECT <i>expr-list-N</i>".  Both forms are the same, except that
+the number of SELECT statements in a compound is limited by
+<a href="c3ref/c_limit_attached.html#sqlitelimitcompoundselect">SQLITE_LIMIT_COMPOUND_SELECT</a> whereas the number of rows in a
+VALUES clause has no arbitrary limit.
+
+<p>There are some restrictions on the use of a VALUES clause that are
+not shown on the syntax diagrams:
+
+<ul>
+<li><p>
+A VALUES clause cannot be followed by <a href="lang_select.html#orderby">ORDER BY</a>.
+
+<li><p>
+A VALUES clause cannot be followed by <a href="lang_select.html#limitoffset">LIMIT</a>.
+</ul>
+
+
+<h3>The WITH Clause</h3>
+
+<p>SELECT statements may be optionally preceded by a single
+<a href="lang_with.html">WITH clause</a> that defines one or more <a href="lang_with.html">common table expressions</a>
+for use within the SELECT statement.
+
+<a name="tabfunc1"></a>
+
+<h3>Table-valued Functions In The FROM Clause</h3>
+
+<p>A <a href="vtab.html">virtual table</a> that contains <a href="vtab.html#hiddencol">hidden columns</a> can be used like
+a <a href="vtab.html#tabfunc2">table-valued function</a> in the FROM clause.  The arguments to the
+table-valued function become constraints on the HIDDEN columns of
+the virtual table.  Additional information can be found in the
+<a href="vtab.html#tabfunc2">virtual table documentation</a>.
+
+

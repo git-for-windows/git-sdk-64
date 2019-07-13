@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>The Carray() Table-Valued Function</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+The Carray() Table-Valued Function
+</div>
+</div>
+
+
+
+
+<h1 id="overview"><span>1. </span>Overview</h1>
+
+<p>Carray($PTR,$N) is a <a href="vtab.html#tabfunc2">table-valued function</a> with a single column (named
+"value") and zero or more rows.
+The "value" of each row in the carray() is taken from a C-language array
+that is $N elements long.  $PTR is a pointer to the beginning of the array.
+In this way, the carray() function provides a convenient mechanism to
+bind C-language arrays to SQL queries.
+
+</p><h1 id="availability"><span>2. </span>Availability</h1>
+
+<p>The carray() function is not compiled into SQLite by default.
+It is available as a <a href="loadext.html">loadable extension</a> in the
+<a href="https://www.sqlite.org/src/artifact?ci=trunk&filename=ext/misc/carray.c">ext/misc/carray.c</a>
+source file.
+
+</p><h1 id="details"><span>3. </span>Details</h1>
+
+<p>The carray() function takes two or three arguments.
+The first argument is a pointer to an array.  Since pointer values cannot
+be specified directly in SQL, the first argument must be a <a href="lang_expr.html#varparam">parameter</a> that
+is bound to a pointer value using the <a href="c3ref/bind_blob.html">sqlite3_bind_pointer()</a> interface
+using a pointer-type of "carray".
+The second argument is the number of elements in the array.  The optional
+third argument is a string that determines the datatype of the elements
+in the C-language array.  Allowed values for the third argument are:
+
+</p><ol>
+<li> 'int32'
+</li><li> 'int64'
+</li><li> 'double'
+</li><li> 'char*'
+</li></ol>
+
+<p>The default datatype is 'int32'.
+
+</p><p>The carray() function can be used in the FROM clause of a query.
+For example, to query two entries from the OBJ table using rowids
+taken from a C-language array at address $PTR.
+
+</p><div class="codeblock"><pre>SELECT obj.* FROM obj, carray($PTR, 10) AS x
+ WHERE obj.rowid=x.value;
+</pre></div>
+
+<p>This query gives the same result:
+
+</p><div class="codeblock"><pre>SELECT * FROM obj WHERE rowid IN carray($PTR, 10);
+</pre></div>
+

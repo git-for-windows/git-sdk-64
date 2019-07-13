@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>SQLite Query Language: SAVEPOINT</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=nosearch><h1 align="center">SQL As Understood By SQLite</h1><p><a href="lang.html">[Top]</a></p><h2>SAVEPOINT</h2></div><p><b><a href="syntax/savepoint-stmt.html">savepoint-stmt:</a></b>
+<button id='x1171' onclick='hideorshow("x1171","x1172")'>hide</button></p>
+ <div id='x1172' class='imgcontainer'>
+ <img alt="syntax diagram savepoint-stmt" src="images/syntax/savepoint-stmt.gif" />
+</div>
+<p><b><a href="syntax/release-stmt.html">release-stmt:</a></b>
+<button id='x1173' onclick='hideorshow("x1173","x1174")'>hide</button></p>
+ <div id='x1174' class='imgcontainer'>
+ <img alt="syntax diagram release-stmt" src="images/syntax/release-stmt.gif" />
+</div>
+<p><b><a href="syntax/rollback-stmt.html">rollback-stmt:</a></b>
+<button id='x1175' onclick='hideorshow("x1175","x1176")'>hide</button></p>
+ <div id='x1176' class='imgcontainer'>
+ <img alt="syntax diagram rollback-stmt" src="images/syntax/rollback-stmt.gif" />
+</div>
+
+
+<p> SAVEPOINTs are a method of creating transactions, similar to
+<a href="lang_transaction.html">BEGIN</a> and <a href="lang_transaction.html">COMMIT</a>, except that the SAVEPOINT and RELEASE commands
+are named and may be nested.</p>
+
+<p> The SAVEPOINT command starts a new transaction with a name.
+The transaction names need not be unique.
+A SAVEPOINT can be started either within or outside of
+a <a href="lang_transaction.html">BEGIN</a>...<a href="lang_transaction.html">COMMIT</a>.  When a SAVEPOINT is the outer-most savepoint
+and it is not within a <a href="lang_transaction.html">BEGIN</a>...<a href="lang_transaction.html">COMMIT</a> then the behavior is the
+same as BEGIN DEFERRED TRANSACTION.</p>
+
+<p>The ROLLBACK TO command reverts the state of the database back to what
+it was just after the corresponding SAVEPOINT.  Note that unlike that
+plain <a href="lang_transaction.html">ROLLBACK</a> command (without the TO keyword) the ROLLBACK TO command
+does not cancel the transaction.  Instead of cancelling the transaction,
+the ROLLBACK TO command restarts the transaction again at the beginning.
+All intervening SAVEPOINTs are canceled, however.</p>
+
+<p>The RELEASE command is like a <a href="lang_transaction.html">COMMIT</a> for a SAVEPOINT.
+The RELEASE command causes all savepoints back to and including the 
+most recent savepoint with a matching name to be removed from the 
+transaction stack.  The RELEASE of an inner transaction
+does not cause any changes to be written to the database file; it merely
+removes savepoints from the transaction stack such that it is
+no longer possible to ROLLBACK TO those savepoints.
+If a RELEASE command releases the outermost savepoint, so
+that the transaction stack becomes empty, then RELEASE is the same
+as <a href="lang_transaction.html">COMMIT</a>.
+The <a href="lang_transaction.html">COMMIT</a> command may be used to release all savepoints and
+commit the transaction even if the transaction was originally started
+by a SAVEPOINT command instead of a <a href="lang_transaction.html">BEGIN</a> command.</p>
+
+<p>If the savepoint-name in a RELEASE command does not match any
+savepoint currently in the transaction stack, then no savepoints are
+released, the database is unchanged, and the RELEASE command returns
+an error.</p>
+
+<p>Note that an inner transaction might commit (using the RELEASE command)
+but then later have its work undone by a ROLLBACK in an outer transaction.
+A power failure or program crash or OS crash will cause the outer-most
+transaction to rollback, undoing all changes that have occurred within
+that outer transaction, even changes that have supposedly been "committed"
+by the RELEASE command.  Content is not actually committed on the disk 
+until the outermost transaction commits.</p>
+
+<p>There are several ways of thinking about the RELEASE command:</p>
+
+<ul>
+<li><p>
+Some people view RELEASE as the equivalent of COMMIT for a SAVEPOINT.
+This is an acceptable point of view as long as one remembers that the
+changes committed by an inner transaction might later be undone by a
+rollback in an outer transaction.</p></li>
+
+<li><p>
+Another view of RELEASE is that it merges a named transaction into its
+parent transaction, so that the named transaction and its parent become
+the same transaction.  After RELEASE, the named transaction and its parent
+will commit or rollback together, whatever their fate may be.
+</p></li>
+
+<li><p>
+One can also think of savepoints as
+"marks" in the transaction timeline.  In this view, the SAVEPOINT command
+creates a new mark, the ROLLBACK TO command rewinds the timeline back
+to a point just after the named mark, and the RELEASE command
+erases marks from the timeline without actually making any
+changes to the database.
+</p></li>
+</ul>
+
+
+
+<h3>Transaction Nesting Rules</h3>
+
+<p>The last transaction started will be the first
+transaction committed or rolled back.</p>
+
+<p>The <a href="lang_transaction.html">BEGIN</a> command only works if the transaction stack is empty, or
+in other words if there are no pending transactions.  If the transaction
+stack is not empty when the <a href="lang_transaction.html">BEGIN</a> command is invoked, then the command
+fails with an error.</p>
+
+<p>The <a href="lang_transaction.html">COMMIT</a> command commits all outstanding transactions and leaves
+the transaction stack empty.</p>
+
+<p>The RELEASE command starts with the most recent addition to the
+transaction stack and releases savepoints backwards 
+in time until it releases a savepoint with a matching savepoint-name.
+Prior savepoints, even savepoints with matching savepoint-names, are
+unchanged.
+If the RELEASE command causes the
+transaction stack to become empty (if the RELEASE command releases the
+outermost transaction from the stack) then the transaction commits.</p>
+
+<p>The <a href="lang_transaction.html">ROLLBACK</a> command without a TO clause rolls backs all transactions
+and leaves the transaction stack empty.</p>
+
+<p>The ROLLBACK command with a TO clause rolls back transactions going
+backwards in time back to the most recent SAVEPOINT with a matching name.
+The SAVEPOINT with the matching name remains on the transaction stack,
+but all database changes that occurred after that SAVEPOINT was created
+are rolled back.  If the savepoint-name in a ROLLBACK TO command does not
+match any SAVEPOINT on the stack, then the ROLLBACK command fails with an
+error and leaves the state of the database unchanged.</p>
+
+
