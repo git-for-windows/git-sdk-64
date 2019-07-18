@@ -963,7 +963,7 @@ namespace std
 #define _GLIBCXX_HAVE_LIMIT_VMEM 0
 
 /* Define if link is available in <unistd.h>. */
-/* #undef _GLIBCXX_HAVE_LINK */
+#define _GLIBCXX_HAVE_LINK 1
 
 /* Define if futex syscall is available. */
 /* #undef _GLIBCXX_HAVE_LINUX_FUTEX */
@@ -1053,7 +1053,7 @@ namespace std
 #define _GLIBCXX_HAVE_QUICK_EXIT 1
 
 /* Define if readlink is available in <unistd.h>. */
-/* #undef _GLIBCXX_HAVE_READLINK */
+#define _GLIBCXX_HAVE_READLINK 1
 
 /* Define to 1 if you have the `setenv' function. */
 #define _GLIBCXX_HAVE_SETENV 1
@@ -1122,13 +1122,13 @@ namespace std
 #define _GLIBCXX_HAVE_STRTOLD 1
 
 /* Define to 1 if `d_type' is a member of `struct dirent'. */
-/* #undef _GLIBCXX_HAVE_STRUCT_DIRENT_D_TYPE */
+#define _GLIBCXX_HAVE_STRUCT_DIRENT_D_TYPE 1
 
 /* Define if strxfrm_l is available in <string.h>. */
 /* #undef _GLIBCXX_HAVE_STRXFRM_L */
 
 /* Define if symlink is available in <unistd.h>. */
-/* #undef _GLIBCXX_HAVE_SYMLINK */
+#define _GLIBCXX_HAVE_SYMLINK 1
 
 /* Define to 1 if the target runtime linker supports binding the same symbol
    to different versions. */
@@ -1210,7 +1210,7 @@ namespace std
 #define _GLIBCXX_HAVE_TLS 1
 
 /* Define if truncate is available in <unistd.h>. */
-/* #undef _GLIBCXX_HAVE_TRUNCATE */
+#define _GLIBCXX_HAVE_TRUNCATE 1
 
 /* Define to 1 if you have the <uchar.h> header file. */
 /* #undef _GLIBCXX_HAVE_UCHAR_H */
@@ -1650,10 +1650,10 @@ namespace std
 #define _GLIBCXX_USE_DEV_RANDOM 1
 
 /* Define if fchmod is available in <sys/stat.h>. */
-/* #undef _GLIBCXX_USE_FCHMOD */
+#define _GLIBCXX_USE_FCHMOD 1
 
 /* Define if fchmodat is available in <sys/stat.h>. */
-/* #undef _GLIBCXX_USE_FCHMODAT */
+#define _GLIBCXX_USE_FCHMODAT 1
 
 /* Defined if gettimeofday is available. */
 #define _GLIBCXX_USE_GETTIMEOFDAY 1
@@ -1671,7 +1671,7 @@ namespace std
 #define _GLIBCXX_USE_LONG_LONG 1
 
 /* Define if lstat is available in <sys/stat.h>. */
-/* #undef _GLIBCXX_USE_LSTAT */
+#define _GLIBCXX_USE_LSTAT 1
 
 /* Defined if nanosleep is available. */
 #define _GLIBCXX_USE_NANOSLEEP 1
@@ -1705,7 +1705,7 @@ namespace std
 /* #undef _GLIBCXX_USE_SENDFILE */
 
 /* Define if struct stat has timespec members. */
-/* #undef _GLIBCXX_USE_ST_MTIM */
+#define _GLIBCXX_USE_ST_MTIM 1
 
 /* Define if sysctl(), CTL_HW and HW_NCPU are available in <sys/sysctl.h>. */
 /* #undef _GLIBCXX_USE_SYSCTL_HW_NCPU */
@@ -1714,11 +1714,11 @@ namespace std
 #define _GLIBCXX_USE_TMPNAM 1
 
 /* Define if utime is available in <utime.h>. */
-/* #undef _GLIBCXX_USE_UTIME */
+#define _GLIBCXX_USE_UTIME 1
 
 /* Define if utimensat and UTIME_OMIT are available in <sys/stat.h> and
    AT_FDCWD in <fcntl.h>. */
-/* #undef _GLIBCXX_USE_UTIMENSAT */
+#define _GLIBCXX_USE_UTIMENSAT 1
 
 /* Define if code specialized for wchar_t should be used. */
 #define _GLIBCXX_USE_WCHAR_T 1
