@@ -11,6 +11,7 @@ import subprocess
 import sys
 import sysconfig
 import types
+from sysconfig import _POSIX_BUILD
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +112,7 @@ class EnvBuilder:
         context.executable = executable
         context.python_dir = dirname
         context.python_exe = exename
-        if sys.platform == 'win32':
+        if sys.platform == 'win32' and not _POSIX_BUILD:
             binname = 'Scripts'
             incpath = 'Include'
             libpath = os.path.join(env_dir, 'Lib', 'site-packages')
@@ -155,7 +156,7 @@ class EnvBuilder:
             f.write('include-system-site-packages = %s\n' % incl)
             f.write('version = %d.%d.%d\n' % sys.version_info[:3])
 
-    if os.name != 'nt':
+    if os.name != 'nt' or _POSIX_BUILD:
         def symlink_or_copy(self, src, dst, relative_symlinks_ok=False):
             """
             Try symlinking a file, and if that fails, fall back to copying.
@@ -229,11 +230,11 @@ class EnvBuilder:
         path = context.env_exe
         copier = self.symlink_or_copy
         dirname = context.python_dir
-        if os.name != 'nt':
+        if os.name != 'nt' or _POSIX_BUILD:
             copier(context.executable, path)
             if not os.path.islink(path):
                 os.chmod(path, 0o755)
-            for suffix in ('python', 'python3'):
+            for suffix in ('python.exe', 'python3.exe'):
                 path = os.path.join(binpath, suffix)
                 if not os.path.exists(path):
                     # Issue 18807: make copies if
@@ -283,9 +284,11 @@ class EnvBuilder:
         # We run ensurepip in isolated mode to avoid side effects from
         # environment vars, the current directory and anything else
         # intended for the global Python environment
+        env = os.environ.copy()
+        env.pop("MSYSTEM", None)
         cmd = [context.env_exe, '-Im', 'ensurepip', '--upgrade',
-                                                    '--default-pip']
-        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+               '--default-pip']
+        subprocess.check_call(cmd, stderr=subprocess.STDOUT, env=env)
 
     def setup_scripts(self, context):
         """

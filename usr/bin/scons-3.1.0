@@ -25,15 +25,15 @@
 
 from __future__ import print_function
 
-__revision__ = "src/script/scons.py 3a41ed6b288cee8d085373ad7fa02894e1903864 2019-01-23 17:30:35 bdeegan"
+__revision__ = "src/script/scons.py ae4de9ab2249be220b6658a514eef8c3a57afc04 2019-07-21 02:32:15 bdeegan"
 
-__version__ = "3.0.4"
+__version__ = "3.1.0"
 
-__build__ = "3a41ed6b288cee8d085373ad7fa02894e1903864"
+__build__ = "ae4de9ab2249be220b6658a514eef8c3a57afc04"
 
 __buildsys__ = "kufra"
 
-__date__ = "2019-01-23 17:30:35"
+__date__ = "2019-07-21 02:32:15"
 
 __developer__ = "bdeegan"
 
@@ -68,7 +68,7 @@ Python 2.7 or >= 3.5 is required.\n"
 # Strip the script directory from sys.path so on case-insensitive
 # (WIN32) systems Python doesn't think that the "scons" script is the
 # "SCons" package.
-script_dir = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.realpath(__file__))
 script_path = os.path.realpath(os.path.dirname(__file__))
 if script_path in sys.path:
     sys.path.remove(script_path)

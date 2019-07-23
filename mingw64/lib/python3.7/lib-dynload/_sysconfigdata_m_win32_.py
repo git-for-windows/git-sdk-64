@@ -58,8 +58,8 @@ build_time_vars = {'ABIFLAGS': 'm',
  'CONFINCLUDEDIR': '/mingw64/include',
  'CONFINCLUDEPY': '/mingw64/include/python3.7m',
  'COREPYTHONPATH': '',
- 'COVERAGE_INFO': '/e/mingwbuild/mingw-w64-python3/src/build-x86_64/coverage.info',
- 'COVERAGE_REPORT': '/e/mingwbuild/mingw-w64-python3/src/build-x86_64/lcov-report',
+ 'COVERAGE_INFO': '/scripts/mingw-w64-python3/src/build-x86_64/coverage.info',
+ 'COVERAGE_REPORT': '/scripts/mingw-w64-python3/src/build-x86_64/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--no-branch-coverage --title "CPython lcov '
                             'report"',
  'CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.4/Include '
