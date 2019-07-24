@@ -28,14 +28,14 @@ build_time_vars = {'ABIFLAGS': 'm',
            '-DNDEBUG',
  'CFLAGSFORSHARED': '',
  'CFLAGS_ALIASING': '',
- 'CFLAGS_NODIST': '',
  'CONFIGFILES': 'configure configure.ac acconfig.h pyconfig.h.in '
                 'Makefile.pre.in',
  'CONFIGURE_CFLAGS': '-march=i686 -mtune=generic -O2 -pipe -fwrapv '
                      '-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 '
                      '-DNDEBUG',
- 'CONFIGURE_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
-                            '-Wno-unused-parameter '
+ 'CONFIGURE_CFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
+                            '-flto-partition=none -g -std=c99 -Wextra '
+                            '-Wno-unused-result -Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
                             '-Wno-cast-function-type '
                             '-Werror=implicit-function-declaration',
@@ -43,11 +43,13 @@ build_time_vars = {'ABIFLAGS': 'm',
                        '-D__USE_MINGW_ANSI_STDIO=1 '
                        '-IC:/building/msys64/mingw32/include/ncurses  -I.',
  'CONFIGURE_LDFLAGS': '-pipe -s',
- 'CONFIGURE_LDFLAGS_NODIST': '',
+ 'CONFIGURE_LDFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
+                             '-flto-partition=none -g',
  'CONFIG_ARGS': "'--prefix=/mingw32' '--host=i686-w64-mingw32' "
                 "'--build=i686-w64-mingw32' '--enable-shared' "
                 "'--with-nt-threads' '--with-system-expat' '--with-system-ffi' "
-                "'--with-system-libmpdec' '--without-ensurepip' 'OPT=' "
+                "'--with-system-libmpdec' '--without-ensurepip' "
+                "'--enable-optimizations' '--with-lto' 'OPT=' "
                 "'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' "
                 "'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv "
                 "-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' "
@@ -635,11 +637,14 @@ build_time_vars = {'ABIFLAGS': 'm',
                              '-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 '
                              '-DNDEBUG -march=i686 -mtune=generic -O2 -pipe '
                              '-fwrapv -D__USE_MINGW_ANSI_STDIO=1 '
-                             '-D_WIN32_WINNT=0x0601 -DNDEBUG -std=c99 -Wextra '
+                             '-D_WIN32_WINNT=0x0601 -DNDEBUG -flto '
+                             '-fuse-linker-plugin -ffat-lto-objects '
+                             '-flto-partition=none -g -std=c99 -Wextra '
                              '-Wno-unused-result -Wno-unused-parameter '
                              '-Wno-missing-field-initializers '
                              '-Wno-cast-function-type '
-                             '-Werror=implicit-function-declaration -IObjects '
+                             '-Werror=implicit-function-declaration '
+                             '-fprofile-use -fprofile-correction -IObjects '
                              '-IInclude -IPython -I. -I../Python-3.7.4/Include '
                              '-I../Python-3.7.4/PC -D_FORTIFY_SOURCE=2 '
                              '-D__USE_MINGW_ANSI_STDIO=1 '
@@ -653,27 +658,32 @@ build_time_vars = {'ABIFLAGS': 'm',
               '-D_WIN32_WINNT=0x0601 -DNDEBUG -march=i686 -mtune=generic -O2 '
               '-pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 '
               '-DNDEBUG',
- 'PY_CFLAGS_NODIST': '-std=c99 -Wextra -Wno-unused-result '
-                     '-Wno-unused-parameter -Wno-missing-field-initializers '
-                     '-Wno-cast-function-type '
-                     '-Werror=implicit-function-declaration',
+ 'PY_CFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
+                     '-flto-partition=none -g -std=c99 -Wextra '
+                     '-Wno-unused-result -Wno-unused-parameter '
+                     '-Wno-missing-field-initializers -Wno-cast-function-type '
+                     '-Werror=implicit-function-declaration -fprofile-use '
+                     '-fprofile-correction',
  'PY_COERCE_C_LOCALE': 1,
  'PY_CORE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -march=i686 '
                    '-mtune=generic -O2 -pipe -fwrapv '
                    '-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG '
                    '-march=i686 -mtune=generic -O2 -pipe -fwrapv '
                    '-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG '
-                   '-std=c99 -Wextra -Wno-unused-result -Wno-unused-parameter '
+                   '-flto -fuse-linker-plugin -ffat-lto-objects '
+                   '-flto-partition=none -g -std=c99 -Wextra '
+                   '-Wno-unused-result -Wno-unused-parameter '
                    '-Wno-missing-field-initializers -Wno-cast-function-type '
-                   '-Werror=implicit-function-declaration -IObjects -IInclude '
-                   '-IPython -I. -I../Python-3.7.4/Include '
-                   '-I../Python-3.7.4/PC -D_FORTIFY_SOURCE=2 '
-                   '-D__USE_MINGW_ANSI_STDIO=1 '
+                   '-Werror=implicit-function-declaration -fprofile-use '
+                   '-fprofile-correction -IObjects -IInclude -IPython -I. '
+                   '-I../Python-3.7.4/Include -I../Python-3.7.4/PC '
+                   '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
                    '-IC:/building/msys64/mingw32/include/ncurses  -I. '
                    '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
                    '-IC:/building/msys64/mingw32/include/ncurses '
                    '-DPy_BUILD_CORE',
- 'PY_CORE_LDFLAGS': '-pipe -s -pipe -s',
+ 'PY_CORE_LDFLAGS': '-pipe -s -pipe -s -flto -fuse-linker-plugin '
+                    '-ffat-lto-objects -flto-partition=none -g',
  'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.4/Include '
                 '-I../Python-3.7.4/PC -D_FORTIFY_SOURCE=2 '
                 '-D__USE_MINGW_ANSI_STDIO=1 '
@@ -682,7 +692,8 @@ build_time_vars = {'ABIFLAGS': 'm',
                 '-IC:/building/msys64/mingw32/include/ncurses',
  'PY_FORMAT_SIZE_T': '"z"',
  'PY_LDFLAGS': '-pipe -s -pipe -s',
- 'PY_LDFLAGS_NODIST': '',
+ 'PY_LDFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
+                      '-flto-partition=none -g',
  'PY_SSL_DEFAULT_CIPHERS': 1,
  'PY_SSL_DEFAULT_CIPHER_STRING': 0,
  'PY_STDMODULE_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG '
@@ -690,13 +701,15 @@ build_time_vars = {'ABIFLAGS': 'm',
                         '-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 '
                         '-DNDEBUG -march=i686 -mtune=generic -O2 -pipe -fwrapv '
                         '-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 '
-                        '-DNDEBUG -std=c99 -Wextra -Wno-unused-result '
-                        '-Wno-unused-parameter -Wno-missing-field-initializers '
+                        '-DNDEBUG -flto -fuse-linker-plugin -ffat-lto-objects '
+                        '-flto-partition=none -g -std=c99 -Wextra '
+                        '-Wno-unused-result -Wno-unused-parameter '
+                        '-Wno-missing-field-initializers '
                         '-Wno-cast-function-type '
-                        '-Werror=implicit-function-declaration -IObjects '
-                        '-IInclude -IPython -I. -I../Python-3.7.4/Include '
-                        '-I../Python-3.7.4/PC -D_FORTIFY_SOURCE=2 '
-                        '-D__USE_MINGW_ANSI_STDIO=1 '
+                        '-Werror=implicit-function-declaration -fprofile-use '
+                        '-fprofile-correction -IObjects -IInclude -IPython -I. '
+                        '-I../Python-3.7.4/Include -I../Python-3.7.4/PC '
+                        '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
                         '-IC:/building/msys64/mingw32/include/ncurses  -I. '
                         '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
                         '-IC:/building/msys64/mingw32/include/ncurses',
