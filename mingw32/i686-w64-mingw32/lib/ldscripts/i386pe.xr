@@ -1,5 +1,5 @@
 /* Script for ld -r: link without relocation */
-/* Copyright (C) 2014-2018 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2019 Free Software Foundation, Inc.
    Copying and distribution of this script, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
@@ -25,6 +25,7 @@ SECTIONS
   .rdata  :
   {
     *(.rdata)
+    . = ALIGN(4);
   }
   .eh_frame  :
   {

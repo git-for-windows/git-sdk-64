@@ -1,5 +1,5 @@
 /* bfdlink.h -- header file for BFD link routines
-   Copyright (C) 1993-2018 Free Software Foundation, Inc.
+   Copyright (C) 1993-2019 Free Software Foundation, Inc.
    Written by Steve Chamberlain and Ian Lance Taylor, Cygnus Support.
 
    This file is part of BFD, the Binary File Descriptor library.
@@ -114,6 +114,11 @@ struct bfd_link_hash_entry
 
   /* Symbol defined in a linker script.  */
   unsigned int ldscript_def : 1;
+
+  /* Symbol will be converted from absolute to section-relative.  Set for
+     symbols defined by a script from "dot" (also SEGMENT_START or ORIGIN)
+     outside of an output section statement.  */
+  unsigned int rel_from_abs : 1;
 
   /* A union of information depending upon the type.  */
   union
@@ -470,6 +475,9 @@ struct bfd_link_info
   /* TRUE if the linker script contained an explicit PHDRS command.  */
   unsigned int user_phdrs: 1;
 
+  /* TRUE if program headers ought to be loaded.  */
+  unsigned int load_phdrs: 1;
+
   /* TRUE if we should check relocations after all input files have
      been opened.  */
   unsigned int check_relocs_after_open_input: 1;
@@ -497,6 +505,9 @@ struct bfd_link_info
 
   /* TRUE if common symbols should be treated as undefined.  */
   unsigned int inhibit_common_definition : 1;
+
+  /* TRUE if "-Map map" is passed to linker.  */
+  unsigned int has_map_file : 1;
 
   /* The 1-byte NOP for x86 call instruction.  */
   char call_nop_byte;

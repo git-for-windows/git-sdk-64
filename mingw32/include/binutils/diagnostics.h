@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2018 Free Software Foundation, Inc.
+/* Copyright (C) 2017-2019 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@
 #if defined (__clang__) /* clang */
 
 # define DIAGNOSTIC_IGNORE_SELF_MOVE DIAGNOSTIC_IGNORE ("-Wself-move")
+# define DIAGNOSTIC_IGNORE_DEPRECATED_DECLARATIONS \
+  DIAGNOSTIC_IGNORE ("-Wdeprecated-declarations")
 # define DIAGNOSTIC_IGNORE_DEPRECATED_REGISTER \
   DIAGNOSTIC_IGNORE ("-Wdeprecated-register")
 # define DIAGNOSTIC_IGNORE_UNUSED_FUNCTION \
@@ -57,6 +59,10 @@
 #  define DIAGNOSTIC_IGNORE_SWITCH_DIFFERENT_ENUM_TYPES \
    DIAGNOSTIC_IGNORE ("-Wenum-compare-switch")
 # endif
+
+# define DIAGNOSTIC_IGNORE_FORMAT_NONLITERAL \
+  DIAGNOSTIC_IGNORE ("-Wformat-nonliteral")
+
 #elif defined (__GNUC__) /* GCC */
 
 # define DIAGNOSTIC_IGNORE_UNUSED_FUNCTION \
@@ -64,10 +70,18 @@
 
 # define DIAGNOSTIC_IGNORE_STRINGOP_TRUNCATION \
   DIAGNOSTIC_IGNORE ("-Wstringop-truncation")
+
+# define DIAGNOSTIC_IGNORE_FORMAT_NONLITERAL \
+  DIAGNOSTIC_IGNORE ("-Wformat-nonliteral")
+
 #endif
 
 #ifndef DIAGNOSTIC_IGNORE_SELF_MOVE
 # define DIAGNOSTIC_IGNORE_SELF_MOVE
+#endif
+
+#ifndef DIAGNOSTIC_IGNORE_DEPRECATED_DECLARATIONS
+# define DIAGNOSTIC_IGNORE_DEPRECATED_DECLARATIONS
 #endif
 
 #ifndef DIAGNOSTIC_IGNORE_DEPRECATED_REGISTER
@@ -84,6 +98,10 @@
 
 #ifndef DIAGNOSTIC_IGNORE_STRINGOP_TRUNCATION
 # define DIAGNOSTIC_IGNORE_STRINGOP_TRUNCATION
+#endif
+
+#ifndef DIAGNOSTIC_IGNORE_FORMAT_NONLITERAL
+# define DIAGNOSTIC_IGNORE_FORMAT_NONLITERAL
 #endif
 
 #endif /* DIAGNOSTICS_H */

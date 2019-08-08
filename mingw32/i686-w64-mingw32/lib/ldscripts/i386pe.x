@@ -1,5 +1,5 @@
 /* Default linker script, for normal executables */
-/* Copyright (C) 2014-2018 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2019 Free Software Foundation, Inc.
    Copying and distribution of this script, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
@@ -28,10 +28,12 @@ SECTIONS
 	  overridden and global constructors will not be run.
 
 	  This does mean that it is not possible for a user to define
-	  their own __CTOR_LIST__ and __DTOR_LIST__ symbols.  If that
-	  ability is needed a custom linker script will have to be
-	  used.  (The custom script can just be a copy of this script
-	  with the PROVIDE() qualifiers added).
+	  their own __CTOR_LIST__ and __DTOR_LIST__ symbols; if they do,
+	  the content from those variables are included but the symbols
+	  defined here silently take precedence.  If they truly need to
+	  be redefined, a custom linker script will have to be used.
+	  (The custom script can just be a copy of this script with the
+	  PROVIDE() qualifiers added).
 	  See PR 22762 for more details.  */
        ___CTOR_LIST__ = .;
        __CTOR_LIST__ = .;
@@ -75,6 +77,7 @@ SECTIONS
   {
     *(.rdata)
 	     *(SORT(.rdata$*))
+    . = ALIGN(4);
     __rt_psrelocs_start = .;
     KEEP(*(.rdata_runtime_pseudo_reloc))
     __rt_psrelocs_end = .;

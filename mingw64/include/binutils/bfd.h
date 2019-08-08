@@ -7,7 +7,7 @@
 
 /* Main header file for the bfd library -- portable access to object files.
 
-   Copyright (C) 1990-2018 Free Software Foundation, Inc.
+   Copyright (C) 1990-2019 Free Software Foundation, Inc.
 
    Contributed by Cygnus Support.
 
@@ -41,6 +41,7 @@ extern "C" {
 
 #include "ansidecl.h"
 #include "symcat.h"
+#include "bfd_stdint.h"
 #include "diagnostics.h"
 #include <stdarg.h>
 #include <sys/stat.h>
@@ -240,9 +241,6 @@ bfd_format;
 
 /* A count of carsyms (canonical archive symbols).  */
 typedef unsigned long symindex;
-
-/* How to perform a relocation.  */
-typedef const struct reloc_howto_struct reloc_howto_type;
 
 #define BFD_NO_MORE_SYMBOLS ((symindex) ~0)
 
@@ -1070,9 +1068,25 @@ extern bfd_boolean v850_elf_set_note
 /* MIPS ABI flags data access.  For the disassembler.  */
 struct elf_internal_abiflags_v0;
 extern struct elf_internal_abiflags_v0 *bfd_mips_elf_get_abiflags (bfd *);
-/* Extracted from init.c.  */
-void bfd_init (void);
 
+/* C-SKY functions.  */
+extern bfd_boolean elf32_csky_build_stubs
+  (struct bfd_link_info *);
+extern bfd_boolean elf32_csky_size_stubs
+  (bfd *, bfd *, struct bfd_link_info *, bfd_signed_vma,
+   struct bfd_section *(*) (const char*, struct bfd_section*),
+   void (*) (void));
+extern void elf32_csky_next_input_section
+  (struct bfd_link_info *, struct bfd_section *);
+extern int elf32_csky_setup_section_lists
+  (bfd *, struct bfd_link_info *);
+/* Extracted from init.c.  */
+unsigned int bfd_init (void);
+
+
+/* Value returned by bfd_init.  */
+
+#define BFD_INIT_MAGIC (sizeof (struct bfd_section))
 /* Extracted from opncls.c.  */
 /* Set to N to open the next N BFDs using an alternate id space.  */
 extern unsigned int bfd_use_reserved_id;
@@ -1159,6 +1173,20 @@ char *bfd_follow_build_id_debuglink (bfd *abfd, const char *dir);
   BFD_SEND (abfd, bfd_getx16, (ptr))
 #define bfd_get_signed_16(abfd, ptr) \
   BFD_SEND (abfd, bfd_getx_signed_16, (ptr))
+
+#define bfd_put_24(abfd, val, ptr) \
+  do                                   \
+    if (bfd_big_endian (abfd))         \
+      bfd_putb24 ((val), (ptr));       \
+    else                               \
+      bfd_putl24 ((val), (ptr));       \
+  while (0)
+
+bfd_vma bfd_getb24 (const void *p);
+bfd_vma bfd_getl24 (const void *p);
+
+#define bfd_get_24(abfd, ptr) \
+  (bfd_big_endian (abfd) ? bfd_getb24 (ptr) : bfd_getl24 (ptr))
 
 #define bfd_put_32(abfd, val, ptr) \
   BFD_SEND (abfd, bfd_putx32, ((val),(ptr)))
@@ -2046,7 +2074,9 @@ enum bfd_architecture
 #define bfd_mach_mips5                 5
 #define bfd_mach_mips_loongson_2e      3001
 #define bfd_mach_mips_loongson_2f      3002
-#define bfd_mach_mips_loongson_3a      3003
+#define bfd_mach_mips_gs464            3003
+#define bfd_mach_mips_gs464e           3004
+#define bfd_mach_mips_gs264e           3005
 #define bfd_mach_mips_sb1              12310201 /* octal 'SB', 01.  */
 #define bfd_mach_mips_octeon           6501
 #define bfd_mach_mips_octeonp          6601
@@ -2197,6 +2227,19 @@ enum bfd_architecture
 #define bfd_mach_arm_ep9312    11
 #define bfd_mach_arm_iWMMXt    12
 #define bfd_mach_arm_iWMMXt2   13
+#define bfd_mach_arm_5TEJ      14
+#define bfd_mach_arm_6         15
+#define bfd_mach_arm_6KZ       16
+#define bfd_mach_arm_6T2       17
+#define bfd_mach_arm_6K        18
+#define bfd_mach_arm_7         19
+#define bfd_mach_arm_6M        20
+#define bfd_mach_arm_6SM       21
+#define bfd_mach_arm_7EM       22
+#define bfd_mach_arm_8         23
+#define bfd_mach_arm_8R        24
+#define bfd_mach_arm_8M_BASE   25
+#define bfd_mach_arm_8M_MAIN   26
   bfd_arch_nds32,     /* Andes NDS32.  */
 #define bfd_mach_n1            1
 #define bfd_mach_n1h           2
@@ -2316,6 +2359,8 @@ enum bfd_architecture
 #define bfd_mach_rl78          0x75
   bfd_arch_rx,        /* Renesas RX.  */
 #define bfd_mach_rx            0x75
+#define bfd_mach_rx_v2         0x76
+#define bfd_mach_rx_v3         0x77
   bfd_arch_s390,      /* IBM s390.  */
 #define bfd_mach_s390_31       31
 #define bfd_mach_s390_64       64
@@ -2387,6 +2432,15 @@ enum bfd_architecture
   bfd_arch_nfp,       /* Netronome Flow Processor */
 #define bfd_mach_nfp3200       0x3200
 #define bfd_mach_nfp6000       0x6000
+  bfd_arch_csky,      /* C-SKY.  */
+#define bfd_mach_ck_unknown    0
+#define bfd_mach_ck510         1
+#define bfd_mach_ck610         2
+#define bfd_mach_ck801         3
+#define bfd_mach_ck802         4
+#define bfd_mach_ck803         5
+#define bfd_mach_ck807         6
+#define bfd_mach_ck810         7
   bfd_arch_last
   };
 
@@ -2487,6 +2541,7 @@ typedef enum bfd_reloc_status
  }
  bfd_reloc_status_type;
 
+typedef const struct reloc_howto_struct reloc_howto_type;
 
 typedef struct reloc_cache_entry
 {
@@ -2524,51 +2579,39 @@ enum complain_overflow
      unsigned number.  */
   complain_overflow_unsigned
 };
-struct bfd_symbol;             /* Forward declaration.  */
-
 struct reloc_howto_struct
 {
-  /*  The type field has mainly a documentary use - the back end can
-      do what it wants with it, though normally the back end's
-      external idea of what a reloc number is stored
-      in this field.  For example, a PC relative word relocation
-      in a coff environment has the type 023 - because that's
-      what the outside world calls a R_PCRWORD reloc.  */
+  /* The type field has mainly a documentary use - the back end can
+     do what it wants with it, though normally the back end's idea of
+     an external reloc number is stored in this field.  */
   unsigned int type;
 
-  /*  The value the final relocation is shifted right by.  This drops
-      unwanted data from the relocation.  */
-  unsigned int rightshift;
+  /* The encoded size of the item to be relocated.  This is *not* a
+     power-of-two measure.  Use bfd_get_reloc_size to find the size
+     of the item in bytes.  */
+  unsigned int size:3;
 
-  /*  The size of the item to be relocated.  This is *not* a
-      power-of-two measure.  To get the number of bytes operated
-      on by a type of relocation, use bfd_get_reloc_size.  */
-  int size;
+  /* The number of bits in the field to be relocated.  This is used
+     when doing overflow checking.  */
+  unsigned int bitsize:7;
 
-  /*  The number of bits in the item to be relocated.  This is used
-      when doing overflow checking.  */
-  unsigned int bitsize;
+  /* The value the final relocation is shifted right by.  This drops
+     unwanted data from the relocation.  */
+  unsigned int rightshift:6;
 
-  /*  The relocation is relative to the field being relocated.  */
-  bfd_boolean pc_relative;
-
-  /*  The bit position of the reloc value in the destination.
-      The relocated value is left shifted by this amount.  */
-  unsigned int bitpos;
+  /* The bit position of the reloc value in the destination.
+     The relocated value is left shifted by this amount.  */
+  unsigned int bitpos:6;
 
   /* What type of overflow error should be checked for when
      relocating.  */
-  enum complain_overflow complain_on_overflow;
+  ENUM_BITFIELD (complain_overflow) complain_on_overflow:2;
 
-  /* If this field is non null, then the supplied function is
-     called rather than the normal function.  This allows really
-     strange relocation methods to be accommodated.  */
-  bfd_reloc_status_type (*special_function)
-    (bfd *, arelent *, struct bfd_symbol *, void *, asection *,
-     bfd *, char **);
+  /* The relocation value should be negated before applying.  */
+  unsigned int negate:1;
 
-  /* The textual name of the relocation type.  */
-  char *name;
+  /* The relocation is relative to the item being relocated.  */
+  unsigned int pc_relative:1;
 
   /* Some formats record a relocation addend in the section contents
      rather than with the relocation.  For ELF formats this is the
@@ -2585,21 +2628,7 @@ struct reloc_howto_struct
      USE_REL targets set this field to TRUE.  Why this is so is peculiar
      to each particular target.  For relocs that aren't used in partial
      links (e.g. GOT stuff) it doesn't matter what this is set to.  */
-  bfd_boolean partial_inplace;
-
-  /* src_mask selects the part of the instruction (or data) to be used
-     in the relocation sum.  If the target relocations don't have an
-     addend in the reloc, eg. ELF USE_REL, src_mask will normally equal
-     dst_mask to extract the addend from the section contents.  If
-     relocations do have an addend in the reloc, eg. ELF USE_RELA, this
-     field should be zero.  Non-zero values for ELF USE_RELA targets are
-     bogus as in those cases the value in the dst_mask part of the
-     section contents should be treated as garbage.  */
-  bfd_vma src_mask;
-
-  /* dst_mask selects which parts of the instruction (or data) are
-     replaced with a relocated value.  */
-  bfd_vma dst_mask;
+  unsigned int partial_inplace:1;
 
   /* When some formats create PC relative instructions, they leave
      the value of the pc of the place being relocated in the offset
@@ -2607,33 +2636,40 @@ struct reloc_howto_struct
      be made just by adding in an ordinary offset (e.g., sun3 a.out).
      Some formats leave the displacement part of an instruction
      empty (e.g., ELF); this flag signals the fact.  */
-  bfd_boolean pcrel_offset;
+  unsigned int pcrel_offset:1;
+
+  /* src_mask selects the part of the instruction (or data) to be used
+     in the relocation sum.  If the target relocations don't have an
+     addend in the reloc, eg. ELF USE_REL, src_mask will normally equal
+     dst_mask to extract the addend from the section contents.  If
+     relocations do have an addend in the reloc, eg. ELF USE_RELA, this
+     field should normally be zero.  Non-zero values for ELF USE_RELA
+     targets should be viewed with suspicion as normally the value in
+     the dst_mask part of the section contents should be ignored.  */
+  bfd_vma src_mask;
+
+  /* dst_mask selects which parts of the instruction (or data) are
+     replaced with a relocated value.  */
+  bfd_vma dst_mask;
+
+  /* If this field is non null, then the supplied function is
+     called rather than the normal function.  This allows really
+     strange relocation methods to be accommodated.  */
+  bfd_reloc_status_type (*special_function)
+    (bfd *, arelent *, struct bfd_symbol *, void *, asection *,
+     bfd *, char **);
+
+  /* The textual name of the relocation type.  */
+  char *name;
 };
 
-#define HOWTO(C, R, S, B, P, BI, O, SF, NAME, INPLACE, MASKSRC, MASKDST, PC) \
-  { (unsigned) C, R, S, B, P, BI, O, SF, NAME, INPLACE, MASKSRC, MASKDST, PC }
-#define NEWHOWTO(FUNCTION, NAME, SIZE, REL, IN) \
-  HOWTO (0, 0, SIZE, 0, REL, 0, complain_overflow_dont, FUNCTION, \
-         NAME, FALSE, 0, 0, IN)
-
+#define HOWTO(type, right, size, bits, pcrel, left, ovf, func, name,   \
+              inplace, src_mask, dst_mask, pcrel_off)                  \
+  { (unsigned) type, size < 0 ? -size : size, bits, right, left, ovf,  \
+    size < 0, pcrel, inplace, pcrel_off, src_mask, dst_mask, func, name }
 #define EMPTY_HOWTO(C) \
   HOWTO ((C), 0, 0, 0, FALSE, 0, complain_overflow_dont, NULL, \
          NULL, FALSE, 0, 0, FALSE)
-
-#define HOWTO_PREPARE(relocation, symbol)              \
-  {                                                    \
-    if (symbol != NULL)                                \
-      {                                                \
-        if (bfd_is_com_section (symbol->section))      \
-          {                                            \
-            relocation = 0;                            \
-          }                                            \
-        else                                           \
-          {                                            \
-            relocation = symbol->value;                \
-          }                                            \
-      }                                                \
-  }
 
 unsigned int bfd_get_reloc_size (reloc_howto_type *);
 
@@ -3407,8 +3443,15 @@ instruction.  */
   BFD_RELOC_PPC64_PLTGOT16_LO_DS,
   BFD_RELOC_PPC64_ADDR16_HIGH,
   BFD_RELOC_PPC64_ADDR16_HIGHA,
+  BFD_RELOC_PPC64_REL16_HIGH,
+  BFD_RELOC_PPC64_REL16_HIGHA,
+  BFD_RELOC_PPC64_REL16_HIGHER,
+  BFD_RELOC_PPC64_REL16_HIGHERA,
+  BFD_RELOC_PPC64_REL16_HIGHEST,
+  BFD_RELOC_PPC64_REL16_HIGHESTA,
   BFD_RELOC_PPC64_ADDR64_LOCAL,
   BFD_RELOC_PPC64_ENTRY,
+  BFD_RELOC_PPC64_REL24_NOTOC,
 
 /* PowerPC and PowerPC64 thread-local storage relocations.  */
   BFD_RELOC_PPC_TLS,
@@ -4239,18 +4282,36 @@ This is a 5 bit absolute address.  */
 
 /* For TLS.  */
   BFD_RELOC_NDS32_TPOFF,
+  BFD_RELOC_NDS32_GOTTPOFF,
   BFD_RELOC_NDS32_TLS_LE_HI20,
   BFD_RELOC_NDS32_TLS_LE_LO12,
-  BFD_RELOC_NDS32_TLS_LE_ADD,
-  BFD_RELOC_NDS32_TLS_LE_LS,
-  BFD_RELOC_NDS32_GOTTPOFF,
-  BFD_RELOC_NDS32_TLS_IE_HI20,
-  BFD_RELOC_NDS32_TLS_IE_LO12S2,
-  BFD_RELOC_NDS32_TLS_TPOFF,
   BFD_RELOC_NDS32_TLS_LE_20,
   BFD_RELOC_NDS32_TLS_LE_15S0,
   BFD_RELOC_NDS32_TLS_LE_15S1,
   BFD_RELOC_NDS32_TLS_LE_15S2,
+  BFD_RELOC_NDS32_TLS_LE_ADD,
+  BFD_RELOC_NDS32_TLS_LE_LS,
+  BFD_RELOC_NDS32_TLS_IE_HI20,
+  BFD_RELOC_NDS32_TLS_IE_LO12,
+  BFD_RELOC_NDS32_TLS_IE_LO12S2,
+  BFD_RELOC_NDS32_TLS_IEGP_HI20,
+  BFD_RELOC_NDS32_TLS_IEGP_LO12,
+  BFD_RELOC_NDS32_TLS_IEGP_LO12S2,
+  BFD_RELOC_NDS32_TLS_IEGP_LW,
+  BFD_RELOC_NDS32_TLS_DESC,
+  BFD_RELOC_NDS32_TLS_DESC_HI20,
+  BFD_RELOC_NDS32_TLS_DESC_LO12,
+  BFD_RELOC_NDS32_TLS_DESC_20,
+  BFD_RELOC_NDS32_TLS_DESC_SDA17S2,
+  BFD_RELOC_NDS32_TLS_DESC_ADD,
+  BFD_RELOC_NDS32_TLS_DESC_FUNC,
+  BFD_RELOC_NDS32_TLS_DESC_CALL,
+  BFD_RELOC_NDS32_TLS_DESC_MEM,
+  BFD_RELOC_NDS32_REMOVE,
+  BFD_RELOC_NDS32_GROUP,
+
+/* For floating load store relaxation.  */
+  BFD_RELOC_NDS32_LSI,
 
 /* This is a 9-bit reloc  */
   BFD_RELOC_V850_9_PCREL,
@@ -5418,26 +5479,41 @@ then it may be truncated to 8 bits.  */
 
 /* OpenRISC 1000 Relocations.  */
   BFD_RELOC_OR1K_REL_26,
+  BFD_RELOC_OR1K_SLO16,
+  BFD_RELOC_OR1K_PCREL_PG21,
+  BFD_RELOC_OR1K_LO13,
+  BFD_RELOC_OR1K_SLO13,
   BFD_RELOC_OR1K_GOTPC_HI16,
   BFD_RELOC_OR1K_GOTPC_LO16,
   BFD_RELOC_OR1K_GOT16,
+  BFD_RELOC_OR1K_GOT_PG21,
+  BFD_RELOC_OR1K_GOT_LO13,
   BFD_RELOC_OR1K_PLT26,
-  BFD_RELOC_OR1K_GOTOFF_HI16,
-  BFD_RELOC_OR1K_GOTOFF_LO16,
+  BFD_RELOC_OR1K_PLTA26,
+  BFD_RELOC_OR1K_GOTOFF_SLO16,
   BFD_RELOC_OR1K_COPY,
   BFD_RELOC_OR1K_GLOB_DAT,
   BFD_RELOC_OR1K_JMP_SLOT,
   BFD_RELOC_OR1K_RELATIVE,
   BFD_RELOC_OR1K_TLS_GD_HI16,
   BFD_RELOC_OR1K_TLS_GD_LO16,
+  BFD_RELOC_OR1K_TLS_GD_PG21,
+  BFD_RELOC_OR1K_TLS_GD_LO13,
   BFD_RELOC_OR1K_TLS_LDM_HI16,
   BFD_RELOC_OR1K_TLS_LDM_LO16,
+  BFD_RELOC_OR1K_TLS_LDM_PG21,
+  BFD_RELOC_OR1K_TLS_LDM_LO13,
   BFD_RELOC_OR1K_TLS_LDO_HI16,
   BFD_RELOC_OR1K_TLS_LDO_LO16,
   BFD_RELOC_OR1K_TLS_IE_HI16,
+  BFD_RELOC_OR1K_TLS_IE_AHI16,
   BFD_RELOC_OR1K_TLS_IE_LO16,
+  BFD_RELOC_OR1K_TLS_IE_PG21,
+  BFD_RELOC_OR1K_TLS_IE_LO13,
   BFD_RELOC_OR1K_TLS_LE_HI16,
+  BFD_RELOC_OR1K_TLS_LE_AHI16,
   BFD_RELOC_OR1K_TLS_LE_LO16,
+  BFD_RELOC_OR1K_TLS_LE_SLO16,
   BFD_RELOC_OR1K_TLS_TPOFF,
   BFD_RELOC_OR1K_TLS_DTPOFF,
   BFD_RELOC_OR1K_TLS_DTPMOD,
@@ -6553,6 +6629,76 @@ assembler and not (currently) written to any object files.  */
   BFD_RELOC_WASM32_CODE_POINTER,
   BFD_RELOC_WASM32_INDEX,
   BFD_RELOC_WASM32_PLT_SIG,
+
+/* C-SKY relocations.  */
+  BFD_RELOC_CKCORE_NONE,
+  BFD_RELOC_CKCORE_ADDR32,
+  BFD_RELOC_CKCORE_PCREL_IMM8BY4,
+  BFD_RELOC_CKCORE_PCREL_IMM11BY2,
+  BFD_RELOC_CKCORE_PCREL_IMM4BY2,
+  BFD_RELOC_CKCORE_PCREL32,
+  BFD_RELOC_CKCORE_PCREL_JSR_IMM11BY2,
+  BFD_RELOC_CKCORE_GNU_VTINHERIT,
+  BFD_RELOC_CKCORE_GNU_VTENTRY,
+  BFD_RELOC_CKCORE_RELATIVE,
+  BFD_RELOC_CKCORE_COPY,
+  BFD_RELOC_CKCORE_GLOB_DAT,
+  BFD_RELOC_CKCORE_JUMP_SLOT,
+  BFD_RELOC_CKCORE_GOTOFF,
+  BFD_RELOC_CKCORE_GOTPC,
+  BFD_RELOC_CKCORE_GOT32,
+  BFD_RELOC_CKCORE_PLT32,
+  BFD_RELOC_CKCORE_ADDRGOT,
+  BFD_RELOC_CKCORE_ADDRPLT,
+  BFD_RELOC_CKCORE_PCREL_IMM26BY2,
+  BFD_RELOC_CKCORE_PCREL_IMM16BY2,
+  BFD_RELOC_CKCORE_PCREL_IMM16BY4,
+  BFD_RELOC_CKCORE_PCREL_IMM10BY2,
+  BFD_RELOC_CKCORE_PCREL_IMM10BY4,
+  BFD_RELOC_CKCORE_ADDR_HI16,
+  BFD_RELOC_CKCORE_ADDR_LO16,
+  BFD_RELOC_CKCORE_GOTPC_HI16,
+  BFD_RELOC_CKCORE_GOTPC_LO16,
+  BFD_RELOC_CKCORE_GOTOFF_HI16,
+  BFD_RELOC_CKCORE_GOTOFF_LO16,
+  BFD_RELOC_CKCORE_GOT12,
+  BFD_RELOC_CKCORE_GOT_HI16,
+  BFD_RELOC_CKCORE_GOT_LO16,
+  BFD_RELOC_CKCORE_PLT12,
+  BFD_RELOC_CKCORE_PLT_HI16,
+  BFD_RELOC_CKCORE_PLT_LO16,
+  BFD_RELOC_CKCORE_ADDRGOT_HI16,
+  BFD_RELOC_CKCORE_ADDRGOT_LO16,
+  BFD_RELOC_CKCORE_ADDRPLT_HI16,
+  BFD_RELOC_CKCORE_ADDRPLT_LO16,
+  BFD_RELOC_CKCORE_PCREL_JSR_IMM26BY2,
+  BFD_RELOC_CKCORE_TOFFSET_LO16,
+  BFD_RELOC_CKCORE_DOFFSET_LO16,
+  BFD_RELOC_CKCORE_PCREL_IMM18BY2,
+  BFD_RELOC_CKCORE_DOFFSET_IMM18,
+  BFD_RELOC_CKCORE_DOFFSET_IMM18BY2,
+  BFD_RELOC_CKCORE_DOFFSET_IMM18BY4,
+  BFD_RELOC_CKCORE_GOTOFF_IMM18,
+  BFD_RELOC_CKCORE_GOT_IMM18BY4,
+  BFD_RELOC_CKCORE_PLT_IMM18BY4,
+  BFD_RELOC_CKCORE_PCREL_IMM7BY4,
+  BFD_RELOC_CKCORE_TLS_LE32,
+  BFD_RELOC_CKCORE_TLS_IE32,
+  BFD_RELOC_CKCORE_TLS_GD32,
+  BFD_RELOC_CKCORE_TLS_LDM32,
+  BFD_RELOC_CKCORE_TLS_LDO32,
+  BFD_RELOC_CKCORE_TLS_DTPMOD32,
+  BFD_RELOC_CKCORE_TLS_DTPOFF32,
+  BFD_RELOC_CKCORE_TLS_TPOFF32,
+  BFD_RELOC_CKCORE_PCREL_FLRW_IMM8BY4,
+  BFD_RELOC_CKCORE_NOJSRI,
+  BFD_RELOC_CKCORE_CALLGRAPH,
+  BFD_RELOC_CKCORE_IRELATIVE,
+  BFD_RELOC_CKCORE_PCREL_BLOOP_IMM4BY4,
+  BFD_RELOC_CKCORE_PCREL_BLOOP_IMM12BY4,
+
+/* S12Z relocations.  */
+  BFD_RELOC_S12Z_OPR,
   BFD_RELOC_UNUSED };
 
 typedef enum bfd_reloc_code_real bfd_reloc_code_real_type;
@@ -7279,7 +7425,8 @@ void bfd_update_compression_header
 
 bfd_boolean bfd_check_compression_header
    (bfd *abfd, bfd_byte *contents, asection *sec,
-    bfd_size_type *uncompressed_size);
+    bfd_size_type *uncompressed_size,
+    unsigned int *uncompressed_alignment_power);
 
 int bfd_get_compression_header_size (bfd *abfd, asection *sec);
 
@@ -7789,6 +7936,17 @@ bfd_boolean bfd_set_format (bfd *abfd, bfd_format format);
 const char *bfd_format_string (bfd_format format);
 
 /* Extracted from linker.c.  */
+/* Return TRUE if the symbol described by a linker hash entry H
+   is going to be absolute.  Linker-script defined symbols can be
+   converted from absolute to section-relative ones late in the
+   link.  Use this macro to correctly determine whether the symbol
+   will actually end up absolute in output.  */
+#define bfd_is_abs_symbol(H) \
+  (((H)->type == bfd_link_hash_defined \
+    || (H)->type == bfd_link_hash_defweak) \
+   && bfd_is_abs_section ((H)->u.def.section) \
+   && !(H)->rel_from_abs)
+
 bfd_boolean bfd_link_split_section (bfd *abfd, asection *sec);
 
 #define bfd_link_split_section(abfd, sec) \
@@ -7855,7 +8013,8 @@ void bfd_cache_section_contents
 bfd_boolean bfd_is_section_compressed_with_header
    (bfd *abfd, asection *section,
     int *compression_header_size_p,
-    bfd_size_type *uncompressed_size_p);
+    bfd_size_type *uncompressed_size_p,
+    unsigned int *uncompressed_alignment_power_p);
 
 bfd_boolean bfd_is_section_compressed
    (bfd *abfd, asection *section);

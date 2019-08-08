@@ -1,6 +1,6 @@
 /* Interface between the opcode library and its callers.
 
-   Copyright (C) 1999-2018 Free Software Foundation, Inc.
+   Copyright (C) 1999-2019 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ extern "C" {
 #endif
 
 #include <stdio.h>
+#include <string.h>
 #include "bfd.h"
 
   typedef int (*fprintf_ftype) (void *, const char*, ...) ATTRIBUTE_FPTR_PRINTF_2;
@@ -222,16 +223,53 @@ typedef struct disassemble_info
 
 } disassemble_info;
 
-/* This struct is used to pass information about valid disassembler options
-   and their descriptions from the target to the generic GDB functions that
-   set and display them.  */
+/* This struct is used to pass information about valid disassembler
+   option arguments from the target to the generic GDB functions
+   that set and display them.  */
 
 typedef struct
 {
+  /* Option argument name to use in descriptions.  */
+  const char *name;
+
+  /* Vector of acceptable option argument values, NULL-terminated.  */
+  const char **values;
+} disasm_option_arg_t;
+
+/* This struct is used to pass information about valid disassembler
+   options, their descriptions and arguments from the target to the
+   generic GDB functions that set and display them.  Options are
+   defined by tuples of vector entries at each index.  */
+
+typedef struct
+{
+  /* Vector of option names, NULL-terminated.  */
   const char **name;
+
+  /* Vector of option descriptions or NULL if none to be shown.  */
   const char **description;
+
+  /* Vector of option argument information pointers or NULL if no
+     option accepts an argument.  NULL entries denote individual
+     options that accept no argument.  */
+  const disasm_option_arg_t **arg;
 } disasm_options_t;
 
+/* This struct is used to pass information about valid disassembler
+   options and arguments from the target to the generic GDB functions
+   that set and display them.  */
+
+typedef struct
+{
+  /* Valid disassembler options.  Individual options that support
+     an argument will refer to entries in the ARGS vector.  */
+  disasm_options_t options;
+
+  /* Vector of acceptable option arguments, NULL-terminated.  This
+     collects all possible option argument choices, some of which
+     may be shared by different options from the OPTIONS member.  */
+  disasm_option_arg_t *args;
+} disasm_options_and_args_t;
 
 /* Standard disassemblers.  Disassemble one instruction at the given
    target address.  Return number of octets processed.  */
@@ -240,6 +278,7 @@ typedef int (*disassembler_ftype) (bfd_vma, disassemble_info *);
 /* Disassemblers used out side of opcodes library.  */
 extern int print_insn_m32c		(bfd_vma, disassemble_info *);
 extern int print_insn_mep		(bfd_vma, disassemble_info *);
+extern int print_insn_s12z		(bfd_vma, disassemble_info *);
 extern int print_insn_sh		(bfd_vma, disassemble_info *);
 extern int print_insn_sparc		(bfd_vma, disassemble_info *);
 extern int print_insn_rx		(bfd_vma, disassemble_info *);
@@ -263,12 +302,16 @@ extern void print_s390_disassembler_options (FILE *);
 extern void print_wasm32_disassembler_options (FILE *);
 extern bfd_boolean aarch64_symbol_is_valid (asymbol *, struct disassemble_info *);
 extern bfd_boolean arm_symbol_is_valid (asymbol *, struct disassemble_info *);
+extern bfd_boolean csky_symbol_is_valid (asymbol *, struct disassemble_info *);
+extern bfd_boolean riscv_symbol_is_valid (asymbol *, struct disassemble_info *);
 extern void disassemble_init_powerpc (struct disassemble_info *);
 extern void disassemble_init_s390 (struct disassemble_info *);
 extern void disassemble_init_wasm32 (struct disassemble_info *);
-extern const disasm_options_t *disassembler_options_powerpc (void);
-extern const disasm_options_t *disassembler_options_arm (void);
-extern const disasm_options_t *disassembler_options_s390 (void);
+extern void disassemble_init_nds32 (struct disassemble_info *);
+extern const disasm_options_and_args_t *disassembler_options_arm (void);
+extern const disasm_options_and_args_t *disassembler_options_mips (void);
+extern const disasm_options_and_args_t *disassembler_options_powerpc (void);
+extern const disasm_options_and_args_t *disassembler_options_s390 (void);
 
 /* Fetch the disassembler for a given architecture ARC, endianess (big
    endian if BIG is true), bfd_mach value MACH, and ABFD, if that support
