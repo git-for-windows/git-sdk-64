@@ -73,7 +73,7 @@ use warnings;
 use Getopt::Long;
 use Cwd;
 
-my $JEPROF_VERSION = "5.2.0-0-gb0b3e49a54ec29e32636f4577d9d5a896d67fd20";
+my $JEPROF_VERSION = "5.2.1-0-gea6b3e973b477b8061e0076bb257dbd7f3faa756";
 my $PPROF_VERSION = "2.0";
 
 # These are the object tools we use which can come from a
@@ -2909,6 +2909,7 @@ sub RemoveUninterestingFrames {
                       'je_xallocx',
                       'je_dallocx',
                       'je_sdallocx',
+                      'je_sdallocx_noflags',
                       'tc_calloc',
                       'tc_cfree',
                       'tc_malloc',
@@ -5366,7 +5367,7 @@ sub GetProcedureBoundaries {
   my $demangle_flag = "";
   my $cppfilt_flag = "";
   my $to_devnull = ">$dev_null 2>&1";
-  if (system(ShellEscape($nm, "--demangle", "image") . $to_devnull) == 0) {
+  if (system(ShellEscape($nm, "--demangle", $image) . $to_devnull) == 0) {
     # In this mode, we do "nm --demangle <foo>"
     $demangle_flag = "--demangle";
     $cppfilt_flag = "";
