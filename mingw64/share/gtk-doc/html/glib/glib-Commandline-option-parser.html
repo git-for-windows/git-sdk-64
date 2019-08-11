@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Shell-related-Utilities.html" title="Shell-related Utilities">
 <link rel="next" href="glib-Glob-style-pattern-matching.html" title="Glob-style pattern matching">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -1050,7 +1050,7 @@ added to it.</p>
 <a class="indexterm" name="id-1.5.22.7.12.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 g_option_context_parse (<em class="parameter"><code><a class="link" href="glib-Commandline-option-parser.html#GOptionContext" title="GOptionContext"><span class="type">GOptionContext</span></a> *context</code></em>,
-                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> *argc</code></em>,
+                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> *argc</code></em>,
                         <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> ***argv</code></em>,
                         <em class="parameter"><code><a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Parses the command line arguments, recognizing options
@@ -2169,7 +2169,8 @@ to ignore unknown options, see <a class="link" href="glib-Commandline-option-par
 <pre class="programlisting">#define G_OPTION_ERROR (g_option_error_quark ())
 </pre>
 <p>Error domain for option parsing. Errors in this domain will
-be from the <a class="link" href="glib-Commandline-option-parser.html#GOptionError" title="enum GOptionError"><span class="type">GOptionError</span></a> enumeration. See <a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> for information on 
+be from the <a class="link" href="glib-Commandline-option-parser.html#GOptionError" title="enum GOptionError"><span class="type">GOptionError</span></a> enumeration. See <a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> for information on
+
 error domains.</p>
 </div>
 <div class="refsect2">
@@ -2178,7 +2179,8 @@ error domains.</p>
 <a class="indexterm" name="id-1.5.22.8.4.2"></a>
 <pre class="programlisting">typedef struct _GOptionContext GOptionContext;</pre>
 <p>A <code class="literal">GOptionContext</code> struct defines which options
-are accepted by the commandline option parser. The struct has only private 
+are accepted by the commandline option parser. The struct has only private
+
 fields and should not be directly accessed.</p>
 </div>
 <div class="refsect2">
@@ -2247,7 +2249,8 @@ uses of the option are collected into an array of strings.</p>
 <tr>
 <td class="enum_member_name"><p><a name="G-OPTION-ARG-FILENAME-ARRAY:CAPS"></a>G_OPTION_ARG_FILENAME_ARRAY</p></td>
 <td class="enum_member_description">
-<p>The option takes a filename as argument, 
+<p>The option takes a filename as argument,
+
 multiple uses of the option are collected into an array of strings.</p>
 </td>
 <td class="enum_member_annotations"> </td>
@@ -2343,7 +2346,8 @@ callback in the GLib filename encoding rather than UTF-8. Since 2.8</p>
 <tr>
 <td class="enum_member_name"><p><a name="G-OPTION-FLAG-OPTIONAL-ARG:CAPS"></a>G_OPTION_FLAG_OPTIONAL_ARG</p></td>
 <td class="enum_member_description">
-<p>For options of the <a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-CALLBACK:CAPS"><code class="literal">G_OPTION_ARG_CALLBACK</code></a> 
+<p>For options of the <a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-CALLBACK:CAPS"><code class="literal">G_OPTION_ARG_CALLBACK</code></a>
+
 kind, this flag indicates that the argument supply is optional.
 If no argument is given then data of <a class="link" href="glib-Commandline-option-parser.html#GOptionParseFunc" title="GOptionParseFunc ()"><code class="literal">GOptionParseFunc</code></a> will be
 set to NULL. Since 2.8</p>
@@ -2354,7 +2358,8 @@ set to NULL. Since 2.8</p>
 <td class="enum_member_name"><p><a name="G-OPTION-FLAG-NOALIAS:CAPS"></a>G_OPTION_FLAG_NOALIAS</p></td>
 <td class="enum_member_description">
 <p>This flag turns off the automatic conflict
-resolution which prefixes long option names with <code class="literal">groupname-</code> if 
+resolution which prefixes long option names with <code class="literal">groupname-</code> if
+
 there is a conflict. This option should only be used in situations
 where aliasing is necessary to model some legacy commandline interface.
 It is not safe to use this option, unless all option groups are under
@@ -2373,13 +2378,15 @@ your direct control. Since 2.8.</p>
 <a class="indexterm" name="id-1.5.22.8.7.2"></a>
 <pre class="programlisting">#define G_OPTION_REMAINING ""
 </pre>
-<p>If a long option in the main group has this name, it is not treated as a 
+<p>If a long option in the main group has this name, it is not treated as a
+
 regular option. Instead it collects all non-option arguments which would
 otherwise be left in <code class="literal">argv</code>. The option must be of type
 <a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-CALLBACK:CAPS"><code class="literal">G_OPTION_ARG_CALLBACK</code></a>, <a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-STRING-ARRAY:CAPS"><code class="literal">G_OPTION_ARG_STRING_ARRAY</code></a>
 or <a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-FILENAME-ARRAY:CAPS"><code class="literal">G_OPTION_ARG_FILENAME_ARRAY</code></a>.</p>
 <p>Using <a class="link" href="glib-Commandline-option-parser.html#G-OPTION-REMAINING:CAPS" title="G_OPTION_REMAINING"><span class="type">G_OPTION_REMAINING</span></a> instead of simply scanning <code class="literal">argv</code>
-for leftover arguments has the advantage that GOption takes care of 
+for leftover arguments has the advantage that GOption takes care of
+
 necessary encoding conversions for strings or filenames.</p>
 <p class="since">Since: <a class="link" href="api-index-2-6.html#api-index-2.6">2.6</a></p>
 </div>
@@ -2394,7 +2401,7 @@ necessary encoding conversions for strings or filenames.</p>
 
   GOptionArg   arg;
   gpointer     arg_data;
-  
+
   const gchar *description;
   const gchar *arg_description;
 };
@@ -2432,7 +2439,7 @@ short name.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
-<td class="struct_member_name"><p><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> <em class="structfield"><code><a name="GOptionEntry.flags"></a>flags</code></em>;</p></td>
+<td class="struct_member_name"><p><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GOptionEntry.flags"></a>flags</code></em>;</p></td>
 <td class="struct_member_description"><p>Flags from <a class="link" href="glib-Commandline-option-parser.html#GOptionFlags" title="enum GOptionFlags"><span class="type">GOptionFlags</span></a></p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
@@ -2455,7 +2462,7 @@ type:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
 <li class="listitem"><p><a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-NONE:CAPS"><code class="literal">G_OPTION_ARG_NONE</code></a>: <a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><code class="literal">gboolean</code></a></p></li>
 <li class="listitem"><p><a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-STRING:CAPS"><code class="literal">G_OPTION_ARG_STRING</code></a>: <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><code class="literal">gchar</code></a>*</p></li>
-<li class="listitem"><p><a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-INT:CAPS"><code class="literal">G_OPTION_ARG_INT</code></a>: <a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><code class="literal">gint</code></a></p></li>
+<li class="listitem"><p><a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-INT:CAPS"><code class="literal">G_OPTION_ARG_INT</code></a>: <a class="link" href="glib-Basic-Types.html#gint" title="gint"><code class="literal">gint</code></a></p></li>
 <li class="listitem"><p><a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-FILENAME:CAPS"><code class="literal">G_OPTION_ARG_FILENAME</code></a>: <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><code class="literal">gchar</code></a>*</p></li>
 <li class="listitem"><p><a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-STRING-ARRAY:CAPS"><code class="literal">G_OPTION_ARG_STRING_ARRAY</code></a>: <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><code class="literal">gchar</code></a>**</p></li>
 <li class="listitem"><p><a class="link" href="glib-Commandline-option-parser.html#G-OPTION-ARG-FILENAME-ARRAY:CAPS"><code class="literal">G_OPTION_ARG_FILENAME_ARRAY</code></a>: <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><code class="literal">gchar</code></a>**</p></li>
@@ -2511,6 +2518,6 @@ the application can then add to its <a class="link" href="glib-Commandline-optio
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

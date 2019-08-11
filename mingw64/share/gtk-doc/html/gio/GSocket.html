@@ -8,7 +8,7 @@
 <link rel="up" href="networking.html" title="Low-level network support">
 <link rel="prev" href="networking.html" title="Low-level network support">
 <link rel="next" href="GDatagramBased.html" title="GDatagramBased">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -532,12 +532,12 @@ GSocket
 <tr>
 <td class="property_type"><a class="link" href="GSocketAddress.html#GSocketFamily" title="enum GSocketFamily"><span class="type">GSocketFamily</span></a></td>
 <td class="property_name"><a class="link" href="GSocket.html#GSocket--family" title="The “family” property">family</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gint</span></a></td>
 <td class="property_name"><a class="link" href="GSocket.html#GSocket--fd" title="The “fd” property">fd</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gboolean</span></a></td>
@@ -568,7 +568,7 @@ GSocket
 <tr>
 <td class="property_type"><a class="link" href="GSocket.html#GSocketProtocol" title="enum GSocketProtocol"><span class="type">GSocketProtocol</span></a></td>
 <td class="property_name"><a class="link" href="GSocket.html#GSocket--protocol" title="The “protocol” property">protocol</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
@@ -589,7 +589,7 @@ GSocket
 <tr>
 <td class="property_type"><a class="link" href="GSocket.html#GSocketType" title="enum GSocketType"><span class="type">GSocketType</span></a></td>
 <td class="property_name"><a class="link" href="GSocket.html#GSocket--type" title="The “type” property">type</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 </tbody>
 </table>
@@ -3626,6 +3626,15 @@ sockets).</p>
 <p>If this operation isn't supported on the OS, the method fails with
 the <a class="link" href="gio-GIOError.html#G-IO-ERROR-NOT-SUPPORTED:CAPS"><code class="literal">G_IO_ERROR_NOT_SUPPORTED</code></a> error. On Linux this is implemented
 by reading the <a class="link" href=""><code class="literal">SO_PEERCRED</code></a> option on the underlying socket.</p>
+<p>This method can be expected to be available on the following platforms:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>Linux since GLib 2.26</p></li>
+<li class="listitem"><p>OpenBSD since GLib 2.30</p></li>
+<li class="listitem"><p>Solaris, Illumos and OpenSolaris since GLib 2.40</p></li>
+<li class="listitem">
+<p>NetBSD since GLib 2.42</p>
+</li>
+</ul></div>
 <p>Other ways to obtain credentials from a foreign peer includes the
 <a class="link" href="gio-GUnixCredentialsMessage.html#GUnixCredentialsMessage" title="GUnixCredentialsMessage"><span class="type">GUnixCredentialsMessage</span></a> type and
 <a class="link" href=""><code class="function">g_unix_connection_send_credentials()</code></a> /
@@ -4551,6 +4560,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.2.2"></a>
 <pre class="programlisting">  “blocking”                 <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether or not I/O on this socket is blocking.</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read / Write</p>
 <p>Default value: TRUE</p>
 </div>
@@ -4559,6 +4569,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.3.2"></a>
 <pre class="programlisting">  “broadcast”                <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether the socket should allow sending to broadcast addresses.</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read / Write</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -4568,7 +4579,8 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.4.2"></a>
 <pre class="programlisting">  “family”                   <a class="link" href="GSocketAddress.html#GSocketFamily" title="enum GSocketFamily"><span class="type">GSocketFamily</span></a></pre>
 <p>The sockets address family.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GSocket</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: G_SOCKET_FAMILY_INVALID</p>
 </div>
 <div class="refsect2">
@@ -4576,7 +4588,8 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.5.2"></a>
 <pre class="programlisting">  “fd”                       <a class="link" href=""><span class="type">gint</span></a></pre>
 <p>The sockets file descriptor.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GSocket</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: -1</p>
 </div>
 <div class="refsect2">
@@ -4584,6 +4597,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.6.2"></a>
 <pre class="programlisting">  “keepalive”                <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Keep connection alive by sending periodic pings.</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read / Write</p>
 <p>Default value: FALSE</p>
 </div>
@@ -4592,6 +4606,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.7.2"></a>
 <pre class="programlisting">  “listen-backlog”           <a class="link" href=""><span class="type">gint</span></a></pre>
 <p>Outstanding connections in the listen queue.</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read / Write</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 10</p>
@@ -4601,6 +4616,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.8.2"></a>
 <pre class="programlisting">  “local-address”            <a class="link" href="GSocketAddress.html" title="GSocketAddress"><span class="type">GSocketAddress</span></a> *</pre>
 <p>The local address the socket is bound to.</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read</p>
 </div>
 <div class="refsect2">
@@ -4608,6 +4624,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.9.2"></a>
 <pre class="programlisting">  “multicast-loopback”       <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether outgoing multicast packets loop back to the local host.</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read / Write</p>
 <p>Default value: TRUE</p>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -4617,6 +4634,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.10.2"></a>
 <pre class="programlisting">  “multicast-ttl”            <a class="link" href=""><span class="type">guint</span></a></pre>
 <p>Time-to-live out outgoing multicast packets</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read / Write</p>
 <p>Default value: 1</p>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -4626,7 +4644,8 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.11.2"></a>
 <pre class="programlisting">  “protocol”                 <a class="link" href="GSocket.html#GSocketProtocol" title="enum GSocketProtocol"><span class="type">GSocketProtocol</span></a></pre>
 <p>The id of the protocol to use, or -1 for unknown.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GSocket</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: G_SOCKET_PROTOCOL_UNKNOWN</p>
 </div>
 <div class="refsect2">
@@ -4634,6 +4653,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.12.2"></a>
 <pre class="programlisting">  “remote-address”           <a class="link" href="GSocketAddress.html" title="GSocketAddress"><span class="type">GSocketAddress</span></a> *</pre>
 <p>The remote address the socket is connected to.</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read</p>
 </div>
 <div class="refsect2">
@@ -4641,6 +4661,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.13.2"></a>
 <pre class="programlisting">  “timeout”                  <a class="link" href=""><span class="type">guint</span></a></pre>
 <p>The timeout in seconds on socket I/O</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read / Write</p>
 <p>Default value: 0</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -4650,6 +4671,7 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.14.2"></a>
 <pre class="programlisting">  “ttl”                      <a class="link" href=""><span class="type">guint</span></a></pre>
 <p>Time-to-live for outgoing unicast packets</p>
+<p>Owner: GSocket</p>
 <p>Flags: Read / Write</p>
 <p>Default value: 0</p>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -4659,7 +4681,8 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 <a class="indexterm" name="id-1.4.13.2.12.15.2"></a>
 <pre class="programlisting">  “type”                     <a class="link" href="GSocket.html#GSocketType" title="enum GSocketType"><span class="type">GSocketType</span></a></pre>
 <p>The sockets type.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GSocket</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: G_SOCKET_TYPE_STREAM</p>
 </div>
 
@@ -4673,6 +4696,6 @@ to an array of <a class="link" href=""><span class="type">GSocketControlMessages
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="glib-utilities.html" title="GLib Utilities">
 <link rel="prev" href="glib-Timers.html" title="Timers">
 <link rel="next" href="glib-File-Utilities.html" title="File Utilities">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -321,9 +321,9 @@ g_spawn_async_with_fds (<em class="parameter"><code>const <a class="link" href="
                         <em class="parameter"><code><a class="link" href="glib-Spawning-Processes.html#GSpawnChildSetupFunc" title="GSpawnChildSetupFunc ()"><span class="type">GSpawnChildSetupFunc</span></a> child_setup</code></em>,
                         <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
                         <em class="parameter"><code><a class="link" href="glib-The-Main-Event-Loop.html#GPid" title="GPid"><span class="type">GPid</span></a> *child_pid</code></em>,
-                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> stdin_fd</code></em>,
-                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> stdout_fd</code></em>,
-                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> stderr_fd</code></em>,
+                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> stdin_fd</code></em>,
+                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> stdout_fd</code></em>,
+                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> stderr_fd</code></em>,
                         <em class="parameter"><code><a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Identical to <a class="link" href="glib-Spawning-Processes.html#g-spawn-async-with-pipes" title="g_spawn_async_with_pipes ()"><code class="function">g_spawn_async_with_pipes()</code></a> but instead of
 creating pipes for the stdin/stdout/stderr, you can pass existing
@@ -438,9 +438,9 @@ g_spawn_async_with_pipes (<em class="parameter"><code>const <a class="link" href
                           <em class="parameter"><code><a class="link" href="glib-Spawning-Processes.html#GSpawnChildSetupFunc" title="GSpawnChildSetupFunc ()"><span class="type">GSpawnChildSetupFunc</span></a> child_setup</code></em>,
                           <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
                           <em class="parameter"><code><a class="link" href="glib-The-Main-Event-Loop.html#GPid" title="GPid"><span class="type">GPid</span></a> *child_pid</code></em>,
-                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> *standard_input</code></em>,
-                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> *standard_output</code></em>,
-                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> *standard_error</code></em>,
+                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> *standard_input</code></em>,
+                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> *standard_output</code></em>,
+                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> *standard_error</code></em>,
                           <em class="parameter"><code><a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Executes a child program asynchronously (your program will not
 block waiting for the child to exit). The child program is
@@ -816,7 +816,7 @@ g_spawn_sync (<em class="parameter"><code>const <a class="link" href="glib-Basic
               <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
               <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> **standard_output</code></em>,
               <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> **standard_error</code></em>,
-              <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> *exit_status</code></em>,
+              <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> *exit_status</code></em>,
               <em class="parameter"><code><a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Executes a child synchronously (waits for the child to exit before returning).
 All output from the child is stored in <em class="parameter"><code>standard_output</code></em>
@@ -921,7 +921,7 @@ directory, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="
 
 <a class="indexterm" name="id-1.5.17.7.7.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
-g_spawn_check_exit_status (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> exit_status</code></em>,
+g_spawn_check_exit_status (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> exit_status</code></em>,
                            <em class="parameter"><code><a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Set <em class="parameter"><code>error</code></em>
  if <em class="parameter"><code>exit_status</code></em>
@@ -1050,7 +1050,7 @@ errors are those from <a class="link" href="glib-Shell-related-Utilities.html#g-
 g_spawn_command_line_sync (<em class="parameter"><code>const <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> *command_line</code></em>,
                            <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> **standard_output</code></em>,
                            <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> **standard_error</code></em>,
-                           <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> *exit_status</code></em>,
+                           <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> *exit_status</code></em>,
                            <em class="parameter"><code><a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>A simple version of <a class="link" href="glib-Spawning-Processes.html#g-spawn-sync" title="g_spawn_sync ()"><code class="function">g_spawn_sync()</code></a> with little-used parameters
 removed, taking a command line instead of an argument vector.  See
@@ -1453,6 +1453,6 @@ will be the program exit code.</p>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

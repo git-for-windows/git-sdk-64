@@ -8,7 +8,7 @@
 <link rel="up" href="glib-data-types.html" title="GLib Data Types">
 <link rel="prev" href="gvariant-text.html" title="GVariant Text Format">
 <link rel="next" href="glib-Reference-counted-data.html" title="Reference counted data">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -108,6 +108,28 @@ Reference counting
 </table>
 </div>
 </div>
+<div class="refsect1">
+<a name="glib-Reference-counting.other"></a><h2>Types and Values</h2>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="glib-Reference-counting.html#grefcount" title="grefcount">grefcount</a></td>
+</tr>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="glib-Reference-counting.html#gatomicrefcount" title="gatomicrefcount">gatomicrefcount</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 
 <div class="refsect1">
 <a name="glib-Reference-counting.includes"></a><h2>Includes</h2>
@@ -125,9 +147,9 @@ increased whenever a new reference to that data type is acquired, and
 decreased whenever the reference is released. Once the last reference
 is released, the resources associated to that data type are freed.</p>
 <p>GLib uses reference counting in many of its data types, and provides
-the <a class="link" href=""><span class="type">grefcount</span></a> and <a class="link" href=""><span class="type">gatomicrefcount</span></a> types to implement safe and atomic
+the <a class="link" href="glib-Reference-counting.html#grefcount" title="grefcount"><span class="type">grefcount</span></a> and <a class="link" href="glib-Reference-counting.html#gatomicrefcount" title="gatomicrefcount"><span class="type">gatomicrefcount</span></a> types to implement safe and atomic
 reference counting semantics in new data types.</p>
-<p>It is important to note that <a class="link" href=""><span class="type">grefcount</span></a> and <a class="link" href=""><span class="type">gatomicrefcount</span></a> should be
+<p>It is important to note that <a class="link" href="glib-Reference-counting.html#grefcount" title="grefcount"><span class="type">grefcount</span></a> and <a class="link" href="glib-Reference-counting.html#gatomicrefcount" title="gatomicrefcount"><span class="type">gatomicrefcount</span></a> should be
 considered completely opaque types; you should always use the provided
 API to increase and decrease the counters, and you should never check
 their content directly, or compare their content with other values.</p>
@@ -139,9 +161,9 @@ their content directly, or compare their content with other values.</p>
 <div class="refsect2">
 <a name="g-ref-count-init"></a><h3>g_ref_count_init ()</h3>
 
-<a class="indexterm" name="id-1.6.22.6.2.2"></a>
+<a class="indexterm" name="id-1.6.22.7.2.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
-g_ref_count_init (<em class="parameter"><code><a class="link" href=""><span class="type">grefcount</span></a> *rc</code></em>);</pre>
+g_ref_count_init (<em class="parameter"><code><a class="link" href="glib-Reference-counting.html#grefcount" title="grefcount"><span class="type">grefcount</span></a> *rc</code></em>);</pre>
 <p>Initializes a reference count variable.</p>
 <div class="refsect3">
 <a name="g-ref-count-init.parameters"></a><h4>Parameters</h4>
@@ -166,9 +188,9 @@ g_ref_count_init (<em class="parameter"><code><a class="link" href=""><span clas
 <div class="refsect2">
 <a name="g-ref-count-inc"></a><h3>g_ref_count_inc ()</h3>
 
-<a class="indexterm" name="id-1.6.22.6.3.2"></a>
+<a class="indexterm" name="id-1.6.22.7.3.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
-g_ref_count_inc (<em class="parameter"><code><a class="link" href=""><span class="type">grefcount</span></a> *rc</code></em>);</pre>
+g_ref_count_inc (<em class="parameter"><code><a class="link" href="glib-Reference-counting.html#grefcount" title="grefcount"><span class="type">grefcount</span></a> *rc</code></em>);</pre>
 <p>Increases the reference count.</p>
 <div class="refsect3">
 <a name="g-ref-count-inc.parameters"></a><h4>Parameters</h4>
@@ -193,9 +215,9 @@ g_ref_count_inc (<em class="parameter"><code><a class="link" href=""><span class
 <div class="refsect2">
 <a name="g-ref-count-dec"></a><h3>g_ref_count_dec ()</h3>
 
-<a class="indexterm" name="id-1.6.22.6.4.2"></a>
+<a class="indexterm" name="id-1.6.22.7.4.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
-g_ref_count_dec (<em class="parameter"><code><a class="link" href=""><span class="type">grefcount</span></a> *rc</code></em>);</pre>
+g_ref_count_dec (<em class="parameter"><code><a class="link" href="glib-Reference-counting.html#grefcount" title="grefcount"><span class="type">grefcount</span></a> *rc</code></em>);</pre>
 <p>Decreases the reference count.</p>
 <div class="refsect3">
 <a name="g-ref-count-dec.parameters"></a><h4>Parameters</h4>
@@ -225,10 +247,10 @@ g_ref_count_dec (<em class="parameter"><code><a class="link" href=""><span class
 <div class="refsect2">
 <a name="g-ref-count-compare"></a><h3>g_ref_count_compare ()</h3>
 
-<a class="indexterm" name="id-1.6.22.6.5.2"></a>
+<a class="indexterm" name="id-1.6.22.7.5.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
-g_ref_count_compare (<em class="parameter"><code><a class="link" href=""><span class="type">grefcount</span></a> *rc</code></em>,
-                     <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> val</code></em>);</pre>
+g_ref_count_compare (<em class="parameter"><code><a class="link" href="glib-Reference-counting.html#grefcount" title="grefcount"><span class="type">grefcount</span></a> *rc</code></em>,
+                     <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> val</code></em>);</pre>
 <p>Compares the current value of <em class="parameter"><code>rc</code></em>
  with <em class="parameter"><code>val</code></em>
 .</p>
@@ -268,9 +290,9 @@ as the given value</p>
 <div class="refsect2">
 <a name="g-atomic-ref-count-init"></a><h3>g_atomic_ref_count_init ()</h3>
 
-<a class="indexterm" name="id-1.6.22.6.6.2"></a>
+<a class="indexterm" name="id-1.6.22.7.6.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
-g_atomic_ref_count_init (<em class="parameter"><code><a class="link" href=""><span class="type">gatomicrefcount</span></a> *arc</code></em>);</pre>
+g_atomic_ref_count_init (<em class="parameter"><code><a class="link" href="glib-Reference-counting.html#gatomicrefcount" title="gatomicrefcount"><span class="type">gatomicrefcount</span></a> *arc</code></em>);</pre>
 <p>Initializes a reference count variable.</p>
 <div class="refsect3">
 <a name="g-atomic-ref-count-init.parameters"></a><h4>Parameters</h4>
@@ -295,9 +317,9 @@ g_atomic_ref_count_init (<em class="parameter"><code><a class="link" href=""><sp
 <div class="refsect2">
 <a name="g-atomic-ref-count-inc"></a><h3>g_atomic_ref_count_inc ()</h3>
 
-<a class="indexterm" name="id-1.6.22.6.7.2"></a>
+<a class="indexterm" name="id-1.6.22.7.7.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
-g_atomic_ref_count_inc (<em class="parameter"><code><a class="link" href=""><span class="type">gatomicrefcount</span></a> *arc</code></em>);</pre>
+g_atomic_ref_count_inc (<em class="parameter"><code><a class="link" href="glib-Reference-counting.html#gatomicrefcount" title="gatomicrefcount"><span class="type">gatomicrefcount</span></a> *arc</code></em>);</pre>
 <p>Atomically increases the reference count.</p>
 <div class="refsect3">
 <a name="g-atomic-ref-count-inc.parameters"></a><h4>Parameters</h4>
@@ -322,9 +344,9 @@ g_atomic_ref_count_inc (<em class="parameter"><code><a class="link" href=""><spa
 <div class="refsect2">
 <a name="g-atomic-ref-count-dec"></a><h3>g_atomic_ref_count_dec ()</h3>
 
-<a class="indexterm" name="id-1.6.22.6.8.2"></a>
+<a class="indexterm" name="id-1.6.22.7.8.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
-g_atomic_ref_count_dec (<em class="parameter"><code><a class="link" href=""><span class="type">gatomicrefcount</span></a> *arc</code></em>);</pre>
+g_atomic_ref_count_dec (<em class="parameter"><code><a class="link" href="glib-Reference-counting.html#gatomicrefcount" title="gatomicrefcount"><span class="type">gatomicrefcount</span></a> *arc</code></em>);</pre>
 <p>Atomically decreases the reference count.</p>
 <div class="refsect3">
 <a name="g-atomic-ref-count-dec.parameters"></a><h4>Parameters</h4>
@@ -354,10 +376,10 @@ g_atomic_ref_count_dec (<em class="parameter"><code><a class="link" href=""><spa
 <div class="refsect2">
 <a name="g-atomic-ref-count-compare"></a><h3>g_atomic_ref_count_compare ()</h3>
 
-<a class="indexterm" name="id-1.6.22.6.9.2"></a>
+<a class="indexterm" name="id-1.6.22.7.9.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
-g_atomic_ref_count_compare (<em class="parameter"><code><a class="link" href=""><span class="type">gatomicrefcount</span></a> *arc</code></em>,
-                            <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> val</code></em>);</pre>
+g_atomic_ref_count_compare (<em class="parameter"><code><a class="link" href="glib-Reference-counting.html#gatomicrefcount" title="gatomicrefcount"><span class="type">gatomicrefcount</span></a> *arc</code></em>,
+                            <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> val</code></em>);</pre>
 <p>Atomically compares the current value of <em class="parameter"><code>arc</code></em>
  with <em class="parameter"><code>val</code></em>
 .</p>
@@ -399,11 +421,41 @@ as the given value</p>
 <div class="refsect1">
 <a name="glib-Reference-counting.other_details"></a><h2>Types and Values</h2>
 
+<div class="refsect2">
+<a name="grefcount"></a><h3>grefcount</h3>
+
+<a class="indexterm" name="id-1.6.22.8.2.2"></a>
+<pre class="programlisting">typedef gint            grefcount;
+</pre>
+<p>A type for implementing non-atomic reference count semantics.</p>
+<p>Use <a class="link" href="glib-Reference-counting.html#g-ref-count-init" title="g_ref_count_init ()"><code class="function">g_ref_count_init()</code></a> to initialize it; <a class="link" href="glib-Reference-counting.html#g-ref-count-inc" title="g_ref_count_inc ()"><code class="function">g_ref_count_inc()</code></a> to
+increase the counter, and <a class="link" href="glib-Reference-counting.html#g-ref-count-dec" title="g_ref_count_dec ()"><code class="function">g_ref_count_dec()</code></a> to decrease it.</p>
+<p>It is safe to use <a class="link" href="glib-Reference-counting.html#grefcount" title="grefcount"><span class="type">grefcount</span></a> only if you're expecting to operate
+on the reference counter from a single thread. It is entirely up
+to you to ensure that all reference count changes happen in the
+same thread.</p>
+<p>See also: <a class="link" href="glib-Reference-counting.html#gatomicrefcount" title="gatomicrefcount"><span class="type">gatomicrefcount</span></a></p>
+<p class="since">Since: <a class="link" href="api-index-2-58.html#api-index-2.58">2.58</a></p>
+</div>
+<div class="refsect2">
+<a name="gatomicrefcount"></a><h3>gatomicrefcount</h3>
+
+<a class="indexterm" name="id-1.6.22.8.3.2"></a>
+<pre class="programlisting">typedef volatile gint   gatomicrefcount;
+</pre>
+<p>A type for implementing atomic reference count semantics.</p>
+<p>Use <a class="link" href="glib-Reference-counting.html#g-atomic-ref-count-init" title="g_atomic_ref_count_init ()"><code class="function">g_atomic_ref_count_init()</code></a> to initialize it; <a class="link" href="glib-Reference-counting.html#g-atomic-ref-count-inc" title="g_atomic_ref_count_inc ()"><code class="function">g_atomic_ref_count_inc()</code></a>
+to increase the counter, and <a class="link" href="glib-Reference-counting.html#g-atomic-ref-count-dec" title="g_atomic_ref_count_dec ()"><code class="function">g_atomic_ref_count_dec()</code></a> to decrease it.</p>
+<p>It is safe to use <a class="link" href="glib-Reference-counting.html#gatomicrefcount" title="gatomicrefcount"><span class="type">gatomicrefcount</span></a> if you're expecting to operate on the
+reference counter from multiple threads.</p>
+<p>See also: <a class="link" href="glib-Reference-counting.html#grefcount" title="grefcount"><span class="type">grefcount</span></a></p>
+<p class="since">Since: <a class="link" href="api-index-2-58.html#api-index-2.58">2.58</a></p>
+</div>
 
 </div>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

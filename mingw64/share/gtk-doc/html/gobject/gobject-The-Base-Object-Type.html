@@ -8,7 +8,7 @@
 <link rel="up" href="rn01.html" title="API Reference">
 <link rel="prev" href="GTypeModule.html" title="GTypeModule">
 <link rel="next" href="gobject-Enumeration-and-Flag-Types.html" title="Enumeration and Flag Types">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -237,9 +237,11 @@ GObject
 </td>
 </tr>
 <tr>
-<td class="define_keyword">#define</td>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">gboolean</span></a>
+</td>
 <td class="function_name">
-<a class="link" href="gobject-The-Base-Object-Type.html#g-set-object" title="g_set_object()">g_set_object</a><span class="c_punctuation">()</span>
+<a class="link" href="gobject-The-Base-Object-Type.html#g-set-object" title="g_set_object ()">g_set_object</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -307,15 +309,19 @@ GObject
 </td>
 </tr>
 <tr>
-<td class="define_keyword">#define</td>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">gboolean</span></a>
+</td>
 <td class="function_name">
-<a class="link" href="gobject-The-Base-Object-Type.html#g-set-weak-pointer" title="g_set_weak_pointer()">g_set_weak_pointer</a><span class="c_punctuation">()</span>
+<a class="link" href="gobject-The-Base-Object-Type.html#g-set-weak-pointer" title="g_set_weak_pointer ()">g_set_weak_pointer</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
-<td class="define_keyword">#define</td>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">void</span></a>
+</td>
 <td class="function_name">
-<a class="link" href="gobject-The-Base-Object-Type.html#g-clear-weak-pointer" title="g_clear_weak_pointer()">g_clear_weak_pointer</a><span class="c_punctuation">()</span>
+<a class="link" href="gobject-The-Base-Object-Type.html#g-clear-weak-pointer" title="g_clear_weak_pointer ()">g_clear_weak_pointer</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -622,9 +628,9 @@ GObject
 <div class="informaltable">
 <table class="informaltable" border="0">
 <colgroup>
-<col width="150px" class="signals_return">
-<col width="300px" class="signals_name">
-<col width="200px" class="signals_flags">
+<col width="150px" class="signal_proto_type">
+<col width="300px" class="signal_proto_name">
+<col width="200px" class="signal_proto_flags">
 </colgroup>
 <tbody><tr>
 <td class="signal_type"><a class="link" href=""><span class="returnvalue">void</span></a></td>
@@ -2011,10 +2017,12 @@ under the same conditions as for <a class="link" href="gobject-The-Base-Object-T
 <p class="since">Since: <a class="link" href="api-index-2-10.html#api-index-2.10">2.10</a></p>
 </div>
 <div class="refsect2">
-<a name="g-set-object"></a><h3>g_set_object()</h3>
+<a name="g-set-object"></a><h3>g_set_object ()</h3>
 
 <a class="indexterm" name="id-1.4.5.11.29.2"></a>
-<pre class="programlisting">#define             g_set_object(object_ptr, new_object)</pre>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">gboolean</span></a>
+g_set_object (<em class="parameter"><code><a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> **object_ptr</code></em>,
+              <em class="parameter"><code><a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *new_object</code></em>);</pre>
 <p>Updates a <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> pointer to refer to <em class="parameter"><code>new_object</code></em>
 . It increments the
 reference count of <em class="parameter"><code>new_object</code></em>
@@ -2060,6 +2068,8 @@ between compilation units.</p>
 </div>
 
 <p></p>
+
+<p><span class="annotation">[<acronym class="acronym">skip</acronym>]</span></p>
 <div class="refsect3">
 <a name="g-set-object.parameters"></a><h4>Parameters</h4>
 
@@ -2414,10 +2424,12 @@ of a pointer. </p></td>
 </div>
 </div>
 <div class="refsect2">
-<a name="g-set-weak-pointer"></a><h3>g_set_weak_pointer()</h3>
+<a name="g-set-weak-pointer"></a><h3>g_set_weak_pointer ()</h3>
 
 <a class="indexterm" name="id-1.4.5.11.38.2"></a>
-<pre class="programlisting">#define             g_set_weak_pointer(weak_pointer_location, new_object)</pre>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">gboolean</span></a>
+g_set_weak_pointer (<em class="parameter"><code><a class="link" href=""><span class="type">gpointer</span></a> *weak_pointer_location</code></em>,
+                    <em class="parameter"><code><a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *new_object</code></em>);</pre>
 <p>Updates a pointer to weakly refer to <em class="parameter"><code>new_object</code></em>
 . It assigns <em class="parameter"><code>new_object</code></em>
 
@@ -2464,6 +2476,8 @@ between compilation units.</p>
 </div>
 
 <p></p>
+
+<p><span class="annotation">[<acronym class="acronym">skip</acronym>]</span></p>
 <div class="refsect3">
 <a name="g-set-weak-pointer.parameters"></a><h4>Parameters</h4>
 
@@ -2499,10 +2513,11 @@ changed, <a class="link" href=""><code class="literal">FALSE</code></a> otherwis
 <p class="since">Since: <a class="link" href="api-index-2-56.html#api-index-2.56">2.56</a></p>
 </div>
 <div class="refsect2">
-<a name="g-clear-weak-pointer"></a><h3>g_clear_weak_pointer()</h3>
+<a name="g-clear-weak-pointer"></a><h3>g_clear_weak_pointer ()</h3>
 
 <a class="indexterm" name="id-1.4.5.11.39.2"></a>
-<pre class="programlisting">#define             g_clear_weak_pointer(weak_pointer_location)</pre>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
+g_clear_weak_pointer (<em class="parameter"><code><a class="link" href=""><span class="type">gpointer</span></a> *weak_pointer_location</code></em>);</pre>
 <p>Clears a weak reference to a <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>.</p>
 <p><em class="parameter"><code>weak_pointer_location</code></em>
  must not be <a class="link" href=""><code class="literal">NULL</code></a>.</p>
@@ -2512,6 +2527,8 @@ and the pointer is set to <a class="link" href=""><code class="literal">NULL</co
 <p>A macro is also included that allows this function to be used without
 pointer casts. The function itself is static inline, so its address may vary
 between compilation units.</p>
+
+<p><span class="annotation">[<acronym class="acronym">skip</acronym>]</span></p>
 <div class="refsect3">
 <a name="g-clear-weak-pointer.parameters"></a><h4>Parameters</h4>
 
@@ -4579,7 +4596,8 @@ function.</p>
 
 <a class="indexterm" name="id-1.4.5.12.2.2"></a>
 <pre class="programlisting">struct GObject;</pre>
-<p>All the fields in the GObject structure are private 
+<p>All the fields in the GObject structure are private
+
 to the <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> implementation and should never be accessed directly.</p>
 </div>
 <div class="refsect2">
@@ -4652,7 +4670,7 @@ to the <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span cl
                           <span class="n">GObjectConstructParam</span> <span class="o">*</span><span class="n">construct_params</span><span class="p">)</span>
 <span class="p">{</span>
   <span class="n">GObject</span> <span class="o">*</span><span class="n">object</span><span class="p">;</span>
-  
+
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">the_singleton</span><span class="p">)</span>
     <span class="p">{</span>
       <span class="n">object</span> <span class="o">=</span> <span class="n">G_OBJECT_CLASS</span> <span class="p">(</span><span class="n">parent_class</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">constructor</span> <span class="p">(</span><span class="n">type</span><span class="p">,</span>
@@ -4778,7 +4796,8 @@ to complete its initialisation.</p></td>
   GValue     *value;
 };
 </pre>
-<p>The GObjectConstructParam struct is an auxiliary 
+<p>The GObjectConstructParam struct is an auxiliary
+
 structure used to hand <a class="link" href="gobject-GParamSpec.html#GParamSpec" title="struct GParamSpec"><span class="type">GParamSpec</span></a>/<a class="link" href="gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> pairs to the <em class="parameter"><code>constructor</code></em>
  of
 a <a class="link" href="gobject-The-Base-Object-Type.html#GObjectClass" title="struct GObjectClass"><span class="type">GObjectClass</span></a>.</p>
@@ -4854,8 +4873,10 @@ to hand parameter name/value pairs to <a class="link" href="gobject-The-Base-Obj
 <a class="indexterm" name="id-1.4.5.12.6.2"></a>
 <pre class="programlisting">typedef struct _GObject                  GInitiallyUnowned;
 </pre>
-<p>All the fields in the GInitiallyUnowned structure 
-are private to the <a class="link" href="gobject-The-Base-Object-Type.html#GInitiallyUnowned"><span class="type">GInitiallyUnowned</span></a> implementation and should never be 
+<p>All the fields in the GInitiallyUnowned structure
+
+are private to the <a class="link" href="gobject-The-Base-Object-Type.html#GInitiallyUnowned"><span class="type">GInitiallyUnowned</span></a> implementation and should never be
+
 accessed directly.</p>
 </div>
 <div class="refsect2">
@@ -4985,6 +5006,6 @@ detail strings for the notify signal.</p>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="tls.html" title="TLS (SSL) support">
 <link rel="prev" href="GTlsServerConnection.html" title="GTlsServerConnection">
 <link rel="next" href="GDtlsClientConnection.html" title="GDtlsClientConnection">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -255,7 +255,7 @@ GDtlsConnection
 <td class="property_type">
 <a class="link" href="GDatagramBased.html" title="GDatagramBased"><span class="type">GDatagramBased</span></a> *</td>
 <td class="property_name"><a class="link" href="GDtlsConnection.html#GDtlsConnection--base-socket" title="The “base-socket” property">base-socket</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
@@ -312,9 +312,9 @@ GDtlsConnection
 <div class="informaltable">
 <table class="informaltable" border="0">
 <colgroup>
-<col width="150px" class="signals_return">
-<col width="300px" class="signals_name">
-<col width="200px" class="signals_flags">
+<col width="150px" class="signal_proto_type">
+<col width="300px" class="signal_proto_name">
+<col width="200px" class="signal_proto_flags">
 </colgroup>
 <tbody><tr>
 <td class="signal_type"><a class="link" href=""><span class="returnvalue">gboolean</span></a></td>
@@ -1598,6 +1598,7 @@ and <a class="link" href="GDtlsServerConnection.html" title="GDtlsServerConnecti
 <p>The list of application-layer protocols that the connection
 advertises that it is willing to speak. See
 <a class="link" href="GDtlsConnection.html#g-dtls-connection-set-advertised-protocols" title="g_dtls_connection_set_advertised_protocols ()"><code class="function">g_dtls_connection_set_advertised_protocols()</code></a>.</p>
+<p>Owner: GDtlsConnection</p>
 <p>Flags: Read / Write</p>
 <p class="since">Since: <a class="link" href="api-index-2-60.html#api-index-2.60">2.60</a></p>
 </div>
@@ -1607,7 +1608,8 @@ advertises that it is willing to speak. See
 <pre class="programlisting">  “base-socket”              <a class="link" href="GDatagramBased.html" title="GDatagramBased"><span class="type">GDatagramBased</span></a> *</pre>
 <p>The <a class="link" href="GDatagramBased.html" title="GDatagramBased"><span class="type">GDatagramBased</span></a> that the connection wraps. Note that this may be any
 implementation of <a class="link" href="GDatagramBased.html" title="GDatagramBased"><span class="type">GDatagramBased</span></a>, not just a <a class="link" href="GSocket.html" title="GSocket"><span class="type">GSocket</span></a>.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDtlsConnection</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-48.html#api-index-2.48">2.48</a></p>
 </div>
 <div class="refsect2">
@@ -1616,6 +1618,7 @@ implementation of <a class="link" href="GDatagramBased.html" title="GDatagramBas
 <pre class="programlisting">  “certificate”              <a class="link" href="GTlsCertificate.html" title="GTlsCertificate"><span class="type">GTlsCertificate</span></a> *</pre>
 <p>The connection's certificate; see
 <a class="link" href="GDtlsConnection.html#g-dtls-connection-set-certificate" title="g_dtls_connection_set_certificate ()"><code class="function">g_dtls_connection_set_certificate()</code></a>.</p>
+<p>Owner: GDtlsConnection</p>
 <p>Flags: Read / Write</p>
 <p class="since">Since: <a class="link" href="api-index-2-48.html#api-index-2.48">2.48</a></p>
 </div>
@@ -1626,6 +1629,7 @@ implementation of <a class="link" href="GDatagramBased.html" title="GDatagramBas
 <p>The certificate database to use when verifying this TLS connection.
 If no certificate database is set, then the default database will be
 used. See <a class="link" href="GTlsBackend.html#g-tls-backend-get-default-database" title="g_tls_backend_get_default_database ()"><code class="function">g_tls_backend_get_default_database()</code></a>.</p>
+<p>Owner: GDtlsConnection</p>
 <p>Flags: Read / Write</p>
 <p class="since">Since: <a class="link" href="api-index-2-48.html#api-index-2.48">2.48</a></p>
 </div>
@@ -1636,6 +1640,7 @@ used. See <a class="link" href="GTlsBackend.html#g-tls-backend-get-default-datab
 <p>A <a class="link" href="GTlsInteraction.html" title="GTlsInteraction"><span class="type">GTlsInteraction</span></a> object to be used when the connection or certificate
 database need to interact with the user. This will be used to prompt the
 user for passwords where necessary.</p>
+<p>Owner: GDtlsConnection</p>
 <p>Flags: Read / Write</p>
 <p class="since">Since: <a class="link" href="api-index-2-48.html#api-index-2.48">2.48</a></p>
 </div>
@@ -1645,6 +1650,7 @@ user for passwords where necessary.</p>
 <pre class="programlisting">  “negotiated-protocol”      <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The application-layer protocol negotiated during the TLS
 handshake. See <a class="link" href="GDtlsConnection.html#g-dtls-connection-get-negotiated-protocol" title="g_dtls_connection_get_negotiated_protocol ()"><code class="function">g_dtls_connection_get_negotiated_protocol()</code></a>.</p>
+<p>Owner: GDtlsConnection</p>
 <p>Flags: Read</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-60.html#api-index-2.60">2.60</a></p>
@@ -1659,6 +1665,7 @@ particular that this is not yet set during the emission of
 <a class="link" href="GDtlsConnection.html#GDtlsConnection-accept-certificate" title="The “accept-certificate” signal"><span class="type">“accept-certificate”</span></a>.</p>
 <p>(You can watch for a <a class="link" href=""><span class="type">“notify”</span></a> signal on this property to
 detect when a handshake has occurred.)</p>
+<p>Owner: GDtlsConnection</p>
 <p>Flags: Read</p>
 <p class="since">Since: <a class="link" href="api-index-2-48.html#api-index-2.48">2.48</a></p>
 </div>
@@ -1672,6 +1679,7 @@ it may not be if <a class="link" href="GDtlsClientConnection.html#GDtlsClientCon
 <a class="link" href="gio-TLS-Overview.html#G-TLS-CERTIFICATE-VALIDATE-ALL:CAPS"><code class="literal">G_TLS_CERTIFICATE_VALIDATE_ALL</code></a>, or if
 <a class="link" href="GDtlsConnection.html#GDtlsConnection-accept-certificate" title="The “accept-certificate” signal"><span class="type">“accept-certificate”</span></a> overrode the default
 behavior.</p>
+<p>Owner: GDtlsConnection</p>
 <p>Flags: Read</p>
 <p class="since">Since: <a class="link" href="api-index-2-48.html#api-index-2.48">2.48</a></p>
 </div>
@@ -1686,6 +1694,7 @@ behavior.</p>
   required for compatibility. Also, rehandshaking has been removed
   from the TLS protocol in TLS 1.3.</p>
 </div>
+<p>Owner: GDtlsConnection</p>
 <p>Flags: Read / Write / Construct</p>
 <p>Default value: G_TLS_REHANDSHAKE_NEVER</p>
 <p class="since">Since: <a class="link" href="api-index-2-48.html#api-index-2.48">2.48</a></p>
@@ -1696,6 +1705,7 @@ behavior.</p>
 <pre class="programlisting">  “require-close-notify”     <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether or not proper TLS close notification is required.
 See <a class="link" href="GDtlsConnection.html#g-dtls-connection-set-require-close-notify" title="g_dtls_connection_set_require_close_notify ()"><code class="function">g_dtls_connection_set_require_close_notify()</code></a>.</p>
+<p>Owner: GDtlsConnection</p>
 <p>Flags: Read / Write / Construct</p>
 <p>Default value: TRUE</p>
 <p class="since">Since: <a class="link" href="api-index-2-48.html#api-index-2.48">2.48</a></p>
@@ -1799,6 +1809,6 @@ no one else overrides it.</p>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

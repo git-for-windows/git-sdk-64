@@ -8,7 +8,7 @@
 <link rel="up" href="application.html" title="Application support">
 <link rel="prev" href="GSimpleAction.html" title="GSimpleAction">
 <link rel="next" href="GRemoteActionGroup.html" title="GRemoteActionGroup">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -69,19 +69,19 @@ GPropertyAction
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gboolean</span></a></td>
 <td class="property_name"><a class="link" href="GPropertyAction.html#GPropertyAction--invert-boolean" title="The “invert-boolean” property">invert-boolean</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GPropertyAction.html#GPropertyAction--name" title="The “name” property">name</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">GObject</span></a> *</td>
 <td class="property_name"><a class="link" href="GPropertyAction.html#GPropertyAction--object" title="The “object” property">object</a></td>
-<td class="property_flags">Write / Construct Only</td>
+<td class="property_flags">Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
@@ -93,7 +93,7 @@ GPropertyAction
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GPropertyAction.html#GPropertyAction--property-name" title="The “property-name” property">property-name</a></td>
-<td class="property_flags">Write / Construct Only</td>
+<td class="property_flags">Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
@@ -277,6 +277,7 @@ to wrap. </p></td>
  is currently enabled.</p>
 <p>If the action is disabled then calls to <a class="link" href="GAction.html#g-action-activate" title="g_action_activate ()"><code class="function">g_action_activate()</code></a> and
 <a class="link" href="GAction.html#g-action-change-state" title="g_action_change_state ()"><code class="function">g_action_change_state()</code></a> have no effect.</p>
+<p>Owner: GPropertyAction</p>
 <p>Flags: Read</p>
 <p>Default value: TRUE</p>
 <p class="since">Since: <a class="link" href="api-index-2-38.html#api-index-2.38">2.38</a></p>
@@ -287,7 +288,8 @@ to wrap. </p></td>
 <pre class="programlisting">  “invert-boolean”           <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>If <a class="link" href=""><code class="literal">TRUE</code></a>, the state of the action will be the negation of the
 property value, provided the property is boolean.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GPropertyAction</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
 </div>
@@ -297,7 +299,8 @@ property value, provided the property is boolean.</p>
 <pre class="programlisting">  “name”                     <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The name of the action.  This is mostly meaningful for identifying
 the action once it has been added to a <a class="link" href="GActionMap.html" title="GActionMap"><span class="type">GActionMap</span></a>.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GPropertyAction</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-38.html#api-index-2.38">2.38</a></p>
 </div>
@@ -307,7 +310,8 @@ the action once it has been added to a <a class="link" href="GActionMap.html" ti
 <pre class="programlisting">  “object”                   <a class="link" href=""><span class="type">GObject</span></a> *</pre>
 <p>The object to wrap a property on.</p>
 <p>The object must be a non-<a class="link" href=""><code class="literal">NULL</code></a> <a class="link" href=""><span class="type">GObject</span></a> with properties.</p>
-<p>Flags: Write / Construct Only</p>
+<p>Owner: GPropertyAction</p>
+<p>Flags: Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-38.html#api-index-2.38">2.38</a></p>
 </div>
 <div class="refsect2">
@@ -316,6 +320,7 @@ the action once it has been added to a <a class="link" href="GActionMap.html" ti
 <pre class="programlisting">  “parameter-type”           <a class="link" href=""><span class="type">GVariantType</span></a> *</pre>
 <p>The type of the parameter that must be given when activating the
 action.</p>
+<p>Owner: GPropertyAction</p>
 <p>Flags: Read</p>
 <p class="since">Since: <a class="link" href="api-index-2-38.html#api-index-2.38">2.38</a></p>
 </div>
@@ -326,7 +331,8 @@ action.</p>
 <p>The name of the property to wrap on the object.</p>
 <p>The property must exist on the passed-in object and it must be
 readable and writable (and not construct-only).</p>
-<p>Flags: Write / Construct Only</p>
+<p>Owner: GPropertyAction</p>
+<p>Flags: Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-38.html#api-index-2.38">2.38</a></p>
 </div>
@@ -335,6 +341,7 @@ readable and writable (and not construct-only).</p>
 <a class="indexterm" name="id-1.4.24.9.12.8.2"></a>
 <pre class="programlisting">  “state”                    <a class="link" href=""><span class="type">GVariant</span></a> *</pre>
 <p>The state of the action, or <a class="link" href=""><code class="literal">NULL</code></a> if the action is stateless.</p>
+<p>Owner: GPropertyAction</p>
 <p>Flags: Read</p>
 <p>Allowed values: GVariant&lt;*&gt;</p>
 <p>Default value: NULL</p>
@@ -346,6 +353,7 @@ readable and writable (and not construct-only).</p>
 <pre class="programlisting">  “state-type”               <a class="link" href=""><span class="type">GVariantType</span></a> *</pre>
 <p>The <a class="link" href=""><span class="type">GVariantType</span></a> of the state that the action has, or <a class="link" href=""><code class="literal">NULL</code></a> if the
 action is stateless.</p>
+<p>Owner: GPropertyAction</p>
 <p>Flags: Read</p>
 <p class="since">Since: <a class="link" href="api-index-2-38.html#api-index-2.38">2.38</a></p>
 </div>
@@ -354,6 +362,6 @@ action is stateless.</p>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

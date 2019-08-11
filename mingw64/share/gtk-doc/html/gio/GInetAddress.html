@@ -8,7 +8,7 @@
 <link rel="up" href="networking.html" title="Low-level network support">
 <link rel="prev" href="GDatagramBased.html" title="GDatagramBased">
 <link rel="next" href="GInetAddressMask.html" title="GInetAddressMask">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -209,12 +209,12 @@ GInetAddress
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gpointer</span></a></td>
 <td class="property_name"><a class="link" href="GInetAddress.html#GInetAddress--bytes" title="The “bytes” property">bytes</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href="GSocketAddress.html#GSocketFamily" title="enum GSocketFamily"><span class="type">GSocketFamily</span></a></td>
 <td class="property_name"><a class="link" href="GInetAddress.html#GInetAddress--family" title="The “family” property">family</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gboolean</span></a></td>
@@ -1027,14 +1027,16 @@ is a global multicast address.</p>
 <a class="indexterm" name="id-1.4.13.4.11.2.2"></a>
 <pre class="programlisting">  “bytes”                    <a class="link" href=""><span class="type">gpointer</span></a></pre>
 <p>The raw address data.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GInetAddress</p>
+<p>Flags: Read / Write / Construct Only</p>
 </div>
 <div class="refsect2">
 <a name="GInetAddress--family"></a><h3>The <code class="literal">“family”</code> property</h3>
 <a class="indexterm" name="id-1.4.13.4.11.3.2"></a>
 <pre class="programlisting">  “family”                   <a class="link" href="GSocketAddress.html#GSocketFamily" title="enum GSocketFamily"><span class="type">GSocketFamily</span></a></pre>
 <p>The address family (IPv4 or IPv6).</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GInetAddress</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: G_SOCKET_FAMILY_INVALID</p>
 </div>
 <div class="refsect2">
@@ -1043,6 +1045,7 @@ is a global multicast address.</p>
 <pre class="programlisting">  “is-any”                   <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is the "any" address for its family.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-any" title="g_inet_address_get_is_any ()"><code class="function">g_inet_address_get_is_any()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1053,6 +1056,7 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-any" title="g_
 <pre class="programlisting">  “is-link-local”            <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is a link-local address.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-link-local" title="g_inet_address_get_is_link_local ()"><code class="function">g_inet_address_get_is_link_local()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1063,6 +1067,7 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-link-local" ti
 <pre class="programlisting">  “is-loopback”              <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is the loopback address for its family.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-loopback" title="g_inet_address_get_is_loopback ()"><code class="function">g_inet_address_get_is_loopback()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1073,6 +1078,7 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-loopback" titl
 <pre class="programlisting">  “is-mc-global”             <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is a global multicast address.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-global" title="g_inet_address_get_is_mc_global ()"><code class="function">g_inet_address_get_is_mc_global()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1083,6 +1089,7 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-global" tit
 <pre class="programlisting">  “is-mc-link-local”         <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is a link-local multicast address.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-link-local" title="g_inet_address_get_is_mc_link_local ()"><code class="function">g_inet_address_get_is_mc_link_local()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1093,6 +1100,7 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-link-local"
 <pre class="programlisting">  “is-mc-node-local”         <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is a node-local multicast address.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-node-local" title="g_inet_address_get_is_mc_node_local ()"><code class="function">g_inet_address_get_is_mc_node_local()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1103,6 +1111,7 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-node-local"
 <pre class="programlisting">  “is-mc-org-local”          <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is an organization-local multicast address.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-org-local" title="g_inet_address_get_is_mc_org_local ()"><code class="function">g_inet_address_get_is_mc_org_local()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1113,6 +1122,7 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-org-local" 
 <pre class="programlisting">  “is-mc-site-local”         <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is a site-local multicast address.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-site-local" title="g_inet_address_get_is_mc_site_local ()"><code class="function">g_inet_address_get_is_mc_site_local()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1123,6 +1133,7 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-mc-site-local"
 <pre class="programlisting">  “is-multicast”             <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is a multicast address.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-multicast" title="g_inet_address_get_is_multicast ()"><code class="function">g_inet_address_get_is_multicast()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1133,6 +1144,7 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-multicast" tit
 <pre class="programlisting">  “is-site-local”            <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether this is a site-local address.
 See <a class="link" href="GInetAddress.html#g-inet-address-get-is-loopback" title="g_inet_address_get_is_loopback ()"><code class="function">g_inet_address_get_is_loopback()</code></a>.</p>
+<p>Owner: GInetAddress</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1142,6 +1154,6 @@ See <a class="link" href="GInetAddress.html#g-inet-address-get-is-loopback" titl
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

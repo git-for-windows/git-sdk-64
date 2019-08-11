@@ -8,7 +8,7 @@
 <link rel="up" href="tls.html" title="TLS (SSL) support">
 <link rel="prev" href="gio-TLS-Overview.html" title="TLS Overview">
 <link rel="next" href="GTlsConnection.html" title="GTlsConnection">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -115,31 +115,31 @@ GTlsCertificate
 <td class="property_type">
 <a class="link" href=""><span class="type">GByteArray</span></a> *</td>
 <td class="property_name"><a class="link" href="GTlsCertificate.html#GTlsCertificate--certificate" title="The “certificate” property">certificate</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GTlsCertificate.html#GTlsCertificate--certificate-pem" title="The “certificate-pem” property">certificate-pem</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href="GTlsCertificate.html" title="GTlsCertificate"><span class="type">GTlsCertificate</span></a> *</td>
 <td class="property_name"><a class="link" href="GTlsCertificate.html#GTlsCertificate--issuer" title="The “issuer” property">issuer</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">GByteArray</span></a> *</td>
 <td class="property_name"><a class="link" href="GTlsCertificate.html#GTlsCertificate--private-key" title="The “private-key” property">private-key</a></td>
-<td class="property_flags">Write / Construct Only</td>
+<td class="property_flags">Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GTlsCertificate.html#GTlsCertificate--private-key-pem" title="The “private-key-pem” property">private-key-pem</a></td>
-<td class="property_flags">Write / Construct Only</td>
+<td class="property_flags">Write / Construct Only</td>
 </tr>
 </tbody>
 </table>
@@ -600,7 +600,8 @@ their <a class="link" href="GTlsCertificate.html#GTlsCertificate--issuer" title=
 <p>The DER (binary) encoded representation of the certificate.
 This property and the <a class="link" href="GTlsCertificate.html#GTlsCertificate--certificate-pem" title="The “certificate-pem” property"><span class="type">“certificate-pem”</span></a> property
 represent the same data, just in different forms.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GTlsCertificate</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
 </div>
 <div class="refsect2">
@@ -610,7 +611,8 @@ represent the same data, just in different forms.</p>
 <p>The PEM (ASCII) encoded representation of the certificate.
 This property and the <a class="link" href="GTlsCertificate.html#GTlsCertificate--certificate" title="The “certificate” property"><span class="type">“certificate”</span></a>
 property represent the same data, just in different forms.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GTlsCertificate</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
 </div>
@@ -622,7 +624,8 @@ property represent the same data, just in different forms.</p>
 certificate. If <a class="link" href=""><code class="literal">NULL</code></a>, this means that the certificate is either
 self-signed, or else the certificate of the issuer is not
 available.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GTlsCertificate</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
 </div>
 <div class="refsect2">
@@ -637,7 +640,8 @@ but cannot be read.</p>
 <p>PKCS#8 format is supported since 2.32; earlier releases only
 support PKCS#1. You can use the <code class="literal">openssl rsa</code>
 tool to convert PKCS#8 keys to PKCS#1.</p>
-<p>Flags: Write / Construct Only</p>
+<p>Owner: GTlsCertificate</p>
+<p>Flags: Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
 </div>
 <div class="refsect2">
@@ -653,7 +657,8 @@ constructing a key (eg, from a file), but cannot be read.</p>
 <p>PKCS#8 format is supported since 2.32; earlier releases only
 support PKCS#1. You can use the <code class="literal">openssl rsa</code>
 tool to convert PKCS#8 keys to PKCS#1.</p>
-<p>Flags: Write / Construct Only</p>
+<p>Owner: GTlsCertificate</p>
+<p>Flags: Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
 </div>
@@ -668,6 +673,6 @@ tool to convert PKCS#8 keys to PKCS#1.</p>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

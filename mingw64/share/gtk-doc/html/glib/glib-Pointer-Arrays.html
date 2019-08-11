@@ -8,7 +8,7 @@
 <link rel="up" href="glib-data-types.html" title="GLib Data Types">
 <link rel="prev" href="glib-Arrays.html" title="Arrays">
 <link rel="next" href="glib-Byte-Arrays.html" title="Byte Arrays">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -339,7 +339,7 @@ g_ptr_array_new (<em class="parameter"><code><span class="type">void</span></cod
 
 <a class="indexterm" name="id-1.6.11.7.3.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="returnvalue">GPtrArray</span></a> *
-g_ptr_array_sized_new (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> reserved_size</code></em>);</pre>
+g_ptr_array_sized_new (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> reserved_size</code></em>);</pre>
 <p>Creates a new <a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> with <em class="parameter"><code>reserved_size</code></em>
  pointers preallocated
 and a reference count of 1. This avoids frequent reallocation, if
@@ -413,7 +413,7 @@ or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code
 
 <a class="indexterm" name="id-1.6.11.7.5.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="returnvalue">GPtrArray</span></a> *
-g_ptr_array_new_full (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> reserved_size</code></em>,
+g_ptr_array_new_full (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> reserved_size</code></em>,
                       <em class="parameter"><code><a class="link" href="glib-Datasets.html#GDestroyNotify" title="GDestroyNotify ()"><span class="type">GDestroyNotify</span></a> element_free_func</code></em>);</pre>
 <p>Creates a new <a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> with <em class="parameter"><code>reserved_size</code></em>
  pointers preallocated
@@ -607,7 +607,7 @@ in size automatically if necessary.</p>
 <a class="indexterm" name="id-1.6.11.7.10.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_ptr_array_insert (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *array</code></em>,
-                    <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> index_</code></em>,
+                    <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> index_</code></em>,
                     <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> data</code></em>);</pre>
 <p>Inserts an element into the pointer array at the given index. The 
 array will grow in size automatically if necessary.</p>
@@ -695,7 +695,7 @@ is not found in the array</p>
 <a class="indexterm" name="id-1.6.11.7.12.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
 g_ptr_array_remove_index (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *array</code></em>,
-                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> index_</code></em>);</pre>
+                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> index_</code></em>);</pre>
 <p>Removes the pointer at the given index from the pointer array.
 The following elements are moved down one place. If <em class="parameter"><code>array</code></em>
  has
@@ -786,7 +786,7 @@ pointer was not found.</p>
 <a class="indexterm" name="id-1.6.11.7.14.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
 g_ptr_array_remove_index_fast (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *array</code></em>,
-                               <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> index_</code></em>);</pre>
+                               <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> index_</code></em>);</pre>
 <p>Removes the pointer at the given index from the pointer array.
 The last element in the array is used to fill in the space, so
 this function does not preserve the order of the array. But it
@@ -833,8 +833,8 @@ return value from this function will potentially point to freed memory
 <a class="indexterm" name="id-1.6.11.7.15.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="returnvalue">GPtrArray</span></a> *
 g_ptr_array_remove_range (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *array</code></em>,
-                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> index_</code></em>,
-                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> length</code></em>);</pre>
+                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> index_</code></em>,
+                          <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> length</code></em>);</pre>
 <p>Removes the given number of pointers starting at the given index
 from a <a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a>. The following elements are moved to close the
 gap. If <em class="parameter"><code>array</code></em>
@@ -885,7 +885,7 @@ called for the removed elements.</p>
 <a class="indexterm" name="id-1.6.11.7.16.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
 g_ptr_array_steal_index (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *array</code></em>,
-                         <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> index_</code></em>);</pre>
+                         <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> index_</code></em>);</pre>
 <p>Removes the pointer at the given index from the pointer array.
 The following elements are moved down one place. The <a class="link" href="glib-Datasets.html#GDestroyNotify" title="GDestroyNotify ()"><span class="type">GDestroyNotify</span></a> for
 <em class="parameter"><code>array</code></em>
@@ -930,7 +930,7 @@ the caller of this function.</p>
 <a class="indexterm" name="id-1.6.11.7.17.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
 g_ptr_array_steal_index_fast (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *array</code></em>,
-                              <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> index_</code></em>);</pre>
+                              <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> index_</code></em>);</pre>
 <p>Removes the pointer at the given index from the pointer array.
 The last element in the array is used to fill in the space, so
 this function does not preserve the order of the array. But it
@@ -1065,7 +1065,7 @@ pointers to the pointers in the array.</p>
 <a class="indexterm" name="id-1.6.11.7.20.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_ptr_array_set_size (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *array</code></em>,
-                      <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint ()"><span class="type">gint</span></a> length</code></em>);</pre>
+                      <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> length</code></em>);</pre>
 <p>Sets the size of the array. When making the array larger,
 newly-added elements will be set to <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. When making it smaller,
 if <em class="parameter"><code>array</code></em>
@@ -1244,7 +1244,7 @@ add elements to or remove elements from the array.</p>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 g_ptr_array_find (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *haystack</code></em>,
                   <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> needle</code></em>,
-                  <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> *index_</code></em>);</pre>
+                  <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> *index_</code></em>);</pre>
 <p>Checks whether <em class="parameter"><code>needle</code></em>
  exists in <em class="parameter"><code>haystack</code></em>
 . If the element is found, <a class="link" href="glib-Standard-Macros.html#TRUE:CAPS" title="TRUE"><code class="literal">TRUE</code></a> is
@@ -1307,7 +1307,7 @@ is one of the elements of <em class="parameter"><code>haystack</code></em>
 g_ptr_array_find_with_equal_func (<em class="parameter"><code><a class="link" href="glib-Pointer-Arrays.html#GPtrArray" title="struct GPtrArray"><span class="type">GPtrArray</span></a> *haystack</code></em>,
                                   <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> needle</code></em>,
                                   <em class="parameter"><code><a class="link" href="glib-Hash-Tables.html#GEqualFunc" title="GEqualFunc ()"><span class="type">GEqualFunc</span></a> equal_func</code></em>,
-                                  <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> *index_</code></em>);</pre>
+                                  <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> *index_</code></em>);</pre>
 <p>Checks whether <em class="parameter"><code>needle</code></em>
  exists in <em class="parameter"><code>haystack</code></em>
 , using the given <em class="parameter"><code>equal_func</code></em>
@@ -1408,7 +1408,7 @@ array grows</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
-<td class="struct_member_name"><p><a class="link" href="glib-Basic-Types.html#guint" title="guint ()"><span class="type">guint</span></a> <em class="structfield"><code><a name="GPtrArray.len"></a>len</code></em>;</p></td>
+<td class="struct_member_name"><p><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GPtrArray.len"></a>len</code></em>;</p></td>
 <td class="struct_member_description"><p>number of pointers in the array</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
@@ -1422,6 +1422,6 @@ array grows</p></td>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

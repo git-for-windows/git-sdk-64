@@ -8,7 +8,7 @@
 <link rel="up" href="gdbus-lowlevel.html" title="Low-level D-Bus Support">
 <link rel="prev" href="GDBusMessage.html" title="GDBusMessage">
 <link rel="next" href="GDBusMethodInvocation.html" title="GDBusMethodInvocation">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -488,13 +488,13 @@ GDBusConnection
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusConnection.html#GDBusConnection--address" title="The “address” property">address</a></td>
-<td class="property_flags">Write / Construct Only</td>
+<td class="property_flags">Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusConnection.html#GDBusConnection--authentication-observer" title="The “authentication-observer” property">authentication-observer</a></td>
-<td class="property_flags">Write / Construct Only</td>
+<td class="property_flags">Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href="GDBusConnection.html#GDBusCapabilityFlags" title="enum GDBusCapabilityFlags"><span class="type">GDBusCapabilityFlags</span></a></td>
@@ -514,19 +514,19 @@ GDBusConnection
 <tr>
 <td class="property_type"><a class="link" href="GDBusConnection.html#GDBusConnectionFlags" title="enum GDBusConnectionFlags"><span class="type">GDBusConnectionFlags</span></a></td>
 <td class="property_name"><a class="link" href="GDBusConnection.html#GDBusConnection--flags" title="The “flags” property">flags</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusConnection.html#GDBusConnection--guid" title="The “guid” property">guid</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href="GIOStream.html" title="GIOStream"><span class="type">GIOStream</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusConnection.html#GDBusConnection--stream" title="The “stream” property">stream</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
@@ -544,9 +544,9 @@ GDBusConnection
 <div class="informaltable">
 <table class="informaltable" border="0">
 <colgroup>
-<col width="150px" class="signals_return">
-<col width="300px" class="signals_name">
-<col width="200px" class="signals_flags">
+<col width="150px" class="signal_proto_type">
+<col width="300px" class="signal_proto_name">
+<col width="200px" class="signal_proto_flags">
 </colgroup>
 <tbody><tr>
 <td class="signal_type"><a class="link" href=""><span class="returnvalue">void</span></a></td>
@@ -4977,7 +4977,8 @@ to dynamically spawn objects in the subtree.</p>
 <pre class="programlisting">  “address”                  <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>A D-Bus address specifying potential endpoints that can be used
 when establishing the connection.</p>
-<p>Flags: Write / Construct Only</p>
+<p>Owner: GDBusConnection</p>
+<p>Flags: Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -4986,7 +4987,8 @@ when establishing the connection.</p>
 <a class="indexterm" name="id-1.4.17.7.13.3.2"></a>
 <pre class="programlisting">  “authentication-observer”  <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> *</pre>
 <p>A <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> object to assist in the authentication process or <a class="link" href=""><code class="literal">NULL</code></a>.</p>
-<p>Flags: Write / Construct Only</p>
+<p>Owner: GDBusConnection</p>
+<p>Flags: Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
 <div class="refsect2">
@@ -4995,6 +4997,7 @@ when establishing the connection.</p>
 <pre class="programlisting">  “capabilities”             <a class="link" href="GDBusConnection.html#GDBusCapabilityFlags" title="enum GDBusCapabilityFlags"><span class="type">GDBusCapabilityFlags</span></a></pre>
 <p>Flags from the <a class="link" href="GDBusConnection.html#GDBusCapabilityFlags" title="enum GDBusCapabilityFlags"><span class="type">GDBusCapabilityFlags</span></a> enumeration
 representing connection features negotiated with the other peer.</p>
+<p>Owner: GDBusConnection</p>
 <p>Flags: Read</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -5003,6 +5006,7 @@ representing connection features negotiated with the other peer.</p>
 <a class="indexterm" name="id-1.4.17.7.13.5.2"></a>
 <pre class="programlisting">  “closed”                   <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>A boolean specifying whether the connection has been closed.</p>
+<p>Owner: GDBusConnection</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -5016,6 +5020,7 @@ calling <code class="literal">raise(SIGTERM)</code>) if the connection is closed
 remote peer.</p>
 <p>Note that <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> objects returned by <a class="link" href="GDBusConnection.html#g-bus-get-finish" title="g_bus_get_finish ()"><code class="function">g_bus_get_finish()</code></a>
 and <a class="link" href="GDBusConnection.html#g-bus-get-sync" title="g_bus_get_sync ()"><code class="function">g_bus_get_sync()</code></a> will (usually) have this property set to <a class="link" href=""><code class="literal">TRUE</code></a>.</p>
+<p>Owner: GDBusConnection</p>
 <p>Flags: Read / Write</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -5025,7 +5030,8 @@ and <a class="link" href="GDBusConnection.html#g-bus-get-sync" title="g_bus_get_
 <a class="indexterm" name="id-1.4.17.7.13.7.2"></a>
 <pre class="programlisting">  “flags”                    <a class="link" href="GDBusConnection.html#GDBusConnectionFlags" title="enum GDBusConnectionFlags"><span class="type">GDBusConnectionFlags</span></a></pre>
 <p>Flags from the <a class="link" href="GDBusConnection.html#GDBusConnectionFlags" title="enum GDBusConnectionFlags"><span class="type">GDBusConnectionFlags</span></a> enumeration.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusConnection</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
 <div class="refsect2">
@@ -5043,7 +5049,8 @@ property to a valid guid.</p>
 <a class="link" href="GDBusConnection.html#GDBusConnection--flags" title="The “flags” property"><span class="type">“flags”</span></a> property you will be able to read the GUID
 of the other peer here after the connection has been successfully
 initialized.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusConnection</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -5057,7 +5064,8 @@ then the corresponding <a class="link" href="GSocket.html" title="GSocket"><span
 <p>While the <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> is active, it will interact with this
 stream from a worker thread, so it is not safe to interact with
 the stream directly.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusConnection</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
 <div class="refsect2">
@@ -5066,6 +5074,7 @@ the stream directly.</p>
 <pre class="programlisting">  “unique-name”              <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The unique name as assigned by the message bus or <a class="link" href=""><code class="literal">NULL</code></a> if the
 connection is not open or not a message bus connection.</p>
+<p>Owner: GDBusConnection</p>
 <p>Flags: Read</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -5153,6 +5162,6 @@ remote peer closed its end of the connection</p></td>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

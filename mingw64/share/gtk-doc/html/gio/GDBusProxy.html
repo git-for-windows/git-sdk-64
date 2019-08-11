@@ -8,7 +8,7 @@
 <link rel="up" href="gdbus-convenience.html" title="High-level D-Bus Support">
 <link rel="prev" href="GDBusInterfaceSkeleton.html" title="GDBusInterfaceSkeleton">
 <link rel="next" href="GDBusObject.html" title="GDBusObject">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -255,13 +255,13 @@ GDBusProxy
 <tr>
 <td class="property_type"><a class="link" href="GDBusConnection.html#GBusType" title="enum GBusType"><span class="type">GBusType</span></a></td>
 <td class="property_name"><a class="link" href="GDBusProxy.html#GDBusProxy--g-bus-type" title="The “g-bus-type” property">g-bus-type</a></td>
-<td class="property_flags">Write / Construct Only</td>
+<td class="property_flags">Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusProxy.html#GDBusProxy--g-connection" title="The “g-connection” property">g-connection</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gint</span></a></td>
@@ -271,7 +271,7 @@ GDBusProxy
 <tr>
 <td class="property_type"><a class="link" href="GDBusProxy.html#GDBusProxyFlags" title="enum GDBusProxyFlags"><span class="type">GDBusProxyFlags</span></a></td>
 <td class="property_name"><a class="link" href="GDBusProxy.html#GDBusProxy--g-flags" title="The “g-flags” property">g-flags</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
@@ -283,13 +283,13 @@ GDBusProxy
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusProxy.html#GDBusProxy--g-interface-name" title="The “g-interface-name” property">g-interface-name</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusProxy.html#GDBusProxy--g-name" title="The “g-name” property">g-name</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
@@ -301,7 +301,7 @@ GDBusProxy
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusProxy.html#GDBusProxy--g-object-path" title="The “g-object-path” property">g-object-path</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 </tbody>
 </table>
@@ -313,9 +313,9 @@ GDBusProxy
 <div class="informaltable">
 <table class="informaltable" border="0">
 <colgroup>
-<col width="150px" class="signals_return">
-<col width="300px" class="signals_name">
-<col width="200px" class="signals_flags">
+<col width="150px" class="signal_proto_type">
+<col width="300px" class="signal_proto_name">
+<col width="200px" class="signal_proto_flags">
 </colgroup>
 <tbody>
 <tr>
@@ -2098,7 +2098,8 @@ should only be accessed using the provided API.</p>
 <a class="link" href="GDBusProxy.html#GDBusProxy--g-connection" title="The “g-connection” property"><span class="type">“g-connection”</span></a> must be <a class="link" href=""><code class="literal">NULL</code></a> and will be set to the
 <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> obtained by calling <a class="link" href="GDBusConnection.html#g-bus-get" title="g_bus_get ()"><code class="function">g_bus_get()</code></a> with the value
 of this property.</p>
-<p>Flags: Write / Construct Only</p>
+<p>Owner: GDBusProxy</p>
+<p>Flags: Write / Construct Only</p>
 <p>Default value: G_BUS_TYPE_NONE</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -2107,7 +2108,8 @@ of this property.</p>
 <a class="indexterm" name="id-1.4.18.6.13.3.2"></a>
 <pre class="programlisting">  “g-connection”             <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> *</pre>
 <p>The <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> the proxy is for.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusProxy</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
 <div class="refsect2">
@@ -2122,6 +2124,7 @@ as <em class="parameter"><code>timeout_msec</code></em>
 remote method invocations on the proxy. If this property is -1,
 the default timeout (typically 25 seconds) is used. If set to
 <a class="link" href=""><code class="literal">G_MAXINT</code></a>, then no timeout is used.</p>
+<p>Owner: GDBusProxy</p>
 <p>Flags: Read / Write / Construct</p>
 <p>Allowed values: &gt;= -1</p>
 <p>Default value: -1</p>
@@ -2132,7 +2135,8 @@ the default timeout (typically 25 seconds) is used. If set to
 <a class="indexterm" name="id-1.4.18.6.13.5.2"></a>
 <pre class="programlisting">  “g-flags”                  <a class="link" href="GDBusProxy.html#GDBusProxyFlags" title="enum GDBusProxyFlags"><span class="type">GDBusProxyFlags</span></a></pre>
 <p>Flags from the <a class="link" href="GDBusProxy.html#GDBusProxyFlags" title="enum GDBusProxyFlags"><span class="type">GDBusProxyFlags</span></a> enumeration.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusProxy</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
 <div class="refsect2">
@@ -2168,6 +2172,7 @@ logged via <a class="link" href=""><code class="function">g_warning()</code></a>
 properties that are not referenced in the given
 <a class="link" href="gio-D-Bus-Introspection-Data.html#GDBusInterfaceInfo"><span class="type">GDBusInterfaceInfo</span></a>, since extending a D-Bus interface on the
 service-side is not considered an ABI break.</p>
+<p>Owner: GDBusProxy</p>
 <p>Flags: Read / Write</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -2176,7 +2181,8 @@ service-side is not considered an ABI break.</p>
 <a class="indexterm" name="id-1.4.18.6.13.7.2"></a>
 <pre class="programlisting">  “g-interface-name”         <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The D-Bus interface name the proxy is for.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusProxy</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -2185,7 +2191,8 @@ service-side is not considered an ABI break.</p>
 <a class="indexterm" name="id-1.4.18.6.13.8.2"></a>
 <pre class="programlisting">  “g-name”                   <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The well-known or unique name that the proxy is for.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusProxy</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -2196,6 +2203,7 @@ service-side is not considered an ABI break.</p>
 <p>The unique name that owns <a class="link" href="GDBusProxy.html#GDBusProxy--g-name" title="The “g-name” property"><span class="type">“g-name”</span></a> or <a class="link" href=""><code class="literal">NULL</code></a> if no-one
 currently owns that name. You may connect to <a class="link" href=""><span class="type">“notify”</span></a> signal to
 track changes to this property.</p>
+<p>Owner: GDBusProxy</p>
 <p>Flags: Read</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -2205,7 +2213,8 @@ track changes to this property.</p>
 <a class="indexterm" name="id-1.4.18.6.13.10.2"></a>
 <pre class="programlisting">  “g-object-path”            <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The object path the proxy is for.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusProxy</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -2332,6 +2341,6 @@ user_function (<a class="link" href="GDBusProxy.html" title="GDBusProxy"><span c
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

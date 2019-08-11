@@ -8,7 +8,7 @@
 <link rel="up" href="gdbus-lowlevel.html" title="Low-level D-Bus Support">
 <link rel="prev" href="GDBusMethodInvocation.html" title="GDBusMethodInvocation">
 <link rel="next" href="GDBusAuthObserver.html" title="GDBusAuthObserver">
-<meta name="generator" content="GTK-Doc V1.30 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -118,13 +118,13 @@ GDBusServer
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusServer.html#GDBusServer--address" title="The “address” property">address</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusServer.html#GDBusServer--authentication-observer" title="The “authentication-observer” property">authentication-observer</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
@@ -135,13 +135,13 @@ GDBusServer
 <tr>
 <td class="property_type"><a class="link" href="GDBusServer.html#GDBusServerFlags" title="enum GDBusServerFlags"><span class="type">GDBusServerFlags</span></a></td>
 <td class="property_name"><a class="link" href="GDBusServer.html#GDBusServer--flags" title="The “flags” property">flags</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">gchar</span></a> *</td>
 <td class="property_name"><a class="link" href="GDBusServer.html#GDBusServer--guid" title="The “guid” property">guid</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 </tbody>
 </table>
@@ -153,9 +153,9 @@ GDBusServer
 <div class="informaltable">
 <table class="informaltable" border="0">
 <colgroup>
-<col width="150px" class="signals_return">
-<col width="300px" class="signals_name">
-<col width="200px" class="signals_flags">
+<col width="150px" class="signal_proto_type">
+<col width="300px" class="signal_proto_name">
+<col width="200px" class="signal_proto_flags">
 </colgroup>
 <tbody><tr>
 <td class="signal_type"><a class="link" href=""><span class="returnvalue">gboolean</span></a></td>
@@ -223,6 +223,10 @@ implement the org.freedesktop.DBus interface.</p>
 session or system bus, you should instead use <a class="link" href="gio-Owning-Bus-Names.html#g-bus-own-name" title="g_bus_own_name ()"><code class="function">g_bus_own_name()</code></a>.</p>
 <p>An example of peer-to-peer communication with G-DBus can be found
 in <a class="ulink" href="https://git.gnome.org/browse/glib/tree/gio/tests/gdbus-example-peer.c" target="_top">gdbus-example-peer.c</a>.</p>
+<p>Note that a minimal <a class="link" href="GDBusServer.html" title="GDBusServer"><span class="type">GDBusServer</span></a> will accept connections from any
+peer. In many use-cases it will be necessary to add a <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a>
+that only accepts connections that have successfully authenticated
+as the same user that is running the <a class="link" href="GDBusServer.html" title="GDBusServer"><span class="type">GDBusServer</span></a>.</p>
 
 </div>
 <div class="refsect1">
@@ -244,6 +248,9 @@ g_dbus_server_new_sync (<em class="parameter"><code>const <a class="link" href="
  that works.</p>
 <p>Once constructed, you can use <a class="link" href="GDBusServer.html#g-dbus-server-get-client-address" title="g_dbus_server_get_client_address ()"><code class="function">g_dbus_server_get_client_address()</code></a> to
 get a D-Bus address string that clients can use to connect.</p>
+<p>To have control over the available authentication mechanisms and
+the users that are authorized to connect, it is strongly recommended
+to provide a non-<a class="link" href=""><code class="literal">NULL</code></a> <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a>.</p>
 <p>Connect to the <a class="link" href="GDBusServer.html#GDBusServer-new-connection" title="The “new-connection” signal"><span class="type">“new-connection”</span></a> signal to handle
 incoming connections.</p>
 <p>The returned <a class="link" href="GDBusServer.html" title="GDBusServer"><span class="type">GDBusServer</span></a> isn't active - you have to start it with
@@ -568,6 +575,7 @@ authentication method.</p>
 <a class="indexterm" name="id-1.4.17.9.13.2.2"></a>
 <pre class="programlisting">  “active”                   <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether the server is currently active.</p>
+<p>Owner: GDBusServer</p>
 <p>Flags: Read</p>
 <p>Default value: FALSE</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -577,7 +585,8 @@ authentication method.</p>
 <a class="indexterm" name="id-1.4.17.9.13.3.2"></a>
 <pre class="programlisting">  “address”                  <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The D-Bus address to listen on.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusServer</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -586,7 +595,8 @@ authentication method.</p>
 <a class="indexterm" name="id-1.4.17.9.13.4.2"></a>
 <pre class="programlisting">  “authentication-observer”  <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> *</pre>
 <p>A <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> object to assist in the authentication process or <a class="link" href=""><code class="literal">NULL</code></a>.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusServer</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
 <div class="refsect2">
@@ -594,6 +604,7 @@ authentication method.</p>
 <a class="indexterm" name="id-1.4.17.9.13.5.2"></a>
 <pre class="programlisting">  “client-address”           <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The D-Bus address that clients can use.</p>
+<p>Owner: GDBusServer</p>
 <p>Flags: Read</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -603,7 +614,8 @@ authentication method.</p>
 <a class="indexterm" name="id-1.4.17.9.13.6.2"></a>
 <pre class="programlisting">  “flags”                    <a class="link" href="GDBusServer.html#GDBusServerFlags" title="enum GDBusServerFlags"><span class="type">GDBusServerFlags</span></a></pre>
 <p>Flags from the <a class="link" href="GDBusServer.html#GDBusServerFlags" title="enum GDBusServerFlags"><span class="type">GDBusServerFlags</span></a> enumeration.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusServer</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
 <div class="refsect2">
@@ -611,7 +623,8 @@ authentication method.</p>
 <a class="indexterm" name="id-1.4.17.9.13.7.2"></a>
 <pre class="programlisting">  “guid”                     <a class="link" href=""><span class="type">gchar</span></a> *</pre>
 <p>The guid of the server.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GDBusServer</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: NULL</p>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -692,6 +705,6 @@ run.</p>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.30</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>
