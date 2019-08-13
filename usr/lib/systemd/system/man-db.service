@@ -10,7 +10,7 @@ ExecStart=+/usr/bin/install -d -o root -g root -m 0755 /var/cache/man
 # Expunge old catman pages which have not been read in a week.
 ExecStart=/usr/bin/find /var/cache/man -type f -name *.gz -atime +6 -delete
 # Regenerate man database.
-ExecStart=/usr/bin/mandb
+ExecStart=/usr/bin/mandb --quiet
 User=root
 Nice=19
 IOSchedulingClass=idle
