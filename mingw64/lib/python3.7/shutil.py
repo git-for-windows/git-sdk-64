@@ -10,7 +10,6 @@ import stat
 import fnmatch
 import collections
 import errno
-import time
 
 try:
     import zlib
@@ -400,7 +399,6 @@ def _rmtree_unsafe(path, onerror):
             except OSError:
                 onerror(os.unlink, fullname, sys.exc_info())
     try:
-        time.sleep(2)
         os.rmdir(path)
     except OSError:
         onerror(os.rmdir, path, sys.exc_info())
