@@ -444,7 +444,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git commit-graph read</em> [--object-dir &lt;dir&gt;]
-<em>git commit-graph verify</em> [--object-dir &lt;dir&gt;]
+<em>git commit-graph verify</em> [--object-dir &lt;dir&gt;] [--shallow]
 <em>git commit-graph write</em> &lt;options&gt; [--object-dir &lt;dir&gt;]</pre>
 </div>
 </div>
@@ -467,7 +467,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Use given directory for the location of packfiles and commit-graph
 file. This parameter exists to specify the location of an alternate
 that only has the objects directory, not a full <code>.git</code> directory. The
-commit-graph file is expected to be at <code>&lt;dir&gt;/info/commit-graph</code> and
+commit-graph file is expected to be in the <code>&lt;dir&gt;/info</code> directory and
 the packfiles are expected to be in <code>&lt;dir&gt;/pack</code>.</p>
 </dd>
 </dl>
@@ -502,6 +502,33 @@ or <code>--stdin-packs</code>.)</p>
 <p>With the <code>--append</code> option, include all commits that are present in the
 existing commit-graph file.</p>
 </div>
+<div class="paragraph">
+<p>With the <code>--split</code> option, write the commit-graph as a chain of multiple
+commit-graph files stored in <code>&lt;dir&gt;/info/commit-graphs</code>. The new commits
+not already in the commit-graph are added in a new "tip" file. This file
+is merged with the existing file if the following merge conditions are
+met:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If <code>--size-multiple=&lt;X&gt;</code> is not specified, let <code>X</code> equal 2. If the new
+tip file would have <code>N</code> commits and the previous tip has <code>M</code> commits and
+<code>X</code> times <code>N</code> is greater than  <code>M</code>, instead merge the two files into a
+single file.</p>
+</li>
+<li>
+<p>If <code>--max-commits=&lt;M&gt;</code> is specified with <code>M</code> a positive integer, and the
+new tip file would have more than <code>M</code> commits, then instead merge the new
+tip with the previous tip.</p>
+<div class="paragraph">
+<p>Finally, if <code>--expire-time=&lt;datetime&gt;</code> is not specified, let <code>datetime</code>
+be the current time. After writing the split commit-graph, delete all
+unused commit-graph whose modified times are older than <code>datetime</code>.</p>
+</div>
+</li>
+</ul>
+</div>
 </dd>
 <dt class="hdlist1"><em>read</em></dt>
 <dd>
@@ -512,6 +539,10 @@ Used for debugging purposes.</p>
 <dd>
 <p>Read the commit-graph file and verify its contents against the object
 database. Used to check for corrupted data.</p>
+<div class="paragraph">
+<p>With the <code>--shallow</code> option, only check the tip commit-graph file in
+a chain of split commit-graphs.</p>
+</div>
 </dd>
 </dl>
 </div>
@@ -580,7 +611,7 @@ commit-graph file along with those reachable from <code>HEAD</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

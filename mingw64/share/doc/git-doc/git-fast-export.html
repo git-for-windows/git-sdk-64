@@ -575,7 +575,7 @@ master~5..master</code> will not include the commit master~5
 and will make master~4 no longer have master~5 as
 a parent (though both the old master~4 and new
 master~4 will have all the same files).  Use
---reference-excluded-parents to instead have the the stream
+--reference-excluded-parents to instead have the stream
 refer to commits in the excluded range of history by their
 sha1sum.  Note that the resulting stream can only be used by a
 repository which already contains the necessary parent
@@ -588,6 +588,14 @@ commits.</p>
 ignored by importers such as git-fast-import, it may be useful
 for intermediary filters (e.g. for rewriting commit messages
 which refer to older commits, or for stripping blobs by id).</p>
+</dd>
+<dt class="hdlist1">--reencode=(yes|no|abort)</dt>
+<dd>
+<p>Specify how to handle <code>encoding</code> header in commit objects.  When
+asking to <em>abort</em> (which is the default), this program will die
+when encountering such a commit object.  With <em>yes</em>, the commit
+message will be reencoded into UTF-8.  With <em>no</em>, the original
+encoding will be preserved.</p>
 </dd>
 <dt class="hdlist1">--refspec</dt>
 <dd>
@@ -734,7 +742,7 @@ a tag referencing a tree instead of a commit.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

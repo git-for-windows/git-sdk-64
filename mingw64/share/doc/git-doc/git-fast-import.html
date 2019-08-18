@@ -927,6 +927,7 @@ change to the project.</p>
 	original-oid?
 	('author' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF)?
 	'committer' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF
+	('encoding' SP &lt;encoding&gt;)?
 	data
 	('from' SP &lt;commit-ish&gt; LF)?
 	('merge' SP &lt;commit-ish&gt; LF)?
@@ -968,7 +969,7 @@ the same commit, as <code>filedeleteall</code> wipes the branch clean (see below
 <div class="paragraph">
 <p>The <code>LF</code> after the command is optional (it used to be required).  Note
 that for reasons of backward compatibility, if the commit ends with a
-<code>data</code> command (i.e. it has has no <code>from</code>, <code>merge</code>, <code>filemodify</code>,
+<code>data</code> command (i.e. it has no <code>from</code>, <code>merge</code>, <code>filemodify</code>,
 <code>filedelete</code>, <code>filecopy</code>, <code>filerename</code>, <code>filedeleteall</code> or
 <code>notemodify</code> commands) then two <code>LF</code> commands may appear at the end of
 the command instead of just one.</p>
@@ -1003,6 +1004,14 @@ of bytes, except <code>LT</code>, <code>GT</code> and <code>LF</code>.  <code>&l
 that was selected by the --date-format=&lt;fmt&gt; command-line option.
 See &#8220;Date Formats&#8221; above for the set of supported formats, and
 their syntax.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_encoding"><code>encoding</code></h4>
+<div class="paragraph">
+<p>The optional <code>encoding</code> command indicates the encoding of the commit
+message.  Most commits are UTF-8 and the encoding is omitted, but this
+allows importing commit messages into git without first reencoding them.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2412,7 +2421,7 @@ compression.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

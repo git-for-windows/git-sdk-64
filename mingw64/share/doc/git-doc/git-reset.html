@@ -468,13 +468,14 @@ state at <code>&lt;tree-ish&gt;</code>.  (It does not affect the working tree or
 the current branch.)</p>
 <div class="paragraph">
 <p>This means that <code>git reset &lt;paths&gt;</code> is the opposite of <code>git add
-&lt;paths&gt;</code>.</p>
+&lt;paths&gt;</code>. This command is equivalent to
+<code>git restore [--source=&lt;tree-ish&gt;] --staged &lt;paths&gt;...</code>.</p>
 </div>
 <div class="paragraph">
 <p>After running <code>git reset &lt;paths&gt;</code> to update the index entry, you can
-use <a href="git-checkout.html">git-checkout</a>(1) to check the contents out of the index to
-the working tree.
-Alternatively, using <a href="git-checkout.html">git-checkout</a>(1) and specifying a commit, you
+use <a href="git-restore.html">git-restore</a>(1) to check the contents out of the index to
+the working tree. Alternatively, using <a href="git-restore.html">git-restore</a>(1)
+and specifying a commit with <code>--source</code>, you
 can copy the contents of a path out of a commit to the index and to the
 working tree in one go.</p>
 </div>
@@ -550,8 +551,8 @@ changes, reset is aborted.</p>
 </dl>
 </div>
 <div class="paragraph">
-<p>If you want to undo a commit other than the latest on a branch,
-<a href="git-revert.html">git-revert</a>(1) is your friend.</p>
+<p>See "Reset, restore and revert" in <a href="git.html">git</a>(1) for the differences
+between the three commands.</p>
 </div>
 </div>
 </div>
@@ -660,9 +661,9 @@ edit the message further, you can give <code>-C</code> option instead.</p>
 <dd>
 <div class="listingblock">
 <div class="content">
-<pre>$ git branch topic/wip     <b class="conum">(1)</b>
-$ git reset --hard HEAD~3  <b class="conum">(2)</b>
-$ git checkout topic/wip   <b class="conum">(3)</b></pre>
+<pre>$ git branch topic/wip          <b class="conum">(1)</b>
+$ git reset --hard HEAD~3       <b class="conum">(2)</b>
+$ git switch topic/wip          <b class="conum">(3)</b></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -783,13 +784,13 @@ need to get to the other branch for a quick bugfix.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout feature ;# you were working in "feature" branch and
-$ work work work       ;# got interrupted
+<pre>$ git switch feature  ;# you were working in "feature" branch and
+$ work work work      ;# got interrupted
 $ git commit -a -m "snapshot WIP"                 <b class="conum">(1)</b>
-$ git checkout master
+$ git switch master
 $ fix fix fix
 $ git commit ;# commit with real log
-$ git checkout feature
+$ git switch feature
 $ git reset --soft HEAD^ ;# go back to WIP state  <b class="conum">(2)</b>
 $ git reset                                       <b class="conum">(3)</b></pre>
 </div>
@@ -855,11 +856,11 @@ reset it while keeping the changes in your working tree.</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git tag start
-$ git checkout -b branch1
+$ git switch -c branch1
 $ edit
 $ git commit ...                            <b class="conum">(1)</b>
 $ edit
-$ git checkout -b branch2                   <b class="conum">(2)</b>
+$ git switch -c branch2                     <b class="conum">(2)</b>
 $ git reset --keep start                    <b class="conum">(3)</b></pre>
 </div>
 </div>
@@ -871,7 +872,7 @@ $ git reset --keep start                    <b class="conum">(3)</b></pre>
 <li>
 <p>In the ideal world, you could have realized that the earlier
 commit did not belong to the new topic when you created and switched
-to <code>branch2</code> (i.e. <code>git checkout -b branch2 start</code>), but nobody is
+to <code>branch2</code> (i.e. <code>git switch -c branch2 start</code>), but nobody is
 perfect.</p>
 </li>
 <li>
@@ -1109,7 +1110,7 @@ entries:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

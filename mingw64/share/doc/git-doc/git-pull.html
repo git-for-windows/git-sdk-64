@@ -671,6 +671,9 @@ branch (or more in case of an octopus).</p>
 <p>With --no-squash perform the merge and commit the result. This
 option can be used to override --squash.</p>
 </div>
+<div class="paragraph">
+<p>With --squash, --commit is not allowed, and will fail.</p>
+</div>
 </dd>
 <dt class="hdlist1">-s &lt;strategy&gt;</dt>
 <dt class="hdlist1">--strategy=&lt;strategy&gt;</dt>
@@ -909,6 +912,21 @@ character.  The server&#8217;s handling of server options, including
 unknown ones, is server-specific.
 When multiple <code>--server-option=&lt;option&gt;</code> are given, they are all
 sent to the other side in the order listed on the command line.</p>
+</dd>
+<dt class="hdlist1">--show-forced-updates</dt>
+<dd>
+<p>By default, git checks if a branch is force-updated during
+fetch. This can be disabled through fetch.showForcedUpdates, but
+the --show-forced-updates option guarantees this check occurs.
+See <a href="git-config.html">git-config</a>(1).</p>
+</dd>
+<dt class="hdlist1">--no-show-forced-updates</dt>
+<dd>
+<p>By default, git checks if a branch is force-updated during
+fetch. Pass --no-show-forced-updates or set fetch.showForcedUpdates
+to false to skip this check for performance reasons. If used during
+<em>git-pull</em> the --ff-only option will still check for forced updates
+before attempting a fast-forward update. See <a href="git-config.html">git-config</a>(1).</p>
 </dd>
 <dt class="hdlist1">-4</dt>
 <dt class="hdlist1">--ipv4</dt>
@@ -1657,7 +1675,7 @@ The delta reveals regions of X that are similar to Y to the attacker.</p>
 <div class="paragraph">
 <p>Using --recurse-submodules can only fetch new commits in already checked
 out submodules right now. When e.g. upstream added a new submodule in the
-just fetched commits of the superproject the submodule itself can not be
+just fetched commits of the superproject the submodule itself cannot be
 fetched, making it impossible to check out that submodule later without
 having to do a fetch again. This is expected to be fixed in a future Git
 version.</p>
@@ -1683,7 +1701,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

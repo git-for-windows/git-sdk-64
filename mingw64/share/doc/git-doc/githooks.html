@@ -634,12 +634,13 @@ rebased, and is not set when rebasing the current branch.</p>
 <div class="sect2">
 <h3 id="_post_checkout">post-checkout</h3>
 <div class="paragraph">
-<p>This hook is invoked when a <a href="git-checkout.html">git-checkout</a>(1) is run after having updated the
+<p>This hook is invoked when a <a href="git-checkout.html">git-checkout</a>(1) or
+<a href="git-switch.html">git-switch</a>(1) is run after having updated the
 worktree.  The hook is given three parameters: the ref of the previous HEAD,
 the ref of the new HEAD (which may or may not have changed), and a flag
 indicating whether the checkout was a branch checkout (changing branches,
 flag=1) or a file checkout (retrieving a file from the index, flag=0).
-This hook cannot affect the outcome of <code>git checkout</code>.</p>
+This hook cannot affect the outcome of <code>git switch</code> or <code>git checkout</code>.</p>
 </div>
 <div class="paragraph">
 <p>It is also run after <a href="git-clone.html">git-clone</a>(1), unless the <code>--no-checkout</code> (<code>-n</code>) option is
@@ -929,7 +930,8 @@ exit with a zero status.</p>
 <p>For example, the hook can simply run <code>git read-tree -u -m HEAD "$1"</code>
 in order to emulate <code>git fetch</code> that is run in the reverse direction
 with <code>git push</code>, as the two-tree form of <code>git read-tree -u -m</code> is
-essentially the same as <code>git checkout</code> that switches branches while
+essentially the same as <code>git switch</code> or <code>git checkout</code>
+that switches branches while
 keeping the local changes in the working tree that do not interfere
 with the difference between the branches.</p>
 </div>
@@ -1077,7 +1079,7 @@ running passing "1", "1" should not be possible.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

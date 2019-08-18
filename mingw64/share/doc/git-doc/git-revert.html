@@ -444,9 +444,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git revert</em> [--[no-]edit] [-n] [-m parent-number] [-s] [-S[&lt;keyid&gt;]] &lt;commit&gt;&#8230;&#8203;
-<em>git revert</em> --continue
-<em>git revert</em> --quit
-<em>git revert</em> --abort</pre>
+<em>git revert</em> (--continue | --skip | --abort | --quit)</pre>
 </div>
 </div>
 </div>
@@ -465,9 +463,13 @@ effect of some earlier commits (often only a faulty one).  If you want to
 throw away all uncommitted changes in your working directory, you
 should see <a href="git-reset.html">git-reset</a>(1), particularly the <code>--hard</code> option.  If
 you want to extract specific files as they were in another commit, you
-should see <a href="git-checkout.html">git-checkout</a>(1), specifically the <code>git checkout
-&lt;commit&gt; -- &lt;filename&gt;</code> syntax.  Take care with these alternatives as
+should see <a href="git-restore.html">git-restore</a>(1), specifically the <code>--source</code>
+option. Take care with these alternatives as
 both will discard uncommitted changes in your working directory.</p>
+</div>
+<div class="paragraph">
+<p>See "Reset, restore and revert" in <a href="git.html">git</a>(1) for the differences
+between the three commands.</p>
 </div>
 </div>
 </div>
@@ -586,6 +588,11 @@ result of auto-conflict resolution if possible.</p>
 <code>.git/sequencer</code>.  Can be used to continue after resolving
 conflicts in a failed cherry-pick or revert.</p>
 </dd>
+<dt class="hdlist1">--skip</dt>
+<dd>
+<p>Skip the current commit and continue with the rest of the
+sequence.</p>
+</dd>
 <dt class="hdlist1">--quit</dt>
 <dd>
 <p>Forget about the current operation in progress.  Can be used
@@ -641,7 +648,7 @@ index.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

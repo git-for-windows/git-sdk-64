@@ -447,8 +447,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	[-s &lt;strategy&gt;] [-X &lt;strategy-option&gt;] [-S[&lt;keyid&gt;]]
 	[--[no-]allow-unrelated-histories]
 	[--[no-]rerere-autoupdate] [-m &lt;msg&gt;] [-F &lt;file&gt;] [&lt;commit&gt;&#8230;&#8203;]
-<em>git merge</em> --abort
-<em>git merge</em> --continue</pre>
+<em>git merge</em> (--continue | --abort | --quit)</pre>
 </div>
 </div>
 </div>
@@ -632,6 +631,9 @@ branch (or more in case of an octopus).</p>
 <p>With --no-squash perform the merge and commit the result. This
 option can be used to override --squash.</p>
 </div>
+<div class="paragraph">
+<p>With --squash, --commit is not allowed, and will fail.</p>
+</div>
 </dd>
 <dt class="hdlist1">-s &lt;strategy&gt;</dt>
 <dt class="hdlist1">--strategy=&lt;strategy&gt;</dt>
@@ -720,6 +722,12 @@ will be appended to the specified message.</p>
 <p>Allow the rerere mechanism to update the index with the
 result of auto-conflict resolution if possible.</p>
 </dd>
+<dt class="hdlist1">--overwrite-ignore</dt>
+<dt class="hdlist1">--no-overwrite-ignore</dt>
+<dd>
+<p>Silently overwrite ignored files from the merge result. This
+is the default behavior. Use <code>--no-overwrite-ignore</code> to abort.</p>
+</dd>
 <dt class="hdlist1">--abort</dt>
 <dd>
 <p>Abort the current conflict resolution process, and
@@ -734,6 +742,11 @@ commit or stash your changes before running <em>git merge</em>.</p>
 <p><em>git merge --abort</em> is equivalent to <em>git reset --merge</em> when
 <code>MERGE_HEAD</code> is present.</p>
 </div>
+</dd>
+<dt class="hdlist1">--quit</dt>
+<dd>
+<p>Forget about the current merge in progress. Leave the index
+and the working tree as-is.</p>
 </dd>
 <dt class="hdlist1">--continue</dt>
 <dd>
@@ -1481,7 +1494,7 @@ values containing whitespace characters are currently not supported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

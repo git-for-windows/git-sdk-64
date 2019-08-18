@@ -1407,7 +1407,7 @@ saying that you want to check out a new branch:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout -b mybranch</pre>
+<pre>$ git switch -c mybranch</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1429,7 +1429,7 @@ In other words, if you have an earlier tag or branch, you&#8217;d just do</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout -b mybranch earlier-commit</pre>
+<pre>$ git switch -c mybranch earlier-commit</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1445,7 +1445,7 @@ and check out the state at that time.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout master</pre>
+<pre>$ git switch master</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1482,7 +1482,7 @@ checking it out and switching to it. If so, just use the command</p>
 <div class="paragraph">
 <p>which will simply <em>create</em> the branch, but will not do anything further.
 You can then later&#8201;&#8212;&#8201;once you decide that you want to actually develop
-on that branch&#8201;&#8212;&#8201;switch to that branch with a regular <em>git checkout</em>
+on that branch&#8201;&#8212;&#8201;switch to that branch with a regular <em>git switch</em>
 with the branchname as the argument.</p>
 </div>
 </div>
@@ -1499,7 +1499,7 @@ that branch, and do some work there.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout mybranch
+<pre>$ git switch mybranch
 $ echo "Work, work, work" &gt;&gt;hello
 $ git commit -m "Some work." -i hello</pre>
 </div>
@@ -1519,7 +1519,7 @@ to the master branch, and editing the same file differently there:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout master</pre>
+<pre>$ git switch master</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1693,7 +1693,7 @@ to the <code>master</code> branch. Let&#8217;s go back to <code>mybranch</code>,
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout mybranch
+<pre>$ git switch mybranch
 $ git merge -m "Merge upstream changes." master</pre>
 </div>
 </div>
@@ -1930,9 +1930,8 @@ work." commit.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout mybranch
-$ git reset --hard master^2
-$ git checkout master
+<pre>$ git switch -C mybranch master^2
+$ git switch master
 $ git reset --hard master^</pre>
 </div>
 </div>
@@ -2625,7 +2624,7 @@ to follow, not easier.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

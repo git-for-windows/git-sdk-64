@@ -780,6 +780,16 @@ configuration variable.</p>
 <h3 id="_automating">Automating</h3>
 <div class="dlist">
 <dl>
+<dt class="hdlist1">--no-[to|cc|bcc]</dt>
+<dd>
+<p>Clears any list of "To:", "Cc:", "Bcc:" addresses previously
+set via config.</p>
+</dd>
+<dt class="hdlist1">--no-identity</dt>
+<dd>
+<p>Clears the previously read value of <code>sendemail.identity</code> set
+via config, if any.</p>
+</dd>
 <dt class="hdlist1">--to-cmd=&lt;command&gt;</dt>
 <dd>
 <p>Specify a command to execute once per patch file which
@@ -1123,8 +1133,11 @@ helper configured (see <a href="git-credential.html">git-credential</a>(1)), the
 the credential store so you won&#8217;t have to type it the next time.</p>
 </div>
 <div class="paragraph">
-<p>Note: the following perl modules are required
-      Net::SMTP::SSL, MIME::Base64 and Authen::SASL</p>
+<p>Note: the following core Perl modules that may be installed with your
+distribution of Perl are required:
+MIME::Base64, MIME::QuotedPrint, Net::Domain and Net::SMTP.
+These additional Perl modules are also required:
+Authen::SASL and Mail::Address.</p>
 </div>
 </div>
 </div>
@@ -1148,7 +1161,7 @@ the credential store so you won&#8217;t have to type it the next time.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

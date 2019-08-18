@@ -474,7 +474,8 @@ manual page gives you an overview of the command-line command syntax.</p>
 </div>
 <div class="paragraph">
 <p>A formatted and hyperlinked copy of the latest Git documentation
-can be viewed at <code>https://git.github.io/htmldocs/git.html</code>.</p>
+can be viewed at <a href="https://git.github.io/htmldocs/git.html" class="bare">https://git.github.io/htmldocs/git.html</a>
+or <a href="https://git-scm.com/docs" class="bare">https://git-scm.com/docs</a>.</p>
 </div>
 </div>
 </div>
@@ -505,7 +506,8 @@ help ...</code>.</p>
 <p>Run as if git was started in <em>&lt;path&gt;</em> instead of the current working
 directory.  When multiple <code>-C</code> options are given, each subsequent
 non-absolute <code>-C &lt;path&gt;</code> is interpreted relative to the preceding <code>-C
-&lt;path&gt;</code>.</p>
+&lt;path&gt;</code>.  If <em>&lt;path&gt;</em> is present but empty, e.g. <code>-C ""</code>, then the
+current working directory is left unchanged.</p>
 <div class="paragraph">
 <p>This option affects options that expect path name like <code>--git-dir</code> and
 <code>--work-tree</code> in that their interpretations of the path names would be
@@ -787,6 +789,10 @@ ancillary user utilities.</p>
 <dd>
 <p>Reset current HEAD to the specified state.</p>
 </dd>
+<dt class="hdlist1"><a href="git-restore.html">git-restore</a>(1)</dt>
+<dd>
+<p>Restore working tree files.</p>
+</dd>
 <dt class="hdlist1"><a href="git-revert.html">git-revert</a>(1)</dt>
 <dd>
 <p>Revert some existing commits.</p>
@@ -814,6 +820,10 @@ ancillary user utilities.</p>
 <dt class="hdlist1"><a href="git-submodule.html">git-submodule</a>(1)</dt>
 <dd>
 <p>Initialize, update or inspect submodules.</p>
+</dd>
+<dt class="hdlist1"><a href="git-switch.html">git-switch</a>(1)</dt>
+<dd>
+<p>Switch branches.</p>
 </dd>
 <dt class="hdlist1"><a href="git-tag.html">git-tag</a>(1)</dt>
 <dd>
@@ -996,6 +1006,36 @@ people via patch over e-mail.</p>
 <p>Bidirectional operation between a Subversion repository and Git.</p>
 </dd>
 </dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reset_restore_and_revert">Reset, restore and revert</h3>
+<div class="paragraph">
+<p>There are three commands with similar names: <code>git reset</code>,
+<code>git restore</code> and <code>git revert</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="git-revert.html">git-revert</a>(1) is about making a new commit that reverts the
+changes made by other commits.</p>
+</li>
+<li>
+<p><a href="git-restore.html">git-restore</a>(1) is about restoring files in the working tree
+from either the index or another commit. This command does not
+update your branch. The command can also be used to restore files in
+the index from another commit.</p>
+</li>
+<li>
+<p><a href="git-reset.html">git-reset</a>(1) is about updating your branch, moving the tip
+in order to add or remove commits from the branch. This operation
+changes the commit history.</p>
+<div class="paragraph">
+<p><code>git reset</code> can also be used to restore the index, overlapping with
+<code>git restore</code>.</p>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -2191,7 +2231,7 @@ the Git Security mailing list &lt;<a href="mailto:git-security@googlegroups.com"
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

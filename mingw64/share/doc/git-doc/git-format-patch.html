@@ -456,7 +456,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 		   [--rfc] [--subject-prefix=Subject-Prefix]
 		   [(--reroll-count|-v) &lt;n&gt;]
 		   [--to=&lt;email&gt;] [--cc=&lt;email&gt;]
-		   [--[no-]cover-letter] [--quiet] [--notes[=&lt;ref&gt;]]
+		   [--[no-]cover-letter] [--quiet]
+		   [--no-notes | --notes[=&lt;ref&gt;]]
 		   [--interdiff=&lt;previous&gt;]
 		   [--range-diff=&lt;previous&gt; [--creation-factor=&lt;percent&gt;]]
 		   [--progress]
@@ -1227,6 +1228,7 @@ creation/deletion cost fudge factor. See <a href="git-range-diff.html">git-range
 for details.</p>
 </dd>
 <dt class="hdlist1">--notes[=&lt;ref&gt;]</dt>
+<dt class="hdlist1">--no-notes</dt>
 <dd>
 <p>Append the notes (see <a href="git-notes.html">git-notes</a>(1)) for the commit
 after the three-dash line.</p>
@@ -1238,6 +1240,10 @@ these explanations after <code>format-patch</code> has run but before sending,
 keeping them as Git notes allows them to be maintained between versions
 of the patch series (but see the discussion of the <code>notes.rewrite</code>
 configuration options in <a href="git-notes.html">git-notes</a>(1) to use this workflow).</p>
+</div>
+<div class="paragraph">
+<p>The default is <code>--no-notes</code>, unless the <code>format.notes</code> configuration is
+set.</p>
 </div>
 </dd>
 <dt class="hdlist1">--[no-]signature=&lt;signature&gt;</dt>
@@ -1425,8 +1431,8 @@ say.</p>
 <div class="literalblock">
 <div class="content">
 <pre>$ git fetch &lt;project&gt; master:test-apply
-$ git checkout test-apply
-$ git reset --hard
+$ git switch test-apply
+$ git restore --source=HEAD --staged --worktree :/
 $ git am a.patch</pre>
 </div>
 </div>
@@ -1787,7 +1793,7 @@ as e-mailable patches:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

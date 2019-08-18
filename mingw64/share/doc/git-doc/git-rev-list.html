@@ -482,6 +482,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	     [ --date=&lt;format&gt;]
 	     [ [ --objects | --objects-edge | --objects-edge-aggressive ]
 	       [ --unpacked ]
+	       [ --object-names | --no-object-names ]
 	       [ --filter=&lt;filter-spec&gt; [ --filter-print-omitted ] ] ]
 	     [ --missing=&lt;missing-action&gt; ]
 	     [ --pretty | --header ]
@@ -771,6 +772,15 @@ explicitly.</p>
 <dd>
 <p>Pretend as if all objects mentioned by reflogs are listed on the
 command line as <code>&lt;commit&gt;</code>.</p>
+</dd>
+<dt class="hdlist1">--alternate-refs</dt>
+<dd>
+<p>Pretend as if all objects mentioned as ref tips of alternate
+repositories were listed on the command line. An alternate
+repository is any repository whose object directory is specified
+in <code>objects/info/alternates</code>.  The set of included objects may
+be modified by <code>core.alternateRefsCommand</code>, etc. See
+<a href="git-config.html">git-config</a>(1).</p>
 </dd>
 <dt class="hdlist1">--single-worktree</dt>
 <dd>
@@ -1441,6 +1451,18 @@ on the command line.  Note that you probably want to use
 <dd>
 <p>Only useful with <code>--objects</code>; print the object IDs that are not
 in packs.</p>
+</dd>
+<dt class="hdlist1">--object-names</dt>
+<dd>
+<p>Only useful with <code>--objects</code>; print the names of the object IDs
+that are found. This is the default behavior.</p>
+</dd>
+<dt class="hdlist1">--no-object-names</dt>
+<dd>
+<p>Only useful with <code>--objects</code>; does not print the names of the object
+IDs that are found. This inverts <code>--object-names</code>. This flag allows
+the output to be more easily parsed by commands such as
+<a href="git-cat-file.html">git-cat-file</a>(1).</p>
 </dd>
 <dt class="hdlist1">--filter=&lt;filter-spec&gt;</dt>
 <dd>
@@ -2430,7 +2452,7 @@ $ git log -2 --pretty=%h 4da45bef</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

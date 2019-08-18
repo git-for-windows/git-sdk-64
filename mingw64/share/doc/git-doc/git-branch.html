@@ -443,12 +443,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git branch</em> [--color[=&lt;when&gt;] | --no-color] [-r | -a]
-	[--list] [--show-current] [-v [--abbrev=&lt;length&gt; | --no-abbrev]]
+<pre class="content"><em>git branch</em> [--color[=&lt;when&gt;] | --no-color] [--show-current]
+	[-v [--abbrev=&lt;length&gt; | --no-abbrev]]
 	[--column[=&lt;options&gt;] | --no-column] [--sort=&lt;key&gt;]
 	[(--merged | --no-merged) [&lt;commit&gt;]]
 	[--contains [&lt;commit]] [--no-contains [&lt;commit&gt;]]
-	[--points-at &lt;object&gt;] [--format=&lt;format&gt;] [&lt;pattern&gt;&#8230;&#8203;]
+	[--points-at &lt;object&gt;] [--format=&lt;format&gt;]
+	[(-r | --remotes) | (-a | --all)]
+	[--list] [&lt;pattern&gt;&#8230;&#8203;]
 <em>git branch</em> [--track | --no-track] [-f] &lt;branchname&gt; [&lt;start-point&gt;]
 <em>git branch</em> (--set-upstream-to=&lt;upstream&gt; | -u &lt;upstream&gt;) [&lt;branchname&gt;]
 <em>git branch</em> --unset-upstream [&lt;branchname&gt;]
@@ -464,13 +466,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="paragraph">
 <p>If <code>--list</code> is given, or if there are no non-option arguments, existing
-branches are listed; the current branch will be highlighted with an
-asterisk.  Option <code>-r</code> causes the remote-tracking branches to be listed,
-and option <code>-a</code> shows both local and remote branches. If a <code>&lt;pattern&gt;</code>
+branches are listed; the current branch will be highlighted in green and
+marked with an asterisk.  Any branches checked out in linked worktrees will
+be highlighted in cyan and marked with a plus sign. Option <code>-r</code> causes the
+remote-tracking branches to be listed,
+and option <code>-a</code> shows both local and remote branches.</p>
+</div>
+<div class="paragraph">
+<p>If a <code>&lt;pattern&gt;</code>
 is given, it is used as a shell wildcard to restrict the output to
 matching branches. If multiple patterns are given, a branch is shown if
-it matches any of the patterns.  Note that when providing a
-<code>&lt;pattern&gt;</code>, you must use <code>--list</code>; otherwise the command is interpreted
+it matches any of the patterns.</p>
+</div>
+<div class="paragraph">
+<p>Note that when providing a
+<code>&lt;pattern&gt;</code>, you must use <code>--list</code>; otherwise the command may be interpreted
 as branch creation.</p>
 </div>
 <div class="paragraph">
@@ -493,7 +503,7 @@ can leave out at most one of <code>A</code> and <code>B</code>, in which case it
 </div>
 <div class="paragraph">
 <p>Note that this will create the new branch, but it will not switch the
-working tree to it; use "git checkout &lt;newbranch&gt;" to switch to the
+working tree to it; use "git switch &lt;newbranch&gt;" to switch to the
 new branch.</p>
 </div>
 <div class="paragraph">
@@ -616,12 +626,14 @@ without options are equivalent to <em>always</em> and <em>never</em> respectivel
 <dt class="hdlist1">-r</dt>
 <dt class="hdlist1">--remotes</dt>
 <dd>
-<p>List or delete (if used with -d) the remote-tracking branches.</p>
+<p>List or delete (if used with -d) the remote-tracking branches.
+Combine with <code>--list</code> to match the optional pattern(s).</p>
 </dd>
 <dt class="hdlist1">-a</dt>
 <dt class="hdlist1">--all</dt>
 <dd>
-<p>List both remote-tracking branches and local branches.</p>
+<p>List both remote-tracking branches and local branches.
+Combine with <code>--list</code> to match optional pattern(s).</p>
 </dd>
 <dt class="hdlist1">-l</dt>
 <dt class="hdlist1">--list</dt>
@@ -642,8 +654,10 @@ nothing is printed.</p>
 <p>When in list mode,
 show sha1 and commit subject line for each head, along with
 relationship to upstream branch (if any). If given twice, print
-the name of the upstream branch, as well (see also <code>git remote
-show &lt;remote&gt;</code>).</p>
+the path of the linked worktree (if any) and the name of the upstream
+branch, as well (see also <code>git remote show &lt;remote&gt;</code>).  Note that the
+current worktree&#8217;s HEAD will not have its path printed (it will always
+be your current directory).</p>
 </dd>
 <dt class="hdlist1">-q</dt>
 <dt class="hdlist1">--quiet</dt>
@@ -674,7 +688,7 @@ upstream when the new branch is checked out.</p>
 <div class="paragraph">
 <p>This behavior is the default when the start point is a remote-tracking branch.
 Set the branch.autoSetupMerge configuration variable to <code>false</code> if you
-want <code>git checkout</code> and <code>git branch</code> to always behave as if <code>--no-track</code>
+want <code>git switch</code>, <code>git checkout</code> and <code>git branch</code> to always behave as if <code>--no-track</code>
 were given. Set it to <code>always</code> if you want this behavior when the
 start-point is either a local or remote-tracking branch.</p>
 </div>
@@ -800,7 +814,7 @@ See <a href="git-config.html">git-config</a>(1).</p>
 <pre>$ git clone git://git.kernel.org/pub/scm/.../linux-2.6 my2.6
 $ cd my2.6
 $ git branch my2.6.14 v2.6.14   <b class="conum">(1)</b>
-$ git checkout my2.6.14</pre>
+$ git switch my2.6.14</pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -836,7 +850,30 @@ is currently checked out) does not have all commits from the test branch.</p>
 </ol>
 </div>
 </dd>
+<dt class="hdlist1">Listing branches from a specific remote</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre>$ git branch -r -l '&lt;remote&gt;/&lt;pattern&gt;'                 <b class="conum">(1)</b>
+$ git for-each-ref 'refs/remotes/&lt;remote&gt;/&lt;pattern&gt;'    <b class="conum">(2)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Using <code>-a</code> would conflate &lt;remote&gt; with any local branches you happen to
+have been prefixed with the same &lt;remote&gt; pattern.</p>
+</li>
+<li>
+<p><code>for-each-ref</code> can take a wide range of options. See <a href="git-for-each-ref.html">git-for-each-ref</a>(1)</p>
+</li>
+</ol>
+</div>
+</dd>
 </dl>
+</div>
+<div class="paragraph">
+<p>Patterns will normally need quoting.</p>
 </div>
 </div>
 </div>
@@ -844,9 +881,9 @@ is currently checked out) does not have all commits from the test branch.</p>
 <h2 id="_notes">NOTES</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If you are creating a branch that you want to checkout immediately, it is
-easier to use the git checkout command with its <code>-b</code> option to create
-a branch and check it out with a single command.</p>
+<p>If you are creating a branch that you want to switch to immediately,
+it is easier to use the "git switch" command with its <code>-c</code> option to
+do the same thing with a single command.</p>
 </div>
 <div class="paragraph">
 <p>The options <code>--contains</code>, <code>--no-contains</code>, <code>--merged</code> and <code>--no-merged</code>
@@ -898,7 +935,7 @@ a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

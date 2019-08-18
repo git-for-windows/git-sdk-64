@@ -555,31 +555,32 @@ Put a backslash ("<code>\</code>") in front of the first "<code>!</code>" for pa
 that begin with a literal "<code>!</code>", for example, "<code>\!important!.txt</code>".</p>
 </li>
 <li>
-<p>If the pattern ends with a slash, it is removed for the
-purpose of the following description, but it would only find
-a match with a directory.  In other words, <code>foo/</code> will match a
-directory <code>foo</code> and paths underneath it, but will not match a
-regular file or a symbolic link <code>foo</code> (this is consistent
-with the way how pathspec works in general in Git).</p>
+<p>The slash <em>/</em> is used as the directory separator. Separators may
+occur at the beginning, middle or end of the <code>.gitignore</code> search pattern.</p>
 </li>
 <li>
-<p>If the pattern does not contain a slash <em>/</em>, Git treats it as
-a shell glob pattern and checks for a match against the
-pathname relative to the location of the <code>.gitignore</code> file
-(relative to the toplevel of the work tree if not from a
-<code>.gitignore</code> file).</p>
+<p>If there is a separator at the beginning or middle (or both) of the
+pattern, then the pattern is relative to the directory level of the
+particular <code>.gitignore</code> file itself. Otherwise the pattern may also
+match at any level below the <code>.gitignore</code> level.</p>
 </li>
 <li>
-<p>Otherwise, Git treats the pattern as a shell glob: "<code>*</code>" matches
-anything except "<code>/</code>", "<code>?</code>" matches any one character except "<code>/</code>"
-and "<code>[]</code>" matches one character in a selected range. See
-fnmatch(3) and the FNM_PATHNAME flag for a more detailed
-description.</p>
+<p>If there is a separator at the end of the pattern then the pattern
+will only match directories, otherwise the pattern can match both
+files and directories.</p>
 </li>
 <li>
-<p>A leading slash matches the beginning of the pathname.
-For example, "/*.c" matches "cat-file.c" but not
-"mozilla-sha1/sha1.c".</p>
+<p>For example, a pattern <code>doc/frotz/</code> matches <code>doc/frotz</code> directory,
+but not <code>a/doc/frotz</code> directory; however <code>frotz/</code> matches <code>frotz</code>
+and <code>a/frotz</code> that is a directory (all paths are relative from
+the <code>.gitignore</code> file).</p>
+</li>
+<li>
+<p>An asterisk "<code>*</code>" matches anything except a slash.
+The character "<code>?</code>" matches any one character except "<code>/</code>".
+The range notation, e.g. <code>[a-zA-Z]</code>, can be used to match
+one of the characters in a range. See fnmatch(3) and the
+FNM_PATHNAME flag for a more detailed description.</p>
 </li>
 </ul>
 </div>
@@ -641,6 +642,36 @@ not tracked by Git remain untracked.</p>
 <div class="sect1">
 <h2 id="_examples">EXAMPLES</h2>
 <div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The pattern <code>hello.*</code> matches any file or folder
+whose name begins with <code>hello</code>. If one wants to restrict
+this only to the directory and not in its subdirectories,
+one can prepend the pattern with a slash, i.e. <code>/hello.*</code>;
+the pattern now matches <code>hello.txt</code>, <code>hello.c</code> but not
+<code>a/hello.java</code>.</p>
+</li>
+<li>
+<p>The pattern <code>foo/</code> will match a directory <code>foo</code> and
+paths underneath it, but will not match a regular file
+or a symbolic link <code>foo</code> (this is consistent with the
+way how pathspec works in general in Git)</p>
+</li>
+<li>
+<p>The pattern <code>doc/frotz</code> and <code>/doc/frotz</code> have the same effect
+in any <code>.gitignore</code> file. In other words, a leading slash
+is not relevant  if there is already a middle slash in
+the pattern.</p>
+</li>
+<li>
+<p>The pattern "foo/*", matches "foo/test.json"
+(a regular file), "foo/bar" (a directory), but it does not match
+"foo/bar/hello.c" (a regular file), as the asterisk in the
+pattern does not match "bar/hello.c" which has a slash in it.</p>
+</li>
+</ul>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre>    $ git status
@@ -723,7 +754,7 @@ everything within <code>foo/bar</code>):</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

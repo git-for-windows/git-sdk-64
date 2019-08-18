@@ -449,7 +449,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 	  [--dissociate] [--separate-git-dir &lt;git dir&gt;]
 	  [--depth &lt;depth&gt;] [--[no-]single-branch] [--no-tags]
 	  [--recurse-submodules[=&lt;pathspec&gt;]] [--[no-]shallow-submodules]
-	  [--jobs &lt;n&gt;] [--] &lt;repository&gt; [&lt;directory&gt;]</pre>
+	  [--[no-]remote-submodules] [--jobs &lt;n&gt;] [--] &lt;repository&gt;
+	  [&lt;directory&gt;]</pre>
 </div>
 </div>
 </div>
@@ -459,7 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>Clones a repository into a newly created directory, creates
 remote-tracking branches for each branch in the cloned repository
-(visible using <code>git branch -r</code>), and creates and checks out an
+(visible using <code>git branch --remotes</code>), and creates and checks out an
 initial branch that is forked from the cloned repository&#8217;s
 currently active branch.</p>
 </div>
@@ -483,8 +484,8 @@ configuration variables.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--local</dt>
 <dt class="hdlist1">-l</dt>
+<dt class="hdlist1">--local</dt>
 <dd>
 <p>When the repository to clone from is on a local machine,
 this flag bypasses the normal "Git aware" transport
@@ -508,8 +509,8 @@ filesystem to copy the files under the <code>.git/objects</code>
 directory instead of using hardlinks. This may be desirable
 if you are trying to make a back-up of your repository.</p>
 </dd>
-<dt class="hdlist1">--shared</dt>
 <dt class="hdlist1">-s</dt>
+<dt class="hdlist1">--shared</dt>
 <dd>
 <p>When the repository to clone is on the local machine,
 instead of using hard links, automatically setup
@@ -528,14 +529,14 @@ If these objects are removed and were referenced by the cloned repository,
 then the cloned repository will become corrupt.</p>
 </div>
 <div class="paragraph">
-<p>Note that running <code>git repack</code> without the <code>-l</code> option in a repository
-cloned with <code>-s</code> will copy objects from the source repository into a pack
-in the cloned repository, removing the disk space savings of <code>clone -s</code>.
-It is safe, however, to run <code>git gc</code>, which uses the <code>-l</code> option by
+<p>Note that running <code>git repack</code> without the <code>--local</code> option in a repository
+cloned with <code>--shared</code> will copy objects from the source repository into a pack
+in the cloned repository, removing the disk space savings of <code>clone --shared</code>.
+It is safe, however, to run <code>git gc</code>, which uses the <code>--local</code> option by
 default.</p>
 </div>
 <div class="paragraph">
-<p>If you want to break the dependency of a repository cloned with <code>-s</code> on
+<p>If you want to break the dependency of a repository cloned with <code>--shared</code> on
 its source repository, you can simply run <code>git repack -a</code> to copy all
 objects from the source repository into a pack in the cloned repository.</p>
 </div>
@@ -568,14 +569,14 @@ repository&#8212;&#8203;the new repository will borrow objects from the
 same repository, and this option can be used to stop the
 borrowing.</p>
 </dd>
-<dt class="hdlist1">--quiet</dt>
 <dt class="hdlist1">-q</dt>
+<dt class="hdlist1">--quiet</dt>
 <dd>
 <p>Operate quietly.  Progress is not reported to the standard
 error stream.</p>
 </dd>
-<dt class="hdlist1">--verbose</dt>
 <dt class="hdlist1">-v</dt>
+<dt class="hdlist1">--verbose</dt>
 <dd>
 <p>Run verbosely. Does not affect the reporting of progress status
 to the standard error stream.</p>
@@ -583,7 +584,7 @@ to the standard error stream.</p>
 <dt class="hdlist1">--progress</dt>
 <dd>
 <p>Progress status is reported on the standard error stream
-by default when it is attached to a terminal, unless -q
+by default when it is attached to a terminal, unless <code>--quiet</code>
 is specified. This flag forces progress status even if the
 standard error stream is not directed to a terminal.</p>
 </dd>
@@ -596,8 +597,8 @@ unknown ones, is server-specific.
 When multiple <code>--server-option=&lt;option&gt;</code> are given, they are all
 sent to the other side in the order listed on the command line.</p>
 </dd>
-<dt class="hdlist1">--no-checkout</dt>
 <dt class="hdlist1">-n</dt>
+<dt class="hdlist1">--no-checkout</dt>
 <dd>
 <p>No checkout of HEAD is performed after the clone is complete.</p>
 </dd>
@@ -606,7 +607,7 @@ sent to the other side in the order listed on the command line.</p>
 <p>Make a <em>bare</em> Git repository.  That is, instead of
 creating <code>&lt;directory&gt;</code> and placing the administrative
 files in <code>&lt;directory&gt;/.git</code>, make the <code>&lt;directory&gt;</code>
-itself the <code>$GIT_DIR</code>. This obviously implies the <code>-n</code>
+itself the <code>$GIT_DIR</code>. This obviously implies the <code>--no-checkout</code>
 because there is nowhere to check out the working tree.
 Also the branch heads at the remote are copied directly
 to corresponding local branch heads, without mapping
@@ -623,14 +624,14 @@ remote-tracking branches, notes etc.) and sets up a refspec configuration such
 that all these refs are overwritten by a <code>git remote update</code> in the
 target repository.</p>
 </dd>
-<dt class="hdlist1">--origin &lt;name&gt;</dt>
 <dt class="hdlist1">-o &lt;name&gt;</dt>
+<dt class="hdlist1">--origin &lt;name&gt;</dt>
 <dd>
 <p>Instead of using the remote name <code>origin</code> to keep track
 of the upstream repository, use <code>&lt;name&gt;</code>.</p>
 </dd>
-<dt class="hdlist1">--branch &lt;name&gt;</dt>
 <dt class="hdlist1">-b &lt;name&gt;</dt>
+<dt class="hdlist1">--branch &lt;name&gt;</dt>
 <dd>
 <p>Instead of pointing the newly created HEAD to the branch pointed
 to by the cloned repository&#8217;s HEAD, point to <code>&lt;name&gt;</code> branch
@@ -639,8 +640,8 @@ be checked out.
 <code>--branch</code> can also take tags and detaches the HEAD at that commit
 in the resulting repository.</p>
 </dd>
-<dt class="hdlist1">--upload-pack &lt;upload-pack&gt;</dt>
 <dt class="hdlist1">-u &lt;upload-pack&gt;</dt>
+<dt class="hdlist1">--upload-pack &lt;upload-pack&gt;</dt>
 <dd>
 <p>When given, and the repository to clone from is accessed
 via ssh, this specifies a non-default path for the command
@@ -651,8 +652,8 @@ run on the other end.</p>
 <p>Specify the directory from which templates will be used;
 (See the "TEMPLATE DIRECTORY" section of <a href="git-init.html">git-init</a>(1).)</p>
 </dd>
-<dt class="hdlist1">--config &lt;key&gt;=&lt;value&gt;</dt>
 <dt class="hdlist1">-c &lt;key&gt;=&lt;value&gt;</dt>
+<dt class="hdlist1">--config &lt;key&gt;=&lt;value&gt;</dt>
 <dd>
 <p>Set a configuration variable in the newly-created repository;
 this takes effect immediately after the repository is
@@ -734,6 +735,13 @@ or <code>--mirror</code> is given)</p>
 <dt class="hdlist1">--[no-]shallow-submodules</dt>
 <dd>
 <p>All submodules which are cloned will be shallow with a depth of 1.</p>
+</dd>
+<dt class="hdlist1">--[no-]remote-submodules</dt>
+<dd>
+<p>All submodules which are cloned will use the status of the submodule’s
+remote-tracking branch to update the submodule, rather than the
+superproject’s recorded SHA-1. Equivalent to passing <code>--remote</code> to
+<code>git submodule update</code>.</p>
 </dd>
 <dt class="hdlist1">--separate-git-dir=&lt;git dir&gt;</dt>
 <dd>
@@ -984,7 +992,7 @@ $ cd my-linux</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

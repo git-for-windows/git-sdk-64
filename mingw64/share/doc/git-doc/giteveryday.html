@@ -494,7 +494,7 @@ following commands.</p>
 <p><a href="git-log.html">git-log</a>(1) to see what happened.</p>
 </li>
 <li>
-<p><a href="git-checkout.html">git-checkout</a>(1) and <a href="git-branch.html">git-branch</a>(1) to switch
+<p><a href="git-switch.html">git-switch</a>(1) and <a href="git-branch.html">git-branch</a>(1) to switch
 branches.</p>
 </li>
 <li>
@@ -508,8 +508,7 @@ you are in the middle of doing.</p>
 <p><a href="git-commit.html">git-commit</a>(1) to advance the current branch.</p>
 </li>
 <li>
-<p><a href="git-reset.html">git-reset</a>(1) and <a href="git-checkout.html">git-checkout</a>(1) (with
-pathname parameters) to undo changes.</p>
+<p><a href="git-restore.html">git-restore</a>(1) to undo changes.</p>
 </li>
 <li>
 <p><a href="git-merge.html">git-merge</a>(1) to merge between local branches.</p>
@@ -553,9 +552,9 @@ $ git tag v2.43 <b class="conum">(2)</b></pre>
 <dd>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout -b alsa-audio <b class="conum">(1)</b>
+<pre>$ git switch -c alsa-audio <b class="conum">(1)</b>
 $ edit/compile/test
-$ git checkout -- curses/ux_audio_oss.c <b class="conum">(2)</b>
+$ git restore curses/ux_audio_oss.c <b class="conum">(2)</b>
 $ git add curses/ux_audio_alsa.c <b class="conum">(3)</b>
 $ edit/compile/test
 $ git diff HEAD <b class="conum">(4)</b>
@@ -563,7 +562,7 @@ $ git commit -a -s <b class="conum">(5)</b>
 $ edit/compile/test
 $ git diff HEAD^ <b class="conum">(6)</b>
 $ git commit -a --amend <b class="conum">(7)</b>
-$ git checkout master <b class="conum">(8)</b>
+$ git switch master <b class="conum">(8)</b>
 $ git merge alsa-audio <b class="conum">(9)</b>
 $ git log --since='3 days ago' <b class="conum">(10)</b>
 $ git log v2.43.. curses/ <b class="conum">(11)</b></pre>
@@ -663,11 +662,11 @@ for your upstream to pull.</p>
 <div class="content">
 <pre>$ git clone git://git.kernel.org/pub/scm/.../torvalds/linux-2.6 my2.6
 $ cd my2.6
-$ git checkout -b mine master <b class="conum">(1)</b>
+$ git switch -c mine master <b class="conum">(1)</b>
 $ edit/compile/test; git commit -a -s <b class="conum">(2)</b>
 $ git format-patch master <b class="conum">(3)</b>
 $ git send-email --to="person &lt;email@example.com&gt;" 00*.patch <b class="conum">(4)</b>
-$ git checkout master <b class="conum">(5)</b>
+$ git switch master <b class="conum">(5)</b>
 $ git pull <b class="conum">(6)</b>
 $ git log -p ORIG_HEAD.. arch/i386 include/asm-i386 <b class="conum">(7)</b>
 $ git ls-remote --heads http://git.kernel.org/.../jgarzik/libata-dev.git <b class="conum">(8)</b>
@@ -735,7 +734,7 @@ satellite$ edit/compile/test/commit
 satellite$ git push origin <b class="conum">(4)</b>
 
 mothership$ cd frotz
-mothership$ git checkout master
+mothership$ git switch master
 mothership$ git merge satellite/master <b class="conum">(5)</b></pre>
 </div>
 </div>
@@ -772,7 +771,7 @@ machine into the master branch.</p>
 <dd>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout -b private2.6.14 v2.6.14 <b class="conum">(1)</b>
+<pre>$ git switch -c private2.6.14 v2.6.14 <b class="conum">(1)</b>
 $ edit/compile/test; git commit -a
 $ git checkout master
 $ git cherry-pick v2.6.14..private2.6.14 <b class="conum">(2)</b></pre>
@@ -855,14 +854,14 @@ $ mailx <b class="conum">(3)</b>
 &amp; s 2 3 4 5 ./+to-apply
 &amp; s 7 8 ./+hold-linus
 &amp; q
-$ git checkout -b topic/one master
+$ git switch -c topic/one master
 $ git am -3 -i -s ./+to-apply <b class="conum">(4)</b>
 $ compile/test
-$ git checkout -b hold/linus &amp;&amp; git am -3 -i -s ./+hold-linus <b class="conum">(5)</b>
-$ git checkout topic/one &amp;&amp; git rebase master <b class="conum">(6)</b>
-$ git checkout pu &amp;&amp; git reset --hard next <b class="conum">(7)</b>
+$ git switch -c hold/linus &amp;&amp; git am -3 -i -s ./+hold-linus <b class="conum">(5)</b>
+$ git switch topic/one &amp;&amp; git rebase master <b class="conum">(6)</b>
+$ git switch -C pu next <b class="conum">(7)</b>
 $ git merge topic/one topic/two &amp;&amp; git merge hold/linus <b class="conum">(8)</b>
-$ git checkout maint
+$ git switch maint
 $ git cherry-pick master~4 <b class="conum">(9)</b>
 $ compile/test
 $ git tag -s -m "GIT 0.99.9x" v0.99.9x <b class="conum">(10)</b>
@@ -1131,7 +1130,7 @@ create and push version tags.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

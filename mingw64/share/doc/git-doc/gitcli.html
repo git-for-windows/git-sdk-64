@@ -493,8 +493,8 @@ them from getting globbed by the shell.  These two mean different
 things:</p>
 <div class="listingblock">
 <div class="content">
-<pre>$ git checkout -- *.c
-$ git checkout -- \*.c</pre>
+<pre>$ git restore *.c
+$ git restore \*.c</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -700,6 +700,26 @@ entries.</p>
 <a href="http://marc.info/?l=git&amp;m=119150393620273" class="bare">http://marc.info/?l=git&amp;m=119150393620273</a> for further
 information.</p>
 </div>
+<div class="paragraph">
+<p>Some other commands that also work on files in the working tree and/or
+in the index can take <code>--staged</code> and/or <code>--worktree</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>--staged</code> is exactly like <code>--cached</code>, which is used to ask a
+command to only work on the index, not the working tree.</p>
+</li>
+<li>
+<p><code>--worktree</code> is the opposite, to ask a command to work on the
+working tree only, not the index.</p>
+</li>
+<li>
+<p>The two options can be specified together to ask a command to work
+on both the index and the working tree.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -713,7 +733,7 @@ information.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>

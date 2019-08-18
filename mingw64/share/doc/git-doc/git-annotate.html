@@ -637,6 +637,27 @@ commit. And the default value is 40. If there are more than one
 take effect.</p>
 </div>
 </dd>
+<dt class="hdlist1">--ignore-rev &lt;rev&gt;</dt>
+<dd>
+<p>Ignore changes made by the revision when assigning blame, as if the
+change never happened.  Lines that were changed or added by an ignored
+commit will be blamed on the previous commit that changed that line or
+nearby lines.  This option may be specified multiple times to ignore
+more than one revision.  If the <code>blame.markIgnoredLines</code> config option
+is set, then lines that were changed by an ignored commit and attributed to
+another commit will be marked with a <code>?</code> in the blame output.  If the
+<code>blame.markUnblamableLines</code> config option is set, then those lines touched
+by an ignored commit that we could not attribute to another revision are
+marked with a <em>*</em>.</p>
+</dd>
+<dt class="hdlist1">--ignore-revs-file &lt;file&gt;</dt>
+<dd>
+<p>Ignore revisions listed in <code>file</code>, which must be in the same format as an
+<code>fsck.skipList</code>.  This option may be repeated, and these files will be
+processed after any files specified with the <code>blame.ignoreRevsFile</code> config
+option.  An empty file name, <code>""</code>, will clear the list of revs from
+previously processed files.</p>
+</dd>
 <dt class="hdlist1">-h</dt>
 <dd>
 <p>Show help message.</p>
@@ -664,7 +685,7 @@ take effect.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-08 06:14:44 UTC
+Last updated 2019-08-17 09:27:16 UTC
 </div>
 </div>
 </body>
