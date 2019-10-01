@@ -295,7 +295,7 @@ finish_eval=""
 hardcode_into_libs=no
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/lib/gcc/x86_64-pc-msys/9.1.0 /usr/x86_64-pc-msys/lib /usr/lib /lib  /usr/lib/w32api"
+sys_lib_search_path_spec="/usr/lib/gcc/x86_64-pc-msys/9.1.0 /usr/x86_64-pc-msys/lib /usr/lib  /usr/lib/w32api"
 
 # Detected run-time system search path for libraries.
 sys_lib_dlsearch_path_spec="/usr/lib /lib"
@@ -8331,8 +8331,15 @@ func_mode_link ()
 	  fi
 	  case $linkmode in
 	  lib)
-	    # Linking convenience modules into shared libraries is allowed,
-	    # but linking other static libraries is non-portable.
+	    # Linking convenience modules and compiler provided static libraries
+	    # into shared libraries is allowed, but linking other static
+	    # libraries is non-portable.
+	    case $deplib in
+	      */libgcc*.$libext | */libclang_rt*.$libext)
+		deplibs="$deplib $deplibs"
+		continue
+	      ;;
+	    esac
 	    case " $dlpreconveniencelibs " in
 	    *" $deplib "*) ;;
 	    *)
@@ -11868,7 +11875,7 @@ file_list_spec="@"
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/9.1.0 /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../lib /lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../.."
+compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/9.1.0 /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../.."
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
@@ -11879,7 +11886,7 @@ postdeps="-lstdc++ -lgcc_s -lgcc -lmsys-2.0 -ladvapi32 -lshell32 -luser32 -lkern
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/9.1.0 -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../.."
+compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/9.1.0 -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../.."
 
 # ### END LIBTOOL TAG CONFIG: CXX
 
@@ -12178,7 +12185,7 @@ file_list_spec="@"
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/9.1.0 /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../lib /lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../.."
+compiler_lib_search_dirs="/usr/lib/gcc/x86_64-pc-msys/9.1.0 /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../lib /usr/lib/../lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib /usr/lib/gcc/x86_64-pc-msys/9.1.0/../../.."
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
@@ -12189,7 +12196,7 @@ postdeps="-lgfortran -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lmsys-2.0 -ladv
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/9.1.0 -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../.."
+compiler_lib_search_path="-L/usr/lib/gcc/x86_64-pc-msys/9.1.0 -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../../../x86_64-pc-msys/lib -L/usr/lib/gcc/x86_64-pc-msys/9.1.0/../../.."
 
 # ### END LIBTOOL TAG CONFIG: FC
 

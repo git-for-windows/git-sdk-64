@@ -176,6 +176,17 @@ hi def link pbSha1Quotes Keyword
 hi def link pbSha1Hash Error
 hi def link pbValidSha1sums  Number
 
+" sha224sums
+syn keyword pb_k_sha224sums sha224sums contained
+syn match pbIllegalsha224sums /[^='"()\/ ]/ contained contains=pbValidsha224sums
+syn match pbValidsha224sums /\x\{64\}/ contained
+syn region pbsha224sumsGroup start=/^sha224sums/ end=/)/ contains=pb_k_sha224sums,pbsha224Quotes,pbsha224Hash,pbIllegalsha224sums keepend
+syn match pbsha224Quotes /'.*'\|".*"/ contained contains=pbsha224Hash,pbIllegalsha224sums
+syn match pbsha224Hash /\x\+/ contained contains=pbValidsha224sums
+hi def link pbsha224Quotes Keyword
+hi def link pbsha224Hash Error
+hi def link pbValidsha224sums  Number
+
 " sha256sums
 syn keyword pb_k_sha256sums sha256sums contained
 syn match pbIllegalSha256sums /[^='"()\/ ]/ contained contains=pbValidSha256sums
@@ -290,6 +301,9 @@ hi def link pbIllegalMd5sums Error
 
 hi def link pb_k_sha1sums pbKeywords
 hi def link pbIllegalSha1sums Error
+
+hi def link pb_k_sha224sums pbKeywords
+hi def link pbIllegalSha224sums Error
 
 hi def link pb_k_sha256sums pbKeywords
 hi def link pbIllegalSha256sums Error

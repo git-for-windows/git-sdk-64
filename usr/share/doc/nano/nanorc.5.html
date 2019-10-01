@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Tue Jun 18 10:25:01 2019 -->
+<!-- CreationDate: Sun Aug 25 10:41:26 2019 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -421,8 +421,8 @@ jumpyscrolling</b> instead.</p>
 <p style="margin-left:15%;">Enable soft line wrapping for
 easier viewing of very long lines.</p>
 
-<p style="margin-left:11%;"><b>set speller</b>
-<i>program</i></p>
+<p style="margin-left:11%;"><b>set speller
+&quot;</b><i>program</i> [<i>arg</i>...]<b>&quot;</b></p>
 
 <p style="margin-left:15%;">Use the given <i>program</i> to
 do spell checking and correcting, instead of the built-in
@@ -540,8 +540,8 @@ expressions can do a lot and are easy to make, so they are a
 good fit for a small editor like <b>nano</b>.</p>
 
 <p style="margin-left:11%; margin-top: 1em">All regular
-expressions in <b>nano</b> are extended regular expressions
-(ERE). This means that <b>.</b>, <b>?</b>, <b>*</b>,
+expressions in <b>nano</b> are POSIX extended regular
+expressions. This means that <b>.</b>, <b>?</b>, <b>*</b>,
 <b>+</b>, <b>^</b>, <b>$</b>, and several other characters
 are special. The period <b>.</b> matches any single
 character, <b>?</b> means the preceding item is optional,
@@ -625,17 +625,16 @@ value is &quot;<b>#</b>&quot;.</p>
 <i>fgcolor</i><b>,</b><i>bgcolor</i>
 <b>&quot;</b><i>regex</i><b>&quot;</b> ...</p>
 
-<p style="margin-left:22%;">Display all pieces of text that
-match the extended regular expression <i>regex</i> with
-foreground color <i>fgcolor</i> and background color
-<i>bgcolor</i>, at least one of which must be specified.
-Valid names for foreground and background colors are:
+<p style="margin-left:22%;">Paint all pieces of text that
+match the extended regular expression <i>regex</i> with the
+given foreground and background colors, at least one of
+which must be specified. Valid color names are:
 <b>white</b>, <b>black</b>, <b>blue</b>, <b>green</b>,
 <b>red</b>, <b>cyan</b>, <b>yellow</b>, <b>magenta</b>, and
 <b>normal</b> -- where <b>normal</b> means the default
 foreground or background color. You may use the prefix
-<b>bright</b> to get a stronger color highlight for the
-foreground. If your terminal supports transparency, not
+<b>bright</b> for the foreground color to get a stronger
+highlight. If your terminal supports transparency, not
 specifying a <i>bgcolor</i> tells <b>nano</b> to attempt to
 use a transparent background.</p>
 
@@ -651,14 +650,13 @@ matching is case insensitive.</p>
 <b>start=&quot;</b><i>fromrx</i><b>&quot;
 end=&quot;</b><i>torx</i><b>&quot;</b></p>
 
-<p style="margin-left:22%;">Display all pieces of text
-whose start matches extended regular expression
-<i>fromrx</i> and whose end matches extended regular
-expression <i>torx</i> with foreground color <i>fgcolor</i>
-and background color <i>bgcolor</i>, at least one of which
-must be specified. This means that, after an initial
-instance of <i>fromrx</i>, all text until the first instance
-of <i>torx</i> will be colored. This allows syntax
+<p style="margin-left:22%;">Paint all pieces of text whose
+start matches extended regular expression <i>fromrx</i> and
+whose end matches extended regular expression <i>torx</i>
+with the given foreground and background colors, at least
+one of which must be specified. This means that, after an
+initial instance of <i>fromrx</i>, all text until the first
+instance of <i>torx</i> will be colored. This allows syntax
 highlighting to span multiple lines.</p>
 
 <p style="margin-left:11%;"><b>icolor</b>

@@ -10,7 +10,7 @@
 # but modified ***significantly***
 
 package Error;
-$Error::VERSION = '0.17027';
+$Error::VERSION = '0.17028';
 use strict;
 use warnings;
 
@@ -279,7 +279,7 @@ sub value
 }
 
 package Error::Simple;
-$Error::Simple::VERSION = '0.17027';
+$Error::Simple::VERSION = '0.17028';
 @Error::Simple::ISA = qw(Error);
 
 sub new
@@ -316,7 +316,7 @@ sub stringify
 # Peter Seibel <peter@weblogic.com>
 
 package Error::subs;
-$Error::subs::VERSION = '0.17027';
+$Error::subs::VERSION = '0.17028';
 use Exporter ();
 use vars qw(@EXPORT_OK @ISA %EXPORT_TAGS);
 
@@ -569,7 +569,7 @@ sub otherwise (&;$)
 1;
 
 package Error::WarnDie;
-$Error::WarnDie::VERSION = '0.17027';
+$Error::WarnDie::VERSION = '0.17028';
 sub gen_callstack($)
 {
     my ($start) = @_;
@@ -614,7 +614,7 @@ sub DEATH
         my $stackdepth = 0;
         while ( caller($stackdepth) =~ m/^Error(?:$|::)/ )
         {
-            $stackdepth++;
+            ++$stackdepth;
         }
 
         @callstack = gen_callstack( $stackdepth + 1 );
@@ -680,13 +680,9 @@ __END__
 
 =encoding UTF-8
 
-=head1 NAME
-
-Error
-
 =head1 VERSION
 
-version 0.17027
+version 0.17028
 
 =head1 SYNOPSIS
 
@@ -739,10 +735,6 @@ user should throw errors from a sub-class of C<Error>.
 =head1 NAME
 
 Error - Error/exception handling in an OO-ish way
-
-=head1 VERSION
-
-version 0.17027
 
 =head1 WARNING
 
@@ -1204,9 +1196,9 @@ The code is open to the world, and available for you to hack on. Please feel fre
 with it, or whatever. If you want to contribute patches, please send me a diff or prod me to pull
 from your repository :)
 
-L<https://github.com/shlomif/error>
+L<https://github.com/shlomif/perl-error.pm>
 
-  git clone https://bitbucket.org/shlomif/perl-error.pm
+  git clone git://github.com/shlomif/perl-error.pm.git
 
 =head1 AUTHOR
 
@@ -1215,7 +1207,7 @@ Shlomi Fish ( http://www.shlomifish.org/ )
 =head1 BUGS
 
 Please report any bugs or feature requests on the bugtracker website
-L<https://github.com/shlomif/error/issues>
+L<https://github.com/shlomif/perl-error.pm/issues>
 
 When submitting a bug or request, please include a test-file or a
 patch to an existing test-file that illustrates the bug or desired
@@ -1223,7 +1215,7 @@ feature.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2018 by Shlomi Fish ( http://www.shlomifish.org/ ).
+This software is copyright (c) 2019 by Shlomi Fish ( http://www.shlomifish.org/ ).
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
