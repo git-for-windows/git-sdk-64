@@ -8,7 +8,7 @@
 <link rel="up" href="rn01.html" title="API Reference">
 <link rel="prev" href="gdk-pixbuf-File-Loading.html" title="File Loading">
 <link rel="next" href="gdk-pixbuf-Image-Data-in-Memory.html" title="Image Data in Memory">
-<meta name="generator" content="GTK-Doc V1.29 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -242,18 +242,35 @@ gdk_pixbuf_save (<em class="parameter"><code><a class="link" href="gdk-pixbuf-Th
 and "bmp" are possible file formats to save in, but more formats may be
 installed. The list of all writable formats can be determined in the 
 following way:</p>
-<div class="informalexample"><pre class="programlisting">
-void add_if_writable (GdkPixbufFormat *data, GSList **list)
-{
-  if (gdk_pixbuf_format_is_writable (data))
-    *list = g_slist_prepend (*list, data);
-}
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="kt">void</span> <span class="nf">add_if_writable</span> <span class="p">(</span><span class="n">GdkPixbufFormat</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="n">GSList</span> <span class="o">**</span><span class="n">list</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">gdk_pixbuf_format_is_writable</span> <span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="o">*</span><span class="n">list</span> <span class="o">=</span> <span class="n">g_slist_prepend</span> <span class="p">(</span><span class="o">*</span><span class="n">list</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>
+<span class="p">}</span>
 
-GSList *formats = gdk_pixbuf_get_formats ();
-GSList *writable_formats = NULL;
-g_slist_foreach (formats, add_if_writable, &amp;writable_formats);
-g_slist_free (formats);
-</pre></div>
+<span class="n">GSList</span> <span class="o">*</span><span class="n">formats</span> <span class="o">=</span> <span class="n">gdk_pixbuf_get_formats</span> <span class="p">();</span>
+<span class="n">GSList</span> <span class="o">*</span><span class="n">writable_formats</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="n">g_slist_foreach</span> <span class="p">(</span><span class="n">formats</span><span class="p">,</span> <span class="n">add_if_writable</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">writable_formats</span><span class="p">);</span>
+<span class="n">g_slist_free</span> <span class="p">(</span><span class="n">formats</span><span class="p">);</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p></p>
 <p>If <em class="parameter"><code>error</code></em>
  is set, <a class="link" href=""><code class="literal">FALSE</code></a> will be returned. Possible errors include 
@@ -261,9 +278,17 @@ those in the <a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GDK-P
 <p>The variable argument list should be <a class="link" href=""><code class="literal">NULL</code></a>-terminated; if not empty,
 it should contain pairs of strings that modify the save
 parameters. For example:</p>
-<div class="informalexample"><pre class="programlisting">
-gdk_pixbuf_save (pixbuf, handle, "jpeg", &amp;error, "quality", "100", NULL);
-</pre></div>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="n">gdk_pixbuf_save</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="s">&quot;jpeg&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">error</span><span class="p">,</span> <span class="s">&quot;quality&quot;</span><span class="p">,</span> <span class="s">&quot;100&quot;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p></p>
 <p>Currently only few parameters exist. JPEG images can be saved with a
 "quality" parameter; its value should be in the range [0,100]. JPEG
@@ -277,14 +302,27 @@ integer in the range of [0,9].</p>
 <p>ICC color profiles can also be embedded into PNG, JPEG and TIFF images.
 The "icc-profile" value should be the complete ICC profile encoded
 into base64.</p>
-<div class="informalexample"><pre class="programlisting">
-gchar *contents;
-gchar *contents_encode;
-gsize length;
-g_file_get_contents ("/home/hughsie/.color/icc/L225W.icm", &amp;contents, &amp;length, NULL);
-contents_encode = g_base64_encode ((const guchar *) contents, length);
-gdk_pixbuf_save (pixbuf, handle, "png", &amp;error, "icc-profile", contents_encode, NULL);
-</pre></div>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="n">gchar</span> <span class="o">*</span><span class="n">contents</span><span class="p">;</span>
+<span class="n">gchar</span> <span class="o">*</span><span class="n">contents_encode</span><span class="p">;</span>
+<span class="n">gsize</span> <span class="n">length</span><span class="p">;</span>
+<span class="n">g_file_get_contents</span> <span class="p">(</span><span class="s">&quot;/home/hughsie/.color/icc/L225W.icm&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">contents</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">length</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="n">contents_encode</span> <span class="o">=</span> <span class="n">g_base64_encode</span> <span class="p">((</span><span class="k">const</span> <span class="n">guchar</span> <span class="o">*</span><span class="p">)</span> <span class="n">contents</span><span class="p">,</span> <span class="n">length</span><span class="p">);</span>
+<span class="n">gdk_pixbuf_save</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="s">&quot;png&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">error</span><span class="p">,</span> <span class="s">&quot;icc-profile&quot;</span><span class="p">,</span> <span class="n">contents_encode</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p></p>
 <p>TIFF images recognize: (1) a "bits-per-sample" option (integer) which
 can be either 1 for saving bi-level CCITTFAX4 images, or 8 for saving
@@ -1037,14 +1075,9 @@ gdk_pixbuf_save_to_stream_finish (<em class="parameter"><code><a class="link" hr
 </div>
 
 </div>
-<div class="refsect1">
-<a name="gdk-pixbuf-File-saving.other_details"></a><h2>Types and Values</h2>
-
-
-</div>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.29</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

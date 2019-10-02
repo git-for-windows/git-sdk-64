@@ -106,9 +106,12 @@ gboolean            gdk_pixbuf_animation_is_static_image  (GdkPixbufAnimation *a
 GDK_PIXBUF_AVAILABLE_IN_ALL
 GdkPixbuf          *gdk_pixbuf_animation_get_static_image (GdkPixbufAnimation *animation);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 GDK_PIXBUF_AVAILABLE_IN_ALL
 GdkPixbufAnimationIter *gdk_pixbuf_animation_get_iter                        (GdkPixbufAnimation     *animation,
                                                                               const GTimeVal         *start_time);
+G_GNUC_END_IGNORE_DEPRECATIONS
+
 GDK_PIXBUF_AVAILABLE_IN_ALL
 GType                   gdk_pixbuf_animation_iter_get_type                   (void) G_GNUC_CONST;
 GDK_PIXBUF_AVAILABLE_IN_ALL
@@ -117,9 +120,11 @@ GDK_PIXBUF_AVAILABLE_IN_ALL
 GdkPixbuf              *gdk_pixbuf_animation_iter_get_pixbuf                 (GdkPixbufAnimationIter *iter);
 GDK_PIXBUF_AVAILABLE_IN_ALL
 gboolean                gdk_pixbuf_animation_iter_on_currently_loading_frame (GdkPixbufAnimationIter *iter);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 GDK_PIXBUF_AVAILABLE_IN_ALL
 gboolean                gdk_pixbuf_animation_iter_advance                    (GdkPixbufAnimationIter *iter,
                                                                               const GTimeVal         *current_time);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 #ifdef GDK_PIXBUF_ENABLE_BACKEND
@@ -150,6 +155,7 @@ struct _GdkPixbufAnimation {
 
 };
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 struct _GdkPixbufAnimationClass {
         GObjectClass parent_class;
 
@@ -167,6 +173,7 @@ struct _GdkPixbufAnimationClass {
                                              const GTimeVal     *start_time);
 
 };
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 
@@ -196,6 +203,7 @@ struct _GdkPixbufAnimationIter {
 
 };
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 struct _GdkPixbufAnimationIterClass {
         GObjectClass parent_class;
 
@@ -210,6 +218,7 @@ struct _GdkPixbufAnimationIterClass {
         gboolean   (*advance)          (GdkPixbufAnimationIter *iter,
                                         const GTimeVal         *current_time);
 };
+G_GNUC_END_IGNORE_DEPRECATIONS
       
 
 GDK_PIXBUF_AVAILABLE_IN_ALL

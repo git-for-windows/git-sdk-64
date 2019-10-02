@@ -8,7 +8,7 @@
 <link rel="up" href="LoadableModules.html" title="Loadable modules">
 <link rel="prev" href="LoadableModules.html" title="Loadable modules">
 <link rel="next" href="GdkPixbufLoader.html" title="GdkPixbufLoader">
-<meta name="generator" content="GTK-Doc V1.29 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -1063,7 +1063,7 @@ operations.</p>
 <td class="enum_member_name"><p><a name="GDK-PIXBUF-FORMAT-THREADSAFE:CAPS"></a>GDK_PIXBUF_FORMAT_THREADSAFE</p></td>
 <td class="enum_member_description">
 <p>the module is threadsafe. gdk-pixbuf
-    ignores modules that are not marked as threadsafe. (Since 2.28).</p>
+ignores modules that are not marked as threadsafe. (Since 2.28).</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -1084,17 +1084,25 @@ operations.</p>
 };
 </pre>
 <p>The signature of a module is a set of prefixes. Prefixes are encoded as
-pairs of ordinary strings, where the second string, called the mask, if 
-not <a class="link" href=""><code class="literal">NULL</code></a>, must be of the same length as the first one and may contain 
-' ', '!', 'x', 'z', and 'n' to indicate bytes that must be matched, 
-not matched, "don't-care"-bytes, zeros and non-zeros. 
-Each prefix has an associated integer that describes the relevance of 
+pairs of ordinary strings, where the second string, called the mask, if
+
+not <a class="link" href=""><code class="literal">NULL</code></a>, must be of the same length as the first one and may contain
+
+' ', '!', 'x', 'z', and 'n' to indicate bytes that must be matched,
+
+not matched, "don't-care"-bytes, zeros and non-zeros.
+
+Each prefix has an associated integer that describes the relevance of
+
 the prefix, with 0 meaning a mismatch and 100 a "perfect match".</p>
-<p>Starting with gdk-pixbuf 2.8, the first byte of the mask may be '*', 
-indicating an unanchored pattern that matches not only at the beginning, 
+<p>Starting with gdk-pixbuf 2.8, the first byte of the mask may be '*',
+
+indicating an unanchored pattern that matches not only at the beginning,
+
 but also in the middle. Versions prior to 2.8 will interpret the '*'
 like an 'x'. </p>
-<p>The signature of a module is stored as an array of 
+<p>The signature of a module is stored as an array of
+
 <a class="link" href=""><span class="type">GdkPixbufModulePatterns</span></a>. The array is terminated by a pattern
 where the <em class="parameter"><code>prefix</code></em>
  is <a class="link" href=""><code class="literal">NULL</code></a>.</p>
@@ -1106,7 +1114,8 @@ GdkPixbufModulePattern *signature[] = {
   { NULL, NULL, 0 }
 };
 </pre>
-The example matches e.g. "auud\0" with relevance 100, and "blau" with 
+The example matches e.g. "auud\0" with relevance 100, and "blau" with
+
 relevance 90.</div>
 <div class="refsect3">
 <a name="GdkPixbufModulePattern.members"></a><h4>Members</h4>
@@ -1150,7 +1159,7 @@ test data</p></td>
 	char *module_path;
 	GModule *module;
 	GdkPixbufFormat *info;
-	
+
         GdkPixbuf *(* load) (FILE    *f,
                              GError **error);
         GdkPixbuf *(* load_xpm_data) (const char **data);
@@ -1186,14 +1195,16 @@ test data</p></td>
 				      gchar **option_keys,
 				      gchar **option_values,
 				      GError **error);
-  
+
         gboolean (* is_save_option_supported) (const gchar *option_key);
 };
 </pre>
-<p>A <a class="link" href="gdk-pixbuf-Module-Interface.html#GdkPixbufModule" title="struct GdkPixbufModule"><span class="type">GdkPixbufModule</span></a> contains the necessary functions to load and save 
+<p>A <a class="link" href="gdk-pixbuf-Module-Interface.html#GdkPixbufModule" title="struct GdkPixbufModule"><span class="type">GdkPixbufModule</span></a> contains the necessary functions to load and save
+
 images in a certain file format. </p>
 <p>A <a class="link" href="gdk-pixbuf-Module-Interface.html#GdkPixbufModule" title="struct GdkPixbufModule"><span class="type">GdkPixbufModule</span></a> can be loaded dynamically from a <a class="link" href=""><span class="type">GModule</span></a>.
-Each loadable module must contain a <a class="link" href="gdk-pixbuf-Module-Interface.html#GdkPixbufModuleFillVtableFunc" title="GdkPixbufModuleFillVtableFunc ()"><span class="type">GdkPixbufModuleFillVtableFunc</span></a> function 
+Each loadable module must contain a <a class="link" href="gdk-pixbuf-Module-Interface.html#GdkPixbufModuleFillVtableFunc" title="GdkPixbufModuleFillVtableFunc ()"><span class="type">GdkPixbufModuleFillVtableFunc</span></a> function
+
 named <code class="function">fill_vtable</code>, which will get called when the module
 is loaded and must set the function pointers of the <a class="link" href="gdk-pixbuf-Module-Interface.html#GdkPixbufModule" title="struct GdkPixbufModule"><span class="type">GdkPixbufModule</span></a>.</p>
 <div class="refsect3">
@@ -1285,21 +1296,22 @@ usual file extension for images of this type, eg. "xpm", "jpeg" or "png".</p></t
 <pre class="programlisting">struct GdkPixbufAnimationClass {
         GObjectClass parent_class;
 
-
         gboolean                (*is_static_image)  (GdkPixbufAnimation *anim);
 
         GdkPixbuf*              (*get_static_image) (GdkPixbufAnimation *anim);
-        
+
         void                    (*get_size) (GdkPixbufAnimation *anim,
                                              int                 *width,
                                              int                 *height);
-        
+
         GdkPixbufAnimationIter* (*get_iter) (GdkPixbufAnimation *anim,
                                              const GTimeVal     *start_time);
 };
 </pre>
-<p>Modules supporting animations must derive a type from 
-<a class="link" href="gdk-pixbuf-Animations.html#GdkPixbufAnimation"><span class="type">GdkPixbufAnimation</span></a>, providing suitable implementations of the 
+<p>Modules supporting animations must derive a type from
+
+<a class="link" href="gdk-pixbuf-Animations.html#GdkPixbufAnimation"><span class="type">GdkPixbufAnimation</span></a>, providing suitable implementations of the
+
 virtual functions.</p>
 <div class="refsect3">
 <a name="GdkPixbufAnimationClass.members"></a><h4>Members</h4>
@@ -1346,7 +1358,6 @@ with the frame size of the animation.</p></td>
 <pre class="programlisting">struct GdkPixbufAnimationIterClass {
         GObjectClass parent_class;
 
-
         int        (*get_delay_time)   (GdkPixbufAnimationIter *iter);
 
         GdkPixbuf* (*get_pixbuf)       (GdkPixbufAnimationIter *iter);
@@ -1357,8 +1368,10 @@ with the frame size of the animation.</p></td>
                                         const GTimeVal         *current_time);
 };
 </pre>
-<p>Modules supporting animations must derive a type from 
-<a class="link" href="gdk-pixbuf-Animations.html#GdkPixbufAnimationIter"><span class="type">GdkPixbufAnimationIter</span></a>, providing suitable implementations of the 
+<p>Modules supporting animations must derive a type from
+
+<a class="link" href="gdk-pixbuf-Animations.html#GdkPixbufAnimationIter"><span class="type">GdkPixbufAnimationIter</span></a>, providing suitable implementations of the
+
 virtual functions.</p>
 <div class="refsect3">
 <a name="GdkPixbufAnimationIterClass.members"></a><h4>Members</h4>
@@ -1406,6 +1419,6 @@ current frame.</p></td>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.29</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="up" href="rn01.html" title="API Reference">
 <link rel="prev" href="gdk-pixbuf-Image-Data-in-Memory.html" title="Image Data in Memory">
 <link rel="next" href="gdk-pixbuf-Scaling.html" title="Scaling">
-<meta name="generator" content="GTK-Doc V1.29 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -441,7 +441,8 @@ of <em class="parameter"><code>pixdata</code></em>
   guint8 *pixel_data;
 };
 </pre>
-<p>A <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> contains pixbuf information in a form suitable for 
+<p>A <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> contains pixbuf information in a form suitable for
+
 serialization and streaming.</p>
 <div class="refsect3">
 <a name="GdkPixdata.members"></a><h4>Members</h4>
@@ -506,8 +507,10 @@ and <em class="parameter"><code>rowstride</code></em>
 <a name="GdkPixdataType"></a><h3>enum GdkPixdataType</h3>
 
 <a class="indexterm" name="id-1.2.9.8.3.2"></a>
-<p>An enumeration containing three sets of flags for a <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> struct: 
-one for the used colorspace, one for the width of the samples and one 
+<p>An enumeration containing three sets of flags for a <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> struct:
+
+one for the used colorspace, one for the width of the samples and one
+
 for the encoding of the pixel data.</p>
 <div class="refsect3">
 <a name="GdkPixdataType.members"></a><h4>Members</h4>
@@ -530,8 +533,9 @@ for the encoding of the pixel data.</p>
 <tr>
 <td class="enum_member_name"><p><a name="GDK-PIXDATA-COLOR-TYPE-RGBA:CAPS"></a>GDK_PIXDATA_COLOR_TYPE_RGBA</p></td>
 <td class="enum_member_description">
-<p>each pixel has red, green and blue samples 
-   and an alpha value.</p>
+<p>each pixel has red, green and blue samples
+
+and an alpha value.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -566,11 +570,13 @@ for the encoding of the pixel data.</p>
 <tr>
 <td class="enum_member_name"><p><a name="GDK-PIXDATA-ENCODING-RLE:CAPS"></a>GDK_PIXDATA_ENCODING_RLE</p></td>
 <td class="enum_member_description">
-<p>the pixel data is run-length encoded. Runs may 
-   be up to 127 bytes long; their length is stored in a single byte 
-   preceding the pixel data for the run. If a run is constant, its length
-   byte has the high bit set and the pixel data consists of a single pixel
-   which must be repeated. </p>
+<p>the pixel data is run-length encoded. Runs may
+
+be up to 127 bytes long; their length is stored in a single byte
+
+preceding the pixel data for the run. If a run is constant, its length
+byte has the high bit set and the pixel data consists of a single pixel
+which must be repeated. </p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -615,44 +621,51 @@ elements are optional flags that can be freely added.</p>
 <tr>
 <td class="enum_member_name"><p><a name="GDK-PIXDATA-DUMP-PIXDATA-STREAM:CAPS"></a>GDK_PIXDATA_DUMP_PIXDATA_STREAM</p></td>
 <td class="enum_member_description">
-<p>Generate pixbuf data stream (a single 
-   string containing a serialized <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> structure in network byte 
-   order).</p>
+<p>Generate pixbuf data stream (a single
+
+string containing a serialized <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> structure in network byte
+
+order).</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="GDK-PIXDATA-DUMP-PIXDATA-STRUCT:CAPS"></a>GDK_PIXDATA_DUMP_PIXDATA_STRUCT</p></td>
 <td class="enum_member_description">
-<p>Generate <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> structure (needs 
-   the <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> structure definition from gdk-pixdata.h).</p>
+<p>Generate <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> structure (needs
+
+the <a class="link" href="gdk-pixbuf-Inline-data.html#GdkPixdata" title="struct GdkPixdata"><span class="type">GdkPixdata</span></a> structure definition from gdk-pixdata.h).</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="GDK-PIXDATA-DUMP-MACROS:CAPS"></a>GDK_PIXDATA_DUMP_MACROS</p></td>
 <td class="enum_member_description">
-<p>Generate <code class="function">*_ROWSTRIDE</code>,     
-   <code class="function">*_WIDTH</code>, <code class="function">*_HEIGHT</code>,
-   <code class="function">*_BYTES_PER_PIXEL</code> and 
-   <code class="function">*_RLE_PIXEL_DATA</code> or <code class="function">*_PIXEL_DATA</code>
-   macro definitions for the image.</p>
+<p>Generate <code class="function">*_ROWSTRIDE</code>,
+
+<code class="function">*_WIDTH</code>, <code class="function">*_HEIGHT</code>,
+<code class="function">*_BYTES_PER_PIXEL</code> and
+
+<code class="function">*_RLE_PIXEL_DATA</code> or <code class="function">*_PIXEL_DATA</code>
+macro definitions for the image.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="GDK-PIXDATA-DUMP-GTYPES:CAPS"></a>GDK_PIXDATA_DUMP_GTYPES</p></td>
 <td class="enum_member_description">
-<p>Generate GLib data types instead of 
-   standard C data types.</p>
+<p>Generate GLib data types instead of
+
+standard C data types.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="GDK-PIXDATA-DUMP-CTYPES:CAPS"></a>GDK_PIXDATA_DUMP_CTYPES</p></td>
 <td class="enum_member_description">
-<p>Generate standard C data types instead of 
-   GLib data types.</p>
+<p>Generate standard C data types instead of
+
+GLib data types.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -673,8 +686,9 @@ elements are optional flags that can be freely added.</p>
 <tr>
 <td class="enum_member_name"><p><a name="GDK-PIXDATA-DUMP-RLE-DECODER:CAPS"></a>GDK_PIXDATA_DUMP_RLE_DECODER</p></td>
 <td class="enum_member_description">
-<p>Provide a <code class="function">*_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp)</code> 
-   macro definition  to  decode  run-length encoded image data.</p>
+<p>Provide a <code class="function">*_RUN_LENGTH_DECODE(image_buf, rle_data, size, bpp)</code>
+
+macro definition  to  decode  run-length encoded image data.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -705,6 +719,6 @@ elements are optional flags that can be freely added.</p>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.29</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>

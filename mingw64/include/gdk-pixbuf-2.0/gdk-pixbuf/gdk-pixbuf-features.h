@@ -45,8 +45,8 @@ Library version numbers.
 
 #define GDK_PIXBUF_MAJOR (2)
 #define GDK_PIXBUF_MINOR (38)
-#define GDK_PIXBUF_MICRO (1)
-#define GDK_PIXBUF_VERSION "2.38.1"
+#define GDK_PIXBUF_MICRO (2)
+#define GDK_PIXBUF_VERSION "2.38.2"
 
 #ifndef _GDK_PIXBUF_EXTERN
 #define _GDK_PIXBUF_EXTERN extern

@@ -8,7 +8,7 @@
 <link rel="up" href="rn01.html" title="API Reference">
 <link rel="prev" href="gdk-pixbuf-Versioning.html" title="Initialization and Versions">
 <link rel="next" href="gdk-pixbuf-Reference-Counting-and-Memory-Mangement.html" title="Reference Counting and Memory Mangement">
-<meta name="generator" content="GTK-Doc V1.29 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -200,48 +200,48 @@ The GdkPixbuf Structure
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gint</span></a></td>
 <td class="property_name"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf--bits-per-sample" title="The “bits-per-sample” property">bits-per-sample</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkColorspace" title="enum GdkColorspace"><span class="type">GdkColorspace</span></a></td>
 <td class="property_name"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf--colorspace" title="The “colorspace” property">colorspace</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gboolean</span></a></td>
 <td class="property_name"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf--has-alpha" title="The “has-alpha” property">has-alpha</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gint</span></a></td>
 <td class="property_name"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf--height" title="The “height” property">height</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gint</span></a></td>
 <td class="property_name"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf--n-channels" title="The “n-channels” property">n-channels</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type">
 <a class="link" href=""><span class="type">GBytes</span></a> *</td>
 <td class="property_name"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf--pixel-bytes" title="The “pixel-bytes” property">pixel-bytes</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gpointer</span></a></td>
 <td class="property_name"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf--pixels" title="The “pixels” property">pixels</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gint</span></a></td>
 <td class="property_name"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf--rowstride" title="The “rowstride” property">rowstride</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 <tr>
 <td class="property_type"><a class="link" href=""><span class="type">gint</span></a></td>
 <td class="property_name"><a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkPixbuf--width" title="The “width” property">width</a></td>
-<td class="property_flags">Read / Write / Construct Only</td>
+<td class="property_flags">Read / Write / Construct Only</td>
 </tr>
 </tbody>
 </table>
@@ -328,36 +328,71 @@ function for RGB pixbufs with 8 bits per channel with an alpha
 channel.  It is not included in the gdk-pixbuf library for
 performance reasons; rather than making several function calls
 for each pixel, your own code can take shortcuts.</p>
-<div class="informalexample"><pre class="programlisting">
-static void
-put_pixel (GdkPixbuf *pixbuf, int x, int y, guchar red, guchar green, guchar blue, guchar alpha)
-{
-  int width, height, rowstride, n_channels;
-  guchar *pixels, *p;
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="k">static</span> <span class="kt">void</span>
+<span class="nf">put_pixel</span> <span class="p">(</span><span class="n">GdkPixbuf</span> <span class="o">*</span><span class="n">pixbuf</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="n">guchar</span> <span class="n">red</span><span class="p">,</span> <span class="n">guchar</span> <span class="n">green</span><span class="p">,</span> <span class="n">guchar</span> <span class="n">blue</span><span class="p">,</span> <span class="n">guchar</span> <span class="n">alpha</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">rowstride</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">;</span>
+  <span class="n">guchar</span> <span class="o">*</span><span class="n">pixels</span><span class="p">,</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
 
-  n_channels = gdk_pixbuf_get_n_channels (pixbuf);
+  <span class="n">n_channels</span> <span class="o">=</span> <span class="n">gdk_pixbuf_get_n_channels</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">);</span>
 
-  g_assert (gdk_pixbuf_get_colorspace (pixbuf) == GDK_COLORSPACE_RGB);
-  g_assert (gdk_pixbuf_get_bits_per_sample (pixbuf) == 8);
-  g_assert (gdk_pixbuf_get_has_alpha (pixbuf));
-  g_assert (n_channels == 4);
+  <span class="n">g_assert</span> <span class="p">(</span><span class="n">gdk_pixbuf_get_colorspace</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">)</span> <span class="o">==</span> <span class="n">GDK_COLORSPACE_RGB</span><span class="p">);</span>
+  <span class="n">g_assert</span> <span class="p">(</span><span class="n">gdk_pixbuf_get_bits_per_sample</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span><span class="p">);</span>
+  <span class="n">g_assert</span> <span class="p">(</span><span class="n">gdk_pixbuf_get_has_alpha</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">));</span>
+  <span class="n">g_assert</span> <span class="p">(</span><span class="n">n_channels</span> <span class="o">==</span> <span class="mi">4</span><span class="p">);</span>
 
-  width = gdk_pixbuf_get_width (pixbuf);
-  height = gdk_pixbuf_get_height (pixbuf);
+  <span class="n">width</span> <span class="o">=</span> <span class="n">gdk_pixbuf_get_width</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">);</span>
+  <span class="n">height</span> <span class="o">=</span> <span class="n">gdk_pixbuf_get_height</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">);</span>
 
-  g_assert (x &gt;= 0 &amp;&amp; x &lt; width);
-  g_assert (y &gt;= 0 &amp;&amp; y &lt; height);
+  <span class="n">g_assert</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">width</span><span class="p">);</span>
+  <span class="n">g_assert</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">height</span><span class="p">);</span>
 
-  rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-  pixels = gdk_pixbuf_get_pixels (pixbuf);
+  <span class="n">rowstride</span> <span class="o">=</span> <span class="n">gdk_pixbuf_get_rowstride</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">);</span>
+  <span class="n">pixels</span> <span class="o">=</span> <span class="n">gdk_pixbuf_get_pixels</span> <span class="p">(</span><span class="n">pixbuf</span><span class="p">);</span>
 
-  p = pixels + y * rowstride + x * n_channels;
-  p[0] = red;
-  p[1] = green;
-  p[2] = blue;
-  p[3] = alpha;
-}
-</pre></div>
+  <span class="n">p</span> <span class="o">=</span> <span class="n">pixels</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">rowstride</span> <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">n_channels</span><span class="p">;</span>
+  <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">red</span><span class="p">;</span>
+  <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">green</span><span class="p">;</span>
+  <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">blue</span><span class="p">;</span>
+  <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">;</span>
+<span class="p">}</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p></p>
 <p>This function will not work for pixbufs with images that are
 other than 8 bits per sample or channel, but it will work for
@@ -1123,7 +1158,7 @@ domain.</p>
 <td class="enum_member_name"><p><a name="GDK-PIXBUF-ERROR-UNSUPPORTED-OPERATION:CAPS"></a>GDK_PIXBUF_ERROR_UNSUPPORTED_OPERATION</p></td>
 <td class="enum_member_description">
 <p>Don't know how to perform the
- given operation on the type of image at hand.</p>
+given operation on the type of image at hand.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -1210,9 +1245,9 @@ back to a bilevel clipping mask.</p>
 <td class="enum_member_name"><p><a name="GDK-PIXBUF-ALPHA-BILEVEL:CAPS"></a>GDK_PIXBUF_ALPHA_BILEVEL</p></td>
 <td class="enum_member_description">
 <p>A bilevel clipping mask (black and white)
- will be created and used to draw the image.  Pixels below 0.5 opacity
- will be considered fully transparent, and all others will be
- considered fully opaque.</p>
+will be created and used to draw the image.  Pixels below 0.5 opacity
+will be considered fully transparent, and all others will be
+considered fully opaque.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -1220,7 +1255,7 @@ back to a bilevel clipping mask.</p>
 <td class="enum_member_name"><p><a name="GDK-PIXBUF-ALPHA-FULL:CAPS"></a>GDK_PIXBUF_ALPHA_FULL</p></td>
 <td class="enum_member_description">
 <p>For now falls back to <a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GDK-PIXBUF-ALPHA-BILEVEL:CAPS"><span class="type">GDK_PIXBUF_ALPHA_BILEVEL</span></a>.
- In the future it will do full alpha compositing.</p>
+In the future it will do full alpha compositing.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -1252,7 +1287,8 @@ one row and the start of the next).</p>
 <p>The number of bits per sample.
 
 Currently only 8 bit per sample are supported.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GdkPixbuf</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Allowed values: [1,16]</p>
 <p>Default value: 8</p>
 </div>
@@ -1261,7 +1297,8 @@ Currently only 8 bit per sample are supported.</p>
 <a class="indexterm" name="id-1.2.4.13.3.2"></a>
 <pre class="programlisting">  “colorspace”               <a class="link" href="gdk-pixbuf-The-GdkPixbuf-Structure.html#GdkColorspace" title="enum GdkColorspace"><span class="type">GdkColorspace</span></a></pre>
 <p>The colorspace in which the samples are interpreted.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GdkPixbuf</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: GDK_COLORSPACE_RGB</p>
 </div>
 <div class="refsect2">
@@ -1269,7 +1306,8 @@ Currently only 8 bit per sample are supported.</p>
 <a class="indexterm" name="id-1.2.4.13.4.2"></a>
 <pre class="programlisting">  “has-alpha”                <a class="link" href=""><span class="type">gboolean</span></a></pre>
 <p>Whether the pixbuf has an alpha channel.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GdkPixbuf</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Default value: FALSE</p>
 </div>
 <div class="refsect2">
@@ -1277,7 +1315,8 @@ Currently only 8 bit per sample are supported.</p>
 <a class="indexterm" name="id-1.2.4.13.5.2"></a>
 <pre class="programlisting">  “height”                   <a class="link" href=""><span class="type">gint</span></a></pre>
 <p>The number of rows of the pixbuf.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GdkPixbuf</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Allowed values: &gt;= 1</p>
 <p>Default value: 1</p>
 </div>
@@ -1288,7 +1327,8 @@ Currently only 8 bit per sample are supported.</p>
 <p>The number of samples per pixel.
 
 Currently, only 3 or 4 samples per pixel are supported.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GdkPixbuf</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 3</p>
 </div>
@@ -1297,14 +1337,16 @@ Currently, only 3 or 4 samples per pixel are supported.</p>
 <a class="indexterm" name="id-1.2.4.13.7.2"></a>
 <pre class="programlisting">  “pixel-bytes”              <a class="link" href=""><span class="type">GBytes</span></a> *</pre>
 <p>Readonly pixel data.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GdkPixbuf</p>
+<p>Flags: Read / Write / Construct Only</p>
 </div>
 <div class="refsect2">
 <a name="GdkPixbuf--pixels"></a><h3>The <code class="literal">“pixels”</code> property</h3>
 <a class="indexterm" name="id-1.2.4.13.8.2"></a>
 <pre class="programlisting">  “pixels”                   <a class="link" href=""><span class="type">gpointer</span></a></pre>
 <p>A pointer to the pixel data of the pixbuf.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GdkPixbuf</p>
+<p>Flags: Read / Write / Construct Only</p>
 </div>
 <div class="refsect2">
 <a name="GdkPixbuf--rowstride"></a><h3>The <code class="literal">“rowstride”</code> property</h3>
@@ -1314,7 +1356,8 @@ Currently, only 3 or 4 samples per pixel are supported.</p>
 
 the start of the next row. This number must (obviously)
 be at least as large as the width of the pixbuf.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GdkPixbuf</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Allowed values: &gt;= 1</p>
 <p>Default value: 1</p>
 </div>
@@ -1323,7 +1366,8 @@ be at least as large as the width of the pixbuf.</p>
 <a class="indexterm" name="id-1.2.4.13.10.2"></a>
 <pre class="programlisting">  “width”                    <a class="link" href=""><span class="type">gint</span></a></pre>
 <p>The number of columns of the pixbuf.</p>
-<p>Flags: Read / Write / Construct Only</p>
+<p>Owner: GdkPixbuf</p>
+<p>Flags: Read / Write / Construct Only</p>
 <p>Allowed values: &gt;= 1</p>
 <p>Default value: 1</p>
 </div>
@@ -1332,6 +1376,6 @@ be at least as large as the width of the pixbuf.</p>
 
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.29</div>
+<hr>Generated by GTK-Doc V1.31</div>
 </body>
 </html>
