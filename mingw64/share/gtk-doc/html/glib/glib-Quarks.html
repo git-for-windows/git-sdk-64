@@ -192,6 +192,9 @@ g_quark_from_string (<em class="parameter"><code>const <a class="link" href="gli
 <p>Gets the <a class="link" href="glib-Quarks.html#GQuark" title="GQuark"><span class="type">GQuark</span></a> identifying the given string. If the string does
 not currently have an associated <a class="link" href="glib-Quarks.html#GQuark" title="GQuark"><span class="type">GQuark</span></a>, a new <a class="link" href="glib-Quarks.html#GQuark" title="GQuark"><span class="type">GQuark</span></a> is created,
 using a copy of the string.</p>
+<p>This function must not be used before library constructors have finished
+running. In particular, this means it cannot be used to initialize global
+variables in C++.</p>
 <div class="refsect3">
 <a name="g-quark-from-string.parameters"></a><h4>Parameters</h4>
 
@@ -234,6 +237,9 @@ with statically allocated strings in the main program, but not with
 statically allocated memory in dynamically loaded modules, if you
 expect to ever unload the module again (e.g. do not use this
 function in GTK+ theme engines).</p>
+<p>This function must not be used before library constructors have finished
+running. In particular, this means it cannot be used to initialize global
+variables in C++.</p>
 <div class="refsect3">
 <a name="g-quark-from-static-string.parameters"></a><h4>Parameters</h4>
 
@@ -300,6 +306,8 @@ g_quark_try_string (<em class="parameter"><code>const <a class="link" href="glib
 <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> or it has no associated <a class="link" href="glib-Quarks.html#GQuark" title="GQuark"><span class="type">GQuark</span></a>.</p>
 <p>If you want the GQuark to be created if it doesn't already exist,
 use <a class="link" href="glib-Quarks.html#g-quark-from-string" title="g_quark_from_string ()"><code class="function">g_quark_from_string()</code></a> or <a class="link" href="glib-Quarks.html#g-quark-from-static-string" title="g_quark_from_static_string ()"><code class="function">g_quark_from_static_string()</code></a>.</p>
+<p>This function must not be used before library constructors have finished
+running.</p>
 <div class="refsect3">
 <a name="g-quark-try-string.parameters"></a><h4>Parameters</h4>
 
@@ -336,6 +344,9 @@ g_intern_string (<em class="parameter"><code>const <a class="link" href="glib-Ba
 . Interned strings
 can be compared for equality by comparing the pointers, instead of
 using <a class="link" href=""><code class="function">strcmp()</code></a>.</p>
+<p>This function must not be used before library constructors have finished
+running. In particular, this means it cannot be used to initialize global
+variables in C++.</p>
 <div class="refsect3">
 <a name="g-intern-string.parameters"></a><h4>Parameters</h4>
 
@@ -373,6 +384,9 @@ can be compared for equality by comparing the pointers, instead of
 using <a class="link" href=""><code class="function">strcmp()</code></a>. <a class="link" href="glib-Quarks.html#g-intern-static-string" title="g_intern_static_string ()"><code class="function">g_intern_static_string()</code></a> does not copy the string,
 therefore <em class="parameter"><code>string</code></em>
  must not be freed or modified.</p>
+<p>This function must not be used before library constructors have finished
+running. In particular, this means it cannot be used to initialize global
+variables in C++.</p>
 <div class="refsect3">
 <a name="g-intern-static-string.parameters"></a><h4>Parameters</h4>
 

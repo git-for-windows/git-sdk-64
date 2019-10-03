@@ -304,6 +304,12 @@ perhaps along with additional context known only to the calling
 function (the file being opened, or whatever - though in the
 <a class="link" href="glib-File-Utilities.html#g-file-get-contents" title="g_file_get_contents ()"><code class="function">g_file_get_contents()</code></a> case, the <em class="parameter"><code>message</code></em>
  already contains a filename).</p>
+<p>Note, however, that many error messages are too technical to display to the
+user in an application, so prefer to use <a class="link" href="glib-Error-Reporting.html#g-error-matches" title="g_error_matches ()"><code class="function">g_error_matches()</code></a> to categorize errors
+from called functions, and build an appropriate error message for the context
+within your application. Error messages from a <a class="link" href="glib-Error-Reporting.html#GError" title="struct GError"><span class="type">GError</span></a> are more appropriate
+to be printed in system logs or on the command line. They are typically
+translated.</p>
 <p>When implementing a function that can report errors, the basic
 tool is <a class="link" href="glib-Error-Reporting.html#g-set-error" title="g_set_error ()"><code class="function">g_set_error()</code></a>. Typically, if a fatal error occurs you
 want to <a class="link" href="glib-Error-Reporting.html#g-set-error" title="g_set_error ()"><code class="function">g_set_error()</code></a>, then return immediately. <a class="link" href="glib-Error-Reporting.html#g-set-error" title="g_set_error ()"><code class="function">g_set_error()</code></a>

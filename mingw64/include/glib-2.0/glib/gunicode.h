@@ -154,9 +154,7 @@ typedef enum
  *
  * Deprecated: 2.30: Use %G_UNICODE_SPACING_MARK.
  */
-#ifndef G_DISABLE_DEPRECATED
-#define G_UNICODE_COMBINING_MARK G_UNICODE_SPACING_MARK
-#endif
+#define G_UNICODE_COMBINING_MARK G_UNICODE_SPACING_MARK GLIB_DEPRECATED_MACRO_IN_2_30_FOR(G_UNICODE_SPACING_MARK)
 
 /**
  * GUnicodeBreakType:
@@ -422,6 +420,10 @@ typedef enum
  * @G_UNICODE_SCRIPT_MEDEFAIDRIN:          Medefaidrin. Since: 2.58
  * @G_UNICODE_SCRIPT_OLD_SOGDIAN:          Old Sogdian. Since: 2.58
  * @G_UNICODE_SCRIPT_SOGDIAN:              Sogdian. Since: 2.58
+ * @G_UNICODE_SCRIPT_ELYMAIC:              Elym. Since: 2.62
+ * @G_UNICODE_SCRIPT_NANDINAGARI:          Nand. Since: 2.62
+ * @G_UNICODE_SCRIPT_NYIAKENG_PUACHUE_HMONG: Rohg. Since: 2.62
+ * @G_UNICODE_SCRIPT_WANCHO:               Wcho. Since: 2.62
  *
  * The #GUnicodeScript enumeration identifies different writing
  * systems. The values correspond to the names as defined in the
@@ -607,7 +609,13 @@ typedef enum
   G_UNICODE_SCRIPT_MAKASAR,                /* Maka */
   G_UNICODE_SCRIPT_MEDEFAIDRIN,            /* Medf */
   G_UNICODE_SCRIPT_OLD_SOGDIAN,            /* Sogo */
-  G_UNICODE_SCRIPT_SOGDIAN                 /* Sogd */
+  G_UNICODE_SCRIPT_SOGDIAN,                /* Sogd */
+
+  /* Unicode 12.0 additions */
+  G_UNICODE_SCRIPT_ELYMAIC,                /* Elym */
+  G_UNICODE_SCRIPT_NANDINAGARI,            /* Nand */
+  G_UNICODE_SCRIPT_NYIAKENG_PUACHUE_HMONG, /* Rohg */
+  G_UNICODE_SCRIPT_WANCHO                  /* Wcho */
 } GUnicodeScript;
 
 GLIB_AVAILABLE_IN_ALL

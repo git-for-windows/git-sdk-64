@@ -151,7 +151,7 @@ UNIX-file-descriptor-style asynchronous I/O rather than GIO-style.</p>
 <div class="refsect2">
 <a name="g-pollable-output-stream-can-poll"></a><h3>g_pollable_output_stream_can_poll ()</h3>
 
-<a class="indexterm" name="id-1.4.7.26.10.2.2"></a>
+<a class="indexterm" name="id-1.4.7.24.10.2.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">gboolean</span></a>
 g_pollable_output_stream_can_poll (<em class="parameter"><code><a class="link" href="GPollableOutputStream.html" title="GPollableOutputStream"><span class="type">GPollableOutputStream</span></a> *stream</code></em>);</pre>
 <p>Checks if <em class="parameter"><code>stream</code></em>
@@ -190,7 +190,7 @@ is pollable, <a class="link" href=""><code class="literal">FALSE</code></a> if n
 <div class="refsect2">
 <a name="g-pollable-output-stream-is-writable"></a><h3>g_pollable_output_stream_is_writable ()</h3>
 
-<a class="indexterm" name="id-1.4.7.26.10.3.2"></a>
+<a class="indexterm" name="id-1.4.7.24.10.3.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">gboolean</span></a>
 g_pollable_output_stream_is_writable (<em class="parameter"><code><a class="link" href="GPollableOutputStream.html" title="GPollableOutputStream"><span class="type">GPollableOutputStream</span></a> *stream</code></em>);</pre>
 <p>Checks if <em class="parameter"><code>stream</code></em>
@@ -234,7 +234,7 @@ next attempt to write will return the error.</p>
 <div class="refsect2">
 <a name="g-pollable-output-stream-create-source"></a><h3>g_pollable_output_stream_create_source ()</h3>
 
-<a class="indexterm" name="id-1.4.7.26.10.4.2"></a>
+<a class="indexterm" name="id-1.4.7.24.10.4.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">GSource</span></a> *
 g_pollable_output_stream_create_source
                                (<em class="parameter"><code><a class="link" href="GPollableOutputStream.html" title="GPollableOutputStream"><span class="type">GPollableOutputStream</span></a> *stream</code></em>,
@@ -284,7 +284,7 @@ rather than <a class="link" href="GOutputStream.html#g-output-stream-write" titl
 <div class="refsect2">
 <a name="g-pollable-output-stream-write-nonblocking"></a><h3>g_pollable_output_stream_write_nonblocking ()</h3>
 
-<a class="indexterm" name="id-1.4.7.26.10.5.2"></a>
+<a class="indexterm" name="id-1.4.7.24.10.5.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">gssize</span></a>
 g_pollable_output_stream_write_nonblocking
                                (<em class="parameter"><code><a class="link" href="GPollableOutputStream.html" title="GPollableOutputStream"><span class="type">GPollableOutputStream</span></a> *stream</code></em>,
@@ -366,7 +366,7 @@ data from. </p></td>
 <div class="refsect2">
 <a name="g-pollable-output-stream-writev-nonblocking"></a><h3>g_pollable_output_stream_writev_nonblocking ()</h3>
 
-<a class="indexterm" name="id-1.4.7.26.10.6.2"></a>
+<a class="indexterm" name="id-1.4.7.24.10.6.2"></a>
 <pre class="programlisting"><a class="link" href="gio-gpollableutils.html#GPollableReturn" title="enum GPollableReturn"><span class="returnvalue">GPollableReturn</span></a>
 g_pollable_output_stream_writev_nonblocking
                                (<em class="parameter"><code><a class="link" href="GPollableOutputStream.html" title="GPollableOutputStream"><span class="type">GPollableOutputStream</span></a> *stream</code></em>,
@@ -468,7 +468,7 @@ be set.</p>
 <div class="refsect2">
 <a name="GPollableOutputStream-struct"></a><h3>GPollableOutputStream</h3>
 
-<a class="indexterm" name="id-1.4.7.26.11.2.2"></a>
+<a class="indexterm" name="id-1.4.7.24.11.2.2"></a>
 <pre class="programlisting">typedef struct _GPollableOutputStream GPollableOutputStream;</pre>
 <p>An interface for a <a class="link" href="GOutputStream.html" title="GOutputStream"><span class="type">GOutputStream</span></a> that can be polled for writeability.</p>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -476,7 +476,7 @@ be set.</p>
 <div class="refsect2">
 <a name="GPollableOutputStreamInterface"></a><h3>struct GPollableOutputStreamInterface</h3>
 
-<a class="indexterm" name="id-1.4.7.26.11.3.2"></a>
+<a class="indexterm" name="id-1.4.7.24.11.3.2"></a>
 <pre class="programlisting">struct GPollableOutputStreamInterface {
   GTypeInterface g_iface;
 
@@ -508,6 +508,12 @@ need to override it if it is possible that your <em class="parameter"><code>is_w
 
 implementation may return <a class="link" href=""><code class="literal">TRUE</code></a> when the stream is not actually
 writable.</p>
+<p>The default implementation of <em class="parameter"><code>writev_nonblocking</code></em>
+ calls
+<a class="link" href="GPollableOutputStream.html#g-pollable-output-stream-write-nonblocking" title="g_pollable_output_stream_write_nonblocking ()"><code class="function">g_pollable_output_stream_write_nonblocking()</code></a> for each vector, and converts
+its return value and error (if set) to a <a class="link" href="gio-gpollableutils.html#GPollableReturn" title="enum GPollableReturn"><span class="type">GPollableReturn</span></a>. You should
+override this where possible to avoid having to allocate a <a class="link" href=""><span class="type">GError</span></a> to return
+<a class="link" href="gio-GIOError.html#G-IO-ERROR-WOULD-BLOCK:CAPS"><code class="literal">G_IO_ERROR_WOULD_BLOCK</code></a>.</p>
 <div class="refsect3">
 <a name="GPollableOutputStreamInterface.members"></a><h4>Members</h4>
 
@@ -542,8 +548,9 @@ writable.</p>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GPollableOutputStreamInterface.writev-nonblocking"></a>writev_nonblocking</code></em> ()</p></td>
-<td> </td>
-<td> </td>
+<td class="struct_member_description"><p>Does a vectored non-blocking write, or returns
+<a class="link" href="gio-gpollableutils.html#G-POLLABLE-RETURN-WOULD-BLOCK:CAPS"><code class="literal">G_POLLABLE_RETURN_WOULD_BLOCK</code></a></p></td>
+<td class="struct_member_annotations"> </td>
 </tr>
 </tbody>
 </table>

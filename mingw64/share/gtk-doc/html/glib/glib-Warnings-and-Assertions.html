@@ -646,6 +646,9 @@ This invokes gdb, which attaches to the current process and shows
 a stack trace. The prompt is then shown again.</p>
 <p>If "[P]roceed" is selected, the function returns.</p>
 <p>This function may cause different actions on non-UNIX platforms.</p>
+<p>On Windows consider using the <code class="literal">G_DEBUGGER</code> environment
+variable (see <a class="ulink" href="glib-running.html" target="_top">Running GLib Applications</a>) and
+calling <a class="link" href="glib-Warnings-and-Assertions.html#g-on-error-stack-trace" title="g_on_error_stack_trace ()"><code class="function">g_on_error_stack_trace()</code></a> instead.</p>
 <div class="refsect3">
 <a name="g-on-error-query.parameters"></a><h4>Parameters</h4>
 
@@ -681,6 +684,11 @@ option is selected. You can get the current process's program name
 with <a class="link" href="glib-Miscellaneous-Utility-Functions.html#g-get-prgname" title="g_get_prgname ()"><code class="function">g_get_prgname()</code></a>, assuming that you have called <a class="link" href=""><code class="function">gtk_init()</code></a> or
 <a class="link" href=""><code class="function">gdk_init()</code></a>.</p>
 <p>This function may cause different actions on non-UNIX platforms.</p>
+<p>When running on Windows, this function is *not* called by
+<a class="link" href="glib-Warnings-and-Assertions.html#g-on-error-query" title="g_on_error_query ()"><code class="function">g_on_error_query()</code></a>. If called directly, it will raise an
+exception, which will crash the program. If the <code class="literal">G_DEBUGGER</code> environment
+variable is set, a debugger will be invoked to attach and
+handle that exception (see <a class="ulink" href="glib-running.html" target="_top">Running GLib Applications</a>).</p>
 <div class="refsect3">
 <a name="g-on-error-stack-trace.parameters"></a><h4>Parameters</h4>
 

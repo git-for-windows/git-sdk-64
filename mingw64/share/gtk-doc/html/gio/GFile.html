@@ -1399,7 +1399,7 @@ default main context of the calling thread (ie: the same way that the
 final async result would be reported).</p>
 <p><em class="parameter"><code>current_size</code></em>
  is in the same units as requested by the operation (see
-<a class="link" href=""><code class="literal">G_FILE_DISK_USAGE_APPARENT_SIZE</code></a>).</p>
+<a class="link" href="GFile.html#G-FILE-MEASURE-APPARENT-SIZE:CAPS"><code class="literal">G_FILE_MEASURE_APPARENT_SIZE</code></a>).</p>
 <p>The frequency of the updates is implementation defined, but is
 ideally about once every 200ms.</p>
 <p>The last progress callback may or may not be equal to the final
@@ -3937,6 +3937,11 @@ g_file_query_default_handler_async (<em class="parameter"><code><a class="link" 
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
+<td class="parameter_name"><p>io_priority</p></td>
+<td class="parameter_description"><p>the <a class="link" href="GAsyncResult.html#io-priority" title="I/O Priority">I/O priority</a> of the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p>optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a class="link" href=""><code class="literal">NULL</code></a> to ignore</p></td>
 <td class="parameter_annotations"> </td>
@@ -4028,7 +4033,7 @@ reports the number of directories and non-directory files encountered
 (including things like symbolic links).</p>
 <p>By default, errors are only reported against the toplevel file
 itself.  Errors found while recursing are silently ignored, unless
-<a class="link" href=""><code class="literal">G_FILE_DISK_USAGE_REPORT_ALL_ERRORS</code></a> is given in <em class="parameter"><code>flags</code></em>
+<a class="link" href="GFile.html#G-FILE-MEASURE-REPORT-ANY-ERROR:CAPS"><code class="literal">G_FILE_MEASURE_REPORT_ANY_ERROR</code></a> is given in <em class="parameter"><code>flags</code></em>
 .</p>
 <p>The returned size, <em class="parameter"><code>disk_usage</code></em>
 , is in bytes and should be formatted
@@ -4262,11 +4267,11 @@ g_file_find_enclosing_mount (<em class="parameter"><code><a class="link" href="G
                              <em class="parameter"><code><a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> *cancellable</code></em>,
                              <em class="parameter"><code><a class="link" href=""><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Gets a <a class="link" href="GMount.html" title="GMount"><span class="type">GMount</span></a> for the <a class="link" href="GFile.html" title="GFile"><span class="type">GFile</span></a>.</p>
-<p>If the <a class="link" href="GFile.html#GFileIface" title="struct GFileIface"><span class="type">GFileIface</span></a> for <em class="parameter"><code>file</code></em>
- does not have a mount (e.g.
-possibly a remote share), <em class="parameter"><code>error</code></em>
- will be set to <a class="link" href="gio-GIOError.html#G-IO-ERROR-NOT-FOUND:CAPS"><code class="literal">G_IO_ERROR_NOT_FOUND</code></a>
-and <a class="link" href=""><code class="literal">NULL</code></a> will be returned.</p>
+<p><a class="link" href="GMount.html" title="GMount"><span class="type">GMount</span></a> is returned only for user interesting locations, see
+<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"><span class="type">GVolumeMonitor</span></a>. If the <a class="link" href="GFile.html#GFileIface" title="struct GFileIface"><span class="type">GFileIface</span></a> for <em class="parameter"><code>file</code></em>
+ does not have a <a class="link" href=""><span class="type">mount</span></a>,
+<em class="parameter"><code>error</code></em>
+ will be set to <a class="link" href="gio-GIOError.html#G-IO-ERROR-NOT-FOUND:CAPS"><code class="literal">G_IO_ERROR_NOT_FOUND</code></a> and <a class="link" href=""><code class="literal">NULL</code></a> <a class="link" href=""><span class="type">will</span></a> be returned.</p>
 <p>If <em class="parameter"><code>cancellable</code></em>
  is not <a class="link" href=""><code class="literal">NULL</code></a>, then the operation can be cancelled by
 triggering the cancellable object from another thread. If the operation
@@ -7395,7 +7400,7 @@ when the request is satisfied, or <a class="link" href=""><code class="literal">
 g_file_stop_mountable_finish (<em class="parameter"><code><a class="link" href="GFile.html" title="GFile"><span class="type">GFile</span></a> *file</code></em>,
                               <em class="parameter"><code><a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a> *result</code></em>,
                               <em class="parameter"><code><a class="link" href=""><span class="type">GError</span></a> **error</code></em>);</pre>
-<p>Finishes an stop operation, see <a class="link" href="GFile.html#g-file-stop-mountable" title="g_file_stop_mountable ()"><code class="function">g_file_stop_mountable()</code></a> for details.</p>
+<p>Finishes a stop operation, see <a class="link" href="GFile.html#g-file-stop-mountable" title="g_file_stop_mountable ()"><code class="function">g_file_stop_mountable()</code></a> for details.</p>
 <p>Finish an asynchronous stop operation that was started
 with <a class="link" href="GFile.html#g-file-stop-mountable" title="g_file_stop_mountable ()"><code class="function">g_file_stop_mountable()</code></a>.</p>
 <div class="refsect3">
@@ -10039,12 +10044,12 @@ necessarily represent files or directories that currently exist.</p>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GFileIface.query-settable-attributes"></a>query_settable_attributes</code></em> ()</p></td>
-<td class="struct_member_description"><p>Returns a list of <a class="link" href=""><span class="type">GFileAttributes</span></a> that can be set.</p></td>
+<td class="struct_member_description"><p>Returns a list of <a class="link" href=""><span class="type">GFileAttributeInfos</span></a> that can be set.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GFileIface.-query-settable-attributes-async"></a>_query_settable_attributes_async</code></em> ()</p></td>
-<td class="struct_member_description"><p>Asynchronously gets a list of <a class="link" href=""><span class="type">GFileAttributes</span></a> that can be set.</p></td>
+<td class="struct_member_description"><p>Asynchronously gets a list of <a class="link" href=""><span class="type">GFileAttributeInfos</span></a> that can be set.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
@@ -10054,12 +10059,12 @@ necessarily represent files or directories that currently exist.</p>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GFileIface.query-writable-namespaces"></a>query_writable_namespaces</code></em> ()</p></td>
-<td class="struct_member_description"><p>Returns a list of <a class="link" href=""><span class="type">GFileAttribute</span></a> namespaces that are writable.</p></td>
+<td class="struct_member_description"><p>Returns a list of <a class="link" href="gio-GFileAttribute.html#GFileAttributeInfo" title="GFileAttributeInfo"><span class="type">GFileAttributeInfo</span></a> namespaces that are writable.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GFileIface.-query-writable-namespaces-async"></a>_query_writable_namespaces_async</code></em> ()</p></td>
-<td class="struct_member_description"><p>Asynchronously gets a list of <a class="link" href=""><span class="type">GFileAttribute</span></a> namespaces that are writable.</p></td>
+<td class="struct_member_description"><p>Asynchronously gets a list of <a class="link" href="gio-GFileAttribute.html#GFileAttributeInfo" title="GFileAttributeInfo"><span class="type">GFileAttributeInfo</span></a> namespaces that are writable.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
@@ -10069,12 +10074,12 @@ necessarily represent files or directories that currently exist.</p>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GFileIface.set-attribute"></a>set_attribute</code></em> ()</p></td>
-<td class="struct_member_description"><p>Sets a <a class="link" href=""><span class="type">GFileAttribute</span></a>.</p></td>
+<td class="struct_member_description"><p>Sets a <a class="link" href="gio-GFileAttribute.html#GFileAttributeInfo" title="GFileAttributeInfo"><span class="type">GFileAttributeInfo</span></a>.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GFileIface.set-attributes-from-info"></a>set_attributes_from_info</code></em> ()</p></td>
-<td class="struct_member_description"><p>Sets a <a class="link" href=""><span class="type">GFileAttribute</span></a> with information from a <a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a>.</p></td>
+<td class="struct_member_description"><p>Sets a <a class="link" href="gio-GFileAttribute.html#GFileAttributeInfo" title="GFileAttributeInfo"><span class="type">GFileAttributeInfo</span></a> with information from a <a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a>.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
@@ -10339,7 +10344,7 @@ necessarily represent files or directories that currently exist.</p>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GFileIface.start-mountable-finish"></a>start_mountable_finish</code></em> ()</p></td>
-<td class="struct_member_description"><p>Finishes an start operation. Since 2.22.</p></td>
+<td class="struct_member_description"><p>Finishes a start operation. Since 2.22.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
@@ -10349,7 +10354,7 @@ necessarily represent files or directories that currently exist.</p>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GFileIface.stop-mountable-finish"></a>stop_mountable_finish</code></em> ()</p></td>
-<td class="struct_member_description"><p>Finishes an stop operation. Since 2.22.</p></td>
+<td class="struct_member_description"><p>Finishes a stop operation. Since 2.22.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>
@@ -10384,7 +10389,7 @@ necessarily represent files or directories that currently exist.</p>
 </tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GFileIface.poll-mountable-finish"></a>poll_mountable_finish</code></em> ()</p></td>
-<td class="struct_member_description"><p>Finishes an poll operation for media changes. Since 2.22.</p></td>
+<td class="struct_member_description"><p>Finishes a poll operation for media changes. Since 2.22.</p></td>
 <td class="struct_member_annotations"> </td>
 </tr>
 <tr>

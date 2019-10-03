@@ -238,6 +238,14 @@ Testing
 </tr>
 <tr>
 <td class="function_type">
+<a class="link" href=""><span class="returnvalue">void</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="glib-Testing.html#g-test-summary" title="g_test_summary ()">g_test_summary</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
 <a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 </td>
 <td class="function_name">
@@ -364,14 +372,6 @@ Testing
 <td class="define_keyword">#define</td>
 <td class="function_name">
 <a class="link" href="glib-Testing.html#g-test-trap-assert-stderr-unmatched" title="g_test_trap_assert_stderr_unmatched()">g_test_trap_assert_stderr_unmatched</a><span class="c_punctuation">()</span>
-</td>
-</tr>
-<tr>
-<td class="function_type">
-<a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
-</td>
-<td class="function_name">
-<a class="link" href="glib-Testing.html#g-test-trap-fork" title="g_test_trap_fork ()">g_test_trap_fork</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -592,10 +592,6 @@ Testing
 </tr>
 <tr>
 <td class="datatype_keyword">enum</td>
-<td class="function_name"><a class="link" href="glib-Testing.html#GTestTrapFlags" title="enum GTestTrapFlags">GTestTrapFlags</a></td>
-</tr>
-<tr>
-<td class="datatype_keyword">enum</td>
 <td class="function_name"><a class="link" href="glib-Testing.html#GTestSubprocessFlags" title="enum GTestSubprocessFlags">GTestSubprocessFlags</a></td>
 </tr>
 <tr>
@@ -733,8 +729,7 @@ and <a class="link" href="glib-Testing.html#g-assert-true" title="g_assert_true(
 56
 57
 58
-59
-60</pre></td>
+59</pre></td>
         <td class="listing_code"><pre class="programlisting"><span class="cp">#include</span> <span class="cpf">&lt;glib.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;locale.h&gt;</span><span class="cp"></span>
 
@@ -783,7 +778,6 @@ and <a class="link" href="glib-Testing.html#g-assert-true" title="g_assert_true(
   <span class="n">setlocale</span> <span class="p">(</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
 
   <span class="n">g_test_init</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">argc</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">argv</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
-  <span class="n">g_test_bug_base</span> <span class="p">(</span><span class="s">&quot;http://bugzilla.gnome.org/show_bug.cgi?id=&quot;</span><span class="p">);</span>
 
   <span class="c1">// Define the tests.</span>
   <span class="n">g_test_add</span> <span class="p">(</span><span class="s">&quot;/my-object/test1&quot;</span><span class="p">,</span> <span class="n">MyObjectFixture</span><span class="p">,</span> <span class="s">&quot;some-user-data&quot;</span><span class="p">,</span>
@@ -924,7 +918,10 @@ in your top-level <code class="literal">Makefile.am</code>:</p>
 <p>If you don't have access to the Autotools TAP harness, you can use the
 <a class="link" href="gtester.html" title="gtester">gtester</a> and <a class="link" href="gtester-report.html" title="gtester-report">gtester-report</a> tools, and use
 the <a class="ulink" href="https://gitlab.gnome.org/GNOME/glib/blob/glib-2-58/glib.mk" target="_top">glib.mk</a>
-Automake template provided by GLib.</p>
+Automake template provided by GLib. Note, however, that since GLib 2.62,
+<a class="link" href="gtester.html" title="gtester">gtester</a> and <a class="link" href="gtester-report.html" title="gtester-report">gtester-report</a> have been deprecated
+in favour of using TAP. The <code class="literal">--tap</code> argument to tests is enabled by default
+as of GLib 2.62.</p>
 
 </div>
 <div class="refsect1">
@@ -1859,6 +1856,8 @@ portion to <em class="parameter"><code>uri_pattern</code></em>
 , or by replacing the special string
 '%s' within <em class="parameter"><code>uri_pattern</code></em>
  if that is present.</p>
+<p>If <a class="link" href="glib-Testing.html#g-test-bug-base" title="g_test_bug_base ()"><code class="function">g_test_bug_base()</code></a> is not called, bug URIs are formed solely
+from the value provided by <a class="link" href="glib-Testing.html#g-test-bug" title="g_test_bug ()"><code class="function">g_test_bug()</code></a>.</p>
 <div class="refsect3">
 <a name="g-test-bug-base.parameters"></a><h4>Parameters</h4>
 
@@ -1889,7 +1888,9 @@ g_test_bug (<em class="parameter"><code>const <a class="link" href=""><span clas
 associates a bug URI with a test case.
 Bug URIs are constructed from a base URI set with <a class="link" href="glib-Testing.html#g-test-bug-base" title="g_test_bug_base ()"><code class="function">g_test_bug_base()</code></a>
 and <em class="parameter"><code>bug_uri_snippet</code></em>
-.</p>
+. If <a class="link" href="glib-Testing.html#g-test-bug-base" title="g_test_bug_base ()"><code class="function">g_test_bug_base()</code></a> has not been called, it is
+assumed to be the empty string, so a full URI can be provided to
+<a class="link" href="glib-Testing.html#g-test-bug" title="g_test_bug ()"><code class="function">g_test_bug()</code></a> instead.</p>
 <div class="refsect3">
 <a name="g-test-bug.parameters"></a><h4>Parameters</h4>
 
@@ -1911,9 +1912,68 @@ and <em class="parameter"><code>bug_uri_snippet</code></em>
 <p class="since">Since: <a class="link" href="api-index-2-16.html#api-index-2.16">2.16</a></p>
 </div>
 <div class="refsect2">
-<a name="GTestLogFatalFunc"></a><h3>GTestLogFatalFunc ()</h3>
+<a name="g-test-summary"></a><h3>g_test_summary ()</h3>
 
 <a class="indexterm" name="id-1.5.29.7.31.2"></a>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
+g_test_summary (<em class="parameter"><code>const <a class="link" href=""><span class="type">char</span></a> *summary</code></em>);</pre>
+<p>Set the summary for a test, which describes what the test checks, and how it
+goes about checking it. This may be included in test report output, and is
+useful documentation for anyone reading the source code or modifying a test
+in future. It must be a single line.</p>
+<p>This should be called at the top of a test function.</p>
+<p>For example:</p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="k">static</span> <span class="kt">void</span>
+<span class="nf">test_array_sort</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">g_test_summary</span> <span class="p">(</span><span class="s">&quot;Test my_array_sort() sorts the array correctly and stably, &quot;</span>
+                  <span class="s">&quot;including testing zero length and one-element arrays.&quot;</span><span class="p">);</span>
+
+  <span class="err">…</span>
+<span class="p">}</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
+<div class="refsect3">
+<a name="g-test-summary.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>summary</p></td>
+<td class="parameter_description"><p>One or two sentences summarising what the test checks, and how it
+checks it.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table>
+</div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-62.html#api-index-2.62">2.62</a></p>
+</div>
+<div class="refsect2">
+<a name="GTestLogFatalFunc"></a><h3>GTestLogFatalFunc ()</h3>
+
+<a class="indexterm" name="id-1.5.29.7.32.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 <span class="c_punctuation">(</span>*GTestLogFatalFunc<span class="c_punctuation">)</span> (<em class="parameter"><code>const <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> *log_domain</code></em>,
                       <em class="parameter"><code><a class="link" href="glib-Message-Logging.html#GLogLevelFlags" title="enum GLogLevelFlags"><span class="type">GLogLevelFlags</span></a> log_level</code></em>,
@@ -1965,7 +2025,7 @@ and <em class="parameter"><code>bug_uri_snippet</code></em>
 <div class="refsect2">
 <a name="g-test-log-set-fatal-handler"></a><h3>g_test_log_set_fatal_handler ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.32.2"></a>
+<a class="indexterm" name="id-1.5.29.7.33.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_log_set_fatal_handler (<em class="parameter"><code><a class="link" href="glib-Testing.html#GTestLogFatalFunc" title="GTestLogFatalFunc ()"><span class="type">GTestLogFatalFunc</span></a> log_func</code></em>,
                               <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
@@ -2016,7 +2076,7 @@ writer function using <a class="link" href="glib-Message-Logging.html#g-log-set-
 <div class="refsect2">
 <a name="g-test-timer-start"></a><h3>g_test_timer_start ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.33.2"></a>
+<a class="indexterm" name="id-1.5.29.7.34.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_timer_start (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Start a timing test. Call <a class="link" href="glib-Testing.html#g-test-timer-elapsed" title="g_test_timer_elapsed ()"><code class="function">g_test_timer_elapsed()</code></a> when the task is supposed
@@ -2026,7 +2086,7 @@ to be done. Call this function again to restart the timer.</p>
 <div class="refsect2">
 <a name="g-test-timer-elapsed"></a><h3>g_test_timer_elapsed ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.34.2"></a>
+<a class="indexterm" name="id-1.5.29.7.35.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">double</span></a>
 g_test_timer_elapsed (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Get the time since the last start of the timer with <a class="link" href="glib-Testing.html#g-test-timer-start" title="g_test_timer_start ()"><code class="function">g_test_timer_start()</code></a>.</p>
@@ -2040,7 +2100,7 @@ g_test_timer_elapsed (<em class="parameter"><code><span class="type">void</span>
 <div class="refsect2">
 <a name="g-test-timer-last"></a><h3>g_test_timer_last ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.35.2"></a>
+<a class="indexterm" name="id-1.5.29.7.36.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">double</span></a>
 g_test_timer_last (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Report the last result of <a class="link" href="glib-Testing.html#g-test-timer-elapsed" title="g_test_timer_elapsed ()"><code class="function">g_test_timer_elapsed()</code></a>.</p>
@@ -2054,7 +2114,7 @@ g_test_timer_last (<em class="parameter"><code><span class="type">void</span></c
 <div class="refsect2">
 <a name="g-test-queue-free"></a><h3>g_test_queue_free ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.36.2"></a>
+<a class="indexterm" name="id-1.5.29.7.37.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_queue_free (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> gfree_pointer</code></em>);</pre>
 <p>Enqueue a pointer to be released with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a> during the next
@@ -2083,7 +2143,7 @@ with a destroy callback of <a class="link" href="glib-Memory-Allocation.html#g-f
 <div class="refsect2">
 <a name="g-test-queue-destroy"></a><h3>g_test_queue_destroy ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.37.2"></a>
+<a class="indexterm" name="id-1.5.29.7.38.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_queue_destroy (<em class="parameter"><code><a class="link" href="glib-Datasets.html#GDestroyNotify" title="GDestroyNotify ()"><span class="type">GDestroyNotify</span></a> destroy_func</code></em>,
                       <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> destroy_data</code></em>);</pre>
@@ -2124,7 +2184,7 @@ callback A before callback B will cause <a class="link" href=""><code class="fun
 <div class="refsect2">
 <a name="g-test-queue-unref"></a><h3>g_test_queue_unref()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.38.2"></a>
+<a class="indexterm" name="id-1.5.29.7.39.2"></a>
 <pre class="programlisting">#define             g_test_queue_unref(gobject)</pre>
 <p>Enqueue an object to be released with <a class="link" href=""><code class="function">g_object_unref()</code></a> during
 the next teardown phase. This is equivalent to calling
@@ -2152,7 +2212,7 @@ the next teardown phase. This is equivalent to calling
 <div class="refsect2">
 <a name="g-test-expect-message"></a><h3>g_test_expect_message ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.39.2"></a>
+<a class="indexterm" name="id-1.5.29.7.40.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_expect_message (<em class="parameter"><code>const <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> *log_domain</code></em>,
                        <em class="parameter"><code><a class="link" href="glib-Message-Logging.html#GLogLevelFlags" title="enum GLogLevelFlags"><span class="type">GLogLevelFlags</span></a> log_level</code></em>,
@@ -2237,7 +2297,7 @@ expected via <a class="link" href="glib-Testing.html#g-test-expect-message" titl
 <div class="refsect2">
 <a name="g-test-assert-expected-messages"></a><h3>g_test_assert_expected_messages</h3>
 
-<a class="indexterm" name="id-1.5.29.7.40.2"></a>
+<a class="indexterm" name="id-1.5.29.7.41.2"></a>
 <pre class="programlisting">#define             g_test_assert_expected_messages()</pre>
 <p>Asserts that all messages previously indicated via
 <a class="link" href="glib-Testing.html#g-test-expect-message" title="g_test_expect_message ()"><code class="function">g_test_expect_message()</code></a> have been seen and suppressed.</p>
@@ -2251,7 +2311,7 @@ expected via <a class="link" href="glib-Testing.html#g-test-expect-message" titl
 <div class="refsect2">
 <a name="g-test-trap-subprocess"></a><h3>g_test_trap_subprocess ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.41.2"></a>
+<a class="indexterm" name="id-1.5.29.7.42.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_trap_subprocess (<em class="parameter"><code>const <a class="link" href=""><span class="type">char</span></a> *test_path</code></em>,
                         <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint64" title="guint64"><span class="type">guint64</span></a> usec_timeout</code></em>,
@@ -2381,7 +2441,7 @@ message.</p>
 <div class="refsect2">
 <a name="g-test-trap-has-passed"></a><h3>g_test_trap_has_passed ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.42.2"></a>
+<a class="indexterm" name="id-1.5.29.7.43.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 g_test_trap_has_passed (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Check the result of the last <a class="link" href="glib-Testing.html#g-test-trap-subprocess" title="g_test_trap_subprocess ()"><code class="function">g_test_trap_subprocess()</code></a> call.</p>
@@ -2395,7 +2455,7 @@ g_test_trap_has_passed (<em class="parameter"><code><span class="type">void</spa
 <div class="refsect2">
 <a name="g-test-trap-reached-timeout"></a><h3>g_test_trap_reached_timeout ()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.43.2"></a>
+<a class="indexterm" name="id-1.5.29.7.44.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 g_test_trap_reached_timeout (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Check the result of the last <a class="link" href="glib-Testing.html#g-test-trap-subprocess" title="g_test_trap_subprocess ()"><code class="function">g_test_trap_subprocess()</code></a> call.</p>
@@ -2409,7 +2469,7 @@ g_test_trap_reached_timeout (<em class="parameter"><code><span class="type">void
 <div class="refsect2">
 <a name="g-test-trap-assert-passed"></a><h3>g_test_trap_assert_passed</h3>
 
-<a class="indexterm" name="id-1.5.29.7.44.2"></a>
+<a class="indexterm" name="id-1.5.29.7.45.2"></a>
 <pre class="programlisting">#define             g_test_trap_assert_passed()</pre>
 <p>Assert that the last test subprocess passed.
 See <a class="link" href="glib-Testing.html#g-test-trap-subprocess" title="g_test_trap_subprocess ()"><code class="function">g_test_trap_subprocess()</code></a>.</p>
@@ -2418,7 +2478,7 @@ See <a class="link" href="glib-Testing.html#g-test-trap-subprocess" title="g_tes
 <div class="refsect2">
 <a name="g-test-trap-assert-failed"></a><h3>g_test_trap_assert_failed</h3>
 
-<a class="indexterm" name="id-1.5.29.7.45.2"></a>
+<a class="indexterm" name="id-1.5.29.7.46.2"></a>
 <pre class="programlisting">#define             g_test_trap_assert_failed()</pre>
 <p>Assert that the last test subprocess failed.
 See <a class="link" href="glib-Testing.html#g-test-trap-subprocess" title="g_test_trap_subprocess ()"><code class="function">g_test_trap_subprocess()</code></a>.</p>
@@ -2432,7 +2492,7 @@ to indicate that undefined behaviour may be tested.</p>
 <div class="refsect2">
 <a name="g-test-trap-assert-stdout"></a><h3>g_test_trap_assert_stdout()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.46.2"></a>
+<a class="indexterm" name="id-1.5.29.7.47.2"></a>
 <pre class="programlisting">#define             g_test_trap_assert_stdout(soutpattern)</pre>
 <p>Assert that the stdout output of the last test subprocess matches
 <em class="parameter"><code>soutpattern</code></em>
@@ -2460,7 +2520,7 @@ to indicate that undefined behaviour may be tested.</p>
 <div class="refsect2">
 <a name="g-test-trap-assert-stdout-unmatched"></a><h3>g_test_trap_assert_stdout_unmatched()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.47.2"></a>
+<a class="indexterm" name="id-1.5.29.7.48.2"></a>
 <pre class="programlisting">#define             g_test_trap_assert_stdout_unmatched(soutpattern)</pre>
 <p>Assert that the stdout output of the last test subprocess
 does not match <em class="parameter"><code>soutpattern</code></em>
@@ -2488,7 +2548,7 @@ does not match <em class="parameter"><code>soutpattern</code></em>
 <div class="refsect2">
 <a name="g-test-trap-assert-stderr"></a><h3>g_test_trap_assert_stderr()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.48.2"></a>
+<a class="indexterm" name="id-1.5.29.7.49.2"></a>
 <pre class="programlisting">#define             g_test_trap_assert_stderr(serrpattern)</pre>
 <p>Assert that the stderr output of the last test subprocess
 matches <em class="parameter"><code>serrpattern</code></em>
@@ -2522,7 +2582,7 @@ behaviour may be tested.</p>
 <div class="refsect2">
 <a name="g-test-trap-assert-stderr-unmatched"></a><h3>g_test_trap_assert_stderr_unmatched()</h3>
 
-<a class="indexterm" name="id-1.5.29.7.49.2"></a>
+<a class="indexterm" name="id-1.5.29.7.50.2"></a>
 <pre class="programlisting">#define             g_test_trap_assert_stderr_unmatched(serrpattern)</pre>
 <p>Assert that the stderr output of the last test subprocess
 does not match <em class="parameter"><code>serrpattern</code></em>
@@ -2544,96 +2604,6 @@ does not match <em class="parameter"><code>serrpattern</code></em>
 </tr></tbody>
 </table>
 </div>
-</div>
-<p class="since">Since: <a class="link" href="api-index-2-16.html#api-index-2.16">2.16</a></p>
-</div>
-<div class="refsect2">
-<a name="g-test-trap-fork"></a><h3>g_test_trap_fork ()</h3>
-
-<a class="indexterm" name="id-1.5.29.7.50.2"></a><a class="indexterm" name="id-1.5.29.7.50.3"></a>
-<pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
-g_test_trap_fork (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint64" title="guint64"><span class="type">guint64</span></a> usec_timeout</code></em>,
-                  <em class="parameter"><code><a class="link" href="glib-Testing.html#GTestTrapFlags" title="enum GTestTrapFlags"><span class="type">GTestTrapFlags</span></a> test_trap_flags</code></em>);</pre>
-<div class="warning">
-<p><code class="literal">g_test_trap_fork</code> is deprecated and should not be used in newly-written code.</p> <p>This function is implemented only on Unix platforms,
-and is not always reliable due to problems inherent in
-fork-without-exec. Use <a class="link" href="glib-Testing.html#g-test-trap-subprocess" title="g_test_trap_subprocess ()"><code class="function">g_test_trap_subprocess()</code></a> instead.</p>
-</div>
-<p>Fork the current test program to execute a test case that might
-not return or that might abort.</p>
-<p>If <em class="parameter"><code>usec_timeout</code></em>
- is non-0, the forked test case is aborted and
-considered failing if its run time exceeds it.</p>
-<p>The forking behavior can be configured with the <a class="link" href="glib-Testing.html#GTestTrapFlags" title="enum GTestTrapFlags"><span class="type">GTestTrapFlags</span></a> flags.</p>
-<p>In the following example, the test code forks, the forked child
-process produces some sample output and exits successfully.
-The forking parent process then asserts successful child program
-termination and validates child program outputs.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="k">static</span> <span class="kt">void</span>
-<span class="nf">test_fork_patterns</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">g_test_trap_fork</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">G_TEST_TRAP_SILENCE_STDOUT</span> <span class="o">|</span> <span class="n">G_TEST_TRAP_SILENCE_STDERR</span><span class="p">))</span>
-    <span class="p">{</span>
-      <span class="n">g_print</span> <span class="p">(</span><span class="s">&quot;some stdout text: somagic17</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-      <span class="n">g_printerr</span> <span class="p">(</span><span class="s">&quot;some stderr text: semagic43</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-      <span class="n">exit</span> <span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// successful test run</span>
-    <span class="p">}</span>
-  <span class="n">g_test_trap_assert_passed</span> <span class="p">();</span>
-  <span class="n">g_test_trap_assert_stdout</span> <span class="p">(</span><span class="s">&quot;*somagic17*&quot;</span><span class="p">);</span>
-  <span class="n">g_test_trap_assert_stderr</span> <span class="p">(</span><span class="s">&quot;*semagic43*&quot;</span><span class="p">);</span>
-<span class="p">}</span></pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<p></p>
-<div class="refsect3">
-<a name="g-test-trap-fork.parameters"></a><h4>Parameters</h4>
-
-<div class="informaltable">
-<table class="informaltable" width="100%" border="0">
-<colgroup>
-<col width="150px" class="parameters_name">
-<col class="parameters_description">
-<col width="200px" class="parameters_annotations">
-</colgroup>
-<tbody>
-<tr>
-<td class="parameter_name"><p>usec_timeout</p></td>
-<td class="parameter_description"><p>Timeout for the forked test in micro seconds.</p></td>
-<td class="parameter_annotations"> </td>
-</tr>
-<tr>
-<td class="parameter_name"><p>test_trap_flags</p></td>
-<td class="parameter_description"><p>Flags to modify forking behaviour.</p></td>
-<td class="parameter_annotations"> </td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="refsect3">
-<a name="g-test-trap-fork.returns"></a><h4>Returns</h4>
-
-<p> <a class="link" href="glib-Standard-Macros.html#TRUE:CAPS" title="TRUE"><code class="literal">TRUE</code></a> for the forked child and <a class="link" href="glib-Standard-Macros.html#FALSE:CAPS" title="FALSE"><code class="literal">FALSE</code></a> for the executing parent process.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-16.html#api-index-2.16">2.16</a></p>
 </div>
@@ -3029,7 +2999,7 @@ actual values of <em class="parameter"><code>n1</code></em>
 <tbody>
 <tr>
 <td class="parameter_name"><p>n1</p></td>
-<td class="parameter_description"><p>an floating point number</p></td>
+<td class="parameter_description"><p>a floating point number</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -3074,7 +3044,7 @@ actual values of <em class="parameter"><code>n1</code></em>
 <tbody>
 <tr>
 <td class="parameter_name"><p>n1</p></td>
-<td class="parameter_description"><p>an floating point number</p></td>
+<td class="parameter_description"><p>a floating point number</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -3806,67 +3776,11 @@ build from git) and are considered as distributed files.</p>
 <p class="since">Since: <a class="link" href="api-index-2-38.html#api-index-2.38">2.38</a></p>
 </div>
 <div class="refsect2">
-<a name="GTestTrapFlags"></a><h3>enum GTestTrapFlags</h3>
-
-<a class="indexterm" name="id-1.5.29.8.4.2"></a>
-<div class="warning">
-<p><code class="literal">GTestTrapFlags</code> is deprecated and should not be used in newly-written code.</p> <p><a class="link" href="glib-Testing.html#GTestTrapFlags" title="enum GTestTrapFlags"><span class="type">GTestTrapFlags</span></a> is used only with <a class="link" href="glib-Testing.html#g-test-trap-fork" title="g_test_trap_fork ()"><code class="function">g_test_trap_fork()</code></a>,
-which is deprecated. <a class="link" href="glib-Testing.html#g-test-trap-subprocess" title="g_test_trap_subprocess ()"><code class="function">g_test_trap_subprocess()</code></a> uses
-<a class="link" href="glib-Testing.html#GTestSubprocessFlags" title="enum GTestSubprocessFlags"><span class="type">GTestSubprocessFlags</span></a>.</p>
-</div>
-<p>Test traps are guards around forked tests.
-These flags determine what traps to set.</p>
-<div class="refsect3">
-<a name="GTestTrapFlags.members"></a><h4>Members</h4>
-
-<div class="informaltable">
-<table class="informaltable" width="100%" border="0">
-<colgroup>
-<col width="300px" class="enum_members_name">
-<col class="enum_members_description">
-<col width="200px" class="enum_members_annotations">
-</colgroup>
-<tbody>
-<tr>
-<td class="enum_member_name"><p><a name="G-TEST-TRAP-SILENCE-STDOUT:CAPS"></a>G_TEST_TRAP_SILENCE_STDOUT</p></td>
-<td class="enum_member_description">
-<p>Redirect stdout of the test child to
-<code class="literal">/dev/null</code> so it cannot be observed on the console during test
-runs. The actual output is still captured though to allow later
-tests with <a class="link" href="glib-Testing.html#g-test-trap-assert-stdout" title="g_test_trap_assert_stdout()"><code class="function">g_test_trap_assert_stdout()</code></a>.</p>
-</td>
-<td class="enum_member_annotations"> </td>
-</tr>
-<tr>
-<td class="enum_member_name"><p><a name="G-TEST-TRAP-SILENCE-STDERR:CAPS"></a>G_TEST_TRAP_SILENCE_STDERR</p></td>
-<td class="enum_member_description">
-<p>Redirect stderr of the test child to
-<code class="literal">/dev/null</code> so it cannot be observed on the console during test
-runs. The actual output is still captured though to allow later
-tests with <a class="link" href="glib-Testing.html#g-test-trap-assert-stderr" title="g_test_trap_assert_stderr()"><code class="function">g_test_trap_assert_stderr()</code></a>.</p>
-</td>
-<td class="enum_member_annotations"> </td>
-</tr>
-<tr>
-<td class="enum_member_name"><p><a name="G-TEST-TRAP-INHERIT-STDIN:CAPS"></a>G_TEST_TRAP_INHERIT_STDIN</p></td>
-<td class="enum_member_description">
-<p>If this flag is given, stdin of the
-child process is shared with stdin of its parent process.
-It is redirected to <code class="literal">/dev/null</code> otherwise.</p>
-</td>
-<td class="enum_member_annotations"> </td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div class="refsect2">
 <a name="GTestSubprocessFlags"></a><h3>enum GTestSubprocessFlags</h3>
 
-<a class="indexterm" name="id-1.5.29.8.5.2"></a>
+<a class="indexterm" name="id-1.5.29.8.4.2"></a>
 <p>Flags to pass to <a class="link" href="glib-Testing.html#g-test-trap-subprocess" title="g_test_trap_subprocess ()"><code class="function">g_test_trap_subprocess()</code></a> to control input and output.</p>
-<p>Note that in contrast with <a class="link" href="glib-Testing.html#g-test-trap-fork" title="g_test_trap_fork ()"><code class="function">g_test_trap_fork()</code></a>, the default is to
+<p>Note that in contrast with <a class="link" href=""><code class="function">g_test_trap_fork()</code></a>, the default is to
 not show stdout and stderr.</p>
 <div class="refsect3">
 <a name="GTestSubprocessFlags.members"></a><h4>Members</h4>
@@ -3880,33 +3794,19 @@ not show stdout and stderr.</p>
 </colgroup>
 <tbody>
 <tr>
-<td class="enum_member_name"><p><a name="G-TEST-SUBPROCESS-INHERIT-STDIN:CAPS"></a>G_TEST_SUBPROCESS_INHERIT_STDIN</p></td>
-<td class="enum_member_description">
-<p>If this flag is given, the child
-process will inherit the parent's stdin. Otherwise, the child's
-stdin is redirected to <code class="literal">/dev/null</code>.</p>
-</td>
-<td class="enum_member_annotations"> </td>
+<td class="enum_member_name"><p><a name="G-TEST-TRAP-SILENCE-STDOUT:CAPS"></a>G_TEST_TRAP_SILENCE_STDOUT</p></td>
+<td> </td>
+<td> </td>
 </tr>
 <tr>
-<td class="enum_member_name"><p><a name="G-TEST-SUBPROCESS-INHERIT-STDOUT:CAPS"></a>G_TEST_SUBPROCESS_INHERIT_STDOUT</p></td>
-<td class="enum_member_description">
-<p>If this flag is given, the child
-process will inherit the parent's stdout. Otherwise, the child's
-stdout will not be visible, but it will be captured to allow
-later tests with <a class="link" href="glib-Testing.html#g-test-trap-assert-stdout" title="g_test_trap_assert_stdout()"><code class="function">g_test_trap_assert_stdout()</code></a>.</p>
-</td>
-<td class="enum_member_annotations"> </td>
+<td class="enum_member_name"><p><a name="G-TEST-TRAP-SILENCE-STDERR:CAPS"></a>G_TEST_TRAP_SILENCE_STDERR</p></td>
+<td> </td>
+<td> </td>
 </tr>
 <tr>
-<td class="enum_member_name"><p><a name="G-TEST-SUBPROCESS-INHERIT-STDERR:CAPS"></a>G_TEST_SUBPROCESS_INHERIT_STDERR</p></td>
-<td class="enum_member_description">
-<p>If this flag is given, the child
-process will inherit the parent's stderr. Otherwise, the child's
-stderr will not be visible, but it will be captured to allow
-later tests with <a class="link" href="glib-Testing.html#g-test-trap-assert-stderr" title="g_test_trap_assert_stderr()"><code class="function">g_test_trap_assert_stderr()</code></a>.</p>
-</td>
-<td class="enum_member_annotations"> </td>
+<td class="enum_member_name"><p><a name="G-TEST-TRAP-INHERIT-STDIN:CAPS"></a>G_TEST_TRAP_INHERIT_STDIN</p></td>
+<td> </td>
+<td> </td>
 </tr>
 </tbody>
 </table>
@@ -3916,7 +3816,7 @@ later tests with <a class="link" href="glib-Testing.html#g-test-trap-assert-stde
 <div class="refsect2">
 <a name="GTestCase"></a><h3>GTestCase</h3>
 
-<a class="indexterm" name="id-1.5.29.8.6.2"></a>
+<a class="indexterm" name="id-1.5.29.8.5.2"></a>
 <pre class="programlisting">typedef struct GTestCase  GTestCase;
 </pre>
 <p>An opaque structure representing a test case.</p>
@@ -3924,17 +3824,11 @@ later tests with <a class="link" href="glib-Testing.html#g-test-trap-assert-stde
 <div class="refsect2">
 <a name="GTestSuite"></a><h3>GTestSuite</h3>
 
-<a class="indexterm" name="id-1.5.29.8.7.2"></a>
+<a class="indexterm" name="id-1.5.29.8.6.2"></a>
 <pre class="programlisting">typedef struct GTestSuite GTestSuite;
 </pre>
 <p>An opaque structure representing a test suite.</p>
 </div>
-
-</div>
-<div class="refsect1">
-<a name="glib-Testing.see-also"></a><h2>See Also</h2>
-
-<p><a class="link" href="gtester.html" title="gtester">gtester</a>, <a class="link" href="gtester-report.html" title="gtester-report">gtester-report</a></p>
 
 </div>
 

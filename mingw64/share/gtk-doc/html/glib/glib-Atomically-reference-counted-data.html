@@ -325,7 +325,7 @@ ancillary function that calls <a class="link" href="glib-Reference-counted-data.
   <span class="n">g_atomic_rc_box_release_full</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">GDestroyNotify</span><span class="p">)</span> <span class="n">my_data_struct_clear</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="n">G_DEFINE_AUTOPTR_CLEANUP_FUNC</span> <span class="p">(</span><span class="n">MyDataStruct</span><span class="p">,</span> <span class="n">my_data_struct_clear</span><span class="p">)</span></pre></td>
+<span class="n">G_DEFINE_AUTOPTR_CLEANUP_FUNC</span> <span class="p">(</span><span class="n">MyDataStruct</span><span class="p">,</span> <span class="n">my_data_struct_release</span><span class="p">)</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -505,7 +505,7 @@ memory, cast to a pointer for the given <em class="parameter"><code>type</code><
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
 g_atomic_rc_box_dup (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gsize" title="gsize"><span class="type">gsize</span></a> block_size</code></em>,
                      <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> mem_block</code></em>);</pre>
-<p>Allocates a new block of data with atomit reference counting
+<p>Allocates a new block of data with atomic reference counting
 semantics, and copies <em class="parameter"><code>block_size</code></em>
  bytes of <em class="parameter"><code>mem_block</code></em>
 

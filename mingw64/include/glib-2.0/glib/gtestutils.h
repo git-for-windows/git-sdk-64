@@ -149,7 +149,14 @@ typedef void (*GTestFixtureFunc) (gpointer      fixture,
 #endif
 
 #ifdef G_DISABLE_ASSERT
+/* https://gcc.gnu.org/onlinedocs/gcc-8.3.0/gcc/Other-Builtins.html#index-_005f_005fbuiltin_005funreachable
+ * GCC 5 is not a strict lower bound for versions of GCC which provide __builtin_unreachable(). */
+#if __GNUC__ >= 5 || g_macro__has_builtin(__builtin_unreachable)
+#define g_assert_not_reached()          G_STMT_START { (void) 0; __builtin_unreachable (); } G_STMT_END
+#else  /* if __builtin_unreachable() is not supported: */
 #define g_assert_not_reached()          G_STMT_START { (void) 0; } G_STMT_END
+#endif
+
 #define g_assert(expr)                  G_STMT_START { (void) 0; } G_STMT_END
 #else /* !G_DISABLE_ASSERT */
 #define g_assert_not_reached()          G_STMT_START { g_assertion_message_expr (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, NULL); } G_STMT_END
@@ -314,6 +321,8 @@ GLIB_AVAILABLE_IN_ALL
 void    g_test_bug_base                 (const char *uri_pattern);
 GLIB_AVAILABLE_IN_ALL
 void    g_test_bug                      (const char *bug_uri_snippet);
+GLIB_AVAILABLE_IN_2_62
+void    g_test_summary                  (const char *summary);
 /* measure test timings */
 GLIB_AVAILABLE_IN_ALL
 void    g_test_timer_start              (void);
@@ -330,15 +339,40 @@ void    g_test_queue_destroy            (GDestroyNotify destroy_func,
                                          gpointer       destroy_data);
 #define g_test_queue_unref(gobject)     g_test_queue_destroy (g_object_unref, gobject)
 
+/**
+ * GTestTrapFlags:
+ * @G_TEST_TRAP_SILENCE_STDOUT: Redirect stdout of the test child to
+ *     `/dev/null` so it cannot be observed on the console during test
+ *     runs. The actual output is still captured though to allow later
+ *     tests with g_test_trap_assert_stdout().
+ * @G_TEST_TRAP_SILENCE_STDERR: Redirect stderr of the test child to
+ *     `/dev/null` so it cannot be observed on the console during test
+ *     runs. The actual output is still captured though to allow later
+ *     tests with g_test_trap_assert_stderr().
+ * @G_TEST_TRAP_INHERIT_STDIN: If this flag is given, stdin of the
+ *     child process is shared with stdin of its parent process.
+ *     It is redirected to `/dev/null` otherwise.
+ *
+ * Test traps are guards around forked tests.
+ * These flags determine what traps to set.
+ *
+ * Deprecated: 2.38: #GTestTrapFlags is used only with g_test_trap_fork(),
+ * which is deprecated. g_test_trap_subprocess() uses
+ * #GTestSubprocessFlags.
+ */
 typedef enum {
   G_TEST_TRAP_SILENCE_STDOUT    = 1 << 7,
   G_TEST_TRAP_SILENCE_STDERR    = 1 << 8,
   G_TEST_TRAP_INHERIT_STDIN     = 1 << 9
-} GTestTrapFlags;
+} GTestTrapFlags GLIB_DEPRECATED_TYPE_IN_2_38_FOR(GTestSubprocessFlags);
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 
 GLIB_DEPRECATED_IN_2_38_FOR (g_test_trap_subprocess)
 gboolean g_test_trap_fork               (guint64              usec_timeout,
                                          GTestTrapFlags       test_trap_flags);
+
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 typedef enum {
   G_TEST_SUBPROCESS_INHERIT_STDIN  = 1 << 0,

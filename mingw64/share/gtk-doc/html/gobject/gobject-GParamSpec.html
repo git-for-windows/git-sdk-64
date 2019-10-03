@@ -1804,6 +1804,7 @@ the pool<a class="link" href=""><span class="type">GParamSpecs</span></a>. </p>
   GType		 owner_type; /* class or interface using this property */
 };
 </pre>
+<div class="warning"><p><code class="literal">GParamSpec</code> is deprecated and should not be used in newly-written code.</p></div>
 <p>All other fields of the GParamSpec struct are private and
 should not be used directly.</p>
 <div class="refsect3">
@@ -2000,13 +2001,6 @@ Since 2.8</p>
 <td class="enum_member_annotations"> </td>
 </tr>
 <tr>
-<td class="enum_member_name"><p><a name="G-PARAM-PRIVATE:CAPS"></a>G_PARAM_PRIVATE</p></td>
-<td class="enum_member_description">
-<p>internal</p>
-</td>
-<td class="enum_member_annotations"> </td>
-</tr>
-<tr>
 <td class="enum_member_name"><p><a name="G-PARAM-STATIC-NICK:CAPS"></a>G_PARAM_STATIC_NICK</p></td>
 <td class="enum_member_description">
 <p>the string used as nick when constructing the
@@ -2183,6 +2177,7 @@ according to <em class="parameter"><code>pspec</code></em>
 
 <a class="indexterm" name="id-1.4.10.8.9.2"></a>
 <pre class="programlisting">typedef struct _GParamSpecPool GParamSpecPool;</pre>
+<div class="warning"><p><code class="literal">GParamSpecPool</code> is deprecated and should not be used in newly-written code.</p></div>
 <p>A <a class="link" href="gobject-GParamSpec.html#GParamSpecPool" title="GParamSpecPool"><span class="type">GParamSpecPool</span></a> maintains a collection of <a class="link" href=""><span class="type">GParamSpecs</span></a> which can be
 quickly accessed by owner and name. The implementation of the <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> property
 system uses such a pool to store the <a class="link" href=""><span class="type">GParamSpecs</span></a> of the properties all object

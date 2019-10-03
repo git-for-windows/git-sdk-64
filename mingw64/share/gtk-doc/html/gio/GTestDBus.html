@@ -7,7 +7,7 @@
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="testing.html" title="GIO Testing">
 <link rel="prev" href="testing.html" title="GIO Testing">
-<link rel="next" href="migrating.html" title="Part III. Migrating to GIO">
+<link rel="next" href="win32-support.html" title="Win32 support">
 <meta name="generator" content="GTK-Doc V1.31 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
@@ -17,7 +17,7 @@
 <td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
 <td><a accesskey="u" href="testing.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
 <td><a accesskey="p" href="testing.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
-<td><a accesskey="n" href="migrating.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+<td><a accesskey="n" href="win32-support.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
 </tr></table>
 <div class="refentry">
 <a name="GTestDBus"></a><div class="titlepage"></div>
@@ -174,7 +174,7 @@ threads are spawned, or should have appropriate locking to ensure no access
 conflicts to environment variables shared between <a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> and other
 threads.</p>
 <div class="refsect3">
-<a name="id-1.4.27.2.8.4"></a><h4>Creating unit tests using GTestDBus</h4>
+<a name="id-1.4.26.2.8.4"></a><h4>Creating unit tests using GTestDBus</h4>
 <p>Testing of D-Bus services can be tricky because normally we only ever run
 D-Bus services over an existing instance of the D-Bus daemon thus we
 usually don't activate D-Bus services that are not yet installed into the
@@ -271,7 +271,7 @@ do the following in the directory holding schemas:</p>
 <div class="refsect2">
 <a name="g-test-dbus-new"></a><h3>g_test_dbus_new ()</h3>
 
-<a class="indexterm" name="id-1.4.27.2.9.2.2"></a>
+<a class="indexterm" name="id-1.4.26.2.9.2.2"></a>
 <pre class="programlisting"><a class="link" href="GTestDBus.html" title="GTestDBus"><span class="returnvalue">GTestDBus</span></a> *
 g_test_dbus_new (<em class="parameter"><code><a class="link" href="GTestDBus.html#GTestDBusFlags" title="enum GTestDBusFlags"><span class="type">GTestDBusFlags</span></a> flags</code></em>);</pre>
 <p>Create a new <a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> object.</p>
@@ -303,7 +303,7 @@ g_test_dbus_new (<em class="parameter"><code><a class="link" href="GTestDBus.htm
 <div class="refsect2">
 <a name="g-test-dbus-get-flags"></a><h3>g_test_dbus_get_flags ()</h3>
 
-<a class="indexterm" name="id-1.4.27.2.9.3.2"></a>
+<a class="indexterm" name="id-1.4.26.2.9.3.2"></a>
 <pre class="programlisting"><a class="link" href="GTestDBus.html#GTestDBusFlags" title="enum GTestDBusFlags"><span class="returnvalue">GTestDBusFlags</span></a>
 g_test_dbus_get_flags (<em class="parameter"><code><a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> *self</code></em>);</pre>
 <p>Get the flags of the <a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> object.</p>
@@ -334,7 +334,7 @@ g_test_dbus_get_flags (<em class="parameter"><code><a class="link" href="GTestDB
 <div class="refsect2">
 <a name="g-test-dbus-get-bus-address"></a><h3>g_test_dbus_get_bus_address ()</h3>
 
-<a class="indexterm" name="id-1.4.27.2.9.4.2"></a>
+<a class="indexterm" name="id-1.4.26.2.9.4.2"></a>
 <pre class="programlisting">const <a class="link" href=""><span class="returnvalue">gchar</span></a> *
 g_test_dbus_get_bus_address (<em class="parameter"><code><a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> *self</code></em>);</pre>
 <p>Get the address on which dbus-daemon is running. If <a class="link" href="GTestDBus.html#g-test-dbus-up" title="g_test_dbus_up ()"><code class="function">g_test_dbus_up()</code></a> has not
@@ -368,7 +368,7 @@ been called yet, <a class="link" href=""><code class="literal">NULL</code></a> i
 <div class="refsect2">
 <a name="g-test-dbus-add-service-dir"></a><h3>g_test_dbus_add_service_dir ()</h3>
 
-<a class="indexterm" name="id-1.4.27.2.9.5.2"></a>
+<a class="indexterm" name="id-1.4.26.2.9.5.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_dbus_add_service_dir (<em class="parameter"><code><a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> *self</code></em>,
                              <em class="parameter"><code>const <a class="link" href=""><span class="type">gchar</span></a> *path</code></em>);</pre>
@@ -403,7 +403,7 @@ called after <a class="link" href="GTestDBus.html#g-test-dbus-up" title="g_test_
 <div class="refsect2">
 <a name="g-test-dbus-up"></a><h3>g_test_dbus_up ()</h3>
 
-<a class="indexterm" name="id-1.4.27.2.9.6.2"></a>
+<a class="indexterm" name="id-1.4.26.2.9.6.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_dbus_up (<em class="parameter"><code><a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> *self</code></em>);</pre>
 <p>Start a dbus-daemon instance and set DBUS_SESSION_BUS_ADDRESS. After this
@@ -434,7 +434,7 @@ must be called after <a class="link" href=""><code class="function">g_test_run()
 <div class="refsect2">
 <a name="g-test-dbus-stop"></a><h3>g_test_dbus_stop ()</h3>
 
-<a class="indexterm" name="id-1.4.27.2.9.7.2"></a>
+<a class="indexterm" name="id-1.4.26.2.9.7.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_dbus_stop (<em class="parameter"><code><a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> *self</code></em>);</pre>
 <p>Stop the session bus started by <a class="link" href="GTestDBus.html#g-test-dbus-up" title="g_test_dbus_up ()"><code class="function">g_test_dbus_up()</code></a>.</p>
@@ -464,12 +464,12 @@ can use this function but should still call <a class="link" href="GTestDBus.html
 <div class="refsect2">
 <a name="g-test-dbus-down"></a><h3>g_test_dbus_down ()</h3>
 
-<a class="indexterm" name="id-1.4.27.2.9.8.2"></a>
+<a class="indexterm" name="id-1.4.26.2.9.8.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_dbus_down (<em class="parameter"><code><a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> *self</code></em>);</pre>
 <p>Stop the session bus started by <a class="link" href="GTestDBus.html#g-test-dbus-up" title="g_test_dbus_up ()"><code class="function">g_test_dbus_up()</code></a>.</p>
 <p>This will wait for the singleton returned by <a class="link" href="GDBusConnection.html#g-bus-get" title="g_bus_get ()"><code class="function">g_bus_get()</code></a> or <a class="link" href="GDBusConnection.html#g-bus-get-sync" title="g_bus_get_sync ()"><code class="function">g_bus_get_sync()</code></a>
-is destroyed. This is done to ensure that the next unit test won't get a
+to be destroyed. This is done to ensure that the next unit test won't get a
 leaked singleton from this test.</p>
 <div class="refsect3">
 <a name="g-test-dbus-down.parameters"></a><h4>Parameters</h4>
@@ -493,7 +493,7 @@ leaked singleton from this test.</p>
 <div class="refsect2">
 <a name="g-test-dbus-unset"></a><h3>g_test_dbus_unset ()</h3>
 
-<a class="indexterm" name="id-1.4.27.2.9.9.2"></a>
+<a class="indexterm" name="id-1.4.26.2.9.9.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_test_dbus_unset (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Unset DISPLAY and DBUS_SESSION_BUS_ADDRESS env variables to ensure the test
@@ -510,7 +510,7 @@ bus is running. It is not necessary to call this if unit test already calls
 <div class="refsect2">
 <a name="GTestDBus-struct"></a><h3>GTestDBus</h3>
 
-<a class="indexterm" name="id-1.4.27.2.10.2.2"></a>
+<a class="indexterm" name="id-1.4.26.2.10.2.2"></a>
 <pre class="programlisting">typedef struct _GTestDBus GTestDBus;</pre>
 <p>The <a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> structure contains only private data and
 should only be accessed using the provided API.</p>
@@ -519,7 +519,7 @@ should only be accessed using the provided API.</p>
 <div class="refsect2">
 <a name="GTestDBusFlags"></a><h3>enum GTestDBusFlags</h3>
 
-<a class="indexterm" name="id-1.4.27.2.10.3.2"></a>
+<a class="indexterm" name="id-1.4.26.2.10.3.2"></a>
 <p>Flags to define future <a class="link" href="GTestDBus.html" title="GTestDBus"><span class="type">GTestDBus</span></a> behaviour.</p>
 <div class="refsect3">
 <a name="GTestDBusFlags.members"></a><h4>Members</h4>
@@ -550,7 +550,7 @@ should only be accessed using the provided API.</p>
 
 <div class="refsect2">
 <a name="GTestDBus--flags"></a><h3>The <code class="literal">“flags”</code> property</h3>
-<a class="indexterm" name="id-1.4.27.2.11.2.2"></a>
+<a class="indexterm" name="id-1.4.26.2.11.2.2"></a>
 <pre class="programlisting">  “flags”                    <a class="link" href="GTestDBus.html#GTestDBusFlags" title="enum GTestDBusFlags"><span class="type">GTestDBusFlags</span></a></pre>
 <p><a class="link" href="GTestDBus.html#GTestDBusFlags" title="enum GTestDBusFlags"><span class="type">GTestDBusFlags</span></a> specifying the behaviour of the D-Bus session.</p>
 <p>Owner: GTestDBus</p>

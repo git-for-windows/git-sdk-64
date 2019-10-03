@@ -75,6 +75,8 @@ GArray* g_array_sized_new         (gboolean          zero_terminated,
 				   gboolean          clear_,
 				   guint             element_size,
 				   guint             reserved_size);
+GLIB_AVAILABLE_IN_2_62
+GArray* g_array_copy              (GArray           *array);
 GLIB_AVAILABLE_IN_ALL
 gchar*  g_array_free              (GArray           *array,
 				   gboolean          free_segment);
@@ -117,6 +119,11 @@ GLIB_AVAILABLE_IN_ALL
 void    g_array_sort_with_data    (GArray           *array,
 				   GCompareDataFunc  compare_func,
 				   gpointer          user_data);
+GLIB_AVAILABLE_IN_2_62
+gboolean g_array_binary_search    (GArray           *array,
+                                   gconstpointer     target,
+                                   GCompareFunc      compare_func,
+                                   guint            *out_match_index);
 GLIB_AVAILABLE_IN_ALL
 void    g_array_set_clear_func    (GArray           *array,
                                    GDestroyNotify    clear_func);
@@ -130,6 +137,10 @@ GLIB_AVAILABLE_IN_ALL
 GPtrArray* g_ptr_array_new                (void);
 GLIB_AVAILABLE_IN_ALL
 GPtrArray* g_ptr_array_new_with_free_func (GDestroyNotify    element_free_func);
+GLIB_AVAILABLE_IN_2_62
+GPtrArray *g_ptr_array_copy               (GPtrArray        *array,
+                                           GCopyFunc         func,
+                                           gpointer          user_data);
 GLIB_AVAILABLE_IN_ALL
 GPtrArray* g_ptr_array_sized_new          (guint             reserved_size);
 GLIB_AVAILABLE_IN_ALL
@@ -173,6 +184,14 @@ GPtrArray *g_ptr_array_remove_range       (GPtrArray        *array,
 GLIB_AVAILABLE_IN_ALL
 void       g_ptr_array_add                (GPtrArray        *array,
 					   gpointer          data);
+GLIB_AVAILABLE_IN_2_62
+void g_ptr_array_extend                   (GPtrArray        *array_to_extend,
+                                           GPtrArray        *array,
+                                           GCopyFunc         func,
+                                           gpointer          user_data);
+GLIB_AVAILABLE_IN_2_62
+void g_ptr_array_extend_and_steal         (GPtrArray        *array_to_extend,
+                                           GPtrArray        *array);
 GLIB_AVAILABLE_IN_2_40
 void       g_ptr_array_insert             (GPtrArray        *array,
                                            gint              index_,

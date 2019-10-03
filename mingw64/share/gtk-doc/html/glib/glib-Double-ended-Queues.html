@@ -261,7 +261,23 @@ Double-ended Queues
 <a class="link" href=""><span class="returnvalue">void</span></a>
 </td>
 <td class="function_name">
+<a class="link" href="glib-Double-ended-Queues.html#g-queue-insert-before-link" title="g_queue_insert_before_link ()">g_queue_insert_before_link</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">void</span></a>
+</td>
+<td class="function_name">
 <a class="link" href="glib-Double-ended-Queues.html#g-queue-insert-after" title="g_queue_insert_after ()">g_queue_insert_after</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href=""><span class="returnvalue">void</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="glib-Double-ended-Queues.html#g-queue-insert-after-link" title="g_queue_insert_after_link ()">g_queue_insert_after_link</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -1443,9 +1459,58 @@ push at the tail of the queue. </p></td>
 <p class="since">Since: <a class="link" href="api-index-2-4.html#api-index-2.4">2.4</a></p>
 </div>
 <div class="refsect2">
-<a name="g-queue-insert-after"></a><h3>g_queue_insert_after ()</h3>
+<a name="g-queue-insert-before-link"></a><h3>g_queue_insert_before_link ()</h3>
 
 <a class="indexterm" name="id-1.6.4.7.29.2"></a>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
+g_queue_insert_before_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
+                            <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *sibling</code></em>,
+                            <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *link_</code></em>);</pre>
+<p>Inserts <em class="parameter"><code>link_</code></em>
+ into <em class="parameter"><code>queue</code></em>
+ before <em class="parameter"><code>sibling</code></em>
+.</p>
+<p><em class="parameter"><code>sibling</code></em>
+ must be part of <em class="parameter"><code>queue</code></em>
+.</p>
+<div class="refsect3">
+<a name="g-queue-insert-before-link.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>queue</p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>sibling</p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> link that must be part of <em class="parameter"><code>queue</code></em>
+, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to
+push at the tail of the queue. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">nullable</acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>link_</p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> link to insert which must not be part of any other list.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-62.html#api-index-2.62">2.62</a></p>
+</div>
+<div class="refsect2">
+<a name="g-queue-insert-after"></a><h3>g_queue_insert_after ()</h3>
+
+<a class="indexterm" name="id-1.6.4.7.30.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_queue_insert_after (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                       <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *sibling</code></em>,
@@ -1493,9 +1558,58 @@ push at the head of the queue. </p></td>
 <p class="since">Since: <a class="link" href="api-index-2-4.html#api-index-2.4">2.4</a></p>
 </div>
 <div class="refsect2">
+<a name="g-queue-insert-after-link"></a><h3>g_queue_insert_after_link ()</h3>
+
+<a class="indexterm" name="id-1.6.4.7.31.2"></a>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
+g_queue_insert_after_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
+                           <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *sibling</code></em>,
+                           <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *link_</code></em>);</pre>
+<p>Inserts <em class="parameter"><code>link_</code></em>
+ into <em class="parameter"><code>queue</code></em>
+ after <em class="parameter"><code>sibling</code></em>
+.</p>
+<p><em class="parameter"><code>sibling</code></em>
+ must be part of <em class="parameter"><code>queue</code></em>
+.</p>
+<div class="refsect3">
+<a name="g-queue-insert-after-link.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>queue</p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>sibling</p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> link that must be part of <em class="parameter"><code>queue</code></em>
+, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to
+push at the head of the queue. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">nullable</acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>link_</p></td>
+<td class="parameter_description"><p>a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> link to insert which must not be part of any other list.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-62.html#api-index-2.62">2.62</a></p>
+</div>
+<div class="refsect2">
 <a name="g-queue-insert-sorted"></a><h3>g_queue_insert_sorted ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.30.2"></a>
+<a class="indexterm" name="id-1.6.4.7.32.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_queue_insert_sorted (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> data</code></em>,
@@ -1552,7 +1666,7 @@ element comes before the first.</p></td>
 <div class="refsect2">
 <a name="g-queue-push-head-link"></a><h3>g_queue_push_head_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.31.2"></a>
+<a class="indexterm" name="id-1.6.4.7.33.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_queue_push_head_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                         <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *link_</code></em>);</pre>
@@ -1586,7 +1700,7 @@ g_queue_push_head_link (<em class="parameter"><code><a class="link" href="glib-D
 <div class="refsect2">
 <a name="g-queue-push-tail-link"></a><h3>g_queue_push_tail_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.32.2"></a>
+<a class="indexterm" name="id-1.6.4.7.34.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_queue_push_tail_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                         <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *link_</code></em>);</pre>
@@ -1620,7 +1734,7 @@ g_queue_push_tail_link (<em class="parameter"><code><a class="link" href="glib-D
 <div class="refsect2">
 <a name="g-queue-push-nth-link"></a><h3>g_queue_push_nth_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.33.2"></a>
+<a class="indexterm" name="id-1.6.4.7.35.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_queue_push_nth_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="type">gint</span></a> n</code></em>,
@@ -1668,7 +1782,7 @@ the number of elements in <em class="parameter"><code>queue</code></em>
 <div class="refsect2">
 <a name="g-queue-pop-head-link"></a><h3>g_queue_pop_head_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.34.2"></a>
+<a class="indexterm" name="id-1.6.4.7.36.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_queue_pop_head_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>);</pre>
 <p>Removes and returns the first element of the queue.</p>
@@ -1700,7 +1814,7 @@ if the queue is empty</p>
 <div class="refsect2">
 <a name="g-queue-pop-tail-link"></a><h3>g_queue_pop_tail_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.35.2"></a>
+<a class="indexterm" name="id-1.6.4.7.37.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_queue_pop_tail_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>);</pre>
 <p>Removes and returns the last element of the queue.</p>
@@ -1732,7 +1846,7 @@ if the queue is empty</p>
 <div class="refsect2">
 <a name="g-queue-pop-nth-link"></a><h3>g_queue_pop_nth_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.36.2"></a>
+<a class="indexterm" name="id-1.6.4.7.38.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_queue_pop_nth_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                       <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> n</code></em>);</pre>
@@ -1775,7 +1889,7 @@ is off the end of <em class="parameter"><code>queue</code></em>
 <div class="refsect2">
 <a name="g-queue-peek-head-link"></a><h3>g_queue_peek_head_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.37.2"></a>
+<a class="indexterm" name="id-1.6.4.7.39.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_queue_peek_head_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>);</pre>
 <p>Returns the first link in <em class="parameter"><code>queue</code></em>
@@ -1810,7 +1924,7 @@ is empty</p>
 <div class="refsect2">
 <a name="g-queue-peek-tail-link"></a><h3>g_queue_peek_tail_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.38.2"></a>
+<a class="indexterm" name="id-1.6.4.7.40.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_queue_peek_tail_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>);</pre>
 <p>Returns the last link in <em class="parameter"><code>queue</code></em>
@@ -1845,7 +1959,7 @@ is empty</p>
 <div class="refsect2">
 <a name="g-queue-peek-nth-link"></a><h3>g_queue_peek_nth_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.39.2"></a>
+<a class="indexterm" name="id-1.6.4.7.41.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_queue_peek_nth_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                        <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> n</code></em>);</pre>
@@ -1888,7 +2002,7 @@ is off the end of the list</p>
 <div class="refsect2">
 <a name="g-queue-link-index"></a><h3>g_queue_link_index ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.40.2"></a>
+<a class="indexterm" name="id-1.6.4.7.42.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="returnvalue">gint</span></a>
 g_queue_link_index (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                     <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *link_</code></em>);</pre>
@@ -1933,7 +2047,7 @@ not part of <em class="parameter"><code>queue</code></em>
 <div class="refsect2">
 <a name="g-queue-unlink"></a><h3>g_queue_unlink ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.41.2"></a>
+<a class="indexterm" name="id-1.6.4.7.43.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_queue_unlink (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                 <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *link_</code></em>);</pre>
@@ -1975,7 +2089,7 @@ The link is not freed.</p>
 <div class="refsect2">
 <a name="g-queue-delete-link"></a><h3>g_queue_delete_link ()</h3>
 
-<a class="indexterm" name="id-1.6.4.7.42.2"></a>
+<a class="indexterm" name="id-1.6.4.7.44.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_queue_delete_link (<em class="parameter"><code><a class="link" href="glib-Double-ended-Queues.html#GQueue" title="struct GQueue"><span class="type">GQueue</span></a> *queue</code></em>,
                      <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *link_</code></em>);</pre>

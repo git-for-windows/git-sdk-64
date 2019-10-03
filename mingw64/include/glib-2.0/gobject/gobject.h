@@ -424,10 +424,16 @@ GObject*    g_object_new_with_properties      (GType           object_type,
                                                guint           n_properties,
                                                const char     *names[],
                                                const GValue    values[]);
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
 GLIB_DEPRECATED_IN_2_54_FOR(g_object_new_with_properties)
 gpointer    g_object_newv		      (GType           object_type,
 					       guint	       n_parameters,
 					       GParameter     *parameters);
+
+G_GNUC_END_IGNORE_DEPRECATIONS
+
 GLIB_AVAILABLE_IN_ALL
 GObject*    g_object_new_valist               (GType           object_type,
 					       const gchar    *first_property_name,
@@ -737,6 +743,38 @@ static inline gboolean
   0 ? *(object_ptr) = (new_object), FALSE : \
   (g_set_object) ((GObject **) (object_ptr), (GObject *) (new_object)) \
  )
+
+/**
+ * g_assert_finalize_object: (skip)
+ * @object: (transfer full) (type GObject.Object): an object
+ *
+ * Assert that @object is non-%NULL, then release one reference to it with
+ * g_object_unref() and assert that it has been finalized (i.e. that there
+ * are no more references).
+ *
+ * If assertions are disabled via `G_DISABLE_ASSERT`,
+ * this macro just calls g_object_unref() without any further checks.
+ *
+ * This macro should only be used in regression tests.
+ *
+ * Since: 2.62
+ */
+static inline void
+(g_assert_finalize_object) (GObject *object)
+{
+  gpointer weak_pointer = object;
+
+  g_assert_true (G_IS_OBJECT (weak_pointer));
+  g_object_add_weak_pointer (object, &weak_pointer);
+  g_object_unref (weak_pointer);
+  g_assert_null (weak_pointer);
+}
+
+#ifdef G_DISABLE_ASSERT
+#define g_assert_finalize_object(object) g_object_unref (object)
+#else
+#define g_assert_finalize_object(object) (g_assert_finalize_object ((GObject *) object))
+#endif
 
 /**
  * g_clear_weak_pointer: (skip)

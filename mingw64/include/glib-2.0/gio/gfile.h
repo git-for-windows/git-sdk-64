@@ -80,14 +80,14 @@ typedef struct _GFileIface    		GFileIface;
  * @set_display_name: Sets the display name for a #GFile.
  * @set_display_name_async: Asynchronously sets a #GFile's display name.
  * @set_display_name_finish: Finishes asynchronously setting a #GFile's display name.
- * @query_settable_attributes: Returns a list of #GFileAttributes that can be set.
- * @_query_settable_attributes_async: Asynchronously gets a list of #GFileAttributes that can be set.
+ * @query_settable_attributes: Returns a list of #GFileAttributeInfos that can be set.
+ * @_query_settable_attributes_async: Asynchronously gets a list of #GFileAttributeInfos that can be set.
  * @_query_settable_attributes_finish: Finishes asynchronously querying settable attributes.
- * @query_writable_namespaces: Returns a list of #GFileAttribute namespaces that are writable.
- * @_query_writable_namespaces_async: Asynchronously gets a list of #GFileAttribute namespaces that are writable.
+ * @query_writable_namespaces: Returns a list of #GFileAttributeInfo namespaces that are writable.
+ * @_query_writable_namespaces_async: Asynchronously gets a list of #GFileAttributeInfo namespaces that are writable.
  * @_query_writable_namespaces_finish: Finishes asynchronously querying the writable namespaces.
- * @set_attribute: Sets a #GFileAttribute.
- * @set_attributes_from_info: Sets a #GFileAttribute with information from a #GFileInfo.
+ * @set_attribute: Sets a #GFileAttributeInfo.
+ * @set_attributes_from_info: Sets a #GFileAttributeInfo with information from a #GFileInfo.
  * @set_attributes_async: Asynchronously sets a file's attributes.
  * @set_attributes_finish: Finishes setting a file's attributes asynchronously.
  * @read_fn: Reads a file asynchronously.
@@ -140,16 +140,16 @@ typedef struct _GFileIface    		GFileIface;
  * @replace_readwrite_async: Asynchronously replaces file read/write. Since 2.22.
  * @replace_readwrite_finish: Finishes an asynchronous replace read/write. Since 2.22.
  * @start_mountable: Starts a mountable object. Since 2.22.
- * @start_mountable_finish: Finishes an start operation. Since 2.22.
+ * @start_mountable_finish: Finishes a start operation. Since 2.22.
  * @stop_mountable: Stops a mountable. Since 2.22.
- * @stop_mountable_finish: Finishes an stop operation. Since 2.22.
+ * @stop_mountable_finish: Finishes a stop operation. Since 2.22.
  * @supports_thread_contexts: a boolean that indicates whether the #GFile implementation supports thread-default contexts. Since 2.22.
  * @unmount_mountable_with_operation: Unmounts a mountable object using a #GMountOperation. Since 2.22.
  * @unmount_mountable_with_operation_finish: Finishes an unmount operation using a #GMountOperation. Since 2.22.
  * @eject_mountable_with_operation: Ejects a mountable object using a #GMountOperation. Since 2.22.
  * @eject_mountable_with_operation_finish: Finishes an eject operation using a #GMountOperation. Since 2.22.
  * @poll_mountable: Polls a mountable object for media changes. Since 2.22.
- * @poll_mountable_finish: Finishes an poll operation for media changes. Since 2.22.
+ * @poll_mountable_finish: Finishes a poll operation for media changes. Since 2.22.
  * @measure_disk_usage: Recursively measures the disk usage of @file. Since 2.38
  * @measure_disk_usage_async: Asynchronously recursively measures the disk usage of @file. Since 2.38
  * @measure_disk_usage_finish: Finishes an asynchronous recursive measurement of the disk usage of @file. Since 2.38

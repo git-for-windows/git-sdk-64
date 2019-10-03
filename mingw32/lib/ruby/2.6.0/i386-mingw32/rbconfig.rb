@@ -10,7 +10,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("2.6.") or
-    raise "ruby lib version (2.6.3) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (2.6.5) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.6.0/i386-mingw32")
@@ -21,8 +21,8 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "2"
   CONFIG["MINOR"] = "6"
-  CONFIG["TEENY"] = "3"
-  CONFIG["PATCHLEVEL"] = "62"
+  CONFIG["TEENY"] = "5"
+  CONFIG["PATCHLEVEL"] = "114"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/mingw32")
@@ -44,7 +44,7 @@ module RbConfig
   CONFIG["RUBY_SEARCH_PATH"] = ""
   CONFIG["UNIVERSAL_INTS"] = ""
   CONFIG["UNIVERSAL_ARCHNAMES"] = ""
-  CONFIG["configure_args"] = " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include' 'LDFLAGS=-pipe' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include -I/mingw32/include/pdcurses' 'CXXFLAGS=-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include'"
+  CONFIG["configure_args"] = " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include' 'LDFLAGS=-pipe' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include -I/mingw32/include/pdcurses' 'CXXFLAGS=-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include'"
   CONFIG["CONFIGURE"] = "configure"
   CONFIG["vendorarchdir"] = "$(vendorlibdir)/$(sitearch)"
   CONFIG["vendorlibdir"] = "$(vendordir)/$(ruby_version)"
@@ -165,7 +165,7 @@ module RbConfig
   CONFIG["AR"] = "ar"
   CONFIG["RANLIB"] = "ranlib"
   CONFIG["try_header"] = ""
-  CONFIG["CC_VERSION_MESSAGE"] = "i686-w64-mingw32-gcc.exe (Rev3, Built by MSYS2 project) 9.1.0\nCopyright (C) 2019 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  CONFIG["CC_VERSION_MESSAGE"] = "i686-w64-mingw32-gcc.exe (Rev2, Built by MSYS2 project) 9.2.0\nCopyright (C) 2019 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
   CONFIG["CC_VERSION"] = "$(CC) --version"
   CONFIG["CSRCFLAG"] = ""
   CONFIG["COUTFLAG"] = "-o "
@@ -180,7 +180,7 @@ module RbConfig
   CONFIG["CXXFLAGS"] = "-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include"
   CONFIG["CXX"] = "i686-w64-mingw32-g++"
   CONFIG["OBJEXT"] = "o"
-  CONFIG["CPPFLAGS"] = "-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include -I/mingw32/include/pdcurses -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT $(DEFS) $(cppflags)"
+  CONFIG["CPPFLAGS"] = "-D__USE_MINGW_ANSI_STDIO=1 -DFD_SETSIZE=2048 -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include -I/mingw32/include/pdcurses -D_WIN32_WINNT=0x0600 -D__MINGW_USE_VC2005_COMPAT $(DEFS) $(cppflags)"
   CONFIG["LDFLAGS"] = "-L. -pipe"
   CONFIG["CFLAGS"] = "-march=i686 -mtune=generic -O2 -pipe -I/mingw32/include/pdcurses -IC:/building/msys64/mingw32/lib/libffi-3.2.1/include"
   CONFIG["CC"] = "i686-w64-mingw32-gcc"
@@ -200,7 +200,7 @@ module RbConfig
   CONFIG["build_cpu"] = "i686"
   CONFIG["build"] = "i686-w64-mingw32"
   CONFIG["RUBY_API_VERSION"] = "$(MAJOR).$(MINOR)"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.6.3"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.6.5"
   CONFIG["HAVE_GIT"] = "yes"
   CONFIG["GIT"] = "git"
   CONFIG["cxxflags"] = "$(optflags) $(debugflags) $(warnflags)"

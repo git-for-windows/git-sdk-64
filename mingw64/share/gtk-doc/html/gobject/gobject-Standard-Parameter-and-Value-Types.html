@@ -4860,9 +4860,9 @@ g_value_take_param (<em class="parameter"><code><a class="link" href="gobject-Ge
                     <em class="parameter"><code><a class="link" href="gobject-GParamSpec.html#GParamSpec" title="struct GParamSpec"><span class="type">GParamSpec</span></a> *param</code></em>);</pre>
 <p>Sets the contents of a <a class="link" href="gobject-Type-Information.html#G-TYPE-PARAM:CAPS" title="G_TYPE_PARAM"><code class="literal">G_TYPE_PARAM</code></a> <a class="link" href="gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> to <em class="parameter"><code>param</code></em>
  and takes
-over the ownership of the callers reference to <em class="parameter"><code>param</code></em>
+over the ownership of the caller’s reference to <em class="parameter"><code>param</code></em>
 ; the caller
-doesn't have to unref it any more.</p>
+doesn’t have to unref it any more.</p>
 
 <p><span class="annotation">[<acronym class="acronym">skip</acronym>]</span></p>
 <div class="refsect3">
@@ -5230,9 +5230,9 @@ g_value_take_boxed (<em class="parameter"><code><a class="link" href="gobject-Ge
                     <em class="parameter"><code><a class="link" href=""><span class="type">gconstpointer</span></a> v_boxed</code></em>);</pre>
 <p>Sets the contents of a <a class="link" href="gobject-Type-Information.html#G-TYPE-BOXED:CAPS" title="G_TYPE_BOXED"><code class="literal">G_TYPE_BOXED</code></a> derived <a class="link" href="gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> to <em class="parameter"><code>v_boxed</code></em>
 
-and takes over the ownership of the callers reference to <em class="parameter"><code>v_boxed</code></em>
+and takes over the ownership of the caller’s reference to <em class="parameter"><code>v_boxed</code></em>
 ;
-the caller doesn't have to unref it any more.</p>
+the caller doesn’t have to unref it any more.</p>
 <div class="refsect3">
 <a name="g-value-take-boxed.parameters"></a><h4>Parameters</h4>
 
@@ -5782,9 +5782,9 @@ g_value_take_object (<em class="parameter"><code><a class="link" href="gobject-G
                      <em class="parameter"><code><a class="link" href=""><span class="type">gpointer</span></a> v_object</code></em>);</pre>
 <p>Sets the contents of a <a class="link" href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS" title="G_TYPE_OBJECT"><code class="literal">G_TYPE_OBJECT</code></a> derived <a class="link" href="gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> to <em class="parameter"><code>v_object</code></em>
 
-and takes over the ownership of the callers reference to <em class="parameter"><code>v_object</code></em>
+and takes over the ownership of the caller’s reference to <em class="parameter"><code>v_object</code></em>
 ;
-the caller doesn't have to unref it any more (i.e. the reference
+the caller doesn’t have to unref it any more (i.e. the reference
 count of the object is not increased).</p>
 <p>If you want the <a class="link" href="gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> to hold its own reference to <em class="parameter"><code>v_object</code></em>
 , use
@@ -6048,7 +6048,7 @@ property. <a class="link" href="gobject-Generic-values.html#GValue"><span class=
 <a name="G-IS-PARAM-SPEC-VALUE-ARRAY:CAPS"></a><h3>G_IS_PARAM_SPEC_VALUE_ARRAY()</h3>
 
 <a class="indexterm" name="id-1.4.9.7.129.2"></a>
-<pre class="programlisting">#define G_IS_PARAM_SPEC_VALUE_ARRAY(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), G_TYPE_PARAM_VALUE_ARRAY))
+<pre class="programlisting">#define G_IS_PARAM_SPEC_VALUE_ARRAY(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), G_TYPE_PARAM_VALUE_ARRAY)) GLIB_DEPRECATED_MACRO_IN_2_32
 </pre>
 <div class="warning">
 <p><code class="literal">G_IS_PARAM_SPEC_VALUE_ARRAY</code> has been deprecated since version 2.32 and should not be used in newly-written code.</p> <p>Use <a class="link" href=""><span class="type">GArray</span></a> instead of <a class="link" href="gobject-Value-arrays.html#GValueArray"><span class="type">GValueArray</span></a></p>
@@ -6082,7 +6082,7 @@ property. <a class="link" href="gobject-Generic-values.html#GValue"><span class=
 <a name="G-PARAM-SPEC-VALUE-ARRAY:CAPS"></a><h3>G_PARAM_SPEC_VALUE_ARRAY()</h3>
 
 <a class="indexterm" name="id-1.4.9.7.130.2"></a>
-<pre class="programlisting">#define G_PARAM_SPEC_VALUE_ARRAY(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), G_TYPE_PARAM_VALUE_ARRAY, GParamSpecValueArray))
+<pre class="programlisting">#define G_PARAM_SPEC_VALUE_ARRAY(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), G_TYPE_PARAM_VALUE_ARRAY, GParamSpecValueArray)) GLIB_DEPRECATED_MACRO_IN_2_32
 </pre>
 <div class="warning">
 <p><code class="literal">G_PARAM_SPEC_VALUE_ARRAY</code> has been deprecated since version 2.32 and should not be used in newly-written code.</p> <p>Use <a class="link" href=""><span class="type">GArray</span></a> instead of <a class="link" href="gobject-Value-arrays.html#GValueArray"><span class="type">GValueArray</span></a></p>
@@ -7738,7 +7738,7 @@ properties.</p>
 <a name="G-TYPE-PARAM-VALUE-ARRAY:CAPS"></a><h3>G_TYPE_PARAM_VALUE_ARRAY</h3>
 
 <a class="indexterm" name="id-1.4.9.8.41.2"></a>
-<pre class="programlisting">#define G_TYPE_PARAM_VALUE_ARRAY	   (g_param_spec_types[18])
+<pre class="programlisting">#define G_TYPE_PARAM_VALUE_ARRAY	   (g_param_spec_types[18]) GLIB_DEPRECATED_MACRO_IN_2_32
 </pre>
 <div class="warning">
 <p><code class="literal">G_TYPE_PARAM_VALUE_ARRAY</code> has been deprecated since version 2.32 and should not be used in newly-written code.</p> <p>Use <a class="link" href=""><span class="type">GArray</span></a> instead of <a class="link" href="gobject-Value-arrays.html#GValueArray"><span class="type">GValueArray</span></a></p>

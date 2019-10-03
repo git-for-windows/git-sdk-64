@@ -77,6 +77,14 @@ Doubly-Linked Lists
 <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 </td>
 <td class="function_name">
+<a class="link" href="glib-Doubly-Linked-Lists.html#g-list-insert-before-link" title="g_list_insert_before_link ()">g_list_insert_before_link</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
+</td>
+<td class="function_name">
 <a class="link" href="glib-Doubly-Linked-Lists.html#g-list-insert-sorted" title="g_list_insert_sorted ()">g_list_insert_sorted</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
@@ -690,9 +698,58 @@ is inserted or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title=
 </div>
 </div>
 <div class="refsect2">
-<a name="g-list-insert-sorted"></a><h3>g_list_insert_sorted ()</h3>
+<a name="g-list-insert-before-link"></a><h3>g_list_insert_before_link ()</h3>
 
 <a class="indexterm" name="id-1.6.2.7.6.2"></a>
+<pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
+g_list_insert_before_link (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
+                           <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *sibling</code></em>,
+                           <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *link_</code></em>);</pre>
+<p>Inserts <em class="parameter"><code>link_</code></em>
+ into the list before the given position.</p>
+<div class="refsect3">
+<a name="g-list-insert-before-link.parameters"></a><h4>Parameters</h4>
+
+<div class="informaltable">
+<table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>list</p></td>
+<td class="parameter_description"><p>a pointer to a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a>, this must point to the top of the list</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>sibling</p></td>
+<td class="parameter_description"><p>the list element before which the new element
+is inserted or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> to insert at the end of the list. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">nullable</acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>link_</p></td>
+<td class="parameter_description"><p>the list element to be added, which must not be part of
+any other list</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="refsect3">
+<a name="g-list-insert-before-link.returns"></a><h4>Returns</h4>
+
+<p> the (possibly changed) start of the <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a></p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-62.html#api-index-2.62">2.62</a></p>
+</div>
+<div class="refsect2">
+<a name="g-list-insert-sorted"></a><h3>g_list_insert_sorted ()</h3>
+
+<a class="indexterm" name="id-1.6.2.7.7.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_insert_sorted (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                       <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> data</code></em>,
@@ -745,7 +802,7 @@ second parameter in the sort order.</p></td>
 <div class="refsect2">
 <a name="g-list-remove"></a><h3>g_list_remove ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.7.2"></a>
+<a class="indexterm" name="id-1.6.2.7.8.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_remove (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> data</code></em>);</pre>
@@ -786,7 +843,7 @@ If none of the elements contain the data, the <a class="link" href="glib-Doubly-
 <div class="refsect2">
 <a name="g-list-remove-link"></a><h3>g_list_remove_link ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.8.2"></a>
+<a class="indexterm" name="id-1.6.2.7.9.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_remove_link (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                     <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *llink</code></em>);</pre>
@@ -846,7 +903,7 @@ the list before freeing its data:</p>
 <div class="refsect2">
 <a name="g-list-delete-link"></a><h3>g_list_delete_link ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.9.2"></a>
+<a class="indexterm" name="id-1.6.2.7.10.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_delete_link (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                     <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *link_</code></em>);</pre>
@@ -888,7 +945,7 @@ without freeing it.</p>
 <div class="refsect2">
 <a name="g-list-remove-all"></a><h3>g_list_remove_all ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.10.2"></a>
+<a class="indexterm" name="id-1.6.2.7.11.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_remove_all (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                    <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> data</code></em>);</pre>
@@ -931,7 +988,7 @@ matching the given data.</p>
 <div class="refsect2">
 <a name="g-list-free"></a><h3>g_list_free ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.11.2"></a>
+<a class="indexterm" name="id-1.6.2.7.12.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_list_free (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>);</pre>
 <p>Frees all of the memory used by a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a>.
@@ -960,7 +1017,7 @@ either use <a class="link" href="glib-Doubly-Linked-Lists.html#g-list-free-full"
 <div class="refsect2">
 <a name="g-list-free-full"></a><h3>g_list_free_full ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.12.2"></a>
+<a class="indexterm" name="id-1.6.2.7.13.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_list_free_full (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                   <em class="parameter"><code><a class="link" href="glib-Datasets.html#GDestroyNotify" title="GDestroyNotify ()"><span class="type">GDestroyNotify</span></a> free_func</code></em>);</pre>
@@ -1000,7 +1057,7 @@ element from it).</p>
 <div class="refsect2">
 <a name="g-list-alloc"></a><h3>g_list_alloc ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.13.2"></a>
+<a class="indexterm" name="id-1.6.2.7.14.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_alloc (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Allocates space for one <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> element. It is called by
@@ -1015,7 +1072,7 @@ g_list_alloc (<em class="parameter"><code><span class="type">void</span></code><
 <div class="refsect2">
 <a name="g-list-free-1"></a><h3>g_list_free_1 ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.14.2"></a>
+<a class="indexterm" name="id-1.6.2.7.15.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_list_free_1 (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>);</pre>
 <p>Frees one <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> element, but does not update links from the next and
@@ -1044,7 +1101,7 @@ element that is currently part of a list.</p>
 <div class="refsect2">
 <a name="g-list-length"></a><h3>g_list_length ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.15.2"></a>
+<a class="indexterm" name="id-1.6.2.7.16.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="returnvalue">guint</span></a>
 g_list_length (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>);</pre>
 <p>Gets the number of elements in a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a>.</p>
@@ -1080,7 +1137,7 @@ of items. To check whether the list is non-empty, it is faster to check
 <div class="refsect2">
 <a name="g-list-copy"></a><h3>g_list_copy ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.16.2"></a>
+<a class="indexterm" name="id-1.6.2.7.17.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_copy (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>);</pre>
 <p>Copies a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a>.</p>
@@ -1116,7 +1173,7 @@ to copy the data as well.</p>
 <div class="refsect2">
 <a name="g-list-copy-deep"></a><h3>g_list_copy_deep ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.17.2"></a>
+<a class="indexterm" name="id-1.6.2.7.18.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_copy_deep (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                   <em class="parameter"><code><a class="link" href="glib-N-ary-Trees.html#GCopyFunc" title="GCopyFunc ()"><span class="type">GCopyFunc</span></a> func</code></em>,
@@ -1204,7 +1261,7 @@ use <a class="link" href="glib-Doubly-Linked-Lists.html#g-list-free-full" title=
 <div class="refsect2">
 <a name="g-list-reverse"></a><h3>g_list_reverse ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.18.2"></a>
+<a class="indexterm" name="id-1.6.2.7.19.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_reverse (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>);</pre>
 <p>Reverses a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a>.
@@ -1236,7 +1293,7 @@ It simply switches the next and prev pointers of each element.</p>
 <div class="refsect2">
 <a name="g-list-sort"></a><h3>g_list_sort ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.19.2"></a>
+<a class="indexterm" name="id-1.6.2.7.20.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_sort (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
              <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GCompareFunc" title="GCompareFunc ()"><span class="type">GCompareFunc</span></a> compare_func</code></em>);</pre>
@@ -1280,7 +1337,7 @@ the first element comes after the second.</p></td>
 <div class="refsect2">
 <a name="GCompareFunc"></a><h3>GCompareFunc ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.20.2"></a>
+<a class="indexterm" name="id-1.6.2.7.21.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="returnvalue">gint</span></a>
 <span class="c_punctuation">(</span>*GCompareFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> a</code></em>,
                  <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> b</code></em>);</pre>
@@ -1329,7 +1386,7 @@ value if <em class="parameter"><code>a</code></em>
 <div class="refsect2">
 <a name="g-list-insert-sorted-with-data"></a><h3>g_list_insert_sorted_with_data ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.21.2"></a>
+<a class="indexterm" name="id-1.6.2.7.22.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_insert_sorted_with_data (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                                 <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> data</code></em>,
@@ -1389,7 +1446,7 @@ second parameter in the sort order.</p></td>
 <div class="refsect2">
 <a name="g-list-sort-with-data"></a><h3>g_list_sort_with_data ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.22.2"></a>
+<a class="indexterm" name="id-1.6.2.7.23.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_sort_with_data (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                        <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GCompareDataFunc" title="GCompareDataFunc ()"><span class="type">GCompareDataFunc</span></a> compare_func</code></em>,
@@ -1435,7 +1492,7 @@ a user data argument.</p>
 <div class="refsect2">
 <a name="GCompareDataFunc"></a><h3>GCompareDataFunc ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.23.2"></a>
+<a class="indexterm" name="id-1.6.2.7.24.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="returnvalue">gint</span></a>
 <span class="c_punctuation">(</span>*GCompareDataFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> a</code></em>,
                      <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> b</code></em>,
@@ -1490,7 +1547,7 @@ value if <em class="parameter"><code>a</code></em>
 <div class="refsect2">
 <a name="g-list-concat"></a><h3>g_list_concat ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.24.2"></a>
+<a class="indexterm" name="id-1.6.2.7.25.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_concat (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list1</code></em>,
                <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list2</code></em>);</pre>
@@ -1549,7 +1606,7 @@ if not <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><
 <div class="refsect2">
 <a name="g-list-foreach"></a><h3>g_list_foreach ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.25.2"></a>
+<a class="indexterm" name="id-1.6.2.7.26.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_list_foreach (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                 <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GFunc" title="GFunc ()"><span class="type">GFunc</span></a> func</code></em>,
@@ -1593,7 +1650,7 @@ not modify any part of the list after that element.</p>
 <div class="refsect2">
 <a name="GFunc"></a><h3>GFunc ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.26.2"></a>
+<a class="indexterm" name="id-1.6.2.7.27.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 <span class="c_punctuation">(</span>*GFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> data</code></em>,
           <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
@@ -1628,7 +1685,7 @@ not modify any part of the list after that element.</p>
 <div class="refsect2">
 <a name="g-list-first"></a><h3>g_list_first ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.27.2"></a>
+<a class="indexterm" name="id-1.6.2.7.28.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_first (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>);</pre>
 <p>Gets the first element in a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a>.</p>
@@ -1660,7 +1717,7 @@ or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code
 <div class="refsect2">
 <a name="g-list-last"></a><h3>g_list_last ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.28.2"></a>
+<a class="indexterm" name="id-1.6.2.7.29.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_last (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>);</pre>
 <p>Gets the last element in a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a>.</p>
@@ -1692,7 +1749,7 @@ or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code
 <div class="refsect2">
 <a name="g-list-previous"></a><h3>g_list_previous()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.29.2"></a>
+<a class="indexterm" name="id-1.6.2.7.30.2"></a>
 <pre class="programlisting">#define             g_list_previous(list)</pre>
 <p>A convenience macro to get the previous element in a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a>.
 Note that it is considered perfectly acceptable to access
@@ -1726,7 +1783,7 @@ elements</p>
 <div class="refsect2">
 <a name="g-list-next"></a><h3>g_list_next()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.30.2"></a>
+<a class="indexterm" name="id-1.6.2.7.31.2"></a>
 <pre class="programlisting">#define             g_list_next(list)</pre>
 <p>A convenience macro to get the next element in a <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a>.
 Note that it is considered perfectly acceptable to access
@@ -1759,7 +1816,7 @@ Note that it is considered perfectly acceptable to access
 <div class="refsect2">
 <a name="g-list-nth"></a><h3>g_list_nth ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.31.2"></a>
+<a class="indexterm" name="id-1.6.2.7.32.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_nth (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
             <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> n</code></em>);</pre>
@@ -1803,7 +1860,7 @@ the end of the <a class="link" href="glib-Doubly-Linked-Lists.html#GList" title=
 <div class="refsect2">
 <a name="g-list-nth-data"></a><h3>g_list_nth_data ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.32.2"></a>
+<a class="indexterm" name="id-1.6.2.7.33.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
 g_list_nth_data (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                  <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> n</code></em>);</pre>
@@ -1847,7 +1904,7 @@ is off the end of the <a class="link" href="glib-Doubly-Linked-Lists.html#GList"
 <div class="refsect2">
 <a name="g-list-nth-prev"></a><h3>g_list_nth_prev ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.33.2"></a>
+<a class="indexterm" name="id-1.6.2.7.34.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_nth_prev (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                  <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> n</code></em>);</pre>
@@ -1889,7 +1946,7 @@ off the end of the <a class="link" href="glib-Doubly-Linked-Lists.html#GList" ti
 <div class="refsect2">
 <a name="g-list-find"></a><h3>g_list_find ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.34.2"></a>
+<a class="indexterm" name="id-1.6.2.7.35.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_find (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
              <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> data</code></em>);</pre>
@@ -1928,7 +1985,7 @@ g_list_find (<em class="parameter"><code><a class="link" href="glib-Doubly-Linke
 <div class="refsect2">
 <a name="g-list-find-custom"></a><h3>g_list_find_custom ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.35.2"></a>
+<a class="indexterm" name="id-1.6.2.7.36.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="returnvalue">GList</span></a> *
 g_list_find_custom (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                     <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> data</code></em>,
@@ -1979,7 +2036,7 @@ It should return 0 when the desired element is found</p></td>
 <div class="refsect2">
 <a name="g-list-position"></a><h3>g_list_position ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.36.2"></a>
+<a class="indexterm" name="id-1.6.2.7.37.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="returnvalue">gint</span></a>
 g_list_position (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
                  <em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *llink</code></em>);</pre>
@@ -2020,7 +2077,7 @@ or -1 if the element is not found</p>
 <div class="refsect2">
 <a name="g-list-index"></a><h3>g_list_index ()</h3>
 
-<a class="indexterm" name="id-1.6.2.7.37.2"></a>
+<a class="indexterm" name="id-1.6.2.7.38.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gint" title="gint"><span class="returnvalue">gint</span></a>
 g_list_index (<em class="parameter"><code><a class="link" href="glib-Doubly-Linked-Lists.html#GList" title="struct GList"><span class="type">GList</span></a> *list</code></em>,
               <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gconstpointer" title="gconstpointer"><span class="type">gconstpointer</span></a> data</code></em>);</pre>

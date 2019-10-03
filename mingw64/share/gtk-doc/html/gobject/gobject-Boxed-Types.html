@@ -225,12 +225,22 @@ by the type system
 <div class="refsect1">
 <a name="gobject-Boxed-Types.description"></a><h2>Description</h2>
 
-<p>GBoxed is a generic wrapper mechanism for arbitrary C structures. The only
-thing the type system needs to know about the structures is how to copy and
-free them, beyond that they are treated as opaque chunks of memory.</p>
+<p><a class="link" href=""><span class="type">GBoxed</span></a> is a generic wrapper mechanism for arbitrary C structures. The only
+thing the type system needs to know about the structures is how to copy them
+(a <a class="link" href="gobject-Boxed-Types.html#GBoxedCopyFunc" title="GBoxedCopyFunc ()"><span class="type">GBoxedCopyFunc</span></a>) and how to free them (a <a class="link" href="gobject-Boxed-Types.html#GBoxedFreeFunc" title="GBoxedFreeFunc ()"><span class="type">GBoxedFreeFunc</span></a>) — beyond that
+they are treated as opaque chunks of memory.</p>
 <p>Boxed types are useful for simple value-holder structures like rectangles or
-points. They can also be used for wrapping structures defined in non-GObject
-based libraries.</p>
+points. They can also be used for wrapping structures defined in non-<a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a>
+based libraries. They allow arbitrary structures to be handled in a uniform
+way, allowing uniform copying (or referencing) and freeing (or unreferencing)
+of them, and uniform representation of the type of the contained structure.
+In turn, this allows any type which can be boxed to be set as the data in a
+<a class="link" href="gobject-Generic-values.html#GValue"><span class="type">GValue</span></a>, which allows for polymorphic handling of a much wider range of data
+types, and hence usage of such types as <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> property values.</p>
+<p><a class="link" href=""><span class="type">GBoxed</span></a> is designed so that reference counted types can be boxed. Use the
+type’s ‘ref’ function as the <a class="link" href="gobject-Boxed-Types.html#GBoxedCopyFunc" title="GBoxedCopyFunc ()"><span class="type">GBoxedCopyFunc</span></a>, and its ‘unref’ function as the
+<a class="link" href="gobject-Boxed-Types.html#GBoxedFreeFunc" title="GBoxedFreeFunc ()"><span class="type">GBoxedFreeFunc</span></a>. For example, for <a class="link" href=""><span class="type">GBytes</span></a>, the <a class="link" href="gobject-Boxed-Types.html#GBoxedCopyFunc" title="GBoxedCopyFunc ()"><span class="type">GBoxedCopyFunc</span></a> is
+<a class="link" href=""><code class="function">g_bytes_ref()</code></a>, and the <a class="link" href="gobject-Boxed-Types.html#GBoxedFreeFunc" title="GBoxedFreeFunc ()"><span class="type">GBoxedFreeFunc</span></a> is <a class="link" href=""><code class="function">g_bytes_unref()</code></a>.</p>
 
 </div>
 <div class="refsect1">

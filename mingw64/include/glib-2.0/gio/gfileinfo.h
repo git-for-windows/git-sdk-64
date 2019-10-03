@@ -76,6 +76,7 @@ typedef struct _GFileInfoClass   GFileInfoClass;
  * A key in the "standard" namespace for checking if the file is a symlink.
  * Typically the actual type is something else, if we followed the symlink
  * to get the type.
+ * On Windows NTFS mountpoints are considered to be symlinks as well.
  * Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_BOOLEAN.
  **/
 #define G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK "standard::is-symlink"         /* boolean */
@@ -1045,9 +1046,13 @@ GLIB_AVAILABLE_IN_ALL
 const char *      g_file_info_get_content_type       (GFileInfo         *info);
 GLIB_AVAILABLE_IN_ALL
 goffset           g_file_info_get_size               (GFileInfo         *info);
-GLIB_AVAILABLE_IN_ALL
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+GLIB_DEPRECATED_IN_2_62_FOR(g_file_info_get_modification_date_time)
 void              g_file_info_get_modification_time  (GFileInfo         *info,
-						      GTimeVal          *result);
+                                                      GTimeVal          *result);
+G_GNUC_END_IGNORE_DEPRECATIONS
+GLIB_AVAILABLE_IN_2_62
+GDateTime *       g_file_info_get_modification_date_time (GFileInfo     *info);
 GLIB_AVAILABLE_IN_ALL
 const char *      g_file_info_get_symlink_target     (GFileInfo         *info);
 GLIB_AVAILABLE_IN_ALL
@@ -1092,9 +1097,14 @@ void              g_file_info_set_content_type       (GFileInfo         *info,
 GLIB_AVAILABLE_IN_ALL
 void              g_file_info_set_size               (GFileInfo         *info,
 						      goffset            size);
-GLIB_AVAILABLE_IN_ALL
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+GLIB_DEPRECATED_IN_2_62_FOR(g_file_info_set_modification_date_time)
 void              g_file_info_set_modification_time  (GFileInfo         *info,
-						      GTimeVal          *mtime);
+                                                      GTimeVal          *mtime);
+G_GNUC_END_IGNORE_DEPRECATIONS
+GLIB_AVAILABLE_IN_2_62
+void              g_file_info_set_modification_date_time (GFileInfo     *info,
+                                                          GDateTime     *mtime);
 GLIB_AVAILABLE_IN_ALL
 void              g_file_info_set_symlink_target     (GFileInfo         *info,
 						      const char        *symlink_target);

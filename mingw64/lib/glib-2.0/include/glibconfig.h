@@ -108,14 +108,9 @@ typedef unsigned long long guintptr;
 #define G_GINTPTR_FORMAT        "lli"
 #define G_GUINTPTR_FORMAT       "llu"
 
-#ifndef G_DISABLE_DEPRECATED
-#define g_ATEXIT(proc)	(atexit (proc))
-#define g_memmove(dest,src,len) G_STMT_START { memmove ((dest), (src), (len)); } G_STMT_END
-#endif
-
 #define GLIB_MAJOR_VERSION 2
-#define GLIB_MINOR_VERSION 60
-#define GLIB_MICRO_VERSION 6
+#define GLIB_MINOR_VERSION 62
+#define GLIB_MICRO_VERSION 0
 
 #define G_OS_WIN32
 #define G_PLATFORM_WIN32

@@ -1160,9 +1160,12 @@ See <a class="link" href="glib-Windows-Compatibility-Functions.html#g-win32-get-
 </tr>
 <tr>
 <td class="parameter_name"><p>arguments</p></td>
-<td class="parameter_description"><p>a pointer to the
-command line arguments (which must be in UTF-8 on Windows). </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">inout</acronym>][<acronym class="acronym">array</acronym> zero-terminated=1]</span></td>
+<td class="parameter_description"><p>a pointer
+to the command line arguments (which must be in UTF-8 on Windows).
+Starting with GLib 2.62, <em class="parameter"><code>arguments</code></em>
+can be <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, which matches
+<a class="link" href="glib-Commandline-option-parser.html#g-option-context-parse" title="g_option_context_parse ()"><code class="function">g_option_context_parse()</code></a>. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">inout</acronym>][<acronym class="acronym">array</acronym> null-terminated=1][<acronym class="acronym">optional</acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -2212,7 +2215,7 @@ option: <code class="literal">--name arg</code> or combined in a single argument
 <tr>
 <td class="enum_member_name"><p><a name="G-OPTION-ARG-STRING:CAPS"></a>G_OPTION_ARG_STRING</p></td>
 <td class="enum_member_description">
-<p>The option takes a string argument.</p>
+<p>The option takes a UTF-8 string argument.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
@@ -2234,7 +2237,8 @@ option: <code class="literal">--name arg</code> or combined in a single argument
 <tr>
 <td class="enum_member_name"><p><a name="G-OPTION-ARG-FILENAME:CAPS"></a>G_OPTION_ARG_FILENAME</p></td>
 <td class="enum_member_description">
-<p>The option takes a filename as argument.</p>
+<p>The option takes a filename as argument, which will
+be in the GLib filename encoding rather than UTF-8.</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>

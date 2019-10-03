@@ -765,14 +765,6 @@ The Main Event Loop
 </tr>
 <tr>
 <td class="function_type">
-<a class="link" href=""><span class="returnvalue">void</span></a>
-</td>
-<td class="function_name">
-<a class="link" href="glib-The-Main-Event-Loop.html#g-source-get-current-time" title="g_source_get_current_time ()">g_source_get_current_time</a> <span class="c_punctuation">()</span>
-</td>
-</tr>
-<tr>
-<td class="function_type">
 <a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 </td>
 <td class="function_name">
@@ -1591,7 +1583,6 @@ g_main_context_pending (<em class="parameter"><code><a class="link" href="glib-T
 
 <a class="indexterm" name="id-1.4.2.7.21.2"></a>
 <pre class="programlisting">#define             g_main_pending()</pre>
-<div class="warning"><p><code class="literal">g_main_pending</code> is deprecated and should not be used in newly-written code.</p></div>
 <p>Checks if any events are pending for the default <a class="link" href="glib-The-Main-Event-Loop.html#GMainContext" title="GMainContext"><span class="type">GMainContext</span></a>
 (i.e. ready to be processed).</p>
 <div class="refsect3">
@@ -1609,7 +1600,7 @@ g_main_context_pending (<em class="parameter"><code><a class="link" href="glib-T
 g_main_context_find_source_by_id (<em class="parameter"><code><a class="link" href="glib-The-Main-Event-Loop.html#GMainContext" title="GMainContext"><span class="type">GMainContext</span></a> *context</code></em>,
                                   <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> source_id</code></em>);</pre>
 <p>Finds a <a class="link" href="glib-The-Main-Event-Loop.html#GSource" title="struct GSource"><span class="type">GSource</span></a> given a pair of context and ID.</p>
-<p>It is a programmer error to attempt to lookup a non-existent source.</p>
+<p>It is a programmer error to attempt to look up a non-existent source.</p>
 <p>More specifically: source IDs can be reissued after a source has been
 destroyed and therefore it is never valid to use this function with a
 source ID which may have already been removed.  An example is when
@@ -2013,8 +2004,8 @@ for polling is determined by calling <a class="link" href="glib-The-Main-Event-L
 <tr>
 <td class="parameter_name"><p>priority</p></td>
 <td class="parameter_description"><p>location to store priority of highest priority
-source already ready.</p></td>
-<td class="parameter_annotations"> </td>
+source already ready. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">out</acronym>][<acronym class="acronym">optional</acronym>]</span></td>
 </tr>
 </tbody>
 </table>
@@ -3961,6 +3952,8 @@ g_source_destroy (<em class="parameter"><code><a class="link" href="glib-The-Mai
 destroyed.  The source cannot be subsequently added to another
 context. It is safe to call this on sources which have already been
 removed from their context.</p>
+<p>This does not unref the <a class="link" href="glib-The-Main-Event-Loop.html#GSource" title="struct GSource"><span class="type">GSource</span></a>: if you still hold a reference, use
+<a class="link" href="glib-The-Main-Event-Loop.html#g-source-unref" title="g_source_unref ()"><code class="function">g_source_unref()</code></a> to drop it.</p>
 <div class="refsect3">
 <a name="g-source-destroy.parameters"></a><h4>Parameters</h4>
 
@@ -5172,48 +5165,9 @@ other reasonable alternative otherwise.  See <a class="link" href="glib-Date-and
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
 </div>
 <div class="refsect2">
-<a name="g-source-get-current-time"></a><h3>g_source_get_current_time ()</h3>
-
-<a class="indexterm" name="id-1.4.2.7.95.2"></a>
-<pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
-g_source_get_current_time (<em class="parameter"><code><a class="link" href="glib-The-Main-Event-Loop.html#GSource" title="struct GSource"><span class="type">GSource</span></a> *source</code></em>,
-                           <em class="parameter"><code><a class="link" href="glib-Date-and-Time-Functions.html#GTimeVal" title="struct GTimeVal"><span class="type">GTimeVal</span></a> *timeval</code></em>);</pre>
-<div class="warning">
-<p><code class="literal">g_source_get_current_time</code> has been deprecated since version 2.28 and should not be used in newly-written code.</p> <p>use <a class="link" href="glib-The-Main-Event-Loop.html#g-source-get-time" title="g_source_get_time ()"><code class="function">g_source_get_time()</code></a> instead</p>
-</div>
-<p>This function ignores <em class="parameter"><code>source</code></em>
- and is otherwise the same as
-<a class="link" href="glib-Date-and-Time-Functions.html#g-get-current-time" title="g_get_current_time ()"><code class="function">g_get_current_time()</code></a>.</p>
-<div class="refsect3">
-<a name="g-source-get-current-time.parameters"></a><h4>Parameters</h4>
-
-<div class="informaltable">
-<table class="informaltable" width="100%" border="0">
-<colgroup>
-<col width="150px" class="parameters_name">
-<col class="parameters_description">
-<col width="200px" class="parameters_annotations">
-</colgroup>
-<tbody>
-<tr>
-<td class="parameter_name"><p>source</p></td>
-<td class="parameter_description"><p>a <a class="link" href="glib-The-Main-Event-Loop.html#GSource" title="struct GSource"><span class="type">GSource</span></a></p></td>
-<td class="parameter_annotations"> </td>
-</tr>
-<tr>
-<td class="parameter_name"><p>timeval</p></td>
-<td class="parameter_description"><p><a class="link" href="glib-Date-and-Time-Functions.html#GTimeVal" title="struct GTimeVal"><span class="type">GTimeVal</span></a> structure in which to store current time.</p></td>
-<td class="parameter_annotations"> </td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div class="refsect2">
 <a name="g-source-remove"></a><h3>g_source_remove ()</h3>
 
-<a class="indexterm" name="id-1.4.2.7.96.2"></a>
+<a class="indexterm" name="id-1.4.2.7.95.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 g_source_remove (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> tag</code></em>);</pre>
 <p>Removes the source with the given ID from the default main context. You must
@@ -5259,7 +5213,7 @@ wrong source.</p>
 <div class="refsect2">
 <a name="g-source-remove-by-funcs-user-data"></a><h3>g_source_remove_by_funcs_user_data ()</h3>
 
-<a class="indexterm" name="id-1.4.2.7.97.2"></a>
+<a class="indexterm" name="id-1.4.2.7.96.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 g_source_remove_by_funcs_user_data (<em class="parameter"><code><a class="link" href="glib-The-Main-Event-Loop.html#GSourceFuncs" title="struct GSourceFuncs"><span class="type">GSourceFuncs</span></a> *funcs</code></em>,
                                     <em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
@@ -5301,7 +5255,7 @@ passed to <a class="link" href="glib-The-Main-Event-Loop.html#g-source-new" titl
 <div class="refsect2">
 <a name="g-source-remove-by-user-data"></a><h3>g_source_remove_by_user_data ()</h3>
 
-<a class="indexterm" name="id-1.4.2.7.98.2"></a>
+<a class="indexterm" name="id-1.4.2.7.97.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gboolean" title="gboolean"><span class="returnvalue">gboolean</span></a>
 g_source_remove_by_user_data (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>Removes a source from the default main loop context given the user
@@ -5334,7 +5288,7 @@ data, only one will be destroyed.</p>
 <div class="refsect2">
 <a name="GClearHandleFunc"></a><h3>GClearHandleFunc ()</h3>
 
-<a class="indexterm" name="id-1.4.2.7.99.2"></a>
+<a class="indexterm" name="id-1.4.2.7.98.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 <span class="c_punctuation">(</span>*GClearHandleFunc<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> handle_id</code></em>);</pre>
 <p>Specifies the type of function passed to <a class="link" href="glib-The-Main-Event-Loop.html#g-clear-handle-id" title="g_clear_handle_id ()"><code class="function">g_clear_handle_id()</code></a>.
@@ -5366,7 +5320,7 @@ by <em class="parameter"><code>handle_id</code></em>
 <div class="refsect2">
 <a name="g-clear-handle-id"></a><h3>g_clear_handle_id ()</h3>
 
-<a class="indexterm" name="id-1.4.2.7.100.2"></a>
+<a class="indexterm" name="id-1.4.2.7.99.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_clear_handle_id (<em class="parameter"><code><a class="link" href="glib-Basic-Types.html#guint" title="guint"><span class="type">guint</span></a> *tag_ptr</code></em>,
                    <em class="parameter"><code><a class="link" href="glib-The-Main-Event-Loop.html#GClearHandleFunc" title="GClearHandleFunc ()"><span class="type">GClearHandleFunc</span></a> clear_func</code></em>);</pre>

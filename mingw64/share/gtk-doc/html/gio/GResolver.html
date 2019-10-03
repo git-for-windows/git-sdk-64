@@ -1221,12 +1221,12 @@ operation, in which case <em class="parameter"><code>error</code></em>
 </tr>
 <tr>
 <td class="parameter_name"><p>rrname</p></td>
-<td class="parameter_description"><p>the DNS name to lookup the record for</p></td>
+<td class="parameter_description"><p>the DNS name to look up the record for</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
 <td class="parameter_name"><p>record_type</p></td>
-<td class="parameter_description"><p>the type of DNS record to lookup</p></td>
+<td class="parameter_description"><p>the type of DNS record to look up</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -1289,12 +1289,12 @@ g_resolver_lookup_records_async (<em class="parameter"><code><a class="link" hre
 </tr>
 <tr>
 <td class="parameter_name"><p>rrname</p></td>
-<td class="parameter_description"><p>the DNS name to lookup the record for</p></td>
+<td class="parameter_description"><p>the DNS name to look up the record for</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
 <td class="parameter_name"><p>record_type</p></td>
-<td class="parameter_description"><p>the type of DNS record to lookup</p></td>
+<td class="parameter_description"><p>the type of DNS record to look up</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
@@ -1444,20 +1444,26 @@ different platforms and situations.</p>
 as lists of <a class="link" href=""><span class="type">GVariant</span></a> tuples. Each record type has different values in
 the variant tuples returned.</p>
 <p><a class="link" href="GResolver.html#G-RESOLVER-RECORD-SRV:CAPS"><code class="literal">G_RESOLVER_RECORD_SRV</code></a> records are returned as variants with the signature
-'(qqqs)', containing a guint16 with the priority, a guint16 with the
-weight, a guint16 with the port, and a string of the hostname.</p>
+<code class="literal">(qqqs)</code>, containing a <code class="literal">guint16</code> with the priority, a <code class="literal">guint16</code> with the
+weight, a <code class="literal">guint16</code> with the port, and a string of the hostname.</p>
 <p><a class="link" href="GResolver.html#G-RESOLVER-RECORD-MX:CAPS"><code class="literal">G_RESOLVER_RECORD_MX</code></a> records are returned as variants with the signature
-'(qs)', representing a guint16 with the preference, and a string containing
+<code class="literal">(qs)</code>, representing a <code class="literal">guint16</code> with the preference, and a string containing
 the mail exchanger hostname.</p>
 <p><a class="link" href="GResolver.html#G-RESOLVER-RECORD-TXT:CAPS"><code class="literal">G_RESOLVER_RECORD_TXT</code></a> records are returned as variants with the signature
-'(as)', representing an array of the strings in the text record.</p>
+<code class="literal">(as)</code>, representing an array of the strings in the text record. Note: Most TXT
+records only contain a single string, but
+<a class="ulink" href="https://tools.ietf.org/html/rfc1035#section-3.3.14" target="_top">RFC 1035</a> does allow a
+record to contain multiple strings. The RFC which defines the interpretation
+of a specific TXT record will likely require concatenation of multiple
+strings if they are present, as with
+<a class="ulink" href="https://tools.ietf.org/html/rfc7208#section-3.3" target="_top">RFC 7208</a>.</p>
 <p><a class="link" href="GResolver.html#G-RESOLVER-RECORD-SOA:CAPS"><code class="literal">G_RESOLVER_RECORD_SOA</code></a> records are returned as variants with the signature
-'(ssuuuuu)', representing a string containing the primary name server, a
-string containing the administrator, the serial as a guint32, the refresh
-interval as guint32, the retry interval as a guint32, the expire timeout
-as a guint32, and the ttl as a guint32.</p>
+<code class="literal">(ssuuuuu)</code>, representing a string containing the primary name server, a
+string containing the administrator, the serial as a <code class="literal">guint32</code>, the refresh
+interval as a <code class="literal">guint32</code>, the retry interval as a <code class="literal">guint32</code>, the expire timeout
+as a <code class="literal">guint32</code>, and the TTL as a <code class="literal">guint32</code>.</p>
 <p><a class="link" href="GResolver.html#G-RESOLVER-RECORD-NS:CAPS"><code class="literal">G_RESOLVER_RECORD_NS</code></a> records are returned as variants with the signature
-'(s)', representing a string of the hostname of the name server.</p>
+<code class="literal">(s)</code>, representing a string of the hostname of the name server.</p>
 <div class="refsect3">
 <a name="GResolverRecordType.members"></a><h4>Members</h4>
 
@@ -1472,35 +1478,35 @@ as a guint32, and the ttl as a guint32.</p>
 <tr>
 <td class="enum_member_name"><p><a name="G-RESOLVER-RECORD-SRV:CAPS"></a>G_RESOLVER_RECORD_SRV</p></td>
 <td class="enum_member_description">
-<p>lookup DNS SRV records for a domain</p>
+<p>look up DNS SRV records for a domain</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="G-RESOLVER-RECORD-MX:CAPS"></a>G_RESOLVER_RECORD_MX</p></td>
 <td class="enum_member_description">
-<p>lookup DNS MX records for a domain</p>
+<p>look up DNS MX records for a domain</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="G-RESOLVER-RECORD-TXT:CAPS"></a>G_RESOLVER_RECORD_TXT</p></td>
 <td class="enum_member_description">
-<p>lookup DNS TXT records for a name</p>
+<p>look up DNS TXT records for a name</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="G-RESOLVER-RECORD-SOA:CAPS"></a>G_RESOLVER_RECORD_SOA</p></td>
 <td class="enum_member_description">
-<p>lookup DNS SOA records for a zone</p>
+<p>look up DNS SOA records for a zone</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
 <tr>
 <td class="enum_member_name"><p><a name="G-RESOLVER-RECORD-NS:CAPS"></a>G_RESOLVER_RECORD_NS</p></td>
 <td class="enum_member_description">
-<p>lookup DNS NS records for a domain</p>
+<p>look up DNS NS records for a domain</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>

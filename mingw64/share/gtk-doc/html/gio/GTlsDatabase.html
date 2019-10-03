@@ -215,7 +215,7 @@ GTlsDatabase is required by
 <div class="refsect1">
 <a name="GTlsDatabase.description"></a><h2>Description</h2>
 
-<p><a class="link" href="GTlsDatabase.html" title="GTlsDatabase"><span class="type">GTlsDatabase</span></a> is used to lookup certificates and other information
+<p><a class="link" href="GTlsDatabase.html" title="GTlsDatabase"><span class="type">GTlsDatabase</span></a> is used to look up certificates and other information
 from a certificate or key store. It is an abstract base class which
 TLS library specific subtypes override.</p>
 <p>A <a class="link" href="GTlsDatabase.html" title="GTlsDatabase"><span class="type">GTlsDatabase</span></a> may be accessed from multiple threads by the TLS backend.
@@ -498,7 +498,7 @@ g_tls_database_lookup_certificate_issuer
                                 <em class="parameter"><code><a class="link" href="GTlsDatabase.html#GTlsDatabaseLookupFlags" title="enum GTlsDatabaseLookupFlags"><span class="type">GTlsDatabaseLookupFlags</span></a> flags</code></em>,
                                 <em class="parameter"><code><a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> *cancellable</code></em>,
                                 <em class="parameter"><code><a class="link" href=""><span class="type">GError</span></a> **error</code></em>);</pre>
-<p>Lookup the issuer of <em class="parameter"><code>certificate</code></em>
+<p>Look up the issuer of <em class="parameter"><code>certificate</code></em>
  in the database.</p>
 <p>The <a class="link" href="GTlsCertificate.html#GTlsCertificate--issuer" title="The “issuer” property"><span class="type">“issuer”</span></a> property
 of <em class="parameter"><code>certificate</code></em>
@@ -573,7 +573,7 @@ g_tls_database_lookup_certificate_issuer_async
                                 <em class="parameter"><code><a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> *cancellable</code></em>,
                                 <em class="parameter"><code><a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> callback</code></em>,
                                 <em class="parameter"><code><a class="link" href=""><span class="type">gpointer</span></a> user_data</code></em>);</pre>
-<p>Asynchronously lookup the issuer of <em class="parameter"><code>certificate</code></em>
+<p>Asynchronously look up the issuer of <em class="parameter"><code>certificate</code></em>
  in the database. See
 <a class="link" href="GTlsDatabase.html#g-tls-database-lookup-certificate-issuer" title="g_tls_database_lookup_certificate_issuer ()"><code class="function">g_tls_database_lookup_certificate_issuer()</code></a> for more information.</p>
 <div class="refsect3">
@@ -690,7 +690,7 @@ g_tls_database_lookup_certificates_issued_by
                                 <em class="parameter"><code><a class="link" href="GTlsDatabase.html#GTlsDatabaseLookupFlags" title="enum GTlsDatabaseLookupFlags"><span class="type">GTlsDatabaseLookupFlags</span></a> flags</code></em>,
                                 <em class="parameter"><code><a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> *cancellable</code></em>,
                                 <em class="parameter"><code><a class="link" href=""><span class="type">GError</span></a> **error</code></em>);</pre>
-<p>Lookup certificates issued by this issuer in the database.</p>
+<p>Look up certificates issued by this issuer in the database.</p>
 <p>This function can block, use <a class="link" href="GTlsDatabase.html#g-tls-database-lookup-certificates-issued-by-async" title="g_tls_database_lookup_certificates_issued_by_async ()"><code class="function">g_tls_database_lookup_certificates_issued_by_async()</code></a> to perform
 the lookup operation asynchronously.</p>
 <div class="refsect3">
@@ -760,7 +760,7 @@ g_tls_database_lookup_certificates_issued_by_async
                                 <em class="parameter"><code><a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> *cancellable</code></em>,
                                 <em class="parameter"><code><a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> callback</code></em>,
                                 <em class="parameter"><code><a class="link" href=""><span class="type">gpointer</span></a> user_data</code></em>);</pre>
-<p>Asynchronously lookup certificates issued by this issuer in the database. See
+<p>Asynchronously look up certificates issued by this issuer in the database. See
 <a class="link" href="GTlsDatabase.html#g-tls-database-lookup-certificates-issued-by" title="g_tls_database_lookup_certificates_issued_by ()"><code class="function">g_tls_database_lookup_certificates_issued_by()</code></a> for more information.</p>
 <p>The database may choose to hold a reference to the issuer byte array for the duration
 of of this asynchronous operation. The byte array should not be modified during
@@ -928,7 +928,7 @@ g_tls_database_lookup_certificate_for_handle
                                 <em class="parameter"><code><a class="link" href="GTlsDatabase.html#GTlsDatabaseLookupFlags" title="enum GTlsDatabaseLookupFlags"><span class="type">GTlsDatabaseLookupFlags</span></a> flags</code></em>,
                                 <em class="parameter"><code><a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> *cancellable</code></em>,
                                 <em class="parameter"><code><a class="link" href=""><span class="type">GError</span></a> **error</code></em>);</pre>
-<p>Lookup a certificate by its handle.</p>
+<p>Look up a certificate by its handle.</p>
 <p>The handle should have been created by calling
 <a class="link" href="GTlsDatabase.html#g-tls-database-create-certificate-handle" title="g_tls_database_create_certificate_handle ()"><code class="function">g_tls_database_create_certificate_handle()</code></a> on a <a class="link" href="GTlsDatabase.html" title="GTlsDatabase"><span class="type">GTlsDatabase</span></a> object of
 the same TLS backend. The handle is designed to remain valid across
@@ -1004,7 +1004,7 @@ g_tls_database_lookup_certificate_for_handle_async
                                 <em class="parameter"><code><a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> *cancellable</code></em>,
                                 <em class="parameter"><code><a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> callback</code></em>,
                                 <em class="parameter"><code><a class="link" href=""><span class="type">gpointer</span></a> user_data</code></em>);</pre>
-<p>Asynchronously lookup a certificate by its handle in the database. See
+<p>Asynchronously look up a certificate by its handle in the database. See
 <a class="link" href="GTlsDatabase.html#g-tls-database-lookup-certificate-for-handle" title="g_tls_database_lookup_certificate_for_handle ()"><code class="function">g_tls_database_lookup_certificate_for_handle()</code></a> for more information.</p>
 <div class="refsect3">
 <a name="g-tls-database-lookup-certificate-for-handle-async.parameters"></a><h4>Parameters</h4>
@@ -1068,7 +1068,7 @@ g_tls_database_lookup_certificate_for_handle_finish
                                 <em class="parameter"><code><a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a> *result</code></em>,
                                 <em class="parameter"><code><a class="link" href=""><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Finish an asynchronous lookup of a certificate by its handle. See
-<a class="link" href=""><code class="function">g_tls_database_lookup_certificate_by_handle()</code></a> for more information.</p>
+<a class="link" href="GTlsDatabase.html#g-tls-database-lookup-certificate-for-handle" title="g_tls_database_lookup_certificate_for_handle ()"><code class="function">g_tls_database_lookup_certificate_for_handle()</code></a> for more information.</p>
 <p>If the handle is no longer valid, or does not point to a certificate in
 this database, then <a class="link" href=""><code class="literal">NULL</code></a> will be returned.</p>
 <div class="refsect3">

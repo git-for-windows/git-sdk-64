@@ -98,7 +98,7 @@ GDtlsConnection
 </tr>
 <tr>
 <td class="function_type">
-<a class="link" href="GTlsConnection.html#GTlsRehandshakeMode" title="enum GTlsRehandshakeMode"><span class="returnvalue">GTlsRehandshakeMode</span></a>
+<a class="link" href=""><span class="returnvalue">GTlsRehandshakeMode</span></a>
 </td>
 <td class="function_name">
 <a class="link" href="GDtlsConnection.html#g-dtls-connection-get-rehandshake-mode" title="g_dtls_connection_get_rehandshake_mode ()">g_dtls_connection_get_rehandshake_mode</a> <span class="c_punctuation">()</span>
@@ -293,7 +293,7 @@ GDtlsConnection
 <td class="property_flags">Read</td>
 </tr>
 <tr>
-<td class="property_type"><a class="link" href="GTlsConnection.html#GTlsRehandshakeMode" title="enum GTlsRehandshakeMode"><span class="type">GTlsRehandshakeMode</span></a></td>
+<td class="property_type"><a class="link" href=""><span class="type">GTlsRehandshakeMode</span></a></td>
 <td class="property_name"><a class="link" href="GDtlsConnection.html#GDtlsConnection--rehandshake-mode" title="The “rehandshake-mode” property">rehandshake-mode</a></td>
 <td class="property_flags">Read / Write / Construct</td>
 </tr>
@@ -664,7 +664,7 @@ requires a proper TLS close notification.</p>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
 g_dtls_connection_set_rehandshake_mode
                                (<em class="parameter"><code><a class="link" href="GDtlsConnection.html" title="GDtlsConnection"><span class="type">GDtlsConnection</span></a> *conn</code></em>,
-                                <em class="parameter"><code><a class="link" href="GTlsConnection.html#GTlsRehandshakeMode" title="enum GTlsRehandshakeMode"><span class="type">GTlsRehandshakeMode</span></a> mode</code></em>);</pre>
+                                <em class="parameter"><code><a class="link" href=""><span class="type">GTlsRehandshakeMode</span></a> mode</code></em>);</pre>
 <div class="warning">
 <p><code class="literal">g_dtls_connection_set_rehandshake_mode</code> has been deprecated since version 2.60. and should not be used in newly-written code.</p> <p>Changing the rehandshake mode is no longer
   required for compatibility. Also, rehandshaking has been removed
@@ -672,17 +672,17 @@ g_dtls_connection_set_rehandshake_mode
 </div>
 <p>Sets how <em class="parameter"><code>conn</code></em>
  behaves with respect to rehandshaking requests.</p>
-<p><a class="link" href="GTlsConnection.html#G-TLS-REHANDSHAKE-NEVER:CAPS"><code class="literal">G_TLS_REHANDSHAKE_NEVER</code></a> means that it will never agree to
+<p><a class="link" href="GTlsPassword.html#G-TLS-REHANDSHAKE-NEVER:CAPS"><code class="literal">G_TLS_REHANDSHAKE_NEVER</code></a> means that it will never agree to
 rehandshake after the initial handshake is complete. (For a client,
 this means it will refuse rehandshake requests from the server, and
 for a server, this means it will close the connection with an error
 if the client attempts to rehandshake.)</p>
-<p><a class="link" href="GTlsConnection.html#G-TLS-REHANDSHAKE-SAFELY:CAPS"><code class="literal">G_TLS_REHANDSHAKE_SAFELY</code></a> means that the connection will allow a
+<p><a class="link" href="GTlsPassword.html#G-TLS-REHANDSHAKE-SAFELY:CAPS"><code class="literal">G_TLS_REHANDSHAKE_SAFELY</code></a> means that the connection will allow a
 rehandshake only if the other end of the connection supports the
 TLS <code class="literal">renegotiation_info</code> extension. This is the default behavior,
 but means that rehandshaking will not work against older
 implementations that do not support that extension.</p>
-<p><a class="link" href="GTlsConnection.html#G-TLS-REHANDSHAKE-UNSAFELY:CAPS"><code class="literal">G_TLS_REHANDSHAKE_UNSAFELY</code></a> means that the connection will allow
+<p><a class="link" href="GTlsPassword.html#G-TLS-REHANDSHAKE-UNSAFELY:CAPS"><code class="literal">G_TLS_REHANDSHAKE_UNSAFELY</code></a> means that the connection will allow
 rehandshaking even without the <code class="literal">renegotiation_info</code> extension. On
 the server side in particular, this is not recommended, since it
 leaves the server open to certain attacks. However, this mode is
@@ -719,7 +719,7 @@ software.</p>
 <a name="g-dtls-connection-get-rehandshake-mode"></a><h3>g_dtls_connection_get_rehandshake_mode ()</h3>
 
 <a class="indexterm" name="id-1.4.15.7.12.9.2"></a><a class="indexterm" name="id-1.4.15.7.12.9.3"></a>
-<pre class="programlisting"><a class="link" href="GTlsConnection.html#GTlsRehandshakeMode" title="enum GTlsRehandshakeMode"><span class="returnvalue">GTlsRehandshakeMode</span></a>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">GTlsRehandshakeMode</span></a>
 g_dtls_connection_get_rehandshake_mode
                                (<em class="parameter"><code><a class="link" href="GDtlsConnection.html" title="GDtlsConnection"><span class="type">GDtlsConnection</span></a> *conn</code></em>);</pre>
 <div class="warning"><p><code class="literal">g_dtls_connection_get_rehandshake_mode</code> is deprecated and should not be used in newly-written code.</p></div>
@@ -1686,7 +1686,7 @@ behavior.</p>
 <div class="refsect2">
 <a name="GDtlsConnection--rehandshake-mode"></a><h3>The <code class="literal">“rehandshake-mode”</code> property</h3>
 <a class="indexterm" name="id-1.4.15.7.14.10.2"></a><a class="indexterm" name="id-1.4.15.7.14.10.3"></a>
-<pre class="programlisting">  “rehandshake-mode”         <a class="link" href="GTlsConnection.html#GTlsRehandshakeMode" title="enum GTlsRehandshakeMode"><span class="type">GTlsRehandshakeMode</span></a></pre>
+<pre class="programlisting">  “rehandshake-mode”         <a class="link" href=""><span class="type">GTlsRehandshakeMode</span></a></pre>
 <p>The rehandshaking mode. See
 <a class="link" href="GDtlsConnection.html#g-dtls-connection-set-rehandshake-mode" title="g_dtls_connection_set_rehandshake_mode ()"><code class="function">g_dtls_connection_set_rehandshake_mode()</code></a>.</p>
 <div class="warning">

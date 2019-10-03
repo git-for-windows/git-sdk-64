@@ -380,10 +380,10 @@ GFileInfo
 </tr>
 <tr>
 <td class="function_type">
-<a class="link" href=""><span class="returnvalue">void</span></a>
+<a class="link" href=""><span class="returnvalue">GDateTime</span></a> *
 </td>
 <td class="function_name">
-<a class="link" href="GFileInfo.html#g-file-info-get-modification-time" title="g_file_info_get_modification_time ()">g_file_info_get_modification_time</a> <span class="c_punctuation">()</span>
+<a class="link" href="GFileInfo.html#g-file-info-get-modification-date-time" title="g_file_info_get_modification_date_time ()">g_file_info_get_modification_date_time</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -517,7 +517,7 @@ GFileInfo
 <a class="link" href=""><span class="returnvalue">void</span></a>
 </td>
 <td class="function_name">
-<a class="link" href="GFileInfo.html#g-file-info-set-modification-time" title="g_file_info_set_modification_time ()">g_file_info_set_modification_time</a> <span class="c_punctuation">()</span>
+<a class="link" href="GFileInfo.html#g-file-info-set-modification-date-time" title="g_file_info_set_modification_date_time ()">g_file_info_set_modification_date_time</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -1316,7 +1316,7 @@ g_file_info_get_attribute_as_string (<em class="parameter"><code><a class="link"
                                      <em class="parameter"><code>const <a class="link" href=""><span class="type">char</span></a> *attribute</code></em>);</pre>
 <p>Gets the value of a attribute, formated as a string.
 This escapes things as needed to make the string valid
-utf8.</p>
+UTF-8.</p>
 <div class="refsect3">
 <a name="g-file-info-get-attribute-as-string.parameters"></a><h4>Parameters</h4>
 
@@ -1345,9 +1345,11 @@ utf8.</p>
 <div class="refsect3">
 <a name="g-file-info-get-attribute-as-string.returns"></a><h4>Returns</h4>
 
-<p> a UTF-8 string associated with the given <em class="parameter"><code>attribute</code></em>
-.
-When you're done with the string it must be freed with <a class="link" href=""><code class="function">g_free()</code></a>.</p>
+<p>a UTF-8 string associated with the given <em class="parameter"><code>attribute</code></em>
+, or
+<a class="link" href=""><code class="literal">NULL</code></a> if the attribute wasn’t set.
+When you're done with the string it must be freed with <a class="link" href=""><code class="function">g_free()</code></a>. </p>
+<p><span class="annotation">[<acronym class="acronym">nullable</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -1752,7 +1754,7 @@ attribute does not contain an unsigned 64-bit integer, or is invalid,
 g_file_info_get_attribute_int64 (<em class="parameter"><code><a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a> *info</code></em>,
                                  <em class="parameter"><code>const <a class="link" href=""><span class="type">char</span></a> *attribute</code></em>);</pre>
 <p>Gets a signed 64-bit integer contained within the attribute. If the
-attribute does not contain an signed 64-bit integer, or is invalid,
+attribute does not contain a signed 64-bit integer, or is invalid,
 0 will be returned.</p>
 <div class="refsect3">
 <a name="g-file-info-get-attribute-int64.parameters"></a><h4>Parameters</h4>
@@ -2695,18 +2697,20 @@ g_file_info_get_size (<em class="parameter"><code><a class="link" href="GFileInf
 </div>
 </div>
 <div class="refsect2">
-<a name="g-file-info-get-modification-time"></a><h3>g_file_info_get_modification_time ()</h3>
+<a name="g-file-info-get-modification-date-time"></a><h3>g_file_info_get_modification_date_time ()</h3>
 
 <a class="indexterm" name="id-1.4.2.4.9.45.2"></a>
-<pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
-g_file_info_get_modification_time (<em class="parameter"><code><a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a> *info</code></em>,
-                                   <em class="parameter"><code><a class="link" href=""><span class="type">GTimeVal</span></a> *result</code></em>);</pre>
+<pre class="programlisting"><a class="link" href=""><span class="returnvalue">GDateTime</span></a> *
+g_file_info_get_modification_date_time
+                               (<em class="parameter"><code><a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a> *info</code></em>);</pre>
 <p>Gets the modification time of the current <em class="parameter"><code>info</code></em>
- and sets it
-in <em class="parameter"><code>result</code></em>
-.</p>
+ and returns it as a
+<a class="link" href=""><span class="type">GDateTime</span></a>.</p>
+<p>This requires the <a class="link" href="GFileInfo.html#G-FILE-ATTRIBUTE-TIME-MODIFIED:CAPS" title="G_FILE_ATTRIBUTE_TIME_MODIFIED"><code class="literal">G_FILE_ATTRIBUTE_TIME_MODIFIED</code></a> attribute. If
+<a class="link" href="GFileInfo.html#G-FILE-ATTRIBUTE-TIME-MODIFIED-USEC:CAPS" title="G_FILE_ATTRIBUTE_TIME_MODIFIED_USEC"><code class="literal">G_FILE_ATTRIBUTE_TIME_MODIFIED_USEC</code></a> is provided, the resulting <a class="link" href=""><span class="type">GDateTime</span></a>
+will have microsecond precision.</p>
 <div class="refsect3">
-<a name="g-file-info-get-modification-time.parameters"></a><h4>Parameters</h4>
+<a name="g-file-info-get-modification-date-time.parameters"></a><h4>Parameters</h4>
 
 <div class="informaltable">
 <table class="informaltable" width="100%" border="0">
@@ -2715,21 +2719,21 @@ in <em class="parameter"><code>result</code></em>
 <col class="parameters_description">
 <col width="200px" class="parameters_annotations">
 </colgroup>
-<tbody>
-<tr>
+<tbody><tr>
 <td class="parameter_name"><p>info</p></td>
 <td class="parameter_description"><p>a <a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a>.</p></td>
 <td class="parameter_annotations"> </td>
-</tr>
-<tr>
-<td class="parameter_name"><p>result</p></td>
-<td class="parameter_description"><p>a <a class="link" href=""><span class="type">GTimeVal</span></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">out caller-allocates</acronym>]</span></td>
-</tr>
-</tbody>
+</tr></tbody>
 </table>
 </div>
 </div>
+<div class="refsect3">
+<a name="g-file-info-get-modification-date-time.returns"></a><h4>Returns</h4>
+
+<p>modification time, or <a class="link" href=""><code class="literal">NULL</code></a> if unknown. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>][<acronym class="acronym">nullable</acronym>]</span></p>
+</div>
+<p class="since">Since: <a class="link" href="">2.62</a></p>
 </div>
 <div class="refsect2">
 <a name="g-file-info-get-symlink-target"></a><h3>g_file_info_get_symlink_target ()</h3>
@@ -3278,16 +3282,17 @@ to the given size.</p>
 </div>
 </div>
 <div class="refsect2">
-<a name="g-file-info-set-modification-time"></a><h3>g_file_info_set_modification_time ()</h3>
+<a name="g-file-info-set-modification-date-time"></a><h3>g_file_info_set_modification_date_time ()</h3>
 
 <a class="indexterm" name="id-1.4.2.4.9.62.2"></a>
 <pre class="programlisting"><a class="link" href=""><span class="returnvalue">void</span></a>
-g_file_info_set_modification_time (<em class="parameter"><code><a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a> *info</code></em>,
-                                   <em class="parameter"><code><a class="link" href=""><span class="type">GTimeVal</span></a> *mtime</code></em>);</pre>
+g_file_info_set_modification_date_time
+                               (<em class="parameter"><code><a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a> *info</code></em>,
+                                <em class="parameter"><code><a class="link" href=""><span class="type">GDateTime</span></a> *mtime</code></em>);</pre>
 <p>Sets the <a class="link" href="GFileInfo.html#G-FILE-ATTRIBUTE-TIME-MODIFIED:CAPS" title="G_FILE_ATTRIBUTE_TIME_MODIFIED"><code class="literal">G_FILE_ATTRIBUTE_TIME_MODIFIED</code></a> attribute in the file
-info to the given time value.</p>
+info to the given date/time value.</p>
 <div class="refsect3">
-<a name="g-file-info-set-modification-time.parameters"></a><h4>Parameters</h4>
+<a name="g-file-info-set-modification-date-time.parameters"></a><h4>Parameters</h4>
 
 <div class="informaltable">
 <table class="informaltable" width="100%" border="0">
@@ -3304,13 +3309,14 @@ info to the given time value.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>mtime</p></td>
-<td class="parameter_description"><p>a <a class="link" href=""><span class="type">GTimeVal</span></a>.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>a <a class="link" href=""><span class="type">GDateTime</span></a>. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">not nullable</acronym>]</span></td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+<p class="since">Since: <a class="link" href="">2.62</a></p>
 </div>
 <div class="refsect2">
 <a name="g-file-info-set-symlink-target"></a><h3>g_file_info_set_symlink_target ()</h3>
@@ -3762,6 +3768,14 @@ was <a class="link" href=""><code class="literal">NULL</code></a>.</p>
 
 <a class="indexterm" name="id-1.4.2.4.10.3.2"></a>
 <p>Indicates the file's on-disk type.</p>
+<p>On Windows systems a file will never have <a class="link" href="GFileInfo.html#G-FILE-TYPE-SYMBOLIC-LINK:CAPS"><code class="literal">G_FILE_TYPE_SYMBOLIC_LINK</code></a> type;
+use <a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a> and <a class="link" href="GFileInfo.html#G-FILE-ATTRIBUTE-STANDARD-IS-SYMLINK:CAPS" title="G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK"><code class="literal">G_FILE_ATTRIBUTE_STANDARD_IS_SYMLINK</code></a> to determine
+whether a file is a symlink or not. This is due to the fact that NTFS does
+not have a single filesystem object type for symbolic links - it has
+files that symlink to files, and directories that symlink to directories.
+<a class="link" href="GFileInfo.html#GFileType" title="enum GFileType"><span class="type">GFileType</span></a> enumeration cannot precisely represent this important distinction,
+which is why all Windows symlinks will continue to be reported as
+<a class="link" href="GFileInfo.html#G-FILE-TYPE-REGULAR:CAPS"><code class="literal">G_FILE_TYPE_REGULAR</code></a> or <a class="link" href="GFileInfo.html#G-FILE-TYPE-DIRECTORY:CAPS"><code class="literal">G_FILE_TYPE_DIRECTORY</code></a>.</p>
 <div class="refsect3">
 <a name="GFileType.members"></a><h4>Members</h4>
 
@@ -3873,6 +3887,7 @@ Corresponding <a class="link" href="gio-GFileAttribute.html#GFileAttributeType" 
 <p>A key in the "standard" namespace for checking if the file is a symlink.
 Typically the actual type is something else, if we followed the symlink
 to get the type.
+On Windows NTFS mountpoints are considered to be symlinks as well.
 Corresponding <a class="link" href="gio-GFileAttribute.html#GFileAttributeType" title="enum GFileAttributeType"><span class="type">GFileAttributeType</span></a> is <a class="link" href="gio-GFileAttribute.html#G-FILE-ATTRIBUTE-TYPE-BOOLEAN:CAPS"><code class="literal">G_FILE_ATTRIBUTE_TYPE_BOOLEAN</code></a>.</p>
 </div>
 <div class="refsect2">

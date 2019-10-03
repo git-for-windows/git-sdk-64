@@ -299,6 +299,69 @@ How to run and debug your GLib application
   
 </p>
 
+<p><a name="G_DEBUGGER"></a>
+  <b><code class="envar">G_DEBUGGER</code>. </b>
+
+  
+    When running on Windows, if set to a non-empty string, GLib will
+    try to interpret the contents of this environment variable as
+    a command line to a debugger, and run it if the process crashes.
+    The debugger command line should contain <code class="literal">%p</code> and <code class="literal">%e</code> substitution
+    tokens, which GLib will replace with the process ID of the crashing
+    process and a handle to an event that the debugger should signal
+    to let GLib know that the debugger successfully attached to the
+    process. If <code class="literal">%e</code> is absent, or if the debugger is not able to
+    signal events, GLib will resume execution after 60 seconds.
+    If <code class="literal">%p</code> is absent, the debugger won't know which process to attach to,
+    and GLib will also resume execution after 60 seconds.
+  
+  
+    Additionally, even if <code class="envar">G_DEBUGGER</code> is not set, GLib would still
+    try to print basic exception information (code and address) into
+    stderr.
+  
+  
+    By default the debugger gets a new console allocated for it.
+    Set the <code class="envar">G_DEBUGGER_OLD_CONSOLE</code> environment variable to any
+    non-empty string to make the debugger inherit the console of
+    the crashing process. Normally this is only used by the GLib
+    testsuite.
+  
+  
+    The exception handler is written with the aim of making it as
+    simple as possible, to minimize the risk of it invoking
+    buggy functions or running buggy code, which would result
+    in exceptions being raised recursively. Because of that
+    it lacks most of the amenities that one would expect of GLib.
+    Namely, it does not support Unicode, so it is highly advisable
+    to only use ASCII characters in <code class="envar">G_DEBUGGER</code>.
+  
+  
+    See also <a class="link" href="glib-running.html#G_VEH_CATCH" title="G_VEH_CATCH"><code class="envar">G_VEH_CATCH</code></a>.
+  
+</p>
+
+<p><a name="G_VEH_CATCH"></a>
+  <b><code class="envar">G_VEH_CATCH</code>. </b>
+
+  
+    Catching some exceptions can break the program, since Windows
+    will sometimes use exceptions for execution flow control and
+    other purposes other than signalling a crash.
+  
+  
+    The <code class="envar">G_VEH_CATCH</code> environment variable augments
+    <a class="ulink" href="https://docs.microsoft.com/en-us/windows/desktop/debug/vectored-exception-handling" target="_top">Vectored Exception Handling</a>
+    on Windows (see <a class="link" href="glib-running.html#G_DEBUGGER" title="G_DEBUGGER"><code class="envar">G_DEBUGGER</code></a>), allowing GLib to catch more
+    exceptions. Set this variable to a comma-separated list of
+    hexademical exception codes that should additionally be caught.
+  
+  
+    By default GLib will only catch Access Violation, Stack Overflow and
+    Illegal Instruction <a class="ulink" href="https://docs.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-_exception_record" target="_top">exceptions</a>.
+  
+</p>
+
 </div>
 
 <div class="refsect2">

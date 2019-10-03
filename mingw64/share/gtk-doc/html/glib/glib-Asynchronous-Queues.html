@@ -253,14 +253,6 @@ Asynchronous Queues
 <a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
 </td>
 <td class="function_name">
-<a class="link" href="glib-Asynchronous-Queues.html#g-async-queue-timed-pop" title="g_async_queue_timed_pop ()">g_async_queue_timed_pop</a> <span class="c_punctuation">()</span>
-</td>
-</tr>
-<tr>
-<td class="function_type">
-<a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
-</td>
-<td class="function_name">
 <a class="link" href="glib-Asynchronous-Queues.html#g-async-queue-timed-pop-unlocked" title="g_async_queue_timed_pop_unlocked ()">g_async_queue_timed_pop_unlocked</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
@@ -1416,64 +1408,12 @@ element.</p>
 <p class="since">Since: <a class="link" href="api-index-2-10.html#api-index-2.10">2.10</a></p>
 </div>
 <div class="refsect2">
-<a name="g-async-queue-timed-pop"></a><h3>g_async_queue_timed_pop ()</h3>
+<a name="g-async-queue-timed-pop-unlocked"></a><h3>g_async_queue_timed_pop_unlocked ()</h3>
 
 <a class="indexterm" name="id-1.4.5.7.28.2"></a>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
-g_async_queue_timed_pop (<em class="parameter"><code><a class="link" href="glib-Asynchronous-Queues.html#GAsyncQueue" title="GAsyncQueue"><span class="type">GAsyncQueue</span></a> *queue</code></em>,
-                         <em class="parameter"><code><a class="link" href="glib-Date-and-Time-Functions.html#GTimeVal" title="struct GTimeVal"><span class="type">GTimeVal</span></a> *end_time</code></em>);</pre>
-<div class="warning">
-<p><code class="literal">g_async_queue_timed_pop</code> is deprecated and should not be used in newly-written code.</p> <p>use <a class="link" href="glib-Asynchronous-Queues.html#g-async-queue-timeout-pop" title="g_async_queue_timeout_pop ()"><code class="function">g_async_queue_timeout_pop()</code></a>.</p>
-</div>
-<p>Pops data from the <em class="parameter"><code>queue</code></em>
-. If the queue is empty, blocks until
-<em class="parameter"><code>end_time</code></em>
- or until data becomes available.</p>
-<p>If no data is received before <em class="parameter"><code>end_time</code></em>
-, <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> is returned.</p>
-<p>To easily calculate <em class="parameter"><code>end_time</code></em>
-, a combination of <a class="link" href="glib-Date-and-Time-Functions.html#g-get-current-time" title="g_get_current_time ()"><code class="function">g_get_current_time()</code></a>
-and <a class="link" href="glib-Date-and-Time-Functions.html#g-time-val-add" title="g_time_val_add ()"><code class="function">g_time_val_add()</code></a> can be used.</p>
-<div class="refsect3">
-<a name="g-async-queue-timed-pop.parameters"></a><h4>Parameters</h4>
-
-<div class="informaltable">
-<table class="informaltable" width="100%" border="0">
-<colgroup>
-<col width="150px" class="parameters_name">
-<col class="parameters_description">
-<col width="200px" class="parameters_annotations">
-</colgroup>
-<tbody>
-<tr>
-<td class="parameter_name"><p>queue</p></td>
-<td class="parameter_description"><p>a <a class="link" href="glib-Asynchronous-Queues.html#GAsyncQueue" title="GAsyncQueue"><span class="type">GAsyncQueue</span></a></p></td>
-<td class="parameter_annotations"> </td>
-</tr>
-<tr>
-<td class="parameter_name"><p>end_time</p></td>
-<td class="parameter_description"><p>a <a class="link" href="glib-Date-and-Time-Functions.html#GTimeVal" title="struct GTimeVal"><span class="type">GTimeVal</span></a>, determining the final time</p></td>
-<td class="parameter_annotations"> </td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="refsect3">
-<a name="g-async-queue-timed-pop.returns"></a><h4>Returns</h4>
-
-<p> data from the queue or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>, when no data is
-received before <em class="parameter"><code>end_time</code></em>
-.</p>
-</div>
-</div>
-<div class="refsect2">
-<a name="g-async-queue-timed-pop-unlocked"></a><h3>g_async_queue_timed_pop_unlocked ()</h3>
-
-<a class="indexterm" name="id-1.4.5.7.29.2"></a>
-<pre class="programlisting"><a class="link" href="glib-Basic-Types.html#gpointer" title="gpointer"><span class="returnvalue">gpointer</span></a>
 g_async_queue_timed_pop_unlocked (<em class="parameter"><code><a class="link" href="glib-Asynchronous-Queues.html#GAsyncQueue" title="GAsyncQueue"><span class="type">GAsyncQueue</span></a> *queue</code></em>,
-                                  <em class="parameter"><code><a class="link" href="glib-Date-and-Time-Functions.html#GTimeVal" title="struct GTimeVal"><span class="type">GTimeVal</span></a> *end_time</code></em>);</pre>
+                                  <em class="parameter"><code><a class="link" href=""><span class="type">GTimeVal</span></a> *end_time</code></em>);</pre>
 <div class="warning">
 <p><code class="literal">g_async_queue_timed_pop_unlocked</code> is deprecated and should not be used in newly-written code.</p> <p>use <a class="link" href="glib-Asynchronous-Queues.html#g-async-queue-timeout-pop-unlocked" title="g_async_queue_timeout_pop_unlocked ()"><code class="function">g_async_queue_timeout_pop_unlocked()</code></a>.</p>
 </div>
@@ -1484,7 +1424,7 @@ g_async_queue_timed_pop_unlocked (<em class="parameter"><code><a class="link" hr
 <p>If no data is received before <em class="parameter"><code>end_time</code></em>
 , <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> is returned.</p>
 <p>To easily calculate <em class="parameter"><code>end_time</code></em>
-, a combination of <a class="link" href="glib-Date-and-Time-Functions.html#g-get-current-time" title="g_get_current_time ()"><code class="function">g_get_current_time()</code></a>
+, a combination of <a class="link" href="glib-Date-and-Time-Functions.html#g-get-real-time" title="g_get_real_time ()"><code class="function">g_get_real_time()</code></a>
 and <a class="link" href="glib-Date-and-Time-Functions.html#g-time-val-add" title="g_time_val_add ()"><code class="function">g_time_val_add()</code></a> can be used.</p>
 <p>This function must be called while holding the <em class="parameter"><code>queue</code></em>
 's lock.</p>
@@ -1506,7 +1446,7 @@ and <a class="link" href="glib-Date-and-Time-Functions.html#g-time-val-add" titl
 </tr>
 <tr>
 <td class="parameter_name"><p>end_time</p></td>
-<td class="parameter_description"><p>a <a class="link" href="glib-Date-and-Time-Functions.html#GTimeVal" title="struct GTimeVal"><span class="type">GTimeVal</span></a>, determining the final time</p></td>
+<td class="parameter_description"><p>a <a class="link" href=""><span class="type">GTimeVal</span></a>, determining the final time</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 </tbody>

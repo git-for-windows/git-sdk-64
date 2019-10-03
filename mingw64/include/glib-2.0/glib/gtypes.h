@@ -119,6 +119,20 @@ typedef void            (*GHFunc)               (gpointer       key,
                                                  gpointer       user_data);
 
 /**
+ * GCopyFunc:
+ * @src: (not nullable): A pointer to the data which should be copied
+ * @data: Additional data
+ *
+ * A function of this signature is used to copy the node data
+ * when doing a deep-copy of a tree.
+ *
+ * Returns: (not nullable): A pointer to the copy
+ *
+ * Since: 2.4
+ */
+typedef gpointer	(*GCopyFunc)            (gconstpointer  src,
+                                                 gpointer       data);
+/**
  * GFreeFunc:
  * @data: a data pointer
  *
@@ -437,6 +451,9 @@ typedef const gchar *   (*GTranslateFunc)       (const gchar   *str,
     _GLIB_CHECKED_MUL_U32(dest, a, b)
 #endif
 
+/* FIXME: Hide this from gtkdoc scanner because it confuses its poor regexes.
+ * https://gitlab.gnome.org/GNOME/gtk-doc/issues/90 */
+#ifndef __GTK_DOC_IGNORE__
 /* The names of the following inlines are private.  Use the macro
  * definitions above.
  */
@@ -460,6 +477,7 @@ static inline gboolean _GLIB_CHECKED_ADD_U64 (guint64 *dest, guint64 a, guint64 
 static inline gboolean _GLIB_CHECKED_MUL_U64 (guint64 *dest, guint64 a, guint64 b) {
   *dest = a * b; return !a || *dest / a == b; }
 #endif
+#endif /* __GTK_DOC_IGNORE__ */
 
 /* IEEE Standard 754 Single Precision Storage Format (gfloat):
  *
@@ -528,13 +546,13 @@ union _GDoubleIEEE754
 #error unknown ENDIAN type
 #endif /* !G_LITTLE_ENDIAN && !G_BIG_ENDIAN */
 
-typedef struct _GTimeVal                GTimeVal;
+typedef struct _GTimeVal GTimeVal GLIB_DEPRECATED_TYPE_IN_2_62_FOR(GDateTime);
 
 struct _GTimeVal
 {
   glong tv_sec;
   glong tv_usec;
-};
+} GLIB_DEPRECATED_TYPE_IN_2_62_FOR(GDateTime);
 
 typedef gint            grefcount;
 typedef volatile gint   gatomicrefcount;

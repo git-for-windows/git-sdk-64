@@ -3974,6 +3974,23 @@ allow nesting such as</p>
 </div>
 
 <p></p>
+<p>In order to modify a copy, you may use <code class="literal"><a class="link" href="glib-String-Utility-Functions.html#g-strdup" title="g_strdup ()"><code class="function">g_strdup()</code></a></code>:</p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="n">reformatted</span> <span class="o">=</span> <span class="n">g_strdelimit</span> <span class="p">(</span><span class="n">g_strdup</span> <span class="p">(</span><span class="n">const_str</span><span class="p">),</span> <span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="sc">&#39;?&#39;</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">g_free</span> <span class="p">(</span><span class="n">reformatted</span><span class="p">);</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
 <div class="refsect3">
 <a name="g-strdelimit.parameters"></a><h4>Parameters</h4>
 
@@ -4125,6 +4142,23 @@ nesting such as</p>
 </div>
 
 <p></p>
+<p>In order to modify a copy, you may use <code class="literal"><a class="link" href="glib-String-Utility-Functions.html#g-strdup" title="g_strdup ()"><code class="function">g_strdup()</code></a></code>:</p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="n">reformatted</span> <span class="o">=</span> <span class="n">g_strcanon</span> <span class="p">(</span><span class="n">g_strdup</span> <span class="p">(</span><span class="n">const_str</span><span class="p">),</span> <span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="sc">&#39;?&#39;</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">g_free</span> <span class="p">(</span><span class="n">reformatted</span><span class="p">);</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
 <div class="refsect3">
 <a name="g-strcanon.parameters"></a><h4>Parameters</h4>
 
@@ -4183,7 +4217,7 @@ appended to the last token.</p>
 and "".</p>
 <p>As a special case, the result of splitting the empty string "" is an empty
 vector, not a vector containing a single string. The reason for this
-special case is that being able to represent a empty vector is typically
+special case is that being able to represent an empty vector is typically
 more useful than consistent handling of empty elements. If you do need
 to represent empty elements, you'll need to check for the empty string
 before calling <a class="link" href="glib-String-Utility-Functions.html#g-strsplit" title="g_strsplit ()"><code class="function">g_strsplit()</code></a>.</p>
@@ -4252,7 +4286,7 @@ and "ghi".</p>
 vector containing the four strings "", "def", "ghi", and "".</p>
 <p>As a special case, the result of splitting the empty string "" is an empty
 vector, not a vector containing a single string. The reason for this
-special case is that being able to represent a empty vector is typically
+special case is that being able to represent an empty vector is typically
 more useful than consistent handling of empty elements. If you do need
 to represent empty elements, you'll need to check for the empty string
 before calling <a class="link" href="glib-String-Utility-Functions.html#g-strsplit-set" title="g_strsplit_set ()"><code class="function">g_strsplit_set()</code></a>.</p>

@@ -1314,7 +1314,7 @@ g_unichar_toupper (<em class="parameter"><code><a class="link" href="glib-Unicod
 <p> the result of converting <em class="parameter"><code>c</code></em>
 to uppercase.
 If <em class="parameter"><code>c</code></em>
-is not an lowercase or titlecase character,
+is not a lowercase or titlecase character,
 or has no upper case equivalent <em class="parameter"><code>c</code></em>
 is returned unchanged.</p>
 </div>
@@ -1510,8 +1510,8 @@ for details.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>ch</p></td>
-<td class="parameter_description"><p>return location for the composed character</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p>return location for the composed character. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">out</acronym>][<acronym class="acronym">not optional</acronym>]</span></td>
 </tr>
 </tbody>
 </table>
@@ -1579,14 +1579,14 @@ for details.</p>
 <tr>
 <td class="parameter_name"><p>a</p></td>
 <td class="parameter_description"><p>return location for the first component of <em class="parameter"><code>ch</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">out</acronym>][<acronym class="acronym">not optional</acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>b</p></td>
 <td class="parameter_description"><p>return location for the second component of <em class="parameter"><code>ch</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">out</acronym>][<acronym class="acronym">not optional</acronym>]</span></td>
 </tr>
 </tbody>
 </table>
@@ -1655,7 +1655,7 @@ for details.</p>
 <tr>
 <td class="parameter_name"><p>result</p></td>
 <td class="parameter_description"><p>location to store decomposed result, or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">nullable</acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">optional</acronym>][<acronym class="acronym">out caller-allocates</acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>result_len</p></td>
@@ -2212,7 +2212,8 @@ text rendering and therefore has to be as fast as possible.</p>
 <div class="refsect3">
 <a name="g-utf8-offset-to-pointer.returns"></a><h4>Returns</h4>
 
-<p> the resulting pointer</p>
+<p>the resulting pointer. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer none</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -2222,7 +2223,7 @@ text rendering and therefore has to be as fast as possible.</p>
 <pre class="programlisting"><a class="link" href="glib-Basic-Types.html#glong" title="glong"><span class="returnvalue">glong</span></a>
 g_utf8_pointer_to_offset (<em class="parameter"><code>const <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> *str</code></em>,
                           <em class="parameter"><code>const <a class="link" href="glib-Basic-Types.html#gchar" title="gchar"><span class="type">gchar</span></a> *pos</code></em>);</pre>
-<p>Converts from a pointer to position within a string to a integer
+<p>Converts from a pointer to position within a string to an integer
 character offset.</p>
 <p>Since 2.10, this function allows <em class="parameter"><code>pos</code></em>
  to be before <em class="parameter"><code>str</code></em>
@@ -2295,7 +2296,8 @@ character of the string, you must use <a class="link" href="glib-Unicode-Manipul
 <div class="refsect3">
 <a name="g-utf8-prev-char.returns"></a><h4>Returns</h4>
 
-<p> a pointer to the found character</p>
+<p>a pointer to the found character. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer none</acronym>][<acronym class="acronym">not nullable</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -2349,7 +2351,7 @@ or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code
 <p>a pointer to the found character or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if <em class="parameter"><code>end</code></em>
 is
 set and is reached. </p>
-<p><span class="annotation">[<acronym class="acronym">nullable</acronym>]</span></p>
+<p><span class="annotation">[<acronym class="acronym">transfer none</acronym>][<acronym class="acronym">nullable</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -2400,7 +2402,8 @@ it starts with an appropriate byte.</p>
 <div class="refsect3">
 <a name="g-utf8-find-prev-char.returns"></a><h4>Returns</h4>
 
-<p> a pointer to the found character or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>.</p>
+<p>a pointer to the found character or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a>. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer none</acronym>][<acronym class="acronym">nullable</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -2483,8 +2486,8 @@ largest possible UTF-8 characters</p>
 <tr>
 <td class="parameter_name"><p>dest</p></td>
 <td class="parameter_description"><p>buffer to fill with characters from <em class="parameter"><code>src</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym class="acronym">transfer none</acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>src</p></td>
@@ -2503,8 +2506,9 @@ largest possible UTF-8 characters</p>
 <div class="refsect3">
 <a name="g-utf8-strncpy.returns"></a><h4>Returns</h4>
 
-<p> <em class="parameter"><code>dest</code></em>
-</p>
+<p><em class="parameter"><code>dest</code></em>
+. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer none</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -2554,9 +2558,10 @@ If <em class="parameter"><code>len</code></em>
 <div class="refsect3">
 <a name="g-utf8-strchr.returns"></a><h4>Returns</h4>
 
-<p> <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the string does not contain the character,
+<p><a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the string does not contain the character,
 otherwise, a pointer to the start of the leftmost occurrence
-of the character in the string.</p>
+of the character in the string. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer none</acronym>][<acronym class="acronym">nullable</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -2606,9 +2611,10 @@ If <em class="parameter"><code>len</code></em>
 <div class="refsect3">
 <a name="g-utf8-strrchr.returns"></a><h4>Returns</h4>
 
-<p> <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the string does not contain the character,
+<p><a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if the string does not contain the character,
 otherwise, a pointer to the start of the rightmost occurrence
-of the character in the string.</p>
+of the character in the string. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer none</acronym>][<acronym class="acronym">nullable</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -2661,8 +2667,9 @@ then the string is nul-terminated.</p></td>
 <div class="refsect3">
 <a name="g-utf8-strreverse.returns"></a><h4>Returns</h4>
 
-<p> a newly-allocated string which is the reverse of <em class="parameter"><code>str</code></em>
-</p>
+<p>a newly-allocated string which is the reverse of <em class="parameter"><code>str</code></em>
+. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-2.html#api-index-2.2">2.2</a></p>
 </div>
@@ -2713,8 +2720,9 @@ The substring will contain <em class="parameter"><code>end_pos</code></em>
 <div class="refsect3">
 <a name="g-utf8-substring.returns"></a><h4>Returns</h4>
 
-<p> a newly allocated copy of the requested
-substring. Free with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a> when no longer needed.</p>
+<p>a newly allocated copy of the requested
+substring. Free with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a> when no longer needed. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-30.html#api-index-2.30">2.30</a></p>
 </div>
@@ -3094,11 +3102,11 @@ is nul-terminated.</p></td>
 <div class="refsect3">
 <a name="g-utf8-normalize.returns"></a><h4>Returns</h4>
 
-<p> a newly allocated string, that is the
-normalized form of <em class="parameter"><code>str</code></em>
+<p>a newly allocated string, that
+is the normalized form of <em class="parameter"><code>str</code></em>
 , or <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> if <em class="parameter"><code>str</code></em>
-is not
-valid UTF-8.</p>
+is not valid UTF-8. </p>
+<p><span class="annotation">[<acronym class="acronym">nullable</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -3315,10 +3323,11 @@ errors. Any of the errors in <a class="link" href="glib-Character-Set-Conversion
 <div class="refsect3">
 <a name="g-utf8-to-utf16.returns"></a><h4>Returns</h4>
 
-<p> a pointer to a newly allocated UTF-16 string.
+<p>a pointer to a newly allocated UTF-16 string.
 This value must be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>. If an error occurs,
 <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> will be returned and <em class="parameter"><code>error</code></em>
-set.</p>
+set. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -3390,10 +3399,11 @@ errors. Any of the errors in <a class="link" href="glib-Character-Set-Conversion
 <div class="refsect3">
 <a name="g-utf8-to-ucs4.returns"></a><h4>Returns</h4>
 
-<p> a pointer to a newly allocated UCS-4 string.
+<p>a pointer to a newly allocated UCS-4 string.
 This value must be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>. If an error occurs,
 <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> will be returned and <em class="parameter"><code>error</code></em>
-set.</p>
+set. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -3446,8 +3456,9 @@ number of characters in the result, or <a class="link" href="glib-Standard-Macro
 <div class="refsect3">
 <a name="g-utf8-to-ucs4-fast.returns"></a><h4>Returns</h4>
 
-<p> a pointer to a newly allocated UCS-4 string.
-This value must be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>.</p>
+<p>a pointer to a newly allocated UCS-4 string.
+This value must be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -3516,10 +3527,11 @@ errors. Any of the errors in <a class="link" href="glib-Character-Set-Conversion
 <div class="refsect3">
 <a name="g-utf16-to-ucs4.returns"></a><h4>Returns</h4>
 
-<p> a pointer to a newly allocated UCS-4 string.
+<p>a pointer to a newly allocated UCS-4 string.
 This value must be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>. If an error occurs,
 <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> will be returned and <em class="parameter"><code>error</code></em>
-set.</p>
+set. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -3597,10 +3609,11 @@ errors. Any of the errors in <a class="link" href="glib-Character-Set-Conversion
 <div class="refsect3">
 <a name="g-utf16-to-utf8.returns"></a><h4>Returns</h4>
 
-<p> a pointer to a newly allocated UTF-8 string.
+<p>a pointer to a newly allocated UTF-8 string.
 This value must be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>. If an error occurs,
 <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> will be returned and <em class="parameter"><code>error</code></em>
-set.</p>
+set. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -3667,10 +3680,11 @@ errors. Any of the errors in <a class="link" href="glib-Character-Set-Conversion
 <div class="refsect3">
 <a name="g-ucs4-to-utf16.returns"></a><h4>Returns</h4>
 
-<p> a pointer to a newly allocated UTF-16 string.
+<p>a pointer to a newly allocated UTF-16 string.
 This value must be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>. If an error occurs,
 <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> will be returned and <em class="parameter"><code>error</code></em>
-set.</p>
+set. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -3736,11 +3750,12 @@ errors. Any of the errors in <a class="link" href="glib-Character-Set-Conversion
 <div class="refsect3">
 <a name="g-ucs4-to-utf8.returns"></a><h4>Returns</h4>
 
-<p> a pointer to a newly allocated UTF-8 string.
+<p>a pointer to a newly allocated UTF-8 string.
 This value must be freed with <a class="link" href="glib-Memory-Allocation.html#g-free" title="g_free ()"><code class="function">g_free()</code></a>. If an error occurs,
 <a class="link" href="glib-Standard-Macros.html#NULL:CAPS" title="NULL"><code class="literal">NULL</code></a> will be returned and <em class="parameter"><code>error</code></em>
 set. In that case, <em class="parameter"><code>items_read</code></em>
-will be set to the position of the first invalid input character.</p>
+will be set to the position of the first invalid input character. </p>
+<p><span class="annotation">[<acronym class="acronym">transfer full</acronym>]</span></p>
 </div>
 </div>
 <div class="refsect2">
@@ -4092,7 +4107,7 @@ See <a class="ulink" href="http://www.unicode.org/reports/tr44/#General_Category
 <a name="G-UNICODE-COMBINING-MARK:CAPS"></a><h3>G_UNICODE_COMBINING_MARK</h3>
 
 <a class="indexterm" name="id-1.5.4.8.6.2"></a>
-<pre class="programlisting">#define G_UNICODE_COMBINING_MARK G_UNICODE_SPACING_MARK
+<pre class="programlisting">#define G_UNICODE_COMBINING_MARK G_UNICODE_SPACING_MARK GLIB_DEPRECATED_MACRO_IN_2_30_FOR(G_UNICODE_SPACING_MARK)
 </pre>
 <div class="warning">
 <p><code class="literal">G_UNICODE_COMBINING_MARK</code> has been deprecated since version 2.30 and should not be used in newly-written code.</p> <p>Use <a class="link" href="glib-Unicode-Manipulation.html#G-UNICODE-SPACING-MARK:CAPS"><code class="literal">G_UNICODE_SPACING_MARK</code></a>.</p>
@@ -5495,6 +5510,34 @@ base glyph to which it is attached</p>
 <td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-SOGDIAN:CAPS"></a>G_UNICODE_SCRIPT_SOGDIAN</p></td>
 <td class="enum_member_description">
 <p>Sogdian. Since: 2.58</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-ELYMAIC:CAPS"></a>G_UNICODE_SCRIPT_ELYMAIC</p></td>
+<td class="enum_member_description">
+<p>Elym. Since: 2.62</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-NANDINAGARI:CAPS"></a>G_UNICODE_SCRIPT_NANDINAGARI</p></td>
+<td class="enum_member_description">
+<p>Nand. Since: 2.62</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-NYIAKENG-PUACHUE-HMONG:CAPS"></a>G_UNICODE_SCRIPT_NYIAKENG_PUACHUE_HMONG</p></td>
+<td class="enum_member_description">
+<p>Rohg. Since: 2.62</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-UNICODE-SCRIPT-WANCHO:CAPS"></a>G_UNICODE_SCRIPT_WANCHO</p></td>
+<td class="enum_member_description">
+<p>Wcho. Since: 2.62</p>
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
