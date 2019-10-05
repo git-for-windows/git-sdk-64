@@ -14,15 +14,15 @@ command_not_found_handle () {
     [[ -z $response || $response = [Yy] ]] || return 0
     printf '\n'
     sudo pacman -S --noconfirm -- "$pkg"
-    return 0
+    return
   fi
 
   if (( ${#pkgs[*]} )); then
     printf '%s may be found in the following packages:\n' "$cmd"
     printf '  %s\n' "${pkgs[@]}"
-    return 0
   else
-    printf "bash: %s: command not found\n" "$cmd" >&2
-    return 127
-  fi
+    printf "bash: %s: command not found\n" "$cmd"
+  fi >&2
+
+  return 127
 }
