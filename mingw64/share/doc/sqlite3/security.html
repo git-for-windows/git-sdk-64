@@ -216,13 +216,44 @@ In other words, make sure that <a href="pragma.html#pragma_mmap_size">PRAGMA mma
 A maliciously crafted database might be able to inject SQL by defining new
 <a href="lang_createtrigger.html">triggers</a> or <a href="lang_createview.html">views</a> in the schema that the
 application does not anticipate.
-Therefore, applications that read untrusted databases might want to 
-scan the <a href="fileformat2.html#sqlite_master">sqlite_master</a> table to look for unexpected triggers and/or views
-and might also want to deploy the SQL defense techniques described in
-the previous section.
-</p></li></ol>
+There are multiple defenses:
+</p><ol type="a">
+<li><p>
+If the application does not use triggers or views, then disable the
+unused capabilities using:
+</p><blockquote><pre>
+<a href="c3ref/db_config.html">sqlite3_db_config</a>(db,<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenabletrigger">SQLITE_DBCONFIG_ENABLE_TRIGGER</a>,0,0);
+<a href="c3ref/db_config.html">sqlite3_db_config</a>(db,<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenableview">SQLITE_DBCONFIG_ENABLE_VIEW</a>,0,0);
+</pre></blockquote>
 
-<h1 id="summary"><span>2. </span>Summary</h1>
+</li><li><p>
+If the application does use triggers or views, then use queries to
+scan the <a href="fileformat2.html#sqlite_master">sqlite_master</a> table to verify that the triggers and views
+found there are expected, that there are no surplus triggers or views,
+existing triggers and views have not been tampered with,
+and that no existing ordinary tables have been replaced by
+malicious views.
+</p>
+</li><li><p>
+If the application uses <a href="c3ref/create_function.html">application-defined SQL functions</a> that have
+side effects, then it is recommended to set the <a href="c3ref/c_deterministic.html">SQLITE_DIRECTONLY</a> flag
+on those SQL functions to prevent them from being used inside triggers
+and views.  To illustrate the importance of this flag, consider an
+application that implements an SQL function "send_money(...)".  Without
+the SQLITE_DIRECTONLY flag, an attacker might be able to add a trigger
+or view that uses that custom function, then trick a
+high-privilege application to run an otherwise harmless query that invokes
+that malicious trigger or view.  The SQLITE_DIRECTONLY flag prevents the
+attack by requiring the "send_money()" function to be invoked directly
+by the application, rather than indirectly through a trigger or view.
+</p></li></ol>
+</li></ol>
+
+<p>Even if the application does not deliberately accept database files
+from untrusted sources, beware of attacks in which a local database file
+is surreptitiously altered to contain harmful content.
+
+</p><h1 id="summary"><span>2. </span>Summary</h1>
 
 <p>
 The precautions above are not required in order to use SQLite safely

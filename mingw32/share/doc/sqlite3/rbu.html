@@ -227,8 +227,10 @@ then later resumed.
 <li><p>All RBU updates use the "OR ROLLBACK" constraint handling mechanism.
     </p></li>
 <li><p>The target database may not be in <a href="wal.html">WAL mode</a>.</p></li>
-<li><p>The target database may not contain <a href="expridx.html">indexes on expressions</a>.
-</p></li><li><p>No other writes may occur on the target database while the
+<li><p></p><s>The target database may not contain <a href="expridx.html">indexes on expressions</a>.</s>
+    Indexes on expressions are supported beginning with SQLite 3.30.0
+    (2019-10-04).
+</li><li><p>No other writes may occur on the target database while the
        RBU update is being applied.  A read-lock is held on the target
        database to prevent this.</p></li>
 </ul>

@@ -7,6 +7,7 @@
 #ifndef BOOST_HISTOGRAM_SERIALIZATION_HPP
 #define BOOST_HISTOGRAM_SERIALIZATION_HPP
 
+#include <boost/archive/archive_exception.hpp>
 #include <boost/assert.hpp>
 #include <boost/histogram/accumulators/mean.hpp>
 #include <boost/histogram/accumulators/sum.hpp>
@@ -21,12 +22,15 @@
 #include <boost/histogram/storage_adaptor.hpp>
 #include <boost/histogram/unlimited_storage.hpp>
 #include <boost/histogram/unsafe_access.hpp>
+#include <boost/mp11/algorithm.hpp>
 #include <boost/mp11/tuple.hpp>
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/split_member.hpp>
 #include <boost/serialization/string.hpp>
-#include <boost/serialization/variant.hpp>
+#include <boost/serialization/throw_exception.hpp>
 #include <boost/serialization/vector.hpp>
 #include <tuple>
 #include <type_traits>
@@ -83,6 +87,13 @@ void weighted_mean<RealType>::serialize(Archive& ar, unsigned /* version */) {
   ar& serialization::make_nvp("sum_of_weighted_deltas_squared",
                               sum_of_weighted_deltas_squared_);
 }
+
+template <class Archive, class T>
+void serialize(Archive& ar, thread_safe<T>& t, unsigned /* version */) {
+  T value = t;
+  ar& serialization::make_nvp("value", value);
+  t = value;
+}
 } // namespace accumulators
 
 namespace axis {
@@ -138,10 +149,51 @@ void category<T, M, O, A>::serialize(Archive& ar, unsigned /* version */) {
   ar& serialization::make_nvp("meta", vec_meta_.second());
 }
 
-template <class... Ts>
-template <class Archive>
-void variant<Ts...>::serialize(Archive& ar, unsigned /* version */) {
-  ar& serialization::make_nvp("variant", impl);
+// variant_proxy is a workaround to remain backward compatible in the serialization
+// format. It uses only the public interface of axis::variant for serialization and
+// therefore works independently of the underlying variant implementation.
+template <class Variant>
+struct variant_proxy {
+  Variant& v;
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER()
+
+  template <class Archive>
+  void save(Archive& ar, unsigned /* version */) const {
+    visit(
+        [&ar](auto& value) {
+          using T = std::decay_t<decltype(value)>;
+          int which = static_cast<int>(mp11::mp_find<Variant, T>::value);
+          ar << serialization::make_nvp("which", which);
+          ar << serialization::make_nvp("value", value);
+        },
+        v);
+  }
+
+  template <class Archive>
+  void load(Archive& ar, unsigned /* version */) {
+    int which = 0;
+    ar >> serialization::make_nvp("which", which);
+    constexpr unsigned N = mp11::mp_size<Variant>::value;
+    if (which < 0 || static_cast<unsigned>(which) >= N)
+      // throw on invalid which, which >= N can happen if type was removed from variant
+      serialization::throw_exception(
+          archive::archive_exception(archive::archive_exception::unsupported_version));
+    mp11::mp_with_index<N>(static_cast<unsigned>(which), [&ar, this](auto i) {
+      using T = mp11::mp_at_c<Variant, i>;
+      T value;
+      ar >> serialization::make_nvp("value", value);
+      v = std::move(value);
+      T* new_address = get_if<T>(&v);
+      ar.reset_object_address(new_address, &value);
+    });
+  }
+};
+
+template <class Archive, class... Ts>
+void serialize(Archive& ar, variant<Ts...>& v, unsigned /* version */) {
+  variant_proxy<variant<Ts...>> p{v};
+  ar& serialization::make_nvp("variant", p);
 }
 } // namespace axis
 
@@ -165,35 +217,37 @@ void serialize(Archive& ar, map_impl<T>& impl, unsigned /* version */) {
 }
 
 template <class Archive, class Allocator>
-void serialize(Archive& ar, mp_int<Allocator>& x, unsigned /* version */) {
+void serialize(Archive& ar, large_int<Allocator>& x, unsigned /* version */) {
   ar& serialization::make_nvp("data", x.data);
 }
 } // namespace detail
 
 template <class Archive, class T>
-void serialize(Archive& ar, storage_adaptor<T>& s, unsigned /* version */) {
-  ar& serialization::make_nvp("impl", static_cast<detail::storage_adaptor_impl<T>&>(s));
+void serialize(Archive& ar, storage_adaptor<T>& x, unsigned /* version */) {
+  auto& impl = unsafe_access::storage_adaptor_impl(x);
+  ar& serialization::make_nvp("impl", impl);
 }
 
-template <class A>
-template <class Archive>
-void unlimited_storage<A>::serialize(Archive& ar, unsigned /* version */) {
+template <class Allocator, class Archive>
+void serialize(Archive& ar, unlimited_storage<Allocator>& s, unsigned /* version */) {
+  auto& buffer = unsafe_access::unlimited_storage_buffer(s);
+  using buffer_t = std::remove_reference_t<decltype(buffer)>;
   if (Archive::is_loading::value) {
-    buffer_type dummy(buffer.alloc);
+    buffer_t helper(buffer.alloc);
     std::size_t size;
-    ar& serialization::make_nvp("type", dummy.type);
+    ar& serialization::make_nvp("type", helper.type);
     ar& serialization::make_nvp("size", size);
-    dummy.apply([this, size](auto* tp) {
+    helper.visit([&buffer, size](auto* tp) {
       BOOST_ASSERT(tp == nullptr);
-      using T = detail::remove_cvref_t<decltype(*tp)>;
+      using T = std::decay_t<decltype(*tp)>;
       buffer.template make<T>(size);
     });
   } else {
     ar& serialization::make_nvp("type", buffer.type);
     ar& serialization::make_nvp("size", buffer.size);
   }
-  buffer.apply([this, &ar](auto* tp) {
-    using T = detail::remove_cvref_t<decltype(*tp)>;
+  buffer.visit([&buffer, &ar](auto* tp) {
+    using T = std::decay_t<decltype(*tp)>;
     ar& serialization::make_nvp(
         "buffer",
         serialization::make_array(reinterpret_cast<T*>(buffer.ptr), buffer.size));

@@ -193,7 +193,7 @@ Use an alternative <a href="vfs.html">VFS</a> named by the argument.
 <p>
 Once an SQLite database is open, it can be controlled using 
 methods of the <i>dbcmd</i>.
-There are currently 39 methods
+There are currently 40 methods
 defined.</p>
 
 
@@ -210,6 +210,7 @@ defined.</p>
 <li><a href="#collation_needed">collation_needed</a></li>
 <li><a href="#commit_hook">commit_hook</a></li>
 <li><a href="#complete">complete</a></li>
+<li><a href="#config">config</a></li>
 <li><a href="#copy">copy</a></li>
 <li><a href="#deserialize">deserialize</a></li>
 </ul></td>
@@ -227,9 +228,9 @@ defined.</p>
 <li><a href="#preupdate">preupdate</a></li>
 <li><a href="#profile">profile</a></li>
 <li><a href="#progress">progress</a></li>
+<li><a href="#restore">restore</a></li>
 </ul></td>
 <td valign='top'><ul>
-<li><a href="#restore">restore</a></li>
 <li><a href="#rollback_hook">rollback_hook</a></li>
 <li><a href="#serialize">serialize</a></li>
 <li><a href="#status">status</a></li>
@@ -522,6 +523,35 @@ in order to know when the user has finished entering a line of SQL code.
 This is really just an interface to the 
 <a href="c3ref/complete.html"><b>sqlite3_complete()</b></a> C
 function.
+<a name="config"></a>
+<h3>The "config" method</h3>
+
+
+<p>
+The "config" method queries or changes certain configuration settings for
+the database connection using the <a href="c3ref/db_config.html">sqlite3_db_config()</a> interface.
+Run this method with no arguments to get a TCL list of available
+configuration settings and their current values:
+
+<blockquote>
+<i>dbcmd</i>&nbsp;&nbsp;<b>config</b>
+</blockquote>
+
+<p>The above will return something like this:
+
+<blockquote>
+enable_fkey 0 enable_trigger 1 enable_view 1 fts3_tokenizer 0 load_extension 0 no_ckpt_on_close 0 enable_qpsg 0 trigger_eqp 0 reset_database 0 defensive 0 writable_schema 0 legacy_alter_table 0 dqs_dml 1 dqs_ddl 1
+</blockquote>
+
+<p>Add the name of an individual configuration setting to query the current
+value of that setting.  Optionally add a boolean value to change a setting.
+For example, turn off support for the <a href="quirks.html#dblquote">double-quoted string literal</a>
+misfeature like this:
+
+<blockquote><pre>
+db config dqs_dml 0
+db config dqs_ddl 0
+</pre></blockquote>
 <a name="copy"></a>
 <h3>The "copy" method</h3>
 

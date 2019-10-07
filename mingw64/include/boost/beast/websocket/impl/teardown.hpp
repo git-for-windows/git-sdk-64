@@ -14,7 +14,7 @@
 #include <boost/beast/core/bind_handler.hpp>
 #include <boost/beast/core/stream_traits.hpp>
 #include <boost/beast/core/detail/bind_continuation.hpp>
-#include <boost/beast/core/detail/type_traits.hpp>
+#include <boost/beast/core/detail/is_invocable.hpp>
 #include <boost/asio/coroutine.hpp>
 #include <boost/asio/post.hpp>
 #include <memory>
@@ -33,7 +33,7 @@ class teardown_tcp_op
         Handler, beast::executor_type<
             net::basic_stream_socket<
                 Protocol, Executor>>>
-    , public net::coroutine
+    , public asio::coroutine
 {
     using socket_type =
         net::basic_stream_socket<Protocol, Executor>;

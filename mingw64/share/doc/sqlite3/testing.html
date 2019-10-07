@@ -113,6 +113,8 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#sql_fuzz">4.1. SQL Fuzz</a></div>
 <div class="fancy-toc3"><a href="#sql_fuzz_using_the_american_fuzzy_lop_fuzzer">4.1.1. SQL Fuzz Using The American Fuzzy Lop Fuzzer</a></div>
 <div class="fancy-toc3"><a href="#google_oss_fuzz">4.1.2. Google OSS Fuzz</a></div>
+<div class="fancy-toc3"><a href="#the_dbsqlfuzz_fuzzer">4.1.3. The dbsqlfuzz fuzzer</a></div>
+<div class="fancy-toc3"><a href="#the_fuzzcheck_test_harness">4.1.4. The fuzzcheck test harness</a></div>
 <div class="fancy-toc2"><a href="#malformed_database_files">4.2. Malformed Database Files</a></div>
 <div class="fancy-toc2"><a href="#boundary_value_tests">4.3. Boundary Value Tests</a></div>
 <div class="fancy-toc1"><a href="#regression_testing">5. Regression Testing</a></div>
@@ -164,15 +166,15 @@ mk.innerHTML = "&#x25ba;";
 <p>The reliability and robustness of SQLite is achieved in part
 by thorough and careful testing.</p>
 
-<p>As of <a href="releaselog/3_23_0.html">version 3.23.0</a> (2018-04-02),
+<p>As of <a href="releaselog/3_29_0.html">version 3.29.0</a> (2019-07-10),
 the SQLite library consists of approximately
-128.9 KSLOC of C code.
+138.9 KSLOC of C code.
 (KSLOC means thousands of "Source Lines Of Code" or, in other words,
 lines of code excluding blank lines and comments.)
 By comparison, the project has
-711 times as much
+662 times as much
 test code and test scripts - 
-91772.0 KSLOC.</p>
+91946.2 KSLOC.</p>
 
 <h2 id="executive_summary"><span>1.1. </span>Executive Summary</h2>
 
@@ -214,11 +216,11 @@ SQLite core and like the SQLite core are in the public domain.  The
 TCL tests are the primary tests used during development.
 The TCL tests are written using the 
 <a href="http://www.tcl-lang.org/">TCL scripting language</a>.
-The TCL test harness itself consists of 26.1 KSLOC 
+The TCL test harness itself consists of 26.9 KSLOC 
 of C code used to create the TCL interface.  The test scripts are contained
-in 1307 files totaling 
-15.5MB in size.  There are
-40870 distinct test cases, but many of the test
+in 1264 files totaling 
+20.5MB in size.  There are
+44792 distinct test cases, but many of the test
 cases are parameterized and run multiple times (with different parameters)
 so that on a full test run millions of
 separate tests are performed.
@@ -233,10 +235,10 @@ the core SQLite library.  The TH3 tests are designed to run
 on embedded and specialized platforms that would not easily support
 TCL or other workstation services.  TH3 tests use only the published 
 SQLite interfaces. TH3 consists of about
-57.9 MB or 792.3 KSLOC
-of C code implementing 43049 distinct test cases.
+69.4 MB or 948.1 KSLOC
+of C code implementing 44753 distinct test cases.
 TH3 tests are heavily parameterized, though, so a full-coverage test runs
-about 1.6 million different test
+about 1.7 million different test
 instances.  The cases that provide 100% branch test coverage constitute
 a subset of the total TH3 test suite.  A soak test
 prior to release does hundreds of millions of tests.
@@ -276,7 +278,7 @@ before each release of SQLite.</p>
 <p>Prior to each check-in to the SQLite source tree, developers
 typically run a subset (called "veryquick") of the Tcl tests
 consisting of about 
-142.6 thousand test cases.
+248.5 thousand test cases.
 The veryquick tests include most tests other than the anomaly, fuzz, and 
 soak tests.  The idea behind the veryquick tests are that they are
 sufficient to catch most errors, but also run in only a few minutes
@@ -467,6 +469,9 @@ cover all distinct behaviors.  Newly discovered test cases are periodically
 captured and added to the <a href="testing.html#tcl">TCL test suite</a> where they can be rerun using
 the "make fuzztest" or "make valgrindfuzz" commands.
 
+</p><p>Update:  As of SQLite <a href="releaselog/3_29_0.html">version 3.29.0</a> (2019-07-10) the use of
+AFL has been superceded by the new <a href="testing.html#dbsqlfuzz">dbsqlfuzz</a> fuzzer described below.
+
 <a name="ossfuzz"></a>
 
 </p><h3 id="google_oss_fuzz"><span>4.1.2. </span>Google OSS Fuzz</h3>
@@ -482,6 +487,44 @@ and emails a confirmation to the developers.
 </p><p>SQLite is one of many open-source projects that OSS Fuzz tests. The
 <a href="https://www.sqlite.org/src/file/test/ossfuzz.c">test/ossfuzz.c</a> source file
 in the SQLite repository is SQLite's interface to OSS fuzz.
+
+<a name="dbsqlfuzz"></a>
+
+</p><h3 id="the_dbsqlfuzz_fuzzer"><span>4.1.3. </span>The dbsqlfuzz fuzzer</h3>
+
+<p>Beginning in late 2018, SQLite has been fuzzed using a new proprietary
+fuzzer called "dbsqlfuzz".  Dbsqlfuzz is built using the 
+<a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> framework of LLVM.
+
+</p><p>The dbsqlfuzz fuzzer mutates both the SQL input and the database file
+at the same time.  Dbsqlfuzz uses a custom
+<a href="https://github.com/google/fuzzer-test-suite/blob/master/tutorial/structure-aware-fuzzing.md">Structure-Aware Mutator</a>
+on a specialized input file that defines both an input database and SQL
+text to be run against that database. Because it mutates both the input
+database and the input SQL at the same time, dbsqlfuzz has been able to
+find some obscure faults in SQLite that were missed by prior fuzzers that
+mutated only SQL inputs or only the database file.
+
+</p><p>As of this writing (2019-07-16), the SQLite developers have stopped
+using AFL for routine testing and instead are focused on running
+dbsqlfuzz.  At least one instance of dbsqlfuzz is running on the latest
+SQLite source code at all times, in order to catch any new problems that 
+might be introduced into the source tree as features are added and routine
+maintenance is performed.
+
+<a name="fuzzcheck"></a>
+
+</p><h3 id="the_fuzzcheck_test_harness"><span>4.1.4. </span>The fuzzcheck test harness</h3>
+
+<p>Historical test cases from <a href="testing.html#aflfuzz">AFL</a>, <a href="testing.html#ossfuzz">OSS Fuzz</a>, and <a href="testing.html#dbsqlfuzz">dbsqlfuzz</a> are
+collected in a set of database files in the main SQLite source tree
+and then rerun by the "fuzzcheck" utility program whenever one runs
+"make test".  Fuzzcheck only runs a few thousand "interesting" cases
+out of the hundreds of millions of cases that the various fuzzers have
+examined over the years.  "Interesting" cases are cases that exhibit
+previously unseen behavior.  Actual bugs found by fuzzers are always
+included among the interesting test cases, but most of the cases run
+by fuzzcheck were never actual bugs. 
 
 </p><h2 id="malformed_database_files"><span>4.2. </span>Malformed Database Files</h2>
 
@@ -703,7 +746,7 @@ testcase( mask & SQLITE_OPEN_TEMP_DB );
 if( (mask & (SQLITE_OPEN_MAIN_DB|SQLITE_OPEN_TEMP_DB))!=0 ){ ... }
 </pre></div>
 
-<p>The SQLite source code contains 878
+<p>The SQLite source code contains 992
 uses of the <tt>testcase()</tt> macro.</p>
 
 <a name="mcdc"></a>
@@ -871,7 +914,7 @@ quality of SQLite.</p>
 
 <h2 id="assert"><span>8.1. </span>Assert</h2>
 
-<p>The SQLite core contains 5415 <tt>assert()</tt>
+<p>The SQLite core contains 5665 <tt>assert()</tt>
 statements that verify function preconditions and postconditions and
 loop invariants.  Assert() is a macro which is a standard part of
 ANSI-C.  The argument is a boolean value that is assumed to always be
@@ -885,6 +928,9 @@ the database engine runs about three times slower when asserts are enabled.
 Hence, the default (production) build of SQLite disables asserts.  
 Assert statements are only enabled when SQLite is compiled with the
 SQLITE_DEBUG preprocessor macro defined.</p>
+
+<p>See the <a href="assert.html">Use Of assert in SQLite</a> document
+for additional information about how SQLite uses assert().</p>b
 
 <a name="valgrind"></a>
 

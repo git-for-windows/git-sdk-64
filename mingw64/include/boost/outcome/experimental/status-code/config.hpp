@@ -160,12 +160,16 @@ namespace detail
   Our bit_cast is only guaranteed to be constexpr when both the input and output
   arguments are either integrals or enums. However, this covers most use cases
   since the vast majority of status_codes have an underlying type that is either
-  an integral or enum.
+  an integral or enum. We still attempt a constexpr union-based type pun for non-array
+  input types, which some compilers accept. For array inputs, we fall back to
+  non-constexpr memmove.
   */
 
   template <class T> using is_integral_or_enum = std::integral_constant<bool, std::is_integral<T>::value || std::is_enum<T>::value>;
 
   template <class To, class From> using is_static_castable = std::integral_constant<bool, is_integral_or_enum<To>::value && is_integral_or_enum<From>::value>;
+
+  template <class To, class From> using is_union_castable = std::integral_constant<bool, !is_static_castable<To, From>::value && !std::is_array<To>::value && !std::is_array<From>::value>;
 
   template <class To, class From> using is_bit_castable = std::integral_constant<bool, sizeof(To) == sizeof(From) && traits::is_move_relocating<To>::value && traits::is_move_relocating<From>::value>;
 
@@ -174,9 +178,40 @@ namespace detail
     To target;
   };
 
-  template <class To, class From, typename std::enable_if<is_bit_castable<To, From>::value && is_static_castable<To, From>::value, bool>::type = true> constexpr To bit_cast(const From &from) noexcept { return static_cast<To>(from); }
+  template <class To, class From,
+            typename std::enable_if<                //
+            is_bit_castable<To, From>::value        //
+            && is_static_castable<To, From>::value  //
+            && !is_union_castable<To, From>::value,  //
+            bool>::type = true>  //
+  constexpr To bit_cast(const From &from) noexcept
+  {
+    return static_cast<To>(from);
+  }
 
-  template <class To, class From, typename std::enable_if<is_bit_castable<To, From>::value && !is_static_castable<To, From>::value, bool>::type = true> constexpr To bit_cast(const From &from) noexcept { return bit_cast_union<To, From>{from}.target; }
+  template <class To, class From,
+            typename std::enable_if<                 //
+            is_bit_castable<To, From>::value         //
+            && !is_static_castable<To, From>::value  //
+            && is_union_castable<To, From>::value,    //
+            bool>::type = true>  //
+  constexpr To bit_cast(const From &from) noexcept
+  {
+    return bit_cast_union<To, From>{from}.target;
+  }
+
+  template <class To, class From,
+            typename std::enable_if<                 //
+            is_bit_castable<To, From>::value         //
+            && !is_static_castable<To, From>::value  //
+            && !is_union_castable<To, From>::value,   //
+            bool>::type = true>  //
+  To bit_cast(const From &from) noexcept
+  {
+    bit_cast_union<To, From> ret;
+    memmove(&ret.source, &from, sizeof(ret.source));
+    return ret.target;
+  }
 
   /* erasure_cast performs a bit_cast with additional rules to handle types
   of differing sizes. For integral & enum types, it may perform a narrowing
@@ -244,7 +279,7 @@ namespace detail
 #ifndef __APPLE__
     extern "C" ptrdiff_t write(int, const void *, size_t);
 #endif
-  }
+  }  // namespace avoid_stdio_include
   inline void do_fatal_exit(const char *msg)
   {
     using namespace avoid_stdio_include;

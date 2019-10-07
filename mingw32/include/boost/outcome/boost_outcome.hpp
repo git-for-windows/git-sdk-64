@@ -1,5 +1,5 @@
 /* A less simple result type
-(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (59 commits)
+(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (7 commits)
 File Created: June 2017
 
 
@@ -35,6 +35,8 @@ DEALINGS IN THE SOFTWARE.
 
 #include "boost_result.hpp"
 
+#ifndef BOOST_SYSTEM_BASIC_OUTCOME_FAILURE_EXCEPTION_FROM_ERROR
+#define BOOST_SYSTEM_BASIC_OUTCOME_FAILURE_EXCEPTION_FROM_ERROR
 namespace boost
 {
   namespace system
@@ -43,6 +45,7 @@ namespace boost
     inline boost::exception_ptr basic_outcome_failure_exception_from_error(const boost::system::error_code &ec) { return boost::copy_exception(boost::system::system_error(ec)); }
   }  // namespace system
 }  // namespace boost
+#endif
 
 BOOST_OUTCOME_V2_NAMESPACE_EXPORT_BEGIN
 

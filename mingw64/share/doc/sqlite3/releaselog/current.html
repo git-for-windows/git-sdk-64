@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="../sqlite.css" rel="stylesheet">
-<title>SQLite Release 3.29.0 On 2019-07-10</title>
+<title>SQLite Release 3.30.0 On 2019-10-04</title>
 <!-- path=../ -->
 </head>
 <body>
@@ -91,34 +91,37 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.29.0 On 2019-07-10</h2><p><ol class='lessindent'>
-<li> Added the <a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigdqsdml">SQLITE_DBCONFIG_DQS_DML</a> and <a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigdqsddl">SQLITE_DBCONFIG_DQS_DDL</a>
-     actions to <a href="../c3ref/db_config.html">sqlite3_db_config()</a> for activating and deactivating
-     the <a href="../quirks.html#dblquote">double-quoted string literal</a> misfeature.  Both default to "on"
-     for legacy compatibility, but developers are encouraged to turn them
-     "off", perhaps using the <a href="../compile.html#dqs">-DSQLITE_DQS=0</a> compile-time option.
-<li> <a href="../compile.html#dqs">-DSQLITE_DQS=0</a> is now a <a href="../compile.html#rcmd">recommended compile-time option</a>.
-<li> Improvements to the <a href="../optoverview.html">query planner</a>:
-<ol type="a">
-<li> Improved optimization of AND and OR operators when one or the other
-     operand is a constant.
-<li> Enhancements to the <a href="../optoverview.html#like_opt">LIKE optimization</a> for cases when the left-hand
-     side column has numeric affinity.
-</ol>
-<li> Added the "<a href="https://sqlite.org/src/file/ext/misc/dbdata.c">sqlite_dbdata</a>"
-     virtual table for extracting raw low-level content from an SQLite database,
-     even a database that is corrupt.
-<li> Enhancements to the <a href="../cli.html">CLI</a>:
-<ol type="a">
-<li> Add the ".recover" command which tries to recover as much content
-     as possible from a corrupt database file.
-<li> Add the ".filectrl" command useful for testing.
-<li> Add the long-standing ".testctrl" command to the ".help" menu.
-<li> Added the ".dbconfig" command
-</ol>
+<h2>SQLite Release 3.30.0 On 2019-10-04</h2><p><ol class='lessindent'>
+<li> Add support for the <a href="../lang_aggfunc.html#aggfilter">FILTER clause on aggregate functions</a>.
+<li> Add support for the <a href="../lang_select.html#nullslast">NULLS FIRST</a> and <a href="../lang_select.html#nullslast">NULLS LAST</a> syntax in <a href="../lang_select.html#orderby">ORDER BY</a> clauses.
+<li> The <a href="../pragma.html#pragma_index_info">index_info</a> and <a href="../pragma.html#pragma_index_xinfo">index_xinfo</a> pragmas are enhanced to provide
+     information about the on-disk representation of <a href="../withoutrowid.html">WITHOUT ROWID</a>
+     tables.
+<li> Add the <a href="../c3ref/drop_modules.html">sqlite3_drop_modules()</a> interface, allowing applications
+     to disable automatically loaded virtual tables that they do not
+     need.
+<li> Improvements to the <a href="../cli.html#recover">.recover dot-command</a> in the <a href="../cli.html">CLI</a> so that
+     it recovers more content from corrupt database files.
+<li> Enhance the <a href="../rbu.html">RBU</a> extension to support <a href="../expridx.html">indexes on expressions</a>.
+<li> Change the schema parser so that it will error out if any of
+     the type, name, and tbl_name columns of the <a href="../fileformat2.html#sqlite_master">sqlite_master table</a>
+     have been corrupted and the database connection is not in
+     <a href="../pragma.html#pragma_writable_schema">writable_schema</a> mode.
+<li> The <a href="../pragma.html#pragma_function_list">PRAGMA function_list</a>, <a href="../pragma.html#pragma_module_list">PRAGMA module_list</a>, and
+     <a href="../pragma.html#pragma_pragma_list">PRAGMA pragma_list</a> commands are now
+     enabled in all builds by default.  Disable them using
+     <a href="../compile.html#omit_introspection_pragmas">-DSQLITE_OMIT_INTROSPECTION_PRAGMAS</a>.
+<li> Add the <a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigenableview">SQLITE_DBCONFIG_ENABLE_VIEW</a> option for <a href="../c3ref/db_config.html">sqlite3_db_config()</a>.
+<li> Added the <a href="../tclsqlite.html">TCL Interface</a> <a href="../tclsqlite.html#config">config method</a> in order to be able to
+     disable <a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigenableview">SQLITE_DBCONFIG_ENABLE_VIEW</a> as well as control other
+     <a href="../c3ref/db_config.html">sqlite3_db_config()</a> options from TCL.
+<li> Added the <a href="../c3ref/c_deterministic.html">SQLITE_DIRECTONLY</a> flag for
+     <a href="../c3ref/create_function.html">application-defined SQL functions</a> to prevent those functions from
+     being used inside triggers and views.
+<li> The legacy <a href="../compile.html#enable_stat3">SQLITE_ENABLE_STAT3</a> compile-time option is now a no-op.
 <p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: 2019-07-10 17:32:03 fc82b73eaac8b36950e527f12c4b5dc1e147e6f4ad2217ae43ad82882a88bfa6
-<li>SHA3-256 for sqlite3.c: d9a5daf7697a827f4b2638276ce639fa04e8e8bb5fd3a6b683cfad10f1c81b12
+<li>SQLITE_SOURCE_ID: 2019-10-04 15:03:17 c20a35336432025445f9f7e289d0cc3e4003fb17f45a4ce74c6269c407c6e09f
+<li>SHA3-256 for sqlite3.c: f04393dd47205a4ee2b98ff737dc51a3fdbcc14c055b88d58f5b27d0672158f5
 
 </ol></p>
 

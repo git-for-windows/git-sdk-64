@@ -45,6 +45,10 @@ boost
         std::exception const * se=current_exception_cast<std::exception const>();
         if( be || se )
             return exception_detail::diagnostic_information_impl(be,se,true,verbose);
+#if defined(__GLIBCXX__) && __cplusplus >= 201103L && !defined(BOOST_NO_RTTI)
+        else if (auto* p=std::current_exception().__cxa_exception_type())
+            return "Dynamic exception type: "+boost::core::demangle(p->name());
+#endif
         else
             return "No diagnostic information available.";
         }
@@ -157,7 +161,7 @@ boost
                     core::demangle((be?(BOOST_EXCEPTION_DYNAMIC_TYPEID(*be)):(BOOST_EXCEPTION_DYNAMIC_TYPEID(*se))).type_->name()) << '\n';
 #endif
             if( with_what && se && verbose )
-                tmp << "std::exception::what: " << wh << '\n';
+                tmp << "std::exception::what: " << (wh ? wh : "(null)") << '\n';
             if( be )
                 if( char const * s=exception_detail::get_diagnostic_information(*be,tmp.str().c_str()) )
                     if( *s )
@@ -175,7 +179,7 @@ boost
 
     inline
     char const *
-    diagnostic_information_what( exception const & e, bool verbose=true ) throw()
+    diagnostic_information_what( exception const & e, bool verbose=true ) BOOST_NOEXCEPT_OR_NOTHROW
         {
         char const * w=0;
 #ifndef BOOST_NO_EXCEPTIONS

@@ -62,7 +62,7 @@ boost
                 {
                 }
 
-            ~error_info_container_impl() throw()
+            ~error_info_container_impl() BOOST_NOEXCEPT_OR_NOTHROW
                 {
                 }
 

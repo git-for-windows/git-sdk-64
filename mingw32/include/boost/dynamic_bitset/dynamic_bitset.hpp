@@ -50,6 +50,7 @@
 #include "boost/utility/addressof.hpp"
 #include "boost/detail/no_exceptions_support.hpp"
 #include "boost/throw_exception.hpp"
+#include "boost/functional/hash/hash.hpp"
 
 
 namespace boost {
@@ -127,8 +128,10 @@ public:
     typedef bool const_reference;
 
     // constructors, etc.
+    dynamic_bitset() : m_num_bits(0) {}
+
     explicit
-    dynamic_bitset(const Allocator& alloc = Allocator());
+    dynamic_bitset(const Allocator& alloc);
 
     explicit
     dynamic_bitset(size_type num_bits, unsigned long value = 0,
@@ -354,7 +357,8 @@ public:
     template <typename B, typename A, typename stringT>
     friend void to_string_helper(const dynamic_bitset<B, A> & b, stringT & s, bool dump_all);
 
-
+    template <typename B, typename A>
+    friend std::size_t hash_value(const dynamic_bitset<B, A>& a);
 #endif
 
 public:
@@ -1623,6 +1627,17 @@ inline bool operator>=(const dynamic_bitset<Block, Allocator>& a,
 }
 
 //-----------------------------------------------------------------------------
+// hash operations
+
+template <typename Block, typename Allocator>
+inline std::size_t hash_value(const dynamic_bitset<Block, Allocator>& a)
+{
+    std::size_t res = hash_value(a.m_num_bits);
+    boost::hash_combine(res, a.m_bits);
+    return res;
+}
+
+//-----------------------------------------------------------------------------
 // stream operations
 
 #ifdef BOOST_OLD_IOSTREAMS
@@ -2106,8 +2121,26 @@ bool dynamic_bitset<Block, Allocator>::m_check_invariants() const
 
 } // namespace boost
 
-
 #undef BOOST_BITSET_CHAR
+
+// std::hash support
+#if !defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) && !defined(BOOST_DYNAMIC_BITSET_NO_STD_HASH)
+#include <functional>
+namespace std
+{
+    template<typename Block, typename Allocator>
+    struct hash< boost::dynamic_bitset<Block, Allocator> >
+    {
+        typedef boost::dynamic_bitset<Block, Allocator> argument_type;
+        typedef std::size_t result_type;
+        result_type operator()(const argument_type& a) const BOOST_NOEXCEPT
+        {
+            boost::hash<argument_type> hasher;
+            return hasher(a);
+        }
+    };
+}
+#endif
 
 #endif // include guard
 

@@ -1,5 +1,5 @@
 /* C interface for result
-(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (59 commits)
+(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (6 commits)
 File Created: Aug 2017
 
 

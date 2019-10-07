@@ -115,7 +115,34 @@ the EXPLAIN keyword not been present. When the EXPLAIN QUERY PLAN phrase
 appears, the statement returns high-level information regarding the query
 plan that would have been used.
 
-The EXPLAIN QUERY PLAN command is described in 
+<p>The EXPLAIN QUERY PLAN command is described in 
 <a href="eqp.html">more detail here</a>.
 
+<h3>EXPLAIN operates at run-time, not at prepare-time</h3>
+
+<p>The EXPLAIN and EXPLAIN QUERY PLAN prefixes affect the behavior of
+running a <a href="c3ref/stmt.html">prepared statement</a> using <a href="c3ref/step.html">sqlite3_step()</a>.  The process of
+generating a new prepared statement using <a href="c3ref/prepare.html">sqlite3_prepare()</a> or similar
+is (mostly) unaffected by EXPLAIN.  (The exception to the previous sentence
+is that some special opcodes used by EXPLAIN QUERY PLAN are omitted when
+building an EXPLAIN QUERY PLAN prepared statement, as a performance
+optimization.)
+
+<p>This means that actions that occur during sqlite3_prepare() are
+unaffected by EXPLAIN.
+
+<ul>
+<li><p>
+Some <a href="pragma.html#syntax">PRAGMA</a> statements do their work during sqlite3_prepare() rather
+than during sqlite3_step().  Those PRAGMA statements are unaffected
+by EXPLAIN.  They operate the same with or without the EXPLAIN prefix.
+The set of PRAGMA statements that are unaffected by EXPLAIN can vary
+from one release to the next.  Some PRAGMA statements operate during
+sqlite3_prepare() depending on their arguments.  For consistent
+results, avoid using EXPLAIN on PRAGMA statements.
+
+<li><p>
+The <a href="c3ref/set_authorizer.html">authorizer callback</a> is invoked regardless of the presence of
+EXPLAIN or EXPLAIN QUERY PLAN.
+</ul>
 

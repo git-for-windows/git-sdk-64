@@ -15,7 +15,6 @@
 
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
-#include <cstdlib> // std::abort
 
 
 #ifdef BOOST_MSVC
@@ -24,12 +23,6 @@
 #endif
 
 namespace boost { namespace detail { namespace variant {
-
-BOOST_NORETURN inline void forced_return_no_return() { // fixes `must return a value` warnings
-    using namespace std;
-    abort(); // some implementations have no std::abort
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // (detail) function template forced_return
@@ -44,12 +37,9 @@ forced_return()
     // logical error: should never be here! (see above)
     BOOST_ASSERT(false);
 
-    forced_return_no_return();
-
-#ifdef BOOST_NO_NORETURN
     T (*dummy)() = 0;
-    return dummy();
-#endif
+    (void)dummy;
+    BOOST_UNREACHABLE_RETURN(dummy());
 }
 
 }}} // namespace boost::detail::variant

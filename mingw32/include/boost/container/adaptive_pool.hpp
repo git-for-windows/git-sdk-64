@@ -146,13 +146,13 @@ class adaptive_pool
    //!Returns the number of elements that could be allocated.
    //!Never throws
    size_type max_size() const BOOST_NOEXCEPT_OR_NOTHROW
-   {  return size_type(-1)/sizeof(T);   }
+   {  return size_type(-1)/(2u*sizeof(T));   }
 
    //!Allocate memory for an array of count elements.
    //!Throws std::bad_alloc if there is no enough memory
    pointer allocate(size_type count, const void * = 0)
    {
-      if(BOOST_UNLIKELY(count > this->max_size()))
+      if(BOOST_UNLIKELY(count > size_type(-1)/(2u*sizeof(T))))
          boost::container::throw_bad_alloc();
 
       if(Version == 1 && count == 1){
@@ -456,13 +456,13 @@ class private_adaptive_pool
    //!Returns the number of elements that could be allocated.
    //!Never throws
    size_type max_size() const BOOST_NOEXCEPT_OR_NOTHROW
-   {  return size_type(-1)/sizeof(T);   }
+   {  return size_type(-1)/(2u*sizeof(T));   }
 
    //!Allocate memory for an array of count elements.
    //!Throws std::bad_alloc if there is no enough memory
    pointer allocate(size_type count, const void * = 0)
    {
-      if(BOOST_UNLIKELY(count > this->max_size()))
+      if(BOOST_UNLIKELY(count > size_type(-1)/(2u*sizeof(T))))
          boost::container::throw_bad_alloc();
 
       if(Version == 1 && count == 1){

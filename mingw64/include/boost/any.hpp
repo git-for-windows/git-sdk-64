@@ -38,7 +38,7 @@ namespace boost
     {
     public: // structors
 
-        any() BOOST_NOEXCEPT
+        BOOST_CONSTEXPR any() BOOST_NOEXCEPT
           : content(0)
         {
         }
@@ -98,7 +98,7 @@ namespace boost
 
         any & operator=(any rhs)
         {
-            any(rhs).swap(*this);
+            rhs.swap(*this);
             return *this;
         }
 
@@ -166,7 +166,11 @@ namespace boost
         };
 
         template<typename ValueType>
-        class holder : public placeholder
+        class holder
+#ifndef BOOST_NO_CXX11_FINAL
+          final
+#endif
+          : public placeholder
         {
         public: // structors
 

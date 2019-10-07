@@ -1,5 +1,5 @@
 /* Storage for a very simple basic_result type
-(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (59 commits)
+(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (6 commits)
 File Created: Oct 2017
 
 
@@ -59,6 +59,9 @@ namespace detail
   template <bool value_throws, bool error_throws> struct basic_result_storage_swap;
   template <class R, class EC, class NoValuePolicy>                                                                                                                                    //
   BOOST_OUTCOME_REQUIRES(trait::type_can_be_used_in_basic_result<R> &&trait::type_can_be_used_in_basic_result<EC> && (std::is_void<EC>::value || std::is_default_constructible<EC>::value))  //
+  class basic_result_storage;
+  template <class R, class EC, class NoValuePolicy>                                                                                                                                    //
+  BOOST_OUTCOME_REQUIRES(trait::type_can_be_used_in_basic_result<R> &&trait::type_can_be_used_in_basic_result<EC> && (std::is_void<EC>::value || std::is_default_constructible<EC>::value))  //
   class basic_result_storage
   {
     static_assert(trait::type_can_be_used_in_basic_result<R>, "The type R cannot be used in a basic_result");
@@ -66,7 +69,9 @@ namespace detail
     static_assert(std::is_void<EC>::value || std::is_default_constructible<EC>::value, "The type S must be void or default constructible");
 
     friend struct policy::base;
-    template <class T, class U, class V> friend class basic_result_storage;
+    template <class T, class U, class V>                                                                                                                                              //
+    BOOST_OUTCOME_REQUIRES(trait::type_can_be_used_in_basic_result<T> &&trait::type_can_be_used_in_basic_result<U> && (std::is_void<U>::value || std::is_default_constructible<U>::value))  //
+    friend class basic_result_storage;
     template <class T, class U, class V> friend class basic_result_final;
     template <class T, class U, class V> friend constexpr inline uint16_t hooks::spare_storage(const detail::basic_result_final<T, U, V> *r) noexcept;        // NOLINT
     template <class T, class U, class V> friend constexpr inline void hooks::set_spare_storage(detail::basic_result_final<T, U, V> *r, uint16_t v) noexcept;  // NOLINT
@@ -192,8 +197,21 @@ namespace detail
   {
     template <class R, class EC, class NoValuePolicy> constexpr basic_result_storage_swap(basic_result_storage<R, EC, NoValuePolicy> &a, basic_result_storage<R, EC, NoValuePolicy> &b)
     {
-      using std::swap;
-      swap(a._msvc_nonpermissive_error(), b._msvc_nonpermissive_error());
+      struct _
+      {
+        unsigned &a, &b;
+        bool all_good{false};
+        ~_()
+        {
+          if(!all_good)
+          {
+            // We lost one of the values
+            a |= status_lost_consistency;
+            b |= status_lost_consistency;
+          }
+        }
+      } _{a._msvc_nonpermissive_state()._status, b._msvc_nonpermissive_state()._status};
+      strong_swap(_.all_good, a._msvc_nonpermissive_error(), b._msvc_nonpermissive_error());
       a._msvc_nonpermissive_state().swap(b._msvc_nonpermissive_state());
     }
   };
@@ -205,19 +223,33 @@ namespace detail
       using std::swap;
       // Swap value and status first, if it throws, status will remain unchanged
       a._msvc_nonpermissive_state().swap(b._msvc_nonpermissive_state());
+      bool all_good = false;
       try
       {
-        swap(a._msvc_nonpermissive_error(), b._msvc_nonpermissive_error());
+        strong_swap(all_good, a._msvc_nonpermissive_error(), b._msvc_nonpermissive_error());
       }
       catch(...)
       {
-        // First try to put the value and status back
-        try
+        if(!all_good)
         {
-          a._msvc_nonpermissive_state().swap(b._msvc_nonpermissive_state());
-          // If that succeeded, continue by rethrowing the exception
+          a._msvc_nonpermissive_state()._status |= detail::status_lost_consistency;
+          b._msvc_nonpermissive_state()._status |= detail::status_lost_consistency;
         }
-        catch(...)
+        else
+        {
+          // We may still be able to rescue tis
+          // First try to put the value and status back
+          try
+          {
+            a._msvc_nonpermissive_state().swap(b._msvc_nonpermissive_state());
+            // If that succeeded, continue by rethrowing the exception
+          }
+          catch(...)
+          {
+            all_good = false;
+          }
+        }
+        if(!all_good)
         {
           // We are now trapped. The value swapped, the error did not,
           // trying to restore the value failed. We now have
@@ -227,6 +259,7 @@ namespace detail
             bool has_value = (x._state._status & detail::status_have_value) != 0;
             bool has_error = (x._state._status & detail::status_have_error) != 0;
             bool has_exception = (x._state._status & detail::status_have_exception) != 0;
+            x._state._status |= detail::status_lost_consistency;
             if(has_value == (has_error || has_exception))
             {
               if(has_value)

@@ -144,8 +144,7 @@ template<typename T>
 boost::weak_ptr<T> weak_from_raw(T *p)
 {
     BOOST_ASSERT(p != 0);
-    boost::weak_ptr<T> result;
-    result._internal_aliasing_assign(p->enable_shared_from_raw::weak_from_this(), p);
+    boost::weak_ptr<T> result(p->enable_shared_from_raw::weak_from_this(), p);
     return result;
 }
 

@@ -1862,10 +1862,10 @@ class c_heap_deleter
 
    void realloc_mem(std::size_t num_bytes)
    {
-      void *buf = ::realloc(m_buf, num_bytes);
-      if(!buf){
-         free(m_buf);
-         m_buf = 0;
+      void *oldBuf = m_buf;
+      m_buf = ::realloc(m_buf, num_bytes);
+      if (!m_buf){
+         free(oldBuf);
       }
    }
 

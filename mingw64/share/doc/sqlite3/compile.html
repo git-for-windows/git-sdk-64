@@ -1197,14 +1197,13 @@ the available settings:</p>
   is now a no-op.
 </p></blockquote><a name="enable_stat3"></a>
 <p><b>SQLITE_ENABLE_STAT3</b></p><blockquote><p>
-  This option adds additional logic to the <a href="lang_analyze.html">ANALYZE</a> command and to
-  the <a href="optoverview.html">query planner</a> that can help SQLite to chose a better query plan
-  under certain situations.  The <a href="lang_analyze.html">ANALYZE</a> command is enhanced to collect
-  histogram data from the left-most column of each index and store that data
-  in the <a href="fileformat2.html#stat3tab">sqlite_stat3</a> table.  The query planner will then use the
-  histogram data to help it make better index choices.  Note, however,
-  that the use of histogram data in query planner violates the
-  <a href="queryplanner-ng.html#qpstab">query planner stability guarantee</a> which is important to some applications.
+  This option used to cause the <a href="lang_analyze.html">ANALYZE</a> command to collect
+  index histogram data in the <b>sqlite_stat3</b> table.  But that
+  functionality was superceded by <a href="compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a> as of
+  SQLite <a href="releaselog/3_8_1.html">version 3.8.1</a> (2013-10-17).  
+  The SQLITE_ENABLE_STAT3 compile-time option
+  continued to be supported through <a href="releaselog/3_29_0.html">version 3.29.0</a> (2019-07-10)
+  but has now become a no-op.
   <p>
 </p></blockquote><a name="enable_stat4"></a>
 <p><b>SQLITE_ENABLE_STAT4</b></p><blockquote><p>
@@ -1222,8 +1221,7 @@ the available settings:</p>
   only recorded histogram data for the left-most column of each index
   whereas the STAT4 enhancement records histogram data from all columns
   of each index.
-  The <a href="compile.html#enable_stat3">SQLITE_ENABLE_STAT3</a> compile-time option is a no-op and is ignored
-  if the SQLITE_ENABLE_STAT4 compile-time option is used.
+  The <a href="compile.html#enable_stat3">SQLITE_ENABLE_STAT3</a> compile-time option has become a no-op.
 </p></blockquote><a name="enable_tree_explain"></a>
 <p><b>SQLITE_ENABLE_TREE_EXPLAIN</b></p><blockquote><p>
   This compile-time option is no longer used.
@@ -1261,9 +1259,11 @@ the available settings:</p>
   information.
 </p></blockquote><a name="introspection_pragmas"></a>
 <p><b>SQLITE_INTROSPECTION_PRAGMAS</b></p><blockquote><p>
-  This option adds some extra PRAGMA statements such as
+  This option is obsolete.  It used to enable some extra
+  some extra PRAGMA statements such as
   <a href="pragma.html#pragma_function_list">PRAGMA function_list</a>, <a href="pragma.html#pragma_module_list">PRAGMA module_list</a>, and
-  <a href="pragma.html#pragma_pragma_list">PRAGMA pragma_list</a>.
+  <a href="pragma.html#pragma_pragma_list">PRAGMA pragma_list</a>, but those pragmas are now all
+  enabled by default.  See <a href="compile.html#omit_introspection_pragmas">SQLITE_OMIT_INTROSPECTION_PRAGMAS</a>.
 </p></blockquote><a name="soundex"></a>
 <p><b>SQLITE_SOUNDEX</b></p><blockquote><p>
   This option enables the <a href="lang_corefunc.html#soundex">soundex() SQL function</a>.
@@ -1284,7 +1284,7 @@ the available settings:</p>
   <a href="https://zlib.net">zlib compression library</a>.
   <p>
   This option has no affect on the SQLite core.  It is only used by extensions.
-  This is option is necessary for the commpression and decompression
+  This is option is necessary for the compression and decompression
   functions that are part of <a href="sqlar.html">SQL Archive</a> support in the
   <a href="cli.html">command-line shell</a>.
   <p>
@@ -1607,6 +1607,11 @@ The SQLITE_OMIT_* compile-time options are mostly unsupported.
 </p></blockquote><a name="omit_integrity_check"></a>
 <p><b>SQLITE_OMIT_INTEGRITY_CHECK</b></p><blockquote><p>
   This option omits support for the <a href="pragma.html#pragma_integrity_check">integrity_check pragma</a>.
+</p></blockquote><a name="omit_introspection_pragmas"></a>
+<p><b>SQLITE_OMIT_INTROSPECTION_PRAGMAS</b></p><blockquote><p>
+  This option omits support for
+  <a href="pragma.html#pragma_function_list">PRAGMA function_list</a>, <a href="pragma.html#pragma_module_list">PRAGMA module_list</a>, and
+  <a href="pragma.html#pragma_pragma_list">PRAGMA pragma_list</a>.
 </p></blockquote><a name="omit_like_optimization"></a>
 <p><b>SQLITE_OMIT_LIKE_OPTIMIZATION</b></p><blockquote><p>
   This option disables the ability of SQLite to use indices to help
@@ -1830,7 +1835,7 @@ macros is included completeness.</p>
 
 <a name="api"></a>
 <p><b>SQLITE_API</b></p><blockquote><p>
-  This macro identifies a externally visible interface for SQLite.
+  This macro identifies an externally visible interface for SQLite.
   This macro is sometimes set to "extern".  But the definition is
   compiler-specific.
 </p></blockquote><a name="apicall"></a>

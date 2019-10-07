@@ -674,10 +674,6 @@ comments in the source code.
 <dd><p>The built-in functions used to implement LIKE and GLOB must not have been overloaded using the sqlite3_create_function() API.
 <i>(source: <a href="optoverview.html">optoverview.html</a>, matrix: <a href='matrix/optoverview.html#R-02559-29055-33962-47817-36688-50556-57969-25403'>context</a>, <a href='matrix/matrix_doptoverview.html#R-02559-29055-33962-47817-36688-50556-57969-25403'>detail</a>)</i></p></dd>
 
-<dt><b>R-02573-31629-30846-62353-22365-28558-65513-55729</b></dt>
-<dd><p>The cast is carried through even if it is lossy and irreversible.
-<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_06.test, matrix: <a href='matrix/datatype3.html#R-02573-31629-30846-62353-22365-28558-65513-55729'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-02573-31629-30846-62353-22365-28558-65513-55729'>detail</a>)</i></p></dd>
-
 <dt><b>R-02597-60207-27800-53923-18122-14559-36270-03523</b></dt>
 <dd><p>This pragma only changes the behavior of the SQL LIKE operator. It does not change the behavior of the sqlite3_strlike() C-language interface, which is always case insensitive.
 <i>(source: <a href="pragma.html">pragma.html</a>, matrix: <a href='matrix/pragma.html#R-02597-60207-27800-53923-18122-14559-36270-03523'>context</a>, <a href='matrix/matrix_dpragma.html#R-02597-60207-27800-53923-18122-14559-36270-03523'>detail</a>)</i></p></dd>
@@ -1672,7 +1668,7 @@ comments in the source code.
 
 <dt><b>R-08023-12605-32642-43845-16740-17726-48491-51878</b></dt>
 <dd><p>The sqlite3_compileoption_get() function allows iterating over the list of options that were defined at compile time by returning the N-th compile time option string.
-<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, matrix: <a href='matrix/c3ref/compileoption_get.html#R-08023-12605-32642-43845-16740-17726-48491-51878'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-08023-12605-32642-43845-16740-17726-48491-51878'>detail</a>)</i></p></dd>
+<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, checked-by: th3/cov1/ctime01.test, matrix: <a href='matrix/c3ref/compileoption_get.html#R-08023-12605-32642-43845-16740-17726-48491-51878'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-08023-12605-32642-43845-16740-17726-48491-51878'>detail</a>)</i></p></dd>
 
 <dt><b>R-08041-13327-32920-22476-39167-57805-60221-02084</b></dt>
 <dd><p>Any operators applied to column names, including the no-op unary "+" operator, convert the column name into an expression which always has no affinity. Hence even if X and Y.Z are column names, the expressions +X and +Y.Z are not column names and have no affinity.
@@ -1862,10 +1858,6 @@ comments in the source code.
 <dd><p>If Y is omitted then the default entry point name is used.
 <i>(source: <a href="lang_corefunc.html">lang_corefunc.html</a>, checked-by: th3/cov1/func03.test, matrix: <a href='matrix/lang_corefunc.html#R-09261-46339-25709-54309-20729-08593-14367-03558'>context</a>, <a href='matrix/matrix_dlang_corefunc.html#R-09261-46339-25709-54309-20729-08593-14367-03558'>detail</a>)</i></p></dd>
 
-<dt><b>R-09295-61337-32073-06786-13373-31465-59006-42307</b></dt>
-<dd><p>Casting a TEXT or BLOB value into NUMERIC first does a forced conversion into REAL but then further converts the result into INTEGER if and only if the conversion from REAL to INTEGER is lossless and reversible.
-<i>(source: <a href="lang_expr.html">lang_expr.html</a>, checked-by: tcl/e_expr.test, matrix: <a href='matrix/lang_expr.html#R-09295-61337-32073-06786-13373-31465-59006-42307'>context</a>, <a href='matrix/matrix_dlang_expr.html#R-09295-61337-32073-06786-13373-31465-59006-42307'>detail</a>)</i></p></dd>
-
 <dt><b>R-09310-54000-20676-45974-44442-40354-59533-62372</b></dt>
 <dd><p>For the GLOB operator, the column must be indexed using the built-in BINARY collating sequence.
 <i>(source: <a href="optoverview.html">optoverview.html</a>, matrix: <a href='matrix/optoverview.html#R-09310-54000-20676-45974-44442-40354-59533-62372'>context</a>, <a href='matrix/matrix_doptoverview.html#R-09310-54000-20676-45974-44442-40354-59533-62372'>detail</a>)</i></p></dd>
@@ -1988,7 +1980,7 @@ comments in the source code.
 
 <dt><b>R-09933-20910-17434-57069-20423-40847-01443-50853</b></dt>
 <dd><p>SQLite will invoke the destructor D with a single argument of P when it is finished using P.
-<i>(source: <a href="c3ref/bind_blob.html">c3ref/bind_blob.html</a>, matrix: <a href='matrix/c3ref/bind_blob.html#R-09933-20910-17434-57069-20423-40847-01443-50853'>context</a>, <a href='matrix/matrix_dbind_blob.html#R-09933-20910-17434-57069-20423-40847-01443-50853'>detail</a>)</i></p></dd>
+<i>(source: <a href="c3ref/bind_blob.html">c3ref/bind_blob.html</a>, checked-by: th3/cov1/bindptr01.test, matrix: <a href='matrix/c3ref/bind_blob.html#R-09933-20910-17434-57069-20423-40847-01443-50853'>context</a>, <a href='matrix/matrix_dbind_blob.html#R-09933-20910-17434-57069-20423-40847-01443-50853'>detail</a>)</i></p></dd>
 
 <dt><b>R-09943-43999-40050-60099-27352-31262-44628-15476</b></dt>
 <dd><p>An attempt to ATTACH a database with a different text encoding from the "main" database will fail.
@@ -2398,6 +2390,10 @@ comments in the source code.
 <dd><p>In other words, the schema-name. prefix on the table name is not allowed within triggers.
 <i>(source: <a href="lang_delete.html">lang_delete.html</a>, checked-by: tcl/e_delete.test, matrix: <a href='matrix/lang_delete.html#R-12275-20298-47772-56757-15778-39462-64033-34126'>context</a>, <a href='matrix/matrix_dlang_delete.html#R-12275-20298-47772-56757-15778-39462-64033-34126'>detail</a>)</i></p></dd>
 
+<dt><b>R-12314-13901-08300-54236-37161-34051-04965-51279</b></dt>
+<dd><p>Division by zero gives a result of NULL.
+<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_06.test, matrix: <a href='matrix/datatype3.html#R-12314-13901-08300-54236-37161-34051-04965-51279'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-12314-13901-08300-54236-37161-34051-04965-51279'>detail</a>)</i></p></dd>
+
 <dt><b>R-12374-37755-19006-43319-29109-21110-40176-02153</b></dt>
 <dd><p>The locking-mode is either NORMAL or EXCLUSIVE.
 <i>(source: <a href="pragma.html">pragma.html</a>, checked-by: th3/req1/pragma04.test, matrix: <a href='matrix/pragma.html#R-12374-37755-19006-43319-29109-21110-40176-02153'>context</a>, <a href='matrix/matrix_dpragma.html#R-12374-37755-19006-43319-29109-21110-40176-02153'>detail</a>)</i></p></dd>
@@ -2473,6 +2469,10 @@ comments in the source code.
 <dt><b>R-12693-31159-47760-14933-14712-45041-12329-60921</b></dt>
 <dd><p>Each SCAN or SEARCH record includes the following information: The name of the table data is read from. Whether or not an index or automatic index is used. Whether or not the covering index optimization applies. Which terms of the WHERE clause are used for indexing.
 <i>(source: <a href="eqp.html">eqp.html</a>, matrix: <a href='matrix/eqp.html#R-12693-31159-47760-14933-14712-45041-12329-60921'>context</a>, <a href='matrix/matrix_deqp.html#R-12693-31159-47760-14933-14712-45041-12329-60921'>detail</a>)</i></p></dd>
+
+<dt><b>R-12720-41494-41537-21978-20786-40223-25082-25767</b></dt>
+<dd><p>Mathematical operators (+, -, *, /, %, <<, >>, &, and |) interpret both operands as if they were numbers. STRING or BLOB operands automatically convert into REAL or INTEGER values.
+<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_06.test, matrix: <a href='matrix/datatype3.html#R-12720-41494-41537-21978-20786-40223-25082-25767'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-12720-41494-41537-21978-20786-40223-25082-25767'>detail</a>)</i></p></dd>
 
 <dt><b>R-12722-60883-17939-30379-04776-48495-16635-34994</b></dt>
 <dd><p>The P argument is a pointer to the prepared statement and the X argument points to a 64-bit integer which is the estimated of the number of nanosecond that the prepared statement took to run.
@@ -2561,6 +2561,10 @@ comments in the source code.
 <dt><b>R-13183-30817-63475-03286-24149-37029-58658-28178</b></dt>
 <dd><p>Parameters of the form "?" without a following integer have no name and are referred to as "nameless" or "anonymous parameters".
 <i>(source: <a href="c3ref/bind_parameter_name.html">c3ref/bind_parameter_name.html</a>, checked-by: th3/req1/bind04.test, matrix: <a href='matrix/c3ref/bind_parameter_name.html#R-13183-30817-63475-03286-24149-37029-58658-28178'>context</a>, <a href='matrix/matrix_dbind_parameter_name.html#R-13183-30817-63475-03286-24149-37029-58658-28178'>detail</a>)</i></p></dd>
+
+<dt><b>R-13199-64588-45721-29417-06985-29231-64898-26576</b></dt>
+<dd><p>No error is returned for uniqueness, NOT NULL, and UNIQUE constraint errors when the IGNORE conflict resolution algorithm is used.
+<i>(source: <a href="lang_conflict.html">lang_conflict.html</a>, checked-by: th3/req1/conflict01.test, matrix: <a href='matrix/lang_conflict.html#R-13199-64588-45721-29417-06985-29231-64898-26576'>context</a>, <a href='matrix/matrix_dlang_conflict.html#R-13199-64588-45721-29417-06985-29231-64898-26576'>detail</a>)</i></p></dd>
 
 <dt><b>R-13210-09522-30167-47682-54328-15503-65010-64185</b></dt>
 <dd><p>Each entry in the table b-tree corresponds to a row of the SQL table.
@@ -3006,10 +3010,6 @@ comments in the source code.
 <dd><p>If the largest root b-tree page value is zero, then the database must not contain ptrmap pages.
 <i>(source: <a href="fileformat2.html">fileformat2.html</a>, matrix: <a href='matrix/fileformat2.html#R-15548-18334-64551-32138-25458-60589-38835-29955'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-15548-18334-64551-32138-25458-60589-38835-29955'>detail</a>)</i></p></dd>
 
-<dt><b>R-15569-63625-32025-44445-56996-41662-23877-23571</b></dt>
-<dd><p>If a CHECK constraint violation occurs, the REPLACE conflict resolution algorithm always works like ABORT.
-<i>(source: <a href="lang_conflict.html">lang_conflict.html</a>, checked-by: src/insert.c, th3/req1/conflict02.test, matrix: <a href='matrix/lang_conflict.html#R-15569-63625-32025-44445-56996-41662-23877-23571'>context</a>, <a href='matrix/matrix_dlang_conflict.html#R-15569-63625-32025-44445-56996-41662-23877-23571'>detail</a>)</i></p></dd>
-
 <dt><b>R-15572-63310-25640-21443-38928-49206-01158-44169</b></dt>
 <dd><p>So just because a column is declared to contain a particular type does not mean that the data stored in that column is of the declared type.
 <i>(source: <a href="c3ref/column_decltype.html">c3ref/column_decltype.html</a>, matrix: <a href='matrix/c3ref/column_decltype.html#R-15572-63310-25640-21443-38928-49206-01158-44169'>context</a>, <a href='matrix/matrix_dcolumn_decltype.html#R-15572-63310-25640-21443-38928-49206-01158-44169'>detail</a>)</i></p></dd>
@@ -3268,7 +3268,7 @@ comments in the source code.
 
 <dt><b>R-16824-07538-50218-17384-27705-17061-18390-01878</b></dt>
 <dd><p>Support for the diagnostic functions sqlite3_compileoption_used() and sqlite3_compileoption_get() may be omitted by specifying the SQLITE_OMIT_COMPILEOPTION_DIAGS option at compile time.
-<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, matrix: <a href='matrix/c3ref/compileoption_get.html#R-16824-07538-50218-17384-27705-17061-18390-01878'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-16824-07538-50218-17384-27705-17061-18390-01878'>detail</a>)</i></p></dd>
+<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, checked-by: src/ctime.c, matrix: <a href='matrix/c3ref/compileoption_get.html#R-16824-07538-50218-17384-27705-17061-18390-01878'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-16824-07538-50218-17384-27705-17061-18390-01878'>detail</a>)</i></p></dd>
 
 <dt><b>R-16876-26469-56495-43773-04643-04870-06914-01150</b></dt>
 <dd><p>However, in many cases you can use an INSTEAD OF trigger on the view to accomplish the same thing.
@@ -3570,6 +3570,10 @@ comments in the source code.
 <dd><p>NULL values (serial type 0) sort first.
 <i>(source: <a href="fileformat2.html">fileformat2.html</a>, checked-by: th3/req1/fileformat05.test, matrix: <a href='matrix/fileformat2.html#R-18347-31070-03027-11066-56518-02178-55511-27886'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-18347-31070-03027-11066-56518-02178-55511-27886'>detail</a>)</i></p></dd>
 
+<dt><b>R-18364-25640-43471-65335-34300-00271-36361-11229</b></dt>
+<dd><p>Some mathematical operators (%, <<, >>, &, and |) expect INTEGER operands. For those operators, REAL operands are converted into INTEGER in the same way as a CAST to INTEGER.
+<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_06.test, matrix: <a href='matrix/datatype3.html#R-18364-25640-43471-65335-34300-00271-36361-11229'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-18364-25640-43471-65335-34300-00271-36361-11229'>detail</a>)</i></p></dd>
+
 <dt><b>R-18369-35089-02774-53882-33695-33553-03042-04730</b></dt>
 <dd><p>In each such row, the sqlite_stat.stat column will be a string consisting of a list of integers followed by zero or more arguments.
 <i>(source: <a href="fileformat2.html">fileformat2.html</a>, matrix: <a href='matrix/fileformat2.html#R-18369-35089-02774-53882-33695-33553-03042-04730'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-18369-35089-02774-53882-33695-33553-03042-04730'>detail</a>)</i></p></dd>
@@ -3725,6 +3729,10 @@ comments in the source code.
 <dt><b>R-18981-44563-59556-01794-47708-02337-53296-37760</b></dt>
 <dd><p>The OFF journaling mode disables the rollback journal completely.
 <i>(source: <a href="pragma.html">pragma.html</a>, checked-by: th3/req1/pragma25.test, matrix: <a href='matrix/pragma.html#R-18981-44563-59556-01794-47708-02337-53296-37760'>context</a>, <a href='matrix/matrix_dpragma.html#R-18981-44563-59556-01794-47708-02337-53296-37760'>detail</a>)</i></p></dd>
+
+<dt><b>R-18996-06026-12732-36881-04380-02078-38106-17370</b></dt>
+<dd><p>However, the IGNORE conflict resolution algorithm works like ABORT for foreign key constraint errors.
+<i>(source: <a href="lang_conflict.html">lang_conflict.html</a>, matrix: <a href='matrix/lang_conflict.html#R-18996-06026-12732-36881-04380-02078-38106-17370'>context</a>, <a href='matrix/matrix_dlang_conflict.html#R-18996-06026-12732-36881-04380-02078-38106-17370'>detail</a>)</i></p></dd>
 
 <dt><b>R-19003-27813-57127-49100-22413-58501-27554-18699</b></dt>
 <dd><p>The SAVEPOINT with the matching name remains on the transaction stack, but all database changes that occurred after that SAVEPOINT was created are rolled back.
@@ -4294,6 +4302,10 @@ comments in the source code.
 <dd><p>Note that if one of the dynamic mutex parameters (SQLITE_MUTEX_FAST or SQLITE_MUTEX_RECURSIVE) is used then sqlite3_mutex_alloc() returns a different mutex on every call.
 <i>(source: <a href="c3ref/mutex_alloc.html">c3ref/mutex_alloc.html</a>, checked-by: th3/cov1/mutex01.test, matrix: <a href='matrix/c3ref/mutex_alloc.html#R-22391-07186-37161-38876-45465-63159-33403-63078'>context</a>, <a href='matrix/matrix_dmutex_alloc.html#R-22391-07186-37161-38876-45465-63159-33403-63078'>detail</a>)</i></p></dd>
 
+<dt><b>R-22414-48736-05483-33334-64418-18410-20572-40044</b></dt>
+<dd><p>A COLLATE operator has the same affinity as its left-hand side operand.
+<i>(source: <a href="datatype3.html">datatype3.html</a>, matrix: <a href='matrix/datatype3.html#R-22414-48736-05483-33334-64418-18410-20572-40044'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-22414-48736-05483-33334-64418-18410-20572-40044'>detail</a>)</i></p></dd>
+
 <dt><b>R-22484-49535-05658-48568-12441-17149-15045-25439</b></dt>
 <dd><p>Leading spaces are removed.
 <i>(source: <a href="fileformat2.html">fileformat2.html</a>, matrix: <a href='matrix/fileformat2.html#R-22484-49535-05658-48568-12441-17149-15045-25439'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-22484-49535-05658-48568-12441-17149-15045-25439'>detail</a>)</i></p></dd>
@@ -4520,7 +4532,7 @@ comments in the source code.
 
 <dt><b>R-23486-28813-15662-33687-07998-38651-35612-02946</b></dt>
 <dd><p>The SQLITE_ prefix is omitted from any strings returned by sqlite3_compileoption_get().
-<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, matrix: <a href='matrix/c3ref/compileoption_get.html#R-23486-28813-15662-33687-07998-38651-35612-02946'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-23486-28813-15662-33687-07998-38651-35612-02946'>detail</a>)</i></p></dd>
+<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, checked-by: th3/cov1/ctime01.test, matrix: <a href='matrix/c3ref/compileoption_get.html#R-23486-28813-15662-33687-07998-38651-35612-02946'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-23486-28813-15662-33687-07998-38651-35612-02946'>detail</a>)</i></p></dd>
 
 <dt><b>R-23498-38103-14789-32362-20893-18131-57271-11278</b></dt>
 <dd><p>When the REPLACE conflict resolution strategy deletes rows in order to satisfy a constraint, delete triggers fire if and only if recursive triggers are enabled.
@@ -4769,6 +4781,10 @@ comments in the source code.
 <dt><b>R-24625-56801-43002-50418-06223-19456-53547-53426</b></dt>
 <dd><p>SQLite makes its own private copy of the content of the sqlite3_mem_methods structure before the sqlite3_config() call returns.
 <i>(source: <a href="c3ref/c_config_covering_index_scan.html">c3ref/c_config_covering_index_scan.html</a>, checked-by: th3/th3oom.c, matrix: <a href='matrix/c3ref/c_config_covering_index_scan.html#R-24625-56801-43002-50418-06223-19456-53547-53426'>context</a>, <a href='matrix/matrix_dc_config_covering_index_scan.html#R-24625-56801-43002-50418-06223-19456-53547-53426'>detail</a>)</i></p></dd>
+
+<dt><b>R-24635-37065-50827-53824-24547-23611-48294-22857</b></dt>
+<dd><p>The <<, >>, &, and | operators always return an INTEGER (or NULL) result, but the % operator returns either INTEGER or REAL (or NULL) depending on the type of its operands.
+<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_06.test, matrix: <a href='matrix/datatype3.html#R-24635-37065-50827-53824-24547-23611-48294-22857'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-24635-37065-50827-53824-24547-23611-48294-22857'>detail</a>)</i></p></dd>
 
 <dt><b>R-24654-22397-54230-45811-61786-44537-26039-50669</b></dt>
 <dd><p>The X callback is invoked whenever any of the events identified by mask M occur.
@@ -5046,10 +5062,6 @@ comments in the source code.
 <dd><p>In the "vX" interfaces, the prepared statement that is returned (the sqlite3_stmt object) contains a copy of the original SQL text.
 <i>(source: <a href="c3ref/prepare.html">c3ref/prepare.html</a>, checked-by: th3/req1/prepare01.test, matrix: <a href='matrix/c3ref/prepare.html#R-26018-54615-20076-23782-57324-62216-58815-28451'>context</a>, <a href='matrix/matrix_dprepare.html#R-26018-54615-20076-23782-57324-62216-58815-28451'>detail</a>)</i></p></dd>
 
-<dt><b>R-26026-19483-46131-60322-16678-61732-18178-30249</b></dt>
-<dd><p>For the purposes of the previous sentence, a column name preceded by one or more unary "+" operators is still considered a column name.
-<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_09.test, matrix: <a href='matrix/datatype3.html#R-26026-19483-46131-60322-16678-61732-18178-30249'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-26026-19483-46131-60322-16678-61732-18178-30249'>detail</a>)</i></p></dd>
-
 <dt><b>R-26030-41411-57646-19570-38371-36124-26436-49384</b></dt>
 <dd><p>The highwater mark associated with SQLITE_DBSTATUS_CACHE_USED is always 0.
 <i>(source: <a href="c3ref/c_dbstatus_options.html">c3ref/c_dbstatus_options.html</a>, checked-by: th3/req1/dbstatus01.test, matrix: <a href='matrix/c3ref/c_dbstatus_options.html#R-26030-41411-57646-19570-38371-36124-26436-49384'>context</a>, <a href='matrix/matrix_dc_dbstatus_options.html#R-26030-41411-57646-19570-38371-36124-26436-49384'>detail</a>)</i></p></dd>
@@ -5153,6 +5165,10 @@ comments in the source code.
 <dt><b>R-26383-00685-00003-12709-20041-02640-63629-60960</b></dt>
 <dd><p>Note that the journal_mode for an in-memory database is either MEMORY or OFF and can not be changed to a different value.
 <i>(source: <a href="pragma.html">pragma.html</a>, checked-by: th3/req1/pragma23.test, matrix: <a href='matrix/pragma.html#R-26383-00685-00003-12709-20041-02640-63629-60960'>context</a>, <a href='matrix/matrix_dpragma.html#R-26383-00685-00003-12709-20041-02640-63629-60960'>detail</a>)</i></p></dd>
+
+<dt><b>R-26383-51744-00561-00695-36382-45480-37936-10675</b></dt>
+<dd><p>If a CHECK constraint or foreign key constraint violation occurs, the REPLACE conflict resolution algorithm works like ABORT.
+<i>(source: <a href="lang_conflict.html">lang_conflict.html</a>, checked-by: src/insert.c, th3/req1/conflict02.test, matrix: <a href='matrix/lang_conflict.html#R-26383-51744-00561-00695-36382-45480-37936-10675'>context</a>, <a href='matrix/matrix_dlang_conflict.html#R-26383-51744-00561-00695-36382-45480-37936-10675'>detail</a>)</i></p></dd>
 
 <dt><b>R-26406-03647-33657-03652-13422-62298-62842-50282</b></dt>
 <dd><p>It is possible for the library compile-time C preprocessor symbol SQLITE_TEMP_STORE to override this pragma setting.
@@ -5433,6 +5449,10 @@ comments in the source code.
 <dt><b>R-27847-27229-42495-29063-58716-22268-05238-18530</b></dt>
 <dd><p>The first argument is the database connection object to be interrogated.
 <i>(source: <a href="c3ref/db_status.html">c3ref/db_status.html</a>, checked-by: th3/req1/dbstatus01.test, matrix: <a href='matrix/c3ref/db_status.html#R-27847-27229-42495-29063-58716-22268-05238-18530'>context</a>, <a href='matrix/matrix_ddb_status.html#R-27847-27229-42495-29063-58716-22268-05238-18530'>detail</a>)</i></p></dd>
+
+<dt><b>R-27875-27272-27361-08539-07716-12839-63715-05434</b></dt>
+<dd><p>The implied type conversion of mathematical operands is slightly different from CAST to NUMERIC in that string and BLOB values that look like real numbers but have no fractional part are kept as REAL instead of being converted into INTEGER as they would be for CAST to NUMERIC.
+<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_06.test, matrix: <a href='matrix/datatype3.html#R-27875-27272-27361-08539-07716-12839-63715-05434'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-27875-27272-27361-08539-07716-12839-63715-05434'>detail</a>)</i></p></dd>
 
 <dt><b>R-27882-15425-11851-57208-29860-19997-13242-33591</b></dt>
 <dd><p>This option is used to enable or disable the sqlite3_load_extension() interface independently of the load_extension() SQL function.
@@ -6280,7 +6300,7 @@ comments in the source code.
 
 <dt><b>R-31624-24737-51221-05558-39670-00793-48763-40650</b></dt>
 <dd><p>RTRIM is like BINARY except that extra spaces at the end of either string do not change the result. In other words, strings will compare equal to one another as long as they differ only in the number of spaces at the end.
-<i>(source: <a href="fileformat2.html">fileformat2.html</a>, checked-by: src/main.c, matrix: <a href='matrix/fileformat2.html#R-31624-24737-51221-05558-39670-00793-48763-40650'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-31624-24737-51221-05558-39670-00793-48763-40650'>detail</a>)</i></p></dd>
+<i>(source: <a href="fileformat2.html">fileformat2.html</a>, matrix: <a href='matrix/fileformat2.html#R-31624-24737-51221-05558-39670-00793-48763-40650'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-31624-24737-51221-05558-39670-00793-48763-40650'>detail</a>)</i></p></dd>
 
 <dt><b>R-31676-45509-42539-51511-07128-62436-51993-36875</b></dt>
 <dd><p>If X is the integer -9223372036854775808 then abs(X) throws an integer overflow error since there is no equivalent positive 64-bit two complement value.
@@ -7194,10 +7214,6 @@ comments in the source code.
 <dd><p>SQLite does not make a copy of the new main schema name string, so the application must ensure that the argument passed into this DBCONFIG option is unchanged until after the database connection closes.
 <i>(source: <a href="c3ref/c_dbconfig_defensive.html">c3ref/c_dbconfig_defensive.html</a>, checked-by: src/main.c, th3/cov1/maindbname01.test, matrix: <a href='matrix/c3ref/c_dbconfig_defensive.html#R-36257-52125-15338-28227-38982-51329-51201-58164'>context</a>, <a href='matrix/matrix_dc_dbconfig_defensive.html#R-36257-52125-15338-28227-38982-51329-51201-58164'>detail</a>)</i></p></dd>
 
-<dt><b>R-36265-51196-56439-27074-26615-17035-18675-11586</b></dt>
-<dd><p>All mathematical operators (+, -, *, /, %, <<, >>, &, and |) cast both operands to the NUMERIC storage class prior to being carried out.
-<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_06.test, matrix: <a href='matrix/datatype3.html#R-36265-51196-56439-27074-26615-17035-18675-11586'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-36265-51196-56439-27074-26615-17035-18675-11586'>detail</a>)</i></p></dd>
-
 <dt><b>R-36322-06257-02337-56371-28217-24228-64026-14937</b></dt>
 <dd><p>When memory allocation statistics are disabled, the following SQLite interfaces become non-operational: sqlite3_memory_used() sqlite3_memory_highwater() sqlite3_soft_heap_limit64() sqlite3_status64()
 <i>(source: <a href="c3ref/c_config_covering_index_scan.html">c3ref/c_config_covering_index_scan.html</a>, matrix: <a href='matrix/c3ref/c_config_covering_index_scan.html#R-36322-06257-02337-56371-28217-24228-64026-14937'>context</a>, <a href='matrix/matrix_dc_config_covering_index_scan.html#R-36322-06257-02337-56371-28217-24228-64026-14937'>detail</a>)</i></p></dd>
@@ -7289,6 +7305,10 @@ comments in the source code.
 <dt><b>R-36765-11966-40319-64990-44757-09945-39108-37525</b></dt>
 <dd><p>If the sqlite_stat1.idx column is the same as the sqlite_stat1.tbl column, then the table is a WITHOUT ROWID table and the sqlite_stat1.stat field contains information about the index btree that implements the WITHOUT ROWID table.
 <i>(source: <a href="fileformat2.html">fileformat2.html</a>, matrix: <a href='matrix/fileformat2.html#R-36765-11966-40319-64990-44757-09945-39108-37525'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-36765-11966-40319-64990-44757-09945-39108-37525'>detail</a>)</i></p></dd>
+
+<dt><b>R-36787-21388-40333-56236-13841-04160-18258-18988</b></dt>
+<dd><p>If the STRING or BLOB looks like a real number (if it has a decimal point or an exponent) or if the value is outside the range that can be represented as a 64-bit signed integer, then it converts to REAL. Otherwise the operand converts to INTEGER.
+<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_06.test, matrix: <a href='matrix/datatype3.html#R-36787-21388-40333-56236-13841-04160-18258-18988'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-36787-21388-40333-56236-13841-04160-18258-18988'>detail</a>)</i></p></dd>
 
 <dt><b>R-36822-49898-51267-28801-22242-39926-43860-26511</b></dt>
 <dd><p>In many pragmas, the argument is a boolean. The boolean can be one of: 1 yes true on0 no false off
@@ -7968,7 +7988,7 @@ comments in the source code.
 
 <dt><b>R-40383-06816-10485-50532-53566-05766-27128-48276</b></dt>
 <dd><p>The sqlite3_compileoption_used() function returns 0 or 1 indicating whether the specified option was defined at compile time.
-<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, matrix: <a href='matrix/c3ref/compileoption_get.html#R-40383-06816-10485-50532-53566-05766-27128-48276'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-40383-06816-10485-50532-53566-05766-27128-48276'>detail</a>)</i></p></dd>
+<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, checked-by: th3/cov1/ctime01.test, matrix: <a href='matrix/c3ref/compileoption_get.html#R-40383-06816-10485-50532-53566-05766-27128-48276'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-40383-06816-10485-50532-53566-05766-27128-48276'>detail</a>)</i></p></dd>
 
 <dt><b>R-40390-09039-54106-21086-56168-24022-18205-41129</b></dt>
 <dd><p>These functions add, remove, or modify a collation associated with the database connection specified as the first argument.
@@ -8208,7 +8228,7 @@ comments in the source code.
 
 <dt><b>R-41519-43313-49943-13325-32316-49786-47625-55988</b></dt>
 <dd><p>If N is out of range, sqlite3_compileoption_get() returns a NULL pointer.
-<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, matrix: <a href='matrix/c3ref/compileoption_get.html#R-41519-43313-49943-13325-32316-49786-47625-55988'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-41519-43313-49943-13325-32316-49786-47625-55988'>detail</a>)</i></p></dd>
+<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, checked-by: th3/cov1/ctime01.test, matrix: <a href='matrix/c3ref/compileoption_get.html#R-41519-43313-49943-13325-32316-49786-47625-55988'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-41519-43313-49943-13325-32316-49786-47625-55988'>detail</a>)</i></p></dd>
 
 <dt><b>R-41531-51083-45051-37425-19674-01432-09098-10672</b></dt>
 <dd><p>Every new database connection defaults to having the auto-checkpoint enabled with a threshold of 1000 or SQLITE_DEFAULT_WAL_AUTOCHECKPOINT pages.
@@ -8228,7 +8248,7 @@ comments in the source code.
 
 <dt><b>R-41621-22586-12548-60539-44942-45128-18412-02664</b></dt>
 <dd><p>As an example, consider the following SQL: CREATE TABLE ex25(a,b,c,d,e,PRIMARY KEY(d,c,a)) WITHOUT rowid; CREATE INDEX ex25ce ON ex25(c,e); CREATE INDEX ex25acde ON ex25(a,c,d,e); CREATE INDEX ex25ae ON ex25(a COLLATE nocase,e); Each row in the ex25ce index is a record with these columns: c, e, d, a. The first two columns are the columns being indexed, c and e. The remaining columns are the primary key of the corresponding table row. Normally, the primary key would be columns d, c, and a, but because column c already appears earlier in the index, it is omitted from the key suffix.
-<i>(source: <a href="fileformat2.html">fileformat2.html</a>, matrix: <a href='matrix/fileformat2.html#R-41621-22586-12548-60539-44942-45128-18412-02664'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-41621-22586-12548-60539-44942-45128-18412-02664'>detail</a>)</i></p></dd>
+<i>(source: <a href="fileformat2.html">fileformat2.html</a>, checked-by: th3/req1/fileformat04.test, matrix: <a href='matrix/fileformat2.html#R-41621-22586-12548-60539-44942-45128-18412-02664'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-41621-22586-12548-60539-44942-45128-18412-02664'>detail</a>)</i></p></dd>
 
 <dt><b>R-41640-10889-37891-53855-47925-09375-30702-30304</b></dt>
 <dd><p>The filename returned by this function is the output of the xFullPathname method of the VFS.
@@ -9398,6 +9418,10 @@ comments in the source code.
 <dd><p>A database connection handle is usually returned in *ppDb, even if an error occurs. The only exception is that if SQLite is unable to allocate memory to hold the sqlite3 object, a NULL will be written into *ppDb instead of a pointer to the sqlite3 object.
 <i>(source: <a href="c3ref/open.html">c3ref/open.html</a>, matrix: <a href='matrix/c3ref/open.html#R-47032-28289-44184-46595-09836-48485-53901-64968'>context</a>, <a href='matrix/matrix_dopen.html#R-47032-28289-44184-46595-09836-48485-53901-64968'>detail</a>)</i></p></dd>
 
+<dt><b>R-47045-23194-06320-38835-32835-03422-03688-60752</b></dt>
+<dd><p>Input text that looks like floating point (there is a decimal point and/or an exponent) and the text describes a value that can be losslessly converted back and forth between IEEE 754 64-bit float and a 51-bit signed integer, then the result is INTEGER.
+<i>(source: <a href="lang_expr.html">lang_expr.html</a>, checked-by: tcl/e_expr.test, th3/cov1/cast01.test, matrix: <a href='matrix/lang_expr.html#R-47045-23194-06320-38835-32835-03422-03688-60752'>context</a>, <a href='matrix/matrix_dlang_expr.html#R-47045-23194-06320-38835-32835-03422-03688-60752'>detail</a>)</i></p></dd>
+
 <dt><b>R-47080-02069-19289-28177-02416-33406-46082-01364</b></dt>
 <dd><p>If an "ALTER TABLE ... RENAME TO" command is used to rename a table that is the parent table of one or more foreign key constraints, the definitions of the foreign key constraints are modified to refer to the parent table by its new name
 <i>(source: <a href="foreignkeys.html">foreignkeys.html</a>, checked-by: tcl/e_fkey.test, th3/req1/foreignkeys21.test, matrix: <a href='matrix/foreignkeys.html#R-47080-02069-19289-28177-02416-33406-46082-01364'>context</a>, <a href='matrix/matrix_dforeignkeys.html#R-47080-02069-19289-28177-02416-33406-46082-01364'>detail</a>)</i></p></dd>
@@ -9826,6 +9850,10 @@ comments in the source code.
 <dd><p>When the auto_vacuum pragma is invoked with no arguments, it returns the current auto_vacuum mode.
 <i>(source: <a href="pragma.html">pragma.html</a>, checked-by: th3/req1/pragma07.test, matrix: <a href='matrix/pragma.html#R-48932-13175-31748-44734-45646-26291-63323-36256'>context</a>, <a href='matrix/matrix_dpragma.html#R-48932-13175-31748-44734-45646-26291-63323-36256'>detail</a>)</i></p></dd>
 
+<dt><b>R-48945-04866-13752-27122-40545-48068-02764-57790</b></dt>
+<dd><p>If the input text looks like an integer (there is no decimal point nor exponent) and the value is small enough to fit in a 64-bit signed integer, then the result will be INTEGER.
+<i>(source: <a href="lang_expr.html">lang_expr.html</a>, checked-by: tcl/e_expr.test, th3/cov1/cast01.test, matrix: <a href='matrix/lang_expr.html#R-48945-04866-13752-27122-40545-48068-02764-57790'>context</a>, <a href='matrix/matrix_dlang_expr.html#R-48945-04866-13752-27122-40545-48068-02764-57790'>detail</a>)</i></p></dd>
+
 <dt><b>R-48957-47016-25285-15223-13940-44175-60524-56619</b></dt>
 <dd><p>PRAGMA schema.max_page_count; PRAGMA schema.max_page_count = N; Query or set the maximum number of pages in the database file.
 <i>(source: <a href="pragma.html">pragma.html</a>, checked-by: th3/req1/pragma12.test, matrix: <a href='matrix/pragma.html#R-48957-47016-25285-15223-13940-44175-60524-56619'>context</a>, <a href='matrix/matrix_dpragma.html#R-48957-47016-25285-15223-13940-44175-60524-56619'>detail</a>)</i></p></dd>
@@ -10077,6 +10105,10 @@ comments in the source code.
 <dt><b>R-50299-05307-25514-21202-52371-12958-26129-48124</b></dt>
 <dd><p>When an applicable constraint violation occurs, the IGNORE resolution algorithm skips the one row that contains the constraint violation and continues processing subsequent rows of the SQL statement as if nothing went wrong.
 <i>(source: <a href="lang_conflict.html">lang_conflict.html</a>, checked-by: th3/req1/conflict01.test, matrix: <a href='matrix/lang_conflict.html#R-50299-05307-25514-21202-52371-12958-26129-48124'>context</a>, <a href='matrix/matrix_dlang_conflict.html#R-50299-05307-25514-21202-52371-12958-26129-48124'>detail</a>)</i></p></dd>
+
+<dt><b>R-50300-26941-55863-56023-43928-35657-09281-24931</b></dt>
+<dd><p>Any text input that describes a value outside the range of a 64-bit signed integer yields a REAL result.
+<i>(source: <a href="lang_expr.html">lang_expr.html</a>, checked-by: tcl/e_expr.test, th3/cov1/cast01.test, matrix: <a href='matrix/lang_expr.html#R-50300-26941-55863-56023-43928-35657-09281-24931'>context</a>, <a href='matrix/matrix_dlang_expr.html#R-50300-26941-55863-56023-43928-35657-09281-24931'>detail</a>)</i></p></dd>
 
 <dt><b>R-50311-40073-45053-25007-44644-61997-30405-63505</b></dt>
 <dd><p><img src="images/syntax/create-trigger-stmt.gif"><br>
@@ -10446,10 +10478,6 @@ comments in the source code.
 <dd><p>If this option is set to an empty string the default VFS object is used.
 <i>(source: <a href="c3ref/open.html">c3ref/open.html</a>, checked-by: tcl/e_uri.test, matrix: <a href='matrix/c3ref/open.html#R-52293-58497-02008-48685-44667-03336-29126-34066'>context</a>, <a href='matrix/matrix_dopen.html#R-52293-58497-02008-48685-44667-03336-29126-34066'>detail</a>)</i></p></dd>
 
-<dt><b>R-52324-04086-24847-26987-35436-53811-31141-55641</b></dt>
-<dd><p>No error is returned when the IGNORE conflict resolution algorithm is used.
-<i>(source: <a href="lang_conflict.html">lang_conflict.html</a>, checked-by: th3/req1/conflict01.test, matrix: <a href='matrix/lang_conflict.html#R-52324-04086-24847-26987-35436-53811-31141-55641'>context</a>, <a href='matrix/matrix_dlang_conflict.html#R-52324-04086-24847-26987-35436-53811-31141-55641'>detail</a>)</i></p></dd>
-
 <dt><b>R-52324-13814-42283-42747-08778-19058-01136-41555</b></dt>
 <dd><p>If the resetFlg is true, then the counter is reset to zero after this interface call returns.
 <i>(source: <a href="c3ref/stmt_status.html">c3ref/stmt_status.html</a>, matrix: <a href='matrix/c3ref/stmt_status.html#R-52324-13814-42283-42747-08778-19058-01136-41555'>context</a>, <a href='matrix/matrix_dstmt_status.html#R-52324-13814-42283-42747-08778-19058-01136-41555'>detail</a>)</i></p></dd>
@@ -10584,7 +10612,7 @@ comments in the source code.
 
 <dt><b>R-52975-24025-19782-48078-21253-08318-64480-41617</b></dt>
 <dd><p>D is either a NULL pointer or a pointer to a destructor function for P.
-<i>(source: <a href="c3ref/bind_blob.html">c3ref/bind_blob.html</a>, matrix: <a href='matrix/c3ref/bind_blob.html#R-52975-24025-19782-48078-21253-08318-64480-41617'>context</a>, <a href='matrix/matrix_dbind_blob.html#R-52975-24025-19782-48078-21253-08318-64480-41617'>detail</a>)</i></p></dd>
+<i>(source: <a href="c3ref/bind_blob.html">c3ref/bind_blob.html</a>, checked-by: th3/cov1/carray01.test, matrix: <a href='matrix/c3ref/bind_blob.html#R-52975-24025-19782-48078-21253-08318-64480-41617'>context</a>, <a href='matrix/matrix_dbind_blob.html#R-52975-24025-19782-48078-21253-08318-64480-41617'>detail</a>)</i></p></dd>
 
 <dt><b>R-52979-05948-62253-13959-08616-19782-00231-65048</b></dt>
 <dd><p>The sqlite3_create_module() interface is equivalent to sqlite3_create_module_v2() with a NULL destructor.
@@ -10970,6 +10998,10 @@ comments in the source code.
 <dd><p>As with PRIMARY KEYs, a UNIQUE table-constraint clause must contain only column names &mdash; the use of expressions in an indexed-column of a UNIQUE table-constraint is not supported.
 <i>(source: <a href="lang_createtable.html">lang_createtable.html</a>, matrix: <a href='matrix/lang_createtable.html#R-55072-00299-56529-46464-12562-60725-23596-59611'>context</a>, <a href='matrix/matrix_dlang_createtable.html#R-55072-00299-56529-46464-12562-60725-23596-59611'>detail</a>)</i></p></dd>
 
+<dt><b>R-55084-10555-33415-01077-58327-07092-00273-30693</b></dt>
+<dd><p>Casting a TEXT or BLOB value into NUMERIC yields either an INTEGER or a REAL result.
+<i>(source: <a href="lang_expr.html">lang_expr.html</a>, checked-by: tcl/cast.test, tcl/e_expr.test, th3/cov1/cast01.test, matrix: <a href='matrix/lang_expr.html#R-55084-10555-33415-01077-58327-07092-00273-30693'>context</a>, <a href='matrix/matrix_dlang_expr.html#R-55084-10555-33415-01077-58327-07092-00273-30693'>detail</a>)</i></p></dd>
+
 <dt><b>R-55119-57913-09912-49020-08762-55611-23100-00371</b></dt>
 <dd><p>By default, VACUUM only works only on the main database.
 <i>(source: <a href="lang_vacuum.html">lang_vacuum.html</a>, checked-by: tcl/e_vacuum.test, matrix: <a href='matrix/lang_vacuum.html#R-55119-57913-09912-49020-08762-55611-23100-00371'>context</a>, <a href='matrix/matrix_dlang_vacuum.html#R-55119-57913-09912-49020-08762-55611-23100-00371'>detail</a>)</i></p></dd>
@@ -11162,6 +11194,10 @@ comments in the source code.
 <dd><p>the following three table declarations all cause the column "x" to be an alias for the rowid (an integer primary key): CREATE TABLE t(x INTEGER PRIMARY KEY ASC, y, z); CREATE TABLE t(x INTEGER, y, z, PRIMARY KEY(x ASC)); CREATE TABLE t(x INTEGER, y, z, PRIMARY KEY(x DESC));
 <i>(source: <a href="lang_createtable.html">lang_createtable.html</a>, checked-by: tcl/e_createtable.test, matrix: <a href='matrix/lang_createtable.html#R-56094-57830-57463-55156-04028-13498-23873-32141'>context</a>, <a href='matrix/matrix_dlang_createtable.html#R-56094-57830-57463-55156-04028-13498-23873-32141'>detail</a>)</i></p></dd>
 
+<dt><b>R-56101-50212-09292-39432-28945-47695-30385-48702</b></dt>
+<dd><p>For the purposes of the previous sentence, a column name preceded by one or more unary "+" operators and/or CAST operators is still considered a column name.
+<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_09.test, matrix: <a href='matrix/datatype3.html#R-56101-50212-09292-39432-28945-47695-30385-48702'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-56101-50212-09292-39432-28945-47695-30385-48702'>detail</a>)</i></p></dd>
+
 <dt><b>R-56132-15700-29603-38264-36933-60961-45364-58760</b></dt>
 <dd><p>This is the only difference between a USING clause and its equivalent ON constraint.
 <i>(source: <a href="lang_select.html">lang_select.html</a>, checked-by: tcl/e_select.test, matrix: <a href='matrix/lang_select.html#R-56132-15700-29603-38264-36933-60961-45364-58760'>context</a>, <a href='matrix/matrix_dlang_select.html#R-56132-15700-29603-38264-36933-60961-45364-58760'>detail</a>)</i></p></dd>
@@ -11245,6 +11281,10 @@ comments in the source code.
 <dt><b>R-56692-55226-52354-63477-50727-27057-22841-42848</b></dt>
 <dd><p>If sqlite3_malloc() is unable to obtain sufficient free memory, it returns a NULL pointer.
 <i>(source: <a href="c3ref/free.html">c3ref/free.html</a>, checked-by: th3/req1/malloc02.test, matrix: <a href='matrix/c3ref/free.html#R-56692-55226-52354-63477-50727-27057-22841-42848'>context</a>, <a href='matrix/matrix_dfree.html#R-56692-55226-52354-63477-50727-27057-22841-42848'>detail</a>)</i></p></dd>
+
+<dt><b>R-56743-17266-53373-09142-21068-04228-42328-23175</b></dt>
+<dd><p>The conversion from STRING or BLOB into REAL or INTEGER is performed even if it is lossy and irreversible.
+<i>(source: <a href="datatype3.html">datatype3.html</a>, checked-by: th3/req1/datatype3_06.test, matrix: <a href='matrix/datatype3.html#R-56743-17266-53373-09142-21068-04228-42328-23175'>context</a>, <a href='matrix/matrix_ddatatype3.html#R-56743-17266-53373-09142-21068-04228-42328-23175'>detail</a>)</i></p></dd>
 
 <dt><b>R-56774-47553-42553-22624-23601-45834-24629-45686</b></dt>
 <dd><p>PRAGMA writable_schema = boolean; When this pragma is on, and the SQLITE_DBCONFIG_DEFENSIVE flag is off, then the sqlite_master table can be changed using ordinary UPDATE, INSERT, and DELETE statements.
@@ -12224,7 +12264,7 @@ comments in the source code.
 
 <dt><b>R-61981-08185-11399-27946-15257-51226-00201-31403</b></dt>
 <dd><p>In an index on a WITHOUT ROWID table, if a column of the PRIMARY KEY is also a column in the index and has a matching collating sequence, then the indexed column is not repeated in the table-key suffix on the end of the index record.
-<i>(source: <a href="fileformat2.html">fileformat2.html</a>, matrix: <a href='matrix/fileformat2.html#R-61981-08185-11399-27946-15257-51226-00201-31403'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-61981-08185-11399-27946-15257-51226-00201-31403'>detail</a>)</i></p></dd>
+<i>(source: <a href="fileformat2.html">fileformat2.html</a>, checked-by: th3/req1/fileformat04.test, matrix: <a href='matrix/fileformat2.html#R-61981-08185-11399-27946-15257-51226-00201-31403'>context</a>, <a href='matrix/matrix_dfileformat2.html#R-61981-08185-11399-27946-15257-51226-00201-31403'>detail</a>)</i></p></dd>
 
 <dt><b>R-61987-00541-30628-29518-50059-37734-56753-06843</b></dt>
 <dd><p>SQLITE_LIMIT_LENGTH The maximum size of any string or BLOB or table row, in bytes.
@@ -12980,7 +13020,7 @@ comments in the source code.
 
 <dt><b>R-65388-41786-00092-02077-09568-05356-17956-02801</b></dt>
 <dd><p>The SQLITE_ prefix may be omitted from the option name passed to sqlite3_compileoption_used().
-<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, matrix: <a href='matrix/c3ref/compileoption_get.html#R-65388-41786-00092-02077-09568-05356-17956-02801'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-65388-41786-00092-02077-09568-05356-17956-02801'>detail</a>)</i></p></dd>
+<i>(source: <a href="c3ref/compileoption_get.html">c3ref/compileoption_get.html</a>, checked-by: th3/cov1/ctime01.test, matrix: <a href='matrix/c3ref/compileoption_get.html#R-65388-41786-00092-02077-09568-05356-17956-02801'>context</a>, <a href='matrix/matrix_dcompileoption_get.html#R-65388-41786-00092-02077-09568-05356-17956-02801'>detail</a>)</i></p></dd>
 
 <dt><b>R-65415-14215-28340-46015-14060-32761-36485-26152</b></dt>
 <dd><p>The xCurrentTimeInt64() method returns, as an integer, the Julian Day Number multiplied by 86400000 (the number of milliseconds in a 24-hour day).

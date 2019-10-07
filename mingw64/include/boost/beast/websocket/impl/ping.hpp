@@ -35,7 +35,7 @@ template<class Handler>
 class stream<NextLayer, deflateSupported>::ping_op
     : public beast::stable_async_base<
         Handler, beast::executor_type<stream>>
-    , public net::coroutine
+    , public asio::coroutine
 {
     boost::weak_ptr<impl_type> wp_;
     detail::frame_buffer& fb_;
@@ -115,7 +115,7 @@ public:
 template<class NextLayer, bool deflateSupported>
 template<class Executor>
 class stream<NextLayer, deflateSupported>::idle_ping_op
-    : public net::coroutine
+    : public asio::coroutine
     , public boost::empty_value<Executor>
 {
     boost::weak_ptr<impl_type> wp_;
@@ -176,7 +176,8 @@ public:
                 impl.op_idle_ping.emplace(std::move(*this));
                 impl.wr_block.lock(this);
                 BOOST_ASIO_CORO_YIELD
-                net::post(this->get(), std::move(*this));
+                net::post(
+                    this->get_executor(), std::move(*this));
                 BOOST_ASSERT(impl.wr_block.is_locked(this));
             }
             if(impl.check_stop_now(ec))

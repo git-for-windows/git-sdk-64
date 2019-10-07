@@ -296,9 +296,11 @@ ORDER BY name;
   to implement the PRIMARY KEY or UNIQUE constraints) the <b>sql</b> field
   is NULL.</p>
 
-  <p>The SQLITE_MASTER table is read-only.  You cannot change this table
-  using UPDATE, INSERT, or DELETE.  The table is automatically updated by
-  CREATE TABLE, CREATE INDEX, DROP TABLE, and DROP INDEX commands.</p>
+  <p>The SQLITE_MASTER table cannot be modified using UPDATE, INSERT, 
+  or DELETE (except under
+  <a href="pragma.html#pragma_writable_schema">extraordinary conditions</a>).  
+  The SQLITE_MASTER table is automatically updated by commands like
+  CREATE TABLE, CREATE INDEX, DROP TABLE, and DROP INDEX.</p>
 
   <p>Temporary tables do not appear in the SQLITE_MASTER table.  Temporary
   tables and their indices and triggers occur in another special table

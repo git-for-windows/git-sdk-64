@@ -1,5 +1,5 @@
 /* Traits for Outcome
-(C) 2018-2019 Niall Douglas <http://www.nedproductions.biz/> (59 commits)
+(C) 2018-2019 Niall Douglas <http://www.nedproductions.biz/> (8 commits)
 File Created: March 2018
 
 
@@ -119,9 +119,9 @@ type definition  is_exception_ptr_available. Potential doc page: NOT FOUND
 */
   template <class T> struct is_exception_ptr_available
   {
-    static constexpr bool value = detail::_is_exception_ptr_available<std::decay<T>>::value;
+    static constexpr bool value = detail::_is_exception_ptr_available<std::decay_t<T>>::value;
   };
-  template <class T> constexpr bool is_exception_ptr_available_v = detail::_is_exception_ptr_available<std::decay<T>>::value;
+  template <class T> constexpr bool is_exception_ptr_available_v = detail::_is_exception_ptr_available<std::decay_t<T>>::value;
 
 
 }  // namespace trait

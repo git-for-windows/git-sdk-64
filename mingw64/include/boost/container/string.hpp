@@ -865,7 +865,7 @@ class basic_string
    //! <b>Complexity</b>: Linear to the elements x contains.
    basic_string& operator=(BOOST_COPY_ASSIGN_REF(basic_string) x)
    {
-      if (&x != this){
+      if (BOOST_LIKELY(this != &x)) {
          allocator_type &this_alloc     = this->alloc();
          const allocator_type &x_alloc  = x.alloc();
          dtl::bool_<allocator_traits_type::
@@ -896,27 +896,27 @@ class basic_string
       BOOST_NOEXCEPT_IF(allocator_traits_type::propagate_on_container_move_assignment::value
                                   || allocator_traits_type::is_always_equal::value)
    {
-      //for move constructor, no aliasing (&x != this) is assumed.
-      BOOST_ASSERT(this != &x);
-      allocator_type &this_alloc = this->alloc();
-      allocator_type &x_alloc    = x.alloc();
-      const bool propagate_alloc = allocator_traits_type::
-            propagate_on_container_move_assignment::value;
-      dtl::bool_<propagate_alloc> flag;
-      const bool allocators_equal = this_alloc == x_alloc; (void)allocators_equal;
-      //Resources can be transferred if both allocators are
-      //going to be equal after this function (either propagated or already equal)
-      if(propagate_alloc || allocators_equal){
-         //Destroy objects but retain memory in case x reuses it in the future
-         this->clear();
-         //Move allocator if needed
-         dtl::move_alloc(this_alloc, x_alloc, flag);
-         //Nothrow swap
-         this->swap_data(x);
-      }
-      //Else do a one by one move
-      else{
-         this->assign( x.begin(), x.end());
+      if (BOOST_LIKELY(this != &x)) {
+         allocator_type &this_alloc = this->alloc();
+         allocator_type &x_alloc    = x.alloc();
+         const bool propagate_alloc = allocator_traits_type::
+               propagate_on_container_move_assignment::value;
+         dtl::bool_<propagate_alloc> flag;
+         const bool allocators_equal = this_alloc == x_alloc; (void)allocators_equal;
+         //Resources can be transferred if both allocators are
+         //going to be equal after this function (either propagated or already equal)
+         if(propagate_alloc || allocators_equal){
+            //Destroy objects but retain memory in case x reuses it in the future
+            this->clear();
+            //Move allocator if needed
+            dtl::move_alloc(this_alloc, x_alloc, flag);
+            //Nothrow swap
+            this->swap_data(x);
+         }
+         //Else do a one by one move
+         else{
+            this->assign( x.begin(), x.end());
+         }
       }
       return *this;
    }
@@ -3490,9 +3490,9 @@ namespace boost {
 template <class C, class T, class Allocator>
 struct has_trivial_destructor_after_move<boost::container::basic_string<C, T, Allocator> >
 {
-   typedef typename ::boost::container::allocator_traits
-      <typename boost::container::basic_string<C, T, Allocator>::allocator_type>::pointer pointer;
-   static const bool value = ::boost::has_trivial_destructor_after_move<Allocator>::value &&
+   typedef typename boost::container::basic_string<C, T, Allocator>::allocator_type allocator_type;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::pointer pointer;
+   static const bool value = ::boost::has_trivial_destructor_after_move<allocator_type>::value &&
                              ::boost::has_trivial_destructor_after_move<pointer>::value;
 };
 

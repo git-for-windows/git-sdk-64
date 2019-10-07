@@ -11,7 +11,6 @@
 #define BOOST_BEAST_IMPL_MULTI_BUFFER_HPP
 
 #include <boost/beast/core/buffer_traits.hpp>
-#include <boost/beast/core/detail/type_traits.hpp>
 #include <boost/config/workaround.hpp>
 #include <boost/core/exchange.hpp>
 #include <boost/assert.hpp>
@@ -88,41 +87,6 @@ namespace beast {
           in_pos_                   out_pos_ == 0
                                     out_end_ == 0
 */
-//------------------------------------------------------------------------------
-
-template<class Allocator>
-class basic_multi_buffer<Allocator>::element
-    : public boost::intrusive::list_base_hook<
-        boost::intrusive::link_mode<
-            boost::intrusive::normal_link>>
-{
-    using size_type = typename
-        detail::allocator_traits<Allocator>::size_type;
-
-    size_type const size_;
-
-public:
-    element(element const&) = delete;
-
-    explicit
-    element(size_type n) noexcept
-        : size_(n)
-    {
-    }
-
-    size_type
-    size() const noexcept
-    {
-        return size_;
-    }
-
-    char*
-    data() const noexcept
-    {
-        return const_cast<char*>(
-            reinterpret_cast<char const*>(this + 1));
-    }
-};
 
 //------------------------------------------------------------------------------
 
@@ -487,7 +451,7 @@ template<class Allocator>
 basic_multi_buffer<Allocator>::
 basic_multi_buffer(
     Allocator const& alloc) noexcept
-    : boost::empty_value<base_alloc_type>(
+    : boost::empty_value<Allocator>(
         boost::empty_init_t(), alloc)
     , max_(alloc_traits::max_size(this->get()))
     , out_(list_.end())
@@ -499,8 +463,8 @@ basic_multi_buffer<Allocator>::
 basic_multi_buffer(
     std::size_t limit,
     Allocator const& alloc) noexcept
-    : boost::empty_value<
-        base_alloc_type>(boost::empty_init_t(), alloc)
+    : boost::empty_value<Allocator>(
+        boost::empty_init_t(), alloc)
     , max_(limit)
     , out_(list_.end())
 {
@@ -510,7 +474,7 @@ template<class Allocator>
 basic_multi_buffer<Allocator>::
 basic_multi_buffer(
     basic_multi_buffer&& other) noexcept
-    : boost::empty_value<base_alloc_type>(
+    : boost::empty_value<Allocator>(
         boost::empty_init_t(), std::move(other.get()))
     , max_(other.max_)
     , in_size_(boost::exchange(other.in_size_, 0))
@@ -529,9 +493,9 @@ template<class Allocator>
 basic_multi_buffer<Allocator>::
 basic_multi_buffer(
     basic_multi_buffer&& other,
-    Allocator const& alloc) 
-    : boost::empty_value<
-        base_alloc_type>(boost::empty_init_t(), alloc)
+    Allocator const& alloc)
+    : boost::empty_value<Allocator>(
+        boost::empty_init_t(), alloc)
     , max_(other.max_)
 {
     if(this->get() != other.get())
@@ -562,7 +526,7 @@ template<class Allocator>
 basic_multi_buffer<Allocator>::
 basic_multi_buffer(
     basic_multi_buffer const& other)
-    : boost::empty_value<base_alloc_type>(
+    : boost::empty_value<Allocator>(
         boost::empty_init_t(), alloc_traits::
             select_on_container_copy_construction(
                 other.get()))
@@ -577,7 +541,7 @@ basic_multi_buffer<Allocator>::
 basic_multi_buffer(
     basic_multi_buffer const& other,
     Allocator const& alloc)
-    : boost::empty_value<base_alloc_type>(
+    : boost::empty_value<Allocator>(
         boost::empty_init_t(), alloc)
     , max_(other.max_)
     , out_(list_.end())
@@ -601,8 +565,8 @@ basic_multi_buffer<Allocator>::
 basic_multi_buffer(
     basic_multi_buffer<OtherAlloc> const& other,
         allocator_type const& alloc)
-    : boost::empty_value<
-        base_alloc_type>(boost::empty_init_t(), alloc)
+    : boost::empty_value<Allocator>(
+        boost::empty_init_t(), alloc)
     , max_(other.max_)
     , out_(list_.end())
 {
@@ -1012,10 +976,7 @@ consume(size_type n) noexcept
             in_pos_ = 0;
             auto& e = list_.front();
             list_.erase(list_.iterator_to(e));
-            auto const len = sizeof(e) + e.size();
-            e.~element();
-            alloc_traits::deallocate(this->get(),
-                reinterpret_cast<char*>(&e), len);
+            destroy(e);
         #if BOOST_BEAST_MULTI_BUFFER_DEBUG_CHECK
             debug_check();
         #endif
@@ -1216,10 +1177,14 @@ void
 basic_multi_buffer<Allocator>::
 destroy(element& e)
 {
-    auto const len = sizeof(e) + e.size();
+    auto a = rebind_type{this->get()};
+    auto const n =
+        (sizeof(element) + e.size() +
+            sizeof(align_type) - 1) /
+        sizeof(align_type);
     e.~element();
-    alloc_traits::deallocate(this->get(),
-        reinterpret_cast<char*>(&e), len);
+    alloc_traits::deallocate(a,
+        reinterpret_cast<align_type*>(&e), n);
 }
 
 template<class Allocator>
@@ -1231,9 +1196,11 @@ alloc(std::size_t size) ->
     if(size > alloc_traits::max_size(this->get()))
         BOOST_THROW_EXCEPTION(std::length_error(
         "A basic_multi_buffer exceeded the allocator's maximum size"));
-    return *::new(alloc_traits::allocate(
-        this->get(),
-        sizeof(element) + size)) element(size);
+    auto a = rebind_type{this->get()};
+    auto const p = alloc_traits::allocate(a,
+        (sizeof(element) + size + sizeof(align_type) - 1) /
+            sizeof(align_type));
+    return *(::new(p) element(size));
 }
 
 template<class Allocator>

@@ -51,14 +51,22 @@ namespace aux {
 
 template< typename StreamT, typename T, bool ByValueV, typename R >
 struct enable_record_ostream_generic_operator {};
+
 template< typename CharT, typename T, typename R >
 struct enable_record_ostream_generic_operator< basic_record_ostream< CharT >, T, false, R > :
     public boost::disable_if_c< boost::is_scalar< typename boost::remove_cv< T >::type >::value, R >
 {
 };
+
 template< typename CharT, typename T, typename R >
 struct enable_record_ostream_generic_operator< basic_record_ostream< CharT >, T, true, R > :
     public boost::enable_if_c< boost::is_enum< typename boost::remove_cv< T >::type >::value, R >
+{
+};
+
+template< typename CharT, typename T, typename R >
+struct enable_record_ostream_generic_operator< basic_record_ostream< CharT >, T*, true, R > :
+    public disable_if_streamable_char_type< typename boost::remove_cv< T >::type, R >
 {
 };
 
@@ -321,12 +329,6 @@ public:
         return *this;
     }
     basic_record_ostream& operator<< (long double value)
-    {
-        static_cast< base_type& >(*this) << value;
-        return *this;
-    }
-
-    basic_record_ostream& operator<< (const void* value)
     {
         static_cast< base_type& >(*this) << value;
         return *this;

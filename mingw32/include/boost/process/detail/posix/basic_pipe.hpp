@@ -97,7 +97,7 @@ public:
         return read_len;
     }
 
-    bool is_open()
+    bool is_open() const
     {
         return (_source != -1) ||
                (_sink   != -1);

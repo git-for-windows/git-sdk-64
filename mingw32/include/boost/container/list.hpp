@@ -76,7 +76,7 @@ struct list_node
    typedef T internal_type;
    typedef typename list_hook<VoidPointer>::type hook_type;
 
-   typedef typename aligned_storage<sizeof(T), alignment_of<T>::value>::type storage_t;
+   typedef typename dtl::aligned_storage<sizeof(T), dtl::alignment_of<T>::value>::type storage_t;
    storage_t m_storage;
 
    #if defined(BOOST_GCC) && (BOOST_GCC >= 40600) && (BOOST_GCC < 80000)
@@ -367,7 +367,7 @@ class list
    //! <b>Complexity</b>: Linear to the number of elements in x.
    list& operator=(BOOST_COPY_ASSIGN_REF(list) x)
    {
-      if (&x != this){
+      if (BOOST_LIKELY(this != &x)) {
          NodeAlloc &this_alloc     = this->node_alloc();
          const NodeAlloc &x_alloc  = x.node_alloc();
          dtl::bool_<allocator_traits_type::
@@ -396,26 +396,27 @@ class list
       BOOST_NOEXCEPT_IF(allocator_traits_type::propagate_on_container_move_assignment::value
                                   || allocator_traits_type::is_always_equal::value)
    {
-      BOOST_ASSERT(this != &x);
-      NodeAlloc &this_alloc = this->node_alloc();
-      NodeAlloc &x_alloc    = x.node_alloc();
-      const bool propagate_alloc = allocator_traits_type::
-            propagate_on_container_move_assignment::value;
-      const bool allocators_equal = this_alloc == x_alloc; (void)allocators_equal;
-      //Resources can be transferred if both allocators are
-      //going to be equal after this function (either propagated or already equal)
-      if(propagate_alloc || allocators_equal){
-         //Destroy
-         this->clear();
-         //Move allocator if needed
-         this->AllocHolder::move_assign_alloc(x);
-         //Obtain resources
-         this->icont() = boost::move(x.icont());
-      }
-      //Else do a one by one move
-      else{
-         this->assign( boost::make_move_iterator(x.begin())
-                     , boost::make_move_iterator(x.end()));
+      if (BOOST_LIKELY(this != &x)) {
+         NodeAlloc &this_alloc = this->node_alloc();
+         NodeAlloc &x_alloc    = x.node_alloc();
+         const bool propagate_alloc = allocator_traits_type::
+               propagate_on_container_move_assignment::value;
+         const bool allocators_equal = this_alloc == x_alloc; (void)allocators_equal;
+         //Resources can be transferred if both allocators are
+         //going to be equal after this function (either propagated or already equal)
+         if(propagate_alloc || allocators_equal){
+            //Destroy
+            this->clear();
+            //Move allocator if needed
+            this->AllocHolder::move_assign_alloc(x);
+            //Obtain resources
+            this->icont() = boost::move(x.icont());
+         }
+         //Else do a one by one move
+         else{
+            this->assign( boost::make_move_iterator(x.begin())
+                        , boost::make_move_iterator(x.end()));
+         }
       }
       return *this;
    }
@@ -1521,8 +1522,9 @@ list(InputIterator, InputIterator, ValueAllocator const&) ->
 template <class T, class Allocator>
 struct has_trivial_destructor_after_move<boost::container::list<T, Allocator> >
 {
-   typedef typename ::boost::container::allocator_traits<Allocator>::pointer pointer;
-   static const bool value = ::boost::has_trivial_destructor_after_move<Allocator>::value &&
+   typedef typename boost::container::list<T, Allocator>::allocator_type allocator_type;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::pointer pointer;
+   static const bool value = ::boost::has_trivial_destructor_after_move<allocator_type>::value &&
                              ::boost::has_trivial_destructor_after_move<pointer>::value;
 };
 

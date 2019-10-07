@@ -190,7 +190,7 @@ template <
     , typename Visitor, typename VoidPtrCV
     , typename NoBackupFlag
     >
-inline typename Visitor::result_type
+BOOST_FORCEINLINE typename Visitor::result_type
 visitation_impl(
       const int internal_which, const int logical_which
     , Visitor& visitor, VoidPtrCV storage

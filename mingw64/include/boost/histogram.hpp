@@ -12,14 +12,20 @@
   Includes all standard headers of the Boost.histogram library.
 
   Extra headers not automatically included are:
-    - boost/histogram/accumulators/ostream.hpp
-    - boost/histogram/axis/ostream.hpp
-    - boost/histogram/ostream.hpp
-    - boost/histogram/serialization.hpp
+    - [boost/histogram/ostream.hpp][1]
+    - [boost/histogram/axis/ostream.hpp][2]
+    - [boost/histogram/accumulators/ostream.hpp][3]
+    - [boost/histogram/serialization.hpp][4]
+
+  [1]: histogram/reference.html#header.boost.histogram.ostream_hpp
+  [2]: histogram/reference.html#header.boost.histogram.axis.ostream_hpp
+  [3]: histogram/reference.html#header.boost.histogram.accumulators.ostream_hpp
+  [4]: histogram/reference.html#header.boost.histogram.serialization_hpp
 */
 
 #include <boost/histogram/accumulators/mean.hpp>
 #include <boost/histogram/accumulators/sum.hpp>
+#include <boost/histogram/accumulators/thread_safe.hpp>
 #include <boost/histogram/accumulators/weighted_mean.hpp>
 #include <boost/histogram/accumulators/weighted_sum.hpp>
 #include <boost/histogram/algorithm/project.hpp>

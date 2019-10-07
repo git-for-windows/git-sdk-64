@@ -10,12 +10,17 @@
 #include <boost/histogram/axis/iterator.hpp>
 #include <boost/histogram/axis/option.hpp>
 #include <boost/histogram/detail/compressed_pair.hpp>
-#include <boost/histogram/detail/meta.hpp>
+#include <boost/histogram/detail/convert_integer.hpp>
+#include <boost/histogram/detail/limits.hpp>
+#include <boost/histogram/detail/relaxed_equal.hpp>
+#include <boost/histogram/detail/replace_default.hpp>
+#include <boost/histogram/detail/static_if.hpp>
 #include <boost/histogram/fwd.hpp>
 #include <boost/throw_exception.hpp>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 #include <utility>
 
@@ -52,6 +57,23 @@ class integer : public iterator_mixin<integer<Value, MetaData, Options>> {
 
 public:
   constexpr integer() = default;
+  integer(const integer&) = default;
+  integer& operator=(const integer&) = default;
+  integer(integer&& o) noexcept : size_meta_(std::move(o.size_meta_)), min_(o.min_) {
+    // std::string explicitly guarantees nothrow only in C++17
+    static_assert(std::is_same<metadata_type, std::string>::value ||
+                      std::is_nothrow_move_constructible<metadata_type>::value,
+                  "");
+  }
+  integer& operator=(integer&& o) noexcept {
+    // std::string explicitly guarantees nothrow only in C++17
+    static_assert(std::is_same<metadata_type, std::string>::value ||
+                      std::is_nothrow_move_assignable<metadata_type>::value,
+                  "");
+    size_meta_ = std::move(o.size_meta_);
+    min_ = o.min_;
+    return *this;
+  }
 
   /** Construct over semi-open integer interval [start, stop).
    *

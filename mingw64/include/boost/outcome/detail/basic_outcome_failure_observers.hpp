@@ -1,5 +1,5 @@
 /* Failure observers for outcome type
-(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (59 commits)
+(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (7 commits)
 File Created: Oct 2017
 
 

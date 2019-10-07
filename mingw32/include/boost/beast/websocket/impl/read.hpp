@@ -48,7 +48,7 @@ template<class Handler, class MutableBufferSequence>
 class stream<NextLayer, deflateSupported>::read_some_op
     : public beast::async_base<
         Handler, beast::executor_type<stream>>
-    , public net::coroutine
+    , public asio::coroutine
 {
     boost::weak_ptr<impl_type> wp_;
     MutableBufferSequence bs_;
@@ -619,7 +619,7 @@ template<class Handler,  class DynamicBuffer>
 class stream<NextLayer, deflateSupported>::read_op
     : public beast::async_base<
         Handler, beast::executor_type<stream>>
-    , public net::coroutine
+    , public asio::coroutine
 {
     boost::weak_ptr<impl_type> wp_;
     DynamicBuffer& b_;
@@ -664,21 +664,22 @@ public:
         auto& impl = *sp;
         using mutable_buffers_type = typename
             DynamicBuffer::mutable_buffers_type;
-        boost::optional<mutable_buffers_type> mb;
         BOOST_ASIO_CORO_REENTER(*this)
         {
             do
             {
-                mb = beast::detail::dynamic_buffer_prepare(b_,
-                    clamp(impl.read_size_hint_db(b_), limit_),
-                        ec, error::buffer_overflow);
-                if(impl.check_stop_now(ec))
-                    goto upcall;
-
                 // VFALCO TODO use boost::beast::bind_continuation
                 BOOST_ASIO_CORO_YIELD
-                read_some_op<read_op, mutable_buffers_type>(
-                    std::move(*this), sp, *mb);
+                {
+                    auto mb = beast::detail::dynamic_buffer_prepare(b_,
+                        clamp(impl.read_size_hint_db(b_), limit_),
+                            ec, error::buffer_overflow);
+                    if(impl.check_stop_now(ec))
+                        goto upcall;
+                    read_some_op<read_op, mutable_buffers_type>(
+                        std::move(*this), sp, *mb);
+                }
+
                 b_.commit(bytes_transferred);
                 bytes_written_ += bytes_transferred;
                 if(ec)

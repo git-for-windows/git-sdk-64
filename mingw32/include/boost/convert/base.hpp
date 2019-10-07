@@ -27,7 +27,7 @@ namespace boost { namespace cnv
     operator()
 
 #define BOOST_CNV_PARAM(param_name, param_type)                         \
-    derived_type& operator()(boost::parameter::aux::tag<ARG::type::param_name, param_type>::type const& arg)
+    derived_type& operator()(boost::parameter::aux::tag<ARG::type::param_name, param_type const>::type const& arg)
 
 template<typename derived_type>
 struct boost::cnv::cnvbase
@@ -78,15 +78,14 @@ struct boost::cnv::cnvbase
     BOOST_CNV_STRING_TO (string_type const& s, optional<   dbl_type>& r) const { str_to_(s, r); }
     BOOST_CNV_STRING_TO (string_type const& s, optional<  ldbl_type>& r) const { str_to_(s, r); }
     // Formatters
-//  BOOST_CNV_PARAM (locale, std::locale const) { locale_    = arg[ARG::   locale]; return dncast(); }
-    BOOST_CNV_PARAM (base,     cnv::base const) { base_      = arg[ARG::     base]; return dncast(); }
-    BOOST_CNV_PARAM (adjust, cnv::adjust const) { adjust_    = arg[ARG::   adjust]; return dncast(); }
-    BOOST_CNV_PARAM (precision,      int const) { precision_ = arg[ARG::precision]; return dncast(); }
-    BOOST_CNV_PARAM (precision,            int) { precision_ = arg[ARG::precision]; return dncast(); }
-    BOOST_CNV_PARAM (uppercase,     bool const) { uppercase_ = arg[ARG::uppercase]; return dncast(); }
-    BOOST_CNV_PARAM (skipws,        bool const) { skipws_    = arg[ARG::   skipws]; return dncast(); }
-    BOOST_CNV_PARAM (width,          int const) { width_     = arg[ARG::    width]; return dncast(); }
-    BOOST_CNV_PARAM (fill,          char const) {  fill_     = arg[ARG::     fill]; return dncast(); }
+//  BOOST_CNV_PARAM (locale, std::locale) { locale_    = arg[ARG::   locale]; return dncast(); }
+    BOOST_CNV_PARAM (base,     cnv::base) { base_      = arg[ARG::     base]; return dncast(); }
+    BOOST_CNV_PARAM (adjust, cnv::adjust) { adjust_    = arg[ARG::   adjust]; return dncast(); }
+    BOOST_CNV_PARAM (precision,      int) { precision_ = arg[ARG::precision]; return dncast(); }
+    BOOST_CNV_PARAM (uppercase,     bool) { uppercase_ = arg[ARG::uppercase]; return dncast(); }
+    BOOST_CNV_PARAM (skipws,        bool) { skipws_    = arg[ARG::   skipws]; return dncast(); }
+    BOOST_CNV_PARAM (width,          int) { width_     = arg[ARG::    width]; return dncast(); }
+    BOOST_CNV_PARAM (fill,          char) {  fill_     = arg[ARG::     fill]; return dncast(); }
 
     protected:
 

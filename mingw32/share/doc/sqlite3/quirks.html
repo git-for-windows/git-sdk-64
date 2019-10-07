@@ -158,12 +158,12 @@ we can document the problem.
 </p><h1 id="sqlite_is_embedded_not_client_server"><span>2. </span>SQLite Is Embedded, Not Client-Server</h1>
 
 <p>
-When ever comparing SQLite to other SQL database engines like
+Whenever comparing SQLite to other SQL database engines like
 SQL Server, PostgreSQL, MySQL, or Oracle, it is important first of all
-to realize the SQLite is not intended as a replacement or competitor to
+to realize that SQLite is not intended as a replacement or competitor to
 any of those systems.  SQLite is <a href="serverless.html">serverless</a>.  There is no separate
-server process that manages the database.  An application interact
-with the database engine using function calls, not be sending messages
+server process that manages the database.  An application interacts
+with the database engine using function calls, not by sending messages
 to a separate process or thread.
 
 </p><p>
@@ -257,7 +257,7 @@ columns, rather than BOOLEAN literals.
 </p><h2 id="no_separate_datetime_datatype"><span>3.2. </span>No Separate DATETIME Datatype</h2>
 
 <p>
-SQLite as no DATETIME datatype.
+SQLite has no DATETIME datatype.
 Instead, dates and times can be stored in any of these ways:
 
 </p><ul>
@@ -277,7 +277,7 @@ Which format you use, is entirely up to your application.
 <p>SQLite has parsed foreign key constraints for time out of mind,
 but added the ability to actually enforce those constraints much later,
 with <a href="releaselog/3_6_19.html">version 3.6.19</a> (2009-10-14).  By the time foreign key constraint
-enforcement was added, there where already countless millions of databases
+enforcement was added, there were already countless millions of databases
 in circulation that contained foreign key constraints, some of which
 were not correct.  To avoid breaking those legacy databases, foreign key
 constraint enforcement is turned off by default in SQLite.
@@ -310,7 +310,7 @@ In most SQL implementations, output columns of an aggregate query
 may only reference aggregate functions or columns named in the
 GROUP BY clause.  It does not make good sense to reference an ordinary
 column in an aggregate query because each output row might be composed
-from two more more rows in the input table(s).
+from two or more rows in the input table(s).
 
 </p><p>
 SQLite does not impose this restriction.
@@ -340,7 +340,7 @@ clause can be added as a substitute of DISTINCT ON clause.  In other words,
 output rows are filtered so that only one row is shows for each distinct
 set of values in the GROUP BY clause.  If two or more output rows would
 have otherwise had the same set of values for the GROUP BY columns, then
-the one of the rows is chosen arbitrarily.
+one of the rows is chosen arbitrarily.
 </p></li></ol>
 
 <h1 id="does_not_do_full_unicode_case_folding_by_default"><span>7. </span>Does Not Do Full Unicode Case Folding By Default</h1>
@@ -385,7 +385,7 @@ string literal if it does not match any valid identifier.
 This misfeature means that a misspelled double-quoted
 identifier will be interpreted as a string literal, rather than generating
 an error.
-It also lures developers who are new to the SQL language into
+It also lures developers who are new to the SQL language into the
 bad habit of using double-quoted string literals when they
 really need to learn to use the correct single-quoted string literal form.
 </p><p>

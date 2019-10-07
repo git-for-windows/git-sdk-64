@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Keiju ISHITSUKA".freeze]
   s.bindir = "exe".freeze
-  s.date = "2019-10-02"
+  s.date = "2019-10-06"
   s.description = "A module that provides a two-phase lock with a counter.".freeze
   s.email = ["keiju@ruby-lang.org".freeze]
   s.files = ["sync.rb".freeze]

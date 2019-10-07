@@ -13,7 +13,18 @@
 namespace boost {
 namespace histogram {
 
-/// Unsafe read/write access to classes that potentially break consistency
+/** Unsafe read/write access to private data that potentially breaks consistency.
+
+  This struct enables access to private data of some classes. It is intended for library
+  developers who need this to implement algorithms efficiently, for example,
+  serialization. Users should not use this. If you are a user who absolutely needs this to
+  get a specific effect, please submit an issue on Github. Perhaps the public
+  interface is insufficient and should be extended for your use case.
+
+  Unlike the normal interface, the unsafe_access interface may change between versions.
+  If your code relies on unsafe_access, it may or may not break when you update Boost.
+  This is another reason to not use it unless you are ok with these conditions.
+*/
 struct unsafe_access {
   /**
     Get axes.
@@ -58,13 +69,31 @@ struct unsafe_access {
   */
   template <class Histogram>
   static auto& storage(Histogram& hist) {
-    return hist.storage_;
+    return hist.storage_and_mutex_.first();
   }
 
   /// @copydoc storage()
   template <class Histogram>
   static const auto& storage(const Histogram& hist) {
-    return hist.storage_;
+    return hist.storage_and_mutex_.first();
+  }
+
+  /**
+    Get buffer of unlimited_storage.
+    @param storage instance of unlimited_storage.
+  */
+  template <class Allocator>
+  static constexpr auto& unlimited_storage_buffer(unlimited_storage<Allocator>& storage) {
+    return storage.buffer_;
+  }
+
+  /**
+    Get implementation of storage_adaptor.
+    @param storage instance of storage_adaptor.
+  */
+  template <class T>
+  static constexpr auto& storage_adaptor_impl(storage_adaptor<T>& storage) {
+    return static_cast<typename storage_adaptor<T>::impl_type&>(storage);
   }
 };
 

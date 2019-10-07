@@ -62,8 +62,6 @@ class basic_fields
 
     friend class fields_test; // for `header`
 
-    static std::size_t constexpr max_static_buffer = 4096;
-
     struct element;
 
     using off_t = std::uint16_t;
@@ -72,7 +70,7 @@ public:
     /// The type of allocator used.
     using allocator_type = Allocator;
 
-    /// The type of element used to represent a field 
+    /// The type of element used to represent a field
     class value_type
     {
         friend class basic_fields;
@@ -198,7 +196,7 @@ private:
 
     using rebind_type = typename
         beast::detail::allocator_traits<Allocator>::
-            template rebind_alloc<element>;
+            template rebind_alloc<align_type>;
 
     using alloc_traits =
         beast::detail::allocator_traits<rebind_type>;

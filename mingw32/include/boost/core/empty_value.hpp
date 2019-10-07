@@ -71,6 +71,10 @@ public:
     template<class U>
     empty_value(boost::empty_init_t, const U& value)
         : value_(value) { }
+
+    template<class U>
+    empty_value(boost::empty_init_t, U& value)
+        : value_(value) { }
 #endif
 
     const T& get() const BOOST_NOEXCEPT {
@@ -114,6 +118,10 @@ public:
 #else
     template<class U>
     empty_value(boost::empty_init_t, const U& value)
+        : T(value) { }
+
+    template<class U>
+    empty_value(boost::empty_init_t, U& value)
         : T(value) { }
 #endif
 

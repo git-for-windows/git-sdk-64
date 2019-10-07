@@ -1,5 +1,5 @@
 /* A less simple result type
-(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (59 commits)
+(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (20 commits)
 File Created: June 2017
 
 
@@ -187,18 +187,20 @@ template <class R, class S, class P, class NoValuePolicy>                       
 BOOST_OUTCOME_REQUIRES(trait::type_can_be_used_in_basic_result<P> && (std::is_void<P>::value || std::is_default_constructible<P>::value))  //
 class BOOST_OUTCOME_NODISCARD basic_outcome
 #if defined(BOOST_OUTCOME_DOXYGEN_IS_IN_THE_HOUSE) || defined(BOOST_OUTCOME_STANDARDESE_IS_IN_THE_HOUSE)
-: public detail::basic_outcome_failure_observers<detail::basic_result_final<R, S, P, NoValuePolicy>, R, S, P, NoValuePolicy>,
-  public detail::basic_outcome_exception_observers<detail::basic_result_final<R, S, NoValuePolicy>, R, S, P, NoValuePolicy>,
-  public detail::basic_result_final<R, S, NoValuePolicy>
+    : public detail::basic_outcome_failure_observers<detail::basic_result_final<R, S, P, NoValuePolicy>, R, S, P, NoValuePolicy>,
+      public detail::basic_outcome_exception_observers<detail::basic_result_final<R, S, NoValuePolicy>, R, S, P, NoValuePolicy>,
+      public detail::basic_result_final<R, S, NoValuePolicy>
 #else
-: public detail::select_basic_outcome_failure_observers<detail::basic_outcome_exception_observers<detail::basic_result_final<R, S, NoValuePolicy>, R, S, P, NoValuePolicy>, R, S, P, NoValuePolicy>
+    : public detail::select_basic_outcome_failure_observers<detail::basic_outcome_exception_observers<detail::basic_result_final<R, S, NoValuePolicy>, R, S, P, NoValuePolicy>, R, S, P, NoValuePolicy>
 #endif
 {
   static_assert(trait::type_can_be_used_in_basic_result<P>, "The exception_type cannot be used");
   static_assert(std::is_void<P>::value || std::is_default_constructible<P>::value, "exception_type must be void or default constructible");
   using base = detail::select_basic_outcome_failure_observers<detail::basic_outcome_exception_observers<detail::basic_result_final<R, S, NoValuePolicy>, R, S, P, NoValuePolicy>, R, S, P, NoValuePolicy>;
   friend struct policy::base;
-  template <class T, class U, class V, class W> friend class basic_outcome;
+  template <class T, class U, class V, class W> //
+  BOOST_OUTCOME_REQUIRES(trait::type_can_be_used_in_basic_result<V> && (std::is_void<V>::value || std::is_default_constructible<V>::value))  //
+  friend class basic_outcome;
   template <class T, class U, class V, class W, class X> friend constexpr inline void hooks::override_outcome_exception(basic_outcome<T, U, V, W> *o, X &&v) noexcept;  // NOLINT
 
   struct implicit_constructors_disabled_tag
@@ -362,8 +364,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(predicate::template enable_value_converting_constructor<T>))
   constexpr basic_outcome(T &&t, value_converting_constructor_tag /*unused*/ = value_converting_constructor_tag()) noexcept(std::is_nothrow_constructible<value_type, T>::value)  // NOLINT
-  : base{in_place_type<typename base::_value_type>, static_cast<T &&>(t)},
-    _ptr()
+      : base{in_place_type<typename base::_value_type>, static_cast<T &&>(t)}
+      , _ptr()
   {
     using namespace hooks;
     hook_outcome_construction(this, static_cast<T &&>(t));
@@ -374,8 +376,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(predicate::template enable_error_converting_constructor<T>))
   constexpr basic_outcome(T &&t, error_converting_constructor_tag /*unused*/ = error_converting_constructor_tag()) noexcept(std::is_nothrow_constructible<error_type, T>::value)  // NOLINT
-  : base{in_place_type<typename base::_error_type>, static_cast<T &&>(t)},
-    _ptr()
+      : base{in_place_type<typename base::_error_type>, static_cast<T &&>(t)}
+      , _ptr()
   {
     using namespace hooks;
     hook_outcome_construction(this, static_cast<T &&>(t));
@@ -387,7 +389,7 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TEXPR(error_type(make_error_code(ErrorCondEnum()))),  //
                     BOOST_OUTCOME_TPRED(predicate::template enable_error_condition_converting_constructor<ErrorCondEnum>))
   constexpr basic_outcome(ErrorCondEnum &&t, error_condition_converting_constructor_tag /*unused*/ = error_condition_converting_constructor_tag()) noexcept(noexcept(error_type(make_error_code(static_cast<ErrorCondEnum &&>(t)))))  // NOLINT
-  : base{in_place_type<typename base::_error_type>, make_error_code(t)}
+      : base{in_place_type<typename base::_error_type>, make_error_code(t)}
   {
     using namespace hooks;
     hook_outcome_construction(this, static_cast<ErrorCondEnum &&>(t));
@@ -398,8 +400,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(predicate::template enable_exception_converting_constructor<T>))
   constexpr basic_outcome(T &&t, exception_converting_constructor_tag /*unused*/ = exception_converting_constructor_tag()) noexcept(std::is_nothrow_constructible<exception_type, T>::value)  // NOLINT
-  : base(),
-    _ptr(static_cast<T &&>(t))
+      : base()
+      , _ptr(static_cast<T &&>(t))
   {
     using namespace hooks;
     this->_state._status |= detail::status_have_exception;
@@ -411,8 +413,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T, class U)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(predicate::template enable_error_exception_converting_constructor<T, U>))
   constexpr basic_outcome(T &&a, U &&b, error_exception_converting_constructor_tag /*unused*/ = error_exception_converting_constructor_tag()) noexcept(std::is_nothrow_constructible<error_type, T>::value &&std::is_nothrow_constructible<exception_type, U>::value)  // NOLINT
-  : base{in_place_type<typename base::_error_type>, static_cast<T &&>(a)},
-    _ptr(static_cast<U &&>(b))
+      : base{in_place_type<typename base::_error_type>, static_cast<T &&>(a)}
+      , _ptr(static_cast<U &&>(b))
   {
     using namespace hooks;
     this->_state._status |= detail::status_have_exception;
@@ -427,7 +429,7 @@ SIGNATURE NOT RECOGNISED
                     BOOST_OUTCOME_TPRED(convert::value_or_error<basic_outcome, std::decay_t<T>>::enable_outcome_inputs || !is_basic_outcome_v<T>),  //
                     BOOST_OUTCOME_TEXPR(convert::value_or_error<basic_outcome, std::decay_t<T>>{}(std::declval<T>())))
   constexpr explicit basic_outcome(T &&o, explicit_valueorerror_converting_constructor_tag /*unused*/ = explicit_valueorerror_converting_constructor_tag())  // NOLINT
-  : basic_outcome{convert::value_or_error<basic_outcome, std::decay_t<T>>{}(static_cast<T &&>(o))}
+      : basic_outcome{convert::value_or_error<basic_outcome, std::decay_t<T>>{}(static_cast<T &&>(o))}
   {
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
@@ -568,7 +570,7 @@ SIGNATURE NOT RECOGNISED
 SIGNATURE NOT RECOGNISED
 */
   constexpr basic_outcome(const success_type<void> &o) noexcept(std::is_nothrow_default_constructible<value_type>::value)  // NOLINT
-  : base{in_place_type<typename base::_value_type>}
+      : base{in_place_type<typename base::_value_type>}
   {
     using namespace hooks;
     hook_outcome_copy_construction(this, o);
@@ -579,7 +581,7 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(!std::is_void<T>::value && predicate::template enable_compatible_conversion<T, void, void, void>))
   constexpr basic_outcome(const success_type<T> &o) noexcept(std::is_nothrow_constructible<value_type, T>::value)  // NOLINT
-  : base{in_place_type<typename base::_value_type>, detail::extract_value_from_success<value_type>(o)}
+      : base{in_place_type<typename base::_value_type>, detail::extract_value_from_success<value_type>(o)}
   {
     using namespace hooks;
     hook_outcome_copy_construction(this, o);
@@ -590,7 +592,7 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(!std::is_void<T>::value && predicate::template enable_compatible_conversion<T, void, void, void>))
   constexpr basic_outcome(success_type<T> &&o) noexcept(std::is_nothrow_constructible<value_type, T>::value)  // NOLINT
-  : base{in_place_type<typename base::_value_type>, detail::extract_value_from_success<value_type>(static_cast<success_type<T> &&>(o))}
+      : base{in_place_type<typename base::_value_type>, detail::extract_value_from_success<value_type>(static_cast<success_type<T> &&>(o))}
   {
     using namespace hooks;
     hook_outcome_move_construction(this, static_cast<success_type<T> &&>(o));
@@ -602,8 +604,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(!std::is_void<T>::value && predicate::template enable_compatible_conversion<void, T, void, void>))
   constexpr basic_outcome(const failure_type<T> &o, error_failure_tag /*unused*/ = error_failure_tag()) noexcept(std::is_nothrow_constructible<error_type, T>::value)  // NOLINT
-  : base{in_place_type<typename base::_error_type>, detail::extract_error_from_failure<error_type>(o)},
-    _ptr()
+      : base{in_place_type<typename base::_error_type>, detail::extract_error_from_failure<error_type>(o)}
+      , _ptr()
   {
     using namespace hooks;
     hook_outcome_copy_construction(this, o);
@@ -614,8 +616,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(!std::is_void<T>::value && predicate::template enable_compatible_conversion<void, void, T, void>))
   constexpr basic_outcome(const failure_type<T> &o, exception_failure_tag /*unused*/ = exception_failure_tag()) noexcept(std::is_nothrow_constructible<exception_type, T>::value)  // NOLINT
-  : base(),
-    _ptr(detail::extract_exception_from_failure<exception_type>(o))
+      : base()
+      , _ptr(detail::extract_exception_from_failure<exception_type>(o))
   {
     this->_state._status |= detail::status_have_exception;
     using namespace hooks;
@@ -627,8 +629,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T, class U)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(!std::is_void<U>::value && predicate::template enable_compatible_conversion<void, T, U, void>))
   constexpr basic_outcome(const failure_type<T, U> &o) noexcept(std::is_nothrow_constructible<error_type, T>::value &&std::is_nothrow_constructible<exception_type, U>::value)  // NOLINT
-  : base{in_place_type<typename base::_error_type>, detail::extract_error_from_failure<error_type>(o)},
-    _ptr(detail::extract_exception_from_failure<exception_type>(o))
+      : base{in_place_type<typename base::_error_type>, detail::extract_error_from_failure<error_type>(o)}
+      , _ptr(detail::extract_exception_from_failure<exception_type>(o))
   {
     if(!o.has_error())
     {
@@ -648,8 +650,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(!std::is_void<T>::value && predicate::template enable_compatible_conversion<void, T, void, void>))
   constexpr basic_outcome(failure_type<T> &&o, error_failure_tag /*unused*/ = error_failure_tag()) noexcept(std::is_nothrow_constructible<error_type, T>::value)  // NOLINT
-  : base{in_place_type<typename base::_error_type>, detail::extract_error_from_failure<error_type>(static_cast<failure_type<T> &&>(o))},
-    _ptr()
+      : base{in_place_type<typename base::_error_type>, detail::extract_error_from_failure<error_type>(static_cast<failure_type<T> &&>(o))}
+      , _ptr()
   {
     using namespace hooks;
     hook_outcome_copy_construction(this, o);
@@ -660,8 +662,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(!std::is_void<T>::value && predicate::template enable_compatible_conversion<void, void, T, void>))
   constexpr basic_outcome(failure_type<T> &&o, exception_failure_tag /*unused*/ = exception_failure_tag()) noexcept(std::is_nothrow_constructible<exception_type, T>::value)  // NOLINT
-  : base(),
-    _ptr(detail::extract_exception_from_failure<exception_type>(static_cast<failure_type<T> &&>(o)))
+      : base()
+      , _ptr(detail::extract_exception_from_failure<exception_type>(static_cast<failure_type<T> &&>(o)))
   {
     this->_state._status |= detail::status_have_exception;
     using namespace hooks;
@@ -673,8 +675,8 @@ SIGNATURE NOT RECOGNISED
   BOOST_OUTCOME_TEMPLATE(class T, class U)
   BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(!std::is_void<U>::value && predicate::template enable_compatible_conversion<void, T, U, void>))
   constexpr basic_outcome(failure_type<T, U> &&o) noexcept(std::is_nothrow_constructible<error_type, T>::value &&std::is_nothrow_constructible<exception_type, U>::value)  // NOLINT
-  : base{in_place_type<typename base::_error_type>, detail::extract_error_from_failure<error_type>(static_cast<failure_type<T, U> &&>(o))},
-    _ptr(detail::extract_exception_from_failure<exception_type>(static_cast<failure_type<T, U> &&>(o)))
+      : base{in_place_type<typename base::_error_type>, detail::extract_error_from_failure<error_type>(static_cast<failure_type<T, U> &&>(o))}
+      , _ptr(detail::extract_exception_from_failure<exception_type>(static_cast<failure_type<T, U> &&>(o)))
   {
     if(!o.has_error())
     {
@@ -807,110 +809,83 @@ SIGNATURE NOT RECOGNISED
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-  void swap(basic_outcome &o) noexcept(detail::is_nothrow_swappable<value_type>::value &&std::is_nothrow_move_constructible<value_type>::value    //
-                                       &&detail::is_nothrow_swappable<error_type>::value &&std::is_nothrow_move_constructible<error_type>::value  //
-                                       &&detail::is_nothrow_swappable<exception_type>::value &&std::is_nothrow_move_constructible<exception_type>::value)
+  constexpr void swap(basic_outcome &o) noexcept((std::is_void<value_type>::value || detail::is_nothrow_swappable<value_type>::value)     //
+                                                 && (std::is_void<error_type>::value || detail::is_nothrow_swappable<error_type>::value)  //
+                                                 && (std::is_void<exception_type>::value || detail::is_nothrow_swappable<exception_type>::value))
   {
-    using std::swap;
 #ifndef BOOST_NO_EXCEPTIONS
-    constexpr bool value_throws = !noexcept(this->_state.swap(o._state));
-    constexpr bool error_throws = !noexcept(swap(this->_error, o._error));
-    constexpr bool exception_throws = !noexcept(swap(this->_ptr, o._ptr));
+    constexpr bool value_throws = !std::is_void<value_type>::value && !detail::is_nothrow_swappable<value_type>::value;
+    constexpr bool error_throws = !std::is_void<error_type>::value && !detail::is_nothrow_swappable<error_type>::value;
+    constexpr bool exception_throws = !std::is_void<exception_type>::value && !detail::is_nothrow_swappable<exception_type>::value;
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4127)  // conditional expression is constant
 #endif
-    // Do throwing swap first
-    if((value_throws && !error_throws && !exception_throws) || (!value_throws && !error_throws && !exception_throws))
+    if(!exception_throws && !value_throws && !error_throws)
     {
-      this->_state.swap(o._state);
-      swap(this->_error, o._error);
+      // Simples
+      detail::basic_result_storage_swap<value_throws, error_throws>(*this, o);
+      using std::swap;
       swap(this->_ptr, o._ptr);
+      return;
     }
-    else if(!value_throws && !error_throws && exception_throws)
+    struct _
     {
-      swap(this->_ptr, o._ptr);
-      this->_state.swap(o._state);
-      swap(this->_error, o._error);
-    }
-    else if(!value_throws && error_throws && !exception_throws)
-    {
-      swap(this->_error, o._error);
-      this->_state.swap(o._state);
-      swap(this->_ptr, o._ptr);
-    }
-    else
-    {
-      // Two or more can throw
-      this->_state.swap(o._state);
-      bool exception_threw = false;
-      try
+      basic_outcome &a, &b;
+      bool exceptioned{false};
+      bool all_good{false};
+      ~_()
       {
-        swap(this->_error, o._error);
-        exception_threw = true;
-        swap(this->_ptr, o._ptr);
-      }
-      catch(...)
-      {
-        // Try to put it back
-        bool error_is_mine = !exception_threw;
-        try
+        if(!all_good)
         {
-          if(exception_threw)
-          {
-            swap(this->_error, o._error);
-            error_is_mine = true;
-          }
-          this->_state.swap(o._state);
-          // If that succeeded, continue by rethrowing the exception
+          // We lost one of the values
+          a._state._status |=  detail::status_lost_consistency;
+          b._state._status |=  detail::status_lost_consistency;
+          return;
         }
-        catch(...)
+        if(exceptioned)
         {
-          if(error_is_mine)
+          // The value + error swap threw an exception. Try to swap back _ptr
+          try
           {
-            try
-            {
-              swap(this->_error, o._error);
-              error_is_mine = false;
-            }
-            catch(...)
-            {
-            }
+            strong_swap(all_good, a._ptr, b._ptr);
           }
+          catch(...)
+          {
+            // We lost one of the values
+            a._state._status |= detail::status_lost_consistency;
+            b._state._status |= detail::status_lost_consistency;
+            // throw away second exception
+          }
+
           // Prevent has_value() == has_error() or has_value() == has_exception()
-          auto check = [](basic_outcome *t, bool set_error) {
+          auto check = [](basic_outcome *t) {
             if(t->has_value() && (t->has_error() || t->has_exception()))
             {
-              // We know the value swapped and is now set, so clear error and exception
               t->_state._status &= ~(detail::status_have_error | detail::status_have_exception);
+              t->_state._status |= detail::status_lost_consistency;
             }
             if(!t->has_value() && !(t->has_error() || t->has_exception()))
             {
-              // We know the value swapped and is now unset, so either set exception or error
-              if(set_error)
-              {
-                t->_state._status |= detail::status_have_error;
-              }
-              else
-              {
-                t->_state._status |= detail::status_have_exception;
-              }
+              // Choose error, for no particular reason
+              t->_state._status |= detail::status_have_error | detail::status_lost_consistency;
             }
           };
-          // If my value is unset and error is not mine, set error
-          check(this, !error_is_mine);
-          // If other's value is unset and error is not mine, set error
-          check(&o, !error_is_mine);
+          check(&a);
+          check(&b);
         }
-        throw;
       }
-    }
+    } _{*this, o};
+    strong_swap(_.all_good, this->_ptr, o._ptr);
+    _.exceptioned = true;
+    detail::basic_result_storage_swap<value_throws, error_throws>(*this, o);
+    _.exceptioned = false;
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 #else
-    this->_state.swap(o._state);
-    swap(this->_error, o._error);
+    detail::basic_result_storage_swap<false, false>(*this, o);
+    using std::swap;
     swap(this->_ptr, o._ptr);
 #endif
   }

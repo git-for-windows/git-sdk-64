@@ -36,6 +36,8 @@
 #include <boost/log/sinks/unlocked_frontend.hpp>
 #endif
 #include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/keywords/format.hpp>
+#include <boost/log/keywords/filter.hpp>
 #include <boost/log/keywords/scan_method.hpp>
 #include <boost/log/detail/header.hpp>
 
@@ -164,6 +166,8 @@ BOOST_PP_REPEAT_FROM_TO(1, BOOST_LOG_MAX_PARAMETER_ARGS, BOOST_LOG_INIT_LOG_TO_F
  *             \li \c time_based_rotation The predicate for time-based file rotations. See <tt>basic_text_file_backend</tt>.
  *             \li \c auto_flush A boolean flag that shows whether the sink should automatically flush the file
  *                               after each written record.
+ *             \li \c auto_newline_mode - Specifies automatic trailing newline insertion mode. Must be a value of
+ *                                        the \c auto_newline_mode enum. By default, is <tt>auto_newline_mode::insert_if_missing</tt>.
  *             \li \c target The target directory to store rotated files in. See <tt>sinks::file::make_collector</tt>.
  *             \li \c max_size The maximum total size of rotated files in the target directory. See <tt>sinks::file::make_collector</tt>.
  *             \li \c min_free_space Minimum free space in the target directory. See <tt>sinks::file::make_collector</tt>.

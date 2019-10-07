@@ -1,5 +1,5 @@
 /* Configure Boost.Outcome with Boost
-(C) 2015-2019 Niall Douglas <http://www.nedproductions.biz/> (24 commits)
+(C) 2015-2019 Niall Douglas <http://www.nedproductions.biz/> (7 commits)
 File Created: August 2015
 
 
@@ -31,7 +31,7 @@ DEALINGS IN THE SOFTWARE.
 #ifndef BOOST_OUTCOME_V2_CONFIG_HPP
 #define BOOST_OUTCOME_V2_CONFIG_HPP
 
-#include "version.hpp"
+#include "detail/version.hpp"
 
 // Pull in detection of __MINGW64_VERSION_MAJOR
 #if defined(__MINGW32__) && !defined(DOXYGEN_IS_IN_THE_HOUSE)
@@ -295,18 +295,10 @@ namespace detail
 #if !defined(STANDARDESE_IS_IN_THE_HOUSE) && BOOST_OUTCOME_USE_STD_IS_NOTHROW_SWAPPABLE
   template <class T> using is_nothrow_swappable = std::is_nothrow_swappable<T>;
 #else
-  namespace _is_nothrow_swappable
+  template <class T> struct is_nothrow_swappable
   {
-    using namespace std;
-    template <class T> constexpr inline T &ldeclval();
-    template <class T, class = void> struct is_nothrow_swappable : std::integral_constant<bool, false>
-    {
-    };
-    template <class T> struct is_nothrow_swappable<T, decltype(swap(ldeclval<T>(), ldeclval<T>()))> : std::integral_constant<bool, noexcept(swap(ldeclval<T>(), ldeclval<T>()))>
-    {
-    };
-  }  // namespace _is_nothrow_swappable
-  template <class T> using is_nothrow_swappable = _is_nothrow_swappable::is_nothrow_swappable<T>;
+    static constexpr bool value = std::is_nothrow_move_constructible<T>::value && std::is_nothrow_move_assignable<T>::value;
+  };
 #endif
 }  // namespace detail
 BOOST_OUTCOME_V2_NAMESPACE_END

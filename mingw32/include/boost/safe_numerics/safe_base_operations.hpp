@@ -20,7 +20,6 @@
 
 #include "checked_integer.hpp"
 #include "checked_result.hpp"
-#include "checked_result_operations.hpp"
 #include "safe_base.hpp"
 
 #include "interval.hpp"

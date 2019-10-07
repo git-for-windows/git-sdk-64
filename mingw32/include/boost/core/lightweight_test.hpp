@@ -22,8 +22,8 @@
 //  http://www.boost.org/LICENSE_1_0.txt
 //
 
-#include <boost/core/no_exceptions_support.hpp>
 #include <boost/current_function.hpp>
+#include <boost/config.hpp>
 #include <iostream>
 #include <iterator>
 #include <cstdlib>
@@ -379,18 +379,20 @@ inline int report_errors()
     result.done();
 
     int errors = result.errors();
+
     if( errors == 0 )
     {
         BOOST_LIGHTWEIGHT_TEST_OSTREAM
           << "No errors detected." << std::endl;
-        return 0;
     }
     else
     {
         BOOST_LIGHTWEIGHT_TEST_OSTREAM
           << errors << " error" << (errors == 1? "": "s") << " detected." << std::endl;
-        return 1;
     }
+
+    // `return report_errors();` from main only supports 8 bit exit codes
+    return errors < 256? errors: 255;
 }
 
 } // namespace boost

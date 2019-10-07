@@ -313,6 +313,7 @@ var listitems23 = [{"u":"#SQLITE_ABORT","x":"SQLITE_ABORT","s":0},
 {"u":"#sqlitedbconfigenableloadextension","x":"SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION","s":0},
 {"u":"#sqlitedbconfigenableqpsg","x":"SQLITE_DBCONFIG_ENABLE_QPSG","s":0},
 {"u":"#sqlitedbconfigenabletrigger","x":"SQLITE_DBCONFIG_ENABLE_TRIGGER","s":0},
+{"u":"#sqlitedbconfigenableview","x":"SQLITE_DBCONFIG_ENABLE_VIEW","s":0},
 {"u":"#sqlitedbconfiglegacyaltertable","x":"SQLITE_DBCONFIG_LEGACY_ALTER_TABLE","s":0},
 {"u":"#sqlitedbconfiglookaside","x":"SQLITE_DBCONFIG_LOOKASIDE","s":0},
 {"u":"#sqlitedbconfigmaindbname","x":"SQLITE_DBCONFIG_MAINDBNAME","s":0},
@@ -342,6 +343,7 @@ var listitems23 = [{"u":"#SQLITE_ABORT","x":"SQLITE_ABORT","s":0},
 {"u":"#SQLITE_DESERIALIZE_FREEONCLOSE","x":"SQLITE_DESERIALIZE_RESIZEABLE","s":0},
 {"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DETACH","s":0},
 {"u":"#SQLITE_DETERMINISTIC","x":"SQLITE_DETERMINISTIC","s":0},
+{"u":"#SQLITE_DETERMINISTIC","x":"SQLITE_DIRECTONLY","s":0},
 {"u":"#SQLITE_ABORT","x":"SQLITE_DONE","s":0},
 {"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_INDEX","s":0},
 {"u":"#SQLITE_ALTER_TABLE","x":"SQLITE_DROP_TABLE","s":0},
@@ -587,6 +589,7 @@ var listitems23 = [{"u":"#SQLITE_ABORT","x":"SQLITE_ABORT","s":0},
 {"u":"#sqlitestmtstatusrun","x":"SQLITE_STMTSTATUS_RUN","s":0},
 {"u":"#sqlitestmtstatussort","x":"SQLITE_STMTSTATUS_SORT","s":0},
 {"u":"#sqlitestmtstatusvmstep","x":"SQLITE_STMTSTATUS_VM_STEP","s":0},
+{"u":"#SQLITE_DETERMINISTIC","x":"SQLITE_SUBTYPE","s":0},
 {"u":"#SQLITE_SYNC_DATAONLY","x":"SQLITE_SYNC_DATAONLY","s":0},
 {"u":"#SQLITE_SYNC_DATAONLY","x":"SQLITE_SYNC_FULL","s":0},
 {"u":"#SQLITE_SYNC_DATAONLY","x":"SQLITE_SYNC_NORMAL","s":0},
@@ -596,6 +599,7 @@ var listitems23 = [{"u":"#SQLITE_ABORT","x":"SQLITE_ABORT","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_BITVEC_TEST","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_BYTEORDER","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_EXPLAIN_STMT","s":0},
+{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_EXTRA_SCHEMA_CHECKS","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_FAULT_INSTALL","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_FIRST","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_IMPOSTER","s":0},
@@ -612,6 +616,7 @@ var listitems23 = [{"u":"#SQLITE_ABORT","x":"SQLITE_ABORT","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PRNG_RESET","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PRNG_RESTORE","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PRNG_SAVE","s":0},
+{"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_PRNG_SEED","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_RESERVE","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_RESULT_INTREAL","s":0},
 {"u":"#SQLITE_TESTCTRL_ALWAYS","x":"SQLITE_TESTCTRL_SCRATCHMALLOC","s":0},
@@ -677,7 +682,7 @@ document.getElementById("listtab23").innerHTML = h;
 <p>Note: Functions marked with "<small><i>(exp)</i></small>"
 are <a href="capi3ref.html">experimental</a> and functions whose names are
 <s>struck through</s> are <a href="capi3ref.html">deprecated</a>.</p>
-<!-- number of functions: 263 -->
+<!-- number of functions: 264 -->
 <!-- number of deprecated functions: 7 -->
 <!-- number of experimental functions: 0 -->
 <style>
@@ -772,6 +777,7 @@ var listitems24 = [{"u":"#sqlite3_aggregate_context","x":"sqlite3_aggregate_cont
 {"u":"#sqlite3_db_status","x":"sqlite3_db_status","s":0},
 {"u":"#sqlite3_declare_vtab","x":"sqlite3_declare_vtab","s":0},
 {"u":"#sqlite3_deserialize","x":"sqlite3_deserialize","s":0},
+{"u":"#sqlite3_drop_modules","x":"sqlite3_drop_modules","s":0},
 {"u":"#sqlite3_enable_load_extension","x":"sqlite3_enable_load_extension","s":0},
 {"u":"#sqlite3_enable_shared_cache","x":"sqlite3_enable_shared_cache","s":0},
 {"u":"#sqlite3_errcode","x":"sqlite3_errcode","s":0},
@@ -988,18 +994,7 @@ for(var i=0; i<listitems24.length; i++){
 document.getElementById("listtab24").innerHTML = h;
 </script>
 <hr>
-<a name="SQLITE_DETERMINISTIC"></a>
-<h2>Function Flags</h2>
-</div>
-<blockquote><pre>
-#define SQLITE_DETERMINISTIC    0x800
-</pre></blockquote>
-<p>
-These constants may be ORed together with the
-<a href="#SQLITE_ANY">preferred text encoding</a> as the fourth argument
-to <a href="#sqlite3_create_function">sqlite3_create_function()</a>, <a href="#sqlite3_create_function">sqlite3_create_function16()</a>, or
-<a href="#sqlite3_create_function">sqlite3_create_function_v2()</a>.
-</p><hr><a name="SQLITE_INDEX_SCAN_UNIQUE"></a>
+<a name="SQLITE_INDEX_SCAN_UNIQUE"></a>
 <h2>Virtual Table Scan Flags</h2>
 </div>
 <blockquote><pre>
@@ -2744,6 +2739,23 @@ SQLITE_DESERIALIZE_FREEONCLOSE bit is set in argument F, then
 
 <p>This interface is only available if SQLite is compiled with the
 <a href="compile.html#enable_deserialize">SQLITE_ENABLE_DESERIALIZE</a> option.
+</p><hr><a name="sqlite3_drop_modules"></a>
+<h2>Remove Unnecessary Virtual Table Implementations</h2>
+</div>
+<blockquote><pre>
+int sqlite3_drop_modules(
+  sqlite3 *db,                /* Remove modules from this connection */
+  const char **azKeep         /* Except, do not remove the ones named here */
+);
+</pre></blockquote>
+<p>
+The sqlite3_drop_modules(D,L) interface removes all virtual
+table modules from database connection D except those named on list L.
+The L parameter must be either NULL or a pointer to an array of pointers
+to strings where the array is terminated by a single NULL pointer.
+If the L parameter is NULL, then all virtual table modules are removed.</p>
+
+<p>See also: <a href="#sqlite3_create_module">sqlite3_create_module()</a>
 </p><hr><a name="sqlite3_enable_load_extension"></a>
 <h2>Enable Or Disable Extension Loading</h2>
 </div>
@@ -5326,7 +5338,8 @@ compile-time option is not set, then the default maximum is 1073741824.
 #define SQLITE_DBCONFIG_LEGACY_ALTER_TABLE    1012 /* int int* */
 #define SQLITE_DBCONFIG_DQS_DML               1013 /* int int* */
 #define SQLITE_DBCONFIG_DQS_DDL               1014 /* int int* */
-#define SQLITE_DBCONFIG_MAX                   1014 /* Largest DBCONFIG */
+#define SQLITE_DBCONFIG_ENABLE_VIEW           1015 /* int int* */
+#define SQLITE_DBCONFIG_MAX                   1015 /* Largest DBCONFIG */
 </pre></blockquote>
 <p>
 These constants are the available integer configuration options that
@@ -5387,6 +5400,18 @@ The second parameter is a pointer to an integer into which
 is written 0 or 1 to indicate whether triggers are disabled or enabled
 following this call.  The second parameter may be a NULL pointer, in
 which case the trigger setting is not reported back. </dd></p>
+
+<p><a name="sqlitedbconfigenableview"></a>
+
+<dt>SQLITE_DBCONFIG_ENABLE_VIEW</dt>
+<dd> This option is used to enable or disable <a href="lang_createview.html">views</a>.
+There should be two additional arguments.
+The first argument is an integer which is 0 to disable views,
+positive to enable views or negative to leave the setting unchanged.
+The second parameter is a pointer to an integer into which
+is written 0 or 1 to indicate whether views are disabled or enabled
+following this call.  The second parameter may be a NULL pointer, in
+which case the view setting is not reported back. </dd></p>
 
 <p><a name="sqlitedbconfigenablefts3tokenizer"></a>
 
@@ -5598,6 +5623,39 @@ the number of bytes specified by the M parameter.</p>
 
 <p>The SQLITE_DESERIALIZE_READONLY flag means that the deserialized database
 should be treated as read-only.
+</p><hr><a name="SQLITE_DETERMINISTIC"></a>
+<h2>Function Flags</h2>
+</div>
+<blockquote><pre>
+#define SQLITE_DETERMINISTIC    0x000000800
+#define SQLITE_DIRECTONLY       0x000080000
+#define SQLITE_SUBTYPE          0x000100000
+</pre></blockquote>
+<p>
+These constants may be ORed together with the
+<a href="#SQLITE_ANY">preferred text encoding</a> as the fourth argument
+to <a href="#sqlite3_create_function">sqlite3_create_function()</a>, <a href="#sqlite3_create_function">sqlite3_create_function16()</a>, or
+<a href="#sqlite3_create_function">sqlite3_create_function_v2()</a>.</p>
+
+<p>The SQLITE_DETERMINISTIC flag means that the new function will always
+maps the same inputs into the same output.  The abs() function is
+deterministic, for example, but randomblob() is not.</p>
+
+<p>The SQLITE_DIRECTONLY flag means that the function may only be invoked
+from top-level SQL, and cannot be used in VIEWs or TRIGGERs.  This is
+a security feature which is recommended for all
+<a href="#sqlite3_create_function">application-defined SQL functions</a> that have side-effects.  This flag
+prevents an attacker from adding triggers and views to a schema then
+tricking a high-privilege application into causing unintended side-effects
+while performing ordinary queries.</p>
+
+<p>The SQLITE_SUBTYPE flag indicates to SQLite that a function may call
+<a href="#sqlite3_value_subtype">sqlite3_value_subtype()</a> to inspect the sub-types of its arguments.
+Specifying this flag makes no difference for scalar or aggregate user
+functions. However, if it is not specified for a user-defined window
+function, then any sub-types belonging to arguments passed to the window
+function may be discarded before the window function is called (i.e.
+sqlite3_value_subtype() will always return 0).
 </p><hr><a name="SQLITE_FAIL"></a>
 <h2>Conflict resolution modes</h2>
 </div>
@@ -6273,9 +6331,9 @@ and EXCLUSIVE.
 <h2>Compile-Time Library Version Numbers</h2>
 </div>
 <blockquote><pre>
-#define SQLITE_VERSION        "3.29.0"
-#define SQLITE_VERSION_NUMBER 3029000
-#define SQLITE_SOURCE_ID      "2019-07-10 17:32:03 fc82b73eaac8b36950e527f12c4b5dc1e147e6f4ad2217ae43ad82882a88bfa6"
+#define SQLITE_VERSION        "3.30.0"
+#define SQLITE_VERSION_NUMBER 3030000
+#define SQLITE_SOURCE_ID      "2019-10-04 15:03:17 c20a35336432025445f9f7e289d0cc3e4003fb17f45a4ce74c6269c407c6e09f"
 </pre></blockquote>
 <p>
 The <a href="#SQLITE_SOURCE_ID">SQLITE_VERSION</a> C preprocessor macro in the sqlite3.h header
@@ -6449,7 +6507,7 @@ cares about the difference.)
 #define SQLITE_TESTCTRL_FIRST                    5
 #define SQLITE_TESTCTRL_PRNG_SAVE                5
 #define SQLITE_TESTCTRL_PRNG_RESTORE             6
-#define SQLITE_TESTCTRL_PRNG_RESET               7
+#define SQLITE_TESTCTRL_PRNG_RESET               7  /* NOT USED */
 #define SQLITE_TESTCTRL_BITVEC_TEST              8
 #define SQLITE_TESTCTRL_FAULT_INSTALL            9
 #define SQLITE_TESTCTRL_BENIGN_MALLOC_HOOKS     10
@@ -6472,7 +6530,9 @@ cares about the difference.)
 #define SQLITE_TESTCTRL_IMPOSTER                25
 #define SQLITE_TESTCTRL_PARSER_COVERAGE         26
 #define SQLITE_TESTCTRL_RESULT_INTREAL          27
-#define SQLITE_TESTCTRL_LAST                    27  /* Largest TESTCTRL */
+#define SQLITE_TESTCTRL_PRNG_SEED               28
+#define SQLITE_TESTCTRL_EXTRA_SCHEMA_CHECKS     29
+#define SQLITE_TESTCTRL_LAST                    29  /* Largest TESTCTRL */
 </pre></blockquote>
 <p>
 These constants are the valid operation code parameters used
@@ -7023,6 +7083,7 @@ var listitems26 = [{"u":"#sqlite3_blob_open","x":"sqlite3_blob_open","s":0},
 {"u":"#sqlite3_db_readonly","x":"sqlite3_db_readonly","s":0},
 {"u":"#sqlite3_db_release_memory","x":"sqlite3_db_release_memory","s":0},
 {"u":"#sqlite3_db_status","x":"sqlite3_db_status","s":0},
+{"u":"#sqlite3_drop_modules","x":"sqlite3_drop_modules","s":0},
 {"u":"#sqlite3_enable_load_extension","x":"sqlite3_enable_load_extension","s":0},
 {"u":"#sqlite3_errcode","x":"sqlite3_errcode","s":0},
 {"u":"#sqlite3_errcode","x":"sqlite3_errmsg","s":0},
@@ -8294,7 +8355,13 @@ no longer needs the pClientData pointer.  The destructor will also
 be invoked if the call to sqlite3_create_module_v2() fails.
 The sqlite3_create_module()
 interface is equivalent to sqlite3_create_module_v2() with a NULL
-destructor.
+destructor.</p>
+
+<p>If the third parameter (the pointer to the sqlite3_module object) is
+NULL then no new module is create and any existing modules with the
+same name are dropped.</p>
+
+<p>See also: <a href="#sqlite3_drop_modules">sqlite3_drop_modules()</a>
 </p><hr><a name="sqlite3_errcode"></a>
 <h2>Error Codes And Messages</h2>
 </div>
@@ -10220,7 +10287,7 @@ to the <a href="#sqlite3_bind_blob">bindings</a> of that <a href="lang_expr.html
 The specific value of WHERE-clause <a href="lang_expr.html#varparam">parameter</a> might influence the
 choice of query plan if the parameter is the left-hand side of a <a href="lang_expr.html#like">LIKE</a>
 or <a href="lang_expr.html#glob">GLOB</a> operator or if the parameter is compared to an indexed column
-and the <a href="compile.html#enable_stat3">SQLITE_ENABLE_STAT3</a> compile-time option is enabled.
+and the <a href="compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a> compile-time option is enabled.
 </li>
 </ol></p>
 
@@ -10328,6 +10395,12 @@ deterministic.  The built-in <a href="lang_corefunc.html#random">random()</a> SQ
 function that is not deterministic.  The SQLite query planner is able to
 perform additional optimizations on deterministic functions, so use
 of the <a href="#SQLITE_DETERMINISTIC">SQLITE_DETERMINISTIC</a> flag is recommended where possible.</p>
+
+<p>The fourth parameter may also optionally include the <a href="#SQLITE_DETERMINISTIC">SQLITE_DIRECTONLY</a>
+flag, which if present prevents the function from being invoked from
+within VIEWs or TRIGGERs.  For security reasons, the <a href="#SQLITE_DETERMINISTIC">SQLITE_DIRECTONLY</a>
+flag is recommended for any application-defined SQL function that has
+side-effects.</p>
 
 <p>The fifth parameter is an arbitrary pointer.  The implementation of the
 function can gain access to this pointer using <a href="#sqlite3_user_data">sqlite3_user_data()</a>.</p>

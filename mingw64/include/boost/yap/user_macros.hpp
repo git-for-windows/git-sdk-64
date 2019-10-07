@@ -278,7 +278,7 @@
     resulting expression.
 
     The \a rhs parameter to each of the defined overloads may be any type,
-    including an expression, except that the overloads are cosntrained by
+    including an expression, except that the overloads are constrained by
     std::enable_if<> not to conflict with the assignment and move assignement
     operators.  If \a rhs is a non-expression, it is wrapped in a terminal
     expression.
@@ -352,7 +352,7 @@
     resulting expression.
 
     The \a rhs parameter to each of the defined overloads may be any type,
-    including an expression, except that the overloads are cosntrained by
+    including an expression, except that the overloads are constrained by
     std::enable_if<> not to conflict with the assignment and move assignement
     operators.  If \a rhs is a non-expression, it is wrapped in a terminal
     expression.

@@ -98,7 +98,7 @@ public:
 } safe_numerics_error_category {};
 
 // constexpr - damn, can't use constexpr due to std::error_code
-std::error_code make_error_code(const safe_numerics_error & e){
+inline std::error_code make_error_code(const safe_numerics_error & e){
     return std::error_code(static_cast<int>(e), safe_numerics_error_category);
 }
 

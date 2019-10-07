@@ -12,7 +12,7 @@
 #include <boost/thread/lock_types.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/pthread/condition_variable_fwd.hpp>
-#include <boost/thread/pthread/pthread_mutex_scoped_lock.hpp>
+#include <boost/thread/pthread/pthread_helpers.hpp>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>

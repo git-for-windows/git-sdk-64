@@ -30,9 +30,7 @@
 #include <boost/beast/core/static_buffer.hpp>
 #include <boost/beast/core/stream_traits.hpp>
 #include <boost/beast/core/detail/clamp.hpp>
-#include <boost/beast/core/detail/type_traits.hpp>
 #include <boost/beast/version.hpp>
-#include <boost/asio/bind_executor.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/core/empty_value.hpp>
 #include <boost/enable_shared_from_this.hpp>
@@ -99,7 +97,8 @@ struct stream<NextLayer, deflateSupported>::impl_type
     bool                    wr_cont         /* next write is a continuation */ = false;
     bool                    wr_frag         /* autofrag the current message */ = false;
     bool                    wr_frag_opt     /* autofrag option setting */ = true;
-    bool                    wr_compress     /* compress current message */ = false;
+    bool                    wr_compress;    /* compress current message */
+    bool                    wr_compress_opt /* compress message setting */ = true;
     detail::opcode          wr_opcode       /* message type */ = detail::opcode::text;
     std::unique_ptr<
         std::uint8_t[]>     wr_buf;         // write buffer
@@ -211,11 +210,14 @@ struct stream<NextLayer, deflateSupported>::impl_type
         timer.cancel();
     }
 
-    // Called before each write frame
+    // Called just before sending
+    // the first frame of each message
     void
     begin_msg()
     {
         wr_frag = wr_frag_opt;
+        wr_compress =
+            this->pmd_enabled() && wr_compress_opt;
 
         // Maintain the write buffer
         if( this->pmd_enabled() ||
@@ -234,6 +236,8 @@ struct stream<NextLayer, deflateSupported>::impl_type
             wr_buf_size = wr_buf_opt;
             wr_buf.reset();
         }
+
+        //
     }
 
     //--------------------------------------------------------------------------
@@ -275,13 +279,6 @@ struct stream<NextLayer, deflateSupported>::impl_type
                 return key;
     }
 
-    std::size_t
-    read_size_hint(std::size_t initial_size) const
-    {
-        return this->read_size_hint_pmd(
-            initial_size, rd_done, rd_remain, rd_fh);
-    }
-
     template<class DynamicBuffer>
     std::size_t
     read_size_hint_db(DynamicBuffer& buffer) const
@@ -291,7 +288,8 @@ struct stream<NextLayer, deflateSupported>::impl_type
             buffer.max_size() - buffer.size());
         if(initial_size == 0)
             return 1; // buffer is full
-        return this->read_size_hint(initial_size);
+        return this->read_size_hint_pmd(
+            initial_size, rd_done, rd_remain, rd_fh);
     }
 
     template<class DynamicBuffer>
@@ -771,10 +769,12 @@ parse_fh(
     {
     case 126:
     {
-        std::uint8_t tmp[2];
-        BOOST_ASSERT(buffer_bytes(cb) >= sizeof(tmp));
-        cb.consume(net::buffer_copy(net::buffer(tmp), cb));
-        fh.len = detail::big_uint16_to_native(&tmp[0]);
+
+        std::uint16_t len_be;
+        BOOST_ASSERT(buffer_bytes(cb) >= sizeof(len_be));
+        cb.consume(net::buffer_copy(
+            net::mutable_buffer(&len_be, sizeof(len_be)), cb));
+        fh.len = endian::big_to_native(len_be);
         if(fh.len < 126)
         {
             // length not canonical
@@ -785,10 +785,11 @@ parse_fh(
     }
     case 127:
     {
-        std::uint8_t tmp[8];
-        BOOST_ASSERT(buffer_bytes(cb) >= sizeof(tmp));
-        cb.consume(net::buffer_copy(net::buffer(tmp), cb));
-        fh.len = detail::big_uint64_to_native(&tmp[0]);
+        std::uint64_t len_be;
+        BOOST_ASSERT(buffer_bytes(cb) >= sizeof(len_be));
+        cb.consume(net::buffer_copy(
+            net::mutable_buffer(&len_be, sizeof(len_be)), cb));
+        fh.len = endian::big_to_native(len_be);
         if(fh.len < 65536)
         {
             // length not canonical
@@ -800,10 +801,11 @@ parse_fh(
     }
     if(fh.mask)
     {
-        std::uint8_t tmp[4];
-        BOOST_ASSERT(buffer_bytes(cb) >= sizeof(tmp));
-        cb.consume(net::buffer_copy(net::buffer(tmp), cb));
-        fh.key = detail::little_uint32_to_native(&tmp[0]);
+        std::uint32_t key_le;
+        BOOST_ASSERT(buffer_bytes(cb) >= sizeof(key_le));
+        cb.consume(net::buffer_copy(
+            net::mutable_buffer(&key_le, sizeof(key_le)), cb));
+        fh.key = endian::little_to_native(key_le);
         detail::prepare_key(rd_key, fh.key);
     }
     else
@@ -909,12 +911,10 @@ write_close(DynamicBuffer& db, close_reason const& cr)
         if(fh.mask)
             detail::prepare_key(key, fh.key);
         {
-            std::uint8_t tmp[2];
-            ::new(&tmp[0]) big_uint16_buf_t{
-                (std::uint16_t)cr.code};
+            auto code_be = endian::native_to_big<std::uint16_t>(cr.code);
             auto mb = db.prepare(2);
             net::buffer_copy(mb,
-                net::buffer(tmp));
+                net::const_buffer(&code_be, sizeof(code_be)));
             if(fh.mask)
                 detail::mask_inplace(mb, key);
             db.commit(2);

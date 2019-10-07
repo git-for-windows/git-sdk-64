@@ -376,17 +376,17 @@ BOOST_TEST_APPEND_UNIQUE_ID( BOOST_JOIN( test_name, _registrar ) ) BOOST_ATTRIBU
 
 #if defined(BOOST_TEST_MAIN)
 
+// initializing the master test suite name from the user defined macros
+// this function should be seen exactly once.
+#ifdef BOOST_TEST_MODULE
+static const boost::unit_test::framework::impl::master_test_suite_name_setter mtsetter(BOOST_TEST_STRINGIZE( BOOST_TEST_MODULE ).trim( "\"" ));
+#endif
+
 #ifdef BOOST_TEST_ALTERNATIVE_INIT_API
 bool init_unit_test()                   {
 #else
 ::boost::unit_test::test_suite*
 init_unit_test_suite( int, char* [] )   {
-#endif
-
-#ifdef BOOST_TEST_MODULE
-    using namespace ::boost::unit_test;
-    assign_op( framework::master_test_suite().p_name.value, BOOST_TEST_STRINGIZE( BOOST_TEST_MODULE ).trim( "\"" ), 0 );
-
 #endif
 
 #ifdef BOOST_TEST_ALTERNATIVE_INIT_API

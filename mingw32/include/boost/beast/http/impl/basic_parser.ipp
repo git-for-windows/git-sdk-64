@@ -14,9 +14,9 @@
 #include <boost/beast/http/error.hpp>
 #include <boost/beast/http/rfc7230.hpp>
 #include <boost/beast/core/buffer_traits.hpp>
-#include <boost/beast/core/static_string.hpp>
 #include <boost/beast/core/detail/clamp.hpp>
 #include <boost/beast/core/detail/config.hpp>
+#include <boost/beast/core/detail/string.hpp>
 #include <boost/asio/buffer.hpp>
 #include <algorithm>
 #include <utility>
@@ -405,7 +405,7 @@ parse_fields(char const*& in,
     string_view name;
     string_view value;
     // https://stackoverflow.com/questions/686217/maximum-on-http-header-values
-    static_string<max_obs_fold> buf;
+    beast::detail::char_buffer<max_obs_fold> buf;
     auto p = in;
     for(;;)
     {
@@ -508,15 +508,16 @@ finish_header(error_code& ec, std::false_type)
     }
     else if(f_ & flagContentLength)
     {
-        if(len_ > body_limit_)
-        {
-            ec = error::body_limit;
-            return;
-        }
         if(len_ > 0)
         {
             f_ |= flagHasBody;
             state_ = state::body0;
+
+            if(len_ > body_limit_)
+            {
+                ec = error::body_limit;
+                return;
+            }
         }
         else
         {
@@ -746,6 +747,7 @@ basic_parser<isRequest>::
 do_field(field f,
     string_view value, error_code& ec)
 {
+    using namespace beast::detail::string_literals;
     // Connection
     if(f == field::connection ||
         f == field::proxy_connection)
@@ -759,19 +761,19 @@ do_field(field f,
         }
         for(auto const& s : list)
         {
-            if(iequals({"close", 5}, s))
+            if(beast::iequals("close"_sv, s))
             {
                 f_ |= flagConnectionClose;
                 continue;
             }
 
-            if(iequals({"keep-alive", 10}, s))
+            if(beast::iequals("keep-alive"_sv, s))
             {
                 f_ |= flagConnectionKeepAlive;
                 continue;
             }
 
-            if(iequals({"upgrade", 7}, s))
+            if(beast::iequals("upgrade"_sv, s))
             {
                 f_ |= flagConnectionUpgrade;
                 continue;
@@ -799,8 +801,7 @@ do_field(field f,
         }
 
         std::uint64_t v;
-        if(! parse_dec(
-            value.begin(), value.end(), v))
+        if(! parse_dec(value, v))
         {
             ec = error::bad_content_length;
             return;
@@ -833,9 +834,9 @@ do_field(field f,
         ec = {};
         auto const v = token_list{value};
         auto const p = std::find_if(v.begin(), v.end(),
-            [&](typename token_list::value_type const& s)
+            [&](string_view const& s)
             {
-                return iequals({"chunked", 7}, s);
+                return beast::iequals("chunked"_sv, s);
             });
         if(p == v.end())
             return;

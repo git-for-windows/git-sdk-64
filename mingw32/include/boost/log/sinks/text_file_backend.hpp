@@ -37,9 +37,11 @@
 #include <boost/log/keywords/rotation_size.hpp>
 #include <boost/log/keywords/time_based_rotation.hpp>
 #include <boost/log/keywords/enable_final_rotation.hpp>
+#include <boost/log/keywords/auto_newline_mode.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/light_function.hpp>
 #include <boost/log/detail/parameter_tools.hpp>
+#include <boost/log/sinks/auto_newline_mode.hpp>
 #include <boost/log/sinks/basic_sink_backend.hpp>
 #include <boost/log/sinks/frontend_requirements.hpp>
 #include <boost/log/detail/header.hpp>
@@ -397,6 +399,8 @@ public:
      *                                sink backend destruction. By default, is \c true.
      * \li \c auto_flush - Specifies a flag, whether or not to automatically flush the file after each
      *                     written log record. By default, is \c false.
+     * \li \c auto_newline_mode - Specifies automatic trailing newline insertion mode. Must be a value of
+     *                            the \c auto_newline_mode enum. By default, is <tt>auto_newline_mode::insert_if_missing</tt>.
      *
      * \note Read the caution note regarding file name pattern in the <tt>sinks::file::collector::scan_for_files</tt>
      *       documentation.
@@ -513,6 +517,14 @@ public:
     BOOST_LOG_API void auto_flush(bool enable = true);
 
     /*!
+     * Selects whether a trailing newline should be automatically inserted after every log record. See
+     * \c auto_newline_mode description for the possible modes of operation.
+     *
+     * \param mode The trailing newline insertion mode.
+     */
+    BOOST_LOG_API void set_auto_newline_mode(auto_newline_mode mode);
+
+    /*!
      * \return The name of the currently open log file. If no file is open, returns an empty path.
      */
     BOOST_LOG_API filesystem::path get_current_file_name() const;
@@ -566,6 +578,7 @@ private:
             args[keywords::open_mode | (std::ios_base::trunc | std::ios_base::out)],
             args[keywords::rotation_size | (std::numeric_limits< uintmax_t >::max)()],
             args[keywords::time_based_rotation | time_based_rotation_predicate()],
+            args[keywords::auto_newline_mode | insert_if_missing],
             args[keywords::auto_flush | false],
             args[keywords::enable_final_rotation | true]);
     }
@@ -576,6 +589,7 @@ private:
         std::ios_base::openmode mode,
         uintmax_t rotation_size,
         time_based_rotation_predicate const& time_based_rotation,
+        auto_newline_mode auto_newline,
         bool auto_flush,
         bool enable_final_rotation);
 

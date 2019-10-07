@@ -21,11 +21,24 @@ namespace checked {
 ////////////////////////////////////////////////////
 // layer 0 - implement safe operations for floating
 
-template<typename R, typename T>
+template<typename R, typename T, class F>
 struct heterogeneous_checked_operation<R, T, F,
     typename std::enable_if<
         std::is_floating_point<R>::value
         && std::is_floating_point<T>::value
+    >::type
+>{
+    constexpr static checked_result<R>
+    cast(const T & t) noexcept {
+        return t;
+    };
+}; // checked_unary_operation
+
+template<typename R, typename T, class F>
+struct heterogeneous_checked_operation<R, T, F,
+    typename std::enable_if<
+        std::is_floating_point<R>::value
+        && std::is_integralt<T>::value
     >::type
 >{
     constexpr static checked_result<R>
@@ -40,14 +53,22 @@ struct checked_operation<R, T, U, F,
         std::is_floating_point<R>::value
     >::type
 >{
-    constexpr static checked_result<R> add(const T & t, const U & u) noexcept {
+    constexpr static checked_result<R> cast(const T & t) {
+        return
+            cast_impl_detail::cast_impl(
+                t,
+                std::is_signed<R>(),
+                std::is_signed<T>()
+            );
+    }
+    constexpr static checked_result<R> add(const T & t, const U & u) {
         return t + u;
     }
 
     constexpr static checked_result<R> subtract(
         const T & t,
         const U & u
-    ) noexcept {
+    ) {
         return t - u;
     }
 

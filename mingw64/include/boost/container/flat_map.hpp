@@ -788,12 +788,12 @@ class flat_map
    //! Complexity: Logarithmic in the size of the container in general, but amortized constant if
    //! the new element is inserted just before hint.
    template <class M>
-   BOOST_CONTAINER_FORCEINLINE std::pair<iterator, bool> insert_or_assign(const_iterator hint, const key_type& k, BOOST_FWD_REF(M) obj)
+   BOOST_CONTAINER_FORCEINLINE iterator insert_or_assign(const_iterator hint, const key_type& k, BOOST_FWD_REF(M) obj)
    {
-      return dtl::force_copy< std::pair<iterator, bool> >
+      return dtl::force_copy<iterator>
          (this->m_flat_tree.insert_or_assign
             ( dtl::force_copy<impl_const_iterator>(hint)
-            , k, ::boost::forward<M>(obj))
+            , k, ::boost::forward<M>(obj)).first
          );
    }
 
@@ -812,12 +812,12 @@ class flat_map
    //! Complexity: Logarithmic in the size of the container in general, but amortized constant if
    //! the new element is inserted just before hint.
    template <class M>
-   BOOST_CONTAINER_FORCEINLINE std::pair<iterator, bool> insert_or_assign(const_iterator hint, BOOST_RV_REF(key_type) k, BOOST_FWD_REF(M) obj)
+   BOOST_CONTAINER_FORCEINLINE iterator insert_or_assign(const_iterator hint, BOOST_RV_REF(key_type) k, BOOST_FWD_REF(M) obj)
    {
-      return dtl::force_copy< std::pair<iterator, bool> >
+      return dtl::force_copy<iterator>
          (this->m_flat_tree.insert_or_assign
             ( dtl::force_copy<impl_const_iterator>(hint)
-            , ::boost::move(k), ::boost::forward<M>(obj))
+            , ::boost::move(k), ::boost::forward<M>(obj)).first
          );
    }
 
@@ -1353,7 +1353,9 @@ class flat_map
    //! <b>Complexity</b>: log(size())+count(k)
    template<class K>
    BOOST_CONTAINER_FORCEINLINE size_type count(const K& x) const
-      {  return static_cast<size_type>(m_flat_tree.find(x) != m_flat_tree.end());  }
+      //Don't use find() != end optimization here as transparent comparators with key K might
+      //return a different range than key_type (which can only return a single element range)
+      {  return m_flat_tree.count(x);  }
 
    //! <b>Returns</b>: Returns true if there is an element with key
    //!   equivalent to key in the container, otherwise false.
@@ -1465,7 +1467,9 @@ class flat_map
    //! <b>Complexity</b>: Logarithmic.
    template<class K>
    BOOST_CONTAINER_FORCEINLINE std::pair<iterator,iterator> equal_range(const K& x)
-      {  return dtl::force_copy<std::pair<iterator,iterator> >(m_flat_tree.lower_bound_range(x)); }
+      //Don't use lower_bound_range optimization here as transparent comparators with key K might
+      //return a different range than key_type (which can only return a single element range)
+      {  return dtl::force_copy<std::pair<iterator,iterator> >(m_flat_tree.equal_range(x)); }
 
    //! <b>Requires</b>: This overload is available only if
    //! key_compare::is_transparent exists.
@@ -1475,7 +1479,9 @@ class flat_map
    //! <b>Complexity</b>: Logarithmic.
    template<class K>
    BOOST_CONTAINER_FORCEINLINE std::pair<const_iterator, const_iterator> equal_range(const K& x) const
-      {  return dtl::force_copy<std::pair<const_iterator,const_iterator> >(m_flat_tree.lower_bound_range(x)); }
+      //Don't use lower_bound_range optimization here as transparent comparators with key K might
+      //return a different range than key_type (which can only return a single element range)
+      {  return dtl::force_copy<std::pair<const_iterator,const_iterator> >(m_flat_tree.equal_range(x)); }
 
    //! <b>Effects</b>: Extracts the internal sequence container.
    //!
@@ -1651,10 +1657,10 @@ flat_map(ordered_unique_range_t, InputIterator, InputIterator, Compare const&, A
 template <class Key, class T, class Compare, class AllocatorOrContainer>
 struct has_trivial_destructor_after_move<boost::container::flat_map<Key, T, Compare, AllocatorOrContainer> >
 {
-   typedef typename ::boost::container::allocator_traits<AllocatorOrContainer>::pointer pointer;
-   static const bool value = ::boost::has_trivial_destructor_after_move<AllocatorOrContainer>::value &&
-                             ::boost::has_trivial_destructor_after_move<pointer>::value &&
-                             ::boost::has_trivial_destructor_after_move<Compare>::value;
+   typedef ::boost::container::dtl::pair<Key, T> value_t;
+   typedef typename ::boost::container::dtl::container_or_allocator_rebind<AllocatorOrContainer, value_t>::type alloc_or_cont_t;
+   typedef ::boost::container::dtl::flat_tree<value_t,::boost::container::dtl::select1st<Key>, Compare, alloc_or_cont_t> tree;
+   static const bool value = ::boost::has_trivial_destructor_after_move<tree>::value;
 };
 
 namespace container {
@@ -2961,10 +2967,10 @@ namespace boost {
 template <class Key, class T, class Compare, class AllocatorOrContainer>
 struct has_trivial_destructor_after_move< boost::container::flat_multimap<Key, T, Compare, AllocatorOrContainer> >
 {
-   typedef typename ::boost::container::allocator_traits<AllocatorOrContainer>::pointer pointer;
-   static const bool value = ::boost::has_trivial_destructor_after_move<AllocatorOrContainer>::value &&
-                             ::boost::has_trivial_destructor_after_move<pointer>::value &&
-                             ::boost::has_trivial_destructor_after_move<Compare>::value;
+   typedef ::boost::container::dtl::pair<Key, T> value_t;
+   typedef typename ::boost::container::dtl::container_or_allocator_rebind<AllocatorOrContainer, value_t>::type alloc_or_cont_t;
+   typedef ::boost::container::dtl::flat_tree<value_t,::boost::container::dtl::select1st<Key>, Compare, alloc_or_cont_t> tree;
+   static const bool value = ::boost::has_trivial_destructor_after_move<tree>::value;
 };
 
 }  //namespace boost {

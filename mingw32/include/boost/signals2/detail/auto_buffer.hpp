@@ -21,7 +21,7 @@
 #include <boost/iterator/reverse_iterator.hpp>
 #include <boost/iterator/iterator_traits.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/multi_index/detail/scope_guard.hpp>
+#include <boost/signals2/detail/scope_guard.hpp>
 #include <boost/swap.hpp>
 #include <boost/type_traits/aligned_storage.hpp>
 #include <boost/type_traits/alignment_of.hpp>
@@ -288,11 +288,10 @@ namespace detail
         pointer move_to_new_buffer( size_type new_capacity, const boost::false_type& )
         {
             pointer new_buffer = allocate( new_capacity ); // strong
-            boost::multi_index::detail::scope_guard guard =
-                boost::multi_index::detail::make_obj_guard( *this,
-                                                            &auto_buffer::deallocate,
-                                                            new_buffer,
-                                                            new_capacity );
+            scope_guard guard = make_obj_guard( *this,
+                                                &auto_buffer::deallocate,
+                                                new_buffer,
+                                                new_capacity );
             copy_impl( begin(), end(), new_buffer ); // strong
             guard.dismiss();                         // nothrow
             return new_buffer;
@@ -517,11 +516,10 @@ namespace detail
                     auto_buffer_destroy();
                     buffer_ = 0;
                     pointer new_buffer = allocate( r.size() );
-                    boost::multi_index::detail::scope_guard guard =
-                        boost::multi_index::detail::make_obj_guard( *this,
-                                                                    &auto_buffer::deallocate,
-                                                                    new_buffer,
-                                                                    r.size() );
+                    scope_guard guard = make_obj_guard( *this,
+                                                        &auto_buffer::deallocate,
+                                                        new_buffer,
+                                                        r.size() );
                     copy_impl( r.begin(), r.end(), new_buffer );
                     guard.dismiss();
                     buffer_            = new_buffer;

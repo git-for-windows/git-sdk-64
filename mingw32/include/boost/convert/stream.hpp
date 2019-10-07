@@ -19,7 +19,7 @@
 
 #define BOOST_CNV_PARAM(PARAM_NAME, PARAM_TYPE) \
     this_type&                                  \
-    operator()(boost::parameter::aux::tag<boost::cnv::parameter::type::PARAM_NAME, PARAM_TYPE>::type const& arg)
+    operator()(boost::parameter::aux::tag<boost::cnv::parameter::type::PARAM_NAME, PARAM_TYPE const>::type const& arg)
 
 namespace boost { namespace cnv
 {
@@ -87,24 +87,23 @@ struct boost::cnv::basic_stream : boost::noncopyable
     this_type& operator() (manipulator_type m) { return (m(stream_), *this); }
     this_type& operator() (std::locale const& l) { return (stream_.imbue(l), *this); }
 
-    BOOST_CNV_PARAM(locale, std::locale const) { return (stream_.imbue(arg[cnv::parameter::locale]), *this); }
-    BOOST_CNV_PARAM(precision,      int const) { return (stream_.precision(arg[cnv::parameter::precision]), *this); }
-    BOOST_CNV_PARAM(precision,            int) { return (stream_.precision(arg[cnv::parameter::precision]), *this); }
-    BOOST_CNV_PARAM(width,          int const) { return (stream_.width(arg[cnv::parameter::width]), *this); }
-    BOOST_CNV_PARAM(fill,          char const) { return (stream_.fill(arg[cnv::parameter::fill]), *this); }
-    BOOST_CNV_PARAM(uppercase,     bool const)
+    BOOST_CNV_PARAM(locale, std::locale) { return (stream_.imbue(arg[cnv::parameter::locale]), *this); }
+    BOOST_CNV_PARAM(precision,      int) { return (stream_.precision(arg[cnv::parameter::precision]), *this); }
+    BOOST_CNV_PARAM(width,          int) { return (stream_.width(arg[cnv::parameter::width]), *this); }
+    BOOST_CNV_PARAM(fill,          char) { return (stream_.fill(arg[cnv::parameter::fill]), *this); }
+    BOOST_CNV_PARAM(uppercase,     bool)
     {
         bool uppercase = arg[cnv::parameter::uppercase];
         uppercase ? (void) stream_.setf(std::ios::uppercase) : stream_.unsetf(std::ios::uppercase);
         return *this;
     }
-    BOOST_CNV_PARAM(skipws, bool const)
+    BOOST_CNV_PARAM(skipws, bool)
     {
         bool skipws = arg[cnv::parameter::skipws];
         skipws ? (void) stream_.setf(std::ios::skipws) : stream_.unsetf(std::ios::skipws);
         return *this;
     }
-    BOOST_CNV_PARAM(adjust, boost::cnv::adjust const)
+    BOOST_CNV_PARAM(adjust, boost::cnv::adjust)
     {
         cnv::adjust adjust = arg[cnv::parameter::adjust];
 
@@ -114,7 +113,7 @@ struct boost::cnv::basic_stream : boost::noncopyable
 
         return *this;
     }
-    BOOST_CNV_PARAM(base, boost::cnv::base const)
+    BOOST_CNV_PARAM(base, boost::cnv::base)
     {
         cnv::base base = arg[cnv::parameter::base];
 
@@ -125,7 +124,7 @@ struct boost::cnv::basic_stream : boost::noncopyable
 
         return *this;
     }
-    BOOST_CNV_PARAM(notation, boost::cnv::notation const)
+    BOOST_CNV_PARAM(notation, boost::cnv::notation)
     {
         cnv::notation notation = arg[cnv::parameter::notation];
 
@@ -158,7 +157,7 @@ boost::cnv::basic_stream<char_type>::to_str(
     if (!(stream_ << value_in).fail())
     {
         buffer_type*     buf = stream_.rdbuf();
-        obuffer_type*   obuf = static_cast<obuffer_type*>(buf);
+        obuffer_type*   obuf = reinterpret_cast<obuffer_type*>(buf);
         char_type const* beg = obuf->pbase();
         char_type const* end = obuf->pptr();
 

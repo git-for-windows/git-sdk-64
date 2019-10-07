@@ -13,7 +13,6 @@
 #include <boost/beast/_experimental/test/stream.hpp>
 #include <boost/beast/core/bind_handler.hpp>
 #include <boost/beast/core/buffer_traits.hpp>
-#include <boost/beast/core/buffers_prefix.hpp>
 #include <boost/make_shared.hpp>
 #include <stdexcept>
 #include <vector>
@@ -262,6 +261,9 @@ connect(stream& remote)
 {
     BOOST_ASSERT(! out_.lock());
     BOOST_ASSERT(! remote.out_.lock());
+    std::lock(in_->m, remote.in_->m);
+    std::lock_guard<std::mutex> guard1{in_->m, std::adopt_lock};
+    std::lock_guard<std::mutex> guard2{remote.in_->m, std::adopt_lock};
     out_ = remote.in_;
     remote.out_ = in_;
     in_->code = status::ok;
@@ -275,7 +277,7 @@ str() const
     auto const bs = in_->b.data();
     if(buffer_bytes(bs) == 0)
         return {};
-    auto const b = beast::buffers_front(bs);
+    net::const_buffer const b = *net::buffer_sequence_begin(bs);
     return {static_cast<char const*>(b.data()), b.size()};
 }
 

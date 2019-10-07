@@ -32,6 +32,7 @@
 #include <boost/variant/detail/over_sequence.hpp>
 #include <boost/variant/detail/visitation_impl.hpp>
 #include <boost/variant/detail/hash_variant.hpp>
+#include <boost/variant/detail/std_hash.hpp>
 
 #include <boost/variant/detail/move.hpp>
 
@@ -2314,7 +2315,7 @@ public:
 #endif// !defined(BOOST_NO_MEMBER_TEMPLATE_FRIENDS)
 
     template <typename Visitor, typename VoidPtrCV>
-    static typename Visitor::result_type
+    BOOST_FORCEINLINE static typename Visitor::result_type
     internal_apply_visitor_impl(
           int internal_which
         , int logical_which
@@ -2339,7 +2340,7 @@ public:
     }
 
     template <typename Visitor>
-    typename Visitor::result_type
+    BOOST_FORCEINLINE typename Visitor::result_type
     internal_apply_visitor(Visitor& visitor)
     {
         return internal_apply_visitor_impl(
@@ -2348,7 +2349,7 @@ public:
     }
 
     template <typename Visitor>
-    typename Visitor::result_type
+    BOOST_FORCEINLINE typename Visitor::result_type
     internal_apply_visitor(Visitor& visitor) const
     {
         return internal_apply_visitor_impl(

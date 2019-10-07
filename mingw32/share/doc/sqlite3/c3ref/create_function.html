@@ -193,6 +193,12 @@ function that is not deterministic.  The SQLite query planner is able to
 perform additional optimizations on deterministic functions, so use
 of the <a href="../c3ref/c_deterministic.html">SQLITE_DETERMINISTIC</a> flag is recommended where possible.</p>
 
+<p>The fourth parameter may also optionally include the <a href="../c3ref/c_deterministic.html">SQLITE_DIRECTONLY</a>
+flag, which if present prevents the function from being invoked from
+within VIEWs or TRIGGERs.  For security reasons, the <a href="../c3ref/c_deterministic.html">SQLITE_DIRECTONLY</a>
+flag is recommended for any application-defined SQL function that has
+side-effects.</p>
+
 <p>The fifth parameter is an arbitrary pointer.  The implementation of the
 function can gain access to this pointer using <a href="../c3ref/user_data.html">sqlite3_user_data()</a>.</p>
 

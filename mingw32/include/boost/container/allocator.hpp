@@ -180,7 +180,7 @@ class allocator
    pointer allocate(size_type count, const void * hint= 0)
    {
       (void)hint;
-      if(count > this->max_size())
+      if(count > size_type(-1)/(2u*sizeof(T)))
          boost::container::throw_bad_alloc();
       void *ret = dlmalloc_malloc(count*sizeof(T));
       if(!ret)
@@ -196,7 +196,7 @@ class allocator
    //!Returns the maximum number of elements that could be allocated.
    //!Never throws
    BOOST_CONTAINER_FORCEINLINE size_type max_size() const BOOST_NOEXCEPT_OR_NOTHROW
-   {  return size_type(-1)/sizeof(T);   }
+   {  return size_type(-1)/(2u*sizeof(T));   }
 
    //!Swaps two allocators, does nothing
    //!because this allocator is stateless

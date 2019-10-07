@@ -33,7 +33,7 @@
 #include "boost/multi_array/subarray.hpp"
 #include "boost/multi_array/multi_array_ref.hpp"
 #include "boost/multi_array/algorithm.hpp"
-#include "boost/multi_array/allocators.hpp"
+#include "boost/core/alloc_construct.hpp"
 #include "boost/core/empty_value.hpp"
 #include "boost/array.hpp"
 #include "boost/mpl/if.hpp"
@@ -545,12 +545,12 @@ private:
     base_ = allocator().allocate(this->num_elements());
     this->set_base_ptr(base_);
     allocated_elements_ = this->num_elements();
-    detail::multi_array::construct(allocator(),base_,base_+allocated_elements_);
+    boost::alloc_construct_n(allocator(),base_,allocated_elements_);
   }
 
   void deallocate_space() {
     if(base_) {
-      detail::multi_array::destroy(allocator(),base_,base_+allocated_elements_);
+      boost::alloc_destroy_n(allocator(),base_,allocated_elements_);
       allocator().deallocate(base_,allocated_elements_);
     }
   }

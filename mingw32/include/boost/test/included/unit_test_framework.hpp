@@ -9,4 +9,8 @@
 /// @deprecated
 // ***************************************************************************
 
+#include <boost/config/header_deprecated.hpp>
+BOOST_HEADER_DEPRECATED( "This header is deprecated. Please use <boost/test/included/unit_test.hpp> instead." )
+
+
 #include <boost/test/included/unit_test.hpp>

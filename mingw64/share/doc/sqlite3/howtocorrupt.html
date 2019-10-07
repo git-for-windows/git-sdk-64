@@ -175,6 +175,8 @@ That means that any process can open the file and
 overwrite it with garbage.  There is nothing that the SQLite
 library can do to defend against this.</p>
 
+<a name="stalefd"></a>
+
 <h2 id="_continuing_to_use_a_file_descriptor_after_it_has_been_closed"><span>1.1. </span> Continuing to use a file descriptor after it has been closed</h2>
 
 <p>We have seen multiple cases where a file descriptor was open on a file,
@@ -205,7 +207,15 @@ for database files.
 descriptor was 
 <a href="https://code.facebook.com/posts/313033472212144/debugging-file-corruption-on-ios/">reported by facebook engineers</a> in a blog post on 2014-08-12.</p>
 
-<h2 id="_backup_or_restore_while_a_transaction_is_active"><span>1.2. </span> Backup or restore while a transaction is active</h2>
+<p>Another example of this error was reported against
+<a href="https://fossil-scm.org/">Fossil</a> on 2019-07-11.  A file descriptor would
+be opened for debugging output, but then closed and reopened by SQLite.
+But the debugging logic continued to write into the original file
+descriptor. See the
+<a href="https://fossil-scm.org/forum/forumpost/c51b9a1169">forum discussion</a>
+for the bug report and a link to the fix.
+
+</p><h2 id="_backup_or_restore_while_a_transaction_is_active"><span>1.2. </span> Backup or restore while a transaction is active</h2>
 
 <p>Systems that run automatic backups in the background might try to
 make a backup copy of an SQLite database file while it is in the middle

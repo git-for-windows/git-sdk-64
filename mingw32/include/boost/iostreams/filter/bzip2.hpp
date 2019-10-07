@@ -365,22 +365,24 @@ bool bzip2_decompressor_impl<Alloc>::filter
     ( const char*& src_begin, const char* src_end,
       char*& dest_begin, char* dest_end, bool flush )
 {
-    if (eof_) {
-        // reset the stream if there are more characters
-        if(src_begin == src_end)
-            return false;
-        else
-            close();
-    }
-    if (!ready()) 
-        init();
-    before(src_begin, src_end, dest_begin, dest_end);
-    int result = decompress();
-    if(result == bzip2::ok && flush)
-        result = check_end(src_begin, dest_begin);
-    after(src_begin, dest_begin);
-    bzip2_error::check BOOST_PREVENT_MACRO_SUBSTITUTION(result);
-    eof_ = result == bzip2::stream_end;
+    do {
+        if (eof_) {
+            // reset the stream if there are more characters
+            if(src_begin == src_end)
+                return false;
+            else
+                close();
+        }
+        if (!ready()) 
+            init();
+        before(src_begin, src_end, dest_begin, dest_end);
+        int result = decompress();
+        if(result == bzip2::ok && flush)
+            result = check_end(src_begin, dest_begin);
+        after(src_begin, dest_begin);
+        bzip2_error::check BOOST_PREVENT_MACRO_SUBSTITUTION(result);
+        eof_ = result == bzip2::stream_end;
+    } while (eof_ && src_begin != src_end && dest_begin != dest_end);
     return true; 
 }
 

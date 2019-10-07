@@ -12,18 +12,54 @@
 #include <boost/histogram/axis/iterator.hpp>
 #include <boost/histogram/axis/option.hpp>
 #include <boost/histogram/detail/compressed_pair.hpp>
-#include <boost/histogram/detail/meta.hpp>
+#include <boost/histogram/detail/convert_integer.hpp>
+#include <boost/histogram/detail/relaxed_equal.hpp>
+#include <boost/histogram/detail/replace_default.hpp>
 #include <boost/histogram/fwd.hpp>
 #include <boost/mp11/utility.hpp>
 #include <boost/throw_exception.hpp>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 #include <utility>
 
 namespace boost {
 namespace histogram {
+namespace detail {
+
+template <class T>
+using get_scale_type_helper = typename T::value_type;
+
+template <class T>
+using get_scale_type = mp11::mp_eval_or<T, detail::get_scale_type_helper, T>;
+
+struct one_unit {};
+
+template <class T>
+T operator*(T&& t, const one_unit&) {
+  return std::forward<T>(t);
+}
+
+template <class T>
+T operator/(T&& t, const one_unit&) {
+  return std::forward<T>(t);
+}
+
+template <class T>
+using get_unit_type_helper = typename T::unit_type;
+
+template <class T>
+using get_unit_type = mp11::mp_eval_or<one_unit, detail::get_unit_type_helper, T>;
+
+template <class T, class R = get_scale_type<T>>
+R get_scale(const T& t) {
+  return t / get_unit_type<T>();
+}
+
+} // namespace detail
+
 namespace axis {
 
 namespace transform {
@@ -140,6 +176,31 @@ class regular : public iterator_mixin<regular<Value, Transform, MetaData, Option
 
 public:
   constexpr regular() = default;
+  regular(const regular&) = default;
+  regular& operator=(const regular&) = default;
+  regular(regular&& o) noexcept
+      : transform_type(std::move(o))
+      , size_meta_(std::move(o.size_meta_))
+      , min_(o.min_)
+      , delta_(o.delta_) {
+    static_assert(std::is_nothrow_move_constructible<transform_type>::value, "");
+    // std::string explicitly guarantees nothrow only in C++17
+    static_assert(std::is_same<metadata_type, std::string>::value ||
+                      std::is_nothrow_move_constructible<metadata_type>::value,
+                  "");
+  }
+  regular& operator=(regular&& o) noexcept {
+    static_assert(std::is_nothrow_move_assignable<transform_type>::value, "");
+    // std::string explicitly guarantees nothrow only in C++17
+    static_assert(std::is_same<metadata_type, std::string>::value ||
+                      std::is_nothrow_move_assignable<metadata_type>::value,
+                  "");
+    transform_type::operator=(std::move(o));
+    size_meta_ = std::move(o.size_meta_);
+    min_ = o.min_;
+    delta_ = o.delta_;
+    return *this;
+  }
 
   /** Construct n bins over real transformed range [start, stop).
    *
@@ -347,10 +408,15 @@ regular(Tr, unsigned, T, T, M)->regular<detail::convert_integer<T, double>, Tr, 
 
 #endif
 
+/// Regular axis with circular option already set.
 template <class Value = double, class MetaData = use_default, class Options = use_default>
+#ifndef BOOST_HISTOGRAM_DOXYGEN_INVOKED
 using circular = regular<Value, transform::id, MetaData,
                          decltype(detail::replace_default<Options, option::overflow_t>{} |
                                   option::circular)>;
+#else
+class circular;
+#endif
 
 } // namespace axis
 } // namespace histogram

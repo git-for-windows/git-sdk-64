@@ -103,6 +103,8 @@ interface as other SQLite commands (e.g. <a href="lang_select.html">SELECT</a>, 
 different in the following important respects:
 </p>
 <ul>
+<li>The pragma command is specific to SQLite and is
+    not compatible with any other SQL database engine.
 <li>Specific pragma statements may be removed and others added in future
     releases of SQLite. There is no guarantee of backwards compatibility.
 <li>No error messages are generated if an unknown pragma is issued.
@@ -117,8 +119,11 @@ different in the following important respects:
     SQL statements.  Whether or not the pragma runs during sqlite3_prepare()
     or sqlite3_step() depends on the pragma and on the specific release
     of SQLite.
-<li>The pragma command is specific to SQLite and is
-    not compatible with any other SQL database engine.
+<li>The <a href="lang_explain.html">EXPLAIN</a> and <a href="eqp.html">EXPLAIN QUERY PLAN</a> prefixes to SQL statements
+    only affect the behavior of the statement during <a href="c3ref/step.html">sqlite3_step()</a>.
+    That means that PRAGMA statements that take effect during
+    <a href="c3ref/prepare.html">sqlite3_prepare()</a> will behave the same way regardless of whether or
+    not they are prefaced by "EXPLAIN".
 </ul>
 
 <p>The C-language API for SQLite provides the <a href="c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlpragma">SQLITE_FCNTL_PRAGMA</a>
@@ -130,16 +135,16 @@ built-in PRAGMA statements.</p>
 <hr /><a name="syntax"></a>
 <h2>PRAGMA command syntax</h2>
 <p><b><a href="syntax/pragma-stmt.html">pragma-stmt:</a></b>
-<button id='x2035' onclick='hideorshow("x2035","x2036")'>hide</button></p>
- <div id='x2036' class='imgcontainer'>
+<button id='x2251' onclick='hideorshow("x2251","x2252")'>hide</button></p>
+ <div id='x2252' class='imgcontainer'>
  <img alt="syntax diagram pragma-stmt" src="images/syntax/pragma-stmt.gif" />
 <p><b><a href="syntax/pragma-value.html">pragma-value:</a></b>
-<button id='x2037' onclick='hideorshow("x2037","x2038")'>hide</button></p>
- <div id='x2038' class='imgcontainer'>
+<button id='x2253' onclick='hideorshow("x2253","x2254")'>hide</button></p>
+ <div id='x2254' class='imgcontainer'>
  <img alt="syntax diagram pragma-value" src="images/syntax/pragma-value.gif" />
 <p><b><a href="syntax/signed-number.html">signed-number:</a></b>
-<button id='x2039' onclick='hideorshow("x2039","x2040")'>show</button></p>
- <div id='x2040' style='display:none;' class='imgcontainer'>
+<button id='x2255' onclick='hideorshow("x2255","x2256")'>show</button></p>
+ <div id='x2256' style='display:none;' class='imgcontainer'>
  <img alt="syntax diagram signed-number" src="images/syntax/signed-number.gif" />
 </div>
 </div>
@@ -253,8 +258,7 @@ cannot use this feature.
 </style>
 <table id='listtab34' width='100%'></table>
 <script>
-var listitems34 = [{"u":"pragma.html#pragma_locking_mode","x":"EXCLUSIVE locking mode","s":0},
-{"u":"pragma.html#pragma_application_id","x":"application_id","s":0},
+var listitems34 = [{"u":"pragma.html#pragma_application_id","x":"application_id","s":0},
 {"u":"pragma.html#pragma_auto_vacuum","x":"auto_vacuum","s":0},
 {"u":"pragma.html#pragma_automatic_index","x":"automatic_index","s":0},
 {"u":"pragma.html#pragma_busy_timeout","x":"busy_timeout","s":0},
@@ -273,14 +277,13 @@ var listitems34 = [{"u":"pragma.html#pragma_locking_mode","x":"EXCLUSIVE locking
 {"u":"pragma.html#pragma_defer_foreign_keys","x":"defer_foreign_keys","s":0},
 {"u":"pragma.html#pragma_empty_result_callbacks","x":"empty_result_callbacks","s":3},
 {"u":"pragma.html#pragma_encoding","x":"encoding","s":0},
-{"u":"pragma.html#pragma_locking_mode","x":"exclusive locking mode","s":0},
 {"u":"pragma.html#pragma_foreign_key_check","x":"foreign_key_check","s":0},
 {"u":"pragma.html#pragma_foreign_key_list","x":"foreign_key_list","s":0},
 {"u":"pragma.html#pragma_foreign_keys","x":"foreign_keys","s":0},
 {"u":"pragma.html#pragma_freelist_count","x":"freelist_count","s":0},
 {"u":"pragma.html#pragma_full_column_names","x":"full_column_names","s":3},
 {"u":"pragma.html#pragma_fullfsync","x":"fullfsync","s":0},
-{"u":"pragma.html#pragma_function_list","x":"function_list","s":4},
+{"u":"pragma.html#pragma_function_list","x":"function_list","s":0},
 {"u":"pragma.html#pragma_ignore_check_constraints","x":"ignore_check_constraints","s":0},
 {"u":"pragma.html#pragma_incremental_vacuum","x":"incremental_vacuum","s":0},
 {"u":"pragma.html#pragma_index_info","x":"index_info","s":0},
@@ -294,13 +297,12 @@ var listitems34 = [{"u":"pragma.html#pragma_locking_mode","x":"EXCLUSIVE locking
 {"u":"pragma.html#pragma_locking_mode","x":"locking_mode","s":0},
 {"u":"pragma.html#pragma_max_page_count","x":"max_page_count","s":0},
 {"u":"pragma.html#pragma_mmap_size","x":"mmap_size","s":0},
-{"u":"pragma.html#pragma_module_list","x":"module_list","s":4},
+{"u":"pragma.html#pragma_module_list","x":"module_list","s":0},
 {"u":"pragma.html#pragma_optimize","x":"optimize","s":0},
 {"u":"pragma.html#pragma_page_count","x":"page_count","s":0},
 {"u":"pragma.html#pragma_page_size","x":"page_size","s":0},
 {"u":"pragma.html#pragma_parser_trace","x":"parser_trace","s":4},
-{"u":"pragma.html#pragma_journal_mode","x":"persistent journal mode","s":0},
-{"u":"pragma.html#pragma_pragma_list","x":"pragma_list","s":4},
+{"u":"pragma.html#pragma_pragma_list","x":"pragma_list","s":0},
 {"u":"pragma.html#pragma_query_only","x":"query_only","s":0},
 {"u":"pragma.html#pragma_quick_check","x":"quick_check","s":0},
 {"u":"pragma.html#pragma_read_uncommitted","x":"read_uncommitted","s":0},
@@ -756,21 +758,21 @@ for use in application programs.</ol></p>
 <a name="pragma_encoding"></a>
 <h _id=pragma_encoding style="display:none"> PRAGMA encoding</h><hr>
    <p><b>PRAGMA encoding;
-       <br>PRAGMA encoding = "UTF-8";
-       <br>PRAGMA encoding = "UTF-16";
-       <br>PRAGMA encoding = "UTF-16le";
-       <br>PRAGMA encoding = "UTF-16be";</b></p>
+       <br>PRAGMA encoding = 'UTF-8';
+       <br>PRAGMA encoding = 'UTF-16';
+       <br>PRAGMA encoding = 'UTF-16le';
+       <br>PRAGMA encoding = 'UTF-16be';</b></p>
     <p>In first form, if the main database has already been
     created, then this pragma returns the text encoding used by the
-    main database, one of "UTF-8", "UTF-16le" (little-endian UTF-16
-    encoding) or "UTF-16be" (big-endian UTF-16 encoding).  If the main
+    main database, one of 'UTF-8', 'UTF-16le' (little-endian UTF-16
+    encoding) or 'UTF-16be' (big-endian UTF-16 encoding).  If the main
     database has not already been created, then the value returned is the
     text encoding that will be used to create the main database, if 
     it is created by this session.</p>
 
     <p>The second through fifth forms of this pragma
     set the encoding that the main database will be created with if
-    it is created by this session. The string "UTF-16" is interpreted
+    it is created by this session. The string 'UTF-16' is interpreted
     as "UTF-16 encoding using native machine byte-ordering".  It is not
     possible to change the text encoding of a database after it has been
     created and any attempt to do so will be silently ignored.</p>
@@ -884,11 +886,6 @@ for use in application programs.</ol></p>
     <p><b>PRAGMA function_list;</b>
     <p>This pragma returns a list of SQL functions
     known to the database connection.
-
-     <p style='background-color: #f0e0ff;'>
-    This pragma is only available if SQLite is built using the
-    <a href="compile.html#introspection_pragmas">-DSQLITE_INTROSPECTION_PRAGMAS</a> compile-time option.
-  
 <a name="pragma_ignore_check_constraints"></a>
 <h _id=pragma_ignore_check_constraints style="display:none"> PRAGMA ignore_check_constraints</h><hr>
     <p><b>PRAGMA ignore_check_constraints  = </b><i>boolean</i><b>;</b></p>
@@ -924,8 +921,18 @@ for use in application programs.</ol></p>
     <ol>
     <li>The rank of the column within the index.  (0 means left-most.)
     <li>The rank of the column within the table being indexed.
-    <li>The name of the column being indexed.
+        A value of -1 means <a href="lang_createtable.html#rowid">rowid</a> and a value of -2 means that an
+        <a href="expridx.html">expression</a> is being used.
+    <li>The name of the column being indexed.  This columns is NULL
+        if the column is the <a href="lang_createtable.html#rowid">rowid</a> or an <a href="expridx.html">expression</a>.
     </ol>
+
+    <p>If there is no index named <i>index-name</i> but there is a
+    <a href="withoutrowid.html">WITHOUT ROWID</a> table with that name, then (as of
+    SQLite <a href="releaselog/3_30_0.html">version 3.30.0</a> on 2019-10-04) this pragma returns the
+    PRIMARY KEY columns of the WITHOUT ROWID table as they are used
+    in the records of the underlying b-tree, which is to say with
+    duplicate columns removed.
 <a name="pragma_index_list"></a>
 <h _id=pragma_index_list style="display:none"> PRAGMA index_list</h><hr>
     <p><b>PRAGMA </b><i>schema.</i><b>index_list(</b><i>table-name</i><b>);</b></p>
@@ -959,9 +966,11 @@ for use in application programs.</ol></p>
     <li>The rank of the column within the index. (0 means left-most.
          Key columns come before auxiliary columns.)
     <li>The rank of the column within the table being indexed, or -1 if
-         the index-column is the <a href="lang_createtable.html#rowid">rowid</a> of the table being indexed.
+         the index-column is the <a href="lang_createtable.html#rowid">rowid</a> of the table being indexed and -2
+         if the <a href="expridx.html">index is on an expression</a>.
     <li>The name of the column being indexed, or NULL if the index-column
-         is the <a href="lang_createtable.html#rowid">rowid</a> of the table being indexed.
+         is the <a href="lang_createtable.html#rowid">rowid</a> of the table being indexed or an
+         <a href="expridx.html">expression</a>.
     <li>1 if the index-column is sorted in reverse (DESC) order by the
          index and 0 otherwise.
     <li>The name for the <a href="datatype3.html#collation">collating sequence</a>
@@ -969,6 +978,13 @@ for use in application programs.</ol></p>
     <li>1 if the index-column is a key column and 0 if the index-column
          is an auxiliary column.
     </ol>
+
+    <p>If there is no index named <i>index-name</i> but there is a
+    <a href="withoutrowid.html">WITHOUT ROWID</a> table with that name, then (as of
+    SQLite <a href="releaselog/3_30_0.html">version 3.30.0</a> on 2019-10-04) this pragma returns the
+    columns of the WITHOUT ROWID table as they are used
+    in the records of the underlying b-tree, which is to say with
+    de-duplicated PRIMARY KEY columns first followed by data columns.
 <a name="pragma_integrity_check"></a>
 <h _id=pragma_integrity_check style="display:none"> PRAGMA integrity_check</h><hr>
     <p><b>PRAGMA </b><i>schema.</i><b>integrity_check;
@@ -1278,11 +1294,6 @@ PRAGMA <b>main.</b>locking_mode=EXCLUSIVE;
     <p><b>PRAGMA module_list;</b>
     <p>This pragma returns a list of 
     <a href="vtab.html">virtual table</a> modules registered with the database connection.
-
-     <p style='background-color: #f0e0ff;'>
-    This pragma is only available if SQLite is built using the
-    <a href="compile.html#introspection_pragmas">-DSQLITE_INTROSPECTION_PRAGMAS</a> compile-time option.
-  
 <a name="pragma_optimize"></a>
 <h _id=pragma_optimize style="display:none"> PRAGMA optimize</h><hr>
   <p><b>PRAGMA optimize;
@@ -1404,11 +1415,6 @@ PRAGMA <b>main.</b>locking_mode=EXCLUSIVE;
     <p><b>PRAGMA pragma_list;</b>
     <p>This pragma returns a list of PRAGMA commands
     known to the database connection.
-
-     <p style='background-color: #f0e0ff;'>
-    This pragma is only available if SQLite is built using the
-    <a href="compile.html#introspection_pragmas">-DSQLITE_INTROSPECTION_PRAGMAS</a> compile-time option.
-  
 <a name="pragma_query_only"></a>
 <h _id=pragma_query_only style="display:none"> PRAGMA query_only</h><hr>
     <p><b>PRAGMA query_only;

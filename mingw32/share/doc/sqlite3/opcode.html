@@ -193,8 +193,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.29.0 check-in
-<a href='https://www.sqlite.org/src/timeline?c=fc82b73eaac8b'>fc82b73eaac8b</a> dated 2019-07-10.
+ version 3.30.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=c20a353364320'>c20a353364320</a> dated 2019-10-04.
 
 
 
@@ -422,15 +422,15 @@ opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/aaa36d1ac7d55baf007e9c03ee7c826834a51dfe7a56ba4c386318695dd87c99">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/7f43ed8e055a4290535d2e4520d33f0ac6cc00ef76a0c099e4c6bd85be74a6b9">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.29.0 check-in
-<a href='https://www.sqlite.org/src/timeline?c=fc82b73eaac8b'>fc82b73eaac8b</a> dated 2019-07-10.
+ version 3.30.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=c20a353364320'>c20a353364320</a> dated 2019-10-04.
 
 <a name="codes"></a>
 
@@ -626,11 +626,6 @@ values in the record, extract a NULL.</p>
 <p>If the record contains fewer than P2 fields, then extract a NULL.  Or,
 if the P4 argument is a P4_MEM use the value of the P4 argument as
 the result.</p>
-
-<p>If the OPFLAG_CLEARCACHE bit is set on P5 and P1 is a pseudo-table cursor,
-then the cache of the cursor is reset prior to extracting the column.
-The first <a href="opcode.html#Column">Column</a> against a pseudo-table after the value of the content
-register has changed should have this bit set.</p>
 
 <p>If the OPFLAG_LENGTHARG and OPFLAG_TYPEOFARG bits are set on P5 then
 the result is guaranteed to only be used as the argument of a length()

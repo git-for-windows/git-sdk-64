@@ -180,7 +180,7 @@ void adaptive_sort_combine_blocks
    size_type const max_i = n_reg_combined + (l_irreg_combined != 0);
 
    if(merge_left || !use_buf) {
-      for( size_type combined_i = 0; combined_i != max_i; ++combined_i, combined_first += l_reg_combined) {
+      for( size_type combined_i = 0; combined_i != max_i; ) {
          //Now merge blocks
          bool const is_last = combined_i==n_reg_combined;
          size_type const l_cur_combined = is_last ? l_irreg_combined : l_reg_combined;
@@ -202,11 +202,15 @@ void adaptive_sort_combine_blocks
                (keys, key_comp, combined_first, l_block, 0u, n_block_a, n_block_b, l_irreg2, comp, xbuf_used);
          }
          BOOST_MOVE_ADAPTIVE_SORT_PRINT_L2("   After merge_blocks_L: ", len + l_block);
+         ++combined_i;
+         if(combined_i != max_i)
+            combined_first += l_reg_combined;
       }
    }
    else{
       combined_first += l_reg_combined*(max_i-1);
-      for( size_type combined_i = max_i; combined_i--; combined_first -= l_reg_combined) {
+      for( size_type combined_i = max_i; combined_i; ) {
+         --combined_i;
          bool const is_last = combined_i==n_reg_combined;
          size_type const l_cur_combined = is_last ? l_irreg_combined : l_reg_combined;
 
@@ -222,6 +226,8 @@ void adaptive_sort_combine_blocks
          merge_blocks_right
             (keys, key_comp, combined_first, l_block, n_block_a, n_block_b, l_irreg2, comp, xbuf_used);
          BOOST_MOVE_ADAPTIVE_SORT_PRINT_L2("   After merge_blocks_R: ", len + l_block);
+         if(combined_i)
+            combined_first -= l_reg_combined;
       }
    }
 }

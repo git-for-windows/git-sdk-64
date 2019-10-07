@@ -1167,7 +1167,7 @@ execution_monitor::catch_signals( boost::function<int ()> const& F )
         htimer = ::CreateWaitableTimer(
             NULL,
             TRUE,
-            TEXT("Boost.Test timer"));
+            NULL); // naming the timer might create collisions
 
         if( htimer != INVALID_HANDLE_VALUE ) {
             LARGE_INTEGER liDueTime;
