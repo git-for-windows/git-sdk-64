@@ -16,8 +16,8 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
-  <li><a href="#EXAMPLE">EXAMPLE</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -46,18 +46,18 @@
 
 <p>Typically parameters are retrieved from an <b>SSL_CTX</b> or <b>SSL</b> structure using SSL_CTX_get0_param() or SSL_get0_param() and an application modifies them to suit its needs: for example to add a hostname check.</p>
 
-<h1 id="EXAMPLE">EXAMPLE</h1>
-
-<p>Check hostname matches &quot;www.foo.com&quot; in peer certificate:</p>
-
-<pre><code> X509_VERIFY_PARAM *vpm = SSL_get0_param(ssl);
- X509_VERIFY_PARAM_set1_host(vpm, &quot;www.foo.com&quot;, 0);</code></pre>
-
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>SSL_CTX_get0_param() and SSL_get0_param() return a pointer to an <b>X509_VERIFY_PARAM</b> structure.</p>
 
 <p>SSL_CTX_set1_param() and SSL_set1_param() return 1 for success and 0 for failure.</p>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<p>Check hostname matches &quot;www.foo.com&quot; in peer certificate:</p>
+
+<pre><code> X509_VERIFY_PARAM *vpm = SSL_get0_param(ssl);
+ X509_VERIFY_PARAM_set1_host(vpm, &quot;www.foo.com&quot;, 0);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -69,7 +69,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
