@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.7
-srcdir=		../Python-3.7.4
-VPATH=		../Python-3.7.4
-abs_srcdir=	/scripts/mingw-w64-python3/src/build-i686/../Python-3.7.4
+srcdir=		../Python-3.7.5
+VPATH=		../Python-3.7.5
+abs_srcdir=	/scripts/mingw-w64-python3/src/build-i686/../Python-3.7.5
 abs_builddir=	/scripts/mingw-w64-python3/src/build-i686
 
 
@@ -90,7 +90,7 @@ CONFIGURE_CFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-parti
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
 CONFIGURE_LDFLAGS_NODIST= -flto -fuse-linker-plugin -ffat-lto-objects -flto-partition=none -g
-CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncurses  -I.
+CONFIGURE_CPPFLAGS=	-I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncurses  -I.
 CONFIGURE_LDFLAGS=	-pipe -s 
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
@@ -140,9 +140,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4
-VPATH_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4
-abs_srcdir_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4
+srcdir_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.5
+VPATH_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.5
+abs_srcdir_b2h=		E:/mingwbuild/mingw-w64-python3/src/Python-3.7.5
 abs_builddir_b2h=	E:/mingwbuild/mingw-w64-python3/src/build-i686
 prefix_b2h=		C:/building/msys64/mingw32
 
@@ -212,7 +212,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-optimizations' '--with-lto' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-nt-threads' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-optimizations' '--with-lto' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -341,8 +341,9 @@ PGOBJS=		\
 		Parser/pgenmain.o
 
 PARSER_HEADERS= \
-		$(srcdir)/Parser/parser.h \
+		$(srcdir)/Include/grammar.h \
 		$(srcdir)/Include/parsetok.h \
+		$(srcdir)/Parser/parser.h \
 		$(srcdir)/Parser/tokenizer.h
 
 PGENOBJS=	$(POBJS) $(PGOBJS)
@@ -903,7 +904,7 @@ regen-opcode:
 		$(srcdir)/Include/opcode.h.new
 	$(UPDATE_FILE) $(srcdir)/Include/opcode.h $(srcdir)/Include/opcode.h.new
 
-Python/compile.o Python/symtable.o Python/ast_unparse.o Python/ast.o: $(srcdir)/Include/graminit.h $(srcdir)/Include/Python-ast.h
+Python/compile.o Python/symtable.o Python/ast_unparse.o Python/ast.o Python/future.o Parser/parsetok.o: $(srcdir)/Include/graminit.h $(srcdir)/Include/Python-ast.h
 
 Python/getplatform.o: $(srcdir)/Python/getplatform.c
 		$(CC) -c $(PY_CORE_CFLAGS) -DPLATFORM='"$(MACHDEP)"' -o $@ $(srcdir)/Python/getplatform.c
@@ -998,11 +999,11 @@ PYTHON_HEADERS= \
 		$(srcdir)/Include/accu.h \
 		$(srcdir)/Include/asdl.h \
 		$(srcdir)/Include/ast.h \
-		$(srcdir)/Include/bltinmodule.h \
 		$(srcdir)/Include/bitset.h \
+		$(srcdir)/Include/bltinmodule.h \
 		$(srcdir)/Include/boolobject.h \
-		$(srcdir)/Include/bytes_methods.h \
 		$(srcdir)/Include/bytearrayobject.h \
+		$(srcdir)/Include/bytes_methods.h \
 		$(srcdir)/Include/bytesobject.h \
 		$(srcdir)/Include/cellobject.h \
 		$(srcdir)/Include/ceval.h \
@@ -1011,6 +1012,7 @@ PYTHON_HEADERS= \
 		$(srcdir)/Include/codecs.h \
 		$(srcdir)/Include/compile.h \
 		$(srcdir)/Include/complexobject.h \
+		$(srcdir)/Include/context.h \
 		$(srcdir)/Include/descrobject.h \
 		$(srcdir)/Include/dictobject.h \
 		$(srcdir)/Include/dtoa.h \
@@ -1041,6 +1043,7 @@ PYTHON_HEADERS= \
 		$(srcdir)/Include/node.h \
 		$(srcdir)/Include/object.h \
 		$(srcdir)/Include/objimpl.h \
+		$(srcdir)/Include/odictobject.h \
 		$(srcdir)/Include/opcode.h \
 		$(srcdir)/Include/osdefs.h \
 		$(srcdir)/Include/osmodule.h \
@@ -1057,15 +1060,15 @@ PYTHON_HEADERS= \
 		$(srcdir)/Include/pyfpe.h \
 		$(srcdir)/Include/pyhash.h \
 		$(srcdir)/Include/pylifecycle.h \
-		$(srcdir)/Include/pymath.h \
+		$(srcdir)/Include/pymacconfig.h \
 		$(srcdir)/Include/pymacro.h \
+		$(srcdir)/Include/pymath.h \
 		$(srcdir)/Include/pymem.h \
 		$(srcdir)/Include/pyport.h \
 		$(srcdir)/Include/pystate.h \
-		$(srcdir)/Include/context.h \
 		$(srcdir)/Include/pystrcmp.h \
-		$(srcdir)/Include/pystrtod.h \
 		$(srcdir)/Include/pystrhex.h \
+		$(srcdir)/Include/pystrtod.h \
 		$(srcdir)/Include/pythonrun.h \
 		$(srcdir)/Include/pythread.h \
 		$(srcdir)/Include/pytime.h \
@@ -1076,6 +1079,7 @@ PYTHON_HEADERS= \
 		$(srcdir)/Include/structseq.h \
 		$(srcdir)/Include/symtable.h \
 		$(srcdir)/Include/sysmodule.h \
+		$(srcdir)/Include/token.h \
 		$(srcdir)/Include/traceback.h \
 		$(srcdir)/Include/tupleobject.h \
 		$(srcdir)/Include/ucnhash.h \
@@ -1105,6 +1109,11 @@ TESTRUNNER=	$(TESTPYTHON) $(srcdir)/Tools/scripts/run_tests.py
 TESTTIMEOUT=	1200
 
 .PHONY: test testall testuniversal buildbottest pythoninfo
+
+# Remove "test_python_*" directories of previous failed test jobs.
+# Pass TESTOPTS options because it can contain --tempdir option.
+cleantest: build_all
+	$(TESTRUNNER) $(TESTOPTS) --cleanup
 
 # Run a basic set of regression tests.
 # This excludes some tests that are particularly resource-intensive.

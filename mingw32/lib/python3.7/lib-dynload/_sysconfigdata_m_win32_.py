@@ -39,8 +39,7 @@ build_time_vars = {'ABIFLAGS': 'm',
                             '-Wno-missing-field-initializers '
                             '-Wno-cast-function-type '
                             '-Werror=implicit-function-declaration',
- 'CONFIGURE_CPPFLAGS': '-I../Python-3.7.4/PC -D_FORTIFY_SOURCE=2 '
-                       '-D__USE_MINGW_ANSI_STDIO=1 '
+ 'CONFIGURE_CPPFLAGS': '-I../Python-3.7.5/PC -D__USE_MINGW_ANSI_STDIO=1 '
                        '-IC:/building/msys64/mingw32/include/ncurses  -I.',
  'CONFIGURE_LDFLAGS': '-pipe -s',
  'CONFIGURE_LDFLAGS_NODIST': '-flto -fuse-linker-plugin -ffat-lto-objects '
@@ -53,8 +52,7 @@ build_time_vars = {'ABIFLAGS': 'm',
                 "'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' "
                 "'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv "
                 "-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601 -DNDEBUG ' "
-                "'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 "
-                '-D__USE_MINGW_ANSI_STDIO=1 '
+                "'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 "
                 "-IC:/building/msys64/mingw32/include/ncurses ' "
                 "'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'",
  'CONFINCLUDEDIR': '/mingw32/include',
@@ -64,11 +62,10 @@ build_time_vars = {'ABIFLAGS': 'm',
  'COVERAGE_REPORT': '/scripts/mingw-w64-python3/src/build-i686/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--no-branch-coverage --title "CPython lcov '
                             'report"',
- 'CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.4/Include '
-             '-I../Python-3.7.4/PC -D_FORTIFY_SOURCE=2 '
-             '-D__USE_MINGW_ANSI_STDIO=1 '
+ 'CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.5/Include '
+             '-I../Python-3.7.5/PC -D__USE_MINGW_ANSI_STDIO=1 '
              '-IC:/building/msys64/mingw32/include/ncurses  -I. '
-             '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
+             '-D__USE_MINGW_ANSI_STDIO=1 '
              '-IC:/building/msys64/mingw32/include/ncurses',
  'CXX': 'i686-w64-mingw32-c++',
  'DESTDIR': '',
@@ -565,7 +562,7 @@ build_time_vars = {'ABIFLAGS': 'm',
  'MAINCC': 'i686-w64-mingw32-gcc',
  'MAJOR_IN_MKDEV': 0,
  'MAJOR_IN_SYSMACROS': 0,
- 'MAKESETUP': '../Python-3.7.4/Modules/makesetup',
+ 'MAKESETUP': '../Python-3.7.5/Modules/makesetup',
  'MANDIR': '/mingw32/share/man',
  'MKDIR_P': '/usr/bin/mkdir -p',
  'MODBUILT_NAMES': 'nt  winreg  msvcrt  _winapi  errno  _sre  _codecs  '
@@ -645,12 +642,10 @@ build_time_vars = {'ABIFLAGS': 'm',
                              '-Wno-cast-function-type '
                              '-Werror=implicit-function-declaration '
                              '-fprofile-use -fprofile-correction -IObjects '
-                             '-IInclude -IPython -I. -I../Python-3.7.4/Include '
-                             '-I../Python-3.7.4/PC -D_FORTIFY_SOURCE=2 '
-                             '-D__USE_MINGW_ANSI_STDIO=1 '
+                             '-IInclude -IPython -I. -I../Python-3.7.5/Include '
+                             '-I../Python-3.7.5/PC -D__USE_MINGW_ANSI_STDIO=1 '
                              '-IC:/building/msys64/mingw32/include/ncurses  '
-                             '-I. -D_FORTIFY_SOURCE=2 '
-                             '-D__USE_MINGW_ANSI_STDIO=1 '
+                             '-I. -D__USE_MINGW_ANSI_STDIO=1 '
                              '-IC:/building/msys64/mingw32/include/ncurses '
                              '-DPy_BUILD_CORE_BUILTIN',
  'PY_CFLAGS': '-Wno-unused-result -Wsign-compare -DNDEBUG -march=i686 '
@@ -676,19 +671,18 @@ build_time_vars = {'ABIFLAGS': 'm',
                    '-Wno-missing-field-initializers -Wno-cast-function-type '
                    '-Werror=implicit-function-declaration -fprofile-use '
                    '-fprofile-correction -IObjects -IInclude -IPython -I. '
-                   '-I../Python-3.7.4/Include -I../Python-3.7.4/PC '
-                   '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
+                   '-I../Python-3.7.5/Include -I../Python-3.7.5/PC '
+                   '-D__USE_MINGW_ANSI_STDIO=1 '
                    '-IC:/building/msys64/mingw32/include/ncurses  -I. '
-                   '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
+                   '-D__USE_MINGW_ANSI_STDIO=1 '
                    '-IC:/building/msys64/mingw32/include/ncurses '
                    '-DPy_BUILD_CORE',
  'PY_CORE_LDFLAGS': '-pipe -s -pipe -s -flto -fuse-linker-plugin '
                     '-ffat-lto-objects -flto-partition=none -g',
- 'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.4/Include '
-                '-I../Python-3.7.4/PC -D_FORTIFY_SOURCE=2 '
-                '-D__USE_MINGW_ANSI_STDIO=1 '
+ 'PY_CPPFLAGS': '-IObjects -IInclude -IPython -I. -I../Python-3.7.5/Include '
+                '-I../Python-3.7.5/PC -D__USE_MINGW_ANSI_STDIO=1 '
                 '-IC:/building/msys64/mingw32/include/ncurses  -I. '
-                '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
+                '-D__USE_MINGW_ANSI_STDIO=1 '
                 '-IC:/building/msys64/mingw32/include/ncurses',
  'PY_FORMAT_SIZE_T': '"z"',
  'PY_LDFLAGS': '-pipe -s -pipe -s',
@@ -708,10 +702,10 @@ build_time_vars = {'ABIFLAGS': 'm',
                         '-Wno-cast-function-type '
                         '-Werror=implicit-function-declaration -fprofile-use '
                         '-fprofile-correction -IObjects -IInclude -IPython -I. '
-                        '-I../Python-3.7.4/Include -I../Python-3.7.4/PC '
-                        '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
+                        '-I../Python-3.7.5/Include -I../Python-3.7.5/PC '
+                        '-D__USE_MINGW_ANSI_STDIO=1 '
                         '-IC:/building/msys64/mingw32/include/ncurses  -I. '
-                        '-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 '
+                        '-D__USE_MINGW_ANSI_STDIO=1 '
                         '-IC:/building/msys64/mingw32/include/ncurses',
  'Py_DEBUG': 0,
  'Py_ENABLE_SHARED': 1,
@@ -749,7 +743,7 @@ build_time_vars = {'ABIFLAGS': 'm',
  'SIZEOF__BOOL': 1,
  'SOABI': 'cpython-37m',
  'SRCDIRS': 'Parser Objects Python Modules Modules/_io Programs PC',
- 'SRC_GDB_HOOKS': '../Python-3.7.4/Tools/gdb/libpython.py',
+ 'SRC_GDB_HOOKS': '../Python-3.7.5/Tools/gdb/libpython.py',
  'STDC_HEADERS': 1,
  'STRICT_SYSV_CURSES': "/* Don't use ncurses extensions */",
  'STRIPFLAG': '-s',
@@ -764,18 +758,18 @@ build_time_vars = {'ABIFLAGS': 'm',
  'TESTPATH': '',
  'TESTPYTHON': './python.exe',
  'TESTPYTHONOPTS': '',
- 'TESTRUNNER': './python.exe ../Python-3.7.4/Tools/scripts/run_tests.py',
+ 'TESTRUNNER': './python.exe ../Python-3.7.5/Tools/scripts/run_tests.py',
  'TESTTIMEOUT': 1200,
  'TIMEMODULE_LIB': 0,
  'TIME_WITH_SYS_TIME': 1,
  'TM_IN_SYS_TIME': 0,
  'UNICODE_DEPS': '\\',
  'UNIVERSALSDK': '',
- 'UPDATE_FILE': 'python3.7 ../Python-3.7.4/Tools/scripts/update_file.py',
+ 'UPDATE_FILE': 'python3.7 ../Python-3.7.5/Tools/scripts/update_file.py',
  'USE_COMPUTED_GOTOS': 0,
  'VERSION': '3.7',
- 'VPATH': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4',
- 'VPATH_b2h': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4',
+ 'VPATH': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.5',
+ 'VPATH_b2h': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.5',
  'WINDOW_HAS_FLAGS': 1,
  'WITH_DOC_STRINGS': 1,
  'WITH_DTRACE': 0,
@@ -788,14 +782,14 @@ build_time_vars = {'ABIFLAGS': 'm',
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
  'abs_builddir': 'E:/mingwbuild/mingw-w64-python3/src/build-i686',
  'abs_builddir_b2h': 'E:/mingwbuild/mingw-w64-python3/src/build-i686',
- 'abs_srcdir': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4',
- 'abs_srcdir_b2h': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4',
+ 'abs_srcdir': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.5',
+ 'abs_srcdir_b2h': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.5',
  'datarootdir': '/mingw32/share',
  'exec_prefix': '/mingw32',
  'prefix': 'C:/building/msys64/mingw32',
  'prefix_b2h': 'C:/building/msys64/mingw32',
- 'srcdir': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4',
- 'srcdir_b2h': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.4'}
+ 'srcdir': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.5',
+ 'srcdir_b2h': 'E:/mingwbuild/mingw-w64-python3/src/Python-3.7.5'}
 
 
 keys_to_replace = [

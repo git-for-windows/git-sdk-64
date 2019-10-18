@@ -13,7 +13,7 @@ SECTIONS
   . = ALIGN(__section_alignment__);
   .text  __image_base__ + ( __section_alignment__ < 0x1000 ? . : __section_alignment__ ) :
   {
-     KEEP(*(.init))
+    KEEP (*(SORT_NONE(.init)))
     *(.text)
     *(SORT(.text$*))
      *(.text.*)
@@ -52,7 +52,7 @@ SECTIONS
        KEEP (*(.dtor));
        KEEP (*(SORT_BY_NAME(.dtors.*)));
        LONG (0); LONG (0);
-     KEEP (*(.fini))
+    KEEP (*(SORT_NONE(.fini)))
     /* ??? Why is .gcc_exc here?  */
      *(.gcc_exc)
     PROVIDE (etext = .);

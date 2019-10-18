@@ -116,6 +116,8 @@ typedef struct disassemble_info
   /* Set if the user has specifically set the machine type encoded in the
      mach field of this structure.  */
 #define USER_SPECIFIED_MACHINE_TYPE (1 << 29)
+  /* Set if the user has requested wide output.  */
+#define WIDE_OUTPUT (1 << 28)
 
   /* Use internally by the target specific disassembly code.  */
   void *private_data;
@@ -220,6 +222,12 @@ typedef struct disassemble_info
      If an instruction spans this address then this is an error in the
      file being disassembled.  */
   bfd_vma stop_vma;
+
+  /* The end range of the current range being disassembled.  This is required
+     in order to notify the disassembler when it's currently handling a
+     different range than it was before.  This prevent unsafe optimizations when
+     disassembling such as the way mapping symbols are found on AArch64.  */
+  bfd_vma stop_offset;
 
 } disassemble_info;
 

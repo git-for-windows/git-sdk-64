@@ -9,8 +9,7 @@
 
 /**
  * SECTION:initialization_versions
- * @Short_description: 
-Library version numbers.
+ * @Short_description: Library version numbers.
  * @Title: Initialization and Versions
  * 
  * These macros and variables let you check the version of gdk-pixbuf
@@ -44,9 +43,9 @@ Library version numbers.
  */
 
 #define GDK_PIXBUF_MAJOR (2)
-#define GDK_PIXBUF_MINOR (38)
-#define GDK_PIXBUF_MICRO (2)
-#define GDK_PIXBUF_VERSION "2.38.2"
+#define GDK_PIXBUF_MINOR (40)
+#define GDK_PIXBUF_MICRO (0)
+#define GDK_PIXBUF_VERSION "2.40.0"
 
 #ifndef _GDK_PIXBUF_EXTERN
 #define _GDK_PIXBUF_EXTERN extern
