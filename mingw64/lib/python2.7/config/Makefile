@@ -26,9 +26,9 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	2.7
-srcdir=		../Python-2.7.16
-VPATH=		../Python-2.7.16
-abs_srcdir=	/scripts/mingw-w64-python2/src/build-x86_64/../Python-2.7.16
+srcdir=		../Python-2.7.17
+VPATH=		../Python-2.7.17
+abs_srcdir=	/scripts/mingw-w64-python2/src/build-x86_64/../Python-2.7.17
 abs_builddir=	/scripts/mingw-w64-python2/src/build-x86_64
 build=		x86_64-w64-mingw32
 host=		x86_64-w64-mingw32
@@ -77,7 +77,7 @@ CFLAGS=		$(BASECFLAGS) -march=x86-64 -mtune=generic -O2 -pipe -fwrapv -D__USE_MI
 # Both CPPFLAGS and LDFLAGS need to contain the shell's value for setup.py to
 # be able to build extension modules using the directories specified in the
 # environment variables
-CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw64/include/ncurses 
+CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw64/include/ncurses 
 LDFLAGS=	-pipe -s 
 LDLAST=		
 SGI_ABI=	
@@ -107,9 +107,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		E:/mingwbuild/mingw-w64-python2/src/Python-2.7.16
-VPATH_b2h=		E:/mingwbuild/mingw-w64-python2/src/Python-2.7.16
-abs_srcdir_b2h=		E:/mingwbuild/mingw-w64-python2/src/Python-2.7.16
+srcdir_b2h=		E:/mingwbuild/mingw-w64-python2/src/Python-2.7.17
+VPATH_b2h=		E:/mingwbuild/mingw-w64-python2/src/Python-2.7.17
+abs_srcdir_b2h=		E:/mingwbuild/mingw-w64-python2/src/Python-2.7.17
 abs_builddir_b2h=	E:/mingwbuild/mingw-w64-python2/src/build-x86_64
 prefix_b2h=		C:/building/msys64/mingw64
 
@@ -167,11 +167,11 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw64/include/ncurses ' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'CFLAGS=-march=x86-64 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw64/include/ncurses ' 'PKG_CONFIG_PATH=/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig'
 
 
 # Subdirectories with code
-SRCDIRS= 	Parser Objects Python Modules PC
+SRCDIRS= 	Parser Objects Python Modules Modules/_io PC
 
 # Other subdirectories
 SUBDIRSTOO=	Include Lib Misc Demo
@@ -890,6 +890,12 @@ $(LIBRARY_OBJS) $(MODOBJS) Modules/python.o: $(PYTHON_HEADERS)
 TESTOPTS=	-l $(EXTRATESTOPTS)
 TESTPROG=	$(srcdir)/Lib/test/regrtest.py
 TESTPYTHON=	$(RUNSHARED) ./$(BUILDPYTHON) -Wd -3 -E -tt $(TESTPYTHONOPTS)
+
+# Remove "test_python_*" directories of previous failed test jobs.
+# Pass TESTOPTS options because it can contain --tempdir option.
+cleantest: build_all
+	$(TESTPYTHON) $(TESTPROG) $(TESTOPTS) --cleanup
+
 test:		all platform
 		-find $(srcdir)/Lib -name '*.py[co]' -print | xargs rm -f
 		-$(TESTPYTHON) $(TESTPROG) $(TESTOPTS)
