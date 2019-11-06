@@ -2,7 +2,7 @@
 #
 #   git.sh - function for handling the download and "extraction" of Git sources
 #
-#   Copyright (c) 2015-2018 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2015-2019 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,11 @@ source "$LIBRARY/util/pkgbuild.sh"
 
 
 download_git() {
+	# abort early if parent says not to fetch
+	if declare -p get_vcs > /dev/null 2>&1; then
+		(( get_vcs )) || return
+	fi
+
 	local netfile=$1
 
 	local dir=$(get_filepath "$netfile")
@@ -86,7 +91,7 @@ extract_git() {
 			exit 1
 		fi
 		cd_safe "$srcdir"
-	elif ! git clone "$dir" "${dir##*/}"; then
+	elif ! git clone -s "$dir" "${dir##*/}"; then
 		error "$(gettext "Failure while creating working copy of %s %s repo")" "${repo}" "git"
 		plain "$(gettext "Aborting...")"
 		exit 1
@@ -112,7 +117,7 @@ extract_git() {
 
 	if [[ ${fragment%%=*} = tag ]]; then
 		tagname="$(git tag -l --format='%(tag)' "$ref")"
-		if [[ -n $tagname && $tagname != $ref ]]; then
+		if [[ -n $tagname && $tagname != "$ref" ]]; then
 			error "$(gettext "Failure while checking out version %s, the git tag has been forged")" "$ref"
 			plain "$(gettext "Aborting...")"
 			exit 1

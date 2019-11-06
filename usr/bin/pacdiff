@@ -21,7 +21,7 @@
 shopt -s extglob
 
 declare -r myname='pacdiff'
-declare -r myver='1.1.0'
+declare -r myver='1.2.0'
 
 diffprog=${DIFFPROG:-'vim -d'}
 diffsearchpath=${DIFFSEARCHPATH:-/etc}
@@ -150,7 +150,7 @@ done
 
 # check if messages are to be printed using color
 unset ALL_OFF BOLD BLUE GREEN RED YELLOW
-if [[ -t 2 && ! $USE_COLOR = "n" ]]; then
+if [[ -t 2 && ! $USE_COLOR = "n" && ! $TERM = "dumb" ]]; then
 	# prefer terminal safe colored and bold text when tput is supported
 	if tput setaf 0 &>/dev/null; then
 		ALL_OFF="$(tput sgr0)"
@@ -187,7 +187,7 @@ if (( USE_PACDB )); then
 		error "unable to read /etc/pacman.conf"
 		usage; exit 1
 	fi
-	pac_db="${DBPath:-/var/lib/pacman/}local"
+	pac_db="${DBPath:-/var/lib/pacman}/local"
 	if [[ ! -d "${pac_db}" ]]; then
 		error "unable to read pacman database %s". "${pac_db}"
 		usage; exit 1

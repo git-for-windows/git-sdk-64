@@ -2,7 +2,7 @@
 #
 #   hg.sh - function for handling the download and "extraction" of Mercurial sources
 #
-#   Copyright (c) 2015-2018 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2015-2019 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,11 @@ source "$LIBRARY/util/pkgbuild.sh"
 
 
 download_hg() {
+	# abort early if parent says not to fetch
+	if declare -p get_vcs > /dev/null 2>&1; then
+		(( get_vcs )) || return
+	fi
+
 	local netfile=$1
 
 	local dir=$(get_filepath "$netfile")
@@ -74,7 +79,11 @@ extract_hg() {
 	msg2 "$(gettext "Creating working copy of %s %s repo...")" "${repo}" "hg"
 	pushd "$srcdir" &>/dev/null
 
-	local ref=tip
+	local ref=default
+	# Is the repository configured to checkout some ref other than 'default'?
+	if hg identify -r @ "$dir" >/dev/null 2>&1; then
+		ref=@
+	fi
 	if [[ -n $fragment ]]; then
 		case ${fragment%%=*} in
 			branch|revision|tag)

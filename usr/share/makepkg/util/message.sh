@@ -2,7 +2,7 @@
 #
 #   message.sh - functions for outputting messages in makepkg
 #
-#   Copyright (c) 2006-2018 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2006-2019 Pacman Development Team <pacman-dev@archlinux.org>
 #   Copyright (c) 2002-2006 by Judd Vinet <jvinet@zeroflux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -44,18 +44,26 @@ colorize() {
 }
 
 plain() {
+	(( QUIET )) && return
 	local mesg=$1; shift
-	printf "${BOLD}    ${mesg}${ALL_OFF}\n" "$@" >&2
+	printf "${BOLD}    ${mesg}${ALL_OFF}\n" "$@"
 }
 
 msg() {
+	(( QUIET )) && return
 	local mesg=$1; shift
-	printf "${GREEN}==>${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+	printf "${GREEN}==>${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@"
 }
 
 msg2() {
+	(( QUIET )) && return
 	local mesg=$1; shift
-	printf "${BLUE}  ->${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+	printf "${BLUE}  ->${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@"
+}
+
+ask() {
+	local mesg=$1; shift
+	printf "${BLUE}::${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}" "$@"
 }
 
 warning() {

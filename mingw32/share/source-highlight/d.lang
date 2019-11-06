@@ -1,5 +1,4 @@
 # D language definition, http://www.digitalmars.com/d/2.0/index.html
-# most is reused from cpp.lang
 
 preproc = '\<__[[:alpha:]]+__\>'
 preproc = "import"
@@ -20,12 +19,21 @@ string delim "`" "`"
 # string literal postfix characters
 string = '\".*\"(c|w|d)'
 
-include "cpp.lang"
+include "c_comment.lang"
+
+(keyword,normal,classname) = 
+  `(\<(?:enum|class|struct|typename|union))([[:blank:]]+)([[:alnum:]_]+)`
 
 type = "byte|cdouble|cent|cfloat|creal|dchar|idouble|ifloat|ireal",
-	"real|ubyte|ucent|uint|ulong|ushort|wchar"
+	"real|ubyte|ucent|uint|ulong|ushort|wchar",
+	"bool|char|double|float|int|long",
+  	"short|signed|unsigned|wchar_t"
 
-subst keyword = "abstract|alias|align|asm|assert|auto|body",
+include "number.lang"
+
+include "c_string.lang"
+
+keyword = "abstract|alias|align|asm|assert|auto|body",
 "break|case|cast|catch|class|const|continue|debug|default",
 "delegate|delete|deprecated|do|else|enum|export|extern",
 "false|final|finally|for|foreach_reverse|foreach|function",
@@ -37,3 +45,12 @@ subst keyword = "abstract|alias|align|asm|assert|auto|body",
 "typeof|union|unittest|version|void|volatile",
 "while|with|__gshared|__thread|__traits"
 
+label = '^[[:blank:]]*[[:alnum:]]+:[[:blank:]]*\z'
+
+include "symbols.lang"
+
+cbracket = "{|}"
+
+include "function.lang"
+
+include "clike_vardeclaration.lang"

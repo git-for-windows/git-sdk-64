@@ -74,7 +74,7 @@
 /* Define if GCC supports __attribute__((format(PyArg_ParseTuple, 2, 3))) */
 /* #undef HAVE_ATTRIBUTE_FORMAT_PARSETUPLE */
 
-/* Define to 1 if you have the `bind_textdomain_codeset' function. */
+/* Define to 1 if bind_textdomain_codeset is available. */
 #define HAVE_BIND_TEXTDOMAIN_CODESET 1
 
 /* Define to 1 if you have the <bluetooth/bluetooth.h> header file. */
@@ -439,6 +439,9 @@
 
 /* Define to 1 if you have the 'lchflags' function. */
 /* #undef HAVE_LCHFLAGS */
+
+/* Define to 1 if you have the `lchmod' function. */
+/* #undef HAVE_LCHMOD */
 
 /* Define to 1 if you have the `lchown' function. */
 #define HAVE_LCHOWN 1

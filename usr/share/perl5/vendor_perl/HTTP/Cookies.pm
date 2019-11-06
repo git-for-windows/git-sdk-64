@@ -4,18 +4,14 @@ use strict;
 use HTTP::Date qw(str2time parse_date time2str);
 use HTTP::Headers::Util qw(_split_header_words join_header_words);
 
-use vars qw($EPOCH_OFFSET);
-our $VERSION = '6.04';
+our $EPOCH_OFFSET;
+our $VERSION = '6.05';
 
 # Legacy: because "use "HTTP::Cookies" used be the ONLY way
 #  to load the class HTTP::Cookies::Netscape.
 require HTTP::Cookies::Netscape;
 
 $EPOCH_OFFSET = 0;  # difference from Unix epoch
-if ($^O eq "MacOS") {
-    require Time::Local;
-    $EPOCH_OFFSET = Time::Local::timelocal(0,0,0,1,0,70);
-}
 
 # A HTTP::Cookies object is a hash.  The main attribute is the
 # COOKIES 3 level hash:  $self->{COOKIES}{$domain}{$path}{$key}.
@@ -231,7 +227,7 @@ sub extract_cookies
 	    my $param;
 	    my $expires;
 	    my $first_param = 1;
-	    for $param (split(/;\s*/, $set)) {
+	    for $param (@{_split_text($set)}) {
                 next unless length($param);
 		my($k,$v) = split(/\s*=\s*/, $param, 2);
 		if (defined $v) {
@@ -434,6 +430,7 @@ sub save
     open(my $fh, '>', $file) or die "Can't open $file: $!";
     print {$fh} "#LWP-Cookies-1.0\n";
     print {$fh} $self->as_string(!$self->{ignore_discard});
+    close $fh or die "Can't close $file: $!";
     1;
 }
 
@@ -620,6 +617,50 @@ sub _normalize_path  # so that plain string compare can be used
     $_[0] =~ s/([\0-\x20\x7f-\xff])/sprintf("%%%02X",ord($1))/eg;
 }
 
+# deals with splitting values by ; and the fact that they could
+# be in quotes which can also have escaping.
+sub _split_text {
+    my $val = shift;
+    my @vals = grep { $_ ne q{} } split(/([;\\"])/, $val);
+    my @chunks;
+    # divide it up into chunks to be processed.
+    my $in_string = 0;
+    my @current_string;
+    for(my $i = 0; $i < @vals; $i++) {
+        my $chunk = $vals[$i];
+        if($in_string) {
+            if($chunk eq q{\\}) {
+                # don't care about next char probably.
+                # having said that, probably need to be appending to the chunks
+                # just dropping this.
+                $i++;
+                if($i < @vals) {
+                    push @current_string, $vals[$i];
+                }
+            } elsif($chunk eq q{"}) {
+                $in_string = 0;
+            }
+            else {
+                push @current_string, $chunk;
+            }
+        } else {
+            if($chunk eq q{"}) {
+                $in_string = 1;
+            }
+            elsif($chunk eq q{;}) {
+                push @chunks, join(q{}, @current_string);
+                @current_string = ();
+            }
+            else {
+                push @current_string, $chunk;
+            }
+        }
+    }
+    push @chunks, join(q{}, @current_string) if @current_string;
+    s/^\s+// for @chunks;
+    return \@chunks;
+}
+
 1;
 
 =pod
@@ -632,7 +673,7 @@ HTTP::Cookies - HTTP cookie jars
 
 =head1 VERSION
 
-version 6.04
+version 6.05
 
 =head1 SYNOPSIS
 
@@ -661,8 +702,8 @@ knows about.
 Cookies are a general mechanism which server side connections can use
 to both store and retrieve information on the client side of the
 connection.  For more information about cookies refer to
-<URL:http://curl.haxx.se/rfc/cookie_spec.html> and
-<URL:http://www.cookiecentral.com/>.  This module also implements the
+L<Cookie Spec|http://curl.haxx.se/rfc/cookie_spec.html> and
+L<Cookie Central|http://www.cookiecentral.com>.  This module also implements the
 new style cookies described in L<RFC 2965|https://tools.ietf.org/html/rfc2965>.
 The two variants of cookies are supposed to be able to coexist happily.
 
@@ -741,8 +782,11 @@ The set_cookie() method updates the state of the $cookie_jar.  The
 $key, $val, $domain, $port and $path arguments are strings.  The
 $path_spec, $secure, $discard arguments are boolean values. The $maxage
 value is a number indicating number of seconds that this cookie will
-live.  A value of $maxage <= 0 will delete this cookie.  %rest defines
-various other attributes like "Comment" and "CommentURL".
+live.  A value of $maxage <= 0 will delete this cookie.  The $version argument
+sets the version of the cookie; the default value is 0 ( original Netscape 
+spec ).  Setting $version to another value indicates the RFC to which the
+cookie conforms (e.g. version 1 for RFC 2109).  %rest defines various other
+attributes like "Comment" and "CommentURL".
 
 =item $cookie_jar->save
 

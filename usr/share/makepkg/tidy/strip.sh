@@ -2,7 +2,7 @@
 #
 #   strip.sh - Strip debugging symbols from binary files
 #
-#   Copyright (c) 2007-2018 Pacman Development Team <pacman-dev@archlinux.org>
+#   Copyright (c) 2007-2019 Pacman Development Team <pacman-dev@archlinux.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ tidy_modify+=('tidy_strip')
 
 source_files() {
 	LANG=C readelf "$1" --debug-dump | \
-		awk '/DW_AT_name +:/{name=$8}/DW_AT_comp_dir +:/{{if (name !~ /^\//) {printf "%s/", $8}}{print name}}'
+		awk '/DW_AT_name +:/{name=$8}/DW_AT_comp_dir +:/{{if (name == "<artificial>") next}{if (name !~ /^[<\/]/) {printf "%s/", $8}}{print name}}'
 }
 
 strip_file() {
@@ -48,7 +48,7 @@ strip_file() {
 
 			# copy source files to debug directory
 			local f t
-			while read -r t; do
+			while IFS= read -r t; do
 				f=${t/${dbgsrcdir}/"$srcdir"}
 				mkdir -p "${dbgsrc/"$dbgsrcdir"/}${t%/*}"
 				cp -- "$f" "${dbgsrc/"$dbgsrcdir"/}$t"
@@ -77,7 +77,7 @@ strip_file() {
 			# it's pointing), and its contents pass the CRC32 check
 
 			# create any needed hardlinks
-			while read -rd '' file ; do
+			while IFS= read -rd '' file ; do
 				if [[ "${binary}" -ef "${file}" && ! -f "$dbgdir/${file}.debug" ]]; then
 					mkdir -p "$dbgdir/${file%/*}"
 					ln "$dbgdir/${binary}.debug" "$dbgdir/${file}.debug"
@@ -114,7 +114,7 @@ tidy_strip() {
 		find * -type f ! -name '*.dll.a' ! -name '*.lib' \
 			-a \( -name '*.a' -o -name '*.dll' -o -name '*.exe' -o -name '*.so' -o -name '*.so.*' -o -name '*.oct' -o -name '*.cmxs' \) -print0 \
 			-o -type f -executable ! -name '*.dll' ! -name '*.exe' ! -name '*.so' ! -name '*.so.[0-9]*' ! -name '*.oct' ! -name '*.cmxs' ! -name '*.a' ! -name '*.la' ! -name '*.lib' ! -name '*.exe.manifest' ! -name '*.exe.config' ! -name '*.dll.config' ! -name '*.mdb' ! -name '*-config' ! -name '*.csh' ! -name '*.sh' ! -name '*.pl' ! -name '*.pm' ! -name '*.py' ! -name '*.rb' ! -name '*.tcl' -print0 | \
-		while read -d $'\0' binary
+		while IFS= read -d $'\0' binary
 		do
 			# Skip thin archives from stripping
 			case "${binary##*/}" in

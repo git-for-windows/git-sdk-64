@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta name="GENERATOR" content="GNU source-highlight 3.1.8
+<meta name="GENERATOR" content="GNU source-highlight 3.1.9
 by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite">
-<title>../../source-highlight-3.1.8/src/source-highlight.cc</title>
+<title>../../source-highlight-3.1.9/src/source-highlight.cc</title>
 </head>
 <body bgcolor="white">
 <pre><tt><i><font color="#9A1900">/*</font></i>
@@ -72,7 +72,7 @@ http://www.gnu.org/software/src-highlite">
 <i><font color="#9A1900"> * INFERFIRST = inference has priority (e.g., if --infer-lang is specified),</font></i>
 <i><font color="#9A1900"> * INFERATLAST = try inference as the last chance</font></i>
 <i><font color="#9A1900"> */</font></i>
-<b><font color="#0000FF">enum</font></b> InferPolicy <font color="#FF0000">{</font>
+<b><font color="#0000FF">enum</font></b> <font color="#008080">InferPolicy</font> <font color="#FF0000">{</font>
     NOINFERENCE <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">,</font> INFERFIRST<font color="#990000">,</font> INFERATLAST
 <font color="#FF0000">}</font><font color="#990000">;</font>
 
@@ -214,34 +214,35 @@ http://www.gnu.org/software/src-highlite">
     <i><font color="#9A1900">// the default for output format is html</font></i>
     outputFormat <font color="#990000">=</font> args_info<font color="#990000">.</font>out_format_arg<font color="#990000">;</font>
 
-    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>args_info<font color="#990000">.</font>data_dir_given<font color="#990000">)</font> <font color="#FF0000">{</font>
-        dataDir <font color="#990000">=</font> args_info<font color="#990000">.</font>data_dir_arg<font color="#990000">;</font>
-    <font color="#FF0000">}</font>
-
     <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>args_info<font color="#990000">.</font>output_dir_given<font color="#990000">)</font> <font color="#FF0000">{</font>
         outputDir <font color="#990000">=</font> args_info<font color="#990000">.</font>output_dir_arg<font color="#990000">;</font>
     <font color="#FF0000">}</font>
 
     <i><font color="#9A1900">/*</font></i>
-<i><font color="#9A1900">     the starting default path to search for files is computed at</font></i>
-<i><font color="#9A1900">     run-time: it is</font></i>
-<i><font color="#9A1900">     the path of the binary + ".." + RELATIVEDATADIR</font></i>
-<i><font color="#9A1900">     this should make the package relocable (i.e., not stuck</font></i>
-<i><font color="#9A1900">     with a fixed installation directory).</font></i>
+<i><font color="#9A1900">     The starting default path is from Settings::retrieveDataDir() which</font></i>
+<i><font color="#9A1900">     does the heavy lifting of finding the data dir by looking at config-time</font></i>
+<i><font color="#9A1900">     values, environment variables, user settings at $HOME, etc. See settings.h</font></i>
+
+<i><font color="#9A1900">     From here, invoking with --data-dir=&lt;my-datadir&gt; overrides the above value.</font></i>
+
+<i><font color="#9A1900">     We also use a fallback dir which is calculated in runtime relative to this</font></i>
+<i><font color="#9A1900">     executable (by default &lt;executable-dir&gt;/../share/source-highlight/).</font></i>
+
+<i><font color="#9A1900">     this should make the package relocatable (i.e., not stuck with a fixed</font></i>
+<i><font color="#9A1900">     installation directory).</font></i>
 <i><font color="#9A1900">     Of course, the GNU standards for installation directories</font></i>
 <i><font color="#9A1900">     should be followed, but this is not a problem if you use</font></i>
 <i><font color="#9A1900">     configure and make install features.</font></i>
-<i><font color="#9A1900">     If no path is specified in the running program we go back to</font></i>
-<i><font color="#9A1900">     the absolute datadir.</font></i>
-<i><font color="#9A1900">     */</font></i>
-    <i><font color="#9A1900">// this is defined in fileutil.cc</font></i>
-    <font color="#008080">string</font> prefix_dir <font color="#990000">=</font> <b><font color="#000000">get_file_path</font></b><font color="#990000">(</font>argv<font color="#990000">[</font><font color="#993399">0</font><font color="#990000">]);</font>
-    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>prefix_dir<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">())</font>
-        start_path <font color="#990000">=</font> <b><font color="#000000">get_file_path</font></b><font color="#990000">(</font>argv<font color="#990000">[</font><font color="#993399">0</font><font color="#990000">])</font> <font color="#990000">+</font> RELATIVEDATADIR<font color="#990000">;</font>
-    <b><font color="#0000FF">else</font></b>
-        start_path <font color="#990000">=</font> Settings<font color="#990000">::</font><b><font color="#000000">retrieveDataDir</font></b><font color="#990000">();</font>
+<i><font color="#9A1900">    */</font></i>
 
-    <i><font color="#9A1900">// if datadir is not specified, we rely on start_path?</font></i>
+    dataDir <font color="#990000">=</font> Settings<font color="#990000">::</font><b><font color="#000000">retrieveDataDir</font></b><font color="#990000">();</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>args_info<font color="#990000">.</font>data_dir_given<font color="#990000">)</font>
+        dataDir <font color="#990000">=</font> args_info<font color="#990000">.</font>data_dir_arg<font color="#990000">;</font>
+
+    <i><font color="#9A1900">// start_path is global fallback for dataDir - used at fileutil.h</font></i>
+    <font color="#008080">string</font> executable_dir <font color="#990000">=</font> <b><font color="#000000">get_file_path</font></b><font color="#990000">(</font>argv<font color="#990000">[</font><font color="#993399">0</font><font color="#990000">]);</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>executable_dir<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">())</font>
+        start_path <font color="#990000">=</font> executable_dir <font color="#990000">+</font> RELATIVEDATADIR<font color="#990000">;</font>
 
     <b><font color="#0000FF">try</font></b> <font color="#FF0000">{</font>
         <i><font color="#9A1900">// initialize map files</font></i>

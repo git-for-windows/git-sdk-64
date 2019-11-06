@@ -22,7 +22,7 @@
    packages produce RGBA files but don't mark the alpha properly. */
 #define DEFAULT_EXTRASAMPLE_AS_ALPHA 1
 
-/* enable deferred strip/tile offset/size loading (experimental) */
+/* enable deferred strip/tile offset/size loading */
 /* #undef DEFER_STRILE_LOAD */
 
 /* Define to 1 if you have the <assert.h> header file. */
@@ -188,7 +188,7 @@
 #define PACKAGE_NAME "LibTIFF Software"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "LibTIFF Software 4.0.10"
+#define PACKAGE_STRING "LibTIFF Software 4.1.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "tiff"
@@ -197,7 +197,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "4.0.10"
+#define PACKAGE_VERSION "4.1.0"
 
 /* Support Macintosh PackBits algorithm */
 #define PACKBITS_SUPPORT 1
@@ -313,7 +313,7 @@
 #define USE_WIN32_FILEIO 1
 
 /* Version number of package */
-#define VERSION "4.0.10"
+#define VERSION "4.1.0"
 
 /* Support webp compression */
 /* #undef WEBP_SUPPORT */

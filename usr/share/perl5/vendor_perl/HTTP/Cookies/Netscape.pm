@@ -1,12 +1,11 @@
 package HTTP::Cookies::Netscape;
 
 use strict;
-use vars qw(@ISA);
 
-our $VERSION = '6.04';
+our $VERSION = '6.05';
 
 require HTTP::Cookies;
-@ISA=qw(HTTP::Cookies);
+our @ISA=qw(HTTP::Cookies);
 
 sub load
 {
@@ -76,7 +75,7 @@ HTTP::Cookies::Netscape - Access to Netscape cookies files
 
 =head1 VERSION
 
-version 6.04
+version 6.05
 
 =head1 SYNOPSIS
 

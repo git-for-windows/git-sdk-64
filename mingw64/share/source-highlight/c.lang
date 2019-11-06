@@ -1,18 +1,13 @@
 # definitions for C
+
 include "c_comment.lang"
 
 label = '^[[:blank:]]*[[:alnum:]]+:[[:blank:]]*\z'
 
 (keyword,normal,classname) = 
-  `(\<struct)([[:blank:]]+)([[:alnum:]_]+)`
+  `(\<(?:enum|struct|union))([[:blank:]]+)([[:alnum:]_]+)`
 
-state preproc start '^[[:blank:]]*#(?:[[:blank:]]*include)' begin
-        string delim "<" ">" 
-        string delim "\"" "\"" escape "\\"
-        include "c_comment.lang"
-end
-
-preproc = '^[[:blank:]]*#([[:blank:]]*[[:word:]]*)'
+include "c_preprocessor.lang"
 
 include "number.lang"
 
@@ -23,16 +18,18 @@ keyword = "__asm|__cdecl|__declspec|__export|__far16",
   "__pascal|__rtti|__stdcall|_asm|_cdecl",
   "__except|_export|_far16|_fastcall",
   "__finally|_fortran|_import|_pascal|_stdcall|__thread|__try|asm|auto",
+  "_Alignas|_Alignof|_Atomic|_Generic|_Noreturn|_Static_assert|_Thread_local",
   "break|case|catch|cdecl|const|continue|default",
   "do|else|enum|extern|for|goto",
   "if|pascal",
-  "register|return|sizeof|static",
+  "register|restrict|return|sizeof|static",
   "struct|switch",
   "typedef|union",
   "volatile|while"
 
 type = "bool|char|double|float|int|long",
-  "short|signed|unsigned|void|wchar_t"
+  "short|signed|unsigned|void|wchar_t",
+  "_Bool|_Complex|_Imaginary"
 
 include "symbols.lang"
 

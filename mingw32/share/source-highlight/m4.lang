@@ -6,8 +6,11 @@ state keyword start "dnl" begin
   include "url.lang"
   include "html_simple.lang"
   type = '@[[:alpha:]]+'
+  # avoid non-word character not include in urls etc in front of urls etc
+  # be caputured prefixes
+  comment = '[^[:word:]]'
   # everything else is a comment
-  comment = '.+'
+  comment = '[[:word:]]+'
 end
 
 comment start "#"

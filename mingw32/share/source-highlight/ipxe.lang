@@ -1,0 +1,48 @@
+# iPXE scripts (http://ipxe.org/)
+
+vardef VAR = '\$\{[^\}]+\}'
+vardef SEP = ';|&&|\|\|'
+vardef ID = '[-/:\w]+'
+vardef KW = "autoboot|boot|chain|choose|colour|config|console|cpair|cpuid",
+            "dhcp|echo|exit|fcels|fcstat|gdbstub|help|ifclose|ifconf|ifopen",
+            "ifstat|imgargs|imgexec|imgfetch|imgfree|imgload|imgselect|imgstat",
+            "imgtrust|imgverify|initrd|ipstat|iseq|isset|item|kernel|login",
+            "lotest|menu|module|nslookup|nstat|param|params|pciscan|ping|poweroff",
+            "profstat|prompt|pxebs|read|reboot|route|sanboot|sanhook|sanunhook",
+            "shell|sleep|sync|time|vcreate|vdestroy"
+
+# comments
+environment comment start "#"
+begin
+  include "url.lang"
+end
+
+# labels and goto
+label start '^\s*:'
+(keyword, normal, variable) = `(\bgoto)(\s+)(\$\{[^\}]+\})`
+(keyword, normal, label) = `(\bgoto)(\s+)([-/:\w]+)`
+
+# variables
+(keyword, normal, variable) = `(\b(?:clear|inc|show))(\s+)([-/:\w]+)`
+state keyword = "set"
+begin
+   state variable = $ID
+   begin
+     include "number.lang"
+     variable = $VAR
+     symbol = $SEP         exitall
+     normal = '$'          exitall
+   end
+end
+
+# keywords and statements
+state keyword = $KW
+begin
+   include "number.lang"
+   variable = $VAR
+   symbol = $SEP         exit
+   normal = '$'          exit
+end
+
+symbol = $SEP
+

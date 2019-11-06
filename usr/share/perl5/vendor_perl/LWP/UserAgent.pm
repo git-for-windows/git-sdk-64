@@ -15,7 +15,7 @@ use LWP::Protocol ();
 use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.39';
+our $VERSION = '6.41';
 
 sub new
 {
@@ -966,6 +966,8 @@ sub mirror
 {
     my($self, $url, $file) = @_;
 
+    die "Local file name is missing" unless defined $file && length $file;
+
     my $request = HTTP::Request->new('GET', $url);
 
     # If the file exists, add a cache-related header
@@ -979,10 +981,10 @@ sub mirror
 
     my $response = $self->request($request, $tmpfile);
     if ( $response->header('X-Died') ) {
-	die $response->header('X-Died');
+        die $response->header('X-Died');
     }
 
-    # Only fetching a fresh copy of the would be considered success.
+    # Only fetching a fresh copy of the file would be considered success.
     # If the file was not modified, "304" would returned, which
     # is considered by HTTP::Status to be a "redirect", /not/ "success"
     if ( $response->is_success ) {
@@ -1017,7 +1019,7 @@ sub mirror
     }
     # The local copy is fresh enough, so just delete the temp file
     else {
-	unlink($tmpfile);
+        unlink($tmpfile);
     }
     return $response;
 }
@@ -1732,7 +1734,7 @@ the given processing phase.
 
     $ua->remove_handler( undef, %matchspec );
     $ua->remove_handler( $phase, %matchspec );
-    $ua->remove_handlers(); # REMOVE ALL HANDLERS IN ALL PHASES
+    $ua->remove_handler(); # REMOVE ALL HANDLERS IN ALL PHASES
 
 Remove handlers that match the given C<%matchspec>.  If C<$phase> is not
 provided, remove handlers from all phases.
@@ -1796,9 +1798,9 @@ Fields names that start with ":" are special.  These will not
 initialize headers of the request but will determine how the response
 content is treated.  The following special field names are recognized:
 
-    :content_file   => $filename
-    :content_cb     => \&callback
-    :read_size_hint => $bytes
+    ':content_file'   => $filename
+    ':content_cb'     => \&callback
+    ':read_size_hint' => $bytes
 
 If a $filename is provided with the C<:content_file> option, then the
 response content will be saved here instead of in the response

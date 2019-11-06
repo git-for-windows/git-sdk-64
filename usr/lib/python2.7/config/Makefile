@@ -28,8 +28,8 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	2.7
 srcdir=		.
 
-abs_srcdir=	/msys_scripts/python2/src/Python-2.7.16
-abs_builddir=	/msys_scripts/python2/src/Python-2.7.16
+abs_srcdir=	/msys_scripts/python2/src/Python-2.7.17
+abs_builddir=	/msys_scripts/python2/src/Python-2.7.17
 build=		x86_64-pc-msys
 host=		x86_64-pc-msys
 
@@ -163,7 +163,7 @@ CONFIG_ARGS=	 '--build=x86_64-pc-msys' '--prefix=/usr' '--enable-shared' '--enab
 
 
 # Subdirectories with code
-SRCDIRS= 	Parser Objects Python Modules
+SRCDIRS= 	Parser Objects Python Modules Modules/_io
 
 # Other subdirectories
 SUBDIRSTOO=	Include Lib Misc Demo
@@ -183,7 +183,7 @@ LDLIBRARYDIR=
 INSTSONAME=	$(LDLIBRARY)
 
 
-LIBS=		-ldl 
+LIBS=		-lintl -ldl 
 LIBM=		
 LIBC=		
 SYSLIBS=	$(LIBM) $(LIBC)
@@ -872,6 +872,12 @@ $(LIBRARY_OBJS) $(MODOBJS) Modules/python.o: $(PYTHON_HEADERS)
 TESTOPTS=	-l $(EXTRATESTOPTS)
 TESTPROG=	$(srcdir)/Lib/test/regrtest.py
 TESTPYTHON=	$(RUNSHARED) ./$(BUILDPYTHON) -Wd -3 -E -tt $(TESTPYTHONOPTS)
+
+# Remove "test_python_*" directories of previous failed test jobs.
+# Pass TESTOPTS options because it can contain --tempdir option.
+cleantest: build_all
+	$(TESTPYTHON) $(TESTPROG) $(TESTOPTS) --cleanup
+
 test:		all platform
 		-find $(srcdir)/Lib -name '*.py[co]' -print | xargs rm -f
 		-$(TESTPYTHON) $(TESTPROG) $(TESTOPTS)

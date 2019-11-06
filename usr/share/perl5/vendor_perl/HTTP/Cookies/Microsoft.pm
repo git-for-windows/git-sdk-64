@@ -2,12 +2,10 @@ package HTTP::Cookies::Microsoft;
 
 use strict;
 
-use vars qw(@ISA);
-
-our $VERSION = '6.04';
+our $VERSION = '6.05';
 
 require HTTP::Cookies;
-@ISA=qw(HTTP::Cookies);
+our @ISA=qw(HTTP::Cookies);
 
 sub load_cookies_from_file
 {
@@ -226,7 +224,7 @@ sub load
 
                 # set the delayload cookie for this domain with
                 # the cookie_file as cookie for later-loading info
-                $self->set_cookie(undef, 'cookie', $cookie_file, '//+delayload', $domain, undef, 0, 0, $now+86400, 0);
+                $self->set_cookie(undef, 'cookie', $cookie_file, '//+delayload', $domain, undef, 0, 0, $now+86_400, 0);
             }
         }
     }
@@ -246,7 +244,7 @@ HTTP::Cookies::Microsoft - Access to Microsoft cookies files
 
 =head1 VERSION
 
-version 6.04
+version 6.05
 
 =head1 SYNOPSIS
 
