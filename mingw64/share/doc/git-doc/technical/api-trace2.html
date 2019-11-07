@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>Trace2 API</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -465,8 +465,8 @@ formats in the future.  This might be used to define a binary format,
 for example.</p>
 </div>
 <div class="paragraph">
-<p>Trace2 is controlled using <code>trace2.<strong></code> config values in the system and
-global config files and <code>GIT_TRACE2</strong></code> environment variables.  Trace2 does
+<p>Trace2 is controlled using <code>trace2.*</code> config values in the system and
+global config files and <code>GIT_TRACE2*</code> environment variables.  Trace2 does
 not read from repo local or worktree config files or respect <code>-c</code>
 command line config settings.</p>
 </div>
@@ -598,7 +598,7 @@ git version 2.20.1.155.g426c96fcdb</pre>
 <div class="listingblock">
 <div class="content">
 <pre>$ cat ~/log.event
-{"event":"version","sid":"sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.620713Z","file":"common-main.c","line":38,"evt":"1","exe":"2.20.1.155.g426c96fcdb"}
+{"event":"version","sid":"sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.620713Z","file":"common-main.c","line":38,"evt":"2","exe":"2.20.1.155.g426c96fcdb"}
 {"event":"start","sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.621027Z","file":"common-main.c","line":39,"t_abs":0.001173,"argv":["git","version"]}
 {"event":"cmd_name","sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.621122Z","file":"git.c","line":432,"name":"version","hierarchy":"version"}
 {"event":"exit","sid":"20190408T191610.507018Z-H9b68c35f-P000059a8","thread":"main","time":"2019-01-16T17:28:42.621236Z","file":"git.c","line":662,"t_abs":0.001227,"code":0}
@@ -626,7 +626,9 @@ system or global config value to one of the following:</p>
 <p><code>[2-9]</code> - Writes to the already opened file descriptor.</p>
 </li>
 <li>
-<p><code>&lt;absolute-pathname&gt;</code> - Writes to the file in append mode.</p>
+<p><code>&lt;absolute-pathname&gt;</code> - Writes to the file in append mode. If the target
+already exists and is a directory, the traces will be written to files (one
+per process) underneath the given directory.</p>
 </li>
 <li>
 <p><code>af_unix:[&lt;socket_type&gt;:]&lt;absolute-pathname&gt;</code> - Write to a
@@ -639,10 +641,9 @@ try both.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>If the target already exists and is a directory, the traces will be
-written to files (one per process) underneath the given directory. They
-will be named according to the last component of the SID (optionally
-followed by a counter to avoid filename collisions).</p>
+<p>When trace files are written to a target directory, they will be named according
+to the last component of the SID (optionally followed by a counter to avoid
+filename collisions).</p>
 </div>
 </div>
 </div>
@@ -807,7 +808,7 @@ settings.</p>
 <p>The environment variable <code>GIT_TRACE2_CONFIG_PARAMS</code> or the <code>trace2.configParams</code>
 config value can be set to a
 list of patterns of important configuration settings, for example:
-<code>core.<strong>,remote.</strong>.url</code>.  This function will iterate over all config
+<code>core.*,remote.*.url</code>.  This function will iterate over all config
 settings and emit a "def_param" message for each match.</p>
 </div>
 </dd>
@@ -824,7 +825,7 @@ configuration changes and update a value previously reported by
 <dt class="hdlist1"><code>void trace2_def_repo(struct repository *repo)</code></dt>
 <dd>
 <p>Registers a repository with the Trace2 layer.  Assigns a
-unique "repo-id" to <code>repo&#8594;trace2_repo_id</code>.</p>
+unique "repo-id" to <code>repo-&gt;trace2_repo_id</code>.</p>
 <div class="paragraph">
 <p>Emits a "worktree" messages containing the repo-id and the worktree
 pathname.</p>
@@ -856,11 +857,11 @@ including shell scripts, git commands, editors, pagers, and hooks.</p>
 <p>Emits a "child_start" message containing the "child-id",
 "child-argv", and "child-classification".</p>
 <div class="paragraph">
-<p>Before calling this, set <code>cmd&#8594;trace2_child_class</code> to a name
+<p>Before calling this, set <code>cmd-&gt;trace2_child_class</code> to a name
 describing the type of child process, for example "editor".</p>
 </div>
 <div class="paragraph">
-<p>This function assigns a unique "child-id" to <code>cmd&#8594;trace2_child_id</code>.
+<p>This function assigns a unique "child-id" to <code>cmd-&gt;trace2_child_id</code>.
 This field is used later during the "child_exit" message to associate
 it with the "child_start" message.</p>
 </div>
@@ -954,7 +955,7 @@ over regions or spans of code.</p>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code>void trace2_region_enter(const char *category, const char *label, const struct repository *repo)</code></dt>
-<dt class="hdlist1"><code>void trace2_region_enter_printf(const char *category, const char *label, const struct repository *repo, const char *fmt, &#8230;&#8203;)</code></dt>
+<dt class="hdlist1"><code>void trace2_region_enter_printf(const char *category, const char *label, const struct repository *repo, const char *fmt, ...)</code></dt>
 <dt class="hdlist1"><code>void trace2_region_enter_printf_va(const char *category, const char *label, const struct repository *repo, const char *fmt, va_list ap)</code></dt>
 <dd>
 <p>Emits a thread-relative "region_enter" message with optional
@@ -979,7 +980,7 @@ recursive oerations can be attributed to the correct repository.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>void trace2_region_leave(const char *category, const char *label, const struct repository *repo)</code></dt>
-<dt class="hdlist1"><code>void trace2_region_leave_printf(const char *category, const char *label, const struct repository *repo, const char *fmt, &#8230;&#8203;)</code></dt>
+<dt class="hdlist1"><code>void trace2_region_leave_printf(const char *category, const char *label, const struct repository *repo, const char *fmt, ...)</code></dt>
 <dt class="hdlist1"><code>void trace2_region_leave_printf_va(const char *category, const char *label, const struct repository *repo, const char *fmt, va_list ap)</code></dt>
 <dd>
 <p>Emits a thread-relative "region_leave" message with optional
@@ -1007,7 +1008,7 @@ to print the number of files in a directory during a multi-threaded
 recursive tree walk.</p>
 </div>
 </dd>
-<dt class="hdlist1"><code>void trace2_printf(const char *fmt, &#8230;&#8203;)</code></dt>
+<dt class="hdlist1"><code>void trace2_printf(const char *fmt, ...)</code></dt>
 <dt class="hdlist1"><code>void trace2_printf_va(const char *fmt, va_list ap)</code></dt>
 <dd>
 <p>Emits a region- and thread-relative "printf" message.</p>
@@ -1170,13 +1171,13 @@ event-specific.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"version",
-	"sid":"20190408T191827.272759Z-H9b68c35f-P00003510",
-	"thread":"main",
-	"time":"2019-04-08T19:18:27.282761Z",
-	"file":"common-main.c",
-	"line":42,
-	...
+        "event":"version",
+        "sid":"20190408T191827.272759Z-H9b68c35f-P00003510",
+        "thread":"main",
+        "time":"2019-04-08T19:18:27.282761Z",
+        "file":"common-main.c",
+        "line":42,
+        ...
 }</pre>
 </div>
 </div>
@@ -1230,14 +1231,34 @@ only present on the "start" and "atexit" events.</p>
 <dl>
 <dt class="hdlist1"><code>"version"</code></dt>
 <dd>
-<p>This event gives the version of the executable and the EVENT format.</p>
+<p>This event gives the version of the executable and the EVENT format. It
+should always be the first event in a trace session. The EVENT format
+version will be incremented if new event types are added, if existing
+fields are removed, or if there are significant changes in
+interpretation of existing events or fields. Smaller changes, such as
+adding a new field to an existing event, will not require an increment
+to the EVENT format version.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"version",
-	...
-	"evt":"1",		       # EVENT format version
-	"exe":"2.20.1.155.g426c96fcdb" # git version
+        "event":"version",
+        ...
+        "evt":"2",                     # EVENT format version
+        "exe":"2.20.1.155.g426c96fcdb" # git version
+}</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1"><code>"discard"</code></dt>
+<dd>
+<p>This event is written to the git-trace2-discard sentinel file if there
+are too many files in the target trace directory (see the
+trace2.maxFiles config option).</p>
+<div class="listingblock">
+<div class="content">
+<pre>{
+        "event":"discard",
+        ...
 }</pre>
 </div>
 </div>
@@ -1248,10 +1269,10 @@ only present on the "start" and "atexit" events.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"start",
-	...
-	"t_abs":0.001227, # elapsed time in seconds
-	"argv":["git","version"]
+        "event":"start",
+        ...
+        "t_abs":0.001227, # elapsed time in seconds
+        "argv":["git","version"]
 }</pre>
 </div>
 </div>
@@ -1262,10 +1283,10 @@ only present on the "start" and "atexit" events.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"exit",
-	...
-	"t_abs":0.001227, # elapsed time in seconds
-	"code":0	  # exit code
+        "event":"exit",
+        ...
+        "t_abs":0.001227, # elapsed time in seconds
+        "code":0          # exit code
 }</pre>
 </div>
 </div>
@@ -1283,10 +1304,10 @@ completed.)</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"atexit",
-	...
-	"t_abs":0.001227, # elapsed time in seconds
-	"code":0          # exit code
+        "event":"atexit",
+        ...
+        "t_abs":0.001227, # elapsed time in seconds
+        "code":0          # exit code
 }</pre>
 </div>
 </div>
@@ -1299,10 +1320,10 @@ prevent the "atexit" event from being generated.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"signal",
-	...
-	"t_abs":0.001227,  # elapsed time in seconds
-	"signo":13         # SIGTERM, SIGINT, etc.
+        "event":"signal",
+        ...
+        "t_abs":0.001227,  # elapsed time in seconds
+        "signo":13         # SIGTERM, SIGINT, etc.
 }</pre>
 </div>
 </div>
@@ -1314,10 +1335,10 @@ or <code>usage()</code> functions are called.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"error",
-	...
-	"msg":"invalid option: --cahced", # formatted error message
-	"fmt":"invalid option: %s"	  # error format string
+        "event":"error",
+        ...
+        "msg":"invalid option: --cahced", # formatted error message
+        "fmt":"invalid option: %s"        # error format string
 }</pre>
 </div>
 </div>
@@ -1334,9 +1355,9 @@ executable (on platforms that are configured to resolve it).</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"cmd_path",
-	...
-	"path":"C:/work/gfw/git.exe"
+        "event":"cmd_path",
+        ...
+        "path":"C:/work/gfw/git.exe"
 }</pre>
 </div>
 </div>
@@ -1348,10 +1369,10 @@ and the hierarchy of commands from parent git processes.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"cmd_name",
-	...
-	"name":"pack-objects",
-	"hierarchy":"push/pack-objects"
+        "event":"cmd_name",
+        ...
+        "name":"pack-objects",
+        "hierarchy":"push/pack-objects"
 }</pre>
 </div>
 </div>
@@ -1377,9 +1398,9 @@ event may be emitted more than once.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"cmd_mode",
-	...
-	"name":"branch"
+        "event":"cmd_mode",
+        ...
+        "name":"branch"
 }</pre>
 </div>
 </div>
@@ -1396,10 +1417,10 @@ characteristics that are not comparable.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"alias",
-	...
-	"alias":"l",		 # registered alias
-	"argv":["log","--graph"] # alias expansion
+        "event":"alias",
+        ...
+        "alias":"l",             # registered alias
+        "argv":["log","--graph"] # alias expansion
 }</pre>
 </div>
 </div>
@@ -1411,15 +1432,15 @@ spawned.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"child_start",
-	...
-	"child_id":2,
-	"child_class":"?",
-	"use_shell":false,
-	"argv":["git","rev-list","--objects","--stdin","--not","--all","--quiet"]
+        "event":"child_start",
+        ...
+        "child_id":2,
+        "child_class":"?",
+        "use_shell":false,
+        "argv":["git","rev-list","--objects","--stdin","--not","--all","--quiet"]
 
-	"hook_name":"&lt;hook_name&gt;"  # present when child_class is "hook"
-	"cd":"&lt;path&gt;"		   # present when cd is required
+        "hook_name":"&lt;hook_name&gt;"  # present when child_class is "hook"
+        "cd":"&lt;path&gt;"              # present when cd is required
 }</pre>
 </div>
 </div>
@@ -1441,12 +1462,12 @@ child.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"child_exit",
-	...
-	"child_id":2,
-	"pid":14708,	 # child PID
-	"code":0,	 # child exit-code
-	"t_rel":0.110605 # observed run-time of child process
+        "event":"child_exit",
+        ...
+        "child_id":2,
+        "pid":14708,     # child PID
+        "code":0,        # child exit-code
+        "t_rel":0.110605 # observed run-time of child process
 }</pre>
 </div>
 </div>
@@ -1471,11 +1492,11 @@ another command rather than starting a child process.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"exec",
-	...
-	"exec_id":0,
-	"exe":"git",
-	"argv":["foo", "bar"]
+        "event":"exec",
+        ...
+        "exec_id":0,
+        "exe":"git",
+        "argv":["foo", "bar"]
 }</pre>
 </div>
 </div>
@@ -1491,10 +1512,10 @@ returns to the current git command.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"exec_result",
-	...
-	"exec_id":0,
-	"code":1      # error code (errno) from exec()
+        "event":"exec_result",
+        ...
+        "exec_id":0,
+        "code":1      # error code (errno) from exec()
 }</pre>
 </div>
 </div>
@@ -1507,9 +1528,9 @@ reasons).</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"thread_start",
-	...
-	"thread":"th02:preload_thread" # thread name
+        "event":"thread_start",
+        ...
+        "thread":"th02:preload_thread" # thread name
 }</pre>
 </div>
 </div>
@@ -1521,10 +1542,10 @@ from <strong>within</strong> the thread&#8217;s thread-proc (for TLS reasons).</
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"thread_exit",
-	...
-	"thread":"th02:preload_thread", # thread name
-	"t_rel":0.007328                # thread elapsed time
+        "event":"thread_exit",
+        ...
+        "thread":"th02:preload_thread", # thread name
+        "t_rel":0.007328                # thread elapsed time
 }</pre>
 </div>
 </div>
@@ -1535,10 +1556,10 @@ from <strong>within</strong> the thread&#8217;s thread-proc (for TLS reasons).</
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"def_param",
-	...
-	"param":"core.abbrev",
-	"value":"7"
+        "event":"def_param",
+        ...
+        "param":"core.abbrev",
+        "value":"7"
 }</pre>
 </div>
 </div>
@@ -1550,10 +1571,10 @@ of the worktree.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"def_repo",
-	...
-	"repo":1,
-	"worktree":"/Users/jeffhost/work/gfw"
+        "event":"def_repo",
+        ...
+        "repo":1,
+        "worktree":"/Users/jeffhost/work/gfw"
 }</pre>
 </div>
 </div>
@@ -1570,13 +1591,13 @@ visited.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"region_enter",
-	...
-	"repo":1,                # optional
-	"nesting":1,             # current region stack depth
-	"category":"index",      # optional
-	"label":"do_read_index", # optional
-	"msg":".git/index"       # optional
+        "event":"region_enter",
+        ...
+        "repo":1,                # optional
+        "nesting":1,             # current region stack depth
+        "category":"index",      # optional
+        "label":"do_read_index", # optional
+        "msg":".git/index"       # optional
 }</pre>
 </div>
 </div>
@@ -1595,14 +1616,14 @@ filter deeply nested regions and data events.  It defaults to "2".</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"region_leave",
-	...
-	"repo":1,                # optional
-	"t_rel":0.002876,        # time spent in region in seconds
-	"nesting":1,             # region stack depth
-	"category":"index",      # optional
-	"label":"do_read_index", # optional
-	"msg":".git/index"       # optional
+        "event":"region_leave",
+        ...
+        "repo":1,                # optional
+        "t_rel":0.002876,        # time spent in region in seconds
+        "nesting":1,             # region stack depth
+        "category":"index",      # optional
+        "label":"do_read_index", # optional
+        "msg":".git/index"       # optional
 }</pre>
 </div>
 </div>
@@ -1614,15 +1635,15 @@ key/value pair.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"data",
-	...
-	"repo":1,              # optional
-	"t_abs":0.024107,      # absolute elapsed time
-	"t_rel":0.001031,      # elapsed time in region/thread
-	"nesting":2,           # region stack depth
-	"category":"index",
-	"key":"read/cache_nr",
-	"value":"3552"
+        "event":"data",
+        ...
+        "repo":1,              # optional
+        "t_abs":0.024107,      # absolute elapsed time
+        "t_rel":0.001031,      # elapsed time in region/thread
+        "nesting":2,           # region stack depth
+        "category":"index",
+        "key":"read/cache_nr",
+        "value":"3552"
 }</pre>
 </div>
 </div>
@@ -1637,15 +1658,15 @@ containing structured data.</p>
 <div class="listingblock">
 <div class="content">
 <pre>{
-	"event":"data_json",
-	...
-	"repo":1,              # optional
-	"t_abs":0.015905,
-	"t_rel":0.015905,
-	"nesting":1,
-	"category":"process",
-	"key":"windows/ancestry",
-	"value":["bash.exe","bash.exe"]
+        "event":"data_json",
+        ...
+        "repo":1,              # optional
+        "t_abs":0.015905,
+        "t_rel":0.015905,
+        "nesting":1,
+        "category":"process",
+        "key":"windows/ancestry",
+        "value":["bash.exe","bash.exe"]
 }</pre>
 </div>
 </div>
@@ -1673,16 +1694,16 @@ usage (without worrying about the actual Git details).</p>
 <div class="content">
 <pre>int main(int argc, const char **argv)
 {
-	int exit_code;
+        int exit_code;
 
-	trace2_initialize();
-	trace2_cmd_start(argv);
+        trace2_initialize();
+        trace2_cmd_start(argv);
 
-	exit_code = cmd_main(argc, argv);
+        exit_code = cmd_main(argc, argv);
 
-	trace2_cmd_exit(exit_code);
+        trace2_cmd_exit(exit_code);
 
-	return exit_code;
+        return exit_code;
 }</pre>
 </div>
 </div>
@@ -1695,17 +1716,17 @@ information can be sent to Trace2 as it is discovered.</p>
 <div class="content">
 <pre>int cmd_checkout(int argc, const char **argv)
 {
-	trace2_cmd_name("checkout");
-	trace2_cmd_mode("branch");
-	trace2_def_repo(the_repository);
+        trace2_cmd_name("checkout");
+        trace2_cmd_mode("branch");
+        trace2_def_repo(the_repository);
 
-	// emit "def_param" messages for "interesting" config settings.
-	trace2_cmd_list_config();
+        // emit "def_param" messages for "interesting" config settings.
+        trace2_cmd_list_config();
 
-	if (do_something())
-	    trace2_cmd_error("Path '%s': cannot do something", path);
+        if (do_something())
+            trace2_cmd_error("Path '%s': cannot do something", path);
 
-	return 0;
+        return 0;
 }</pre>
 </div>
 </div>
@@ -1717,14 +1738,14 @@ information can be sent to Trace2 as it is discovered.</p>
 <div class="content">
 <pre>void run_child(...)
 {
-	int child_exit_code;
-	struct child_process cmd = CHILD_PROCESS_INIT;
-	...
-	cmd.trace2_child_class = "editor";
+        int child_exit_code;
+        struct child_process cmd = CHILD_PROCESS_INIT;
+        ...
+        cmd.trace2_child_class = "editor";
 
-	trace2_child_start(&amp;cmd);
-	child_exit_code = spawn_child_and_wait_for_it();
-	trace2_child_exit(&amp;cmd, child_exit_code);
+        trace2_child_start(&amp;cmd);
+        child_exit_code = spawn_child_and_wait_for_it();
+        trace2_child_exit(&amp;cmd, child_exit_code);
 }</pre>
 </div>
 </div>
@@ -1808,26 +1829,26 @@ atexit elapsed:3.868970 code:0</pre>
 <div class="content">
 <pre>void wt_status_collect(struct wt_status *s)
 {
-	trace2_region_enter("status", "worktrees", s-&gt;repo);
-	wt_status_collect_changes_worktree(s);
-	trace2_region_leave("status", "worktrees", s-&gt;repo);
+        trace2_region_enter("status", "worktrees", s-&gt;repo);
+        wt_status_collect_changes_worktree(s);
+        trace2_region_leave("status", "worktrees", s-&gt;repo);
 
-	trace2_region_enter("status", "index", s-&gt;repo);
-	wt_status_collect_changes_index(s);
-	trace2_region_leave("status", "index", s-&gt;repo);
+        trace2_region_enter("status", "index", s-&gt;repo);
+        wt_status_collect_changes_index(s);
+        trace2_region_leave("status", "index", s-&gt;repo);
 
-	trace2_region_enter("status", "untracked", s-&gt;repo);
-	wt_status_collect_untracked(s);
-	trace2_region_leave("status", "untracked", s-&gt;repo);
+        trace2_region_enter("status", "untracked", s-&gt;repo);
+        wt_status_collect_untracked(s);
+        trace2_region_leave("status", "untracked", s-&gt;repo);
 }
 
 void wt_status_print(struct wt_status *s)
 {
-	trace2_region_enter("status", "print", s-&gt;repo);
-	switch (s-&gt;status_format) {
-	    ...
-	}
-	trace2_region_leave("status", "print", s-&gt;repo);
+        trace2_region_enter("status", "print", s-&gt;repo);
+        switch (s-&gt;status_format) {
+            ...
+        }
+        trace2_region_leave("status", "print", s-&gt;repo);
 }</pre>
 </div>
 </div>
@@ -1869,16 +1890,16 @@ level as expected.  For example, if we add region message to:</p>
 <div class="listingblock">
 <div class="content">
 <pre>static enum path_treatment read_directory_recursive(struct dir_struct *dir,
-	struct index_state *istate, const char *base, int baselen,
-	struct untracked_cache_dir *untracked, int check_only,
-	int stop_at_first_file, const struct pathspec *pathspec)
+        struct index_state *istate, const char *base, int baselen,
+        struct untracked_cache_dir *untracked, int check_only,
+        int stop_at_first_file, const struct pathspec *pathspec)
 {
-	enum path_treatment state, subdir_state, dir_state = path_none;
+        enum path_treatment state, subdir_state, dir_state = path_none;
 
-	trace2_region_enter_printf("dir", "read_recursive", NULL, "%.*s", baselen, base);
-	...
-	trace2_region_leave_printf("dir", "read_recursive", NULL, "%.*s", baselen, base);
-	return dir_state;
+        trace2_region_enter_printf("dir", "read_recursive", NULL, "%.*s", baselen, base);
+        ...
+        trace2_region_leave_printf("dir", "read_recursive", NULL, "%.*s", baselen, base);
+        return dir_state;
 }</pre>
 </div>
 </div>
@@ -1929,16 +1950,16 @@ maintain per-thread stacks of timers.</p>
 <div class="listingblock">
 <div class="content">
 <pre>int read_index_from(struct index_state *istate, const char *path,
-	const char *gitdir)
+        const char *gitdir)
 {
-	trace2_region_enter_printf("index", "do_read_index", the_repository, "%s", path);
+        trace2_region_enter_printf("index", "do_read_index", the_repository, "%s", path);
 
-	...
+        ...
 
-	trace2_data_intmax("index", the_repository, "read/version", istate-&gt;version);
-	trace2_data_intmax("index", the_repository, "read/cache_nr", istate-&gt;cache_nr);
+        trace2_data_intmax("index", the_repository, "read/version", istate-&gt;version);
+        trace2_data_intmax("index", the_repository, "read/cache_nr", istate-&gt;cache_nr);
 
-	trace2_region_leave_printf("index", "do_read_index", the_repository, "%s", path);
+        trace2_region_leave_printf("index", "do_read_index", the_repository, "%s", path);
 }</pre>
 </div>
 </div>
@@ -1976,38 +1997,38 @@ per-thread start and exit events within the threadproc.</p>
 <div class="content">
 <pre>static void *preload_thread(void *_data)
 {
-	// start the per-thread clock and emit a message.
-	trace2_thread_start("preload_thread");
+        // start the per-thread clock and emit a message.
+        trace2_thread_start("preload_thread");
 
-	// report which chunk of the array this thread was assigned.
-	trace2_data_intmax("index", the_repository, "offset", p-&gt;offset);
-	trace2_data_intmax("index", the_repository, "count", nr);
+        // report which chunk of the array this thread was assigned.
+        trace2_data_intmax("index", the_repository, "offset", p-&gt;offset);
+        trace2_data_intmax("index", the_repository, "count", nr);
 
-	do {
-	    ...
-	} while (--nr &gt; 0);
-	...
+        do {
+            ...
+        } while (--nr &gt; 0);
+        ...
 
-	// report elapsed time taken by this thread.
-	trace2_thread_exit();
-	return NULL;
+        // report elapsed time taken by this thread.
+        trace2_thread_exit();
+        return NULL;
 }
 
 void preload_index(struct index_state *index,
-	const struct pathspec *pathspec,
-	unsigned int refresh_flags)
+        const struct pathspec *pathspec,
+        unsigned int refresh_flags)
 {
-	trace2_region_enter("index", "preload", the_repository);
+        trace2_region_enter("index", "preload", the_repository);
 
-	for (i = 0; i &lt; threads; i++) {
-	    ... /* create thread */
-	}
+        for (i = 0; i &lt; threads; i++) {
+            ... /* create thread */
+        }
 
-	for (i = 0; i &lt; threads; i++) {
-	    ... /* join thread */
-	}
+        for (i = 0; i &lt; threads; i++) {
+            ... /* join thread */
+        }
 
-	trace2_region_leave("index", "preload", the_repository);
+        trace2_region_leave("index", "preload", the_repository);
 }</pre>
 </div>
 </div>
@@ -2120,7 +2141,7 @@ Trace2 targets (and convert &lt;key&gt; to a "category").</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

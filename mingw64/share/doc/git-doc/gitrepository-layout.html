@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>gitrepository-layout(5)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -490,7 +490,7 @@ found in it), but there are a few ways to violate it.</p>
 <ol class="arabic">
 <li>
 <p>You could have an incomplete but locally usable repository
-by creating a shallow clone.  See <a href="git-clone.html">git-clone</a>(1).</p>
+by creating a shallow clone.  See <a href="git-clone.html">git-clone(1)</a>.</p>
 </li>
 <li>
 <p>You could be using the <code>objects/info/alternates</code> or
@@ -519,7 +519,7 @@ here are often called <em>unpacked</em> (or <em>loose</em>) objects.</p>
 </dd>
 <dt class="hdlist1">objects/pack</dt>
 <dd>
-<p>Packs (files that store many object in compressed form,
+<p>Packs (files that store many objects in compressed form,
 along with index files to allow them to be randomly
 accessed) are found in this directory.</p>
 </dd>
@@ -583,14 +583,14 @@ from a remote repository.</p>
 <dd>
 <p>records the SHA-1 of the object that replaces <code>&lt;obj-sha1&gt;</code>.
 This is similar to info/grafts and is internally used and
-maintained by <a href="git-replace.html">git-replace</a>(1). Such refs can be exchanged
+maintained by <a href="git-replace.html">git-replace(1)</a>. Such refs can be exchanged
 between repositories while grafts are not.</p>
 </dd>
 <dt class="hdlist1">packed-refs</dt>
 <dd>
 <p>records the same information as refs/heads/, refs/tags/,
 and friends record in a more efficient way.  See
-<a href="git-pack-refs.html">git-pack-refs</a>(1). This file is ignored if $GIT_COMMON_DIR
+<a href="git-pack-refs.html">git-pack-refs(1)</a>. This file is ignored if $GIT_COMMON_DIR
 is set and "$GIT_COMMON_DIR/packed-refs" will be used instead.</p>
 </dd>
 <dt class="hdlist1">HEAD</dt>
@@ -608,7 +608,7 @@ branch.</p>
 <div class="paragraph">
 <p>HEAD can also record a specific commit directly, instead of
 being a symref to point at the current branch.  Such a state
-is often called <em>detached HEAD.</em>  See <a href="git-checkout.html">git-checkout</a>(1)
+is often called <em>detached HEAD.</em>  See <a href="git-checkout.html">git-checkout(1)</a>
 for details.</p>
 </div>
 </dd>
@@ -622,7 +622,7 @@ used instead.</p>
 <dd>
 <p>Working directory specific configuration file for the main
 working directory in multiple working directory setup (see
-<a href="git-worktree.html">git-worktree</a>(1)).</p>
+<a href="git-worktree.html">git-worktree(1)</a>).</p>
 </dd>
 <dt class="hdlist1">branches</dt>
 <dd>
@@ -631,7 +631,7 @@ to specify a URL to <em>git fetch</em>, <em>git pull</em> and <em>git push</em>.
 A file can be stored as <code>branches/&lt;name&gt;</code> and then
 <em>name</em> can be given to these commands in place of
 <em>repository</em> argument.  See the REMOTES section in
-<a href="git-fetch.html">git-fetch</a>(1) for details.  This mechanism is legacy
+<a href="git-fetch.html">git-fetch(1)</a> for details.  This mechanism is legacy
 and not likely to be found in modern repositories. This
 directory is ignored if $GIT_COMMON_DIR is set and
 "$GIT_COMMON_DIR/branches" will be used instead.</p>
@@ -643,7 +643,7 @@ commands.  A handful of sample hooks are installed when
 <em>git init</em> is run, but all of them are disabled by
 default.  To enable, the <code>.sample</code> suffix has to be
 removed from the filename by renaming.
-Read <a href="githooks.html">githooks</a>(5) for more details about
+Read <a href="githooks.html">githooks(5)</a> for more details about
 each hook. This directory is ignored if $GIT_COMMON_DIR is set
 and "$GIT_COMMON_DIR/hooks" will be used instead.</p>
 </dd>
@@ -691,7 +691,7 @@ listing their 40-byte hexadecimal object names separated
 by a space and terminated by a newline.</p>
 <div class="paragraph">
 <p>Note that the grafts mechanism is outdated and can lead to problems
-transferring objects between repositories; see <a href="git-replace.html">git-replace</a>(1)
+transferring objects between repositories; see <a href="git-replace.html">git-replace(1)</a>
 for a more flexible and robust system to do the same thing.</p>
 </div>
 </dd>
@@ -701,24 +701,24 @@ for a more flexible and robust system to do the same thing.</p>
 exclude pattern list. <code>.gitignore</code> is the per-directory
 ignore file.  <em>git status</em>, <em>git add</em>, <em>git rm</em> and
 <em>git clean</em> look at it but the core Git commands do not look
-at it.  See also: <a href="gitignore.html">gitignore</a>(5).</p>
+at it.  See also: <a href="gitignore.html">gitignore(5)</a>.</p>
 </dd>
 <dt class="hdlist1">info/attributes</dt>
 <dd>
 <p>Defines which attributes to assign to a path, similar to per-directory
-<code>.gitattributes</code> files.   See also: <a href="gitattributes.html">gitattributes</a>(5).</p>
+<code>.gitattributes</code> files.   See also: <a href="gitattributes.html">gitattributes(5)</a>.</p>
 </dd>
 <dt class="hdlist1">info/sparse-checkout</dt>
 <dd>
 <p>This file stores sparse checkout patterns.
-See also: <a href="git-read-tree.html">git-read-tree</a>(1).</p>
+See also: <a href="git-read-tree.html">git-read-tree(1)</a>.</p>
 </dd>
 <dt class="hdlist1">remotes</dt>
 <dd>
 <p>Stores shorthands for URL and default refnames for use
 when interacting with remote repositories via <em>git fetch</em>,
 <em>git pull</em> and <em>git push</em> commands.  See the REMOTES section
-in <a href="git-fetch.html">git-fetch</a>(1) for details.  This mechanism is legacy
+in <a href="git-fetch.html">git-fetch(1)</a> for details.  This mechanism is legacy
 and not likely to be found in modern repositories. This
 directory is ignored if $GIT_COMMON_DIR is set and
 "$GIT_COMMON_DIR/remotes" will be used instead.</p>
@@ -726,7 +726,7 @@ directory is ignored if $GIT_COMMON_DIR is set and
 <dt class="hdlist1">logs</dt>
 <dd>
 <p>Records of changes made to refs are stored in this directory.
-See <a href="git-update-ref.html">git-update-ref</a>(1) for more information. This
+See <a href="git-update-ref.html">git-update-ref(1)</a> for more information. This
 directory is ignored if $GIT_COMMON_DIR is set and
 "$GIT_COMMON_DIR/logs" will be used instead.</p>
 </dd>
@@ -742,13 +742,13 @@ directory is ignored if $GIT_COMMON_DIR is set and
 <dd>
 <p>This is similar to <code>info/grafts</code> but is internally used
 and maintained by shallow clone mechanism.  See <code>--depth</code>
-option to <a href="git-clone.html">git-clone</a>(1) and <a href="git-fetch.html">git-fetch</a>(1). This
+option to <a href="git-clone.html">git-clone(1)</a> and <a href="git-fetch.html">git-fetch(1)</a>. This
 file is ignored if $GIT_COMMON_DIR is set and
 "$GIT_COMMON_DIR/shallow" will be used instead.</p>
 </dd>
 <dt class="hdlist1">commondir</dt>
 <dd>
-<p>If this file exists, $GIT_COMMON_DIR (see <a href="git.html">git</a>(1)) will
+<p>If this file exists, $GIT_COMMON_DIR (see <a href="git.html">git(1)</a>) will
 be set to the path specified in this file if it is not
 explicitly set. If the specified path is relative, it is
 relative to $GIT_DIR. The repository with commondir is
@@ -934,13 +934,13 @@ GIT_COMMON_DIR/worktrees/&lt;id&gt;/config.worktree)</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-init.html">git-init</a>(1),
-<a href="git-clone.html">git-clone</a>(1),
-<a href="git-fetch.html">git-fetch</a>(1),
-<a href="git-pack-refs.html">git-pack-refs</a>(1),
-<a href="git-gc.html">git-gc</a>(1),
-<a href="git-checkout.html">git-checkout</a>(1),
-<a href="gitglossary.html">gitglossary</a>(7),
+<p><a href="git-init.html">git-init(1)</a>,
+<a href="git-clone.html">git-clone(1)</a>,
+<a href="git-fetch.html">git-fetch(1)</a>,
+<a href="git-pack-refs.html">git-pack-refs(1)</a>,
+<a href="git-gc.html">git-gc(1)</a>,
+<a href="git-checkout.html">git-checkout(1)</a>,
+<a href="gitglossary.html">gitglossary(7)</a>,
 <a href="user-manual.html">The Git User&#8217;s Manual</a></p>
 </div>
 </div>
@@ -949,14 +949,14 @@ GIT_COMMON_DIR/worktrees/&lt;id&gt;/config.worktree)</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

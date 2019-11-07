@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>gitweb.conf(5)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -482,7 +482,7 @@ the use of symlinks.</p>
 <div class="paragraph">
 <p>Note that some configuration can be controlled on per-repository rather than
 gitweb-wide basis: see "Per-repository gitweb configuration" subsection on
-<a href="gitweb.html">gitweb</a>(1) manpage.</p>
+<a href="gitweb.html">gitweb(1)</a> manpage.</p>
 </div>
 </div>
 </div>
@@ -578,7 +578,7 @@ and installing gitweb.</p>
 Git repositories, and how repositories are displayed and accessed.</p>
 </div>
 <div class="paragraph">
-<p>See also "Repositories" and later subsections in <a href="gitweb.html">gitweb</a>(1) manpage.</p>
+<p>See also "Repositories" and later subsections in <a href="gitweb.html">gitweb(1)</a> manpage.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -689,7 +689,7 @@ $projects_list, and $projects_maxdepth.  Example:</p>
 </div>
 <div class="paragraph">
 <p>See also more involved example in "Controlling access to Git repositories"
-subsection on <a href="gitweb.html">gitweb</a>(1) manpage.</p>
+subsection on <a href="gitweb.html">gitweb(1)</a> manpage.</p>
 </div>
 </dd>
 <dt class="hdlist1">$strict_export</dt>
@@ -1101,7 +1101,7 @@ file</p>
 <div class="listingblock">
 <div class="content">
 <pre>our $per_request_config = sub {
-	$ENV{GL_USER} = $cgi-&gt;remote_user || "gitweb";
+        $ENV{GL_USER} = $cgi-&gt;remote_user || "gitweb";
 };</pre>
 </div>
 </div>
@@ -1186,9 +1186,9 @@ structure:</p>
 <div class="listingblock">
 <div class="content">
 <pre>"&lt;feature_name&gt;" =&gt; {
-	"sub" =&gt; &lt;feature-sub (subroutine)&gt;,
-	"override" =&gt; &lt;allow-override (boolean)&gt;,
-	"default" =&gt; [ &lt;options&gt;... ]
+        "sub" =&gt; &lt;feature-sub (subroutine)&gt;,
+        "override" =&gt; &lt;allow-override (boolean)&gt;,
+        "default" =&gt; [ &lt;options&gt;... ]
 },</pre>
 </div>
 </div>
@@ -1200,8 +1200,8 @@ form:</p>
 <div class="listingblock">
 <div class="content">
 <pre>"&lt;feature_name&gt;" =&gt; {
-	"override" =&gt; 0,
-	"default" =&gt; [ &lt;options&gt;... ]
+        "override" =&gt; 0,
+        "default" =&gt; [ &lt;options&gt;... ]
 },</pre>
 </div>
 </div>
@@ -1268,7 +1268,7 @@ in the comments.</p>
 <dt class="hdlist1">blame</dt>
 <dd>
 <p>Enable the "blame" and "blame_incremental" blob views, showing for
-each line the last commit that modified it; see <a href="git-blame.html">git-blame</a>(1).
+each line the last commit that modified it; see <a href="git-blame.html">git-blame(1)</a>.
 This can be very CPU-intensive and is therefore disabled by default.</p>
 <div class="paragraph">
 <p>This feature can be configured on a per-repository basis via
@@ -1279,7 +1279,7 @@ repository&#8217;s <code>gitweb.blame</code> configuration variable (boolean).</
 <dd>
 <p>Enable and configure the "snapshot" action, which allows user to
 download a compressed archive of any tree or commit, as produced
-by <a href="git-archive.html">git-archive</a>(1) and possibly additionally compressed.
+by <a href="git-archive.html">git-archive(1)</a> and possibly additionally compressed.
 This can potentially generate high traffic if you have large project.</p>
 <div class="paragraph">
 <p>The value of 'default' is a list of names of snapshot formats,
@@ -1298,7 +1298,7 @@ Unknown values are ignored.</p>
 <dt class="hdlist1">grep</dt>
 <dd>
 <p>Enable grep search, which lists the files in currently selected
-tree (directory) containing the given string; see <a href="git-grep.html">git-grep</a>(1).
+tree (directory) containing the given string; see <a href="git-grep.html">git-grep(1)</a>.
 This can be potentially CPU-intensive, of course.  Enabled by default.</p>
 <div class="paragraph">
 <p>This feature can be configured on a per-repository basis via
@@ -1312,9 +1312,9 @@ that introduced or removed a given string in a file.  This can be
 practical and quite faster alternative to "blame" action, but it is
 still potentially CPU-intensive.  Enabled by default.</p>
 <div class="paragraph">
-<p>The pickaxe search is described in <a href="git-log.html">git-log</a>(1) (the
+<p>The pickaxe search is described in <a href="git-log.html">git-log(1)</a> (the
 description of <code>-S&lt;string&gt;</code> option, which refers to pickaxe entry in
-<a href="gitdiffcore.html">gitdiffcore</a>(7) for more details).</p>
+<a href="gitdiffcore.html">gitdiffcore(7)</a> for more details).</p>
 </div>
 <div class="paragraph">
 <p>This feature can be configured on a per-repository basis by setting
@@ -1325,7 +1325,7 @@ repository&#8217;s <code>gitweb.pickaxe</code> configuration variable (boolean).
 <dd>
 <p>Enable showing size of blobs (ordinary files) in a "tree" view, in a
 separate column, similar to what <code>ls -l</code> does; see description of
-<code>-l</code> option in <a href="git-ls-tree.html">git-ls-tree</a>(1) manpage.  This costs a bit of
+<code>-l</code> option in <a href="git-ls-tree.html">git-ls-tree(1)</a> manpage.  This costs a bit of
 I/O.  Enabled by default.</p>
 <div class="paragraph">
 <p>This feature can be configured on a per-repository basis via
@@ -1335,7 +1335,7 @@ repository&#8217;s <code>gitweb.showSizes</code> configuration variable (boolean
 <dt class="hdlist1">patches</dt>
 <dd>
 <p>Enable and configure "patches" view, which displays list of commits in email
-(plain text) output format; see also <a href="git-format-patch.html">git-format-patch</a>(1).
+(plain text) output format; see also <a href="git-format-patch.html">git-format-patch(1)</a>.
 The value is the maximum number of patches in a patchset generated
 in "patches" view.  Set the <em>default</em> field to a list containing single
 item of or to an empty list to disable patch view, or to a list
@@ -1387,7 +1387,7 @@ repository&#8217;s <code>gitweb.highlight</code> configuration variable (boolean
 <p>Enable displaying remote heads (remote-tracking branches) in the "heads"
 list.  In most cases the list of remote-tracking branches is an
 unnecessary internal private detail, and this feature is therefore
-disabled by default.  <a href="git-instaweb.html">git-instaweb</a>(1), which is usually used
+disabled by default.  <a href="git-instaweb.html">git-instaweb(1)</a>, which is usually used
 to browse local repositories, enables and uses this feature.</p>
 <div class="paragraph">
 <p>This feature can be configured on a per-repository basis via
@@ -1405,7 +1405,7 @@ repository&#8217;s <code>gitweb.remote_heads</code> configuration variable (bool
 <dd>
 <p>Enable text search, which will list the commits which match author,
 committer or commit text to a given string; see the description of
-<code>--author</code>, <code>--committer</code> and <code>--grep</code> options in <a href="git-log.html">git-log</a>(1)
+<code>--author</code>, <code>--committer</code> and <code>--grep</code> options in <a href="git-log.html">git-log(1)</a>
 manpage.  Enabled by default.</p>
 <div class="paragraph">
 <p>Project specific override is not supported.</p>
@@ -1418,7 +1418,7 @@ subdirectories of project root (basename) to be forks of existing
 projects.  For each project <code>$projname.git</code>, projects in the
 <code>$projname/</code> directory and its subdirectories will not be
 shown in the main projects list.  Instead, a '+' mark is shown
-next to +$projname+, which links to a "forks" view that lists all
+next to <code>$projname</code>, which links to a "forks" view that lists all
 the forks (all projects in <code>$projname/</code> subdirectory).  Additionally
 a "forks" view for a project is linked from project summary page.</p>
 <div class="paragraph">
@@ -1451,7 +1451,7 @@ Git hosting site set it to the following to enable graphical log
 <div class="listingblock">
 <div class="content">
 <pre>$feature{'actions'}{'default'} =
-	[ ('graphiclog', '/git-browser/by-commit.html?r=%n', 'summary')];</pre>
+        [ ('graphiclog', '/git-browser/by-commit.html?r=%n', 'summary')];</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1519,7 +1519,7 @@ follows:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$feature{'extra-branch-refs'}{'default'} =
-	['sandbox', 'wip', 'other'];</pre>
+        ['sandbox', 'wip', 'other'];</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1531,7 +1531,7 @@ space separated list of refs. An example:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[gitweb]
-	extraBranchRefs = sandbox wip other</pre>
+        extraBranchRefs = sandbox wip other</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1542,8 +1542,8 @@ same as of the snippet above:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[gitweb]
-	extraBranchRefs = sandbox
-	extraBranchRefs = wip other</pre>
+        extraBranchRefs = sandbox
+        extraBranchRefs = wip other</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1657,7 +1657,7 @@ file.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="gitweb.html">gitweb</a>(1), <a href="git-instaweb.html">git-instaweb</a>(1)</p>
+<p><a href="gitweb.html">gitweb(1)</a>, <a href="git-instaweb.html">git-instaweb(1)</a></p>
 </div>
 <div class="paragraph">
 <p><em>gitweb/README</em>, <em>gitweb/INSTALL</em></p>
@@ -1668,14 +1668,14 @@ file.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

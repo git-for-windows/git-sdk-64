@@ -354,6 +354,16 @@ proc parseviewrevs {view revs} {
     return $ret
 }
 
+# Escapes a list of filter paths to be passed to git log via stdin. Note that
+# paths must not be quoted.
+proc escape_filter_paths {paths} {
+	set escaped [list]
+	foreach path $paths {
+		lappend escaped [string map {\\ \\\\ "\ " "\\\ "} $path]
+	}
+	return $escaped
+}
+
 # Start off a git log process and arrange to read its output
 proc start_rev_list {view} {
     global startmsecs commitidx viewcomplete curview
@@ -415,7 +425,8 @@ proc start_rev_list {view} {
     if {[catch {
 	set fd [open [concat | git log --no-color -z --pretty=raw $show_notes \
 			--parents --boundary $args --stdin \
-			"<<[join [concat $revs "--" $files] "\\n"]"] r]
+			"<<[join [concat $revs "--" \
+				[escape_filter_paths $files]] "\\n"]"] r]
     } err]} {
 	error_popup "[mc "Error executing git log:"] $err"
 	return 0
@@ -569,7 +580,8 @@ proc updatecommits {} {
 	set fd [open [concat | git log --no-color -z --pretty=raw $show_notes \
 			--parents --boundary $args --stdin \
 			"<<[join [concat $revs "--" \
-				$vfilelimit($view)] "\\n"]"] r]
+				[escape_filter_paths \
+					$vfilelimit($view)]] "\\n"]"] r]
     } err]} {
 	error_popup "[mc "Error executing git log:"] $err"
 	return
@@ -3416,6 +3428,8 @@ set rectmask {
        0xfc, 0x0f, 0xfc, 0x0f, 0xfc, 0x0f, 0xfc, 0x0f, 0x00, 0x00};
 }
 image create bitmap reficon-H -background black -foreground "#00ff00" \
+    -data $rectdata -maskdata $rectmask
+image create bitmap reficon-R -background black -foreground "#ffddaa" \
     -data $rectdata -maskdata $rectmask
 image create bitmap reficon-o -background black -foreground "#ddddff" \
     -data $rectdata -maskdata $rectmask
@@ -7029,6 +7043,7 @@ proc commit_descriptor {p} {
 
 # append some text to the ctext widget, and make any SHA1 ID
 # that we know about be a clickable link.
+# Also look for URLs of the form "http[s]://..." and make them web links.
 proc appendwithlinks {text tags} {
     global ctext linknum curview
 
@@ -7043,6 +7058,18 @@ proc appendwithlinks {text tags} {
 	$ctext tag delete link$linknum
 	$ctext tag add link$linknum "$start + $s c" "$start + $e c"
 	setlink $linkid link$linknum
+	incr linknum
+    }
+    set wlinks [regexp -indices -all -inline -line \
+		    {https?://[^[:space:]]+} $text]
+    foreach l $wlinks {
+	set s2 [lindex $l 0]
+	set e2 [lindex $l 1]
+	set url [string range $text $s2 $e2]
+	incr e2
+	$ctext tag delete link$linknum
+	$ctext tag add link$linknum "$start + $s2 c" "$start + $e2 c"
+	setwlink $url link$linknum
 	incr linknum
     }
 }
@@ -7077,6 +7104,18 @@ proc setlink {id lk} {
     }
 }
 
+proc setwlink {url lk} {
+    global ctext
+    global linkfgcolor
+    global web_browser
+
+    if {$web_browser eq {}} return
+    $ctext tag conf $lk -foreground $linkfgcolor -underline 1
+    $ctext tag bind $lk <1> [list browseweb $url]
+    $ctext tag bind $lk <Enter> {linkcursor %W 1}
+    $ctext tag bind $lk <Leave> {linkcursor %W -1}
+}
+
 proc appendshortlink {id {pre {}} {post {}}} {
     global ctext linknum
 
@@ -7108,6 +7147,16 @@ proc linkcursor {w inc} {
 	if {$linkentercount < 0} {
 	    set linkentercount 0
 	}
+    }
+}
+
+proc browseweb {url} {
+    global web_browser
+
+    if {$web_browser eq {}} return
+    # Use eval here in case $web_browser is a command plus some arguments
+    if {[catch {eval exec $web_browser [list $url] &} err]} {
+	error_popup "[mc "Error starting web browser:"] $err"
     }
 }
 
@@ -8204,11 +8253,11 @@ proc parseblobdiffline {ids line} {
 	} else {
 	    $ctext insert end "$line\n" filesep
 	}
-    } elseif {![string compare -length 3 "  >" $line]} {
+    } elseif {$currdiffsubmod != "" && ![string compare -length 3 "  >" $line]} {
 	set $currdiffsubmod ""
 	set line [encoding convertfrom $diffencoding $line]
 	$ctext insert end "$line\n" dresult
-    } elseif {![string compare -length 3 "  <" $line]} {
+    } elseif {$currdiffsubmod != "" && ![string compare -length 3 "  <" $line]} {
 	set $currdiffsubmod ""
 	set line [encoding convertfrom $diffencoding $line]
 	$ctext insert end "$line\n" d0
@@ -10036,6 +10085,7 @@ proc sel_reflist {w x y} {
     set n [lindex $ref 0]
     switch -- [lindex $ref 1] {
 	"H" {selbyid $headids($n)}
+	"R" {selbyid $headids($n)}
 	"T" {selbyid $tagids($n)}
 	"o" {selbyid $otherrefids($n)}
     }
@@ -10065,7 +10115,11 @@ proc refill_reflist {} {
     foreach n [array names headids] {
 	if {[string match $reflistfilter $n]} {
 	    if {[commitinview $headids($n) $curview]} {
-		lappend refs [list $n H]
+		if {[string match "remotes/*" $n]} {
+		    lappend refs [list $n R]
+		} else {
+		    lappend refs [list $n H]
+		}
 	    } else {
 		interestedin $headids($n) {run refill_reflist}
 	    }
@@ -11508,7 +11562,7 @@ proc create_prefs_page {w} {
 proc prefspage_general {notebook} {
     global NS maxwidth maxgraphpct showneartags showlocalchanges
     global tabstop limitdiffs autoselect autosellen extdifftool perfile_attrs
-    global hideremotes want_ttk have_ttk maxrefs
+    global hideremotes want_ttk have_ttk maxrefs web_browser
 
     set page [create_prefs_page $notebook.general]
 
@@ -11558,6 +11612,13 @@ proc prefspage_general {notebook} {
     pack $page.extdifff.l $page.extdifff.b -side left
     pack configure $page.extdifff.l -padx 10
     grid x $page.extdifff $page.extdifft -sticky ew
+
+    ${NS}::entry $page.webbrowser -textvariable web_browser
+    ${NS}::frame $page.webbrowserf
+    ${NS}::label $page.webbrowserf.l -text [mc "Web browser" ]
+    pack $page.webbrowserf.l -side left
+    pack configure $page.webbrowserf.l -padx 10
+    grid x $page.webbrowserf $page.webbrowser -sticky ew
 
     ${NS}::label $page.lgen -text [mc "General options"]
     grid $page.lgen - -sticky w -pady 10
@@ -12329,6 +12390,7 @@ if {[tk windowingsystem] eq "win32"} {
     set bgcolor SystemWindow
     set fgcolor SystemWindowText
     set selectbgcolor SystemHighlight
+    set web_browser "cmd /c start"
 } else {
     set uicolor grey85
     set uifgcolor black
@@ -12336,6 +12398,11 @@ if {[tk windowingsystem] eq "win32"} {
     set bgcolor white
     set fgcolor black
     set selectbgcolor gray85
+    if {[tk windowingsystem] eq "aqua"} {
+	set web_browser "open"
+    } else {
+	set web_browser "xdg-open"
+    }
 }
 set diffcolors {red "#00a000" blue}
 set diffcontext 3
@@ -12409,6 +12476,7 @@ set config_variables {
     filesepbgcolor filesepfgcolor linehoverbgcolor linehoverfgcolor
     linehoveroutlinecolor mainheadcirclecolor workingfilescirclecolor
     indexcirclecolor circlecolors linkfgcolor circleoutlinecolor
+    web_browser
 }
 foreach var $config_variables {
     config_init_trace $var

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>Packfile transfer protocols</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -711,16 +711,16 @@ MUST peel the ref if it&#8217;s an annotated tag.</p>
 <div class="listingblock">
 <div class="content">
 <pre>  advertised-refs  =  *1("version 1")
-		      (no-refs / list-of-refs)
-		      *shallow
-		      flush-pkt
+                      (no-refs / list-of-refs)
+                      *shallow
+                      flush-pkt
 
   no-refs          =  PKT-LINE(zero-id SP "capabilities^{}"
-		      NUL capability-list)
+                      NUL capability-list)
 
   list-of-refs     =  first-ref *other-ref
   first-ref        =  PKT-LINE(obj-id SP refname
-		      NUL capability-list)
+                      NUL capability-list)
 
   other-ref        =  PKT-LINE(other-tip / other-peeled)
   other-tip        =  obj-id SP refname
@@ -764,19 +764,19 @@ out of what the server said it could do with the first <em>want</em> line.</p>
 <div class="listingblock">
 <div class="content">
 <pre>  upload-request    =  want-list
-		       *shallow-line
-		       *1depth-request
-		       [filter-request]
-		       flush-pkt
+                       *shallow-line
+                       *1depth-request
+                       [filter-request]
+                       flush-pkt
 
   want-list         =  first-want
-		       *additional-want
+                       *additional-want
 
   shallow-line      =  PKT-LINE("shallow" SP obj-id)
 
   depth-request     =  PKT-LINE("deepen" SP depth) /
-		       PKT-LINE("deepen-since" SP timestamp) /
-		       PKT-LINE("deepen-not" SP ref)
+                       PKT-LINE("deepen-since" SP timestamp) /
+                       PKT-LINE("deepen-not" SP ref)
 
   first-want        =  PKT-LINE("want" SP obj-id SP capability-list)
   additional-want   =  PKT-LINE("want" SP obj-id)
@@ -831,8 +831,8 @@ a positive depth, this step is skipped.</p>
 <div class="listingblock">
 <div class="content">
 <pre>  shallow-update   =  *shallow-line
-		      *unshallow-line
-		      flush-pkt
+                      *unshallow-line
+                      flush-pkt
 
   shallow-line     =  PKT-LINE("shallow" SP obj-id)
 
@@ -863,7 +863,7 @@ so that there is always a block of 32 "in-flight on the wire" at a time.</p>
 <div class="listingblock">
 <div class="content">
 <pre>  upload-haves      =  have-list
-		       compute-end
+                       compute-end
 
   have-list         =  *have-line
   have-line         =  PKT-LINE("have" SP obj-id)
@@ -1108,8 +1108,8 @@ of the reference.</p>
   shallow           =  PKT-LINE("shallow" SP obj-id)
 
   command-list      =  PKT-LINE(command NUL capability-list)
-		       *PKT-LINE(command)
-		       flush-pkt
+                       *PKT-LINE(command)
+                       flush-pkt
 
   command           =  create / delete / update
   create            =  zero-id SP new-id  SP name
@@ -1120,15 +1120,15 @@ of the reference.</p>
   new-id            =  obj-id
 
   push-cert         = PKT-LINE("push-cert" NUL capability-list LF)
-		      PKT-LINE("certificate version 0.1" LF)
-		      PKT-LINE("pusher" SP ident LF)
-		      PKT-LINE("pushee" SP url LF)
-		      PKT-LINE("nonce" SP nonce LF)
-		      *PKT-LINE("push-option" SP push-option LF)
-		      PKT-LINE(LF)
-		      *PKT-LINE(command LF)
-		      *PKT-LINE(gpg-signature-lines LF)
-		      PKT-LINE("push-cert-end" LF)
+                      PKT-LINE("certificate version 0.1" LF)
+                      PKT-LINE("pusher" SP ident LF)
+                      PKT-LINE("pushee" SP url LF)
+                      PKT-LINE("nonce" SP nonce LF)
+                      *PKT-LINE("push-option" SP push-option LF)
+                      PKT-LINE(LF)
+                      *PKT-LINE(command LF)
+                      *PKT-LINE(gpg-signature-lines LF)
+                      PKT-LINE("push-cert-end" LF)
 
   push-option       =  1*( VCHAR | SP )</pre>
 </div>
@@ -1245,8 +1245,8 @@ update was successful, or <em>ng [refname] [error]</em> if the update was not.</
 <div class="listingblock">
 <div class="content">
 <pre>  report-status     = unpack-status
-		      1*(command-status)
-		      flush-pkt
+                      1*(command-status)
+                      flush-pkt
 
   unpack-status     = PKT-LINE("unpack" SP unpack-result)
   unpack-result     = "ok" / error-msg
@@ -1292,7 +1292,7 @@ can be rejected.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

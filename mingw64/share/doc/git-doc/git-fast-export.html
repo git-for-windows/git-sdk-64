@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-fast-export(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -456,8 +456,9 @@ into <em>git fast-import</em>.</p>
 </div>
 <div class="paragraph">
 <p>You can use it as a human-readable bundle replacement (see
-<a href="git-bundle.html">git-bundle</a>(1)), or as a kind of an interactive
-<em>git filter-branch</em>.</p>
+<a href="git-bundle.html">git-bundle(1)</a>), or as a format that can be edited before being
+fed to <em>git fast-import</em> in order to do history rewrites (an ability
+relied on by tools like <em>git filter-repo</em>).</p>
 </div>
 </div>
 </div>
@@ -495,14 +496,14 @@ tagged objects may be filtered completely.</p>
 when encountering such a tag.  With <em>drop</em> it will omit such tags from
 the output.  With <em>rewrite</em>, if the tagged object is a commit, it will
 rewrite the tag to tag an ancestor commit (via parent rewriting; see
-<a href="git-rev-list.html">git-rev-list</a>(1))</p>
+<a href="git-rev-list.html">git-rev-list(1)</a>)</p>
 </div>
 </dd>
 <dt class="hdlist1">-M</dt>
 <dt class="hdlist1">-C</dt>
 <dd>
 <p>Perform move and/or copy detection, as described in the
-<a href="git-diff.html">git-diff</a>(1) manual page, and use it to generate
+<a href="git-diff.html">git-diff(1)</a> manual page, and use it to generate
 rename and copy commands in the output dump.</p>
 <div class="paragraph">
 <p>Note that earlier versions of this command did not complain and
@@ -527,11 +528,21 @@ marked/exported.</p>
 <p>Before processing any input, load the marks specified in
 &lt;file&gt;.  The input file must exist, must be readable, and
 must use the same format as produced by --export-marks.</p>
+</dd>
+<dt class="hdlist1">--mark-tags</dt>
+<dd>
+<p>In addition to labelling blobs and commits with mark ids, also
+label tags.  This is useful in conjunction with
+<code>--export-marks</code> and <code>--import-marks</code>, and is also useful (and
+necessary) for exporting of nested tags.  It does not hurt
+other cases and would be the default, but many fast-import
+frontends are not prepared to accept tags with mark
+identifiers.</p>
 <div class="paragraph">
-<p>Any commits that have already been marked will not be exported again.
-If the backend uses a similar --import-marks file, this allows for
-incremental bidirectional exporting of the repository by keeping the
-marks the same across runs.</p>
+<p>Any commits (or tags) that have already been marked will not be
+exported again.  If the backend uses a similar --import-marks file,
+this allows for incremental bidirectional exporting of the repository
+by keeping the marks the same across runs.</p>
 </div>
 </dd>
 <dt class="hdlist1">--fake-missing-tagger</dt>
@@ -632,8 +643,8 @@ UTF-8, it would be a one-to-one mirror.</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git fast-export master~5..master |
-	sed "s|refs/heads/master|refs/heads/other|" |
-	git fast-import</pre>
+        sed "s|refs/heads/master|refs/heads/other|" |
+        git fast-import</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -727,7 +738,7 @@ a tag referencing a tree instead of a commit.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-fast-import.html">git-fast-import</a>(1)</p>
+<p><a href="git-fast-import.html">git-fast-import(1)</a></p>
 </div>
 </div>
 </div>
@@ -735,14 +746,14 @@ a tag referencing a tree instead of a commit.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>Submitting Patches</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -558,7 +558,7 @@ run <code>git diff --check</code> on your changes before you commit.</p>
 <h3 id="describe-changes">Describe your changes well.</h3>
 <div class="paragraph">
 <p>The first line of the commit message should be a short description (50
-characters is the soft limit, see DISCUSSION in <a href="git-commit.html">git-commit</a>(1)),
+characters is the soft limit, see DISCUSSION in <a href="git-commit.html">git-commit(1)</a>),
 and should skip the full stop.  It is also conventional in most cases to
 prefix the first line with "area: " where the area is a filename or
 identifier for the general area of the code being modified, e.g.</p>
@@ -616,8 +616,8 @@ with the subject enclosed in a pair of double-quotes, like this:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	Commit f86a374 ("pack-bitmap.c: fix a memleak", 2015-03-30)
-	noticed that ...</pre>
+<pre>        Commit f86a374 ("pack-bitmap.c: fix a memleak", 2015-03-30)
+        noticed that ...</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -626,7 +626,7 @@ format, or this invocation of <code>git show</code>:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	git show -s --date=short --pretty='format:%h ("%s", %ad)' &lt;commit&gt;</pre>
+<pre>        git show -s --date=short --pretty='format:%h ("%s", %ad)' &lt;commit&gt;</pre>
 </div>
 </div>
 </div>
@@ -839,7 +839,7 @@ this project or the open source license(s) involved.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	Signed-off-by: Random J Developer &lt;random@developer.example.org&gt;</pre>
+<pre>        Signed-off-by: Random J Developer &lt;random@developer.example.org&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -899,10 +899,10 @@ repositories.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>git-gui/</code> comes from git-gui project, maintained by Pat Thoyts:</p>
+<p><code>git-gui/</code> comes from git-gui project, maintained by Pratyush Yadav:</p>
 <div class="literalblock">
 <div class="content">
-<pre>git://repo.or.cz/git-gui.git</pre>
+<pre>https://github.com/prati0100/git-gui.git</pre>
 </div>
 </div>
 </li>
@@ -949,7 +949,7 @@ the change.</p>
 are butchering.  These people happen to be the ones who are
 most likely to be knowledgeable enough to help you, but
 they have no obligation to help you (i.e. you ask for help,
-don&#8217;t demand).  <code>git log -p &#45;&#45; <em>$area_you_are_modifying</em></code> would
+don&#8217;t demand).  <code>git log -p &#x2d;&#x2d; <em>$area_you_are_modifying</em></code> would
 help you find out who they are.</p>
 </div>
 </li>
@@ -1067,9 +1067,9 @@ patterns of breakage.  Please make sure your MUA is set up
 properly not to corrupt whitespaces.</p>
 </div>
 <div class="paragraph">
-<p>See the DISCUSSION section of <a href="git-format-patch.html">git-format-patch</a>(1) for hints on
+<p>See the DISCUSSION section of <a href="git-format-patch.html">git-format-patch(1)</a> for hints on
 checking your patch by mailing it to yourself and applying with
-<a href="git-am.html">git-am</a>(1).</p>
+<a href="git-am.html">git-am(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>While you are at it, check the resulting commit log message from
@@ -1116,14 +1116,14 @@ diff --git a/pico/pico.c b/pico/pico.c
 --- a/pico/pico.c
 +++ b/pico/pico.c
 @@ -219,7 +219,9 @@ PICO *pm;
-	    switch(pico_all_done){	/* prepare for/handle final events */
-	      case COMP_EXIT :		/* already confirmed */
-		packheader();
+            switch(pico_all_done){      /* prepare for/handle final events */
+              case COMP_EXIT :          /* already confirmed */
+                packheader();
 +#if 0
-		stripwhitespace();
+                stripwhitespace();
 +#endif
-		c |= COMP_EXIT;
-		break;</pre>
+                c |= COMP_EXIT;
+                break;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1146,7 +1146,7 @@ it.</pre>
 <div class="sect2">
 <h3 id="_thunderbird_kmail_gmail">Thunderbird, KMail, GMail</h3>
 <div class="paragraph">
-<p>See the MUA-SPECIFIC HINTS section of <a href="git-format-patch.html">git-format-patch</a>(1).</p>
+<p>See the MUA-SPECIFIC HINTS section of <a href="git-format-patch.html">git-format-patch(1)</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1168,7 +1168,7 @@ this problem around.</p>
 </div>
 </div>
 <div id="footnotes">
-<hr>
+<hr/>
 <div class="footnote" id="_footnotedef_1">
 <a href="#_footnoteref_1">1</a>. The Git Security mailing list: <a href="mailto:git-security@googlegroups.com">git-security@googlegroups.com</a>
 </div>
@@ -1181,7 +1181,7 @@ this problem around.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

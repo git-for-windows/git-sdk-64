@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-worktree(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -472,7 +472,7 @@ with a linked working tree, remove it with <code>git worktree remove</code>.</p>
 <p>If a working tree is deleted without using <code>git worktree remove</code>, then
 its associated administrative files, which reside in the repository
 (see "DETAILS" below), will eventually be removed automatically (see
-<code>gc.worktreePruneExpire</code> in <a href="git-config.html">git-config</a>(1)), or you can run
+<code>gc.worktreePruneExpire</code> in <a href="git-config.html">git-config(1)</a>), or you can run
 <code>git worktree prune</code> in the main or any linked working tree to
 clean up any stale administrative files.</p>
 </div>
@@ -514,7 +514,7 @@ unique across all remotes. Set it to
 e.g. <code>checkout.defaultRemote=origin</code> to always checkout remote
 branches from there if <code>&lt;branch&gt;</code> is ambiguous but exists on the
 <em>origin</em> remote. See also <code>checkout.defaultRemote</code> in
-<a href="git-config.html">git-config</a>(1).</p>
+<a href="git-config.html">git-config(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>If <code>&lt;commit-ish&gt;</code> is omitted and neither <code>-b</code> nor <code>-B</code> nor <code>--detach</code> used,
@@ -602,14 +602,14 @@ exists. <code>-B</code> overrides this safeguard, resetting <code>&lt;new-branch
 <dt class="hdlist1">--detach</dt>
 <dd>
 <p>With <code>add</code>, detach HEAD in the new working tree. See "DETACHED HEAD"
-in <a href="git-checkout.html">git-checkout</a>(1).</p>
+in <a href="git-checkout.html">git-checkout(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--[no-]checkout</dt>
 <dd>
 <p>By default, <code>add</code> checks out <code>&lt;commit-ish&gt;</code>, however, <code>--no-checkout</code> can
 be used to suppress checkout in order to make customizations,
 such as configuring sparse-checkout. See "Sparse checkout"
-in <a href="git-read-tree.html">git-read-tree</a>(1).</p>
+in <a href="git-read-tree.html">git-read-tree(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--[no-]guess-remote</dt>
 <dd>
@@ -628,7 +628,7 @@ the remote-tracking branch as "upstream" from the new branch.</p>
 <p>When creating a new branch, if <code>&lt;commit-ish&gt;</code> is a branch,
 mark it as "upstream" from the new branch.  This is the
 default if <code>&lt;commit-ish&gt;</code> is a remote-tracking branch.  See
-"--track" in <a href="git-branch.html">git-branch</a>(1) for details.</p>
+"--track" in <a href="git-branch.html">git-branch(1)</a> for details.</p>
 </dd>
 <dt class="hdlist1">--lock</dt>
 <dd>
@@ -713,7 +713,7 @@ GIT_COMMON_DIR/worktrees/bar/refs/bisect/bad.</p>
 </div>
 <div class="paragraph">
 <p>To access refs, it&#8217;s best not to look inside GIT_DIR directly. Instead
-use commands such as <a href="git-rev-parse.html">git-rev-parse</a>(1) or <a href="git-update-ref.html">git-update-ref</a>(1)
+use commands such as <a href="git-rev-parse.html">git-rev-parse(1)</a> or <a href="git-update-ref.html">git-update-ref(1)</a>
 which will handle refs correctly.</p>
 </div>
 </div>
@@ -794,7 +794,7 @@ since refs are shared across all working trees, except refs/bisect and
 refs/worktree.</p>
 </div>
 <div class="paragraph">
-<p>See <a href="gitrepository-layout.html">gitrepository-layout</a>(5) for more information. The rule of
+<p>See <a href="gitrepository-layout.html">gitrepository-layout(5)</a> for more information. The rule of
 thumb is do not make any assumption about whether a path belongs to
 $GIT_DIR or $GIT_COMMON_DIR when you need to directly access something
 inside $GIT_DIR. Use <code>git rev-parse --git-path</code> to get the final path.</p>
@@ -817,7 +817,7 @@ plain text. For example, if a linked working tree&#8217;s <code>.git</code> file
 to <code>/path/main/.git/worktrees/test-next</code> then a file named
 <code>/path/main/.git/worktrees/test-next/locked</code> will prevent the
 <code>test-next</code> entry from being pruned.  See
-<a href="gitrepository-layout.html">gitrepository-layout</a>(5) for details.</p>
+<a href="gitrepository-layout.html">gitrepository-layout(5)</a> for details.</p>
 </div>
 <div class="paragraph">
 <p>When extensions.worktreeConfig is enabled, the config file
@@ -873,7 +873,7 @@ detached</pre>
 <div class="paragraph">
 <p>You are in the middle of a refactoring session and your boss comes in and
 demands that you fix something immediately. You might typically use
-<a href="git-stash.html">git-stash</a>(1) to store your changes away temporarily, however, your
+<a href="git-stash.html">git-stash(1)</a> to store your changes away temporarily, however, your
 working tree is in such a state of disarray (with new, moved, and removed
 files, and other bits and pieces strewn around) that you don&#8217;t want to risk
 disturbing any of it. Instead, you create a temporary linked working tree to
@@ -906,14 +906,14 @@ checkouts of a superproject.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

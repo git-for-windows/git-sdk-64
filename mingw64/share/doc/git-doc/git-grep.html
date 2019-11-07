@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-grep(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,25 +444,25 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git grep</em> [-a | --text] [-I] [--textconv] [-i | --ignore-case] [-w | --word-regexp]
-	   [-v | --invert-match] [-h|-H] [--full-name]
-	   [-E | --extended-regexp] [-G | --basic-regexp]
-	   [-P | --perl-regexp]
-	   [-F | --fixed-strings] [-n | --line-number] [--column]
-	   [-l | --files-with-matches] [-L | --files-without-match]
-	   [(-O | --open-files-in-pager) [&lt;pager&gt;]]
-	   [-z | --null]
-	   [ -o | --only-matching ] [-c | --count] [--all-match] [-q | --quiet]
-	   [--max-depth &lt;depth&gt;] [--[no-]recursive]
-	   [--color[=&lt;when&gt;] | --no-color]
-	   [--break] [--heading] [-p | --show-function]
-	   [-A &lt;post-context&gt;] [-B &lt;pre-context&gt;] [-C &lt;context&gt;]
-	   [-W | --function-context]
-	   [--threads &lt;num&gt;]
-	   [-f &lt;file&gt;] [-e] &lt;pattern&gt;
-	   [--and|--or|--not|(|)|-e &lt;pattern&gt;&#8230;&#8203;]
-	   [--recurse-submodules] [--parent-basename &lt;basename&gt;]
-	   [ [--[no-]exclude-standard] [--cached | --no-index | --untracked] | &lt;tree&gt;&#8230;&#8203;]
-	   [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
+           [-v | --invert-match] [-h|-H] [--full-name]
+           [-E | --extended-regexp] [-G | --basic-regexp]
+           [-P | --perl-regexp]
+           [-F | --fixed-strings] [-n | --line-number] [--column]
+           [-l | --files-with-matches] [-L | --files-without-match]
+           [(-O | --open-files-in-pager) [&lt;pager&gt;]]
+           [-z | --null]
+           [ -o | --only-matching ] [-c | --count] [--all-match] [-q | --quiet]
+           [--max-depth &lt;depth&gt;] [--[no-]recursive]
+           [--color[=&lt;when&gt;] | --no-color]
+           [--break] [--heading] [-p | --show-function]
+           [-A &lt;post-context&gt;] [-B &lt;pre-context&gt;] [-C &lt;context&gt;]
+           [-W | --function-context]
+           [--threads &lt;num&gt;]
+           [-f &lt;file&gt;] [-e] &lt;pattern&gt;
+           [--and|--or|--not|(|)|-e &lt;pattern&gt;&#8230;&#8203;]
+           [--recurse-submodules] [--parent-basename &lt;basename&gt;]
+           [ [--[no-]exclude-standard] [--cached | --no-index | --untracked] | &lt;tree&gt;&#8230;&#8203;]
+           [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -681,7 +681,7 @@ specified only one pattern, the first file is positioned at
 the first match automatically. The <code>pager</code> argument is
 optional; if specified, it must be stuck to the option
 without a space. If <code>pager</code> is unspecified, the default pager
-will be used (see <code>core.pager</code> in <a href="git-config.html">git-config</a>(1)).</p>
+will be used (see <code>core.pager</code> in <a href="git-config.html">git-config(1)</a>).</p>
 </dd>
 <dt class="hdlist1">-z</dt>
 <dt class="hdlist1">--null</dt>
@@ -728,7 +728,7 @@ at the start of each shown line.</p>
 the match, unless the matching line is a function name itself.
 The name is determined in the same way as <em>git diff</em> works out
 patch hunk headers (see <em>Defining a custom hunk-header</em> in
-<a href="gitattributes.html">gitattributes</a>(5)).</p>
+<a href="gitattributes.html">gitattributes(5)</a>).</p>
 </dd>
 <dt class="hdlist1">-&lt;num&gt;</dt>
 <dt class="hdlist1">-C &lt;num&gt;</dt>
@@ -765,6 +765,27 @@ See <code>grep.threads</code> in <em>CONFIGURATION</em> for more information.</p
 <dt class="hdlist1">-f &lt;file&gt;</dt>
 <dd>
 <p>Read patterns from &lt;file&gt;, one per line.</p>
+<div class="paragraph">
+<p>Passing the pattern via &lt;file&gt; allows for providing a search pattern
+containing a \0.</p>
+</div>
+<div class="paragraph">
+<p>Not all pattern types support patterns containing \0. Git will error
+out if a given pattern type can&#8217;t support such a pattern. The
+<code>--perl-regexp</code> pattern type when compiled against the PCRE v2 backend
+has the widest support for these types of patterns.</p>
+</div>
+<div class="paragraph">
+<p>In versions of Git before 2.23.0 patterns containing \0 would be
+silently considered fixed. This was never documented, there were also
+odd and undocumented interactions between e.g. non-ASCII patterns
+containing \0 and <code>--ignore-case</code>.</p>
+</div>
+<div class="paragraph">
+<p>In future versions we may learn to support patterns containing \0 for
+more search backends, until then we&#8217;ll die when the pattern type in
+question doesn&#8217;t support them.</p>
+</div>
 </dd>
 <dt class="hdlist1">-e</dt>
 <dd>
@@ -811,7 +832,7 @@ are &lt;pathspec&gt; limiters.</p>
 Both leading paths match and glob(7) patterns are supported.</p>
 <div class="paragraph">
 <p>For more details about the &lt;pathspec&gt; syntax, see the <em>pathspec</em> entry
-in <a href="gitglossary.html">gitglossary</a>(7).</p>
+in <a href="gitglossary.html">gitglossary(7)</a>.</p>
 </div>
 </dd>
 </dl>
@@ -850,14 +871,14 @@ files that have lines that match both.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

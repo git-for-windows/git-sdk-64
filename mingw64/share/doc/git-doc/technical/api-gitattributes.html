@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>gitattributes API</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -544,9 +544,9 @@ we are checking two attributes):</p>
 <pre>static struct attr_check *check;
 static void setup_check(void)
 {
-	if (check)
-		return; /* already done */
-	check = attr_check_initl("crlf", "ident", NULL);
+        if (check)
+                return; /* already done */
+        check = attr_check_initl("crlf", "ident", NULL);
 }</pre>
 </div>
 </div>
@@ -559,10 +559,10 @@ static void setup_check(void)
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	const char *path;
+<pre>        const char *path;
 
-	setup_check();
-	git_check_attr(path, check);</pre>
+        setup_check();
+        git_check_attr(path, check);</pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -574,23 +574,23 @@ static void setup_check(void)
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	const char *value = check-&gt;items[0].value;
+<pre>        const char *value = check-&gt;items[0].value;
 
-	if (ATTR_TRUE(value)) {
-		The attribute is Set, by listing only the name of the
-		attribute in the gitattributes file for the path.
-	} else if (ATTR_FALSE(value)) {
-		The attribute is Unset, by listing the name of the
-		attribute prefixed with a dash - for the path.
-	} else if (ATTR_UNSET(value)) {
-		The attribute is neither set nor unset for the path.
-	} else if (!strcmp(value, "input")) {
-		If none of ATTR_TRUE(), ATTR_FALSE(), or ATTR_UNSET() is
-		true, the value is a string set in the gitattributes
-		file for the path by saying "attr=value".
-	} else if (... other check using value as string ...) {
-		...
-	}</pre>
+        if (ATTR_TRUE(value)) {
+                The attribute is Set, by listing only the name of the
+                attribute in the gitattributes file for the path.
+        } else if (ATTR_FALSE(value)) {
+                The attribute is Unset, by listing the name of the
+                attribute prefixed with a dash - for the path.
+        } else if (ATTR_UNSET(value)) {
+                The attribute is neither set nor unset for the path.
+        } else if (!strcmp(value, "input")) {
+                If none of ATTR_TRUE(), ATTR_FALSE(), or ATTR_UNSET() is
+                true, the value is a string set in the gitattributes
+                file for the path by saying "attr=value".
+        } else if (... other check using value as string ...) {
+                ...
+        }</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -602,12 +602,12 @@ the first step in the above would be different.</p>
 <pre>static struct attr_check *check;
 static void setup_check(const char **argv)
 {
-	check = attr_check_alloc();
-	while (*argv) {
-		struct git_attr *attr = git_attr(*argv);
-		attr_check_append(check, attr);
-		argv++;
-	}
+        check = attr_check_alloc();
+        while (*argv) {
+                struct git_attr *attr = git_attr(*argv);
+                attr_check_append(check, attr);
+                argv++;
+        }
 }</pre>
 </div>
 </div>
@@ -647,7 +647,7 @@ false for all returned <code>attr_check.items[]</code> objects.)</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

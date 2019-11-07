@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-status(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -454,7 +454,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Displays paths that have differences between the index file and the
 current HEAD commit, paths that have differences between the working
 tree and the index file, and paths in the working tree that are not
-tracked by Git (and are not ignored by <a href="gitignore.html">gitignore</a>(5)). The first
+tracked by Git (and are not ignored by <a href="gitignore.html">gitignore(5)</a>). The first
 are what you <em>would</em> commit by running <code>git commit</code>; the second and
 third are what you <em>could</em> commit by running <em>git add</em> before running
 <code>git commit</code>.</p>
@@ -508,6 +508,8 @@ have not yet been staged (i.e., like the output of <code>git diff</code>).</p>
 <dt class="hdlist1">--untracked-files[=&lt;mode&gt;]</dt>
 <dd>
 <p>Show untracked files.</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
 <p>The mode parameter is used to specify the handling of untracked files.
 It is optional: it defaults to <em>all</em>, and if specified, it must be
@@ -542,7 +544,9 @@ return more quickly without showing untracked files.</p>
 </div>
 <div class="paragraph">
 <p>The default can be changed using the status.showUntrackedFiles
-configuration variable documented in <a href="git-config.html">git-config</a>(1).</p>
+configuration variable documented in <a href="git-config.html">git-config(1)</a>.</p>
+</div>
+</div>
 </div>
 </dd>
 <dt class="hdlist1">--ignore-submodules[=&lt;when&gt;]</dt>
@@ -552,7 +556,7 @@ either "none", "untracked", "dirty" or "all", which is the default.
 Using "none" will consider the submodule modified when it either contains
 untracked or modified files or its HEAD differs from the commit recorded
 in the superproject and can be used to override any settings of the
-<em>ignore</em> option in <a href="git-config.html">git-config</a>(1) or <a href="gitmodules.html">gitmodules</a>(5). When
+<em>ignore</em> option in <a href="git-config.html">git-config(1)</a> or <a href="gitmodules.html">gitmodules(5)</a>. When
 "untracked" is used submodules are not considered dirty when they only
 contain untracked content (but they are still scanned for modified
 content). Using "dirty" ignores all changes to the work tree of submodules,
@@ -564,6 +568,8 @@ the behavior before 1.7.0). Using "all" hides all changes to submodules
 <dt class="hdlist1">--ignored[=&lt;mode&gt;]</dt>
 <dd>
 <p>Show ignored files as well.</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
 <p>The mode parameter is used to specify the handling of ignored files.
 It is optional: it defaults to <em>traditional</em>.</p>
@@ -595,6 +601,8 @@ then it is shown, but not paths contained in the ignored directory. If
 a directory does not match an ignore pattern, but all contents are
 ignored, then the directory is not shown, but all contents are shown.</p>
 </div>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">-z</dt>
 <dd>
@@ -619,13 +627,13 @@ branch relative to its upstream branch.  Defaults to true.</p>
 <dt class="hdlist1">--no-renames</dt>
 <dd>
 <p>Turn on/off rename detection regardless of user configuration.
-See also <a href="git-diff.html">git-diff</a>(1) <code>--no-renames</code>.</p>
+See also <a href="git-diff.html">git-diff(1)</a> <code>--no-renames</code>.</p>
 </dd>
 <dt class="hdlist1">--find-renames[=&lt;n&gt;]</dt>
 <dd>
 <p>Turn on rename detection, optionally setting the similarity
 threshold.
-See also <a href="git-diff.html">git-diff</a>(1) <code>--find-renames</code>.</p>
+See also <a href="git-diff.html">git-diff(1)</a> <code>--find-renames</code>.</p>
 </dd>
 <dt class="hdlist1">--no-lock-index</dt>
 <dt class="hdlist1">--lock-index</dt>
@@ -637,7 +645,7 @@ update it afterwards if any changes were detected. Defaults to
 </dd>
 <dt class="hdlist1">&lt;pathspec&gt;&#8230;&#8203;</dt>
 <dd>
-<p>See the <em>pathspec</em> entry in <a href="gitglossary.html">gitglossary</a>(7).</p>
+<p>See the <em>pathspec</em> entry in <a href="gitglossary.html">gitglossary(7)</a>.</p>
 </dd>
 </dl>
 </div>
@@ -723,7 +731,7 @@ in which case <code>XY</code> are <code>!!</code>.</p>
 <div class="content">
 <pre>X          Y     Meaning
 -------------------------------------------------
-	 [AMD]   not updated
+         [AMD]   not updated
 M        [ MD]   updated in index
 A        [ MD]   added to index
 D                deleted from index
@@ -832,7 +840,7 @@ information about the current branch.</p>
 # branch.head &lt;branch&gt; | (detached)      Current branch.
 # branch.upstream &lt;upstream_branch&gt;      If upstream is set.
 # branch.ab +&lt;ahead&gt; -&lt;behind&gt;           If upstream is set and
-					 the commit is present.
+                                         the commit is present.
 ------------------------------------------------------------</pre>
 </div>
 </div>
@@ -867,31 +875,31 @@ line types in any order.</p>
 <pre>Field       Meaning
 --------------------------------------------------------
 &lt;XY&gt;        A 2 character field containing the staged and
-	    unstaged XY values described in the short format,
-	    with unchanged indicated by a "." rather than
-	    a space.
+            unstaged XY values described in the short format,
+            with unchanged indicated by a "." rather than
+            a space.
 &lt;sub&gt;       A 4 character field describing the submodule state.
-	    "N..." when the entry is not a submodule.
-	    "S&lt;c&gt;&lt;m&gt;&lt;u&gt;" when the entry is a submodule.
-	    &lt;c&gt; is "C" if the commit changed; otherwise ".".
-	    &lt;m&gt; is "M" if it has tracked changes; otherwise ".".
-	    &lt;u&gt; is "U" if there are untracked changes; otherwise ".".
+            "N..." when the entry is not a submodule.
+            "S&lt;c&gt;&lt;m&gt;&lt;u&gt;" when the entry is a submodule.
+            &lt;c&gt; is "C" if the commit changed; otherwise ".".
+            &lt;m&gt; is "M" if it has tracked changes; otherwise ".".
+            &lt;u&gt; is "U" if there are untracked changes; otherwise ".".
 &lt;mH&gt;        The octal file mode in HEAD.
 &lt;mI&gt;        The octal file mode in the index.
 &lt;mW&gt;        The octal file mode in the worktree.
 &lt;hH&gt;        The object name in HEAD.
 &lt;hI&gt;        The object name in the index.
 &lt;X&gt;&lt;score&gt;  The rename or copy score (denoting the percentage
-	    of similarity between the source and target of the
-	    move or copy). For example "R100" or "C75".
+            of similarity between the source and target of the
+            move or copy). For example "R100" or "C75".
 &lt;path&gt;      The pathname.  In a renamed/copied entry, this
-	    is the target path.
+            is the target path.
 &lt;sep&gt;       When the `-z` option is used, the 2 pathnames are separated
-	    with a NUL (ASCII 0x00) byte; otherwise, a tab (ASCII 0x09)
-	    byte separates them.
+            with a NUL (ASCII 0x00) byte; otherwise, a tab (ASCII 0x09)
+            byte separates them.
 &lt;origPath&gt;  The pathname in the commit at HEAD or in the index.
-	    This is only present in a renamed/copied entry, and
-	    tells where the renamed/copied contents came from.
+            This is only present in a renamed/copied entry, and
+            tells where the renamed/copied contents came from.
 --------------------------------------------------------</pre>
 </div>
 </div>
@@ -909,9 +917,9 @@ a "u" to distinguish from ordinary changed entries.</p>
 <pre>Field       Meaning
 --------------------------------------------------------
 &lt;XY&gt;        A 2 character field describing the conflict type
-	    as described in the short format.
+            as described in the short format.
 &lt;sub&gt;       A 4 character field describing the submodule state
-	    as described above.
+            as described above.
 &lt;m1&gt;        The octal file mode in stage 1.
 &lt;m2&gt;        The octal file mode in stage 2.
 &lt;m3&gt;        The octal file mode in stage 3.
@@ -958,7 +966,7 @@ byte.</p>
 <div class="paragraph">
 <p>Without the <code>-z</code> option, pathnames with "unusual" characters are
 quoted as explained for the configuration variable <code>core.quotePath</code>
-(see <a href="git-config.html">git-config</a>(1)).</p>
+(see <a href="git-config.html">git-config(1)</a>).</p>
 </div>
 </div>
 </div>
@@ -982,7 +990,7 @@ directory.</p>
 <p>If <code>status.submoduleSummary</code> is set to a non zero number or true (identical
 to -1 or an unlimited number), the submodule summary will be enabled for
 the long format and a summary of commits for modified submodules will be
-shown (see --summary-limit option of <a href="git-submodule.html">git-submodule</a>(1)). Please note
+shown (see --summary-limit option of <a href="git-submodule.html">git-submodule(1)</a>). Please note
 that the summary output from the status command will be suppressed for all
 submodules when <code>diff.ignoreSubmodules</code> is set to <em>all</em> or only for those
 submodules where <code>submodule.&lt;name&gt;.ignore=all</code>. To also view the summary for
@@ -1004,7 +1012,7 @@ them out is just to save subsequent programs from repeating our
 computation). When <code>status</code> is run in the background, the lock held
 during the write may conflict with other simultaneous processes, causing
 them to fail. Scripts running <code>status</code> in the background should consider
-using <code>git --no-optional-locks status</code> (see <a href="git.html">git</a>(1) for details).</p>
+using <code>git --no-optional-locks status</code> (see <a href="git.html">git(1)</a> for details).</p>
 </div>
 </div>
 </div>
@@ -1012,7 +1020,7 @@ using <code>git --no-optional-locks status</code> (see <a href="git.html">git</a
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="gitignore.html">gitignore</a>(5)</p>
+<p><a href="gitignore.html">gitignore(5)</a></p>
 </div>
 </div>
 </div>
@@ -1020,14 +1028,14 @@ using <code>git --no-optional-locks status</code> (see <a href="git.html">git</a
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

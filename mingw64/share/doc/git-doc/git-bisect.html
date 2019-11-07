@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-bisect(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -731,11 +731,11 @@ one instead.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git bisect good/bad			# previous round was good or bad.
+<pre>$ git bisect good/bad                   # previous round was good or bad.
 Bisecting: 337 revisions left to test after this (roughly 9 steps)
-$ git bisect visualize			# oops, that is uninteresting.
-$ git reset --hard HEAD~3		# try 3 revisions before what
-					# was suggested</pre>
+$ git bisect visualize                  # oops, that is uninteresting.
+$ git reset --hard HEAD~3               # try 3 revisions before what
+                                        # was suggested</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -945,15 +945,15 @@ make and test processes and the scripts.</p>
 
 # tweak the working tree by merging the hot-fix branch
 # and then attempt a build
-if	git merge --no-commit hot-fix &amp;&amp;
-	make
+if      git merge --no-commit hot-fix &amp;&amp;
+        make
 then
-	# run project specific test and report its status
-	~/check_test_case.sh
-	status=$?
+        # run project specific test and report its status
+        ~/check_test_case.sh
+        status=$?
 else
-	# tell the caller this is untestable
-	status=125
+        # tell the caller this is untestable
+        status=125
 fi
 
 # undo the tweak to allow clean flipping to the next commit
@@ -992,12 +992,12 @@ on a single line.</p>
 <div class="content">
 <pre>$ git bisect start HEAD &lt;known-good-commit&gt; [ &lt;boundary-commit&gt; ... ] --no-checkout
 $ git bisect run sh -c '
-	GOOD=$(git for-each-ref "--format=%(objectname)" refs/bisect/good-*) &amp;&amp;
-	git rev-list --objects BISECT_HEAD --not $GOOD &gt;tmp.$$ &amp;&amp;
-	git pack-objects --stdout &gt;/dev/null &lt;tmp.$$
-	rc=$?
-	rm -f tmp.$$
-	test $rc = 0'
+        GOOD=$(git for-each-ref "--format=%(objectname)" refs/bisect/good-*) &amp;&amp;
+        git rev-list --objects BISECT_HEAD --not $GOOD &gt;tmp.$$ &amp;&amp;
+        git pack-objects --stdout &gt;/dev/null &lt;tmp.$$
+        rc=$?
+        rm -f tmp.$$
+        test $rc = 0'
 
 $ git bisect reset                   # quit the bisect session</pre>
 </div>
@@ -1044,7 +1044,7 @@ help</code> or <code>git bisect -h</code> to get a long usage description.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p><a href="git-bisect-lk2009.html">Fighting regressions with git bisect</a>,
-<a href="git-blame.html">git-blame</a>(1).</p>
+<a href="git-blame.html">git-blame(1)</a>.</p>
 </div>
 </div>
 </div>
@@ -1052,14 +1052,14 @@ help</code> or <code>git bisect -h</code> to get a long usage description.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

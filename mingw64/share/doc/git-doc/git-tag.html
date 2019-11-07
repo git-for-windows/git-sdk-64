@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-tag(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,12 +444,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git tag</em> [-a | -s | -u &lt;keyid&gt;] [-f] [-m &lt;msg&gt; | -F &lt;file&gt;] [-e]
-	&lt;tagname&gt; [&lt;commit&gt; | &lt;object&gt;]
+        &lt;tagname&gt; [&lt;commit&gt; | &lt;object&gt;]
 <em>git tag</em> -d &lt;tagname&gt;&#8230;&#8203;
 <em>git tag</em> [-n[&lt;num&gt;]] -l [--contains &lt;commit&gt;] [--no-contains &lt;commit&gt;]
-	[--points-at &lt;object&gt;] [--column[=&lt;options&gt;] | --no-column]
-	[--create-reflog] [--sort=&lt;key&gt;] [--format=&lt;format&gt;]
-	[--[no-]merged [&lt;commit&gt;]] [&lt;pattern&gt;&#8230;&#8203;]
+        [--points-at &lt;object&gt;] [--column[=&lt;options&gt;] | --no-column]
+        [--create-reflog] [--sort=&lt;key&gt;] [--format=&lt;format&gt;]
+        [--[no-]merged [&lt;commit&gt;]] [&lt;pattern&gt;&#8230;&#8203;]
 <em>git tag</em> -v [--format=&lt;format&gt;] &lt;tagname&gt;&#8230;&#8203;</pre>
 </div>
 </div>
@@ -516,7 +516,7 @@ lightweight tags by default.</p>
 <p>Make a GPG-signed tag, using the default e-mail address&#8217;s key.
 The default behavior of tag GPG-signing is controlled by <code>tag.gpgSign</code>
 configuration variable if it exists, or disabled oder otherwise.
-See <a href="git-config.html">git-config</a>(1).</p>
+See <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--no-sign</dt>
 <dd>
@@ -581,7 +581,7 @@ configuration variable.
 The keys supported are the same as those in <code>git for-each-ref</code>.
 Sort order defaults to the value configured for the <code>tag.sort</code>
 variable if it exists, or lexicographic order otherwise. See
-<a href="git-config.html">git-config</a>(1).</p>
+<a href="git-config.html">git-config(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--color[=&lt;when&gt;]</dt>
 <dd>
@@ -664,7 +664,7 @@ all, <em>whitespace</em> removes just leading/trailing whitespace lines and
 <dt class="hdlist1">--create-reflog</dt>
 <dd>
 <p>Create a reflog for the tag. To globally enable reflogs for tags, see
-<code>core.logAllRefUpdates</code> in <a href="git-config.html">git-config</a>(1).
+<code>core.logAllRefUpdates</code> in <a href="git-config.html">git-config(1)</a>.
 The negated form <code>--no-create-reflog</code> only overrides an earlier
 <code>--create-reflog</code>, but currently does not negate the setting of
 <code>core.logAllRefUpdates</code>.</p>
@@ -673,14 +673,14 @@ The negated form <code>--no-create-reflog</code> only overrides an earlier
 <dd>
 <p>A string that interpolates <code>%(fieldname)</code> from a tag ref being shown
 and the object it points at.  The format is the same as
-that of <a href="git-for-each-ref.html">git-for-each-ref</a>(1).  When unspecified,
+that of <a href="git-for-each-ref.html">git-for-each-ref(1)</a>.  When unspecified,
 defaults to <code>%(refname:strip=2)</code>.</p>
 </dd>
 <dt class="hdlist1">&lt;tagname&gt;</dt>
 <dd>
 <p>The name of the tag to create, delete, or describe.
 The new tag name must pass all checks defined by
-<a href="git-check-ref-format.html">git-check-ref-format</a>(1).  Some of these checks
+<a href="git-check-ref-format.html">git-check-ref-format(1)</a>.  Some of these checks
 may restrict the characters allowed in a tag name.</p>
 </dd>
 <dt class="hdlist1">&lt;commit&gt;</dt>
@@ -711,7 +711,7 @@ it in the repository configuration as follows:</p>
 <div class="paragraph">
 <p><code>pager.tag</code> is only respected when listing tags, i.e., when <code>-l</code> is
 used or implied. The default is to use a pager.
-See <a href="git-config.html">git-config</a>(1).</p>
+See <a href="git-config.html">git-config(1)</a>.</p>
 </div>
 </div>
 </div>
@@ -773,14 +773,14 @@ then fixed something, and retagged the *fixed* tree as X again.
 If you got the wrong tag, and want the new one, please delete
 the old one and fetch the new one by doing:
 
-	git tag -d X
-	git fetch origin tag X
+        git tag -d X
+        git fetch origin tag X
 
 to get my updated tag.
 
 You can test which tag you have by doing
 
-	git rev-parse X
+        git rev-parse X
 
 which should return 0123456789abcdef.. if you have the new version.
 
@@ -818,7 +818,7 @@ command line:</p>
 <div class="content">
 <pre>Linus, please pull from
 
-	git://git..../proj.git master
+        git://git..../proj.git master
 
 to get the following updates...</pre>
 </div>
@@ -938,8 +938,8 @@ In addition, the date part is accepted in the following formats:
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-check-ref-format.html">git-check-ref-format</a>(1).
-<a href="git-config.html">git-config</a>(1).</p>
+<p><a href="git-check-ref-format.html">git-check-ref-format(1)</a>.
+<a href="git-config.html">git-config(1)</a>.</p>
 </div>
 </div>
 </div>
@@ -947,14 +947,14 @@ In addition, the date part is accepted in the following formats:
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

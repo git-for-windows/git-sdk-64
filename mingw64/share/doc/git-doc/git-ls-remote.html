@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-ls-remote(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,8 +444,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git ls-remote</em> [--heads] [--tags] [--refs] [--upload-pack=&lt;exec&gt;]
-	      [-q | --quiet] [--exit-code] [--get-url] [--sort=&lt;key&gt;]
-	      [--symref] [&lt;repository&gt; [&lt;refs&gt;&#8230;&#8203;]]</pre>
+              [-q | --quiet] [--exit-code] [--get-url] [--sort=&lt;key&gt;]
+              [--symref] [&lt;repository&gt; [&lt;refs&gt;&#8230;&#8203;]]</pre>
 </div>
 </div>
 </div>
@@ -499,7 +499,7 @@ found any matching refs.</p>
 <dt class="hdlist1">--get-url</dt>
 <dd>
 <p>Expand the URL of the given remote repository taking into account any
-"url.&lt;base&gt;.insteadOf" config setting (See <a href="git-config.html">git-config</a>(1)) and
+"url.&lt;base&gt;.insteadOf" config setting (See <a href="git-config.html">git-config(1)</a>) and
 exit without talking to the remote.</p>
 </dd>
 <dt class="hdlist1">--symref</dt>
@@ -515,7 +515,7 @@ one shown by ls-remote.</p>
 of the value. Supports "version:refname" or "v:refname" (tag names
 are treated as versions). The "version:refname" sort order can also
 be affected by the "versionsort.suffix" configuration variable.
-See <a href="git-for-each-ref.html">git-for-each-ref</a>(1) for more sort options, but be aware
+See <a href="git-for-each-ref.html">git-for-each-ref(1)</a> for more sort options, but be aware
 keys like <code>committerdate</code> that require access to the objects
 themselves will not work for refs whose objects have not yet been
 fetched from the remote, and will give a <code>missing object</code> error.</p>
@@ -533,7 +533,7 @@ sent to the other side in the order listed on the command line.</p>
 <dd>
 <p>The "remote" repository to query.  This parameter can be
 either a URL or the name of a remote (see the GIT URLS and
-REMOTES sections of <a href="git-fetch.html">git-fetch</a>(1)).</p>
+REMOTES sections of <a href="git-fetch.html">git-fetch(1)</a>).</p>
 </dd>
 <dt class="hdlist1">&lt;refs&gt;&#8230;&#8203;</dt>
 <dd>
@@ -549,23 +549,23 @@ are displayed.</p>
 <div class="sect1">
 <h2 id="_examples">EXAMPLES</h2>
 <div class="sectionbody">
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
 <pre>$ git ls-remote --tags ./.
-d6602ec5194c87b0fc87103ca4d67251c76f233a	refs/tags/v0.99
-f25a265a342aed6041ab0cc484224d9ca54b6f41	refs/tags/v0.99.1
-7ceca275d047c90c0c7d5afb13ab97efdf51bd6e	refs/tags/v0.99.3
-c5db5456ae3b0873fc659c19fafdde22313cc441	refs/tags/v0.99.2
-0918385dbd9656cab0d1d81ba7453d49bbc16250	refs/tags/junio-gpg-pub
+d6602ec5194c87b0fc87103ca4d67251c76f233a        refs/tags/v0.99
+f25a265a342aed6041ab0cc484224d9ca54b6f41        refs/tags/v0.99.1
+7ceca275d047c90c0c7d5afb13ab97efdf51bd6e        refs/tags/v0.99.3
+c5db5456ae3b0873fc659c19fafdde22313cc441        refs/tags/v0.99.2
+0918385dbd9656cab0d1d81ba7453d49bbc16250        refs/tags/junio-gpg-pub
 $ git ls-remote http://www.kernel.org/pub/scm/git/git.git master pu rc
-5fe978a5381f1fbad26a80e682ddd2a401966740	refs/heads/master
-c781a84b5204fb294c9ccc79f8b3baceeb32c061	refs/heads/pu
+5fe978a5381f1fbad26a80e682ddd2a401966740        refs/heads/master
+c781a84b5204fb294c9ccc79f8b3baceeb32c061        refs/heads/pu
 $ git remote add korg http://www.kernel.org/pub/scm/git/git.git
 $ git ls-remote --tags korg v\*
-d6602ec5194c87b0fc87103ca4d67251c76f233a	refs/tags/v0.99
-f25a265a342aed6041ab0cc484224d9ca54b6f41	refs/tags/v0.99.1
-c5db5456ae3b0873fc659c19fafdde22313cc441	refs/tags/v0.99.2
-7ceca275d047c90c0c7d5afb13ab97efdf51bd6e	refs/tags/v0.99.3</pre>
+d6602ec5194c87b0fc87103ca4d67251c76f233a        refs/tags/v0.99
+f25a265a342aed6041ab0cc484224d9ca54b6f41        refs/tags/v0.99.1
+c5db5456ae3b0873fc659c19fafdde22313cc441        refs/tags/v0.99.2
+7ceca275d047c90c0c7d5afb13ab97efdf51bd6e        refs/tags/v0.99.3</pre>
 </div>
 </div>
 </div>
@@ -574,7 +574,7 @@ c5db5456ae3b0873fc659c19fafdde22313cc441	refs/tags/v0.99.2
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-check-ref-format.html">git-check-ref-format</a>(1).</p>
+<p><a href="git-check-ref-format.html">git-check-ref-format(1)</a>.</p>
 </div>
 </div>
 </div>
@@ -582,14 +582,14 @@ c5db5456ae3b0873fc659c19fafdde22313cc441	refs/tags/v0.99.2
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

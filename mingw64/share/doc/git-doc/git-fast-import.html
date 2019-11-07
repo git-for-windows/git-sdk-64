@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-fast-import(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -609,7 +609,7 @@ The default is unlimited.</p>
 </dd>
 <dt class="hdlist1">fastimport.unpackLimit</dt>
 <dd>
-<p>See <a href="git-config.html">git-config</a>(1)</p>
+<p>See <a href="git-config.html">git-config(1)</a></p>
 </dd>
 </dl>
 </div>
@@ -863,6 +863,14 @@ a specific revision without making a commit on it.</p>
 <code>commit</code> command.  This command is optional and is not
 needed to perform an import.</p>
 </dd>
+<dt class="hdlist1"><code>alias</code></dt>
+<dd>
+<p>Record that a mark refers to a given object without first
+creating any new object.  Using --import-marks and referring
+to missing marks will cause fast-import to fail, so aliases
+can provide a way to set otherwise pruned commits to a valid
+value (e.g. the nearest non-pruned ancestor).</p>
+</dd>
 <dt class="hdlist1"><code>checkpoint</code></dt>
 <dd>
 <p>Forces fast-import to close the current packfile, generate its
@@ -922,17 +930,17 @@ change to the project.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'commit' SP &lt;ref&gt; LF
-	mark?
-	original-oid?
-	('author' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF)?
-	'committer' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF
-	('encoding' SP &lt;encoding&gt;)?
-	data
-	('from' SP &lt;commit-ish&gt; LF)?
-	('merge' SP &lt;commit-ish&gt; LF)?
-	(filemodify | filedelete | filecopy | filerename | filedeleteall | notemodify)*
-	LF?</pre>
+<pre>        'commit' SP &lt;ref&gt; LF
+        mark?
+        original-oid?
+        ('author' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF)?
+        'committer' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF
+        ('encoding' SP &lt;encoding&gt;)?
+        data
+        ('from' SP &lt;commit-ish&gt; LF)?
+        ('merge' SP &lt;commit-ish&gt; LF)*
+        (filemodify | filedelete | filecopy | filerename | filedeleteall | notemodify)*
+        LF?</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1066,7 +1074,7 @@ consist only of base-10 digits.</p>
 </li>
 <li>
 <p>Any valid Git SHA-1 expression that resolves to a commit.  See
-&#8220;SPECIFYING REVISIONS&#8221; in <a href="gitrevisions.html">gitrevisions</a>(7) for details.</p>
+&#8220;SPECIFYING REVISIONS&#8221; in <a href="gitrevisions.html">gitrevisions(7)</a> for details.</p>
 </li>
 <li>
 <p>The special null SHA-1 (40 zeros) specifies that the branch is to be
@@ -1080,7 +1088,7 @@ current branch value should be written as:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	from refs/heads/branch^0</pre>
+<pre>        from refs/heads/branch^0</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1123,7 +1131,7 @@ of specifying the content of the file.</p>
 <code>blob</code> command.  The frontend just needs to connect it.</p>
 <div class="literalblock">
 <div class="content">
-<pre>	'M' SP &lt;mode&gt; SP &lt;dataref&gt; SP &lt;path&gt; LF</pre>
+<pre>        'M' SP &lt;mode&gt; SP &lt;dataref&gt; SP &lt;path&gt; LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1141,8 +1149,8 @@ The frontend wants to supply it as part of this modify
 command.</p>
 <div class="literalblock">
 <div class="content">
-<pre>	'M' SP &lt;mode&gt; SP 'inline' SP &lt;path&gt; LF
-	data</pre>
+<pre>        'M' SP &lt;mode&gt; SP 'inline' SP &lt;path&gt; LF
+        data</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1234,7 +1242,7 @@ first non-empty directory or the root is reached.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'D' SP &lt;path&gt; LF</pre>
+<pre>        'D' SP &lt;path&gt; LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1253,7 +1261,7 @@ by the content copied from the source.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'C' SP &lt;path&gt; SP &lt;path&gt; LF</pre>
+<pre>        'C' SP &lt;path&gt; SP &lt;path&gt; LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1278,7 +1286,7 @@ the destination exists it will be replaced by the source directory.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'R' SP &lt;path&gt; SP &lt;path&gt; LF</pre>
+<pre>        'R' SP &lt;path&gt; SP &lt;path&gt; LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1314,7 +1322,7 @@ to subsequently add all interesting files from scratch.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'deleteall' LF</pre>
+<pre>        'deleteall' LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1354,7 +1362,7 @@ of the note.</p>
 commit that is to be annotated.</p>
 <div class="literalblock">
 <div class="content">
-<pre>	'N' SP &lt;dataref&gt; SP &lt;commit-ish&gt; LF</pre>
+<pre>        'N' SP &lt;dataref&gt; SP &lt;commit-ish&gt; LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1370,8 +1378,8 @@ The frontend wants to supply it as part of this modify
 command.</p>
 <div class="literalblock">
 <div class="content">
-<pre>	'N' SP 'inline' SP &lt;commit-ish&gt; LF
-	data</pre>
+<pre>        'N' SP 'inline' SP &lt;commit-ish&gt; LF
+        data</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1397,7 +1405,7 @@ command the <code>mark</code> command appears within.  This can be <code>commit<
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'mark' SP ':' &lt;idnum&gt; LF</pre>
+<pre>        'mark' SP ':' &lt;idnum&gt; LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1422,7 +1430,7 @@ may have uses for this information</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'original-oid' SP &lt;object-identifier&gt; LF</pre>
+<pre>        'original-oid' SP &lt;object-identifier&gt; LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1437,11 +1445,12 @@ lightweight (non-annotated) tags see the <code>reset</code> command below.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'tag' SP &lt;name&gt; LF
-	'from' SP &lt;commit-ish&gt; LF
-	original-oid?
-	'tagger' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF
-	data</pre>
+<pre>        'tag' SP &lt;name&gt; LF
+        mark?
+        'from' SP &lt;commit-ish&gt; LF
+        original-oid?
+        'tagger' (SP &lt;name&gt;)? SP LT &lt;email&gt; GT SP &lt;when&gt; LF
+        data</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1493,9 +1502,9 @@ branch from an existing commit without creating a new commit.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'reset' SP &lt;ref&gt; LF
-	('from' SP &lt;commit-ish&gt; LF)?
-	LF?</pre>
+<pre>        'reset' SP &lt;ref&gt; LF
+        ('from' SP &lt;commit-ish&gt; LF)?
+        LF?</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1534,10 +1543,10 @@ assigned mark.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'blob' LF
-	mark?
-	original-oid?
-	data</pre>
+<pre>        'blob' LF
+        mark?
+        original-oid?
+        data</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1570,8 +1579,8 @@ file/message content whose lines might start with <code>#</code>.</p>
 <p>The frontend must specify the number of bytes of data.</p>
 <div class="literalblock">
 <div class="content">
-<pre>	'data' SP &lt;count&gt; LF
-	&lt;raw&gt; LF?</pre>
+<pre>        'data' SP &lt;count&gt; LF
+        &lt;raw&gt; LF?</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1595,10 +1604,10 @@ This format is primarily useful for testing and is not
 recommended for real data.</p>
 <div class="literalblock">
 <div class="content">
-<pre>	'data' SP '&lt;&lt;' &lt;delim&gt; LF
-	&lt;raw&gt; LF
-	&lt;delim&gt; LF
-	LF?</pre>
+<pre>        'data' SP '&lt;&lt;' &lt;delim&gt; LF
+        &lt;raw&gt; LF
+        &lt;delim&gt; LF
+        LF?</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1617,6 +1626,24 @@ a data chunk which does not have an LF as its last byte.</p>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_alias"><code>alias</code></h3>
+<div class="paragraph">
+<p>Record that a mark refers to a given object without first creating any
+new object.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>        'alias' LF
+        mark
+        'to' SP &lt;commit-ish&gt; LF
+        LF?</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For a detailed description of <code>&lt;commit-ish&gt;</code> see above under <code>from</code>.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_checkpoint"><code>checkpoint</code></h3>
 <div class="paragraph">
 <p>Forces fast-import to close the current packfile, start a new one, and to
@@ -1624,8 +1651,8 @@ save out all current branch refs, tags and marks.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'checkpoint' LF
-	LF?</pre>
+<pre>        'checkpoint' LF
+        LF?</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1661,8 +1688,8 @@ on the current import, or on any of fast-import&#8217;s internal state.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'progress' SP &lt;any&gt; LF
-	LF?</pre>
+<pre>        'progress' SP &lt;any&gt; LF
+        LF?</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1697,7 +1724,7 @@ might want to refer to in their commit messages.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'get-mark' SP ':' &lt;idnum&gt; LF</pre>
+<pre>        'get-mark' SP ':' &lt;idnum&gt; LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1716,7 +1743,7 @@ accessible from the target repository.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'cat-blob' SP &lt;dataref&gt; LF</pre>
+<pre>        'cat-blob' SP &lt;dataref&gt; LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1770,7 +1797,7 @@ The path names a directory entry within fast-import&#8217;s
 active commit.  The path must be quoted in this case.</p>
 <div class="literalblock">
 <div class="content">
-<pre>	'ls' SP &lt;path&gt; LF</pre>
+<pre>        'ls' SP &lt;path&gt; LF</pre>
 </div>
 </div>
 </dd>
@@ -1783,7 +1810,7 @@ The path is relative to the top level of the tree
 named by <code>&lt;dataref&gt;</code>.</p>
 <div class="literalblock">
 <div class="content">
-<pre>	'ls' SP &lt;dataref&gt; SP &lt;path&gt; LF</pre>
+<pre>        'ls' SP &lt;dataref&gt; SP &lt;path&gt; LF</pre>
 </div>
 </div>
 </dd>
@@ -1835,7 +1862,7 @@ it does not.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>	'feature' SP &lt;feature&gt; ('=' &lt;argument&gt;)? LF</pre>
+<pre>        'feature' SP &lt;feature&gt; ('=' &lt;argument&gt;)? LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2285,8 +2312,8 @@ final packfile size (30-50% smaller can be quite typical).</p>
 <p>Instead of running <code>git repack</code> you can also run <code>git gc
 --aggressive</code>, which will also optimize other things after an import
 (e.g. pack loose refs). As noted in the "AGGRESSIVE" section in
-<a href="git-gc.html">git-gc</a>(1) the <code>--aggressive</code> option will find new deltas with
-the <code>-f</code> option to <a href="git-repack.html">git-repack</a>(1). For the reasons elaborated
+<a href="git-gc.html">git-gc(1)</a> the <code>--aggressive</code> option will find new deltas with
+the <code>-f</code> option to <a href="git-repack.html">git-repack(1)</a>. For the reasons elaborated
 on above using <code>--aggressive</code> after a fast-import is one of the few
 cases where it&#8217;s known to be worthwhile.</p>
 </div>
@@ -2406,7 +2433,7 @@ compression.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-fast-export.html">git-fast-export</a>(1)</p>
+<p><a href="git-fast-export.html">git-fast-export(1)</a></p>
 </div>
 </div>
 </div>
@@ -2414,14 +2441,14 @@ compression.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>gitworkflows(7)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -473,7 +473,7 @@ logical steps, and commit each of them.  They should be consistent,
 working independently of any later commits, pass the test suite, etc.
 This makes the review process much easier, and the history much more
 useful for later inspection and analysis, for example with
-<a href="git-blame.html">git-blame</a>(1) and <a href="git-bisect.html">git-bisect</a>(1).</p>
+<a href="git-blame.html">git-blame(1)</a> and <a href="git-bisect.html">git-bisect(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>To achieve this, try to split your work into small steps from the very
@@ -483,7 +483,7 @@ small or imperfect steps along the way. You can always go back later
 and edit the commits with <code>git rebase --interactive</code> before you
 publish them.  You can use <code>git stash push --keep-index</code> to run the
 test suite independent of other uncommitted changes; see the EXAMPLES
-section of <a href="git-stash.html">git-stash</a>(1).</p>
+section of <a href="git-stash.html">git-stash(1)</a>.</p>
 </div>
 </div>
 </div>
@@ -492,8 +492,8 @@ section of <a href="git-stash.html">git-stash</a>(1).</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>There are two main tools that can be used to include changes from one
-branch on another: <a href="git-merge.html">git-merge</a>(1) and
-<a href="git-cherry-pick.html">git-cherry-pick</a>(1).</p>
+branch on another: <a href="git-merge.html">git-merge(1)</a> and
+<a href="git-cherry-pick.html">git-cherry-pick(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>Merges have many advantages, so we try to solve as many problems as
@@ -577,7 +577,7 @@ other.</p>
 <div class="paragraph">
 <p>This gives a very controlled flow of fixes.  If you notice that you
 have applied a fix to e.g. <em>master</em> that is also required in <em>maint</em>,
-you will need to cherry-pick it (using <a href="git-cherry-pick.html">git-cherry-pick</a>(1))
+you will need to cherry-pick it (using <a href="git-cherry-pick.html">git-cherry-pick(1)</a>)
 downwards.  This will happen a few times and is nothing to worry about
 unless you do it very frequently.</p>
 </div>
@@ -630,14 +630,14 @@ do this "just habitually", see below.)</p>
 </li>
 <li>
 <p>If you find you forked off the wrong branch and want to move it
-"back in time", use <a href="git-rebase.html">git-rebase</a>(1).</p>
+"back in time", use <a href="git-rebase.html">git-rebase(1)</a>.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
 <p>Note that the last point clashes with the other two: a topic that has
 been merged elsewhere should not be rebased.  See the section on
-RECOVERING FROM UPSTREAM REBASE in <a href="git-rebase.html">git-rebase</a>(1).</p>
+RECOVERING FROM UPSTREAM REBASE in <a href="git-rebase.html">git-rebase(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>We should point out that "habitually" (regularly for no real reason)
@@ -883,15 +883,15 @@ history; downstream base their work on the official history.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="git-push.html">git-push</a>(1) copies your branches to a remote repository,
+<p><a href="git-push.html">git-push(1)</a> copies your branches to a remote repository,
 usually to one that can be read by all involved parties;</p>
 </li>
 <li>
-<p><a href="git-fetch.html">git-fetch</a>(1) that copies remote branches to your repository;
+<p><a href="git-fetch.html">git-fetch(1)</a> that copies remote branches to your repository;
 and</p>
 </li>
 <li>
-<p><a href="git-pull.html">git-pull</a>(1) that does fetch and merge in one go.</p>
+<p><a href="git-pull.html">git-pull(1)</a> that does fetch and merge in one go.</p>
 </li>
 </ul>
 </div>
@@ -913,7 +913,7 @@ from.</p>
 </div>
 <div class="paragraph">
 <p>You will still have to tell people by other means, such as mail.  (Git
-provides the <a href="git-request-pull.html">git-request-pull</a>(1) to send preformatted pull
+provides the <a href="git-request-pull.html">git-request-pull(1)</a> to send preformatted pull
 requests to upstream maintainers to simplify this task.)</p>
 </div>
 <div class="paragraph">
@@ -968,7 +968,7 @@ downstream <em>should</em> merge from upstream.</p>
 <div class="paragraph">
 <p>If you are a contributor that sends changes upstream in the form of
 emails, you should use topic branches as usual (see above).  Then use
-<a href="git-format-patch.html">git-format-patch</a>(1) to generate the corresponding emails
+<a href="git-format-patch.html">git-format-patch(1)</a> to generate the corresponding emails
 (highly recommended over manually formatting them because it makes the
 maintainer&#8217;s life easier).</p>
 </div>
@@ -989,7 +989,7 @@ patch files</p>
 </div>
 </div>
 <div class="paragraph">
-<p>See the <a href="git-format-patch.html">git-format-patch</a>(1) and <a href="git-send-email.html">git-send-email</a>(1)
+<p>See the <a href="git-format-patch.html">git-format-patch(1)</a> and <a href="git-send-email.html">git-send-email(1)</a>
 manpages for further usage notes.</p>
 </div>
 <div class="paragraph">
@@ -1026,7 +1026,7 @@ create a new topic branch and use <em>git am</em> to import the commits:</p>
 <div class="paragraph">
 <p>One feature worth pointing out is the three-way merge, which can help
 if you get conflicts: <code>git am -3</code> will use index information contained
-in patches to figure out the merge base.  See <a href="git-am.html">git-am</a>(1) for
+in patches to figure out the merge base.  See <a href="git-am.html">git-am(1)</a> for
 other options.</p>
 </div>
 </div>
@@ -1036,14 +1036,14 @@ other options.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="gittutorial.html">gittutorial</a>(7),
-<a href="git-push.html">git-push</a>(1),
-<a href="git-pull.html">git-pull</a>(1),
-<a href="git-merge.html">git-merge</a>(1),
-<a href="git-rebase.html">git-rebase</a>(1),
-<a href="git-format-patch.html">git-format-patch</a>(1),
-<a href="git-send-email.html">git-send-email</a>(1),
-<a href="git-am.html">git-am</a>(1)</p>
+<p><a href="gittutorial.html">gittutorial(7)</a>,
+<a href="git-push.html">git-push(1)</a>,
+<a href="git-pull.html">git-pull(1)</a>,
+<a href="git-merge.html">git-merge(1)</a>,
+<a href="git-rebase.html">git-rebase(1)</a>,
+<a href="git-format-patch.html">git-format-patch(1)</a>,
+<a href="git-send-email.html">git-send-email(1)</a>,
+<a href="git-am.html">git-am(1)</a></p>
 </div>
 </div>
 </div>
@@ -1051,14 +1051,14 @@ other options.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

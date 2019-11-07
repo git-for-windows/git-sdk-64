@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-am(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,12 +444,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git am</em> [--signoff] [--keep] [--[no-]keep-cr] [--[no-]utf8]
-	 [--[no-]3way] [--interactive] [--committer-date-is-author-date]
-	 [--ignore-date] [--ignore-space-change | --ignore-whitespace]
-	 [--whitespace=&lt;option&gt;] [-C&lt;n&gt;] [-p&lt;n&gt;] [--directory=&lt;dir&gt;]
-	 [--exclude=&lt;path&gt;] [--include=&lt;path&gt;] [--reject] [-q | --quiet]
-	 [--[no-]scissors] [-S[&lt;keyid&gt;]] [--patch-format=&lt;format&gt;]
-	 [(&lt;mbox&gt; | &lt;Maildir&gt;)&#8230;&#8203;]
+         [--[no-]3way] [--interactive] [--committer-date-is-author-date]
+         [--ignore-date] [--ignore-space-change | --ignore-whitespace]
+         [--whitespace=&lt;option&gt;] [-C&lt;n&gt;] [-p&lt;n&gt;] [--directory=&lt;dir&gt;]
+         [--exclude=&lt;path&gt;] [--include=&lt;path&gt;] [--reject] [-q | --quiet]
+         [--[no-]scissors] [-S[&lt;keyid&gt;]] [--patch-format=&lt;format&gt;]
+         [(&lt;mbox&gt; | &lt;Maildir&gt;)&#8230;&#8203;]
 <em>git am</em> (--continue | --skip | --abort | --quit | --show-current-patch)</pre>
 </div>
 </div>
@@ -480,20 +480,20 @@ If you supply directories, they will be treated as Maildirs.</p>
 <dd>
 <p>Add a <code>Signed-off-by:</code> line to the commit message, using
 the committer identity of yourself.
-See the signoff option in <a href="git-commit.html">git-commit</a>(1) for more information.</p>
+See the signoff option in <a href="git-commit.html">git-commit(1)</a> for more information.</p>
 </dd>
 <dt class="hdlist1">-k</dt>
 <dt class="hdlist1">--keep</dt>
 <dd>
-<p>Pass <code>-k</code> flag to <em>git mailinfo</em> (see <a href="git-mailinfo.html">git-mailinfo</a>(1)).</p>
+<p>Pass <code>-k</code> flag to <em>git mailinfo</em> (see <a href="git-mailinfo.html">git-mailinfo(1)</a>).</p>
 </dd>
 <dt class="hdlist1">--keep-non-patch</dt>
 <dd>
-<p>Pass <code>-b</code> flag to <em>git mailinfo</em> (see <a href="git-mailinfo.html">git-mailinfo</a>(1)).</p>
+<p>Pass <code>-b</code> flag to <em>git mailinfo</em> (see <a href="git-mailinfo.html">git-mailinfo(1)</a>).</p>
 </dd>
 <dt class="hdlist1">--[no-]keep-cr</dt>
 <dd>
-<p>With <code>--keep-cr</code>, call <em>git mailsplit</em> (see <a href="git-mailsplit.html">git-mailsplit</a>(1))
+<p>With <code>--keep-cr</code>, call <em>git mailsplit</em> (see <a href="git-mailsplit.html">git-mailsplit(1)</a>)
 with the same option, to prevent it from stripping CR at the end of
 lines. <code>am.keepcr</code> configuration variable can be used to specify the
 default behaviour.  <code>--no-keep-cr</code> is useful to override <code>am.keepcr</code>.</p>
@@ -502,17 +502,17 @@ default behaviour.  <code>--no-keep-cr</code> is useful to override <code>am.kee
 <dt class="hdlist1">--scissors</dt>
 <dd>
 <p>Remove everything in body before a scissors line (see
-<a href="git-mailinfo.html">git-mailinfo</a>(1)). Can be activated by default using
+<a href="git-mailinfo.html">git-mailinfo(1)</a>). Can be activated by default using
 the <code>mailinfo.scissors</code> configuration variable.</p>
 </dd>
 <dt class="hdlist1">--no-scissors</dt>
 <dd>
-<p>Ignore scissors lines (see <a href="git-mailinfo.html">git-mailinfo</a>(1)).</p>
+<p>Ignore scissors lines (see <a href="git-mailinfo.html">git-mailinfo(1)</a>).</p>
 </dd>
 <dt class="hdlist1">-m</dt>
 <dt class="hdlist1">--message-id</dt>
 <dd>
-<p>Pass the <code>-m</code> flag to <em>git mailinfo</em> (see <a href="git-mailinfo.html">git-mailinfo</a>(1)),
+<p>Pass the <code>-m</code> flag to <em>git mailinfo</em> (see <a href="git-mailinfo.html">git-mailinfo(1)</a>),
 so that the Message-ID header is added to the commit message.
 The <code>am.messageid</code> configuration variable can be used to specify
 the default behaviour.</p>
@@ -530,7 +530,7 @@ the default behaviour.</p>
 <dt class="hdlist1">-u</dt>
 <dt class="hdlist1">--utf8</dt>
 <dd>
-<p>Pass <code>-u</code> flag to <em>git mailinfo</em> (see <a href="git-mailinfo.html">git-mailinfo</a>(1)).
+<p>Pass <code>-u</code> flag to <em>git mailinfo</em> (see <a href="git-mailinfo.html">git-mailinfo(1)</a>).
 The proposed commit log message taken from the e-mail
 is re-coded into UTF-8 encoding (configuration variable
 <code>i18n.commitencoding</code> can be used to specify project&#8217;s
@@ -543,7 +543,7 @@ default.   You can use <code>--no-utf8</code> to override this.</p>
 <dt class="hdlist1">--no-utf8</dt>
 <dd>
 <p>Pass <code>-n</code> flag to <em>git mailinfo</em> (see
-<a href="git-mailinfo.html">git-mailinfo</a>(1)).</p>
+<a href="git-mailinfo.html">git-mailinfo(1)</a>).</p>
 </dd>
 <dt class="hdlist1">-3</dt>
 <dt class="hdlist1">--3way</dt>
@@ -554,7 +554,7 @@ default.   You can use <code>--no-utf8</code> to override this.</p>
 it is supposed to apply to and we have those blobs
 available locally. <code>--no-3way</code> can be used to override
 am.threeWay configuration variable. For more information,
-see am.threeWay in <a href="git-config.html">git-config</a>(1).</p>
+see am.threeWay in <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--rerere-autoupdate</dt>
 <dt class="hdlist1">--no-rerere-autoupdate</dt>
@@ -572,7 +572,7 @@ result of auto-conflict resolution if possible.</p>
 <dt class="hdlist1">--include=&lt;path&gt;</dt>
 <dt class="hdlist1">--reject</dt>
 <dd>
-<p>These flags are passed to the <em>git apply</em> (see <a href="git-apply.html">git-apply</a>(1))
+<p>These flags are passed to the <em>git apply</em> (see <a href="git-apply.html">git-apply(1)</a>)
 program that applies
 the patch.</p>
 </dd>
@@ -734,7 +734,7 @@ errors in the "From:" lines).</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This command can run <code>applypatch-msg</code>, <code>pre-applypatch</code>,
-and <code>post-applypatch</code> hooks.  See <a href="githooks.html">githooks</a>(5) for more
+and <code>post-applypatch</code> hooks.  See <a href="githooks.html">githooks(5)</a> for more
 information.</p>
 </div>
 </div>
@@ -743,7 +743,7 @@ information.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-apply.html">git-apply</a>(1).</p>
+<p><a href="git-apply.html">git-apply(1)</a>.</p>
 </div>
 </div>
 </div>
@@ -751,14 +751,14 @@ information.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

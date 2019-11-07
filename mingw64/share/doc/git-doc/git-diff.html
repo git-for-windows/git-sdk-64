@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-diff(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -467,7 +467,7 @@ two blob objects, or changes between two files on disk.</p>
 the index (staging area for the next commit).  In other
 words, the differences are what you <em>could</em> tell Git to
 further add to the index but you still haven&#8217;t.  You can
-stage these changes by using <a href="git-add.html">git-add</a>(1).</p>
+stage these changes by using <a href="git-add.html">git-add(1)</a>.</p>
 </dd>
 <dt class="hdlist1"><em>git diff</em> [&lt;options&gt;] --no-index [--] &lt;path&gt; &lt;path&gt;</dt>
 <dd>
@@ -525,11 +525,11 @@ in the last two forms that use ".." notations, can be any
 </div>
 <div class="paragraph">
 <p>For a more complete list of ways to spell &lt;commit&gt;, see
-"SPECIFYING REVISIONS" section in <a href="gitrevisions.html">gitrevisions</a>(7).
+"SPECIFYING REVISIONS" section in <a href="gitrevisions.html">gitrevisions(7)</a>.
 However, "diff" is about comparing two <em>endpoints</em>, not ranges,
 and the range notations ("&lt;commit&gt;..&lt;commit&gt;" and
 "&lt;commit&gt;...&lt;commit&gt;") do not mean a range as defined in the
-"SPECIFYING RANGES" section in <a href="gitrevisions.html">gitrevisions</a>(7).</p>
+"SPECIFYING RANGES" section in <a href="gitrevisions.html">gitrevisions(7)</a>.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -707,7 +707,7 @@ lines.</p>
 sub-directory. The behavior of <code>--dirstat</code> can be customized by
 passing it a comma separated list of parameters.
 The defaults are controlled by the <code>diff.dirstat</code> configuration
-variable (see <a href="git-config.html">git-config</a>(1)).
+variable (see <a href="git-config.html">git-config(1)</a>).
 The following parameters are available:</p>
 <div class="openblock">
 <div class="content">
@@ -786,7 +786,7 @@ given, do not munge pathnames and use NULs as output field terminators.</p>
 <div class="paragraph">
 <p>Without this option, pathnames with "unusual" characters are quoted as
 explained for the configuration variable <code>core.quotePath</code> (see
-<a href="git-config.html">git-config</a>(1)).</p>
+<a href="git-config.html">git-config(1)</a>).</p>
 </div>
 </dd>
 <dt class="hdlist1">--name-only</dt>
@@ -805,7 +805,7 @@ of the <code>--diff-filter</code> option on what the status letters mean.</p>
 shows the names of the commits at the beginning and end of the range.
 When <code>--submodule</code> or <code>--submodule=log</code> is specified, the <em>log</em>
 format is used.  This format lists the commits in the range like
-<a href="git-submodule.html">git-submodule</a>(1) <code>summary</code> does.  When <code>--submodule=diff</code>
+<a href="git-submodule.html">git-submodule(1)</a> <code>summary</code> does.  When <code>--submodule=diff</code>
 is specified, the <em>diff</em> format is used.  This format shows an
 inline diff of the changes in the submodule contents between the
 commit range.  Defaults to <code>diff.submodule</code> or the <em>short</em> format
@@ -994,7 +994,7 @@ and, correspondingly, show differences character by character.</p>
 </div>
 <div class="paragraph">
 <p>The regex can also be set via a diff driver or configuration option, see
-<a href="gitattributes.html">gitattributes</a>(5) or <a href="git-config.html">git-config</a>(1).  Giving it explicitly
+<a href="gitattributes.html">gitattributes(5)</a> or <a href="git-config.html">git-config(1)</a>.  Giving it explicitly
 overrides any diff driver or configuration setting.  Diff drivers
 override configuration settings.</p>
 </div>
@@ -1200,7 +1200,7 @@ occurrences of that string did not change).</p>
 filter will be ignored.</p>
 </div>
 <div class="paragraph">
-<p>See the <em>pickaxe</em> entry in <a href="gitdiffcore.html">gitdiffcore</a>(7) for more
+<p>See the <em>pickaxe</em> entry in <a href="gitdiffcore.html">gitdiffcore(7)</a> for more
 information.</p>
 </div>
 </dd>
@@ -1230,7 +1230,7 @@ expression to match.</p>
 <dd>
 <p>Control the order in which files appear in the output.
 This overrides the <code>diff.orderFile</code> configuration variable
-(see <a href="git-config.html">git-config</a>(1)).  To cancel <code>diff.orderFile</code>,
+(see <a href="git-config.html">git-config(1)</a>).  To cancel <code>diff.orderFile</code>,
 use <code>-O/dev/null</code>.</p>
 <div class="paragraph">
 <p>The output order is determined by the order of glob patterns in
@@ -1346,8 +1346,8 @@ That is, it exits with 1 if there were differences and
 <dt class="hdlist1">--ext-diff</dt>
 <dd>
 <p>Allow an external diff helper to be executed. If you set an
-external diff driver with <a href="gitattributes.html">gitattributes</a>(5), you need
-to use this option with <a href="git-log.html">git-log</a>(1) and friends.</p>
+external diff driver with <a href="gitattributes.html">gitattributes(5)</a>, you need
+to use this option with <a href="git-log.html">git-log(1)</a> and friends.</p>
 </dd>
 <dt class="hdlist1">--no-ext-diff</dt>
 <dd>
@@ -1357,12 +1357,12 @@ to use this option with <a href="git-log.html">git-log</a>(1) and friends.</p>
 <dt class="hdlist1">--no-textconv</dt>
 <dd>
 <p>Allow (or disallow) external text conversion filters to be run
-when comparing binary files. See <a href="gitattributes.html">gitattributes</a>(5) for
+when comparing binary files. See <a href="gitattributes.html">gitattributes(5)</a> for
 details. Because textconv filters are typically a one-way
 conversion, the resulting diff is suitable for human
 consumption, but cannot be applied. For this reason, textconv
-filters are enabled by default only for <a href="git-diff.html">git-diff</a>(1) and
-<a href="git-log.html">git-log</a>(1), but not for <a href="git-format-patch.html">git-format-patch</a>(1) or
+filters are enabled by default only for <a href="git-diff.html">git-diff(1)</a> and
+<a href="git-log.html">git-log(1)</a>, but not for <a href="git-format-patch.html">git-format-patch(1)</a> or
 diff plumbing commands.</p>
 </dd>
 <dt class="hdlist1">--ignore-submodules[=&lt;when&gt;]</dt>
@@ -1372,7 +1372,7 @@ either "none", "untracked", "dirty" or "all", which is the default.
 Using "none" will consider the submodule modified when it either contains
 untracked or modified files or its HEAD differs from the commit recorded
 in the superproject and can be used to override any settings of the
-<em>ignore</em> option in <a href="git-config.html">git-config</a>(1) or <a href="gitmodules.html">gitmodules</a>(5). When
+<em>ignore</em> option in <a href="git-config.html">git-config(1)</a> or <a href="gitmodules.html">gitmodules(5)</a>. When
 "untracked" is used submodules are not considered dirty when they only
 contain untracked content (but they are still scanned for modified
 content). Using "dirty" ignores all changes to the work tree of submodules,
@@ -1408,7 +1408,7 @@ experimental and could be removed in future.</p>
 </div>
 <div class="paragraph">
 <p>For more detailed explanation on these common options, see also
-<a href="gitdiffcore.html">gitdiffcore</a>(7).</p>
+<a href="gitdiffcore.html">gitdiffcore(7)</a>.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -1419,7 +1419,7 @@ experimental and could be removed in future.</p>
 <p>Compare the working tree with the "base" version (stage #1),
 "our branch" (stage #2) or "their branch" (stage #3).  The
 index contains these stages only for unmerged entries i.e.
-while resolving conflicts.  See <a href="git-read-tree.html">git-read-tree</a>(1)
+while resolving conflicts.  See <a href="git-read-tree.html">git-read-tree(1)</a>
 section "3-Way Merge" for detailed information.</p>
 </dd>
 <dt class="hdlist1">-0</dt>
@@ -1592,7 +1592,7 @@ and it is out of sync with the index.</p>
 <div class="paragraph">
 <p>Without the <code>-z</code> option, pathnames with "unusual" characters are
 quoted as explained for the configuration variable <code>core.quotePath</code>
-(see <a href="git-config.html">git-config</a>(1)).  Using <code>-z</code> the filename is output
+(see <a href="git-config.html">git-config(1)</a>).  Using <code>-z</code> the filename is output
 verbatim and the line is terminated by a NUL byte.</p>
 </div>
 </div>
@@ -1636,9 +1636,9 @@ followed by the name of the path in the merge commit.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>::100644 100644 100644 fabadb8 cc95eb0 4866510 MM	desc.c
-::100755 100755 100755 52b7a2d 6d1ac04 d2ac7d7 RM	bar.sh
-::100644 100644 100644 e07d6c5 9042e82 ee91881 RR	phooey.c</pre>
+<pre>::100644 100644 100644 fabadb8 cc95eb0 4866510 MM       desc.c
+::100755 100755 100755 52b7a2d 6d1ac04 d2ac7d7 RM       bar.sh
+::100644 100644 100644 e07d6c5 9042e82 ee91881 RR       phooey.c</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1646,9 +1646,9 @@ followed by the name of the path in the merge commit.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>::100644 100644 100644 fabadb8 cc95eb0 4866510 MM	desc.c	desc.c	desc.c
-::100755 100755 100755 52b7a2d 6d1ac04 d2ac7d7 RM	foo.sh	bar.sh	bar.sh
-::100644 100644 100644 e07d6c5 9042e82 ee91881 RR	fooey.c	fuey.c	phooey.c</pre>
+<pre>::100644 100644 100644 fabadb8 cc95eb0 4866510 MM       desc.c  desc.c  desc.c
+::100755 100755 100755 52b7a2d 6d1ac04 d2ac7d7 RM       foo.sh  bar.sh  bar.sh
+::100644 100644 100644 e07d6c5 9042e82 ee91881 RR       fooey.c fuey.c  phooey.c</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1658,14 +1658,18 @@ all parents.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_generating_patches_with_p">Generating patches with -p</h2>
+<h2 id="_generating_patch_text_with_p">Generating patch text with -p</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When "git-diff-index", "git-diff-tree", or "git-diff-files" are run
-with a <code>-p</code> option, "git diff" without the <code>--raw</code> option, or
-"git log" with the "-p" option, they
-do not produce the output described above; instead they produce a
-patch file.  You can customize the creation of such patches via the
+<p>Running
+<a href="git-diff.html">git-diff(1)</a>,
+<a href="git-log.html">git-log(1)</a>,
+<a href="git-show.html">git-show(1)</a>,
+<a href="git-diff-index.html">git-diff-index(1)</a>,
+<a href="git-diff-tree.html">git-diff-tree(1)</a>, or
+<a href="git-diff-files.html">git-diff-files(1)</a>
+with the <code>-p</code> option produces patch text.
+You can customize the creation of patch text via the
 <code>GIT_EXTERNAL_DIFF</code> and the <code>GIT_DIFF_OPTS</code> environment variables.</p>
 </div>
 <div class="paragraph">
@@ -1725,7 +1729,7 @@ files, while 100% dissimilarity means that no line from the old
 file made it into the new one.</p>
 </div>
 <div class="paragraph">
-<p>The index line includes the SHA-1 checksum before and after the change.
+<p>The index line includes the blob object names before and after the change.
 The &lt;mode&gt; is included if the file mode does not change; otherwise,
 separate lines indicate the old and the new mode.</p>
 </div>
@@ -1733,7 +1737,7 @@ separate lines indicate the old and the new mode.</p>
 <li>
 <p>Pathnames with "unusual" characters are quoted as explained for
 the configuration variable <code>core.quotePath</code> (see
-<a href="git-config.html">git-config</a>(1)).</p>
+<a href="git-config.html">git-config(1)</a>).</p>
 </li>
 <li>
 <p>All the <code>file1</code> files in the output refer to files before the
@@ -1756,18 +1760,18 @@ rename to a</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_combined_diff_format">combined diff format</h2>
+<h2 id="_combined_diff_format">Combined diff format</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Any diff-generating command can take the <code>-c</code> or <code>--cc</code> option to
 produce a <em>combined diff</em> when showing a merge. This is the default
-format when showing merges with <a href="git-diff.html">git-diff</a>(1) or
-<a href="git-show.html">git-show</a>(1). Note also that you can give the <code>-m</code> option to any
+format when showing merges with <a href="git-diff.html">git-diff(1)</a> or
+<a href="git-show.html">git-show(1)</a>. Note also that you can give the <code>-m</code> option to any
 of these commands to force generation of diffs with individual parents
 of a merge.</p>
 </div>
 <div class="paragraph">
-<p>A <em>combined diff</em> format looks like this:</p>
+<p>A "combined diff" format looks like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1776,42 +1780,42 @@ index fabadb8,cc95eb0..4866510
 --- a/describe.c
 +++ b/describe.c
 @@@ -98,20 -98,12 +98,20 @@@
-	return (a_date &gt; b_date) ? -1 : (a_date == b_date) ? 0 : 1;
+        return (a_date &gt; b_date) ? -1 : (a_date == b_date) ? 0 : 1;
   }
 
 - static void describe(char *arg)
  -static void describe(struct commit *cmit, int last_one)
 ++static void describe(char *arg, int last_one)
   {
- +	unsigned char sha1[20];
- +	struct commit *cmit;
-	struct commit_list *list;
-	static int initialized = 0;
-	struct commit_name *n;
+ +      unsigned char sha1[20];
+ +      struct commit *cmit;
+        struct commit_list *list;
+        static int initialized = 0;
+        struct commit_name *n;
 
- +	if (get_sha1(arg, sha1) &lt; 0)
- +		usage(describe_usage);
- +	cmit = lookup_commit_reference(sha1);
- +	if (!cmit)
- +		usage(describe_usage);
+ +      if (get_sha1(arg, sha1) &lt; 0)
+ +              usage(describe_usage);
+ +      cmit = lookup_commit_reference(sha1);
+ +      if (!cmit)
+ +              usage(describe_usage);
  +
-	if (!initialized) {
-		initialized = 1;
-		for_each_ref(get_name);</pre>
+        if (!initialized) {
+                initialized = 1;
+                for_each_ref(get_name);</pre>
 </div>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
 <p>It is preceded with a "git diff" header, that looks like
-this (when <code>-c</code> option is used):</p>
+this (when the <code>-c</code> option is used):</p>
 <div class="literalblock">
 <div class="content">
 <pre>diff --combined file</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>or like this (when <code>--cc</code> option is used):</p>
+<p>or like this (when the <code>--cc</code> option is used):</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1874,7 +1878,7 @@ parents.</p>
 <p>Chunk header format is modified to prevent people from
 accidentally feeding it to <code>patch -p1</code>. Combined diff format
 was created for review of merge commit changes, and was not
-meant for apply. The change is similar to the change in the
+meant to be applied. The change is similar to the change in the
 extended <em>index</em> header:</p>
 <div class="literalblock">
 <div class="content">
@@ -1948,8 +1952,8 @@ like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>1	2	README
-3	1	arch/{i386 =&gt; x86}/Makefile</pre>
+<pre>1       2       README
+3       1       arch/{i386 =&gt; x86}/Makefile</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1982,8 +1986,8 @@ like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>1	2	README NUL
-3	1	NUL arch/i386/Makefile NUL arch/x86/Makefile NUL</pre>
+<pre>1       2       README NUL
+3       1       NUL arch/i386/Makefile NUL arch/x86/Makefile NUL</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2163,11 +2167,11 @@ rewrites (very expensive).</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>diff(1),
-<a href="git-difftool.html">git-difftool</a>(1),
-<a href="git-log.html">git-log</a>(1),
-<a href="gitdiffcore.html">gitdiffcore</a>(7),
-<a href="git-format-patch.html">git-format-patch</a>(1),
-<a href="git-apply.html">git-apply</a>(1)</p>
+<a href="git-difftool.html">git-difftool(1)</a>,
+<a href="git-log.html">git-log(1)</a>,
+<a href="gitdiffcore.html">gitdiffcore(7)</a>,
+<a href="git-format-patch.html">git-format-patch(1)</a>,
+<a href="git-apply.html">git-apply(1)</a></p>
 </div>
 </div>
 </div>
@@ -2175,14 +2179,14 @@ rewrites (very expensive).</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

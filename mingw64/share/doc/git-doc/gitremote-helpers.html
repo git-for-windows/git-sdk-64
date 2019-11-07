@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>gitremote-helpers(7)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -718,18 +718,18 @@ helper&#8217;s stdin.</p>
 <dd>
 <p>This modifies the <em>export</em> capability, instructing Git to dump the
 internal marks table to &lt;file&gt; when complete. For details,
-read up on <code>--export-marks=&lt;file&gt;</code> in <a href="git-fast-export.html">git-fast-export</a>(1).</p>
+read up on <code>--export-marks=&lt;file&gt;</code> in <a href="git-fast-export.html">git-fast-export(1)</a>.</p>
 </dd>
 <dt class="hdlist1"><em>import-marks</em> &lt;file&gt;</dt>
 <dd>
 <p>This modifies the <em>export</em> capability, instructing Git to load the
 marks specified in &lt;file&gt; before processing any input. For details,
-read up on <code>--import-marks=&lt;file&gt;</code> in <a href="git-fast-export.html">git-fast-export</a>(1).</p>
+read up on <code>--import-marks=&lt;file&gt;</code> in <a href="git-fast-export.html">git-fast-export(1)</a>.</p>
 </dd>
 <dt class="hdlist1"><em>signed-tags</em></dt>
 <dd>
 <p>This modifies the <em>export</em> capability, instructing Git to pass
-<code>--signed-tags=verbatim</code> to <a href="git-fast-export.html">git-fast-export</a>(1).  In the
+<code>--signed-tags=verbatim</code> to <a href="git-fast-export.html">git-fast-export(1)</a>.  In the
 absence of this capability, Git will use <code>--signed-tags=warn-strip</code>.</p>
 </dd>
 </dl>
@@ -809,9 +809,13 @@ Outputs a single blank line when all fetch commands in the
 same batch are complete. Only objects which were reported
 in the output of <em>list</em> with a sha1 may be fetched this way.</p>
 <div class="paragraph">
-<p>Optionally may output a <em>lock &lt;file&gt;</em> line indicating a file under
-GIT_DIR/objects/pack which is keeping a pack until refs can be
-suitably updated.</p>
+<p>Optionally may output a <em>lock &lt;file&gt;</em> line indicating the full path of
+a file under <code>$GIT_DIR/objects/pack</code> which is keeping a pack until
+refs can be suitably updated.  The path must end with <code>.keep</code>. This is
+a mechanism to name a &lt;pack,idx,keep&gt; tuple by giving only the keep
+component.  The kept pack will not be deleted by a concurrent repack,
+even though its objects may not be referenced until the fetch completes.
+The <code>.keep</code> file will be deleted at the conclusion of the fetch.</p>
 </div>
 <div class="paragraph">
 <p>If option <em>check-connectivity</em> is requested, the helper must output
@@ -1076,6 +1080,12 @@ must not contain LF or NUL characters, the string is not encoded.</p>
 <p>Indicate that only the objects wanted need to be fetched, not
 their dependents.</p>
 </dd>
+<dt class="hdlist1"><em>option atomic</em> {<em>true</em>|<em>false</em>}</dt>
+<dd>
+<p>When pushing, request the remote server to update refs in a single atomic
+transaction.  If successful, all refs will be updated, or none will.  If the
+remote side does not support this capability, the push will fail.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -1084,16 +1094,16 @@ their dependents.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-remote.html">git-remote</a>(1)</p>
+<p><a href="git-remote.html">git-remote(1)</a></p>
 </div>
 <div class="paragraph">
-<p><a href="git-remote-ext.html">git-remote-ext</a>(1)</p>
+<p><a href="git-remote-ext.html">git-remote-ext(1)</a></p>
 </div>
 <div class="paragraph">
-<p><a href="git-remote-fd.html">git-remote-fd</a>(1)</p>
+<p><a href="git-remote-fd.html">git-remote-fd(1)</a></p>
 </div>
 <div class="paragraph">
-<p><a href="git-fast-import.html">git-fast-import</a>(1)</p>
+<p><a href="git-fast-import.html">git-fast-import(1)</a></p>
 </div>
 </div>
 </div>
@@ -1101,14 +1111,14 @@ their dependents.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>gittutorial(7)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -478,7 +478,7 @@ the first two chapters of <a href="user-manual.html">The Git User&#8217;s Manual
 </div>
 <div class="paragraph">
 <p>With the latter, you can use the manual viewer of your choice; see
-<a href="git-help.html">git-help</a>(1) for more information.</p>
+<a href="git-help.html">git-help(1)</a> for more information.</p>
 </div>
 <div class="paragraph">
 <p>It is a good idea to introduce yourself to Git with your name and
@@ -577,9 +577,9 @@ Changes to be committed:
 Your branch is up to date with 'origin/master'.
   (use "git restore --staged &lt;file&gt;..." to unstage)
 
-	modified:   file1
-	modified:   file2
-	modified:   file3</pre>
+        modified:   file1
+        modified:   file2
+        modified:   file3</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -613,7 +613,7 @@ begin the commit message with a single short (less than 50 character)
 line summarizing the change, followed by a blank line and then a more
 thorough description. The text up to the first blank line in a commit
 message is treated as the commit title, and that title is used
-throughout Git.  For example, <a href="git-format-patch.html">git-format-patch</a>(1) turns a
+throughout Git.  For example, <a href="git-format-patch.html">git-format-patch(1)</a> turns a
 commit into email, and it uses the title on the Subject line and the
 rest of the commit in the body.</p>
 </div>
@@ -986,7 +986,7 @@ used for pulls:</p>
 </div>
 <div class="paragraph">
 <p>(The complete configuration created by <em>git clone</em> is visible using
-<code>git config -l</code>, and the <a href="git-config.html">git-config</a>(1) man page
+<code>git config -l</code>, and the <a href="git-config.html">git-config(1)</a> man page
 explains the meaning of each option.)</p>
 </div>
 <div class="paragraph">
@@ -1010,12 +1010,12 @@ perform clones and pulls using the ssh protocol:</p>
 </div>
 <div class="paragraph">
 <p>Alternatively, Git has a native protocol, or can use http;
-see <a href="git-pull.html">git-pull</a>(1) for details.</p>
+see <a href="git-pull.html">git-pull(1)</a> for details.</p>
 </div>
 <div class="paragraph">
 <p>Git can also be used in a CVS-like mode, with a central repository
-that various users push changes to; see <a href="git-push.html">git-push</a>(1) and
-<a href="gitcvs-migration.html">gitcvs-migration</a>(7).</p>
+that various users push changes to; see <a href="git-push.html">git-push(1)</a> and
+<a href="gitcvs-migration.html">gitcvs-migration(7)</a>.</p>
 </div>
 </div>
 </div>
@@ -1053,10 +1053,10 @@ part of the name that is long enough to uniquely identify the commit:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git show c82a22c39c	# the first few characters of the name are
-			# usually enough
-$ git show HEAD		# the tip of the current branch
-$ git show experimental	# the tip of the "experimental" branch</pre>
+<pre>$ git show c82a22c39c   # the first few characters of the name are
+                        # usually enough
+$ git show HEAD         # the tip of the current branch
+$ git show experimental # the tip of the "experimental" branch</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1091,7 +1091,7 @@ $ git show HEAD^2 # show the second parent of HEAD</pre>
 <p>you can refer to 1b2e1d63ff by the name "v2.5".  If you intend to
 share this name with other people (for example, to identify a release
 version), you should create a "tag" object, and perhaps sign it; see
-<a href="git-tag.html">git-tag</a>(1) for details.</p>
+<a href="git-tag.html">git-tag(1)</a> for details.</p>
 </div>
 <div class="paragraph">
 <p>Any Git command that needs to know a commit can take any of these
@@ -1099,11 +1099,11 @@ names.  For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git diff v2.5 HEAD	 # compare the current HEAD to v2.5
+<pre>$ git diff v2.5 HEAD     # compare the current HEAD to v2.5
 $ git branch stable v2.5 # start a new branch named "stable" based
-			 # at v2.5
+                         # at v2.5
 $ git reset --hard HEAD^ # reset your current branch and working
-			 # directory to its state at HEAD^</pre>
+                         # directory to its state at HEAD^</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1150,7 +1150,7 @@ in a number of ways.  Here are some examples with <em>git log</em>:</p>
 $ git log v2.5..                # commits since v2.5
 $ git log --since="2 weeks ago" # commits from the last 2 weeks
 $ git log v2.5.. Makefile       # commits since v2.5 which modify
-				# Makefile</pre>
+                                # Makefile</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1245,7 +1245,7 @@ hold the various trees involved in a merge.</p>
 <div class="paragraph">
 <p>Part two of this tutorial explains the object
 database, the index file, and a few other odds and ends that you&#8217;ll
-need to make the most of Git. You can find it at <a href="gittutorial-2.html">gittutorial-2</a>(7).</p>
+need to make the most of Git. You can find it at <a href="gittutorial-2.html">gittutorial-2(7)</a>.</p>
 </div>
 <div class="paragraph">
 <p>If you don&#8217;t want to continue with that right away, a few other
@@ -1254,13 +1254,13 @@ digressions that may be interesting at this point are:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="git-format-patch.html">git-format-patch</a>(1), <a href="git-am.html">git-am</a>(1): These convert
+<p><a href="git-format-patch.html">git-format-patch(1)</a>, <a href="git-am.html">git-am(1)</a>: These convert
 series of git commits into emailed patches, and vice versa,
 useful for projects such as the Linux kernel which rely heavily
 on emailed patches.</p>
 </li>
 <li>
-<p><a href="git-bisect.html">git-bisect</a>(1): When there is a regression in your
+<p><a href="git-bisect.html">git-bisect(1)</a>: When there is a regression in your
 project, one way to track down the bug is by searching through
 the history to find the exact commit that&#8217;s to blame.  Git bisect
 can help you perform a binary search for that commit.  It is
@@ -1268,14 +1268,14 @@ smart enough to perform a close-to-optimal search even in the
 case of complex non-linear history with lots of merged branches.</p>
 </li>
 <li>
-<p><a href="gitworkflows.html">gitworkflows</a>(7): Gives an overview of recommended
+<p><a href="gitworkflows.html">gitworkflows(7)</a>: Gives an overview of recommended
 workflows.</p>
 </li>
 <li>
-<p><a href="giteveryday.html">giteveryday</a>(7): Everyday Git with 20 Commands Or So.</p>
+<p><a href="giteveryday.html">giteveryday(7)</a>: Everyday Git with 20 Commands Or So.</p>
 </li>
 <li>
-<p><a href="gitcvs-migration.html">gitcvs-migration</a>(7): Git for CVS users.</p>
+<p><a href="gitcvs-migration.html">gitcvs-migration(7)</a>: Git for CVS users.</p>
 </li>
 </ul>
 </div>
@@ -1285,13 +1285,13 @@ workflows.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="gittutorial-2.html">gittutorial-2</a>(7),
-<a href="gitcvs-migration.html">gitcvs-migration</a>(7),
-<a href="gitcore-tutorial.html">gitcore-tutorial</a>(7),
-<a href="gitglossary.html">gitglossary</a>(7),
-<a href="git-help.html">git-help</a>(1),
-<a href="gitworkflows.html">gitworkflows</a>(7),
-<a href="giteveryday.html">giteveryday</a>(7),
+<p><a href="gittutorial-2.html">gittutorial-2(7)</a>,
+<a href="gitcvs-migration.html">gitcvs-migration(7)</a>,
+<a href="gitcore-tutorial.html">gitcore-tutorial(7)</a>,
+<a href="gitglossary.html">gitglossary(7)</a>,
+<a href="git-help.html">git-help(1)</a>,
+<a href="gitworkflows.html">gitworkflows(7)</a>,
+<a href="giteveryday.html">giteveryday(7)</a>,
 <a href="user-manual.html">The Git User&#8217;s Manual</a></p>
 </div>
 </div>
@@ -1300,14 +1300,14 @@ workflows.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>githooks(5)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -458,7 +458,7 @@ the executable bit set are ignored.</p>
 <div class="paragraph">
 <p>By default the hooks directory is <code>$GIT_DIR/hooks</code>, but that can be
 changed via the <code>core.hooksPath</code> configuration variable (see
-<a href="git-config.html">git-config</a>(1)).</p>
+<a href="git-config.html">git-config(1)</a>).</p>
 </div>
 <div class="paragraph">
 <p>Before Git invokes a hook, it changes its working directory to either
@@ -475,7 +475,7 @@ details.</p>
 <div class="paragraph">
 <p><code>git init</code> may copy hooks to the new repository, depending on its
 configuration. See the "TEMPLATE DIRECTORY" section in
-<a href="git-init.html">git-init</a>(1) for details. When the rest of this document refers
+<a href="git-init.html">git-init(1)</a> for details. When the rest of this document refers
 to "default hooks" it&#8217;s talking about the default template shipped
 with Git.</p>
 </div>
@@ -490,7 +490,7 @@ with Git.</p>
 <div class="sect2">
 <h3 id="_applypatch_msg">applypatch-msg</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-am.html">git-am</a>(1).  It takes a single
+<p>This hook is invoked by <a href="git-am.html">git-am(1)</a>.  It takes a single
 parameter, the name of the file that holds the proposed commit
 log message.  Exiting with a non-zero status causes <code>git am</code> to abort
 before applying the patch.</p>
@@ -509,7 +509,7 @@ the message file.</p>
 <div class="sect2">
 <h3 id="_pre_applypatch">pre-applypatch</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-am.html">git-am</a>(1).  It takes no parameter, and is
+<p>This hook is invoked by <a href="git-am.html">git-am(1)</a>.  It takes no parameter, and is
 invoked after the patch is applied, but before a commit is made.</p>
 </div>
 <div class="paragraph">
@@ -528,7 +528,7 @@ make a commit if it does not pass certain test.</p>
 <div class="sect2">
 <h3 id="_post_applypatch">post-applypatch</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-am.html">git-am</a>(1).  It takes no parameter,
+<p>This hook is invoked by <a href="git-am.html">git-am(1)</a>.  It takes no parameter,
 and is invoked after the patch is applied and a commit is made.</p>
 </div>
 <div class="paragraph">
@@ -539,7 +539,7 @@ the outcome of <code>git am</code>.</p>
 <div class="sect2">
 <h3 id="_pre_commit">pre-commit</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-commit.html">git-commit</a>(1), and can be bypassed
+<p>This hook is invoked by <a href="git-commit.html">git-commit(1)</a>, and can be bypassed
 with the <code>--no-verify</code> option.  It takes no parameters, and is
 invoked before obtaining the proposed commit log message and
 making a commit.  Exiting with a non-zero status from this script
@@ -562,9 +562,35 @@ the use of non-ASCII filenames.</p>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_pre_merge_commit">pre-merge-commit</h3>
+<div class="paragraph">
+<p>This hook is invoked by <a href="git-merge.html">git-merge(1)</a>, and can be bypassed
+with the <code>--no-verify</code> option.  It takes no parameters, and is
+invoked after the merge has been carried out successfully and before
+obtaining the proposed commit log message to
+make a commit.  Exiting with a non-zero status from this script
+causes the <code>git merge</code> command to abort before creating a commit.</p>
+</div>
+<div class="paragraph">
+<p>The default <em>pre-merge-commit</em> hook, when enabled, runs the
+<em>pre-commit</em> hook, if the latter is enabled.</p>
+</div>
+<div class="paragraph">
+<p>This hook is invoked with the environment variable
+<code>GIT_EDITOR=:</code> if the command will not bring up an editor
+to modify the commit message.</p>
+</div>
+<div class="paragraph">
+<p>If the merge cannot be carried out automatically, the conflicts
+need to be resolved and the result committed separately (see
+<a href="git-merge.html">git-merge(1)</a>). At that point, this hook will not be executed,
+but the <em>pre-commit</em> hook will, if it is enabled.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_prepare_commit_msg">prepare-commit-msg</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-commit.html">git-commit</a>(1) right after preparing the
+<p>This hook is invoked by <a href="git-commit.html">git-commit(1)</a> right after preparing the
 default log message, and before the editor is started.</p>
 </div>
 <div class="paragraph">
@@ -594,7 +620,7 @@ help message found in the commented portion of the commit template.</p>
 <div class="sect2">
 <h3 id="_commit_msg">commit-msg</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-commit.html">git-commit</a>(1) and <a href="git-merge.html">git-merge</a>(1), and can be
+<p>This hook is invoked by <a href="git-commit.html">git-commit(1)</a> and <a href="git-merge.html">git-merge(1)</a>, and can be
 bypassed with the <code>--no-verify</code> option.  It takes a single parameter,
 the name of the file that holds the proposed commit log message.
 Exiting with a non-zero status causes the command to abort.</p>
@@ -613,7 +639,7 @@ file.</p>
 <div class="sect2">
 <h3 id="_post_commit">post-commit</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-commit.html">git-commit</a>(1). It takes no parameters, and is
+<p>This hook is invoked by <a href="git-commit.html">git-commit(1)</a>. It takes no parameters, and is
 invoked after a commit is made.</p>
 </div>
 <div class="paragraph">
@@ -624,7 +650,7 @@ the outcome of <code>git commit</code>.</p>
 <div class="sect2">
 <h3 id="_pre_rebase">pre-rebase</h3>
 <div class="paragraph">
-<p>This hook is called by <a href="git-rebase.html">git-rebase</a>(1) and can be used to prevent a
+<p>This hook is called by <a href="git-rebase.html">git-rebase(1)</a> and can be used to prevent a
 branch from getting rebased.  The hook may be called with one or
 two parameters.  The first parameter is the upstream from which
 the series was forked.  The second parameter is the branch being
@@ -634,8 +660,8 @@ rebased, and is not set when rebasing the current branch.</p>
 <div class="sect2">
 <h3 id="_post_checkout">post-checkout</h3>
 <div class="paragraph">
-<p>This hook is invoked when a <a href="git-checkout.html">git-checkout</a>(1) or
-<a href="git-switch.html">git-switch</a>(1) is run after having updated the
+<p>This hook is invoked when a <a href="git-checkout.html">git-checkout(1)</a> or
+<a href="git-switch.html">git-switch(1)</a> is run after having updated the
 worktree.  The hook is given three parameters: the ref of the previous HEAD,
 the ref of the new HEAD (which may or may not have changed), and a flag
 indicating whether the checkout was a branch checkout (changing branches,
@@ -643,7 +669,7 @@ flag=1) or a file checkout (retrieving a file from the index, flag=0).
 This hook cannot affect the outcome of <code>git switch</code> or <code>git checkout</code>.</p>
 </div>
 <div class="paragraph">
-<p>It is also run after <a href="git-clone.html">git-clone</a>(1), unless the <code>--no-checkout</code> (<code>-n</code>) option is
+<p>It is also run after <a href="git-clone.html">git-clone(1)</a>, unless the <code>--no-checkout</code> (<code>-n</code>) option is
 used. The first parameter given to the hook is the null-ref, the second the
 ref of the new HEAD and the flag is always 1. Likewise for <code>git worktree add</code>
 unless <code>--no-checkout</code> is used.</p>
@@ -657,7 +683,7 @@ properties.</p>
 <div class="sect2">
 <h3 id="_post_merge">post-merge</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-merge.html">git-merge</a>(1), which happens when a <code>git pull</code>
+<p>This hook is invoked by <a href="git-merge.html">git-merge(1)</a>, which happens when a <code>git pull</code>
 is done on a local repository.  The hook takes a single parameter, a status
 flag specifying whether or not the merge being done was a squash merge.
 This hook cannot affect the outcome of <code>git merge</code> and is not executed,
@@ -673,7 +699,7 @@ for an example of how to do this.</p>
 <div class="sect2">
 <h3 id="_pre_push">pre-push</h3>
 <div class="paragraph">
-<p>This hook is called by <a href="git-push.html">git-push</a>(1) and can be used to prevent
+<p>This hook is called by <a href="git-push.html">git-push(1)</a> and can be used to prevent
 a push from taking place.  The hook is called with two parameters
 which provide the name and location of the destination remote, if a
 named remote is not being used both values will be the same.</p>
@@ -713,7 +739,7 @@ to the user by writing to standard error.</p>
 <div class="sect2">
 <h3 id="pre-receive">pre-receive</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack</a>(1) when it reacts to
+<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack(1)</a> when it reacts to
 <code>git push</code> and updates reference(s) in its repository.
 Just before starting to update refs on the remote repository, the
 pre-receive hook is invoked.  Its exit status determines the success
@@ -757,13 +783,13 @@ will be set to zero, <code>GIT_PUSH_OPTION_COUNT=0</code>.</p>
 </div>
 <div class="paragraph">
 <p>See the section on "Quarantine Environment" in
-<a href="git-receive-pack.html">git-receive-pack</a>(1) for some caveats.</p>
+<a href="git-receive-pack.html">git-receive-pack(1)</a> for some caveats.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="update">update</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack</a>(1) when it reacts to
+<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack(1)</a> when it reacts to
 <code>git push</code> and updates reference(s) in its repository.
 Just before updating the ref on the remote repository, the update hook
 is invoked.  Its exit status determines the success or failure of
@@ -807,7 +833,7 @@ firing one e-mail per ref when used naively, though.  The
 <p>In an environment that restricts the users' access only to git
 commands over the wire, this hook can be used to implement access
 control without relying on filesystem ownership and group
-membership. See <a href="git-shell.html">git-shell</a>(1) for how you might use the login
+membership. See <a href="git-shell.html">git-shell(1)</a> for how you might use the login
 shell to restrict the user&#8217;s access to only git commands.</p>
 </div>
 <div class="paragraph">
@@ -824,7 +850,7 @@ unannotated tags to be pushed.</p>
 <div class="sect2">
 <h3 id="post-receive">post-receive</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack</a>(1) when it reacts to
+<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack(1)</a> when it reacts to
 <code>git push</code> and updates reference(s) in its repository.
 It executes on the remote repository once after all the refs have
 been updated.</p>
@@ -869,7 +895,7 @@ will be set to zero, <code>GIT_PUSH_OPTION_COUNT=0</code>.</p>
 <div class="sect2">
 <h3 id="post-update">post-update</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack</a>(1) when it reacts to
+<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack(1)</a> when it reacts to
 <code>git push</code> and updates reference(s) in its repository.
 It executes on the remote repository once after all the refs have
 been updated.</p>
@@ -906,7 +932,7 @@ for the user.</p>
 <div class="sect2">
 <h3 id="_push_to_checkout">push-to-checkout</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack</a>(1) when it reacts to
+<p>This hook is invoked by <a href="git-receive-pack.html">git-receive-pack(1)</a> when it reacts to
 <code>git push</code> and updates reference(s) in its repository, and when
 the push tries to update the branch that is currently checked out
 and the <code>receive.denyCurrentBranch</code> configuration variable is set to
@@ -939,7 +965,7 @@ with the difference between the branches.</p>
 <div class="sect2">
 <h3 id="_pre_auto_gc">pre-auto-gc</h3>
 <div class="paragraph">
-<p>This hook is invoked by <code>git gc --auto</code> (see <a href="git-gc.html">git-gc</a>(1)). It
+<p>This hook is invoked by <code>git gc --auto</code> (see <a href="git-gc.html">git-gc(1)</a>). It
 takes no parameter, and exiting with non-zero status from this script
 causes the <code>git gc --auto</code> to abort.</p>
 </div>
@@ -948,11 +974,13 @@ causes the <code>git gc --auto</code> to abort.</p>
 <h3 id="_post_rewrite">post-rewrite</h3>
 <div class="paragraph">
 <p>This hook is invoked by commands that rewrite commits
-(<a href="git-commit.html">git-commit</a>(1) when called with <code>--amend</code> and
-<a href="git-rebase.html">git-rebase</a>(1); currently <code>git filter-branch</code> does <em>not</em> call
-it!).  Its first argument denotes the command it was invoked by:
-currently one of <code>amend</code> or <code>rebase</code>.  Further command-dependent
-arguments may be passed in the future.</p>
+(<a href="git-commit.html">git-commit(1)</a> when called with <code>--amend</code> and
+<a href="git-rebase.html">git-rebase(1)</a>; however, full-history (re)writing tools like
+<a href="git-fast-import.html">git-fast-import(1)</a> or
+<a href="https://github.com/newren/git-filter-repo">git-filter-repo</a> typically
+do not call it!).  Its first argument denotes the command it was
+invoked by: currently one of <code>amend</code> or <code>rebase</code>.  Further
+command-dependent arguments may be passed in the future.</p>
 </div>
 <div class="paragraph">
 <p>The hook receives a list of the rewritten commits on stdin, in the
@@ -970,7 +998,7 @@ preceding SP is also omitted.  Currently, no commands pass any
 </div>
 <div class="paragraph">
 <p>The hook always runs after the automatic note copying (see
-"notes.rewrite.&lt;command&gt;" in <a href="git-config.html">git-config</a>(1)) has happened, and
+"notes.rewrite.&lt;command&gt;" in <a href="git-config.html">git-config(1)</a>) has happened, and
 thus has access to these notes.</p>
 </div>
 <div class="paragraph">
@@ -995,7 +1023,7 @@ processed by rebase.</p>
 <div class="sect2">
 <h3 id="_sendemail_validate">sendemail-validate</h3>
 <div class="paragraph">
-<p>This hook is invoked by <a href="git-send-email.html">git-send-email</a>(1).  It takes a single parameter,
+<p>This hook is invoked by <a href="git-send-email.html">git-send-email(1)</a>.  It takes a single parameter,
 the name of the file that holds the e-mail to be sent.  Exiting with a
 non-zero status causes <code>git send-email</code> to abort before sending any
 e-mails.</p>
@@ -1072,14 +1100,14 @@ running passing "1", "1" should not be possible.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

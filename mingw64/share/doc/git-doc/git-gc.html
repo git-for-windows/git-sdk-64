@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-gc(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -469,7 +469,7 @@ below for how to disable this behavior.</p>
 a repository without regularly running such porcelain commands, to do
 a one-off repository optimization, or e.g. to clean up a suboptimal
 mass-import. See the "PACKFILE OPTIMIZATION" section in
-<a href="git-fast-import.html">git-fast-import</a>(1) for more details on the import case.</p>
+<a href="git-fast-import.html">git-fast-import(1)</a> for more details on the import case.</p>
 </div>
 </div>
 </div>
@@ -537,9 +537,9 @@ option is used, <code>gc.bigPackThreshold</code> is ignored.</p>
 <h2 id="_aggressive">AGGRESSIVE</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When the <code>--aggressive</code> option is supplied, <a href="git-repack.html">git-repack</a>(1) will
+<p>When the <code>--aggressive</code> option is supplied, <a href="git-repack.html">git-repack(1)</a> will
 be invoked with the <code>-f</code> flag, which in turn will pass
-<code>--no-reuse-delta</code> to <a href="git-pack-objects.html">git-pack-objects</a>(1). This will throw
+<code>--no-reuse-delta</code> to <a href="git-pack-objects.html">git-pack-objects(1)</a>. This will throw
 away any existing deltas and re-compute them, at the expense of
 spending much more time on the repacking.</p>
 </div>
@@ -551,7 +551,7 @@ might pick a sub-optimal delta from a newer pack instead.</p>
 </div>
 <div class="paragraph">
 <p>Furthermore, supplying <code>--aggressive</code> will tweak the <code>--depth</code> and
-<code>--window</code> options passed to <a href="git-repack.html">git-repack</a>(1). See the
+<code>--window</code> options passed to <a href="git-repack.html">git-repack(1)</a>. See the
 <code>gc.aggressiveDepth</code> and <code>gc.aggressiveWindow</code> settings below. By
 using a larger window size we&#8217;re more likely to find more optimal
 deltas.</p>
@@ -570,7 +570,7 @@ users and their repositories.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The below documentation is the same as what&#8217;s found in
-<a href="git-config.html">git-config</a>(1):</p>
+<a href="git-config.html">git-config(1)</a>:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -582,7 +582,7 @@ to 50, which is the default for the <code>--depth</code> option when
 <code>--aggressive</code> isn&#8217;t in use.</p>
 <div class="paragraph">
 <p>See the documentation for the <code>--depth</code> option in
-<a href="git-repack.html">git-repack</a>(1) for more details.</p>
+<a href="git-repack.html">git-repack(1)</a> for more details.</p>
 </div>
 </dd>
 <dt class="hdlist1">gc.aggressiveWindow</dt>
@@ -593,7 +593,7 @@ to 250, which is a much more aggressive window size than
 the default <code>--window</code> of 10.</p>
 <div class="paragraph">
 <p>See the documentation for the <code>--window</code> option in
-<a href="git-repack.html">git-repack</a>(1) for more details.</p>
+<a href="git-repack.html">git-repack(1)</a> for more details.</p>
 </div>
 </dd>
 <dt class="hdlist1">gc.auto</dt>
@@ -650,9 +650,9 @@ will also be excluded (this is the equivalent of running <code>git gc</code> wit
 <dt class="hdlist1">gc.writeCommitGraph</dt>
 <dd>
 <p>If true, then gc will rewrite the commit-graph file when
-<a href="git-gc.html">git-gc</a>(1) is run. When using <code>git gc --auto</code>
+<a href="git-gc.html">git-gc(1)</a> is run. When using <code>git gc --auto</code>
 the commit-graph will be updated if housekeeping is
-required. Default is false. See <a href="git-commit-graph.html">git-commit-graph</a>(1)
+required. Default is true. See <a href="git-commit-graph.html">git-commit-graph(1)</a>
 for details.</p>
 </dd>
 <dt class="hdlist1">gc.logExpiry</dt>
@@ -680,7 +680,7 @@ Override the grace period with this config variable.  The value
 unreachable objects immediately, or "never" may be used to
 suppress pruning.  This feature helps prevent corruption when
 <em>git gc</em> runs concurrently with another process writing to the
-repository; see the "NOTES" section of <a href="git-gc.html">git-gc</a>(1).</p>
+repository; see the "NOTES" section of <a href="git-gc.html">git-gc(1)</a>.</p>
 </dd>
 <dt class="hdlist1">gc.worktreePruneExpire</dt>
 <dd>
@@ -724,14 +724,14 @@ default is more aggressive than <code>gc.reflogExpire</code>.</p>
 <p>Records of conflicted merge you resolved earlier are
 kept for this many days when <em>git rerere gc</em> is run.
 You can also use more human-readable "1.month.ago", etc.
-The default is 60 days.  See <a href="git-rerere.html">git-rerere</a>(1).</p>
+The default is 60 days.  See <a href="git-rerere.html">git-rerere(1)</a>.</p>
 </dd>
 <dt class="hdlist1">gc.rerereUnresolved</dt>
 <dd>
 <p>Records of conflicted merge you have not resolved are
 kept for this many days when <em>git rerere gc</em> is run.
 You can also use more human-readable "1.month.ago", etc.
-The default is 15 days.  See <a href="git-rerere.html">git-rerere</a>(1).</p>
+The default is 15 days.  See <a href="git-rerere.html">git-rerere(1)</a>.</p>
 </dd>
 </dl>
 </div>
@@ -742,15 +742,14 @@ The default is 15 days.  See <a href="git-rerere.html">git-rerere</a>(1).</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>git gc</em> tries very hard not to delete objects that are referenced
-anywhere in your repository. In
-particular, it will keep not only objects referenced by your current set
-of branches and tags, but also objects referenced by the index,
-remote-tracking branches, refs saved by <em>git filter-branch</em> in
-refs/original/, reflogs (which may reference commits in branches
-that were later amended or rewound), and anything else in the refs/* namespace.
-If you are expecting some objects to be deleted and they aren&#8217;t, check
-all of those locations and decide whether it makes sense in your case to
-remove those references.</p>
+anywhere in your repository. In particular, it will keep not only
+objects referenced by your current set of branches and tags, but also
+objects referenced by the index, remote-tracking branches, notes saved
+by <em>git notes</em> under refs/notes/, reflogs (which may reference commits
+in branches that were later amended or rewound), and anything else in
+the refs/* namespace.  If you are expecting some objects to be deleted
+and they aren&#8217;t, check all of those locations and decide whether it
+makes sense in your case to remove those references.</p>
 </div>
 <div class="paragraph">
 <p>On the other hand, when <em>git gc</em> runs concurrently with another process,
@@ -785,7 +784,7 @@ seems to be low in practice).</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <em>git gc --auto</em> command will run the <em>pre-auto-gc</em> hook.  See
-<a href="githooks.html">githooks</a>(5) for more information.</p>
+<a href="githooks.html">githooks(5)</a> for more information.</p>
 </div>
 </div>
 </div>
@@ -793,10 +792,10 @@ seems to be low in practice).</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-prune.html">git-prune</a>(1)
-<a href="git-reflog.html">git-reflog</a>(1)
-<a href="git-repack.html">git-repack</a>(1)
-<a href="git-rerere.html">git-rerere</a>(1)</p>
+<p><a href="git-prune.html">git-prune(1)</a>
+<a href="git-reflog.html">git-reflog(1)</a>
+<a href="git-repack.html">git-repack(1)</a>
+<a href="git-rerere.html">git-rerere(1)</a></p>
 </div>
 </div>
 </div>
@@ -804,14 +803,14 @@ seems to be low in practice).</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

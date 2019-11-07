@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-reset(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -473,8 +473,8 @@ the current branch.)</p>
 </div>
 <div class="paragraph">
 <p>After running <code>git reset &lt;paths&gt;</code> to update the index entry, you can
-use <a href="git-restore.html">git-restore</a>(1) to check the contents out of the index to
-the working tree. Alternatively, using <a href="git-restore.html">git-restore</a>(1)
+use <a href="git-restore.html">git-restore(1)</a> to check the contents out of the index to
+the working tree. Alternatively, using <a href="git-restore.html">git-restore(1)</a>
 and specifying a commit with <code>--source</code>, you
 can copy the contents of a path out of a commit to the index and to the
 working tree in one go.</p>
@@ -488,7 +488,7 @@ in reverse to the index.</p>
 <div class="paragraph">
 <p>This means that <code>git reset -p</code> is the opposite of <code>git add -p</code>, i.e.
 you can use it to selectively reset hunks. See the &#8220;Interactive Mode&#8221;
-section of <a href="git-add.html">git-add</a>(1) to learn how to operate the <code>--patch</code> mode.</p>
+section of <a href="git-add.html">git-add(1)</a> to learn how to operate the <code>--patch</code> mode.</p>
 </div>
 </dd>
 <dt class="hdlist1"><em>git reset</em> [&lt;mode&gt;] [&lt;commit&gt;]</dt>
@@ -515,7 +515,7 @@ are preserved but not marked for commit) and reports what has not
 been updated. This is the default action.</p>
 <div class="paragraph">
 <p>If <code>-N</code> is specified, removed paths are marked as intent-to-add (see
-<a href="git-add.html">git-add</a>(1)).</p>
+<a href="git-add.html">git-add(1)</a>).</p>
 </div>
 </dd>
 <dt class="hdlist1">--hard</dt>
@@ -551,7 +551,7 @@ changes, reset is aborted.</p>
 </dl>
 </div>
 <div class="paragraph">
-<p>See "Reset, restore and revert" in <a href="git.html">git</a>(1) for the differences
+<p>See "Reset, restore and revert" in <a href="git.html">git(1)</a> for the differences
 between the three commands.</p>
 </div>
 </div>
@@ -654,7 +654,7 @@ edit the message further, you can give <code>-C</code> option instead.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>See also the <code>--amend</code> option to <a href="git-commit.html">git-commit</a>(1).</p>
+<p>See also the <code>--amend</code> option to <a href="git-commit.html">git-commit(1)</a>.</p>
 </div>
 </dd>
 <dt class="hdlist1">Undo a commit, making it a topic branch</dt>
@@ -697,7 +697,7 @@ $ git reset --hard HEAD~3   <b class="conum">(1)</b></pre>
 <p>The last three commits (<code>HEAD</code>, <code>HEAD^</code>, and <code>HEAD~2</code>) were bad
 and you do not want to ever see them again.  Do <strong>not</strong> do this if
 you have already given these commits to somebody else.  (See the
-"RECOVERING FROM UPSTREAM REBASE" section in <a href="git-rebase.html">git-rebase</a>(1)
+"RECOVERING FROM UPSTREAM REBASE" section in <a href="git-rebase.html">git-rebase(1)</a>
 for the implications of doing so.)</p>
 </li>
 </ol>
@@ -812,7 +812,7 @@ WIP files as uncommitted.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>See also <a href="git-stash.html">git-stash</a>(1).</p>
+<p>See also <a href="git-stash.html">git-stash(1)</a>.</p>
 </div>
 </dd>
 <dt class="hdlist1">Reset a single file in the index</dt>
@@ -930,7 +930,7 @@ pre-populate the commit message from the original message that you started
 with in the first commit. This is helpful to avoid retyping it. The
 <code>HEAD@{1}</code> is a special notation for the commit that <code>HEAD</code> used to be at
 prior to the original reset commit (1 change ago).
-See <a href="git-reflog.html">git-reflog</a>(1) for more details. You may also use any other
+See <a href="git-reflog.html">git-reflog(1)</a> for more details. You may also use any other
 valid commit reference.</p>
 </li>
 <li>
@@ -987,10 +987,10 @@ in state <code>D</code>).</p>
 <pre>working index HEAD target         working index HEAD
 ----------------------------------------------------
  A       B     C    D     --soft   A       B     D
-			  --mixed  A       D     D
-			  --hard   D       D     D
-			  --merge (disallowed)
-			  --keep  (disallowed)</pre>
+                          --mixed  A       D     D
+                          --hard   D       D     D
+                          --merge (disallowed)
+                          --keep  (disallowed)</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -998,10 +998,10 @@ in state <code>D</code>).</p>
 <pre>working index HEAD target         working index HEAD
 ----------------------------------------------------
  A       B     C    C     --soft   A       B     C
-			  --mixed  A       C     C
-			  --hard   C       C     C
-			  --merge (disallowed)
-			  --keep   A       C     C</pre>
+                          --mixed  A       C     C
+                          --hard   C       C     C
+                          --merge (disallowed)
+                          --keep   A       C     C</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -1009,10 +1009,10 @@ in state <code>D</code>).</p>
 <pre>working index HEAD target         working index HEAD
 ----------------------------------------------------
  B       B     C    D     --soft   B       B     D
-			  --mixed  B       D     D
-			  --hard   D       D     D
-			  --merge  D       D     D
-			  --keep  (disallowed)</pre>
+                          --mixed  B       D     D
+                          --hard   D       D     D
+                          --merge  D       D     D
+                          --keep  (disallowed)</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -1020,10 +1020,10 @@ in state <code>D</code>).</p>
 <pre>working index HEAD target         working index HEAD
 ----------------------------------------------------
  B       B     C    C     --soft   B       B     C
-			  --mixed  B       C     C
-			  --hard   C       C     C
-			  --merge  C       C     C
-			  --keep   B       C     C</pre>
+                          --mixed  B       C     C
+                          --hard   C       C     C
+                          --merge  C       C     C
+                          --keep   B       C     C</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -1031,10 +1031,10 @@ in state <code>D</code>).</p>
 <pre>working index HEAD target         working index HEAD
 ----------------------------------------------------
  B       C     C    D     --soft   B       C     D
-			  --mixed  B       D     D
-			  --hard   D       D     D
-			  --merge (disallowed)
-			  --keep  (disallowed)</pre>
+                          --mixed  B       D     D
+                          --hard   D       D     D
+                          --merge (disallowed)
+                          --keep  (disallowed)</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -1042,10 +1042,10 @@ in state <code>D</code>).</p>
 <pre>working index HEAD target         working index HEAD
 ----------------------------------------------------
  B       C     C    C     --soft   B       C     C
-			  --mixed  B       C     C
-			  --hard   C       C     C
-			  --merge  B       C     C
-			  --keep   B       C     C</pre>
+                          --mixed  B       C     C
+                          --hard   C       C     C
+                          --merge  B       C     C
+                          --keep   B       C     C</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1077,10 +1077,10 @@ entries:</p>
 <pre>working index HEAD target         working index HEAD
 ----------------------------------------------------
  X       U     A    B     --soft  (disallowed)
-			  --mixed  X       B     B
-			  --hard   B       B     B
-			  --merge  B       B     B
-			  --keep  (disallowed)</pre>
+                          --mixed  X       B     B
+                          --hard   B       B     B
+                          --merge  B       B     B
+                          --keep  (disallowed)</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -1088,10 +1088,10 @@ entries:</p>
 <pre>working index HEAD target         working index HEAD
 ----------------------------------------------------
  X       U     A    A     --soft  (disallowed)
-			  --mixed  X       A     A
-			  --hard   A       A     A
-			  --merge  A       A     A
-			  --keep  (disallowed)</pre>
+                          --mixed  X       A     A
+                          --hard   A       A     A
+                          --merge  A       A     A
+                          --keep  (disallowed)</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1103,14 +1103,14 @@ entries:</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

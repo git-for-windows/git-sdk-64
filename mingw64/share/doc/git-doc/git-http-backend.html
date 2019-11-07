@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-http-backend(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -555,14 +555,14 @@ RewriteCond %{REQUEST_URI} /git-receive-pack$
 RewriteRule ^/git/ - [E=AUTHREQUIRED:yes]
 
 &lt;LocationMatch "^/git/"&gt;
-	Order Deny,Allow
-	Deny from env=AUTHREQUIRED
+        Order Deny,Allow
+        Deny from env=AUTHREQUIRED
 
-	AuthType Basic
-	AuthName "Git Access"
-	Require group committers
-	Satisfy Any
-	...
+        AuthType Basic
+        AuthName "Git Access"
+        Require group committers
+        Satisfy Any
+        ...
 &lt;/LocationMatch&gt;</pre>
 </div>
 </div>
@@ -574,10 +574,10 @@ like:</p>
 <div class="listingblock">
 <div class="content">
 <pre>&lt;LocationMatch "^/git/.*/git-receive-pack$"&gt;
-	AuthType Basic
-	AuthName "Git Access"
-	Require group committers
-	...
+        AuthType Basic
+        AuthName "Git Access"
+        Require group committers
+        ...
 &lt;/LocationMatch&gt;</pre>
 </div>
 </div>
@@ -598,10 +598,10 @@ directive around the repository, or one of its parent directories:</p>
 <div class="listingblock">
 <div class="content">
 <pre>&lt;Location /git/private&gt;
-	AuthType Basic
-	AuthName "Private Git Access"
-	Require group committers
-	...
+        AuthType Basic
+        AuthName "Private Git Access"
+        Require group committers
+        ...
 &lt;/Location&gt;</pre>
 </div>
 </div>
@@ -613,19 +613,19 @@ rest to gitweb:</p>
 <div class="listingblock">
 <div class="content">
 <pre>ScriptAliasMatch \
-	"(?x)^/git/(.*/(HEAD | \
-			info/refs | \
-			objects/(info/[^/]+ | \
-				 [0-9a-f]{2}/[0-9a-f]{38} | \
-				 pack/pack-[0-9a-f]{40}\.(pack|idx)) | \
-			git-(upload|receive)-pack))$" \
-	/usr/libexec/git-core/git-http-backend/$1
+        "(?x)^/git/(.*/(HEAD | \
+                        info/refs | \
+                        objects/(info/[^/]+ | \
+                                 [0-9a-f]{2}/[0-9a-f]{38} | \
+                                 pack/pack-[0-9a-f]{40}\.(pack|idx)) | \
+                        git-(upload|receive)-pack))$" \
+        /usr/libexec/git-core/git-http-backend/$1
 
 ScriptAlias /git/ /var/www/cgi-bin/gitweb.cgi/</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To serve multiple repositories from different <a href="gitnamespaces.html">gitnamespaces</a>(7) in a
+<p>To serve multiple repositories from different <a href="gitnamespaces.html">gitnamespaces(7)</a> in a
 single repository:</p>
 </div>
 <div class="listingblock">
@@ -660,11 +660,11 @@ ScriptAlias /git/ /usr/libexec/git-core/git-http-backend/</pre>
 AliasMatch ^/git/(.*/objects/[0-9a-f]{2}/[0-9a-f]{38})$          /var/www/git/$1
 AliasMatch ^/git/(.*/objects/pack/pack-[0-9a-f]{40}.(pack|idx))$ /var/www/git/$1
 ScriptAliasMatch \
-	"(?x)^/git/(.*/(HEAD | \
-			info/refs | \
-			objects/info/[^/]+ | \
-			git-(upload|receive)-pack))$" \
-	/usr/libexec/git-core/git-http-backend/$1
+        "(?x)^/git/(.*/(HEAD | \
+                        info/refs | \
+                        objects/info/[^/]+ | \
+                        git-(upload|receive)-pack))$" \
+        /usr/libexec/git-core/git-http-backend/$1
 ScriptAlias /git/ /var/www/cgi-bin/gitweb.cgi/</pre>
 </div>
 </div>
@@ -678,11 +678,11 @@ all requests to the CGI:</p>
 <div class="content">
 <pre>alias.url += ( "/git" =&gt; "/usr/lib/git-core/git-http-backend" )
 $HTTP["url"] =~ "^/git" {
-	cgi.assign = ("" =&gt; "")
-	setenv.add-environment = (
-		"GIT_PROJECT_ROOT" =&gt; "/var/www/git",
-		"GIT_HTTP_EXPORT_ALL" =&gt; ""
-	)
+        cgi.assign = ("" =&gt; "")
+        setenv.add-environment = (
+                "GIT_PROJECT_ROOT" =&gt; "/var/www/git",
+                "GIT_HTTP_EXPORT_ALL" =&gt; ""
+        )
 }</pre>
 </div>
 </div>
@@ -692,10 +692,10 @@ $HTTP["url"] =~ "^/git" {
 <div class="listingblock">
 <div class="content">
 <pre>$HTTP["querystring"] =~ "service=git-receive-pack" {
-	include "git-auth.conf"
+        include "git-auth.conf"
 }
 $HTTP["url"] =~ "^/git/.*/git-receive-pack$" {
-	include "git-auth.conf"
+        include "git-auth.conf"
 }</pre>
 </div>
 </div>
@@ -705,11 +705,11 @@ $HTTP["url"] =~ "^/git/.*/git-receive-pack$" {
 <div class="listingblock">
 <div class="content">
 <pre>auth.require = (
-	"/" =&gt; (
-		"method" =&gt; "basic",
-		"realm" =&gt; "Git Access",
-		"require" =&gt; "valid-user"
-	       )
+        "/" =&gt; (
+                "method" =&gt; "basic",
+                "realm" =&gt; "Git Access",
+                "require" =&gt; "valid-user"
+               )
 )
 # ...and set up auth.backend here</pre>
 </div>
@@ -720,7 +720,7 @@ $HTTP["url"] =~ "^/git/.*/git-receive-pack$" {
 <div class="listingblock">
 <div class="content">
 <pre>$HTTP["url"] =~ "^/git/private" {
-	include "git-auth.conf"
+        include "git-auth.conf"
 }</pre>
 </div>
 </div>
@@ -789,14 +789,14 @@ invoked by the <em>git-receive-pack</em>.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

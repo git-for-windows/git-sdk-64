@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-push(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,11 +444,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git push</em> [--all | --mirror | --tags] [--follow-tags] [--atomic] [-n | --dry-run] [--receive-pack=&lt;git-receive-pack&gt;]
-	   [--repo=&lt;repository&gt;] [-f | --force] [-d | --delete] [--prune] [-v | --verbose]
-	   [-u | --set-upstream] [-o &lt;string&gt; | --push-option=&lt;string&gt;]
-	   [--[no-]signed|--signed=(true|false|if-asked)]
-	   [--force-with-lease[=&lt;refname&gt;[:&lt;expect&gt;]]]
-	   [--no-verify] [&lt;repository&gt; [&lt;refspec&gt;&#8230;&#8203;]]</pre>
+           [--repo=&lt;repository&gt;] [-f | --force] [-d | --delete] [--prune] [-v | --verbose]
+           [-u | --set-upstream] [-o &lt;string&gt; | --push-option=&lt;string&gt;]
+           [--[no-]signed|--signed=(true|false|if-asked)]
+           [--force-with-lease[=&lt;refname&gt;[:&lt;expect&gt;]]]
+           [--no-verify] [&lt;repository&gt; [&lt;refspec&gt;&#8230;&#8203;]]</pre>
 </div>
 </div>
 </div>
@@ -462,7 +462,7 @@ necessary to complete the given refs.</p>
 <div class="paragraph">
 <p>You can make interesting things happen to a repository
 every time you push into it, by setting up <em>hooks</em> there.  See
-documentation for <a href="git-receive-pack.html">git-receive-pack</a>(1).</p>
+documentation for <a href="git-receive-pack.html">git-receive-pack(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>When the command line does not specify where to push with the
@@ -475,7 +475,7 @@ configuration is missing, it defaults to <em>origin</em>.</p>
 arguments or <code>--all</code>, <code>--mirror</code>, <code>--tags</code> options, the command finds
 the default <code>&lt;refspec&gt;</code> by consulting <code>remote.*.push</code> configuration,
 and if it is not found, honors <code>push.default</code> configuration to decide
-what to push (See <a href="git-config.html">git-config</a>(1) for the meaning of <code>push.default</code>).</p>
+what to push (See <a href="git-config.html">git-config(1)</a> for the meaning of <code>push.default</code>).</p>
 </div>
 <div class="paragraph">
 <p>When neither the command-line nor the configuration specify what to
@@ -508,7 +508,7 @@ by a colon <code>:</code>, followed by the destination ref &lt;dst&gt;.</p>
 <div class="paragraph">
 <p>The &lt;src&gt; is often the name of the branch you would want to push, but
 it can be any arbitrary "SHA-1 expression", such as <code>master~4</code> or
-<code>HEAD</code> (see <a href="gitrevisions.html">gitrevisions</a>(7)).</p>
+<code>HEAD</code> (see <a href="gitrevisions.html">gitrevisions(7)</a>).</p>
 </div>
 <div class="paragraph">
 <p>The &lt;dst&gt; tells which ref on the remote side is updated with this
@@ -543,7 +543,7 @@ then prepend that to &lt;dst&gt;.</p>
 <p>Other ambiguity resolutions might be added in the future, but for
 now any other cases will error out with an error indicating what we
 tried, and depending on the <code>advice.pushUnqualifiedRefname</code>
-configuration (see <a href="git-config.html">git-config</a>(1)) suggest what refs/
+configuration (see <a href="git-config.html">git-config(1)</a>) suggest what refs/
 namespace you may have wanted to push to.</p>
 </li>
 </ul>
@@ -594,15 +594,15 @@ can be overridden by adding an the optional leading <code>+</code> to a refspec
 is that no amount of forcing will make the <code>refs/heads/*</code> namespace
 accept a non-commit object. Hooks and configuration can also override
 or amend these rules, see e.g. <code>receive.denyNonFastForwards</code> in
-<a href="git-config.html">git-config</a>(1) and <code>pre-receive</code> and <code>update</code> in
-<a href="githooks.html">githooks</a>(5).</p>
+<a href="git-config.html">git-config(1)</a> and <code>pre-receive</code> and <code>update</code> in
+<a href="githooks.html">githooks(5)</a>.</p>
 </div>
 <div class="paragraph">
 <p>Pushing an empty &lt;src&gt; allows you to delete the &lt;dst&gt; ref from the
 remote repository. Deletions are always accepted without a leading <code>+</code>
 in the refspec (or <code>--force</code>), except when forbidden by configuration
-or hooks. See <code>receive.denyDeletes</code> in <a href="git-config.html">git-config</a>(1) and
-<code>pre-receive</code> and <code>update</code> in <a href="githooks.html">githooks</a>(5).</p>
+or hooks. See <code>receive.denyDeletes</code> in <a href="git-config.html">git-config(1)</a> and
+<code>pre-receive</code> and <code>update</code> in <a href="githooks.html">githooks(5)</a>.</p>
 </div>
 <div class="paragraph">
 <p>The special refspec <code>:</code> (or <code>+:</code> to allow non-fast-forward updates)
@@ -670,7 +670,7 @@ and also push annotated tags in <code>refs/tags</code> that are missing
 from the remote but are pointing at commit-ish that are
 reachable from the refs being pushed.  This can also be specified
 with configuration variable <code>push.followTags</code>.  For more
-information, see <code>push.followTags</code> in <a href="git-config.html">git-config</a>(1).</p>
+information, see <code>push.followTags</code> in <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--[no-]signed</dt>
 <dt class="hdlist1">--signed=(true|false|if-asked)</dt>
@@ -682,7 +682,7 @@ attempted.  If <code>true</code> or <code>--signed</code>, the push will fail if
 server does not support signed pushes.  If set to <code>if-asked</code>,
 sign if and only if the server supports signed pushes.  The push
 will also fail if the actual call to <code>gpg --sign</code> fails.  See
-<a href="git-receive-pack.html">git-receive-pack</a>(1) for the details on the receiving end.</p>
+<a href="git-receive-pack.html">git-receive-pack(1)</a> for the details on the receiving end.</p>
 </dd>
 <dt class="hdlist1">--[no-]atomic</dt>
 <dd>
@@ -858,12 +858,12 @@ are specified, the command-line argument takes precedence.</p>
 <dd>
 <p>For every branch that is up to date or successfully pushed, add
 upstream (tracking) reference, used by argument-less
-<a href="git-pull.html">git-pull</a>(1) and other commands. For more information,
-see <code>branch.&lt;name&gt;.merge</code> in <a href="git-config.html">git-config</a>(1).</p>
+<a href="git-pull.html">git-pull(1)</a> and other commands. For more information,
+see <code>branch.&lt;name&gt;.merge</code> in <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--[no-]thin</dt>
 <dd>
-<p>These options are passed to <a href="git-send-pack.html">git-send-pack</a>(1). A thin transfer
+<p>These options are passed to <a href="git-send-pack.html">git-send-pack(1)</a>. A thin transfer
 significantly reduces the amount of sent data when the sender and
 receiver share many of the same objects in common. The default is
 <code>--thin</code>.</p>
@@ -906,7 +906,7 @@ submodule recursion is required.</p>
 </dd>
 <dt class="hdlist1">--[no-]verify</dt>
 <dd>
-<p>Toggle the pre-push hook (see <a href="githooks.html">githooks</a>(5)).  The
+<p>Toggle the pre-push hook (see <a href="githooks.html">githooks(5)</a>).  The
 default is --verify, giving the hook a chance to prevent the
 push.  With --no-verify, the hook is bypassed completely.</p>
 </dd>
@@ -1010,7 +1010,7 @@ syntaxes may be used:</p>
 </div>
 <div class="paragraph">
 <p>These two syntaxes are mostly equivalent, except when cloning, when
-the former implies --local option. See <a href="git-clone.html">git-clone</a>(1) for
+the former implies --local option. See <a href="git-clone.html">git-clone(1)</a> for
 details.</p>
 </div>
 <div class="paragraph">
@@ -1029,7 +1029,7 @@ may be used:</p>
 <div class="paragraph">
 <p>where &lt;address&gt; may be a path, a server and path, or an arbitrary
 URL-like string recognized by the specific remote helper being
-invoked. See <a href="gitremote-helpers.html">gitremote-helpers</a>(7) for details.</p>
+invoked. See <a href="gitremote-helpers.html">gitremote-helpers(7)</a> for details.</p>
 </div>
 <div class="paragraph">
 <p>If there are a large number of similarly-named remote repositories and
@@ -1039,8 +1039,8 @@ configuration section of the form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	[url "&lt;actual url base&gt;"]
-		insteadOf = &lt;other url base&gt;</pre>
+<pre>        [url "&lt;actual url base&gt;"]
+                insteadOf = &lt;other url base&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1048,9 +1048,9 @@ configuration section of the form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	[url "git://git.host.xz/"]
-		insteadOf = host.xz:/path/to/
-		insteadOf = work:</pre>
+<pre>        [url "git://git.host.xz/"]
+                insteadOf = host.xz:/path/to/
+                insteadOf = work:</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1063,8 +1063,8 @@ configuration section of the form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	[url "&lt;actual url base&gt;"]
-		pushInsteadOf = &lt;other url base&gt;</pre>
+<pre>        [url "&lt;actual url base&gt;"]
+                pushInsteadOf = &lt;other url base&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1072,8 +1072,8 @@ configuration section of the form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	[url "ssh://example.org/"]
-		pushInsteadOf = git://example.org/</pre>
+<pre>        [url "ssh://example.org/"]
+                pushInsteadOf = git://example.org/</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1111,7 +1111,7 @@ because they each contain a refspec which git will use by default.</p>
 <h3 id="_named_remote_in_configuration_file">Named remote in configuration file</h3>
 <div class="paragraph">
 <p>You can choose to provide the name of a remote which you had previously
-configured using <a href="git-remote.html">git-remote</a>(1), <a href="git-config.html">git-config</a>(1)
+configured using <a href="git-remote.html">git-remote(1)</a>, <a href="git-config.html">git-config(1)</a>
 or even by a manual edit to the <code>$GIT_DIR/config</code> file.  The URL of
 this remote will be used to access the repository.  The refspec
 of this remote will be used by default when you do
@@ -1120,11 +1120,11 @@ config file would appear like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	[remote "&lt;name&gt;"]
-		url = &lt;url&gt;
-		pushurl = &lt;pushurl&gt;
-		push = &lt;refspec&gt;
-		fetch = &lt;refspec&gt;</pre>
+<pre>        [remote "&lt;name&gt;"]
+                url = &lt;url&gt;
+                pushurl = &lt;pushurl&gt;
+                push = &lt;refspec&gt;
+                fetch = &lt;refspec&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1144,9 +1144,9 @@ following format:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	URL: one of the above URL format
-	Push: &lt;refspec&gt;
-	Pull: &lt;refspec&gt;</pre>
+<pre>        URL: one of the above URL format
+        Push: &lt;refspec&gt;
+        Pull: &lt;refspec&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1166,7 +1166,7 @@ This file should have the following format:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	&lt;url&gt;#&lt;head&gt;</pre>
+<pre>        &lt;url&gt;#&lt;head&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1183,7 +1183,7 @@ refspecs, if you don&#8217;t provide one on the command line.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	refs/heads/&lt;head&gt;:refs/heads/&lt;branch&gt;</pre>
+<pre>        refs/heads/&lt;head&gt;:refs/heads/&lt;branch&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1191,7 +1191,7 @@ refspecs, if you don&#8217;t provide one on the command line.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	HEAD:refs/heads/&lt;head&gt;</pre>
+<pre>        HEAD:refs/heads/&lt;head&gt;</pre>
 </div>
 </div>
 </div>
@@ -1286,7 +1286,7 @@ of the following safety options in effect:
 <code>receive.denyCurrentBranch</code> (for pushes to the checked out
 branch), <code>receive.denyNonFastForwards</code> (for forced
 non-fast-forward updates), <code>receive.denyDeletes</code> or
-<code>receive.denyDeleteCurrent</code>.  See <a href="git-config.html">git-config</a>(1).</p>
+<code>receive.denyDeleteCurrent</code>.  See <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
 <dt class="hdlist1">remote failure</dt>
 <dd>
@@ -1518,9 +1518,9 @@ commits dangling in the origin repository.</strong>  Consider the
 following situation, where a fast-forward is not possible:</p>
 <div class="listingblock">
 <div class="content">
-<pre>	    o---o---o---A---B  origin/master
-		     \
-		      X---Y---Z  dev</pre>
+<pre>            o---o---o---A---B  origin/master
+                     \
+                      X---Y---Z  dev</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1528,9 +1528,9 @@ following situation, where a fast-forward is not possible:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>		      A---B  (unnamed branch)
-		     /
-	    o---o---o---X---Y---Z  master</pre>
+<pre>                      A---B  (unnamed branch)
+                     /
+            o---o---o---X---Y---Z  master</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1589,14 +1589,14 @@ The delta reveals regions of X that are similar to Y to the attacker.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

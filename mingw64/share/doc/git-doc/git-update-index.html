@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-update-index(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,22 +444,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git update-index</em>
-	     [--add] [--remove | --force-remove] [--replace]
-	     [--refresh] [-q] [--unmerged] [--ignore-missing]
-	     [(--cacheinfo &lt;mode&gt;,&lt;object&gt;,&lt;file&gt;)&#8230;&#8203;]
-	     [--chmod=(+|-)x]
-	     [--[no-]assume-unchanged]
-	     [--[no-]skip-worktree]
-	     [--[no-]fsmonitor-valid]
-	     [--ignore-submodules]
-	     [--[no-]split-index]
-	     [--[no-|test-|force-]untracked-cache]
-	     [--[no-]fsmonitor]
-	     [--really-refresh] [--unresolve] [--again | -g]
-	     [--info-only] [--index-info]
-	     [-z] [--stdin] [--index-version &lt;n&gt;]
-	     [--verbose]
-	     [--] [&lt;file&gt;&#8230;&#8203;]</pre>
+             [--add] [--remove | --force-remove] [--replace]
+             [--refresh] [-q] [--unmerged] [--ignore-missing]
+             [(--cacheinfo &lt;mode&gt;,&lt;object&gt;,&lt;file&gt;)&#8230;&#8203;]
+             [--chmod=(+|-)x]
+             [--[no-]assume-unchanged]
+             [--[no-]skip-worktree]
+             [--[no-]ignore-skip-worktree-entries]
+             [--[no-]fsmonitor-valid]
+             [--ignore-submodules]
+             [--[no-]split-index]
+             [--[no-|test-|force-]untracked-cache]
+             [--[no-]fsmonitor]
+             [--really-refresh] [--unresolve] [--again | -g]
+             [--info-only] [--index-info]
+             [-z] [--stdin] [--index-version &lt;n&gt;]
+             [--verbose]
+             [--] [&lt;file&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -472,7 +473,7 @@ into the index and any <em>unmerged</em> or <em>needs updating</em> state is
 cleared.</p>
 </div>
 <div class="paragraph">
-<p>See also <a href="git-add.html">git-add</a>(1) for a more user-friendly way to do some of
+<p>See also <a href="git-add.html">git-add(1)</a> for a more user-friendly way to do some of
 the most common operations on the index.</p>
 </div>
 <div class="paragraph">
@@ -572,6 +573,11 @@ for the paths are not updated. Instead, these options
 set and unset the "skip-worktree" bit for the paths. See
 section "Skip-worktree bit" below for more information.</p>
 </dd>
+<dt class="hdlist1">--[no-]ignore-skip-worktree-entries</dt>
+<dd>
+<p>Do not remove skip-worktree (AKA "index-only") entries even when
+the <code>--remove</code> option was specified.</p>
+</dd>
 <dt class="hdlist1">--[no-]fsmonitor-valid</dt>
 <dd>
 <p>When one of these flags is specified, the object name recorded
@@ -648,7 +654,7 @@ changes in $GIT_DIR/index are pushed back to the shared index
 file.</p>
 <div class="paragraph">
 <p>These options take effect whatever the value of the <code>core.splitIndex</code>
-configuration variable (see <a href="git-config.html">git-config</a>(1)). But a warning is
+configuration variable (see <a href="git-config.html">git-config(1)</a>). But a warning is
 emitted when the change goes against the configured value, as the
 configured value will take effect next time the index is read and this
 will remove the intended effect of the option.</p>
@@ -661,7 +667,7 @@ will remove the intended effect of the option.</p>
 <code>--test-untracked-cache</code> before enabling it.</p>
 <div class="paragraph">
 <p>These options take effect whatever the value of the <code>core.untrackedCache</code>
-configuration variable (see <a href="git-config.html">git-config</a>(1)). But a warning is
+configuration variable (see <a href="git-config.html">git-config(1)</a>). But a warning is
 emitted when the change goes against the configured value, as the
 configured value will take effect next time the index is read and this
 will remove the intended effect of the option.</p>
@@ -690,7 +696,7 @@ this option would enable the extension unconditionally.</p>
 <dd>
 <p>Enable or disable files system monitor feature. These options
 take effect whatever the value of the <code>core.fsmonitor</code>
-configuration variable (see <a href="git-config.html">git-config</a>(1)). But a warning
+configuration variable (see <a href="git-config.html">git-config(1)</a>). But a warning
 is emitted when the change goes against the configured value, as
 the configured value will take effect next time the index is
 read and this will remove the intended effect of the option.</p>
@@ -808,9 +814,9 @@ then feeding necessary input lines in the third format.</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git update-index --index-info
-0 0000000000000000000000000000000000000000	frotz
-100644 8a1218a1024a212bb3db30becd860315f9f3ac52 1	frotz
-100755 8a1218a1024a212bb3db30becd860315f9f3ac52 2	frotz</pre>
+0 0000000000000000000000000000000000000000      frotz
+100644 8a1218a1024a212bb3db30becd860315f9f3ac52 1       frotz
+100755 8a1218a1024a212bb3db30becd860315f9f3ac52 2       frotz</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -822,8 +828,8 @@ for that path.  After the above, we would end up with this:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git ls-files -s
-100644 8a1218a1024a212bb3db30becd860315f9f3ac52 1	frotz
-100755 8a1218a1024a212bb3db30becd860315f9f3ac52 2	frotz</pre>
+100644 8a1218a1024a212bb3db30becd860315f9f3ac52 1       frotz
+100755 8a1218a1024a212bb3db30becd860315f9f3ac52 2       frotz</pre>
 </div>
 </div>
 </div>
@@ -850,7 +856,7 @@ tree files, you have to explicitly tell Git about it by dropping
 <p>In order to set "assume unchanged" bit, use <code>--assume-unchanged</code>
 option.  To unset, use <code>--no-assume-unchanged</code>. To see which files
 have the "assume unchanged" bit set, use <code>git ls-files -v</code>
-(see <a href="git-ls-files.html">git-ls-files</a>(1)).</p>
+(see <a href="git-ls-files.html">git-ls-files(1)</a>).</p>
 </div>
 <div class="paragraph">
 <p>The command looks at <code>core.ignorestat</code> configuration variable.  When
@@ -975,13 +981,13 @@ all index entries and stays unchanged.</p>
 <p>All changes in the split index are pushed back to the shared index
 file when the number of entries in the split index reaches a level
 specified by the splitIndex.maxPercentChange config variable (see
-<a href="git-config.html">git-config</a>(1)).</p>
+<a href="git-config.html">git-config(1)</a>).</p>
 </div>
 <div class="paragraph">
 <p>Each time a new shared index file is created, the old shared index
 files are deleted if their modification time is older than what is
 specified by the splitIndex.sharedIndexExpire config variable (see
-<a href="git-config.html">git-config</a>(1)).</p>
+<a href="git-config.html">git-config(1)</a>).</p>
 </div>
 <div class="paragraph">
 <p>To avoid deleting a shared index file that is still used, its
@@ -1014,7 +1020,7 @@ no longer the case.</p>
 <div class="paragraph">
 <p>If you want to enable (or disable) this feature, it is easier to use
 the <code>core.untrackedCache</code> configuration variable (see
-<a href="git-config.html">git-config</a>(1)) than using the <code>--untracked-cache</code> option to
+<a href="git-config.html">git-config(1)</a>) than using the <code>--untracked-cache</code> option to
 <code>git update-index</code> in each repository, especially if you want to do so
 across all repositories you use, because you can set the configuration
 variable to <code>true</code> (or <code>false</code>) in your <code>$HOME/.gitconfig</code> just once
@@ -1069,7 +1075,7 @@ large working directories.</p>
 </div>
 <div class="paragraph">
 <p>It enables git to work together with a file system monitor (see the
-"fsmonitor-watchman" section of <a href="githooks.html">githooks</a>(5)) that can
+"fsmonitor-watchman" section of <a href="githooks.html">githooks(5)</a>) that can
 inform it as to what files have been modified. This enables git to avoid
 having to lstat() every file to find modified files.</p>
 </div>
@@ -1081,7 +1087,7 @@ looking for new files.</p>
 <div class="paragraph">
 <p>If you want to enable (or disable) this feature, it is easier to use
 the <code>core.fsmonitor</code> configuration variable (see
-<a href="git-config.html">git-config</a>(1)) than using the <code>--fsmonitor</code> option to
+<a href="git-config.html">git-config(1)</a>) than using the <code>--fsmonitor</code> option to
 <code>git update-index</code> in each repository, especially if you want to do so
 across all repositories you use, because you can set the configuration
 variable in your <code>$HOME/.gitconfig</code> just once and have it affect all
@@ -1101,7 +1107,7 @@ system monitor is immediately added to or removed from the index.</p>
 <div class="paragraph">
 <p>The command honors <code>core.filemode</code> configuration variable.  If
 your repository is on a filesystem whose executable bits are
-unreliable, this should be set to <em>false</em> (see <a href="git-config.html">git-config</a>(1)).
+unreliable, this should be set to <em>false</em> (see <a href="git-config.html">git-config(1)</a>).
 This causes the command to ignore differences in file modes recorded
 in the index and the file mode on the filesystem if they differ only on
 executable bit.   On such an unfortunate filesystem, you may
@@ -1109,7 +1115,7 @@ need to use <em>git update-index --chmod=</em>.</p>
 </div>
 <div class="paragraph">
 <p>Quite similarly, if <code>core.symlinks</code> configuration variable is set
-to <em>false</em> (see <a href="git-config.html">git-config</a>(1)), symbolic links are checked out
+to <em>false</em> (see <a href="git-config.html">git-config(1)</a>), symbolic links are checked out
 as plain files, and this command does not modify a recorded file mode
 from symbolic link to regular file.</p>
 </div>
@@ -1121,12 +1127,12 @@ from symbolic link to regular file.</p>
 <p>The command also looks at <code>core.trustctime</code> configuration variable.
 It can be useful when the inode change time is regularly modified by
 something outside Git (file system crawlers and backup systems use
-ctime for marking files processed) (see <a href="git-config.html">git-config</a>(1)).</p>
+ctime for marking files processed) (see <a href="git-config.html">git-config(1)</a>).</p>
 </div>
 <div class="paragraph">
 <p>The untracked cache extension can be enabled by the
 <code>core.untrackedCache</code> configuration variable (see
-<a href="git-config.html">git-config</a>(1)).</p>
+<a href="git-config.html">git-config(1)</a>).</p>
 </div>
 </div>
 </div>
@@ -1134,9 +1140,9 @@ ctime for marking files processed) (see <a href="git-config.html">git-config</a>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-config.html">git-config</a>(1),
-<a href="git-add.html">git-add</a>(1),
-<a href="git-ls-files.html">git-ls-files</a>(1)</p>
+<p><a href="git-config.html">git-config(1)</a>,
+<a href="git-add.html">git-add(1)</a>,
+<a href="git-ls-files.html">git-ls-files(1)</a></p>
 </div>
 </div>
 </div>
@@ -1144,14 +1150,14 @@ ctime for marking files processed) (see <a href="git-config.html">git-config</a>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

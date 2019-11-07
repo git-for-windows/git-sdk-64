@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-daemon(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,19 +444,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git daemon</em> [--verbose] [--syslog] [--export-all]
-	     [--timeout=&lt;n&gt;] [--init-timeout=&lt;n&gt;] [--max-connections=&lt;n&gt;]
-	     [--strict-paths] [--base-path=&lt;path&gt;] [--base-path-relaxed]
-	     [--user-path | --user-path=&lt;path&gt;]
-	     [--interpolated-path=&lt;pathtemplate&gt;]
-	     [--reuseaddr] [--detach] [--pid-file=&lt;file&gt;]
-	     [--enable=&lt;service&gt;] [--disable=&lt;service&gt;]
-	     [--allow-override=&lt;service&gt;] [--forbid-override=&lt;service&gt;]
-	     [--access-hook=&lt;path&gt;] [--[no-]informative-errors]
-	     [--inetd |
-	      [--listen=&lt;host_or_ipaddr&gt;] [--port=&lt;n&gt;]
-	      [--user=&lt;user&gt; [--group=&lt;group&gt;]]]
-	     [--log-destination=(stderr|syslog|none)]
-	     [&lt;directory&gt;&#8230;&#8203;]</pre>
+             [--timeout=&lt;n&gt;] [--init-timeout=&lt;n&gt;] [--max-connections=&lt;n&gt;]
+             [--strict-paths] [--base-path=&lt;path&gt;] [--base-path-relaxed]
+             [--user-path | --user-path=&lt;path&gt;]
+             [--interpolated-path=&lt;pathtemplate&gt;]
+             [--reuseaddr] [--detach] [--pid-file=&lt;file&gt;]
+             [--enable=&lt;service&gt;] [--disable=&lt;service&gt;]
+             [--allow-override=&lt;service&gt;] [--forbid-override=&lt;service&gt;]
+             [--access-hook=&lt;path&gt;] [--[no-]informative-errors]
+             [--inetd |
+              [--listen=&lt;host_or_ipaddr&gt;] [--port=&lt;n&gt;]
+              [--user=&lt;user&gt; [--group=&lt;group&gt;]]]
+             [--log-destination=(stderr|syslog|none)]
+             [&lt;directory&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -764,7 +764,7 @@ enabled by setting <code>daemon.receivepack</code> configuration item to
 <div class="listingblock">
 <div class="content">
 <pre>$ grep 9418 /etc/services
-git		9418/tcp		# Git Version Control System</pre>
+git             9418/tcp                # Git Version Control System</pre>
 </div>
 </div>
 </dd>
@@ -776,9 +776,9 @@ and /pub/bar, place an entry like the following into
 /etc/inetd all on one line:</p>
 <div class="listingblock">
 <div class="content">
-<pre>	git stream tcp nowait nobody  /usr/bin/git
-		git daemon --inetd --verbose --export-all
-		/pub/foo /pub/bar</pre>
+<pre>        git stream tcp nowait nobody  /usr/bin/git
+                git daemon --inetd --verbose --export-all
+                /pub/foo /pub/bar</pre>
 </div>
 </div>
 </dd>
@@ -790,12 +790,12 @@ and <code>www.example.org</code>, place an entry like the following into
 <code>/etc/inetd</code> all on one line:</p>
 <div class="listingblock">
 <div class="content">
-<pre>	git stream tcp nowait nobody /usr/bin/git
-		git daemon --inetd --verbose --export-all
-		--interpolated-path=/pub/%H%D
-		/pub/www.example.org/software
-		/pub/www.example.com/software
-		/software</pre>
+<pre>        git stream tcp nowait nobody /usr/bin/git
+                git daemon --inetd --verbose --export-all
+                --interpolated-path=/pub/%H%D
+                /pub/www.example.org/software
+                /pub/www.example.com/software
+                /software</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -814,10 +814,10 @@ handles repositories for multiple virtual hosts based on
 their IP addresses, start the daemon like this:</p>
 <div class="listingblock">
 <div class="content">
-<pre>	git daemon --verbose --export-all
-		--interpolated-path=/pub/%IP/%D
-		/pub/192.168.1.200/software
-		/pub/10.10.220.23/software</pre>
+<pre>        git daemon --verbose --export-all
+                --interpolated-path=/pub/%IP/%D
+                /pub/192.168.1.200/software
+                /pub/10.10.220.23/software</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -835,9 +835,9 @@ repository (that is the file <em>config</em> next to <code>HEAD</code>, <em>refs
 <em>objects</em>).</p>
 <div class="listingblock">
 <div class="content">
-<pre>	[daemon]
-		uploadpack = false
-		uploadarch = true</pre>
+<pre>        [daemon]
+                uploadpack = false
+                uploadarch = true</pre>
 </div>
 </div>
 </dd>
@@ -860,14 +860,14 @@ services are performed.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

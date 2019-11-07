@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-rebase(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -443,10 +443,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git rebase</em> [-i | --interactive] [&lt;options&gt;] [--exec &lt;cmd&gt;] [--onto &lt;newbase&gt;]
-	[&lt;upstream&gt; [&lt;branch&gt;]]
+<pre class="content"><em>git rebase</em> [-i | --interactive] [&lt;options&gt;] [--exec &lt;cmd&gt;]
+        [--onto &lt;newbase&gt; | --keep-base] [&lt;upstream&gt; [&lt;branch&gt;]]
 <em>git rebase</em> [-i | --interactive] [&lt;options&gt;] [--exec &lt;cmd&gt;] [--onto &lt;newbase&gt;]
-	--root [&lt;branch&gt;]
+        --root [&lt;branch&gt;]
 <em>git rebase</em> (--continue | --skip | --abort | --quit | --edit-todo | --show-current-patch)</pre>
 </div>
 </div>
@@ -462,7 +462,7 @@ it remains on the current branch.</p>
 <div class="paragraph">
 <p>If &lt;upstream&gt; is not specified, the upstream configured in
 branch.&lt;name&gt;.remote and branch.&lt;name&gt;.merge options will be used (see
-<a href="git-config.html">git-config</a>(1) for details) and the <code>--fork-point</code> option is
+<a href="git-config.html">git-config(1)</a> for details) and the <code>--fork-point</code> option is
 assumed.  If you are currently not on any branch or if the current
 branch does not have a configured upstream, the rebase will abort.</p>
 </div>
@@ -721,7 +721,7 @@ ends.  This means that you can run rebase on a dirty worktree.
 However, use with care: the final stash application after a
 successful rebase might result in non-trivial conflicts.
 This option can be overridden by the <code>--no-autostash</code> and
-<code>--autostash</code> options of <a href="git-rebase.html">git-rebase</a>(1).
+<code>--autostash</code> options of <a href="git-rebase.html">git-rebase(1)</a>.
 Defaults to false.</p>
 </dd>
 <dt class="hdlist1">rebase.missingCommitsCheck</dt>
@@ -738,7 +738,7 @@ Defaults to "ignore".</p>
 </dd>
 <dt class="hdlist1">rebase.instructionFormat</dt>
 <dd>
-<p>A format string, as specified in <a href="git-log.html">git-log</a>(1), to be used for the
+<p>A format string, as specified in <a href="git-log.html">git-log(1)</a>, to be used for the
 todo list during an interactive rebase.  The format will
 automatically have the long commit hash prepended to the format.</p>
 </dd>
@@ -748,9 +748,9 @@ automatically have the long commit hash prepended to the format.</p>
 todo list resulting in something like this:</p>
 <div class="listingblock">
 <div class="content">
-<pre>	p deadbee The oneline of the commit
-	p fa1afe1 The oneline of the next commit
-	...</pre>
+<pre>        p deadbee The oneline of the commit
+        p fa1afe1 The oneline of the next commit
+        ...</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -758,9 +758,9 @@ todo list resulting in something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	pick deadbee The oneline of the commit
-	pick fa1afe1 The oneline of the next commit
-	...</pre>
+<pre>        pick deadbee The oneline of the commit
+        pick fa1afe1 The oneline of the next commit
+        ...</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -792,6 +792,28 @@ existing branch name.</p>
 <p>As a special case, you may use "A...B" as a shortcut for the
 merge base of A and B if there is exactly one merge base. You can
 leave out at most one of A and B, in which case it defaults to HEAD.</p>
+</div>
+</dd>
+<dt class="hdlist1">--keep-base</dt>
+<dd>
+<p>Set the starting point at which to create the new commits to the
+merge base of &lt;upstream&gt; &lt;branch&gt;. Running
+<em>git rebase --keep-base &lt;upstream&gt; &lt;branch&gt;</em> is equivalent to
+running <em>git rebase --onto &lt;upstream&gt;&#8230;&#8203; &lt;upstream&gt;</em>.</p>
+<div class="paragraph">
+<p>This option is useful in the case where one is developing a feature on
+top of an upstream branch. While the feature is being worked on, the
+upstream branch may advance and it may not be the best idea to keep
+rebasing on top of the upstream but to keep the base commit as-is.</p>
+</div>
+<div class="paragraph">
+<p>Although both this option and --fork-point find the merge base between
+&lt;upstream&gt; and &lt;branch&gt;, this option uses the merge base as the <em>starting
+point</em> on which new commits will be created, whereas --fork-point uses
+the merge base to determine the <em>set of commits</em> which will be rebased.</p>
+</div>
+<div class="paragraph">
+<p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
 </dd>
 <dt class="hdlist1">&lt;upstream&gt;</dt>
@@ -932,12 +954,12 @@ diffstat is also controlled by the configuration option rebase.stat.</p>
 </dd>
 <dt class="hdlist1">--no-verify</dt>
 <dd>
-<p>This option bypasses the pre-rebase hook.  See also <a href="githooks.html">githooks</a>(5).</p>
+<p>This option bypasses the pre-rebase hook.  See also <a href="githooks.html">githooks(5)</a>.</p>
 </dd>
 <dt class="hdlist1">--verify</dt>
 <dd>
 <p>Allows the pre-rebase hook to run, which is the default.  This option can
-be used to override --no-verify.  See also <a href="githooks.html">githooks</a>(5).</p>
+be used to override --no-verify.  See also <a href="githooks.html">githooks(5)</a>.</p>
 </dd>
 <dt class="hdlist1">-C&lt;n&gt;</dt>
 <dd>
@@ -974,19 +996,24 @@ introduced by &lt;branch&gt;.</p>
 <p>When --fork-point is active, <em>fork_point</em> will be used instead of
 &lt;upstream&gt; to calculate the set of commits to rebase, where
 <em>fork_point</em> is the result of <code>git merge-base --fork-point &lt;upstream&gt;
-&lt;branch&gt;</code> command (see <a href="git-merge-base.html">git-merge-base</a>(1)).  If <em>fork_point</em>
+&lt;branch&gt;</code> command (see <a href="git-merge-base.html">git-merge-base(1)</a>).  If <em>fork_point</em>
 ends up being empty, the &lt;upstream&gt; will be used as a fallback.</p>
 </div>
 <div class="paragraph">
 <p>If either &lt;upstream&gt; or --root is given on the command line, then the
 default is <code>--no-fork-point</code>, otherwise the default is <code>--fork-point</code>.</p>
 </div>
+<div class="paragraph">
+<p>If your branch was based on &lt;upstream&gt; but &lt;upstream&gt; was rewound and
+your branch contains commits which were dropped, this option can be used
+with <code>--keep-base</code> in order to drop those commits from your branch.</p>
+</div>
 </dd>
 <dt class="hdlist1">--ignore-whitespace</dt>
 <dt class="hdlist1">--whitespace=&lt;option&gt;</dt>
 <dd>
 <p>These flag are passed to the <em>git apply</em> program
-(see <a href="git-apply.html">git-apply</a>(1)) that applies the patch.</p>
+(see <a href="git-apply.html">git-apply(1)</a>) that applies the patch.</p>
 <div class="paragraph">
 <p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
@@ -995,7 +1022,7 @@ default is <code>--no-fork-point</code>, otherwise the default is <code>--fork-p
 <dt class="hdlist1">--ignore-date</dt>
 <dd>
 <p>These flags are passed to <em>git am</em> to easily change the dates
-of the rebased commits (see <a href="git-am.html">git-am</a>(1)).</p>
+of the rebased commits (see <a href="git-am.html">git-am(1)</a>).</p>
 <div class="paragraph">
 <p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
@@ -1037,7 +1064,7 @@ resolved/re-applied manually.</p>
 <div class="paragraph">
 <p>By default, or when <code>no-rebase-cousins</code> was specified, commits which do not
 have <code>&lt;upstream&gt;</code> as direct ancestor will keep their original branch point,
-i.e. commits that would be excluded by <a href="git-log.html">git-log</a>(1)'s
+i.e. commits that would be excluded by <a href="git-log.html">git-log(1)</a>'s
 <code>--ancestry-path</code> option will keep their original ancestry by default. If
 the <code>rebase-cousins</code> mode is turned on, such commits are instead rebased
 onto <code>&lt;upstream&gt;</code> (or <code>&lt;onto&gt;</code>, if specified).</p>
@@ -1135,7 +1162,7 @@ from <code>pick</code> to <code>squash</code> (or <code>fixup</code>).  A commit
 the commit subject matches, or if the <code>...</code> refers to the commit&#8217;s
 hash. As a fall-back, partial matches of the commit subject work,
 too.  The recommended way to create fixup/squash commits is by using
-the <code>--fixup</code>/<code>--squash</code> options of <a href="git-commit.html">git-commit</a>(1).</p>
+the <code>--fixup</code>/<code>--squash</code> options of <a href="git-commit.html">git-commit(1)</a>.</p>
 <div class="paragraph">
 <p>If the <code>--autosquash</code> option is enabled by default using the
 configuration variable <code>rebase.autoSquash</code>, this option can be
@@ -1247,10 +1274,10 @@ sense in interactive mode (or when an <code>--exec</code> option was provided).<
 <p>--preserve-merges and --rebase-merges</p>
 </li>
 <li>
-<p>--rebase-merges and --strategy</p>
+<p>--keep-base and --onto</p>
 </li>
 <li>
-<p>--rebase-merges and --strategy-option</p>
+<p>--keep-base and --root</p>
 </li>
 </ul>
 </div>
@@ -1348,14 +1375,14 @@ no <em>theirs</em> merge strategy to confuse this merge option with.</p>
 to avoid mismerges that sometimes occur due to unimportant
 matching lines (e.g., braces from distinct functions).  Use
 this when the branches to be merged have diverged wildly.
-See also <a href="git-diff.html">git-diff</a>(1) <code>--patience</code>.</p>
+See also <a href="git-diff.html">git-diff(1)</a> <code>--patience</code>.</p>
 </dd>
 <dt class="hdlist1">diff-algorithm=[patience|minimal|histogram|myers]</dt>
 <dd>
 <p>Tells <em>merge-recursive</em> to use a different diff algorithm, which
 can help avoid mismerges that occur due to unimportant matching
 lines (such as braces from distinct functions).  See also
-<a href="git-diff.html">git-diff</a>(1) <code>--diff-algorithm</code>.</p>
+<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.</p>
 </dd>
 <dt class="hdlist1">ignore-space-change</dt>
 <dt class="hdlist1">ignore-all-space</dt>
@@ -1365,7 +1392,7 @@ lines (such as braces from distinct functions).  See also
 <p>Treats lines with the indicated type of whitespace change as
 unchanged for the sake of a three-way merge.  Whitespace
 changes mixed with other changes to a line are not ignored.
-See also <a href="git-diff.html">git-diff</a>(1) <code>-b</code>, <code>-w</code>,
+See also <a href="git-diff.html">git-diff(1)</a> <code>-b</code>, <code>-w</code>,
 <code>--ignore-space-at-eol</code>, and <code>--ignore-cr-at-eol</code>.</p>
 <div class="ulist">
 <ul>
@@ -1390,7 +1417,7 @@ of a file when resolving a three-way merge.  This option is
 meant to be used when merging branches with different clean
 filters or end-of-line normalization rules.  See "Merging
 branches with differing checkin/checkout attributes" in
-<a href="gitattributes.html">gitattributes</a>(5) for details.</p>
+<a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
 <dt class="hdlist1">no-renormalize</dt>
 <dd>
@@ -1401,14 +1428,14 @@ branches with differing checkin/checkout attributes" in
 <dd>
 <p>Turn off rename detection. This overrides the <code>merge.renames</code>
 configuration variable.
-See also <a href="git-diff.html">git-diff</a>(1) <code>--no-renames</code>.</p>
+See also <a href="git-diff.html">git-diff(1)</a> <code>--no-renames</code>.</p>
 </dd>
 <dt class="hdlist1">find-renames[=&lt;n&gt;]</dt>
 <dd>
 <p>Turn on rename detection, optionally setting the similarity
 threshold.  This is the default. This overrides the
 <em>merge.renames</em> configuration variable.
-See also <a href="git-diff.html">git-diff</a>(1) <code>--find-renames</code>.</p>
+See also <a href="git-diff.html">git-diff(1)</a> <code>--find-renames</code>.</p>
 </dd>
 <dt class="hdlist1">rename-threshold=&lt;n&gt;</dt>
 <dd>
@@ -1761,10 +1788,10 @@ following:</p>
 <div class="listingblock">
 <div class="content">
 <pre>    o---o---o---o---o---o---o---o  master
-	 \
-	  o---o---o---o---o  subsystem
-			   \
-			    *---*---*  topic</pre>
+         \
+          o---o---o---o---o  subsystem
+                           \
+                            *---*---*  topic</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1773,10 +1800,10 @@ following:</p>
 <div class="listingblock">
 <div class="content">
 <pre>    o---o---o---o---o---o---o---o  master
-	 \			 \
-	  o---o---o---o---o	  o'--o'--o'--o'--o'  subsystem
-			   \
-			    *---*---*  topic</pre>
+         \                       \
+          o---o---o---o---o       o'--o'--o'--o'--o'  subsystem
+                           \
+                            *---*---*  topic</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1786,10 +1813,10 @@ to <em>subsystem</em>, the commits from <em>subsystem</em> will remain duplicate
 <div class="listingblock">
 <div class="content">
 <pre>    o---o---o---o---o---o---o---o  master
-	 \			 \
-	  o---o---o---o---o	  o'--o'--o'--o'--o'--M	 subsystem
-			   \			     /
-			    *---*---*-..........-*--*  topic</pre>
+         \                       \
+          o---o---o---o---o       o'--o'--o'--o'--o'--M  subsystem
+                           \                         /
+                            *---*---*-..........-*--*  topic</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1814,7 +1841,8 @@ had no conflicts.</p>
 <p>This happens if the <em>subsystem</em> rebase had conflicts, or used
 <code>--interactive</code> to omit, edit, squash, or fixup commits; or
 if the upstream used one of <code>commit --amend</code>, <code>reset</code>, or
-<code>filter-branch</code>.</p>
+a full history rewriting command like
+<a href="https://github.com/newren/git-filter-repo"><code>filter-repo</code></a>.</p>
 </dd>
 </dl>
 </div>
@@ -1841,10 +1869,10 @@ changes that are already present in the new upstream.  So if you say
 <div class="listingblock">
 <div class="content">
 <pre>    o---o---o---o---o---o---o---o  master
-				 \
-				  o'--o'--o'--o'--o'  subsystem
-						   \
-						    *---*---*  topic</pre>
+                                 \
+                                  o'--o'--o'--o'--o'  subsystem
+                                                   \
+                                                    *---*---*  topic</pre>
 </div>
 </div>
 </div>
@@ -1871,7 +1899,7 @@ While an "easy case recovery" sometimes appears to be successful
 </div>
 <div class="paragraph">
 <p>The idea is to manually tell <em>git rebase</em> "where the old <em>subsystem</em>
-ended and your <em>topic</em> began", that is, what the old merge-base
+ended and your <em>topic</em> began", that is, what the old merge base
 between them was.  You will have to find a way to name the last commit
 of the old <em>subsystem</em>, for example:</p>
 </div>
@@ -1880,7 +1908,7 @@ of the old <em>subsystem</em>, for example:</p>
 <li>
 <p>With the <em>subsystem</em> reflog: after <em>git fetch</em>, the old tip of
 <em>subsystem</em> is at <code>subsystem@{1}</code>.  Subsequent fetches will
-increase the number.  (See <a href="git-reflog.html">git-reflog</a>(1).)</p>
+increase the number.  (See <a href="git-reflog.html">git-reflog(1)</a>.)</p>
 </li>
 <li>
 <p>Relative to the tip of <em>topic</em>: knowing that your <em>topic</em> has three
@@ -2090,7 +2118,7 @@ Use <code>--rebase-merges</code> in such scenarios instead.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	3
+<pre>        3
        /
 1 --- 2 --- 4 --- 5</pre>
 </div>
@@ -2101,14 +2129,14 @@ Use <code>--rebase-merges</code> in such scenarios instead.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

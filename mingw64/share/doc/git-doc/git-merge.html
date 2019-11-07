@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-merge(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,9 +444,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git merge</em> [-n] [--stat] [--no-commit] [--squash] [--[no-]edit]
-	[-s &lt;strategy&gt;] [-X &lt;strategy-option&gt;] [-S[&lt;keyid&gt;]]
-	[--[no-]allow-unrelated-histories]
-	[--[no-]rerere-autoupdate] [-m &lt;msg&gt;] [-F &lt;file&gt;] [&lt;commit&gt;&#8230;&#8203;]
+        [--no-verify] [-s &lt;strategy&gt;] [-X &lt;strategy-option&gt;] [-S[&lt;keyid&gt;]]
+        [--[no-]allow-unrelated-histories]
+        [--[no-]rerere-autoupdate] [-m &lt;msg&gt;] [-F &lt;file&gt;] [&lt;commit&gt;&#8230;&#8203;]
 <em>git merge</em> (--continue | --abort | --quit)</pre>
 </div>
 </div>
@@ -467,8 +467,8 @@ from one branch into another.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	  A---B---C topic
-	 /
+<pre>          A---B---C topic
+         /
     D---E---F---G master</pre>
 </div>
 </div>
@@ -481,8 +481,8 @@ a log message from the user describing the changes.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	  A---B---C topic
-	 /         \
+<pre>          A---B---C topic
+         /         \
     D---E---F---G---H master</pre>
 </div>
 </div>
@@ -551,29 +551,34 @@ set to <code>no</code> at the beginning of them.</p>
 <dt class="hdlist1">--cleanup=&lt;mode&gt;</dt>
 <dd>
 <p>This option determines how the merge message will be cleaned up before
-commiting. See <a href="git-commit.html">git-commit</a>(1) for more details. In addition, if
+commiting. See <a href="git-commit.html">git-commit(1)</a> for more details. In addition, if
 the <em>&lt;mode&gt;</em> is given a value of <code>scissors</code>, scissors will be appended
 to <code>MERGE_MSG</code> before being passed on to the commit machinery in the
 case of a merge conflict.</p>
 </dd>
 <dt class="hdlist1">--ff</dt>
-<dd>
-<p>When the merge resolves as a fast-forward, only update the branch
-pointer, without creating a merge commit.  This is the default
-behavior.</p>
-</dd>
 <dt class="hdlist1">--no-ff</dt>
-<dd>
-<p>Create a merge commit even when the merge resolves as a
-fast-forward.  This is the default behaviour when merging an
-annotated (and possibly signed) tag that is not stored in
-its natural place in <em>refs/tags/</em> hierarchy.</p>
-</dd>
 <dt class="hdlist1">--ff-only</dt>
 <dd>
-<p>Refuse to merge and exit with a non-zero status unless the
-current <code>HEAD</code> is already up to date or the merge can be
-resolved as a fast-forward.</p>
+<p>Specifies how a merge is handled when the merged-in history is
+already a descendant of the current history.  <code>--ff</code> is the
+default unless merging an annotated (and possibly signed) tag
+that is not stored in its natural place in the <code>refs/tags/</code>
+hierarchy, in which case <code>--no-ff</code> is assumed.</p>
+<div class="paragraph">
+<p>With <code>--ff</code>, when possible resolve the merge as a fast-forward (only
+update the branch pointer to match the merged branch; do not create a
+merge commit).  When not possible (when the merged-in history is not a
+descendant of the current history), create a merge commit.</p>
+</div>
+<div class="paragraph">
+<p>With <code>--no-ff</code>, create a merge commit in all cases, even when the merge
+could instead be resolved as a fast-forward.</p>
+</div>
+<div class="paragraph">
+<p>With <code>--ff-only</code>, resolve the merge as a fast-forward when possible.
+When not possible, refuse to merge and exit with a non-zero status.</p>
+</div>
 </dd>
 <dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
 <dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
@@ -587,7 +592,7 @@ it must be stuck to the option without a space.</p>
 <dd>
 <p>In addition to branch names, populate the log message with
 one-line descriptions from at most &lt;n&gt; actual commits that are being
-merged. See also <a href="git-fmt-merge-msg.html">git-fmt-merge-msg</a>(1).</p>
+merged. See also <a href="git-fmt-merge-msg.html">git-fmt-merge-msg(1)</a>.</p>
 <div class="paragraph">
 <p>With --no-log do not list one-line descriptions from the
 actual commits being merged.</p>
@@ -634,6 +639,11 @@ option can be used to override --squash.</p>
 <div class="paragraph">
 <p>With --squash, --commit is not allowed, and will fail.</p>
 </div>
+</dd>
+<dt class="hdlist1">--no-verify</dt>
+<dd>
+<p>This option bypasses the pre-merge and commit-msg hooks.
+See also <a href="githooks.html">githooks(5)</a>.</p>
 </dd>
 <dt class="hdlist1">-s &lt;strategy&gt;</dt>
 <dt class="hdlist1">--strategy=&lt;strategy&gt;</dt>
@@ -780,7 +790,7 @@ of <code>git fetch</code> for merging are merged to the current branch.</p>
 <div class="paragraph">
 <p>Before applying outside changes, you should get your own work in
 good shape and committed locally, so it will not be clobbered if
-there are conflicts.  See also <a href="git-stash.html">git-stash</a>(1).
+there are conflicts.  See also <a href="git-stash.html">git-stash(1)</a>.
 <em>git pull</em> and <em>git merge</em> will stop without doing anything when
 local uncommitted changes overlap with files that <em>git pull</em>/<em>git
 merge</em> may need to update.</p>
@@ -876,7 +886,7 @@ want to start over, you can recover with <code>git merge --abort</code>.</p>
 creates a merge commit even if a fast-forward merge is possible, and
 the commit message template is prepared with the tag message.
 Additionally, if the tag is signed, the signature check is reported
-as a comment in the message template. See also <a href="git-tag.html">git-tag</a>(1).</p>
+as a comment in the message template. See also <a href="git-tag.html">git-tag(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>When you want to just integrate with the work leading to the commit
@@ -1127,14 +1137,14 @@ no <em>theirs</em> merge strategy to confuse this merge option with.</p>
 to avoid mismerges that sometimes occur due to unimportant
 matching lines (e.g., braces from distinct functions).  Use
 this when the branches to be merged have diverged wildly.
-See also <a href="git-diff.html">git-diff</a>(1) <code>--patience</code>.</p>
+See also <a href="git-diff.html">git-diff(1)</a> <code>--patience</code>.</p>
 </dd>
 <dt class="hdlist1">diff-algorithm=[patience|minimal|histogram|myers]</dt>
 <dd>
 <p>Tells <em>merge-recursive</em> to use a different diff algorithm, which
 can help avoid mismerges that occur due to unimportant matching
 lines (such as braces from distinct functions).  See also
-<a href="git-diff.html">git-diff</a>(1) <code>--diff-algorithm</code>.</p>
+<a href="git-diff.html">git-diff(1)</a> <code>--diff-algorithm</code>.</p>
 </dd>
 <dt class="hdlist1">ignore-space-change</dt>
 <dt class="hdlist1">ignore-all-space</dt>
@@ -1144,7 +1154,7 @@ lines (such as braces from distinct functions).  See also
 <p>Treats lines with the indicated type of whitespace change as
 unchanged for the sake of a three-way merge.  Whitespace
 changes mixed with other changes to a line are not ignored.
-See also <a href="git-diff.html">git-diff</a>(1) <code>-b</code>, <code>-w</code>,
+See also <a href="git-diff.html">git-diff(1)</a> <code>-b</code>, <code>-w</code>,
 <code>--ignore-space-at-eol</code>, and <code>--ignore-cr-at-eol</code>.</p>
 <div class="ulist">
 <ul>
@@ -1169,7 +1179,7 @@ of a file when resolving a three-way merge.  This option is
 meant to be used when merging branches with different clean
 filters or end-of-line normalization rules.  See "Merging
 branches with differing checkin/checkout attributes" in
-<a href="gitattributes.html">gitattributes</a>(5) for details.</p>
+<a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
 <dt class="hdlist1">no-renormalize</dt>
 <dd>
@@ -1180,14 +1190,14 @@ branches with differing checkin/checkout attributes" in
 <dd>
 <p>Turn off rename detection. This overrides the <code>merge.renames</code>
 configuration variable.
-See also <a href="git-diff.html">git-diff</a>(1) <code>--no-renames</code>.</p>
+See also <a href="git-diff.html">git-diff(1)</a> <code>--no-renames</code>.</p>
 </dd>
 <dt class="hdlist1">find-renames[=&lt;n&gt;]</dt>
 <dd>
 <p>Turn on rename detection, optionally setting the similarity
 threshold.  This is the default. This overrides the
 <em>merge.renames</em> configuration variable.
-See also <a href="git-diff.html">git-diff</a>(1) <code>--find-renames</code>.</p>
+See also <a href="git-diff.html">git-diff(1)</a> <code>--find-renames</code>.</p>
 </dd>
 <dt class="hdlist1">rename-threshold=&lt;n&gt;</dt>
 <dd>
@@ -1281,7 +1291,7 @@ command line).</p>
 <dt class="hdlist1">merge.verifySignatures</dt>
 <dd>
 <p>If true, this is equivalent to the --verify-signatures command
-line option. See <a href="git-merge.html">git-merge</a>(1) for details.</p>
+line option. See <a href="git-merge.html">git-merge(1)</a> for details.</p>
 </dd>
 <dt class="hdlist1">merge.branchdesc</dt>
 <dd>
@@ -1332,7 +1342,7 @@ endings).  In such a repository, Git can convert the data
 recorded in commits to a canonical form before performing a
 merge to reduce unnecessary conflicts.  For more information,
 see section "Merging branches with differing checkin/checkout
-attributes" in <a href="gitattributes.html">gitattributes</a>(5).</p>
+attributes" in <a href="gitattributes.html">gitattributes(5)</a>.</p>
 </dd>
 <dt class="hdlist1">merge.stat</dt>
 <dd>
@@ -1341,14 +1351,14 @@ at the end of the merge.  True by default.</p>
 </dd>
 <dt class="hdlist1">merge.tool</dt>
 <dd>
-<p>Controls which merge tool is used by <a href="git-mergetool.html">git-mergetool</a>(1).
+<p>Controls which merge tool is used by <a href="git-mergetool.html">git-mergetool(1)</a>.
 The list below shows the valid built-in values.
 Any other value is treated as a custom merge tool and requires
 that a corresponding mergetool.&lt;tool&gt;.cmd variable is defined.</p>
 </dd>
 <dt class="hdlist1">merge.guitool</dt>
 <dd>
-<p>Controls which merge tool is used by <a href="git-mergetool.html">git-mergetool</a>(1) when the
+<p>Controls which merge tool is used by <a href="git-mergetool.html">git-mergetool(1)</a> when the
 -g/--gui flag is specified. The list below shows the valid built-in values.
 Any other value is treated as a custom merge tool and requires that a
 corresponding mergetool.&lt;guitool&gt;.cmd variable is defined.</p>
@@ -1447,18 +1457,18 @@ Can be overridden by the <code>GIT_MERGE_VERBOSITY</code> environment variable.<
 <dt class="hdlist1">merge.&lt;driver&gt;.name</dt>
 <dd>
 <p>Defines a human-readable name for a custom low-level
-merge driver.  See <a href="gitattributes.html">gitattributes</a>(5) for details.</p>
+merge driver.  See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
 <dt class="hdlist1">merge.&lt;driver&gt;.driver</dt>
 <dd>
 <p>Defines the command that implements a custom low-level
-merge driver.  See <a href="gitattributes.html">gitattributes</a>(5) for details.</p>
+merge driver.  See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
 <dt class="hdlist1">merge.&lt;driver&gt;.recursive</dt>
 <dd>
 <p>Names a low-level merge driver to be used when
 performing an internal merge between common ancestors.
-See <a href="gitattributes.html">gitattributes</a>(5) for details.</p>
+See <a href="gitattributes.html">gitattributes(5)</a> for details.</p>
 </dd>
 <dt class="hdlist1">branch.&lt;name&gt;.mergeOptions</dt>
 <dd>
@@ -1474,12 +1484,12 @@ values containing whitespace characters are currently not supported.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-fmt-merge-msg.html">git-fmt-merge-msg</a>(1), <a href="git-pull.html">git-pull</a>(1),
-<a href="gitattributes.html">gitattributes</a>(5),
-<a href="git-reset.html">git-reset</a>(1),
-<a href="git-diff.html">git-diff</a>(1), <a href="git-ls-files.html">git-ls-files</a>(1),
-<a href="git-add.html">git-add</a>(1), <a href="git-rm.html">git-rm</a>(1),
-<a href="git-mergetool.html">git-mergetool</a>(1)</p>
+<p><a href="git-fmt-merge-msg.html">git-fmt-merge-msg(1)</a>, <a href="git-pull.html">git-pull(1)</a>,
+<a href="gitattributes.html">gitattributes(5)</a>,
+<a href="git-reset.html">git-reset(1)</a>,
+<a href="git-diff.html">git-diff(1)</a>, <a href="git-ls-files.html">git-ls-files(1)</a>,
+<a href="git-add.html">git-add(1)</a>, <a href="git-rm.html">git-rm(1)</a>,
+<a href="git-mergetool.html">git-mergetool(1)</a></p>
 </div>
 </div>
 </div>
@@ -1487,14 +1497,14 @@ values containing whitespace characters are currently not supported.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

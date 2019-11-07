@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-format-patch(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,25 +444,25 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git format-patch</em> [-k] [(-o|--output-directory) &lt;dir&gt; | --stdout]
-		   [--no-thread | --thread[=&lt;style&gt;]]
-		   [(--attach|--inline)[=&lt;boundary&gt;] | --no-attach]
-		   [-s | --signoff]
-		   [--signature=&lt;signature&gt; | --no-signature]
-		   [--signature-file=&lt;file&gt;]
-		   [-n | --numbered | -N | --no-numbered]
-		   [--start-number &lt;n&gt;] [--numbered-files]
-		   [--in-reply-to=Message-Id] [--suffix=.&lt;sfx&gt;]
-		   [--ignore-if-in-upstream]
-		   [--rfc] [--subject-prefix=Subject-Prefix]
-		   [(--reroll-count|-v) &lt;n&gt;]
-		   [--to=&lt;email&gt;] [--cc=&lt;email&gt;]
-		   [--[no-]cover-letter] [--quiet]
-		   [--no-notes | --notes[=&lt;ref&gt;]]
-		   [--interdiff=&lt;previous&gt;]
-		   [--range-diff=&lt;previous&gt; [--creation-factor=&lt;percent&gt;]]
-		   [--progress]
-		   [&lt;common diff options&gt;]
-		   [ &lt;since&gt; | &lt;revision range&gt; ]</pre>
+                   [--no-thread | --thread[=&lt;style&gt;]]
+                   [(--attach|--inline)[=&lt;boundary&gt;] | --no-attach]
+                   [-s | --signoff]
+                   [--signature=&lt;signature&gt; | --no-signature]
+                   [--signature-file=&lt;file&gt;]
+                   [-n | --numbered | -N | --no-numbered]
+                   [--start-number &lt;n&gt;] [--numbered-files]
+                   [--in-reply-to=&lt;message id&gt;] [--suffix=.&lt;sfx&gt;]
+                   [--ignore-if-in-upstream]
+                   [--rfc] [--subject-prefix=&lt;subject prefix&gt;]
+                   [(--reroll-count|-v) &lt;n&gt;]
+                   [--to=&lt;email&gt;] [--cc=&lt;email&gt;]
+                   [--[no-]cover-letter] [--quiet]
+                   [--no-notes | --notes[=&lt;ref&gt;]]
+                   [--interdiff=&lt;previous&gt;]
+                   [--range-diff=&lt;previous&gt; [--creation-factor=&lt;percent&gt;]]
+                   [--progress]
+                   [&lt;common diff options&gt;]
+                   [ &lt;since&gt; | &lt;revision range&gt; ]</pre>
 </div>
 </div>
 </div>
@@ -487,7 +487,7 @@ that leads to the &lt;since&gt; to be output.</p>
 </li>
 <li>
 <p>Generic &lt;revision range&gt; expression (see "SPECIFYING
-REVISIONS" section in <a href="gitrevisions.html">gitrevisions</a>(7)) means the
+REVISIONS" section in <a href="gitrevisions.html">gitrevisions(7)</a>) means the
 commits in the specified range.</p>
 </li>
 </ol>
@@ -513,12 +513,13 @@ they are created in the current working directory. The default path
 can be set with the <code>format.outputDirectory</code> configuration option.
 The <code>-o</code> option takes precedence over <code>format.outputDirectory</code>.
 To store patches in the current working directory even when
-<code>format.outputDirectory</code> points elsewhere, use <code>-o .</code>.</p>
+<code>format.outputDirectory</code> points elsewhere, use <code>-o .</code>. All directory
+components will be created.</p>
 </div>
 <div class="paragraph">
 <p>By default, the subject of a single patch is "[PATCH] " followed by
 the concatenation of lines from the commit message up to the first blank
-line (see the DISCUSSION section of <a href="git-commit.html">git-commit</a>(1)).</p>
+line (see the DISCUSSION section of <a href="git-commit.html">git-commit(1)</a>).</p>
 </div>
 <div class="paragraph">
 <p>When multiple patches are output, the subject prefix will instead be
@@ -681,7 +682,7 @@ lines.</p>
 sub-directory. The behavior of <code>--dirstat</code> can be customized by
 passing it a comma separated list of parameters.
 The defaults are controlled by the <code>diff.dirstat</code> configuration
-variable (see <a href="git-config.html">git-config</a>(1)).
+variable (see <a href="git-config.html">git-config(1)</a>).
 The following parameters are available:</p>
 <div class="openblock">
 <div class="content">
@@ -861,7 +862,7 @@ number.</p>
 <dd>
 <p>Control the order in which files appear in the output.
 This overrides the <code>diff.orderFile</code> configuration variable
-(see <a href="git-config.html">git-config</a>(1)).  To cancel <code>diff.orderFile</code>,
+(see <a href="git-config.html">git-config(1)</a>).  To cancel <code>diff.orderFile</code>,
 use <code>-O/dev/null</code>.</p>
 <div class="paragraph">
 <p>The output order is determined by the order of glob patterns in
@@ -953,8 +954,8 @@ is unset.</p>
 <dt class="hdlist1">--ext-diff</dt>
 <dd>
 <p>Allow an external diff helper to be executed. If you set an
-external diff driver with <a href="gitattributes.html">gitattributes</a>(5), you need
-to use this option with <a href="git-log.html">git-log</a>(1) and friends.</p>
+external diff driver with <a href="gitattributes.html">gitattributes(5)</a>, you need
+to use this option with <a href="git-log.html">git-log(1)</a> and friends.</p>
 </dd>
 <dt class="hdlist1">--no-ext-diff</dt>
 <dd>
@@ -964,12 +965,12 @@ to use this option with <a href="git-log.html">git-log</a>(1) and friends.</p>
 <dt class="hdlist1">--no-textconv</dt>
 <dd>
 <p>Allow (or disallow) external text conversion filters to be run
-when comparing binary files. See <a href="gitattributes.html">gitattributes</a>(5) for
+when comparing binary files. See <a href="gitattributes.html">gitattributes(5)</a> for
 details. Because textconv filters are typically a one-way
 conversion, the resulting diff is suitable for human
 consumption, but cannot be applied. For this reason, textconv
-filters are enabled by default only for <a href="git-diff.html">git-diff</a>(1) and
-<a href="git-log.html">git-log</a>(1), but not for <a href="git-format-patch.html">git-format-patch</a>(1) or
+filters are enabled by default only for <a href="git-diff.html">git-diff(1)</a> and
+<a href="git-log.html">git-log(1)</a>, but not for <a href="git-format-patch.html">git-format-patch(1)</a> or
 diff plumbing commands.</p>
 </dd>
 <dt class="hdlist1">--ignore-submodules[=&lt;when&gt;]</dt>
@@ -979,7 +980,7 @@ either "none", "untracked", "dirty" or "all", which is the default.
 Using "none" will consider the submodule modified when it either contains
 untracked or modified files or its HEAD differs from the commit recorded
 in the superproject and can be used to override any settings of the
-<em>ignore</em> option in <a href="git-config.html">git-config</a>(1) or <a href="gitmodules.html">gitmodules</a>(5). When
+<em>ignore</em> option in <a href="git-config.html">git-config(1)</a> or <a href="gitmodules.html">gitmodules(5)</a>. When
 "untracked" is used submodules are not considered dirty when they only
 contain untracked content (but they are still scanned for modified
 content). Using "dirty" ignores all changes to the work tree of submodules,
@@ -1015,7 +1016,7 @@ experimental and could be removed in future.</p>
 </div>
 <div class="paragraph">
 <p>For more detailed explanation on these common options, see also
-<a href="gitdiffcore.html">gitdiffcore</a>(7).</p>
+<a href="gitdiffcore.html">gitdiffcore(7)</a>.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -1059,7 +1060,7 @@ commit log message.</p>
 <dd>
 <p>Add <code>Signed-off-by:</code> line to the commit message, using
 the committer identity of yourself.
-See the signoff option in <a href="git-commit.html">git-commit</a>(1) for more information.</p>
+See the signoff option in <a href="git-commit.html">git-commit(1)</a> for more information.</p>
 </dd>
 <dt class="hdlist1">--stdout</dt>
 <dd>
@@ -1108,10 +1109,10 @@ itself.  If you want <code>git format-patch</code> to take care of threading, yo
 will want to ensure that threading is disabled for <code>git send-email</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--in-reply-to=Message-Id</dt>
+<dt class="hdlist1">--in-reply-to=&lt;message id&gt;</dt>
 <dd>
 <p>Make the first mail (or all the mails with <code>--no-thread</code>) appear as a
-reply to the given Message-Id, which avoids breaking threads to
+reply to the given &lt;message id&gt;, which avoids breaking threads to
 provide a new patch series.</p>
 </dd>
 <dt class="hdlist1">--ignore-if-in-upstream</dt>
@@ -1122,10 +1123,10 @@ from &lt;since&gt; but not from &lt;until&gt; and compare them with the
 patches being generated, and any patch that matches is
 ignored.</p>
 </dd>
-<dt class="hdlist1">--subject-prefix=&lt;Subject-Prefix&gt;</dt>
+<dt class="hdlist1">--subject-prefix=&lt;subject prefix&gt;</dt>
 <dd>
 <p>Instead of the standard <em>[PATCH]</em> prefix in the subject
-line, instead use <em>[&lt;Subject-Prefix&gt;]</em>. This
+line, instead use <em>[&lt;subject prefix&gt;]</em>. This
 allows for useful naming of a patch series, and can be
 combined with the <code>--numbered</code> option.</p>
 </dd>
@@ -1203,7 +1204,7 @@ the series being formatted (for example <code>git format-patch
 </dd>
 <dt class="hdlist1">--range-diff=&lt;previous&gt;</dt>
 <dd>
-<p>As a reviewer aid, insert a range-diff (see <a href="git-range-diff.html">git-range-diff</a>(1))
+<p>As a reviewer aid, insert a range-diff (see <a href="git-range-diff.html">git-range-diff(1)</a>)
 into the cover letter, or as commentary of the lone patch of a
 1-patch series, showing the differences between the previous
 version of the patch series and the series currently being formatted.
@@ -1224,13 +1225,13 @@ material (this may change in the future).</p>
 <dd>
 <p>Used with <code>--range-diff</code>, tweak the heuristic which matches up commits
 between the previous and current series of patches by adjusting the
-creation/deletion cost fudge factor. See <a href="git-range-diff.html">git-range-diff</a>(1))
+creation/deletion cost fudge factor. See <a href="git-range-diff.html">git-range-diff(1)</a>)
 for details.</p>
 </dd>
 <dt class="hdlist1">--notes[=&lt;ref&gt;]</dt>
 <dt class="hdlist1">--no-notes</dt>
 <dd>
-<p>Append the notes (see <a href="git-notes.html">git-notes</a>(1)) for the commit
+<p>Append the notes (see <a href="git-notes.html">git-notes(1)</a>) for the commit
 after the three-dash line.</p>
 <div class="paragraph">
 <p>The expected use case of this is to write supporting explanation for
@@ -1239,7 +1240,7 @@ and include it with the patch submission. While one can simply write
 these explanations after <code>format-patch</code> has run but before sending,
 keeping them as Git notes allows them to be maintained between versions
 of the patch series (but see the discussion of the <code>notes.rewrite</code>
-configuration options in <a href="git-notes.html">git-notes</a>(1) to use this workflow).</p>
+configuration options in <a href="git-notes.html">git-notes(1)</a> to use this workflow).</p>
 </div>
 <div class="paragraph">
 <p>The default is <code>--no-notes</code>, unless the <code>format.notes</code> configuration is
@@ -1289,7 +1290,8 @@ of the hash of the commit.</p>
 <dd>
 <p>Record the base tree information to identify the state the
 patch series applies to.  See the BASE TREE INFORMATION section
-below for details.</p>
+below for details. If &lt;commit&gt; is "auto", a base commit is
+automatically chosen.</p>
 </dd>
 <dt class="hdlist1">--root</dt>
 <dd>
@@ -1313,21 +1315,23 @@ of this flag.</p>
 <div class="paragraph">
 <p>You can specify extra mail header lines to be added to each message,
 defaults for the subject prefix and file suffix, number patches when
-outputting more than one patch, add "To" or "Cc:" headers, configure
-attachments, and sign off patches with configuration variables.</p>
+outputting more than one patch, add "To:" or "Cc:" headers, configure
+attachments, change the patch output directory, and sign off patches
+with configuration variables.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre>[format]
-	headers = "Organization: git-foo\n"
-	subjectPrefix = CHANGE
-	suffix = .txt
-	numbered = auto
-	to = &lt;email&gt;
-	cc = &lt;email&gt;
-	attach [ = mime-boundary-string ]
-	signOff = true
-	coverletter = auto</pre>
+        headers = "Organization: git-foo\n"
+        subjectPrefix = CHANGE
+        suffix = .txt
+        numbered = auto
+        to = &lt;email&gt;
+        cc = &lt;email&gt;
+        attach [ = mime-boundary-string ]
+        signOff = true
+        outputDirectory = &lt;directory&gt;
+        coverLetter = auto</pre>
 </div>
 </div>
 </div>
@@ -1364,7 +1368,7 @@ timely commentary that should not go in the changelog after the three
 dashes, and then sent as a message whose body, in our example, starts
 with "arch/arm config files were&#8230;&#8203;".  On the receiving end, readers
 can save interesting patches in a UNIX mailbox and apply them with
-<a href="git-am.html">git-am</a>(1).</p>
+<a href="git-am.html">git-am(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>When a patch is part of an ongoing discussion, the patch generated by
@@ -1447,7 +1451,7 @@ $ git am a.patch</pre>
 <li>
 <p>The patch itself does not apply cleanly.  That is <em>bad</em> but
 does not have much to do with your MUA.  You might want to rebase
-the patch with <a href="git-rebase.html">git-rebase</a>(1) before regenerating it in
+the patch with <a href="git-rebase.html">git-rebase(1)</a> before regenerating it in
 this case.</p>
 </li>
 <li>
@@ -1488,11 +1492,11 @@ the emails through that.</p>
 </div>
 <div class="paragraph">
 <p>For hints on using <em>git send-email</em> to send your patches through the
-GMail SMTP server, see the EXAMPLE section of <a href="git-send-email.html">git-send-email</a>(1).</p>
+GMail SMTP server, see the EXAMPLE section of <a href="git-send-email.html">git-send-email(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>For hints on submission using the IMAP interface, see the EXAMPLE
-section of <a href="git-imap-send.html">git-imap-send</a>(1).</p>
+section of <a href="git-imap-send.html">git-imap-send(1)</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1582,8 +1586,8 @@ window for the patch, use Tools&#8594;about:config to set the
 following to the indicated values:</p>
 <div class="listingblock">
 <div class="content">
-<pre>	mailnews.send_plaintext_flowed  =&gt; false
-	mailnews.wraplength             =&gt; 0</pre>
+<pre>        mailnews.send_plaintext_flowed  =&gt; false
+        mailnews.wraplength             =&gt; 0</pre>
 </div>
 </div>
 </li>
@@ -1602,9 +1606,9 @@ about:config and the following settings but no one&#8217;s tried yet.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	mail.html_compose                       =&gt; false
-	mail.identity.default.compose_html      =&gt; false
-	mail.identity.id?.compose_html          =&gt; false</pre>
+<pre>        mail.html_compose                       =&gt; false
+        mail.identity.default.compose_html      =&gt; false
+        mail.identity.id?.compose_html          =&gt; false</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1778,7 +1782,7 @@ as e-mailable patches:</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-am.html">git-am</a>(1), <a href="git-send-email.html">git-send-email</a>(1)</p>
+<p><a href="git-am.html">git-am(1)</a>, <a href="git-send-email.html">git-send-email(1)</a></p>
 </div>
 </div>
 </div>
@@ -1786,14 +1790,14 @@ as e-mailable patches:</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

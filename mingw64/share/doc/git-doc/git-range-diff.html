@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-range-diff(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,8 +444,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git range-diff</em> [--color=[&lt;when&gt;]] [--no-color] [&lt;diff-options&gt;]
-	[--no-dual-color] [--creation-factor=&lt;factor&gt;]
-	( &lt;range1&gt; &lt;range2&gt; | &lt;rev1&gt;&#8230;&#8203;&lt;rev2&gt; | &lt;base&gt; &lt;rev1&gt; &lt;rev2&gt; )</pre>
+        [--no-dual-color] [--creation-factor=&lt;factor&gt;]
+        ( &lt;range1&gt; &lt;range2&gt; | &lt;rev1&gt;&#8230;&#8203;&lt;rev2&gt; | &lt;base&gt; &lt;rev1&gt; &lt;rev2&gt; )</pre>
 </div>
 </div>
 </div>
@@ -526,7 +526,7 @@ show the differences introduced by the rebase.</p>
 </div>
 <div class="paragraph">
 <p><code>git range-diff</code> also accepts the regular diff options (see
-<a href="git-diff.html">git-diff</a>(1)), most notably the <code>--color=[&lt;when&gt;]</code> and
+<a href="git-diff.html">git-diff(1)</a>), most notably the <code>--color=[&lt;when&gt;]</code> and
 <code>--no-color</code> options. These options are used when generating the "diff
 between patches", i.e. to compare the author, commit message and diff of
 corresponding old/new commits. There is currently no means to tweak the
@@ -542,8 +542,8 @@ diff options passed to <code>git log</code> when generating those patches.</p>
 intended to be human-readable porcelain output, not something that can
 be used across versions of Git to get a textually stable <code>range-diff</code>
 (as opposed to something like the <code>--stable</code> option to
-<a href="git-patch-id.html">git-patch-id</a>(1)). There&#8217;s also no equivalent of
-<a href="git-apply.html">git-apply</a>(1) for <code>range-diff</code>, the output is not intended to
+<a href="git-patch-id.html">git-patch-id(1)</a>). There&#8217;s also no equivalent of
+<a href="git-apply.html">git-apply(1)</a> for <code>range-diff</code>, the output is not intended to
 be machine-readable.</p>
 </div>
 <div class="paragraph">
@@ -562,7 +562,7 @@ output which summarizes how the diffstat changed).</p>
 <div class="paragraph">
 <p>This command uses the <code>diff.color.*</code> and <code>pager.range-diff</code> settings
 (the latter is on by default).
-See <a href="git-config.html">git-config</a>(1).</p>
+See <a href="git-config.html">git-config(1)</a>.</p>
 </div>
 </div>
 </div>
@@ -660,7 +660,7 @@ a fixed typo). Visualize the commits as a bipartite graph:</p>
 
     2            B
 
-		 C</pre>
+                 C</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -670,10 +670,10 @@ the old one. We can represent an "explanation" as an edge in the graph:</p>
 <div class="listingblock">
 <div class="content">
 <pre>    1            A
-	       /
+               /
     2 --------'  B
 
-		 C</pre>
+                 C</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -684,11 +684,11 @@ because of the modification:</p>
 <div class="listingblock">
 <div class="content">
 <pre>    1 ----.      A
-	  |    /
+          |    /
     2 ----+---'  B
-	  |
-	  `----- C
-	  c&gt;0</pre>
+          |
+          `----- C
+          c&gt;0</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -702,11 +702,11 @@ on both sides:</p>
 <div class="listingblock">
 <div class="content">
 <pre>    1 ----.      A
-	  |    /
+          |    /
     2 ----+---'  B
-	  |
+          |
     o     `----- C
-	  c&gt;0
+          c&gt;0
     o            o
 
     o            o</pre>
@@ -733,11 +733,11 @@ found in this case will look like this:</p>
 <div class="listingblock">
 <div class="content">
 <pre>    1 ----.      A
-	  |    /
+          |    /
     2 ----+---'  B
        .--+-----'
     o -'  `----- C
-	  c&gt;0
+          c&gt;0
     o ---------- o
 
     o ---------- o</pre>
@@ -749,7 +749,7 @@ found in this case will look like this:</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-log.html">git-log</a>(1)</p>
+<p><a href="git-log.html">git-log(1)</a></p>
 </div>
 </div>
 </div>
@@ -757,14 +757,14 @@ found in this case will look like this:</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

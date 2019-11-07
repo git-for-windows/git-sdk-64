@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>Partial Clone Design Notes</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -477,12 +477,21 @@ times and disk usage.  Missing objects can later be "demand fetched"
 if/when needed.</p>
 </div>
 <div class="paragraph">
+<p>A remote that can later provide the missing objects is called a
+promisor remote, as it promises to send the objects when
+requested. Initialy Git supported only one promisor remote, the origin
+remote from which the user cloned and that was configured in the
+"extensions.partialClone" config option. Later support for more than
+one promisor remote has been implemented.</p>
+</div>
+<div class="paragraph">
 <p>Use of partial clone requires that the user be online and the origin
-remote be available for on-demand fetching of missing objects.  This may
-or may not be problematic for the user.  For example, if the user can
-stay within the pre-selected subset of the source tree, they may not
-encounter any missing objects.  Alternatively, the user could try to
-pre-fetch various objects if they know that they are going offline.</p>
+remote or other promisor remotes be available for on-demand fetching
+of missing objects.  This may or may not be problematic for the user.
+For example, if the user can stay within the pre-selected subset of
+the source tree, they may not encounter any missing objects.
+Alternatively, the user could try to pre-fetch various objects if they
+know that they are going offline.</p>
 </div>
 </div>
 </div>
@@ -576,10 +585,10 @@ See "extensions.partialClone" in Documentation/technical/repository-version.txt"
 <div class="ulist">
 <ul>
 <li>
-<p>An object may be missing due to a partial clone or fetch, or missing due
-to repository corruption.  To differentiate these cases, the local
-repository specially indicates such filtered packfiles obtained from the
-promisor remote as "promisor packfiles".</p>
+<p>An object may be missing due to a partial clone or fetch, or missing
+due to repository corruption.  To differentiate these cases, the
+local repository specially indicates such filtered packfiles
+obtained from promisor remotes as "promisor packfiles".</p>
 <div class="paragraph">
 <p>These promisor packfiles consist of a "&lt;name&gt;.promisor" file with
 arbitrary contents (like the "&lt;name&gt;.keep" files), in addition to
@@ -588,8 +597,8 @@ their "&lt;name&gt;.pack" and "&lt;name&gt;.idx" files.</p>
 </li>
 <li>
 <p>The local repository considers a "promisor object" to be an object that
-it knows (to the best of its ability) that the promisor remote has promised
-that it has, either because the local repository has that object in one of
+it knows (to the best of its ability) that promisor remotes have promised
+that they have, either because the local repository has that object in one of
 its promisor packfiles, or because another promisor object refers to it.</p>
 <div class="paragraph">
 <p>When Git encounters a missing object, Git can see if it is a promisor object
@@ -604,12 +613,12 @@ expensive-to-modify list of missing objects.[a]</p>
 <p>Since almost all Git code currently expects any referenced object to be
 present locally and because we do not want to force every command to do
 a dry-run first, a fallback mechanism is added to allow Git to attempt
-to dynamically fetch missing objects from the promisor remote.</p>
+to dynamically fetch missing objects from promisor remotes.</p>
 <div class="paragraph">
 <p>When the normal object lookup fails to find an object, Git invokes
-fetch-object to try to get the object from the server and then retry
-the object lookup.  This allows objects to be "faulted in" without
-complicated prediction algorithms.</p>
+promisor_remote_get_direct() to try to get the object from a promisor
+remote and then retry the object lookup.  This allows objects to be
+"faulted in" without complicated prediction algorithms.</p>
 </div>
 <div class="paragraph">
 <p>For efficiency reasons, no check as to whether the missing object is
@@ -647,8 +656,7 @@ report an error.</p>
 <div class="paragraph">
 <p>We are not happy with this global variable and would like to remove it,
 but that requires significant refactoring of the object code to pass an
-additional flag.  We hope that concurrent efforts to add an ODB API can
-encompass this.</p>
+additional flag.</p>
 </div>
 </li>
 </ul>
@@ -686,26 +694,86 @@ though they are not necessary.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_using_many_promisor_remotes">Using many promisor remotes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Many promisor remotes can be configured and used.</p>
+</div>
+<div class="paragraph">
+<p>This allows for example a user to have multiple geographically-close
+cache servers for fetching missing blobs while continuing to do
+filtered <code>git-fetch</code> commands from the central server.</p>
+</div>
+<div class="paragraph">
+<p>When fetching objects, promisor remotes are tried one after the other
+until all the objects have been fetched.</p>
+</div>
+<div class="paragraph">
+<p>Remotes that are considered "promisor" remotes are those specified by
+the following configuration variables:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>extensions.partialClone = &lt;name&gt;</code></p>
+</li>
+<li>
+<p><code>remote.&lt;name&gt;.promisor = true</code></p>
+</li>
+<li>
+<p><code>remote.&lt;name&gt;.partialCloneFilter = ...</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Only one promisor remote can be configured using the
+<code>extensions.partialClone</code> config variable. This promisor remote will
+be the last one tried when fetching objects.</p>
+</div>
+<div class="paragraph">
+<p>We decided to make it the last one we try, because it is likely that
+someone using many promisor remotes is doing so because the other
+promisor remotes are better for some reason (maybe they are closer or
+faster for some kind of objects) than the origin, and the origin is
+likely to be the remote specified by extensions.partialClone.</p>
+</div>
+<div class="paragraph">
+<p>This justification is not very strong, but one choice had to be made,
+and anyway the long term plan should be to make the order somehow
+fully configurable.</p>
+</div>
+<div class="paragraph">
+<p>For now though the other promisor remotes will be tried in the order
+they appear in the config file.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_current_limitations">Current Limitations</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p>The remote used for a partial clone (or the first partial fetch
-following a regular clone) is marked as the "promisor remote".</p>
+<p>It is not possible to specify the order in which the promisor
+remotes are tried in other ways than the order in which they appear
+in the config file.</p>
 <div class="paragraph">
-<p>We are currently limited to a single promisor remote and only that
-remote may be used for subsequent partial fetches.</p>
-</div>
-<div class="paragraph">
-<p>We accept this limitation because we believe initial users of this
-feature will be using it on repositories with a strong single central
-server.</p>
+<p>It is also not possible to specify an order to be used when fetching
+from one remote and a different order when fetching from another
+remote.</p>
 </div>
 </li>
 <li>
-<p>Dynamic object fetching will only ask the promisor remote for missing
-objects.  We assume that the promisor remote has a complete view of the
+<p>It is not possible to push only specific objects to a promisor
+remote.</p>
+<div class="paragraph">
+<p>It is not possible to push at the same time to multiple promisor
+remote in a specific order.</p>
+</div>
+</li>
+<li>
+<p>Dynamic object fetching will only ask promisor remotes for missing
+objects.  We assume that promisor remotes have a complete view of the
 repository and can satisfy all such requests.</p>
 </li>
 <li>
@@ -736,16 +804,19 @@ If there are large number of refs, this may incur significant overhead.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Allow more than one promisor remote and define a strategy for fetching
-missing objects from specific promisor remotes or of iterating over the
-set of promisor remotes until a missing object is found.</p>
+<p>Improve the way to specify the order in which promisor remotes are
+tried.</p>
 <div class="paragraph">
-<p>A user might want to have multiple geographically-close cache servers
-for fetching missing blobs while continuing to do filtered <code>git-fetch</code>
-commands from the central server, for example.</p>
+<p>For example this could allow to specify explicitly something like:
+"When fetching from this remote, I want to use these promisor remotes
+in this order, though, when pushing or fetching to that remote, I want
+to use those promisor remotes in that order."</p>
 </div>
+</li>
+<li>
+<p>Allow pushing to promisor remotes.</p>
 <div class="paragraph">
-<p>Or the user might want to work in a triangular work flow with multiple
+<p>The user might want to work in a triangular work flow with multiple
 promisor remotes that each have an incomplete view of the repository.</p>
 </div>
 </li>
@@ -846,33 +917,33 @@ type of packfile that references it.</p>
     Bug#2: Partial Clone</p>
 </div>
 <div class="paragraph">
-<p>[1] <a href="https://public-inbox.org/git/20170113155253.1644-1-benpeart@microsoft.com/" class="bare">https://public-inbox.org/git/20170113155253.1644-1-benpeart@microsoft.com/</a><br>
-    Subject: [RFC] Add support for downloading blobs on demand<br>
+<p>[1] <a href="https://public-inbox.org/git/20170113155253.1644-1-benpeart@microsoft.com/" class="bare">https://public-inbox.org/git/20170113155253.1644-1-benpeart@microsoft.com/</a><br/>
+    Subject: [RFC] Add support for downloading blobs on demand<br/>
     Date: Fri, 13 Jan 2017 10:52:53 -0500</p>
 </div>
 <div class="paragraph">
-<p>[2] <a href="https://public-inbox.org/git/cover.1506714999.git.jonathantanmy@google.com/" class="bare">https://public-inbox.org/git/cover.1506714999.git.jonathantanmy@google.com/</a><br>
-    Subject: [PATCH 00/18] Partial clone (from clone to lazy fetch in 18 patches)<br>
+<p>[2] <a href="https://public-inbox.org/git/cover.1506714999.git.jonathantanmy@google.com/" class="bare">https://public-inbox.org/git/cover.1506714999.git.jonathantanmy@google.com/</a><br/>
+    Subject: [PATCH 00/18] Partial clone (from clone to lazy fetch in 18 patches)<br/>
     Date: Fri, 29 Sep 2017 13:11:36 -0700</p>
 </div>
 <div class="paragraph">
-<p>[3] <a href="https://public-inbox.org/git/20170426221346.25337-1-jonathantanmy@google.com/" class="bare">https://public-inbox.org/git/20170426221346.25337-1-jonathantanmy@google.com/</a><br>
-    Subject: Proposal for missing blob support in Git repos<br>
+<p>[3] <a href="https://public-inbox.org/git/20170426221346.25337-1-jonathantanmy@google.com/" class="bare">https://public-inbox.org/git/20170426221346.25337-1-jonathantanmy@google.com/</a><br/>
+    Subject: Proposal for missing blob support in Git repos<br/>
     Date: Wed, 26 Apr 2017 15:13:46 -0700</p>
 </div>
 <div class="paragraph">
-<p>[4] <a href="https://public-inbox.org/git/1488999039-37631-1-git-send-email-git@jeffhostetler.com/" class="bare">https://public-inbox.org/git/1488999039-37631-1-git-send-email-git@jeffhostetler.com/</a><br>
-    Subject: [PATCH 00/10] RFC Partial Clone and Fetch<br>
+<p>[4] <a href="https://public-inbox.org/git/1488999039-37631-1-git-send-email-git@jeffhostetler.com/" class="bare">https://public-inbox.org/git/1488999039-37631-1-git-send-email-git@jeffhostetler.com/</a><br/>
+    Subject: [PATCH 00/10] RFC Partial Clone and Fetch<br/>
     Date: Wed,  8 Mar 2017 18:50:29 +0000</p>
 </div>
 <div class="paragraph">
-<p>[5] <a href="https://public-inbox.org/git/20170505152802.6724-1-benpeart@microsoft.com/" class="bare">https://public-inbox.org/git/20170505152802.6724-1-benpeart@microsoft.com/</a><br>
-    Subject: [PATCH v7 00/10] refactor the filter process code into a reusable module<br>
+<p>[5] <a href="https://public-inbox.org/git/20170505152802.6724-1-benpeart@microsoft.com/" class="bare">https://public-inbox.org/git/20170505152802.6724-1-benpeart@microsoft.com/</a><br/>
+    Subject: [PATCH v7 00/10] refactor the filter process code into a reusable module<br/>
     Date: Fri,  5 May 2017 11:27:52 -0400</p>
 </div>
 <div class="paragraph">
-<p>[6] <a href="https://public-inbox.org/git/20170714132651.170708-1-benpeart@microsoft.com/" class="bare">https://public-inbox.org/git/20170714132651.170708-1-benpeart@microsoft.com/</a><br>
-    Subject: [RFC/PATCH v2 0/1] Add support for downloading blobs on demand<br>
+<p>[6] <a href="https://public-inbox.org/git/20170714132651.170708-1-benpeart@microsoft.com/" class="bare">https://public-inbox.org/git/20170714132651.170708-1-benpeart@microsoft.com/</a><br/>
+    Subject: [RFC/PATCH v2 0/1] Add support for downloading blobs on demand<br/>
     Date: Fri, 14 Jul 2017 09:26:50 -0400</p>
 </div>
 </div>
@@ -880,7 +951,7 @@ type of packfile that references it.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

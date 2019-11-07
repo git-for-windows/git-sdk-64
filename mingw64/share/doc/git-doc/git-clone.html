@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-clone(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,13 +444,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git clone</em> [--template=&lt;template_directory&gt;]
-	  [-l] [-s] [--no-hardlinks] [-q] [-n] [--bare] [--mirror]
-	  [-o &lt;name&gt;] [-b &lt;name&gt;] [-u &lt;upload-pack&gt;] [--reference &lt;repository&gt;]
-	  [--dissociate] [--separate-git-dir &lt;git dir&gt;]
-	  [--depth &lt;depth&gt;] [--[no-]single-branch] [--no-tags]
-	  [--recurse-submodules[=&lt;pathspec&gt;]] [--[no-]shallow-submodules]
-	  [--[no-]remote-submodules] [--jobs &lt;n&gt;] [--] &lt;repository&gt;
-	  [&lt;directory&gt;]</pre>
+          [-l] [-s] [--no-hardlinks] [-q] [-n] [--bare] [--mirror]
+          [-o &lt;name&gt;] [-b &lt;name&gt;] [-u &lt;upload-pack&gt;] [--reference &lt;repository&gt;]
+          [--dissociate] [--separate-git-dir &lt;git dir&gt;]
+          [--depth &lt;depth&gt;] [--[no-]single-branch] [--no-tags]
+          [--recurse-submodules[=&lt;pathspec&gt;]] [--[no-]shallow-submodules]
+          [--[no-]remote-submodules] [--jobs &lt;n&gt;] [--] &lt;repository&gt;
+          [&lt;directory&gt;]</pre>
 </div>
 </div>
 </div>
@@ -524,7 +524,7 @@ repository using this option and then delete branches (or use any
 other Git command that makes any existing commit unreferenced) in the
 source repository, some objects may become unreferenced (or dangling).
 These objects may be removed by normal Git operations (such as <code>git commit</code>)
-which automatically call <code>git gc --auto</code>. (See <a href="git-gc.html">git-gc</a>(1).)
+which automatically call <code>git gc --auto</code>. (See <a href="git-gc.html">git-gc(1)</a>.)
 If these objects are removed and were referenced by the cloned repository,
 then the cloned repository will become corrupt.</p>
 </div>
@@ -650,7 +650,7 @@ run on the other end.</p>
 <dt class="hdlist1">--template=&lt;template_directory&gt;</dt>
 <dd>
 <p>Specify the directory from which templates will be used;
-(See the "TEMPLATE DIRECTORY" section of <a href="git-init.html">git-init</a>(1).)</p>
+(See the "TEMPLATE DIRECTORY" section of <a href="git-init.html">git-init(1)</a>.)</p>
 </dd>
 <dt class="hdlist1">-c &lt;key&gt;=&lt;value&gt;</dt>
 <dt class="hdlist1">--config &lt;key&gt;=&lt;value&gt;</dt>
@@ -659,7 +659,7 @@ run on the other end.</p>
 this takes effect immediately after the repository is
 initialized, but before the remote history is fetched or any
 files checked out.  The key is in the same format as expected by
-<a href="git-config.html">git-config</a>(1) (e.g., <code>core.eol=true</code>). If multiple
+<a href="git-config.html">git-config(1)</a> (e.g., <code>core.eol=true</code>). If multiple
 values are given for the same key, each value will be written to
 the config file. This makes it safe, for example, to add
 additional fetch refspecs to the origin remote.</p>
@@ -706,7 +706,7 @@ branch is created.</p>
 <code>remote.&lt;remote&gt;.tagOpt=--no-tags</code> in the config, ensuring
 that future <code>git pull</code> and <code>git fetch</code> operations won&#8217;t follow
 any tags. Subsequent explicit tag fetches will still work,
-(see <a href="git-fetch.html">git-fetch</a>(1)).</p>
+(see <a href="git-fetch.html">git-fetch(1)</a>).</p>
 <div class="paragraph">
 <p>Can be used in conjunction with <code>--single-branch</code> to clone and
 maintain a branch with no references other than a single cloned
@@ -879,7 +879,7 @@ may be used:</p>
 <div class="paragraph">
 <p>where &lt;address&gt; may be a path, a server and path, or an arbitrary
 URL-like string recognized by the specific remote helper being
-invoked. See <a href="gitremote-helpers.html">gitremote-helpers</a>(7) for details.</p>
+invoked. See <a href="gitremote-helpers.html">gitremote-helpers(7)</a> for details.</p>
 </div>
 <div class="paragraph">
 <p>If there are a large number of similarly-named remote repositories and
@@ -889,8 +889,8 @@ configuration section of the form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	[url "&lt;actual url base&gt;"]
-		insteadOf = &lt;other url base&gt;</pre>
+<pre>        [url "&lt;actual url base&gt;"]
+                insteadOf = &lt;other url base&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -898,9 +898,9 @@ configuration section of the form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	[url "git://git.host.xz/"]
-		insteadOf = host.xz:/path/to/
-		insteadOf = work:</pre>
+<pre>        [url "git://git.host.xz/"]
+                insteadOf = host.xz:/path/to/
+                insteadOf = work:</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -913,8 +913,8 @@ configuration section of the form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	[url "&lt;actual url base&gt;"]
-		pushInsteadOf = &lt;other url base&gt;</pre>
+<pre>        [url "&lt;actual url base&gt;"]
+                pushInsteadOf = &lt;other url base&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -922,8 +922,8 @@ configuration section of the form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	[url "ssh://example.org/"]
-		pushInsteadOf = git://example.org/</pre>
+<pre>        [url "ssh://example.org/"]
+                pushInsteadOf = git://example.org/</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -963,8 +963,8 @@ $ git show-branch</pre>
 <div class="listingblock">
 <div class="content">
 <pre>$ git clone --reference /git/linux.git \
-	git://git.kernel.org/pub/scm/.../linux.git \
-	my-linux
+        git://git.kernel.org/pub/scm/.../linux.git \
+        my-linux
 $ cd my-linux</pre>
 </div>
 </div>
@@ -985,14 +985,14 @@ $ cd my-linux</pre>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>gitattributes(5)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -509,7 +509,7 @@ attribute.</p>
 </div>
 <div class="paragraph">
 <p>The rules by which the pattern matches paths are the same as in
-<code>.gitignore</code> files (see <a href="gitignore.html">gitignore</a>(5)), with a few exceptions:</p>
+<code>.gitignore</code> files (see <a href="gitignore.html">gitignore(5)</a>), with a few exceptions:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -548,7 +548,7 @@ Attributes which should be version-controlled and distributed to other
 repositories (i.e., attributes of interest to all users) should go into
 <code>.gitattributes</code> files. Attributes that should affect all repositories
 for a single user should be placed in a file specified by the
-<code>core.attributesFile</code> configuration option (see <a href="git-config.html">git-config</a>(1)).
+<code>core.attributesFile</code> configuration option (see <a href="git-config.html">git-config(1)</a>).
 Its default value is $XDG_CONFIG_HOME/git/attributes. If $XDG_CONFIG_HOME
 is either not set or empty, $HOME/.config/git/attributes is used instead.
 Attributes for all users on a system should be placed in the
@@ -589,7 +589,7 @@ directory, use the <code>eol</code> attribute for a single file and the
 <code>core.eol</code> configuration variable for all text files.
 Note that setting <code>core.autocrlf</code> to <code>true</code> or <code>input</code> overrides
 <code>core.eol</code> (see the definitions of those options in
-<a href="git-config.html">git-config</a>(1)).</p>
+<a href="git-config.html">git-config(1)</a>).</p>
 </div>
 <div class="dlist">
 <dl>
@@ -659,9 +659,9 @@ follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>crlf		text
--crlf		-text
-crlf=input	eol=lf</pre>
+<pre>crlf            text
+-crlf           -text
+crlf=input      eol=lf</pre>
 </div>
 </div>
 </div>
@@ -680,7 +680,7 @@ config variable "core.autocrlf" without using any attributes.</p>
 <div class="listingblock">
 <div class="content">
 <pre>[core]
-	autocrlf = true</pre>
+        autocrlf = true</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -696,7 +696,7 @@ the repository have their line endings normalized, you can set the
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>*	text=auto</pre>
+<pre>*       text=auto</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -710,10 +710,10 @@ regardless of their content.</p>
 <div class="listingblock">
 <div class="content">
 <pre>*               text=auto
-*.txt		text
-*.vcproj	text eol=crlf
-*.sh		text eol=lf
-*.jpg		-text</pre>
+*.txt           text
+*.vcproj        text eol=crlf
+*.sh            text eol=lf
+*.jpg           -text</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -747,7 +747,7 @@ unset their <code>text</code> attribute before running <em>git add -u</em>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>manual.pdf	-text</pre>
+<pre>manual.pdf      -text</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -756,7 +756,7 @@ enabled manually.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>weirdchars.txt	text</pre>
+<pre>weirdchars.txt  text</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -840,7 +840,7 @@ That operation will fail and cause an error.</p>
 conversion might not be UTF-8 round trip safe. If you suspect your
 encoding to not be round trip safe, then add it to
 <code>core.checkRoundtripEncoding</code> to make Git check the round trip
-encoding (see <a href="git-config.html">git-config</a>(1)). SHIFT-JIS (Japanese character
+encoding (see <a href="git-config.html">git-config(1)</a>). SHIFT-JIS (Japanese character
 set) is known to have round trip issues with UTF-8 and is checked by
 default.</p>
 </li>
@@ -862,7 +862,7 @@ automatic line ending conversion based on your platform.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>*.ps1		text working-tree-encoding=UTF-16</pre>
+<pre>*.ps1           text working-tree-encoding=UTF-16</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -876,7 +876,7 @@ attribute is used to avoid ambiguity.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>*.ps1		text working-tree-encoding=UTF-16LE eol=CRLF</pre>
+<pre>*.ps1           text working-tree-encoding=UTF-16LE eol=CRLF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -929,7 +929,7 @@ symlinks that point at other files, you can do:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>*.gif 	symlink=file</pre>
+<pre>*.gif   symlink=file</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -937,7 +937,7 @@ symlinks that point at other files, you can do:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>tools_folder 	symlink=dir</pre>
+<pre>tools_folder    symlink=dir</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1004,7 +1004,7 @@ attribute for paths.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>*.c	filter=indent</pre>
+<pre>*.c     filter=indent</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1017,8 +1017,8 @@ command is "cat").</p>
 <div class="listingblock">
 <div class="content">
 <pre>[filter "indent"]
-	clean = indent
-	smudge = cat</pre>
+        clean = indent
+        smudge = cat</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1041,9 +1041,9 @@ you can declare that the filter is <code>required</code>, in the configuration:<
 <div class="listingblock">
 <div class="content">
 <pre>[filter "crypt"]
-	clean = openssl enc ...
-	smudge = openssl enc -d ...
-	required</pre>
+        clean = openssl enc ...
+        smudge = openssl enc -d ...
+        required</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1054,8 +1054,8 @@ substitution.  For example:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[filter "p4"]
-	clean = git-p4-filter --clean %f
-	smudge = git-p4-filter --smudge %f</pre>
+        clean = git-p4-filter --clean %f
+        smudge = git-p4-filter --smudge %f</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1259,7 +1259,7 @@ packet:          git&lt; 0000  # empty list, keep "status=success" unchanged!</p
 <code>contrib/long-running-filter/example.pl</code> located in the Git
 core repository. If you develop your own long running filter
 process then the <code>GIT_TRACE_PACKET</code> environment variables can be
-very helpful for debugging (see <a href="git.html">git</a>(1)).</p>
+very helpful for debugging (see <a href="git.html">git(1)</a>).</p>
 </div>
 <div class="paragraph">
 <p>Please note that you cannot use an existing <code>filter.&lt;driver&gt;.clean</code>
@@ -1366,7 +1366,7 @@ wrong place to talk about it.  However&#8230;&#8203;</p>
 <div class="listingblock">
 <div class="content">
 <pre>[diff "jcdiff"]
-	command = j-c-diff</pre>
+        command = j-c-diff</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1374,7 +1374,7 @@ wrong place to talk about it.  However&#8230;&#8203;</p>
 attribute set to <code>jcdiff</code>, it calls the command you specified
 with the above configuration, i.e. <code>j-c-diff</code>, with 7
 parameters, just like <code>GIT_EXTERNAL_DIFF</code> program is called.
-See <a href="git.html">git</a>(1) for details.</p>
+See <a href="git.html">git(1)</a> for details.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1401,7 +1401,7 @@ for paths.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>*.tex	diff=tex</pre>
+<pre>*.tex   diff=tex</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1413,7 +1413,7 @@ want to appear as the hunk header "TEXT". Add a section to your
 <div class="listingblock">
 <div class="content">
 <pre>[diff "tex"]
-	xfuncname = "^(\\\\(sub)*section\\{.*)$"</pre>
+        xfuncname = "^(\\\\(sub)*section\\{.*)$"</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1446,6 +1446,9 @@ patterns are available:</p>
 </li>
 <li>
 <p><code>css</code> suitable for cascading style sheets.</p>
+</li>
+<li>
+<p><code>dts</code> suitable for devicetree (DTS) files.</p>
 </li>
 <li>
 <p><code>fortran</code> suitable for source code in the Fortran language.</p>
@@ -1506,7 +1509,7 @@ whitespace.  To separate them, use a regular expression in your
 <div class="listingblock">
 <div class="content">
 <pre>[diff "tex"]
-	wordRegex = "\\\\[a-zA-Z]+|[{}]|\\\\.|[^\\{}[:space:]]+"</pre>
+        wordRegex = "\\\\[a-zA-Z]+|[{}]|\\\\.|[^\\{}[:space:]]+"</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1539,7 +1542,7 @@ exif tool installed), add the following section to your
 <div class="listingblock">
 <div class="content">
 <pre>[diff "jpg"]
-	textconv = exif</pre>
+        textconv = exif</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1574,8 +1577,8 @@ config. For example:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[diff "jpg"]
-	textconv = exif
-	cachetextconv = true</pre>
+        textconv = exif
+        cachetextconv = true</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1761,9 +1764,9 @@ manual page is a wrong place to talk about it.  However&#8230;&#8203;</p>
 <div class="listingblock">
 <div class="content">
 <pre>[merge "filfre"]
-	name = feel-free merge driver
-	driver = filfre %O %A %B %L %P
-	recursive = binary</pre>
+        name = feel-free merge driver
+        driver = filfre %O %A %B %L %P
+        recursive = binary</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1812,7 +1815,7 @@ results in a conflict.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Documentation/git-merge.txt	conflict-marker-size=32</pre>
+<pre>Documentation/git-merge.txt     conflict-marker-size=32</pre>
 </div>
 </div>
 </div>
@@ -1824,7 +1827,7 @@ results in a conflict.</p>
 <div class="paragraph">
 <p>The <code>core.whitespace</code> configuration variable allows you to define what
 <em>diff</em> and <em>apply</em> should consider whitespace errors for all paths in
-the project (See <a href="git-config.html">git-config</a>(1)).  This attribute gives you finer
+the project (See <a href="git-config.html">git-config(1)</a>).  This attribute gives you finer
 control per path.</p>
 </div>
 <div class="dlist">
@@ -1869,9 +1872,9 @@ archive files.</p>
 <p>If the attribute <code>export-subst</code> is set for a file then Git will expand
 several placeholders when adding this file to an archive.  The
 expansion depends on the availability of a commit ID, i.e., if
-<a href="git-archive.html">git-archive</a>(1) has been given a tree instead of a commit or a
+<a href="git-archive.html">git-archive(1)</a> has been given a tree instead of a commit or a
 tag then no replacement will be done.  The placeholders are the same
-as those for the option <code>--pretty=format:</code> of <a href="git-log.html">git-log</a>(1),
+as those for the option <code>--pretty=format:</code> of <a href="git-log.html">git-log(1)</a>,
 except that they need to be wrapped like this: <code>$Format:PLACEHOLDERS$</code>
 in the file.  E.g. the string <code>$Format:%H$</code> will be replaced by the
 commit hash.</p>
@@ -1894,15 +1897,15 @@ attribute <code>delta</code> set to false.</p>
 <h4 id="_encoding"><code>encoding</code></h4>
 <div class="paragraph">
 <p>The value of this attribute specifies the character encoding that should
-be used by GUI tools (e.g. <a href="gitk.html">gitk</a>(1) and <a href="git-gui.html">git-gui</a>(1)) to
+be used by GUI tools (e.g. <a href="gitk.html">gitk(1)</a> and <a href="git-gui.html">git-gui(1)</a>) to
 display the contents of the relevant file. Note that due to performance
-considerations <a href="gitk.html">gitk</a>(1) does not use this attribute unless you
+considerations <a href="gitk.html">gitk(1)</a> does not use this attribute unless you
 manually enable per-file encodings in its options.</p>
 </div>
 <div class="paragraph">
 <p>If this attribute is not set or has an invalid value, the value of the
 <code>gui.encoding</code> configuration variable is used instead
-(See <a href="git-config.html">git-config</a>(1)).</p>
+(See <a href="git-config.html">git-config(1)</a>).</p>
 </div>
 </div>
 </div>
@@ -1968,15 +1971,15 @@ to:</p>
 <div class="content">
 <pre>(in $GIT_DIR/info/attributes)
 
-a*	foo !bar -baz
+a*      foo !bar -baz
 
 (in .gitattributes)
-abc	foo bar baz
+abc     foo bar baz
 
 (in t/.gitattributes)
-ab*	merge=filfre
-abc	-foo -bar
-*.c	frotz</pre>
+ab*     merge=filfre
+abc     -foo -bar
+*.c     frotz</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2011,11 +2014,11 @@ state, and <code>baz</code> is unset.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>foo	set to true
-bar	unspecified
-baz	set to false
-merge	set to string value "filfre"
-frotz	unspecified</pre>
+<pre>foo     set to true
+bar     unspecified
+baz     set to false
+merge   set to string value "filfre"
+frotz   unspecified</pre>
 </div>
 </div>
 </div>
@@ -2024,7 +2027,7 @@ frotz	unspecified</pre>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-check-attr.html">git-check-attr</a>(1).</p>
+<p><a href="git-check-attr.html">git-check-attr(1)</a>.</p>
 </div>
 </div>
 </div>
@@ -2032,14 +2035,14 @@ frotz	unspecified</pre>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

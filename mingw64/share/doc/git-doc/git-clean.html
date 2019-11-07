@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-clean(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -472,19 +472,21 @@ are affected.</p>
 <dl>
 <dt class="hdlist1">-d</dt>
 <dd>
-<p>Remove untracked directories in addition to untracked files.
-If an untracked directory is managed by a different Git
-repository, it is not removed by default.  Use -f option twice
-if you really want to remove such a directory.</p>
+<p>Normally, when no &lt;path&gt; is specified, git clean will not
+recurse into untracked directories to avoid removing too much.
+Specify -d to have it recurse into such directories as well.
+If any paths are specified, -d is irrelevant; all untracked
+files matching the specified paths (with exceptions for nested
+git directories mentioned under <code>--force</code>) will be removed.</p>
 </dd>
 <dt class="hdlist1">-f</dt>
 <dt class="hdlist1">--force</dt>
 <dd>
 <p>If the Git configuration variable clean.requireForce is not set
 to false, <em>git clean</em> will refuse to delete files or directories
-unless given -f, -n or -i. Git will refuse to delete directories
-with .git sub directory or file unless a second -f
-is given.</p>
+unless given -f or -i.  Git will refuse to modify untracked
+nested git repositories (directories with a .git subdirectory)
+unless a second -f is given.</p>
 </dd>
 <dt class="hdlist1">-i</dt>
 <dt class="hdlist1">--interactive</dt>
@@ -507,11 +509,11 @@ successfully removed.</p>
 <dt class="hdlist1">--exclude=&lt;pattern&gt;</dt>
 <dd>
 <p>Use the given exclude pattern in addition to the standard ignore rules
-(see <a href="gitignore.html">gitignore</a>(5)).</p>
+(see <a href="gitignore.html">gitignore(5)</a>).</p>
 </dd>
 <dt class="hdlist1">-x</dt>
 <dd>
-<p>Don&#8217;t use the standard ignore rules (see <a href="gitignore.html">gitignore</a>(5)), but
+<p>Don&#8217;t use the standard ignore rules (see <a href="gitignore.html">gitignore(5)</a>), but
 still use the ignore rules given with <code>-e</code> options from the command
 line.  This allows removing all untracked
 files, including build products.  This can be used (possibly in
@@ -544,8 +546,8 @@ and type return, like this:</p>
 <div class="listingblock">
 <div class="content">
 <pre>    *** Commands ***
-	1: clean                2: filter by pattern    3: select by numbers
-	4: ask each             5: quit                 6: help
+        1: clean                2: filter by pattern    3: select by numbers
+        4: ask each             5: quit                 6: help
     What now&gt; 1</pre>
 </div>
 </div>
@@ -604,7 +606,7 @@ as the above two actions.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="gitignore.html">gitignore</a>(5)</p>
+<p><a href="gitignore.html">gitignore(5)</a></p>
 </div>
 </div>
 </div>
@@ -612,14 +614,14 @@ as the above two actions.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

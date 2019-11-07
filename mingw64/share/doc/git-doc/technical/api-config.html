@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>config API</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -439,7 +439,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="paragraph">
 <p>The config API gives callers a way to access Git configuration files
-(and files which have the same syntax). See <a href="git-config.html">git-config</a>(1) for a
+(and files which have the same syntax). See <a href="../git-config.html">git-config(1)</a> for a
 discussion of the config file syntax.</p>
 </div>
 </div>
@@ -706,10 +706,10 @@ the wrapper to the regular config-reading functions. For example:</p>
 <div class="content">
 <pre>int read_file_with_include(const char *file, config_fn_t fn, void *data)
 {
-	struct config_include_data inc = CONFIG_INCLUDE_INIT;
-	inc.fn = fn;
-	inc.data = data;
-	return git_config_from_file(git_config_include, file, &amp;inc);
+        struct config_include_data inc = CONFIG_INCLUDE_INIT;
+        inc.fn = fn;
+        inc.data = data;
+        return git_config_from_file(git_config_include, file, &amp;inc);
 }</pre>
 </div>
 </div>
@@ -737,7 +737,7 @@ git_configset_add_file(&amp;gm_config, ".gitmodules");
 git_configset_add_file(&amp;gm_config, ".gitmodules_alt");
 
 if (!git_configset_get_bool(gm_config, "submodule.frotz.ignore", &amp;b)) {
-	/* hack hack hack */
+        /* hack hack hack */
 }
 
 /* when we are done with the configset */
@@ -842,7 +842,7 @@ through <code>new_name</code> parameter, the section will be removed from the co
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-ls-files(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,16 +444,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git ls-files</em> [-z] [-t] [-v] [-f]
-		(--[cached|deleted|others|ignored|stage|unmerged|killed|modified])*
-		(-[c|d|o|i|s|u|k|m])*
-		[--eol]
-		[-x &lt;pattern&gt;|--exclude=&lt;pattern&gt;]
-		[-X &lt;file&gt;|--exclude-from=&lt;file&gt;]
-		[--exclude-per-directory=&lt;file&gt;]
-		[--exclude-standard]
-		[--error-unmatch] [--with-tree=&lt;tree-ish&gt;]
-		[--full-name] [--recurse-submodules]
-		[--abbrev] [--] [&lt;file&gt;&#8230;&#8203;]</pre>
+                (--[cached|deleted|others|ignored|stage|unmerged|killed|modified])*
+                (-[c|d|o|i|s|u|k|m])*
+                [--eol]
+                [-x &lt;pattern&gt;|--exclude=&lt;pattern&gt;]
+                [-X &lt;file&gt;|--exclude-from=&lt;file&gt;]
+                [--exclude-per-directory=&lt;file&gt;]
+                [--exclude-standard]
+                [--error-unmatch] [--with-tree=&lt;tree-ish&gt;]
+                [--full-name] [--recurse-submodules]
+                [--abbrev] [--] [&lt;file&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -574,10 +574,10 @@ with <code>-s</code> or <code>-u</code> options does not make any sense.</p>
 <dt class="hdlist1">-t</dt>
 <dd>
 <p>This feature is semi-deprecated. For scripting purpose,
-<a href="git-status.html">git-status</a>(1) <code>--porcelain</code> and
-<a href="git-diff-files.html">git-diff-files</a>(1) <code>--name-status</code> are almost always
+<a href="git-status.html">git-status(1)</a> <code>--porcelain</code> and
+<a href="git-diff-files.html">git-diff-files(1)</a> <code>--name-status</code> are almost always
 superior alternatives, and users should look at
-<a href="git-status.html">git-status</a>(1) <code>--short</code> or <a href="git-diff.html">git-diff</a>(1)
+<a href="git-status.html">git-status(1)</a> <code>--short</code> or <a href="git-diff.html">git-diff(1)</a>
 <code>--name-status</code> for more user-friendly alternatives.</p>
 <div class="openblock">
 <div class="content">
@@ -624,13 +624,13 @@ a space) at the start of each line:</p>
 <dd>
 <p>Similar to <code>-t</code>, but use lowercase letters for files
 that are marked as <em>assume unchanged</em> (see
-<a href="git-update-index.html">git-update-index</a>(1)).</p>
+<a href="git-update-index.html">git-update-index(1)</a>).</p>
 </dd>
 <dt class="hdlist1">-f</dt>
 <dd>
 <p>Similar to <code>-t</code>, but use lowercase letters for files
 that are marked as <em>fsmonitor valid</em> (see
-<a href="git-update-index.html">git-update-index</a>(1)).</p>
+<a href="git-update-index.html">git-update-index(1)</a>).</p>
 </dd>
 <dt class="hdlist1">--full-name</dt>
 <dd>
@@ -716,12 +716,12 @@ detailed information on unmerged paths.</p>
 the index records up to three such pairs; one from tree O in stage
 1, A in stage 2, and B in stage 3.  This information can be used by
 the user (or the porcelain) to see what should eventually be recorded at the
-path. (see <a href="git-read-tree.html">git-read-tree</a>(1) for more information on state)</p>
+path. (see <a href="git-read-tree.html">git-read-tree(1)</a> for more information on state)</p>
 </div>
 <div class="paragraph">
 <p>Without the <code>-z</code> option, pathnames with "unusual" characters are
 quoted as explained for the configuration variable <code>core.quotePath</code>
-(see <a href="git-config.html">git-config</a>(1)).  Using <code>-z</code> the filename is output
+(see <a href="git-config.html">git-config(1)</a>).  Using <code>-z</code> the filename is output
 verbatim and the line is terminated by a NUL byte.</p>
 </div>
 </div>
@@ -732,7 +732,7 @@ verbatim and the line is terminated by a NUL byte.</p>
 <div class="paragraph">
 <p><em>git ls-files</em> can use a list of "exclude patterns" when
 traversing the directory tree and finding files to show when the
-flags --others or --ignored are specified.  <a href="gitignore.html">gitignore</a>(5)
+flags --others or --ignored are specified.  <a href="gitignore.html">gitignore(5)</a>
 specifies the format of exclude patterns.</p>
 </div>
 <div class="paragraph">
@@ -772,7 +772,7 @@ pattern file appears in.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-read-tree.html">git-read-tree</a>(1), <a href="gitignore.html">gitignore</a>(5)</p>
+<p><a href="git-read-tree.html">git-read-tree(1)</a>, <a href="gitignore.html">gitignore(5)</a></p>
 </div>
 </div>
 </div>
@@ -780,14 +780,14 @@ pattern file appears in.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

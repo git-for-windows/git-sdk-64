@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>oid-array API</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -516,34 +516,34 @@ Preserve the order of the entries that are retained.</p>
 <div class="listingblock">
 <div class="content">
 <pre>int print_callback(const struct object_id *oid,
-		    void *data)
+                    void *data)
 {
-	printf("%s\n", oid_to_hex(oid));
-	return 0; /* always continue */
+        printf("%s\n", oid_to_hex(oid));
+        return 0; /* always continue */
 }
 
 void some_func(void)
 {
-	struct sha1_array hashes = OID_ARRAY_INIT;
-	struct object_id oid;
+        struct sha1_array hashes = OID_ARRAY_INIT;
+        struct object_id oid;
 
-	/* Read objects into our set */
-	while (read_object_from_stdin(oid.hash))
-		oid_array_append(&amp;hashes, &amp;oid);
+        /* Read objects into our set */
+        while (read_object_from_stdin(oid.hash))
+                oid_array_append(&amp;hashes, &amp;oid);
 
-	/* Check if some objects are in our set */
-	while (read_object_from_stdin(oid.hash)) {
-		if (oid_array_lookup(&amp;hashes, &amp;oid) &gt;= 0)
-			printf("it's in there!\n");
+        /* Check if some objects are in our set */
+        while (read_object_from_stdin(oid.hash)) {
+                if (oid_array_lookup(&amp;hashes, &amp;oid) &gt;= 0)
+                        printf("it's in there!\n");
 
-	/*
-	 * Print the unique set of objects. We could also have
-	 * avoided adding duplicate objects in the first place,
-	 * but we would end up re-sorting the array repeatedly.
-	 * Instead, this will sort once and then skip duplicates
-	 * in linear time.
-	 */
-	oid_array_for_each_unique(&amp;hashes, print_callback, NULL);
+        /*
+         * Print the unique set of objects. We could also have
+         * avoided adding duplicate objects in the first place,
+         * but we would end up re-sorting the array repeatedly.
+         * Instead, this will sort once and then skip duplicates
+         * in linear time.
+         */
+        oid_array_for_each_unique(&amp;hashes, print_callback, NULL);
 }</pre>
 </div>
 </div>
@@ -552,7 +552,7 @@ void some_func(void)
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

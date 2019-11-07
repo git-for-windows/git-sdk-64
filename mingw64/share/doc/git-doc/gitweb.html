@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>gitweb(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -443,7 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To get started with gitweb, run <a href="git-instaweb.html">git-instaweb</a>(1) from a Git repository.
+<p>To get started with gitweb, run <a href="git-instaweb.html">git-instaweb(1)</a> from a Git repository.
 This would configure and start your web server, and run web browser pointing to
 gitweb.</p>
 </div>
@@ -497,7 +497,7 @@ browsed using gitweb itself.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Various aspects of gitweb&#8217;s behavior can be controlled through the configuration
-file <code>gitweb_config.perl</code> or <code>/etc/gitweb.conf</code>.  See the <a href="gitweb.conf.html">gitweb.conf</a>(5)
+file <code>gitweb_config.perl</code> or <code>/etc/gitweb.conf</code>.  See the <a href="gitweb.conf.html">gitweb.conf(5)</a>
 for details.</p>
 </div>
 <div class="sect2">
@@ -605,7 +605,7 @@ list page (note that entries that do not point to correctly recognized Git
 repositories won&#8217;t be displayed by gitweb).  Even if a project is not
 visible on projects list page, you can view it nevertheless by hand-crafting
 a gitweb URL.  By setting <code>$strict_export</code> configuration variable (see
-<a href="gitweb.conf.html">gitweb.conf</a>(5)) to true value you can allow viewing only of
+<a href="gitweb.conf.html">gitweb.conf(5)</a>) to true value you can allow viewing only of
 repositories also shown on the overview page (i.e. only projects explicitly
 listed in projects list file will be accessible).</p>
 </div>
@@ -665,11 +665,11 @@ control which repositories are <strong>available</strong> as well.</p>
 <li>
 <p>You can configure gitweb to only list and allow viewing of the explicitly
 exported repositories, via <code>$export_ok</code> variable in gitweb config file; see
-<a href="gitweb.conf.html">gitweb.conf</a>(5) manpage.  If it evaluates to true, gitweb shows
+<a href="gitweb.conf.html">gitweb.conf(5)</a> manpage.  If it evaluates to true, gitweb shows
 repositories only if this file named by <code>$export_ok</code> exists in its object
 database (if directory has the magic file named <code>$export_ok</code>).</p>
 <div class="paragraph">
-<p>For example <a href="git-daemon.html">git-daemon</a>(1) by default (unless <code>--export-all</code> option
+<p>For example <a href="git-daemon.html">git-daemon(1)</a> by default (unless <code>--export-all</code> option
 is used) allows pulling only for those repositories that have
 <em>git-daemon-export-ok</em> file.  Adding</p>
 </div>
@@ -697,13 +697,13 @@ authorized to read the files:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$export_auth_hook = sub {
-	use Apache2::SubRequest ();
-	use Apache2::Const -compile =&gt; qw(HTTP_OK);
-	my $path = "$_[0]/HEAD";
-	my $r    = Apache2::RequestUtil-&gt;request;
-	my $sub  = $r-&gt;lookup_file($path);
-	return $sub-&gt;filename eq $path
-	    &amp;&amp; $sub-&gt;status == Apache2::Const::HTTP_OK;
+        use Apache2::SubRequest ();
+        use Apache2::Const -compile =&gt; qw(HTTP_OK);
+        my $path = "$_[0]/HEAD";
+        my $r    = Apache2::RequestUtil-&gt;request;
+        my $sub  = $r-&gt;lookup_file($path);
+        return $sub-&gt;filename eq $path
+            &amp;&amp; $sub-&gt;status == Apache2::Const::HTTP_OK;
 };</pre>
 </div>
 </div>
@@ -716,7 +716,7 @@ authorized to read the files:</p>
 <div class="paragraph">
 <p>You can configure individual repositories shown in gitweb by creating file
 in the <code>GIT_DIR</code> of Git repository, or by setting some repo configuration
-variable (in <code>GIT_DIR/config</code>, see <a href="git-config.html">git-config</a>(1)).</p>
+variable (in <code>GIT_DIR/config</code>, see <a href="git-config.html">git-config(1)</a>).</p>
 </div>
 <div class="paragraph">
 <p>You can use the following files in repository:</p>
@@ -729,7 +729,7 @@ variable (in <code>GIT_DIR/config</code>, see <a href="git-config.html">git-conf
 "summary" page inside <code>&lt;div&gt;</code> block element. You can use it for longer
 description of a project, to provide links (for example to project&#8217;s
 homepage), etc. This is recognized only if XSS prevention is off
-(<code>$prevent_xss</code> is false, see <a href="gitweb.conf.html">gitweb.conf</a>(5)); a way to include
+(<code>$prevent_xss</code> is false, see <a href="gitweb.conf.html">gitweb.conf(5)</a>); a way to include
 a README safely when XSS prevention is on may be worked out in the
 future.</p>
 </dd>
@@ -737,7 +737,7 @@ future.</p>
 <dd>
 <p>Short (shortened to <code>$projects_list_description_width</code> in the projects
 list page, which is 25 characters by default; see
-<a href="gitweb.conf.html">gitweb.conf</a>(5)) single line description of a project (of a
+<a href="gitweb.conf.html">gitweb.conf(5)</a>) single line description of a project (of a
 repository).  Plain text file; HTML will be escaped.  By default set to</p>
 <div class="listingblock">
 <div class="content">
@@ -760,7 +760,7 @@ configuration variable absent), uncategorized projects are put in the
 precedence.</p>
 <div class="paragraph">
 <p>The configuration variables <code>$projects_list_group_categories</code> and
-<code>$project_list_default_category</code> are described in <a href="gitweb.conf.html">gitweb.conf</a>(5)</p>
+<code>$project_list_default_category</code> are described in <a href="gitweb.conf.html">gitweb.conf(5)</a></p>
 </div>
 </dd>
 <dt class="hdlist1">cloneurl (or multiple-valued <code>gitweb.url</code>)</dt>
@@ -772,7 +772,7 @@ takes precedence.</p>
 <div class="paragraph">
 <p>This is per-repository enhancement / version of global prefix-based
 <code>@git_base_url_list</code> gitweb configuration variable (see
-<a href="gitweb.conf.html">gitweb.conf</a>(5)).</p>
+<a href="gitweb.conf.html">gitweb.conf(5)</a>).</p>
 </div>
 </dd>
 <dt class="hdlist1">gitweb.owner</dt>
@@ -791,7 +791,7 @@ value from this file for given repository.</p>
 <dt class="hdlist1">various <code>gitweb.*</code> config variables (in config)</dt>
 <dd>
 <p>Read description of <code>%feature</code> hash for detailed list, and descriptions.
-See also "Configuring gitweb features" section in <a href="gitweb.conf.html">gitweb.conf</a>(5)</p>
+See also "Configuring gitweb features" section in <a href="gitweb.conf.html">gitweb.conf(5)</a></p>
 </dd>
 </dl>
 </div>
@@ -929,7 +929,7 @@ action shows changeset for given commit.</p>
 <dt class="hdlist1">patch</dt>
 <dd>
 <p>Returns the commit in plain text mail format, suitable for applying with
-<a href="git-am.html">git-am</a>(1).</p>
+<a href="git-am.html">git-am(1)</a>.</p>
 </dd>
 <dt class="hdlist1">tag</dt>
 <dd>
@@ -1095,7 +1095,7 @@ repositories, you can configure Apache like this:</p>
 
     # make access for "dumb clients" work
     RewriteRule ^/(.*\.git/(?!/?(HEAD|info|objects|refs)).*)?$ \
-		/cgi-bin/gitweb.cgi%{REQUEST_URI}  [L,PT]
+                /cgi-bin/gitweb.cgi%{REQUEST_URI}  [L,PT]
 &lt;/VirtualHost&gt;</pre>
 </div>
 </div>
@@ -1103,7 +1103,7 @@ repositories, you can configure Apache like this:</p>
 <p>The above configuration expects your public repositories to live under
 <code>/pub/git</code> and will serve them as <code>http://git.domain.org/dir-under-pub-git</code>,
 both as clonable Git URL and as browseable gitweb interface.  If you then
-start your <a href="git-daemon.html">git-daemon</a>(1) with <code>--base-path=/pub/git --export-all</code>
+start your <a href="git-daemon.html">git-daemon(1)</a> with <code>--base-path=/pub/git --export-all</code>
 then you can even use the <code>git://</code> URL with exactly the same path.</p>
 </div>
 <div class="paragraph">
@@ -1112,7 +1112,7 @@ named file (i.e. in this example <code>/etc/gitweb.conf</code>) as a configurati
 gitweb.  You don&#8217;t really need it in above example; it is required only if
 your configuration file is in different place than built-in (during
 compiling gitweb) <em>gitweb_config.perl</em> or <code>/etc/gitweb.conf</code>.  See
-<a href="gitweb.conf.html">gitweb.conf</a>(5) for details, especially information about precedence
+<a href="gitweb.conf.html">gitweb.conf(5)</a> for details, especially information about precedence
 rules.</p>
 </div>
 <div class="paragraph">
@@ -1158,26 +1158,26 @@ like this:</p>
 
     # look for a public_git folder in unix users' home
     # http://git.example.org/~&lt;user&gt;/
-    RewriteRule ^/\~([^\/]+)(/|/gitweb.cgi)?$	/cgi-bin/gitweb.cgi \
-		[QSA,E=GITWEB_PROJECTROOT:/home/$1/public_git/,L,PT]
+    RewriteRule ^/\~([^\/]+)(/|/gitweb.cgi)?$   /cgi-bin/gitweb.cgi \
+                [QSA,E=GITWEB_PROJECTROOT:/home/$1/public_git/,L,PT]
 
     # http://git.example.org/+&lt;user&gt;/
-    #RewriteRule ^/\+([^\/]+)(/|/gitweb.cgi)?$	/cgi-bin/gitweb.cgi \
-		 [QSA,E=GITWEB_PROJECTROOT:/home/$1/public_git/,L,PT]
+    #RewriteRule ^/\+([^\/]+)(/|/gitweb.cgi)?$  /cgi-bin/gitweb.cgi \
+                 [QSA,E=GITWEB_PROJECTROOT:/home/$1/public_git/,L,PT]
 
     # http://git.example.org/user/&lt;user&gt;/
-    #RewriteRule ^/user/([^\/]+)/(gitweb.cgi)?$	/cgi-bin/gitweb.cgi \
-		 [QSA,E=GITWEB_PROJECTROOT:/home/$1/public_git/,L,PT]
+    #RewriteRule ^/user/([^\/]+)/(gitweb.cgi)?$ /cgi-bin/gitweb.cgi \
+                 [QSA,E=GITWEB_PROJECTROOT:/home/$1/public_git/,L,PT]
 
     # defined list of project roots
     RewriteRule ^/scm(/|/gitweb.cgi)?$ /cgi-bin/gitweb.cgi \
-		[QSA,E=GITWEB_PROJECTROOT:/pub/scm/,L,PT]
+                [QSA,E=GITWEB_PROJECTROOT:/pub/scm/,L,PT]
     RewriteRule ^/var(/|/gitweb.cgi)?$ /cgi-bin/gitweb.cgi \
-		[QSA,E=GITWEB_PROJECTROOT:/var/git/,L,PT]
+                [QSA,E=GITWEB_PROJECTROOT:/var/git/,L,PT]
 
     # make access for "dumb clients" work
     RewriteRule ^/(.*\.git/(?!/?(HEAD|info|objects|refs)).*)?$ \
-		/cgi-bin/gitweb.cgi%{REQUEST_URI}  [L,PT]
+                /cgi-bin/gitweb.cgi%{REQUEST_URI}  [L,PT]
 &lt;/VirtualHost&gt;</pre>
 </div>
 </div>
@@ -1250,21 +1250,21 @@ complementary static files (stylesheet, favicon, JavaScript):</p>
 <div class="listingblock">
 <div class="content">
 <pre>&lt;VirtualHost *:80&gt;
-	ServerAlias git.example.com
+        ServerAlias git.example.com
 
-	DocumentRoot /var/www/gitweb
+        DocumentRoot /var/www/gitweb
 
-	&lt;Directory /var/www/gitweb&gt;
-		Options ExecCGI
-		AddHandler cgi-script cgi
+        &lt;Directory /var/www/gitweb&gt;
+                Options ExecCGI
+                AddHandler cgi-script cgi
 
-		DirectoryIndex gitweb.cgi
+                DirectoryIndex gitweb.cgi
 
-		RewriteEngine On
-		RewriteCond %{REQUEST_FILENAME} !-f
-		RewriteCond %{REQUEST_FILENAME} !-d
-		RewriteRule ^.* /gitweb.cgi/$0 [L,PT]
-	&lt;/Directory&gt;
+                RewriteEngine On
+                RewriteCond %{REQUEST_FILENAME} !-f
+                RewriteCond %{REQUEST_FILENAME} !-d
+                RewriteRule ^.* /gitweb.cgi/$0 [L,PT]
+        &lt;/Directory&gt;
 &lt;/VirtualHost&gt;</pre>
 </div>
 </div>
@@ -1285,22 +1285,22 @@ named <strong>without</strong> a .git extension (e.g. <code>/pub/git/project</co
 <div class="listingblock">
 <div class="content">
 <pre>&lt;VirtualHost *:80&gt;
-	ServerAlias git.example.com
+        ServerAlias git.example.com
 
-	DocumentRoot /var/www/gitweb
+        DocumentRoot /var/www/gitweb
 
-	AliasMatch ^(/.*?)(\.git)(/.*)?$ /pub/git$1$3
-	&lt;Directory /var/www/gitweb&gt;
-		Options ExecCGI
-		AddHandler cgi-script cgi
+        AliasMatch ^(/.*?)(\.git)(/.*)?$ /pub/git$1$3
+        &lt;Directory /var/www/gitweb&gt;
+                Options ExecCGI
+                AddHandler cgi-script cgi
 
-		DirectoryIndex gitweb.cgi
+                DirectoryIndex gitweb.cgi
 
-		RewriteEngine On
-		RewriteCond %{REQUEST_FILENAME} !-f
-		RewriteCond %{REQUEST_FILENAME} !-d
-		RewriteRule ^.* /gitweb.cgi/$0 [L,PT]
-	&lt;/Directory&gt;
+                RewriteEngine On
+                RewriteCond %{REQUEST_FILENAME} !-f
+                RewriteCond %{REQUEST_FILENAME} !-d
+                RewriteRule ^.* /gitweb.cgi/$0 [L,PT]
+        &lt;/Directory&gt;
 &lt;/VirtualHost&gt;</pre>
 </div>
 </div>
@@ -1352,7 +1352,7 @@ putting "gitweb" in the subject of email.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="gitweb.conf.html">gitweb.conf</a>(5), <a href="git-instaweb.html">git-instaweb</a>(1)</p>
+<p><a href="gitweb.conf.html">gitweb.conf(5)</a>, <a href="git-instaweb.html">git-instaweb(1)</a></p>
 </div>
 <div class="paragraph">
 <p><code>gitweb/README</code>, <code>gitweb/INSTALL</code></p>
@@ -1363,14 +1363,14 @@ putting "gitweb" in the subject of email.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

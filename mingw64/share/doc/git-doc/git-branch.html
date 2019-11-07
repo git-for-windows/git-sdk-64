@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-branch(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -444,13 +444,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><em>git branch</em> [--color[=&lt;when&gt;] | --no-color] [--show-current]
-	[-v [--abbrev=&lt;length&gt; | --no-abbrev]]
-	[--column[=&lt;options&gt;] | --no-column] [--sort=&lt;key&gt;]
-	[(--merged | --no-merged) [&lt;commit&gt;]]
-	[--contains [&lt;commit]] [--no-contains [&lt;commit&gt;]]
-	[--points-at &lt;object&gt;] [--format=&lt;format&gt;]
-	[(-r | --remotes) | (-a | --all)]
-	[--list] [&lt;pattern&gt;&#8230;&#8203;]
+        [-v [--abbrev=&lt;length&gt; | --no-abbrev]]
+        [--column[=&lt;options&gt;] | --no-column] [--sort=&lt;key&gt;]
+        [(--merged | --no-merged) [&lt;commit&gt;]]
+        [--contains [&lt;commit]] [--no-contains [&lt;commit&gt;]]
+        [--points-at &lt;object&gt;] [--format=&lt;format&gt;]
+        [(-r | --remotes) | (-a | --all)]
+        [--list] [&lt;pattern&gt;&#8230;&#8203;]
 <em>git branch</em> [--track | --no-track] [-f] &lt;branchname&gt; [&lt;start-point&gt;]
 <em>git branch</em> (--set-upstream-to=&lt;upstream&gt; | -u &lt;upstream&gt;) [&lt;branchname&gt;]
 <em>git branch</em> --unset-upstream [&lt;branchname&gt;]
@@ -536,7 +536,7 @@ has a reflog then the reflog will also be deleted.</p>
 <p>Use <code>-r</code> together with <code>-d</code> to delete remote-tracking branches. Note, that it
 only makes sense to delete remote-tracking branches if they no longer exist
 in the remote repository or if <em>git fetch</em> was configured not to fetch
-them again. See also the <em>prune</em> subcommand of <a href="git-remote.html">git-remote</a>(1) for a
+them again. See also the <em>prune</em> subcommand of <a href="git-remote.html">git-remote(1)</a> for a
 way to clean up all obsolete remote-tracking branches.</p>
 </div>
 </div>
@@ -748,7 +748,7 @@ incompatible with <code>--merged</code>.</p>
 <dd>
 <p>The name of the branch to create or delete.
 The new branch name must pass all checks defined by
-<a href="git-check-ref-format.html">git-check-ref-format</a>(1).  Some of these checks
+<a href="git-check-ref-format.html">git-check-ref-format(1)</a>.  Some of these checks
 may restrict the characters allowed in a branch name.</p>
 </dd>
 <dt class="hdlist1">&lt;start-point&gt;</dt>
@@ -776,7 +776,7 @@ for-each-ref</code>. Sort order defaults to the value configured for the
 <code>branch.sort</code> variable if exists, or to sorting based on the
 full refname (including <code>refs/...</code> prefix). This lists
 detached HEAD (if present) first, then local branches and
-finally remote-tracking branches. See <a href="git-config.html">git-config</a>(1).</p>
+finally remote-tracking branches. See <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
 <dt class="hdlist1">--points-at &lt;object&gt;</dt>
 <dd>
@@ -786,7 +786,7 @@ finally remote-tracking branches. See <a href="git-config.html">git-config</a>(1
 <dd>
 <p>A string that interpolates <code>%(fieldname)</code> from a branch ref being shown
 and the object it points at.  The format is the same as
-that of <a href="git-for-each-ref.html">git-for-each-ref</a>(1).</p>
+that of <a href="git-for-each-ref.html">git-for-each-ref(1)</a>.</p>
 </dd>
 </dl>
 </div>
@@ -798,7 +798,7 @@ that of <a href="git-for-each-ref.html">git-for-each-ref</a>(1).</p>
 <div class="paragraph">
 <p><code>pager.branch</code> is only respected when listing branches, i.e., when
 <code>--list</code> is used or implied. The default is to use a pager.
-See <a href="git-config.html">git-config</a>(1).</p>
+See <a href="git-config.html">git-config(1)</a>.</p>
 </div>
 </div>
 </div>
@@ -841,7 +841,7 @@ $ git branch -D test                                    <b class="conum">(2)</b>
 <li>
 <p>Delete the remote-tracking branches "todo", "html" and "man". The next
 <em>fetch</em> or <em>pull</em> will create them again unless you configure them not to.
-See <a href="git-fetch.html">git-fetch</a>(1).</p>
+See <a href="git-fetch.html">git-fetch(1)</a>.</p>
 </li>
 <li>
 <p>Delete the "test" branch even if the "master" branch (or whichever branch
@@ -865,7 +865,7 @@ $ git for-each-ref 'refs/remotes/&lt;remote&gt;/&lt;pattern&gt;'    <b class="co
 have been prefixed with the same &lt;remote&gt; pattern.</p>
 </li>
 <li>
-<p><code>for-each-ref</code> can take a wide range of options. See <a href="git-for-each-ref.html">git-for-each-ref</a>(1)</p>
+<p><code>for-each-ref</code> can take a wide range of options. See <a href="git-for-each-ref.html">git-for-each-ref(1)</a></p>
 </li>
 </ol>
 </div>
@@ -916,9 +916,9 @@ into HEAD, since those branches are not fully contained by HEAD.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-check-ref-format.html">git-check-ref-format</a>(1),
-<a href="git-fetch.html">git-fetch</a>(1),
-<a href="git-remote.html">git-remote</a>(1),
+<p><a href="git-check-ref-format.html">git-check-ref-format(1)</a>,
+<a href="git-fetch.html">git-fetch(1)</a>,
+<a href="git-remote.html">git-remote(1)</a>,
 <a href="user-manual.html#what-is-a-branch">&#8220;Understanding history: What is
 a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 </div>
@@ -928,14 +928,14 @@ a branch?&#8221;</a> in the Git User&#8217;s Manual.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

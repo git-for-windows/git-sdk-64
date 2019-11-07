@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>git-svn(1)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -1288,7 +1288,7 @@ tree objects.</p>
 <p>Only used with the <em>dcommit</em>, <em>set-tree</em> and <em>commit-diff</em> commands.</p>
 <div class="paragraph">
 <p>They are both passed directly to <em>git diff-tree</em>; see
-<a href="git-diff-tree.html">git-diff-tree</a>(1) for more information.</p>
+<a href="git-diff-tree.html">git-diff-tree(1)</a> for more information.</p>
 </div>
 <div class="verseblock">
 <pre class="content">config key: svn.l
@@ -1302,7 +1302,7 @@ config key: svn.findcopiesharder</pre>
 an empty email address can be supplied with <em>&lt;&gt;</em>:</p>
 <div class="listingblock">
 <div class="content">
-<pre>	loginname = Joe User &lt;user@example.com&gt;</pre>
+<pre>        loginname = Joe User &lt;user@example.com&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1463,11 +1463,11 @@ option for (hopefully) obvious reasons.</p>
 <div class="paragraph">
 <p>This option is NOT recommended as it makes it difficult to track down
 old references to SVN revision numbers in existing documentation, bug
-reports and archives.  If you plan to eventually migrate from SVN to Git
-and are certain about dropping SVN history, consider
-<a href="git-filter-branch.html">git-filter-branch</a>(1) instead.  filter-branch also allows
-reformatting of metadata for ease-of-reading and rewriting authorship
-info for non-"svn.authorsFile" users.</p>
+reports, and archives.  If you plan to eventually migrate from SVN to
+Git and are certain about dropping SVN history, consider
+<a href="https://github.com/newren/git-filter-repo">git-filter-repo</a> instead.
+filter-repo also allows reformatting of metadata for ease-of-reading
+and rewriting authorship info for non-"svn.authorsFile" users.</p>
 </div>
 </dd>
 <dt class="hdlist1">svn.useSvmProps</dt>
@@ -1564,21 +1564,21 @@ for rewriteRoot and rewriteUUID which can be used together.</p>
 <div class="listingblock">
 <div class="content">
 <pre># Clone a repo (like git clone):
-	git svn clone http://svn.example.com/project/trunk
+        git svn clone http://svn.example.com/project/trunk
 # Enter the newly cloned directory:
-	cd trunk
+        cd trunk
 # You should be on master branch, double-check with 'git branch'
-	git branch
+        git branch
 # Do some work and commit locally to Git:
-	git commit ...
+        git commit ...
 # Something is committed to SVN, rebase your local changes against the
 # latest changes in SVN:
-	git svn rebase
+        git svn rebase
 # Now commit your changes (that were committed previously using Git) to SVN,
 # as well as automatically updating your working HEAD:
-	git svn dcommit
+        git svn dcommit
 # Append svn:ignore settings to the default Git exclude file:
-	git svn show-ignore &gt;&gt; .git/info/exclude</pre>
+        git svn show-ignore &gt;&gt; .git/info/exclude</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1588,16 +1588,16 @@ for rewriteRoot and rewriteUUID which can be used together.</p>
 <div class="listingblock">
 <div class="content">
 <pre># Clone a repo with standard SVN directory layout (like git clone):
-	git svn clone http://svn.example.com/project --stdlayout --prefix svn/
+        git svn clone http://svn.example.com/project --stdlayout --prefix svn/
 # Or, if the repo uses a non-standard directory layout:
-	git svn clone http://svn.example.com/project -T tr -b branch -t tag --prefix svn/
+        git svn clone http://svn.example.com/project -T tr -b branch -t tag --prefix svn/
 # View all branches and tags you have cloned:
-	git branch -r
+        git branch -r
 # Create a new branch in SVN
-	git svn branch waldo
+        git svn branch waldo
 # Reset your master to trunk (or any other branch, replacing 'trunk'
 # with the appropriate name):
-	git reset --hard svn/trunk
+        git reset --hard svn/trunk
 # You may only dcommit to one branch/tag/trunk at a time.  The usage
 # of dcommit/rebase/show-ignore should be the same as above.</pre>
 </div>
@@ -1613,24 +1613,24 @@ have each person clone that repository with <em>git clone</em>:</p>
 <div class="listingblock">
 <div class="content">
 <pre># Do the initial import on a server
-	ssh server "cd /pub &amp;&amp; git svn clone http://svn.example.com/project [options...]"
+        ssh server "cd /pub &amp;&amp; git svn clone http://svn.example.com/project [options...]"
 # Clone locally - make sure the refs/remotes/ space matches the server
-	mkdir project
-	cd project
-	git init
-	git remote add origin server:/pub/project
-	git config --replace-all remote.origin.fetch '+refs/remotes/*:refs/remotes/*'
-	git fetch
+        mkdir project
+        cd project
+        git init
+        git remote add origin server:/pub/project
+        git config --replace-all remote.origin.fetch '+refs/remotes/*:refs/remotes/*'
+        git fetch
 # Prevent fetch/pull from remote Git server in the future,
 # we only want to use git svn for future updates
-	git config --remove-section remote.origin
+        git config --remove-section remote.origin
 # Create a local branch from one of the branches just fetched
-	git checkout -b master FETCH_HEAD
+        git checkout -b master FETCH_HEAD
 # Initialize 'git svn' locally (be sure to use the same URL and
 # --stdlayout/-T/-b/-t/--prefix options as were used on server)
-	git svn init http://svn.example.com/project [options...]
+        git svn init http://svn.example.com/project [options...]
 # Pull the latest changes from Subversion
-	git svn rebase</pre>
+        git svn rebase</pre>
 </div>
 </div>
 </div>
@@ -1766,10 +1766,10 @@ at all.</p>
 <p>Since <em>dcommit</em> uses rebase internally, any Git branches you <em>git push</em> to
 before <em>dcommit</em> on will require forcing an overwrite of the existing ref
 on the remote repository.  This is generally considered bad practice,
-see the <a href="git-push.html">git-push</a>(1) documentation for details.</p>
+see the <a href="git-push.html">git-push(1)</a> documentation for details.</p>
 </div>
 <div class="paragraph">
-<p>Do not use the --amend option of <a href="git-commit.html">git-commit</a>(1) on a change you&#8217;ve
+<p>Do not use the --amend option of <a href="git-commit.html">git-commit(1)</a> on a change you&#8217;ve
 already dcommitted.  It is considered bad practice to --amend commits
 you&#8217;ve already pushed to a remote repository for other users, and
 dcommit with SVN is analogous to that.</p>
@@ -1845,12 +1845,12 @@ listed below are allowed:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[svn-remote "project-a"]
-	url = http://server.org/svn
-	fetch = trunk/project-a:refs/remotes/project-a/trunk
-	branches = branches/*/project-a:refs/remotes/project-a/branches/*
-	branches = branches/release_*:refs/remotes/project-a/branches/release_*
-	branches = branches/re*se:refs/remotes/project-a/branches/*
-	tags = tags/*/project-a:refs/remotes/project-a/tags/*</pre>
+        url = http://server.org/svn
+        fetch = trunk/project-a:refs/remotes/project-a/trunk
+        branches = branches/*/project-a:refs/remotes/project-a/branches/*
+        branches = branches/release_*:refs/remotes/project-a/branches/release_*
+        branches = branches/re*se:refs/remotes/project-a/branches/*
+        tags = tags/*/project-a:refs/remotes/project-a/tags/*</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1887,10 +1887,10 @@ comma-separated list of names within braces. For example:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[svn-remote "huge-project"]
-	url = http://server.org/svn
-	fetch = trunk/src:refs/remotes/trunk
-	branches = branches/{red,green}/src:refs/remotes/project-a/branches/*
-	tags = tags/{1.0,2.0}/src:refs/remotes/project-a/tags/*</pre>
+        url = http://server.org/svn
+        fetch = trunk/src:refs/remotes/trunk
+        branches = branches/{red,green}/src:refs/remotes/project-a/branches/*
+        tags = tags/{1.0,2.0}/src:refs/remotes/project-a/tags/*</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1899,12 +1899,12 @@ comma-separated list of names within braces. For example:</p>
 <div class="listingblock">
 <div class="content">
 <pre>[svn-remote "messy-repo"]
-	url = http://server.org/svn
-	fetch = trunk/project-a:refs/remotes/project-a/trunk
-	fetch = branches/demos/june-project-a-demo:refs/remotes/project-a/demos/june-demo
-	branches = branches/server/*:refs/remotes/project-a/branches/*
-	branches = branches/demos/2011/*:refs/remotes/project-a/2011-demos/*
-	tags = tags/server/*:refs/remotes/project-a/tags/*</pre>
+        url = http://server.org/svn
+        fetch = trunk/project-a:refs/remotes/project-a/trunk
+        fetch = branches/demos/june-project-a-demo:refs/remotes/project-a/demos/june-demo
+        branches = branches/server/*:refs/remotes/project-a/branches/*
+        branches = branches/demos/2011/*:refs/remotes/project-a/2011-demos/*
+        tags = tags/server/*:refs/remotes/project-a/tags/*</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1950,7 +1950,7 @@ rewinds it.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-rebase.html">git-rebase</a>(1)</p>
+<p><a href="git-rebase.html">git-rebase(1)</a></p>
 </div>
 </div>
 </div>
@@ -1958,14 +1958,14 @@ rewinds it.</p>
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Part of the <a href="git.html">git</a>(1) suite</p>
+<p>Part of the <a href="git.html">git(1)</a> suite</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.8">
+<meta charset="UTF-8"/>
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"/><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 1.5.8"/>
 <title>My First Contribution to the Git Project</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"/>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
@@ -561,8 +561,8 @@ point for your command in a function matching the style and signature:</p>
 </div>
 <div class="paragraph">
 <p>We&#8217;ll also need to add the declaration of psuh; open up <code>builtin.h</code>, find the
-declaration for <code>cmd_push</code>, and add a new line for <code>psuh</code> immediately before it,
-in order to keep the declarations sorted:</p>
+declaration for <code>cmd_pull</code>, and add a new line for <code>psuh</code> immediately before it,
+in order to keep the declarations alphabetically sorted:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -596,13 +596,13 @@ should also do so when writing your user-facing commands in the future.
 <div class="content">
 <pre>int cmd_psuh(int argc, const char **argv, const char *prefix)
 {
-	printf(_("Pony saying hello goes here.\n"));
-	return 0;
+        printf(_("Pony saying hello goes here.\n"));
+        return 0;
 }</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Let&#8217;s try to build it.  Open <code>Makefile</code>, find where <code>builtin/push.o</code> is added
+<p>Let&#8217;s try to build it.  Open <code>Makefile</code>, find where <code>builtin/pull.o</code> is added
 to <code>BUILTIN_OBJS</code>, and add <code>builtin/psuh.o</code> in the same way next to it in
 alphabetical order. Once you&#8217;ve done so, move to the top-level directory and
 build simply with <code>make</code>. Also add the <code>DEVELOPER=1</code> variable to turn on
@@ -651,7 +651,7 @@ a <code>cmd_struct</code> to the <code>commands[]</code> array. <code>struct cmd
 with the command name, a function pointer to the command implementation, and a
 setup option flag. For now, let&#8217;s keep mimicking <code>push</code>. Find the line where
 <code>cmd_push</code> is registered, copy it, and modify it for <code>cmd_psuh</code>, placing the new
-line in alphabetical order.</p>
+line in alphabetical order (immediately before <code>cmd_pull</code>).</p>
 </div>
 <div class="paragraph">
 <p>The options are documented in <code>builtin.h</code> under "Adding a new built-in." Since
@@ -674,7 +674,7 @@ and see if it works. There&#8217;s a binary you can use to test with in the
 <div class="paragraph">
 <p><code>git status</code> reveals modified <code>Makefile</code>, <code>builtin.h</code>, and <code>git.c</code> as well as
 untracked <code>builtin/psuh.c</code> and <code>git-psuh</code>. First, let&#8217;s take care of the binary,
-which should be ignored. Open <code>.gitignore</code> in your editor, find <code>/git-push</code>, and
+which should be ignored. Open <code>.gitignore</code> in your editor, find <code>/git-pull</code>, and
 add an entry for your new command in alphabetical order:</p>
 </div>
 <div class="listingblock">
@@ -753,19 +753,19 @@ existing <code>printf()</code> calls in place:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	int i;
+<pre>        int i;
 
-	...
+        ...
 
-	printf(Q_("Your args (there is %d):\n",
-		  "Your args (there are %d):\n",
-		  argc),
-	       argc);
-	for (i = 0; i &lt; argc; i++)
-		printf("%d: %s\n", i, argv[i]);
+        printf(Q_("Your args (there is %d):\n",
+                  "Your args (there are %d):\n",
+                  argc),
+               argc);
+        for (i = 0; i &lt; argc; i++)
+                printf("%d: %s\n", i, argv[i]);
 
-	printf(_("Your current working directory:\n&lt;top-level&gt;%s%s\n"),
-	       prefix ? "/" : "", prefix ? prefix : "");</pre>
+        printf(_("Your current working directory:\n&lt;top-level&gt;%s%s\n"),
+               prefix ? "/" : "", prefix ? prefix : "");</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -780,15 +780,15 @@ function body:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	const char *cfg_name;
+<pre>        const char *cfg_name;
 
 ...
 
-	git_config(git_default_config, NULL);
-	if (git_config_get_string_const("user.name", &amp;cfg_name) &gt; 0)
-		printf(_("No name is found in config\n"));
-	else
-		printf(_("Your name: %s\n"), cfg_name);</pre>
+        git_config(git_default_config, NULL);
+        if (git_config_get_string_const("user.name", &amp;cfg_name) &gt; 0)
+                printf(_("No name is found in config\n"));
+        else
+                printf(_("Your name: %s\n"), cfg_name);</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -863,16 +863,16 @@ prepare it, and print its contents:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	struct wt_status status;
+<pre>        struct wt_status status;
 
 ...
 
-	wt_status_prepare(the_repository, &amp;status);
-	git_config(git_default_config, &amp;status);
+        wt_status_prepare(the_repository, &amp;status);
+        git_config(git_default_config, &amp;status);
 
 ...
 
-	printf(_("Your current branch: %s\n"), status.branch);</pre>
+        printf(_("Your current branch: %s\n"), status.branch);</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -911,17 +911,17 @@ the declarations and the logic, respectively.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	struct commit *c = NULL;
-	struct strbuf commitline = STRBUF_INIT;
+<pre>        struct commit *c = NULL;
+        struct strbuf commitline = STRBUF_INIT;
 
 ...
 
-	c = lookup_commit_reference_by_name("origin/master");
+        c = lookup_commit_reference_by_name("origin/master");
 
-	if (c != NULL) {
-		pp_commit_easy(CMIT_FMT_ONELINE, c, &amp;commitline);
-		printf(_("Current commit: %s\n"), commitline.buf);
-	}</pre>
+        if (c != NULL) {
+                pp_commit_easy(CMIT_FMT_ONELINE, c, &amp;commitline);
+                printf(_("Current commit: %s\n"), commitline.buf);
+        }</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1084,8 +1084,8 @@ strings and a <code>builtin_psuh_options</code> array.</p>
 <div class="listingblock">
 <div class="content">
 <pre>static const char * const psuh_usage[] = {
-	N_("git psuh [&lt;arg&gt;...]"),
-	NULL,
+        N_("git psuh [&lt;arg&gt;...]"),
+        NULL,
 };</pre>
 </div>
 </div>
@@ -1096,9 +1096,9 @@ explore <code>parse_options()</code> in more detail:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	struct option options[] = {
-		OPT_END()
-	};</pre>
+<pre>        struct option options[] = {
+                OPT_END()
+        };</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1107,7 +1107,7 @@ explore <code>parse_options()</code> in more detail:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>	argc = parse_options(argc, argv, prefix, options, psuh_usage, 0);</pre>
+<pre>        argc = parse_options(argc, argv, prefix, options, psuh_usage, 0);</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1199,8 +1199,8 @@ mention the right animal somewhere:</p>
 <div class="listingblock">
 <div class="content">
 <pre>test_expect_success 'runs correctly with no args and good output' '
-	git psuh &gt;actual &amp;&amp;
-	test_i18ngrep Pony actual
+        git psuh &gt;actual &amp;&amp;
+        test_i18ngrep Pony actual
 '</pre>
 </div>
 </div>
@@ -1722,8 +1722,8 @@ to the command:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git send-email --to=target@example.com
-		 --in-reply-to="&lt;foo.12345.author@example.com&gt;"
-		 psuh/v2*</pre>
+                 --in-reply-to="&lt;foo.12345.author@example.com&gt;"
+                 psuh/v2*</pre>
 </div>
 </div>
 </div>
@@ -1880,7 +1880,7 @@ should generate your diffs from <code>&lt;topic&gt;..&lt;mybranch&gt;</code> and
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-17 09:27:16 UTC
+Last updated 2019-11-06 13:43:55 UTC
 </div>
 </div>
 </body>
