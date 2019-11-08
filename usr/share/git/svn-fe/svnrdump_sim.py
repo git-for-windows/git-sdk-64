@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python2
 """
 Simulates svnrdump by replaying an existing dump from a file, taking care
 of the specified revision range.
