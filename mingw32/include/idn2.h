@@ -121,7 +121,7 @@ extern "C"
  * version number.  Used together with idn2_check_version() to verify
  * header file and run-time library consistency.
  */
-#define IDN2_VERSION "2.2.0"
+#define IDN2_VERSION "2.3.0"
 
 /**
  * IDN2_VERSION_NUMBER
@@ -132,7 +132,7 @@ extern "C"
  * digits are used to enumerate development snapshots, but for all
  * public releases they will be 0000.
  */
-#define IDN2_VERSION_NUMBER 0x02020000
+#define IDN2_VERSION_NUMBER 0x02030000
 
 /**
  * IDN2_VERSION_MAJOR
@@ -148,7 +148,7 @@ extern "C"
  * Pre-processor symbol for the minor version number (decimal).
  * The version scheme is major.minor.patchlevel.
  */
-#define IDN2_VERSION_MINOR 2
+#define IDN2_VERSION_MINOR 3
 
 /**
  * IDN2_VERSION_PATCH
