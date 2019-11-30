@@ -132,7 +132,15 @@ sdk () {
 	# for building
 	makepkg|makepkg-mingw)
 		cmd=$1; shift
+		WITHOUT_PDBS="$(! grep -q WITHOUT_PDBS PKGBUILD || sdk find_mspdb_dll || echo true)" \
 		MAKEFLAGS=${MAKEFLAGS:--j$(nproc)} $cmd --syncdeps --noconfirm --skipchecksums --skippgpcheck "$@"
+		;;
+	find_mspdb_dll)
+		for v in 140 120 110 100 80
+		do
+			type -p mspdb$v.dll 2>/dev/null && return 0
+		done
+		return 1
 		;;
 	# here start the commands
 	init-lazy)
@@ -291,7 +299,8 @@ sdk () {
 			sdk cd "$2" ||
 			return $?
 
-			if test refs/heads/makepkg = "$(git symbolic-ref HEAD)" &&
+			if test refs/heads/makepkg = \
+				"$(git symbolic-ref HEAD 2>/dev/null)" &&
 				{ git -C diff-files --quiet &&
 				  git -C diff-index --quiet HEAD ||
 				  test ! -s .git/index; }
@@ -303,9 +312,9 @@ sdk () {
 			fi
 
 			# Build the current branch
-			uname_m="$(uname -m)" &&
-			cd "../build-$uname_m-pc-msys/$uname_m-pc-msys/winsup/cygwin" &&
-			make -j$(nproc)
+			(uname_m="$(uname -m)" &&
+			 cd "../build-$uname_m-pc-msys/$uname_m-pc-msys/winsup/cygwin" &&
+			 make -j$(nproc))
 			return $?
 			;;
 		*)

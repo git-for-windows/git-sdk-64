@@ -634,7 +634,10 @@ pkd:0:1024:B665B1435F4C2 .... FF26ABB:
     This indicates the length of the plaintext that is about to be
     written.  Note that if the plaintext packet has partial length
     encoding it is not possible to know the length ahead of time.  In
-    that case, this status tag does not appear.
+    that case, this status tag does not appear.  The length is only
+    exact for binary formats; other formats ('t', 'u') may do post
+    processing like line ending conversion so that the actual number
+    of bytes written may be differ.
 
 *** ATTRIBUTE <arguments>
     The list or arguments are:
@@ -1043,10 +1046,14 @@ pkd:0:1024:B665B1435F4C2 .... FF26ABB:
     numerical error code and an underscore; e.g.: "151011327_EOF".
 *** WARNING <location> <error code> [<text>]
     This is a generic warning status message, it might be followed by
-    error location specific data. <error code> and <location>
-    should not contain spaces.  The error code is a either a string
-    commencing with a letter or such a string prefixed with a
-    numerical error code and an underscore; e.g.: "151011327_EOF".
+    error location specific data. <location> and <error code> may not
+    contain spaces.  The <location> may be used to indicate a class of
+    warnings.  The error code is a either a string commencing with a
+    letter or such a string prefixed with a numerical error code and
+    an underscore; e.g.: "151011327_EOF".
+*** NOTE <location> <error code> [<text>]
+    This is a generic info status message the same syntax as for
+    WARNING messages is used.
 *** SUCCESS [<location>]
     Positive confirmation that an operation succeeded.  It is used
     similar to ISO-C's EXIT_SUCCESS.  <location> is optional but if
@@ -1566,6 +1573,7 @@ Description of some debug flags:
    | ecc/*   | 11 | ECC (set your own capabilities) |
    | ecc/e   | 12 | ECC (encrypt only)              |
    | keygrip | 13 | Existing key                    |
+   | cardkey | 14 | Existing key from card          |
 
    If one of the "foo/*" names are used a "keygen.flags" prompt needs
    to be answered as well.  Instead of toggling the predefined flags,
