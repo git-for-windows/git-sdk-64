@@ -50,6 +50,14 @@
 #endif
 #endif
 
+#ifdef __GNUC__
+# define __LIBTASN1_CONST__  __attribute__((const))
+# define __LIBTASN1_PURE__  __attribute__((pure))
+#else
+# define __LIBTASN1_CONST__
+# define __LIBTASN1_PURE__
+#endif
+
 #include <sys/types.h>
 #include <time.h>
 #include <stdio.h>		/* for FILE* */
@@ -64,7 +72,7 @@ extern "C"
  *
  * Version of the library as a string.
  */
-#define ASN1_VERSION "4.14"
+#define ASN1_VERSION "4.15.0"
 
 /**
  * ASN1_VERSION_MAJOR:
@@ -78,7 +86,7 @@ extern "C"
  *
  * Minor version number of the library.
  */
-#define ASN1_VERSION_MINOR 14
+#define ASN1_VERSION_MINOR 15
 
 /**
  * ASN1_VERSION_PATCH:
@@ -92,7 +100,7 @@ extern "C"
  *
  * Version number of the library as a number.
  */
-#define ASN1_VERSION_NUMBER 0x040e00
+#define ASN1_VERSION_NUMBER 0x040f00
 
 
 #if defined __GNUC__ && !defined ASN1_INTERNAL_BUILD
@@ -400,8 +408,10 @@ extern ASN1_API const char *asn1_find_structure_from_oid (asn1_node_const
 							    const char
 							    *oidValue);
 
+__LIBTASN1_PURE__
 extern ASN1_API const char *asn1_check_version (const char *req_version);
 
+__LIBTASN1_PURE__
 extern ASN1_API const char *asn1_strerror (int error);
 
 extern ASN1_API void asn1_perror (int error);

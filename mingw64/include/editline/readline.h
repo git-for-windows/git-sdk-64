@@ -46,6 +46,10 @@ these defines may be changed
 */
 #define DEFAULT_HISTORY_SIZE    200  /* default number of history entries */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef char **rl_completion_func_t(const char *, int, int);
 typedef char *rl_compentry_func_t(const char *, int);
 typedef void rl_compentryfree_func_t(void *);
