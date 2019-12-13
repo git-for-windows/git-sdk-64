@@ -25,6 +25,34 @@ _screen()
     local cur prev words cword
     _init_completion || return
 
+    if ((cword == 1)); then
+        if [[ $cur == /dev* ]]; then
+            COMPREPLY=( $(compgen -W "$(shopt -s nullglob; printf '%s\n' \
+                /dev/serial/by-id/* /dev/ttyUSB* /dev/ttyACM* 2>/dev/null)" \
+                -- "$cur") )
+            return
+        fi
+        if [[ $cur == //* ]]; then
+            COMPREPLY=( $(compgen -W '//telnet' -- "$cur") )
+            return
+        fi
+    fi
+
+    case ${words[1]} in
+        /dev*)
+            if ((cword == 2)); then
+                COMPREPLY=( $(compgen -W '110 300 600 1200 2400 4800 9600 \
+                14400 19200 38400 57600 115200 128000 256000' -- "$cur") )
+                # TODO more, comma separated options
+            fi
+            return
+            ;;
+        //telnet)
+            ((cword == 2)) && _known_hosts_real -- "$cur"
+            return
+            ;;
+    esac
+
     if ((cword > 2)); then
         case ${words[cword-2]} in
             -*[dD])
@@ -84,9 +112,7 @@ _screen()
     esac
 
     if [[ "$cur" == -* ]]; then
-        COMPREPLY=( $(compgen -W '-a -A -c -d -D -e -f -fn -fa -h -i -ln -list
-            -L -m -O -p -q -r -R -s -S -t -T -U -v -wipe -x -X --help
-            --version' -- "$cur") )
+        COMPREPLY=( $(compgen -W '$(_parse_help "$1")' -- "$cur") )
     fi
 } &&
 complete -F _screen screen

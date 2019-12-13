@@ -2,7 +2,7 @@ package HTTP::Cookies::Microsoft;
 
 use strict;
 
-our $VERSION = '6.05';
+our $VERSION = '6.08';
 
 require HTTP::Cookies;
 our @ISA=qw(HTTP::Cookies);
@@ -244,7 +244,7 @@ HTTP::Cookies::Microsoft - Access to Microsoft cookies files
 
 =head1 VERSION
 
-version 6.05
+version 6.08
 
 =head1 SYNOPSIS
 
@@ -311,7 +311,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2002-2017 by Gisle Aas.
+This software is copyright (c) 2002-2019 by Gisle Aas.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

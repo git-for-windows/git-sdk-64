@@ -23,7 +23,7 @@
 #
 #   https://github.com/scop/bash-completion
 
-BASH_COMPLETION_VERSINFO=(2 9)
+BASH_COMPLETION_VERSINFO=(2 10)
 
 if [[ $- == *v* ]]; then
     BASH_COMPLETION_ORIGINAL_V_VALUE="-v"
@@ -99,6 +99,7 @@ _sysvdirs()
     [[ -d /etc/init.d ]] && sysvdirs+=( /etc/init.d )
     # Slackware uses /etc/rc.d
     [[ -f /etc/slackware-version ]] && sysvdirs=( /etc/rc.d )
+    return 0
 }
 
 # This function checks whether we have a given program on the system.
@@ -566,27 +567,36 @@ _filedir()
     _tilde "$cur" || return
 
     local -a toks
-    local x reset
+    local reset
 
-    reset=$(shopt -po noglob); set -o noglob
-    toks=( $(compgen -d -- "$cur") )
-    IFS=' '; $reset; IFS=$'\n'
-
-    if [[ "$1" != -d ]]; then
+    if [[ "$1" == -d ]]; then
+        reset=$(shopt -po noglob); set -o noglob
+        toks=( $(compgen -d -- "$cur") )
+        IFS=' '; $reset; IFS=$'\n'
+    else
         local quoted
         _quote_readline_by_ref "$cur" quoted
 
         # Munge xspec to contain uppercase version too
         # http://thread.gmane.org/gmane.comp.shells.bash.bugs/15294/focus=15306
-        local xspec=${1:+"!*.@($1|${1^^})"}
+        local xspec=${1:+"!*.@($1|${1^^})"} plusdirs=()
+
+        # Use plusdirs to get dir completions if we have a xspec; if we don't,
+        # there's no need, dirs come along with other completions. Don't use
+        # plusdirs quite yet if fallback is in use though, in order to not ruin
+        # the fallback condition with the "plus" dirs.
+        local opts=( -f -X "$xspec" )
+        [[ $xspec ]] && plusdirs=(-o plusdirs)
+        [[ ${COMP_FILEDIR_FALLBACK-} ]] || opts+=( "${plusdirs[@]}" )
+
         reset=$(shopt -po noglob); set -o noglob
-        toks+=( $(compgen -f -X "$xspec" -- $quoted) )
+        toks+=( $(compgen "${opts[@]}" -- $quoted) )
         IFS=' '; $reset; IFS=$'\n'
 
         # Try without filter if it failed to produce anything and configured to
         [[ -n ${COMP_FILEDIR_FALLBACK:-} && -n "$1" && ${#toks[@]} -lt 1 ]] && {
             reset=$(shopt -po noglob); set -o noglob
-            toks+=( $(compgen -f -- $quoted) )
+            toks+=( $(compgen -f "${plusdirs[@]}" -- $quoted) )
             IFS=' '; $reset; IFS=$'\n'
         }
     fi
@@ -673,6 +683,15 @@ _variables()
                     fi
                     COMPREPLY[i]=${COMPREPLY[i]#/usr/share/zoneinfo/}
                 done
+                return 0
+                ;;
+            TERM)
+                _terms
+                return 0
+                ;;
+            LANG|LC_*)
+                COMPREPLY=( $(compgen -W '$(locale -a 2>/dev/null)' \
+                    -- "$cur" ) )
                 return 0
                 ;;
         esac
@@ -1079,23 +1098,46 @@ _pnames()
 } ||
 _pnames()
 {
+    local -a procs
     if [[ "$1" == -s ]]; then
-        COMPREPLY=( $(compgen -X '<defunct>' \
-            -W '$(command ps axo comm | command sed -e 1d)' -- "$cur") )
+        procs=( $(command ps axo comm | command sed -e 1d) )
     else
-        # FIXME: completes "[kblockd/0]" to "0". Previously it was completed
-        # to "kblockd" which isn't correct either. "kblockd/0" would be
-        # arguably most correct, but killall from psmisc 22 treats arguments
-        # containing "/" specially unless -r is given so that wouldn't quite
-        # work either. Perhaps it'd be best to not complete these to anything
-        # for now.
-        COMPREPLY=( $(compgen -X '<defunct>' -W '$(command ps axo command= | command sed -e \
-            "s/ .*//" -e \
-            "s:.*/::" -e \
-            "s/:$//" -e \
-            "s/^[[(-]//" -e \
-            "s/[])]$//" | sort -u)' -- "$cur") )
+        local line i=-1 OIFS=$IFS
+        IFS=$'\n'
+        local -a psout=( $(command ps axo command=) )
+        IFS=$OIFS
+        for line in "${psout[@]}"; do
+            if [[ $i -eq -1 ]]; then
+                # First line, see if it has COMMAND column header. For example
+                # the busybox ps does that, i.e. doesn't respect axo command=
+                if [[ $line =~ ^(.*[[:space:]])COMMAND([[:space:]]|$) ]]; then
+                    # It does; store its index.
+                    i=${#BASH_REMATCH[1]}
+                else
+                    # Nope, fall through to "regular axo command=" parsing.
+                    break
+                fi
+            else
+                #
+                line=${line:$i}   # take command starting from found index
+                line=${line%% *}  # trim arguments
+                procs+=( $line )
+            fi
+        done
+        if [[ $i -eq -1 ]]; then
+            # Regular axo command= parsing
+            for line in "${psout[@]}"; do
+                if [[ $line =~ ^[[(](.+)[])]$ ]]; then
+                    procs+=( ${BASH_REMATCH[1]} )
+                else
+                    line=${line%% *}       # trim arguments
+                    line=${line##@(*/|-)}  # trim leading path and -
+                    procs+=( $line )
+                fi
+            done
+        fi
     fi
+    COMPREPLY=( $(compgen -X "<defunct>" -W '${procs[@]}' -- "$cur" ) )
 }
 
 # This function completes on user IDs
@@ -1412,11 +1454,12 @@ _dvd_devices()
 # TERM environment variable values
 _terms()
 {
-    COMPREPLY+=( $(compgen -W \
-        "$(command sed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap \
-           2>/dev/null)" -- "$cur") )
-    COMPREPLY+=( $(compgen -W "$({ toe -a 2>/dev/null || toe 2>/dev/null; } \
-        | awk '{ print $1 }' | sort -u)" -- "$cur") )
+    COMPREPLY+=( $(compgen -W "$({ \
+        command sed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap;
+        { toe -a || toe; } | awk '{ print $1 }';
+        find /{etc,lib,usr/lib,usr/share}/terminfo/? -type f -maxdepth 1 \
+            | awk -F/ '{ print $NF }';
+    } 2>/dev/null)" -- "$cur") )
 }
 
 # a little help for FreeBSD ports users
@@ -1977,7 +2020,7 @@ _install_xspec()
 }
 # bzcmp, bzdiff, bz*grep, bzless, bzmore intentionally not here, see Debian: #455510
 _install_xspec '!*.?(t)bz?(2)' bunzip2 bzcat pbunzip2 pbzcat lbunzip2 lbzcat
-_install_xspec '!*.@(zip|[egjswx]ar|exe|pk3|wsz|zargo|xpi|s[tx][cdiw]|sx[gm]|o[dt][tspgfc]|od[bm]|oxt|epub|apk|ipa|do[ct][xm]|p[op]t[mx]|xl[st][xm]|pyz|whl)' unzip zipinfo
+_install_xspec '!*.@(zip|[egjswx]ar|exe|pk3|wsz|zargo|xpi|s[tx][cdiw]|sx[gm]|o[dt][tspgfc]|od[bm]|oxt|epub|apk|aab|ipa|do[ct][xm]|p[op]t[mx]|xl[st][xm]|pyz|whl)' unzip zipinfo
 _install_xspec '*.Z' compress znew
 # zcmp, zdiff, z*grep, zless, zmore intentionally not here, see Debian: #455510
 _install_xspec '!*.@(Z|[gGd]z|t[ag]z)' gunzip zcat

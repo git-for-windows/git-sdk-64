@@ -11,7 +11,7 @@ package LWP::Debug::TraceHTTP;
 use strict;
 use base 'LWP::Protocol::http';
 
-our $VERSION = '6.41';
+our $VERSION = '6.43';
 
 package # hide from PAUSE
     LWP::Debug::TraceHTTP::Socket;

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- Created by GNU Texinfo 6.6, http://www.gnu.org/software/texinfo/ -->
+<!-- Created by GNU Texinfo 6.7, http://www.gnu.org/software/texinfo/ -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>nano</title>
@@ -12,7 +12,6 @@
 <meta name="Generator" content="makeinfo">
 <link href="#Top" rel="start" title="Top">
 <link href="#SEC_Contents" rel="contents" title="Table of Contents">
-<link href="dir.html#Top" rel="up" title="(dir)">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
@@ -46,7 +45,7 @@ ul.no-bullet {list-style: none}
 
 
 <span id="Top"></span><span id="SEC_Top"></span>
-<p>This manual documents the GNU <code>nano</code> editor, version 4.5.
+<p>This manual documents the GNU <code>nano</code> editor, version 4.6.
 </p>
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Introduction" accesskey="1">Introduction</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
@@ -136,6 +135,7 @@ you will rarely need to specify a line number.
 will read data from standard input.  This means you can pipe the output of
 a command straight into a buffer, and then edit it.
 </p>
+
 <hr>
 <span id="Command_002dline-Options"></span><span id="Command_002dline-Options-1"></span><h2 class="chapter">3 Command-line Options</h2>
 
@@ -422,7 +422,8 @@ The default value is <tt>-8</tt>.
 <code>nano</code> uses the command specified in the <code>SPELL</code> environment
 variable.  If <code>SPELL</code> is not set, and <samp>--speller</samp> is
 not specified either, then <code>nano</code> uses its own interactive spell
-corrector, which requires the GNU <code>spell</code> program to be installed.
+corrector, which requires either <code>hunspell</code> or GNU <code>spell</code>
+to be installed.
 </p>
 </dd>
 <dt><samp>-t</samp></dt>
@@ -646,6 +647,7 @@ is running.
 terminal emulator, not on a Linux console (VT), because the latter does
 not by default distinguish modified from unmodified arrow keys.
 </p>
+
 <hr>
 <span id="Built_002din-Help"></span><span id="Built_002din-Help-1"></span><h2 class="chapter">5 Built-in Help</h2>
 
@@ -917,8 +919,7 @@ cursor, set the mark (with a double click), or execute shortcuts.
 </p>
 </dd>
 <dt><code>set nopauses</code></dt>
-<dd><p>Don&rsquo;t pause between warnings at startup.  This means that only
-the last one will be visible (when there are multiple ones).
+<dd><p>Obsolete option.  Ignored.
 </p>
 </dd>
 <dt><code>set nowrap</code></dt>
@@ -1153,6 +1154,13 @@ file, to determine whether this syntax should be used for it.
 on the system and will be silently ignored otherwise.)
 </p>
 </dd>
+<dt><code>formatter <var>program</var> [<var>arg</var> &hellip;]</code></dt>
+<dd><p>Run the given <var>program</var> on the full contents of the current buffer.
+(The current buffer is written out to a temporary file, the program is
+run on it, and then the temporary file is read back in, replacing the
+contents of the buffer.)
+</p>
+</dd>
 <dt><code>linter <var>program</var> [<var>arg</var> &hellip;]</code></dt>
 <dd><p>Use the given <var>program</var> to do a syntax check on the current buffer.
 </p>
@@ -1187,6 +1195,9 @@ stronger highlight.
 If your terminal supports transparency, not specifying a &quot;bgcolor&quot;
 tells <code>nano</code> to attempt to use a transparent background.
 </p>
+<p>All coloring commands are applied in the order in which they are specified,
+which means that later commands can recolor stuff that was colored earlier.
+</p>
 </dd>
 <dt><code>icolor <var>fgcolor</var>,<var>bgcolor</var> &quot;<var>regex</var>&quot; &hellip;</code></dt>
 <dd><p>Same as above, except that the matching is case insensitive.
@@ -1214,29 +1225,13 @@ to <code>icolor</code>.
 <dt><code>extendsyntax <var>name</var> <var>command</var> [<var>arg</var> &hellip;]</code></dt>
 <dd><p>Extend the syntax previously defined as &quot;<var>name</var>&quot; with another <var>command</var>.
 This allows you to add a new <code>color</code>, <code>icolor</code>, <code>header</code>,
-<code>magic</code>, <code>comment</code>, or <code>linter</code> command to an already
+<code>magic</code>, <code>comment</code>, <code>linter</code>, or <code>formatter</code> command to an already
 defined syntax &mdash; useful when you want to slightly improve a syntax defined
 in one of the system-installed files (which normally are not writable).
 </p>
 </dd>
 </dl>
 
-<p>Note: the <code>formatter</code> command has been removed.  It was superseded by
-a more general mechanism: the filtering of buffer or marked text through
-an external command.  Such filtering is done by typing <code>^R^X</code> and then
-preceding your formatter command with the pipe symbol (<code>|</code>).  It has
-the added advantage that the operation can be undone.
-</p>
-<p>If you use such a formatting command regularly, you could assign the relevant
-series of keystrokes to a single key in your nanorc:
-</p>
-<div class="example">
-<pre class="example">   bind  M-F  &quot;^R^X|yourformatcommand^M&quot;  main
-</pre></div>
-
-<p>(Note that the <tt class="key">^R</tt>, <tt class="key">^X</tt>, and <tt class="key">^M</tt> are each a single, literal
-control character.  You can enter them by preceding each with <tt class="key">M-V</tt>.)
-</p>
 <hr>
 <span id="Rebinding-Keys"></span><span id="Rebinding-Keys-1"></span><h3 class="section">7.3 Rebinding Keys</h3>
 
@@ -1246,7 +1241,7 @@ nanorc file:
 <dl compact="compact">
 <dt><code>bind key function menu</code></dt>
 <dd><p>Rebinds <code>key</code> to <code>function</code> in the context of <code>menu</code>
-(or in all menus where the function exists by using <code>all</code>).
+(or in all menus where the function exists when <code>all</code> is used).
 </p>
 </dd>
 <dt><code>bind key &quot;string&quot; menu</code></dt>
@@ -1259,7 +1254,7 @@ with <kbd>M-V</kbd>.)
 </dd>
 <dt><code>unbind key menu</code></dt>
 <dd><p>Unbinds <code>key</code> from <code>menu</code>
-(or from all menus where it exists by using <code>all</code>).
+(or from all menus where the key exists when <code>all</code> is used).
 </p>
 </dd>
 </dl>
@@ -1268,19 +1263,26 @@ with <kbd>M-V</kbd>.)
 <p>The format of <code>key</code> should be one of:
 </p>
 <ul class="no-bullet">
-<li><!-- /@w --> <code>^</code>&nbsp; followed by a Latin letter, by one of several ASCII characters
-(@, ], \, ^, or _), or by the word &quot;Space&quot;.
+<li><!-- /@w --> <code>^<var>X</var></code> &mdash;&mdash; where <var>X</var> is a Latin letter, or one of several
+ASCII characters (@, ], \, ^, _), or the word &quot;Space&quot;.
 Example: <code>^C</code>.
 
-</li><li><!-- /@w --> <code>M-</code>&nbsp; followed by any ASCII character except [, or by the word &quot;Space&quot;.
+</li><li><!-- /@w --> <code>M-<var>X</var></code> &mdash;&mdash; where <var>X</var> is any ASCII character except [,
+or the word &quot;Space&quot;.
 Example: <code>M-C</code>.
 
-</li><li><!-- /@w --> <code>F</code>&nbsp; followed by a numeric value from 1 to 16.
+</li><li><!-- /@w --> <code>F<var>n</var></code> &mdash;&mdash; where <var>n</var> is a numeric value from 1 to 24.
 Example: <code>F10</code>.
+(Often, <code>F13</code> to <code>F24</code> can be typed as <code>F1</code> to <code>F12</code>
+with Shift.)
 
-</li><li><!-- /@w --> the word &quot;Ins&quot; or the word &quot;Del&quot;.
+</li><li><!-- /@w --> <code>Ins</code> or <code>Del</code>.
 </li></ul>
 
+<p>Rebinding <code>^M</code> (Enter) or <code>^I</code> (Tab) is probably not a good idea.
+On some terminals it&rsquo;s not possible to rebind <code>^H</code> (unless <code>--raw</code>
+is used) because its keycode is identical to that of the Backspace key.
+</p>
 <br>
 <p>Valid names for the <code>function</code> to be bound are:
 </p>
@@ -1380,8 +1382,13 @@ Or, when it is set, unsets the mark.
 </p>
 </dd>
 <dt><code>speller</code></dt>
-<dd><p>Invokes a spell-checking program, either the default one, or the one
-defined by <samp>--speller</samp> or <code>set speller</code>.
+<dd><p>Invokes a spell-checking program, either the default <code>hunspell</code>
+or GNU <code>spell</code>, or the one defined by <samp>--speller</samp> or
+<code>set speller</code>.
+</p>
+</dd>
+<dt><code>formatter</code></dt>
+<dd><p>Invokes a full-buffer-processing program (if the active syntax defines one).
 </p>
 </dd>
 <dt><code>linter</code></dt>
@@ -1749,7 +1756,7 @@ position to the end of the line.
 </p>
 </dd>
 <dt><code>spell</code></dt>
-<dd><p>The interactive spell checker Yes/no menu.
+<dd><p>The menu of the integrated spell checker where the user can edit a misspelled word.
 </p>
 </dd>
 <dt><code>linter</code></dt>

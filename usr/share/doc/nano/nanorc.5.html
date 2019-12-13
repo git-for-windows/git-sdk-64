@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Fri Oct  4 11:51:06 2019 -->
+<!-- CreationDate: Fri Nov 29 11:17:32 2019 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -302,9 +302,7 @@ you to save non-POSIX text files.)</p>
 
 <p style="margin-left:11%;"><b>set nopauses</b></p>
 
-<p style="margin-left:15%;">Don&rsquo;t pause between
-warnings at startup. This means that only the last one will
-be visible (when there are multiple ones).</p>
+<p style="margin-left:15%;">Obsolete option. Ignored.</p>
 
 <p style="margin-left:11%;"><b>set nowrap</b></p>
 
@@ -425,8 +423,9 @@ easier viewing of very long lines.</p>
 &quot;</b><i>program</i> [<i>arg</i>...]<b>&quot;</b></p>
 
 <p style="margin-left:15%;">Use the given <i>program</i> to
-do spell checking and correcting, instead of the built-in
-corrector that calls <b>spell</b>.</p>
+do spell checking and correcting, instead of using the
+built-in corrector that calls <b>hunspell</b> or GNU
+<b>spell</b>.</p>
 
 <p style="margin-left:11%;"><b>set statuscolor</b>
 <i>fgcolor</i>,<i>bgcolor</i></p>
@@ -599,6 +598,15 @@ whether this syntax should be used for it. (This
 functionality only works when <b>libmagic</b> is installed
 on the system and will be silently ignored otherwise.)</p>
 
+<p style="margin-left:11%;"><b>formatter</b> <i>program</i>
+[<i>arg</i> ...]</p>
+
+<p style="margin-left:22%;">Run the given <i>program</i> on
+the full contents of the current buffer. (The current buffer
+is written out to a temporary file, the program is run on
+it, and then the temporary file is read back in, replacing
+the contents of the buffer.)</p>
+
 <p style="margin-left:11%;"><b>linter</b> <i>program</i>
 [<i>arg</i> ...]</p>
 
@@ -646,6 +654,11 @@ highlight. If your terminal supports transparency, not
 specifying a <i>bgcolor</i> tells <b>nano</b> to attempt to
 use a transparent background.</p>
 
+<p style="margin-left:22%; margin-top: 1em">All coloring
+commands are applied in the order in which they are
+specified, which means that later commands can recolor stuff
+that was colored earlier.</p>
+
 <p style="margin-left:11%;"><b>icolor</b>
 <i>fgcolor</i><b>,</b><i>bgcolor</i>
 <b>&quot;</b><i>regex</i><b>&quot;</b> ...</p>
@@ -689,32 +702,11 @@ command</i> [<i>arg</i> ...]</p>
 <p style="margin-left:22%;">Extend the syntax previously
 defined as <i>name</i> with another <i>command</i>. This
 allows adding a new <b>color</b>, <b>icolor</b>,
-<b>header</b>, <b>magic</b>, <b>comment</b>, or
-<b>linter</b> command to an already defined syntax -- useful
-when you want to slightly improve a syntax defined in one of
-the system-installed files (which normally are not
+<b>header</b>, <b>magic</b>, <b>comment</b>, <b>linter</b>,
+or <b>formatter</b> command to an already defined syntax --
+useful when you want to slightly improve a syntax defined in
+one of the system-installed files (which normally are not
 writable).</p>
-
-<p style="margin-left:11%; margin-top: 1em">Note: the
-<b>formatter</b> command has been removed. It was superseded
-by a more general mechanism: the filtering of buffer or
-marked text through an external command. Such filtering is
-done by typing <b>^R^X</b> and then preceding your formatter
-command with the pipe symbol (<b>|</b>). It has the added
-advantage that the operation can be undone.</p>
-
-<p style="margin-left:11%; margin-top: 1em">If you use such
-a formatting command regularly, you could assign the
-relevant series of keystrokes to a single key in your
-nanorc:</p>
-
-<p style="margin-left:22%; margin-top: 1em"><b>bind
-M&minus;F &quot;^R^X|yourformatcommand^M&quot; main</b></p>
-
-<p style="margin-left:11%; margin-top: 1em">(Note that the
-<b>^R</b>, <b>^X</b>, and <b>^M</b> are each a single,
-literal control character. You can enter them by preceding
-each with <b>M&minus;V</b>.)</p>
 
 <h2>REBINDING KEYS
 <a name="REBINDING KEYS"></a>
@@ -727,10 +719,10 @@ can be changed via the following three commands:</p>
 <p style="margin-left:15%;"><b>bind</b> <i>key function
 menu</i></p>
 
-<p style="margin-left:26%;">Rebinds the key <i>key</i> to a
-new function named <i>function</i> in the context of menu
-<i>menu</i> (or in all menus where the function exists by
-using <b>all</b>).</p>
+<p style="margin-left:26%;">Rebinds the given <i>key</i> to
+the given <i>function</i> in the given <i>menu</i> (or in
+all menus where the function exists when <b>all</b> is
+used).</p>
 
 <p style="margin-left:15%;"><b>bind</b> <i>key</i>
 <b>&quot;</b><i>string</i><b>&quot;</b> <i>menu</i></p>
@@ -745,9 +737,9 @@ its keystroke with <b>M&minus;V</b>.)</p>
 <p style="margin-left:15%;"><b>unbind</b> <i>key
 menu</i></p>
 
-<p style="margin-left:26%;">Unbinds the key <i>key</i> from
-the menu named <i>menu</i> (or from all menus where it
-exists by using <b>all</b>).</p>
+<p style="margin-left:26%;">Unbinds the given <i>key</i>
+from the given <i>menu</i> (or from all menus where the key
+exists when <b>all</b> is used).</p>
 
 <p style="margin-left:11%;">The format of <i>key</i> should
 be one of:</p>
@@ -756,48 +748,52 @@ be one of:</p>
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="15%"></td>
-<td width="3%">
+<td width="5%">
 
 
-<p><b>^</b></p></td>
-<td width="2%"></td>
-<td width="80%">
+<p><b>^</b><i>X</i></p></td>
+<td width="3%"></td>
+<td width="77%">
 
 
-<p>followed by a Latin letter, by one of several ASCII
-characters (@, ], \, ^, or _), or by the word
+<p>where <i>X</i> is a Latin letter, or one of several
+ASCII characters (@, ], \, ^, _), or the word
 &quot;Space&quot;. Example: ^C.</p></td></tr>
 <tr valign="top" align="left">
 <td width="15%"></td>
-<td width="3%">
+<td width="5%">
 
 
-<p><b>M&minus;</b></p></td>
-<td width="2%"></td>
-<td width="80%">
+<p><b>M&minus;</b><i>X</i></p></td>
+<td width="3%"></td>
+<td width="77%">
 
 
-<p>followed by any ASCII character except [, or by the word
-&quot;Space&quot;. Example: M&minus;C.</p></td></tr>
+<p>where <i>X</i> is any ASCII character except [, or the
+word &quot;Space&quot;. Example: M&minus;C.</p></td></tr>
 <tr valign="top" align="left">
 <td width="15%"></td>
-<td width="3%">
+<td width="5%">
 
 
-<p><b>F</b></p></td>
-<td width="2%"></td>
-<td width="80%">
+<p><b>F</b><i>N</i></p></td>
+<td width="3%"></td>
+<td width="77%">
 
 
-<p>followed by a numeric value from 1 to 16. Example:
-F10.</p> </td></tr>
+<p>where <i>N</i> is a numeric value from 1 to 24. Example:
+F10. (Often, <b>F13</b> to <b>F24</b> can be typed as
+<b>F1</b> to <b>F12</b> with Shift.)</p></td></tr>
 </table>
 
-<p style="margin-left:15%;">the word &quot;Ins&quot; or the
-word &quot;Del&quot;.</p>
+<p style="margin-left:15%;"><b>Ins</b> or <b>Del</b>.</p>
 
-<p style="margin-left:11%;">Valid <i>function</i> names to
-be bound are:</p>
+<p style="margin-left:11%; margin-top: 1em">Rebinding
+<b>^M</b> (Enter) or <b>^I</b> (Tab) is probably not a good
+idea. On some terminals it&rsquo;s not possible to rebind
+<b>^H</b> (unless <b>&minus;&minus;raw</b> is used) because
+its keycode is identical to that of the Backspace key. <br>
+Valid <i>function</i> names to be bound are:</p>
 
 <p style="margin-left:15%;"><b>help</b></p>
 
@@ -918,8 +914,15 @@ lines and characters in the current buffer.</p>
 <p style="margin-left:15%;"><b>speller</b></p>
 
 <p style="margin-left:18%;">Invokes a spell-checking
-program, either the default one, or the one defined by
+program, either the default <b>hunspell</b> or GNU
+<b>spell</b>, or the one defined by
 <b>&minus;&minus;speller</b> or <b>set speller</b>.</p>
+
+<p style="margin-left:15%;"><b>formatter</b></p>
+
+<p style="margin-left:18%;">Invokes a
+full-buffer-processing program (if the active syntax defines
+one).</p>
 
 <p style="margin-left:15%;"><b>linter</b></p>
 
@@ -1367,8 +1370,8 @@ from an external command, reached from the insert menu.</p>
 
 <p style="margin-left:15%;"><b>spell</b></p>
 
-<p style="margin-left:18%;">The interactive spell checker
-Yes/no menu.</p>
+<p style="margin-left:18%;">The menu of the integrated
+spell checker where the user can edit a misspelled word.</p>
 
 <p style="margin-left:15%;"><b>linter</b></p>
 

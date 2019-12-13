@@ -2,7 +2,7 @@ package HTTP::Cookies::Netscape;
 
 use strict;
 
-our $VERSION = '6.05';
+our $VERSION = '6.08';
 
 require HTTP::Cookies;
 our @ISA=qw(HTTP::Cookies);
@@ -36,8 +36,14 @@ sub load
 
 sub save
 {
-    my($self, $file) = @_;
-    $file ||= $self->{'file'} || return;
+    my $self = shift;
+    my %args = (
+        file => $self->{'file'},
+        ignore_discard => $self->{'ignore_discard'},
+        @_ == 1 ? ( file => $_[0] ) : @_
+    );
+    Carp::croak('Unexpected argument to save method') if keys %args > 2;
+    my $file = $args{'file'} || return;
 
     open(my $fh, '>', $file) || return;
 
@@ -53,7 +59,7 @@ EOT
     my $now = time - $HTTP::Cookies::EPOCH_OFFSET;
     $self->scan(sub {
         my ($version, $key, $val, $path, $domain, $port, $path_spec, $secure, $expires, $discard, $rest) = @_;
-        return if $discard && !$self->{ignore_discard};
+        return if $discard && !$args{'ignore_discard'};
         $expires = $expires ? $expires - $HTTP::Cookies::EPOCH_OFFSET : 0;
         return if $now > $expires;
         $secure = $secure ? "TRUE" : "FALSE";
@@ -75,7 +81,7 @@ HTTP::Cookies::Netscape - Access to Netscape cookies files
 
 =head1 VERSION
 
-version 6.05
+version 6.08
 
 =head1 SYNOPSIS
 
@@ -113,7 +119,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2002-2017 by Gisle Aas.
+This software is copyright (c) 2002-2019 by Gisle Aas.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

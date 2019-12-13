@@ -43,6 +43,10 @@ _curl()
             if [[ $cur == \@* ]]; then
                 cur=${cur:1}
                 _filedir
+                if [[ ${#COMPREPLY[@]} -eq 1 && -d "${COMPREPLY[0]}" ]]; then
+                    COMPREPLY[0]+=/
+                    compopt -o nospace
+                fi
                 COMPREPLY=( "${COMPREPLY[@]/#/@}" )
             fi
             return
@@ -72,7 +76,7 @@ _curl()
             return
             ;;
         --pubkey)
-            _filedir pub
+            _xfunc ssh _ssh_identityfile pub
             return
             ;;
         --stderr)
