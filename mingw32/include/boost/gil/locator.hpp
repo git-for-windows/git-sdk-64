@@ -261,6 +261,7 @@ public:
     memory_based_2d_locator(x_iterator xit, std::ptrdiff_t row_bytes) : _p(xit,row_bytes) {}
     template <typename X> memory_based_2d_locator(const memory_based_2d_locator<X>& pl) : _p(pl._p) {}
     memory_based_2d_locator(const memory_based_2d_locator& pl) : _p(pl._p) {}
+    memory_based_2d_locator& operator=(memory_based_2d_locator const& other) = default;
 
     bool                  operator==(const this_t& p)  const { return _p==p._p; }
 

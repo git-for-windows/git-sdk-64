@@ -21,7 +21,6 @@
 #include <boost/gil/io/typedefs.hpp>
 
 #include <boost/assert.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <type_traits>
 #include <vector>
@@ -99,7 +98,7 @@ public:
             io_error( "Image header was not read." );
         }
 
-        using is_read_and_convert_t = typename is_same
+        using is_read_and_convert_t = typename std::is_same
             <
                 ConversionPolicy,
                 detail::read_and_no_convert

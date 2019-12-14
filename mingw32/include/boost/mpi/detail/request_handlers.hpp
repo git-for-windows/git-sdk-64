@@ -273,7 +273,7 @@ struct serialized_array_data {
 
 }
 
-class request::legacy_handler : public request::handler {
+class BOOST_MPI_DECL request::legacy_handler : public request::handler {
 public:
   legacy_handler(communicator const& comm, int source, int tag);
   
@@ -478,7 +478,7 @@ public:
         // Resize our buffer and get ready to receive its data
         this->extra::m_values.resize(this->extra::m_count);
         BOOST_MPI_CHECK_RESULT(MPI_Irecv,
-                               (&(this->extra::m_values[0]), this->extra::m_values.size(),MPI_PACKED,
+                               (&(this->extra::m_values[0]), this->extra::m_values.size(), get_mpi_datatype<T>(),
                                 stat.source(), stat.tag(), 
                                 MPI_Comm(m_comm), m_requests + 1));
       } else
@@ -495,7 +495,7 @@ public:
   }
 };
 
-class request::trivial_handler : public request::handler {
+class BOOST_MPI_DECL request::trivial_handler : public request::handler {
 
 public:
   trivial_handler();

@@ -8,12 +8,13 @@
 #define BOOST_HISTOGRAM_INDEXED_HPP
 
 #include <array>
+#include <boost/config.hpp>
 #include <boost/histogram/axis/traits.hpp>
-#include <boost/histogram/detail/attribute.hpp>
 #include <boost/histogram/detail/axes.hpp>
 #include <boost/histogram/detail/iterator_adaptor.hpp>
 #include <boost/histogram/detail/operators.hpp>
 #include <boost/histogram/fwd.hpp>
+#include <iterator>
 #include <type_traits>
 #include <utility>
 
@@ -36,31 +37,33 @@ enum class coverage {
   input iterators exist, the other copies become invalid if one of them is incremented.
 */
 template <class Histogram>
-class BOOST_HISTOGRAM_NODISCARD indexed_range {
+class BOOST_ATTRIBUTE_NODISCARD indexed_range {
 private:
   using histogram_type = Histogram;
   static constexpr std::size_t buffer_size =
       detail::buffer_size<typename std::remove_const_t<histogram_type>::axes_type>::value;
 
 public:
-  using value_iterator = decltype(std::declval<histogram_type>().begin());
-  using value_reference = typename value_iterator::reference;
-  using value_type = typename value_iterator::value_type;
+  using value_iterator = std::conditional_t<std::is_const<histogram_type>::value,
+                                            typename histogram_type::const_iterator,
+                                            typename histogram_type::iterator>;
+  using value_reference = typename std::iterator_traits<value_iterator>::reference;
+  using value_type = typename std::iterator_traits<value_iterator>::value_type;
 
   class iterator;
   using range_iterator = iterator; ///< deprecated
 
-  /** Pointer-like class to access value and index of current cell.
+  /** Lightweight view to access value and index of current cell.
 
-    Its methods provide access to the current indices and bins and it acts like a pointer
-    to the cell value. To interoperate with the algorithms of the standard library, the
-    accessor is implicitly convertible to a cell value. Assignments and comparisons
-    are passed through to the cell. The accessor is coupled to its parent
-    iterator. Moving the parent iterator forward also updates the linked
-    accessor. Accessors are not copyable. They cannot be stored in containers, but
-    range_iterators can be stored.
+    The methods provide access to the current cell indices and bins. It acts like a
+    pointer to the cell value, and in a limited way also like a reference. To interoperate
+    with the algorithms of the standard library, the accessor is implicitly convertible to
+    a cell value. Assignments and comparisons are passed through to the cell. An accessor
+    is coupled to its parent indexed_range::iterator. Moving the parent iterator
+    forward also updates the linked accessor. Accessors are not copyable. They cannot be
+    stored in containers, but indexed_range::iterator can be stored.
   */
-  class accessor : detail::mirrored<accessor, void> {
+  class BOOST_ATTRIBUTE_NODISCARD accessor : detail::mirrored<accessor, void> {
   public:
     /// Array-like view into the current multi-dimensional index.
     class index_view {
@@ -289,7 +292,7 @@ public:
     const auto clast = ca + begin_.indices_.hist_->rank() - 1;
     begin_.indices_.hist_->for_each_axis(
         [ca, clast, cov, &stride, this](const auto& a) mutable {
-          using opt = axis::traits::static_options<decltype(a)>;
+          using opt = axis::traits::static_options<std::decay_t<decltype(a)>>;
           constexpr int under = opt::test(axis::option::underflow);
           constexpr int over = opt::test(axis::option::overflow);
           const auto size = a.size();

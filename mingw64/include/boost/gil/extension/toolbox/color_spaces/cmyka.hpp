@@ -12,13 +12,12 @@
 #include <boost/gil/color_convert.hpp>
 #include <boost/gil/rgba.hpp>
 #include <boost/gil/typedefs.hpp>
-
-#include <boost/mpl/vector.hpp>
+#include <boost/gil/detail/mp11.hpp>
 
 namespace boost{ namespace gil {
 
 /// \ingroup ColorSpaceModel
-using cmyka_t = mpl::vector5<cyan_t, magenta_t, yellow_t, black_t, alpha_t>;
+using cmyka_t = mp11::mp_list<cyan_t, magenta_t, yellow_t, black_t, alpha_t>;
 
 /// \ingroup LayoutModel
 using cmyka_layout_t = layout<cmyka_t>;

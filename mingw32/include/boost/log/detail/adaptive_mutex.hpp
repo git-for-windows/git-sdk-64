@@ -44,6 +44,8 @@
 #if defined(__INTEL_COMPILER) || defined(_MSC_VER)
 #    if defined(__INTEL_COMPILER)
 #        define BOOST_LOG_COMPILER_BARRIER __memory_barrier()
+#    elif defined(__clang__) // clang-win also defines _MSC_VER
+#        define BOOST_LOG_COMPILER_BARRIER __atomic_signal_fence(__ATOMIC_SEQ_CST)
 #    else
 extern "C" void _ReadWriteBarrier(void);
 #        if defined(BOOST_MSVC)

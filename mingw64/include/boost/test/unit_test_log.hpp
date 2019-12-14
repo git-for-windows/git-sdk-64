@@ -245,7 +245,7 @@ BOOST_TEST_SINGLETON_INST( unit_test_log )
    (::boost::unit_test::unit_test_log                           \
         << ::boost::unit_test::log::begin(                      \
                 "boost.test framework",                         \
-                __LINE__ ))                                     \
+                0 ))                                     \
              ( ::boost::unit_test::log_messages )               \
     << BOOST_TEST_LAZY_MSG( M )                                 \
 /**/

@@ -117,7 +117,7 @@ namespace beast {
                 // `net::post` will be used to call the completion handler, otherwise
                 // the completion handler will be invoked directly.
 
-                this->invoke(is_continuation, ec, total_bytes_transferred_);
+                this->complete(is_continuation, ec, total_bytes_transferred_);
             }
         };
 
@@ -248,6 +248,10 @@ public:
 
     /// Move Constructor
     async_base(async_base&& other) = default;
+
+    virtual ~async_base() = default;
+    async_base(async_base const&) = delete;
+    async_base& operator=(async_base const&) = delete;
 
     /** The type of allocator associated with this object.
 

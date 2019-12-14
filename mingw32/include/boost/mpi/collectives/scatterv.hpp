@@ -101,7 +101,7 @@ scatterv(const communicator& comm, const T* in_values,
          T* out_values, int out_size, int root)
 {
   using detail::c_data;
-  scatterv_impl(comm, in_values, out_values, out_size, c_data(sizes), c_data(displs), 
+  detail::scatterv_impl(comm, in_values, out_values, out_size, c_data(sizes), c_data(displs), 
                 root, is_mpi_datatype<T>());
 }
 

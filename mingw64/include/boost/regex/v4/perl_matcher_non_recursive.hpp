@@ -67,7 +67,7 @@ struct saved_matched_paren : public saved_state
 {
    int index;
    sub_match<BidiIterator> sub;
-   saved_matched_paren(int i, const sub_match<BidiIterator>& s) : saved_state(1), index(i), sub(s){};
+   saved_matched_paren(int i, const sub_match<BidiIterator>& s) : saved_state(1), index(i), sub(s){}
 };
 
 template <class BidiIterator>
@@ -75,7 +75,7 @@ struct saved_position : public saved_state
 {
    const re_syntax_base* pstate;
    BidiIterator position;
-   saved_position(const re_syntax_base* ps, BidiIterator pos, int i) : saved_state(i), pstate(ps), position(pos){};
+   saved_position(const re_syntax_base* ps, BidiIterator pos, int i) : saved_state(i), pstate(ps), position(pos){}
 };
 
 template <class BidiIterator>
@@ -83,7 +83,7 @@ struct saved_assertion : public saved_position<BidiIterator>
 {
    bool positive;
    saved_assertion(bool p, const re_syntax_base* ps, BidiIterator pos) 
-      : saved_position<BidiIterator>(ps, pos, saved_type_assertion), positive(p){};
+      : saved_position<BidiIterator>(ps, pos, saved_type_assertion), positive(p){}
 };
 
 template <class BidiIterator>

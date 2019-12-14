@@ -8,14 +8,14 @@
 #define BOOST_HISTOGRAM_STORAGE_ADAPTOR_HPP
 
 #include <algorithm>
-#include <boost/histogram/detail/cat.hpp>
+#include <boost/core/nvp.hpp>
+#include <boost/histogram/detail/array_wrapper.hpp>
 #include <boost/histogram/detail/detect.hpp>
 #include <boost/histogram/detail/iterator_adaptor.hpp>
 #include <boost/histogram/detail/safe_comparison.hpp>
 #include <boost/histogram/fwd.hpp>
 #include <boost/mp11/utility.hpp>
 #include <boost/throw_exception.hpp>
-#include <iosfwd>
 #include <stdexcept>
 #include <type_traits>
 
@@ -55,9 +55,14 @@ struct vector_impl : T {
     using value_type = typename T::value_type;
     const auto old_size = T::size();
     T::resize(n, value_type());
-    std::fill_n(T::begin(), std::min(n, old_size), value_type());
+    std::fill_n(T::begin(), (std::min)(n, old_size), value_type());
   }
-}; // namespace detail
+
+  template <class Archive>
+  void serialize(Archive& ar, unsigned /* version */) {
+    ar& make_nvp("vector", static_cast<T&>(*this));
+  }
+};
 
 template <class T>
 struct array_impl : T {
@@ -84,20 +89,19 @@ struct array_impl : T {
 
   template <class U, class = requires_iterable<U>>
   array_impl& operator=(const U& u) {
+    if (u.size() > T::max_size()) // for std::arra
+      BOOST_THROW_EXCEPTION(std::length_error("argument size exceeds maximum capacity"));
     size_ = u.size();
-    if (size_ > T::max_size()) // for std::array
-      BOOST_THROW_EXCEPTION(std::length_error(
-          detail::cat("size ", size_, " exceeds maximum capacity ", T::max_size())));
-    auto it = T::begin();
-    for (auto&& x : u) *it++ = x;
+    using std::begin;
+    using std::end;
+    std::copy(begin(u), end(u), T::begin());
     return *this;
   }
 
   void reset(std::size_t n) {
     using value_type = typename T::value_type;
     if (n > T::max_size()) // for std::array
-      BOOST_THROW_EXCEPTION(std::length_error(
-          detail::cat("size ", n, " exceeds maximum capacity ", T::max_size())));
+      BOOST_THROW_EXCEPTION(std::length_error("argument size exceeds maximum capacity"));
     std::fill_n(T::begin(), n, value_type());
     size_ = n;
   }
@@ -106,6 +110,13 @@ struct array_impl : T {
   typename T::const_iterator end() const noexcept { return T::begin() + size_; }
 
   std::size_t size() const noexcept { return size_; }
+
+  template <class Archive>
+  void serialize(Archive& ar, unsigned /* version */) {
+    ar& make_nvp("size", size_);
+    auto w = detail::make_array_wrapper(T::data(), size_);
+    ar& make_nvp("array", w);
+  }
 
   std::size_t size_ = 0;
 };
@@ -315,6 +326,12 @@ struct map_impl : T {
 
   std::size_t size() const noexcept { return size_; }
 
+  template <class Archive>
+  void serialize(Archive& ar, unsigned /* version */) {
+    ar& make_nvp("size", size_);
+    ar& make_nvp("map", static_cast<T&>(*this));
+  }
+
   std::size_t size_ = 0;
 };
 
@@ -361,6 +378,11 @@ public:
     using std::begin;
     using std::end;
     return std::equal(this->begin(), this->end(), begin(u), end(u), detail::safe_equal{});
+  }
+
+  template <class Archive>
+  void serialize(Archive& ar, unsigned /* version */) {
+    ar& make_nvp("impl", static_cast<impl_type&>(*this));
   }
 
 private:

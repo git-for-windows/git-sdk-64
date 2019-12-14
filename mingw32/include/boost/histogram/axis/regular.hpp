@@ -8,13 +8,14 @@
 #define BOOST_HISTOGRAM_AXIS_REGULAR_HPP
 
 #include <boost/assert.hpp>
+#include <boost/core/nvp.hpp>
 #include <boost/histogram/axis/interval_view.hpp>
 #include <boost/histogram/axis/iterator.hpp>
+#include <boost/histogram/axis/metadata_base.hpp>
 #include <boost/histogram/axis/option.hpp>
-#include <boost/histogram/detail/compressed_pair.hpp>
 #include <boost/histogram/detail/convert_integer.hpp>
 #include <boost/histogram/detail/relaxed_equal.hpp>
-#include <boost/histogram/detail/replace_default.hpp>
+#include <boost/histogram/detail/replace_type.hpp>
 #include <boost/histogram/fwd.hpp>
 #include <boost/mp11/utility.hpp>
 #include <boost/throw_exception.hpp>
@@ -67,46 +68,55 @@ namespace transform {
 /// Identity transform for equidistant bins.
 struct id {
   /// Pass-through.
-  template <typename T>
+  template <class T>
   static T forward(T&& x) noexcept {
     return std::forward<T>(x);
   }
 
   /// Pass-through.
-  template <typename T>
+  template <class T>
   static T inverse(T&& x) noexcept {
     return std::forward<T>(x);
   }
+
+  template <class Archive>
+  void serialize(Archive&, unsigned /* version */) {}
 };
 
 /// Log transform for equidistant bins in log-space.
 struct log {
   /// Returns log(x) of external value x.
-  template <typename T>
+  template <class T>
   static T forward(T x) {
     return std::log(x);
   }
 
   /// Returns exp(x) for internal value x.
-  template <typename T>
+  template <class T>
   static T inverse(T x) {
     return std::exp(x);
   }
+
+  template <class Archive>
+  void serialize(Archive&, unsigned /* version */) {}
 };
 
 /// Sqrt transform for equidistant bins in sqrt-space.
 struct sqrt {
   /// Returns sqrt(x) of external value x.
-  template <typename T>
+  template <class T>
   static T forward(T x) {
     return std::sqrt(x);
   }
 
   /// Returns x^2 of internal value x.
-  template <typename T>
+  template <class T>
   static T inverse(T x) {
     return x * x;
   }
+
+  template <class Archive>
+  void serialize(Archive&, unsigned /* version */) {}
 };
 
 /// Pow transform for equidistant bins in pow-space.
@@ -118,25 +128,30 @@ struct pow {
   pow() = default;
 
   /// Returns pow(x, power) of external value x.
-  template <typename T>
+  template <class T>
   auto forward(T x) const {
     return std::pow(x, power);
   }
 
   /// Returns pow(x, 1/power) of external value x.
-  template <typename T>
+  template <class T>
   auto inverse(T x) const {
     return std::pow(x, 1.0 / power);
   }
 
   bool operator==(const pow& o) const noexcept { return power == o.power; }
+
+  template <class Archive>
+  void serialize(Archive& ar, unsigned /* version */) {
+    ar& make_nvp("power", power);
+  }
 };
 
 } // namespace transform
 
 #ifndef BOOST_HISTOGRAM_DOXYGEN_INVOKED
 // Type envelope to mark value as step size
-template <typename T>
+template <class T>
 struct step_type {
   T value;
 };
@@ -145,9 +160,9 @@ struct step_type {
 /**
   Helper function to mark argument as step size.
  */
-template <typename T>
-auto step(T&& t) {
-  return step_type<T&&>{std::forward<T>(t)};
+template <class T>
+step_type<T> step(T t) {
+  return step_type<T>{t};
 }
 
 /**
@@ -162,45 +177,32 @@ auto step(T&& t) {
  */
 template <class Value, class Transform, class MetaData, class Options>
 class regular : public iterator_mixin<regular<Value, Transform, MetaData, Options>>,
-                protected detail::replace_default<Transform, transform::id> {
+                protected detail::replace_default<Transform, transform::id>,
+                public metadata_base<MetaData> {
   using value_type = Value;
   using transform_type = detail::replace_default<Transform, transform::id>;
-  using metadata_type = detail::replace_default<MetaData, std::string>;
+  using metadata_type = typename metadata_base<MetaData>::metadata_type;
   using options_type =
       detail::replace_default<Options, decltype(option::underflow | option::overflow)>;
 
+  static_assert(std::is_nothrow_move_constructible<transform_type>::value,
+                "transform must be no-throw move constructible");
+  static_assert(std::is_nothrow_move_assignable<transform_type>::value,
+                "transform must be no-throw move assignable");
+
   using unit_type = detail::get_unit_type<value_type>;
   using internal_value_type = detail::get_scale_type<value_type>;
+
   static_assert(std::is_floating_point<internal_value_type>::value,
-                "variable axis requires floating point type");
+                "regular axis requires floating point type");
+
+  static_assert(
+      (!options_type::test(option::circular) && !options_type::test(option::growth)) ||
+          (options_type::test(option::circular) ^ options_type::test(option::growth)),
+      "circular and growth options are mutually exclusive");
 
 public:
   constexpr regular() = default;
-  regular(const regular&) = default;
-  regular& operator=(const regular&) = default;
-  regular(regular&& o) noexcept
-      : transform_type(std::move(o))
-      , size_meta_(std::move(o.size_meta_))
-      , min_(o.min_)
-      , delta_(o.delta_) {
-    static_assert(std::is_nothrow_move_constructible<transform_type>::value, "");
-    // std::string explicitly guarantees nothrow only in C++17
-    static_assert(std::is_same<metadata_type, std::string>::value ||
-                      std::is_nothrow_move_constructible<metadata_type>::value,
-                  "");
-  }
-  regular& operator=(regular&& o) noexcept {
-    static_assert(std::is_nothrow_move_assignable<transform_type>::value, "");
-    // std::string explicitly guarantees nothrow only in C++17
-    static_assert(std::is_same<metadata_type, std::string>::value ||
-                      std::is_nothrow_move_assignable<metadata_type>::value,
-                  "");
-    transform_type::operator=(std::move(o));
-    size_meta_ = std::move(o.size_meta_);
-    min_ = o.min_;
-    delta_ = o.delta_;
-    return *this;
-  }
 
   /** Construct n bins over real transformed range [start, stop).
    *
@@ -213,7 +215,8 @@ public:
   regular(transform_type trans, unsigned n, value_type start, value_type stop,
           metadata_type meta = {})
       : transform_type(std::move(trans))
-      , size_meta_(static_cast<index_type>(n), std::move(meta))
+      , metadata_base<MetaData>(std::move(meta))
+      , size_(static_cast<index_type>(n))
       , min_(this->forward(detail::get_scale(start)))
       , delta_(this->forward(detail::get_scale(stop)) - min_) {
     if (size() == 0) BOOST_THROW_EXCEPTION(std::invalid_argument("bins > 0 required"));
@@ -248,8 +251,8 @@ public:
    * (start + n * step).
    */
   template <class T>
-  regular(transform_type trans, const step_type<T>& step, value_type start,
-          value_type stop, metadata_type meta = {})
+  regular(transform_type trans, step_type<T> step, value_type start, value_type stop,
+          metadata_type meta = {})
       : regular(trans, static_cast<index_type>(std::abs(stop - start) / step.value),
                 start,
                 start + static_cast<index_type>(std::abs(stop - start) / step.value) *
@@ -268,8 +271,7 @@ public:
    * (start + n * step).
    */
   template <class T>
-  regular(const step_type<T>& step, value_type start, value_type stop,
-          metadata_type meta = {})
+  regular(step_type<T> step, value_type start, value_type stop, metadata_type meta = {})
       : regular({}, step, start, stop, std::move(meta)) {}
 
   /// Constructor used by algorithm::reduce to shrink and rebin (not for users).
@@ -318,7 +320,7 @@ public:
         const auto i = static_cast<axis::index_type>(std::floor(z * size()));
         min_ += i * (delta_ / size());
         delta_ = stop - min_;
-        size_meta_.first() -= i;
+        size_ -= i;
         return std::make_pair(0, -i);
       }
       // z is -infinity
@@ -330,7 +332,7 @@ public:
       const auto n = i - size() + 1;
       delta_ /= size();
       delta_ *= size() + n;
-      size_meta_.first() += n;
+      size_ += n;
       return std::make_pair(i, -n);
     }
     // z either infinite or NaN
@@ -356,19 +358,15 @@ public:
   }
 
   /// Returns the number of bins, without over- or underflow.
-  index_type size() const noexcept { return size_meta_.first(); }
+  index_type size() const noexcept { return size_; }
+
   /// Returns the options.
   static constexpr unsigned options() noexcept { return options_type::value; }
-  /// Returns reference to metadata.
-  metadata_type& metadata() noexcept { return size_meta_.second(); }
-  /// Returns reference to const metadata.
-  const metadata_type& metadata() const noexcept { return size_meta_.second(); }
 
   template <class V, class T, class M, class O>
   bool operator==(const regular<V, T, M, O>& o) const noexcept {
     return detail::relaxed_equal(transform(), o.transform()) && size() == o.size() &&
-           detail::relaxed_equal(metadata(), o.metadata()) && min_ == o.min_ &&
-           delta_ == o.delta_;
+           min_ == o.min_ && delta_ == o.delta_ && metadata_base<MetaData>::operator==(o);
   }
   template <class V, class T, class M, class O>
   bool operator!=(const regular<V, T, M, O>& o) const noexcept {
@@ -376,10 +374,16 @@ public:
   }
 
   template <class Archive>
-  void serialize(Archive&, unsigned);
+  void serialize(Archive& ar, unsigned /* version */) {
+    ar& make_nvp("transform", static_cast<transform_type&>(*this));
+    ar& make_nvp("size", size_);
+    ar& make_nvp("meta", this->metadata());
+    ar& make_nvp("min", min_);
+    ar& make_nvp("delta", delta_);
+  }
 
 private:
-  detail::compressed_pair<index_type, metadata_type> size_meta_{0};
+  index_type size_{0};
   internal_value_type min_{0}, delta_{1};
 
   template <class V, class T, class M, class O>
@@ -389,22 +393,21 @@ private:
 #if __cpp_deduction_guides >= 201606
 
 template <class T>
-regular(unsigned, T, T)->regular<detail::convert_integer<T, double>>;
-
-template <class T>
-regular(unsigned, T, T, const char*)->regular<detail::convert_integer<T, double>>;
+regular(unsigned, T, T)
+    ->regular<detail::convert_integer<T, double>, transform::id, null_type>;
 
 template <class T, class M>
-regular(unsigned, T, T, M)->regular<detail::convert_integer<T, double>, transform::id, M>;
+regular(unsigned, T, T, M)
+    ->regular<detail::convert_integer<T, double>, transform::id,
+              detail::replace_cstring<std::decay_t<M>>>;
 
-template <class Tr, class T>
-regular(Tr, unsigned, T, T)->regular<detail::convert_integer<T, double>, Tr>;
-
-template <class Tr, class T>
-regular(Tr, unsigned, T, T, const char*)->regular<detail::convert_integer<T, double>, Tr>;
+template <class Tr, class T, class = detail::requires_transform<Tr, T>>
+regular(Tr, unsigned, T, T)->regular<detail::convert_integer<T, double>, Tr, null_type>;
 
 template <class Tr, class T, class M>
-regular(Tr, unsigned, T, T, M)->regular<detail::convert_integer<T, double>, Tr, M>;
+regular(Tr, unsigned, T, T, M)
+    ->regular<detail::convert_integer<T, double>, Tr,
+              detail::replace_cstring<std::decay_t<M>>>;
 
 #endif
 

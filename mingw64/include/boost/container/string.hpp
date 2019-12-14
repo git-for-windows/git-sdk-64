@@ -712,7 +712,7 @@ class basic_string
       : base_t(a)
    {
       this->priv_terminate_string();
-      if(a == this->alloc()){
+      if(s.alloc() == this->alloc()){
          this->swap_data(s);
       }
       else{

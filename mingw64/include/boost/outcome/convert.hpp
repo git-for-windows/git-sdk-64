@@ -38,11 +38,18 @@ BOOST_OUTCOME_V2_NAMESPACE_EXPORT_BEGIN
 namespace convert
 {
 #if defined(__cpp_concepts)
-#if !defined(_MSC_VER) && !defined(__clang__) && __GNUC__ < 8
+#if !defined(_MSC_VER) && !defined(__clang__) && __GNUC__ < 9
 #define BOOST_OUTCOME_GCC6_CONCEPT_BOOL bool
 #else
 #define BOOST_OUTCOME_GCC6_CONCEPT_BOOL
 #endif
+  namespace detail
+  {
+    template <class T, class U> concept BOOST_OUTCOME_GCC6_CONCEPT_BOOL SameHelper = std::is_same<T, U>::value;
+    template <class T, class U> concept BOOST_OUTCOME_GCC6_CONCEPT_BOOL same_as = detail::SameHelper<T, U> &&detail::SameHelper<U, T>;
+  }  // namespace detail
+
+
   /* The `ValueOrNone` concept.
   \requires That `U::value_type` exists and that `std::declval<U>().has_value()` returns a `bool` and `std::declval<U>().value()` exists.
   */
@@ -51,7 +58,7 @@ namespace convert
     {
       a.has_value()
     }
-    ->bool;
+    ->detail::same_as<bool>;
     {a.value()};
   };
   /* The `ValueOrError` concept.
@@ -63,7 +70,7 @@ namespace convert
     {
       a.has_value()
     }
-    ->bool;
+    ->detail::same_as<bool>;
     {a.value()};
     {a.error()};
   };

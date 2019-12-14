@@ -29,6 +29,8 @@
 #include <boost/mpl/vector_c.hpp>
 #include <boost/mpl/transform.hpp>
 
+#include <type_traits>
+
 // Max number of cases in the cross-expension of binary operation for it to be reduced as unary
 #define GIL_BINARY_REDUCE_LIMIT 226
 
@@ -38,11 +40,11 @@ namespace boost { namespace mpl {
 
 ///////////////////////////////////////////////////////
 /// Mapping vector - represents the mapping of one type vector to another
-///  It is not a full-blown MPL Random Access Type sequence; just has at_c and size implemented
+///  It is not a full-blown Boost.MP11-compatible list; just has at_c and size implemented
 ///
-/// SrcTypes, DstTypes: MPL Random Access Type Sequences
+/// SrcTypes, DstTypes: Boost.MP11-compatible list
 ///
-/// Implements size and at_c to behave as if this is an MPL vector of integers
+/// Implements size and at_c to behave as if this is an Boost.MP11-compatible list of integers
 ///////////////////////////////////////////////////////
 
 template <typename SrcTypes, typename DstTypes>
@@ -51,7 +53,7 @@ struct mapping_vector {};
 template <typename SrcTypes, typename DstTypes, long K>
 struct at_c<mapping_vector<SrcTypes,DstTypes>, K>
 {
-    static const std::size_t value=size<DstTypes>::value - order<DstTypes, typename gil::at_c<SrcTypes,K>::type>::type::value +1;
+    static const std::size_t value=size<DstTypes>::value - order<DstTypes, typename gil::at_c<SrcTypes,K>::type>::value +1;
     using type = size_t<value>;
 };
 
@@ -784,7 +786,7 @@ namespace detail {
     template <typename CC, typename V1, typename V2, bool AreBasic>
     struct reduce_views_basic<copy_and_convert_pixels_fn<CC>, V1, V2, AreBasic>
     {
-        using Same = is_same<typename V1::pixel_t, typename V2::pixel_t>;
+        using Same = std::is_same<typename V1::pixel_t, typename V2::pixel_t>;
 
         using CsR = reduce_color_space<typename V1::color_space_t::base>;
         using Cs1 = typename mpl::if_<Same, typename CsR::type, typename V1::color_space_t>::type;

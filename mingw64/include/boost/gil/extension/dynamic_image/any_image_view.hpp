@@ -12,36 +12,40 @@
 #include <boost/gil/image.hpp>
 #include <boost/gil/image_view.hpp>
 #include <boost/gil/point.hpp>
+#include <boost/gil/detail/mp11.hpp>
 
 #include <boost/variant.hpp>
 
 namespace boost { namespace gil {
 
-namespace detail {
-    template <typename View> struct get_const_t { using type = typename View::const_t; };
-    template <typename Views> struct views_get_const_t : public mpl::transform<Views, get_const_t<mpl::_1> > {};
-}
-
-template <typename View> struct dynamic_xy_step_transposed_type;
+template <typename View>
+struct dynamic_xy_step_transposed_type;
 
 namespace detail {
 
-     // works for both image_view and image
-    struct any_type_get_num_channels
-    {
-        using result_type = int;
-        template <typename T>
-        result_type operator()(const T&) const { return num_channels<T>::value; }
-    };
+template <typename View>
+struct get_const_t { using type = typename View::const_t; };
 
-    // works for both image_view and image
-    struct any_type_get_dimensions
-    {
-        using result_type = point<std::ptrdiff_t>;
-        template <typename T>
-        result_type operator()(const T& v) const { return v.dimensions(); }
-    };
-}
+template <typename Views>
+struct views_get_const_t : mp11::mp_transform<get_const_t, Views> {};
+
+// works for both image_view and image
+struct any_type_get_num_channels
+{
+    using result_type = int;
+    template <typename T>
+    result_type operator()(const T&) const { return num_channels<T>::value; }
+};
+
+// works for both image_view and image
+struct any_type_get_dimensions
+{
+    using result_type = point<std::ptrdiff_t>;
+    template <typename T>
+    result_type operator()(const T& v) const { return v.dimensions(); }
+};
+
+} // namespace detail
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS any_image_view
@@ -57,23 +61,47 @@ namespace detail {
 ///
 /// To perform an algorithm on any_image_view, put the algorithm in a function object and invoke it by calling \p apply_operation(runtime_view, algorithm_fn);
 ////////////////////////////////////////////////////////////////////////////////////////
-template <typename ImageViewTypes>
-class any_image_view : public make_variant_over<ImageViewTypes>::type {
-    using parent_t = typename make_variant_over<ImageViewTypes>::type;
+
+template <typename Views>
+class any_image_view : public make_variant_over<Views>::type
+{
+    using parent_t = typename make_variant_over<Views>::type;
 public:
-    using const_t = any_image_view<typename detail::views_get_const_t<ImageViewTypes>::type>;
+    using const_t = any_image_view<detail::views_get_const_t<Views>>;
     using x_coord_t = std::ptrdiff_t;
     using y_coord_t = std::ptrdiff_t;
     using point_t = point<std::ptrdiff_t>;
 
-    any_image_view()                                                          : parent_t() {}
-    template <typename T> explicit any_image_view(const T& obj)               : parent_t(obj) {}
-    any_image_view(const any_image_view& v)                                   : parent_t((const parent_t&)v)    {}
-    template <typename Types> any_image_view(const any_image_view<Types>& v)  : parent_t((const typename make_variant_over<Types>::type&)v)    {}
+    any_image_view() = default;
+    any_image_view(any_image_view const& view) : parent_t((parent_t const&)view) {}
 
-    template <typename T> any_image_view&     operator=(const T& obj)                   { parent_t::operator=(obj); return *this; }
-    any_image_view&                           operator=(const any_image_view& v)        { parent_t::operator=((const parent_t&)v); return *this;}
-    template <typename Types> any_image_view& operator=(const any_image_view<Types>& v) { parent_t::operator=((const typename make_variant_over<Types>::type&)v); return *this;}
+    template <typename View>
+    explicit any_image_view(View const& view) : parent_t(view) {}
+
+    template <typename OtherViews>
+    any_image_view(any_image_view<OtherViews> const& view)
+        : parent_t((typename make_variant_over<OtherViews>::type const&)view)
+    {}
+
+    any_image_view& operator=(any_image_view const& view)
+    {
+        parent_t::operator=((parent_t const&)view);
+        return *this;
+    }
+
+    template <typename View>
+    any_image_view& operator=(View const& view)
+    {
+        parent_t::operator=(view);
+        return *this;
+    }
+
+    template <typename OtherViews>
+    any_image_view& operator=(any_image_view<OtherViews> const& view)
+    {
+        parent_t::operator=((typename make_variant_over<OtherViews>::type const&)view);
+        return *this;
+    }
 
     std::size_t num_channels()  const { return apply_operation(*this, detail::any_type_get_num_channels()); }
     point_t     dimensions()    const { return apply_operation(*this, detail::any_type_get_dimensions()); }
@@ -85,32 +113,68 @@ public:
 //  HasDynamicXStepTypeConcept
 /////////////////////////////
 
-template <typename IVTypes>
-struct dynamic_x_step_type<any_image_view<IVTypes>>
+template <typename Views>
+struct dynamic_x_step_type<any_image_view<Views>>
 {
-    using type = any_image_view<typename mpl::transform<IVTypes, dynamic_x_step_type<mpl::_1>>::type>;
+private:
+    // FIXME: Remove class name injection with gil:: qualification
+    // Required as workaround for Boost.MP11 issue that treats unqualified metafunction
+    // in the class definition of the same name as the specialization (Peter Dimov):
+    //    invalid template argument for template parameter 'F', expected a class template
+    template <typename T>
+    using dynamic_step_view = typename gil::dynamic_x_step_type<T>::type;
+
+public:
+    using type = any_image_view<mp11::mp_transform<dynamic_step_view, Views>>;
 };
 
 /////////////////////////////
 //  HasDynamicYStepTypeConcept
 /////////////////////////////
 
-template <typename IVTypes>
-struct dynamic_y_step_type<any_image_view<IVTypes>>
+template <typename Views>
+struct dynamic_y_step_type<any_image_view<Views>>
 {
-    using type = any_image_view<typename mpl::transform<IVTypes, dynamic_y_step_type<mpl::_1>>::type>;
+private:
+    // FIXME: Remove class name injection with gil:: qualification
+    // Required as workaround for Boost.MP11 issue that treats unqualified metafunction
+    // in the class definition of the same name as the specialization (Peter Dimov):
+    //    invalid template argument for template parameter 'F', expected a class template
+    template <typename T>
+    using dynamic_step_view = typename gil::dynamic_y_step_type<T>::type;
+
+public:
+    using type = any_image_view<mp11::mp_transform<dynamic_step_view, Views>>;
 };
 
-template <typename IVTypes>
-struct dynamic_xy_step_type<any_image_view<IVTypes>>
+template <typename Views>
+struct dynamic_xy_step_type<any_image_view<Views>>
 {
-    using type = any_image_view<typename mpl::transform<IVTypes, dynamic_xy_step_type<mpl::_1>>::type>;
+private:
+    // FIXME: Remove class name injection with gil:: qualification
+    // Required as workaround for Boost.MP11 issue that treats unqualified metafunction
+    // in the class definition of the same name as the specialization (Peter Dimov):
+    //    invalid template argument for template parameter 'F', expected a class template
+    template <typename T>
+    using dynamic_step_view = typename gil::dynamic_xy_step_type<T>::type;
+
+public:
+    using type = any_image_view<mp11::mp_transform<dynamic_step_view, Views>>;
 };
 
-template <typename IVTypes>
-struct dynamic_xy_step_transposed_type<any_image_view<IVTypes>>
+template <typename Views>
+struct dynamic_xy_step_transposed_type<any_image_view<Views>>
 {
-    using type = any_image_view<typename mpl::transform<IVTypes, dynamic_xy_step_transposed_type<mpl::_1>>::type>;
+private:
+    // FIXME: Remove class name injection with gil:: qualification
+    // Required as workaround for Boost.MP11 issue that treats unqualified metafunction
+    // in the class definition of the same name as the specialization (Peter Dimov):
+    //    invalid template argument for template parameter 'F', expected a class template
+    template <typename T>
+    using dynamic_step_view = typename gil::dynamic_xy_step_type<T>::type;
+
+public:
+    using type = any_image_view<mp11::mp_transform<dynamic_step_view, Views>>;
 };
 
 }}  // namespace boost::gil

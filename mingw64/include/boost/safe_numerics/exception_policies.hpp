@@ -8,7 +8,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/mp11.hpp>
-
+#include <boost/config.hpp> // BOOST_NO_EXCEPTIONS
 #include "exception.hpp"
 
 namespace boost {
@@ -55,15 +55,19 @@ struct ignore_exception {
     constexpr ignore_exception(const safe_numerics_error &, const char * ){}
 };
 
+// emit compile time error if this is invoked.
+struct trap_exception {};
+
 // If an exceptional condition is detected at runtime throw the exception.
 struct throw_exception {
+    #ifndef BOOST_NO_EXCEPTIONS
     throw_exception(const safe_numerics_error & e, const char * message){
         throw std::system_error(std::error_code(e), message);
     }
+    #else
+    trap_exception(const safe_numerics_error & e, const char * message);
+    #endif
 };
-
-// emit compile time error if this is invoked.
-struct trap_exception {};
 
 // given an error code - return the action code which it corresponds to.
 constexpr safe_numerics_actions

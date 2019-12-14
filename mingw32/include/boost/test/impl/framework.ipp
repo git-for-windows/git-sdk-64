@@ -59,9 +59,7 @@
 #include <ctime>
 #include <numeric>
 #include <cmath>
-#ifdef BOOST_NO_CXX98_RANDOM_SHUFFLE
 #include <iterator>
-#endif
 
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std { using ::time; using ::srand; }
@@ -441,9 +439,7 @@ parse_filters( test_unit_id master_tu_id, test_unit_id_list& tu_to_enable, test_
 
 //____________________________________________________________________________//
 
-#ifdef BOOST_NO_CXX98_RANDOM_SHUFFLE
-
-// a poor man's implementation of random_shuffle
+// a poor man's implementation of random_shuffle, deprecated in C++11
 template< class RandomIt, class RandomFunc >
 void random_shuffle( RandomIt first, RandomIt last, RandomFunc &r )
 {
@@ -457,9 +453,6 @@ void random_shuffle( RandomIt first, RandomIt last, RandomFunc &r )
         }
     }
 }
-
-#endif
-
 
 // A simple handle for registering the global fixtures to the master test suite
 // without deleting an existing static object (the global fixture itself) when the program
@@ -673,8 +666,11 @@ public:
 
         execution_result result = unit_test_monitor_t::test_ok;
 
-        if( !tu.is_enabled() )
+        if( !tu.is_enabled() ) {
+            BOOST_TEST_FOREACH( test_observer*, to, m_observers )
+                to->test_unit_skipped( tu, "disabled" );
             return result;
+        }
 
         // 10. Check preconditions, including zero time left for execution and
         // successful execution of all dependencies
@@ -778,11 +774,7 @@ public:
                             it++;
                         }
 
-#ifdef BOOST_NO_CXX98_RANDOM_SHUFFLE
                         impl::random_shuffle( children_with_the_same_rank.begin(), children_with_the_same_rank.end(), rand_gen );
-#else
-                        std::random_shuffle( children_with_the_same_rank.begin(), children_with_the_same_rank.end(), rand_gen );
-#endif
 
                         BOOST_TEST_FOREACH( test_unit_id, chld, children_with_the_same_rank ) {
                             unsigned long int chld_timeout = child_timeout(

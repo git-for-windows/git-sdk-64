@@ -189,10 +189,12 @@ public:
             else
                 m_tr.p_test_cases_passed.value++;
         }
-        else if( tr.p_timed_out )
+        else if( tr.p_timed_out ) {
             m_tr.p_test_cases_timed_out.value++;
-        else if( tr.p_skipped )
+        }
+        else if( tr.p_skipped || !tc.is_enabled() ) {
             m_tr.p_test_cases_skipped.value++;
+        }
         else {
             if( tr.p_aborted )
                 m_tr.p_test_cases_aborted.value++;
@@ -224,17 +226,12 @@ private:
 void
 results_collector_t::test_unit_finish( test_unit const& tu, unsigned long elapsed_in_microseconds )
 {
+    test_results & tr = s_rc_impl().m_results_store[tu.p_id];
     if( tu.p_type == TUT_SUITE ) {
-        results_collect_helper ch( s_rc_impl().m_results_store[tu.p_id], tu );
-
-        traverse_test_tree( tu, ch );
-
-        s_rc_impl().m_results_store[tu.p_id].p_duration_microseconds.value = elapsed_in_microseconds;
+        results_collect_helper ch( tr, tu );
+        traverse_test_tree( tu, ch, true ); // true to ignore the status: we need to count the skipped/disabled tests
     }
     else {
-        test_results & tr = s_rc_impl().m_results_store[tu.p_id];
-        tr.p_duration_microseconds.value = elapsed_in_microseconds;
-
         bool num_failures_match = tr.p_aborted || tr.p_assertions_failed >= tr.p_expected_failures;
         if( !num_failures_match )
             BOOST_TEST_FRAMEWORK_MESSAGE( "Test case " << tu.full_name() << " has fewer failures than expected" );
@@ -243,6 +240,7 @@ results_collector_t::test_unit_finish( test_unit const& tu, unsigned long elapse
         if( !check_any_assertions )
             BOOST_TEST_FRAMEWORK_MESSAGE( "Test case " << tu.full_name() << " did not check any assertions" );
     }
+    tr.p_duration_microseconds.value = elapsed_in_microseconds;
 }
 
 //____________________________________________________________________________//
@@ -256,8 +254,8 @@ results_collector_t::test_unit_skipped( test_unit const& tu, const_string /*reas
     tr.p_skipped.value = true;
 
     if( tu.p_type == TUT_SUITE ) {
-        test_case_counter tcc;
-        traverse_test_tree( tu, tcc );
+        test_case_counter tcc(true);
+        traverse_test_tree( tu, tcc, true ); // true because need to count the disabled tests/units
 
         tr.p_test_cases_skipped.value = tcc.p_count;
     }

@@ -56,8 +56,8 @@ class _posix_code_domain : public status_code_domain
     char buffer[1024] = "";
 #ifdef _WIN32
     strerror_s(buffer, sizeof(buffer), c);
-#elif defined(__linux__)
-    char *s = strerror_r(c, buffer, sizeof(buffer));  // NOLINT
+#elif defined(__gnu_linux__) && !defined(__ANDROID__)  // handle glibc's weird strerror_r()
+    char *s = strerror_r(c, buffer, sizeof(buffer));   // NOLINT
     if(s != nullptr)
     {
       strncpy(buffer, s, sizeof(buffer));  // NOLINT

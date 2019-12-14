@@ -1,4 +1,4 @@
-// Copyright 2015-2017 Hans Dembinski
+// Copyright 2015-2019 Hans Dembinski
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt
@@ -7,20 +7,18 @@
 #ifndef BOOST_HISTOGRAM_AXIS_VARIANT_HPP
 #define BOOST_HISTOGRAM_AXIS_VARIANT_HPP
 
+#include <boost/core/nvp.hpp>
 #include <boost/histogram/axis/iterator.hpp>
 #include <boost/histogram/axis/polymorphic_bin.hpp>
 #include <boost/histogram/axis/traits.hpp>
-#include <boost/histogram/detail/cat.hpp>
 #include <boost/histogram/detail/relaxed_equal.hpp>
 #include <boost/histogram/detail/static_if.hpp>
 #include <boost/histogram/detail/type_name.hpp>
-#include <boost/histogram/fwd.hpp>
-#include <boost/mp11/function.hpp>
-#include <boost/mp11/list.hpp>
-#include <boost/mp11/utility.hpp>
+#include <boost/histogram/detail/variant_proxy.hpp>
+#include <boost/mp11/algorithm.hpp> // mp_contains
+#include <boost/mp11/list.hpp>      // mp_first
 #include <boost/throw_exception.hpp>
 #include <boost/variant2/variant.hpp>
-#include <ostream>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -74,9 +72,9 @@ public:
           detail::static_if<is_bounded_type<U>>(
               [this](const auto& u) { this->operator=(u); },
               [](const auto&) {
-                BOOST_THROW_EXCEPTION(std::runtime_error(detail::cat(
-                    detail::type_name<U>(), " is not convertible to a bounded type of ",
-                    detail::type_name<variant>())));
+                BOOST_THROW_EXCEPTION(std::runtime_error(
+                    detail::type_name<U>() + " is not convertible to a bounded type of " +
+                    detail::type_name<variant>()));
               },
               u);
         },
@@ -94,6 +92,11 @@ public:
     return visit([](const auto& a) { return axis::traits::options(a); }, *this);
   }
 
+  /// Returns true if the axis is inclusive or false.
+  bool inclusive() const {
+    return visit([](const auto& a) { return axis::traits::inclusive(a); }, *this);
+  }
+
   /// Return reference to const metadata or instance of null_type if axis has no
   /// metadata.
   const metadata_type& metadata() const {
@@ -104,11 +107,11 @@ public:
               [](const auto& a) -> const metadata_type& { return traits::metadata(a); },
               [](const auto&) -> const metadata_type& {
                 BOOST_THROW_EXCEPTION(std::runtime_error(
-                    detail::cat("cannot return metadata of type ", detail::type_name<M>(),
-                                " through axis::variant interface which uses type ",
-                                detail::type_name<metadata_type>(),
-                                "; use boost::histogram::axis::get to obtain a reference "
-                                "of this axis type")));
+                    "cannot return metadata of type " + detail::type_name<M>() +
+                    " through axis::variant interface which uses type " +
+                    detail::type_name<metadata_type>() +
+                    "; use boost::histogram::axis::get to obtain a reference "
+                    "of this axis type"));
               },
               a);
         },
@@ -125,11 +128,11 @@ public:
               [](auto& a) -> metadata_type& { return traits::metadata(a); },
               [](auto&) -> metadata_type& {
                 BOOST_THROW_EXCEPTION(std::runtime_error(
-                    detail::cat("cannot return metadata of type ", detail::type_name<M>(),
-                                " through axis::variant interface which uses type ",
-                                detail::type_name<metadata_type>(),
-                                "; use boost::histogram::axis::get to obtain a reference "
-                                "of this axis type")));
+                    "cannot return metadata of type " + detail::type_name<M>() +
+                    " through axis::variant interface which uses type " +
+                    detail::type_name<metadata_type>() +
+                    "; use boost::histogram::axis::get to obtain a reference "
+                    "of this axis type"));
               },
               a);
         },
@@ -214,6 +217,12 @@ public:
     return !operator==(t);
   }
 
+  template <class Archive>
+  void serialize(Archive& ar, unsigned /* version */) {
+    detail::variant_proxy<variant> p{*this};
+    ar& make_nvp("variant", p);
+  }
+
 private:
   impl_type impl;
 
@@ -245,13 +254,13 @@ decltype(auto) visit(Visitor&& vis, const variant<Us...>& var) {
 
 /// Returns pointer to T in variant or null pointer if type does not match.
 template <class T, class... Us>
-T* get_if(variant<Us...>* v) {
+auto get_if(variant<Us...>* v) {
   return detail::variant_access::template get_if<T>(v);
 }
 
 /// Returns pointer to const T in variant or null pointer if type does not match.
 template <class T, class... Us>
-const T* get_if(const variant<Us...>* v) {
+auto get_if(const variant<Us...>* v) {
   return detail::variant_access::template get_if<T>(v);
 }
 
@@ -279,6 +288,12 @@ decltype(auto) get(const variant<Us...>& v) {
   return *tp;
 }
 
+// pass-through version of visit for generic programming
+template <class Visitor, class T>
+decltype(auto) visit(Visitor&& vis, T&& var) {
+  return std::forward<Visitor>(vis)(std::forward<T>(var));
+}
+
 // pass-through version of get for generic programming
 template <class T, class U>
 decltype(auto) get(U&& u) {
@@ -287,15 +302,15 @@ decltype(auto) get(U&& u) {
 
 // pass-through version of get_if for generic programming
 template <class T, class U>
-T* get_if(U* u) {
-  return std::is_same<T, std::decay_t<U>>::value ? reinterpret_cast<T*>(u) : nullptr;
+auto get_if(U* u) {
+  return reinterpret_cast<T*>(std::is_same<T, std::decay_t<U>>::value ? u : nullptr);
 }
 
 // pass-through version of get_if for generic programming
 template <class T, class U>
-const T* get_if(const U* u) {
-  return std::is_same<T, std::decay_t<U>>::value ? reinterpret_cast<const T*>(u)
-                                                 : nullptr;
+auto get_if(const U* u) {
+  return reinterpret_cast<const T*>(std::is_same<T, std::decay_t<U>>::value ? u
+                                                                            : nullptr);
 }
 
 } // namespace axis

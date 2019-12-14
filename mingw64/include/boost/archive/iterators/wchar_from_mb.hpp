@@ -16,7 +16,6 @@
 
 //  See http://www.boost.org for updates, documentation, and revision history.
 
-#include <boost/assert.hpp>
 #include <cctype>
 #include <cstddef> // size_t
 #ifndef BOOST_NO_CWCHAR
@@ -30,6 +29,8 @@ namespace std{
     using ::mbstate_t;
 } // namespace std
 #endif
+#include <boost/assert.hpp>
+#include <boost/core/ignore_unused.hpp>
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/archive/detail/utf8_codecvt_facet.hpp>
@@ -165,6 +166,7 @@ void wchar_from_mb<Base>::drain(){
     const typename boost::iterators::iterator_value<Base>::type * input_new_start;
     typename iterator_value<this_t>::type * next_available;
 
+    BOOST_ATTRIBUTE_UNUSED // redundant with ignore_unused below but clarifies intention
     std::codecvt_base::result r = m_codecvt_facet.in(
         m_mbs,
         m_input.m_buffer.begin(),

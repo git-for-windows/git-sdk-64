@@ -14,7 +14,6 @@
 #elif defined(BOOST_LIBSTDCXX_VERSION) && (BOOST_LIBSTDCXX_VERSION < 40800)
 #define BOOST_CB_NO_CXX11_ALLOCATOR
 #endif
-#include <limits>
 #if !defined(BOOST_CB_NO_CXX11_ALLOCATOR)
 #include <memory>
 #else
@@ -28,16 +27,7 @@ namespace boost {
 namespace cb_details {
 
 #if !defined(BOOST_CB_NO_CXX11_ALLOCATOR)
-template<class A>
-struct allocator_traits
-    : std::allocator_traits<A> {
-    using typename std::allocator_traits<A>::value_type;
-    using typename std::allocator_traits<A>::size_type;
-
-    static size_type max_size(const A&) BOOST_NOEXCEPT {
-        return (std::numeric_limits<size_type>::max)() / sizeof(value_type);
-    }
-};
+using std::allocator_traits;
 #else
 template<class A>
 struct allocator_traits {
@@ -47,8 +37,8 @@ struct allocator_traits {
     typedef typename A::difference_type difference_type;
     typedef typename A::size_type size_type;
 
-    static size_type max_size(const A&) BOOST_NOEXCEPT {
-        return (std::numeric_limits<size_type>::max)() / sizeof(value_type);
+    static size_type max_size(const A& a) BOOST_NOEXCEPT {
+        return a.max_size();
     }
 
 #if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)

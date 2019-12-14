@@ -144,9 +144,25 @@ namespace date_time {
     {
       return duration_type(ticks_ * (-1));
     }
+    duration_type abs() const
+    {
+      if ( is_negative() )
+      {
+        return invert_sign();
+      }
+      return duration_type(ticks_);
+    }
     bool is_negative() const
     {
       return ticks_ < 0;
+    }
+    bool is_zero() const
+    {
+      return ticks_ == 0;
+    }
+    bool is_positive() const
+    {
+      return ticks_ > 0;
     }
     bool operator<(const time_duration& rhs)  const
     {

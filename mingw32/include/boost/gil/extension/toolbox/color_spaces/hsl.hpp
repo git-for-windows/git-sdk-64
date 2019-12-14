@@ -10,6 +10,7 @@
 
 #include <boost/gil/color_convert.hpp>
 #include <boost/gil/typedefs.hpp>
+#include <boost/gil/detail/mp11.hpp>
 
 namespace boost{ namespace gil {
 
@@ -27,12 +28,12 @@ struct lightness_t {};
 /// \}
 
 /// \ingroup ColorSpaceModel
-using hsl_t = mpl::vector3
-    <
-        hsl_color_space::hue_t,
-        hsl_color_space::saturation_t,
-        hsl_color_space::lightness_t
-    >;
+using hsl_t = mp11::mp_list
+<
+    hsl_color_space::hue_t,
+    hsl_color_space::saturation_t,
+    hsl_color_space::lightness_t
+>;
 
 /// \ingroup LayoutModel
 using hsl_layout_t = layout<hsl_t>;

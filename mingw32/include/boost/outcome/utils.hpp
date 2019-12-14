@@ -34,6 +34,7 @@ DEALINGS IN THE SOFTWARE.
 #include "config.hpp"
 
 #include <exception>
+#include <string>
 #include <system_error>
 
 BOOST_OUTCOME_V2_NAMESPACE_BEGIN

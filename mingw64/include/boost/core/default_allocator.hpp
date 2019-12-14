@@ -19,7 +19,7 @@ Distributed under the Boost Software License, Version 1.0.
 namespace boost {
 
 #if defined(BOOST_NO_EXCEPTIONS)
-void throw_exception(const std::exception&);
+BOOST_NORETURN void throw_exception(const std::exception&);
 #endif
 
 namespace default_ {

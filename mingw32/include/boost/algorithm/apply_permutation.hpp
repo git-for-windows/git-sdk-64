@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <type_traits>
 
+#include <boost/config.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 

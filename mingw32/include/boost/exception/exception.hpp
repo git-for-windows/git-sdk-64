@@ -21,6 +21,7 @@ namespace boost { namespace exception_detail { using boost::shared_ptr; } }
 #endif
 #if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
 #pragma warning(push,1)
+#pragma warning(disable: 4265)
 #endif
 
 namespace

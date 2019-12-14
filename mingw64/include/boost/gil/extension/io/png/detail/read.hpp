@@ -21,6 +21,8 @@
 #include <boost/gil/io/row_buffer_helper.hpp>
 #include <boost/gil/io/typedefs.hpp>
 
+#include <type_traits>
+
 namespace boost { namespace gil {
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
@@ -184,7 +186,7 @@ public:
                     default: io_error( "png_reader::read_data(): unknown combination of color type and bit depth" );
                 }
                 #else
-                    io_error( "gray_alpha isn't enabled. Use ENABLE_GRAY_ALPHA when building application." );
+                    io_error( "gray_alpha isn't enabled. Define BOOST_GIL_IO_ENABLE_GRAY_ALPHA when building application." );
                 #endif // BOOST_GIL_IO_ENABLE_GRAY_ALPHA
 
 
@@ -232,7 +234,7 @@ private:
 
         using it_t = typename row_buffer_helper_t::iterator_t;
 
-        using is_read_and_convert_t = typename is_same
+        using is_read_and_convert_t = typename std::is_same
             <
                 ConversionPolicy,
                 detail::read_and_no_convert

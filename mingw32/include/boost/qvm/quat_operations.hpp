@@ -719,7 +719,7 @@ boost
             TR sc=one;
             if( dp < one )
                 {
-                TR const theta = acosf(dp);
+                TR const theta = acos<TR>(dp);
                 TR const invsintheta = one/sin<TR>(theta);
                 TR const scale = sin<TR>(theta*(one-t)) * invsintheta;
                 TR const invscale = sin<TR>(theta*t) * invsintheta * sc;

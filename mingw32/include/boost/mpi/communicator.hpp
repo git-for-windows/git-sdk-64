@@ -509,7 +509,7 @@ class BOOST_MPI_DECL communicator
    */
   status recv(int source, int tag) const;
 
-  /** @brief Send a message to remote process nd receive another message 
+  /** @brief Send a message to remote process and receive another message
    *  from another process.
    */
   template<typename T>

@@ -7,12 +7,11 @@
 #ifndef BOOST_ALGORITHM_FIND_NOT_HPP
 #define BOOST_ALGORITHM_FIND_NOT_HPP
 
+#include <utility>
+
 #include <boost/config.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
-
-#include <utility>
-
 
 namespace boost { namespace algorithm {
 

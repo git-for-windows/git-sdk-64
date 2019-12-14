@@ -1116,27 +1116,33 @@ public:
     //!   Constant O(1).
     const_reverse_iterator crend() const BOOST_NOEXCEPT_OR_NOTHROW;
 
-    //! @brief Returns container's capacity.
-    //!
-    //! @return container's capacity.
-    //!
-    //! @par Throws
-    //!   Nothing.
-    //!
-    //! @par Complexity
-    //!   Constant O(1).
-    static size_type capacity() BOOST_NOEXCEPT_OR_NOTHROW;
+   #endif   //#ifdef BOOST_CONTAINER_DOXYGEN_INVOKED
 
-    //! @brief Returns container's capacity.
-    //!
-    //! @return container's capacity.
-    //!
-    //! @par Throws
-    //!   Nothing.
-    //!
-    //! @par Complexity
-    //!   Constant O(1).
-    static size_type max_size() BOOST_NOEXCEPT_OR_NOTHROW;
+   //! @brief Returns container's capacity.
+   //!
+   //! @return container's capacity.
+   //!
+   //! @par Throws
+   //!   Nothing.
+   //!
+   //! @par Complexity
+   //!   Constant O(1).
+   BOOST_CONTAINER_FORCEINLINE static size_type capacity() BOOST_NOEXCEPT_OR_NOTHROW
+   { return static_capacity; }
+
+   //! @brief Returns container's capacity.
+   //!
+   //! @return container's capacity.
+   //!
+   //! @par Throws
+   //!   Nothing.
+   //!
+   //! @par Complexity
+   //!   Constant O(1).
+   BOOST_CONTAINER_FORCEINLINE static size_type max_size() BOOST_NOEXCEPT_OR_NOTHROW
+   { return static_capacity; }
+
+   #ifdef BOOST_CONTAINER_DOXYGEN_INVOKED
 
     //! @brief Returns the number of stored elements.
     //!

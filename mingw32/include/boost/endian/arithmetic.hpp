@@ -97,6 +97,12 @@ namespace endian
   typedef endian_arithmetic<order::little, uint32_t, 32, align::yes>  little_uint32_at;
   typedef endian_arithmetic<order::little, uint64_t, 64, align::yes>  little_uint64_at;
 
+  // aligned floating point types
+  typedef endian_arithmetic<order::big, float, 32, align::yes>        big_float32_at;
+  typedef endian_arithmetic<order::big, double, 64, align::yes>       big_float64_at;
+  typedef endian_arithmetic<order::little, float, 32, align::yes>     little_float32_at;
+  typedef endian_arithmetic<order::little, double, 64, align::yes>    little_float64_at;
+
   // aligned native endian typedefs are not provided because
   // <cstdint> types are superior for this use case
 
@@ -181,6 +187,14 @@ namespace endian
   typedef little_uint56_t  native_uint56_t;
   typedef little_uint64_t  native_uint64_t;
 # endif
+
+  // unaligned floating point types
+  typedef endian_arithmetic<order::big, float, 32, align::no>        big_float32_t;
+  typedef endian_arithmetic<order::big, double, 64, align::no>       big_float64_t;
+  typedef endian_arithmetic<order::little, float, 32, align::no>     little_float32_t;
+  typedef endian_arithmetic<order::little, double, 64, align::no>    little_float64_t;
+  typedef endian_arithmetic<order::native, float, 32, align::no>     native_float32_t;
+  typedef endian_arithmetic<order::native, double, 64, align::no>    native_float64_t;
 
 //----------------------------------  end synopsis  ------------------------------------//
 

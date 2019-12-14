@@ -12,8 +12,7 @@
 
 #include <boost/gil/color_convert.hpp>
 #include <boost/gil/typedefs.hpp>
-
-#include <boost/mpl/vector.hpp>
+#include <boost/gil/detail/mp11.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -34,12 +33,12 @@ struct value_t {};
 /// \}
 
 /// \ingroup ColorSpaceModel
-using hsv_t = mpl::vector3
-    <
-        hsv_color_space::hue_t,
-        hsv_color_space::saturation_t,
-        hsv_color_space::value_t
-    >;
+using hsv_t = mp11::mp_list
+<
+    hsv_color_space::hue_t,
+    hsv_color_space::saturation_t,
+    hsv_color_space::value_t
+>;
 
 /// \ingroup LayoutModel
 using hsv_layout_t = layout<hsv_t>;

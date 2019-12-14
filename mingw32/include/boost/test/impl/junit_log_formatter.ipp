@@ -23,7 +23,6 @@
 #include <boost/test/framework.hpp>
 
 #include <boost/test/tree/visitor.hpp>
-#include <boost/test/tree/test_case_counter.hpp>
 #include <boost/test/tree/traverse.hpp>
 #include <boost/test/results_collector.hpp>
 

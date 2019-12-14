@@ -8,8 +8,10 @@
 #ifndef BOOST_GIL_EXTENSION_DYNAMIC_IMAGE_DYNAMIC_AT_C_HPP
 #define BOOST_GIL_EXTENSION_DYNAMIC_IMAGE_DYNAMIC_AT_C_HPP
 
-#include <boost/mpl/at.hpp>
-#include <boost/mpl/size.hpp>
+#include <boost/gil/detail/mp11.hpp>
+
+#include <boost/preprocessor/facilities/empty.hpp>
+#include <boost/preprocessor/repetition/repeat.hpp>
 
 #include <stdexcept>
 
@@ -17,8 +19,8 @@ namespace boost { namespace gil {
 
 // Constructs for static-to-dynamic integer convesion
 
-#define GIL_AT_C_VALUE(z, N, text)    mpl::at_c<IntTypes,S+N>::type::value,
-#define GIL_DYNAMIC_AT_C_LIMIT        226    // size of the maximum vector to handle
+#define GIL_AT_C_VALUE(z, N, text) mp11::mp_at_c<IntTypes, S+N>::value,
+#define GIL_DYNAMIC_AT_C_LIMIT 226 // size of the maximum vector to handle
 
 #define GIL_AT_C_LOOKUP(z, NUM, text)                                   \
     template<std::size_t S>                                             \
@@ -43,7 +45,7 @@ namespace detail {
         struct at_c_impl<0> {
             template <typename IntTypes, typename ValueType> inline
             static ValueType apply(std::size_t index) {
-                return at_c_fn<0,mpl::size<IntTypes>::value>::template apply<IntTypes,ValueType>(index);
+                return at_c_fn<0, mp11::mp_size<IntTypes>::value>::template apply<IntTypes,ValueType>(index);
             }
         };
 
@@ -51,7 +53,7 @@ namespace detail {
         struct at_c_impl<1> {
             template <typename IntTypes, typename ValueType> inline
             static ValueType apply(std::size_t index) {
-                const std::size_t SIZE=mpl::size<IntTypes>::value;
+                const std::size_t SIZE = mp11::mp_size<IntTypes>::value;
                 const std::size_t REM = SIZE % GIL_DYNAMIC_AT_C_LIMIT;
                 switch (index / GIL_DYNAMIC_AT_C_LIMIT) {
                     case 0: return at_c_fn<0                   ,GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index);
@@ -65,7 +67,7 @@ namespace detail {
         struct at_c_impl<2> {
             template <typename IntTypes, typename ValueType> inline
             static ValueType apply(std::size_t index) {
-                const std::size_t SIZE=mpl::size<IntTypes>::value;
+                const std::size_t SIZE = mp11::mp_size<IntTypes>::value;
                 const std::size_t REM = SIZE % GIL_DYNAMIC_AT_C_LIMIT;
                 switch (index / GIL_DYNAMIC_AT_C_LIMIT) {
                     case 0: return at_c_fn<0                   ,GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index);
@@ -80,7 +82,7 @@ namespace detail {
         struct at_c_impl<3> {
             template <typename IntTypes, typename ValueType> inline
             static ValueType apply(std::size_t index) {
-                const std::size_t SIZE=mpl::size<IntTypes>::value;
+                const std::size_t SIZE = mp11::mp_size<IntTypes>::value;
                 const std::size_t REM = SIZE % GIL_DYNAMIC_AT_C_LIMIT;
                 switch (index / GIL_DYNAMIC_AT_C_LIMIT) {
                     case 0: return at_c_fn<0                   ,GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index);
@@ -96,14 +98,15 @@ namespace detail {
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///
-///    \brief Given an MPL Random Access Sequence and a dynamic index n, returns the value of the n-th element
-///  It constructs a lookup table at compile time
+/// \brief Given an Boost.MP11-compatible list and a dynamic index n,
+/// returns the value of the n-th element.
+/// It constructs a lookup table at compile time.
 ///
 ////////////////////////////////////////////////////////////////////////////////////
 
 template <typename IntTypes, typename ValueType> inline
 ValueType at_c(std::size_t index) {
-    const std::size_t Size=mpl::size<IntTypes>::value;
+    const std::size_t Size=mp11::mp_size<IntTypes>::value;
     return detail::at_c::at_c_impl<Size/GIL_DYNAMIC_AT_C_LIMIT>::template apply<IntTypes,ValueType>(index);
 }
 

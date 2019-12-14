@@ -56,13 +56,16 @@ DEALINGS IN THE SOFTWARE.
 #ifndef BOOST_OUTCOME_SYMBOL_VISIBLE
 #define BOOST_OUTCOME_SYMBOL_VISIBLE BOOST_SYMBOL_VISIBLE
 #endif
+#ifdef __has_cpp_attribute
+#define BOOST_OUTCOME_HAS_CPP_ATTRIBUTE(attr) __has_cpp_attribute(attr)
+#else
+#define BOOST_OUTCOME_HAS_CPP_ATTRIBUTE(attr) (0)
+#endif
 // Weird that Boost.Config doesn't define a BOOST_NO_CXX17_NODISCARD
 #ifndef BOOST_OUTCOME_NODISCARD
-#ifdef __has_cpp_attribute
-#if __has_cpp_attribute(nodiscard)
+#if BOOST_OUTCOME_HAS_CPP_ATTRIBUTE(nodiscard)
 #define BOOST_OUTCOME_NODISCARD [[nodiscard]]
-#endif
-#elif defined(__clang__)
+#elif defined(__clang__)  // deliberately not GCC
 #define BOOST_OUTCOME_NODISCARD __attribute__((warn_unused_result))
 #elif defined(_MSC_VER)
 // _Must_inspect_result_ expands into this
@@ -107,7 +110,7 @@ DEALINGS IN THE SOFTWARE.
 #define BOOST_OUTCOME_TPRED(...) typename = std::enable_if_t<__VA_ARGS__>
 #endif
 #ifndef BOOST_OUTCOME_REQUIRES
-#ifdef __cpp_concepts
+#if defined(__cpp_concepts) && (!defined(_MSC_VER) || _MSC_FULL_VER >= 192400000)  // VS 2019 16.3 is broken here
 #define BOOST_OUTCOME_REQUIRES(...) requires __VA_ARGS__
 #else
 #define BOOST_OUTCOME_REQUIRES(...)
@@ -189,6 +192,15 @@ template <class T> struct in_place_type_t
 //! Aliases `std::in_place_type<T>` if on C++ 17 or later, else defined locally.
 template <class T> constexpr in_place_type_t<T> in_place_type{};
 BOOST_OUTCOME_V2_NAMESPACE_END
+#endif
+
+#ifndef BOOST_OUTCOME_TRIVIAL_ABI
+#if defined(STANDARDESE_IS_IN_THE_HOUSE) || __clang_major__ >= 7
+//! Defined to be `[[clang::trivial_abi]]` when on a new enough clang compiler. Usually automatic, can be overriden.
+#define BOOST_OUTCOME_TRIVIAL_ABI [[clang::trivial_abi]]
+#else
+#define BOOST_OUTCOME_TRIVIAL_ABI
+#endif
 #endif
 
 BOOST_OUTCOME_V2_NAMESPACE_BEGIN

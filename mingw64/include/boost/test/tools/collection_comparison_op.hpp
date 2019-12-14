@@ -131,8 +131,8 @@ typename boost::enable_if_c<
     assertion_result>::type
 lexicographic_compare( Lhs const& lhs, Rhs const& rhs )
 {
-    typedef typename unit_test::deduce_cstring<Lhs>::type lhs_char_type;
-    typedef typename unit_test::deduce_cstring<Rhs>::type rhs_char_type;
+    typedef typename unit_test::deduce_cstring_transform<Lhs>::type lhs_char_type;
+    typedef typename unit_test::deduce_cstring_transform<Rhs>::type rhs_char_type;
 
     return lexicographic_compare<OP, can_be_equal, prefer_shorter>(
         lhs_char_type(lhs),
@@ -192,8 +192,8 @@ typename boost::enable_if_c<
     assertion_result>::type
 element_compare( Lhs const& lhs, Rhs const& rhs )
 {
-    typedef typename unit_test::deduce_cstring<Lhs>::type lhs_char_type;
-    typedef typename unit_test::deduce_cstring<Rhs>::type rhs_char_type;
+    typedef typename unit_test::deduce_cstring_transform<Lhs>::type lhs_char_type;
+    typedef typename unit_test::deduce_cstring_transform<Rhs>::type rhs_char_type;
 
     return element_compare<OP>(lhs_char_type(lhs),
                                rhs_char_type(rhs));

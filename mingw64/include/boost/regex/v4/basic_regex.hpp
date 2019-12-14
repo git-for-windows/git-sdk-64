@@ -20,7 +20,7 @@
 #define BOOST_REGEX_V4_BASIC_REGEX_HPP
 
 #include <boost/type_traits/is_same.hpp>
-#include <boost/functional/hash.hpp>
+#include <boost/container_hash/hash.hpp>
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

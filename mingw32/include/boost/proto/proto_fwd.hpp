@@ -124,9 +124,11 @@
 #endif
 
 #if defined(_MSC_VER)
+# define BOOST_PROTO_DISABLE_MSVC_C4180 __pragma(warning(disable : 4180))  // qualifier applied to function type has no meaning; ignored
 # define BOOST_PROTO_DISABLE_MSVC_C4522 __pragma(warning(disable : 4522))  // 'class' : multiple assignment operators specified
 # define BOOST_PROTO_DISABLE_MSVC_C4714 __pragma(warning(disable : 4714))  // function 'xxx' marked as __forceinline not inlined
 #else
+# define BOOST_PROTO_DISABLE_MSVC_C4180
 # define BOOST_PROTO_DISABLE_MSVC_C4522 
 # define BOOST_PROTO_DISABLE_MSVC_C4714
 #endif

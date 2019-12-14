@@ -141,4 +141,14 @@ class type_info;
 
 #endif /* ifndef BOOST_PP_VARIADICS */
 
+//____________________________________________________________________________//
+// string_view support
+//____________________________________________________________________________//
+// note the code should always be compatible with compiled version of boost.test
+// using a pre-c++17 compiler
+
+#ifndef BOOST_NO_CXX17_HDR_STRING_VIEW
+#define BOOST_TEST_STRING_VIEW
+#endif
+
 #endif // BOOST_TEST_CONFIG_HPP_071894GER

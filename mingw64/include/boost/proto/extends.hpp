@@ -74,6 +74,7 @@ namespace boost { namespace proto
     ///
     #define BOOST_PROTO_DEFINE_FUN_OP_IMPL_(Z, N, DATA, Const)                                      \
         BOOST_PP_IF(N, BOOST_PROTO_TEMPLATE_YES_, BOOST_PROTO_TEMPLATE_NO_)(Z, N)                   \
+        BOOST_PROTO_DISABLE_MSVC_C4180                                                              \
         BOOST_PROTO_DISABLE_MSVC_C4714 BOOST_FORCEINLINE                                            \
         typename BOOST_PROTO_RESULT_OF<                                                             \
             proto_generator(                                                                        \
@@ -104,6 +105,7 @@ namespace boost { namespace proto
     ///
     #define BOOST_PROTO_DEFINE_FUN_OP_VARIADIC_IMPL_(Const)                                         \
         template<typename... A>                                                                     \
+        BOOST_PROTO_DISABLE_MSVC_C4180                                                              \
         BOOST_PROTO_DISABLE_MSVC_C4714 BOOST_FORCEINLINE                                            \
         typename BOOST_PROTO_RESULT_OF<                                                             \
             proto_generator(                                                                        \
@@ -258,6 +260,7 @@ namespace boost { namespace proto
         ///
     #define BOOST_PROTO_EXTENDS_ASSIGN_IMPL_(ThisConst, ThatConst)                                  \
         template<typename A>                                                                        \
+        BOOST_PROTO_DISABLE_MSVC_C4180                                                              \
         BOOST_PROTO_DISABLE_MSVC_C4714 BOOST_FORCEINLINE                                            \
         typename BOOST_PROTO_RESULT_OF<                                                             \
             proto_generator(                                                                        \
@@ -325,6 +328,7 @@ namespace boost { namespace proto
         ///
     #define BOOST_PROTO_EXTENDS_SUBSCRIPT_IMPL_(ThisConst, ThatConst)                               \
         template<typename A>                                                                        \
+        BOOST_PROTO_DISABLE_MSVC_C4180                                                              \
         BOOST_PROTO_DISABLE_MSVC_C4714 BOOST_FORCEINLINE                                            \
         typename BOOST_PROTO_RESULT_OF<                                                             \
             proto_generator(                                                                        \
