@@ -367,6 +367,28 @@ class _TestProcess(BaseTestCase):
         self.assertNotIn(p, self.active_children())
         close_queue(q)
 
+    @unittest.skipUnless(threading._HAVE_THREAD_NATIVE_ID, "needs native_id")
+    def test_process_mainthread_native_id(self):
+        if self.TYPE == 'threads':
+            self.skipTest('test not appropriate for {}'.format(self.TYPE))
+
+        current_mainthread_native_id = threading.main_thread().native_id
+
+        q = self.Queue(1)
+        p = self.Process(target=self._test_process_mainthread_native_id, args=(q,))
+        p.start()
+
+        child_mainthread_native_id = q.get()
+        p.join()
+        close_queue(q)
+
+        self.assertNotEqual(current_mainthread_native_id, child_mainthread_native_id)
+
+    @classmethod
+    def _test_process_mainthread_native_id(cls, q):
+        mainthread_native_id = threading.main_thread().native_id
+        q.put(mainthread_native_id)
+
     @classmethod
     def _sleep_some(cls):
         time.sleep(100)
@@ -5651,16 +5673,7 @@ def install_tests_in_module_dict(remote_globs, start_method):
         if need_sleep:
             time.sleep(0.5)
 
-        multiprocessing.process._cleanup()
-
-        # Stop the ForkServer process if it's running
-        from multiprocessing import forkserver
-        forkserver._forkserver._stop()
-
-        # bpo-37421: Explicitly call _run_finalizers() to remove immediately
-        # temporary directories created by multiprocessing.util.get_temp_dir().
-        multiprocessing.util._run_finalizers()
-        test.support.gc_collect()
+        multiprocessing.util._cleanup_tests()
 
     remote_globs['setUpModule'] = setUpModule
     remote_globs['tearDownModule'] = tearDownModule

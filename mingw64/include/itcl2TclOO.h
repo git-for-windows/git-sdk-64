@@ -31,4 +31,3 @@ MODULE_SCOPE int Itcl_InvokeEnsembleMethod(Tcl_Interp *interp, Tcl_Namespace *ns
     Tcl_Obj *namePtr, Tcl_Proc *procPtr, int objc, Tcl_Obj *const *objv);
 MODULE_SCOPE int Itcl_InvokeProcedureMethod(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *const *objv);
-MODULE_SCOPE void Itcl_IncrObjectRefCount(Tcl_Object ptr);

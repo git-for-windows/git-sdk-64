@@ -779,6 +779,9 @@ g_date_time_new_from_iso8601 (<em class="parameter"><code>const <a class="link" 
 <a class="ulink" href="https://en.wikipedia.org/wiki/ISO_8601" target="_top">ISO 8601 formatted string</a>
 <em class="parameter"><code>text</code></em>
 . ISO 8601 strings of the form &lt;date&gt;&lt;sep&gt;&lt;time&gt;&lt;tz&gt; are supported.</p>
+<p>Note that as <a class="link" href="glib-GDateTime.html#GDateTime" title="GDateTime"><span class="type">GDateTime</span></a> "is oblivious to leap seconds", leap seconds information
+in an ISO-8601 string will be ignored, so a <code class="literal">23:59:60</code> time would be parsed as
+<code class="literal">23:59:59</code>.</p>
 <p>&lt;sep&gt; is the separator and can be either 'T', 't' or ' '.</p>
 <p>&lt;date&gt; is in the form:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">

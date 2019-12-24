@@ -350,7 +350,7 @@ proc titleline {title} {
     puts [string repeat * 79]
   } else {
     set len [string length $title]
-    set stars [string repeat * [expr 79-$len-5]]
+    set stars [string repeat * [expr {79-$len-5}]]
     puts "*** $title $stars"
   }
 }
@@ -360,7 +360,7 @@ proc titleline {title} {
 #
 proc statline {title value {extra {}}} {
   set len [string length $title]
-  set dots [string repeat . [expr 50-$len]]
+  set dots [string repeat . [expr {50-$len}]]
   set len [string length $value]
   set sp2 [string range {          } $len end]
   if {$extra ne ""} {
@@ -386,7 +386,7 @@ proc percent {num denom {of {}}} {
 
 proc divide {num denom} {
   if {$denom==0} {return 0.0}
-  return [format %.2f [expr double($num)/double($denom)]]
+  return [format %.2f [expr {double($num)/double($denom)}]]
 }
 
 # Generate a subreport that covers some subset of the database.
@@ -538,10 +538,10 @@ proc autovacuum_overhead {filePages pageSize} {
   # database file is one pointer-map page, followed by $ptrsPerPage other
   # pages, followed by a pointer-map page etc. The first pointer-map page
   # is the second page of the file overall.
-  set ptrsPerPage [expr double($pageSize/5)]
+  set ptrsPerPage [expr {double($pageSize/5)}]
 
   # Return the number of pointer map pages in the database.
-  return [expr wide(ceil( ($filePages-1.0)/($ptrsPerPage+1.0) ))]
+  return [expr {wide(ceil(($filePages-1.0)/($ptrsPerPage+1.0)))}]
 }
 
 
@@ -582,7 +582,7 @@ set av_pgcnt    [autovacuum_overhead $file_pgcnt $pageSize]
 set av_percent  [percent $av_pgcnt $file_pgcnt]
 
 set sql {SELECT sum(leaf_pages+int_pages+ovfl_pages) FROM space_used}
-set inuse_pgcnt   [expr wide([mem eval $sql])]
+set inuse_pgcnt   [expr {wide([mem eval $sql])}]
 set inuse_percent [percent $inuse_pgcnt $file_pgcnt]
 
 set free_pgcnt    [expr {$file_pgcnt-$inuse_pgcnt-$av_pgcnt}]

@@ -48,18 +48,30 @@
 #endif
 
 /*
+ * MSVC 8.0 started to mark many standard C library functions depreciated
+ * including the *printf family and others. Tell it to shut up.
+ * (_MSC_VER is 1200 for VC6, 1300 or 1310 for vc7.net, 1400 for 8.0)
+ */
+#if defined(_MSC_VER)
+#   pragma warning(disable:4244)
+#   if _MSC_VER >= 1400
+#	pragma warning(disable:4267)
+#	pragma warning(disable:4996)
+#   endif
+#endif
+
+/*
  * Since the Tcl/Tk distribution doesn't perform any asserts,
  * dynamic loading can fail to find the __assert function.
  * As a workaround, we'll include our own.
  */
 
 #undef  assert
-#define DEBUG 1
-#ifndef  DEBUG
+#if defined(NDEBUG) && !defined(DEBUG)
 #define assert(EX) ((void)0)
-#else
+#else /* !NDEBUG || DEBUG */
 #define assert(EX) (void)((EX) || (Itcl_Assert(STRINGIFY(EX), __FILE__, __LINE__), 0))
-#endif  /* DEBUG */
+#endif
 
 #define ITCL_INTERP_DATA "itcl_data"
 #define ITCL_TK_VERSION "8.6"
@@ -75,11 +87,11 @@
     Tcl_HashEntry *hPtr;Tcl_HashSearch search
 #define FOREACH_HASH(key,val,tablePtr) \
     for(hPtr=Tcl_FirstHashEntry((tablePtr),&search); hPtr!=NULL ? \
-            ((key)=(void *)Tcl_GetHashKey((tablePtr),hPtr),\
-            (val)=Tcl_GetHashValue(hPtr),1):0; hPtr=Tcl_NextHashEntry(&search))
+	    (*(void **)&(key)=Tcl_GetHashKey((tablePtr),hPtr),\
+	    *(void **)&(val)=Tcl_GetHashValue(hPtr),1):0; hPtr=Tcl_NextHashEntry(&search))
 #define FOREACH_HASH_VALUE(val,tablePtr) \
     for(hPtr=Tcl_FirstHashEntry((tablePtr),&search); hPtr!=NULL ? \
-            ((val)=Tcl_GetHashValue(hPtr),1):0;hPtr=Tcl_NextHashEntry(&search))
+	    (*(void **)&(val)=Tcl_GetHashValue(hPtr),1):0;hPtr=Tcl_NextHashEntry(&search))
 
 /*
  * What sort of size of things we like to allocate.
@@ -87,31 +99,10 @@
 
 #define ALLOC_CHUNK 8
 
-#define ITCL_VARIABLES_NAMESPACE "::itcl::internal::variables"
-#define ITCL_COMMANDS_NAMESPACE "::itcl::internal::commands"
-
-#ifdef ITCL_PRESERVE_DEBUG
-#define ITCL_PRESERVE_BUCKET_SIZE 50
-#define ITCL_PRESERVE_INCR 1
-#define ITCL_PRESERVE_DECR -1
-#define ITCL_PRESERVE_DELETED 0
-
-typedef struct ItclPreserveInfoEntry {
-    int type;
-    int line;
-    const char * fileName;
-} ItclPreserveInfoEntry;
-
-typedef struct ItclPreserveInfo {
-    size_t refCount;
-    ClientData clientData;
-    size_t size;
-    size_t numEntries;
-    ItclPreserveInfoEntry *entries;
-} ItclPreserveInfo;
-
-#endif
-
+#define ITCL_INT_NAMESPACE	    ITCL_NAMESPACE"::internal"
+#define ITCL_INTDICTS_NAMESPACE	    ITCL_INT_NAMESPACE"::dicts"
+#define ITCL_VARIABLES_NAMESPACE    ITCL_INT_NAMESPACE"::variables"
+#define ITCL_COMMANDS_NAMESPACE	    ITCL_INT_NAMESPACE"::commands"
 
 typedef struct ItclFoundation {
     Itcl_Stack methodCallStack;
@@ -169,7 +160,7 @@ typedef struct ItclObjectInfo {
     const Tcl_ObjectMetadataType *object_meta_type;
                                     /* type for getting the Itcl object info
                                      * from a TclOO Tcl_Object */
-    Tcl_Object unused1;             /* the root object of Itcl */
+    Tcl_Object clazzObjectPtr;      /* the root object of Itcl */
     Tcl_Class clazzClassPtr;        /* the root class of Itcl */
     struct EnsembleInfo *ensembleInfo;
     struct ItclClass *currContextIclsPtr;
@@ -182,8 +173,7 @@ typedef struct ItclObjectInfo {
     Tcl_Obj **unparsedObjv;         /* options not parsed by
                                        ItclExtendedConfigure/-Cget function */
     int functionFlags;              /* used for creating of ItclMemberCode */
-    int unused7;               /* used for having a unique key for objects
-                                     * for use in mytypemethod etc. */
+    int unused7;
     struct ItclDelegatedOption *currIdoPtr;
                                     /* the current delegated option info */
     int inOptionHandling;           /* used to indicate for type/widget ...
@@ -201,7 +191,7 @@ typedef struct ItclObjectInfo {
     Tcl_Obj *unused3;
     Tcl_Obj *unused4;
     Tcl_Obj *infoVarsPtr;
-    Tcl_Obj *infoVars3Ptr;
+    Tcl_Obj *unused9;
     Tcl_Obj *infoVars4Ptr;
     Tcl_Obj *typeDestructorArgumentPtr;
     struct ItclObject *lastIoPtr;   /* last object constructed */
@@ -232,7 +222,7 @@ typedef struct EnsembleInfo {
 #define ITCL_CLASS_IS_DELETED              0x1000
 #define ITCL_CLASS_IS_DESTROYED            0x2000
 #define ITCL_CLASS_NS_IS_DESTROYED         0x4000
-#define ITCL_CLASS_IS_RENAMED              0x8000
+#define ITCL_CLASS_IS_RENAMED              0x8000 /* unused */
 #define ITCL_CLASS_IS_FREED               0x10000
 #define ITCL_CLASS_DERIVED_RELEASED       0x20000
 #define ITCL_CLASS_NS_TEARDOWN            0x40000
@@ -385,7 +375,6 @@ typedef struct ItclObject {
     int noComponentTrace;         /* don't call component traces if
                                    * setting components in DelegationInstall */
     int hadConstructorError;      /* needed for multiple calls of CallItclObjectCmd */
-    int refCount;
 } ItclObject;
 
 #define ITCL_IGNORE_ERRS  0x002  /* useful for construction/destruction */
@@ -415,7 +404,6 @@ typedef struct ItclMemberCode {
         Tcl_ObjCmdProc *objCmd; /* (objc,objv) C implementation */
     } cfunc;
     ClientData clientData;      /* client data for C implementations */
-    int refCount;
 } ItclMemberCode;
 
 /*
@@ -517,7 +505,6 @@ typedef struct ItclMemberFunc {
     ClientData tmPtr;           /* TclOO methodPtr */
     ItclDelegatedFunction *idmPtr;
                                 /* if the function is delegated != NULL */
-    int refCount;
 } ItclMemberFunc;
 
 /*
@@ -593,14 +580,6 @@ typedef struct ItclMethodVariable {
 #define VAR_TYPE_VARIABLE 	1
 #define VAR_TYPE_COMMON 	2
 
-typedef struct ItclClassVarInfo {
-    int type;
-    int protection;
-    int varNum;
-    Tcl_Namespace *nsPtr;
-    Tcl_Namespace *declaringNsPtr;
-} ItclClassVarInfo;
-
 #define CMD_TYPE_METHOD 	1
 #define CMD_TYPE_PROC 		2
 
@@ -625,7 +604,6 @@ typedef struct ItclVarLookup {
                                * taken from the resolveVars table, so
                                * it shouldn't be freed. */
     int varNum;
-    ItclClassVarInfo *classVarInfoPtr;
     Tcl_Var varPtr;
 } ItclVarLookup;
 
@@ -683,17 +661,8 @@ MODULE_SCOPE Tcl_ObjCmdProc ItclObjectUnknownCommand;
 MODULE_SCOPE int ItclCheckCallProc(ClientData clientData, Tcl_Interp *interp,
         Tcl_ObjectContext contextPtr, Tcl_CallFrame *framePtr, int *isFinished);
 
-MODULE_SCOPE void ItclPreserveIMF(ItclMemberFunc *imPtr);
-MODULE_SCOPE void ItclReleaseIMF(ClientData imPtr);
-
 MODULE_SCOPE void ItclPreserveClass(ItclClass *iclsPtr);
 MODULE_SCOPE void ItclReleaseClass(ClientData iclsPtr);
-
-MODULE_SCOPE void ItclPreserveMemberCode(ItclMemberCode *mcodePtr);
-MODULE_SCOPE void ItclReleaseMemberCode(ItclMemberCode *mcodePtr);
-
-MODULE_SCOPE void ItclPreserveObject(ItclObject *ioPtr);
-MODULE_SCOPE void ItclReleaseObject(ClientData ioPtr);
 
 MODULE_SCOPE ItclFoundation *ItclGetFoundation(Tcl_Interp *interp);
 MODULE_SCOPE Tcl_ObjCmdProc ItclClassCommandDispatcher;
@@ -725,6 +694,9 @@ MODULE_SCOPE void ItclDeleteClassVariablesNamespace(Tcl_Interp *interp,
         ItclClass *iclsPtr);
 MODULE_SCOPE int ItclInfoInit(Tcl_Interp *interp, ItclObjectInfo *infoPtr);
 
+MODULE_SCOPE Tcl_HashEntry *ItclResolveVarEntry(
+	ItclClass* iclsPtr, const char *varName);
+
 struct Tcl_ResolvedVarInfo;
 MODULE_SCOPE int Itcl_ClassCmdResolver(Tcl_Interp *interp, const char* name,
 	Tcl_Namespace *nsPtr, int flags, Tcl_Command *rPtr);
@@ -744,9 +716,9 @@ MODULE_SCOPE int ItclSetParserResolver(Tcl_Namespace *nsPtr);
 MODULE_SCOPE void ItclProcErrorProc(Tcl_Interp *interp, Tcl_Obj *procNameObj);
 MODULE_SCOPE int Itcl_CreateOption (Tcl_Interp *interp, ItclClass *iclsPtr,
 	ItclOption *ioptPtr);
-MODULE_SCOPE int Itcl_CreateMethodVariable (Tcl_Interp *interp,
-        ItclClass *iclsPtr, Tcl_Obj *name, Tcl_Obj *defaultPtr,
-	Tcl_Obj *callbackPtr, ItclMethodVariable **imvPtr);
+MODULE_SCOPE int ItclCreateMethodVariable(Tcl_Interp *interp,
+	ItclVariable *ivPtr, Tcl_Obj* defaultPtr, Tcl_Obj* callbackPtr,
+	ItclMethodVariable** imvPtrPtr);
 MODULE_SCOPE int DelegationInstall(Tcl_Interp *interp, ItclObject *ioPtr,
         ItclClass *iclsPtr);
 MODULE_SCOPE ItclClass *ItclNamespace2Class(Tcl_Namespace *nsPtr);
@@ -819,6 +791,9 @@ MODULE_SCOPE int ItclAddClassDelegatedFunctionDictInfo(Tcl_Interp *interp,
         ItclClass *iclsPtr, ItclDelegatedFunction *idmPtr);
 MODULE_SCOPE int ItclClassCreateObject(ClientData clientData, Tcl_Interp *interp,
         int objc, Tcl_Obj *const objv[]);
+
+MODULE_SCOPE void ItclRestoreInfoVars(ClientData clientData);
+
 MODULE_SCOPE Tcl_ObjCmdProc Itcl_BiMyProcCmd;
 MODULE_SCOPE Tcl_ObjCmdProc Itcl_BiInstallComponentCmd;
 MODULE_SCOPE Tcl_ObjCmdProc Itcl_BiCallInstanceCmd;
@@ -847,9 +822,6 @@ MODULE_SCOPE ItclRootMethodProc ItclConstructGuts;
 MODULE_SCOPE ItclRootMethodProc ItclInfoGuts;
 
 #include "itcl2TclOO.h"
-#ifdef NEW_PROTO_RESOLVER
-#include "itclVarsAndCmds.h"
-#endif
 
 /*
  * Include all the private API, generated from itcl.decls.

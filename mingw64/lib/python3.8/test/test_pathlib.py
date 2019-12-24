@@ -1672,6 +1672,7 @@ class _BasePathTest(object):
         self.assertFileNotFound(p.stat)
         self.assertFileNotFound(p.unlink)
 
+    @unittest.skipUnless(hasattr(os, "link"), "os.link() is not present")
     def test_link_to(self):
         P = self.cls(BASE)
         p = P / 'fileA'
@@ -1690,6 +1691,15 @@ class _BasePathTest(object):
         q.link_to(r)
         self.assertEqual(os.stat(r).st_size, size)
         self.assertTrue(q.stat)
+
+    @unittest.skipIf(hasattr(os, "link"), "os.link() is present")
+    def test_link_to_not_implemented(self):
+        P = self.cls(BASE)
+        p = P / 'fileA'
+        # linking to another path.
+        q = P / 'dirA' / 'fileAA'
+        with self.assertRaises(NotImplementedError):
+            p.link_to(q)
 
     def test_rename(self):
         P = self.cls(BASE)
@@ -2291,11 +2301,15 @@ class WindowsPathTest(_BasePathTest, unittest.TestCase):
         P = self.cls
         p = P(BASE)
         self.assertEqual(set(p.glob("FILEa")), { P(BASE, "fileA") })
+        self.assertEqual(set(p.glob("F*a")), { P(BASE, "fileA") })
+        self.assertEqual(set(map(str, p.glob("FILEa"))), {f"{p}\\FILEa"})
+        self.assertEqual(set(map(str, p.glob("F*a"))), {f"{p}\\fileA"})
 
     def test_rglob(self):
         P = self.cls
         p = P(BASE, "dirC")
         self.assertEqual(set(p.rglob("FILEd")), { P(BASE, "dirC/dirD/fileD") })
+        self.assertEqual(set(map(str, p.rglob("FILEd"))), {f"{p}\\dirD\\FILEd"})
 
     def test_expanduser(self):
         P = self.cls

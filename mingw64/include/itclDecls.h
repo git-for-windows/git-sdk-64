@@ -11,7 +11,7 @@ ITCLAPI const char *Itcl_InitStubs(
 	Tcl_Interp *, const char *version, int exact);
 #else
 
-#define Itcl_InitStubs(interp, version, exact) Tcl_PkgRequire(interp,"itcl",version,exact)
+#define Itcl_InitStubs(interp, version, exact) Tcl_PkgRequireEx(interp,"itcl",version,exact,NULL)
 
 #endif
 
@@ -19,7 +19,7 @@ ITCLAPI const char *Itcl_InitStubs(
 /* !BEGIN!: Do not edit below this line. */
 
 #define ITCL_STUBS_EPOCH 0
-#define ITCL_STUBS_REVISION 150
+#define ITCL_STUBS_REVISION 152
 
 #ifdef __cplusplus
 extern "C" {
@@ -92,6 +92,10 @@ ITCLAPI int		Itcl_RestoreInterpState(Tcl_Interp *interp,
 				Itcl_InterpState state);
 /* 25 */
 ITCLAPI void		Itcl_DiscardInterpState(Itcl_InterpState state);
+/* 26 */
+ITCLAPI void *		Itcl_Alloc(size_t size);
+/* 27 */
+ITCLAPI void		Itcl_Free(void *ptr);
 
 typedef struct {
     const struct ItclIntStubs *itclIntStubs;
@@ -129,6 +133,8 @@ typedef struct ItclStubs {
     Itcl_InterpState (*itcl_SaveInterpState) (Tcl_Interp *interp, int status); /* 23 */
     int (*itcl_RestoreInterpState) (Tcl_Interp *interp, Itcl_InterpState state); /* 24 */
     void (*itcl_DiscardInterpState) (Itcl_InterpState state); /* 25 */
+    void * (*itcl_Alloc) (size_t size); /* 26 */
+    void (*itcl_Free) (void *ptr); /* 27 */
 } ItclStubs;
 
 extern const ItclStubs *itclStubsPtr;
@@ -193,6 +199,10 @@ extern const ItclStubs *itclStubsPtr;
 	(itclStubsPtr->itcl_RestoreInterpState) /* 24 */
 #define Itcl_DiscardInterpState \
 	(itclStubsPtr->itcl_DiscardInterpState) /* 25 */
+#define Itcl_Alloc \
+	(itclStubsPtr->itcl_Alloc) /* 26 */
+#define Itcl_Free \
+	(itclStubsPtr->itcl_Free) /* 27 */
 
 #endif /* defined(USE_ITCL_STUBS) */
 

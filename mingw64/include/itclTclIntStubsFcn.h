@@ -25,7 +25,7 @@ MODULE_SCOPE int _Tcl_CreateProc(Tcl_Interp *interp, Tcl_Namespace *nsPtr,
 	 const char *procName, Tcl_Obj *argsPtr, Tcl_Obj *bodyPtr,
         Tcl_Proc *procPtrPtr);
 MODULE_SCOPE void _Tcl_ProcDeleteProc(ClientData clientData);
-MODULE_SCOPE void *_Tcl_GetObjInterpProc(void);
+MODULE_SCOPE Tcl_ObjCmdProc *_Tcl_GetObjInterpProc(void);
 MODULE_SCOPE int Tcl_RenameCommand(Tcl_Interp *interp, const char *oldName,
 	const char *newName);
 MODULE_SCOPE Tcl_HashTable *Itcl_GetNamespaceChildTable(Tcl_Namespace *nsPtr);

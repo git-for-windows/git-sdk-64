@@ -80,12 +80,12 @@ extern "C" {
 #endif
 
 #define ITCL_MAJOR_VERSION	4
-#define ITCL_MINOR_VERSION	1
+#define ITCL_MINOR_VERSION	2
 #define ITCL_RELEASE_LEVEL      TCL_FINAL_RELEASE
-#define ITCL_RELEASE_SERIAL     2
+#define ITCL_RELEASE_SERIAL     0
 
-#define ITCL_VERSION            "4.1"
-#define ITCL_PATCH_LEVEL        "4.1.2"
+#define ITCL_VERSION            "4.2"
+#define ITCL_PATCH_LEVEL        "4.2.0"
 
 
 /*
@@ -180,15 +180,6 @@ typedef struct Itcl_InterpState_ *Itcl_InterpState;
  */
 
 #include "itclDecls.h"
-
-#ifdef ITCL_PRESERVE_DEBUG
-#undef Itcl_PreserveData
-#undef Itcl_ReleaseData
-void ItclDbgPreserveData(ClientData cdata, int line, const char *file);
-void ItclDbgReleaseData(ClientData cdata, int line, const char *file);
-#define Itcl_PreserveData(addr) ItclDbgPreserveData(addr, __LINE__, __FILE__)
-#define Itcl_ReleaseData(addr) ItclDbgReleaseData(addr, __LINE__, __FILE__)
-#endif
 
 #endif /* RC_INVOKED */
 

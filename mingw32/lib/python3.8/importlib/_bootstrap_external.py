@@ -1603,6 +1603,11 @@ def _setup(_bootstrap_module):
                 continue
     else:
         raise ImportError('importlib requires posix or nt')
+
+    if 'MSYSTEM' in os_module.environ:
+        path_separators = path_separators[::-1]
+        path_sep = path_separators[0]
+
     setattr(self_module, '_os', os_module)
     setattr(self_module, 'path_sep', path_sep)
     setattr(self_module, 'path_separators', ''.join(path_separators))

@@ -25,7 +25,12 @@
 /*
  * Exported from threadCmd.c file.
  */
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 DLLEXPORT int Thread_Init(Tcl_Interp *interp);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _TCL_THREAD_H_ */
