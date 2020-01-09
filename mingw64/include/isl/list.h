@@ -45,6 +45,9 @@ __isl_give isl_##EL##_list *isl_##EL##_list_insert(			\
 	__isl_take struct isl_##EL *el);				\
 __isl_give isl_##EL##_list *isl_##EL##_list_drop(			\
 	__isl_take isl_##EL##_list *list, unsigned first, unsigned n);	\
+EXPORT									\
+__isl_give isl_##EL##_list *isl_##EL##_list_clear(			\
+	__isl_take isl_##EL##_list *list);				\
 __isl_give isl_##EL##_list *isl_##EL##_list_swap(			\
 	__isl_take isl_##EL##_list *list, unsigned pos1,		\
 	unsigned pos2);							\

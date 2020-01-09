@@ -250,6 +250,7 @@ __isl_give isl_schedule_node *isl_schedule_node_insert_filter(
 __isl_export
 __isl_give isl_schedule_node *isl_schedule_node_insert_guard(
 	__isl_take isl_schedule_node *node, __isl_take isl_set *context);
+__isl_export
 __isl_give isl_schedule_node *isl_schedule_node_insert_mark(
 	__isl_take isl_schedule_node *node, __isl_take isl_id *mark);
 __isl_export

@@ -1,5 +1,5 @@
-#ifndef ISL_AST_CONTEXT_H
-#define ISL_AST_CONTEXT_H
+#ifndef ISL_AST_BUILD_H
+#define ISL_AST_BUILD_H
 
 #include <isl/ctx.h>
 #include <isl/set.h>
@@ -52,6 +52,7 @@ __isl_give isl_ast_build *isl_ast_build_from_context(__isl_take isl_set *set);
 
 __isl_give isl_space *isl_ast_build_get_schedule_space(
 	__isl_keep isl_ast_build *build);
+__isl_export
 __isl_give isl_union_map *isl_ast_build_get_schedule(
 	__isl_keep isl_ast_build *build);
 
