@@ -486,130 +486,22 @@ and <code>diff.c</code> for examples.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>This describes the set of options the calling program wants to affect
-the operation of a low-level (single file) merge.  Some options:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>virtual_ancestor</code></dt>
-<dd>
-<p>Behave as though this were part of a merge between common
-ancestors in a recursive merge.
-If a helper program is specified by the
-<code>[merge "&lt;driver&gt;"] recursive</code> configuration, it will
-be used (see <a href="../gitattributes.html">gitattributes(5)</a>).</p>
-</dd>
-<dt class="hdlist1"><code>variant</code></dt>
-<dd>
-<p>Resolve local conflicts automatically in favor
-of one side or the other (as in <em>git merge-file</em>
-<code>--ours</code>/<code>--theirs</code>/<code>--union</code>).  Can be <code>0</code>,
-<code>XDL_MERGE_FAVOR_OURS</code>, <code>XDL_MERGE_FAVOR_THEIRS</code>, or
-<code>XDL_MERGE_FAVOR_UNION</code>.</p>
-</dd>
-<dt class="hdlist1"><code>renormalize</code></dt>
-<dd>
-<p>Resmudge and clean the "base", "theirs" and "ours" files
-before merging.  Use this when the merge is likely to have
-overlapped with a change in smudge/clean or end-of-line
-normalization rules.</p>
-</dd>
-</dl>
+<p>Check ll-merge.h for details.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_low_level_single_file_merge">Low-level (single file) merge</h2>
 <div class="sectionbody">
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>ll_merge</code></dt>
-<dd>
-<p>Perform a three-way single-file merge in core.  This is
-a thin wrapper around <code>xdl_merge</code> that takes the path and
-any merge backend specified in <code>.gitattributes</code> or
-<code>.git/info/attributes</code> into account.  Returns 0 for a
-clean merge.</p>
-</dd>
-</dl>
-</div>
 <div class="paragraph">
-<p>Calling sequence:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Prepare a <code>struct ll_merge_options</code> to record options.
-If you have no special requests, skip this and pass <code>NULL</code>
-as the <code>opts</code> parameter to use the default options.</p>
-</li>
-<li>
-<p>Allocate an mmbuffer_t variable for the result.</p>
-</li>
-<li>
-<p>Allocate and fill variables with the file&#8217;s original content
-and two modified versions (using <code>read_mmfile</code>, for example).</p>
-</li>
-<li>
-<p>Call <code>ll_merge()</code>.</p>
-</li>
-<li>
-<p>Read the merged content from <code>result_buf.ptr</code> and <code>result_buf.size</code>.</p>
-</li>
-<li>
-<p>Release buffers when finished.  A simple
-<code>free(ancestor.ptr); free(ours.ptr); free(theirs.ptr);
-free(result_buf.ptr);</code> will do.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If the modifications do not merge cleanly, <code>ll_merge</code> will return a
-nonzero value and <code>result_buf</code> will generally include a description of
-the conflict bracketed by markers such as the traditional <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>
-and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>.</p>
-</div>
-<div class="paragraph">
-<p>The <code>ancestor_label</code>, <code>our_label</code>, and <code>their_label</code> parameters are
-used to label the different sides of a conflict if the merge driver
-supports this.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_everything_else">Everything else</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Talk about &lt;merge-recursive.h&gt; and merge_file():</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>merge_trees() to merge with rename detection</p>
-</li>
-<li>
-<p>merge_recursive() for ancestor consolidation</p>
-</li>
-<li>
-<p>try_merge_command() for other strategies</p>
-</li>
-<li>
-<p>conflict format</p>
-</li>
-<li>
-<p>merge options</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>(Daniel, Miklos, Stephan, JC)</p>
+<p>Check ll-merge.h for details.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-12-07 19:37:20 UTC
+Last updated 2020-01-13 20:31:51 UTC
 </div>
 </div>
 </body>

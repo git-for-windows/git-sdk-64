@@ -446,7 +446,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="content"><em>git add</em> [--verbose | -v] [--dry-run | -n] [--force | -f] [--interactive | -i] [--patch | -p]
           [--edit | -e] [--[no-]all | --[no-]ignore-removal | [--update | -u]]
           [--intent-to-add | -N] [--refresh] [--ignore-errors] [--ignore-missing] [--renormalize]
-          [--chmod=(+|-)x] [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
+          [--chmod=(+|-)x] [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]]
+          [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -657,6 +658,21 @@ This option implies <code>-u</code>.</p>
 <p>Override the executable bit of the added files.  The executable
 bit is only changed in the index, the files on disk are left
 unchanged.</p>
+</dd>
+<dt class="hdlist1">--pathspec-from-file=&lt;file&gt;</dt>
+<dd>
+<p>Pathspec is passed in <code>&lt;file&gt;</code> instead of commandline args. If
+<code>&lt;file&gt;</code> is exactly <code>-</code> then standard input is used. Pathspec
+elements are separated by LF or CR/LF. Pathspec elements can be
+quoted as explained for the configuration variable <code>core.quotePath</code>
+(see <a href="git-config.html">git-config(1)</a>). See also <code>--pathspec-file-nul</code> and
+global <code>--literal-pathspecs</code>.</p>
+</dd>
+<dt class="hdlist1">--pathspec-file-nul</dt>
+<dd>
+<p>Only meaningful with <code>--pathspec-from-file</code>. Pathspec elements are
+separated with NUL character and all other characters are taken
+literally (including newlines and quotes).</p>
 </dd>
 <dt class="hdlist1">--</dt>
 <dd>
@@ -971,7 +987,7 @@ they will make the patch impossible to apply:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-12-07 19:37:20 UTC
+Last updated 2020-01-13 20:31:51 UTC
 </div>
 </div>
 </body>

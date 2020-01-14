@@ -30,8 +30,8 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.}]
 ##
 ## Tcl/Tk sanity check
 
-if {[catch {package require Tcl 8.4} err]
- || [catch {package require Tk  8.4} err]
+if {[catch {package require Tcl 8.6} err]
+ || [catch {package require Tk  8.6} err]
 } {
 	catch {wm withdraw .}
 	tk_messageBox \
@@ -688,6 +688,7 @@ proc load_current_branch {} {
 	global current_branch is_detached
 
 	set fd [open [gitdir HEAD] r]
+	fconfigure $fd -translation binary -encoding utf-8
 	if {[gets $fd ref] < 1} {
 		set ref {}
 	}
@@ -1335,6 +1336,9 @@ if {[lindex $_reponame end] eq {.git}} {
 	set _reponame [lindex $_reponame end]
 }
 
+set env(GIT_DIR) $_gitdir
+set env(GIT_WORK_TREE) $_gitworktree
+
 ######################################################################
 ##
 ## global init
@@ -1804,10 +1808,10 @@ proc ui_status {msg} {
 	}
 }
 
-proc ui_ready {{test {}}} {
+proc ui_ready {} {
 	global main_status
 	if {[info exists main_status]} {
-		$main_status show [mc "Ready."] $test
+		$main_status show [mc "Ready."]
 	}
 }
 
@@ -2157,11 +2161,9 @@ proc incr_font_size {font {amt 1}} {
 ##
 ## ui commands
 
-set starting_gitk_msg [mc "Starting gitk... please wait..."]
-
 proc do_gitk {revs {is_submodule false}} {
 	global current_diff_path file_states current_diff_side ui_index
-	global _gitworktree
+	global _gitdir _gitworktree
 
 	# -- Always start gitk through whatever we were loaded with.  This
 	#    lets us bypass using shell process on Windows systems.
@@ -2173,19 +2175,12 @@ proc do_gitk {revs {is_submodule false}} {
 	} else {
 		global env
 
-		if {[info exists env(GIT_DIR)]} {
-			set old_GIT_DIR $env(GIT_DIR)
-		} else {
-			set old_GIT_DIR {}
-		}
-
 		set pwd [pwd]
 
 		if {!$is_submodule} {
 			if {![is_bare]} {
 				cd $_gitworktree
 			}
-			set env(GIT_DIR) [file normalize [gitdir]]
 		} else {
 			cd $current_diff_path
 			if {$revs eq {--}} {
@@ -2206,23 +2201,25 @@ proc do_gitk {revs {is_submodule false}} {
 				}
 				set revs $old_sha1...$new_sha1
 			}
-			if {[info exists env(GIT_DIR)]} {
-				unset env(GIT_DIR)
-			}
+			# GIT_DIR and GIT_WORK_TREE for the submodule are not the ones
+			# we've been using for the main repository, so unset them.
+			# TODO we could make life easier (start up faster?) for gitk
+			# by setting these to the appropriate values to allow gitk
+			# to skip the heuristics to find their proper value
+			unset env(GIT_DIR)
+			unset env(GIT_WORK_TREE)
 		}
 		eval exec $cmd $revs "--" "--" &
 
-		if {$old_GIT_DIR ne {}} {
-			set env(GIT_DIR) $old_GIT_DIR
-		} else {
-			unset env(GIT_DIR)
-		}
+		set env(GIT_DIR) $_gitdir
+		set env(GIT_WORK_TREE) $_gitworktree
 		cd $pwd
 
-		ui_status $::starting_gitk_msg
-		after 10000 {
-			ui_ready $starting_gitk_msg
-		}
+		set status_operation [$::main_status \
+			start \
+			[mc "Starting %s... please wait..." "gitk"]]
+
+		after 3500 [list $status_operation stop]
 	}
 }
 
@@ -2237,34 +2234,32 @@ proc do_git_gui {} {
 		error_popup [mc "Couldn't find git gui in PATH"]
 	} else {
 		global env
+		global _gitdir _gitworktree
 
-		if {[info exists env(GIT_DIR)]} {
-			set old_GIT_DIR $env(GIT_DIR)
-			unset env(GIT_DIR)
-		} else {
-			set old_GIT_DIR {}
-		}
+		# see note in do_gitk about unsetting these vars when
+		# running tools in a submodule
+		unset env(GIT_DIR)
+		unset env(GIT_WORK_TREE)
 
 		set pwd [pwd]
 		cd $current_diff_path
 
 		eval exec $exe gui &
 
-		if {$old_GIT_DIR ne {}} {
-			set env(GIT_DIR) $old_GIT_DIR
-		}
+		set env(GIT_DIR) $_gitdir
+		set env(GIT_WORK_TREE) $_gitworktree
 		cd $pwd
 
-		ui_status $::starting_gitk_msg
-		after 10000 {
-			ui_ready $starting_gitk_msg
-		}
+		set status_operation [$::main_status \
+			start \
+			[mc "Starting %s... please wait..." "git-gui"]]
+
+		after 3500 [list $status_operation stop]
 	}
 }
 
-proc do_explore {} {
-	global _gitworktree
-	set explorer {}
+# Get the system-specific explorer app/command.
+proc get_explorer {} {
 	if {[is_Cygwin] || [is_Windows]} {
 		set explorer "explorer.exe"
 	} elseif {[is_MacOSX]} {
@@ -2273,7 +2268,21 @@ proc do_explore {} {
 		# freedesktop.org-conforming system is our best shot
 		set explorer "xdg-open"
 	}
+	return $explorer
+}
+
+proc do_explore {} {
+	global _gitworktree
+	set explorer [get_explorer]
 	eval exec $explorer [list [file nativename $_gitworktree]] &
+}
+
+# Open file relative to the working tree by the default associated app.
+proc do_file_open {file} {
+	global _gitworktree
+	set explorer [get_explorer]
+	set full_file_path [file join $_gitworktree $file]
+	exec $explorer [file nativename $full_file_path] &
 }
 
 set is_quitting 0
@@ -3527,9 +3536,11 @@ tlabel .vpane.lower.diff.header.file \
 	-justify left
 tlabel .vpane.lower.diff.header.path \
 	-background gold \
-	-foreground black \
+	-foreground blue \
 	-anchor w \
-	-justify left
+	-justify left \
+	-font [eval font create [font configure font_ui] -underline 1] \
+	-cursor hand2
 pack .vpane.lower.diff.header.status -side left
 pack .vpane.lower.diff.header.file -side left
 pack .vpane.lower.diff.header.path -fill x
@@ -3544,8 +3555,12 @@ $ctxm add command \
 			-type STRING \
 			-- $current_diff_path
 	}
+$ctxm add command \
+	-label [mc Open] \
+	-command {do_file_open $current_diff_path}
 lappend diff_actions [list $ctxm entryconf [$ctxm index last] -state]
 bind_button3 .vpane.lower.diff.header.path "tk_popup $ctxm %X %Y"
+bind .vpane.lower.diff.header.path <Button-1> {do_file_open $current_diff_path}
 
 # -- Diff Body
 #
@@ -4173,6 +4188,9 @@ if {[is_enabled retcode]} {
 if {$picked && [is_config_true gui.autoexplore]} {
 	do_explore
 }
+
+# Clear "Initializing..." status
+after 500 {$main_status show ""}
 
 # Local variables:
 # mode: tcl

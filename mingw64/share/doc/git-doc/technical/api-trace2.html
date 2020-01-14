@@ -696,7 +696,7 @@ describe the simplified forms.</p>
 <h2 id="_public_api">Public API</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>All Trace2 API functions send a messsage to all of the active
+<p>All Trace2 API functions send a message to all of the active
 Trace2 Targets.  This section describes the set of available
 messages.</p>
 </div>
@@ -707,141 +707,18 @@ purposes.</p>
 <div class="sect2">
 <h3 id="_basic_command_messages">Basic Command Messages</h3>
 <div class="paragraph">
-<p>These are concerned with the lifetime of the overall git process.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>void trace2_initialize_clock()</code></dt>
-<dd>
-<p>Initialize the Trace2 start clock and nothing else.  This should
-be called at the very top of main() to capture the process start
-time and reduce startup order dependencies.</p>
-</dd>
-<dt class="hdlist1"><code>void trace2_initialize()</code></dt>
-<dd>
-<p>Determines if any Trace2 Targets should be enabled and
-initializes the Trace2 facility.  This includes setting up the
-Trace2 thread local storage (TLS).</p>
-<div class="paragraph">
-<p>This function emits a "version" message containing the version of git
-and the Trace2 protocol.</p>
-</div>
-<div class="paragraph">
-<p>This function should be called from <code>main()</code> as early as possible in
-the life of the process after essential process initialization.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>int trace2_is_enabled()</code></dt>
-<dd>
-<p>Returns 1 if Trace2 is enabled (at least one target is
-active).</p>
-</dd>
-<dt class="hdlist1"><code>void trace2_cmd_start(int argc, const char **argv)</code></dt>
-<dd>
-<p>Emits a "start" message containing the process command line
-arguments.</p>
-</dd>
-<dt class="hdlist1"><code>int trace2_cmd_exit(int exit_code)</code></dt>
-<dd>
-<p>Emits an "exit" message containing the process exit-code and
-elapsed time.</p>
-<div class="paragraph">
-<p>Returns the exit-code.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_cmd_error(const char *fmt, va_list ap)</code></dt>
-<dd>
-<p>Emits an "error" message containing a formatted error message.</p>
-</dd>
-<dt class="hdlist1"><code>void trace2_cmd_path(const char *pathname)</code></dt>
-<dd>
-<p>Emits a "cmd_path" message with the full pathname of the
-current process.</p>
-</dd>
-</dl>
+<p>These are concerned with the lifetime of the overall git process.
+e.g: <code>void trace2_initialize_clock()</code>, <code>void trace2_initialize()</code>,
+<code>int trace2_is_enabled()</code>, <code>void trace2_cmd_start(int argc, const char **argv)</code>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_command_detail_messages">Command Detail Messages</h3>
 <div class="paragraph">
 <p>These are concerned with describing the specific Git command
-after the command line, config, and environment are inspected.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>void trace2_cmd_name(const char *name)</code></dt>
-<dd>
-<p>Emits a "cmd_name" message with the canonical name of the
-command, for example "status" or "checkout".</p>
-</dd>
-<dt class="hdlist1"><code>void trace2_cmd_mode(const char *mode)</code></dt>
-<dd>
-<p>Emits a "cmd_mode" message with a qualifier name to further
-describe the current git command.</p>
-<div class="paragraph">
-<p>This message is intended to be used with git commands having multiple
-major modes.  For example, a "checkout" command can checkout a new
-branch or it can checkout a single file, so the checkout code could
-emit a cmd_mode message of "branch" or "file".</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_cmd_alias(const char *alias, const char **argv_expansion)</code></dt>
-<dd>
-<p>Emits an "alias" message containing the alias used and the
-argument expansion.</p>
-</dd>
-<dt class="hdlist1"><code>void trace2_def_param(const char *parameter, const char *value)</code></dt>
-<dd>
-<p>Emits a "def_param" message containing a key/value pair.</p>
-<div class="paragraph">
-<p>This message is intended to report some global aspect of the current
-command, such as a configuration setting or command line switch that
-significantly affects program performance or behavior, such as
-<code>core.abbrev</code>, <code>status.showUntrackedFiles</code>, or <code>--no-ahead-behind</code>.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_cmd_list_config()</code></dt>
-<dd>
-<p>Emits a "def_param" messages for "important" configuration
-settings.</p>
-<div class="paragraph">
-<p>The environment variable <code>GIT_TRACE2_CONFIG_PARAMS</code> or the <code>trace2.configParams</code>
-config value can be set to a
-list of patterns of important configuration settings, for example:
-<code>core.*,remote.*.url</code>.  This function will iterate over all config
-settings and emit a "def_param" message for each match.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_cmd_set_config(const char *key, const char *value)</code></dt>
-<dd>
-<p>Emits a "def_param" message for a new or updated key/value
-pair IF <code>key</code> is considered important.</p>
-<div class="paragraph">
-<p>This is used to hook into <code>git_config_set()</code> and catch any
-configuration changes and update a value previously reported by
-<code>trace2_cmd_list_config()</code>.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_def_repo(struct repository *repo)</code></dt>
-<dd>
-<p>Registers a repository with the Trace2 layer.  Assigns a
-unique "repo-id" to <code>repo-&gt;trace2_repo_id</code>.</p>
-<div class="paragraph">
-<p>Emits a "worktree" messages containing the repo-id and the worktree
-pathname.</p>
-</div>
-<div class="paragraph">
-<p>Region and data messages (described later) may refer to this repo-id.</p>
-</div>
-<div class="paragraph">
-<p>The main/top-level repository will have repo-id value 1 (aka "r1").</p>
-</div>
-<div class="paragraph">
-<p>The repo-id field is in anticipation of future in-proc submodule
-repositories.</p>
-</div>
-</dd>
-</dl>
+after the command line, config, and environment are inspected.
+e.g: <code>void trace2_cmd_name(const char *name)</code>,
+<code>void trace2_cmd_mode(const char *mode)</code>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -850,62 +727,8 @@ repositories.</p>
 <p>These are concerned with the various spawned child processes,
 including shell scripts, git commands, editors, pagers, and hooks.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>void trace2_child_start(struct child_process *cmd)</code></dt>
-<dd>
-<p>Emits a "child_start" message containing the "child-id",
-"child-argv", and "child-classification".</p>
 <div class="paragraph">
-<p>Before calling this, set <code>cmd-&gt;trace2_child_class</code> to a name
-describing the type of child process, for example "editor".</p>
-</div>
-<div class="paragraph">
-<p>This function assigns a unique "child-id" to <code>cmd-&gt;trace2_child_id</code>.
-This field is used later during the "child_exit" message to associate
-it with the "child_start" message.</p>
-</div>
-<div class="paragraph">
-<p>This function should be called before spawning the child process.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_child_exit(struct child_proess *cmd, int child_exit_code)</code></dt>
-<dd>
-<p>Emits a "child_exit" message containing the "child-id",
-the child&#8217;s elapsed time and exit-code.</p>
-<div class="paragraph">
-<p>The reported elapsed time includes the process creation overhead and
-time spend waiting for it to exit, so it may be slightly longer than
-the time reported by the child itself.</p>
-</div>
-<div class="paragraph">
-<p>This function should be called after reaping the child process.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>int trace2_exec(const char *exe, const char **argv)</code></dt>
-<dd>
-<p>Emits a "exec" message containing the "exec-id" and the
-argv of the new process.</p>
-<div class="paragraph">
-<p>This function should be called before calling one of the <code>exec()</code>
-variants, such as <code>execvp()</code>.</p>
-</div>
-<div class="paragraph">
-<p>This function returns a unique "exec-id".  This value is used later
-if the exec() fails and a "exec-result" message is necessary.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_exec_result(int exec_id, int error_code)</code></dt>
-<dd>
-<p>Emits a "exec_result" message containing the "exec-id"
-and the error code.</p>
-<div class="paragraph">
-<p>On Unix-based systems, <code>exec()</code> does not return if successful.
-This message is used to indicate that the <code>exec()</code> failed and
-that the current program is continuing.</p>
-</div>
-</dd>
-</dl>
+<p>e.g: <code>void trace2_child_start(struct child_process *cmd)</code>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -913,107 +736,19 @@ that the current program is continuing.</p>
 <div class="paragraph">
 <p>These messages are concerned with Git thread usage.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>void trace2_thread_start(const char *thread_name)</code></dt>
-<dd>
-<p>Emits a "thread_start" message.</p>
 <div class="paragraph">
-<p>The <code>thread_name</code> field should be a descriptive name, such as the
-unique name of the thread-proc.  A unique "thread-id" will be added
-to the name to uniquely identify thread instances.</p>
-</div>
-<div class="paragraph">
-<p>Region and data messages (described later) may refer to this thread
-name.</p>
-</div>
-<div class="paragraph">
-<p>This function must be called by the thread-proc of the new thread
-(so that TLS data is properly initialized) and not by the caller
-of <code>pthread_create()</code>.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_thread_exit()</code></dt>
-<dd>
-<p>Emits a "thread_exit" message containing the thread name
-and the thread elapsed time.</p>
-<div class="paragraph">
-<p>This function must be called by the thread-proc before it returns
-(so that the coorect TLS data is used and cleaned up.  It should
-not be called by the caller of <code>pthread_join()</code>.</p>
-</div>
-</dd>
-</dl>
+<p>e.g: <code>void trace2_thread_start(const char *thread_name)</code>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_region_and_data_messages">Region and Data Messages</h3>
 <div class="paragraph">
 <p>These are concerned with recording performance data
-over regions or spans of code.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>void trace2_region_enter(const char *category, const char *label, const struct repository *repo)</code></dt>
-<dt class="hdlist1"><code>void trace2_region_enter_printf(const char *category, const char *label, const struct repository *repo, const char *fmt, ...)</code></dt>
-<dt class="hdlist1"><code>void trace2_region_enter_printf_va(const char *category, const char *label, const struct repository *repo, const char *fmt, va_list ap)</code></dt>
-<dd>
-<p>Emits a thread-relative "region_enter" message with optional
-printf string.</p>
-<div class="paragraph">
-<p>This function pushes a new region nesting stack level on the current
-thread and starts a clock for the new stack frame.</p>
+over regions or spans of code. e.g:
+<code>void trace2_region_enter(const char *category, const char *label, const struct repository *repo)</code>.</p>
 </div>
 <div class="paragraph">
-<p>The <code>category</code> field is an arbitrary category name used to classify
-regions by feature area, such as "status" or "index".  At this time
-it is only just printed along with the rest of the message.  It may
-be used in the future to filter messages.</p>
-</div>
-<div class="paragraph">
-<p>The <code>label</code> field is an arbitrary label used to describe the activity
-being started, such as "read_recursive" or "do_read_index".</p>
-</div>
-<div class="paragraph">
-<p>The <code>repo</code> field, if set, will be used to get the "repo-id", so that
-recursive oerations can be attributed to the correct repository.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_region_leave(const char *category, const char *label, const struct repository *repo)</code></dt>
-<dt class="hdlist1"><code>void trace2_region_leave_printf(const char *category, const char *label, const struct repository *repo, const char *fmt, ...)</code></dt>
-<dt class="hdlist1"><code>void trace2_region_leave_printf_va(const char *category, const char *label, const struct repository *repo, const char *fmt, va_list ap)</code></dt>
-<dd>
-<p>Emits a thread-relative "region_leave" message with optional
-printf string.</p>
-<div class="paragraph">
-<p>This function pops the region nesting stack on the current thread
-and reports the elapsed time of the stack frame.</p>
-</div>
-<div class="paragraph">
-<p>The <code>category</code>, <code>label</code>, and <code>repo</code> fields are the same as above.
-The <code>category</code> and <code>label</code> do not need to match the correpsonding
-"region_enter" message, but it makes the data stream easier to
-understand.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_data_string(const char *category, const struct repository *repo, const char *key, const char * value)</code></dt>
-<dt class="hdlist1"><code>void trace2_data_intmax(const char *category, const struct repository *repo, const char *key, intmax value)</code></dt>
-<dt class="hdlist1"><code>void trace2_data_json(const char *category, const struct repository *repo, const char *key, const struct json_writer *jw)</code></dt>
-<dd>
-<p>Emits a region- and thread-relative "data" or "data_json" message.</p>
-<div class="paragraph">
-<p>This is a key/value pair message containing information about the
-current thread, region stack, and repository.  This could be used
-to print the number of files in a directory during a multi-threaded
-recursive tree walk.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>void trace2_printf(const char *fmt, ...)</code></dt>
-<dt class="hdlist1"><code>void trace2_printf_va(const char *fmt, va_list ap)</code></dt>
-<dd>
-<p>Emits a region- and thread-relative "printf" message.</p>
-</dd>
-</dl>
+<p>Refer to trace2.h for details about all trace2 functions.</p>
 </div>
 </div>
 </div>
@@ -1475,7 +1210,7 @@ child.</p>
 <p>Note that the session-id of the child process is not available to
 the current/spawning process, so the child&#8217;s PID is reported here as
 a hint for post-processing.  (But it is only a hint because the child
-proces may be a shell script which doesn&#8217;t have a session-id.)</p>
+process may be a shell script which doesn&#8217;t have a session-id.)</p>
 </div>
 <div class="paragraph">
 <p>Note that the <code>t_rel</code> field contains the observed run time in seconds
@@ -1884,7 +1619,7 @@ d0 | main                     | atexit       |     |  0.028809 |           |    
 <div class="paragraph">
 <p>Regions may be nested.  This causes messages to be indented in the
 PERF target, for example.
-Elapsed times are relative to the start of the correpsonding nesting
+Elapsed times are relative to the start of the corresponding nesting
 level as expected.  For example, if we add region message to:</p>
 </div>
 <div class="listingblock">
@@ -2092,7 +1827,7 @@ d0 | main                     | atexit       |     |  0.030027 |           |    
 <p>In this example, the preload region took 0.009122 seconds.  The 7 threads
 took between 0.006069 and 0.008947 seconds to work on their portion of
 the index.  Thread "th01" worked on 508 items at offset 0.  Thread "th02"
-worked on 508 items at offset 2032.  Thread "th04" worked on 508 itemts
+worked on 508 items at offset 2032.  Thread "th04" worked on 508 items
 at offset 508.</p>
 </div>
 <div class="paragraph">
@@ -2141,7 +1876,7 @@ Trace2 targets (and convert &lt;key&gt; to a "category").</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-12-07 19:37:20 UTC
+Last updated 2020-01-13 20:31:51 UTC
 </div>
 </div>
 </body>

@@ -445,7 +445,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="verseblock">
 <pre class="content"><em>git notes</em> [list [&lt;object&gt;]]
 <em>git notes</em> add [-f] [--allow-empty] [-F &lt;file&gt; | -m &lt;msg&gt; | (-c | -C) &lt;object&gt;] [&lt;object&gt;]
-<em>git notes</em> copy [-f] ( --stdin | &lt;from-object&gt; &lt;to-object&gt; )
+<em>git notes</em> copy [-f] ( --stdin | &lt;from-object&gt; [&lt;to-object&gt;] )
 <em>git notes</em> append [--allow-empty] [-F &lt;file&gt; | -m &lt;msg&gt; | (-c | -C) &lt;object&gt;] [&lt;object&gt;]
 <em>git notes</em> edit [--allow-empty] [&lt;object&gt;]
 <em>git notes</em> show [&lt;object&gt;]
@@ -517,8 +517,8 @@ subcommand).</p>
 </dd>
 <dt class="hdlist1">copy</dt>
 <dd>
-<p>Copy the notes for the first object onto the second object.
-Abort if the second object already has notes, or if the first
+<p>Copy the notes for the first object onto the second object (defaults to
+HEAD). Abort if the second object already has notes, or if the first
 object has none (use -f to overwrite existing notes to the
 second object). This subcommand is equivalent to:
 <code>git notes add [-f] -C $(git notes list &lt;from-object&gt;) &lt;to-object&gt;</code></p>
@@ -945,7 +945,7 @@ on the <code>notes.rewrite.&lt;command&gt;</code> and <code>notes.rewriteRef</co
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-12-07 19:37:20 UTC
+Last updated 2020-01-13 20:31:51 UTC
 </div>
 </div>
 </body>

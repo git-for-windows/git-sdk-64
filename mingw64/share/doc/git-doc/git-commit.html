@@ -448,7 +448,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
            [-F &lt;file&gt; | -m &lt;msg&gt;] [--reset-author] [--allow-empty]
            [--allow-empty-message] [--no-verify] [-e] [--author=&lt;author&gt;]
            [--date=&lt;date&gt;] [--cleanup=&lt;mode&gt;] [--[no-]status]
-           [-i | -o] [-S[&lt;keyid&gt;]] [--] [&lt;file&gt;&#8230;&#8203;]</pre>
+           [-i | -o] [--pathspec-from-file=&lt;file&gt; [--pathspec-file-nul]]
+           [-S[&lt;keyid&gt;]] [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -787,6 +788,21 @@ the last commit without committing changes that have
 already been staged. If used together with <code>--allow-empty</code>
 paths are also not required, and an empty commit will be created.</p>
 </dd>
+<dt class="hdlist1">--pathspec-from-file=&lt;file&gt;</dt>
+<dd>
+<p>Pathspec is passed in <code>&lt;file&gt;</code> instead of commandline args. If
+<code>&lt;file&gt;</code> is exactly <code>-</code> then standard input is used. Pathspec
+elements are separated by LF or CR/LF. Pathspec elements can be
+quoted as explained for the configuration variable <code>core.quotePath</code>
+(see <a href="git-config.html">git-config(1)</a>). See also <code>--pathspec-file-nul</code> and
+global <code>--literal-pathspecs</code>.</p>
+</dd>
+<dt class="hdlist1">--pathspec-file-nul</dt>
+<dd>
+<p>Only meaningful with <code>--pathspec-from-file</code>. Pathspec elements are
+separated with NUL character and all other characters are taken
+literally (including newlines and quotes).</p>
+</dd>
 <dt class="hdlist1">-u[&lt;mode&gt;]</dt>
 <dt class="hdlist1">--untracked-files[=&lt;mode&gt;]</dt>
 <dd>
@@ -878,13 +894,15 @@ set to force each and every commit to be signed.</p>
 <dd>
 <p>Do not interpret any more arguments as options.</p>
 </dd>
-<dt class="hdlist1">&lt;file&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1">&lt;pathspec&gt;&#8230;&#8203;</dt>
 <dd>
-<p>When files are given on the command line, the command
-commits the contents of the named files, without
-recording the changes already staged.  The contents of
-these files are also staged for the next commit on top
-of what have been staged before.</p>
+<p>When pathspec is given on the command line, commit the contents of
+the files that match the pathspec without recording the changes
+already added to the index. The contents of these files are also
+staged for the next commit on top of what have been staged before.</p>
+<div class="paragraph">
+<p>For more details, see the <em>pathspec</em> entry in <a href="gitglossary.html">gitglossary(7)</a>.</p>
+</div>
 </dd>
 </dl>
 </div>
@@ -1212,7 +1230,7 @@ overwritten by the next invocation of <code>git commit</code>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-12-07 19:37:20 UTC
+Last updated 2020-01-13 20:31:51 UTC
 </div>
 </div>
 </body>
