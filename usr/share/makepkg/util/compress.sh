@@ -36,7 +36,7 @@ compress_as() {
 	case "$ext" in
 		*.tar.gz)  ${COMPRESSGZ[@]:-gzip -c -f -n} ;;
 		*.tar.bz2) ${COMPRESSBZ2[@]:-bzip2 -c -f} ;;
-		*.tar.xz)  ${COMPRESSXZ[@]:-xz -c -z -T0 -} ;;
+		*.tar.xz)  ${COMPRESSXZ[@]:-xz -c -z -} ;;
 		*.tar.zst) ${COMPRESSZST[@]:-zstd -c -z -q -} ;;
 		*.tar.lrz) ${COMPRESSLRZ[@]:-lrzip -q} ;;
 		*.tar.lzo) ${COMPRESSLZO[@]:-lzop -q} ;;

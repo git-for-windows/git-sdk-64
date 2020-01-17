@@ -96,7 +96,7 @@ extract_file() {
 	fi
 
 	# do not rely on extension for file type
-	local file_type=$(file -bizL -- "$file")
+	local file_type=$(file -S -bizL -- "$file")
 	local ext=${file##*.}
 	local cmd=''
 	case "$file_type" in

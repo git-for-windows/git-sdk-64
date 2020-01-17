@@ -535,11 +535,11 @@ create_db() {
 
 		pushd "$tmpdir/$repo" >/dev/null
 		if ( shopt -s nullglob; files=(*); (( ${#files[*]} )) ); then
-			bsdtar -c ${TAR_OPT} -f "$tempname" *
+			bsdtar --uid 1 --uname root --gid 1 --gname root -c ${TAR_OPT} -f "$tempname" *
 		else
 			# we have no packages remaining? zip up some emptyness
 			warning "$(gettext "No packages remain, creating empty database.")"
-			bsdtar -c ${TAR_OPT} -f "$tempname" -T /dev/null
+			bsdtar --uid 1 --uname root --gid 1 --gname root -c ${TAR_OPT} -f "$tempname" -T /dev/null
 		fi
 		popd >/dev/null
 

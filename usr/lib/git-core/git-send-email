@@ -1230,7 +1230,7 @@ sub process_address_list {
 # domain name that corresponds the IP address in the HELO/EHLO
 # handshake. This is used to verify the connection and prevent
 # spammers from trying to hide their identity. If the DNS and IP don't
-# match, the receiveing MTA may deny the connection.
+# match, the receiving MTA may deny the connection.
 #
 # Here is a deny example of Net::SMTP with the default "localhost.localdomain"
 #
@@ -1396,7 +1396,7 @@ sub send_message {
 	@recipients = unique_email_list(@recipients,@cc,@initial_bcc);
 	@recipients = (map { extract_valid_address_or_die($_) } @recipients);
 	my $date = format_2822_time($time++);
-	my $gitversion = '2.24.1';
+	my $gitversion = '2.25.0';
 	if ($gitversion =~ m/..GIT_VERSION../) {
 	    $gitversion = Git::version();
 	}

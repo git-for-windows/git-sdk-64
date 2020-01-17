@@ -52,13 +52,13 @@ result:
   list  { std::cout << $1 << '\n'; }
 ;
 
-%type <std::vector<std::string>> list;
+%nterm <std::vector<std::string>> list;
 list:
   %empty     { /* Generates an empty string list */ }
 | list item  { $$ = $1; $$.push_back ($2); }
 ;
 
-%type <std::string> item;
+%nterm <std::string> item;
 %token <std::string> TEXT;
 %token <int> NUMBER;
 item:

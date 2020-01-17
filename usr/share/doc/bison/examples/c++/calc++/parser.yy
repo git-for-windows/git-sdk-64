@@ -1,5 +1,5 @@
 %skeleton "lalr1.cc" /* -*- C++ -*- */
-%require "3.4.2"
+%require "3.5"
 %defines
 
 %define api.token.constructor
@@ -37,7 +37,7 @@
 
 %token <std::string> IDENTIFIER "identifier"
 %token <int> NUMBER "number"
-%type  <int> exp
+%nterm <int> exp
 
 %printer { yyo << $$; } <*>;
 

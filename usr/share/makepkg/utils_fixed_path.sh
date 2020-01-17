@@ -15,9 +15,9 @@ if [[ -n "$MSYSTEM" ]]; then
                           'svn'
                           'tput'
                           'uncompress'
-                          'upx'
                           'xargs'
                           'xz'
+                          'zstd'
                          )
 
   for wrapper in ${UTILS_NAME[@]}; do

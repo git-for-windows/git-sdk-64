@@ -9,7 +9,7 @@
 %define api.value.type union /* Generate YYSTYPE from these types: */
 %token <double>  NUM     /* Double precision number. */
 %token <symrec*> VAR FUN /* Symbol table pointer: variable/function. */
-%type  <double>  exp
+%nterm <double>  exp
 
 %precedence '='
 %left '-' '+'
@@ -84,7 +84,11 @@ init_table (void)
     }
 }
 
-#include <stdlib.h> /* malloc. */
+/* The mfcalc code assumes that malloc and realloc
+   always succeed, and that integer calculations
+   never overflow.  Production-quality code should
+   not make these assumptions.  */
+#include <stdlib.h> /* malloc, realloc. */
 #include <string.h> /* strlen. */
 
 symrec *
@@ -109,15 +113,16 @@ getsym (char const *name)
 }
 
 #include <ctype.h>
+#include <stddef.h>
 
 int
 yylex (void)
 {
-  int c;
+  int c = getchar ();
 
   /* Ignore white space, get first nonwhite character. */
-  while ((c = getchar ()) == ' ' || c == '\t')
-    continue;
+  while (c == ' ' || c == '\t')
+    c = getchar ();
 
   if (c == EOF)
     return 0;
@@ -133,21 +138,16 @@ yylex (void)
   /* Char starts an identifier => read the name. */
   if (isalpha (c))
     {
-      /* Initially make the buffer long enough
-         for a 40-character symbol name. */
-      static size_t length = 40;
+      static ptrdiff_t bufsize = 0;
       static char *symbuf = 0;
-      if (!symbuf)
-        symbuf = malloc (length + 1);
-
-      int i = 0;
+      ptrdiff_t i = 0;
       do
         {
           /* If buffer is full, make it bigger. */
-          if (i == length)
+          if (bufsize <= i)
             {
-              length *= 2;
-              symbuf = realloc (symbuf, length + 1);
+              bufsize = 2 * bufsize + 40;
+              symbuf = realloc (symbuf, bufsize);
             }
           /* Add this character to the buffer. */
           symbuf[i++] = c;
