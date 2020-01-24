@@ -15,7 +15,7 @@ use Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(&strtotime &str2time &strptime);
 
-$VERSION = "2.30";
+$VERSION = "2.31";
 
 my %month = (
 	january		=> 0,
@@ -73,7 +73,7 @@ sub {
   my $dtstr = lc shift;
   my $merid = 24;
 
-  my($year,$month,$day,$hh,$mm,$ss,$zone,$dst,$frac);
+  my($century,$year,$month,$day,$hh,$mm,$ss,$zone,$dst,$frac);
 
   $zone = tz_offset(shift) if @_;
 
@@ -195,12 +195,15 @@ sub {
     }
   }
 
-  $year -= 1900 if defined $year && $year > 1900;
+  if (defined $year && $year > 1900) {
+    $century = int($year / 100);
+    $year -= 1900;
+  }
 
   $zone += 3600 if defined $zone && $dst;
   $ss += "0.$frac" if $frac;
 
-  return ($ss,$mm,$hh,$day,$month,$year,$zone);
+  return ($ss,$mm,$hh,$day,$month,$year,$zone,$century);
 }
 ESQ
 
@@ -233,7 +236,7 @@ sub str2time
  return undef
 	unless @t;
 
- my($ss,$mm,$hh,$day,$month,$year,$zone) = @t;
+ my($ss,$mm,$hh,$day,$month,$year,$zone, $century) = @t;
  my @lt  = localtime(time);
 
  $hh    ||= 0;
@@ -251,6 +254,9 @@ sub str2time
 
  $year = ($month > $lt[4]) ? ($lt[5] - 1) : $lt[5]
 	unless(defined $year);
+
+ # we were given a 4 digit year, so let's keep using those
+ $year += 1900 if defined $century;
 
  return undef
 	unless($month <= 11 && $day >= 1 && $day <= 31
@@ -317,10 +323,12 @@ date string does not specify a timezone.
 =item strptime(DATE [, ZONE])
 
 C<strptime> takes the same arguments as str2time but returns an array of
-values C<($ss,$mm,$hh,$day,$month,$year,$zone)>. Elements are only defined
-if they could be extracted from the date string. The C<$zone> element is
-the timezone offset in seconds from GMT. An empty array is returned upon
+values C<($ss,$mm,$hh,$day,$month,$year,$zone,$century)>. Elements are only
+defined if they could be extracted from the date string. The C<$zone> element
+is the timezone offset in seconds from GMT. An empty array is returned upon
 failure.
+
+=back
 
 =head1 MULTI-LANGUAGE SUPPORT
 
