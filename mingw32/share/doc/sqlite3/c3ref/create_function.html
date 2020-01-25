@@ -91,7 +91,7 @@ return false;
 }
 </script>
 </div>
-<!-- keywords: {application-defined SQL function} {application-defined SQL functions} {function creation routines} sqlite3_create_function sqlite3_create_function16 sqlite3_create_function_v2 sqlite3_create_window_function -->
+<!-- keywords: {function creation routines} sqlite3_create_function sqlite3_create_function16 sqlite3_create_function_v2 sqlite3_create_window_function -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 <h2>Create Or Redefine SQL Functions</h2>
@@ -185,19 +185,30 @@ each encoding.
 When multiple implementations of the same function are available, SQLite
 will pick the one that involves the least amount of data conversion.</p>
 
-<p>The fourth parameter may optionally be ORed with <a href="../c3ref/c_deterministic.html">SQLITE_DETERMINISTIC</a>
+<p>The fourth parameter may optionally be ORed with <a href="../c3ref/c_deterministic.html#sqlitedeterministic">SQLITE_DETERMINISTIC</a>
 to signal that the function will always return the same result given
 the same inputs within a single SQL statement.  Most SQL functions are
 deterministic.  The built-in <a href="../lang_corefunc.html#random">random()</a> SQL function is an example of a
 function that is not deterministic.  The SQLite query planner is able to
 perform additional optimizations on deterministic functions, so use
-of the <a href="../c3ref/c_deterministic.html">SQLITE_DETERMINISTIC</a> flag is recommended where possible.</p>
+of the <a href="../c3ref/c_deterministic.html#sqlitedeterministic">SQLITE_DETERMINISTIC</a> flag is recommended where possible.</p>
 
-<p>The fourth parameter may also optionally include the <a href="../c3ref/c_deterministic.html">SQLITE_DIRECTONLY</a>
+<p>The fourth parameter may also optionally include the <a href="../c3ref/c_deterministic.html#sqlitedirectonly">SQLITE_DIRECTONLY</a>
 flag, which if present prevents the function from being invoked from
-within VIEWs or TRIGGERs.  For security reasons, the <a href="../c3ref/c_deterministic.html">SQLITE_DIRECTONLY</a>
-flag is recommended for any application-defined SQL function that has
-side-effects.</p>
+within VIEWs, TRIGGERs, CHECK constraints, generated column expressions,
+index expressions, or the WHERE clause of partial indexes.</p>
+
+<p><span style="background-color:#ffff90;">
+For best security, the <a href="../c3ref/c_deterministic.html#sqlitedirectonly">SQLITE_DIRECTONLY</a> flag is recommended for
+all application-defined SQL functions that do not need to be
+used inside of triggers, view, CHECK constraints, or other elements of
+the database schema.  This flags is especially recommended for SQL
+functions that have side effects or reveal internal application state.
+Without this flag, an attacker might be able to modify the schema of
+a database file to include invocations of the function with parameters
+chosen by the attacker, which the application will then execute when
+the database file is opened and read.
+</span></p>
 
 <p>The fifth parameter is an arbitrary pointer.  The implementation of the
 function can gain access to this pointer using <a href="../c3ref/user_data.html">sqlite3_user_data()</a>.</p>

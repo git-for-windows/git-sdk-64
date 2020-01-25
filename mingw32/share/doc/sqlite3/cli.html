@@ -113,25 +113,27 @@ Table Of Contents
 <div class="fancy-toc1"><a href="#csv_import">8. CSV Import</a></div>
 <div class="fancy-toc1"><a href="#csv_export">9. CSV Export</a></div>
 <div class="fancy-toc2"><a href="#_export_to_excel_">9.1.  Export to Excel </a></div>
-<div class="fancy-toc1"><a href="#converting_an_entire_database_to_an_ascii_text_file">10. Converting An Entire Database To An ASCII Text File</a></div>
-<div class="fancy-toc1"><a href="#recover_data_from_a_corrupted_database">11. Recover Data From a Corrupted Database</a></div>
-<div class="fancy-toc1"><a href="#loading_extensions">12. Loading Extensions</a></div>
-<div class="fancy-toc1"><a href="#cryptographic_hashes_of_database_content">13. Cryptographic Hashes Of Database Content</a></div>
-<div class="fancy-toc1"><a href="#database_content_self_tests">14. Database Content Self-Tests</a></div>
-<div class="fancy-toc1"><a href="#sqlite_archive_support">15. SQLite Archive Support</a></div>
-<div class="fancy-toc2"><a href="#_sqlite_archive_create_command_">15.1.  SQLite Archive Create Command </a></div>
-<div class="fancy-toc2"><a href="#_sqlite_archive_extract_command_">15.2.  SQLite Archive Extract Command </a></div>
-<div class="fancy-toc2"><a href="#_sqlite_archive_list_command_">15.3.  SQLite Archive List Command </a></div>
-<div class="fancy-toc2"><a href="#_sqlite_archive_insert_and_update_commands_">15.4.  SQLite Archive Insert And Update Commands </a></div>
-<div class="fancy-toc2"><a href="#_operations_on_zip_archives_">15.5.  Operations On ZIP Archives </a></div>
-<div class="fancy-toc2"><a href="#_sql_used_to_implement_sqlite_archive_operations_">15.6.  SQL Used To Implement SQLite Archive Operations </a></div>
-<div class="fancy-toc1"><a href="#sql_parameters">16. SQL Parameters</a></div>
-<div class="fancy-toc1"><a href="#index_recommendations_sqlite_expert_">17. Index Recommendations (SQLite Expert)</a></div>
-<div class="fancy-toc1"><a href="#other_dot_commands">18. Other Dot Commands</a></div>
-<div class="fancy-toc1"><a href="#using_sqlite3_in_a_shell_script">19. Using sqlite3 in a shell script</a></div>
-<div class="fancy-toc1"><a href="#ending_shell_commands">20. Ending shell commands</a></div>
-<div class="fancy-toc1"><a href="#compiling_the_sqlite3_program_from_sources">21. Compiling the sqlite3 program from sources</a></div>
-<div class="fancy-toc2"><a href="#_do_it_yourself_builds_">21.1.  Do-It-Yourself Builds </a></div>
+<div class="fancy-toc1"><a href="#accessing_zip_archives_as_database_files">10. Accessing ZIP Archives As Database Files</a></div>
+<div class="fancy-toc2"><a href="#how_zip_archive_access_is_implemented">10.1. How ZIP archive access is implemented</a></div>
+<div class="fancy-toc1"><a href="#converting_an_entire_database_to_an_ascii_text_file">11. Converting An Entire Database To An ASCII Text File</a></div>
+<div class="fancy-toc1"><a href="#recover_data_from_a_corrupted_database">12. Recover Data From a Corrupted Database</a></div>
+<div class="fancy-toc1"><a href="#loading_extensions">13. Loading Extensions</a></div>
+<div class="fancy-toc1"><a href="#cryptographic_hashes_of_database_content">14. Cryptographic Hashes Of Database Content</a></div>
+<div class="fancy-toc1"><a href="#database_content_self_tests">15. Database Content Self-Tests</a></div>
+<div class="fancy-toc1"><a href="#sqlite_archive_support">16. SQLite Archive Support</a></div>
+<div class="fancy-toc2"><a href="#_sqlite_archive_create_command_">16.1.  SQLite Archive Create Command </a></div>
+<div class="fancy-toc2"><a href="#_sqlite_archive_extract_command_">16.2.  SQLite Archive Extract Command </a></div>
+<div class="fancy-toc2"><a href="#_sqlite_archive_list_command_">16.3.  SQLite Archive List Command </a></div>
+<div class="fancy-toc2"><a href="#_sqlite_archive_insert_and_update_commands_">16.4.  SQLite Archive Insert And Update Commands </a></div>
+<div class="fancy-toc2"><a href="#_operations_on_zip_archives_">16.5.  Operations On ZIP Archives </a></div>
+<div class="fancy-toc2"><a href="#_sql_used_to_implement_sqlite_archive_operations_">16.6.  SQL Used To Implement SQLite Archive Operations </a></div>
+<div class="fancy-toc1"><a href="#sql_parameters">17. SQL Parameters</a></div>
+<div class="fancy-toc1"><a href="#index_recommendations_sqlite_expert_">18. Index Recommendations (SQLite Expert)</a></div>
+<div class="fancy-toc1"><a href="#other_dot_commands">19. Other Dot Commands</a></div>
+<div class="fancy-toc1"><a href="#using_sqlite3_in_a_shell_script">20. Using sqlite3 in a shell script</a></div>
+<div class="fancy-toc1"><a href="#ending_shell_commands">21. Ending shell commands</a></div>
+<div class="fancy-toc1"><a href="#compiling_the_sqlite3_program_from_sources">22. Compiling the sqlite3 program from sources</a></div>
+<div class="fancy-toc2"><a href="#_do_it_yourself_builds_">22.1.  Do-It-Yourself Builds </a></div>
 </div>
 </div>
 <script>
@@ -159,12 +161,14 @@ mk.innerHTML = "&#x25ba;";
 <p>The SQLite project provides a simple command-line program named
 <b>sqlite3</b> (or <b>sqlite3.exe</b> on Windows)
 that allows the user to manually enter and execute SQL
-statements against an SQLite database.  This document provides a brief
+statements against an SQLite database or against a
+<a href="#zipdb">ZIP archive</a>.  This document provides a brief
 introduction on how to use the <b>sqlite3</b> program.
 
 </p><p>Start the <b>sqlite3</b> program by typing "sqlite3" at the
 command prompt, optionally followed 
-by the name the file that holds the SQLite database.  If the named
+by the name the file that holds the SQLite database
+(or <a href="#zipdb">ZIP archive</a>).  If the named
 file does not exist, a new database file with the given name will be
 created automatically.  If no database file is specified on the
 command-line, a temporary database is created, then deleted when 
@@ -474,11 +478,11 @@ auto-adjusting 0 value.</p>
 <p>Use a negative column width for right-justified columns.</p>
 
 <p>The column labels that appear on the first two lines of output
-can be turned on and off using the ".header" dot command.  In the
+can be turned on and off using the ".headers" dot command.  In the
 examples above, the column labels are on.  To turn them off you
 could do this:</p>
 
-<div class="codeblock"><pre>sqlite&gt; <b>.header off</b>
+<div class="codeblock"><pre>sqlite&gt; <b>.headers off</b>
 sqlite&gt; <b>select * from tbl1;</b>
 hello         10    
 goodbye       20    
@@ -566,7 +570,7 @@ thing.
 
 </p><h2 id="file_i_o_functions"><span>6.1. </span>File I/O Functions</h2>
 
-<p>The command-line shell adds two <a href="c3ref/create_function.html">application-defined SQL functions</a> that
+<p>The command-line shell adds two <a href="appfunc.html">application-defined SQL functions</a> that
 facilitate reading content from a file into a table column, and writing the
 content of a column into a file, respectively.
 
@@ -775,17 +779,17 @@ table does not previously exist.
 the "mode" to "csv" and then run a query to extract the desired rows
 of the table.
 
-</p><div class="codeblock"><pre>sqlite&gt; <b>.header on</b>
+</p><div class="codeblock"><pre>sqlite&gt; <b>.headers on</b>
 sqlite&gt; <b>.mode csv</b>
 sqlite&gt; <b>.once c:/work/dataout.csv</b>
 sqlite&gt; <b>SELECT * FROM tab1;</b>
 sqlite&gt; <b>.system c:/work/dataout.csv</b>
 </pre></div>
 
-<p>In the example above, the ".header on" line causes column labels to
+<p>In the example above, the ".headers on" line causes column labels to
 be printed as the first row of output.  This means that the first row of
 the resulting CSV file will contain column labels.  If column labels are
-not desired, set ".header off" instead. (The ".header off" setting is
+not desired, set ".headers off" instead. (The ".headers off" setting is
 the default and can be omitted if the headers have not been previously
 turned on.)
 
@@ -843,9 +847,77 @@ it names the temporary file with a ".txt" suffix so that the default
 text editor for the system will be invoked, instead of the default
 spreadsheet.
 
+<a name="zipdb"></a>
+
+</p><h1 id="accessing_zip_archives_as_database_files"><span>10. </span>Accessing ZIP Archives As Database Files</h1>
+
+<p>In addition to reading and writing SQLite database files,
+the <b>sqlite3</b> program will also read and write ZIP archives.
+Simply specify a ZIP archive filename in place of an SQLite database
+filename on the initial command line, or in the ".open" command,
+and <b>sqlite3</b> will automatically detect that the file is a
+ZIP archive instead of an SQLite database and will open it as such.
+This works regardless of file suffix.  So you can open JAR, DOCX,
+and ODP files and any other file format that is really a ZIP
+archive and SQLite will read it for you.
+
+</p><p>A ZIP archive appears to be a database containing a single table
+with the following schema:
+
+</p><div class="codeblock"><pre>CREATE TABLE zip(
+  name,     // Name of the file
+  mode,     // Unix-style file permissions
+  mtime,    // Timestamp, seconds since 1970
+  sz,       // File size after decompression
+  rawdata,  // Raw compressed file data
+  data,     // Uncompressed file content
+  method    // ZIP compression method code
+);
+</pre></div>
+
+<p>So, for example, if you wanted to see the compression efficiency
+(expressed as the size of the compressed content relative to the
+original uncompressed file size) for all files in the ZIP archive,
+sorted from most compressed to least compressed, you could run a
+query like this:
+
+</p><div class="codeblock"><pre>sqlite&gt; SELECT name, (100.0*length(rawdata))/sz FROM zip ORDER BY 2;
+</pre></div>
+
+<p>Or using <a href="cli.html#fileio">file I/O functions</a>, you can extract elements of the
+ZIP archive:
+
+</p><div class="codeblock"><pre>sqlite&gt; SELECT writefile(name,content) FROM zip
+   ...&gt; WHERE name LIKE 'docProps/%';
+</pre></div>
+
+<h2 id="how_zip_archive_access_is_implemented"><span>10.1. </span>How ZIP archive access is implemented</h2>
+
+<p>The command-line shell uses the <a href="zipfile.html">Zipfile virtual table</a> to
+access ZIP archives.  You can see this by running the ".schema"
+command when a ZIP archive is open:
+
+</p><div class="codeblock"><pre>sqlite&gt; .schema
+CREATE VIRTUAL TABLE zip USING zipfile('document.docx')
+/* zip(name,mode,mtime,sz,rawdata,data,method) */;
+</pre></div>
+
+<p>When opening a file, if the command-line client discovers that the
+file is ZIP archive instead of an SQLite database, it actually opens
+an <a href="inmemorydb.html">in-memory database</a> and then in that in-memory database it creates
+an instance of the <a href="zipfile.html">Zipfile virtual table</a> that is attached to the
+ZIP archive.
+
+</p><p>The special processing for opening ZIP archives is a trick of the
+command-line shell, not the core SQLite library.  So if you want to
+open a ZIP archive as a database in your application, you will need to
+activate the <a href="zipfile.html">Zipfile virtual table</a> module then run an appropriate
+<a href="lang_createvtab.html">CREATE VIRTUAL TABLE</a> statement.
+
+
 <a name="dump"></a>
 
-</p><h1 id="converting_an_entire_database_to_an_ascii_text_file"><span>10. </span>Converting An Entire Database To An ASCII Text File</h1>
+</p><h1 id="converting_an_entire_database_to_an_ascii_text_file"><span>11. </span>Converting An Entire Database To An ASCII Text File</h1>
 
 <p>Use the ".dump" command to convert the entire contents of a
 database into a single ASCII text file.  This file can be converted
@@ -878,7 +950,7 @@ $ <b>sqlite3 ex1 .dump | psql ex2</b>
 
 <a name="recover"></a>
 
-<h1 id="recover_data_from_a_corrupted_database"><span>11. </span>Recover Data From a Corrupted Database</h1>
+<h1 id="recover_data_from_a_corrupted_database"><span>12. </span>Recover Data From a Corrupted Database</h1>
 
 <p>Like the ".dump" command, ".recover" attempts to convert the entire 
 contents of a database file to text. The difference is that instead of
@@ -946,9 +1018,9 @@ the table "orphaned_rows":
 
 <a name="dotload"></a>
 
-<h1 id="loading_extensions"><span>12. </span>Loading Extensions</h1>
+<h1 id="loading_extensions"><span>13. </span>Loading Extensions</h1>
 
-<p>You can add new custom <a href="c3ref/create_function.html">application-defined SQL functions</a>,
+<p>You can add new custom <a href="appfunc.html">application-defined SQL functions</a>,
 <a href="datatype3.html#collation">collating sequences</a>, <a href="vtab.html">virtual tables</a>, and <a href="vfs.html">VFSes</a> to the command-line
 shell at run-time using the ".load" command.  First, convert the
 extension in to a DLL or shared library (as described in the
@@ -975,7 +1047,7 @@ your own particular needs.
 
 <a name="sha3sum"></a>
 
-</p><h1 id="cryptographic_hashes_of_database_content"><span>13. </span>Cryptographic Hashes Of Database Content</h1>
+</p><h1 id="cryptographic_hashes_of_database_content"><span>14. </span>Cryptographic Hashes Of Database Content</h1>
 
 <p>The ".sha3sum" dot-command computes a
 <a href="https://en.wikipedia.org/wiki/SHA-3">SHA3</a> hash of the <em>content</em>
@@ -1000,7 +1072,7 @@ that is included with the command-line shell.
 
 <a name="selftest"></a>
 
-</p><h1 id="database_content_self_tests"><span>14. </span>Database Content Self-Tests</h1>
+</p><h1 id="database_content_self_tests"><span>15. </span>Database Content Self-Tests</h1>
 
 <p>The ".selftest" command attempts to verify that a database is
 intact and is not corrupt.  
@@ -1034,7 +1106,7 @@ refer to tables that are not constant.
 
 <a name="sqlar"></a>
 
-</p><h1 id="sqlite_archive_support"><span>15. </span>SQLite Archive Support</h1>
+</p><h1 id="sqlite_archive_support"><span>16. </span>SQLite Archive Support</h1>
 
 <p>The ".archive" dot-command and the "-A" command-line option
 provide built-in support for the 
@@ -1104,14 +1176,14 @@ next, and any remaining words are considered command arguments. For example:
 .ar cCf dir1 new_archive.db file1 file2 file3
 </pre></div>
 
-<h2 id="_sqlite_archive_create_command_"><span>15.1. </span> SQLite Archive Create Command </h2>
+<h2 id="_sqlite_archive_create_command_"><span>16.1. </span> SQLite Archive Create Command </h2>
 
 <p>Create a new archive, overwriting any existing archive (either in the current
 "main" db or in the file specified by a --file option). Each argument following
 the options is a file to add to the archive. Directories are imported
 recursively. See above for examples.
 
-</p><h2 id="_sqlite_archive_extract_command_"><span>15.2. </span> SQLite Archive Extract Command </h2>
+</p><h2 id="_sqlite_archive_extract_command_"><span>16.2. </span> SQLite Archive Extract Command </h2>
 
 <p>Extract files from the archive (either to the current working directory or
 to the directory specified by a --directory option). If there are no arguments
@@ -1128,7 +1200,7 @@ specified files are not part of the archive.
 .ar fCx ar.db dir1 file1
 </pre></div>
 
-<h2 id="_sqlite_archive_list_command_"><span>15.3. </span> SQLite Archive List Command </h2>
+<h2 id="_sqlite_archive_list_command_"><span>16.3. </span> SQLite Archive List Command </h2>
 
 <p>List the contents of the archive. If no arguments are specified, then all
 files are listed. Otherwise, only those specified as arguments are. Currently,
@@ -1141,7 +1213,7 @@ change in the future.
 
 <a name="arinsup"></a>
 
-<h2 id="_sqlite_archive_insert_and_update_commands_"><span>15.4. </span> SQLite Archive Insert And Update Commands </h2>
+<h2 id="_sqlite_archive_insert_and_update_commands_"><span>16.4. </span> SQLite Archive Insert And Update Commands </h2>
 
 <p> The --update and --insert commands work like --create command, except that 
 they do not delete the current archive before commencing. New versions of
@@ -1157,7 +1229,7 @@ is currently in the archive.
 the --update option was supported but that option worked like --insert in that
 it always reinserted every file regardless of whether or not it had changed.
 
-</p><h2 id="_operations_on_zip_archives_"><span>15.5. </span> Operations On ZIP Archives </h2>
+</p><h2 id="_operations_on_zip_archives_"><span>16.5. </span> Operations On ZIP Archives </h2>
 
 <p>If FILE is a ZIP archive rather than an SQLite Archive, the ".archive"
 command and the "-A" command-line option still work.  This is accomplished
@@ -1172,7 +1244,7 @@ differing only in output formatting:
   </td></tr><tr style="text-align:left;background-color:#DDDDDD"><td>zip -r archive2.zip dir</td><td>sqlite3 -Acf archive2.zip dir
 </td></tr></table>
 
-<h2 id="_sql_used_to_implement_sqlite_archive_operations_"><span>15.6. </span> SQL Used To Implement SQLite Archive Operations </h2>
+<h2 id="_sql_used_to_implement_sqlite_archive_operations_"><span>16.6. </span> SQL Used To Implement SQLite Archive Operations </h2>
 
 <p>The various SQLite Archive Archive commands are implemented using SQL statements.
 Application developers can easily add SQLite Archive Archive reading and writing
@@ -1220,7 +1292,7 @@ command is used.
 
 <a name="param"></a>
 
-<h1 id="sql_parameters"><span>16. </span>SQL Parameters</h1>
+<h1 id="sql_parameters"><span>17. </span>SQL Parameters</h1>
 
 <p>SQLite allows <a href="lang_expr.html#varparam">bound parameters</a> to appear in an SQL statement anywhere
 that a literal value is allowed.  The values for these parameters are set
@@ -1265,7 +1337,7 @@ a hint for how to implement it yourself.
 
 <a name="expert"></a>
 
-</p><h1 id="index_recommendations_sqlite_expert_"><span>17. </span>Index Recommendations (SQLite Expert)</h1>
+</p><h1 id="index_recommendations_sqlite_expert_"><span>18. </span>Index Recommendations (SQLite Expert)</h1>
 
 <p><b>Note: This command is experimental. It may be removed or the 
 interface modified in incompatible ways at some point in the future.
@@ -1338,7 +1410,7 @@ SQLite expert extension</a> code.
 
 <a name="dotother"></a>
 
-</p><h1 id="other_dot_commands"><span>18. </span>Other Dot Commands</h1>
+</p><h1 id="other_dot_commands"><span>19. </span>Other Dot Commands</h1>
 
 <p>There are many other dot-commands available in the command-line
 shell.  See the ".help" command for a complete list for any particular
@@ -1346,7 +1418,7 @@ version and build of SQLite.
 
 <a name="insh"></a>
 
-</p><h1 id="using_sqlite3_in_a_shell_script"><span>19. </span>Using sqlite3 in a shell script</h1>
+</p><h1 id="using_sqlite3_in_a_shell_script"><span>20. </span>Using sqlite3 in a shell script</h1>
 
 <p>
 One way to use sqlite3 in a shell script is to use "echo" or
@@ -1371,7 +1443,7 @@ $
 
 <a name="endsh"></a>
 
-<h1 id="ending_shell_commands"><span>20. </span>Ending shell commands</h1>
+<h1 id="ending_shell_commands"><span>21. </span>Ending shell commands</h1>
 
 <p>
 SQLite commands are normally terminated by a semicolon.  In the shell 
@@ -1384,7 +1456,7 @@ to that function.</p>
 
 <a name="compiling"></a>
 
-<h1 id="compiling_the_sqlite3_program_from_sources"><span>21. </span>Compiling the sqlite3 program from sources</h1>
+<h1 id="compiling_the_sqlite3_program_from_sources"><span>22. </span>Compiling the sqlite3 program from sources</h1>
 
 <p>
 To compile the command-line shell on unix systems and on Windows with MinGW,
@@ -1420,7 +1492,7 @@ of the source tree and compile this way:
 </p><div class="codeblock"><pre>nmake /f Makefile.msc USE_ZLIB=1
 </pre></div>
 
-<h2 id="_do_it_yourself_builds_"><span>21.1. </span> Do-It-Yourself Builds </h2>
+<h2 id="_do_it_yourself_builds_"><span>22.1. </span> Do-It-Yourself Builds </h2>
 
 <p>
 The source code to the sqlite3 command line interface is in a single

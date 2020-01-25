@@ -129,52 +129,19 @@ return false;
 <li>SQLITE_SOURCE_ID: "2016-05-18 10:57:30 fc49f556e48970561d7ab6a2f24fdd7d9eb81ff2"
 <li>SHA1 for sqlite3.c: 9b9171b1e6ce7a980e6b714e9c0d9112657ad552
 
-<p><b>Bug fixes backported into patch release 3.8.1 (2013-10-17):</b></p>
-
-<li>Added the <a href="../lang_corefunc.html#unlikely">unlikely()</a> and <a href="../lang_corefunc.html#likelihood">likelihood()</a> SQL functions to be used
-    as hints to the query planner.
-<li>Enhancements to the query planner:
-<ol type='a'>
-<li>Take into account the fact WHERE clause terms that cannot be used with indices
-    still probably reduce the number of output rows.
-<li>Estimate the sizes of table and index rows and use the smallest applicable B-Tree
-    for full scans and "count(*)" operations.
-</ol>
-<li>Added the <a href="../pragma.html#pragma_soft_heap_limit">soft_heap_limit pragma</a>.
-<li>Added support for <a href="../compile.html#enable_stat4">SQLITE_ENABLE_STAT4</a>
-<li>Added support for "sz=NNN" parameters at the end of 
-    <a href="../fileformat2.html#stat1tab">sqlite_stat1.stat</a> fields
-    used to specify the average length in bytes for table and index rows.
-<li>Avoid running foreign-key constraint checks on an UPDATE if none of the
-    modified columns are associated with foreign keys.
-<li>Added the <a href="../compile.html#minimum_file_descriptor">SQLITE_MINIMUM_FILE_DESCRIPTOR</a> compile-time option
-<li>Added the win32-longpath VFS on windows, permitting filenames up to 32K
-    characters in length.
-<li>The <a href="../lang_datefunc.html">Date And Time Functions</a> are enhanced so that the current time
-    (ex: julianday('now')) is always the same for multiple function invocations
-    within the same <a href="../c3ref/step.html">sqlite3_step()</a> call.
-<li>Add the "totype.c" extension, implementing the tointeger() and toreal()
-    SQL functions.
-<li><a href="../fts3.html#fts4">FTS4</a> queries are better able to make use of docid<$limit constraints to
-    limit the amount of I/O required.
-<li>Added the hidden <a href="../fts3.html#f4alid">fts4aux languageid column</a> to the <a href="../fts3.html#fts4aux">fts4aux</a> virtual table.
-<li>The <a href="../lang_vacuum.html">VACUUM</a> command packs the database about 1% tighter.
-<li>The sqlite3_analyzer utility program is updated to provide better descriptions
-    and to compute a more accurate estimate for "Non-sequential pages"
-<li>Refactor the implementation of PRAGMA statements to improve parsing performance.
-<li>The directory used to hold temporary files on unix can now be set using
-    the SQLITE_TMPDIR environment variable,  which takes precedence over the
-    TMPDIR environment variable.  The <a href="../c3ref/temp_directory.html">sqlite3_temp_directory</a> global variable
-    still has higher precedence than both environment variables, however.
-<li>Added the <a href="../pragma.html#pragma_stats">PRAGMA stats</a> statement.
-<li><b>Bug fix:</b> Return the correct answer for "SELECT count(*) FROM table" even if
-    there is a <a href="../partialindex.html">partial index</a> on the table. Ticket
-    <a href="http://www.sqlite.org/src/info/a5c8ed66ca">a5c8ed66ca</a>.
-
-
 <p><b>Bug fixes backported into patch release 3.8.0.2 (2013-09-03):</b></p>
 
 <li>Fix a bug in the optimization that attempts to omit unused LEFT JOINs
+
+
+<p><b>Bug fixes backported into patch release 3.8.0.1 (2013-08-29):</b></p>
+
+<li>Fix an off-by-one error that caused quoted empty string at the end of a 
+CRNL-terminated line of CSV input to be misread by the command-line shell.
+<li>Fix a query planner bug involving a LEFT JOIN with a BETWEEN or LIKE/GLOB
+constraint and then another INNER JOIN to the right that involves an OR constraint.
+<li>Fix a query planner bug that could result in a segfault when querying tables
+with a UNIQUE or PRIMARY KEY constraint with more than four columns.
 
 
 </ol></p>

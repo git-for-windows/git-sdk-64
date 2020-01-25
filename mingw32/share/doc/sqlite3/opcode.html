@@ -193,8 +193,8 @@ output from SQLite, you should reference the version of this document
 that corresponds to the version of SQLite that ran the <a href="lang_explain.html">EXPLAIN</a>.
 Otherwise, the description of the opcodes may not be accurate.
 This document is derived from SQLite
- version 3.30.1 check-in
-<a href='https://www.sqlite.org/src/timeline?c=18db032d058f1'>18db032d058f1</a> dated 2019-10-10.
+ version 3.31.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=f6affdd416089'>f6affdd416089</a> dated 2020-01-22.
 
 
 
@@ -417,20 +417,20 @@ pragmas include:
 
 <h1 id="the_opcodes"><span>4. </span>The Opcodes</h1>
 
-<p>There are currently 170
+<p>There are currently 175
 opcodes defined by the virtual machine.
 All currently defined opcodes are described in the table below.
 This table was generated automatically by scanning the source code
 from the file
-<a href="http://www.sqlite.org/src/artifact/da4030a71acf42be18001b9b7067d6d34ffb76610603ce6fafa52854b9e52936">vdbe.c</a>.
+<a href="http://www.sqlite.org/src/artifact/e3dd230ece613409507523e68436764cc20638bb77ba2f416097de5b37235ce1">vdbe.c</a>.
 
 
 </p><p>Remember: The VDBE opcodes are <u>not</u> part of the interface 
 definition for SQLite.  The number of opcodes and their names and meanings
 change from one release of SQLite to the next.
 The opcodes shown in the table below are valid for SQLite
- version 3.30.1 check-in
-<a href='https://www.sqlite.org/src/timeline?c=18db032d058f1'>18db032d058f1</a> dated 2019-10-10.
+ version 3.31.0 check-in
+<a href='https://www.sqlite.org/src/timeline?c=f6affdd416089'>f6affdd416089</a> dated 2020-01-22.
 
 <a name="codes"></a>
 
@@ -693,6 +693,14 @@ satisfy the Expr in P4.  TK_REGISTER terms in the P4 expression refer
 to values currently held in registers.  TK_COLUMN terms in the P4
 expression refer to columns in the b-tree to which cursor P1 is pointing.</td></tr>
 <tr><td valign="top" align="center">
+<a name="CursorLock"></a>CursorLock
+<td>Lock the btree to which cursor P1 is pointing so that the btree cannot be
+written by an other cursor.</td></tr>
+<tr><td valign="top" align="center">
+<a name="CursorUnlock"></a>CursorUnlock
+<td>Unlock the btree to which cursor P1 is pointing so that it can be
+written by other cursors.</td></tr>
+<tr><td valign="top" align="center">
 <a name="DecrJumpZero"></a>DecrJumpZero
 <td>Register P1 must hold an integer.  Decrement the value in P1
 and jump to P2 if the new value is exactly zero.</td></tr>
@@ -802,11 +810,16 @@ the internal representation of the
 schema consistent with what is on disk.</td></tr>
 <tr><td valign="top" align="center">
 <a name="ElseNotEq"></a>ElseNotEq
-<td>This opcode must immediately follow an <a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a> comparison operator.
-If result of an <a href="opcode.html#Eq">Eq</a> comparison on the same two operands
-would have be NULL or false (0), then then jump to P2.
-If the result of an <a href="opcode.html#Eq">Eq</a> comparison on the two previous operands
-would have been true (1), then fall through.</td></tr>
+<td>This opcode must follow an <a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a> comparison operator.  There
+can be zero or more OP_ReleaseReg opcodes intervening, but no other
+opcodes are allowed to occur between this instruction and the previous
+<a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a>.  Furthermore, the prior <a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a> must have the
+SQLITE_STOREP2 bit set in the P5 field.</p>
+
+<p>If result of an <a href="opcode.html#Eq">Eq</a> comparison on the same two operands as the
+prior <a href="opcode.html#Lt">Lt</a> or <a href="opcode.html#Gt">Gt</a> would have been NULL or false (0), then then
+jump to P2.  If the result of an <a href="opcode.html#Eq">Eq</a> comparison on the two previous
+operands would have been true (1), then fall through.</td></tr>
 <tr><td valign="top" align="center">
 <a name="EndCoroutine"></a>EndCoroutine
 <td>The instruction at the address in register P1 is a <a href="opcode.html#Yield">Yield</a>.
@@ -863,6 +876,11 @@ The P2==1 case occurs when a CREATE INDEX or similar schema change happens
 that might help the statement run faster but which does not affect the
 correctness of operation.</td></tr>
 <tr><td valign="top" align="center">
+<a name="FinishSeek"></a>FinishSeek
+<td>If cursor P1 was previously moved via <a href="opcode.html#DeferredSeek">DeferredSeek</a>, complete that
+seek operation now, without further delay.  If the cursor seek has
+already occurred, this instruction is a no-op.</td></tr>
+<tr><td valign="top" align="center">
 <a name="FkCounter"></a>FkCounter
 <td>Increment a "constraint counter" by P2 (P2 may be negative or positive).
 If P1 is non-zero, the database constraint counter is incremented
@@ -896,8 +914,10 @@ but not the <a href="opcode.html#Prev">Prev</a> instruction.</p>
 <tr><td valign="top" align="center">
 <a name="Function"></a>Function
 <td>Invoke a user function (P4 is a pointer to an sqlite3_context object that
-contains a pointer to the function to be run) with P5 arguments taken
-from register P2 and successors.  The result of the function is stored
+contains a pointer to the function to be run) with arguments taken
+from register P2 and successors.  The number of arguments is in
+the sqlite3_context object that P4 points to.
+The result of the function is stored
 in register P3.  Register P3 must not be one of the function inputs.</p>
 
 <p>P1 is a 32-bit bitmask indicating whether or not each argument to the
@@ -907,29 +927,7 @@ whether meta data associated with a user function argument using the
 sqlite3_set_auxdata() API may be safely retained until the next
 invocation of this opcode.</p>
 
-<p>SQL functions are initially coded as <a href="opcode.html#Function0">Function0</a> with P4 pointing
-to a FuncDef object.  But on first evaluation, the P4 operand is
-automatically converted into an sqlite3_context object and the operation
-changed to this <a href="opcode.html#Function">Function</a> opcode.  In this way, the initialization of
-the sqlite3_context object occurs only once, rather than once for each
-evaluation of the function.</p>
-
-<p>See also: <a href="opcode.html#Function0">Function0</a>, <a href="opcode.html#AggStep">AggStep</a>, <a href="opcode.html#AggFinal">AggFinal</a></td></tr>
-<tr><td valign="top" align="center">
-<a name="Function0"></a>Function0
-<td>Invoke a user function (P4 is a pointer to a FuncDef object that
-defines the function) with P5 arguments taken from register P2 and
-successors.  The result of the function is stored in register P3.
-Register P3 must not be one of the function inputs.</p>
-
-<p>P1 is a 32-bit bitmask indicating whether or not each argument to the
-function was determined to be constant at compile time. If the first
-argument was constant then bit 0 of P1 is set. This is used to determine
-whether meta data associated with a user function argument using the
-sqlite3_set_auxdata() API may be safely retained until the next
-invocation of this opcode.</p>
-
-<p>See also: <a href="opcode.html#Function">Function</a>, <a href="opcode.html#AggStep">AggStep</a>, <a href="opcode.html#AggFinal">AggFinal</a></td></tr>
+<p>See also: <a href="opcode.html#AggStep">AggStep</a>, <a href="opcode.html#AggFinal">AggFinal</a>, <a href="opcode.html#PureFunc">PureFunc</a></td></tr>
 <tr><td valign="top" align="center">
 <a name="Ge"></a>Ge
 <td>This works just like the Lt opcode except that the jump is taken if
@@ -1099,6 +1097,9 @@ jump is taken if there is "no hope" of achieving a match.</p>
 <td>Jump to P2 if the value in register P1 is False.  The value
 is considered false if it has a numeric value of zero.  If the value
 in P1 is NULL then take the jump if and only if P3 is non-zero.</td></tr>
+<tr><td valign="top" align="center">
+<a name="IfNotOpen"></a>IfNotOpen
+<td>If cursor P1 is not open, jump to instruction P2. Otherwise, fall through.</td></tr>
 <tr><td valign="top" align="center">
 <a name="IfNotZero"></a>IfNotZero
 <td>Register P1 must contain an integer.  If the content of register P1 is
@@ -1715,6 +1716,31 @@ memory required by the sub-vdbe at runtime.</p>
 
 <p>If P5 is non-zero, then recursive program invocation is enabled.</td></tr>
 <tr><td valign="top" align="center">
+<a name="PureFunc"></a>PureFunc
+<td>Invoke a user function (P4 is a pointer to an sqlite3_context object that
+contains a pointer to the function to be run) with arguments taken
+from register P2 and successors.  The number of arguments is in
+the sqlite3_context object that P4 points to.
+The result of the function is stored
+in register P3.  Register P3 must not be one of the function inputs.</p>
+
+<p>P1 is a 32-bit bitmask indicating whether or not each argument to the
+function was determined to be constant at compile time. If the first
+argument was constant then bit 0 of P1 is set. This is used to determine
+whether meta data associated with a user function argument using the
+sqlite3_set_auxdata() API may be safely retained until the next
+invocation of this opcode.</p>
+
+<p>This opcode works exactly like <a href="opcode.html#Function">Function</a>.  The only difference is in
+its name.  This opcode is used in places where the function must be
+purely non-deterministic.  Some built-in date/time functions can be
+either determinitic of non-deterministic, depending on their arguments.
+When those function are used in a non-deterministic way, they will check
+to see if they were called using <a href="opcode.html#PureFunc">PureFunc</a> instead of <a href="opcode.html#Function">Function</a>, and
+if they were, they throw an error.</p>
+
+<p>See also: <a href="opcode.html#AggStep">AggStep</a>, <a href="opcode.html#AggFinal">AggFinal</a>, <a href="opcode.html#Function">Function</a></td></tr>
+<tr><td valign="top" align="center">
 <a name="ReadCookie"></a>ReadCookie
 <td>Read cookie number P3 from database P1 and write it into register P2.
 P3==1 is the schema version.  P3==2 is the database format.
@@ -1737,6 +1763,34 @@ Write that value into register P2.</td></tr>
 has REAL affinity.  Such column values may still be stored as
 integers, for space efficiency, but after extraction we want them
 to have only a real value.</td></tr>
+<tr><td valign="top" align="center">
+<a name="ReleaseReg"></a>ReleaseReg
+<td>Release registers from service.  Any content that was in the
+the registers is unreliable after this opcode completes.</p>
+
+<p>The registers released will be the P2 registers starting at P1,
+except if bit ii of P3 set, then do not release register P1+ii.
+In other words, P3 is a mask of registers to preserve.</p>
+
+<p>Releasing a register clears the Mem.pScopyFrom pointer.  That means
+that if the content of the released register was set using <a href="opcode.html#SCopy">SCopy</a>,
+a change to the value of the source register for the <a href="opcode.html#SCopy">SCopy</a> will no longer
+generate an assertion fault in sqlite3VdbeMemAboutToChange().</p>
+
+<p>If P5 is set, then all released registers have their type set
+to MEM_Undefined so that any subsequent attempt to read the released
+register (before it is reinitialized) will generate an assertion fault.</p>
+
+<p>P5 ought to be set on every call to this opcode.
+However, there are places in the code generator will release registers
+before their are used, under the (valid) assumption that the registers
+will not be reallocated for some other purpose before they are used and
+hence are safe to release.</p>
+
+<p>This opcode is only available in testing and debugging builds.  It is
+not generated for release builds.  The purpose of this opcode is to help
+validate the generated bytecode.  This opcode does not actually contribute
+to computing an answer.</td></tr>
 <tr><td valign="top" align="center">
 <a name="Remainder"></a>Remainder
 <td>Compute the remainder after integer register P2 is divided by
@@ -1932,11 +1986,7 @@ configured to use <a href="opcode.html#Next">Next</a>, not <a href="opcode.html#
 <p>See also: <a href="opcode.html#Found">Found</a>, <a href="opcode.html#NotFound">NotFound</a>, SeekLt, SeekGe, SeekLe</td></tr>
 <tr><td valign="top" align="center">
 <a name="SeekHit"></a>SeekHit
-<td>Set the seekHit flag on cursor P1 to the value in P2.
-The seekHit flag is used by the <a href="opcode.html#IfNoHope">IfNoHope</a> opcode.</p>
-
-<p>P1 must be a valid b-tree cursor.  P2 must be a boolean value,
-either 0 or 1.</td></tr>
+<td>Set the seekHit flag on cursor P1 to the value in P2.</td></tr>
 <tr><td valign="top" align="center">
 <a name="SeekLE"></a>SeekLE
 <td>If cursor P1 refers to an SQL table (B-Tree that uses integer keys),

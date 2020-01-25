@@ -107,7 +107,7 @@ sqlite3_uint64 sqlite3_msize(void*);
 <p>
 The SQLite core uses these three routines for all of its own
 internal memory allocation needs. "Core" in the previous sentence
-does not include operating-system specific VFS implementation.  The
+does not include operating-system specific <a href="../vfs.html">VFS</a> implementation.  The
 Windows VFS uses native malloc() and free() for some operations.</p>
 
 <p>The sqlite3_malloc() routine returns a pointer to a block
@@ -167,19 +167,6 @@ sqlite3_malloc64(), and sqlite3_realloc64()
 is always aligned to at least an 8 byte boundary, or to a
 4 byte boundary if the <a href="../compile.html#4_byte_aligned_malloc">SQLITE_4_BYTE_ALIGNED_MALLOC</a> compile-time
 option is used.</p>
-
-<p>In SQLite version 3.5.0 and 3.5.1, it was possible to define
-the SQLITE_OMIT_MEMORY_ALLOCATION which would cause the built-in
-implementation of these routines to be omitted.  That capability
-is no longer provided.  Only built-in memory allocators can be used.</p>
-
-<p>Prior to SQLite version 3.7.10, the Windows OS interface layer called
-the system malloc() and free() directly when converting
-filenames between the UTF-8 encoding used by SQLite
-and whatever filename encoding is used by the particular Windows
-installation.  Memory allocation errors were detected, but
-they were reported back as <a href="../rescode.html#cantopen">SQLITE_CANTOPEN</a> or
-<a href="../rescode.html#ioerr">SQLITE_IOERR</a> rather than <a href="../rescode.html#nomem">SQLITE_NOMEM</a>.</p>
 
 <p>The pointer arguments to <a href="../c3ref/free.html">sqlite3_free()</a> and <a href="../c3ref/free.html">sqlite3_realloc()</a>
 must be either NULL or else pointers obtained from a prior

@@ -116,6 +116,7 @@ Table Of Contents
 <div class="fancy-toc3"><a href="#no_op_memory_allocator_stub">3.1.8. No-op memory allocator stub</a></div>
 <div class="fancy-toc2"><a href="#_page_cache_memory">3.2.  Page cache memory</a></div>
 <div class="fancy-toc2"><a href="#_lookaside_memory_allocator">3.3.  Lookaside memory allocator</a></div>
+<div class="fancy-toc3"><a href="#two_size_lookaside">3.3.1. Two-Size Lookaside</a></div>
 <div class="fancy-toc2"><a href="#_memory_status">3.4.  Memory status</a></div>
 <div class="fancy-toc2"><a href="#_setting_memory_usage_limits">3.5.  Setting memory usage limits</a></div>
 <div class="fancy-toc1"><a href="#_mathematical_guarantees_against_memory_allocation_failures">4.  Mathematical Guarantees Against Memory Allocation Failures</a></div>
@@ -194,7 +195,7 @@ errors.
 
 <li><p>
 <b>Memory usage limits.</b>
-The <a href="c3ref/soft_heap_limit64.html">sqlite3_soft_heap_limit64()</a> mechanism allows the application to
+The <a href="c3ref/hard_heap_limit64.html">sqlite3_soft_heap_limit64()</a> mechanism allows the application to
 set a memory usage limit that SQLite strives to stay below.  SQLite
 will attempt to reuse memory from its caches rather than allocating new
 memory as it approaches the soft limit.
@@ -741,9 +742,45 @@ Hence, the configuration should be set immediately after creating the
 database connection using <a href="c3ref/open.html">sqlite3_open()</a> (or equivalent) and before
 evaluating any SQL statements on the connection.</p>
 
+<h3 id="two_size_lookaside"><span>3.3.1. </span>Two-Size Lookaside</h3>
+
+<p>
+Beginning with SQLite version 3.31.0 (2020-01-22),
+lookaside supports two memory pools, each with a different size
+slot.  The small-slot pool uses 128-byte slots and the large-slot
+pool uses whatever size is specified by <a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfiglookaside">SQLITE_DBCONFIG_LOOKASIDE</a>
+(defaulting to 1200 bytes).  Splitting the pool in two like this
+allows memory allocations to be covered by lookaside more often
+while at the same time reducing per-database-connection heap usage
+from 120KB down to 48KB.
+
+</p><p>
+Configuration continues to use the SQLITE_DBCONFIG_LOOKASIDE or
+SQLITE_CONFIG_LOOKASIDE configuration options, as described above,
+with parameters "sz" and "cnt".  The total heap space used for
+lookaside continues to be sz*cnt bytes.  But the space is allocated
+between the small-slot lookaside and big-slot lookaside, with
+preference given to small-slot lookaside.  The total number of
+slots will usually exceed "cnt", since "sz" is typically much
+larger than the small-slot size of 128 bytes.
+
+</p><p>
+The default lookaside configuration has changed from 100 slots
+of 1200 bytes each (120KB) to be 40 slots of 1200 bytes each
+(48KB).  This space ends up being allocated as 93 slots of
+128 bytes each and 30 slots of 1200 bytes each.  So more lookaside
+slots are available but much less heap space is used.
+
+</p><p>
+The default lookaside configuration, the size of the small-slots,
+and the details of how heap space is allocated between small-slots
+and big-slots, are all subject to change from one release to the
+next.
+
+
 <a name="memstatus"></a>
 
-<h2 id="_memory_status"><span>3.4. </span> Memory status</h2>
+</p><h2 id="_memory_status"><span>3.4. </span> Memory status</h2>
 
 <p>By default, SQLite keeps statistics on its memory usage.  These
 statistics are useful in helping to determine how much memory an
@@ -807,7 +844,7 @@ per-connection statistics continue to function even if
 <a name="heaplimit"></a>
 <h2 id="_setting_memory_usage_limits"><span>3.5. </span> Setting memory usage limits</h2>
 
-<p>The <a href="c3ref/soft_heap_limit64.html">sqlite3_soft_heap_limit64()</a> interface can be used to set an
+<p>The <a href="c3ref/hard_heap_limit64.html">sqlite3_soft_heap_limit64()</a> interface can be used to set an
 upper bound on the total amount of outstanding memory that the
 general-purpose memory allocator for SQLite will allow to be outstanding
 at one time.  If attempts are made to allocate more memory than specified

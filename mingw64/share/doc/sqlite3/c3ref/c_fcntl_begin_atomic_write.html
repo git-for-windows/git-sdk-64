@@ -91,7 +91,7 @@ return false;
 }
 </script>
 </div>
-<!-- keywords: SQLITE_FCNTL_BEGIN_ATOMIC_WRITE SQLITE_FCNTL_BUSYHANDLER SQLITE_FCNTL_CHUNK_SIZE SQLITE_FCNTL_COMMIT_ATOMIC_WRITE SQLITE_FCNTL_COMMIT_PHASETWO SQLITE_FCNTL_DATA_VERSION SQLITE_FCNTL_FILE_POINTER SQLITE_FCNTL_GET_LOCKPROXYFILE SQLITE_FCNTL_HAS_MOVED SQLITE_FCNTL_JOURNAL_POINTER SQLITE_FCNTL_LAST_ERRNO SQLITE_FCNTL_LOCKSTATE SQLITE_FCNTL_LOCK_TIMEOUT SQLITE_FCNTL_MMAP_SIZE SQLITE_FCNTL_OVERWRITE SQLITE_FCNTL_PDB SQLITE_FCNTL_PERSIST_WAL SQLITE_FCNTL_POWERSAFE_OVERWRITE SQLITE_FCNTL_PRAGMA SQLITE_FCNTL_RBU SQLITE_FCNTL_ROLLBACK_ATOMIC_WRITE SQLITE_FCNTL_SET_LOCKPROXYFILE SQLITE_FCNTL_SIZE_HINT SQLITE_FCNTL_SIZE_LIMIT SQLITE_FCNTL_SYNC SQLITE_FCNTL_SYNC_OMITTED SQLITE_FCNTL_TEMPFILENAME SQLITE_FCNTL_TRACE SQLITE_FCNTL_VFSNAME SQLITE_FCNTL_VFS_POINTER SQLITE_FCNTL_WAL_BLOCK SQLITE_FCNTL_WIN32_AV_RETRY SQLITE_FCNTL_WIN32_GET_HANDLE SQLITE_FCNTL_WIN32_SET_HANDLE SQLITE_FCNTL_ZIPVFS {file control opcode} {file control opcodes} -->
+<!-- keywords: SQLITE_FCNTL_BEGIN_ATOMIC_WRITE SQLITE_FCNTL_BUSYHANDLER SQLITE_FCNTL_CHUNK_SIZE SQLITE_FCNTL_CKPT_DONE SQLITE_FCNTL_COMMIT_ATOMIC_WRITE SQLITE_FCNTL_COMMIT_PHASETWO SQLITE_FCNTL_DATA_VERSION SQLITE_FCNTL_FILE_POINTER SQLITE_FCNTL_GET_LOCKPROXYFILE SQLITE_FCNTL_HAS_MOVED SQLITE_FCNTL_JOURNAL_POINTER SQLITE_FCNTL_LAST_ERRNO SQLITE_FCNTL_LOCKSTATE SQLITE_FCNTL_LOCK_TIMEOUT SQLITE_FCNTL_MMAP_SIZE SQLITE_FCNTL_OVERWRITE SQLITE_FCNTL_PDB SQLITE_FCNTL_PERSIST_WAL SQLITE_FCNTL_POWERSAFE_OVERWRITE SQLITE_FCNTL_PRAGMA SQLITE_FCNTL_RBU SQLITE_FCNTL_ROLLBACK_ATOMIC_WRITE SQLITE_FCNTL_SET_LOCKPROXYFILE SQLITE_FCNTL_SIZE_HINT SQLITE_FCNTL_SIZE_LIMIT SQLITE_FCNTL_SYNC SQLITE_FCNTL_SYNC_OMITTED SQLITE_FCNTL_TEMPFILENAME SQLITE_FCNTL_TRACE SQLITE_FCNTL_VFSNAME SQLITE_FCNTL_VFS_POINTER SQLITE_FCNTL_WAL_BLOCK SQLITE_FCNTL_WIN32_AV_RETRY SQLITE_FCNTL_WIN32_GET_HANDLE SQLITE_FCNTL_WIN32_SET_HANDLE SQLITE_FCNTL_ZIPVFS {file control opcode} {file control opcodes} -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 <h2>Standard File Control Opcodes</h2>
@@ -132,6 +132,7 @@ return false;
 #define SQLITE_FCNTL_LOCK_TIMEOUT           34
 #define SQLITE_FCNTL_DATA_VERSION           35
 #define SQLITE_FCNTL_SIZE_LIMIT             36
+#define SQLITE_FCNTL_CKPT_DONE              37
 </pre></blockquote>
 <p>
 These integer constants are opcodes for the xFileControl method
@@ -326,9 +327,9 @@ it is able to override built-in <a href="../pragma.html#syntax">PRAGMA</a> state
 The <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlbusyhandler">SQLITE_FCNTL_BUSYHANDLER</a>
 file-control may be invoked by SQLite on the database file handle
 shortly after it is opened in order to provide a custom VFS with access
-to the connections busy-handler callback. The argument is of type (void **)
+to the connection's busy-handler callback. The argument is of type (void**)
 - an array of two (void *) values. The first (void *) actually points
-to a function of type (int (*)(void *)). In order to invoke the connections
+to a function of type (int (*)(void *)). In order to invoke the connection's
 busy-handler, this function should be invoked with the second (void *) in
 the array as the only argument. If it returns non-zero, then the operation
 should be retried. If it returns zero, the custom VFS should abandon the
@@ -336,7 +337,7 @@ current operation.</p>
 
 <p><li><a name="sqlitefcntltempfilename"></a>
 
-Application can invoke the <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntltempfilename">SQLITE_FCNTL_TEMPFILENAME</a> file-control
+Applications can invoke the <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntltempfilename">SQLITE_FCNTL_TEMPFILENAME</a> file-control
 to have SQLite generate a
 temporary filename using the same algorithm that is followed to generate
 temporary filenames for TEMP tables and other internal uses.  The
@@ -462,12 +463,19 @@ but that interface responds to changes on TEMP as well as MAIN and does
 not provide a mechanism to detect changes to MAIN only.  Also, the
 <a href="../c3ref/total_changes.html">sqlite3_total_changes()</a> interface responds to internal changes only and
 omits changes made by other database connections.  The
-<a href="../pragma.html#pragma_data_version">PRAGMA data_version</a> command provide a mechanism to detect changes to
+<a href="../pragma.html#pragma_data_version">PRAGMA data_version</a> command provides a mechanism to detect changes to
 a single attached database that occur due to other database connections,
 but omits changes implemented by the database connection on which it is
 called.  This file control is the only mechanism to detect changes that
 happen either internally or externally and that are associated with
-a particular attached database.
+a particular attached database.</p>
+
+<p><li><a name="sqlitefcntlckptdone"></a>
+
+The <a href="../c3ref/c_fcntl_begin_atomic_write.html#sqlitefcntlckptdone">SQLITE_FCNTL_CKPT_DONE</a> opcode is invoked from within a checkpoint
+in wal mode after the client has finished copying pages from the wal
+file to the database file, but before the *-shm file is updated to
+record the fact that the pages have been checkpointed.
 </ul>
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,

@@ -221,9 +221,10 @@ interpreted as a boolean, which enables or disables the collection of
 memory allocation statistics. When memory allocation statistics are
 disabled, the following SQLite interfaces become non-operational:
 <ul>
+<li> <a href="../c3ref/hard_heap_limit64.html">sqlite3_hard_heap_limit64()</a>
 <li> <a href="../c3ref/memory_highwater.html">sqlite3_memory_used()</a>
 <li> <a href="../c3ref/memory_highwater.html">sqlite3_memory_highwater()</a>
-<li> <a href="../c3ref/soft_heap_limit64.html">sqlite3_soft_heap_limit64()</a>
+<li> <a href="../c3ref/hard_heap_limit64.html">sqlite3_soft_heap_limit64()</a>
 <li> <a href="../c3ref/status.html">sqlite3_status64()</a>
 </ul>
 Memory allocation statistics are enabled by default unless SQLite is
@@ -241,7 +242,7 @@ allocation statistics are disabled by default.
 <dd> The SQLITE_CONFIG_PAGECACHE option specifies a memory pool
 that SQLite can use for the database page cache with the default page
 cache implementation.
-This configuration option is a no-op if an application-define page
+This configuration option is a no-op if an application-defined page
 cache implementation is loaded using the <a href="../c3ref/c_config_covering_index_scan.html#sqliteconfigpcache2">SQLITE_CONFIG_PCACHE2</a>.
 There are three arguments to SQLITE_CONFIG_PAGECACHE: A pointer to
 8-byte aligned memory (pMem), the size of each page cache line (sz),

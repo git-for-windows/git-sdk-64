@@ -112,15 +112,19 @@ sharing was enabled or disabled for each thread separately.</p>
 
 <p>The cache sharing mode set by this interface effects all subsequent
 calls to <a href="../c3ref/open.html">sqlite3_open()</a>, <a href="../c3ref/open.html">sqlite3_open_v2()</a>, and <a href="../c3ref/open.html">sqlite3_open16()</a>.
-Existing database connections continue use the sharing mode
+Existing database connections continue to use the sharing mode
 that was in effect at the time they were opened.</p>
 
 <p>This routine returns <a href="../rescode.html#ok">SQLITE_OK</a> if shared cache was enabled or disabled
 successfully.  An <a href="../rescode.html">error code</a> is returned otherwise.</p>
 
-<p>Shared cache is disabled by default. But this might change in
-future releases of SQLite.  Applications that care about shared
-cache setting should set it explicitly.</p>
+<p>Shared cache is disabled by default. It is recommended that it stay
+that way.  In other words, do not use this routine.  This interface
+continues to be provided for historical compatibility, but its use is
+discouraged.  Any use of shared cache is discouraged.  If shared cache
+must be used, it is recommended that shared cache only be enabled for
+individual database connections using the <a href="../c3ref/open.html">sqlite3_open_v2()</a> interface
+with the <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_SHAREDCACHE</a> flag.</p>
 
 <p>Note: This method is disabled on MacOS X 10.7 and iOS version 5.0
 and will always return SQLITE_MISUSE. On those systems,

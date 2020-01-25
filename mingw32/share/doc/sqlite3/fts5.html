@@ -1832,8 +1832,8 @@ specifically:
 </p><p>
    There are several ways to approach this in FTS5:
 </p><p>
-   </p><ol><li> By mapping all synonyms to a single token. In this case, the 
-            In the above example, this means that the tokenizer returns the
+   </p><ol><li> By mapping all synonyms to a single token. In this case, using
+            the above example, this means that the tokenizer returns the
             same token for inputs "first" and "1st". Say that token is in
             fact "first", so that when the user inserts the document "I won
             1st place" entries are added to the index for tokens "i", "won",
@@ -1932,7 +1932,7 @@ xToken(pCtx, 0, "place",                  5, 12, 17);
 <h2 tags="FTS5 custom auxiliary functions" id="custom_auxiliary_functions"><span>7.2. </span>Custom Auxiliary Functions</h2>
 
 <p> Implementing a custom auxiliary function is similar to implementing a
-<a href="c3ref/create_function.html">scalar SQL function</a>. The implementation
+<a href="appfunc.html">scalar SQL function</a>. The implementation
 should be a C function of type fts5_extension_function, defined as follows:
 
 </p><div class="codeblock"><pre>typedef struct Fts5ExtensionApi Fts5ExtensionApi;
@@ -2210,7 +2210,7 @@ This API function is used to query the FTS table for phrase iPhrase
 <dt style="white-space:pre;font-family:monospace;font-size:120%" id="xSetAuxdata">
 <b>int (*xSetAuxdata)(Fts5Context*, void *pAux, void(*xDelete)(void*))</b></dt><dd>
 <p style="margin-top:0.1em">
-Save the pointer passed as the second argument as the extension functions 
+Save the pointer passed as the second argument as the extension function's 
    "auxiliary data". The pointer may then be retrieved by the current or any
    future invocation of the same fts5 extension function made as part of
    the same MATCH query using the xGetAuxdata() API.

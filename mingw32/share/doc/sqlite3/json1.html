@@ -148,7 +148,7 @@ mk.innerHTML = "&#x25ba;";
 <h1 id="overview"><span>1. </span>Overview</h1>
 <p>
 The <b>json1</b> extension is a <a href="loadext.html">loadable extension</a> that
-implements fifteen <a href="c3ref/create_function.html">application-defined SQL functions</a> and
+implements fifteen <a href="appfunc.html">application-defined SQL functions</a> and
 two <a href="vtab.html#tabfunc2">table-valued functions</a> that are useful for
 managing <a href="http://json.org/">JSON</a> content stored in an SQLite database.
 There are thirteen scalar functions:
@@ -309,6 +309,8 @@ with the JSON spec.  These routines accept exactly the
 <a href="http://www.rfc-editor.org/rfc/rfc7159.txt">rfc-7159 JSON syntax</a>
 &mdash; no more and no less.
 
+<a name="jsonpath"></a>
+
 </p><h2 id="path_arguments"><span>3.2. </span>PATH arguments</h2>
 
 <p>
@@ -317,6 +319,17 @@ else the function will throw an error.
 A well-formed PATH is a text value that begins with exactly one
 '$' character followed by zero or more instances
 of ".<i>objectlabel</i>" or "&#91<i>arrayindex</i>&#93".
+
+</p><p>
+The <i>arrayindex</i> is usually a non-negative integer <i>N</i>.  In
+that case, the array element selected is the <i>N</i>-th element
+of the array, starting with zero on the left.
+The <i>arrayindex</i> can also be of the form "<b>#-</b><i>N</i>"
+in which case the element selected is the <i>N</i>-th from the
+right.  The last element of the array is "<b>#-1</b>".  Think of
+the "#" characters as the "number of elements in the array".  Then
+the expression "#-1" evaluates is the integer that corresponds to 
+the last entry in the array.
 
 </p><h2 id="value_arguments"><span>3.3. </span>VALUE arguments</h2>
 
@@ -521,6 +534,9 @@ the various values.
 <li><span class='jex'>json_extract('{"a":2,"c":[4,5],"f":7}','$.c','$.a')</span>
 <span class='jans'>&rarr; '[[4,5],2]'</span></li>
 
+<li><span class='jex'>json_extract('{"a":2,"c":[4,5],"f":7}','$.c[#-1]'</span>
+<span class='jans'>&rarr; 5</span></li>
+
 <li><span class='jex'>json_extract('{"a":2,"c":[4,5,{"f":7}]}', '$.x')</span>
 <span class='jans'>&rarr; NULL</span></li>
 
@@ -577,7 +593,20 @@ of its substructure.
 well-formed or if any PATH argument is not well-formed or if any
 argument is a BLOB.
 
-</p><p>Examples:
+</p><p>To append an element onto the end of an array, using json_insert()
+with an array index of "#".  Examples:
+
+<ul>
+<li><span class='jex'>json_insert('[1,2,3,4]','$[#]',99)</span>
+<span class='jans'>&rarr; '[1,2,3,4,99]'</span></li>
+
+<li><span class='jex'>json_insert('[1,[2,3],4]','$[1][#]',99)</span>
+<span class='jans'>&rarr; '[1,[2,3,99],4]'</span></li>
+
+</ul>
+
+
+</p><p>Other examples:
 
 <ul>
 <li><span class='jex'>json_insert('{"a":2,"c":4}', '$.a', 99)</span>
@@ -717,6 +746,9 @@ path, or if any argument is a BLOB.
 
 <li><span class='jex'>json_remove('[0,1,2,3,4]','$[0]','$[2]')</span>
 <span class='jans'>&rarr; '[1,2,4]'</span></li>
+
+<li><span class='jex'>json_remove('[0,1,2,3,4]','$[#-1]','$[0]')</span>
+<span class='jans'>&rarr; '[1,2,3]'</span></li>
 
 <li><span class='jex'>json_remove('{"x":25,"y":42}')</span>
 <span class='jans'>&rarr; '{"x":25,"y":42}'</span></li>

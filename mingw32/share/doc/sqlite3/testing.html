@@ -114,7 +114,9 @@ Table Of Contents
 <div class="fancy-toc3"><a href="#sql_fuzz_using_the_american_fuzzy_lop_fuzzer">4.1.1. SQL Fuzz Using The American Fuzzy Lop Fuzzer</a></div>
 <div class="fancy-toc3"><a href="#google_oss_fuzz">4.1.2. Google OSS Fuzz</a></div>
 <div class="fancy-toc3"><a href="#the_dbsqlfuzz_fuzzer">4.1.3. The dbsqlfuzz fuzzer</a></div>
-<div class="fancy-toc3"><a href="#the_fuzzcheck_test_harness">4.1.4. The fuzzcheck test harness</a></div>
+<div class="fancy-toc3"><a href="#other_third_party_fuzzers">4.1.4. Other third-party fuzzers</a></div>
+<div class="fancy-toc3"><a href="#the_fuzzcheck_test_harness">4.1.5. The fuzzcheck test harness</a></div>
+<div class="fancy-toc3"><a href="#tension_between_fuzz_testing_and_100_mc_dc_testing">4.1.6. Tension Between Fuzz Testing And 100% MC/DC Testing</a></div>
 <div class="fancy-toc2"><a href="#malformed_database_files">4.2. Malformed Database Files</a></div>
 <div class="fancy-toc2"><a href="#boundary_value_tests">4.3. Boundary Value Tests</a></div>
 <div class="fancy-toc1"><a href="#regression_testing">5. Regression Testing</a></div>
@@ -434,19 +436,16 @@ statement also happens to be semantically correct.  In that case, the
 resulting prepared statement is run to make sure it gives a reasonable
 result.</p>
 
-<p>The SQL fuzz generator tests are part of the TCL test suite.
-During a full test run, about 111.3 
-thousand fuzz SQL statements are
-generated and tested.</p>
-
 <a name="aflfuzz"></a>
 
 <h3 id="sql_fuzz_using_the_american_fuzzy_lop_fuzzer"><span>4.1.1. </span>SQL Fuzz Using The American Fuzzy Lop Fuzzer</h3>
 
-<p>The <a href="http://lcamtuf.coredump.cx/afl/">American Fuzzy Lop</a>
-or "AFL" fuzzer is a recent (circa 2014) innovation from Michal Zalewski.
-Unlike most other fuzzers that blindly generate random inputs, the AFL
-fuzzer instruments the program being tested (by modifying the assembly-language
+<p>The concept of fuzz testing has been around for decades, but fuzz
+testing was not an effective way to find bugs until 2014 when
+Michal Zalewski invented the first practical profile-guided fuzzer,
+<a href="http://lcamtuf.coredump.cx/afl/">American Fuzzy Lop</a> or "AFL".
+Unlike prior fuzzers that blindly generate random inputs, AFL
+instruments the program being tested (by modifying the assembly-language
 output from the C compiler) and uses that instrumentation to detect when
 an input causes the program to do something different - to follow
 a new control path or loop a different number of times.  Inputs that provoke
@@ -454,23 +453,15 @@ new behavior are retained and further mutated.  In this way, AFL is able
 to "discover" new behaviors of the program under test, including behaviors
 that were never envisioned by the designers.
 
-</p><p>AFL has proven remarkably adept at finding arcane bugs in SQLite.
+</p><p>AFL proved adept at finding arcane bugs in SQLite.
 Most of the findings have been assert() statements where the conditional
 was false under obscure circumstances.  But AFL has also found
 a fair number of crash bugs in SQLite, and even a few cases where SQLite 
 computed incorrect results.
 
 </p><p>Because of its past success, AFL became a standard part of the testing
-strategy for SQLite beginning with <a href="releaselog/3_8_10.html">version 3.8.10</a> (2015-05-07).  
-Both SQL statements and database files are fuzzed.
-Billions and billions of mutations have been tried, but AFL's 
-instrumentation has narrowed them down to less than 50,000 test cases that
-cover all distinct behaviors.  Newly discovered test cases are periodically
-captured and added to the <a href="testing.html#tcl">TCL test suite</a> where they can be rerun using
-the "make fuzztest" or "make valgrindfuzz" commands.
-
-</p><p>Update:  As of SQLite <a href="releaselog/3_29_0.html">version 3.29.0</a> (2019-07-10) the use of
-AFL has been superceded by the new <a href="testing.html#dbsqlfuzz">dbsqlfuzz</a> fuzzer described below.
+strategy for SQLite beginning with <a href="releaselog/3_8_10.html">version 3.8.10</a> (2015-05-07) until
+it was superceded by better fuzzers in <a href="releaselog/3_29_0.html">version 3.29.0</a> (2019-07-10).
 
 <a name="ossfuzz"></a>
 
@@ -505,16 +496,51 @@ database and the input SQL at the same time, dbsqlfuzz has been able to
 find some obscure faults in SQLite that were missed by prior fuzzers that
 mutated only SQL inputs or only the database file.
 
-</p><p>As of this writing (2019-07-16), the SQLite developers have stopped
-using AFL for routine testing and instead are focused on running
-dbsqlfuzz.  At least one instance of dbsqlfuzz is running on the latest
-SQLite source code at all times, in order to catch any new problems that 
-might be introduced into the source tree as features are added and routine
-maintenance is performed.
+</p><p>The SQLite developers usually leave an instance or two of dbsqlfuzz
+running on the latest trunk code of SQLite whenever they are away from
+the office for an extended period, such as overnight.  The dbsqlfuzz
+fuzzer has proven so effective that OSSFuzz has ceased to find new
+problems in SQLite, except for cases when a new bug is introduced
+and OSSFuzz finds it overnight before dbsqlfuzz has had a chance to
+run.  (Examples:
+<a href="https://www.sqlite.org/src/timeline?y=ci&c=c422afb507dc8757">&#91;1&#93;</a>
+<a href="https://www.sqlite.org/src/timeline?y=ci&c=0a2eb949f8a759e5">&#91;2&#93;</a>
+<a href="https://www.sqlite.org/src/timeline?y=ci&c=62f2235adf796c72">&#91;3&#93;</a>)
+
+<a name="3pfuzz"></a>
+
+</p><h3 id="other_third_party_fuzzers"><span>4.1.4. </span>Other third-party fuzzers</h3>
+
+<p>SQLite seems to be a popular target for third-parties to fuzz.
+The developers hear about many attempts to fuzz SQLite
+and they do occasionally get bug reports found by independent
+fuzzers.  All such reports are promptly fixed, so the product is
+improved and that the entire SQLite user community benefits.
+This mechanism of having many independent testers is similar to
+<a href="https://en.wikipedia.org/wiki/Linus%27s_law">Linus's law</a>:
+"given enough eyeballs, all bugs are shallow".
+
+</p><p>One fuzzing researcher of particular note is 
+<a href="https://www.manuelrigger.at/">Manuel Rigger</a>, currently
+(as this paragraph is written on 2019-12-21)
+at <a href="https://ethz.ch/en.html">ETH Zurich</a>.
+Most fuzzers only look for assertion faults, crashes, undefined behavior (UB),
+or other easily detected anomalies.  Dr. Rigger's fuzzers, on the other hand,
+are able to find cases where SQLite computes an incorrect answer.
+Rigger has found
+<a href="https://www.sqlite.org/src/timeline?y=t&u=mrigger&n=all">many such cases</a>.
+Most of these finds are fairly obscure corner cases involving type
+conversions and affinity transformations, and a good number of the finds
+are against unreleased features.  Nevertheless, his finds are still important
+as they are real bugs,
+and the SQLite developers are grateful to be able to identify and fix
+the underlying problems.  Rigger's work is currently unpublished.  When it
+is released, it could be as influential as Zalewski's invention of AFL
+and profile-guided fuzzing.
 
 <a name="fuzzcheck"></a>
 
-</p><h3 id="the_fuzzcheck_test_harness"><span>4.1.4. </span>The fuzzcheck test harness</h3>
+</p><h3 id="the_fuzzcheck_test_harness"><span>4.1.5. </span>The fuzzcheck test harness</h3>
 
 <p>Historical test cases from <a href="testing.html#aflfuzz">AFL</a>, <a href="testing.html#ossfuzz">OSS Fuzz</a>, and <a href="testing.html#dbsqlfuzz">dbsqlfuzz</a> are
 collected in a set of database files in the main SQLite source tree
@@ -525,6 +551,42 @@ examined over the years.  "Interesting" cases are cases that exhibit
 previously unseen behavior.  Actual bugs found by fuzzers are always
 included among the interesting test cases, but most of the cases run
 by fuzzcheck were never actual bugs. 
+
+<a name="tension"></a>
+
+</p><h3 id="tension_between_fuzz_testing_and_100_mc_dc_testing"><span>4.1.6. </span>Tension Between Fuzz Testing And 100% MC/DC Testing</h3>
+
+<p>Fuzz testing and <a href="testing.html#mcdc">100% MC/DC testing</a> are in tension with
+one another.
+That is to say, code tested to 100% MC/DC will tend to be
+more vulnerable to problems found by fuzzing and code that performs
+well during fuzz testing will tend to have (much) less than 
+100% MC/DC.
+This is because MC/DC testing discourages <a href="testing.html#defcode">defensive code</a> with
+unreachable branches, but without defensive code, a fuzzer is
+more likely to find a path that causes problems.  MC/DC testing
+seems to work well for building code that is robust during typical
+normal use, whereas fuzz testing is good for building code that is
+robust against malecious attack.
+
+</p><p>Of course, users would prefer code that is both robust in normal
+use and resistent to malcious attack.  The SQLite developers are
+dedicated to providing that.  The purpose of this section is merely
+to point out that doing both at the same time is hard.
+
+</p><p>For much of its history SQLite has been focused on 100% MC/DC testing.
+Resistence to fuzzing attacks only became a concern with the introduction
+of AFL in 2014.  For a while there, fuzzers were finding many problems
+in SQLite.  In more recent years, the testing strategy of SQLite has
+evolved to place more emphasis on fuzz testing.  We still maintain
+100% MC/DC of the core SQLite code, but most testing CPU cycles are 
+now devoted to fuzzing.
+
+</p><p>While fuzz testing and 100% MC/DC testing are in tension, they
+are not completely at cross-purposes.  The fact that the SQlite test
+suite does test to 100% MC/DC means that when fuzzers do find problems,
+those problems can be fixed quickly and with little risk of introducing
+new errors.
 
 </p><h2 id="malformed_database_files"><span>4.2. </span>Malformed Database Files</h2>
 
@@ -646,7 +708,7 @@ not true.  To reemphasize, the
 <a href="th3.html">TH3</a> test harness for SQLite provides the stronger form of
 test coverage - 100% branch test coverage.</p>
 
-<a name="defensivecode"></a>
+<a name="defcode"></a>
 
 <h2 id="coverage_testing_of_defensive_code"><span>7.2. </span>Coverage testing of defensive code</h2>
 

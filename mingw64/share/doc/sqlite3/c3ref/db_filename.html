@@ -100,16 +100,31 @@ return false;
 const char *sqlite3_db_filename(sqlite3 *db, const char *zDbName);
 </pre></blockquote>
 <p>
-The sqlite3_db_filename(D,N) interface returns a pointer to a filename
-associated with database N of connection D.  The main database file
-has the name "main".  If there is no attached database N on the database
+The sqlite3_db_filename(D,N) interface returns a pointer to the filename
+associated with database N of connection D.
+If there is no attached database N on the database
 connection D, or if database N is a temporary or in-memory database, then
 this function will return either a NULL pointer or an empty string.</p>
+
+<p>The string value returned by this routine is owned and managed by
+the database connection.  The value will be valid until the database N
+is <a href="../lang_detach.html">DETACH</a>-ed or until the database connection closes.</p>
 
 <p>The filename returned by this function is the output of the
 xFullPathname method of the <a href="../vfs.html">VFS</a>.  In other words, the filename
 will be an absolute pathname, even if the filename used
-to open the database originally was a URI or relative pathname.
+to open the database originally was a URI or relative pathname.</p>
+
+<p>If the filename pointer returned by this routine is not NULL, then it
+can be used as the filename input parameter to these routines:
+<ul>
+<li> <a href="../c3ref/uri_boolean.html">sqlite3_uri_parameter()</a>
+<li> <a href="../c3ref/uri_boolean.html">sqlite3_uri_boolean()</a>
+<li> <a href="../c3ref/uri_boolean.html">sqlite3_uri_int64()</a>
+<li> <a href="../c3ref/filename_database.html">sqlite3_filename_database()</a>
+<li> <a href="../c3ref/filename_database.html">sqlite3_filename_journal()</a>
+<li> <a href="../c3ref/filename_database.html">sqlite3_filename_wal()</a>
+</ul>
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,
   <a href="constlist.html">Constants</a>, and

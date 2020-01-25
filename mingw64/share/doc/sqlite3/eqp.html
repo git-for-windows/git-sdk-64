@@ -163,10 +163,12 @@ of the node.
 The entire tree is therefore a table with four columns and zero or more
 rows.
 The <a href="cli.html">command-line shell</a> will usually intercept this table and renders
-it as an ASCII-art graph for more convenient viewing.  To defeat the
-shells automatic graph rendering, simply include extra white space
-in between any of the "EXPLAIN", "QUERY", and/or "PLAN" keywords and
-the output will appear in a (less helpful) tabular format.
+it as an ASCII-art graph for more convenient viewing.  To disable the
+shells automatic graph rendering and to display EXPLAIN QUERY PLAN
+output in its tabular format, run the command ".explain off" to set
+the "EXPLAIN formatting mode" to off.  To restore automatic graph rendering,
+run ".explain auto".  You can see the current "EXPLAIN formatting mode" 
+setting using the ".show" command.
 
 </p><p>One can also set the <a href="cli.html">CLI</a> into automatic EXPLAIN QUERY PLAN mode
 using the ".eqp on" command:

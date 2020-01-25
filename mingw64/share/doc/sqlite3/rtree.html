@@ -105,11 +105,14 @@ Table Of Contents
 <div class="fancy-toc1"><a href="#compiling_the_r_tree_module">2. Compiling The R*Tree Module</a></div>
 <div class="fancy-toc1"><a href="#using_the_r_tree_module">3. Using the R*Tree Module</a></div>
 <div class="fancy-toc2"><a href="#creating_an_r_tree_index">3.1. Creating An R*Tree Index</a></div>
+<div class="fancy-toc3"><a href="#column_naming_details">3.1.1. Column naming details</a></div>
 <div class="fancy-toc2"><a href="#populating_an_r_tree_index">3.2. Populating An R*Tree Index</a></div>
 <div class="fancy-toc2"><a href="#querying_an_r_tree_index">3.3. Querying An R*Tree Index</a></div>
 <div class="fancy-toc2"><a href="#roundoff_error">3.4. Roundoff Error</a></div>
+<div class="fancy-toc2"><a href="#reading_and_writing_at_the_same_time">3.5. Reading And Writing At The Same Time</a></div>
 <div class="fancy-toc1"><a href="#using_r_trees_effectively">4. Using R*Trees Effectively</a></div>
 <div class="fancy-toc2"><a href="#auxiliary_columns">4.1. Auxiliary Columns</a></div>
+<div class="fancy-toc3"><a href="#limitations">4.1.1. Limitations</a></div>
 <div class="fancy-toc1"><a href="#integer_valued_r_trees">5. Integer-Valued R-Trees</a></div>
 <div class="fancy-toc1"><a href="#custom_r_tree_queries">6. Custom R-Tree Queries</a></div>
 <div class="fancy-toc2"><a href="#the_legacy_xgeom_callback">6.1. The Legacy xGeom Callback</a></div>
@@ -258,7 +261,26 @@ spatial queries:
 );
 </pre></div>
 
-<h2 id="populating_an_r_tree_index"><span>3.2. </span>Populating An R*Tree Index</h2>
+<h3 id="column_naming_details"><span>3.1.1. </span>Column naming details</h3>
+
+<p>
+In the argments to "rtree" in the CREATE VIRTUAL TABLE statement, the
+names of the columns are taken from the first token of each argument.
+All subsequent tokens within each argument are silently ignored.
+This means, for example, that if you try to give a column a
+<a href="datatype3.html#affinity">type affinity</a> or add a constraint such as UNIQUE or NOT NULL or DEFAULT to
+a column, those extra tokens are accepted as valid, but they do not change
+the behavior of the rtree.
+In an RTREE virtual table, the first column always has a
+<a href="datatype3.html#affinity">type affinity</a> of INTEGER and all other data columns have a
+<a href="datatype3.html#affinity">type affinity</a> of NUMERIC.
+
+</p><p>
+Recommended practice is to omit any extra tokens in the rtree specification.
+Let each argument to "rtree" be a single ordinary label that is the name of
+the corresponding column, and omit all other tokens from the argument list.
+
+</p><h2 id="populating_an_r_tree_index"><span>3.2. </span>Populating An R*Tree Index</h2>
 
 <p>
 The usual <a href="lang_insert.html">INSERT</a>, <a href="lang_update.html">UPDATE</a>, and <a href="lang_delete.html">DELETE</a> commands work on an R*Tree
@@ -368,6 +390,67 @@ if the edge of the entry bounding box corresponds to the edge of the query
 bounding box.  To guard against this, applications should expand their
 contained-within query boxes slightly (by 0.000012%) by rounding down the
 lower coordinates and rounding up the top coordinates, in each dimension.
+
+<a name="readwrite"></a>
+
+</p><h2 id="reading_and_writing_at_the_same_time"><span>3.5. </span>Reading And Writing At The Same Time</h2>
+
+<p>
+It is the nature of the Guttman R-Tree algorithm that any write might
+radically restructure the tree, and in the process change the scan order
+of the nodes.  For this reason, it is not generally possible to modify
+the R-Tree in the middle of a query of the R-Tree.  Attempts to do so
+will fail with a <a href="rescode.html#locked">SQLITE_LOCKED</a> "database table is locked" error.
+
+</p><p>
+So, for example, suppose an application runs one query against an R-Tree like
+this:
+
+</p><div class="codeblock"><pre>SELECT id FROM demo_index
+ WHERE maxY&gt;=35.0  AND minY&lt;=35.0;
+</pre></div>
+
+<p>
+Then for each "id" value returned, suppose the application creates an 
+UPDATE statement like the following and binds the "id" value returned against
+the "?1" parameter:
+
+</p><div class="codeblock"><pre>UPDATE demo_index SET maxY=maxY+0.5 WHERE id=?1;
+</pre></div>
+
+<p>
+Then the UPDATE might fail with an SQLITE_LOCKED error.  The reason is that
+the initial query has not run to completion.  It is remembering its place
+in the middle of a scan of the R-Tree.  So an update to the R-Tree cannot
+be tolerated as this would disrupt the scan.
+
+</p><p>
+It is also possible to express this kind of simultaneous read and write
+on an R-Tree within a single query, for example if an UPDATE statement
+tries to change the value of one row of the R-Tree based on a complicated
+query from another row of the same R-Tree, perhaps something like this:
+
+</p><div class="codeblock"><pre>UPDATE demo_index 
+   SET maxY = (SELECT max(maxX) FROM demo_index AS x2
+                WHERE x2.maxY&gt;demo_index.x2)
+ WHERE maxY&gt;=35.0  AND minY&lt;=35.0;
+</pre></div>
+
+<p>
+This is a limitation of the R-Tree extension only.  Ordinary tables in
+SQLite are able to read and write at the same time.  Other virtual tables
+might (or might not) also that capability.  And R-Tree can appear to read
+and write at the same time in some circumstances, if it can figure out how
+to reliably run the query to completion before starting the update.  But
+you shouldn't count on that for every query.  Generally speaking, it is
+best to avoid running queries and updates to the same R-Tree at the same
+time.
+
+</p><p>
+If you really need to update an R-Tree based on complex queries against
+the same R-Tree, it is best to run the complex queries first and store
+the results in a temporary table, then update the R-Tree based on the values
+stored in the temporary table.
 
 </p><h1 id="using_r_trees_effectively"><span>4. </span>Using R*Trees Effectively</h1>
 
@@ -493,9 +576,20 @@ be written as a simple query, like this:
    AND minY&gt;=35.0 AND maxY&gt;=36.2;
 </pre></div>
 
+<h3 id="limitations"><span>4.1.1. </span>Limitations</h3>
+
+<p>
+For auxiliary columns, only the name of the column matters.
+The <a href="datatype3.html#affinity">type affinity</a> is ignored.
+Constraints such as NOT NULL, UNIQUE, REFERENCES, or CHECK
+are also ignored.  However, future versions
+of SQLite might start paying attention to the type affinity and
+constraints, so users of auxiliary columns are advised to leave
+both blank, to avoid future compatibility problems.
+
 <a name="intrtree"></a>
 
-<h1 id="integer_valued_r_trees"><span>5. </span>Integer-Valued R-Trees</h1>
+</p><h1 id="integer_valued_r_trees"><span>5. </span>Integer-Valued R-Trees</h1>
 
 <p>
 The default virtual table ("rtree") normally stores coordinates as

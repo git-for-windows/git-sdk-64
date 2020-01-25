@@ -476,6 +476,8 @@ The <a href="c3ref/create_module.html">sqlite3_create_module()</a> interface wou
 <a href="sharedcache.html">shared cache mode</a> is enabled.  That restriction was relaxed
 beginning with SQLite <a href="releaselog/3_6_17.html">version 3.6.17</a>.
 
+<a name="customvtab"></a>
+
 </p><h2 id="creating_new_virtual_table_implementations"><span>1.4. </span>Creating New Virtual Table Implementations</h2>
 
 <p>Follow these steps to create your own virtual table:
@@ -493,13 +495,32 @@ beginning with SQLite <a href="releaselog/3_6_17.html">version 3.6.17</a>.
 
 <p>The only really hard part is step 1. You might want to start with an 
 existing virtual table implementation and modify it to suit your needs.
-There are several virtual table implementations in the SQLite source tree 
-(for testing purposes). You might use one of those as a guide. Locate 
-these test virtual table implementations by searching 
+The <a href="https://sqlite.org/src/dir?ci=trunk&type=tree">SQLite source tree</a>
+contains many virtual table implementations that are suitable for copying,
+including:
+
+</p><p>
+</p><ul>
+<li> <b><a href="https://sqlite.org/src/file/ext/misc/templatevtab.c">templatevtab.c</a></b>
+&rarr; A virtual table created specifically to serve as a template for
+other custom virtual tables.
+</li><li> <b><a href="https://sqlite.org/src/file/ext/misc/series.c">series.c</a></b>
+&rarr; Implementation of the generate_series() table-valued function.
+</li><li> <b><a href="https://sqlite.org/src/file/ext/misc/json1.c">json1.c</a></b> &rarr;
+Contains the sources for the <a href="json1.html#jeach">json_each()</a> and <a href="json1.html#jtree">json_tree()</a> table-valued
+functions.
+</li><li> <b><a href="https://sqlite.org/src/file/ext/misc/csv.c">csv.c</a></b> &rarr;
+A virtual table that reads CSV files.
+</li></ul>
+
+
+<p>There are <a href="vtablist.html">many other virtual table implementations</a>
+in the SQLite source tree that can be used as examples.  Locate 
+these other virtual table implementations by searching 
 for "sqlite3_create_module".
 
 </p><p>You might also want to implement your new virtual table as a 
-<a href="c3ref/load_extension.html">loadable extension</a>.
+<a href="loadext.html">loadable extension</a>.
 
 </p><h1 id="virtual_table_methods"><span>2. </span>Virtual Table Methods</h1>
 

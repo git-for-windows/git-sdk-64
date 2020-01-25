@@ -132,6 +132,8 @@ Table Of Contents
 <div class="fancy-toc2"><a href="#record_sort_order">2.2. Record Sort Order</a></div>
 <div class="fancy-toc2"><a href="#representation_of_sql_tables">2.3. Representation Of SQL Tables</a></div>
 <div class="fancy-toc2"><a href="#representation_of_without_rowid_tables">2.4. Representation of WITHOUT ROWID Tables</a></div>
+<div class="fancy-toc3"><a href="#suppression_of_redundant_columns_in_the_primary_key_of_without_rowid_tables">2.4.1. Suppression of redundant columns in the PRIMARY KEY
+of WITHOUT ROWID tables</a></div>
 <div class="fancy-toc2"><a href="#representation_of_sql_indices">2.5. Representation Of SQL Indices</a></div>
 <div class="fancy-toc3"><a href="#suppression_of_redundant_columns_in_without_rowid_secondary_indexes_">2.5.1. Suppression of redundant columns in WITHOUT ROWID secondary indexes
 </a></div>
@@ -1283,6 +1285,27 @@ first, and the content is used as the key in an index b-tree rather
 than as the data in a table b-tree.
 The special encoding rules for columns with REAL affinity
 apply to WITHOUT ROWID tables the same as they do with rowid tables.
+
+</p><h3 id="suppression_of_redundant_columns_in_the_primary_key_of_without_rowid_tables"><span>2.4.1. </span>Suppression of redundant columns in the PRIMARY KEY
+    of WITHOUT ROWID tables</h3>
+
+<p>If the PRIMARY KEY of a WITHOUT ROWID tables uses the same columns
+with the same collating sequence more than once, then the second and
+subsequent occurrences of that column in the PRIMARY KEY definition are
+ignored.  For example, the following CREATE TABLE statements all specify
+the same table, which will have the exact same representation on disk:
+
+</p><blockquote><pre>
+CREATE TABLE t1(a,b,c,d,PRIMARY KEY(a,c)) WITHOUT ROWID);
+CREATE TABLE t1(a,b,c,d,PRIMARY KEY(a,c,a,c)) WITHOUT ROWID);
+CREATE TABLE t1(a,b,c,d,PRIMARY KEY(a,A,a,C)) WITHOUT ROWID);
+CREATE TABLE t1(a,b,c,d,PRIMARY KEY(a,a,a,a,c)) WITHOUT ROWID);
+</pre></blockquote>
+
+<p>The first example above is the preferred definition of the table,
+of course.  All of the examples create a WITHOUT ROWID table with
+two PRIMARY KEY columns, "a" and "c", in that order, followed by
+two data columns "b" and "d", also in that order.
 
 </p><h2 id="representation_of_sql_indices"><span>2.5. </span>Representation Of SQL Indices</h2>
 

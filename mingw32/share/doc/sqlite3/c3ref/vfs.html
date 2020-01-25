@@ -152,10 +152,10 @@ with SQLite <a href="../releaselog/3_7_0.html">version 3.7.0</a> on 2010-07-21, 
 to 3 with SQLite <a href="../releaselog/3_7_6.html">version 3.7.6</a> on 2011-04-12.  Additional fields
 may be appended to the sqlite3_vfs object and the iVersion value
 may increase again in future versions of SQLite.
-Note that the structure
-of the sqlite3_vfs object changes in the transition from
+Note that due to an oversight, the structure
+of the sqlite3_vfs object changed in the transition from
 SQLite <a href="../releaselog/3_5_9.html">version 3.5.9</a> to <a href="../releaselog/3_6_0.html">version 3.6.0</a> on 2008-07-16
-and yet the iVersion field was not modified.</p>
+and yet the iVersion field was not increased.</p>
 
 <p>The szOsFile field is the size of the subclassed <a href="../c3ref/file.html">sqlite3_file</a>
 structure used by this VFS.  mxPathname is the maximum length of
@@ -247,7 +247,7 @@ It is <i>not</i> used to indicate the file should be opened
 for exclusive access.</p>
 
 <p>At least szOsFile bytes of memory are allocated by SQLite
-to hold the  <a href="../c3ref/file.html">sqlite3_file</a> structure passed as the third
+to hold the <a href="../c3ref/file.html">sqlite3_file</a> structure passed as the third
 argument to xOpen.  The xOpen method does not have to
 allocate the structure; it should just fill it in.  Note that
 the xOpen method must set the sqlite3_file.pMethods to either

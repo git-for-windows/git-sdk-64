@@ -106,24 +106,23 @@ The DBSTAT Virtual Table
 
 <p>
 The DBSTAT virtual table is a read-only <a href="vtab.html#epovtab">eponymous virtual table</a> that returns
-information about which pages of the database files are used by which
-tables and indexes in the schema.
-The DBSTAT virtual table is used to implement <a href="sqlanalyze.html">sqlite3_analyzer.exe</a>
-utility program, and to help compute the 
+information about the amount of disk space used to store the content
+of an SQLite database.
+Example use cases for the
+DBSTAT virtual table include the <a href="sqlanalyze.html">sqlite3_analyzer.exe</a>
+utility program and the
 <a href="https://www.sqlite.org/src/repo-tabsize">table size pie-chart</a> in
 the <a href="https://www.fossil-scm.org/">Fossil-implemented</a> version control system
 for SQLite.
 </p>
 
 <p>
-The <b>dbstat</b> virtual table is available on all 
+The DBSTAT virtual table is available on all 
 <a href="c3ref/sqlite3.html">database connections</a> when SQLite is built using the
 <a href="compile.html#enable_dbstat_vtab">SQLITE_ENABLE_DBSTAT_VTAB</a> compile-time option.
-The dbstat virtual table provides low-level information 
-about btree and overflow pages in a database file.
 
 </p><p>
-The dbstat virtual table is an <a href="vtab.html#epovtab">eponymous virtual table</a>, meaning
+The DBSTAT virtual table is an <a href="vtab.html#epovtab">eponymous virtual table</a>, meaning
 that is not necessary to run <a href="lang_createvtab.html">CREATE VIRTUAL TABLE</a> to create an
 instance of the dbstat virtual table before using it.  The "dbstat"
 module name can be used as if it were a table name to query the
@@ -156,34 +155,45 @@ name in the FROM clause of the query.  (See further discussion of
 <a href="lang_select.html#tabfunc1">table-valued functions in the FROM clause</a> for more details.)
 
 </p><p>
-The schema for the dbstat virtual table is this:
+The schema for the DBSTAT virtual table looks like this:
 </p><div class="codeblock"><pre>CREATE TABLE dbstat(
   name       TEXT,        -- Name of table or index
   path       TEXT,        -- Path to page from root
-  pageno     INTEGER,     -- Page number
-  pagetype   TEXT,        -- 'internal', 'leaf' or 'overflow'
-  ncell      INTEGER,     -- Cells on page (0 for overflow)
-  payload    INTEGER,     -- Bytes of payload on this page
-  unused     INTEGER,     -- Bytes of unused space on this page
-  mx_payload INTEGER,     -- Largest payload size of all cells on this page
-  pgoffset   INTEGER,     -- Offset of page in file
-  pgsize     INTEGER,     -- Size of the page
-  schema     TEXT HIDDEN  -- Database schema being analyzed
+  pageno     INTEGER,     -- Page number, or page count
+  pagetype   TEXT,        -- 'internal', 'leaf', 'overflow', or NULL
+  ncell      INTEGER,     -- Cells on page (0 for overflow pages)
+  payload    INTEGER,     -- Bytes of payload on this page or btree
+  unused     INTEGER,     -- Bytes of unused space on this page or btree
+  mx_payload INTEGER,     -- Largest payload size of all cells on this row
+  pgoffset   INTEGER,     -- Byte offset of the page in the database file
+  pgsize     INTEGER,     -- Size of the page, in bytes
+  schema     TEXT HIDDEN, -- Database schema being analyzed
+  aggregate  BOOL HIDDEN  -- True to enable aggregate mode
 );
 </pre></div>
 
 <p>
-There is a single row of the dbstat table for each page in the
-database file.  Freelist pages, the lock page, and
-pointer-map pages of the database file do not appear in the
-dbstat virtual table.
+The DBSTAT table only reports on the content of btrees within the database file.
+Freelist pages, pointer-map pages, and the lock page are omitted from
+the analysis.
 
+</p><p>
+By default, there is a single row in the DBSTAT table for each
+btree page the database file.  Each row provides
+information about the space utilization of that one page of the
+database.  However, if the hidden column "aggregate" is TRUE, then
+results are aggregated and there is a single row in the DBSTAT table
+for each btree in the database, providing information about space
+utilization across the entire btree.
+
+<a name="dbstatpath"></a>
 </p><h1 id="the_path_column_of_the_dbstat_virtual_table"><span>2. </span>The "path" column of the dbstat virtual table</h1>
 
 <p>
 The "path" column describes the path taken from the 
 root node of the btree structure to each page.  The
 "path" of the root node itself is '/'.
+The "path" is NULL when "aggregate" is TRUE.
 
 The "path" for the left-most child page of the root of
 a btree page is '/000/'. (Btrees store content ordered from left to right
@@ -212,13 +222,79 @@ sort-order than its child page:
 </p><div class="codeblock"><pre>'/1c2/000/'               // Left-most child of 451st child of root
 </pre></div>
 
-<h1 id="example_uses_of_the_dbstat_virtual_table"><span>3. </span>Example uses of the dbstat virtual table</h1>
+<a name="dbstatagg"></a>
+
+<h1 id="aggregated_data"><span>3. </span>Aggregated Data</h1>
+
+<p>
+Beginning with SQLite version 3.31.0 (2020-01-22), the DBSTAT table
+has a new <a href="vtab.html#hiddencol">hidden column</a> named "aggregate", which if constrained to be
+TRUE will cause DBSTAT to generate one row per btree in the database,
+rather than one row per page.  When running in aggregated mode, the 
+"path", "pagetype", and "pgoffset" columns are always NULL and the
+"pageno" column holds the number of pages in the entire btree, rather
+than the number of the page that corresponds to the row.
+
+</p><p>
+The following table shows the meanings of the (non-hidden) columns of
+DBSTAT in both normal and aggregated mode:
+
+</p><center><blockquote>
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>Column
+</th><th>Normal meaning
+</th><th>Aggregate-mode meaning
+</th></tr>
+<tr>
+<th>name
+</th><td colspan="2">
+The name of the table or index that is implemented by
+the btree of the current row
+</td></tr><tr>
+<th>path
+</th><td>See <a href="#dbstatpath">description above</a>
+</td><td>Always NULL
+</td></tr><tr>
+<th>pageno
+</th><td>The page number of the database page for the current row
+</td><td>The total number of pages in the btree for the current row
+</td></tr><tr>
+<th>pagetype
+</th><td>'leaf' or 'interior'
+</td><td>Always NULL
+</td></tr><tr>
+<th>ncell
+</th><td colspan="2">Number of cells on the current page or btree
+</td></tr><tr>
+<th>payload
+</th><td colspan="2">Bytes of useful payload on the current page or btree
+</td></tr><tr>
+<th>unused
+</th><td colspan="2">Unused bytes of on the current page or btree
+</td></tr><tr>
+<th>mx_payload
+</th><td colspan="2">The largest payload found anywhere in the current page
+or btree.
+</td></tr><tr>
+<th>pgoffset
+</th><td>Byte offset to the start of the page
+</td><td>Always NULL
+</td></tr><tr>
+<th>pgsize
+</th><td colspan="2">Total storage space used by the current page or btree.
+</td></tr></table>
+</blockquote></center>
+
+<h1 id="example_uses_of_the_dbstat_virtual_table"><span>4. </span>Example uses of the dbstat virtual table</h1>
 
 <p>
 To find the total number of pages used to store table "xyz" in schema "aux1",
-use:
+use either of the following two queries (the first is the traditional way,
+and the second shows the use of the aggregated feature):
 
 </p><div class="codeblock"><pre>SELECT count(*) FROM dbstat('aux1') WHERE name='xyz';
+SELECT pageno FROM dbstat('aux1',1) WHERE name='xyz';
 </pre></div>
 
 <p>
@@ -226,9 +302,13 @@ To see how efficiently the content of a table is stored on disk,
 compute the amount of space used to hold actual content divided
 by the total amount of disk space used.  The closer this number
 is to 100%, the more efficient the packing.  (In this example, the
-'xyz' table is assumed to be in the 'main' schema.)
+'xyz' table is assumed to be in the 'main' schema.  Again, there
+are two different versions that show the use of DBSTAT both without
+and with the new aggregated feature, respectively.)
 
-</p><div class="codeblock"><pre>SELECT sum(pgsize-unused)/sum(pgsize) FROM dbstat WHERE name='xyz';
+</p><div class="codeblock"><pre>SELECT sum(pgsize-unused)*100.0/sum(pgsize) FROM dbstat WHERE name='xyz';
+SELECT (pgsize-unused)*100.0/pgsize FROM dbstat
+ WHERE name='xyz' AND aggregate=TRUE;
 </pre></div>
 
 <p>

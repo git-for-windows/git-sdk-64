@@ -91,13 +91,15 @@ return false;
 }
 </script>
 </div>
-<!-- keywords: SQLITE_VTAB_CONSTRAINT_SUPPORT -->
+<!-- keywords: SQLITE_VTAB_CONSTRAINT_SUPPORT SQLITE_VTAB_DIRECTONLY SQLITE_VTAB_INNOCUOUS {virtual table configuration option} {virtual table configuration options} -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
 <h2>Virtual Table Configuration Options</h2>
 </div>
 <blockquote><pre>
 #define SQLITE_VTAB_CONSTRAINT_SUPPORT 1
+#define SQLITE_VTAB_INNOCUOUS          2
+#define SQLITE_VTAB_DIRECTONLY         3
 </pre></blockquote>
 <p>
 These macros define the various options to the
@@ -107,7 +109,7 @@ can use to customize and optimize their behavior.</p>
 <p><dl>
 <a name="sqlitevtabconstraintsupport"></a>
 
-<dt>SQLITE_VTAB_CONSTRAINT_SUPPORT
+<dt>SQLITE_VTAB_CONSTRAINT_SUPPORT</dt>
 <dd>Calls of the form
 <a href="../c3ref/vtab_config.html">sqlite3_vtab_config</a>(db,SQLITE_VTAB_CONSTRAINT_SUPPORT,X) are supported,
 where X is an integer.  If X is zero, then the <a href="../vtab.html">virtual table</a> whose
@@ -136,6 +138,28 @@ silently replace the appropriate rows within the xUpdate callback and
 return SQLITE_OK. Or, if this is not possible, it may return
 SQLITE_CONSTRAINT, in which case SQLite falls back to OR ABORT
 constraint handling.
+</dd></p>
+
+<p><a name="sqlitevtabdirectonly"></a>
+<dt>SQLITE_VTAB_DIRECTONLY</dt>
+<dd>Calls of the form
+<a href="../c3ref/vtab_config.html">sqlite3_vtab_config</a>(db,SQLITE_VTAB_DIRECTONLY) from within the
+the <a href="../vtab.html#xconnect">xConnect</a> or <a href="../vtab.html#xcreate">xCreate</a> methods of a <a href="../vtab.html">virtual table</a> implmentation
+prohibits that virtual table from being used from within triggers and
+views.
+</dd></p>
+
+<p><a name="sqlitevtabinnocuous"></a>
+<dt>SQLITE_VTAB_INNOCUOUS</dt>
+<dd>Calls of the form
+<a href="../c3ref/vtab_config.html">sqlite3_vtab_config</a>(db,SQLITE_VTAB_INNOCUOUS) from within the
+the <a href="../vtab.html#xconnect">xConnect</a> or <a href="../vtab.html#xcreate">xCreate</a> methods of a <a href="../vtab.html">virtual table</a> implmentation
+identify that virtual table as being safe to use from within triggers
+and views.  Conceptually, the SQLITE_VTAB_INNOCUOUS tag means that the
+virtual table can do no serious harm even if it is controlled by a
+malicious hacker.  Developers should avoid setting the SQLITE_VTAB_INNOCUOUS
+flag unless absolutely necessary.
+</dd>
 </dl>
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,

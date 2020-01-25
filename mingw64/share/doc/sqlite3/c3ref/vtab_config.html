@@ -107,9 +107,13 @@ various facets of the virtual table interface.</p>
 <p>If this interface is invoked outside the context of an xConnect or
 xCreate virtual table method then the behavior is undefined.</p>
 
-<p>At present, there is only one option that may be configured using
-this function. (See <a href="../c3ref/c_vtab_constraint_support.html#sqlitevtabconstraintsupport">SQLITE_VTAB_CONSTRAINT_SUPPORT</a>.)  Further options
-may be added in the future.
+<p>In the call sqlite3_vtab_config(D,C,...) the D parameter is the
+<a href="../c3ref/sqlite3.html">database connection</a> in which the virtual table is being created and
+which is passed in as the first argument to the <a href="../vtab.html#xconnect">xConnect</a> or <a href="../vtab.html#xcreate">xCreate</a>
+method that is invoking sqlite3_vtab_config().  The C parameter is one
+of the <a href="../c3ref/c_vtab_constraint_support.html">virtual table configuration options</a>.  The presence and meaning
+of parameters after C depend on which <a href="../c3ref/c_vtab_constraint_support.html">virtual table configuration option</a>
+is used.
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,
   <a href="constlist.html">Constants</a>, and

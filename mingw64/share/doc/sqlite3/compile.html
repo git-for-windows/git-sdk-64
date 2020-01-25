@@ -230,7 +230,7 @@ to run slightly faster.
 </p></li><li><p><b><a href="compile.html#omit_shared_cache">SQLITE_OMIT_SHARED_CACHE</a></b>.
 Omitting the possibility of using <a href="sharedcache.html">shared cache</a> allows many conditionals
 in performance-critical sections of the code to be eliminated.  This can
-give a noticable improvement in performance.
+give a noticeable improvement in performance.
 
 </p></li><li><p><b><a href="compile.html#use_alloca">SQLITE_USE_ALLOCA</a></b>.
 Make use of alloca() for dynamically allocating temporary stack space for 
@@ -829,6 +829,15 @@ the available settings:</p>
   If this macro is defined to a positive integer <i>N</i>, then the length of
   strings and BLOB that are expanded into parameters in the output of
   <a href="c3ref/profile.html">sqlite3_trace()</a> is limited to <i>N</i> bytes.  
+</p></blockquote><a name="trusted_schema"></a>
+<p><b>SQLITE_TRUSTED_SCHEMA=<i>&lt;0 or 1&gt;</i></b></p><blockquote><p>
+  This macro determines the default value for the
+  <a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigtrustedschema">SQLITE_DBCONFIG_TRUSTED_SCHEMA</a> and <a href="pragma.html#pragma_trusted_schema">PRAGMA trusted_schema</a> setting.
+  If no alternative is specified, the trusted-schema setting defaults
+  to ON (a value of 1) for legacy compatibility.  However, for best
+  security, systems that implement
+  <a href="appfunc.html">application-defined SQL functions</a> and/or <a href="vtab.html">virtual tables</a> should
+  consider changing the default to OFF.
 </p></blockquote><a name="use_uri"></a>
 <p><b>SQLITE_USE_URI</b></p><blockquote><p>
   This option causes the <a href="uri.html">URI filename</a> process logic to be enabled by 
@@ -1596,10 +1605,17 @@ The SQLITE_OMIT_* compile-time options are mostly unsupported.
 <p><b>SQLITE_OMIT_FOREIGN_KEY</b></p><blockquote><p>
   If this option is defined, then <a href="foreignkeys.html">foreign key constraint</a> syntax is
   not recognized.
+</p></blockquote><a name="omit_generated_columns"></a>
+<p><b>SQLITE_OMIT_GENERATED_COLUMNS</b></p><blockquote><p>
+  If this option is defined, then <a href="gencol.html">generated column</a> syntax is
+  not recognized.
 </p></blockquote><a name="omit_get_table"></a>
 <p><b>SQLITE_OMIT_GET_TABLE</b></p><blockquote><p>
   This option causes support for <a href="c3ref/free_table.html">sqlite3_get_table()</a> and
   <a href="c3ref/free_table.html">sqlite3_free_table()</a> to be omitted.
+</p></blockquote><a name="omit_hex_integer"></a>
+<p><b>SQLITE_OMIT_HEX_INTEGER</b></p><blockquote><p>
+  This option omits support for <a href="lang_expr.html#hexint">hexadecimal integer literals</a>.
 </p></blockquote><a name="omit_incrblob"></a>
 <p><b>SQLITE_OMIT_INCRBLOB</b></p><blockquote><p>
   This option causes support for <a href="c3ref/blob.html">incremental BLOB I/O</a>

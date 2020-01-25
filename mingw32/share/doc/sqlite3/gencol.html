@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="sqlite.css" rel="stylesheet">
+<title>Generated Columns</title>
+<!-- path= -->
+</head>
+<body>
+<div class=nosearch>
+<a href="index.html">
+<img class="logo" src="images/sqlite370_banner.gif" alt="SQLite" border="0">
+</a>
+<div><!-- IE hack to prevent disappearing logo --></div>
+<div class="tagline desktoponly">
+Small. Fast. Reliable.<br>Choose any three.
+</div>
+<div class="menu mainmenu">
+<ul>
+<li><a href="index.html">Home</a>
+<li class='mobileonly'><a href="javascript:void(0)" onclick='toggle_div("submenu")'>Menu</a>
+<li class='wideonly'><a href='about.html'>About</a>
+<li class='desktoponly'><a href="docs.html">Documentation</a>
+<li class='desktoponly'><a href="download.html">Download</a>
+<li class='wideonly'><a href='copyright.html'>License</a>
+<li class='desktoponly'><a href="support.html">Support</a>
+<li class='desktoponly'><a href="prosupport.html">Purchase</a>
+<li class='search' id='search_menubutton'>
+<a href="javascript:void(0)" onclick='toggle_search()'>Search</a>
+</ul>
+</div>
+<div class="menu submenu" id="submenu">
+<ul>
+<li><a href='about.html'>About</a>
+<li><a href='docs.html'>Documentation</a>
+<li><a href='download.html'>Download</a>
+<li><a href='support.html'>Support</a>
+<li><a href='prosupport.html'>Purchase</a>
+</ul>
+</div>
+<div class="searchmenu" id="searchmenu">
+<form method="GET" action="search">
+<select name="s" id="searchtype">
+<option value="d">Search Documentation</option>
+<option value="c">Search Changelog</option>
+</select>
+<input type="text" name="q" id="searchbox" value="">
+<input type="submit" value="Go">
+</form>
+</div>
+</div>
+<script>
+function toggle_div(nm) {
+var w = document.getElementById(nm);
+if( w.style.display=="block" ){
+w.style.display = "none";
+}else{
+w.style.display = "block";
+}
+}
+function toggle_search() {
+var w = document.getElementById("searchmenu");
+if( w.style.display=="block" ){
+w.style.display = "none";
+} else {
+w.style.display = "block";
+setTimeout(function(){
+document.getElementById("searchbox").focus()
+}, 30);
+}
+}
+function div_off(nm){document.getElementById(nm).style.display="none";}
+window.onbeforeunload = function(e){div_off("submenu");}
+/* Disable the Search feature if we are not operating from CGI, since */
+/* Search is accomplished using CGI and will not work without it. */
+if( !location.origin.match || !location.origin.match(/http/) ){
+document.getElementById("search_menubutton").style.display = "none";
+}
+/* Used by the Hide/Show button beside syntax diagrams, to toggle the */
+function hideorshow(btn,obj){
+var x = document.getElementById(obj);
+var b = document.getElementById(btn);
+if( x.style.display!='none' ){
+x.style.display = 'none';
+b.innerHTML='show';
+}else{
+x.style.display = '';
+b.innerHTML='hide';
+}
+return false;
+}
+</script>
+</div>
+<div class=fancy>
+<div class=nosearch>
+<div class="fancy_title">
+Generated Columns
+</div>
+<div class="fancy_toc">
+<a onclick="toggle_toc()">
+<span class="fancy_toc_mark" id="toc_mk">&#x25ba;</span>
+Table Of Contents
+</a>
+<div id="toc_sub"><div class="fancy-toc1"><a href="#introduction">1. Introduction</a></div>
+<div class="fancy-toc1"><a href="#syntax">2. Syntax</a></div>
+<div class="fancy-toc2"><a href="#virtual_versus_stored_columns">2.1. VIRTUAL versus STORED columns</a></div>
+<div class="fancy-toc2"><a href="#capabilities">2.2. Capabilities</a></div>
+<div class="fancy-toc2"><a href="#limitations">2.3. Limitations</a></div>
+<div class="fancy-toc1"><a href="#compatibility">3. Compatibility</a></div>
+</div>
+</div>
+<script>
+function toggle_toc(){
+var sub = document.getElementById("toc_sub")
+var mk = document.getElementById("toc_mk")
+if( sub.style.display!="block" ){
+sub.style.display = "block";
+mk.innerHTML = "&#x25bc;";
+} else {
+sub.style.display = "none";
+mk.innerHTML = "&#x25ba;";
+}
+}
+</script>
+</div>
+
+
+
+
+<h1 id="introduction"><span>1. </span>Introduction</h1>
+
+<p>Generated columns (also sometimes called "computed columns")
+are columns of a table whose values are a function of other columns
+in the same row.
+Generated columns can be read, but their values can not be directly
+written.  The only way to change the value of a generated columns is to
+modify the values of the other columns used to calculate
+the generated column.
+
+</p><h1 id="syntax"><span>2. </span>Syntax</h1>
+
+<p>Syntactically, generated columns are designated using a
+"GENERATED ALWAYS" <a href="syntax/column-constraint.html">column-constraint</a>.  For example:
+
+</p><div class="codeblock"><pre>CREATE TABLE t1(
+   a INTEGER PRIMARY KEY,
+   b INT,
+   c TEXT,
+   d INT GENERATED ALWAYS AS (a*abs(b)) VIRTUAL,
+   e TEXT GENERATED ALWAYS AS (substr(c,b,b+1)) STORED
+);
+</pre></div>
+
+<p>The statement above has three ordinary columns, "a" (the PRIMARY KEY),
+"b", and "c", and two generated columns "d" and "e".
+
+</p><p>The "GENERATED ALWAYS" keywords at the beginning of the constraint
+and the "VIRTUAL" or "STORED" keyword at the end are all optional.
+Only the "AS" keyword and the parenthesized expression are required.
+If the trailing "VIRTUAL" or "STORED" keyword is omitted, then
+VIRTUAL is the default.  Hence, the example statement above could
+be simplified to just:
+
+</p><div class="codeblock"><pre>CREATE TABLE t1(
+   a INTEGER PRIMARY KEY,
+   b INT,
+   c TEXT,
+   d INT AS (a*abs(b)),
+   e TEXT AS (substr(c,b,b+1)) STORED
+);
+</pre></div>
+
+<h2 id="virtual_versus_stored_columns"><span>2.1. </span>VIRTUAL versus STORED columns</h2>
+
+<p>Generated columns can be either VIRTUAL or STORED.  The value of
+a VIRTUAL column is computed when read, whereas the value of a STORED
+column is computed when the row is written.  STORED columns take up space
+in the database file, whereas VIRTUAL columns use more CPU cycles when
+being read.
+
+</p><p>From the point of view of SQL, STORED and VIRTUAL columns are almost
+exactly the same.  Queries against either class of generated column
+produce the same results.  The only functional difference is that
+one cannot add new STORED columns using the
+<a href="lang_altertable.html#altertabaddcol">ALTER TABLE ADD COLUMN</a> command.  Only VIRTUAL columns can be added
+using ALTER TABLE.
+
+</p><h2 id="capabilities"><span>2.2. </span>Capabilities</h2>
+
+<ol>
+<li><p>
+Generated columns can have a datatype.  SQLite attempts to transform
+the result of the generating expression into that datatype using the
+same <a href="datatype3.html#affinity">affinity</a> rules as for ordinary columns.
+
+</p></li><li><p>
+Generated columns may have NOT NULL, CHECK, and UNIQUE constraints,
+and foreign key constraints, just like ordinary columns.
+
+</p></li><li><p>
+Generated columns can participate in indexes, just like ordinary
+columns.
+
+</p></li><li><p>
+The expression of a generated column can refer to any of the
+other declared columns in the table, including other generated columns,
+as long as the expression does not directly or indirectly refer back
+to itself.
+
+</p></li><li><p>
+Generated columns can occur anywhere in the table definition.  Generated
+columns can be interspersed among ordinary columns.  It not necessary
+to put generated columns at the end of the list of columns in the
+table definition, as is shown in the examples above.
+</p></li></ol>
+
+
+<h2 id="limitations"><span>2.3. </span>Limitations</h2>
+
+<ol>
+<li><p>
+Generated columns may not have a <a href="lang_createtable.html#dfltval">default value</a> (they may not use the
+"DEFAULT" clause).  The value of a generated column is always the value
+specified by the expression that follows the "AS" keyword.
+
+</p></li><li><p>
+Generated columns may not be used as part of the <a href="lang_createtable.html#primkeyconst">PRIMARY KEY</a>.
+(Future versions of SQLite might relax this constraint for STORED columns.)
+
+</p></li><li><p>
+The expression of a generated column may only reference
+constant literals and columns within the same row, and may only use
+scalar <a href="deterministic.html">deterministic functions</a>.  The expression may not use subqueries,
+aggregate functions, window functions, or table-valued functions.
+
+</p></li><li><p>
+The expression of a generated column may refer to other generated columns
+in the same row, but no generated column can depend upon itself, either
+directly or indirectly.  
+
+</p></li><li><p>The expression of a generated column may not directly reference
+the <a href="lang_createtable.html#rowid">ROWID</a>, though it can reference the <a href="lang_createtable.html#rowid">INTEGER PRIMARY KEY</a> column,
+which is often the same thing.
+
+</p></li><li><p>
+Every table must have at least one non-generated column.
+
+</p></li><li><p>
+It is not possible to <a href="lang_altertable.html#altertabaddcol">ALTER TABLE ADD COLUMN</a> a STORED column.
+One can add a VIRTUAL column, however.
+</p></li></ol>
+
+<h1 id="compatibility"><span>3. </span>Compatibility</h1>
+
+<p>Generated column support was added with SQLite version 3.31.0
+(2020-01-22).  If an earlier version of SQLite attempts to read
+a database file that contains a generated column in its schema, then
+that earlier version will perceive the generated column syntax as an
+error and will report that the database schema is corrupt.
+
+</p><p>To clarify:  SQLite version 3.31.0 can read and write any database
+created by any prior version of SQLite going back to 
+SQLite 3.0.0 (2004-06-18).  And, earlier versions of SQLite,
+prior to 3.31.0, can read and write databases created by SQLite
+version 3.31.0 and later as long
+as the database schema does not contain features, such as
+generated columns, that are not understood by the earlier version.
+Problems only arise if you create a new database that contains
+generated columns, using SQLite version 3.31.0 or later, and then
+try to read or write that database file using an earlier version of
+SQLite that does not understand generated columns.
+</p>

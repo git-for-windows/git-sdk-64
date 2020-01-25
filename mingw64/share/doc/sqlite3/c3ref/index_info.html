@@ -174,7 +174,13 @@ about what parameters to pass to xFilter.  If argvIndex>0 then
 the right-hand side of the corresponding aConstraint[] is evaluated
 and becomes the argvIndex-th entry in argv.  If aConstraintUsage[].omit
 is true, then the constraint is assumed to be fully handled by the
-virtual table and is not checked again by SQLite.</p>
+virtual table and might not be checked again by the byte code. The
+aConstraintUsage[].omit flag is an optimization hint. When the omit flag
+is left in its default setting of false, the constraint will always be
+checked separately in byte code.  If the omit flag is change to true, then
+the constraint may or may not be checked in byte code.  In other words,
+when the omit flag is true there is no guarantee that the constraint will
+not be checked again using byte code.</p>
 
 <p>The idxNum and idxPtr values are recorded and passed into the
 <a href="../vtab.html#xfilter">xFilter</a> method.
@@ -214,7 +220,7 @@ structure for SQLite <a href="../releaselog/3_8_2.html">version 3.8.2</a> (2013-
 If a virtual table extension is
 used with an SQLite version earlier than 3.8.2, the results of attempting
 to read or write the estimatedRows field are undefined (but are likely
-to included crashing the application). The estimatedRows field should
+to include crashing the application). The estimatedRows field should
 therefore only be used if <a href="../c3ref/libversion.html">sqlite3_libversion_number()</a> returns a
 value greater than or equal to 3008002. Similarly, the idxFlags field
 was added for <a href="../releaselog/3_9_0.html">version 3.9.0</a> (2015-10-14).

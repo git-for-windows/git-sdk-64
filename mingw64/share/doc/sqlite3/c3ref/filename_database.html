@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="../sqlite.css" rel="stylesheet">
-<title>Impose A Limit On Heap Size</title>
+<title>Translate filenames</title>
 <!-- path=../ -->
 </head>
 <body>
@@ -91,62 +91,40 @@ return false;
 }
 </script>
 </div>
-<!-- keywords: sqlite3_soft_heap_limit64 -->
+<!-- keywords: sqlite3_filename_database sqlite3_filename_journal sqlite3_filename_wal -->
 <div class=nosearch>
 <a href="intro.html"><h2>SQLite C Interface</h2></a>
-<h2>Impose A Limit On Heap Size</h2>
+<h2>Translate filenames</h2>
 </div>
 <blockquote><pre>
-sqlite3_int64 sqlite3_soft_heap_limit64(sqlite3_int64 N);
+const char *sqlite3_filename_database(const char*);
+const char *sqlite3_filename_journal(const char*);
+const char *sqlite3_filename_wal(const char*);
 </pre></blockquote>
 <p>
-The sqlite3_soft_heap_limit64() interface sets and/or queries the
-soft limit on the amount of heap memory that may be allocated by SQLite.
-SQLite strives to keep heap memory utilization below the soft heap
-limit by reducing the number of pages held in the page cache
-as heap memory usages approaches the limit.
-The soft heap limit is "soft" because even though SQLite strives to stay
-below the limit, it will exceed the limit rather than generate
-an <a href="../rescode.html#nomem">SQLITE_NOMEM</a> error.  In other words, the soft heap limit
-is advisory only.</p>
+These routines are available to <a href="../vfs.html">custom VFS implementations</a> for
+translating filenames between the main database file, the journal file,
+and the WAL file.</p>
 
-<p>The return value from sqlite3_soft_heap_limit64() is the size of
-the soft heap limit prior to the call, or negative in the case of an
-error.  If the argument N is negative
-then no change is made to the soft heap limit.  Hence, the current
-size of the soft heap limit can be determined by invoking
-sqlite3_soft_heap_limit64() with a negative argument.</p>
+<p>If F is the name of an sqlite database file, journal file, or WAL file
+passed by the SQLite core into the VFS, then sqlite3_filename_database(F)
+returns the name of the corresponding database file.</p>
 
-<p>If the argument N is zero then the soft heap limit is disabled.</p>
+<p>If F is the name of an sqlite database file, journal file, or WAL file
+passed by the SQLite core into the VFS, or if F is a database filename
+obtained from <a href="../c3ref/db_filename.html">sqlite3_db_filename()</a>, then sqlite3_filename_journal(F)
+returns the name of the corresponding rollback journal file.</p>
 
-<p>The soft heap limit is not enforced in the current implementation
-if one or more of following conditions are true:</p>
+<p>If F is the name of an sqlite database file, journal file, or WAL file
+that was passed by the SQLite core into the VFS, or if F is a database
+filename obtained from <a href="../c3ref/db_filename.html">sqlite3_db_filename()</a>, then
+sqlite3_filename_wal(F) returns the name of the corresponding
+WAL file.</p>
 
-<p><ul>
-<li> The soft heap limit is set to zero.
-<li> Memory accounting is disabled using a combination of the
-<a href="../c3ref/config.html">sqlite3_config</a>(<a href="../c3ref/c_config_covering_index_scan.html#sqliteconfigmemstatus">SQLITE_CONFIG_MEMSTATUS</a>,...) start-time option and
-the <a href="../compile.html#default_memstatus">SQLITE_DEFAULT_MEMSTATUS</a> compile-time option.
-<li> An alternative page cache implementation is specified using
-<a href="../c3ref/config.html">sqlite3_config</a>(<a href="../c3ref/c_config_covering_index_scan.html#sqliteconfigpcache2">SQLITE_CONFIG_PCACHE2</a>,...).
-<li> The page cache allocates from its own memory pool supplied
-by <a href="../c3ref/config.html">sqlite3_config</a>(<a href="../c3ref/c_config_covering_index_scan.html#sqliteconfigpagecache">SQLITE_CONFIG_PAGECACHE</a>,...) rather than
-from the heap.
-</ul></p>
-
-<p>Beginning with SQLite <a href="../releaselog/3_7_3.html">version 3.7.3</a> (2010-10-08),
-the soft heap limit is enforced
-regardless of whether or not the <a href="../compile.html#enable_memory_management">SQLITE_ENABLE_MEMORY_MANAGEMENT</a>
-compile-time option is invoked.  With <a href="../compile.html#enable_memory_management">SQLITE_ENABLE_MEMORY_MANAGEMENT</a>,
-the soft heap limit is enforced on every memory allocation.  Without
-<a href="../compile.html#enable_memory_management">SQLITE_ENABLE_MEMORY_MANAGEMENT</a>, the soft heap limit is only enforced
-when memory is allocated by the page cache.  Testing suggests that because
-the page cache is the predominate memory user in SQLite, most
-applications will achieve adequate soft heap limit enforcement without
-the use of <a href="../compile.html#enable_memory_management">SQLITE_ENABLE_MEMORY_MANAGEMENT</a>.</p>
-
-<p>The circumstances under which SQLite will enforce the soft heap limit may
-changes in future releases of SQLite.
+<p>In all of the above, if F is not the name of a database, journal or WAL
+filename passed into the VFS from the SQLite core and F is not the
+return value from <a href="../c3ref/db_filename.html">sqlite3_db_filename()</a>, then the result is
+undefined and is likely a memory access violation.
 </p><p>See also lists of
   <a href="objlist.html">Objects</a>,
   <a href="constlist.html">Constants</a>, and

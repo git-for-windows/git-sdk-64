@@ -353,6 +353,8 @@ new table:
   <li><p> A set of SQL constraints for each table. SQLite supports UNIQUE, NOT
        NULL, CHECK and FOREIGN KEY constraints.
 
+  <li><p> Optionally, a <a href="gencol.html">generated column</a> constraint.
+
   <li><p> Whether the table is a <a href="withoutrowid.html">WITHOUT ROWID</a> table.
 </ul>
 
@@ -431,7 +433,8 @@ statement are the COLLATE and DEFAULT clauses, even though these are not really
 constraints in the sense that they do not restrict the data that the table may
 contain. The other constraints - NOT NULL, CHECK, UNIQUE, PRIMARY KEY and
 FOREIGN KEY constraints - impose restrictions on the tables data, and are are
-described under <a href="lang_createtable.html#constraints">SQL Data Constraints</a> below.
+described under <a href="lang_createtable.html#constraints">SQL Data Constraints</a> below. The
+<a href="gencol.html">generated column</a> syntax is supported since SQLite 3.31.0 (2020-01-22).
 
 <p>Unlike most SQL databases, SQLite does not restrict the type of data that
 may be inserted into a column based on the columns declared type. Instead,

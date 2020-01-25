@@ -183,15 +183,15 @@ depending on their arguments, was added for the 3.20.0 release.
 </p><h1 id="application_defined_deterministic_functions"><span>4. </span>Application-defined deterministic functions</h1>
 
 <p>
-By default, <a href="c3ref/create_function.html">application-defined SQL functions</a> are considered to
+By default, <a href="appfunc.html">application-defined SQL functions</a> are considered to
 be non-deterministic.  However, if the 4th parameter to
 <a href="c3ref/create_function.html">sqlite3_create_function_v2()</a> is OR-ed with 
-<a href="c3ref/c_deterministic.html">SQLITE_DETERMINISTIC</a>, then SQLite will treat that function as if it
+<a href="c3ref/c_deterministic.html#sqlitedeterministic">SQLITE_DETERMINISTIC</a>, then SQLite will treat that function as if it
 were deterministic.
 
 </p><p>
 Note that if a non-deterministic function is tagged with
-<a href="c3ref/c_deterministic.html">SQLITE_DETERMINISTIC</a> and if that function ends up being used in
+<a href="c3ref/c_deterministic.html#sqlitedeterministic">SQLITE_DETERMINISTIC</a> and if that function ends up being used in
 the WHERE clause of a <a href="partialindex.html">partial index</a> or in an
 <a href="expridx.html">expression index</a>, then when the function begins to return different
 answers, the associated index may become corrupt.  If an SQL function
@@ -203,6 +203,6 @@ corrupt, the corruption can be fixed by running <a href="lang_reindex.html">REIN
 The interfaces necessary to construct a function that is sometimes
 deterministic and sometimes non-deterministic depending on their
 inputs, such as the built-in date/time functions, are not published.
-Generic <a href="c3ref/create_function.html">application-defined SQL functions</a> must
+Generic <a href="appfunc.html">application-defined SQL functions</a> must
 be always deterministic or always non-deterministic.
 </p>

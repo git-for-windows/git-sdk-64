@@ -278,10 +278,22 @@ database schema. Triggers are database operations
 that are automatically performed when a specified database event
 occurs.  </p>
 
-<p>A trigger may be specified to fire whenever a <a href="lang_delete.html">DELETE</a>, <a href="lang_insert.html">INSERT</a>,
-or <a href="lang_update.html">UPDATE</a> of a
-particular database table occurs, or whenever an <a href="lang_update.html">UPDATE</a> occurs on
-on one or more specified columns of a table.</p>
+<p>Each trigger must specify that it will fire for one of
+the following operations: <a href="lang_delete.html">DELETE</a>, <a href="lang_insert.html">INSERT</a>, <a href="lang_update.html">UPDATE</a>.
+The trigger fires once for each row that is deleted, inserted,
+or updated.  If the "UPDATE OF <span class='yyterm'>column-name</span>"
+syntax is used, then the trigger will only fire if
+<span class='yyterm'>column-name</span> appears on the left-hand side of
+one of the terms in the SET clause of the <a href="lang_update.html">UPDATE</a> statement.</p>
+
+<p>Due to an historical oversight, columns named in the "UPDATE OF"
+clause do not actually have to exist in the table being updated.
+Unrecognized column names are silently ignored.
+It would be more helpful if SQLite would fail the CREATE TRIGGER
+statement if any of the names in the "UPDATE OF" clause are not
+columns in the table.  However, as this problem was discovered
+many years after SQLite was widely deployed, we have resisted
+fixing the problem for fear of breaking legacy applications.</p>
 
 <p>At this time SQLite supports only FOR EACH ROW triggers, not FOR EACH
 STATEMENT triggers. Hence explicitly specifying FOR EACH ROW is optional.

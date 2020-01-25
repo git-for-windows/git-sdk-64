@@ -137,10 +137,8 @@ passing it to <a href="../c3ref/close.html">sqlite3_close()</a> when it is no lo
 <p>The sqlite3_open_v2() interface works like sqlite3_open()
 except that it accepts two additional parameters for additional control
 over the new database connection.  The flags parameter to
-sqlite3_open_v2() can take one of
-the following three values, optionally combined with the
-<a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_NOMUTEX</a>, <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_FULLMUTEX</a>, <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_SHAREDCACHE</a>,
-<a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_PRIVATECACHE</a>, and/or <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_URI</a> flags:</p>
+sqlite3_open_v2() must include, at a minimum, one of the following
+three flag combinations:</p>
 
 <p><dl>
 <dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_READONLY</a></dt>
@@ -158,22 +156,51 @@ it does not already exist. This is the behavior that is always used for
 sqlite3_open() and sqlite3_open16().</dd>
 </dl></p>
 
+<p>In addition to the required flags, the following optional flags are
+also supported:</p>
+
+<p><dl>
+<dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_URI</a></dt>
+<dd>The filename can be interpreted as a URI if this flag is set.</dd></p>
+
+<p><dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_MEMORY</a></dt>
+<dd>The database will be opened as an in-memory database.  The database
+is named by the "filename" argument for the purposes of cache-sharing,
+if shared cache mode is enabled, but the "filename" is otherwise ignored.
+</dd></p>
+
+<p><dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_NOMUTEX</a></dt>
+<dd>The new database connection will use the "multi-thread"
+<a href="../threadsafe.html">threading mode</a>.  This means that separate threads are allowed
+to use SQLite at the same time, as long as each thread is using
+a different <a href="../c3ref/sqlite3.html">database connection</a>.</p>
+
+<p><dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_FULLMUTEX</a></dt>
+<dd>The new database connection will use the "serialized"
+<a href="../threadsafe.html">threading mode</a>.  This means the multiple threads can safely
+attempt to use the same database connection at the same time.
+(Mutexes will block any actual concurrency, but in this mode
+there is no harm in trying.)</p>
+
+<p><dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_SHAREDCACHE</a></dt>
+<dd>The database is opened <a href="../sharedcache.html">shared cache</a> enabled, overriding
+the default shared cache setting provided by
+<a href="../c3ref/enable_shared_cache.html">sqlite3_enable_shared_cache()</a>.</p>
+
+<p><dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_PRIVATECACHE</a></dt>
+<dd>The database is opened <a href="../sharedcache.html">shared cache</a> disabled, overriding
+the default shared cache setting provided by
+<a href="../c3ref/enable_shared_cache.html">sqlite3_enable_shared_cache()</a>.</p>
+
+<p><a name="opennofollow"></a>
+ <dt><a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_NOFOLLOW</a></dt>
+<dd>The database filename is not allowed to be a symbolic link</dd>
+</dl></p>
+
 <p>If the 3rd parameter to sqlite3_open_v2() is not one of the
-combinations shown above optionally combined with other
+required combinations shown above optionally combined with other
 <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_* bits</a>
 then the behavior is undefined.</p>
-
-<p>If the <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_NOMUTEX</a> flag is set, then the database connection
-opens in the multi-thread <a href="../threadsafe.html">threading mode</a> as long as the single-thread
-mode has not been set at compile-time or start-time.  If the
-<a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_FULLMUTEX</a> flag is set then the database connection opens
-in the serialized <a href="../threadsafe.html">threading mode</a> unless single-thread was
-previously selected at compile-time or start-time.
-The <a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_SHAREDCACHE</a> flag causes the database connection to be
-eligible to use <a href="../sharedcache.html">shared cache mode</a>, regardless of whether or not shared
-cache is enabled using <a href="../c3ref/enable_shared_cache.html">sqlite3_enable_shared_cache()</a>.  The
-<a href="../c3ref/c_open_autoproxy.html">SQLITE_OPEN_PRIVATECACHE</a> flag causes the database connection to not
-participate in <a href="../sharedcache.html">shared cache mode</a> even if it is enabled.</p>
 
 <p>The fourth parameter to sqlite3_open_v2() is the name of the
 <a href="../c3ref/vfs.html">sqlite3_vfs</a> object that defines the operating system interface that

@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="../sqlite.css" rel="stylesheet">
-<title>SQLite Release 3.30.1 On 2019-10-11</title>
+<title>SQLite Release 3.31.0 On 2020-01-22</title>
 <!-- path=../ -->
 </head>
 <body>
@@ -91,47 +91,48 @@ return false;
 }
 </script>
 </div>
-<h2>SQLite Release 3.30.1 On 2019-10-11</h2><p><ol class='lessindent'>
-<li> Fix a bug in the <a href="../optoverview.html#flattening">query flattener</a> that might cause a segfault
-for nested queries that use the new 
-<a href="../lang_aggfunc.html#aggfilter">FILTER clause on aggregate functions</a>.
-Ticket <a href="https://www.sqlite.org/src/info/1079ad19993d13fa">1079ad19993d13fa</a>
-<li> Cherrypick fixes for other obscure problems found since the 3.30.0
-     release
+<h2>SQLite Release 3.31.0 On 2020-01-22</h2><p><ol class='lessindent'>
+<li>Add support for <a href="../gencol.html">generated columns</a>.
+<li>Add the <a href="../c3ref/hard_heap_limit64.html">sqlite3_hard_heap_limit64()</a> interface and the corresponding
+    <a href="../pragma.html#pragma_hard_heap_limit">PRAGMA hard_heap_limit</a> command.
+<li>Enhance the <a href="../pragma.html#pragma_function_list">function_list pragma</a> to show the number of arguments on each
+    function, the type of function (scalar, aggregate, window), and the function
+    property flags <a href="../c3ref/c_deterministic.html#sqlitedeterministic">SQLITE_DETERMINISTIC</a>, <a href="../c3ref/c_deterministic.html#sqlitedirectonly">SQLITE_DIRECTONLY</a>,
+    <a href="../c3ref/c_deterministic.html#sqliteinnocuous">SQLITE_INNOCUOUS</a>, and/or <a href="../c3ref/c_deterministic.html#sqlitesubtype">SQLITE_SUBTYPE</a>.
+<li>Add the <a href="../dbstat.html#dbstatagg">aggregated mode</a> feature to the
+    <a href="../dbstat.html">DBSTAT virtual table</a>.
+<li>Add the <a href="../c3ref/open.html#opennofollow">SQLITE_OPEN_NOFOLLOW</a> option to <a href="../c3ref/open.html">sqlite3_open_v2()</a> that
+    prevents SQLite from opening symbolic links.
+<li>Added the "#-N" array notation for <a href="../json1.html#jsonpath">JSON function path arguments</a>.
+<li>Added the <a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigtrustedschema">SQLITE_DBCONFIG_TRUSTED_SCHEMA</a> connection setting which is
+    also controllable via the new <a href="../pragma.html#pragma_trusted_schema">trusted_schema pragma</a> and at compile-time
+    using the <a href="../compile.html#trusted_schema">-DSQLITE_TRUSTED_SCHEMA</a> compile-time option.
+<li>Added APIs <a href="../c3ref/filename_database.html">sqlite3_filename_database()</a>, <a href="../c3ref/filename_database.html">sqlite3_filename_journal()</a>, and
+    <a href="../c3ref/filename_database.html">sqlite3_filename_wal()</a> which are useful for specialized extensions.
+<li>Add the <a href="../c3ref/uri_boolean.html">sqlite3_uri_key()</a> interface.
+<li>Upgraded the <a href="../c3ref/uri_boolean.html">sqlite3_uri_parameter()</a> function so that it works with the
+    rollback journal or WAL filename in addition to the database filename.
+<li>Provide the ability to tag <a href="../appfunc.html">application-defined SQL functions</a> with
+    new properties <a href="../c3ref/c_deterministic.html#sqliteinnocuous">SQLITE_INNOCUOUS</a> or <a href="../c3ref/c_deterministic.html#sqlitedirectonly">SQLITE_DIRECTONLY</a>.
+<li>Add new verbs to <a href="../c3ref/vtab_config.html">sqlite3_vtab_config()</a> so that the <a href="../vtab.html#xconnect">xConnect</a> method
+    of virtual tables can declare the virtual table as
+    <a href="../c3ref/c_vtab_constraint_support.html#sqlitevtabinnocuous">SQLITE_VTAB_INNOCUOUS</a> or <a href="../c3ref/c_vtab_constraint_support.html#sqlitevtabdirectonly">SQLITE_VTAB_DIRECTONLY</a>.
+<li>Faster response to <a href="../c3ref/interrupt.html">sqlite3_interrupt()</a>.
+<li>Added the <a href="https://sqlite.org/src/file/ext/misc/uuid.c">uuid.c</a> extension module
+    implementing functions for processing RFC-4122 UUIDs.
+<li>The <a href="../malloc.html#lookaside">lookaside memory allocator</a> is enhanced to support two separate memory
+    pools with different sized allocations in each pool.  This allows more memory
+    allocations to be covered by lookaside while at the same time reducing the
+    heap memory usage to 48KB per connection, down from 120KB.
+<li>The <a href="../pragma.html#pragma_legacy_file_format">legacy_file_format pragma</a> is deactivated.  It is now a no-op.  In its place,
+    the <a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfiglegacyfileformat">SQLITE_DBCONFIG_LEGACY_FILE_FORMAT</a> option to <a href="../c3ref/db_config.html">sqlite3_db_config()</a> is
+    provided.  The legacy_file_format pragma is deactivated because (1) it is
+    rarely useful and (2) it is incompatible with <a href="../lang_vacuum.html">VACUUM</a> in schemas that have
+    tables with both generated columns and descending indexes.
+    Ticket <a href="https://www.sqlite.org/src/info/6484e6ce678fffab">6484e6ce678fffab</a>
 <p><b>Hashes:</b>
-<li>SQLITE_SOURCE_ID: 2019-10-10 20:19:45 18db032d058f1436ce3dea84081f4ee5a0f2259ad97301d43c426bc7f3df1b0b
-<li>SHA3-256 for sqlite3.c: f96fafe4c110ed7d77fc70a7d690e5edd1e64fefb84b3b5969a722d885de1f2d
-
-</ol></p>
-<p><b>Changes carried forward from version 3.30.0 (2019-10-04):</b></p>
-<p><ol class='lessindent'>
-<li> Add support for the <a href="../lang_aggfunc.html#aggfilter">FILTER clause on aggregate functions</a>.
-<li> Add support for the <a href="../lang_select.html#nullslast">NULLS FIRST</a> and <a href="../lang_select.html#nullslast">NULLS LAST</a> syntax in <a href="../lang_select.html#orderby">ORDER BY</a> clauses.
-<li> The <a href="../pragma.html#pragma_index_info">index_info</a> and <a href="../pragma.html#pragma_index_xinfo">index_xinfo</a> pragmas are enhanced to provide
-     information about the on-disk representation of <a href="../withoutrowid.html">WITHOUT ROWID</a>
-     tables.
-<li> Add the <a href="../c3ref/drop_modules.html">sqlite3_drop_modules()</a> interface, allowing applications
-     to disable automatically loaded virtual tables that they do not
-     need.
-<li> Improvements to the <a href="../cli.html#recover">.recover dot-command</a> in the <a href="../cli.html">CLI</a> so that
-     it recovers more content from corrupt database files.
-<li> Enhance the <a href="../rbu.html">RBU</a> extension to support <a href="../expridx.html">indexes on expressions</a>.
-<li> Change the schema parser so that it will error out if any of
-     the type, name, and tbl_name columns of the <a href="../fileformat2.html#sqlite_master">sqlite_master table</a>
-     have been corrupted and the database connection is not in
-     <a href="../pragma.html#pragma_writable_schema">writable_schema</a> mode.
-<li> The <a href="../pragma.html#pragma_function_list">PRAGMA function_list</a>, <a href="../pragma.html#pragma_module_list">PRAGMA module_list</a>, and
-     <a href="../pragma.html#pragma_pragma_list">PRAGMA pragma_list</a> commands are now
-     enabled in all builds by default.  Disable them using
-     <a href="../compile.html#omit_introspection_pragmas">-DSQLITE_OMIT_INTROSPECTION_PRAGMAS</a>.
-<li> Add the <a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigenableview">SQLITE_DBCONFIG_ENABLE_VIEW</a> option for <a href="../c3ref/db_config.html">sqlite3_db_config()</a>.
-<li> Added the <a href="../tclsqlite.html">TCL Interface</a> <a href="../tclsqlite.html#config">config method</a> in order to be able to
-     disable <a href="../c3ref/c_dbconfig_defensive.html#sqlitedbconfigenableview">SQLITE_DBCONFIG_ENABLE_VIEW</a> as well as control other
-     <a href="../c3ref/db_config.html">sqlite3_db_config()</a> options from TCL.
-<li> Added the <a href="../c3ref/c_deterministic.html">SQLITE_DIRECTONLY</a> flag for
-     <a href="../c3ref/create_function.html">application-defined SQL functions</a> to prevent those functions from
-     being used inside triggers and views.
-<li> The legacy <a href="../compile.html#enable_stat3">SQLITE_ENABLE_STAT3</a> compile-time option is now a no-op.
+<li>SQLITE_SOURCE_ID: 2020-01-22 18:38:59 f6affdd41608946fcfcea914ece149038a8b25a62bbe719ed2561c649b86d824
+<li>SHA3-256 for sqlite3.c: a5fca0b9f8cbf80ac89b97193378c719d4af4b7d647729d8df9c0c0fca7b1388
 
 </ol></p>
 

@@ -282,13 +282,19 @@ TEXT affinity it is converted into text form before being stored.</p>
 <p>A column with NUMERIC affinity may contain values using all five
 storage classes.  When text data is inserted into a NUMERIC column, the
 storage class of the text is converted to INTEGER or REAL (in order of
-preference) if such conversion is lossless and reversible.
-For conversions between TEXT and REAL storage classes, SQLite considers
-the conversion to be lossless and reversible if the first 15 significant
-decimal digits of the number are preserved.
-If the lossless conversion of TEXT to INTEGER or REAL is not possible then
-the value is stored using the TEXT storage class. No
-attempt is made to convert NULL or BLOB values.</p>
+preference) if the text is a well-formed integer or real literal, respectively.
+If the TEXT value is a well-formed integer literal that is too large
+to fit in a 64-bit signed integer, it is converted to REAL.
+For conversions between TEXT and REAL storage classes, only the first
+15 significant decimal digits of the number are preserved.
+If the TEXT value is not a well-formed integer or real literal,
+then the value is stored as TEXT.
+For the purposes of this paragraph, hexadecimal integer
+literals are not considered well-formed and are stored as TEXT.
+(This is done for historical compatibility with versions of SQLite
+prior to <a href="releaselog/3_8_6.html">version 3.8.6</a> 2014-08-15 where hexadecimal integer
+literals were first introduced into SQLite.)
+No attempt is made to convert NULL or BLOB values.</p>
 
 <p>A string might look like a floating-point literal with
 a decimal point and/or exponent notation but as long as
@@ -578,8 +584,15 @@ Whether or not any conversions are attempted before the comparison takes
 place depends on the type affinity of the operands.
 
 </p><p>To "apply affinity" means to convert an operand to a particular storage
-class if and only if the conversion is lossless and reversible.
-Affinity is applied to operands of a comparison operator prior to
+class if and only if the conversion does not lose essential information.
+Numeric values can always be converted into TEXT.  TEXT values 
+can be converted into numeric values if the text content is a well-formed 
+integer or real literal, but not a hexadecimal integer literal.
+BLOB values are converted into TEXT values by simply interpreting
+the binary BLOB context as a text string in the current database
+encoding.
+
+</p><p>Affinity is applied to operands of a comparison operator prior to
 the comparison according to the following rules in the order shown:</p>
 
 <ul>
@@ -745,6 +758,10 @@ RTRIM.</p>
 
 <p>An application can register additional collating functions using
 the <a href="c3ref/create_collation.html">sqlite3_create_collation()</a> interface.</p>
+
+<p>Collating functions only matter when comparing string values.
+Numeric values are always compared numerically, and BLOBs are always
+compared byte-by-byte using memcmp().</p>
 
 <h2 id="assigning_collating_sequences_from_sql"><span>7.1. </span>Assigning Collating Sequences from SQL</h2>
 

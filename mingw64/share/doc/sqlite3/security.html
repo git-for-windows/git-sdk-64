@@ -180,6 +180,15 @@ set a timer in a separate thread and invoke <a href="c3ref/interrupt.html">sqlit
 the timer goes off to prevent the SQL statement from running forever.
 
 </p></li><li><p>
+Limit the maximum amount of memory that SQLite will allocate using
+the <a href="c3ref/hard_heap_limit64.html">sqlite3_hard_heap_limit64()</a> interface.  This helps prevent
+denial-of-service attacks.  To find out how much heap space an
+application actually needs, run the it against typical inputs and
+then measure the maximum instantaneous memory usage with the 
+<a href="c3ref/memory_highwater.html">sqlite3_memory_highwater()</a> interface.  Set the hard heap limit
+to the maximum observed instantaneous memory usage plus some margin.
+
+</p></li><li><p>
 In extreme cases, consider compiling SQLite with the
 <a href="compile.html#enable_memsys5">-DSQLITE_ENABLE_MEMSYS5</a> option and then providing SQLite with
 a fixed chunk of memory to use as its heap via the
@@ -187,7 +196,7 @@ a fixed chunk of memory to use as its heap via the
 prevent malicious SQL from executing a denial-of-service attack
 by using an excessive amount of memory. If (say) 5 MB of memory
 is provided for SQLite to use, once that much has been consumed,
-SQLite will start returning SQLITE_NOMEM errors, rather than
+SQLite will start returning SQLITE_NOMEM errors rather than
 soaking up memory needed by other parts of the application.
 This also sandboxes SQLite's memory so that a write-after-free
 error in some other part of the application will not cause
@@ -196,10 +205,54 @@ problems for SQLite, or vice versa.
 
 <h2 id="untrusted_sqlite_database_files"><span>1.2. </span>Untrusted SQLite Database Files</h2>
 
-<p>Applications that accept untrusted database files should do the following:
+<p>Applications that read or write SQLite database files of uncertain
+provenance should take precautions enumerated below.
+
+</p><p>Even if the application does not deliberately accept database files 
+from untrusted sources, beware of attacks in which a local 
+database file is altered.  For best security, any database file which 
+might have ever been writable by an agent in a different security domain
+should be treated as suspect.
 
 </p><ol>
-<li value="6"><p>
+<li value="7"><p>
+If the application includes any <a href="appfunc.html">custom SQL functions</a> or 
+<a href="vtab.html#customvtab">custom virtual tables</a> that have side effects or that might leak
+privileged information, then the application should use one or more
+of the techniques below to prevent a maliciously crafted database
+schema from surreptitiously running those SQL functions and/or
+virtual tables for nefarious purposes:
+</p><ol type="a">
+<li> Invoke <a href="c3ref/db_config.html">sqlite3_db_config</a>(db,<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigtrustedschema">SQLITE_DBCONFIG_TRUSTED_SCHEMA</a>,0,0)
+     on each <a href="c3ref/sqlite3.html">database connection</a> as soon as it is opened.
+</li><li> Run the <a href="pragma.html#pragma_trusted_schema">PRAGMA trusted_schema=OFF</a> statement on each database connection
+     as soon as it is opened.
+</li><li> Compile SQLite using the <a href="compile.html#trusted_schema">-DSQLITE_TRUSTED_SCHEMA=0</a> compile-time option.
+</li><li> Disable the surreptitious use of custom SQL functions and virtual tables
+     by setting the <a href="c3ref/c_deterministic.html#sqlitedirectonly">SQLITE_DIRECTONLY</a> flag on all custom SQL functions and
+     the <a href="c3ref/c_vtab_constraint_support.html#sqlitevtabdirectonly">SQLITE_VTAB_DIRECTONLY</a> flag on all custom virtual tables.
+</li></ol>
+</li>
+
+<li><p>
+If the application does not use triggers or views, consider disabling the
+unused capabilities with:
+</p><blockquote><pre>
+<a href="c3ref/db_config.html">sqlite3_db_config</a>(db,<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenabletrigger">SQLITE_DBCONFIG_ENABLE_TRIGGER</a>,0,0);
+<a href="c3ref/db_config.html">sqlite3_db_config</a>(db,<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenableview">SQLITE_DBCONFIG_ENABLE_VIEW</a>,0,0);
+</pre></blockquote>
+
+</li></ol>
+
+<p>
+For reading database files that are unusually high-risk, such as database
+files that are received from remote machines, and possibly from anonymous
+contributors, the following extra precautions
+might be justified.  These added defenses come with performance costs,
+however, and so are probably not appropriate in every situation:
+
+</p><ol>
+<li value="9"><p>
 Run <a href="pragma.html#pragma_integrity_check">PRAGMA integrity_check</a> or <a href="pragma.html#pragma_quick_check">PRAGMA quick_check</a> on the database
 as the first SQL statement after opening the database files and
 prior to running any other SQL statements.  Reject and refuse to
@@ -207,53 +260,15 @@ process any database file containing errors.
 
 </p></li><li><p>
 Enable the <a href="pragma.html#pragma_cell_size_check">PRAGMA cell_size_check=ON</a> setting.
+</p><p>
 
 </p></li><li><p>
 Do not enable memory-mapped I/O.
 In other words, make sure that <a href="pragma.html#pragma_mmap_size">PRAGMA mmap_size=0</a>.
-
-</p></li><li><p>
-A maliciously crafted database might be able to inject SQL by defining new
-<a href="lang_createtrigger.html">triggers</a> or <a href="lang_createview.html">views</a> in the schema that the
-application does not anticipate.
-There are multiple defenses:
-</p><ol type="a">
-<li><p>
-If the application does not use triggers or views, then disable the
-unused capabilities using:
-</p><blockquote><pre>
-<a href="c3ref/db_config.html">sqlite3_db_config</a>(db,<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenabletrigger">SQLITE_DBCONFIG_ENABLE_TRIGGER</a>,0,0);
-<a href="c3ref/db_config.html">sqlite3_db_config</a>(db,<a href="c3ref/c_dbconfig_defensive.html#sqlitedbconfigenableview">SQLITE_DBCONFIG_ENABLE_VIEW</a>,0,0);
-</pre></blockquote>
-
-</li><li><p>
-If the application does use triggers or views, then use queries to
-scan the <a href="fileformat2.html#sqlite_master">sqlite_master</a> table to verify that the triggers and views
-found there are expected, that there are no surplus triggers or views,
-existing triggers and views have not been tampered with,
-and that no existing ordinary tables have been replaced by
-malicious views.
-</p>
-</li><li><p>
-If the application uses <a href="c3ref/create_function.html">application-defined SQL functions</a> that have
-side effects, then it is recommended to set the <a href="c3ref/c_deterministic.html">SQLITE_DIRECTONLY</a> flag
-on those SQL functions to prevent them from being used inside triggers
-and views.  To illustrate the importance of this flag, consider an
-application that implements an SQL function "send_money(...)".  Without
-the SQLITE_DIRECTONLY flag, an attacker might be able to add a trigger
-or view that uses that custom function, then trick a
-high-privilege application to run an otherwise harmless query that invokes
-that malicious trigger or view.  The SQLITE_DIRECTONLY flag prevents the
-attack by requiring the "send_money()" function to be invoked directly
-by the application, rather than indirectly through a trigger or view.
 </p></li></ol>
-</li></ol>
 
-<p>Even if the application does not deliberately accept database files
-from untrusted sources, beware of attacks in which a local database file
-is surreptitiously altered to contain harmful content.
 
-</p><h1 id="summary"><span>2. </span>Summary</h1>
+<h1 id="summary"><span>2. </span>Summary</h1>
 
 <p>
 The precautions above are not required in order to use SQLite safely

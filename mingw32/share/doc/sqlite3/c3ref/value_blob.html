@@ -147,8 +147,8 @@ against a virtual table.
 
 <p>These routines extract type, size, and content information from
 <a href="../c3ref/value.html">protected sqlite3_value</a> objects.  Protected sqlite3_value objects
-are used to pass parameter information into implementation of
-<a href="../c3ref/create_function.html">application-defined SQL functions</a> and <a href="../vtab.html">virtual tables</a>.</p>
+are used to pass parameter information into the functions that
+implement <a href="../appfunc.html">application-defined SQL functions</a> and <a href="../vtab.html">virtual tables</a>.</p>
 
 <p>These routines work only with <a href="../c3ref/value.html">protected sqlite3_value</a> objects.
 Any attempt to use these routines on an <a href="../c3ref/value.html">unprotected sqlite3_value</a>
@@ -205,7 +205,7 @@ the return value is arbitrary and meaningless.</p>
 <p>The sqlite3_value_frombind(X) interface returns non-zero if the
 value X originated from one of the <a href="../c3ref/bind_blob.html">sqlite3_bind()</a>
 interfaces.  If X comes from an SQL literal value, or a table column,
-and expression, then sqlite3_value_frombind(X) returns zero.</p>
+or an expression, then sqlite3_value_frombind(X) returns zero.</p>
 
 <p>Please pay particular attention to the fact that the pointer returned
 from <a href="../c3ref/value_blob.html">sqlite3_value_blob()</a>, <a href="../c3ref/value_blob.html">sqlite3_value_text()</a>, or

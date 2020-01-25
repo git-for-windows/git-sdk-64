@@ -127,7 +127,7 @@ sqlite3_unlock_notify() method with the blocked connection handle as
 the first argument to register for a callback that will be invoked
 when the blocking connections current transaction is concluded. The
 callback is invoked from within the <a href="../c3ref/step.html">sqlite3_step</a> or <a href="../c3ref/close.html">sqlite3_close</a>
-call that concludes the blocking connections transaction.</p>
+call that concludes the blocking connection's transaction.</p>
 
 <p>If sqlite3_unlock_notify() is called in a multi-threaded application,
 there is a chance that the blocking connection will have already
@@ -165,7 +165,7 @@ it an array of void* context pointers. The first argument passed to
 an unlock-notify callback is a pointer to an array of void* pointers,
 and the second is the number of entries in the array.</p>
 
-<p>When a blocking connections transaction is concluded, there may be
+<p>When a blocking connection's transaction is concluded, there may be
 more than one blocked connection that has registered for an unlock-notify
 callback. If two or more such blocked connections have specified the
 same callback function, then instead of invoking the callback function

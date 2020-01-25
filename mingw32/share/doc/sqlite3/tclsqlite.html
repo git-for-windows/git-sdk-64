@@ -540,15 +540,24 @@ configuration settings and their current values:
 <p>The above will return something like this:
 
 <blockquote>
-enable_fkey 0 enable_trigger 1 enable_view 1 fts3_tokenizer 0 load_extension 0 no_ckpt_on_close 0 enable_qpsg 0 trigger_eqp 0 reset_database 0 defensive 0 writable_schema 0 legacy_alter_table 0 dqs_dml 1 dqs_ddl 1
+defensive 0 dqs_ddl 1 dqs_dml 1 enable_fkey 0 enable_qpsg 0 enable_trigger 1 enable_view 1 fts3_tokenizer 1 legacy_alter_table 0 legacy_file_format 0 load_extension 0 no_ckpt_on_close 0 reset_database 0 trigger_eqp 0 trusted_schema 1 writable_schema 0
 </blockquote>
 
 <p>Add the name of an individual configuration setting to query the current
 value of that setting.  Optionally add a boolean value to change a setting.
-For example, turn off support for the <a href="quirks.html#dblquote">double-quoted string literal</a>
-misfeature like this:
+
+<p>
+The following four configuration changes are recommended for maximum
+application security.  Turning off the trust_schema setting prevents
+virtual tables and dodgy SQL functions from being used inside of triggers,
+views, CHECK constraints, generated columns, and expression indexes.
+Turning off the dqs_dml and dqs_ddl settings previews the use of 
+double-quoted strings.  Turning on defensive prevents direct writes
+to shadow tables.
 
 <blockquote><pre>
+db config trusted_schema 0
+db config defensive 1
 db config dqs_dml 0
 db config dqs_ddl 0
 </pre></blockquote>
@@ -652,6 +661,11 @@ this method.</p>
 <p>This method takes a single boolean argument which will turn the
 extension loading functionality on or off.</p>
 
+<p>For best security, do not use this method unless truly needed, 
+and run <a href="pragma.html#pragma_trusted_schema">PRAGMA trusted_schema=OFF</a> or the
+"<a href="#config">db config trusted_schema 0</a>" method <u>before</u>
+invoking this method.
+
 <p>This method maps to the <a href="c3ref/enable_load_extension.html">sqlite3_enable_load_extension()</a> C/C++
 interface.</p>
 <a name="exists"></a>
@@ -690,6 +704,12 @@ implements that function.  Arguments to the function are appended to the
 TCL command before it is invoked.</p>
 
 <p>
+For security reasons, it is recommended that applications first set
+<a href="pragma.html#pragma_trusted_schema">PRAGMA trusted_schema=OFF</a> or run the 
+"<a href="#config">db config trusted_schema 0</a>"
+method before using this method.
+
+<p>
 The following example creates a new SQL function named "hex" that converts
 its numeric argument in to a hexadecimal encoded string:
 </p>
@@ -714,7 +734,38 @@ answer given the same argument values.  The SQLite query optimizer
 uses this information to cache answers from function calls with 
 constant inputs and reuse the result rather than invoke the function
 repeatedly.
-</dl>
+</dd>
+
+<dt><b>-directonly</b>
+<dd><p>
+This option restricts the function to only be usable by direct
+top-level SQL statement.  The function will not be accessible to
+triggers, views, CHECK constraints, generated columns, or index
+expressions.  This option is recommended for all application-defined
+SQL functions, and is <u>highly recommended</u> for any SQL
+function that has side effects or that reveals internal state of
+the application.
+
+<p style="background-color:#ffff90;"><b>Security Warning:</b>
+Without this switch, an attacker might be able to change the
+schema of a database file to include the new function inside a trigger
+or view or CHECK constraint and thereby trick the application into
+running the function with parameters of the attacker's choosing.
+Hence, if the new function has side effects or reveals internal
+state about the application and the -directonly option is not
+used, that is a potential security vulnerability.</p>
+</dd>
+
+<dt><b>-innocuous</b>
+<dd><p>
+This option indicates that the function has no side effects and
+does not leak any information that cannot be computed directly
+from its input parameters.  When this option is specified, the
+function may be used in triggers, views, CHECK constraints,
+generated columns, and/or index expressions even if
+<a href="pragma.html#pragma_trusted_schema">PRAGMA trusted_schema=OFF</a>.  The use of this option is discouraged
+unless it is truly needed.
+</dd>
 
 <dt><b>-returntype integer|real|text|blob|any</b>
 <dd><p>
@@ -728,8 +779,11 @@ to an integer. If this is not possible without data loss, it attempts to coerce
 it to a real value, and finally falls back to text. If this option is set to
 "real", an attempt is made to return a real value, falling back to text if this
 is not possible.
-
+</dd>
 </dl>
+
+
+
 </blockquote>
 <a name="nullvalue"></a>
 <h3>The "nullvalue" method</h3>

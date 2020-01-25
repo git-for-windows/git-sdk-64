@@ -157,7 +157,7 @@ of a few files in the SQLite source tree:
 
 <h1 id="advantages_of_lemon"><span>2. </span>Advantages of Lemon</h1>
 
-<p>Lemon generates an LALR(1) parser.  It's operation is similar to the
+<p>Lemon generates an LALR(1) parser.  Its operation is similar to the
 more familiar tools <a href="https://en.wikipedia.org/wiki/Yacc">Yacc</a> and
 <a href="https://en.wikipedia.org/wiki/GNU_bison">Bison</a>, but Lemon adds important
 improvements, including:
@@ -191,7 +191,7 @@ A grammar file (<a href="https://sqlite.org/src/file/src/parse.y">parse.y</a>) i
 compiled by Lemon into parse.c and parse.h.  The parse.c file is
 incorporated into the <a href="amalgamation.html">amalgamation</a> without further modification.
 
-</p><p>Lemon is also used to generate parse for the query pattern
+</p><p>Lemon is also used to generate the parser for the query pattern
 expressions in the <a href="fts5.html">FTS5</a> extension.  In this case, the input grammar
 file is <a href="https://sqlite.org/src/file/ext/fts5/fts5parse.y">fts5parse.y</a>.
 
@@ -207,7 +207,7 @@ by SQLite include:
 
 </p><ul>
 <li><p>
-Lemon has the concept of a "fallback" tokens.
+Lemon has the concept of a "fallback" token.
 The SQL language contains a large number of keywords and these keywords
 have the potential to collide with identifier names.
 Lemon has the ability to designate some keywords has being able to
@@ -243,7 +243,7 @@ in any SQL database engine.  On-going efforts to optimize SQLite have caused
 the developers to spend a lot of time tweaking Lemon to generate faster
 parsers.  These efforts have benefited all users of the Lemon parser generator,
 not just SQLite.  But if Lemon had been a separately maintained tool, it
-would have been more difficulty to make coordinated changes to both SQLite
+would have been more difficult to make coordinated changes to both SQLite
 and Lemon, and as a result not as much optimization would have been
 accomplished.  Hence, the fact that the parser generator tool is included
 in the source tree for SQLite has turned out to be a net benefit for both
@@ -251,10 +251,10 @@ the tool itself and for SQLite.
 
 </p><h1 id="history_of_lemon"><span>3. </span>History Of Lemon</h1>
 
-<p>Lemon was original written by D. Richard Hipp (also the creator of SQLite)
+<p>Lemon was originally written by D. Richard Hipp (also the creator of SQLite)
 while he was in graduate school at Duke University between 1987 and 1992.
 The original creation date of Lemon has been lost, but was probably sometime
-around 1990.  Lemon generates an LALR(1) parser.  There was companion 
+around 1990.  Lemon generates an LALR(1) parser.  There was a companion 
 LL(1) parser generator tool named "Lime", but the source code for Lime
 has been lost.
 
