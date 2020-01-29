@@ -90,7 +90,7 @@ while test $# -gt 0; do
         ;;
 
     --protocols)
-        for protocol in DICT FILE FTP FTPS GOPHER HTTP HTTPS IMAP IMAPS LDAP LDAPS POP3 POP3S RTSP SMB SMBS SMTP SMTPS TELNET TFTP; do
+        for protocol in DICT FILE FTP FTPS GOPHER HTTP HTTPS IMAP IMAPS LDAP LDAPS POP3 POP3S RTSP SCP SFTP SMB SMBS SMTP SMTPS TELNET TFTP; do
             echo "$protocol"
         done
         ;;
@@ -161,7 +161,7 @@ while test $# -gt 0; do
            CURLLIBDIR=""
         fi
         if test "Xyes" = "Xyes"; then
-          echo ${CURLLIBDIR}-lcurl -lnghttp2 -lidn2 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
+          echo ${CURLLIBDIR}-lcurl -lnghttp2 -lidn2 -lssh2 -L/mingw32/lib -lssh2 -lws2_32 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
         else
           echo ${CURLLIBDIR}-lcurl
         fi
@@ -172,7 +172,7 @@ while test $# -gt 0; do
 
     --static-libs)
         if test "Xyes" != "Xno" ; then
-          echo ${exec_prefix}/lib/libcurl.a -pipe -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -lnghttp2 -lidn2 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
+          echo ${exec_prefix}/lib/libcurl.a -pipe -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -L/mingw32/lib -lnghttp2 -lidn2 -lssh2 -L/mingw32/lib -lssh2 -lws2_32 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
         else
           echo "curl was built with static libraries disabled" >&2
           exit 1
@@ -180,7 +180,7 @@ while test $# -gt 0; do
         ;;
 
     --configure)
-        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--without-random' '--without-librtmp' '--enable-static' '--enable-shared' '--enable-sspi' '--with-libmetalink=/mingw32' '--disable-debug' '--with-ssl' '--with-ca-bundle=/mingw32/ssl/certs/ca-bundle.crt' '--with-nghttp2=${MINGW_PREFIX}/' '--with-winssl' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'"
+        echo " '--prefix=/mingw32' '--build=i686-w64-mingw32' '--host=i686-w64-mingw32' '--target=i686-w64-mingw32' '--without-random' '--without-librtmp' '--enable-static' '--enable-shared' '--enable-sspi' '--with-libmetalink=/mingw32' '--with-libssh2' '--disable-debug' '--with-ssl' '--with-ca-bundle=/mingw32/ssl/certs/ca-bundle.crt' '--with-nghttp2=${MINGW_PREFIX}/' '--with-winssl' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'target_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe' 'LDFLAGS=-pipe' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1'"
         ;;
 
     *)

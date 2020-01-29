@@ -27,7 +27,7 @@ prefix=/mingw32
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
-supported_protocols="DICT FILE FTP FTPS GOPHER HTTP HTTPS IMAP IMAPS LDAP LDAPS POP3 POP3S RTSP SMB SMBS SMTP SMTPS TELNET TFTP"
+supported_protocols="DICT FILE FTP FTPS GOPHER HTTP HTTPS IMAP IMAPS LDAP LDAPS POP3 POP3S RTSP SCP SFTP SMB SMBS SMTP SMTPS TELNET TFTP"
 supported_features="SSL IPv6 libz AsynchDNS IDN SSPI SPNEGO Kerberos NTLM TLS-SRP HTTP2 MultiSSL HTTPS-proxy"
 
 Name: libcurl
@@ -35,5 +35,5 @@ URL: https://curl.haxx.se/
 Description: Library to transfer files with ftp, http, etc.
 Version: 7.68.0
 Libs: -L${libdir} -lcurl
-Libs.private: -lnghttp2 -lidn2 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
+Libs.private: -lnghttp2 -lidn2 -lssh2 -LD:/a/1/s/git-sdk-64/mingw32/lib -lssh2 -lws2_32 -lssl -lcrypto -lssl -lcrypto -lgdi32 -lcrypt32 -lwldap32 -lz -lws2_32
 Cflags: -I${includedir} 
