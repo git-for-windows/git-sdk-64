@@ -2,7 +2,7 @@ package Module::Build::Platform::Windows;
 
 use strict;
 use warnings;
-our $VERSION = '0.4229';
+our $VERSION = '0.4231';
 $VERSION = eval $VERSION;
 
 use Config;
@@ -87,90 +87,11 @@ sub make_executable {
   }
 }
 
-# This routine was copied almost verbatim from the 'pl2bat' utility
-# distributed with perl. It requires too much voodoo with shell quoting
-# differences and shortcomings between the various flavors of Windows
-# to reliably shell out
 sub pl2bat {
   my $self = shift;
   my %opts = @_;
-
-  # NOTE: %0 is already enclosed in doublequotes by cmd.exe, as appropriate
-  $opts{ntargs}    = '-x -S %0 %*' unless exists $opts{ntargs};
-  $opts{otherargs} = '-x -S "%0" %1 %2 %3 %4 %5 %6 %7 %8 %9' unless exists $opts{otherargs};
-
-  $opts{stripsuffix} = '/\\.plx?/' unless exists $opts{stripsuffix};
-  $opts{stripsuffix} = ($opts{stripsuffix} =~ m{^/([^/]*[^/\$]|)\$?/?$} ? $1 : "\Q$opts{stripsuffix}\E");
-
-  unless (exists $opts{out}) {
-    $opts{out} = $opts{in};
-    $opts{out} =~ s/$opts{stripsuffix}$//oi;
-    $opts{out} .= '.bat' unless $opts{in} =~ /\.bat$/i or $opts{in} =~ /^-$/;
-  }
-
-  my $head = <<EOT;
-    \@rem = '--*-Perl-*--
-    \@echo off
-    if "%OS%" == "Windows_NT" goto WinNT
-    perl $opts{otherargs}
-    goto endofperl
-    :WinNT
-    perl $opts{ntargs}
-    if NOT "%COMSPEC%" == "%SystemRoot%\\system32\\cmd.exe" goto endofperl
-    if %errorlevel% == 9009 echo You do not have Perl in your PATH.
-    if errorlevel 1 goto script_failed_so_exit_with_non_zero_val 2>nul
-    goto endofperl
-    \@rem ';
-EOT
-
-  $head =~ s/^\s+//gm;
-  my $headlines = 2 + ($head =~ tr/\n/\n/);
-  my $tail = "\n__END__\n:endofperl\n";
-
-  my $linedone  = 0;
-  my $taildone  = 0;
-  my $linenum   = 0;
-  my $skiplines = 0;
-
-  my $start = $Config{startperl};
-  $start = "#!perl" unless $start =~ /^#!.*perl/;
-
-  open(my $in, '<', "$opts{in}") or die "Can't open $opts{in}: $!";
-  my @file = <$in>;
-  close($in);
-
-  foreach my $line ( @file ) {
-    $linenum++;
-    if ( $line =~ /^:endofperl\b/ ) {
-      if (!exists $opts{update}) {
-        warn "$opts{in} has already been converted to a batch file!\n";
-        return;
-      }
-      $taildone++;
-    }
-    if ( not $linedone and $line =~ /^#!.*perl/ ) {
-      if (exists $opts{update}) {
-        $skiplines = $linenum - 1;
-        $line .= "#line ".(1+$headlines)."\n";
-      } else {
-	$line .= "#line ".($linenum+$headlines)."\n";
-      }
-	$linedone++;
-    }
-    if ( $line =~ /^#\s*line\b/ and $linenum == 2 + $skiplines ) {
-      $line = "";
-    }
-  }
-
-  open(my $out, '>', "$opts{out}") or die "Can't open $opts{out}: $!";
-  print $out $head;
-  print $out $start, ( $opts{usewarnings} ? " -w" : "" ),
-             "\n#line ", ($headlines+1), "\n" unless $linedone;
-  print $out @file[$skiplines..$#file];
-  print $out $tail unless $taildone;
-  close($out);
-
-  return $opts{out};
+  require ExtUtils::PL2Bat;
+  return ExtUtils::PL2Bat::pl2bat(%opts);
 }
 
 

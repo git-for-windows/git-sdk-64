@@ -1,5 +1,5 @@
 %skeleton "lalr1.cc" /* -*- C++ -*- */
-%require "3.5"
+%require "3.5.1"
 %defines
 
 %define api.token.constructor

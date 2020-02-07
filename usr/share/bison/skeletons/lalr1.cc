@@ -1,6 +1,6 @@
 # C++ skeleton for Bison
 
-# Copyright (C) 2002-2015, 2018-2019 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015, 2018-2020 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ m4_ifdef([b4_lex_param], [, ]b4_lex_param))])])
 
 
 m4_pushdef([b4_copyright_years],
-           [2002-2015, 2018-2019])
+           [2002-2015, 2018-2020])
 
 m4_define([b4_parser_class],
           [b4_percent_define_get([[api.parser.class]])])
@@ -640,7 +640,7 @@ m4_if(b4_prefix, [yy], [],
     if (state == empty_state)
       return empty_symbol;
     else
-      return yystos_[state];
+      return yystos_[+state];
   }
 
   ]b4_parser_class[::stack_symbol_type::stack_symbol_type ()
@@ -866,7 +866,7 @@ b4_dollar_popdef])[]dnl
   `-----------*/
   yybackup:
     // Try to take a decision without lookahead.
-    yyn = yypact_[yystack_[0].state];
+    yyn = yypact_[+yystack_[0].state];
     if (yy_pact_value_is_default_ (yyn))
       goto yydefault;
 
@@ -921,7 +921,7 @@ b4_dollar_popdef])[]dnl
       --yyerrstatus_;
 
     // Shift the lookahead token.
-    yypush_ ("Shifting", static_cast<state_type> (yyn), YY_MOVE (yyla));]b4_lac_if([[
+    yypush_ ("Shifting", state_type (yyn), YY_MOVE (yyla));]b4_lac_if([[
     yy_lac_discard_ ("shift");]])[
     goto yynewstate;
 
@@ -930,7 +930,7 @@ b4_dollar_popdef])[]dnl
   | yydefault -- do the default action for the current state.  |
   `-----------------------------------------------------------*/
   yydefault:
-    yyn = yydefact_[yystack_[0].state];
+    yyn = yydefact_[+yystack_[0].state];
     if (yyn == 0)
       goto yyerrlab;
     goto yyreduce;
@@ -1057,7 +1057,7 @@ b4_dollar_popdef])[]dnl
       stack_symbol_type error_token;
       for (;;)
         {
-          yyn = yypact_[yystack_[0].state];
+          yyn = yypact_[+yystack_[0].state];
           if (!yy_pact_value_is_default_ (yyn))
             {
               yyn += yy_error_token_;
@@ -1084,7 +1084,7 @@ b4_dollar_popdef])[]dnl
 
       // Shift the error token.]b4_lac_if([[
       yy_lac_discard_ ("error recovery");]])[
-      error_token.state = static_cast<state_type> (yyn);
+      error_token.state = state_type (yyn);
       yypush_ ("Shifting", YY_MOVE (error_token));
     }
     goto yynewstate;
@@ -1166,13 +1166,13 @@ b4_dollar_popdef])[]dnl
         state_type top_state = (yylac_stack_.empty ()
                                 ? yystack_[lac_top].state
                                 : yylac_stack_.back ());
-        int yyrule = yypact_[top_state];
+        int yyrule = yypact_[+top_state];
         if (yy_pact_value_is_default_ (yyrule)
             || (yyrule += yytoken) < 0 || yylast_ < yyrule
             || yycheck_[yyrule] != yytoken)
           {
             // Use the default action.
-            yyrule = yydefact_[top_state];
+            yyrule = yydefact_[+top_state];
             if (yyrule == 0)
               {
                 YYCDEBUG << " Err\n";
@@ -1345,7 +1345,7 @@ b4_error_verbose_if([state_type yystate, const symbol_type& yyla],
           yy_lac_check_ (yytoken);
 #endif]])[
 
-        int yyn = yypact_[yystate];
+        int yyn = yypact_[+yystate];
         if (!yy_pact_value_is_default_ (yyn))
           {]b4_lac_if([[
             for (int yyx = 0; yyx < yyntokens_; ++yyx)

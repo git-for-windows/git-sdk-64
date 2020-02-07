@@ -7,7 +7,7 @@
 # licence).
 
 package Error::Simple;
-$Error::Simple::VERSION = '0.17028';
+$Error::Simple::VERSION = '0.17029';
 use strict;
 use warnings;
 
@@ -21,9 +21,13 @@ __END__
 
 =encoding UTF-8
 
+=head1 NAME
+
+Error::Simple - the simple error sub-class of Error
+
 =head1 VERSION
 
-version 0.17028
+version 0.17029
 
 =head1 SYNOPSIS
 
@@ -37,10 +41,6 @@ The only purpose of this module is to allow one to say:
 
 and the only thing it does is "use" Error.pm. Refer to the documentation
 of L<Error> for more information about Error::Simple.
-
-=head1 NAME
-
-Error::Simple - the simple error sub-class of Error
 
 =head1 METHODS
 
@@ -65,7 +65,7 @@ Shlomi Fish ( L<http://www.shlomifish.org/> )
 
 L<Error>
 
-=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
+=for :stopwords cpan testmatrix url bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
 
 =head1 SUPPORT
 
@@ -99,14 +99,6 @@ RT: CPAN's Bug Tracker
 The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
 
 L<https://rt.cpan.org/Public/Dist/Display.html?Name=Error>
-
-=item *
-
-AnnoCPAN
-
-The AnnoCPAN is a website that allows community annotations of Perl module documentation.
-
-L<http://annocpan.org/dist/Error>
 
 =item *
 
@@ -181,7 +173,7 @@ feature.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2019 by Shlomi Fish ( http://www.shlomifish.org/ ).
+This software is copyright (c) 2020 by Shlomi Fish ( http://www.shlomifish.org/ ).
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

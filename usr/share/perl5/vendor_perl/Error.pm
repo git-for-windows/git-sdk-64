@@ -10,7 +10,7 @@
 # but modified ***significantly***
 
 package Error;
-$Error::VERSION = '0.17028';
+$Error::VERSION = '0.17029';
 use strict;
 use warnings;
 
@@ -279,7 +279,7 @@ sub value
 }
 
 package Error::Simple;
-$Error::Simple::VERSION = '0.17028';
+$Error::Simple::VERSION = '0.17029';
 @Error::Simple::ISA = qw(Error);
 
 sub new
@@ -316,7 +316,7 @@ sub stringify
 # Peter Seibel <peter@weblogic.com>
 
 package Error::subs;
-$Error::subs::VERSION = '0.17028';
+$Error::subs::VERSION = '0.17029';
 use Exporter ();
 use vars qw(@EXPORT_OK @ISA %EXPORT_TAGS);
 
@@ -569,7 +569,7 @@ sub otherwise (&;$)
 1;
 
 package Error::WarnDie;
-$Error::WarnDie::VERSION = '0.17028';
+$Error::WarnDie::VERSION = '0.17029';
 sub gen_callstack($)
 {
     my ($start) = @_;
@@ -680,9 +680,13 @@ __END__
 
 =encoding UTF-8
 
+=head1 NAME
+
+Error - Error/exception handling in an OO-ish way
+
 =head1 VERSION
 
-version 0.17028
+version 0.17029
 
 =head1 SYNOPSIS
 
@@ -731,10 +735,6 @@ subsequent catch, or can simply be recorded.
 
 Errors in the class C<Error> should not be thrown directly, but the
 user should throw errors from a sub-class of C<Error>.
-
-=head1 NAME
-
-Error - Error/exception handling in an OO-ish way
 
 =head1 WARNING
 
@@ -1099,7 +1099,7 @@ Copyright (c) 1997-8  Graham Barr. All rights reserved.
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
+=for :stopwords cpan testmatrix url bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
 
 =head1 SUPPORT
 
@@ -1133,14 +1133,6 @@ RT: CPAN's Bug Tracker
 The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
 
 L<https://rt.cpan.org/Public/Dist/Display.html?Name=Error>
-
-=item *
-
-AnnoCPAN
-
-The AnnoCPAN is a website that allows community annotations of Perl module documentation.
-
-L<http://annocpan.org/dist/Error>
 
 =item *
 
@@ -1215,7 +1207,7 @@ feature.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2019 by Shlomi Fish ( http://www.shlomifish.org/ ).
+This software is copyright (c) 2020 by Shlomi Fish ( http://www.shlomifish.org/ ).
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
