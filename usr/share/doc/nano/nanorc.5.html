@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Mon Dec 23 11:34:15 2019 -->
+<!-- CreationDate: Fri Feb  7 11:11:01 2020 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -21,8 +21,8 @@
 <h1 align="center">NANORC</h1>
 
 <a href="#NAME">NAME</a><br>
-<a href="#NOTICE">NOTICE</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#NOTICE">NOTICE</a><br>
 <a href="#OPTIONS">OPTIONS</a><br>
 <a href="#SYNTAX HIGHLIGHTING">SYNTAX HIGHLIGHTING</a><br>
 <a href="#REBINDING KEYS">REBINDING KEYS</a><br>
@@ -40,38 +40,42 @@
 <p style="margin-left:11%; margin-top: 1em">nanorc &minus;
 GNU nano&rsquo;s configuration file</p>
 
-<h2>NOTICE
-<a name="NOTICE"></a>
-</h2>
-
-
-<p style="margin-left:11%; margin-top: 1em">Starting with
-version 4.0, <b>nano</b> no longer hard-wraps an overlong
-line by default. It further uses smooth scrolling by
-default, and by default includes the line below the title
-bar into the editing area.</p>
-
-<p style="margin-left:11%; margin-top: 1em">If you want the
-old, Pico behavior back, you can use <b>set
-breaklonglines</b>, <b>set jumpyscrolling</b>, and <b>set
-emptyline</b>.</p>
-
 <h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
 </h2>
 
 
 <p style="margin-left:11%; margin-top: 1em">The
-<i>nanorc</i> file contains the default settings for
-<b>nano</b>, a small and friendly editor. The file should be
-in Unix format, not in DOS or Mac format. During startup,
-<b>nano</b> will first read the system-wide settings, from
+<i>nanorc</i> files contain the default settings for
+<b>nano</b>, a small and friendly editor. They should be in
+Unix format, not in DOS or Mac format. During startup, if
+<b>&minus;&minus;rcfile</b> is not given, <b>nano</b> will
+read two files: first the system-wide settings, from
 <i>/etc/nanorc</i> (the exact path might be different on
 your system), and then the user-specific settings, either
 from <i>~/.nanorc</i> or from
 <i>$XDG_CONFIG_HOME/nano/nanorc</i> or from
 <i>~/.config/nano/nanorc</i>, whichever is encountered
-first.</p>
+first. If <b>&minus;&minus;rcfile</b> is given, <b>nano</b>
+will read just the specified settings file.</p>
+
+<h2>NOTICE
+<a name="NOTICE"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Since version
+4.0, <b>nano</b> by default:</p>
+
+<p style="margin-left:17%; margin-top: 1em">&bull; does not
+automatically hard-wrap lines that become overlong, <br>
+&bull; includes the line below the title bar in the editing
+area, <br>
+&bull; does linewise (smooth) scrolling.</p>
+
+<p style="margin-left:11%; margin-top: 1em">To get the old,
+Pico behavior back, you can use <b>set breaklonglines</b>,
+<b>set emptyline</b>, and <b>set jumpyscrolling</b>.</p>
 
 <h2>OPTIONS
 <a name="OPTIONS"></a>
@@ -421,7 +425,8 @@ jumpyscrolling</b> instead.</p>
 easier viewing of very long lines.</p>
 
 <p style="margin-left:11%;"><b>set speller
-&quot;</b><i>program</i> [<i>arg</i>...]<b>&quot;</b></p>
+&quot;</b><i>program</i> [<i>argument</i>
+...]<b>&quot;</b></p>
 
 <p style="margin-left:15%;">Use the given <i>program</i> to
 do spell checking and correcting, instead of using the
@@ -600,7 +605,7 @@ functionality only works when <b>libmagic</b> is installed
 on the system and will be silently ignored otherwise.)</p>
 
 <p style="margin-left:11%;"><b>formatter</b> <i>program</i>
-[<i>arg</i> ...]</p>
+[<i>argument</i> ...]</p>
 
 <p style="margin-left:22%;">Run the given <i>program</i> on
 the full contents of the current buffer. (The current buffer
@@ -609,7 +614,7 @@ it, and then the temporary file is read back in, replacing
 the contents of the buffer.)</p>
 
 <p style="margin-left:11%;"><b>linter</b> <i>program</i>
-[<i>arg</i> ...]</p>
+[<i>argument</i> ...]</p>
 
 <p style="margin-left:22%;">Use the given <i>program</i> to
 run a syntax check on the current buffer.</p>
@@ -698,15 +703,16 @@ may contain only the above commands, from <b>syntax</b> to
 <b>icolor</b>.</p>
 
 <p style="margin-left:11%;"><b>extendsyntax</b> <i>name
-command</i> [<i>arg</i> ...]</p>
+command argument</i> ...</p>
 
 <p style="margin-left:22%;">Extend the syntax previously
 defined as <i>name</i> with another <i>command</i>. This
 allows adding a new <b>color</b>, <b>icolor</b>,
-<b>header</b>, <b>magic</b>, <b>comment</b>, <b>linter</b>,
-or <b>formatter</b> command to an already defined syntax --
-useful when you want to slightly improve a syntax defined in
-one of the system-installed files (which normally are not
+<b>header</b>, <b>magic</b>, <b>formatter</b>,
+<b>linter</b>, <b>comment</b>, or <b>tabgives</b> command to
+an already defined syntax -- useful when you want to
+slightly improve a syntax defined in one of the
+system-installed files (which normally are not
 writable).</p>
 
 <h2>REBINDING KEYS
@@ -749,12 +755,12 @@ be one of:</p>
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="15%"></td>
-<td width="5%">
+<td width="10%">
 
 
 <p><b>^</b><i>X</i></p></td>
-<td width="3%"></td>
-<td width="77%">
+<td width="1%"></td>
+<td width="74%">
 
 
 <p>where <i>X</i> is a Latin letter, or one of several
@@ -762,24 +768,39 @@ ASCII characters (@, ], \, ^, _), or the word
 &quot;Space&quot;. Example: ^C.</p></td></tr>
 <tr valign="top" align="left">
 <td width="15%"></td>
-<td width="5%">
+<td width="10%">
 
 
 <p><b>M&minus;</b><i>X</i></p></td>
-<td width="3%"></td>
-<td width="77%">
+<td width="1%"></td>
+<td width="74%">
 
 
 <p>where <i>X</i> is any ASCII character except [, or the
-word &quot;Space&quot;. Example: M&minus;C.</p></td></tr>
+word &quot;Space&quot;. Example: M&minus;8.</p></td></tr>
 <tr valign="top" align="left">
 <td width="15%"></td>
-<td width="5%">
+<td width="10%">
+
+
+<p><b>Sh&minus;M&minus;</b><i>X</i></p></td>
+<td width="1%"></td>
+<td width="74%">
+
+
+<p>where <i>X</i> is a Latin letter. Example:
+Sh&minus;M&minus;U. By default, each Meta+letter keystroke
+does the same as the corresponding Shift+Meta+letter. But
+when any Shift+Meta bind is made, that will no longer be the
+case, for all letters.</p></td></tr>
+<tr valign="top" align="left">
+<td width="15%"></td>
+<td width="10%">
 
 
 <p><b>F</b><i>N</i></p></td>
-<td width="3%"></td>
-<td width="77%">
+<td width="1%"></td>
+<td width="74%">
 
 
 <p>where <i>N</i> is a numeric value from 1 to 24. Example:

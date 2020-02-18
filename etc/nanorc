@@ -54,9 +54,9 @@
 ## Do not use the line below the title bar, leaving it entirely blank.
 # set emptyline
 
-## Enable hard-wrapping and set the target width, both for automatic
-## line wrapping and for justifying paragraphs.  If the value is 0 or
-## less, the wrapping point will be the screen width minus this number.
+## Set the target width for automatic hard-wrapping and for justifying
+## paragraphs.  If the specified value is 0 or less, the wrapping point
+## will be the terminal's width minus this number.
 # set fill -8
 
 ## Remember the used search/replace strings for the next session.
@@ -268,6 +268,9 @@ include "/usr/share/nano/*.nanorc"
 ## such as ^O for Open, ^F for Find, ^H for Help, and ^Q for Quit,
 ## then uncomment these:
 #bind ^Q exit all
+#bind ^S savefile main
+#bind ^W writeout main
+#bind ^O insert main
 #bind ^H help all
 #bind ^H exit help
 #bind ^F whereis all
@@ -275,23 +278,23 @@ include "/usr/share/nano/*.nanorc"
 #bind ^B wherewas all
 #bind ^D findprevious all
 #bind ^R replace main
-#bind ^W writeout main
-#bind ^O insert main
-#unbind ^V all
-#unbind ^Y all
 #bind M-X flipnewbuffer all
 #bind ^X cut all
-#bind ^C copy all
+#bind ^C copy main
 #bind ^V paste all
 #bind ^P curpos main
+#bind ^A mark main
+#unbind ^K main
+#unbind ^U all
+#unbind ^N main
+#unbind ^Y all
+#unbind M-J main
+#unbind M-T main
 #bind ^T gotoline main
 #bind ^T gotodir browser
 #bind ^Y speller main
-#unbind ^K all
-#unbind ^U all
+#bind M-U undo main
 #bind M-R redo main
 #bind ^U undo main
 #bind ^E redo main
-#unbind M-J main
-#unbind M-T main
 #set multibuffer
