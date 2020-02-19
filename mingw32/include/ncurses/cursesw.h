@@ -1,7 +1,8 @@
 // * This makes emacs happy -*-Mode: C++;-*-
 // vile:cppmode
 /****************************************************************************
- * Copyright (c) 1998-2014,2017 Free Software Foundation, Inc.              *
+ * Copyright 2019,2020 Thomas E. Dickey                                     *
+ * Copyright 1998-2014,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -31,7 +32,7 @@
 #ifndef NCURSES_CURSESW_H_incl
 #define NCURSES_CURSESW_H_incl 1
 
-// $Id: cursesw.h,v 1.53 2017/11/21 00:37:23 tom Exp $
+// $Id: cursesw.h,v 1.56 2020/02/02 23:34:34 tom Exp $
 
 extern "C" {
 #  include   <ncursesw/curses.h>
@@ -837,7 +838,7 @@ public:
   {
   }
 
-  virtual ~NCursesWindow();
+  virtual ~NCursesWindow() THROWS(NCursesException);
 
   NCursesWindow Clone();
   // Make an exact copy of the window.
@@ -1255,7 +1256,7 @@ public:
   // Return TRUE if window is marked as changed, FALSE otherwise
 
   int            leaveok(bool bf) { return ::leaveok(w, bf); }
-  // If bf is TRUE, curses will leave the cursor after an update whereever
+  // If bf is TRUE, curses will leave the cursor after an update wherever
   // it is after the update.
 
   int            redrawln(int from, int n) { return ::wredrawln(w, from, n); }
@@ -1485,7 +1486,7 @@ public:
   {
   }
 
-  virtual ~NCursesPad() {}
+  virtual ~NCursesPad() THROWS(NCursesException) {}
 
   int echochar(const chtype ch) { return ::pechochar(w, ch); }
   // Put the attributed character onto the pad and immediately do a
@@ -1546,7 +1547,7 @@ public:
   }
   // Construct the FramedPad with the given Window win as viewport.
 
-  virtual ~NCursesFramedPad() {
+  virtual ~NCursesFramedPad() THROWS(NCursesException) {
     delete getSubWindow();
   }
 

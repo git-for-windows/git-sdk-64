@@ -1,5 +1,6 @@
 /****************************************************************************
- * Copyright (c) 1998-2018,2019 Free Software Foundation, Inc.              *
+ * Copyright 2018-2019,2020 Thomas E. Dickey                                *
+ * Copyright 1998-2012,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -33,7 +34,7 @@
  ****************************************************************************/
 
 /*
- * $Id: tic.h,v 1.78 2019/03/10 00:06:02 tom Exp $
+ * $Id: tic.h,v 1.81 2020/02/02 23:34:34 tom Exp $
  *	tic.h - Global variables and structures for the terminfo compiler.
  */
 
@@ -93,7 +94,7 @@ extern "C" {
 
 #define IS_TIC_MAGIC(p)	(LOW_MSB(p) == MAGIC || LOW_MSB(p) == MAGIC2)
 
-#define quick_prefix(s) (!strncmp((s), "b64:", 4) || !strncmp((s), "hex:", 4))
+#define quick_prefix(s) (!strncmp((s), "b64:", (size_t)4) || !strncmp((s), "hex:", (size_t)4))
 
 /*
  * The "maximum" here is misleading; XSI guarantees minimum values, which a
@@ -361,7 +362,7 @@ extern NCURSES_EXPORT(int) _nc_tic_written (void);
 #endif /* NCURSES_INTERNALS */
 
 /*
- * These entrypoints are used by tack.
+ * These entrypoints were used by tack before 1.08.
  */
 
 #undef  NCURSES_TACK_1_08

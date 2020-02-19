@@ -1,6 +1,7 @@
 // * This makes emacs happy -*-Mode: C++;-*-
 /****************************************************************************
- * Copyright (c) 1998-2012,2014 Free Software Foundation, Inc.              *
+ * Copyright 2019,2020 Thomas E. Dickey                                     *
+ * Copyright 1998-2012,2014 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -34,7 +35,7 @@
 #ifndef NCURSES_CURSESP_H_incl
 #define NCURSES_CURSESP_H_incl 1
 
-// $Id: cursesp.h,v 1.31 2014/08/09 22:06:26 Adam.Jiang Exp $
+// $Id: cursesp.h,v 1.33 2020/02/02 23:34:34 tom Exp $
 
 #include <ncursesw/cursesw.h>
 
@@ -131,7 +132,7 @@ public:
   {
   }
 
-  virtual ~NCursesPanel();
+  virtual ~NCursesPanel() THROWS(NCursesException);
 
   // basic manipulation
   inline void hide()
@@ -250,7 +251,7 @@ public:
   // This creates an user panel associated with the ::stdscr and user data
   // pointed to by p_UserData.
 
-  virtual ~NCursesUserPanel() {};
+  virtual ~NCursesUserPanel() THROWS(NCursesException) {};
 
   T* UserData (void)
   {

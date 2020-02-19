@@ -7,13 +7,13 @@ libdir=${exec_prefix}/lib
 includedir=${prefix}/include/ncursesw
 abi_version=6
 major_version=6
-version=6.1.20190630
+version=6.2.20200212
 
 Name: ncurses++w
-Description: ncurses 6.1 add-on library
+Description: ncurses 6.2 add-on library
 Version: ${version}
 URL: https://invisible-island.net/ncurses
 Requires.private: panelw, menuw, formw, ncursesw
-Libs:  -L${libdir} -lncurses++w
-Libs.private: -lgnurx -ltre -lintl -liconv -lpsapi 
-Cflags:  -D_XOPEN_SOURCE=600 -D_POSIX_C_SOURCE=199506L -I/mingw32/include -I${includedir}
+Libs:  -pipe -lncurses++w
+Libs.private: -lgnurx  -ltre -lintl -liconv 
+Cflags:  -D_XOPEN_SOURCE=600 -D_POSIX_C_SOURCE=199506L -I${includedir} -I/mingw32/include

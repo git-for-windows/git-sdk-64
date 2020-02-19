@@ -1,5 +1,6 @@
 /****************************************************************************
- * Copyright (c) 1998-2018,2019 Free Software Foundation, Inc.              *
+ * Copyright 2018-2019,2020 Thomas E. Dickey                                *
+ * Copyright 1998-2013,2017 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -32,7 +33,7 @@
 /*    and: Thomas E. Dickey                        1995-on                  */
 /****************************************************************************/
 
-/* $Id: MKterm.h.awk.in,v 1.71 2019/04/13 22:34:42 tom Exp $ */
+/* $Id: MKterm.h.awk.in,v 1.74 2020/02/02 23:34:34 tom Exp $ */
 
 /*
 **	term.h -- Definition of struct term
@@ -42,7 +43,7 @@
 #define NCURSES_TERM_H_incl 1
 
 #undef  NCURSES_VERSION
-#define NCURSES_VERSION "6.1"
+#define NCURSES_VERSION "6.2"
 
 #include <ncursesw/ncurses_dll.h>
 
@@ -118,6 +119,10 @@ extern "C" {
 #else
 #define GET_TTY(fd, buf) gtty(fd, buf)
 #define SET_TTY(fd, buf) stty(fd, buf)
+#endif
+
+#ifndef	GCC_NORETURN
+#define	GCC_NORETURN /* nothing */
 #endif
 
 #define NAMESIZE 256
@@ -775,12 +780,14 @@ extern NCURSES_EXPORT(int) _nc_name_match (const char *const, const char *const,
 
 
 /*
- * These entrypoints are used by tack.
+ * These entrypoints are used by tack 1.07.
  */
 extern NCURSES_EXPORT(const TERMTYPE *) _nc_fallback (const char *);
 extern NCURSES_EXPORT(int) _nc_read_entry (const char * const, char * const, TERMTYPE *const);
 
-/* Normal entry points */
+/*
+ * Normal entry points
+ */
 extern NCURSES_EXPORT(TERMINAL *) set_curterm (TERMINAL *);
 extern NCURSES_EXPORT(int) del_curterm (TERMINAL *);
 
@@ -847,6 +854,11 @@ extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(del_curterm) (SCREEN*, TERMINAL *
 
 extern NCURSES_EXPORT(int)     NCURSES_SP_NAME(restartterm) (SCREEN*, NCURSES_CONST char *, int, int *);
 #endif /* NCURSES_SP_FUNCS */
+
+/*
+ * Debugging features.
+ */
+extern NCURSES_EXPORT(void)    exit_terminfo(int) GCC_NORETURN;
 
 #ifdef __cplusplus
 }
