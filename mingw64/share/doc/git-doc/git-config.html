@@ -4433,7 +4433,7 @@ http.cookieFile. Has no effect if http.cookieFile is unset.</p>
 <dd>
 <p>Use the specified HTTP protocol version when communicating with a server.
 If you want to force the default. The available and default version depend
-on libcurl. Actually the possible values of
+on libcurl. Currently the possible values of
 this option are:</p>
 <div class="ulist">
 <ul>
@@ -4454,7 +4454,7 @@ depend on whether libcurl was built against NSS or OpenSSL and the
 particular configuration of the crypto library in use. Internally
 this sets the <em>CURLOPT_SSL_VERSION</em> option; see the libcurl
 documentation for more details on the format of this option and
-for the ssl version supported. Actually the possible values of
+for the ssl version supported. Currently the possible values of
 this option are:</p>
 <div class="ulist">
 <ul>
@@ -4602,6 +4602,15 @@ For requests larger than this buffer size, HTTP/1.1 and
 Transfer-Encoding: chunked is used to avoid creating a
 massive pack file locally.  Default is 1 MiB, which is
 sufficient for most requests.</p>
+<div class="paragraph">
+<p>Note that raising this limit is only effective for disabling chunked
+transfer encoding and therefore should be used only where the remote
+server or a proxy only supports HTTP/1.0 or is noncompliant with the
+HTTP standard.  Raising this is not, in general, an effective solution
+for most push problems, but can increase memory consumption
+significantly since the entire buffer is allocated even for small
+pushes.</p>
+</div>
 </dd>
 <dt class="hdlist1">http.lowSpeedLimit, http.lowSpeedTime</dt>
 <dd>
@@ -6860,8 +6869,14 @@ If you need the <code>author</code> or <code>committer</code> to be different, t
 <code>committer.email</code> variables can be set.
 Also, all of these can be overridden by the <code>GIT_AUTHOR_NAME</code>,
 <code>GIT_AUTHOR_EMAIL</code>, <code>GIT_COMMITTER_NAME</code>,
-<code>GIT_COMMITTER_EMAIL</code> and <code>EMAIL</code> environment variables.
-See <a href="git-commit-tree.html">git-commit-tree(1)</a> for more information.</p>
+<code>GIT_COMMITTER_EMAIL</code> and <code>EMAIL</code> environment variables.</p>
+<div class="paragraph">
+<p>Note that the <code>name</code> forms of these variables conventionally refer to
+some form of a personal name.  See <a href="git-commit.html">git-commit(1)</a> and the
+environment variables section of <a href="git.html">git(1)</a> for more information on
+these settings and the <code>credential.username</code> option if you&#8217;re looking
+for authentication credentials instead.</p>
+</div>
 </dd>
 <dt class="hdlist1">user.useConfigOnly</dt>
 <dd>
@@ -6980,7 +6995,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-01-13 20:31:51 UTC
+Last updated 2020-02-19 15:25:40 UTC
 </div>
 </div>
 </body>
