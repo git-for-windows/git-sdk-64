@@ -52,13 +52,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.11"
+#define GNUTLS_VERSION "3.6.12"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 11
+#define GNUTLS_VERSION_PATCH 12
 
-#define GNUTLS_VERSION_NUMBER 0x03060b
+#define GNUTLS_VERSION_NUMBER 0x03060c
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -296,6 +296,8 @@ typedef enum {
  * @GNUTLS_MAC_SHA3_384: Reserved; unimplemented.
  * @GNUTLS_MAC_SHA3_512: Reserved; unimplemented.
  * @GNUTLS_MAC_GOST28147_TC26Z_IMIT: The GOST 28147-89 working in IMIT mode with TC26 Z S-box.
+ * @GNUTLS_MAC_SHAKE_128: Reserved; unimplemented.
+ * @GNUTLS_MAC_SHAKE_256: Reserved; unimplemented.
  *
  * Enumeration of different Message Authentication Code (MAC)
  * algorithms.
@@ -330,6 +332,8 @@ typedef enum {
 	GNUTLS_MAC_AES_GMAC_192 = 206,
 	GNUTLS_MAC_AES_GMAC_256 = 207,
 	GNUTLS_MAC_GOST28147_TC26Z_IMIT = 208,
+	GNUTLS_MAC_SHAKE_128 = 209,
+	GNUTLS_MAC_SHAKE_256 = 210
 } gnutls_mac_algorithm_t;
 
 /**
@@ -352,6 +356,8 @@ typedef enum {
  * @GNUTLS_DIG_GOSTR_94: GOST R 34.11-94 algorithm.
  * @GNUTLS_DIG_STREEBOG_256: GOST R 34.11-2001 (Streebog) algorithm, 256 bit.
  * @GNUTLS_DIG_STREEBOG_512: GOST R 34.11-2001 (Streebog) algorithm, 512 bit.
+ * @GNUTLS_DIG_SHAKE_128: Reserved; unimplemented.
+ * @GNUTLS_DIG_SHAKE_256: Reserved; unimplemented.
  *
  * Enumeration of different digest (hash) algorithms.
  */
@@ -373,7 +379,9 @@ typedef enum {
 	GNUTLS_DIG_MD5_SHA1 = GNUTLS_MAC_MD5_SHA1,
 	GNUTLS_DIG_GOSTR_94 = GNUTLS_MAC_GOSTR_94,
 	GNUTLS_DIG_STREEBOG_256 = GNUTLS_MAC_STREEBOG_256,
-	GNUTLS_DIG_STREEBOG_512 = GNUTLS_MAC_STREEBOG_512
+	GNUTLS_DIG_STREEBOG_512 = GNUTLS_MAC_STREEBOG_512,
+	GNUTLS_DIG_SHAKE_128 = GNUTLS_MAC_SHAKE_128,
+	GNUTLS_DIG_SHAKE_256 = GNUTLS_MAC_SHAKE_256
 	    /* If you add anything here, make sure you align with
 	       gnutls_mac_algorithm_t. */
 } gnutls_digest_algorithm_t;
@@ -835,6 +843,8 @@ typedef enum gnutls_certificate_print_formats {
  * @GNUTLS_PK_GOST_01: GOST R 34.10-2001 algorithm per rfc5832.
  * @GNUTLS_PK_GOST_12_256: GOST R 34.10-2012 algorithm, 256-bit key per rfc7091.
  * @GNUTLS_PK_GOST_12_512: GOST R 34.10-2012 algorithm, 512-bit key per rfc7091.
+ * @GNUTLS_PK_ECDH_X448: Elliptic curve algorithm, restricted to ECDH as per rfc7748.
+ * @GNUTLS_PK_EDDSA_ED448: Edwards curve Digital signature algorithm. Used with SHAKE256 on signatures.
  *
  * Enumeration of different public-key algorithms.
  */
@@ -850,7 +860,9 @@ typedef enum {
 	GNUTLS_PK_GOST_01 = 8,
 	GNUTLS_PK_GOST_12_256 = 9,
 	GNUTLS_PK_GOST_12_512 = 10,
-	GNUTLS_PK_MAX = GNUTLS_PK_GOST_12_512
+	GNUTLS_PK_ECDH_X448 = 11,
+	GNUTLS_PK_EDDSA_ED448 = 12,
+	GNUTLS_PK_MAX = GNUTLS_PK_EDDSA_ED448
 } gnutls_pk_algorithm_t;
 
 
@@ -914,6 +926,7 @@ const char *gnutls_pk_algorithm_get_name(gnutls_pk_algorithm_t algorithm);
  * @GNUTLS_SIGN_GOST_94: Digital signature algorithm GOST R 34.10-2001 with GOST R 34.11-94
  * @GNUTLS_SIGN_GOST_256: Digital signature algorithm GOST R 34.10-2012 with GOST R 34.11-2012 256 bit
  * @GNUTLS_SIGN_GOST_512: Digital signature algorithm GOST R 34.10-2012 with GOST R 34.11-2012 512 bit
+ * @GNUTLS_SIGN_EDDSA_ED448: Digital signature algorithm EdDSA with Ed448 curve.
  *
  * Enumeration of different digital signature algorithms.
  */
@@ -970,7 +983,8 @@ typedef enum {
 	GNUTLS_SIGN_GOST_94 = 43,
 	GNUTLS_SIGN_GOST_256 = 44,
 	GNUTLS_SIGN_GOST_512 = 45,
-	GNUTLS_SIGN_MAX = GNUTLS_SIGN_GOST_512
+	GNUTLS_SIGN_EDDSA_ED448 = 46,
+	GNUTLS_SIGN_MAX = GNUTLS_SIGN_EDDSA_ED448
 } gnutls_sign_algorithm_t;
 
 /**
@@ -995,6 +1009,8 @@ typedef enum {
  * @GNUTLS_ECC_CURVE_GOST256B: GOST R 34.10 TC26 256 B curve
  * @GNUTLS_ECC_CURVE_GOST256C: GOST R 34.10 TC26 256 C curve
  * @GNUTLS_ECC_CURVE_GOST256D: GOST R 34.10 TC26 256 D curve
+ * @GNUTLS_ECC_CURVE_X448: the X448 curve (ECDH only)
+ * @GNUTLS_ECC_CURVE_ED448: the Ed448 curve
  *
  * Enumeration of ECC curves.
  */
@@ -1019,7 +1035,9 @@ typedef enum {
 	GNUTLS_ECC_CURVE_GOST256B,
 	GNUTLS_ECC_CURVE_GOST256C,
 	GNUTLS_ECC_CURVE_GOST256D,
-	GNUTLS_ECC_CURVE_MAX = GNUTLS_ECC_CURVE_GOST256D
+	GNUTLS_ECC_CURVE_X448,
+	GNUTLS_ECC_CURVE_ED448,
+	GNUTLS_ECC_CURVE_MAX = GNUTLS_ECC_CURVE_ED448
 } gnutls_ecc_curve_t;
 
 /**
@@ -1043,6 +1061,7 @@ typedef enum {
  * @GNUTLS_GROUP_FFDHE4096: the FFDHE4096 group
  * @GNUTLS_GROUP_FFDHE6144: the FFDHE6144 group
  * @GNUTLS_GROUP_FFDHE8192: the FFDHE8192 group
+ * @GNUTLS_GROUP_X448: the X448 curve group
  *
  * Enumeration of supported groups. It is intended to be backwards
  * compatible with the enumerations in %gnutls_ecc_curve_t for the groups
@@ -1056,6 +1075,7 @@ typedef enum {
 	GNUTLS_GROUP_SECP384R1 = GNUTLS_ECC_CURVE_SECP384R1,
 	GNUTLS_GROUP_SECP521R1 = GNUTLS_ECC_CURVE_SECP521R1,
 	GNUTLS_GROUP_X25519 = GNUTLS_ECC_CURVE_X25519,
+	GNUTLS_GROUP_X448 = GNUTLS_ECC_CURVE_X448,
 
 	GNUTLS_GROUP_GC256A = GNUTLS_ECC_CURVE_GOST256A,
 	GNUTLS_GROUP_GC256B = GNUTLS_ECC_CURVE_GOST256B,
@@ -1571,6 +1591,8 @@ unsigned gnutls_session_etm_status(gnutls_session_t session);
  * @GNUTLS_SFLAGS_POST_HANDSHAKE_AUTH: Indicates client capability for post-handshake auth; set only on server side.
  * @GNUTLS_SFLAGS_EARLY_START: The TLS1.3 server session returned early.
  * @GNUTLS_SFLAGS_EARLY_DATA: The TLS1.3 early data has been received by the server.
+ * @GNUTLS_SFLAGS_CLI_REQUESTED_OCSP: Set when the client has requested OCSP staple during handshake.
+ * @GNUTLS_SFLAGS_SERV_REQUESTED_OCSP: Set when the server has requested OCSP staple during handshake.
  *
  * Enumeration of different session parameters.
  */
@@ -1585,7 +1607,9 @@ typedef enum {
 	GNUTLS_SFLAGS_SESSION_TICKET = 1<<7,
 	GNUTLS_SFLAGS_POST_HANDSHAKE_AUTH = 1<<8,
 	GNUTLS_SFLAGS_EARLY_START = 1<<9,
-	GNUTLS_SFLAGS_EARLY_DATA = 1<<10
+	GNUTLS_SFLAGS_EARLY_DATA = 1<<10,
+	GNUTLS_SFLAGS_CLI_REQUESTED_OCSP = 1<<11,
+	GNUTLS_SFLAGS_SERV_REQUESTED_OCSP = 1<<12
 } gnutls_session_flags_t;
 
 unsigned gnutls_session_get_flags(gnutls_session_t session);
@@ -2181,8 +2205,8 @@ int gnutls_ocsp_status_request_get(gnutls_session_t session,
 				   gnutls_datum_t * response);
 
 #define GNUTLS_OCSP_SR_IS_AVAIL 1
-int gnutls_ocsp_status_request_is_checked(gnutls_session_t session,
-					  unsigned int flags);
+unsigned gnutls_ocsp_status_request_is_checked(gnutls_session_t session,
+					       unsigned int flags);
 
 int
 gnutls_ocsp_status_request_get2(gnutls_session_t session,
@@ -3391,6 +3415,7 @@ void gnutls_fips140_set_mode(gnutls_fips_mode_t mode, unsigned flags);
 #define GNUTLS_E_MISSING_EXTENSION -427
 #define GNUTLS_E_DB_ENTRY_EXISTS -428
 #define GNUTLS_E_EARLY_DATA_REJECTED -429
+#define GNUTLS_E_X509_DUPLICATE_EXTENSION -430
 
 #define GNUTLS_E_UNIMPLEMENTED_FEATURE -1250
 

@@ -1,9 +1,9 @@
 This is gnutls.info, produced by makeinfo version 6.6 from gnutls.texi.
 
-This manual is last updated 27 June 2019 for version 3.6.11 of GnuTLS.
+This manual is last updated 3 January 2020 for version 3.6.12 of GnuTLS.
 
-Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2019 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2020 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2020 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -28,1772 +28,1777 @@ END-INFO-DIR-ENTRY
 
 
 Indirect:
-gnutls.info-1: 1291
-gnutls.info-2: 320745
-gnutls.info-3: 602450
-gnutls.info-4: 1129175
-gnutls.info-5: 1440571
-gnutls.info-6: 1509195
-gnutls.info-7: 1866353
+gnutls.info-1: 1293
+gnutls.info-2: 322128
+gnutls.info-3: 604808
+gnutls.info-4: 1132656
+gnutls.info-5: 1445036
+gnutls.info-6: 1513862
+gnutls.info-7: 1871858
 
 Tag Table:
 (Indirect)
-Node: Top1291
-Node: Preface2518
-Node: Introduction to GnuTLS3879
-Node: Downloading and installing5578
-Ref: Downloading and installing-Footnote-18101
-Node: Installing for a software distribution8177
-Ref: Installing for a software distribution-Footnote-19799
-Node: Document overview9863
-Node: Introduction to TLS10876
-Ref: Introduction to TLS-Footnote-112035
-Node: TLS layers12325
-Ref: fig-tls-layers13263
-Ref: TLS layers-Footnote-113374
-Node: The transport layer13517
-Node: The TLS record protocol14121
-Node: Encryption algorithms used in the record layer15333
-Ref: tab:ciphers16370
-Ref: tab:macs21158
-Node: Compression algorithms and the record layer21958
-Node: On Record Padding22584
-Node: The TLS Alert Protocol25188
-Ref: The Alert Protocol25388
-Ref: tab:alerts26318
-Node: The TLS Handshake Protocol29720
-Ref: The Handshake Protocol29919
-Node: TLS Cipher Suites30585
-Ref: TLS Cipher Suites-Footnote-131819
-Node: Authentication31933
-Node: Client Authentication32761
-Node: Resuming Sessions33238
-Ref: resume33397
-Node: TLS Extensions34043
-Node: Maximum fragment length negotiation34678
-Node: Server name indication35282
-Ref: serverind35482
-Node: Session tickets36328
-Node: HeartBeat37487
-Node: Safe renegotiation38818
-Node: OCSP status request43732
-Node: SRTP44687
-Ref: gnutls_srtp_profile_t45191
-Node: False Start47522
-Node: Application Layer Protocol Negotiation (ALPN)49396
-Node: Extensions and Supplemental Data50508
-Node: How to use TLS in application protocols51149
-Node: Separate ports51663
-Ref: Separate ports-Footnote-153123
-Node: Upward negotiation53199
-Ref: Upward negotiation-Footnote-155966
-Node: On SSL 2 and older protocols55994
-Node: Authentication methods57872
-Node: Certificate authentication58767
-Ref: tab:key-exchange59321
-Node: X.509 certificates61544
-Ref: fig-x50962023
-Node: X.509 certificate structure62651
-Ref: tab:x50963055
-Node: Importing an X.509 certificate64902
-Node: X.509 certificate names66282
-Node: X.509 distinguished names68044
-Node: X.509 extensions71795
-Ref: tab:x509-ext75501
-Node: X.509 public and private keys80323
-Node: Verifying X.509 certificate paths82792
-Ref: gnutls_certificate_status_t95156
-Node: Verifying a certificate in the context of TLS session97623
-Ref: gnutls_certificate_verify_flags100159
-Node: Verification using PKCS11102643
-Ref: tab:purposes103969
-Ref: Verification using PKCS11-Footnote-1106591
-Node: OpenPGP certificates106660
-Node: Raw public-keys107466
-Node: Importing raw public-keys109113
-Node: Advanced certificate verification109469
-Node: Verifying a certificate using trust on first use authentication110351
-Node: Verifying a certificate using DANE111568
-Node: Digital signatures113076
-Node: More on certificate authentication118374
-Node: PKCS 10 certificate requests119212
-Ref: ex-crq122815
-Node: PKIX certificate revocation lists125320
-Ref: tab:crl126195
-Node: OCSP certificate status checking132541
-Ref: tab:ocsp-response139282
-Ref: gnutls_x509_crl_reason_t142824
-Node: OCSP stapling144148
-Node: Managing encrypted keys148484
-Ref: gnutls_pkcs_encrypt_flags_t152586
-Node: certtool Invocation159971
-Ref: certtool usage160746
-Ref: certtool169517
-Ref: certtool debug169583
-Ref: certtool cert-options169687
-Ref: certtool pubkey-info169803
-Ref: certtool fingerprint170047
-Ref: certtool key-id170366
-Ref: certtool certificate-pubkey170675
-Ref: certtool sign-params170865
-Ref: certtool crq-options171252
-Ref: certtool generate-request171394
-Ref: certtool pkcs12-options171677
-Ref: certtool p12-info171792
-Ref: certtool p12-name171987
-Ref: certtool to-p12172198
-Ref: certtool key-options172338
-Ref: certtool p8-info172444
-Ref: certtool to-rsa172674
-Ref: certtool generate-privkey172961
-Ref: certtool key-type173201
-Ref: certtool curve173617
-Ref: certtool sec-param173840
-Ref: certtool to-p8174054
-Ref: certtool provable174202
-Ref: certtool verify-provable-privkey174914
-Ref: certtool seed175177
-Ref: certtool crl-options175479
-Ref: certtool generate-crl175587
-Ref: certtool verify-crl175936
-Ref: certtool cert-verify-options176219
-Ref: certtool verify-chain176374
-Ref: certtool verify176779
-Ref: certtool verify-hostname177271
-Ref: certtool verify-email177508
-Ref: certtool verify-purpose177885
-Ref: certtool verify-allow-broken178331
-Ref: certtool pkcs7-options178472
-Ref: certtool p7-generate178586
-Ref: certtool p7-sign178812
-Ref: certtool p7-detached-sign179332
-Ref: certtool p7-include-cert179816
-Ref: certtool p7-time180195
-Ref: certtool p7-show-data180461
-Ref: certtool p7-verify180789
-Ref: certtool other-options181263
-Ref: certtool generate-dh-params181381
-Ref: certtool get-dh-params181739
-Ref: certtool load-privkey182165
-Ref: certtool load-pubkey182337
-Ref: certtool load-request182510
-Ref: certtool load-certificate182692
-Ref: certtool load-ca-privkey182864
-Ref: certtool load-ca-certificate183077
-Ref: certtool load-crl183268
-Ref: certtool load-data183426
-Ref: certtool password183580
-Ref: certtool null-password183958
-Ref: certtool empty-password184165
-Ref: certtool cprint184359
-Ref: certtool rsa184587
-Ref: certtool dsa184757
-Ref: certtool ecc184926
-Ref: certtool ecdsa185141
-Ref: certtool hash185258
-Ref: certtool salt-size185498
-Ref: certtool inder185683
-Ref: certtool inraw186107
-Ref: certtool outder186234
-Ref: certtool outraw186486
-Ref: certtool ask-pass186620
-Ref: certtool pkcs-cipher186882
-Ref: certtool provider187117
-Ref: certtool text187310
-Ref: certtool exit status187574
-Ref: certtool See Also187806
-Ref: certtool Examples187881
-Ref: certtool Files192353
-Node: ocsptool Invocation203474
-Ref: ocsptool usage204232
-Ref: ocsptool debug207978
-Ref: ocsptool ask208119
-Ref: ocsptool verify-response208654
-Ref: ocsptool request-info208950
-Ref: ocsptool response-info209120
-Ref: ocsptool load-trust209294
-Ref: ocsptool outder209708
-Ref: ocsptool outpem209926
-Ref: ocsptool verify-allow-broken210052
-Ref: ocsptool exit status210229
-Ref: ocsptool See Also210461
-Ref: ocsptool Examples210511
-Node: danetool Invocation215314
-Ref: danetool usage215768
-Ref: danetool debug219598
-Ref: danetool load-pubkey219739
-Ref: danetool load-certificate219908
-Ref: danetool dlv220088
-Ref: danetool hash220246
-Ref: danetool check220434
-Ref: danetool check-ee220830
-Ref: danetool check-ca221011
-Ref: danetool tlsa-rr221187
-Ref: danetool host221484
-Ref: danetool proto221676
-Ref: danetool app-proto221897
-Ref: danetool starttls-proto222057
-Ref: danetool ca222526
-Ref: danetool x509222697
-Ref: danetool local222956
-Ref: danetool domain223084
-Ref: danetool local-dns223528
-Ref: danetool insecure223843
-Ref: danetool inder223986
-Ref: danetool inraw224391
-Ref: danetool print-raw224516
-Ref: danetool quiet224750
-Ref: danetool exit status224924
-Ref: danetool See Also225156
-Ref: danetool Examples225206
-Node: Shared-key and anonymous authentication226531
-Node: PSK authentication227100
-Node: Authentication using PSK227363
-Node: psktool Invocation228811
-Ref: psktool usage229297
-Ref: psktool debug230899
-Ref: psktool pskfile231040
-Ref: psktool passwd231251
-Ref: psktool exit status231383
-Ref: psktool See Also231611
-Ref: psktool Examples231711
-Node: SRP authentication232121
-Node: Authentication using SRP232417
-Node: srptool Invocation235604
-Ref: srptool usage236415
-Ref: srptool debug238490
-Ref: srptool verify238631
-Ref: srptool passwd-conf238769
-Ref: srptool create-conf238970
-Ref: srptool exit status239216
-Ref: srptool See Also239446
-Ref: srptool Examples239559
-Node: Anonymous authentication240203
-Node: Selecting an appropriate authentication method241647
-Node: Hardware security modules and abstract key types246489
-Node: Abstract key types248415
-Node: Abstract public keys249820
-Node: Abstract private keys254373
-Node: Operations259929
-Node: Application-specific keys267203
-Node: Smart cards and HSMs272747
-Ref: fig-pkcs11-vision274230
-Ref: Smart cards and HSMs-Footnote-1274613
-Node: PKCS11 Initialization274658
-Ref: PKCS11 Initialization-Footnote-1276648
-Ref: PKCS11 Initialization-Footnote-2276707
-Node: PKCS11 Manual Initialization276847
-Node: Accessing objects that require a PIN279401
-Ref: gnutls_pin_flag_t281087
-Node: Reading objects282606
-Node: Writing objects288248
-Node: PKCS11 Low Level Access291080
-Node: Using a PKCS11 token with TLS293073
-Node: Verifying certificates over PKCS11293892
-Ref: Verifying certificates over PKCS11-Footnote-1295123
-Ref: Verifying certificates over PKCS11-Footnote-2295187
-Node: p11tool Invocation295330
-Ref: p11tool usage296251
-Ref: p11tool token-related-options305100
-Ref: p11tool list-token-urls305219
-Ref: p11tool initialize-so-pin305375
-Ref: p11tool set-pin305635
-Ref: p11tool set-so-pin305842
-Ref: p11tool object-list-related-options306033
-Ref: p11tool list-all306160
-Ref: p11tool list-all-certs306395
-Ref: p11tool list-certs306652
-Ref: p11tool list-all-privkeys306897
-Ref: p11tool list-privkeys307077
-Ref: p11tool list-keys307245
-Ref: p11tool export-stapled307423
-Ref: p11tool export-chain307911
-Ref: p11tool export-pubkey308334
-Ref: p11tool trusted308644
-Ref: p11tool distrusted308799
-Ref: p11tool keygen-related-options308924
-Ref: p11tool generate-privkey309055
-Ref: p11tool generate-rsa309363
-Ref: p11tool generate-dsa309618
-Ref: p11tool generate-ecc309871
-Ref: p11tool bits310120
-Ref: p11tool curve310451
-Ref: p11tool sec-param310674
-Ref: p11tool write-object-related-options310881
-Ref: p11tool set-id311007
-Ref: p11tool set-label311432
-Ref: p11tool write311780
-Ref: p11tool id312044
-Ref: p11tool mark-wrap312301
-Ref: p11tool mark-trusted312548
-Ref: p11tool mark-distrusted312912
-Ref: p11tool mark-decrypt313366
-Ref: p11tool mark-sign313643
-Ref: p11tool mark-ca313920
-Ref: p11tool mark-private314193
-Ref: p11tool ca314491
-Ref: p11tool private314625
-Ref: p11tool secret-key314780
-Ref: p11tool other-options314943
-Ref: p11tool debug315045
-Ref: p11tool so-login315186
-Ref: p11tool admin-login315430
-Ref: p11tool test-sign315571
-Ref: p11tool sign-params315865
-Ref: p11tool hash316205
-Ref: p11tool generate-random316501
-Ref: p11tool inder316675
-Ref: p11tool inraw316900
-Ref: p11tool outder317026
-Ref: p11tool outraw317278
-Ref: p11tool provider317411
-Ref: p11tool provider-opts317620
-Ref: p11tool batch317893
-Ref: p11tool exit status318046
-Ref: p11tool See Also318276
-Ref: p11tool Examples318324
-Node: Trusted Platform Module320745
-Ref: Trusted Platform Module-Footnote-1322538
-Ref: Trusted Platform Module-Footnote-2322586
-Node: Keys in TPM322643
-Node: Key generation324127
-Node: Using keys326395
-Node: tpmtool Invocation330040
-Ref: tpmtool usage330466
-Ref: tpmtool debug333778
-Ref: tpmtool generate-rsa333919
-Ref: tpmtool user334190
-Ref: tpmtool system334549
-Ref: tpmtool test-sign334903
-Ref: tpmtool sec-param335186
-Ref: tpmtool inder335512
-Ref: tpmtool outder335813
-Ref: tpmtool srk-well-known336032
-Ref: tpmtool exit status336188
-Ref: tpmtool See Also336418
-Ref: tpmtool Examples336479
-Node: How to use GnuTLS in applications337096
-Node: Introduction to the library337665
-Node: General idea338264
-Ref: fig-gnutls-design339113
-Ref: General idea-Footnote-1340418
-Node: Error handling340463
-Node: Common types342690
-Node: Debugging and auditing344024
-Ref: tab:environment344895
-Node: Thread safety347762
-Ref: Thread safety-Footnote-1349908
-Node: Running in a sandbox350120
-Node: Sessions and fork351514
-Node: Callback functions352066
-Node: Preparation353034
-Node: Headers353453
-Node: Initialization353742
-Ref: Initialization-Footnote-1354640
-Node: Version check354933
-Node: Building the source355808
-Node: Session initialization357919
-Ref: gnutls_init_flags_t359396
-Node: Associating the credentials366103
-Ref: tab:key-exchange-cred366879
-Node: Certificate credentials368010
-Node: Raw public-key credentials383595
-Node: SRP credentials384895
-Node: PSK credentials389793
-Node: Anonymous credentials393504
-Node: Setting up the transport layer394350
-Node: Asynchronous operation403903
-Node: Reducing round-trips408204
-Node: Zero-roundtrip mode411644
-Node: Anti-replay protection413849
-Node: DTLS sessions417494
-Ref: DTLS sessions-Footnote-1419798
-Node: DTLS and SCTP419875
-Node: TLS handshake420895
-Node: Data transfer and termination424813
-Node: Buffered data transfer433955
-Node: Handling alerts435756
-Node: Priority Strings439138
-Ref: tab:prio-keywords441739
-Ref: tab:prio-algorithms448817
-Ref: tab:prio-special1453205
-Ref: tab:prio-special2457052
-Ref: Priority Strings-Footnote-1463402
-Node: Selecting cryptographic key sizes463624
-Ref: tab:key-sizes464273
-Node: Advanced topics469022
-Node: Virtual hosts and credentials469520
-Node: Session resumption472845
-Node: Certificate verification480752
-Ref: dane_verify_status_t490473
-Node: TLS 1.2 re-authentication490878
-Node: TLS 1.3 re-authentication and re-key495735
-Node: Parameter generation497394
-Node: Deriving keys for other applications/protocols500041
-Node: Channel Bindings503271
-Node: Interoperability504810
-Node: Compatibility with the OpenSSL library506128
-Node: GnuTLS application examples506855
-Ref: examples507074
-Node: Client examples507367
-Node: Client example with X.509 certificate support507894
-Ref: ex-verify508132
-Node: Datagram TLS client example513176
-Node: Client using a smart card with TLS517581
-Ref: ex-pkcs11-client517818
-Node: Client with Resume capability example523113
-Ref: ex-resume-client523397
-Node: Client example with SSH-style certificate verification528584
-Node: Server examples532791
-Node: Echo server with X.509 authentication533145
-Node: DTLS echo server with X.509 authentication540869
-Node: More advanced client and servers555280
-Node: Client example with anonymous authentication556137
-Node: Using a callback to select the certificate to use560061
-Node: Obtaining session information566444
-Node: Advanced certificate verification example570657
-Ref: ex-verify2570933
-Node: Client example with PSK authentication576227
-Node: Client example with SRP authentication580593
-Node: Legacy client example with X.509 certificate support584877
-Ref: ex-verify-legacy585194
-Node: Client example in C++591147
-Node: Echo server with PSK authentication593719
-Node: Echo server with SRP authentication602450
-Node: Echo server with anonymous authentication609368
-Node: Helper functions for TCP connections614696
-Node: Helper functions for UDP connections616288
-Node: OCSP example618193
-Ref: Generate OCSP request618376
-Node: Miscellaneous examples627787
-Node: Checking for an alert628113
-Node: X.509 certificate parsing example629562
-Ref: ex-x509-info629819
-Node: Listing the ciphersuites in a priority string633848
-Node: PKCS12 structure generation example636165
-Node: System-wide configuration of the library640370
-Node: Application-specific priority strings642153
-Node: Disabling algorithms and protocols643601
-Node: Querying for disabled algorithms and protocols646485
-Node: Overriding the parameter verification profile647607
-Node: Using GnuTLS as a cryptographic library648562
-Ref: Using GnuTLS as a cryptographic library-Footnote-1649418
-Node: Symmetric algorithms649475
-Ref: gnutls_cipher_algorithm_t650235
-Ref: Symmetric algorithms-Footnote-1657907
-Node: Public key algorithms657992
-Node: Cryptographic Message Syntax / PKCS7662707
-Ref: gnutls_pkcs7_sign_flags666146
-Node: Hash and MAC functions667614
-Ref: gnutls_mac_algorithm_t668226
-Ref: gnutls_digest_algorithm_t671330
-Node: Random number generation672275
-Ref: gnutls_rnd_level_t672637
-Node: Overriding algorithms673744
-Node: Other included programs679678
-Node: gnutls-cli Invocation680249
-Ref: gnutls-cli usage680811
-Ref: gnutls-cli debug687835
-Ref: gnutls-cli tofu687976
-Ref: gnutls-cli strict-tofu688439
-Ref: gnutls-cli dane688841
-Ref: gnutls-cli local-dns689184
-Ref: gnutls-cli ca-verification689499
-Ref: gnutls-cli ocsp689854
-Ref: gnutls-cli resume690096
-Ref: gnutls-cli rehandshake690242
-Ref: gnutls-cli sni-hostname690409
-Ref: gnutls-cli verify-hostname690935
-Ref: gnutls-cli starttls691168
-Ref: gnutls-cli app-proto691352
-Ref: gnutls-cli starttls-proto691514
-Ref: gnutls-cli dh-bits692025
-Ref: gnutls-cli priority692376
-Ref: gnutls-cli rawpkkeyfile692754
-Ref: gnutls-cli rawpkfile693211
-Ref: gnutls-cli ranges693752
-Ref: gnutls-cli benchmark-ciphers694002
-Ref: gnutls-cli benchmark-tls-ciphers694320
-Ref: gnutls-cli list694639
-Ref: gnutls-cli priority-list695006
-Ref: gnutls-cli noticket695252
-Ref: gnutls-cli alpn695413
-Ref: gnutls-cli disable-extensions695722
-Ref: gnutls-cli single-key-share695954
-Ref: gnutls-cli post-handshake-auth696170
-Ref: gnutls-cli inline-commands696367
-Ref: gnutls-cli inline-commands-prefix696687
-Ref: gnutls-cli provider697090
-Ref: gnutls-cli logfile697287
-Ref: gnutls-cli exit status697644
-Ref: gnutls-cli See Also697880
-Ref: gnutls-cli Examples697957
-Node: gnutls-serv Invocation702164
-Ref: gnutls-serv usage702641
-Ref: gnutls-serv debug707706
-Ref: gnutls-serv sni-hostname707847
-Ref: gnutls-serv alpn708179
-Ref: gnutls-serv require-client-cert708466
-Ref: gnutls-serv verify-client-cert708710
-Ref: gnutls-serv heartbeat708939
-Ref: gnutls-serv priority709090
-Ref: gnutls-serv x509keyfile709459
-Ref: gnutls-serv x509certfile709976
-Ref: gnutls-serv x509dsakeyfile710493
-Ref: gnutls-serv x509dsacertfile710657
-Ref: gnutls-serv x509ecckeyfile710824
-Ref: gnutls-serv x509ecccertfile710986
-Ref: gnutls-serv rawpkkeyfile711153
-Ref: gnutls-serv rawpkfile711972
-Ref: gnutls-serv ocsp-response712827
-Ref: gnutls-serv ignore-ocsp-response-errors713144
-Ref: gnutls-serv list713391
-Ref: gnutls-serv provider713629
-Ref: gnutls-serv exit status713826
-Ref: gnutls-serv See Also714064
-Ref: gnutls-serv Examples714142
-Node: gnutls-cli-debug Invocation719450
-Ref: gnutls-cli-debug usage720272
-Ref: gnutls-cli-debug debug722527
-Ref: gnutls-cli-debug app-proto722668
-Ref: gnutls-cli-debug starttls-proto722836
-Ref: gnutls-cli-debug exit status723215
-Ref: gnutls-cli-debug See Also723463
-Ref: gnutls-cli-debug Examples723546
-Node: Internal architecture of GnuTLS727043
-Node: The TLS Protocol727649
-Ref: fig-client-server728125
-Node: TLS Handshake Protocol728215
-Ref: fig-gnutls-handshake728657
-Ref: fig-gnutls-handshake-sequence729166
-Node: TLS Authentication Methods729264
-Ref: TLS Authentication Methods-Footnote-1731568
-Node: TLS Hello Extension Handling731634
-Node: Cryptographic Backend744736
-Ref: fig-crypto-layers745419
-Ref: Cryptographic Backend-Footnote-1748701
-Ref: Cryptographic Backend-Footnote-2748786
-Node: Random Number Generators-internals748894
-Node: FIPS140-2 mode756258
-Ref: gnutls_fips_mode_t758593
-Node: Upgrading from previous versions760740
-Node: Support774734
-Node: Getting help774982
-Node: Commercial Support775570
-Node: Bug Reports775841
-Node: Contributing777205
-Node: Certification779231
-Node: Error codes779695
-Node: Supported ciphersuites804198
-Ref: ciphersuites804371
-Node: API reference819148
-Node: Core TLS API819558
-Ref: gnutls_alert_get819785
-Ref: gnutls_alert_get_name820404
-Ref: gnutls_alert_get_strname820789
-Ref: gnutls_alert_send821124
-Ref: gnutls_alert_send_appropriate822002
-Ref: gnutls_alpn_get_selected_protocol822975
-Ref: gnutls_alpn_set_protocols823639
-Ref: gnutls_anon_allocate_client_credentials824476
-Ref: gnutls_anon_allocate_server_credentials824861
-Ref: gnutls_anon_free_client_credentials825238
-Ref: gnutls_anon_free_server_credentials825527
-Ref: gnutls_anon_set_params_function825808
-Ref: gnutls_anon_set_server_dh_params826484
-Ref: gnutls_anon_set_server_known_dh_params827144
-Ref: gnutls_anon_set_server_params_function828053
-Ref: gnutls_anti_replay_deinit828716
-Ref: gnutls_anti_replay_enable829030
-Ref: gnutls_anti_replay_init829378
-Ref: gnutls_anti_replay_set_add_function829906
-Ref: gnutls_anti_replay_set_ptr830924
-Ref: gnutls_anti_replay_set_window831259
-Ref: gnutls_auth_client_get_type832027
-Ref: gnutls_auth_get_type832654
-Ref: gnutls_auth_server_get_type833466
-Ref: gnutls_base64_decode2834095
-Ref: gnutls_base64_encode2834651
-Ref: gnutls_buffer_append_data835271
-Ref: gnutls_bye835669
-Ref: gnutls_certificate_activation_time_peers837270
-Ref: gnutls_certificate_allocate_credentials837688
-Ref: gnutls_certificate_client_get_request_status838085
-Ref: gnutls_certificate_expiration_time_peers838493
-Ref: gnutls_certificate_free_ca_names838897
-Ref: gnutls_certificate_free_cas839566
-Ref: gnutls_certificate_free_credentials839969
-Ref: gnutls_certificate_free_crls840403
-Ref: gnutls_certificate_free_keys840703
-Ref: gnutls_certificate_get_crt_raw841137
-Ref: gnutls_certificate_get_issuer842208
-Ref: gnutls_certificate_get_ocsp_expiration843291
-Ref: gnutls_certificate_get_ours844462
-Ref: gnutls_certificate_get_peers845292
-Ref: gnutls_certificate_get_peers_subkey_id846415
-Ref: gnutls_certificate_get_verify_flags846771
-Ref: gnutls_certificate_get_x509_crt847184
-Ref: gnutls_certificate_get_x509_key848828
-Ref: gnutls_certificate_send_x509_rdn_sequence850143
-Ref: gnutls_certificate_server_set_request850850
-Ref: gnutls_certificate_set_dh_params851640
-Ref: gnutls_certificate_set_flags852459
-Ref: gnutls_certificate_set_known_dh_params852984
-Ref: gnutls_certificate_set_ocsp_status_request_file853912
-Ref: gnutls_certificate_set_ocsp_status_request_file2855818
-Ref: gnutls_certificate_set_ocsp_status_request_function857336
-Ref: gnutls_certificate_set_ocsp_status_request_function2858824
-Ref: gnutls_certificate_set_ocsp_status_request_mem860790
-Ref: gnutls_certificate_set_params_function862565
-Ref: gnutls_certificate_set_pin_function863262
-Ref: gnutls_certificate_set_rawpk_key_file863915
-Ref: gnutls_certificate_set_rawpk_key_mem867219
-Ref: gnutls_certificate_set_retrieve_function870366
-Ref: gnutls_certificate_set_verify_flags872496
-Ref: gnutls_certificate_set_verify_function872989
-Ref: gnutls_certificate_set_verify_limits874053
-Ref: gnutls_certificate_set_x509_crl874734
-Ref: gnutls_certificate_set_x509_crl_file875562
-Ref: gnutls_certificate_set_x509_crl_mem876343
-Ref: gnutls_certificate_set_x509_key877120
-Ref: gnutls_certificate_set_x509_key_file878788
-Ref: gnutls_certificate_set_x509_key_file2881024
-Ref: gnutls_certificate_set_x509_key_mem883558
-Ref: gnutls_certificate_set_x509_key_mem2885206
-Ref: gnutls_certificate_set_x509_simple_pkcs12_file887019
-Ref: gnutls_certificate_set_x509_simple_pkcs12_mem889149
-Ref: gnutls_certificate_set_x509_system_trust891249
-Ref: gnutls_certificate_set_x509_trust891819
-Ref: gnutls_certificate_set_x509_trust_dir892799
-Ref: gnutls_certificate_set_x509_trust_file893537
-Ref: gnutls_certificate_set_x509_trust_mem894713
-Ref: gnutls_certificate_type_get895656
-Ref: gnutls_certificate_type_get2896503
-Ref: gnutls_certificate_type_get_id897888
-Ref: gnutls_certificate_type_get_name898285
-Ref: gnutls_certificate_type_list898668
-Ref: gnutls_certificate_verification_status_print899022
-Ref: gnutls_certificate_verify_peers899780
-Ref: gnutls_certificate_verify_peers2902576
-Ref: gnutls_certificate_verify_peers3904491
-Ref: gnutls_check_version906801
-Ref: gnutls_cipher_get907543
-Ref: gnutls_cipher_get_id907848
-Ref: gnutls_cipher_get_key_size908230
-Ref: gnutls_cipher_get_name908594
-Ref: gnutls_cipher_list908941
-Ref: gnutls_cipher_suite_get_name909501
-Ref: gnutls_cipher_suite_info910369
-Ref: gnutls_credentials_clear911552
-Ref: gnutls_credentials_get911780
-Ref: gnutls_credentials_set912735
-Ref: gnutls_db_check_entry914099
-Ref: gnutls_db_check_entry_expire_time914556
-Ref: gnutls_db_check_entry_time914962
-Ref: gnutls_db_get_default_cache_expiration915353
-Ref: gnutls_db_get_ptr915548
-Ref: gnutls_db_remove_session915860
-Ref: gnutls_db_set_cache_expiration916397
-Ref: gnutls_db_set_ptr916818
-Ref: gnutls_db_set_remove_function917153
-Ref: gnutls_db_set_retrieve_function917656
-Ref: gnutls_db_set_store_function918342
-Ref: gnutls_deinit918809
-Ref: gnutls_dh_get_group919148
-Ref: gnutls_dh_get_peers_public_bits920000
-Ref: gnutls_dh_get_prime_bits920444
-Ref: gnutls_dh_get_pubkey921084
-Ref: gnutls_dh_get_secret_bits921782
-Ref: gnutls_dh_params_cpy922214
-Ref: gnutls_dh_params_deinit922722
-Ref: gnutls_dh_params_export2_pkcs3922963
-Ref: gnutls_dh_params_export_pkcs3923784
-Ref: gnutls_dh_params_export_raw924803
-Ref: gnutls_dh_params_generate2925556
-Ref: gnutls_dh_params_import_dsa926810
-Ref: gnutls_dh_params_import_pkcs3927287
-Ref: gnutls_dh_params_import_raw928026
-Ref: gnutls_dh_params_import_raw2928656
-Ref: gnutls_dh_params_import_raw3929370
-Ref: gnutls_dh_params_init930070
-Ref: gnutls_dh_set_prime_bits930401
-Ref: gnutls_digest_get_id931504
-Ref: gnutls_digest_get_name931930
-Ref: gnutls_digest_get_oid932276
-Ref: gnutls_digest_list932667
-Ref: gnutls_ecc_curve_get933032
-Ref: gnutls_ecc_curve_get_id933433
-Ref: gnutls_ecc_curve_get_name933814
-Ref: gnutls_ecc_curve_get_oid934148
-Ref: gnutls_ecc_curve_get_pk934493
-Ref: gnutls_ecc_curve_get_size934797
-Ref: gnutls_ecc_curve_list935026
-Ref: gnutls_error_is_fatal935349
-Ref: gnutls_error_to_alert936151
-Ref: gnutls_est_record_overhead_size936883
-Ref: gnutls_ext_get_current_msg937790
-Ref: gnutls_ext_get_data938481
-Ref: gnutls_ext_get_name938996
-Ref: gnutls_ext_raw_parse939314
-Ref: gnutls_ext_register940464
-Ref: gnutls_ext_set_data942099
-Ref: gnutls_fingerprint942610
-Ref: gnutls_fips140_mode_enabled943616
-Ref: gnutls_fips140_set_mode944170
-Ref: gnutls_get_system_config_file945223
-Ref: gnutls_global_deinit945599
-Ref: gnutls_global_init946049
-Ref: gnutls_global_set_audit_log_function947285
-Ref: gnutls_global_set_log_function947992
-Ref: gnutls_global_set_log_level948500
-Ref: gnutls_global_set_mutex948988
-Ref: gnutls_global_set_time_function950090
-Ref: gnutls_gost_paramset_get_name950527
-Ref: gnutls_gost_paramset_get_oid950903
-Ref: gnutls_group_get951280
-Ref: gnutls_group_get_id951650
-Ref: gnutls_group_get_name951997
-Ref: gnutls_group_list952317
-Ref: gnutls_handshake952639
-Ref: gnutls_handshake_description_get_name954744
-Ref: gnutls_handshake_get_last_in955132
-Ref: gnutls_handshake_get_last_out955757
-Ref: gnutls_handshake_set_hook_function956389
-Ref: gnutls_handshake_set_max_packet_length957781
-Ref: gnutls_handshake_set_post_client_hello_function958566
-Ref: gnutls_handshake_set_private_extensions959892
-Ref: gnutls_handshake_set_random960571
-Ref: gnutls_handshake_set_timeout961279
-Ref: gnutls_heartbeat_allowed961973
-Ref: gnutls_heartbeat_enable962447
-Ref: gnutls_heartbeat_get_timeout963285
-Ref: gnutls_heartbeat_ping963824
-Ref: gnutls_heartbeat_pong964956
-Ref: gnutls_heartbeat_set_timeouts965363
-Ref: gnutls_hex2bin966134
-Ref: gnutls_hex_decode966853
-Ref: gnutls_hex_decode2967579
-Ref: gnutls_hex_encode968008
-Ref: gnutls_hex_encode2968605
-Ref: gnutls_idna_map969120
-Ref: gnutls_idna_reverse_map970250
-Ref: gnutls_init971015
-Ref: gnutls_key_generate971843
-Ref: gnutls_kx_get972260
-Ref: gnutls_kx_get_id972846
-Ref: gnutls_kx_get_name973190
-Ref: gnutls_kx_list973535
-Ref: gnutls_load_file973863
-Ref: gnutls_mac_get974400
-Ref: gnutls_mac_get_id974705
-Ref: gnutls_mac_get_key_size975118
-Ref: gnutls_mac_get_name975455
-Ref: gnutls_mac_list975774
-Ref: gnutls_memcmp976162
-Ref: gnutls_memset976722
-Ref: gnutls_ocsp_status_request_enable_client977116
-Ref: gnutls_ocsp_status_request_get978127
-Ref: gnutls_ocsp_status_request_get2978789
-Ref: gnutls_ocsp_status_request_is_checked979784
-Ref: gnutls_oid_to_digest981133
-Ref: gnutls_oid_to_ecc_curve981542
-Ref: gnutls_oid_to_gost_paramset981868
-Ref: gnutls_oid_to_mac982279
-Ref: gnutls_oid_to_pk982692
-Ref: gnutls_oid_to_sign983064
-Ref: gnutls_openpgp_send_cert983468
-Ref: gnutls_packet_deinit983770
-Ref: gnutls_packet_get984044
-Ref: gnutls_pem_base64_decode984549
-Ref: gnutls_pem_base64_decode2985404
-Ref: gnutls_pem_base64_encode986399
-Ref: gnutls_pem_base64_encode2987228
-Ref: gnutls_perror988164
-Ref: gnutls_pk_algorithm_get_name988460
-Ref: gnutls_pk_bits_to_sec_param988816
-Ref: gnutls_pk_get_id989290
-Ref: gnutls_pk_get_name989808
-Ref: gnutls_pk_get_oid990176
-Ref: gnutls_pk_list990575
-Ref: gnutls_pk_to_sign990908
-Ref: gnutls_prf991319
-Ref: gnutls_prf_early993314
-Ref: gnutls_prf_raw994959
-Ref: gnutls_prf_rfc5705996843
-Ref: gnutls_priority_certificate_type_list998520
-Ref: gnutls_priority_certificate_type_list2999218
-Ref: gnutls_priority_cipher_list999836
-Ref: gnutls_priority_deinit1000225
-Ref: gnutls_priority_ecc_curve_list1000470
-Ref: gnutls_priority_get_cipher_suite_index1001004
-Ref: gnutls_priority_group_list1001922
-Ref: gnutls_priority_init1002305
-Ref: gnutls_priority_init21003387
-Ref: gnutls_priority_kx_list1007775
-Ref: gnutls_priority_mac_list1008182
-Ref: gnutls_priority_protocol_list1008589
-Ref: gnutls_priority_set1008993
-Ref: gnutls_priority_set_direct1009648
-Ref: gnutls_priority_sign_list1010581
-Ref: gnutls_priority_string_list1010999
-Ref: gnutls_protocol_get_id1011631
-Ref: gnutls_protocol_get_name1011947
-Ref: gnutls_protocol_get_version1012306
-Ref: gnutls_protocol_list1012604
-Ref: gnutls_psk_allocate_client_credentials1012974
-Ref: gnutls_psk_allocate_server_credentials1013394
-Ref: gnutls_psk_client_get_hint1013790
-Ref: gnutls_psk_free_client_credentials1014417
-Ref: gnutls_psk_free_server_credentials1014700
-Ref: gnutls_psk_server_get_username1014975
-Ref: gnutls_psk_set_client_credentials1015341
-Ref: gnutls_psk_set_client_credentials_function1016380
-Ref: gnutls_psk_set_params_function1017357
-Ref: gnutls_psk_set_server_credentials_file1018037
-Ref: gnutls_psk_set_server_credentials_function1018674
-Ref: gnutls_psk_set_server_credentials_hint1019618
-Ref: gnutls_psk_set_server_dh_params1020242
-Ref: gnutls_psk_set_server_known_dh_params1020927
-Ref: gnutls_psk_set_server_params_function1021824
-Ref: gnutls_random_art1022465
-Ref: gnutls_range_split1023327
-Ref: gnutls_reauth1024409
-Ref: gnutls_record_can_use_length_hiding1026511
-Ref: gnutls_record_check_corked1027262
-Ref: gnutls_record_check_pending1027645
-Ref: gnutls_record_cork1028056
-Ref: gnutls_record_disable_padding1028470
-Ref: gnutls_record_discard_queued1029078
-Ref: gnutls_record_get_direction1029695
-Ref: gnutls_record_get_max_early_data_size1030676
-Ref: gnutls_record_get_max_size1031228
-Ref: gnutls_record_get_state1031595
-Ref: gnutls_record_overhead_size1032617
-Ref: gnutls_record_recv1033004
-Ref: gnutls_record_recv_early_data1034454
-Ref: gnutls_record_recv_packet1035517
-Ref: gnutls_record_recv_seq1036396
-Ref: gnutls_record_send1037382
-Ref: gnutls_record_send21039440
-Ref: gnutls_record_send_early_data1040592
-Ref: gnutls_record_send_range1041648
-Ref: gnutls_record_set_max_early_data_size1042827
-Ref: gnutls_record_set_max_recv_size1043473
-Ref: gnutls_record_set_max_size1044177
-Ref: gnutls_record_set_state1045356
-Ref: gnutls_record_set_timeout1046014
-Ref: gnutls_record_uncork1046615
-Ref: gnutls_rehandshake1047555
-Ref: gnutls_safe_renegotiation_status1049337
-Ref: gnutls_sec_param_get_name1049752
-Ref: gnutls_sec_param_to_pk_bits1050126
-Ref: gnutls_sec_param_to_symmetric_bits1050796
-Ref: gnutls_server_name_get1051180
-Ref: gnutls_server_name_set1052652
-Ref: gnutls_session_channel_binding1053810
-Ref: gnutls_session_enable_compatibility_mode1054528
-Ref: gnutls_session_etm_status1055235
-Ref: gnutls_session_ext_master_secret_status1055638
-Ref: gnutls_session_ext_register1056129
-Ref: gnutls_session_force_valid1058391
-Ref: gnutls_session_get_data1058812
-Ref: gnutls_session_get_data21059472
-Ref: gnutls_session_get_desc1061744
-Ref: gnutls_session_get_flags1062266
-Ref: gnutls_session_get_id1062804
-Ref: gnutls_session_get_id21064327
-Ref: gnutls_session_get_master_secret1065793
-Ref: gnutls_session_get_ptr1066277
-Ref: gnutls_session_get_random1066672
-Ref: gnutls_session_get_verify_cert_status1067293
-Ref: gnutls_session_is_resumed1067966
-Ref: gnutls_session_key_update1068336
-Ref: gnutls_session_resumption_requested1069284
-Ref: gnutls_session_set_data1069666
-Ref: gnutls_session_set_id1070507
-Ref: gnutls_session_set_premaster1071170
-Ref: gnutls_session_set_ptr1072265
-Ref: gnutls_session_set_verify_cert1072665
-Ref: gnutls_session_set_verify_cert21074009
-Ref: gnutls_session_set_verify_function1075193
-Ref: gnutls_session_supplemental_register1076305
-Ref: gnutls_session_ticket_enable_client1077563
-Ref: gnutls_session_ticket_enable_server1078056
-Ref: gnutls_session_ticket_key_generate1078850
-Ref: gnutls_session_ticket_send1079278
-Ref: gnutls_set_default_priority1079862
-Ref: gnutls_set_default_priority_append1080947
-Ref: gnutls_sign_algorithm_get1082289
-Ref: gnutls_sign_algorithm_get_client1082732
-Ref: gnutls_sign_algorithm_get_requested1083199
-Ref: gnutls_sign_get_hash_algorithm1084226
-Ref: gnutls_sign_get_id1084638
-Ref: gnutls_sign_get_name1085001
-Ref: gnutls_sign_get_oid1085333
-Ref: gnutls_sign_get_pk_algorithm1085719
-Ref: gnutls_sign_is_secure1086326
-Ref: gnutls_sign_is_secure21086596
-Ref: gnutls_sign_list1086932
-Ref: gnutls_sign_supports_pk_algorithm1087292
-Ref: gnutls_srp_allocate_client_credentials1087876
-Ref: gnutls_srp_allocate_server_credentials1088277
-Ref: gnutls_srp_base64_decode1088650
-Ref: gnutls_srp_base64_decode21089355
-Ref: gnutls_srp_base64_encode1090023
-Ref: gnutls_srp_base64_encode21090824
-Ref: gnutls_srp_free_client_credentials1091555
-Ref: gnutls_srp_free_server_credentials1091838
-Ref: gnutls_srp_server_get_username1092113
-Ref: gnutls_srp_set_client_credentials1092567
-Ref: gnutls_srp_set_client_credentials_function1093457
-Ref: gnutls_srp_set_prime_bits1094704
-Ref: gnutls_srp_set_server_credentials_file1095389
-Ref: gnutls_srp_set_server_credentials_function1096115
-Ref: gnutls_srp_set_server_fake_salt_seed1097830
-Ref: gnutls_srp_verifier1099333
-Ref: gnutls_srtp_get_keys1100261
-Ref: gnutls_srtp_get_mki1101655
-Ref: gnutls_srtp_get_profile_id1102224
-Ref: gnutls_srtp_get_profile_name1102682
-Ref: gnutls_srtp_get_selected_profile1103103
-Ref: gnutls_srtp_set_mki1103547
-Ref: gnutls_srtp_set_profile1103996
-Ref: gnutls_srtp_set_profile_direct1104528
-Ref: gnutls_store_commitment1105251
-Ref: gnutls_store_pubkey1106550
-Ref: gnutls_strerror1108337
-Ref: gnutls_strerror_name1108822
-Ref: gnutls_supplemental_get_name1109291
-Ref: gnutls_supplemental_recv1109713
-Ref: gnutls_supplemental_register1110183
-Ref: gnutls_supplemental_send1111295
-Ref: gnutls_system_recv_timeout1111740
-Ref: gnutls_tdb_deinit1112482
-Ref: gnutls_tdb_init1112697
-Ref: gnutls_tdb_set_store_commitment_func1113056
-Ref: gnutls_tdb_set_store_func1113737
-Ref: gnutls_tdb_set_verify_func1114326
-Ref: gnutls_transport_get_int1115070
-Ref: gnutls_transport_get_int21115478
-Ref: gnutls_transport_get_ptr1115981
-Ref: gnutls_transport_get_ptr21116397
-Ref: gnutls_transport_set_errno1116931
-Ref: gnutls_transport_set_errno_function1117918
-Ref: gnutls_transport_set_int1118455
-Ref: gnutls_transport_set_int21119009
-Ref: gnutls_transport_set_ptr1119738
-Ref: gnutls_transport_set_ptr21120151
-Ref: gnutls_transport_set_pull_function1120795
-Ref: gnutls_transport_set_pull_timeout_function1121575
-Ref: gnutls_transport_set_push_function1123278
-Ref: gnutls_transport_set_vec_push_function1124123
-Ref: gnutls_url_is_supported1124819
-Ref: gnutls_utf8_password_normalize1125239
-Ref: gnutls_verify_stored_pubkey1126028
-Node: Datagram TLS API1129175
-Ref: gnutls_dtls_cookie_send1129451
-Ref: gnutls_dtls_cookie_verify1130706
-Ref: gnutls_dtls_get_data_mtu1131650
-Ref: gnutls_dtls_get_mtu1132093
-Ref: gnutls_dtls_get_timeout1132536
-Ref: gnutls_dtls_prestate_set1133079
-Ref: gnutls_dtls_set_data_mtu1133663
-Ref: gnutls_dtls_set_mtu1134637
-Ref: gnutls_dtls_set_timeouts1135244
-Ref: gnutls_record_get_discarded1136248
-Node: X509 certificate API1136522
-Ref: gnutls_certificate_get_trust_list1136871
-Ref: gnutls_certificate_set_trust_list1137519
-Ref: gnutls_pkcs8_info1138236
-Ref: gnutls_pkcs_schema_get_name1139754
-Ref: gnutls_pkcs_schema_get_oid1140158
-Ref: gnutls_subject_alt_names_deinit1140564
-Ref: gnutls_subject_alt_names_get1140843
-Ref: gnutls_subject_alt_names_init1141853
-Ref: gnutls_subject_alt_names_set1142233
-Ref: gnutls_x509_aia_deinit1143052
-Ref: gnutls_x509_aia_get1143286
-Ref: gnutls_x509_aia_init1144445
-Ref: gnutls_x509_aia_set1144780
-Ref: gnutls_x509_aki_deinit1145575
-Ref: gnutls_x509_aki_get_cert_issuer1145839
-Ref: gnutls_x509_aki_get_id1146905
-Ref: gnutls_x509_aki_init1147444
-Ref: gnutls_x509_aki_set_cert_issuer1147793
-Ref: gnutls_x509_aki_set_id1148908
-Ref: gnutls_x509_cidr_to_rfc52801149337
-Ref: gnutls_x509_crl_check_issuer1150235
-Ref: gnutls_x509_crl_deinit1150683
-Ref: gnutls_x509_crl_dist_points_deinit1150915
-Ref: gnutls_x509_crl_dist_points_get1151210
-Ref: gnutls_x509_crl_dist_points_init1152184
-Ref: gnutls_x509_crl_dist_points_set1152580
-Ref: gnutls_x509_crl_export1153283
-Ref: gnutls_x509_crl_export21154166
-Ref: gnutls_x509_crl_get_authority_key_gn_serial1154886
-Ref: gnutls_x509_crl_get_authority_key_id1156200
-Ref: gnutls_x509_crl_get_crt_count1157263
-Ref: gnutls_x509_crl_get_crt_serial1157621
-Ref: gnutls_x509_crl_get_dn_oid1158525
-Ref: gnutls_x509_crl_get_extension_data1159331
-Ref: gnutls_x509_crl_get_extension_data21160448
-Ref: gnutls_x509_crl_get_extension_info1161327
-Ref: gnutls_x509_crl_get_extension_oid1162591
-Ref: gnutls_x509_crl_get_issuer_dn1163443
-Ref: gnutls_x509_crl_get_issuer_dn21164444
-Ref: gnutls_x509_crl_get_issuer_dn31165236
-Ref: gnutls_x509_crl_get_issuer_dn_by_oid1166172
-Ref: gnutls_x509_crl_get_next_update1167683
-Ref: gnutls_x509_crl_get_number1168117
-Ref: gnutls_x509_crl_get_raw_issuer_dn1168842
-Ref: gnutls_x509_crl_get_signature1169296
-Ref: gnutls_x509_crl_get_signature_algorithm1169843
-Ref: gnutls_x509_crl_get_signature_oid1170405
-Ref: gnutls_x509_crl_get_this_update1171066
-Ref: gnutls_x509_crl_get_version1171391
-Ref: gnutls_x509_crl_import1171699
-Ref: gnutls_x509_crl_init1172323
-Ref: gnutls_x509_crl_iter_crt_serial1172912
-Ref: gnutls_x509_crl_iter_deinit1174058
-Ref: gnutls_x509_crl_list_import1174303
-Ref: gnutls_x509_crl_list_import21175305
-Ref: gnutls_x509_crl_print1176171
-Ref: gnutls_x509_crl_set_authority_key_id1176820
-Ref: gnutls_x509_crl_set_crt1177473
-Ref: gnutls_x509_crl_set_crt_serial1178046
-Ref: gnutls_x509_crl_set_next_update1178678
-Ref: gnutls_x509_crl_set_number1179295
-Ref: gnutls_x509_crl_set_this_update1179872
-Ref: gnutls_x509_crl_set_version1180276
-Ref: gnutls_x509_crl_sign1180819
-Ref: gnutls_x509_crl_sign21181512
-Ref: gnutls_x509_crl_verify1182748
-Ref: gnutls_x509_crq_deinit1183992
-Ref: gnutls_x509_crq_export1184230
-Ref: gnutls_x509_crq_export21185227
-Ref: gnutls_x509_crq_get_attribute_by_oid1186001
-Ref: gnutls_x509_crq_get_attribute_data1187026
-Ref: gnutls_x509_crq_get_attribute_info1188138
-Ref: gnutls_x509_crq_get_basic_constraints1189335
-Ref: gnutls_x509_crq_get_challenge_password1190588
-Ref: gnutls_x509_crq_get_dn1191200
-Ref: gnutls_x509_crq_get_dn21192149
-Ref: gnutls_x509_crq_get_dn31192964
-Ref: gnutls_x509_crq_get_dn_by_oid1193930
-Ref: gnutls_x509_crq_get_dn_oid1195391
-Ref: gnutls_x509_crq_get_extension_by_oid1196178
-Ref: gnutls_x509_crq_get_extension_by_oid21197335
-Ref: gnutls_x509_crq_get_extension_data1198417
-Ref: gnutls_x509_crq_get_extension_data21199547
-Ref: gnutls_x509_crq_get_extension_info1200426
-Ref: gnutls_x509_crq_get_key_id1201687
-Ref: gnutls_x509_crq_get_key_purpose_oid1202754
-Ref: gnutls_x509_crq_get_key_rsa_raw1203769
-Ref: gnutls_x509_crq_get_key_usage1204393
-Ref: gnutls_x509_crq_get_pk_algorithm1205479
-Ref: gnutls_x509_crq_get_pk_oid1206200
-Ref: gnutls_x509_crq_get_private_key_usage_period1206860
-Ref: gnutls_x509_crq_get_signature_algorithm1207575
-Ref: gnutls_x509_crq_get_signature_oid1208214
-Ref: gnutls_x509_crq_get_spki1208878
-Ref: gnutls_x509_crq_get_subject_alt_name1209438
-Ref: gnutls_x509_crq_get_subject_alt_othername_oid1210996
-Ref: gnutls_x509_crq_get_tlsfeatures1212476
-Ref: gnutls_x509_crq_get_version1213605
-Ref: gnutls_x509_crq_import1213951
-Ref: gnutls_x509_crq_init1214633
-Ref: gnutls_x509_crq_print1214981
-Ref: gnutls_x509_crq_set_attribute_by_oid1215637
-Ref: gnutls_x509_crq_set_basic_constraints1216502
-Ref: gnutls_x509_crq_set_challenge_password1217246
-Ref: gnutls_x509_crq_set_dn1217697
-Ref: gnutls_x509_crq_set_dn_by_oid1218315
-Ref: gnutls_x509_crq_set_extension_by_oid1219445
-Ref: gnutls_x509_crq_set_key1220224
-Ref: gnutls_x509_crq_set_key_purpose_oid1220687
-Ref: gnutls_x509_crq_set_key_rsa_raw1221467
-Ref: gnutls_x509_crq_set_key_usage1222043
-Ref: gnutls_x509_crq_set_private_key_usage_period1222547
-Ref: gnutls_x509_crq_set_spki1223052
-Ref: gnutls_x509_crq_set_subject_alt_name1223923
-Ref: gnutls_x509_crq_set_subject_alt_othername1224749
-Ref: gnutls_x509_crq_set_tlsfeatures1225587
-Ref: gnutls_x509_crq_set_version1226137
-Ref: gnutls_x509_crq_sign1226622
-Ref: gnutls_x509_crq_sign21227393
-Ref: gnutls_x509_crq_verify1228725
-Ref: gnutls_x509_crt_check_email1229318
-Ref: gnutls_x509_crt_check_hostname1229846
-Ref: gnutls_x509_crt_check_hostname21230558
-Ref: gnutls_x509_crt_check_ip1232309
-Ref: gnutls_x509_crt_check_issuer1232923
-Ref: gnutls_x509_crt_check_key_purpose1233661
-Ref: gnutls_x509_crt_check_revocation1234355
-Ref: gnutls_x509_crt_cpy_crl_dist_points1235004
-Ref: gnutls_x509_crt_deinit1235593
-Ref: gnutls_x509_crt_equals1235811
-Ref: gnutls_x509_crt_equals21236193
-Ref: gnutls_x509_crt_export1236617
-Ref: gnutls_x509_crt_export21237528
-Ref: gnutls_x509_crt_get_activation_time1238226
-Ref: gnutls_x509_crt_get_authority_info_access1238604
-Ref: gnutls_x509_crt_get_authority_key_gn_serial1242078
-Ref: gnutls_x509_crt_get_authority_key_id1243519
-Ref: gnutls_x509_crt_get_basic_constraints1244650
-Ref: gnutls_x509_crt_get_ca_status1245864
-Ref: gnutls_x509_crt_get_crl_dist_points1246863
-Ref: gnutls_x509_crt_get_dn1248188
-Ref: gnutls_x509_crt_get_dn21249274
-Ref: gnutls_x509_crt_get_dn31250041
-Ref: gnutls_x509_crt_get_dn_by_oid1250959
-Ref: gnutls_x509_crt_get_dn_oid1252728
-Ref: gnutls_x509_crt_get_expiration_time1253756
-Ref: gnutls_x509_crt_get_extension_by_oid1254122
-Ref: gnutls_x509_crt_get_extension_by_oid21255249
-Ref: gnutls_x509_crt_get_extension_data1256322
-Ref: gnutls_x509_crt_get_extension_data21257411
-Ref: gnutls_x509_crt_get_extension_info1258276
-Ref: gnutls_x509_crt_get_extension_oid1259688
-Ref: gnutls_x509_crt_get_fingerprint1260651
-Ref: gnutls_x509_crt_get_inhibit_anypolicy1261539
-Ref: gnutls_x509_crt_get_issuer1262508
-Ref: gnutls_x509_crt_get_issuer_alt_name1263146
-Ref: gnutls_x509_crt_get_issuer_alt_name21264946
-Ref: gnutls_x509_crt_get_issuer_alt_othername_oid1266528
-Ref: gnutls_x509_crt_get_issuer_dn1268177
-Ref: gnutls_x509_crt_get_issuer_dn21269298
-Ref: gnutls_x509_crt_get_issuer_dn31270103
-Ref: gnutls_x509_crt_get_issuer_dn_by_oid1271052
-Ref: gnutls_x509_crt_get_issuer_dn_oid1272839
-Ref: gnutls_x509_crt_get_issuer_unique_id1273875
-Ref: gnutls_x509_crt_get_key_id1274970
-Ref: gnutls_x509_crt_get_key_purpose_oid1275993
-Ref: gnutls_x509_crt_get_key_usage1277154
-Ref: gnutls_x509_crt_get_name_constraints1278214
-Ref: gnutls_x509_crt_get_pk_algorithm1279622
-Ref: gnutls_x509_crt_get_pk_dsa_raw1280411
-Ref: gnutls_x509_crt_get_pk_ecc_raw1281079
-Ref: gnutls_x509_crt_get_pk_gost_raw1281892
-Ref: gnutls_x509_crt_get_pk_oid1282736
-Ref: gnutls_x509_crt_get_pk_rsa_raw1283362
-Ref: gnutls_x509_crt_get_policy1283940
-Ref: gnutls_x509_crt_get_private_key_usage_period1284886
-Ref: gnutls_x509_crt_get_proxy1285638
-Ref: gnutls_x509_crt_get_raw_dn1286659
-Ref: gnutls_x509_crt_get_raw_issuer_dn1287252
-Ref: gnutls_x509_crt_get_serial1287831
-Ref: gnutls_x509_crt_get_signature1288571
-Ref: gnutls_x509_crt_get_signature_algorithm1289126
-Ref: gnutls_x509_crt_get_signature_oid1289739
-Ref: gnutls_x509_crt_get_spki1290397
-Ref: gnutls_x509_crt_get_subject1290883
-Ref: gnutls_x509_crt_get_subject_alt_name1291526
-Ref: gnutls_x509_crt_get_subject_alt_name21293285
-Ref: gnutls_x509_crt_get_subject_alt_othername_oid1294850
-Ref: gnutls_x509_crt_get_subject_key_id1296490
-Ref: gnutls_x509_crt_get_subject_unique_id1297322
-Ref: gnutls_x509_crt_get_tlsfeatures1298407
-Ref: gnutls_x509_crt_get_version1299519
-Ref: gnutls_x509_crt_import1299846
-Ref: gnutls_x509_crt_import_url1300547
-Ref: gnutls_x509_crt_init1301268
-Ref: gnutls_x509_crt_list_import1301615
-Ref: gnutls_x509_crt_list_import21302982
-Ref: gnutls_x509_crt_list_import_url1304054
-Ref: gnutls_x509_crt_list_verify1305278
-Ref: gnutls_x509_crt_print1306858
-Ref: gnutls_x509_crt_set_activation_time1307750
-Ref: gnutls_x509_crt_set_authority_info_access1308217
-Ref: gnutls_x509_crt_set_authority_key_id1309112
-Ref: gnutls_x509_crt_set_basic_constraints1309694
-Ref: gnutls_x509_crt_set_ca_status1310393
-Ref: gnutls_x509_crt_set_crl_dist_points1310991
-Ref: gnutls_x509_crt_set_crl_dist_points21311643
-Ref: gnutls_x509_crt_set_crq1312342
-Ref: gnutls_x509_crt_set_crq_extension_by_oid1313059
-Ref: gnutls_x509_crt_set_crq_extensions1313695
-Ref: gnutls_x509_crt_set_dn1314161
-Ref: gnutls_x509_crt_set_dn_by_oid1315044
-Ref: gnutls_x509_crt_set_expiration_time1316161
-Ref: gnutls_x509_crt_set_extension_by_oid1316706
-Ref: gnutls_x509_crt_set_flags1317481
-Ref: gnutls_x509_crt_set_inhibit_anypolicy1317989
-Ref: gnutls_x509_crt_set_issuer_alt_name1318499
-Ref: gnutls_x509_crt_set_issuer_alt_othername1319521
-Ref: gnutls_x509_crt_set_issuer_dn1320497
-Ref: gnutls_x509_crt_set_issuer_dn_by_oid1321136
-Ref: gnutls_x509_crt_set_issuer_unique_id1322415
-Ref: gnutls_x509_crt_set_key1322920
-Ref: gnutls_x509_crt_set_key_purpose_oid1323500
-Ref: gnutls_x509_crt_set_key_usage1324268
-Ref: gnutls_x509_crt_set_name_constraints1324727
-Ref: gnutls_x509_crt_set_pin_function1325349
-Ref: gnutls_x509_crt_set_policy1326017
-Ref: gnutls_x509_crt_set_private_key_usage_period1326870
-Ref: gnutls_x509_crt_set_proxy1327377
-Ref: gnutls_x509_crt_set_proxy_dn1328191
-Ref: gnutls_x509_crt_set_serial1329210
-Ref: gnutls_x509_crt_set_spki1330276
-Ref: gnutls_x509_crt_set_subject_alternative_name1331147
-Ref: gnutls_x509_crt_set_subject_alt_name1332049
-Ref: gnutls_x509_crt_set_subject_alt_othername1333289
-Ref: gnutls_x509_crt_set_subject_key_id1334277
-Ref: gnutls_x509_crt_set_subject_unique_id1334797
-Ref: gnutls_x509_crt_set_tlsfeatures1335320
-Ref: gnutls_x509_crt_set_version1335844
-Ref: gnutls_x509_crt_sign1336667
-Ref: gnutls_x509_crt_sign21337362
-Ref: gnutls_x509_crt_verify1338595
-Ref: gnutls_x509_crt_verify_data21339644
-Ref: gnutls_x509_dn_deinit1340648
-Ref: gnutls_x509_dn_export1340910
-Ref: gnutls_x509_dn_export21341804
-Ref: gnutls_x509_dn_get_rdn_ava1342465
-Ref: gnutls_x509_dn_get_str1343497
-Ref: gnutls_x509_dn_get_str21344093
-Ref: gnutls_x509_dn_import1344955
-Ref: gnutls_x509_dn_init1345571
-Ref: gnutls_x509_dn_oid_known1345992
-Ref: gnutls_x509_dn_oid_name1346661
-Ref: gnutls_x509_dn_set_str1347190
-Ref: gnutls_x509_ext_deinit1347789
-Ref: gnutls_x509_ext_export_aia1348033
-Ref: gnutls_x509_ext_export_authority_key_id1348627
-Ref: gnutls_x509_ext_export_basic_constraints1349283
-Ref: gnutls_x509_ext_export_crl_dist_points1349980
-Ref: gnutls_x509_ext_export_inhibit_anypolicy1350648
-Ref: gnutls_x509_ext_export_key_purposes1351316
-Ref: gnutls_x509_ext_export_key_usage1351935
-Ref: gnutls_x509_ext_export_name_constraints1352551
-Ref: gnutls_x509_ext_export_policies1353192
-Ref: gnutls_x509_ext_export_private_key_usage_period1353855
-Ref: gnutls_x509_ext_export_proxy1354520
-Ref: gnutls_x509_ext_export_subject_alt_names1355506
-Ref: gnutls_x509_ext_export_subject_key_id1356155
-Ref: gnutls_x509_ext_export_tlsfeatures1356777
-Ref: gnutls_x509_ext_import_aia1357395
-Ref: gnutls_x509_ext_import_authority_key_id1358100
-Ref: gnutls_x509_ext_import_basic_constraints1358768
-Ref: gnutls_x509_ext_import_crl_dist_points1359394
-Ref: gnutls_x509_ext_import_inhibit_anypolicy1360022
-Ref: gnutls_x509_ext_import_key_purposes1360937
-Ref: gnutls_x509_ext_import_key_usage1361571
-Ref: gnutls_x509_ext_import_name_constraints1362587
-Ref: gnutls_x509_ext_import_policies1363925
-Ref: gnutls_x509_ext_import_private_key_usage_period1364532
-Ref: gnutls_x509_ext_import_proxy1365147
-Ref: gnutls_x509_ext_import_subject_alt_names1366233
-Ref: gnutls_x509_ext_import_subject_key_id1366991
-Ref: gnutls_x509_ext_import_tlsfeatures1367626
-Ref: gnutls_x509_ext_print1368518
-Ref: gnutls_x509_key_purpose_deinit1369229
-Ref: gnutls_x509_key_purpose_get1369483
-Ref: gnutls_x509_key_purpose_init1370211
-Ref: gnutls_x509_key_purpose_set1370572
-Ref: gnutls_x509_name_constraints_add_excluded1371027
-Ref: gnutls_x509_name_constraints_add_permitted1371968
-Ref: gnutls_x509_name_constraints_check1372843
-Ref: gnutls_x509_name_constraints_check_crt1373680
-Ref: gnutls_x509_name_constraints_deinit1374550
-Ref: gnutls_x509_name_constraints_get_excluded1374850
-Ref: gnutls_x509_name_constraints_get_permitted1375921
-Ref: gnutls_x509_name_constraints_init1376975
-Ref: gnutls_x509_othername_to_virtual1377358
-Ref: gnutls_x509_policies_deinit1377977
-Ref: gnutls_x509_policies_get1378257
-Ref: gnutls_x509_policies_init1379043
-Ref: gnutls_x509_policies_set1379408
-Ref: gnutls_x509_policy_release1379875
-Ref: gnutls_x509_privkey_cpy1380239
-Ref: gnutls_x509_privkey_deinit1380709
-Ref: gnutls_x509_privkey_export1380950
-Ref: gnutls_x509_privkey_export21381985
-Ref: gnutls_x509_privkey_export2_pkcs81382863
-Ref: gnutls_x509_privkey_export_dsa_raw1384139
-Ref: gnutls_x509_privkey_export_ecc_raw1384879
-Ref: gnutls_x509_privkey_export_gost_raw1385762
-Ref: gnutls_x509_privkey_export_pkcs81386847
-Ref: gnutls_x509_privkey_export_rsa_raw1388352
-Ref: gnutls_x509_privkey_export_rsa_raw21389213
-Ref: gnutls_x509_privkey_fix1390199
-Ref: gnutls_x509_privkey_generate1390584
-Ref: gnutls_x509_privkey_generate21392109
-Ref: gnutls_x509_privkey_get_key_id1394268
-Ref: gnutls_x509_privkey_get_pk_algorithm1395287
-Ref: gnutls_x509_privkey_get_pk_algorithm21395715
-Ref: gnutls_x509_privkey_get_seed1396206
-Ref: gnutls_x509_privkey_get_spki1397030
-Ref: gnutls_x509_privkey_import1397565
-Ref: gnutls_x509_privkey_import21398360
-Ref: gnutls_x509_privkey_import_dsa_raw1399433
-Ref: gnutls_x509_privkey_import_ecc_raw1400154
-Ref: gnutls_x509_privkey_import_gost_raw1400970
-Ref: gnutls_x509_privkey_import_openssl1402246
-Ref: gnutls_x509_privkey_import_pkcs81403120
-Ref: gnutls_x509_privkey_import_rsa_raw1404567
-Ref: gnutls_x509_privkey_import_rsa_raw21405421
-Ref: gnutls_x509_privkey_init1406417
-Ref: gnutls_x509_privkey_sec_param1406762
-Ref: gnutls_x509_privkey_set_flags1407181
-Ref: gnutls_x509_privkey_set_pin_function1407731
-Ref: gnutls_x509_privkey_set_spki1408349
-Ref: gnutls_x509_privkey_sign_data1408896
-Ref: gnutls_x509_privkey_verify_params1410117
-Ref: gnutls_x509_privkey_verify_seed1410453
-Ref: gnutls_x509_rdn_get1411282
-Ref: gnutls_x509_rdn_get21412100
-Ref: gnutls_x509_rdn_get_by_oid1413008
-Ref: gnutls_x509_rdn_get_oid1413990
-Ref: gnutls_x509_spki_deinit1414735
-Ref: gnutls_x509_spki_get_rsa_pss_params1415017
-Ref: gnutls_x509_spki_init1415578
-Ref: gnutls_x509_spki_set_rsa_pss_params1416094
-Ref: gnutls_x509_tlsfeatures_add1416607
-Ref: gnutls_x509_tlsfeatures_check_crt1417063
-Ref: gnutls_x509_tlsfeatures_deinit1417663
-Ref: gnutls_x509_tlsfeatures_get1417941
-Ref: gnutls_x509_tlsfeatures_init1418501
-Ref: gnutls_x509_trust_list_add_cas1418886
-Ref: gnutls_x509_trust_list_add_crls1420071
-Ref: gnutls_x509_trust_list_add_named_crt1421449
-Ref: gnutls_x509_trust_list_add_system_trust1422664
-Ref: gnutls_x509_trust_list_add_trust_dir1423426
-Ref: gnutls_x509_trust_list_add_trust_file1424289
-Ref: gnutls_x509_trust_list_add_trust_mem1425436
-Ref: gnutls_x509_trust_list_deinit1426355
-Ref: gnutls_x509_trust_list_get_issuer1426981
-Ref: gnutls_x509_trust_list_get_issuer_by_dn1428031
-Ref: gnutls_x509_trust_list_get_issuer_by_subject_key_id1428760
-Ref: gnutls_x509_trust_list_init1429562
-Ref: gnutls_x509_trust_list_iter_deinit1430067
-Ref: gnutls_x509_trust_list_iter_get_ca1430376
-Ref: gnutls_x509_trust_list_remove_cas1431556
-Ref: gnutls_x509_trust_list_remove_trust_file1432411
-Ref: gnutls_x509_trust_list_remove_trust_mem1433112
-Ref: gnutls_x509_trust_list_verify_crt1433746
-Ref: gnutls_x509_trust_list_verify_crt21434909
-Ref: gnutls_x509_trust_list_verify_named_crt1437843
-Node: PKCS 7 API1440571
-Ref: gnutls_pkcs7_add_attr1440867
-Ref: gnutls_pkcs7_attrs_deinit1441673
-Ref: gnutls_pkcs7_deinit1441908
-Ref: gnutls_pkcs7_delete_crl1442113
-Ref: gnutls_pkcs7_delete_crt1442542
-Ref: gnutls_pkcs7_export1442988
-Ref: gnutls_pkcs7_export21443888
-Ref: gnutls_pkcs7_get_attr1444549
-Ref: gnutls_pkcs7_get_crl_count1445436
-Ref: gnutls_pkcs7_get_crl_raw1445784
-Ref: gnutls_pkcs7_get_crl_raw21446559
-Ref: gnutls_pkcs7_get_crt_count1447190
-Ref: gnutls_pkcs7_get_crt_raw1447565
-Ref: gnutls_pkcs7_get_crt_raw21448465
-Ref: gnutls_pkcs7_get_embedded_data1449319
-Ref: gnutls_pkcs7_get_embedded_data_oid1450319
-Ref: gnutls_pkcs7_get_signature_count1450879
-Ref: gnutls_pkcs7_get_signature_info1451286
-Ref: gnutls_pkcs7_import1451959
-Ref: gnutls_pkcs7_init1452580
-Ref: gnutls_pkcs7_print1453004
-Ref: gnutls_pkcs7_set_crl1453723
-Ref: gnutls_pkcs7_set_crl_raw1454124
-Ref: gnutls_pkcs7_set_crt1454514
-Ref: gnutls_pkcs7_set_crt_raw1454998
-Ref: gnutls_pkcs7_sign1455411
-Ref: gnutls_pkcs7_signature_info_deinit1456850
-Ref: gnutls_pkcs7_verify1457203
-Ref: gnutls_pkcs7_verify_direct1458368
-Node: OCSP API1459828
-Ref: gnutls_ocsp_req_add_cert1460112
-Ref: gnutls_ocsp_req_add_cert_id1461072
-Ref: gnutls_ocsp_req_deinit1462392
-Ref: gnutls_ocsp_req_export1462609
-Ref: gnutls_ocsp_req_get_cert_id1463028
-Ref: gnutls_ocsp_req_get_extension1464614
-Ref: gnutls_ocsp_req_get_nonce1465940
-Ref: gnutls_ocsp_req_get_version1466588
-Ref: gnutls_ocsp_req_import1466959
-Ref: gnutls_ocsp_req_init1467455
-Ref: gnutls_ocsp_req_print1467783
-Ref: gnutls_ocsp_req_randomize_nonce1468513
-Ref: gnutls_ocsp_req_set_extension1468946
-Ref: gnutls_ocsp_req_set_nonce1469630
-Ref: gnutls_ocsp_resp_check_crt1470217
-Ref: gnutls_ocsp_resp_deinit1470795
-Ref: gnutls_ocsp_resp_export1471019
-Ref: gnutls_ocsp_resp_export21471439
-Ref: gnutls_ocsp_resp_get_certs1471953
-Ref: gnutls_ocsp_resp_get_extension1473072
-Ref: gnutls_ocsp_resp_get_nonce1474406
-Ref: gnutls_ocsp_resp_get_produced1475066
-Ref: gnutls_ocsp_resp_get_responder1475407
-Ref: gnutls_ocsp_resp_get_responder21476506
-Ref: gnutls_ocsp_resp_get_responder_raw_id1477753
-Ref: gnutls_ocsp_resp_get_response1478568
-Ref: gnutls_ocsp_resp_get_signature1479690
-Ref: gnutls_ocsp_resp_get_signature_algorithm1480173
-Ref: gnutls_ocsp_resp_get_single1480645
-Ref: gnutls_ocsp_resp_get_status1482581
-Ref: gnutls_ocsp_resp_get_version1482994
-Ref: gnutls_ocsp_resp_import1483386
-Ref: gnutls_ocsp_resp_import21483954
-Ref: gnutls_ocsp_resp_init1484582
-Ref: gnutls_ocsp_resp_list_import21484931
-Ref: gnutls_ocsp_resp_print1486122
-Ref: gnutls_ocsp_resp_verify1486842
-Ref: gnutls_ocsp_resp_verify_direct1488453
-Node: PKCS 12 API1489589
-Ref: gnutls_pkcs12_bag_decrypt1489879
-Ref: gnutls_pkcs12_bag_deinit1490311
-Ref: gnutls_pkcs12_bag_enc_info1490549
-Ref: gnutls_pkcs12_bag_encrypt1491922
-Ref: gnutls_pkcs12_bag_get_count1492427
-Ref: gnutls_pkcs12_bag_get_data1492738
-Ref: gnutls_pkcs12_bag_get_friendly_name1493344
-Ref: gnutls_pkcs12_bag_get_key_id1493981
-Ref: gnutls_pkcs12_bag_get_type1494600
-Ref: gnutls_pkcs12_bag_init1494970
-Ref: gnutls_pkcs12_bag_set_crl1495428
-Ref: gnutls_pkcs12_bag_set_crt1495861
-Ref: gnutls_pkcs12_bag_set_data1496307
-Ref: gnutls_pkcs12_bag_set_friendly_name1496778
-Ref: gnutls_pkcs12_bag_set_key_id1497462
-Ref: gnutls_pkcs12_bag_set_privkey1498136
-Ref: gnutls_pkcs12_deinit1498792
-Ref: gnutls_pkcs12_export1498994
-Ref: gnutls_pkcs12_export21499901
-Ref: gnutls_pkcs12_generate_mac1500577
-Ref: gnutls_pkcs12_generate_mac21500968
-Ref: gnutls_pkcs12_get_bag1501412
-Ref: gnutls_pkcs12_import1501998
-Ref: gnutls_pkcs12_init1502719
-Ref: gnutls_pkcs12_mac_info1503152
-Ref: gnutls_pkcs12_set_bag1504461
-Ref: gnutls_pkcs12_simple_parse1504867
-Ref: gnutls_pkcs12_verify_mac1507548
-Node: PKCS 11 API1509195
-Ref: gnutls_pkcs11_add_provider1509524
-Ref: gnutls_pkcs11_copy_attached_extension1510269
-Ref: gnutls_pkcs11_copy_pubkey1511128
-Ref: gnutls_pkcs11_copy_secret_key1512161
-Ref: gnutls_pkcs11_copy_x509_crt1512886
-Ref: gnutls_pkcs11_copy_x509_crt21513534
-Ref: gnutls_pkcs11_copy_x509_privkey1514502
-Ref: gnutls_pkcs11_copy_x509_privkey21515319
-Ref: gnutls_pkcs11_crt_is_known1516264
-Ref: gnutls_pkcs11_deinit1517400
-Ref: gnutls_pkcs11_delete_url1517717
-Ref: gnutls_pkcs11_get_pin_function1518233
-Ref: gnutls_pkcs11_get_raw_issuer1518616
-Ref: gnutls_pkcs11_get_raw_issuer_by_dn1519526
-Ref: gnutls_pkcs11_get_raw_issuer_by_subject_key_id1520565
-Ref: gnutls_pkcs11_init1521676
-Ref: gnutls_pkcs11_obj_deinit1522718
-Ref: gnutls_pkcs11_obj_export1522964
-Ref: gnutls_pkcs11_obj_export21523809
-Ref: gnutls_pkcs11_obj_export31524406
-Ref: gnutls_pkcs11_obj_export_url1525079
-Ref: gnutls_pkcs11_obj_flags_get_str1525606
-Ref: gnutls_pkcs11_obj_get_exts1526085
-Ref: gnutls_pkcs11_obj_get_flags1527021
-Ref: gnutls_pkcs11_obj_get_info1527558
-Ref: gnutls_pkcs11_obj_get_ptr1528822
-Ref: gnutls_pkcs11_obj_get_type1529731
-Ref: gnutls_pkcs11_obj_import_url1530081
-Ref: gnutls_pkcs11_obj_init1531001
-Ref: gnutls_pkcs11_obj_list_import_url31531386
-Ref: gnutls_pkcs11_obj_list_import_url41533327
-Ref: gnutls_pkcs11_obj_set_info1535003
-Ref: gnutls_pkcs11_obj_set_pin_function1535782
-Ref: gnutls_pkcs11_privkey_cpy1536293
-Ref: gnutls_pkcs11_privkey_deinit1536794
-Ref: gnutls_pkcs11_privkey_export_pubkey1537057
-Ref: gnutls_pkcs11_privkey_export_url1537861
-Ref: gnutls_pkcs11_privkey_generate1538371
-Ref: gnutls_pkcs11_privkey_generate21539043
-Ref: gnutls_pkcs11_privkey_generate31540273
-Ref: gnutls_pkcs11_privkey_get_info1541783
-Ref: gnutls_pkcs11_privkey_get_pk_algorithm1542665
-Ref: gnutls_pkcs11_privkey_import_url1543196
-Ref: gnutls_pkcs11_privkey_init1543897
-Ref: gnutls_pkcs11_privkey_set_pin_function1544612
-Ref: gnutls_pkcs11_privkey_status1545132
-Ref: gnutls_pkcs11_reinit1545508
-Ref: gnutls_pkcs11_set_pin_function1546068
-Ref: gnutls_pkcs11_set_token_function1546558
-Ref: gnutls_pkcs11_token_check_mechanism1546976
-Ref: gnutls_pkcs11_token_get_flags1547733
-Ref: gnutls_pkcs11_token_get_info1548275
-Ref: gnutls_pkcs11_token_get_mechanism1549298
-Ref: gnutls_pkcs11_token_get_ptr1549911
-Ref: gnutls_pkcs11_token_get_random1550610
-Ref: gnutls_pkcs11_token_get_url1551241
-Ref: gnutls_pkcs11_token_init1551909
-Ref: gnutls_pkcs11_token_set_pin1552547
-Ref: gnutls_pkcs11_type_get_name1553387
-Ref: gnutls_x509_crt_import_pkcs111553876
-Ref: gnutls_x509_crt_list_import_pkcs111554398
-Node: TPM API1555007
-Ref: gnutls_tpm_get_registered1555286
-Ref: gnutls_tpm_key_list_deinit1555679
-Ref: gnutls_tpm_key_list_get_url1555947
-Ref: gnutls_tpm_privkey_delete1556600
-Ref: gnutls_tpm_privkey_generate1557038
-Node: Abstract key API1558388
-Ref: gnutls_certificate_set_key1558709
-Ref: gnutls_certificate_set_retrieve_function21560845
-Ref: gnutls_certificate_set_retrieve_function31563095
-Ref: gnutls_pcert_deinit1565570
-Ref: gnutls_pcert_export_openpgp1565815
-Ref: gnutls_pcert_export_x5091566164
-Ref: gnutls_pcert_import_openpgp1566814
-Ref: gnutls_pcert_import_openpgp_raw1567213
-Ref: gnutls_pcert_import_rawpk1567782
-Ref: gnutls_pcert_import_rawpk_raw1568635
-Ref: gnutls_pcert_import_x5091569884
-Ref: gnutls_pcert_import_x509_list1570481
-Ref: gnutls_pcert_import_x509_raw1571671
-Ref: gnutls_pcert_list_import_x509_file1572377
-Ref: gnutls_pcert_list_import_x509_raw1573809
-Ref: gnutls_privkey_decrypt_data1575143
-Ref: gnutls_privkey_decrypt_data21575791
-Ref: gnutls_privkey_deinit1576616
-Ref: gnutls_privkey_export_dsa_raw1576865
-Ref: gnutls_privkey_export_dsa_raw21577595
-Ref: gnutls_privkey_export_ecc_raw1578401
-Ref: gnutls_privkey_export_ecc_raw21579263
-Ref: gnutls_privkey_export_gost_raw21580205
-Ref: gnutls_privkey_export_openpgp1581339
-Ref: gnutls_privkey_export_pkcs111581691
-Ref: gnutls_privkey_export_rsa_raw1582303
-Ref: gnutls_privkey_export_rsa_raw21583334
-Ref: gnutls_privkey_export_x5091584380
-Ref: gnutls_privkey_generate1585028
-Ref: gnutls_privkey_generate21586519
-Ref: gnutls_privkey_get_pk_algorithm1588647
-Ref: gnutls_privkey_get_seed1589261
-Ref: gnutls_privkey_get_spki1590060
-Ref: gnutls_privkey_get_type1590640
-Ref: gnutls_privkey_import_dsa_raw1591129
-Ref: gnutls_privkey_import_ecc_raw1591830
-Ref: gnutls_privkey_import_ext1592643
-Ref: gnutls_privkey_import_ext21593793
-Ref: gnutls_privkey_import_ext31595150
-Ref: gnutls_privkey_import_ext41596764
-Ref: gnutls_privkey_import_gost_raw1599524
-Ref: gnutls_privkey_import_openpgp1600732
-Ref: gnutls_privkey_import_openpgp_raw1601141
-Ref: gnutls_privkey_import_pkcs111601730
-Ref: gnutls_privkey_import_pkcs11_url1602488
-Ref: gnutls_privkey_import_rsa_raw1602937
-Ref: gnutls_privkey_import_tpm_raw1603922
-Ref: gnutls_privkey_import_tpm_url1604789
-Ref: gnutls_privkey_import_url1605892
-Ref: gnutls_privkey_import_x5091606439
-Ref: gnutls_privkey_import_x509_raw1607187
-Ref: gnutls_privkey_init1607966
-Ref: gnutls_privkey_set_flags1608884
-Ref: gnutls_privkey_set_pin_function1609409
-Ref: gnutls_privkey_set_spki1609979
-Ref: gnutls_privkey_sign_data1610552
-Ref: gnutls_privkey_sign_data21611572
-Ref: gnutls_privkey_sign_hash1612470
-Ref: gnutls_privkey_sign_hash21613907
-Ref: gnutls_privkey_status1615421
-Ref: gnutls_privkey_verify_params1615965
-Ref: gnutls_privkey_verify_seed1616327
-Ref: gnutls_pubkey_deinit1617039
-Ref: gnutls_pubkey_encrypt_data1617279
-Ref: gnutls_pubkey_export1617921
-Ref: gnutls_pubkey_export21618935
-Ref: gnutls_pubkey_export_dsa_raw1619708
-Ref: gnutls_pubkey_export_dsa_raw21620520
-Ref: gnutls_pubkey_export_ecc_raw1621404
-Ref: gnutls_pubkey_export_ecc_raw21622303
-Ref: gnutls_pubkey_export_ecc_x9621623282
-Ref: gnutls_pubkey_export_gost_raw21623941
-Ref: gnutls_pubkey_export_rsa_raw1625085
-Ref: gnutls_pubkey_export_rsa_raw21625782
-Ref: gnutls_pubkey_get_key_id1626543
-Ref: gnutls_pubkey_get_key_usage1627568
-Ref: gnutls_pubkey_get_openpgp_key_id1628065
-Ref: gnutls_pubkey_get_pk_algorithm1628704
-Ref: gnutls_pubkey_get_preferred_hash_algorithm1629352
-Ref: gnutls_pubkey_get_spki1630293
-Ref: gnutls_pubkey_import1630861
-Ref: gnutls_pubkey_import_dsa_raw1631545
-Ref: gnutls_pubkey_import_ecc_raw1632206
-Ref: gnutls_pubkey_import_ecc_x9621632974
-Ref: gnutls_pubkey_import_gost_raw1633610
-Ref: gnutls_pubkey_import_openpgp1634757
-Ref: gnutls_pubkey_import_openpgp_raw1635149
-Ref: gnutls_pubkey_import_pkcs111635718
-Ref: gnutls_pubkey_import_privkey1636260
-Ref: gnutls_pubkey_import_rsa_raw1636962
-Ref: gnutls_pubkey_import_tpm_raw1637486
-Ref: gnutls_pubkey_import_tpm_url1638263
-Ref: gnutls_pubkey_import_url1639155
-Ref: gnutls_pubkey_import_x5091639628
-Ref: gnutls_pubkey_import_x509_crq1640128
-Ref: gnutls_pubkey_import_x509_raw1640631
-Ref: gnutls_pubkey_init1641208
-Ref: gnutls_pubkey_print1641537
-Ref: gnutls_pubkey_set_key_usage1642271
-Ref: gnutls_pubkey_set_pin_function1642840
-Ref: gnutls_pubkey_set_spki1643405
-Ref: gnutls_pubkey_verify_data21643976
-Ref: gnutls_pubkey_verify_hash21644884
-Ref: gnutls_pubkey_verify_params1646008
-Ref: gnutls_register_custom_url1646366
-Ref: gnutls_system_key_add_x5091647304
-Ref: gnutls_system_key_delete1648049
-Ref: gnutls_system_key_iter_deinit1648473
-Ref: gnutls_system_key_iter_get_info1648741
-Ref: gnutls_x509_crl_privkey_sign1650015
-Ref: gnutls_x509_crq_privkey_sign1651284
-Ref: gnutls_x509_crq_set_pubkey1652646
-Ref: gnutls_x509_crt_privkey_sign1653154
-Ref: gnutls_x509_crt_set_pubkey1654397
-Node: Socket specific API1654850
-Ref: gnutls_transport_set_fastopen1655143
-Node: DANE API1656689
-Ref: dane_cert_type_name1657063
-Ref: dane_cert_usage_name1657353
-Ref: dane_match_type_name1657665
-Ref: dane_query_data1657948
-Ref: dane_query_deinit1658627
-Ref: dane_query_entries1658832
-Ref: dane_query_status1659074
-Ref: dane_query_tlsa1659368
-Ref: dane_query_to_raw_tlsa1659959
-Ref: dane_raw_tlsa1661301
-Ref: dane_state_deinit1662378
-Ref: dane_state_init1662570
-Ref: dane_state_set_dlv_file1663084
-Ref: dane_strerror1663385
-Ref: dane_verification_status_print1663884
-Ref: dane_verify_crt1664478
-Ref: dane_verify_crt_raw1666665
-Ref: dane_verify_session_crt1667898
-Node: Cryptographic API1669300
-Ref: gnutls_aead_cipher_decrypt1669801
-Ref: gnutls_aead_cipher_decryptv21671180
-Ref: gnutls_aead_cipher_deinit1672105
-Ref: gnutls_aead_cipher_encrypt1672433
-Ref: gnutls_aead_cipher_encryptv1673542
-Ref: gnutls_aead_cipher_encryptv21674690
-Ref: gnutls_aead_cipher_init1675618
-Ref: gnutls_cipher_add_auth1676284
-Ref: gnutls_cipher_decrypt1676864
-Ref: gnutls_cipher_decrypt21677488
-Ref: gnutls_cipher_deinit1678414
-Ref: gnutls_cipher_encrypt1678693
-Ref: gnutls_cipher_encrypt21679153
-Ref: gnutls_cipher_get_block_size1679930
-Ref: gnutls_cipher_get_iv_size1680210
-Ref: gnutls_cipher_get_tag_size1680692
-Ref: gnutls_cipher_init1681098
-Ref: gnutls_cipher_set_iv1681828
-Ref: gnutls_cipher_tag1682173
-Ref: gnutls_crypto_register_aead_cipher1682675
-Ref: gnutls_crypto_register_cipher1684183
-Ref: gnutls_crypto_register_digest1685868
-Ref: gnutls_crypto_register_mac1686996
-Ref: gnutls_decode_ber_digest_info1688328
-Ref: gnutls_decode_gost_rs_value1689127
-Ref: gnutls_decode_rs_value1689927
-Ref: gnutls_encode_ber_digest_info1690712
-Ref: gnutls_encode_gost_rs_value1691356
-Ref: gnutls_encode_rs_value1692102
-Ref: gnutls_hash1692722
-Ref: gnutls_hash_copy1693153
-Ref: gnutls_hash_deinit1693670
-Ref: gnutls_hash_fast1693998
-Ref: gnutls_hash_get_len1694515
-Ref: gnutls_hash_init1694848
-Ref: gnutls_hash_output1695384
-Ref: gnutls_hmac1695702
-Ref: gnutls_hmac_copy1696133
-Ref: gnutls_hmac_deinit1696614
-Ref: gnutls_hmac_fast1696941
-Ref: gnutls_hmac_get_len1697655
-Ref: gnutls_hmac_init1697985
-Ref: gnutls_hmac_output1698768
-Ref: gnutls_hmac_set_nonce1699103
-Ref: gnutls_mac_get_nonce_size1699470
-Ref: gnutls_rnd1699780
-Ref: gnutls_rnd_refresh1700418
-Node: Compatibility API1700704
-Ref: gnutls_compression_get1701046
-Ref: gnutls_compression_get_id1701398
-Ref: gnutls_compression_get_name1701762
-Ref: gnutls_compression_list1702144
-Ref: gnutls_global_set_mem_functions1702476
-Ref: gnutls_openpgp_privkey_sign_hash1703851
-Ref: gnutls_priority_compression_list1704280
-Ref: gnutls_x509_crt_get_preferred_hash_algorithm1704734
-Ref: gnutls_x509_privkey_sign_hash1705615
-Node: Copying Information1706485
-Node: Bibliography1731662
-Ref: CBCATT1731801
-Ref: GPGH1731979
-Ref: GUTPKI1732102
-Ref: PRNGATTACKS1732277
-Ref: KEYPIN1732477
-Ref: NISTSP800571732652
-Ref: RFC74131732900
-Ref: RFC79181733067
-Ref: RFC61251733244
-Ref: RFC76851733585
-Ref: RFC76131733760
-Ref: RFC22461734008
-Ref: RFC60831734169
-Ref: RFC44181734406
-Ref: RFC46801734573
-Ref: RFC76331734731
-Ref: RFC79191734903
-Ref: RFC45141735107
-Ref: RFC43461735311
-Ref: RFC43471735461
-Ref: RFC52461735628
-Ref: RFC24401735779
-Ref: RFC48801735961
-Ref: RFC42111736155
-Ref: RFC28171736349
-Ref: RFC28181736502
-Ref: RFC29451736616
-Ref: RFC73011736766
-Ref: RFC29861736986
-Ref: PKIX1737175
-Ref: RFC37491737438
-Ref: RFC38201737604
-Ref: RFC65201737847
-Ref: RFC57461738086
-Ref: RFC52801738295
-Ref: TLSTKT1738562
-Ref: PKCS121738794
-Ref: PKCS111738935
-Ref: RESCORLA1739081
-Ref: SELKEY1739177
-Ref: SSL31739336
-Ref: STEVENS1739527
-Ref: TLSEXT1739635
-Ref: TLSPGP1739852
-Ref: TLSSRP1740017
-Ref: TLSPSK1740214
-Ref: TOMSRP1740383
-Ref: WEGER1740496
-Ref: ECRYPT1740688
-Ref: RFC50561740893
-Ref: RFC57641741046
-Ref: RFC59291741334
-Ref: PKCS11URI1741477
-Ref: TPMURI1741613
-Ref: ANDERSON1741807
-Ref: RFC48211741953
-Ref: RFC25601742106
-Ref: RIVESTCRL1742300
-Node: Function and Data Index1742661
-Node: Concept Index1866353
+Node: Top1293
+Node: Preface2522
+Node: Introduction to GnuTLS3883
+Node: Downloading and installing5582
+Ref: Downloading and installing-Footnote-18105
+Node: Installing for a software distribution8181
+Ref: Installing for a software distribution-Footnote-19803
+Node: Document overview9867
+Node: Introduction to TLS10880
+Ref: Introduction to TLS-Footnote-112039
+Node: TLS layers12329
+Ref: fig-tls-layers13267
+Ref: TLS layers-Footnote-113378
+Node: The transport layer13521
+Node: The TLS record protocol14125
+Node: Encryption algorithms used in the record layer15337
+Ref: tab:ciphers16374
+Ref: tab:macs21532
+Node: Compression algorithms and the record layer22647
+Node: On Record Padding23273
+Node: The TLS Alert Protocol25877
+Ref: The Alert Protocol26077
+Ref: tab:alerts27007
+Node: The TLS Handshake Protocol30409
+Ref: The Handshake Protocol30608
+Node: TLS Cipher Suites31274
+Ref: TLS Cipher Suites-Footnote-132508
+Node: Authentication32622
+Node: Client Authentication33450
+Node: Resuming Sessions33927
+Ref: resume34086
+Node: TLS Extensions34732
+Node: Maximum fragment length negotiation35367
+Node: Server name indication35971
+Ref: serverind36171
+Node: Session tickets37017
+Node: HeartBeat38176
+Node: Safe renegotiation39507
+Node: OCSP status request44421
+Node: SRTP45376
+Ref: gnutls_srtp_profile_t45880
+Node: False Start48211
+Node: Application Layer Protocol Negotiation (ALPN)50085
+Node: Extensions and Supplemental Data51197
+Node: How to use TLS in application protocols51838
+Node: Separate ports52352
+Ref: Separate ports-Footnote-153812
+Node: Upward negotiation53888
+Ref: Upward negotiation-Footnote-156655
+Node: On SSL 2 and older protocols56683
+Node: Authentication methods58561
+Node: Certificate authentication59456
+Ref: tab:key-exchange60010
+Node: X.509 certificates62233
+Ref: fig-x50962712
+Node: X.509 certificate structure63340
+Ref: tab:x50963744
+Node: Importing an X.509 certificate65591
+Node: X.509 certificate names66971
+Node: X.509 distinguished names68733
+Node: X.509 extensions72484
+Ref: tab:x509-ext76190
+Node: X.509 public and private keys81012
+Node: Verifying X.509 certificate paths83481
+Ref: gnutls_certificate_status_t95845
+Node: Verifying a certificate in the context of TLS session98312
+Ref: gnutls_certificate_verify_flags100848
+Node: Verification using PKCS11103332
+Ref: tab:purposes104658
+Ref: Verification using PKCS11-Footnote-1107280
+Node: OpenPGP certificates107349
+Node: Raw public-keys108155
+Node: Importing raw public-keys109802
+Node: Advanced certificate verification110158
+Node: Verifying a certificate using trust on first use authentication111040
+Node: Verifying a certificate using DANE112257
+Node: Digital signatures113765
+Node: More on certificate authentication119063
+Node: PKCS 10 certificate requests119901
+Ref: ex-crq123504
+Node: PKIX certificate revocation lists126009
+Ref: tab:crl126884
+Node: OCSP certificate status checking133230
+Ref: tab:ocsp-response140001
+Ref: gnutls_x509_crl_reason_t143561
+Node: OCSP stapling144903
+Node: Managing encrypted keys149244
+Ref: gnutls_pkcs_encrypt_flags_t153346
+Node: certtool Invocation160731
+Ref: certtool usage161506
+Ref: certtool170373
+Ref: certtool debug170439
+Ref: certtool cert-options170543
+Ref: certtool pubkey-info170659
+Ref: certtool fingerprint170903
+Ref: certtool key-id171222
+Ref: certtool certificate-pubkey171531
+Ref: certtool sign-params171721
+Ref: certtool crq-options172108
+Ref: certtool generate-request172250
+Ref: certtool pkcs12-options172533
+Ref: certtool p12-info172648
+Ref: certtool p12-name172843
+Ref: certtool to-p12173054
+Ref: certtool key-options173194
+Ref: certtool p8-info173300
+Ref: certtool to-rsa173530
+Ref: certtool generate-privkey173817
+Ref: certtool key-type174057
+Ref: certtool curve174482
+Ref: certtool sec-param174705
+Ref: certtool to-p8174919
+Ref: certtool provable175067
+Ref: certtool verify-provable-privkey175779
+Ref: certtool seed176042
+Ref: certtool crl-options176344
+Ref: certtool generate-crl176452
+Ref: certtool verify-crl176801
+Ref: certtool cert-verify-options177084
+Ref: certtool verify-chain177239
+Ref: certtool verify177644
+Ref: certtool verify-hostname178136
+Ref: certtool verify-email178373
+Ref: certtool verify-purpose178750
+Ref: certtool verify-allow-broken179196
+Ref: certtool verify-profile179385
+Ref: certtool pkcs7-options179852
+Ref: certtool p7-generate179967
+Ref: certtool p7-sign180193
+Ref: certtool p7-detached-sign180713
+Ref: certtool p7-include-cert181197
+Ref: certtool p7-time181576
+Ref: certtool p7-show-data181842
+Ref: certtool p7-verify182170
+Ref: certtool other-options182644
+Ref: certtool generate-dh-params182762
+Ref: certtool get-dh-params183120
+Ref: certtool load-privkey183546
+Ref: certtool load-pubkey183718
+Ref: certtool load-request183891
+Ref: certtool load-certificate184073
+Ref: certtool load-ca-privkey184245
+Ref: certtool load-ca-certificate184458
+Ref: certtool load-crl184649
+Ref: certtool load-data184807
+Ref: certtool password184961
+Ref: certtool null-password185339
+Ref: certtool empty-password185546
+Ref: certtool cprint185740
+Ref: certtool rsa185968
+Ref: certtool dsa186138
+Ref: certtool ecc186307
+Ref: certtool ecdsa186522
+Ref: certtool hash186639
+Ref: certtool salt-size186879
+Ref: certtool inder187064
+Ref: certtool inraw187488
+Ref: certtool outder187615
+Ref: certtool outraw187867
+Ref: certtool ask-pass188001
+Ref: certtool pkcs-cipher188263
+Ref: certtool provider188498
+Ref: certtool text188691
+Ref: certtool exit status188955
+Ref: certtool See Also189187
+Ref: certtool Examples189262
+Ref: certtool Files193734
+Node: ocsptool Invocation204855
+Ref: ocsptool usage205613
+Ref: ocsptool debug209359
+Ref: ocsptool ask209500
+Ref: ocsptool verify-response210035
+Ref: ocsptool request-info210331
+Ref: ocsptool response-info210501
+Ref: ocsptool load-trust210675
+Ref: ocsptool outder211089
+Ref: ocsptool outpem211307
+Ref: ocsptool verify-allow-broken211433
+Ref: ocsptool exit status211610
+Ref: ocsptool See Also211842
+Ref: ocsptool Examples211892
+Node: danetool Invocation216695
+Ref: danetool usage217149
+Ref: danetool debug220979
+Ref: danetool load-pubkey221120
+Ref: danetool load-certificate221289
+Ref: danetool dlv221469
+Ref: danetool hash221627
+Ref: danetool check221815
+Ref: danetool check-ee222211
+Ref: danetool check-ca222392
+Ref: danetool tlsa-rr222568
+Ref: danetool host222865
+Ref: danetool proto223057
+Ref: danetool app-proto223278
+Ref: danetool starttls-proto223438
+Ref: danetool ca223907
+Ref: danetool x509224078
+Ref: danetool local224337
+Ref: danetool domain224465
+Ref: danetool local-dns224909
+Ref: danetool insecure225224
+Ref: danetool inder225367
+Ref: danetool inraw225772
+Ref: danetool print-raw225897
+Ref: danetool quiet226131
+Ref: danetool exit status226305
+Ref: danetool See Also226537
+Ref: danetool Examples226587
+Node: Shared-key and anonymous authentication227912
+Node: PSK authentication228481
+Node: Authentication using PSK228744
+Node: psktool Invocation230192
+Ref: psktool usage230678
+Ref: psktool debug232280
+Ref: psktool pskfile232421
+Ref: psktool passwd232632
+Ref: psktool exit status232764
+Ref: psktool See Also232992
+Ref: psktool Examples233092
+Node: SRP authentication233502
+Node: Authentication using SRP233798
+Node: srptool Invocation236985
+Ref: srptool usage237796
+Ref: srptool debug239871
+Ref: srptool verify240012
+Ref: srptool passwd-conf240150
+Ref: srptool create-conf240351
+Ref: srptool exit status240597
+Ref: srptool See Also240827
+Ref: srptool Examples240940
+Node: Anonymous authentication241584
+Node: Selecting an appropriate authentication method243028
+Node: Hardware security modules and abstract key types247870
+Node: Abstract key types249796
+Node: Abstract public keys251201
+Node: Abstract private keys255754
+Node: Operations261310
+Node: Application-specific keys268584
+Node: Smart cards and HSMs274128
+Ref: fig-pkcs11-vision275611
+Ref: Smart cards and HSMs-Footnote-1275994
+Node: PKCS11 Initialization276039
+Ref: PKCS11 Initialization-Footnote-1278029
+Ref: PKCS11 Initialization-Footnote-2278088
+Node: PKCS11 Manual Initialization278228
+Node: Accessing objects that require a PIN280782
+Ref: gnutls_pin_flag_t282468
+Node: Reading objects283987
+Node: Writing objects289629
+Node: PKCS11 Low Level Access292461
+Node: Using a PKCS11 token with TLS294454
+Node: Verifying certificates over PKCS11295273
+Ref: Verifying certificates over PKCS11-Footnote-1296504
+Ref: Verifying certificates over PKCS11-Footnote-2296568
+Node: p11tool Invocation296711
+Ref: p11tool usage297632
+Ref: p11tool token-related-options306481
+Ref: p11tool list-token-urls306600
+Ref: p11tool initialize-so-pin306756
+Ref: p11tool set-pin307016
+Ref: p11tool set-so-pin307223
+Ref: p11tool object-list-related-options307414
+Ref: p11tool list-all307541
+Ref: p11tool list-all-certs307776
+Ref: p11tool list-certs308033
+Ref: p11tool list-all-privkeys308278
+Ref: p11tool list-privkeys308458
+Ref: p11tool list-keys308626
+Ref: p11tool export-stapled308804
+Ref: p11tool export-chain309292
+Ref: p11tool export-pubkey309715
+Ref: p11tool trusted310025
+Ref: p11tool distrusted310180
+Ref: p11tool keygen-related-options310305
+Ref: p11tool generate-privkey310436
+Ref: p11tool generate-rsa310744
+Ref: p11tool generate-dsa310999
+Ref: p11tool generate-ecc311252
+Ref: p11tool bits311501
+Ref: p11tool curve311832
+Ref: p11tool sec-param312055
+Ref: p11tool write-object-related-options312262
+Ref: p11tool set-id312388
+Ref: p11tool set-label312813
+Ref: p11tool write313161
+Ref: p11tool id313425
+Ref: p11tool mark-wrap313682
+Ref: p11tool mark-trusted313929
+Ref: p11tool mark-distrusted314293
+Ref: p11tool mark-decrypt314747
+Ref: p11tool mark-sign315024
+Ref: p11tool mark-ca315301
+Ref: p11tool mark-private315574
+Ref: p11tool ca315872
+Ref: p11tool private316006
+Ref: p11tool secret-key316161
+Ref: p11tool other-options316324
+Ref: p11tool debug316426
+Ref: p11tool so-login316567
+Ref: p11tool admin-login316811
+Ref: p11tool test-sign316952
+Ref: p11tool sign-params317246
+Ref: p11tool hash317586
+Ref: p11tool generate-random317882
+Ref: p11tool inder318056
+Ref: p11tool inraw318281
+Ref: p11tool outder318407
+Ref: p11tool outraw318659
+Ref: p11tool provider318792
+Ref: p11tool provider-opts319001
+Ref: p11tool batch319274
+Ref: p11tool exit status319427
+Ref: p11tool See Also319657
+Ref: p11tool Examples319705
+Node: Trusted Platform Module322128
+Ref: Trusted Platform Module-Footnote-1323921
+Ref: Trusted Platform Module-Footnote-2323969
+Node: Keys in TPM324026
+Node: Key generation325510
+Node: Using keys327778
+Node: tpmtool Invocation331423
+Ref: tpmtool usage331849
+Ref: tpmtool debug335161
+Ref: tpmtool generate-rsa335302
+Ref: tpmtool user335573
+Ref: tpmtool system335932
+Ref: tpmtool test-sign336286
+Ref: tpmtool sec-param336569
+Ref: tpmtool inder336895
+Ref: tpmtool outder337196
+Ref: tpmtool srk-well-known337415
+Ref: tpmtool exit status337571
+Ref: tpmtool See Also337801
+Ref: tpmtool Examples337862
+Node: How to use GnuTLS in applications338479
+Node: Introduction to the library339048
+Node: General idea339647
+Ref: fig-gnutls-design340496
+Ref: General idea-Footnote-1341801
+Node: Error handling341846
+Node: Common types344073
+Node: Debugging and auditing345407
+Ref: tab:environment346278
+Node: Thread safety349145
+Ref: Thread safety-Footnote-1351291
+Node: Running in a sandbox351503
+Node: Sessions and fork352897
+Node: Callback functions353449
+Node: Preparation354417
+Node: Headers354836
+Node: Initialization355125
+Ref: Initialization-Footnote-1356119
+Node: Version check356412
+Node: Building the source357287
+Node: Session initialization359398
+Ref: gnutls_init_flags_t360875
+Node: Associating the credentials367582
+Ref: tab:key-exchange-cred368358
+Node: Certificate credentials369489
+Node: Raw public-key credentials385074
+Node: SRP credentials386374
+Node: PSK credentials391272
+Node: Anonymous credentials394983
+Node: Setting up the transport layer395829
+Node: Asynchronous operation405382
+Node: Reducing round-trips409683
+Node: Zero-roundtrip mode413123
+Node: Anti-replay protection415328
+Node: DTLS sessions418973
+Ref: DTLS sessions-Footnote-1421277
+Node: DTLS and SCTP421354
+Node: TLS handshake422374
+Node: Data transfer and termination426292
+Node: Buffered data transfer435434
+Node: Handling alerts437235
+Node: Priority Strings440617
+Ref: tab:prio-keywords443218
+Ref: tab:prio-algorithms450296
+Ref: tab:prio-special1455561
+Ref: tab:prio-special2459408
+Ref: Priority Strings-Footnote-1465758
+Node: Selecting cryptographic key sizes465980
+Ref: tab:key-sizes466629
+Node: Advanced topics471378
+Node: Virtual hosts and credentials471876
+Node: Session resumption475201
+Node: Certificate verification483108
+Ref: dane_verify_status_t492829
+Node: TLS 1.2 re-authentication493234
+Node: TLS 1.3 re-authentication and re-key498091
+Node: Parameter generation499750
+Node: Deriving keys for other applications/protocols502397
+Node: Channel Bindings505627
+Node: Interoperability507166
+Node: Compatibility with the OpenSSL library508484
+Node: GnuTLS application examples509211
+Ref: examples509430
+Node: Client examples509723
+Node: Client example with X.509 certificate support510250
+Ref: ex-verify510488
+Node: Datagram TLS client example515532
+Node: Client using a smart card with TLS519937
+Ref: ex-pkcs11-client520174
+Node: Client with Resume capability example525469
+Ref: ex-resume-client525753
+Node: Client example with SSH-style certificate verification530940
+Node: Server examples535147
+Node: Echo server with X.509 authentication535501
+Node: DTLS echo server with X.509 authentication543225
+Node: More advanced client and servers557636
+Node: Client example with anonymous authentication558493
+Node: Using a callback to select the certificate to use562417
+Node: Obtaining session information568800
+Node: Advanced certificate verification example573013
+Ref: ex-verify2573289
+Node: Client example with PSK authentication578583
+Node: Client example with SRP authentication582949
+Node: Legacy client example with X.509 certificate support587233
+Ref: ex-verify-legacy587550
+Node: Client example in C++593503
+Node: Echo server with PSK authentication596075
+Node: Echo server with SRP authentication604808
+Node: Echo server with anonymous authentication611726
+Node: Helper functions for TCP connections617054
+Node: Helper functions for UDP connections618646
+Node: OCSP example620551
+Ref: Generate OCSP request620734
+Node: Miscellaneous examples630145
+Node: Checking for an alert630471
+Node: X.509 certificate parsing example631920
+Ref: ex-x509-info632177
+Node: Listing the ciphersuites in a priority string636206
+Node: PKCS12 structure generation example638523
+Node: System-wide configuration of the library642728
+Node: Application-specific priority strings644554
+Node: Disabling algorithms and protocols646002
+Node: Querying for disabled algorithms and protocols648886
+Node: Overriding the parameter verification profile650008
+Node: Overriding the default priority string651010
+Node: Using GnuTLS as a cryptographic library651627
+Ref: Using GnuTLS as a cryptographic library-Footnote-1652483
+Node: Symmetric algorithms652540
+Ref: gnutls_cipher_algorithm_t653300
+Ref: Symmetric algorithms-Footnote-1660972
+Node: Public key algorithms661057
+Node: Cryptographic Message Syntax / PKCS7665779
+Ref: gnutls_pkcs7_sign_flags669218
+Node: Hash and MAC functions670686
+Ref: gnutls_mac_algorithm_t671298
+Ref: gnutls_digest_algorithm_t674508
+Node: Random number generation675559
+Ref: gnutls_rnd_level_t675921
+Node: Overriding algorithms677028
+Node: Other included programs682962
+Node: gnutls-cli Invocation683533
+Ref: gnutls-cli usage684095
+Ref: gnutls-cli debug691119
+Ref: gnutls-cli tofu691260
+Ref: gnutls-cli strict-tofu691723
+Ref: gnutls-cli dane692125
+Ref: gnutls-cli local-dns692468
+Ref: gnutls-cli ca-verification692783
+Ref: gnutls-cli ocsp693138
+Ref: gnutls-cli resume693380
+Ref: gnutls-cli rehandshake693526
+Ref: gnutls-cli sni-hostname693693
+Ref: gnutls-cli verify-hostname694219
+Ref: gnutls-cli starttls694452
+Ref: gnutls-cli app-proto694636
+Ref: gnutls-cli starttls-proto694798
+Ref: gnutls-cli dh-bits695309
+Ref: gnutls-cli priority695660
+Ref: gnutls-cli rawpkkeyfile696038
+Ref: gnutls-cli rawpkfile696495
+Ref: gnutls-cli ranges697036
+Ref: gnutls-cli benchmark-ciphers697286
+Ref: gnutls-cli benchmark-tls-ciphers697604
+Ref: gnutls-cli list697923
+Ref: gnutls-cli priority-list698290
+Ref: gnutls-cli noticket698536
+Ref: gnutls-cli alpn698697
+Ref: gnutls-cli disable-extensions699006
+Ref: gnutls-cli single-key-share699238
+Ref: gnutls-cli post-handshake-auth699454
+Ref: gnutls-cli inline-commands699651
+Ref: gnutls-cli inline-commands-prefix699971
+Ref: gnutls-cli provider700374
+Ref: gnutls-cli logfile700571
+Ref: gnutls-cli exit status700928
+Ref: gnutls-cli See Also701164
+Ref: gnutls-cli Examples701241
+Node: gnutls-serv Invocation705448
+Ref: gnutls-serv usage705925
+Ref: gnutls-serv debug710990
+Ref: gnutls-serv sni-hostname711131
+Ref: gnutls-serv alpn711463
+Ref: gnutls-serv require-client-cert711750
+Ref: gnutls-serv verify-client-cert711994
+Ref: gnutls-serv heartbeat712223
+Ref: gnutls-serv priority712374
+Ref: gnutls-serv x509keyfile712743
+Ref: gnutls-serv x509certfile713260
+Ref: gnutls-serv x509dsakeyfile713777
+Ref: gnutls-serv x509dsacertfile713941
+Ref: gnutls-serv x509ecckeyfile714108
+Ref: gnutls-serv x509ecccertfile714270
+Ref: gnutls-serv rawpkkeyfile714437
+Ref: gnutls-serv rawpkfile715256
+Ref: gnutls-serv ocsp-response716111
+Ref: gnutls-serv ignore-ocsp-response-errors716428
+Ref: gnutls-serv list716675
+Ref: gnutls-serv provider716913
+Ref: gnutls-serv exit status717110
+Ref: gnutls-serv See Also717348
+Ref: gnutls-serv Examples717426
+Node: gnutls-cli-debug Invocation722734
+Ref: gnutls-cli-debug usage723556
+Ref: gnutls-cli-debug debug725811
+Ref: gnutls-cli-debug app-proto725952
+Ref: gnutls-cli-debug starttls-proto726120
+Ref: gnutls-cli-debug exit status726499
+Ref: gnutls-cli-debug See Also726747
+Ref: gnutls-cli-debug Examples726830
+Node: Internal architecture of GnuTLS730327
+Node: The TLS Protocol730933
+Ref: fig-client-server731409
+Node: TLS Handshake Protocol731499
+Ref: fig-gnutls-handshake731941
+Ref: fig-gnutls-handshake-sequence732450
+Node: TLS Authentication Methods732548
+Ref: TLS Authentication Methods-Footnote-1734852
+Node: TLS Hello Extension Handling734918
+Node: Cryptographic Backend748020
+Ref: fig-crypto-layers748703
+Ref: Cryptographic Backend-Footnote-1751985
+Ref: Cryptographic Backend-Footnote-2752070
+Node: Random Number Generators-internals752178
+Node: FIPS140-2 mode759542
+Ref: gnutls_fips_mode_t761877
+Node: Upgrading from previous versions764024
+Node: Support778018
+Node: Getting help778266
+Node: Commercial Support778854
+Node: Bug Reports779125
+Node: Contributing780489
+Node: Certification782515
+Node: Error codes782979
+Node: Supported ciphersuites807611
+Ref: ciphersuites807784
+Node: API reference822561
+Node: Core TLS API822971
+Ref: gnutls_alert_get823198
+Ref: gnutls_alert_get_name823817
+Ref: gnutls_alert_get_strname824202
+Ref: gnutls_alert_send824537
+Ref: gnutls_alert_send_appropriate825415
+Ref: gnutls_alpn_get_selected_protocol826388
+Ref: gnutls_alpn_set_protocols827052
+Ref: gnutls_anon_allocate_client_credentials827889
+Ref: gnutls_anon_allocate_server_credentials828274
+Ref: gnutls_anon_free_client_credentials828651
+Ref: gnutls_anon_free_server_credentials828940
+Ref: gnutls_anon_set_params_function829221
+Ref: gnutls_anon_set_server_dh_params829897
+Ref: gnutls_anon_set_server_known_dh_params830557
+Ref: gnutls_anon_set_server_params_function831466
+Ref: gnutls_anti_replay_deinit832129
+Ref: gnutls_anti_replay_enable832443
+Ref: gnutls_anti_replay_init832791
+Ref: gnutls_anti_replay_set_add_function833319
+Ref: gnutls_anti_replay_set_ptr834337
+Ref: gnutls_anti_replay_set_window834672
+Ref: gnutls_auth_client_get_type835440
+Ref: gnutls_auth_get_type836067
+Ref: gnutls_auth_server_get_type836879
+Ref: gnutls_base64_decode2837508
+Ref: gnutls_base64_encode2838064
+Ref: gnutls_buffer_append_data838684
+Ref: gnutls_bye839082
+Ref: gnutls_certificate_activation_time_peers840683
+Ref: gnutls_certificate_allocate_credentials841101
+Ref: gnutls_certificate_client_get_request_status841498
+Ref: gnutls_certificate_expiration_time_peers841906
+Ref: gnutls_certificate_free_ca_names842310
+Ref: gnutls_certificate_free_cas842979
+Ref: gnutls_certificate_free_credentials843382
+Ref: gnutls_certificate_free_crls843816
+Ref: gnutls_certificate_free_keys844116
+Ref: gnutls_certificate_get_crt_raw844550
+Ref: gnutls_certificate_get_issuer845621
+Ref: gnutls_certificate_get_ocsp_expiration846704
+Ref: gnutls_certificate_get_ours847875
+Ref: gnutls_certificate_get_peers848705
+Ref: gnutls_certificate_get_peers_subkey_id849828
+Ref: gnutls_certificate_get_verify_flags850184
+Ref: gnutls_certificate_get_x509_crt850597
+Ref: gnutls_certificate_get_x509_key852241
+Ref: gnutls_certificate_send_x509_rdn_sequence853556
+Ref: gnutls_certificate_server_set_request854263
+Ref: gnutls_certificate_set_dh_params855053
+Ref: gnutls_certificate_set_flags855872
+Ref: gnutls_certificate_set_known_dh_params856397
+Ref: gnutls_certificate_set_ocsp_status_request_file857325
+Ref: gnutls_certificate_set_ocsp_status_request_file2859231
+Ref: gnutls_certificate_set_ocsp_status_request_function860749
+Ref: gnutls_certificate_set_ocsp_status_request_function2862237
+Ref: gnutls_certificate_set_ocsp_status_request_mem864203
+Ref: gnutls_certificate_set_params_function865978
+Ref: gnutls_certificate_set_pin_function866675
+Ref: gnutls_certificate_set_rawpk_key_file867328
+Ref: gnutls_certificate_set_rawpk_key_mem870632
+Ref: gnutls_certificate_set_retrieve_function873779
+Ref: gnutls_certificate_set_verify_flags875909
+Ref: gnutls_certificate_set_verify_function876402
+Ref: gnutls_certificate_set_verify_limits877466
+Ref: gnutls_certificate_set_x509_crl878147
+Ref: gnutls_certificate_set_x509_crl_file878975
+Ref: gnutls_certificate_set_x509_crl_mem879756
+Ref: gnutls_certificate_set_x509_key880533
+Ref: gnutls_certificate_set_x509_key_file882201
+Ref: gnutls_certificate_set_x509_key_file2884437
+Ref: gnutls_certificate_set_x509_key_mem886971
+Ref: gnutls_certificate_set_x509_key_mem2888619
+Ref: gnutls_certificate_set_x509_simple_pkcs12_file890432
+Ref: gnutls_certificate_set_x509_simple_pkcs12_mem892562
+Ref: gnutls_certificate_set_x509_system_trust894662
+Ref: gnutls_certificate_set_x509_trust895232
+Ref: gnutls_certificate_set_x509_trust_dir896212
+Ref: gnutls_certificate_set_x509_trust_file896950
+Ref: gnutls_certificate_set_x509_trust_mem898126
+Ref: gnutls_certificate_type_get899069
+Ref: gnutls_certificate_type_get2899916
+Ref: gnutls_certificate_type_get_id901301
+Ref: gnutls_certificate_type_get_name901698
+Ref: gnutls_certificate_type_list902081
+Ref: gnutls_certificate_verification_status_print902435
+Ref: gnutls_certificate_verify_peers903193
+Ref: gnutls_certificate_verify_peers2905989
+Ref: gnutls_certificate_verify_peers3907904
+Ref: gnutls_check_version910214
+Ref: gnutls_cipher_get910956
+Ref: gnutls_cipher_get_id911261
+Ref: gnutls_cipher_get_key_size911643
+Ref: gnutls_cipher_get_name912007
+Ref: gnutls_cipher_list912354
+Ref: gnutls_cipher_suite_get_name912914
+Ref: gnutls_cipher_suite_info913782
+Ref: gnutls_credentials_clear914965
+Ref: gnutls_credentials_get915193
+Ref: gnutls_credentials_set916148
+Ref: gnutls_db_check_entry917512
+Ref: gnutls_db_check_entry_expire_time917969
+Ref: gnutls_db_check_entry_time918375
+Ref: gnutls_db_get_default_cache_expiration918766
+Ref: gnutls_db_get_ptr918961
+Ref: gnutls_db_remove_session919273
+Ref: gnutls_db_set_cache_expiration919810
+Ref: gnutls_db_set_ptr920231
+Ref: gnutls_db_set_remove_function920566
+Ref: gnutls_db_set_retrieve_function921069
+Ref: gnutls_db_set_store_function921755
+Ref: gnutls_deinit922222
+Ref: gnutls_dh_get_group922561
+Ref: gnutls_dh_get_peers_public_bits923413
+Ref: gnutls_dh_get_prime_bits923857
+Ref: gnutls_dh_get_pubkey924497
+Ref: gnutls_dh_get_secret_bits925195
+Ref: gnutls_dh_params_cpy925627
+Ref: gnutls_dh_params_deinit926135
+Ref: gnutls_dh_params_export2_pkcs3926376
+Ref: gnutls_dh_params_export_pkcs3927197
+Ref: gnutls_dh_params_export_raw928216
+Ref: gnutls_dh_params_generate2928969
+Ref: gnutls_dh_params_import_dsa930223
+Ref: gnutls_dh_params_import_pkcs3930700
+Ref: gnutls_dh_params_import_raw931439
+Ref: gnutls_dh_params_import_raw2932069
+Ref: gnutls_dh_params_import_raw3932783
+Ref: gnutls_dh_params_init933483
+Ref: gnutls_dh_set_prime_bits933814
+Ref: gnutls_digest_get_id934917
+Ref: gnutls_digest_get_name935343
+Ref: gnutls_digest_get_oid935689
+Ref: gnutls_digest_list936080
+Ref: gnutls_ecc_curve_get936445
+Ref: gnutls_ecc_curve_get_id936846
+Ref: gnutls_ecc_curve_get_name937227
+Ref: gnutls_ecc_curve_get_oid937561
+Ref: gnutls_ecc_curve_get_pk937906
+Ref: gnutls_ecc_curve_get_size938210
+Ref: gnutls_ecc_curve_list938439
+Ref: gnutls_error_is_fatal938762
+Ref: gnutls_error_to_alert939564
+Ref: gnutls_est_record_overhead_size940296
+Ref: gnutls_ext_get_current_msg941203
+Ref: gnutls_ext_get_data941894
+Ref: gnutls_ext_get_name942409
+Ref: gnutls_ext_raw_parse942727
+Ref: gnutls_ext_register943877
+Ref: gnutls_ext_set_data945512
+Ref: gnutls_fingerprint946023
+Ref: gnutls_fips140_mode_enabled947029
+Ref: gnutls_fips140_set_mode947583
+Ref: gnutls_get_system_config_file948636
+Ref: gnutls_global_deinit949012
+Ref: gnutls_global_init949462
+Ref: gnutls_global_set_audit_log_function950737
+Ref: gnutls_global_set_log_function951444
+Ref: gnutls_global_set_log_level951952
+Ref: gnutls_global_set_mutex952440
+Ref: gnutls_global_set_time_function953542
+Ref: gnutls_gost_paramset_get_name953979
+Ref: gnutls_gost_paramset_get_oid954355
+Ref: gnutls_group_get954732
+Ref: gnutls_group_get_id955102
+Ref: gnutls_group_get_name955449
+Ref: gnutls_group_list955769
+Ref: gnutls_handshake956091
+Ref: gnutls_handshake_description_get_name958196
+Ref: gnutls_handshake_get_last_in958584
+Ref: gnutls_handshake_get_last_out959209
+Ref: gnutls_handshake_set_hook_function959841
+Ref: gnutls_handshake_set_max_packet_length961233
+Ref: gnutls_handshake_set_post_client_hello_function962018
+Ref: gnutls_handshake_set_private_extensions963344
+Ref: gnutls_handshake_set_random964023
+Ref: gnutls_handshake_set_timeout964731
+Ref: gnutls_heartbeat_allowed965425
+Ref: gnutls_heartbeat_enable965899
+Ref: gnutls_heartbeat_get_timeout966737
+Ref: gnutls_heartbeat_ping967276
+Ref: gnutls_heartbeat_pong968408
+Ref: gnutls_heartbeat_set_timeouts968815
+Ref: gnutls_hex2bin969586
+Ref: gnutls_hex_decode970305
+Ref: gnutls_hex_decode2971031
+Ref: gnutls_hex_encode971460
+Ref: gnutls_hex_encode2972057
+Ref: gnutls_idna_map972572
+Ref: gnutls_idna_reverse_map973702
+Ref: gnutls_init974467
+Ref: gnutls_key_generate975295
+Ref: gnutls_kx_get975712
+Ref: gnutls_kx_get_id976298
+Ref: gnutls_kx_get_name976642
+Ref: gnutls_kx_list976987
+Ref: gnutls_load_file977315
+Ref: gnutls_mac_get977852
+Ref: gnutls_mac_get_id978157
+Ref: gnutls_mac_get_key_size978570
+Ref: gnutls_mac_get_name978907
+Ref: gnutls_mac_list979226
+Ref: gnutls_memcmp979614
+Ref: gnutls_memset980174
+Ref: gnutls_ocsp_status_request_enable_client980568
+Ref: gnutls_ocsp_status_request_get981579
+Ref: gnutls_ocsp_status_request_get2982241
+Ref: gnutls_ocsp_status_request_is_checked983236
+Ref: gnutls_oid_to_digest984624
+Ref: gnutls_oid_to_ecc_curve985033
+Ref: gnutls_oid_to_gost_paramset985359
+Ref: gnutls_oid_to_mac985770
+Ref: gnutls_oid_to_pk986183
+Ref: gnutls_oid_to_sign986555
+Ref: gnutls_openpgp_send_cert986959
+Ref: gnutls_packet_deinit987261
+Ref: gnutls_packet_get987535
+Ref: gnutls_pem_base64_decode988040
+Ref: gnutls_pem_base64_decode2988895
+Ref: gnutls_pem_base64_encode989890
+Ref: gnutls_pem_base64_encode2990719
+Ref: gnutls_perror991655
+Ref: gnutls_pk_algorithm_get_name991951
+Ref: gnutls_pk_bits_to_sec_param992307
+Ref: gnutls_pk_get_id992781
+Ref: gnutls_pk_get_name993299
+Ref: gnutls_pk_get_oid993667
+Ref: gnutls_pk_list994066
+Ref: gnutls_pk_to_sign994399
+Ref: gnutls_prf994810
+Ref: gnutls_prf_early996805
+Ref: gnutls_prf_raw998450
+Ref: gnutls_prf_rfc57051000334
+Ref: gnutls_priority_certificate_type_list1002011
+Ref: gnutls_priority_certificate_type_list21002709
+Ref: gnutls_priority_cipher_list1003327
+Ref: gnutls_priority_deinit1003716
+Ref: gnutls_priority_ecc_curve_list1003961
+Ref: gnutls_priority_get_cipher_suite_index1004495
+Ref: gnutls_priority_group_list1005413
+Ref: gnutls_priority_init1005796
+Ref: gnutls_priority_init21006878
+Ref: gnutls_priority_kx_list1011254
+Ref: gnutls_priority_mac_list1011661
+Ref: gnutls_priority_protocol_list1012068
+Ref: gnutls_priority_set1012472
+Ref: gnutls_priority_set_direct1013127
+Ref: gnutls_priority_sign_list1014060
+Ref: gnutls_priority_string_list1014478
+Ref: gnutls_protocol_get_id1015110
+Ref: gnutls_protocol_get_name1015426
+Ref: gnutls_protocol_get_version1015785
+Ref: gnutls_protocol_list1016083
+Ref: gnutls_psk_allocate_client_credentials1016453
+Ref: gnutls_psk_allocate_server_credentials1016873
+Ref: gnutls_psk_client_get_hint1017269
+Ref: gnutls_psk_free_client_credentials1017896
+Ref: gnutls_psk_free_server_credentials1018179
+Ref: gnutls_psk_server_get_username1018454
+Ref: gnutls_psk_set_client_credentials1018820
+Ref: gnutls_psk_set_client_credentials_function1019859
+Ref: gnutls_psk_set_params_function1020836
+Ref: gnutls_psk_set_server_credentials_file1021516
+Ref: gnutls_psk_set_server_credentials_function1022153
+Ref: gnutls_psk_set_server_credentials_hint1023097
+Ref: gnutls_psk_set_server_dh_params1023721
+Ref: gnutls_psk_set_server_known_dh_params1024406
+Ref: gnutls_psk_set_server_params_function1025303
+Ref: gnutls_random_art1025944
+Ref: gnutls_range_split1026806
+Ref: gnutls_reauth1027888
+Ref: gnutls_record_can_use_length_hiding1029990
+Ref: gnutls_record_check_corked1030741
+Ref: gnutls_record_check_pending1031124
+Ref: gnutls_record_cork1031535
+Ref: gnutls_record_disable_padding1031949
+Ref: gnutls_record_discard_queued1032557
+Ref: gnutls_record_get_direction1033174
+Ref: gnutls_record_get_max_early_data_size1034155
+Ref: gnutls_record_get_max_size1034707
+Ref: gnutls_record_get_state1035074
+Ref: gnutls_record_overhead_size1036096
+Ref: gnutls_record_recv1036483
+Ref: gnutls_record_recv_early_data1037933
+Ref: gnutls_record_recv_packet1038996
+Ref: gnutls_record_recv_seq1039875
+Ref: gnutls_record_send1040861
+Ref: gnutls_record_send21042919
+Ref: gnutls_record_send_early_data1044071
+Ref: gnutls_record_send_range1045127
+Ref: gnutls_record_set_max_early_data_size1046306
+Ref: gnutls_record_set_max_recv_size1046952
+Ref: gnutls_record_set_max_size1047656
+Ref: gnutls_record_set_state1048835
+Ref: gnutls_record_set_timeout1049493
+Ref: gnutls_record_uncork1050094
+Ref: gnutls_rehandshake1051034
+Ref: gnutls_safe_renegotiation_status1052816
+Ref: gnutls_sec_param_get_name1053231
+Ref: gnutls_sec_param_to_pk_bits1053605
+Ref: gnutls_sec_param_to_symmetric_bits1054275
+Ref: gnutls_server_name_get1054659
+Ref: gnutls_server_name_set1056131
+Ref: gnutls_session_channel_binding1057289
+Ref: gnutls_session_enable_compatibility_mode1058007
+Ref: gnutls_session_etm_status1058714
+Ref: gnutls_session_ext_master_secret_status1059117
+Ref: gnutls_session_ext_register1059608
+Ref: gnutls_session_force_valid1061870
+Ref: gnutls_session_get_data1062291
+Ref: gnutls_session_get_data21062951
+Ref: gnutls_session_get_desc1065223
+Ref: gnutls_session_get_flags1065745
+Ref: gnutls_session_get_id1066283
+Ref: gnutls_session_get_id21067806
+Ref: gnutls_session_get_master_secret1069272
+Ref: gnutls_session_get_ptr1069756
+Ref: gnutls_session_get_random1070151
+Ref: gnutls_session_get_verify_cert_status1070772
+Ref: gnutls_session_is_resumed1071445
+Ref: gnutls_session_key_update1071815
+Ref: gnutls_session_resumption_requested1072763
+Ref: gnutls_session_set_data1073145
+Ref: gnutls_session_set_id1073986
+Ref: gnutls_session_set_premaster1074649
+Ref: gnutls_session_set_ptr1075744
+Ref: gnutls_session_set_verify_cert1076144
+Ref: gnutls_session_set_verify_cert21077488
+Ref: gnutls_session_set_verify_function1078672
+Ref: gnutls_session_supplemental_register1079784
+Ref: gnutls_session_ticket_enable_client1081042
+Ref: gnutls_session_ticket_enable_server1081535
+Ref: gnutls_session_ticket_key_generate1082329
+Ref: gnutls_session_ticket_send1082757
+Ref: gnutls_set_default_priority1083341
+Ref: gnutls_set_default_priority_append1084426
+Ref: gnutls_sign_algorithm_get1085768
+Ref: gnutls_sign_algorithm_get_client1086211
+Ref: gnutls_sign_algorithm_get_requested1086678
+Ref: gnutls_sign_get_hash_algorithm1087705
+Ref: gnutls_sign_get_id1088117
+Ref: gnutls_sign_get_name1088480
+Ref: gnutls_sign_get_oid1088812
+Ref: gnutls_sign_get_pk_algorithm1089198
+Ref: gnutls_sign_is_secure1089805
+Ref: gnutls_sign_is_secure21090075
+Ref: gnutls_sign_list1090411
+Ref: gnutls_sign_supports_pk_algorithm1090771
+Ref: gnutls_srp_allocate_client_credentials1091355
+Ref: gnutls_srp_allocate_server_credentials1091756
+Ref: gnutls_srp_base64_decode1092129
+Ref: gnutls_srp_base64_decode21092834
+Ref: gnutls_srp_base64_encode1093502
+Ref: gnutls_srp_base64_encode21094303
+Ref: gnutls_srp_free_client_credentials1095034
+Ref: gnutls_srp_free_server_credentials1095317
+Ref: gnutls_srp_server_get_username1095592
+Ref: gnutls_srp_set_client_credentials1096046
+Ref: gnutls_srp_set_client_credentials_function1096936
+Ref: gnutls_srp_set_prime_bits1098183
+Ref: gnutls_srp_set_server_credentials_file1098868
+Ref: gnutls_srp_set_server_credentials_function1099594
+Ref: gnutls_srp_set_server_fake_salt_seed1101309
+Ref: gnutls_srp_verifier1102812
+Ref: gnutls_srtp_get_keys1103740
+Ref: gnutls_srtp_get_mki1105134
+Ref: gnutls_srtp_get_profile_id1105703
+Ref: gnutls_srtp_get_profile_name1106161
+Ref: gnutls_srtp_get_selected_profile1106582
+Ref: gnutls_srtp_set_mki1107026
+Ref: gnutls_srtp_set_profile1107475
+Ref: gnutls_srtp_set_profile_direct1108007
+Ref: gnutls_store_commitment1108730
+Ref: gnutls_store_pubkey1110029
+Ref: gnutls_strerror1111816
+Ref: gnutls_strerror_name1112301
+Ref: gnutls_supplemental_get_name1112770
+Ref: gnutls_supplemental_recv1113192
+Ref: gnutls_supplemental_register1113662
+Ref: gnutls_supplemental_send1114774
+Ref: gnutls_system_recv_timeout1115219
+Ref: gnutls_tdb_deinit1115961
+Ref: gnutls_tdb_init1116176
+Ref: gnutls_tdb_set_store_commitment_func1116535
+Ref: gnutls_tdb_set_store_func1117216
+Ref: gnutls_tdb_set_verify_func1117805
+Ref: gnutls_transport_get_int1118549
+Ref: gnutls_transport_get_int21118957
+Ref: gnutls_transport_get_ptr1119460
+Ref: gnutls_transport_get_ptr21119876
+Ref: gnutls_transport_set_errno1120410
+Ref: gnutls_transport_set_errno_function1121397
+Ref: gnutls_transport_set_int1121934
+Ref: gnutls_transport_set_int21122488
+Ref: gnutls_transport_set_ptr1123217
+Ref: gnutls_transport_set_ptr21123630
+Ref: gnutls_transport_set_pull_function1124274
+Ref: gnutls_transport_set_pull_timeout_function1125054
+Ref: gnutls_transport_set_push_function1126757
+Ref: gnutls_transport_set_vec_push_function1127602
+Ref: gnutls_url_is_supported1128298
+Ref: gnutls_utf8_password_normalize1128718
+Ref: gnutls_verify_stored_pubkey1129507
+Node: Datagram TLS API1132656
+Ref: gnutls_dtls_cookie_send1132932
+Ref: gnutls_dtls_cookie_verify1134187
+Ref: gnutls_dtls_get_data_mtu1135131
+Ref: gnutls_dtls_get_mtu1135574
+Ref: gnutls_dtls_get_timeout1136017
+Ref: gnutls_dtls_prestate_set1136560
+Ref: gnutls_dtls_set_data_mtu1137144
+Ref: gnutls_dtls_set_mtu1138118
+Ref: gnutls_dtls_set_timeouts1138725
+Ref: gnutls_record_get_discarded1139729
+Node: X509 certificate API1140003
+Ref: gnutls_certificate_get_trust_list1140352
+Ref: gnutls_certificate_set_trust_list1141000
+Ref: gnutls_certificate_verification_profile_get_id1141775
+Ref: gnutls_certificate_verification_profile_get_name1142322
+Ref: gnutls_pkcs8_info1142705
+Ref: gnutls_pkcs_schema_get_name1144223
+Ref: gnutls_pkcs_schema_get_oid1144627
+Ref: gnutls_subject_alt_names_deinit1145033
+Ref: gnutls_subject_alt_names_get1145312
+Ref: gnutls_subject_alt_names_init1146322
+Ref: gnutls_subject_alt_names_set1146702
+Ref: gnutls_x509_aia_deinit1147521
+Ref: gnutls_x509_aia_get1147755
+Ref: gnutls_x509_aia_init1148914
+Ref: gnutls_x509_aia_set1149249
+Ref: gnutls_x509_aki_deinit1150044
+Ref: gnutls_x509_aki_get_cert_issuer1150308
+Ref: gnutls_x509_aki_get_id1151374
+Ref: gnutls_x509_aki_init1151913
+Ref: gnutls_x509_aki_set_cert_issuer1152262
+Ref: gnutls_x509_aki_set_id1153377
+Ref: gnutls_x509_cidr_to_rfc52801153806
+Ref: gnutls_x509_crl_check_issuer1154704
+Ref: gnutls_x509_crl_deinit1155152
+Ref: gnutls_x509_crl_dist_points_deinit1155384
+Ref: gnutls_x509_crl_dist_points_get1155679
+Ref: gnutls_x509_crl_dist_points_init1156653
+Ref: gnutls_x509_crl_dist_points_set1157049
+Ref: gnutls_x509_crl_export1157752
+Ref: gnutls_x509_crl_export21158635
+Ref: gnutls_x509_crl_get_authority_key_gn_serial1159355
+Ref: gnutls_x509_crl_get_authority_key_id1160669
+Ref: gnutls_x509_crl_get_crt_count1161732
+Ref: gnutls_x509_crl_get_crt_serial1162090
+Ref: gnutls_x509_crl_get_dn_oid1162994
+Ref: gnutls_x509_crl_get_extension_data1163800
+Ref: gnutls_x509_crl_get_extension_data21164917
+Ref: gnutls_x509_crl_get_extension_info1165796
+Ref: gnutls_x509_crl_get_extension_oid1167060
+Ref: gnutls_x509_crl_get_issuer_dn1167912
+Ref: gnutls_x509_crl_get_issuer_dn21168913
+Ref: gnutls_x509_crl_get_issuer_dn31169705
+Ref: gnutls_x509_crl_get_issuer_dn_by_oid1170641
+Ref: gnutls_x509_crl_get_next_update1172152
+Ref: gnutls_x509_crl_get_number1172586
+Ref: gnutls_x509_crl_get_raw_issuer_dn1173311
+Ref: gnutls_x509_crl_get_signature1173765
+Ref: gnutls_x509_crl_get_signature_algorithm1174312
+Ref: gnutls_x509_crl_get_signature_oid1174874
+Ref: gnutls_x509_crl_get_this_update1175535
+Ref: gnutls_x509_crl_get_version1175860
+Ref: gnutls_x509_crl_import1176168
+Ref: gnutls_x509_crl_init1176792
+Ref: gnutls_x509_crl_iter_crt_serial1177381
+Ref: gnutls_x509_crl_iter_deinit1178527
+Ref: gnutls_x509_crl_list_import1178772
+Ref: gnutls_x509_crl_list_import21179774
+Ref: gnutls_x509_crl_print1180640
+Ref: gnutls_x509_crl_set_authority_key_id1181289
+Ref: gnutls_x509_crl_set_crt1181942
+Ref: gnutls_x509_crl_set_crt_serial1182515
+Ref: gnutls_x509_crl_set_next_update1183147
+Ref: gnutls_x509_crl_set_number1183764
+Ref: gnutls_x509_crl_set_this_update1184341
+Ref: gnutls_x509_crl_set_version1184745
+Ref: gnutls_x509_crl_sign1185288
+Ref: gnutls_x509_crl_sign21185981
+Ref: gnutls_x509_crl_verify1187217
+Ref: gnutls_x509_crq_deinit1188461
+Ref: gnutls_x509_crq_export1188699
+Ref: gnutls_x509_crq_export21189696
+Ref: gnutls_x509_crq_get_attribute_by_oid1190470
+Ref: gnutls_x509_crq_get_attribute_data1191495
+Ref: gnutls_x509_crq_get_attribute_info1192607
+Ref: gnutls_x509_crq_get_basic_constraints1193804
+Ref: gnutls_x509_crq_get_challenge_password1195057
+Ref: gnutls_x509_crq_get_dn1195669
+Ref: gnutls_x509_crq_get_dn21196618
+Ref: gnutls_x509_crq_get_dn31197433
+Ref: gnutls_x509_crq_get_dn_by_oid1198399
+Ref: gnutls_x509_crq_get_dn_oid1199860
+Ref: gnutls_x509_crq_get_extension_by_oid1200647
+Ref: gnutls_x509_crq_get_extension_by_oid21201804
+Ref: gnutls_x509_crq_get_extension_data1202886
+Ref: gnutls_x509_crq_get_extension_data21204016
+Ref: gnutls_x509_crq_get_extension_info1204895
+Ref: gnutls_x509_crq_get_key_id1206156
+Ref: gnutls_x509_crq_get_key_purpose_oid1207223
+Ref: gnutls_x509_crq_get_key_rsa_raw1208238
+Ref: gnutls_x509_crq_get_key_usage1208862
+Ref: gnutls_x509_crq_get_pk_algorithm1209948
+Ref: gnutls_x509_crq_get_pk_oid1210669
+Ref: gnutls_x509_crq_get_private_key_usage_period1211326
+Ref: gnutls_x509_crq_get_signature_algorithm1212041
+Ref: gnutls_x509_crq_get_signature_oid1212680
+Ref: gnutls_x509_crq_get_spki1213341
+Ref: gnutls_x509_crq_get_subject_alt_name1213901
+Ref: gnutls_x509_crq_get_subject_alt_othername_oid1215459
+Ref: gnutls_x509_crq_get_tlsfeatures1216939
+Ref: gnutls_x509_crq_get_version1218068
+Ref: gnutls_x509_crq_import1218414
+Ref: gnutls_x509_crq_init1219096
+Ref: gnutls_x509_crq_print1219444
+Ref: gnutls_x509_crq_set_attribute_by_oid1220100
+Ref: gnutls_x509_crq_set_basic_constraints1220965
+Ref: gnutls_x509_crq_set_challenge_password1221709
+Ref: gnutls_x509_crq_set_dn1222160
+Ref: gnutls_x509_crq_set_dn_by_oid1222778
+Ref: gnutls_x509_crq_set_extension_by_oid1223908
+Ref: gnutls_x509_crq_set_key1224687
+Ref: gnutls_x509_crq_set_key_purpose_oid1225150
+Ref: gnutls_x509_crq_set_key_rsa_raw1225930
+Ref: gnutls_x509_crq_set_key_usage1226506
+Ref: gnutls_x509_crq_set_private_key_usage_period1227010
+Ref: gnutls_x509_crq_set_spki1227515
+Ref: gnutls_x509_crq_set_subject_alt_name1228386
+Ref: gnutls_x509_crq_set_subject_alt_othername1229212
+Ref: gnutls_x509_crq_set_tlsfeatures1230050
+Ref: gnutls_x509_crq_set_version1230600
+Ref: gnutls_x509_crq_sign1231085
+Ref: gnutls_x509_crq_sign21231856
+Ref: gnutls_x509_crq_verify1233188
+Ref: gnutls_x509_crt_check_email1233781
+Ref: gnutls_x509_crt_check_hostname1234309
+Ref: gnutls_x509_crt_check_hostname21235021
+Ref: gnutls_x509_crt_check_ip1236772
+Ref: gnutls_x509_crt_check_issuer1237386
+Ref: gnutls_x509_crt_check_key_purpose1238124
+Ref: gnutls_x509_crt_check_revocation1238818
+Ref: gnutls_x509_crt_cpy_crl_dist_points1239467
+Ref: gnutls_x509_crt_deinit1240056
+Ref: gnutls_x509_crt_equals1240274
+Ref: gnutls_x509_crt_equals21240656
+Ref: gnutls_x509_crt_export1241080
+Ref: gnutls_x509_crt_export21241991
+Ref: gnutls_x509_crt_get_activation_time1242689
+Ref: gnutls_x509_crt_get_authority_info_access1243067
+Ref: gnutls_x509_crt_get_authority_key_gn_serial1246541
+Ref: gnutls_x509_crt_get_authority_key_id1247982
+Ref: gnutls_x509_crt_get_basic_constraints1249113
+Ref: gnutls_x509_crt_get_ca_status1250327
+Ref: gnutls_x509_crt_get_crl_dist_points1251326
+Ref: gnutls_x509_crt_get_dn1252651
+Ref: gnutls_x509_crt_get_dn21253737
+Ref: gnutls_x509_crt_get_dn31254504
+Ref: gnutls_x509_crt_get_dn_by_oid1255422
+Ref: gnutls_x509_crt_get_dn_oid1257191
+Ref: gnutls_x509_crt_get_expiration_time1258219
+Ref: gnutls_x509_crt_get_extension_by_oid1258585
+Ref: gnutls_x509_crt_get_extension_by_oid21259712
+Ref: gnutls_x509_crt_get_extension_data1260785
+Ref: gnutls_x509_crt_get_extension_data21261874
+Ref: gnutls_x509_crt_get_extension_info1262739
+Ref: gnutls_x509_crt_get_extension_oid1264151
+Ref: gnutls_x509_crt_get_fingerprint1265114
+Ref: gnutls_x509_crt_get_inhibit_anypolicy1266002
+Ref: gnutls_x509_crt_get_issuer1266971
+Ref: gnutls_x509_crt_get_issuer_alt_name1267609
+Ref: gnutls_x509_crt_get_issuer_alt_name21269409
+Ref: gnutls_x509_crt_get_issuer_alt_othername_oid1270991
+Ref: gnutls_x509_crt_get_issuer_dn1272640
+Ref: gnutls_x509_crt_get_issuer_dn21273761
+Ref: gnutls_x509_crt_get_issuer_dn31274566
+Ref: gnutls_x509_crt_get_issuer_dn_by_oid1275515
+Ref: gnutls_x509_crt_get_issuer_dn_oid1277302
+Ref: gnutls_x509_crt_get_issuer_unique_id1278338
+Ref: gnutls_x509_crt_get_key_id1279433
+Ref: gnutls_x509_crt_get_key_purpose_oid1280456
+Ref: gnutls_x509_crt_get_key_usage1281617
+Ref: gnutls_x509_crt_get_name_constraints1282677
+Ref: gnutls_x509_crt_get_pk_algorithm1284085
+Ref: gnutls_x509_crt_get_pk_dsa_raw1284874
+Ref: gnutls_x509_crt_get_pk_ecc_raw1285542
+Ref: gnutls_x509_crt_get_pk_gost_raw1286355
+Ref: gnutls_x509_crt_get_pk_oid1287199
+Ref: gnutls_x509_crt_get_pk_rsa_raw1287825
+Ref: gnutls_x509_crt_get_policy1288403
+Ref: gnutls_x509_crt_get_private_key_usage_period1289349
+Ref: gnutls_x509_crt_get_proxy1290101
+Ref: gnutls_x509_crt_get_raw_dn1291122
+Ref: gnutls_x509_crt_get_raw_issuer_dn1291715
+Ref: gnutls_x509_crt_get_serial1292294
+Ref: gnutls_x509_crt_get_signature1293034
+Ref: gnutls_x509_crt_get_signature_algorithm1293589
+Ref: gnutls_x509_crt_get_signature_oid1294202
+Ref: gnutls_x509_crt_get_spki1294860
+Ref: gnutls_x509_crt_get_subject1295346
+Ref: gnutls_x509_crt_get_subject_alt_name1295989
+Ref: gnutls_x509_crt_get_subject_alt_name21297748
+Ref: gnutls_x509_crt_get_subject_alt_othername_oid1299313
+Ref: gnutls_x509_crt_get_subject_key_id1300953
+Ref: gnutls_x509_crt_get_subject_unique_id1301785
+Ref: gnutls_x509_crt_get_tlsfeatures1302870
+Ref: gnutls_x509_crt_get_version1303982
+Ref: gnutls_x509_crt_import1304309
+Ref: gnutls_x509_crt_import_url1305010
+Ref: gnutls_x509_crt_init1305731
+Ref: gnutls_x509_crt_list_import1306078
+Ref: gnutls_x509_crt_list_import21307445
+Ref: gnutls_x509_crt_list_import_url1308517
+Ref: gnutls_x509_crt_list_verify1309741
+Ref: gnutls_x509_crt_print1311321
+Ref: gnutls_x509_crt_set_activation_time1312213
+Ref: gnutls_x509_crt_set_authority_info_access1312680
+Ref: gnutls_x509_crt_set_authority_key_id1313575
+Ref: gnutls_x509_crt_set_basic_constraints1314157
+Ref: gnutls_x509_crt_set_ca_status1314856
+Ref: gnutls_x509_crt_set_crl_dist_points1315454
+Ref: gnutls_x509_crt_set_crl_dist_points21316106
+Ref: gnutls_x509_crt_set_crq1316805
+Ref: gnutls_x509_crt_set_crq_extension_by_oid1317522
+Ref: gnutls_x509_crt_set_crq_extensions1318158
+Ref: gnutls_x509_crt_set_dn1318624
+Ref: gnutls_x509_crt_set_dn_by_oid1319507
+Ref: gnutls_x509_crt_set_expiration_time1320624
+Ref: gnutls_x509_crt_set_extension_by_oid1321169
+Ref: gnutls_x509_crt_set_flags1321944
+Ref: gnutls_x509_crt_set_inhibit_anypolicy1322452
+Ref: gnutls_x509_crt_set_issuer_alt_name1322962
+Ref: gnutls_x509_crt_set_issuer_alt_othername1323984
+Ref: gnutls_x509_crt_set_issuer_dn1324960
+Ref: gnutls_x509_crt_set_issuer_dn_by_oid1325599
+Ref: gnutls_x509_crt_set_issuer_unique_id1326878
+Ref: gnutls_x509_crt_set_key1327383
+Ref: gnutls_x509_crt_set_key_purpose_oid1327963
+Ref: gnutls_x509_crt_set_key_usage1328731
+Ref: gnutls_x509_crt_set_name_constraints1329190
+Ref: gnutls_x509_crt_set_pin_function1329812
+Ref: gnutls_x509_crt_set_policy1330480
+Ref: gnutls_x509_crt_set_private_key_usage_period1331333
+Ref: gnutls_x509_crt_set_proxy1331840
+Ref: gnutls_x509_crt_set_proxy_dn1332654
+Ref: gnutls_x509_crt_set_serial1333673
+Ref: gnutls_x509_crt_set_spki1334739
+Ref: gnutls_x509_crt_set_subject_alt_name1335594
+Ref: gnutls_x509_crt_set_subject_alt_othername1336834
+Ref: gnutls_x509_crt_set_subject_alternative_name1337842
+Ref: gnutls_x509_crt_set_subject_key_id1338740
+Ref: gnutls_x509_crt_set_subject_unique_id1339260
+Ref: gnutls_x509_crt_set_tlsfeatures1339783
+Ref: gnutls_x509_crt_set_version1340307
+Ref: gnutls_x509_crt_sign1341130
+Ref: gnutls_x509_crt_sign21341825
+Ref: gnutls_x509_crt_verify1343058
+Ref: gnutls_x509_crt_verify_data21344107
+Ref: gnutls_x509_dn_deinit1345111
+Ref: gnutls_x509_dn_export1345373
+Ref: gnutls_x509_dn_export21346267
+Ref: gnutls_x509_dn_get_rdn_ava1346928
+Ref: gnutls_x509_dn_get_str1347960
+Ref: gnutls_x509_dn_get_str21348556
+Ref: gnutls_x509_dn_import1349418
+Ref: gnutls_x509_dn_init1350034
+Ref: gnutls_x509_dn_oid_known1350455
+Ref: gnutls_x509_dn_oid_name1351124
+Ref: gnutls_x509_dn_set_str1351653
+Ref: gnutls_x509_ext_deinit1352252
+Ref: gnutls_x509_ext_export_aia1352496
+Ref: gnutls_x509_ext_export_authority_key_id1353090
+Ref: gnutls_x509_ext_export_basic_constraints1353746
+Ref: gnutls_x509_ext_export_crl_dist_points1354443
+Ref: gnutls_x509_ext_export_inhibit_anypolicy1355111
+Ref: gnutls_x509_ext_export_key_purposes1355779
+Ref: gnutls_x509_ext_export_key_usage1356398
+Ref: gnutls_x509_ext_export_name_constraints1357014
+Ref: gnutls_x509_ext_export_policies1357655
+Ref: gnutls_x509_ext_export_private_key_usage_period1358318
+Ref: gnutls_x509_ext_export_proxy1358983
+Ref: gnutls_x509_ext_export_subject_alt_names1359969
+Ref: gnutls_x509_ext_export_subject_key_id1360618
+Ref: gnutls_x509_ext_export_tlsfeatures1361240
+Ref: gnutls_x509_ext_import_aia1361858
+Ref: gnutls_x509_ext_import_authority_key_id1362563
+Ref: gnutls_x509_ext_import_basic_constraints1363231
+Ref: gnutls_x509_ext_import_crl_dist_points1363857
+Ref: gnutls_x509_ext_import_inhibit_anypolicy1364485
+Ref: gnutls_x509_ext_import_key_purposes1365400
+Ref: gnutls_x509_ext_import_key_usage1366034
+Ref: gnutls_x509_ext_import_name_constraints1367050
+Ref: gnutls_x509_ext_import_policies1368388
+Ref: gnutls_x509_ext_import_private_key_usage_period1368995
+Ref: gnutls_x509_ext_import_proxy1369610
+Ref: gnutls_x509_ext_import_subject_alt_names1370696
+Ref: gnutls_x509_ext_import_subject_key_id1371454
+Ref: gnutls_x509_ext_import_tlsfeatures1372089
+Ref: gnutls_x509_ext_print1372981
+Ref: gnutls_x509_key_purpose_deinit1373692
+Ref: gnutls_x509_key_purpose_get1373946
+Ref: gnutls_x509_key_purpose_init1374674
+Ref: gnutls_x509_key_purpose_set1375035
+Ref: gnutls_x509_name_constraints_add_excluded1375490
+Ref: gnutls_x509_name_constraints_add_permitted1376431
+Ref: gnutls_x509_name_constraints_check1377306
+Ref: gnutls_x509_name_constraints_check_crt1378143
+Ref: gnutls_x509_name_constraints_deinit1379013
+Ref: gnutls_x509_name_constraints_get_excluded1379313
+Ref: gnutls_x509_name_constraints_get_permitted1380384
+Ref: gnutls_x509_name_constraints_init1381438
+Ref: gnutls_x509_othername_to_virtual1381821
+Ref: gnutls_x509_policies_deinit1382440
+Ref: gnutls_x509_policies_get1382720
+Ref: gnutls_x509_policies_init1383506
+Ref: gnutls_x509_policies_set1383871
+Ref: gnutls_x509_policy_release1384338
+Ref: gnutls_x509_privkey_cpy1384702
+Ref: gnutls_x509_privkey_deinit1385172
+Ref: gnutls_x509_privkey_export1385413
+Ref: gnutls_x509_privkey_export21386448
+Ref: gnutls_x509_privkey_export2_pkcs81387326
+Ref: gnutls_x509_privkey_export_dsa_raw1388602
+Ref: gnutls_x509_privkey_export_ecc_raw1389342
+Ref: gnutls_x509_privkey_export_gost_raw1390225
+Ref: gnutls_x509_privkey_export_pkcs81391310
+Ref: gnutls_x509_privkey_export_rsa_raw1392815
+Ref: gnutls_x509_privkey_export_rsa_raw21393676
+Ref: gnutls_x509_privkey_fix1394662
+Ref: gnutls_x509_privkey_generate1395047
+Ref: gnutls_x509_privkey_generate21396572
+Ref: gnutls_x509_privkey_get_key_id1398731
+Ref: gnutls_x509_privkey_get_pk_algorithm1399750
+Ref: gnutls_x509_privkey_get_pk_algorithm21400178
+Ref: gnutls_x509_privkey_get_seed1400669
+Ref: gnutls_x509_privkey_get_spki1401493
+Ref: gnutls_x509_privkey_import1402028
+Ref: gnutls_x509_privkey_import21402823
+Ref: gnutls_x509_privkey_import_dsa_raw1403896
+Ref: gnutls_x509_privkey_import_ecc_raw1404617
+Ref: gnutls_x509_privkey_import_gost_raw1405433
+Ref: gnutls_x509_privkey_import_openssl1406709
+Ref: gnutls_x509_privkey_import_pkcs81407583
+Ref: gnutls_x509_privkey_import_rsa_raw1409030
+Ref: gnutls_x509_privkey_import_rsa_raw21409884
+Ref: gnutls_x509_privkey_init1410880
+Ref: gnutls_x509_privkey_sec_param1411225
+Ref: gnutls_x509_privkey_set_flags1411644
+Ref: gnutls_x509_privkey_set_pin_function1412194
+Ref: gnutls_x509_privkey_set_spki1412812
+Ref: gnutls_x509_privkey_sign_data1413359
+Ref: gnutls_x509_privkey_verify_params1414580
+Ref: gnutls_x509_privkey_verify_seed1414916
+Ref: gnutls_x509_rdn_get1415745
+Ref: gnutls_x509_rdn_get21416563
+Ref: gnutls_x509_rdn_get_by_oid1417471
+Ref: gnutls_x509_rdn_get_oid1418453
+Ref: gnutls_x509_spki_deinit1419198
+Ref: gnutls_x509_spki_get_rsa_pss_params1419480
+Ref: gnutls_x509_spki_init1420041
+Ref: gnutls_x509_spki_set_rsa_pss_params1420557
+Ref: gnutls_x509_tlsfeatures_add1421070
+Ref: gnutls_x509_tlsfeatures_check_crt1421526
+Ref: gnutls_x509_tlsfeatures_deinit1422126
+Ref: gnutls_x509_tlsfeatures_get1422404
+Ref: gnutls_x509_tlsfeatures_init1422964
+Ref: gnutls_x509_trust_list_add_cas1423349
+Ref: gnutls_x509_trust_list_add_crls1424534
+Ref: gnutls_x509_trust_list_add_named_crt1425912
+Ref: gnutls_x509_trust_list_add_system_trust1427127
+Ref: gnutls_x509_trust_list_add_trust_dir1427889
+Ref: gnutls_x509_trust_list_add_trust_file1428752
+Ref: gnutls_x509_trust_list_add_trust_mem1429899
+Ref: gnutls_x509_trust_list_deinit1430818
+Ref: gnutls_x509_trust_list_get_issuer1431444
+Ref: gnutls_x509_trust_list_get_issuer_by_dn1432494
+Ref: gnutls_x509_trust_list_get_issuer_by_subject_key_id1433223
+Ref: gnutls_x509_trust_list_init1434025
+Ref: gnutls_x509_trust_list_iter_deinit1434530
+Ref: gnutls_x509_trust_list_iter_get_ca1434839
+Ref: gnutls_x509_trust_list_remove_cas1436019
+Ref: gnutls_x509_trust_list_remove_trust_file1436874
+Ref: gnutls_x509_trust_list_remove_trust_mem1437575
+Ref: gnutls_x509_trust_list_verify_crt1438209
+Ref: gnutls_x509_trust_list_verify_crt21439372
+Ref: gnutls_x509_trust_list_verify_named_crt1442306
+Node: PKCS 7 API1445036
+Ref: gnutls_pkcs7_add_attr1445332
+Ref: gnutls_pkcs7_attrs_deinit1446138
+Ref: gnutls_pkcs7_deinit1446373
+Ref: gnutls_pkcs7_delete_crl1446578
+Ref: gnutls_pkcs7_delete_crt1447007
+Ref: gnutls_pkcs7_export1447453
+Ref: gnutls_pkcs7_export21448353
+Ref: gnutls_pkcs7_get_attr1449014
+Ref: gnutls_pkcs7_get_crl_count1449901
+Ref: gnutls_pkcs7_get_crl_raw1450249
+Ref: gnutls_pkcs7_get_crl_raw21451024
+Ref: gnutls_pkcs7_get_crt_count1451655
+Ref: gnutls_pkcs7_get_crt_raw1452030
+Ref: gnutls_pkcs7_get_crt_raw21452930
+Ref: gnutls_pkcs7_get_embedded_data1453784
+Ref: gnutls_pkcs7_get_embedded_data_oid1454784
+Ref: gnutls_pkcs7_get_signature_count1455344
+Ref: gnutls_pkcs7_get_signature_info1455751
+Ref: gnutls_pkcs7_import1456424
+Ref: gnutls_pkcs7_init1457045
+Ref: gnutls_pkcs7_print1457469
+Ref: gnutls_pkcs7_set_crl1458188
+Ref: gnutls_pkcs7_set_crl_raw1458589
+Ref: gnutls_pkcs7_set_crt1458979
+Ref: gnutls_pkcs7_set_crt_raw1459463
+Ref: gnutls_pkcs7_sign1459876
+Ref: gnutls_pkcs7_signature_info_deinit1461315
+Ref: gnutls_pkcs7_verify1461668
+Ref: gnutls_pkcs7_verify_direct1462833
+Node: OCSP API1464293
+Ref: gnutls_ocsp_req_add_cert1464577
+Ref: gnutls_ocsp_req_add_cert_id1465537
+Ref: gnutls_ocsp_req_deinit1466857
+Ref: gnutls_ocsp_req_export1467074
+Ref: gnutls_ocsp_req_get_cert_id1467499
+Ref: gnutls_ocsp_req_get_extension1469091
+Ref: gnutls_ocsp_req_get_nonce1470423
+Ref: gnutls_ocsp_req_get_version1471077
+Ref: gnutls_ocsp_req_import1471464
+Ref: gnutls_ocsp_req_init1471960
+Ref: gnutls_ocsp_req_print1472288
+Ref: gnutls_ocsp_req_randomize_nonce1473024
+Ref: gnutls_ocsp_req_set_extension1473457
+Ref: gnutls_ocsp_req_set_nonce1474141
+Ref: gnutls_ocsp_resp_check_crt1474728
+Ref: gnutls_ocsp_resp_deinit1475312
+Ref: gnutls_ocsp_resp_export1475536
+Ref: gnutls_ocsp_resp_export21475962
+Ref: gnutls_ocsp_resp_get_certs1476482
+Ref: gnutls_ocsp_resp_get_extension1477607
+Ref: gnutls_ocsp_resp_get_nonce1478947
+Ref: gnutls_ocsp_resp_get_produced1479613
+Ref: gnutls_ocsp_resp_get_responder1479960
+Ref: gnutls_ocsp_resp_get_responder21481065
+Ref: gnutls_ocsp_resp_get_responder_raw_id1482328
+Ref: gnutls_ocsp_resp_get_response1483159
+Ref: gnutls_ocsp_resp_get_signature1484287
+Ref: gnutls_ocsp_resp_get_signature_algorithm1484776
+Ref: gnutls_ocsp_resp_get_single1485254
+Ref: gnutls_ocsp_resp_get_status1487196
+Ref: gnutls_ocsp_resp_get_version1487625
+Ref: gnutls_ocsp_resp_import1488033
+Ref: gnutls_ocsp_resp_import21488601
+Ref: gnutls_ocsp_resp_init1489229
+Ref: gnutls_ocsp_resp_list_import21489578
+Ref: gnutls_ocsp_resp_print1490769
+Ref: gnutls_ocsp_resp_verify1491495
+Ref: gnutls_ocsp_resp_verify_direct1493112
+Node: PKCS 12 API1494254
+Ref: gnutls_pkcs12_bag_decrypt1494544
+Ref: gnutls_pkcs12_bag_deinit1494976
+Ref: gnutls_pkcs12_bag_enc_info1495214
+Ref: gnutls_pkcs12_bag_encrypt1496587
+Ref: gnutls_pkcs12_bag_get_count1497092
+Ref: gnutls_pkcs12_bag_get_data1497403
+Ref: gnutls_pkcs12_bag_get_friendly_name1498009
+Ref: gnutls_pkcs12_bag_get_key_id1498646
+Ref: gnutls_pkcs12_bag_get_type1499265
+Ref: gnutls_pkcs12_bag_init1499635
+Ref: gnutls_pkcs12_bag_set_crl1500093
+Ref: gnutls_pkcs12_bag_set_crt1500526
+Ref: gnutls_pkcs12_bag_set_data1500972
+Ref: gnutls_pkcs12_bag_set_friendly_name1501443
+Ref: gnutls_pkcs12_bag_set_key_id1502127
+Ref: gnutls_pkcs12_bag_set_privkey1502801
+Ref: gnutls_pkcs12_deinit1503457
+Ref: gnutls_pkcs12_export1503659
+Ref: gnutls_pkcs12_export21504566
+Ref: gnutls_pkcs12_generate_mac1505242
+Ref: gnutls_pkcs12_generate_mac21505633
+Ref: gnutls_pkcs12_get_bag1506077
+Ref: gnutls_pkcs12_import1506663
+Ref: gnutls_pkcs12_init1507384
+Ref: gnutls_pkcs12_mac_info1507817
+Ref: gnutls_pkcs12_set_bag1509126
+Ref: gnutls_pkcs12_simple_parse1509532
+Ref: gnutls_pkcs12_verify_mac1512213
+Node: PKCS 11 API1513862
+Ref: gnutls_pkcs11_add_provider1514191
+Ref: gnutls_pkcs11_copy_attached_extension1514936
+Ref: gnutls_pkcs11_copy_pubkey1515795
+Ref: gnutls_pkcs11_copy_secret_key1516828
+Ref: gnutls_pkcs11_copy_x509_crt1517553
+Ref: gnutls_pkcs11_copy_x509_crt21518201
+Ref: gnutls_pkcs11_copy_x509_privkey1519169
+Ref: gnutls_pkcs11_copy_x509_privkey21519986
+Ref: gnutls_pkcs11_crt_is_known1520931
+Ref: gnutls_pkcs11_deinit1522067
+Ref: gnutls_pkcs11_delete_url1522384
+Ref: gnutls_pkcs11_get_pin_function1522900
+Ref: gnutls_pkcs11_get_raw_issuer1523283
+Ref: gnutls_pkcs11_get_raw_issuer_by_dn1524193
+Ref: gnutls_pkcs11_get_raw_issuer_by_subject_key_id1525232
+Ref: gnutls_pkcs11_init1526343
+Ref: gnutls_pkcs11_obj_deinit1527385
+Ref: gnutls_pkcs11_obj_export1527631
+Ref: gnutls_pkcs11_obj_export21528476
+Ref: gnutls_pkcs11_obj_export31529073
+Ref: gnutls_pkcs11_obj_export_url1529746
+Ref: gnutls_pkcs11_obj_flags_get_str1530273
+Ref: gnutls_pkcs11_obj_get_exts1530752
+Ref: gnutls_pkcs11_obj_get_flags1531688
+Ref: gnutls_pkcs11_obj_get_info1532225
+Ref: gnutls_pkcs11_obj_get_ptr1533489
+Ref: gnutls_pkcs11_obj_get_type1534398
+Ref: gnutls_pkcs11_obj_import_url1534748
+Ref: gnutls_pkcs11_obj_init1535668
+Ref: gnutls_pkcs11_obj_list_import_url31536053
+Ref: gnutls_pkcs11_obj_list_import_url41537994
+Ref: gnutls_pkcs11_obj_set_info1539670
+Ref: gnutls_pkcs11_obj_set_pin_function1540449
+Ref: gnutls_pkcs11_privkey_cpy1540960
+Ref: gnutls_pkcs11_privkey_deinit1541461
+Ref: gnutls_pkcs11_privkey_export_pubkey1541724
+Ref: gnutls_pkcs11_privkey_export_url1542528
+Ref: gnutls_pkcs11_privkey_generate1543038
+Ref: gnutls_pkcs11_privkey_generate21543710
+Ref: gnutls_pkcs11_privkey_generate31544940
+Ref: gnutls_pkcs11_privkey_get_info1546450
+Ref: gnutls_pkcs11_privkey_get_pk_algorithm1547332
+Ref: gnutls_pkcs11_privkey_import_url1547863
+Ref: gnutls_pkcs11_privkey_init1548564
+Ref: gnutls_pkcs11_privkey_set_pin_function1549279
+Ref: gnutls_pkcs11_privkey_status1549799
+Ref: gnutls_pkcs11_reinit1550175
+Ref: gnutls_pkcs11_set_pin_function1550735
+Ref: gnutls_pkcs11_set_token_function1551225
+Ref: gnutls_pkcs11_token_check_mechanism1551643
+Ref: gnutls_pkcs11_token_get_flags1552400
+Ref: gnutls_pkcs11_token_get_info1552942
+Ref: gnutls_pkcs11_token_get_mechanism1553965
+Ref: gnutls_pkcs11_token_get_ptr1554578
+Ref: gnutls_pkcs11_token_get_random1555277
+Ref: gnutls_pkcs11_token_get_url1555908
+Ref: gnutls_pkcs11_token_init1556576
+Ref: gnutls_pkcs11_token_set_pin1557214
+Ref: gnutls_pkcs11_type_get_name1558054
+Ref: gnutls_x509_crt_import_pkcs111558543
+Ref: gnutls_x509_crt_list_import_pkcs111559065
+Node: TPM API1559674
+Ref: gnutls_tpm_get_registered1559953
+Ref: gnutls_tpm_key_list_deinit1560346
+Ref: gnutls_tpm_key_list_get_url1560614
+Ref: gnutls_tpm_privkey_delete1561267
+Ref: gnutls_tpm_privkey_generate1561705
+Node: Abstract key API1563055
+Ref: gnutls_certificate_set_key1563376
+Ref: gnutls_certificate_set_retrieve_function21565512
+Ref: gnutls_certificate_set_retrieve_function31567762
+Ref: gnutls_pcert_deinit1570237
+Ref: gnutls_pcert_export_openpgp1570482
+Ref: gnutls_pcert_export_x5091570831
+Ref: gnutls_pcert_import_openpgp1571481
+Ref: gnutls_pcert_import_openpgp_raw1571880
+Ref: gnutls_pcert_import_rawpk1572449
+Ref: gnutls_pcert_import_rawpk_raw1573302
+Ref: gnutls_pcert_import_x5091574551
+Ref: gnutls_pcert_import_x509_list1575148
+Ref: gnutls_pcert_import_x509_raw1576338
+Ref: gnutls_pcert_list_import_x509_file1577044
+Ref: gnutls_pcert_list_import_x509_raw1578476
+Ref: gnutls_privkey_decrypt_data1579810
+Ref: gnutls_privkey_decrypt_data21580458
+Ref: gnutls_privkey_deinit1581283
+Ref: gnutls_privkey_export_dsa_raw1581532
+Ref: gnutls_privkey_export_dsa_raw21582262
+Ref: gnutls_privkey_export_ecc_raw1583068
+Ref: gnutls_privkey_export_ecc_raw21583930
+Ref: gnutls_privkey_export_gost_raw21584872
+Ref: gnutls_privkey_export_openpgp1586006
+Ref: gnutls_privkey_export_pkcs111586358
+Ref: gnutls_privkey_export_rsa_raw1586970
+Ref: gnutls_privkey_export_rsa_raw21588001
+Ref: gnutls_privkey_export_x5091589047
+Ref: gnutls_privkey_generate1589695
+Ref: gnutls_privkey_generate21591186
+Ref: gnutls_privkey_get_pk_algorithm1593314
+Ref: gnutls_privkey_get_seed1593928
+Ref: gnutls_privkey_get_spki1594727
+Ref: gnutls_privkey_get_type1595307
+Ref: gnutls_privkey_import_dsa_raw1595796
+Ref: gnutls_privkey_import_ecc_raw1596497
+Ref: gnutls_privkey_import_ext1597310
+Ref: gnutls_privkey_import_ext21598460
+Ref: gnutls_privkey_import_ext31599817
+Ref: gnutls_privkey_import_ext41601431
+Ref: gnutls_privkey_import_gost_raw1604191
+Ref: gnutls_privkey_import_openpgp1605399
+Ref: gnutls_privkey_import_openpgp_raw1605808
+Ref: gnutls_privkey_import_pkcs111606397
+Ref: gnutls_privkey_import_pkcs11_url1607155
+Ref: gnutls_privkey_import_rsa_raw1607604
+Ref: gnutls_privkey_import_tpm_raw1608589
+Ref: gnutls_privkey_import_tpm_url1609456
+Ref: gnutls_privkey_import_url1610559
+Ref: gnutls_privkey_import_x5091611106
+Ref: gnutls_privkey_import_x509_raw1611854
+Ref: gnutls_privkey_init1612633
+Ref: gnutls_privkey_set_flags1613551
+Ref: gnutls_privkey_set_pin_function1614076
+Ref: gnutls_privkey_set_spki1614646
+Ref: gnutls_privkey_sign_data1615219
+Ref: gnutls_privkey_sign_data21616239
+Ref: gnutls_privkey_sign_hash1617137
+Ref: gnutls_privkey_sign_hash21618574
+Ref: gnutls_privkey_status1620088
+Ref: gnutls_privkey_verify_params1620632
+Ref: gnutls_privkey_verify_seed1620994
+Ref: gnutls_pubkey_deinit1621706
+Ref: gnutls_pubkey_encrypt_data1621946
+Ref: gnutls_pubkey_export1622588
+Ref: gnutls_pubkey_export21623602
+Ref: gnutls_pubkey_export_dsa_raw1624375
+Ref: gnutls_pubkey_export_dsa_raw21625187
+Ref: gnutls_pubkey_export_ecc_raw1626071
+Ref: gnutls_pubkey_export_ecc_raw21626970
+Ref: gnutls_pubkey_export_ecc_x9621627949
+Ref: gnutls_pubkey_export_gost_raw21628608
+Ref: gnutls_pubkey_export_rsa_raw1629752
+Ref: gnutls_pubkey_export_rsa_raw21630449
+Ref: gnutls_pubkey_get_key_id1631210
+Ref: gnutls_pubkey_get_key_usage1632235
+Ref: gnutls_pubkey_get_openpgp_key_id1632732
+Ref: gnutls_pubkey_get_pk_algorithm1633371
+Ref: gnutls_pubkey_get_preferred_hash_algorithm1634019
+Ref: gnutls_pubkey_get_spki1634960
+Ref: gnutls_pubkey_import1635528
+Ref: gnutls_pubkey_import_dsa_raw1636212
+Ref: gnutls_pubkey_import_ecc_raw1636873
+Ref: gnutls_pubkey_import_ecc_x9621637641
+Ref: gnutls_pubkey_import_gost_raw1638277
+Ref: gnutls_pubkey_import_openpgp1639424
+Ref: gnutls_pubkey_import_openpgp_raw1639816
+Ref: gnutls_pubkey_import_pkcs111640385
+Ref: gnutls_pubkey_import_privkey1640927
+Ref: gnutls_pubkey_import_rsa_raw1641629
+Ref: gnutls_pubkey_import_tpm_raw1642153
+Ref: gnutls_pubkey_import_tpm_url1642930
+Ref: gnutls_pubkey_import_url1643822
+Ref: gnutls_pubkey_import_x5091644295
+Ref: gnutls_pubkey_import_x509_crq1644795
+Ref: gnutls_pubkey_import_x509_raw1645298
+Ref: gnutls_pubkey_init1645875
+Ref: gnutls_pubkey_print1646204
+Ref: gnutls_pubkey_set_key_usage1646938
+Ref: gnutls_pubkey_set_pin_function1647507
+Ref: gnutls_pubkey_set_spki1648072
+Ref: gnutls_pubkey_verify_data21648643
+Ref: gnutls_pubkey_verify_hash21649551
+Ref: gnutls_pubkey_verify_params1650675
+Ref: gnutls_register_custom_url1651033
+Ref: gnutls_system_key_add_x5091651971
+Ref: gnutls_system_key_delete1652716
+Ref: gnutls_system_key_iter_deinit1653140
+Ref: gnutls_system_key_iter_get_info1653408
+Ref: gnutls_x509_crl_privkey_sign1654682
+Ref: gnutls_x509_crq_privkey_sign1655951
+Ref: gnutls_x509_crq_set_pubkey1657313
+Ref: gnutls_x509_crt_privkey_sign1657821
+Ref: gnutls_x509_crt_set_pubkey1659064
+Node: Socket specific API1659517
+Ref: gnutls_transport_set_fastopen1659810
+Node: DANE API1661356
+Ref: dane_cert_type_name1661730
+Ref: dane_cert_usage_name1662020
+Ref: dane_match_type_name1662332
+Ref: dane_query_data1662615
+Ref: dane_query_deinit1663294
+Ref: dane_query_entries1663499
+Ref: dane_query_status1663741
+Ref: dane_query_tlsa1664035
+Ref: dane_query_to_raw_tlsa1664626
+Ref: dane_raw_tlsa1665968
+Ref: dane_state_deinit1667045
+Ref: dane_state_init1667237
+Ref: dane_state_set_dlv_file1667751
+Ref: dane_strerror1668052
+Ref: dane_verification_status_print1668551
+Ref: dane_verify_crt1669145
+Ref: dane_verify_crt_raw1671332
+Ref: dane_verify_session_crt1672565
+Node: Cryptographic API1673967
+Ref: gnutls_aead_cipher_decrypt1674468
+Ref: gnutls_aead_cipher_decryptv21675847
+Ref: gnutls_aead_cipher_deinit1676772
+Ref: gnutls_aead_cipher_encrypt1677100
+Ref: gnutls_aead_cipher_encryptv1678209
+Ref: gnutls_aead_cipher_encryptv21679357
+Ref: gnutls_aead_cipher_init1680285
+Ref: gnutls_cipher_add_auth1680951
+Ref: gnutls_cipher_decrypt1681531
+Ref: gnutls_cipher_decrypt21682155
+Ref: gnutls_cipher_deinit1683081
+Ref: gnutls_cipher_encrypt1683360
+Ref: gnutls_cipher_encrypt21683820
+Ref: gnutls_cipher_get_block_size1684597
+Ref: gnutls_cipher_get_iv_size1684877
+Ref: gnutls_cipher_get_tag_size1685359
+Ref: gnutls_cipher_init1685765
+Ref: gnutls_cipher_set_iv1686495
+Ref: gnutls_cipher_tag1686840
+Ref: gnutls_crypto_register_aead_cipher1687342
+Ref: gnutls_crypto_register_cipher1688850
+Ref: gnutls_crypto_register_digest1690535
+Ref: gnutls_crypto_register_mac1691663
+Ref: gnutls_decode_ber_digest_info1692995
+Ref: gnutls_decode_gost_rs_value1693794
+Ref: gnutls_decode_rs_value1694594
+Ref: gnutls_encode_ber_digest_info1695379
+Ref: gnutls_encode_gost_rs_value1696023
+Ref: gnutls_encode_rs_value1696769
+Ref: gnutls_hash1697389
+Ref: gnutls_hash_copy1697820
+Ref: gnutls_hash_deinit1698337
+Ref: gnutls_hash_fast1698665
+Ref: gnutls_hash_get_len1699182
+Ref: gnutls_hash_init1699515
+Ref: gnutls_hash_output1700051
+Ref: gnutls_hmac1700369
+Ref: gnutls_hmac_copy1700800
+Ref: gnutls_hmac_deinit1701281
+Ref: gnutls_hmac_fast1701608
+Ref: gnutls_hmac_get_key_size1702332
+Ref: gnutls_hmac_get_len1702793
+Ref: gnutls_hmac_init1703123
+Ref: gnutls_hmac_output1703906
+Ref: gnutls_hmac_set_nonce1704241
+Ref: gnutls_mac_get_nonce_size1704608
+Ref: gnutls_rnd1704918
+Ref: gnutls_rnd_refresh1705556
+Node: Compatibility API1705842
+Ref: gnutls_compression_get1706184
+Ref: gnutls_compression_get_id1706536
+Ref: gnutls_compression_get_name1706900
+Ref: gnutls_compression_list1707282
+Ref: gnutls_global_set_mem_functions1707614
+Ref: gnutls_openpgp_privkey_sign_hash1708989
+Ref: gnutls_priority_compression_list1709418
+Ref: gnutls_x509_crt_get_preferred_hash_algorithm1709872
+Ref: gnutls_x509_privkey_sign_hash1710753
+Node: Copying Information1711623
+Node: Bibliography1736800
+Ref: CBCATT1736939
+Ref: GPGH1737117
+Ref: GUTPKI1737240
+Ref: PRNGATTACKS1737415
+Ref: KEYPIN1737615
+Ref: NISTSP800571737790
+Ref: RFC74131738038
+Ref: RFC79181738205
+Ref: RFC61251738382
+Ref: RFC76851738723
+Ref: RFC76131738898
+Ref: RFC22461739146
+Ref: RFC60831739307
+Ref: RFC44181739544
+Ref: RFC46801739711
+Ref: RFC76331739869
+Ref: RFC79191740041
+Ref: RFC45141740245
+Ref: RFC43461740449
+Ref: RFC43471740599
+Ref: RFC52461740766
+Ref: RFC24401740917
+Ref: RFC48801741099
+Ref: RFC42111741293
+Ref: RFC28171741487
+Ref: RFC28181741640
+Ref: RFC29451741754
+Ref: RFC73011741904
+Ref: RFC29861742124
+Ref: PKIX1742313
+Ref: RFC37491742576
+Ref: RFC38201742742
+Ref: RFC65201742985
+Ref: RFC57461743224
+Ref: RFC52801743433
+Ref: TLSTKT1743700
+Ref: PKCS121743932
+Ref: PKCS111744073
+Ref: RESCORLA1744219
+Ref: SELKEY1744315
+Ref: SSL31744474
+Ref: STEVENS1744665
+Ref: TLSEXT1744773
+Ref: TLSPGP1744990
+Ref: TLSSRP1745155
+Ref: TLSPSK1745352
+Ref: TOMSRP1745521
+Ref: WEGER1745634
+Ref: ECRYPT1745826
+Ref: RFC50561746031
+Ref: RFC57641746184
+Ref: RFC59291746472
+Ref: PKCS11URI1746615
+Ref: TPMURI1746751
+Ref: ANDERSON1746945
+Ref: RFC48211747091
+Ref: RFC25601747244
+Ref: RIVESTCRL1747438
+Node: Function and Data Index1747799
+Node: Concept Index1871858
 
 End Tag Table

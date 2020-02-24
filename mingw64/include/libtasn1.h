@@ -72,7 +72,7 @@ extern "C"
  *
  * Version of the library as a string.
  */
-#define ASN1_VERSION "4.15.0"
+#define ASN1_VERSION "4.16.0"
 
 /**
  * ASN1_VERSION_MAJOR:
@@ -86,7 +86,7 @@ extern "C"
  *
  * Minor version number of the library.
  */
-#define ASN1_VERSION_MINOR 15
+#define ASN1_VERSION_MINOR 16
 
 /**
  * ASN1_VERSION_PATCH:
@@ -100,7 +100,7 @@ extern "C"
  *
  * Version number of the library as a number.
  */
-#define ASN1_VERSION_NUMBER 0x040f00
+#define ASN1_VERSION_NUMBER 0x041000
 
 
 #if defined __GNUC__ && !defined ASN1_INTERNAL_BUILD
@@ -484,6 +484,10 @@ extern ASN1_API int
   asn1_get_object_id_der (const unsigned char *der,
                           int der_len, int *ret_len,
                           char *str, int str_size);
+
+extern ASN1_API int
+  asn1_object_id_der (const char *str, unsigned char *der, int *der_len,
+                      unsigned flags);
 
 /* Compatibility types */
 

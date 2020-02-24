@@ -1,9 +1,9 @@
 This is gnutls.info, produced by makeinfo version 6.6 from gnutls.texi.
 
-This manual is last updated 27 June 2019 for version 3.6.11 of GnuTLS.
+This manual is last updated 3 January 2020 for version 3.6.12 of GnuTLS.
 
-Copyright (C) 2001-2019 Free Software Foundation, Inc.\\ Copyright (C)
-2001-2019 Nikos Mavrogiannopoulos
+Copyright (C) 2001-2020 Free Software Foundation, Inc.\\ Copyright (C)
+2001-2020 Nikos Mavrogiannopoulos
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -695,7 +695,7 @@ gnutls_ocsp_req_deinit
 gnutls_ocsp_req_export
 ----------------------
 
- -- Function: int gnutls_ocsp_req_export (gnutls_ocsp_req_t REQ,
+ -- Function: int gnutls_ocsp_req_export (gnutls_ocsp_req_const_t REQ,
           gnutls_datum_t * DATA)
      REQ: Holds the OCSP request
 
@@ -709,8 +709,8 @@ gnutls_ocsp_req_export
 gnutls_ocsp_req_get_cert_id
 ---------------------------
 
- -- Function: int gnutls_ocsp_req_get_cert_id (gnutls_ocsp_req_t REQ,
-          unsigned INDX, gnutls_digest_algorithm_t * DIGEST,
+ -- Function: int gnutls_ocsp_req_get_cert_id (gnutls_ocsp_req_const_t
+          REQ, unsigned INDX, gnutls_digest_algorithm_t * DIGEST,
           gnutls_datum_t * ISSUER_NAME_HASH, gnutls_datum_t *
           ISSUER_KEY_HASH, gnutls_datum_t * SERIAL_NUMBER)
      REQ: should contain a 'gnutls_ocsp_req_t' type
@@ -749,9 +749,9 @@ gnutls_ocsp_req_get_cert_id
 gnutls_ocsp_req_get_extension
 -----------------------------
 
- -- Function: int gnutls_ocsp_req_get_extension (gnutls_ocsp_req_t REQ,
-          unsigned INDX, gnutls_datum_t * OID, unsigned int * CRITICAL,
-          gnutls_datum_t * DATA)
+ -- Function: int gnutls_ocsp_req_get_extension (gnutls_ocsp_req_const_t
+          REQ, unsigned INDX, gnutls_datum_t * OID, unsigned int *
+          CRITICAL, gnutls_datum_t * DATA)
      REQ: should contain a 'gnutls_ocsp_req_t' type
 
      INDX: Specifies which extension OID to get.  Use (0) to get the
@@ -783,8 +783,8 @@ gnutls_ocsp_req_get_extension
 gnutls_ocsp_req_get_nonce
 -------------------------
 
- -- Function: int gnutls_ocsp_req_get_nonce (gnutls_ocsp_req_t REQ,
-          unsigned int * CRITICAL, gnutls_datum_t * NONCE)
+ -- Function: int gnutls_ocsp_req_get_nonce (gnutls_ocsp_req_const_t
+          REQ, unsigned int * CRITICAL, gnutls_datum_t * NONCE)
      REQ: should contain a 'gnutls_ocsp_req_t' type
 
      CRITICAL: whether nonce extension is marked critical, or NULL
@@ -802,7 +802,8 @@ gnutls_ocsp_req_get_nonce
 gnutls_ocsp_req_get_version
 ---------------------------
 
- -- Function: int gnutls_ocsp_req_get_version (gnutls_ocsp_req_t REQ)
+ -- Function: int gnutls_ocsp_req_get_version (gnutls_ocsp_req_const_t
+          REQ)
      REQ: should contain a 'gnutls_ocsp_req_t' type
 
      This function will return the version of the OCSP request.
@@ -841,7 +842,7 @@ gnutls_ocsp_req_init
 gnutls_ocsp_req_print
 ---------------------
 
- -- Function: int gnutls_ocsp_req_print (gnutls_ocsp_req_t REQ,
+ -- Function: int gnutls_ocsp_req_print (gnutls_ocsp_req_const_t REQ,
           gnutls_ocsp_print_formats_t FORMAT, gnutls_datum_t * OUT)
      REQ: The data to be printed
 
@@ -916,8 +917,8 @@ gnutls_ocsp_req_set_nonce
 gnutls_ocsp_resp_check_crt
 --------------------------
 
- -- Function: int gnutls_ocsp_resp_check_crt (gnutls_ocsp_resp_t RESP,
-          unsigned int INDX, gnutls_x509_crt_t CRT)
+ -- Function: int gnutls_ocsp_resp_check_crt (gnutls_ocsp_resp_const_t
+          RESP, unsigned int INDX, gnutls_x509_crt_t CRT)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      INDX: Specifies response number to get.  Use (0) to get the first
@@ -944,8 +945,8 @@ gnutls_ocsp_resp_deinit
 gnutls_ocsp_resp_export
 -----------------------
 
- -- Function: int gnutls_ocsp_resp_export (gnutls_ocsp_resp_t RESP,
-          gnutls_datum_t * DATA)
+ -- Function: int gnutls_ocsp_resp_export (gnutls_ocsp_resp_const_t
+          RESP, gnutls_datum_t * DATA)
      RESP: Holds the OCSP response
 
      DATA: newly allocate buffer holding DER encoded OCSP response
@@ -958,8 +959,8 @@ gnutls_ocsp_resp_export
 gnutls_ocsp_resp_export2
 ------------------------
 
- -- Function: int gnutls_ocsp_resp_export2 (gnutls_ocsp_resp_t RESP,
-          gnutls_datum_t * DATA, gnutls_x509_crt_fmt_t FMT)
+ -- Function: int gnutls_ocsp_resp_export2 (gnutls_ocsp_resp_const_t
+          RESP, gnutls_datum_t * DATA, gnutls_x509_crt_fmt_t FMT)
      RESP: Holds the OCSP response
 
      DATA: newly allocate buffer holding DER or PEM encoded OCSP
@@ -977,8 +978,8 @@ gnutls_ocsp_resp_export2
 gnutls_ocsp_resp_get_certs
 --------------------------
 
- -- Function: int gnutls_ocsp_resp_get_certs (gnutls_ocsp_resp_t RESP,
-          gnutls_x509_crt_t ** CERTS, size_t * NCERTS)
+ -- Function: int gnutls_ocsp_resp_get_certs (gnutls_ocsp_resp_const_t
+          RESP, gnutls_x509_crt_t ** CERTS, size_t * NCERTS)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      CERTS: newly allocated array with 'gnutls_x509_crt_t' certificates
@@ -1004,9 +1005,9 @@ gnutls_ocsp_resp_get_certs
 gnutls_ocsp_resp_get_extension
 ------------------------------
 
- -- Function: int gnutls_ocsp_resp_get_extension (gnutls_ocsp_resp_t
-          RESP, unsigned INDX, gnutls_datum_t * OID, unsigned int *
-          CRITICAL, gnutls_datum_t * DATA)
+ -- Function: int gnutls_ocsp_resp_get_extension
+          (gnutls_ocsp_resp_const_t RESP, unsigned INDX, gnutls_datum_t
+          * OID, unsigned int * CRITICAL, gnutls_datum_t * DATA)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      INDX: Specifies which extension OID to get.  Use (0) to get the
@@ -1038,8 +1039,8 @@ gnutls_ocsp_resp_get_extension
 gnutls_ocsp_resp_get_nonce
 --------------------------
 
- -- Function: int gnutls_ocsp_resp_get_nonce (gnutls_ocsp_resp_t RESP,
-          unsigned int * CRITICAL, gnutls_datum_t * NONCE)
+ -- Function: int gnutls_ocsp_resp_get_nonce (gnutls_ocsp_resp_const_t
+          RESP, unsigned int * CRITICAL, gnutls_datum_t * NONCE)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      CRITICAL: whether nonce extension is marked critical
@@ -1058,8 +1059,8 @@ gnutls_ocsp_resp_get_nonce
 gnutls_ocsp_resp_get_produced
 -----------------------------
 
- -- Function: time_t gnutls_ocsp_resp_get_produced (gnutls_ocsp_resp_t
-          RESP)
+ -- Function: time_t gnutls_ocsp_resp_get_produced
+          (gnutls_ocsp_resp_const_t RESP)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      This function will return the time when the OCSP response was
@@ -1070,8 +1071,8 @@ gnutls_ocsp_resp_get_produced
 gnutls_ocsp_resp_get_responder
 ------------------------------
 
- -- Function: int gnutls_ocsp_resp_get_responder (gnutls_ocsp_resp_t
-          RESP, gnutls_datum_t * DN)
+ -- Function: int gnutls_ocsp_resp_get_responder
+          (gnutls_ocsp_resp_const_t RESP, gnutls_datum_t * DN)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      DN: newly allocated buffer with name
@@ -1097,8 +1098,9 @@ gnutls_ocsp_resp_get_responder
 gnutls_ocsp_resp_get_responder2
 -------------------------------
 
- -- Function: int gnutls_ocsp_resp_get_responder2 (gnutls_ocsp_resp_t
-          RESP, gnutls_datum_t * DN, unsigned FLAGS)
+ -- Function: int gnutls_ocsp_resp_get_responder2
+          (gnutls_ocsp_resp_const_t RESP, gnutls_datum_t * DN, unsigned
+          FLAGS)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      DN: newly allocated buffer with name
@@ -1128,7 +1130,8 @@ gnutls_ocsp_resp_get_responder_raw_id
 -------------------------------------
 
  -- Function: int gnutls_ocsp_resp_get_responder_raw_id
-          (gnutls_ocsp_resp_t RESP, unsigned TYPE, gnutls_datum_t * RAW)
+          (gnutls_ocsp_resp_const_t RESP, unsigned TYPE, gnutls_datum_t
+          * RAW)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      TYPE: should be 'GNUTLS_OCSP_RESP_ID_KEY' or
@@ -1150,9 +1153,9 @@ gnutls_ocsp_resp_get_responder_raw_id
 gnutls_ocsp_resp_get_response
 -----------------------------
 
- -- Function: int gnutls_ocsp_resp_get_response (gnutls_ocsp_resp_t
-          RESP, gnutls_datum_t * RESPONSE_TYPE_OID, gnutls_datum_t *
-          RESPONSE)
+ -- Function: int gnutls_ocsp_resp_get_response
+          (gnutls_ocsp_resp_const_t RESP, gnutls_datum_t *
+          RESPONSE_TYPE_OID, gnutls_datum_t * RESPONSE)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      RESPONSE_TYPE_OID: newly allocated output buffer with response type
@@ -1177,8 +1180,8 @@ gnutls_ocsp_resp_get_response
 gnutls_ocsp_resp_get_signature
 ------------------------------
 
- -- Function: int gnutls_ocsp_resp_get_signature (gnutls_ocsp_resp_t
-          RESP, gnutls_datum_t * SIG)
+ -- Function: int gnutls_ocsp_resp_get_signature
+          (gnutls_ocsp_resp_const_t RESP, gnutls_datum_t * SIG)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      SIG: newly allocated output buffer with signature data
@@ -1192,7 +1195,7 @@ gnutls_ocsp_resp_get_signature_algorithm
 ----------------------------------------
 
  -- Function: int gnutls_ocsp_resp_get_signature_algorithm
-          (gnutls_ocsp_resp_t RESP)
+          (gnutls_ocsp_resp_const_t RESP)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      This function will return a value of the 'gnutls_sign_algorithm_t'
@@ -1205,8 +1208,8 @@ gnutls_ocsp_resp_get_signature_algorithm
 gnutls_ocsp_resp_get_single
 ---------------------------
 
- -- Function: int gnutls_ocsp_resp_get_single (gnutls_ocsp_resp_t RESP,
-          unsigned INDX, gnutls_digest_algorithm_t * DIGEST,
+ -- Function: int gnutls_ocsp_resp_get_single (gnutls_ocsp_resp_const_t
+          RESP, unsigned INDX, gnutls_digest_algorithm_t * DIGEST,
           gnutls_datum_t * ISSUER_NAME_HASH, gnutls_datum_t *
           ISSUER_KEY_HASH, gnutls_datum_t * SERIAL_NUMBER, unsigned int
           * CERT_STATUS, time_t * THIS_UPDATE, time_t * NEXT_UPDATE,
@@ -1256,7 +1259,8 @@ gnutls_ocsp_resp_get_single
 gnutls_ocsp_resp_get_status
 ---------------------------
 
- -- Function: int gnutls_ocsp_resp_get_status (gnutls_ocsp_resp_t RESP)
+ -- Function: int gnutls_ocsp_resp_get_status (gnutls_ocsp_resp_const_t
+          RESP)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      This function will return the status of a OCSP response, an
@@ -1268,7 +1272,8 @@ gnutls_ocsp_resp_get_status
 gnutls_ocsp_resp_get_version
 ----------------------------
 
- -- Function: int gnutls_ocsp_resp_get_version (gnutls_ocsp_resp_t RESP)
+ -- Function: int gnutls_ocsp_resp_get_version (gnutls_ocsp_resp_const_t
+          RESP)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      This function will return the version of the Basic OCSP Response.
@@ -1361,7 +1366,7 @@ gnutls_ocsp_resp_list_import2
 gnutls_ocsp_resp_print
 ----------------------
 
- -- Function: int gnutls_ocsp_resp_print (gnutls_ocsp_resp_t RESP,
+ -- Function: int gnutls_ocsp_resp_print (gnutls_ocsp_resp_const_t RESP,
           gnutls_ocsp_print_formats_t FORMAT, gnutls_datum_t * OUT)
      RESP: The data to be printed
 
@@ -1384,9 +1389,9 @@ gnutls_ocsp_resp_print
 gnutls_ocsp_resp_verify
 -----------------------
 
- -- Function: int gnutls_ocsp_resp_verify (gnutls_ocsp_resp_t RESP,
-          gnutls_x509_trust_list_t TRUSTLIST, unsigned int * VERIFY,
-          unsigned int FLAGS)
+ -- Function: int gnutls_ocsp_resp_verify (gnutls_ocsp_resp_const_t
+          RESP, gnutls_x509_trust_list_t TRUSTLIST, unsigned int *
+          VERIFY, unsigned int FLAGS)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      TRUSTLIST: trust anchors as a 'gnutls_x509_trust_list_t' type
@@ -1422,9 +1427,9 @@ gnutls_ocsp_resp_verify
 gnutls_ocsp_resp_verify_direct
 ------------------------------
 
- -- Function: int gnutls_ocsp_resp_verify_direct (gnutls_ocsp_resp_t
-          RESP, gnutls_x509_crt_t ISSUER, unsigned int * VERIFY,
-          unsigned int FLAGS)
+ -- Function: int gnutls_ocsp_resp_verify_direct
+          (gnutls_ocsp_resp_const_t RESP, gnutls_x509_crt_t ISSUER,
+          unsigned int * VERIFY, unsigned int FLAGS)
      RESP: should contain a 'gnutls_ocsp_resp_t' type
 
      ISSUER: certificate believed to have signed the response
