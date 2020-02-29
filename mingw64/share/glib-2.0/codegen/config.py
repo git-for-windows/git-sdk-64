@@ -19,4 +19,6 @@
 #
 # Author: David Zeuthen <davidz@redhat.com>
 
-VERSION = "2.62.4"
+VERSION = "2.64.0"
+MAJOR_VERSION = 2
+MINOR_VERSION = 64
