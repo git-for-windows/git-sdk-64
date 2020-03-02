@@ -3,13 +3,13 @@ package HTTP::Request::Common;
 use strict;
 use warnings;
 
-our $VERSION = '6.18';
+our $VERSION = '6.22';
 
 our $DYNAMIC_FILE_UPLOAD ||= 0;  # make it defined (don't know why)
 
 use Exporter 5.57 'import';
 
-our @EXPORT =qw(GET HEAD PUT PATCH POST);
+our @EXPORT =qw(GET HEAD PUT PATCH POST OPTIONS);
 our @EXPORT_OK = qw($DYNAMIC_FILE_UPLOAD DELETE);
 
 require HTTP::Request;
@@ -23,6 +23,7 @@ sub DELETE { _simple_req('DELETE', @_); }
 sub PATCH { request_type_with_data('PATCH', @_); }
 sub POST { request_type_with_data('POST', @_); }
 sub PUT { request_type_with_data('PUT', @_); }
+sub OPTIONS { request_type_with_data('OPTIONS', @_); }
 
 sub request_type_with_data
 {
@@ -312,7 +313,7 @@ HTTP::Request::Common - Construct common HTTP::Request objects
 
 =head1 VERSION
 
-version 6.18
+version 6.22
 
 =head1 SYNOPSIS
 
@@ -322,6 +323,7 @@ version 6.18
   $ua->request(POST 'http://somewhere/foo', [foo => bar, bar => foo]);
   $ua->request(PATCH 'http://somewhere/foo', [foo => bar, bar => foo]);
   $ua->request(PUT 'http://somewhere/foo', [foo => bar, bar => foo]);
+  $ua->request(OPTIONS 'http://somewhere/foo', [foo => bar, bar => foo]);
 
 =head1 DESCRIPTION
 
@@ -397,6 +399,18 @@ The same as C<POST> below, but the method in the request is C<PATCH>.
 =item PUT $url, Header => Value,..., Content => $content
 
 The same as C<POST> below, but the method in the request is C<PUT>
+
+=item OPTIONS $url
+
+=item OPTIONS $url, Header => Value,...
+
+=item OPTIONS $url, $form_ref, Header => Value,...
+
+=item OPTIONS $url, Header => Value,..., Content => $form_ref
+
+=item OPTIONS $url, Header => Value,..., Content => $content
+
+The same as C<POST> below, but the method in the request is C<OPTIONS>
 
 =item POST $url
 
