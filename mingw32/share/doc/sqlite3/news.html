@@ -95,7 +95,19 @@ return false;
 
 <h2>Recent News</h2>
 
-<a name="2020_01_22"></a><h3>2020-01-22 - Release 3.31.0</h3><blockquote>
+<a name="2020_01_27"></a><h3>2020-01-27 - Release 3.31.1</h3><blockquote>
+Applications that use SQLite should only interface with SQLite
+through the officially published APIs.  Applications should not
+depend upon or use the internal data structures of SQLite as those
+structures might change from one release to another.  However, there
+is a popular application that does depend on the details of the
+internal layout of data in an internal SQLite data structure, and
+those details changed in version 3.31.0, breaking the application.
+This is, technically, a bug in the application, not in SQLite.
+But it is within the power of SQLite to fix it, by reverting the
+internal data structure change, and so that is what we have done
+for the 3.31.1 release.
+</blockquote><hr width="50%"><a name="2020_01_22"></a><h3>2020-01-22 - Release 3.31.0</h3><blockquote>
 Version 3.31.0 is an ordinary maintenance release of SQLite.
 This release features the ability to define
 <a href="gencol.html">generated columns</a> for tables as well as many other enhancements.
