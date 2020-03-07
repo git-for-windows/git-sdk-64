@@ -79,6 +79,14 @@
 @ENDLOCAL & @SET "SSH_AUTH_SOCK=%SSH_AUTH_SOCK%" ^
           & @SET "SSH_AGENT_PID=%SSH_AGENT_PID%"
 
+@REM Set variables globally
+@where setx
+@if %ERRORLEVEL% == 0 (
+	@echo Setup global vars
+	@setx SSH_AGENT_PID %SSH_AGENT_PID%
+	@setx SSH_AUTH_SOCK %SSH_AUTH_SOCK%
+)
+
 @ECHO %cmdcmdline% | @FINDSTR /l "\"\"" >NUL
 @IF NOT ERRORLEVEL 1 @(
     @CALL cmd %*
