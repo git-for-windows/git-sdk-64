@@ -1,30 +1,29 @@
-#!/usr/bin/python2
-'''
+#!/usr/bin/env python3
+
+"""
 a2x - A toolchain manager for AsciiDoc (converts Asciidoc text files to other
       file formats)
 
 Copyright: Stuart Rackham (c) 2009
 License:   MIT
 Email:     srackham@gmail.com
-
-'''
+"""
 
 import os
 import fnmatch
-import HTMLParser
+from html.parser import HTMLParser
 import re
 import shutil
 import subprocess
 import sys
 import traceback
-import urlparse
+from urllib.parse import urlparse
 import zipfile
 import xml.dom.minidom
 import mimetypes
-import codecs
 
 PROG = os.path.basename(os.path.splitext(__file__)[0])
-VERSION = '8.6.10'
+VERSION = '9.0.0rc1'
 
 # AsciiDoc global configuration file directory.
 # NOTE: CONF_DIR is "fixed up" by Makefile -- don't rename or change syntax.
@@ -69,18 +68,23 @@ XSLTPROC_OPTS = ''
 
 OPTIONS = None  # These functions read verbose and dry_run command options.
 
+
 def errmsg(msg):
-    sys.stderr.write('%s: %s\n' % (PROG,msg))
+    print('%s: %s\n' % (PROG, msg), file=sys.stderr)
+
 
 def warning(msg):
     errmsg('WARNING: %s' % msg)
 
+
 def infomsg(msg):
-    print '%s: %s' % (PROG,msg)
+    print('%s: %s' % (PROG, msg))
+
 
 def die(msg, exit_code=1):
     errmsg('ERROR: %s' % msg)
     sys.exit(exit_code)
+
 
 def trace():
     """Print traceback to stderr."""
@@ -88,39 +92,51 @@ def trace():
     traceback.print_exc(file=sys.stderr)
     errmsg('-'*60)
 
+
 def verbose(msg):
     if OPTIONS.verbose or OPTIONS.dry_run:
         infomsg(msg)
+
 
 class AttrDict(dict):
     """
     Like a dictionary except values can be accessed as attributes i.e. obj.foo
     can be used in addition to obj['foo'].
-    If self._default has been set then it will be returned if a non-existant
+    If self._default has been set then it will be returned if a non-existent
     attribute is accessed (instead of raising an AttributeError).
     """
     def __getattr__(self, key):
         try:
             return self[key]
-        except KeyError, k:
-            if self.has_key('_default'):
+        except KeyError as k:
+            if '_default' in self:
                 return self['_default']
             else:
-                raise AttributeError, k
+                raise AttributeError from k
+
     def __setattr__(self, key, value):
         self[key] = value
+
     def __delattr__(self, key):
-        try: del self[key]
-        except KeyError, k: raise AttributeError, k
+        try:
+            del self[key]
+        except KeyError as k:
+            raise AttributeError from k
+
     def __repr__(self):
         return '<AttrDict ' + dict.__repr__(self) + '>'
+
     def __getstate__(self):
         return dict(self)
-    def __setstate__(self,value):
-        for k,v in value.items(): self[k]=v
+
+    def __setstate__(self, value):
+        for k, v in value.items():
+            self[k] = v
+
 
 def isexecutable(file_name):
     return os.path.isfile(file_name) and os.access(file_name, os.X_OK)
+
 
 def find_executable(file_name):
     '''
@@ -140,31 +156,30 @@ def find_executable(file_name):
                 return os.path.realpath(f)
         return None
     if os.name == 'nt' and os.path.splitext(file_name)[1] == '':
-        for ext in ('.cmd','.bat','.exe'):
+        for ext in ('.cmd', '.bat', '.exe'):
             result = _find_executable(file_name + ext)
-            if result: break
+            if result:
+                break
     else:
         result = _find_executable(file_name)
     return result
 
-def write_file(filename, data, mode='w', encoding='utf-8'):
-    f = codecs.open(filename, mode, encoding)
-    try:
-        f.write(data)
-    finally:
-        f.close()
 
-def read_file(filename, mode='r'):
-    f = open(filename, mode)
-    try:
+def write_file(filename, data, mode='w', encoding='utf-8'):
+    with open(filename, mode=mode, encoding=encoding) as f:
+        f.write(data)
+
+
+def read_file(filename, mode='r', encoding='utf-8'):
+    with open(filename, mode=mode, encoding=encoding) as f:
         return f.read()
-    finally:
-        f.close()
+
 
 def shell_cd(path):
     verbose('chdir %s' % path)
     if not OPTIONS.dry_run:
         os.chdir(path)
+
 
 def shell_makedirs(path):
     if os.path.isdir(path):
@@ -173,10 +188,12 @@ def shell_makedirs(path):
     if not OPTIONS.dry_run:
         os.makedirs(path)
 
+
 def shell_copy(src, dst):
-    verbose('copying "%s" to "%s"' % (src,dst))
+    verbose('copying "%s" to "%s"' % (src, dst))
     if not OPTIONS.dry_run:
         shutil.copy(src, dst)
+
 
 def shell_rm(path):
     if not os.path.exists(path):
@@ -185,12 +202,14 @@ def shell_rm(path):
     if not OPTIONS.dry_run:
         os.unlink(path)
 
+
 def shell_rmtree(path):
     if not os.path.isdir(path):
         return
     verbose('deleting %s' % path)
     if not OPTIONS.dry_run:
         shutil.rmtree(path)
+
 
 def shell(cmd, raise_error=True):
     '''
@@ -208,7 +227,7 @@ def shell(cmd, raise_error=True):
         if not mo:
             mo = re.match(r'^\s*(?P<arg0>[^ ]+)', cmd)
         if mo.group('arg0').endswith('.py'):
-            cmd = 'python2 ' + cmd
+            cmd = 'python ' + cmd
         # Remove redundant quoting -- this is not just cosmetic,
         # quoting seems to dramatically decrease the allowed command
         # length in Windows XP.
@@ -219,16 +238,17 @@ def shell(cmd, raise_error=True):
     stdout = stderr = subprocess.PIPE
     try:
         popen = subprocess.Popen(cmd, stdout=stdout, stderr=stderr,
-                shell=True, env=ENV)
-    except OSError, e:
+                                 shell=True, env=ENV, universal_newlines=True)
+    except OSError as e:
         die('failed: %s: %s' % (cmd, e))
     stdoutdata, stderrdata = popen.communicate()
     if OPTIONS.verbose:
-        print stdoutdata
-        print stderrdata
+        print(stdoutdata)
+        print(stderrdata)
     if popen.returncode != 0 and raise_error:
         die('%s returned non-zero exit status %d' % (cmd, popen.returncode))
     return (stdoutdata, stderrdata, popen.returncode)
+
 
 def find_resources(files, tagname, attrname, filter=None):
     '''
@@ -237,20 +257,22 @@ def find_resources(files, tagname, attrname, filter=None):
     Handles HTML open and XHTML closed tags.
     Non-local URIs are skipped.
     files can be a file name or a list of file names.
-    The filter function takes a dictionary of tag attributes and returns True if
-    the URI is to be included.
+    The filter function takes a dictionary of tag attributes and returns True
+    if the URI is to be included.
     '''
-    class FindResources(HTMLParser.HTMLParser):
+    class FindResources(HTMLParser):
         # Nested parser class shares locals with enclosing function.
         def handle_startendtag(self, tag, attrs):
             self.handle_starttag(tag, attrs)
+
         def handle_starttag(self, tag, attrs):
             attrs = dict(attrs)
             if tag == tagname and (filter is None or filter(attrs)):
                 # Accept only local URIs.
-                uri = urlparse.urlparse(attrs[attrname])
-                if uri[0] in ('','file') and not uri[1] and uri[2]:
+                uri = urlparse(attrs[attrname])
+                if uri[0] in ('', 'file') and not uri[1] and uri[2]:
                     result.append(uri[2])
+
     if isinstance(files, str):
         files = [files]
     result = []
@@ -259,19 +281,16 @@ def find_resources(files, tagname, attrname, filter=None):
         if OPTIONS.dry_run:
             continue
         parser = FindResources()
-        # HTMLParser has problems with non-ASCII strings.
-        # See http://bugs.python.org/issue3932
-        contents = read_file(filename)
-        mo = re.search(r'\A<\?xml.* encoding="(.*?)"', contents)
-        if mo:
-            encoding = mo.group(1)
-            parser.feed(contents.decode(encoding))
-        else:
-            parser.feed(contents)
+        with open(filename, 'rb') as open_file:
+            contents = open_file.read()
+        mo = re.search(b'\A<\?xml.* encoding="(.*?)"', contents)
+        contents = contents.decode(mo.group(1).decode('utf-8') if mo else 'utf-8')
+        parser.feed(contents)
         parser.close()
     result = list(set(result))   # Drop duplicate values.
     result.sort()
     return result
+
 
 # NOT USED.
 def copy_files(files, src_dir, dst_dir):
@@ -292,24 +311,27 @@ def copy_files(files, src_dir, dst_dir):
             shell_makedirs(dstdir)
             shell_copy(src, dst)
 
+
 def find_files(path, pattern):
     '''
     Return list of file names matching pattern in directory path.
     '''
     result = []
-    for (p,dirs,files) in os.walk(path):
+    for (p, dirs, files) in os.walk(path):
         for f in files:
             if fnmatch.fnmatch(f, pattern):
-                result.append(os.path.normpath(os.path.join(p,f)))
+                result.append(os.path.normpath(os.path.join(p, f)))
     return result
 
-def exec_xsltproc(xsl_file, xml_file, dst_dir, opts = ''):
+
+def exec_xsltproc(xsl_file, xml_file, dst_dir, opts=''):
     cwd = os.getcwd()
     shell_cd(dst_dir)
     try:
         shell('"%s" %s "%s" "%s"' % (XSLTPROC, opts, xsl_file, xml_file))
     finally:
         shell_cd(cwd)
+
 
 def get_source_options(asciidoc_file):
     '''
@@ -342,14 +364,11 @@ def get_source_options(asciidoc_file):
     result = []
     if os.path.isfile(asciidoc_file):
         options = ''
-        f = open(asciidoc_file)
-        try:
+        with open(asciidoc_file) as f:
             for line in f:
                 mo = re.search(r'^//\s*a2x:', line)
                 if mo:
                     options += ' ' + line[mo.end():].strip()
-        finally:
-            f.close()
         parse_options()
     return result
 
@@ -370,10 +389,10 @@ class A2X(AttrDict):
         self.process_options()
         # Append configuration file options.
         self.asciidoc_opts += ' ' + ASCIIDOC_OPTS
-        self.dblatex_opts  += ' ' + DBLATEX_OPTS
-        self.fop_opts      += ' ' + FOP_OPTS
+        self.dblatex_opts += ' ' + DBLATEX_OPTS
+        self.fop_opts += ' ' + FOP_OPTS
         self.xsltproc_opts += ' ' + XSLTPROC_OPTS
-        self.backend_opts  += ' ' + BACKEND_OPTS
+        self.backend_opts += ' ' + BACKEND_OPTS
         # Execute to_* functions.
         if self.backend:
             self.to_backend()
@@ -438,14 +457,14 @@ class A2X(AttrDict):
         for f in conf_files:
             if os.path.isfile(f):
                 verbose('loading configuration file: %s' % f)
-                execfile(f, globals())
+                exec(open(f).read(), globals())
 
     def process_options(self):
         '''
         Validate and command options and set defaults.
         '''
         if not os.path.isfile(self.asciidoc_file):
-            die('missing SOURCE_FILE: %s' % self.asciidoc_file)
+            die('missing ASCIIDOC_FILE: %s' % self.asciidoc_file)
         self.asciidoc_file = os.path.abspath(self.asciidoc_file)
         if os.path.splitext(self.asciidoc_file)[1].lower() == '.xml':
             self.skip_asciidoc = True
@@ -457,24 +476,21 @@ class A2X(AttrDict):
             if not os.path.isdir(self.destination_dir):
                 die('missing --destination-dir: %s' % self.destination_dir)
             self.destination_dir = os.path.abspath(self.destination_dir)
-            if not self.format in ('chunked','epub','htmlhelp','xhtml','manpage'):
+            if self.format not in ('chunked', 'epub', 'htmlhelp', 'xhtml', 'manpage'):
                 warning('--destination-dir option is only applicable to HTML and manpage based outputs')
         self.resource_dirs = []
         self.resource_files = []
         if self.resource_manifest:
             if not os.path.isfile(self.resource_manifest):
                 die('missing --resource-manifest: %s' % self.resource_manifest)
-            f = open(self.resource_manifest)
-            try:
+            with open(self.resource_manifest) as f:
                 for r in f:
                     self.resources.append(r.strip())
-            finally:
-                f.close()
         for r in self.resources:
             r = os.path.expanduser(r)
             r = os.path.expandvars(r)
             if r.endswith('/') or r.endswith('\\'):
-                if  os.path.isdir(r):
+                if os.path.isdir(r):
                     self.resource_dirs.append(r)
                 else:
                     die('missing resource directory: %s' % r)
@@ -486,8 +502,8 @@ class A2X(AttrDict):
             else:
                 self.resource_files.append(r)
         for p in (os.path.dirname(self.asciidoc), CONF_DIR):
-            for d in ('images','stylesheets'):
-                d = os.path.join(p,d)
+            for d in ('images', 'stylesheets'):
+                d = os.path.join(p, d)
                 if os.path.isdir(d):
                     self.resource_dirs.append(d)
         verbose('resource files: %s' % self.resource_files)
@@ -581,16 +597,21 @@ class A2X(AttrDict):
 
     def copy_resources(self, html_files, src_dir, dst_dir, resources=[]):
         '''
-        Search html_files for images and CSS resource URIs (html_files can be a
-        list of file names or a single file name).
+        Search html_files for images and CSS resource URIs (html_files can
+        be a list of file names or a single file name).
         Copy them from the src_dir to the dst_dir.
         If not found in src_dir then recursively search all specified
         resource directories.
-        Optional additional resources files can be passed in the resources list.
+        Optional additional resources files can be passed in the resources
+        list.
         '''
         resources = resources[:]
-        resources += find_resources(html_files, 'link', 'href',
-                        lambda attrs: attrs.get('type') == 'text/css')
+        resources += find_resources(
+            html_files,
+            'link',
+            'href',
+            lambda attrs: attrs.get('type') == 'text/css'
+        )
         resources += find_resources(html_files, 'img', 'src')
         resources += self.resource_files
         resources = list(set(resources))    # Drop duplicates.
@@ -713,7 +734,7 @@ class A2X(AttrDict):
             dst_dir = self.dst_path('.chunked')
         elif self.format == 'htmlhelp':
             dst_dir = self.dst_path('.htmlhelp')
-        if not 'base.dir ' in opts:
+        if 'base.dir ' not in opts:
             opts += ' --stringparam base.dir "%s/"' % os.path.basename(dst_dir)
         # Create content.
         shell_rmtree(dst_dir)
@@ -730,9 +751,9 @@ class A2X(AttrDict):
         '''
         opf_dir = os.path.dirname(opf_file)
         resource_files = []
-        for (p,dirs,files) in os.walk(os.path.dirname(opf_file)):
+        for (p, dirs, files) in os.walk(os.path.dirname(opf_file)):
             for f in files:
-                f = os.path.join(p,f)
+                f = os.path.join(p, f)
                 if os.path.isfile(f):
                     assert f.startswith(opf_dir)
                     f = '.' + f[len(opf_dir):]
@@ -788,21 +809,21 @@ class A2X(AttrDict):
         shell_cd(build_dir)
         try:
             if not self.dry_run:
-                zip = zipfile.ZipFile(epub_file, 'w')
+                zip_archive = zipfile.ZipFile(epub_file, 'w')
                 try:
                     # Create and add uncompressed mimetype file.
                     verbose('archiving: mimetype')
                     write_file('mimetype', 'application/epub+zip')
-                    zip.write('mimetype', compress_type=zipfile.ZIP_STORED)
+                    zip_archive.write('mimetype', compress_type=zipfile.ZIP_STORED)
                     # Compress all remaining files.
-                    for (p,dirs,files) in os.walk('.'):
+                    for (p, dirs, files) in os.walk('.'):
                         for f in files:
                             f = os.path.normpath(os.path.join(p,f))
                             if f != 'mimetype':
                                 verbose('archiving: %s' % f)
-                                zip.write(f, compress_type=zipfile.ZIP_DEFLATED)
+                                zip_archive.write(f, compress_type=zipfile.ZIP_DEFLATED)
                 finally:
-                    zip.close()
+                    zip_archive.close()
             verbose('created archive: %s' % epub_file)
         finally:
             shell_cd(cwd)
@@ -842,122 +863,119 @@ class A2X(AttrDict):
 
 if __name__ == '__main__':
     description = '''A toolchain manager for AsciiDoc (converts Asciidoc text files to other file formats)'''
-    from optparse import OptionParser
-    parser = OptionParser(usage='usage: %prog [OPTIONS] SOURCE_FILE',
-        version='%s %s' % (PROG,VERSION),
+    from argparse import ArgumentParser
+    parser = ArgumentParser(usage='usage: %(prog)s [OPTIONS] ASCIIDOC_FILE',
         description=description)
-    parser.add_option('-a', '--attribute',
+    parser.add_argument('--version', action='version', version='{} {}'.format(PROG, VERSION))
+    parser.add_argument('-a', '--attribute',
         action='append', dest='attributes', default=[], metavar='ATTRIBUTE',
         help='set asciidoc attribute value')
-    parser.add_option('--asciidoc-opts',
+    parser.add_argument('--asciidoc-opts',
         action='append', dest='asciidoc_opts', default=[],
         metavar='ASCIIDOC_OPTS', help='asciidoc options')
     #DEPRECATED
-    parser.add_option('--copy',
+    parser.add_argument('--copy',
         action='store_true', dest='copy', default=False,
         help='DEPRECATED: does nothing')
-    parser.add_option('--conf-file',
+    parser.add_argument('--conf-file',
         dest='conf_file', default=None, metavar='CONF_FILE',
         help='configuration file')
-    parser.add_option('-D', '--destination-dir',
+    parser.add_argument('-D', '--destination-dir',
         action='store', dest='destination_dir', default=None, metavar='PATH',
-        help='output directory (defaults to SOURCE_FILE directory)')
-    parser.add_option('-d','--doctype',
+        help='output directory (defaults to ASCIIDOC_FILE directory)')
+    parser.add_argument('-d','--doctype',
         action='store', dest='doctype', metavar='DOCTYPE',
         choices=('article','manpage','book'),
         help='article, manpage, book')
-    parser.add_option('-b','--backend',
+    parser.add_argument('-b','--backend',
         action='store', dest='backend', metavar='BACKEND',
         help='name of backend plugin')
-    parser.add_option('--epubcheck',
+    parser.add_argument('--epubcheck',
         action='store_true', dest='epubcheck', default=False,
         help='check EPUB output with epubcheck')
-    parser.add_option('-f','--format',
+    parser.add_argument('-f','--format',
         action='store', dest='format', metavar='FORMAT', default = 'pdf',
         choices=('chunked','epub','htmlhelp','manpage','pdf', 'text',
                  'xhtml','dvi','ps','tex','docbook'),
         help='chunked, epub, htmlhelp, manpage, pdf, text, xhtml, dvi, ps, tex, docbook')
-    parser.add_option('--icons',
+    parser.add_argument('--icons',
         action='store_true', dest='icons', default=False,
         help='use admonition, callout and navigation icons')
-    parser.add_option('--icons-dir',
+    parser.add_argument('--icons-dir',
         action='store', dest='icons_dir',
         default=None, metavar='PATH',
         help='admonition and navigation icon directory')
-    parser.add_option('-k', '--keep-artifacts',
+    parser.add_argument('-k', '--keep-artifacts',
         action='store_true', dest='keep_artifacts', default=False,
         help='do not delete temporary build files')
-    parser.add_option('--lynx',
+    parser.add_argument('--lynx',
         action='store_true', dest='lynx', default=False,
         help='use lynx to generate text files')
-    parser.add_option('-L', '--no-xmllint',
+    parser.add_argument('-L', '--no-xmllint',
         action='store_true', dest='no_xmllint', default=False,
         help='do not check asciidoc output with xmllint')
-    parser.add_option('-n','--dry-run',
+    parser.add_argument('-n','--dry-run',
         action='store_true', dest='dry_run', default=False,
         help='just print the commands that would have been executed')
-    parser.add_option('-r','--resource',
+    parser.add_argument('-r','--resource',
         action='append', dest='resources', default=[],
         metavar='PATH',
         help='resource file or directory containing resource files')
-    parser.add_option('-m', '--resource-manifest',
+    parser.add_argument('-m', '--resource-manifest',
         action='store', dest='resource_manifest', default=None, metavar='FILE',
         help='read resources from FILE')
     #DEPRECATED
-    parser.add_option('--resource-dir',
+    parser.add_argument('--resource-dir',
         action='append', dest='resources', default=[],
         metavar='PATH',
         help='DEPRECATED: use --resource')
     #DEPRECATED
-    parser.add_option('-s','--skip-asciidoc',
+    parser.add_argument('-s','--skip-asciidoc',
         action='store_true', dest='skip_asciidoc', default=False,
         help='DEPRECATED: redundant')
-    parser.add_option('--stylesheet',
+    parser.add_argument('--stylesheet',
         action='store', dest='stylesheet', default=None,
         metavar='STYLESHEET',
         help='HTML CSS stylesheet file name')
     #DEPRECATED
-    parser.add_option('--safe',
+    parser.add_argument('--safe',
         action='store_true', dest='safe', default=False,
         help='DEPRECATED: does nothing')
-    parser.add_option('--dblatex-opts',
+    parser.add_argument('--dblatex-opts',
         action='append', dest='dblatex_opts', default=[],
         metavar='DBLATEX_OPTS', help='dblatex options')
-    parser.add_option('--backend-opts',
+    parser.add_argument('--backend-opts',
         action='append', dest='backend_opts', default=[],
         metavar='BACKEND_OPTS', help='backend plugin options')
-    parser.add_option('--fop',
+    parser.add_argument('--fop',
         action='store_true', dest='fop', default=False,
         help='use FOP to generate PDF files')
-    parser.add_option('--fop-opts',
+    parser.add_argument('--fop-opts',
         action='append', dest='fop_opts', default=[],
         metavar='FOP_OPTS', help='options for FOP pdf generation')
-    parser.add_option('--xsltproc-opts',
+    parser.add_argument('--xsltproc-opts',
         action='append', dest='xsltproc_opts', default=[],
         metavar='XSLTPROC_OPTS', help='xsltproc options for XSL stylesheets')
-    parser.add_option('--xsl-file',
+    parser.add_argument('--xsl-file',
         action='store', dest='xsl_file', metavar='XSL_FILE',
         help='custom XSL stylesheet')
-    parser.add_option('-v', '--verbose',
+    parser.add_argument('-v', '--verbose',
         action='count', dest='verbose', default=0,
         help='increase verbosity')
-    if len(sys.argv) == 1:
-        parser.parse_args(['--help'])
+    parser.add_argument("asciidoc_file", action="store", help="AsciiDoc source file")
     source_options = get_source_options(sys.argv[-1])
     argv = source_options + sys.argv[1:]
-    opts, args = parser.parse_args(argv)
-    if len(args) != 1:
-        parser.error('incorrect number of arguments')
+    opts = parser.parse_args(argv)
     opts.asciidoc_opts = ' '.join(opts.asciidoc_opts)
     opts.dblatex_opts = ' '.join(opts.dblatex_opts)
     opts.fop_opts = ' '.join(opts.fop_opts)
     opts.xsltproc_opts = ' '.join(opts.xsltproc_opts)
     opts.backend_opts = ' '.join(opts.backend_opts)
-    opts = eval(str(opts))  # Convert optparse.Values to dict.
+    opts = vars(opts)  # Convert argparse.Values to dict.
     a2x = A2X(opts)
     OPTIONS = a2x           # verbose and dry_run used by utility functions.
     verbose('args: %r' % argv)
-    a2x.asciidoc_file = args[0]
+    a2x.asciidoc_file = opts['asciidoc_file']
     try:
         a2x.load_conf()
         a2x.execute()

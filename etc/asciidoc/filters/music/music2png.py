@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 '''
 NAME
     music2png - Converts textual music notation to classically notated PNG file
@@ -50,11 +50,8 @@ COPYING
     granted under the terms of the GNU General Public License (GPL).
 '''
 
-# Suppress warning: "the md5 module is deprecated; use hashlib instead"
-import warnings
-warnings.simplefilter('ignore',DeprecationWarning)
-
-import os, sys, tempfile, md5
+import os, sys, tempfile
+from hashlib import md5
 
 VERSION = '0.1.2'
 
@@ -70,19 +67,17 @@ def print_verbose(line):
     if verbose:
         print_stderr(line)
 
-def write_file(filename, data, mode='w'):
-    f = open(filename, mode)
-    try:
+def write_file(filename, data, mode='w', encoding='utf-8'):
+    if 'b' in mode:
+        encoding = None
+    with open(filename, mode, encoding=encoding) as f:
         f.write(data)
-    finally:
-        f.close()
 
-def read_file(filename, mode='r'):
-    f = open(filename, mode)
-    try:
+def read_file(filename, mode='r', encoding='utf-8'):
+    if 'b' in mode:
+        encoding = None
+    with open(filename, mode, encoding=encoding) as f:
         return f.read()
-    finally:
-        f.close()
 
 def run(cmd):
     global verbose
@@ -90,20 +85,20 @@ def run(cmd):
         cmd += ' 2>%s' % os.devnull
     print_verbose('executing: %s' % cmd)
     if os.system(cmd):
-        raise EApp, 'failed command: %s' % cmd
+        raise EApp('failed command: %s' % cmd)
 
 def music2png(format, infile, outfile, modified):
     '''Convert ABC notation in file infile to cropped PNG file named outfile.'''
     outfile = os.path.abspath(outfile)
     outdir = os.path.dirname(outfile)
     if not os.path.isdir(outdir):
-        raise EApp, 'directory does not exist: %s' % outdir
+        raise EApp('directory does not exist: %s' % outdir)
     basefile = tempfile.mktemp(dir=os.path.dirname(outfile))
     temps = [basefile + ext for ext in ('.abc', '.ly', '.ps', '.midi')]
     skip = False
     if infile == '-':
         source = sys.stdin.read()
-        checksum = md5.new(source).digest()
+        checksum = md5(source.encode('utf-8')).digest()
         filename = os.path.splitext(outfile)[0] + '.md5'
         if modified:
             if os.path.isfile(filename) and os.path.isfile(outfile) and \
@@ -113,7 +108,7 @@ def music2png(format, infile, outfile, modified):
                 write_file(filename, checksum, 'wb')
     else:
         if not os.path.isfile(infile):
-            raise EApp, 'input file does not exist: %s' % infile
+            raise EApp('input file does not exist: %s' % infile)
         if modified and os.path.isfile(outfile) and \
                 os.path.getmtime(infile) <= os.path.getmtime(outfile):
             skip = True
@@ -174,10 +169,10 @@ def main():
     opts,args = getopt.getopt(sys.argv[1:], 'f:o:mhv', ['help','version'])
     for o,v in opts:
         if o in ('--help','-h'):
-            print __doc__
+            print(__doc__)
             sys.exit(0)
         if o =='--version':
-            print('music2png version %s' % (VERSION,))
+            print(('music2png version %s' % (VERSION,)))
             sys.exit(0)
         if o == '-f': format = v
         if o == '-o': outfile = v
@@ -208,6 +203,6 @@ if __name__ == "__main__":
         raise
     except KeyboardInterrupt:
         sys.exit(1)
-    except Exception, e:
+    except Exception as e:
         print_stderr("%s: %s" % (os.path.basename(sys.argv[0]), str(e)))
         sys.exit(1)

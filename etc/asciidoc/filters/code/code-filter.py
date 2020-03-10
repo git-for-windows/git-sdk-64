@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 '''
 NAME
     code-filter - AsciiDoc filter to highlight language keywords
@@ -35,7 +35,7 @@ OPTIONS
 BUGS
     - Code on the same line as a block comment is treated as comment.
       Keywords inside literal strings are highlighted.
-    - There doesn't appear to be an easy way to accomodate linuxdoc so
+    - There doesn't appear to be an easy way to accommodate linuxdoc so
       just pass it through without markup.
 
 AUTHOR
@@ -50,7 +50,7 @@ COPYING
     granted under the terms of the GNU General Public License (GPL).
 '''
 
-import os, sys, re, string
+import os, sys, re
 
 VERSION = '1.1.2'
 
@@ -138,12 +138,12 @@ def code_filter():
     tag_comment = 0 # True if we should tag the current line as a comment.
     line = sys.stdin.readline()
     while line:
-        line = string.rstrip(line)
-        line = string.expandtabs(line,tabsize)
+        line = line.rstrip()
+        line = line.expandtabs(tabsize)
         # Escape special characters.
-        line = string.replace(line,'&','&amp;')
-        line = string.replace(line,'<','&lt;')
-        line = string.replace(line,'>','&gt;')
+        line = line.replace('&','&amp;')
+        line = line.replace('<','&lt;')
+        line = line.replace('>','&gt;')
         # Process block comment.
         if blk_comment:
             if in_comment:
@@ -163,7 +163,7 @@ def code_filter():
             if line: line = stag+line+etag
         else:
             if inline_comment:
-                pos = string.find(line,inline_comment)
+                pos = line.find(inline_comment)
             else:
                 pos = -1
             if pos >= 0:
@@ -193,14 +193,14 @@ def main():
         sys.exit(1)
     for o,v in opts:
         if o in ('--help','-h'):
-            print __doc__
+            print(__doc__)
             sys.exit(0)
         if o in ('--version','-v'):
             print('code-filter version %s' % (VERSION,))
             sys.exit(0)
         if o == '-b': backend = v
         if o == '-l':
-            v = string.lower(v)
+            v = v.lower()
             if v == 'c': v = 'c++'
             language = v
         if o == '-t':
@@ -215,13 +215,13 @@ def main():
     if backend is None:
         usage('backend option is mandatory')
         sys.exit(1)
-    if not keywordtags.has_key(backend):
+    if backend not in keywordtags:
         usage('illegal backend option')
         sys.exit(1)
     if language is None:
         usage('language option is mandatory')
         sys.exit(1)
-    if not keywords.has_key(language):
+    if language not in keywords:
         usage('illegal language option')
         sys.exit(1)
     # Do the work.

@@ -1,5 +1,5 @@
 <!--
-  Inlcuded in xhtml.xsl, xhtml.chunked.xsl, htmlhelp.xsl.
+  Included in xhtml.xsl, xhtml.chunked.xsl, htmlhelp.xsl.
   Contains common XSL stylesheets parameters.
   Output documents styled by docbook.css.
 -->

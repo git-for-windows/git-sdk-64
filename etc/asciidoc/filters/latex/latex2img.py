@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 '''
 NAME
     latex2img - Converts LaTeX source to PNG or SVG file
@@ -58,11 +58,8 @@ COPYING
     granted under the terms of the MIT License.
 '''
 
-# Suppress warning: "the md5 module is deprecated; use hashlib instead"
-import warnings
-warnings.simplefilter('ignore',DeprecationWarning)
-
-import os, sys, tempfile, md5
+import os, sys, tempfile
+from hashlib import md5
 
 VERSION = '0.2.0'
 
@@ -92,19 +89,17 @@ def print_verbose(line):
     if verbose:
         print_stderr(line)
 
-def write_file(filename, data, mode='w'):
-    f = open(filename, mode)
-    try:
+def write_file(filename, data, mode='w', encoding='utf-8'):
+    if 'b' in mode:
+        encoding = None
+    with open(filename, mode, encoding=encoding) as f:
         f.write(data)
-    finally:
-        f.close()
 
-def read_file(filename, mode='r'):
-    f = open(filename, mode)
-    try:
+def read_file(filename, mode='r', encoding='utf-8'):
+    if 'b' in mode:
+        encoding = None
+    with open(filename, mode, encoding=encoding) as f:
         return f.read()
-    finally:
-        f.close()
 
 def run(cmd):
     global verbose
@@ -114,7 +109,7 @@ def run(cmd):
         cmd += ' 2>%s 1>&2' % os.devnull
     print_verbose('executing: %s' % cmd)
     if os.system(cmd):
-        raise EApp, 'failed command: %s' % cmd
+        raise EApp('failed command: %s' % cmd)
 
 def latex2img(infile, outfile, imgfmt, dpi, modified):
     '''
@@ -123,7 +118,7 @@ def latex2img(infile, outfile, imgfmt, dpi, modified):
     outfile = os.path.abspath(outfile)
     outdir = os.path.dirname(outfile)
     if not os.path.isdir(outdir):
-        raise EApp, 'directory does not exist: %s' % outdir
+        raise EApp('directory does not exist: %s' % outdir)
     texfile = tempfile.mktemp(suffix='.tex', dir=os.path.dirname(outfile))
     basefile = os.path.splitext(texfile)[0]
     dvifile = basefile + '.dvi'
@@ -132,14 +127,14 @@ def latex2img(infile, outfile, imgfmt, dpi, modified):
     if infile == '-':
         tex = sys.stdin.read()
         if modified:
-            checksum = md5.new(tex + imgfmt + str(dpi)).digest()
+            checksum = md5((tex + imgfmt + str(dpi)).encode('utf-8')).digest()
             md5_file = os.path.splitext(outfile)[0] + '.md5'
             if os.path.isfile(md5_file) and os.path.isfile(outfile) and \
                     checksum == read_file(md5_file,'rb'):
                 skip = True
     else:
         if not os.path.isfile(infile):
-            raise EApp, 'input file does not exist: %s' % infile
+            raise EApp('input file does not exist: %s' % infile)
         tex = read_file(infile)
         if modified and os.path.isfile(outfile) and \
                 os.path.getmtime(infile) <= os.path.getmtime(outfile):
@@ -207,10 +202,10 @@ def main():
     opts,args = getopt.getopt(sys.argv[1:], 'D:o:mhvf:', ['help','version'])
     for o,v in opts:
         if o in ('--help','-h'):
-            print __doc__
+            print(__doc__)
             sys.exit(0)
         if o =='--version':
-            print('latex2img version %s' % (VERSION,))
+            print(('latex2img version %s' % (VERSION,)))
             sys.exit(0)
         if o == '-D': dpi = v
         if o == '-o': outfile = v
@@ -245,6 +240,6 @@ if __name__ == "__main__":
         raise
     except KeyboardInterrupt:
         sys.exit(1)
-    except Exception, e:
+    except Exception as e:
         print_stderr("%s: %s" % (os.path.basename(sys.argv[0]), str(e)))
         sys.exit(1)
