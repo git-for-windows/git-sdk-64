@@ -456,7 +456,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
          [--exclude=&lt;path&gt;] [--include=&lt;path&gt;] [--reject] [-q | --quiet]
          [--[no-]scissors] [-S[&lt;keyid&gt;]] [--patch-format=&lt;format&gt;]
          [(&lt;mbox&gt; | &lt;Maildir&gt;)&#8230;&#8203;]
-<em>git am</em> (--continue | --skip | --abort | --quit | --show-current-patch)</pre>
+<em>git am</em> (--continue | --skip | --abort | --quit | --show-current-patch[=(diff|raw)])</pre>
 </div>
 </div>
 </div>
@@ -651,10 +651,12 @@ for internal use between <em>git rebase</em> and <em>git am</em>.</p>
 <p>Abort the patching operation but keep HEAD and the index
 untouched.</p>
 </dd>
-<dt class="hdlist1">--show-current-patch</dt>
+<dt class="hdlist1">--show-current-patch[=(diff|raw)]</dt>
 <dd>
-<p>Show the entire e-mail message "git am" has stopped at, because
-of conflicts.</p>
+<p>Show the message at which <code>git am</code> has stopped due to
+conflicts.  If <code>raw</code> is specified, show the raw contents of
+the e-mail message; if <code>diff</code>, show the diff portion only.
+Defaults to <code>raw</code>.</p>
 </dd>
 </dl>
 </div>
@@ -764,7 +766,7 @@ information.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-03-06 14:00:15 UTC
+Last updated 2020-03-10 20:40:21 UTC
 </div>
 </div>
 </body>
