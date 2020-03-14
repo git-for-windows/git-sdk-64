@@ -6,7 +6,7 @@
 #ifndef _INC_STDIO
 #define _INC_STDIO
 
-#include <crtdefs.h>
+#include <corecrt_stdio_config.h>
 
 #pragma pack(push,_CRT_PACKING)
 
@@ -490,34 +490,34 @@ int vsnprintf (char *__stream, size_t __n, const char *__format, __builtin_va_li
   __attribute__((__format__ (__MINGW_SCANF_FORMAT, 2, 3))) __MINGW_ATTRIB_NONNULL(2)
   int __cdecl fscanf(FILE * __restrict__ _File,const char * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vfscanf(0, _File, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vfscanf(0, _File, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   __attribute__((__format__ (__MINGW_SCANF_FORMAT, 1, 2))) __MINGW_ATTRIB_NONNULL(1)
   int __cdecl scanf(const char * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vfscanf(0, stdin, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vfscanf(0, stdin, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   __attribute__((__format__ (__MINGW_SCANF_FORMAT, 2, 3))) __MINGW_ATTRIB_NONNULL(2)
   int __cdecl sscanf(const char * __restrict__ _Src,const char * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vsscanf(0, _Src, (size_t)-1, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vsscanf(0, _Src, (size_t)-1, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
 #ifdef _GNU_SOURCE
   __attribute__ ((__format__ (__MINGW_PRINTF_FORMAT, 2, 0)))
@@ -572,8 +572,8 @@ int vsnprintf (char *__stream, size_t __n, const char *__format, __builtin_va_li
   __attribute__((__format__ (ms_scanf, 2, 3))) __MINGW_ATTRIB_NONNULL(2)
   int __cdecl sscanf(const char * __restrict__ _Src,const char * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
 #ifdef _GNU_SOURCE
-  int __cdecl vasprintf(char ** __restrict__ ret,const char * __restrict__ format,va_list ap)  __attribute__ ((format (__MINGW_PRINTF_FORMAT, 2, 0)));
-  int __cdecl asprintf(char ** __restrict__ ret,const char * __restrict__ format,...) __attribute__ ((format (__MINGW_PRINTF_FORMAT, 2, 3)));
+  int __cdecl vasprintf(char ** __restrict__ __ret,const char * __restrict__ __format,va_list __ap)  __attribute__ ((format (__MINGW_PRINTF_FORMAT, 2, 0)));
+  int __cdecl asprintf(char ** __restrict__ __ret,const char * __restrict__ __format,...) __attribute__ ((format (__MINGW_PRINTF_FORMAT, 2, 3)));
 #endif /*_GNU_SOURCE*/
 #ifndef __NO_ISOCEXT  /* externs in libmingwex.a */
 #ifdef __GNUC__
@@ -736,22 +736,22 @@ int vsnprintf (char *__stream, size_t __n, const char *__format, __builtin_va_li
   __mingw_ovr
   int __cdecl _scprintf(const char * __restrict__ _Format,...)
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vsprintf(UCRTBASE_PRINTF_STANDARD_SNPRINTF_BEHAVIOUR, NULL, 0, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vsprintf(UCRTBASE_PRINTF_STANDARD_SNPRINTF_BEHAVIOUR, NULL, 0, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   int __cdecl _snscanf(const char * __restrict__ _Src,size_t _MaxCount,const char * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vsscanf(0, _Src, _MaxCount, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vsscanf(0, _Src, _MaxCount, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
 #else
   _CRTIMP int __cdecl _scprintf(const char * __restrict__ _Format,...);
@@ -768,12 +768,12 @@ int vsnprintf (char *__stream, size_t __n, const char *__format, __builtin_va_li
   __attribute__((__format__ (__MINGW_PRINTF_FORMAT, 3, 4))) __MINGW_ATTRIB_NONNULL(3)
   int __cdecl _snprintf(char * __restrict__ _Dest,size_t _Count,const char * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = _vsnprintf(_Dest, _Count, _Format, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = _vsnprintf(_Dest, _Count, _Format, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
 #else
   __attribute__((__format__ (ms_printf, 3, 4))) __MINGW_ATTRIB_NONNULL(3)
@@ -941,15 +941,7 @@ int vsprintf (char * __restrict__ __stream, const char * __restrict__ __format, 
 #endif /* _UCRT */
 #endif /* __USE_MINGW_ANSI_STDIO */
 
-#ifdef _UCRT
-  __mingw_ovr
-  int __cdecl _vscprintf(const char * __restrict__ _Format,va_list _ArgList)
-  {
-    return __stdio_common_vsprintf(UCRTBASE_PRINTF_STANDARD_SNPRINTF_BEHAVIOUR, NULL, 0, _Format, NULL, _ArgList);
-  }
-#else
   _CRTIMP int __cdecl _vscprintf(const char * __restrict__ _Format,va_list _ArgList);
-#endif /* _UCRT */
 
   _CRTIMP int __cdecl _set_printf_count_output(int _Value);
   _CRTIMP int __cdecl _get_printf_count_output(void);
@@ -1137,32 +1129,32 @@ int vsnwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, __builti
   __mingw_ovr
   int __cdecl fwscanf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vfwscanf(UCRTBASE_SCANF_DEFAULT_WIDE, _File, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vfwscanf(UCRTBASE_SCANF_DEFAULT_WIDE, _File, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   int __cdecl swscanf(const wchar_t * __restrict__ _Src,const wchar_t * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vswscanf(UCRTBASE_SCANF_DEFAULT_WIDE, _Src, (size_t)-1, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vswscanf(UCRTBASE_SCANF_DEFAULT_WIDE, _Src, (size_t)-1, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   int __cdecl wscanf(const wchar_t * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vfwscanf(UCRTBASE_SCANF_DEFAULT_WIDE, stdin, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vfwscanf(UCRTBASE_SCANF_DEFAULT_WIDE, stdin, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   __MINGW_ATTRIB_NONNULL(2)
@@ -1187,22 +1179,22 @@ int vsnwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, __builti
   __mingw_static_ovr
   int __cdecl fwprintf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,...)
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vfwprintf(UCRTBASE_PRINTF_DEFAULT_WIDE, _File, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vfwprintf(UCRTBASE_PRINTF_DEFAULT_WIDE, _File, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   int __cdecl wprintf(const wchar_t * __restrict__ _Format,...)
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vfwprintf(UCRTBASE_PRINTF_DEFAULT_WIDE, stdout, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vfwprintf(UCRTBASE_PRINTF_DEFAULT_WIDE, stdout, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   int __cdecl vfwprintf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,va_list _ArgList)
@@ -1281,22 +1273,22 @@ int vsnwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, __builti
   __mingw_ovr
   int __cdecl _scwprintf(const wchar_t * __restrict__ _Format,...)
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE | UCRTBASE_PRINTF_STANDARD_SNPRINTF_BEHAVIOUR, NULL, 0, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE | UCRTBASE_PRINTF_STANDARD_SNPRINTF_BEHAVIOUR, NULL, 0, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_static_ovr
   int __cdecl _snwprintf(wchar_t * __restrict__ _Dest,size_t _Count,const wchar_t * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE | UCRTBASE_PRINTF_LEGACY_VSPRINTF_NULL_TERMINATION, _Dest, _Count, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE | UCRTBASE_PRINTF_LEGACY_VSPRINTF_NULL_TERMINATION, _Dest, _Count, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   int __cdecl _vsnwprintf(wchar_t * __restrict__ _Dest,size_t _Count,const wchar_t * __restrict__ _Format,va_list _Args) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
 
@@ -1304,29 +1296,30 @@ int vsnwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, __builti
   __mingw_ovr
   int snwprintf (wchar_t * __restrict__ s, size_t n, const wchar_t * __restrict__ format, ...)
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, format);
-    ret = __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE | UCRTBASE_PRINTF_STANDARD_SNPRINTF_BEHAVIOUR, s, n, format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, format);
+    __ret = __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE | UCRTBASE_PRINTF_STANDARD_SNPRINTF_BEHAVIOUR, s, n, format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   int __cdecl vsnwprintf (wchar_t * __restrict__ s, size_t n, const wchar_t * __restrict__ format, va_list arg)
   {
-    return __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE | UCRTBASE_PRINTF_STANDARD_SNPRINTF_BEHAVIOUR, s, n, format, NULL, arg);
+    int __ret = __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE, s, n, format, NULL, arg);
+    return __ret < 0 ? -1 : __ret;
   }
 #endif
 
   __mingw_ovr
   int __cdecl _swprintf(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Format,...)
   {
-    __builtin_va_list ap;
-    int ret;
-    __builtin_va_start(ap, _Format);
-    ret = __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE, _Dest, (size_t)-1, _Format, NULL, ap);
-    __builtin_va_end(ap);
-    return ret;
+    __builtin_va_list __ap;
+    int __ret;
+    __builtin_va_start(__ap, _Format);
+    __ret = __stdio_common_vswprintf(UCRTBASE_PRINTF_DEFAULT_WIDE, _Dest, (size_t)-1, _Format, NULL, __ap);
+    __builtin_va_end(__ap);
+    return __ret;
   }
   __mingw_ovr
   int __cdecl _vswprintf(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Format,va_list _Args)
