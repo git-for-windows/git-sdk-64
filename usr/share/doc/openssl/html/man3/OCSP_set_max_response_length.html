@@ -43,8 +43,7 @@
 
  int OCSP_REQ_CTX_set1_req(OCSP_REQ_CTX *rctx, OCSP_REQUEST *req);
 
- OCSP_RESPONSE *OCSP_sendreq_bio(BIO *io, const char *path, OCSP_REQUEST *req,
-                                 int maxline);</code></pre>
+ OCSP_RESPONSE *OCSP_sendreq_bio(BIO *io, const char *path, OCSP_REQUEST *req);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -60,7 +59,7 @@
 
 <p>OCSP_REQ_CTX_set1_req() sets the OCSP request in <b>rctx</b> to <b>req</b>. This function should be called after any calls to OCSP_REQ_CTX_add1_header().</p>
 
-<p>OCSP_sendreq_bio() performs an OCSP request using the responder <b>io</b>, the URL path <b>path</b>, the OCSP request <b>req</b> and with a response header maximum line length of <b>maxline</b>. If <b>maxline</b> is zero a default value of 4k is used.</p>
+<p>OCSP_sendreq_bio() performs an OCSP request using the responder <b>io</b>, the URL path <b>path</b>, and the OCSP request <b>req</b> with a response header maximum line length 4k. It waits indefinitely on a response.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -96,7 +95,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
