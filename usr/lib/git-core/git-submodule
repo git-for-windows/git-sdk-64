@@ -10,7 +10,7 @@ USAGE="[--quiet] [--cached]
    or: $dashless [--quiet] status [--cached] [--recursive] [--] [<path>...]
    or: $dashless [--quiet] init [--] [<path>...]
    or: $dashless [--quiet] deinit [-f|--force] (--all| [--] <path>...)
-   or: $dashless [--quiet] update [--init] [--remote] [-N|--no-fetch] [-f|--force] [--checkout|--merge|--rebase] [--[no-]recommend-shallow] [--reference <repository>] [--recursive] [--] [<path>...]
+   or: $dashless [--quiet] update [--init] [--remote] [-N|--no-fetch] [-f|--force] [--checkout|--merge|--rebase] [--[no-]recommend-shallow] [--reference <repository>] [--recursive] [--[no-]single-branch] [--] [<path>...]
    or: $dashless [--quiet] set-branch (--default|--branch <branch>) [--] <path>
    or: $dashless [--quiet] set-url [--] <path> <newurl>
    or: $dashless [--quiet] summary [--cached|--files] [--summary-limit <n>] [commit] [--] [<path>...]
@@ -47,6 +47,7 @@ custom_name=
 depth=
 progress=
 dissociate=
+single_branch=
 
 die_if_unmatched ()
 {
@@ -241,13 +242,15 @@ cmd_add()
 	    die "$(eval_gettext "'\$sm_path' does not have a commit checked out")"
 	fi
 
-	if test -z "$force" &&
-		! git add --dry-run --ignore-missing --no-warn-embedded-repo "$sm_path" > /dev/null 2>&1
+	if test -z "$force"
 	then
-		eval_gettextln "The following path is ignored by one of your .gitignore files:
-\$sm_path
-Use -f if you really want to add it." >&2
-		exit 1
+	    dryerr=$(git add --dry-run --ignore-missing --no-warn-embedded-repo "$sm_path" 2>&1 >/dev/null)
+	    res=$?
+	    if test $res -ne 0
+	    then
+		 echo >&2 "$dryerr"
+		 exit $res
+	    fi
 	fi
 
 	if test -n "$custom_name"
@@ -526,6 +529,12 @@ cmd_update()
 		--jobs=*)
 			jobs=$1
 			;;
+		--single-branch)
+			single_branch="--single-branch"
+			;;
+		--no-single-branch)
+			single_branch="--no-single-branch"
+			;;
 		--)
 			shift
 			break
@@ -555,6 +564,7 @@ cmd_update()
 		${dissociate:+"--dissociate"} \
 		${depth:+--depth "$depth"} \
 		${require_init:+--require-init} \
+		$single_branch \
 		$recommend_shallow \
 		$jobs \
 		-- \
