@@ -54,8 +54,7 @@ endif()
 add_library(c-ares::cares SHARED IMPORTED)
 
 set_target_properties(c-ares::cares PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "ws2_32"
+  INTERFACE_LINK_LIBRARIES "ws2_32;Advapi32"
 )
 
 # Create imported target c-ares::cares_static
@@ -63,8 +62,7 @@ add_library(c-ares::cares_static STATIC IMPORTED)
 
 set_target_properties(c-ares::cares_static PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "CARES_STATICLIB"
-  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "ws2_32"
+  INTERFACE_LINK_LIBRARIES "ws2_32;Advapi32"
 )
 
 if(CMAKE_VERSION VERSION_LESS 2.8.12)

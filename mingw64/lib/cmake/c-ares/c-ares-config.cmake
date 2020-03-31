@@ -16,6 +16,7 @@ endmacro()
 
 set_and_check(c-ares_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/include")
 
+include("${CMAKE_CURRENT_LIST_DIR}/c-ares-config-version.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/c-ares-targets.cmake")
 
 set(c-ares_LIBRARY c-ares::cares)
