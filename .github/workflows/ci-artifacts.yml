@@ -1,0 +1,36 @@
+name: ci-artifacts
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  ci-artifact:
+    strategy:
+      matrix:
+        artifact: [full-sdk, build-installers, makepkg-git]
+    runs-on: windows-latest
+    steps:
+      - name: clone git-sdk-64
+        run: git clone --bare --depth=1 --single-branch -b master https://github.com/git-for-windows/git-sdk-64
+      - name: clone build-extra
+        run: git clone --depth=1 --single-branch -b master https://github.com/git-for-windows/build-extra
+      - name: build git-sdk-64-${{matrix.artifact}}
+        shell: bash
+        run: |
+          sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git ${{matrix.artifact}}
+          echo "::set-env name=ARTIFACT_PATH::$(echo ${{matrix.artifact}}/*.tar.xz)"
+      - name: compress artifact
+        if: matrix.artifact != 'full-sdk'
+        shell: bash
+        run: |
+          (cd ${{matrix.artifact}} && tar cvf - * .[0-9A-Za-z]*) | xz -9 >git-sdk-64-${{matrix.artifact}}.tar.xz
+          echo "::set-env name=ARTIFACT_PATH::$(echo *.tar.xz)"
+      - name: upload to Azure Blobs
+        uses: fixpoint/azblob-upload-artifact@v3
+        with:
+          connection-string: ${{secrets.CI_ARTIFACTS_CONNECTION_STRING}}
+          name: .
+          path: ${{env.ARTIFACT_PATH}}
+          container: ci-artifacts
