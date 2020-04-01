@@ -52,13 +52,13 @@ extern "C" {
 #endif
 /* *INDENT-ON* */
 
-#define GNUTLS_VERSION "3.6.12"
+#define GNUTLS_VERSION "3.6.13"
 
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 6
-#define GNUTLS_VERSION_PATCH 12
+#define GNUTLS_VERSION_PATCH 13
 
-#define GNUTLS_VERSION_NUMBER 0x03060c
+#define GNUTLS_VERSION_NUMBER 0x03060d
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
 #define GNUTLS_CIPHER_RIJNDAEL_256_CBC GNUTLS_CIPHER_AES_256_CBC
@@ -115,6 +115,8 @@ extern "C" {
  * @GNUTLS_CIPHER_CAMELLIA_256_GCM: CAMELLIA in GCM mode with 256-bit keys (AEAD).
  * @GNUTLS_CIPHER_SALSA20_256: Salsa20 with 256-bit keys.
  * @GNUTLS_CIPHER_ESTREAM_SALSA20_256: Estream's Salsa20 variant with 256-bit keys.
+ * @GNUTLS_CIPHER_CHACHA20_32: Chacha20 cipher with 96-bit nonces and 32-bit block counters.
+ * @GNUTLS_CIPHER_CHACHA20_64: Chacha20 cipher with 64-bit nonces and 64-bit block counters.
  * @GNUTLS_CIPHER_CHACHA20_POLY1305: The Chacha20 cipher with the Poly1305 authenticator (AEAD).
  * @GNUTLS_CIPHER_GOST28147_TC26Z_CFB: GOST 28147-89 (Magma) cipher in CFB mode with TC26 Z S-box.
  * @GNUTLS_CIPHER_GOST28147_CPA_CFB: GOST 28147-89 (Magma) cipher in CFB mode with CryptoPro A S-box.
@@ -176,6 +178,8 @@ typedef enum gnutls_cipher_algorithm {
 	GNUTLS_CIPHER_AES_128_XTS = 32,
 	GNUTLS_CIPHER_AES_256_XTS = 33,
 	GNUTLS_CIPHER_GOST28147_TC26Z_CNT = 34,
+	GNUTLS_CIPHER_CHACHA20_64 = 35,
+	GNUTLS_CIPHER_CHACHA20_32 = 36,
 
 	/* used only for PGP internals. Ignored in TLS/SSL
 	 */
@@ -1273,6 +1277,7 @@ gnutls_group_t gnutls_group_get(gnutls_session_t session);
 gnutls_cipher_algorithm_t gnutls_cipher_get(gnutls_session_t session);
 gnutls_kx_algorithm_t gnutls_kx_get(gnutls_session_t session);
 gnutls_mac_algorithm_t gnutls_mac_get(gnutls_session_t session);
+gnutls_digest_algorithm_t gnutls_prf_hash_get(const gnutls_session_t session);
 gnutls_certificate_type_t
 gnutls_certificate_type_get(gnutls_session_t session);
 gnutls_certificate_type_t
@@ -2294,6 +2299,25 @@ void gnutls_global_set_log_function(gnutls_log_func log_func);
 void gnutls_global_set_audit_log_function(gnutls_audit_log_func log_func);
 void gnutls_global_set_log_level(int level);
 
+  /**
+   * gnutls_keylog_func:
+   * @session: the current session
+   * @label: the keylog label
+   * @secret: the (const) data of the derived secret.
+   *
+   * Function prototype for keylog hooks. It is set using
+   * gnutls_session_set_keylog_function().
+   *
+   * Returns: Non zero on error.
+   * Since: 3.6.13
+   */
+typedef int (*gnutls_keylog_func) (gnutls_session_t session,
+				   const char *label,
+				   const gnutls_datum_t *secret);
+gnutls_keylog_func gnutls_session_get_keylog_function(const gnutls_session_t session);
+void gnutls_session_set_keylog_function(gnutls_session_t session,
+					gnutls_keylog_func func);
+
 /* Diffie-Hellman parameter handling.
  */
 int gnutls_dh_params_init(gnutls_dh_params_t * dh_params);
@@ -2577,6 +2601,10 @@ int gnutls_psk_set_client_credentials(gnutls_psk_client_credentials_t res,
 				      const char *username,
 				      const gnutls_datum_t * key,
 				      gnutls_psk_key_flags flags);
+int gnutls_psk_set_client_credentials2(gnutls_psk_client_credentials_t res,
+				       const gnutls_datum_t *username,
+				       const gnutls_datum_t *key,
+				       gnutls_psk_key_flags flags);
 
 void
 gnutls_psk_free_server_credentials(gnutls_psk_server_credentials_t sc);
@@ -2591,25 +2619,39 @@ gnutls_psk_set_server_credentials_hint(gnutls_psk_server_credentials_t
 				       res, const char *hint);
 
 const char *gnutls_psk_server_get_username(gnutls_session_t session);
+int gnutls_psk_server_get_username2(gnutls_session_t session,
+				    gnutls_datum_t *out);
 const char *gnutls_psk_client_get_hint(gnutls_session_t session);
 
 typedef int gnutls_psk_server_credentials_function(gnutls_session_t,
 						   const char *username,
 						   gnutls_datum_t * key);
+typedef int gnutls_psk_server_credentials_function2(gnutls_session_t,
+						    const gnutls_datum_t *username,
+						    gnutls_datum_t *key);
 void
 gnutls_psk_set_server_credentials_function(gnutls_psk_server_credentials_t
 					   cred,
 					   gnutls_psk_server_credentials_function
 					   * func);
+void
+gnutls_psk_set_server_credentials_function2(gnutls_psk_server_credentials_t cred,
+					    gnutls_psk_server_credentials_function2 *func);
 
 typedef int gnutls_psk_client_credentials_function(gnutls_session_t,
 						   char **username,
 						   gnutls_datum_t * key);
+typedef int gnutls_psk_client_credentials_function2(gnutls_session_t,
+						    gnutls_datum_t *username,
+						    gnutls_datum_t *key);
 void
 gnutls_psk_set_client_credentials_function(gnutls_psk_client_credentials_t
 					   cred,
 					   gnutls_psk_client_credentials_function
 					   * func);
+void
+gnutls_psk_set_client_credentials_function2(gnutls_psk_client_credentials_t cred,
+					    gnutls_psk_client_credentials_function2 *func);
 
 int gnutls_hex_encode(const gnutls_datum_t * data, char *result,
 		      size_t * result_size);
