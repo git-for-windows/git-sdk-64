@@ -53,13 +53,13 @@ jobs:
           name: minimal-sdk
           path: git-sdk-64-minimal.tar.xz
       - name: clone git.git's `master`
-        run: git clone --depth=1 --branch master https://github.com/git/git git
+        run: git clone --depth=1 --branch master https://github.com/git/git ..\git
       - name: build current `master` of git.git
         run: |
-          & .\minimal-sdk\usr\bin\bash.exe -lc "make -C git NO_PERL=1 -j8 all strip"
+          & .\minimal-sdk\usr\bin\bash.exe -lc "make -C ../git NO_PERL=1 -j8 all strip"
       - name: compress git artifacts
         shell: bash
-        run: tar cf - --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git | xz -9 >git-artifacts.tar.xz
+        run: tar -C .. -cf - --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git | xz -9 >git-artifacts.tar.xz
       - name: upload git artifacts for testing
         uses: actions/upload-artifact@v1
         with:
@@ -87,11 +87,11 @@ jobs:
           path: ${{github.workspace}}
       - name: uncompress git-artifacts
         shell: bash
-        run: tar xJf git-artifacts.tar.xz
+        run: tar -C .. -xJf git-artifacts.tar.xz
       - name: test
         run: |
           & .\minimal-sdk\usr\bin\bash.exe -lc @"
-            cd git/t &&
+            cd ../git/t &&
             make T=\"`$(ls -S t[0-9]*.sh | awk \"!((NR+${{matrix.nr}})%17)\" | tr '\n' \\ )\" prove || {
               for d in trash*
               do
