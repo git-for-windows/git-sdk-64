@@ -1,0 +1,128 @@
+name: ci-artifacts
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  ci-artifact:
+    if: github.event.repository.fork == false
+    strategy:
+      matrix:
+        artifact: [full-sdk, build-installers, makepkg-git]
+    runs-on: windows-latest
+    steps:
+      - name: clone git-sdk-64
+        run: git clone --bare --depth=1 --single-branch -b master https://github.com/git-for-windows/git-sdk-64
+      - name: clone build-extra
+        run: git clone --depth=1 --single-branch -b master https://github.com/git-for-windows/build-extra
+      - name: build git-sdk-64-${{matrix.artifact}}
+        shell: bash
+        run: |
+          sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git ${{matrix.artifact}}
+          echo "::set-env name=ARTIFACT_PATH::$(echo ${{matrix.artifact}}/*.tar.xz)"
+      - name: compress artifact
+        if: matrix.artifact != 'full-sdk'
+        shell: bash
+        run: |
+          (cd ${{matrix.artifact}} && tar cvf - * .[0-9A-Za-z]*) | xz -9 >git-sdk-64-${{matrix.artifact}}.tar.xz
+          echo "::set-env name=ARTIFACT_PATH::$(echo *.tar.xz)"
+      - name: upload to Azure Blobs
+        uses: fixpoint/azblob-upload-artifact@v3
+        with:
+          connection-string: ${{secrets.CI_ARTIFACTS_CONNECTION_STRING}}
+          name: .
+          path: ${{env.ARTIFACT_PATH}}
+          container: ci-artifacts
+  minimal-sdk-artifact:
+    if: github.event.repository.fork == false
+    runs-on: windows-latest
+    steps:
+      - name: clone git-sdk-64
+        run: git clone --bare --depth=1 --single-branch -b master https://github.com/git-for-windows/git-sdk-64
+      - name: clone build-extra
+        run: git clone --depth=1 --single-branch -b master https://github.com/git-for-windows/build-extra
+      - name: build git-sdk-64-minimal-sdk
+        shell: bash
+        run: sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git minimal-sdk
+      - name: compress artifact
+        shell: bash
+        run: (cd minimal-sdk && tar cvf - * .[0-9A-Za-z]*) | xz -9 >git-sdk-64-minimal.tar.xz
+      - name: upload minimal-sdk artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: minimal-sdk
+          path: git-sdk-64-minimal.tar.xz
+      - name: clone git.git's `master`
+        run: git clone --depth=1 --branch master https://github.com/git/git ..\git
+      - name: build current `master` of git.git
+        run: |
+          & .\minimal-sdk\usr\bin\bash.exe -lc "make -C ../git NO_PERL=1 -j8 all strip"
+      - name: compress git artifacts
+        shell: bash
+        run: tar -C .. -cf - --exclude '*.a' --exclude '*.o' --exclude .git --exclude .depend git | xz -9 >git-artifacts.tar.xz
+      - name: upload git artifacts for testing
+        uses: actions/upload-artifact@v1
+        with:
+          name: git-artifacts
+          path: git-artifacts.tar.xz
+  test-minimal-sdk:
+    runs-on: windows-latest
+    needs: [minimal-sdk-artifact]
+    strategy:
+      matrix:
+        # 0..16 permutated according to the matrix builds' runtimes as of git/git@9fadedd63
+        nr: [9, 6, 13, 0, 8, 5, 2, 16, 15, 11, 10, 1, 7, 3, 14, 12, 4]
+    steps:
+      - name: download minimal-sdk artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: minimal-sdk
+          path: ${{github.workspace}}
+      - name: uncompress minimal-sdk
+        shell: bash
+        run: mkdir -p minimal-sdk && tar -C minimal-sdk -xJf git-sdk-64-minimal.tar.xz
+      - name: download git artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: git-artifacts
+          path: ${{github.workspace}}
+      - name: uncompress git-artifacts
+        shell: bash
+        run: tar -C .. -xJf git-artifacts.tar.xz
+      - name: test
+        run: |
+          & .\minimal-sdk\usr\bin\bash.exe -lc @"
+            cd ../git/t &&
+            make T=\"`$(ls -S t[0-9]*.sh | awk \"!((NR+${{matrix.nr}})%17)\" | tr '\n' \\ )\" prove || {
+              for d in trash*
+              do
+                t=`${d#trash directory.}
+                echo ===========================
+                echo Failed: `$t.sh
+                cat test-results/`$t.out
+              done
+              exit 1
+            }
+          "@
+        env:
+          GIT_TEST_OPTS: --verbose-log -x --no-chain-lint
+          GIT_PROVE_OPTS: --timer --jobs 8
+          NO_SVN_TESTS: 1
+  upload-minimal-sdk:
+    runs-on: windows-latest
+    needs: [test-minimal-sdk]
+    steps:
+      - name: download minimal-sdk artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: minimal-sdk
+          path: ${{github.workspace}}
+      - name: upload to Azure Blobs
+        uses: fixpoint/azblob-upload-artifact@v3
+        with:
+          connection-string: ${{secrets.CI_ARTIFACTS_CONNECTION_STRING}}
+          name: .
+          path: git-sdk-64-minimal.tar.xz
+          container: ci-artifacts
