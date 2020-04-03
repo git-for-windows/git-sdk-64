@@ -7,6 +7,7 @@ on:
 
 jobs:
   ci-artifact:
+    if: github.event.repository.fork == false
     strategy:
       matrix:
         artifact: [full-sdk, build-installers, makepkg-git]
@@ -35,6 +36,7 @@ jobs:
           path: ${{env.ARTIFACT_PATH}}
           container: ci-artifacts
   minimal-sdk-artifact:
+    if: github.event.repository.fork == false
     runs-on: windows-latest
     steps:
       - name: clone git-sdk-64
