@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2020-02-24"
+  s.date = "2020-04-03"
   s.description = "Transactional File Storage for Ruby Objects".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.files = ["pstore.rb".freeze, "pstore/version.rb".freeze]

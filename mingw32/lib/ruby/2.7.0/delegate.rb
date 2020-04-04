@@ -103,13 +103,20 @@ class Delegator < BasicObject
     r
   end
 
+  KERNEL_RESPOND_TO = ::Kernel.instance_method(:respond_to?)
+  private_constant :KERNEL_RESPOND_TO
+
   # Handle BasicObject instances
   private def target_respond_to?(target, m, include_private)
     case target
     when Object
       target.respond_to?(m, include_private)
     else
-      ::Kernel.instance_method(:respond_to?).bind_call(target, m, include_private)
+      if KERNEL_RESPOND_TO.bind_call(target, :respond_to?)
+        target.respond_to?(m, include_private)
+      else
+        KERNEL_RESPOND_TO.bind_call(target, m, include_private)
+      end
     end
   end
 
@@ -334,7 +341,7 @@ def Delegator.delegating_block(mid) # :nodoc:
   lambda do |*args, &block|
     target = self.__getobj__
     target.__send__(mid, *args, &block)
-  end
+  end.ruby2_keywords
 end
 
 #

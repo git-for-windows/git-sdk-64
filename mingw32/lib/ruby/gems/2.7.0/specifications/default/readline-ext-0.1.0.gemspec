@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 # stub: readline-ext 0.1.0 ruby lib
+# stub: ext/readline/extconf.rb
 
 Gem::Specification.new do |s|
   s.name = "readline-ext".freeze
@@ -10,12 +11,27 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2020-02-24"
+  s.date = "2020-04-03"
   s.description = "Provides an interface for GNU Readline and Edit Line (libedit).".freeze
   s.email = ["matz@ruby-lang.org".freeze]
-  s.files = ["readline.so".freeze]
+  s.extensions = ["ext/readline/extconf.rb".freeze]
+  s.files = ["ext/readline/extconf.rb".freeze, "readline.so".freeze]
   s.homepage = "https://github.com/ruby/readline-ext".freeze
   s.licenses = ["BSD-2-Clause".freeze]
   s.rubygems_version = "3.1.2".freeze
   s.summary = "Provides an interface for GNU Readline and Edit Line (libedit).".freeze
+
+  if s.respond_to? :specification_version then
+    s.specification_version = 4
+  end
+
+  if s.respond_to? :add_runtime_dependency then
+    s.add_development_dependency(%q<bundler>.freeze, [">= 0"])
+    s.add_development_dependency(%q<rake>.freeze, [">= 0"])
+    s.add_development_dependency(%q<rake-compiler>.freeze, [">= 0"])
+  else
+    s.add_dependency(%q<bundler>.freeze, [">= 0"])
+    s.add_dependency(%q<rake>.freeze, [">= 0"])
+    s.add_dependency(%q<rake-compiler>.freeze, [">= 0"])
+  end
 end

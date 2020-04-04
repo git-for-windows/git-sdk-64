@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Yukihiro Matsumoto".freeze]
   s.bindir = "exe".freeze
-  s.date = "2020-02-24"
+  s.date = "2020-04-03"
   s.description = "Provides three abilities to delegate method calls to an object.".freeze
   s.email = ["matz@ruby-lang.org".freeze]
   s.files = ["delegate.rb".freeze, "delegate/version.rb".freeze]
