@@ -1,0 +1,45 @@
+name: git-64-portable
+
+on:
+  release:
+    types: created
+  repository_dispatch:
+    types: git-64-portable
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download Portable Git
+        run: |
+          case '${{github.event_name}}' in
+          release) url='${{github.event.release.assets_url}}';;
+          repository_dispatch) url='https://api.github.com/repos/git-for-windows/git/releases/${{github.event.client_payload.release_id}}/assets';;
+          *) echo 'Unexpected event type: ${{github.event_name}}' >&2; exit 1;;
+          esac
+          curl -o assets "$url"
+          url2="$(sed -n '/^  {/{
+            :1;
+            N;
+            /\n  }/{
+              /\n    "name": "PortableGit-[^"]*-64-bit\.7z\.exe"/{
+                s/.*\n    "browser_download_url": "\([^"]*\).*/\1/p
+              };
+              b
+            };
+            b1
+          }' <assets)"
+          curl -Lo PortableGit.exe "$url2"
+      - run: sudo apt-get -y install p7zip
+      - name: unpack
+        run: |
+          mkdir -p extracted && cd extracted && 7za x ../PortableGit.exe
+      - name: compress as .tar.xz
+        run: (cd extracted && tar cf - * .[0-9A-Za-z]*) | xz -9 >git-64-portable.tar.xz
+      - name: upload to Azure Blobs
+        uses: fixpoint/azblob-upload-artifact@v3
+        with:
+          connection-string: ${{secrets.CI_ARTIFACTS_CONNECTION_STRING}}
+          name: .
+          path: git-64-portable.tar.xz
+          container: ci-artifacts
