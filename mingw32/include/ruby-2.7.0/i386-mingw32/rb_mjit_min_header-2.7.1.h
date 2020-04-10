@@ -7997,6 +7997,13 @@ extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) void MemoryB
       DWORD Type;
       DWORD __alignment2;
     } MEMORY_BASIC_INFORMATION64,*PMEMORY_BASIC_INFORMATION64;
+#define CFG_CALL_TARGET_VALID 0x01
+#define CFG_CALL_TARGET_PROCESSED 0x02
+#define CFG_CALL_TARGET_CONVERT_EXPORT_SUPPRESSED_TO_VALID 0x04
+  typedef struct _CFG_CALL_TARGET_INFO {
+    ULONG_PTR Offset;
+    ULONG_PTR Flags;
+  } CFG_CALL_TARGET_INFO, *PCFG_CALL_TARGET_INFO;
 #define SECTION_QUERY 0x0001
 #define SECTION_MAP_WRITE 0x0002
 #define SECTION_MAP_READ 0x0004
@@ -8018,6 +8025,19 @@ extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) void MemoryB
 #define PAGE_GUARD 0x100
 #define PAGE_NOCACHE 0x200
 #define PAGE_WRITECOMBINE 0x400
+#define PAGE_GRAPHICS_NOACCESS 0x0800
+#define PAGE_GRAPHICS_READONLY 0x1000
+#define PAGE_GRAPHICS_READWRITE 0x2000
+#define PAGE_GRAPHICS_EXECUTE 0x4000
+#define PAGE_GRAPHICS_EXECUTE_READ 0x8000
+#define PAGE_GRAPHICS_EXECUTE_READWRITE 0x10000
+#define PAGE_GRAPHICS_COHERENT 0x20000
+#define PAGE_ENCLAVE_THREAD_CONTROL 0x80000000
+#define PAGE_REVERT_TO_FILE_MAP 0x80000000
+#define PAGE_TARGETS_NO_UPDATE 0x40000000
+#define PAGE_TARGETS_INVALID 0x40000000
+#define PAGE_ENCLAVE_UNVALIDATED 0x20000000
+#define PAGE_ENCLAVE_DECOMMIT 0x10000000
 #define MEM_COMMIT 0x1000
 #define MEM_RESERVE 0x2000
 #define MEM_DECOMMIT 0x4000
@@ -8030,8 +8050,46 @@ extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) void MemoryB
 #define MEM_WRITE_WATCH 0x200000
 #define MEM_PHYSICAL 0x400000
 #define MEM_ROTATE 0x800000
+#define MEM_DIFFERENT_IMAGE_BASE_OK 0x800000
+#define MEM_RESET_UNDO 0x1000000
 #define MEM_LARGE_PAGES 0x20000000
 #define MEM_4MB_PAGES 0x80000000
+#define MEM_64K_PAGES (MEM_LARGE_PAGES | MEM_PHYSICAL)
+  typedef struct _MEM_ADDRESS_REQUIREMENTS {
+    PVOID LowestStartingAddress;
+    PVOID HighestEndingAddress;
+    SIZE_T Alignment;
+  } MEM_ADDRESS_REQUIREMENTS, *PMEM_ADDRESS_REQUIREMENTS;
+#define MEM_EXTENDED_PARAMETER_GRAPHICS 0x01
+#define MEM_EXTENDED_PARAMETER_NONPAGED 0x02
+#define MEM_EXTENDED_PARAMETER_ZERO_PAGES_OPTIONAL 0x04
+#define MEM_EXTENDED_PARAMETER_NONPAGED_LARGE 0x08
+#define MEM_EXTENDED_PARAMETER_NONPAGED_HUGE 0x10
+  typedef enum MEM_EXTENDED_PARAMETER_TYPE {
+    MemExtendedParameterInvalidType = 0,
+    MemExtendedParameterAddressRequirements,
+    MemExtendedParameterNumaNode,
+    MemExtendedParameterPartitionHandle,
+    MemExtendedParameterUserPhysicalHandle,
+    MemExtendedParameterAttributeFlags,
+    MemExtendedParameterMax
+  } MEM_EXTENDED_PARAMETER_TYPE, *PMEM_EXTENDED_PARAMETER_TYPE;
+#define MEM_EXTENDED_PARAMETER_TYPE_BITS 8
+  typedef struct __attribute__ ((__aligned__ (8))) MEM_EXTENDED_PARAMETER {
+    __extension__ struct {
+        DWORD64 Type : 8;
+        DWORD64 Reserved : 64 - 8;
+    };
+    __extension__ union {
+        DWORD64 ULong64;
+        PVOID Pointer;
+        SIZE_T Size;
+        HANDLE Handle;
+        DWORD ULong;
+    };
+  } MEM_EXTENDED_PARAMETER, *PMEM_EXTENDED_PARAMETER;
+#define SEC_PARTITION_OWNER_HANDLE 0x40000
+#define SEC_64K_PAGES 0x80000
 #define SEC_FILE 0x800000
 #define SEC_IMAGE 0x1000000
 #define SEC_PROTECTED_IMAGE 0x2000000
@@ -8041,6 +8099,12 @@ extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) void MemoryB
 #define SEC_WRITECOMBINE 0x40000000
 #define SEC_LARGE_PAGES 0x80000000
 #define SEC_IMAGE_NO_EXECUTE (SEC_IMAGE | SEC_NOCACHE)
+  typedef enum MEM_SECTION_EXTENDED_PARAMETER_TYPE {
+    MemSectionExtendedParameterInvalidType = 0,
+    MemSectionExtendedParameterUserPhysicalFlags,
+    MemSectionExtendedParameterNumaNode,
+    MemSectionExtendedParameterMax
+  } MEM_SECTION_EXTENDED_PARAMETER_TYPE, *PMEM_SECTION_EXTENDED_PARAMETER_TYPE;
 #define MEM_IMAGE SEC_IMAGE
 #define WRITE_WATCH_FLAG_RESET 0x01
 #define MEM_UNMAP_WITH_TRANSIENT_BOOST 0x01
@@ -12383,11 +12447,15 @@ typedef const REDIRECTION_DESCRIPTOR *PCREDIRECTION_DESCRIPTOR;
 #define FILE_MAP_ALL_ACCESS SECTION_ALL_ACCESS
 #define FILE_MAP_COPY 0x1
 #define FILE_MAP_RESERVE 0x80000000
+#define FILE_MAP_TARGETS_INVALID 0x40000000
+#define FILE_MAP_LARGE_PAGES 0x20000000
   __attribute__((dllimport)) SIZE_T __attribute__((__stdcall__)) VirtualQuery (LPCVOID lpAddress, PMEMORY_BASIC_INFORMATION lpBuffer, SIZE_T dwLength);
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) FlushViewOfFile (LPCVOID lpBaseAddress, SIZE_T dwNumberOfBytesToFlush);
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) UnmapViewOfFile (LPCVOID lpBaseAddress);
+  __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) UnmapViewOfFile2(HANDLE Process, PVOID BaseAddress, ULONG UnmapFlags);
   __attribute__((dllimport)) HANDLE __attribute__((__stdcall__)) CreateFileMappingFromApp (HANDLE hFile, PSECURITY_ATTRIBUTES SecurityAttributes, ULONG PageProtection, ULONG64 MaximumSize, PCWSTR Name);
   __attribute__((dllimport)) PVOID __attribute__((__stdcall__)) MapViewOfFileFromApp (HANDLE hFileMappingObject, ULONG DesiredAccess, ULONG64 FileOffset, SIZE_T NumberOfBytesToMap);
+  __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) VirtualUnlockEx(HANDLE Process, LPVOID Address, SIZE_T Size);
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) VirtualProtect (LPVOID lpAddress, SIZE_T dwSize, DWORD flNewProtect, PDWORD lpflOldProtect);
 #define FILE_MAP_EXECUTE SECTION_MAP_EXECUTE_EXPLICIT
 #define FILE_CACHE_FLAGS_DEFINED 
@@ -12417,7 +12485,12 @@ typedef const REDIRECTION_DESCRIPTOR *PCREDIRECTION_DESCRIPTOR;
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) QueryMemoryResourceNotification (HANDLE ResourceNotificationHandle, PBOOL ResourceState);
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) GetSystemFileCacheSize (PSIZE_T lpMinimumFileCacheSize, PSIZE_T lpMaximumFileCacheSize, PDWORD lpFlags);
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) SetSystemFileCacheSize (SIZE_T MinimumFileCacheSize, SIZE_T MaximumFileCacheSize, DWORD Flags);
+  __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) AllocateUserPhysicalPages(HANDLE hProcess, PULONG_PTR NumberOfPages, PULONG_PTR PageArray);
+  __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) FreeUserPhysicalPages(HANDLE hProcess, PULONG_PTR NumberOfPages, PULONG_PTR PageArray);
+  __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) MapUserPhysicalPages(PVOID VirtualAddress, ULONG_PTR NumberOfPages, PULONG_PTR PageArray);
+  __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) AllocateUserPhysicalPagesNuma(HANDLE hProcess, PULONG_PTR NumberOfPages, PULONG_PTR PageArray, DWORD nndPreferred);
   __attribute__((dllimport)) HANDLE __attribute__((__stdcall__)) CreateFileMappingNumaW (HANDLE hFile, LPSECURITY_ATTRIBUTES lpFileMappingAttributes, DWORD flProtect, DWORD dwMaximumSizeHigh, DWORD dwMaximumSizeLow, LPCWSTR lpName, DWORD nndPreferred);
+  __attribute__((dllimport)) LPVOID __attribute__((__stdcall__)) VirtualAllocExNuma(HANDLE hProcess, LPVOID lpAddress, SIZE_T dwSize, DWORD flAllocationType, DWORD flProtect, DWORD nndPreferred);
 #define _NAMEDPIPE_H_ 
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) ImpersonateNamedPipeClient (HANDLE hNamedPipe);
   __attribute__((dllimport)) WINBOOL __attribute__((__stdcall__)) CreatePipe (PHANDLE hReadPipe, PHANDLE hWritePipe, LPSECURITY_ATTRIBUTES lpPipeAttributes, DWORD nSize);

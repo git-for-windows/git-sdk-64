@@ -28,8 +28,8 @@ MODLIBS=        $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	2.7
 srcdir=		../Python-2.7.17
 VPATH=		../Python-2.7.17
-abs_srcdir=	/scripts/mingw-w64-python2/src/build-i686/../Python-2.7.17
-abs_builddir=	/scripts/mingw-w64-python2/src/build-i686
+abs_srcdir=	/mingwdev/mingw-w64-python2/src/build-i686/../Python-2.7.17
+abs_builddir=	/mingwdev/mingw-w64-python2/src/build-i686
 build=		i686-w64-mingw32
 host=		i686-w64-mingw32
 
@@ -77,7 +77,7 @@ CFLAGS=		$(BASECFLAGS) -march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MING
 # Both CPPFLAGS and LDFLAGS need to contain the shell's value for setup.py to
 # be able to build extension modules using the directories specified in the
 # environment variables
-CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncurses 
+CPPFLAGS=	-I. -IInclude -I$(srcdir)/Include -I$(srcdir)/Python -I$(srcdir)/PC -D__USE_MINGW_ANSI_STDIO=1 -ID:/msys64/mingw32/include/ncurses 
 LDFLAGS=	-pipe -s 
 LDLAST=		
 SGI_ABI=	
@@ -107,11 +107,11 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		E:/mingwbuild/mingw-w64-python2/src/Python-2.7.17
-VPATH_b2h=		E:/mingwbuild/mingw-w64-python2/src/Python-2.7.17
-abs_srcdir_b2h=		E:/mingwbuild/mingw-w64-python2/src/Python-2.7.17
-abs_builddir_b2h=	E:/mingwbuild/mingw-w64-python2/src/build-i686
-prefix_b2h=		C:/building/msys64/mingw32
+srcdir_b2h=		D:/mingwbuild/mingw-w64-python2/src/Python-2.7.17
+VPATH_b2h=		D:/mingwbuild/mingw-w64-python2/src/Python-2.7.17
+abs_srcdir_b2h=		D:/mingwbuild/mingw-w64-python2/src/Python-2.7.17
+abs_builddir_b2h=	D:/mingwbuild/mingw-w64-python2/src/build-i686
+prefix_b2h=		D:/msys64/mingw32
 
 # Expanded directories
 BINDIR=		${exec_prefix}/bin
@@ -167,7 +167,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -IC:/building/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
+CONFIG_ARGS=	 '--prefix=/mingw32' '--host=i686-w64-mingw32' '--build=i686-w64-mingw32' '--enable-shared' '--with-threads' '--with-system-expat' '--with-system-ffi' 'OPT=' 'build_alias=i686-w64-mingw32' 'host_alias=i686-w64-mingw32' 'CFLAGS=-march=i686 -mtune=generic -O2 -pipe -fwrapv -D__USE_MINGW_ANSI_STDIO=1  -DNDEBUG ' 'LDFLAGS=-pipe -s ' 'CPPFLAGS=-D__USE_MINGW_ANSI_STDIO=1 -ID:/msys64/mingw32/include/ncurses ' 'PKG_CONFIG_PATH=/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig'
 
 
 # Subdirectories with code
@@ -260,7 +260,7 @@ SIGNAL_OBJS=
 
 ##########################################################################
 
-LIBFFI_INCLUDEDIR=	C:/building/msys64/mingw32/lib/libffi-3.2.1/include
+LIBFFI_INCLUDEDIR=	D:/msys64/mingw32/include
 
 ##########################################################################
 # Parser

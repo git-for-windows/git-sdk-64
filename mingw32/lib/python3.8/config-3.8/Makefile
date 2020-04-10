@@ -310,7 +310,7 @@ IO_OBJS=	\
 
 ##########################################################################
 
-LIBFFI_INCLUDEDIR=	D:/msys64/mingw32/lib/libffi-3.2.1/include
+LIBFFI_INCLUDEDIR=	D:/msys64/mingw32/include
 
 ##########################################################################
 # Parser
