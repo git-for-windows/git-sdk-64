@@ -1,6 +1,6 @@
 ;;; Web client
 
-;; Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 Free Software Foundation, Inc.
+;; Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2020 Free Software Foundation, Inc.
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -131,12 +131,7 @@ host name without trailing dot."
     ;;(set-log-procedure! log)
 
     (handshake session)
-    ;; FIXME: It appears that session-record-port is entirely
-    ;; sufficient; it's already a port.  The only value of this code is
-    ;; to keep a reference on "port", to keep it alive!  To fix this we
-    ;; need to arrange to either hand GnuTLS its own fd to close, or to
-    ;; arrange a reference from the session-record-port to the
-    ;; underlying socket.
+
     (let ((record (session-record-port session)))
       (define (read! bv start count)
         (define read-bv (get-bytevector-some record))
@@ -160,7 +155,15 @@ host name without trailing dot."
           (close-port port))
         (unless (port-closed? record)
           (close-port record)))
+
       (setvbuf record 'block)
+
+      ;; Return a port that wraps RECORD to ensure that closing it also
+      ;; closes PORT, the actual socket port, and its file descriptor.
+      ;; XXX: This wrapper would be unnecessary if GnuTLS could
+      ;; automatically close SESSION's file descriptor when RECORD is
+      ;; closed, but that doesn't seem to be possible currently (as of
+      ;; 3.6.9).
       (make-custom-binary-input/output-port "gnutls wrapped port" read! write!
                                             get-position set-position!
                                             close))))

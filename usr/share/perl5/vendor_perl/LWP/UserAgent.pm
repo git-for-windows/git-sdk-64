@@ -15,7 +15,7 @@ use LWP::Protocol ();
 use Scalar::Util qw(blessed);
 use Try::Tiny qw(try catch);
 
-our $VERSION = '6.43';
+our $VERSION = '6.44';
 
 sub new
 {
@@ -1893,6 +1893,7 @@ forced to match that of the server.
 The return value is an L<HTTP::Response> object.
 
 =head2 patch
+
     # Any version of HTTP::Message works with this form:
     my $res = $ua->patch( $url, $field_name => $value, Content => $content );
 

@@ -1,6 +1,8 @@
 %skeleton "lalr1.cc" /* -*- C++ -*- */
-%require "3.5.3"
+%require "3.5.4"
 %defines
+
+%define api.token.raw
 
 %define api.token.constructor
 %define api.value.type variant

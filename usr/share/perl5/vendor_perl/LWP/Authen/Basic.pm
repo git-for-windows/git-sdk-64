@@ -2,13 +2,21 @@ package LWP::Authen::Basic;
 
 use strict;
 
-our $VERSION = '6.43';
+our $VERSION = '6.44';
 
+require Encode;
 require MIME::Base64;
 
 sub auth_header {
-    my($class, $user, $pass) = @_;
-    return "Basic " . MIME::Base64::encode("$user:$pass", "");
+    my($class, $user, $pass, $request, $ua, $h) = @_;
+
+    my $userpass = "$user:$pass";
+    # https://tools.ietf.org/html/rfc7617#section-2.1
+    my $charset = uc($h->{auth_param}->{charset} || "");
+    $userpass = Encode::encode($charset, $userpass)
+        if ($charset eq "UTF-8");
+
+    return "Basic " . MIME::Base64::encode($userpass, "");
 }
 
 sub _reauth_requested {
