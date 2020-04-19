@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 8.2.  Last change: 2020 Jan 01
+*options.txt*	For Vim version 8.2.  Last change: 2020 Apr 10
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -22,9 +22,13 @@ achieve special effects.  These options come in three forms:
 1. Setting options					*set-option* *E764*
 
 							*:se* *:set*
-:se[t]			Show all options that differ from their default value.
+:se[t][!]		Show all options that differ from their default value.
+			When [!] is present every option is on a separate
+			line.
 
-:se[t] all		Show all but terminal options.
+:se[t][!] all		Show all but terminal options.
+			When [!] is present every option is on a separate
+			line.
 
 :se[t] termcap		Show all terminal options.  Note that in the GUI the
 			key codes are not shown, because they are generated
@@ -287,7 +291,7 @@ happens when the buffer is not loaded, but they are lost when the buffer is
 wiped out |:bwipe|.
 
 							*:setl* *:setlocal*
-:setl[ocal] ...		Like ":set" but set only the value local to the
+:setl[ocal][!] ...	Like ":set" but set only the value local to the
 			current buffer or window.  Not all options have a
 			local value.  If the option does not have a local
 			value the global value is set.
@@ -309,7 +313,7 @@ wiped out |:bwipe|.
 			{option}, so that the global value will be used.
 
 							*:setg* *:setglobal*
-:setg[lobal] ...	Like ":set" but set only the global value for a local
+:setg[lobal][!] ...	Like ":set" but set only the global value for a local
 			option without changing the local value.
 			When displaying an option, the global value is shown.
 			With the "all" argument: display global values for all
@@ -513,10 +517,11 @@ Examples:
 
 The second form (this is compatible with some versions of Vi):
 
-	[text]{white}{vi:|vim:|Vim:|ex:}[white]se[t] {options}:[text]
+	[text{white}]{vi:|vim:|Vim:|ex:}[white]se[t] {options}:[text]
 
-[text]			any text or empty
-{white}			at least one blank character (<Space> or <Tab>)
+[text{white}]		empty or any text followed by at least one blank
+			character (<Space> or <Tab>); "ex:" always requires at
+			least one blank character
 {vi:|vim:|Vim:|ex:}	the string "vi:", "vim:", "Vim:" or "ex:"
 [white]			optional white space
 se[t]			the string "set " or "se " (note the space); When
@@ -910,6 +915,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	eol	allow backspacing over line breaks (join lines)
 	start	allow backspacing over the start of insert; CTRL-W and CTRL-U
 		stop once at the start of insert.
+	nostop	like start, except CTRL-W and CTRL-U do not stop at the start of
+		insert.
 
 	When the value is empty, Vi compatible backspacing is used.
 
@@ -918,6 +925,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	  0	same as ":set backspace=" (Vi compatible)
 	  1	same as ":set backspace=indent,eol"
 	  2	same as ":set backspace=indent,eol,start"
+	  3	same as ":set backspace=indent,eol,nostop"
 
 	See |:fixdel| if your <BS> or <Del> key does not do what you want.
 	NOTE: This option is set to "" when 'compatible' is set.
@@ -1375,6 +1383,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 
 	This option is used together with 'bufhidden' and 'swapfile' to
 	specify special kinds of buffers.   See |special-buffers|.
+	Also see |win_gettype()|, which returns the type of the window.
 
 	Be careful with changing this option, it can have many side effects!
 
@@ -3763,7 +3772,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 		'guitablabel' can be used to change the text in the labels.
 		When 'e' is missing a non-GUI tab pages line may be used.
 		The GUI tabs are only supported on some systems, currently
-		GTK, Motif, Mac OS/X and MS-Windows.
+		GTK, Motif, Mac OS/X, Haiku, and MS-Windows.
 								*'go-f'*
 	  'f'	Foreground: Don't use fork() to detach the GUI from the shell
 		where it was started.  Use this for programs that wait for the
@@ -4640,8 +4649,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	be able to execute Normal mode commands.
 	This is the opposite of the 'keymap' option, where characters are
 	mapped in Insert mode.
-	Also consider resetting 'langremap' to avoid 'langmap' applies to
-	characters resulting from a mapping.
+	Also consider setting 'langremap' to off, to prevent 'langmap' from
+	applying to characters resulting from a mapping.
 	This option cannot be set from a |modeline| or in the |sandbox|, for
 	security reasons.
 
@@ -4706,7 +4715,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	'langnoremap' is set to the inverted value, and the other way around.
 
 			*'langremap'* *'lrm'* *'nolangremap'* *'nolrm'*
-'langremap' 'lrm'	boolean (default on, reset in |defaults.vim|)
+'langremap' 'lrm'	boolean (default on, set to off in |defaults.vim|)
 			global
 			{only available when compiled with the |+langmap|
 			feature}
@@ -5248,7 +5257,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	default because it makes using the pull down menus a little goofy, as
 	a pointer transit may activate a window unintentionally.
 	MS-Windows: Also see 'scrollfocus' for what window is scrolled when
-	using the mouse scroll whel.
+	using the mouse scroll wheel.
 
 			*'mousehide'* *'mh'* *'nomousehide'* *'nomh'*
 'mousehide' 'mh'	boolean	(default on)
@@ -6201,6 +6210,11 @@ A jump table for the options with a short description can be found at |Q_op|.
 					Macintosh: "$VIM:vimfiles,
 						$VIMRUNTIME,
 						$VIM:vimfiles:after"
+					Haiku: "$BE_USER_SETTINGS/vim,
+						$VIM/vimfiles,
+						$VIMRUNTIME,
+						$VIM/vimfiles/after,
+						$BE_USER_SETTINGS/vim/after")
 					VMS: "sys$login:vimfiles,
 						$VIM/vimfiles,
 						$VIMRUNTIME,
@@ -6216,6 +6230,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	  compiler/	compiler files |:compiler|
 	  doc/		documentation |write-local-help|
 	  ftplugin/	filetype plugins |write-filetype-plugin|
+	  import/	files that are found by `:import`
 	  indent/	indent scripts |indent-expression|
 	  keymap/	key mapping files |mbyte-keymap|
 	  lang/		menu translations |:menutrans|
@@ -6748,8 +6763,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	option is on, dots in file names are replaced with underscores when
 	adding an extension (".~" or ".swp").  This option is useful
 	when editing files on an MS-DOS compatible filesystem, e.g., messydos
-	or crossdos.  When running the Win32 GUI version under Win32s, this
-	option is always on by default.
+	or crossdos.
 
 						*'showbreak'* *'sbr'* *E595*
 'showbreak' 'sbr'	string	(default "")
@@ -7284,8 +7298,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 <	Beware that an expression is evaluated each and every time the status
 	line is displayed.
 				*stl-%{* *g:actual_curbuf* *g:actual_curwin*
-	While evaluationg %{} the current buffer and current window will be
-	set temporarily to that of the window (and buffer) whose statusline is
+	While evaluating %{} the current buffer and current window will be set
+	temporarily to that of the window (and buffer) whose statusline is
 	currently being drawn.  The expression will evaluate in this context.
 	The variable "g:actual_curbuf" is set to the `bufnr()` number of the
 	real current buffer and "g:actual_curwin" to the |window-ID| of the
@@ -7659,6 +7673,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 				      in the GUI: "builtin_gui"
 					on Amiga: "amiga"
 					 on BeOS: "beos-ansi"
+					on Haiku: "xterm"
 					  on Mac: "mac-ansi"
 					 on MiNT: "vt52"
 					 on Unix: "ansi"
@@ -7945,7 +7960,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 		- VIM		the server name |v:servername| or "VIM"
 	Only works if the terminal supports setting window titles
 	(currently Amiga console, Win32 console, all GUI versions and
-	terminals with a non- empty 't_ts' option - these are Unix xterm and
+	terminals with a non-empty 't_ts' option - these are Unix xterm and
 	iris-ansi by default, where 't_ts' is taken from the builtin termcap).
 								*X11*
 	When Vim was compiled with HAVE_X11 defined, the original title will
