@@ -251,8 +251,6 @@ sub gdt($$;$$)
   my $encoding;
   if ($self->get_conf('OUTPUT_ENCODING_NAME')) {
     $encoding = $self->get_conf('OUTPUT_ENCODING_NAME');
-  } elsif ($self->get_conf('INPUT_ENCODING_NAME')) {
-    $encoding = $self->get_conf('INPUT_ENCODING_NAME');
   }
   Locale::Messages::bind_textdomain_codeset($strings_textdomain, $encoding)
     if ($encoding and $encoding ne 'us-ascii');
@@ -260,8 +258,6 @@ sub gdt($$;$$)
     my $perl_encoding;
     if ($self->get_conf('OUTPUT_PERL_ENCODING')) {
       $perl_encoding = $self->get_conf('OUTPUT_PERL_ENCODING');
-    } elsif ($self->get_conf('INPUT_PERL_ENCODING')) {
-      $perl_encoding = $self->get_conf('INPUT_PERL_ENCODING');
     }
     if ($perl_encoding) {
       Locale::Messages::bind_textdomain_filter($strings_textdomain,

@@ -28,11 +28,7 @@
 #  user visible subroutines.
 #  internal subroutines, doing the parsing.
 
-package Texinfo::ParserNonXS;
-
-no strict 'refs';
-BEGIN { *Texinfo::Parser:: = \%Texinfo::ParserNonXS::; }
-use strict 'refs';
+package Texinfo::Parser;
 
 # We need the unicode stuff.
 use 5.006;
@@ -103,7 +99,7 @@ sub import {
 @EXPORT = qw(
 );
 
-$VERSION = '6.6';
+$VERSION = '6.7';
 
 sub N__($)
 {
@@ -178,16 +174,9 @@ my %parser_default_configuration = (
 # line_nr    current line number in the file
 # fh         filehandle for the file
 
-# content is not copied but reference is copied when duplicating a parser.
-my %tree_informations;
-foreach my $tree_information ('values', 'macros', 'explained_commands', 'labels') {
-  $tree_informations{$tree_information} = 1;
-}
-
 # The commands in initialization_overrides are not set in the document if
 # set at the parser initialization.
 my %initialization_overrides = (
-  'INPUT_ENCODING_NAME' => 1,
   'documentlanguage' => 1,
 );
 
@@ -248,7 +237,7 @@ foreach my $type ('before_item', 'text_root', 'document_root',
 
 my %command_ignore_space_after;
 foreach my $command ('anchor', 'hyphenation', 'caption', 'shortcaption',
-                     'sortas') {
+                     'sortas', 'seeentry', 'seealso') {
   $command_ignore_space_after{$command} = 1;
 }
 
@@ -312,7 +301,7 @@ foreach my $no_paragraph_command (keys(%line_commands)) {
 # in the manual
 foreach my $not_begin_line_command ('comment', 'c', 'sp', 'columnfractions',
                                  'item', 'verbatiminclude',
-                                 'set', 'clear', 'vskip') {
+                                 'set', 'clear', 'vskip', 'subentry') {
   delete $begin_line_commands{$not_begin_line_command};
 }
 
@@ -350,7 +339,7 @@ my %in_full_text_commands;
 foreach my $command (keys(%brace_commands), keys(%no_brace_commands)) {
   $in_full_text_commands{$command} = 1;
 }
-foreach my $in_full_text_command ('c', 'comment', 'refill',
+foreach my $in_full_text_command ('c', 'comment', 'refill', 'subentry',
                          'columnfractions', 'set', 'clear', 'end') {
   $in_full_text_commands{$in_full_text_command} = 1;
 }
@@ -529,31 +518,6 @@ sub _setup_conf($$$)
       }
     }
   }
-}
-
-# Duplicate an existing parser.
-sub duplicate_parser {
-  my $old_parser = shift;
-
-  my $parser = dclone(\%parser_default_configuration);
-
-  foreach my $key (keys(%parser_default_configuration)) {
-    if ($tree_informations{$key}) {
-      if (defined($old_parser->{$key})) {
-        foreach my $info_key (keys(%{$old_parser->{$key}})) {
-          $parser->{$key}->{$info_key}
-          = $old_parser->{$key}->{$info_key};
-        }
-      }
-    } elsif(ref($old_parser->{$key})) {
-      $parser->{$key} = dclone($old_parser->{$key});
-    } else {
-      $parser->{$key} = $old_parser->{$key};
-    }
-  }
-  bless $parser, ref($old_parser);
-
-  return _setup_parser($parser, undef);
 }
 
 # initialization entry point.  Set up a parser.
@@ -767,13 +731,34 @@ sub parse_texi_text($$;$$$$)
   return $tree;
 }
 
+sub _open_in {
+  my ($self, $filehandle, $file_name) = @_;
+
+  if (open($filehandle, $file_name)) {
+    if (defined($self->{'info'}->{'input_perl_encoding'})) {
+      if ($self->{'info'}->{'input_perl_encoding'} eq 'utf-8') {
+        binmode($filehandle, ":utf8");
+      } else {
+        binmode($filehandle, ":encoding($self->{'info'}->{'input_perl_encoding'})");
+        # For UTF-8, this would lead to errors in Latin-1 input the first time 
+        # a line is read from the file, even though the binmode is changed 
+        # later.  Evidently Perl is checking ahead in the file to see if the 
+        # input is valid.
+      }
+    }
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 # parse a texi file
 sub parse_texi_file($$)
 {
   my ($self, $file_name) = @_;
 
   my $filehandle = do { local *FH };
-  if (! open($filehandle, $file_name)) { 
+  if (!_open_in($self, $filehandle, $file_name)) {
     $self->document_error(sprintf(__("could not open %s: %s"), 
                                   $file_name, $!));
     return undef;
@@ -820,6 +805,7 @@ sub parse_texi_file($$)
         }];
   $self->{'info'}->{'input_file_name'} = $file_name;
   $self->{'info'}->{'input_directory'} = $directories;
+
   my $tree = $self->_parse_texi($root);
 
   # Find 'text_root', which contains everything before first node/section.
@@ -2412,7 +2398,14 @@ sub _enter_index_entry($$$$$$$)
     $self->line_warn(sprintf(__("entry for index `%s' outside of any node"), 
                              $index_name), $line_nr);
   }
-  push @{$index->{'index_entries'}}, $index_entry;
+
+  # Skip these as these entries do not refer to the place in the document where 
+  # the index commands occurred.
+  if (!defined $current->{'extra'}->{'seeentry'}
+      and !defined $current->{'extra'}->{'seealso'}) {
+    push @{$index->{'index_entries'}}, $index_entry;
+  }
+
   $current->{'extra'}->{'index_entry'} = $index_entry;
 }
 
@@ -2957,10 +2950,8 @@ sub _end_line($$$)
           my $file = Texinfo::Common::locate_include_file($self, $text) ;
           if (defined($file)) {
             my $filehandle = do { local *FH };
-            if (open ($filehandle, $file)) {
+            if (_open_in ($self, $filehandle, $file)) {
               $included_file = 1;
-              binmode($filehandle, ":encoding($self->{'INPUT_PERL_ENCODING'})")
-                if (defined($self->{'INPUT_PERL_ENCODING'}));
               print STDERR "Included $file($filehandle)\n" if ($self->{'DEBUG'});
               my ($directories, $suffix);
               ($file, $directories, $suffix) = fileparse($file)
@@ -2982,8 +2973,8 @@ sub _end_line($$$)
           }
         } elsif ($command eq 'verbatiminclude') {
           $current->{'extra'}->{'input_perl_encoding'}
-                                          = $self->{'INPUT_PERL_ENCODING'}
-            if defined $self->{'INPUT_PERL_ENCODING'};
+                          = $self->{'info'}->{'input_perl_encoding'}
+            if defined $self->{'info'}->{'input_perl_encoding'};
         } elsif ($command eq 'documentencoding') {
           my ($texinfo_encoding, $perl_encoding, $input_encoding)
             = Texinfo::Encoding::encoding_alias($text);
@@ -3001,18 +2992,12 @@ sub _end_line($$$)
             $current->{'extra'}->{'input_perl_encoding'} = $perl_encoding;
 
             if ($input_encoding) {
-              if (!$self->{'set'}->{'INPUT_ENCODING_NAME'}) {
-                $self->{'INPUT_ENCODING_NAME'} = $input_encoding;
-                $self->{'info'}->{'input_encoding_name'} = $input_encoding;
-              }
+              $self->{'info'}->{'input_encoding_name'} = $input_encoding;
             }
 
-            if (!$self->{'set'}->{'INPUT_PERL_ENCODING'}) {
-              $self->{'INPUT_PERL_ENCODING'} = $perl_encoding;
-              $self->{'info'}->{'input_perl_encoding'} = $perl_encoding;
-              foreach my $input (@{$self->{'input'}}) {
-                binmode($input->{'fh'}, ":encoding($perl_encoding)") if ($input->{'fh'});
-              }
+            $self->{'info'}->{'input_perl_encoding'} = $perl_encoding;
+            foreach my $input (@{$self->{'input'}}) {
+              binmode($input->{'fh'}, ":encoding($perl_encoding)") if ($input->{'fh'});
             }
           }
         } elsif ($command eq 'documentlanguage') {
@@ -3357,6 +3342,17 @@ sub _command_with_command_as_argument($)
      ($current->{'parent'}->{'cmdname'} eq 'itemize'
       or $item_line_commands{$current->{'parent'}->{'cmdname'}})
       and scalar(@{$current->{'contents'}}) == 1);
+}
+
+sub _is_index_element {
+  my ($self, $element) = @_;
+
+  if (!$element->{'cmdname'}
+        or (!$self->{'command_index'}->{$element->{'cmdname'}}
+             and $element->{'cmdname'} ne 'subentry')) {
+    return 0;
+  }
+  return 1;
 }
 
 # This combines several regular expressions used in '_parse_texi' to
@@ -4067,6 +4063,18 @@ sub _parse_texi($;$)
           $current = _end_preformatted($self, $current, $line_nr);
         }
 
+        if ($in_index_commands{$command}
+            and $current->{'contents'}
+            and $current->{'contents'}->[-1]
+            and $current->{'contents'}->[-1]->{'text'}) {
+          $current->{'contents'}->[-1]->{'text'} =~ s/(\s+)$//;
+          if ($1 ne '') {
+            my $new_spaces = { 'text' => $1, 'parent' => $current,
+              'type' => 'empty_spaces_before_argument' };
+            push @{$current->{'contents'}}, $new_spaces;
+          }
+        }
+
         if (defined($other_commands{$command})
             and ($command ne 'item' or !_item_line_parent($current))) {
           # noarg skipspace
@@ -4341,9 +4349,32 @@ sub _parse_texi($;$)
               push @{$current->{'contents'}}, $misc;
               $misc->{'line_nr'} = $line_nr;
             } else {
-              $misc = { 'cmdname' => $command, 'parent' => $current,
-                  'line_nr' => $line_nr };
+              $misc = { 'cmdname' => $command, 'line_nr' => $line_nr };
+              if ($command eq 'subentry') {
+                my $parent = $current->{'parent'};
+                if (!_is_index_element($self, $parent)) {
+                  $self->line_warn(
+                    sprintf(__("\@%s should only appear in an index entry"),
+                            $command), $line_nr);
+                }
+                $parent->{'extra'}->{'subentry'} = $misc;
+                my $subentry_level = 1;
+                if ($parent->{'cmdname'} eq 'subentry') {
+                  $subentry_level = $parent->{'extra'}->{'level'} + 1;
+                }
+                $misc->{'extra'}->{'level'} = $subentry_level;
+                if ($subentry_level > 2) {
+                  $self->line_error(__(
+              "no more than two levels of index subentry are allowed"),
+                           $line_nr);
+                }
+                # Do not make the @subentry element a child of the index
+                # command.  This means that spaces are preserved properly
+                # when converting back to Texinfo.
+                $current = _end_line($self, $current, $line_nr);
+              }
               push @{$current->{'contents'}}, $misc;
+              $misc->{'parent'} = $current;
               if ($sectioning_commands{$command}) {
                 if ($self->{'sections_level'}) {
                   $current->{'contents'}->[-1]->{'extra'}->{'sections_level'}
@@ -4419,6 +4450,12 @@ sub _parse_texi($;$)
             } elsif ($command eq 'dircategory' and $self->{'current_node'}) {
                 $self->line_warn(__("\@dircategory after first node"),
                              $line_nr);
+            } elsif ($command eq 'printindex') {
+              # Record that @printindex occurs in this node so we know it
+              # is an index node.
+              if ($self->{'current_node'}) {
+                $self->{'current_node'}->{'extra'}->{'isindex'} = 1;
+              }
             }
 
             $current = $current->{'args'}->[-1];
@@ -4656,11 +4693,8 @@ sub _parse_texi($;$)
           $current->{'contents'}->[-1]->{'line_nr'} = $line_nr
             if ($keep_line_nr_brace_commands{$command}
                 and !$self->{'definfoenclose'}->{$command});
-
           if ($in_index_commands{$command}
-              and (!$current->{'parent'}->{'cmdname'}
-                    or !$self->{'command_index'}
-                             ->{$current->{'parent'}->{'cmdname'}})) {
+              and !_is_index_element($self, $current->{'parent'})) {
             $self->line_warn(
               sprintf(__("\@%s should only appear in an index entry"),
                       $command), $line_nr);
@@ -4935,8 +4969,8 @@ sub _parse_texi($;$)
                    __("\@image missing filename argument"), $line_nr);
               }
               $image->{'extra'}->{'input_perl_encoding'}
-                           = $self->{'INPUT_PERL_ENCODING'}
-                                  if defined $self->{'INPUT_PERL_ENCODING'};
+                           = $self->{'info'}->{'input_perl_encoding'}
+                                  if defined $self->{'info'}->{'input_perl_encoding'};
             } elsif($current->{'parent'}->{'cmdname'} eq 'dotless') {
               my $dotless = $current->{'parent'};
               if (@{$current->{'contents'}}) {
@@ -5019,14 +5053,16 @@ sub _parse_texi($;$)
                   if (!$current->{'parent'}->{'type'});
                $current->{'parent'}->{'parent'}->{'parent'}->{'extra'}->{'command_as_argument'} 
                   = $current->{'parent'};
-            } elsif ($current->{'parent'}->{'cmdname'} eq 'sortas') {
+            } elsif ($in_index_commands{$current->{'parent'}->{'cmdname'}}) {
+              my $command = $current->{'parent'}->{'cmdname'};
               my @contents = @{$current->{'contents'}};
               my $arg = $current->{'contents'}->[0]->{'text'};
+
               if (defined($arg)) {
                 my $index_element = $current->{'parent'}->{'parent'}->{'parent'};
-                if ($index_element and $index_element->{'cmdname'}
-             and $self->{'command_index'}->{$index_element->{'cmdname'}}) {
-                  $index_element->{'extra'}->{'sortas'} = $arg;
+                if ($index_element
+                    and _is_index_element($self, $index_element)) {
+                  $index_element->{'extra'}->{$command} = $arg;
                 }
               }
             }
@@ -6074,15 +6110,6 @@ A string, the command name associated with C<@clickstyle>.
 =item documentlanguage
 
 A string corresponding to a document language set by C<@documentlanguage>.
-
-=item INPUT_ENCODING_NAME
-
-=item INPUT_PERL_ENCODING
-
-C<INPUT_ENCODING_NAME> string is the encoding name as set 
-by C<@documentencoding>.
-C<INPUT_PERL_ENCODING> string is a corresponding perl encoding name.  
-In general those two strings should be set simultaneously.
 
 =item indices
 

@@ -33,12 +33,8 @@
 
 use strict;
 
-my $global_cmds = get_conf('GLOBAL_COMMANDS');
-if (!defined($global_cmds)) {
-  set_from_init_file('GLOBAL_COMMANDS', []);
-  $global_cmds = get_conf('GLOBAL_COMMANDS');
-}
-push @$global_cmds, ('math', 'tex');
+# For __(
+use Texinfo::Common;
 
 texinfo_register_handler('structure', \&tex4ht_prepare);
 texinfo_register_handler('init', \&tex4ht_convert);
@@ -82,10 +78,11 @@ my %commands = ();
 my $tex4ht_initial_dir;
 my $tex4ht_out_dir;
 
-sub tex4ht_prepare($)
+sub tex4ht_prepare($$)
 {
   # set file names
   my $self = shift;
+  my $document_root = shift;
 
   return 1 if (defined($self->get_conf('OUTFILE'))
         and $Texinfo::Common::null_device_file{$self->get_conf('OUTFILE')});
@@ -104,7 +101,9 @@ sub tex4ht_prepare($)
   $commands{'tex'}->{'style'} = $Texinfo::TeX4HT::STYLE_TEX;
   $commands{'math'}->{'exec'} = $Texinfo::TeX4HT::tex4ht_command_math;
   $commands{'tex'}->{'exec'} = $Texinfo::TeX4HT::tex4ht_command_tex;
-  foreach my $command ('math', 'tex') {
+  my @replaced_commands = sort(keys(%commands));
+  my $collected_commands = Texinfo::Common::collect_commands_in_tree($document_root, \@replaced_commands);
+  foreach my $command (@replaced_commands) {
     my $style = $commands{$command}->{'style'};
     $commands{$command}->{'basename'} = $tex4ht_basename . "_$command";
     my $suffix = '.tex';
@@ -117,10 +116,13 @@ sub tex4ht_prepare($)
     $commands{$command}->{'counter'} = 0;
     $commands{$command}->{'output_counter'} = 0;
 
-    if ($self->{'extra'}->{$command}) {
+    ## we rely on 'math' and 'tex' being recorded as global commands
+    #if ($self->{'extra'}->{$command}) {
+    if (scalar(@{$collected_commands->{$command}}) > 0) {
+      
       local *TEX4HT_TEXFILE;
       unless (open (*TEX4HT_TEXFILE, ">$rfile")) {
-        $self->document_warn(sprintf($self->__("tex4ht.pm: could not open %s: %s"), 
+        $self->document_warn(sprintf(__("tex4ht.pm: could not open %s: %s"), 
                                       $rfile, $!));
         return 1;
       }
@@ -143,7 +145,8 @@ sub tex4ht_prepare($)
           print $fh "\\csname tex4ht\\endcsname\n";
         }
       }
-      foreach my $root (@{$self->{'extra'}->{$command}}) {
+      #foreach my $root (@{$self->{'extra'}->{$command}}) {
+      foreach my $root (@{$collected_commands->{$command}}) {
         $commands{$command}->{'counter'}++;
         my $counter = $commands{$command}->{'counter'};
         my $tree;
@@ -216,7 +219,7 @@ sub tex4ht_convert($)
 {
   my $self = shift;
   unless (chdir $tex4ht_out_dir) {
-    $self->document_warn(sprintf($self->__("tex4ht.pm: chdir %s failed: %s"),
+    $self->document_warn(sprintf(__("tex4ht.pm: chdir %s failed: %s"),
                          $tex4ht_out_dir, $!));
     return 0;
   }
@@ -228,7 +231,7 @@ sub tex4ht_convert($)
     $errors += tex4ht_process_command($self, $command);
   }
   unless (chdir $tex4ht_initial_dir) {
-    $self->document_warn(sprintf($self->__(
+    $self->document_warn(sprintf(__(
           "tex4ht.pm: unable to return to initial directory: %s"), $!));
     return 0;
   }
@@ -241,7 +244,7 @@ sub tex4ht_process_command($$) {
   
   return 0 unless ($commands{$command}->{'counter'});
 
-  $self->document_warn(sprintf($self->__("tex4ht.pm: output file missing: %s"),
+  $self->document_warn(sprintf(__("tex4ht.pm: output file missing: %s"),
                                $commands{$command}->{'basefile'}))
     unless (-f $commands{$command}->{'basefile'});
   my $style = $commands{$command}->{'style'};
@@ -256,7 +259,7 @@ sub tex4ht_process_command($$) {
   my $cmd = "$commands{$command}->{'exec'} $commands{$command}->{'basefile'} $options";
   print STDERR "tex4ht command: $cmd\n" if ($self->get_conf('VERBOSE'));
   if (system($cmd)) {
-    $self->document_warn(sprintf($self->__(
+    $self->document_warn(sprintf(__(
                          "tex4ht.pm: command failed: %s"), $cmd));
     return 1;
   }
@@ -264,7 +267,7 @@ sub tex4ht_process_command($$) {
   # extract the html from the file created by tex4ht
   my $html_basefile = $commands{$command}->{'html_file'};
   unless (open (TEX4HT_HTMLFILE, $html_basefile)) {
-    $self->document_warn(sprintf($self->__("tex4ht.pm: could not open %s: %s"), 
+    $self->document_warn(sprintf(__("tex4ht.pm: could not open %s: %s"), 
                                   $html_basefile, $!));
     return 1;
   }
@@ -290,14 +293,14 @@ sub tex4ht_process_command($$) {
         }
       }
       unless ($end_found) {
-        $self->document_warn(sprintf($self->__(
+        $self->document_warn(sprintf(__(
                                "tex4ht.pm: end of \@%s item %d not found"), 
                                       $command, $count));
       }
     }
   }
   if ($got_count != $commands{$command}->{'counter'}) {
-    $self->document_warn(sprintf($self->__(
+    $self->document_warn(sprintf(__(
        "tex4ht.pm: processing produced %d items in HTML; expected %d, the number of items found in the document for \@%s"), 
                                  $got_count, $commands{$command}->{'counter'},
                                  $command));
@@ -317,7 +320,7 @@ sub tex4ht_do_tex($$$$)
     $commands{$cmdname}->{'output_counter'}++;
     return $commands{$cmdname}->{'results'}->{$command};
   } else {
-    $self->document_warn(sprintf($self->__(
+    $self->document_warn(sprintf(__(
                        "tex4ht.pm: output has no HTML item for \@%s %s"),
                                   $cmdname, $command));
     return '';
@@ -332,7 +335,7 @@ sub tex4ht_finish($)
   if ($self->get_conf('VERBOSE')) {
     foreach my $command (keys(%commands)) {
       if ($commands{$command}->{'output_counter'} != $commands{$command}->{'counter'}) {
-        $self->document_warn(sprintf($self->__(
+        $self->document_warn(sprintf(__(
            "tex4ht.pm: processing retrieved %d items in HTML; expected %d, the number of items found in the document for \@%s"), 
                                   $commands{$command}->{'output_counter'}, 
                                   $commands{$command}->{'counter'}, $command));

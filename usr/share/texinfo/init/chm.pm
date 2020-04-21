@@ -28,9 +28,11 @@ use strict;
 
 use File::Spec;
 
+# For __(
+use Texinfo::Common;
+
 main::set_global_format('html');
 
-set_from_init_file('TOP_NODE_FILE', undef);
 set_from_init_file('TOP_FILE', undef);
 
 #$SECTION_NAVIGATION = 0; # to avoid headers in normal elements
@@ -218,7 +220,7 @@ sub chm_init($)
   my $hhk_file = File::Spec->catfile($outdir, $hhk_filename);
   my $hhk_fh = Texinfo::Common::open_out($self, $hhk_file);
   if (!defined($hhk_fh)) {
-    $self->document_error(sprintf($self->__("chm.pm: could not open %s for writing: %s\n"), 
+    $self->document_error(sprintf(__("chm.pm: could not open %s for writing: %s\n"), 
                   $hhk_file, $!));
     return 0;
   }
@@ -264,7 +266,7 @@ sub chm_init($)
   print $hhk_fh "</BODY>\n</HTML>\n";
   delete $self->{'unclosed_files'}->{$hhk_file};
   if (!close ($hhk_fh)) {
-    $self->document_error(sprintf($self->__("chm.pm: error on closing %s: %s"),
+    $self->document_error(sprintf(__("chm.pm: error on closing %s: %s"),
                           $hhk_file, $!));
     return 0;                  
   }
@@ -274,7 +276,7 @@ sub chm_init($)
   my $hhc_fh = Texinfo::Common::open_out($self, $hhc_file);
   # Not sure $! is still valid
   if (!defined($hhc_fh)) {
-    $self->document_error(sprintf($self->__("chm.pm: could not open %s for writing: %s\n"), 
+    $self->document_error(sprintf(__("chm.pm: could not open %s for writing: %s\n"), 
                   $hhc_file, $!));
     return 0;
   }
@@ -334,7 +336,7 @@ sub chm_init($)
   print $hhc_fh "</HTML>\n</BODY>\n";
   delete $self->{'unclosed_files'}->{$hhc_file};
   if (!close ($hhc_fh)) {
-    $self->document_error(sprintf($self->__("chm.pm: error on closing %s: %s"),
+    $self->document_error(sprintf(__("chm.pm: error on closing %s: %s"),
                           $hhc_file, $!));
     return 0;                  
   }
@@ -344,7 +346,7 @@ sub chm_init($)
   my $hhp_fh = Texinfo::Common::open_out($self, $hhp_file);
   # Not sure $! is still valid
   if (!defined($hhp_fh)) {
-    $self->document_error(sprintf($self->__("chm.pm: could not open %s for writing: %s\n"), 
+    $self->document_error(sprintf(__("chm.pm: could not open %s for writing: %s\n"), 
                   $hhp_file, $!));
     return 0;
   }
@@ -395,7 +397,7 @@ EOT
 
   delete $self->{'unclosed_files'}->{$hhp_file};
   if (!close ($hhp_fh)) {
-    $self->document_error(sprintf($self->__("chm.pm: error on closing %s: %s"),
+    $self->document_error(sprintf(__("chm.pm: error on closing %s: %s"),
                           $hhp_file, $!));
     return 0;                  
   }

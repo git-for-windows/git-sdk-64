@@ -58,22 +58,21 @@ BEGIN
   my $package = 'texinfo';
   my $packagedir = '/usr/lib/texinfo';
 
-  if ($datadir eq '@' .'datadir@' or $package eq '@' . 'PACKAGE@'
-      or $packagedir eq '@' .'pkglibdir@'
+  if ($datadir eq '@' .'datadir@'
       or defined($ENV{'TEXINFO_DEV_SOURCE'})
          and $ENV{'TEXINFO_DEV_SOURCE'} ne '0')
   {
     # Use uninstalled modules
 
     # To find Texinfo::ModulePath
-    if (!defined($ENV{'top_builddir'})) {
-      $ENV{'top_builddir'} = File::Spec->catdir($command_directory, $updir);
-      $ENV{'top_srcdir'} = File::Spec->catdir($command_directory, $updir);
+    if (defined($ENV{'top_builddir'})) {
+      unshift @INC, File::Spec->catdir($ENV{'top_builddir'}, 'tp');
+    } else {
+      unshift @INC, File::Spec->catdir($command_directory);
     }
-    unshift @INC, File::Spec->catdir($ENV{'top_builddir'}, 'tp');
 
     require Texinfo::ModulePath;
-    Texinfo::ModulePath::init();
+    Texinfo::ModulePath::init(undef, undef, 'updirs' => 1);
   } else {
     # Look for modules in their installed locations.
 
@@ -81,7 +80,7 @@ BEGIN
     unshift @INC, $lib_dir;
 
     require Texinfo::ModulePath;
-    Texinfo::ModulePath::init($lib_dir, $packagedir);
+    Texinfo::ModulePath::init($lib_dir, $packagedir, 'installed' => 1);
   }
 } # end BEGIN
 
@@ -168,43 +167,23 @@ $strings_textdomain = 'texinfo_document'
 my $srcdir;
 if (defined($ENV{'top_srcdir'})) {
   $srcdir = File::Spec->catdir($ENV{'top_srcdir'}, 'tp');
-} else {
-  $srcdir = $command_directory;
 }
-
-my $libsrcdir = File::Spec->catdir($srcdir, 'maintain');
 
 
 # we want a reliable way to switch locale, so we don't use the system
 # gettext.
 Locale::Messages->select_package('gettext_pp');
 
-#my @search_locale_dirs = ("$datadir/locale", (map $_ . '/LocaleData', @INC),
-#  qw (/usr/share/locale /usr/local/share/locale));
-my @search_locale_dirs = ();
-
-if (($command_suffix eq '.pl' and !(defined($ENV{'TEXINFO_DEV_SOURCE'}) 
-     and $ENV{'TEXINFO_DEV_SOURCE'} eq 0)) or $ENV{'TEXINFO_DEV_SOURCE'}) {
-  # in case of build from the source directory, out of source build, 
-  # this helps to locate the locales.
-  my $locales_dir_found = 0;
-  @search_locale_dirs = (
-    File::Spec->catdir($libsrcdir, $updir, 'LocaleData'),
-    File::Spec->catdir($curdir, 'LocaleData'),
-    File::Spec->catdir($updir, $updir, $updir, 'tp', 'LocaleData'),
-    File::Spec->catdir($updir, $updir, 'tp', 'LocaleData'));
-  foreach my $locales_dir (@search_locale_dirs) {
-    if (-d $locales_dir) {
-      Locale::Messages::bindtextdomain ($strings_textdomain, $locales_dir);
-      # the messages in this domain are not regenerated automatically, 
-      # only when calling ./maintain/regenerate_perl_module_files.sh
-      Locale::Messages::bindtextdomain ($messages_textdomain, $locales_dir);
-      $locales_dir_found = 1;
-      last;
-    }
-  }
-  if (!$locales_dir_found) {
-    warn "Locales dir for document strings not found (@search_locale_dirs)\n";
+if ($Texinfo::ModulePath::texinfo_uninstalled) {
+  my $locales_dir = File::Spec->catdir($Texinfo::ModulePath::builddir,
+                                       'LocaleData');
+  if (-d $locales_dir) {
+    Locale::Messages::bindtextdomain ($strings_textdomain, $locales_dir);
+    # the messages in this domain are not regenerated automatically, 
+    # only when calling ./maintain/regenerate_perl_module_files.sh
+    Locale::Messages::bindtextdomain ($messages_textdomain, $locales_dir);
+  } else {
+    warn "Locales dir for document strings not found\n";
   }
 } else {
   Locale::Messages::bindtextdomain ($strings_textdomain, 
@@ -212,9 +191,6 @@ if (($command_suffix eq '.pl' and !(defined($ENV{'TEXINFO_DEV_SOURCE'})
   Locale::Messages::bindtextdomain ($messages_textdomain,
                                     File::Spec->catdir($datadir, 'locale'));
 }
-
-#Locale::Messages::bindtextdomain ($messages_textdomain, 
-#                                  File::Spec->catdir($datadir, 'locale'));
 
 
 # Version setting is complicated, because we cope with 
@@ -228,7 +204,7 @@ if (($command_suffix eq '.pl' and !(defined($ENV{'TEXINFO_DEV_SOURCE'})
 # in practice as a regexp extracts the version from configure.ac.
 my $hardcoded_version = "0.00-hardcoded";
 # Version set in configure.ac
-my $configured_version = '6.6';
+my $configured_version = '6.7';
 if ($configured_version eq '@' . 'PACKAGE_VERSION@') {
   # if not configured, and $hardcoded_version is set search for the version 
   # in configure.ac
@@ -864,7 +840,6 @@ There is NO WARRANTY, to the extent permitted by law.\n"), "2017";
       $var = 'SUBDIR';
     }
     set_from_cmdline($var, $_[1]);
-    set_from_cmdline('OUT', $_[1]);
     push @texi2dvi_args, '-o', $_[1];
   },
  'no-validate|no-pointer-validate' => sub {
@@ -1011,7 +986,7 @@ if (defined($ENV{'TEXINFO_OUTPUT_FORMAT'})
 }
 
 if ($call_texi2dvi) {
-  if (defined(get_conf('OUT')) and @ARGV > 1) {
+  if (defined(get_conf('OUTFILE')) and @ARGV > 1) {
     die sprintf(__('%s: when generating %s, only one input FILE may be specified with -o'."\n"),
                 $real_command_name, format_name($format));
   }
@@ -1182,8 +1157,7 @@ while(@input_files) {
     my $texinfo_text = Texinfo::Convert::Texinfo::convert($tree, 1);
     #print STDERR "$texinfo_text\n";
     my $macro_expand_file = get_conf('MACRO_EXPAND');
-    my $macro_expand_fh = Texinfo::Common::open_out($parser, 
-                        $macro_expand_file, $parser->{'INPUT_PERL_ENCODING'});
+    my $macro_expand_fh = Texinfo::Common::open_out($parser, $macro_expand_file);
 
     my $error_macro_expand_file;
     if (defined($macro_expand_fh)) {
@@ -1263,7 +1237,6 @@ while(@input_files) {
 
   if ($file_number != 0) {
     delete $cmdline_options->{'OUTFILE'} if exists($cmdline_options->{'OUTFILE'});
-    delete $cmdline_options->{'OUT'} if exists($cmdline_options->{'OUT'});
     delete $cmdline_options->{'PREFIX'} if exists($cmdline_options->{'PREFIX'});
     delete $cmdline_options->{'SUBDIR'} 
       if (exists($cmdline_options->{'SUBDIR'}) and get_conf('SPLIT'));

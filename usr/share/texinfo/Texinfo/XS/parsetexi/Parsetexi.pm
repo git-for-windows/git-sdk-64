@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package Parsetexi;
+package Texinfo::Parser;
 
 use Texinfo::XSLoader;
 
@@ -28,6 +28,7 @@ require Exporter;
 use Texinfo::Common;
 use Texinfo::Encoding;
 use Texinfo::Convert::NodeNameNormalization;
+use Texinfo::Report;
 
 our @ISA = qw(Exporter DynaLoader Texinfo::Report);
 our %EXPORT_TAGS = ( 'all' => [ qw(
@@ -60,31 +61,6 @@ foreach my $tree_information ('values', 'macros', 'explained_commands', 'labels'
 }
 
 use Storable qw(dclone); # standard in 5.007003
-
-sub duplicate_parser {
-  my $old_parser = shift;
-
-  my $parser = dclone(\%parser_default_configuration);
-
-  foreach my $key (keys(%parser_default_configuration)) {
-    if ($tree_informations{$key}) {
-      if (defined($old_parser->{$key})) {
-        foreach my $info_key (keys(%{$old_parser->{$key}})) {
-          $parser->{$key}->{$info_key}
-          = $old_parser->{$key}->{$info_key};
-        }
-      }
-    } elsif(ref($old_parser->{$key})) {
-      $parser->{$key} = dclone($old_parser->{$key});
-    } else {
-      $parser->{$key} = $old_parser->{$key};
-    }
-  }
-  bless $parser, ref($old_parser);
-
-  $parser->Texinfo::Report::new;
-  return $parser;
-}
 
 sub simple_parser {
   goto &parser;
@@ -276,13 +252,6 @@ sub parse_texi_file ($$)
 
   ############################################################
 
-  if (defined($self->{'info'}->{'input_encoding_name'})) {
-    my ($texinfo_encoding, $perl_encoding, $input_encoding)
-      = Texinfo::Encoding::encoding_alias(
-            $self->{'info'}->{'input_encoding_name'});
-    $self->{'info'}->{'input_encoding_name'} = $input_encoding;
-  }
-
   my ($basename, $directories, $suffix) = fileparse($file_name);
   $self->{'info'}->{'input_file_name'} = $basename;
   $self->{'info'}->{'input_directory'} = $directories;
@@ -410,7 +379,7 @@ sub labels_information($)
 BEGIN {
   Texinfo::XSLoader::init (
     "Texinfo::Parser",
-    "Parsetexi",
+    "Texinfo::Parser",
     "Texinfo::ParserNonXS",
     "Parsetexi",
     0);
@@ -419,27 +388,6 @@ BEGIN {
 END {
   #reset_parser (); # for debugging memory leaks
 }
-
-# This "use" statement is all the way down here because Texinfo::Report
-# and Texinfo::Parser both "use" each other.  If we "use Texinfo::Report"
-# at the top of the file, this has the problem that the symbol table
-# for the Texinfo::Parser namespace, %Texinfo::Parser::, is a different
-# hash (i.e. it has a different address) from what it ends up with by the
-# end of this module.  Once the Perl interpreter has read in a module and 
-# interpreted variables in terms of a given symbol table, it does not 
-# do so them again.  Hence, use of subroutines in the Texinfo::Parser namespace 
-# fails.  This remains the case even if we arrange for the symbol table hash 
-# to remain at the same address, because is empty while the file is being read.
-use Texinfo::Report;
-
-# NB Don't add more functions down here, because this can cause an error
-# with some versions of Perl, connected with the typeglob assignment just
-# above.  ("Can't call mro_method_changed_in() on anonymous symbol table").
-#
-# See http://perl5.git.perl.org/perl.git/commitdiff/03d9f026ae253e9e69212a3cf6f1944437e9f070?hp=ac73ea1ec401df889d312b067f78b618f7ffecc3
-#
-# (change to Perl interpreter on 22 Oct 2011)
-
 
 1;
 __END__

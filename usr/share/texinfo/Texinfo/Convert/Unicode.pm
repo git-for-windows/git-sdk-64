@@ -478,20 +478,6 @@ our %unicode_simple_character_map = (
 #http://www.alanwood.net/unicode/mathematical_operators.html 22**
 
 our %unicode_map = (
-               'bullet'            => '2022',
-               'copyright'         => '00A9',
-               'registeredsymbol'  => '00AE',
-               'dots'              => '2026',
-               'enddots'           => '',
-               'equiv'             => '2261',
-               'error'             => '',
-               'expansion'         => '21A6',
-               'arrow'             => '2192',
-               'minus'             => '2212', # in mathematical operators
-#               'minus'             => '002D', # in latin1
-               'point'             => '2605',
-               'print'             => '22A3',
-               'result'            => '21D2',
                'today'             => '',
                'aa'                => '00E5',
                'AA'                => '00C5',
@@ -538,10 +524,30 @@ our %unicode_map = (
                'guillemotright'    => '00BB',
                'guilsinglleft'     => '2039',
                'guilsinglright'    => '203A',
+             );
+
+# For commands where ASCII output is acceptable
+our %extra_unicode_map = (
+               'bullet'            => '2022',
+               'copyright'         => '00A9',
+               'registeredsymbol'  => '00AE',
+               'dots'              => '2026',
+               'enddots'           => '',
+               'equiv'             => '2261',
+               'error'             => '',
+               'expansion'         => '21A6',
+               'arrow'             => '2192',
+               'minus'             => '2212', # in mathematical operators
+#               'minus'             => '002D', # in latin1
+               'point'             => '2605',
+               'print'             => '22A3',
+               'result'            => '21D2',
                # this should only happen if the @clickstyle argument isn't a 
                # command with braces and no argument.
                'click'             => '2192',
-             );
+);
+
+%unicode_map = (%unicode_map, %extra_unicode_map);
 
 # set the %unicode_character_brace_no_arg_commands value to the character
 # corresponding to the hex value in %unicode_map.

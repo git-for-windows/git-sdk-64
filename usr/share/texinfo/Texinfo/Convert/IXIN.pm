@@ -47,7 +47,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.6';
+$VERSION = '6.7';
 
 my $ixin_version = 1;
 
@@ -848,8 +848,8 @@ sub output_ixin($$)
             $blob_nr++;
             if ($extension eq 'txt') {
               binmode($filehandle, ":encoding("
-                         .$self->get_conf('INPUT_PERL_ENCODING').")")
-                if (defined($self->get_conf('INPUT_PERL_ENCODING')));
+                         .$self->{'info'}->{'input_perl_encoding'}
+                if (defined($self->{'info'}->{'input_perl_encoding'});
             }
             my $file_content;
             if (-z $file) {

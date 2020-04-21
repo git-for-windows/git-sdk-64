@@ -28,10 +28,7 @@ use File::Basename;
 use File::Spec;
 use Encode;
 
-use Texinfo::Report;
 use Texinfo::Common;
-use Texinfo::Convert::Text;
-use Texinfo::Convert::Texinfo;
 use Texinfo::Structuring;
 
 use Carp qw(cluck);
@@ -52,7 +49,7 @@ xml_accents
 @EXPORT = qw(
 );
 
-$VERSION = '6.6';
+$VERSION = '6.7';
 
 my %defaults = (
   'ENABLE_ENCODING'      => 1,
@@ -67,6 +64,7 @@ our %all_converters_defaults = (
   'language_config_dirs' => undef,
   'output_format'        => undef,
   'SPLIT_SIZE'           => 300000,
+  'TOP_NODE_UP'          => '(dir)',   # up node of Top node default value
   'paragraphindent'      => 3,
   'fillcolumn'           => 72,
   'expanded_formats'     => undef,
@@ -207,18 +205,6 @@ sub converter(;$)
       $converter->{'extra'} 
          = $converter->{'parser'}->global_commands_information();
       $converter->{'info'} = $converter->{'parser'}->global_informations();
-      if ($converter->{'info'} 
-          and $converter->{'info'}->{'input_perl_encoding'}
-          and !defined($conf->{'INPUT_PERL_ENCODING'})) {
-        $conf->{'INPUT_PERL_ENCODING'}
-              = $converter->{'info'}->{'input_perl_encoding'};
-      }
-      if ($converter->{'info'} 
-          and $converter->{'info'}->{'input_encoding_name'}
-          and !defined($conf->{'INPUT_ENCODING_NAME'})) {
-        $conf->{'INPUT_ENCODING_NAME'} 
-             = $converter->{'info'}->{'input_encoding_name'};
-      }
       my $floats = $converter->{'parser'}->floats_information();
       my $labels = $converter->{'parser'}->labels_information();
       $converter->{'structuring'} = $converter->{'parser'}->{'structuring'};
@@ -248,8 +234,8 @@ sub converter(;$)
     }
   }
   $converter->set_conf('OUTPUT_ENCODING_NAME', 
-                       $converter->get_conf('INPUT_ENCODING_NAME'))
-     if ($converter->get_conf('INPUT_ENCODING_NAME'));
+                       $converter->{'info'}->{'input_encoding_name'})
+     if ($converter->{'info'}->{'input_encoding_name'});
   if (!$converter->get_conf('OUTPUT_PERL_ENCODING')
        and $converter->get_conf('OUTPUT_ENCODING_NAME')) {
     my $perl_encoding 
@@ -278,6 +264,10 @@ sub converter(;$)
   foreach my $expanded_format(@{$converter->{'expanded_formats'}}) {
     $converter->{'expanded_formats_hash'}->{$expanded_format} = 1;
   }
+
+  require Texinfo::Report;
+  # 'require' here instead of 'use' at top of file to cut down run time of 
+  # 'texi2any --help'
 
   $converter->Texinfo::Report::new();
 
@@ -603,22 +593,14 @@ sub _top_node_filename($)
       and $self->get_conf('TOP_FILE') ne '') {
     $top_node_filename = $self->get_conf('TOP_FILE');
   } else {
-    if (defined($self->get_conf('TOP_NODE_FILE'))) {
-      $top_node_filename = $self->get_conf('TOP_NODE_FILE');
-    } else {
-      # TOP_NODE_FILE is set in the default case.
-      # If not the manual name is used.
-      $top_node_filename = $self->{'document_name'};
-    }
+    my $extension = '';
+    $extension = '.'.$self->get_conf('EXTENSION')
+      if (defined($self->get_conf('EXTENSION'))
+            and $self->get_conf('EXTENSION') ne '');
+
+    $top_node_filename = $self->{'document_name'};
     if (defined($top_node_filename)) {
-      my $top_node_extension;
-      if ($self->get_conf('NODE_FILENAMES')) {
-        $top_node_extension = $self->get_conf('NODE_FILE_EXTENSION');
-      } else {
-        $top_node_extension = $self->get_conf('EXTENSION');
-      }
-      $top_node_filename .= '.'.$top_node_extension 
-        if (defined($top_node_extension) and $top_node_extension ne '');
+      $top_node_filename .= $extension;
     }
   }
   return $top_node_filename;
@@ -674,8 +656,7 @@ sub _set_pages_files($$)
   
     my $top_node_filename = $self->_top_node_filename();
     # first determine the top node file name.
-    if ($self->get_conf('NODE_FILENAMES') and $node_top 
-        and defined($top_node_filename)) {
+    if ($node_top and defined($top_node_filename)) {
       my ($node_top_element) = $self->_get_element($node_top);
       die "BUG: No element for top node" if (!defined($node_top));
       $self->_set_element_file($node_top_element, $top_node_filename);
@@ -690,57 +671,46 @@ sub _set_pages_files($$)
       }
       if (!defined($element->{'extra'}->{'first_in_page'}->{'filename'})) {
         my $file_element = $element->{'extra'}->{'first_in_page'};
-        if ($self->get_conf('NODE_FILENAMES')) {
-          foreach my $root_command (@{$file_element->{'contents'}}) {
-            if ($root_command->{'cmdname'} 
-                and $root_command->{'cmdname'} eq 'node') {
-              my $node_filename;
-              # double node are not normalized, they are handled here
-              if (!defined($root_command->{'extra'}->{'normalized'})
-                  or !defined($self->{'labels'}->{$root_command->{'extra'}->{'normalized'}})) {
-                $node_filename = 'unknown_node';
-              } else {
-                $node_filename = $self->_node_filename($root_command->{'extra'});
-              }
-              $node_filename .= '.'.$self->get_conf('NODE_FILE_EXTENSION') 
-                if (defined($self->get_conf('NODE_FILE_EXTENSION')) 
-                 and $self->get_conf('NODE_FILE_EXTENSION') ne '');
-              $self->_set_element_file($file_element, $node_filename);
-              last;
-            }
-          }
-          if (!defined($file_element->{'filename'})) {
-            # use section to do the file name if there is no node
-            my $command = $self->element_command($file_element);
-            if ($command) {
-              if ($command->{'cmdname'} eq 'top' and !$node_top
-                  and defined($top_node_filename)) {
-                $self->_set_element_file($file_element, $top_node_filename);
-              } else {
-                my ($normalized_name, $filename) 
-                   = $self->_sectioning_command_normalized_filename($command);
-                $self->_set_element_file($file_element, $filename)
-              }
+        foreach my $root_command (@{$file_element->{'contents'}}) {
+          if ($root_command->{'cmdname'} 
+              and $root_command->{'cmdname'} eq 'node') {
+            my $node_filename;
+            # double node are not normalized, they are handled here
+            if (!defined($root_command->{'extra'}->{'normalized'})
+                or !defined($self->{'labels'}->{$root_command->{'extra'}->{'normalized'}})) {
+              $node_filename = 'unknown_node';
             } else {
-              # when everything else has failed
-              if ($file_nr == 0 and !$node_top 
-                  and defined($top_node_filename)) {
-                $self->_set_element_file($file_element, $top_node_filename);
-              } else {
-                my $filename = $self->{'document_name'} . "_$file_nr";
-                $filename .= $extension;
-                $self->_set_element_file($element, $filename);
-              }
-              $file_nr++;
+              $node_filename = $self->_node_filename($root_command->{'extra'});
             }
+            $node_filename .= $extension;
+            $self->_set_element_file($file_element, $node_filename);
+            last;
           }
-        } else {
-          my $filename = $self->{'document_name'} . "_$file_nr";
-          $filename .= '.'.$self->get_conf('EXTENSION') 
-            if (defined($self->get_conf('EXTENSION')) 
-                and $self->get_conf('EXTENSION') ne '');
-          $self->_set_element_file($file_element, $filename);
-          $file_nr++;
+        }
+        if (!defined($file_element->{'filename'})) {
+          # use section to do the file name if there is no node
+          my $command = $self->element_command($file_element);
+          if ($command) {
+            if ($command->{'cmdname'} eq 'top' and !$node_top
+                and defined($top_node_filename)) {
+              $self->_set_element_file($file_element, $top_node_filename);
+            } else {
+              my ($normalized_name, $filename) 
+                 = $self->_sectioning_command_normalized_filename($command);
+              $self->_set_element_file($file_element, $filename)
+            }
+          } else {
+            # when everything else has failed
+            if ($file_nr == 0 and !$node_top 
+                and defined($top_node_filename)) {
+              $self->_set_element_file($file_element, $top_node_filename);
+            } else {
+              my $filename = $self->{'document_name'} . "_$file_nr";
+              $filename .= $extension;
+              $self->_set_element_file($element, $filename);
+            }
+            $file_nr++;
+          }
         }
       }
       $element->{'filename'} 
@@ -776,13 +746,6 @@ sub output($$)
   }
   if ($self->get_conf('SPLIT')) {
     $self->set_conf('NODE_FILES', 1);
-  }
-  if ($self->get_conf('NODE_FILES') 
-      or ($self->get_conf('SPLIT') and $self->get_conf('SPLIT') eq 'node')) {
-    $self->set_conf('NODE_FILENAMES', 1);
-  }
-  if ($self->get_conf('NODE_FILENAMES') and defined($self->get_conf('EXTENSION'))) {
-     $self->set_conf('NODE_FILE_EXTENSION', $self->get_conf('EXTENSION'));
   }
 
   $self->_set_outfile();
@@ -1085,19 +1048,6 @@ sub _collect_leading_trailing_spaces_arg($$)
   return @result;
 }
 
-sub _register_command_arg($$$)
-{
-  my ($self, $current, $type) = @_;
-
-  my @contents = @{$current->{'contents'}};
-  Texinfo::Common::trim_spaces_comment_from_content(\@contents);
-  if (scalar(@contents)) {
-    push @{$current->{'parent'}->{'extra'}->{$type}}, \@contents;
-  } else {
-    push @{$current->{'parent'}->{'extra'}->{$type}}, undef;
-  }
-}
-
 sub _table_item_content_tree($$$)
 {
   my $self = shift;
@@ -1348,6 +1298,8 @@ sub sort_element_counts($$;$$)
 
   my $max_count = 0;
   my @name_counts_array;
+
+  require Texinfo::Convert::Texinfo;
   foreach my $element (@$elements) {
     my $name = 'UNNAMED element';
     if ($element->{'extra'} 
@@ -1403,6 +1355,21 @@ sub xml_protect_text($$)
   $text =~ s/\"/&quot;/g;
   return $text;
 }
+
+# Add any index sub-entries specified with @subentry, separated by commas.
+sub convert_index_subentries {
+  my ($self, $entry) = @_;
+
+  my $result = '';
+  my $tmp = $entry->{'command'};
+  while ($tmp->{'extra'} and $tmp->{'extra'}->{'subentry'}) {
+    $tmp = $tmp->{'extra'}->{'subentry'};
+    $result .= $self->_convert({'text' => ', '});
+    $result .= $self->_convert($tmp->{'args'}->[0]);
+  }
+  return $result;
+}
+
 
 # 'today' is not set here.
 our %default_xml_commands_formatting; 

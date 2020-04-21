@@ -64,7 +64,7 @@ valid_tree_transformation
 __ __p print_tree
 );
 
-$VERSION = '6.6';
+$VERSION = '6.7';
 
 # i18n
 sub N__($)
@@ -136,6 +136,8 @@ our %default_parser_state_configuration = (
                               # argument.  A Texinfo tree may also be used.
   'info' => {
     'novalidate' => 0,        # same as setting @novalidate.
+    'input_encoding_name' => 'utf-8',
+    'input_perl_encoding' => 'utf-8'
   },
   'in_gdt' => 0 # whether we are being called by gdt
 );
@@ -150,11 +152,6 @@ our %default_customization_values = (
   'SHOW_MENU' => 1,             # if false no menu error related.
   'IGNORE_BEFORE_SETFILENAME' => 1,
   'IGNORE_SPACE_AFTER_BRACED_COMMAND_NAME' => 1,
-  'INPUT_PERL_ENCODING' => undef, # input perl encoding name, set from 
-                              # @documentencoding in the default case
-  'INPUT_ENCODING_NAME' => undef, # encoding name normalized as preferred
-                              # IANA, set from @documentencoding in the default
-                              # case
   'CPP_LINE_DIRECTIVES' => 1, # handle cpp like synchronization lines
   'MAX_MACRO_CALL_NESTING' => 100000, # max number of nested macro calls
   # This is not used directly, but passed to Convert::Text through 
@@ -162,7 +159,6 @@ our %default_customization_values = (
   'ENABLE_ENCODING' => 1,     # output accented and special characters
                               # based on @documentencoding
   # following are used in Texinfo::Structuring
-  'TOP_NODE_UP' => '(dir)',   # up node of Top node
   'SIMPLE_MENU' => 0,         # not used in the parser but in structuring
   'USE_UP_NODE_FOR_ELEMENT_UP' => 0, # Use node up for Up if there is no 
                                      # section up.
@@ -224,7 +220,7 @@ my @command_line_settables = ('FILLCOLUMN', 'SPLIT', 'SPLIT_SIZE',
   'NUMBER_FOOTNOTES', 'NODE_FILES',
   'NO_WARN', 'VERBOSE',
   'TRANSLITERATE_FILE_NAMES', 'ERROR_LIMIT', 'ENABLE_ENCODING',
-  'FORCE', 'INTERNAL_LINKS', 'OUTFILE', 'SUBDIR', 'OUT',
+  'FORCE', 'INTERNAL_LINKS', 'OUTFILE', 'SUBDIR',
   'SILENT', 'CASE_INSENSITIVE_FILENAMES',
 );
 
@@ -249,7 +245,7 @@ my @variable_string_settables = (
   'SIMPLE_MENU', 'EXTENSION', 'USE_NUMERIC_ENTITY',
   'ENABLE_ENCODING_USE_ENTITY', 'ICONS',
   'USE_UNIDECODE', 'DATE_IN_HEADER', 'OPEN_QUOTE_SYMBOL',
-  'CLOSE_QUOTE_SYMBOL', 'TOP_NODE_UP', 'TOP_NODE_UP_URL', 'TOP_NODE_FILE',
+  'CLOSE_QUOTE_SYMBOL', 'TOP_NODE_UP', 'TOP_NODE_UP_URL',
   'TOP_NODE_FILE_TARGET', 'SECTION_NAME_IN_TITLE',
   'SHOW_TITLE', 'WORDS_IN_PAGE',
   'HEADER_IN_TABLE', 'USE_ACCESSKEY', 'USE_REL_REV', 'USE_LINKS',
@@ -260,10 +256,8 @@ my @variable_string_settables = (
   'USE_NODE_TARGET',
   'PROGRAM_NAME_IN_FOOTER', 'NODE_FILENAMES',
   'EXTERNAL_CROSSREF_SPLIT', 'BODYTEXT',
-  'CSS_LINES', 'RENAMED_NODES_REDIRECTIONS', 'RENAMED_NODES_FILE',
-  'CPP_LINE_DIRECTIVES',
+  'CSS_LINES', 'CPP_LINE_DIRECTIVES',
   'TEXI2DVI', 'DUMP_TREE', 'MAX_MACRO_CALL_NESTING',
-  'INPUT_ENCODING_NAME', 'INPUT_PERL_ENCODING', 
   'OUTPUT_ENCODING_NAME', 'OUTPUT_PERL_ENCODING', 
   'PACKAGE_VERSION',
   'PACKAGE_AND_VERSION', 'PACKAGE_URL', 'PACKAGE', 'PACKAGE_NAME', 'PROGRAM',
@@ -507,6 +501,7 @@ our %line_commands = (
   # obsolete @-commands.
   'setcontentsaftertitlepage'      => 'skipline', # no arg
   'setshortcontentsaftertitlepage' => 'skipline', # no arg
+  'subentry'          => 'line', 
 );
 
 # commands that do not take the whole line as argument
@@ -536,7 +531,7 @@ foreach my $in_heading_command ('thischapter', 'thischaptername',
 
 # only valid in index entries
 our %in_index_commands;
-foreach my $in_index_command ('sortas') {
+foreach my $in_index_command ('sortas', 'seeentry', 'seealso') {
   $in_index_commands{$in_index_command} = 1;
 }
 
@@ -615,7 +610,7 @@ foreach my $command ('r', 'i', 'b', 'sansserif', 'slanted') {
 }
 
 foreach my $one_arg_command ('U', 'dmn', 'key',
-    'titlefont', 'anchor', 'errormsg', 'sortas') {
+    'titlefont', 'anchor', 'errormsg', 'sortas', 'seeentry', 'seealso') {
   $brace_commands{$one_arg_command} = 1;
 }
 
@@ -1120,7 +1115,9 @@ sub open_out($$;$$)
   # before setting the encoding filters with binmode.
   binmode($filehandle) if $use_binmode;
   if ($encoding) {
-    if ($encoding eq 'utf8' or $encoding eq 'utf-8-strict') {
+    if ($encoding eq 'utf8'
+        or $encoding eq 'utf-8'
+        or $encoding eq 'utf-8-strict') {
       binmode($filehandle, ':utf8');
     } else { # FIXME also right for shiftijs or similar encodings?
       binmode($filehandle, ':bytes');
@@ -1676,91 +1673,6 @@ sub is_content_empty($;$)
   }
   return 1;
 }
-
-sub parse_renamed_nodes_file($$;$$)
-{
-  my $self = shift;
-  my $renamed_nodes_file = shift;
-  # if not given they are automatically created
-  my $renamed_nodes = shift;
-  my $renamed_nodes_lines = shift;
-
-  my $input_directory = $self->{'info'}->{'input_directory'};
-  
-  # check for noderename.cnf in directory of source, and in current
-  # directory.
-  if ($input_directory
-        and open(RENAMEDFILE, "<$input_directory$renamed_nodes_file")
-      or open(RENAMEDFILE, "<$renamed_nodes_file")) {
-    if ($self->get_conf('INPUT_PERL_ENCODING')) {
-      binmode(RENAMEDFILE, ":encoding(".
-                       $self->get_conf('INPUT_PERL_ENCODING').")");
-    }
-    my $renamed_nodes_line_nr = 0;
-    my @old_names = ();
-    while (<RENAMEDFILE>) {
-      $renamed_nodes_line_nr++;
-      next unless (/\S/);
-      next if (/^\s*\@c\b/);
-      if (s/^\s*\@\@\{\}\s+(\S)/$1/) {
-        chomp;
-        if (scalar(@old_names)) {
-          foreach my $old_node_name (@old_names) {
-            $renamed_nodes->{$old_node_name} = $_;
-          }
-          $renamed_nodes_lines->{$_} = $renamed_nodes_line_nr;
-          @old_names = ();
-        } else {
-          $self->file_line_warn(__("no node to be renamed"),
-                        $renamed_nodes_file, $renamed_nodes_line_nr);
-        }
-      } else {
-        chomp;
-        s/^\s*//;
-        $renamed_nodes_lines->{$_} = $renamed_nodes_line_nr;
-        push @old_names, $_;
-      }
-    }
-    if (scalar(@old_names)) {
-      $self->file_line_warn(__("nodes without a new name at the end of file"),
-             $renamed_nodes_file, $renamed_nodes_line_nr);
-    }
-    if (!close(RENAMEDFILE)) {
-      $self->document_warn(sprintf(__p(
-          "see HTML Xref Link Preservation in the Texinfo manual for context",
-          "error on closing node-renaming configuration file %s: %s"), 
-                            $renamed_nodes_file, $!));
-    }
-  } else {
-    $self->document_warn(sprintf(__("could not open %s: %s"), 
-                         $renamed_nodes_file, $!));
-  }
-  return ($renamed_nodes, $renamed_nodes_lines);
-}
-
-sub collect_renamed_nodes($$;$$)
-{
-  my $self = shift;
-  my $basename = shift;
-  my $renamed_nodes = shift;
-  my $renamed_nodes_lines = shift;
-
-  my $renamed_nodes_file;
-  if (defined($self->get_conf('RENAMED_NODES_FILE'))) {
-    $renamed_nodes_file = $self->get_conf('RENAMED_NODES_FILE');
-  } elsif (-f $basename . '-noderename.cnf') {
-    $renamed_nodes_file = $basename . '-noderename.cnf';
-  }
-  if (defined($renamed_nodes_file)) {
-    $self->document_warn(sprintf(__("using a renamed nodes file (`%s') is deprecated"), $renamed_nodes_file));
-    my ($renamed_nodes, $renamed_nodes_lines)
-     = parse_renamed_nodes_file($self, $renamed_nodes_file, $renamed_nodes,
-                                $renamed_nodes_lines);
-    return ($renamed_nodes, $renamed_nodes_lines, $renamed_nodes_file);
-  }
-  return (undef, undef, undef);
-}
-
 sub normalize_top_node_name($)
 {
   my $node = shift;
@@ -1777,8 +1689,6 @@ sub _convert_text_options($)
   if ($self->get_conf('ENABLE_ENCODING')) {
     if ($self->get_conf('OUTPUT_ENCODING_NAME')) {
       $options{'enabled_encoding'} = $self->get_conf('OUTPUT_ENCODING_NAME');
-    } elsif ($self->get_conf('INPUT_ENCODING_NAME')) {
-      $options{'enabled_encoding'} = $self->get_conf('INPUT_ENCODING_NAME');
     }
   }
   $options{'TEST'} = 1 if ($self->get_conf('TEST'));
@@ -1802,7 +1712,8 @@ sub count_bytes($$;$)
     $encoding = $self->get_conf('OUTPUT_PERL_ENCODING');
   }
 
-  if ($encoding eq 'utf-8-strict') {
+  if ($encoding eq 'utf-8'
+      or $encoding eq 'utf-8-strict') {
     if (Encode::is_utf8($string)) {
       # Get the number of bytes in the underlying storage.  This may
       # be slightly faster than calling Encode::encode_utf8.
@@ -1912,6 +1823,39 @@ sub _copy_tree($$$)
     }
   }
   return $new;
+}
+
+# for user-defined code
+sub collect_commands_in_tree($$)
+{
+  my $root = shift;
+  my $commands_list = shift;
+
+  my $commands_hash = {};
+  foreach my $command_name (@$commands_list) {
+    $commands_hash->{$command_name} = [];
+  }
+  _collect_commands_in_tree($root, $commands_hash);
+  return $commands_hash;
+}
+
+sub _collect_commands_in_tree($$);
+sub _collect_commands_in_tree($$)
+{
+  my $current = shift;
+  my $commands_hash = shift;
+
+  if (defined($current->{'cmdname'})
+      and defined($commands_hash->{$current->{'cmdname'}})) {
+    push @{$commands_hash->{$current->{'cmdname'}}}, $current;
+  }
+  foreach my $key ('args', 'contents') {
+    if ($current->{$key}) {
+      foreach my $child (@{$current->{$key}}) {
+        _collect_commands_in_tree($child, $commands_hash);
+      }
+    }
+  }
 }
 
 # Not used.
@@ -2973,6 +2917,13 @@ through C<@insertcopying> if in a C<@copying>.
 Return true if the I<$name> is a known tree transformation name
 that may be passed with C<TREE_TRANSFORMATIONS> to modify a texinfo
 tree.
+
+=item collect_commands_in_tree($tree, $commands_list)
+
+Returns a hash reference with keys @-commands names specified
+in the I<$commands_list> array reference and values arrays of
+tree elements corresponding to those @-command found in I<$tree>
+by traversing the tree.
 
 =back
 

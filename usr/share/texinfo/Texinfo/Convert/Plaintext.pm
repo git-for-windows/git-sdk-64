@@ -61,7 +61,7 @@ sub import {
 @EXPORT = qw(
 );
 
-$VERSION = '6.6';
+$VERSION = '6.7';
 
 # misc commands that are of use for formatting.
 my %formatting_misc_commands = %Texinfo::Convert::Text::formatting_misc_commands;
@@ -398,20 +398,26 @@ sub converter_initialize($)
   }
 
   %{$self->{'style_map'}} = %style_map;
+  $self->{'convert_text_options'} 
+      = {Texinfo::Common::_convert_text_options($self)};
+
   if ($self->get_conf('ENABLE_ENCODING') and $self->get_conf('OUTPUT_ENCODING_NAME')
       and $self->get_conf('OUTPUT_ENCODING_NAME') eq 'utf-8') {
     # cache this to avoid redoing calls to get_conf
     $self->{'to_utf8'} = 1;
-
-    foreach my $quoted_command (@quoted_commands) {
-      # Directed single quotes
-      $self->{'style_map'}->{$quoted_command} = ["\x{2018}", "\x{2019}"];
+    if (!$self->{'extra'}->{'documentencoding'}) {
+      # Do not use curly quotes or some other unnecessary non-ASCII characters
+      # if '@documentencoding UTF-8' is not given.
+      $self->{'convert_text_options'}->{'no_extra_unicode'} = 1;
+    } else {
+      foreach my $quoted_command (@quoted_commands) {
+        # Directed single quotes
+        $self->{'style_map'}->{$quoted_command} = ["\x{2018}", "\x{2019}"];
+      }
+      # Directed double quotes
+      $self->{'style_map'}->{'dfn'} = ["\x{201C}", "\x{201D}"];
     }
-    # Directed double quotes
-    $self->{'style_map'}->{'dfn'} = ["\x{201C}", "\x{201D}"];
   }
-  $self->{'convert_text_options'} 
-      = {Texinfo::Common::_convert_text_options($self)};
   if (defined($self->get_conf('OPEN_QUOTE_SYMBOL'))) {
     foreach my $quoted_command (@quoted_commands) {
       $self->{'style_map'}->{$quoted_command}->[0] 
@@ -565,7 +571,8 @@ sub _process_text($$$)
     $text = uc($text);
   }
 
-  if ($self->{'to_utf8'}) {
+  if ($self->{'to_utf8'}
+      and $self->{'extra'}->{'documentencoding'}) {
     return Texinfo::Convert::Unicode::unicode_text($text, 
             $context->{'font_type_stack'}->[-1]->{'monospace'});
   } elsif (!$context->{'font_type_stack'}->[-1]->{'monospace'}) {
@@ -1235,9 +1242,18 @@ sub _printindex_formatted($$;$)
       $entry_tree->{'type'} = 'frenchspacing';
     }
     my $entry_text = '';
-    $entry_text .= $self->convert_line($entry_tree, {'indent' => 0,
-                                                     'suppress_styles' => 1});
+
+    my $formatter = $self->new_formatter('line',
+                                   {'indent' => 0, 'suppress_styles' => 1});
+    push @{$self->{'formatters'}}, $formatter;
+    $entry_text = $self->_convert($entry_tree);
+    $entry_text .= $self->convert_index_subentries($entry);
+    $entry_text .= _count_added($self, $formatter->{'container'},
+                  Texinfo::Convert::Paragraph::end($formatter->{'container'}));
+    pop @{$self->{'formatters'}};
+
     next if ($entry_text !~ /\S/);
+
     # FIXME protect instead
     if ($entry_text =~ /:/ and $self->get_conf('INDEX_SPECIAL_CHARS_WARNING')) {
       $self->line_warn (sprintf(__("Index entry in \@%s with : produces invalid Info: %s"),
@@ -1369,6 +1385,7 @@ sub ensure_end_of_line($$)
     $self->{'count_context'}->[-1]->{'lines'} -= 1;
   }
   $text .= "\n";
+  $self->{'text_element_context'}->[-1]->{'counter'} = 0;
   _add_text_count($self, "\n");
   _add_lines_count($self, 1);
   return $text;
@@ -2260,9 +2277,6 @@ sub _convert($$)
         $arg = $root->{'args'}->[0]->{'contents'}->[0]->{'text'};
       }
       if ($arg) {
-        # The general idea is to output UTF-8 if that has been
-        # explicitly given as the encoding, else simple ASCII.
-        # 
         # Syntactic checks on the value were already done in Parser.pm,
         # but we have one more thing to test: since this is the one
         # place where we might output actual UTF-8 binary bytes, we have
@@ -2270,12 +2284,9 @@ sub _convert($$)
         # and will not output UTF-8 for Unicode non-characters such as
         # U+10FFFF.  In this case, silently fall back to plain text, on
         # the theory that the user wants something.
-        # 
-        # Having an option to output binary bytes nevertheless is
-        # possible, but seems unlikely to be practically useful, so skip
-        # it until it gets requested.
         my $res;
         if ($self->{'to_utf8'}) {
+          my $error = 0;
           # The warning about non-characters is only given when the code
           # point is attempted to be output, not just manipulated.
           # http://stackoverflow.com/questions/5127725/how-could-i-catch-an-unicode-non-character-warning
@@ -2283,8 +2294,7 @@ sub _convert($$)
           # Therefore, we have to try to output it within an eval.
           # Since opening /dev/null or a temporary file means
           # more system-dependent checks, use a string as our
-          # filehandle; this was introduced ca.2000, which should be old
-          # enough.  We hope.
+          # filehandle.
           eval {
             use warnings FATAL => qw(all);
             my ($fh, $string);
@@ -2294,7 +2304,15 @@ sub _convert($$)
           };
           if ($@) {
             warn "\@U chr(hex($arg)) eval failed: $@\n" if ($self->{'DEBUG'});
-            $res = "U+$arg";       # chr won't work
+            $error = 1;
+          } elsif (hex($arg) > 0x10FFFF) {
+            # The check above appears not to work in older versions of perl,
+            # so check the argument is not greater the maximum Unicode code 
+            # point.
+            $error = 1;
+          }
+          if ($error) {
+            $res = "U+$arg";
           } else {
             $res = chr(hex($arg)); # ok to call chr
           }
@@ -2706,8 +2724,11 @@ sub _convert($$)
     } else {
       $unknown_command = 1;
     }
-    if ($unknown_command and !($root->{'extra'} 
-                               and $root->{'extra'}->{'index_entry'})
+    if ($unknown_command
+        and !($root->{'extra'} 
+                and ($root->{'extra'}->{'index_entry'}
+                     or $root->{'extra'}->{'seeentry'}
+                     or $root->{'extra'}->{'seealso'}))
         # commands like def*x are not processed above, since only the def_line
         # associated is processed. If they have no name and no category they 
         # are not considered as index entries either so they have a specific
@@ -2938,6 +2959,11 @@ sub _convert($$)
         my ($pre_quote, $post_quote);
         if ($arg->{'type'} eq 'menu_entry_node') {
           $self->{'formatters'}->[-1]->{'suppress_styles'} = 1;
+
+          # Flush a leading space
+          $result .= _count_added($self, $formatter->{'container'},
+                           add_pending_word($formatter->{'container'}, 1));
+
           my $node_text = _convert($self, {'type' => '_code',
                                       'contents' => $arg->{'contents'}});
 

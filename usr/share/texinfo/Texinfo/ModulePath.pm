@@ -1,4 +1,4 @@
-# tp/Texinfo/ModulePath.pm.  Generated from ModulePath.pm.in by configure.
+# @configure_input@
 #
 # Add directories to @INC, Perl's module search path, to find modules,
 # either in the source or build directories.
@@ -11,6 +11,14 @@ $VERSION = '6.3dev';
 
 use File::Basename;
 use File::Spec;
+
+# Used as a flag to say whether to look for data files in uninstalled 
+# locations.
+our $texinfo_uninstalled = 0;
+
+# Pathname of the tp/ build directory.  Used to find the locale
+# data.
+our $builddir = '';
 
 # If $LIB_DIR and $LIBEXEC_DIR are given,
 # (likely the installation directories)
@@ -27,35 +35,50 @@ sub init {
   my $libexec_dir = shift;
   my %named_args = @_;
 
-  if (!$ENV{'top_srcdir'} and !$ENV{'top_builddir'}
-      and $named_args{'updirs'}) {
-    my ($real_command_name, $command_directory, $command_suffix) 
-            = fileparse($0, '.pl');
-    my $updir = File::Spec->updir();
+  if (!$named_args{'installed'}) {
+    $texinfo_uninstalled = 1;
 
-    # e.g. tp/t -> tp/t/../.. for 'updirs' = 2.
-    my $count = $named_args{'updirs'};
-    my $top_srcdir = $command_directory;
-    while ($count-- > 0) {
-      $top_srcdir = File::Spec->catdir($top_srcdir, $updir);
+    my $top_srcdir;
+    if ($ENV{'top_srcdir'}) {
+      $top_srcdir = $ENV{'top_srcdir'};
+    } elsif (defined $named_args{'updirs'}) {
+      my ($real_command_name, $command_directory, $command_suffix) 
+              = fileparse($0, '.pl');
+      my $updir = File::Spec->updir();
+
+      # e.g. tp/t -> tp/t/../.. for 'updirs' = 2.
+      my $count = $named_args{'updirs'};
+      $top_srcdir = $command_directory;
+      while ($count-- > 0) {
+        $top_srcdir = File::Spec->catdir($top_srcdir, $updir);
+      }
     }
-    $ENV{'top_srcdir'} = $top_srcdir;
-    $ENV{'top_builddir'} = $top_srcdir;
-  }
-   
-  if (!$lib_dir) {
-    if (defined($ENV{'top_srcdir'})) {
+     
+    if (defined($top_srcdir)) {
       # For Texinfo::Parser and the rest.
-      unshift @INC, File::Spec->catdir($ENV{'top_srcdir'}, 'tp');
+      unshift @INC, File::Spec->catdir($top_srcdir, 'tp');
 
-      $lib_dir = File::Spec->catdir($ENV{'top_srcdir'}, 'tp', 'maintain');
+      $lib_dir = File::Spec->catdir($top_srcdir, 'tp', 'maintain');
     }
+
+    # Find XS modules in the build directory
+    my $top_builddir;
+    if (defined($ENV{'top_builddir'})) {
+      $top_builddir = $ENV{'top_builddir'};
+    } else {
+      $top_builddir = $top_srcdir;
+    }
+    if (defined($top_builddir)) {
+      unshift @INC, File::Spec->catdir($top_builddir, 'tp',
+        'Texinfo', 'XS');
+      unshift @INC, File::Spec->catdir($top_builddir, 'tp',
+        'Texinfo', 'XS', 'parsetexi');
+    }
+
+    $builddir = File::Spec->catdir($top_builddir, 'tp');
   }
 
-  # module using values from configure
   if (defined($lib_dir)) {
-    #warn "lib dir is $lib_dir\n";
-
     unshift @INC, $lib_dir;
 
     # '@USE_EXTERNAL_LIBINTL @' and similar are substituted
@@ -72,14 +95,6 @@ sub init {
 
   if (defined($libexec_dir)) {
     unshift @INC, $libexec_dir;
-  } else {
-    # *.la files are generated in the build directory.
-    if (defined($ENV{'top_builddir'})) {
-      unshift @INC, File::Spec->catdir($ENV{'top_builddir'}, 'tp',
-        'Texinfo', 'XS');
-      unshift @INC, File::Spec->catdir($ENV{'top_builddir'}, 'tp',
-        'Texinfo', 'XS', 'parsetexi');
-    }
   }
 
   unshift @INC, sub { 

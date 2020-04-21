@@ -14,6 +14,22 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+# Formatting functions, registered in %default_types_conversion
+# should not have side effects, such that users can overrides
+# them independently without risking unwanted results.  Also in
+# formatting functions, the state of the converter should only
+# be accessed through functions, such as in_math, in_preformatted,
+# preformatted_classes_stack and similar functions.
+#
+# In most formatting functions, the case where $self->in_string() is
+# true should be handled explicitely and the simplest formatting should be
+# done in that case, without any HTML element such that the result
+# can be in an attribute or in a comment.
+#
+# FIXME: there is already a case with a side effect, with the
+# variable $html_menu_entry_index.
 # 
 # Original author: Patrice Dumas <pertusus@free.fr>
 
@@ -55,7 +71,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.6';
+$VERSION = '6.7';
 
 # misc commands that are of use for formatting.
 my %formatting_misc_commands = %Texinfo::Convert::Text::formatting_misc_commands;
@@ -172,6 +188,17 @@ sub preformatted_number($)
 {
   my $self = shift;
   return $self->{'document_context'}->[-1]->{'formatting_context'}->[-1]->{'preformatted_number'};
+}
+
+sub count_elements_in_filename($$)
+{
+  my $self = shift;
+  my $filename = shift;
+  
+  if (defined($self->{'elements_in_file_count'}->{$filename})) {
+    return $self->{'elements_in_file_count'}->{$filename};
+  }
+  return undef;
 }
 
 sub top_format($)
@@ -376,7 +403,7 @@ sub command_href($$;$$)
 
   $filename = $self->{'current_filename'} if (!defined($filename));
 
-  if ($command->{'manual_content'} or $command->{'top_node_up'}) {
+  if ($command->{'manual_content'}) {
     return $self->_external_node_href($command, $filename, $link_command);
   }
 
@@ -399,6 +426,16 @@ sub command_href($$;$$)
     if (!defined($filename) 
          or $filename ne $target_filename) {
       $href .= $target_filename;
+      # omit target if the command is an element command, there is only
+      # one element in file and there is a file in the href
+      if (defined($filename)
+          and defined($self->command_element_command($command))
+          and $self->command_element_command($command) eq $command) {
+        my $count_elements_in_file = $self->count_elements_in_filename($target_filename);
+        if (defined($count_elements_in_file) and $count_elements_in_file == 1) {
+          $target = '';
+        }
+      }
     }
   }
   $href .= '#' . $target if ($target ne '');
@@ -444,7 +481,7 @@ sub command_contents_href($$$$)
 #  'tree' - return a tree
 #  'tree_nonumber' - return tree representing text without a chapter number
 #                    being included.
-#  'string'
+#  'string' - return simpler text that can be used in element attributes
 sub command_text($$;$)
 {
   my $self = shift;
@@ -458,7 +495,7 @@ sub command_text($$;$)
     cluck "in command_text($type) command not defined";
   }
 
-  if ($command->{'manual_content'} or $command->{'top_node_up'}) {
+  if ($command->{'manual_content'}) {
     my $node_content = [];
     $node_content = $command->{'node_content'}
       if (defined($command->{'node_content'}));
@@ -924,8 +961,6 @@ my %defaults = (
   'ENABLE_ENCODING'      => 0,
   'SHOW_MENU'            => 1,
   'OUTPUT_ENCODING_NAME'  => 'utf-8',
-  #'encoding_name'        => undef,
-  #'perl_encoding'        => undef,
   'OUTFILE'              => undef,
   'SUBDIR'               => undef,
   'USE_NODES'            => 1,
@@ -940,11 +975,9 @@ my %defaults = (
   'OPEN_QUOTE_SYMBOL'    => '&lsquo;',
   'CLOSE_QUOTE_SYMBOL'   => '&rsquo;',
   'USE_ISO'              => 1,
-# file name used for Top node when NODE_FILENAMES is true
-  'TOP_NODE_FILE'        => 'index',
-  'NODE_FILE_EXTENSION'  => 'html',
+  'TOP_FILE'             => 'index.html',
   'EXTENSION'            => 'html',
-  'TOP_NODE_FILE_TARGET' => 'index',
+  'TOP_NODE_FILE_TARGET' => 'index.html',
   'TRANSLITERATE_FILE_NAMES' => 1,
   'USE_LINKS'            => 1,
   'USE_NUMERIC_ENTITY'   => 1,
@@ -1640,7 +1673,7 @@ sub _convert_footnote_command($$$$)
     }
   }
 
-  $foot_lines .= '<h3>' .
+  $foot_lines .= '<h5>' .
    "<a id=\"$footid\" href=\"$document_filename#$docid\">($number_in_doc)</a></h3>\n"
    . $footnote_text;
 
@@ -2368,22 +2401,6 @@ sub _convert_heading_command($$$$$)
   }
   $result .= $content if (defined($content));
 
-  if ($cmdname ne 'node'
-      and $self->{'current_node'}
-      and !$self->{'seenmenus'}->{$self->{'current_node'}}) {
-    $self->{'seenmenus'}->{$self->{'current_node'}} = 1;
-    # Generate a menu for this node.
-    my $menu_text;
-    my $menu_node = Texinfo::Structuring::section_menu_of_node (undef,
-      $command->{'extra'}{'associated_node'});
-    if ($menu_node) {
-      $menu_text = _convert ($self, $menu_node);
-      if ($menu_text) {
-        $result .= $menu_text;
-        $result .= "\n";
-      }
-    }
-  }
   return $result;
 }
 
@@ -2759,6 +2776,9 @@ sub _convert_menu_command($$$$)
   if ($content !~ /\S/) {
     return '';
   }
+  # This can probably only happen with incorrect input,
+  # for instance menu in copying
+  # FIXME check?
   if ($self->in_string()) {
     return $content;
   }
@@ -2767,9 +2787,6 @@ sub _convert_menu_command($$$$)
   if ($self->_in_preformatted_in_menu()) {
     $begin_row = '<tr><td>';
     $end_row = '</td></tr>';
-  }
-  if ($self->{'current_node'}) {
-    $self->{'seenmenus'}->{$self->{'current_node'}} = 1;
   }
   return $self->_attribute_class('table', 'menu')
     ." border=\"0\" cellspacing=\"0\">${begin_row}\n"
@@ -2940,7 +2957,7 @@ sub _convert_enumerate_command($$$$)
   if ($content eq '') {
     return '';
   }
-  my $specification = $command->{'extra'}{'enumerate_specification'};
+  my $specification = $command->{'extra'}->{'enumerate_specification'};
   if (defined $specification) {
     my ($start, $type);
     if ($specification =~ /^\d*$/ and $specification ne '1') {
@@ -3481,6 +3498,7 @@ sub _convert_printindex_command($$$$)
       } else {
         $entry = $self->convert_tree({'contents' => $index_entry_ref->{'content'}});
       }
+      $entry .= $self->convert_index_subentries($index_entry_ref);
       if ($already_formatted) {
         $self->{'ignore_notice'}--;
       }
@@ -3857,7 +3875,7 @@ sub _convert_menu_entry_type($$$)
   my $command = shift;
   
   my $href;
-  my $node;
+  my $rel = '';
   my $section;
   my $node_entry = $command->{'extra'}->{'menu_entry_node'};
   # external node
@@ -3866,7 +3884,7 @@ sub _convert_menu_entry_type($$$)
     $href = $self->command_href($node_entry, undef, $command); 
     $external_node = 1;
   } else {
-    $node = $self->label_command($node_entry->{'normalized'});
+    my $node = $self->label_command($node_entry->{'normalized'});
     # if !NODE_NAME_IN_MENU, we pick the associated section, except if 
     # the node is the element command
     if ($node->{'extra'}->{'associated_section'} 
@@ -3876,6 +3894,11 @@ sub _convert_menu_entry_type($$$)
       $href = $self->command_href($section, undef, $command);
     } else {
       $href = $self->command_href($node, undef, $command);
+    }
+    if ($node->{'extra'}->{'isindex'}) {
+      # Mark the target as an index.  See
+      # http://microformats.org/wiki/existing-rel-values#HTML5_link_type_extensions
+      $rel = ' rel="index"';
     }
   }
 
@@ -3899,7 +3922,7 @@ sub _convert_menu_entry_type($$$)
         my $name = $self->convert_tree(
            {'type' => '_code', 'contents' => $arg->{'contents'}});
         if ($href ne '' and !$self->in_string()) {
-          $result .= "<a href=\"$href\"$accesskey>".$name."</a>";
+          $result .= "<a href=\"$href\"$rel$accesskey>".$name."</a>";
         } else {
           $result .= $name;
         }
@@ -3936,16 +3959,11 @@ sub _convert_menu_entry_type($$$)
   my $name;
   my $name_no_number;
   if ($section) {
-    #my $section_name = $self->command_text($section);
     $name = $self->command_text($section);
     $name_no_number = $self->command_text($section, 'text_nonumber');
     if ($href ne '' and $name ne '') {
-      #$name = "<a href=\"$href\"$accesskey>".$section_name."</a>";
-      $name = "<a href=\"$href\"$accesskey>".$name."</a>";
-    }# else {
-    #  $name = $section_name;
-    #}
-    #$name = "$MENU_SYMBOL ".$name if ($section_name eq $name_no_number);
+      $name = "<a href=\"$href\"$rel$accesskey>".$name."</a>";
+    }
   }
   if (!defined($name) or $name eq '') {
     if ($command->{'extra'}->{'menu_entry_name'}) {
@@ -3963,7 +3981,7 @@ sub _convert_menu_entry_type($$$)
     $name =~ s/^\s*//;
     $name_no_number = $name;
     if ($href ne '') {
-      $name = "<a href=\"$href\"$accesskey>".$name."</a>";
+      $name = "<a href=\"$href\"$rel$accesskey>".$name."</a>";
     }
     $name = "$MENU_SYMBOL ".$name;
   }
@@ -4749,9 +4767,6 @@ sub converter_initialize($)
 {
   my $self = shift;
 
-  if ($self->get_conf('SHORTEXTN')) {
-    $self->set_conf('EXTENSION', 'htm');
-  }
   $foot_num = 0;
   $foot_lines = '';
   %formatted_index_entries = ();
@@ -4877,9 +4892,6 @@ sub converter_initialize($)
       $self->{"format_".$formatting_reference} 
        = $default_formatting_references{$formatting_reference};
     }
-  }
-  if ($Texinfo::Config::renamed_nodes) {
-    %{$self->{'renamed_nodes'}} = %{$Texinfo::Config::renamed_nodes};
   }
 
   $self->{'document_context'} = [];
@@ -5212,6 +5224,8 @@ sub _new_sectioning_command_target($$)
 #  * the target, id and normalized filename of 'labels', ie everything that 
 #    may be the target of a ref, like @node, @float, @anchor...
 # conversion to HTML is done on-demand, upon call to command_text.
+# Note that 'node_filename', which is set here for Top too, is not
+# used later for Top, see the NOTE below.
 sub _set_root_commands_targets_node_files($$)
 {
   my $self = shift;
@@ -5221,12 +5235,14 @@ sub _set_root_commands_targets_node_files($$)
   $no_unidecode = 1 if (defined($self->get_conf('USE_UNIDECODE')) 
                         and !$self->get_conf('USE_UNIDECODE'));
 
+  my $extension = '';
+  $extension = '.'.$self->get_conf('EXTENSION')
+            if (defined($self->get_conf('EXTENSION'))
+                and $self->get_conf('EXTENSION') ne '');
   if ($self->{'labels'}) {
     foreach my $root_command (values(%{$self->{'labels'}})) {
       my ($filename, $target) = $self->_node_id_file($root_command->{'extra'});
-      $filename .= '.'.$self->get_conf('NODE_FILE_EXTENSION') 
-        if (defined($self->get_conf('NODE_FILE_EXTENSION')) 
-            and $self->get_conf('NODE_FILE_EXTENSION') ne '');
+      $filename .= $extension;
       if (defined($Texinfo::Config::node_file_name)) {
         $filename = &$Texinfo::Config::node_file_name($self, $root_command,
                                                      $filename);
@@ -5343,8 +5359,7 @@ sub _set_pages_files($$)
   
     my $top_node_filename = $self->_top_node_filename();
     # first determine the top node file name.
-    if ($self->get_conf('NODE_FILENAMES') and $node_top 
-        and defined($top_node_filename)) {
+    if ($node_top and defined($top_node_filename)) {
       my ($node_top_element) = $self->_get_element($node_top);
       die "BUG: No element for top node" if (!defined($node_top));
       $self->_set_element_file($node_top_element, $top_node_filename);
@@ -5359,65 +5374,54 @@ sub _set_pages_files($$)
       }
       if (!defined($element->{'extra'}->{'first_in_page'}->{'filename'})) {
         my $file_element = $element->{'extra'}->{'first_in_page'};
-        if ($self->get_conf('NODE_FILENAMES')) {
-          foreach my $root_command (@{$file_element->{'contents'}}) {
-            if ($root_command->{'cmdname'} 
-                and $root_command->{'cmdname'} eq 'node') {
-              my $node_filename;
-              # double node are not normalized, they are handled here
-              if (!defined($root_command->{'extra'}->{'normalized'})
-                  or !defined($self->{'labels'}->{$root_command->{'extra'}->{'normalized'}})) {
-                $node_filename = 'unknown_node';
-                $node_filename .= '.'.$self->get_conf('NODE_FILE_EXTENSION') 
-                  if (defined($self->get_conf('NODE_FILE_EXTENSION')) 
-                    and $self->get_conf('NODE_FILE_EXTENSION') ne '');
-              } else {
-                if (!defined($self->{'targets'}->{$root_command})
-                    or !defined($self->{'targets'}->{$root_command}->{'node_filename'})) {
-                  # Could have been a double node, thus use equivalent node.
-                  # However since double nodes are not normalized, in fact it 
-                  # never happens.
-                  $root_command
-                    = $self->{'labels'}->{$root_command->{'extra'}->{'normalized'}};
-                }
-                $node_filename 
-                  = $self->{'targets'}->{$root_command}->{'node_filename'};
-              }
-              $self->_set_element_file($file_element, $node_filename);
-              last;
-            }
-          }
-          if (!defined($file_element->{'filename'})) {
-            # use section to do the file name if there is no node
-            my $command = $self->element_command($file_element);
-            if ($command) {
-              if ($command->{'cmdname'} eq 'top' and !$node_top
-                  and defined($top_node_filename)) {
-                $self->_set_element_file($file_element, $top_node_filename);
-              } else {
-                $self->_set_element_file($file_element,
-                   $self->{'targets'}->{$command}->{'section_filename'});
-              }
+        foreach my $root_command (@{$file_element->{'contents'}}) {
+          if ($root_command->{'cmdname'} 
+              and $root_command->{'cmdname'} eq 'node') {
+            my $node_filename;
+            # double node are not normalized, they are handled here
+            if (!defined($root_command->{'extra'}->{'normalized'})
+                or !defined($self->{'labels'}->{$root_command->{'extra'}->{'normalized'}})) {
+              $node_filename = 'unknown_node';
+              $node_filename .= $extension;
             } else {
-              # when everything else has failed
-              if ($file_nr == 0 and !$node_top 
-                  and defined($top_node_filename)) {
-                $self->_set_element_file($file_element, $top_node_filename);
-              } else {
-                my $filename = $self->{'document_name'} . "_$file_nr";
-                $filename .= $extension;
-                $self->_set_element_file($element, $filename);
+              if (!defined($self->{'targets'}->{$root_command})
+                  or !defined($self->{'targets'}->{$root_command}->{'node_filename'})) {
+                # Could have been a double node, thus use equivalent node.
+                # However since double nodes are not normalized, in fact it 
+                # never happens.
+                $root_command
+                  = $self->{'labels'}->{$root_command->{'extra'}->{'normalized'}};
               }
-              $file_nr++;
+              $node_filename 
+                = $self->{'targets'}->{$root_command}->{'node_filename'};
             }
+            $self->_set_element_file($file_element, $node_filename);
+            last;
           }
-        } else {
-          my $filename = $self->{'document_name'} . "_$file_nr";
-          $filename .= '.'.$self->get_conf('EXTENSION') 
-            if (defined($self->get_conf('EXTENSION')) 
-                and $self->get_conf('EXTENSION') ne '');
-          $self->_set_element_file($file_element, $filename);
-          $file_nr++;
+        }
+        if (!defined($file_element->{'filename'})) {
+          # use section to do the file name if there is no node
+          my $command = $self->element_command($file_element);
+          if ($command) {
+            if ($command->{'cmdname'} eq 'top' and !$node_top
+                and defined($top_node_filename)) {
+              $self->_set_element_file($file_element, $top_node_filename);
+            } else {
+              $self->_set_element_file($file_element,
+                 $self->{'targets'}->{$command}->{'section_filename'});
+            }
+          } else {
+            # when everything else has failed
+            if ($file_nr == 0 and !$node_top 
+                and defined($top_node_filename)) {
+              $self->_set_element_file($file_element, $top_node_filename);
+            } else {
+              my $filename = $self->{'document_name'} . "_$file_nr";
+              $filename .= $extension;
+              $self->_set_element_file($element, $filename);
+            }
+            $file_nr++;
+          }
         }
       }
       $element->{'filename'} 
@@ -5820,21 +5824,6 @@ sub _external_node_href($$$$)
   my $filename = shift;
   my $link_command = shift;
   
-  # This only overrides an implicit pointer to (dir) as the Top node's Up.
-  # It has no effect if a pointer is explicitly specified,
-  # or if implicit pointers aren't being created (e.g., just a Top node).
-  if ($external_node->{'top_node_up'} 
-      and defined($self->get_conf('TOP_NODE_UP_URL'))) {
-    return $self->get_conf('TOP_NODE_UP_URL');
-  }
-
-  # In addition to that implicit (dir) as the Top node's Up, replace all
-  # other references to external file "dir" with the same TOP_NODE_UP_URL.
-  if (defined($self->get_conf('TOP_NODE_UP_URL'))
-      and $external_node->{'manual_content'}[0]->{'text'} eq "dir") {
-    return $self->get_conf('TOP_NODE_UP_URL');
-  }
-  
   #print STDERR "external_node: ".join('|', keys(%$external_node))."\n";
   my ($target_filebase, $target) = $self->_node_id_file($external_node);
 
@@ -5842,10 +5831,7 @@ sub _external_node_href($$$$)
 
   my $default_target_split = $self->get_conf('EXTERNAL_CROSSREF_SPLIT');
 
-  my $extension = '';
-  $extension = "." . $self->get_conf('NODE_FILE_EXTENSION')
-          if (defined($self->get_conf('NODE_FILE_EXTENSION')) 
-              and $self->get_conf('NODE_FILE_EXTENSION') ne '');
+  my $external_file_extension = '.html';
 
   my $target_split;
   my $file;
@@ -5855,7 +5841,7 @@ sub _external_node_href($$$$)
        { 'code' => 1, 
          Texinfo::Common::_convert_text_options($self)});
     my $manual_base = $manual_name;
-    $manual_base =~ s/\.[^\.]*$//;
+    $manual_base =~ s/\.info*$//;
     $manual_base =~ s/^.*\///;
     my $document_split = $self->get_conf('SPLIT');
     $document_split = 'mono' if (!$document_split);
@@ -5875,8 +5861,7 @@ sub _external_node_href($$$$)
       $target_split = 1 unless ($split_found eq 'mono');
     } else { # nothing specified for that manual, use default
       $target_split = $default_target_split;
-      if ($self->get_conf('CHECK_HTMLXREF')
-          and !$external_node->{'top_node_up'}) {
+      if ($self->get_conf('CHECK_HTMLXREF')) {
         if (defined($link_command) and $link_command->{'line_nr'}) {
           $self->line_warn(sprintf(__(
               "no htmlxref.cnf entry found for `%s'"), $manual_name),
@@ -5910,7 +5895,7 @@ sub _external_node_href($$$$)
         } else {
           $file = $manual_base;
         }
-        $file .= $extension;
+        $file .= $external_file_extension;
       }
     }
   } else {
@@ -5921,8 +5906,7 @@ sub _external_node_href($$$$)
   if ($target eq '') {
     if ($target_split) {
       if (defined($self->get_conf('TOP_NODE_FILE_TARGET'))) {
-        return $file . $self->get_conf('TOP_NODE_FILE_TARGET') 
-           . $extension;# . '#Top';
+        return $file . $self->get_conf('TOP_NODE_FILE_TARGET');
       } else {
         return $file;# . '#Top';
       }
@@ -5934,13 +5918,13 @@ sub _external_node_href($$$$)
   if (! $target_split) {
     return $file . '#' . $xml_target;
   } else {
-    my $file_basename;
+    my $file_name;
     if ($target eq 'Top' and defined($self->get_conf('TOP_NODE_FILE_TARGET'))) {
-      $file_basename = $self->get_conf('TOP_NODE_FILE_TARGET');
+      $file_name = $self->get_conf('TOP_NODE_FILE_TARGET');
     } else {
-      $file_basename = $target_filebase;
+      $file_name = $target_filebase . $external_file_extension;
     }
-    return $file . $file_basename . $extension . '#' . $xml_target;
+    return $file . $file_name . '#' . $xml_target;
   }
 }
 
@@ -5957,6 +5941,13 @@ foreach my $no_number_type ('text', 'tree', 'string') {
   $valid_types{$no_number_type .'_nonumber'} = 1;
 }
 
+# $element can be undef.
+# $element undef happens at least when there is no output file, or for
+# the table of content when frames are used.  That call would result
+# for instance from _element_direction being called from _get_links,
+# itself called from 'format_begin_file' which, in the default case
+# points to _default_begin_file.
+# TODO are there other cases?
 sub _element_direction($$$$;$)
 {
   my $self = shift;
@@ -5982,6 +5973,21 @@ sub _element_direction($$$$;$)
       and $element->{'extra'}->{'directions'}->{$direction}) {
     $element_target
       = $element->{'extra'}->{'directions'}->{$direction};
+  # output TOP_NODE_UP related infos even if element is not
+  # defined which should mostly correspond to cases when there is no
+  # output file, for example in the tests.
+  } elsif ((not defined($element)
+             or ($element and $self->element_is_top($element)))
+            and defined($self->get_conf('TOP_NODE_UP_URL'))
+            and ($direction eq 'Up' or $direction eq 'NodeUp')) {
+    if ($type eq 'href') {
+      return $self->get_conf('TOP_NODE_UP_URL');
+    } elsif ($type eq 'text' or $type eq 'node' or $type eq 'string') {
+      return $self->get_conf('TOP_NODE_UP');
+    } else {
+      cluck("type $type not available for TOP_NODE_UP\n");
+      return '';
+    }
   }
 
   if ($element_target) {
@@ -5992,8 +5998,7 @@ sub _element_direction($$$$;$)
         . "directions :". Texinfo::Structuring::_print_directions($element);
     }
     ########
-    if ($element_target->{'type'} eq 'external_node'
-        or $element_target->{'type'} eq 'top_node_up') {
+    if ($element_target->{'type'} eq 'external_node') {
       my $external_node = $element_target->{'extra'};
       if ($type eq 'href') {
         return $self->command_href($external_node, $filename);
@@ -6106,13 +6111,19 @@ sub _default_contents($$;$$)
           if ($toc_id ne '' or $href ne '') {
             my $toc_name_attribute = '';
             if ($toc_id ne '') {
-              $toc_name_attribute = "id=\"$toc_id\" ";
+              $toc_name_attribute = " id=\"$toc_id\"";
             }
             my $href_attribute = '';
             if ($href ne '') {
-              $href_attribute = "href=\"$href\"";
+              $href_attribute = " href=\"$href\"";
             }
-            $result .= "<li><a ${toc_name_attribute}${href_attribute}>$text</a>";
+            my $rel = '';
+            if ($section->{'extra'}
+                and $section->{'extra'}->{'associated_node'}
+                and $section->{'extra'}->{'associated_node'}->{'extra'}->{'isindex'}) {
+              $rel = ' rel="index"';
+            }
+            $result .= "<li><a${toc_name_attribute}${href_attribute}$rel>$text</a>";
           } else {
             $result .= "<li>$text";
           }
@@ -6207,9 +6218,9 @@ $pre_body_close
 ";
 }
 
-# This is used for normal output files and other files, like renamed
-# nodes file headers, or redirection file headers.  $COMMAND is the tree
-# element for a @node that is being output in the file.
+# This is used for normal output files and other files, like
+# redirection file headers.  $COMMAND is the tree element for
+# a @node that is being output in the file.
 sub _file_header_informations($$)
 {
   my $self = shift;
@@ -6309,7 +6320,7 @@ sub _get_links ($$$)
     foreach my $link (@$link_buttons) {
       my $link_href = $self->_element_direction($element,
                                           $link, 'href', $filename);
-      #print STDERR "$title: $link -> $link_href \n";
+      #print STDERR "$link -> $link_href \n";
       if ($link_href and $link_href ne '') {
         my $link_string = $self->_element_direction($element,
                                           $link, 'string');
@@ -6707,9 +6718,10 @@ foreach my $stage (@possible_stages) {
   $possible_stages{$stage} = 1;
 }
 
-sub run_stage_handlers($$)
+sub run_stage_handlers($$$)
 {
   my $converter = shift;
+  my $root = shift;
   my $stage = shift;
   die if (!$possible_stages{$stage});
 
@@ -6721,7 +6733,7 @@ sub run_stage_handlers($$)
       if ($converter->get_conf('DEBUG')) {
         print STDERR "HANDLER($stage) , priority $priority: $handler\n";
       }
-      my $status = &{$handler}($converter, $stage);
+      my $status = &{$handler}($converter, $root, $stage);
       if (!$status) {
         #if ($converter->get_conf('VERBOSE')) {
         #  print STDERR "Handler $handler of $stage($priority) failed\n";
@@ -6808,15 +6820,12 @@ sub output($$)
   if ($self->get_conf('SPLIT')) {
     $self->set_conf('NODE_FILES', 1);
   }
-  if ($self->get_conf('NODE_FILES') or $self->get_conf('SPLIT') eq 'node') {
-    $self->set_conf('NODE_FILENAMES', 1);
-  }
   if ($self->get_conf('FRAMES')) {
     $self->set_conf('shortcontents', 1);
   }
   $self->set_conf('EXTERNAL_CROSSREF_SPLIT', $self->get_conf('SPLIT'));
 
-  my $setup_status = $self->run_stage_handlers('setup');
+  my $setup_status = $self->run_stage_handlers($root, 'setup');
   return undef unless($setup_status);
 
   $self->_prepare_css();
@@ -6825,13 +6834,6 @@ sub output($$)
   # 'destination_directory' and 'output_filename' that are useful when split.
   $self->_set_outfile();
   return undef unless $self->_create_destination_directory();
-
-  # collect renamed nodes
-  ($self->{'renamed_nodes'}, $self->{'renamed_nodes_lines'}, 
-       $self->{'renamed_nodes_file'})
-    = Texinfo::Common::collect_renamed_nodes($self, $self->{'input_basename_name'},
-                                             $self->{'renamed_nodes'});
-
 
   # Get the list of "elements" to be processed, i.e. nodes or sections.
   # This should return undef if called on a tree without node or sections.
@@ -6873,8 +6875,14 @@ sub output($$)
 
   $self->_prepare_index_entries();
   $self->_prepare_footnotes();
+  
+  # 'file_counters' is dynamic, decreased when the element is encountered
+  # 'elements_in_file_count' is not modified afterwards
+  foreach my $filename (keys(%{$self->{'file_counters'}})) {
+    $self->{'elements_in_file_count'}->{$filename} = $self->{'file_counters'}->{$filename};
+  }
 
-  my $structure_status = $self->run_stage_handlers('structure');
+  my $structure_status = $self->run_stage_handlers($root, 'structure');
   return undef unless($structure_status);
 
   &{$self->{'format_css_lines'}}($self);
@@ -6963,7 +6971,7 @@ sub output($$)
     chomp($self->{'documentdescription_string'});
   }
 
-  my $init_status = $self->run_stage_handlers('init');
+  my $init_status = $self->run_stage_handlers($root, 'init');
   return undef unless($init_status);
 
   if ($self->get_conf('FRAMES')) {
@@ -7092,9 +7100,13 @@ sub output($$)
     }
   }
 
-  my $finish_status = $self->run_stage_handlers('finish');
+  my $finish_status = $self->run_stage_handlers($root, 'finish');
   return undef unless($finish_status);
 
+  my $extension = '';
+  $extension = '.'.$self->get_conf('EXTENSION')
+            if (defined($self->get_conf('EXTENSION'))
+                and $self->get_conf('EXTENSION') ne '');
   # do node redirection pages
   $self->{'current_filename'} = undef;
   if ($self->get_conf('NODE_FILES') 
@@ -7112,12 +7124,7 @@ sub output($$)
       if ($node->{'extra'} and $node->{'extra'}->{'normalized'}
           and $node->{'extra'}->{'normalized'} eq 'Top' 
           and defined($self->get_conf('TOP_NODE_FILE_TARGET'))) {
-        my $extension = '';
-        $extension = "." . $self->get_conf('NODE_FILE_EXTENSION')
-            if (defined($self->get_conf('NODE_FILE_EXTENSION')) 
-              and $self->get_conf('NODE_FILE_EXTENSION') ne '');
-        $node_filename = $self->get_conf('TOP_NODE_FILE_TARGET')
-                     .$extension;
+        $node_filename = $self->get_conf('TOP_NODE_FILE_TARGET');
       } else {
         $node_filename = $target->{'node_filename'};
       }
@@ -7149,128 +7156,6 @@ sub output($$)
           }
         }
       }
-    }
-  }
-  if ($self->{'renamed_nodes'}
-      and $self->{'labels'} and $self->{'output_file'} ne '') {
-    # do a fresh parser, to avoid, for example adding new labels if renamed
-    # nodes incorrectly define anchors...
-    my $parser_for_renamed_nodes;
-    if ($self->{'parser'}) {
-      $parser_for_renamed_nodes
-                       = Texinfo::Parser::duplicate_parser($self->{'parser'});
-    }
-    my %warned_new_node;
-    foreach my $old_node_name (sort(keys(%{$self->{'renamed_nodes'}}))) {
-      my $parsed_old_node = $self->_parse_node_and_warn_external(
-         $old_node_name, $parser_for_renamed_nodes,
-         $self->{'renamed_nodes_lines'}->{$old_node_name},
-         $self->{'renamed_nodes_file'});
-      if ($parsed_old_node) {
-        if ($self->label_command($parsed_old_node->{'normalized'})) {
-          $self->file_line_error(sprintf(__(
-               "old name for `%s' is a node of the document"), $old_node_name),
-                                $self->{'renamed_nodes_file'},
-                                $self->{'renamed_nodes_lines'}->{$old_node_name});
-          $parsed_old_node = undef;
-        } elsif ($parsed_old_node->{'normalized'} !~ /[^-]/) {
-          $self->file_line_error(sprintf(__(
-               "file empty for renamed node `%s'"), $old_node_name),
-                                $self->{'renamed_nodes_file'},
-                                $self->{'renamed_nodes_lines'}->{$old_node_name});
-          $parsed_old_node = undef;
-        }
-      }
-      my $new_node_name = $self->{'renamed_nodes'}->{$old_node_name};
-      my $parsed_new_node = $self->_parse_node_and_warn_external(
-         $new_node_name, $parser_for_renamed_nodes,
-         $self->{'renamed_nodes_lines'}->{$new_node_name},
-         $self->{'renamed_nodes_file'});
-      if (!$self->label_command($parsed_new_node->{'normalized'})) {
-        if (!$warned_new_node{$new_node_name}) {
-           $self->file_line_warn(sprintf(__(
-            "target node (new name for `%s') not in document: %s"), 
-             $old_node_name, $new_node_name), $self->{'renamed_nodes_file'},
-             $self->{'renamed_nodes_lines'}->{$new_node_name});
-          $warned_new_node{$new_node_name} = 1;
-        }
-        $parsed_new_node = undef;
-      }
-      if ($parsed_new_node and $parsed_old_node) {
-        my ($filename, $target) = $self->_node_id_file($parsed_old_node);
-        $filename .= '.'.$self->get_conf('NODE_FILE_EXTENSION') 
-          if (defined($self->get_conf('NODE_FILE_EXTENSION')) 
-            and $self->get_conf('NODE_FILE_EXTENSION') ne '');
-        my $redirection_page 
-          = &{$self->{'format_node_redirection_page'}}($self, 
-                       $self->label_command($parsed_new_node->{'normalized'}));
-        my $out_filename;
-        if (defined($self->{'destination_directory'}) 
-            and $self->{'destination_directory'} ne '') {
-          $out_filename = File::Spec->catfile($self->{'destination_directory'}, 
-                                              $filename);
-        } else {
-          $out_filename = $filename;
-        }
-        my $file_fh = $self->Texinfo::Common::open_out($out_filename);
-        if (!$file_fh) {
-         $self->document_error(sprintf(__("could not open %s for writing: %s"),
-                                    $out_filename, $!));
-        } else {
-          print $file_fh $redirection_page;
-          $self->register_close_file($out_filename);
-          if (!close ($file_fh)) {
-            $self->document_error(sprintf(__(
-                   "error on closing renamed node redirection file %s: %s"),
-                                    $out_filename, $!));
-            return undef;
-          }
-        }
-      }
-    }
-  }
-}
-
-sub _parse_node_and_warn_external($$$$$)
-{
-  my $self = shift;
-  my $node_texi = shift;
-  my $parser = shift;
-  my $line_number = shift;
-  my $file = shift;
-
-  # NOTE nothing to check that there is an invalid nesting.  Indeed, there
-  # is no information given to the parser stating that we are in a label
-  # command.  
-  # A possibility would be to consider
-  # 'root_line' type as a $simple_text_command, or, to avoid spurious 
-  # messages, $full_text_command.  This would imply really using
-  # the gdt 4th argument to pass 'translated_paragraph' when in a 
-  # less constrained environment, for instance @center in @quotation for
-  # @author
-  #
-  # it is unlikely, however that invalid nesting does much harm, since
-  # the tree is mostly used to be normalized and this converter should
-  # be rather foolproof.
-  my $node_tree = Texinfo::Parser::parse_texi_line($parser,
-                                          $node_texi, $line_number, $file);
-  if ($node_tree) {
-    my $node_normalized_result = Texinfo::Common::parse_node_manual(
-          $node_tree);
-    my $line_nr = {'line_nr' => $line_number, 'file_name' => $file };
-    if (!$node_normalized_result) {
-      $self->line_warn(__('empty node name'), $line_nr);
-    } elsif ($node_normalized_result->{'manual_content'}) {
-      $self->line_error(sprintf(__("syntax for an external node used for `%s'"),
-         $node_texi), $line_nr);
-
-    } else {
-      if ($node_normalized_result->{'node_content'}) {
-        $node_normalized_result->{'normalized'} =
-          Texinfo::Convert::NodeNameNormalization::normalize_node(
-            {'contents' => $node_normalized_result->{'node_content'}});
-      }
-      return $node_normalized_result;
     }
   }
   return undef;
@@ -7586,6 +7471,9 @@ sub _convert($$;$)
       if ($root->{'cmdname'} eq 'node') {
         $self->{'current_node'} = $root;
       }
+      elsif ($root->{'cmdname'} eq 'menu' and $self->{'current_node'}) {
+        $self->{'seenmenus'}->{$self->{'current_node'}} = 1;
+      }
       # args are formatted, now format the command itself
       my $result;
       if ($args_formatted) {
@@ -7599,6 +7487,24 @@ sub _convert($$;$)
       } else {
         $result = &{$self->{'commands_conversion'}->{$command_name}}($self,
                 $command_name, $root, $content_formatted);
+      }
+      # FIXME add a configuration variable to be able turn automatically 
+      # adding menus off?
+      if ($sectioning_commands{$command_name}
+          and $self->{'current_node'}
+          and !$self->{'seenmenus'}->{$self->{'current_node'}}) {
+        $self->{'seenmenus'}->{$self->{'current_node'}} = 1;
+        # Generate automatically a menu for this node.
+        my $menu_text;
+        my $menu_node = Texinfo::Structuring::section_menu_of_node (undef,
+          $root->{'extra'}->{'associated_node'});
+        if ($menu_node) {
+          $menu_text = _convert ($self, $menu_node);
+          if ($menu_text) {
+            $result .= $menu_text;
+            $result .= "\n";
+          }
+        }
       }
       return $result;
     } else {
@@ -7707,7 +7613,6 @@ sub _set_variables_texi2html()
   ['INLINE_CONTENTS', 0],
   ['FORCE', 1],
   ['AVOID_MENU_REDUNDANCY', 1],
-  ['TOP_FILE', ''],
   ['USE_ACCESSKEY', 0],
   ['NODE_NAME_IN_MENU', 0],
   ['OVERVIEW_LINK_TO_TOC', 0],
@@ -7715,7 +7620,6 @@ sub _set_variables_texi2html()
   ['USE_REL_REV', 0],
   ['USE_LINKS', 0],
   ['USE_NODES', 0],
-  ['NODE_FILENAMES', 0],
   ['USE_NUMERIC_ENTITY', 1],
   ['SPLIT', ''],
   ['SPLIT_INDEX', 100],

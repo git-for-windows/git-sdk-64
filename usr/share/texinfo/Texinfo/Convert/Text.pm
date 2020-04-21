@@ -47,7 +47,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.6';
+$VERSION = '6.7';
 
 # this is in fact not needed for 'footnote', 'shortcaption', 'caption'
 # when they have no brace_command_arg, see below.
@@ -246,8 +246,12 @@ sub brace_no_arg_command($;$)
      if ($root->{'extra'}
       and defined($root->{'extra'}->{'clickstyle'})
       and defined($text_brace_no_arg_commands{$root->{'extra'}->{'clickstyle'}}));
-  my $result = Texinfo::Convert::Unicode::unicode_for_brace_no_arg_command(
+  my $result;
+  if (!$options->{'no_extra_unicode'}
+      or !$Texinfo::Convert::Unicode::extra_unicode_map{$command}) {
+    $result = Texinfo::Convert::Unicode::unicode_for_brace_no_arg_command(
                        $command, $encoding);
+  }
   if (!defined($result and $options and $options->{'converter'})) {
     my $tree = Texinfo::Common::translated_command_tree(
                   $options->{'converter'}, $command);

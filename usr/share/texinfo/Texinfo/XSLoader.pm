@@ -1,4 +1,4 @@
-# Copyright 2014, 2015, 2016, 2017, 2018 Free Software Foundation, Inc.
+# Copyright 2014-2019 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ use warnings;
 
 our $TEXINFO_XS;
 
-our $VERSION = '6.6';
+our $VERSION = '6.7';
 
 our $disable_XS;
 
@@ -221,7 +221,9 @@ LOAD:
   # This makes it easier to refer to packages and symbols by name.
   no strict 'refs';
   
-  if (defined &{"${module}::init"} and !&{"${module}::init"} ()) {
+  if (defined &{"${module}::init"}
+      and !&{"${module}::init"} ($Texinfo::ModulePath::texinfo_uninstalled,
+                                 $Texinfo::ModulePath::builddir)) {
     _fatal "$module_name: error initializing";
     goto FALLBACK;
   }

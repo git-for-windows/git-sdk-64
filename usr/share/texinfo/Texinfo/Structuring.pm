@@ -64,7 +64,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT = qw(
 );
 
-$VERSION = '6.6';
+$VERSION = '6.7';
 
 
 my %types_to_enter;
@@ -408,7 +408,6 @@ sub nodes_tree($)
   my $self = shift;
   return undef unless ($self->{'nodes'} and @{$self->{'nodes'}});
   my $top_node;
-  my $top_node_up;
 
   my $check_menu_entries = (!$self->{'info'}->{'novalidate'}
                               and $self->{'SHOW_MENU'});
@@ -416,19 +415,6 @@ sub nodes_tree($)
   foreach my $node (@{$self->{'nodes'}}) {
     if ($node->{'extra'}->{'normalized'} eq 'Top') {
       $top_node = $node;
-      my $parser = Texinfo::Parser::simple_parser ($self->{'conf'});
-      my $top_node_up_content_tree
-                         = $parser->parse_texi_line($self->{'TOP_NODE_UP'});
-      $top_node_up
-        = {'type' => 'top_node_up',
-           'extra' => Texinfo::Common::parse_node_manual(
-                {'contents' => $top_node_up_content_tree->{'contents'}})};
-      if ($top_node_up->{'extra'}->{'node_content'}) {
-        $top_node_up->{'extra'}->{'normalized'} =
-        Texinfo::Convert::NodeNameNormalization::normalize_node(
-         {'contents' => $top_node_up->{'extra'}->{'node_content'}}
-        );
-      }
     }
     if ($node->{'menus'}) {
       if ($self->{'SHOW_MENU'} and @{$node->{'menus'}} > 1) {
@@ -599,8 +585,6 @@ sub nodes_tree($)
         }
       } else {
         # Special case for Top node.
-        $node->{'node_up'} = $top_node_up;
-        $node->{'node_up'}->{'extra'}->{'top_node_up'} = $node;
         if ($node->{'menu_child'}) {
           $node->{'node_next'} = $node->{'menu_child'};
           if (!$node->{'menu_child'}->{'extra'}->{'manual_content'}) {
@@ -617,21 +601,6 @@ sub nodes_tree($)
         # external node
         if ($node_direction->{'manual_content'}) {
           $node->{'node_'.$direction} = { 'extra' => $node_direction };
-          # set top_node_up for up of Top if it is the same as top_node_up
-          if ($node->{'extra'}->{'normalized'} eq 'Top'
-              and $direction eq 'up'
-              and $top_node_up->{'extra'}->{'manual_content'}
-              and ((!defined($node_direction->{'normalized'})
-                    and !defined($top_node_up->{'extra'}->{'normalized'}))
-                   or (defined($node_direction->{'normalized'}) 
-                       and defined($top_node_up->{'extra'}->{'normalized'})
-                       and $node_direction->{'normalized'} eq $top_node_up->{'extra'}->{'normalized'}))
-              and (Texinfo::Convert::NodeNameNormalization::normalize_node(
-                     {'contents' => $node_direction->{'manual_content'}})
-                  eq Texinfo::Convert::NodeNameNormalization::normalize_node(
-                     {'contents' => $top_node_up->{'extra'}->{'manual_content'}}))) {
-            $node->{'node_'.$direction}->{'extra'}->{'top_node_up'} = $node;
-          }
         } else {
           if ($self->{'labels'}->{$node_direction->{'normalized'}}) {
             my $node_target 
@@ -653,17 +622,6 @@ sub nodes_tree($)
           } else {
             if ($self->{'info'}->{'novalidate'}) {
               $node->{'node_'.$direction} = { 'extra' => $node_direction };
-            # special case of up for top an internal node and the same
-            # as TOP_NODE_UP.  This is not the default case, since in the
-            # default case TOP_NODE_UP is an external node.
-            } elsif ($node->{'extra'}->{'normalized'} eq 'Top' 
-                     and $direction eq 'up'
-                     and !$top_node_up->{'extra'}->{'manual_content'}
-                     and $node_direction->{'normalized'} eq $top_node_up->{'extra'}->{'normalized'}) {
-              $node->{'node_'.$direction} = { 'type' => 'top_node_up',
-                                              'extra' => $node_direction };
-              $node->{'node_'.$direction}->{'extra'}->{'top_node_up'} 
-                = $node;
             } else {
               $self->line_error(sprintf(
                                   __("%s reference to nonexistent `%s'"),
@@ -876,14 +834,9 @@ sub _node_element($)
         Texinfo::Convert::NodeNameNormalization::normalize_node(
           {'contents' => $node->{'extra'}->{'node_content'}}); 
     }
-    $external_node->{'extra'}->{'top_node_up'} 
-      = $node->{'extra'}->{'top_node_up'}
-      if (exists($node->{'extra'}->{'top_node_up'}));
     return $external_node;
   } elsif ($node->{'cmdname'} and $node->{'cmdname'} eq 'node') {
     return $node->{'parent'};
-  } elsif ($node->{'type'} and $node->{'type'} eq 'top_node_up') {
-    return $node;
   } else {
     # case of a @float or an @anchor
     return undef;
@@ -1481,8 +1434,8 @@ sub do_index_keys($$)
 
   my $options = {'sort_string' => 1};
   if ($self->get_conf('ENABLE_ENCODING') 
-      and $self->get_conf('INPUT_ENCODING_NAME')) {
-    $options->{'enabled_encoding'} = $self->get_conf('INPUT_ENCODING_NAME');
+      and $self->{'info'}->{'input_encoding_name'}) {
+    $options->{'enabled_encoding'} = $self->{'info'}->{'input_encoding_name'};
   }
   my %convert_text_options = Texinfo::Common::_convert_text_options($self);
   $options = {%$options, %convert_text_options};

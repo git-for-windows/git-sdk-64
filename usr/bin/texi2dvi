@@ -44,7 +44,6 @@ orig_pwd=`pwd`
 # Don't use `unset' since old bourne shells don't have this command.
 # Instead, assign them an empty value.
 action=compile
-batch=false     # interact normally
 debug=false
 escape="\\"
 expand=false    # true for expansion via makeinfo
@@ -106,15 +105,6 @@ CDPATH=${ZSH_VERSION+.}$path_sep
 # usage - display usage and exit successfully.
 usage ()
 {
-  # We used to simply have `echo "$usage"', but coping with the
-  # changing behavior of `echo' is much harder than simply using a
-  # here-doc.
-  #
-  #             echo '\noto'   echo '\\noto'   echo -e '\\noto'
-  # bash 3.1      \noto           \\noto          \noto
-  # bash 3.2       %oto           \noto           -e \noto
-  #
-  # where % denotes the eol character.
   cat <<EOF
 Usage: $program [OPTION]... FILE...
   or:  texi2pdf [OPTION]... FILE...
@@ -130,11 +120,10 @@ When invoked as \`texi2pdf' or given the option --pdf generate PDF output.
 Otherwise, generate DVI.
 
 General options:
-  -b, --batch         no interaction
   -D, --debug         turn on shell debugging (set -x)
   -h, --help          display this help and exit successfully
   -o, --output=OFILE  leave output in OFILE; only one input FILE is allowed
-  -q, --quiet         no output unless errors (implies --batch)
+  -q, --quiet         no output unless errors
   -v, --version       display version information and exit successfully
   -V, --verbose       report on what is done
   --max-iterations=N  don't process files more than N times [$max_iters]
@@ -209,7 +198,7 @@ EOF
 version ()
 {
   cat <<EOF
-texi2dvi (GNU Texinfo 6.6)
+texi2dvi (GNU Texinfo 6.7)
 
 Copyright (C) 2019 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -222,46 +211,36 @@ EOF
 
 #  Generic auxiliary functions.
 
-# List of variables containing paths to directories or files that
-# we need to update.
-path_vars='work_build workdir t2ddir work_bak in_input'
+# Used to access files and directories after we have changed directory
+# (for --tidy).
+rel=
 
 # Change directory, updating some relative paths.
 cd_dir ()
 {
   cd "$1"
 
-  # Check if argument is absolute, and if so, make all the path variables
-  # absolute.
-  case "$1" in
+  # Check if argument or input file is absolute, and if so, make all the path 
+  # variables absolute.
+  use_absolute=false
+  case $1 in
   [\\/]* | ?:[\\/]*)  # absolute path
-    for cdd_dir in $path_vars; do
-      eval "$cdd_dir=\`absolute \$$cdd_dir\`"
-    done
-    return ;;
+    use_absolute=true ;;
+  esac
+  case $in_input in
+  [\\/]* | ?:[\\/]*)
+    use_absolute=true ;;
   esac
 
-  # Replace each path component with ".." and remove any trailing slash.
-  cdd_prefix=`echo "$1" | \$SED -e 's/[^/\\][^/\\]*/../g' -e 's/[/\\]$//'`
+  if $use_absolute ; then
+    for cdd_dir in work_build workdir t2ddir work_bak in_input in_dir; do
+      eval "$cdd_dir=\`absolute \$$cdd_dir\`"
+    done
+    return
+  fi
 
-  # Add this prefix for some variables.
-  for cdd_dir in $path_vars; do
-    eval "case \"\$$cdd_dir\" in
-          [\\/]* | ?:[\\/]*) ;;  # absolute path - do nothing
-          ?*)
-             eval \"\$cdd_dir=\$cdd_prefix/\\\$\$cdd_dir\" ;;
-          esac"
-    # Without first level of quotes, where CDD_DIR is $cdd_dir:
-    #      case "$CDD_DIR" in
-    #      [\\/]* | ?:[\\/]*) ;;
-    #      *)
-    #         eval "$cdd_dir=$cdd_prefix/\$$cdd_dir" ;;
-    #      esac
-    #
-    # Inner 'eval' becomes
-    #     CDD_DIR=CDD_PREFIX/$CDD_DIR
-    # where CDD_DIR is $cdd_dir and CDD_PREFIX is $cdd_prefix
-  done
+  # Replace each path component with ".." and add a single trailing slash.
+  rel=`echo "$1" | \$SED -e 's/[^/\\][^/\\]*/../g' -e 's/[/\\]*$/\//'`
 }
 
 # cd_orig - Return to the original directory.
@@ -275,23 +254,7 @@ cd_orig ()
   # - the temporary file can be removed
   cd "$orig_pwd" || exit 1
 
-  test -z "$cdd_prefix" && return
-  
-  # strip off ../../ from some variables
-  # quote string by placing \ before each character (each either . or /)
-  cdd_prefix_q=`echo "$cdd_prefix" | \$SED -e 's/\\(.\\)/\\\\\\1/g'`
-  # after backslashes quote within backquoted string:
-  #             echo "$cdd_prefix" | $SED -e 's/\(.\)/\\\1/g'
-
-  for cdo_dir in $path_vars ; do
-    eval "$cdo_dir=\`echo \"\$$cdo_dir\" | \$SED -e 's/^$cdd_prefix_q\///'\`"
-
-    # Becomes
-    # CDO_DIR=`echo "$CDO_DIR" | $SED -e 's/^CDD_PREFIX//'`
-
-    # eval $cdo_dir=\${$cdo_dir#\$cdd_prefix/}
-    # would be simpler, but doesn't work in older shells.
-  done
+  rel=
 }
 
 
@@ -705,6 +668,8 @@ index_file_p ()
     latex:*:*:"\\indexentry{"*|latex:*:*:"\\indexentry {"*) echo $1;;
 
     texinfo:*:*:"\\entry{"*) echo $1;;
+    texinfo:*:*:"@entry{"*) echo $1;;
+    # @entry is output from newer versions of texinfo.tex
   esac
   return 0
 }
@@ -767,7 +732,7 @@ report 'Once you'\''ve done that, delete the file with an '\''fl'\'' extension.'
 }
 
 
-# xref_files_save - set xref_files_orig from xref_files_orig, and save xref 
+# xref_files_save - set xref_files_orig from xref_files_new, and save xref 
 #                   files in $work_bak.
 xref_files_save ()
 {
@@ -782,7 +747,18 @@ xref_files_save ()
     # Users may have, e.g., --keep-old-files.  Don't let this interfere.
     # (Don't use unset for the sake of ancient shells.)
     TAR_OPTIONS=; export TAR_OPTIONS
-    tar cf - $xref_files_orig | (cd "$work_bak" && tar xf -)
+    tar cf - $xref_files_orig | (cd "$rel$work_bak" && tar xf -)
+  fi
+
+  # Remove auxiliary files in same directory as main input file.  Otherwise,
+  # these will likely be read instead of those in the build dir.
+  if $tidy ; then
+    secondary_xref_files=`sorted_index_files`
+    for f in $xref_files_new $secondary_xref_files ; do
+      if test -f "$rel$in_dir/$f" ; then
+        remove $rel$in_dir/$f
+      fi
+    done
   fi
 }
 
@@ -817,10 +793,10 @@ xref_files_changed ()
   for this_file in $xref_files_new; do
     verbose "Comparing xref file `echo $this_file | $SED 's|\./||g'` ..."
     # cmp -s returns nonzero exit status if files differ.
-    if cmp -s "$this_file" "$work_bak/$this_file"; then :; else
+    if cmp -s "$this_file" "$rel$work_bak/$this_file"; then :; else
       verbose "xref file `echo $this_file | $SED 's|\./||g'` differed ..."
       if $debug; then
-        diff -u "$work_bak/$this_file" "$this_file"
+        diff -u "$rel$work_bak/$this_file" "$this_file"
       fi
       return 0
     fi
@@ -908,21 +884,17 @@ make_tex_cmd ()
   # Tell TeX to allow running external executables
   test -n "$shell_escape" && tex_cmd="$tex_cmd $shell_escape"
 
-  # Tell TeX to be batch if requested.
-  if $batch; then
-    # \batchmode does not show terminal output at all, so we don't
-    # want that.  And even in batch mode, TeX insists on having input
-    # from the user.  Close its stdin to make it impossible.
-    tex_cmd="$tex_cmd </dev/null '${escape}nonstopmode'"
-  fi
+  # Run without interaction.
+  # \batchmode does not show terminal output at all, so we don't
+  # want that.  And even in batch mode, TeX insists on having input
+  # from the user.  Close its stdin to make it impossible.
+  tex_cmd="$tex_cmd </dev/null '${escape}nonstopmode'"
 }
 
 
-# run_tex - Run TeX as "$tex $in_input", taking care of errors and logs.
+# run_tex - Run TeX, taking care of errors and logs.
 run_tex ()
 {
-  make_tex_cmd
-
   # Check for any unusual characters in the filename.
   # However, >, \ and any whitespace characters are not supported
   # filenames.
@@ -943,7 +915,7 @@ run_tex ()
     done
 
     # Set \toks0 to "\input FILENAME\relax"
-    tex_cmd="$tex_cmd '${escape}toks0${escape}bgroup${escape}input' '$in_input' '${escape}relax>"
+    tex_cmd="$tex_cmd '${escape}toks0${escape}bgroup${escape}input' '$rel$in_input' '${escape}relax>"
 
     # Expand \toks0 after the end of the group
     tex_cmd="$tex_cmd${escape}expandafter${escape}egroup"
@@ -951,7 +923,7 @@ run_tex ()
   else
     # In the case of a simple filename, just pass the filename
     # with no funny tricks.
-    tex_cmd="$tex_cmd '${escape}input' '$in_input'"
+    tex_cmd="$tex_cmd '${escape}input' '$rel$in_input'"
   fi
 
   verbose "$0: Running $tex_cmd ..."
@@ -960,7 +932,7 @@ run_tex ()
       dvi | pdf ) move_to_dest "$in_noext.$out_lang";;
     esac
   else
-    error 1 "$tex exited with bad status, quitting."
+    tex_failed=true
   fi
 }
 
@@ -1137,6 +1109,8 @@ run_dvipdf ()
 # run_tex_suite - Run the TeX tools until a stable point is reached.
 run_tex_suite ()
 {
+  make_tex_cmd
+
   # Move to the working directory.
   if $tidy; then
     verbose "cd $work_build"
@@ -1162,6 +1136,7 @@ run_tex_suite ()
     suite_cycle=`expr $suite_cycle + 1`
     verbose "Cycle $suite_cycle for $command_line_filename"
 
+    tex_failed=false
     run_core_conversion
     xref_files_changed || break
     xref_files_save
@@ -1172,6 +1147,11 @@ run_tex_suite ()
     run_bibtex
     run_index
   done
+
+  if $tex_failed ; then
+    # TeX failed, and the xref files did not change.
+    error 1 "$tex exited with bad status, quitting."
+  fi
 
   # If we were using thumbpdf and producing PDF, then run thumbpdf
   # and TeX one last time.
@@ -1417,7 +1397,7 @@ run_hevea ()
   # successful compilation.
   run_hevea_cmd="$run_hevea_cmd -fix -O -o '$out_base'"
   run_hevea_cmd="$run_hevea_cmd `list_prefix includes -I` -I '$orig_pwd' "
-  run_hevea_cmd="$run_hevea_cmd '$in_input'"
+  run_hevea_cmd="$run_hevea_cmd '$rel$in_input'"
 
   if $debug; then
     run_hevea_cmd="$run_hevea_cmd -v -v"
@@ -1499,8 +1479,12 @@ compile ()
 #
 make_openout_test ()
 {
+    recorder_option_maybe="$1"
+    make_tex_cmd
+
     ensure_dir "$workdir"/check_recorder
     cd_dir "$workdir"/check_recorder
+
     cat > openout.tex <<EOF
 \newwrite\ourwrite
 \immediate\openout\ourwrite dum.dum
@@ -1508,11 +1492,6 @@ make_openout_test ()
 EOF
     # \bye doesn't work for LaTeX, but it will cause latex
     # to exit with an input error.
-    recorder_option_maybe="$1"
-    save_batch=$batch
-    batch=true
-    make_tex_cmd
-    batch=$save_batch
     tex_cmd="$tex_cmd '${escape}input' ./openout.tex"
     # ./ in case . isn't in path
     verbose "$0: running $tex_cmd ..."
@@ -1717,12 +1696,6 @@ cleanup ()
 #   input is preprocessed.
 input_file_name_decode ()
 {
-  # See if we are run from within AUC-Tex, in which case we are
-  # passed `\input{FOO.tex}' or even `\nonstopmode\input{FOO.tex}'.
-  case $command_line_filename in
-    *\\nonstopmode*)
-      batch=true;;
-  esac
   case $command_line_filename in
     *\\input{*}*)
       # Let AUC-TeX error parser deal with line numbers.
@@ -1808,8 +1781,7 @@ while test x"$1" != x"$arg_sep"; do
   case "$1" in
     -@ ) escape=@;;
     -~ ) verbose "Option -~ is obsolete: texi2dvi ignores it.";;
-    # Silently and without documentation accept -b and --b[atch] as synonyms.
-    -b | --batch) batch=true;;
+    -b | --batch) ;; # Obsolete
          --build)      shift; build_mode=$1;;
          --build-dir)  shift; build_dir=$1; build_mode=tidy;;
     -c | --clean) build_mode=clean;;
@@ -1832,7 +1804,7 @@ while test x"$1" != x"$arg_sep"; do
        out_lang_set `echo "x$1" | $SED 's/^x--//'`;;
 
     -p) out_lang_set pdf;;
-    -q | -s | --quiet | --silent) quiet=true; batch=true;;
+    -q | -s | --quiet | --silent) quiet=true;;
     --src-specials) src_specials=--src-specials;;
     --shell-escape) shell_escape=--shell-escape;;  
     --tex4ht) latex2html=tex4ht;;
