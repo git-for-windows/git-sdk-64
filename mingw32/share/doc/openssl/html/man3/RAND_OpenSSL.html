@@ -50,10 +50,10 @@
 <h1 id="THE-RAND_METHOD-STRUCTURE">THE RAND_METHOD STRUCTURE</h1>
 
 <pre><code> typedef struct rand_meth_st {
-     void (*seed)(const void *buf, int num);
+     int (*seed)(const void *buf, int num);
      int (*bytes)(unsigned char *buf, int num);
      void (*cleanup)(void);
-     void (*add)(const void *buf, int num, int randomness);
+     int (*add)(const void *buf, int num, double entropy);
      int (*pseudorand)(unsigned char *buf, int num);
      int (*status)(void);
  } RAND_METHOD;</code></pre>
@@ -70,7 +70,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the OpenSSL license (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
