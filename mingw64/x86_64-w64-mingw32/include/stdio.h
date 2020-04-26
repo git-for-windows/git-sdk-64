@@ -706,12 +706,14 @@ int vsnprintf (char *__stream, size_t __n, const char *__format, __builtin_va_li
 #define _CRT_PERROR_DEFINED
   void __cdecl perror(const char *_ErrMsg);
 #endif
+#ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
   _CRTIMP int __cdecl _pclose(FILE *_File);
   _CRTIMP FILE *__cdecl _popen(const char *_Command,const char *_Mode);
 #if !defined(NO_OLDNAMES) && !defined(popen)
 #define popen	_popen
 #define pclose	_pclose
 #endif
+#endif /* _CRT_USE_WINAPI_FAMILY_DESKTOP_APP */
   int __cdecl putc(int _Ch,FILE *_File);
   int __cdecl putchar(int _Ch);
   int __cdecl puts(const char *_Str);
@@ -1510,6 +1512,7 @@ void __cdecl __mingw_str_free(void *ptr);
 
 #endif /* __MINGW_MBWC_CONVERT_DEFINED */
 
+#ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
 #ifndef _WSPAWN_DEFINED
 #define _WSPAWN_DEFINED
   _CRTIMP intptr_t __cdecl _wspawnl(int _Mode,const wchar_t *_Filename,const wchar_t *_ArgList,...);
@@ -1541,6 +1544,7 @@ void __cdecl __mingw_str_free(void *ptr);
   _CRTIMP intptr_t __cdecl _spawnvp(int _Mode,const char *_Filename,const char *const *_ArgList);
   _CRTIMP intptr_t __cdecl _spawnvpe(int _Mode,const char *_Filename,const char *const *_ArgList,const char *const *_Env);
 #endif
+#endif /* _CRT_USE_WINAPI_FAMILY_DESKTOP_APP */
 
 #ifdef __cplusplus
 }

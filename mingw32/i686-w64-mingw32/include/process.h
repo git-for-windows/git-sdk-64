@@ -64,6 +64,7 @@ extern "C" {
   void __cdecl __MINGW_NOTHROW _cexit(void);
   void __cdecl __MINGW_NOTHROW _c_exit(void);
   _CRTIMP int __cdecl _getpid(void);
+#ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
   _CRTIMP intptr_t __cdecl _cwait(int *_TermStat,intptr_t _ProcHandle,int _Action);
   _CRTIMP intptr_t __cdecl _execl(const char *_Filename,const char *_ArgList,...);
   _CRTIMP intptr_t __cdecl _execle(const char *_Filename,const char *_ArgList,...);
@@ -119,20 +120,13 @@ extern "C" {
 #define _CRT_WSYSTEM_DEFINED
   _CRTIMP int __cdecl _wsystem(const wchar_t *_Command);
 #endif
+#endif /* _CRT_USE_WINAPI_FAMILY_DESKTOP_APP */
 
-  void __cdecl __security_init_cookie(void);
-#if (defined(_X86_) && !defined(__x86_64))
-  void __fastcall __security_check_cookie(uintptr_t _StackCookie);
-  __MINGW_ATTRIB_NORETURN void __cdecl __report_gsfailure(void);
-#else
-  void __cdecl __security_check_cookie(uintptr_t _StackCookie);
-  __MINGW_ATTRIB_NORETURN void __cdecl __report_gsfailure(uintptr_t _StackCookie);
-#endif
-  extern uintptr_t __security_cookie;
-
+#ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
   intptr_t __cdecl _loaddll(char *_Filename);
   int __cdecl _unloaddll(intptr_t _Handle);
   int (__cdecl *__cdecl _getdllprocaddr(intptr_t _Handle,char *_ProcedureName,intptr_t _Ordinal))(void);
+#endif /* _CRT_USE_WINAPI_FAMILY_DESKTOP_APP */
 
 #ifdef _DECL_DLLMAIN
 #ifdef _WINDOWS_
@@ -158,6 +152,7 @@ extern "C" {
 #define WAIT_CHILD _WAIT_CHILD
 #define WAIT_GRANDCHILD _WAIT_GRANDCHILD
 
+#ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
   intptr_t __cdecl cwait(int *_TermStat,intptr_t _ProcHandle,int _Action) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
 #ifdef __GNUC__
   int __cdecl execl(const char *_Filename,const char *_ArgList,...) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
@@ -198,6 +193,7 @@ extern "C" {
   _CRTIMP intptr_t __cdecl spawnvp(int,const char *_Filename,char *const _ArgList[]) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
   _CRTIMP intptr_t __cdecl spawnvpe(int,const char *_Filename,char *const _ArgList[],char *const _Env[]) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
 #endif
+#endif /* _CRT_USE_WINAPI_FAMILY_DESKTOP_APP */
 
 #ifdef __cplusplus
 }
