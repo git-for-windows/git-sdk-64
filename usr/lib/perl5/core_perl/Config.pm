@@ -3,14 +3,14 @@
 
 # for a description of the variables, please have a look at the
 # Glossary file, as written in the Porting folder, or use the url:
-# http://perl5.git.perl.org/perl.git/blob/HEAD:/Porting/Glossary
+# https://github.com/Perl/perl5/blob/blead/Porting/Glossary
 
 package Config;
 use strict;
 use warnings;
-use vars '%Config', '$VERSION';
+our ( %Config, $VERSION );
 
-$VERSION = "5.026002";
+$VERSION = "5.030002";
 
 # Skip @Config::EXPORT because it only contains %Config, which we special
 # case below as it's not a function. @Config::EXPORT won't change in the
@@ -56,11 +56,11 @@ sub import {
     return;
 }
 
-die "$0: Perl lib version (5.26.2) doesn't match executable '$^X' version ($])"
+die "$0: Perl lib version (5.30.2) doesn't match executable '$^X' version ($])"
     unless $^V;
 
-$^V eq 5.26.2
-    or die sprintf "%s: Perl lib version (5.26.2) doesn't match executable '$^X' version (%vd)", $0, $^V;
+$^V eq 5.30.2
+    or die sprintf "%s: Perl lib version (5.30.2) doesn't match executable '$^X' version (%vd)", $0, $^V;
 
 
 sub FETCH {
@@ -98,7 +98,7 @@ tie %Config, 'Config', {
     ldlibpthname => 'PATH',
     libpth => '/usr/lib',
     osname => 'msys',
-    osvers => '2.10.0(0.32553)',
+    osvers => '3.0.7-338.x86_64',
     path_sep => ':',
     privlibexp => '/usr/share/perl5/core_perl',
     scriptdir => '/usr/bin/core_perl',
@@ -107,5 +107,5 @@ tie %Config, 'Config', {
     so => 'dll',
     useithreads => 'define',
     usevendorprefix => 'define',
-    version => '5.26.2',
+    version => '5.30.2',
 };

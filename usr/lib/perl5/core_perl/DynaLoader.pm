@@ -16,7 +16,7 @@ package DynaLoader;
 # Tim.Bunce@ig.co.uk, August 1994
 
 BEGIN {
-    $VERSION = '1.42';
+    $VERSION = '1.45';
 }
 
 use Config;
@@ -235,7 +235,7 @@ sub dl_findfile {
 
         # Deal with directories first:
         #  Using a -L prefix is the preferred option (faster and more robust)
-        if (m:^-L:) { s/^-L//; push(@dirs, $_); next; }
+        if ( s{^-L}{} ) { push(@dirs, $_); next; }
 
         #  Otherwise we try to try to spot directories by a heuristic
         #  (this is a more complicated issue than it first appears)
@@ -245,10 +245,8 @@ sub dl_findfile {
 
         #  Only files should get this far...
         my(@names, $name);    # what filenames to look for
-        if (m:-l: ) {          # convert -lname to appropriate library name
-            s/-l//;
-            push(@names,"lib$_.$dl_so");
-            push(@names,"lib$_.a");
+        if ( s{^-l}{} ) {          # convert -lname to appropriate library name
+            push(@names, "lib$_.$dl_so", "lib$_.a");
         } else {                # Umm, a bare name. Try various alternatives:
             # these should be ordered with the most likely first
             push(@names,"$_.$dl_dlext")    unless m/\.$dl_dlext$/o;
@@ -332,7 +330,7 @@ DynaLoader - Dynamically load C libraries into Perl code
     package YourPackage;
     require DynaLoader;
     @ISA = qw(... DynaLoader ...);
-    bootstrap YourPackage;
+    __PACKAGE__->bootstrap;
 
     # optional method for 'global' loading
     sub dl_load_flags { 0x01 }

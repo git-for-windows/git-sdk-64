@@ -11,12 +11,12 @@ use Symbol;
 
 our $VERSION;
 BEGIN {
-  $VERSION = '3.34';
+  $VERSION = '3.40';
+  require ExtUtils::ParseXS::Constants; ExtUtils::ParseXS::Constants->VERSION($VERSION);
+  require ExtUtils::ParseXS::CountLines; ExtUtils::ParseXS::CountLines->VERSION($VERSION);
+  require ExtUtils::ParseXS::Utilities; ExtUtils::ParseXS::Utilities->VERSION($VERSION);
+  require ExtUtils::ParseXS::Eval; ExtUtils::ParseXS::Eval->VERSION($VERSION);
 }
-use ExtUtils::ParseXS::Constants $VERSION;
-use ExtUtils::ParseXS::CountLines $VERSION;
-use ExtUtils::ParseXS::Utilities $VERSION;
-use ExtUtils::ParseXS::Eval $VERSION;
 $VERSION = eval $VERSION if $VERSION =~ /_/;
 
 use ExtUtils::ParseXS::Utilities qw(
@@ -467,7 +467,7 @@ EOM
         $self->{defaults}->{$args[$i]} = $2;
         $self->{defaults}->{$args[$i]} =~ s/"/\\"/g;
       }
-      $self->{proto_arg}->[$i+1] = '$';
+      $self->{proto_arg}->[$i+1] = '$' unless $only_C_inlist_ref->{$args[$i]};
     }
     my $min_args = $num_args - $extra_args;
     $report_args =~ s/"/\\"/g;
@@ -519,9 +519,10 @@ EOF
 EOF
     }
     else {
-    # cv likely to be unused
+    # cv and items likely to be unused
     print Q(<<"EOF");
 #    PERL_UNUSED_VAR(cv); /* -W */
+#    PERL_UNUSED_VAR(items); /* -W */
 EOF
     }
 
@@ -871,6 +872,7 @@ EOF
 #XS_EUPXS(XS_$self->{Packid}_nil)
 #{
 #   dXSARGS;
+#   PERL_UNUSED_VAR(items);
 #   XSRETURN_EMPTY;
 #}
 #

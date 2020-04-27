@@ -1,16 +1,15 @@
 package JSON::Syck;
 use strict;
-use vars qw( $VERSION @EXPORT_OK @ISA );
+
 use Exporter;
 use YAML::Syck ();
 
-BEGIN {
-    $VERSION   = '1.30';
-    @EXPORT_OK = qw( Load Dump LoadFile DumpFile DumpInto );
-    @ISA       = 'Exporter';
-    *Load      = \&YAML::Syck::LoadJSON;
-    *Dump      = \&YAML::Syck::DumpJSON;
-}
+our $VERSION   = '1.31';
+our @EXPORT_OK = qw( Load Dump LoadFile DumpFile DumpInto );
+our @ISA       = qw/Exporter/;
+
+*Load = \&YAML::Syck::LoadJSON;
+*Dump = \&YAML::Syck::DumpJSON;
 
 sub DumpFile {
     my $file = shift;

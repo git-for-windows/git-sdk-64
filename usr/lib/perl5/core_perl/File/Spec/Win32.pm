@@ -2,13 +2,13 @@ package File::Spec::Win32;
 
 use strict;
 
-use vars qw(@ISA $VERSION);
+use Cwd ();
 require File::Spec::Unix;
 
-$VERSION = '3.67';
+our $VERSION = '3.78';
 $VERSION =~ tr/_//d;
 
-@ISA = qw(File::Spec::Unix);
+our @ISA = qw(File::Spec::Unix);
 
 # Some regexes we use for path splitting
 my $DRIVE_RX = '[a-zA-Z]:';
@@ -137,7 +137,7 @@ sub catfile {
     # Legacy / compatibility support
     #
     shift, return _canon_cat( "/", @_ )
-	if $_[0] eq "";
+	if !@_ || $_[0] eq "";
 
     # Compatibility with File::Spec <= 3.26:
     #     catfile('A:', 'foo') should return 'A:\foo'.
@@ -330,14 +330,13 @@ sub rel2abs {
 
     if ($is_abs) {
       # It's missing a volume, add one
-      my $vol = ($self->splitpath( $self->_cwd() ))[0];
+      my $vol = ($self->splitpath( Cwd::getcwd() ))[0];
       return $self->canonpath( $vol . $path );
     }
 
     if ( !defined( $base ) || $base eq '' ) {
-      require Cwd ;
       $base = Cwd::getdcwd( ($self->splitpath( $path ))[0] ) if defined &Cwd::getdcwd ;
-      $base = $self->_cwd() unless defined $base ;
+      $base = Cwd::getcwd() unless defined $base ;
     }
     elsif ( ! $self->file_name_is_absolute( $base ) ) {
       $base = $self->rel2abs( $base ) ;
@@ -408,16 +407,6 @@ sub _canon_cat				# @path -> path
 	       )+			# performance boost -- I do not know why
 	     }{\\}gx;
 
-    # XXX I do not know whether more dots are supported by the OS supporting
-    #     this ... annotation (NetWare or symbian but not MSWin32).
-    #     Then .... could easily become ../../.. etc:
-    # Replace \.\.\. by (\.\.\.+)  and substitute with
-    # { $1 . ".." . "\\.." x (length($2)-2) }gex
-	     				# ... --> ../..
-    $path =~ s{ (\A|\\)			# at begin or after a slash
-    		\.\.\.
-		(?=\\|\z) 		# at end or followed by slash
-	     }{$1..\\..}gx;
     					# xx\yy\..\zz --> xx\zz
     while ( $path =~ s{(?:
 		(?:\A|\\)		# at begin or after a slash

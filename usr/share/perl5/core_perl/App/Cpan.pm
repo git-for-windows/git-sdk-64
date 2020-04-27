@@ -6,7 +6,7 @@ use vars qw($VERSION);
 
 use if $] < 5.008 => 'IO::Scalar';
 
-$VERSION = '1.66';
+$VERSION = '1.672';
 
 =head1 NAME
 
@@ -119,6 +119,8 @@ C<-l> was already taken.
 Load the file that has the CPAN configuration data. This should have the
 same format as the standard F<CPAN/Config.pm> file, which defines
 C<$CPAN::Config> as an anonymous hash.
+
+If the file does not exist, C<cpan> dies.
 
 =item -J
 
@@ -261,7 +263,7 @@ to C<1> unless it already has a value (even if that value is false).
 
 =item CPAN_OPTS
 
-As with C<PERL5OPTS>, a string of additional C<cpan(1)> options to
+As with C<PERL5OPT>, a string of additional C<cpan(1)> options to
 add to those you specify on the command line.
 
 =item CPANSCRIPT_LOGLEVEL
@@ -289,7 +291,7 @@ use CPAN 1.80 (); # needs no test
 use Config;
 use autouse Cwd => qw(cwd);
 use autouse 'Data::Dumper' => qw(Dumper);
-use File::Spec::Functions;
+use File::Spec::Functions qw(catfile file_name_is_absolute rel2abs);
 use File::Basename;
 use Getopt::Std;
 
@@ -545,7 +547,13 @@ package
   Local::Null::Logger; # hide from PAUSE
 
 sub new { bless \ my $x, $_[0] }
-sub AUTOLOAD { 1 }
+sub AUTOLOAD {
+    my $autoload = our $AUTOLOAD;
+    $autoload =~ s/.*://;
+    return if $autoload =~ /^(debug|trace)$/;
+    $CPAN::Frontend->mywarn(">($autoload): $_\n")
+        for split /[\r\n]+/, $_[1];
+}
 sub DESTROY { 1 }
 }
 
@@ -566,7 +574,7 @@ sub _init_logger
 
     unless( $log4perl_loaded )
         {
-        print STDERR "Loading internal null logger. Install Log::Log4perl for logging messages\n";
+        print STDOUT "Loading internal logger. Log::Log4perl recommended for better logging\n";
         $logger = Local::Null::Logger->new;
         return $logger;
         }
@@ -624,6 +632,8 @@ sub _default
 
 	# How do I handle exit codes for multiple arguments?
 	my @errors = ();
+
+	$options->{x} or _disable_guessers();
 
 	foreach my $arg ( @$args )
 		{
@@ -1093,12 +1103,14 @@ sub _shell
 
 sub _load_config # -j
 	{
-	my $file = shift || '';
+	my $argument = shift;
+
+	my $file = file_name_is_absolute( $argument ) ? $argument : rel2abs( $argument );
+	croak( "cpan config file [$file] for -j does not exist!\n" ) unless -e $file;
 
 	# should I clear out any existing config here?
 	$CPAN::Config = {};
 	delete $INC{'CPAN/Config.pm'};
-	croak( "Config file [$file] does not exist!\n" ) unless -e $file;
 
 	my $rc = eval "require '$file'";
 
@@ -1157,9 +1169,9 @@ sub _download
 
 		$logger->debug( "Inst file would be $path\n" );
 
-		$paths{$arg} = _get_file( _make_path( $path ) );
+		$paths{$module} = _get_file( _make_path( $path ) );
 
-		$logger->info( "Downloaded [$arg] to [$paths{$module}]" );
+		$logger->info( "Downloaded [$arg] to [$paths{$arg}]" );
 		}
 
 	return \%paths;
@@ -1183,7 +1195,9 @@ sub _get_file
 		{
 		my $fetch_path = join "/", $site, $path;
 		$logger->debug( "Trying $fetch_path" );
-	    last if LWP::Simple::getstore( $fetch_path, $store_path );
+		my $status_code = LWP::Simple::getstore( $fetch_path, $store_path );
+		last if( 200 <= $status_code and $status_code <= 300 );
+		$logger->warn( "Could not get [$fetch_path]: Status code $status_code" );
 		}
 
 	return $store_path;
@@ -1517,13 +1531,18 @@ sub _expand_module
 	}
 
 my $guessers = [
-	[ qw( Text::Levenshtein::XS distance 7 ) ],
-	[ qw( Text::Levenshtein::Damerau::XS     xs_edistance 7 ) ],
+	[ qw( Text::Levenshtein::XS distance 7 1 ) ],
+	[ qw( Text::Levenshtein::Damerau::XS     xs_edistance 7 1 ) ],
 
-	[ qw( Text::Levenshtein     distance 7 ) ],
-	[ qw( Text::Levenshtein::Damerau::PP     pp_edistance 7 ) ],
+	[ qw( Text::Levenshtein     distance 7 1 ) ],
+	[ qw( Text::Levenshtein::Damerau::PP     pp_edistance 7 1 ) ],
 
 	];
+
+sub _disable_guessers
+	{
+	$_->[-1] = 0 for @$guessers;
+	}
 
 # for -x
 sub _guess_namespace
@@ -1553,25 +1572,40 @@ sub _list_all_namespaces {
 
 BEGIN {
 my $distance;
+my $_threshold;
+my $can_guess;
+my $shown_help = 0;
 sub _guess_at_module_name
 	{
 	my( $target, $threshold ) = @_;
 
 	unless( defined $distance ) {
 		foreach my $try ( @$guessers ) {
-			my $can_guess = eval "require $try->[0]; 1" or next;
+			$can_guess = eval "require $try->[0]; 1" or next;
 
+			$try->[-1] or next; # disabled
 			no strict 'refs';
 			$distance = \&{ join "::", @$try[0,1] };
 			$threshold ||= $try->[2];
 			}
 		}
+	$_threshold ||= $threshold;
 
 	unless( $distance ) {
-		my $modules = join ", ", map { $_->[0] } @$guessers;
-		substr $modules, rindex( $modules, ',' ), 1, ', and';
+		unless( $shown_help ) {
+			my $modules = join ", ", map { $_->[0] } @$guessers;
+			substr $modules, rindex( $modules, ',' ), 1, ', and';
 
-		$logger->info( "I can suggest names if you install one of $modules" );
+			# Should this be colorized?
+			if( $can_guess ) {
+				$logger->info( "I can suggest names if you provide the -x option on invocation." );
+				}
+			else {
+				$logger->info( "I can suggest names if you install one of $modules" );
+				$logger->info( "and you provide the -x option on invocation." );
+				}
+			$shown_help++;
+			}
 		return;
 		}
 
@@ -1581,7 +1615,7 @@ sub _guess_at_module_name
 	my %guesses;
 	foreach my $guess ( @$modules ) {
 		my $distance = $distance->( $target, $guess );
-		next if $distance > $threshold;
+		next if $distance > $_threshold;
 		$guesses{$guess} = $distance;
 		}
 
@@ -1651,13 +1685,15 @@ where this script ends up with a .bat extension
 
 David Golden helps integrate this into the C<CPAN.pm> repos.
 
+Jim Keenan fixed up various issues with _download
+
 =head1 AUTHOR
 
 brian d foy, C<< <bdfoy@cpan.org> >>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2001-2015, brian d foy, All Rights Reserved.
+Copyright (c) 2001-2018, brian d foy, All Rights Reserved.
 
 You may redistribute this under the same terms as Perl itself.
 

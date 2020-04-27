@@ -135,7 +135,7 @@ and L<perlunicode> for details.
    \W      A non-word character
    \s      A whitespace character
    \S      A non-whitespace character
-   \h      An horizontal whitespace
+   \h      A horizontal whitespace
    \H      A non horizontal whitespace
    \N      A non newline (when not followed by '{NAME}';;
            not valid in a character class; equivalent to [^\n]; it's
@@ -234,10 +234,15 @@ There is no quantifier C<{,n}>. That's interpreted as a literal string.
    (?:...)           Groups subexpressions without capturing (cluster)
    (?pimsx-imsx:...) Enable/disable option (as per m// modifiers)
    (?=...)           Zero-width positive lookahead assertion
+   (?*pla:...)       Same; avail experimentally starting in 5.28
    (?!...)           Zero-width negative lookahead assertion
+   (?*nla:...)       Same; avail experimentally starting in 5.28
    (?<=...)          Zero-width positive lookbehind assertion
+   (?*plb:...)       Same; avail experimentally starting in 5.28
    (?<!...)          Zero-width negative lookbehind assertion
+   (?*nlb:...)       Same; avail experimentally starting in 5.28
    (?>...)           Grab what we can, prohibit backtracking
+   (?*atomic:...)    Same; avail experimentally starting in 5.28
    (?|...)           Branch reset
    (?<name>...)      Named capture
    (?'name'...)      Named capture
@@ -251,7 +256,7 @@ There is no quantifier C<{,n}>. That's interpreted as a literal string.
    (?&name)          Recurse into a named subpattern
    (?P>name)         Recurse into a named subpattern (python syntax)
    (?(cond)yes|no)
-   (?(cond)yes)      Conditional expression, where "cond" can be:
+   (?(cond)yes)      Conditional expression, where "(cond)" can be:
                      (?=pat)   lookahead
                      (?!pat)   negative lookahead
                      (?<=pat)  lookbehind

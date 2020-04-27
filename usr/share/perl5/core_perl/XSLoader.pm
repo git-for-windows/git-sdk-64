@@ -3,7 +3,7 @@
 
 package XSLoader;
 
-$VERSION = "0.27";
+$VERSION = "0.30"; # remember to update version in POD!
 
 #use strict;
 
@@ -35,12 +35,13 @@ sub load {
 
     my @modparts = split(/::/,$module);
     my $modfname = $modparts[-1];
+    my $modfname_orig = $modfname; # For .bs file search
 
     my $modpname = join('/',@modparts);
     my $c = () = split(/::/,$caller,-1);
     $modlibname =~ s,[\\/][^\\/]+$,, while $c--;    # Q&D basename
     # Does this look like a relative path?
-    if ($modlibname !~ m{^/}) {
+    if ($modlibname !~ m{^(?:[A-Za-z]:)?[\\/]}) {
         # Someone may have a #line directive that changes the file name, or
         # may be calling XSLoader::load from inside a string eval.  We cer-
         # tainly do not want to go loading some code that is not in @INC,
@@ -68,17 +69,13 @@ sub load {
 
 #   print STDERR "XSLoader::load for $module ($file)\n" if $dl_debug;
 
-    my $bs = $file;
-    $bs =~ s/(\.\w+)?(;\d*)?$/\.bs/; # look for .bs 'beside' the library
+    # N.B. The .bs file does not following the naming convention used
+    # by mod2fname, so use the unedited version of the name.
 
-    if (-s $bs) { # only read file if it's not empty
-#       print STDERR "BS: $bs ($^O, $dlsrc)\n" if $dl_debug;
-        eval { local @INC = ('.'); do $bs; };
-        warn "$bs: $@\n" if $@;
-	goto \&XSLoader::bootstrap_inherit;
-    }
+    my $bs = "$modlibname/auto/$modpname/$modfname_orig.bs";
 
-    goto \&XSLoader::bootstrap_inherit if not -f $file;
+    # This calls DynaLoader::bootstrap, which will load the .bs file if present
+    goto \&XSLoader::bootstrap_inherit if not -f $file or -s $bs;
 
     my $bootname = "boot_$module";
     $bootname =~ s/\W/_/g;
@@ -130,14 +127,14 @@ XSLoader - Dynamically load C libraries into Perl code
 
 =head1 VERSION
 
-Version 0.24
+Version 0.30
 
 =head1 SYNOPSIS
 
     package YourPackage;
     require XSLoader;
 
-    XSLoader::load();
+    XSLoader::load(__PACKAGE__, $VERSION);
 
 =head1 DESCRIPTION
 
@@ -158,7 +155,7 @@ A typical module using L<DynaLoader|DynaLoader> starts like this:
 
     our @ISA = qw( OnePackage OtherPackage DynaLoader );
     our $VERSION = '0.01';
-    bootstrap YourPackage $VERSION;
+    __PACKAGE__->bootstrap($VERSION);
 
 Change this to
 
@@ -167,7 +164,7 @@ Change this to
 
     our @ISA = qw( OnePackage OtherPackage );
     our $VERSION = '0.01';
-    XSLoader::load 'YourPackage', $VERSION;
+    XSLoader::load(__PACKAGE__, $VERSION);
 
 In other words: replace C<require DynaLoader> by C<use XSLoader>, remove
 C<DynaLoader> from C<@ISA>, change C<bootstrap> by C<XSLoader::load>.  Do not
@@ -184,10 +181,9 @@ one can remove this reference to C<@ISA> together with the C<@ISA> assignment.
 
 If no C<$VERSION> was specified on the C<bootstrap> line, the last line becomes
 
-    XSLoader::load 'YourPackage';
+    XSLoader::load(__PACKAGE__);
 
-If the call to C<load> is from C<YourPackage>, then that can be further
-simplified to
+in which case it can be further simplified to
 
     XSLoader::load();
 
@@ -199,18 +195,17 @@ If you want to have your cake and eat it too, you need a more complicated
 boilerplate.
 
     package YourPackage;
-    use vars qw($VERSION @ISA);
 
-    @ISA = qw( OnePackage OtherPackage );
-    $VERSION = '0.01';
+    our @ISA = qw( OnePackage OtherPackage );
+    our $VERSION = '0.01';
     eval {
        require XSLoader;
-       XSLoader::load('YourPackage', $VERSION);
+	XSLoader::load(__PACKAGE__, $VERSION);
        1;
     } or do {
        require DynaLoader;
        push @ISA, 'DynaLoader';
-       bootstrap YourPackage $VERSION;
+       __PACKAGE__->bootstrap($VERSION);
     };
 
 The parentheses about C<XSLoader::load()> arguments are needed since we replaced
@@ -268,7 +263,7 @@ boilerplate as
 
     package YourPackage;
     use XSLoader;
-    use vars qw($VERSION @ISA);
+    our ($VERSION, @ISA);
 
     BEGIN {
        @ISA = qw( OnePackage OtherPackage );
@@ -276,7 +271,7 @@ boilerplate as
 
        # Put Perl code used in the BOOT: section here
 
-       XSLoader::load 'YourPackage', $VERSION;
+       XSLoader::load(__PACKAGE__, $VERSION);
     }
 
     # Put Perl code making calls into XSUBs here
@@ -291,12 +286,12 @@ this:
 
     package YourPackage;
     use XSLoader;
-    use vars qw($VERSION @ISA);
+    our ($VERSION, @ISA);
 
     BEGIN {
        @ISA = qw( OnePackage OtherPackage );
        $VERSION = '0.01';
-       XSLoader::load 'YourPackage', $VERSION;
+       XSLoader::load(__PACKAGE__, $VERSION);
     }
 
     # Put Perl code used in onBOOT() function here; calls to XSUBs are

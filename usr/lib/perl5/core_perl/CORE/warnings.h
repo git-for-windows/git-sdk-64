@@ -18,8 +18,8 @@
 #define G_WARN_ALL_MASK		(G_WARN_ALL_ON|G_WARN_ALL_OFF)
 
 #define pWARN_STD		NULL
-#define pWARN_ALL		(((STRLEN*)0)+1)    /* use warnings 'all' */
-#define pWARN_NONE		(((STRLEN*)0)+2)    /* no  warnings 'all' */
+#define pWARN_ALL		(STRLEN *) &PL_WARN_ALL    /* use warnings 'all' */
+#define pWARN_NONE		(STRLEN *) &PL_WARN_NONE   /* no  warnings 'all' */
 
 #define specialWARN(x)		((x) == pWARN_STD || (x) == pWARN_ALL ||	\
 				 (x) == pWARN_NONE)
@@ -115,9 +115,21 @@
 
 #define WARN_EXPERIMENTAL__DECLARED_REFS 66
 
-#define WARNsize			 17
-#define WARN_ALLstring			 "\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125"
-#define WARN_NONEstring			 "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+/* Warnings Categories added in Perl 5.027 */
+
+#define WARN_EXPERIMENTAL__ALPHA_ASSERTIONS 67
+#define WARN_EXPERIMENTAL__SCRIPT_RUN	 68
+#define WARN_SHADOW			 69
+
+/* Warnings Categories added in Perl 5.029 */
+
+#define WARN_EXPERIMENTAL__PRIVATE_USE	 70
+#define WARN_EXPERIMENTAL__UNIPROP_WILDCARDS 71
+#define WARN_EXPERIMENTAL__VLB		 72
+
+#define WARNsize			 19
+#define WARN_ALLstring			 "\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125\125"
+#define WARN_NONEstring			 "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
 
 #define isLEXWARN_on \
 	cBOOL(PL_curcop && PL_curcop->cop_warnings != pWARN_STD)
@@ -127,10 +139,7 @@
 #define isWARN_on(c,x)	(IsSet((U8 *)(c + 1), 2*(x)))
 #define isWARNf_on(c,x)	(IsSet((U8 *)(c + 1), 2*(x)+1))
 
-#define DUP_WARNINGS(p)		\
-    (specialWARN(p) ? (STRLEN*)(p)	\
-    : (STRLEN*)CopyD(p, PerlMemShared_malloc(sizeof(*p)+*p), sizeof(*p)+*p, \
-		     			     char))
+#define DUP_WARNINGS(p) Perl_dup_warnings(aTHX_ p)
 
 /*
 
@@ -221,13 +230,15 @@ is by default enabled even if not within the scope of S<C<use warnings>>.
 #define unpackWARN4(x)		(((x) >>24) & 0xFF)
 
 #define ckDEAD(x)							\
-	   (PL_curcop &&                                                \
-            !specialWARN(PL_curcop->cop_warnings) &&			\
-	    ( isWARNf_on(PL_curcop->cop_warnings, WARN_ALL) || 		\
-	      isWARNf_on(PL_curcop->cop_warnings, unpackWARN1(x)) ||	\
-	      isWARNf_on(PL_curcop->cop_warnings, unpackWARN2(x)) ||	\
-	      isWARNf_on(PL_curcop->cop_warnings, unpackWARN3(x)) ||	\
-	      isWARNf_on(PL_curcop->cop_warnings, unpackWARN4(x))))
+   (PL_curcop &&                                                        \
+    !specialWARN(PL_curcop->cop_warnings) &&			        \
+    (isWARNf_on(PL_curcop->cop_warnings, unpackWARN1(x)) ||	        \
+      (unpackWARN2(x) &&                                                \
+	(isWARNf_on(PL_curcop->cop_warnings, unpackWARN2(x)) ||	        \
+	  (unpackWARN3(x) &&                                            \
+	    (isWARNf_on(PL_curcop->cop_warnings, unpackWARN3(x)) ||	\
+	      (unpackWARN4(x) &&                                        \
+		isWARNf_on(PL_curcop->cop_warnings, unpackWARN4(x)))))))))
 
 /* end of file warnings.h */
 

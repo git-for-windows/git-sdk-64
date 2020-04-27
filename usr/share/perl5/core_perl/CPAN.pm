@@ -2,7 +2,7 @@
 # vim: ts=4 sts=4 sw=4:
 use strict;
 package CPAN;
-$CPAN::VERSION = '2.18';
+$CPAN::VERSION = '2.22';
 $CPAN::VERSION =~ s/_//;
 
 # we need to run chdir all over and we would get at wrong libraries
@@ -90,11 +90,13 @@ if ($ENV{PERL5_CPAN_IS_RUNNING} && $$ != $ENV{PERL5_CPAN_IS_RUNNING}) {
         warn $w;
     }
     local $| = 1;
+    my $have_been_sleeping = 0;
     while ($sleep > 0) {
         printf "\r#%5d", --$sleep;
         sleep 1;
+	++$have_been_sleeping;
     }
-    print "\n";
+    print "\n" if $have_been_sleeping;
 }
 $ENV{PERL5_CPAN_IS_RUNNING}=$$;
 $ENV{PERL5_CPANPLUS_IS_RUNNING}=$$; # https://rt.cpan.org/Ticket/Display.html?id=23735
@@ -284,7 +286,7 @@ sub shell {
         }
         if (my $histfile = $CPAN::Config->{'histfile'}) {{
             unless ($term->can("AddHistory")) {
-                $CPAN::Frontend->mywarn("Terminal does not support AddHistory.\n");
+                $CPAN::Frontend->mywarn("Terminal does not support AddHistory.\n\nTo fix enter>  install Term::ReadLine::Perl\n\n");
                 last;
             }
             $META->readhist($term,$histfile);
@@ -488,7 +490,7 @@ Trying '$root' as temporary haven.
         push @$cwd, $root;
     }
     while () {
-        if (chdir $cwd->[0]) {
+        if (chdir "$cwd->[0]") {
             return;
         } else {
             if (@$cwd>1) {
@@ -564,7 +566,10 @@ sub _yaml_loadfile {
             }
         } elsif ($code = UNIVERSAL::can($yaml_module, "Load")) {
             local *FH;
-            open FH, $local_file or die "Could not open '$local_file': $!";
+            unless (open FH, $local_file) {
+                $CPAN::Frontend->mywarn("Could not open '$local_file': $!");
+                return +[];
+            }
             local $/;
             my $ystream = <FH>;
             eval { @yaml = $code->($ystream); };
@@ -856,11 +861,12 @@ this variable in either a CPAN/MyConfig.pm or a CPAN/Config.pm in your
         }
         my $sleep = 1;
         while (!CPAN::_flock($fh, LOCK_EX|LOCK_NB)) {
-            if ($sleep>10) {
-                $CPAN::Frontend->mydie("Giving up\n");
+            my $err = $! || "unknown error";
+            if ($sleep>3) {
+                $CPAN::Frontend->mydie("Could not lock '$lockfile' with flock: $err; giving up\n");
             }
-            $CPAN::Frontend->mysleep($sleep++);
-            $CPAN::Frontend->mywarn("Could not lock lockfile with flock: $!; retrying\n");
+            $CPAN::Frontend->mysleep($sleep+=0.1);
+            $CPAN::Frontend->mywarn("Could not lock '$lockfile' with flock: $err; retrying\n");
         }
 
         seek $fh, 0, 0;
@@ -1038,6 +1044,11 @@ sub has_usable {
 
                'CPAN::Meta::Requirements' => [
                             sub {
+                                if (defined $CPAN::Meta::Requirements::VERSION
+                                    && CPAN::Version->vlt($CPAN::Meta::Requirements::VERSION, "2.120920")
+                                   ) {
+                                    delete $INC{"CPAN/Meta/Requirements.pm"};
+                                }
                                 require CPAN::Meta::Requirements;
                                 unless (CPAN::Version->vge(CPAN::Meta::Requirements->VERSION, 2.120920)) {
                                     for ("Will not use CPAN::Meta::Requirements, need version 2.120920\n") {

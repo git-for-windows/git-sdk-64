@@ -3,37 +3,22 @@ package YAML::Syck;
 # See documentation after the __END__ mark.
 
 use strict;
-use vars qw(
-  @ISA @EXPORT @EXPORT_OK $VERSION
-  $Headless $SortKeys $SingleQuote
-  $ImplicitBinary $ImplicitTyping $ImplicitUnicode
-  $UseCode $LoadCode $DumpCode
-  $DeparseObject $LoadBlessed
-);
+
+our ( $Headless, $SingleQuote, $ImplicitBinary, $ImplicitTyping, $ImplicitUnicode, $UseCode, $LoadCode, $DumpCode, $DeparseObject );
+
 use 5.006;
 use Exporter;
+use XSLoader ();
 
-BEGIN {
-    $VERSION   = '1.30';
-    @EXPORT    = qw( Dump Load DumpFile LoadFile );
-    @EXPORT_OK = qw( DumpInto );
-    @ISA       = qw( Exporter );
+our $VERSION   = '1.32';
+our @EXPORT    = qw( Dump Load DumpFile LoadFile );
+our @EXPORT_OK = qw( DumpInto );
+our @ISA       = qw( Exporter );
 
-    $SortKeys    = 1;
-    $LoadBlessed = 1;
+our $SortKeys    = 1;
+our $LoadBlessed = 0;
 
-    local $@;
-    eval {
-        require XSLoader;
-        XSLoader::load( __PACKAGE__, $VERSION );
-        1;
-    } or do {
-        require DynaLoader;
-        push @ISA, 'DynaLoader';
-        __PACKAGE__->bootstrap($VERSION);
-    };
-
-}
+XSLoader::load( 'YAML::Syck', $VERSION );
 
 use constant QR_MAP => {
     ''   => sub { qr{$_[0]} },
@@ -250,12 +235,13 @@ both C<$YAML::Syck::LoadCode> and C<$YAML::Syck::DumpCode> to true.
 
 =head2 $YAML::Syck::LoadBlessed
 
-Defaults to true. Setting to false will block YAML::Syck from doing ANY
-blessing. This is an interface change since 1.21. The variable name was
-misleading, implying that no blessing would happen when in fact it did.
+Defaults to false. Setting to true will allow YAML::Syck to bless objects as it
+imports objects. This default changed in 1.32.
 
-Prior to 1.22, setting this to a false value only prevented C<Load> from
-blessing tag names that did not begin with C<!!perl> or C<!perl>;.
+You can create any kind of object with YAML. The creation itself is not the
+critical part. If the class has a DESTROY method, it will be called once the
+object is deleted. An example with File::Temp removing files can be found at
+L<https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=862373|https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=862373>
 
 =head1 BUGS
 

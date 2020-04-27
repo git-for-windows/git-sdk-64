@@ -10,13 +10,15 @@
 package Data::Dumper;
 
 BEGIN {
-    $VERSION = '2.167'; # Don't forget to set version and release
+    $VERSION = '2.174'; # Don't forget to set version and release
 }               # date in POD below!
 
 #$| = 1;
 
 use 5.006_001;
 require Exporter;
+
+use constant IS_PRE_516_PERL => $] < 5.016;
 
 use Carp ();
 
@@ -224,12 +226,11 @@ sub Names {
 sub DESTROY {}
 
 sub Dump {
-    return &Dumpxs
+  return &Dumpxs
     unless $Data::Dumper::Useperl || (ref($_[0]) && $_[0]->{useperl})
-
             # Use pure perl version on earlier releases on EBCDIC platforms
         || (! $IS_ASCII && $] lt 5.021_010);
-    return &Dumpperl;
+  return &Dumpperl;
 }
 
 #
@@ -527,11 +528,12 @@ sub _dump {
     $ref = \$val;
     if (ref($ref) eq 'GLOB') {  # glob
       my $name = substr($val, 1);
-      if ($name =~ /^[A-Za-z_][\w:]*$/ && $name ne 'main::') {
-        $name =~ s/^main::/::/;
+      $name =~ s/^main::(?!\z)/::/;
+      if ($name =~ /\A(?:[A-Z_a-z][0-9A-Z_a-z]*)?::(?:[0-9A-Z_a-z]+::)*[0-9A-Z_a-z]*\z/ && $name ne 'main::') {
         $sname = $name;
       }
       else {
+        local $s->{useqq} = IS_PRE_516_PERL && ($s->{useqq} || $name =~ /[^\x00-\x7f]/) ? 1 : $s->{useqq};
         $sname = $s->_dump(
           $name eq 'main::' || $] < 5.007 && $name eq "main::\0"
             ? ''
@@ -618,7 +620,7 @@ sub Reset {
 
 sub Indent {
   my($s, $v) = @_;
-  if (defined($v)) {
+  if (@_ >= 2) {
     if ($v == 0) {
       $s->{xpad} = "";
       $s->{sep} = "";
@@ -637,92 +639,92 @@ sub Indent {
 
 sub Trailingcomma {
   my($s, $v) = @_;
-  defined($v) ? (($s->{trailingcomma} = $v), return $s) : $s->{trailingcomma};
+  @_ >= 2 ? (($s->{trailingcomma} = $v), return $s) : $s->{trailingcomma};
 }
 
 sub Pair {
     my($s, $v) = @_;
-    defined($v) ? (($s->{pair} = $v), return $s) : $s->{pair};
+    @_ >= 2 ? (($s->{pair} = $v), return $s) : $s->{pair};
 }
 
 sub Pad {
   my($s, $v) = @_;
-  defined($v) ? (($s->{pad} = $v), return $s) : $s->{pad};
+  @_ >= 2 ? (($s->{pad} = $v), return $s) : $s->{pad};
 }
 
 sub Varname {
   my($s, $v) = @_;
-  defined($v) ? (($s->{varname} = $v), return $s) : $s->{varname};
+  @_ >= 2 ? (($s->{varname} = $v), return $s) : $s->{varname};
 }
 
 sub Purity {
   my($s, $v) = @_;
-  defined($v) ? (($s->{purity} = $v), return $s) : $s->{purity};
+  @_ >= 2 ? (($s->{purity} = $v), return $s) : $s->{purity};
 }
 
 sub Useqq {
   my($s, $v) = @_;
-  defined($v) ? (($s->{useqq} = $v), return $s) : $s->{useqq};
+  @_ >= 2 ? (($s->{useqq} = $v), return $s) : $s->{useqq};
 }
 
 sub Terse {
   my($s, $v) = @_;
-  defined($v) ? (($s->{terse} = $v), return $s) : $s->{terse};
+  @_ >= 2 ? (($s->{terse} = $v), return $s) : $s->{terse};
 }
 
 sub Freezer {
   my($s, $v) = @_;
-  defined($v) ? (($s->{freezer} = $v), return $s) : $s->{freezer};
+  @_ >= 2 ? (($s->{freezer} = $v), return $s) : $s->{freezer};
 }
 
 sub Toaster {
   my($s, $v) = @_;
-  defined($v) ? (($s->{toaster} = $v), return $s) : $s->{toaster};
+  @_ >= 2 ? (($s->{toaster} = $v), return $s) : $s->{toaster};
 }
 
 sub Deepcopy {
   my($s, $v) = @_;
-  defined($v) ? (($s->{deepcopy} = $v), return $s) : $s->{deepcopy};
+  @_ >= 2 ? (($s->{deepcopy} = $v), return $s) : $s->{deepcopy};
 }
 
 sub Quotekeys {
   my($s, $v) = @_;
-  defined($v) ? (($s->{quotekeys} = $v), return $s) : $s->{quotekeys};
+  @_ >= 2 ? (($s->{quotekeys} = $v), return $s) : $s->{quotekeys};
 }
 
 sub Bless {
   my($s, $v) = @_;
-  defined($v) ? (($s->{'bless'} = $v), return $s) : $s->{'bless'};
+  @_ >= 2 ? (($s->{'bless'} = $v), return $s) : $s->{'bless'};
 }
 
 sub Maxdepth {
   my($s, $v) = @_;
-  defined($v) ? (($s->{'maxdepth'} = $v), return $s) : $s->{'maxdepth'};
+  @_ >= 2 ? (($s->{'maxdepth'} = $v), return $s) : $s->{'maxdepth'};
 }
 
 sub Maxrecurse {
   my($s, $v) = @_;
-  defined($v) ? (($s->{'maxrecurse'} = $v), return $s) : $s->{'maxrecurse'};
+  @_ >= 2 ? (($s->{'maxrecurse'} = $v), return $s) : $s->{'maxrecurse'};
 }
 
 sub Useperl {
   my($s, $v) = @_;
-  defined($v) ? (($s->{'useperl'} = $v), return $s) : $s->{'useperl'};
+  @_ >= 2 ? (($s->{'useperl'} = $v), return $s) : $s->{'useperl'};
 }
 
 sub Sortkeys {
   my($s, $v) = @_;
-  defined($v) ? (($s->{'sortkeys'} = $v), return $s) : $s->{'sortkeys'};
+  @_ >= 2 ? (($s->{'sortkeys'} = $v), return $s) : $s->{'sortkeys'};
 }
 
 sub Deparse {
   my($s, $v) = @_;
-  defined($v) ? (($s->{'deparse'} = $v), return $s) : $s->{'deparse'};
+  @_ >= 2 ? (($s->{'deparse'} = $v), return $s) : $s->{'deparse'};
 }
 
 sub Sparseseen {
   my($s, $v) = @_;
-  defined($v) ? (($s->{'noseen'} = $v), return $s) : $s->{'noseen'};
+  @_ >= 2 ? (($s->{'noseen'} = $v), return $s) : $s->{'noseen'};
 }
 
 # used by qquote below
@@ -1459,13 +1461,13 @@ be to use the C<Sortkeys> filter of Data::Dumper.
 
 Gurusamy Sarathy        gsar@activestate.com
 
-Copyright (c) 1996-2017 Gurusamy Sarathy. All rights reserved.
+Copyright (c) 1996-2019 Gurusamy Sarathy. All rights reserved.
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 =head1 VERSION
 
-Version 2.167  (January 4 2017)
+Version 2.174
 
 =head1 SEE ALSO
 

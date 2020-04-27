@@ -295,6 +295,20 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
 =cut
 */
 
+/* EXTEND_HWM_SET: note the high-water-mark to which the stack has been
+ * requested to be extended (which is likely to be less than PL_stack_max)
+ */
+#if defined DEBUGGING && !defined DEBUGGING_RE_ONLY
+#  define EXTEND_HWM_SET(p, n)                      \
+        STMT_START {                                \
+            SSize_t ix = (p) - PL_stack_base + (n); \
+            if (ix > PL_curstackinfo->si_stack_hwm) \
+                PL_curstackinfo->si_stack_hwm = ix; \
+        } STMT_END
+#else
+#  define EXTEND_HWM_SET(p, n) NOOP
+#endif
+
 /* _EXTEND_SAFE_N(n): private helper macro for EXTEND().
  * Tests whether the value of n would be truncated when implicitly cast to
  * SSize_t as an arg to stack_grow(). If so, sets it to -1 instead to
@@ -306,6 +320,8 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
         (sizeof(n) > sizeof(SSize_t) && ((SSize_t)(n) != (n)) ? -1 : (n))
 
 #ifdef STRESS_REALLOC
+# define EXTEND_SKIP(p, n) EXTEND_HWM_SET(p, n)
+
 # define EXTEND(p,n)   STMT_START {                                     \
                            sp = stack_grow(sp,p,_EXTEND_SAFE_N(n));     \
                            PERL_UNUSED_VAR(sp);                         \
@@ -335,15 +351,32 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
  * this just gives a safe false positive
  */
 
-#  define _EXTEND_NEEDS_GROW(p,n) ( (n) < 0 || PL_stack_max - p < (n))
+#  define _EXTEND_NEEDS_GROW(p,n) ((n) < 0 || PL_stack_max - (p) < (n))
+
+
+/* EXTEND_SKIP(): used for where you would normally call EXTEND(), but
+ * you know for sure that a previous op will have already extended the
+ * stack sufficiently.  For example pp_enteriter ensures that that there
+ * is always at least 1 free slot, so pp_iter can return &PL_sv_yes/no
+ * without checking each time. Calling EXTEND_SKIP() defeats the HWM
+ * debugging mechanism which would otherwise whine
+ */
+
+#  define EXTEND_SKIP(p, n) STMT_START {                                \
+                                EXTEND_HWM_SET(p, n);                   \
+                                assert(!_EXTEND_NEEDS_GROW(p,n));       \
+                          } STMT_END
+
 
 #  define EXTEND(p,n)   STMT_START {                                    \
+                         EXTEND_HWM_SET(p, n);                          \
                          if (UNLIKELY(_EXTEND_NEEDS_GROW(p,n))) {       \
                            sp = stack_grow(sp,p,_EXTEND_SAFE_N(n));     \
                            PERL_UNUSED_VAR(sp);                         \
                          } } STMT_END
 /* Same thing, but update mark register too. */
 #  define MEXTEND(p,n)  STMT_START {                                    \
+                         EXTEND_HWM_SET(p, n);                          \
                          if (UNLIKELY(_EXTEND_NEEDS_GROW(p,n))) {       \
                            const SSize_t markoff = mark - PL_stack_base;\
                            sp = stack_grow(sp,p,_EXTEND_SAFE_N(n));     \
@@ -351,6 +384,7 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
                            PERL_UNUSED_VAR(sp);                         \
                          } } STMT_END
 #endif
+
 
 /* set TARG to the IV value i. If do_taint is false,
  * assume that PL_tainted can never be true */
@@ -443,9 +477,9 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
 #define mXPUSHs(s)	XPUSHs(sv_2mortal(s))
 #define XPUSHmortal	XPUSHs(sv_newmortal())
 #define mXPUSHp(p,l)	STMT_START { EXTEND(sp,1); mPUSHp((p), (l)); } STMT_END
-#define mXPUSHn(n)	STMT_START { EXTEND(sp,1); sv_setnv(PUSHmortal, (NV)(n)); } STMT_END
-#define mXPUSHi(i)	STMT_START { EXTEND(sp,1); sv_setiv(PUSHmortal, (IV)(i)); } STMT_END
-#define mXPUSHu(u)	STMT_START { EXTEND(sp,1); sv_setuv(PUSHmortal, (UV)(u)); } STMT_END
+#define mXPUSHn(n)	STMT_START { EXTEND(sp,1); mPUSHn(n); } STMT_END
+#define mXPUSHi(i)	STMT_START { EXTEND(sp,1); mPUSHi(i); } STMT_END
+#define mXPUSHu(u)	STMT_START { EXTEND(sp,1); mPUSHu(u); } STMT_END
 
 #define SETs(s)		(*sp = s)
 #define SETTARG		STMT_START { SvSETMAGIC(TARG); SETs(TARG); } STMT_END
@@ -519,10 +553,10 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
 
 #define AMGf_noright	1
 #define AMGf_noleft	2
-#define AMGf_assign	4
+#define AMGf_assign	4       /* op supports mutator variant, e.g. $x += 1 */
 #define AMGf_unary	8
 #define AMGf_numeric	0x10	/* for Perl_try_amagic_bin */
-#define AMGf_set	0x20	/* for Perl_try_amagic_bin */
+
 #define AMGf_want_list	0x40
 #define AMGf_numarg	0x80
 
@@ -574,7 +608,7 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
             else { /* AMGf_want_scalar */                       \
                 dATARGET; /* just use the arg's location */     \
                 sv_setsv(TARG, tmpsv);                          \
-                if (opASSIGN)                                   \
+                if (PL_op->op_flags & OPf_STACKED)              \
                     sp--;                                       \
                 SETTARG;                                        \
             }                                                   \
@@ -600,6 +634,7 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
     } STMT_END
 
 
+/* 2019: no longer used in core */
 #define opASSIGN (PL_op->op_flags & OPf_STACKED)
 
 /*

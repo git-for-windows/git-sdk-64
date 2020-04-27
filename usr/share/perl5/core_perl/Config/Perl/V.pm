@@ -1,5 +1,3 @@
-#!/pro/bin/perl
-
 package Config::Perl::V;
 
 use strict;
@@ -8,7 +6,7 @@ use warnings;
 use Config;
 use Exporter;
 use vars qw($VERSION @ISA @EXPORT_OK %EXPORT_TAGS);
-$VERSION     = "0.28";
+$VERSION     = "0.32";
 @ISA         = qw( Exporter );
 @EXPORT_OK   = qw( plv2hash summary myconfig signature );
 %EXPORT_TAGS = (
@@ -72,6 +70,7 @@ my %BTD = map { $_ => 0 } qw(
     USE_NO_REGISTRY
     USE_PERL_ATOF
     USE_SITECUSTOMIZE
+    USE_THREAD_SAFE_LOCALE
 
     DEBUG_LEAKING_SCALARS
     DEBUG_LEAKING_SCALARS_FORK_DUMP
@@ -310,8 +309,11 @@ sub plv2hash {
 
 sub summary {
     my $conf = shift || myconfig ();
-    ref $conf eq "HASH" &&
-	exists $conf->{config} && exists $conf->{build} or return;
+    ref $conf eq "HASH"
+    && exists $conf->{config}
+    && exists $conf->{build}
+    && ref $conf->{config} eq "HASH"
+    && ref $conf->{build}  eq "HASH" or return;
 
     my %info = map {
 	exists $conf->{config}{$_} ? ( $_ => $conf->{config}{$_} ) : () }
@@ -328,10 +330,15 @@ sub summary {
     } # summary
 
 sub signature {
-    eval { require Digest::MD5 };
-    $@ and return "00000000000000000000000000000000";
+    my $no_md5 = "0" x 32;
+    my $conf = summary (shift) or return $no_md5;
 
-    my $conf = shift || summary ();
+    eval { require Digest::MD5 };
+    $@ and return $no_md5;
+
+    $conf->{cc} =~ s{.*\bccache\s+}{};
+    $conf->{cc} =~ s{.*[/\\]}{};
+
     delete $conf->{config_args};
     return Digest::MD5::md5_hex (join "\xFF" => map {
 	"$_=".(defined $conf->{$_} ? $conf->{$_} : "\xFE");
@@ -398,9 +405,9 @@ Config::Perl::V - Structured data retrieval of perl -V output
 
 =head2 $conf = myconfig ()
 
-This function will collect the data described in L<the hash structure> below,
+This function will collect the data described in L</"The hash structure"> below,
 and return that as a hash reference. It optionally accepts an option to
-include more entries from %ENV. See L<environment> below.
+include more entries from %ENV. See L</environment> below.
 
 Note that this will not work on uninstalled perls when called with
 C<-I/path/to/uninstalled/perl/lib>, but it works when that path is in
@@ -546,7 +553,7 @@ H.Merijn Brand <h.m.brand@xs4all.nl>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2009-2016 H.Merijn Brand
+Copyright (C) 2009-2018 H.Merijn Brand
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

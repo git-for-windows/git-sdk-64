@@ -26,7 +26,7 @@ BEGIN
 our ($Error);
 
 our ($VERSION, @EXPORT_OK);
-$VERSION = '1.000';
+$VERSION = '1.001';
 @EXPORT_OK = qw( globmap );
 
 

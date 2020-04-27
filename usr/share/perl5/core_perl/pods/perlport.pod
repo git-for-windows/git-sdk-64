@@ -436,7 +436,7 @@ too).  The portable idiom to remove all the versions of a file is
 
     1 while unlink "file";
 
-This will terminate if the file is undeleteable for some reason
+This will terminate if the file is undeletable for some reason
 (protected, not there, and so on).
 
 Don't count on a specific environment variable existing in
@@ -1234,8 +1234,8 @@ character sets internally (usually Character Code Set ID 0037 for OS/400
 and either 1047 or POSIX-BC for S/390 systems).
 
 The rest of this section may need updating, but we don't know what it
-should say.  Please email comments to
-L<perlbug@perl.org|mailto:perlbug@perl.org>.
+should say.  Please submit comments to
+L<https://github.com/Perl/perl5/issues>.
 
 On the mainframe Perl currently works under the "Unix system
 services for OS/390" (formerly known as OpenEdition), VM/ESA OpenEdition, or
@@ -1362,7 +1362,7 @@ where
     Directory and File =~ m|[^\0- "\.\$\%\&:\@\\^\|\177]+|
 
 The default filename translation is roughly C<tr|/.|./|>, swapping dots
-and slahes.
+and slashes.
 
 Note that C<"ADFS::HardDisk.$.File" ne 'ADFS::HardDisk.$.File'> and that
 the second stage of C<$> interpolation in regular expressions will fall
@@ -1591,6 +1591,10 @@ in the SYSTEM environment settings.
 Setting the exec bit on some locations (generally F</sdcard>) will return true
 but not actually set the bit.
 
+(VMS)
+A mode argument of zero sets permissions to the user's default permission mask
+rather than disabling all permissions.
+
 =item chown
 
 (S<Plan 9>, S<RISC OS>)
@@ -1642,6 +1646,11 @@ Invokes VMS debugger.
 (Win32)
 C<exec LIST> without the use of indirect object syntax (C<exec PROGRAM LIST>)
 may fall back to trying the shell if the first C<spawn()> fails.
+
+Note that the list form of exec() is emulated since the Win32 API
+CreateProcess() accepts a simple string rather than an array of
+command-line arguments.  This may have security implications for your
+code.
 
 (SunOS, Solaris, HP-UX)
 Does not automatically flush output handles on some platforms.
@@ -1955,12 +1964,18 @@ Not implemented.
 
 =item open
 
-(Win32, S<RISC OS>)
+(S<RISC OS>)
 Open modes C<|-> and C<-|> are unsupported.
 
 (SunOS, Solaris, HP-UX)
 Opening a process does not automatically flush output handles on some
 platforms.
+
+(Win32)
+Both of modes C<|-> and C<-|> are supported, but the list form is
+emulated since the Win32 API CreateProcess() accepts a simple string
+rather than an array of arguments.  This may have security
+implications for your code.
 
 =item readlink
 
@@ -2120,6 +2135,11 @@ L<C<$?>|perlvar/$?> to C<<< 255 << 8 >>>.  L<C<$?>|perlvar/$?> is set in a
 way compatible with Unix (i.e. the exit status of the subprocess is
 obtained by C<<< $? >> 8 >>>, as described in the documentation).
 
+Note that the list form of system() is emulated since the Win32 API
+CreateProcess() accepts a simple string rather than an array of
+command-line arguments.  This may have security implications for your
+code.
+
 (S<RISC OS>)
 There is no shell to process metacharacters, and the native standard is
 to pass a command line terminated by "\n" "\r" or "\0" to the spawned
@@ -2140,8 +2160,12 @@ may fall back to trying the shell if the first C<spawn()> fails.
 Does not automatically flush output handles on some platforms.
 
 (VMS)
-The return value is POSIX-like (shifted up by 8 bits), which only allows
-room for a made-up value derived from the severity bits of the native
+As with Win32, C<system(1, @args)> spawns an external process and
+immediately returns its process designator without waiting for the
+process to terminate.  In this case the return value may be used subsequently
+in L<C<wait>|perlfunc/wait> or L<C<waitpid>|perlfunc/waitpid PID,FLAGS>.
+Otherwise the return value is POSIX-like (shifted up by 8 bits), which only
+allows room for a made-up value derived from the severity bits of the native
 32-bit condition code (unless overridden by
 L<C<use vmsish 'status'>|vmsish/C<vmsish status>>).  If the native
 condition code is one that has a POSIX value encoded, the POSIX value will
@@ -2408,7 +2432,6 @@ available at L<http://www.cpan.org/src/>
         Open UNIX       (Unixware) (since Perl 5.8.1/5.9.0)
         OS/2
         OS/400          (using the PASE) (since Perl 5.8.1/5.9.0)
-        PowerUX
         POSIX-BC        (formerly BS2000)
         QNX
         Solaris
@@ -2452,7 +2475,8 @@ the past (5.005_03 and earlier), but we haven't been able to verify
 their status for the current release, either because the
 hardware/software platforms are rare or because we don't have an
 active champion on these platforms--or both.  They used to work,
-though, so go ahead and try compiling them, and let perlbug@perl.org
+though, so go ahead and try compiling them, and let
+L<https://github.com/Perl/perl5/issues> know
 of any trouble.
 
         3b1

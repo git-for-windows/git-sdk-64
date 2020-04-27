@@ -27,17 +27,37 @@ X<operator, precedence> X<precedence> X<associativity>
 Operator precedence and associativity work in Perl more or less like
 they do in mathematics.
 
-I<Operator precedence> means some operators are evaluated before
-others.  For example, in S<C<2 + 4 * 5>>, the multiplication has higher
-precedence so S<C<4 * 5>> is evaluated first yielding S<C<2 + 20 ==
-22>> and not S<C<6 * 5 == 30>>.
+I<Operator precedence> means some operators group more tightly than others.
+For example, in C<2 + 4 * 5>, the multiplication has higher precedence, so C<4
+* 5> is grouped together as the right-hand operand of the addition, rather
+than C<2 + 4> being grouped together as the left-hand operand of the
+multiplication. It is as if the expression were written C<2 + (4 * 5)>, not
+C<(2 + 4) * 5>. So the expression yields C<2 + 20 == 22>, rather than
+C<6 * 5 == 30>.
 
-I<Operator associativity> defines what happens if a sequence of the
-same operators is used one after another: whether the evaluator will
-evaluate the left operations first, or the right first.  For example, in
-S<C<8 - 4 - 2>>, subtraction is left associative so Perl evaluates the
-expression left to right.  S<C<8 - 4>> is evaluated first making the
-expression S<C<4 - 2 == 2>> and not S<C<8 - 2 == 6>>.
+I<Operator associativity> defines what happens if a sequence of the same
+operators is used one after another: whether they will be grouped at the left
+or the right. For example, in C<9 - 3 - 2>, subtraction is left associative,
+so C<9 - 3> is grouped together as the left-hand operand of the second
+subtraction, rather than C<3 - 2> being grouped together as the right-hand
+operand of the first subtraction. It is as if the expression were written
+C<(9 - 3) - 2>, not C<9 - (3 - 2)>. So the expression yields C<6 - 2 == 4>,
+rather than C<9 - 1 == 8>.
+
+For simple operators that evaluate all their operands and then combine the
+values in some way, precedence and associativity (and parentheses) imply some
+ordering requirements on those combining operations. For example, in C<2 + 4 *
+5>, the grouping implied by precedence means that the multiplication of 4 and
+5 must be performed before the addition of 2 and 20, simply because the result
+of that multiplication is required as one of the operands of the addition. But
+the order of operations is not fully determined by this: in C<2 * 2 + 4 * 5>
+both multiplications must be performed before the addition, but the grouping
+does not say anything about the order in which the two multiplications are
+performed. In fact Perl has a general rule that the operands of an operator
+are evaluated in left-to-right order. A few operators such as C<&&=> have
+special evaluation rules that can result in an operand not being evaluated at
+all; in general, the top-level operator in an expression has control of
+operand evaluation.
 
 Perl operators have the following associativity and precedence,
 listed from highest precedence to lowest.  Operators borrowed from
@@ -243,18 +263,16 @@ bits wide on a 64-bit platform, so if you are expecting a certain bit
 width, remember to use the C<"&"> operator to mask off the excess bits.
 X<~> X<negation, binary>
 
-When complementing strings, if all characters have ordinal values under
-256, then their complements will, also.  But if they do not, all
-characters will be in either 32- or 64-bit complements, depending on your
-architecture.  So for example, C<~"\x{3B1}"> is C<"\x{FFFF_FC4E}"> on
-32-bit machines and C<"\x{FFFF_FFFF_FFFF_FC4E}"> on 64-bit machines.
+Starting in Perl 5.28, it is a fatal error to try to complement a string
+containing a character with an ordinal value above 255.
 
-If the experimental "bitwise" feature is enabled via S<C<use feature
-'bitwise'>>, then unary C<"~"> always treats its argument as a number, and an
+If the "bitwise" feature is enabled via S<C<use
+feature 'bitwise'>> or C<use v5.28>, then unary
+C<"~"> always treats its argument as a number, and an
 alternate form of the operator, C<"~.">, always treats its argument as a
 string.  So C<~0> and C<~"0"> will both give 2**32-1 on 32-bit platforms,
-whereas C<~.0> and C<~."0"> will both yield C<"\xff">.  This feature
-produces a warning unless you use S<C<no warnings 'experimental::bitwise'>>.
+whereas C<~.0> and C<~."0"> will both yield C<"\xff">.  Until Perl 5.28,
+this feature produced a warning in the C<"experimental::bitwise"> category.
 
 Unary C<"+"> has no effect whatsoever, even on strings.  It is useful
 syntactically for separating a function name from a parenthesized expression
@@ -262,7 +280,12 @@ that would otherwise be interpreted as the complete list of function
 arguments.  (See examples above under L</Terms and List Operators (Leftward)>.)
 X<+>
 
-Unary C<"\"> creates a reference to whatever follows it.  See L<perlreftut>
+Unary C<"\"> creates references.  If its operand is a single sigilled
+thing, it creates a reference to that object.  If its operand is a
+parenthesised list, then it creates references to the things mentioned
+in the list.  Otherwise it puts its operand in list context, and creates
+a list of references to the scalars in the list provided by the operand.
+See L<perlreftut>
 and L<perlref>.  Do not confuse this behavior with the behavior of
 backslash within a string, although both forms do convey the notion
 of protecting the next thing from interpolation.
@@ -333,11 +356,16 @@ operator is not as well defined for negative operands, but it will
 execute faster.
 X<%> X<remainder> X<modulo> X<mod>
 
-Binary C<"x"> is the repetition operator.  In scalar context or if the left
-operand is not enclosed in parentheses, it returns a string consisting
-of the left operand repeated the number of times specified by the right
-operand.  In list context, if the left operand is enclosed in
-parentheses or is a list formed by C<qw/I<STRING>/>, it repeats the list.
+Binary C<x> is the repetition operator.  In scalar context, or if the
+left operand is neither enclosed in parentheses nor a C<qw//> list,
+it performs a string repetition.  In that case it supplies scalar
+context to the left operand, and returns a string consisting of the
+left operand string repeated the number of times specified by the right
+operand.  If the C<x> is in list context, and the left operand is either
+enclosed in parentheses or a C<qw//> list, it performs a list repetition.
+In that case it supplies list context to the left operand, and returns
+a list consisting of the left operand list repeated the number of times
+specified by the right operand.
 If the right operand is zero or negative (raising a warning on
 negative), it returns an empty string
 or an empty list, depending on the context.
@@ -542,7 +570,7 @@ The standard C<L<Unicode::Collate>> and
 C<L<Unicode::Collate::Locale>> modules offer much more powerful
 solutions to collation issues.
 
-For case-insensitive comparisions, look at the L<perlfunc/fc> case-folding
+For case-insensitive comparisons, look at the L<perlfunc/fc> case-folding
 function, available in Perl v5.16 or later:
 
     if ( fc($x) eq fc($y) ) { ... }
@@ -565,7 +593,7 @@ type information to select a suitable comparison mechanism.
 
 The C<~~> operator compares its operands "polymorphically", determining how
 to compare them according to their actual types (numeric, string, array,
-hash, etc.)  Like the equality operators with which it shares the same
+hash, etc.).  Like the equality operators with which it shares the same
 precedence, C<~~> returns 1 for true and C<""> for false.  It is often best
 read aloud as "in", "inside of", or "is contained in", because the left
 operand is often looked for I<inside> the right operand.  That makes the
@@ -845,10 +873,10 @@ the parentheses are essential in a test like
 
     print "Even\n" if ($x & 1) == 0;
 
-If the experimental "bitwise" feature is enabled via S<C<use feature
-'bitwise'>>, then this operator always treats its operand as numbers.  This
-feature produces a warning unless you also use C<S<no warnings
-'experimental::bitwise'>>.
+If the "bitwise" feature is enabled via S<C<use feature 'bitwise'>> or
+C<use v5.28>, then this operator always treats its operands as numbers.
+Before Perl 5.28 this feature produced a warning in the
+C<"experimental::bitwise"> category.
 
 =head2 Bitwise Or and Exclusive Or
 X<operator, bitwise, or> X<bitwise or> X<|> X<operator, bitwise, xor>
@@ -868,10 +896,10 @@ for example the parentheses are essential in a test like
 
     print "false\n" if (8 | 2) != 10;
 
-If the experimental "bitwise" feature is enabled via S<C<use feature
-'bitwise'>>, then this operator always treats its operand as numbers.  This
-feature produces a warning unless you also use S<C<no warnings
-'experimental::bitwise'>>.
+If the "bitwise" feature is enabled via S<C<use feature 'bitwise'>> or
+C<use v5.28>, then this operator always treats its operands as numbers.
+Before Perl 5.28. this feature produced a warning in the
+C<"experimental::bitwise"> category.
 
 =head2 C-style Logical And
 X<&&> X<logical and> X<operator, logical, and>
@@ -1206,7 +1234,7 @@ the number of elements produced by the expression on the right hand
 side of the assignment.
 
 The three dotted bitwise assignment operators (C<&.=> C<|.=> C<^.=>) are new in
-Perl 5.22 and experimental.  See L</Bitwise String Operators>.
+Perl 5.22.  See L</Bitwise String Operators>.
 
 =head2 Comma Operator
 X<comma> X<operator, comma> X<,>
@@ -1415,7 +1443,7 @@ is a word character (meaning it matches C</\w/>):
     qXfooX  # WRONG!
 
 The following escape sequences are available in constructs that interpolate,
-and in transliterations:
+and in transliterations whose delimiters aren't single quotes (C<"'">).
 X<\t> X<\n> X<\r> X<\f> X<\b> X<\a> X<\e> X<\x> X<\0> X<\c> X<\N> X<\N{}>
 X<\o{}>
 
@@ -1765,7 +1793,7 @@ of C<"msixpluadn"> will be propagated appropriately.  The effect that the
 C</o> modifier has is not propagated, being restricted to those patterns
 explicitly using it.
 
-The last four modifiers listed above, added in Perl 5.14,
+The C</a>, C</d>, C</l>, and C</u> modifiers (added in Perl 5.14)
 control the character set rules, but C</a> is the only one you are likely
 to want to specify explicitly; the other three are selected
 automatically by various pragmas.
@@ -1998,8 +2026,8 @@ The last example should print:
 Notice that the final match matched C<q> instead of C<p>, which a match
 without the C<\G> anchor would have done.  Also note that the final match
 did not update C<pos>.  C<pos> is only updated on a C</g> match.  If the
-final match did indeed match C<p>, it's a good bet that you're running a
-very old (pre-5.6.0) version of Perl.
+final match did indeed match C<p>, it's a good bet that you're running an
+ancient (pre-5.6.0) version of Perl.
 
 A useful idiom for C<lex>-like scanners is C</\G.../gc>.  You can
 combine several regexps like this to process a string part-by-part,
@@ -2069,7 +2097,8 @@ X<regexp, substitute> X</m> X</s> X</i> X</x> X</p> X</o> X</g> X</c> X</e> X</r
 
 Searches a string for a pattern, and if found, replaces that pattern
 with the replacement text and returns the number of substitutions
-made.  Otherwise it returns false (specifically, the empty string).
+made.  Otherwise it returns false (a value that is both an empty string (C<"">)
+and numeric zero (C<0>) as described in L</Relational Operators>).
 
 If the C</r> (non-destructive) option is used then it runs the
 substitution on a copy of the string and instead of returning the
@@ -2181,6 +2210,10 @@ Examples:
     }
 
     s/([^ ]*) *([^ ]*)/$2 $1/;	# reverse 1st two fields
+
+    $foo !~ s/A/a/g;    # Lowercase all A's in $foo; return
+                        # 0 if any were found and changed;
+                        # otherwise return 1
 
 Note the use of C<$> instead of C<\> in the last example.  Unlike
 B<sed>, we use the \<I<digit>> form only in the left hand side.
@@ -2337,6 +2370,8 @@ output of the command, for example:
   use open IN => ":encoding(UTF-8)";
   my $x = `cmd-producing-utf-8`;
 
+C<qx//> can also be called like a function with L<perlfunc/readpipe>.
+
 See L</"I/O Operators"> for more discussion.
 
 =item C<qw/I<STRING>/>
@@ -2348,7 +2383,8 @@ equivalent to:
 
     split(" ", q/STRING/);
 
-the differences being that it generates a real list at compile time, and
+the differences being that it only splits on ASCII whitespace,
+generates a real list at compile time, and
 in scalar context it returns the last element in the list.  So
 this expression:
 
@@ -2373,10 +2409,14 @@ X<tr> X<y> X<transliterate> X</c> X</d> X</s>
 
 =item C<y/I<SEARCHLIST>/I<REPLACEMENTLIST>/cdsr>
 
-Transliterates all occurrences of the characters found in the search list
-with the corresponding character in the replacement list.  It returns
-the number of characters replaced or deleted.  If no string is
-specified via the C<=~> or C<!~> operator, the C<$_> string is transliterated.
+Transliterates all occurrences of the characters found (or not found
+if the C</c> modifier is specified) in the search list with the
+positionally corresponding character in the replacement list, possibly
+deleting some, depending on the modifiers specified.  It returns the
+number of characters replaced or deleted.  If no string is specified via
+the C<=~> or C<!~> operator, the C<$_> string is transliterated.
+
+For B<sed> devotees, C<y> is provided as a synonym for C<tr>.
 
 If the C</r> (non-destructive) option is present, a new copy of the string
 is made and its characters transliterated, and this copy is returned no
@@ -2388,19 +2428,26 @@ Unless the C</r> option is used, the string specified with C<=~> must be a
 scalar variable, an array element, a hash element, or an assignment to one
 of those; in other words, an lvalue.
 
-A character range may be specified with a hyphen, so C<tr/A-J/0-9/>
-does the same replacement as C<tr/ACEGIBDFHJ/0246813579/>.
-For B<sed> devotees, C<y> is provided as a synonym for C<tr>.  If the
-I<SEARCHLIST> is delimited by bracketing quotes, the I<REPLACEMENTLIST>
-must have its own pair of quotes, which may or may not be bracketing
-quotes; for example, C<tr[aeiouy][yuoiea]> or C<tr(+\-*/)/ABCD/>.
+If the characters delimiting I<SEARCHLIST> and I<REPLACEMENTLIST>
+are single quotes (C<tr'I<SEARCHLIST>'I<REPLACEMENTLIST>'>), the only
+interpolation is removal of C<\> from pairs of C<\\>.
 
-Characters may be literals or any of the escape sequences accepted in
-double-quoted strings.  But there is no variable interpolation, so C<"$">
-and C<"@"> are treated as literals.  A hyphen at the beginning or end, or
-preceded by a backslash is considered a literal.  Escape sequence
-details are in L<the table near the beginning of this section|/Quote and
-Quote-like Operators>.
+Otherwise, a character range may be specified with a hyphen, so
+C<tr/A-J/0-9/> does the same replacement as
+C<tr/ACEGIBDFHJ/0246813579/>.
+
+If the I<SEARCHLIST> is delimited by bracketing quotes, the
+I<REPLACEMENTLIST> must have its own pair of quotes, which may or may
+not be bracketing quotes; for example, C<tr[aeiouy][yuoiea]> or
+C<tr(+\-*/)/ABCD/>.
+
+Characters may be literals, or (if the delimiters aren't single quotes)
+any of the escape sequences accepted in double-quoted strings.  But
+there is never any variable interpolation, so C<"$"> and C<"@"> are
+always treated as literals.  A hyphen at the beginning or end, or
+preceded by a backslash is also always considered a literal.  Escape
+sequence details are in L<the table near the beginning of this
+section|/Quote and Quote-like Operators>.
 
 Note that C<tr> does B<not> do regular expression character classes such as
 C<\d> or C<\pL>.  The C<tr> operator is not equivalent to the C<L<tr(1)>>
@@ -2439,71 +2486,128 @@ range's end points are expressed as C<\N{...}>
 removes from C<$string> all the platform's characters which are
 equivalent to any of Unicode U+0020, U+0021, ... U+007D, U+007E.  This
 is a portable range, and has the same effect on every platform it is
-run on.  It turns out that in this example, these are the ASCII
+run on.  In this example, these are the ASCII
 printable characters.  So after this is run, C<$string> has only
 controls and characters which have no ASCII equivalents.
 
 But, even for portable ranges, it is not generally obvious what is
-included without having to look things up.  A sound principle is to use
-only ranges that begin from and end at either ASCII alphabetics of equal
-case (C<b-e>, C<B-E>), or digits (C<1-4>).  Anything else is unclear
-(and unportable unless C<\N{...}> is used).  If in doubt, spell out the
-character sets in full.
+included without having to look things up in the manual.  A sound
+principle is to use only ranges that both begin from, and end at, either
+ASCII alphabetics of equal case (C<b-e>, C<B-E>), or digits (C<1-4>).
+Anything else is unclear (and unportable unless C<\N{...}> is used).  If
+in doubt, spell out the character sets in full.
 
 Options:
 
     c	Complement the SEARCHLIST.
     d	Delete found but unreplaced characters.
-    s	Squash duplicate replaced characters.
     r	Return the modified string and leave the original string
 	untouched.
+    s	Squash duplicate replaced characters.
 
-If the C</c> modifier is specified, the I<SEARCHLIST> character set
-is complemented.  If the C</d> modifier is specified, any characters
-specified by I<SEARCHLIST> not found in I<REPLACEMENTLIST> are deleted.
-(Note that this is slightly more flexible than the behavior of some
-B<tr> programs, which delete anything they find in the I<SEARCHLIST>,
-period.)  If the C</s> modifier is specified, sequences of characters
-that were transliterated to the same character are squashed down
-to a single instance of the character.
+If the C</d> modifier is specified, any characters specified by
+I<SEARCHLIST>  not found in I<REPLACEMENTLIST> are deleted.  (Note that
+this is slightly more flexible than the behavior of some B<tr> programs,
+which delete anything they find in the I<SEARCHLIST>, period.)
+
+If the C</s> modifier is specified, sequences of characters, all in a
+row, that were transliterated to the same character are squashed down to
+a single instance of that character.
+
+ my $a = "aaaba"
+ $a =~ tr/a/a/s     # $a now is "aba"
 
 If the C</d> modifier is used, the I<REPLACEMENTLIST> is always interpreted
 exactly as specified.  Otherwise, if the I<REPLACEMENTLIST> is shorter
-than the I<SEARCHLIST>, the final character is replicated till it is long
-enough.  If the I<REPLACEMENTLIST> is empty, the I<SEARCHLIST> is replicated.
-This latter is useful for counting characters in a class or for
-squashing character sequences in a class.
+than the I<SEARCHLIST>, the final character, if any, is replicated until
+it is long enough.  There won't be a final character if and only if the
+I<REPLACEMENTLIST> is empty, in which case I<REPLACEMENTLIST> is
+copied from I<SEARCHLIST>.    An empty I<REPLACEMENTLIST> is useful
+for counting characters in a class, or for squashing character sequences
+in a class.
 
-Examples:
+    tr/abcd//            tr/abcd/abcd/
+    tr/abcd/AB/          tr/abcd/ABBB/
+    tr/abcd//d           s/[abcd]//g
+    tr/abcd/AB/d         (tr/ab/AB/ + s/[cd]//g)  - but run together
 
-    $ARGV[1] =~ tr/A-Z/a-z/;	# canonicalize to lower case ASCII
+If the C</c> modifier is specified, the characters to be transliterated
+are the ones NOT in I<SEARCHLIST>, that is, it is complemented.  If
+C</d> and/or C</s> are also specified, they apply to the complemented
+I<SEARCHLIST>.  Recall, that if I<REPLACEMENTLIST> is empty (except
+under C</d>) a copy of I<SEARCHLIST> is used instead.  That copy is made
+after complementing under C</c>.  I<SEARCHLIST> is sorted by code point
+order after complementing, and any I<REPLACEMENTLIST>  is applied to
+that sorted result.  This means that under C</c>, the order of the
+characters specified in I<SEARCHLIST> is irrelevant.  This can
+lead to different results on EBCDIC systems if I<REPLACEMENTLIST>
+contains more than one character, hence it is generally non-portable to
+use C</c> with such a I<REPLACEMENTLIST>.
 
-    $cnt = tr/*/*/;		# count the stars in $_
+Another way of describing the operation is this:
+If C</c> is specified, the I<SEARCHLIST> is sorted by code point order,
+then complemented.  If I<REPLACEMENTLIST> is empty and C</d> is not
+specified, I<REPLACEMENTLIST> is replaced by a copy of I<SEARCHLIST> (as
+modified under C</c>), and these potentially modified lists are used as
+the basis for what follows.  Any character in the target string that
+isn't in I<SEARCHLIST> is passed through unchanged.  Every other
+character in the target string is replaced by the character in
+I<REPLACEMENTLIST> that positionally corresponds to its mate in
+I<SEARCHLIST>, except that under C</s>, the 2nd and following characters
+are squeezed out in a sequence of characters in a row that all translate
+to the same character.  If I<SEARCHLIST> is longer than
+I<REPLACEMENTLIST>, characters in the target string that match a
+character in I<SEARCHLIST> that doesn't have a correspondence in
+I<REPLACEMENTLIST> are either deleted from the target string if C</d> is
+specified; or replaced by the final character in I<REPLACEMENTLIST> if
+C</d> isn't specified.
 
-    $cnt = $sky =~ tr/*/*/;	# count the stars in $sky
+Some examples:
 
-    $cnt = tr/0-9//;		# count the digits in $_
+ $ARGV[1] =~ tr/A-Z/a-z/;   # canonicalize to lower case ASCII
 
-    tr/a-zA-Z//s;		# bookkeeper -> bokeper
+ $cnt = tr/*/*/;            # count the stars in $_
+ $cnt = tr/*//;             # same thing
 
-    ($HOST = $host) =~ tr/a-z/A-Z/;
-     $HOST = $host  =~ tr/a-z/A-Z/r;   # same thing
+ $cnt = $sky =~ tr/*/*/;    # count the stars in $sky
+ $cnt = $sky =~ tr/*//;     # same thing
 
-    $HOST = $host =~ tr/a-z/A-Z/r    # chained with s///r
-                  =~ s/:/ -p/r;
+ $cnt = $sky =~ tr/*//c;    # count all the non-stars in $sky
+ $cnt = $sky =~ tr/*/*/c;   # same, but transliterate each non-star
+                            # into a star, leaving the already-stars
+                            # alone.  Afterwards, everything in $sky
+                            # is a star.
 
-    tr/a-zA-Z/ /cs;		# change non-alphas to single space
+ $cnt = tr/0-9//;           # count the ASCII digits in $_
 
-    @stripped = map tr/a-zA-Z/ /csr, @original;
-				# /r with map
+ tr/a-zA-Z//s;              # bookkeeper -> bokeper
+ tr/o/o/s;                  # bookkeeper -> bokkeeper
+ tr/oe/oe/s;                # bookkeeper -> bokkeper
+ tr/oe//s;                  # bookkeeper -> bokkeper
+ tr/oe/o/s;                 # bookkeeper -> bokkopor
 
-    tr [\200-\377]
-       [\000-\177];		# wickedly delete 8th bit
+ ($HOST = $host) =~ tr/a-z/A-Z/;
+  $HOST = $host  =~ tr/a-z/A-Z/r; # same thing
+
+ $HOST = $host =~ tr/a-z/A-Z/r   # chained with s///r
+               =~ s/:/ -p/r;
+
+ tr/a-zA-Z/ /cs;                 # change non-alphas to single space
+
+ @stripped = map tr/a-zA-Z/ /csr, @original;
+                                 # /r with map
+
+ tr [\200-\377]
+    [\000-\177];                 # wickedly delete 8th bit
+
+ $foo !~ tr/A/a/    # transliterate all the A's in $foo to 'a',
+                    # return 0 if any were found and changed.
+                    # Otherwise return 1
 
 If multiple transliterations are given for a character, only the
 first one is used:
 
-    tr/AAA/XYZ/
+ tr/AAA/XYZ/
 
 will transliterate any A to X.
 
@@ -2512,10 +2616,10 @@ the I<SEARCHLIST> nor the I<REPLACEMENTLIST> are subjected to double quote
 interpolation.  That means that if you want to use variables, you
 must use an C<eval()>:
 
-    eval "tr/$oldlist/$newlist/";
-    die $@ if $@;
+ eval "tr/$oldlist/$newlist/";
+ die $@ if $@;
 
-    eval "tr/$oldlist/$newlist/, 1" or die $@;
+ eval "tr/$oldlist/$newlist/, 1" or die $@;
 
 =item C<< <<I<EOF> >>
 X<here-doc> X<heredoc> X<here-document> X<<< << >>>
@@ -2531,10 +2635,9 @@ want to use L</Indented Here-docs> (see below).
 The terminating string may be either an identifier (a word), or some
 quoted text.  An unquoted identifier works like double quotes.
 There may not be a space between the C<< << >> and the identifier,
-unless the identifier is explicitly quoted.  (If you put a space it
-will be treated as a null identifier, which is valid, and matches the
-first empty line.)  The terminating string must appear by itself
-(unquoted and with no surrounding whitespace) on the terminating line.
+unless the identifier is explicitly quoted.  The terminating string
+must appear by itself (unquoted and with no surrounding whitespace)
+on the terminating line.
 
 If the terminating string is quoted, the type of quotes used determine
 the treatment of the text.
@@ -2672,12 +2775,12 @@ use C<chomp()>.
     END
 
 If you want your here-docs to be indented with the rest of the code,
-you'll need to remove leading whitespace from each line manually:
+use the C<<< <<~FOO >>> construct described under L</Indented Here-docs>:
 
-    ($quote = <<'FINIS') =~ s/^\s+//gm;
+    $quote = <<~'FINIS';
        The Road goes ever on and on,
        down from the door where it began.
-    FINIS
+       FINIS
 
 If you use a here-doc within a delimited construct, such as in C<s///eg>,
 the quoted material must still come on the line following the
@@ -3044,7 +3147,8 @@ Unlike in B<csh>, no translation is done on the return data--newlines
 remain newlines.  Unlike in any of the shells, single quotes do not
 hide variable names in the command from interpretation.  To pass a
 literal dollar-sign through to the shell you need to hide it with a
-backslash.  The generalized form of backticks is C<qx//>.  (Because
+backslash.  The generalized form of backticks is C<qx//>, or you can
+call the L<perlfunc/readpipe> function.  (Because
 backticks always undergo shell expansion as well, see L<perlsec> for
 security concerns.)
 X<qx> X<`> X<``> X<backtick> X<glob>
@@ -3064,9 +3168,12 @@ destroying whatever was there previously.  (This may seem like an
 odd thing to you, but you'll use the construct in almost every Perl
 script you write.)  The C<$_> variable is not implicitly localized.
 You'll have to put a S<C<local $_;>> before the loop if you want that
-to happen.
+to happen.  Furthermore, if the input symbol or an explicit assignment
+of the input symbol to a scalar is used as a C<while>/C<for> condition,
+then the condition actually tests for definedness of the expression's
+value, not for its regular truth value.
 
-The following lines are equivalent:
+Thus the following lines are equivalent:
 
     while (defined($_ = <STDIN>)) { print; }
     while ($_ = <STDIN>) { print; }
@@ -3272,6 +3379,13 @@ to become confused with the indirect filehandle notation.
     @files = glob("$dir/*.[ch]");
     @files = glob($files[$i]);
 
+If an angle-bracket-based globbing expression is used as the condition of
+a C<while> or C<for> loop, then it will be implicitly assigned to C<$_>.
+If either a globbing expression or an explicit assignment of a globbing
+expression to a scalar is used as a C<while>/C<for> condition, then
+the condition actually tests for definedness of the expression's value,
+not for its regular truth value.
+
 =head2 Constant Folding
 X<constant folding> X<folding>
 
@@ -3337,16 +3451,15 @@ operation you intend by using C<""> or C<0+>, as in the examples below.
     $baz = 0+$foo & 0+$bar;	# both ops explicitly numeric
     $biz = "$foo" ^ "$bar";	# both ops explicitly stringy
 
-This somewhat unpredictable behavior can be avoided with the experimental
-"bitwise" feature, new in Perl 5.22.  You can enable it via S<C<use feature
-'bitwise'>>.  By default, it will warn unless the C<"experimental::bitwise">
-warnings category has been disabled.  (S<C<use experimental 'bitwise'>> will
-enable the feature and disable the warning.)  Under this feature, the four
+This somewhat unpredictable behavior can be avoided with the "bitwise"
+feature, new in Perl 5.22.  You can enable it via S<C<use feature
+'bitwise'>> or C<use v5.28>.  Before Perl 5.28, it used to emit a warning
+in the C<"experimental::bitwise"> category.  Under this feature, the four
 standard bitwise operators (C<~ | & ^>) are always numeric.  Adding a dot
 after each operator (C<~. |. &. ^.>) forces it to treat its operands as
 strings:
 
-    use experimental "bitwise";
+    use feature "bitwise";
     $foo =  150  |  105;	# yields 255  (0x96 | 0x69 is 0xFF)
     $foo = '150' |  105;	# yields 255
     $foo =  150  | '105';	# yields 255
@@ -3362,9 +3475,10 @@ strings:
 The assignment variants of these operators (C<&= |= ^= &.= |.= ^.=>)
 behave likewise under the feature.
 
-The behavior of these operators is problematic (and subject to change)
-if either or both of the strings are encoded in UTF-8 (see
-L<perlunicode/Byte and Character Semantics>.
+It is a fatal error if an operand contains a character whose ordinal
+value is above 0xFF, and hence not expressible except in UTF-8.  The
+operation is performed on a non-UTF-8 copy for other operands encoded in
+UTF-8.  See L<perlunicode/Byte and Character Semantics>.
 
 See L<perlfunc/vec> for information on how to manipulate individual bits
 in a bit vector.

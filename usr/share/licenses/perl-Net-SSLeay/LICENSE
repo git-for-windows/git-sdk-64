@@ -1,21 +1,23 @@
 README - Net::SSLeay Perl module for using OpenSSL
-$Id: README 472 2016-07-28 09:14:26Z mikem-guest $
 
 By popular demand...
 --------------------
 
    perl -MNet::SSLeay -e '($p)=Net::SSLeay::get_https("www.openssl.org", 443, "/"); print $p'
 
-for the latest and possibly unstable version from SVN:
 
-   svn co svn://svn.debian.org/svn/net-ssleay
+for the released versions:
+   https://metacpan.org/release/Net-SSLeay
+
+for the latest and possibly unstable version from git:
+
+   https://github.com/radiator-software/p5-net-ssleay
 
 
 Prerequisites
 -------------
 
-perl-5.6.1     though anything starting from perl5.003 probably works. Later
-	       versions are OK.
+Perl 5.8.1 or higher.
 
 OpenSSL-0.9.6j through to at least OpenSSL-1.1 and probably later
 	       http://www.openssl.org/ - On Linux, you can either build and
@@ -215,9 +217,6 @@ I have a report (schinder@@pobox._com) of make test segfaulting on
 Linux-PPC. This still needs to be investigated. No recent information
 has been received.
 
-It seems perl5.004 (at least some versions) has bad xsub compiler which
-can make builds sometimes fail. Try upgrading to perl-5.6.1 first.
-
 "Random number generator not seeded!!!" This warning indicates that
     randomize() was not able to read /dev/random or /dev/urandom, possibly
     because your system does not have them or they are differently
@@ -229,20 +228,6 @@ is, just say `perldoc Net::SSLeay' or `more SSLeay.pm')?
 
 Are you sure you didn't confuse `Net::SSLeay' with `SSLeay' that
 comes with OpenSSL?
-
-My development environments used to be
-
-  i686,   Linux-2.4.3,  gcc-2.92.2,   glibc-2.2,   perl-5.6.0,   openssl-0.9.6a
-  i686,   Linux-2.4.3,  gcc-2.92.2,   glibc-2.2,   perl5.005_02, openssl-0.9.6a
-  i686,   Linux-2.0.35, gcc-2.7.2.3,  glibc-2.0.6, perl5.005_02, openssl-0.9.5a
-  i586,   Linux-2.4.3,  gcc-2.92.2.1, glibc-2.2.2, perl-5.6.0,   openssl-0.9.6a
-  i586,   Linux-2.4.3,  gcc-2.92.2.1, glibc-2.2.2, perl5.005_03, openssl-0.9.6
-  i586,   Linux-2.4.3,  gcc-2.92.2.1, glibc-2.2.2, perl5.005_03, openssl-0.9.6a
-  Sun-U1, SunOS-5.6,    gcc-2.92.2,   libc2        perl-5.6.1,   openssl-0.9.6c
-
-Unfortunately I do not have access to other systems so you are
-somewhat on your own. Everything compiles without a warning (except
-those mentioned above) on my systems.
 
 Check that perl is finding your OpenSSL.
 
@@ -290,26 +275,23 @@ threads. Try not using the PerlIO abstraction.
 If you need to tweak build for some platform, please let me know
 so I can fix it. Patches and gdb session dumps are also welcome.
 
-License and Copying
--------------------
+Copyright
+---------
 
-Copyright (c) 1996-2002 Sampo Kellomaki <sampo@symlabs.com>
-Copyright (c) 2005 Florian Ragwitz <rafl@debian.org>
-Copyright (c) 2005 Mike McCauley <mikem@airspayce.com>
+Copyright (c) 1996-2003 Sampo Kellomäki <sampo@iki.fi>
+Copyright (c) 2005-2010 Florian Ragwitz <rafl@debian.org>
+Copyright (c) 2005-2018 Mike McCauley <mikem@airspayce.com>
+Copyright (c) 2018- Chris Novakovic <chris@chrisn.me.uk>
+Copyright (c) 2018- Tuure Vartiainen <vartiait@radiatorsoftware.com>
+Copyright (c) 2018- Heikki Vatiainen <hvn@radiatorsoftware.com>
 
+All rights reserved.
 
-All Rights Reserved.
+License
+-------
 
-From version
-1.66 onwards, this Net-SSLeay package is issued under the "Perl Artistic
-License 2.0", the same license as Perl itself.
-
-The Authors credit Eric Young and the OpenSSL team with the development of the
-excellent OpenSSL library, which this Perl package uses.
-
-And remember, you, and nobody else but you, are responsible for
-auditing this module and OpenSSL library for security problems,
-backdoors, and general suitability for your application.
+Net-SSLeay is released under the terms of the Artistic License 2.0. For
+details, see the LICENSE file.
 
 Recommended reading
 -------------------
@@ -338,15 +320,10 @@ which gives excellent tutorial of the build process of XSUBs.
 
 Say `perldoc Net::SSLeay' _NOW_!
 
-To download OpenSSL, try URL http://www.openssl.org/
+To download OpenSSL, see https://www.openssl.org/
 
-Of related interest may be `http://www.symlabs.com/Net_SSLeay/smime.html'
+Bug reports, patch submission, feature requests and git access to the
+latest source code etc., can be obtained at
+https://github.com/radiator-software/p5-net-ssleay
 
-Bug reports, patch submission, feature requests, subversion access to the latest 
-source code etc can be obtained at 
-http://alioth.debian.org/projects/net-ssleay
-
-The developer mailing list (for people interested in contributin to the source code)
-can be found at 
-http://lists.alioth.debian.org/mailman/listinfo/net-ssleay-devel
 

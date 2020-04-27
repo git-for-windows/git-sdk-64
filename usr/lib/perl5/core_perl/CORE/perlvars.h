@@ -99,17 +99,19 @@ PERLVARI(G, mmap_page_size, IV, 0)
 
 #if defined(USE_ITHREADS)
 PERLVAR(G, hints_mutex, perl_mutex)    /* Mutex for refcounted he refcounting */
+#  if ! defined(USE_THREAD_SAFE_LOCALE) || defined(TS_W32_BROKEN_LOCALECONV)
 PERLVAR(G, locale_mutex, perl_mutex)   /* Mutex for setlocale() changing */
+#  endif
+#  ifndef USE_THREAD_SAFE_LOCALE
+PERLVAR(G, lc_numeric_mutex, perl_mutex)   /* Mutex for switching LC_NUMERIC */
+#  endif
+#endif
 
-#   ifdef HAS_NEWLOCALE
+#ifdef USE_POSIX_2008_LOCALE
 PERLVAR(G, C_locale_obj, locale_t)
-#   endif
-
 #endif
 
-#ifdef DEBUGGING
 PERLVARI(G, watch_pvx,	char *, NULL)
-#endif
 
 /*
 =for apidoc AmU|Perl_check_t *|PL_check
@@ -223,9 +225,15 @@ at a chain of handler functions, all of which have an opportunity to
 handle keywords, and only the last function in the chain (built into
 the Perl core) will normally return C<KEYWORD_PLUGIN_DECLINE>.
 
+For thread safety, modules should not set this variable directly.
+Instead, use the function L</wrap_keyword_plugin>.
+
 =cut
 */
 
+#if defined(USE_ITHREADS)
+PERLVAR(G, keyword_plugin_mutex, perl_mutex)   /* Mutex for PL_keyword_plugin */
+#endif
 PERLVARI(G, keyword_plugin, Perl_keyword_plugin_t, Perl_keyword_plugin_standard)
 
 PERLVARI(G, op_sequence, HV *, NULL)	/* dump.c */
@@ -248,10 +256,93 @@ PERLVAR(G, malloc_mutex, perl_mutex)	/* Mutex for malloc */
 
 PERLVARI(G, hash_seed_set, bool, FALSE)	/* perl.c */
 PERLVARA(G, hash_seed, PERL_HASH_SEED_BYTES, unsigned char) /* perl.c and hv.h */
+#if defined(PERL_HASH_STATE_BYTES)
+PERLVARA(G, hash_state, PERL_HASH_STATE_BYTES, unsigned char) /* perl.c and hv.h */
+#endif
+#if defined(PERL_USE_SINGLE_CHAR_HASH_CACHE)
+PERLVARA(G, hash_chars, (1+256) * sizeof(U32), unsigned char) /* perl.c and hv.h */
+#endif
 
 /* The path separator can vary depending on whether we're running under DCL or
  * a Unix shell.
  */
 #ifdef __VMS
 PERLVAR(G, perllib_sep, char)
+#endif
+
+PERLVAR(G, AboveLatin1,	SV *)
+PERLVAR(G, Assigned_invlist, SV *)
+PERLVAR(G, GCB_invlist, SV *)
+PERLVAR(G, HasMultiCharFold,   SV *)
+PERLVAR(G, InMultiCharFold,   SV *)
+PERLVAR(G, Latin1,	SV *)
+PERLVAR(G, LB_invlist, SV *)
+PERLVAR(G, NonFinalFold,   SV *)
+PERLVAR(G, SB_invlist, SV *)
+PERLVAR(G, SCX_invlist, SV *)
+PERLVAR(G, UpperLatin1,	SV *)   /* Code points 128 - 255 */
+
+/* List of characters that participate in any fold defined by Unicode */
+PERLVAR(G, in_some_fold, SV *)
+
+PERLVAR(G, utf8_idcont,	SV *)
+PERLVAR(G, utf8_idstart, SV *)
+PERLVAR(G, utf8_perl_idcont, SV *)
+PERLVAR(G, utf8_perl_idstart, SV *)
+PERLVAR(G, utf8_xidcont, SV *)
+PERLVAR(G, utf8_xidstart, SV *)
+PERLVAR(G, WB_invlist, SV *)
+PERLVARA(G, XPosix_ptrs, POSIX_CC_COUNT, SV *)
+PERLVARA(G,  Posix_ptrs, POSIX_CC_COUNT, SV *)
+PERLVAR(G, utf8_toupper, SV *)
+PERLVAR(G, utf8_totitle, SV *)
+PERLVAR(G, utf8_tolower, SV *)
+PERLVAR(G, utf8_tofold,	SV *)
+PERLVAR(G, utf8_tosimplefold,	SV *)
+PERLVAR(G, utf8_charname_begin, SV *)
+PERLVAR(G, utf8_charname_continue, SV *)
+PERLVAR(G, utf8_mark,	SV *)
+PERLVARI(G, InBitmap,	SV *, NULL)
+PERLVAR(G, CCC_non0_non230,	SV *)
+PERLVAR(G, Private_Use,	SV *)
+
+/* Definitions of user-defined \p{} properties, as the subs that define them
+ * are only called once */
+PERLVARI(G, user_def_props,	HV *, NULL)
+
+#if defined(USE_ITHREADS)
+PERLVAR(G, user_def_props_aTHX, PerlInterpreter *)  /* aTHX that user_def_props
+                                                       was defined in */
+PERLVAR(G, user_prop_mutex, perl_mutex)    /* Mutex for manipulating
+                                              PL_user_defined_properties */
+#endif
+
+/* Everything that folds to a given character, for case insensitivity regex
+ * matching */
+PERLVAR(G, utf8_foldclosures, SV *)
+
+/* these record the best way to to perform certain IO operations while
+ * atomically setting FD_CLOEXEC. On the first call, a probe is done
+ * and the result recorded for use by subsequent calls.
+ * In theory these variables aren't thread-safe, but the worst that can
+ * happen is that two treads will both do an initial probe
+ */
+PERLVARI(G, strategy_dup,        int, 0)	/* doio.c */
+PERLVARI(G, strategy_dup2,       int, 0)	/* doio.c */
+PERLVARI(G, strategy_open,       int, 0)	/* doio.c */
+PERLVARI(G, strategy_open3,      int, 0)	/* doio.c */
+PERLVARI(G, strategy_mkstemp,    int, 0)	/* doio.c */
+PERLVARI(G, strategy_socket,     int, 0)	/* doio.c */
+PERLVARI(G, strategy_accept,     int, 0)	/* doio.c */
+PERLVARI(G, strategy_pipe,       int, 0)	/* doio.c */
+PERLVARI(G, strategy_socketpair, int, 0)	/* doio.c */
+
+#ifdef PERL_IMPLICIT_CONTEXT
+#  ifdef PERL_GLOBAL_STRUCT_PRIVATE
+/* per-module array of pointers to MY_CXT_KEY constants.
+ * It simulates each module having a static my_cxt_index var on builds
+ * which don't allow static vars */
+PERLVARI(G, my_cxt_keys, const char **, NULL)
+PERLVARI(G, my_cxt_keys_size, int,	0)	/* size of PL_my_cxt_keys */
+#  endif
 #endif

@@ -50,10 +50,6 @@ The following pragmas are defined (and have their own documentation).
 
 =over 12
 
-=item arybase
-
-Set indexing base via $[
-
 =item attributes
 
 Get/set subroutine or variable attributes
@@ -116,7 +112,7 @@ Declare constants
 
 =item deprecate
 
-Perl pragma for deprecating the core version of a module
+Perl pragma for deprecating the inclusion of a module in core
 
 =item diagnostics
 
@@ -148,7 +144,7 @@ Control the filetest permission operators
 
 =item if
 
-C<use> a Perl module if a condition holds (also can C<no> a module)
+C<use> a Perl module if a condition holds
 
 =item integer
 
@@ -212,7 +208,7 @@ Restrict unsafe constructs
 
 =item subs
 
-Predeclare sub names
+Predeclare subroutine names
 
 =item threads
 
@@ -237,6 +233,10 @@ Perl extension for Version Objects
 =item vmsish
 
 Control VMS-specific language features
+
+=item warnings
+
+Control optional warnings
 
 =item warnings::register
 
@@ -317,17 +317,13 @@ The Perl Compiler Backend
 
 Walk Perl syntax tree, printing concise info about ops
 
-=item B::Debug
-
-Walk Perl syntax tree, printing debug info about ops
-
 =item B::Deparse
 
 Perl compiler backend to produce perl code
 
 =item B::Op_private
 
- OP op_private flag definitions
+OP op_private flag definitions
 
 =item B::Showlex
 
@@ -493,6 +489,10 @@ Interface to zlib compression library
 
 Access Perl configuration information
 
+=item Config::Extensions
+
+Hash lookup of which core extensions were built.
+
 =item Config::Perl::V
 
 Structured data retrieval of perl -V output
@@ -571,7 +571,7 @@ Calculate digests of files
 
 =item DirHandle
 
-Supply object methods for directory handles
+(obsolete) supply object methods for directory handles
 
 =item Dumpvalue
 
@@ -1217,58 +1217,6 @@ A selection of general-utility list subroutines
 
 Indicate if List::Util was compiled with a C compiler
 
-=item Locale::Codes
-
-A distribution of modules to handle locale codes
-
-=item Locale::Codes::API
-
-A description of the callable function in each module
-
-=item Locale::Codes::Changes
-
-Details changes to Locale::Codes
-
-=item Locale::Codes::Country
-
-Standard codes for country identification
-
-=item Locale::Codes::Currency
-
-Standard codes for currency identification
-
-=item Locale::Codes::LangExt
-
-Standard codes for language extension identification
-
-=item Locale::Codes::LangFam
-
-Standard codes for language extension identification
-
-=item Locale::Codes::LangVar
-
-Standard codes for language variation identification
-
-=item Locale::Codes::Language
-
-Standard codes for language identification
-
-=item Locale::Codes::Script
-
-Standard codes for script identification
-
-=item Locale::Country
-
-Standard codes for country identification
-
-=item Locale::Currency
-
-Standard codes for currency identification
-
-=item Locale::Language
-
-Standard codes for language identification
-
 =item Locale::Maketext
 
 Framework for localization
@@ -1293,10 +1241,6 @@ Simple interface to Locale::Maketext::Lexicon
 
 Article about software localization
 
-=item Locale::Script
-
-Standard codes for script identification
-
 =item MIME::Base64
 
 Encoding and decoding of base64 strings
@@ -1316,10 +1260,6 @@ Arbitrary size integer/float math package
 =item Math::BigInt::Calc
 
 Pure Perl module to support Math::BigInt
-
-=item Math::BigInt::CalcEmu
-
-Emulate low-level math with BigInt code
 
 =item Math::BigInt::FastCalc
 
@@ -1717,6 +1657,10 @@ Convert POD data to formatted text
 
 Convert POD data to formatted color ASCII text
 
+=item Pod::Text::Overstrike
+
+Convert POD data to formatted overstrike text
+
 =item Pod::Text::Termcap
 
 Convert POD data to ASCII text with format escapes
@@ -2009,13 +1953,13 @@ Set the encoding for the output stream
 
 Exception event
 
+=item Test2::Event::Fail
+
+Event for a simple failed assertion
+
 =item Test2::Event::Generic
 
 Generic event type.
-
-=item Test2::Event::Info
-
-Info event base class
 
 =item Test2::Event::Note
 
@@ -2024,6 +1968,10 @@ Note event type
 =item Test2::Event::Ok
 
 Ok event type
+
+=item Test2::Event::Pass
+
+Event for a simple passing assertion
 
 =item Test2::Event::Plan
 
@@ -2041,9 +1989,69 @@ Event for subtest types
 
 Event for TAP version.
 
+=item Test2::Event::V2
+
+Second generation event.
+
 =item Test2::Event::Waiting
 
 Tell all procs/threads it is time to be done
+
+=item Test2::EventFacet
+
+Base class for all event facets.
+
+=item Test2::EventFacet::About
+
+Facet with event details.
+
+=item Test2::EventFacet::Amnesty
+
+Facet for assertion amnesty.
+
+=item Test2::EventFacet::Assert
+
+Facet representing an assertion.
+
+=item Test2::EventFacet::Control
+
+Facet for hub actions and behaviors.
+
+=item Test2::EventFacet::Error
+
+Facet for errors that need to be shown.
+
+=item Test2::EventFacet::Hub
+
+Facet for the hubs an event passes through.
+
+=item Test2::EventFacet::Info
+
+Facet for information a developer might care about.
+
+=item Test2::EventFacet::Info::Table
+
+Intermediary representation of a table.
+
+=item Test2::EventFacet::Meta
+
+Facet for meta-data
+
+=item Test2::EventFacet::Parent
+
+Facet for events contains other events
+
+=item Test2::EventFacet::Plan
+
+Facet for setting the plan
+
+=item Test2::EventFacet::Render
+
+Facet that dictates how to render an event.
+
+=item Test2::EventFacet::Trace
+
+Debug information for events
 
 =item Test2::Formatter
 
@@ -2097,13 +2105,17 @@ Tools used by Test2 and friends.
 
 Allow third party tools to safely attach meta-data
 
+=item Test2::Util::Facets2Legacy
+
+Convert facet data to the legacy event API.
+
 =item Test2::Util::HashBase
 
 Build hash based classes.
 
 =item Test2::Util::Trace
 
-Debug information for events
+Legacy wrapper fro L<Test2::EventFacet::Trace>.
 
 =item Test::Builder
 
@@ -2367,7 +2379,7 @@ Wrapper class for calling subs at end of scope
 
 =item autodie::Scope::GuardStack
 
- Hook stack for managing scopes via %^H
+Hook stack for managing scopes via %^H
 
 =item autodie::Util
 
@@ -2415,7 +2427,7 @@ completely) due to their sizes, volatility, or simply lack of time
 for adequate testing and configuration across the multitude of
 platforms on which Perl was beta-tested.  You are encouraged to
 look for them on CPAN (described below), or using web search engines
-like Alta Vista or Google.
+like Google or DuckDuckGo.
 
 =head1 CPAN
 

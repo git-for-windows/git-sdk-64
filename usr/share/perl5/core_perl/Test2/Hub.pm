@@ -2,17 +2,19 @@ package Test2::Hub;
 use strict;
 use warnings;
 
-our $VERSION = '1.302073';
+our $VERSION = '1.302162';
 
 
 use Carp qw/carp croak confess/;
-use Test2::Util qw/get_tid ipc_separator/;
+use Test2::Util qw/get_tid gen_uid/;
 
 use Scalar::Util qw/weaken/;
+use List::Util qw/first/;
 
 use Test2::Util::ExternalMeta qw/meta get_meta set_meta delete_meta/;
 use Test2::Util::HashBase qw{
     pid tid hid ipc
+    nested buffered
     no_ending
     _filters
     _pre_filters
@@ -23,6 +25,7 @@ use Test2::Util::HashBase qw{
     _context_init
     _context_release
 
+    uuid
     active
     count
     failed
@@ -33,13 +36,20 @@ use Test2::Util::HashBase qw{
     skip_reason
 };
 
-my $ID_POSTFIX = 1;
+my $UUID_VIA;
+
 sub init {
     my $self = shift;
 
     $self->{+PID} = $$;
     $self->{+TID} = get_tid();
-    $self->{+HID} = join ipc_separator, $self->{+PID}, $self->{+TID}, $ID_POSTFIX++;
+    $self->{+HID} = gen_uid();
+
+    $UUID_VIA ||= Test2::API::_add_uuid_via_ref();
+    $self->{+UUID} = ${$UUID_VIA}->('hub') if $$UUID_VIA;
+
+    $self->{+NESTED}   = 0 unless defined $self->{+NESTED};
+    $self->{+BUFFERED} = 0 unless defined $self->{+BUFFERED};
 
     $self->{+COUNT}    = 0;
     $self->{+FAILED}   = 0;
@@ -55,6 +65,21 @@ sub init {
 }
 
 sub is_subtest { 0 }
+
+sub _tb_reset {
+    my $self = shift;
+
+    # Nothing to do
+    return if $self->{+PID} == $$ && $self->{+TID} == get_tid();
+
+    $self->{+PID} = $$;
+    $self->{+TID} = get_tid();
+    $self->{+HID} = gen_uid();
+
+    if (my $ipc = $self->{+IPC}) {
+        $ipc->add_hub($self->{+HID});
+    }
+}
 
 sub reset_state {
     my $self = shift;
@@ -72,6 +97,8 @@ sub reset_state {
 sub inherit {
     my $self = shift;
     my ($from, %params) = @_;
+
+    $self->{+NESTED} ||= 0;
 
     $self->{+_FORMATTER} = $from->{+_FORMATTER}
         unless $self->{+_FORMATTER} || exists($params{formatter});
@@ -250,6 +277,25 @@ sub send {
     my $self = shift;
     my ($e) = @_;
 
+    $e->eid;
+
+    $e->add_hub(
+        {
+            details => ref($self),
+
+            buffered => $self->{+BUFFERED},
+            hid      => $self->{+HID},
+            nested   => $self->{+NESTED},
+            pid      => $self->{+PID},
+            tid      => $self->{+TID},
+            uuid     => $self->{+UUID},
+
+            ipc => $self->{+IPC} ? 1 : 0,
+        }
+    );
+
+    $e->set_uuid(${$UUID_VIA}->('event')) if $$UUID_VIA;
+
     if ($self->{+_PRE_FILTERS}) {
         for (@{$self->{+_PRE_FILTERS}}) {
             $e = $_->{code}->($self, $e);
@@ -281,32 +327,63 @@ sub process {
         }
     }
 
+    # Optimize the most common case
     my $type = ref($e);
-    my $is_ok = $type eq 'Test2::Event::Ok';
-    my $no_fail = $type eq 'Test2::Event::Diag' || $type eq 'Test2::Event::Note';
-    my $causes_fail = $is_ok ? !$e->{effective_pass} : $no_fail ? 0 : $e->causes_fail;
-    my $counted = $is_ok || (!$no_fail && $e->increments_count);
+    if ($type eq 'Test2::Event::Pass' || ($type eq 'Test2::Event::Ok' && $e->{pass})) {
+        my $count = ++($self->{+COUNT});
+        $self->{+_FORMATTER}->write($e, $count) if $self->{+_FORMATTER};
 
-    $self->{+COUNT}++      if $counted;
-    $self->{+FAILED}++     if $causes_fail && $counted;
-    $self->{+_PASSING} = 0 if $causes_fail;
+        if ($self->{+_LISTENERS}) {
+            $_->{code}->($self, $e, $count) for @{$self->{+_LISTENERS}};
+        }
 
-    my $callback = $e->callback($self) unless $is_ok || $no_fail;
-
-    my $count = $self->{+COUNT};
-
-    $self->{+_FORMATTER}->write($e, $count) if $self->{+_FORMATTER};
-
-    if ($self->{+_LISTENERS}) {
-        $_->{code}->($self, $e, $count) for @{$self->{+_LISTENERS}};
+        return $e;
     }
 
-    return $e if $is_ok || $no_fail;
+    my $f = $e->facet_data;
 
-    my $code = $e->terminate;
+    my $fail = 0;
+    $fail = 1 if $f->{assert} && !$f->{assert}->{pass};
+    $fail = 1 if $f->{errors} && grep { $_->{fail} } @{$f->{errors}};
+    $fail = 0 if $f->{amnesty};
+
+    $self->{+COUNT}++ if $f->{assert};
+    $self->{+FAILED}++ if $fail && $f->{assert};
+    $self->{+_PASSING} = 0 if $fail;
+
+    my $code = $f->{control}->{terminate};
+    my $count = $self->{+COUNT};
+
+    if (my $plan = $f->{plan}) {
+        if ($plan->{skip}) {
+            $self->plan('SKIP');
+            $self->set_skip_reason($plan->{details} || 1);
+            $code ||= 0;
+        }
+        elsif ($plan->{none}) {
+            $self->plan('NO PLAN');
+        }
+        else {
+            $self->plan($plan->{count});
+        }
+    }
+
+    $e->callback($self) if $f->{control}->{has_callback};
+
+    $self->{+_FORMATTER}->write($e, $count, $f) if $self->{+_FORMATTER};
+
+    if ($self->{+_LISTENERS}) {
+        $_->{code}->($self, $e, $count, $f) for @{$self->{+_LISTENERS}};
+    }
+
+    if ($f->{control}->{halt}) {
+        $code ||= 255;
+        $self->set_bailed_out($e);
+    }
+
     if (defined $code) {
-        $self->{+_FORMATTER}->terminate($e) if $self->{+_FORMATTER};
-        $self->terminate($code, $e);
+        $self->{+_FORMATTER}->terminate($e, $f) if $self->{+_FORMATTER};
+        $self->terminate($code, $e, $f);
     }
 
     return $e;
@@ -339,11 +416,11 @@ sub finalize {
     my $failed = $self->{+FAILED};
     my $active = $self->{+ACTIVE};
 
-	# return if NOTHING was done.
-	unless ($active || $do_plan || defined($plan) || $count || $failed) {
-		$self->{+_FORMATTER}->finalize($plan, $count, $failed, 0, $self->is_subtest) if $self->{+_FORMATTER};
-		return;
-	}
+    # return if NOTHING was done.
+    unless ($active || $do_plan || defined($plan) || $count || $failed) {
+        $self->{+_FORMATTER}->finalize($plan, $count, $failed, 0, $self->is_subtest) if $self->{+_FORMATTER};
+        return;
+    }
 
     unless ($self->{+ENDED}) {
         if ($self->{+_FOLLOW_UPS}) {
@@ -381,7 +458,7 @@ Second End: $sfile line $sline
     $self->{+ENDED} = $frame;
     my $pass = $self->is_passing(); # Generate the final boolean.
 
-	$self->{+_FORMATTER}->finalize($plan, $count, $failed, $pass, $self->is_subtest) if $self->{+_FORMATTER};
+    $self->{+_FORMATTER}->finalize($plan, $count, $failed, $pass, $self->is_subtest) if $self->{+_FORMATTER};
 
     return $pass;
 }
@@ -452,7 +529,6 @@ sub DESTROY {
     my $ipc = $self->{+IPC} || return;
     return unless $$ == $self->{+PID};
     return unless get_tid() == $self->{+TID};
-
     $ipc->drop_hub($self->{+HID});
 }
 
@@ -640,7 +716,7 @@ the reference returned by C<filter()> or C<pre_filter()>.
 =item $hub->follow_op(sub { ... })
 
 Use this to add behaviors that are called just before the hub is finalized. The
-only argument to your codeblock will be a L<Test2::Util::Trace> instance.
+only argument to your codeblock will be a L<Test2::EventFacet::Trace> instance.
 
     $hub->follow_up(sub {
         my ($trace, $hub) = @_;
@@ -722,6 +798,10 @@ Get the thread id under which the hub was created.
 =item $hud = $hub->hid()
 
 Get the identifier string of the hub.
+
+=item $uuid = $hub->uuid()
+
+If UUID tagging is enabled (see L<Test2::API>) then the hub will have a UUID.
 
 =item $ipc = $hub->ipc()
 
@@ -819,7 +899,7 @@ F<http://github.com/Test-More/test-more/>.
 
 =head1 COPYRIGHT
 
-Copyright 2016 Chad Granum E<lt>exodist@cpan.orgE<gt>.
+Copyright 2019 Chad Granum E<lt>exodist@cpan.orgE<gt>.
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

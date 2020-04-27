@@ -2,10 +2,10 @@ package Module::CoreList::Utils;
 
 use strict;
 use warnings;
-use vars qw[$VERSION %utilities];
 use Module::CoreList;
 
-$VERSION = '5.20180414_26';
+our $VERSION = '5.20200314';
+our %utilities;
 
 sub utilities {
     my $perl = shift;
@@ -1368,8 +1368,220 @@ my %delta = (
         removed => {
         }
     },
+    5.024004 => {
+        delta_from => 5.024003,
+        changed => {
+        },
+        removed => {
+        }
+    },
     5.026002 => {
         delta_from => 5.026001,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.027011 => {
+        delta_from => 5.027010,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.028000 => {
+        delta_from => 5.027011,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029000 => {
+        delta_from => 5.028,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029001 => {
+        delta_from => 5.029000,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029002 => {
+        delta_from => 5.029001,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029003 => {
+        delta_from => 5.029002,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029004 => {
+        delta_from => 5.029003,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029005 => {
+        delta_from => 5.029004,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.026003 => {
+        delta_from => 5.026002,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.028001 => {
+        delta_from => 5.028000,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029006 => {
+        delta_from => 5.029005,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029007 => {
+        delta_from => 5.029006,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029008 => {
+        delta_from => 5.029007,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029009 => {
+        delta_from => 5.029008,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.028002 => {
+        delta_from => 5.028001,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.029010 => {
+        delta_from => 5.029009,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.030000 => {
+        delta_from => 5.029010,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.031000 => {
+        delta_from => 5.03,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.031001 => {
+        delta_from => 5.031,
+        changed => {
+        },
+        removed => {
+            'podselect'             => 1,
+        }
+    },
+    5.031002 => {
+        delta_from => 5.031001,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.031003 => {
+        delta_from => 5.031002,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.031004 => {
+        delta_from => 5.031003,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.031005 => {
+        delta_from => 5.031004,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.030001 => {
+        delta_from => 5.03,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.031006 => {
+        delta_from => 5.031005,
+        changed => {
+            'streamzip'             => '1',
+        },
+        removed => {
+        }
+    },
+    5.031007 => {
+        delta_from => 5.031006,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.031008 => {
+        delta_from => 5.031007,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.031009 => {
+        delta_from => 5.031008,
+        changed => {
+        },
+        removed => {
+        }
+    },
+    5.030002 => {
+        delta_from => 5.030001,
         changed => {
         },
         removed => {

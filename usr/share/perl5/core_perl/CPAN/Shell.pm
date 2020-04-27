@@ -47,7 +47,7 @@ use vars qw(
              "CPAN/Tarzip.pm",
              "CPAN/Version.pm",
             );
-$VERSION = "5.5006";
+$VERSION = "5.5008";
 # record the initial timestamp for reload.
 $reload = { map {$INC{$_} ? ($_,(stat $INC{$_})[9]) : ()} @relo };
 @CPAN::Shell::ISA = qw(CPAN::Debug);
@@ -562,7 +562,7 @@ sub reload {
     $self->debug("self[$self]command[$command]arg[@arg]") if $CPAN::DEBUG;
     if ($command =~ /^cpan$/i) {
         my $redef = 0;
-        chdir $CPAN::iCwd if $CPAN::iCwd; # may fail
+        chdir "$CPAN::iCwd" if $CPAN::iCwd; # may fail
         my $failed;
       MFILE: for my $f (@relo) {
             next unless exists $INC{$f};
@@ -1023,7 +1023,7 @@ CPAN_VERSION: %s %s
         $need{$module->id}++;
     }
     unless (%need) {
-        if ($what eq "u") {
+        if (!@expand || $what eq "u") {
             $CPAN::Frontend->myprint("No modules found for @args\n");
         } elsif ($what eq "r") {
             $CPAN::Frontend->myprint("All modules are up to date for @args\n");

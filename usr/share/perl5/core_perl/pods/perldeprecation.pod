@@ -50,6 +50,117 @@ changes to the variable that it closes over, add an explicit C<return>:
 
 This usage has been deprecated, and will no longer be allowed in Perl 5.32.
 
+=head3 Use of strings with code points over 0xFF as arguments to C<vec>
+
+C<vec> views its string argument as a sequence of bits.  A string
+containing a code point over 0xFF is nonsensical.  This usage is
+deprecated in Perl 5.28, and will be removed in Perl 5.32.
+
+=head3 Use of code points over 0xFF in string bitwise operators
+
+The string bitwise operators, C<&>, C<|>, C<^>, and C<~>, treat their
+operands as strings of bytes. As such, values above 0xFF are
+nonsensical. Some instances of these have been deprecated since Perl
+5.24, and were made fatal in 5.28, but it turns out that in cases where
+the wide characters did not affect the end result, no deprecation
+notice was raised, and so remain legal.  Now, all occurrences either are
+fatal or raise a deprecation warning, so that the remaining legal
+occurrences will be fatal in 5.32.
+
+An example of this is
+
+ "" & "\x{100}"
+
+The wide character is not used in the C<&> operation because the left
+operand is shorter.  This now warns anyway.
+
+=head3 hostname() doesn't accept any arguments
+
+The function C<hostname()> in the L<Sys::Hostname> module has always
+been documented to be called with no arguments.  Historically it has not
+enforced this, and has actually accepted and ignored any arguments.  As a
+result, some users have got the mistaken impression that an argument does
+something useful.  To avoid these bugs, the function is being made strict.
+Passing arguments was deprecated in Perl 5.28, and will become fatal in
+Perl 5.32.
+
+=head3 Unescaped left braces in regular expressions
+
+The simple rule to remember, if you want to match a literal C<{>
+character (U+007B C<LEFT CURLY BRACKET>) in a regular expression
+pattern, is to escape each literal instance of it in some way.
+Generally easiest is to precede it with a backslash, like C<\{>
+or enclose it in square brackets (C<[{]>).  If the pattern
+delimiters are also braces, any matching right brace (C<}>) should
+also be escaped to avoid confusing the parser, for example,
+
+ qr{abc\{def\}ghi}
+
+Forcing literal C<{> characters to be escaped will enable the Perl
+language to be extended in various ways in future releases.  To avoid
+needlessly breaking existing code, the restriction is is not enforced in
+contexts where there are unlikely to ever be extensions that could
+conflict with the use there of C<{> as a literal.  A non-deprecation
+warning that the left brace is being taken literally is raised in
+contexts where there could be confusion about it.
+
+Literal uses of C<{> were deprecated in Perl 5.20, and some uses of it
+started to give deprecation warnings since. These cases were made fatal
+in Perl 5.26. Due to an oversight, not all cases of a use of a literal
+C<{> got a deprecation warning.  Some cases started warning in Perl 5.26,
+and were made fatal in Perl 5.30.  Other cases started in Perl 5.28,
+and will be made fatal in 5.32.
+
+=head3 In XS code, use of various macros dealing with UTF-8.
+
+These macros will require an extra parameter in Perl 5.32:
+C<isALPHANUMERIC_utf8>,
+C<isASCII_utf8>,
+C<isBLANK_utf8>,
+C<isCNTRL_utf8>,
+C<isDIGIT_utf8>,
+C<isIDFIRST_utf8>,
+C<isPSXSPC_utf8>,
+C<isSPACE_utf8>,
+C<isVERTWS_utf8>,
+C<isWORDCHAR_utf8>,
+C<isXDIGIT_utf8>,
+C<isALPHANUMERIC_LC_utf8>,
+C<isALPHA_LC_utf8>,
+C<isASCII_LC_utf8>,
+C<isBLANK_LC_utf8>,
+C<isCNTRL_LC_utf8>,
+C<isDIGIT_LC_utf8>,
+C<isGRAPH_LC_utf8>,
+C<isIDCONT_LC_utf8>,
+C<isIDFIRST_LC_utf8>,
+C<isLOWER_LC_utf8>,
+C<isPRINT_LC_utf8>,
+C<isPSXSPC_LC_utf8>,
+C<isPUNCT_LC_utf8>,
+C<isSPACE_LC_utf8>,
+C<isUPPER_LC_utf8>,
+C<isWORDCHAR_LC_utf8>,
+C<isXDIGIT_LC_utf8>,
+C<toFOLD_utf8>,
+C<toLOWER_utf8>,
+C<toTITLE_utf8>,
+and
+C<toUPPER_utf8>.
+
+There is now a macro that corresponds to each one of these, simply by
+appending C<_safe> to the name.  It takes the extra parameter.
+For example, C<isDIGIT_utf8_safe> corresponds to C<isDIGIT_utf8>, but
+takes the extra parameter, and its use doesn't generate a deprecation
+warning.  All are documented in L<perlapi/Character case changing> and
+L<perlapi/Character classification>.
+
+You can change to use these versions at any time, or, if you can live
+with the deprecation messages, wait until 5.32 and add the parameter to
+the existing calls, without changing the names.
+
+This change was originally scheduled for 5.30, but was delayed.
+
 =head2 Perl 5.30
 
 =head3 C<< $* >> is no longer supported
@@ -72,8 +183,17 @@ used functionality was removed in Perl 5.10. In order to free up
 the variable for a future special meaning, its use will be a fatal
 error in Perl 5.30.
 
-To specify how numbers are formatted when printed, one is adviced
+To specify how numbers are formatted when printed, one is advised
 to use C<< printf >> or C<< sprintf >> instead.
+
+=head3 Assigning non-zero to C<< $[ >> is fatal
+
+This variable (and the corresponding C<array_base> feature and
+L<arybase> module) allowed changing the base for array and string
+indexing operations.
+
+Setting this to a non-zero value has been deprecated since Perl 5.12 and
+throws a fatal error as of Perl 5.30.
 
 =head3 C<< File::Glob::glob() >> will disappear
 
@@ -89,30 +209,9 @@ disappear in Perl 5.30.
 Code using C<< File::Glob::glob() >> should call
 C<< File::Glob::bsd_glob() >> instead.
 
+=head3 Unescaped left braces in regular expressions (for 5.30)
 
-=head3 Unescaped left braces in regular expressions
-
-The simple rule to remember, if you want to match a literal C<{>
-character (U+007B C<LEFT CURLY BRACKET>) in a regular expression
-pattern, is to escape each literal instance of it in some way.
-Generally easiest is to precede it with a backslash, like C<\{>
-or enclose it in square brackets (C<[{]>).  If the pattern
-delimiters are also braces, any matching right brace (C<}>) should
-also be escaped to avoid confusing the parser, for example,
-
- qr{abc\{def\}ghi}
-
-Forcing literal C<{> characters to be escaped will enable the Perl
-language to be extended in various ways in future releases.  To avoid
-needlessly breaking existing code, the restriction is is not enforced in
-contexts where there are unlikely to ever be extensions that could
-conflict with the use there of C<{> as a literal.
-
-Literal uses of C<{> were deprecated in Perl 5.20, and some uses of it
-started to give deprecation warnings since. These cases were made fatal
-in Perl 5.26. Due to an oversight, not all cases of a use of a literal
-C<{> got a deprecation warning. These cases started warning in Perl 5.26,
-and they will be fatal by Perl 5.30.
+See L</Unescaped left braces in regular expressions> above.
 
 =head3 Unqualified C<dump()>
 
@@ -183,96 +282,46 @@ A grapheme is what appears to a native-speaker of a language to be a
 character.  In Unicode (and hence Perl) a grapheme may actually be
 several adjacent characters that together form a complete grapheme.  For
 example, there can be a base character, like "R" and an accent, like a
-circumflex "^", that appear when displayed to be a single character with
-the circumflex hovering over the "R".  Perl currently allows things like
-that circumflex to be delimiters of strings, patterns, I<etc>.  When
-displayed, the circumflex would look like it belongs to the character
-just to the left of it.  In order to move the language to be able to
-accept graphemes as delimiters, we have to deprecate the use of
-delimiters which aren't graphemes by themselves.  Also, a delimiter must
-already be assigned (or known to be never going to be assigned) to try
-to future-proof code, for otherwise code that works today would fail to
-compile if the currently unassigned delimiter ends up being something
-that isn't a stand-alone grapheme.  Because Unicode is never going to
-assign
-L<non-character code points|perlunicode/Noncharacter code points>, nor
-L<code points that are above the legal Unicode maximum|
-perlunicode/Beyond Unicode code points>, those can be delimiters, and
-their use won't raise this warning.
+circumflex "^", that appear to be a single character when displayed,
+with the circumflex hovering over the "R".
 
-In Perl 5.30, delimiters which are unassigned code points, or which
-are non-standalone graphemes will be fatal.
+As of Perl 5.30, use of delimiters which are non-standalone graphemes is
+fatal, in order to move the language to be able to accept
+multi-character graphemes as delimiters.
 
-=head3 In XS code, use of various macros dealing with UTF-8.
+Also, as of Perl 5.30, delimiters which are unassigned code points
+but that may someday become assigned are prohibited.  Otherwise, code
+that works today would fail to compile if the currently unassigned
+delimiter ends up being something that isn't a stand-alone grapheme.
+Because Unicode is never going to assign L<non-character code
+points|perlunicode/Noncharacter code points>, nor L<code points that are
+above the legal Unicode maximum|perlunicode/Beyond Unicode code
+points>, those can be delimiters.
 
-These macros will require an extra parameter in Perl 5.30:
-C<isALPHANUMERIC_utf8>,
-C<isASCII_utf8>,
-C<isBLANK_utf8>,
-C<isCNTRL_utf8>,
-C<isDIGIT_utf8>,
-C<isIDFIRST_utf8>,
-C<isPSXSPC_utf8>,
-C<isSPACE_utf8>,
-C<isVERTWS_utf8>,
-C<isWORDCHAR_utf8>,
-C<isXDIGIT_utf8>,
-C<isALPHANUMERIC_LC_utf8>,
-C<isALPHA_LC_utf8>,
-C<isASCII_LC_utf8>,
-C<isBLANK_LC_utf8>,
-C<isCNTRL_LC_utf8>,
-C<isDIGIT_LC_utf8>,
-C<isGRAPH_LC_utf8>,
-C<isIDCONT_LC_utf8>,
-C<isIDFIRST_LC_utf8>,
-C<isLOWER_LC_utf8>,
-C<isPRINT_LC_utf8>,
-C<isPSXSPC_LC_utf8>,
-C<isPUNCT_LC_utf8>,
-C<isSPACE_LC_utf8>,
-C<isUPPER_LC_utf8>,
-C<isWORDCHAR_LC_utf8>,
-C<isXDIGIT_LC_utf8>,
-C<toFOLD_utf8>,
-C<toLOWER_utf8>,
-C<toTITLE_utf8>,
-and
-C<toUPPER_utf8>.
-
-There is now a macro that corresponds to each one of these, simply by
-appending C<_safe> to the name.  It takes the extra parameter.
-For example, C<isDIGIT_utf8_safe> corresponds to C<isDIGIT_utf8>, but
-takes the extra parameter, and its use doesn't generate a deprecation
-warning.  All are documented in L<perlapi/Character case changing> and
-L<perlapi/Character classification>.
-
-You can change to use these versions at any time, or, if you can live
-with the deprecation messages, wait until 5.30 and add the parameter to
-the existing calls, without changing the names.
 
 =head2 Perl 5.28
 
-=head3 Attribute "%s" is deprecated, and will disappear in 5.28
+=head3 Attributes C<< :locked >> and C<< :unique >>
 
 The attributes C<< :locked >> (on code references) and C<< :unique >>
 (on array, hash and scalar references) have had no effect since
 Perl 5.005 and Perl 5.8.8 respectively. Their use has been deprecated
 since.
 
-These attributes will no longer be recognized in Perl 5.28, and will
-then result in a syntax error. Since the attributes do not do anything,
-removing them from your code fixes the deprecation warning; and removing
-them will not influence the behaviour of your code.
+As of Perl 5.28, these attributes are syntax errors. Since the
+attributes do not do anything, removing them from your code fixes
+the syntax error; and removing them will not influence the behaviour
+of your code.
 
 
 =head3 Bare here-document terminators
 
 Perl has allowed you to use a bare here-document terminator to have the
 here-document end at the first empty line. This practise was deprecated
-in Perl 5.000, and this will be a fatal error in Perl 5.28.
+in Perl 5.000; as of Perl 5.28, using a bare here-document terminator
+throws a fatal error.
 
-You are encouraged to use the explictly quoted form if you wish to
+You are encouraged to use the explicitly quoted form if you wish to
 use an empty line as the terminator of the here-document:
 
   print <<"";
@@ -293,7 +342,8 @@ In Perl 5.20.0 this was changed so that it would be B<exactly> the same as
 setting C<$/> to undef, with the exception that this warning would be
 thrown.
 
-In Perl 5.28, this will throw a fatal error.
+As of Perl 5.28, setting C<$/> to a reference of a non-positive
+integer throws a fatal error.
 
 You are recommended to change your code to set C<$/> to C<undef> explicitly
 if you wish to slurp the file.
@@ -301,38 +351,38 @@ if you wish to slurp the file.
 
 =head3 Limit on the value of Unicode code points.
 
-Unicode only allows code points up to 0x10FFFF, but Perl allows much
-larger ones. However, using code points exceeding the maximum value
-of an integer (C<IV_MAX>) may break the perl interpreter in some constructs,
-including causing it to hang in a few cases.  The known problem areas
-are in C<tr///>, regular expression pattern matching using quantifiers,
-as quote delimiters in C<qI<X>...I<X>> (where I<X> is the C<chr()> of a large
-code point), and as the upper limits in loops.
+Unicode only allows code points up to 0x10FFFF, but Perl allows
+much larger ones. Up till Perl 5.28, it was allowed to use code
+points exceeding the maximum value of an integer (C<IV_MAX>).
+However, that did break the perl interpreter in some constructs,
+including causing it to hang in a few cases.  The known problem
+areas were in C<tr///>, regular expression pattern matching using
+quantifiers, as quote delimiters in C<qI<X>...I<X>> (where I<X> is
+the C<chr()> of a large code point), and as the upper limits in
+loops.
 
-The use of out of range code points was deprecated in Perl 5.24, and
-it will be a fatal error in Perl 5.28.
+The use of out of range code points was deprecated in Perl 5.24; as of
+Perl 5.28 using a code point exceeding C<IV_MAX> throws a fatal error.
 
 If your code is to run on various platforms, keep in mind that the upper
-limit depends on the platform.  It is much larger on 64-bit word sizes
-than 32-bit ones.
+limit depends on the platform. It is much larger on 64-bit word sizes
+than 32-bit ones. For 32-bit integers, C<IV_MAX> equals C<0x7FFFFFFF>,
+for 64-bit integers, C<IV_MAX> equals C<0x7FFFFFFFFFFFFFFF>.
 
 
 =head3 Use of comma-less variable list in formats.
 
-It's allowed to use a list of variables in a format, without
+It was allowed to use a list of variables in a format, without
 separating them with commas. This usage has been deprecated
-for a long time, and it will be a fatal error in Perl 5.28.
-
-
+for a long time, and as of Perl 5.28, this throws a fatal error.
 
 =head3 Use of C<\N{}>
 
 Use of C<\N{}> with nothing between the braces was deprecated in
-Perl 5.24, and will throw a fatal error in Perl 5.28.
+Perl 5.24, and throws a fatal error as of Perl 5.28.
 
 Since such a construct is equivalent to using an empty string,
 you are recommended to remove such C<\N{}> constructs.
-
 
 =head3 Using the same symbol to open a filehandle and a dirhandle
 
@@ -342,7 +392,7 @@ This idiom is likely to be confusing, and it was deprecated in
 Perl 5.10.
 
 Using the same symbol to C<open()> a filehandle and a dirhandle
-will be a fatal error in Perl 5.28.
+throws a fatal error as of Perl 5.28.
 
 You should be using two different symbols instead.
 
@@ -353,26 +403,27 @@ the C<encoding> pragma. Setting this variable to anything other
 than C<undef> was deprecated in Perl 5.22. Full deprecation
 of the variable happened in Perl 5.25.3.
 
-Setting this variable will become a fatal error in Perl 5.28.
+Setting this variable to anything other than an undefined value
+throws a fatal error as of Perl 5.28.
 
 
 =head3 C<< B::OP::terse >>
 
 This method, which just calls C<< B::Concise::b_terse >>, has been
-deprecated, and will disappear in Perl 5.28. Please use
+deprecated, and disappeared in Perl 5.28. Please use
 C<< B::Concise >> instead.
 
 
 
-=head3 Use of inherited AUTOLOAD for non-method %s() is deprecated
+=head3 Use of inherited AUTOLOAD for non-method %s::%s() is no longer allowed
 
-As an (ahem) accidental feature, C<AUTOLOAD> subroutines are looked
+As an (ahem) accidental feature, C<AUTOLOAD> subroutines were looked
 up as methods (using the C<@ISA> hierarchy) even when the subroutines
 to be autoloaded were called as plain functions (e.g. C<Foo::bar()>),
 not as methods (e.g. C<< Foo->bar() >> or C<< $obj->bar() >>).
 
-This bug will be rectified in future by using method lookup only for
-methods' C<AUTOLOAD>s.
+This bug was deprecated in Perl 5.004, has been rectified in Perl 5.28
+by using method lookup only for methods' C<AUTOLOAD>s.
 
 The simple rule is:  Inheritance will not work when autoloading
 non-methods.  The simple fix for old code is:  In any module that used
@@ -384,19 +435,17 @@ In code that currently says C<use AutoLoader; @ISA = qw(AutoLoader);>
 you should remove AutoLoader from @ISA and change C<use AutoLoader;> to
 C<use AutoLoader 'AUTOLOAD';>.
 
-This feature was deprecated in Perl 5.004, and will be fatal in Perl 5.28.
-
 
 =head3 Use of code points over 0xFF in string bitwise operators
 
 The string bitwise operators, C<&>, C<|>, C<^>, and C<~>, treat
 their operands as strings of bytes. As such, values above 0xFF
 are nonsensical. Using such code points with these operators
-was deprecated in Perl 5.24, and will be fatal in Perl 5.28.
+was deprecated in Perl 5.24, and is fatal as of Perl 5.28.
 
 =head3 In XS code, use of C<to_utf8_case()>
 
-This function is being removed; instead convert to call
+This function has been removed as of Perl 5.28; instead convert to call
 the appropriate one of:
 L<C<toFOLD_utf8_safe>|perlapi/toFOLD_utf8_safe>.
 L<C<toLOWER_utf8_safe>|perlapi/toLOWER_utf8_safe>,
@@ -411,13 +460,13 @@ L<C<toUPPER_utf8_safe>|perlapi/toUPPER_utf8_safe>.
 Since Perl 5.18, the option C<< --libpods >> has been deprecated, and
 using this option did not do anything other than producing a warning.
 
-The C<< --libpods >> option is no longer recognized in Perl 5.26.
+The C<< --libpods >> option is no longer recognized as of Perl 5.26.
 
 
 =head3 The utilities C<< c2ph >> and C<< pstruct >>
 
 These old, perl3-era utilities have been deprecated in favour of
-C<< h2xs >> for a long time. In Perl 5.26, they have been removed.
+C<< h2xs >> for a long time. As of Perl 5.26, they have been removed.
 
 
 =head3 Trapping C<< $SIG {__DIE__} >> other than during program exit.
@@ -431,7 +480,7 @@ pending exception is actually a useful feature, and not a bug.
 
 Perl never issued a deprecation warning for this; the deprecation
 was by documentation policy only. But this deprecation has been
-lifted in Perl 5.26.
+lifted as of Perl 5.26.
 
 
 =head3 Malformed UTF-8 string in "%s"

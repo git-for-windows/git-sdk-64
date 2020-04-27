@@ -20,8 +20,7 @@ to do that first.
 
 =head1 COMMON PROBLEMS
 
-Perl source plays by ANSI C89 rules: no C99 (or C++) extensions.  In
-some cases we have to take pre-ANSI requirements into consideration.
+Perl source plays by ANSI C89 rules: no C99 (or C++) extensions.
 You don't care about some particular platform having broken Perl? I
 hear there is still a strong demand for J2EE programmers.
 
@@ -916,7 +915,7 @@ Lots of junk will go past as gdb reads in the relevant source files and
 libraries, and then:
 
     Breakpoint 1, Perl_pp_add () at pp_hot.c:309
-    309         dSP; dATARGET; tryAMAGICbin(add,opASSIGN);
+    1396    dSP; dATARGET; bool useleft; SV *svl, *svr;
     (gdb) step
     311           dPOPTOPnnrl_ul;
     (gdb)
@@ -965,7 +964,7 @@ subroutine:
 
 We can also dump out this op: the current op is always stored in
 C<PL_op>, and we can dump it with C<Perl_op_dump>.  This'll give us
-similar output to L<B::Debug|B::Debug>.
+similar output to CPAN module B::Debug.
 
     (gdb) print Perl_op_dump(PL_op)
     {
@@ -1106,7 +1105,7 @@ being a prime example).  If Configure C<-Dgccansipedantic> is used, the
 C<cflags> frontend selects C<-ansi -pedantic> for the platforms where
 they are known to be safe.
 
-Starting from Perl 5.9.4 the following extra flags are added:
+The following extra flags are added:
 
 =over 4
 
@@ -1120,7 +1119,19 @@ C<-Wextra>
 
 =item *
 
-C<-Wdeclaration-after-statement>
+C<-Wc++-compat>
+
+=item *
+
+C<-Wwrite-strings>
+
+=item *
+
+C<-Werror=declaration-after-statement>
+
+=item *
+
+C<-Werror=pointer-arith>
 
 =back
 
@@ -1128,10 +1139,6 @@ The following flags would be nice to have but they would first need
 their own Augean stablemaster:
 
 =over 4
-
-=item *
-
-C<-Wpointer-arith>
 
 =item *
 

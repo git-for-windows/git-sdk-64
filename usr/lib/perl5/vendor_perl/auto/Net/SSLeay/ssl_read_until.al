@@ -3,7 +3,7 @@
 # See AutoSplit.pm.
 package Net::SSLeay;
 
-#line 786 "blib/lib/Net/SSLeay.pm (autosplit into blib/lib/auto/Net/SSLeay/ssl_read_until.al)"
+#line 799 "blib/lib/Net/SSLeay.pm (autosplit into blib/lib/auto/Net/SSLeay/ssl_read_until.al)"
 ### from patch by Clinton Wong <clintdw@netcom.com>
 
 # ssl_read_until($ssl [, $delimit [, $max_length]])
@@ -60,14 +60,14 @@ sub ssl_read_until ($;$$) {
 	    $found = index($match, $delim);
 
 	    if ($found > -1) {
-		#$got = Net::SSLeay::read($ssl, $found+$len_delim);
+		#$got = Net::SSLeay::ssl_read_all($ssl, $found+$len_delim);
 		#read up to the end of the delimiter
-		$got = Net::SSLeay::read($ssl,
+		$got = Net::SSLeay::ssl_read_all($ssl,
 					 $found + $len_delim
 					 - ((blength($match)) - (blength($got))));
 		$done = 1;
 	    } else {
-		$got = Net::SSLeay::read($ssl, $peek_length);
+		$got = Net::SSLeay::ssl_read_all($ssl, $peek_length);
 		$done = 1 if ($peek_length == $max_length - blength($reply));
 	    }
 
@@ -78,7 +78,7 @@ sub ssl_read_until ($;$$) {
 	}
     } else {
 	while (!defined $max_length || length $reply < $max_length) {
-	    $got = Net::SSLeay::read($ssl,1);  # one by one
+	    $got = Net::SSLeay::ssl_read_all($ssl,1);  # one by one
 	    last if print_errs('SSL_read');
 	    debug_read(\$reply, \$got) if $trace>1;
 	    last if $got eq '';

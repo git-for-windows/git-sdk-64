@@ -7,15 +7,14 @@
 package IO::Socket::INET;
 
 use strict;
-our(@ISA, $VERSION);
 use IO::Socket;
 use Socket;
 use Carp;
 use Exporter;
 use Errno;
 
-@ISA = qw(IO::Socket);
-$VERSION = "1.35";
+our @ISA = qw(IO::Socket);
+our $VERSION = "1.40";
 
 my $EINVAL = exists(&Errno::EINVAL) ? Errno::EINVAL() : 1;
 
@@ -407,12 +406,12 @@ Examples:
                            Broadcast => 1 )
                        or die "Can't bind : $@\n";
 
- NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+B<NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE>
 
 As of VERSION 1.18 all IO::Socket objects have autoflush turned on
 by default. This was not the case with earlier releases.
 
- NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+B<NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE>
 
 =back
 

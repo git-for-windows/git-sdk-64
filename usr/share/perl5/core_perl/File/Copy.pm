@@ -16,13 +16,15 @@ use Config;
 # And then we need these games to avoid loading overload, as that will
 # confuse miniperl during the bootstrap of perl.
 my $Scalar_Util_loaded = eval q{ require Scalar::Util; require overload; 1 };
+# We want HiRes stat and utime if available
+BEGIN { eval q{ use Time::HiRes qw( stat utime ) } };
 our(@ISA, @EXPORT, @EXPORT_OK, $VERSION, $Too_Big, $Syscopy_is_copy);
 sub copy;
 sub syscopy;
 sub cp;
 sub mv;
 
-$VERSION = '2.32';
+$VERSION = '2.34';
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -499,7 +501,7 @@ $! will be set if an error was encountered.
 Before calling copy() or move() on a filehandle, the caller should
 close or flush() the file to avoid writes being lost. Note that this
 is the case even for move(), because it may actually copy the file,
-depending on the OS-specific inplementation, and the underlying
+depending on the OS-specific implementation, and the underlying
 filesystem(s).
 
 =head1 AUTHOR

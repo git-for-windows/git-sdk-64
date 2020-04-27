@@ -106,7 +106,8 @@
     magic_vtable_max | PERL_MAGIC_VALUE_MAGIC,
     0,
     0,
-    0,
+    /* nonelem 'Y' Array element that does not exist */
+    want_vtbl_nonelem | PERL_MAGIC_VALUE_MAGIC,
     0,
     0,
     /* lvref '\' Lvalue reference constructor */

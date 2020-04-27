@@ -2,10 +2,16 @@ package Test2::Util;
 use strict;
 use warnings;
 
-our $VERSION = '1.302073';
+our $VERSION = '1.302162';
 
-
+use POSIX();
 use Config qw/%Config/;
+use Carp qw/croak/;
+
+BEGIN {
+    local ($@, $!, $SIG{__DIE__});
+    *HAVE_PERLIO = eval { require PerlIO; PerlIO->VERSION(1.02); } ? sub() { 1 } : sub() { 0 };
+}
 
 our @EXPORT_OK = qw{
     try
@@ -17,9 +23,19 @@ our @EXPORT_OK = qw{
     CAN_REALLY_FORK
     CAN_FORK
 
+    CAN_SIGSYS
+
     IS_WIN32
 
     ipc_separator
+
+    gen_uid
+
+    do_rename do_unlink
+
+    try_sig_mask
+
+    clone_io
 };
 BEGIN { require Exporter; our @ISA = qw(Exporter) }
 
@@ -143,6 +159,120 @@ sub pkg_to_file {
 
 sub ipc_separator() { "~" }
 
+my $UID = 1;
+sub gen_uid() { join ipc_separator() => ($$, get_tid(), time, $UID++) }
+
+sub _check_for_sig_sys {
+    my $sig_list = shift;
+    return $sig_list =~ m/\bSYS\b/;
+}
+
+BEGIN {
+    if (_check_for_sig_sys($Config{sig_name})) {
+        *CAN_SIGSYS = sub() { 1 };
+    }
+    else {
+        *CAN_SIGSYS = sub() { 0 };
+    }
+}
+
+my %PERLIO_SKIP = (
+    unix => 1,
+    via  => 1,
+);
+
+sub clone_io {
+    my ($fh) = @_;
+    my $fileno = eval { fileno($fh) };
+
+    return $fh if !defined($fileno) || !length($fileno) || $fileno < 0;
+
+    open(my $out, '>&' . $fileno) or die "Can't dup fileno $fileno: $!";
+
+    my %seen;
+    my @layers = HAVE_PERLIO ? grep { !$PERLIO_SKIP{$_} and !$seen{$_}++ } PerlIO::get_layers($fh) : ();
+    binmode($out, join(":", "", "raw", @layers));
+
+    my $old = select $fh;
+    my $af  = $|;
+    select $out;
+    $| = $af;
+    select $old;
+
+    return $out;
+}
+
+BEGIN {
+    if (IS_WIN32) {
+        my $max_tries = 5;
+
+        *do_rename = sub {
+            my ($from, $to) = @_;
+
+            my $err;
+            for (1 .. $max_tries) {
+                return (1) if rename($from, $to);
+                $err = "$!";
+                last if $_ == $max_tries;
+                sleep 1;
+            }
+
+            return (0, $err);
+        };
+        *do_unlink = sub {
+            my ($file) = @_;
+
+            my $err;
+            for (1 .. $max_tries) {
+                return (1) if unlink($file);
+                $err = "$!";
+                last if $_ == $max_tries;
+                sleep 1;
+            }
+
+            return (0, "$!");
+        };
+    }
+    else {
+        *do_rename = sub {
+            my ($from, $to) = @_;
+            return (1) if rename($from, $to);
+            return (0, "$!");
+        };
+        *do_unlink = sub {
+            my ($file) = @_;
+            return (1) if unlink($file);
+            return (0, "$!");
+        };
+    }
+}
+
+sub try_sig_mask(&) {
+    my $code = shift;
+
+    my ($old, $blocked);
+    unless(IS_WIN32) {
+        my $to_block = POSIX::SigSet->new(
+            POSIX::SIGINT(),
+            POSIX::SIGALRM(),
+            POSIX::SIGHUP(),
+            POSIX::SIGTERM(),
+            POSIX::SIGUSR1(),
+            POSIX::SIGUSR2(),
+        );
+        $old = POSIX::SigSet->new;
+        $blocked = POSIX::sigprocmask(POSIX::SIG_BLOCK(), $to_block, $old);
+        # Silently go on if we failed to log signals, not much we can do.
+    }
+
+    my ($ok, $err) = &try($code);
+
+    # If our block was successful we want to restore the old mask.
+    POSIX::sigprocmask(POSIX::SIG_SETMASK(), $old, POSIX::SigSet->new()) if defined $blocked;
+
+    return ($ok, $err);
+}
+
 1;
 
 __END__
@@ -204,6 +334,66 @@ otherwise it returns 0.
 
 Convert a package name to a filename.
 
+=item $string = ipc_separator()
+
+Get the IPC separator. Currently this is always the string C<'~'>.
+
+=item $string = gen_uid()
+
+Generate a unique id (NOT A UUID). This will typically be the process id, the
+thread id, the time, and an incrementing integer all joined with the
+C<ipc_separator()>.
+
+These ID's are unique enough for most purposes. For identical ids to be
+generated you must have 2 processes with the same PID generate IDs at the same
+time with the same current state of the incrementing integer. This is a
+perfectly reasonable thing to expect to happen across multiple machines, but is
+quite unlikely to happen on one machine.
+
+This can fail to be unique if a process generates an id, calls exec, and does
+it again after the exec and it all happens in less than a second. It can also
+happen if the systems process id's cycle in less than a second allowing 2
+different programs that use this generator to run with the same PID in less
+than a second. Both these cases are sufficiently unlikely. If you need
+universally unique ids, or ids that are unique in these conditions, look at
+L<Data::UUID>.
+
+=item ($ok, $err) = do_rename($old_name, $new_name)
+
+Rename a file, this wraps C<rename()> in a way that makes it more reliable
+cross-platform when trying to rename files you recently altered.
+
+=item ($ok, $err) = do_unlink($filename)
+
+Unlink a file, this wraps C<unlink()> in a way that makes it more reliable
+cross-platform when trying to unlink files you recently altered.
+
+=item ($ok, $err) = try_sig_mask { ... }
+
+Complete an action with several signals masked, they will be unmasked at the
+end allowing any signals that were intercepted to get handled.
+
+This is primarily used when you need to make several actions atomic (against
+some signals anyway).
+
+Signals that are intercepted:
+
+=over 4
+
+=item SIGINT
+
+=item SIGALRM
+
+=item SIGHUP
+
+=item SIGTERM
+
+=item SIGUSR1
+
+=item SIGUSR2
+
+=back
+
 =back
 
 =head1 NOTES && CAVEATS
@@ -248,7 +438,7 @@ F<http://github.com/Test-More/test-more/>.
 
 =head1 COPYRIGHT
 
-Copyright 2016 Chad Granum E<lt>exodist@cpan.orgE<gt>.
+Copyright 2019 Chad Granum E<lt>exodist@cpan.orgE<gt>.
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

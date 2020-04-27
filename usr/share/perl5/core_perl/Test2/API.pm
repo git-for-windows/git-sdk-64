@@ -2,12 +2,14 @@ package Test2::API;
 use strict;
 use warnings;
 
+use Test2::Util qw/USE_THREADS/;
+
 BEGIN {
     $ENV{TEST_ACTIVE} ||= 1;
     $ENV{TEST2_ACTIVE} = 1;
 }
 
-our $VERSION = '1.302073';
+our $VERSION = '1.302162';
 
 
 my $INST;
@@ -16,10 +18,21 @@ sub test2_set_is_end { ($ENDING) = @_ ? @_ : (1) }
 sub test2_get_is_end { $ENDING }
 
 use Test2::API::Instance(\$INST);
+
 # Set the exit status
 END {
     test2_set_is_end(); # See gh #16
     $INST->set_exit();
+}
+
+sub CLONE {
+    my $init = test2_init_done();
+    my $load = test2_load_done();
+
+    return if $init && $load;
+
+    require Carp;
+    Carp::croak "Test2 must be fully loaded before you start a new thread!\n";
 }
 
 # See gh #16
@@ -38,7 +51,8 @@ BEGIN {
     }
 }
 
-use Test2::Util::Trace();
+use Test2::EventFacet::Trace();
+use Test2::Util::Trace(); # Legacy
 
 use Test2::Hub::Subtest();
 use Test2::Hub::Interceptor();
@@ -54,19 +68,23 @@ use Test2::Event::Waiting();
 use Test2::Event::Skip();
 use Test2::Event::Subtest();
 
-use Carp qw/carp croak confess longmess/;
+use Carp qw/carp croak confess/;
 use Scalar::Util qw/blessed weaken/;
-use Test2::Util qw/get_tid/;
+use Test2::Util qw/get_tid clone_io pkg_to_file gen_uid/;
 
 our @EXPORT_OK = qw{
     context release
     context_do
     no_context
-    intercept
+    intercept intercept_deep
     run_subtest
 
     test2_init_done
     test2_load_done
+    test2_load
+    test2_start_preload
+    test2_stop_preload
+    test2_in_preload
 
     test2_set_is_end
     test2_get_is_end
@@ -75,6 +93,13 @@ our @EXPORT_OK = qw{
     test2_tid
     test2_stack
     test2_no_wait
+    test2_ipc_wait_enable
+    test2_ipc_wait_disable
+    test2_ipc_wait_enabled
+
+    test2_add_uuid_via
+
+    test2_add_callback_testing_done
 
     test2_add_callback_context_aquire
     test2_add_callback_context_acquire
@@ -82,14 +107,19 @@ our @EXPORT_OK = qw{
     test2_add_callback_context_release
     test2_add_callback_exit
     test2_add_callback_post_load
+    test2_add_callback_pre_subtest
     test2_list_context_aquire_callbacks
     test2_list_context_acquire_callbacks
     test2_list_context_init_callbacks
     test2_list_context_release_callbacks
     test2_list_exit_callbacks
     test2_list_post_load_callbacks
+    test2_list_pre_subtest_callbacks
 
     test2_ipc
+    test2_has_ipc
+    test2_ipc_disable
+    test2_ipc_disabled
     test2_ipc_drivers
     test2_ipc_add_driver
     test2_ipc_polling
@@ -97,12 +127,17 @@ our @EXPORT_OK = qw{
     test2_ipc_enable_polling
     test2_ipc_get_pending
     test2_ipc_set_pending
-    test2_ipc_enable_shm
+    test2_ipc_get_timeout
+    test2_ipc_set_timeout
 
     test2_formatter
     test2_formatters
     test2_formatter_add
     test2_formatter_set
+
+    test2_stdout
+    test2_stderr
+    test2_reset_io
 };
 BEGIN { require Exporter; our @ISA = qw(Exporter) }
 
@@ -111,15 +146,55 @@ my $CONTEXTS    = $INST->contexts;
 my $INIT_CBS    = $INST->context_init_callbacks;
 my $ACQUIRE_CBS = $INST->context_acquire_callbacks;
 
+my $STDOUT = clone_io(\*STDOUT);
+my $STDERR = clone_io(\*STDERR);
+sub test2_stdout { $STDOUT ||= clone_io(\*STDOUT) }
+sub test2_stderr { $STDERR ||= clone_io(\*STDERR) }
+
+sub test2_post_preload_reset {
+    test2_reset_io();
+    $INST->post_preload_reset;
+}
+
+sub test2_reset_io {
+    $STDOUT = clone_io(\*STDOUT);
+    $STDERR = clone_io(\*STDERR);
+}
+
 sub test2_init_done { $INST->finalized }
 sub test2_load_done { $INST->loaded }
 
-sub test2_pid     { $INST->pid }
-sub test2_tid     { $INST->tid }
-sub test2_stack   { $INST->stack }
+sub test2_load          { $INST->load }
+sub test2_start_preload { $ENV{T2_IN_PRELOAD} = 1; $INST->start_preload }
+sub test2_stop_preload  { $ENV{T2_IN_PRELOAD} = 0; $INST->stop_preload }
+sub test2_in_preload    { $INST->preload }
+
+sub test2_pid              { $INST->pid }
+sub test2_tid              { $INST->tid }
+sub test2_stack            { $INST->stack }
+sub test2_ipc_wait_enable  { $INST->set_no_wait(0) }
+sub test2_ipc_wait_disable { $INST->set_no_wait(1) }
+sub test2_ipc_wait_enabled { !$INST->no_wait }
+
 sub test2_no_wait {
     $INST->set_no_wait(@_) if @_;
     $INST->no_wait;
+}
+
+sub test2_add_callback_testing_done {
+    my $cb = shift;
+
+    test2_add_callback_post_load(sub {
+        my $stack = test2_stack();
+        $stack->top; # Insure we have a hub
+        my ($hub) = Test2::API::test2_stack->all;
+
+        $hub->set_active(1);
+
+        $hub->follow_up($cb);
+    });
+
+    return;
 }
 
 sub test2_add_callback_context_acquire   { $INST->add_context_acquire_callback(@_) }
@@ -128,14 +203,24 @@ sub test2_add_callback_context_init      { $INST->add_context_init_callback(@_) 
 sub test2_add_callback_context_release   { $INST->add_context_release_callback(@_) }
 sub test2_add_callback_exit              { $INST->add_exit_callback(@_) }
 sub test2_add_callback_post_load         { $INST->add_post_load_callback(@_) }
+sub test2_add_callback_pre_subtest       { $INST->add_pre_subtest_callback(@_) }
 sub test2_list_context_aquire_callbacks  { @{$INST->context_acquire_callbacks} }
 sub test2_list_context_acquire_callbacks { @{$INST->context_acquire_callbacks} }
 sub test2_list_context_init_callbacks    { @{$INST->context_init_callbacks} }
 sub test2_list_context_release_callbacks { @{$INST->context_release_callbacks} }
 sub test2_list_exit_callbacks            { @{$INST->exit_callbacks} }
 sub test2_list_post_load_callbacks       { @{$INST->post_load_callbacks} }
+sub test2_list_pre_subtest_callbacks     { @{$INST->pre_subtest_callbacks} }
+
+sub test2_add_uuid_via {
+    $INST->set_add_uuid_via(@_) if @_;
+    $INST->add_uuid_via();
+}
 
 sub test2_ipc                 { $INST->ipc }
+sub test2_has_ipc             { $INST->has_ipc }
+sub test2_ipc_disable         { $INST->ipc_disable }
+sub test2_ipc_disabled        { $INST->ipc_disabled }
 sub test2_ipc_add_driver      { $INST->add_ipc_driver(@_) }
 sub test2_ipc_drivers         { @{$INST->ipc_drivers} }
 sub test2_ipc_polling         { $INST->ipc_polling }
@@ -143,9 +228,21 @@ sub test2_ipc_enable_polling  { $INST->enable_ipc_polling }
 sub test2_ipc_disable_polling { $INST->disable_ipc_polling }
 sub test2_ipc_get_pending     { $INST->get_ipc_pending }
 sub test2_ipc_set_pending     { $INST->set_ipc_pending(@_) }
-sub test2_ipc_enable_shm      { $INST->ipc_enable_shm }
+sub test2_ipc_set_timeout     { $INST->set_ipc_timeout(@_) }
+sub test2_ipc_get_timeout     { $INST->ipc_timeout() }
+sub test2_ipc_enable_shm      { 0 }
 
-sub test2_formatter     { $INST->formatter }
+sub test2_formatter     {
+    if ($ENV{T2_FORMATTER} && $ENV{T2_FORMATTER} =~ m/^(\+)?(.*)$/) {
+        my $formatter = $1 ? $2 : "Test2::Formatter::$2";
+        my $file = pkg_to_file($formatter);
+        require $file;
+        return $formatter;
+    }
+
+    return $INST->formatter;
+}
+
 sub test2_formatters    { @{$INST->formatters} }
 sub test2_formatter_add { $INST->add_formatter(@_) }
 sub test2_formatter_set {
@@ -160,6 +257,7 @@ sub _contexts_ref                  { $INST->contexts }
 sub _context_acquire_callbacks_ref { $INST->context_acquire_callbacks }
 sub _context_init_callbacks_ref    { $INST->context_init_callbacks }
 sub _context_release_callbacks_ref { $INST->context_release_callbacks }
+sub _add_uuid_via_ref              { \($INST->{Test2::API::Instance::ADD_UUID_VIA()}) }
 
 # Private, for use in Test2::IPC
 sub _set_ipc { $INST->set_ipc(@_) }
@@ -207,10 +305,11 @@ sub no_context(&;$) {
     return;
 };
 
+my $UUID_VIA = _add_uuid_via_ref();
 sub context {
     # We need to grab these before anything else to ensure they are not
     # changed.
-    my ($errno, $eval_error, $child_error) = (0 + $!, $@, $?);
+    my ($errno, $eval_error, $child_error, $extended_error) = (0 + $!, $@, $?, $^E);
 
     my %params = (level => 0, wrapped => 0, @_);
 
@@ -252,7 +351,7 @@ sub context {
     }
 
     # I know this is ugly....
-    ($!, $@, $?) = ($errno, $eval_error, $child_error) and return bless(
+    ($!, $@, $?, $^E) = ($errno, $eval_error, $child_error, $extended_error) and return bless(
         {
             %$current,
             _is_canon   => undef,
@@ -283,11 +382,20 @@ sub context {
     # hit with how often this needs to be called.
     my $trace = bless(
         {
-            frame => [$pkg, $file, $line, $sub],
-            pid   => $$,
-            tid   => get_tid(),
+            frame  => [$pkg, $file, $line, $sub],
+            pid    => $$,
+            tid    => get_tid(),
+            cid    => gen_uid(),
+            hid    => $hid,
+            nested => $hub->{nested},
+            buffered => $hub->{buffered},
+
+            $$UUID_VIA ? (
+                huuid => $hub->{uuid},
+                uuid  => ${$UUID_VIA}->('context'),
+            ) : (),
         },
-        'Test2::Util::Trace'
+        'Test2::EventFacet::Trace'
     );
 
     # Directly bless the object here, calling new is a noticeable performance
@@ -317,7 +425,7 @@ sub context {
 
     $params{on_init}->($current) if $params{on_init};
 
-    ($!, $@, $?) = ($errno, $eval_error, $child_error);
+    ($!, $@, $?, $^E) = ($errno, $eval_error, $child_error, $extended_error);
 
     return $current;
 }
@@ -345,7 +453,8 @@ sub _existing_error {
     my $oldframe = $ctx->{trace}->frame;
     my $olddepth = $ctx->{_depth};
 
-    my $mess = longmess();
+    # Older versions of Carp do not export longmess() function, so it needs to be called with package name
+    my $mess = Carp::longmess();
 
     warn <<"    EOT";
 $msg
@@ -374,7 +483,29 @@ sub release($;$) {
 
 sub intercept(&) {
     my $code = shift;
+    my $ctx = context();
 
+    my $events = _intercept($code, deep => 0);
+
+    $ctx->release;
+
+    return $events;
+}
+
+sub intercept_deep(&) {
+    my $code = shift;
+    my $ctx = context();
+
+    my $events = _intercept($code, deep => 1);
+
+    $ctx->release;
+
+    return $events;
+}
+
+sub _intercept {
+    my $code = shift;
+    my %params = @_;
     my $ctx = context();
 
     my $ipc;
@@ -389,7 +520,7 @@ sub intercept(&) {
     );
 
     my @events;
-    $hub->listen(sub { push @events => $_[1] });
+    $hub->listen(sub { push @events => $_[1] }, inherit => $params{deep});
 
     $ctx->stack->top; # Make sure there is a top hub before we begin.
     $ctx->stack->push($hub);
@@ -426,24 +557,29 @@ sub intercept(&) {
 sub run_subtest {
     my ($name, $code, $params, @args) = @_;
 
+    $_->($name,$code,@args)
+        for Test2::API::test2_list_pre_subtest_callbacks();
+
     $params = {buffered => $params} unless ref $params;
-    my $buffered      = delete $params->{buffered};
     my $inherit_trace = delete $params->{inherit_trace};
 
     my $ctx = context();
 
-    $ctx->note($name) unless $buffered;
-
     my $parent = $ctx->hub;
+
+    # If a parent is buffered then the child must be as well.
+    my $buffered = $params->{buffered} || $parent->{buffered};
+
+    $ctx->note($name) unless $buffered;
 
     my $stack = $ctx->stack || $STACK;
     my $hub = $stack->new_hub(
         class => 'Test2::Hub::Subtest',
         %$params,
+        buffered => $buffered,
     );
 
     my @events;
-    $hub->set_nested( $parent->isa('Test2::Hub::Subtest') ? $parent->nested + 1 : 1 );
     $hub->listen(sub { push @events => $_[1] });
 
     if ($buffered) {
@@ -452,21 +588,15 @@ sub run_subtest {
             $hub->format(undef) if $hide;
         }
     }
-    elsif (! $parent->format) {
-        # If our parent has no format that means we're in a buffered subtest
-        # and now we're trying to run a streaming subtest. There's really no
-        # way for that to work, so we need to force the use of a buffered
-        # subtest here as
-        # well. https://github.com/Test-More/test-more/issues/721
-        $buffered = 1;
-    }
 
     if ($inherit_trace) {
         my $orig = $code;
         $code = sub {
+            my $base_trace = $ctx->trace;
+            my $trace = $base_trace->snapshot(nested => 1 + $base_trace->nested);
             my $st_ctx = Test2::API::Context->new(
-                trace => $ctx->trace,
-                hub   => $hub,
+                trace  => $trace,
+                hub    => $hub,
             );
             $st_ctx->do_in_context($orig, @args);
         };
@@ -487,20 +617,44 @@ sub run_subtest {
             $finished = 1;
         }
     }
+
+    if ($params->{no_fork}) {
+        if ($$ != $ctx->trace->pid) {
+            warn $ok ? "Forked inside subtest, but subtest never finished!\n" : $err;
+            exit 255;
+        }
+
+        if (get_tid() != $ctx->trace->tid) {
+            warn $ok ? "Started new thread inside subtest, but thread never finished!\n" : $err;
+            exit 255;
+        }
+    }
+    elsif (!$parent->is_local && !$parent->ipc) {
+        warn $ok ? "A new process or thread was started inside subtest, but IPC is not enabled!\n" : $err;
+        exit 255;
+    }
+
     $stack->pop($hub);
 
     my $trace = $ctx->trace;
 
+    my $bailed = $hub->bailed_out;
+
     if (!$finished) {
-        if(my $bailed = $hub->bailed_out) {
+        if ($bailed && !$buffered) {
             $ctx->bail($bailed->reason);
         }
-        my $code = $hub->exit_code;
-        $ok = !$code;
-        $err = "Subtest ended with exit code $code" if $code;
+        elsif ($bailed && $buffered) {
+            $ok = 1;
+        }
+        else {
+            my $code = $hub->exit_code;
+            $ok = !$code;
+            $err = "Subtest ended with exit code $code" if $code;
+        }
     }
 
-    $hub->finalize($trace, 1)
+    $hub->finalize($trace->snapshot(huuid => $hub->uuid, hid => $hub->hid, nested => $hub->nested, buffered => $buffered), 1)
         if $ok
         && !$hub->no_ending
         && !$hub->ended;
@@ -508,11 +662,12 @@ sub run_subtest {
     my $pass = $ok && $hub->is_passing;
     my $e = $ctx->build_event(
         'Subtest',
-        pass       => $pass,
-        name       => $name,
-        subtest_id => $hub->id,
-        buffered   => $buffered,
-        subevents  => \@events,
+        pass         => $pass,
+        name         => $name,
+        subtest_id   => $hub->id,
+        subtest_uuid => $hub->uuid,
+        buffered     => $buffered,
+        subevents    => \@events,
     );
 
     my $plan_ok = $hub->check_plan;
@@ -525,6 +680,8 @@ sub run_subtest {
 
     $ctx->diag("Bad subtest plan, expected " . $hub->plan . " but ran " . $hub->count)
         if defined($plan_ok) && !$plan_ok;
+
+    $ctx->bail($bailed->reason) if $bailed && $buffered;
 
     $ctx->release;
     return $pass;
@@ -617,6 +774,35 @@ generated by the test system:
     my_ok(@$events == 2, "got 2 events, the pass and the fail");
     my_ok($events->[0]->pass, "first event passed");
     my_ok(!$events->[1]->pass, "second event failed");
+
+=head3 DEEP EVENT INTERCEPTION
+
+Normally C<intercept { ... }> only intercepts events sent to the main hub (as
+added by intercept itself). Nested hubs, such as those created by subtests,
+will not be intercepted. This is normally what you will still see the nested
+events by inspecting the subtest event. However there are times where you want
+to verify each event as it is sent, in that case use C<intercept_deep { ... }>.
+
+    my $events = intercept_Deep {
+        buffered_subtest foo => sub {
+            ok(1, "pass");
+        };
+    };
+
+C<$events> in this case will contain 3 items:
+
+=over 4
+
+=item The event from C<ok(1, "pass")>
+
+=item The plan event for the subtest
+
+=item The subtest event itself, with the first 2 events nested inside it as children.
+
+=back
+
+This lets you see the order in which the events were sent, unlike
+C<intercept { ... }> which only lets you see events as the main hub sees them.
 
 =head2 OTHER API FUNCTIONS
 
@@ -958,6 +1144,12 @@ created for the hub that shares the same trace as the current context.
 Set this to true if your tool is producing subtests without user-specified
 subs.
 
+=item 'no_fork' => $bool
+
+Defaults to off. Normally forking inside a subtest will actually fork the
+subtest, resulting in 2 final subtest events. This parameter will turn off that
+behavior, only the original process/thread will return a final subtest event.
+
 =back
 
 =item @ARGS
@@ -1065,14 +1257,56 @@ Check if Test2 believes it is the END phase.
 This will return the global L<Test2::API::Stack> instance. If this has not
 yet been initialized it will be initialized now.
 
+=item test2_ipc_disable
+
+Disable IPC.
+
+=item $bool = test2_ipc_diabled
+
+Check if IPC is disabled.
+
+=item test2_ipc_wait_enable()
+
+=item test2_ipc_wait_disable()
+
+=item $bool = test2_ipc_wait_enabled()
+
+These can be used to turn IPC waiting on and off, or check the current value of
+the flag.
+
+Waiting is turned on by default. Waiting will cause the parent process/thread
+to wait until all child processes and threads are finished before exiting. You
+will almost never want to turn this off.
+
 =item $bool = test2_no_wait()
 
 =item test2_no_wait($bool)
+
+B<DISCOURAGED>: This is a confusing interface, it is better to use
+C<test2_ipc_wait_enable()>, C<test2_ipc_wait_disable()> and
+C<test2_ipc_wait_enabled()>.
 
 This can be used to get/set the no_wait status. Waiting is turned on by
 default. Waiting will cause the parent process/thread to wait until all child
 processes and threads are finished before exiting. You will almost never want
 to turn this off.
+
+=item $fh = test2_stdout()
+
+=item $fh = test2_stderr()
+
+These functions return the filehandles that test output should be written to.
+They are primarily useful when writing a custom formatter and code that turns
+events into actual output (TAP, etc.).  They will return a dupe of the original
+filehandles that formatted output can be sent to regardless of whatever state
+the currently running test may have left STDOUT and STDERR in.
+
+=item test2_reset_io()
+
+Re-dupe the internal filehandles returned by C<test2_stdout()> and
+C<test2_stderr()> from the current STDOUT and STDERR.  You shouldn't need to do
+this except in very peculiar situations (for example, you're testing a new
+formatter and you need control over where the formatter is sending its output.)
 
 =back
 
@@ -1108,6 +1342,22 @@ Add a callback that will be called when Test2 is finished loading. This
 means the callback will be run once, the first time a context is obtained.
 If Test2 has already finished loading then the callback will be run immediately.
 
+=item test2_add_callback_testing_done(sub { ... })
+
+This adds your coderef as a follow-up to the root hub after Test2 is finished loading.
+
+This is essentially a helper to do the following:
+
+    test2_add_callback_post_load(sub {
+        my $stack = test2_stack();
+        $stack->top; # Insure we have a hub
+        my ($hub) = Test2::API::test2_stack->all;
+
+        $hub->set_active(1);
+
+        $hub->follow_up(sub { ... }); # <-- Your coderef here
+    });
+
 =item test2_add_callback_context_acquire(sub { ... })
 
 Add a callback that will be called every time someone tries to acquire a
@@ -1136,6 +1386,12 @@ callback will receive the newly created context as its only argument.
 Add a callback that will be called every time a context is released. The
 callback will receive the released context as its only argument.
 
+=item test2_add_callback_pre_subtest(sub { ... })
+
+Add a callback that will be called every time a subtest is going to be
+run. The callback will receive the subtest name, coderef, and any
+arguments.
+
 =item @list = test2_list_context_acquire_callbacks()
 
 Return all the context acquire callback references.
@@ -1156,6 +1412,26 @@ Returns all the exit callback references.
 
 Returns all the post load callback references.
 
+=item @list = test2_list_pre_subtest_callbacks()
+
+Returns all the pre-subtest callback references.
+
+=item test2_add_uuid_via(sub { ... })
+
+=item $sub = test2_add_uuid_via()
+
+This allows you to provide a UUID generator. If provided UUIDs will be attached
+to all events, hubs, and contexts. This is useful for storing, tracking, and
+linking these objects.
+
+The sub you provide should always return a unique identifier. Most things will
+expect a proper UUID string, however nothing in Test2::API enforces this.
+
+The sub will receive exactly 1 argument, the type of thing being tagged
+'context', 'hub', or 'event'. In the future additional things may be tagged, in
+which case new strings will be passed in. These are purely informative, you can
+(and usually should) ignore them.
+
 =back
 
 =head2 IPC AND CONCURRENCY
@@ -1163,6 +1439,10 @@ Returns all the post load callback references.
 These let you access, or specify, the IPC system internals.
 
 =over 4
+
+=item $bool = test2_has_ipc()
+
+Check if IPC is enabled.
 
 =item $ipc = test2_ipc()
 
@@ -1193,8 +1473,7 @@ Turn off IPC polling.
 
 =item test2_ipc_enable_shm()
 
-Turn on IPC SHM. Only some IPC drivers use this, and most will turn it on
-themselves.
+Legacy, this is currently a no-op that returns 0;
 
 =item test2_ipc_set_pending($uniq_val)
 
@@ -1212,6 +1491,15 @@ This returns 0 if there are (most likely) no pending events.
 
 This returns 1 if there are (likely) pending events. Upon return it will reset,
 nothing else will be able to see that there were pending events.
+
+=item $timeout = test2_ipc_get_timeout()
+
+=item test2_ipc_set_timeout($timeout)
+
+Get/Set the timeout value for the IPC system. This timeout is how long the IPC
+system will wait for child processes and threads to finish before aborting.
+
+The default value is C<30> seconds.
 
 =back
 
@@ -1300,7 +1588,7 @@ F<http://github.com/Test-More/test-more/>.
 
 =head1 COPYRIGHT
 
-Copyright 2016 Chad Granum E<lt>exodist@cpan.orgE<gt>.
+Copyright 2019 Chad Granum E<lt>exodist@cpan.orgE<gt>.
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
