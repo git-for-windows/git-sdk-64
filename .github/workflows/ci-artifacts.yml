@@ -35,6 +35,7 @@ jobs:
           (cd ${{matrix.artifact}} && tar cvf - * .[0-9A-Za-z]*) | xz -9 >git-sdk-64-${{matrix.artifact}}.tar.xz
           echo "::set-env name=ARTIFACT_PATH::$(echo *.tar.xz)"
       - name: upload to Azure Blobs
+        if: github.event.repository.fork == false
         uses: fixpoint/azblob-upload-artifact@v3
         with:
           connection-string: ${{secrets.CI_ARTIFACTS_CONNECTION_STRING}}
@@ -120,6 +121,7 @@ jobs:
           GIT_PROVE_OPTS: --timer --jobs 8
           NO_SVN_TESTS: 1
   upload-minimal-sdk:
+    if: github.event.repository.fork == false
     runs-on: windows-latest
     needs: [test-minimal-sdk]
     steps:
