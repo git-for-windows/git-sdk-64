@@ -17,7 +17,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: clone git-sdk-64
-        run: git clone --bare --depth=1 --single-branch -b master https://github.com/git-for-windows/git-sdk-64
+        shell: bash
+        run: git clone --bare --depth=1 --single-branch -b ${REF#refs/heads/} https://github.com/${{github.repository}}
+        env:
+          REF: ${{github.ref}}
       - name: clone build-extra
         run: git clone --depth=1 --single-branch -b master https://github.com/git-for-windows/build-extra
       - name: build git-sdk-64-${{matrix.artifact}}
@@ -43,7 +46,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: clone git-sdk-64
-        run: git clone --bare --depth=1 --single-branch -b master https://github.com/git-for-windows/git-sdk-64
+        shell: bash
+        run: git clone --bare --depth=1 --single-branch -b ${REF#refs/heads/} https://github.com/${{github.repository}}
+        env:
+          REF: ${{github.ref}}
       - name: clone build-extra
         run: git clone --depth=1 --single-branch -b master https://github.com/git-for-windows/build-extra
       - name: build git-sdk-64-minimal-sdk
