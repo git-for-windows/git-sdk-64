@@ -22,10 +22,10 @@
 #
 # mailer.py: send email describing a commit
 #
-# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.9.x/tools/hook-scripts/mailer/mailer.py $
-# $LastChangedDate: 2015-02-13 11:17:40 +0000 (Fri, 13 Feb 2015) $
-# $LastChangedBy: rhuijben $
-# $LastChangedRevision: 1659509 $
+# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.13.x/tools/hook-scripts/mailer/mailer.py $
+# $LastChangedDate: 2018-02-18 19:06:38 +0000 (Sun, 18 Feb 2018) $
+# $LastChangedBy: danielsh $
+# $LastChangedRevision: 1824690 $
 #
 # USAGE: mailer.py commit      REPOS REVISION [CONFIG-FILE]
 #        mailer.py propchange  REPOS REVISION AUTHOR REVPROPNAME [CONFIG-FILE]
@@ -71,16 +71,10 @@ _MIN_SVN_VERSION = [1, 5, 0]
 
 # Import the Subversion Python bindings, making sure they meet our
 # minimum version requirements.
-try:
-  import svn.fs
-  import svn.delta
-  import svn.repos
-  import svn.core
-except ImportError:
-  sys.stderr.write(
-    "You need version %s or better of the Subversion Python bindings.\n" \
-    % ".".join([str(x) for x in _MIN_SVN_VERSION]))
-  sys.exit(1)
+import svn.fs
+import svn.delta
+import svn.repos
+import svn.core
 if _MIN_SVN_VERSION > [svn.core.SVN_VER_MAJOR,
                        svn.core.SVN_VER_MINOR,
                        svn.core.SVN_VER_PATCH]:
@@ -291,7 +285,10 @@ class SMTPOutput(MailedOutput):
     self.write(self.mail_headers(group, params))
 
   def finish(self):
-    server = smtplib.SMTP(self.cfg.general.smtp_hostname)
+    if self.cfg.is_set('general.smtp_ssl') and self.cfg.general.smtp_ssl == 'yes':
+      server = smtplib.SMTP_SSL(self.cfg.general.smtp_hostname)
+    else:
+      server = smtplib.SMTP(self.cfg.general.smtp_hostname)
     if self.cfg.is_set('general.smtp_username'):
       server.login(self.cfg.general.smtp_username,
                    self.cfg.general.smtp_password)

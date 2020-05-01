@@ -21,10 +21,10 @@
 #
 #
 
-# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.9.x/tools/hook-scripts/svnperms.py $
-# $LastChangedDate: 2011-07-12 18:37:44 +0000 (Tue, 12 Jul 2011) $
-# $LastChangedBy: blair $
-# $LastChangedRevision: 1145712 $
+# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.13.x/tools/hook-scripts/svnperms.py $
+# $LastChangedDate: 2016-04-30 08:16:53 +0000 (Sat, 30 Apr 2016) $
+# $LastChangedBy: stefan2 $
+# $LastChangedRevision: 1741723 $
 
 import sys, os
 import getopt
@@ -296,7 +296,7 @@ class MissingArgumentsException(Exception):
 def parse_options():
     try:
         opts, args = my_getopt(sys.argv[1:], "f:s:r:t:R:A:h", ["help"])
-    except getopt.GetoptError, e:
+    except getopt.GetoptError as e:
         raise Error(e.msg)
     class Options: pass
     obj = Options()
@@ -349,11 +349,11 @@ def main():
         check_perms(opts.filename, opts.section,
                     opts.repository, opts.transaction, opts.revision,
                     opts.author)
-    except MissingArgumentsException, e:
+    except MissingArgumentsException as e:
         sys.stderr.write("%s\n" % str(e))
         sys.stderr.write(USAGE)
         sys.exit(1)
-    except Error, e:
+    except Error as e:
         sys.stderr.write("error: %s\n" % str(e))
         sys.exit(1)
 

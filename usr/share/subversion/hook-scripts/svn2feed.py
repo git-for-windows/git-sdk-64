@@ -70,10 +70,10 @@ Options:
 #   is actually set only on initial feed creation, and thereafter simply
 #   re-used from the pickle each time.
 
-# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.9.x/tools/hook-scripts/svn2feed.py $
-# $LastChangedDate: 2009-11-16 19:07:17 +0000 (Mon, 16 Nov 2009) $
-# $LastChangedBy: hwright $
-# $LastChangedRevision: 880911 $
+# $HeadURL: https://svn.apache.org/repos/asf/subversion/branches/1.13.x/tools/hook-scripts/svn2feed.py $
+# $LastChangedDate: 2016-04-30 08:16:53 +0000 (Sat, 30 Apr 2016) $
+# $LastChangedBy: stefan2 $
+# $LastChangedRevision: 1741723 $
 
 import sys
 
@@ -363,7 +363,7 @@ def main():
                                         "feed-url=",
                                         "format=",
                                         ])
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         usage_and_exit(msg)
 
     # Make sure required arguments are present.
@@ -394,7 +394,7 @@ def main():
         elif opt in ("-m", "--max-items"):
             try:
                max_items = int(arg)
-            except ValueError, msg:
+            except ValueError as msg:
                usage_and_exit("Invalid value '%s' for --max-items." % (arg))
             if max_items < 1:
                usage_and_exit("Value for --max-items must be a positive "
@@ -427,7 +427,7 @@ def main():
         cmd_out = proc.stdout.readlines()
         try:
             revisions = [int(cmd_out[0])]
-        except IndexError, msg:
+        except IndexError as msg:
             usage_and_exit("svn2feed.py: Invalid value '%s' for " \
                            "REPOS-PATH" % (repos_path))
     else:
@@ -447,7 +447,7 @@ def main():
                 revisions = list(range(start, end + 1)[-max_items:])
             else:
                 raise ValueError()
-        except ValueError, msg:
+        except ValueError as msg:
             usage_and_exit("svn2feed.py: Invalid value '%s' for --revision." \
                            % (commit_rev))
 
