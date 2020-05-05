@@ -9,9 +9,9 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Sun Apr 26 19:36:49 GMT 2020
+ * Configuration time: Mon May  4 19:54:21 GMT 2020
  * Configured by     : VssAdministrator
- * Target system     : msys_nt-10.0-14393 fv-az335 3.0.7-338.x86_64 2019-11-21 23:07 utc x86_64 msys 
+ * Target system     : msys_nt-10.0-14393 fv-az393 3.1.4-340.x86_64 2020-05-01 12:36 utc x86_64 msys 
  */
 
 #ifndef _config_h_
@@ -1369,7 +1369,7 @@
  *	feature tests from Configure are generally more reliable.
  */
 #define OSNAME "msys"		/**/
-#define OSVERS "3.0.7-338.x86_64"		/**/
+#define OSVERS "3.1.4-340.x86_64"		/**/
 
 /* CAT2:
  *	This macro concatenates 2 tokens together.
@@ -2065,10 +2065,10 @@
  *	parameter information. While ANSI C prototypes are supported in C++,
  *	K&R style function declarations will yield errors.
  */
-/*#define I_NDBM	/ **/
+#define I_NDBM	/**/
 /*#define I_GDBMNDBM	/ **/
 /*#define I_GDBM_NDBM	/ **/
-/*#define NDBM_H_USES_PROTOTYPES	/ **/
+#define NDBM_H_USES_PROTOTYPES	/**/
 /*#define GDBMNDBM_H_USES_PROTOTYPES	/ **/
 /*#define GDBM_NDBM_H_USES_PROTOTYPES	/ **/
 
@@ -3083,7 +3083,7 @@
 #define	HAS_USELOCALE	/**/
 #define	HAS_DUPLOCALE	/**/
 /*#define	HAS_QUERYLOCALE	/ **/
-#define	I_XLOCALE               /**/
+/*#define	I_XLOCALE               / **/
 
 /* HAS_NEXTAFTER:
  *	This symbol, if defined, indicates that the nextafter routine is
