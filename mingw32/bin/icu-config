@@ -64,7 +64,7 @@ datadir="${datarootdir}"
 sbindir="${exec_prefix}/sbin"
 
 # about the ICU version
-VERSION="66.1"
+VERSION="67.1"
 UNICODE_VERSION="13.0"
 
 # The prefix for ICU libraries, normally 'icu'
@@ -212,7 +212,7 @@ CPPFLAGS="-I${prefix}/include"
 CXXFLAGS="-std=c++11"
 CXX="i686-w64-mingw32-g++"
 DEFAULT_MODE="dll"
-DEFS="-DPACKAGE_NAME=\"ICU\" -DPACKAGE_TARNAME=\"International\ Components\ for\ Unicode\" -DPACKAGE_VERSION=\"66.1\" -DPACKAGE_STRING=\"ICU\ 66.1\" -DPACKAGE_BUGREPORT=\"http://icu-project.org/bugs\" -DPACKAGE_URL=\"http://icu-project.org\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSIZEOF_VOID_P=4 -DHAVE_LIBM=1 -DHAVE_GETTIMEOFDAY=1 -DHAVE_LIBPTHREAD=1 -DHAVE_INTTYPES_H=1 -DHAVE_DIRENT_H=1 -DHAVE_WCHAR_H=1 -DSIZEOF_WCHAR_T=2 "
+DEFS="-DPACKAGE_NAME=\"ICU\" -DPACKAGE_TARNAME=\"International\ Components\ for\ Unicode\" -DPACKAGE_VERSION=\"67.1\" -DPACKAGE_STRING=\"ICU\ 67.1\" -DPACKAGE_BUGREPORT=\"http://icu-project.org/bugs\" -DPACKAGE_URL=\"http://icu-project.org\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DSIZEOF_VOID_P=4 -DHAVE_LIBM=1 -DHAVE_GETTIMEOFDAY=1 -DHAVE_LIBPTHREAD=1 -DHAVE_INTTYPES_H=1 -DHAVE_DIRENT_H=1 -DHAVE_WCHAR_H=1 -DSIZEOF_WCHAR_T=2 "
 # use a consistent INSTALL 
 INSTALL="${SHELL} ${pkgdatadir}/install-sh -c"
 INSTALL_DATA="${INSTALL} -m 644"
@@ -221,8 +221,8 @@ INSTALL_SCRIPT="${INSTALL}"
 LDFLAGS="${RPATHLDFLAGS}"
 LIBS="-lpthread -lm  "
 LIB_M=""
-LIB_VERSION="66.1"
-LIB_VERSION_MAJOR="66"
+LIB_VERSION="67.1"
+LIB_VERSION_MAJOR="67"
 MKINSTALLDIRS="${SHELL} ${pkgdatadir}/mkinstalldirs"
 RANLIB="ranlib"
 RMV="rm -rf"
@@ -250,7 +250,7 @@ INSTALL_L="${INSTALL_DATA}"
 
 # The basename of the ICU data file (i.e. icudt21b )
 ICUDATA_CHAR="l"
-ICUDATA_NAME="icudt66l"
+ICUDATA_NAME="icudt67l"
 
 # Defaults for pkgdata's mode and directories
 # The default data dir changes depending on what packaging mode 
@@ -301,6 +301,11 @@ GENCCODE_ASSEMBLY=""
 
 # This file is similar to mh-mingw64
 # Any changes made here may also need to be made in mh-mingw64
+
+# On Windows we generally have the DLLs in the bin directory rather than the lib directory.
+# This setting moves the ICU DLLs into the bin folder for MinGW/MSYS2 when "make install" is run.
+# If you prefer to have the DLLs in the lib folder, then set this to NO instead.
+MINGW_MOVEDLLSTOBINDIR="YES"
 
 ## Commands to generate dependency files
 GEN_DEPS_c="${CC} -E -MM ${DEFS} ${CPPFLAGS}"
@@ -379,7 +384,10 @@ ICULIBS_COMMON_LIB_NAME="${LIBICU}${COMMON_STUBNAME}${ICULIBSUFFIX}${ICULIBSUFFI
 ICULIBS_COMMON_LIB_NAME_A="${LIBICU}${COMMON_STUBNAME}${ICULIBSUFFIX}.${A}"
 
 ICULIBS_DATA="-l${ICUPREFIX}${DATA_STUBNAME}${ICULIBSUFFIX}"
-ICULIBS_I18N="-l${ICUPREFIX}${I18N_STUBNAME}${ICULIBSUFFIX}"
+ICULIBS_DT=""-l${ICUPREFIX}${DATA_STUBNAME}${ICULIBSUFFIX}""
+ICULIBS_I18N=""-l${ICUPREFIX}${I18N_STUBNAME}${ICULIBSUFFIX}""
+ICULIBS_IO=""-l${ICUPREFIX}${IO_STUBNAME}${ICULIBSUFFIX}""
+ICULIBS_UC=""-l${ICUPREFIX}${COMMON_STUBNAME}${ICULIBSUFFIX}""
 
 # ICULIBS is the set of libraries your application should link
 # with usually. Many applications will want to add ${ICULIBS_I18N} as well. 
@@ -421,7 +429,13 @@ PKGDATA_DEFS="-DU_MAKE=\"${MAKE}\""
 ## Copyright (c) 2002-2013, International Business Machines Corporation and
 ## others. All Rights Reserved.
 
-ICUUC_FILE="${bindir}/${ICULIBS_COMMON_LIB_NAME}"
+# For MinGW do we want the common DLL to go into the bin location?
+if [ "$MINGW_MOVEDLLSTOBINDIR" = "YES" ]; then
+	ICUUC_FILE="${bindir}/${ICULIBS_COMMON_LIB_NAME}"
+else
+	ICUUC_FILE="${libdir}/${ICULIBS_COMMON_LIB_NAME}"
+fi
+
 ICUUC_FILE_A="${libdir}/${ICULIBS_COMMON_LIB_NAME_A}"
 
 #  echo ENABLE RPATH $ENABLE_RPATH and RPATHLDFLAGS=${RPATH_LDFLAGS}
