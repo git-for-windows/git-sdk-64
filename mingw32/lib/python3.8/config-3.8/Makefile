@@ -28,9 +28,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.8
-srcdir=		../Python-3.8.2
-VPATH=		../Python-3.8.2
-abs_srcdir=	/mingwdev/mingw-w64-python/src/build-i686/../Python-3.8.2
+srcdir=		../Python-3.8.3
+VPATH=		../Python-3.8.3
+abs_srcdir=	/mingwdev/mingw-w64-python/src/build-i686/../Python-3.8.3
 abs_builddir=	/mingwdev/mingw-w64-python/src/build-i686
 
 
@@ -139,9 +139,9 @@ exec_prefix=	${prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		D:/mingwbuild/mingw-w64-python/src/Python-3.8.2
-VPATH_b2h=		D:/mingwbuild/mingw-w64-python/src/Python-3.8.2
-abs_srcdir_b2h=		D:/mingwbuild/mingw-w64-python/src/Python-3.8.2
+srcdir_b2h=		D:/mingwbuild/mingw-w64-python/src/Python-3.8.3
+VPATH_b2h=		D:/mingwbuild/mingw-w64-python/src/Python-3.8.3
+abs_srcdir_b2h=		D:/mingwbuild/mingw-w64-python/src/Python-3.8.3
 abs_builddir_b2h=	D:/mingwbuild/mingw-w64-python/src/build-i686
 prefix_b2h=		D:/msys64/mingw32
 
