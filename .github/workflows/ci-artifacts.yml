@@ -130,10 +130,13 @@ jobs:
         with:
           name: minimal-sdk
           path: ${{github.workspace}}
+      - name: rename the artifact
+        shell: bash
+        run: mv git-sdk-64-minimal.tar.xz git-sdk-64-minimal-test.tar.xz
       - name: upload to Azure Blobs
         uses: fixpoint/azblob-upload-artifact@v3
         with:
           connection-string: ${{secrets.CI_ARTIFACTS_CONNECTION_STRING}}
           name: .
-          path: git-sdk-64-minimal.tar.xz
+          path: git-sdk-64-minimal-test.tar.xz
           container: ci-artifacts
