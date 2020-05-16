@@ -855,7 +855,8 @@ started.</p>
 <dd>
 <p>Abort the rebase operation but HEAD is not reset back to the
 original branch. The index and working tree are also left
-unchanged as a result.</p>
+unchanged as a result. If a temporary stash entry was created
+using --autostash, it will be saved to the stash list.</p>
 </dd>
 </dl>
 </div>
@@ -884,23 +885,60 @@ drop it, edit files more, or just commit the empty changes.
 Other options, like --exec, will use the default of drop unless
 -i/--interactive is explicitly specified.</p>
 <div class="paragraph">
-<p>Note that commits which start empty are kept, and commits which are
-clean cherry-picks (as determined by <code>git log --cherry-mark ...</code>) are
-always dropped.</p>
+<p>Note that commits which start empty are kept (unless --no-keep-empty
+is specified), and commits which are clean cherry-picks (as determined
+by <code>git log --cherry-mark ...</code>) are detected and dropped as a
+preliminary step (unless --reapply-cherry-picks is passed).</p>
 </div>
 <div class="paragraph">
 <p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
 </dd>
+<dt class="hdlist1">--no-keep-empty</dt>
 <dt class="hdlist1">--keep-empty</dt>
 <dd>
-<p>No-op.  Rebasing commits that started empty (had no change
-relative to their parent) used to fail and this option would
-override that behavior, allowing commits with empty changes to
-be rebased.  Now commits with no changes do not cause rebasing
-to halt.</p>
+<p>Do not keep commits that start empty before the rebase
+(i.e. that do not change anything from its parent) in the
+result.  The default is to keep commits which start empty,
+since creating such commits requires passing the --allow-empty
+override flag to <code>git commit</code>, signifying that a user is very
+intentionally creating such a commit and thus wants to keep
+it.</p>
 <div class="paragraph">
-<p>See also BEHAVIORAL DIFFERENCES and INCOMPATIBLE OPTIONS below.</p>
+<p>Usage of this flag will probably be rare, since you can get rid of
+commits that start empty by just firing up an interactive rebase and
+removing the lines corresponding to the commits you don&#8217;t want.  This
+flag exists as a convenient shortcut, such as for cases where external
+tools generate many empty commits and you want them all removed.</p>
+</div>
+<div class="paragraph">
+<p>For commits which do not start empty but become empty after rebasing,
+see the --empty flag.</p>
+</div>
+<div class="paragraph">
+<p>See also INCOMPATIBLE OPTIONS below.</p>
+</div>
+</dd>
+<dt class="hdlist1">--reapply-cherry-picks</dt>
+<dt class="hdlist1">--no-reapply-cherry-picks</dt>
+<dd>
+<p>Reapply all clean cherry-picks of any upstream commit instead
+of preemptively dropping them. (If these commits then become
+empty after rebasing, because they contain a subset of already
+upstream changes, the behavior towards them is controlled by
+the <code>--empty</code> flag.)</p>
+<div class="paragraph">
+<p>By default (or if <code>--no-reapply-cherry-picks</code> is given), these commits
+will be automatically dropped.  Because this necessitates reading all
+upstream commits, this can be expensive in repos with a large number
+of upstream commits that need to be read.</p>
+</div>
+<div class="paragraph">
+<p><code>--reapply-cherry-picks</code> allows rebase to forgo reading all upstream
+commits, potentially improving performance.</p>
+</div>
+<div class="paragraph">
+<p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
 </dd>
 <dt class="hdlist1">--allow-empty-message</dt>
@@ -979,10 +1017,13 @@ result of auto-conflict resolution if possible.</p>
 </dd>
 <dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
 <dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
+<dt class="hdlist1">--no-gpg-sign</dt>
 <dd>
 <p>GPG-sign commits. The <code>keyid</code> argument is optional and
 defaults to the committer identity; if specified, it must be
-stuck to the option without a space.</p>
+stuck to the option without a space. <code>--no-gpg-sign</code> is useful to
+countermand both <code>commit.gpgSign</code> configuration variable, and
+earlier <code>--gpg-sign</code>.</p>
 </dd>
 <dt class="hdlist1">-q</dt>
 <dt class="hdlist1">--quiet</dt>
@@ -1052,13 +1093,16 @@ introduced by &lt;branch&gt;.</p>
 ends up being empty, the &lt;upstream&gt; will be used as a fallback.</p>
 </div>
 <div class="paragraph">
-<p>If either &lt;upstream&gt; or --root is given on the command line, then the
-default is <code>--no-fork-point</code>, otherwise the default is <code>--fork-point</code>.</p>
+<p>If &lt;upstream&gt; is given on the command line, then the default is
+<code>--no-fork-point</code>, otherwise the default is <code>--fork-point</code>.</p>
 </div>
 <div class="paragraph">
 <p>If your branch was based on &lt;upstream&gt; but &lt;upstream&gt; was rewound and
 your branch contains commits which were dropped, this option can be used
 with <code>--keep-base</code> in order to drop those commits from your branch.</p>
+</div>
+<div class="paragraph">
+<p>See also INCOMPATIBLE OPTIONS below.</p>
 </div>
 </dd>
 <dt class="hdlist1">--ignore-whitespace</dt>
@@ -1305,10 +1349,13 @@ sense in interactive mode (or when an <code>--exec</code> option was provided).<
 <p>--exec</p>
 </li>
 <li>
-<p>--keep-empty</p>
+<p>--no-keep-empty</p>
 </li>
 <li>
 <p>--empty=</p>
+</li>
+<li>
+<p>--reapply-cherry-picks</p>
 </li>
 <li>
 <p>--edit-todo</p>
@@ -1341,6 +1388,9 @@ sense in interactive mode (or when an <code>--exec</code> option was provided).<
 <li>
 <p>--keep-base and --root</p>
 </li>
+<li>
+<p>--fork-point and --root</p>
+</li>
 </ul>
 </div>
 </div>
@@ -1350,7 +1400,7 @@ sense in interactive mode (or when an <code>--exec</code> option was provided).<
 <div class="sectionbody">
 <div class="paragraph">
 <p>git rebase has two primary backends: apply and merge.  (The apply
-backend used to known as the <em>am</em> backend, but the name led to
+backend used to be known as the <em>am</em> backend, but the name led to
 confusion as it looks like a verb instead of a noun.  Also, the merge
 backend used to be known as the interactive backend, but it is now
 used for non-interactive cases as well.  Both were renamed based on
@@ -1366,12 +1416,16 @@ also drops commits that become empty and has no option for controlling
 this behavior.</p>
 </div>
 <div class="paragraph">
-<p>The merge backend keeps intentionally empty commits.  Similar to the
-apply backend, by default the merge backend drops commits that become
-empty unless -i/--interactive is specified (in which case it stops and
-asks the user what to do).  The merge backend also has an
---empty={drop,keep,ask} option for changing the behavior of handling
-commits that become empty.</p>
+<p>The merge backend keeps intentionally empty commits by default (though
+with -i they are marked as empty in the todo list editor, or they can
+be dropped automatically with --no-keep-empty).</p>
+</div>
+<div class="paragraph">
+<p>Similar to the apply backend, by default the merge backend drops
+commits that become empty unless -i/--interactive is specified (in
+which case it stops and asks the user what to do).  The merge backend
+also has an --empty={drop,keep,ask} option for changing the behavior
+of handling commits that become empty.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1437,9 +1491,17 @@ and thus has no such limitations.</p>
 <h3 id="_hooks">Hooks</h3>
 <div class="paragraph">
 <p>The apply backend has not traditionally called the post-commit hook,
-while the merge backend has.  However, this was by accident of
-implementation rather than by design.  Both backends should have the
-same behavior, though it is not clear which one is correct.</p>
+while the merge backend has.  Both have called the post-checkout hook,
+though the merge backend has squelched its output.  Further, both
+backends only call the post-checkout hook with the starting point
+commit of the rebase, not the intermediate commits nor the final
+commit.  In each case, the calling of these hooks was by accident of
+implementation rather than by design (both backends were originally
+implemented as shell scripts and happened to invoke other commands
+like <em>git checkout</em> or <em>git commit</em> that would call the hooks).  Both
+backends should have the same behavior, though it is not entirely
+clear which, if any, is correct.  We will likely make rebase stop
+calling either of these hooks in the future.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2036,7 +2098,8 @@ a full history rewriting command like
 </div>
 <div class="paragraph">
 <p>In that case, the fix is easy because <em>git rebase</em> knows to skip
-changes that are already present in the new upstream.  So if you say
+changes that are already present in the new upstream (unless
+<code>--reapply-cherry-picks</code> is given). So if you say
 (assuming you&#8217;re on <em>topic</em>)</p>
 </div>
 <div class="listingblock">
@@ -2317,7 +2380,7 @@ Use <code>--rebase-merges</code> in such scenarios instead.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-20 15:34:01 UTC
+Last updated 2020-05-15 14:38:22 UTC
 </div>
 </div>
 </body>

@@ -653,7 +653,8 @@ $ make test              ;# final review</pre>
 <p>Anything unobvious that is applicable to <em>master</em> (in other
 words, does not depend on anything that is still in <em>next</em>
 and not in <em>master</em>) is applied to a new topic branch that
-is forked from the tip of <em>master</em>.  This includes both
+is forked from the tip of <em>master</em> (or the last feature release,
+which is a bit older than <em>master</em>).  This includes both
 enhancements and unobvious fixes to <em>master</em>.  A topic
 branch is named as ai/topic where "ai" is two-letter string
 named after author&#8217;s initial and "topic" is a descriptive name
@@ -661,8 +662,9 @@ of the topic (in other words, "what&#8217;s the series is about").</p>
 </li>
 <li>
 <p>An unobvious fix meant for <em>maint</em> is applied to a new
-topic branch that is forked from the tip of <em>maint</em>.  The
-topic is named as ai/maint-topic.</p>
+topic branch that is forked from the tip of <em>maint</em> (or the
+oldest and still relevant maintenance branch).  The
+topic may be named as ai/maint-topic.</p>
 </li>
 <li>
 <p>Changes that pertain to an existing topic are applied to
@@ -679,7 +681,7 @@ the branch, but:</p>
 for commits not in <em>next</em>.</p>
 <div class="literalblock">
 <div class="content">
-<pre>The above except the "replacement" are all done with:</pre>
+<pre>The initial round is done with:</pre>
 </div>
 </div>
 <div class="literalblock">
@@ -690,31 +692,55 @@ $ git am -sc3 mailbox</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>while patch replacement is often done by:</pre>
+<pre>and replacing an existing topic with subsequent round is done with:</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git format-patch ai/topic~$n..ai/topic ;# export existing</pre>
+<pre>$ git checkout master...ai/topic ;# try to reapply to the same base
+$ git am -sc3 mailbox</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>then replace some parts with the new patch, and reapplying:</pre>
+<pre>to prepare the new round on a detached HEAD, and then</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git checkout ai/topic
-$ git reset --hard ai/topic~$n
-$ git am -sc3 -s 000*.txt</pre>
+<pre>$ git range-diff @{-1}...
+$ git diff @{-1}</pre>
 </div>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>The full test suite is always run for 'maint' and 'master'
-after patch application; for topic branches the tests are run
-as time permits.</pre>
+<pre>to double check what changed since the last round, and finally</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ git checkout -B @{-1}</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>to conclude (the last step is why a topic already in 'next' is
+not replaced but updated incrementally).</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Whether it is the initial round or a subsequent round, the topic
+may not build even in isolation, or may break the build when
+merged to integration branches due to bugs.  There may already
+be obvious and trivial improvements suggested on the list.  The
+maintainer often adds an extra commit, with "SQUASH???" in its
+title, to fix things up, before publishing the integration
+branches to make it usable by other developers for testing.
+These changes are what the maintainer is not 100% committed to
+(trivial typofixes etc. are often squashed directly into the
+patches that need fixing, without being applied as a separate
+"SQUASH???" commit), so that they can be removed easily as needed.</pre>
 </div>
 </div>
 </li>
@@ -1015,6 +1041,15 @@ Commits already merged to <em>next</em> will not be.</p>
 be included in the next feature release.  Being in the
 <em>master</em> branch typically is.</p>
 </li>
+<li>
+<p>Due to the nature of "SQUASH???" fix-ups, if the original author
+agrees with the suggested changes, it is OK to squash them to
+appropriate patches in the next round (when the suggested change
+is small enough, the author should not even bother with
+"Helped-by").  It is also OK to drop them from the next round
+when the original author does not agree with the suggestion, but
+the author is expected to say why somewhere in the discussion.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -1127,7 +1162,7 @@ $ git update-ref -d $mf/ai/topic</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-20 15:34:01 UTC
+Last updated 2020-05-15 14:38:22 UTC
 </div>
 </div>
 </body>

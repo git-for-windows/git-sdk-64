@@ -523,6 +523,17 @@ but they can be read from stdin using the <code>--stdin</code> option. When
 <code>core.sparseCheckoutCone</code> is enabled, the given patterns are interpreted
 as directory names as in the <em>set</em> subcommand.</p>
 </dd>
+<dt class="hdlist1">'reapply</dt>
+<dd>
+<p>Reapply the sparsity pattern rules to paths in the working tree.
+Commands like merge or rebase can materialize paths to do their
+work (e.g. in order to show you a conflict), and other
+sparse-checkout commands might fail to sparsify an individual file
+(e.g. because it has unstaged changes or conflicts).  In such
+cases, it can make sense to run <code>git sparse-checkout reapply</code> later
+after cleaning up affected paths (e.g. resolving conflicts, undoing
+or committing changes, etc.).</p>
+</dd>
 <dt class="hdlist1"><em>disable</em></dt>
 <dd>
 <p>Disable the <code>core.sparseCheckout</code> config setting, and restore the
@@ -705,7 +716,7 @@ submodule will still appear in your working directory.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-20 15:34:01 UTC
+Last updated 2020-05-15 14:38:22 UTC
 </div>
 </div>
 </body>

@@ -527,7 +527,11 @@ performs all modifications together.  Specify commands of the form:</p>
 create SP &lt;ref&gt; SP &lt;newvalue&gt; LF
 delete SP &lt;ref&gt; [SP &lt;oldvalue&gt;] LF
 verify SP &lt;ref&gt; [SP &lt;oldvalue&gt;] LF
-option SP &lt;opt&gt; LF</pre>
+option SP &lt;opt&gt; LF
+start LF
+prepare LF
+commit LF
+abort LF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -550,7 +554,11 @@ quoting:</p>
 create SP &lt;ref&gt; NUL &lt;newvalue&gt; NUL
 delete SP &lt;ref&gt; NUL [&lt;oldvalue&gt;] NUL
 verify SP &lt;ref&gt; NUL [&lt;oldvalue&gt;] NUL
-option SP &lt;opt&gt; NUL</pre>
+option SP &lt;opt&gt; NUL
+start NUL
+prepare NUL
+commit NUL
+abort NUL</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -584,13 +592,35 @@ given.  If given, &lt;oldvalue&gt; may not be zero.</p>
 <dt class="hdlist1">verify</dt>
 <dd>
 <p>Verify &lt;ref&gt; against &lt;oldvalue&gt; but do not change it.  If
-&lt;oldvalue&gt; zero or missing, the ref must not exist.</p>
+&lt;oldvalue&gt; is zero or missing, the ref must not exist.</p>
 </dd>
 <dt class="hdlist1">option</dt>
 <dd>
 <p>Modify behavior of the next command naming a &lt;ref&gt;.
 The only valid option is <code>no-deref</code> to avoid dereferencing
 a symbolic ref.</p>
+</dd>
+<dt class="hdlist1">start</dt>
+<dd>
+<p>Start a transaction. In contrast to a non-transactional session, a
+transaction will automatically abort if the session ends without an
+explicit commit.</p>
+</dd>
+<dt class="hdlist1">prepare</dt>
+<dd>
+<p>Prepare to commit the transaction. This will create lock files for all
+queued reference updates. If one reference could not be locked, the
+transaction will be aborted.</p>
+</dd>
+<dt class="hdlist1">commit</dt>
+<dd>
+<p>Commit all reference updates queued for the transaction, ending the
+transaction.</p>
+</dd>
+<dt class="hdlist1">abort</dt>
+<dd>
+<p>Abort the transaction, releasing all locks if the transaction is in
+prepared state.</p>
 </dd>
 </dl>
 </div>
@@ -655,7 +685,7 @@ or does not have committer information available.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-20 15:34:01 UTC
+Last updated 2020-05-15 14:38:22 UTC
 </div>
 </div>
 </body>
