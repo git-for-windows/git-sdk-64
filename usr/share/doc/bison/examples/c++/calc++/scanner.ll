@@ -24,7 +24,7 @@
 # pragma GCC diagnostic ignored "-Wnull-dereference"
 #endif
 
-// This example uses Flex's C backend, yet compiles it as C++.
+// This example uses Flex's C back end, yet compiles it as C++.
 // So expect warnings about C style casts and NULL.
 #if defined CLANG_VERSION && 500 <= CLANG_VERSION
 # pragma clang diagnostic ignored "-Wold-style-cast"
@@ -111,7 +111,7 @@ blank [ \t\r]
              throw yy::parser::syntax_error
                (loc, "invalid character: " + std::string(yytext));
 }
-<<EOF>>    return yy::parser::make_END (loc);
+<<EOF>>    return yy::parser::make_YYEOF (loc);
 %%
 
 yy::parser::symbol_type
@@ -132,7 +132,7 @@ driver::scan_begin ()
     yyin = stdin;
   else if (!(yyin = fopen (file.c_str (), "r")))
     {
-      std::cerr << "cannot open " << file << ": " << strerror(errno) << '\n';
+      std::cerr << "cannot open " << file << ": " << strerror (errno) << '\n';
       exit (EXIT_FAILURE);
     }
 }

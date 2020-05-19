@@ -870,7 +870,7 @@
 #define HAVE_SCHED_RR_GET_INTERVAL 1
 
 /* Define to 1 if you have the `sched_setaffinity' function. */
-/* #undef HAVE_SCHED_SETAFFINITY */
+#define HAVE_SCHED_SETAFFINITY 1
 
 /* Define to 1 if you have the `sched_setparam' function. */
 #define HAVE_SCHED_SETPARAM 1
@@ -1518,6 +1518,10 @@
 
 /* Define if WINDOW in curses.h offers a field _flags. */
 #define WINDOW_HAS_FLAGS 1
+
+/* Define if you want build the _decimal module using a coroutine-local rather
+   than a thread-local context */
+#define WITH_DECIMAL_CONTEXTVAR 1
 
 /* Define if you want documentation strings in extension modules */
 #define WITH_DOC_STRINGS 1

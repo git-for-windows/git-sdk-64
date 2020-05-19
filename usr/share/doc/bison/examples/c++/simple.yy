@@ -23,8 +23,6 @@
 
 %define api.token.constructor
 
-%token END_OF_FILE 0
-
 %code
 {
   namespace yy
@@ -42,7 +40,7 @@
         case 4:
           return parser::make_TEXT ("And that's all!");
         default:
-          return parser::make_END_OF_FILE ();
+          return parser::make_YYEOF ();
         }
     }
   }

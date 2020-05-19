@@ -56,7 +56,7 @@ yylex (void)
     }
   /* Return end-of-input. */
   else if (c == EOF)
-    return 0;
+    return YYEOF;
   /* Return a single char. */
   else
     return c;

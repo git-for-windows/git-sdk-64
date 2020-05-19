@@ -1,5 +1,5 @@
-%skeleton "lalr1.cc" /* -*- C++ -*- */
-%require "3.5.4"
+%skeleton "lalr1.cc" // -*- C++ -*-
+%require "3.6.2"
 %defines
 
 %define api.token.raw
@@ -19,7 +19,8 @@
 %locations
 
 %define parse.trace
-%define parse.error verbose
+%define parse.error detailed
+%define parse.lac full
 
 %code {
 # include "driver.hh"
@@ -27,7 +28,6 @@
 
 %define api.token.prefix {TOK_}
 %token
-  END  0  "end of file"
   ASSIGN  ":="
   MINUS   "-"
   PLUS    "+"

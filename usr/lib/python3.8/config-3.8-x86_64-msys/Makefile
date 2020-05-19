@@ -30,8 +30,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.8
 srcdir=		.
 
-abs_srcdir=	/msysdev/python/src/Python-3.8.2
-abs_builddir=	/msysdev/python/src/Python-3.8.2
+abs_srcdir=	/msysdev/python/src/Python-3.8.3
+abs_builddir=	/msysdev/python/src/Python-3.8.3
 
 
 CC=		x86_64-pc-msys-gcc

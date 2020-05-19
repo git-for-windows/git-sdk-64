@@ -59,7 +59,7 @@ struct init
   func_t *fun;
 };
 
-struct init const arith_funs[] =
+struct init const funs[] =
 {
   { "atan", atan },
   { "cos",  cos  },
@@ -73,14 +73,14 @@ struct init const arith_funs[] =
 /* The symbol table: a chain of 'struct symrec'. */
 symrec *sym_table;
 
-/* Put arithmetic functions in table. */
+/* Put functions in table. */
 static void
 init_table (void)
 {
-  for (int i = 0; arith_funs[i].name; i++)
+  for (int i = 0; funs[i].name; i++)
     {
-      symrec *ptr = putsym (arith_funs[i].name, FUN);
-      ptr->value.fun = arith_funs[i].fun;
+      symrec *ptr = putsym (funs[i].name, FUN);
+      ptr->value.fun = funs[i].fun;
     }
 }
 
@@ -125,7 +125,7 @@ yylex (void)
     c = getchar ();
 
   if (c == EOF)
-    return 0;
+    return YYEOF;
 
   /* Char starts a number => parse the number. */
   if (c == '.' || isdigit (c))
