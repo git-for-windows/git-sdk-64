@@ -188,12 +188,12 @@ update_pkgver() {
 
 	if [[ -n $newpkgver && $newpkgver != "$pkgver" ]]; then
 		if [[ -f $BUILDFILE && -w $BUILDFILE ]]; then
-			if ! /usr/bin/sed --follow-symlinks -i "s:^pkgver=[^ ]*:pkgver=$newpkgver:" "$BUILDFILE"; then
+			if ! /usr/bin/sed  --follow-symlinks -i "s:^pkgver=[^ ]*:pkgver=$newpkgver:" "$BUILDFILE"; then
 				error "$(gettext "Failed to update %s from %s to %s")" \
 						"pkgver" "$pkgver" "$newpkgver"
 				exit $E_PKGBUILD_ERROR
 			fi
-			/usr/bin/sed --follow-symlinks -i "s:^pkgrel=[^ ]*:pkgrel=1:" "$BUILDFILE"
+			/usr/bin/sed  --follow-symlinks -i "s:^pkgrel=[^ ]*:pkgrel=1:" "$BUILDFILE"
 			source_safe "$BUILDFILE"
 			local fullver=$(get_full_version)
 			msg "$(gettext "Updated version: %s")" "$pkgbase $fullver"

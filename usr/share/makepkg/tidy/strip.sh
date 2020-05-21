@@ -83,7 +83,7 @@ strip_file() {
 					ln "$dbgdir/${binary}.debug" "$dbgdir/${file}.debug"
 				fi
 			done < <(find . -type f -perm -u+w -print0 2>/dev/null)
-			
+
 		fi
 		;;
 	esac
@@ -149,7 +149,7 @@ tidy_strip() {
 				%PAR\.pm%)  continue ;;
 				Caml1999X0[0-9][0-9])  continue ;;
 			esac
-			
+
 			# Mono assemblies must not be stripped, but remove .mdb debug symbols,
 			# and make them non-executable so they're not launched by MS .NET
 			if LC_ALL=C file -b "${binary}" 2>&1 | grep -q "Mono/\.Net assembly"
@@ -158,7 +158,7 @@ tidy_strip() {
 				rm -f "${binary}.mdb"
 				continue
 			fi
-			
+
 			# check for .exe from non-automake Makefile which install(1) didn't fix
 			# strip(1) used to take care of this, but not anymore
 			case ${CHOST} in
@@ -175,7 +175,7 @@ tidy_strip() {
 				;;
 			esac
 			chmod 0755 "${binary}";
-			
+
 			case "$(file -bi "$binary")" in
 				*application/x-dosexec*) # Windows executables and dlls
 					strip_flags="$STRIP_SHARED";;
