@@ -252,6 +252,10 @@
 #  define BOOST_NO_CXX11_FINAL
 #endif
 
+#if !__has_feature(cxx_unrestricted_unions)
+#  define BOOST_NO_CXX11_UNRESTRICTED_UNION
+#endif
+
 #if !(__has_feature(__cxx_binary_literals__) || __has_extension(__cxx_binary_literals__))
 #  define BOOST_NO_CXX14_BINARY_LITERALS
 #endif

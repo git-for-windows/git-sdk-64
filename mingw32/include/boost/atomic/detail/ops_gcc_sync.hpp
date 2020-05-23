@@ -19,7 +19,7 @@
 #include <cstddef>
 #include <boost/memory_order.hpp>
 #include <boost/atomic/detail/config.hpp>
-#include <boost/atomic/detail/storage_type.hpp>
+#include <boost/atomic/detail/storage_traits.hpp>
 #include <boost/atomic/detail/operations_fwd.hpp>
 #include <boost/atomic/detail/ops_extending_cas_based.hpp>
 #include <boost/atomic/capabilities.hpp>
@@ -60,10 +60,10 @@ template< std::size_t Size, bool Signed >
 struct gcc_sync_operations :
     public gcc_sync_operations_base
 {
-    typedef typename make_storage_type< Size >::type storage_type;
-    typedef typename make_storage_type< Size >::aligned aligned_storage_type;
+    typedef typename storage_traits< Size >::type storage_type;
 
     static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = Size;
+    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_alignment = storage_traits< Size >::alignment;
     static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 
     static BOOST_FORCEINLINE void store(storage_type volatile& storage, storage_type v, memory_order order) BOOST_NOEXCEPT

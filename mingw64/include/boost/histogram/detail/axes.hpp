@@ -175,7 +175,7 @@ void axes_assign(T& t, const std::tuple<Us...>& u) {
   mp_for_each<mp_iota_c<sizeof...(Us)>>([&](auto I) { t[I] = std::get<I>(u); });
 }
 
-template <typename T, typename U>
+template <class T, class U>
 void axes_assign(T& t, const U& u) {
   t.assign(u.begin(), u.end());
 }
@@ -324,13 +324,13 @@ auto make_stack_buffer(const T& t, V&& v) {
 
 template <class T>
 using has_underflow =
-    decltype(axis::traits::static_options<T>::test(axis::option::underflow));
+    decltype(axis::traits::get_options<T>::test(axis::option::underflow));
 
 template <class T>
-using is_growing = decltype(axis::traits::static_options<T>::test(axis::option::growth));
+using is_growing = decltype(axis::traits::get_options<T>::test(axis::option::growth));
 
 template <class T>
-using is_not_inclusive = mp11::mp_not<axis::traits::static_is_inclusive<T>>;
+using is_not_inclusive = mp11::mp_not<axis::traits::is_inclusive<T>>;
 
 // for vector<T>
 template <class T>

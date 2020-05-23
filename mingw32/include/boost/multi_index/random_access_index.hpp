@@ -1,4 +1,4 @@
-/* Copyright 2003-2018 Joaquin M Lopez Munoz.
+/* Copyright 2003-2020 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -15,7 +15,7 @@
 
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <algorithm>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/call_traits.hpp>
 #include <boost/core/addressof.hpp>
 #include <boost/detail/no_exceptions_support.hpp>
@@ -823,15 +823,17 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
 #endif
   }
 
-  void swap_(random_access_index<SuperMeta,TagList>& x)
+  template<typename BoolConstant>
+  void swap_(
+    random_access_index<SuperMeta,TagList>& x,BoolConstant swap_allocators)
   {
-    ptrs.swap(x.ptrs);
+    ptrs.swap(x.ptrs,swap_allocators);
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
     safe_super::swap(x);
 #endif
 
-    super::swap_(x);
+    super::swap_(x,swap_allocators);
   }
 
   void swap_elements_(random_access_index<SuperMeta,TagList>& x)

@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // collections_save_imp.hpp: serialization for stl collections
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -60,7 +60,7 @@ inline void save_collection(
     while(count-- > 0){
         // note borland emits a no-op without the explicit namespace
         boost::serialization::save_construct_data_adl(
-            ar, 
+            ar,
             boost::addressof(*it),
             item_version
         );
@@ -76,7 +76,7 @@ inline void save_collection(Archive & ar, const Container &s)
     save_collection(ar, s, count);
 }
 
-} // namespace stl 
+} // namespace stl
 } // namespace serialization
 } // namespace boost
 

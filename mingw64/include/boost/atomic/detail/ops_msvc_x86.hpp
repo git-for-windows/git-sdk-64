@@ -20,7 +20,7 @@
 #include <boost/memory_order.hpp>
 #include <boost/atomic/detail/config.hpp>
 #include <boost/atomic/detail/interlocked.hpp>
-#include <boost/atomic/detail/storage_type.hpp>
+#include <boost/atomic/detail/storage_traits.hpp>
 #include <boost/atomic/detail/operations_fwd.hpp>
 #include <boost/atomic/detail/type_traits/make_signed.hpp>
 #include <boost/atomic/capabilities.hpp>
@@ -112,10 +112,10 @@ template< std::size_t Size, bool Signed, typename Derived >
 struct msvc_x86_operations :
     public msvc_x86_operations_base
 {
-    typedef typename make_storage_type< Size >::type storage_type;
-    typedef typename make_storage_type< Size >::aligned aligned_storage_type;
+    typedef typename storage_traits< Size >::type storage_type;
 
     static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = Size;
+    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_alignment = storage_traits< Size >::alignment;
     static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 
     static BOOST_FORCEINLINE void store(storage_type volatile& storage, storage_type v, memory_order order) BOOST_NOEXCEPT
@@ -587,13 +587,13 @@ struct operations< 2u, Signed > :
 template< bool Signed >
 struct msvc_dcas_x86
 {
-    typedef typename make_storage_type< 8u >::type storage_type;
-    typedef typename make_storage_type< 8u >::aligned aligned_storage_type;
+    typedef typename storage_traits< 8u >::type storage_type;
 
     static BOOST_CONSTEXPR_OR_CONST bool full_cas_based = true;
     static BOOST_CONSTEXPR_OR_CONST bool is_always_lock_free = true;
 
     static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = 8u;
+    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_alignment = 8u;
     static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 
     // Intel 64 and IA-32 Architectures Software Developer's Manual, Volume 3A, 8.1.1. Guaranteed Atomic Operations:
@@ -840,13 +840,13 @@ struct operations< 8u, Signed > :
 template< bool Signed >
 struct msvc_dcas_x86_64
 {
-    typedef typename make_storage_type< 16u >::type storage_type;
-    typedef typename make_storage_type< 16u >::aligned aligned_storage_type;
+    typedef typename storage_traits< 16u >::type storage_type;
 
     static BOOST_CONSTEXPR_OR_CONST bool full_cas_based = true;
     static BOOST_CONSTEXPR_OR_CONST bool is_always_lock_free = true;
 
     static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = 16u;
+    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_alignment = 16u;
     static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 
     static BOOST_FORCEINLINE void store(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT

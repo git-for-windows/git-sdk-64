@@ -31,27 +31,29 @@ namespace safe_numerics {
 /////////////////////////////////////////////////////////////////
 // validation
 
-template<typename R, R Min, R Max, typename T, typename E>
+template<typename R, R Min, R Max, typename E>
 struct validate_detail {
     using r_type = checked_result<R>;
 
     struct exception_possible {
+        template<typename T>
         constexpr static R return_value(
             const T & t
         ){
             // INT08-C
             const r_type rx = heterogeneous_checked_operation<
                 R,
+                Min,
+                Max,
                 typename base_type<T>::type,
                 dispatch_and_return<E, R>
             >::cast(t);
-            const R r = rx.exception()
-                ? static_cast<R>(t)
-                : rx.m_r;
-            return r;
+
+            return rx;
         }
     };
     struct exception_not_possible {
+        template<typename T>
         constexpr static R return_value(
             const T & t
         ){
@@ -59,19 +61,19 @@ struct validate_detail {
         }
     };
 
+    template<typename T>
     constexpr static R return_value(const T & t){
+
         constexpr const interval<r_type> t_interval{
             checked::cast<R>(base_value(std::numeric_limits<T>::min())),
             checked::cast<R>(base_value(std::numeric_limits<T>::max()))
         };
         constexpr const interval<r_type> r_interval{r_type(Min), r_type(Max)};
 
-        /*
         static_assert(
-            true != r_interval.excludes(t_interval),
-            "ranges don't overlap: can't cast"
+            true != static_cast<bool>(r_interval.excludes(t_interval)),
+            "can't cast from ranges that don't overlap"
         );
-        */
 
         return std::conditional<
             static_cast<bool>(r_interval.includes(t_interval)),
@@ -85,7 +87,7 @@ template<class Stored, Stored Min, Stored Max, class P, class E>
 template<class T>
 constexpr Stored safe_base<Stored, Min, Max, P, E>::
 validated_cast(const T & t) const {
-    return validate_detail<Stored,Min,Max,T,E>::return_value(t);
+    return validate_detail<Stored,Min,Max,E>::return_value(t);
 }
 
 template<class Stored, Stored Min, Stored Max, class P, class E>
@@ -168,9 +170,8 @@ template<
 >
 constexpr safe_base<Stored, Min, Max, P, E>::
 operator R () const {
-
     // if static values don't overlap, the program can never function
-    #if 0
+    #if 1
     constexpr const interval<R> r_interval;
     constexpr const interval<Stored> this_interval(Min, Max);
     static_assert(
@@ -178,19 +179,17 @@ operator R () const {
         "safe type cannot be constructed with this type"
     );
     #endif
-    
+
     return validate_detail<
         R,
         std::numeric_limits<R>::min(),
         std::numeric_limits<R>::max(),
-        Stored,
         E
-    >::return_value(m_t);
-
+    >::return_value(*this);
 }
 
 // cast to the underlying builtin type from a safe type
-template< class Stored, Stored Min, Stored Max, class P, class E>
+template<class Stored, Stored Min, Stored Max, class P, class E>
 constexpr safe_base<Stored, Min, Max, P, E>::
 operator Stored () const {
     return m_t;
@@ -279,7 +278,6 @@ struct common_promotion_policy {
 // type will be.  Note we currently need this because we support
 // return of only safe integer types. Someday ..., we'll support
 // all other safe types including float and user defined ones.
-//
 
 // helper - cast arguments to binary operators to a specified
 // result type
@@ -290,6 +288,8 @@ constexpr static casting_helper(const T & t, const U & u){
     using r_type = checked_result<R>;
     const r_type tx = heterogeneous_checked_operation<
         R,
+        std::numeric_limits<R>::min(),
+        std::numeric_limits<R>::max(),
         typename base_type<T>::type,
         dispatch_and_return<EP, R>
     >::cast(base_value(t));
@@ -299,6 +299,8 @@ constexpr static casting_helper(const T & t, const U & u){
 
     const r_type ux = heterogeneous_checked_operation<
         R,
+        std::numeric_limits<R>::min(),
+        std::numeric_limits<R>::max(),
         typename base_type<U>::type,
         dispatch_and_return<EP, R>
     >::cast(base_value(u));

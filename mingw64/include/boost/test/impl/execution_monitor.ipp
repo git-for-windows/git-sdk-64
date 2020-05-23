@@ -715,7 +715,11 @@ signal_action::~signal_action()
 class signal_handler {
 public:
     // Constructor
-    explicit signal_handler( bool catch_system_errors, bool detect_fpe, unsigned timeout_microseconds, bool attach_dbg, char* alt_stack );
+    explicit signal_handler( bool catch_system_errors,
+                             bool detect_fpe,
+                             unsigned long int timeout_microseconds,
+                             bool attach_dbg,
+                             char* alt_stack );
 
     // Destructor
     ~signal_handler();
@@ -738,7 +742,7 @@ public:
 private:
     // Data members
     signal_handler*         m_prev_handler;
-    unsigned                m_timeout_microseconds;
+    unsigned long int       m_timeout_microseconds;
 
     // Note: We intentionality do not catch SIGCHLD. Users have to deal with it themselves
     signal_action           m_ILL_action;
@@ -762,7 +766,11 @@ signal_handler* signal_handler::s_active_handler = signal_handler_ptr();
 
 //____________________________________________________________________________//
 
-signal_handler::signal_handler( bool catch_system_errors, bool detect_fpe, unsigned timeout_microseconds, bool attach_dbg, char* alt_stack )
+signal_handler::signal_handler( bool catch_system_errors,
+                                bool detect_fpe,
+                                unsigned long int timeout_microseconds,
+                                bool attach_dbg,
+                                char* alt_stack )
 : m_prev_handler( s_active_handler )
 , m_timeout_microseconds( timeout_microseconds )
 , m_ILL_action ( SIGILL , catch_system_errors,      attach_dbg, alt_stack )
@@ -1365,7 +1373,7 @@ execution_monitor::execute( boost::function<int ()> const& F )
 
 #endif // !BOOST_NO_EXCEPTIONS
 
-    return 0;  // never reached; supplied to quiet compiler warnings
+    BOOST_TEST_UNREACHABLE_RETURN(0);  // never reached; supplied to quiet compiler warnings
 } // execute
 
 //____________________________________________________________________________//

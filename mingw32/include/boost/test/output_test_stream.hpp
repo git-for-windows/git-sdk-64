@@ -11,7 +11,7 @@
 // ***************************************************************************
 
 #include <boost/config/header_deprecated.hpp>
-BOOST_HEADER_DEPRECATED( "This header is deprecated. Please use <boost/test/tools/output_test_stream.hpp> instead." )
+BOOST_HEADER_DEPRECATED( "<boost/test/tools/output_test_stream.hpp>" )
 
 
 // Boost.Test

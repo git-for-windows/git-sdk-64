@@ -121,7 +121,7 @@ public:
 class BOOST_TEST_DECL results_collector_t : public test_observer {
 public:
 
-    virtual void        test_start( counter_t );
+    virtual void        test_start( counter_t, test_unit_id );
 
     virtual void        test_unit_start( test_unit const& );
     virtual void        test_unit_finish( test_unit const&, unsigned long );

@@ -34,7 +34,7 @@ namespace op {
 // **************               string_compare                 ************** //
 // ************************************************************************** //
 
-#define DEFINE_CSTRING_COMPARISON( oper, name, rev )                \
+#define DEFINE_CSTRING_COMPARISON( oper, name, rev, name_inverse )  \
 template<typename Lhs,typename Rhs>                                 \
 struct name<Lhs,Rhs,typename boost::enable_if_c<                    \
     (   unit_test::is_cstring_comparable<Lhs>::value                \
@@ -45,6 +45,7 @@ struct name<Lhs,Rhs,typename boost::enable_if_c<                    \
     typedef typename unit_test::deduce_cstring_transform<Rhs>::type rhs_char_type; \
 public:                                                             \
     typedef assertion_result result_type;                           \
+    typedef name_inverse<Lhs, Rhs> inverse;                         \
                                                                     \
     typedef name<                                                   \
         typename lhs_char_type::value_type,                         \
@@ -67,6 +68,8 @@ public:                                                             \
              << tt_detail::print_helper( rhs );                     \
     }                                                               \
                                                                     \
+    static char const* forward()                                    \
+    { return " " #oper " "; }                                       \
     static char const* revert()                                     \
     { return " " #rev " "; }                                        \
 };                                                                  \

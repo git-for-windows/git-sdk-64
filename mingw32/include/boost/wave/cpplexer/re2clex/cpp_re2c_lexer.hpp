@@ -196,7 +196,6 @@ lexer<IteratorT, PositionT, TokenT>::get(TokenT& result)
             impl::validate_literal(value, actline, scanner.column, filename);
         break;
 
-#if BOOST_WAVE_SUPPORT_INCLUDE_NEXT != 0
     case T_PP_HHEADER:
     case T_PP_QHEADER:
     case T_PP_INCLUDE:
@@ -205,13 +204,14 @@ lexer<IteratorT, PositionT, TokenT>::get(TokenT& result)
           value = string_type((char const *)scanner.tok,
               scanner.cur-scanner.tok);
 
+#if BOOST_WAVE_SUPPORT_INCLUDE_NEXT != 0
       // Skip '#' and whitespace and see whether we find an 'include_next' here.
           typename string_type::size_type start = value.find("include");
           if (value.compare(start, 12, "include_next", 12) == 0)
               id = token_id(id | AltTokenType);
+#endif
           break;
       }
-#endif
 
     case T_LONGINTLIT:  // supported in C++11, C99 and long_long mode
         value = string_type((char const *)scanner.tok,

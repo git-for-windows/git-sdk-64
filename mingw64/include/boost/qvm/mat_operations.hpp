@@ -1,10 +1,11 @@
 //Copyright (c) 2008-2016 Emil Dotchevski and Reverge Studios, Inc.
+//Copyright (c) 2019 agate-pris
 
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_4F915D9ED30A11DF962186E3DFD72085
-#define UUID_4F915D9ED30A11DF962186E3DFD72085
+#ifndef BOOST_QVM_4F915D9ED30A11DF962186E3DFD72085
+#define BOOST_QVM_4F915D9ED30A11DF962186E3DFD72085
 
 #include <boost/qvm/detail/mat_assign.hpp>
 #include <boost/qvm/mat_operations2.hpp>
@@ -112,16 +113,11 @@ boost
             bool>::type
         cmp( A const & a, B const & b, Cmp f )
             {
-            typedef typename deduce_scalar<
-                typename mat_traits<A>::scalar_type,
-                typename mat_traits<B>::scalar_type>::type T;
-            int const rows=mat_traits<A>::rows;
-            int const cols=mat_traits<A>::cols;
-            T m1[rows][cols]; assign(m1,a);
-            T m2[rows][cols]; assign(m2,b);
-            for( int i=0; i!=rows; ++i )
-                for( int j=0; j!=cols; ++j )
-                    if( !f(m1[i][j],m2[i][j]) )
+            for( int i=0; i!=mat_traits<A>::rows; ++i )
+                for( int j=0; j!=mat_traits<A>::cols; ++j )
+                    if( !f(
+                        mat_traits<A>::read_element_idx(i, j, a),
+                        mat_traits<B>::read_element_idx(i, j, b)) )
                         return false;
             return true;
             }
@@ -701,7 +697,7 @@ boost
         namespace
         qvm_detail
             {
-            template <int R,int CR,int C>
+            template <int R,int /*CR*/,int C>
             struct
             mul_mm_defined
                 {

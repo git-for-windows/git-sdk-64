@@ -236,8 +236,8 @@ private:
         monthday
     };
 
-    day_kind m_DayKind : 2;
     unsigned char m_Day : 6;
+    unsigned char m_DayKind : 2; // contains day_kind values
     unsigned char m_Hour, m_Minute, m_Second;
 
     mutable posix_time::ptime m_Previous;

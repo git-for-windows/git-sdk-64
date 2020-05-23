@@ -104,7 +104,21 @@ public:
         >::type = 0
     >
     constexpr operator R () const {
-        return N;
+        // if static values don't overlap, the program can never function
+        #if 1
+        constexpr const interval<R> r_interval;
+        static_assert(
+            ! r_interval.excludes(N),
+            "safe type cannot be constructed with this type"
+        );
+        #endif
+
+        return validate_detail<
+            R,
+            std::numeric_limits<R>::min(),
+            std::numeric_limits<R>::max(),
+            E
+        >::return_value(*this);
     }
 
     // non mutating unary operators

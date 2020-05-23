@@ -39,13 +39,19 @@ struct null_type {
 /// Another alias for an empty metadata type
 using empty_type = null_type;
 
+// some forward declarations must be hidden from doxygen to fix the reference docu :(
 #ifndef BOOST_HISTOGRAM_DOXYGEN_INVOKED
 
 namespace transform {
+
 struct id;
+
 struct log;
+
 struct sqrt;
+
 struct pow;
+
 } // namespace transform
 
 template <class Value = double, class Transform = use_default,
@@ -79,13 +85,20 @@ template <class T>
 struct sample_type;
 
 namespace accumulators {
-template <class Value = double>
+
+template <class ValueType = double>
+class count;
+
+template <class ValueType = double>
 class sum;
-template <class Value = double>
+
+template <class ValueType = double>
 class weighted_sum;
-template <class Value = double>
+
+template <class ValueType = double>
 class mean;
-template <class Value = double>
+
+template <class ValueType = double>
 class weighted_mean;
 
 template <class T>
@@ -95,6 +108,7 @@ template <class T>
 struct is_thread_safe : std::false_type {};
 template <class T>
 struct is_thread_safe<thread_safe<T>> : std::true_type {};
+
 } // namespace accumulators
 
 struct unsafe_access;
@@ -123,12 +137,14 @@ using profile_storage = dense_storage<accumulators::mean<>>;
 /// Dense storage which tracks means of weighted samples in each cell.
 using weighted_profile_storage = dense_storage<accumulators::weighted_mean<>>;
 
+// some forward declarations must be hidden from doxygen to fix the reference docu :(
 #ifndef BOOST_HISTOGRAM_DOXYGEN_INVOKED
 
 template <class Axes, class Storage = default_storage>
 class BOOST_ATTRIBUTE_NODISCARD histogram;
 
-#endif
+#endif // BOOST_HISTOGRAM_DOXYGEN_INVOKED
+
 } // namespace histogram
 } // namespace boost
 

@@ -26,7 +26,7 @@
 
 #include <boost/smart_ptr/detail/sp_interlocked.hpp>
 #include <boost/smart_ptr/detail/sp_typeinfo_.hpp>
-#include <boost/detail/workaround.hpp>
+#include <boost/config/workaround.hpp>
 #include <boost/config.hpp>
 
 namespace boost

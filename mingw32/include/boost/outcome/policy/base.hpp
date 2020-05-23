@@ -1,5 +1,5 @@
 /* Policies for result and outcome
-(C) 2017-2019 Niall Douglas <http://www.nedproductions.biz/> (6 commits) and Andrzej Krzemieński <akrzemi1@gmail.com> (1 commit)
+(C) 2017-2020 Niall Douglas <http://www.nedproductions.biz/> (6 commits) and Andrzej Krzemieński <akrzemi1@gmail.com> (1 commit)
 File Created: Oct 2017
 
 
@@ -31,46 +31,32 @@ DEALINGS IN THE SOFTWARE.
 #ifndef BOOST_OUTCOME_POLICY_BASE_HPP
 #define BOOST_OUTCOME_POLICY_BASE_HPP
 
-#include "../config.hpp"
-
-#include <cassert>
+#include "../detail/value_storage.hpp"
 
 BOOST_OUTCOME_V2_NAMESPACE_EXPORT_BEGIN
 
 namespace policy
 {
-  /*! AWAITING HUGO JSON CONVERSION TOOL 
+  namespace detail
+  {
+    using BOOST_OUTCOME_V2_NAMESPACE::detail::make_ub;
+  }
+  /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
   struct base
   {
   protected:
-    template <class Impl>
-    static constexpr
-#ifdef _MSC_VER
-    __declspec(noreturn)
-#elif defined(__GNUC__) || defined(__clang__)
-        __attribute__((noreturn))
-#endif
-    void _ub(Impl && /*unused*/)
-    {
-      assert(false);  // NOLINT
-#if defined(__GNUC__) || defined(__clang__)
-      __builtin_unreachable();
-#elif defined(_MSC_VER)
-      __assume(0);
-#endif
-    }
+    template <class Impl> static constexpr void _make_ub(Impl &&self) noexcept { return detail::make_ub(static_cast<Impl &&>(self)); }
+    template <class Impl> static constexpr bool _has_value(Impl &&self) noexcept { return self._state._status.have_value(); }
+    template <class Impl> static constexpr bool _has_error(Impl &&self) noexcept { return self._state._status.have_error(); }
+    template <class Impl> static constexpr bool _has_exception(Impl &&self) noexcept { return self._state._status.have_exception(); }
+    template <class Impl> static constexpr bool _has_error_is_errno(Impl &&self) noexcept { return self._state._status.have_error_is_errno(); }
 
-    template <class Impl> static constexpr bool _has_value(Impl &&self) noexcept { return (self._state._status & BOOST_OUTCOME_V2_NAMESPACE::detail::status_have_value) != 0; }
-    template <class Impl> static constexpr bool _has_error(Impl &&self) noexcept { return (self._state._status & BOOST_OUTCOME_V2_NAMESPACE::detail::status_have_error) != 0; }
-    template <class Impl> static constexpr bool _has_exception(Impl &&self) noexcept { return (self._state._status & BOOST_OUTCOME_V2_NAMESPACE::detail::status_have_exception) != 0; }
-    template <class Impl> static constexpr bool _has_error_is_errno(Impl &&self) noexcept { return (self._state._status & BOOST_OUTCOME_V2_NAMESPACE::detail::status_error_is_errno) != 0; }
-
-    template <class Impl> static constexpr void _set_has_value(Impl &&self, bool v) noexcept { v ? self._state._status |= BOOST_OUTCOME_V2_NAMESPACE::detail::status_have_value : self._state._status &= ~BOOST_OUTCOME_V2_NAMESPACE::detail::status_have_value; }
-    template <class Impl> static constexpr void _set_has_error(Impl &&self, bool v) noexcept { v ? self._state._status |= BOOST_OUTCOME_V2_NAMESPACE::detail::status_have_error : self._state._status &= ~BOOST_OUTCOME_V2_NAMESPACE::detail::status_have_error; }
-    template <class Impl> static constexpr void _set_has_exception(Impl &&self, bool v) noexcept { v ? self._state._status |= BOOST_OUTCOME_V2_NAMESPACE::detail::status_have_exception : self._state._status &= ~BOOST_OUTCOME_V2_NAMESPACE::detail::status_have_exception; }
-    template <class Impl> static constexpr void _set_has_error_is_errno(Impl &&self, bool v) noexcept { v ? self._state._status |= BOOST_OUTCOME_V2_NAMESPACE::detail::status_error_is_errno : self._state._status &= ~BOOST_OUTCOME_V2_NAMESPACE::detail::status_error_is_errno; }
+    template <class Impl> static constexpr void _set_has_value(Impl &&self, bool v) noexcept { self._state._status.set_have_value(v); }
+    template <class Impl> static constexpr void _set_has_error(Impl &&self, bool v) noexcept { self._state._status.set_have_error(v); }
+    template <class Impl> static constexpr void _set_has_exception(Impl &&self, bool v) noexcept { self._state._status.set_have_exception(v); }
+    template <class Impl> static constexpr void _set_has_error_is_errno(Impl &&self, bool v) noexcept { self._state._status.set_have_error_is_errno(v); }
 
     template <class Impl> static constexpr auto &&_value(Impl &&self) noexcept { return static_cast<Impl &&>(self)._state._value; }
     template <class Impl> static constexpr auto &&_error(Impl &&self) noexcept { return static_cast<Impl &&>(self)._error; }
@@ -82,21 +68,21 @@ SIGNATURE NOT RECOGNISED
     {
       if(!_has_value(self))
       {
-        _ub(self);
+        _make_ub(self);
       }
     }
     template <class Impl> static constexpr void narrow_error_check(Impl &&self) noexcept
     {
       if(!_has_error(self))
       {
-        _ub(self);
+        _make_ub(self);
       }
     }
     template <class Impl> static constexpr void narrow_exception_check(Impl &&self) noexcept
     {
       if(!_has_exception(self))
       {
-        _ub(self);
+        _make_ub(self);
       }
     }
   };

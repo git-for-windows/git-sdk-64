@@ -18,7 +18,7 @@
 #include <boost/memory_order.hpp>
 #include <boost/atomic/detail/config.hpp>
 #include <boost/atomic/detail/bitwise_fp_cast.hpp>
-#include <boost/atomic/detail/storage_type.hpp>
+#include <boost/atomic/detail/storage_traits.hpp>
 #include <boost/atomic/detail/extra_fp_operations_fwd.hpp>
 #include <boost/atomic/detail/type_traits/is_iec559.hpp>
 #include <boost/atomic/detail/type_traits/is_integral.hpp>

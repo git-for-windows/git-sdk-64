@@ -11,7 +11,6 @@
 //  yield_k.hpp
 //
 //  Copyright (c) 2008 Peter Dimov
-//  Copyright (c) Microsoft Corporation 2014
 //
 //  void yield( unsigned k );
 //
@@ -25,11 +24,6 @@
 //
 
 #include <boost/config.hpp>
-#include <boost/predef/platform/windows_runtime.h>
-
-#if BOOST_PLAT_WINDOWS_RUNTIME
-#include <thread>
-#endif
 
 // BOOST_SMT_PAUSE
 
@@ -59,7 +53,7 @@ namespace boost
 namespace detail
 {
 
-#if !defined( BOOST_USE_WINDOWS_H ) && !BOOST_PLAT_WINDOWS_RUNTIME
+#if !defined( BOOST_USE_WINDOWS_H )
 
 #if defined(__clang__) && defined(__x86_64__)
 // clang x64 warns that __stdcall is ignored
@@ -76,7 +70,7 @@ namespace detail
 
 #undef BOOST_SP_STDCALL
 
-#endif // !defined( BOOST_USE_WINDOWS_H ) && !BOOST_PLAT_WINDOWS_RUNTIME
+#endif // !defined( BOOST_USE_WINDOWS_H )
 
 inline void yield( unsigned k ) BOOST_NOEXCEPT
 {
@@ -89,7 +83,6 @@ inline void yield( unsigned k ) BOOST_NOEXCEPT
         BOOST_SMT_PAUSE
     }
 #endif
-#if !BOOST_PLAT_WINDOWS_RUNTIME
     else if( k < 32 )
     {
         Sleep( 0 );
@@ -98,13 +91,6 @@ inline void yield( unsigned k ) BOOST_NOEXCEPT
     {
         Sleep( 1 );
     }
-#else
-    else
-    {
-        // Sleep isn't supported on the Windows Runtime.
-        std::this_thread::yield();
-    }
-#endif
 }
 
 } // namespace detail

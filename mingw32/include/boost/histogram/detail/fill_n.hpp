@@ -19,12 +19,12 @@
 #include <boost/histogram/detail/optional_index.hpp>
 #include <boost/histogram/detail/span.hpp>
 #include <boost/histogram/detail/static_if.hpp>
+#include <boost/variant2/variant.hpp>
 #include <boost/histogram/fwd.hpp>
 #include <boost/mp11/algorithm.hpp>
 #include <boost/mp11/bind.hpp>
 #include <boost/mp11/utility.hpp>
 #include <boost/throw_exception.hpp>
-#include <boost/variant2/variant.hpp>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -64,7 +64,7 @@ struct index_visitor {
   using index_type = Index;
   using pointer = index_type*;
   using value_type = axis::traits::value_type<Axis>;
-  using Opt = axis::traits::static_options<Axis>;
+  using Opt = axis::traits::get_options<Axis>;
 
   Axis& axis_;
   const std::size_t stride_, start_, size_; // start and size of value collection
@@ -159,7 +159,7 @@ template <class S, class Index, class... Ts>
 void fill_n_storage(S& s, const Index idx, Ts&&... p) noexcept {
   if (is_valid(idx)) {
     BOOST_ASSERT(idx < s.size());
-    fill_storage_3(s[idx], *p.first...);
+    fill_storage_element(s[idx], *p.first...);
   }
   fold((p.second ? ++p.first : 0)...);
 }
@@ -168,8 +168,7 @@ template <class S, class Index, class T, class... Ts>
 void fill_n_storage(S& s, const Index idx, weight_type<T>&& w, Ts&&... ps) noexcept {
   if (is_valid(idx)) {
     BOOST_ASSERT(idx < s.size());
-    fill_storage_3(s[idx], weight_type<decltype(*w.value.first)>{*w.value.first},
-                   *ps.first...);
+    fill_storage_element(s[idx], weight(*w.value.first), *ps.first...);
   }
   if (w.value.second) ++w.value.first;
   fold((ps.second ? ++ps.first : 0)...);

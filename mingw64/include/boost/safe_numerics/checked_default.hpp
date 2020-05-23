@@ -46,6 +46,8 @@ namespace safe_numerics {
 
 template<
     typename R,
+    R Min,
+    R Max,
     typename T,
     class F = make_checked_result<R>,
     class Default = void
@@ -132,7 +134,12 @@ namespace checked {
 
 template<typename R, typename T>
 constexpr checked_result<R> cast(const T & t) /* noexcept */ {
-    return heterogeneous_checked_operation<R, T>::cast(t);
+    return heterogeneous_checked_operation<
+        R,
+        std::numeric_limits<R>::min(),
+        std::numeric_limits<R>::max(),
+        T
+    >::cast(t);
 }
 template<typename R>
 constexpr checked_result<R> minus(const R & t) noexcept {

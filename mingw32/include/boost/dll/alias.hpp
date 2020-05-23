@@ -40,7 +40,7 @@ namespace boost { namespace dll {
 #define BOOST_DLL_FORCE_NO_WEAK_EXPORTS
 #endif
 
-#if BOOST_COMP_MSVC || ((BOOST_COMP_INTEL || BOOST_COMP_CLANG) && BOOST_OS_WINDOWS)
+#if defined(_MSC_VER) // MSVC, Clang-cl, and ICC on Windows
 
 #define BOOST_DLL_SELECTANY __declspec(selectany)
 

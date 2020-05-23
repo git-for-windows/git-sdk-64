@@ -17,9 +17,8 @@
 #include <cstddef>
 #include <boost/memory_order.hpp>
 #include <boost/atomic/detail/config.hpp>
-#include <boost/atomic/detail/storage_type.hpp>
+#include <boost/atomic/detail/storage_traits.hpp>
 #include <boost/atomic/detail/extra_operations_fwd.hpp>
-#include <boost/atomic/detail/lockpool.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -42,11 +41,12 @@ struct emulated_extra_operations :
 {
     typedef Base base_type;
     typedef typename base_type::storage_type storage_type;
+    typedef typename base_type::scoped_lock scoped_lock;
 
     static BOOST_FORCEINLINE storage_type fetch_negate(storage_type volatile& storage, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         storage_type old_val = s;
         s = static_cast< storage_type >(-old_val);
         return old_val;
@@ -55,7 +55,7 @@ struct emulated_extra_operations :
     static BOOST_FORCEINLINE storage_type negate(storage_type volatile& storage, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         storage_type new_val = static_cast< storage_type >(-s);
         s = new_val;
         return new_val;
@@ -64,7 +64,7 @@ struct emulated_extra_operations :
     static BOOST_FORCEINLINE storage_type add(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         storage_type new_val = s;
         new_val += v;
         s = new_val;
@@ -74,7 +74,7 @@ struct emulated_extra_operations :
     static BOOST_FORCEINLINE storage_type sub(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         storage_type new_val = s;
         new_val -= v;
         s = new_val;
@@ -84,7 +84,7 @@ struct emulated_extra_operations :
     static BOOST_FORCEINLINE storage_type bitwise_and(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         storage_type new_val = s;
         new_val &= v;
         s = new_val;
@@ -94,7 +94,7 @@ struct emulated_extra_operations :
     static BOOST_FORCEINLINE storage_type bitwise_or(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         storage_type new_val = s;
         new_val |= v;
         s = new_val;
@@ -104,7 +104,7 @@ struct emulated_extra_operations :
     static BOOST_FORCEINLINE storage_type bitwise_xor(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         storage_type new_val = s;
         new_val ^= v;
         s = new_val;
@@ -114,7 +114,7 @@ struct emulated_extra_operations :
     static BOOST_FORCEINLINE storage_type fetch_complement(storage_type volatile& storage, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         storage_type old_val = s;
         s = static_cast< storage_type >(~old_val);
         return old_val;
@@ -123,7 +123,7 @@ struct emulated_extra_operations :
     static BOOST_FORCEINLINE storage_type bitwise_complement(storage_type volatile& storage, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         storage_type new_val = static_cast< storage_type >(~s);
         s = new_val;
         return new_val;

@@ -17,7 +17,7 @@
 #include <cstddef>
 #include <boost/memory_order.hpp>
 #include <boost/atomic/detail/config.hpp>
-#include <boost/atomic/detail/storage_type.hpp>
+#include <boost/atomic/detail/storage_traits.hpp>
 #include <boost/atomic/detail/operations_fwd.hpp>
 #include <boost/atomic/capabilities.hpp>
 #if (defined(__clang__) || (defined(BOOST_GCC) && (BOOST_GCC+0) >= 70000)) && (defined(BOOST_ATOMIC_DETAIL_X86_HAS_CMPXCHG8B) || defined(BOOST_ATOMIC_DETAIL_X86_HAS_CMPXCHG16B))
@@ -84,10 +84,10 @@ BOOST_FORCEINLINE BOOST_CONSTEXPR int convert_memory_order_to_gcc(memory_order o
 template< std::size_t Size, bool Signed >
 struct gcc_atomic_operations
 {
-    typedef typename make_storage_type< Size >::type storage_type;
-    typedef typename make_storage_type< Size >::aligned aligned_storage_type;
+    typedef typename storage_traits< Size >::type storage_type;
 
     static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = Size;
+    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_alignment = storage_traits< Size >::alignment;
     static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
     static BOOST_CONSTEXPR_OR_CONST bool full_cas_based = false;
 
@@ -180,8 +180,6 @@ template< bool Signed >
 struct operations< 16u, Signed > :
     public cas_based_operations< gcc_dcas_x86_64< Signed > >
 {
-    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = 16u;
-    static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 };
 
 #else

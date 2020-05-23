@@ -48,6 +48,7 @@ class async_pipe
 public:
     typedef ::boost::winapi::HANDLE_ native_handle_type;
     typedef ::boost::asio::windows::stream_handle   handle_type;
+    typedef typename handle_type::executor_type executor_type;
 
     async_pipe(boost::asio::io_context & ios) : async_pipe(ios, ios, make_pipe_name(), true) {}
     async_pipe(boost::asio::io_context & ios_source, boost::asio::io_context & ios_sink)

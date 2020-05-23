@@ -34,7 +34,7 @@ namespace unit_test {
 class BOOST_TEST_DECL framework_init_observer_t : public test_observer {
 public:
 
-    virtual void        test_start( counter_t );
+    virtual void        test_start( counter_t, test_unit_id );
 
     virtual void        assertion_result( unit_test::assertion_result );
     virtual void        exception_caught( execution_exception const& );
@@ -47,11 +47,9 @@ public:
     /// Indicates if a failure has been recorded so far
     bool                has_failed( ) const;
 
-    /// Singleton pattern
-    BOOST_TEST_SINGLETON_CONS( framework_init_observer_t )
+private:
+    bool m_has_failure;
 };
-
-BOOST_TEST_SINGLETON_INST( framework_init_observer )
 
 } // namespace unit_test
 } // namespace boost

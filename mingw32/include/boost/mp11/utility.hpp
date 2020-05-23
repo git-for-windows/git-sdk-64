@@ -1,7 +1,7 @@
 #ifndef BOOST_MP11_UTILITY_HPP_INCLUDED
 #define BOOST_MP11_UTILITY_HPP_INCLUDED
 
-// Copyright 2015, 2017, 2019 Peter Dimov.
+// Copyright 2015-2020 Peter Dimov.
 //
 // Distributed under the Boost Software License, Version 1.0.
 //
@@ -9,6 +9,8 @@
 // http://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/mp11/integral.hpp>
+#include <boost/mp11/detail/mp_list.hpp>
+#include <boost/mp11/detail/mp_fold.hpp>
 #include <boost/mp11/detail/config.hpp>
 
 namespace boost
@@ -220,7 +222,22 @@ template<class Q, class... T> using mp_invoke_q = typename Q::template fn<T...>;
 #endif
 
 // old name for mp_invoke_q retained for compatibility, but deprecated
+#if !defined(__clang__)
+
 template<class Q, class... T> using mp_invoke BOOST_MP11_DEPRECATED("please use mp_invoke_q") = mp_invoke_q<Q, T...>;
+
+#else
+
+// Clang doesn't warn on deprecated alias templates
+
+template<class Q, class... T> struct BOOST_MP11_DEPRECATED("please use mp_invoke_q") mp_invoke_
+{
+    using type = mp_invoke_q<Q, T...>;
+};
+
+template<class Q, class... T> using mp_invoke = typename mp_invoke_<Q, T...>::type;
+
+#endif
 
 // mp_not_fn<P>
 template<template<class...> class P> struct mp_not_fn
@@ -229,6 +246,28 @@ template<template<class...> class P> struct mp_not_fn
 };
 
 template<class Q> using mp_not_fn_q = mp_not_fn<Q::template fn>;
+
+// mp_compose
+namespace detail
+{
+
+template<class T, class Q> using mp_reverse_invoke_q = mp_invoke_q<Q, T>;
+
+} // namespace detail
+
+#if !BOOST_MP11_WORKAROUND( BOOST_MP11_MSVC, < 1900 )
+
+template<template<class...> class... F> struct mp_compose
+{
+    template<class T> using fn = mp_fold<mp_list<mp_quote<F>...>, T, detail::mp_reverse_invoke_q>;
+};
+
+#endif
+
+template<class... Q> struct mp_compose_q
+{
+    template<class T> using fn = mp_fold<mp_list<Q...>, T, detail::mp_reverse_invoke_q>;
+};
 
 } // namespace mp11
 } // namespace boost

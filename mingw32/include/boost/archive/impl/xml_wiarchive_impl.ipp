@@ -169,8 +169,6 @@ xml_wiarchive_impl<Archive>::xml_wiarchive_impl(
         is_.sync();
         is_.imbue(archive_locale);
     }
-    if(0 == (flags & no_header))
-        init();
 }
 
 template<class Archive>

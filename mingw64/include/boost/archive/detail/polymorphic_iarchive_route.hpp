@@ -190,7 +190,7 @@ public:
     }
     // register type function
     template<class T>
-    const basic_pointer_iserializer * 
+    const basic_pointer_iserializer *
     register_type(T * t = NULL){
         return ArchiveImplementation::register_type(t);
     }

@@ -13,7 +13,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // collections_load_imp.hpp: serialization for loading stl collections
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -26,8 +26,8 @@
 #include <cstddef> // size_t
 #include <boost/config.hpp> // msvc 6.0 needs this for warning suppression
 #if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{ 
-    using ::size_t; 
+namespace std{
+    using ::size_t;
 } // namespace std
 #endif
 #include <boost/detail/workaround.hpp>
@@ -95,11 +95,11 @@ collection_load_impl(
         detail::stack_construct<Archive, typename T::value_type> u(ar, item_version);
         ar >> boost::serialization::make_nvp("item", u.reference());
         t.push_back(boost::move(u.reference()));
-        ar.reset_object_address(& t.back() , & u.reference());
+        ar.reset_object_address(& t.back() , u.address());
      }
 }
 
-} // namespace stl 
+} // namespace stl
 } // namespace serialization
 } // namespace boost
 

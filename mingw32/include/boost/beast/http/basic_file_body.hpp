@@ -111,6 +111,12 @@ public:
     /// Move assignment
     value_type& operator=(value_type&& other) = default;
 
+    /// Return the file
+    File& file()
+    {
+        return file_;
+    }
+
     /// Returns `true` if the file is open
     bool
     is_open() const
@@ -356,6 +362,12 @@ get(error_code& ec) ->
     auto const nread = body_.file_.read(buf_, amount, ec);
     if(ec)
         return boost::none;
+
+    if (nread == 0)
+    {
+        ec = error::short_read;
+        return boost::none;
+    }
 
     // Make sure there is forward progress
     BOOST_ASSERT(nread != 0);

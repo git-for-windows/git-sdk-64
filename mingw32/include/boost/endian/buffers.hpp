@@ -30,7 +30,6 @@
 #include <boost/endian/detail/endian_store.hpp>
 #include <boost/endian/detail/endian_load.hpp>
 #include <boost/core/scoped_enum.hpp>
-#include <boost/predef/other/endian.h>
 #include <boost/static_assert.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/config.hpp>
@@ -149,47 +148,25 @@ namespace endian
   typedef endian_buffer<order::little, uint_least64_t, 56>  little_uint56_buf_t;
   typedef endian_buffer<order::little, uint_least64_t, 64>  little_uint64_buf_t;
 
-# if BOOST_ENDIAN_BIG_BYTE
   // unaligned native endian signed integer buffers
-  typedef big_int8_buf_t   native_int8_buf_t;
-  typedef big_int16_buf_t  native_int16_buf_t;
-  typedef big_int24_buf_t  native_int24_buf_t;
-  typedef big_int32_buf_t  native_int32_buf_t;
-  typedef big_int40_buf_t  native_int40_buf_t;
-  typedef big_int48_buf_t  native_int48_buf_t;
-  typedef big_int56_buf_t  native_int56_buf_t;
-  typedef big_int64_buf_t  native_int64_buf_t;
+  typedef endian_buffer<order::native, int_least8_t, 8>     native_int8_buf_t;
+  typedef endian_buffer<order::native, int_least16_t, 16>   native_int16_buf_t;
+  typedef endian_buffer<order::native, int_least32_t, 24>   native_int24_buf_t;
+  typedef endian_buffer<order::native, int_least32_t, 32>   native_int32_buf_t;
+  typedef endian_buffer<order::native, int_least64_t, 40>   native_int40_buf_t;
+  typedef endian_buffer<order::native, int_least64_t, 48>   native_int48_buf_t;
+  typedef endian_buffer<order::native, int_least64_t, 56>   native_int56_buf_t;
+  typedef endian_buffer<order::native, int_least64_t, 64>   native_int64_buf_t;
 
   // unaligned native endian unsigned integer buffers
-  typedef big_uint8_buf_t   native_uint8_buf_t;
-  typedef big_uint16_buf_t  native_uint16_buf_t;
-  typedef big_uint24_buf_t  native_uint24_buf_t;
-  typedef big_uint32_buf_t  native_uint32_buf_t;
-  typedef big_uint40_buf_t  native_uint40_buf_t;
-  typedef big_uint48_buf_t  native_uint48_buf_t;
-  typedef big_uint56_buf_t  native_uint56_buf_t;
-  typedef big_uint64_buf_t  native_uint64_buf_t;
-# else
-  // unaligned native endian signed integer buffers
-  typedef little_int8_buf_t   native_int8_buf_t;
-  typedef little_int16_buf_t  native_int16_buf_t;
-  typedef little_int24_buf_t  native_int24_buf_t;
-  typedef little_int32_buf_t  native_int32_buf_t;
-  typedef little_int40_buf_t  native_int40_buf_t;
-  typedef little_int48_buf_t  native_int48_buf_t;
-  typedef little_int56_buf_t  native_int56_buf_t;
-  typedef little_int64_buf_t  native_int64_buf_t;
-
-  // unaligned native endian unsigned integer buffers
-  typedef little_uint8_buf_t   native_uint8_buf_t;
-  typedef little_uint16_buf_t  native_uint16_buf_t;
-  typedef little_uint24_buf_t  native_uint24_buf_t;
-  typedef little_uint32_buf_t  native_uint32_buf_t;
-  typedef little_uint40_buf_t  native_uint40_buf_t;
-  typedef little_uint48_buf_t  native_uint48_buf_t;
-  typedef little_uint56_buf_t  native_uint56_buf_t;
-  typedef little_uint64_buf_t  native_uint64_buf_t;
-# endif
+  typedef endian_buffer<order::native, uint_least8_t, 8>    native_uint8_buf_t;
+  typedef endian_buffer<order::native, uint_least16_t, 16>  native_uint16_buf_t;
+  typedef endian_buffer<order::native, uint_least32_t, 24>  native_uint24_buf_t;
+  typedef endian_buffer<order::native, uint_least32_t, 32>  native_uint32_buf_t;
+  typedef endian_buffer<order::native, uint_least64_t, 40>  native_uint40_buf_t;
+  typedef endian_buffer<order::native, uint_least64_t, 48>  native_uint48_buf_t;
+  typedef endian_buffer<order::native, uint_least64_t, 56>  native_uint56_buf_t;
+  typedef endian_buffer<order::native, uint_least64_t, 64>  native_uint64_buf_t;
 
   // unaligned floating point buffers
   typedef endian_buffer<order::big, float, 32, align::no>       big_float32_buf_t;

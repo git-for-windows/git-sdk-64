@@ -13,8 +13,8 @@
 //           Andrew Lumsdaine
 //  See http://www.boost.org/libs/multi_array for documentation.
 
-#ifndef BOOST_MULTI_ARRAY_RG071801_HPP
-#define BOOST_MULTI_ARRAY_RG071801_HPP
+#ifndef BOOST_MULTI_ARRAY_HPP
+#define BOOST_MULTI_ARRAY_HPP
 
 //
 // multi_array.hpp - contains the multi_array class template
@@ -569,4 +569,4 @@ private:
 #  pragma GCC diagnostic pop
 #endif
 
-#endif // BOOST_MULTI_ARRAY_RG071801_HPP
+#endif

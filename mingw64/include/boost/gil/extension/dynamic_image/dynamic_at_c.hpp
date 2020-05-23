@@ -19,16 +19,16 @@ namespace boost { namespace gil {
 
 // Constructs for static-to-dynamic integer convesion
 
-#define GIL_AT_C_VALUE(z, N, text) mp11::mp_at_c<IntTypes, S+N>::value,
-#define GIL_DYNAMIC_AT_C_LIMIT 226 // size of the maximum vector to handle
+#define BOOST_GIL_AT_C_VALUE(z, N, text) mp11::mp_at_c<IntTypes, S+N>::value,
+#define BOOST_GIL_DYNAMIC_AT_C_LIMIT 226 // size of the maximum vector to handle
 
-#define GIL_AT_C_LOOKUP(z, NUM, text)                                   \
+#define BOOST_GIL_AT_C_LOOKUP(z, NUM, text)                                   \
     template<std::size_t S>                                             \
     struct at_c_fn<S,NUM> {                                             \
     template <typename IntTypes, typename ValueType> inline           \
         static ValueType apply(std::size_t index) {                    \
             static ValueType table[] = {                               \
-                BOOST_PP_REPEAT(NUM, GIL_AT_C_VALUE, BOOST_PP_EMPTY)    \
+                BOOST_PP_REPEAT(NUM, BOOST_GIL_AT_C_VALUE, BOOST_PP_EMPTY)    \
             };                                                          \
             return table[index];                                        \
         }                                                               \
@@ -37,7 +37,7 @@ namespace boost { namespace gil {
 namespace detail {
     namespace at_c {
         template <std::size_t START, std::size_t NUM> struct at_c_fn;
-        BOOST_PP_REPEAT(GIL_DYNAMIC_AT_C_LIMIT, GIL_AT_C_LOOKUP, BOOST_PP_EMPTY)
+        BOOST_PP_REPEAT(BOOST_GIL_DYNAMIC_AT_C_LIMIT, BOOST_GIL_AT_C_LOOKUP, BOOST_PP_EMPTY)
 
         template <std::size_t QUOT> struct at_c_impl;
 
@@ -54,10 +54,10 @@ namespace detail {
             template <typename IntTypes, typename ValueType> inline
             static ValueType apply(std::size_t index) {
                 const std::size_t SIZE = mp11::mp_size<IntTypes>::value;
-                const std::size_t REM = SIZE % GIL_DYNAMIC_AT_C_LIMIT;
-                switch (index / GIL_DYNAMIC_AT_C_LIMIT) {
-                    case 0: return at_c_fn<0                   ,GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index);
-                    case 1: return at_c_fn<GIL_DYNAMIC_AT_C_LIMIT  ,REM                 >::template apply<IntTypes,ValueType>(index - GIL_DYNAMIC_AT_C_LIMIT);
+                const std::size_t REM = SIZE % BOOST_GIL_DYNAMIC_AT_C_LIMIT;
+                switch (index / BOOST_GIL_DYNAMIC_AT_C_LIMIT) {
+                    case 0: return at_c_fn<0                   ,BOOST_GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index);
+                    case 1: return at_c_fn<BOOST_GIL_DYNAMIC_AT_C_LIMIT  ,REM                 >::template apply<IntTypes,ValueType>(index - BOOST_GIL_DYNAMIC_AT_C_LIMIT);
                 };
                 throw;
             }
@@ -68,11 +68,11 @@ namespace detail {
             template <typename IntTypes, typename ValueType> inline
             static ValueType apply(std::size_t index) {
                 const std::size_t SIZE = mp11::mp_size<IntTypes>::value;
-                const std::size_t REM = SIZE % GIL_DYNAMIC_AT_C_LIMIT;
-                switch (index / GIL_DYNAMIC_AT_C_LIMIT) {
-                    case 0: return at_c_fn<0                   ,GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index);
-                    case 1: return at_c_fn<GIL_DYNAMIC_AT_C_LIMIT  ,GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index - GIL_DYNAMIC_AT_C_LIMIT);
-                    case 2: return at_c_fn<GIL_DYNAMIC_AT_C_LIMIT*2,REM                 >::template apply<IntTypes,ValueType>(index - GIL_DYNAMIC_AT_C_LIMIT*2);
+                const std::size_t REM = SIZE % BOOST_GIL_DYNAMIC_AT_C_LIMIT;
+                switch (index / BOOST_GIL_DYNAMIC_AT_C_LIMIT) {
+                    case 0: return at_c_fn<0                   ,BOOST_GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index);
+                    case 1: return at_c_fn<BOOST_GIL_DYNAMIC_AT_C_LIMIT  ,BOOST_GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index - BOOST_GIL_DYNAMIC_AT_C_LIMIT);
+                    case 2: return at_c_fn<BOOST_GIL_DYNAMIC_AT_C_LIMIT*2,REM                 >::template apply<IntTypes,ValueType>(index - BOOST_GIL_DYNAMIC_AT_C_LIMIT*2);
                 };
                 throw;
             }
@@ -83,12 +83,12 @@ namespace detail {
             template <typename IntTypes, typename ValueType> inline
             static ValueType apply(std::size_t index) {
                 const std::size_t SIZE = mp11::mp_size<IntTypes>::value;
-                const std::size_t REM = SIZE % GIL_DYNAMIC_AT_C_LIMIT;
-                switch (index / GIL_DYNAMIC_AT_C_LIMIT) {
-                    case 0: return at_c_fn<0                   ,GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index);
-                    case 1: return at_c_fn<GIL_DYNAMIC_AT_C_LIMIT  ,GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index - GIL_DYNAMIC_AT_C_LIMIT);
-                    case 2: return at_c_fn<GIL_DYNAMIC_AT_C_LIMIT*2,GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index - GIL_DYNAMIC_AT_C_LIMIT*2);
-                    case 3: return at_c_fn<GIL_DYNAMIC_AT_C_LIMIT*3,REM                 >::template apply<IntTypes,ValueType>(index - GIL_DYNAMIC_AT_C_LIMIT*3);
+                const std::size_t REM = SIZE % BOOST_GIL_DYNAMIC_AT_C_LIMIT;
+                switch (index / BOOST_GIL_DYNAMIC_AT_C_LIMIT) {
+                    case 0: return at_c_fn<0                   ,BOOST_GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index);
+                    case 1: return at_c_fn<BOOST_GIL_DYNAMIC_AT_C_LIMIT  ,BOOST_GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index - BOOST_GIL_DYNAMIC_AT_C_LIMIT);
+                    case 2: return at_c_fn<BOOST_GIL_DYNAMIC_AT_C_LIMIT*2,BOOST_GIL_DYNAMIC_AT_C_LIMIT-1>::template apply<IntTypes,ValueType>(index - BOOST_GIL_DYNAMIC_AT_C_LIMIT*2);
+                    case 3: return at_c_fn<BOOST_GIL_DYNAMIC_AT_C_LIMIT*3,REM                 >::template apply<IntTypes,ValueType>(index - BOOST_GIL_DYNAMIC_AT_C_LIMIT*3);
                 };
                 throw;
             }
@@ -107,12 +107,12 @@ namespace detail {
 template <typename IntTypes, typename ValueType> inline
 ValueType at_c(std::size_t index) {
     const std::size_t Size=mp11::mp_size<IntTypes>::value;
-    return detail::at_c::at_c_impl<Size/GIL_DYNAMIC_AT_C_LIMIT>::template apply<IntTypes,ValueType>(index);
+    return detail::at_c::at_c_impl<Size/BOOST_GIL_DYNAMIC_AT_C_LIMIT>::template apply<IntTypes,ValueType>(index);
 }
 
-#undef GIL_AT_C_VALUE
-#undef GIL_DYNAMIC_AT_C_LIMIT
-#undef GIL_AT_C_LOOKUP
+#undef BOOST_GIL_AT_C_VALUE
+#undef BOOST_GIL_DYNAMIC_AT_C_LIMIT
+#undef BOOST_GIL_AT_C_LOOKUP
 
 }} // namespace boost::gil
 

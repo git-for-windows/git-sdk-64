@@ -40,7 +40,7 @@ using lab_t = mp11::mp_list
 /// \ingroup LayoutModel
 using lab_layout_t = layout<lab_t>;
 
-GIL_DEFINE_ALL_TYPEDEFS(32f, float32_t, lab)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(32f, float32_t, lab)
 
 /// \ingroup ColorConvert
 /// \brief LAB to XYZ

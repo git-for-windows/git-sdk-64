@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // slist.hpp
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -31,7 +31,7 @@
 #include <boost/serialization/detail/is_default_constructible.hpp>
 #include <boost/move/utility_core.hpp>
 
-namespace boost { 
+namespace boost {
 namespace serialization {
 
 template<class Archive, class U, class Allocator>
@@ -42,7 +42,7 @@ inline void save(
 ){
     boost::serialization::stl::save_collection<
         Archive,
-        BOOST_STD_EXTENSION_NAMESPACE::slist<U, Allocator> 
+        BOOST_STD_EXTENSION_NAMESPACE::slist<U, Allocator>
     >(ar, t);
 }
 

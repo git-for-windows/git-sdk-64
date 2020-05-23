@@ -91,7 +91,7 @@
 #define BOOST_YAP_USER_UNARY_OPERATOR(                                         \
     op_name, expr_template, result_expr_template)                              \
     template<::boost::yap::expr_kind Kind, typename Tuple>                     \
-    auto operator BOOST_YAP_INDIRECT_CALL(op_name)(                            \
+    constexpr auto operator BOOST_YAP_INDIRECT_CALL(op_name)(                  \
         expr_template<Kind, Tuple> const & x)                                  \
     {                                                                          \
         using lhs_type = ::boost::yap::detail::operand_type_t<                 \
@@ -104,7 +104,7 @@
             tuple_type{::boost::yap::detail::make_operand<lhs_type>{}(x)}};    \
     }                                                                          \
     template<::boost::yap::expr_kind Kind, typename Tuple>                     \
-    auto operator BOOST_YAP_INDIRECT_CALL(op_name)(                            \
+    constexpr auto operator BOOST_YAP_INDIRECT_CALL(op_name)(                  \
         expr_template<Kind, Tuple> & x)                                        \
     {                                                                          \
         using lhs_type = ::boost::yap::detail::operand_type_t<                 \
@@ -117,7 +117,7 @@
             tuple_type{::boost::yap::detail::make_operand<lhs_type>{}(x)}};    \
     }                                                                          \
     template<::boost::yap::expr_kind Kind, typename Tuple>                     \
-    auto operator BOOST_YAP_INDIRECT_CALL(op_name)(                            \
+    constexpr auto operator BOOST_YAP_INDIRECT_CALL(op_name)(                  \
         expr_template<Kind, Tuple> && x)                                       \
     {                                                                          \
         using tuple_type = ::boost::hana::tuple<expr_template<Kind, Tuple>>;   \

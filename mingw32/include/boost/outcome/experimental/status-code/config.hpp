@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018 - 2019 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018 - 2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Feb 2018
 
 
@@ -135,13 +135,13 @@ BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_BEGIN
 //! Namespace for user specialised traits
 namespace traits
 {
-  /*! Specialise to true if you guarantee that a type is move relocating (i.e.
+  /*! Specialise to true if you guarantee that a type is move bitcopying (i.e.
   its move constructor equals copying bits from old to new, old is left in a
   default constructed state, and calling the destructor on a default constructed
-  instance is trivial). All trivially copyable types are move relocating by
+  instance is trivial). All trivially copyable types are move bitcopying by
   definition, and that is the unspecialised implementation.
   */
-  template <class T> struct is_move_relocating
+  template <class T> struct is_move_bitcopying
   {
     static constexpr bool value = std::is_trivially_copyable<T>::value;
   };
@@ -174,7 +174,7 @@ namespace detail
 
   template <class To, class From> using is_union_castable = std::integral_constant<bool, !is_static_castable<To, From>::value && !std::is_array<To>::value && !std::is_array<From>::value>;
 
-  template <class To, class From> using is_bit_castable = std::integral_constant<bool, sizeof(To) == sizeof(From) && traits::is_move_relocating<To>::value && traits::is_move_relocating<From>::value>;
+  template <class To, class From> using is_bit_castable = std::integral_constant<bool, sizeof(To) == sizeof(From) && traits::is_move_bitcopying<To>::value && traits::is_move_bitcopying<From>::value>;
 
   template <class To, class From> union bit_cast_union {
     From source;
@@ -182,33 +182,40 @@ namespace detail
   };
 
   template <class To, class From,
-            typename std::enable_if<                //
-            is_bit_castable<To, From>::value        //
-            && is_static_castable<To, From>::value  //
+            typename std::enable_if<                 //
+            is_bit_castable<To, From>::value         //
+            && is_static_castable<To, From>::value   //
             && !is_union_castable<To, From>::value,  //
-            bool>::type = true>  //
+            bool>::type = true>                      //
   constexpr To bit_cast(const From &from) noexcept
   {
     return static_cast<To>(from);
   }
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
   template <class To, class From,
             typename std::enable_if<                 //
             is_bit_castable<To, From>::value         //
             && !is_static_castable<To, From>::value  //
-            && is_union_castable<To, From>::value,    //
-            bool>::type = true>  //
+            && is_union_castable<To, From>::value,   //
+            bool>::type = true>                      //
   constexpr To bit_cast(const From &from) noexcept
   {
     return bit_cast_union<To, From>{from}.target;
   }
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
   template <class To, class From,
             typename std::enable_if<                 //
             is_bit_castable<To, From>::value         //
             && !is_static_castable<To, From>::value  //
-            && !is_union_castable<To, From>::value,   //
-            bool>::type = true>  //
+            && !is_union_castable<To, From>::value,  //
+            bool>::type = true>                      //
   To bit_cast(const From &from) noexcept
   {
     bit_cast_union<To, From> ret;
@@ -223,7 +230,7 @@ namespace detail
   types it may insert the value into another object with extra padding bytes
   to satisfy bit_cast's preconditions that both types have the same size. */
 
-  template <class To, class From> using is_erasure_castable = std::integral_constant<bool, traits::is_move_relocating<To>::value && traits::is_move_relocating<From>::value>;
+  template <class To, class From> using is_erasure_castable = std::integral_constant<bool, traits::is_move_bitcopying<To>::value && traits::is_move_bitcopying<From>::value>;
 
   template <class T, bool = std::is_enum<T>::value> struct identity_or_underlying_type
   {
@@ -239,7 +246,7 @@ namespace detail
 
   template <class ErasedType, std::size_t N> struct padded_erasure_object
   {
-    static_assert(traits::is_move_relocating<ErasedType>::value, "ErasedType must be TriviallyCopyable or MoveRelocating");
+    static_assert(traits::is_move_bitcopying<ErasedType>::value, "ErasedType must be TriviallyCopyable or MoveBitcopying");
     static_assert(alignof(ErasedType) <= sizeof(ErasedType), "ErasedType must not be over-aligned");
     ErasedType value;
     char padding[N];
@@ -269,6 +276,9 @@ namespace detail
 BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_END
 
 #ifndef BOOST_OUTCOME_SYSTEM_ERROR2_FATAL
+#ifdef BOOST_OUTCOME_SYSTEM_ERROR2_NOT_POSIX
+#error If BOOST_OUTCOME_SYSTEM_ERROR2_NOT_POSIX is defined, you must define your own BOOST_OUTCOME_SYSTEM_ERROR2_FATAL implementation!
+#endif
 #include <cstdlib>  // for abort
 #ifdef __APPLE__
 #include <unistd.h>  // for write
@@ -279,8 +289,15 @@ namespace detail
 {
   namespace avoid_stdio_include
   {
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(_MSC_VER)
     extern "C" ptrdiff_t write(int, const void *, size_t);
+#elif defined(_MSC_VER)
+    extern ptrdiff_t write(int, const void *, size_t);
+#if defined(_WIN64)
+#pragma comment(linker, "/alternatename:?write@avoid_stdio_include@detail@system_error2@@YA_JHPEBX_K@Z=write")
+#else
+#pragma comment(linker, "/alternatename:?write@avoid_stdio_include@detail@system_error2@@YAHHPBXI@Z=_write")
+#endif
 #endif
   }  // namespace avoid_stdio_include
   inline void do_fatal_exit(const char *msg)

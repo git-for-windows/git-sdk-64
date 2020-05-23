@@ -11,7 +11,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include <boost/thread/detail/config.hpp>
 #include <boost/thread/condition_variable.hpp>

@@ -1,4 +1,4 @@
-/* Copyright 2003-2018 Joaquin M Lopez Munoz.
+/* Copyright 2003-2020 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/push_front.hpp>
 #include <boost/multi_index/detail/access_specifier.hpp>
+#include <boost/multi_index/detail/adl_swap.hpp>
 #include <boost/multi_index/detail/allocator_traits.hpp>
 #include <boost/multi_index/detail/auto_space.hpp>
 #include <boost/multi_index/detail/bucket_array.hpp>
@@ -875,13 +876,15 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
 #endif
   }
 
+  template<typename BoolConstant>
   void swap_(
-    hashed_index<KeyFromValue,Hash,Pred,SuperMeta,TagList,Category>& x)
+    hashed_index<KeyFromValue,Hash,Pred,SuperMeta,TagList,Category>& x,
+    BoolConstant swap_allocators)
   {
-    std::swap(key,x.key);
-    std::swap(hash_,x.hash_);
-    std::swap(eq_,x.eq_);
-    buckets.swap(x.buckets);
+    adl_swap(key,x.key);
+    adl_swap(hash_,x.hash_);
+    adl_swap(eq_,x.eq_);
+    buckets.swap(x.buckets,swap_allocators);
     std::swap(mlf,x.mlf);
     std::swap(max_load,x.max_load);
 
@@ -889,7 +892,7 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
     safe_super::swap(x);
 #endif
 
-    super::swap_(x);
+    super::swap_(x,swap_allocators);
   }
 
   void swap_elements_(

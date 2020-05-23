@@ -14,6 +14,7 @@
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
 #include <boost/move/move.hpp>
+#include <boost/range.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/utility/explicit_operator_bool.hpp>
 
@@ -2390,19 +2391,12 @@ end( push_coroutine< R > & c)
 
 }
 
-// forward declaration of Boost.Range traits to break dependency on it
-template<typename C, typename Enabler>
-struct range_mutable_iterator;
-
-template<typename C, typename Enabler>
-struct range_const_iterator;
-
 template< typename Arg >
-struct range_mutable_iterator< coroutines::push_coroutine< Arg >, void >
+struct range_mutable_iterator< coroutines::push_coroutine< Arg > >
 { typedef typename coroutines::push_coroutine< Arg >::iterator type; };
 
 template< typename R >
-struct range_mutable_iterator< coroutines::pull_coroutine< R >, void >
+struct range_mutable_iterator< coroutines::pull_coroutine< R > >
 { typedef typename coroutines::pull_coroutine< R >::iterator type; };
 
 }

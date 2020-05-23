@@ -87,7 +87,7 @@ struct global_configuration_impl : public global_configuration {
     }
 
     // test observer interface
-    virtual void    test_start( counter_t ) {
+    virtual void    test_start( counter_t, test_unit_id ) {
         m_configuration_observer = new F;
     }
 

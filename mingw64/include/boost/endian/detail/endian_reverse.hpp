@@ -10,6 +10,8 @@
 #include <boost/endian/detail/intrinsic.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits/enable_if.hpp>
+#include <boost/type_traits/is_class.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/config.hpp>
@@ -106,7 +108,9 @@ inline uint128_type BOOST_ENDIAN_CONSTEXPR endian_reverse_impl( uint128_type x )
 // Requires:
 //    T is non-bool integral
 
-template<class T> inline BOOST_CONSTEXPR T endian_reverse( T x ) BOOST_NOEXCEPT
+template<class T> inline BOOST_CONSTEXPR
+    typename enable_if_< !is_class<T>::value, T >::type
+    endian_reverse( T x ) BOOST_NOEXCEPT
 {
     BOOST_STATIC_ASSERT( is_integral<T>::value && !(is_same<T, bool>::value) );
 

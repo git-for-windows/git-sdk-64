@@ -242,14 +242,16 @@ public:
         return begin()[i]; // potential performance problem!
     }
 
-    auto at(difference_type i) const ->iterator
+    auto at(difference_type i) const -> iterator
     {
-        BOOST_ASSERT(i < size());
+        // UB if the specified increment advances non-incrementable iterator (i.e. past-the-end)
+        BOOST_ASSERT(i < static_cast<difference_type>(size()));
         return begin() + i;
     }
 
     auto at(point_t const& p) const -> iterator
     {
+        // UB if the specified coordinates advance non-incrementable iterator (i.e. past-the-end)
         BOOST_ASSERT(0 <= p.x && p.x < width());
         BOOST_ASSERT(0 <= p.y && p.y < height());
         return begin() + p.y * width() + p.x;
@@ -257,6 +259,7 @@ public:
 
     auto at(x_coord_t x, y_coord_t y) const -> iterator
     {
+        // UB if the specified coordinates advance non-incrementable iterator (i.e. past-the-end)
         BOOST_ASSERT(0 <= x && x < width());
         BOOST_ASSERT(0 <= y && y < height());
         return begin() + y * width() + x;
@@ -282,7 +285,7 @@ public:
     template <std::size_t D>
     auto axis_iterator(point_t const& p) const -> typename axis<D>::iterator
     {
-        // allow request for iterators from inclusive range of [begin, end]
+        // Allow request for iterators from inclusive range of [begin, end]
         BOOST_ASSERT(0 <= p.x && p.x <= width());
         BOOST_ASSERT(0 <= p.y && p.y <= height());
         return _pixels.template axis_iterator<D>(p);
@@ -292,11 +295,11 @@ public:
     {
         // TODO: Are relative locations of neighbors with negative offsets valid? Sampling?
         BOOST_ASSERT(x < width());
-        BOOST_ASSERT(y < height());
+        BOOST_ASSERT(y <= height());
         return _pixels + point_t(x, y);
     }
 
-    auto xy_at(point_t const& p) const -> locator
+    auto xy_at(point_t const& p) const -> xy_locator
     {
         // TODO: Are relative locations of neighbors with negative offsets valid? Sampling?
         BOOST_ASSERT(p.x < width());
@@ -310,14 +313,14 @@ public:
     auto x_at(x_coord_t x, y_coord_t y) const -> x_iterator
     {
         BOOST_ASSERT(0 <= x && x <= width()); // allow request for [begin, end] inclusive
-        BOOST_ASSERT(0 <= y && y < height());
+        BOOST_ASSERT(0 <= y && y < height()); // TODO: For empty image/view, shouldn't we accept: row_begin(0) == view.row_end(0) ?
         return _pixels.x_at(x, y);
     }
 
     auto x_at(point_t const& p) const -> x_iterator
     {
         BOOST_ASSERT(0 <= p.x && p.x <= width()); // allow request for [begin, end] inclusive
-        BOOST_ASSERT(0 <= p.y && p.y < height());
+        BOOST_ASSERT(0 <= p.y && p.y < height()); // TODO: For empty image/view, shouldn't we accept: row_begin(0) == view.row_end(0) ?
         return _pixels.x_at(p);
     }
 
@@ -338,14 +341,14 @@ public:
     /// \name Y navigation
     auto y_at(x_coord_t x, y_coord_t y) const -> y_iterator
     {
-        BOOST_ASSERT(0 <= x && x < width());
+        BOOST_ASSERT(0 <= x && x < width()); // TODO: For empty image/view, shouldn't we accept: view.col_begin(0) == view.col_end(0) ?
         BOOST_ASSERT(0 <= y && y <= height()); // allow request for [begin, end] inclusive
         return xy_at(x, y).y();
     }
 
     auto y_at(point_t const& p) const -> y_iterator
     {
-        BOOST_ASSERT(0 <= p.x && p.x < width());
+        BOOST_ASSERT(0 <= p.x && p.x < width()); // TODO: For empty image/view, shouldn't we accept: view.col_begin(0) == view.col_end(0) ?
         BOOST_ASSERT(0 <= p.y && p.y <= height()); // allow request for [begin, end] inclusive
         return xy_at(p).y();
     }

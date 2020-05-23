@@ -17,6 +17,7 @@
 #include <boost/histogram/detail/mutex_base.hpp>
 #include <boost/histogram/detail/non_member_container_access.hpp>
 #include <boost/histogram/detail/span.hpp>
+#include <boost/histogram/detail/static_if.hpp>
 #include <boost/histogram/fwd.hpp>
 #include <boost/histogram/sample.hpp>
 #include <boost/histogram/storage_adaptor.hpp>
@@ -155,6 +156,8 @@ public:
 
   /** Fill histogram with values, an optional weight, and/or a sample.
 
+    Returns iterator to located cell.
+
     Arguments are passed in order to the axis objects. Passing an argument type that is
     not convertible to the value type accepted by the axis or passing the wrong number
     of arguments causes a throw of `std::invalid_argument`.
@@ -176,14 +179,14 @@ public:
     __Axis with multiple arguments__
 
     If the histogram contains an axis which accepts a `std::tuple` of arguments, the
-    arguments for that axis need to passed as a `std::tuple`, for example,
+    arguments for that axis need to be passed as a `std::tuple`, for example,
     `std::make_tuple(1.2, 2.3)`. If the histogram contains only this axis and no other,
     the arguments can be passed directly.
   */
-  template <class Arg0, class... Args>
-  std::enable_if_t<(detail::is_tuple<Arg0>::value == false || sizeof...(Args) > 0),
-                   iterator>
-  operator()(const Arg0& arg0, const Args&... args) {
+  template <class T0, class... Ts,
+            class = std::enable_if_t<(detail::is_tuple<T0>::value == false ||
+                                      sizeof...(Ts) > 0)>>
+  iterator operator()(const T0& arg0, const Ts&... args) {
     return operator()(std::forward_as_tuple(arg0, args...));
   }
 
@@ -193,7 +196,7 @@ public:
     using arg_traits = detail::argument_traits<std::decay_t<Ts>...>;
     using acc_traits = detail::accumulator_traits<value_type>;
     constexpr bool weight_valid =
-        arg_traits::wpos::value == -1 || acc_traits::wsupport::value;
+        arg_traits::wpos::value == -1 || acc_traits::weight_support;
     static_assert(weight_valid, "error: accumulator does not support weights");
     detail::sample_args_passed_vs_expected<typename arg_traits::sargs,
                                            typename acc_traits::args>();
@@ -239,7 +242,7 @@ public:
   template <class Iterable, class T, class = detail::requires_iterable<Iterable>>
   void fill(const Iterable& args, const weight_type<T>& weights) {
     using acc_traits = detail::accumulator_traits<value_type>;
-    constexpr bool weight_valid = acc_traits::wsupport::value;
+    constexpr bool weight_valid = acc_traits::weight_support;
     static_assert(weight_valid, "error: accumulator does not support weights");
     detail::sample_args_passed_vs_expected<std::tuple<>, typename acc_traits::args>();
     constexpr bool sample_valid =
@@ -305,7 +308,7 @@ public:
     std::lock_guard<typename mutex_base::type> guard{mutex_base::get()};
     mp11::tuple_apply(
         [&](const auto&... sargs) {
-          constexpr bool weight_valid = acc_traits::wsupport::value;
+          constexpr bool weight_valid = acc_traits::weight_support;
           static_assert(weight_valid, "error: accumulator does not support weights");
           constexpr bool sample_valid =
               std::is_convertible<sample_args_passed, typename acc_traits::args>::value;
@@ -371,7 +374,7 @@ public:
   }
 
   /// Access cell value at integral indices stored in `std::tuple` (read-only).
-  template <typename... Indices>
+  template <class... Indices>
   decltype(auto) at(const std::tuple<Indices...>& is) const {
     if (rank() != sizeof...(Indices))
       BOOST_THROW_EXCEPTION(
@@ -436,11 +439,18 @@ public:
     return !operator==(rhs);
   }
 
-  /// Add values of another histogram.
+  /** Add values of another histogram.
+
+    This operator is only available if the value_type supports operator+=.
+  */
   template <class A, class S>
+#ifdef BOOST_HISTOGRAM_DOXYGEN_INVOKED
+  histogram&
+#else
   std::enable_if_t<
       detail::has_operator_radd<value_type, typename histogram<A, S>::value_type>::value,
       histogram&>
+#endif
   operator+=(const histogram<A, S>& rhs) {
     if (!detail::axes_equal(axes_, unsafe_access::axes(rhs)))
       BOOST_THROW_EXCEPTION(std::invalid_argument("axes of histograms differ"));
@@ -449,11 +459,18 @@ public:
     return *this;
   }
 
-  /// Subtract values of another histogram.
+  /** Subtract values of another histogram.
+
+    This operator is only available if the value_type supports operator-=.
+  */
   template <class A, class S>
+#ifdef BOOST_HISTOGRAM_DOXYGEN_INVOKED
+  histogram&
+#else
   std::enable_if_t<
       detail::has_operator_rsub<value_type, typename histogram<A, S>::value_type>::value,
       histogram&>
+#endif
   operator-=(const histogram<A, S>& rhs) {
     if (!detail::axes_equal(axes_, unsafe_access::axes(rhs)))
       BOOST_THROW_EXCEPTION(std::invalid_argument("axes of histograms differ"));
@@ -462,11 +479,18 @@ public:
     return *this;
   }
 
-  /// Multiply by values of another histogram.
+  /** Multiply by values of another histogram.
+
+    This operator is only available if the value_type supports operator*=.
+  */
   template <class A, class S>
+#ifdef BOOST_HISTOGRAM_DOXYGEN_INVOKED
+  histogram&
+#else
   std::enable_if_t<
       detail::has_operator_rmul<value_type, typename histogram<A, S>::value_type>::value,
       histogram&>
+#endif
   operator*=(const histogram<A, S>& rhs) {
     if (!detail::axes_equal(axes_, unsafe_access::axes(rhs)))
       BOOST_THROW_EXCEPTION(std::invalid_argument("axes of histograms differ"));
@@ -475,11 +499,18 @@ public:
     return *this;
   }
 
-  /// Divide by values of another histogram.
+  /** Divide by values of another histogram.
+
+    This operator is only available if the value_type supports operator/=.
+  */
   template <class A, class S>
+#ifdef BOOST_HISTOGRAM_DOXYGEN_INVOKED
+  histogram&
+#else
   std::enable_if_t<
       detail::has_operator_rdiv<value_type, typename histogram<A, S>::value_type>::value,
       histogram&>
+#endif
   operator/=(const histogram<A, S>& rhs) {
     if (!detail::axes_equal(axes_, unsafe_access::axes(rhs)))
       BOOST_THROW_EXCEPTION(std::invalid_argument("axes of histograms differ"));
@@ -488,32 +519,39 @@ public:
     return *this;
   }
 
-  /// Multiply all values with a scalar.
+  /** Multiply all values with a scalar.
+
+    This operator is only available if the value_type supports operator*=.
+  */
+#ifdef BOOST_HISTOGRAM_DOXYGEN_INVOKED
+  histogram&
+#else
   template <class V = value_type>
-  std::enable_if_t<(detail::has_operator_rmul<V, double>::value &&
-                    detail::has_operator_rmul<storage_type, double>::value == true),
-                   histogram&>
+  std::enable_if_t<(detail::has_operator_rmul<V, double>::value), histogram&>
+#endif
   operator*=(const double x) {
-    // use special implementation of scaling if available
-    storage_ *= x;
+    // use special storage implementation of scaling if available,
+    // else fallback to scaling item by item
+    detail::static_if<detail::has_operator_rmul<storage_type, double>>(
+        [x](auto& s) { s *= x; },
+        [x](auto& s) {
+          for (auto&& si : s) si *= x;
+        },
+        storage_);
     return *this;
   }
 
-  /// Multiply all values with a scalar.
-  template <class V = value_type>
-  std::enable_if_t<(detail::has_operator_rmul<V, double>::value &&
-                    detail::has_operator_rmul<storage_type, double>::value == false),
-                   histogram&>
-  operator*=(const double x) {
-    // generic implementation of scaling
-    for (auto&& si : storage_) si *= x;
-    return *this;
-  }
+  /** Divide all values by a scalar.
 
-  /// Divide all values by a scalar.
-  template <class V = value_type>
-  std::enable_if_t<detail::has_operator_rmul<V, double>::value, histogram&> operator/=(
-      const double x) {
+    This operator is only available if operator*= is available.
+  */
+#ifdef BOOST_HISTOGRAM_DOXYGEN_INVOKED
+  histogram&
+#else
+  template <class H = histogram>
+  std::enable_if_t<(detail::has_operator_rmul<H, double>::value), histogram&>
+#endif
+  operator/=(const double x) {
     return operator*=(1.0 / x);
   }
 

@@ -44,7 +44,7 @@ class iterator_from_2d : public iterator_facade<iterator_from_2d<Loc2>,
                                                 std::random_access_iterator_tag,
                                                 typename Loc2::reference,
                                                 typename Loc2::coord_t> {
-    GIL_CLASS_REQUIRE(Loc2, boost::gil, PixelLocatorConcept)
+    BOOST_GIL_CLASS_REQUIRE(Loc2, boost::gil, PixelLocatorConcept)
 public:
     using parent_t = iterator_facade<iterator_from_2d<Loc2>,
                             typename Loc2::value_type,

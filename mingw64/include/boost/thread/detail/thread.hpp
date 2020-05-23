@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <boost/core/ref.hpp>
 #include <boost/cstdint.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <stdlib.h>
 #include <memory>
 #include <boost/core/enable_if.hpp>
@@ -635,10 +635,6 @@ namespace boost
 #else
         thread_data()
 #endif
-        {}
-
-        id(const id& other) BOOST_NOEXCEPT :
-            thread_data(other.thread_data)
         {}
 
         bool operator==(const id& y) const BOOST_NOEXCEPT

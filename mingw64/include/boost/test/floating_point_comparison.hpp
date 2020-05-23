@@ -11,7 +11,7 @@
 // ***************************************************************************
 
 #include <boost/config/header_deprecated.hpp>
-BOOST_HEADER_DEPRECATED( "This header is deprecated. Please use <boost/test/tools/floating_point_comparison.hpp> instead." )
+BOOST_HEADER_DEPRECATED( "<boost/test/tools/floating_point_comparison.hpp>" )
 
 
 // Boost.Test

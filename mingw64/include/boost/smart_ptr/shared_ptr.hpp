@@ -26,7 +26,7 @@
 #include <boost/checked_delete.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/smart_ptr/detail/shared_count.hpp>
-#include <boost/detail/workaround.hpp>
+#include <boost/config/workaround.hpp>
 #include <boost/smart_ptr/detail/sp_convertible.hpp>
 #include <boost/smart_ptr/detail/sp_nullptr_t.hpp>
 #include <boost/smart_ptr/detail/sp_disable_deprecated.hpp>
@@ -1174,6 +1174,13 @@ template<class D, class T> D const * basic_get_local_deleter( D const *, shared_
 }
 
 } // namespace detail
+
+#if defined(__cpp_deduction_guides)
+
+template<class T> shared_ptr( weak_ptr<T> ) -> shared_ptr<T>;
+template<class T, class D> shared_ptr( std::unique_ptr<T, D> ) -> shared_ptr<T>;
+
+#endif
 
 } // namespace boost
 

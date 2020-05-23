@@ -145,8 +145,11 @@ struct async_out_future : ::boost::process::detail::posix::handler_base_ext,
                     {
                         std::istream is (buffer_.get());
                         Type arg;
-                        arg.resize(buffer_->size());
-                        is.read(&*arg.begin(), buffer_->size());
+                        if (buffer_->size() > 0)
+                        {
+                            arg.resize(buffer_->size());
+                            is.read(&*arg.begin(), buffer_->size());
+                        }
                         promise_->set_value(std::move(arg));
                     }
                 });

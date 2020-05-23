@@ -1,6 +1,6 @@
 /* Multiply indexed container.
  *
- * Copyright 2003-2018 Joaquin M Lopez Munoz.
+ * Copyright 2003-2020 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -43,6 +43,7 @@
 #include <boost/multi_index/detail/scope_guard.hpp>
 #include <boost/multi_index/detail/vartempl_support.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/base_from_member.hpp>
 
@@ -76,6 +77,12 @@
 namespace boost{
 
 namespace multi_index{
+
+namespace detail{
+
+struct unequal_alloc_move_ctor_tag{};
+
+} /* namespace multi_index::detail */
 
 #if BOOST_WORKAROUND(BOOST_MSVC,BOOST_TESTED_AT(1500))
 #pragma warning(push)
@@ -123,7 +130,7 @@ private:
 #endif
 
   typedef typename detail::multi_index_base_type<
-      Value,IndexSpecifierList,Allocator>::type   super;
+      Value,IndexSpecifierList,Allocator>::type    super;
   typedef typename detail::rebind_alloc_for<
     Allocator,
     typename super::node_type
@@ -271,28 +278,18 @@ public:
 
   multi_index_container(
     const multi_index_container<Value,IndexSpecifierList,Allocator>& x):
-    bfm_allocator(x.bfm_allocator::member),
+    bfm_allocator(
+      node_alloc_traits::select_on_container_copy_construction(
+        x.bfm_allocator::member)),
     bfm_header(),
     super(x),
     node_count(0)
   {
-    copy_map_type map(bfm_allocator::member,x.size(),x.header(),header());
-    for(const_iterator it=x.begin(),it_end=x.end();it!=it_end;++it){
-      map.clone(it.get_node());
-    }
-    super::copy_(x,map);
-    map.release();
-    node_count=x.size();
-
-    /* Not until this point are the indices required to be consistent,
-     * hence the position of the invariant checker.
-     */
-
-    BOOST_MULTI_INDEX_CHECK_INVARIANT;
+    copy_construct_from(x);
   }
 
   multi_index_container(BOOST_RV_REF(multi_index_container) x):
-    bfm_allocator(x.bfm_allocator::member),
+    bfm_allocator(boost::move(x.bfm_allocator::member)),
     bfm_header(),
     super(x,detail::do_not_copy_elements_tag()),
     node_count(0)
@@ -300,6 +297,36 @@ public:
     BOOST_MULTI_INDEX_CHECK_INVARIANT;
     BOOST_MULTI_INDEX_CHECK_INVARIANT_OF(x);
     swap_elements_(x);
+  }
+
+  multi_index_container(
+    const multi_index_container<Value,IndexSpecifierList,Allocator>& x,
+    const allocator_type& al):
+    bfm_allocator(al),
+    bfm_header(),
+    super(x),
+    node_count(0)
+  {
+    copy_construct_from(x);
+  }
+
+  multi_index_container(
+    BOOST_RV_REF(multi_index_container) x,const allocator_type& al):
+    bfm_allocator(al),
+    bfm_header(),
+    super(x,detail::do_not_copy_elements_tag()),
+    node_count(0)
+  {
+    BOOST_MULTI_INDEX_CHECK_INVARIANT;
+    BOOST_MULTI_INDEX_CHECK_INVARIANT_OF(x);
+
+    if(al==x.get_allocator()){
+      swap_elements_(x);
+    }
+    else{
+      multi_index_container y(x,al,detail::unequal_alloc_move_ctor_tag());
+      swap_elements_(y);
+    }
   }
 
   ~multi_index_container()
@@ -315,8 +342,11 @@ public:
   multi_index_container<Value,IndexSpecifierList,Allocator>& operator=(
     const multi_index_container<Value,IndexSpecifierList,Allocator>& x)
   {
-    multi_index_container y(x);
-    this->swap(y);
+    multi_index_container y(
+      x,
+      node_alloc_traits::propagate_on_container_copy_assignment::value?
+        x.get_allocator():this->get_allocator());
+    swap_(y,boost::true_type() /* swap_allocators */);
     return *this;
   }
 #endif
@@ -324,16 +354,44 @@ public:
   multi_index_container<Value,IndexSpecifierList,Allocator>& operator=(
     BOOST_COPY_ASSIGN_REF(multi_index_container) x)
   {
-    multi_index_container y(x);
-    this->swap(y);
+    multi_index_container y(
+      x,
+      node_alloc_traits::propagate_on_container_copy_assignment::value?
+        x.get_allocator():this->get_allocator());
+    swap_(y,boost::true_type() /* swap_allocators */);
     return *this;
   }
 
   multi_index_container<Value,IndexSpecifierList,Allocator>& operator=(
     BOOST_RV_REF(multi_index_container) x)
   {
-    this->swap(x);
+#if !defined(BOOST_NO_CXX17_IF_CONSTEXPR)
+#define BOOST_MULTI_INDEX_IF_CONSTEXPR if constexpr
+#else
+#define BOOST_MULTI_INDEX_IF_CONSTEXPR if
+#if defined(BOOST_MSVC)
+#pragma warning(push)
+#pragma warning(disable:4127) /* conditional expression is constant */
+#endif
+#endif
+
+    BOOST_MULTI_INDEX_IF_CONSTEXPR(
+      node_alloc_traits::propagate_on_container_move_assignment::value){
+      swap_(x,boost::true_type() /* swap_allocators */);
+    }
+    else if(this->get_allocator()==x.get_allocator()){
+      swap_(x,boost::false_type() /* swap_allocators */);
+    }
+    else{
+      multi_index_container y(boost::move(x),this->get_allocator());
+      swap_(y,boost::false_type() /* swap_allocators */);
+    }
     return *this;
+
+#undef BOOST_MULTI_INDEX_IF_CONSTEXPR 
+#if defined(BOOST_NO_CXX17_IF_CONSTEXPR)&&defined(BOOST_MSVC)
+#pragma warning(pop) /* C4127 */
+#endif
   }
 
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
@@ -518,6 +576,39 @@ public:
 BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
   typedef typename super::copy_map_type copy_map_type;
 
+  multi_index_container(
+    multi_index_container<Value,IndexSpecifierList,Allocator>& x,
+    const allocator_type& al,
+    detail::unequal_alloc_move_ctor_tag):
+    bfm_allocator(al),
+    bfm_header(),
+    super(x),
+    node_count(0)
+  {
+    BOOST_MULTI_INDEX_CHECK_INVARIANT_OF(x);
+    BOOST_TRY{
+      copy_map_type map(bfm_allocator::member,x.size(),x.header(),header());
+      for(const_iterator it=x.begin(),it_end=x.end();it!=it_end;++it){
+        map.move_clone(it.get_node());
+      }
+      super::copy_(x,map);
+      map.release();
+      node_count=x.size();
+      x.clear();
+    }
+    BOOST_CATCH(...){
+      x.clear();
+      BOOST_RETHROW;
+    }
+    BOOST_CATCH_END
+
+    /* Not until this point are the indices required to be consistent,
+     * hence the position of the invariant checker.
+     */
+
+    BOOST_MULTI_INDEX_CHECK_INVARIANT;
+  }
+
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
   multi_index_container(
     const multi_index_container<Value,IndexSpecifierList,Allocator>& x,
@@ -530,6 +621,24 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
     BOOST_MULTI_INDEX_CHECK_INVARIANT;
   }
 #endif
+
+  void copy_construct_from(
+    const multi_index_container<Value,IndexSpecifierList,Allocator>& x)
+  {
+    copy_map_type map(bfm_allocator::member,x.size(),x.header(),header());
+    for(const_iterator it=x.begin(),it_end=x.end();it!=it_end;++it){
+      map.copy_clone(it.get_node());
+    }
+    super::copy_(x,map);
+    map.release();
+    node_count=x.size();
+
+    /* Not until this point are the indices required to be consistent,
+     * hence the position of the invariant checker.
+     */
+
+    BOOST_MULTI_INDEX_CHECK_INVARIANT;
+  }
 
   node_type* header()const
   {
@@ -811,11 +920,28 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
 
   void swap_(multi_index_container<Value,IndexSpecifierList,Allocator>& x)
   {
-    if(bfm_allocator::member!=x.bfm_allocator::member){
-      detail::adl_swap(bfm_allocator::member,x.bfm_allocator::member);
-    }
+    swap_(
+      x,
+      boost::integral_constant<
+        bool,node_alloc_traits::propagate_on_container_swap::value>());
+  }
+
+  void swap_(
+    multi_index_container<Value,IndexSpecifierList,Allocator>& x,
+    boost::true_type swap_allocators)
+  {
+    detail::adl_swap(bfm_allocator::member,x.bfm_allocator::member);
     std::swap(bfm_header::member,x.bfm_header::member);
-    super::swap_(x);
+    super::swap_(x,swap_allocators);
+    std::swap(node_count,x.node_count);
+  }
+
+  void swap_(
+    multi_index_container<Value,IndexSpecifierList,Allocator>& x,
+    boost::false_type swap_allocators)
+  {
+    std::swap(bfm_header::member,x.bfm_header::member);
+    super::swap_(x,swap_allocators);
     std::swap(node_count,x.node_count);
   }
 

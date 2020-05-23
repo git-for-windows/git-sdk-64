@@ -14,11 +14,11 @@
 #include <boost/histogram/detail/relaxed_equal.hpp>
 #include <boost/histogram/detail/static_if.hpp>
 #include <boost/histogram/detail/type_name.hpp>
+#include <boost/variant2/variant.hpp>
 #include <boost/histogram/detail/variant_proxy.hpp>
 #include <boost/mp11/algorithm.hpp> // mp_contains
 #include <boost/mp11/list.hpp>      // mp_first
 #include <boost/throw_exception.hpp>
-#include <boost/variant2/variant.hpp>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -35,7 +35,7 @@ class variant : public iterator_mixin<variant<Ts...>> {
   template <class T>
   using is_bounded_type = mp11::mp_contains<variant, std::decay_t<T>>;
 
-  template <typename T>
+  template <class T>
   using requires_bounded_type = std::enable_if_t<is_bounded_type<T>::value>;
 
   // maybe metadata_type or const metadata_type, if bounded type is const
@@ -84,17 +84,22 @@ public:
 
   /// Return size of axis.
   index_type size() const {
-    return visit([](const auto& a) { return a.size(); }, *this);
+    return visit([](const auto& a) -> index_type { return a.size(); }, *this);
   }
 
   /// Return options of axis or option::none_t if axis has no options.
   unsigned options() const {
-    return visit([](const auto& a) { return axis::traits::options(a); }, *this);
+    return visit([](const auto& a) { return traits::options(a); }, *this);
   }
 
   /// Returns true if the axis is inclusive or false.
   bool inclusive() const {
-    return visit([](const auto& a) { return axis::traits::inclusive(a); }, *this);
+    return visit([](const auto& a) { return traits::inclusive(a); }, *this);
+  }
+
+  /// Returns true if the axis is ordered or false.
+  bool ordered() const {
+    return visit([](const auto& a) { return traits::ordered(a); }, *this);
   }
 
   /// Return reference to const metadata or instance of null_type if axis has no
@@ -178,7 +183,7 @@ public:
                 const double x2 = traits::value_as<double>(a, idx + 1);
                 return polymorphic_bin<double>(x1, x2);
               },
-              a);
+              a, detail::priority<1>{});
         },
         *this);
   }

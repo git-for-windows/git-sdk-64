@@ -1002,6 +1002,16 @@ namespace std{ using ::type_info; }
 #else
 #define BOOST_INLINE_VARIABLE
 #endif
+//
+// C++17 if constexpr
+//
+#if !defined(BOOST_NO_CXX17_IF_CONSTEXPR)
+#  define BOOST_IF_CONSTEXPR if constexpr
+#else
+#  define BOOST_IF_CONSTEXPR if
+#endif
+
+#define BOOST_INLINE_CONSTEXPR  BOOST_INLINE_VARIABLE BOOST_CONSTEXPR_OR_CONST
 
 //
 // Unused variable/typedef workarounds:
@@ -1012,7 +1022,14 @@ namespace std{ using ::type_info; }
 //
 // [[nodiscard]]:
 //
-#ifdef __has_cpp_attribute
+#if defined(__has_attribute) && defined(__SUNPRO_CC) && (__SUNPRO_CC > 0x5130)
+#if __has_attribute(nodiscard)
+# define BOOST_ATTRIBUTE_NODISCARD [[nodiscard]]
+#endif
+#if __has_attribute(no_unique_address)
+# define BOOST_ATTRIBUTE_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#endif
+#elif defined(__has_cpp_attribute)
 // clang-6 accepts [[nodiscard]] with -std=c++14, but warns about it -pedantic
 #if __has_cpp_attribute(nodiscard) && !(defined(__clang__) && (__cplusplus < 201703L))
 # define BOOST_ATTRIBUTE_NODISCARD [[nodiscard]]

@@ -1,6 +1,6 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 
-// (C) Copyright 2002-4 Pavel Vozenilek . 
+// (C) Copyright 2002-4 Pavel Vozenilek .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -33,13 +33,13 @@
 
 // function specializations must be defined in the appropriate
 // namespace - boost::serialization
-namespace boost { 
+namespace boost {
 namespace serialization {
 
 template<class Archive, class T>
 void save(
-    Archive & ar, 
-    const boost::optional< T > & t, 
+    Archive & ar,
+    const boost::optional< T > & t,
     const unsigned int /*version*/
 ){
     // It is an inherent limitation to the serialization of optional.hpp
@@ -62,8 +62,8 @@ void save(
 
 template<class Archive, class T>
 void load(
-    Archive & ar, 
-    boost::optional< T > & t, 
+    Archive & ar,
+    boost::optional< T > & t,
     const unsigned int version
 ){
     bool tflag;
@@ -89,8 +89,8 @@ void load(
 
 template<class Archive, class T>
 void serialize(
-    Archive & ar, 
-    boost::optional< T > & t, 
+    Archive & ar,
+    boost::optional< T > & t,
     const unsigned int version
 ){
     boost::serialization::split_free(ar, t, version);

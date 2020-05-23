@@ -11,21 +11,11 @@
 /// \warning Extremely experimental! Requires C++14! Will change in next version of Boost! boost/dll/smart_library.hpp is not included in boost/dll.hpp
 /// \brief Contains the boost::dll::experimental::smart_library class for loading mangled symbols.
 
-#include <boost/predef.h>
-
-#if BOOST_COMP_GNUC || BOOST_COMP_CLANG || BOOST_COMP_HPACC || BOOST_COMP_IBM
-
-#if BOOST_OS_WINDOWS && BOOST_COMP_CLANG
-#warning "Clang-win is not supported"
-#include <boost/dll/detail/demangling/msvc.hpp>
+#include <boost/dll/config.hpp>
+#if defined(_MSC_VER) // MSVC, Clang-cl, and ICC on Windows
+#   include <boost/dll/detail/demangling/msvc.hpp>
 #else
-#include <boost/dll/detail/demangling/itanium.hpp>
-#endif
-
-#elif BOOST_COMP_MSVC
-#include <boost/dll/detail/demangling/msvc.hpp>
-#else
-#error "Compiler not supported"
+#   include <boost/dll/detail/demangling/itanium.hpp>
 #endif
 
 #include <boost/dll/shared_library.hpp>

@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018-2019 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Feb 2018
 
 
@@ -30,6 +30,10 @@ DEALINGS IN THE SOFTWARE.
 
 #ifndef BOOST_OUTCOME_SYSTEM_ERROR2_POSIX_CODE_HPP
 #define BOOST_OUTCOME_SYSTEM_ERROR2_POSIX_CODE_HPP
+
+#ifdef BOOST_OUTCOME_SYSTEM_ERROR2_NOT_POSIX
+#error <posix_code.hpp> is not includable when BOOST_OUTCOME_SYSTEM_ERROR2_NOT_POSIX is defined!
+#endif
 
 #include "generic_code.hpp"
 

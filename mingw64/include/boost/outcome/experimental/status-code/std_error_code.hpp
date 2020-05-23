@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018-2019 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Aug 2018
 
 
@@ -31,7 +31,9 @@ DEALINGS IN THE SOFTWARE.
 #ifndef BOOST_OUTCOME_SYSTEM_ERROR2_STD_ERROR_CODE_HPP
 #define BOOST_OUTCOME_SYSTEM_ERROR2_STD_ERROR_CODE_HPP
 
+#ifndef BOOST_OUTCOME_SYSTEM_ERROR2_NOT_POSIX
 #include "posix_code.hpp"
+#endif
 
 #if defined(_WIN32) || defined(BOOST_OUTCOME_STANDARDESE_IS_IN_THE_HOUSE)
 #include "win32_code.hpp"
@@ -138,10 +140,11 @@ protected:
 // Convert to POSIX or Win32 code, and compare that
 #ifdef _WIN32
       win32_code _c1((win32::DWORD) c1.value().value());
-#else
-      posix_code _c1(c1.value().value());
-#endif
       return _c1 == code2;
+#elif !defined(BOOST_OUTCOME_SYSTEM_ERROR2_NOT_POSIX)
+      posix_code _c1(c1.value().value());
+      return _c1 == code2;
+#endif
     }
     return false;
   }

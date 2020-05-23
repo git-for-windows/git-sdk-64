@@ -10,7 +10,7 @@
 // serialization/map.hpp:
 // serialization for stl map templates
 
-// (C) Copyright 2002-2014 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002-2014 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -33,7 +33,7 @@
 #include <boost/serialization/split_free.hpp>
 #include <boost/move/utility_core.hpp>
 
-namespace boost { 
+namespace boost {
 namespace serialization {
 
 ////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
@@ -75,8 +75,8 @@ inline void save(
     const unsigned int /* file_version */
 ){
     boost::serialization::stl::save_collection<
-        Archive, 
-        std::map<Key, Type, Compare, Allocator> 
+        Archive,
+        std::map<Key, Type, Compare, Allocator>
     >(ar, t);
 }
 
@@ -108,8 +108,8 @@ inline void save(
     const unsigned int /* file_version */
 ){
     boost::serialization::stl::save_collection<
-        Archive, 
-        std::multimap<Key, Type, Compare, Allocator> 
+        Archive,
+        std::multimap<Key, Type, Compare, Allocator>
     >(ar, t);
 }
 

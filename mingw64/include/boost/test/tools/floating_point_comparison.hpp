@@ -179,7 +179,7 @@ safe_fpt_division( FPT f1, FPT f2 )
         return fpt_limits<FPT>::max_value();
 
     // Avoid underflow.
-    if( (f1 == static_cast<FPT>(0)) ||
+    if( (fpt_abs(f1) <= fpt_limits<FPT>::min_value()) ||
         ((f2 > static_cast<FPT>(1)) && (f1 < f2*fpt_limits<FPT>::min_value())) )
         return static_cast<FPT>(0);
 

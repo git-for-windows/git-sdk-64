@@ -64,79 +64,9 @@ inline bool wait_until(
     bool timed_out = false;
     int ret;
 
-#if defined(BOOST_POSIX_HAS_SIGTIMEDWAIT)
-    auto get_timespec =
-            +[](const Duration & dur)
-            {
-                ::timespec ts;
-                ts.tv_sec  = std::chrono::duration_cast<std::chrono::seconds>(dur).count();
-                ts.tv_nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count() % 1000000000;
-                return ts;
-            };
-
-    ::sigset_t  sigset;
-
-    if (sigemptyset(&sigset) != 0)
-    {
-        ec = get_last_error();
-        return false;
-    }
-    if (sigaddset(&sigset, SIGCHLD) != 0)
-    {
-        ec = get_last_error();
-        return false;
-    }
-
-    struct ::sigaction old_sig;
-    if (-1 == ::sigaction(SIGCHLD, nullptr, &old_sig))
-    {
-        ec = get_last_error();
-        return false;
-    }
-
-    do
-    {
-        auto ts = get_timespec(time_out - Clock::now());
-        ret = ::sigtimedwait(&sigset, nullptr, &ts);
-        errno = 0;
-        if ((ret == SIGCHLD) && (old_sig.sa_handler != SIG_DFL) && (old_sig.sa_handler != SIG_IGN))
-            old_sig.sa_handler(ret);
-
-        ret = ::waitpid(-p.grp, &siginfo.si_status, 0); //so in case it exited, we wanna reap it first
-        if (ret == -1)
-        {
-			if ((errno == ECHILD) || (errno == ESRCH))
-			{
-				ec.clear();
-				return true;
-			}
-			else
-			{
-				ec = get_last_error();
-				return false; 
-			}
-        }
-
-        //check if we're done ->
-        ret = ::waitid(P_PGID, p.grp, &siginfo, WEXITED | WNOHANG);
-    }
-    while (((ret != -1) || ((errno != ECHILD) && (errno != ESRCH))) && !(timed_out = (Clock::now() > time_out)));
-
-    if (errno != ECHILD)
-    {
-        ec = boost::process::detail::get_last_error();
-        return !timed_out;
-    }
-    else
-    {
-        ec.clear();
-        return true; //even if timed out, there are no child proccessess left
-    }
-
-#else
     ::timespec sleep_interval;
     sleep_interval.tv_sec = 0;
-    sleep_interval.tv_nsec = 1000000;
+    sleep_interval.tv_nsec = 100000000;
 
 
     while (!(timed_out = (Clock::now() > time_out)))
@@ -156,7 +86,6 @@ inline bool wait_until(
         ::nanosleep(&sleep_interval, nullptr);
     }
     return !timed_out;
-#endif
 }
 
 template< class Clock, class Duration >

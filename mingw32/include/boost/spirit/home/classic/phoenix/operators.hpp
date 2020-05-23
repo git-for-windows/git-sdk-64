@@ -5,8 +5,8 @@
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ==============================================================================*/
-#ifndef PHOENIX_OPERATORS_HPP
-#define PHOENIX_OPERATORS_HPP
+#ifndef BOOST_SPIRIT_CLASSIC_PHOENIX_OPERATORS_HPP
+#define BOOST_SPIRIT_CLASSIC_PHOENIX_OPERATORS_HPP
 
 ///////////////////////////////////////////////////////////////////////////////
 #if !defined(BOOST_NO_CWCTYPE)
@@ -345,7 +345,7 @@ struct unary_operator<post_decr_op, T> {
 //      type of binary operators such as +. The type with the higher
 //      rank wins and is used as the operator's return type. T1 generic
 //      user defined type has a very high rank and always wins when
-//      compared against a user defined type. If this is not desireable,
+//      compared against a user defined type. If this is not desirable,
 //      one can write a rank specialization for the type.
 //
 //      Take note that ranks 0..9999 are reserved for the framework.

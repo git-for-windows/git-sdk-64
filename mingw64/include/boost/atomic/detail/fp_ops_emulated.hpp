@@ -19,7 +19,6 @@
 #include <boost/atomic/detail/config.hpp>
 #include <boost/atomic/detail/bitwise_fp_cast.hpp>
 #include <boost/atomic/detail/fp_operations_fwd.hpp>
-#include <boost/atomic/detail/lockpool.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -37,11 +36,12 @@ struct emulated_fp_operations :
     typedef Base base_type;
     typedef typename base_type::storage_type storage_type;
     typedef Value value_type;
+    typedef typename base_type::scoped_lock scoped_lock;
 
     static BOOST_FORCEINLINE value_type fetch_add(storage_type volatile& storage, value_type v, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         value_type old_val = atomics::detail::bitwise_fp_cast< value_type >(s);
         value_type new_val = old_val + v;
         s = atomics::detail::bitwise_fp_cast< storage_type >(new_val);
@@ -51,7 +51,7 @@ struct emulated_fp_operations :
     static BOOST_FORCEINLINE value_type fetch_sub(storage_type volatile& storage, value_type v, memory_order) BOOST_NOEXCEPT
     {
         storage_type& s = const_cast< storage_type& >(storage);
-        lockpool::scoped_lock lock(&storage);
+        scoped_lock lock(&storage);
         value_type old_val = atomics::detail::bitwise_fp_cast< value_type >(s);
         value_type new_val = old_val - v;
         s = atomics::detail::bitwise_fp_cast< storage_type >(new_val);

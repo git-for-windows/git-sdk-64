@@ -287,29 +287,31 @@ inline bool operator!=(const mallocator<T>&,
   return false;
 }
 
-template <class Allocator>
-typename Allocator::pointer Reallocate(
-    Allocator& alloc,
-    typename Allocator::pointer p,
-    typename Allocator::size_type oldObjCount,
-    typename Allocator::size_type newObjCount,
-    void*)
-{
-    // @@@ not implemented
-    return NULL;
-}
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
+template<class A>
+struct allocator_traits {
+    typedef typename A::value_type value_type;
+    typedef typename A::pointer pointer;
+    typedef typename A::const_pointer const_pointer;
+    typedef typename A::size_type size_type;
+    typedef typename A::reference reference;
+    typedef typename A::const_reference const_reference;
 
-template <class Allocator>
-typename Allocator::pointer Reallocate(
-    Allocator& alloc,
-    typename Allocator::pointer p,
-    typename Allocator::size_type oldObjCount,
-    typename Allocator::size_type newObjCount,
-    mallocator<void>*)
-{
-    // @@@ not implemented
-    return NULL;
-}
+    static pointer allocate( A& a, size_type n, const_pointer hint )
+    {
+        return a.allocate(n, hint);
+    }
+
+    static void deallocate( A& a, pointer p, size_type n )
+    {
+        a.deallocate(p, n);
+    }
+
+    static size_type max_size( A const& a ) { return a.max_size(); }
+};
+#else
+using std::allocator_traits;
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // class template SimpleStringStorage
@@ -331,7 +333,7 @@ public:
     };
     static const Data emptyString_;
 
-    typedef typename A::size_type size_type;
+    typedef typename allocator_traits<A>::size_type size_type;
 
 private:
     Data* pData_;
@@ -544,12 +546,12 @@ SimpleStringStorage<E, A>::emptyString_ =
 template <typename E, class A = std::allocator<E> >
 class AllocatorStringStorage : public A
 {
-    typedef typename A::size_type size_type;
+    typedef typename allocator_traits<A>::size_type size_type;
     typedef typename SimpleStringStorage<E, A>::Data Data;
 
     void* Alloc(size_type sz, const void* p = 0)
     {
-        return A::allocate(1 + (sz - 1) / sizeof(E),
+        return allocator_traits<A>::allocate(*this, 1 + (sz - 1) / sizeof(E),
             static_cast<const char*>(p));
     }
 
@@ -563,7 +565,7 @@ class AllocatorStringStorage : public A
 
     void Free(void* p, size_type sz)
     {
-        A::deallocate(static_cast<E*>(p), sz);
+        allocator_traits<A>::deallocate(*this, static_cast<E*>(p), sz);
     }
 
     Data* pData_;
@@ -666,7 +668,7 @@ public:
     { return size_type(end() - begin()); }
 
     size_type max_size() const
-    { return A::max_size(); }
+    { return allocator_traits<A>::max_size(*this); }
 
     size_type capacity() const
     { return size_type(pData_->pEndOfMem_ - pData_->buffer_); }
@@ -757,7 +759,7 @@ public: // protected:
     typedef typename base::iterator iterator;
     typedef typename base::const_iterator const_iterator;
     typedef A allocator_type;
-    typedef typename A::size_type size_type;
+    typedef typename allocator_traits<A>::size_type size_type;
 
     VectorStringStorage(const VectorStringStorage& s) : base(s)
     { }
@@ -874,7 +876,7 @@ public:
     typedef value_type* iterator;
     typedef const value_type* const_iterator;
     typedef typename Storage::allocator_type allocator_type;
-    typedef typename allocator_type::size_type size_type;
+    typedef typename allocator_traits<allocator_type>::size_type size_type;
 
 private:
   enum { temp1 = threshold * sizeof(value_type) > sizeof(Storage)
@@ -1201,8 +1203,8 @@ public:
     typedef typename Storage::iterator iterator;
     typedef typename Storage::const_iterator const_iterator;
     typedef typename Storage::allocator_type allocator_type;
-    typedef typename allocator_type::size_type size_type;
-    typedef typename Storage::reference reference;
+    typedef typename allocator_traits<allocator_type>::size_type size_type;
+    typedef typename Storage::value_type& reference;
 
 private:
     union
@@ -1461,13 +1463,12 @@ public:
     typedef T traits_type;
     typedef typename traits_type::char_type value_type;
     typedef A allocator_type;
-    typedef typename A::size_type size_type;
-    typedef typename A::difference_type difference_type;
 
-    typedef typename A::reference reference;
-    typedef typename A::const_reference const_reference;
-    typedef typename A::pointer pointer;
-    typedef typename A::const_pointer const_pointer;
+    typedef typename allocator_traits<A>::value_type& reference;
+    typedef typename allocator_traits<A>::value_type const& const_reference;
+    typedef typename allocator_traits<A>::pointer pointer;
+    typedef typename allocator_traits<A>::const_pointer const_pointer;
+    typedef typename allocator_traits<A>::size_type size_type;
 
     typedef typename Storage::iterator iterator;
     typedef typename Storage::const_iterator const_iterator;
@@ -1802,13 +1803,13 @@ private:
         if(!empty() && beginIterator != endIterator)
         {
             typedef const typename std::iterator_traits<Iterator>::value_type *
-                pointer;
+                value_pointer;
 
-            pointer myBegin(&*begin());
-            pointer myEnd(&*begin() + size());
-            pointer rangeBegin(DereferenceValidIterator(beginIterator));
+            value_pointer myBegin(&*begin());
+            value_pointer myEnd(&*begin() + size());
+            value_pointer rangeBegin(DereferenceValidIterator(beginIterator));
 
-            const std::less_equal<pointer> less_equal = std::less_equal<pointer>();
+            const std::less_equal<value_pointer> less_equal = std::less_equal<value_pointer>();
             if(less_equal(myBegin, rangeBegin) && less_equal(rangeBegin, myEnd))
                 return true;
         }

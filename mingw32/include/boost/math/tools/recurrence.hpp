@@ -10,6 +10,7 @@
 #include <boost/math/tools/precision.hpp>
 #include <boost/math/tools/tuple.hpp>
 #include <boost/math/tools/fraction.hpp>
+#include <boost/math/tools/cxx03_warn.hpp>
 
 #ifdef BOOST_NO_CXX11_HDR_TUPLE
 #error "This header requires C++11 support"
@@ -167,7 +168,7 @@ namespace boost {
                   first *= scale;
                   *log_scaling += log_scale;
                }
-               // scale each part seperately to avoid spurious overflow:
+               // scale each part separately to avoid spurious overflow:
                third = (a / -c) * first + (b / -c) * second;
                BOOST_ASSERT((boost::math::isfinite)(third));
 
@@ -221,7 +222,7 @@ namespace boost {
                   first *= scale;
                   *log_scaling += log_scale;
                }
-               // scale each part seperately to avoid spurious overflow:
+               // scale each part separately to avoid spurious overflow:
                next = (b / -a) * second + (c / -a) * first;
                BOOST_ASSERT((boost::math::isfinite)(next));
 

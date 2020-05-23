@@ -34,7 +34,7 @@ class BOOST_TEST_DECL progress_monitor_t : public test_observer {
 public:
     /// @name Test observer interface
     /// @{
-    virtual void    test_start( counter_t test_cases_amount );
+    virtual void    test_start( counter_t test_cases_amount, test_unit_id );
     virtual void    test_aborted();
 
     virtual void    test_unit_finish( test_unit const&, unsigned long );

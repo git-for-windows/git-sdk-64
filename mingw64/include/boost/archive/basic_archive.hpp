@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // basic_archive.hpp:
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -46,27 +46,27 @@ public:
     explicit library_version_type(const unsigned int & t_) : t(t_){
         BOOST_ASSERT(t_ <= boost::integer_traits<base_type>::const_max);
     }
-    library_version_type(const library_version_type & t_) : 
+    library_version_type(const library_version_type & t_) :
         t(t_.t)
     {}
     library_version_type & operator=(const library_version_type & rhs){
-        t = rhs.t; 
+        t = rhs.t;
         return *this;
     }
     // used for text output
     operator base_type () const {
         return t;
-    }                
+    }
     // used for text input
     operator base_type & (){
         return t;
-    }                
+    }
     bool operator==(const library_version_type & rhs) const {
         return t == rhs.t;
-    } 
+    }
     bool operator<(const library_version_type & rhs) const {
         return t < rhs.t;
-    }   
+    }
 };
 
 BOOST_ARCHIVE_DECL library_version_type
@@ -82,27 +82,27 @@ public:
     explicit version_type(const unsigned int & t_) : t(t_){
         BOOST_ASSERT(t_ <= boost::integer_traits<base_type>::const_max);
     }
-    version_type(const version_type & t_) : 
+    version_type(const version_type & t_) :
         t(t_.t)
     {}
     version_type & operator=(const version_type & rhs){
-        t = rhs.t; 
+        t = rhs.t;
         return *this;
     }
     // used for text output
     operator base_type () const {
         return t;
-    }                
+    }
     // used for text intput
     operator base_type  & (){
         return t;
-    }                
+    }
     bool operator==(const version_type & rhs) const {
         return t == rhs.t;
-    } 
+    }
     bool operator<(const version_type & rhs) const {
         return t < rhs.t;
-    }   
+    }
 };
 
 class class_id_type {
@@ -118,31 +118,31 @@ public:
     explicit class_id_type(const std::size_t t_) : t(t_){
  //       BOOST_ASSERT(t_ <= boost::integer_traits<base_type>::const_max);
     }
-    class_id_type(const class_id_type & t_) : 
+    class_id_type(const class_id_type & t_) :
         t(t_.t)
     {}
     class_id_type & operator=(const class_id_type & rhs){
-        t = rhs.t; 
+        t = rhs.t;
         return *this;
     }
 
     // used for text output
     operator base_type () const {
         return t;
-    }                
+    }
     // used for text input
     operator base_type &() {
         return t;
-    }                
+    }
     bool operator==(const class_id_type & rhs) const {
         return t == rhs.t;
-    } 
+    }
     bool operator<(const class_id_type & rhs) const {
         return t < rhs.t;
-    }   
+    }
 };
 
-#define NULL_POINTER_TAG boost::archive::class_id_type(-1)
+#define BOOST_SERIALIZATION_NULL_POINTER_TAG boost::archive::class_id_type(-1)
 
 class object_id_type {
 private:
@@ -157,27 +157,27 @@ public:
         // precision
         BOOST_ASSERT(t_ <= boost::integer_traits<base_type>::const_max);
     }
-    object_id_type(const object_id_type & t_) : 
+    object_id_type(const object_id_type & t_) :
         t(t_.t)
     {}
     object_id_type & operator=(const object_id_type & rhs){
-        t = rhs.t; 
+        t = rhs.t;
         return *this;
     }
     // used for text output
     operator base_type () const {
         return t;
-    }                
+    }
     // used for text input
     operator base_type & () {
         return t;
-    }                
+    }
     bool operator==(const object_id_type & rhs) const {
         return t == rhs.t;
-    } 
+    }
     bool operator<(const object_id_type & rhs) const {
         return t < rhs.t;
-    }   
+    }
 };
 
 #if defined(_MSC_VER)
@@ -214,8 +214,8 @@ struct tracking_type {
     }
 };
 
-struct class_name_type : 
-    private boost::noncopyable 
+struct class_name_type :
+    private boost::noncopyable
 {
     char *t;
     operator const char * & () const {
@@ -227,9 +227,9 @@ struct class_name_type :
     std::size_t size() const {
         return std::strlen(t);
     }
-    explicit class_name_type(const char *key_) 
+    explicit class_name_type(const char *key_)
     : t(const_cast<char *>(key_)){}
-    explicit class_name_type(char *key_) 
+    explicit class_name_type(char *key_)
     : t(key_){}
     class_name_type & operator=(const class_name_type & rhs){
         t = rhs.t;
@@ -249,7 +249,7 @@ BOOST_ARCHIVE_DECL const char *
 BOOST_ARCHIVE_SIGNATURE();
 
 /* NOTE : Warning  : Warning : Warning : Warning : Warning
- * If any of these are changed to different sized types, 
+ * If any of these are changed to different sized types,
  * binary_iarchive won't be able to read older archives
  * unless you rev the library version and include conditional
  * code based on the library version.  There is nothing
@@ -291,7 +291,7 @@ BOOST_CLASS_IMPLEMENTATION(boost::archive::tracking_type, primitive_type)
 
 #include <boost/serialization/is_bitwise_serializable.hpp>
 
-// set types used internally by the serialization library 
+// set types used internally by the serialization library
 // to be bitwise serializable
 
 BOOST_IS_BITWISE_SERIALIZABLE(boost::archive::library_version_type)

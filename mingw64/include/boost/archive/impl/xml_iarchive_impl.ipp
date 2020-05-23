@@ -181,10 +181,7 @@ xml_iarchive_impl<Archive>::xml_iarchive_impl(
     ),
     basic_xml_iarchive<Archive>(flags),
     gimpl(new xml_grammar())
-{
-    if(0 == (flags & no_header))
-        init();
-}
+{}
 
 template<class Archive>
 BOOST_ARCHIVE_DECL

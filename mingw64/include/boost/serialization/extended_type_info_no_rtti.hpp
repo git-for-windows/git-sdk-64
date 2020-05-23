@@ -11,7 +11,7 @@
 // on runtime typing (rtti - typeid) but uses a user specified string
 // as the portable class identifier.
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -50,7 +50,7 @@ namespace serialization {
 
 namespace no_rtti_system {
 
-// common base class to share type_info_key.  This is used to 
+// common base class to share type_info_key.  This is used to
 // identify the method used to keep track of the extended type
 class BOOST_SYMBOL_VISIBLE extended_type_info_no_rtti_0 :
     public extended_type_info
@@ -68,7 +68,7 @@ public:
 } // no_rtti_system
 
 template<class T>
-class extended_type_info_no_rtti : 
+class extended_type_info_no_rtti :
     public no_rtti_system::extended_type_info_no_rtti_0,
     public singleton<extended_type_info_no_rtti< T > >
 {
@@ -80,7 +80,7 @@ class extended_type_info_no_rtti :
             }
         };
         struct undefined {
-            // if your program traps here - you failed to 
+            // if your program traps here - you failed to
             // export a guid for this type.  the no_rtti
             // system requires export for types serialized
             // as pointers.
@@ -88,7 +88,7 @@ class extended_type_info_no_rtti :
             static const char * invoke();
         };
         static const char * invoke(){
-            typedef 
+            typedef
                 typename boost::mpl::if_c<
                     tf,
                     defined,
@@ -157,7 +157,7 @@ public:
 } // namespace boost
 
 ///////////////////////////////////////////////////////////////////////////////
-// If no other implementation has been designated as default, 
+// If no other implementation has been designated as default,
 // use this one.  To use this implementation as the default, specify it
 // before any of the other headers.
 
@@ -167,7 +167,7 @@ public:
     namespace serialization {
     template<class T>
     struct extended_type_info_impl {
-        typedef typename 
+        typedef typename
             boost::serialization::extended_type_info_no_rtti< T > type;
     };
     } // namespace serialization

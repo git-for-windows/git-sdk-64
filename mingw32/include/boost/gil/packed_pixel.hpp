@@ -76,7 +76,8 @@ struct packed_pixel
         : _bitfield(0)
     {
         static_assert(num_channels<packed_pixel>::value == 2, "");
-        gil::at_c<0>(*this) = chan0; gil::at_c<1>(*this) = chan1;
+        gil::at_c<0>(*this) = chan0;
+        gil::at_c<1>(*this) = chan1;
     }
 
     packed_pixel(int chan0, int chan1, int chan2)
@@ -236,7 +237,8 @@ auto at_c(const packed_pixel<P, C, L>& p)
 //  PixelConcept
 /////////////////////////////
 
-// Metafunction predicate that flags packed_pixel as a model of PixelConcept. Required by PixelConcept
+// Metafunction predicate that flags packed_pixel as a model of PixelConcept.
+// Required by PixelConcept
 template <typename BitField, typename ChannelRefs, typename Layout>
 struct is_pixel<packed_pixel<BitField, ChannelRefs, Layout>> : std::true_type {};
 
@@ -266,7 +268,9 @@ struct is_planar<packed_pixel<P, C, Layout>> : std::false_type {};
 /// \defgroup PixelIteratorModelPackedInterleavedPtr Pointer to packed_pixel<P,CR,Layout>
 /// \ingroup PixelIteratorModel
 /// \brief Iterators over interleaved pixels.
-/// The pointer packed_pixel<P,CR,Layout>* is used as an iterator over interleaved pixels of packed format. Models PixelIteratorConcept, HasDynamicXStepTypeConcept, MemoryBasedIteratorConcept
+/// The pointer packed_pixel<P,CR,Layout>* is used as an iterator over interleaved
+/// pixels of packed format.
+/// Models PixelIteratorConcept, HasDynamicXStepTypeConcept, MemoryBasedIteratorConcept
 
 template <typename P, typename C, typename L>
 struct iterator_is_mutable<packed_pixel<P, C, L>*>

@@ -20,7 +20,7 @@ namespace boost { namespace yap {
         "ref" and "term" for the non-operator kinds
         <code>expr_kind::expr_ref</code> amd <code>expr_kind::terminal</code>,
         respectively.*/
-    inline char const * op_string(expr_kind kind)
+    inline constexpr char const * op_string(expr_kind kind)
     {
         switch (kind) {
         case expr_kind::expr_ref: return "ref";

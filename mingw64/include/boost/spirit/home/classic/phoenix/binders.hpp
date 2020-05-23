@@ -5,8 +5,8 @@
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ==============================================================================*/
-#ifndef PHOENIX_BINDERS_HPP
-#define PHOENIX_BINDERS_HPP
+#ifndef BOOST_SPIRIT_CLASSIC_PHOENIX_BINDERS_HPP
+#define BOOST_SPIRIT_CLASSIC_PHOENIX_BINDERS_HPP
 
 ///////////////////////////////////////////////////////////////////////////////
 #include <boost/spirit/home/classic/phoenix/functions.hpp>
@@ -20,7 +20,7 @@ namespace phoenix {
 //
 //  Binders
 //
-//      There are times when it is desireable to bind a simple functor,
+//      There are times when it is desirable to bind a simple functor,
 //      function, member function or member variable for deferred
 //      evaluation. This can be done through the binding facilities
 //      provided below. There are template classes:

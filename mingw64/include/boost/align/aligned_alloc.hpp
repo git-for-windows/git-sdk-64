@@ -24,6 +24,8 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/align/detail/aligned_alloc_msvc.hpp>
 #elif defined(__MINGW32__) && (__MSVCRT_VERSION__ >= 0x0700)
 #include <boost/align/detail/aligned_alloc_msvc.hpp>
+#elif defined(__MINGW32__)
+#include <boost/align/detail/aligned_alloc_mingw.hpp>
 #elif MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 #include <boost/align/detail/aligned_alloc_posix.hpp>
 #elif MAC_OS_X_VERSION_MIN_REQUIRED >= 1060

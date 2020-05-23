@@ -49,7 +49,7 @@
 
 // Boost
 #include <boost/test/utils/timer.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 // STL
 #include <limits>
@@ -991,6 +991,7 @@ setup_loggers()
                                      log_cleaner );
             }
             unit_test_log.set_stream( stream_logger.ref() );
+            unit_test_log.configure();
         }
         else
         {
@@ -1185,7 +1186,6 @@ init( init_unit_test_func init_func, int argc, char* argv[] )
     // 40. Register default test observers
     register_observer( results_collector );
     register_observer( unit_test_log );
-    register_observer( framework_init_observer );
 
     if( runtime_config::get<bool>( runtime_config::btrt_show_progress ) ) {
         progress_monitor.set_stream( std::cout ); // defaults to stdout
@@ -1605,6 +1605,33 @@ struct swap_on_delete {
     Cont& m_c2;
 };
 
+struct register_observer_helper {
+  register_observer_helper(test_observer& observer)
+  : m_observer(observer)
+  { 
+    register_obs();
+  }
+
+  ~register_observer_helper() {
+    if(m_registered)
+      deregister_observer( m_observer );
+  }
+
+  void deregister_obs() {
+    m_registered = false;
+    deregister_observer( m_observer );
+  }
+
+  void register_obs() {
+    m_registered = true;
+    register_observer( m_observer );
+  }
+  
+
+  test_observer& m_observer;
+  bool m_registered;
+};
+
 void
 run( test_unit_id id, bool continue_test )
 {
@@ -1626,6 +1653,9 @@ run( test_unit_id id, bool continue_test )
     bool    init_ok             = true;
     const_string setup_error;
 
+    framework_init_observer_t local_init_observer;
+    register_observer_helper init_observer_helper( local_init_observer );
+
     if( call_start_finish ) {
         // indicates the framework that no test is in progress now if observers need to be notified
         impl::s_frk_state().m_test_in_progress = false;
@@ -1633,13 +1663,13 @@ run( test_unit_id id, bool continue_test )
         BOOST_TEST_FOREACH( test_observer*, to, impl::s_frk_state().m_observers ) {
             BOOST_TEST_I_TRY {
                 ut_detail::test_unit_id_restore restore_current_test_unit(impl::s_frk_state().m_curr_test_unit, id);
-                unit_test_monitor_t::error_level result = unit_test_monitor.execute_and_translate( boost::bind( &test_observer::test_start, to, tcc.p_count ) );
+                unit_test_monitor_t::error_level result = unit_test_monitor.execute_and_translate( boost::bind( &test_observer::test_start, to, tcc.p_count, id ) );
                 if( init_ok ) {
                     if( result != unit_test_monitor_t::test_ok ) {
                         init_ok = false;
                     }
                     else {
-                        if( unit_test::framework_init_observer.has_failed() ) {
+                        if( local_init_observer.has_failed() ) {
                             init_ok = false;
                         }
                     }
@@ -1655,6 +1685,9 @@ run( test_unit_id id, bool continue_test )
             }
         }
     }
+
+    // removing this observer as it should not be of any use for the tests
+    init_observer_helper.deregister_obs();
 
     if( init_ok ) {
 
@@ -1694,7 +1727,10 @@ run( test_unit_id id, bool continue_test )
 
     results_reporter::make_report( INV_REPORT_LEVEL, id );
 
-    unit_test::framework_init_observer.clear();
+    // reinstalling this observer
+    init_observer_helper.register_obs();
+
+    local_init_observer.clear();
     if( call_start_finish ) {
         // indicates the framework that no test is in progress anymore if observers need to be notified
         // and this is a teardown, so assertions should not raise any exception otherwise an exception
@@ -1709,7 +1745,7 @@ run( test_unit_id id, bool continue_test )
     impl::s_frk_state().m_test_in_progress = was_in_progress;
 
     // propagates the init/teardown error if any
-    BOOST_TEST_SETUP_ASSERT( init_ok && !unit_test::framework_init_observer.has_failed(), setup_error );
+    BOOST_TEST_SETUP_ASSERT( init_ok && !local_init_observer.has_failed(), setup_error );
 }
 
 //____________________________________________________________________________//

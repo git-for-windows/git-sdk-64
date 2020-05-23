@@ -264,6 +264,12 @@ template<class T> void swap(weak_ptr<T> & a, weak_ptr<T> & b) BOOST_SP_NOEXCEPT
     a.swap(b);
 }
 
+#if defined(__cpp_deduction_guides)
+
+template<class T> weak_ptr( shared_ptr<T> ) -> weak_ptr<T>;
+
+#endif
+
 } // namespace boost
 
 #endif  // #ifndef BOOST_SMART_PTR_WEAK_PTR_HPP_INCLUDED

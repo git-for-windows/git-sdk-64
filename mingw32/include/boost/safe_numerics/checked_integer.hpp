@@ -35,10 +35,17 @@ using bool_type = typename std::conditional<tf, std::true_type, std::false_type>
 // convert an integral value to some other integral type
 template<
     typename R,
+    R Min,
+    R Max,
     typename T,
     class F
 >
-struct heterogeneous_checked_operation<R, T, F,
+struct heterogeneous_checked_operation<
+    R,
+    Min,
+    Max,
+    T,
+    F,
     typename std::enable_if<
         std::is_integral<R>::value
         && std::is_integral<T>::value
@@ -59,7 +66,7 @@ struct heterogeneous_checked_operation<R, T, F,
             return
             boost::safe_numerics::safe_compare::greater_than(
                 t,
-                std::numeric_limits<R>::max()
+                Max
             ) ?
                 F::template invoke<safe_numerics_error::positive_overflow_error>(
                     "converted signed value too large"
@@ -67,7 +74,7 @@ struct heterogeneous_checked_operation<R, T, F,
             :
             boost::safe_numerics::safe_compare::less_than(
                 t,
-                std::numeric_limits<R>::min()
+                Min
             ) ?
                 F::template invoke<safe_numerics_error::negative_overflow_error>(
                     "converted signed value too small"
@@ -87,7 +94,7 @@ struct heterogeneous_checked_operation<R, T, F,
             return
             boost::safe_numerics::safe_compare::greater_than(
                 t,
-                std::numeric_limits<R>::max()
+                Max
             ) ?
                 F::template invoke<safe_numerics_error::positive_overflow_error>(
                     "converted unsigned value too large"
@@ -107,7 +114,7 @@ struct heterogeneous_checked_operation<R, T, F,
             return
             boost::safe_numerics::safe_compare::greater_than(
                 t,
-                std::numeric_limits<R>::max()
+                Max
             ) ?
                 F::template invoke<safe_numerics_error::positive_overflow_error>(
                     "converted unsigned value too large"
@@ -130,7 +137,7 @@ struct heterogeneous_checked_operation<R, T, F,
             :
             boost::safe_numerics::safe_compare::greater_than(
                 t,
-                std::numeric_limits<R>::max()
+                Max
             ) ?
                 F::template invoke<safe_numerics_error::positive_overflow_error>(
                     "converted signed value too large"
@@ -155,10 +162,17 @@ struct heterogeneous_checked_operation<R, T, F,
 // converting floating point value to integral type
 template<
     typename R,
+    R Min,
+    R Max,
     typename T,
     class F
 >
-struct heterogeneous_checked_operation<R, T, F,
+struct heterogeneous_checked_operation<
+    R,
+    Min,
+    Max,
+    T,
+    F,
     typename std::enable_if<
         std::is_integral<R>::value
         && std::is_floating_point<T>::value
@@ -175,10 +189,17 @@ struct heterogeneous_checked_operation<R, T, F,
 // INT35-C. Use correct integer precisions
 template<
     typename R,
+    R Min,
+    R Max,
     typename T,
     class F
 >
-struct heterogeneous_checked_operation<R, T, F,
+struct heterogeneous_checked_operation<
+    R,
+    Min,
+    Max,
+    T,
+    F,
     typename std::enable_if<
         std::is_floating_point<R>::value
         && std::is_integral<T>::value

@@ -1,13 +1,10 @@
 prefix=/mingw64
-exec_prefix=/mingw64
-libdir=/mingw64/lib
-includedir=/mingw64/include
+libdir=${prefix}/lib
+includedir=${prefix}/include
 
-Name: harfbuzz
+Name: harfbuzz-icu
 Description: HarfBuzz text shaping library ICU integration
 Version: 2.6.6
-
-Requires: harfbuzz
-Requires.private: icu-uc
+Requires.private: harfbuzz, icu-uc
 Libs: -L${libdir} -lharfbuzz-icu
-Cflags: -I${includedir}/harfbuzz
+Cflags:-I${includedir}/harfbuzz

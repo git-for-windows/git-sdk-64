@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // xml_wiarchive.hpp
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -50,7 +50,7 @@ class basic_xml_grammar;
 typedef basic_xml_grammar<wchar_t> xml_wgrammar;
 
 template<class Archive>
-class BOOST_SYMBOL_VISIBLE xml_wiarchive_impl : 
+class BOOST_SYMBOL_VISIBLE xml_wiarchive_impl :
     public basic_text_iprimitive<std::wistream>,
     public basic_xml_iarchive<Archive>
 {
@@ -68,17 +68,17 @@ protected:
         return is;
     }
     template<class T>
-    void 
+    void
     load(T & t){
         basic_text_iprimitive<std::wistream>::load(t);
     }
-    void 
+    void
     load(version_type & t){
         unsigned int v;
         load(v);
         t = version_type(v);
     }
-    void 
+    void
     load(boost::serialization::item_version_type & t){
         unsigned int v;
         load(v);
@@ -102,11 +102,11 @@ protected:
     }
     BOOST_WARCHIVE_DECL void
     load_override(class_name_type & t);
-    BOOST_WARCHIVE_DECL void 
+    BOOST_WARCHIVE_DECL void
     init();
-    BOOST_WARCHIVE_DECL 
+    BOOST_WARCHIVE_DECL
     xml_wiarchive_impl(std::wistream & is, unsigned int flags) ;
-    BOOST_WARCHIVE_DECL 
+    BOOST_WARCHIVE_DECL
     ~xml_wiarchive_impl();
 };
 
@@ -114,7 +114,7 @@ protected:
 } // namespace boost
 
 #ifdef BOOST_MSVC
-#  pragma warning(pop) 
+#  pragma warning(pop)
 #endif
 
 #include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
@@ -124,7 +124,7 @@ protected:
 #  pragma warning(disable : 4511 4512)
 #endif
 
-namespace boost { 
+namespace boost {
 namespace archive {
 
 class BOOST_SYMBOL_VISIBLE xml_wiarchive :
@@ -132,7 +132,10 @@ class BOOST_SYMBOL_VISIBLE xml_wiarchive :
 public:
     xml_wiarchive(std::wistream & is, unsigned int flags = 0) :
         xml_wiarchive_impl<xml_wiarchive>(is, flags)
-    {}
+    {
+    if(0 == (flags & no_header))
+        init();
+    }
     ~xml_wiarchive(){}
 };
 

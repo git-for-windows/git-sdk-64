@@ -21,8 +21,19 @@ namespace checked {
 ////////////////////////////////////////////////////
 // layer 0 - implement safe operations for floating
 
-template<typename R, typename T, class F>
-struct heterogeneous_checked_operation<R, T, F,
+template<
+    typename R,
+    R Min,
+    R Max,
+    typename T,
+    class F
+>
+struct heterogeneous_checked_operation<
+    R,
+    Min,
+    Max,
+    T,
+    F,
     typename std::enable_if<
         std::is_floating_point<R>::value
         && std::is_floating_point<T>::value
@@ -34,8 +45,20 @@ struct heterogeneous_checked_operation<R, T, F,
     };
 }; // checked_unary_operation
 
-template<typename R, typename T, class F>
-struct heterogeneous_checked_operation<R, T, F,
+template<
+    typename R,
+    R Min,
+    R Max,
+    typename T,
+    class
+    F
+>
+struct heterogeneous_checked_operation<
+    R,
+    Min,
+    Max,
+    T,
+    F,
     typename std::enable_if<
         std::is_floating_point<R>::value
         && std::is_integralt<T>::value

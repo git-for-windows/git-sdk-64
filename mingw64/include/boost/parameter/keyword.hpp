@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef KEYWORD_050328_HPP
-#define KEYWORD_050328_HPP
+#ifndef BOOST_PARAMETER_KEYWORD_HPP
+#define BOOST_PARAMETER_KEYWORD_HPP
 
 #include <boost/parameter/aux_/tag.hpp>
 #include <boost/parameter/aux_/default.hpp>

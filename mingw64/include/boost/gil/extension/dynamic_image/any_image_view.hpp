@@ -45,6 +45,14 @@ struct any_type_get_dimensions
     result_type operator()(const T& v) const { return v.dimensions(); }
 };
 
+// works for image_view
+struct any_type_get_size
+{
+    using result_type = std::size_t;
+    template <typename T>
+    result_type operator()(const T& v) const { return v.size(); }
+};
+
 } // namespace detail
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -71,6 +79,7 @@ public:
     using x_coord_t = std::ptrdiff_t;
     using y_coord_t = std::ptrdiff_t;
     using point_t = point<std::ptrdiff_t>;
+    using size_type = std::size_t;
 
     any_image_view() = default;
     any_image_view(any_image_view const& view) : parent_t((parent_t const&)view) {}
@@ -105,6 +114,7 @@ public:
 
     std::size_t num_channels()  const { return apply_operation(*this, detail::any_type_get_num_channels()); }
     point_t     dimensions()    const { return apply_operation(*this, detail::any_type_get_dimensions()); }
+    size_type   size()          const { return apply_operation(*this, detail::any_type_get_size()); }
     x_coord_t   width()         const { return dimensions().x; }
     y_coord_t   height()        const { return dimensions().y; }
 };

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UNWRAP_CV_REFERENCE_050328_HPP
-#define UNWRAP_CV_REFERENCE_050328_HPP
+#ifndef BOOST_PARAMETER_AUX_UNWRAP_CV_REFERENCE_HPP
+#define BOOST_PARAMETER_AUX_UNWRAP_CV_REFERENCE_HPP
 
 namespace boost {
 

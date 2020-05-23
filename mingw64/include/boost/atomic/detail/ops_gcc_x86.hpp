@@ -19,7 +19,7 @@
 #include <cstddef>
 #include <boost/memory_order.hpp>
 #include <boost/atomic/detail/config.hpp>
-#include <boost/atomic/detail/storage_type.hpp>
+#include <boost/atomic/detail/storage_traits.hpp>
 #include <boost/atomic/detail/operations_fwd.hpp>
 #include <boost/atomic/capabilities.hpp>
 #if defined(BOOST_ATOMIC_DETAIL_X86_HAS_CMPXCHG8B) || defined(BOOST_ATOMIC_DETAIL_X86_HAS_CMPXCHG16B)
@@ -57,7 +57,7 @@ template< std::size_t Size, bool Signed, typename Derived >
 struct gcc_x86_operations :
     public gcc_x86_operations_base
 {
-    typedef typename make_storage_type< Size >::type storage_type;
+    typedef typename storage_traits< Size >::type storage_type;
 
     static BOOST_FORCEINLINE void store(storage_type volatile& storage, storage_type v, memory_order order) BOOST_NOEXCEPT
     {
@@ -108,10 +108,10 @@ struct operations< 1u, Signed > :
 {
     typedef gcc_x86_operations< 1u, Signed, operations< 1u, Signed > > base_type;
     typedef typename base_type::storage_type storage_type;
-    typedef typename make_storage_type< 1u >::aligned aligned_storage_type;
-    typedef typename make_storage_type< 4u >::type temp_storage_type;
+    typedef typename storage_traits< 4u >::type temp_storage_type;
 
     static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = 1u;
+    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_alignment = 1u;
     static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 
     static BOOST_FORCEINLINE storage_type fetch_add(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT
@@ -209,10 +209,10 @@ struct operations< 2u, Signed > :
 {
     typedef gcc_x86_operations< 2u, Signed, operations< 2u, Signed > > base_type;
     typedef typename base_type::storage_type storage_type;
-    typedef typename make_storage_type< 2u >::aligned aligned_storage_type;
-    typedef typename make_storage_type< 4u >::type temp_storage_type;
+    typedef typename storage_traits< 4u >::type temp_storage_type;
 
     static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = 2u;
+    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_alignment = 2u;
     static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 
     static BOOST_FORCEINLINE storage_type fetch_add(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT
@@ -310,9 +310,9 @@ struct operations< 4u, Signed > :
 {
     typedef gcc_x86_operations< 4u, Signed, operations< 4u, Signed > > base_type;
     typedef typename base_type::storage_type storage_type;
-    typedef typename make_storage_type< 4u >::aligned aligned_storage_type;
 
     static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = 4u;
+    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_alignment = 4u;
     static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 
     static BOOST_FORCEINLINE storage_type fetch_add(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT
@@ -410,8 +410,6 @@ template< bool Signed >
 struct operations< 8u, Signed > :
     public cas_based_operations< gcc_dcas_x86< Signed > >
 {
-    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = 8u;
-    static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 };
 
 #elif defined(__x86_64__)
@@ -422,9 +420,9 @@ struct operations< 8u, Signed > :
 {
     typedef gcc_x86_operations< 8u, Signed, operations< 8u, Signed > > base_type;
     typedef typename base_type::storage_type storage_type;
-    typedef typename make_storage_type< 8u >::aligned aligned_storage_type;
 
     static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = 8u;
+    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_alignment = 8u;
     static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 
     static BOOST_FORCEINLINE storage_type fetch_add(storage_type volatile& storage, storage_type v, memory_order) BOOST_NOEXCEPT
@@ -524,8 +522,6 @@ template< bool Signed >
 struct operations< 16u, Signed > :
     public cas_based_operations< gcc_dcas_x86_64< Signed > >
 {
-    static BOOST_CONSTEXPR_OR_CONST std::size_t storage_size = 16u;
-    static BOOST_CONSTEXPR_OR_CONST bool is_signed = Signed;
 };
 
 #endif // defined(BOOST_ATOMIC_DETAIL_X86_HAS_CMPXCHG16B)

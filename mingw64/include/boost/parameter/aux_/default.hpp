@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef DEFAULT_050329_HPP
-#define DEFAULT_050329_HPP
+#ifndef BOOST_PARAMETER_AUX_DEFAULT_HPP
+#define BOOST_PARAMETER_AUX_DEFAULT_HPP
 
 namespace boost { namespace parameter { namespace aux {
 

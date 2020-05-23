@@ -17,7 +17,10 @@
 #include <boost/assert.hpp>
 #include <boost/memory_order.hpp>
 #include <boost/atomic/detail/config.hpp>
-#include <boost/atomic/detail/operations_lockfree.hpp>
+#include <boost/atomic/detail/operations.hpp>
+#if defined(BOOST_ATOMIC_DETAIL_NO_CXX11_ALIGNAS)
+#include <boost/type_traits/type_with_alignment.hpp>
+#endif
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -31,7 +34,7 @@
 namespace boost {
 namespace atomics {
 
-#if defined(BOOST_NO_CXX11_CONSTEXPR) || defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX)
+#if defined(BOOST_ATOMIC_DETAIL_NO_CXX11_CONSTEXPR_UNION_INIT) || defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX)
 #define BOOST_ATOMIC_NO_ATOMIC_FLAG_INIT
 #else
 #define BOOST_ATOMIC_FLAG_INIT {}
@@ -42,15 +45,31 @@ struct atomic_flag
     typedef atomics::detail::operations< 1u, false > operations;
     typedef operations::storage_type storage_type;
 
-    operations::aligned_storage_type m_storage;
-
-    BOOST_FORCEINLINE BOOST_CONSTEXPR atomic_flag() BOOST_NOEXCEPT : m_storage(0)
+#if !defined(BOOST_ATOMIC_DETAIL_NO_CXX11_ALIGNAS)
+    alignas(operations::storage_alignment) storage_type m_storage;
+#else
+    // Note: Some compilers cannot use constant expressions in alignment attributes, so we have to use the union trick
+    union
     {
+        storage_type m_storage;
+        boost::type_with_alignment< operations::storage_alignment >::type m_aligner;
+    };
+#endif
+
+    BOOST_FORCEINLINE BOOST_ATOMIC_DETAIL_CONSTEXPR_UNION_INIT atomic_flag() BOOST_NOEXCEPT : m_storage(0u)
+    {
+    }
+
+    BOOST_FORCEINLINE bool test(memory_order order = memory_order_seq_cst) const volatile BOOST_NOEXCEPT
+    {
+        BOOST_ASSERT(order != memory_order_release);
+        BOOST_ASSERT(order != memory_order_acq_rel);
+        return !!operations::load(m_storage, order);
     }
 
     BOOST_FORCEINLINE bool test_and_set(memory_order order = memory_order_seq_cst) volatile BOOST_NOEXCEPT
     {
-        return operations::test_and_set(m_storage.value, order);
+        return operations::test_and_set(m_storage, order);
     }
 
     BOOST_FORCEINLINE void clear(memory_order order = memory_order_seq_cst) volatile BOOST_NOEXCEPT
@@ -58,7 +77,7 @@ struct atomic_flag
         BOOST_ASSERT(order != memory_order_consume);
         BOOST_ASSERT(order != memory_order_acquire);
         BOOST_ASSERT(order != memory_order_acq_rel);
-        operations::clear(m_storage.value, order);
+        operations::clear(m_storage, order);
     }
 
     BOOST_DELETED_FUNCTION(atomic_flag(atomic_flag const&))

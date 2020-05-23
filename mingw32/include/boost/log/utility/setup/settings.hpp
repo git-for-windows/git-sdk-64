@@ -20,7 +20,7 @@
 #include <iterator>
 #include <boost/assert.hpp>
 #include <boost/move/core.hpp>
-#include <boost/mpl/if.hpp>
+#include <boost/type_traits/conditional.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -115,7 +115,7 @@ private:
     class ref
     {
     private:
-        typedef typename mpl::if_c<
+        typedef typename boost::conditional<
             IsConstV,
             basic_settings_section< char_type > const,
             basic_settings_section< char_type >

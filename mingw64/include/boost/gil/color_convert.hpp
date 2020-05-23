@@ -39,7 +39,12 @@ template <typename P> struct channel_type;
 /// \ingroup ColorConvert
 /// \brief Color Convertion function object. To be specialized for every src/dst color space
 template <typename C1, typename C2>
-struct default_color_converter_impl {};
+struct default_color_converter_impl
+{
+    static_assert(
+        std::is_same<C1, C2>::value,
+        "default_color_converter_impl not specialized for given color spaces");
+};
 
 /// \ingroup ColorConvert
 /// \brief When the color space is the same, color convertion performs channel depth conversion

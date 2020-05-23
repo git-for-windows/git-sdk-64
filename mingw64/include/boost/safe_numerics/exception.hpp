@@ -80,6 +80,8 @@ public:
             return "underflow error";
         case safe_numerics_error::range_error:
             return "range error";
+        case safe_numerics_error::precision_overflow_error:
+            return "precision_overflow_error";
         case safe_numerics_error::domain_error:
             return "domain error";
         case safe_numerics_error::negative_shift:

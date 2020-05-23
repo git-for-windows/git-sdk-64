@@ -30,6 +30,10 @@
 #include <cstring>
 #include <cstddef>
 
+#if defined(_MSC_VER) && defined(_CPPLIB_VER) && defined(_DEBUG)
+# include <crtdbg.h>
+#endif
+
 //  IDE's like Visual Studio perform better if output goes to std::cout or
 //  some other stream, so allow user to configure output stream:
 #ifndef BOOST_LIGHTWEIGHT_TEST_OSTREAM
@@ -48,7 +52,13 @@ public:
         : report_(false)
         , errors_(0) {
 #if defined(_MSC_VER) && (_MSC_VER > 1310)
+        // disable message boxes on assert(), abort()
         ::_set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+#endif
+#if defined(_MSC_VER) && defined(_CPPLIB_VER) && defined(_DEBUG)
+        // disable message boxes on iterator debugging violations
+        _CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_FILE );
+        _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
 #endif
     }
 
@@ -83,12 +93,21 @@ inline int& test_errors()
     return test_results().errors();
 }
 
-inline void test_failed_impl(char const * expr, char const * file, int line, char const * function)
+inline bool test_impl(char const * expr, char const * file, int line, char const * function, bool v)
 {
-    BOOST_LIGHTWEIGHT_TEST_OSTREAM
-      << file << "(" << line << "): test '" << expr << "' failed in function '"
-      << function << "'" << std::endl;
-    ++test_results().errors();
+    if( v )
+    {
+        test_results();
+        return true;
+    }
+    else
+    {
+        BOOST_LIGHTWEIGHT_TEST_OSTREAM
+          << file << "(" << line << "): test '" << expr << "' failed in function '"
+          << function << "'" << std::endl;
+        ++test_results().errors();
+        return false;
+    }
 }
 
 inline void error_impl(char const * msg, char const * file, int line, char const * function)
@@ -174,13 +193,14 @@ struct lw_test_ge {
 };
 
 template<class BinaryPredicate, class T, class U>
-inline void test_with_impl(BinaryPredicate pred, char const * expr1, char const * expr2,
+inline bool test_with_impl(BinaryPredicate pred, char const * expr1, char const * expr2,
                            char const * file, int line, char const * function,
                            T const & t, U const & u)
 {
     if( pred(t, u) )
     {
         test_results();
+        return true;
     }
     else
     {
@@ -189,15 +209,17 @@ inline void test_with_impl(BinaryPredicate pred, char const * expr1, char const 
             << "' ('" << test_output_impl(t) << "' " << pred.op() << " '" << test_output_impl(u)
             << "') failed in function '" << function << "'" << std::endl;
         ++test_results().errors();
+        return false;
     }
 }
 
-inline void test_cstr_eq_impl( char const * expr1, char const * expr2,
+inline bool test_cstr_eq_impl( char const * expr1, char const * expr2,
   char const * file, int line, char const * function, char const * const t, char const * const u )
 {
     if( std::strcmp(t, u) == 0 )
     {
         test_results();
+        return true;
     }
     else
     {
@@ -205,15 +227,17 @@ inline void test_cstr_eq_impl( char const * expr1, char const * expr2,
             << file << "(" << line << "): test '" << expr1 << " == " << expr2 << "' ('" << t
             << "' == '" << u << "') failed in function '" << function << "'" << std::endl;
         ++test_results().errors();
+        return false;
     }
 }
 
-inline void test_cstr_ne_impl( char const * expr1, char const * expr2,
+inline bool test_cstr_ne_impl( char const * expr1, char const * expr2,
   char const * file, int line, char const * function, char const * const t, char const * const u )
 {
     if( std::strcmp(t, u) != 0 )
     {
         test_results();
+        return true;
     }
     else
     {
@@ -221,11 +245,12 @@ inline void test_cstr_ne_impl( char const * expr1, char const * expr2,
             << file << "(" << line << "): test '" << expr1 << " != " << expr2 << "' ('" << t
             << "' != '" << u << "') failed in function '" << function << "'" << std::endl;
         ++test_results().errors();
+        return false;
     }
 }
 
 template<class FormattedOutputFunction, class InputIterator1, class InputIterator2>
-void test_all_eq_impl(FormattedOutputFunction& output,
+bool test_all_eq_impl(FormattedOutputFunction& output,
                       char const * file, int line, char const * function,
                       InputIterator1 first_begin, InputIterator1 first_end,
                       InputIterator2 second_begin, InputIterator2 second_end)
@@ -284,16 +309,18 @@ void test_all_eq_impl(FormattedOutputFunction& output,
     if (error_count == 0)
     {
         test_results();
+        return true;
     }
     else
     {
         output << std::endl;
         ++test_results().errors();
+        return false;
     }
 }
 
 template<class FormattedOutputFunction, class InputIterator1, class InputIterator2, typename BinaryPredicate>
-void test_all_with_impl(FormattedOutputFunction& output,
+bool test_all_with_impl(FormattedOutputFunction& output,
                         char const * file, int line, char const * function,
                         InputIterator1 first_begin, InputIterator1 first_end,
                         InputIterator2 second_begin, InputIterator2 second_end,
@@ -353,11 +380,13 @@ void test_all_with_impl(FormattedOutputFunction& output,
     if (error_count == 0)
     {
         test_results();
+        return true;
     }
     else
     {
         output << std::endl;
         ++test_results().errors();
+        return false;
     }
 }
 
@@ -397,7 +426,7 @@ inline int report_errors()
 
 } // namespace boost
 
-#define BOOST_TEST(expr) ((expr)? (void)::boost::detail::test_results(): ::boost::detail::test_failed_impl(#expr, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION))
+#define BOOST_TEST(expr) ( ::boost::detail::test_impl(#expr, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION, (expr)? true: false) )
 #define BOOST_TEST_NOT(expr) BOOST_TEST(!(expr))
 
 #define BOOST_ERROR(msg) ( ::boost::detail::error_impl(msg, __FILE__, __LINE__, BOOST_CURRENT_FUNCTION) )

@@ -3,7 +3,7 @@
 
 //  enable_shared_from.hpp
 //
-//  Copyright 2019 Peter Dimov
+//  Copyright 2019, 2020 Peter Dimov
 //
 //  Distributed under the Boost Software License, Version 1.0.
 //  See accompanying file LICENSE_1_0.txt or copy at
@@ -19,17 +19,21 @@ namespace boost
 
 class enable_shared_from: public enable_shared_from_this<enable_shared_from>
 {
+private:
+
+    using enable_shared_from_this<enable_shared_from>::shared_from_this;
+    using enable_shared_from_this<enable_shared_from>::weak_from_this;
 };
 
 
 template<class T> shared_ptr<T> shared_from( T * p )
 {
-    return shared_ptr<T>( p->enable_shared_from::shared_from_this(), p );
+    return shared_ptr<T>( p->enable_shared_from_this<enable_shared_from>::shared_from_this(), p );
 }
 
 template<class T> weak_ptr<T> weak_from( T * p ) BOOST_SP_NOEXCEPT
 {
-    return weak_ptr<T>( p->enable_shared_from::weak_from_this(), p );
+    return weak_ptr<T>( p->enable_shared_from_this<enable_shared_from>::weak_from_this(), p );
 }
 
 } // namespace boost

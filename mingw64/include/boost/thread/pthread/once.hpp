@@ -19,7 +19,7 @@
 #include <boost/thread/detail/delete.hpp>
 #include <boost/core/no_exceptions_support.hpp>
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/assert.hpp>
 #include <boost/config/abi_prefix.hpp>
 

@@ -1,4 +1,4 @@
-/* Copyright 2003-2018 Joaquin M Lopez Munoz.
+/* Copyright 2003-2020 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -22,6 +22,7 @@
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
 #include <boost/multi_index/detail/vartempl_support.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #include <new>
 #endif
 
@@ -75,6 +76,10 @@ struct allocator_traits
   typedef typename Allocator::difference_type difference_type;
   typedef typename Allocator::size_type       size_type;
 
+  typedef boost::false_type propagate_on_container_copy_assignment;
+  typedef boost::false_type propagate_on_container_move_assignment;
+  typedef boost::false_type propagate_on_container_swap;
+
   template<typename T>
   struct rebind_alloc
   {
@@ -123,6 +128,11 @@ struct allocator_traits
 #endif
 
   static size_type max_size(Allocator& a)BOOST_NOEXCEPT{return a.max_size();}
+
+  static Allocator select_on_container_copy_construction(const Allocator& a)
+  {
+    return a;
+  }
 };
 
 #endif

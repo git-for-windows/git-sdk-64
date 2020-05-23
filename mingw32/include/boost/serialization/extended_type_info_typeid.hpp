@@ -11,7 +11,7 @@
 // on runtime typing (rtti - typeid) but uses a user specified string
 // as the portable class identifier.
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -78,7 +78,7 @@ public:
 } // typeid_system
 
 template<class T>
-class extended_type_info_typeid : 
+class extended_type_info_typeid :
     public typeid_system::extended_type_info_typeid_0,
     public singleton<extended_type_info_typeid< T > >
 {
@@ -102,7 +102,7 @@ public:
         // note: this implementation - based on usage of typeid (rtti)
         // only does something if the class has at least one virtual function.
         BOOST_STATIC_WARNING(boost::is_polymorphic< T >::value);
-        return 
+        return
             typeid_system::extended_type_info_typeid_0::get_extended_type_info(
                 typeid(t)
             );
@@ -143,7 +143,7 @@ public:
 } // namespace boost
 
 ///////////////////////////////////////////////////////////////////////////////
-// If no other implementation has been designated as default, 
+// If no other implementation has been designated as default,
 // use this one.  To use this implementation as the default, specify it
 // before any of the other headers.
 #ifndef BOOST_SERIALIZATION_DEFAULT_TYPE_INFO
@@ -152,7 +152,7 @@ public:
     namespace serialization {
     template<class T>
     struct extended_type_info_impl {
-        typedef typename 
+        typedef typename
             boost::serialization::extended_type_info_typeid< T > type;
     };
     } // namespace serialization

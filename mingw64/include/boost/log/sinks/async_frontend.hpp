@@ -26,7 +26,7 @@
 #error Boost.Log: Asynchronous sink frontend is only supported in multithreaded environment
 #endif
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/memory_order.hpp>
 #include <boost/atomic/atomic.hpp>

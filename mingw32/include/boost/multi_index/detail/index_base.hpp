@@ -1,4 +1,4 @@
-/* Copyright 2003-2018 Joaquin M Lopez Munoz.
+/* Copyright 2003-2020 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -162,7 +162,11 @@ protected:
 
   void clear_(){}
 
-  void swap_(index_base<Value,IndexSpecifierList,Allocator>&){}
+  template<typename BoolConstant>
+  void swap_(
+    index_base<Value,IndexSpecifierList,Allocator>&,
+    BoolConstant /* swap_allocators */)
+  {}
 
   void swap_elements_(index_base<Value,IndexSpecifierList,Allocator>&){}
 

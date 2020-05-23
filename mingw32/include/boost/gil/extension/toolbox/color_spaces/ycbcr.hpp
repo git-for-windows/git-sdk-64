@@ -65,8 +65,8 @@ using ycbcr_601__layout_t = boost::gil::layout<ycbcr_601__t>;
 using ycbcr_709__layout_t = boost::gil::layout<ycbcr_709__t>;
 
 //The channel depth is ALWAYS 8bits ofr YCbCr!
-GIL_DEFINE_ALL_TYPEDEFS(8, uint8_t, ycbcr_601_)
-GIL_DEFINE_ALL_TYPEDEFS(8, uint8_t, ycbcr_709_)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(8, uint8_t, ycbcr_601_)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(8, uint8_t, ycbcr_709_)
 
 namespace detail {
 

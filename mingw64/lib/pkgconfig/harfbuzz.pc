@@ -1,13 +1,11 @@
 prefix=/mingw64
-exec_prefix=/mingw64
-libdir=/mingw64/lib
-includedir=/mingw64/include
+libdir=${prefix}/lib
+includedir=${prefix}/include
 
 Name: harfbuzz
 Description: HarfBuzz text shaping library
 Version: 2.6.6
-
+Requires.private: glib-2.0, gobject-2.0, cairo, cairo-ft, graphite2, freetype2, fontconfig
 Libs: -L${libdir} -lharfbuzz
-Libs.private: -lm  -lusp10 -lgdi32 -lrpcrt4   
-Requires.private: glib-2.0 >= 2.19.1 freetype2 >= 12.0.6 graphite2 >= 1.2.0
-Cflags: -I${includedir}/harfbuzz
+Libs.private: -lm -lusp10 -lgdi32 -lrpcrt4 -ldwrite
+Cflags:-I${includedir}/harfbuzz

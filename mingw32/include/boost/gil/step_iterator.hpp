@@ -130,7 +130,7 @@ struct memunit_step_fn {
 
     void            set_step(std::ptrdiff_t step) { _step=step; }
 private:
-    GIL_CLASS_REQUIRE(Iterator, boost::gil, MemoryBasedIteratorConcept)
+    BOOST_GIL_CLASS_REQUIRE(Iterator, boost::gil, MemoryBasedIteratorConcept)
     difference_type _step;
 };
 
@@ -139,7 +139,7 @@ class memory_based_step_iterator : public detail::step_iterator_adaptor<memory_b
                                                                             Iterator,
                                                                             memunit_step_fn<Iterator>>
 {
-    GIL_CLASS_REQUIRE(Iterator, boost::gil, MemoryBasedIteratorConcept)
+    BOOST_GIL_CLASS_REQUIRE(Iterator, boost::gil, MemoryBasedIteratorConcept)
 public:
     using parent_t = detail::step_iterator_adaptor<memory_based_step_iterator<Iterator>,
                                           Iterator,
@@ -255,7 +255,7 @@ struct dynamic_x_step_type<memory_based_step_iterator<Iterator>> {
 // For step iterators, pass the function object to the base
 template <typename Iterator, typename Deref>
 struct iterator_add_deref<memory_based_step_iterator<Iterator>,Deref> {
-    GIL_CLASS_REQUIRE(Deref, boost::gil, PixelDereferenceAdaptorConcept)
+    BOOST_GIL_CLASS_REQUIRE(Deref, boost::gil, PixelDereferenceAdaptorConcept)
 
     using type = memory_based_step_iterator<typename iterator_add_deref<Iterator, Deref>::type>;
 

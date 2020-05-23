@@ -6,8 +6,8 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_REAL_IMPL_APRIL_18_2006_0901AM)
-#define SPIRIT_REAL_IMPL_APRIL_18_2006_0901AM
+#ifndef BOOST_SPIRIT_QI_NUMERIC_DETAIL_REAL_IMPL_HPP
+#define BOOST_SPIRIT_QI_NUMERIC_DETAIL_REAL_IMPL_HPP
 
 #if defined(_MSC_VER)
 #pragma once
@@ -171,7 +171,7 @@ namespace boost { namespace spirit { namespace qi  { namespace detail
     {
         template <typename Iterator>
         static std::size_t
-        ignore_excess_digits(Iterator& first, Iterator const& last, mpl::false_)
+        ignore_excess_digits(Iterator& /* first */, Iterator const& /* last */, mpl::false_)
         {
             return 0;
         }

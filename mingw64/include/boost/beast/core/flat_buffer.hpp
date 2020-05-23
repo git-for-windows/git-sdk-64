@@ -358,17 +358,17 @@ public:
     void
     reserve(std::size_t n);
 
-    /** Reallocate the buffer to fit the readable bytes exactly.
+    /** Request the removal of unused capacity.
 
-        Buffer sequences previously obtained using @ref data or
-        @ref prepare become invalid.
+        This function attempts to reduce @ref capacity()
+        to @ref size(), which may not succeed.
 
         @esafe
 
-        Strong guarantee.
+        No-throw guarantee.
     */
     void
-    shrink_to_fit();
+    shrink_to_fit() noexcept;
 
     /** Set the size of the readable and writable bytes to zero.
 
@@ -396,7 +396,6 @@ public:
     /// The ConstBufferSequence used to represent the readable bytes.
     using const_buffers_type = net::const_buffer;
 
-    /// The MutableBufferSequence used to represent the readable bytes.
     using mutable_data_type = net::mutable_buffer;
 
     /// The MutableBufferSequence used to represent the writable bytes.
@@ -438,7 +437,7 @@ public:
     }
 
     /// Returns a mutable buffer sequence representing the readable bytes
-    mutable_data_type
+    mutable_buffers_type
     data() noexcept
     {
         return {in_, dist(in_, out_)};

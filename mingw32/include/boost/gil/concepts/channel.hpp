@@ -19,6 +19,7 @@
 
 #if defined(BOOST_CLANG)
 #pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wunused-local-typedefs"
 #endif
 
@@ -66,7 +67,7 @@ auto channel_convert(SrcT const& val)
 ///     static const bool is_mutable;        // use channel_traits<T>::is_mutable to access it
 ///
 ///     static T min_value();                // use channel_traits<T>::min_value to access it
-///     static T max_value();                // use channel_traits<T>::min_value to access it
+///     static T max_value();                // use channel_traits<T>::max_value to access it
 /// };
 /// \endcode
 template <typename T>

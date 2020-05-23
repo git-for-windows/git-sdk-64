@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef ARG_LIST_050329_HPP
-#define ARG_LIST_050329_HPP
+#ifndef BOOST_PARAMETER_AUX_ARG_LIST_HPP
+#define BOOST_PARAMETER_AUX_ARG_LIST_HPP
 
 namespace boost { namespace parameter { namespace aux {
 

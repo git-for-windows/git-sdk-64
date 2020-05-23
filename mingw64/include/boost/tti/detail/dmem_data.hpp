@@ -7,7 +7,6 @@
 #if !defined(BOOST_TTI_DETAIL_MEM_DATA_HPP)
 #define BOOST_TTI_DETAIL_MEM_DATA_HPP
 
-#include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 #include <boost/function_types/components.hpp>
 #include <boost/function_types/is_member_object_pointer.hpp>
@@ -15,13 +14,12 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/mpl/or.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <boost/tti/detail/ddeftype.hpp>
 #include <boost/tti/detail/dftclass.hpp>
+#include <boost/tti/detail/denclosing_type.hpp>
 #include <boost/tti/gen/namespace_gen.hpp>
 #include <boost/type_traits/detail/yes_no_type.hpp>
-#include <boost/type_traits/is_class.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_const.hpp>
 
@@ -87,7 +85,7 @@
   BOOST_TTI_DETAIL_TRAIT_HAS_TYPES_MEMBER_FUNCTION(trait,name) \
   template<class BOOST_TTI_DETAIL_TP_T,class BOOST_TTI_DETAIL_TP_C> \
   struct BOOST_PP_CAT(trait,_detail_hmd_op) : \
-    BOOST_PP_CAT(trait,_detail_types)<BOOST_TTI_DETAIL_TP_T,BOOST_TTI_DETAIL_TP_C> \
+    BOOST_PP_CAT(trait,_detail_hmf_types)<BOOST_TTI_DETAIL_TP_T,BOOST_TTI_DETAIL_TP_C> \
     { \
     }; \
 /**/
@@ -127,7 +125,7 @@
   struct BOOST_PP_CAT(trait,_detail_hmd_with_enclosing_class) : \
     boost::mpl::eval_if \
         < \
-        boost::is_class<BOOST_TTI_DETAIL_TP_ET>, \
+        BOOST_TTI_NAMESPACE::detail::enclosing_type<BOOST_TTI_DETAIL_TP_ET>, \
         BOOST_PP_CAT(trait,_detail_hmd_invoke_enclosing_class) \
             < \
             BOOST_TTI_DETAIL_TP_ET, \

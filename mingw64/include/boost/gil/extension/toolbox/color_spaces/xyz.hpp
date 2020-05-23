@@ -38,7 +38,7 @@ using xyz_t = mp11::mp_list
 /// \ingroup LayoutModel
 using xyz_layout_t = layout<xyz_t>;
 
-GIL_DEFINE_ALL_TYPEDEFS(32f, float32_t, xyz)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(32f, float32_t, xyz)
 
 /// \ingroup ColorConvert
 /// \brief RGB to XYZ

@@ -17,8 +17,8 @@
 #include <cstddef>
 #include <boost/memory_order.hpp>
 #include <boost/atomic/detail/config.hpp>
-#include <boost/atomic/detail/storage_type.hpp>
-#include <boost/atomic/detail/integral_extend.hpp>
+#include <boost/atomic/detail/storage_traits.hpp>
+#include <boost/atomic/detail/integral_conversions.hpp>
 #include <boost/atomic/detail/extra_operations_fwd.hpp>
 #include <boost/atomic/capabilities.hpp>
 
@@ -43,7 +43,7 @@ struct generic_extra_operations :
 {
     typedef Base base_type;
     typedef typename base_type::storage_type storage_type;
-    typedef typename make_storage_type< Size >::type emulated_storage_type;
+    typedef typename storage_traits< Size >::type emulated_storage_type;
 
     static BOOST_FORCEINLINE storage_type fetch_negate(storage_type volatile& storage, memory_order order) BOOST_NOEXCEPT
     {
@@ -200,7 +200,7 @@ struct generic_extra_operations< Base, Size, Signed, true > :
 {
     typedef Base base_type;
     typedef typename base_type::storage_type storage_type;
-    typedef typename make_storage_type< Size >::type emulated_storage_type;
+    typedef typename storage_traits< Size >::type emulated_storage_type;
 
     static BOOST_FORCEINLINE storage_type fetch_negate(storage_type volatile& storage, memory_order order) BOOST_NOEXCEPT
     {

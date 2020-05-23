@@ -124,7 +124,7 @@ print_log_value<char const*>::operator()( std::ostream& ostr, char const* t )
 void
 print_log_value<wchar_t const*>::operator()( std::ostream& ostr, wchar_t const* t )
 {
-    ostr << ( t ? t : L"null string" );
+    ostr << ( t ? reinterpret_cast<const void*>(t) : "null string" );
 }
 
 //____________________________________________________________________________//
@@ -384,7 +384,7 @@ report_assertion( assertion_result const&   ar,
         BOOST_TEST_I_THROW( execution_aborted() );
         // the previous line either throws or aborts and the return below is not reached
         // return false;
-        BOOST_UNREACHABLE_RETURN(false);
+        BOOST_TEST_UNREACHABLE_RETURN(false);
     }
 
     return true;
@@ -404,7 +404,7 @@ format_assertion_result( const_string expr_val, const_string details )
 
     if( !details.is_empty() ) {
         if( first_char(details) != '[' )
-            res.message().stream() << ". ";
+            res.message().stream() << ": ";
         else
             res.message().stream() << " ";
 
@@ -733,7 +733,7 @@ output_test_stream::match_pattern( bool flush_stream )
                     for( std::size_t k = 1; k < (std::max)(best_pattern_start_index, best_stream_start_index); k++ ) { // 1 is for the current char c
                         std::string s1(pretty_print_log(std::string(1, last_elements_ordered[(std::min)(k, best_pattern_start_index)])));
                         std::string s2(pretty_print_log(std::string(1, sub_str_suffix[(std::min)(k, best_stream_start_index)])));
-                        for( int h = (std::max)(s1.size(), s2.size()); h > 0; h--)
+                        for( int h = static_cast<int>((std::max)(s1.size(), s2.size())); h > 0; h--)
                             result.message() << "~";
                     }
 

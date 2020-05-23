@@ -12,9 +12,7 @@
 //        with features contributed and bugs found by
 //        Antony Polukhin, Ed Brey, Mark Rodgers, 
 //        Peter Dimov, and James Curran
-// when:  July 2001, April 2013 - 2019
-
-#include <algorithm>
+// when:  July 2001, April 2013 - 2020
 
 #include <boost/config.hpp>
 #include <boost/type_index.hpp>
@@ -83,7 +81,9 @@ namespace boost
 
         any & swap(any & rhs) BOOST_NOEXCEPT
         {
-            std::swap(content, rhs.content);
+            placeholder* tmp = content;
+            content = rhs.content;
+            rhs.content = tmp;
             return *this;
         }
 
@@ -333,7 +333,7 @@ namespace boost
 }
 
 // Copyright Kevlin Henney, 2000, 2001, 2002. All rights reserved.
-// Copyright Antony Polukhin, 2013-2019.
+// Copyright Antony Polukhin, 2013-2020.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at

@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // wchar_from_mb.hpp
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -25,7 +25,7 @@
 
 #include <boost/config.hpp>
 #if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{ 
+namespace std{
     using ::mbstate_t;
 } // namespace std
 #endif
@@ -39,7 +39,7 @@ namespace std{
 
 #include <iostream>
 
-namespace boost { 
+namespace boost {
 namespace archive {
 namespace iterators {
 
@@ -47,10 +47,10 @@ namespace iterators {
 // class used by text archives to translate char strings to wchar_t
 // strings of the currently selected locale
 template<class Base>
-class wchar_from_mb 
+class wchar_from_mb
     : public boost::iterator_adaptor<
-        wchar_from_mb<Base>, 
-        Base, 
+        wchar_from_mb<Base>,
+        Base,
         wchar_t,
         single_pass_traversal_tag,
         wchar_t
@@ -58,8 +58,8 @@ class wchar_from_mb
 {
     friend class boost::iterator_core_access;
     typedef typename boost::iterator_adaptor<
-        wchar_from_mb<Base>, 
-        Base, 
+        wchar_from_mb<Base>,
+        Base,
         wchar_t,
         single_pass_traversal_tag,
         wchar_t
@@ -126,7 +126,7 @@ class wchar_from_mb
 public:
     // make composible buy using templated constructor
     template<class T>
-    wchar_from_mb(T start) : 
+    wchar_from_mb(T start) :
         super_t(Base(static_cast< T >(start))),
         m_mbs(std::mbstate_t())
     {

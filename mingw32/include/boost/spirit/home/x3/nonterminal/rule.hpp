@@ -51,7 +51,7 @@ namespace boost { namespace spirit { namespace x3
         static bool const force_attribute =
             force_attribute_;
 
-        rule_definition(RHS const& rhs, char const* name)
+        constexpr rule_definition(RHS const& rhs, char const* name)
           : rhs(rhs), name(name) {}
 
         template <typename Iterator, typename Context, typename Attribute_>
@@ -73,6 +73,9 @@ namespace boost { namespace spirit { namespace x3
     template <typename ID, typename Attribute, bool force_attribute_>
     struct rule : parser<rule<ID, Attribute>>
     {
+        static_assert(!std::is_reference<Attribute>::value,
+                      "Reference qualifier on rule attribute type is meaningless");
+
         typedef ID id;
         typedef Attribute attribute_type;
         static bool const has_attribute =
@@ -84,14 +87,23 @@ namespace boost { namespace spirit { namespace x3
 #if !defined(BOOST_SPIRIT_X3_NO_RTTI)
         rule() : name(typeid(rule).name()) {}
 #else
-        rule() : name("unnamed") {}
+        constexpr rule() : name("unnamed") {}
 #endif
 
-        rule(char const* name)
+        constexpr rule(char const* name)
           : name(name) {}
 
+        constexpr rule(rule const& r)
+          : name(r.name)
+        {
+            // Assert that we are not copying an unitialized static rule. If
+            // the static is in another TU, it may be initialized after we copy
+            // it. If so, its name member will be nullptr.
+            BOOST_ASSERT_MSG(r.name, "uninitialized rule"); // static initialization order fiasco
+        }
+
         template <typename RHS>
-        rule_definition<
+        constexpr rule_definition<
             ID, typename extension::as_parser<RHS>::value_type, Attribute, force_attribute_>
         operator=(RHS const& rhs) const
         {
@@ -99,7 +111,7 @@ namespace boost { namespace spirit { namespace x3
         }
 
         template <typename RHS>
-        rule_definition<
+        constexpr rule_definition<
             ID, typename extension::as_parser<RHS>::value_type, Attribute, true>
         operator%=(RHS const& rhs) const
         {
@@ -132,7 +144,7 @@ namespace boost { namespace spirit { namespace x3
             , Context const& context, unused_type, unused_type) const
         {
             // make sure we pass exactly the rule attribute type
-            attribute_type no_attr;
+            attribute_type no_attr{};
             return parse_rule(*this, first, last, context, no_attr);
         }
 

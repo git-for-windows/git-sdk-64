@@ -30,6 +30,7 @@
 #include <boost/test/utils/basic_cstring/io.hpp>
 
 // Boost
+#include <boost/core/ignore_unused.hpp>
 #include <boost/cstdlib.hpp>
 
 // STL
@@ -200,6 +201,7 @@ unit_test_main( init_unit_test_func init_func, int argc, char* argv[] )
     int result_code = 0;
 
     ut_detail::framework_shutdown_helper shutdown_helper;
+    boost::ignore_unused(shutdown_helper);
 
     BOOST_TEST_I_TRY {
         

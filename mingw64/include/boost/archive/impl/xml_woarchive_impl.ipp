@@ -133,8 +133,6 @@ xml_woarchive_impl<Archive>::xml_woarchive_impl(
         os_.flush();
         os_.imbue(archive_locale);
     }
-    if(0 == (flags & no_header))
-        this->init();
 }
 
 template<class Archive>

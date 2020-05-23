@@ -12,18 +12,6 @@
 
 #include <boost/variant/apply_visitor.hpp>
 
-#ifdef BOOST_GIL_DOXYGEN_ONLY
-#undef BOOST_GIL_REDUCE_CODE_BLOAT
-#endif
-
-// Implements apply_operation for variants.
-// Optionally performs type reduction.
-#ifdef BOOST_GIL_REDUCE_CODE_BLOAT
-
-#include <boost/gil/extension/dynamic_image/reduce.hpp>
-
-#else
-
 namespace boost { namespace gil {
 
 /// \ingroup Variant
@@ -66,7 +54,5 @@ auto apply_operation(
 }
 
 }}  // namespace boost::gil
-
-#endif // defined(BOOST_GIL_REDUCE_CODE_BLOAT)
 
 #endif

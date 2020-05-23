@@ -98,7 +98,7 @@ enum class errc : int
   operation_would_block = EWOULDBLOCK,
   owner_dead = EOWNERDEAD,
   permission_denied = EACCES,
-  protcol_error = EPROTO,
+  protocol_error = EPROTO,
   protocol_not_supported = EPROTONOSUPPORT,
   read_only_file_system = EROFS,
   resource_deadlock_would_occur = EDEADLK,
@@ -250,7 +250,7 @@ namespace detail
       return "Owner died";
     case errc::permission_denied:
       return "Permission denied";
-    case errc::protcol_error:
+    case errc::protocol_error:
       return "Protocol error";
     case errc::protocol_not_supported:
       return "Protocol not supported";

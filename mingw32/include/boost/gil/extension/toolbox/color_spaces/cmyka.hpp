@@ -22,13 +22,13 @@ using cmyka_t = mp11::mp_list<cyan_t, magenta_t, yellow_t, black_t, alpha_t>;
 /// \ingroup LayoutModel
 using cmyka_layout_t = layout<cmyka_t>;
 
-GIL_DEFINE_ALL_TYPEDEFS(8, uint8_t, cmyka)
-GIL_DEFINE_ALL_TYPEDEFS(8s, int8_t, cmyka)
-GIL_DEFINE_ALL_TYPEDEFS(16, uint16_t, cmyka)
-GIL_DEFINE_ALL_TYPEDEFS(16s, int16_t, cmyka)
-GIL_DEFINE_ALL_TYPEDEFS(32, uint32_t, cmyka)
-GIL_DEFINE_ALL_TYPEDEFS(32s, int32_t, cmyka)
-GIL_DEFINE_ALL_TYPEDEFS(32f, float32_t, cmyka)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(8, uint8_t, cmyka)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(8s, int8_t, cmyka)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(16, uint16_t, cmyka)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(16s, int16_t, cmyka)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(32, uint32_t, cmyka)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(32s, int32_t, cmyka)
+BOOST_GIL_DEFINE_ALL_TYPEDEFS(32f, float32_t, cmyka)
 
 ///// \ingroup ColorConvert
 ///// \brief Converting CMYKA to any pixel type. Note: Supports homogeneous pixels only.

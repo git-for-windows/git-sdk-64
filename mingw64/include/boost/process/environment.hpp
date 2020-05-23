@@ -44,7 +44,7 @@ struct const_entry
             bool operator()(char c)    const {return c == api::env_seperator<char>   ();}
         } s;
         boost::split(data, _data, s);
-        return std::move(data);
+        return data;
     }
     string_type to_string()              const
     {

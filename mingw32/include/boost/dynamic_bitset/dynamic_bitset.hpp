@@ -384,7 +384,7 @@ private:
     static Block bit_mask(size_type first, size_type last) BOOST_NOEXCEPT
     {
         Block res = (last == bits_per_block - 1)
-            ? static_cast<Block>(~0)
+            ? detail::dynamic_bitset_impl::max_limit<Block>::value
             : ((Block(1) << (last + 1)) - 1);
         res ^= (Block(1) << first) - 1;
         return res;
@@ -406,7 +406,7 @@ private:
     }
     inline static Block set_block_full(Block) BOOST_NOEXCEPT
     {
-        return static_cast<Block>(~0);
+        return detail::dynamic_bitset_impl::max_limit<Block>::value;
     }
     inline static Block reset_block_partial(Block block, size_type first,
         size_type last) BOOST_NOEXCEPT
@@ -764,7 +764,7 @@ resize(size_type num_bits, bool value) // strong guarantee
   const size_type old_num_blocks = num_blocks();
   const size_type required_blocks = calc_num_blocks(num_bits);
 
-  const block_type v = value? ~Block(0) : Block(0);
+  const block_type v = value? detail::dynamic_bitset_impl::max_limit<Block>::value : Block(0);
 
   if (required_blocks != old_num_blocks) {
     m_bits.resize(required_blocks, v); // s.g. (copy)
@@ -1045,7 +1045,7 @@ template <typename Block, typename Allocator>
 dynamic_bitset<Block, Allocator>&
 dynamic_bitset<Block, Allocator>::set()
 {
-  std::fill(m_bits.begin(), m_bits.end(), static_cast<Block>(~0));
+  std::fill(m_bits.begin(), m_bits.end(), detail::dynamic_bitset_impl::max_limit<Block>::value);
   m_zero_unused_bits();
   return *this;
 }
@@ -1138,7 +1138,7 @@ bool dynamic_bitset<Block, Allocator>::all() const
     }
 
     const block_width_type extra_bits = count_extra_bits();
-    block_type const all_ones = static_cast<Block>(~0);
+    block_type const all_ones = detail::dynamic_bitset_impl::max_limit<Block>::value;
 
     if (extra_bits == 0) {
         for (size_type i = 0, e = num_blocks(); i < e; ++i) {
@@ -2107,7 +2107,7 @@ bool dynamic_bitset<Block, Allocator>::m_check_invariants() const
 {
     const block_width_type extra_bits = count_extra_bits();
     if (extra_bits > 0) {
-        const block_type mask = block_type(~0) << extra_bits;
+        const block_type mask = detail::dynamic_bitset_impl::max_limit<Block>::value << extra_bits;
         if ((m_highest_block() & mask) != 0)
             return false;
     }

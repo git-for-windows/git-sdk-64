@@ -14,7 +14,7 @@
 #define BOOST_TEST_AUTO_UNIT_TEST_HPP_071894GER
 
 #include <boost/config/header_deprecated.hpp>
-BOOST_HEADER_DEPRECATED( "This header is deprecated. Please use <boost/test/unit_test.hpp> instead." )
+BOOST_HEADER_DEPRECATED( "<boost/test/unit_test.hpp>" )
 
 #include <boost/test/unit_test.hpp>
 

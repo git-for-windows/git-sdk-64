@@ -64,10 +64,10 @@ class type_info;
 
 //____________________________________________________________________________//
 
-#if defined(__GNUC__) || BOOST_WORKAROUND(BOOST_MSVC, == 1400)
-#define BOOST_TEST_PROTECTED_VIRTUAL virtual
-#else
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1400)
 #define BOOST_TEST_PROTECTED_VIRTUAL
+#else
+#define BOOST_TEST_PROTECTED_VIRTUAL virtual
 #endif
 
 //____________________________________________________________________________//
@@ -112,7 +112,11 @@ class type_info;
 #    define BOOST_TEST_DECL BOOST_SYMBOL_IMPORT BOOST_SYMBOL_VISIBLE
 #  endif  // BOOST_TEST_SOURCE
 #else
-#  define BOOST_TEST_DECL BOOST_SYMBOL_VISIBLE
+#  if defined(BOOST_TEST_INCLUDED)
+#     define BOOST_TEST_DECL
+#  else
+#     define BOOST_TEST_DECL BOOST_SYMBOL_VISIBLE
+#  endif
 #endif
 
 #if !defined(BOOST_TEST_MAIN) && defined(BOOST_AUTO_TEST_MAIN)
@@ -125,7 +129,7 @@ class type_info;
 
 
 
-#ifndef BOOST_PP_VARIADICS /* we can change this only if not already defined) */
+#ifndef BOOST_PP_VARIADICS /* we can change this only if not already defined */
 
 #ifdef __PGI
 #define BOOST_PP_VARIADICS 1
@@ -139,7 +143,18 @@ class type_info;
 #define BOOST_PP_VARIADICS 1
 #endif
 
+#if defined(__NVCC__)
+#define BOOST_PP_VARIADICS 1
+#endif
+
 #endif /* ifndef BOOST_PP_VARIADICS */
+
+// some versions of VC exibit a manifest error with this BOOST_UNREACHABLE_RETURN
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1910)
+# define BOOST_TEST_UNREACHABLE_RETURN(x) return x
+#else
+# define BOOST_TEST_UNREACHABLE_RETURN(x) BOOST_UNREACHABLE_RETURN(x)
+#endif
 
 //____________________________________________________________________________//
 // string_view support

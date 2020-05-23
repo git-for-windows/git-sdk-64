@@ -133,6 +133,7 @@ namespace timer {
       return_value.wall = static_cast<nanosecond_type>((clock * timebase.first) / timebase.second);
 #else
       struct timespec end_time;
+      return_value.wall = 0;
       if( ::clock_gettime( CLOCK_MONOTONIC, &end_time ) == 0 )
       {
           return_value.wall = static_cast<nanosecond_type>((end_time.tv_sec - _start_time_wall.tv_sec) * 1E9 + (end_time.tv_nsec - _start_time_wall.tv_nsec));

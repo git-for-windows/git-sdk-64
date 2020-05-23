@@ -30,6 +30,14 @@ namespace boost {
   namespace detail {
   namespace dynamic_bitset_impl {
 
+    template<class T>
+    struct max_limit {
+        BOOST_STATIC_CONSTEXPR T value = static_cast<T>(-1);
+    };
+
+    template<class T>
+    BOOST_CONSTEXPR_OR_CONST T max_limit<T>::value;
+
     // Gives (read-)access to the object representation
     // of an object of type T (3.9p4). CANNOT be used
     // on a base sub-object

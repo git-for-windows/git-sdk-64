@@ -153,9 +153,18 @@ namespace date_time {
    month_type month_;
  };
 
-
   //! Returns nth arg as string. 1 -> "first", 2 -> "second", max is 5.
-  BOOST_DATE_TIME_DECL const char* nth_as_str(int n);
+  inline const char* nth_as_str(int ele)
+  {
+    static const char* const _nth_as_str[] = {"out of range", "first", "second",
+                                              "third", "fourth", "fifth"};
+    if(ele >= 1 && ele <= 5) {
+      return _nth_as_str[ele];
+    }
+    else {
+      return _nth_as_str[0];
+    }
+  }
 
   //! Useful generator functor for finding holidays
   /*! Based on the idea in Cal. Calc. for finding holidays that are

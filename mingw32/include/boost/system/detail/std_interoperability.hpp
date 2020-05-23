@@ -66,7 +66,9 @@ public:
     virtual bool equivalent( const std::error_code & code, int condition ) const BOOST_NOEXCEPT;
 };
 
+#if !defined(__SUNPRO_CC) // trailing __global is not supported
 inline std::error_category const & to_std_category( boost::system::error_category const & cat ) BOOST_SYMBOL_VISIBLE;
+#endif
 
 struct cat_ptr_less
 {

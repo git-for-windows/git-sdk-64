@@ -23,6 +23,7 @@ class async_pipe
 public:
     typedef int native_handle_type;
     typedef ::boost::asio::posix::stream_descriptor handle_type;
+    typedef typename handle_type::executor_type executor_type;
 
     inline async_pipe(boost::asio::io_context & ios) : async_pipe(ios, ios) {}
 

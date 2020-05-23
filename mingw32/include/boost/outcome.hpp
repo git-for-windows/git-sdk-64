@@ -1,5 +1,5 @@
 /* Include the default amount of outcome
-(C) 2018-2019 Niall Douglas <http://www.nedproductions.biz/> (4 commits)
+(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (4 commits)
 File Created: Mar 2018
 
 

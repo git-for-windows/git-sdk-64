@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018-2019 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Jun 2018
 
 
@@ -149,9 +149,9 @@ public:
 
 namespace traits
 {
-  template <class DomainType> struct is_move_relocating<errored_status_code<DomainType>>
+  template <class DomainType> struct is_move_bitcopying<errored_status_code<DomainType>>
   {
-    static constexpr bool value = is_move_relocating<typename DomainType::value_type>::value;
+    static constexpr bool value = is_move_bitcopying<typename DomainType::value_type>::value;
   };
 }  // namespace traits
 
@@ -208,7 +208,7 @@ public:
   {
     _check();
   }
-  //! Implicit move construction from any other status code if its value type is trivially copyable or move relocating and it would fit into our storage
+  //! Implicit move construction from any other status code if its value type is trivially copyable or move bitcopying and it would fit into our storage
   template <class DomainType,  //
             typename std::enable_if<detail::type_erasure_is_safe<value_type, typename DomainType::value_type>::value,
                                     bool>::type = true>
@@ -235,7 +235,7 @@ public:
 
 namespace traits
 {
-  template <class ErasedType> struct is_move_relocating<errored_status_code<erased<ErasedType>>>
+  template <class ErasedType> struct is_move_bitcopying<errored_status_code<erased<ErasedType>>>
   {
     static constexpr bool value = true;
   };

@@ -180,11 +180,30 @@ std::string mangled_storage_impl::get_mem_fn(const std::string &name) const
 
     std::string cname = get_name<Class>();
 
-    auto matcher = cname + "::" + name +
+    const auto matcher = cname + "::" + name +
              '(' + parser::arg_list(*this, func_type()) + ')'
              + const_rule<Class>() + volatile_rule<Class>();
 
-    auto found = std::find_if(storage_.begin(), storage_.end(), [&](const entry& e) {return e.demangled == matcher;});
+    // Linux export table contains int MyClass::Func<float>(), but expected in import_mangled MyClass::Func<float>() without returned type.
+    auto found = std::find_if(storage_.begin(), storage_.end(), [&matcher](const entry& e) {
+        if (e.demangled == matcher) {
+          return true;
+        }
+
+        const auto pos = e.demangled.rfind(matcher);
+        if (pos == std::string::npos) {
+          // Not found.
+          return false;
+        }
+
+        if (pos + matcher.size() != e.demangled.size()) {
+          // There are some characters after the `matcher` string.
+          return false;
+        }
+
+        // Double checking that we matched a full function name
+        return e.demangled[pos - 1] == ' '; // `if (e.demangled == matcher)` makes sure that `pos > 0`
+    });
 
     if (found != storage_.end())
         return found->mangled;

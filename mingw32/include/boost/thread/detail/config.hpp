@@ -470,7 +470,8 @@
 #else //Use default
 #   if defined(BOOST_THREAD_PLATFORM_WIN32)
 #       if defined(BOOST_MSVC) || defined(BOOST_INTEL_WIN) \
-      || defined(__MINGW32__) || defined(MINGW32) || defined(BOOST_MINGW32)
+      || defined(__MINGW32__) || defined(MINGW32) || defined(BOOST_MINGW32) \
+      || (defined(_MSC_VER) && defined(__clang__))
       //For compilers supporting auto-tss cleanup
             //with Boost.Threads lib, use Boost.Threads lib
 #           define BOOST_THREAD_USE_LIB
